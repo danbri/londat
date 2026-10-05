@@ -1,0 +1,9 @@
+{
+  "about": "TfL axonometric station diagrams (FOI release, 2015). Use approved by the project owner danbri on 2026-10-05 for the cwplans scoping phase. Rights: Transport for London (RPSI re-use), not an open licence.",
+  "approved_by": "danbri",
+  "approved_on": "2026-10-05",
+  "stations": [
+    { "id": "canada-water", "name": "Canada Water", "lines": ["Jubilee"], "status": "pending", "files": [] },
+    { "id": "canary-wharf", "name": "Canary Wharf", "lines": ["Jubilee"], "status": "pending", "files": [] }
+  ]
+}
