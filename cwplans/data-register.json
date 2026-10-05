@@ -29,11 +29,81 @@
   }
  },
  "sources": {
+  "ads-ariadne": {
+   "name": "ADS / ARIADNE catalogue records (only the OGL and CC-BY ones)",
+   "licence": "per record: OGL v3.0 or CC-BY (Portable Antiquities Scheme)",
+   "note": "records under the ADS terms of use are not committed"
+  },
+  "aishub-via-openwaters": {
+   "name": "AISHub aggregate AIS, re-served by Open Waters AIS (events with source aishub)",
+   "licence": "AISHub membership terms; Open Waters reports AISHub's written confirmation (2026-08-22) of no restrictions on use including commercial use and redistribution, 'revocable at will'. No published licence",
+   "url": "https://www.aishub.net",
+   "attribution": "Open Waters AIS (https://openwaters.io/ais/). AISHub (https://www.aishub.net)",
+   "review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+  },
+  "aisstream-via-openwaters": {
+   "name": "aisstream.io AIS, re-served by Open Waters AIS (events with source aisstream)",
+   "licence": "no published terms",
+   "url": "https://aisstream.io",
+   "attribution": "Open Waters AIS (https://openwaters.io/ais/). aisstream.io",
+   "review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+  },
+  "companies-house": {
+   "name": "Companies House Basic Company Data",
+   "licence": "free reuse (OGL terms for Companies House public data)"
+  },
+  "construction-web": {
+   "name": "developer, project and press pages of named construction schemes (30marshwall.co.uk, ballymoregroup.com, 25cuba.com, constructionenquirer.com, skyscrapercenter.com)",
+   "licence": "each site's terms, no open licence: facts only (URL, date, numbers, names), no text or images; crawls allowed for scoping (owner, 2026-10-03)",
+   "note": "the list of pages, dates and facts taken is in registry/sources/construction/facts.json crawls"
+  },
+  "crt-notices-api": {
+   "name": "Canal & River Trust notices and stoppages (JSON endpoint behind canalrivertrust.org.uk/notices)",
+   "licence": "© Canal & River Trust, no open licence stated; facts and links only",
+   "url": "https://canalrivertrust.org.uk/notices"
+  },
+  "crt-pages": {
+   "name": "Canal & River Trust boating pages (Locks to the River Thames; Boating London Docklands)",
+   "licence": "© Canal & River Trust; lock rules paraphrased by hand as facts with URL and date",
+   "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames"
+  },
   "dfe-gias": {
    "name": "DfE Get Information About Schools (GIAS), all establishments daily download",
    "licence": "OGL v3.0",
    "url": "https://get-information-schools.service.gov.uk/Downloads",
    "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (Department for Education)"
+  },
+  "dft-street-manager": {
+   "name": "DfT Street Manager open data: monthly archive of permit and highway-activity notifications (opendata.manage-roadworks.service.gov.uk)",
+   "licence": "OGL v3.0",
+   "url": "https://department-for-transport-streetmanager.github.io/street-manager-docs/open-data/",
+   "attribution": "Contains public sector information licensed under the Open Government Licence v3.0"
+  },
+  "ea-defences": {
+   "name": "Environment Agency Spatial Flood Defences (OGC API Features)",
+   "licence": "OGL v3.0",
+   "note": "owner and maintainer fields dropped"
+  },
+  "ea-flood-monitoring": {
+   "name": "Environment Agency real-time flood-monitoring API: tidal level readings at Tower Pier (0007), Charlton (0003) and Silvertown (0001)",
+   "licence": "OGL v3.0",
+   "url": "https://environment.data.gov.uk/flood-monitoring/doc/reference",
+   "attribution": "This uses Environment Agency flood and river level data from the real-time data API (Beta)"
+  },
+  "ea-hydrology": {
+   "name": "Environment Agency Hydrology API: continuous water-quality sondes on the tidal Thames (Cadogan Pier, Thames Barrier Gardens Pier, Erith)",
+   "licence": "OGL v3.0 (stated in each response)",
+   "url": "https://environment.data.gov.uk/hydrology/doc/reference"
+  },
+  "ea-lidar": {
+   "name": "Environment Agency LiDAR Composite DTM/DSM 1 m (WCS)",
+   "licence": "OGL v3.0",
+   "url": "https://environment.data.gov.uk/"
+  },
+  "ea-water-quality-archive": {
+   "name": "Environment Agency Water Quality Archive (2025 API): sampling points and observations",
+   "licence": "OGL v3.0",
+   "url": "https://environment.data.gov.uk/water-quality/"
   },
   "gla-cim-arcgis": {
    "name": "GLA ArcGIS map service behind the public Cultural Infrastructure Map app (Cultural_infrastructure_2023_for_webapp_verified/MapServer, gis.london.gov.uk)",
@@ -41,6 +111,15 @@
    "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer",
    "attribution": "Greater London Authority",
    "note": "queried 2026-10-04 (37 layers, zone envelope, f=geojson) by tools/amend-uprns.mjs as evidence for rounded UPRNs only: os_addressbase_uprn is a text field there with the same rounded values (1.00E+11). No rows committed. The editable FeatureServers named in the app need a token and were not used."
+  },
+  "historic-england": {
+   "name": "Historic England open data hub (records, Archaeological Priority Areas)",
+   "licence": "OGL v3.0"
+  },
+  "hmlr-price-paid": {
+   "name": "HM Land Registry Price Paid Data",
+   "licence": "OGL v3.0",
+   "attribution": "Contains HM Land Registry data © Crown copyright and database right 2026. This data is licensed under the Open Government Licence v3.0."
   },
   "kml-crt-locks": {
    "name": "Canal & River Trust locks (Canal_And_River_Trust_Locks_View, ArcGIS feature layer)",
@@ -58,6 +137,10 @@
    "licence": "Open Government Licence v3.0 (the licence of each ArcGIS item)",
    "url": "https://gis-tfl.opendata.arcgis.com/",
    "attribution": "Contains Transport for London data licensed under the Open Government Licence v3.0. Powered by TfL Open Data."
+  },
+  "lbsm": {
+   "name": "GLA London Building Stock Model 2",
+   "licence": "OGL v3.0"
   },
   "lds-204q6": {
    "name": "London Datastore 204q6: London Plan AMR 15 tables and data (Greater London Authority)",
@@ -1373,6 +1456,12 @@
    "url": "https://data.london.gov.uk/dataset/water-quality-of-londons-rivers-and-other-waterbodies-vqmy6",
    "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Environment Agency). The GLA cannot warrant the quality or accuracy of the data."
   },
+  "nats-pib": {
+   "name": "NATS UK AIS contingency full UK PIB (all UK NOTAMs valid now and in the next 7 days, XML, hourly, no login)",
+   "licence": "© NATS Limited; no open licence stated. Facts only (NOTAM id, Q-line code, positions, heights, validity, area vertices, short place label); no NOTAM text, contacts or phone numbers kept. Re-check before production",
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/",
+   "attribution": "Source: UK AIS (NATS)"
+  },
   "nhs-ods": {
    "name": "NHS Organisation Data Service, ORD API 2-0-0 (directory.spineservices.nhs.uk)",
    "licence": "OGL v3.0",
@@ -2467,6 +2556,25 @@
    "attribution": "© Historic England 2026. Contains Ordnance Survey data © Crown copyright and database right 2026. The Historic England GIS Data contained in this material was obtained on [date]. The most publicly available up to date Historic England GIS Data can be obtained from [HistoricEngland.org.uk](https://historicengland.org.uk).",
    "note": "fetched 2026-10-04 by tools/walk-portals.mjs pdg harvest world-heritage-site-buffer-zone"
   },
+  "open-meteo": {
+   "name": "Open-Meteo weather API (forecast API past hours and forecasts; archive API for older dates)",
+   "licence": "CC BY 4.0 (data); API free for non-commercial use",
+   "url": "https://open-meteo.com/",
+   "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)"
+  },
+  "openwaters-ais": {
+   "name": "Open Waters AIS (Open Water Software, LLC): live AIS re-served from several upstream sources, anonymous tier, ais.openwaters.io /v1/vessels, /v1/stations, /v1/stream (SSE)",
+   "licence": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are not kept (owner decision). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
+   "url": "https://openwaters.io/ais/",
+   "attribution": "Open Waters AIS (https://openwaters.io/ais/)",
+   "crawl": "API reads 2026-10-04 by tools/fetch-ais.mjs (one request at a time, >= 2 s apart, one SSE stream of 600 s); terms read from openwaters.io/ais/, /api/ais/ and github.com/openwatersio/aiscast docs on 2026-10-04"
+  },
+  "openwaters-volunteer-cc0": {
+   "name": "Open Waters AIS volunteer receiving stations (single receptions, source station:/udp:/mmsi:)",
+   "licence": "CC0 1.0 per reception (Open Waters contributor agreement); the Open Waters aggregate of volunteer receptions is ODbL and is not copied",
+   "url": "https://github.com/openwatersio/aiscast/blob/main/docs/contributor-agreement.md",
+   "attribution": "Open Waters AIS (https://openwaters.io/ais/) (not required for CC0)"
+  },
   "os-open-uprn": {
    "name": "OS Open UPRN and Open Linked Identifiers",
    "licence": "OGL v3.0",
@@ -2488,20 +2596,99 @@
    "name": "written or computed in this project (method, decisions, URLs, search templates)",
    "licence": "repository licence"
   },
+  "owner-photos-cc0": {
+   "name": "photos taken by the repository owner (danbri) and dedicated to the public domain",
+   "licence": "CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)",
+   "note": "Owner, 2026-10-04: \"I am copyright holder but will CC0 them.\" (the day photos of 4 October 2026 from Greenland Pier). No attribution required; credited anyway. Owner, 2026-10-05, for the aircraft photo docklands/reference/plane-2026-10/evening-thames-from-plane.jpg: \"Plane photo - yes cc0, record me as owner\".",
+   "photographer": "danbri (repository owner)"
+  },
+  "pla-arcgis": {
+   "name": "Port of London Authority ArcGIS feature layers (sediment samples, licensing areas and others)",
+   "licence": "not stated on the layers (see registry/sources/pla/README.md); re-check before production",
+   "url": "https://services8.arcgis.com/QgdzYlEcjteGD0VH/arcgis/rest/services"
+  },
+  "pla-tide-booklet": {
+   "name": "PLA Tide Booklet 2025 (chart datum to ODN values only)",
+   "licence": "two published numbers used as facts",
+   "url": "https://www.pla.co.uk/"
+  },
+  "planning-london-datahub": {
+   "name": "Planning London Datahub (GLA): planning application metadata, guest Elasticsearch endpoint",
+   "licence": "GLA Planning London Datahub terms (not confirmed as OGL): application metadata and links only",
+   "url": "https://www.london.gov.uk/programmes-strategies/planning/digital-planning/planning-london-datahub"
+  },
+  "rodma-water-quality": {
+   "name": "Royal Docks Waterways (Royal Docks Management Authority): water quality results certificate PDF",
+   "licence": "all rights reserved; sample results kept as facts with URL and fetch date (crawl for scoping, owner 2026-10-03)",
+   "url": "https://royaldockswaterways.com/impact-responsibility/documents/"
+  },
+  "sea-lanes-cw": {
+   "name": "Sea Lanes Canary Wharf (Eden Dock) water-quality and swimming pages",
+   "licence": "all rights reserved; published test results and the shown water temperature kept as facts with URL and fetch date (crawl for scoping, owner 2026-10-03)",
+   "url": "https://sealanescanarywharf.co.uk/water-quality/"
+  },
+  "southwark-south-dock": {
+   "name": "Southwark Council, South Dock Marina navigation page",
+   "licence": "© Southwark Council; lock facts paraphrased by hand with URL and date",
+   "url": "https://www.southwark.gov.uk/culture-and-sport/south-dock-marina/navigation-thames"
+  },
   "sport-england-active-places": {
    "name": "Sport England Active Places (ArcGIS feature services: sites and facilities)",
    "licence": "CC BY 4.0 (personal data excluded from the licence)",
    "url": "https://www.activeplacespower.com/opendata",
    "attribution": "Contains Data © Sport England"
   },
+  "tfl-live-feeds": {
+   "name": "Transport for London Unified API live feeds: BikePoint (Santander Cycles docks), lift disruptions v2, live crowding by naptan, JamCam cameras, StopPoint by mode (api.tfl.gov.uk)",
+   "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required); the terms page refuses scripted requests: re-check before production",
+   "url": "https://api-portal.tfl.gov.uk/",
+   "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]"
+  },
   "tfl-stoppoint": {
    "name": "TfL Unified API StopPoint (metro and rail stations by position)",
    "licence": "TfL open data terms (Powered by TfL Open Data); station names and positions used as facts",
    "url": "https://api.tfl.gov.uk/StopPoint",
    "attribution": "Powered by TfL Open Data"
+  },
+  "tfl-unified-api": {
+   "name": "Transport for London Unified API: line status by date range, bus route and stop disruptions, road disruptions and closed street segments (api.tfl.gov.uk)",
+   "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required); the terms page refuses scripted requests: re-check before production",
+   "url": "https://api-portal.tfl.gov.uk/",
+   "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]"
+  },
+  "thames-water-storm-overflows": {
+   "name": "Thames Water Storm Overflow Activity (Event Duration Monitoring), National Storm Overflow Hub / Stream, ArcGIS item 216f455c4435450693cf1d0d0ecf6023",
+   "licence": "CC BY 4.0 (item licenceInfo, read 2026-10-04)",
+   "url": "https://www.streamwaterdata.co.uk/",
+   "attribution": "Contains Thames Water storm overflow data licensed under CC BY 4.0, via Stream"
+  },
+  "ukho": {
+   "name": "UKHO INSPIRE bathymetry and wrecks (PLA multibeam survey 2013–2017)",
+   "licence": "OGL v3.0",
+   "attribution": "Contains public sector information, licensed under the Open Government Licence v3.0, from the UK Hydrographic Office",
+   "note": "not for navigation"
+  },
+  "ukpn-live-faults": {
+   "name": "UK Power Networks Open Data Portal, dataset ukpn-live-faults (live power cuts, planned and unplanned)",
+   "licence": "CC BY 4.0 (dataset metadata, read 2026-10-04)",
+   "url": "https://ukpowernetworks.opendatasoft.com/explore/dataset/ukpn-live-faults/",
+   "attribution": "Contains UK Power Networks data licensed under CC BY 4.0"
+  },
+  "web-quotes": {
+   "name": "short quotations from published pages (Wikipedia 169 of 360 in facts.json, also Crossrail Learning Legacy, Tideway, Canal & River Trust, trade press and others)",
+   "licence": "Wikipedia text is CC BY-SA 4.0 (share-alike); the other pages are all rights reserved",
+   "note": "each quote is one sentence or less, kept with its URL to cite a number"
+  },
+  "wikidata": {
+   "name": "Wikidata (SPARQL; QLever for the registry)",
+   "licence": "CC0 1.0",
+   "url": "https://www.wikidata.org/"
   }
  },
  "files": [
+  {"path":"cache/live-*.sqlite","hosted":"londat","what":"SQLite history of live state in the zone, one file per UTC month (live-2026-10.sqlite first): Santander Cycles docks, lift outages, station crowding, power cuts, storm overflows, NOTAM cranes and areas (facts), AIS vessel positions (small private craft counted only), EA tide and river level readings, TfL line status, river-bus arrival counts, Open-Meteo current weather; tables sources and runs. Times are Unix seconds; schema in skill cwplans-londat-cache","sources":["tfl-live-feeds","ukpn-live-faults","thames-water-storm-overflows","nats-pib","openwaters-ais","aishub-via-openwaters","aisstream-via-openwaters","openwaters-volunteer-cc0","ea-flood-monitoring","open-meteo"],"osm":{"use":"none"},"produced_by":"tools/cache-londat.mjs","fetched":"2026-10-04 onwards (append-only)","shown_on":[],"review":"AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"},
+  {"path":"cache/latest.json","hosted":"londat","what":"the latest live state of the zone per theme and the last 24 h series (bikes, lifts, crowding, power cuts, storm overflows, NOTAMs, AIS, tide, line status, river buses, weather), written from the SQLite history at each run; the 3D page and the atlas read it before any third-party service","sources":["tfl-live-feeds","ukpn-live-faults","thames-water-storm-overflows","nats-pib","openwaters-ais","aishub-via-openwaters","aisstream-via-openwaters","openwaters-volunteer-cc0","ea-flood-monitoring","open-meteo"],"osm":{"use":"none"},"produced_by":"tools/cache-londat.mjs","fetched":"rewritten at each run","shown_on":["docklands/index.html","atlas/index.html"],"review":"AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"},
+  {"path":"cache/zone.gpkg","hosted":"londat","what":"GeoPackage of the static zone layers for GIS users (163 layers on 2026-10-05): the 3D model's buildings with heights and cwb- ids, water, greens, roads and railways, flood defences (EPSG:27700); registry buildings, construction sites and river snapshot points (EPSG:4326); every London Datastore and portal GeoJSON in londat; table layer_licences; licence and attribution of each layer in gpkg_contents.description","sources":["osm","ea-lidar","wikidata","ea-defences","ukho","pla-tide-booklet","web-quotes","onspd","companies-house","hmlr-price-paid","historic-england","ads-ariadne","lbsm","planning-london-datahub","nats-pib","dft-street-manager","lds-2og9g","lds-2jxpm","construction-web","owner-photos-cc0","os-ostn15","own","crt-pages","southwark-south-dock","crt-notices-api","sea-lanes-cw","rodma-water-quality","ea-hydrology","ea-water-quality-archive","pla-arcgis","tfl-unified-api","ea-flood-monitoring","lds-23n41","lds-2gy3r","lds-23jxk","lds-emqwg","lds-23697","lds-2ko88","os-open-uprn","lds-e195k","lds-29z31","lds-2gqpn","lds-2g90r","lds-e1r5k","lds-2y5xy","lds-vdjgm","lds-e55z7","lds-20od9","lds-epr7z","lds-2zj76","lds-2rq4w","lds-2nl6n","lds-vqmx7","lds-2w184","lds-20pz9","lds-24rpx","lds-24yxz","lds-29j4y","lds-2g1p1","lds-2lzpg","lds-2nln8","lds-e6w0w","lds-v8onw","lds-vd455","lds-vdjx4","lds-2gyg0","lds-2gyrw","lds-2kodd","lds-2lz9x","lds-2r48w","lds-2r4o4","lds-2r4wd","lds-e6wp0","lds-em5dl","lds-em875","lds-emqkp","lds-exgxp","lds-vqmy6","lds-238g1","lds-248xz","lds-2jkzj","lds-2jxjl","lds-2ry4d","lds-2yjmq","lds-e550x","lds-e55pw","lds-ep0rw","lds-v8w4q","lds-206m8","lds-24rz6","lds-e68zn","lds-20pj6","lds-exy6d","lds-exyop","lds-exywx","lds-2k85d","lds-2zwwy","lds-2g1rn","lds-e70pq","lds-emqzm","lds-248y5","lds-298zq","lds-2goy0","lds-2jrxd","lds-2yr5w","lds-2zjmn","lds-2zwnk","lds-e18zj","lds-em9qy","lds-exp0l","lds-29jwj","lds-em95y","lds-em9mg","op-bor-city-airport-safeguarding-area","op-bor-city-city-flood-risk-area","op-bor-city-coal-tax-posts","op-bor-city-crossrail-safeguarding-area","op-bor-city-cultural-spaces","op-bor-city-cycleways","op-bor-city-grit-bins","op-bor-city-highway-authority-subway","op-bor-city-historic-land-use","op-bor-city-lvmf-protected-vistas","op-bor-city-monument-views-and-setting","op-bor-city-permissive-subway","op-bor-city-places-of-interest","op-bor-city-principal-shopping-centres","op-bor-city-protected-squares","op-bor-city-rail-stations","op-bor-city-riverside-walk","op-bor-city-smoke-control-orders","op-bor-city-special-act-land","op-bor-city-st-paul-s-heights-grid","op-bor-city-st-paul-s-heights-points","op-bor-city-st-paul-s-heights-setback","op-bor-city-st-pauls-heights-policy-area","op-bor-city-thames-policy-area","op-bor-city-thames-tideway-tunnel-safeguarding-area","op-bor-city-tower-of-london-whs-local-setting-area","op-bor-city-underground-stations","op-bor-lewisham-ev-chargepoints","op-dgu-blue-space-access-points-in-england","op-dgu-flood-warning-areas3","op-dgu-historic-flood-map1","op-dgu-hydrometric-monitoring-points1","op-dgu-national-trails-england3","op-dgu-noise-action-planning-important-areas-round-3-england","op-dgu-priority-habitats-inventory-england","op-dgu-rail-noise-lden-england-round-3","op-dgu-recorded-flood-outlines1","op-dgu-rivers-and-sea-3-3-defended-flood-risk-extents-present-day","op-dgu-statutory-main-river-map","op-dgu-surveyed-priority-ponds-points","op-dgu-thames-estuary-2100-extreme-water-level-nodes","op-dgu-water-recreation-locations-zones-and-catchment-summaries-england","op-nat-dft-aadf","op-nat-os-open-names","op-nat-os-open-rivers","op-onsgeo-lsoa21-centroids","op-onsgeo-oa21-boundaries","op-onsgeo-oa21-centroids","op-onsgeo-wards-latest","op-onsgeo-workplace-zones-2011","op-pdg-agricultural-land-classification","op-pdg-air-quality-management-area","op-pdg-article-4-direction-area","op-pdg-certificate-of-immunity","op-pdg-flood-risk-zone","op-pdg-heritage-at-risk","op-pdg-infrastructure-project","op-pdg-listed-building","op-pdg-listed-building-outline","op-pdg-local-nature-reserve","op-pdg-park-and-garden","op-pdg-tree-preservation-zone","op-pdg-world-heritage-site","op-pdg-world-heritage-site-buffer-zone"],"osm":{"use":"derived","extract":"osmfr-greater-london","what":"the 3D model's building outlines, water, greens, roads and railways (area.js), registry building outlines (atlas.json), OSM river points (osm-river.json), OSM construction links (sites.json) and the UPRN-amended cultural infrastructure layers; ODbL named in each such layer's description"},"produced_by":"tools/build-zone-gpkg.mjs","fetched":"2026-10-05 (built from the files as committed)","shown_on":[],"review":"Some layers carry sources marked for review: registry/sources/construction/sites.json"},
   {"path":"feeds/kml/tfl-cycle-routes.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: TfL Cycle Routes (Cycleways, Quietways, Superhighways) in the zone, 420 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-tfl-gis-hub"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
   {"path":"feeds/kml/tfl-river-piers.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: TfL River Piers in the zone, 15 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-tfl-gis-hub"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
   {"path":"feeds/kml/tfl-river-services.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: TfL River Services (with stops) in the zone, 11 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-tfl-gis-hub"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},

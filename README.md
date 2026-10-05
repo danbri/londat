@@ -14,6 +14,7 @@ Status: scoping, planning and prototyping. The data is not reviewed for producti
 | `cwplans/feeds/london-datastore/` | London Datastore (data.london.gov.uk, GLA) datasets, clipped to the Docklands 3D model box, plus the walk of the whole catalogue (`catalogue.json`, `triage.json`, `probe.json`, `harvest-log.json`, `index.json`, `zone-codes.json`) | 237 | `tools/walk-london-datastore.mjs`, `tools/lds-harvest-auto.mjs`, `tools/amend-uprns.mjs` |
 | `cwplans/feeds/portals/` | other open-data portals, clipped to the same box: data.gov.uk, planning.data.gov.uk, borough portals, Nomis Census 2021, ONS Open Geography, national sources (DfT, police.uk, DESNZ, OS OpenData, MHCLG) | 163 | `tools/walk-portals.mjs` and `tools/portals/*.mjs` |
 | `cwplans/feeds/kml/` | zone-clipped KML copies of open layers (TfL, Walk Wheel Cycle Trust, Canal & River Trust, Natural England, Historic England, GLA) for the 3D page's `?kml=` link; the licence and attribution are in each file's Document description | 12 | `tools/find-kml.mjs` (catalogue: `magpie/cwplans/feeds/kml/catalogue.json` in the main repository) |
+| `cwplans/cache/` | live-state history and GIS layers: `live-YYYY-MM.sqlite` (append-only SQLite, one per UTC month: hire bikes, lift outages, station crowding, power cuts, storm overflows, NOTAM cranes, AIS vessels without small private craft, EA tide and river levels, TfL line status, river-bus arrival counts, Open-Meteo weather; tables `sources` and `runs`), `latest.json` (latest state and the last 24 h per theme, read by the pages), `zone.gpkg` (GeoPackage of the static zone layers for QGIS and GDAL) | 3 or more | `tools/cache-londat.mjs`, `tools/build-zone-gpkg.mjs` |
 | `cwplans/data-register.json` | a copy of the register entries for these files: sources, licences, attribution, OSM use | 1 | written by `tools/check-data-register.mjs --write` |
 
 Each path is the same as the old path under `magpie/cwplans/` in the main repository. For example
@@ -23,6 +24,32 @@ The descriptions of each folder (rules, counts, final states) stay in the main r
 [feeds/london-datastore/README.md](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/london-datastore/README.md),
 [feeds/portals/README.md](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/portals/README.md).
 A file whose name ends in `.gz` is gzip-compressed JSON.
+
+## The cache folder (`cwplans/cache/`)
+
+- **`live-YYYY-MM.sqlite`**: SQLite 3, opens with any SQLite tool (`sqlite3`, DB Browser for SQLite, Python, QGIS).
+  Times are Unix seconds (UTC). Each state table has a `fetch_time` column and a primary key with it, so the history is
+  append-only and a second run on the same data adds nothing. Table `sources` gives each theme's URL, licence,
+  attribution and politeness; table `runs` gives each run's time, counts, errors and file size. Places (docks,
+  stations, overflows, piers, gauges) are in `places`. Example:
+  `SELECT datetime(fetch_time, 'unixepoch'), sum(bikes) FROM bikes GROUP BY fetch_time;`
+- **`latest.json`**: the newest fetch of each theme in compact columns, and a 24 h series. The pages of the main
+  repository read it first and ask a third-party service only when the visitor switches on "Live".
+- **`zone.gpkg`**: an OGC GeoPackage. In QGIS: Layer > Add Layer > Add Vector Layer (or drag the file into the
+  window), then pick the layers. The 3D model layers (`model_*`) are in EPSG:27700 (British National Grid); the others
+  are in EPSG:4326. Each layer's licence and attribution are in its description (Layer Properties > Information, or
+  the table `gpkg_contents`), and the table `layer_licences` lists them all. Layers made from OpenStreetMap data
+  (`model_buildings`, `model_water`, `model_greens`, `model_lines`, `registry_buildings`, `river_osm_river`,
+  `construction_sites` and the UPRN-amended cultural infrastructure layer) are under the ODbL 1.0,
+  © OpenStreetMap contributors (https://www.openstreetmap.org/copyright).
+- Licences: Powered by TfL Open Data (TfL open data terms). Contains UK Power Networks data licensed under CC BY 4.0.
+  Contains Thames Water storm overflow data licensed under CC BY 4.0, via Stream. Environment Agency flood and river
+  level data from the real-time data API (Beta), Open Government Licence v3.0. Weather data by Open-Meteo.com
+  (CC BY 4.0). Source: UK AIS (NATS); NOTAM facts only, no open licence stated. AIS: Open Waters AIS
+  (https://openwaters.io/ais/), AISHub (https://www.aishub.net) and aisstream.io events, accepted for scoping only and
+  marked for review; small private craft are counted, never listed.
+- Refresh: `.github/workflows/cache-live.yml` in this repository (hourly), or by hand from the main repository:
+  `NODE_USE_ENV_PROXY=1 LONDAT_DIR=/path/to/londat node magpie/cwplans/tools/cache-londat.mjs`.
 
 ## The register is the authority
 
