@@ -13,6 +13,7 @@ Status: scoping, planning and prototyping. The data is not reviewed for producti
 |---|---|---|---|
 | `cwplans/feeds/london-datastore/` | London Datastore (data.london.gov.uk, GLA) datasets, clipped to the Docklands 3D model box, plus the walk of the whole catalogue (`catalogue.json`, `triage.json`, `probe.json`, `harvest-log.json`, `index.json`, `zone-codes.json`) | 237 | `tools/walk-london-datastore.mjs`, `tools/lds-harvest-auto.mjs`, `tools/amend-uprns.mjs` |
 | `cwplans/feeds/portals/` | other open-data portals, clipped to the same box: data.gov.uk, planning.data.gov.uk, borough portals, Nomis Census 2021, ONS Open Geography, national sources (DfT, police.uk, DESNZ, OS OpenData, MHCLG) | 163 | `tools/walk-portals.mjs` and `tools/portals/*.mjs` |
+| `cwplans/feeds/kml/` | zone-clipped KML copies of open layers (TfL, Walk Wheel Cycle Trust, Canal & River Trust, Natural England, Historic England, GLA) for the 3D page's `?kml=` link; the licence and attribution are in each file's Document description | 12 | `tools/find-kml.mjs` (catalogue: `magpie/cwplans/feeds/kml/catalogue.json` in the main repository) |
 | `cwplans/data-register.json` | a copy of the register entries for these files: sources, licences, attribution, OSM use | 1 | written by `tools/check-data-register.mjs --write` |
 
 Each path is the same as the old path under `magpie/cwplans/` in the main repository. For example
