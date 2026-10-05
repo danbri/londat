@@ -1,0 +1,47 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Areas for Intensification Points (London Plan Consultation 2009) (Greater London Authority)",
+ "dataset": "248y5",
+ "page": "https://data.london.gov.uk/dataset/areas-for-intensification-points-london-plan-consultation-2009-248y5",
+ "resources": [
+  {
+   "resource": "5bce87a4-e86b-455a-af75-895d9a034e41",
+   "file": "lp-consultation-oct-2009-areas-for-intensification-points-shp.zip",
+   "url": "https://data.london.gov.uk/download/248y5/5bce87a4-e86b-455a-af75-895d9a034e41/lp-consultation-oct-2009-areas-for-intensification-points-shp.zip",
+   "size": 6146,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04",
+   "entries": 7
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-07-04",
+ "update_frequency": null,
+ "geo": "Point Location",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "lp-consultation-oct-2009-areas-for-intensification-points",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 248y5: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 10,
+  "no_geometry": 0,
+  "in_zone": 1,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"Ref_Number":34,"Designated":"Area for Intensification","Name":"Canada Water/Surrey Quays","Source":"London Plan Consultation Draft","Updated":null,"Easting":535649.097425,"Northing":179386.580381,"Comments":"This data is subject to change and should be checked with the relevent Local Authority before use","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.047221,51.497153]}}
+]}

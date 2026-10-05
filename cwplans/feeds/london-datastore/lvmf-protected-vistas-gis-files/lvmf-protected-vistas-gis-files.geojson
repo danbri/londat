@@ -1,0 +1,62 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: LVMF protected vistas - GIS files (Greater London Authority)",
+ "dataset": "2yjmq",
+ "page": "https://data.london.gov.uk/dataset/lvmf-protected-vistas-gis-files-2yjmq",
+ "resources": [
+  {
+   "resource": "22779d63-01d6-4717-8fe8-b12b0bc0e136",
+   "file": "Protected Vistas LVMF.zip",
+   "url": "https://data.london.gov.uk/download/2yjmq/22779d63-01d6-4717-8fe8-b12b0bc0e136/Protected%20Vistas%20LVMF.zip",
+   "size": 9214,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04",
+   "entries": 9
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2016-04-15",
+ "update_frequency": null,
+ "geo": "Custom Polygons",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "Protected Vistas LVMF 2010_region",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 2yjmq: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 43,
+  "no_geometry": 0,
+  "in_zone": 18,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": []
+},
+"features":[
+{"type":"Feature","properties":{"VIEW":"5A.2","DESCRIPTIO":"Greenwich Park Wolfe statue to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":50.6,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.000707,51.477915],[-0.099413,51.512619],[-0.09894,51.513122],[-0.000707,51.477915]]]}},
+{"type":"Feature","properties":{"VIEW":"6A.1","DESCRIPTIO":"Blackheath Point to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.01095,51.47349],[-0.099602,51.512696],[-0.099046,51.513166],[-0.01095,51.47349]]]}},
+{"type":"Feature","properties":{"VIEW":"5A.2","DESCRIPTIO":"Greenwich Park Wolfe statue to Tower Bridge","TYPE":"WSCA","HEIGHT":30,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.000707,51.477915],[-0.074868,51.505855],[-0.074506,51.50624],[-0.000707,51.477915]]]}},
+{"type":"Feature","properties":{"VIEW":"5A.2","DESCRIPTIO":"Greenwich Park Wolfe statue to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":50.6,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.000707,51.477915],[-0.097697,51.51444],[-0.097224,51.514943],[-0.000707,51.477915]]]}},
+{"type":"Feature","properties":{"VIEW":"6A.1","DESCRIPTIO":"Blackheath Point to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.01095,51.47349],[-0.097976,51.51407],[-0.097035,51.514866],[-0.01095,51.47349]]]}},
+{"type":"Feature","properties":{"VIEW":"1A.2","DESCRIPTIO":"Alexandra Palace viewing terrace to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.096214,51.514089],[-0.087414,51.492293],[-0.092758,51.49151],[-0.100421,51.513472],[-0.096214,51.514089]]]}},
+{"type":"Feature","properties":{"VIEW":"2A.1","DESCRIPTIO":"Parliament Hill summit to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.09666,51.514645],[-0.072965,51.497713],[-0.077531,51.495336],[-0.099977,51.512917],[-0.09666,51.514645]]]}},
+{"type":"Feature","properties":{"VIEW":"3A.1","DESCRIPTIO":"Kenwood viewing gazebo to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.096559,51.514564],[-0.075083,51.49652],[-0.079706,51.49446],[-0.100078,51.512997],[-0.096559,51.514564]]]}},
+{"type":"Feature","properties":{"VIEW":"4A.1","DESCRIPTIO":"Primrose Hill summit to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.097124,51.514905],[-0.066529,51.503033],[-0.070067,51.499701],[-0.099513,51.512656],[-0.097124,51.514905]]]}},
+{"type":"Feature","properties":{"VIEW":"8A.1","DESCRIPTIO":"Westminster Pier to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.098664,51.514069],[-0.058868,51.533406],[-0.057077,51.531917],[-0.097973,51.513493],[-0.098664,51.514069]]]}},
+{"type":"Feature","properties":{"VIEW":"9A.1","DESCRIPTIO":"King Henry's Mound to St Paul's Cathedral","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.098846,51.51437],[-0.054944,51.529858],[-0.053654,51.528417],[-0.097791,51.513192],[-0.098846,51.51437]]]}},
+{"type":"Feature","properties":{"VIEW":"23A.1","DESCRIPTIO":"Centre of Bridge over the Serpentine to the Palace of Westminster","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.124599,51.499742],[-0.075328,51.493088],[-0.076729,51.489265],[-0.125288,51.497858],[-0.124599,51.499742]]]}},
+{"type":"Feature","properties":{"VIEW":"25A.1","DESCRIPTIO":"City Hall to the White Tower","TYPE":"WSCA","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.076681,51.508071],[-0.066903,51.52989],[-0.05725,51.527347],[-0.075486,51.507756],[-0.076681,51.508071]]]}},
+{"type":"Feature","properties":{"VIEW":"5A.2","DESCRIPTIO":"Greenwich Park Wolfe statue to Tower Bridge","TYPE":"VC","HEIGHT":30,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.000707,51.477915],[-0.075818,51.504847],[-0.074868,51.505855],[-0.000707,51.477915]]]}},
+{"type":"Feature","properties":{"VIEW":"5A.2","DESCRIPTIO":"Greenwich Park Wolfe statue to St Paul's Cathedral","TYPE":"VC","HEIGHT":50.6,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.000707,51.477915],[-0.09894,51.513122],[-0.097697,51.51444],[-0.000707,51.477915]]]}},
+{"type":"Feature","properties":{"VIEW":"6A.1","DESCRIPTIO":"Blackheath Point to St Paul's Cathedral","TYPE":"VC","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.01095,51.47349],[-0.099046,51.513166],[-0.097976,51.51407],[-0.01095,51.47349]]]}},
+{"type":"Feature","properties":{"VIEW":"25A.1","DESCRIPTIO":"City Hall to the White Tower","TYPE":"VC","HEIGHT":0,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.078061,51.504988],[-0.076681,51.508071],[-0.075486,51.507756],[-0.078061,51.504988]]]}},
+{"type":"Feature","properties":{"VIEW":"5A.2","DESCRIPTIO":"Greenwich Park Wolfe statue to Tower Bridge","TYPE":"WSCA","HEIGHT":30,"SOURCE":"London View Management Framework SPG July 2010","UPDATED":"July 2010","COMMENTS":"This dataset presents the location of the viewing corridors only, not their height. They have been digitised using the coordinates provided in the LVMF SPG 2010","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.000707,51.477915],[-0.07618,51.504462],[-0.075818,51.504847],[-0.000707,51.477915]]]}}
+]}

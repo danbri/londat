@@ -1,0 +1,48 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Inner and Outer London Boundaries (London Plan Consultation 2009) (Greater London Authority)",
+ "dataset": "2yr5w",
+ "page": "https://data.london.gov.uk/dataset/inner-and-outer-london-boundaries-london-plan-consultation-2009-2yr5w",
+ "resources": [
+  {
+   "resource": "684e59f2-9208-4da1-bf67-d8dfeb72c047",
+   "file": "lp-consultation-oct-2009-inner-outer-london-shp.zip",
+   "url": "https://data.london.gov.uk/download/2yr5w/684e59f2-9208-4da1-bf67-d8dfeb72c047/lp-consultation-oct-2009-inner-outer-london-shp.zip",
+   "size": 189905,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04",
+   "entries": 7
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-07-04",
+ "update_frequency": null,
+ "geo": "Custom Polygons",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "lp-consultation-oct-2009-inner-outer-london",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 2yr5w: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 2,
+  "no_geometry": 0,
+  "in_zone": 1,
+  "in_cw": 1
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read",
+  "lp-consultation-oct-2009-inner-outer-london-shp.zip: 2 polygons with over 1000 vertices cut to the zone box plus 500 m (clipped_to_zone)"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"Boundary":"Inner London","Source":"London Plan Consultation Draft","Area_Ha":34863.295694,"Shape_Leng":117020.737488,"Shape_Area":348632956.877,"clipped_to_zone":true,"in_cw":true,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.102388,51.469403],[-0.099922,51.528715],[0.022534,51.526667],[0.019909,51.467359],[-0.102388,51.469403]]]}}
+]}

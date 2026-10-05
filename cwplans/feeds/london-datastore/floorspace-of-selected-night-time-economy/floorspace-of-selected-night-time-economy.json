@@ -1,0 +1,40 @@
+{"meta":{
+ "source": "London Datastore: Floorspace of selected night time economy establishments by town centre (Greater London Authority)",
+ "dataset": "23j8j",
+ "page": "https://data.london.gov.uk/dataset/floorspace-of-selected-night-time-economy-establishments-by-town-23j8j",
+ "resources": [
+  {
+   "resource": "2f93b073-e9f5-4a27-affd-ba7a6b0d2b75",
+   "file": "floorspace-nte.xlsx",
+   "url": "https://data.london.gov.uk/download/23j8j/2f93b073-e9f5-4a27-affd-ba7a6b0d2b75/floorspace-nte.xlsx",
+   "size": 69295,
+   "resource_date": "2020-10-01",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v3",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2020-10-08",
+ "update_frequency": "Annually",
+ "geo": "Borough",
+ "theme": "buildings-places",
+ "method": "lds-harvest-auto.mjs run 23j8j: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "name keys: 33 zone town centre names (zone-names.json); a cell equal to one (normalised) is a zone row, a weaker key than a code"
+ ],
+ "counts": {
+  "tables_read": 2,
+  "rows_read": 23,
+  "zone_rows": 1,
+  "zone_rows_by_key": {
+   "town-centre": 1
+  }
+ }
+},
+"tables":[
+{"table":"floorspace-nte.xlsx#Data","rows_read":10,"header_rows":[["T6","Herne Hill","Southwark/Lambeth","Unclassified",515,0,0,0,0,0,0,0,0,515],["T7","London Bridge","Southwark","Unclassified",6180,1340,1760,1100,920,870,0,770,0,12940],["T8","Merrielands Crescent","Barking and Dagenham","Unclassified",0,0,0,150,0,0,0,0,0,150],["T9","Merry Fiddlers","Barking and Dagenham","Unclassified",100,0,0,170,0,0,0,0,0,270]],"zone_keys":["town-centre:New Cross and New Cross Gate"],"rows":[
+["T19","New Cross and New Cross Gate","Lewisham","Unclassified",1925,640,60,1130,840,0,0,0,1150,5745]
+]}
+]}

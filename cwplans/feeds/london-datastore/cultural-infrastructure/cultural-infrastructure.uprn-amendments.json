@@ -1,0 +1,4055 @@
+{
+ "meta": {
+  "input": "feeds/london-datastore/cultural-infrastructure/cultural-infrastructure.geojson",
+  "input_untouched": true,
+  "output": "feeds/london-datastore/cultural-infrastructure/cultural-infrastructure.uprn-amended.geojson",
+  "tool": "tools/amend-uprns.mjs cultural-infrastructure",
+  "date": "2026-10-04",
+  "column": "os_addressbase_uprn",
+  "row_id": "layer#id",
+  "method": "Copy the file; change only cells whose UPRN is in a rounded class (scientific notation; 9 or more digits ending in 5 or more zeros); recover each from (a) the same dataset in other formats and versions, (b) OS Open UPRN points in the venue's building outline, (c) registers with UPRNs, stopping at the first route that gives exactly one candidate; else leave it unknown with the reason. The recovered value must lie in the range the rounded value allows. See skills/cwplans-london-datastore/SKILL.md, \"Amending rounded UPRNs\".",
+  "rules": [
+   "Rounded classes (amended): \"scientific\" (1.00E+11, 1.00023E+11) and \"trailing-zeros\" (9 or more digits ending in 5 or more zeros, e.g. 200000000000). Other classes are counted and listed, never changed.",
+   "Range: Excel rounds to k significant digits, so the true UPRN lies within half a unit of the last kept digit: 1.00023E+11 -> [100022500000, 100023500000); a plain 200000000000 is read with its non-zero prefix (k = 1) -> [150000000000, 250000000000). Rounded forms of the same venue in other versions narrow the range (intersection).",
+   "Route a: a reference row is the same venue when its normalised name equals the venue's (or one contains the other, 8 characters or more) and its point is within 50 m (or, without a point, address1 is the same). Exactly one distinct usable UPRN in range -> amended.",
+   "Route b: the smallest OSM building outline that contains the venue point (no outline: points within 10 m); in a layer whose venue points sit a measured constant offset from their own UPRN points, the point moved by that offset is tried too. Exactly one OS Open UPRN point in range -> candidate.",
+   "Route c: as route a, over register rows with UPRNs (GIAS, ODS, Active Places).",
+   "Confidence: high = route a with an exact name match and the UPRN's OS Open UPRN point within 150 m of the venue (or of the venue moved by its layer offset); medium = route a otherwise, route c, or route b when the one candidate's point is within 1 m of the venue's own point (not a moved point) in an outline with at most 25 UPRN points; low = any other route b result. High and medium are applied; low is recorded and not applied. Measured precision of each rule: meta.validation.",
+   "Venue: rows with the same normalised name within 50 m are one venue (the same venue in several layers); their ranges are intersected and their candidates pooled, and every row gets the same answer.",
+   "Never: a value that is not in a rounded class is not changed; two candidates are never chosen between; the source file is never written."
+  ],
+  "sources": {
+   "route_a": [
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 cultural venues by London Borough.zip (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/e8d6dc8d-c30b-44c9-8843-b657182525cf/cultural%20venues%20by%20London%20Borough.zip"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 cultural_venues_in_GIS_format.gpkg (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/b4fe7632-deef-4c10-adb0-bb7eeba82611/cultural_venues_in_GIS_format.gpkg"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/cafefc69-a35d-42d1-baf4-5bd80da25902/CIM%202023%20Archives%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Artists workspaces (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/ddf2b6e3-f685-45d4-8ef5-e7480b4e1b8e/CIM%202023%20Artists%20workspaces%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Arts centres.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/59a6ca29-de73-4ded-8698-cb203ef5bf44/CIM%202023%20Arts%20centres.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Cinemas.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/22413710-c624-49a4-a8c0-ab9554a76efd/CIM%202023%20Cinemas.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Commercial galleries (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/5b99d347-3af6-48f6-bff8-39e86855800f/CIM%202023%20Commercial%20galleries%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Creative coworking desk space.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/8aec74e8-0428-479b-86dd-d6f3e71ce998/CIM%202023%20Creative%20coworking%20desk%20space.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Creative workspaces (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/8a0832c6-f798-4a4c-bce3-9b872328d7a6/CIM%202023%20Creative%20workspaces%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Dance performance venues.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/f3c3dec0-e9d7-45d3-8582-90cf8586354e/CIM%202023%20Dance%20performance%20venues.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Dance rehearsal studios.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/1e1dbbed-41be-4737-b844-9fe5feafdcf6/CIM%202023%20Dance%20rehearsal%20studios.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Fashion and design.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/9cb97b16-e529-4ee7-8d88-9387ffed7759/CIM%202023%20Fashion%20and%20design.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Jewellery design (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/9d41eb5b-2bfd-4f7d-a19b-8ffc0e89389c/CIM%202023%20Jewellery%20design%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Lgbt venues.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/ef34b3da-e272-48a8-9266-b1f1e26ab93e/CIM%202023%20Lgbt%20venues.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Libraries (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/ce53c0af-4493-464e-9bfd-0d63f4f8606c/CIM%202023%20Libraries%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Makerspaces (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/da9d74dd-0e80-471b-9de7-8b55d660de31/CIM%202023%20Makerspaces%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Making and manufacturing.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/32d2be69-f505-450e-bd5b-9ea1e8351e7c/CIM%202023%20Making%20and%20manufacturing.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Museums and public galleries (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/74cd308d-3488-4917-a7a2-fa804c7056b8/CIM%202023%20Museums%20and%20public%20galleries%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2024 Music_Venues_All.csv (2024-03-15)",
+     "url": "https://data.london.gov.uk/download/23697/f08c8fa8-2614-403e-b27e-a75602d850fe/CIM%202024%20Music_Venues_All.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2024 Music_Venues_Grassroots.csv (2024-03-15)",
+     "url": "https://data.london.gov.uk/download/23697/eab4e955-60ad-46d6-8722-134ff53da94e/CIM%202024%20Music_Venues_Grassroots.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2024 Music_Nightclubs.csv (2024-03-15)",
+     "url": "https://data.london.gov.uk/download/23697/16b47d81-cbcf-49a1-9e43-8ada18d726fd/CIM%202024%20Music_Nightclubs.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Music recording studios (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/3b8e2929-4468-48e7-afbe-35f6b7e44fc4/CIM%202023%20Music%20recording%20studios%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Music rehearsal studios (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/ecbe9fa1-ca76-41bb-909e-86a9dd101439/CIM%202023%20Music%20rehearsal%20studios%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Prop and costume making.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/80081f94-7727-4140-bc38-321d9ddeddfb/CIM%202023%20Prop%20and%20costume%20making.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Set and exhibition building.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/cde0354e-6853-4b21-a23b-0ff144e248e6/CIM%202023%20Set%20and%20exhibition%20building.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Textile design.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/573a6354-4481-454f-b6e8-5888bb34c770/CIM%202023%20Textile%20design.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Theatre rehearsal studios (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/23697/030cc2a8-6032-4a10-862d-a6484371f598/CIM%202023%20Theatre%20rehearsal%20studios%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Theatre.csv (2023-10-12)",
+     "url": "https://data.london.gov.uk/download/23697/7fc22271-0a39-4ed1-aae0-79172c000ba9/CIM%202023%20Theatre.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Artists workspaces.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/e9bc0017-c1fe-4dd6-8235-060314bb86b3/CIM%202023%20Artists%20workspaces.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Makerspaces.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/f7e9f1be-1509-4603-823b-6ff6a5bf8bb4/CIM%202023%20Makerspaces.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Creative workspaces.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/a19b6638-a4c5-43a4-84e3-ef46a24cea84/CIM%202023%20Creative%20workspaces.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Theatre rehearsal studios.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/c4906a27-9610-4115-a623-941532cd5a57/CIM%202023%20Theatre%20rehearsal%20studios.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 07_Dance_performance_venues_MASTER.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/63368b8e-1e61-49ad-a2a3-d65bf0536234/07_Dance_performance_venues_MASTER.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Music grassroot.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/27406111-5056-4010-8387-049f655495dc/CIM%202023%20Music%20grassroot.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Music all.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/ba688518-6bfe-41c4-8bda-51f437a78ec1/CIM%202023%20Music%20all.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 09_Music_rehearsal_studios_MASTER.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/4115bd27-9399-4150-b13f-f93578d103aa/09_Music_rehearsal_studios_MASTER.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 10_Music_recording_studios_MASTER.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/f59a8345-21b3-4d88-a6df-9bc2b8ffe2e0/10_Music_recording_studios_MASTER.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Music nightclubs.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/ec92403a-7894-4bf1-b0ed-f7fef2c71bb5/CIM%202023%20Music%20nightclubs.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Jewellery design.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/74969ba2-d20f-4cc3-858b-45a540fcac59/CIM%202023%20Jewellery%20design.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Museums and public galleries.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/94c46ae4-1e86-4a8b-8324-ac268baef5a2/CIM%202023%20Museums%20and%20public%20galleries.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Commercial galleries.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/0836e02e-9f62-4d2d-8315-9ac9b6e427b2/CIM%202023%20Commercial%20galleries.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Libraries.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/ba755813-154f-4603-80c2-b228dae3eccb/CIM%202023%20Libraries.csv"
+    },
+    {
+     "source": "lds-23697",
+     "file": "lds 23697 CIM 2023 Archives.csv (2025-06-18)",
+     "url": "https://data.london.gov.uk/download/23697/cca2d802-79d9-4f5f-a959-45c94eff8a4f/CIM%202023%20Archives.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/bf7822ed-e90a-4773-abef-dda6f6b40654/CulturalInfrastructureMap.gpkg"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 site_by_borough.zip (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/debe429f-c76b-41d0-bf96-c859fbb8a8a4/site_by_borough.zip"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Theatres (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/c9bda99b-2156-4ecd-b09d-c207ae5947e2/2019%20publication%20-%20Theatres%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Theatre_rehearsal_studio (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/db3e3507-4ae1-4795-b838-2e0293bc722c/2019%20publication%20-%20Theatre_rehearsal_studio%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Textile_design (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/2ff48612-b14d-4289-abf6-6294d40e5fb5/2019%20publication%20-%20Textile_design%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Skate_Parks.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/acf74a29-212f-4cd4-b01e-464bf83fcd99/Skate_Parks.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Set_and_exhibition_building (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/4d364e07-e01b-4f2b-8916-3b7e2be7cadb/2019%20publication%20-%20Set_and_exhibition_building%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Pubs.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/7e6b0f36-da01-4029-99d7-640d89c4a0a4/Pubs.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Prop_and_costume_making (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/5d3de727-af1d-4e67-8d3d-7e245cbaa9ac/2019%20publication%20-%20Prop_and_costume_making%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Outdoor_spaces_for_cultural_use.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/6e16c2db-bd27-4e1e-9ab7-ea6369966393/Outdoor_spaces_for_cultural_use.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Music_recording_studios (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/277ad0a9-5cfd-45c7-9962-0e464337530a/2019%20publication%20-%20Music_recording_studios%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Music_venues_grassroots.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/5effe6f3-3697-49c4-8dcb-d9db58e7e00b/Music_venues_grassroots.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Music_venues_all.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/ceb42f72-aee0-4bdc-8eb8-973c66ec9f81/Music_venues_all.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Music_rehearsal_studios (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/e3ee048e-b661-4eeb-89ed-f96b485378db/2019%20publication%20-%20Music_rehearsal_studios%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Music_office_based_businesses.csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/fa9e6157-807f-48d3-8ac4-6a4030490131/2019%20publication%20-%20Music_office_based_businesses.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Museums_and_public_galleries (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/d091e270-182a-444d-b4ee-64d9d9682749/2019%20publication%20-%20Museums_and_public_galleries%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Making_and_manufacturing (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/9261b9e3-29dc-4c88-890b-12d3d5a226f6/2019%20publication%20-%20Making_and_manufacturing%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Makerspaces (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/a19ebe8a-c026-4f4e-ac56-53d3f48b72fb/2019%20publication%20-%20Makerspaces%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Live_in_artists_workspace.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/3bce412e-b1c8-4554-a120-a5920008ab17/Live_in_artists_workspace.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Libraries (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/2dd6ce1e-61a9-499d-8e3e-c6fb26726e7b/2019%20publication%20-%20Libraries%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - LGBT_night_time_venues (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/4f9b2984-b171-49ff-b72a-31430803d3b9/2019%20publication%20-%20LGBT_night_time_venues%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Legal_street_art_walls.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/21cd5ed4-e846-44ea-b6c1-1afdf244e292/Legal_street_art_walls.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Large_media_production_studios.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/d149fb3f-c6b2-4d8b-8cfb-89efe74f0c5f/Large_media_production_studios.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Jewellery_design (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/4d9469ea-6bee-4836-9a95-9082a4728f12/2019%20publication%20-%20Jewellery_design%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Fashion_and_design (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/4eb7a9c2-c4e4-4032-a54a-9e38ef3fe6e8/2019%20publication%20-%20Fashion_and_design%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Dance_rehearsal_studios (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/5e278953-8445-46df-ae48-1fa7e9f16157/2019%20publication%20-%20Dance_rehearsal_studios%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Dance_performance_venues (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/730a2942-39ad-4a34-87fe-efbbb5cc7c71/2019%20publication%20-%20Dance_performance_venues%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Creative_workspaces (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/d74cdb33-1528-41c5-9849-06afd60c2678/2019%20publication%20-%20Creative_workspaces%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Creative_coworking_desk_space (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/40bf1a44-98ac-40d1-b558-9698f99bd050/2019%20publication%20-%20Creative_coworking_desk_space%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Commercial_galleries (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/27c653ae-080e-469d-b0d9-4a663b52d726/2019%20publication%20-%20Commercial_galleries%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Community_centres (Nov 2023).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/a8625bba-addb-4fae-a737-244b2281f429/2019%20publication%20-%20Community_centres%20(Nov%202023).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Cinemas (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/f353f97b-a1fb-41fa-810a-825586839b4d/2019%20publication%20-%20Cinemas%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 Arts_centres.csv (2023-07-30)",
+     "url": "https://data.london.gov.uk/download/2ko88/bec79216-7a51-4810-89d5-da8cc44d8458/Arts_centres.csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Artists_workspaces (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/f4254814-935e-4ffd-b9f6-f841dfd1cd82/2019%20publication%20-%20Artists_workspaces%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2ko88",
+     "file": "lds 2ko88 2019 publication - Archives (2023 revision).csv (2024-03-04)",
+     "url": "https://data.london.gov.uk/download/2ko88/21358543-f1cd-42e1-9af4-17ab2c0bb010/2019%20publication%20-%20Archives%20(2023%20revision).csv"
+    },
+    {
+     "source": "lds-2zj1y",
+     "file": "lds 2zj1y culture_inf_2024_lgbt_venues.csv (2024-12-17)",
+     "url": "https://data.london.gov.uk/download/2zj1y/5f5276e2-5972-4f0f-89c3-cf165b06ae0f/culture_inf_2024_lgbt_venues.csv"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 0 Archives",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/0"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 1 Artists workspaces",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/1"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 2 Arts centres",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/2"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 3 Cinemas",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/3"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 4 Commercial galleries",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/4"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 5 Community centres",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/5"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 6 Creative co-working desk space",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/6"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 7 Creative workspaces",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/7"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 8 Dance performance venues",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/8"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 9 Dance rehearsal studios",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/9"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 10 Fashion and design",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/10"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 11 Heritage at risk",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/11"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 12 Jewellery design",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/12"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 13 Large media production studios",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/13"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 14 Legal street art walls",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/14"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 15 LGBT+ night time venues",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/15"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 16 Libraries",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/16"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 17 Listed buildings",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/17"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 18 Live in artists' workspace",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/18"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 19 Makerspaces",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/19"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 20 Making and manufacturing",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/20"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 21 Museums and public galleries",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/21"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 22 Music (office based businesses)",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/22"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 23 Music recording studios",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/23"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 24 Music rehearsal studios",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/24"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 25 Music venues (all)",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/25"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 26 Music venues (grassroots)",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/26"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 36 Nightclubs",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/36"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 27 Outdoor spaces for cultural use",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/27"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 28 Prop and costume making",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/28"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 29 Pubs",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/29"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 30 Scheduled monuments",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/30"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 31 Set and exhibition building",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/31"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 32 Skate Parks",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/32"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 33 Textile design",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/33"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 34 Theatre rehearsal studio",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/34"
+    },
+    {
+     "source": "gla-cim-arcgis",
+     "file": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 35 Theatres",
+     "url": "https://gis.london.gov.uk/arcgis/rest/services/apps/Cultural_infrastructure_2023_for_webapp_verified/MapServer/35"
+    }
+   ],
+   "route_b": {
+    "open_uprn": "osopenuprn_202609_csv.zip",
+    "footprints": "osm-clip.json.gz (OSM building outlines)",
+    "registry": "registry/buildings.json"
+   },
+   "route_c": [
+    "registry/sources/registers/gias.json",
+    "registry/sources/registers/ods.json",
+    "registry/sources/registers/active-places.json"
+   ]
+  },
+  "counts": {
+   "rows": 662,
+   "rounded": 56,
+   "amended": {
+    "a": 6,
+    "b": 6,
+    "c": 0
+   },
+   "by_confidence": {
+    "high": 6,
+    "medium": 6,
+    "low": 3
+   },
+   "applied": 12,
+   "unknown": 44,
+   "distinct_venues_rounded": 49,
+   "distinct_venues_amended": 12
+  },
+  "validation": {
+   "k3": {
+    "tested": 160,
+    "b_unique_correct": 38,
+    "b_unique_wrong": 9,
+    "b_ambiguous": 97,
+    "b_none": 16,
+    "b_medium_correct": 2,
+    "b_medium_wrong": 0,
+    "a_unique_correct": 61,
+    "a_unique_wrong": 0,
+    "a_ambiguous": 3,
+    "a_none": 96,
+    "wrong": [
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Artists workspaces#60",
+      "name": "TOWER BRIDGE BUSINESS COMPLEX",
+      "uprn": "200003492917",
+      "got": "200003410687",
+      "m": 6.1,
+      "own_point_m": 81,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Commercial galleries#342",
+      "name": "Gossamer Fog",
+      "uprn": "100023280536",
+      "got": "100021951737",
+      "m": 2,
+      "own_point_m": 7,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Commercial galleries#388",
+      "name": "London Glassblowing ",
+      "uprn": "200003362734",
+      "got": "200003361751",
+      "m": 8.9,
+      "own_point_m": 12,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Dance performance venues#135",
+      "name": "Greenwich Dance",
+      "uprn": "100023227774",
+      "got": "100023227711",
+      "m": 0,
+      "own_point_m": 31,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Dance rehearsal studios#207",
+      "name": "Greenwich Dance",
+      "uprn": "100023227774",
+      "got": "100023227711",
+      "m": 0,
+      "own_point_m": 31,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Making and manufacturing#58",
+      "name": "London Glassblowing ",
+      "uprn": "200003362734",
+      "got": "200003361751",
+      "m": 7.6,
+      "own_point_m": 12,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Set and exhibition building#12",
+      "name": "Illusion Design & Construct",
+      "uprn": "100023569533",
+      "got": "100023680112",
+      "m": 1.3,
+      "own_point_m": 137,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Set and exhibition building#44",
+      "name": "Footprint Scenery",
+      "uprn": "200003496057",
+      "got": "200003380962",
+      "m": 8.3,
+      "own_point_m": 139,
+      "medium": false
+     },
+     {
+      "k": 3,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Theatre#276",
+      "name": "Jazzbourne",
+      "uprn": "100023238425",
+      "got": "100023238977",
+      "m": 3.7,
+      "own_point_m": 2,
+      "medium": false
+     }
+    ]
+   },
+   "k6": {
+    "tested": 160,
+    "b_unique_correct": 50,
+    "b_unique_wrong": 9,
+    "b_ambiguous": 82,
+    "b_none": 19,
+    "b_medium_correct": 7,
+    "b_medium_wrong": 0,
+    "a_unique_correct": 63,
+    "a_unique_wrong": 0,
+    "a_ambiguous": 1,
+    "a_none": 96,
+    "wrong": [
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Artists workspaces#60",
+      "name": "TOWER BRIDGE BUSINESS COMPLEX",
+      "uprn": "200003492917",
+      "got": "200003410687",
+      "m": 6.1,
+      "own_point_m": 81,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Commercial galleries#388",
+      "name": "London Glassblowing ",
+      "uprn": "200003362734",
+      "got": "200003361751",
+      "m": 8.9,
+      "own_point_m": 12,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Dance performance venues#135",
+      "name": "Greenwich Dance",
+      "uprn": "100023227774",
+      "got": "100023227711",
+      "m": 0,
+      "own_point_m": 31,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Dance rehearsal studios#207",
+      "name": "Greenwich Dance",
+      "uprn": "100023227774",
+      "got": "100023227711",
+      "m": 0,
+      "own_point_m": 31,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Making and manufacturing#58",
+      "name": "London Glassblowing ",
+      "uprn": "200003362734",
+      "got": "200003361751",
+      "m": 7.6,
+      "own_point_m": 12,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Set and exhibition building#8",
+      "name": "Flints Theatrical Chandlers",
+      "uprn": "100023282024",
+      "got": "100023282051",
+      "m": 1.2,
+      "own_point_m": 50,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Set and exhibition building#12",
+      "name": "Illusion Design & Construct",
+      "uprn": "100023569533",
+      "got": "100023680112",
+      "m": 1.3,
+      "own_point_m": 137,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Set and exhibition building#44",
+      "name": "Footprint Scenery",
+      "uprn": "200003496057",
+      "got": "200003380962",
+      "m": 8.3,
+      "own_point_m": 139,
+      "medium": false
+     },
+     {
+      "k": 6,
+      "route": "b",
+      "row": "cultural_venues_CIM 2023 Theatre#276",
+      "name": "Jazzbourne",
+      "uprn": "100023238425",
+      "got": "100023238977",
+      "m": 3.7,
+      "own_point_m": 2,
+      "medium": false
+     }
+    ]
+   }
+  },
+  "catalogue": {
+   "rows": 662,
+   "by_class": {
+    "ok": 491,
+    "trailing-zeros": 56,
+    "empty": 63,
+    "text": 31,
+    "padded": 18,
+    "out-of-range": 3
+   },
+   "duplicate": [
+    {
+     "value": "200003000000",
+     "rows": 4,
+     "names": 4,
+     "rounded": true
+    },
+    {
+     "value": "200000000000",
+     "rows": 26,
+     "names": 24,
+     "rounded": true
+    },
+    {
+     "value": "100023000000",
+     "rows": 3,
+     "names": 3,
+     "rounded": true
+    },
+    {
+     "value": "6086565",
+     "rows": 4,
+     "names": 4,
+     "rounded": false
+    },
+    {
+     "value": "100000000000",
+     "rows": 22,
+     "names": 17,
+     "rounded": true
+    },
+    {
+     "value": "6086845",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "6006845",
+     "rows": 5,
+     "names": 3,
+     "rounded": false
+    },
+    {
+     "value": "10095995140",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "200003493816",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "10090748110",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "100023238053",
+     "rows": 4,
+     "names": 4,
+     "rounded": false
+    },
+    {
+     "value": "10091668508",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "100023680112",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "10010216996",
+     "rows": 3,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "10090284129",
+     "rows": 5,
+     "names": 5,
+     "rounded": false
+    },
+    {
+     "value": "100022933575",
+     "rows": 6,
+     "names": 3,
+     "rounded": false
+    },
+    {
+     "value": "200003372210",
+     "rows": 2,
+     "names": 2,
+     "rounded": false
+    },
+    {
+     "value": "200003380843",
+     "rows": 3,
+     "names": 3,
+     "rounded": false
+    }
+   ],
+   "not_in_open_uprn": [
+    {
+     "row": "cultural_venues_CIM 2023 Archives#7",
+     "name": "Employment Policy Institute",
+     "value": "95500292"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Artists workspaces#79",
+     "name": "Trinity Buoy Wharf",
+     "value": "10091954134"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Artists workspaces#302",
+     "name": "FormaHQ",
+     "value": "56295142"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Jewellery design#2",
+     "name": "Alex Monroe Limited",
+     "value": "10091779289"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Makerspaces#58",
+     "name": "Sustainable Workspaces",
+     "value": "10091908827"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music all#3",
+     "name": "Jamboree",
+     "value": "10091774214"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music all#80",
+     "name": "Village Underground",
+     "value": "10091784233"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music all#137",
+     "name": "Cafe 1001",
+     "value": "10091893758"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music all#156",
+     "name": "Boisdale Of Canary Wharf",
+     "value": "10091775667"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music all#337",
+     "name": "Gibson Hall",
+     "value": "10091780027"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music grassroot#1",
+     "name": "Jamboree",
+     "value": "10091774214"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music grassroot#34",
+     "name": "Village Underground",
+     "value": "10091784233"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music nightclubs#172",
+     "name": "Village Underground",
+     "value": "10091784233"
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Theatre#157",
+     "name": "London Theatre",
+     "value": "10091838199"
+    }
+   ],
+   "far_from_open_uprn": [
+    {
+     "row": "cultural_venues_CIM 2023 Commercial galleries#102",
+     "name": "Vibe Gallery",
+     "value": "10009799375",
+     "m": 197
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Creative coworking desk space#44",
+     "name": "Buygivework At Keetons And Collett",
+     "value": "200003410896",
+     "m": 153
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Creative workspaces#48",
+     "name": "Artistic Spaces Ltd",
+     "value": "10093394512",
+     "m": 159
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Dance performance venues#132",
+     "name": "Trinity Laban / Laban Theatre",
+     "value": "10010216996",
+     "m": 905
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Museums and public galleries#80",
+     "name": "National Maritime Museum",
+     "value": "10010243516",
+     "m": 168
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Museums and public galleries#129",
+     "name": "The Old Royal Naval College",
+     "value": "100023228558",
+     "m": 211
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music all#104",
+     "name": "Beehive (The)",
+     "value": "6072864",
+     "m": 195
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music grassroot#58",
+     "name": "Beehive (The)",
+     "value": "6072864",
+     "m": 195
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Music rehearsal studios#25",
+     "name": "Rogue Studios",
+     "value": "200003407579",
+     "m": 409
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Set and exhibition building#3",
+     "name": "Aldworth James & Bond",
+     "value": "100022000186",
+     "m": 159
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Theatre#3",
+     "name": "George Wood Theatre ",
+     "value": "100023238053",
+     "m": 236
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Theatre#95",
+     "name": "Theatre Peckham",
+     "value": "10000811503",
+     "m": 384
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Theatre#110",
+     "name": "Unicorn Theatre",
+     "value": "10009804074",
+     "m": 170
+    },
+    {
+     "row": "cultural_venues_CIM 2023 Theatre#234",
+     "name": "Trinity Laban / Laban Theatre",
+     "value": "100023569221",
+     "m": 232
+    }
+   ],
+   "group_offsets": {
+    "cultural_venues_CIM 2023 Archives": {
+     "with_uprn_point": 37,
+     "within_25m": 33,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Artists workspaces": {
+     "with_uprn_point": 53,
+     "within_25m": 50,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Arts centres": {
+     "with_uprn_point": 1,
+     "within_25m": 1,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Cinemas": {
+     "with_uprn_point": 12,
+     "within_25m": 12,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Commercial galleries": {
+     "with_uprn_point": 42,
+     "within_25m": 15,
+     "shifted": 24,
+     "shift_m": [
+      -112,
+      54
+     ]
+    },
+    "cultural_venues_CIM 2023 Creative coworking desk space": {
+     "with_uprn_point": 11,
+     "within_25m": 2,
+     "shifted": 7,
+     "shift_m": [
+      -112,
+      54
+     ]
+    },
+    "cultural_venues_CIM 2023 Creative workspaces": {
+     "with_uprn_point": 24,
+     "within_25m": 6,
+     "shifted": 13,
+     "shift_m": [
+      -112,
+      55
+     ]
+    },
+    "cultural_venues_CIM 2023 Dance performance venues": {
+     "with_uprn_point": 23,
+     "within_25m": 20,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Dance rehearsal studios": {
+     "with_uprn_point": 36,
+     "within_25m": 33,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Fashion and design": {
+     "with_uprn_point": 19,
+     "within_25m": 18,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Jewellery design": {
+     "with_uprn_point": 10,
+     "within_25m": 7,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Lgbt venues": {
+     "with_uprn_point": 3,
+     "within_25m": 1,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Libraries": {
+     "with_uprn_point": 20,
+     "within_25m": 0,
+     "shifted": 17,
+     "shift_m": [
+      -112,
+      55
+     ]
+    },
+    "cultural_venues_CIM 2023 Makerspaces": {
+     "with_uprn_point": 11,
+     "within_25m": 9,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Making and manufacturing": {
+     "with_uprn_point": 17,
+     "within_25m": 3,
+     "shifted": 9,
+     "shift_m": [
+      -112,
+      56
+     ]
+    },
+    "cultural_venues_CIM 2023 Museums and public galleries": {
+     "with_uprn_point": 39,
+     "within_25m": 15,
+     "shifted": 19,
+     "shift_m": [
+      -111,
+      54
+     ]
+    },
+    "cultural_venues_CIM 2023 Music all": {
+     "with_uprn_point": 16,
+     "within_25m": 2,
+     "shifted": 7,
+     "shift_m": [
+      -112,
+      54
+     ]
+    },
+    "cultural_venues_CIM 2023 Music grassroot": {
+     "with_uprn_point": 4,
+     "within_25m": 0,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Music nightclubs": {
+     "with_uprn_point": 3,
+     "within_25m": 1,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Music recording studios": {
+     "with_uprn_point": 13,
+     "within_25m": 10,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Music rehearsal studios": {
+     "with_uprn_point": 8,
+     "within_25m": 5,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Prop and costume making": {
+     "with_uprn_point": 11,
+     "within_25m": 5,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Set and exhibition building": {
+     "with_uprn_point": 14,
+     "within_25m": 2,
+     "shifted": 6,
+     "shift_m": [
+      -113,
+      54
+     ]
+    },
+    "cultural_venues_CIM 2023 Textile design": {
+     "with_uprn_point": 10,
+     "within_25m": 4,
+     "shifted": 3,
+     "shift_m": [
+      -112,
+      54
+     ]
+    },
+    "cultural_venues_CIM 2023 Theatre rehearsal studios": {
+     "with_uprn_point": 33,
+     "within_25m": 27,
+     "shifted": 0,
+     "shift_m": null
+    },
+    "cultural_venues_CIM 2023 Theatre": {
+     "with_uprn_point": 25,
+     "within_25m": 6,
+     "shifted": 9,
+     "shift_m": [
+      113,
+      -54
+     ]
+    }
+   },
+   "duplicate_values": 18,
+   "not_in_open_uprn_count": 14,
+   "far_from_open_uprn_count": 14
+  }
+ },
+ "amendments": [
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#45",
+   "name": "Baltic Exchange",
+   "column": "os_addressbase_uprn",
+   "old_value": "100023000000",
+   "new_value": "100022934744",
+   "route": "b",
+   "confidence": "medium",
+   "applied": true,
+   "evidence": {
+    "open_uprn_point_m": 0.1,
+    "from": "venue point",
+    "outline": "way/221665709",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/221665709",
+      "registry": null,
+      "uprns_there": 3
+     }
+    ],
+    "range": [
+     100022500000,
+     100023500000
+    ],
+    "range_width": 1000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#46",
+   "name": "Bank of England Archive",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "new_value": "200000069805",
+   "route": "b",
+   "confidence": "medium",
+   "applied": true,
+   "evidence": {
+    "open_uprn_point_m": 0,
+    "from": "venue point",
+    "outline": "relation/553472",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "relation/553472",
+      "registry": null,
+      "uprns_there": 5
+     }
+    ],
+    "range": [
+     199500000000,
+     200500000000
+    ],
+    "range_width": 1000000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#55",
+   "name": "Bishopsgate Institute",
+   "column": "os_addressbase_uprn",
+   "old_value": "100023000000",
+   "new_value": "100022933667",
+   "route": "a",
+   "confidence": "high",
+   "applied": true,
+   "evidence": {
+    "references": [
+     {
+      "where": "lds 23697 cultural venues by London Borough.zip (2023-10-12) > cultural venues by London Borough/Cultural venues City of London.csv",
+      "name": "Bishopsgate Institute",
+      "uprn": "100022933667",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 23697 cultural_venues_in_GIS_format.gpkg (2023-10-12) > cultural_venues_CIM 2023 Dance rehearsal studios",
+      "name": "Bishopsgate Institute",
+      "uprn": "100022933667",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 9 Dance rehearsal studios > Dance rehearsal studios",
+      "name": "Bishopsgate Institute",
+      "uprn": "100022933667",
+      "m": 0,
+      "name_match": "exact"
+     }
+    ],
+    "range": [
+     100022500000,
+     100023500000
+    ],
+    "tightened_by": [],
+    "other_values_out_of_range": [],
+    "open_uprn_m": 0
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#79",
+   "name": "British Red Cross Museum and Archives",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "new_value": "200000075168",
+   "route": "a",
+   "confidence": "high",
+   "applied": true,
+   "evidence": {
+    "references": [
+     {
+      "where": "lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Museums_and_public_galleries",
+      "name": "British Red Cross Museum and Archives",
+      "uprn": "200000075168",
+      "m": 5,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 site_by_borough.zip (2023-07-30) > all_sites.csv",
+      "name": "British Red Cross Museum and Archives",
+      "uprn": "200000075168",
+      "m": 5,
+      "name_match": "exact"
+     }
+    ],
+    "range": [
+     199500000000,
+     200500000000
+    ],
+    "tightened_by": [
+     "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+    ],
+    "other_values_out_of_range": [],
+    "open_uprn_m": 5
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#115",
+   "name": "City of London Club",
+   "column": "os_addressbase_uprn",
+   "old_value": "100023000000",
+   "new_value": "100022933935",
+   "route": "b",
+   "confidence": "medium",
+   "applied": true,
+   "evidence": {
+    "open_uprn_point_m": 0,
+    "from": "venue point",
+    "outline": "way/166431071",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/166431071",
+      "registry": null,
+      "uprns_there": 21
+     }
+    ],
+    "range": [
+     100022500000,
+     100023500000
+    ],
+    "range_width": 1000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#275",
+   "name": "Livability (Shaftesbury Society)",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "new_value": "100022933231",
+   "route": "b",
+   "confidence": "medium",
+   "applied": true,
+   "evidence": {
+    "open_uprn_point_m": 0.1,
+    "from": "venue point",
+    "outline": "way/164523856",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/164523856",
+      "registry": null,
+      "uprns_there": 11
+     }
+    ],
+    "range": [
+     100022500000,
+     100023500000
+    ],
+    "range_width": 1000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#293",
+   "name": "London University: Goldsmiths Library: Special Collec",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "new_value": "100023238053",
+   "route": "b",
+   "confidence": "medium",
+   "applied": true,
+   "evidence": {
+    "open_uprn_point_m": 0,
+    "from": "venue point",
+    "outline": "relation/395554",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "relation/395554",
+      "registry": null,
+      "uprns_there": 1
+     }
+    ],
+    "range": [
+     99500000000,
+     100500000000
+    ],
+    "range_width": 1000000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#463",
+   "name": "South London Gallery",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "new_value": "200003464154",
+   "route": "a",
+   "confidence": "high",
+   "applied": true,
+   "evidence": {
+    "references": [
+     {
+      "where": "lds 23697 cultural venues by London Borough.zip (2023-10-12) > cultural venues by London Borough/Cultural venues Southwark.csv",
+      "name": "South London Gallery",
+      "uprn": "200003464154",
+      "m": 2,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 23697 cultural_venues_in_GIS_format.gpkg (2023-10-12) > cultural_venues_CIM 2023 Museums and public galleries",
+      "name": "South London Gallery",
+      "uprn": "200003464154",
+      "m": 2,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 23697 CIM 2023 Museums and public galleries.csv (2025-06-18)",
+      "name": "South London Gallery",
+      "uprn": "200003464154",
+      "m": 2,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Commercial_galleries",
+      "name": "South London Gallery",
+      "uprn": "200003464154",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 site_by_borough.zip (2023-07-30) > all_sites.csv",
+      "name": "South London Gallery",
+      "uprn": "200003464154",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "GLA ArcGIS Cultural_infrastructure_2023_for_webapp_verified layer 21 Museums and public galleries > Museums and public galleries",
+      "name": "South London Gallery",
+      "uprn": "200003464154",
+      "m": 2,
+      "name_match": "exact"
+     }
+    ],
+    "range": [
+     200002500000,
+     200003500000
+    ],
+    "tightened_by": [
+     "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+     "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+    ],
+    "other_values_out_of_range": [],
+    "open_uprn_m": 0
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#482",
+   "name": "The Children's Society Records and Archive Centre",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "new_value": "200003410687",
+   "route": "b",
+   "confidence": "low",
+   "applied": false,
+   "evidence": {
+    "open_uprn_point_m": 6.1,
+    "from": "venue point",
+    "outline": "way/1547786584",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/1547786584",
+      "registry": null,
+      "uprns_there": 475
+     }
+    ],
+    "range": [
+     200002500000,
+     200003500000
+    ],
+    "range_width": 1000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#497",
+   "name": "Trinity Laban Conservatoire of Music and Dance: Laban",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "new_value": "100023569221",
+   "route": "b",
+   "confidence": "medium",
+   "applied": true,
+   "evidence": {
+    "open_uprn_point_m": 0,
+    "from": "venue point",
+    "outline": "way/28211077",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/28211077",
+      "registry": null,
+      "uprns_there": 2
+     }
+    ],
+    "range": [
+     100023500000,
+     100024500000
+    ],
+    "range_width": 1000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Arts centres#19",
+   "name": "The Albany ",
+   "column": "os_addressbase_uprn",
+   "old_value": "100024000000",
+   "new_value": "100023569348",
+   "route": "a",
+   "confidence": "high",
+   "applied": true,
+   "evidence": {
+    "references": [
+     {
+      "where": "lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Arts_centres",
+      "name": "The Albany ",
+      "uprn": "100023569348",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 site_by_borough.zip (2023-07-30) > all_sites.csv",
+      "name": "The Albany ",
+      "uprn": "100023569348",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 site_by_borough.zip (2023-07-30) > Lewisham.csv",
+      "name": "The Albany ",
+      "uprn": "100023569348",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 Arts_centres.csv (2023-07-30)",
+      "name": "The Albany ",
+      "uprn": "100023569348",
+      "m": 0,
+      "name_match": "exact"
+     }
+    ],
+    "range": [
+     100023500000,
+     100024500000
+    ],
+    "tightened_by": [],
+    "other_values_out_of_range": [
+     "100023280749"
+    ],
+    "open_uprn_m": 0
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#179",
+   "name": "Printworks",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "new_value": "200003500401",
+   "route": "a",
+   "confidence": "high",
+   "applied": true,
+   "evidence": {
+    "references": [
+     {
+      "where": "lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Music_venues_all",
+      "name": "Printworks",
+      "uprn": "200003500401",
+      "m": 35,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 2ko88 site_by_borough.zip (2023-07-30) > all_sites.csv",
+      "name": "Printworks",
+      "uprn": "200003500401",
+      "m": 35,
+      "name_match": "exact"
+     }
+    ],
+    "range": [
+     150000000000,
+     250000000000
+    ],
+    "tightened_by": [],
+    "other_values_out_of_range": [],
+    "open_uprn_m": 35,
+    "open_uprn_m_after_layer_offset": 92
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#181",
+   "name": "Studio 338",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "new_value": "100023227662",
+   "route": "b",
+   "confidence": "low",
+   "applied": false,
+   "evidence": {
+    "open_uprn_point_m": 2.7,
+    "from": "venue point",
+    "outline": "way/436262038",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/436262038",
+      "registry": null,
+      "uprns_there": 1
+     },
+     {
+      "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+      "outline": null,
+      "registry": null,
+      "uprns_there": 0
+     },
+     {
+      "point": "venue point",
+      "outline": "way/436262038",
+      "registry": null,
+      "uprns_there": 1
+     }
+    ],
+    "range": [
+     50000000000,
+     150000000000
+    ],
+    "range_width": 100000000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music nightclubs#37",
+   "name": "Studio 338",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "new_value": "100023227662",
+   "route": "b",
+   "confidence": "low",
+   "applied": false,
+   "evidence": {
+    "open_uprn_point_m": 2.7,
+    "from": "venue point",
+    "outline": "way/436262038",
+    "registry_building": null,
+    "points_seen": [
+     {
+      "point": "venue point",
+      "outline": "way/436262038",
+      "registry": null,
+      "uprns_there": 1
+     },
+     {
+      "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+      "outline": null,
+      "registry": null,
+      "uprns_there": 0
+     },
+     {
+      "point": "venue point",
+      "outline": "way/436262038",
+      "registry": null,
+      "uprns_there": 1
+     }
+    ],
+    "range": [
+     50000000000,
+     150000000000
+    ],
+    "range_width": 100000000000
+   },
+   "date": "2026-10-04"
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Prop and costume making#3",
+   "name": "Absolute Motion Control Ltd",
+   "column": "os_addressbase_uprn",
+   "old_value": "200003000000",
+   "new_value": "200003422535",
+   "route": "a",
+   "confidence": "high",
+   "applied": true,
+   "evidence": {
+    "references": [
+     {
+      "where": "lds 23697 cultural venues by London Borough.zip (2023-10-12) > cultural venues by London Borough/Cultural venues Southwark.csv",
+      "name": "Absolute Motion Control Ltd",
+      "uprn": "200003422535",
+      "m": 0,
+      "name_match": "exact"
+     },
+     {
+      "where": "lds 23697 cultural_venues_in_GIS_format.gpkg (2023-10-12) > cultural_venues_CIM 2023 Set and exhibition building",
+      "name": "Absolute Motion Control Ltd",
+      "uprn": "200003422535",
+      "m": 0,
+      "name_match": "exact"
+     }
+    ],
+    "range": [
+     200002500000,
+     200003500000
+    ],
+    "tightened_by": [],
+    "other_values_out_of_range": [],
+    "open_uprn_m": 124
+   },
+   "date": "2026-10-04"
+  }
+ ],
+ "unresolved": [
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#19",
+   "name": "Action for Blind People",
+   "column": "os_addressbase_uprn",
+   "old_value": "200003000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/393285870); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/393285870",
+       "registry": null,
+       "uprns_there": 72
+      }
+     ],
+     "candidates": [
+      "200003379130",
+      "200003404932"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#28",
+   "name": "All Hallows by the Tower",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 11 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/59213570); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 11,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/59213570",
+       "registry": null,
+       "uprns_there": 2
+      }
+     ],
+     "candidates": [
+      "200000075581",
+      "200000075582"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#104",
+   "name": "Chartered Institute of Journalists",
+   "column": "os_addressbase_uprn",
+   "old_value": "200003000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 15 UPRN points in range in the outline (way/47297144); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/47297144",
+       "registry": null,
+       "uprns_there": 18
+      }
+     ],
+     "candidates": [
+      "200003401282",
+      "200003401284",
+      "200003404559",
+      "200003404560",
+      "200003404561",
+      "200003404562",
+      "200003404563",
+      "200003404564",
+      "200003404721",
+      "200003404736",
+      "200003404742",
+      "200003404750",
+      "200003404816",
+      "200003404832",
+      "200003494312"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#130",
+   "name": "Co-operative Party",
+   "column": "os_addressbase_uprn",
+   "old_value": "200003000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 12 UPRN points in range in the outline (way/101530099); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/101530099",
+       "registry": null,
+       "uprns_there": 24
+      }
+     ],
+     "candidates": [
+      "200003362486",
+      "200003363170",
+      "200003363276",
+      "200003363611",
+      "200003363646",
+      "200003496903",
+      "200003496904",
+      "200003496905",
+      "200003496906",
+      "200003363171",
+      "200003363877",
+      "200003482368"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#167",
+   "name": "Fishmongers Company",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 4 UPRN points in range in the outline (way/143415208); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/143415208",
+       "registry": null,
+       "uprns_there": 9
+      }
+     ],
+     "candidates": [
+      "200000075424",
+      "200000075425",
+      "200000075426",
+      "200000075427"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#234",
+   "name": "Institute of Chartered Accountants in England and Wal",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 5 matching rows in other versions, none with a full UPRN in range; b: 4 UPRN points in range in the outline (way/160140571); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 5,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/160140571",
+       "registry": null,
+       "uprns_there": 7
+      }
+     ],
+     "candidates": [
+      "200000069510",
+      "200000070597",
+      "200000075783",
+      "200000069509"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#278",
+   "name": "Lloyd's",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/23988892); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      100022500000,
+      100023500000
+     ],
+     "tightened_by": [
+      "1.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "100023000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/23988892",
+       "registry": null,
+       "uprns_there": 5
+      }
+     ],
+     "candidates": [
+      "100022934925",
+      "100022934900"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#279",
+   "name": "Lloyds Banking Group Archives (London)",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 14 UPRN points in range in the outline (way/30805750); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      100022500000,
+      100023500000
+     ],
+     "tightened_by": [
+      "1.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "100023000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/30805750",
+       "registry": null,
+       "uprns_there": 34
+      }
+     ],
+     "candidates": [
+      "100022933627",
+      "100022933606",
+      "100022933628",
+      "100022933632",
+      "100022933612",
+      "100022933615",
+      "100022933620",
+      "100022933601",
+      "100022933603",
+      "100022933619",
+      "100022933622",
+      "100022933623",
+      "100022933629",
+      "100022933613"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#280",
+   "name": "Lloyd's Register Foundation Heritage & Education Cent",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 5 matching rows in other versions, none with a full UPRN in range; b: 4 UPRN points in range in the outline (way/56441629); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 5,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/56441629",
+       "registry": null,
+       "uprns_there": 11
+      }
+     ],
+     "candidates": [
+      "200000070937",
+      "200000070938",
+      "200000070939",
+      "200000070936"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#327",
+   "name": "Mission to Seafarers",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 3 UPRN points in range in the outline (way/160628262); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/160628262",
+       "registry": null,
+       "uprns_there": 3
+      }
+     ],
+     "candidates": [
+      "200000069262",
+      "200000069263",
+      "200000069261"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#343",
+   "name": "National Council for Housing and Planning",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 6 UPRN points in range in the outline (way/59541203); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/59541203",
+       "registry": null,
+       "uprns_there": 190
+      }
+     ],
+     "candidates": [
+      "200000072070",
+      "200000072071",
+      "200000074865",
+      "200000069637",
+      "200000072072",
+      "200000069638"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#354",
+   "name": "National Society for the Prevention of Cruelty to Chi",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 5 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/31396033); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 5,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      99500000000,
+      100500000000
+     ],
+     "tightened_by": [
+      "1.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/31396033",
+       "registry": null,
+       "uprns_there": 9
+      }
+     ],
+     "candidates": [
+      "100022933017",
+      "100022932967"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#394",
+   "name": "Royal British Legion",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/100799871); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/100799871",
+       "registry": null,
+       "uprns_there": 2
+      }
+     ],
+     "candidates": [
+      "200003355246",
+      "200003492537"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#410",
+   "name": "Royal Commonwealth Ex-Services League",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/100799871); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/100799871",
+       "registry": null,
+       "uprns_there": 2
+      }
+     ],
+     "candidates": [
+      "200003355246",
+      "200003492537"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#433",
+   "name": "Royal Town Planning Institute",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 6 UPRN points in range in the outline (way/59541203); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/59541203",
+       "registry": null,
+       "uprns_there": 190
+      }
+     ],
+     "candidates": [
+      "200000072070",
+      "200000072071",
+      "200000074865",
+      "200000069637",
+      "200000072072",
+      "200000069638"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#435",
+   "name": "Russo-British Chamber of Commerce",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 3 UPRN points in range in the outline (way/82770863); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/82770863",
+       "registry": null,
+       "uprns_there": 6
+      }
+     ],
+     "candidates": [
+      "200003356503",
+      "200003356550",
+      "200003356619"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#439",
+   "name": "Salters Company",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 4 UPRN points in range in the outline (way/156193764); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      199500000000,
+      200500000000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/156193764",
+       "registry": null,
+       "uprns_there": 7
+      }
+     ],
+     "candidates": [
+      "200000072116",
+      "200000072117",
+      "200000072118",
+      "200000072119"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#460",
+   "name": "Society of Radiographers",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 3 UPRN points in range in the outline (way/835072756); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/835072756",
+       "registry": null,
+       "uprns_there": 8
+      }
+     ],
+     "candidates": [
+      "200003495068",
+      "200003495069",
+      "200003360622"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#465",
+   "name": "Southwark Local History Library and Archive",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: 3 UPRN points in range in the outline (way/31248298); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/31248298",
+       "registry": null,
+       "uprns_there": 67
+      }
+     ],
+     "candidates": [
+      "200003356510",
+      "200003356690",
+      "200003492538"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#482",
+   "name": "The Children's Society Records and Archive Centre",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "only a low-confidence candidate (200003410687, route b); not applied",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/1547786584",
+       "registry": null,
+       "uprns_there": 475
+      }
+     ],
+     "candidates": [
+      "200003410687"
+     ]
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#508",
+   "name": "University of Greenwich",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 0 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      100022500000,
+      100023500000
+     ],
+     "tightened_by": [
+      "1.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "100023000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Archives#511",
+   "name": "University of the Arts London: Camberwell College of ",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 9 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (way/596180048: 1 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 9,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      200002500000,
+      200003500000
+     ],
+     "tightened_by": [
+      "2.00E+11 (lds 23697 CIM 2023 Archives (Nov 2023).csv (2024-03-04))",
+      "200003000000 (lds 2ko88 CulturalInfrastructureMap.gpkg (2023-07-30) > Archives)"
+     ]
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/596180048",
+       "registry": null,
+       "uprns_there": 1
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#27",
+   "name": "Deptford Albany",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 5 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (no outline, way/372018620); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 5,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 16
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/372018620",
+       "registry": null,
+       "uprns_there": 2
+      }
+     ],
+     "candidates": [
+      "100021953043",
+      "100023280903"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#39",
+   "name": "Barbican Centre",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 7 matching rows in other versions, none with a full UPRN in range; b: 3 UPRN points in range in the outline (way/499964223, no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 7,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/499964223",
+       "registry": null,
+       "uprns_there": 35
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": [
+      "200000074747",
+      "200000075775",
+      "200000075154"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#53",
+   "name": "Amersham Arms",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 13 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/1123226692, no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 13,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/1123226692",
+       "registry": null,
+       "uprns_there": 3
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": [
+      "100021991024",
+      "100023238466"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#82",
+   "name": "Gladstone Arms",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 57 matching rows in other versions, none with a full UPRN in range; b: 74 UPRN points in range in the outline (way/100275556, no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 57,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/100275556",
+       "registry": null,
+       "uprns_there": 73
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 2
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": "way/100275556",
+       "registry": null,
+       "uprns_there": 73
+      }
+     ],
+     "candidates": [
+      "200003355173",
+      "200003355174",
+      "200003355175",
+      "200003355176",
+      "200003355177",
+      "200003355178",
+      "200003355179",
+      "200003355180",
+      "200003355181",
+      "200003355182",
+      "200003355183",
+      "200003355184",
+      "200003355185",
+      "200003355192",
+      "200003355194",
+      "200003355195",
+      "200003355196",
+      "200003355197",
+      "200003355198",
+      "200003355199",
+      "200003355200",
+      "200003355201",
+      "200003355202",
+      "200003355203",
+      "200003355204",
+      "200003355205",
+      "200003355206",
+      "200003355207",
+      "200003355208",
+      "200003355209",
+      "200003355210",
+      "200003355211",
+      "200003355212",
+      "200003355213",
+      "200003355214",
+      "200003355215",
+      "200003355216",
+      "200003355217",
+      "200003500436",
+      "200003500437",
+      "200003355222",
+      "200003355224",
+      "200003355225",
+      "200003355226",
+      "200003355227",
+      "200003355228",
+      "200003355229",
+      "200003355230",
+      "200003355231",
+      "200003355232",
+      "200003355233",
+      "200003355234",
+      "200003355235",
+      "200003355236",
+      "200003355237",
+      "200003355238",
+      "200003355239",
+      "200003500435",
+      "200003355193",
+      "200003355223",
+      "200003356740",
+      "200003356741",
+      "200003356742",
+      "200003356743",
+      "200003356744",
+      "200003356745",
+      "200003356746",
+      "200003356747",
+      "200003356748",
+      "200003356749",
+      "200003356750",
+      "200003356751",
+      "200003500434",
+      "200003356110"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music grassroot#36",
+   "name": "Gladstone Arms",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 57 matching rows in other versions, none with a full UPRN in range; b: 74 UPRN points in range in the outline (way/100275556, no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 57,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/100275556",
+       "registry": null,
+       "uprns_there": 73
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 2
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": "way/100275556",
+       "registry": null,
+       "uprns_there": 73
+      }
+     ],
+     "candidates": [
+      "200003355173",
+      "200003355174",
+      "200003355175",
+      "200003355176",
+      "200003355177",
+      "200003355178",
+      "200003355179",
+      "200003355180",
+      "200003355181",
+      "200003355182",
+      "200003355183",
+      "200003355184",
+      "200003355185",
+      "200003355192",
+      "200003355194",
+      "200003355195",
+      "200003355196",
+      "200003355197",
+      "200003355198",
+      "200003355199",
+      "200003355200",
+      "200003355201",
+      "200003355202",
+      "200003355203",
+      "200003355204",
+      "200003355205",
+      "200003355206",
+      "200003355207",
+      "200003355208",
+      "200003355209",
+      "200003355210",
+      "200003355211",
+      "200003355212",
+      "200003355213",
+      "200003355214",
+      "200003355215",
+      "200003355216",
+      "200003355217",
+      "200003500436",
+      "200003500437",
+      "200003355222",
+      "200003355224",
+      "200003355225",
+      "200003355226",
+      "200003355227",
+      "200003355228",
+      "200003355229",
+      "200003355230",
+      "200003355231",
+      "200003355232",
+      "200003355233",
+      "200003355234",
+      "200003355235",
+      "200003355236",
+      "200003355237",
+      "200003355238",
+      "200003355239",
+      "200003500435",
+      "200003355193",
+      "200003355223",
+      "200003356740",
+      "200003356741",
+      "200003356742",
+      "200003356743",
+      "200003356744",
+      "200003356745",
+      "200003356746",
+      "200003356747",
+      "200003356748",
+      "200003356749",
+      "200003356750",
+      "200003356751",
+      "200003500434",
+      "200003356110"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music nightclubs#174",
+   "name": "Gladstone Arms",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 57 matching rows in other versions, none with a full UPRN in range; b: 74 UPRN points in range in the outline (way/100275556, no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 57,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/100275556",
+       "registry": null,
+       "uprns_there": 73
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 2
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": "way/100275556",
+       "registry": null,
+       "uprns_there": 73
+      }
+     ],
+     "candidates": [
+      "200003355173",
+      "200003355174",
+      "200003355175",
+      "200003355176",
+      "200003355177",
+      "200003355178",
+      "200003355179",
+      "200003355180",
+      "200003355181",
+      "200003355182",
+      "200003355183",
+      "200003355184",
+      "200003355185",
+      "200003355192",
+      "200003355194",
+      "200003355195",
+      "200003355196",
+      "200003355197",
+      "200003355198",
+      "200003355199",
+      "200003355200",
+      "200003355201",
+      "200003355202",
+      "200003355203",
+      "200003355204",
+      "200003355205",
+      "200003355206",
+      "200003355207",
+      "200003355208",
+      "200003355209",
+      "200003355210",
+      "200003355211",
+      "200003355212",
+      "200003355213",
+      "200003355214",
+      "200003355215",
+      "200003355216",
+      "200003355217",
+      "200003500436",
+      "200003500437",
+      "200003355222",
+      "200003355224",
+      "200003355225",
+      "200003355226",
+      "200003355227",
+      "200003355228",
+      "200003355229",
+      "200003355230",
+      "200003355231",
+      "200003355232",
+      "200003355233",
+      "200003355234",
+      "200003355235",
+      "200003355236",
+      "200003355237",
+      "200003355238",
+      "200003355239",
+      "200003500435",
+      "200003355193",
+      "200003355223",
+      "200003356740",
+      "200003356741",
+      "200003356742",
+      "200003356743",
+      "200003356744",
+      "200003356745",
+      "200003356746",
+      "200003356747",
+      "200003356748",
+      "200003356749",
+      "200003356750",
+      "200003356751",
+      "200003500434",
+      "200003356110"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#106",
+   "name": "Queen Of Hoxton",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 15 matching rows in other versions, none with a full UPRN in range; b: 8 UPRN points in range in the outline (way/164525275, way/164756406); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 15,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/164525275",
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/164756406",
+       "registry": null,
+       "uprns_there": 14
+      }
+     ],
+     "candidates": [
+      "100022932796",
+      "100022933203",
+      "100023545038",
+      "100023545039",
+      "100023545040",
+      "100023545041",
+      "100023545042",
+      "100023545043"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#118",
+   "name": "New Cross Inn",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 28 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/1201607329, way/87496751); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 28,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/1201607329",
+       "registry": null,
+       "uprns_there": 2
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/87496751",
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point",
+       "outline": "way/1201607329",
+       "registry": null,
+       "uprns_there": 2
+      }
+     ],
+     "candidates": [
+      "100021990914",
+      "100023238480"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music grassroot#72",
+   "name": "New Cross Inn",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 28 matching rows in other versions, none with a full UPRN in range; b: 2 UPRN points in range in the outline (way/1201607329, way/87496751); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 28,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/1201607329",
+       "registry": null,
+       "uprns_there": 2
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/87496751",
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point",
+       "outline": "way/1201607329",
+       "registry": null,
+       "uprns_there": 2
+      }
+     ],
+     "candidates": [
+      "100021990914",
+      "100023238480"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#181",
+   "name": "Studio 338",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "only a low-confidence candidate (100023227662, route b); not applied",
+   "tried": {
+    "a": {
+     "matches": 24,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/436262038",
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": "way/436262038",
+       "registry": null,
+       "uprns_there": 1
+      }
+     ],
+     "candidates": [
+      "100023227662"
+     ]
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music nightclubs#37",
+   "name": "Studio 338",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "only a low-confidence candidate (100023227662, route b); not applied",
+   "tried": {
+    "a": {
+     "matches": 24,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/436262038",
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": "way/436262038",
+       "registry": null,
+       "uprns_there": 1
+      }
+     ],
+     "candidates": [
+      "100023227662"
+     ]
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#225",
+   "name": "St. Stephen Walbrook",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 7 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (way/143407589: 5 points; no outline, 10 m: 0 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 7,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/143407589",
+       "registry": null,
+       "uprns_there": 5
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#232",
+   "name": "St. Magnus The Martyr",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 7 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 2 points; no outline, 10 m: 0 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 7,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 2
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#245",
+   "name": "The Warehouse",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 16 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 1 points; way/157605263: 30 points; no outline, 10 m: 1 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 16,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/157605263",
+       "registry": null,
+       "uprns_there": 30
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 1
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music grassroot#94",
+   "name": "The Warehouse",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 16 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 1 points; way/157605263: 30 points; no outline, 10 m: 1 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 16,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 1
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/157605263",
+       "registry": null,
+       "uprns_there": 30
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 1
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#256",
+   "name": "White Hart Beer House And Kitchen (The)",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 24 matching rows in other versions, none with a full UPRN in range; b: 4 UPRN points in range in the outline (no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 24,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 58
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": [
+      "100021990775",
+      "100021997445",
+      "100021997446",
+      "100023237911"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music grassroot#107",
+   "name": "White Hart Beer House And Kitchen (The)",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 24 matching rows in other versions, none with a full UPRN in range; b: 4 UPRN points in range in the outline (no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 24,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 58
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": [
+      "100021990775",
+      "100021997445",
+      "100021997446",
+      "100023237911"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#265",
+   "name": "The Paperworks",
+   "column": "os_addressbase_uprn",
+   "old_value": "200000000000",
+   "reason": "a: 3 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 0 points; no outline, 10 m: 0 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 3,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      150000000000,
+      250000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#295",
+   "name": "The Venue",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 8 matching rows in other versions, none with a full UPRN in range; b: 7 UPRN points in range in the outline (way/156406632, way/156376247); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 8,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/156406632",
+       "registry": null,
+       "uprns_there": 94
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": "way/156376247",
+       "registry": null,
+       "uprns_there": 7
+      }
+     ],
+     "candidates": [
+      "100023238509",
+      "100023238120",
+      "100023238121",
+      "100023238296",
+      "100023238297",
+      "100023238298",
+      "100023238514"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#312",
+   "name": "Number3London",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 16 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 0 points; no outline, 10 m: 0 points; no outline, 10 m: 0 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 16,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music nightclubs#105",
+   "name": "Number3London",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 16 matching rows in other versions, none with a full UPRN in range; b: no UPRN point in range (no outline, 10 m: 0 points; no outline, 10 m: 0 points; no outline, 10 m: 0 points); c: no register match",
+   "tried": {
+    "a": {
+     "matches": 16,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      },
+      {
+       "point": "venue point",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": []
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  },
+  {
+   "row_id": "cultural_venues_CIM 2023 Music all#351",
+   "name": "Vinyl Deptford",
+   "column": "os_addressbase_uprn",
+   "old_value": "100000000000",
+   "reason": "a: 3 matching rows in other versions, none with a full UPRN in range; b: 3 UPRN points in range in the outline (way/1206220823, no outline); not chosen between; c: no register match",
+   "tried": {
+    "a": {
+     "matches": 3,
+     "candidates": [],
+     "outside_range": [],
+     "range": [
+      50000000000,
+      150000000000
+     ],
+     "tightened_by": []
+    },
+    "b": {
+     "seen": [
+      {
+       "point": "venue point",
+       "outline": "way/1206220823",
+       "registry": null,
+       "uprns_there": 3
+      },
+      {
+       "point": "venue point moved by its layer's measured offset (-112, 54 m)",
+       "outline": null,
+       "registry": null,
+       "uprns_there": 0
+      }
+     ],
+     "candidates": [
+      "100022011138",
+      "100023280765",
+      "100023280839"
+     ]
+    },
+    "c": {
+     "matches": 0,
+     "candidates": []
+    }
+   }
+  }
+ ]
+}

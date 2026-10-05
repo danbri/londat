@@ -1,0 +1,65 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Town Centre locations - London Plan 2016 (Greater London Authority)",
+ "dataset": "emqkp",
+ "page": "https://data.london.gov.uk/dataset/town-centre-locations-london-plan-2016-emqkp",
+ "resources": [
+  {
+   "resource": "50e12a40-90c4-4a46-af20-9891d1441a5c",
+   "file": "LP_2016_town_centre_points.zip",
+   "url": "https://data.london.gov.uk/download/emqkp/50e12a40-90c4-4a46-af20-9891d1441a5c/LP_2016_town_centre_points.zip",
+   "size": 15765,
+   "resource_date": "2019-04-17",
+   "fetched": "2026-10-04",
+   "entries": 8
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2019-04-17",
+ "update_frequency": null,
+ "geo": "Point Location",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "LP_2016_town_centre_points",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run emqkp: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 230,
+  "no_geometry": 0,
+  "in_zone": 19,
+  "in_cw": 1
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "name keys: 33 zone town centre names (zone-names.json); a cell equal to one (normalised) is a zone row, a weaker key than a code"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"Ref":105,"Centre":"East Greenwich","Borough_1":"Greenwich","Classifi_1":"District","Night_time":null,"Policy_dir":"Medium","Office_gui":null,"Potential":null,"LP_ref":"105","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.005427,51.485025]}},
+{"type":"Feature","properties":{"Ref":102,"Centre":"Greenwich West","Borough_1":"Greenwich","Classifi_1":"District","Night_time":"NT3","Policy_dir":"Medium","Office_gui":null,"Potential":null,"LP_ref":"102","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.011267,51.481418]}},
+{"type":"Feature","properties":{"Ref":150,"Centre":"Deptford","Borough_1":"Lewisham","Classifi_1":"District","Night_time":"NT3","Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"150","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.025621,51.477781]}},
+{"type":"Feature","properties":{"Ref":154,"Centre":"New Cross","Borough_1":"Lewisham","Classifi_1":"District","Night_time":"NT3","Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"154","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.039432,51.475832]}},
+{"type":"Feature","properties":{"Ref":158,"Centre":"Canning Town","Borough_1":"Newham","Classifi_1":"District","Night_time":null,"Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"158","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.010596,51.515117]}},
+{"type":"Feature","properties":{"Ref":172,"Centre":"Canada Water","Borough_1":"Southwark","Classifi_1":"District","Night_time":null,"Policy_dir":"High R","Office_gui":"B","Potential":null,"LP_ref":"172","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.046045,51.496316]}},
+{"type":"Feature","properties":{"Ref":174,"Centre":"Camberwell","Borough_1":"Southwark/Lambeth","Classifi_1":"District","Night_time":"NT3","Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"174","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.091858,51.473825]}},
+{"type":"Feature","properties":{"Ref":182,"Centre":"Brick Lane","Borough_1":"Tower Hamlets","Classifi_1":"District","Night_time":"NT3","Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"182","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.071515,51.521061]}},
+{"type":"Feature","properties":{"Ref":183,"Centre":"Chrisp Street","Borough_1":"Tower Hamlets","Classifi_1":"District","Night_time":null,"Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"183","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.014052,51.512111]}},
+{"type":"Feature","properties":{"Ref":186,"Centre":"Watney Market","Borough_1":"Tower Hamlets","Classifi_1":"District","Night_time":null,"Policy_dir":"Medium R","Office_gui":null,"Potential":null,"LP_ref":"186","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.057038,51.513848]}},
+{"type":"Feature","properties":{"Ref":187,"Centre":"Whitechapel","Borough_1":"Tower Hamlets","Classifi_1":"District","Night_time":null,"Policy_dir":"High R","Office_gui":null,"Potential":null,"LP_ref":"187","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.059577,51.519258]}},
+{"type":"Feature","properties":{"Ref":207,"Centre":"Leadenhall Market","Borough_1":"City of London","Classifi_1":"CAZ Frontage","Night_time":null,"Policy_dir":"Medium","Office_gui":"CAZ","Potential":null,"LP_ref":"207","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.083724,51.512257]}},
+{"type":"Feature","properties":{"Ref":208,"Centre":"Liverpool Street","Borough_1":"City of London","Classifi_1":"CAZ Frontage","Night_time":null,"Policy_dir":"Medium","Office_gui":"CAZ","Potential":null,"LP_ref":"208","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.082367,51.517594]}},
+{"type":"Feature","properties":{"Ref":209,"Centre":"Moorgate","Borough_1":"City of London","Classifi_1":"CAZ Frontage","Night_time":null,"Policy_dir":"Medium","Office_gui":"CAZ","Potential":null,"LP_ref":"209","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.087982,51.517649]}},
+{"type":"Feature","properties":{"Ref":212,"Centre":"London Bridge","Borough_1":"Southwark","Classifi_1":"CAZ Frontage","Night_time":null,"Policy_dir":"Medium","Office_gui":"CAZ","Potential":null,"LP_ref":"212","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.083309,51.504549]}},
+{"type":"Feature","properties":{"Ref":213,"Centre":"Wentworth Street","Borough_1":"Tower Hamlets","Classifi_1":"CAZ Frontage","Night_time":null,"Policy_dir":"Medium R","Office_gui":"CAZ","Potential":null,"LP_ref":"213","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.074974,51.516678]}},
+{"type":"Feature","properties":{"Ref":223,"Centre":"North Greenwich","Borough_1":"Greenwich","Classifi_1":"Unclassified","Night_time":null,"Policy_dir":null,"Office_gui":null,"Potential":"District","LP_ref":"PF2","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.004492,51.501488]}},
+{"type":"Feature","properties":{"Ref":228,"Centre":"Crossharbour","Borough_1":"Tower Hamlets","Classifi_1":"Unclassified","Night_time":null,"Policy_dir":null,"Office_gui":null,"Potential":"District","LP_ref":"PF7","Source":"The London Plan 2016","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.013049,51.494689]}},
+{"type":"Feature","properties":{"Ref":43,"Centre":"Canary Wharf","Borough_1":"Tower Hamlets","Classifi_1":"Major","Night_time":"NT2","Policy_dir":"High","Office_gui":"A","Potential":"Metropolitan","LP_ref":"43","Source":"The London Plan 2016","in_cw":true,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.019422,51.504471]}}
+]}

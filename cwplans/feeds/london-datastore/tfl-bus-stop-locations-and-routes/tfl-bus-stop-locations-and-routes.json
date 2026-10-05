@@ -1,0 +1,41 @@
+{"meta":{
+ "source": "London Datastore: TfL Bus Stop Locations and Routes (Transport for London)",
+ "dataset": "e68zn",
+ "page": "https://data.london.gov.uk/dataset/tfl-bus-stop-locations-and-routes-e68zn",
+ "resources": [
+  {
+   "resource": "673033eb-59a6-4903-84bc-d24495661707",
+   "file": "bus-stops-10-06-15.csv",
+   "url": "https://data.london.gov.uk/download/e68zn/673033eb-59a6-4903-84bc-d24495661707/bus-stops-10-06-15.csv",
+   "size": 1334657,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Transport for London). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2015-04-26",
+ "update_frequency": null,
+ "geo": "Point Location",
+ "theme": "transport",
+ "method": "lds-harvest-auto.mjs run e68zn: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [],
+ "counts": {
+  "tables_read": 1,
+  "rows_read": 19801,
+  "zone_rows": 4,
+  "zone_rows_by_key": {
+   "sector": 4
+  }
+ }
+},
+"tables":[
+{"table":"bus-stops-10-06-15.csv","rows_read":19801,"header_rows":[["Stop_Code_LBSL","Bus_Stop_Code","Naptan_Atco","Stop_Name","Location_Easting","Location_Northing","Heading","Stop_Area","Virtual_Bus_Stop"]],"zone_keys":["sector:SE1 0","sector:SE1 0","sector:SE1 1","sector:SE1 1"],"rows":[
+[2988,52312,"490004617A","NORTH ROAD",519826,190842,139,"SE10",0],
+[2989,49947,"490004617B","NORTH ROAD",519855,190790,319,"SE10",0],
+["M27",53736,"490004113E","BLOOD TRANSFUSION CENTRE",519646,191279,54,"SE11",0],
+["M30",51086,"490004113W","BLOOD TRANSFUSION CENTRE",519635,191256,233,"SE11",0]
+]}
+]}

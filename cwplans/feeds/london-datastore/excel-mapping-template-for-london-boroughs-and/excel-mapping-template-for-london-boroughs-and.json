@@ -1,0 +1,133 @@
+{"meta":{
+ "source": "London Datastore: Excel Mapping Template for London Boroughs and Wards (Greater London Authority)",
+ "dataset": "2w9lz",
+ "page": "https://data.london.gov.uk/dataset/excel-mapping-template-for-london-boroughs-and-wards-2w9lz",
+ "resources": [
+  {
+   "resource": "f6c0ac45-f188-42f8-b117-558148dbeb93",
+   "file": "Mapping-template-for-wards-B&D.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/f6c0ac45-f188-42f8-b117-558148dbeb93/Mapping-template-for-wards-B%26D.xls",
+   "size": 194560,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "b1f08033-4bd4-4778-bff2-82c911d0b383",
+   "file": "Mapping-template-for-wards-Barnet.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/b1f08033-4bd4-4778-bff2-82c911d0b383/Mapping-template-for-wards-Barnet.xls",
+   "size": 257536,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "ac956778-9526-401c-acb5-8c4ddd35f07e",
+   "file": "Mapping-template-for-wards-Bexley.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/ac956778-9526-401c-acb5-8c4ddd35f07e/Mapping-template-for-wards-Bexley.xls",
+   "size": 244224,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "580acaf5-eddd-486e-80f0-76a18fa5fb29",
+   "file": "Mapping-template-for-wards-Brent.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/580acaf5-eddd-486e-80f0-76a18fa5fb29/Mapping-template-for-wards-Brent.xls",
+   "size": 239104,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "bdca2c8f-4fa7-4598-a326-1d028013a33f",
+   "file": "Mapping-template-for-wards-Bromley.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/bdca2c8f-4fa7-4598-a326-1d028013a33f/Mapping-template-for-wards-Bromley.xls",
+   "size": 264704,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "94358c5a-315b-4cbd-b28d-b006b290cca1",
+   "file": "Mapping-template-for-wards-Camden.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/94358c5a-315b-4cbd-b28d-b006b290cca1/Mapping-template-for-wards-Camden.xls",
+   "size": 223744,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "2a23fb3b-8ce9-42cc-aeb4-39d23dff39fd",
+   "file": "Mapping-template-for-wards-Croydon.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/2a23fb3b-8ce9-42cc-aeb4-39d23dff39fd/Mapping-template-for-wards-Croydon.xls",
+   "size": 251392,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "7b3dea04-1012-4301-93cf-43e0d255e221",
+   "file": "Mapping-template-for-wards-Ealing.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/7b3dea04-1012-4301-93cf-43e0d255e221/Mapping-template-for-wards-Ealing.xls",
+   "size": 245760,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "8a7c13db-404f-4558-8de4-cbb1f5b4271d",
+   "file": "Mapping-template-for-wards-Enfield.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/8a7c13db-404f-4558-8de4-cbb1f5b4271d/Mapping-template-for-wards-Enfield.xls",
+   "size": 245248,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "517e1f32-fe2e-4f6a-aa56-fab78c4dbbfe",
+   "file": "Mapping-template-for-wards-Greenwich.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/517e1f32-fe2e-4f6a-aa56-fab78c4dbbfe/Mapping-template-for-wards-Greenwich.xls",
+   "size": 226816,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "f91665c6-5f7d-41f6-80df-1e8a92d02140",
+   "file": "Mapping-template-for-wards-Hackney.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/f91665c6-5f7d-41f6-80df-1e8a92d02140/Mapping-template-for-wards-Hackney.xls",
+   "size": 225792,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "f7dcd9bd-92dc-4ec8-9680-8ce599063b7f",
+   "file": "Mapping-template-for-wards-Hammersmith&Fulham.xls",
+   "url": "https://data.london.gov.uk/download/2w9lz/f7dcd9bd-92dc-4ec8-9680-8ce599063b7f/Mapping-template-for-wards-Hammersmith%26Fulham.xls",
+   "size": 213504,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2020-04-09",
+ "update_frequency": null,
+ "geo": "Ward",
+ "theme": "buildings-places",
+ "method": "lds-harvest-auto.mjs run 2w9lz: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "45 stems, 15 MB: the newest 12 taken (caps)"
+ ],
+ "counts": {
+  "tables_read": 24,
+  "rows_read": 863,
+  "zone_rows": 4,
+  "zone_rows_by_key": {
+   "ward2003": 4
+  }
+ }
+},
+"tables":[
+{"table":"Mapping-template-for-wards-Greenwich.xls#Ward Thematic Map","rows_read":51,"header_rows":[["Code","Ward name","Mapname","Values",null,null,"Ensure Macros are enabled then paste your data into column D",null,null,null,null,null,"To use different colours to the default ones, find the RGB values of the colours you want, and enter them into the cell grid starting in T22.",null,null,null,null,null,null,null,null,"UpdateAllcells",null,null,"MapNameToShape",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]],"zone_keys":["ward2003:00ALGQ","ward2003:00ALGY","ward2003:00ALHB"],"rows":[
+["00ALGQ","Blackheath Westcombe","Freeform_3207",105,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Freeform_3207","Freeform 3207",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["00ALGY","Greenwich West","Freeform_3214",140,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Freeform_3214","Freeform 3214",null,null,null,null,100,16777164,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["00ALHB","Peninsula","Freeform_3217",155,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Freeform_3217","Freeform 3217",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+]},
+{"table":"Mapping-template-for-wards-Hackney.xls#Ward Thematic Map","rows_read":53,"header_rows":[["Code","Ward name","Mapname","Values",null,null,"Ensure Macros are enabled then paste your data into column D",null,null,null,null,null,"To use different colours to the default ones, find the RGB values of the colours you want, and enter them into the cell grid starting in T22.",null,null,null,null,null,null,null,null,"UpdateAllcells",null,null,"MapNameToShape",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]],"zone_keys":["ward2003:00AMGJ"],"rows":[
+["00AMGJ","Haggerston","Freeform_3254",140,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"Freeform_3254","Freeform 3254",null,null,null,null,100,16777164,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+]}
+]}

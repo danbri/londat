@@ -1,0 +1,49 @@
+{"meta":{
+ "source": "London Datastore: Local Authority By-Election Results (Greater London Authority)",
+ "dataset": "2kokr",
+ "page": "https://data.london.gov.uk/dataset/local-authority-by-election-results-2kokr",
+ "resources": [
+  {
+   "resource": "46039198-d31e-4f03-af36-3fb5ade18db8",
+   "file": "local-by-election-results-since-2010-london.xls",
+   "url": "https://data.london.gov.uk/download/2kokr/46039198-d31e-4f03-af36-3fb5ade18db8/local-by-election-results-since-2010-london.xls",
+   "size": 314880,
+   "resource_date": "2015-10-06",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2015-09-24",
+ "update_frequency": null,
+ "geo": "Ward",
+ "theme": "people-housing",
+ "method": "lds-harvest-auto.mjs run 2kokr: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [],
+ "counts": {
+  "tables_read": 1,
+  "rows_read": 305,
+  "zone_rows": 11,
+  "zone_rows_by_key": {
+   "ward2003": 8,
+   "ward": 3
+  }
+ }
+},
+"tables":[
+{"table":"local-by-election-results-since-2010-london.xls#Local By-elections since 2010 ","rows_read":305,"header_rows":[["Date","Old Ward Code","New ward code","Ward","Borough","Winner (Party)","Gain","Majority","Turnout","Winning candidate","Replacing","Voting - Party#1","#2","#3","#4","#5","#6","#7","#8","#9",null]],"zone_keys":["ward2003:00BGGL","ward2003:00BEGC","ward2003:00BEGY","ward2003:00BEGQ","ward2003:00BGGL","ward2003:00BGGM","ward2003:00BEGJ","ward2003:00AZGK","ward:E05000222","ward:E05000537","ward:E05009334"],"rows":[
+["2010-12-16","00BGGL","E05000587","Spitalfields and Banglatown","Tower Hamlets","Respect","Respect gain from Labour",113,0.1683,null,null,"Respect 666","Lab 553","Con 135","Green 52","Lib Dem 33","Ind 28",null,null,null,null],
+["2011-03-10","00BEGC","E05000534","Brunswick Park","Southwark","Lab","Lab hold",1351,0.342,null,null,"Lab 1981","Lib Dem 630","Green 231","Con 129","Trade Unionist and Socialist Coalition 70",null,null,null,null,null],
+["2011-05-05","00BEGY","E05000553","The Lane","Southwark","Lab","Lab hold",2198,0.3962,null,null,"Lab 2670","Green 472","Lib Dem 471","Con 423","Trade Unionists and Socialists Against Cuts 107",null,null,null,null,null],
+["2011-07-07","00BEGQ","E05000546","Peckham","Southwark","Lab","Lab hold",1200,0.2554,null,null,"Lab 1754","Lib Dem 554","Con 86","Trade Unionists and Socialists Against Cuts 63","Green 46",null,null,null,null,null],
+["2012-04-19","00BGGL","E05000587","Spitalfields and Banglatown","Tower Hamlets","Ind","Ind gain from Lab",43,0.3143,null,null,"Ind 1030","Lab 987","Con 140","Green 99","Lib Dem 39",null,null,null,null,null],
+["2012-05-03","00BGGM","E05000588","Weavers","Tower Hamlets","Lab","Lab hold",284,0.446,null,null,"Lab 1544","Respect 1260","Con 415","Green 373","Lib Dem 208","Ind 36",null,null,null,null],
+["2012-11-29","00BEGJ","E05000540","East Walworth","Southwark","Lab","Lab hold",256,0.2535,null,null,"Lab 1259","Lib Dem 1003","Con 94",null,null,null,null,null,null,null],
+["2013-03-28","00AZGK","E05000443","Evelyn","Lewisham","Lab","Lab hold",574,0.162,null,null,"Lab 978 ","Lewisham People Before Profit 404 ","Lib Dem 131 ","UKIP 119 ","Con 119 ",null,null,null,null,null],
+["2015-05-07",null,"E05000222","Greenwich West","Greenwich","Lab","Lab hold",964,0.6413,"Mehboob Khan","Matthew Pennycook","Lab 3430","Con 2466","Green 1452","Lib Dem 756","UKIP 422","Independent 138","TUSC 80",null,null,null],
+["2015-05-07",null,"E05000537","Chaucer","Southwark","Lab","Lab hold",1419,0.6094,"Helen Dennis","Claire Maugham","Lab 2951","Lib Dem 1532","Con 994","Green 564","UKIP 240","Independent 67","All People's Party 25",null,null,null],
+["2015-06-11",null,"E05009334","Stepney Green","Tower Hamlets","Lab","Lab gain from Tower Hamlets First",171,0.474,"Sabina Akhtar","Alibor Choudhury","Lab 1643","Independent 1472","Green 272","UKIP 203","Con 158","Lib Dem 114","Something New 40",null,null,null]
+]}
+]}

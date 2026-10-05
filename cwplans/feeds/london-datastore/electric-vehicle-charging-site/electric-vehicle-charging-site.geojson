@@ -1,0 +1,51 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Electric Vehicle Charging Site (Greater London Authority)",
+ "dataset": "2lzpg",
+ "page": "https://data.london.gov.uk/dataset/electric-vehicle-charging-site-2lzpg",
+ "resources": [
+  {
+   "resource": "8ef9c743-c01d-4329-8239-8f858ff4de53",
+   "file": "Rapid_charging_points.gpkg",
+   "url": "https://data.london.gov.uk/download/2lzpg/8ef9c743-c01d-4329-8239-8f858ff4de53/Rapid_charging_points.gpkg",
+   "size": 147456,
+   "resource_date": "2019-09-03",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Creative Commons Attribution",
+ "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+ "attribution": "Greater London Authority, Creative Commons Attribution. The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2019-09-03",
+ "update_frequency": "Annually",
+ "geo": "Custom Polygons",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "Rapid_charging_points",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 2lzpg: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 156,
+  "no_geometry": 0,
+  "in_zone": 8,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": []
+},
+"features":[
+{"type":"Feature","properties":{"fid":19,"borough":"Tower Hamlets","easting":"536698.82539628597","latitude":"51.5196855","longtitude":"-0.0311525","northing":"181922.26477374579","numberrcpoints":"1","objectid":18,"siteid":"395","sitename":"Burdett Road south of Portia way","taxipublicuses":"Taxi","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.031126,51.519686]}},
+{"type":"Feature","properties":{"fid":54,"borough":"Southwark","easting":"533198.77701369766","latitude":"51.496206","longtitude":"-0.082589","northing":"179216.51885216916","numberrcpoints":"1","objectid":54,"siteid":"711","sitename":"76-80 Tower Bridge Road","taxipublicuses":"Taxi","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.082564,51.496207]}},
+{"type":"Feature","properties":{"fid":59,"borough":"Southwark","easting":"532725.22974705661","latitude":"51.497241","longtitude":"-0.089368","northing":"179319.30970892392","numberrcpoints":"1","objectid":59,"siteid":"729","sitename":"Great Dover Street northbound,","taxipublicuses":"Taxi","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.089343,51.497242]}},
+{"type":"Feature","properties":{"fid":69,"borough":"Lewisham","easting":"536432.36967909173","latitude":"51.475891","longtitude":"-0.036876","northing":"177041.56346299726","numberrcpoints":"1","objectid":68,"siteid":"829","sitename":"2-4 Clifton Rise, SE14","taxipublicuses":"Public use","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.036851,51.475891]}},
+{"type":"Feature","properties":{"fid":81,"borough":"Southwark","easting":"532486.64788130927","latitude":"51.504720","longtitude":"-0.092493","northing":"180145.33830638288","numberrcpoints":"1","objectid":80,"siteid":"904","sitename":"Southwark st east of Redcross way","taxipublicuses":"Public use","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.092468,51.504721]}},
+{"type":"Feature","properties":{"fid":128,"borough":"Greenwich","easting":"537541.37063379702","latitude":"51.474525","longtitude":"-0.020965","northing":"176919.4073084523","numberrcpoints":"1","objectid":128,"siteid":"738","sitename":"17A, Greenwich High Road","taxipublicuses":"Public use","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.02094,51.474525]}},
+{"type":"Feature","properties":{"fid":137,"borough":"Southwark","easting":"533805.31023341184","latitude":"51.502605","longtitude":"-0.073581","northing":"179944.52068793774","numberrcpoints":"2","objectid":137,"siteid":"470","sitename":"Qpark: Tower Bridge","taxipublicuses":"Public use","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.073556,51.502606]}},
+{"type":"Feature","properties":{"fid":156,"borough":"Tower Hamlets","easting":"534177.69253101584","latitude":"51.5180181","longtitude":"-0.0675633","northing":"181669.50699002889","numberrcpoints":"1","objectid":156,"siteid":"1141","sitename":"Shell Whitechapel Road","taxipublicuses":"Public use","url":"https://tfl.gov.uk/modes/driving/electric-vehicles-and-rapid-charging","runtime":"08/29/2019","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.067537,51.518019]}}
+]}

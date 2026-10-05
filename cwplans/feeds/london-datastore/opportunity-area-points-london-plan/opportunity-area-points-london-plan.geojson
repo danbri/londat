@@ -1,0 +1,51 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Opportunity Area Points (London Plan Consolidated with Alterations since 2004) (Greater London Authority)",
+ "dataset": "ep0rw",
+ "page": "https://data.london.gov.uk/dataset/opportunity-area-points-london-plan-consolidated-with-alteration-ep0rw",
+ "resources": [
+  {
+   "resource": "aaccdd91-0c04-434e-85f7-e11e75984a6f",
+   "file": "lp-falp-2006-opportunity-areas-points-shp.zip",
+   "url": "https://data.london.gov.uk/download/ep0rw/aaccdd91-0c04-434e-85f7-e11e75984a6f/lp-falp-2006-opportunity-areas-points-shp.zip",
+   "size": 6924,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04",
+   "entries": 7
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-07-04",
+ "update_frequency": null,
+ "geo": "Point Location",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "lp-falp-2006-opportunity-areas-points",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run ep0rw: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 28,
+  "no_geometry": 0,
+  "in_zone": 5,
+  "in_cw": 1
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"LP_Ref":2,"Type":"Opportunity Area","Name":"City Fringe  (including Bishopsgate/South Shoreditch)","Easting":533716.62825,"Northing":181459.137118,"Source":"The London Plan consolidated with alterations since 2004","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.074258,51.516238]}},
+{"type":"Feature","properties":{"LP_Ref":6,"Type":"Opportunity Area","Name":"Deptford Creek/ Greenwich Riverside","Easting":537454.130937,"Northing":177733.483575,"Source":"The London Plan consolidated with alterations since 2004","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.021878,51.481862]}},
+{"type":"Feature","properties":{"LP_Ref":9,"Type":"Opportunity Area","Name":"Greenwich Peninsula & Charlton Riverside West","Easting":539513.203026,"Northing":179292.557295,"Source":"The London Plan consolidated with alterations since 2004","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.008372,51.495368]}},
+{"type":"Feature","properties":{"LP_Ref":12,"Type":"Opportunity Area","Name":"Isle of Dogs","Easting":537672.559095,"Northing":179695.941827,"Source":"The London Plan consolidated with alterations since 2004","in_cw":true,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.017969,51.499444]}},
+{"type":"Feature","properties":{"LP_Ref":15,"Type":"Opportunity Area","Name":"London Bridge/ Bankside","Easting":532448.133844,"Northing":179894.465,"Source":"The London Plan consolidated with alterations since 2004","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.093116,51.502476]}}
+]}

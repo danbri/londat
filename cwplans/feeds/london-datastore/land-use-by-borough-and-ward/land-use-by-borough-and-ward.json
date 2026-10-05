@@ -1,0 +1,97 @@
+{"meta":{
+ "source": "London Datastore: Land Use by Borough and Ward (Ministry of Housing, Communities & Local Government)",
+ "dataset": "2489z",
+ "page": "https://data.london.gov.uk/dataset/land-use-by-borough-and-ward-2489z",
+ "resources": [
+  {
+   "resource": "aa1464a0-acf4-4978-85fd-52e651c8f0b9",
+   "file": "land-use-glud-ward.csv",
+   "url": "https://data.london.gov.uk/download/2489z/aa1464a0-acf4-4978-85fd-52e651c8f0b9/land-use-glud-ward.csv",
+   "size": 96438,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "65301e5a-c593-414b-998f-a805a1366ecf",
+   "file": "land-use-glud-borough.xls",
+   "url": "https://data.london.gov.uk/download/2489z/65301e5a-c593-414b-998f-a805a1366ecf/land-use-glud-borough.xls",
+   "size": 47616,
+   "resource_date": "2015-09-21",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "1f9be3a5-7ea7-4996-8875-fa060d8335e4",
+   "file": "Land use borough.csv",
+   "url": "https://data.london.gov.uk/download/2489z/1f9be3a5-7ea7-4996-8875-fa060d8335e4/Land%20use%20borough.csv",
+   "size": 17248,
+   "resource_date": "2018-03-05",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Ministry of Housing, Communities & Local Government). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2018-03-05",
+ "update_frequency": null,
+ "geo": "Ward",
+ "theme": "buildings-places",
+ "method": "lds-harvest-auto.mjs run 2489z: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ],
+ "counts": {
+  "tables_read": 5,
+  "rows_read": 1143,
+  "zone_rows": 42,
+  "zone_rows_by_key": {
+   "ward2003": 42
+  }
+ }
+},
+"tables":[
+{"table":"land-use-glud-ward.csv","rows_read":626,"header_rows":[["Area Code","Local Authority Name","Area name","Area of Domestic Buildings","Area of Domestic Gardens","Area of Non Domestic Buildings","Area of Road","Area of Rail","Area of Path","Area of Greenspace","Area of Water","Area of Other Land Uses","Area of Unclassified Land","Total Area of All Land Types","Area of Admin Geography","% Area of Domestic Buildings","% Area of Domestic Gardens","% Area of Non Domestic Buildings","% Area of Road","% Area of Rail","% Area of Path","% Area of Greenspace","% Area of Water","% Area of Other Land Uses","% Area of Unclassified Land","% Total Area of All Land Types","Quality of Fit Indicator"]],"zone_keys":["ward2003:00ALGQ","ward2003:00ALGY","ward2003:00ALHB","ward2003:00AMGJ","ward2003:00AUFY","ward2003:00AZGE","ward2003:00AZGF","ward2003:00AZGK","ward2003:00AZGR","ward2003:00AZGW","ward2003:00BBGD","ward2003:00BBGE","ward2003:00BEGC","ward2003:00BEGD","ward2003:00BEGE","ward2003:00BEGF","ward2003:00BEGJ","ward2003:00BEGK","ward2003:00BEGL","ward2003:00BEGM","ward2003:00BEGN","ward2003:00BEGP","ward2003:00BEGQ","ward2003:00BEGS","ward2003:00BEGT","ward2003:00BEGU","ward2003:00BEGX","ward2003:00BEGY","ward2003:00BGFX","ward2003:00BGFY","ward2003:00BGGB","ward2003:00BGGC","ward2003:00BGGD","ward2003:00BGGE","ward2003:00BGGF","ward2003:00BGGG","ward2003:00BGGH","ward2003:00BGGJ","ward2003:00BGGK","ward2003:00BGGL","ward2003:00BGGM","ward2003:00BGGN"],"rows":[
+["00ALGQ","Greenwich","Blackheath Westcombe",260.57,835.53,77.71,377.04,6.79,9.11,443.55,0.58,140.53,0,2151.4,2137.56,12.1,38.8,3.6,17.5,0.3,0.4,20.6,0,6.5,0,100,0.65],
+["00ALGY","Greenwich","Greenwich West",197.7,296.5,183.78,351.41,29.58,106.11,1036.94,79.19,348.45,0,2629.66,2797.07,7.5,11.3,7,13.4,1.1,4,39.4,3,13.3,0,100,-5.99],
+["00ALHB","Greenwich","Peninsula",214.33,277.98,548.95,600.02,26.69,61.62,519.39,245.12,1156.81,0,3650.91,4482.17,5.9,7.6,15,16.4,0.7,1.7,14.2,6.7,31.7,0,100,-18.55],
+["00AMGJ","Hackney","Haggerston",104.79,47.89,280.8,285.27,4.95,25.26,259.61,8.18,209.02,0,1225.78,1242.5,8.5,3.9,22.9,23.3,0.4,2.1,21.2,0.7,17.1,0,100,-1.35],
+["00AUFY","Islington","Bunhill",79.95,17.55,338.11,284.55,0,7.68,132.82,0,242.47,0,1103.14,1089.1,7.2,1.6,30.6,25.8,0,0.7,12,0,22,0,100,1.29],
+["00AZGE","Lewisham","Blackheath",221.07,641.15,102.17,351.35,9.5,14.02,814.14,5.7,143.99,0,2303.09,2312.53,9.6,27.8,4.4,15.3,0.4,0.6,35.3,0.2,6.3,0,100,-0.41],
+["00AZGF","Lewisham","Brockley",251.59,535.66,105.37,329.14,33.69,11.05,248.92,9.52,138.97,0,1663.9,1686.16,15.1,32.2,6.3,19.8,2,0.7,15,0.6,8.4,0,100,-1.32],
+["00AZGK","Lewisham","Evelyn",138.25,166.37,233.18,253.78,14.47,28.95,380.6,27.74,384.58,0,1627.92,1773.65,8.5,10.2,14.3,15.6,0.9,1.8,23.4,1.7,23.6,0,100,-8.22],
+["00AZGR","Lewisham","New Cross",189.77,240.8,204.8,304,186.69,24.66,363.65,13.76,319.66,0,1847.8,1816.61,10.3,13,11.1,16.5,10.1,1.3,19.7,0.7,17.3,0,100,1.72],
+["00AZGW","Lewisham","Telegraph Hill",234.33,474.77,75.62,298.9,45.19,20.26,286.47,0.33,126.36,0,1562.25,1543.99,15,30.4,4.8,19.1,2.9,1.3,18.3,0,8.1,0,100,1.18],
+["00BBGD","Newham","Canning Town North",239.36,283.18,278.69,422.51,48.98,35.49,631.31,81.59,496.29,0,2517.4,2523.14,9.5,11.2,11.1,16.8,1.9,1.4,25.1,3.2,19.7,0,100,-0.23],
+["00BBGE","Newham","Canning Town South",185.74,249.95,99.87,397.01,47.69,22.29,315.25,186.15,249.57,0,1753.52,1817.35,10.6,14.3,5.7,22.6,2.7,1.3,18,10.6,14.2,0,100,-3.51],
+["00BEGC","Southwark","Brunswick Park",149.53,202.38,105.16,186.59,5.43,14.86,120.12,0,135.31,0,919.38,934.74,16.3,22,11.4,20.3,0.6,1.6,13.1,0,14.7,0,100,-1.64],
+["00BEGD","Southwark","Camberwell Green",120.25,171.34,150.96,216.34,20.89,8.91,110.45,0,181.59,0,980.72,974.75,12.3,17.5,15.4,22.1,2.1,0.9,11.3,0,18.5,0,100,0.61],
+["00BEGE","Southwark","Cathedrals",144.82,75.39,394.96,409.43,89.02,9.43,194.38,25.72,285.22,0,1628.35,1763.21,8.9,4.6,24.3,25.1,5.5,0.6,11.9,1.6,17.5,0,100,-7.65],
+["00BEGF","Southwark","Chaucer",60,30.05,158.3,201.59,0,13.79,176.64,0.32,174.16,0,814.86,822.5,7.4,3.7,19.4,24.7,0,1.7,21.7,0,21.4,0,100,-0.93],
+["00BEGJ","Southwark","East Walworth",110.16,104.89,132.4,250.45,0,21.94,299.61,29.68,182.33,0,1131.45,1143.76,9.7,9.3,11.7,22.1,0,1.9,26.5,2.6,16.1,0,100,-1.08],
+["00BEGK","Southwark","Faraday",105.78,78.27,62.41,173.94,0,19.42,306.01,0,129.55,0,875.38,876.83,12.1,8.9,7.1,19.9,0,2.2,35,0,14.8,0,100,-0.16],
+["00BEGL","Southwark","Grange",110.38,61.04,285.25,241.72,24.61,17.99,173.43,0.24,284.9,0,1199.56,1204.51,9.2,5.1,23.8,20.2,2.1,1.5,14.5,0,23.8,0,100,-0.41],
+["00BEGM","Southwark","Livesey",145.22,174.57,250.76,283.97,37.84,16.24,186.38,0,342.61,0,1437.57,1436.33,10.1,12.1,17.4,19.8,2.6,1.1,13,0,23.8,0,100,0.09],
+["00BEGN","Southwark","Newington",117.51,118.31,95.64,187.04,16.5,10.05,157.61,0,129.29,0,831.97,832.3,14.1,14.2,11.5,22.5,2,1.2,18.9,0,15.5,0,100,-0.04],
+["00BEGP","Southwark","Nunhead",214.7,299.25,50.79,220.18,23.25,14.84,382.8,0,106.54,0,1312.35,1322,16.4,22.8,3.9,16.8,1.8,1.1,29.2,0,8.1,0,100,-0.73],
+["00BEGQ","Southwark","Peckham",144.24,162.51,71.46,203.65,0,6.58,132.84,0,158.9,0,880.18,872.46,16.4,18.5,8.1,23.1,0,0.7,15.1,0,18.1,0,100,0.88],
+["00BEGS","Southwark","Riverside",96.84,60.02,213.13,219.04,88.99,9.82,125.15,226.21,263.5,0,1302.69,1332.25,7.4,4.6,16.4,16.8,6.8,0.8,9.6,17.4,20.2,0,100,-2.22],
+["00BEGT","Southwark","Rotherhithe",111.43,126.63,115.85,233.53,15.05,41.98,409.78,66.61,258.94,0,1379.8,1492.39,8.1,9.2,8.4,16.9,1.1,3,29.7,4.8,18.8,0,100,-7.54],
+["00BEGU","Southwark","South Bermondsey",127.74,144.14,102.58,225.62,0,12.73,171.14,0,164.7,0,948.66,973.18,13.5,15.2,10.8,23.8,0,1.3,18,0,17.4,0,100,-2.52],
+["00BEGX","Southwark","Surrey Docks",126.23,159.61,144.17,266.22,0,31.09,307.2,212.27,299.61,0,1546.38,1901.13,8.2,10.3,9.3,17.2,0,2,19.9,13.7,19.4,0,100,-18.66],
+["00BEGY","Southwark","The Lane",236.55,336.59,154.38,305.3,36,8.62,144.95,0.01,183.59,0,1406,1389.6,16.8,23.9,11,21.7,2.6,0.6,10.3,0,13.1,0,100,1.18],
+["00BGFX","Tower Hamlets","Bethnal Green South",96.7,92.84,109.54,201.17,61.45,13.51,167.62,0,149.54,0,892.37,881.38,10.8,10.4,12.3,22.5,6.9,1.5,18.8,0,16.8,0,100,1.25],
+["00BGFY","Tower Hamlets","Blackwall and Cubitt Town",133.59,153.86,275.51,450.85,25.76,25.21,431.23,4772.82,555.15,0,6823.97,2966.85,2,2.3,4,6.6,0.4,0.4,6.3,69.9,8.1,0,100,130.01],
+["00BGGB","Tower Hamlets","Bromley-by-Bow",82.25,101.51,168.07,214.46,15.79,6.82,155.49,47.04,283.9,0,1075.33,1074.15,7.6,9.4,15.6,19.9,1.5,0.6,14.5,4.4,26.4,0,100,0.11],
+["00BGGC","Tower Hamlets","East India and Lansbury",122.88,116.57,138.1,299.96,7.63,19.87,262.17,11.16,200.29,0,1178.63,1224.22,10.4,9.9,11.7,25.4,0.6,1.7,22.2,0.9,17,0,100,-3.72],
+["00BGGD","Tower Hamlets","Limehouse",98.29,131.08,134.44,248.95,33.97,15.72,150.21,33.59,220.24,0,1066.48,1141.83,9.2,12.3,12.6,23.3,3.2,1.5,14.1,3.1,20.7,0,100,-6.6],
+["00BGGE","Tower Hamlets","Mile End and Globe Town",108.61,129.59,117.52,214.67,30.08,10.86,154.46,12.59,124.96,0,903.34,899.73,12,14.3,13,23.8,3.3,1.2,17.1,1.4,13.8,0,100,0.4],
+["00BGGF","Tower Hamlets","Mile End East",87.29,99.66,94.73,210.53,299.4,9.1,338.06,10.54,194.78,0,1344.09,1070.01,6.5,7.4,7,15.7,22.3,0.7,25.2,0.8,14.5,0,100,25.61],
+["00BGGG","Tower Hamlets","Millwall",135.37,155.78,363.77,342.17,23.63,13.08,170.11,283.35,527.1,0,2014.37,2458.42,6.7,7.7,18.1,17,1.2,0.6,8.4,14.1,26.2,0,100,-18.06],
+["00BGGH","Tower Hamlets","St Dunstan's and Stepney Green",142.99,167.73,93.49,235.93,0.69,15.49,161.67,11.56,184.1,0,1013.65,1018.17,14.1,16.5,9.2,23.3,0.1,1.5,15.9,1.1,18.2,0,100,-0.44],
+["00BGGJ","Tower Hamlets","St Katherine's and Wapping",96.22,53.6,230.07,222.07,2.47,16.43,167.09,107.06,294.75,0,1189.76,1505.69,8.1,4.5,19.3,18.7,0.2,1.4,14,9,24.8,0,100,-20.98],
+["00BGGK","Tower Hamlets","Shadwell",68.06,63.07,126.39,181.2,1.07,5.19,101.06,72.65,228.51,0,847.19,962.7,8,7.4,14.9,21.4,0.1,0.6,11.9,8.6,27,0,100,-12],
+["00BGGL","Tower Hamlets","Spitalfields and Banglatown",85.13,34.72,180.64,157.76,0,3.78,38.47,0,141.98,0,642.47,638.4,13.3,5.4,28.1,24.6,0,0.6,6,0,22.1,0,100,0.64],
+["00BGGM","Tower Hamlets","Weavers",99.04,60.18,107.69,190.15,9.87,12.5,182.74,0.07,114.33,0,776.56,778.76,12.8,7.7,13.9,24.5,1.3,1.6,23.5,0,14.7,0,100,-0.28],
+["00BGGN","Tower Hamlets","Whitechapel",106.98,62.61,218.67,256.03,32.01,8.54,84.26,0,174.44,0,943.54,917.85,11.3,6.6,23.2,27.1,3.4,0.9,8.9,0,18.5,0,100,2.8]
+]}
+]}

@@ -1,0 +1,58 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Police Front Counter Access Times (Greater London Authority)",
+ "dataset": "2g1p1",
+ "page": "https://data.london.gov.uk/dataset/police-front-counter-access-times-2g1p1",
+ "resources": [
+  {
+   "resource": "5acb6da0-4004-4c89-a99c-5673a2bd5a54",
+   "file": "police-counters.csv",
+   "url": "https://data.london.gov.uk/download/2g1p1/5acb6da0-4004-4c89-a99c-5673a2bd5a54/police-counters.csv",
+   "size": 10750,
+   "resource_date": "2025-06-20",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-07-07",
+ "update_frequency": null,
+ "geo": "Output Area",
+ "theme": "transport",
+ "layers": [
+  {
+   "table": "police-counters.csv",
+   "srs": "per row",
+   "columns": [
+    "longitude",
+    "latitude"
+   ],
+   "rows_read": 137
+  }
+ ],
+ "crs_source": "EPSG:per row",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 2g1p1: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 8,
+  "no_geometry": 0,
+  "in_zone": 8,
+  "in_cw": 0,
+  "table_rows_read": 137,
+  "note": "features made from table rows: source_features counts the zone rows only; table_rows_read counts every row read"
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": []
+},
+"features":[
+{"type":"Feature","properties":{"name":"GREENWICH POLICE STATION","local authority":"GREENWICH","longitude":-0.0098948,"latitude":51.478,"status":"cut","current":"24HR","proposed":"CLOSED","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.009895,51.478]}},
+{"type":"Feature","properties":{"name":"DEPTFORD POLICE STATION","local authority":"LEWISHAM","longitude":-0.0311266,"latitude":51.4767,"status":"keep","current":"24HR","proposed":"DAY TIME","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.031127,51.4767]}},
+{"type":"Feature","properties":{"name":"PECKHAM POLICE STATION","local authority":"SOUTHWARK","longitude":-0.0648239,"latitude":51.4743,"status":"keep","current":"24HR","proposed":"24HR","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.064824,51.4743]}},
+{"type":"Feature","properties":{"name":"ROTHERHITHE POLICE STATION","local authority":"SOUTHWARK","longitude":-0.0515833,"latitude":51.4954,"status":"cut","current":"DAY TIME","proposed":"CLOSED","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.051583,51.4954]}},
+{"type":"Feature","properties":{"name":"BRICK LANE POLICE OFFICE","local authority":"TOWER HAMLETS","longitude":-0.071965,"latitude":51.5148,"status":"keep","current":"DAY TIME","proposed":"DAY TIME","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.071965,51.5148]}},
+{"type":"Feature","properties":{"name":"ISLE OF DOGS POLICE STATION","local authority":"TOWER HAMLETS","longitude":-0.0376757,"latitude":51.5198,"status":"cut","current":"DAY TIME","proposed":"CLOSED","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.037676,51.5198]}},
+{"type":"Feature","properties":{"name":"LIMEHOUSE POLICE STATION & FORMER SECTION HOUSE","local authority":"TOWER HAMLETS","longitude":-0.0271361,"latitude":51.511,"status":"keep","current":"24HR","proposed":"DAY TIME","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.027136,51.511]}},
+{"type":"Feature","properties":{"name":"POPLAR POLICE OFFICE","local authority":"TOWER HAMLETS","longitude":-0.0152027,"latitude":51.5128,"status":"cut","current":"DAY TIME","proposed":"CLOSED","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.015203,51.5128]}}
+]}

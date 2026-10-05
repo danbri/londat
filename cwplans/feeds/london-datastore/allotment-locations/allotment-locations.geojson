@@ -1,0 +1,69 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Allotment Locations (Greater London Authority)",
+ "dataset": "248xz",
+ "page": "https://data.london.gov.uk/dataset/allotment-locations-248xz",
+ "resources": [
+  {
+   "resource": "7f0af12b-bed3-4387-a2be-0531d1368c10",
+   "file": "gla-allotment-locations-shp.zip",
+   "url": "https://data.london.gov.uk/download/248xz/7f0af12b-bed3-4387-a2be-0531d1368c10/gla-allotment-locations-shp.zip",
+   "size": 57592,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04",
+   "entries": 4
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-07-04",
+ "update_frequency": null,
+ "geo": "Point Location",
+ "theme": "environment",
+ "layers": [
+  {
+   "table": "gla-allotment-locations",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 248xz: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 741,
+  "no_geometry": 0,
+  "in_zone": 23,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"GLA_ID":316,"REF":"14","NAME":"Restell Close","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE3 7UQ","BOROUGH":"Greenwich","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":539356,"NORTHING":177761,"LATITUDE":0.005504,"LONGITUDE":51.481589,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.005508,51.481644]}},
+{"type":"Feature","properties":{"GLA_ID":315,"REF":"18","NAME":"Prior Street","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE10 8SF","BOROUGH":"Greenwich","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":538255,"NORTHING":177137,"LATITUDE":-0.010592,"LONGITUDE":51.47625,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.010587,51.476305]}},
+{"type":"Feature","properties":{"GLA_ID":310,"REF":"12","NAME":"Humber","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE3 7LX","BOROUGH":"Greenwich","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":539882,"NORTHING":177966,"LATITUDE":0.013148,"LONGITUDE":51.4833,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.013151,51.483355]}},
+{"type":"Feature","properties":{"GLA_ID":518,"REF":"0","NAME":"Blackhorse Road","LOCATION":"Blackhorse Road","SUPPLIEDPO":"SE8 5NX","NEARESTPOS":"SE8 5HZ","BOROUGH":"Lewisham","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536191,"NORTHING":177893,"LATITUDE":-0.040007,"LONGITUDE":51.483547,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.040002,51.483602]}},
+{"type":"Feature","properties":{"GLA_ID":526,"REF":"0","NAME":"Edward Street","LOCATION":"Edward Street, opposite Milton Court Road","SUPPLIEDPO":"SE14 6DS","NEARESTPOS":"SE14 6JW","BOROUGH":"Lewisham","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536352,"NORTHING":177279,"LATITUDE":-0.037924,"LONGITUDE":51.477988,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.037919,51.478043]}},
+{"type":"Feature","properties":{"GLA_ID":541,"REF":"0","NAME":"Royal Naval Place Stage I","LOCATION":"Amersham Vale","SUPPLIEDPO":"SE14 6LF","NEARESTPOS":"SE14 6LE","BOROUGH":"Lewisham","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536701,"NORTHING":177259,"LATITUDE":-0.032908,"LONGITUDE":51.477722,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.032903,51.477777]}},
+{"type":"Feature","properties":{"GLA_ID":542,"REF":"0","NAME":"Royal Naval Place Stage II","LOCATION":"Amersham Vale","SUPPLIEDPO":"SE14 6LF","NEARESTPOS":"SE14 6LH","BOROUGH":"Lewisham","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536657,"NORTHING":177303,"LATITUDE":-0.033524,"LONGITUDE":51.478128,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.033519,51.478183]}},
+{"type":"Feature","properties":{"GLA_ID":546,"REF":"0","NAME":"Stanley Street","LOCATION":"Stanley Street/ Mornington Road","SUPPLIEDPO":"SE14 6LD","NEARESTPOS":"SE8 4BT","BOROUGH":"Lewisham","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536853,"NORTHING":177216,"LATITUDE":-0.030729,"LONGITUDE":51.477298,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.030725,51.477353]}},
+{"type":"Feature","properties":{"GLA_ID":551,"REF":"0","NAME":"Windlass Place","LOCATION":"56 Carteret Way","SUPPLIEDPO":"SE8 3QA","NEARESTPOS":"SE8 3QA","BOROUGH":"Lewisham","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536451,"NORTHING":178655,"LATITUDE":-0.035958,"LONGITUDE":51.490327,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.035953,51.490382]}},
+{"type":"Feature","properties":{"GLA_ID":629,"REF":"0","NAME":"Alscot Road allotments","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE1 3EU","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":533784,"NORTHING":179075,"LATITUDE":-0.0742,"LONGITUDE":51.494741,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.074194,51.494796]}},
+{"type":"Feature","properties":{"GLA_ID":630,"REF":"0","NAME":"Aylesbury Road allotments","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE17 2EH","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":532837,"NORTHING":178226,"LATITUDE":-0.08815,"LONGITUDE":51.487332,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.088144,51.487387]}},
+{"type":"Feature","properties":{"GLA_ID":631,"REF":"0","NAME":"Bermondsey","LOCATION":"Tenda Road","SUPPLIEDPO":"SE16","NEARESTPOS":"SE16 3PN","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":534611,"NORTHING":178566,"LATITUDE":-0.062484,"LONGITUDE":51.489971,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.062479,51.490026]}},
+{"type":"Feature","properties":{"GLA_ID":632,"REF":"0","NAME":"Bonar Road","LOCATION":null,"SUPPLIEDPO":"SE15","NEARESTPOS":"SE15 5JY","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":534085,"NORTHING":177083,"LATITUDE":-0.07062,"LONGITUDE":51.476767,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.070615,51.476822]}},
+{"type":"Feature","properties":{"GLA_ID":633,"REF":"0","NAME":"Caspian Street allotments","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE5 7JL","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":532629,"NORTHING":177316,"LATITUDE":-0.091487,"LONGITUDE":51.479207,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.091482,51.479263]}},
+{"type":"Feature","properties":{"GLA_ID":641,"REF":"0","NAME":"Lynton Road","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE1 5DR","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":534500,"NORTHING":178500,"LATITUDE":-0.064108,"LONGITUDE":51.489405,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.064103,51.48946]}},
+{"type":"Feature","properties":{"GLA_ID":642,"REF":"0","NAME":"Marcia Road allotments","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE1 5NH","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":533380,"NORTHING":178619,"LATITUDE":-0.080186,"LONGITUDE":51.490738,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.08018,51.490794]}},
+{"type":"Feature","properties":{"GLA_ID":645,"REF":"0","NAME":"Reverdy Road allotments","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE1 5QE","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":534064,"NORTHING":178786,"LATITUDE":-0.070279,"LONGITUDE":51.492075,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.070274,51.49213]}},
+{"type":"Feature","properties":{"GLA_ID":646,"REF":"0","NAME":"St James Rd & Lynton Rd East & West","LOCATION":null,"SUPPLIEDPO":null,"NEARESTPOS":"SE1 5DA","BOROUGH":"Southwark","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":534442,"NORTHING":178523,"LATITUDE":-0.064927,"LONGITUDE":51.489626,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.064922,51.489681]}},
+{"type":"Feature","properties":{"GLA_ID":688,"REF":"0","NAME":"Mudchute Allotment Society","LOCATION":"East Ferry Road","SUPPLIEDPO":"E14","NEARESTPOS":"E14 9NQ","BOROUGH":"Tower Hamlets","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":537986,"NORTHING":179425,"LATITUDE":-0.013564,"LONGITUDE":51.49688,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.013559,51.496935]}},
+{"type":"Feature","properties":{"GLA_ID":691,"REF":"0","NAME":"Stepping Stones Farm Allotments","LOCATION":"Stepney Way","SUPPLIEDPO":"E1 3DG","NEARESTPOS":"E1 3DG","BOROUGH":"Tower Hamlets","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":535844,"NORTHING":181643,"LATITUDE":-0.04355,"LONGITUDE":51.517332,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.043544,51.517386]}},
+{"type":"Feature","properties":{"GLA_ID":687,"REF":"0","NAME":"Cable Street Community Gardens","LOCATION":"Cable Street and Glamis Road, Bromley by Bow","SUPPLIEDPO":"E1","NEARESTPOS":"E1 0EL","BOROUGH":"Tower Hamlets","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":535422,"NORTHING":181012,"LATITUDE":-0.049867,"LONGITUDE":51.511761,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.049861,51.511816]}},
+{"type":"Feature","properties":{"GLA_ID":689,"REF":"0","NAME":"Prospect Walk Allotment Society","LOCATION":"Canary Wharf","SUPPLIEDPO":"E14","NEARESTPOS":"E14 9US","BOROUGH":"Tower Hamlets","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":538062,"NORTHING":178784,"LATITUDE":-0.012729,"LONGITUDE":51.491095,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.012724,51.49115]}},
+{"type":"Feature","properties":{"GLA_ID":685,"REF":"0","NAME":"Ackroyd Drive Allotments","LOCATION":"Land between Ackroyd Drive and Railway Arches","SUPPLIEDPO":"E3","NEARESTPOS":"E3 4AS","BOROUGH":"Tower Hamlets","ORGANISATI":null,"FACILITIES":null,"GRADE":null,"COMMENTS":null,"EASTING":536832,"NORTHING":181864,"LATITUDE":-0.029242,"LONGITUDE":51.519073,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.029236,51.519128]}}
+]}

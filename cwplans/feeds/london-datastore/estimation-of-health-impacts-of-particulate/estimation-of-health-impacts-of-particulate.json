@@ -1,0 +1,79 @@
+{"meta":{
+ "source": "London Datastore: Estimation of Health Impacts of Particulate Pollution in London (Greater London Authority)",
+ "dataset": "e710q",
+ "page": "https://data.london.gov.uk/dataset/estimation-of-health-impacts-of-particulate-pollution-in-london-e710q",
+ "resources": [
+  {
+   "resource": "cb3a6461-c432-44e6-85c9-03acf2cf46ec",
+   "file": "particulate-air-pollution-mortality.csv",
+   "url": "https://data.london.gov.uk/download/e710q/cb3a6461-c432-44e6-85c9-03acf2cf46ec/particulate-air-pollution-mortality.csv",
+   "size": 24857,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-06-18",
+ "update_frequency": null,
+ "geo": "Ward",
+ "theme": "environment",
+ "method": "lds-harvest-auto.mjs run e710q: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [],
+ "counts": {
+  "tables_read": 1,
+  "rows_read": 626,
+  "zone_rows": 42,
+  "zone_rows_by_key": {
+   "ward2003": 42
+  }
+ }
+},
+"tables":[
+{"table":"particulate-air-pollution-mortality.csv","rows_read":626,"header_rows":[["Area Code","Area Name","Total Population","PM2.5 Concentration (�g/m3)","Attributable Deaths at coefft (change for 10 �g/m3 PM2.5) 6%","Attributable Deaths at coefft (change for 10 �g/m3 PM2.5) 1%","Attributable Deaths at coefft (change for 10 �g/m3 PM2.5) 12%"]],"zone_keys":["ward2003:00ALGQ","ward2003:00ALGY","ward2003:00ALHB","ward2003:00AMGJ","ward2003:00AUFY","ward2003:00AZGE","ward2003:00AZGF","ward2003:00AZGK","ward2003:00AZGR","ward2003:00AZGW","ward2003:00BBGD","ward2003:00BBGE","ward2003:00BEGC","ward2003:00BEGD","ward2003:00BEGE","ward2003:00BEGF","ward2003:00BEGJ","ward2003:00BEGK","ward2003:00BEGL","ward2003:00BEGM","ward2003:00BEGN","ward2003:00BEGP","ward2003:00BEGQ","ward2003:00BEGS","ward2003:00BEGT","ward2003:00BEGU","ward2003:00BEGX","ward2003:00BEGY","ward2003:00BGFX","ward2003:00BGFY","ward2003:00BGGB","ward2003:00BGGC","ward2003:00BGGD","ward2003:00BGGE","ward2003:00BGGF","ward2003:00BGGG","ward2003:00BGGH","ward2003:00BGGJ","ward2003:00BGGK","ward2003:00BGGL","ward2003:00BGGM","ward2003:00BGGN"],"rows":[
+["00ALGQ","Blackheath Westcombe",12261,15.62,8,1,14],
+["00ALGY","Greenwich West",13830,15.73,9,2,16],
+["00ALHB","Peninsula",13309,16.17,8,1,16],
+["00AMGJ","Haggerston",12165,16.21,5,1,10],
+["00AUFY","Bunhill",11089,16.61,6,1,10],
+["00AZGE","Blackheath",14048,15.5,8,1,15],
+["00AZGF","Brockley",15709,15.69,9,2,17],
+["00AZGK","Evelyn",16772,15.57,10,2,18],
+["00AZGR","New Cross",16617,15.63,9,2,18],
+["00AZGW","Telegraph Hill",15331,15.52,9,2,16],
+["00BBGD","Canning Town North",12439,15.52,6,1,11],
+["00BBGE","Canning Town South",13629,15.88,6,1,12],
+["00BEGC","Brunswick Park",12281,15.82,6,1,11],
+["00BEGD","Camberwell Green",13928,15.97,7,1,13],
+["00BEGE","Cathedrals",15723,16.61,8,1,14],
+["00BEGF","Chaucer",15934,16.52,8,1,15],
+["00BEGJ","East Walworth",13100,16.14,6,1,12],
+["00BEGK","Faraday",13570,15.79,7,1,12],
+["00BEGL","Grange",14559,16.06,7,1,13],
+["00BEGM","Livesey",13699,15.71,7,1,13],
+["00BEGN","Newington",14277,15.93,7,1,13],
+["00BEGP","Nunhead",12030,15.45,6,1,11],
+["00BEGQ","Peckham",11842,15.66,6,1,11],
+["00BEGS","Riverside",13354,16,7,1,12],
+["00BEGT","Rotherhithe",13022,15.72,6,1,12],
+["00BEGU","South Bermondsey",12809,15.99,6,1,12],
+["00BEGX","Surrey Docks",12719,15.35,6,1,12],
+["00BEGY","The Lane",14420,15.67,7,1,13],
+["00BGFX","Bethnal Green South",14886,15.88,7,1,12],
+["00BGFY","Blackwall and Cubitt Town",20406,16.11,9,2,17],
+["00BGGB","Bromley-by-Bow",14514,16.27,6,1,12],
+["00BGGC","East India and Lansbury",13202,16.28,6,1,11],
+["00BGGD","Limehouse",14328,16.25,6,1,12],
+["00BGGE","Mile End and Globe Town",15412,15.81,7,1,13],
+["00BGGF","Mile End East",12377,15.74,5,1,10],
+["00BGGG","Millwall",16705,15.56,7,1,14],
+["00BGGH","St. Dunstan's and Stepney Green",15037,15.65,7,1,12],
+["00BGGJ","St. Katherine's and Wapping",12734,16.13,6,1,10],
+["00BGGK","Shadwell",12733,16.44,6,1,10],
+["00BGGL","Spitalfields and Banglatown",9417,16.37,4,1,8],
+["00BGGM","Weavers",12420,15.9,5,1,10],
+["00BGGN","Whitechapel",13148,16.32,6,1,11]
+]}
+]}

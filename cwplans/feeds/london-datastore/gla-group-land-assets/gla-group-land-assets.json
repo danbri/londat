@@ -1,0 +1,71 @@
+{"meta":{
+ "source": "London Datastore: GLA Group Land Assets (Greater London Authority)",
+ "dataset": "em875",
+ "page": "https://data.london.gov.uk/dataset/gla-group-land-assets-em875",
+ "resources": [
+  {
+   "resource": "de8ecfed-1fd7-40f0-99d6-c28db5b16d48",
+   "file": "GLA_assets.csv",
+   "url": "https://data.london.gov.uk/download/em875/de8ecfed-1fd7-40f0-99d6-c28db5b16d48/GLA_assets.csv",
+   "size": 39085,
+   "resource_date": "2018-05-11",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "cee896b0-1daf-4d78-9c81-abaaa40175ba",
+   "file": "LFB_assets.csv",
+   "url": "https://data.london.gov.uk/download/em875/cee896b0-1daf-4d78-9c81-abaaa40175ba/LFB_assets.csv",
+   "size": 16724,
+   "resource_date": "2018-05-11",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "b26a9465-7da1-44d1-bc41-ef5b5b058a9b",
+   "file": "LLDC_assets.csv",
+   "url": "https://data.london.gov.uk/download/em875/b26a9465-7da1-44d1-bc41-ef5b5b058a9b/LLDC_assets.csv",
+   "size": 8092,
+   "resource_date": "2018-05-11",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "8b8b3374-1bfe-4da1-ac02-1e77e92cf762",
+   "file": "Met_assets.csv",
+   "url": "https://data.london.gov.uk/download/em875/8b8b3374-1bfe-4da1-ac02-1e77e92cf762/Met_assets.csv",
+   "size": 60130,
+   "resource_date": "2018-05-11",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "154cfac4-44b1-4249-848f-0c51b85c364e",
+   "file": "TFL_assets.csv",
+   "url": "https://data.london.gov.uk/download/em875/154cfac4-44b1-4249-848f-0c51b85c364e/TFL_assets.csv",
+   "size": 122830,
+   "resource_date": "2018-05-11",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2018-05-11",
+ "update_frequency": null,
+ "geo": "Coordinates",
+ "theme": "buildings-places",
+ "method": "lds-harvest-auto.mjs run em875: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [],
+ "counts": {
+  "tables_read": 1,
+  "rows_read": 162,
+  "zone_rows": 2,
+  "zone_rows_by_key": {
+   "postcode": 2
+  }
+ }
+},
+"tables":[
+{"table":"GLA_assets.csv","rows_read":162,"header_rows":[["OBJECTID","Borough","Unique_Asset_ID","Unique_Asset_ID_X","Unique_Asset_ID_Y","Holding_Name","Address","Post_Code","Sub_Unit","UPRN","Description","Occupied","Land_Building","Asset_Category","Tenure","Site_Area_Hectares","Building_Area_GIA_sqm","Site_Area_Hectares_1","Easting","Northing"]],"zone_keys":["postcode:E16 1FB","postcode:E16 1AF"],"rows":[
+[34,"Newham","10/00000126",null,null,"(Q580) Dock Road","Dock Road, Lond","E16 1FB","Front Land At Dock Road","N/A","Land adjacent to Thames Wharf. Major regeneration site impacted by proposed Silvertown Tunnel.","No","Land only","Saleable asset","FH",0.1,0,null,539926,180468],
+[104,"Newham","04/033/0008",null,null,"Thames Wharf and Dock Road, Canning Town","Dock Road, Canning Town, London","E16 1AF","Plot 8","N/A","Major regeneration site impacted by proposed Silvertown Tunnel. Currently industrial investment.","Yes","Land & buildings","Subject to disposal process","LLH",0.06,0,null,539901,180612]
+]}
+]}

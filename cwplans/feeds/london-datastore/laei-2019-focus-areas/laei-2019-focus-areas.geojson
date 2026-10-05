@@ -1,0 +1,64 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: London Atmospheric Emissions Inventory (LAEI) 2019 Air Quality Focus Areas (GLA and TFL Air Quality)",
+ "dataset": "2zj76",
+ "page": "https://data.london.gov.uk/dataset/london-atmospheric-emissions-inventory-laei-2019-air-quality-foc-2zj76",
+ "resources": [
+  {
+   "resource": "36d88eac-849b-400a-ae44-2dc93bdb966d",
+   "file": "2. GIS files.zip",
+   "url": "https://data.london.gov.uk/download/2zj76/36d88eac-849b-400a-ae44-2dc93bdb966d/2.%20GIS%20files.zip",
+   "size": 41589,
+   "resource_date": "2024-04-24",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v3",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3 (GLA and TFL Air Quality). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2024-04-24",
+ "update_frequency": "One off",
+ "geo": "Borough",
+ "theme": "environment",
+ "layers": [
+  {
+   "table": "LAEI2019_FocusAreas",
+   "srs": 27700,
+   "from": "no .prj; BNG from the coordinate range"
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "walk-london-datastore.mjs harvest laei-2019-focus-areas: download the newest matching resource (shpzip); read every feature; keep a feature whose geometry meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300; WGS84 -0.095, 51.474, 0.015, 51.522): a vertex inside, an edge crossing the box or the box inside a polygon. Whole geometries are kept (not cut at the box): whole_in_zone says whether all of it lies inside. in_cw: the geometry meets the Canary Wharf registry box -0.03, 51.498, -0.005, 51.51. Source attributes kept as published except fields matching e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|website_contact|^owner_?name|person. uprn_suspect: a UPRN field that a spreadsheet rounded (an exponent, or 9+ digits ending in 5+ zeros); not a key (fault F22).",
+ "counts": {
+  "source_features": 160,
+  "no_geometry": 0,
+  "in_zone": 22,
+  "in_cw": 1
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": []
+},
+"features":[
+{"type":"Feature","properties":{"ID":33,"SUBREGION":"Central","BOROUGH":"City of London","NAME":"Monument/Gracechurch St/Bishopsgate to Houndsditch","Shape_Area":134226.099488,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.080646,51.516472],[-0.085921,51.509629],[-0.087984,51.510248],[-0.08271,51.517092],[-0.080646,51.516472]]]}},
+{"type":"Feature","properties":{"ID":48,"SUBREGION":"East","BOROUGH":"Greenwich","NAME":"Greenwich Centre","Shape_Area":116612.993298,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.011975,51.482812],[-0.006686,51.482726],[-0.006805,51.479874],[-0.012094,51.47996],[-0.011975,51.482812]]]}},
+{"type":"Feature","properties":{"ID":51,"SUBREGION":"East","BOROUGH":"Greenwich","NAME":"Greenwich South St/Lewisham High St Junction and Blackheath Hill","Shape_Area":109706.753868,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.016356,51.473521],[-0.008293,51.473361],[-0.008408,51.471602],[-0.01647,51.471762],[-0.016356,51.473521]]]}},
+{"type":"Feature","properties":{"ID":52,"SUBREGION":"East","BOROUGH":"Greenwich","NAME":"Greenwich Trafalgar Road (A206) and Woolwich Road","Shape_Area":389437.05605,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.002441,51.482089],[-0.003924,51.483841],[0.008169,51.487187],[0.021056,51.486954],[0.020957,51.484944],[0.008563,51.485153],[-0.002441,51.482089]]]}},
+{"type":"Feature","properties":{"ID":58,"SUBREGION":"East","BOROUGH":"Hackney","NAME":"Old Street City Rd/Old St/Great Eastern St/Shorditch High St","Shape_Area":712808.340649,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.088526,51.528261],[-0.074524,51.528032],[-0.074802,51.521441],[-0.088802,51.52167],[-0.088526,51.528261]]]}},
+{"type":"Feature","properties":{"ID":107,"SUBREGION":"South","BOROUGH":"Lewisham","NAME":"Deptford Town Centre","Shape_Area":399030.11238,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.02776,51.482209],[-0.021551,51.482105],[-0.021923,51.473794],[-0.028131,51.473898],[-0.02776,51.482209]]]}},
+{"type":"Feature","properties":{"ID":108,"SUBREGION":"South","BOROUGH":"Lewisham","NAME":"New Cross Gate and New Cross","Shape_Area":1093022.93495,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.053157,51.478623],[-0.030504,51.478244],[-0.030773,51.472004],[-0.053423,51.472383],[-0.053157,51.478623]]]}},
+{"type":"Feature","properties":{"ID":119,"SUBREGION":"East","BOROUGH":"Newham","NAME":"Barking Road A124 from Canning Town to Wallend/Barking","Shape_Area":2288267.46603,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.06706,51.538324],[0.068856,51.534023],[0.036962,51.528539],[0.012643,51.516518],[0.008389,51.520156],[0.034644,51.533041],[0.06706,51.538324]]]}},
+{"type":"Feature","properties":{"ID":120,"SUBREGION":"East","BOROUGH":"Newham","NAME":"Canning Town Silvertown Way","Shape_Area":347344.549231,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.011278,51.515373],[0.017267,51.50774],[0.012496,51.506302],[0.006517,51.513948],[0.011278,51.515373]]]}},
+{"type":"Feature","properties":{"ID":128,"SUBREGION":"South","BOROUGH":"Southwark","NAME":"Peckham Town Centre","Shape_Area":475130.615065,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.072544,51.474397],[-0.066097,51.475214],[-0.062834,51.466089],[-0.069279,51.465273],[-0.072544,51.474397]]]}},
+{"type":"Feature","properties":{"ID":129,"SUBREGION":"Central","BOROUGH":"Southwark","NAME":"Tower Bridge Road A100","Shape_Area":187394.475259,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.075614,51.503427],[-0.078948,51.496917],[-0.082977,51.494684],[-0.085278,51.495115],[-0.080952,51.497967],[-0.077915,51.503857],[-0.075614,51.503427]]]}},
+{"type":"Feature","properties":{"ID":130,"SUBREGION":"Central","BOROUGH":"Southwark","NAME":"London Bridge at Borough High Street","Shape_Area":161256.98123,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.089839,51.507051],[-0.087107,51.506156],[-0.092535,51.500292],[-0.095267,51.501187],[-0.089839,51.507051]]]}},
+{"type":"Feature","properties":{"ID":131,"SUBREGION":"Central","BOROUGH":"Southwark","NAME":"A2 Old Kent Road from East Street to Trafalgar Avenue","Shape_Area":187030.902399,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.08177,51.492035],[-0.071899,51.487341],[-0.073793,51.485789],[-0.083664,51.490483],[-0.08177,51.492035]]]}},
+{"type":"Feature","properties":{"ID":133,"SUBREGION":"South","BOROUGH":"Southwark","NAME":"Walworth Road/Camberwell Road/Camberwell Green","Shape_Area":630902.78,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.094327,51.47108],[-0.098141,51.490599],[-0.094018,51.490913],[-0.090205,51.471394],[-0.094327,51.47108]]]}},
+{"type":"Feature","properties":{"ID":134,"SUBREGION":"Central","BOROUGH":"Southwark","NAME":"Lower Road / A200 Surrey Quays / Rotherine Old Road / Rotherine New Road","Shape_Area":213055.477211,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.050305,51.490757],[-0.050136,51.494709],[-0.043163,51.494593],[-0.043332,51.49064],[-0.050305,51.490757]]]}},
+{"type":"Feature","properties":{"ID":136,"SUBREGION":"East","BOROUGH":"Tower Hamlets","NAME":"Tower Hill/Tower Gateway/Cable St/The Highway","Shape_Area":292587.846012,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.07565,51.512318],[-0.066949,51.512175],[-0.067099,51.507822],[-0.075799,51.507966],[-0.07565,51.512318]]]}},
+{"type":"Feature","properties":{"ID":137,"SUBREGION":"East","BOROUGH":"Tower Hamlets","NAME":"A11 Whitechapel Road to Mile End junction A1205 Burdett Road","Shape_Area":699942.810714,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.070087,51.517477],[-0.032972,51.526429],[-0.031656,51.524304],[-0.068769,51.515352],[-0.070087,51.517477]]]}},
+{"type":"Feature","properties":{"ID":138,"SUBREGION":"East","BOROUGH":"Tower Hamlets","NAME":"Commercial Road from Aldgate East to jctn Jubilee Street","Shape_Area":232477.535746,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.067985,51.516084],[-0.051713,51.515044],[-0.052069,51.513217],[-0.06834,51.514256],[-0.067985,51.516084]]]}},
+{"type":"Feature","properties":{"ID":140,"SUBREGION":"East","BOROUGH":"Tower Hamlets","NAME":"Blackwall A13 East India Dock Road/Aspen Way/Blackwall Tunnel","Shape_Area":798016.512365,"Status19":"No change","in_cw":true,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.011772,51.51441],[-0.001371,51.514232],[-0.001821,51.504292],[-0.012204,51.504477],[-0.011772,51.51441]]]}},
+{"type":"Feature","properties":{"ID":141,"SUBREGION":"East","BOROUGH":"Tower Hamlets","NAME":"Commercial Street","Shape_Area":109430.469893,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.077487,51.521545],[-0.075361,51.522171],[-0.071235,51.516719],[-0.07336,51.516093],[-0.077487,51.521545]]]}},
+{"type":"Feature","properties":{"ID":142,"SUBREGION":"East","BOROUGH":"Tower Hamlets","NAME":"Aldgate and Aldgate East","Shape_Area":258753.062942,"Status19":"No change","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.077817,51.516552],[-0.067818,51.516385],[-0.068011,51.513037],[-0.078009,51.513203],[-0.077817,51.516552]]]}},
+{"type":"Feature","properties":{"ID":160,"SUBREGION":"Central","BOROUGH":"Westminster","NAME":"Embankment Charing Cross to Tower Hill","Shape_Area":594125.813911,"Status19":"No change","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.075295,51.510165],[-0.075487,51.508626],[-0.086961,51.508934],[-0.095972,51.51046],[-0.112184,51.510232],[-0.11826,51.509059],[-0.121458,51.50547],[-0.123514,51.506479],[-0.119643,51.510178],[-0.11228,51.51177],[-0.095946,51.512007],[-0.086797,51.510471],[-0.075295,51.510165]]]}}
+]}

@@ -1,0 +1,57 @@
+{"meta":{
+ "source": "London Datastore: London Plan AMR 15 tables and data (Greater London Authority)",
+ "dataset": "204q6",
+ "page": "https://data.london.gov.uk/dataset/london-plan-amr-15-tables-and-data-204q6",
+ "resources": [
+  {
+   "resource": "37be4d7c-6907-45cc-a0c1-fc672a4358be",
+   "file": "AMR 15 Chapter Two Tables .xlsx",
+   "url": "https://data.london.gov.uk/download/204q6/37be4d7c-6907-45cc-a0c1-fc672a4358be/AMR%2015%20Chapter%20Two%20Tables%20.xlsx",
+   "size": 155259,
+   "resource_date": "2020-03-04",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "76c4b065-fb2c-4590-82c0-af925f64a5ce",
+   "file": "AMR 15 Chapter Three Tables.xlsx",
+   "url": "https://data.london.gov.uk/download/204q6/76c4b065-fb2c-4590-82c0-af925f64a5ce/AMR%2015%20Chapter%20Three%20Tables.xlsx",
+   "size": 189212,
+   "resource_date": "2019-10-31",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Data Commons Attribution License",
+ "licence_url": "https://www.opendatacommons.org/licenses/by/1.0/index.html",
+ "attribution": "Greater London Authority, Open Data Commons Attribution License. The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2020-03-04",
+ "update_frequency": "One off",
+ "geo": "Borough",
+ "theme": "buildings-places",
+ "method": "lds-harvest-auto.mjs run 204q6: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "hand rule: AMR 15 (2019): the chapter tables; its LDD extracts are earlier snapshots of the London Development Database, superseded by the 2020 extract (2jxq0) and the Planning London Datahub",
+  "name keys: 33 zone town centre names (zone-names.json); a cell equal to one (normalised) is a zone row, a weaker key than a code"
+ ],
+ "counts": {
+  "tables_read": 40,
+  "rows_read": 2139,
+  "zone_rows": 8,
+  "zone_rows_by_key": {
+   "town-centre": 2,
+   "opportunity-area": 6
+  }
+ }
+},
+"tables":[
+{"table":"AMR 15 Chapter Three Tables.xlsx#Opportunity areas","rows_read":62,"header_rows":[["Table 3.46 Net housing completions in adopted Opportunity Areas 2017/18",null,null,null,null,null,null],["Opportunity Area","Net units",null,null,null,null,null]],"zone_keys":["town-centre:Canada Water","opportunity-area:City Fringe/Tech City","opportunity-area:Elephant and Castle","opportunity-area:Greenwich Peninsula","town-centre:Canada Water","opportunity-area:City Fringe/Tech City","opportunity-area:Elephant and Castle","opportunity-area:Greenwich Peninsula"],"rows":[
+["Canada Water",0,null,null,null,null,null],
+["City Fringe/ Tech City",1173,null,null,null,null,null],
+["Elephant and Castle",381,null,null,null,null,null],
+["Greenwich Peninsula",991,null,null,null,null,null],
+["Canada Water",79,1410,1489,null,null,null],
+["City Fringe/ Tech City",2371,5551,7922,null,null,null],
+["Elephant and Castle",234,2741,2975,null,null,null],
+["Greenwich Peninsula",726,16064,16790,null,null,null]
+]}
+]}

@@ -1,0 +1,97 @@
+{"meta":{
+ "source": "London Datastore: Low Carbon Generators (Greater London Authority)",
+ "dataset": "2jkzj",
+ "page": "https://data.london.gov.uk/dataset/low-carbon-generators-2jkzj",
+ "resources": [
+  {
+   "resource": "7f069dca-8c18-405a-9dc4-0d6f802d52a5",
+   "file": "LFB low carbon generators at fire stations - June 2017.csv",
+   "url": "https://data.london.gov.uk/download/2jkzj/7f069dca-8c18-405a-9dc4-0d6f802d52a5/LFB%20low%20carbon%20generators%20at%20fire%20stations%20-%20June%202017.csv",
+   "size": 8063,
+   "resource_date": "2017-08-07",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "fee9eaae-5e47-417a-a50f-ad3f3c4f7d5a",
+   "file": "LFEPA low carbon generators - June 2016.csv",
+   "url": "https://data.london.gov.uk/download/2jkzj/fee9eaae-5e47-417a-a50f-ad3f3c4f7d5a/LFEPA%20low%20carbon%20generators%20-%20June%202016.csv",
+   "size": 7901,
+   "resource_date": "2016-07-22",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "cc8592d6-afaa-44ea-a3a6-35770a05acf0",
+   "file": "gla-low-carbon-generators.csv",
+   "url": "https://data.london.gov.uk/download/2jkzj/cc8592d6-afaa-44ea-a3a6-35770a05acf0/gla-low-carbon-generators.csv",
+   "size": 219,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "651af1ec-496f-4399-ae13-f0de562086d9",
+   "file": "mps-low-carbon-generators-2011-05.csv",
+   "url": "https://data.london.gov.uk/download/2jkzj/651af1ec-496f-4399-ae13-f0de562086d9/mps-low-carbon-generators-2011-05.csv",
+   "size": 1172,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "5a4ddb97-1b93-4c28-876f-db9a8f78a2d3",
+   "file": "tfl-low-carbon-generators-2011-05.csv",
+   "url": "https://data.london.gov.uk/download/2jkzj/5a4ddb97-1b93-4c28-876f-db9a8f78a2d3/tfl-low-carbon-generators-2011-05.csv",
+   "size": 820,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2017-08-07",
+ "update_frequency": "Annually",
+ "geo": "Point Location",
+ "theme": "environment",
+ "method": "lds-harvest-auto.mjs run 2jkzj: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ],
+ "counts": {
+  "tables_read": 4,
+  "rows_read": 233,
+  "zone_rows": 22,
+  "zone_rows_by_key": {
+   "postcode": 22
+  }
+ }
+},
+"tables":[
+{"table":"LFB low carbon generators at fire stations - June 2017.csv","rows_read":104,"header_rows":[["Fire station","Address","Postcode","Number of Photovoltaic Arrays","Photovoltaic  Output at Peak (kWp)","Photovoltaic Installation Date","Number of Combined Heat and Power","Combined Heat and Power kWe (electric power output) and kWt (heat output)","Combined Heat and Power Installation Date","Number of Wind Turbine","Wind Turbine mean power kWh","Wind Turbine Installation Date","Number of Solar Thermal Unit","Solar Thermal power Output","Solar Thermal Installation Date","Biomass","Biomass power output","Biomass Installation Date","Number Of Ground Source Heat pumps","Heat Pump Output","Ground Source Heat Pump Installation Date"]],"zone_keys":["postcode:SE1 2BP","postcode:EC4R 3UE","postcode:SE10 8UP","postcode:E14 8JH","postcode:SE14 5JN","postcode:SE1 5JH","postcode:SE5 8PR","postcode:E14 0BP","postcode:E1 0BX","postcode:E1 1LD"],"rows":[
+["Dockhead","8 Woseley Street","SE1 2BP",1,"7.0kWp",2016,1,"12 kWe & 28kW",2016,null,null,null,null,null,null,null,null,null,null,null,null],
+["Dowgate","94-95 Upper Thames Street","EC4R 3UE",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Greenwich","4 Blisset Street","SE10 8UP",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Millwall","43 Westferry Road","E14 8JH",null,null,null,1,null,2016,null,null,null,null,null,null,null,null,null,null,null,null],
+["New Cross","266 Queen's Road","SE14 5JN",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Old Kent Road","405 Old Kent Road","SE1 5JH",1,"5kWp",2015,1,"12kWe & 19kWe",2015,null,null,null,null,null,null,null,null,null,null,null,null],
+["Peckham","78-80 Peckham Road","SE5 8PR",null,null,null,null,null,null,null,null,null,1,"21kWt",2008,null,null,null,null,null,null],
+["Poplar","168 East India Dock Road","E14 0BP",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Shadwell","290 Cable Street","E1 0BX",1,"8.75kWp",2016,1,"12kWe & 19kWe",2016,null,null,null,null,null,null,null,null,null,null,null,null],
+["Whitechapel","27 Commercial Road","E1 1LD",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+]},
+{"table":"LFEPA low carbon generators - June 2016.csv","rows_read":104,"header_rows":[["Fire station","Address","Postcode","Number of Photovoltaic Arrays","Photovoltaic  Output at Peak (kWp)","Photovoltaic Installation Date","Number of Combined Heat and Power","Combined Heat and Power kWe (electric power output) and kWt (heat output)","Combined Heat and Power Installation Date","Number of Wind Turbine","Wind Turbine mean power kWh","Wind Turbine Installation Date","Number of Solar Thermal Unit","Solar Thermal power Output","Solar Thermal Installation Date","Biomass","Biomass power output","Biomass Installation Date","Number Of Ground Source Heat pumps","Heat Pump Output","Ground Source Heat Pump Installation Date"]],"zone_keys":["postcode:SE1 2BP","postcode:EC4R 3UE","postcode:SE10 8UP","postcode:E14 8JH","postcode:SE14 5JN","postcode:SE1 5JH","postcode:SE5 8PR","postcode:E14 0BP","postcode:E1 0BX","postcode:E1 1LD"],"rows":[
+["Dockhead","8 Woseley Street","SE1 2BP",1,"7.0kWp",2016,1,"12 kWe & 28kW",2016,null,null,null,null,null,null,null,null,null,null,null,null],
+["Dowgate","94-95 Upper Thames Street","EC4R 3UE",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Greenwich","4 Blisset Street","SE10 8UP",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Millwall","43 Westferry Road","E14 8JH",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["New Cross","266 Queen's Road","SE14 5JN",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Old Kent Road","405 Old Kent Road","SE1 5JH",1,"5kWp",2015,1,"12kWe & 19kWe",2015,null,null,null,null,null,null,null,null,null,null,null,null],
+["Peckham","78-80 Peckham Road","SE5 8PR",null,null,null,null,null,null,null,null,null,1,"21kWt",2008,null,null,null,null,null,null],
+["Poplar","168 East India Dock Road","E14 0BP",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+["Shadwell","290 Cable Street","E1 0BX",1,"8.75kWp",2016,1,"12kWe & 19kWe",2016,null,null,null,null,null,null,null,null,null,null,null,null],
+["Whitechapel","27 Commercial Road","E1 1LD",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+]},
+{"table":"tfl-low-carbon-generators-2011-05.csv","rows_read":15,"header_rows":[["Renewable energy type","Location","Postcode","Quantity","installed electrical capacity kW","installed heat capacity: kW for CHP; m2 for solar thermal"]],"zone_keys":["postcode:EC3N 1AH","postcode:E16 4SA"],"rows":[
+["Solar thermal","Aldgate BTP","EC3N 1AH",1,null,"4m2 evac. tubes"],
+["Wind","West Ham Bus Garage","E16 4SA",1,100,null]
+]}
+]}

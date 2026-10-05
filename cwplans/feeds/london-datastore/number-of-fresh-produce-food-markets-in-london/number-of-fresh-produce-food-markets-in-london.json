@@ -1,0 +1,40 @@
+{"meta":{
+ "source": "London Datastore: Number of fresh produce food markets in London (Greater London Authority)",
+ "dataset": "2ogj6",
+ "page": "https://data.london.gov.uk/dataset/number-of-fresh-produce-food-markets-in-london-2ogj6",
+ "resources": [
+  {
+   "resource": "80c430dc-eda0-4c92-a201-ba802e8916ea",
+   "file": "B.3 Fresh Food markets.xlsx",
+   "url": "https://data.london.gov.uk/download/2ogj6/80c430dc-eda0-4c92-a201-ba802e8916ea/B.3%20Fresh%20Food%20markets.xlsx",
+   "size": 17775,
+   "resource_date": "2018-12-21",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v3",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2018-12-21",
+ "update_frequency": null,
+ "geo": null,
+ "theme": "occupants-organisations",
+ "method": "lds-harvest-auto.mjs run 2ogj6: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [],
+ "counts": {
+  "tables_read": 1,
+  "rows_read": 23,
+  "zone_rows": 3,
+  "zone_rows_by_key": {
+   "postcode": 3
+  }
+ }
+},
+"tables":[
+{"table":"B.3 Fresh Food markets.xlsx#Sheet1","rows_read":23,"header_rows":[["ID","Market Name","Post code","Opening Hours","Market Type","Website","Status"]],"zone_keys":["postcode:SE1 1TL","postcode:E14 5ST","postcode:E14 5ST"],"rows":[
+["GLA163","Borough Market","SE1 1TL","Monday-Thursday 10:00-17:00, Friday 10:00-18:00, Saturday 8:00-17:00","Fresh Produce","http://boroughmarket.org.uk/","Private & Other"],
+["GLA232","Billingsgate","E14 5ST","Tuesday-Saturday 4:00-9:30","Fresh Produce","http://www.billingsgatefishmarket.org/","Private & Other"],
+["GLA233","Billingsgate Market","E14 5ST","4am-8am","Fresh Produce","http://www.billingsgatefishmarket.org/","Local Authority"]
+]}
+]}

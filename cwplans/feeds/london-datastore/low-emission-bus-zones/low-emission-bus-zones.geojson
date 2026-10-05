@@ -1,0 +1,45 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Low Emission Bus Zones (Greater London Authority)",
+ "dataset": "2gyg0",
+ "page": "https://data.london.gov.uk/dataset/low-emission-bus-zones-2gyg0",
+ "resources": [
+  {
+   "resource": "9eacb8ee-345b-49e6-97d9-b3677c62652c",
+   "file": "Low_Emission_Bus_Zones_line.gpkg",
+   "url": "https://data.london.gov.uk/download/2gyg0/9eacb8ee-345b-49e6-97d9-b3677c62652c/Low_Emission_Bus_Zones_line.gpkg",
+   "size": 114688,
+   "resource_date": "2019-09-03",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2019-09-03",
+ "update_frequency": "Monthly",
+ "geo": "Custom Polygons",
+ "theme": "transport",
+ "layers": [
+  {
+   "table": "Low_Emission_Bus_Zones_line",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run 2gyg0: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 12,
+  "no_geometry": 0,
+  "in_zone": 2,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": []
+},
+"features":[
+{"type":"Feature","properties":{"fid":2,"classification":"Installed routes","desciption":"from Camberwell New Road, along Peckham High Street to New Cross Road","endof":"New Cross Road","length":7033.58427017,"nox_saving":93,"objectid":1,"reduction":"90%","shape_length":7033.584275546587,"since":"Aug-18","siteid":"7","sitename":"Camberwell - New Cross","st_length(geom)":7033.584275546587,"startof":"Camberwell New Road","url":"https://www.london.gov.uk/WHAT-WE-DO/environment/environment-publications/low-emission-bus-zones-evaluation-first-seven-zones","runtime":"08/29/2019","in_cw":false,"whole_in_zone":false},"geometry":{"type":"LineString","coordinates":[[-0.015231,51.473031],[-0.016615,51.473055],[-0.018056,51.473203],[-0.01868,51.473331],[-0.019469,51.473573],[-0.021151,51.474248],[-0.021863,51.474289],[-0.025384,51.474836],[-0.031369,51.475788],[-0.032981,51.475903],[-0.037065,51.475674],[-0.038066,51.475477],[-0.042769,51.474335],[-0.044265,51.474307],[-0.04627,51.474354],[-0.047122,51.474102],[-0.047727,51.47401],[-0.049043,51.473909],[-0.051474,51.473249],[-0.052689,51.472986],[-0.055016,51.473005],[-0.056312,51.473374],[-0.057868,51.473439],[-0.058795,51.473579],[-0.059929,51.473885],[-0.061889,51.47406],[-0.066583,51.473933],[-0.067827,51.473995],[-0.069118,51.473735],[-0.070371,51.473315],[-0.072869,51.47365],[-0.074477,51.47413],[-0.075587,51.474332],[-0.077324,51.474253],[-0.079532,51.473982],[-0.080328,51.47377],[-0.083248,51.473736],[-0.086798,51.473507],[-0.08765,51.473521],[-0.090158,51.47391],[-0.09078,51.473941],[-0.091786,51.474182],[-0.093022,51.474057],[-0.1104,51.481156]]}},
+{"type":"Feature","properties":{"fid":4,"classification":"Installed routes","desciption":"from Bromley Road, along Lewisham High Street to Lewisham Road","endof":"Bromley Road","length":5310.32712878,"nox_saving":107,"objectid":3,"reduction":"90%","shape_length":5310.327163666915,"since":"April-19","siteid":"4","sitename":"Lewisham - Catford","st_length(geom)":5310.327163666915,"startof":"Lewisham Road","url":"https://www.london.gov.uk/WHAT-WE-DO/environment/environment-publications/low-emission-bus-zones-evaluation-first-seven-zones","runtime":"08/29/2019","in_cw":false,"whole_in_zone":false},"geometry":{"type":"LineString","coordinates":[[-0.015269,51.472979],[-0.015481,51.472261],[-0.014727,51.471251],[-0.013914,51.469854],[-0.013125,51.468947],[-0.011737,51.467615],[-0.011006,51.46606],[-0.011313,51.464889],[-0.012108,51.463915],[-0.012991,51.462428],[-0.0131,51.461838],[-0.01307,51.460942],[-0.012771,51.459999],[-0.012002,51.459301],[-0.013158,51.457935],[-0.01365,51.457144],[-0.014788,51.456193],[-0.015224,51.455632],[-0.015744,51.45521],[-0.016114,51.454059],[-0.016804,51.451858],[-0.01698,51.449905],[-0.017209,51.448839],[-0.018177,51.447601],[-0.019356,51.446205],[-0.020119,51.44441],[-0.020339,51.443563],[-0.020323,51.442343],[-0.020622,51.44083],[-0.020524,51.440311],[-0.020027,51.439483],[-0.019188,51.438636],[-0.018751,51.437296],[-0.01823,51.436145],[-0.017978,51.434928],[-0.017525,51.433088],[-0.017138,51.432344],[-0.016005,51.431278],[-0.015079,51.430667],[-0.014483,51.429491],[-0.013894,51.429029],[-0.013158,51.428624]]}}
+]}

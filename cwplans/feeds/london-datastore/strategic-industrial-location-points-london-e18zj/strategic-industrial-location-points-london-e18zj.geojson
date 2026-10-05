@@ -1,0 +1,51 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: Strategic Industrial Location Points (London Plan Consultation 2009) (Greater London Authority)",
+ "dataset": "e18zj",
+ "page": "https://data.london.gov.uk/dataset/strategic-industrial-location-points-london-plan-consultation-20-e18zj",
+ "resources": [
+  {
+   "resource": "5e7eb8bf-3119-4ad8-ae11-08db196e90f4",
+   "file": "lp-consultation-oct-2009-sil-points-shp.zip",
+   "url": "https://data.london.gov.uk/download/e18zj/5e7eb8bf-3119-4ad8-ae11-08db196e90f4/lp-consultation-oct-2009-sil-points-shp.zip",
+   "size": 9146,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04",
+   "entries": 7
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-06-18",
+ "update_frequency": null,
+ "geo": "Point Location",
+ "theme": "buildings-places",
+ "layers": [
+  {
+   "table": "lp-consultation-oct-2009-sil-points",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run e18zj: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 59,
+  "no_geometry": 0,
+  "in_zone": 5,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"LP_Ref":24,"Location":"Greenwich Peninsula West","Borough":"Greenwich","SES_Type":"Preferred Industrial Location","Source":"London Plan Consultation Draft","Easting":539151.830243,"Northing":179166.953248,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[0.00312,51.494329]}},
+{"type":"Feature","properties":{"LP_Ref":9,"Location":"British Gas Site/ Cody Road (Part)","Borough":"Newham","SES_Type":"Industrial Business Park","Source":"London Plan Consultation Draft","Easting":538713.019846,"Northing":182066.573241,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.002056,51.520493]}},
+{"type":"Feature","properties":{"LP_Ref":16,"Location":"Empson Street","Borough":"Tower Hamlets","SES_Type":"Industrial Business Park","Source":"London Plan Consultation Draft","Easting":537846.876177,"Northing":182048.458426,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.01454,51.520542]}},
+{"type":"Feature","properties":{"LP_Ref":50,"Location":"Surrey Canal Area (part)","Borough":"Lewisham","SES_Type":"Preferred Industrial Location","Source":"London Plan Consultation Draft","Easting":535431.955496,"Northing":177913.262114,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.050912,51.483965]}},
+{"type":"Feature","properties":{"LP_Ref":4,"Location":"Bermondsey SE","Borough":"Southwark","SES_Type":"Preferred Industrial Location","Source":"London Plan Consultation Draft","Easting":534833.520716,"Northing":178685.780982,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.059231,51.49105]}}
+]}

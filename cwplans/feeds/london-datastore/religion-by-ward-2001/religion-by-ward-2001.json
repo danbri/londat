@@ -1,0 +1,81 @@
+{"meta":{
+ "source": "London Datastore: Religion by Ward, 2001 (Office for National Statistics)",
+ "dataset": "2ryj1",
+ "page": "https://data.london.gov.uk/dataset/religion-by-ward-2001-2ryj1",
+ "resources": [
+  {
+   "resource": "72dda976-ba7c-47e8-8092-c907932f427e",
+   "file": "religion-ward-2001.csv",
+   "url": "https://data.london.gov.uk/download/2ryj1/72dda976-ba7c-47e8-8092-c907932f427e/religion-ward-2001.csv",
+   "size": 58814,
+   "resource_date": "2018-11-15",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v2",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Office for National Statistics). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2014-07-04",
+ "update_frequency": null,
+ "geo": "Ward",
+ "theme": "people-housing",
+ "method": "lds-harvest-auto.mjs run 2ryj1: resources chosen by the written rules; every row of every sheet or CSV read (CSV over 20 MB streamed and not stored; large xlsx streamed with ExcelJS); a row is kept when it is a zone row (harvest-log.json meta.rules.zone_row): zone OA/LSOA/MSOA/ward code, zone postcode or postcode sector, zone UPRN or TOID, or coordinates in the 3D model box. zone_keys gives the key that matched, row by row. header_rows: the rows above the first data row.",
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "1 format variants of a picked stem not read"
+ ],
+ "counts": {
+  "tables_read": 1,
+  "rows_read": 627,
+  "zone_rows": 42,
+  "zone_rows_by_key": {
+   "ward2003": 42
+  }
+ }
+},
+"tables":[
+{"table":"religion-ward-2001.csv","rows_read":627,"header_rows":[["Area code","Borough","Area name","All people","Christian","Buddhist","Hindu","Jewish","Muslim","Sikh","Other religions","No religion","Religion not stated","% Christian","% Buddhist","% Hindu","% Jewish","% Muslim","% Sikh","% Other religions","% No religion","% Religion not stated"]],"zone_keys":["ward2003:00ALGQ","ward2003:00ALGY","ward2003:00ALHB","ward2003:00AMGJ","ward2003:00AUFY","ward2003:00AZGE","ward2003:00AZGF","ward2003:00AZGK","ward2003:00AZGR","ward2003:00AZGW","ward2003:00BBGD","ward2003:00BBGE","ward2003:00BEGC","ward2003:00BEGD","ward2003:00BEGE","ward2003:00BEGF","ward2003:00BEGJ","ward2003:00BEGK","ward2003:00BEGL","ward2003:00BEGM","ward2003:00BEGN","ward2003:00BEGP","ward2003:00BEGQ","ward2003:00BEGS","ward2003:00BEGT","ward2003:00BEGU","ward2003:00BEGX","ward2003:00BEGY","ward2003:00BGFX","ward2003:00BGFY","ward2003:00BGGB","ward2003:00BGGC","ward2003:00BGGD","ward2003:00BGGE","ward2003:00BGGF","ward2003:00BGGG","ward2003:00BGGH","ward2003:00BGGJ","ward2003:00BGGK","ward2003:00BGGL","ward2003:00BGGM","ward2003:00BGGN"],"rows":[
+["00ALGQ","Greenwich","Blackheath Westcombe",11981,7266,82,99,74,318,109,37,2965,1031,61,1,1,1,3,1,0,25,9],
+["00ALGY","Greenwich","Greenwich West",11228,6522,123,163,33,444,143,51,2678,1071,58,1,1,0,4,1,0,24,10],
+["00ALHB","Greenwich","Peninsula",10155,5824,87,121,36,455,333,21,2419,859,57,1,1,0,4,3,0,24,8],
+["00AMGJ","Hackney","Haggerston",10366,5447,148,88,91,1597,48,44,1863,1040,53,1,1,1,15,0,0,18,10],
+["00AUFY","Islington","Bunhill",10055,5811,102,125,98,979,42,39,2041,818,58,1,1,1,10,0,0,20,8],
+["00AZGE","Lewisham","Blackheath",13135,7834,107,203,59,416,13,75,3218,1210,60,1,2,0,3,0,1,24,9],
+["00AZGF","Lewisham","Brockley",13697,7674,218,121,65,753,29,92,3438,1307,56,2,1,0,5,0,1,25,10],
+["00AZGK","Lewisham","Evelyn",14512,8472,641,175,26,1061,14,65,2475,1583,58,4,1,0,7,0,0,17,11],
+["00AZGR","Lewisham","New Cross",15093,8462,480,155,31,1064,30,78,3015,1778,56,3,1,0,7,0,1,20,12],
+["00AZGW","Lewisham","Telegraph Hill",14426,8231,143,110,59,688,15,84,3512,1584,57,1,1,0,5,0,1,24,11],
+["00BBGD","Newham","Canning Town North",12061,7885,109,108,11,1246,93,22,1442,1145,65,1,1,0,10,1,0,12,9],
+["00BBGE","Newham","Canning Town South",11278,7712,59,101,6,973,23,23,1300,1081,68,1,1,0,9,0,0,12,10],
+["00BEGC","Southwark","Brunswick Park",11136,6648,139,90,39,860,28,41,2190,1101,60,1,1,0,8,0,0,20,10],
+["00BEGD","Southwark","Camberwell Green",12798,7840,156,123,28,1098,28,65,2025,1435,61,1,1,0,9,0,1,16,11],
+["00BEGE","Southwark","Cathedrals",13115,7348,190,189,64,1223,37,59,2601,1404,56,1,1,0,9,0,0,20,11],
+["00BEGF","Southwark","Chaucer",13058,7165,144,300,39,1686,55,57,2225,1387,55,1,2,0,13,0,0,17,11],
+["00BEGJ","Southwark","East Walworth",12000,7333,154,102,23,1134,11,28,1771,1444,61,1,1,0,9,0,0,15,12],
+["00BEGK","Southwark","Faraday",12697,7829,250,27,18,1357,21,50,1772,1373,62,2,0,0,11,0,0,14,11],
+["00BEGL","Southwark","Grange",11985,7537,117,142,36,812,29,33,2122,1157,63,1,1,0,7,0,0,18,10],
+["00BEGM","Southwark","Livesey",12070,7921,112,82,8,1035,20,47,1569,1276,66,1,1,0,9,0,0,13,11],
+["00BEGN","Southwark","Newington",12870,7862,121,68,33,1009,88,32,2186,1471,61,1,1,0,8,1,0,17,11],
+["00BEGP","Southwark","Nunhead",10271,6375,93,97,30,630,13,44,1900,1089,62,1,1,0,6,0,0,18,11],
+["00BEGQ","Southwark","Peckham",11381,7288,231,58,13,1158,17,28,1419,1169,64,2,1,0,10,0,0,12,10],
+["00BEGS","Southwark","Riverside",10979,7024,86,92,62,488,18,31,2082,1096,64,1,1,1,4,0,0,19,10],
+["00BEGT","Southwark","Rotherhithe",11395,7460,92,146,34,481,20,44,2128,990,65,1,1,0,4,0,0,19,9],
+["00BEGU","Southwark","South Bermondsey",11631,7752,110,84,47,627,19,35,1913,1044,67,1,1,0,5,0,0,16,9],
+["00BEGX","Southwark","Surrey Docks",11346,7287,85,183,54,378,33,34,2451,841,64,1,2,0,3,0,0,22,7],
+["00BEGY","Southwark","The Lane",11973,7251,98,76,103,572,23,42,2599,1209,61,1,1,1,5,0,0,22,10],
+["00BGFX","Tower Hamlets","Bethnal Green South",13675,3593,102,100,132,7156,40,33,1649,870,26,1,1,1,52,0,0,12,6],
+["00BGFY","Tower Hamlets","Blackwall and Cubitt Town",11939,5885,193,102,64,2404,48,39,2336,868,49,2,1,1,20,0,0,20,7],
+["00BGGB","Tower Hamlets","Bromley-by-Bow",11581,4148,157,61,64,5099,50,25,1305,672,36,1,1,1,44,0,0,11,6],
+["00BGGC","Tower Hamlets","East India and Lansbury",11496,5259,135,56,36,3709,37,38,1394,832,46,1,0,0,32,0,0,12,7],
+["00BGGD","Tower Hamlets","Limehouse",12484,5514,147,104,66,4106,20,26,1582,919,44,1,1,1,33,0,0,13,7],
+["00BGGE","Tower Hamlets","Mile End and Globe Town",11801,4951,96,115,101,3822,49,36,1586,1045,42,1,1,1,32,0,0,13,9],
+["00BGGF","Tower Hamlets","Mile End East",11139,4223,89,97,103,4357,58,29,1372,811,38,1,1,1,39,1,0,12,7],
+["00BGGG","Tower Hamlets","Millwall",12892,6406,276,135,67,2366,37,29,2783,793,50,2,1,1,18,0,0,22,6],
+["00BGGH","Tower Hamlets","St Dunstan`s and Stepney Green",12679,4333,56,71,210,5695,46,30,1148,1090,34,0,1,2,45,0,0,9,9],
+["00BGGJ","Tower Hamlets","St Katherine`s and Wapping",11245,4995,113,127,109,3006,44,35,1972,844,44,1,1,1,27,0,0,18,8],
+["00BGGK","Tower Hamlets","Shadwell",12078,3489,92,69,94,6243,23,21,1126,921,29,1,1,1,52,0,0,9,8],
+["00BGGL","Tower Hamlets","Spitalfields and Banglatown",8383,1532,40,94,112,5186,9,16,953,441,18,0,1,1,62,0,0,11,5],
+["00BGGM","Tower Hamlets","Weavers",11685,4069,104,57,104,4589,11,38,1637,1076,35,1,0,1,39,0,0,14,9],
+["00BGGN","Tower Hamlets","Whitechapel",12046,2556,72,135,283,6563,31,25,1439,942,21,1,1,2,54,0,0,12,8]
+]}
+]}

@@ -1,0 +1,67 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: London Green and Blue Cover (Greater London Authority)",
+ "dataset": "emqzm",
+ "page": "https://data.london.gov.uk/dataset/london-green-and-blue-cover-emqzm",
+ "resources": [
+  {
+   "resource": "828fdf21-84c8-43ff-b962-5384b596a0c6",
+   "file": "tile_grid_467_bng_GLA.zip",
+   "url": "https://data.london.gov.uk/download/emqzm/828fdf21-84c8-43ff-b962-5384b596a0c6/tile_grid_467_bng_GLA.zip",
+   "size": 122753,
+   "resource_date": "2019-01-18",
+   "fetched": "2026-10-04",
+   "entries": 8
+  }
+ ],
+ "licence": "Open Government Licence v3",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2023-07-06",
+ "update_frequency": "One off",
+ "geo": null,
+ "theme": "environment",
+ "layers": [
+  {
+   "table": "cir_2km_tile_lu_gla_clip",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "lds-harvest-auto.mjs run emqzm: resources chosen by the written rules (harvest-log.json meta.rules: formats, dedupe, caps); every feature read (GeoPackage, GeoJSON, shapefile, or table rows with coordinate columns as points, the CRS judged per row by value); a feature is kept when it meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing or the box inside a polygon; whole geometries kept, whole_in_zone and in_cw added; WGS84 6 decimals through OSTN15; contact fields dropped.",
+ "counts": {
+  "source_features": 467,
+  "no_geometry": 0,
+  "in_zone": 20,
+  "in_cw": 2
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": [],
+ "harvest_rules": "tools/lds-harvest-auto.mjs AUTO_RULES (feeds/london-datastore/harvest-log.json meta.rules)",
+ "selection_notes": [
+  "blueandgreen_ndvi0.05.zip: 1650 MB, over the 1200 MB resource cap",
+  "blueandgreen_ndvi0.1.zip: 1697 MB, over the 1200 MB resource cap"
+ ]
+},
+"features":[
+{"type":"Feature","properties":{"tile_num":262,"tile_area":399.999840827,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.030446,51.510353],[0.001645,51.510848],[0.002433,51.528821],[0.031245,51.528325],[0.030446,51.510353]]]}},
+{"type":"Feature","properties":{"tile_num":263,"tile_area":399.999840923,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.029646,51.492381],[0.000856,51.492876],[0.001645,51.510848],[0.030446,51.510353],[0.029646,51.492381]]]}},
+{"type":"Feature","properties":{"tile_num":264,"tile_area":399.999841016,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.028848,51.474409],[0.000069,51.474904],[0.000856,51.492876],[0.029646,51.492381],[0.028848,51.474409]]]}},
+{"type":"Feature","properties":{"tile_num":265,"tile_area":399.999841112,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.028051,51.456437],[-0.000717,51.456931],[0.000069,51.474904],[0.028848,51.474409],[0.028051,51.456437]]]}},
+{"type":"Feature","properties":{"tile_num":285,"tile_area":399.999841891,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.001645,51.510848],[-0.027158,51.511336],[-0.02638,51.529309],[0.002433,51.528821],[0.001645,51.510848]]]}},
+{"type":"Feature","properties":{"tile_num":286,"tile_area":399.999841987,"in_cw":true,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[0.000856,51.492876],[-0.027934,51.493364],[-0.027158,51.511336],[0.001645,51.510848],[0.000856,51.492876]]]}},
+{"type":"Feature","properties":{"tile_num":287,"tile_area":399.99984208,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[0.000069,51.474904],[-0.02871,51.475391],[-0.027934,51.493364],[0.000856,51.492876],[0.000069,51.474904]]]}},
+{"type":"Feature","properties":{"tile_num":288,"tile_area":399.999842176,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.000717,51.456931],[-0.029485,51.457418],[-0.02871,51.475391],[0.000069,51.474904],[-0.000717,51.456931]]]}},
+{"type":"Feature","properties":{"tile_num":308,"tile_area":399.999842955,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.027158,51.511336],[-0.055961,51.511817],[-0.055195,51.52979],[-0.02638,51.529309],[-0.027158,51.511336]]]}},
+{"type":"Feature","properties":{"tile_num":309,"tile_area":399.999843051,"in_cw":true,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.027934,51.493364],[-0.056726,51.493845],[-0.055961,51.511817],[-0.027158,51.511336],[-0.027934,51.493364]]]}},
+{"type":"Feature","properties":{"tile_num":310,"tile_area":399.999843145,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.02871,51.475391],[-0.05749,51.475872],[-0.056726,51.493845],[-0.027934,51.493364],[-0.02871,51.475391]]]}},
+{"type":"Feature","properties":{"tile_num":311,"tile_area":399.99984324,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.029485,51.457418],[-0.058254,51.457898],[-0.05749,51.475872],[-0.02871,51.475391],[-0.029485,51.457418]]]}},
+{"type":"Feature","properties":{"tile_num":331,"tile_area":399.99984402,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.055961,51.511817],[-0.084765,51.512292],[-0.08401,51.530265],[-0.055195,51.52979],[-0.055961,51.511817]]]}},
+{"type":"Feature","properties":{"tile_num":332,"tile_area":399.999844115,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.056726,51.493845],[-0.085519,51.494318],[-0.084765,51.512292],[-0.055961,51.511817],[-0.056726,51.493845]]]}},
+{"type":"Feature","properties":{"tile_num":333,"tile_area":399.999844209,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.05749,51.475872],[-0.086271,51.476345],[-0.085519,51.494318],[-0.056726,51.493845],[-0.05749,51.475872]]]}},
+{"type":"Feature","properties":{"tile_num":334,"tile_area":399.999844304,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.058254,51.457898],[-0.087023,51.458372],[-0.086271,51.476345],[-0.05749,51.475872],[-0.058254,51.457898]]]}},
+{"type":"Feature","properties":{"tile_num":354,"tile_area":399.999845084,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.084765,51.512292],[-0.11357,51.512758],[-0.112827,51.530732],[-0.08401,51.530265],[-0.084765,51.512292]]]}},
+{"type":"Feature","properties":{"tile_num":355,"tile_area":399.999845178,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.085519,51.494318],[-0.114312,51.494785],[-0.11357,51.512758],[-0.084765,51.512292],[-0.085519,51.494318]]]}},
+{"type":"Feature","properties":{"tile_num":356,"tile_area":399.999845273,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.086271,51.476345],[-0.115053,51.476811],[-0.114312,51.494785],[-0.085519,51.494318],[-0.086271,51.476345]]]}},
+{"type":"Feature","properties":{"tile_num":357,"tile_area":399.999845368,"in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.087023,51.458372],[-0.115794,51.458838],[-0.115053,51.476811],[-0.086271,51.476345],[-0.087023,51.458372]]]}}
+]}

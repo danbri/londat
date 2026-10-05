@@ -1,0 +1,100 @@
+{"type":"FeatureCollection","meta":{
+ "source": "London Datastore: London View Management Framework (LVMF) - 2026 consultation GIS files (Greater London Authority)",
+ "dataset": "2gqpn",
+ "page": "https://data.london.gov.uk/dataset/london-view-management-framework-lvmf-2026-consultation-gis-file-2gqpn",
+ "resources": [
+  {
+   "resource": "ypd",
+   "file": "LVMF_consultation_kinetic_paths.zip",
+   "url": "https://data.london.gov.uk/download/2gqpn/ypd/LVMF_consultation_kinetic_paths.zip",
+   "size": 3498,
+   "resource_date": "2026-09-21",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "g17",
+   "file": "LVMF_consultation_protected_vistas.zip",
+   "url": "https://data.london.gov.uk/download/2gqpn/g17/LVMF_consultation_protected_vistas.zip",
+   "size": 6074,
+   "resource_date": "2026-09-21",
+   "fetched": "2026-10-04"
+  },
+  {
+   "resource": "70d",
+   "file": "LVMF_consultation_representative_viewpoints.zip",
+   "url": "https://data.london.gov.uk/download/2gqpn/70d/LVMF_consultation_representative_viewpoints.zip",
+   "size": 5870,
+   "resource_date": "2026-09-21",
+   "fetched": "2026-10-04"
+  }
+ ],
+ "licence": "Open Government Licence v3",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data (London Datastore terms).",
+ "dataset_modified": "2026-09-21",
+ "update_frequency": "One off",
+ "geo": "Postcode Sector",
+ "theme": "heritage",
+ "layers": [
+  {
+   "table": "LVMF_consultation_kinetic_paths",
+   "srs": 27700
+  },
+  {
+   "table": "LVMF_consultation_protected_vistas",
+   "srs": 27700
+  },
+  {
+   "table": "LVMF_consultation_representative_viewpoints",
+   "srs": 27700
+  }
+ ],
+ "crs_source": "EPSG:27700",
+ "crs_output": "EPSG:4326 (WGS84), 6 decimal places; BNG to WGS84 through the OS OSTN15 grid (lib.mjs bngProjector)",
+ "method": "walk-london-datastore.mjs harvest lvmf-2026-consultation: download every shpzip resource (shpzip); read every feature; keep a feature whose geometry meets the zone (the 3D model box, BNG E 532400-539900, N 176700-182300; WGS84 -0.095, 51.474, 0.015, 51.522): a vertex inside, an edge crossing the box or the box inside a polygon. Whole geometries are kept (not cut at the box): whole_in_zone says whether all of it lies inside. in_cw: the geometry meets the Canary Wharf registry box -0.03, 51.498, -0.005, 51.51. Source attributes kept as published except fields matching e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|website_contact|^owner_?name|person. uprn_suspect: a UPRN field that a spreadsheet rounded (an exponent, or 9+ digits ending in 5+ zeros); not a key (fault F22).",
+ "counts": {
+  "source_features": 114,
+  "no_geometry": 0,
+  "in_zone": 35,
+  "in_cw": 0
+ },
+ "attributes_in_source": "yes",
+ "fields_dropped": []
+},
+"features":[
+{"type":"Feature","properties":{"layer":"LVMF_consultation_kinetic_paths","viewing_lo":"11A","viewing_pl":11,"view_name":"London Bridge | upstream – from Southwark","in_cw":false,"whole_in_zone":true},"geometry":{"type":"LineString","coordinates":[[-0.088309,51.506893],[-0.088138,51.507371],[-0.087973,51.50783]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_kinetic_paths","viewing_lo":"24A","viewing_pl":24,"view_name":"Island Gardens | opposite The Old Royal Naval College","in_cw":false,"whole_in_zone":true},"geometry":{"type":"LineString","coordinates":[[-0.009128,51.486486],[-0.008159,51.486681],[-0.007106,51.486971]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_kinetic_paths","viewing_lo":"25A","viewing_pl":25,"view_name":"The Queen’s Walk | opposite The Tower of London","in_cw":false,"whole_in_zone":true},"geometry":{"type":"LineString","coordinates":[[-0.080435,51.505729],[-0.079719,51.505526],[-0.078061,51.504988],[-0.076857,51.504576]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_kinetic_paths","viewing_lo":"11B","viewing_pl":11,"view_name":"London Bridge | downstream – from Southwark","in_cw":false,"whole_in_zone":true},"geometry":{"type":"LineString","coordinates":[[-0.087548,51.507731],[-0.087718,51.507244],[-0.087808,51.506991]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":25,"viewing_lo":"25B","view_name":"The Queen’s Walk | at the site of Old London Bridge","pv_compone":"Landmark Viewing Corridor","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.075948,51.508557],[-0.075638,51.507679],[-0.086904,51.506692],[-0.075948,51.508557]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":25,"viewing_lo":"25B","view_name":"The Queen’s Walk | at the site of Old London Bridge","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.031696,51.517029],[-0.075638,51.507679],[-0.075948,51.508557],[0.028455,51.526273],[0.031696,51.517029]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":25,"viewing_lo":"25A","view_name":"The Queen’s Walk | opposite The Tower of London","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.057935,51.553852],[-0.075584,51.507895],[-0.076658,51.507967],[-0.0739,51.554935],[-0.057935,51.553852]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":25,"viewing_lo":"25A","view_name":"The Queen’s Walk | opposite The Tower of London","pv_compone":"Landmark Viewing Corridor","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.075584,51.507895],[-0.076857,51.504576],[-0.076658,51.507967],[-0.075584,51.507895]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":9,"viewing_lo":"09A","view_name":"Richmond Park | King Henry’s Mound","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.059973,51.567489],[-0.097791,51.513193],[-0.098846,51.514369],[0.058079,51.569609],[0.059973,51.567489]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":8,"viewing_lo":"08A","view_name":"Victoria Embankment | at Westminster Pier","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[0.04823,51.579226],[-0.097973,51.513493],[-0.098664,51.514069],[0.043619,51.583069],[0.04823,51.579226]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":6,"viewing_lo":"06A","view_name":"Blackheath Point | the orientation board","pv_compone":"Lateral Assessment Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.099045,51.513166],[-0.010847,51.473523],[-0.0996,51.512695],[-0.099045,51.513166]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":6,"viewing_lo":"06A","view_name":"Blackheath Point | the orientation board","pv_compone":"Landmark Viewing Corridor","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.097977,51.514071],[-0.010847,51.473523],[-0.099045,51.513166],[-0.097977,51.514071]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":6,"viewing_lo":"06A","view_name":"Blackheath Point | the orientation board","pv_compone":"Lateral Assessment Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.097037,51.514867],[-0.010847,51.473523],[-0.097977,51.514071],[-0.097037,51.514867]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade – toward the City of London","pv_compone":"Lateral Assessment Area","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.074493,51.506255],[-0.000768,51.478023],[-0.074855,51.50587],[-0.074493,51.506255]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade – toward the City of London","pv_compone":"Landmark Viewing Corridor","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.074855,51.50587],[-0.000768,51.478023],[-0.075802,51.504862],[-0.074855,51.50587]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade – toward the City of London","pv_compone":"Lateral Assessment Area","in_cw":false,"whole_in_zone":true},"geometry":{"type":"Polygon","coordinates":[[[-0.075802,51.504862],[-0.000768,51.478023],[-0.076164,51.504477],[-0.075802,51.504862]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":4,"viewing_lo":"04A","view_name":"Primrose Hill | the summit – toward the City of London","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.097125,51.514905],[0.055706,51.455472],[0.047557,51.447817],[-0.099512,51.512657],[-0.097125,51.514905]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":3,"viewing_lo":"03A","view_name":"Kenwood | the viewpoint","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.09656,51.514565],[-0.045042,51.47125],[-0.051212,51.468502],[-0.100077,51.512997],[-0.09656,51.514565]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":2,"viewing_lo":"02A","view_name":"Parliament Hill | the viewpoint – toward the City of London","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.096659,51.514645],[-0.039828,51.473996],[-0.046141,51.470711],[-0.099978,51.512917],[-0.096659,51.514645]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":23,"viewing_lo":"23A","view_name":"Hyde Park | The Serpentine Bridge","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.124598,51.499742],[-0.019037,51.485456],[-0.021259,51.479421],[-0.125288,51.497858],[-0.124598,51.499742]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":1,"viewing_lo":"01B","view_name":"Alexandra Palace | East Court car park","pv_compone":"Background Consultation Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.096215,51.514089],[-0.075105,51.461778],[-0.082039,51.460762],[-0.100422,51.513473],[-0.096215,51.514089]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade – toward the City of London","pv_compone":"Lateral Assessment Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.076164,51.504477],[-0.099411,51.512618],[-0.098938,51.513122],[-0.075802,51.504862],[-0.076164,51.504477]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade – toward the City of London","pv_compone":"Landmark Viewing Corridor","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.075802,51.504862],[-0.098938,51.513122],[-0.097699,51.51444],[-0.074855,51.50587],[-0.075802,51.504862]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_protected_vistas","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade – toward the City of London","pv_compone":"Lateral Assessment Area","in_cw":false,"whole_in_zone":false},"geometry":{"type":"Polygon","coordinates":[[[-0.097225,51.514944],[-0.074493,51.506255],[-0.074855,51.50587],[-0.097699,51.51444],[-0.097225,51.514944]]]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":5,"viewing_lo":"05A","view_name":"Greenwich Park | The Wolfe Promenade - toward the Old Royal Naval College","X":538919.87,"Y":177339.78,"Z":46.56,"bearing":327.36,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.000938,51.477966]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":5,"viewing_lo":"05B","view_name":"Greenwich Park | the Wolfe Promenade - toward the City of London","X":538931.53,"Y":177346.37,"Z":46.55,"bearing":298.9,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.000768,51.478023]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":6,"viewing_lo":"06A","view_name":"Blackheath Point | the orientation board","X":538245.22,"Y":176827,"Z":45.96,"bearing":304.88,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.010847,51.473523]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":10,"viewing_lo":"10A","view_name":"Tower Bridge | upstream � the north bastion","X":533665.02,"Y":180311.37,"Z":13.22,"bearing":332.86,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.075436,51.505936]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":10,"viewing_lo":"10B","view_name":"Tower Bridge | upstream � the south bastion","X":533634.64,"Y":180231.6,"Z":14.8,"bearing":281.72,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.075904,51.505226]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":11,"viewing_lo":"11A","view_name":"London Bridge | upstream � from Southwark","X":532768.9,"Y":180394.4,"Z":14.6,"bearing":316.3,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.088309,51.506893]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":11,"viewing_lo":"11B","view_name":"London Bridge | downstream � from Southwark","X":532808.9,"Y":180434.5,"Z":14.3,"bearing":82.93,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.087718,51.507244]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":11,"viewing_lo":"11C","view_name":"London Bridge | downstream � at the centre of the Bridge","X":532830.5,"Y":180548.7,"Z":15,"bearing":108.66,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.087364,51.508266]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":24,"viewing_lo":"24A","view_name":"Island Gardens | opposite The Old Royal Naval College","X":538392.1,"Y":178295.2,"Z":5.1,"bearing":156.6,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.008159,51.486681]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":25,"viewing_lo":"25A","view_name":"The Queen's Walk | opposite the Tower of London","X":533570.39,"Y":180157.55,"Z":4.44,"bearing":345.85,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.076857,51.504576]}},
+{"type":"Feature","properties":{"layer":"LVMF_consultation_representative_viewpoints","viewing_pl":25,"viewing_lo":"25B","view_name":"The Queen�s Walk | at the site of Old London Bridge","X":532867,"Y":180374.5,"Z":6.1,"bearing":77.83,"in_cw":false,"whole_in_zone":true},"geometry":{"type":"Point","coordinates":[-0.086904,51.506692]}}
+]}
