@@ -38,7 +38,8 @@
           "ELL platforms 3 & 4",
           "Jubilee platforms 1 & 2 (east end, west end)"
         ]
-      }
+      },
+      "model": "models/stations-exports.zip (canada-water.glb)"
     },
     {
       "id": "canary-wharf",
@@ -76,8 +77,85 @@
           "Lift to ticket hall",
           "Lift to platform level"
         ]
-      }
+      },
+      "model": "models/stations-exports.zip (canary-wharf.glb)"
     }
   ],
-  "note_on_formats": "The 2015 FOI release is raster drawings (TfL axonometric sheets, not to scale, parts redacted). No open 3D format (DWG/IFC/glTF) of these stations is known to be published; TfL holds CAD/BIM sources (e.g. drawing reference J009-06 on the Canada Water sheet)."
+  "note_on_formats": "The 2015 FOI release is raster drawings (TfL axonometric sheets, not to scale, parts redacted). No open 3D format (DWG/IFC/glTF) of these stations is known to be published; TfL holds CAD/BIM sources (e.g. drawing reference J009-06 on the Canada Water sheet).",
+  "models": {
+    "made": "2026-10-05",
+    "tool": "Blender 4.0.2 driven through the blender-mcp (mcp-for-blender 2.1.8, MIT) MCP server under Xvfb",
+    "stations": [
+      "canada-water",
+      "canary-wharf"
+    ],
+    "basis": "TfL axonometric sheets as a layout guide (owner-approved, not open licence) + OpenStreetMap geometry (ODbL 1.0, © OpenStreetMap contributors) + cited published levels and sizes",
+    "licence_note": "Contains OpenStreetMap-derived geometry, ODbL 1.0. TfL sheet basis: RPSI re-use, approved by danbri 2026-10-05 for the scoping phase.",
+    "frame": {
+      "crs": "EPSG:27700 + ODN",
+      "E0": 537550,
+      "N0": 180300,
+      "glb_obj_fbx": "Y up: x=E-E0, y=m OD, z=-(N-N0)",
+      "blend_usdc_stl": "Z up: X=E-E0, Y=N-N0, Z=m OD"
+    },
+    "levels_chosen_m_od": {
+      "canary-wharf": {
+        "jl_rail": -15.6,
+        "jl_platform": -14.6,
+        "street": 8.4,
+        "hall_floor": -3.1,
+        "mezzanine": 3.0
+      },
+      "canada-water": {
+        "jl_rail": -13.3,
+        "jl_platform": -12.3,
+        "ell_platform": -5.6,
+        "hall_floor": 0.9,
+        "street": 5.4
+      }
+    },
+    "files": [
+      {
+        "path": "models/stations-blend.zip",
+        "bytes": 1842599,
+        "sha256": "b97f1638dbb21ba004b07ff74f0a338abc7a6d8bac4a8ba238948f9450906262"
+      },
+      {
+        "path": "models/stations-exports.zip",
+        "bytes": 8858154,
+        "sha256": "499cb94f4420f838fc952b75809079095f37c37e713eb6aca2545669559381d2"
+      },
+      {
+        "path": "models/making_of.zip",
+        "bytes": 8317012,
+        "sha256": "8c970aba5c3abb8e8866c0bb579daa2cf02e0cd00515f23dc3c389c55734115f"
+      }
+    ],
+    "contents": {
+      "stations-blend.zip": [
+        "stations.blend"
+      ],
+      "stations-exports.zip": [
+        "stations.glb",
+        "canary-wharf.glb",
+        "canada-water.glb",
+        "stations.obj",
+        "stations.mtl",
+        "stations.fbx",
+        "canary-wharf.stl",
+        "canada-water.stl",
+        "stations.usdc"
+      ],
+      "making_of.zip": [
+        "making_of/screenshots/ (102 captures, every 10 s)",
+        "making_of/timelapse.mp4",
+        "making_of/contact-sheet.jpg",
+        "making_of/stills/",
+        "making_of/plans/",
+        "making_of/scripts/",
+        "making_of/MAKING-OF.md"
+      ]
+    },
+    "readme": "models/README.md"
+  }
 }
