@@ -1,8 +1,9 @@
-# Hourly snapshot of live state in the Canary Wharf / Docklands zone, appended to cwplans/cache/live-YYYY-MM.sqlite
-# and cwplans/cache/latest.json. The tools live in danbri/glitchcan-minigam (magpie/cwplans/tools/cache-londat.mjs,
+# Hourly snapshot of live state in the Canary Wharf / Docklands zone: one small run file per run in cwplans/cache/runs/
+# and cwplans/cache/latest.json; the first run of a month writes the previous month's cwplans/cache/live-YYYY-MM.sqlite
+# once and removes that month's run files. No binary file is committed hourly. The tools live in danbri/glitchcan-minigam (magpie/cwplans/tools/cache-londat.mjs,
 # which runs fetch-live.mjs, fetch-river.mjs and fetch-ais.mjs with their own politeness). Skill: cwplans-londat-cache.
 # About 120 requests per run to TfL, EA, NATS, UK Power Networks, Thames Water/Stream, Open Waters and Open-Meteo,
-# one at a time per host. Each commit adds about 25 kB of SQLite pages (measured by simulation, 2026-10-05).
+# one at a time per host. Size per run: see the skill cwplans-londat-cache, "Sizes and growth".
 name: cache-live
 on:
   schedule:
@@ -52,7 +53,8 @@ jobs:
         run: |
           git config user.name 'londat cache bot'
           git config user.email 'londat-cache@users.noreply.github.com'
-          git add cwplans/cache/live-*.sqlite cwplans/cache/latest.json
+          git add -A cwplans/cache/runs cwplans/cache/latest.json
+          git add cwplans/cache/live-*.sqlite 2>/dev/null || true
           if git diff --cached --quiet; then echo 'nothing new'; exit 0; fi
           git commit -q -m "cache: live state $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep 10; done
