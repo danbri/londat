@@ -3,7 +3,81 @@
   "approved_by": "danbri",
   "approved_on": "2026-10-05",
   "stations": [
-    { "id": "canada-water", "name": "Canada Water", "lines": ["Jubilee"], "status": "pending", "files": [] },
-    { "id": "canary-wharf", "name": "Canary Wharf", "lines": ["Jubilee"], "status": "pending", "files": [] }
-  ]
+    {
+      "id": "canada-water",
+      "name": "Canada Water",
+      "lines": [
+        "Jubilee"
+      ],
+      "status": "imported",
+      "files": [
+        {
+          "path": "stations/canada-water/canada-water-axonometric.jpg",
+          "format": "JPEG raster",
+          "px": [
+            1811,
+            1241
+          ],
+          "bytes": 395884,
+          "sha256": "29dc1d01a340066e0e3402420967760de7305b4a5211449cf0aae1e22698f47f",
+          "source_url": "https://www.ianvisits.co.uk/articles/wp-content/uploads/sites/2/2015/07/canada-water.jpg",
+          "obtained": "2026-10-05, downloaded by the owner (danbri) and supplied in the session; not fetched by script (site robots.txt blocks Anthropic agents)"
+        }
+      ],
+      "facts_read_from_drawing": {
+        "drawing_ref": "J009-06",
+        "depths_below_street_m": {
+          "Jubilee line platforms": 15.0,
+          "East London line platforms": 8.0
+        },
+        "labels": [
+          "Ticket hall",
+          "Lift 1-4",
+          "Escape stair 3",
+          "Exits 2, 3",
+          "ELL platforms 3 & 4",
+          "Jubilee platforms 1 & 2 (east end, west end)"
+        ]
+      }
+    },
+    {
+      "id": "canary-wharf",
+      "name": "Canary Wharf",
+      "lines": [
+        "Jubilee"
+      ],
+      "status": "imported",
+      "files": [
+        {
+          "path": "stations/canary-wharf/canary-wharf-axonometric.jpg",
+          "format": "JPEG raster",
+          "px": [
+            1779,
+            1230
+          ],
+          "bytes": 383763,
+          "sha256": "7f4528aced6c58fdea708551ddaadb832406577e30d5888695f359463ae66550",
+          "source_url": "https://www.ianvisits.co.uk/articles/wp-content/uploads/sites/2/2015/07/canary-wharf.jpg",
+          "obtained": "2026-10-05, downloaded by the owner (danbri) and supplied in the session; not fetched by script (site robots.txt blocks Anthropic agents)"
+        }
+      ],
+      "facts_read_from_drawing": {
+        "drawing_ref": null,
+        "depths_below_street_m": {
+          "Jubilee line platforms": 23.0
+        },
+        "labels": [
+          "Plaza entrance (west end)",
+          "Fosterito entrance (central area)",
+          "Mezzanine level",
+          "Ticket hall level east/west end",
+          "JL platform level",
+          "ESC 1-20",
+          "Lift to ticket hall",
+          "Lift to platform level"
+        ]
+      }
+    }
+  ],
+  "note_on_formats": "The 2015 FOI release is raster drawings (TfL axonometric sheets, not to scale, parts redacted). No open 3D format (DWG/IFC/glTF) of these stations is known to be published; TfL holds CAD/BIM sources (e.g. drawing reference J009-06 on the Canada Water sheet)."
 }
