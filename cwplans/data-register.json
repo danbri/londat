@@ -42,6 +42,23 @@
    "attribution": "Greater London Authority",
    "note": "queried 2026-10-04 (37 layers, zone envelope, f=geojson) by tools/amend-uprns.mjs as evidence for rounded UPRNs only: os_addressbase_uprn is a text field there with the same rounded values (1.00E+11). No rows committed. The editable FeatureServers named in the app need a token and were not used."
   },
+  "kml-crt-locks": {
+   "name": "Canal & River Trust locks (Canal_And_River_Trust_Locks_View, ArcGIS feature layer)",
+   "licence": "Open Government Licence (item licence)",
+   "url": "https://data-canalrivertrust.opendata.arcgis.com/"
+  },
+  "kml-sustrans-ncn": {
+   "name": "National Cycle Network (Public), Walk Wheel Cycle Trust (formerly Sustrans), ArcGIS feature layer",
+   "licence": "Open Government Licence v3.0 (item licence); contains OS data (Crown copyright 2018) and OpenStreetMap contributions (ODbL)",
+   "url": "https://data-sustrans-uk.opendata.arcgis.com/datasets/Sustrans-UK::national-cycle-network-public-1/about",
+   "note": "OSM content inside an OGL layer: the copy is marked osm derived"
+  },
+  "kml-tfl-gis-hub": {
+   "name": "Transport for London GIS Open Data Hub feature layers (Cycle Routes, River Piers, River Services with stops)",
+   "licence": "Open Government Licence v3.0 (the licence of each ArcGIS item)",
+   "url": "https://gis-tfl.opendata.arcgis.com/",
+   "attribution": "Contains Transport for London data licensed under the Open Government Licence v3.0. Powered by TfL Open Data."
+  },
   "lds-204q6": {
    "name": "London Datastore 204q6: London Plan AMR 15 tables and data (Greater London Authority)",
    "licence": "ODC-By 1.0 (London Datastore: \"Open Data Commons Attribution License\")",
@@ -389,6 +406,11 @@
    "licence": "OGL v2.0 (London Datastore: \"Open Government Licence v2\")",
    "url": "https://data.london.gov.uk/dataset/inner-and-outer-london-boundaries-london-plan-consolidated-with--2jrxd",
    "attribution": "Contains public sector information licensed under the Open Government Licence v2 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data."
+  },
+  "lds-2jx1l": {
+   "name": "London Datastore: Create your own mapping templates (Excel add-in): ward-map-kml.kml",
+   "licence": "Open Government Licence v2",
+   "url": "https://data.london.gov.uk/dataset/create-your-own-mapping-templates-excel-add-in-2jx1l"
   },
   "lds-2jx5l": {
    "name": "London Datastore 2jx5l: Workday Population by Sex and Age, Borough and Ward (Office for National Statistics)",
@@ -2480,6 +2502,18 @@
   }
  },
  "files": [
+  {"path":"feeds/kml/tfl-cycle-routes.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: TfL Cycle Routes (Cycleways, Quietways, Superhighways) in the zone, 420 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-tfl-gis-hub"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/tfl-river-piers.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: TfL River Piers in the zone, 15 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-tfl-gis-hub"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/tfl-river-services.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: TfL River Services (with stops) in the zone, 11 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-tfl-gis-hub"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/sustrans-ncn.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: National Cycle Network (Walk Wheel Cycle Trust, formerly Sustrans) in the zone, 350 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-sustrans-ncn","osm"],"osm":{"use":"derived","what":"route lines of the National Cycle Network contain OpenStreetMap contributions (stated by the publisher)"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/crt-locks.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Canal & River Trust locks in the zone, 13 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["kml-crt-locks"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/ne-thames-path.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Thames Path National Trail in the model box, 1 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["op-dgu-national-trails-england3"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/he-listed-buildings.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Listed buildings in the model box (Historic England, via planning.data.gov.uk), 1769 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["op-pdg-listed-building"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/he-world-heritage.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: World Heritage Sites and buffer zone in the model box (Tower of London, Maritime Greenwich), 3 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["op-pdg-world-heritage-site","op-pdg-world-heritage-site-buffer-zone"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/he-heritage-at-risk.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Heritage at Risk in the model box, 58 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["op-pdg-heritage-at-risk"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/he-parks-gardens.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Registered parks and gardens in the model box, 6 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["op-pdg-park-and-garden"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/gla-conservation-areas.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Conservation areas in the model box (GLA Planning Constraints Map), 107 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["lds-emqwg"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"feeds/kml/lds-wards-2016-zone.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: London wards 2014 (GLA ward KML) in the zone, 92 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["lds-2jx1l"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
   {"path":"feeds/london-datastore/catalogue.json","hosted":"londat","what":"the whole London Datastore catalogue, 2026-10-04: 1,305 datasets, one per line (id, title, publisher, licence, topics, tags, geo granularity, update frequency, dates, 11,348 resources with format, generic kind, md5, size and download path, 312 links; a details member from /api/v3/dataset/<id> for all 1,305: resource count, kinds, archivedAt, next review, the granularity words and zone place names named in the description)","sources":["lds-catalogue"],"osm":{"use":"none"},"produced_by":"tools/walk-london-datastore.mjs walk","shown_on":[]},
   {"path":"feeds/london-datastore/triage.json","hosted":"londat","what":"triage of every catalogue dataset by written rules: licence class, relevance to the zone, kind, held/listed by the project, value themes, join keys, sensitivity, score and reasons; the ranked list","sources":["lds-catalogue","own"],"osm":{"use":"none"},"produced_by":"tools/walk-london-datastore.mjs triage","shown_on":[]},
   {"path":"feeds/london-datastore/air-quality-monitoring-sites/air-quality-monitoring-sites.geojson","hosted":"londat","what":"Air quality monitoring sites (GLA, borough and Breathe London networks): id, name, network, pollutants, coordinates (features that meet the 3D model box; GeoJSON WGS84 with a meta member)","sources":["lds-23n41","os-ostn15"],"osm":{"use":"none"},"produced_by":"tools/walk-london-datastore.mjs harvest air-quality-monitoring-sites","shown_on":[]},
