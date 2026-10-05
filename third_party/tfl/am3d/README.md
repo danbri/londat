@@ -17,6 +17,9 @@ requests (first set published July 2015, 124 stations A to W, many parts redacte
   https://www.whatdotheyknow.com/request/updated_axonometric_drawings_of
 - Ian Visits articles that republish the set (C to G includes Canada Water and Canary Wharf):
   https://www.ianvisits.co.uk/articles/3d-maps-of-every-underground-station-cdefg-14651/
+- What other people built from or alongside these diagrams (54 projects, licences, best baselines for Canada Water and
+  Canary Wharf): https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/underground/AXONOMETRIC-USES.md
+  (records: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/underground/axonometric-uses.json ; 2026-10-05)
 
 ## How files get here
 
