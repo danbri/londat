@@ -68,13 +68,17 @@ N 180131.46 bearing 98.8 deg; `CW.origin.jubilee_axis` E 535472.61 N 179468.26 b
 
 | file | bytes | what |
 |---|---|---|
-| `stations-blend.zip` | 1,842,599 | `stations.blend` (both collections, materials, custom properties, axis empties) |
-| `stations-exports.zip` | 8,858,154 | `stations.glb`, `canary-wharf.glb`, `canada-water.glb`, `stations.obj` + `stations.mtl`, `stations.fbx`, `canary-wharf.stl`, `canada-water.stl`, `stations.usdc` |
-| `making_of.zip` | 8,317,012 | 10-second screen captures, `timelapse.mp4`, `contact-sheet.jpg`, stills, OSM plan plots, build scripts, `MAKING-OF.md` |
+| `stations-blend.zip` | 1,841,025 | `stations.blend` (both collections, materials, custom properties, axis empties) |
+| `stations-exports.zip` | 8,898,451 | `stations.glb`, `canary-wharf.glb`, `canada-water.glb`, `stations.obj` + `stations.mtl`, `stations.fbx`, `canary-wharf.stl`, `canada-water.stl`, `stations.usdc` |
+| `making_of.zip` | 6,345,917 | 5-second screen captures of a scripted rebuild (run 2; run 1's 10-second captures of the authoring session are in commit 0077caa), `timelapse.mp4`, `contact-sheet.jpg`, stills, OSM plan plots, build scripts, `MAKING-OF.md` |
 
 USD: the Debian Blender 4.0.2 build has no USD support (`bpy.app.build_options.usd` is False), so `stations.usdc`
 was written with usd-core 26.8 (pxr) from the evaluated Blender meshes (Z up, metres, displayColor and
 displayOpacity by class, the custom properties as customData). STL has no materials or properties.
+
+The zips were made again on 2026-10-05 (run 2, 19:45 to 19:51 UTC) by running the same build steps again
+through the MCP, with a screen capture every 5 s. The geometry is the same as run 1 (same triangle counts, 0.000 m
+vertex difference in the STL files); only the triangle order in the export files changed.
 
 ## Known limits
 
