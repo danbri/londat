@@ -1,0 +1,1166 @@
+{
+ "meta": {
+  "made": "2026-10-04",
+  "tool": "tools/walk-portals.mjs index",
+  "note": "counts per portal from each triage.json meta; harvested files with size and item count"
+ },
+ "portals": {
+  "boroughs": {
+   "portal": "zone borough portals",
+   "triaged": "2026-10-04",
+   "datasets_seen": null,
+   "in_scope": null,
+   "counts": {
+    "not-open": 4100,
+    "harvested": 28,
+    "deferred": 46,
+    "not-relevant": 4,
+    "held": 11,
+    "walked-elsewhere": 29801,
+    "listed-for-harvest": 1
+   },
+   "harvested_files": 28,
+   "harvested_bytes": 986971,
+   "catalogue_bytes": 739298,
+   "harvested": [
+    {
+     "key": "city-airport-safeguarding-area",
+     "file": "boroughs/city-airport-safeguarding-area/city-airport-safeguarding-area.geojson",
+     "bytes": 16385,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-city-flood-risk-area",
+     "file": "boroughs/city-city-flood-risk-area/city-city-flood-risk-area.geojson",
+     "bytes": 14185,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-coal-tax-posts",
+     "file": "boroughs/city-coal-tax-posts/city-coal-tax-posts.geojson",
+     "bytes": 1810,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-crossrail-safeguarding-area",
+     "file": "boroughs/city-crossrail-safeguarding-area/city-crossrail-safeguarding-area.geojson",
+     "bytes": 13040,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-cultural-spaces",
+     "file": "boroughs/city-cultural-spaces/city-cultural-spaces.geojson",
+     "bytes": 56352,
+     "items": 237,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-cycleways",
+     "file": "boroughs/city-cycleways/city-cycleways.geojson",
+     "bytes": 90663,
+     "items": 23,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-grit-bins",
+     "file": "boroughs/city-grit-bins/city-grit-bins.geojson",
+     "bytes": 6414,
+     "items": 21,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-highway-authority-subway",
+     "file": "boroughs/city-highway-authority-subway/city-highway-authority-subway.geojson",
+     "bytes": 11172,
+     "items": 6,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-historic-land-use",
+     "file": "boroughs/city-historic-land-use/city-historic-land-use.geojson",
+     "bytes": 144368,
+     "items": 340,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-lvmf-protected-vistas",
+     "file": "boroughs/city-lvmf-protected-vistas/city-lvmf-protected-vistas.geojson",
+     "bytes": 8472,
+     "items": 18,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-monument-views-and-setting",
+     "file": "boroughs/city-monument-views-and-setting/city-monument-views-and-setting.geojson",
+     "bytes": 14043,
+     "items": 6,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-permissive-subway",
+     "file": "boroughs/city-permissive-subway/city-permissive-subway.geojson",
+     "bytes": 12516,
+     "items": 3,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-places-of-interest",
+     "file": "boroughs/city-places-of-interest/city-places-of-interest.geojson",
+     "bytes": 87693,
+     "items": 17,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-principal-shopping-centres",
+     "file": "boroughs/city-principal-shopping-centres/city-principal-shopping-centres.geojson",
+     "bytes": 69733,
+     "items": 4,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-protected-squares",
+     "file": "boroughs/city-protected-squares/city-protected-squares.geojson",
+     "bytes": 5147,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-rail-stations",
+     "file": "boroughs/city-rail-stations/city-rail-stations.geojson",
+     "bytes": 2807,
+     "items": 7,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-riverside-walk",
+     "file": "boroughs/city-riverside-walk/city-riverside-walk.geojson",
+     "bytes": 39036,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-smoke-control-orders",
+     "file": "boroughs/city-smoke-control-orders/city-smoke-control-orders.geojson",
+     "bytes": 28640,
+     "items": 8,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-special-act-land",
+     "file": "boroughs/city-special-act-land/city-special-act-land.geojson",
+     "bytes": 6154,
+     "items": 5,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-st-paul-s-heights-grid",
+     "file": "boroughs/city-st-paul-s-heights-grid/city-st-paul-s-heights-grid.geojson",
+     "bytes": 155284,
+     "items": 538,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-st-paul-s-heights-points",
+     "file": "boroughs/city-st-paul-s-heights-points/city-st-paul-s-heights-points.geojson",
+     "bytes": 107084,
+     "items": 635,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-st-paul-s-heights-setback",
+     "file": "boroughs/city-st-paul-s-heights-setback/city-st-paul-s-heights-setback.geojson",
+     "bytes": 2858,
+     "items": 6,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-st-pauls-heights-policy-area",
+     "file": "boroughs/city-st-pauls-heights-policy-area/city-st-pauls-heights-policy-area.geojson",
+     "bytes": 8664,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-thames-policy-area",
+     "file": "boroughs/city-thames-policy-area/city-thames-policy-area.geojson",
+     "bytes": 17465,
+     "items": 6,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-thames-tideway-tunnel-safeguarding-area",
+     "file": "boroughs/city-thames-tideway-tunnel-safeguarding-area/city-thames-tideway-tunnel-safeguarding-area.geojson",
+     "bytes": 37677,
+     "items": 13,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-tower-of-london-whs-local-setting-area",
+     "file": "boroughs/city-tower-of-london-whs-local-setting-area/city-tower-of-london-whs-local-setting-area.geojson",
+     "bytes": 16051,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "city-underground-stations",
+     "file": "boroughs/city-underground-stations/city-underground-stations.geojson",
+     "bytes": 4803,
+     "items": 15,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "lewisham-ev-chargepoints",
+     "file": "boroughs/lewisham-ev-chargepoints/lewisham-ev-chargepoints.geojson",
+     "bytes": 8455,
+     "items": 17,
+     "licence": "Open Government Licence v3.0"
+    }
+   ]
+  },
+  "dgu": {
+   "portal": "data.gov.uk",
+   "triaged": "2026-10-04",
+   "datasets_seen": 59451,
+   "in_scope": 25492,
+   "counts": {
+    "listed-for-harvest": 1126,
+    "not-relevant": 9145,
+    "deferred": 1990,
+    "not-open": 4809,
+    "unavailable": 3199,
+    "walked-elsewhere": 5109,
+    "held": 28,
+    "sensitive": 72,
+    "harvested": 14
+   },
+   "harvested_files": 14,
+   "harvested_bytes": 1862417,
+   "catalogue_bytes": 665933,
+   "harvested": [
+    {
+     "key": "blue-space-access-points-in-england",
+     "file": "dgu/blue-space-access-points-in-england/blue-space-access-points-in-england.geojson",
+     "bytes": 596379,
+     "items": 1193,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "flood-warning-areas3",
+     "file": "dgu/flood-warning-areas3/flood-warning-areas3.geojson",
+     "bytes": 117553,
+     "items": 16,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "historic-flood-map1",
+     "file": "dgu/historic-flood-map1/historic-flood-map1.geojson",
+     "bytes": 30095,
+     "items": 30,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "hydrometric-monitoring-points1",
+     "file": "dgu/hydrometric-monitoring-points1/hydrometric-monitoring-points1.geojson",
+     "bytes": 7455,
+     "items": 13,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "national-trails-england3",
+     "file": "dgu/national-trails-england3/national-trails-england3.geojson",
+     "bytes": 19415,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "noise-action-planning-important-areas-round-3-england",
+     "file": "dgu/noise-action-planning-important-areas-round-3-england/noise-action-planning-important-areas-round-3-england.geojson",
+     "bytes": 326675,
+     "items": 47,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "priority-habitats-inventory-england",
+     "file": "dgu/priority-habitats-inventory-england/priority-habitats-inventory-england.geojson.gz",
+     "bytes": 222806,
+     "items": 429,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "rail-noise-lden-england-round-3",
+     "file": "dgu/rail-noise-lden-england-round-3/rail-noise-lden-england-round-3.geojson.gz",
+     "bytes": 127692,
+     "items": 2350,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "recorded-flood-outlines1",
+     "file": "dgu/recorded-flood-outlines1/recorded-flood-outlines1.geojson",
+     "bytes": 41483,
+     "items": 10,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "rivers-and-sea-3-3-defended-flood-risk-extents-present-day",
+     "file": "dgu/rivers-and-sea-3-3-defended-flood-risk-extents-present-day/rivers-and-sea-3-3-defended-flood-risk-extents-present-day.geojson.gz",
+     "bytes": 242294,
+     "items": 68,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "statutory-main-river-map",
+     "file": "dgu/statutory-main-river-map/statutory-main-river-map.geojson",
+     "bytes": 25912,
+     "items": 54,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "surveyed-priority-ponds-points",
+     "file": "dgu/surveyed-priority-ponds-points/surveyed-priority-ponds-points.geojson",
+     "bytes": 7775,
+     "items": 10,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "thames-estuary-2100-extreme-water-level-nodes",
+     "file": "dgu/thames-estuary-2100-extreme-water-level-nodes/thames-estuary-2100-extreme-water-level-nodes.geojson",
+     "bytes": 7564,
+     "items": 20,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "water-recreation-locations-zones-and-catchment-summaries-england",
+     "file": "dgu/water-recreation-locations-zones-and-catchment-summaries-england/water-recreation-locations-zones-and-catchment-summaries-england.geojson",
+     "bytes": 89319,
+     "items": 11,
+     "licence": "Open Government Licence v3.0"
+    }
+   ]
+  },
+  "national": {
+   "portal": "national sources of the brief",
+   "triaged": "2026-10-04",
+   "datasets_seen": null,
+   "in_scope": null,
+   "counts": {
+    "harvested": 7,
+    "unavailable": 1,
+    "not-open": 2,
+    "held": 7,
+    "listed-for-harvest": 1,
+    "not-relevant": 1,
+    "deferred": 1
+   },
+   "harvested_files": 7,
+   "harvested_bytes": 1360068,
+   "catalogue_bytes": 10607,
+   "harvested": [
+    {
+     "key": "desnz-energy",
+     "file": "national/desnz-energy/desnz-energy.json.gz",
+     "bytes": 506935,
+     "items": 15500,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "dft-aadf",
+     "file": "national/dft-aadf/dft-aadf.geojson",
+     "bytes": 266253,
+     "items": 222,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "dft-stats19",
+     "file": "national/dft-stats19/dft-stats19.json",
+     "bytes": 51764,
+     "items": 1322,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "mhclg-imd2025",
+     "file": "national/mhclg-imd2025/mhclg-imd2025.json",
+     "bytes": 98856,
+     "items": 318,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "os-open-names",
+     "file": "national/os-open-names/os-open-names.geojson.gz",
+     "bytes": 175547,
+     "items": 4066,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "os-open-rivers",
+     "file": "national/os-open-rivers/os-open-rivers.geojson",
+     "bytes": 15106,
+     "items": 34,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "police-crime",
+     "file": "national/police-crime/police-crime.json",
+     "bytes": 245607,
+     "items": null,
+     "licence": "Open Government Licence v3.0"
+    }
+   ]
+  },
+  "nomis": {
+   "portal": "Nomis Census 2021 bulk downloads",
+   "triaged": "2026-10-04",
+   "datasets_seen": null,
+   "in_scope": null,
+   "counts": {
+    "harvested": 68,
+    "not-relevant": 5,
+    "unavailable": 1
+   },
+   "harvested_files": 68,
+   "harvested_bytes": 3377073,
+   "catalogue_bytes": 33680,
+   "harvested": [
+    {
+     "key": "census2021-ts001-oa",
+     "file": "nomis/census2021-ts001-oa/census2021-ts001-oa.json",
+     "bytes": 39389,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts002-oa",
+     "file": "nomis/census2021-ts002-oa/census2021-ts002-oa.json",
+     "bytes": 95751,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts003-oa",
+     "file": "nomis/census2021-ts003-oa/census2021-ts003-oa.json",
+     "bytes": 110049,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts004-oa",
+     "file": "nomis/census2021-ts004-oa/census2021-ts004-oa.json",
+     "bytes": 87448,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts005-oa",
+     "file": "nomis/census2021-ts005-oa/census2021-ts005-oa.json",
+     "bytes": 147638,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts006-oa",
+     "file": "nomis/census2021-ts006-oa/census2021-ts006-oa.json",
+     "bytes": 35486,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts007-msoa",
+     "file": "nomis/census2021-ts007-msoa/census2021-ts007-msoa.json",
+     "bytes": 33692,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts007a-oa",
+     "file": "nomis/census2021-ts007a-oa/census2021-ts007a-oa.json",
+     "bytes": 101753,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts008-oa",
+     "file": "nomis/census2021-ts008-oa/census2021-ts008-oa.json",
+     "bytes": 41773,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts010-msoa",
+     "file": "nomis/census2021-ts010-msoa/census2021-ts010-msoa.json",
+     "bytes": 8756,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts011-oa",
+     "file": "nomis/census2021-ts011-oa/census2021-ts011-oa.json",
+     "bytes": 50109,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts013-msoa",
+     "file": "nomis/census2021-ts013-msoa/census2021-ts013-msoa.json",
+     "bytes": 22922,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts015-oa",
+     "file": "nomis/census2021-ts015-oa/census2021-ts015-oa.json",
+     "bytes": 77786,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts016-oa",
+     "file": "nomis/census2021-ts016-oa/census2021-ts016-oa.json",
+     "bytes": 53973,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts017-oa",
+     "file": "nomis/census2021-ts017-oa/census2021-ts017-oa.json",
+     "bytes": 63373,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts018-oa",
+     "file": "nomis/census2021-ts018-oa/census2021-ts018-oa.json",
+     "bytes": 98544,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts019-oa",
+     "file": "nomis/census2021-ts019-oa/census2021-ts019-oa.json",
+     "bytes": 47647,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts020-oa",
+     "file": "nomis/census2021-ts020-oa/census2021-ts020-oa.json",
+     "bytes": 33220,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts021-oa",
+     "file": "nomis/census2021-ts021-oa/census2021-ts021-oa.json",
+     "bytes": 123181,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts022-msoa",
+     "file": "nomis/census2021-ts022-msoa/census2021-ts022-msoa.json",
+     "bytes": 76057,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts023-oa",
+     "file": "nomis/census2021-ts023-oa/census2021-ts023-oa.json",
+     "bytes": 50561,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts025-oa",
+     "file": "nomis/census2021-ts025-oa/census2021-ts025-oa.json",
+     "bytes": 47201,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts026-oa",
+     "file": "nomis/census2021-ts026-oa/census2021-ts026-oa.json",
+     "bytes": 50212,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts027-oa",
+     "file": "nomis/census2021-ts027-oa/census2021-ts027-oa.json",
+     "bytes": 99971,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts028-msoa",
+     "file": "nomis/census2021-ts028-msoa/census2021-ts028-msoa.json",
+     "bytes": 31707,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts029-oa",
+     "file": "nomis/census2021-ts029-oa/census2021-ts029-oa.json",
+     "bytes": 57371,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts030-oa",
+     "file": "nomis/census2021-ts030-oa/census2021-ts030-oa.json",
+     "bytes": 65467,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts031-msoa",
+     "file": "nomis/census2021-ts031-msoa/census2021-ts031-msoa.json",
+     "bytes": 16492,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts032-oa",
+     "file": "nomis/census2021-ts032-oa/census2021-ts032-oa.json",
+     "bytes": 2036,
+     "items": 0,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts033-oa",
+     "file": "nomis/census2021-ts033-oa/census2021-ts033-oa.json",
+     "bytes": 1533,
+     "items": 0,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts034-oa",
+     "file": "nomis/census2021-ts034-oa/census2021-ts034-oa.json",
+     "bytes": 1528,
+     "items": 0,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts035-oa",
+     "file": "nomis/census2021-ts035-oa/census2021-ts035-oa.json",
+     "bytes": 1526,
+     "items": 0,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts036-oa",
+     "file": "nomis/census2021-ts036-oa/census2021-ts036-oa.json",
+     "bytes": 1582,
+     "items": 0,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts037-oa",
+     "file": "nomis/census2021-ts037-oa/census2021-ts037-oa.json",
+     "bytes": 52721,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts038-oa",
+     "file": "nomis/census2021-ts038-oa/census2021-ts038-oa.json",
+     "bytes": 59854,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts039-oa",
+     "file": "nomis/census2021-ts039-oa/census2021-ts039-oa.json",
+     "bytes": 59219,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts040-oa",
+     "file": "nomis/census2021-ts040-oa/census2021-ts040-oa.json",
+     "bytes": 43201,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts041-oa",
+     "file": "nomis/census2021-ts041-oa/census2021-ts041-oa.json",
+     "bytes": 29822,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts044-oa",
+     "file": "nomis/census2021-ts044-oa/census2021-ts044-oa.json",
+     "bytes": 58079,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts045-oa",
+     "file": "nomis/census2021-ts045-oa/census2021-ts045-oa.json",
+     "bytes": 45856,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts046-oa",
+     "file": "nomis/census2021-ts046-oa/census2021-ts046-oa.json",
+     "bytes": 71478,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts047-msoa",
+     "file": "nomis/census2021-ts047-msoa/census2021-ts047-msoa.json",
+     "bytes": 8698,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts048-msoa",
+     "file": "nomis/census2021-ts048-msoa/census2021-ts048-msoa.json",
+     "bytes": 11359,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts050-oa",
+     "file": "nomis/census2021-ts050-oa/census2021-ts050-oa.json",
+     "bytes": 47019,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts051-oa",
+     "file": "nomis/census2021-ts051-oa/census2021-ts051-oa.json",
+     "bytes": 62429,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts052-oa",
+     "file": "nomis/census2021-ts052-oa/census2021-ts052-oa.json",
+     "bytes": 50360,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts053-oa",
+     "file": "nomis/census2021-ts053-oa/census2021-ts053-oa.json",
+     "bytes": 50803,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts054-oa",
+     "file": "nomis/census2021-ts054-oa/census2021-ts054-oa.json",
+     "bytes": 76467,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts055-oa",
+     "file": "nomis/census2021-ts055-oa/census2021-ts055-oa.json",
+     "bytes": 56909,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts056-oa",
+     "file": "nomis/census2021-ts056-oa/census2021-ts056-oa.json",
+     "bytes": 43882,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts058-oa",
+     "file": "nomis/census2021-ts058-oa/census2021-ts058-oa.json",
+     "bytes": 68217,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts059-oa",
+     "file": "nomis/census2021-ts059-oa/census2021-ts059-oa.json",
+     "bytes": 58442,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts060-msoa",
+     "file": "nomis/census2021-ts060-msoa/census2021-ts060-msoa.json",
+     "bytes": 32898,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts061-oa",
+     "file": "nomis/census2021-ts061-oa/census2021-ts061-oa.json",
+     "bytes": 71077,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts062-oa",
+     "file": "nomis/census2021-ts062-oa/census2021-ts062-oa.json",
+     "bytes": 69972,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts063-oa",
+     "file": "nomis/census2021-ts063-oa/census2021-ts063-oa.json",
+     "bytes": 66793,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts064-msoa",
+     "file": "nomis/census2021-ts064-msoa/census2021-ts064-msoa.json",
+     "bytes": 32096,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts065-oa",
+     "file": "nomis/census2021-ts065-oa/census2021-ts065-oa.json",
+     "bytes": 42687,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts066-oa",
+     "file": "nomis/census2021-ts066-oa/census2021-ts066-oa.json",
+     "bytes": 148520,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts067-oa",
+     "file": "nomis/census2021-ts067-oa/census2021-ts067-oa.json",
+     "bytes": 60173,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts068-oa",
+     "file": "nomis/census2021-ts068-oa/census2021-ts068-oa.json",
+     "bytes": 41155,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts071-msoa",
+     "file": "nomis/census2021-ts071-msoa/census2021-ts071-msoa.json",
+     "bytes": 4392,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts072-msoa",
+     "file": "nomis/census2021-ts072-msoa/census2021-ts072-msoa.json",
+     "bytes": 4635,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts073-msoa",
+     "file": "nomis/census2021-ts073-msoa/census2021-ts073-msoa.json",
+     "bytes": 3485,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts074-msoa",
+     "file": "nomis/census2021-ts074-msoa/census2021-ts074-msoa.json",
+     "bytes": 4716,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts075-oa",
+     "file": "nomis/census2021-ts075-oa/census2021-ts075-oa.json",
+     "bytes": 54302,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts077-msoa",
+     "file": "nomis/census2021-ts077-msoa/census2021-ts077-msoa.json",
+     "bytes": 4756,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "census2021-ts078-msoa",
+     "file": "nomis/census2021-ts078-msoa/census2021-ts078-msoa.json",
+     "bytes": 4867,
+     "items": 75,
+     "licence": "Open Government Licence v3.0"
+    }
+   ]
+  },
+  "onsgeo": {
+   "portal": "ONS Open Geography Portal",
+   "triaged": "2026-10-04",
+   "datasets_seen": null,
+   "in_scope": null,
+   "counts": {
+    "held": 3,
+    "not-relevant": 2023,
+    "listed-for-harvest": 426,
+    "harvested": 6,
+    "not-open": 56,
+    "deferred": 116
+   },
+   "harvested_files": 6,
+   "harvested_bytes": 1940101,
+   "catalogue_bytes": 1634173,
+   "harvested": [
+    {
+     "key": "lsoa21-centroids",
+     "file": "onsgeo/lsoa21-centroids/lsoa21-centroids.geojson",
+     "bytes": 55297,
+     "items": 259,
+     "licence": "Open Government Licence v3.0 (ONS geography licences: https://www.ons.gov.uk/methodology/geography/licences)"
+    },
+    {
+     "key": "oa21-boundaries",
+     "file": "onsgeo/oa21-boundaries/oa21-boundaries.geojson",
+     "bytes": 998083,
+     "items": 1538,
+     "licence": "Open Government Licence v3.0 (ONS geography licences: https://www.ons.gov.uk/methodology/geography/licences)"
+    },
+    {
+     "key": "oa21-centroids",
+     "file": "onsgeo/oa21-centroids/oa21-centroids.geojson",
+     "bytes": 298166,
+     "items": 1437,
+     "licence": "Open Government Licence v3.0 (ONS geography licences: https://www.ons.gov.uk/methodology/geography/licences)"
+    },
+    {
+     "key": "oa21-lookup",
+     "file": "onsgeo/oa21-lookup/oa21-lookup.json",
+     "bytes": 175708,
+     "items": 1509,
+     "licence": "Open Government Licence v3.0 (ONS geography licences: https://www.ons.gov.uk/methodology/geography/licences)"
+    },
+    {
+     "key": "wards-latest",
+     "file": "onsgeo/wards-latest/wards-latest.geojson",
+     "bytes": 60678,
+     "items": 69,
+     "licence": "Open Government Licence v3.0 (ONS geography licences: https://www.ons.gov.uk/methodology/geography/licences)"
+    },
+    {
+     "key": "workplace-zones-2011",
+     "file": "onsgeo/workplace-zones-2011/workplace-zones-2011.geojson",
+     "bytes": 352169,
+     "items": 705,
+     "licence": "Open Government Licence v3.0 (ONS geography licences: https://www.ons.gov.uk/methodology/geography/licences)"
+    }
+   ]
+  },
+  "pdg": {
+   "portal": "planning.data.gov.uk",
+   "triaged": "2026-10-04",
+   "datasets_seen": null,
+   "in_scope": null,
+   "counts": {
+    "unavailable": 106,
+    "harvested": 26,
+    "not-relevant": 79,
+    "held": 11
+   },
+   "harvested_files": 26,
+   "harvested_bytes": 4868618,
+   "catalogue_bytes": 137990,
+   "harvested": [
+    {
+     "key": "agricultural-land-classification",
+     "file": "pdg/agricultural-land-classification/agricultural-land-classification.geojson",
+     "bytes": 16254,
+     "items": 2,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "air-quality-management-area",
+     "file": "pdg/air-quality-management-area/air-quality-management-area.geojson",
+     "bytes": 168614,
+     "items": 8,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "article-4-direction",
+     "file": "pdg/article-4-direction/article-4-direction.json",
+     "bytes": 414447,
+     "items": 602,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "article-4-direction-area",
+     "file": "pdg/article-4-direction-area/article-4-direction-area.geojson",
+     "bytes": 886638,
+     "items": 344,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "certificate-of-immunity",
+     "file": "pdg/certificate-of-immunity/certificate-of-immunity.geojson",
+     "bytes": 26688,
+     "items": 20,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "community-infrastructure-levy-schedule",
+     "file": "pdg/community-infrastructure-levy-schedule/community-infrastructure-levy-schedule.json",
+     "bytes": 2607,
+     "items": 2,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "conservation-area-document",
+     "file": "pdg/conservation-area-document/conservation-area-document.json",
+     "bytes": 104240,
+     "items": 151,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "design-code",
+     "file": "pdg/design-code/design-code.json",
+     "bytes": 1495,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "developer-agreement",
+     "file": "pdg/developer-agreement/developer-agreement.json",
+     "bytes": 138483,
+     "items": 370,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "developer-agreement-contribution",
+     "file": "pdg/developer-agreement-contribution/developer-agreement-contribution.json",
+     "bytes": 561771,
+     "items": 1398,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "developer-agreement-transaction",
+     "file": "pdg/developer-agreement-transaction/developer-agreement-transaction.json",
+     "bytes": 344049,
+     "items": 813,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "flood-risk-zone",
+     "file": "pdg/flood-risk-zone/flood-risk-zone.geojson.gz",
+     "bytes": 226861,
+     "items": 824,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "heritage-at-risk",
+     "file": "pdg/heritage-at-risk/heritage-at-risk.geojson",
+     "bytes": 76455,
+     "items": 58,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "infrastructure-funding-statement",
+     "file": "pdg/infrastructure-funding-statement/infrastructure-funding-statement.json",
+     "bytes": 3197,
+     "items": 3,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "infrastructure-project",
+     "file": "pdg/infrastructure-project/infrastructure-project.geojson",
+     "bytes": 382594,
+     "items": 3,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "listed-building",
+     "file": "pdg/listed-building/listed-building.geojson",
+     "bytes": 940639,
+     "items": 1769,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "listed-building-outline",
+     "file": "pdg/listed-building-outline/listed-building-outline.geojson.gz",
+     "bytes": 229909,
+     "items": 1557,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "local-area-requirements",
+     "file": "pdg/local-area-requirements/local-area-requirements.json",
+     "bytes": 7407,
+     "items": 6,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "local-nature-reserve",
+     "file": "pdg/local-nature-reserve/local-nature-reserve.geojson",
+     "bytes": 24212,
+     "items": 7,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "local-plan",
+     "file": "pdg/local-plan/local-plan.json",
+     "bytes": 12570,
+     "items": 17,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "park-and-garden",
+     "file": "pdg/park-and-garden/park-and-garden.geojson",
+     "bytes": 19667,
+     "items": 6,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "plan-timetable",
+     "file": "pdg/plan-timetable/plan-timetable.json",
+     "bytes": 90824,
+     "items": 191,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "tree-preservation-order",
+     "file": "pdg/tree-preservation-order/tree-preservation-order.json",
+     "bytes": 27647,
+     "items": 72,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "tree-preservation-zone",
+     "file": "pdg/tree-preservation-zone/tree-preservation-zone.geojson",
+     "bytes": 137404,
+     "items": 141,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "world-heritage-site",
+     "file": "pdg/world-heritage-site/world-heritage-site.geojson",
+     "bytes": 11551,
+     "items": 2,
+     "licence": "Open Government Licence v3.0"
+    },
+    {
+     "key": "world-heritage-site-buffer-zone",
+     "file": "pdg/world-heritage-site-buffer-zone/world-heritage-site-buffer-zone.geojson",
+     "bytes": 12395,
+     "items": 1,
+     "licence": "Open Government Licence v3.0"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,42 @@
+{"type":"FeatureCollection","meta":{
+ "source": "City of London INSPIRE map service: Grit Bins",
+ "borough": "City of London",
+ "page": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/48",
+ "api": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/48/query?where=1=1&geometry=<zone box>&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=4326&f=geojson&resultOffset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_evidence": "the City's INSPIRE record on data.gov.uk (grit-bins2): [\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\"] | [\"License\"]",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (City of London Corporation)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs boroughs harvest city-grit-bins: features that meet the zone box, WGS84 rounded to 6 decimals, whole geometries; whole_in_zone, in_cw; empty fields and ArcGIS shape measures left out; fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i dropped",
+ "counts": {
+  "features": 21,
+  "zone_count_at_walk": 21,
+  "in_cw": 0
+ },
+ "fields_dropped": []
+},
+"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.094397,51.517355]},"properties":{"OBJECTID":642,"STREET_NAME":"London Wall","LOCATION":"London Wall  North of Wood Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.092595,51.517352]},"properties":{"OBJECTID":645,"STREET_NAME":"Aldersgate Street","LOCATION":"Aldersgate Street Rotunda by Museum Stairs","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.092595,51.517352]},"properties":{"OBJECTID":646,"STREET_NAME":"Basinghall Street","LOCATION":"Basinghall Street By Entrance to Guildhall North","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.091545,51.516384]},"properties":{"OBJECTID":648,"STREET_NAME":"Blackfriars Bridge South","LOCATION":"Blackfriars Bridge South Garden Area","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.080656,51.509442]},"properties":{"OBJECTID":660,"whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.077033,51.513708]},"properties":{"OBJECTID":673,"STREET_NAME":"Duke's Place","LOCATION":"Duke's Place Junction Aldgate High Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.073851,51.514103]},"properties":{"OBJECTID":675,"STREET_NAME":"Mansell Street","LOCATION":"Mansell Street By Exit 16 Aldgate High Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.075069,51.515198]},"properties":{"OBJECTID":676,"STREET_NAME":"Middlesex Street","LOCATION":"Middlesex Street Junction St Botolph Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.074509,51.511327]},"properties":{"OBJECTID":678,"STREET_NAME":"Goodman's Yard","LOCATION":"Goodman's Yard By King George's Field Gate","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.082809,51.517428]},"properties":{"OBJECTID":680,"STREET_NAME":"Liverpool Street","LOCATION":"Liverpool Street By Station Old Broad Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.086689,51.510514]},"properties":{"OBJECTID":682,"STREET_NAME":"King William Street ","LOCATION":"King William Street  Junction Fish Street Hill","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.087153,51.509178]},"properties":{"OBJECTID":683,"STREET_NAME":"London Bridge","LOCATION":"London Bridge Outside Adelaide House","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.088264,51.506864]},"properties":{"OBJECTID":684,"STREET_NAME":"London Bridge South","LOCATION":"London Bridge South By Glaziers' Hall","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.087867,51.506337]},"properties":{"OBJECTID":685,"STREET_NAME":"London Bridge South","LOCATION":"London Bridge South  Walkway to Colechurch House","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.093374,51.509835]},"properties":{"OBJECTID":686,"STREET_NAME":"Southwark Bridge North","LOCATION":"Southwark Bridge North by Three Cranes Walk","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.094569,51.507793]},"properties":{"OBJECTID":687,"STREET_NAME":"Southwark Bridge South","LOCATION":"Southwark Bridge South by Bus Shelter","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.094328,51.512377]},"properties":{"OBJECTID":689,"STREET_NAME":"Queen Victoria Street","LOCATION":"Queen Victoria Street Junction Cannon Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.076118,51.504218]},"properties":{"OBJECTID":994,"STREET_NAME":"Tower Bridge Road South","LOCATION":"Tower Bridge Road South By South East Steps to Shad Thames","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.074357,51.506858]},"properties":{"OBJECTID":995,"STREET_NAME":"Tower Bridge East","LOCATION":"Tower Bridge East by Stairs To St Kathrine's Dock","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.074599,51.506926]},"properties":{"OBJECTID":996,"STREET_NAME":"Tower Bridge East","LOCATION":"Tower Bridge East by Stairs to Thames Path Tower of London","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.07576,51.514743]},"properties":{"OBJECTID":1313,"whole_in_zone":true,"in_cw":false}}
+]}

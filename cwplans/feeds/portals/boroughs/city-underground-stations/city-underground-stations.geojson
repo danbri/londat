@@ -1,0 +1,36 @@
+{"type":"FeatureCollection","meta":{
+ "source": "City of London INSPIRE map service: Underground Stations",
+ "borough": "City of London",
+ "page": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/19",
+ "api": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/19/query?where=1=1&geometry=<zone box>&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=4326&f=geojson&resultOffset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_evidence": "the City's INSPIRE record on data.gov.uk (underground-stations4): [\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\"] | [\"License\", \"https://inspire.ec.europa.eu/metadata-codelist/LimitationsOnPublicAccess\"]",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (City of London Corporation)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs boroughs harvest city-underground-stations: features that meet the zone box, WGS84 rounded to 6 decimals, whole geometries; whole_in_zone, in_cw; empty fields and ArcGIS shape measures left out; fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i dropped",
+ "counts": {
+  "features": 15,
+  "zone_count_at_walk": 15,
+  "in_cw": 0
+ },
+ "fields_dropped": []
+},
+"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.074644,51.51062]},"properties":{"NAME":"Tower Gateway (DLR)","OBJECTID":1,"ROUTES":"DLR","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.07647,51.510084]},"properties":{"NAME":"Tower Hill","OBJECTID":2,"ROUTES":"Circle, District","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.075666,51.514317]},"properties":{"NAME":"Aldgate","OBJECTID":3,"ROUTES":"Circle, Metropolitan","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.088959,51.513351]},"properties":{"NAME":"Bank","OBJECTID":4,"ROUTES":"Central, Northern, Waterloo & City, DLR","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.086175,51.510604]},"properties":{"NAME":"Monument","OBJECTID":5,"ROUTES":"Circle, District","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.094104,51.512048]},"properties":{"NAME":"Mansion House","OBJECTID":6,"ROUTES":"Circle, District","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.072529,51.51537]},"properties":{"NAME":"Aldgate East","OBJECTID":8,"ROUTES":"District, Hammersmith & City","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.084976,51.505063]},"properties":{"NAME":"London Bridge","OBJECTID":15,"ROUTES":"Jubilee, Northern, National Rail","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.082869,51.517298]},"properties":{"NAME":"Liverpool Street","OBJECTID":16,"ROUTES":"Central, Circle, Hammersmith & City, Metropolitan, Overground, National Rail","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.090244,51.51137]},"properties":{"NAME":"Cannon Street","OBJECTID":18,"ROUTES":"Circle, District, National Rail","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.08908,51.518252]},"properties":{"NAME":"Moorgate","OBJECTID":19,"ROUTES":"Circle, Hammersmith & City , Metropolitan, Northern, National Rail, Elizabeth","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.059685,51.519448]},"properties":{"NAME":"Whitechapel","OBJECTID":328,"ROUTES":"District, Hammersmith & City, Overground","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.055703,51.511744]},"properties":{"NAME":"Shadwell","OBJECTID":329,"ROUTES":"DLR, Overground","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.083835,51.51779]},"properties":{"NAME":"Liverpool Street","OBJECTID":642,"ROUTES":"Elizabeth","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.087886,51.511276]},"properties":{"NAME":"Bank","OBJECTID":643,"ROUTES":"Central, Northern, Waterloo & City, DLR","whole_in_zone":true,"in_cw":false}}
+]}

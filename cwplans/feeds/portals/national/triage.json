@@ -1,0 +1,38 @@
+{"meta":{
+ "portal": "national sources of the brief",
+ "triaged": "2026-10-04",
+ "counts": {
+  "harvested": 7,
+  "unavailable": 1,
+  "not-open": 2,
+  "held": 7,
+  "listed-for-harvest": 1,
+  "not-relevant": 1,
+  "deferred": 1
+ },
+ "rules": [
+  "state written by hand in SOURCES after checking API, licence and robots.txt; harvested when the zone file exists"
+ ]
+},
+"sources":[
+{"key":"dft-aadf","name":"DfT road traffic statistics: count points and annual average daily flow (AADF)","licence":"Open Government Licence v3.0","state":"harvested","reason":"feeds/portals/national/dft-aadf/dft-aadf.geojson"},
+{"key":"dft-stats19","name":"DfT road safety data (STATS19): collisions, last 5 years","licence":"Open Government Licence v3.0","state":"harvested","reason":"feeds/portals/national/dft-stats19/dft-stats19.json"},
+{"key":"police-crime","name":"police.uk street-level crime (API crimes-street, 12 months)","licence":"Open Government Licence v3.0","state":"harvested","reason":"feeds/portals/national/police-crime/police-crime.json"},
+{"key":"desnz-energy","name":"DESNZ sub-national electricity and gas consumption by LSOA and MSOA (2010-2024)","licence":"Open Government Licence v3.0","state":"harvested","reason":"feeds/portals/national/desnz-energy/desnz-energy.json"},
+{"key":"ofcom-connected-nations","name":"Ofcom Connected Nations: broadband and mobile coverage by postcode and output area","licence":"OGL (Ofcom open data)","state":"unavailable","reason":"www.ofcom.org.uk answers 403 to scripted requests, robots.txt included (2026-10-04); not fetched through other routes"},
+{"key":"nomis-api","name":"Nomis API (ONS labour market and census datasets)","licence":"Open Government Licence v3.0","state":"not-open","reason":"robots.txt disallows /api/v01/dataset/ and /query/ for every agent; census tables taken from the bulk downloads instead (../nomis/)"},
+{"key":"hmlr-price-paid","name":"HM Land Registry Price Paid Data","licence":"Open Government Licence v3.0","state":"held","reason":"held: registry/homes-by-postcode.json (source hmlr-price-paid)"},
+{"key":"hmlr-inspire","name":"HM Land Registry INSPIRE Index Polygons","licence":"OGL with conditions","state":"held","reason":"held: tools/registry-inspire.mjs (source hmlr-inspire); planning.data.gov.uk re-serves it as title-boundary"},
+{"key":"fsa-fhrs","name":"FSA food hygiene ratings","licence":"Open Government Licence v3.0","state":"held","reason":"held: sources fsa, fsa-api"},
+{"key":"historic-england","name":"Historic England open data (NHLE, Heritage at Risk, APAs)","licence":"Open Government Licence v3.0","state":"held","reason":"scheduled monuments and APAs held (registry/sources/museums); listed buildings and Heritage at Risk harvested from planning.data.gov.uk (../pdg/)"},
+{"key":"ea-flood-zones","name":"EA Flood Map for Planning (flood zones 2 and 3)","licence":"Open Government Licence v3.0","state":"held","reason":"harvested from planning.data.gov.uk (../pdg/flood-risk-zone/); EA spatial flood defences held (ea-defences)"},
+{"key":"os-open-uprn","name":"OS Open UPRN and Open Linked Identifiers","licence":"Open Government Licence v3.0","state":"held","reason":"held (os-open-uprn)"},
+{"key":"os-open-greenspace","name":"OS Open Greenspace","licence":"Open Government Licence v3.0","state":"held","reason":"held (os-open-greenspace)"},
+{"key":"os-open-names","name":"OS Open Names (GB CSV)","licence":"OGL (OS OpenData)","state":"harvested","reason":"feeds/portals/national/os-open-names/os-open-names.geojson"},
+{"key":"os-open-rivers","name":"OS Open Rivers (GB GeoPackage)","licence":"OGL (OS OpenData)","state":"harvested","reason":"feeds/portals/national/os-open-rivers/os-open-rivers.geojson"},
+{"key":"os-open-usrn-roads","name":"OS Open USRN, Open Roads, Built Up Areas","licence":"OGL (OS OpenData)","state":"listed-for-harvest","reason":"GB downloads of 0.3 to 1 GB; the container had about 2 GB of free disk on 2026-10-04: one product at a time, zone extract only, the download deleted after reading"},
+{"key":"coal-authority","name":"Coal Authority mining reporting areas","licence":"Open Government Licence v3.0","state":"not-relevant","reason":"London is outside the coalfield"},
+{"key":"bgs","name":"British Geological Survey datasets","licence":"BGS terms per product (OGL for some, commercial for others)","state":"deferred","reason":"4,128 BGS records on data.gov.uk have no licence field; BGS Geology 625k/50k licences to be read per product before use"},
+{"key":"mhclg-imd2025","name":"English Indices of Deprivation 2025 by LSOA (MHCLG, File 7)","licence":"Open Government Licence v3.0","state":"harvested","reason":"feeds/portals/national/mhclg-imd2025/mhclg-imd2025.json"},
+{"key":"epc","name":"Energy Performance Certificates (domestic and non-domestic)","licence":"OGL for data, but address data under Royal Mail / OS terms; registration required","state":"not-open","reason":"download needs an account and accepts terms that restrict address data"}
+]}

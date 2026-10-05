@@ -1,0 +1,28 @@
+{"type":"FeatureCollection","meta":{
+ "source": "City of London INSPIRE map service: Rail Stations",
+ "borough": "City of London",
+ "page": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/20",
+ "api": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/20/query?where=1=1&geometry=<zone box>&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=4326&f=geojson&resultOffset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_evidence": "the City's INSPIRE record on data.gov.uk (rail-stations3): [\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\"] | [\"License\", \"https://inspire.ec.europa.eu/metadata-codelist/LimitationsOnPublicAccess\"]",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (City of London Corporation)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs boroughs harvest city-rail-stations: features that meet the zone box, WGS84 rounded to 6 decimals, whole geometries; whole_in_zone, in_cw; empty fields and ArcGIS shape measures left out; fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i dropped",
+ "counts": {
+  "features": 7,
+  "zone_count_at_walk": 8,
+  "in_cw": 0
+ },
+ "fields_dropped": []
+},
+"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.079046,51.511635]},"properties":{"OBJECTID":1,"NAME":"Fenchurch Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.085795,51.504237]},"properties":{"OBJECTID":2,"NAME":"London Bridge","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.081889,51.517949]},"properties":{"OBJECTID":5,"NAME":"Liverpool Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.090457,51.510869]},"properties":{"OBJECTID":7,"NAME":"Cannon Street","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.088904,51.51855]},"properties":{"OBJECTID":8,"NAME":"Moorgate","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.056455,51.511705]},"properties":{"OBJECTID":321,"NAME":"Shadwell","whole_in_zone":true,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.060569,51.519626]},"properties":{"OBJECTID":322,"NAME":"Whitechapel","whole_in_zone":true,"in_cw":false}}
+]}

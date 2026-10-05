@@ -1,0 +1,30 @@
+{"meta":{
+ "source": "Census 2021 TS036: Welsh language skills (understanding) (ONS, Nomis bulk download)",
+ "table": "TS036",
+ "topic": "Welsh language in Wales",
+ "page": "https://www.nomisweb.co.uk/sources/census_2021_bulk",
+ "file": "https://www.nomisweb.co.uk/output/census/2021/census2021-ts036.zip",
+ "entry": "census2021-ts036-oa.csv",
+ "metadata_entry": "metadata/ts036-2021-1.txt",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Source: Office for National Statistics licensed under the Open Government Licence v3.0 (Census 2021, via Nomis bulk downloads)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs nomis harvest TS036: the output-area CSV of the bulk zip, streamed; rows kept whose OA 2021 code is a zone OA (feeds/london-datastore/zone-codes.json oa21: an ONSPD postcode in the box carries it, 1509 OAs); values as published (counts; percentages where the table has them). Join to LSOA/MSOA/ward through the ONS OA lookup (feeds/portals/onsgeo/)",
+ "what": "Welsh language skills (understanding) by output area: 3 columns",
+ "counts": {
+  "rows": 0,
+  "zone_oas": 1509,
+  "columns": 4
+ },
+ "columns": [
+  "oa21",
+  "Welsh understanding ability: Total: All usual residents aged 3 years and over",
+  "Welsh understanding ability: Cannot understand spoken Welsh",
+  "Welsh understanding ability: Can understand spoken Welsh"
+ ]
+},
+"rows":[
+
+]}

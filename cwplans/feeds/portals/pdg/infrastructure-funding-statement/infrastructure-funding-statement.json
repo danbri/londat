@@ -1,0 +1,29 @@
+{"meta":{
+ "source": "planning.data.gov.uk: Infrastructure funding statement (infrastructure-funding-statement)",
+ "dataset": "infrastructure-funding-statement",
+ "page": "https://www.planning.data.gov.uk/dataset/infrastructure-funding-statement",
+ "typology": "document",
+ "phase": "beta",
+ "api": "https://www.planning.data.gov.uk/entity.json?dataset=infrastructure-funding-statement&organisation_entity=<150|198|350>&limit=500&offset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "© Crown copyright and database right 2026",
+ "why": "infrastructure funding statements (links)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs pdg harvest infrastructure-funding-statement: every entity published by a zone planning organisation (Royal Borough of Greenwich 1, London Borough of Lewisham 1, London Borough of Tower Hamlets 1); fields kept as published except empty ones and fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i",
+ "counts": {
+  "rows": 3,
+  "by_org": {
+   "150": 1,
+   "198": 1,
+   "350": 1
+  },
+  "pages": 3
+ }
+},
+"rows":[
+{"entry-date":"2021-10-07","entity":8100162,"dataset":"infrastructure-funding-statement","typology":"document","reference":"d3ada92df6db8fcfbef682ef4f114fa8c8e06641be3c210544afda36e1fd91ce","prefix":"infrastructure-funding-statement","organisation-entity":150,"quality":"some","document-url":"https://www.royalgreenwich.gov.uk/download/downloads/id/5046/infrastructure_funding_statement_2019-20.pdf","documentation-url":"https://www.royalgreenwich.gov.uk/downloads/download/1046/community_infrastructure_levy_and_s106_financial_reports","organisation":"Royal Borough of Greenwich"},
+{"entry-date":"2021-10-07","entity":8100074,"dataset":"infrastructure-funding-statement","typology":"document","reference":"6d2fc42b5852361681b95067dcc2f1946c82c525dac6e793f603f0226867d62e","prefix":"infrastructure-funding-statement","organisation-entity":198,"quality":"some","document-url":"https://lewisham.gov.uk/-/media/files/imported/ifs2019_2020.ashx","documentation-url":"https://lewisham.gov.uk/myservices/planning/policy/cil","organisation":"London Borough of Lewisham"},
+{"entry-date":"2026-05-06","entity":8100003,"dataset":"infrastructure-funding-statement","typology":"document","reference":"06c201ec324bdbfa4ddd41665fe88e1ec49853f48caf4ae2faa25da6f161cf5d","prefix":"infrastructure-funding-statement","organisation-entity":350,"quality":"some","document-url":"https://www.towerhamlets.gov.uk/Documents/Planning-and-building-control/Strategic-Planning/InfrastructureFundingStatement2019-20.pdf","period-end-date":"2020-03-31","documentation-url":"https://www.towerhamlets.gov.uk/lgnl/planning_and_building_control/Infrastructure_planning/infrastructure_delivery.aspx#:~:text=The%20Infrastructure%20Delivery%20Plan%20(IDP,future%20need%20across%20the%20borough.","period-start-date":"2019-04-01","organisation":"London Borough of Tower Hamlets"}
+]}

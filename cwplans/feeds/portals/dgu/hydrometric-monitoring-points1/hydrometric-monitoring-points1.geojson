@@ -1,0 +1,38 @@
+{"type":"FeatureCollection","meta":{
+ "source": "data.gov.uk: Hydrometric Monitoring Points (Environment Agency)",
+ "dgu_dataset": "hydrometric-monitoring-points1",
+ "page": "https://www.data.gov.uk/dataset/0bac3947-c632-47eb-83d5-fff7f1911537/hydrometric-monitoring-points1",
+ "api": "https://environment.data.gov.uk/spatialdata/hydrometric-monitoring-points/wfs",
+ "layers": [
+  {
+   "name": "dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points",
+   "zone_count": 14
+  }
+ ],
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_evidence": "[\"Open Government Licence\"] | [\"There are no public access constraints to this data. Use of this data is subject to the licence identified.\", \"There are no public access constraints to this data. Use of this data is subject to the licence identified.\"]",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (Environment Agency)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs dgu harvest hydrometric-monitoring-points1: the service the probe counted, read with the zone box (WFS 2.0 GetFeature in EPSG:4326, or ArcGIS query with the envelope); polygons that cross the box edge are cut at the box (clipped_to_zone: for display, not for area sums); coordinates rounded to 6 decimals; empty fields, shape measures and fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i left out",
+ "counts": {
+  "features": 13,
+  "probe_zone_count": 14,
+  "clipped": 0
+ }
+},
+"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.028698,51.475381]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"289102","sitename":"DEPTFORD PS","sitetype":"Climate stations","sitesubtyp":"Precipitation - manually read","lettercode":"TQ","easting":37,"northing":77,"conc_ngr":"TQ3777","status":"Open","x_coord":537000,"y_coord":177000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.028698,51.475381]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"289102TP","sitename":"DEPTFORD PS TBR","sitetype":"Climate stations","sitesubtyp":"Precipitation - recording","lettercode":"TQ","easting":37,"northing":77,"conc_ngr":"TQ3777","status":"Open","x_coord":537000,"y_coord":177000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.08513,51.503295]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"4270TH","sitename":"TOWER PIER TL","sitetype":"Surface water sites","sitesubtyp":"Surface water level (including tide","lettercode":"TQ","easting":33,"northing":80,"conc_ngr":"TQ3380","status":"Open","x_coord":533000,"y_coord":180000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.013527,51.49311]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/166","sitename":"TUNNEL AVENUE GWL","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":38,"northing":79,"conc_ngr":"TQ3879","status":"Open","x_coord":538000,"y_coord":179000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.028698,51.475381]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/254A","sitename":"GREENWICH GWL","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":37,"northing":77,"conc_ngr":"TQ3777","status":"Open","x_coord":537000,"y_coord":177000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.028698,51.475381]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/254BL","sitename":"GREENWICH LOWER TUBE GW","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":37,"northing":77,"conc_ngr":"TQ3777","status":"Open","x_coord":537000,"y_coord":177000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.028698,51.475381]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/254BU","sitename":"GREENWICH UPPER TUBE GW","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":37,"northing":77,"conc_ngr":"TQ3777","status":"Open","x_coord":537000,"y_coord":177000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.042703,51.484608]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/268","sitename":"EARL PS GWL","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":36,"northing":78,"conc_ngr":"TQ3678","status":"Open","x_coord":536000,"y_coord":178000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.056714,51.493834]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/276","sitename":"ROTHERHITHE GWL","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":35,"northing":79,"conc_ngr":"TQ3579","status":"Open","x_coord":535000,"y_coord":179000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.07111,51.494072]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ37/7E","sitename":"YALDING ROAD GWL","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":34,"northing":79,"conc_ngr":"TQ3479","status":"Open","x_coord":534000,"y_coord":179000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.069971,51.521032]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ38/463","sitename":"WEAVERS FIELDS","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":34,"northing":82,"conc_ngr":"TQ3482","status":"Open","x_coord":534000,"y_coord":182000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[0.002051,51.519824]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ38/466","sitename":"MEMORIAL RECREATION","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":39,"northing":82,"conc_ngr":"TQ3982","status":"Open","x_coord":539000,"y_coord":182000,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.041161,51.520554]},"properties":{"layer":"dataset-656e998f-d465-11e4-b266-f0def148f590:Hydrometric_Monitoring_Points","siteno":"TQ38/515","sitename":"MILE END ROAD OBH","sitetype":"Groundwater sites","sitesubtyp":"Groundwater level (observation bore","lettercode":"TQ","easting":36,"northing":82,"conc_ngr":"TQ3682","status":"Open","x_coord":536000,"y_coord":182000,"in_cw":false}}
+]}

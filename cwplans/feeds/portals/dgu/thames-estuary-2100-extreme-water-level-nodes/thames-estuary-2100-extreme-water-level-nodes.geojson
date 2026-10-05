@@ -1,0 +1,45 @@
+{"type":"FeatureCollection","meta":{
+ "source": "data.gov.uk: Thames Estuary 2100 Extreme Water Level nodes (Environment Agency)",
+ "dgu_dataset": "thames-estuary-2100-extreme-water-level-nodes",
+ "page": "https://www.data.gov.uk/dataset/69728968-613b-445d-9e6d-de854c0af461/thames-estuary-2100-extreme-water-level-nodes",
+ "api": "https://environment.data.gov.uk/spatialdata/thames-estuary-2100-extreme-water-level-nodes/wfs",
+ "layers": [
+  {
+   "name": "dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes",
+   "zone_count": 20
+  }
+ ],
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_evidence": "[\"Open Government Licence\"] | [\"There are no public access constraints to this data. Use of this data is subject to the licence identified.\", \"There are no public access constraints to this data. Use of this data is subject to the licence identified.\"]",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (Environment Agency)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs dgu harvest thames-estuary-2100-extreme-water-level-nodes: the service the probe counted, read with the zone box (WFS 2.0 GetFeature in EPSG:4326, or ArcGIS query with the envelope); polygons that cross the box edge are cut at the box (clipped_to_zone: for display, not for area sums); coordinates rounded to 6 decimals; empty fields, shape measures and fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i left out",
+ "counts": {
+  "features": 20,
+  "probe_zone_count": 20,
+  "clipped": 0
+ }
+},
+"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.089634,51.508173]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.35","chainage":30685,"easting":532673.26,"northing":180534.33,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.078897,51.506359]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.36","chainage":31459,"easting":533423.65,"northing":180352.05,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.070674,51.503956]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.36a","chainage":32089,"easting":534001.29,"northing":180099.88,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.06337,51.502025]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.37","chainage":32641,"easting":534513.84,"northing":179898.5,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.052502,51.50405]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.38","chainage":33473,"easting":535262.11,"northing":180143.79,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.041091,51.508645]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.39","chainage":34442,"easting":536040.35,"northing":180675.91,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.03356,51.507443]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.39a","chainage":34989,"easting":536566.55,"northing":180556.18,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.029622,51.502884]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.40","chainage":35614,"easting":536853.44,"northing":180056.56,"in_cw":true}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.030085,51.494734]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.41","chainage":36521,"easting":536845.75,"northing":179149.48,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.026671,51.488866]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.41a","chainage":37230,"easting":537100.31,"northing":178503.38,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.018048,51.48499]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.42u","chainage":38057,"easting":537710.63,"northing":178088.51,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.016086,51.484725]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.42d","chainage":38057,"easting":537847.65,"northing":178062.73,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.005581,51.485936]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.43","chainage":38889,"easting":538573.34,"northing":178217.2,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.000624,51.490995]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.44","chainage":39590,"easting":538902.08,"northing":178789.13,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.003727,51.497215]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.44a","chainage":40321,"easting":538667.78,"northing":179474.9,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.005033,51.501179]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.45","chainage":40776,"easting":538565.13,"northing":179913.27,"in_cw":true}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[0.000551,51.506219]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.46","chainage":41505,"easting":538937.37,"northing":180484.27,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[0.008001,51.505403]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.46au","chainage":42123,"easting":539456.85,"northing":180407.76,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[0.009061,51.504638]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.46ad","chainage":42123,"easting":539532.72,"northing":180324.69,"in_cw":false}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[0.012921,51.501354]},"properties":{"layer":"dataset-bf59ab69-d88e-4c3f-98cc-6cdb42627757:ea_thames_estuary_2100_extreme_water_level_nodes","node":"2.47","chainage":42633,"easting":539810.69,"northing":179966.88,"in_cw":false}}
+]}

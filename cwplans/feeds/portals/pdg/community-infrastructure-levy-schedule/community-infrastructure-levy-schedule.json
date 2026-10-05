@@ -1,0 +1,27 @@
+{"meta":{
+ "source": "planning.data.gov.uk: Community infrastructure levy schedule (community-infrastructure-levy-schedule)",
+ "dataset": "community-infrastructure-levy-schedule",
+ "page": "https://www.planning.data.gov.uk/dataset/community-infrastructure-levy-schedule",
+ "typology": "document",
+ "phase": "alpha",
+ "api": "https://www.planning.data.gov.uk/entity.json?dataset=community-infrastructure-levy-schedule&organisation_entity=<144|203>&limit=500&offset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "© Crown copyright and database right 2026",
+ "why": "CIL charging schedules (links)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs pdg harvest community-infrastructure-levy-schedule: every entity published by a zone planning organisation (Greater London Authority 1, City of London Corporation 1); fields kept as published except empty ones and fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i",
+ "counts": {
+  "rows": 2,
+  "by_org": {
+   "144": 1,
+   "203": 1
+  },
+  "pages": 2
+ }
+},
+"rows":[
+{"entry-date":"2026-06-09","start-date":"2019-04-01","entity":900077,"name":"MCIL2 Charging schedule","dataset":"community-infrastructure-levy-schedule","typology":"document","reference":"GLA/1","prefix":"community-infrastructure-levy-schedule","organisation-entity":144,"quality":"some","adopted-date":"2012-02-29","document-url":"https://www.london.gov.uk/sites/default/files/mcil2_charging_schedule_-_final.pdf","documentation-url":"https://www.london.gov.uk/programmes-strategies/planning/implementing-london-plan/mayoral-community-infrastructure-levy#annual-cil-rate-summary-32476-title","organisation":"Greater London Authority"},
+{"entry-date":"2026-06-09","start-date":"2024-01-01","entity":900039,"name":"City of London Annual CIL Rate Summary 2024","dataset":"community-infrastructure-levy-schedule","typology":"document","reference":"LND/1","prefix":"community-infrastructure-levy-schedule","organisation-entity":203,"quality":"some","adopted-date":"2014-07-01","document-url":"https://www.cityoflondon.gov.uk/assets/Services-Environment/annual-cil-rate-summary-2024.pdf","documentation-url":"https://www.cityoflondon.gov.uk/services/planning/planning-policy/community-infrastructure-levy-cil-and-planning-obligations-s106","organisation":"City of London Corporation"}
+]}

@@ -1,0 +1,22 @@
+{"type":"FeatureCollection","meta":{
+ "source": "City of London INSPIRE map service: Coal Tax Posts",
+ "borough": "City of London",
+ "page": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/3",
+ "api": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer/3/query?where=1=1&geometry=<zone box>&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&outSR=4326&f=geojson&resultOffset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_evidence": "the City's INSPIRE record on data.gov.uk (coal-tax-posts2): [\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\"] | [\"License\"]",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (City of London Corporation)",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs boroughs harvest city-coal-tax-posts: features that meet the zone box, WGS84 rounded to 6 decimals, whole geometries; whole_in_zone, in_cw; empty fields and ArcGIS shape measures left out; fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i dropped",
+ "counts": {
+  "features": 1,
+  "zone_count_at_walk": 1,
+  "in_cw": 0
+ },
+ "fields_dropped": []
+},
+"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.0914,51.515599]},"properties":{"OBJECTID":63,"POST_NUMBER":"63","DESCRIPTION":"Cast Iron Plates","LOCATION":"The Guildhall Museum","LOCAL_AUTHORITY":"City of London","whole_in_zone":true,"in_cw":false}}
+]}

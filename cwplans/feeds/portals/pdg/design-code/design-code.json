@@ -1,0 +1,25 @@
+{"meta":{
+ "source": "planning.data.gov.uk: Design code (design-code)",
+ "dataset": "design-code",
+ "page": "https://www.planning.data.gov.uk/dataset/design-code",
+ "typology": "policy",
+ "phase": "alpha",
+ "api": "https://www.planning.data.gov.uk/entity.json?dataset=design-code&organisation_entity=<329>&limit=500&offset=<n>",
+ "fetched": "2026-10-04",
+ "licence": "Open Government Licence v3.0",
+ "licence_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+ "attribution": "© Crown copyright and database right 2026",
+ "why": "design codes",
+ "zone": "the 3D model box, BNG E 532400-539900, N 176700-182300 (WGS84 -0.095, 51.474 to 0.015, 51.522)",
+ "method": "walk-portals.mjs pdg harvest design-code: every entity published by a zone planning organisation (London Borough of Southwark 1); fields kept as published except empty ones and fields matching /e-?mail|phone|tel(ephone)?$|^tel|contact|^fax|mobile|^owner_?name|person|officer|case_?officer|agent_?name|applicant/i",
+ "counts": {
+  "rows": 1,
+  "by_org": {
+   "329": 1
+  },
+  "pages": 1
+ }
+},
+"rows":[
+{"entry-date":"2022-04-18","entity":641009,"name":"Hatcham and Ilderton Roads Design Code","dataset":"design-code","typology":"policy","reference":"1","prefix":"design-code","organisation-entity":329,"quality":"authoritative","document-url":"https://oldkentroad.org.uk/wp-content/uploads/HatchamIldertonDesignCode.pdf","design-code-status":"draft","organisation":"London Borough of Southwark"}
+]}
