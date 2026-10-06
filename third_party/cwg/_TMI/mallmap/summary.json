@@ -1,0 +1,197 @@
+{
+ "generated": "2026-10-06T16:08:35.101Z",
+ "tool": "magpie/cwplans/tools/cwg-mallmap-tmi.mjs",
+ "zooms_read": [
+  19,
+  18,
+  17,
+  16,
+  15,
+  14,
+  13,
+  12
+ ],
+ "features": 10092,
+ "whole": 10088,
+ "pieced": 4,
+ "by_zoom": {
+  "12": 4,
+  "13": 105,
+  "14": 15,
+  "15": 222,
+  "16": 292,
+  "17": 580,
+  "18": 519,
+  "19": 8355
+ },
+ "api_feature_records": 537,
+ "places": 536,
+ "files": [
+  {
+   "file": "indoor-floor--4.0.geojson",
+   "floor_name": "Level -4",
+   "features": 78,
+   "named": 18,
+   "classes": {
+    "circulation": 27,
+    "building": 44,
+    "facility": 5,
+    "leisure": 2
+   }
+  },
+  {
+   "file": "indoor-floor--3.0.geojson",
+   "floor_name": "Level -3",
+   "features": 319,
+   "named": 30,
+   "classes": {
+    "building": 65,
+    "circulation": 230,
+    "other": 11,
+    "facility": 6,
+    "food_and_drink": 4,
+    "restroom": 2,
+    "routing": 1
+   }
+  },
+  {
+   "file": "indoor-floor--2.0.geojson",
+   "floor_name": "Level -2",
+   "features": 1195,
+   "named": 101,
+   "classes": {
+    "circulation": 992,
+    "building": 107,
+    "other": 14,
+    "retail": 26,
+    "facility": 18,
+    "food_and_drink": 29,
+    "entertainment": 2,
+    "restroom": 6,
+    "tourism": 1
+   }
+  },
+  {
+   "file": "indoor-floor--1.0.geojson",
+   "floor_name": "Level -1",
+   "features": 2368,
+   "named": 405,
+   "classes": {
+    "circulation": 1734,
+    "food_and_drink": 121,
+    "building": 210,
+    "retail": 187,
+    "tourism": 14,
+    "emergency": 5,
+    "restroom": 10,
+    "other": 39,
+    "entertainment": 4,
+    "facility": 39,
+    "education": 4,
+    "routing": 1
+   }
+  },
+  {
+   "file": "indoor-floor--0.5.geojson",
+   "floor_name": "Level -1M",
+   "features": 583,
+   "named": 25,
+   "classes": {
+    "circulation": 524,
+    "food_and_drink": 4,
+    "building": 46,
+    "retail": 4,
+    "other": 4,
+    "routing": 1
+   }
+  },
+  {
+   "file": "indoor-floor-0.0.geojson",
+   "floor_name": "Level 0",
+   "features": 3151,
+   "named": 418,
+   "classes": {
+    "circulation": 2393,
+    "building": 315,
+    "other": 76,
+    "facility": 51,
+    "food_and_drink": 154,
+    "retail": 77,
+    "transport": 14,
+    "restroom": 5,
+    "leisure": 8,
+    "tourism": 20,
+    "entertainment": 8,
+    "region": 8,
+    "event_space": 11,
+    "education": 8,
+    "outdoor_leisure": 1,
+    "routing": 1,
+    "emergency": 1
+   }
+  },
+  {
+   "file": "indoor-floor-0.5.geojson",
+   "floor_name": "Level M",
+   "features": 3,
+   "named": 2,
+   "classes": {
+    "tourism": 2,
+    "circulation": 1
+   }
+  },
+  {
+   "file": "indoor-floor-1.0.geojson",
+   "floor_name": "Level 1",
+   "features": 961,
+   "named": 57,
+   "classes": {
+    "circulation": 784,
+    "building": 128,
+    "retail": 24,
+    "facility": 5,
+    "food_and_drink": 10,
+    "tourism": 5,
+    "emergency": 2,
+    "transport": 1,
+    "event_space": 1,
+    "routing": 1
+   }
+  },
+  {
+   "file": "indoor-floor-2.0.geojson",
+   "floor_name": "Level 2",
+   "features": 215,
+   "named": 42,
+   "classes": {
+    "circulation": 134,
+    "building": 57,
+    "food_and_drink": 15,
+    "retail": 2,
+    "facility": 5,
+    "routing": 1,
+    "tourism": 1
+   }
+  },
+  {
+   "file": "outdoor.geojson",
+   "floor_name": "Level 0",
+   "features": 1219,
+   "named": 152,
+   "classes": {
+    "building": 435,
+    "circulation": 632,
+    "commercial": 101,
+    "outdoor_leisure": 3,
+    "transport": 15,
+    "retail": 16,
+    "healthcare": 2,
+    "other": 6,
+    "entertainment": 2,
+    "tourism": 5,
+    "urban": 1,
+    "facility": 1
+   }
+  }
+ ]
+}

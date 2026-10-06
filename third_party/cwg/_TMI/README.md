@@ -77,3 +77,13 @@ Checked by eye on the page: "Bewliehill $J" (no such grid square; read as 5J and
 Management", "Welhunt", "Potatoe Art Studio", "Hireright 20 Water Street 4E" (20 Water Street is 18C elsewhere),
 "Notes Coffee Roasters, kiosk 7L" on page 2 (7L is a page 1 square; left without `grid_refs`, with a note), and the
 brochure's "ScibbleForm" in the trail ("ScribbleForm" in the brochure) and "Skycraper".
+
+## mallmap/ (the Living Map archive, normalised)
+
+Made by `magpie/cwplans/tools/cwg-mallmap-tmi.mjs` from `../mallmap/`. Every feature of the indoor tiles once, with its
+properties as served, its geometry in WGS84 (7 decimal places) from the most precise zoom at which it lies whole in one
+tile (`zoom_used`; 10,088 of 10,092 whole; the other 4 are their pieces at the lowest zoom as a Multi* geometry,
+`whole: false`). One FeatureCollection per floor (`indoor-floor-<floor_level>.geojson`, -4.0 to 2.0, with -0.5 = Level
+-1M and 0.5 = Level M) and `outdoor.geojson`; `features.json` = the 537 API feature records (one per id); `places.json`
+= the 536 named places; `summary.json` = counts per floor and class. Tiles are not simplified by zoom (each zoom from 14
+to 18 holds all 8,871 indoor features); only the number of cut pieces changes. Rights: Canary Wharf Group / Living Map.

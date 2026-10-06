@@ -1,0 +1,114 @@
+{
+  "attribution_dialog": {
+    "button_text": "OK"
+  },
+  "home": {
+    "compass_tooltip": "Compass",
+    "floor_selector_find_building": "Find a building",
+    "floor_selector_tooltip": "Floor selector",
+    "locate_me_tooltip": "Locate me",
+    "search_bar_text": "Search {{projectName}}",
+    "search_suggestion_text": "Search for <strong>{{query}}</strong>",
+    "user_location_declined_alert": "We can't locate you without your permission. Please check and update your location sharing permissions.",
+    "user_location_out_of_bounds": "Your location is outside of the map area",
+    "zoom_tooltip": "Zoom"
+  },
+  "journey_overview": {
+    "heading": "Journey overview"
+  },
+  "loading_map_view": {
+    "logo_text": "Powered by"
+  },
+  "location_error_dialog": {
+    "body": "Your location could not be determined at this time. Please try again.",
+    "cancel_button_text": "Cancel",
+    "retry_button_text": "Retry",
+    "title": "Location not found"
+  },
+  "locator": {
+    "links": {
+      "description": "Locate assets on your map",
+      "title": "Locator"
+    }
+  },
+  "navigate_page": {
+    "arrive_at": "Arrive at",
+    "avoid_stairs_toggle": "Avoid stairs",
+    "caution_message": "Always use caution! Real-world conditions may not exactly match our directions.",
+    "finding_route_pill": "Finding route",
+    "go_down": "Go down to",
+    "go_up": "Go up to",
+    "head_straight": "Head straight",
+    "hide_steps": "Hide Steps",
+    "navigate_default": "Go to",
+    "no_results": "Couldn't find a route for this journey",
+    "send_directions_to_mobile": "Send directions to mobile",
+    "show_steps": "Show Steps",
+    "start_at": "Start at",
+    "turn_left": "Turn left",
+    "turn_right": "Turn right"
+  },
+  "no_results": "No Results",
+  "no_results_message": "Check your spelling or try another search.",
+  "operating_hours_day_friday": "Friday",
+  "operating_hours_day_monday": "Monday",
+  "operating_hours_day_saturday": "Saturday",
+  "operating_hours_day_sunday": "Sunday",
+  "operating_hours_day_thursday": "Thursday",
+  "operating_hours_day_tuesday": "Tuesday",
+  "operating_hours_day_wednesday": "Wednesday",
+  "operating_hours_status_close": "Closed",
+  "operating_hours_status_closed_until": "Closed until {{time}} {{day}}",
+  "operating_hours_status_closed_until_today": "Closed until {{time}}",
+  "operating_hours_status_open": "Open until {{time}}",
+  "operating_hours_status_open_24_hours": "Open 24 hours",
+  "operating_hours_status_temporarily_closed": "Temporarily Closed",
+  "poi": {
+    "departures": {
+      "due": "Now",
+      "minutes": "mins",
+      "no_upcoming_departures": "No upcoming departures",
+      "then": "then",
+      "times_unavailable": "Times unavailable right now"
+    },
+    "live_departures": "Live departures",
+    "navigate_button": "Navigate",
+    "panorama_building_block": "Drag to look around",
+    "panorama_button": "Look around",
+    "read_more_button": "Read more",
+    "share_button": "Share",
+    "timetabled_departures": "Timetabled departures"
+  },
+  "route_page": {
+    "choose_from_map_button": "Choose from map",
+    "destination_placeholder": "Choose destination",
+    "origin_placeholder": "Choose starting point",
+    "your_location_button": "Your location",
+    "floor_dialog_header": "Which floor are you on?",
+    "floor_dialog_body": "Don't know? The map will remain as it is.",
+    "floor_dialog_submit_button": "Confirm floor",
+    "floor_dialog_cancel_button": "I don't know"
+  },
+  "search_bar": {
+    "cancel_button_text": "Cancel"
+  },
+  "search_result": {
+    "temporarily_closed": "Temporarily Closed"
+  },
+  "search_results_view": {
+    "searching_for_results": "Searching..."
+  },
+  "search_results": {
+    "no_results_body": "Check your spelling or try another search",
+    "no_results_title": "No results",
+    "results_heading": "{{number}} results",
+    "single_result_heading": "{{number}} result"
+  },
+  "share_dialog": {
+    "body": "Scan this code with your phone",
+    "button_text": "Copy link",
+    "button_text_confirmed": "Copied!",
+    "title": "Share"
+  },
+  "temporarily_closed": "Temporarily Closed"
+}
