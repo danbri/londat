@@ -1,7 +1,7 @@
 {
  "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://danbri.github.io/londat/kgx/",
- "built": "2026-10-06T17:55:04.372Z",
+ "built": "2026-10-06T18:29:09.469Z",
  "tool": "magpie/cwplans/tools/build-kgx.mjs",
  "engine": "@factoidal/core 0.7.1",
  "prefixes": {
@@ -30,12 +30,12 @@
   "coref-site-name": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
   "mallmap": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
   "storeguide": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
-  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/f65ef6ff8798067f",
+  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/3faea1e5a03f7c2b",
   "coverage-imagery": "https://danbri.github.io/londat/kgx/graph/coverage-imagery/625642ff1fe69ec6",
   "facade-patches-cwlibrary": "https://danbri.github.io/londat/kgx/graph/facade-patches-cwlibrary/a9ec39f5e86dd130",
   "photos-cwlibrary": "https://danbri.github.io/londat/kgx/graph/photos-cwlibrary/9200b27affb8a9c6",
-  "meta": "https://danbri.github.io/londat/kgx/graph/meta/a7f54ffdb54ff285",
-  "log": "https://danbri.github.io/londat/kgx/graph/log/0b6dc824d6604fbf"
+  "meta": "https://danbri.github.io/londat/kgx/graph/meta/23b9769bd8224aec",
+  "log": "https://danbri.github.io/londat/kgx/graph/log/4eb99eb79e46b873"
  },
  "graphs": {
   "facts": {
@@ -147,10 +147,10 @@
    "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
   },
   "pipeline": {
-   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/f65ef6ff8798067f",
-   "rdfc10_sha256": "f65ef6ff8798067f8e6a0e5b54a7f1180ee4a5db72b06cd36748b47956b66b54",
-   "triples": 13531,
-   "file": "graphs/pipeline/f65ef6ff8798067f.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/3faea1e5a03f7c2b",
+   "rdfc10_sha256": "3faea1e5a03f7c2b6ca07897a142fd05ebe9ee125e034b317f00413c4622d786",
+   "triples": 13555,
+   "file": "graphs/pipeline/3faea1e5a03f7c2b.nq.gz",
    "parts": 5,
    "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
    "licence": "CC0 (descriptions of tools and files)"
@@ -183,32 +183,32 @@
    "licence": "CC0 (photos and descriptions); OSM names and tags quoted are © OpenStreetMap contributors, ODbL 1.0"
   },
   "meta": {
-   "version": "https://danbri.github.io/londat/kgx/graph/meta/a7f54ffdb54ff285",
-   "rdfc10_sha256": "a7f54ffdb54ff2853dc221e2c79402b6302a2f4bdfc2ecf00427a449357d3f40",
+   "version": "https://danbri.github.io/londat/kgx/graph/meta/23b9769bd8224aec",
+   "rdfc10_sha256": "23b9769bd8224aec92e7adaf65257a14184a6c19e197b66ad533be527bc03239",
    "triples": 575,
-   "file": "graphs/meta/a7f54ffdb54ff285.nq.gz",
+   "file": "graphs/meta/23b9769bd8224aec.nq.gz",
    "parts": 0,
    "title": "Descriptions of the graph versions and the current version of each graph name",
    "licence": "CC0 (descriptions only)"
   },
   "log": {
-   "version": "https://danbri.github.io/londat/kgx/graph/log/0b6dc824d6604fbf",
-   "rdfc10_sha256": "0b6dc824d6604fbfead05675f0375768a0055cc3ce9bffc8f83ecc1e9519d5f4",
-   "triples": 4082,
-   "file": "graphs/log/0b6dc824d6604fbf.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/log/4eb99eb79e46b873",
+   "rdfc10_sha256": "4eb99eb79e46b873a264128083bf2f30993809d8c7421497aceaf8191afbc520",
+   "triples": 4541,
+   "file": "graphs/log/4eb99eb79e46b873.nq.gz",
    "parts": 0,
    "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
    "licence": "CC0"
   }
  },
- "total_triples": 107408,
+ "total_triples": 107891,
  "store": {
-  "generation": "gen-f77d3378dffd7b81",
+  "generation": "gen-78dd2364aa7ffb08",
   "members": 46,
   "files": 4460,
-  "bytes": 20584127
+  "bytes": 20607717
  },
  "activities_this_run": 27,
  "activities_run_new": 0,
- "activities_in_log": 51
+ "activities_in_log": 56
 }

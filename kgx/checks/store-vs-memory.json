@@ -1,0 +1,111 @@
+{
+ "checked": "2026-10-06T18:39:53.929Z",
+ "generation": "gen-78dd2364aa7ffb08",
+ "quads": 107891,
+ "engine": "@factoidal/core 0.7.1",
+ "queries": {
+  "join, one GRAPH block": {
+   "store": 130,
+   "memory": 130,
+   "memory_one_graph_per_source": 2519,
+   "identical": true
+  },
+  "join, one GRAPH block per subject": {
+   "store": 2519,
+   "memory": 2519,
+   "memory_one_graph_per_source": 2519,
+   "identical": true
+  },
+  "one subject, three patterns": {
+   "store": 18,
+   "memory": 18,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "quads per graph": {
+   "store": 46,
+   "memory": 46,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "cited-facts.rq": {
+   "store": 1260,
+   "memory": 1260,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "describe.rq": {
+   "store": 18,
+   "memory": 18,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "graphs.rq": {
+   "store": 16,
+   "memory": 16,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "guide-grid.rq": {
+   "store": 705,
+   "memory": 705,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "hours-cwg-vs-mallmap.rq": {
+   "store": 96,
+   "memory": 96,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "lineage.rq": {
+   "store": 96,
+   "memory": 96,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "occupants-by-building.rq": {
+   "store": 289,
+   "memory": 289,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "open-at.rq": {
+   "store": 320,
+   "memory": 320,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "same-as.rq": {
+   "store": 1068,
+   "memory": 1068,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "step-free.rq": {
+   "store": 70,
+   "memory": 70,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "tallest.rq": {
+   "store": 67,
+   "memory": 67,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "toilets-facilities.rq": {
+   "store": 159,
+   "memory": 159,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  },
+  "units-by-floor.rq": {
+   "store": 40,
+   "memory": 40,
+   "memory_one_graph_per_source": null,
+   "identical": true
+  }
+ },
+ "different": 0
+}

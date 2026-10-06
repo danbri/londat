@@ -41,14 +41,14 @@ The rule and the operations: the `cwplans-dataflow` skill in the main repository
 | `coref-<rule>` | 4,417 | owl:sameAs links between web descriptions, one graph per key rule (5 rules) |
 | `mallmap` | 19,250 | Living Map data behind map.canarywharf.com: units (name, class, mall, floor, hours, outline) and facilities (lifts, escalators, ramps, stairs, entrances, toilets) |
 | `storeguide` | 5,732 | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
-| `pipeline` | 13,531 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
+| `pipeline` | 13,555 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
 | `coverage-imagery` | 1,407 | open imagery coverage of the first study areas (OpenAerialMap, Panoramax, KartaView, EA survey catalogue): counts per source and area, OpenAerialMap images, EA products; made by `tools/probe-imagery-coverage.mjs` and named in `external-heads.json` |
 | `facade-patches-cwlibrary` | 171 | rectified facade patches from the contributed Canada Water photos: periods and colours (operation `rectify-facade-patches`) |
 | `photos-cwlibrary` | 232 | the contributed photos (CC0) and the buildings identified in them, with evidence (operation `lift-contrib-photos`; see `data/images/contrib/cwlibrary/`) |
 | `meta` | 575 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
-| `log` | 4,082 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
+| `log` | 4,541 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
 
-Total 107,408 triples. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
+Total 107,891 triples. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
 `https://danbri.github.io/londat/kgx/vocab#` (prefix `cwk:`), with schema.org first. There are no blank nodes (the
 `pipeline` graph is skolemized to `https://danbri.github.io/londat/kgx/genid/pipeline/…`).
 
