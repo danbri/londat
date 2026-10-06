@@ -1,0 +1,63 @@
+{
+ "about": "Canary Wharf Group printed maps and guides from canarywharf.com/maps/. Rights: Canary Wharf Group; store guide design \u00a9 Ravenshaw Studios Limited and Paul & Linda Anthony 2026. No open licence. Added at the request of the project owner danbri on 2026-10-06 for the cwplans scoping phase.",
+ "approved_by": "danbri",
+ "approved_on": "2026-10-06",
+ "files": [
+  {
+   "path": "maps/260720_store_guide_JULY_composite_v85_vec.pdf",
+   "what": "store guide: Shopping Malls (p1) and Canary Wharf Estate (p2) maps with indexes; text as outlines",
+   "date_in_file": "2026-07-20",
+   "bytes": 2775723,
+   "sha256": "620130287ec28df86eb94c726185c83d63c3cb499ce90d71dda45c0eb080eaf0",
+   "pages": 2,
+   "page_size_pt": "1842.52 x 2806.3 pts",
+   "creator": "Adobe Illustrator 30.6 (Macintosh)",
+   "created": "Sat Jul 18 08:43:41 2026 UTC",
+   "source": "https://canarywharf.com/maps/",
+   "added_by": "danbri (downloaded by hand)",
+   "added_on": "2026-10-06"
+  },
+  {
+   "path": "maps/AccesibilityMap_MAY-2025_v2.pdf",
+   "what": "step-free access map",
+   "date_in_file": "2025-05",
+   "bytes": 3541210,
+   "sha256": "891b097efad587f699980e92e3771d999f63c85996faf7886cc72f054efc57fc",
+   "pages": 1,
+   "page_size_pt": "1094.17 x 615.198 pts",
+   "creator": "Adobe Illustrator 29.5 (Macintosh)",
+   "created": "Sun May 11 20:12:36 2025 UTC",
+   "source": "https://canarywharf.com/maps/",
+   "added_by": "danbri (downloaded by hand)",
+   "added_on": "2026-10-06"
+  },
+  {
+   "path": "maps/JUNE-2025-Childrens-Art-Trail_Map_Online_AW.pdf",
+   "what": "children's art trail map",
+   "date_in_file": "2025-06",
+   "bytes": 1814738,
+   "sha256": "eeddad9063e8da81e6f35d86dc673c9ede23586fac8c7b61f03a41c8de75fb0d",
+   "pages": 3,
+   "page_size_pt": "595.276 x 841.89 pts (A4)",
+   "creator": "Adobe InDesign 20.3 (Macintosh)",
+   "created": "Fri Jun  6 13:39:16 2025 UTC",
+   "source": "https://canarywharf.com/maps/",
+   "added_by": "danbri (downloaded by hand)",
+   "added_on": "2026-10-06"
+  },
+  {
+   "path": "maps/Art-Brochure_Whale-cover.pdf",
+   "what": "art guide, over 100 permanent artworks",
+   "date_in_file": "2025-04",
+   "bytes": 9285059,
+   "sha256": "c94b5e20f05db3fea1ae6992c8eae2cef29a57aa3f8ec932c373ec4f91a0195a",
+   "pages": 20,
+   "page_size_pt": "481.89 x 680.315 pts",
+   "creator": "Adobe InDesign 20.2 (Macintosh)",
+   "created": "Thu Mar 20 16:49:19 2025 UTC",
+   "source": "https://canarywharf.com/maps/",
+   "added_by": "danbri (downloaded by hand)",
+   "added_on": "2026-10-06"
+  }
+ ]
+}
