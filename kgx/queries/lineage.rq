@@ -1,0 +1,11 @@
+PREFIX s: <https://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+# The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
+# Every logged operation: skill, tool, activity and the graph versions it generated
+SELECT ?operation ?skill ?tool ?activity ?generated WHERE { GRAPH ?l1 { ?activity a prov:Activity ; cwk:operation ?op ; prov:generated ?generated } GRAPH ?l2 { ?op cwk:skill ?skill ; cwk:tool ?tool } BIND(STRAFTER(STR(?op), "/operation/") AS ?operation) } ORDER BY ?operation ?generated

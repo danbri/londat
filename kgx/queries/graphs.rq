@@ -4,6 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
-# Graphs, sources and licences
-SELECT ?g ?title ?quads ?licence ?rights WHERE { GRAPH ?m { ?g a void:Dataset ; dct:title ?title ; void:triples ?quads ; dct:license ?licence . OPTIONAL { ?g dct:rights ?rights } } } ORDER BY DESC(?quads)
+# The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
+# Each graph name, its current version (named by its RDFC-1.0 hash), size and licence
+SELECT ?name ?version ?triples ?title ?licence WHERE { GRAPH ?m { ?name cwk:current ?version . ?version void:triples ?triples ; dct:title ?title ; dct:license ?licence } } ORDER BY DESC(?triples)

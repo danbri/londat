@@ -4,6 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
-# The same name in the CWG directory and the mall map, hours side by side
-SELECT ?name ?cwg ?mallmap WHERE { GRAPH ?g1 { ?e s:openingHours ?cwg ; s:name ?name ; cwk:levelText ?lt } GRAPH ?g2 { ?u a cwk:MallUnit ; s:name ?name ; cwk:openingTimesText ?mallmap } } ORDER BY ?name
+# The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
+# The same name in the CWG directory and the mall map, hours side by side (exact name match)
+SELECT ?name ?cwg ?mallmap ?e WHERE { GRAPH ?g1 { ?e s:openingHours ?cwg ; s:name ?name ; cwk:levelText ?lt } GRAPH ?g2 { ?u a cwk:MallUnit ; s:name ?name ; cwk:openingTimesText ?mallmap } } ORDER BY ?name

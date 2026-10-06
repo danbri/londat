@@ -4,6 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+# The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Store guide entries with grid squares, linked to the CWG directory when matched
 SELECT ?name ?section ?grid ?cwg WHERE { GRAPH ?g { ?e a cwk:GuideEntry ; s:name ?name ; cwk:guideSection ?section ; cwk:gridRef ?grid . OPTIONAL { ?e s:sameAs ?cwg } } } ORDER BY ?section ?name

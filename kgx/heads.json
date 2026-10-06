@@ -1,0 +1,19 @@
+{
+ "heads": {
+  "facts": "https://danbri.github.io/londat/kgx/graph/facts/330e32d6f008ebb1",
+  "buildings": "https://danbri.github.io/londat/kgx/graph/buildings/0dd804f7e731f9ca",
+  "occupants": "https://danbri.github.io/londat/kgx/graph/occupants/cd01fe5b05447fc6",
+  "cwg": "https://danbri.github.io/londat/kgx/graph/cwg/a47565e65828de3a",
+  "web": "https://danbri.github.io/londat/kgx/graph/web/1cbdab61edf01325",
+  "coref-iri": "https://danbri.github.io/londat/kgx/graph/coref-iri/25bfbdb2f6b9d434",
+  "coref-postcode-name": "https://danbri.github.io/londat/kgx/graph/coref-postcode-name/70fa8d3ca6d17dea",
+  "coref-telephone": "https://danbri.github.io/londat/kgx/graph/coref-telephone/980586e88e281dff",
+  "coref-sameAs": "https://danbri.github.io/londat/kgx/graph/coref-sameAs/041226af9602ae32",
+  "coref-site-name": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
+  "mallmap": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
+  "storeguide": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
+  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/ade58aecdcf8a27e",
+  "meta": "https://danbri.github.io/londat/kgx/graph/meta/96f056fe01ec9609",
+  "log": "https://danbri.github.io/londat/kgx/graph/log/7efc0c480a197548"
+ }
+}

@@ -4,6 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+# The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Places open on a day at a minute of the day (edit Tuesday and 900 = 15:00)
-SELECT ?place ?name ?opens ?closes WHERE { GRAPH ?g { ?place s:openingHoursSpecification ?h ; s:name ?name . ?h s:dayOfWeek s:Tuesday ; cwk:opensMinute ?o ; cwk:closesMinute ?c ; s:opens ?opens ; s:closes ?closes . FILTER(?o <= 900 && ?c > 900) } } ORDER BY ?name
+SELECT ?place ?name ?opens ?closes WHERE { GRAPH ?g1 { ?h s:dayOfWeek s:Tuesday ; cwk:opensMinute ?o ; cwk:closesMinute ?c ; s:opens ?opens ; s:closes ?closes . FILTER(?o <= 900 && ?c > 900) } GRAPH ?g2 { ?place s:openingHoursSpecification ?h ; s:name ?name } } ORDER BY ?name

@@ -1,17 +1,9 @@
 {
- "about": "cwplans knowledge graph, first cut. One named graph per source; the same quads as N-Quads, COTTAS and a Shardborough store. See README.md.",
+ "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://danbri.github.io/londat/kgx/",
- "built": "2026-10-06T16:18:55.409Z",
+ "built": "2026-10-06T17:06:04.143Z",
  "tool": "magpie/cwplans/tools/build-kgx.mjs",
  "engine": "@factoidal/core 0.7.1",
- "timings_ms": {
-  "start": 1791303535399,
-  "graphs": 0,
-  "per_graph_nq_and_cottas": 206301,
-  "all_nq_and_cottas": 318709,
-  "hdt": 66485,
-  "shardborough": 21112
- },
  "prefixes": {
   "s": "https://schema.org/",
   "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -25,312 +17,168 @@
   "wd": "http://www.wikidata.org/entity/",
   "cwk": "https://danbri.github.io/londat/kgx/vocab#"
  },
+ "heads": {
+  "facts": "https://danbri.github.io/londat/kgx/graph/facts/330e32d6f008ebb1",
+  "buildings": "https://danbri.github.io/londat/kgx/graph/buildings/0dd804f7e731f9ca",
+  "occupants": "https://danbri.github.io/londat/kgx/graph/occupants/cd01fe5b05447fc6",
+  "cwg": "https://danbri.github.io/londat/kgx/graph/cwg/a47565e65828de3a",
+  "web": "https://danbri.github.io/londat/kgx/graph/web/1cbdab61edf01325",
+  "coref-iri": "https://danbri.github.io/londat/kgx/graph/coref-iri/25bfbdb2f6b9d434",
+  "coref-postcode-name": "https://danbri.github.io/londat/kgx/graph/coref-postcode-name/70fa8d3ca6d17dea",
+  "coref-telephone": "https://danbri.github.io/londat/kgx/graph/coref-telephone/980586e88e281dff",
+  "coref-sameAs": "https://danbri.github.io/londat/kgx/graph/coref-sameAs/041226af9602ae32",
+  "coref-site-name": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
+  "mallmap": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
+  "storeguide": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
+  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/ade58aecdcf8a27e",
+  "meta": "https://danbri.github.io/londat/kgx/graph/meta/96f056fe01ec9609",
+  "log": "https://danbri.github.io/londat/kgx/graph/log/7efc0c480a197548"
+ },
  "graphs": {
   "facts": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/facts",
-   "quads": 3452,
+   "version": "https://danbri.github.io/londat/kgx/graph/facts/330e32d6f008ebb1",
+   "rdfc10_sha256": "330e32d6f008ebb138d000a9d0125cb2ce2122502f11df2e6d5e10ac33bdd0b0",
+   "triples": 3452,
+   "file": "graphs/facts/330e32d6f008ebb1.nq.gz",
+   "parts": 2,
    "title": "Cited facts about Canary Wharf and the Docklands structures",
-   "source": [
-    "magpie/cwplans/docklands/facts.json"
-   ],
-   "licence": "facts with short quotes from cited pages (crawl rule of 2026-10-03, scoping); each fact names its source URL",
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "licence": "facts with short quotes from cited pages (crawl rule of 2026-10-03, scoping); each fact names its source URL"
   },
   "buildings": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/buildings",
-   "quads": 17148,
+   "version": "https://danbri.github.io/londat/kgx/graph/buildings/0dd804f7e731f9ca",
+   "rdfc10_sha256": "0dd804f7e731f9cabee549d13495ff9d7acba246d278c3a9388fcf0a6ab19e85",
+   "triples": 17148,
+   "file": "graphs/buildings/0dd804f7e731f9ca.nq.gz",
+   "parts": 6,
    "title": "Registry buildings of the Canary Wharf box (cwb- ids): names, positions, outlines, levels, height, postcodes, identifiers",
-   "source": [
-    "magpie/cwplans/registry/buildings.json",
-    "magpie/cwplans/atlas/data/atlas.json"
-   ],
-   "licence": "derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), Wikidata (CC0), OS Open UPRN/USRN/TOID ids (OGL)",
-   "osm": true,
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "licence": "derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), Wikidata (CC0), OS Open UPRN/USRN/TOID ids (OGL)"
   },
   "occupants": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/occupants",
-   "quads": 10092,
+   "version": "https://danbri.github.io/londat/kgx/graph/occupants/cd01fe5b05447fc6",
+   "rdfc10_sha256": "cd01fe5b05447fc69b180e033ff34b987edef8d828541026572d77abf364bf22",
+   "triples": 10092,
+   "file": "graphs/occupants/cd01fe5b05447fc6.nq.gz",
+   "parts": 4,
    "title": "Occupants of the registry buildings: shops, food and drink, services, offices, with role, level, opening hours and links",
-   "source": [
-    "magpie/cwplans/registry/buildings.json"
-   ],
-   "licence": "joined from OSM (ODbL), FSA ratings (OGL), Canary Wharf Group directory (crawl rule, scoping), brand and register sources named per occupant in the registry",
-   "osm": true,
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "licence": "joined from OSM (ODbL), FSA ratings (OGL), Canary Wharf Group directory (crawl rule, scoping), brand and register sources named per occupant in the registry"
   },
   "cwg": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/cwg",
-   "quads": 20637,
+   "version": "https://danbri.github.io/londat/kgx/graph/cwg/a47565e65828de3a",
+   "rdfc10_sha256": "a47565e65828de3a772864380abf9ee2a722829761d39284fd5a99aceafdb3e5",
+   "triples": 20637,
+   "file": "graphs/cwg/a47565e65828de3a.nq.gz",
+   "parts": 7,
    "title": "Canary Wharf Group directory: typed occupants, malls, levels, page dates and weekly opening hours",
-   "source": [
-    "magpie/cwplans/registry/sources/brands/cwg-directory-typed.nq",
-    "magpie/cwplans/registry/sources/brands/cwg-directory-typed.json",
-    "magpie/cwplans/registry/sources/brands/cwg-hours.json"
-   ],
-   "licence": "Canary Wharf Group pages as archived by the Internet Archive; crawl rule of 2026-10-03, scoping only",
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "licence": "Canary Wharf Group pages as archived by the Internet Archive; crawl rule of 2026-10-03, scoping only"
   },
   "web": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/web",
-   "quads": 6682,
+   "version": "https://danbri.github.io/londat/kgx/graph/web/1cbdab61edf01325",
+   "rdfc10_sha256": "1cbdab61edf01325497d1fb3dfc78879043c2195c40c2cb14921f50532c158ff",
+   "triples": 6682,
+   "file": "graphs/web/1cbdab61edf01325.nq.gz",
+   "parts": 3,
    "title": "Canonical schema.org layer from the web harvest (branch cards, weekly hours, organisation cards), all pages merged",
-   "source": [
-    "third_party/cwplans-structured-data/idioms/canonical.nq.gz"
-   ],
-   "licence": "the publishers' own markup; crawl rule of 2026-10-03, scoping only",
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "licence": "the publishers' own markup; crawl rule of 2026-10-03, scoping only"
   },
   "coref-iri": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/coref-iri",
-   "quads": 1676,
-   "title": "Same-thing links by key rule \"iri\" between web descriptions",
-   "source": [
-    "third_party/cwplans-structured-data/coref/sameas.nq.gz"
-   ],
-   "licence": "derived from the web harvest (scoping)",
-   "tool": "magpie/cwplans/tools/web-coref.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/coref-iri/25bfbdb2f6b9d434",
+   "rdfc10_sha256": "25bfbdb2f6b9d43487fcaf3087713d916c659edaeff22aa84390e124289dceee",
+   "triples": 1676,
+   "file": "graphs/coref-iri/25bfbdb2f6b9d434.nq.gz",
+   "parts": 1,
+   "title": "Same-thing links by key rule \"iri\" between web descriptions (made by tools/web-coref.mjs)",
+   "licence": "derived from the web harvest (scoping)"
   },
   "coref-postcode-name": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/coref-postcode-name",
-   "quads": 301,
-   "title": "Same-thing links by key rule \"postcode-name\" between web descriptions",
-   "source": [
-    "third_party/cwplans-structured-data/coref/sameas.nq.gz"
-   ],
-   "licence": "derived from the web harvest (scoping)",
-   "tool": "magpie/cwplans/tools/web-coref.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/coref-postcode-name/70fa8d3ca6d17dea",
+   "rdfc10_sha256": "70fa8d3ca6d17deabed454a9d243353682d51e50a6d1bbaf65ff5da0de34df5b",
+   "triples": 301,
+   "file": "graphs/coref-postcode-name/70fa8d3ca6d17dea.nq.gz",
+   "parts": 1,
+   "title": "Same-thing links by key rule \"postcode-name\" between web descriptions (made by tools/web-coref.mjs)",
+   "licence": "derived from the web harvest (scoping)"
   },
   "coref-telephone": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/coref-telephone",
-   "quads": 167,
-   "title": "Same-thing links by key rule \"telephone\" between web descriptions",
-   "source": [
-    "third_party/cwplans-structured-data/coref/sameas.nq.gz"
-   ],
-   "licence": "derived from the web harvest (scoping)",
-   "tool": "magpie/cwplans/tools/web-coref.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/coref-telephone/980586e88e281dff",
+   "rdfc10_sha256": "980586e88e281dff62eabeb68cc059d0268b22006dc2856ca36cd9fb8bf76388",
+   "triples": 167,
+   "file": "graphs/coref-telephone/980586e88e281dff.nq.gz",
+   "parts": 1,
+   "title": "Same-thing links by key rule \"telephone\" between web descriptions (made by tools/web-coref.mjs)",
+   "licence": "derived from the web harvest (scoping)"
   },
   "coref-sameAs": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/coref-sameAs",
-   "quads": 1680,
-   "title": "Same-thing links by key rule \"sameAs\" between web descriptions",
-   "source": [
-    "third_party/cwplans-structured-data/coref/sameas.nq.gz"
-   ],
-   "licence": "derived from the web harvest (scoping)",
-   "tool": "magpie/cwplans/tools/web-coref.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/coref-sameAs/041226af9602ae32",
+   "rdfc10_sha256": "041226af9602ae3259e749c1d25338e98d8739c6ca7ff363d196f39dcc011f67",
+   "triples": 1680,
+   "file": "graphs/coref-sameAs/041226af9602ae32.nq.gz",
+   "parts": 1,
+   "title": "Same-thing links by key rule \"sameAs\" between web descriptions (made by tools/web-coref.mjs)",
+   "licence": "derived from the web harvest (scoping)"
   },
   "coref-site-name": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/coref-site-name",
-   "quads": 593,
-   "title": "Same-thing links by key rule \"site-name\" between web descriptions",
-   "source": [
-    "third_party/cwplans-structured-data/coref/sameas.nq.gz"
-   ],
-   "licence": "derived from the web harvest (scoping)",
-   "tool": "magpie/cwplans/tools/web-coref.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
+   "rdfc10_sha256": "b5b031a4b3141c7ebf74001ed9a1803ce79053de030ed924e3675dc919810283",
+   "triples": 593,
+   "file": "graphs/coref-site-name/b5b031a4b3141c7e.nq.gz",
+   "parts": 1,
+   "title": "Same-thing links by key rule \"site-name\" between web descriptions (made by tools/web-coref.mjs)",
+   "licence": "derived from the web harvest (scoping)"
   },
   "mallmap": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/mallmap",
-   "quads": 19250,
-   "title": "Mall units and facilities (lifts, escalators, ramps, stairs, entrances, toilets, defibrillators and more) from the Living Map data behind map.canarywharf.com: name, class, type, mall, floor, opening times, outline or position",
-   "source": [
-    "danbri/londat third_party/cwg/_TMI/mallmap (from third_party/cwg/mallmap tiles)"
-   ],
-   "licence": "Canary Wharf Group / Living Map; archived at the owner's request 2026-10-06 for reference and accessibility design study, scoping only",
-   "tool": "magpie/cwplans/tools/cwg-mallmap-tmi.mjs, build-kgx.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
+   "rdfc10_sha256": "d8d9312a9bbc26d3cf53132b6d35b023483adb378cc291e4443fca7bf7512e1e",
+   "triples": 19250,
+   "file": "graphs/mallmap/d8d9312a9bbc26d3.nq.gz",
+   "parts": 7,
+   "title": "Mall units and facilities (lifts, escalators, ramps, stairs, entrances, toilets, defibrillators and more) from the Living Map data behind map.canarywharf.com",
+   "licence": "Canary Wharf Group / Living Map; archived at the owner's request 2026-10-06 for reference and accessibility design study, scoping only"
   },
   "storeguide": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/storeguide",
-   "quads": 5732,
-   "title": "Canary Wharf Group store guide (20 July 2026): every listed shop, restaurant, café, service and office tenant with its section and grid squares, read by OCR",
-   "source": [
-    "danbri/londat third_party/cwg/_TMI/store-guide-2026-07-20.json",
-    "danbri/londat third_party/cwg/maps/260720_store_guide_JULY_composite_v85_vec.pdf"
-   ],
-   "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping",
-   "tool": "magpie/cwplans/tools/cwg-maps-tmi.mjs, build-kgx.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
+   "rdfc10_sha256": "4992232f7aca3d675e3220641e94aa572b0473ba12e201602e228519f04afb66",
+   "triples": 5732,
+   "file": "graphs/storeguide/4992232f7aca3d67.nq.gz",
+   "parts": 2,
+   "title": "Canary Wharf Group store guide (20 July 2026): listed shops, restaurants, cafés, services and office tenants with section and grid squares, read by OCR (tools/cwg-maps-tmi.mjs)",
+   "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
+  },
+  "pipeline": {
+   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/ade58aecdcf8a27e",
+   "rdfc10_sha256": "ade58aecdcf8a27e4b4ea39b9d587508829b7b0d26cd7e6d5162ba6fd2d13d8c",
+   "triples": 13424,
+   "file": "graphs/pipeline/ade58aecdcf8a27e.nq.gz",
+   "parts": 5,
+   "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
+   "licence": "CC0 (descriptions of tools and files)"
   },
   "meta": {
-   "iri": "https://danbri.github.io/londat/kgx/graph/meta",
-   "quads": 102,
-   "title": "Descriptions of the graphs in this knowledge graph",
-   "source": [],
-   "licence": "CC0 (descriptions only)",
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "version": "https://danbri.github.io/londat/kgx/graph/meta/96f056fe01ec9609",
+   "rdfc10_sha256": "96f056fe01ec96097721d737e935e07f449ef32f326be586a3cb249806a43c68",
+   "triples": 514,
+   "file": "graphs/meta/96f056fe01ec9609.nq.gz",
+   "parts": 0,
+   "title": "Descriptions of the graph versions and the current version of each graph name",
+   "licence": "CC0 (descriptions only)"
+  },
+  "log": {
+   "version": "https://danbri.github.io/londat/kgx/graph/log/7efc0c480a197548",
+   "rdfc10_sha256": "7efc0c480a1975483918af4671e411f30b45b7e5d04b494389744e4b50b33f20",
+   "triples": 2634,
+   "file": "graphs/log/7efc0c480a197548.nq.gz",
+   "parts": 0,
+   "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
+   "licence": "CC0"
   }
  },
- "total_quads": 87512,
- "files": {
-  "nq/facts.nq.gz": {
-   "bytes": 50588,
-   "sha256": "9851faaa23318202fda2083933f858b01fd907aea81807b14f7d2b4f566dba8c"
-  },
-  "cottas/facts.cottas": {
-   "bytes": 102870,
-   "sha256": "c1a8c1f096db3612a7bfc284b77ec637c9cb86cb54d949215a07a6760b900295"
-  },
-  "nq/buildings.nq.gz": {
-   "bytes": 184793,
-   "sha256": "25fc78970e3206e407f8af2dadbaffbf8e37a75c8d84ccfb4945e96d9931dcc9"
-  },
-  "cottas/buildings.cottas": {
-   "bytes": 917216,
-   "sha256": "4db442f080543009bd3b25120797375f5078bedacddc7536cbb08e5f56a7e6f0"
-  },
-  "nq/occupants.nq.gz": {
-   "bytes": 118056,
-   "sha256": "a1c83d672905be6c6c5d5760b64a90e744cc7a2b158b5736532afca0d972d478"
-  },
-  "cottas/occupants.cottas": {
-   "bytes": 345156,
-   "sha256": "6775c2ed7f698f3f7af357a82aa26362ba184cf41a1d1aa1680f9cfe3bfc83d4"
-  },
-  "nq/cwg.nq.gz": {
-   "bytes": 142478,
-   "sha256": "a8f503aa00599a0f9086c93d307f1e6cbaa14c91e0486e525a9a1d55b6275899"
-  },
-  "cottas/cwg.cottas": {
-   "bytes": 628925,
-   "sha256": "5f48761de9fe37dc75a7b2568e5a84193001fabbc3a6649fb896cb755c5fa130"
-  },
-  "nq/web.nq.gz": {
-   "bytes": 99131,
-   "sha256": "5b6d03370e44a273b8f43fe5b24c306f4c5a60e19409cbbdac3796ebbcd48a14"
-  },
-  "cottas/web.cottas": {
-   "bytes": 393666,
-   "sha256": "24fff6206bd8d617a2a04c933c258c47ebec7cbc6cb0f33b817a303fcb4e43e7"
-  },
-  "nq/coref-iri.nq.gz": {
-   "bytes": 24736,
-   "sha256": "e0530f7009997de5c908f8f2439cde017cae4a6f7d9a0914c70a4e4b70a5e17f"
-  },
-  "cottas/coref-iri.cottas": {
-   "bytes": 139112,
-   "sha256": "0df4c9dc12b188e3d488ddd3b26dd6bd6d982f31eacb1de084123576f2b115dc"
-  },
-  "nq/coref-postcode-name.nq.gz": {
-   "bytes": 4349,
-   "sha256": "0875dee70cf93ee40441f48a0a0af3f7cffe50a038f54225a893e6c5f6cba716"
-  },
-  "cottas/coref-postcode-name.cottas": {
-   "bytes": 19841,
-   "sha256": "18b6d4bd74f93e3f198b72536df555663f4b3dbb4316ad3d152bd54cb8d07775"
-  },
-  "nq/coref-telephone.nq.gz": {
-   "bytes": 2306,
-   "sha256": "839ef5f4b057dbc6325fac02189e23d49506f23fe7d2a6a297142eb51d789d36"
-  },
-  "cottas/coref-telephone.cottas": {
-   "bytes": 11290,
-   "sha256": "63242aff6e132eff5e80bb6ed6a965cde749c9b6569b0c16bc248dc3f7a7f27d"
-  },
-  "nq/coref-sameAs.nq.gz": {
-   "bytes": 24658,
-   "sha256": "f4166f46ee8375b1c41d23fdc46e7281a52c26e97edef20e5efcb678699680b0"
-  },
-  "cottas/coref-sameAs.cottas": {
-   "bytes": 139370,
-   "sha256": "56b8f4c8eccbc17d8dcf7c4de81403ffe3d1250f1015df7e64e7f97cce5f2102"
-  },
-  "nq/coref-site-name.nq.gz": {
-   "bytes": 8402,
-   "sha256": "a83b94c5709e0ac5a6d1bdece85ce225f365a1dfe7b801d393c9465a511d813a"
-  },
-  "cottas/coref-site-name.cottas": {
-   "bytes": 37576,
-   "sha256": "3e3e59d3e8eeb64efc83464e018562885034dfac98ce3e620793dffc743cace2"
-  },
-  "nq/mallmap.nq.gz": {
-   "bytes": 281923,
-   "sha256": "deae9e64486519e3c7861432e4d18db4a5400557ac3f6ebcdc83f2cc2efdce29"
-  },
-  "cottas/mallmap.cottas": {
-   "bytes": 1062235,
-   "sha256": "e41f598e62bfc296091d9b9cf0cc84e6ae44a834c293b2eaee25066dc6890fb4"
-  },
-  "nq/storeguide.nq.gz": {
-   "bytes": 51520,
-   "sha256": "e9fb6fa95505e385f2cb8ad92bf381c1bbfafb37e684691a08e1f9b561dbb3a3"
-  },
-  "cottas/storeguide.cottas": {
-   "bytes": 143669,
-   "sha256": "8d0fdb57d0fa32e2ba9515a0dbc85757732a1c70e6d94b7100b6e4dfe9fd3ad3"
-  },
-  "nq/meta.nq.gz": {
-   "bytes": 2022,
-   "sha256": "31736a28b01109d2577b1258abe1ac1e6fca19ab31151f7c95becfc2d31c20c7"
-  },
-  "cottas/meta.cottas": {
-   "bytes": 5768,
-   "sha256": "91628d8590e39f14d7503584d109bb66f7cf31e1ec12333aac9a429be69c8b7a"
-  },
-  "nq/all.nq.gz": {
-   "bytes": 997926,
-   "sha256": "01d62a9de522495f6626ca84d7d39c3a4ba650d076303b68fd1b5dca3d96d7be"
-  },
-  "cottas/all.cottas": {
-   "bytes": 3718760,
-   "sha256": "9d6601f62b551ca1988d62cca7a1d546d11499c80c2ccf9b7e1a00864cd77a92"
-  },
-  "hdt/facts.hdt": {
-   "bytes": 57060,
-   "sha256": "1874588aa347ae4d891b3ce293a9b1d631d58b188eea5b06bb1c672a2f82ef85"
-  },
-  "hdt/buildings.hdt": {
-   "bytes": 533654,
-   "sha256": "2db2fbfddf9aa55e1acf3a35a8b63059de479d30ec97dd6fa52feddff7c5bd0b"
-  },
-  "hdt/occupants.hdt": {
-   "bytes": 141852,
-   "sha256": "584db29645471cb32b0438e483aeba93b9e5505aeb4929d4c3678b4aa2ade1c7"
-  },
-  "hdt/cwg.hdt": {
-   "bytes": 157172,
-   "sha256": "2a92f8c8935fe7dfa62ca6db40fd0b08b9fe495382fb058e3bcd3334432af983"
-  },
-  "hdt/web.hdt": {
-   "bytes": 126904,
-   "sha256": "3d2ba833795d39a38d07aceb5d3b0857016ec862b9705a5433b9cf574e48cbf9"
-  },
-  "hdt/coref-iri.hdt": {
-   "bytes": 39659,
-   "sha256": "bd75e671e772f403a5ddbefe0d9c4b69c51e84ad0bb4cb3ba732f5a14e250fb7"
-  },
-  "hdt/coref-postcode-name.hdt": {
-   "bytes": 7072,
-   "sha256": "221f078ce3c0c207b296def4c6c90334cb116adaa5417bf8f2ab9ab67e73b6db"
-  },
-  "hdt/coref-telephone.hdt": {
-   "bytes": 4886,
-   "sha256": "b3e73e2aba104cfc8756d0981476802957feb692f5413b4ac68f2176f4322e56"
-  },
-  "hdt/coref-sameAs.hdt": {
-   "bytes": 39665,
-   "sha256": "7604b476f400b46100d2f8b907ac8a4c4c1970c5174093482525417b23263b4e"
-  },
-  "hdt/coref-site-name.hdt": {
-   "bytes": 10579,
-   "sha256": "b3c06e37149167ad22d18df8fa475a52b7574650c9dbf4a560eebc74eaf2cbe7"
-  },
-  "hdt/mallmap.hdt": {
-   "bytes": 684193,
-   "sha256": "d7b422470d575dabbd9eaf287e6d1878de45f91353fcd527274d566d0a757b47"
-  },
-  "hdt/storeguide.hdt": {
-   "bytes": 62254,
-   "sha256": "2ec64685bf5c0024f1d5f73b55dbacfd7c2df8e5a671c26a118525b65948a096"
-  },
-  "hdt/meta.hdt": {
-   "bytes": 5634,
-   "sha256": "1919008964a8f70d717e1034452e4282ecd51c588efe2c5ad1720711367e8b6a"
-  },
-  "shardborough/": {
-   "generation": "gen-20261006-854bbbff",
-   "files": 896,
-   "bytes": 14006932
-  }
- }
+ "total_triples": 103982,
+ "store": {
+  "generation": "gen-997d0037f51ae3b8",
+  "members": 43,
+  "files": 3956,
+  "bytes": 19938015
+ },
+ "activities_this_run": 24,
+ "activities_run_new": 0,
+ "activities_in_log": 30
 }

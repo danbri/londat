@@ -1,8 +1,8 @@
-# kgx: the cwplans knowledge graph (first cut)
+# kgx: the cwplans knowledge graph
 
 Core data of the Canary Wharf / Docklands scoping project (magpie/cwplans in
-[danbri/glitchcan-minigam](https://github.com/danbri/glitchcan-minigam)) as one RDF graph, beginning with the cited
-Canary Wharf facts. Built by
+[danbri/glitchcan-minigam](https://github.com/danbri/glitchcan-minigam)) as RDF, beginning with the cited Canary Wharf
+facts. Built by
 [`magpie/cwplans/tools/build-kgx.mjs`](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/build-kgx.mjs)
 with [@factoidal/core](https://github.com/danbri/factoidal). Search page:
 https://danbri.github.io/glitchcan-minigam/magpie/cwplans/kg/
@@ -11,42 +11,72 @@ Status: scoping, planning and prototyping. Not reviewed for production use. Each
 in the `meta` graph and in `manifest.json`; several hold OpenStreetMap-derived data (© OpenStreetMap contributors,
 ODbL 1.0, https://www.openstreetmap.org/copyright) or data crawled for scoping under the owner's rule.
 
-## Graphs
+## How it is made: operations on immutable graph versions
 
-One named graph per source, IRI `https://danbri.github.io/londat/kgx/graph/<name>`:
+Every step is an operation (a tool or task named in a skill) applied to fixed inputs, giving new graph versions.
+Nothing is edited in place.
 
-| graph | what |
+- An input file is named by the SHA-256 of its bytes: `https://danbri.github.io/londat/kgx/artifact/sha256/<hash>`.
+- A graph version is named by its content, the RDFC-1.0 SHA-256 of the graph:
+  `https://danbri.github.io/londat/kgx/graph/<name>/<first 16 hex>`. Its file is `graphs/<name>/<first 16 hex>.nq.gz`
+  (N-Quads, sorted, the version IRI as the graph term). A version never changes.
+- A run of an operation is a `prov:Activity`, `https://danbri.github.io/londat/kgx/activity/<16 hex>`, named by the
+  hash of (operation, operation version, input IRIs, parameters). The build does not run an activity that is already in
+  the log, so the same inputs always give the same outputs.
+- `log/activities.jsonl` holds every activity (operation, skill, tool, inputs, parameters, outputs, times);
+  `log/versions.jsonl` every graph version (name, hash, triples, file, title, licence).
+- `heads.json` maps each graph name to its current version.
+
+The rule and the operations: the `cwplans-dataflow` skill in the main repository.
+
+## Graphs (current versions)
+
+| graph | triples | what |
+|---|---:|---|
+| `facts` | 3,452 | cited facts about Canary Wharf structures: property, value, unit, reference level, source URL, short quote |
+| `buildings` | 17,148 | registry buildings (cwb- ids): name, position, outline as WKT, levels, height, postcodes, OSM and Wikidata links |
+| `occupants` | 10,092 | occupants of the buildings: role, level, mall, opening hours, links to OSM, the CWG directory, brands |
+| `cwg` | 20,637 | the Canary Wharf Group directory: schema.org types, malls, levels, page dates, weekly opening hours per day |
+| `web` | 6,682 | the canonical schema.org layer of the web harvest (branch cards, hours, organisation cards) |
+| `coref-<rule>` | 4,417 | owl:sameAs links between web descriptions, one graph per key rule (5 rules) |
+| `mallmap` | 19,250 | Living Map data behind map.canarywharf.com: units (name, class, mall, floor, hours, outline) and facilities (lifts, escalators, ramps, stairs, entrances, toilets) |
+| `storeguide` | 5,732 | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
+| `pipeline` | 13,424 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
+| `meta` | 514 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
+| `log` | 2,634 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
+
+Total 103,982 triples. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
+`https://danbri.github.io/londat/kgx/vocab#` (prefix `cwk:`), with schema.org first. There are no blank nodes (the
+`pipeline` graph is skolemized to `https://danbri.github.io/londat/kgx/genid/pipeline/…`).
+
+## Files
+
+| path | what |
 |---|---|
-| `facts` | cited facts about Canary Wharf structures: property, value, unit, reference level, source URL, short quote |
-| `buildings` | registry buildings (cwb- ids): name, position, outline as WKT, levels, height, postcodes, OSM and Wikidata links |
-| `occupants` | occupants of the buildings: role, level, mall, opening hours, links to OSM, the CWG directory, brands |
-| `cwg` | the Canary Wharf Group directory: schema.org types, malls, levels, page dates, weekly opening hours per day |
-| `web` | the canonical schema.org layer of the web harvest (branch cards, hours, organisation cards) |
-| `coref-<rule>` | owl:sameAs links between web descriptions, one graph per key rule |
-| `mallmap` | mall units from the Living Map data behind map.canarywharf.com: name, class, mall, floor, hours, outline |
-| `storeguide` | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
-| `meta` | a description of every graph above (void:Dataset): title, sources, licence, triple count |
+| `graphs/<name>/<hash16>.nq.gz` | every graph version, N-Quads, gzip; the reference copy |
+| `graphs/<name>.pNN/<hash16>.nq.gz` | the parts of a version, as stored in Shardborough (below) |
+| `current.nq.gz` | the current version of every graph in one file |
+| `heads.json`, `manifest.json` | current versions; graph titles, licences, triple and part counts, the store generation |
+| `log/` | the activity and version logs (JSON lines) |
+| `shardborough/` | the Factoidal Shardborough store, wire version 10 (`ibk5`): `CURRENT` names the generation folder |
+| `queries/*.rq` | example SPARQL; each answers in about 1 to 3 s through a store handle |
 
-Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is `https://danbri.github.io/londat/kgx/vocab#`
-(prefix `cwk:`), with schema.org first. There are no blank nodes.
+The first layout (one file per graph in `nq/`, plus `cottas/` and `hdt/` copies) is in the git history. COTTAS and HDT
+were too slow to query at this size; the measurements are in the `cwplans-kgx` skill.
 
-## The same quads, four ways
+## The store
 
-| folder | format | use |
-|---|---|---|
-| `nq/` | N-Quads, gzip: one file per graph and `all.nq.gz` | the reference copy; any RDF tool |
-| `shardborough/` | Factoidal Shardborough store: `CURRENT` names the active generation folder | fast SPARQL in Node (`npx factoidal query kgx/shardborough '…'`) and in the browser page |
-| `cottas/` | COTTAS (Parquet RDF), one file per graph and `all.cottas` | portable bytes for Factoidal `openCottas`; slow to query at this size |
-| `hdt/` | HDT, one file per graph (triples; the graph is the file) | exchange with HDT tools; written with hdt-java `rdf2hdt` |
+Each source version is cut into parts of about 3,000 triples by subject, in the store's zone-key order (term type,
+UTF-8 length, text), so each block (one predicate in one part) covers a narrow range of subjects. A query with a
+constant subject or object then reads few blocks: "everything about one restaurant" reads 56 of 659 blocks (1.1 MB).
+The store's graph IRIs are the parts (`graph/cwg.p03/<hash16>`); `meta` says which version each part belongs to.
 
-`manifest.json` lists every file with size and SHA-256, the quad count per graph, the prefixes and the build timings.
+**Query rule:** write one `GRAPH` block per subject. Two subjects can be in different parts, so
+`GRAPH ?g { ?place s:openingHoursSpecification ?h . ?h s:opens ?o }` misses rows that
+`GRAPH ?g1 { ?place s:openingHoursSpecification ?h } GRAPH ?g2 { ?h s:opens ?o }` finds (measured on this store: 130
+rows against 2,519).
 
-## Query
+    node magpie/cwplans/tools/kgx-query.mjs ../londat/kgx/queries/open-at.rq     # in the main repository
 
-    npx factoidal query kgx/shardborough 'PREFIX s: <https://schema.org/>
-      SELECT ?name ?hours WHERE { GRAPH ?g { ?x s:name ?name ; s:openingHours ?hours
-      FILTER(CONTAINS(LCASE(?name), "nando")) } }'
-
-Every quad is in a named graph: wrap patterns in `GRAPH ?g { … }`, and a pattern that joins two graphs needs two
-`GRAPH` blocks. The store refuses a query that would read more than 64 blocks (a block is one predicate in one graph):
-write predicates out, not as a variable. Measurements and the reasons: the `cwplans-kgx` skill in the main repository.
+`npx factoidal query kgx/shardborough '…'` works too, but it is the stateless call: it refuses a plan above 64
+blocks. `kgx-query.mjs` opens a store handle, which has no block cap (only 128 MiB held in all).

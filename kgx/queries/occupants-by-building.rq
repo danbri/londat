@@ -4,6 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
-# Occupant counts per registry building (two graphs)
-SELECT ?building ?name (COUNT(?o) AS ?occupants) WHERE { GRAPH ?g1 { ?o s:containedInPlace ?building } GRAPH ?g2 { ?building a cwk:Building . OPTIONAL { ?building s:name ?name } } } GROUP BY ?building ?name ORDER BY DESC(?occupants) LIMIT 60
+# The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
+# Occupant counts per registry building
+SELECT ?building ?name (COUNT(?o) AS ?occupants) WHERE { GRAPH ?g1 { ?o s:containedInPlace ?building } GRAPH ?g2 { ?building a cwk:Building . OPTIONAL { ?building s:name ?name } } } GROUP BY ?building ?name ORDER BY DESC(?occupants)
