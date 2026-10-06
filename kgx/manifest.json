@@ -1,16 +1,16 @@
 {
  "about": "cwplans knowledge graph, first cut. One named graph per source; the same quads as N-Quads, COTTAS and a Shardborough store. See README.md.",
  "base": "https://danbri.github.io/londat/kgx/",
- "built": "2026-10-06T15:36:25.508Z",
+ "built": "2026-10-06T16:18:55.409Z",
  "tool": "magpie/cwplans/tools/build-kgx.mjs",
  "engine": "@factoidal/core 0.7.1",
  "timings_ms": {
-  "start": 1791300985503,
+  "start": 1791303535399,
   "graphs": 0,
-  "per_graph_nq_and_cottas": 182190,
-  "all_nq_and_cottas": 258955,
-  "hdt": 52281,
-  "shardborough": 21051
+  "per_graph_nq_and_cottas": 206301,
+  "all_nq_and_cottas": 318709,
+  "hdt": 66485,
+  "shardborough": 21112
  },
  "prefixes": {
   "s": "https://schema.org/",
@@ -133,13 +133,13 @@
   },
   "mallmap": {
    "iri": "https://danbri.github.io/londat/kgx/graph/mallmap",
-   "quads": 7209,
-   "title": "Mall units and facilities from the Living Map data behind map.canarywharf.com: name, class, mall, floor, opening times, position, outline",
+   "quads": 19250,
+   "title": "Mall units and facilities (lifts, escalators, ramps, stairs, entrances, toilets, defibrillators and more) from the Living Map data behind map.canarywharf.com: name, class, type, mall, floor, opening times, outline or position",
    "source": [
-    "danbri/londat third_party/cwg/mallmap/tiles/indoor (zoom 17)"
+    "danbri/londat third_party/cwg/_TMI/mallmap (from third_party/cwg/mallmap tiles)"
    ],
-   "licence": "Canary Wharf Group / Living Map; archived at the owner's request 2026-10-06, scoping only",
-   "tool": "magpie/cwplans/tools/build-kgx.mjs"
+   "licence": "Canary Wharf Group / Living Map; archived at the owner's request 2026-10-06 for reference and accessibility design study, scoping only",
+   "tool": "magpie/cwplans/tools/cwg-mallmap-tmi.mjs, build-kgx.mjs"
   },
   "storeguide": {
    "iri": "https://danbri.github.io/londat/kgx/graph/storeguide",
@@ -161,7 +161,7 @@
    "tool": "magpie/cwplans/tools/build-kgx.mjs"
   }
  },
- "total_quads": 75471,
+ "total_quads": 87512,
  "files": {
   "nq/facts.nq.gz": {
    "bytes": 50588,
@@ -244,12 +244,12 @@
    "sha256": "3e3e59d3e8eeb64efc83464e018562885034dfac98ce3e620793dffc743cace2"
   },
   "nq/mallmap.nq.gz": {
-   "bytes": 158600,
-   "sha256": "9b3cae2f41f605536a61f845bd54d936b06ffd18563440284f2cd219ac02cb03"
+   "bytes": 281923,
+   "sha256": "deae9e64486519e3c7861432e4d18db4a5400557ac3f6ebcdc83f2cc2efdce29"
   },
   "cottas/mallmap.cottas": {
-   "bytes": 602992,
-   "sha256": "0309a4c564750e277428bc1fcaaaf4fd52eecf89395445212fc1bc8dd684628e"
+   "bytes": 1062235,
+   "sha256": "e41f598e62bfc296091d9b9cf0cc84e6ae44a834c293b2eaee25066dc6890fb4"
   },
   "nq/storeguide.nq.gz": {
    "bytes": 51520,
@@ -260,77 +260,77 @@
    "sha256": "8d0fdb57d0fa32e2ba9515a0dbc85757732a1c70e6d94b7100b6e4dfe9fd3ad3"
   },
   "nq/meta.nq.gz": {
-   "bytes": 1939,
-   "sha256": "3e7087b6fc47807322552157d53e98c94bba5523a2e9f874e6e0429334f5ddfc"
+   "bytes": 2022,
+   "sha256": "31736a28b01109d2577b1258abe1ac1e6fca19ab31151f7c95becfc2d31c20c7"
   },
   "cottas/meta.cottas": {
-   "bytes": 5554,
-   "sha256": "eeb332262ac22fa26b42e134a2b4de617ff6b30d3cadea3ddfa2a4aedb0679a6"
+   "bytes": 5768,
+   "sha256": "91628d8590e39f14d7503584d109bb66f7cf31e1ec12333aac9a429be69c8b7a"
   },
   "nq/all.nq.gz": {
-   "bytes": 875019,
-   "sha256": "42506b117f1feea3c9ab4d05a033795e4b788d509be5475b84cd0e8ed5e7aabe"
+   "bytes": 997926,
+   "sha256": "01d62a9de522495f6626ca84d7d39c3a4ba650d076303b68fd1b5dca3d96d7be"
   },
   "cottas/all.cottas": {
-   "bytes": 3259889,
-   "sha256": "6d57fd800de7e7e91242fe6f204f2f3bcf8c5b71ca406790c70682ae85517681"
+   "bytes": 3718760,
+   "sha256": "9d6601f62b551ca1988d62cca7a1d546d11499c80c2ccf9b7e1a00864cd77a92"
   },
   "hdt/facts.hdt": {
    "bytes": 57060,
-   "sha256": "c1e51da9ef919b5ed191e1ad105dc94fdea8f0d4f6039f81eaa156105387681f"
+   "sha256": "1874588aa347ae4d891b3ce293a9b1d631d58b188eea5b06bb1c672a2f82ef85"
   },
   "hdt/buildings.hdt": {
    "bytes": 533654,
-   "sha256": "ce1c18f9a70b4c1b4bc5c2d0ad0d854bfe8f4948aaa340604b31e7280b5e8db1"
+   "sha256": "2db2fbfddf9aa55e1acf3a35a8b63059de479d30ec97dd6fa52feddff7c5bd0b"
   },
   "hdt/occupants.hdt": {
    "bytes": 141852,
-   "sha256": "b807a563b81cac951467f565826e9533e5ae487dcc25bb56c6c6ca722e807869"
+   "sha256": "584db29645471cb32b0438e483aeba93b9e5505aeb4929d4c3678b4aa2ade1c7"
   },
   "hdt/cwg.hdt": {
    "bytes": 157172,
-   "sha256": "89bbed2d46dbfbe34864aa9c4ec287b61462932e0bed7ded6683ae6a1638a7bc"
+   "sha256": "2a92f8c8935fe7dfa62ca6db40fd0b08b9fe495382fb058e3bcd3334432af983"
   },
   "hdt/web.hdt": {
    "bytes": 126904,
-   "sha256": "b0ed79f43145fdd394af3a6f45cc8cd77fae6937be4bdd1a6c870609adbe71de"
+   "sha256": "3d2ba833795d39a38d07aceb5d3b0857016ec862b9705a5433b9cf574e48cbf9"
   },
   "hdt/coref-iri.hdt": {
    "bytes": 39659,
-   "sha256": "4f3b1304ee8d8bf3a8d9b3a8be3b3759f4f6b2a60bf7062e7ff3834012928868"
+   "sha256": "bd75e671e772f403a5ddbefe0d9c4b69c51e84ad0bb4cb3ba732f5a14e250fb7"
   },
   "hdt/coref-postcode-name.hdt": {
    "bytes": 7072,
-   "sha256": "893bb2fb10ec79736813701c805f49372b04cfa86f4ea495adf6c6127949a180"
+   "sha256": "221f078ce3c0c207b296def4c6c90334cb116adaa5417bf8f2ab9ab67e73b6db"
   },
   "hdt/coref-telephone.hdt": {
    "bytes": 4886,
-   "sha256": "479a7b85ad9a108385005b4c36cbfbc2daaf831da88345927284317e995aa535"
+   "sha256": "b3e73e2aba104cfc8756d0981476802957feb692f5413b4ac68f2176f4322e56"
   },
   "hdt/coref-sameAs.hdt": {
    "bytes": 39665,
-   "sha256": "30a2813191dfd598eca1ab3ad3ac28574aad3e90c83bee1b99b73cfe2c33ddfb"
+   "sha256": "7604b476f400b46100d2f8b907ac8a4c4c1970c5174093482525417b23263b4e"
   },
   "hdt/coref-site-name.hdt": {
    "bytes": 10579,
-   "sha256": "1b99e5e8dcf595fa30b356f4c33ae877ad3e6765ec4c3e8718f4459d4b9d3d00"
+   "sha256": "b3c06e37149167ad22d18df8fa475a52b7574650c9dbf4a560eebc74eaf2cbe7"
   },
   "hdt/mallmap.hdt": {
-   "bytes": 453079,
-   "sha256": "d1be8600324e67e2907403358a74cf20aec421fca62e538709d1020685673e95"
+   "bytes": 684193,
+   "sha256": "d7b422470d575dabbd9eaf287e6d1878de45f91353fcd527274d566d0a757b47"
   },
   "hdt/storeguide.hdt": {
    "bytes": 62254,
-   "sha256": "9c553db6bffa1b9358e313e3f4605676d70e8d0ffd6c097207942cbaa85872a7"
+   "sha256": "2ec64685bf5c0024f1d5f73b55dbacfd7c2df8e5a671c26a118525b65948a096"
   },
   "hdt/meta.hdt": {
-   "bytes": 5452,
-   "sha256": "c877e2c6ad93caaa738781ff9e7c7555ed072cbad968853ec1b7f447d51f3183"
+   "bytes": 5634,
+   "sha256": "1919008964a8f70d717e1034452e4282ecd51c588efe2c5ad1720711367e8b6a"
   },
   "shardborough/": {
-   "generation": "gen-20261006-6a0d0d92",
+   "generation": "gen-20261006-854bbbff",
    "files": 896,
-   "bytes": 12465462
+   "bytes": 14006932
   }
  }
 }

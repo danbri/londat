@@ -6,4 +6,4 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
 # Restrooms and facility units by mall and floor
-SELECT ?mall ?floor ?name ?class WHERE { GRAPH ?g { ?unit a cwk:MallUnit ; cwk:unitClass ?class ; s:name ?name ; cwk:mall ?mall ; cwk:floorName ?floor . FILTER(?class IN ("restroom", "facility")) } } ORDER BY ?mall ?floor ?name
+SELECT ?mall ?floor ?name ?class WHERE { GRAPH ?g { ?unit a cwk:MallUnit ; cwk:unitClass ?class ; s:name ?name ; cwk:mall ?mall ; cwk:floorName ?floor . FILTER(?class IN ("restroom", "facility", "emergency")) } } ORDER BY ?mall ?floor ?name
