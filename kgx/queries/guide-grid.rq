@@ -1,0 +1,9 @@
+PREFIX s: <https://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+# Store guide entries with grid squares, linked to the CWG directory when matched
+SELECT ?name ?section ?grid ?cwg WHERE { GRAPH ?g { ?e a cwk:GuideEntry ; s:name ?name ; cwk:guideSection ?section ; cwk:gridRef ?grid . OPTIONAL { ?e s:sameAs ?cwg } } } ORDER BY ?section ?name

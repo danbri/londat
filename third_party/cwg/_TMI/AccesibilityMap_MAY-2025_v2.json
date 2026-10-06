@@ -1,0 +1,2893 @@
+{
+ "source": {
+  "file": "third_party/cwg/maps/AccesibilityMap_MAY-2025_v2.pdf",
+  "sha256": "891b097efad587f699980e92e3771d999f63c85996faf7886cc72f054efc57fc",
+  "bytes": 3541210,
+  "pages": 1,
+  "page_size_pt": [
+   1094.2,
+   615.2
+  ],
+  "rights": "Canary Wharf Group. No open licence; scoping use only (see ../README.md)."
+ },
+ "generated": "2026-10-06T15:23:17.831Z",
+ "tool": "magpie/cwplans/tools/cwg-maps-tmi.mjs (danbri/glitchcan-minigam)",
+ "method": "pdf.js text layer (no OCR)",
+ "coordinates": "bbox = [x0, y0, x1, y1] in PDF points, origin at the top left of the page, y down; angle in degrees (0 = horizontal)",
+ "counts": {
+  "labels": 174,
+  "legend": 14
+ },
+ "legend": [
+  {
+   "text": "JUBILEE LINE",
+   "bbox": [
+    1002.8,
+    40,
+    1053.4,
+    47.7
+   ]
+  },
+  {
+   "text": "LIFTS",
+   "bbox": [
+    867.9,
+    40,
+    888.8,
+    47.7
+   ]
+  },
+  {
+   "text": "ACCESIBLE TOILET (STREET LEVEL)",
+   "bbox": [
+    867.9,
+    59.2,
+    937.1,
+    75.7
+   ]
+  },
+  {
+   "text": "DLR",
+   "bbox": [
+    1004,
+    62.5,
+    1018.4,
+    70.2
+   ]
+  },
+  {
+   "text": "OUTDOOR TOILETS (STREET LEVEL)",
+   "bbox": [
+    867.9,
+    83.5,
+    937.2,
+    99.9
+   ]
+  },
+  {
+   "text": "ELIZABETH LINE",
+   "bbox": [
+    1002.8,
+    86.7,
+    1062.9,
+    94.4
+   ]
+  },
+  {
+   "text": "TOILETS WILL ONLY BE OPEN BETWEEN MAY – SEPT | 10AM – 6PM",
+   "bbox": [
+    867.9,
+    108.8,
+    956.9,
+    134
+   ]
+  },
+  {
+   "text": "CAR PARKING",
+   "bbox": [
+    1002.8,
+    111.1,
+    1053.4,
+    118.7
+   ]
+  },
+  {
+   "text": "BUSES",
+   "bbox": [
+    1002.8,
+    134,
+    1026.6,
+    141.7
+   ]
+  },
+  {
+   "text": "ACCESIBLE RAMPS",
+   "bbox": [
+    867.9,
+    142.3,
+    936.6,
+    150
+   ]
+  },
+  {
+   "text": "RIVERBUS PIER",
+   "bbox": [
+    1002.8,
+    156.4,
+    1060.3,
+    164.1
+   ]
+  },
+  {
+   "text": "ACCESIBLE TOILETS (INSIDE MALL)",
+   "bbox": [
+    867.9,
+    160.3,
+    941.6,
+    176.8
+   ]
+  },
+  {
+   "text": "ACCESIBLE TOILETS WITH HOIST FACILITIES (INSIDE MALL)",
+   "bbox": [
+    867.9,
+    184.3,
+    958.4,
+    209.4
+   ]
+  },
+  {
+   "text": "PARENT BABY CHANGING (INSIDE MALL)",
+   "bbox": [
+    867.9,
+    217.1,
+    960.2,
+    233.5
+   ]
+  }
+ ],
+ "labels": [
+  {
+   "text": "Canary Wharf step-free access map",
+   "lines": [
+    "Canary Wharf",
+    "step-free access map"
+   ],
+   "bbox": [
+    24.4,
+    31.5,
+    268.9,
+    80.2
+   ],
+   "font_size": 22.7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "DLR",
+   "lines": [
+    "DLR"
+   ],
+   "bbox": [
+    578.3,
+    54.7,
+    586.3,
+    58.8
+   ],
+   "font_size": 4.1,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "POPLAR",
+   "lines": [
+    "POPLAR"
+   ],
+   "bbox": [
+    571.7,
+    67.7,
+    593.4,
+    73.2
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Aspen Way",
+   "lines": [
+    "Aspen Way"
+   ],
+   "bbox": [
+    591.5,
+    81.6,
+    622.4,
+    87.6
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "*",
+   "lines": [
+    "*"
+   ],
+   "bbox": [
+    847.2,
+    106.2,
+    861.1,
+    134.2
+   ],
+   "font_size": 28,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NQ B1",
+   "lines": [
+    "NQ B1"
+   ],
+   "bbox": [
+    518.7,
+    112.9,
+    529.7,
+    117.1
+   ],
+   "font_size": 4.3,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NQ D1/D2",
+   "lines": [
+    "NQ D1/D2"
+   ],
+   "bbox": [
+    587.9,
+    116.5,
+    606.4,
+    120.8
+   ],
+   "font_size": 4.3,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NORTH QUAY",
+   "lines": [
+    "NORTH QUAY"
+   ],
+   "bbox": [
+    545.2,
+    134.5,
+    566.7,
+    138
+   ],
+   "font_size": 3.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "ONE NORTH QUAY",
+   "lines": [
+    "ONE",
+    "NORTH",
+    "QUAY"
+   ],
+   "bbox": [
+    465.5,
+    134.9,
+    481.6,
+    150.9
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "DLR",
+   "lines": [
+    "DLR"
+   ],
+   "bbox": [
+    435.7,
+    136.6,
+    443.8,
+    140.7
+   ],
+   "font_size": 4.1,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NQ A5",
+   "lines": [
+    "NQ A5"
+   ],
+   "bbox": [
+    500.1,
+    150,
+    512.3,
+    154.2
+   ],
+   "font_size": 4.3,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "WEST INDIA QUAY DLR",
+   "lines": [
+    "WEST",
+    "INDIA QUAY",
+    "DLR"
+   ],
+   "bbox": [
+    423.2,
+    150.6,
+    457.2,
+    168.1
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NQ D3",
+   "lines": [
+    "NQ D3"
+   ],
+   "bbox": [
+    566.9,
+    151.7,
+    579.3,
+    155.9
+   ],
+   "font_size": 4.3,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NQ D4",
+   "lines": [
+    "NQ D4"
+   ],
+   "bbox": [
+    610.1,
+    151.7,
+    622.4,
+    155.9
+   ],
+   "font_size": 4.3,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "from the A13 & A1256 Aspen Way",
+   "lines": [
+    "from the A13 & A1256 Aspen Way"
+   ],
+   "bbox": [
+    65.4,
+    151.8,
+    73.4,
+    221.1
+   ],
+   "font_size": 4,
+   "angle": -65,
+   "kind": "street or path"
+  },
+  {
+   "text": "Upper Bank Street",
+   "lines": [
+    "Upper Bank Street"
+   ],
+   "bbox": [
+    640.6,
+    170.2,
+    652.6,
+    233.6
+   ],
+   "font_size": 6,
+   "angle": -90,
+   "kind": "street or path"
+  },
+  {
+   "text": "North Dock Footbridge",
+   "lines": [
+    "North Dock Footbridge"
+   ],
+   "bbox": [
+    322.5,
+    173.5,
+    331.5,
+    229.7
+   ],
+   "font_size": 4.5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "Hertsmere Road",
+   "lines": [
+    "Hertsmere Road"
+   ],
+   "bbox": [
+    180.8,
+    185.2,
+    190.8,
+    233.4
+   ],
+   "font_size": 5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "Westferry Road",
+   "lines": [
+    "Westferry Road"
+   ],
+   "bbox": [
+    77.2,
+    185.7,
+    87.2,
+    232.1
+   ],
+   "font_size": 5,
+   "angle": -64,
+   "kind": "street or path"
+  },
+  {
+   "text": "Westferry Road",
+   "lines": [
+    "Westferry Road"
+   ],
+   "bbox": [
+    62.5,
+    192.2,
+    72.5,
+    238.6
+   ],
+   "font_size": 5,
+   "angle": -64,
+   "kind": "street or path"
+  },
+  {
+   "text": "NORTH DOCK",
+   "lines": [
+    "NORTH DOCK"
+   ],
+   "bbox": [
+    362.1,
+    196,
+    405.5,
+    203
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "CROSSRAIL PLACE & ROOF GARDEN",
+   "lines": [
+    "CROSSRAIL PLACE",
+    "& ROOF GARDEN"
+   ],
+   "bbox": [
+    570.9,
+    198.6,
+    633.7,
+    213.6
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "ELIZABETH LINE",
+   "lines": [
+    "ELIZABETH LINE"
+   ],
+   "bbox": [
+    508.6,
+    206.9,
+    533.7,
+    210
+   ],
+   "font_size": 3.1,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "ELIZABETH LINE",
+   "lines": [
+    "ELIZABETH LINE"
+   ],
+   "bbox": [
+    659.8,
+    206.9,
+    684.9,
+    210
+   ],
+   "font_size": 3.1,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Ontario Way",
+   "lines": [
+    "Ontario Way"
+   ],
+   "bbox": [
+    116.8,
+    211.5,
+    145.8,
+    216.5
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Adam’s Plaza",
+   "lines": [
+    "Adam’s Plaza"
+   ],
+   "bbox": [
+    509,
+    218.9,
+    520,
+    264.1
+   ],
+   "font_size": 5.5,
+   "angle": 90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Fishermans Walk",
+   "lines": [
+    "Fishermans Walk"
+   ],
+   "bbox": [
+    455.6,
+    221.9,
+    503.3,
+    227.9
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Fishermans Walk",
+   "lines": [
+    "Fishermans Walk"
+   ],
+   "bbox": [
+    366.4,
+    221.9,
+    414.1,
+    227.9
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "17 COLUMBUS COURTYARD",
+   "lines": [
+    "17",
+    "COLUMBUS",
+    "COURTYARD"
+   ],
+   "bbox": [
+    199.4,
+    222,
+    231.7,
+    240.8
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Adam’s Plaza Bridge",
+   "lines": [
+    "Adam’s Plaza Bridge"
+   ],
+   "bbox": [
+    518.4,
+    225,
+    526.4,
+    271.2
+   ],
+   "font_size": 4,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "*",
+   "lines": [
+    "*"
+   ],
+   "bbox": [
+    311.9,
+    226.8,
+    321.9,
+    246.8
+   ],
+   "font_size": 20,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "ONE CHURCHILL PLACE",
+   "lines": [
+    "ONE",
+    "CHURCHILL",
+    "PLACE"
+   ],
+   "bbox": [
+    762.6,
+    230.3,
+    794.4,
+    249.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "1 WESTFERRY CIRCUS",
+   "lines": [
+    "1",
+    "WESTFERRY",
+    "CIRCUS"
+   ],
+   "bbox": [
+    117.8,
+    230.4,
+    149.7,
+    249.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "8 CANADA SQUARE",
+   "lines": [
+    "8",
+    "CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    607.4,
+    240.1,
+    629.2,
+    258.8
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "5 CANADA SQUARE",
+   "lines": [
+    "5",
+    "CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    547.4,
+    240.1,
+    569.1,
+    258.8
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "FROBISHER PASSAGE",
+   "lines": [
+    "FROBISHER",
+    "PASSAGE"
+   ],
+   "bbox": [
+    426.6,
+    240.3,
+    454,
+    251.3
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Trafalgar Way",
+   "lines": [
+    "Trafalgar Way"
+   ],
+   "bbox": [
+    882.1,
+    241.6,
+    894.1,
+    293.5
+   ],
+   "font_size": 6,
+   "angle": 56,
+   "kind": "street or path"
+  },
+  {
+   "text": "WREN LANDING",
+   "lines": [
+    "WREN",
+    "LANDING"
+   ],
+   "bbox": [
+    322.1,
+    242.3,
+    344.1,
+    252.8
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "30 NORTH COLONNADE",
+   "lines": [
+    "30",
+    "NORTH",
+    "COLONNADE"
+   ],
+   "bbox": [
+    696.8,
+    243.3,
+    730.3,
+    262
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "15 CANADA SQUARE",
+   "lines": [
+    "15",
+    "CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    660.7,
+    243.7,
+    682.4,
+    262.5
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "1 CABOT SQUARE",
+   "lines": [
+    "1",
+    "CABOT",
+    "SQUARE"
+   ],
+   "bbox": [
+    280.4,
+    249.4,
+    302.1,
+    268.2
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "10 CABOT SQUARE",
+   "lines": [
+    "10",
+    "CABOT",
+    "SQUARE"
+   ],
+   "bbox": [
+    357.9,
+    249.4,
+    379.6,
+    268.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "5 NORTH COLONNADE",
+   "lines": [
+    "5",
+    "NORTH",
+    "COLONNADE"
+   ],
+   "bbox": [
+    390.1,
+    249.4,
+    423.6,
+    268.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "25 NORTH COLONNADE",
+   "lines": [
+    "25",
+    "NORTH",
+    "COLONNADE"
+   ],
+   "bbox": [
+    458.4,
+    249.8,
+    491.9,
+    268.6
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Columbus Courtyard",
+   "lines": [
+    "Columbus",
+    "Courtyard"
+   ],
+   "bbox": [
+    184.8,
+    254.9,
+    210.7,
+    267
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Bellmouth Passage",
+   "lines": [
+    "Bellmouth Passage"
+   ],
+   "bbox": [
+    733.4,
+    263.1,
+    741.4,
+    307.2
+   ],
+   "font_size": 4,
+   "angle": -90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "7 WESTFERRY CIRCUS",
+   "lines": [
+    "7",
+    "WESTFERRY",
+    "CIRCUS"
+   ],
+   "bbox": [
+    148,
+    265.2,
+    179.9,
+    283.9
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "20 COLUMBUS COURTYARD",
+   "lines": [
+    "20",
+    "COLUMBUS",
+    "COURTYARD"
+   ],
+   "bbox": [
+    231.1,
+    273.9,
+    263.4,
+    292.7
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "5 CHURCHILL PLACE",
+   "lines": [
+    "5",
+    "CHURCHILL",
+    "PLACE"
+   ],
+   "bbox": [
+    813.2,
+    275.9,
+    845.1,
+    294.7
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "11 WESTFERRY CIRCUS",
+   "lines": [
+    "11",
+    "WESTFERRY",
+    "CIRCUS"
+   ],
+   "bbox": [
+    178.9,
+    281.4,
+    209.4,
+    299.9
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "North Colonnade",
+   "lines": [
+    "North Colonnade"
+   ],
+   "bbox": [
+    670,
+    284,
+    717.1,
+    290
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Churchill Place",
+   "lines": [
+    "Churchill Place"
+   ],
+   "bbox": [
+    737.4,
+    284,
+    778.2,
+    290
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "North Colonnade",
+   "lines": [
+    "North Colonnade"
+   ],
+   "bbox": [
+    355,
+    284.7,
+    402,
+    290.7
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "North Colonnade",
+   "lines": [
+    "North Colonnade"
+   ],
+   "bbox": [
+    459.3,
+    284.7,
+    506.3,
+    290.7
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "North Colonnade",
+   "lines": [
+    "North Colonnade"
+   ],
+   "bbox": [
+    570.9,
+    284.7,
+    617.9,
+    290.7
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "GRAVING DOCK",
+   "lines": [
+    "GRAVING DOCK"
+   ],
+   "bbox": [
+    1065.6,
+    296,
+    1077.6,
+    352.3
+   ],
+   "font_size": 6,
+   "angle": -67,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "*",
+   "lines": [
+    "*"
+   ],
+   "bbox": [
+    117.5,
+    296.3,
+    127.5,
+    316.3
+   ],
+   "font_size": 20,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "PAVILLION",
+   "lines": [
+    "PAVILLION"
+   ],
+   "bbox": [
+    553,
+    300,
+    563,
+    335.8
+   ],
+   "font_size": 5,
+   "angle": 90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "THE PARK",
+   "lines": [
+    "THE PARK"
+   ],
+   "bbox": [
+    548,
+    301.6,
+    558,
+    334.2
+   ],
+   "font_size": 5,
+   "angle": 90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "1 CHARTER STREET",
+   "lines": [
+    "1",
+    "CHARTER",
+    "STREET"
+   ],
+   "bbox": [
+    884.3,
+    301.6,
+    908.8,
+    320.3
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "16-19 CANADA SQUARE",
+   "lines": [
+    "16-19",
+    "CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    681.4,
+    306.4,
+    703.1,
+    325.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Upper Bank Street",
+   "lines": [
+    "Upper Bank Street"
+   ],
+   "bbox": [
+    640.8,
+    307.6,
+    652.8,
+    371
+   ],
+   "font_size": 6,
+   "angle": -90,
+   "kind": "street or path"
+  },
+  {
+   "text": "CANADA SQUARE PARK",
+   "lines": [
+    "CANADA",
+    "SQUARE",
+    "PARK"
+   ],
+   "bbox": [
+    585,
+    307.6,
+    612.9,
+    330.6
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "BLACKWALL BASIN",
+   "lines": [
+    "BLACKWALL BASIN"
+   ],
+   "bbox": [
+    943.2,
+    307.7,
+    1004.9,
+    314.7
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Churchill Place Churchill Place",
+   "lines": [
+    "Churchill Place",
+    "Churchill Place"
+   ],
+   "bbox": [
+    806.2,
+    307.7,
+    843.6,
+    320.8
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "DLR",
+   "lines": [
+    "DLR"
+   ],
+   "bbox": [
+    436.1,
+    308.7,
+    444.1,
+    312.8
+   ],
+   "font_size": 4.1,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "CARTIERCIRCLE",
+   "lines": [
+    "CARTIERCIRCLE"
+   ],
+   "bbox": [
+    850.2,
+    309.7,
+    885.4,
+    334.7
+   ],
+   "font_size": 4.2,
+   "angle": -32,
+   "curved": true,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "West India Avenue",
+   "lines": [
+    "West India Avenue"
+   ],
+   "bbox": [
+    179.5,
+    309.8,
+    232.3,
+    315.8
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "CABOT SQUARE",
+   "lines": [
+    "CABOT",
+    "SQUARE"
+   ],
+   "bbox": [
+    319.2,
+    310.2,
+    346.4,
+    325.2
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "ONE CANADA SQUARE",
+   "lines": [
+    "ONE CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    499,
+    311.6,
+    536.8,
+    324.6
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "CABOT PLACE",
+   "lines": [
+    "CABOT",
+    "PLACE"
+   ],
+   "bbox": [
+    388.5,
+    311.6,
+    408.5,
+    324.6
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "CHURCHILL PLACE",
+   "lines": [
+    "CHURCHILL",
+    "PLACE"
+   ],
+   "bbox": [
+    752.6,
+    311.7,
+    787.6,
+    323.7
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "WESTFERRY CIRCUS",
+   "lines": [
+    "WESTFERRY",
+    "CIRCUS"
+   ],
+   "bbox": [
+    98.9,
+    313.6,
+    139.2,
+    328.6
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Montgomery Street",
+   "lines": [
+    "Montgomery Street"
+   ],
+   "bbox": [
+    715.9,
+    316.3,
+    727.9,
+    382.3
+   ],
+   "font_size": 6,
+   "angle": -90,
+   "kind": "street or path"
+  },
+  {
+   "text": "Westferry Road",
+   "lines": [
+    "Westferry Road"
+   ],
+   "bbox": [
+    161.2,
+    316.8,
+    171.2,
+    363.2
+   ],
+   "font_size": 5,
+   "angle": -47,
+   "kind": "street or path"
+  },
+  {
+   "text": "Addington Quay",
+   "lines": [
+    "Addington Quay"
+   ],
+   "bbox": [
+    841.6,
+    317.6,
+    849.6,
+    355.9
+   ],
+   "font_size": 4,
+   "angle": -90,
+   "kind": "street or path"
+  },
+  {
+   "text": "CANARY WHARF DLR",
+   "lines": [
+    "CANARY WHARF",
+    "DLR"
+   ],
+   "bbox": [
+    418.3,
+    320.9,
+    462.3,
+    332.4
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "West India Avenue",
+   "lines": [
+    "West India Avenue"
+   ],
+   "bbox": [
+    233.2,
+    321,
+    286,
+    327
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Westferry Road",
+   "lines": [
+    "Westferry Road"
+   ],
+   "bbox": [
+    147.3,
+    323.7,
+    157.3,
+    370.1
+   ],
+   "font_size": 5,
+   "angle": -47,
+   "kind": "street or path"
+  },
+  {
+   "text": "Lovegrove",
+   "lines": [
+    "Lovegrove"
+   ],
+   "bbox": [
+    1018.5,
+    327.9,
+    1025.5,
+    351.5
+   ],
+   "font_size": 3.5,
+   "angle": 20,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "15 WESTFERRY CIRCUS",
+   "lines": [
+    "15",
+    "WESTFERRY",
+    "CIRCUS"
+   ],
+   "bbox": [
+    170.6,
+    335.8,
+    201.1,
+    354.3
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Charter Street",
+   "lines": [
+    "Charter Street"
+   ],
+   "bbox": [
+    898.3,
+    339.2,
+    909.3,
+    386.8
+   ],
+   "font_size": 5.5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "20 CHURCHILL PLACE",
+   "lines": [
+    "20",
+    "CHURCHILL",
+    "PLACE"
+   ],
+   "bbox": [
+    808.9,
+    339.9,
+    840.7,
+    358.7
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "South Colonnade",
+   "lines": [
+    "South Colonnade"
+   ],
+   "bbox": [
+    670,
+    342.3,
+    717.6,
+    348.3
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Churchill Place",
+   "lines": [
+    "Churchill Place"
+   ],
+   "bbox": [
+    737.4,
+    342.4,
+    778.2,
+    348.4
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "South Colonnade",
+   "lines": [
+    "South Colonnade"
+   ],
+   "bbox": [
+    354.9,
+    343.3,
+    402.5,
+    349.3
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "South Colonnade",
+   "lines": [
+    "South Colonnade"
+   ],
+   "bbox": [
+    459.6,
+    343.3,
+    507.2,
+    349.3
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "South Colonnade",
+   "lines": [
+    "South Colonnade"
+   ],
+   "bbox": [
+    584.6,
+    343.3,
+    632.2,
+    349.3
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "28 & 29 WESTFERRY CIRCUS",
+   "lines": [
+    "28 & 29",
+    "WESTFERRY",
+    "CIRCUS"
+   ],
+   "bbox": [
+    53.5,
+    348.9,
+    84,
+    367.4
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Newfoundland",
+   "lines": [
+    "Newfoundland"
+   ],
+   "bbox": [
+    231.3,
+    349.6,
+    239.3,
+    385.3
+   ],
+   "font_size": 4,
+   "angle": -85,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "CANARY WHARF PIER",
+   "lines": [
+    "CANARY WHARF",
+    "PIER"
+   ],
+   "bbox": [
+    4.3,
+    354.6,
+    41.4,
+    365.6
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "CUBITT STEPS",
+   "lines": [
+    "CUBITT",
+    "STEPS"
+   ],
+   "bbox": [
+    325.1,
+    354.6,
+    343.2,
+    365.6
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Timber Quay",
+   "lines": [
+    "Timber Quay"
+   ],
+   "bbox": [
+    962.1,
+    355.5,
+    983.1,
+    359
+   ],
+   "font_size": 3.5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "4 CHARTER STREET",
+   "lines": [
+    "4",
+    "CHARTER",
+    "STREET"
+   ],
+   "bbox": [
+    859.4,
+    360.6,
+    883.9,
+    379.4
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "30 SOUTH COLONNADE",
+   "lines": [
+    "30",
+    "SOUTH",
+    "COLONNADE"
+   ],
+   "bbox": [
+    458.5,
+    364.8,
+    492,
+    383.6
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "25 CABOT SQUARE",
+   "lines": [
+    "25",
+    "CABOT",
+    "SQUARE"
+   ],
+   "bbox": [
+    281.3,
+    364.8,
+    303,
+    383.6
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "20 CABOT SQUARE",
+   "lines": [
+    "20",
+    "CABOT",
+    "SQUARE"
+   ],
+   "bbox": [
+    354,
+    364.9,
+    375.7,
+    383.6
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "10 SOUTH COLONNADE",
+   "lines": [
+    "10",
+    "SOUTH",
+    "COLONNADE"
+   ],
+   "bbox": [
+    387.6,
+    364.9,
+    421.1,
+    383.6
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "25/30 CHURCHILL PLACE",
+   "lines": [
+    "25/30",
+    "CHURCHILL",
+    "PLACE"
+   ],
+   "bbox": [
+    757.5,
+    365.2,
+    789.3,
+    384
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "20 CANADA SQUARE",
+   "lines": [
+    "20 CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    671,
+    369.6,
+    700.9,
+    382.3
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "25 CANADA SQUARE",
+   "lines": [
+    "25",
+    "CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    609.6,
+    369.7,
+    631.3,
+    389.4
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "33 CANADA SQUARE",
+   "lines": [
+    "33",
+    "CANADA",
+    "SQUARE"
+   ],
+   "bbox": [
+    549.1,
+    369.7,
+    570.8,
+    389.4
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Place",
+   "lines": [
+    "Place"
+   ],
+   "bbox": [
+    228,
+    376.9,
+    236,
+    395.1
+   ],
+   "font_size": 4,
+   "angle": -85,
+   "kind": "street or path"
+  },
+  {
+   "text": "Brannan Street",
+   "lines": [
+    "Brannan Street"
+   ],
+   "bbox": [
+    963.7,
+    382,
+    1002.6,
+    387.5
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "WEST LANE",
+   "lines": [
+    "WEST LANE"
+   ],
+   "bbox": [
+    968.3,
+    390.1,
+    975.3,
+    416.3
+   ],
+   "font_size": 3.5,
+   "angle": 90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "REUTERS PLAZA",
+   "lines": [
+    "REUTERS",
+    "PLAZA"
+   ],
+   "bbox": [
+    506.6,
+    390.1,
+    527.5,
+    401.1
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Berners place",
+   "lines": [
+    "Berners place"
+   ],
+   "bbox": [
+    857.8,
+    394,
+    884,
+    398
+   ],
+   "font_size": 4,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "3 WEST LANE",
+   "lines": [
+    "3",
+    "WEST",
+    "LANE"
+   ],
+   "bbox": [
+    977.1,
+    394.6,
+    990.4,
+    410.6
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "30 HARBORD SQUARE",
+   "lines": [
+    "30",
+    "HARBORD",
+    "SQUARE"
+   ],
+   "bbox": [
+    993.4,
+    394.9,
+    1016.3,
+    410.9
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Mackenzie Walk",
+   "lines": [
+    "Mackenzie Walk"
+   ],
+   "bbox": [
+    456.1,
+    400.1,
+    494.1,
+    405.1
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Mackenzie Walk",
+   "lines": [
+    "Mackenzie Walk"
+   ],
+   "bbox": [
+    382,
+    401.5,
+    420.1,
+    406.5
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "15 WATER STREET",
+   "lines": [
+    "15 WATER",
+    "STREET"
+   ],
+   "bbox": [
+    857.1,
+    402.2,
+    882.6,
+    414.4
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Mackenzie Walk",
+   "lines": [
+    "Mackenzie Walk"
+   ],
+   "bbox": [
+    267.9,
+    402.8,
+    305.9,
+    407.8
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Eden Dock Bridge",
+   "lines": [
+    "Eden Dock Bridge"
+   ],
+   "bbox": [
+    369.3,
+    403.5,
+    378.3,
+    449.6
+   ],
+   "font_size": 4.5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "Charter Street",
+   "lines": [
+    "Charter Street"
+   ],
+   "bbox": [
+    898.3,
+    409.1,
+    909.3,
+    456.7
+   ],
+   "font_size": 5.5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "20 BRANNAN STREET",
+   "lines": [
+    "20",
+    "BRANNAN",
+    "STREET"
+   ],
+   "bbox": [
+    1073.9,
+    409.2,
+    1096.5,
+    425.2
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "1 WATER STREET",
+   "lines": [
+    "1",
+    "WATER STREET"
+   ],
+   "bbox": [
+    752.4,
+    409.3,
+    791.8,
+    421.6
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "5 WATER STREET",
+   "lines": [
+    "5 WATER",
+    "STREET"
+   ],
+   "bbox": [
+    807.7,
+    410.2,
+    831.8,
+    422.5
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "UNION SQUARE",
+   "lines": [
+    "UNION",
+    "SQUARE"
+   ],
+   "bbox": [
+    922.6,
+    412.3,
+    949.7,
+    427.3
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "RIVINGTON WALK",
+   "lines": [
+    "RIVINGTON WALK"
+   ],
+   "bbox": [
+    971.1,
+    413.9,
+    1001.7,
+    417.4
+   ],
+   "font_size": 3.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "50 HARBORD SQUARE",
+   "lines": [
+    "50",
+    "HARBORD",
+    "SQUARE"
+   ],
+   "bbox": [
+    1051.5,
+    416.8,
+    1074.4,
+    432.8
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "HARBORD PARK",
+   "lines": [
+    "HARBORD",
+    "PARK"
+   ],
+   "bbox": [
+    1016.5,
+    417.2,
+    1050.3,
+    432.2
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "EDEN DOCK",
+   "lines": [
+    "EDEN DOCK"
+   ],
+   "bbox": [
+    313.9,
+    419.1,
+    353.2,
+    426.1
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "MONTGOMERY SQUARE",
+   "lines": [
+    "MONTGOMERY",
+    "SQUARE"
+   ],
+   "bbox": [
+    664.5,
+    420.5,
+    713.9,
+    435.5
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "NEWFOUNDLAND",
+   "lines": [
+    "NEWFOUNDLAND"
+   ],
+   "bbox": [
+    218.5,
+    421.4,
+    264.2,
+    427.2
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Water Street",
+   "lines": [
+    "Water Street"
+   ],
+   "bbox": [
+    858.7,
+    425,
+    891.5,
+    430.5
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "NORTH LANE",
+   "lines": [
+    "NORTH LANE"
+   ],
+   "bbox": [
+    974.1,
+    428.9,
+    998.3,
+    432.9
+   ],
+   "font_size": 4,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "WEST LANE",
+   "lines": [
+    "WEST LANE"
+   ],
+   "bbox": [
+    968.3,
+    431.6,
+    975.3,
+    457.9
+   ],
+   "font_size": 3.5,
+   "angle": 90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "EAST LANE",
+   "lines": [
+    "EAST LANE"
+   ],
+   "bbox": [
+    994.5,
+    431.6,
+    1001.5,
+    456.6
+   ],
+   "font_size": 3.5,
+   "angle": 90,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "JUBILEE LINE",
+   "lines": [
+    "JUBILEE LINE"
+   ],
+   "bbox": [
+    535.7,
+    434,
+    560.9,
+    437.7
+   ],
+   "font_size": 3.7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "JUBILEE LINE",
+   "lines": [
+    "JUBILEE LINE"
+   ],
+   "bbox": [
+    615.8,
+    434,
+    641,
+    437.7
+   ],
+   "font_size": 3.7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Wrayburn Place",
+   "lines": [
+    "Wrayburn Place"
+   ],
+   "bbox": [
+    1064.7,
+    435.5,
+    1090.5,
+    439
+   ],
+   "font_size": 3.5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "JUBILEE PARK",
+   "lines": [
+    "JUBILEE",
+    "PARK"
+   ],
+   "bbox": [
+    575,
+    437.5,
+    603.7,
+    452.5
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Water Street",
+   "lines": [
+    "Water Street"
+   ],
+   "bbox": [
+    770.1,
+    438.2,
+    805.8,
+    444.2
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Riverside South",
+   "lines": [
+    "Riverside South"
+   ],
+   "bbox": [
+    133.7,
+    438.5,
+    176.9,
+    444.5
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "12 BANK STREET",
+   "lines": [
+    "12 BANK",
+    "STREET"
+   ],
+   "bbox": [
+    324.5,
+    439.6,
+    346.4,
+    451.8
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "JUBILEE LINE",
+   "lines": [
+    "JUBILEE LINE"
+   ],
+   "bbox": [
+    650.5,
+    440.5,
+    675.7,
+    444.2
+   ],
+   "font_size": 3.7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Park Drive",
+   "lines": [
+    "Park Drive"
+   ],
+   "bbox": [
+    845.1,
+    443.3,
+    856.1,
+    480.4
+   ],
+   "font_size": 5.5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "15 WEST LANE",
+   "lines": [
+    "15",
+    "WEST",
+    "LANE"
+   ],
+   "bbox": [
+    973.6,
+    444.1,
+    986.9,
+    460.1
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "20 WATER STREET",
+   "lines": [
+    "20 WATER",
+    "STREET"
+   ],
+   "bbox": [
+    861.6,
+    446.1,
+    888,
+    458.3
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "65 HARBORD SQUARE",
+   "lines": [
+    "65",
+    "HARBORD",
+    "SQUARE"
+   ],
+   "bbox": [
+    1052.5,
+    447.5,
+    1075.5,
+    463.5
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "8 WATER STREET",
+   "lines": [
+    "8 WATER",
+    "STREET"
+   ],
+   "bbox": [
+    776.4,
+    449.9,
+    799.7,
+    462.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "8 HARBORD SQUARE",
+   "lines": [
+    "8",
+    "HARBORD",
+    "SQUARE"
+   ],
+   "bbox": [
+    995.9,
+    450.1,
+    1018.8,
+    466.1
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Adelaide Place",
+   "lines": [
+    "Adelaide Place"
+   ],
+   "bbox": [
+    1032.1,
+    455.8,
+    1039.1,
+    486.5
+   ],
+   "font_size": 3.5,
+   "angle": -90,
+   "kind": "street or path"
+  },
+  {
+   "text": "BELLEVUE SQUARE",
+   "lines": [
+    "BELLEVUE",
+    "SQUARE"
+   ],
+   "bbox": [
+    951.7,
+    458.5,
+    969.7,
+    466.8
+   ],
+   "font_size": 3.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "10 PARK DRIVE",
+   "lines": [
+    "10 PARK",
+    "DRIVE"
+   ],
+   "bbox": [
+    821.2,
+    458.8,
+    842.5,
+    471
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Bank Street",
+   "lines": [
+    "Bank Street"
+   ],
+   "bbox": [
+    313.4,
+    460.4,
+    346.1,
+    466.4
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Entrance to Jubilee Mall",
+   "lines": [
+    "Entrance to",
+    "Jubilee Mall"
+   ],
+   "bbox": [
+    612.4,
+    468.3,
+    640.4,
+    479.3
+   ],
+   "font_size": 5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "COMPTON GARDENS",
+   "lines": [
+    "COMPTON",
+    "GARDENS"
+   ],
+   "bbox": [
+    792.7,
+    471.9,
+    810.7,
+    479.6
+   ],
+   "font_size": 3.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "George Street",
+   "lines": [
+    "George Street"
+   ],
+   "bbox": [
+    860.7,
+    472.1,
+    896.6,
+    477.6
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "Park Drive",
+   "lines": [
+    "Park Drive"
+   ],
+   "bbox": [
+    803.6,
+    472.7,
+    814.6,
+    509.8
+   ],
+   "font_size": 5.5,
+   "angle": -16,
+   "kind": "street or path"
+  },
+  {
+   "text": "1 & 5 BANK STREET",
+   "lines": [
+    "1 & 5",
+    "BANK",
+    "STREET"
+   ],
+   "bbox": [
+    264.8,
+    484.6,
+    284.4,
+    503.3
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Bank Street",
+   "lines": [
+    "Bank Street"
+   ],
+   "bbox": [
+    568.4,
+    485.5,
+    601.1,
+    491.5
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "10 UPPER BANK STREET",
+   "lines": [
+    "10",
+    "UPPER BANK",
+    "STREET"
+   ],
+   "bbox": [
+    670.1,
+    485.9,
+    703.8,
+    505.7
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "40 CHARTER STREET",
+   "lines": [
+    "40",
+    "CHARTER",
+    "STREET"
+   ],
+   "bbox": [
+    918.3,
+    487,
+    942.8,
+    505.7
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "10 GEORGE STREET",
+   "lines": [
+    "10 GEORGE",
+    "STREET"
+   ],
+   "bbox": [
+    860.3,
+    487.7,
+    890.5,
+    500
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "25 BANK STREET",
+   "lines": [
+    "25",
+    "BANK",
+    "STREET"
+   ],
+   "bbox": [
+    464.3,
+    488.5,
+    484,
+    507.2
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "20 BANK STREET",
+   "lines": [
+    "20",
+    "BANK",
+    "STREET"
+   ],
+   "bbox": [
+    396.2,
+    489.7,
+    415.9,
+    508.5
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "ONE PARK DRIVE",
+   "lines": [
+    "ONE",
+    "PARK DRIVE"
+   ],
+   "bbox": [
+    768,
+    490.7,
+    800,
+    503
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "DLR",
+   "lines": [
+    "DLR"
+   ],
+   "bbox": [
+    436.2,
+    492.7,
+    444.2,
+    496.8
+   ],
+   "font_size": 4.1,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "PADIUM BANK STREET PARK",
+   "lines": [
+    "PADIUM",
+    "BANK STREET",
+    "PARK"
+   ],
+   "bbox": [
+    323.5,
+    494.2,
+    359.3,
+    514.1
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "Bank Street",
+   "lines": [
+    "Bank Street"
+   ],
+   "bbox": [
+    568,
+    498.6,
+    600.6,
+    504.6
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "CRANE GARDENS",
+   "lines": [
+    "CRANE GARDENS"
+   ],
+   "bbox": [
+    1056.5,
+    499.1,
+    1088.1,
+    503.1
+   ],
+   "font_size": 4,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "HERON QUAYS DLR",
+   "lines": [
+    "HERON",
+    "QUAYS",
+    "DLR"
+   ],
+   "bbox": [
+    430.7,
+    506.1,
+    450.1,
+    523.6
+   ],
+   "font_size": 5.5,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "HARBOUR QUAY GARDENS",
+   "lines": [
+    "HARBOUR QUAY",
+    "GARDENS"
+   ],
+   "bbox": [
+    833.2,
+    512.6,
+    887.1,
+    527.6
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "40 BANK STREET",
+   "lines": [
+    "40",
+    "BANK",
+    "STREET"
+   ],
+   "bbox": [
+    545.9,
+    516.6,
+    565.5,
+    536.4
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "50 BANK STREET",
+   "lines": [
+    "50",
+    "BANK",
+    "STREET"
+   ],
+   "bbox": [
+    624,
+    516.6,
+    643.6,
+    536.4
+   ],
+   "font_size": 5.8,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "WEST WINTER GARDEN",
+   "lines": [
+    "WEST",
+    "WINTER",
+    "GARDEN"
+   ],
+   "bbox": [
+    498.9,
+    518.7,
+    522.2,
+    538.7
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "BOARDWALK",
+   "lines": [
+    "BOARDWALK"
+   ],
+   "bbox": [
+    785.8,
+    523.2,
+    810.8,
+    527.5
+   ],
+   "font_size": 4.3,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "THE PELLIGON",
+   "lines": [
+    "THE",
+    "PELLIGON"
+   ],
+   "bbox": [
+    581.9,
+    525.1,
+    610.6,
+    538.1
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "South Dock Footbridge",
+   "lines": [
+    "South Dock Footbridge"
+   ],
+   "bbox": [
+    526.6,
+    541.1,
+    535.6,
+    597.7
+   ],
+   "font_size": 4.5,
+   "angle": 90,
+   "kind": "street or path"
+  },
+  {
+   "text": "South Dock Walk",
+   "lines": [
+    "South Dock Walk"
+   ],
+   "bbox": [
+    449.4,
+    541.5,
+    496.2,
+    547.5
+   ],
+   "font_size": 6,
+   "angle": 0,
+   "kind": "street or path"
+  },
+  {
+   "text": "SOUTH DOCK",
+   "lines": [
+    "SOUTH DOCK"
+   ],
+   "bbox": [
+    666.9,
+    561.8,
+    710.2,
+    568.8
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  },
+  {
+   "text": "SOUTH DOCK",
+   "lines": [
+    "SOUTH DOCK"
+   ],
+   "bbox": [
+    348.9,
+    561.8,
+    392.2,
+    568.8
+   ],
+   "font_size": 7,
+   "angle": 0,
+   "kind": "place, building or station"
+  }
+ ],
+ "not_extracted": "symbols (lifts, toilets, ramps, car parks) are vector drawings without text; their positions are not in this file"
+}

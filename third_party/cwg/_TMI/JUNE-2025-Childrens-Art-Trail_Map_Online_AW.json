@@ -1,0 +1,588 @@
+{
+ "source": {
+  "file": "third_party/cwg/maps/JUNE-2025-Childrens-Art-Trail_Map_Online_AW.pdf",
+  "sha256": "eeddad9063e8da81e6f35d86dc673c9ede23586fac8c7b61f03a41c8de75fb0d",
+  "bytes": 1814738,
+  "pages": 3,
+  "rights": "Canary Wharf Group (photographs and quotes credited in the file). No open licence; scoping use only."
+ },
+ "generated": "2026-10-06T15:23:18.277Z",
+ "tool": "magpie/cwplans/tools/cwg-maps-tmi.mjs (danbri/glitchcan-minigam)",
+ "method": "pdf.js text layer (no OCR)",
+ "coordinates": "bbox = [x0, y0, x1, y1] in PDF points, origin at the top left of the page, y down; map_markers = boxes of the numbered markers on the page 2 map with that number (a number can occur more than once)",
+ "counts": {
+  "artworks": 12,
+  "with_map_marker": 12
+ },
+ "entries": [
+  {
+   "number": 1,
+   "title": "Draped Seated Woman or ‘Old Flo’",
+   "year": "1957-1958",
+   "artist": "Henry Moore",
+   "description": "I was created from bronze in the 1950s by one of Britain’s greatest artists, Henry Moore. I’ve been on quite a journey before arriving at my home in Canary Wharf. I used to live in Stepney’s Stifford Estate in Tower Hamlets, the East End of London but in 1997 the estate was demolished so I moved to Yorkshire Sculpture Park for safekeeping. In 2015 the Mayor of Tower Hamlets promised to bring me back to the borough and Canary Wharf Group offered me a new home in Cabot Square. I like my new home as there is always so much happening in Canary Wharf and I get to meet so many people.",
+   "activity": null,
+   "page": 1,
+   "bbox": [
+    93.3,
+    624.9,
+    415.3,
+    644.2
+   ],
+   "map_markers": [
+    [
+     792.7,
+     378.7,
+     793.7,
+     381.9
+    ],
+    [
+     315.9,
+     374.9,
+     319.2,
+     384.4
+    ]
+   ]
+  },
+  {
+   "number": 2,
+   "title": "Chimney",
+   "year": "2008",
+   "artist": "Andrew Burton",
+   "description": "Made up of lots of tiny bricks, Andrew Burton has built a tall and colourful chimney stack. Working with artists in India, Korea and the Netherlands, Andrew created a sculpture which is modelled on India’s tallest brick minaret - the Qutub Minar, in Delhi.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    40.5,
+    37.3,
+    83.1,
+    55.3
+   ],
+   "map_markers": [
+    [
+     164.3,
+     403.4,
+     169.8,
+     412.9
+    ]
+   ]
+  },
+  {
+   "number": 3,
+   "title": "Shine Your Colours",
+   "year": "2021",
+   "artist": "Tine Bech",
+   "description": "This installation was created for our Summer Lights festival in 2021. The artist wanted to encourage visitors to see themselves and the world through different colours. If you are lucky enough to visit on a sunny day you might see the bright colours reflecting on the ground.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    317.5,
+    38.1,
+    413.6,
+    56.1
+   ],
+   "map_markers": [
+    [
+     140.8,
+     427.3,
+     146.6,
+     436.8
+    ]
+   ]
+  },
+  {
+   "number": 4,
+   "title": "Columbus Screen",
+   "year": "2000",
+   "artist": "Wendy Ramshaw",
+   "description": "Wendy is best known as a jewellery designer so this piece that measures 15m by 2m is certainly larger than her normal work! This work is inspired by the famous explorer Christopher Columbus and the maps he might have used in his explorations.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    157.1,
+    632.8,
+    244.9,
+    650.8
+   ],
+   "map_markers": [
+    [
+     222.2,
+     336.3,
+     227.9,
+     345.8
+    ]
+   ]
+  },
+  {
+   "number": 5,
+   "title": "Skystation",
+   "year": "2005",
+   "artist": "Peter Newman",
+   "description": "Skystation is an interactive sculpture which is both an artwork and a seat. The work invites you to sit down, relax and gaze up at the sky to look at the world from a different angle.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    383.4,
+    632.8,
+    439,
+    650.8
+   ],
+   "map_markers": [
+    [
+     737.7,
+     358.7,
+     739.6,
+     361.8
+    ],
+    [
+     458.4,
+     327.2,
+     464.3,
+     336.7
+    ]
+   ]
+  },
+  {
+   "number": 6,
+   "title": "Captivated by Colour",
+   "year": "2020",
+   "artist": "Camille Walala",
+   "description": "Created for the first London Mural Festival in 2020, local artist Camille Walala designed colourful geometric shapes, playing with the long perspective of the tunnel. As you walk through the bridge you will see the patterns and colours change.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    631.9,
+    37.3,
+    736.4,
+    55.3
+   ],
+   "map_markers": [
+    [
+     494,
+     350.9,
+     499.8,
+     360.4
+    ]
+   ]
+  },
+  {
+   "number": 7,
+   "title": "Tandem Lovers",
+   "year": "2020",
+   "artist": "Gillie & Marc",
+   "description": "Tandem Lovers takes you on an adventure with Gillie and Marc’s iconic characters, Rabbitwoman and Dogman. They love to go biking so they can travel while being environmentally conscious at the same time.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    994,
+    37.3,
+    1069.6,
+    55.3
+   ],
+   "map_markers": [
+    [
+     869.6,
+     430.9,
+     871.3,
+     434
+    ],
+    [
+     470.5,
+     406.8,
+     475.7,
+     416.3
+    ]
+   ]
+  },
+  {
+   "number": 8,
+   "title": "Wharf Walk",
+   "year": "2013",
+   "artist": "Emma Biggs",
+   "description": "This artwork is a mosaic, this means the artwork has been made using small pieces of coloured stone and glass to create the patterns. The artist chose the designs to depict some of the trades that passed through the original dockyards that flourished here in earlier times. You will find this artwork on level -2 of Jubilee Place Mall. Accessible by lifts or escalators.",
+   "activity": "COUNT How many different animals can you see in this mosaic?",
+   "page": 2,
+   "bbox": [
+    632.2,
+    632.6,
+    693.2,
+    650.6
+   ],
+   "map_markers": [
+    [
+     526.4,
+     502.7,
+     531.9,
+     512.2
+    ]
+   ],
+   "location_text": "level -2 of Jubilee Place Mall"
+  },
+  {
+   "number": 9,
+   "title": "ScibbleForm",
+   "year": "2020",
+   "artist": "Julian Wild",
+   "description": "This sculpture is based on a flamboyant doodle which appears to have leapt off the page and is now a giant red sculpture. Look at the artwork and you will see a simple line, weaving and tangling into a complex form that seems to defy gravity.",
+   "activity": null,
+   "page": 2,
+   "bbox": [
+    921,
+    634.1,
+    984.6,
+    652.1
+   ],
+   "map_markers": [
+    [
+     636.5,
+     483.9,
+     642.3,
+     493.4
+    ]
+   ]
+  },
+  {
+   "number": 10,
+   "title": "Drawing Cube",
+   "year": "2010",
+   "artist": "Suresh Dutt",
+   "description": "Suresh Dutt Artist, Suresh Dutt, has converted a 3D shape into a 2D drawing and created this striking blue sculpture. You’ll find that the sculpture changes as you walk around it and new lines and shapes come into view.",
+   "activity": "DRAW Drawing Cube frames different parts of its surroundings. Why not pick a frame and draw what’s inside!",
+   "page": 3,
+   "bbox": [
+    34.6,
+    35.2,
+    104.5,
+    53.2
+   ],
+   "map_markers": [
+    [
+     767.3,
+     534.7,
+     770.4,
+     537.8
+    ],
+    [
+     737.8,
+     502.7,
+     740.9,
+     505.8
+    ],
+    [
+     632.3,
+     459.6,
+     642.1,
+     469.1
+    ]
+   ]
+  },
+  {
+   "number": 11,
+   "title": "Whale on the Wharf (Skycraper)",
+   "year": "2025",
+   "artist": "StudioKCA",
+   "description": "This is an 11-meter-tall whale sculpture which appears to be leaping from the dock! Made from plastic found in the ocean, Whale on the Wharf is a reminder to cut down on plastic products in order to protect our planet.",
+   "activity": null,
+   "page": 3,
+   "bbox": [
+    222.9,
+    35.2,
+    373.1,
+    53.2
+   ],
+   "map_markers": [
+    [
+     762.9,
+     482.2,
+     769.6,
+     491.7
+    ]
+   ]
+  },
+  {
+   "number": 12,
+   "title": "Minotaur and Hare on Bench",
+   "year": "1995",
+   "artist": "Sophie Ryder",
+   "description": "Sophie is well known for her sculptures of animals and mystical creatures. The hare is an animal you might find in the English countryside whereas the Minotaur can be found in Greek Mythology.",
+   "activity": null,
+   "page": 3,
+   "bbox": [
+    411.3,
+    35.5,
+    555,
+    53.5
+   ],
+   "map_markers": [
+    [
+     736.1,
+     557.6,
+     744.9,
+     567.1
+    ]
+   ]
+  }
+ ],
+ "map_markers": [
+  {
+   "number": 7,
+   "page": 2,
+   "bbox": [
+    869.6,
+    430.9,
+    871.3,
+    434
+   ]
+  },
+  {
+   "number": 5,
+   "page": 2,
+   "bbox": [
+    737.7,
+    358.7,
+    739.6,
+    361.8
+   ]
+  },
+  {
+   "number": 20,
+   "page": 2,
+   "bbox": [
+    731.5,
+    411.8,
+    735.4,
+    415
+   ]
+  },
+  {
+   "number": 13,
+   "page": 2,
+   "bbox": [
+    896,
+    430.5,
+    898.9,
+    433.6
+   ]
+  },
+  {
+   "number": 10,
+   "page": 2,
+   "bbox": [
+    767.3,
+    534.7,
+    770.4,
+    537.8
+   ]
+  },
+  {
+   "number": 65,
+   "page": 2,
+   "bbox": [
+    935,
+    502.6,
+    938.8,
+    505.8
+   ]
+  },
+  {
+   "number": 20,
+   "page": 2,
+   "bbox": [
+    954.6,
+    477.7,
+    958.5,
+    480.9
+   ]
+  },
+  {
+   "number": 50,
+   "page": 2,
+   "bbox": [
+    933,
+    477.5,
+    936.9,
+    480.6
+   ]
+  },
+  {
+   "number": 1,
+   "page": 2,
+   "bbox": [
+    792.7,
+    378.7,
+    793.7,
+    381.9
+   ]
+  },
+  {
+   "number": 10,
+   "page": 2,
+   "bbox": [
+    737.8,
+    502.7,
+    740.9,
+    505.8
+   ]
+  },
+  {
+   "number": 30,
+   "page": 2,
+   "bbox": [
+    886.4,
+    456,
+    890.3,
+    459.1
+   ]
+  },
+  {
+   "number": 70,
+   "page": 2,
+   "bbox": [
+    935.9,
+    535.1,
+    939.6,
+    538.3
+   ]
+  },
+  {
+   "number": 40,
+   "page": 2,
+   "bbox": [
+    832.3,
+    536.4,
+    836.2,
+    539.6
+   ]
+  },
+  {
+   "number": 15,
+   "page": 2,
+   "bbox": [
+    861.9,
+    497.3,
+    864.8,
+    500.4
+   ]
+  },
+  {
+   "number": 12,
+   "page": 2,
+   "bbox": [
+    736.1,
+    557.6,
+    744.9,
+    567.1
+   ]
+  },
+  {
+   "number": 4,
+   "page": 2,
+   "bbox": [
+    222.2,
+    336.3,
+    227.9,
+    345.8
+   ]
+  },
+  {
+   "number": 1,
+   "page": 2,
+   "bbox": [
+    315.9,
+    374.9,
+    319.2,
+    384.4
+   ]
+  },
+  {
+   "number": 2,
+   "page": 2,
+   "bbox": [
+    164.3,
+    403.4,
+    169.8,
+    412.9
+   ]
+  },
+  {
+   "number": 3,
+   "page": 2,
+   "bbox": [
+    140.8,
+    427.3,
+    146.6,
+    436.8
+   ]
+  },
+  {
+   "number": 5,
+   "page": 2,
+   "bbox": [
+    458.4,
+    327.2,
+    464.3,
+    336.7
+   ]
+  },
+  {
+   "number": 6,
+   "page": 2,
+   "bbox": [
+    494,
+    350.9,
+    499.8,
+    360.4
+   ]
+  },
+  {
+   "number": 7,
+   "page": 2,
+   "bbox": [
+    470.5,
+    406.8,
+    475.7,
+    416.3
+   ]
+  },
+  {
+   "number": 9,
+   "page": 2,
+   "bbox": [
+    636.5,
+    483.9,
+    642.3,
+    493.4
+   ]
+  },
+  {
+   "number": 8,
+   "page": 2,
+   "bbox": [
+    526.4,
+    502.7,
+    531.9,
+    512.2
+   ]
+  },
+  {
+   "number": 11,
+   "page": 2,
+   "bbox": [
+    762.9,
+    482.2,
+    769.6,
+    491.7
+   ]
+  },
+  {
+   "number": 10,
+   "page": 2,
+   "bbox": [
+    632.3,
+    459.6,
+    642.1,
+    469.1
+   ]
+  }
+ ]
+}

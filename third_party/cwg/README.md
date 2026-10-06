@@ -21,6 +21,11 @@ Docklands project (magpie/cwplans in danbri/glitchcan-minigam).
 | `JUNE-2025-Childrens-Art-Trail_Map_Online_AW.pdf` | June 2025 | 3 | children's art trail: artworks on a map with short texts. |
 | `Art-Brochure_Whale-cover.pdf` | April 2025 | 20 | art guide: over 100 permanent artworks by area (Montgomery and Wood Wharf first), with artists and texts. |
 
+## The interactive map (`mallmap/`)
+
+The data behind https://map.canarywharf.com/ (Living Map): app, API answers, every vector tile at every zoom, icons and
+popup images, archived as served at the owner's request (2026-10-06). See `mallmap/README.md`.
+
 ## How they are used
 
 Facts only (a shop's mall, level and grid square; where a lift or toilet is), joined to the registry in
