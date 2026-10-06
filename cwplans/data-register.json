@@ -100,6 +100,11 @@
    "licence": "OGL v3.0",
    "url": "https://environment.data.gov.uk/"
   },
+  "ea-survey-catalogue": {
+   "name": "Environment Agency survey download catalogue search (products, years and resolutions over a polygon)",
+   "licence": "OGL v3.0",
+   "url": "https://environment.data.gov.uk/backend/catalog/api/tiles/collections/survey/search"
+  },
   "ea-water-quality-archive": {
    "name": "Environment Agency Water Quality Archive (2025 API): sampling points and observations",
    "licence": "OGL v3.0",
@@ -1456,6 +1461,12 @@
    "url": "https://data.london.gov.uk/dataset/water-quality-of-londons-rivers-and-other-waterbodies-vqmy6",
    "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Environment Agency). The GLA cannot warrant the quality or accuracy of the data."
   },
+  "mapillary": {
+   "name": "Mapillary Graph API (Meta): street-level images and map features",
+   "licence": "CC BY-SA 4.0 (share-alike)",
+   "url": "https://graph.mapillary.com/",
+   "note": "not fetched: needs an access token"
+  },
   "nats-pib": {
    "name": "NATS UK AIS contingency full UK PIB (all UK NOTAMs valid now and in the next 7 days, XML, hourly, no login)",
    "licence": "© NATS Limited; no open licence stated. Facts only (NOTAM id, Q-line code, positions, heights, validity, area vertices, short place label); no NOTAM text, contacts or phone numbers kept. Re-check before production",
@@ -2562,6 +2573,12 @@
    "url": "https://open-meteo.com/",
    "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)"
   },
+  "openaerialmap": {
+   "name": "OpenAerialMap catalogue API (/meta by box): drone and satellite image metadata",
+   "licence": "CC BY 4.0",
+   "url": "https://api.openaerialmap.org/meta",
+   "note": "uploader (provider) field dropped"
+  },
   "openwaters-ais": {
    "name": "Open Waters AIS (Open Water Software, LLC): live AIS re-served from several upstream sources, anonymous tier, ais.openwaters.io /v1/vessels, /v1/stations, /v1/stream (SSE)",
    "licence": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are not kept (owner decision). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
@@ -2704,6 +2721,9 @@
   {"path":"feeds/kml/he-parks-gardens.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Registered parks and gardens in the model box, 6 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["op-pdg-park-and-garden"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
   {"path":"feeds/kml/gla-conservation-areas.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: Conservation areas in the model box (GLA Planning Constraints Map), 107 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["lds-emqwg"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
   {"path":"feeds/kml/lds-wards-2016-zone.kml","hosted":"londat","what":"KML for the 3D page ?kml= link: London wards 2014 (GLA ward KML) in the zone, 92 placemarks (zone-clipped copy; source, licence and attribution in the Document description)","sources":["lds-2jx1l"],"osm":{"use":"none"},"produced_by":"tools/find-kml.mjs copy","shown_on":[]},
+  {"path":"coverage/raw/*/openaerialmap-*.json","hosted":"londat","what":"OpenAerialMap /meta answers per study area and date, cut to id, title, dates, ground sample distance, platform, licence, box and image URL (uploader dropped); inputs of lift-imagery-coverage","sources":["openaerialmap"],"osm":{"use":"none"},"produced_by":"tools/probe-imagery-coverage.mjs"},
+  {"path":"coverage/raw/*/ea-survey-*.json","hosted":"londat","what":"EA survey catalogue answers per study area and date: product, year, resolution, tile and download URL; inputs of lift-imagery-coverage","sources":["ea-survey-catalogue"],"osm":{"use":"none"},"produced_by":"tools/probe-imagery-coverage.mjs"},
+  {"path":"coverage/raw/*/mapillary.json","hosted":"londat","what":"Mapillary status for the run (not fetched without a token)","sources":["mapillary"],"osm":{"use":"none"},"produced_by":"tools/probe-imagery-coverage.mjs"},
   {"path":"feeds/london-datastore/catalogue.json","hosted":"londat","what":"the whole London Datastore catalogue, 2026-10-04: 1,305 datasets, one per line (id, title, publisher, licence, topics, tags, geo granularity, update frequency, dates, 11,348 resources with format, generic kind, md5, size and download path, 312 links; a details member from /api/v3/dataset/<id> for all 1,305: resource count, kinds, archivedAt, next review, the granularity words and zone place names named in the description)","sources":["lds-catalogue"],"osm":{"use":"none"},"produced_by":"tools/walk-london-datastore.mjs walk","shown_on":[]},
   {"path":"feeds/london-datastore/triage.json","hosted":"londat","what":"triage of every catalogue dataset by written rules: licence class, relevance to the zone, kind, held/listed by the project, value themes, join keys, sensitivity, score and reasons; the ranked list","sources":["lds-catalogue","own"],"osm":{"use":"none"},"produced_by":"tools/walk-london-datastore.mjs triage","shown_on":[]},
   {"path":"feeds/london-datastore/air-quality-monitoring-sites/air-quality-monitoring-sites.geojson","hosted":"londat","what":"Air quality monitoring sites (GLA, borough and Breathe London networks): id, name, network, pollutants, coordinates (features that meet the 3D model box; GeoJSON WGS84 with a meta member)","sources":["lds-23n41","os-ostn15"],"osm":{"use":"none"},"produced_by":"tools/walk-london-datastore.mjs harvest air-quality-monitoring-sites","shown_on":[]},

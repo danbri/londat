@@ -12,8 +12,9 @@
   "coref-site-name": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
   "mallmap": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
   "storeguide": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
-  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/ade58aecdcf8a27e",
-  "meta": "https://danbri.github.io/londat/kgx/graph/meta/96f056fe01ec9609",
-  "log": "https://danbri.github.io/londat/kgx/graph/log/7efc0c480a197548"
+  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/c6248399e189d871",
+  "coverage-imagery": "https://danbri.github.io/londat/kgx/graph/coverage-imagery/625642ff1fe69ec6",
+  "meta": "https://danbri.github.io/londat/kgx/graph/meta/ee56622bdf656577",
+  "log": "https://danbri.github.io/londat/kgx/graph/log/b208af5c2d22b6a6"
  }
 }

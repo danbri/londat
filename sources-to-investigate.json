@@ -1,0 +1,123 @@
+{
+ "about": "Queue of data sources to investigate for the cwplans scoping project (Canary Wharf, Isle of Dogs, Limehouse, Rotherhithe / SE16). Readable view: SOURCES-TO-INVESTIGATE.md. Licence classes follow the project rule (CLAUDE.md, cwplans exception): open = may be committed; share-alike = counts only, a committed extract needs the owner's agreement; restricted = do not fetch for the repo; unknown = check first.",
+ "updated": "2026-10-06",
+ "origin": "Gemini answer pasted by the owner on 2026-10-06 (street-level imagery, aerial imagery, LiDAR, London Datastore), checked against what the project already holds; plus candidates found while checking.",
+ "coverage_graph": "https://danbri.github.io/londat/kgx/graph/coverage-imagery (current version in kgx/heads.json); tool magpie/cwplans/tools/probe-imagery-coverage.mjs",
+ "items": [
+  {
+   "id": "mapillary",
+   "name": "Mapillary street-level imagery and map features (Meta)",
+   "api": "https://graph.mapillary.com/images?bbox=W,S,E,N (and /map_features, detections)",
+   "licence": "CC BY-SA 4.0",
+   "licence_class": "share-alike",
+   "status": "catalogued, not counted",
+   "known": "magpie/cwplans/feeds/feeds.json id mapillary (2026-10-03 survey)",
+   "new_from_gemini": "the AI-extracted map features (signs, street furniture) as a separate layer",
+   "blocker": "the Graph API needs an access token (free account)",
+   "next": "owner: provide a client token or decide not to; then count images and map features per area (counts only)"
+  },
+  {
+   "id": "kartaview",
+   "name": "KartaView street-level imagery (formerly OpenStreetCam; Grab)",
+   "api": "https://api.openstreetcam.org/2.0/photo/?lat=&lng=&radius= (radius about 150 m or less; at most 150 items a page; bbox search on /sequence is refused)",
+   "licence": "CC BY-SA 4.0",
+   "licence_class": "share-alike",
+   "status": "counted per area 2026-10-06",
+   "known": "feeds.json id kartaview (2026-10-03: not verified)",
+   "next": "counts are in the coverage graph (photos 2016 to 2024, most from 2020); decide whether these older street views are worth an extract (share-alike: owner's agreement first)",
+   "coverage_2026_10_06": {
+    "canary-wharf": 70,
+    "isle-of-dogs-south": 38,
+    "limehouse": 49,
+    "rotherhithe-se16": 152,
+    "zone": "not counted (grid too large)"
+   }
+  },
+  {
+   "id": "panoramax",
+   "name": "Panoramax street-level imagery (federated STAC API)",
+   "api": "https://api.panoramax.xyz/api/search?bbox=W,S,E,N&limit=500",
+   "licence": "per picture; all 5,217 pictures in the zone on 2026-10-06 were CC BY-SA 4.0",
+   "licence_class": "share-alike",
+   "status": "counted per area 2026-10-06",
+   "known": "feeds.json id panoramax (2026-10-03: 608 pictures in one box)",
+   "next": "66 of the 5,217 zone pictures carry 'semantics' tags; count by tag only if a use appears",
+   "coverage_2026_10_06": {
+    "canary-wharf": 485,
+    "isle-of-dogs-south": 193,
+    "limehouse": 4,
+    "rotherhithe-se16": 9,
+    "zone": 5217
+   }
+  },
+  {
+   "id": "openaerialmap",
+   "name": "OpenAerialMap (drone and satellite images, TMS and GeoTIFF)",
+   "api": "https://api.openaerialmap.org/meta?bbox=W,S,E,N",
+   "licence": "CC BY 4.0",
+   "licence_class": "open",
+   "status": "counted per area 2026-10-06; images listed in the coverage graph",
+   "known": "2026-10-03 note: none at Canary Wharf, four drone images at Canada Water and Deptford",
+   "next": "decide whether to fetch the 2 to 5 cm drone images over Canada Dock (2024-09-02), Canada Water (2025-01-04) and Earl Pumping Station (2026-02-08) for the 3D page or a facade study",
+   "coverage_2026_10_06": {
+    "canary-wharf": 0,
+    "isle-of-dogs-south": 0,
+    "limehouse": 0,
+    "rotherhithe-se16": 4,
+    "zone": 7
+   }
+  },
+  {
+   "id": "ea-survey",
+   "name": "Environment Agency survey downloads (Defra Data Services Platform): vertical aerial photography, LiDAR tiles, point clouds, composites",
+   "api": "POST https://environment.data.gov.uk/backend/catalog/api/tiles/collections/survey/search (GeoJSON polygon)",
+   "licence": "OGL v3.0",
+   "licence_class": "open",
+   "status": "in use (3D page textures and heights); products listed per area 2026-10-06",
+   "known": "data-register sources ea-survey-imagery, ea-dsm-history, ea-lidar; skill docklands-data-curation, Imagery",
+   "new_from_gemini": "25 cm LiDAR: the catalogue lists none in the zone (finest 0.5 m tiles, 2003, 2007, 2012); aerial photography only 2008 (40 cm RGB) and 2012 (20 cm night), plus one 2017 oblique incident-response photograph in the zone",
+   "next": "none now",
+   "coverage_2026_10_06": {
+    "canary-wharf": 64,
+    "isle-of-dogs-south": 31,
+    "limehouse": 34,
+    "rotherhithe-se16": 128,
+    "zone": 176,
+    "unit": "product tiles"
+   }
+  },
+  {
+   "id": "lds-3d-buildings",
+   "name": "London Datastore: 3D building models",
+   "licence_class": "unknown",
+   "status": "not found",
+   "known": "no dataset matching 3D, aerial, orthophoto, LiDAR, surface model or building height in the London Datastore catalogue walk (1,305 datasets; londat cwplans/feeds/london-datastore/catalogue.json; check of 2026-10-06)",
+   "next": "look outside the London Datastore; check the terms of any 3D city model before a fetch"
+  },
+  {
+   "id": "lds-green-infrastructure",
+   "name": "London Datastore: green infrastructure",
+   "licence_class": "open",
+   "status": "in use",
+   "known": "lds-e70pq London Green Infrastructure Framework (harvested, OGL); e7xnn Green Infrastructure Focus Map is 'All Rights Reserved' (excluded)",
+   "next": "none"
+  },
+  {
+   "id": "historic-aerial-indices",
+   "name": "Historical aerial imagery indices",
+   "licence_class": "unknown",
+   "status": "not found in the London Datastore; candidates not checked",
+   "known": "the Gemini text names no dataset. Candidates to check: Historic England Archive aerial photograph catalogue; Britain from Above (Aerofilms); EA vertical aerial photography 2008 and 2012 (in use)",
+   "next": "check the terms of each candidate before any fetch"
+  },
+  {
+   "id": "lds-bess",
+   "name": "Built Environment Scanning System (BESS), xRI, on the London Datastore (vd4ll)",
+   "api": "https://data.london.gov.uk/ (dataset vd4ll: knowledge-graph.ttl, assets-graph.ttl, uprn-graph.ttl and more)",
+   "licence_class": "unknown",
+   "status": "new (found 2026-10-06 while checking the Datastore)",
+   "known": "tags: buildings, image, ir, lidar, photo, thermal; published 2025-05-16; licence field empty",
+   "next": "read the Turtle files and the dataset page for a licence and the area covered; RDF fits kgx directly"
+  }
+ ]
+}

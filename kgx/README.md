@@ -41,11 +41,12 @@ The rule and the operations: the `cwplans-dataflow` skill in the main repository
 | `coref-<rule>` | 4,417 | owl:sameAs links between web descriptions, one graph per key rule (5 rules) |
 | `mallmap` | 19,250 | Living Map data behind map.canarywharf.com: units (name, class, mall, floor, hours, outline) and facilities (lifts, escalators, ramps, stairs, entrances, toilets) |
 | `storeguide` | 5,732 | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
-| `pipeline` | 13,424 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
-| `meta` | 514 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
-| `log` | 2,634 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
+| `pipeline` | 13,500 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
+| `coverage-imagery` | 1,407 | open imagery coverage of the first study areas (OpenAerialMap, Panoramax, KartaView, EA survey catalogue): counts per source and area, OpenAerialMap images, EA products; made by `tools/probe-imagery-coverage.mjs` and named in `external-heads.json` |
+| `meta` | 534 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
+| `log` | 3,574 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
 
-Total 103,982 triples. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
+Total 106,425 triples. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
 `https://danbri.github.io/londat/kgx/vocab#` (prefix `cwk:`), with schema.org first. There are no blank nodes (the
 `pipeline` graph is skolemized to `https://danbri.github.io/londat/kgx/genid/pipeline/…`).
 
@@ -57,6 +58,7 @@ Total 103,982 triples. Things are `https://danbri.github.io/londat/kgx/id/…`; 
 | `graphs/<name>.pNN/<hash16>.nq.gz` | the parts of a version, as stored in Shardborough (below) |
 | `current.nq.gz` | the current version of every graph in one file |
 | `heads.json`, `manifest.json` | current versions; graph titles, licences, triple and part counts, the store generation |
+| `external-heads.json` | graph versions made by other tools' operations (name → version IRI); the build packs them too |
 | `log/` | the activity and version logs (JSON lines) |
 | `shardborough/` | the Factoidal Shardborough store, wire version 10 (`ibk5`): `CURRENT` names the generation folder |
 | `queries/*.rq` | example SPARQL; each answers in about 1 to 3 s through a store handle |
@@ -68,7 +70,7 @@ were too slow to query at this size; the measurements are in the `cwplans-kgx` s
 
 Each source version is cut into parts of about 3,000 triples by subject, in the store's zone-key order (term type,
 UTF-8 length, text), so each block (one predicate in one part) covers a narrow range of subjects. A query with a
-constant subject or object then reads few blocks: "everything about one restaurant" reads 56 of 659 blocks (1.1 MB).
+constant subject or object then reads few blocks: "everything about one restaurant" reads 60 of 688 blocks (1.1 MB).
 The store's graph IRIs are the parts (`graph/cwg.p03/<hash16>`); `meta` says which version each part belongs to.
 
 **Query rule:** write one `GRAPH` block per subject. Two subjects can be in different parts, so

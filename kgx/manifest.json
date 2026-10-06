@@ -1,7 +1,7 @@
 {
  "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://danbri.github.io/londat/kgx/",
- "built": "2026-10-06T17:06:04.143Z",
+ "built": "2026-10-06T17:27:01.391Z",
  "tool": "magpie/cwplans/tools/build-kgx.mjs",
  "engine": "@factoidal/core 0.7.1",
  "prefixes": {
@@ -30,9 +30,10 @@
   "coref-site-name": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
   "mallmap": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
   "storeguide": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
-  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/ade58aecdcf8a27e",
-  "meta": "https://danbri.github.io/londat/kgx/graph/meta/96f056fe01ec9609",
-  "log": "https://danbri.github.io/londat/kgx/graph/log/7efc0c480a197548"
+  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/c6248399e189d871",
+  "coverage-imagery": "https://danbri.github.io/londat/kgx/graph/coverage-imagery/625642ff1fe69ec6",
+  "meta": "https://danbri.github.io/londat/kgx/graph/meta/ee56622bdf656577",
+  "log": "https://danbri.github.io/londat/kgx/graph/log/b208af5c2d22b6a6"
  },
  "graphs": {
   "facts": {
@@ -144,41 +145,50 @@
    "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
   },
   "pipeline": {
-   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/ade58aecdcf8a27e",
-   "rdfc10_sha256": "ade58aecdcf8a27e4b4ea39b9d587508829b7b0d26cd7e6d5162ba6fd2d13d8c",
-   "triples": 13424,
-   "file": "graphs/pipeline/ade58aecdcf8a27e.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/c6248399e189d871",
+   "rdfc10_sha256": "c6248399e189d87183639ca63a22b552da18a6435df42d1ed230a51083fe3cc0",
+   "triples": 13500,
+   "file": "graphs/pipeline/c6248399e189d871.nq.gz",
    "parts": 5,
    "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
    "licence": "CC0 (descriptions of tools and files)"
   },
+  "coverage-imagery": {
+   "version": "https://danbri.github.io/londat/kgx/graph/coverage-imagery/625642ff1fe69ec6",
+   "rdfc10_sha256": "625642ff1fe69ec6dbf0a12ac74aba54243b17d6e703b4b7fcdc8cb0636a03f2",
+   "triples": 1407,
+   "file": "graphs/coverage-imagery/625642ff1fe69ec6.nq.gz",
+   "parts": 1,
+   "title": "Open imagery coverage of the first cwplans areas, 2026-10-06: OpenAerialMap images, EA survey products, and counts of Panoramax and KartaView pictures (counts only: CC BY-SA)",
+   "licence": "CC0 for the counts; OpenAerialMap metadata CC BY 4.0; EA catalogue OGL v3.0"
+  },
   "meta": {
-   "version": "https://danbri.github.io/londat/kgx/graph/meta/96f056fe01ec9609",
-   "rdfc10_sha256": "96f056fe01ec96097721d737e935e07f449ef32f326be586a3cb249806a43c68",
-   "triples": 514,
-   "file": "graphs/meta/96f056fe01ec9609.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/meta/ee56622bdf656577",
+   "rdfc10_sha256": "ee56622bdf656577bcf5fbbc2a6b067083996bddd0fc845e96ea90868d1a07d5",
+   "triples": 534,
+   "file": "graphs/meta/ee56622bdf656577.nq.gz",
    "parts": 0,
    "title": "Descriptions of the graph versions and the current version of each graph name",
    "licence": "CC0 (descriptions only)"
   },
   "log": {
-   "version": "https://danbri.github.io/londat/kgx/graph/log/7efc0c480a197548",
-   "rdfc10_sha256": "7efc0c480a1975483918af4671e411f30b45b7e5d04b494389744e4b50b33f20",
-   "triples": 2634,
-   "file": "graphs/log/7efc0c480a197548.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/log/b208af5c2d22b6a6",
+   "rdfc10_sha256": "b208af5c2d22b6a625f4f5a4c2faec39b8b29c395ab3eebfd163365492fd16c5",
+   "triples": 3574,
+   "file": "graphs/log/b208af5c2d22b6a6.nq.gz",
    "parts": 0,
    "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
    "licence": "CC0"
   }
  },
- "total_triples": 103982,
+ "total_triples": 106425,
  "store": {
-  "generation": "gen-997d0037f51ae3b8",
-  "members": 43,
-  "files": 3956,
-  "bytes": 19938015
+  "generation": "gen-db68f11ff7c7d20a",
+  "members": 44,
+  "files": 4130,
+  "bytes": 20280705
  },
- "activities_this_run": 24,
+ "activities_this_run": 25,
  "activities_run_new": 0,
- "activities_in_log": 30
+ "activities_in_log": 42
 }
