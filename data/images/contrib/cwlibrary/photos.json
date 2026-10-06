@@ -1,0 +1,116 @@
+{
+ "about": "Four photographs taken round Canada Water Library, SE16, and given to the project under CC0 by the owner. This file holds the hand-made part: what each photo shows, how each building was identified, and the facade regions to rectify. The measurements are made by the logged operation rectify-facade-patches and the graph by lift-contrib-photos (magpie/cwplans/tools/contrib-photos.mjs). Skills: docklands-data-curation ('Contributed photos'), photo-view-reconstruction.",
+ "set": "cwlibrary",
+ "licence": "CC0 1.0",
+ "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "creator": "danbri (project owner)",
+ "date": "2026-10-06",
+ "time": "about 16:30 BST (owner); the files carry no EXIF time, GPS or camera data",
+ "owner_view": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&t=now&u=0",
+ "sun": "2026-10-06 15:30 UTC: azimuth 238.7 deg true, altitude 16.3 deg (astronomy-engine, tools/view-mcp sunAt)",
+ "osm_extract": "Geofabrik greater-london-latest.osm.pbf of 2026-10-02 (magpie/cwplans/data/raw/docklands/), cut with osmium to -0.062,51.491,-0.036,51.505",
+ "model": "magpie/cwplans/docklands/data/area.js built 2026-10-03; building index, top (m OD), base and height source at that build",
+ "buildings": {
+  "ontario-point": {
+   "name": "Ontario Point", "osm": "https://www.openstreetmap.org/way/204580680", "osm_tags": {"addr:housename": "Ontario Point", "addr:street": "Surrey Quays Road", "building": "apartments", "building:levels": "25"},
+   "model": {"index": 6448, "top_m_od": 82.2, "base_m_od": 5.7, "height_source": "lidar"},
+   "footprint": "near-square, sides 24.2 m (bearing 27 deg) and 24.0 m (bearing 149 deg), from the OSM outline",
+   "facade": {
+    "faces_seen": {"south-west": "main face in photo 1 (normal 239 deg: it faced the sun)", "north-west": "narrow face on the left in photo 1"},
+    "south_west_face": "Symmetric, 24.0 m wide: corner pier | 3-pane bay | pier | pane | louvre | pane | pier | pane | louvre | pane | pier | pane | louvre | pane | pier | 3-pane bay | corner pier. 12 glazing panes, 3 dark vertical louvre strips (full height), 4 inner piers, 2 corner piers. Panes about 1.2 m, louvre pitch about 4.6 m (rectified patch ontario-point-sw-top, face width from OSM).",
+    "vertical_module": "A thick slab band every two floors and a thin transom halfway between: about 12 two-floor units above the ground floor. Floor about 3.06 m (model height 76.5 m / 25 levels).",
+    "north_west_face": "Glazed winter gardens (balconies closed by glass), one row a floor, on a dark frame.",
+    "top": "Open roof frame about one and a half floors tall: thin vertical fins on a top beam, over a glass balustrade (roof terrace). A tall thin fin rises at the west corner.",
+    "base": "Double-height ground floor, the name ONTARIO POINT in metal letters at the left of the south-west face.",
+    "materials": "Light warm-grey stone or precast piers and spandrels; blue-reflective glass; dark grey louvre strips.",
+    "how": "judged from photo 1 and the rectified patches; counts checked on the full-width patch"
+   },
+   "identified_by": ["the name ONTARIO POIN(T) on the building in photo 1", "OSM way 204580680 has addr:housename Ontario Point and 25 levels", "floor count: about 12 two-floor units plus the ground floor, about 25 levels; model LiDAR height 76.5 m", "the chimney in the lower left (OSM way 1175339088) lies north-west of the tower, as for a camera south-west of it looking north-east, which is also the face that the sun lit"],
+   "confidence": "certain"
+  },
+  "canada-water-library": {
+   "name": "Canada Water Library", "osm": "https://www.openstreetmap.org/way/157137089", "wikidata": "Q55125811",
+   "model": {"index": 4393, "top_m_od": 20.0, "base_m_od": 5.0, "height_source": "lidar"},
+   "footprint": "longest sides 42.0 m (bearing 73 deg) and 34.8 m (bearing 110 deg), from the OSM outline; the building widens upward (an inverted pyramid), so the footprint is smaller than the roof",
+   "facade": {
+    "faces_seen": {"north": "photo 2 (in shade at 16:30)"},
+    "wall": "Expanded-metal panels with a diamond mesh, warm grey-brown (bronze), in a staggered panel grid. The walls lean out: the building is wider at the top.",
+    "windows": "Tall framed windows that project from the wall as boxes, 2 panes across and 3 to 4 high, bronze frames; five on the north face in photo 2, at differing heights.",
+    "base": "Glazed ground floor with a black fascia and the words CANADA WATER LIBRARY in white capitals; a maroon double door with a leisure centre advertisement.",
+    "how": "judged from photo 2 and the rectified patch library-north-wall"
+   },
+   "identified_by": ["the words CANADA WATER LIBRARY on the building", "the inverted-pyramid form", "OSM way 157137089 (amenity library, Wikidata Q55125811)"],
+   "confidence": "certain"
+  },
+  "canada-water-station": {
+   "name": "Canada Water station (Jubilee line ticket hall drum)", "osm": "https://www.openstreetmap.org/way/41599363", "wikidata": "Q800610",
+   "model": {"index": null, "note": "no outline of its own in the model; the nearest model blocks (guessed height 6 m) are 7.5 m away"},
+   "facade": {
+    "form": "A glass drum (cylinder) about 30 m across (OSM outline: radius 13.7 to 16.8 m, perimeter 95.8 m) under a thin overhanging disc roof, dark grey; mullions and transoms in a regular grid.",
+    "how": "judged from photo 3"
+   },
+   "identified_by": ["the glass drum with a disc roof next to the bus station canopy", "OSM way 41599363 (building train_station, name Canada Water)"],
+   "confidence": "certain"
+  },
+  "canada-water-bus-station": {
+   "name": "Canada Water bus station", "osm": "https://www.openstreetmap.org/way/140147695", "wikidata": "Q5029446",
+   "facade": {"form": "Low glazed canopy with a pitched translucent roof and a pointed end, left of the drum in photo 3.", "how": "judged from photo 3"},
+   "identified_by": ["position: the canopy round the drum", "OSM way 140147695 (amenity bus_station)"],
+   "confidence": "probable"
+  },
+  "columbia-point": {
+   "name": "Columbia Point", "osm": "https://www.openstreetmap.org/way/52588475", "osm_tags": {"addr:housename": "Columbia Point", "building": "apartments", "building:levels": "20"},
+   "model": {"index": 770, "top_m_od": 61.7, "base_m_od": 2.4, "height_source": "lidar"},
+   "facade": {
+    "faces_seen": {"north-east": "left tower in photo 3, backlit (judged: the camera was east of the drum)"},
+    "main_face": "Cream concrete frame; a pair of windows in each bay between red-brown panels; a glazed column (stair or lift lobby) at the right; in the left bay a recessed balcony row every fourth floor.",
+    "side_face": "Projecting balconies with dark rails, stacked.",
+    "top": "Plant room box above the roof, set back.",
+    "how": "judged from photo 3 and the rectified patch columbia-point-face"
+   },
+   "identified_by": ["two identical towers of about 20 floors directly west of the drum: OSM ways 52588474 and 52588475 are the only towers of that height there, 71 m apart", "backlit at 16:30 (sun azimuth 239 deg): the camera looked west", "looking west, the south tower is on the left"],
+   "confidence": "probable"
+  },
+  "regina-point": {
+   "name": "Regina Point (OSM name Regina House)", "osm": "https://www.openstreetmap.org/way/52588474", "osm_tags": {"addr:housename": "Regina Point", "name": "Regina House", "building": "apartments", "building:levels": "20"},
+   "model": {"index": 769, "top_m_od": 61.7, "base_m_od": 2.4, "height_source": "lidar"},
+   "facade": {"same_as": "columbia-point", "how": "judged from photo 3: the right tower has the same pattern"},
+   "identified_by": ["as for Columbia Point; the north tower is on the right when looking west"],
+   "confidence": "probable"
+  },
+  "the-founding": {
+   "name": "The Founding (Canada Water plot A1)", "osm": "https://www.openstreetmap.org/way/1330247335", "osm_tags": {"addr:housename": "The Founding", "building": "apartments", "building:levels": "35"},
+   "model": {"index": 36201, "top_m_od": 106, "base_m_od": 5.4, "height_source": "levels (the building is newer than the 2022 LiDAR)"},
+   "published": "35-storey residential tower by Allies and Morrison for British Land and AustralianSuper; 'a tripartite tower structure atop a five-storey podium' (https://www.gardiner.com/projects/plot-a1-canada-water)",
+   "facade": {
+    "faces_seen": {"east or north": "photo 4, in shade (judged: camera north-east of the tower)"},
+    "parts": "Two of the three tower parts are visible in photo 4: a part with a red (oxide-red) frame and projecting balconies on the left, and a taller dark charcoal part on the right with a grid of windows and a column of projecting balconies at its left edge; an open frame crown at the top.",
+    "windows": "Each floor of the dark part: two windows a bay, each with horizontal glazing bars, in a dark metal frame grid.",
+    "how": "judged from photo 4 and the rectified patch the-founding-dark-face; colours are in shade"
+   },
+   "identified_by": ["floor count: 27 floor rows in the rectified region (even 82 px spacing), with the top and the lowest floors outside it, so 30 or more floors", "the only building within about 1 km with 30 or more levels in OSM is The Founding (35); the next is Ontario Point (25, fully glazed, photo 1)", "published form: three tower parts on a podium; photo 4 shows two parts of different height and colour"],
+   "confidence": "probable"
+  }
+ },
+ "photos": [
+  {"file": "2026-10-06-cw-01-ontario-point.jpg", "size": [1932, 2576], "title": "Ontario Point from the south-west, with an aircraft and a brick chimney",
+   "camera": "judged: south-west of the tower, near the bus station, looking north-east and up",
+   "depicts": [{"building": "ontario-point", "role": "subject"}, {"osm": "https://www.openstreetmap.org/way/1175339088", "name": "brick chimney (OSM man_made chimney, Wikidata Q26665763; label not read: Wikidata rate-limited)", "role": "background, lower left"}, {"name": "a lighting mast with floodlights", "role": "foreground"}, {"name": "an aircraft", "role": "sky"}]},
+  {"file": "2026-10-06-cw-02-canada-water-library.jpg", "size": [2576, 1932], "title": "Canada Water Library, north face, with the dock on the left",
+   "camera": "judged: north of the library, looking south; the lake (Canada Water) is south-east of the library, so on the left",
+   "depicts": [{"building": "canada-water-library", "role": "subject"}, {"building": "the-founding", "role": "background, top right (probable: south-west of the library)"}, {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "left"}, {"name": "white buildings with saw-tooth gables across the water", "role": "background, left (not identified)"}]},
+  {"file": "2026-10-06-cw-03-canada-water-station.jpg", "size": [2576, 1932], "title": "Canada Water station drum and bus station, with Columbia Point and Regina Point behind",
+   "camera": "judged: east of the drum, looking west into the low sun",
+   "depicts": [{"building": "canada-water-station", "role": "subject"}, {"building": "canada-water-bus-station", "role": "left"}, {"building": "columbia-point", "role": "background, left"}, {"building": "regina-point", "role": "background, right"}, {"name": "an aircraft", "role": "sky"}, {"name": "a mobile food kiosk", "role": "foreground"}]},
+  {"file": "2026-10-06-cw-04-dark-tower.jpg", "size": [1932, 2576], "title": "The Founding from the north-east, in shade",
+   "camera": "judged: north-east of the tower, looking up; the faces seen are in shade",
+   "depicts": [{"building": "the-founding", "role": "subject"}]}
+ ],
+ "patches": [
+  {"id": "ontario-point-sw-top", "photo": "2026-10-06-cw-01-ontario-point.jpg", "building": "ontario-point", "face": "south-west", "roi": [560, 300, 1330, 870], "box": [167, 92, 837, 570], "face_width_m": 24.0, "note": "full width, below the roof frame, above the lighting mast"},
+  {"id": "ontario-point-sw-height", "photo": "2026-10-06-cw-01-ontario-point.jpg", "building": "ontario-point", "face": "south-west", "roi": [590, 215, 1040, 2440], "box": [260, 200, 866, 2225], "note": "left half, top floor to the top of the ground floor: floor count"},
+  {"id": "library-north-wall", "photo": "2026-10-06-cw-02-canada-water-library.jpg", "building": "canada-water-library", "face": "north", "roi": [1150, 280, 1880, 800], "box": [0, 50, 525, 520], "note": "mesh panels and two window boxes"},
+  {"id": "columbia-point-face", "photo": "2026-10-06-cw-03-canada-water-station.jpg", "building": "columbia-point", "face": "north-east", "roi": [110, 380, 500, 950], "box": [180, 170, 480, 570], "note": "backlit"},
+  {"id": "the-founding-dark-face", "photo": "2026-10-06-cw-04-dark-tower.jpg", "building": "the-founding", "face": "east or north", "roi": [560, 120, 900, 2440], "box": [250, 30, 664, 2300], "note": "in shade"}
+ ]
+}
