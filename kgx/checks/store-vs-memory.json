@@ -1,7 +1,7 @@
 {
- "checked": "2026-10-06T18:39:53.929Z",
- "generation": "gen-78dd2364aa7ffb08",
- "quads": 107891,
+ "checked": "2026-10-06T21:16:20.868Z",
+ "generation": "gen-f330e7f03b06d9d9",
+ "quads": 108774,
  "engine": "@factoidal/core 0.7.1",
  "queries": {
   "join, one GRAPH block": {
@@ -23,8 +23,8 @@
    "identical": true
   },
   "quads per graph": {
-   "store": 46,
-   "memory": 46,
+   "store": 48,
+   "memory": 48,
    "memory_one_graph_per_source": null,
    "identical": true
   },
@@ -41,8 +41,8 @@
    "identical": true
   },
   "graphs.rq": {
-   "store": 16,
-   "memory": 16,
+   "store": 19,
+   "memory": 19,
    "memory_one_graph_per_source": null,
    "identical": true
   },
@@ -59,8 +59,8 @@
    "identical": true
   },
   "lineage.rq": {
-   "store": 96,
-   "memory": 96,
+   "store": 113,
+   "memory": 113,
    "memory_one_graph_per_source": null,
    "identical": true
   },
@@ -89,8 +89,8 @@
    "identical": true
   },
   "tallest.rq": {
-   "store": 67,
-   "memory": 67,
+   "store": 71,
+   "memory": 71,
    "memory_one_graph_per_source": null,
    "identical": true
   },

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4.8 3.09" width="480" height="309">
+  <title>a vector pattern of Columbia Point and Regina Point (from a CC0 photo; colours judged)</title>
+  <desc>Drawn from the rectified face of Columbia Point (photo 3, against the sun): one floor (3.09 m = 61.7 m / 20 levels) by one bay of 4.8 m: red-brown panel 1.2 m, window 1.2 m, cream pier 1.1 m, window 1.2 m, over a cream band at the slab. Widths from the photo with its metric aspect (1.35 to 1.44 from the vanishing points). The colours are judged material colours, not measured: the photo is against the sun. Left out: the recessed balcony row every fourth floor (one bay) and the glazed stair column. Regina Point is its twin and gets the same tile. Licence: CC0 1.0.</desc>
+  <rect x="0" y="0" width="4.8" height="3.09" fill="#c9bfa6"/>
+  <rect x="0" y="0" width="1.2" height="2.64" fill="#6e3328"/>
+  <rect x="1.25" y="0.34" width="1.2" height="1.75" fill="#e6e2d8"/>
+  <rect x="1.33" y="0.42" width="1.04" height="1.59" fill="#3a4450"/>
+  <rect x="1.82" y="0.42" width="0.06" height="1.59" fill="#e6e2d8"/>
+  <rect x="1.33" y="0.91" width="1.04" height="0.06" fill="#e6e2d8"/>
+  <rect x="3.55" y="0.34" width="1.2" height="1.75" fill="#e6e2d8"/>
+  <rect x="3.63" y="0.42" width="1.04" height="1.59" fill="#3a4450"/>
+  <rect x="4.12" y="0.42" width="0.06" height="1.59" fill="#e6e2d8"/>
+  <rect x="3.63" y="0.91" width="1.04" height="0.06" fill="#e6e2d8"/>
+</svg>

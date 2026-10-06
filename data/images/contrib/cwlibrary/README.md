@@ -15,7 +15,7 @@ https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040
 How each was identified, with the evidence and a confidence, is in [`photos.json`](photos.json). In short:
 
 - **Ontario Point:** the name "ONTARIO POIN(T)" at its base. The rectified face has about 12 two-floor units above the
-  ground floor (25 levels); the model's LiDAR height is 76.5 m. The face is the south-west one, which the sun lit at
+  ground floor (25 levels); its LiDAR height is 82.2 m above the ground, roof frame included. The face is the south-west one, which the sun lit at
   16:30 (sun azimuth 239 deg).
 - **Library:** its name and its inverted-pyramid form.
 - **Station and the twin towers:** the glass drum with a disc roof. The only two towers of about 20 floors near it are
@@ -47,9 +47,19 @@ patterns are in `photos.json` (`buildings.*.facade`). Main points:
 
 The colours measured are as photographed in evening shade or against the light; they are darker than the materials.
 
+## Tiles on the 3D model
+
+`tiles/` holds one 256 px tile per building (CC0), which the 3D page repeats on every wall at its size in metres:
+`ontario-point.png` (the south-west face, its left half and the mirror image: 24.0 m by 8 floors), `the-founding.png`
+(two bays by four floors of the dark part), `canada-water-library.png` (the bronze mesh only: the window boxes do not
+repeat), and `columbia-regina-point.png` with its vector source `columbia-regina-point.svg` (a pattern drawn in metres:
+one floor by one bay; the colours are judged, because the photo is against the sun). Sizes, crops and reasons are in
+`photos.json` (`tiles`). The page draws them on the four buildings (and Regina Point) from the facade atlas:
+https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&u=0
+
 ## In the knowledge graph
 
-The operations `rectify-facade-patches` and `lift-contrib-photos` (`magpie/cwplans/tools/contrib-photos.mjs` in
-danbri/glitchcan-minigam) make the graphs `facade-patches-cwlibrary` and `photos-cwlibrary` in [`kgx/`](../../../../kgx/);
+The operations `rectify-facade-patches`, `lift-contrib-photos` and `cut-facade-tiles` (`magpie/cwplans/tools/contrib-photos.mjs`
+in danbri/glitchcan-minigam) make the graphs `facade-patches-cwlibrary`, `photos-cwlibrary` and `facade-tiles-cwlibrary` in [`kgx/`](../../../../kgx/);
 the activity log names the inputs (these photos and `photos.json`) by SHA-256. OSM names and tags quoted in the graph
 are © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright).

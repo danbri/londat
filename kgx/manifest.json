@@ -1,7 +1,7 @@
 {
  "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://danbri.github.io/londat/kgx/",
- "built": "2026-10-06T18:29:09.469Z",
+ "built": "2026-10-06T20:51:04.394Z",
  "tool": "magpie/cwplans/tools/build-kgx.mjs",
  "engine": "@factoidal/core 0.7.1",
  "prefixes": {
@@ -30,12 +30,15 @@
   "coref-site-name": "https://danbri.github.io/londat/kgx/graph/coref-site-name/b5b031a4b3141c7e",
   "mallmap": "https://danbri.github.io/londat/kgx/graph/mallmap/d8d9312a9bbc26d3",
   "storeguide": "https://danbri.github.io/londat/kgx/graph/storeguide/4992232f7aca3d67",
-  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/3faea1e5a03f7c2b",
+  "pipeline": "https://danbri.github.io/londat/kgx/graph/pipeline/8969c4e4924256ef",
   "coverage-imagery": "https://danbri.github.io/londat/kgx/graph/coverage-imagery/625642ff1fe69ec6",
   "facade-patches-cwlibrary": "https://danbri.github.io/londat/kgx/graph/facade-patches-cwlibrary/a9ec39f5e86dd130",
-  "photos-cwlibrary": "https://danbri.github.io/londat/kgx/graph/photos-cwlibrary/9200b27affb8a9c6",
-  "meta": "https://danbri.github.io/londat/kgx/graph/meta/23b9769bd8224aec",
-  "log": "https://danbri.github.io/londat/kgx/graph/log/4eb99eb79e46b873"
+  "photos-cwlibrary": "https://danbri.github.io/londat/kgx/graph/photos-cwlibrary/606f3b1cfe73e6b0",
+  "model-building-keys": "https://danbri.github.io/londat/kgx/graph/model-building-keys/488dbbbd066c81e9",
+  "facade-tiles-cwlibrary": "https://danbri.github.io/londat/kgx/graph/facade-tiles-cwlibrary/715b1baf3e58edff",
+  "facade-atlas": "https://danbri.github.io/londat/kgx/graph/facade-atlas/7de3e3bd47784eef",
+  "meta": "https://danbri.github.io/londat/kgx/graph/meta/64fe722bdaa96364",
+  "log": "https://danbri.github.io/londat/kgx/graph/log/b915e0396eecba16"
  },
  "graphs": {
   "facts": {
@@ -147,10 +150,10 @@
    "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
   },
   "pipeline": {
-   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/3faea1e5a03f7c2b",
-   "rdfc10_sha256": "3faea1e5a03f7c2b6ca07897a142fd05ebe9ee125e034b317f00413c4622d786",
-   "triples": 13555,
-   "file": "graphs/pipeline/3faea1e5a03f7c2b.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/pipeline/8969c4e4924256ef",
+   "rdfc10_sha256": "8969c4e4924256efb9207e16697fa2357a9f0147f83cc6545cb1ee625fc23414",
+   "triples": 13666,
+   "file": "graphs/pipeline/8969c4e4924256ef.nq.gz",
    "parts": 5,
    "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
    "licence": "CC0 (descriptions of tools and files)"
@@ -174,41 +177,68 @@
    "licence": "CC0 (patches cut from CC0 photos)"
   },
   "photos-cwlibrary": {
-   "version": "https://danbri.github.io/londat/kgx/graph/photos-cwlibrary/9200b27affb8a9c6",
-   "rdfc10_sha256": "9200b27affb8a9c6ef711246b1c392766e155fda7840c5c2e9276e7fe781b9c6",
-   "triples": 232,
-   "file": "graphs/photos-cwlibrary/9200b27affb8a9c6.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/photos-cwlibrary/606f3b1cfe73e6b0",
+   "rdfc10_sha256": "606f3b1cfe73e6b007e5e8037527b76881b143afb42a4b5419873b47e2338951",
+   "triples": 237,
+   "file": "graphs/photos-cwlibrary/606f3b1cfe73e6b0.nq.gz",
    "parts": 1,
    "title": "Contributed photos \"cwlibrary\" (2026-10-06, CC0 1.0): what each shows and how the buildings were identified",
    "licence": "CC0 (photos and descriptions); OSM names and tags quoted are © OpenStreetMap contributors, ODbL 1.0"
   },
+  "model-building-keys": {
+   "version": "https://danbri.github.io/londat/kgx/graph/model-building-keys/488dbbbd066c81e9",
+   "rdfc10_sha256": "488dbbbd066c81e9b3047a317b13ae768ef6baad7a16b2832a165a00924de133",
+   "triples": 183485,
+   "file": "graphs/model-building-keys/488dbbbd066c81e9.nq.gz",
+   "parts": 0,
+   "title": "OpenStreetMap keys of the 41803 buildings of the 3D model (area.js 29a3eb8727087095): OSM way or relation, part parents, registry links, OSM names and addresses",
+   "licence": "© OpenStreetMap contributors, ODbL 1.0"
+  },
+  "facade-tiles-cwlibrary": {
+   "version": "https://danbri.github.io/londat/kgx/graph/facade-tiles-cwlibrary/715b1baf3e58edff",
+   "rdfc10_sha256": "715b1baf3e58edffabddd455fbabe59b7f67306b948c3dbae1a22dae8d22e629",
+   "triples": 77,
+   "file": "graphs/facade-tiles-cwlibrary/715b1baf3e58edff.nq.gz",
+   "parts": 1,
+   "title": "Facade tiles from the contributed photos \"cwlibrary\" (photo cuts and vector patterns, CC0) with their size on the wall",
+   "licence": "CC0"
+  },
+  "facade-atlas": {
+   "version": "https://danbri.github.io/londat/kgx/graph/facade-atlas/7de3e3bd47784eef",
+   "rdfc10_sha256": "7de3e3bd47784eefc37a8207443d828419d162c9b69340bd0b39f2b1c1669115",
+   "triples": 17,
+   "file": "graphs/facade-atlas/7de3e3bd47784eef.nq.gz",
+   "parts": 1,
+   "title": "The 3D page's facade atlas: 16 registry tower tiles and 4 contributed tiles, slot by slot",
+   "licence": "CC BY (registry tiles, see facades.json attribution) and CC0 (contributed tiles)"
+  },
   "meta": {
-   "version": "https://danbri.github.io/londat/kgx/graph/meta/23b9769bd8224aec",
-   "rdfc10_sha256": "23b9769bd8224aec92e7adaf65257a14184a6c19e197b66ad533be527bc03239",
-   "triples": 575,
-   "file": "graphs/meta/23b9769bd8224aec.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/meta/64fe722bdaa96364",
+   "rdfc10_sha256": "64fe722bdaa96364af90fd7b705e3772bd3b8456b5aed94f903f380a364a72fe",
+   "triples": 629,
+   "file": "graphs/meta/64fe722bdaa96364.nq.gz",
    "parts": 0,
    "title": "Descriptions of the graph versions and the current version of each graph name",
    "licence": "CC0 (descriptions only)"
   },
   "log": {
-   "version": "https://danbri.github.io/londat/kgx/graph/log/4eb99eb79e46b873",
-   "rdfc10_sha256": "4eb99eb79e46b873a264128083bf2f30993809d8c7421497aceaf8191afbc520",
-   "triples": 4541,
-   "file": "graphs/log/4eb99eb79e46b873.nq.gz",
+   "version": "https://danbri.github.io/londat/kgx/graph/log/b915e0396eecba16",
+   "rdfc10_sha256": "b915e0396eecba1614ba8937e1277e9a87ebdd5e9f8ebcaf330c6f3d33f1546c",
+   "triples": 5160,
+   "file": "graphs/log/b915e0396eecba16.nq.gz",
    "parts": 0,
    "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
    "licence": "CC0"
   }
  },
- "total_triples": 107891,
+ "total_triples": 292259,
  "store": {
-  "generation": "gen-78dd2364aa7ffb08",
-  "members": 46,
-  "files": 4460,
-  "bytes": 20607717
+  "generation": "gen-f330e7f03b06d9d9",
+  "members": 48,
+  "files": 4646,
+  "bytes": 20804680
  },
- "activities_this_run": 27,
+ "activities_this_run": 29,
  "activities_run_new": 0,
- "activities_in_log": 56
+ "activities_in_log": 71
 }
