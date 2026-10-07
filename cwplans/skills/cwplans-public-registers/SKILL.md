@@ -4,13 +4,12 @@ description: >-
   The regulatory and public registers in cwplans (Canary Wharf, Isle of Dogs, E14): DfE GIAS schools, CQC
   care directory, NHS ODS, Charity Commission, Ofsted childcare, Gambling Commission premises, Sport England Active
   Places and FSA pubs and bars. Covers their licences, the fetch tool (tools/fetch-registers.mjs), the fields dropped
-  even under the cwplans exception, how build-registry.mjs joins them to buildings (UPRN first, then the register's
-  point, mall, street address, name at the postcode, and the postcode alone only with checks) with a key, precision and
-  confidence on every link, and the traps catalogued as faults F17 to F20: one UPRN on many records, correspondence
-  and registered-office addresses (E14 5HU), care-of addresses, charity contact addresses in homes, postcodes that do
-  not mean one building, and provider/site pairs. Also what was rejected and why (Tower Hamlets licensing register
-  unreachable, Bank of England PRA terms, FCA and NHS keys). Reach for it before you add or refresh a register, change
-  the register join, or explain why a school, clinic or charity sits in the wrong building or in none.
+  even under the cwplans exception, how build-registry.mjs joins them to buildings (UPRN first, then point, mall,
+  street address, name at the postcode, the postcode alone only with checks) with a key, precision and confidence on
+  every link, and the traps catalogued as faults F17 to F20 (one UPRN on many records, registered-office and care-of
+  addresses, charity contacts in homes, postcodes that are not one building, provider/site pairs). Also what was
+  rejected and why. Reach for it before you add or refresh a register, change the register join, or explain why a
+  school, clinic or charity sits in the wrong building or in none.
 ---
 
 # Public registers for cwplans

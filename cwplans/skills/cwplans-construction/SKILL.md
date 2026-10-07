@@ -3,14 +3,13 @@ name: cwplans-construction
 description: >-
   The index of works in progress (construction sites) in the cwplans Docklands zone: registry/sources/construction/
   sites.json built by tools/build-construction-index.mjs from the Planning London Datahub (borough decisions with the London
-  Development Database commencement and completion dates), joined by position to NOTAM cranes, DfT Street Manager crane and
-  hoarding activities, OSM construction areas (ODbL), the brownfield register, site allocations and Wikidata (CC0), plus
-  hand-written facts from crawled developer pages and the owner's CC0 photos (facts.json). Covers the PLD guest API and its
-  field traps, the grouping of applications into sites, the status rules S1 to S5 with their confidence, the match rules
-  M1 to M6, the faults F32 to F35 (stale commencements, commencement lag and computed lapse dates, stale Wikidata "under
-  construction", point-marker polygons), identifying a site in a photo by bearing and measured height, the "Works in
-  progress" layer of the 3D page, and what is not open (paid construction databases, crane permits). Reach for it before
-  you refresh or extend the index, add a source of site status, answer "what is being built there?", or draw sites on a page.
+  Development Database commencement and completion dates), joined by position to NOTAM cranes, DfT Street Manager,
+  OSM construction areas (ODbL), the brownfield register, site allocations and Wikidata, plus facts from developer pages
+  and the owner's photos (facts.json). Covers the PLD guest API and its traps, the grouping of applications into sites,
+  the status rules S1 to S5, the match rules M1 to M6, the faults F32 to F35, identifying a site in a photo by bearing
+  and height, the "Works in progress" layer of the 3D page, and what is not open (paid construction databases, crane
+  permits). Reach for it before you refresh or extend the index, add a source of site status, answer "what is being
+  built there?", or draw sites on a page.
 ---
 
 # Works in progress (cwplans)

@@ -3,14 +3,13 @@ name: blender-station-models
 description: >-
   Model underground station boxes (Canada Water, Canary Wharf and the next ones) in Blender, driven through the
   blender-mcp MCP server (PyPI blender-mcp, now mcp-for-blender, MIT) with Blender's GUI under Xvfb in this container:
-  the install and start-up recipe, the stdio JSON-RPC client (tools/blender-stations/mcp_call.py), the screen-capture
-  loop (10 s, or 5 s) with timelapse and contact sheet, the 3D page layer (converter, cut-outs, level table), the modelling conventions (the 3D page frame E0/N0 and m OD,
-  one collection per station, names, materials by element class, the "uncertainty" property: OSM / sheet / published /
-  judged), how the TfL axonometric sheets are used (topology and counts only, never positions), how OSM positions,
-  escalator directions and published levels are read from the page's data, the export recipe (glb, obj+mtl, fbx, stl,
-  usdc via usd-core because the Debian Blender has no USD), the deliverables in danbri/londat
-  (third_party/tfl/am3d/models/), and what failed. Reach for it before you model a station or any other structure in
-  Blender, drive Blender from an agent, or add a station to the models.
+  the install and start-up recipe, the stdio JSON-RPC client (tools/blender-stations/mcp_call.py), the 10 s
+  screen-capture loop with timelapse and contact sheet, the 3D page layer (converter, cut-outs, level table), the
+  modelling conventions (the 3D page frame E0/N0 and m OD, one collection per station, names, materials by class, the
+  "uncertainty" property), how the TfL axonometric sheets are used (topology and counts only, never positions), OSM
+  positions, escalator directions and published levels from the page's data, the export recipe (glb, obj+mtl, fbx,
+  stl, and usdc via usd-core), the deliverables (third_party/tfl/am3d/models/), and what failed. Reach for it before
+  you model a station or any other structure in Blender, drive Blender from an agent, or add a station to the models.
 ---
 
 # Blender station models via MCP

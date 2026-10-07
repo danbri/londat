@@ -2,17 +2,14 @@
 name: cwplans-live-state
 description: >-
   Live and fast-changing state in the cwplans Docklands zone, as dated snapshots in feeds/live/ made by
-  tools/fetch-live.mjs: Santander Cycles docks (TfL BikePoint: bikes, e-bikes, empty and broken docks), TfL lift
-  outages and live station busyness (crowding), TfL JamCam traffic cameras, UK Power Networks power cuts (CC BY 4.0),
-  Thames Water storm overflow monitors (CC BY 4.0, via Stream), NOTAMs from the NATS hourly full UK PIB (crane positions
-  and heights, temporary danger and reserved areas, facts only), and the published helicopter structure from the UK AIP
-  (route H4 reporting points and altitudes, restricted areas EGR158 City, EGR159 Isle of Dogs, EGR160 Specified Area).
-  Also what cannot be known and why: live helicopter or Chinook positions (every ADS-B source is non-commercial,
-  restricted or ODbL), military flight plans, CAA helicopter counts (CAP 1455, no reproduction), dockless bike positions
-  and bays in London (no open GBFS), the Canary Wharf estate's hire-bike rules (site behind a bot challenge), and a
-  ranked backlog of other stateful things (trains, Tower Bridge lifts, AIS, EV chargers, flood warnings, air quality).
-  Reach for it before you refresh or add a live source, show live state on the 3D page, or answer "what is flying,
-  parked, broken or discharging in the zone right now?".
+  tools/fetch-live.mjs: Santander Cycles docks, TfL lift outages and station busyness (crowding), TfL JamCam traffic
+  cameras, UK Power Networks power cuts, Thames Water storm overflows, NOTAMs from the NATS PIB (cranes with heights,
+  temporary areas; facts only), and the UK AIP helicopter structure (route H4, restricted areas EGR158 City, EGR159
+  Isle of Dogs, EGR160). Also what cannot be known and why: live helicopter or Chinook positions (every ADS-B source
+  is non-commercial, restricted or ODbL), military flight plans, CAA helicopter counts (no reproduction), dockless bike
+  positions and bays (no open GBFS), and a ranked backlog of other stateful things (trains, Tower Bridge lifts, AIS, EV
+  chargers, flood warnings, air quality). Reach for it before you refresh or add a live source, show live state on the
+  3D page, or answer "what is flying, parked, broken or discharging in the zone right now?".
 ---
 
 # Live state in the Docklands zone

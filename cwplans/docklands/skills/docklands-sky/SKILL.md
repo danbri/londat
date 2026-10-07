@@ -1,18 +1,15 @@
 ---
 name: docklands-sky
 description: >-
-  The sky, the page clock, the weather and the tide on the Docklands 3D page (cwplans/docklands/sky.js, Menu >
-  Sky, ?t=2026-10-03T22:30 or ?t=photo): astronomy-engine for the sun, the moon's phase and bright limb, planets,
-  Jupiter's moons, rise/set, twilight, golden and blue hour; Bright Star Catalogue stars with a light-pollution star
-  limit; d3-celestial constellation lines; a Milky Way band computed from galactic coordinates; CelesTrak satellites
-  through satellite.js and the next ISS pass; IAU star names and NASA HEASARC Messier objects (only what the sky
-  shows, not behind buildings); Open-Meteo cloud layers placed by the EUMETSAT Meteosat cloud mask; why no live aircraft
-  (every ADS-B source's terms) and the London City Airport approach paths; Environment Agency tide readings by chainage
-  along the Thames for every vertex of the river, faulty gauge readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, about ±4 min) and how
-  it was measured; the fetch tool and snapshots (tools/fetch-sky.mjs, docklands/data/sky/). Reach for it before you
-  change sky.js or its hooks in index.html, add a sky object or a data source, refresh the snapshots, solve another
-  photo's time from the sun or the moon, or explain why the sky, a star, a satellite or the river level shows what it
-  shows. Licences and credits for every source are here.
+  The sky, the page clock, the weather and the tide on the Docklands 3D page (cwplans/docklands/sky.js, Menu > Sky,
+  ?t=2026-10-03T22:30 or ?t=photo): astronomy-engine sun, moon (phase, bright limb), planets, rise/set, twilight;
+  Bright Star Catalogue stars and the London star limit; constellation lines; the Milky Way band; CelesTrak satellites
+  and the next ISS pass; IAU star names and Messier objects; Open-Meteo clouds placed by the EUMETSAT cloud mask; why
+  no live aircraft (ADS-B terms); London City Airport approach paths; EA tide readings by chainage along the Thames,
+  faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, about ±4 min); the
+  fetch tool and snapshots (tools/fetch-sky.mjs, docklands/data/sky/). Reach for it before you change sky.js or its
+  hooks in index.html, add a sky object or source, refresh the snapshots, solve a photo's time from the sun or moon,
+  or explain what the sky, a star, a satellite or the river level shows. Licences and credits are here.
 ---
 
 # Docklands sky, time, weather and tide

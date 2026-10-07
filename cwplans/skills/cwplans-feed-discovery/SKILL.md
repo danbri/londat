@@ -2,17 +2,14 @@
 name: cwplans-feed-discovery
 description: >-
   Find London RSS, Atom, JSON Feed and iCalendar feeds at scale for cwplans and verify them: the tool
-  tools/discover-feeds.mjs (stages seed, cc, autodiscover, verify, build), every discovery method and its rules
-  (the earlier site crawl's 61 feeds, ooh.directory OPML, GitHub lists, Feedspot London lists, Wikipedia category and
-  list to Wikidata P856 websites, the ICNN member map, hand lists of local news, hyperlocal, community, faith, school
-  and venue sites, London borough ModernGov RSS, council and public-body pages, the GLA feed list, Mastodon hashtag
-  feeds, Bluesky organisation accounts, Lemmy communities, groups.io search, Meetup iCal, and Common Crawl's columnar
-  index read over HTTPS with range requests plus WARC records), politeness (robots.txt on every host and redirect, one
-  request at a time per host >= 1 s apart), the zone-relevance counts (no item text kept), the merge rule into
-  feeds/events.json (harvest: false so tools/fetch-works.mjs does not read news as programmes), the OPML export, and
-  what is excluded and why (Facebook, Nextdoor, WhatsApp, X, Google Groups, Reddit by robots.txt, groups.io feeds by
-  robots.txt, JISCMail behind Cloudflare, Meetup RSS). Reach for it before you look for more London feeds, refresh or
-  extend feeds/discovery/, add a feed directory or social platform, or answer "where is a big stash of London feeds?".
+  tools/discover-feeds.mjs, every discovery method and its rules (the site crawl, ooh.directory, GitHub lists,
+  Feedspot, Wikipedia and Wikidata P856, the ICNN map, hand lists of local sites, ModernGov RSS, council, public-body
+  and GLA feeds, Mastodon, Bluesky, Lemmy, groups.io search, Meetup iCal, and Common Crawl's columnar index with WARC
+  records), politeness (robots.txt, one request at a time per host), the zone-relevance counts (no item text kept), the
+  merge rule into feeds/events.json (harvest: false so tools/fetch-works.mjs does not read news as programmes), the OPML
+  export, and what is excluded and why (Facebook, Nextdoor, WhatsApp, X, Google Groups, Reddit, groups.io feeds,
+  JISCMail, Meetup RSS). Reach for it before you look for more London feeds, refresh or extend feeds/discovery/, add a
+  feed directory or social platform, or answer "where is a big stash of London feeds?".
 ---
 
 # London feed discovery (cwplans)
