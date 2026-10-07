@@ -207,8 +207,14 @@ codes, and the postcode of a text address, with the address text kept as `cwp:ad
 IRIs: the `…` of the genids (above) and of the descriptions and rule graphs (below) is
 `https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/`, which also starts the idioms
 namespace `i:`; `cwp:` is `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/`. They
-are names, not links, and were kept on purpose at the move to danbri/londat (2026-10-07). Changing them would be a new
-operation version and a new graph version (`web`, `coref-<rule>` in kgx): the owner's decision.
+are names, not links. The files here keep them (upstream data of the harvest). Since 2026-10-07 `build-kgx.mjs` maps
+them when it lifts them into kgx (`web`, `coref-<rule>`, lift version 2): a description becomes
+`https://kgx.foaf.tv/id/desc<h>`, a genid `…/id/genid<h>`, an idiom node `…/id/node<rest>` (owner, 2026-10-07: "Use
+https://kgx.foaf.tv/id/ prefix for IDs. i own the domain; nothing is hosted there yet. iDs should be alphanumeric";
+`tools/kgx-ids.mjs`, skill `cwplans-kgx`). The `#address` nodes of `cwg-directory-typed.nq` become `…/id/addr<page path>`
+the same way; the entity IRIs `https://canarywharf.com/<kind>/<slug>/#entity` stay. The vocabularies (`i:`, `cwp:`)
+do not change. Three `s:addressCountry` values in the canonical layer are the text of a genid IRI, not an IRI (a
+literal: not mapped; seen 2026-10-07, open).
 
 ## Same thing (2026-10-06): `coref/`, `tools/web-coref.mjs`
 

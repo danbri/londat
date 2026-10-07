@@ -16,18 +16,36 @@ ODbL 1.0, https://www.openstreetmap.org/copyright) or data crawled for scoping u
 Every step is an operation (a tool or task named in a skill) applied to fixed inputs, giving new graph versions.
 Nothing is edited in place.
 
-- An input file is named by the SHA-256 of its bytes: `https://danbri.github.io/londat/kgx/artifact/sha256/<hash>`.
-- A graph version is named by its content, the RDFC-1.0 SHA-256 of the graph:
-  `https://danbri.github.io/londat/kgx/graph/<name>/<first 16 hex>`. Its file is `graphs/<name>/<first 16 hex>.nq.gz`
-  (N-Quads, sorted, the version IRI as the graph term). A version never changes.
-- A run of an operation is a `prov:Activity`, `https://danbri.github.io/londat/kgx/activity/<16 hex>`, named by the
-  hash of (operation, operation version, input IRIs, parameters). The build does not run an activity that is already in
-  the log, so the same inputs always give the same outputs.
+- An input file is named by the SHA-256 of its bytes: `https://kgx.foaf.tv/id/sha256<hash>`.
+- A graph version is named by its content, the RDFC-1.0 SHA-256 of the graph: `https://kgx.foaf.tv/id/graph<name><first
+  16 hex>`, with the name in lower case and without hyphens and dots (`graphbuildingsp003fa086f639aa1bdc`). Its file is
+  `graphs/<name>/<first 16 hex>.nq.gz` (N-Quads, sorted, the version IRI as the graph term). A version never changes.
+- A run of an operation is a `prov:Activity`, `https://kgx.foaf.tv/id/act<16 hex>`, named by the hash of (operation,
+  operation version, input IRIs, parameters). The build does not run an activity that is already in the log, so the
+  same inputs always give the same outputs.
 - `log/activities.jsonl` holds every activity (operation, skill, tool, inputs, parameters, outputs, times);
   `log/versions.jsonl` every graph version (name, hash, triples, file, title, licence).
 - `heads.json` maps each graph name to its current version.
 
 The rule and the operations: the `cwplans-dataflow` skill (`cwplans/skills/cwplans-dataflow/` in this repository).
+
+## IDs
+
+Owner, 2026-10-07: "Use https://kgx.foaf.tv/id/ prefix for IDs. i own the domain; nothing is hosted there yet. iDs
+should be alphanumeric". Every IRI that this project mints for the graph is `https://kgx.foaf.tv/id/<local>` (prefix
+`id:`), `<local>` lowercase alphanumeric: a code for the kind and the old name's parts without punctuation. Examples:
+the registry building `cwb-0413` is `id:cwb0413` (its outline `id:cwb0413geometry`), the OSM way 204580680 of the 3D
+model `id:osmw204580680`, the mall Cabot Place `id:mallcabotplace`, a Living Map unit `id:lmu1002803405427`, a graph
+name `id:graphfacts`. Nothing is served at those addresses yet; the search page opens an ID in the page
+(https://danbri.github.io/londat/cwplans/kg/#e=id:cwb0413). The code table and the rules:
+[`cwplans/tools/kgx-ids.mjs`](https://github.com/danbri/londat/blob/main/cwplans/tools/kgx-ids.mjs) and the
+`cwplans-kgx` skill. The vocabulary does not change: `cwk:` is `https://danbri.github.io/londat/kgx/vocab#`, with
+schema.org first.
+
+Until 2026-10-07 the names were under `https://danbri.github.io/londat/kgx/` (`id/<kind>/…`, `graph/…`,
+`activity/…`, `artifact/sha256/…`) and, for the register and the web harvest, under
+`https://danbri.github.io/glitchcan-minigam/`. `log/*.jsonl` and the version files of that time keep those names
+(history); the build maps them to IDs when it describes them (`meta`, `log`) and when it lifts upstream files.
 
 ## Graphs (current versions)
 
@@ -41,7 +59,7 @@ The rule and the operations: the `cwplans-dataflow` skill (`cwplans/skills/cwpla
 | `coref-<rule>` | 4,417 | owl:sameAs links between web descriptions, one graph per key rule (5 rules) |
 | `mallmap` | 19,250 | Living Map data behind map.canarywharf.com: units (name, class, mall, floor, hours, outline) and facilities (lifts, escalators, ramps, stairs, entrances, toilets) |
 | `storeguide` | 5,732 | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
-| `pipeline` | 13,667 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
+| `pipeline` | 14,943 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
 | `coverage-imagery` | 1,407 | open imagery coverage of the first study areas (OpenAerialMap, Panoramax, KartaView, EA survey catalogue): counts per source and area, OpenAerialMap images, EA products; made by `tools/probe-imagery-coverage.mjs` and named in `external-heads.json` |
 | `facade-patches-cwlibrary` | 171 | rectified facade patches from the contributed Canada Water photos: periods and colours (operation `rectify-facade-patches`) |
 | `photos-cwlibrary` | 237 | the contributed photos (CC0) and the buildings identified in them, with evidence (operation `lift-contrib-photos`; see `data/images/contrib/cwlibrary/`) |
@@ -51,22 +69,23 @@ The rule and the operations: the `cwplans-dataflow` skill (`cwplans/skills/cwpla
 | `facade-tiles-cwdock` | 52 | the facade tiles cut from the cwdock photos (CC0): the 17-storey brick tower north-east of Decathlon, Decathlon, Dock Shed; size on the wall, buildings, method (operation `cut-facade-tiles`) |
 | `facade-atlas` | 26 | the 3D page's facade atlas, slot by slot (operation `compose-facade-atlas`) |
 | `model-building-keys` | 183,485 | the OSM way or relation of every building of the 3D model, with model indices, part parents, registry links and OSM name, address, type, levels, Wikidata (operation `key-model-buildings`). **Not in the browser store** (`external-heads.json`: `store: false`); in `graphs/` and `current.nq.gz` |
-| `meta` | 692 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
-| `log` | 5,902 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
+| `meta` | 710 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`id:graph<name> cwk:current <version>`, the name as `rdfs:label`) |
+| `log` | 8,818 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation with its id as `rdfs:label`, skill, tool), 132 activities |
 
-Total 294,405 triples, of which 110,920 in the browser store. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
+Total 298,615 triples (build of 2026-10-07, the first with IDs), of which 115,130 in the browser store. Things are
+`https://kgx.foaf.tv/id/…` (57,034 distinct IDs in `current.nq.gz`); the vocabulary is
 `https://danbri.github.io/londat/kgx/vocab#` (prefix `cwk:`), with schema.org first. There are no blank nodes (the
-`pipeline` graph is skolemized to `https://danbri.github.io/londat/kgx/genid/pipeline/…`).
+`pipeline` graph is skolemized to `https://kgx.foaf.tv/id/genidpipeline…`).
 
 ## Files
 
 | path | what |
 |---|---|
-| `graphs/<name>/<hash16>.nq.gz` | every graph version, N-Quads, gzip; the reference copy |
+| `graphs/<name>/<hash16>.nq.gz` | every graph version, N-Quads, gzip; the reference copy (`<hash16>-id.nq.gz` when a version written before 2026-10-07 under its old name has the same content) |
 | `graphs/<name>.pNN/<hash16>.nq.gz` | the parts of a version, as stored in Shardborough (below) |
 | `current.nq.gz` | the current version of every graph in one file |
 | `heads.json`, `manifest.json` | current versions; graph titles, licences, triple and part counts, the store generation |
-| `external-heads.json` | graph versions made by other tools' operations (name → version IRI); the build packs them too |
+| `external-heads.json` | graph versions made by other tools' operations (name → version IRI); the build packs them too (a version named in the old namespace goes through the operation `map-legacy-ids` first, and this file then names the mapped version) |
 | `log/` | the activity and version logs (JSON lines) |
 | `shardborough/` | the Factoidal Shardborough store, wire version 10 (`ibk5`): `CURRENT` names the generation folder |
 | `queries/*.rq` | example SPARQL; each answers in about 1 to 3 s through a store handle |
@@ -79,7 +98,7 @@ were too slow to query at this size; the measurements are in the `cwplans-kgx` s
 Each source version is cut into parts of about 3,000 triples by subject, in the store's zone-key order (term type,
 UTF-8 length, text), so each block (one predicate in one part) covers a narrow range of subjects. A query with a
 constant subject or object then reads few blocks: "everything about one restaurant" reads 60 of 774 blocks (1.1 MB).
-The store's graph IRIs are the parts (`graph/cwg.p03/<hash16>`); `meta` says which version each part belongs to.
+The store's graph IRIs are the parts (`id:graphcwgp03<hash16>`); `meta` says which version each part belongs to.
 
 **Query rule:** write one `GRAPH` block per subject. Two subjects can be in different parts, so
 `GRAPH ?g { ?place s:openingHoursSpecification ?h . ?h s:opens ?o }` misses rows that

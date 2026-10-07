@@ -404,12 +404,15 @@ that side, which waits until the site here is on).
   The kg page reads its store from `../../kgx/` (same site; `?base=` reads another copy).
 - **Cache workflow.** `.github/workflows/cache-live.yml` runs `cwplans/tools/cache-londat.mjs` from this repository
   (`npm ci --omit=dev`: proj4, geotiff, earcut); before the move it checked the tools out of glitchcan-minigam.
-- **Knowledge-graph names kept.** The IRI namespaces `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#`
-  (sources, activities, the `cwp:` vocabulary) and `https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/`
-  (descriptions, genids, the idioms ShEx) are names and did not change at the move; a new namespace would be a new
-  operation version and new graph versions (skill `cwplans-kgx`), the owner's decision. File IRIs in `pipeline.jsonld`
-  are now `https://github.com/danbri/londat/blob/main/cwplans/...`, so the next `build-kgx.mjs` run gives a new
-  pipeline-provenance graph version.
+- **Knowledge-graph IDs.** Owner, 2026-10-07: "Use https://kgx.foaf.tv/id/ prefix for IDs. i own the domain; nothing
+  is hosted there yet. iDs should be alphanumeric". Since then every name that the project mints for the knowledge graph
+  is `https://kgx.foaf.tv/id/<local>`, with `<local>` lowercase alphanumeric (`cwplans/tools/kgx-ids.mjs`; the code
+  table and the rules are in the skill `cwplans-kgx`, "Graphs, IRIs, vocabulary"). In `pipeline.jsonld` a source is
+  `src<key>`, a tool activity `tool<id>`, a local file `local<path>`; committed files keep their GitHub URLs. The
+  vocabularies keep their namespaces: `cwk:` (`https://danbri.github.io/londat/kgx/vocab#`), `cwp:`
+  (`https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/`) and the idioms ShEx namespace.
+  The web-harvest files in `third_party/cwplans-structured-data/`, `kgx/log/*.jsonl` and the graph versions written
+  before 2026-10-07 keep the old names (upstream data and history); `build-kgx.mjs` maps them when it lifts them.
 - **Sizes.** Push in batches well under 500 MB; no file over 100 MB; keep the site under 1 GB.
 - **Until 2026-10-07 (history).** The rule was: a file moved to londat when it was a data file (not `.js` code, not a
   `README.md`) in `feeds/london-datastore/` or `feeds/portals/` (later also `feeds/kml/` copies, `cache/`,

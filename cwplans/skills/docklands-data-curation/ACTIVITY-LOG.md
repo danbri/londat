@@ -1578,3 +1578,90 @@ Open items (changes to the list of the skills review entry above; the other item
   `RAW_BASE` changed.
 - New: the hourly cache ran 7 times from 2026-10-05 23:09 to 2026-10-07 08:38 UTC (all successful): GitHub delays or
   drops scheduled runs, so the runs were 3.8 to 7.3 hours apart, not 1. Not changed by the move.
+
+## 2026-10-07 (afternoon): knowledge-graph IDs under https://kgx.foaf.tv/id/ (Opus, subagent)
+
+Owner, 2026-10-07, answering "the knowledge-graph IRIs still start with https://danbri.github.io/glitchcan-minigam/
+... Do you want a londat namespace?": "Use https://kgx.foaf.tv/id/ prefix for IDs. i own the domain; nothing is hosted
+there yet. iDs should be alphanumeric".
+
+Commits (londat branch `claude/docklands-migration-londat-hr8hoz`, not pushed): c135c9f (code, page, queries), 18df41a
+(the rebuilt kgx, `pipeline.jsonld`, METHODS.md, DATA-REGISTER.md), then the skills and this entry.
+
+What changed (skill `cwplans-kgx`, "Graphs, IRIs, vocabulary": the scheme, the code table, the rules):
+- New `cwplans/tools/kgx-ids.mjs`: `ID_BASE`, `an()`, the code table, `kid(kind, ...parts)` (mint),
+  `mapLegacy(iri)` (an old name to its ID; any other IRI unchanged; an old name with no code throws), the registry that
+  throws when two old names give one ID, `cwgPath`, `osmKeyOf`, and `--test` (33 examples, idempotence, unchanged
+  vocabularies and external IRIs, the error cases; also `cwplans/tools/test/kgx-ids.test.mjs` in `npm test`).
+- IDs minted at the source: `kgx-ops.mjs` (input files `id:sha256<hash>`, graph versions `id:graph<name><hash16>`,
+  activities `id:act<hash16>`), `build-kgx.mjs` (every lift, `meta`, `log`, the pack activity, `id:store<gen>`,
+  `id:op<operation>`, `id:genidpipeline<sha12>`), `key-model-buildings.mjs`, `contrib-photos.mjs`,
+  `compose-facade-atlas.mjs`, `probe-imagery-coverage.mjs`; `check-data-register.mjs` writes `pipeline.jsonld` with
+  sources `id:src<key>`, tool activities `id:tool<id>`, local files `id:local<path>`.
+- Old names in inputs mapped at lift: the quad collector of `build-kgx.mjs` puts every IRI term through `mapLegacy()`
+  (the web-harvest canonical layer and sameAs groups, the typed CWG directory, `pipeline.jsonld`, and in `log` and
+  `meta` the activities and versions written before).
+- External heads: new operation `map-legacy-ids` (version 1, skill `cwplans-dataflow`, `kgx-ops.mjs`). `build-kgx.mjs`
+  applies it to each head of `external-heads.json` named in the old namespace and writes the mapped version there (9
+  heads, done in this build; my choice of the spec's two ways, so that the other tools read IDs too). Convergence: the
+  IDs that the updated `contrib-photos.mjs` and `compose-facade-atlas.mjs` mint from `photos.json` and the photos are
+  the IDs of the mapped versions (7 graphs: 0 missing, 0 extra); `coverage-imagery`: the 261 IDs minted from the
+  committed answer files are all in the mapped version; `model-building-keys`: only `osm<w|r><id>` (42,464),
+  `cwb<n>` (1,071) and the model ID.
+- Kinds that the spec did not list (decided here: the smallest change that keeps the rule): `urn:cwplans:local:<path>`
+  -> `local<path>` (73), the CWG address nodes `<page>#address` -> `addr<page path>` (344, from
+  `cwg-directory-typed.mjs`), the opening-hours nodes `<page>#entity-hours-<Day>-<k>` -> `hours<page path><day><k>`
+  (2,183, from `lift-cwg-directory`). The CWG entity IRIs `<page>#entity` stay (the join key).
+- `an()` removes hyphens and dots, so `meta` gives each graph name its name as `rdfs:label` and `log` each operation
+  its id; the views "Graphs and versions" and "Lineage" and `kgx/queries/graphs.rq`, `lineage.rq` read the labels.
+  Every `kgx/queries/*.rq` has `PREFIX id:`.
+- Page https://danbri.github.io/londat/cwplans/kg/ : prefix `id:`; an ID opens in the page only, no outside link
+  (nothing is hosted at kgx.foaf.tv); short deep links `#e=id:<local>`; a footer line. `cwplans/docklands` and
+  `cwplans/atlas` hold no kgx IRIs and no links into the kg page (grep).
+- A version file holds its version IRI in each line; a new version with the content of a file written under an old
+  name gets `<hash16>-id.nq.gz` (not needed in this build: 0 such files).
+- Factoidal renames blank nodes per parse (one `_:b1` in two chunks came back as `p0_d0_b1` and `p1_d1_b1`), so
+  `quadsOf()` parses a version with blank nodes in one piece. One parse of 294,405 lines did not end in 10 minutes;
+  2,000 lines at a time took 102 s.
+- Operation versions: the 8 lifts and `lift-pipeline-provenance` 2, `describe-graph-versions` 2,
+  `lift-activity-log` 2, `map-legacy-ids` 1 (new), `key-model-buildings` 3, `rectify-facade-patches` 2,
+  `lift-contrib-photos` 3, `cut-facade-tiles` 2, `compose-facade-atlas` 2, `lift-imagery-coverage` 2.
+  `partition-by-subject-key` (4) and `pack-shardborough` (1) did not change: same bodies, and their activity IRIs change
+  with their inputs.
+
+Measured (before: londat 4411ef3; after: this build):
+- Triples 294,405 -> 298,615 in 24 head graphs (`pipeline` 13,667 -> 14,943: `pipeline.jsonld` after the move; `log`
+  5,902 -> 8,818: 132 activities, 42 of them this build; `meta` 692 -> 710). Store 110,920 -> 115,130 quads, 847 -> 834
+  blocks, `gen-94788565be0fae62` (5,084 files, 21.4 MB) -> `gen-5ad6ded8fc45e17f` (5,006 files, 19.3 MB; blocks 15.0
+  -> 12.8 MB). The build removed the previous generation from the folder (git keeps it), as the skill says.
+- Size added to the repository by the two commits: 5,081 new files, 23.6 MB (the store generation: 5,006 files, 19.3
+  MB; 73 graph version files: 4.3 MB; 2 tool files), and new blobs of the changed `current.nq.gz`, logs and register
+  files; git objects +31.5 MiB (loose, compressed, `git count-objects`). The checkout and the Pages site hold 2.1 MB
+  less store (the old generation, 21.4 MB, is now only in the history) and 4.3 MB more graph files.
+- Distinct IRIs in `current.nq.gz` 105,052 -> 105,742. Names of the old namespaces 56,346 (londat/kgx 51,452;
+  glitchcan-minigam 2,294; urn:cwplans:local 73; CWG address and hours nodes 2,527) -> 0. IDs 0 -> 57,034. In the
+  store: 110,920 of 110,920 quads with an old name -> 0 of 115,130 (SPARQL count through a store handle; the parsed store
+  input agrees: 14,594 IDs, 0 old names). Literals that hold old names (not mapped): `cwk:params` of 11 older
+  activities, 3 `s:addressCountry` texts in the web layer, the `rdfs:comment` of `map-legacy-ids`.
+- Runs: build 1, 7 min 4 s (the mapping of `model-building-keys`, 183,485 triples, is most of it), 42 new activities;
+  build 2, 15 s, `new: 0`, the same generation, `log/*.jsonl`, `heads.json`, `external-heads.json` and `current.nq.gz`
+  unchanged. A first full run before the blank-node guard gave the same counts; it was reset before any commit
+  (`kgx-ops.mjs` is an input of the pipeline graph).
+- Checks: kgx-ids self-test ok; `npm test` 17 of 17; `npm run check` ok (706 entries); `tools/check-skills.mjs` 18 of
+  18 discoverable (it also lists the 18 copies in a local agent worktree under `.claude/worktrees/`, which git ignores,
+  as "not offered"); `check-kgx-store.mjs --write` 17 of 17 the same (9 min 16 s); page test (headless Chromium, local
+  server): the default view, a name search ("Jubilee Place", 69 rows), the 11 views, `#e=id:cwb0413`,
+  `#e=id:mallcabotplace`, the Manhattan Grill entity by its encoded IRI and a click to a graph part: 0 page errors, 0
+  console errors, 0 failed requests, no ID with an outside link.
+
+Open items:
+- The vocabularies keep their namespaces (`cwk:` under danbri.github.io/londat, `cwp:` and the idioms ShEx under
+  danbri.github.io/glitchcan-minigam): a new vocabulary namespace would be the owner's decision.
+- Nothing is hosted at https://kgx.foaf.tv/ yet: the IDs do not resolve. A redirect to
+  https://danbri.github.io/londat/cwplans/kg/#e=id:<local> would make them links.
+- Found, not fixed: `key-model-buildings.mjs` writes `s:sameAs https://www.openstreetmap.org/undefined/<id>` for every
+  way (42,244 links; the clip's ways have no `type`). Fix at its next run (it needs the local OSM clip and extract) with
+  operation version 4. Until that run `docklands/data/building-keys.json` names the old version of
+  `model-building-keys` in its `graph` field.
+- Three `s:addressCountry` values in the web canonical layer are the text of a genid IRI (a fault of that layer).
+- `tools/check-skills.mjs` scans `.claude/worktrees/` (local agent worktrees) and reports their SKILL.md copies.

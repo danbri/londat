@@ -31,15 +31,62 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
 
 ## Graphs, IRIs, vocabulary
 
-- Base `https://danbri.github.io/londat/kgx/`: things `id/…`, graph versions `graph/<name>/<hash16>`, store parts
-  `graph/<name>.pNN/<hash16>`, activities `activity/<hash16>`, input files `artifact/sha256/<hash>`, vocabulary `vocab#`
-  (prefix `cwk:`), schema.org first. No blank nodes (the `pipeline` graph is skolemized to `genid/pipeline/…`).
-- Names under `https://danbri.github.io/glitchcan-minigam/` were kept on purpose at the move to this repository
-  (2026-10-07): `…/magpie/cwplans/data-register.json#` (sources, activities and the `cwp:` vocabulary, in `pipeline`
-  and `web`) and `…/third_party/cwplans-structured-data/` (descriptions, genids and the idioms namespace, in `web` and
-  `coref-<rule>`). They are names, not links. Changing them would be a new operation version and a new graph version:
-  the owner's decision. The file IRIs in `pipeline.jsonld` become `https://github.com/danbri/londat/blob/main/cwplans/…`
-  at the next `check-data-register.mjs --write`, so the next build gives a new `pipeline` version.
+- **IDs.** Owner, 2026-10-07, answering "the knowledge-graph IRIs still start with
+  https://danbri.github.io/glitchcan-minigam/ ... Do you want a londat namespace?": "Use https://kgx.foaf.tv/id/ prefix
+  for IDs. i own the domain; nothing is hosted there yet. iDs should be alphanumeric". So every IRI that this project
+  mints for the graph is `https://kgx.foaf.tv/id/<local>` (prefix `id:`), `<local>` in `[a-z0-9]+`. An old name maps
+  to its ID mechanically: `<local> = CODE[kind] + an(rest)`, where `kind` is the first path segment after the old base,
+  `rest` all the segments after it, and `an(s)` is `s` in NFKD with the accents dropped, in lower case, with every
+  character other than a-z and 0-9 removed. `cwplans/tools/kgx-ids.mjs`: `kid(kind, ...parts)` mints from the parts of
+  the old name, `mapLegacy(iri)` maps an old name and returns any other IRI as it is
+  (`node cwplans/tools/kgx-ids.mjs --test`; also in `npm test`). Graph versions, store parts, activities and input
+  files are IDs too (`cwplans-dataflow`, the runtime). No blank nodes (the `pipeline` graph is skolemized to
+  `id:genidpipeline<sha12>`).
+- **The vocabulary does not change:** `cwk:` = `https://danbri.github.io/londat/kgx/vocab#` (schema.org first), `cwp:` =
+  `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/`, and the idioms ShEx namespace
+  `https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/idioms/idioms.shex#`. External IRIs do
+  not change (schema.org, OSM, Wikidata, the CWG entity IRIs, GitHub and raw.githubusercontent.com URLs).
+- **Codes.** Things had the old base `https://danbri.github.io/londat/kgx/id/<kind>/`; provenance and store
+  `https://danbri.github.io/londat/kgx/<kind>/`.
+
+  | old name | code | ID (examples) |
+  |---|---|---|
+  | `id/building/<key>`, `…/<key>/geometry`, `…/<key>/occupant/<slug>-<sha>` | none (the key has `cwb`, `osm` or the photo set) | `cwb0413`, `cwb0413geometry`, `osmw204580680` |
+  | `id/facility/<uid>`, `id/unit/<uid>` (Living Map) | `lmf`, `lmu` | `lmf1000118219602`, `lmu1002803405427geometry` |
+  | `id/storeguide/p<n>/<section>/<name>-<sha>` | `sg` | `sgp1cafesbars640east95bce8d22f6a` |
+  | `id/fact/`, `id/thing/`, `id/mall/`, `id/area/` | `fact`, `thing`, `mall`, `area` | `fact010e0b6ece9c`, `mallcabotplace`, `areacanarywharfgeometry` |
+  | `id/imagery-source/`, `id/coverage/<run>/<source>/<area>/…`, `id/oam/` | `imagery`, `cov`, `oam` | `imageryeasurvey`, `cov20261006easurveycanarywharflidarcompositedtm1m2022` |
+  | `id/photo/`, `id/facade-patch/`, `id/facade-tile/`, `id/facade-atlas/`, `id/model/` | `photo`, `patch`, `tile`, `atlas`, `model` | `photo0b0d171940a878badepicts0`, `atlasdocklands` |
+  | `graph/<name>`, `graph/<name>/<hash16>`, `graph/<name>.pNN/<hash16>` | `graph` | `graphfacts`, `graphbuildingsp003fa086f639aa1bdc` |
+  | `activity/<hash16>`, `artifact/sha256/<hash>`, `operation/<id>` | `act`, none, `op` | `act017eb7a9ea079a7a`, `sha256<hash>`, `opcomposefacadeatlas` |
+  | `genid/pipeline/<sha12>`, `store/<generation>` | `genid`, `store` | `genidpipeline00e257ebfcd9`, `storegen94788565be0fae62` |
+  | register: `…/glitchcan-minigam/magpie/cwplans/data-register.json#source/<key>`, `#activity/<id>` | `src`, `tool` | `srcglacimarcgis`, `toolamenduprns` |
+  | web harvest: `…/glitchcan-minigam/third_party/cwplans-structured-data/desc/<h>`, `.well-known/genid/<h>`, `idioms/node/<rest>` | `desc`, `genid`, `node` | `desc00f0e211be9b8f433fc7`, `genidb517e85c0c7ab5fa0bd1` |
+  | `urn:cwplans:local:<path>` (local files in `pipeline.jsonld`) | `local` | `localdatarawdocklandsosmclipjsongz` |
+  | `https://canarywharf.com/<page>/#address` (from `cwg-directory-typed.mjs`) | `addr` | `addrrestaurant640east` |
+  | `https://canarywharf.com/<page>/#entity-hours-<Day>-<k>` (`lift-cwg-directory`) | `hours` | `hoursrestaurant640eastfriday0` |
+
+- **Rules (`kgx-ids.mjs`).** A name in an old namespace whose kind has no code throws, so a new kind gets a code on
+  purpose. Each run keeps a registry ID → old name: two old names that give one ID throw, with both names (an()
+  removes hyphens, so `cwb-0413` and `cwb0413` would collide). A local name that is not `[a-z0-9]+` throws. The ID of
+  an ID is itself.
+- **Three kinds that the first list of the change did not name** (2026-10-07). This project minted them, and they are
+  not vocabulary: `urn:cwplans:local:<path>` (73 local files in `pipeline.jsonld`, made by `check-data-register.mjs`),
+  `<page>#address` (344 address nodes, made by `cwg-directory-typed.mjs`, lifted into `cwg`) and
+  `<page>#entity-hours-<Day>-<k>` (2,183 opening-hours nodes, made by `lift-cwg-directory`). They got the codes `local`,
+  `addr` and `hours`: the smallest change that keeps the rule. The CWG entity IRIs `<page>#entity` stay: they are the
+  join key across sources (below).
+- **What keeps the old names, and why.** The web-harvest files in `third_party/cwplans-structured-data/`,
+  `registry/sources/brands/cwg-directory-typed.nq`, `kgx/log/*.jsonl` and the graph version files written before
+  2026-10-07: they are upstream data or history, and a version never changes. `build-kgx.mjs` maps when it lifts: its
+  quad collector puts every IRI term through `mapLegacy()`, so `lift-activity-log` and `describe-graph-versions` name
+  the older activities and versions by their IDs too; the external heads named in the old namespace went through the
+  operation `map-legacy-ids` (`cwplans-dataflow`). Literals are not mapped: `cwk:params` of the activities logged
+  before 2026-10-07 (the JSON of their parameters, with the old names), and three `s:addressCountry` values of the web
+  layer that are the text of a genid IRI (a fault of that layer, open).
+- **Readable names.** `an()` removes hyphens and dots, so a graph name or an operation is harder to read in its ID
+  (`graphcorefpostcodename`). `meta` gives each graph name its name as `rdfs:label`, and `log` each operation its id;
+  the page's views "Graphs and versions" and "Lineage" read the labels.
 - Graph names: `facts`, `buildings` (cwb- ids, outline as `geo:asWKT`), `occupants`, `cwg` (typed CWG directory and
   `s:OpeningHoursSpecification` per day with `cwk:opensMinute`/`cwk:closesMinute`), `web`, `coref-<rule>`, `mallmap`
   (`cwk:MallUnit` with outline, `cwk:Facility` points: lifts, escalators, ramps, stairs, entrances, toilets,
@@ -47,18 +94,21 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   `coverage-imagery` (from `tools/probe-imagery-coverage.mjs` through `kgx/external-heads.json`: `cwk:CoverageCount` per
   imagery source and study area), `photos-<set>`, `facade-patches-<set>`, `facade-tiles-<set>` (contributed photos),
   `facade-atlas`, `model-building-keys` (every model building's OSM key; not in the store), `meta`
-  (`void:Dataset` per version and part; heads as `graph/<name> cwk:current <version>`), `log` (the activities).
+  (`void:Dataset` per version and part; heads as `id:graph<name> cwk:current <version>`, with the name as
+  `rdfs:label`), `log` (the activities).
   Counts: `kgx/README.md`.
 - Joins across sources go through `s:sameAs` to the CWG entity IRI (`https://canarywharf.com/<kind>/<slug>/#entity`),
   OSM element URLs and Wikidata items. Mall units join by exact name only, for now.
 
 ## The store (Shardborough, `factoidal pack --layout ibk5`)
 
-Build of 2026-10-07 09:22 UTC (after the cwdock tiles; londat `kgx/manifest.json`): 294,405 triples in 24 head graphs
-(22 data graphs, `meta` and `log`), of which 110,920 quads in the browser store (51 parts, 847 blocks, generation
-`gen-94788565be0fae62`, 5,084 files, 21.4 MB; blocks 15.0 MB). `model-building-keys` (183,485) is a head but not in
-the store (`external-heads.json` `store: false`). Each build adds lines to `log/`; the counts grow with every
-contributed set (2026-10-06 night: 292,259 triples, 21 graphs, 774 blocks). The table below was measured on an
+Build of 2026-10-07 15:11 UTC (the first with the IDs; londat `kgx/manifest.json`): 298,615 triples in 24 head graphs
+(22 data graphs, `meta` and `log`), of which 115,130 quads in the browser store (49 parts, `meta` and `log`; 834
+blocks, generation `gen-5ad6ded8fc45e17f`, 5,006 files, 19.3 MB; blocks 12.8 MB). The build before it (09:22 UTC, old
+names): 294,405 triples, 110,920 quads, 847 blocks, `gen-94788565be0fae62`, 5,084 files, 21.4 MB, blocks 15.0 MB: the
+IDs are shorter, the log and the pipeline graph larger. `model-building-keys` (183,485) is a head but not in the store
+(`external-heads.json` `store: false`). Each build adds lines to `log/`; the counts grow with every contributed set
+(2026-10-06 night: 292,259 triples, 21 graphs, 774 blocks). The table below was measured on an
 earlier build (15 graphs, 659 blocks); on the 774-block build the same entity read 60 blocks out and 59 in, about
 1.1 MB each (not measured again).
 
@@ -82,7 +132,8 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   with the number of blocks. 3,000 is the balance.
 - **Query rule: one `GRAPH` block per subject.** Two subjects can be in different parts. Measured:
   `GRAPH ?g { ?place s:openingHoursSpecification ?h . ?h s:opens ?o }` 130 rows; with `GRAPH ?g1 {…} GRAPH ?g2 {…}`
-  2,519. There is no default-graph view of the named graphs (a pattern outside `GRAPH` plans no blocks).
+  2,519. With the IDs (2026-10-07) the one-block join gives 1,181 rows, because the shorter hours IDs now fall in the
+  parts of their places more often; still not all: the rule stands. There is no default-graph view of the named graphs (a pattern outside `GRAPH` plans no blocks).
   **This is SPARQL, not a Factoidal fault:** a `GRAPH ?g { … }` block matches inside one named graph at a time, and the
   parts are separate named graphs. Checked 2026-10-06 on the store's own input (107,408 quads, 46 graphs): 18 queries
   through the store handle, the in-memory engine and Oxigraph 0.5.11 gave identical rows (6,910); the one-block join
@@ -113,8 +164,13 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   `kgx/checks/store-vs-memory.json`. It refuses when the store was not packed from the current versions. It reads only the graphs
   the store holds (a head kept out of the store is skipped: with `model-building-keys` the parse took over 15 minutes).
   Several minutes (the in-memory parse; not timed). Results: 2026-10-06 (gen-f330e7f03b06d9d9) 17 of 17 the same;
-  2026-10-07 09:35 UTC (gen-94788565be0fae62, 110,920 quads) 17 of 17 the same (`checks/store-vs-memory.json`). Run it
-  after a rebuild with new data and after a Factoidal upgrade.
+  2026-10-07 09:35 UTC (gen-94788565be0fae62, 110,920 quads) 17 of 17 the same; 2026-10-07 15:20 UTC
+  (gen-5ad6ded8fc45e17f, 115,130 quads, the first build with the IDs) 17 of 17 the same, 9 min 16 s
+  (`checks/store-vs-memory.json`). Run it after a rebuild with new data and after a Factoidal upgrade.
+- No old names in the store: a SPARQL count through a store handle over every quad (`FILTER` on the four positions;
+  run with `node --stack-size=60000` and `ulimit -s unlimited`, because 115,130 solutions overflow the default stack)
+  gave 0 quads with a name of the old namespaces in gen-5ad6ded8fc45e17f, and 110,920 of 110,920 in gen-94788565be0fae62
+  (2026-10-07).
 - An independent engine as a third opinion: pyoxigraph in a venv, `Store.bulk_load(path=…, format=RdfFormat.N_QUADS,
   lenient=True)`. Strict loading refuses one IRI in our data (F49).
 - Reported to Factoidal as https://github.com/danbri/factoidal/issues/697 (store granularity, zone-key order, subqueries,
@@ -140,9 +196,21 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   manifest and the page network first. The page tells the service worker which generation to keep.
 - Views (`VIEWS` in the page, the same queries as `queries/*.rq`): graphs and versions, lineage (the log), open now,
   mall units, step-free, toilets and facilities, hours CWG against mall map, tallest, cited facts, sameAs, occupants.
+- IDs on the page (2026-10-07): the prefix `id:` (added to every query, shown in the cells); an IRI under
+  `https://kgx.foaf.tv/id/` or the vocabulary opens in the page only, with no outside link (nothing is hosted at
+  kgx.foaf.tv yet); any other http(s) IRI also gets ↗. A hash names an ID short: `#e=id:cwb0413`
+  (https://danbri.github.io/londat/cwplans/kg/#e=id:cwb0413); a full IRI is URL-encoded
+  (`#e=https%3A%2F%2Fcanarywharf.com%2Frestaurant%2Fmanhattan-grill%2F%23entity`). "Graphs and versions" and "Lineage"
+  read the `rdfs:label` of graph names and operations (their IDs have no hyphens).
 - Measured 2026-10-06, headless Chromium (no WebKit in the container: Safari not tested), local server: start 1.9 s;
   the 11 views 0.8 to 3.6 s, each 10 to 96 blocks and 0.07 to 2.4 MB the first time; a later page of rows 0.2 s;
-  one entity (out and in links) 2.8 s, 106 blocks, 1.14 MB; no console errors.
+  one entity (out and in links) 2.8 s, 106 blocks, 1.14 MB; no console errors. Again 2026-10-07 with the IDs
+  (`gen-5ad6ded8fc45e17f`): start 2.1 s; the 11 views 0.4 to 3.4 s; a name search ("Jubilee Place", 69 rows) 2.4 s;
+  the entities `#e=id:cwb0413`, `#e=id:mallcabotplace` and the Manhattan Grill entity by its encoded IRI 5 to 7 s from a
+  cold load; 0 page errors, 0 console errors, 0 failed requests; no ID with an outside link. Headless recipe: give
+  Chromium `--proxy-server=$HTTPS_PROXY --proxy-bypass-list=localhost;127.0.0.1` (the engine comes from jsDelivr), not
+  Playwright's `proxy` option: Playwright adds `<-loopback>`, which sends the local server's requests to the agent
+  proxy (405).
 - **raw.githubusercontent.com rate-limits.** The first test of the public page (2026-10-06, 12 fetches at a time, several
   hundred block requests in about a minute) got one 429 on the "Open now" view. Hence 6 at a time and the retry. GitHub
   Pages for londat may avoid this limit (not tested; open item below). Since 2026-10-07 the page reads the store from
@@ -154,6 +222,12 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 
 ## Open
 
+- IDs (2026-10-07): nothing is served at https://kgx.foaf.tv/ yet (the owner's domain). When it is, an ID could
+  redirect to the page (`https://danbri.github.io/londat/cwplans/kg/#e=id:<local>`). The vocabularies keep their
+  namespaces (`cwk:` under danbri.github.io/londat, `cwp:` and the idioms under danbri.github.io/glitchcan-minigam): a
+  new vocabulary namespace is the owner's decision. `key-model-buildings.mjs` writes `s:sameAs
+  https://www.openstreetmap.org/undefined/<id>` for every way (42,244 links: the clip's ways have no `type`): fix it at
+  its next run (it needs the local OSM clip and extract), with a new operation version.
 - Step-free routes: the facilities are in; the corridors (indoor lines) and floor links are not yet.
 - Units: join to CWG entities by a better key than the exact name (normalised name, mall, level).
 - A building-level link from mall units and guide grid squares to registry buildings (position in the outline).
