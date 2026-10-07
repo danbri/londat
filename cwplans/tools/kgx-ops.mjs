@@ -5,7 +5,8 @@
 // the hash of (operation, operation version, input identities, parameters), so an activity already in the log is not
 // run again and the same inputs always name the same outputs. Every IRI here is an ID under https://kgx.foaf.tv/id/
 // (kgx-ids.mjs kid): input files sha256<hash>, graph versions graph<name><hash16>, activities act<hash16>. Operation
-// map-legacy-ids (mapLegacyVersion) gives a version written with names of the old namespaces again with the IDs.
+// map-legacy-ids (mapLegacyVersion) gives a version written with names of the old namespaces (or old vocabulary terms)
+// again with the IDs and the vocabulary terms under https://kgx.foaf.tv/.
 // Library; used by build-kgx.mjs and the tools that write graph versions. Skills: cwplans-dataflow, cwplans-kgx.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
@@ -13,7 +14,7 @@ import { createHash } from 'crypto';
 import { join, dirname } from 'path';
 import { serialize, Dataset, dataFactory as F } from '@factoidal/core';
 import * as fn from '@factoidal/core/fn';
-import { kid, mapLegacy } from './kgx-ids.mjs';
+import { kid, mapLegacy, LEGACY_KG } from './kgx-ids.mjs';
 
 const sha256 = b => createHash('sha256').update(b).digest('hex');
 const short = h => h.slice(0, 16);
@@ -89,8 +90,9 @@ export class Flow {
 export const OPS = {
   partition: { id: 'partition-by-subject-key', version: 4, skill: 'cwplans-dataflow', tool: 'cwplans/tools/kgx-ops.mjs',
     about: 'Split one graph version into parts of about params.target triples: subjects in Shardborough zone-key order (type byte, UTF-8 length as 4 bytes little-endian, UTF-8 text, first 64 bytes), a subject never split; each part canonical (sorted lines); the parts union to the input.' },
-  mapLegacyIds: { id: 'map-legacy-ids', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/kgx-ops.mjs (mapLegacy in cwplans/tools/kgx-ids.mjs)',
-    about: 'One graph version -> the same triples with mapLegacy() applied to every IRI term: names of the old namespaces (https://danbri.github.io/londat/kgx/, the register and web-harvest names under https://danbri.github.io/glitchcan-minigam/, urn:cwplans:local:, CWG address and hours nodes) become IDs under https://kgx.foaf.tv/id/; literals, vocabulary terms and other IRIs unchanged.' },
+  // version 2 (2026-10-07): the vocabulary terms move too (cwk:, cwp:, the idioms ShEx namespace -> https://kgx.foaf.tv/)
+  mapLegacyIds: { id: 'map-legacy-ids', version: 2, skill: 'cwplans-dataflow', tool: 'cwplans/tools/kgx-ops.mjs (mapLegacy in cwplans/tools/kgx-ids.mjs)',
+    about: 'One graph version -> the same triples with mapLegacy() applied to every IRI term: names of the old namespaces (https://danbri.github.io/londat/kgx/, the register and web-harvest names under https://danbri.github.io/glitchcan-minigam/, urn:cwplans:local:, CWG address and hours nodes) become IDs under https://kgx.foaf.tv/id/; old vocabulary terms (cwk: https://danbri.github.io/londat/kgx/vocab#, cwp: ...glitchcan-minigam/magpie/cwplans/data-register.json#vocab/, the idioms ShEx namespace) become https://kgx.foaf.tv/vocab#, /pipeline#, /idioms# with the same local name; literals and other IRIs unchanged.' },
 };
 // a quad with mapLegacy() applied to every IRI term, in the default graph (the runtime names the version)
 const mapTerm = t => t.termType === 'NamedNode' ? F.namedNode(mapLegacy(t.value)) : t;
@@ -103,6 +105,9 @@ export async function quadsOf(text, chunk = 2000) {
   for (let i = 0; i < lines.length; i += chunk) for (const q of (await fn.parse(lines.slice(i, i + chunk).join('\n') + '\n', { format: 'nquads' })).toArray()) out.push(q);
   return out;
 }
+// true when N-Quads text has an IRI term in an old namespace (an old name or an old vocabulary term): such a version
+// goes through map-legacy-ids
+export const hasLegacyNames = text => text.includes('<' + LEGACY_KG) || text.includes('<https://danbri.github.io/glitchcan-minigam/') || text.includes('<urn:cwplans:');
 // operation map-legacy-ids on one version (a version made by another tool before 2026-10-07, named in
 // external-heads.json): the same name, title and licence; the content with IDs
 export async function mapLegacyVersion(flow, v) {

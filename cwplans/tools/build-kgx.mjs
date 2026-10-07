@@ -17,14 +17,14 @@ import { join, relative } from 'path';
 import { parse, jsonldToRdf, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 import { LONDAT_DIR } from './londat.mjs';
-import { Flow, OPS, partitionLines, mapLegacyVersion } from './kgx-ops.mjs';
-import { kid, mapLegacy, cwgPath, ID_BASE, VOCAB } from './kgx-ids.mjs';
+import { Flow, OPS, partitionLines, mapLegacyVersion, hasLegacyNames } from './kgx-ops.mjs';
+import { kid, mapLegacy, cwgPath, ID_BASE, VOCAB, REGISTER_VOCAB } from './kgx-ids.mjs';
 
 const CW = join(TOOLS, '..'), ROOT = join(CW, '..'), OUT = join(LONDAT_DIR, 'kgx');
 const V = VOCAB;
 const NS = { s: 'https://schema.org/', rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#', rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   xsd: 'http://www.w3.org/2001/XMLSchema#', owl: 'http://www.w3.org/2002/07/owl#', geo: 'http://www.opengis.net/ont/geosparql#',
-  dct: 'http://purl.org/dc/terms/', prov: 'http://www.w3.org/ns/prov#', void: 'http://rdfs.org/ns/void#', wd: 'http://www.wikidata.org/entity/', cwk: V, id: ID_BASE };
+  dct: 'http://purl.org/dc/terms/', prov: 'http://www.w3.org/ns/prov#', void: 'http://rdfs.org/ns/void#', wd: 'http://www.wikidata.org/entity/', cwk: V, cwp: REGISTER_VOCAB, id: ID_BASE };
 const OH = createRequire(import.meta.url)(join(CW, 'docklands', 'opening-hours.js'));
 const sha = s => createHash('sha1').update(s).digest('hex').slice(0, 12);
 const slug = s => String(s || '').normalize('NFKD').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'x';
@@ -44,8 +44,9 @@ function G() { const quads = [];
 const flow = new Flow(OUT);
 const rel = p => relative(ROOT, p).startsWith('..') ? 'danbri/londat ' + relative(LONDAT_DIR, p) : relative(ROOT, p);
 const file = p => flow.file(p, rel(p));
-// version 2 (2026-10-07): IDs under https://kgx.foaf.tv/id/ (version 1: names under https://danbri.github.io/londat/kgx/)
-const LIFT = (id, about) => ({ id, version: 2, skill: 'cwplans-kgx', tool: 'cwplans/tools/build-kgx.mjs', about });
+// version 2 (2026-10-07): IDs under https://kgx.foaf.tv/id/ (version 1: names under https://danbri.github.io/londat/kgx/);
+// version 3 (2026-10-07): vocabulary under https://kgx.foaf.tv/ (cwk: /vocab#, cwp: /pipeline#)
+const LIFT = (id, about) => ({ id, version: 3, skill: 'cwplans-kgx', tool: 'cwplans/tools/build-kgx.mjs', about });
 const versions = {};
 
 // ---- lift operations: input files -> one graph version each
@@ -197,16 +198,17 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
 
 // ---- graph versions made by other tools' operations: kgx/external-heads.json maps a name to a version in the log, or
 // to { iri, store: false } for a version that is a head and in meta and current.nq.gz but not in the browser store
-// (too large for what a query there gains: model-building-keys). A version named in the old namespace (made before
-// 2026-10-07) goes through operation map-legacy-ids first, and external-heads.json then names the mapped version: the
-// tools mint the IDs themselves since then, and the mapping gives the same IDs, so a re-run of a tool converges.
+// (too large for what a query there gains: model-building-keys). A version named in the old namespace, or holding old
+// names or old vocabulary terms (made before the moves of 2026-10-07), goes through operation map-legacy-ids first,
+// and external-heads.json then names the mapped version: the tools mint the IDs and the terms themselves since then,
+// and the mapping gives the same IRIs, so a re-run of a tool converges.
 const offStore = new Set();
 { const ehF = join(OUT, 'external-heads.json');
   if (existsSync(ehF)) { const eh = JSON.parse(readFileSync(ehF, 'utf8')); let mapped = 0;
     for (const [name, e] of Object.entries(eh)) {
       const iri = typeof e === 'string' ? e : e.iri; let v = flow.versions.get(iri);
       if (!v || !existsSync(join(OUT, v.file))) throw new Error(`external head ${name}: ${iri} is not in log/versions.jsonl or its file is missing`);
-      if (!iri.startsWith(ID_BASE)) { v = await mapLegacyVersion(flow, v); eh[name] = typeof e === 'string' ? v.iri : { ...e, iri: v.iri }; mapped++; }
+      if (!iri.startsWith(ID_BASE) || hasLegacyNames(flow.read(v))) { v = await mapLegacyVersion(flow, v); eh[name] = typeof e === 'string' ? v.iri : { ...e, iri: v.iri }; mapped++; }
       versions[name] = v; if (typeof e === 'object' && e.store === false) offStore.add(name);
     }
     if (mapped) writeFileSync(ehF, JSON.stringify(eh, null, 1) + '\n');
@@ -229,7 +231,7 @@ for (const v of Object.values(versions)) {
 const heads = Object.fromEntries(Object.values(versions).map(v => [v.name, v.iri]));
 const genBy = {}; for (const a of flow.log.values()) for (const o of a.outputs) (genBy[o] ||= []).push(a.id);
 const describedVersions = [...Object.values(versions), ...Object.values(parts).flat()];
-const metaV = await flow.run({ id: 'describe-graph-versions', version: 2, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'graph versions -> void:Dataset per version (name, title, licence, RDFC-1.0 hash, triples, generating activity, parts) and the heads (graph name, with its name as rdfs:label -> current version); every IRI an ID under https://kgx.foaf.tv/id/' },
+const metaV = await flow.run({ id: 'describe-graph-versions', version: 3, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'graph versions -> void:Dataset per version (name, title, licence, RDFC-1.0 hash, triples, generating activity, parts) and the heads (graph name, with its name as rdfs:label -> current version); every IRI an ID under https://kgx.foaf.tv/id/, terms under https://kgx.foaf.tv/vocab#' },
   describedVersions, { heads, genBy: Object.fromEntries(describedVersions.map(v => [v.iri, genBy[v.iri] || []])) }, async ({ heads, genBy }) => {
     const g = G();
     for (const v of describedVersions) { const s = v.iri;
@@ -250,7 +252,7 @@ const logActs = [...flow.log.values()].filter(a => a.operation !== 'lift-activit
 // Activities logged before 2026-10-07 name their inputs and outputs in the old namespace: the collector maps them to IDs
 // (the log files keep the names they were written with).
 const logBlob = { kind: 'file', iri: kid('artifact', 'sha256', createHash('sha256').update(JSON.stringify(logActs)).digest('hex')), label: 'kgx/log/activities.jsonl (without lift-activity-log entries)' };
-const logV = await flow.run({ id: 'lift-activity-log', version: 2, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'activity log -> prov:Activity per run: operation (with its name as rdfs:label), version, skill, tool, inputs (prov:used), parameters, outputs (prov:generated), times; every IRI an ID under https://kgx.foaf.tv/id/, also for activities logged under the old names' }, [logBlob], null, async () => {
+const logV = await flow.run({ id: 'lift-activity-log', version: 3, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'activity log -> prov:Activity per run: operation (with its name as rdfs:label), version, skill, tool, inputs (prov:used), parameters, outputs (prov:generated), times; every IRI an ID under https://kgx.foaf.tv/id/, also for activities logged under the old names; terms under https://kgx.foaf.tv/vocab#' }, [logBlob], null, async () => {
   const g = G();
   for (const a of logActs) { const s = a.id, op = kid('operation', a.operation);
     g.add(s, TYPE, iri('prov', 'Activity')); g.add(s, iri('cwk', 'operation'), op); g.lit(s, iri('cwk', 'operationVersion'), a.operation_version);

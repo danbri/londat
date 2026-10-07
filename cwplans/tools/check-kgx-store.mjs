@@ -24,7 +24,7 @@ const gen = readFileSync(join(K, 'shardborough', 'CURRENT'), 'utf8').trim();
 const inputHash = createHash('sha256').update(partitioned).digest('hex').slice(0, 16);
 if ('gen-' + inputHash !== gen) { console.error(`the store (${gen}) was not packed from the current versions (gen-${inputHash}): rebuild first`); process.exit(2); }
 
-const P = 'PREFIX s: <https://schema.org/> PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#> PREFIX owl: <http://www.w3.org/2002/07/owl#>\n';
+const P = 'PREFIX s: <https://schema.org/> PREFIX cwk: <https://kgx.foaf.tv/vocab#> PREFIX owl: <http://www.w3.org/2002/07/owl#>\n';
 const Q = {
   'join, one GRAPH block': P + 'SELECT ?place ?h ?o WHERE { GRAPH ?g { ?place s:openingHoursSpecification ?h . ?h s:opens ?o } }',
   'join, one GRAPH block per subject': P + 'SELECT ?place ?h ?o WHERE { GRAPH ?g1 { ?place s:openingHoursSpecification ?h } GRAPH ?g2 { ?h s:opens ?o } }',

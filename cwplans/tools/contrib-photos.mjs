@@ -29,6 +29,8 @@ const PY = process.env.FACADE_PY || 'python3', FT = join(TOOLS, '..', 'registry'
 const spec = JSON.parse(readFileSync(join(DIR, 'photos.json'), 'utf8'));
 const sha = b => createHash('sha256').update(b).digest('hex');
 const V = VOCAB, S = 'https://schema.org/', XSD = 'http://www.w3.org/2001/XMLSchema#';
+// a line `<patch> cwk:building <building>` of the facade-patches version
+const BUILDING_LINE = new RegExp('^<([^>]+)> <' + (V + 'building').replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '> <([^>]+)>');
 const T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', LABEL = 'http://www.w3.org/2000/01/rdf-schema#label';
 const N = F.namedNode;
 function G() { const quads = [];
@@ -46,7 +48,7 @@ const facadeTools = ['facade.py', 'measure.py'].map(f => flow.file(join(FT, f), 
 
 // ---- 1. rectify and measure the facade patches
 const patches = spec.patches.map(p => ({ ...p, building_iri: buildingIri(p.building) }));
-const op1 = { id: 'rectify-facade-patches', version: 2, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs (facade.py, measure.py)',
+const op1 = { id: 'rectify-facade-patches', version: 3, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs (facade.py, measure.py)',
   about: 'photos + facade regions -> affine-rectified patches (LSD segments, RANSAC vanishing points, homography), bay and floor periods (autocorrelation of gradient profiles) and three colours (k-means in Lab) per patch' };
 const v1 = (await flow.run(op1, [...photoFiles, ...facadeTools], { set, patches }, async ({ set, patches }) => {
   const g = G(), tmp = mkdtempSync(join(tmpdir(), 'rect-')); mkdirSync(join(DIR, 'rect'), { recursive: true });
@@ -69,7 +71,7 @@ const v1 = (await flow.run(op1, [...photoFiles, ...facadeTools], { set, patches 
 }))[`facade-patches-${set}`];
 
 // ---- 2. the photos, what they depict and the buildings, from the hand-made photos.json
-const op2 = { id: 'lift-contrib-photos', version: 3, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs',
+const op2 = { id: 'lift-contrib-photos', version: 4, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs',
   about: 'photos.json (identifications, evidence, judged facade notes, model heights) + photos + facade patches -> schema.org Photograph per photo with what it depicts, and a building node per identified building' };
 const v2 = (await flow.run(op2, [specFile, ...photoFiles, v1], { set }, async () => {
   const g = G(), patchLines = flow.read(v1).split('\n');
@@ -83,7 +85,7 @@ const v2 = (await flow.run(op2, [specFile, ...photoFiles, v1], { set }, async ()
     if (b.model) { if (b.model.index != null) g.lit(s, V + 'modelIndex', b.model.index); g.lit(s, V + 'modelTopMetresOD', b.model.top_m_od); g.lit(s, V + 'modelHeightMetres', b.model.height_m); g.lit(s, V + 'modelBaseMetresOD', b.model.base_m_od); g.lit(s, V + 'modelHeightSource', b.model.height_source); g.lit(s, V + 'modelNote', b.model.note); g.lit(s, V + 'modelBuilt', '2026-10-03', 'date'); }
     for (const [k, v] of Object.entries(b.facade || {})) { if (k === 'how') continue; const t = typeof v === 'string' ? v : Object.entries(v).map(([a, c]) => `${a}: ${c}`).join('; '); g.lit(s, V + 'facadeNote', `${k}: ${t}`); }
     if (b.facade?.how) g.lit(s, V + 'facadeNoteHow', b.facade.how);
-    for (const l of patchLines) { const m = l.match(/^<([^>]+)> <https:\/\/danbri\.github\.io\/londat\/kgx\/vocab#building> <([^>]+)>/); if (m && m[2] === s) g.add(s, V + 'facadePatch', m[1]); }
+    for (const l of patchLines) { const m = l.match(BUILDING_LINE); if (m && m[2] === s) g.add(s, V + 'facadePatch', m[1]); }
   }
   for (const p of spec.photos) {
     const s = photoIri(p.file);
@@ -100,7 +102,7 @@ const v2 = (await flow.run(op2, [specFile, ...photoFiles, v1], { set }, async ()
 
 // ---- 3. facade tiles for the 3D page: a cut of a rectified patch, or a vector pattern drawn from the sizes in photos.json
 const tiles = spec.tiles || [], TOOL = join(TOOLS, 'facade-tile.py');
-const op3 = { id: 'cut-facade-tiles', version: 2, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs (facade-tile.py)',
+const op3 = { id: 'cut-facade-tiles', version: 3, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs (facade-tile.py)',
   about: 'photos.json tiles + rectified patches -> 256 px facade tiles (photo cut, mirrored half for a symmetric face, or a vector pattern in metres with judged colours) with their size on the wall in metres, the buildings they are for and a point inside each' };
 const patchFiles = [...new Set(tiles.filter(t => t.patch).map(t => t.patch))].map(id => flow.file(join(DIR, 'rect', id + '.jpg'), `danbri/londat data/images/contrib/${set}/rect/${id}.jpg`));
 const v3 = tiles.length ? (await flow.run(op3, [specFile, ...patchFiles, flow.file(TOOL, 'cwplans/tools/facade-tile.py')], { set }, async () => {

@@ -32,7 +32,7 @@ const sha = b => createHash('sha256').update(b).digest('hex');
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
 const inputs = [flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(CLIP, 'cwplans/data/raw/docklands/osm-clip.json.gz (local, not committed: OSM clip of the openstreetmap.fr Greater London extract)'),
   flow.file(PBF, 'cwplans/data/raw/docklands/greater_london-latest.osm.pbf (local, not committed: the openstreetmap.fr Greater London extract, data of 2026-10-01, ODbL)'), flow.file(ATLAS, 'cwplans/atlas/data/atlas.json')];
-const op = { id: 'key-model-buildings', version: 3, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
+const op = { id: 'key-model-buildings', version: 4, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
   about: 'area.js buildings + the OSM clip they were built from + the atlas -> the OSM way or relation of every model building (exact outline match, aligned in build order), part parents, registry links and OSM name, address, type, levels, Wikidata' };
 
 const v = (await flow.run(op, inputs, {}, async () => {

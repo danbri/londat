@@ -43,7 +43,7 @@ tiles.sort((a, b) => a.iri.localeCompare(b.iri));
 const inputs = [flow.file(join(TEX, 'facades-registry.jpg'), 'cwplans/docklands/data/tex/facades-registry.jpg'), flow.file(join(TEX, 'facades-registry.json'), 'cwplans/docklands/data/tex/facades-registry.json'),
   flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(TOOL, 'cwplans/tools/facade-tile.py'), keysV, ...tileSets,
   ...tiles.map(t => flow.file(join(LONDAT_DIR, t.file), 'danbri/londat ' + t.file))];
-const op = { id: 'compose-facade-atlas', version: 2, skill: 'docklands-3d-page', tool: 'cwplans/tools/compose-facade-atlas.mjs (facade-tile.py)',
+const op = { id: 'compose-facade-atlas', version: 3, skill: 'docklands-3d-page', tool: 'cwplans/tools/compose-facade-atlas.mjs (facade-tile.py)',
   about: 'registry facade atlas + contributed tile sets + model building keys -> the page atlas: contributed tiles in the next slots, keyed by OSM id with model indices and a point' };
 
 const v = (await flow.run(op, inputs, {}, async () => {

@@ -6516,7 +6516,7 @@
       "method": "Runs the same checks, then writes the readable register, the method catalogue (METHODS.md) and the provenance as JSON-LD for a knowledge graph.",
       "rules": [
         "Activities become prov:Activity with prov:used and prov:generated; register files become prov:Entity and dcat:Distribution with prov:wasDerivedFrom their sources and prov:wasGeneratedBy the activity that generates them; sources become dcat:Dataset.",
-        "Committed files are identified by their GitHub URL; sources, tool activities and local files by knowledge-graph IDs (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; tools/kgx-ids.mjs, skill cwplans-kgx); the cwp: vocabulary keeps its namespace.",
+        "Committed files are identified by their GitHub URL; sources, tool activities and local files by knowledge-graph IDs (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; tools/kgx-ids.mjs, skill cwplans-kgx); the cwp: vocabulary is https://kgx.foaf.tv/pipeline# (since 2026-10-07).",
         "METHODS.md: methods-intro.md verbatim, then every activity by area (pipeline.json areas) in rebuild order (topological over after, ties in file order, a cycle in file order), the hand steps, the hand-judgement table, the fault register table read from the curation skill with the activities that cite each fault, the audit checks from quality/issues.json, the rebuild order, libraries and tests.",
         "Hand steps (manual_activities) become prov:Activity with cwp:kind hand; area, faults and judgement are exported as cwp:area, cwp:fault and cwp:judgement."
       ],
@@ -8860,11 +8860,11 @@
     },
     {
       "tool": "tools/kgx-ops.mjs",
-      "provides": "The kgx dataflow runtime (skill cwplans-dataflow): Flow (file inputs named by SHA-256, graph versions named by RDFC-1.0 hash, memoised operation runs, log/activities.jsonl and log/versions.jsonl; every IRI an ID from kgx-ids.mjs), OPS.partition (partition-by-subject-key), OPS.mapLegacyIds and mapLegacyVersion (map-legacy-ids), mapQuad, quadsOf (Factoidal parse a chunk of lines at a time), zoneKey and partitionLines. Used by build-kgx and the tools that write graph versions."
+      "provides": "The kgx dataflow runtime (skill cwplans-dataflow): Flow (file inputs named by SHA-256, graph versions named by RDFC-1.0 hash, memoised operation runs, log/activities.jsonl and log/versions.jsonl; every IRI an ID from kgx-ids.mjs), OPS.partition (partition-by-subject-key), OPS.mapLegacyIds and mapLegacyVersion (map-legacy-ids), hasLegacyNames (a version with old names or old vocabulary terms), mapQuad, quadsOf (Factoidal parse a chunk of lines at a time), zoneKey and partitionLines. Used by build-kgx and the tools that write graph versions."
     },
     {
       "tool": "tools/kgx-ids.mjs",
-      "provides": "The knowledge-graph IDs (skill cwplans-kgx): ID_BASE https://kgx.foaf.tv/id/, an() (lowercase alphanumeric form), the code table per kind, kid(kind, ...parts) (mint an ID from the parts of the old name), mapLegacy(iri) (a name of the old namespaces to its ID, any other IRI unchanged, an old name with no code throws), the registry that fails when two names give one ID, cwgPath, osmKeyOf, VOCAB (cwk:, unchanged); --test runs the self-test. Used by kgx-ops, build-kgx, check-data-register, key-model-buildings, contrib-photos, compose-facade-atlas and probe-imagery-coverage."
+      "provides": "The knowledge-graph IDs (skill cwplans-kgx): ID_BASE https://kgx.foaf.tv/id/, an() (lowercase alphanumeric form), the code table per kind, kid(kind, ...parts) (mint an ID from the parts of the old name), mapLegacy(iri) (a name of the old namespaces to its ID, any other IRI unchanged, an old name with no code throws), the registry that fails when two names give one ID, cwgPath, osmKeyOf, the vocabularies VOCAB (cwk: https://kgx.foaf.tv/vocab#), REGISTER_VOCAB (cwp: https://kgx.foaf.tv/pipeline#), IDIOMS_VOCAB (https://kgx.foaf.tv/idioms#) and VOCAB_MOVES (an old vocabulary term to the new namespace, same local name; since 2026-10-07); --test runs the self-test. Used by kgx-ops, build-kgx, check-data-register, key-model-buildings, contrib-photos, compose-facade-atlas and probe-imagery-coverage."
     },
     {
       "tool": "tools/londat.mjs",
@@ -8958,7 +8958,7 @@
     },
     {
       "tool": "tools/test/kgx-ids.test.mjs",
-      "what": "The self-test of tools/kgx-ids.mjs under node --test: the code-table examples (old name -> ID), idempotence of mapLegacy, unchanged vocabularies and external IRIs, the error cases (an old kind with no code, an empty rest, two names for one ID), osmKeyOf and cwgPath."
+      "what": "The self-test of tools/kgx-ids.mjs under node --test: the code-table examples (old name -> ID), idempotence of mapLegacy, old vocabulary terms to https://kgx.foaf.tv/ (vocab#, pipeline#, idioms#), unchanged new terms and external IRIs, the error cases (an old kind with no code, an empty rest, two names for one ID), osmKeyOf and cwgPath."
     }
   ],
   "header_mismatches_resolved": {

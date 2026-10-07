@@ -20,7 +20,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from '
 import { execFileSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { kid } from './kgx-ids.mjs';
+import { kid, REGISTER_VOCAB } from './kgx-ids.mjs';
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
 const reg = JSON.parse(readFileSync(join(CW, 'data-register.json'), 'utf8'));
 const problems = [];
@@ -169,8 +169,8 @@ if (process.argv.includes('--write')) {
   console.log('wrote DATA-REGISTER.md');
   if (pipe) {   // JSON-LD for a knowledge graph: activities, the files they used and made, and the external sources
     // committed files by their GitHub URL; sources, tool activities and local files by their knowledge-graph IDs
-    // (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; kgx-ids.mjs); the cwp: vocabulary keeps its namespace
-    const BASE = 'https://github.com/danbri/londat/blob/main/cwplans/', REG = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#';
+    // (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; kgx-ids.mjs); the cwp: vocabulary is https://kgx.foaf.tv/pipeline#
+    const BASE = 'https://github.com/danbri/londat/blob/main/cwplans/';
     const fileId = p => BASE + p, srcId = k => kid('source', k), actId = id => kid('tool', id), localId = p => kid('local', p);
     // a local path with a placeholder (<run>, <E>_<N>) is a pattern, not one file: a blank node with the pattern
     const ref = u => u.file ? { '@id': fileId(u.file) } : u.local ? (/[<>]/.test(u.local) ? { 'cwp:pathPattern': u.local } : { '@id': localId(u.local) }) : { '@id': srcId(u.source), ...(u.endpoint ? { 'dcat:accessURL': u.endpoint } : {}), ...(u.request ? { 'dct:description': u.request } : {}) };
@@ -183,7 +183,7 @@ if (process.argv.includes('--write')) {
     const by = new Map(); for (const a of [...(pipe.manual_activities || []), ...pipe.activities]) for (const g of a.generated || []) if (g.file) by.set(g.file, actId(a.id));
     for (const f of reg.files) graph.push({ '@id': fileId(f.path), '@type': ['prov:Entity', 'dcat:Distribution'], 'dct:title': f.what, 'prov:wasDerivedFrom': f.sources.map(k => ({ '@id': srcId(k) })), ...(by.has(f.path) ? { 'prov:wasGeneratedBy': { '@id': by.get(f.path) } } : {}), 'cwp:osmUse': f.osm.use, ...(f.review ? { 'cwp:review': f.review } : {}) });
     for (const [k, v] of Object.entries(reg.sources)) graph.push({ '@id': srcId(k), '@type': ['prov:Entity', 'dcat:Dataset'], 'dct:title': v.name, 'dct:license': v.licence, ...(v.url ? { 'dcat:landingPage': v.url } : {}), ...(v.attribution ? { 'cwp:attribution': v.attribution } : {}) });
-    writeFileSync(join(CW, 'pipeline.jsonld'), JSON.stringify({ '@context': { prov: 'http://www.w3.org/ns/prov#', dct: 'http://purl.org/dc/terms/', dcat: 'http://www.w3.org/ns/dcat#', rdfs: 'http://www.w3.org/2000/01/rdf-schema#', cwp: REG + 'vocab/' }, '@graph': graph }, null, 1));
+    writeFileSync(join(CW, 'pipeline.jsonld'), JSON.stringify({ '@context': { prov: 'http://www.w3.org/ns/prov#', dct: 'http://purl.org/dc/terms/', dcat: 'http://www.w3.org/ns/dcat#', rdfs: 'http://www.w3.org/2000/01/rdf-schema#', cwp: REGISTER_VOCAB }, '@graph': graph }, null, 1));
     console.log(`wrote pipeline.jsonld: ${pipe.activities.length} activities, ${(pipe.manual_activities || []).length} manual activities, ${reg.files.length} files, ${Object.keys(reg.sources).length} sources`);
     writeMethods(esc);
   }

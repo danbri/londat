@@ -4,7 +4,7 @@
   "dct": "http://purl.org/dc/terms/",
   "dcat": "http://www.w3.org/ns/dcat#",
   "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-  "cwp": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/"
+  "cwp": "https://kgx.foaf.tv/pipeline#"
  },
  "@graph": [
   {
@@ -7826,7 +7826,7 @@
    "cwp:kind": "export",
    "cwp:rule": [
     "Activities become prov:Activity with prov:used and prov:generated; register files become prov:Entity and dcat:Distribution with prov:wasDerivedFrom their sources and prov:wasGeneratedBy the activity that generates them; sources become dcat:Dataset.",
-    "Committed files are identified by their GitHub URL; sources, tool activities and local files by knowledge-graph IDs (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; tools/kgx-ids.mjs, skill cwplans-kgx); the cwp: vocabulary keeps its namespace.",
+    "Committed files are identified by their GitHub URL; sources, tool activities and local files by knowledge-graph IDs (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; tools/kgx-ids.mjs, skill cwplans-kgx); the cwp: vocabulary is https://kgx.foaf.tv/pipeline# (since 2026-10-07).",
     "METHODS.md: methods-intro.md verbatim, then every activity by area (pipeline.json areas) in rebuild order (topological over after, ties in file order, a cycle in file order), the hand steps, the hand-judgement table, the fault register table read from the curation skill with the activities that cite each fault, the audit checks from quality/issues.json, the rebuild order, libraries and tests.",
     "Hand steps (manual_activities) become prov:Activity with cwp:kind hand; area, faults and judgement are exported as cwp:area, cwp:fault and cwp:judgement."
    ],

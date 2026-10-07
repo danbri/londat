@@ -97,6 +97,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 const params = new URLSearchParams(location.search);
 const BASE = params.get('base') || '../../kgx/';   // same site: https://danbri.github.io/londat/kgx/ (?base= for another copy)
 const ID = 'https://kgx.foaf.tv/id/';             // the graph's IDs (things, graph versions, activities); skill cwplans-kgx
+const KGX = 'https://kgx.foaf.tv/';               // IDs and vocabulary (vocab#, pipeline#, idioms#); nothing is hosted there yet
 const PFX = `PREFIX s: <https://schema.org/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -105,19 +106,20 @@ PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
-PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX cwk: <https://kgx.foaf.tv/vocab#>
+PREFIX cwp: <https://kgx.foaf.tv/pipeline#>
 PREFIX id: <https://kgx.foaf.tv/id/>
 `;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const lit = s => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"';
 const SHORT = [['https://schema.org/', 's:'], ['http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:'], ['http://www.w3.org/2000/01/rdf-schema#', 'rdfs:'], ['http://www.w3.org/2002/07/owl#', 'owl:'],
-  ['http://www.opengis.net/ont/geosparql#', 'geo:'], ['http://purl.org/dc/terms/', 'dct:'], ['http://rdfs.org/ns/void#', 'void:'], ['http://www.w3.org/ns/prov#', 'prov:'], ['https://danbri.github.io/londat/kgx/vocab#', 'cwk:'],
-  [ID, 'id:'], ['http://www.wikidata.org/entity/', 'wd:']];
+  ['http://www.opengis.net/ont/geosparql#', 'geo:'], ['http://purl.org/dc/terms/', 'dct:'], ['http://rdfs.org/ns/void#', 'void:'], ['http://www.w3.org/ns/prov#', 'prov:'], ['https://kgx.foaf.tv/vocab#', 'cwk:'],
+  ['https://kgx.foaf.tv/pipeline#', 'cwp:'], ['https://kgx.foaf.tv/idioms#', 'i:'], [ID, 'id:'], ['http://www.wikidata.org/entity/', 'wd:']];
 const short = u => { for (const [a, b] of SHORT) if (u.startsWith(a)) return b + u.slice(a.length); return u; };
-// an ID (nothing is hosted at https://kgx.foaf.tv/id/ yet) or a vocabulary term opens in this page only; another http(s)
-// IRI also gets a link out. In a hash an ID is written short: #e=id:cwb0413
-const outside = u => /^https?:\/\//.test(u) && !u.startsWith(ID) && !u.startsWith('https://danbri.github.io/londat/kgx/');
+// an ID or a vocabulary term (all under https://kgx.foaf.tv/, where nothing is hosted yet) opens in this page only;
+// another http(s) IRI also gets a link out. In a hash an ID is written short: #e=id:cwb0413
+const outside = u => /^https?:\/\//.test(u) && !u.startsWith(KGX);
 const hashOf = iri => '#e=' + (iri.startsWith(ID) ? 'id:' + iri.slice(ID.length) : encodeURIComponent(iri));
 const expand = s => /^id:[a-z0-9]+$/.test(s) ? ID + s.slice(3) : s;
 let handle = false;

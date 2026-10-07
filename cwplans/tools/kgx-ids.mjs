@@ -2,9 +2,10 @@
 // kid(kind, ...parts) mints an ID from the parts of the old name: CODE[kind] + an(parts joined by '/'). mapLegacy(iri)
 // gives the ID of a name of the old namespaces (https://danbri.github.io/londat/kgx/..., the register and web-harvest
 // names under https://danbri.github.io/glitchcan-minigam/..., urn:cwplans:local:..., the CWG address and opening-hours
-// nodes) and returns every other IRI unchanged; an old name of a kind with no code throws. Every ID minted in a run is
-// registered (ID -> old name): two old names that give one ID throw. The vocabularies (cwk:, cwp:, the idioms ShEx
-// namespace) are not IDs and do not change.
+// nodes), the new term of an old vocabulary term, and returns every other IRI unchanged; an old name of a kind with no
+// code throws. Every ID minted in a run is registered (ID -> old name): two old names that give one ID throw. The
+// vocabularies are not IDs: since 2026-10-07 they are under https://kgx.foaf.tv/ too (VOCAB_MOVES; terms keep their
+// local names).
 //   node cwplans/tools/kgx-ids.mjs --test     self-test: the examples, idempotence, the error cases
 // Library; used by kgx-ops.mjs, build-kgx.mjs, check-data-register.mjs and the tools that write kgx graph versions.
 // Skills: cwplans-kgx ("Graphs, IRIs, vocabulary": the scheme, the code table, the reasons), cwplans-dataflow.
@@ -12,10 +13,17 @@ import { pathToFileURL } from 'url';
 
 export const ID_BASE = 'https://kgx.foaf.tv/id/';
 export const LEGACY_KG = 'https://danbri.github.io/londat/kgx/';
-export const VOCAB = LEGACY_KG + 'vocab#';                                         // cwk:, unchanged
 const GL = 'https://danbri.github.io/glitchcan-minigam/';
-export const REGISTER_VOCAB = GL + 'magpie/cwplans/data-register.json#vocab/';     // cwp:, unchanged
-export const IDIOMS_VOCAB = GL + 'third_party/cwplans-structured-data/idioms/idioms.shex#';   // unchanged
+// vocabularies (owner, 2026-10-07: "move them to kgx.foaf.tv? Yes pls. No dereferencing needed yet")
+export const VOCAB = 'https://kgx.foaf.tv/vocab#';                                  // cwk:
+export const REGISTER_VOCAB = 'https://kgx.foaf.tv/pipeline#';                       // cwp: (pipeline.jsonld, the web layer)
+export const IDIOMS_VOCAB = 'https://kgx.foaf.tv/idioms#';                           // the idioms ShEx shapes (i:)
+// [old namespace, new namespace]: an old term maps to the new namespace + the same local name
+export const VOCAB_MOVES = [
+  [LEGACY_KG + 'vocab#', VOCAB],
+  [GL + 'magpie/cwplans/data-register.json#vocab/', REGISTER_VOCAB],
+  [GL + 'third_party/cwplans-structured-data/idioms/idioms.shex#', IDIOMS_VOCAB],
+];
 const CWG_SITE = 'https://canarywharf.com/';
 
 // alphanumeric form: accents dropped, lower case, every other character removed
@@ -73,9 +81,10 @@ export function cwgPath(u) {
   return p;
 }
 
-// old name -> ID; any other IRI unchanged (an ID, a vocabulary term, an external IRI)
+// old name -> ID; old vocabulary term -> new term; any other IRI unchanged (an ID, a new vocabulary term, an external IRI)
 export function mapLegacy(iri) {
   if (iri.startsWith(ID_BASE) || iri.startsWith(VOCAB) || iri.startsWith(REGISTER_VOCAB) || iri.startsWith(IDIOMS_VOCAB)) return iri;
+  for (const [from, to] of VOCAB_MOVES) if (iri.startsWith(from) && iri.length > from.length) return to + iri.slice(from.length);
   if (iri.startsWith(LEGACY_KG)) {
     const r = iri.slice(LEGACY_KG.length), isId = r.startsWith('id/'), [kind, ...rest] = (isId ? r.slice(3) : r).split('/');
     if (Object.hasOwn(isId ? ID_CODES : KG_CODES, kind) && rest.length) return kid(kind, ...rest);
@@ -130,6 +139,12 @@ export function selfTest() {
   eq(kid('graph', 'buildings.p00', '3fa086f639aa1bdc'), ID_BASE + 'graphbuildingsp003fa086f639aa1bdc', 'kid graph version');
   eq(kid('hours', cwgPath('https://canarywharf.com/restaurant/640-east/'), 'Friday', 0), ID_BASE + 'hoursrestaurant640eastfriday0', 'kid hours');
   eq(kid('source', 'gla-cim-arcgis'), ID_BASE + 'srcglacimarcgis', 'kid source');
+  // vocabulary terms: the old namespace -> the new one, local name kept; idempotent
+  for (const [o, n] of [[K + 'vocab#CitedFact', 'https://kgx.foaf.tv/vocab#CitedFact'], [K + 'vocab#opensMinute', 'https://kgx.foaf.tv/vocab#opensMinute'],
+    [GL + 'magpie/cwplans/data-register.json#vocab/hoursText', 'https://kgx.foaf.tv/pipeline#hoursText'],
+    [GL + 'magpie/cwplans/data-register.json#vocab/pathPattern', 'https://kgx.foaf.tv/pipeline#pathPattern'],
+    [GL + 'third_party/cwplans-structured-data/idioms/idioms.shex#BranchCard', 'https://kgx.foaf.tv/idioms#BranchCard']]) {
+    eq(mapLegacy(o), n, 'vocabulary ' + o); eq(mapLegacy(n), n, 'idempotence of ' + n); }
   // unchanged: vocabularies and external IRIs
   for (const u of [VOCAB + 'CitedFact', REGISTER_VOCAB + 'hoursText', IDIOMS_VOCAB + 'BranchCard', 'https://schema.org/name', 'http://www.wikidata.org/entity/Q1032006',
     'https://www.openstreetmap.org/way/190355868', 'https://canarywharf.com/restaurant/manhattan-grill/#entity', 'https://canarywharf.com/#/schema/logo/image/',
@@ -139,7 +154,8 @@ export function selfTest() {
   eq(osmKeyOf(ID_BASE + 'cwb0413'), null, 'osmKeyOf cwb'); eq(osmKeyOf(ID_BASE + 'cwdockbricktower17'), null, 'osmKeyOf set key');
   eq(an('Café Nero & Co. 2'), 'cafeneroco2', 'an()');
   // errors: an old namespace with no code, an empty rest, an unknown kind, two names for one ID
-  for (const u of [K + 'id/nosuch/x', K + 'nosuch/x', K + 'id/mall', K + 'vocab', GL + 'magpie/cwplans/data-register.json#other/x',
+  for (const u of [K + 'id/nosuch/x', K + 'nosuch/x', K + 'id/mall', K + 'vocab', K + 'vocab#', GL + 'magpie/cwplans/data-register.json#other/x',
+    GL + 'magpie/cwplans/data-register.json#vocab/', GL + 'third_party/cwplans-structured-data/idioms/idioms.shex#',
     GL + 'third_party/cwplans-structured-data/coref/rule/iri', 'urn:cwplans:other:x', GL + 'third_party/cwplans-structured-data/desc/']) throws(() => mapLegacy(u), 'mapLegacy ' + u);
   throws(() => kid('nosuch', 'x'), 'kid with an unknown kind'); throws(() => kid('mall', '--'), 'kid with no alphanumeric rest'); throws(() => kid('hours', 'shop/x'), 'kid hours with one part');
   throws(() => mapLegacy(K + 'id/building/cwb0413'), 'two names for cwb0413 (cwb-0413 and cwb0413)');

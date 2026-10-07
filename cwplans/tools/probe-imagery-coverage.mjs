@@ -92,7 +92,7 @@ if (!offline) {
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
 const files = [...readdirSync(OPEN).map(f => join(OPEN, f)), ...(existsSync(LOCAL) ? readdirSync(LOCAL).map(f => join(LOCAL, f)) : [])].sort();
 const inputs = files.map(p => flow.file(p, p.startsWith(LONDAT_DIR) ? 'danbri/londat ' + p.slice(LONDAT_DIR.length + 1) : 'cwplans/data/raw/' + p.slice(RAW.length + 1) + ' (local, not committed)'));
-const op = { id: 'lift-imagery-coverage', version: 2, skill: 'docklands-data-curation', tool: 'cwplans/tools/probe-imagery-coverage.mjs',
+const op = { id: 'lift-imagery-coverage', version: 3, skill: 'docklands-data-curation', tool: 'cwplans/tools/probe-imagery-coverage.mjs',
   about: 'Imagery coverage answers (OpenAerialMap, Panoramax, KartaView, EA survey catalogue, Mapillary status) per study area -> cwk:CoverageCount per source and area (count, years, licences, first and last date), cwk:StudyArea with box, OpenAerialMap images and EA products by year and resolution. Share-alike sources give counts only.' };
 const out = await flow.run(op, inputs, { run, areas: AREAS }, async ({ run, areas }) => {
   // IDs (kgx-ids.mjs): area<slug>, imagery<source>, cov<run><source><area>..., oam<id>
