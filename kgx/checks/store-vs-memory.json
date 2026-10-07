@@ -1,12 +1,12 @@
 {
- "checked": "2026-10-07T09:35:59.561Z",
- "generation": "gen-94788565be0fae62",
- "quads": 110920,
+ "checked": "2026-10-07T15:20:24.855Z",
+ "generation": "gen-5ad6ded8fc45e17f",
+ "quads": 115130,
  "engine": "@factoidal/core 0.7.1",
  "queries": {
   "join, one GRAPH block": {
-   "store": 130,
-   "memory": 130,
+   "store": 1181,
+   "memory": 1181,
    "memory_one_graph_per_source": 2519,
    "identical": true
   },
@@ -59,8 +59,8 @@
    "identical": true
   },
   "lineage.rq": {
-   "store": 132,
-   "memory": 132,
+   "store": 382,
+   "memory": 382,
    "memory_one_graph_per_source": null,
    "identical": true
   },

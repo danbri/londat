@@ -1,14 +1,14 @@
 {
- "coverage-imagery": "https://danbri.github.io/londat/kgx/graph/coverage-imagery/625642ff1fe69ec6",
- "facade-patches-cwlibrary": "https://danbri.github.io/londat/kgx/graph/facade-patches-cwlibrary/a9ec39f5e86dd130",
- "photos-cwlibrary": "https://danbri.github.io/londat/kgx/graph/photos-cwlibrary/606f3b1cfe73e6b0",
+ "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery773bad3b03358d79",
+ "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrary6b7d3f00e42917e2",
+ "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibrary19f38d3e7559e168",
  "model-building-keys": {
-  "iri": "https://danbri.github.io/londat/kgx/graph/model-building-keys/488dbbbd066c81e9",
+  "iri": "https://kgx.foaf.tv/id/graphmodelbuildingkeysc9f1761758db48ef",
   "store": false
  },
- "facade-tiles-cwlibrary": "https://danbri.github.io/londat/kgx/graph/facade-tiles-cwlibrary/715b1baf3e58edff",
- "facade-atlas": "https://danbri.github.io/londat/kgx/graph/facade-atlas/911c77615fcb20b3",
- "facade-patches-cwdock": "https://danbri.github.io/londat/kgx/graph/facade-patches-cwdock/df7ef411b4ef1e21",
- "photos-cwdock": "https://danbri.github.io/londat/kgx/graph/photos-cwdock/c92a4335eab7028a",
- "facade-tiles-cwdock": "https://danbri.github.io/londat/kgx/graph/facade-tiles-cwdock/c87912aab7fe2581"
+ "facade-tiles-cwlibrary": "https://kgx.foaf.tv/id/graphfacadetilescwlibrary098ee7e176e96ebc",
+ "facade-atlas": "https://kgx.foaf.tv/id/graphfacadeatlas391fa2aa04fb9513",
+ "facade-patches-cwdock": "https://kgx.foaf.tv/id/graphfacadepatchescwdock41f7db8bc828e3a1",
+ "photos-cwdock": "https://kgx.foaf.tv/id/graphphotoscwdock3999dfbfd65d9edc",
+ "facade-tiles-cwdock": "https://kgx.foaf.tv/id/graphfacadetilescwdockd82f7700fd8662c9"
 }
