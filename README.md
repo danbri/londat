@@ -1,31 +1,57 @@
 # londat
 
-Open-data extracts for the Canary Wharf / Docklands project in
-[danbri/glitchcan-minigam](https://github.com/danbri/glitchcan-minigam), directory `magpie/cwplans/`.
-This repository holds the bulk files, so that the main repository and its GitHub Pages site stay under their size
-limits. The owner created it on 2026-10-05.
+The Canary Wharf / Docklands project (cwplans): the Docklands 3D page, the atlas, the knowledge graph and its search
+page, the feeds and what's-on pages, the data tools, the skills that describe them, and the open-data extracts.
 
 Status: scoping, planning and prototyping. The data is not reviewed for production use.
 
+Site: https://danbri.github.io/londat/ (published by `.github/workflows/pages.yml`; see "GitHub Pages" below).
+
+| page | address |
+|---|---|
+| Docklands 3D | https://danbri.github.io/londat/cwplans/docklands/ |
+| Atlas | https://danbri.github.io/londat/cwplans/atlas/ |
+| Knowledge graph search | https://danbri.github.io/londat/cwplans/kg/ |
+| Feeds and sources, what's on | https://danbri.github.io/londat/cwplans/feeds/ , https://danbri.github.io/londat/cwplans/feeds/whatson.html |
+| Building registry, postcodes | https://danbri.github.io/londat/cwplans/registry/ , https://danbri.github.io/londat/cwplans/postcodes/ |
+| Canada Water to Surrey Quays (where the project started) | https://danbri.github.io/londat/cwplans/ |
+
+## History
+
+The owner created this repository on 2026-10-04 ("Created londat repo"; first commit 2026-10-05) for the bulk files,
+so that danbri/glitchcan-minigam and its GitHub Pages site stayed under their size limits. From 2026-10-05 the London
+Datastore and portal extracts, the KML copies, the live-state cache, the imagery coverage answers, the knowledge graph,
+the contributed photos and the TfL and Canary Wharf Group material were here, and the pages and tools were in
+danbri/glitchcan-minigam, folder `magpie/cwplans/`.
+
+On 2026-10-07 the rest of the project moved here (owner: "Migrate docklands 3d map, data tools, lg etc from
+magpie/cwplans/* into londat repo."), copied at glitchcan-minigam commit 7be94dc:
+`magpie/cwplans/` to `cwplans/` (same relative paths), `third_party/cwplans-structured-data/` and `tools/view-mcp/`.
+History before the move: https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans . Commit ids
+before 2026-10-07 in the skills and the activity log are glitchcan-minigam commits unless they are named as londat
+commits. The old page addresses (https://danbri.github.io/glitchcan-minigam/magpie/cwplans/...) become redirect pages
+to the same page here, with the query and the hash kept.
+
 ## What is here
 
-| folder | what | files | source tools (main repository) |
-|---|---|---|---|
-| `cwplans/feeds/london-datastore/` | London Datastore (data.london.gov.uk, GLA) datasets, clipped to the Docklands 3D model box, plus the walk of the whole catalogue (`catalogue.json`, `triage.json`, `probe.json`, `harvest-log.json`, `index.json`, `zone-codes.json`) | 237 | `tools/walk-london-datastore.mjs`, `tools/lds-harvest-auto.mjs`, `tools/amend-uprns.mjs` |
-| `cwplans/feeds/portals/` | other open-data portals, clipped to the same box: data.gov.uk, planning.data.gov.uk, borough portals, Nomis Census 2021, ONS Open Geography, national sources (DfT, police.uk, DESNZ, OS OpenData, MHCLG) | 163 | `tools/walk-portals.mjs` and `tools/portals/*.mjs` |
-| `cwplans/feeds/kml/` | zone-clipped KML copies of open layers (TfL, Walk Wheel Cycle Trust, Canal & River Trust, Natural England, Historic England, GLA) for the 3D page's `?kml=` link; the licence and attribution are in each file's Document description | 12 | `tools/find-kml.mjs` (catalogue: `magpie/cwplans/feeds/kml/catalogue.json` in the main repository) |
-| `cwplans/cache/` | live-state history and GIS layers: `runs/<day>/live-<time>.json.gz` (the rows each hourly run added) and `live-YYYY-MM.sqlite` (one SQLite per closed UTC month: hire bikes, lift outages, station crowding, power cuts, storm overflows, NOTAM cranes, AIS vessels without small private craft, EA tide and river levels, TfL line status, river-bus arrival counts, Open-Meteo weather; tables `sources` and `runs`), `latest.json` (latest state and the last 24 h per theme, read by the pages), `zone-core.gpkg`, `zone-lds.gpkg`, `zone-portals.gpkg` (GeoPackages of the static zone layers for QGIS and GDAL) | 3 or more | `tools/cache-londat.mjs`, `tools/build-zone-gpkg.mjs` |
-| `third_party/tfl/am3d/` | TfL axonometric station diagrams (FOI release, not an open licence; use approved by the owner 2026-10-05) and the Blender station models made from them | see its README | `tools/blender-stations/` |
-| `third_party/cwg/maps/` | Canary Wharf Group printed maps and guides (store guide with mall and estate maps July 2026, step-free access map, art trail, art guide), supplied by the owner 2026-10-06; not an open licence; see its README and `manifest.json` | 4 | none (added by hand) |
-| `cwplans/data-register.json` | a copy of the register entries for these files: sources, licences, attribution, OSM use | 1 | written by `tools/check-data-register.mjs --write` |
+| folder | what |
+|---|---|
+| `cwplans/` | the project: pages (`docklands/`, `atlas/`, `kg/`, `feeds/`, `registry/`, `postcodes/`, `reports/`), tools (`cwplans/tools/`), skills (`cwplans/skills/`, `cwplans/docklands/skills/`), the data register, `pipeline.json`, `METHODS.md`, and the data |
+| `cwplans/feeds/london-datastore/` | London Datastore (data.london.gov.uk, GLA) datasets clipped to the Docklands 3D model box, and the walk of the whole catalogue; [README](cwplans/feeds/london-datastore/README.md) |
+| `cwplans/feeds/portals/` | other open-data portals clipped to the same box: data.gov.uk, planning.data.gov.uk, borough portals, Nomis Census 2021, ONS Open Geography, national sources; [README](cwplans/feeds/portals/README.md) |
+| `cwplans/feeds/kml/` | zone-clipped KML copies of open layers for the 3D page's `?kml=` link, and the catalogue of KML resources; [README](cwplans/feeds/kml/README.md) |
+| `cwplans/cache/` | the hourly history of live state, `latest.json`, and three GeoPackages for QGIS (below) |
+| `kgx/` | the knowledge graph: graph versions, logs, the Shardborough store read by the search page; [README](kgx/README.md) |
+| `data/images/contrib/` | the owner's photos (CC0), by set; each set has a README and `photos.json` |
+| `third_party/tfl/am3d/` | TfL axonometric station diagrams (FOI release, not an open licence; use approved by the owner 2026-10-05) and the Blender station models made from them |
+| `third_party/cwg/` | Canary Wharf Group printed maps and guides, supplied by the owner 2026-10-06; not an open licence; see its README |
+| `third_party/cwplans-structured-data/` | schema.org data from the websites the registry links to (crawl of the scoping phase); [README](third_party/cwplans-structured-data/README.md) |
+| `tools/view-mcp/` | the `docklands-view` MCP server (`.mcp.json`): landmarks, camera solve, headless renders of the 3D page |
+| `tools/check-skills.mjs` | checks that every skill is linked into `.claude/skills/` |
 
-Each path is the same as the old path under `magpie/cwplans/` in the main repository. For example
-`magpie/cwplans/feeds/london-datastore/heat-demand/heat-demand.json` is now
-`cwplans/feeds/london-datastore/heat-demand/heat-demand.json` here.
-The descriptions of each folder (rules, counts, final states) stay in the main repository:
-[feeds/london-datastore/README.md](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/london-datastore/README.md),
-[feeds/portals/README.md](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/portals/README.md).
-A file whose name ends in `.gz` is gzip-compressed JSON.
+Rules for working here (data policy, licences, model, reports, skills): [CLAUDE.md](CLAUDE.md). Methods and rebuild
+order: [cwplans/METHODS.md](cwplans/METHODS.md). Start with the skill
+[docklands-data-curation](cwplans/skills/docklands-data-curation/SKILL.md).
 
 ## The cache folder (`cwplans/cache/`)
 
@@ -38,8 +64,9 @@ A file whose name ends in `.gz` is gzip-compressed JSON.
   attribution and politeness; table `runs` gives each run's time, counts, errors and file size. Places (docks,
   stations, overflows, piers, gauges) are in `places`. Example:
   `SELECT datetime(fetch_time, 'unixepoch'), sum(bikes) FROM bikes GROUP BY fetch_time;`
-- **`latest.json`**: the newest fetch of each theme in compact columns, and a 24 h series. The pages of the main
-  repository read it first and ask a third-party service only when the visitor switches on "Live".
+- **`latest.json`**: the newest fetch of each theme in compact columns, and a 24 h series. The pages read it first
+  (from raw.githubusercontent.com, so that it is new each hour) and ask a third-party service only when the visitor
+  switches on "Live".
 - **`zone-core.gpkg`** (3D model, registry, construction, river; 17 MB), **`zone-lds.gpkg`** (London Datastore; 38 MB),
   **`zone-portals.gpkg`** (other portals; 13 MB): OGC GeoPackages, split so that each stays under 50 MB. In QGIS: Layer > Add Layer > Add Vector Layer (or drag the file into the
   window), then pick the layers. The 3D model layers (`model_*`) are in EPSG:27700 (British National Grid); the others
@@ -54,18 +81,15 @@ A file whose name ends in `.gz` is gzip-compressed JSON.
   (CC BY 4.0). Source: UK AIS (NATS); NOTAM facts only, no open licence stated. AIS: Open Waters AIS
   (https://openwaters.io/ais/), AISHub (https://www.aishub.net) and aisstream.io events, accepted for scoping only and
   marked for review; small private craft are counted, never listed.
-- Refresh: `.github/workflows/cache-live.yml` in this repository (hourly), or by hand from the main repository:
-  `NODE_USE_ENV_PROXY=1 LONDAT_DIR=/path/to/londat node magpie/cwplans/tools/cache-londat.mjs`.
+- Refresh: `.github/workflows/cache-live.yml` (hourly), or by hand: `NODE_USE_ENV_PROXY=1 node cwplans/tools/cache-londat.mjs`.
 
 ## The register is the authority
 
-The authority for every file (source, licence, attribution, method, OSM use) is
-[magpie/cwplans/data-register.json](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/data-register.json)
-in the main repository (readable view:
-[DATA-REGISTER.md](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/DATA-REGISTER.md)).
-Entries for files in this repository have `"hosted": "londat"`. `cwplans/data-register.json` here is a copy of those
-entries; if the two disagree, the main repository is correct.
-Methods: [METHODS.md](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/METHODS.md).
+The authority for every file in `cwplans/` (and `third_party/cwplans-structured-data/`): source, licence,
+attribution, method, OSM use, is [cwplans/data-register.json](cwplans/data-register.json) (readable view:
+[cwplans/DATA-REGISTER.md](cwplans/DATA-REGISTER.md)). `node cwplans/tools/check-data-register.mjs` fails on an
+unregistered file. Methods: [cwplans/METHODS.md](cwplans/METHODS.md). `kgx/`, `data/images/` and the other
+`third_party/` folders describe their sources in their own READMEs and manifests.
 
 ## Licences
 
@@ -83,24 +107,29 @@ There is no blanket licence. Each file keeps the licence of its source. See [LIC
 - Some London Datastore files add keys or positions from other open sources: ONS Postcode Directory and OS Open UPRN
   (OGL v3.0), DfE GIAS and NHS ODS (OGL v3.0), Sport England Active Places (CC BY 4.0), TfL open data (Powered by TfL
   Open Data). Coordinates were transformed with the OS OSTN15 grid.
+- `third_party/tfl/` and `third_party/cwg/` have no open licence; the GitHub Pages site does not publish `third_party/`.
 
 ## OpenStreetMap
 
-Two files use OpenStreetMap data, © OpenStreetMap contributors, under the ODbL 1.0
-(https://www.openstreetmap.org/copyright):
-`cwplans/feeds/london-datastore/cultural-infrastructure/cultural-infrastructure.uprn-amended.geojson` and
-`cultural-infrastructure.uprn-amendments.json` in the same folder. OSM building outlines chose 6 UPRN values; the files
-hold no OSM geometry, tags or ids. The extract and its date are in the register.
+Many files in `cwplans/` use OpenStreetMap data, © OpenStreetMap contributors, under the ODbL 1.0
+(https://www.openstreetmap.org/copyright): the 3D model, the building registry, the atlas and others. The register
+lists each one with how it uses OSM and the extract and its date (DATA-REGISTER.md, "OpenStreetMap (ODbL) use"), and
+every page that shows OSM data carries the attribution link.
 
-## Use from a page
+## GitHub Pages
 
-Pages in the main repository read these files through one constant, `magpie/cwplans/data-base.js`. Until GitHub
-Pages is on for this repository it is `https://raw.githubusercontent.com/danbri/londat/main/cwplans/` (that host
-sends `Access-Control-Allow-Origin: *`); then `https://danbri.github.io/londat/cwplans/`.
+The site is built by `.github/workflows/pages.yml` on each push to `main` that changes more than `cwplans/cache/`
+(the hourly cache commits do not redeploy it). It publishes the whole repository except `.github/`, `third_party/`,
+`cwplans/cache/runs/` and `cwplans/cache/*.sqlite` (430 MB at the move; the limit is 1 GB and the workflow stops at
+950 MB). Pages read data through `cwplans/data-base.js`: same site, except `cache/` from raw.githubusercontent.com.
+One-time setting (repository owner): Settings > Pages > Build and deployment > Source: **GitHub Actions**.
 
-## Updating
+## Working here
 
-Tools in the main repository write here: set `LONDAT_DIR` to this checkout (the default is a `londat` folder next to
-the main repository's folder). Then run `node magpie/cwplans/tools/check-data-register.mjs --write` in the main
-repository, which checks each file here against the register and rewrites `cwplans/data-register.json`. Keep each
-push well under 500 MB and each file under 100 MB.
+    npm install                                   # the tools' libraries (npm ci --omit=dev: only the three the hourly tools need)
+    npm run check                                 # the data register
+    npm test                                      # tool tests
+    python3 -m http.server 8080                   # then http://127.0.0.1:8080/cwplans/docklands/
+
+Commands run from the repository root (`node cwplans/tools/<tool>.mjs`). Keep each push well under 500 MB and each
+file under 100 MB.

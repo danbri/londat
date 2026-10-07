@@ -2,8 +2,9 @@
 
 There is **no blanket licence** for this repository. Each file keeps the licence of the source it came from.
 The licence, attribution and URL of every source are in
-[magpie/cwplans/data-register.json](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/data-register.json)
-of the main repository (the authority) and in the copy `cwplans/data-register.json` here. Most data files also carry
+[cwplans/data-register.json](cwplans/data-register.json) (the authority; readable view
+[cwplans/DATA-REGISTER.md](cwplans/DATA-REGISTER.md)). Until 2026-10-07 the register was in danbri/glitchcan-minigam
+(`magpie/cwplans/data-register.json`) and this repository held a copy of its entries for the files here. Most data files also carry
 their source, licence and attribution in their own `meta` member.
 
 When you use a file, give the attribution its source asks for. The ones that occur here:

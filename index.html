@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>londat: Canary Wharf and Docklands from open data</title>
+<meta name="description" content="The Canary Wharf and Docklands project (cwplans): a 3D model, an atlas, a knowledge graph, feeds and the open data behind them.">
+<style>
+:root{--bg:#101316;--panel:#15191d;--line:#333a41;--fg:#e8eaec;--muted:#aab2ba;--link:#9cc8ff}
+@media (prefers-color-scheme: light){:root{--bg:#f7f8f9;--panel:#fff;--line:#d5d9dd;--fg:#15191d;--muted:#56606a;--link:#0b5cad}}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
+main{max-width:46rem;margin:0 auto;padding:1.25rem 1rem 3rem}
+h1{font-size:1.4rem;margin:.5rem 0}
+h2{font-size:1.05rem;margin:1.6rem 0 .4rem}
+a{color:var(--link)}
+ul{list-style:none;padding:0;margin:0}
+li{padding:.55rem .75rem;margin:.4rem 0;background:var(--panel);border:1px solid var(--line);border-radius:.5rem}
+li a{font-weight:600}
+.small{color:var(--muted);font-size:.875rem}
+</style>
+</head>
+<body>
+<main>
+  <h1>Canary Wharf and Docklands, from open data</h1>
+  <p class="small">The cwplans project of danbri: scoping, planning and prototyping. The data is not reviewed for production use.
+    Source and data: <a href="https://github.com/danbri/londat">github.com/danbri/londat</a>.</p>
+
+  <h2>Pages</h2>
+  <ul>
+    <li><a href="cwplans/docklands/">Docklands 3D</a><br><span class="small">London Bridge to Cody Dock, Canary Wharf above and below ground: buildings, river, stations, sky, live layers.</span></li>
+    <li><a href="cwplans/atlas/">Atlas</a><br><span class="small">Everything joined: map, buildings, businesses, postcodes, levels below ground, heritage, river, live feeds, data quality.</span></li>
+    <li><a href="cwplans/kg/">Knowledge graph search</a><br><span class="small">SPARQL over the cwplans knowledge graph (kgx/), in the browser.</span></li>
+    <li><a href="cwplans/feeds/">Feeds and sources</a> and <a href="cwplans/feeds/whatson.html">what's on</a><br><span class="small">Checked data sources, feeds and APIs; permits, works, closures and events.</span></li>
+    <li><a href="cwplans/registry/">Building registry</a> and <a href="cwplans/postcodes/">postcodes</a></li>
+    <li><a href="cwplans/">Canada Water to Surrey Quays</a> and the <a href="cwplans/schematic.html">first schematic</a><br><span class="small">The East London Line corridor model, where the project started.</span></li>
+    <li>Reports: <a href="cwplans/reports/schema-org/">schema.org markup</a>, <a href="cwplans/reports/hours-and-plans/">site search, opening hours and mall plans</a></li>
+  </ul>
+
+  <h2>Data and methods</h2>
+  <ul>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">Data register</a><br><span class="small">Every data file: sources, licences, OpenStreetMap use. There is no blanket licence; see <a href="https://github.com/danbri/londat/blob/main/LICENSE-DATA.md">LICENSE-DATA.md</a>.</span></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/METHODS.md">Methods</a><br><span class="small">Every tool and hand step, in rebuild order.</span></li>
+  </ul>
+  <p class="small">Map data from OpenStreetMap: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, ODbL 1.0. Each page names the sources it shows.</p>
+</main>
+</body>
+</html>

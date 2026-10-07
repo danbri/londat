@@ -1,0 +1,52 @@
+# Publish this repository as the GitHub Pages site https://danbri.github.io/londat/ (the cwplans pages: 3D, atlas, kg,
+# feeds, what's on, registry, postcodes; the data they read; kgx/). One-time setting by the owner: Settings > Pages >
+# Build and deployment > Source: "GitHub Actions".
+# Not published (they stay readable in the repository): cwplans/cache/runs/ and cwplans/cache/*.sqlite (the hourly
+# history; the pages read cache/latest.json from raw.githubusercontent.com, see cwplans/data-base.js) and third_party/
+# (TfL and Canary Wharf Group material with no open licence, and the crawl data of the scoping phase).
+# The hourly cache commits do not deploy: they change only cwplans/cache/ (paths-ignore), and a push made with the
+# workflow token starts no other workflow. Skill: docklands-data-curation, "Data hosted in danbri/londat".
+name: pages
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'cwplans/cache/**'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:   # one deployment at a time; a deployment that has started runs to the end
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Stage the site (whole repository less .git, .github, .claude, the hourly runs and third_party/)
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          tar -c --exclude=./.git --exclude=./.github --exclude=./.claude --exclude=./node_modules --exclude=./third_party \
+            --exclude=./cwplans/cache/runs --exclude='./cwplans/cache/*.sqlite' . | tar -x -C "$RUNNER_TEMP/site"
+          du -sh "$RUNNER_TEMP/site"
+          test "$(du -sm "$RUNNER_TEMP/site" | cut -f1)" -lt 950   # the Pages limit is 1 GB
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+      - name: Upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

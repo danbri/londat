@@ -4,7 +4,7 @@ Queue of data sources for the cwplans scoping project (Canary Wharf, Isle of Dog
 Machine-readable copy: [`sources-to-investigate.json`](sources-to-investigate.json). Started 2026-10-06 from a Gemini
 answer the owner pasted, checked against what the project already holds.
 
-Licence classes follow the project rule (CLAUDE.md in danbri/glitchcan-minigam, cwplans exception): **open** may be
+Licence classes follow the project rule ([CLAUDE.md](CLAUDE.md), "Data policy (the cwplans exception)"; until 2026-10-07 in danbri/glitchcan-minigam): **open** may be
 committed; **share-alike** gives counts only, and a committed extract needs the owner's agreement (OpenStreetMap is the
 one share-alike source already agreed); **unknown** means check the terms first.
 
@@ -53,4 +53,4 @@ The numbers come from the knowledge graph: graph `coverage-imagery` in [`kgx/`](
 `lift-imagery-coverage` from the answer files: OpenAerialMap and EA answers in
 [`cwplans/coverage/raw/2026-10-06/`](cwplans/coverage/raw/2026-10-06/); Panoramax and KartaView answers are not
 committed (share-alike), the activity log names them by SHA-256. Tool:
-`magpie/cwplans/tools/probe-imagery-coverage.mjs` in danbri/glitchcan-minigam.
+[`cwplans/tools/probe-imagery-coverage.mjs`](cwplans/tools/probe-imagery-coverage.mjs) (in danbri/glitchcan-minigam until 2026-10-07).
