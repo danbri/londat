@@ -1,11 +1,11 @@
 # kgx: the cwplans knowledge graph
 
-Core data of the Canary Wharf / Docklands scoping project (magpie/cwplans in
-[danbri/glitchcan-minigam](https://github.com/danbri/glitchcan-minigam)) as RDF, beginning with the cited Canary Wharf
-facts. Built by
-[`magpie/cwplans/tools/build-kgx.mjs`](https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/build-kgx.mjs)
+Core data of the Canary Wharf / Docklands scoping project (`cwplans/` in this repository; until 2026-10-07
+magpie/cwplans in [danbri/glitchcan-minigam](https://github.com/danbri/glitchcan-minigam)) as RDF, beginning with the
+cited Canary Wharf facts. Built by
+[`cwplans/tools/build-kgx.mjs`](https://github.com/danbri/londat/blob/main/cwplans/tools/build-kgx.mjs)
 with [@factoidal/core](https://github.com/danbri/factoidal). Search page:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/kg/
+https://danbri.github.io/londat/cwplans/kg/
 
 Status: scoping, planning and prototyping. Not reviewed for production use. Each graph states its sources and licence
 in the `meta` graph and in `manifest.json`; several hold OpenStreetMap-derived data (© OpenStreetMap contributors,
@@ -27,7 +27,7 @@ Nothing is edited in place.
   `log/versions.jsonl` every graph version (name, hash, triples, file, title, licence).
 - `heads.json` maps each graph name to its current version.
 
-The rule and the operations: the `cwplans-dataflow` skill in the main repository.
+The rule and the operations: the `cwplans-dataflow` skill (`cwplans/skills/cwplans-dataflow/` in this repository).
 
 ## Graphs (current versions)
 
@@ -86,7 +86,7 @@ The store's graph IRIs are the parts (`graph/cwg.p03/<hash16>`); `meta` says whi
 `GRAPH ?g1 { ?place s:openingHoursSpecification ?h } GRAPH ?g2 { ?h s:opens ?o }` finds (measured on this store: 130
 rows against 2,519).
 
-    node magpie/cwplans/tools/kgx-query.mjs ../londat/kgx/queries/open-at.rq     # in the main repository
+    node cwplans/tools/kgx-query.mjs kgx/queries/open-at.rq     # from the repository root
 
 `npx factoidal query kgx/shardborough '…'` works too, but it is the stateless call: it refuses a plan above 64
 blocks. `kgx-query.mjs` opens a store handle, which has no block cap (only 128 MiB held in all).

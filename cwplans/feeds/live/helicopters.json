@@ -1,0 +1,318 @@
+{
+ "meta": {
+  "source": "helicopters",
+  "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-AD-2.EGLL-en-GB.html",
+  "fetched": "2026-10-04T08:27:17.144Z",
+  "aip_issue": "2024-03-21 (AIRAC)",
+  "licence": "© NATS Limited (UK AIS) / UK AIP Crown copyright; no open licence stated. Facts only (identifiers, positions, heights, times); no NOTAM text, tables or charts copied. Re-check before production",
+  "attribution": "Source: UK AIS (NATS), www.nats.aero/ais",
+  "h4_profile": {
+   "vfr_max_ft": 2000,
+   "suggested_min_ft": 1000,
+   "svfr_max_ft": 1500,
+   "note": "AD 2.22 para 12 table: values printed between London Bridge and Vauxhall Bridge; the row between Isle-of-Dogs and London Bridge is blank in the HTML table; AIC Y 079/2020: no lower than 1000 FT AMSL on H4 between the Isle of Dogs and the London Heliport"
+  },
+  "method": "UK AIP EGLL AD 2.22 paragraph 12 (Helicopter Routes in the London CTR and London City CTR), route H4 rows, and ENR 5.1 restricted areas EGR158, EGR159 and EGR160, read from the eAIP HTML (cached locally); names, grid references, positions, altitudes and limits kept as facts. The routes' precise lines are on the 1:50 000 chart (not copied). No live helicopter positions: see feeds/live/README.md, \"Helicopters\"",
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  },
+  "counts": {
+   "items": 8,
+   "model_box": 4,
+   "east_margin": 0
+  }
+ },
+ "items": [
+  {
+   "id": "EGR158",
+   "kind": "restricted-area",
+   "name": "CITY OF LONDON",
+   "zone": "model",
+   "time": null,
+   "position": {
+    "lat": 51.516349,
+    "lon": -0.092897
+   },
+   "values": {
+    "lower": "SFC",
+    "upper": "1400 FT ALT",
+    "vertices": [
+     [
+      51.523611,
+      -0.096389
+     ],
+     [
+      51.521667,
+      -0.0775
+     ],
+     [
+      51.511944,
+      -0.071667
+     ],
+     [
+      51.504444,
+      -0.075833
+     ],
+     [
+      51.510278,
+      -0.117778
+     ],
+     [
+      51.518889,
+      -0.114722
+     ],
+     [
+      51.523611,
+      -0.096389
+     ]
+    ],
+    "arcs": [],
+    "permitted": [
+     "any aircraft in the service of the Chief Officer of Police for the Metropolitan Police District",
+     "any aircraft flying in accordance with a Special Flight Notification issued by the appropriate ATC unit",
+     "any helicopter flying on Helicopter Route H4",
+     "any aircraft flying in accordance with an Enhanced Non-Standard Flight clearance issued by the appropriate ATC unit."
+    ],
+    "legal_basis": "2092/2004"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-ENR-5.1-en-GB.html"
+  },
+  {
+   "id": "EGR159",
+   "kind": "restricted-area",
+   "name": "ISLE OF DOGS",
+   "zone": "model",
+   "time": null,
+   "position": {
+    "lat": 51.499722,
+    "lon": -0.014271
+   },
+   "values": {
+    "lower": "SFC",
+    "upper": "1400 FT ALT",
+    "vertices": [
+     [
+      51.509722,
+      -0.006944
+     ],
+     [
+      51.498333,
+      -0.009167
+     ],
+     [
+      51.493889,
+      -0.006111
+     ],
+     [
+      51.491944,
+      -0.013611
+     ],
+     [
+      51.489167,
+      -0.020278
+     ],
+     [
+      51.5,
+      -0.031667
+     ],
+     [
+      51.505,
+      -0.019444
+     ],
+     [
+      51.509722,
+      -0.006944
+     ]
+    ],
+    "arcs": [
+     {
+      "radius_nm": 0.3,
+      "centre": [
+       51.491944,
+       -0.013611
+      ]
+     },
+     {
+      "radius_nm": 0.55,
+      "centre": [
+       51.505,
+       -0.019444
+      ]
+     }
+    ],
+    "permitted": [
+     "any aircraft in the service of the Chief Officer of Police for the Metropolitan Police District",
+     "any aircraft flying in accordance with a Special Flight Notification issued by the appropriate ATC unit",
+     "any helicopter flying on Helicopter Route H4",
+     "any aircraft flying in accordance with an Enhanced Non-Standard Flight clearance issued by the appropriate ATC unit",
+     "any aircraft approaching to, or departing from, London/City Airport."
+    ],
+    "legal_basis": "2091/2004"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-ENR-5.1-en-GB.html"
+  },
+  {
+   "id": "EGR160",
+   "kind": "restricted-area",
+   "name": "THE SPECIFIED AREA",
+   "zone": null,
+   "time": null,
+   "position": {
+    "lat": 51.499639,
+    "lon": -0.158583
+   },
+   "values": {
+    "lower": "SFC",
+    "upper": "UNL",
+    "vertices": [
+     [
+      51.486667,
+      -0.287778
+     ],
+     [
+      51.572222,
+      -0.235278
+     ],
+     [
+      51.555,
+      -0.151111
+     ],
+     [
+      51.569167,
+      -0.055
+     ],
+     [
+      51.525,
+      -0.0125
+     ],
+     [
+      51.445833,
+      -0.012222
+     ],
+     [
+      51.453333,
+      -0.102778
+     ],
+     [
+      51.420833,
+      -0.206111
+     ],
+     [
+      51.481667,
+      -0.235278
+     ],
+     [
+      51.486667,
+      -0.287778
+     ]
+    ],
+    "arcs": [],
+    "permitted": null,
+    "legal_basis": "964/2005",
+    "river_excluded": true
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-ENR-5.1-en-GB.html"
+  },
+  {
+   "id": "H4-Chelsea-Bridge",
+   "kind": "helicopter-reporting-point",
+   "name": "Chelsea Bridge",
+   "zone": null,
+   "time": null,
+   "position": {
+    "lat": 51.483889,
+    "lon": -0.15
+   },
+   "values": {
+    "route": "H4",
+    "reporting": "compulsory",
+    "grid_ref": "TQ 286 778",
+    "description": "Chelsea Road Bridge"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-AD-2.EGLL-en-GB.html"
+  },
+  {
+   "id": "H4-Isle-of-Dogs",
+   "kind": "helicopter-reporting-point",
+   "name": "Isle-of-Dogs",
+   "zone": "model",
+   "time": null,
+   "position": {
+    "lat": 51.483889,
+    "lon": -0.011667
+   },
+   "values": {
+    "route": "H4",
+    "reporting": "compulsory",
+    "grid_ref": "TQ 381 781",
+    "description": "Specified Area Boundary crossing River Thames - north abeam Cutty Sark"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-AD-2.EGLL-en-GB.html"
+  },
+  {
+   "id": "H4-London-Bridge",
+   "kind": "helicopter-reporting-point",
+   "name": "London Bridge",
+   "zone": "model",
+   "time": null,
+   "position": {
+    "lat": 51.5075,
+    "lon": -0.084444
+   },
+   "values": {
+    "route": "H4",
+    "reporting": "on request",
+    "grid_ref": "TQ 330 805",
+    "description": "London Bridge (road bridge)"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-AD-2.EGLL-en-GB.html"
+  },
+  {
+   "id": "H4-London-Heliport",
+   "kind": "helicopter-reporting-point",
+   "name": "London Heliport",
+   "zone": null,
+   "time": null,
+   "position": {
+    "lat": 51.47,
+    "lon": -0.179444
+   },
+   "values": {
+    "route": "H4",
+    "reporting": "compulsory",
+    "grid_ref": "TQ 266 762",
+    "description": "London Heliport"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-AD-2.EGLL-en-GB.html"
+  },
+  {
+   "id": "H4-Vauxhall-Bridge",
+   "kind": "helicopter-reporting-point",
+   "name": "Vauxhall Bridge",
+   "zone": null,
+   "time": null,
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.126667
+   },
+   "values": {
+    "route": "H4",
+    "reporting": "compulsory",
+    "grid_ref": "TQ 302 782",
+    "description": "CTR Boundary crossing River Thames"
+   },
+   "url": "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-03-21-AIRAC/html/eAIP/EG-AD-2.EGLL-en-GB.html"
+  }
+ ]
+}

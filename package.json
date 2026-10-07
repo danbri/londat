@@ -1,0 +1,36 @@
+{
+  "name": "londat",
+  "private": true,
+  "description": "Canary Wharf / Docklands project (cwplans): the 3D page, the atlas, the knowledge graph, the data tools and the open-data extracts. Live site: https://danbri.github.io/londat/",
+  "license": "SEE LICENSE IN LICENSE-DATA.md",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "check": "node cwplans/tools/check-data-register.mjs",
+    "check:write": "node cwplans/tools/check-data-register.mjs --write",
+    "check:factoidal": "node cwplans/tools/check-factoidal.mjs",
+    "test": "node --test cwplans/tools/test/*.test.mjs",
+    "test:view-mcp": "node tools/view-mcp/test.mjs",
+    "skills:check": "node tools/check-skills.mjs"
+  },
+  "dependencies": {
+    "earcut": "^3.2.4",
+    "geotiff": "^2.1.3",
+    "proj4": "^2.22.0"
+  },
+  "devDependencies": {
+    "@factoidal/core": "^0.7.1",
+    "@mapbox/vector-tile": "^2.0.5",
+    "@napi-rs/canvas": "^1.0.10",
+    "@playwright/test": "1.56.1",
+    "exceljs": "^4.4.0",
+    "osm-pbf-parser": "^2.3.0",
+    "pbf": "^4.0.2",
+    "pdfjs-dist": "^6.4.299",
+    "playwright": "1.56.1",
+    "tesseract.js": "^7.0.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "yauzl": "^2.10.0"
+  }
+}

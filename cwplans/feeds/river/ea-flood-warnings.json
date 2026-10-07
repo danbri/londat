@@ -1,0 +1,19 @@
+{
+ "meta": {
+  "source": "ea-flood-warnings",
+  "fetched": "2026-10-04T08:28:26Z",
+  "url": "https://environment.data.gov.uk/flood-monitoring/id/floods?lat=51.505&long=0&dist=15",
+  "licence": "Open Government Licence v3.0",
+  "attribution": "This uses Environment Agency flood and river level data from the real-time data API (Beta)",
+  "method": "EA real-time flood-monitoring API: flood alerts and warnings in force within 15 km of 51.505, 0 at fetch time (an empty list means none in force). The flood area polygons are at /id/floodAreas/{id}/polygon.",
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  },
+  "counts": {
+   "items": 0
+  }
+ },
+ "items": []
+}

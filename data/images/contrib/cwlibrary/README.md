@@ -3,7 +3,7 @@
 Four photographs taken by danbri (the project owner) at about 16:30 BST on 6 October 2026 round Canada Water Library,
 SE16, and given to the project under **CC0 1.0** (https://creativecommons.org/publicdomain/zero/1.0/). The files carry
 no EXIF time, GPS or camera data. They are for facade patterns and textures of these buildings in the 3D model:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&t=now&u=0
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&t=now&u=0
 
 | file | shows | identified as |
 |---|---|---|
@@ -55,11 +55,12 @@ The colours measured are as photographed in evening shade or against the light; 
 repeat), and `columbia-regina-point.png` with its vector source `columbia-regina-point.svg` (a pattern drawn in metres:
 one floor by one bay; the colours are judged, because the photo is against the sun). Sizes, crops and reasons are in
 `photos.json` (`tiles`). The page draws them on the four buildings (and Regina Point) from the facade atlas:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&u=0
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&u=0
 
 ## In the knowledge graph
 
-The operations `rectify-facade-patches`, `lift-contrib-photos` and `cut-facade-tiles` (`magpie/cwplans/tools/contrib-photos.mjs`
-in danbri/glitchcan-minigam) make the graphs `facade-patches-cwlibrary`, `photos-cwlibrary` and `facade-tiles-cwlibrary` in [`kgx/`](../../../../kgx/);
+The operations `rectify-facade-patches`, `lift-contrib-photos` and `cut-facade-tiles` (`cwplans/tools/contrib-photos.mjs`
+in this repository; `magpie/cwplans/tools/` in danbri/glitchcan-minigam until 2026-10-07) make the graphs
+`facade-patches-cwlibrary`, `photos-cwlibrary` and `facade-tiles-cwlibrary` in [`kgx/`](../../../../kgx/);
 the activity log names the inputs (these photos and `photos.json`) by SHA-256. OSM names and tags quoted in the graph
 are © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright).

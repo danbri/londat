@@ -1,0 +1,672 @@
+{
+ "meta": {
+  "source": "markets",
+  "fetched": "2026-10-04",
+  "url": "https://www.towerhamlets.gov.uk/lgnl/business/markets/markets_in_tower_hamlets.aspx; OSM amenity=marketplace",
+  "licence": "OSM: ODbL 1.0 (© OpenStreetMap contributors); Tower Hamlets page: council website terms, days and times as facts with the link",
+  "attribution": "© OpenStreetMap contributors (https://www.openstreetmap.org/copyright); Tower Hamlets Council, Markets in Tower Hamlets",
+  "osm_extract": "osmfr-greater-london (data-register.json osm_extracts; local, not committed)",
+  "method": "OSM amenity=marketplace nodes and ways in the zone, read from the local Greater London extract (ways placed at the mean of their nodes); the Tower Hamlets street-markets page parsed for name, days, place and times, joined to OSM by name, else placed on the OSM street it names. Other boroughs publish no market list in a form read here (README gaps).",
+  "th_markets": [
+   {
+    "name": "Brick Lane Market",
+    "days": "Sundays",
+    "place": "Brick Lane, E1",
+    "times": "Sundays, 10am to 3pm",
+    "osm": null
+   },
+   {
+    "name": "Columbia Road Flower Market",
+    "days": "Sundays",
+    "place": "Columbia Road, E2",
+    "times": "Sundays, 8am to 2pm",
+    "osm": null
+   },
+   {
+    "name": "Petticoat Lane Market",
+    "days": "Sunday",
+    "place": "Middlesex Street, E1",
+    "times": "Sundays, 9am to 3pm",
+    "osm": null
+   },
+   {
+    "name": "Petticoat Lane Street Food",
+    "days": "Mondays to Fridays",
+    "place": "Wentworth Street E1",
+    "times": "Monday to Friday, 8am to 4pm",
+    "osm": null
+   },
+   {
+    "name": "Whitechapel Market",
+    "days": "Monday to Saturday",
+    "place": "Whitechapel Road, E1",
+    "times": "Monday to Saturday, 8am to 6pm",
+    "osm": null
+   },
+   {
+    "name": "Chrisp Street Market",
+    "days": "Monday to Saturday",
+    "place": "Chrisp Street, E14",
+    "times": "Monday to Saturday, 8am to 6pm",
+    "osm": "way/50437784"
+   },
+   {
+    "name": "Roman Road Market",
+    "days": "Tuesday, Thursday and Saturday",
+    "place": "Roman Road, E3",
+    "times": "Tuesday, Thursday, Saturday, 8am to 6pm",
+    "osm": null
+   }
+  ],
+  "counts": {
+   "items": 28,
+   "th_markets_on_page": 7,
+   "osm_marketplaces": 25,
+   "th_matched_osm": 1,
+   "th_placed_by_street": 3,
+   "th_outside_zone": 3
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "osm-market:node/12403373180",
+   "kind": "market",
+   "title": "Stepney Farmers Market: Sa 10:00-15:00",
+   "start": null,
+   "end": null,
+   "recurring": "Sa 10:00-15:00",
+   "opening_hours": "Sa 10:00-15:00",
+   "location": "Stepney Farmers Market",
+   "borough": null,
+   "lat": 51.517606,
+   "lon": -0.043784,
+   "zone": "model",
+   "placed_by": "OSM node 12403373180",
+   "osm": "node/12403373180",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/node/12403373180",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/1278632612",
+   "kind": "market",
+   "title": "Kappacasein Dairy: Sa 09:00-14:00",
+   "start": null,
+   "end": null,
+   "recurring": "Sa 09:00-14:00",
+   "opening_hours": "Sa 09:00-14:00",
+   "location": "Voyager Industrial Estate",
+   "borough": null,
+   "lat": 51.496431,
+   "lon": -0.068815,
+   "zone": "model",
+   "placed_by": "OSM node 1278632612",
+   "osm": "node/1278632612",
+   "operator": null,
+   "url": "https://kappacasein.webflow.io/eat#spa",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/2754596530",
+   "kind": "market",
+   "title": "Sunday Upmarket: Su 10:00-18:00",
+   "start": null,
+   "end": null,
+   "recurring": "Su 10:00-18:00",
+   "opening_hours": "Su 10:00-18:00",
+   "location": "Brick Lane",
+   "borough": null,
+   "lat": 51.520469,
+   "lon": -0.072077,
+   "zone": "model",
+   "placed_by": "OSM node 2754596530",
+   "osm": "node/2754596530",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/node/2754596530",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/2825011782",
+   "kind": "market",
+   "title": "Maltby Street Market: Sa 10:00-17:00; Su 11:00-16:00",
+   "start": null,
+   "end": null,
+   "recurring": "Sa 10:00-17:00; Su 11:00-16:00",
+   "opening_hours": "Sa 10:00-17:00; Su 11:00-16:00",
+   "location": "Maltby Street Market",
+   "borough": null,
+   "lat": 51.499258,
+   "lon": -0.075624,
+   "zone": "model",
+   "placed_by": "OSM node 2825011782",
+   "osm": "node/2825011782",
+   "operator": null,
+   "url": "http://www.maltby.st/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/3532904213",
+   "kind": "market",
+   "title": "Jubilee Market (Borough Market)",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Jubilee Market (Borough Market)",
+   "borough": null,
+   "lat": 51.505697,
+   "lon": -0.090335,
+   "zone": "model",
+   "placed_by": "OSM node 3532904213",
+   "osm": "node/3532904213",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/node/3532904213",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/8823992480",
+   "kind": "market",
+   "title": "Royal Wharf Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Royal Wharf Market",
+   "borough": null,
+   "lat": 51.50052,
+   "lon": 0.028836,
+   "zone": "east",
+   "placed_by": "OSM node 8823992480",
+   "osm": "node/8823992480",
+   "operator": "Ace Events Ltd.",
+   "url": "https://www.openstreetmap.org/node/8823992480",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/901200839",
+   "kind": "market",
+   "title": "Bermondsey Farmers' Market: Sa 10:00-14:00",
+   "start": null,
+   "end": null,
+   "recurring": "Sa 10:00-14:00",
+   "opening_hours": "Sa 10:00-14:00",
+   "location": "Bermondsey Farmers' Market",
+   "borough": null,
+   "lat": 51.497451,
+   "lon": -0.081057,
+   "zone": "model",
+   "placed_by": "OSM node 901200839",
+   "osm": "node/901200839",
+   "operator": null,
+   "url": "https://www.lfm.org.uk/markets/bermondsey/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:node/902513135",
+   "kind": "market",
+   "title": "Broadgate Farmers' Market: Th 08:00-14:00",
+   "start": null,
+   "end": null,
+   "recurring": "Th 08:00-14:00",
+   "opening_hours": "Th 08:00-14:00",
+   "location": "Broadgate Farmers' Market",
+   "borough": null,
+   "lat": 51.519423,
+   "lon": -0.084515,
+   "zone": "model",
+   "placed_by": "OSM node 902513135",
+   "osm": "node/902513135",
+   "operator": null,
+   "url": "https://www.lfm.org.uk/markets/broadgate/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/1381655923",
+   "kind": "market",
+   "title": "Douglas Way Market: We,Fr,Sa 09:00-17:30",
+   "start": null,
+   "end": null,
+   "recurring": "We,Fr,Sa 09:00-17:30",
+   "opening_hours": "We,Fr,Sa 09:00-17:30",
+   "location": "Douglas Way",
+   "borough": null,
+   "lat": 51.47765,
+   "lon": -0.027093,
+   "zone": "model",
+   "placed_by": "OSM way 1381655923 (mean of its nodes)",
+   "osm": "way/1381655923",
+   "operator": "Lewisham Council",
+   "url": "https://www.openstreetmap.org/way/1381655923",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/1421183502",
+   "kind": "market",
+   "title": "Tabard Street Food Market: Mo-Fr 11:00-15:00",
+   "start": null,
+   "end": null,
+   "recurring": "Mo-Fr 11:00-15:00",
+   "opening_hours": "Mo-Fr 11:00-15:00",
+   "location": "Tabard Street Food Market",
+   "borough": null,
+   "lat": 51.501462,
+   "lon": -0.092446,
+   "zone": "model",
+   "placed_by": "OSM way 1421183502 (mean of its nodes)",
+   "osm": "way/1421183502",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/way/1421183502",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/143113935",
+   "kind": "market",
+   "title": "Leadenhall Market: Mo-Su 10:00-18:00",
+   "start": null,
+   "end": null,
+   "recurring": "Mo-Su 10:00-18:00",
+   "opening_hours": "Mo-Su 10:00-18:00",
+   "location": "Gracechurch Street",
+   "borough": null,
+   "lat": 51.51278,
+   "lon": -0.083658,
+   "zone": "model",
+   "placed_by": "OSM way 143113935 (mean of its nodes)",
+   "osm": "way/143113935",
+   "operator": null,
+   "url": "https://leadenhallmarket.co.uk/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/156397315",
+   "kind": "market",
+   "title": "Deptford Market: We, Fr-Sa 09:00-17:30",
+   "start": null,
+   "end": null,
+   "recurring": "We, Fr-Sa 09:00-17:30",
+   "opening_hours": "We, Fr-Sa 09:00-17:30",
+   "location": "Deptford Market",
+   "borough": null,
+   "lat": 51.477191,
+   "lon": -0.026365,
+   "zone": "model",
+   "placed_by": "OSM way 156397315 (mean of its nodes)",
+   "osm": "way/156397315",
+   "operator": "Lewisham Council",
+   "url": "https://lewisham.gov.uk/inmyarea/markets/street-markets/deptford-markets",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/16306646",
+   "kind": "market",
+   "title": "Old Spitalfields Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Old Spitalfields Market",
+   "borough": null,
+   "lat": 51.51963,
+   "lon": -0.075323,
+   "zone": "model",
+   "placed_by": "OSM way 16306646 (mean of its nodes)",
+   "osm": "way/16306646",
+   "operator": null,
+   "url": "https://www.spitalfields.co.uk/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/208091528",
+   "kind": "market",
+   "title": "Spitalfields Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Spitalfields Market",
+   "borough": null,
+   "lat": 51.519839,
+   "lon": -0.076778,
+   "zone": "model",
+   "placed_by": "OSM way 208091528 (mean of its nodes)",
+   "osm": "way/208091528",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/way/208091528",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/24282400",
+   "kind": "market",
+   "title": "Borough Market: Mo-Th 10:00-17:00; Fr 10:00-18:00; Sa 08:00-17:00; Su 10:00-14:00",
+   "start": null,
+   "end": null,
+   "recurring": "Mo-Th 10:00-17:00; Fr 10:00-18:00; Sa 08:00-17:00; Su 10:00-14:00",
+   "opening_hours": "Mo-Th 10:00-17:00; Fr 10:00-18:00; Sa 08:00-17:00; Su 10:00-14:00",
+   "location": "Borough Market",
+   "borough": null,
+   "lat": 51.505648,
+   "lon": -0.090526,
+   "zone": "model",
+   "placed_by": "OSM way 24282400 (mean of its nodes)",
+   "osm": "way/24282400",
+   "operator": null,
+   "url": "https://boroughmarket.org.uk",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/25696035",
+   "kind": "market",
+   "title": "Greenwich Market: Mo-Su 10:00-17:30",
+   "start": null,
+   "end": null,
+   "recurring": "Mo-Su 10:00-17:30",
+   "opening_hours": "Mo-Su 10:00-17:30",
+   "location": "Greenwich Market",
+   "borough": null,
+   "lat": 51.481513,
+   "lon": -0.009045,
+   "zone": "model",
+   "placed_by": "OSM way 25696035 (mean of its nodes)",
+   "osm": "way/25696035",
+   "operator": null,
+   "url": "https://www.greenwichmarket.london",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/270430223",
+   "kind": "market",
+   "title": "The Tea Rooms: Sa 11:00-18:00; Su 10:00-18:00",
+   "start": null,
+   "end": null,
+   "recurring": "Sa 11:00-18:00; Su 10:00-18:00",
+   "opening_hours": "Sa 11:00-18:00; Su 10:00-18:00",
+   "location": "Brick Lane",
+   "borough": null,
+   "lat": 51.521301,
+   "lon": -0.071388,
+   "zone": "model",
+   "placed_by": "OSM way 270430223 (mean of its nodes)",
+   "osm": "way/270430223",
+   "operator": null,
+   "url": "http://www.bricklane-tearooms.co.uk/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/306742433",
+   "kind": "market",
+   "title": "Rathbone Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Rathbone Market",
+   "borough": null,
+   "lat": 51.516722,
+   "lon": 0.011008,
+   "zone": "model",
+   "placed_by": "OSM way 306742433 (mean of its nodes)",
+   "osm": "way/306742433",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/way/306742433",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/40120623",
+   "kind": "market",
+   "title": "East Street Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "East Street Market",
+   "borough": null,
+   "lat": 51.488675,
+   "lon": -0.092348,
+   "zone": "model",
+   "placed_by": "OSM way 40120623 (mean of its nodes)",
+   "osm": "way/40120623",
+   "operator": null,
+   "url": "https://www.southwark.gov.uk/business/markets-and-street-trading/southwark-markets?chapter=3",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/472256766",
+   "kind": "market",
+   "title": "Wentworth Street Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Wentworth Street Market",
+   "borough": null,
+   "lat": 51.516721,
+   "lon": -0.074892,
+   "zone": "model",
+   "placed_by": "OSM way 472256766 (mean of its nodes)",
+   "osm": "way/472256766",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/way/472256766",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/50437784",
+   "kind": "market",
+   "title": "Chrisp Street Market: Monday to Saturday, 8am to 6pm",
+   "start": null,
+   "end": null,
+   "recurring": "Monday to Saturday, 8am to 6pm",
+   "opening_hours": null,
+   "location": "Chrisp Street, E14",
+   "borough": "Tower Hamlets",
+   "lat": 51.512602,
+   "lon": -0.014312,
+   "zone": "model",
+   "placed_by": "OSM way 50437784 (mean of its nodes)",
+   "osm": "way/50437784",
+   "operator": null,
+   "url": "https://www.towerhamlets.gov.uk/lgnl/business/markets/markets_in_tower_hamlets.aspx",
+   "sources": [
+    "osm",
+    "th-markets-page"
+   ]
+  },
+  {
+   "id": "osm-market:way/613477217",
+   "kind": "market",
+   "title": "The Blue Market: Mo-Sa 09:00-17:00",
+   "start": null,
+   "end": null,
+   "recurring": "Mo-Sa 09:00-17:00",
+   "opening_hours": "Mo-Sa 09:00-17:00",
+   "location": "Market Place",
+   "borough": null,
+   "lat": 51.492463,
+   "lon": -0.063695,
+   "zone": "model",
+   "placed_by": "OSM way 613477217 (mean of its nodes)",
+   "osm": "way/613477217",
+   "operator": null,
+   "url": "http://www.bluemarket.co.uk/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/698565110",
+   "kind": "market",
+   "title": "Wapping Docklands Market: Sa 10:00-16:00",
+   "start": null,
+   "end": null,
+   "recurring": "Sa 10:00-16:00",
+   "opening_hours": "Sa 10:00-16:00",
+   "location": "Wapping Docklands Market",
+   "borough": null,
+   "lat": 51.507945,
+   "lon": -0.051433,
+   "zone": "model",
+   "placed_by": "OSM way 698565110 (mean of its nodes)",
+   "osm": "way/698565110",
+   "operator": null,
+   "url": "https://www.squidmarkets.co.uk/wapping-market",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/722818340",
+   "kind": "market",
+   "title": "Watney Market",
+   "start": null,
+   "end": null,
+   "recurring": null,
+   "opening_hours": null,
+   "location": "Watney Market",
+   "borough": null,
+   "lat": 51.513825,
+   "lon": -0.056762,
+   "zone": "model",
+   "placed_by": "OSM way 722818340 (mean of its nodes)",
+   "osm": "way/722818340",
+   "operator": null,
+   "url": "https://www.openstreetmap.org/way/722818340",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "osm-market:way/973163217",
+   "kind": "market",
+   "title": "The Greenwich Vintage Market: Fr-Su 09:00-17:00",
+   "start": null,
+   "end": null,
+   "recurring": "Fr-Su 09:00-17:00",
+   "opening_hours": "Fr-Su 09:00-17:00",
+   "location": "Greenwich Church Street",
+   "borough": null,
+   "lat": 51.480475,
+   "lon": -0.008715,
+   "zone": "model",
+   "placed_by": "OSM way 973163217 (mean of its nodes)",
+   "osm": "way/973163217",
+   "operator": null,
+   "url": "https://www.greenwichvintagemarket.co.uk/",
+   "sources": [
+    "osm"
+   ]
+  },
+  {
+   "id": "th-market:petticoat-lane",
+   "kind": "market",
+   "title": "Petticoat Lane Market: Sundays, 9am to 3pm",
+   "start": null,
+   "end": null,
+   "recurring": "Sundays, 9am to 3pm",
+   "location": "Middlesex Street, E1",
+   "street": "Middlesex Street",
+   "borough": "Tower Hamlets",
+   "lat": 51.518007,
+   "lon": -0.078635,
+   "zone": "model",
+   "placed_by": "street named on the council page, OSM street position",
+   "url": "https://www.towerhamlets.gov.uk/lgnl/business/markets/markets_in_tower_hamlets.aspx",
+   "sources": [
+    "th-markets-page",
+    "osm"
+   ]
+  },
+  {
+   "id": "th-market:petticoat-lane",
+   "kind": "market",
+   "title": "Petticoat Lane Street Food: Monday to Friday, 8am to 4pm",
+   "start": null,
+   "end": null,
+   "recurring": "Monday to Friday, 8am to 4pm",
+   "location": "Wentworth Street E1",
+   "street": "Wentworth Street",
+   "borough": "Tower Hamlets",
+   "lat": 51.516756,
+   "lon": -0.07502,
+   "zone": "model",
+   "placed_by": "street named on the council page, OSM street position",
+   "url": "https://www.towerhamlets.gov.uk/lgnl/business/markets/markets_in_tower_hamlets.aspx",
+   "sources": [
+    "th-markets-page",
+    "osm"
+   ]
+  },
+  {
+   "id": "th-market:whitechapel",
+   "kind": "market",
+   "title": "Whitechapel Market: Monday to Saturday, 8am to 6pm",
+   "start": null,
+   "end": null,
+   "recurring": "Monday to Saturday, 8am to 6pm",
+   "location": "Whitechapel Road, E1",
+   "street": "Whitechapel Road",
+   "borough": "Tower Hamlets",
+   "lat": 51.518384,
+   "lon": -0.063217,
+   "zone": "model",
+   "placed_by": "street named on the council page, OSM street position",
+   "url": "https://www.towerhamlets.gov.uk/lgnl/business/markets/markets_in_tower_hamlets.aspx",
+   "sources": [
+    "th-markets-page",
+    "osm"
+   ]
+  }
+ ]
+}

@@ -2,7 +2,7 @@
  "about": "Queue of data sources to investigate for the cwplans scoping project (Canary Wharf, Isle of Dogs, Limehouse, Rotherhithe / SE16). Readable view: SOURCES-TO-INVESTIGATE.md. Licence classes follow the project rule (CLAUDE.md, cwplans exception): open = may be committed; share-alike = counts only, a committed extract needs the owner's agreement; restricted = do not fetch for the repo; unknown = check first.",
  "updated": "2026-10-06",
  "origin": "Gemini answer pasted by the owner on 2026-10-06 (street-level imagery, aerial imagery, LiDAR, London Datastore), checked against what the project already holds; plus candidates found while checking.",
- "coverage_graph": "https://danbri.github.io/londat/kgx/graph/coverage-imagery (current version in kgx/heads.json); tool magpie/cwplans/tools/probe-imagery-coverage.mjs",
+ "coverage_graph": "https://danbri.github.io/londat/kgx/graph/coverage-imagery (current version in kgx/heads.json); tool cwplans/tools/probe-imagery-coverage.mjs",
  "items": [
   {
    "id": "mapillary",
@@ -11,7 +11,7 @@
    "licence": "CC BY-SA 4.0",
    "licence_class": "share-alike",
    "status": "catalogued, not counted",
-   "known": "magpie/cwplans/feeds/feeds.json id mapillary (2026-10-03 survey)",
+   "known": "cwplans/feeds/feeds.json id mapillary (2026-10-03 survey)",
    "new_from_gemini": "the AI-extracted map features (signs, street furniture) as a separate layer",
    "blocker": "the Graph API needs an access token (free account)",
    "next": "owner: provide a client token or decide not to; then count images and map features per area (counts only)"

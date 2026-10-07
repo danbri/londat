@@ -1,0 +1,1280 @@
+[
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point BookJ (HUBCAW-1000038-BookJ-2) at 51.503682,-0.018655",
+    "value": -1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-BookJ-2,HUBCAW,BookJ,2,-1,51.503682,-0.018655,BookJ",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point BUSF (HUBCAW-1000038-BUSF-7) at 51.505386,-0.020512",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-BUSF-7,HUBCAW,BUSF,7,0,51.505386,-0.020512,BUSF",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point BUSG (HUBCAW-1000038-BUSG-6) at 51.504656,-0.020472",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-BUSG-6,HUBCAW,BUSG,6,0,51.504656,-0.020472,BUSG",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point J Mez (HUBCAW-1000038-J Mez-11) at 51.503753,-0.019142",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-J Mez-11,HUBCAW,J Mez,11,0,51.503753,-0.019142,J Mez",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point JubiE (HUBCAW-1000038-JubiE-5) at 51.503582,-0.018645",
+    "value": -2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-JubiE-5,HUBCAW,JubiE,5,-2,51.503582,-0.018645,JubiE",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point JubiW (HUBCAW-1000038-JubiW-8) at 51.50344,-0.018752",
+    "value": -2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-JubiW-8,HUBCAW,JubiW,8,-2,51.50344,-0.018752,JubiW",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point MET (HUBCAW-1000038-MET-3) at 51.503486,-0.018246",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-MET-3,HUBCAW,MET,3,0,51.503486,-0.018246,MET",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point Mt Sq (HUBCAW-1000038-Mt Sq-12) at 51.503439,-0.016029",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-Mt Sq-12,HUBCAW,Mt Sq,12,0,51.503439,-0.016029,Mt Sq",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point PLA (HUBCAW-1000038-PLA-1) at 51.503524,-0.020002",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-PLA-1,HUBCAW,PLA,1,0,51.503524,-0.020002,PLA",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point UBST (HUBCAW-1000038-UBST-13) at 51.503455,-0.017484",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1000038-UBST-13,HUBCAW,UBST,13,0,51.503455,-0.017484,UBST",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point BH (HUBCAW-1002163-BH-2) at 51.506215,-0.019021",
+    "value": -2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-BH-2,HUBCAW,BH,2,-2,51.506215,-0.019021,BH",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point CAP (HUBCAW-1002163-CAP-7) at 51.50605,-0.018855",
+    "value": -1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-CAP-7,HUBCAW,CAP,7,-1,51.50605,-0.018855,CAP",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point EL EB (HUBCAW-1002163-EL EB-1) at 51.506319,-0.018815",
+    "value": -4,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-EL EB-1,HUBCAW,EL EB,1,-4,51.506319,-0.018815,EL EB",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point EL WB (HUBCAW-1002163-EL WB-5) at 51.506077,-0.018869",
+    "value": -4,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-EL WB-5,HUBCAW,EL WB,5,-4,51.506077,-0.018869,EL WB",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point HLE (HUBCAW-1002163-HLE-3) at 51.506501,-0.016833",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-HLE-3,HUBCAW,HLE,3,0,51.506501,-0.016833,HLE",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point QE (HUBCAW-1002163-QE-4) at 51.506098,-0.020121",
+    "value": -1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-QE-4,HUBCAW,QE,4,-1,51.506098,-0.020121,QE",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point RLY (HUBCAW-1002163-RLY-6) at 51.506203,-0.018834",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1002163-RLY-6,HUBCAW,RLY,6,0,51.506203,-0.018834,RLY",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR M (HUBCAW-1003008-DLR M-1) at 51.505043,-0.020974",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-DLR M-1,HUBCAW,DLR M,1,1,51.505043,-0.020974,DLR M",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-N (HUBCAW-1003008-DLR-N-4) at 51.505098,-0.021072",
+    "value": 2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-DLR-N-4,HUBCAW,DLR-N,4,2,51.505098,-0.021072,DLR-N",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-S (HUBCAW-1003008-DLR-S-2) at 51.505022,-0.020802",
+    "value": 2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-DLR-S-2,HUBCAW,DLR-S,2,2,51.505022,-0.020802,DLR-S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point NORTH (HUBCAW-1003008-NORTH-3) at 51.505416,-0.020727",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-NORTH-3,HUBCAW,NORTH,3,0,51.505416,-0.020727,NORTH",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SHE (HUBCAW-1003008-SHE-6) at 51.505046,-0.020642",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-SHE-6,HUBCAW,SHE,6,0,51.505046,-0.020642,SHE",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SHW (HUBCAW-1003008-SHW-7) at 51.5051,-0.021173",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-SHW-7,HUBCAW,SHW,7,0,51.5051,-0.021173,SHW",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SOUTH (HUBCAW-1003008-SOUTH-5) at 51.504745,-0.0209",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBCAW-1003008-SOUTH-5,HUBCAW,SOUTH,5,0,51.504745,-0.0209,SOUTH",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "Level indices do not match the estate floor numbers. Elizabeth line: TfL gives ticket hall -2 and platforms -4, the Arup paper gives Ticket Hall -4 and Platform -5. Jubilee: TfL ticket hall -1 and platforms -2, OSM uses -2 and -3, a blog source puts the ticket hall at estate level -2. So TfL counts only levels on the step-free route. Area codes 1000038, 1002163, 1003008 are the three station parts.",
+  "id": "tfl-topo-canary-wharf",
+  "name": "TfL station topology (detailed CSV): Canary Wharf hub HUBCAW",
+  "kind": "dataset",
+  "station": "Canary Wharf (Jubilee line, Elizabeth line, Canary Wharf DLR)",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "24 station points with lat/lon and level index. Jubilee line (area 1000038): street points PLA, MET, Mt Sq, UBST, J Mez, BUSF, BUSG at level 0; ticket hall BookJ at -1; platform points JubiE, JubiW at -2; platforms 1 Westbound and 2 Eastbound (NaPTAN 9400ZZLUCYF1). Elizabeth line (area 1002163): HLE and RLY at 0; QE and CAP at -1; ticket hall BH at -2; platform points EL EB and EL WB at -4; platforms A Eastbound and B Westbound. DLR (area 1003008): NORTH, SOUTH, SHE, SHW at 0; DLR M (mezzanine) at 1; DLR-N and DLR-S at 2; platforms 1-6. Lifts.csv: 10 lifts with from/intermediate/to points: LU 1 (PLA|J Mez|UBST to BookJ), LU 2 (BookJ to JubiE|JubiW), EL 1 'Lift A' (HLE via QE to BH), EL 2 'Lift B' (CAP to BH), EL 3 'Lift C' and EL 4 'Lift D' (BH to EL EB|EL WB), DLR 1 and DLR 2 (NORTH to DLR M), DLR S2 (SHW via DLR M to DLR-N), DLR S3 (SHE via DLR M to DLR-S). SameLevelPaths.csv: 71 rows for HUBCAW; RampRoutes.csv: DLR M to SOUTH (ramp). PlatformServices.csv: Jubilee and DLR gap 0-85 mm, step 0-50 mm; Elizabeth line platforms flagged DesignatedLevelAccessPoint TRUE. Toilets.csv: 3 toilets 'Located in ticket hall' (Jubilee). No step-free interchange rows. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV (11 files)",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph: entrance and lift positions (lat/lon), which level each point is on, and lift connections. Not heights: levels must be mapped to metres from other sources (e.g. Arup Figure 6 for the Elizabeth line)."
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point Bus (940GZZDLHEQ-1002046-Bus-3) at 51.503243,-0.020893",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLHEQ-1002046-Bus-3,940GZZDLHEQ,Bus,3,0,51.503243,-0.020893,Bus",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point CONC (940GZZDLHEQ-1002046-CONC-5) at 51.503182,-0.021559",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLHEQ-1002046-CONC-5,940GZZDLHEQ,CONC,5,0,51.503182,-0.021559,CONC",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-N (940GZZDLHEQ-1002046-DLR-N-4) at 51.503199,-0.021501",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLHEQ-1002046-DLR-N-4,940GZZDLHEQ,DLR-N,4,1,51.503199,-0.021501,DLR-N",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-S (940GZZDLHEQ-1002046-DLR-S-2) at 51.503152,-0.021387",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLHEQ-1002046-DLR-S-2,940GZZDLHEQ,DLR-S,2,1,51.503152,-0.021387,DLR-S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point HERON (940GZZDLHEQ-1002046-HERON-1) at 51.503169,-0.021343",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLHEQ-1002046-HERON-1,940GZZDLHEQ,HERON,1,0,51.503169,-0.021343,HERON",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "",
+  "id": "tfl-topo-940gzzdlheq",
+  "name": "TfL station topology (detailed CSV): Heron Quays DLR 940GZZDLHEQ",
+  "kind": "dataset",
+  "station": "Heron Quays DLR",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "Points: HERON, Bus, CONC (concourse) at 0; DLR-S, DLR-N at 1. Lift 1 CONC to DLR-S, Lift 2 CONC to DLR-N (not limited capacity). Platforms 1 Southbound, 2 Northbound. Gap 0-85 mm, step 0-50 mm. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph of points with lat/lon and level index; no heights"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point CONC (940GZZDLWIQ-1002084-CONC-4) at 51.506984,-0.0204",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLWIQ-1002084-CONC-4,940GZZDLWIQ,CONC,4,1,51.506984,-0.0204,CONC",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-N (940GZZDLWIQ-1002084-DLR-N-3) at 51.506949,-0.020459",
+    "value": 2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLWIQ-1002084-DLR-N-3,940GZZDLWIQ,DLR-N,3,2,51.506949,-0.020459,DLR-N",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-S (940GZZDLWIQ-1002084-DLR-S-2) at 51.507011,-0.02037",
+    "value": 2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLWIQ-1002084-DLR-S-2,940GZZDLWIQ,DLR-S,2,2,51.507011,-0.02037,DLR-S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point MARKE (940GZZDLWIQ-1002084-MARKE-1) at 51.507436,-0.02051",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLWIQ-1002084-MARKE-1,940GZZDLWIQ,MARKE,1,0,51.507436,-0.02051,MARKE",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "",
+  "id": "tfl-topo-940gzzdlwiq",
+  "name": "TfL station topology (detailed CSV): West India Quay DLR 940GZZDLWIQ",
+  "kind": "dataset",
+  "station": "West India Quay DLR",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "Points: MARKE (street) at 0; CONC at 1; DLR-S, DLR-N at 2. Lift 1 CONC to DLR-S, Lift 2 CONC to DLR-N, both LimitedCapacityLift TRUE. Platforms 2 Southbound, 3 Northbound, 4 Westbound. Two ramp routes. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph of points with lat/lon and level index; no heights"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point DLR-N (940GZZDLSOQ-1002074-DLR-N-3) at 51.50001,-0.01638",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLSOQ-1002074-DLR-N-3,940GZZDLSOQ,DLR-N,3,1,51.50001,-0.01638,DLR-N",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-S (940GZZDLSOQ-1002074-DLR-S-2) at 51.500081,-0.016319",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLSOQ-1002074-DLR-S-2,940GZZDLSOQ,DLR-S,2,1,51.500081,-0.016319,DLR-S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point LSC (940GZZDLSOQ-1002074-LSC-5) at 51.500123,-0.016677",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLSOQ-1002074-LSC-5,940GZZDLSOQ,LSC,5,0,51.500123,-0.016677,LSC",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point RSC (940GZZDLSOQ-1002074-RSC-6) at 51.499955,-0.015273",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLSOQ-1002074-RSC-6,940GZZDLSOQ,RSC,6,0,51.499955,-0.015273,RSC",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SOUL (940GZZDLSOQ-1002074-SOUL-1) at 51.50013,-0.016576",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLSOQ-1002074-SOUL-1,940GZZDLSOQ,SOUL,1,0,51.50013,-0.016576,SOUL",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SOUR (940GZZDLSOQ-1002074-SOUR-4) at 51.500048,-0.015975",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLSOQ-1002074-SOUR-4,940GZZDLSOQ,SOUR,4,0,51.500048,-0.015975,SOUR",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "",
+  "id": "tfl-topo-940gzzdlsoq",
+  "name": "TfL station topology (detailed CSV): South Quay DLR 940GZZDLSOQ",
+  "kind": "dataset",
+  "station": "South Quay DLR",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "Points: SOUL, SOUR, LSC, RSC at 0; DLR-S, DLR-N at 1. Lift 1 LSC to DLR-S, Lift 2 LSC to DLR-N, both limited capacity. Platforms 1 Southbound, 2 Northbound. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph of points with lat/lon and level index; no heights"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point Bus (940GZZDLCLA-1002025-Bus-3) at 51.495916,-0.014137",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-Bus-3,940GZZDLCLA,Bus,3,0,51.495916,-0.014137,Bus",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point CONCA (940GZZDLCLA-1002025-CONCA-6) at 51.495422,-0.014692",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-CONCA-6,940GZZDLCLA,CONCA,6,0,51.495422,-0.014692,CONCA",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point CONCB (940GZZDLCLA-1002025-CONCB-7) at 51.495268,-0.014598",
+    "value": 1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-CONCB-7,940GZZDLCLA,CONCB,7,1,51.495268,-0.014598,CONCB",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point CROB (940GZZDLCLA-1002025-CROB-5) at 51.495373,-0.01442",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-CROB-5,940GZZDLCLA,CROB,5,0,51.495373,-0.01442,CROB",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point CROSA (940GZZDLCLA-1002025-CROSA-1) at 51.496025,-0.014204",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-CROSA-1,940GZZDLCLA,CROSA,1,0,51.496025,-0.014204,CROSA",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR_S (940GZZDLCLA-1002025-DLR_S-4) at 51.495741,-0.014404",
+    "value": 2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-DLR_S-4,940GZZDLCLA,DLR_S,4,2,51.495741,-0.014404,DLR_S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point DLR-N (940GZZDLCLA-1002025-DLR-N-2) at 51.495815,-0.014516",
+    "value": 2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZDLCLA-1002025-DLR-N-2,940GZZDLCLA,DLR-N,2,2,51.495815,-0.014516,DLR-N",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "",
+  "id": "tfl-topo-940gzzdlcla",
+  "name": "TfL station topology (detailed CSV): Crossharbour DLR 940GZZDLCLA",
+  "kind": "dataset",
+  "station": "Crossharbour DLR",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "Points: CROSA, CROB, CONCA, Bus at 0; CONCB at 1; DLR-N, DLR_S at 2. Lift 1 CROSA to DLR_S, Lift 2 CROSA to DLR-N, both limited capacity. Platforms 1 Southbound, 2 Northbound. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph of points with lat/lon and level index; no heights"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point BEntr (940GZZLUNGW-1000160-BEntr-5) at 51.500074,0.003132",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-BEntr-5,940GZZLUNGW,BEntr,5,0,51.500074,0.003132,BEntr",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point BookH (940GZZLUNGW-1000160-BookH-4) at 51.500605,0.004192",
+    "value": -4,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-BookH-4,940GZZLUNGW,BookH,4,-4,51.500605,0.004192,BookH",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point BusSt (940GZZLUNGW-1000160-BusSt-3) at 51.500264,0.004624",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-BusSt-3,940GZZLUNGW,BusSt,3,0,51.500264,0.004624,BusSt",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point JubEB (940GZZLUNGW-1000160-JubEB-1) at 51.500742,0.004544",
+    "value": -6,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-JubEB-1,940GZZLUNGW,JubEB,1,-6,51.500742,0.004544,JubEB",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point JubWT (940GZZLUNGW-1000160-JubWT-2) at 51.500675,0.004786",
+    "value": -6,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-JubWT-2,940GZZLUNGW,JubWT,2,-6,51.500675,0.004786,JubWT",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point MET (940GZZLUNGW-1000160-MET-6) at 51.500133,0.003379",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-MET-6,940GZZLUNGW,MET,6,0,51.500133,0.003379,MET",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point OEntr (940GZZLUNGW-1000160-OEntr-7) at 51.500293,0.003991",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "940GZZLUNGW-1000160-OEntr-7,940GZZLUNGW,OEntr,7,0,51.500293,0.003991,OEntr",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "North Greenwich index -4 for the ticket hall and -6 for the platforms is not a floor count of a real building (the ticket hall is about 5 m below ground, AJ interview); treat it as ordinal only.",
+  "id": "tfl-topo-940gzzlungw",
+  "name": "TfL station topology (detailed CSV): North Greenwich (Jubilee) 940GZZLUNGW",
+  "kind": "dataset",
+  "station": "North Greenwich (Jubilee)",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "Points: BEntr, OEntr, BusSt, MET at 0; ticket hall BookH at -4; JubEB, JubWT at -6. Lift 4 (OEntr|BEntr to BookH), Lift 1 (BookH to JubEB), Lift 2 (BookH to JubWT). Platforms 1 and 2 Westbound, 3 Eastbound. Toilets by the bus station entrance. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph of points with lat/lon and level index; no heights"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [
+   {
+    "what": "station point Bus (HUBZCW-1000037-Bus-6) at 51.497919,-0.049881",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-Bus-6,HUBZCW,Bus,6,0,51.497919,-0.049881,Bus",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point Jubil (HUBZCW-1000037-Jubil-1) at 51.498003,-0.049489",
+    "value": -3,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-Jubil-1,HUBZCW,Jubil,1,-3,51.498003,-0.049489,Jubil",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point JubWB (HUBZCW-1000037-JubWB-10) at 51.497929,-0.049405",
+    "value": -3,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-JubWB-10,HUBZCW,JubWB,10,-3,51.497929,-0.049405,JubWB",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point MET (HUBZCW-1000037-MET-7) at 51.497943,-0.049722",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-MET-7,HUBZCW,MET,7,0,51.497943,-0.049722,MET",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point RLY (HUBZCW-1000037-RLY-5) at 51.497829,-0.049871",
+    "value": -1,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-RLY-5,HUBZCW,RLY,5,-1,51.497829,-0.049871,RLY",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point RPL-N (HUBZCW-1000037-RPL-N-2) at 51.498013,-0.050093",
+    "value": -2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-RPL-N-2,HUBZCW,RPL-N,2,-2,51.498013,-0.050093,RPL-N",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point RPL-S (HUBZCW-1000037-RPL-S-3) at 51.498019,-0.049935",
+    "value": -2,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-RPL-S-3,HUBZCW,RPL-S,3,-2,51.498019,-0.049935,RPL-S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SUR_N (HUBZCW-1000037-SUR_N-8) at 51.498548,-0.049321",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-SUR_N-8,HUBZCW,SUR_N,8,0,51.498548,-0.049321,SUR_N",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SUR_S (HUBZCW-1000037-SUR_S-9) at 51.497587,-0.049348",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-SUR_S-9,HUBZCW,SUR_S,9,0,51.497587,-0.049348,SUR_S",
+    "page": "StationPoints.csv"
+   },
+   {
+    "what": "station point SURRE (HUBZCW-1000037-SURRE-4) at 51.498063,-0.049904",
+    "value": 0,
+    "unit": "level index",
+    "datum": "TfL relative level index for this station: ground level = 0, other floors counted relative to it (not metres)",
+    "quote": "HUBZCW-1000037-SURRE-4,HUBZCW,SURRE,4,0,51.498063,-0.049904,SURRE",
+    "page": "StationPoints.csv"
+   }
+  ],
+  "notes": "Canada Water: index -2 for the Windrush platforms and -3 for the Jubilee platforms agrees in order with Wikipedia (11 m and 22 m below ground).",
+  "id": "tfl-topo-hubzcw",
+  "name": "TfL station topology (detailed CSV): Canada Water (Jubilee and Windrush line) HUBZCW",
+  "kind": "dataset",
+  "station": "Canada Water (Jubilee and Windrush line)",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "Points: SURRE, SUR_N, SUR_S, Bus, MET at 0; RLY at -1; RPL-N, RPL-S (Windrush platforms) at -2; Jubil, JubWB (Jubilee) at -3. Lift 4 SURRE to RLY (street to ticket hall), Lift 2 RLY to RPL-N, Lift 1 RLY via RPL-S to JubWB|Jubil. Platforms 1 WB, 2 EB Jubilee; 3 SB, 4 NB Windrush. File set dated FeedStartDate 2026-08-03T09:14+00:00 (HTTP last-modified 2026-08-04). Level is an ordinal index, not a height. Platforms in Platforms.csv have no coordinates; they join to station points through SameLevelPaths.csv. Only step-free routes are modelled: stairs and escalators are NOT in the data (spec, page 3).",
+  "format": "ZIP of CSV",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph of points with lat/lon and level index; no heights"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [],
+  "notes": "No stairs, escalators or traversal times. levels.txt has no elevation field.",
+  "id": "tfl-topo-gtfs",
+  "name": "TfL station topology files (GTFS pathways)",
+  "kind": "dataset",
+  "station": "all TfL stations (includes all stations in this area)",
+  "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-gtfs.zip",
+  "date": "2026-08-03",
+  "what_it_shows": "GTFS stops.txt (location_type 1 station, 3 generic node with stop_lat/stop_lon/level_id, 0 platform without coordinates), levels.txt (L#-7 to L#3, level_index only, no elevation), pathways.txt (pathway_mode 1 walkway/same level or ramp, 5 elevator; is_bidirectional). Counts: HUBCAW 59 pathways (38 walkway, 21 lift), Heron Quays 7, North Greenwich 11, Canada Water 17. Same content as the detailed CSV, in GTFS form.",
+  "format": "ZIP of GTFS text files (4)",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/x-zip-compressed",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes, as a graph; directly loadable by GTFS tools"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260506001503/https://tfl.gov.uk/cdn/static/cms/documents/step-free-access-and-toilet-data-guide.pdf",
+  "levels_found": [],
+  "notes": "tfl.gov.uk/cdn/... redirects (302) to content.tfl.gov.uk; content.tfl.gov.uk answers this client, tfl.gov.uk returns 403.",
+  "id": "tfl-stepfree-spec",
+  "name": "Step-free station topology data specification v1.0 (step-free access and toilet data guide)",
+  "kind": "other",
+  "station": "all",
+  "url": "https://content.tfl.gov.uk/step-free-access-and-toilet-data-guide.pdf",
+  "date": "2021-07-30",
+  "what_it_shows": "Field definitions of both zips: 'Ground level is level_index=0 and all other floors are relative to that at a given station' (page 3); stairs and escalators are not included; lifts serving 3 levels are split into pathways; gaps and steps in mm.",
+  "format": "PDF, 10 pages",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "reference only"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "/StopPoint/940GZZLUCYF returns this same HUBCAW hub record (200). /StopPoint/940GZZLUCYF?includeLineData=true returned 404 on 2026-10-03. Stop ids found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-hubcaw",
+  "name": "TfL Unified API StopPoint HUBCAW",
+  "kind": "API",
+  "station": "Canary Wharf (all three stations)",
+  "url": "https://api.tfl.gov.uk/StopPoint/HUBCAW",
+  "date": "2026-10-03",
+  "what_it_shows": "Hub record with children: 910GCANWHRF Elizabeth line (entrances 4900CANWHRF0 51.5065,-0.01683; 4900CANWHRF1 51.5061,-0.02012; 4900CANWHRF2 51.50605,-0.01886; access areas 9100CANWHRF0/1 = platforms), 940GZZDLCAN DLR (entrances 4900ZZDLCAN1-4; platforms 9400ZZDLCAN1, 9400ZZDLCAN2), 940GZZLUCYF Jubilee (entrances 4900ZZLUCYF1 51.50352,-0.02; 4900ZZLUCYF2 51.50344,-0.01603; 4900ZZLUCYF3 51.50345,-0.01748; platform 9400ZZLUCYF1), plus bus stops. Facility properties: Jubilee Lifts 3, Escalators 20, Gates 37, Ticket Halls 1, Toilets yes; DLR Lifts 3, Escalators 4, Gates 0; Elizabeth line Ticket Halls 'no', Toilets 'no'. Accessibility: '200m between Jubilee line and DLR station via the street'. Address of the Elizabeth line station: Crossrail Place, E14 5AB. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Stop id found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-hubngw",
+  "name": "TfL Unified API StopPoint HUBNGW",
+  "kind": "API",
+  "station": "North Greenwich",
+  "url": "https://api.tfl.gov.uk/StopPoint/HUBNGW",
+  "date": "2026-10-03",
+  "what_it_shows": "Children 940GZZLUNGW (entrances 4900ZZLUNGW1-3, platforms 9400ZZLUNGW1 and 2) and 940GZZALGWP cable car. Facilities: Lifts 4, Escalators 9, Gates 13, Ticket Halls 1, Help Points 6 on platforms and 4 in ticket halls, BlueBadgeCarParkSpaces 19. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Stop id found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-hubzcw",
+  "name": "TfL Unified API StopPoint HUBZCW",
+  "kind": "API",
+  "station": "Canada Water",
+  "url": "https://api.tfl.gov.uk/StopPoint/HUBZCW",
+  "date": "2026-10-03",
+  "what_it_shows": "Children 910GCNDAW (entrances 4900CNDAW1-3, access areas 9100CNDAW1/2 = Windrush platforms) and 940GZZLUCWR (platforms 9400ZZLUCWR2 EB, 9400ZZLUCWR3 WB). Facilities: Lifts 4, Escalators 8, Gates 13, Ticket Halls 1. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Stop id found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-940gzzdlheq",
+  "name": "TfL Unified API StopPoint 940GZZDLHEQ",
+  "kind": "API",
+  "station": "Heron Quays DLR",
+  "url": "https://api.tfl.gov.uk/StopPoint/940GZZDLHEQ",
+  "date": "2026-10-03",
+  "what_it_shows": "1 entrance 4900ZZDLHEQ1 (51.50317,-0.02134), 2 platforms 9400ZZDLHEQ1/2, AccessViaLift Yes, LimitedCapacityLift No, Toilet No. No facility counts. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Stop id found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-940gzzdlwiq",
+  "name": "TfL Unified API StopPoint 940GZZDLWIQ",
+  "kind": "API",
+  "station": "West India Quay DLR",
+  "url": "https://api.tfl.gov.uk/StopPoint/940GZZDLWIQ",
+  "date": "2026-10-03",
+  "what_it_shows": "1 entrance 4900ZZDLWIQ1 (51.50744,-0.02051), 2 platforms (NaPTAN) 9400ZZDLWIQ1/2 although topology has 3 platforms, AccessViaLift No, LimitedCapacityLift Yes. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Stop id found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-940gzzdlsoq",
+  "name": "TfL Unified API StopPoint 940GZZDLSOQ",
+  "kind": "API",
+  "station": "South Quay DLR",
+  "url": "https://api.tfl.gov.uk/StopPoint/940GZZDLSOQ",
+  "date": "2026-10-03",
+  "what_it_shows": "2 entrances 4900ZZDLSOQ1 (51.50013,-0.01658), 4900ZZDLSOQ2 (51.50005,-0.01597), 2 platforms, AccessViaLift No, LimitedCapacityLift Yes. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Stop id found by /StopPoint/Search/{name}.",
+  "id": "tfl-api-stoppoint-940gzzdlcla",
+  "name": "TfL Unified API StopPoint 940GZZDLCLA",
+  "kind": "API",
+  "station": "Crossharbour DLR",
+  "url": "https://api.tfl.gov.uk/StopPoint/940GZZDLCLA",
+  "date": "2026-10-03",
+  "what_it_shows": "2 entrances 4900ZZDLCLA1 (51.49603,-0.0142), 4900ZZDLCLA2 (51.49537,-0.01442), 2 platforms, AccessViaLift No, LimitedCapacityLift Yes. Every node has lat/lon (from NaPTAN). No level, height or floor fields in any StopPoint record.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance and platform points in plan only; facility counts as a check"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20260914170926/https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "levels_found": [],
+  "notes": "Linked from the TfL open data page as 'Live lift disruption feed'. Not in the swagger v1 file.",
+  "id": "tfl-api-lift-disruptions",
+  "name": "TfL live lift disruption feed v2",
+  "kind": "API",
+  "station": "all; Canary Wharf and Canada Water affected on 2026-10-03",
+  "url": "https://api.tfl.gov.uk/Disruptions/Lifts/v2",
+  "date": "2026-10-03",
+  "what_it_shows": "17 entries on 2026-10-03, keyed by stationUniqueId and LiftUniqueId of the topology files. HUBCAW: HUBCAW-Lift-LU 2 (ticket hall to Jubilee platforms) 'Step free access is not available to the Jubilee line due to a faulty lift'. HUBZCW: HUBZCW-Lift-4 (street to ticket hall) out 'Until Spring 2027'. No entries for the DLR stations or North Greenwich.",
+  "format": "JSON",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "live state of lifts only"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "/StopPoint/940GZZLUCYF/placeTypes returned 404.",
+  "id": "tfl-api-swagger",
+  "name": "TfL Unified API swagger v1 (endpoint list)",
+  "kind": "API",
+  "station": "all",
+  "url": "https://api.tfl.gov.uk/swagger/docs/v1",
+  "date": "2026-10-03",
+  "what_it_shows": "Endpoint list. StopPoint, Place and Disruption endpoints exist; no station topology endpoint (the topology is the zip files). /Place/Meta/PlaceTypes lists 24 types (CarPark, TaxiRank, BikePoint, etc.), none for station interiors. /StopPoint/Meta/Categories: Accessibility, Address, Direction, Facility, Geo, NearestPlaces, Opening Time, ServiceInfo, StationOwnedByTfl, VisitorCentre.",
+  "format": "JSON (swagger 2)",
+  "licence_or_terms": "TfL open data terms (tfl.gov.uk/corporate/terms-and-conditions/transport-data-service; page returns 403 to this client, not read). The TfL open data page asks for the attribution 'Data provided by Transport for London' and no TfL branding. Check the terms before commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json",
+   "status": "ok"
+  },
+  "usable_for_3d": "no"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Also fetched atcoAreaCodes=940 (618 kB) and 910 (555 kB). The 490 file is 4.5 MB. Docs: https://naptan.api.dft.gov.uk/swagger/index.html (200). NaPTAN has no stop-area-to-entrance level data.",
+  "id": "naptan-access-nodes",
+  "name": "NaPTAN access nodes, areas 490 (London), 940 (metro), 910 (rail)",
+  "kind": "dataset",
+  "station": "all stations in this area",
+  "url": "https://naptan.api.dft.gov.uk/v1/access-nodes?atcoAreaCodes=490&dataFormat=csv",
+  "date": "2026-10-03",
+  "what_it_shows": "Entrances (StopType TMU metro entrance, RSE rail entrance) and platforms (PLT) and station areas (MET, RLY) with Easting/Northing and lat/lon. Entrances: 4900ZZLUCYF1 537521 180146, 4900ZZLUCYF2 537797 180144, 4900ZZLUCYF3 537696 180143 (modified 2024-03-06); 4900CANWHRF0 537732 180483, 4900CANWHRF1 537505 180432, 4900CANWHRF2 537593 180429 (2025-10-12); 4900ZZDLCAN1-4; 4900ZZDLHEQ1 537429 180104; 4900ZZDLWIQ1 537474 180580; 4900ZZDLSOQ1/2; 4900ZZDLCLA1/2; 4900ZZLUNGW1-3; 4900CNDAW1-3. Area 940 file: 9400ZZ... MET and PLT nodes (Canary Wharf Jubilee has one PLT node 9400ZZLUCYF1 537650 180157; Canada Water 9400ZZLUCWR1 is inactive). Area 910: 9100CANWHRF 537594 180446 (2022-03-07), 9100CNDAW. No level, elevation or entrance-to-platform links.",
+  "format": "CSV (also XML)",
+  "licence_or_terms": "Open Government Licence v3 (NaPTAN, DfT); licence page not fetched in this session",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/csv",
+   "status": "ok"
+  },
+  "usable_for_3d": "entrance positions in British National Grid; same points as the TfL API"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20211103035208/https://content.tfl.gov.uk/canary-wharf-station-specific-annexes.pdf",
+  "levels_found": [
+   {
+    "what": "floor level names of the Elizabeth line station and Crossrail Place",
+    "value": "0, -1, -2, -3, -4, -5, -6",
+    "unit": "floor number",
+    "datum": "estate/Crossrail floor numbering (Ground Level 0)",
+    "quote": "CRL1-XRL-T2-DDA-CR143_5-10001 – (Station Concourse Level -4) ... CRL1-XRL-T2-DDA-CR143_6-10001 – (Platform Level -5) ... CRL1-XRL-T2-DDA-CR143_7-10001 – (Sub Platform Level -6)",
+    "page": "PDF page 13 (Appendix 2 to Annex 1)"
+   },
+   {
+    "what": "number of lifts in the Elizabeth line station",
+    "value": 6,
+    "unit": "count",
+    "datum": "n/a",
+    "quote": "(24) Lift Installations YES 6",
+    "page": "PDF page 26 (printed 23)"
+   },
+   {
+    "what": "number of escalators in the Elizabeth line station",
+    "value": 17,
+    "unit": "count",
+    "datum": "n/a",
+    "quote": "(25) Escalator Installations YES 17",
+    "page": "PDF page 26 (printed 23)"
+   }
+  ],
+  "notes": "Found through the Internet Archive index of content.tfl.gov.uk, then fetched live (last-modified 2025-05-23). The 17 escalators and 6 lifts conflict with the National Rail concourse map, which shows more escalator symbols; the annex counts may cover only the station, not the retail.",
+  "id": "tfl-annex-cw-elizabeth",
+  "name": "Canary Wharf Station - Station Annexes (SSA/366/01/21/01), with Crossrail lease boundary plans for each level",
+  "kind": "drawing",
+  "station": "Canary Wharf (Elizabeth line, Crossrail Place)",
+  "url": "https://content.tfl.gov.uk/canary-wharf-station-specific-annexes.pdf",
+  "date": "2021-04-21",
+  "what_it_shows": "Appendix 2 to Annex 1 lists seven plans: CRL1-XRL-T2-DDA-CR143_1-10001 (OSD Ground Level 0), _2 (OSD Promenade Level -1), _3 (OSD Upper Concourse Level -2), _4 (OSD Lower Concourse Level -3), _5 (Station Concourse Level -4, title block 'Ticket Hall Level -4'), _6 (Platform Level -5), _7 (Sub Platform Level -6). The plans are raster images on PDF pages 14-20 (printed pages 11-17), 'Crossrail Lease Boundaries', scale 1:1250 at A3, scale bar 0-125 m, north arrow, on an Ordnance Survey base (c) Crown copyright 2017, Rev P01.1 dated 24-25/09/2018. They show the station box outline with internal plan (escalator banks, lift cores at both ends, central gateline area) for each level, in place on the dock between North Quay and Canada Square. Appendix 4 to Annex 1 (page 23 printed): 'Lift Installations YES 6', 'Escalator Installations YES 17', 'Ticket Gate Line/Platform Barriers YES 32'.",
+  "format": "PDF, 90 pages (legal annex; plans are about 1200x850 px raster images)",
+  "licence_or_terms": "No open licence stated; TfL/ORR station access document with an Ordnance Survey base (Crown copyright, licence 100035971). Reference only, do not commit or trace the OS base.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes as a reference: per-level outline and core positions of the box at a known scale (1:1250, scale bar) that can be georeferenced on the dock edges; resolution is low (about 0.9 m per pixel at A3/119 ppi)"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Each image fetched: 200 image/jpeg (113504, 93859, 79869 bytes). Names the levels 'Promenade', 'Concourse', 'Platform', consistent with Arup Figure 6.",
+  "id": "nr-cw-elizabeth-maps",
+  "name": "National Rail station page and station plans, Canary Wharf (Elizabeth line): platform, concourse and Promenade levels",
+  "kind": "station map PDF",
+  "station": "Canary Wharf (Elizabeth line)",
+  "url": "https://www.nationalrail.co.uk/stations/canary-wharf/",
+  "date": "2026-10-03",
+  "what_it_shows": "Three schematic plan images (800x499 JPEG, not PDF): https://images.nationalrail.co.uk/e8xgegruud3g/3EDMhtYFMmzZNwZDRyROhZ/b6bdfeeeceff467de5e8b2e078179b9d/Canary_Wharf_station_map__platform_level_.jpg (island platform, A north side, B south side; three banks of 3 escalators; 2 lifts between them; help points, seats); https://images.nationalrail.co.uk/e8xgegruud3g/46ZE7XBsK6glKi93TUoRz2/2852c0ac6d9fce70be7e38b14bff4c03/Canary_Wharf_station_map__concourse_level_.jpg (concourse/ticket hall with two gatelines; escalator banks of 2 at each end corner up to Promenade; banks of 2 and 3 down to platforms; 6 lift symbols: 2 at each end, 2 central; 'Access to retail level only' notes; ticket machines); https://images.nationalrail.co.uk/e8xgegruud3g/ZCRKd3TfTmdp0NdxDWhO6/6dbd0f1e74965974811bb231df4c6813/Canary_Wharf_station_map__Promenade_level_.jpg (Promenade level -1: west end hall 'To West India Quay' and 'To Adam's Place, DLR and Jubilee Line', east end hall 'To Upper Bank Street', a walkway along the south side, 2 escalator pairs at each end, 1 lift at each end, Crossrail Place retail in the middle). The page also has accessibility text (step-free category microcopy).",
+  "format": "HTML page with JPEG images",
+  "licence_or_terms": "National Rail Enquiries website content; no open licence stated. Reference only.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "topology and approximate placement of escalators and lifts per level; not to scale"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Each image fetched with 200 image/jpeg.",
+  "id": "nr-canada-water-maps",
+  "name": "National Rail station page and station plans, Canada Water",
+  "kind": "station map PDF",
+  "station": "Canada Water",
+  "url": "https://www.nationalrail.co.uk/stations/canada-water/",
+  "date": "2026-10-03",
+  "what_it_shows": "Four schematic plan images (JPEG): street level entrance (entrance landing with lift and stairs inside the glass drum, Surrey Quays Road, bus station); lower ground floor concourse (ticket hall with gateline, concourse, walkway, lifts, escalators and stairs); London Overground platforms 3 and 4 with landing areas, escalators, stairs and lift to the Jubilee line; London Underground platforms (island, Eastbound 2 and Westbound 1, escalators, stairs, 1 lift). Each marked 'This image is protected by copyright'. URLs: https://images.nationalrail.co.uk/e8xgegruud3g/6hpOJaVu8b4GS9doda3Zi1/1117584d2f496384aa8386e0e25a2c2c/Canada_Water_station_map__street_level_entrance_.jpg ; https://images.nationalrail.co.uk/e8xgegruud3g/5c39K3avB5xZlZEure7Khs/e7f0dddadfabf681269105cf2be7ea33/Canada_Water_station_map__lower_ground_floor_concourse_.jpg ; https://images.nationalrail.co.uk/e8xgegruud3g/5hijdfTqVMPrjQovd4hNpP/c13e167aad06f2bf14c6298a13c472ff/Canada_Water_station_map__London_Overground_platforms_.jpg ; https://images.nationalrail.co.uk/e8xgegruud3g/2KU8mnh73cKUAwNcB1PCHp/307523fc53d0629d9452c2e8f1645d2f/Canada_Water_station_map__London_Underground_platforms_.jpg",
+  "format": "HTML page with JPEG images",
+  "licence_or_terms": "Images marked 'This image is protected by copyright'. Reference only.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "topology per level (4 levels); not to scale"
+ },
+ {
+  "archived_url": "https://web.archive.org/web/20151010120320/http://content.tfl.gov.uk:80/step-free-tube-guide-map.pdf",
+  "levels_found": [],
+  "notes": "Earlier copies are in the Internet Archive from 2014 on.",
+  "id": "tfl-step-free-tube-guide",
+  "name": "Step-free Tube guide (map and index), May 2026 edition",
+  "kind": "station map PDF",
+  "station": "all; entries for every station in this area",
+  "url": "https://content.tfl.gov.uk/step-free-tube-guide-map.pdf",
+  "date": "2026-05-08",
+  "what_it_shows": "Network map plus index; step and gap symbol per line. Canary Wharf entry (index D7): 'Canary Wharf is three separate stations. To connect between stations, you can walk at street-level or through the shopping centre. Walking distances including using the lifts: between the Jubilee line and Elizabeth line 12 minutes; between the Jubilee line and Heron Quays DLR station - 5 minutes; between the Jubilee line and Canary Wharf DLR station - 8 minutes.' Heron Quays D7, West India Quay D7 '(small)' lift, South Quay D7 '(small)', Crossharbour E7 '(small)', North Greenwich D8, Canada Water D7. Step categories in the legend: 0-50 mm, 51-120 mm, over 120 mm; gap 0-85 mm, 86-180 mm, over 180 mm.",
+  "format": "PDF, 2 pages (Illustrator)",
+  "licence_or_terms": "TfL publication; no open licence stated. Reference only.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "no geometry; walking times between the three Canary Wharf stations are a check for passage lengths"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [
+   {
+    "what": "structure description: substructure and superstructure levels",
+    "value": "-1 to -6 and 0 to +3",
+    "unit": "floor number",
+    "datum": "estate floor numbering",
+    "quote": "the Level –1 to –6 substructure being the 'hull' and Levels 0 to +3 being the 'superstructure' (Figure 6)",
+    "page": "PDF page 3 (journal p 80)"
+   },
+   {
+    "what": "OSD column grid",
+    "value": "13.5 x 9",
+    "unit": "m",
+    "datum": "plan",
+    "quote": "a reinforced concrete frame with a grid of up to 13.5m × 9m",
+    "page": "PDF page 4"
+   },
+   {
+    "what": "superstructure movement joints",
+    "value": 90,
+    "unit": "m centres",
+    "datum": "plan",
+    "quote": "split into three separate buildings via movement joints at 90m centres",
+    "page": "PDF page 4"
+   }
+  ],
+  "notes": "Figure 6 levels are already in magpie/cwplans/data/sourced-levels.json; no new levels in this re-read. Landing page: https://learninglegacy.crossrail.co.uk/documents/design-of-canary-wharf-elizabeth-line-station-and-crossrail-place-oversite-development/ (200).",
+  "id": "crossrail-7k005",
+  "name": "Structural engineering for the Elizabeth line Canary Wharf station and oversite development (The Structural Engineer, July 2018, pp 78-83; Crossrail Learning Legacy 7K-005)",
+  "kind": "paper",
+  "station": "Canary Wharf (Elizabeth line, Crossrail Place)",
+  "url": "https://learninglegacy.crossrail.co.uk/wp-content/uploads/2018/07/7K-005-Design-of-Canary-Wharf-Elizabeth-line-station-and-oversite-development.pdf",
+  "date": "2018-07",
+  "what_it_shows": "Figure 1 (PDF page 1, journal p 78): overall plan of the station and neighbouring buildings. Figure 4 (page 2, p 79): example below-ground floor plan, labels 'Retail core', 'Retail escalators', 'Retail floor slab', 'Station floor slab'. Figure 6 (page 3, p 80): typical cross-section with all SSL floor levels and ground conditions (already in data/sourced-levels.json). Figure 7 (page 3, p 80): longitudinal section through station and retail. Figure 9 (page 5): retail flexibility diagrams. Figure 12 (page 6): Promenade Level -1 south side. Text: box 260 m long, 25-30 m wide; 'station areas are confined to the platform spaces, plant rooms at each end, and station entrances'; retail at Levels -2 and -3 and at Level -1 between the entrances; OSD grid up to 13.5 m x 9 m; superstructure split into three buildings by movement joints at 90 m centres; Levels -1 to -6 substructure, Levels 0 to +3 superstructure; floor-to-soffit at Level -1 is 4.6 m; roof 310 m long.",
+  "format": "PDF, 6 pages, 9.0 MB",
+  "licence_or_terms": "Crossrail Learning Legacy hosting of a Structural Engineer article; copyright of the publisher/authors; reference only",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes: Figure 6 slab levels (already used) and Figure 7 longitudinal section for the position of entrances and station zones along the box"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Companion report C305-DSJ-C2-RGN-CR143-50002 (East India to Canary Wharf, Drive Y) verified 200 application/pdf, not downloaded.",
+  "id": "crossrail-c305-50003",
+  "name": "C305 I&M close-out report: levelling points and 3D prisms, Canary Wharf West India Dock wall (Drive Y), C305-DSJ-C2-RGN-CR143-50003 Rev 1.0",
+  "kind": "paper",
+  "station": "Canary Wharf (Elizabeth line), tunnels west of the box",
+  "url": "https://learninglegacy.crossrail.co.uk/wp-content/uploads/2023/05/C305-DSJ-C2-RGN-CR143-50003-Rev-1.0-I-and-M-Close-Out-Report-for-Levelling-Points-and-3D-Prisms-Canary-Wharf-West-India-Dock-Wall-Drive-Y.pdf",
+  "date": "2023-05",
+  "what_it_shows": "Settlement monitoring along the West India Quay dock wall for the C305 tunnel drive, chainage 82500 to 83400 (Areas 4, 5, 6); Appendix A instrument locations (page 24 on), Appendix B list. Scanned pages, no text layer.",
+  "format": "PDF, 42 pages, 14.6 MB, scanned",
+  "licence_or_terms": "Crossrail Learning Legacy document; no open licence stated",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "no for station layout; gives tunnel chainage range near the station"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [
+   {
+    "what": "top of Lower Lambeth Sand",
+    "value": -13,
+    "unit": "m",
+    "datum": "OD",
+    "quote": "Lower Lambeth Sand -13",
+    "page": "PDF page 4, Table 1"
+   },
+   {
+    "what": "top of Thanet Sand",
+    "value": -18,
+    "unit": "m",
+    "datum": "OD",
+    "quote": "Thanet Sand -18",
+    "page": "PDF page 4, Table 1"
+   },
+   {
+    "what": "top of Chalk",
+    "value": -33,
+    "unit": "m",
+    "datum": "OD",
+    "quote": "Chalk – top 10m -33",
+    "page": "PDF page 4, Table 1"
+   },
+   {
+    "what": "dock water level held by gates",
+    "value": 4,
+    "unit": "m",
+    "datum": "OD (approx.)",
+    "quote": "maintained by dock gates at about +4mOD",
+    "page": "PDF page 4"
+   },
+   {
+    "what": "piling platform inside a Canary Wharf building cofferdam (1998)",
+    "value": -5,
+    "unit": "m",
+    "datum": "OD",
+    "quote": "The piling platform level inside the cofferdam was at –5mOD.",
+    "page": "PDF page 5"
+   },
+   {
+    "what": "Crossrail station box size",
+    "value": "265 x 25-30",
+    "unit": "m",
+    "datum": "plan",
+    "quote": "station box 265m long and 25 to 30m wide within the West India North Dock",
+    "page": "PDF page 8, section 3.4"
+   },
+   {
+    "what": "Giken pile toe levels, Crossrail cofferdam",
+    "value": "-22.5 to -30.5",
+    "unit": "m",
+    "datum": "OD",
+    "quote": "toe levels typically -22.5 to -30.5mOD",
+    "page": "PDF page 8, section 3.4"
+   }
+  ],
+  "notes": "The cofferdam piling platform (-5 mOD) is for a Canary Wharf building phase, not the JLE station; check before use.",
+  "id": "issmge-chen-nicholson",
+  "name": "Chen and Nicholson: Lessons learnt from dewatering activities and building settlement at Canary Wharf (11th International Symposium on Field Monitoring in Geomechanics, London, September 2022; ISSMGE online library)",
+  "kind": "paper",
+  "station": "Canary Wharf (Jubilee line box and Elizabeth line box)",
+  "url": "https://www.issmge.org/uploads/publications/80/112/5._Chen_&_Nicholson.pdf",
+  "date": "2022-09",
+  "what_it_shows": "Figure 1: plan of Canary Wharf development phases with the Crossrail station; Figures 2 and 3: geology cross-sections N-S and E-W; Table 1: top of strata in mOD; Figure 4: groundwater and settlement during JLE station dewatering. Text on the JLE station box and the Crossrail station box.",
+  "format": "PDF, 9 pages",
+  "licence_or_terms": "ISSMGE online library ('open-access database'); author copyright; reference only",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "ground strata under the stations; box length conflict (265 m here, 260 m in the Arup paper)"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Credits Kone for escalators and lifts.",
+  "id": "euroinox-jle",
+  "name": "Euro Inox: London Underground Stations, Jubilee Line Extension (stainless steel case study, 2002)",
+  "kind": "paper",
+  "station": "Canary Wharf (Jubilee line); also North Greenwich, Canada Water",
+  "url": "https://www.imoa.info/download_files/stainless-steel/euroinox/Jubilee.pdf?m=1454491162",
+  "date": "2002",
+  "what_it_shows": "Page 12: 'Structural Cross section View' of Canary Wharf station through an entrance canopy (unscaled drawing: canopy, escalators down to the ticket hall, platforms with tracks); photos of the western canopy and escalators. Page text: 1.8 m wide escalators, 16 m wide void (context of a station not checked).",
+  "format": "PDF, 15 pages",
+  "licence_or_terms": "(c) Euro Inox 2002; reference only",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "proportions of the Jubilee line station cross-section only (no scale, no levels)"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "DOI redirects to https://www.emerald.com/jcien/article/132/6/19-25/398253 which returns 403 to this client.",
+  "id": "ice-paoletti-1999",
+  "name": "Paoletti R. Architectural design of the Jubilee Line Extension stations. Proc ICE Civil Engineering 132(6), Nov 1999, pp 19-25, doi 10.1680/icien.1999.132.6.19",
+  "kind": "paper",
+  "station": "Canary Wharf (Jubilee), North Greenwich, Canada Water",
+  "url": "https://doi.org/10.1680/icien.1999.132.6.19",
+  "date": "1999-11",
+  "what_it_shows": "Not read (paywall/bot challenge). Search results say it covers Canary Wharf, North Greenwich and Canada Water. The same issue has a dedicated paper on the design and construction of Canary Wharf station (title from search results only; DOI not found).",
+  "format": "journal article",
+  "licence_or_terms": "ICE Publishing / Emerald, paywalled",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 403,
+   "content_type": "text/html; charset=UTF-8",
+   "status": "blocked"
+  },
+  "usable_for_3d": "unknown"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [
+   {
+    "what": "station box depth",
+    "value": 28,
+    "unit": "m",
+    "datum": "not stated (probably below dock water level, as in Construction Index)",
+    "quote": "features a 28 metre-deep station box which completed last week",
+    "page": "web page"
+   }
+  ],
+  "notes": "Agrees with Construction Index 28 m below water (FACTS.md).",
+  "id": "aj-cw-crossrail-platform-2012",
+  "name": "Architects' Journal: In pictures: Foster's Canary Wharf Crossrail platform level completes (28 March 2012)",
+  "kind": "other",
+  "station": "Canary Wharf (Elizabeth line)",
+  "url": "https://www.architectsjournal.co.uk/archive/in-pictures-fosters-canary-wharf-crossrail-platform-level-completes",
+  "date": "2012-03-28",
+  "what_it_shows": "14 construction photos; text: 'a 28 metre-deep station box'.",
+  "format": "HTML",
+  "licence_or_terms": "AJ copyright; quote only",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "ok"
+  },
+  "usable_for_3d": "check value only"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "",
+  "id": "alsop-heron-quays",
+  "name": "aLL Design (Will Alsop): Heron Quays DLR station project page",
+  "kind": "other",
+  "station": "Heron Quays DLR",
+  "url": "https://all.design/willalsop/heronquays",
+  "date": "unknown",
+  "what_it_shows": "Text only, no dimensions: station wholly enclosed by the office development, self-supporting steel cradle on the basement column grid holding the platforms, a curved shell below the tracks, 'the space at ground level to act as both station concourse and pedestrian thoroughfare', 'Escalators connect lower car parking levels to the platforms above'.",
+  "format": "HTML",
+  "licence_or_terms": "architect website; quote only",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html;charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "qualitative: concourse at ground, platforms one level up on a bridge (agrees with TfL index 0 and 1)"
+ },
+ {
+  "archived_url": null,
+  "levels_found": [],
+  "notes": "Boxes are approximate and include mall areas. Level numbers in OSM mix schemes (estate numbering at Canary Wharf, TfL-like indices at North Greenwich, fractional levels at Canada Water).",
+  "id": "osm-indoor-coverage",
+  "name": "OpenStreetMap indoor and level tagging around the stations (local Greater London extract, 2026-10-01)",
+  "kind": "dataset",
+  "station": "all nine",
+  "url": "https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/greater_london-latest.osm.pbf",
+  "date": "2026-10-01",
+  "what_it_shows": "Counted from the extract already on disk (magpie/cwplans/data/raw/docklands/greater_london-latest.osm.pbf, timestamp 2026-10-01T01:43:50Z), in small boxes around each station; no network query. Canada Water: richest (106 indoor=yes, 29 indoor=corridor, 54 highway=corridor, fractional levels -0.3 to -2.3, platforms at level -2, lifts and escalators with levels). North Greenwich: 49 indoor=yes, platforms at -6, ticket hall footways at -4, lifts '-6;-4', escalators '-6;-4' and '-4;0' (same indices as TfL). Canary Wharf Jubilee box (incl. Jubilee Place mall): platforms at -3, 26 indoor=yes, 32 escalators (steps+conveying), 3 subway_entrance at level 0, lifts '-2;-3', '-2;0'. Crossrail Place box: 8 indoor=yes, lifts '0,-4' and '1,-4', escalators '-1,-4', a station node at -3. Canary Wharf DLR: 10 platforms, levels 0-3 (mall). Heron Quays: 2 lifts, 4 escalators, no levels. South Quay: platforms at a level, 2 lifts. West India Quay and Crossharbour: platforms and lifts, little level data.",
+  "format": "OSM PBF",
+  "licence_or_terms": "ODbL 1.0 (share-alike); allowed in magpie/cwplans for now, must be tracked in data-register.json",
+  "verified": {
+   "date": "2026-10-03",
+   "http": "not fetched (local file)",
+   "content_type": "n/a",
+   "status": "local"
+  },
+  "usable_for_3d": "yes for Canada Water and North Greenwich indoor outlines; partial for Canary Wharf"
+ }
+]

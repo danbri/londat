@@ -1,0 +1,881 @@
+{
+ "meta": {
+  "generated": "2026-10-03T16:06:39.024Z",
+  "tool": "tools/crawl-sites.mjs",
+  "from": "registry/sources/web/site-facts.json",
+  "note": "Feed URLs (RSS, Atom, JSON Feed, iCalendar) found in the crawled pages and not already in feeds/events.json or feeds/feeds.json. Not fetched or verified: check each (feeds/check-events.mjs) before adding it to feeds/events.json. WordPress comment feeds are left out. Feeds on archived canarywharf.com pages are the site's own WordPress feeds.",
+  "counts": {
+   "found": 61,
+   "already_known": 0,
+   "new": 61,
+   "new_by_format": {
+    "rss": 55,
+    "atom": 5,
+    "ical": 1
+   }
+  }
+ },
+ "feeds": [
+  {
+   "url": "https://canarywharf.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Canary Wharf &raquo; Feed",
+   "found_on": [
+    "https://web.archive.org/web/20251107100315/https://canarywharf.com/restaurant/manhattan-grill/",
+    "https://web.archive.org/web/20250329182338/https://canarywharf.com/stay/london-marriott-hotel-canary-wharf/",
+    "https://web.archive.org/web/20251117223946/https://canarywharf.com/shop/london-marriott-executive-apartments-canary-wharf/",
+    "https://web.archive.org/web/20251117212748/https://canarywharf.com/shop/workpath/",
+    "https://web.archive.org/web/20251117211934/https://canarywharf.com/see-do/virgin-active-canary-riverside/",
+    "https://web.archive.org/web/20251107011713/https://canarywharf.com/restaurant/gaucho/",
+    "https://web.archive.org/web/20251114122203/https://canarywharf.com/shop/bright-horizons-canada-square-day-nursery-preschool/",
+    "https://web.archive.org/web/20251115144857/https://canarywharf.com/restaurant/pret-a-manger-westferry-circus/",
+    "https://web.archive.org/web/20251107011939/https://canarywharf.com/shop/bupa-dental-centre-columbus-courtyard/",
+    "https://web.archive.org/web/20251115155912/https://canarywharf.com/shop/bright-horizons-columbus-courtyard-day-nursery-preschool/"
+   ],
+   "for": [
+    "branch:Q105337125@cwg/the-fragrance-shop",
+    "branch:Q1058722@node/1985574417",
+    "branch:Q10730152@fhrs/1902527",
+    "branch:Q108197462@way/704927590",
+    "branch:Q108443313@way/267333160",
+    "branch:Q10877253@node/10092576621",
+    "branch:Q109745011@node/3835357212",
+    "branch:Q109745011@node/7178540970",
+    "branch:Q110103854@node/10034149594",
+    "branch:Q110694603@way/1449335671",
+    "branch:Q110694826@node/7925251503",
+    "branch:Q111363127@cwg/locke",
+    "branch:Q111656694@node/6019685656",
+    "branch:Q111964713@cwg/change-please-reuters-plaza",
+    "branch:Q112123535@cwg/t4",
+    "branch:Q11230957@node/3835357217",
+    "branch:Q112671088@node/13261927511",
+    "branch:Q112671088@node/8715135574",
+    "branch:Q112913418@node/10092576622",
+    "branch:Q113130666@node/573854610"
+   ],
+   "for_count": 873
+  },
+  {
+   "url": "https://notescoffee.com/home?format=rss",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "RSS Feed",
+   "found_on": [
+    "https://notescoffee.com/"
+   ],
+   "for": [
+    "branch:Q111656694@node/6019685656",
+    "branch:Q111656694@node/7130352124",
+    "cwb-0358|Notes",
+    "cwb-0465|Notes",
+    "cwg:notes-coffee-roasters-bar"
+   ],
+   "for_count": 5
+  },
+  {
+   "url": "https://blacksheepcoffee.us/blogs/locations.atom",
+   "format": "atom",
+   "how": "link rel=alternate",
+   "title": "Feed",
+   "found_on": [
+    "https://blacksheepcoffee.co.uk/blogs/locations/canary-wharf",
+    "https://blacksheepcoffee.co.uk/blogs/locations/jubilee"
+   ],
+   "for": [
+    "branch:Q109745011@node/3835357212",
+    "branch:Q109745011@node/7178540970",
+    "cwb-0455|Black Sheep Coffee",
+    "cwb-0587|Black Sheep Coffee"
+   ],
+   "for_count": 4
+  },
+  {
+   "url": "https://jamesshoecare.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "James Shoe Care &raquo; Feed",
+   "found_on": [
+    "https://jamesshoecare.co.uk/",
+    "http://www.jamesshoecare.co.uk/"
+   ],
+   "for": [
+    "cwb-0520|James Shoe Care",
+    "cwg:james-shoe-care-canada-place",
+    "cwg:james-shoe-shine-chair-cabot-place",
+    "cwg:james-shoe-shine-chair-canada-place"
+   ],
+   "for_count": 4
+  },
+  {
+   "url": "https://www.farmerj.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Farmer J &raquo; Feed",
+   "found_on": [
+    "https://farmerj.com/"
+   ],
+   "for": [
+    "branch:Q118611346@fhrs/1498177",
+    "branch:Q118611346@node/7118074386",
+    "cwg:farmer-j-canada-place",
+    "cwg:farmer-j-jubilee-place"
+   ],
+   "for_count": 4
+  },
+  {
+   "url": "https://640east.co.uk/home-blend?format=rss",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "RSS Feed",
+   "found_on": [
+    "https://640east.co.uk/"
+   ],
+   "for": [
+    "cwb-0591|640East",
+    "cwg:640-east",
+    "cwg:640east-water-street"
+   ],
+   "for_count": 3
+  },
+  {
+   "url": "https://markethalls.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Market Halls &raquo; Feed",
+   "found_on": [
+    "https://markethalls.co.uk/venue/canary-wharf/",
+    "https://markethalls.co.uk/trader/gopals/",
+    "https://markethalls.co.uk"
+   ],
+   "for": [
+    "cwb-0412|Gopal's Corner",
+    "cwb-0412|Market Halls Cargo Canary Wharf",
+    "cwg:market-halls"
+   ],
+   "for_count": 3
+  },
+  {
+   "url": "https://marugame.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Marugame Udon &raquo; Feed",
+   "found_on": [
+    "https://marugame.co.uk/blog/location/canary-wharf/"
+   ],
+   "for": [
+    "branch:Q10877253@node/10092576621",
+    "cwb-0411|Marugame Udon",
+    "cwg:marugame-udon"
+   ],
+   "for_count": 3
+  },
+  {
+   "url": "https://wharfsidecarservices.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Wharfside Car Services &raquo; Feed",
+   "found_on": [
+    "https://wharfsidecarservices.com/"
+   ],
+   "for": [
+    "cwb-0466|Wharfside Car Services",
+    "cwg:wharfside-car-valet-cabot-place",
+    "cwg:wharfside-car-valet-canada-place"
+   ],
+   "for_count": 3
+  },
+  {
+   "url": "https://www.wasabi.uk.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Wasabi | Sushi & Bento &raquo; Feed",
+   "found_on": [
+    "https://www.wasabi.uk.com/location/canary-wharf",
+    "https://www.wasabi.uk.com/"
+   ],
+   "for": [
+    "branch:Q23891278@node/3835357225",
+    "cwb-0411|Wasabi",
+    "cwg:wasabi"
+   ],
+   "for_count": 3
+  },
+  {
+   "url": "https://amerigovespucci.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Amerigo Vespucci &raquo; Feed",
+   "found_on": [
+    "https://amerigovespucci.co.uk/",
+    "http://www.amerigovespucci.co.uk"
+   ],
+   "for": [
+    "cwb-0453|Amerigo Vespucci",
+    "cwg:amerigo-vespucci"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://broadwick.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Broadwick &raquo; Feed",
+   "found_on": [
+    "https://broadwick.com/divisions/broadwick-studio/"
+   ],
+   "for": [
+    "cwb-0594|Broadwick Studio",
+    "cwg:broadwick-studio"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://dmr.co.uk/collections/rolex.atom",
+   "format": "atom",
+   "how": "link rel=alternate",
+   "title": "Feed",
+   "found_on": [
+    "https://www.davidmrobinson.co.uk/product-category/watches/rolex/"
+   ],
+   "for": [
+    "branch:Q62288@cwg/rolex-at-dmr",
+    "cwg:rolex-at-dmr"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://newsonthewharf.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "News on the Wharf &raquo; Feed",
+   "found_on": [
+    "https://www.newsonthewharf.co.uk/"
+   ],
+   "for": [
+    "cwg:news-on-the-wharf-jubilee-place",
+    "cwg:news-on-the-wharf-one-canada-square"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://poke-house.com/en-uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Poke-house.com &raquo; Feed",
+   "found_on": [
+    "https://poke-house.com/en-uk/"
+   ],
+   "for": [
+    "branch:Q123399421@node/7579400265",
+    "cwg:poke-house-wharf-kitchen"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://scarpettapasta.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Italian Restaurant I Scarpetta &raquo; Feed",
+   "found_on": [
+    "https://scarpettapasta.com/",
+    "https://scarpettapasta.com/restaurant-canary-wharf/"
+   ],
+   "for": [
+    "cwb-0465|Scarpetta",
+    "cwg:scarpetta"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://thehawksmoor.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Hawksmoor RSS Feed",
+   "found_on": [
+    "https://thehawksmoor.com/",
+    "https://thehawksmoor.com/locations/wood-wharf/"
+   ],
+   "for": [
+    "branch:Q17500669@way/967277709",
+    "cwg:hawksmoor-wood-wharf"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://www.moreyoga.co.uk/feed",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "MoreYoga &raquo; Feed",
+   "found_on": [
+    "https://www.moreyoga.co.uk/"
+   ],
+   "for": [
+    "cwb-0173|More Yoga",
+    "cwb-0598|MoreYoga"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://www.moss.co.uk/rss",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "found_on": [
+    "http://www.moss.co.uk"
+   ],
+   "for": [
+    "branch:Q6916538@node/6553266683",
+    "cwg:moss"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://www.moss.co.uk/store/rss",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "found_on": [
+    "https://www.moss.co.uk/store/169-moss-canary-wharf"
+   ],
+   "for": [
+    "branch:Q6916538@node/6553266683",
+    "cwb-0460|Moss Bros"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://www.mrpretzelsuk.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Mr. Pretzels &raquo; Feed",
+   "found_on": [
+    "https://www.mrpretzelsuk.com/"
+   ],
+   "for": [
+    "branch:Q115728208@fhrs/1616887",
+    "cwg:mr-pretzels"
+   ],
+   "for_count": 2
+  },
+  {
+   "url": "https://breralounge.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "breralounge &raquo; Feed",
+   "found_on": [
+    "https://breralounge.co.uk/"
+   ],
+   "for": [
+    "cwg:brera-lounge"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://charbonnel.co.uk/feed",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Charbonnel et Walker – Britain’s First Luxury Chocolatier. Fine Chocolates and Truffles, established in 1875. &raquo;…",
+   "found_on": [
+    "http://www.charbonnel.co.uk"
+   ],
+   "for": [
+    "cwg:charbonnel-et-walker"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://english-tailoring.com/feed",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "English Tailoring &raquo; Feed",
+   "found_on": [
+    "http://www.english-tailoring.com/"
+   ],
+   "for": [
+    "cwg:english-tailoring"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://experienceplatform.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Experience Platform &raquo; Feed",
+   "found_on": [
+    "https://experienceplatform.co.uk/"
+   ],
+   "for": [
+    "cwb-0358|Platform"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://generalcargo.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "General Cargo",
+   "found_on": [
+    "https://generalcargo.co.uk/"
+   ],
+   "for": [
+    "cwb-0071|General Cargo & Money Transfer"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://generalcargo.co.uk/feed/atom/",
+   "format": "atom",
+   "how": "link rel=alternate",
+   "title": "General Cargo",
+   "found_on": [
+    "https://generalcargo.co.uk/"
+   ],
+   "for": [
+    "cwb-0071|General Cargo & Money Transfer"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://ilbianco.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "IL Bianco &raquo; Feed",
+   "found_on": [
+    "https://ilbianco.co.uk/"
+   ],
+   "for": [
+    "cwb-0341|Il Bianco"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://in2sports.org/feed",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "In2Sports &raquo; Feed",
+   "found_on": [
+    "https://in2sports.org/"
+   ],
+   "for": [
+    "cwg:in2sports"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://kricketrestaurants.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Kricket &raquo; Feed",
+   "found_on": [
+    "https://kricket.co.uk/"
+   ],
+   "for": [
+    "cwg:kricket"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://kubiti.org/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Kubiti &raquo; Feed",
+   "found_on": [
+    "https://kubiti.org/nail-trends/?q=Catherine+Nails+Blackwall"
+   ],
+   "for": [
+    "cwb-0339|Catherine Nails Blackwall"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://lanternsstudiotheatre.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Lanterns Studio Theatre in East London &raquo; Feed",
+   "found_on": [
+    "https://lanternsstudiotheatre.co.uk/"
+   ],
+   "for": [
+    "cwb-0968|Lanterns Studio Theatre"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://lycahealth.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "LycaHealth &raquo; Feed",
+   "found_on": [
+    "https://lycahealth.com/clinics/canary-wharf/"
+   ],
+   "for": [
+    "cwb-0351|Lyca Health Canary Wharf"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://malmin.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Malmin Dental &raquo; Feed",
+   "found_on": [
+    "https://malmin.co.uk/"
+   ],
+   "for": [
+    "cwg:malmin-dental"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://mercatometropolitano.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Mercato Metropolitano &raquo; Feed",
+   "found_on": [
+    "https://mercatometropolitano.com/locations/wood-wharf/"
+   ],
+   "for": [
+    "cwb-0593|Mercato Metropolitano"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://oysteria.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Oysteria &raquo; Feed",
+   "found_on": [
+    "https://oysteria.co.uk/"
+   ],
+   "for": [
+    "cwg:oysteria"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://pandyasrestaurants.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "PANDYAS &raquo; Feed",
+   "found_on": [
+    "https://pandyasrestaurants.com/"
+   ],
+   "for": [
+    "cwb-0009|Pandyas Simply Indian Cuisine"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://parisbaguette.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Paris Baguette &raquo; Feed",
+   "found_on": [
+    "https://parisbaguette.uk/"
+   ],
+   "for": [
+    "cwg:paris-baguette"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://plantworldlondon.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Plant World London &raquo; Feed",
+   "found_on": [
+    "https://plantworldlondon.com/"
+   ],
+   "for": [
+    "cwb-0170|Plant World"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://puresportsmed.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Pure Sports Medicine &raquo; Feed",
+   "found_on": [
+    "http://www.puresportsmed.com"
+   ],
+   "for": [
+    "cwg:pure-sports-medicine"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://rosswatchrepairs.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Ross Watch Repairs &raquo; Feed",
+   "found_on": [
+    "https://rosswatchrepairs.com/"
+   ],
+   "for": [
+    "cwg:ross-watch-repairs"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://thepelligon.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "The Pelligon &raquo; Feed",
+   "found_on": [
+    "https://thepelligon.com/"
+   ],
+   "for": [
+    "cwg:the-pelligon"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://thewinterclub.london/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "The Winter Club &raquo; Feed",
+   "found_on": [
+    "https://www.thewinterclub.london/"
+   ],
+   "for": [
+    "cwg:the-winter-club"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://thunderbirdckn.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Thunderbird Fried Chicken &raquo; Feed",
+   "found_on": [
+    "https://thunderbirdckn.co.uk/"
+   ],
+   "for": [
+    "cwg:thunderbird-fried-chicken-at-wharf-kitchen"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://woodcocklaw.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Woodcock Law &raquo; Feed",
+   "found_on": [
+    "https://woodcocklaw.co.uk/"
+   ],
+   "for": [
+    "cwb-0413|Woodcock Law & Notary Public"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.alignandsmile.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Align&Smile &raquo; Feed",
+   "found_on": [
+    "https://www.alignandsmile.co.uk/"
+   ],
+   "for": [
+    "cwb-0446|Align & Smile"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.boisdale.co.uk/magazine/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Magazine RSS feed for Boisdale",
+   "found_on": [
+    "https://www.boisdale.co.uk/canary-wharf/the-venue/"
+   ],
+   "for": [
+    "cwg:boisdale-of-canary-wharf"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.bricklanebagel.co/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Brick Lane Bagel Co &raquo; Feed",
+   "found_on": [
+    "https://www.bricklanebagel.co/"
+   ],
+   "for": [
+    "cwg:brick-lane-bagel-co"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.emiliaspasta.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Emilia's Crafted Pasta &raquo; Feed",
+   "found_on": [
+    "https://www.emiliaspasta.com/"
+   ],
+   "for": [
+    "cwg:emilias-crafted-pasta"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.garbanzos.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Garbanzos &raquo; Feed",
+   "found_on": [
+    "https://www.garbanzos.co.uk/"
+   ],
+   "for": [
+    "cwg:garbanzos-reuters-plaza"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.gov.uk/government/organisations/competition-and-markets-authority.atom",
+   "format": "atom",
+   "how": "link rel=alternate",
+   "title": "Competition and Markets Authority",
+   "found_on": [
+    "https://www.gov.uk/government/organisations/competition-and-markets-authority"
+   ],
+   "for": [
+    "cwb-0453|Competition & Markets Authority"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.gov.uk/government/organisations/olympic-delivery-authority.atom",
+   "format": "atom",
+   "how": "link rel=alternate",
+   "title": "Olympic Delivery Authority",
+   "found_on": [
+    "https://www.gov.uk/government/organisations/olympic-delivery-authority"
+   ],
+   "for": [
+    "cwb-0424|Olympic Delivery Authority"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.indigostreetfood.com/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Indi-go Rasoi &raquo; Feed",
+   "found_on": [
+    "https://www.indigostreetfood.com/indi-go-canary-wharf/"
+   ],
+   "for": [
+    "cwg:indi-go"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.lanternsschooloftheperformingarts.com/blog-feed.xml",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Lanterns School Of T - RSS",
+   "found_on": [
+    "https://www.lanternsschooloftheperformingarts.com/"
+   ],
+   "for": [
+    "cwb-0968|Lanterns School of the Performing Arts"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.mulberrywoodwharf.org/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Mulberry Wood Wharf &raquo; Feed",
+   "found_on": [
+    "https://www.mulberrywoodwharf.org/"
+   ],
+   "for": [
+    "cwg:mulberry-wood-wharf-primary"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.pittagoras.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Pittagoras &raquo; Feed",
+   "found_on": [
+    "https://www.pittagoras.co.uk/"
+   ],
+   "for": [
+    "cwg:pittagoras-at-wharf-kitchen"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.sixbynico.co.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Six By Nico &raquo; Feed",
+   "found_on": [
+    "https://www.sixbynico.co.uk/canary-wharf/booking/"
+   ],
+   "for": [
+    "cwb-0456|Six by Nico"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.thesaladkitchen.com/blog-feed.xml",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "The Salad Kitchen - RSS",
+   "found_on": [
+    "https://www.thesaladkitchen.com/"
+   ],
+   "for": [
+    "cwg:the-salad-kitchen"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://www.tiantian.london/blog-feed.xml",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Tian Tian Market - RSS",
+   "found_on": [
+    "https://www.tiantian.london/"
+   ],
+   "for": [
+    "cwg:tian-tian-market"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://zata.uk/events/?ical=1",
+   "format": "ical",
+   "how": "link rel=alternate",
+   "title": "Za'ta &raquo; iCal Feed",
+   "found_on": [
+    "https://zata.uk/"
+   ],
+   "for": [
+    "cwg:zata"
+   ],
+   "for_count": 1
+  },
+  {
+   "url": "https://zata.uk/feed/",
+   "format": "rss",
+   "how": "link rel=alternate",
+   "title": "Za'ta &raquo; Feed",
+   "found_on": [
+    "https://zata.uk/"
+   ],
+   "for": [
+    "cwg:zata"
+   ],
+   "for_count": 1
+  }
+ ]
+}

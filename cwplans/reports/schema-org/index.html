@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Snapshot of the report published 2026-10-06 (https://claude.ai/artifact/8syFhnR1EaJEmJJQdqLmn5, version 3). Not rebuilt by a tool. Skill: cwplans-web-harvest, "Reports". -->
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Docklands schema.org harvest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of about 70ch, wide tables scroll inside their own frame; a register-like report */
+:root{
+  --bg:#f7f8f6; --surface:#ffffff; --fg:#1d2321; --muted:#5b6662; --line:#d9dfdb; --accent:#2f6b57; --accent-soft:#e3efe9; --warn:#9a5b12; --warn-soft:#f6ecdd;
+  --display:"Source Serif 4", Georgia, "Times New Roman", serif; --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121615;--surface:#1a201e;--fg:#e4e9e6;--muted:#9aa6a1;--line:#2c3532;--accent:#7cc3a6;--accent-soft:#1f2f29;--warn:#e0a85c;--warn-soft:#2c2418;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121615;--surface:#1a201e;--fg:#e4e9e6;--muted:#9aa6a1;--line:#2c3532;--accent:#7cc3a6;--accent-soft:#1f2f29;--warn:#e0a85c;--warn-soft:#2c2418;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15.5px;line-height:1.6}
+.wrap{max-width:62rem;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:grid;gap:28px}
+header{display:grid;gap:8px;border-bottom:1px solid var(--line);padding-bottom:20px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.15;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:1.45rem;margin:0;text-wrap:balance}
+h3{font-size:1rem;font-weight:600;margin:0}
+section{display:grid;gap:12px;min-width:0}
+p,li{max-width:70ch;margin:0}
+ul,ol{margin:0;padding-left:1.2rem;display:grid;gap:6px}
+.lede{font-size:1.05rem;color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:10px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;gap:2px}
+.fact b{font-family:var(--display);font-size:1.5rem;font-weight:600;font-variant-numeric:tabular-nums}
+.fact span{color:var(--muted);font-size:13px}
+.note{background:var(--warn-soft);border-left:3px solid var(--warn);padding:10px 12px;border-radius:0 6px 6px 0}
+.pill{display:inline-block;font-size:12px;font-weight:500;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.w{background:var(--warn-soft);color:var(--warn)}
+pre{margin:0;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.5}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:520px;height:auto}
+.chart text{fill:var(--fg);font-family:var(--body);font-size:12px}
+.chart .ax{fill:var(--muted);font-size:11px}
+.chart .bar{fill:var(--accent)}
+.chart .grid{stroke:var(--line)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:16px}
+.two>div{min-width:0;display:grid;gap:8px;align-content:start}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">cwplans · web harvest · report of 2026-10-06</div>
+  <h1>The schema.org data that Docklands businesses publish about themselves</h1>
+  <p class="lede">What we extracted from the websites of the occupants, brands and charities that the Canary Wharf registry links to: the entities, the search features the markup targets, shape patterns we can check, and how many descriptions refer to the same real thing.</p>
+</header>
+
+<section>
+  <h2>Summary</h2>
+  <ul>
+    <li>We hold <b>65,566 quads</b> from <b>824 pages</b>: 455 live pages on 378 websites, and 369 Internet Archive copies of the canarywharf.com directory. Most of the markup is site furniture that SEO plugins write (WebSite, WebPage, BreadcrumbList, SearchAction).</li>
+    <li>The useful entities are <b>organisations</b> (Organization on 161 sites) and <b>local places</b> (LocalBusiness and its subtypes on 109 sites, 209 place descriptions). Only <b>69 of the 209</b> place descriptions have a name, a structured address, a telephone number and opening hours together.</li>
+    <li>The markup targets Google's organisation, local business and breadcrumb features, and a retired feature (the sitelinks search box, on 111 sites). Open Graph tags for social link previews are on almost every page.</li>
+    <li>About 16 recurring <b>idioms</b> (small groups of triples, such as a branch card, an organisation card, weekly hours or a breadcrumb trail) carry nearly all of the content. Each idiom appears in a few known forms, for example an address as text or as a PostalAddress node. Open shapes describe each idiom and its forms, so we can recognise it in any page and rewrite it into one canonical form for the graph.</li>
+    <li>The 960 entity descriptions reduce to about <b>421 distinct entities</b> (130 organisations, 291 places). Most of the repetition is one organisation repeated on each page of its own site. The cross-site matches are few (13) and come from shared <code>@id</code> IRIs, social profiles and telephone numbers.</li>
+    <li>Eight groups put one web description against two or three registry buildings. These are candidate registry faults: mostly mall occupants that the registry attaches to more than one mall building.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>What we hold</h2>
+  <div class="facts">
+    <div class="fact"><b>1,067</b><span>URLs attempted (1,025 in scope)</span></div>
+    <div class="fact"><b>901</b><span>pages rendered in headless Chromium</span></div>
+    <div class="fact"><b>824</b><span>pages with structured data</span></div>
+    <div class="fact"><b>379</b><span>sites (378 live, plus the archived canarywharf.com)</span></div>
+    <div class="fact"><b>65,566</b><span>quads, one named graph per page</span></div>
+    <div class="fact"><b>113</b><span>distinct types</span></div>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Syntax</th><th class="n">Pages</th><th class="n">Units</th><th>What it carries</th></tr>
+    <tr><td>JSON-LD</td><td class="n">695</td><td class="n">932 blocks</td><td>Almost all schema.org content</td></tr>
+    <tr><td>Microdata</td><td class="n">72</td><td class="n">363 items</td><td>Theme markup (WPHeader, WPFooter, SiteNavigationElement), some older place markup</td></tr>
+    <tr><td>RDFa</td><td class="n">798</td><td class="n">7,742 triples</td><td>Open Graph and article tags for social previews; schema.org in RDFa on 1 page only</td></tr>
+  </table></div>
+  <p>Crawl failures: 63 bot challenges, 33 DNS failures, 21 pages not found, 11 refused, 10 TLS faults, 8 timeouts, 2 rate limits, 5 robots.txt refusals or errors. Method and limits: <code>third_party/cwplans-structured-data/README.md</code>.</p>
+  <p class="note">Correction: in an earlier chat summary I said the N-Quads hold 2,883 named graphs. That count was wrong: it split lines on spaces inside literals. The correct number is 824 named graphs, one for each page.</p>
+</section>
+
+<section>
+  <h2>Key entities</h2>
+  <p>Number of sites that use each type (top 24 by sites). Nodes are the number of described things; one page can describe many.</p>
+  <div class="chart" role="img" aria-label="Bar chart of schema.org types by number of sites">
+  <svg viewBox="0 0 640 520" xmlns="http://www.w3.org/2000/svg">
+    <g id="bars"></g>
+  </svg>
+  </div>
+  <div class="tbl"><table>
+    <tr><th>Group</th><th>Types (sites, nodes)</th><th>What it tells us</th></tr>
+    <tr><td>Site furniture</td><td>WebSite (187, 588), WebPage (121, 554), BreadcrumbList (105, 502), SearchAction (111, 506), ImageObject (89, 1,016)</td><td>Written by SEO plugins. Gives site name, page dates and section paths. Little about the business.</td></tr>
+    <tr><td>Organisations</td><td>Organization (161, 613), Brand (15), NGO (3), Corporation</td><td>Name, url, logo and <code>sameAs</code> social profiles on 83 to 96% of nodes. Address on only 10%.</td></tr>
+    <tr><td>Local places</td><td>LocalBusiness (56, 67), Restaurant (22, 54), FoodEstablishment, FastFoodRestaurant, Store, Dentist, BarOrPub, ChildCare, RealEstateAgent, MovieTheater, HealthClub and 20 more</td><td>The entities we want: a branch at an address with hours and a phone number.</td></tr>
+    <tr><td>Place parts</td><td>PostalAddress (106, 248), GeoCoordinates (44, 85), OpeningHoursSpecification (39, 462), ContactPoint (25)</td><td>The join keys: postcode, coordinates, telephone, hours.</td></tr>
+    <tr><td>Commerce</td><td>Offer (13, 513), Product (4, 13), Menu (5, 184), MenuItem (2, 2,007), Service (6, 112), OfferCatalog (6)</td><td>Prices and menus from a few chains. Large in node count, narrow in sites.</td></tr>
+    <tr><td>Content</td><td>FAQPage (12), Article (9), VideoObject (6), Event (1 site, 6 nodes)</td><td>Thin. Almost no event markup, although several venues are in scope.</td></tr>
+    <tr><td>People and ratings</td><td>Person (24 sites, 96), AggregateRating (9), Review (3)</td><td>Staff and authors; self-published ratings.</td></tr>
+  </table></div>
+  <h3>The canarywharf.com directory (369 archived pages)</h3>
+  <p>These pages carry only the WordPress and Yoast furniture: WebPage, WebSite, BreadcrumbList and the publisher (Canary Wharf Group). They do not type the shop or restaurant. The business shows only in the page name ("Caffé Nero at Jubilee Place | Canary Wharf"), the URL path (<code>/restaurant/</code>, <code>/shop/</code>, <code>/see-do/</code>), the section (Shops &amp; Services 171 pages, Eat &amp; Drink 161, What's On 6) and the dates (<code>datePublished</code> from 2013, <code>dateModified</code> to 2024). The dates are useful as "listed since" and "last edited" signals for each occupant.</p>
+</section>
+
+<section>
+  <h2>Which search features the markup targets</h2>
+  <p>Each pattern maps to a feature that a search engine or social platform documents. The status column is from published platform documentation as far as I know it; check the current documentation before you depend on a row.</p>
+  <div class="tbl"><table>
+    <tr><th>Pattern</th><th class="n">Sites</th><th>Feature it targets</th><th>Status</th></tr>
+    <tr><td>WebSite + SearchAction (<code>query-input</code>)</td><td class="n">111</td><td>Google sitelinks search box</td><td><span class="pill w">retired</span> Google stopped showing it in late 2024. The markup stays because plugins still write it.</td></tr>
+    <tr><td>BreadcrumbList</td><td class="n">105</td><td>Breadcrumb trail in place of the URL in results</td><td><span class="pill">used</span> Google dropped breadcrumbs from mobile results in early 2025; desktop still uses them</td></tr>
+    <tr><td>Organization with logo and sameAs</td><td class="n">161</td><td>Organisation logo and knowledge panel links (Google), entity reconciliation (Bing)</td><td><span class="pill">used</span></td></tr>
+    <tr><td>LocalBusiness and subtypes with address, geo, hours, telephone</td><td class="n">109</td><td>Local business details for knowledge panels and maps</td><td><span class="pill">used</span> A secondary signal: Google Business Profile is the main source for local data</td></tr>
+    <tr><td>Restaurant: servesCuisine, hasMenu, acceptsReservations, priceRange</td><td class="n">22</td><td>Restaurant details in local results</td><td><span class="pill">used</span> Reservations through partner feeds, not markup</td></tr>
+    <tr><td>AggregateRating / Review on the business itself</td><td class="n">9</td><td>Review stars</td><td><span class="pill w">not eligible</span> Google does not show self-published reviews of a LocalBusiness or Organization (since 2019)</td></tr>
+    <tr><td>FAQPage</td><td class="n">12</td><td>FAQ rich result</td><td><span class="pill w">restricted</span> Since 2023 shown only for well-known government and health sites</td></tr>
+    <tr><td>Product + Offer (sku, mpn, price)</td><td class="n">4</td><td>Product snippets and merchant listings</td><td><span class="pill">used</span></td></tr>
+    <tr><td>Article, VideoObject</td><td class="n">9, 6</td><td>Article and video results</td><td><span class="pill">used</span></td></tr>
+    <tr><td>Open Graph (<code>og:</code>) and <code>twitter:</code> tags</td><td class="n">most</td><td>Link previews in Facebook, LinkedIn, WhatsApp, Slack, iMessage and X</td><td><span class="pill">used</span></td></tr>
+    <tr><td>WPHeader, WPFooter, SiteNavigationElement</td><td class="n">22</td><td>None: theme microdata</td><td>no feature</td></tr>
+  </table></div>
+  <h3>Who wrote the markup</h3>
+  <p>The <code>@id</code> patterns show the tools. Yoast-style IRIs (<code>#website</code>, <code>#organization</code>, <code>#breadcrumb</code>, <code>/#/schema/</code>) are on 43 to 87 sites; the WordPress REST link is on most WordPress pages; theme microdata is on 22 sites. Chains use store-locator platforms (for example <code>locations.pret.co.uk</code>), and one restaurant group publishes the same IRIs through a booking platform (<code>mildreds.getbento.com</code>). So most markup is a plugin default, not written by the business. This explains why site furniture is everywhere and place facts are rare.</p>
+</section>
+
+<section>
+  <h2>Descriptive idioms (shapes)</h2>
+  <p>Sites say the same things with the same small groups of triples. Each group is an <b>idiom</b>: a node of one type, its usual properties, and the child nodes that hang from it. We describe each idiom once as an open shape. The shape recognises the idiom and its known forms in any page; it does not reject data. A recognised idiom is then rewritten into one canonical form for the knowledge graph, and the original form is kept as provenance.</p>
+  <p>The idioms below were mined from the data: for each typed node we took its properties and the types of its child nodes (two levels), grouped equal patterns, and counted the sites that use each one.</p>
+  <div class="tbl"><table>
+    <tr><th>Idiom</th><th>Pattern</th><th class="n">Sites</th><th>Forms seen (sites)</th></tr>
+    <tr><td>Social preview</td><td><code>og:title</code>, <code>og:url</code>, <code>og:type</code>, <code>og:image</code> (RDFa in the page head)</td><td class="n">288</td><td>basic 154; + image size 61; + image size and article times 44; + article times 36</td></tr>
+    <tr><td>Site identity</td><td>WebSite (name, url, description, inLanguage) &gt; publisher Organization</td><td class="n">187</td><td>no publisher 118; with publisher 72</td></tr>
+    <tr><td>Organisation card</td><td>Organization (name, url) &gt; logo ImageObject; sameAs links</td><td class="n">153</td><td>logo IRI + sameAs 52; logo ImageObject + sameAs 44; name and url only 28; sameAs, no logo 20; logo ImageObject, no sameAs 17; logo IRI, no sameAs 14</td></tr>
+    <tr><td>Branch card</td><td>LocalBusiness or a subtype (name, telephone, url) &gt; address PostalAddress; &gt; geo GeoCoordinates; &gt; openingHoursSpecification</td><td class="n">113</td><td>address: node 84, text 24, none 19. Hours: none 62, nodes 38, text 35. The full form (address node, hours nodes, geo, telephone) on 22 sites</td></tr>
+    <tr><td>Site search box</td><td>WebSite &gt; potentialAction SearchAction &gt; target EntryPoint; query-input</td><td class="n">106</td><td>EntryPoint + PropertyValueSpecification 49 (current Yoast); IRI + text 39 (older form); EntryPoint + text 21</td></tr>
+    <tr><td>Breadcrumb trail</td><td>BreadcrumbList &gt; itemListElement ListItem (position, name, item)</td><td class="n">105</td><td>last item without a link 70; every item linked 36</td></tr>
+    <tr><td>Page frame</td><td>WebPage &gt; isPartOf WebSite; &gt; breadcrumb; &gt; primaryImageOfPage; &gt; about Organization; dates</td><td class="n">84</td><td>seven common combinations; breadcrumb in most</td></tr>
+    <tr><td>Weekly hours</td><td>OpeningHoursSpecification (dayOfWeek, opens, closes; validFrom, validThrough for special days)</td><td class="n">39</td><td>day as text 27; day as IRI 12; special-hours form 1</td></tr>
+    <tr><td>Contact point</td><td>Organization &gt; contactPoint ContactPoint (contactType, telephone, email, areaServed, availableLanguage)</td><td class="n">25</td><td>seven combinations; contactType + telephone the core</td></tr>
+    <tr><td>Chain branch link</td><td>LocalBusiness &gt; parentOrganization Organization, or &gt; brand Brand; branchCode</td><td class="n">24</td><td>parentOrganization 15; brand 5; branchCode 2; mixed 2</td></tr>
+    <tr><td>Person</td><td>Person (name, jobTitle, url, sameAs) &gt; worksFor Organization</td><td class="n">24</td><td>name only 5; jobTitle 5; with worksFor 5</td></tr>
+    <tr><td>Menu</td><td>Restaurant &gt; hasMenu (a link) or Menu &gt; MenuSection &gt; MenuItem &gt; Offer</td><td class="n">18</td><td>link to a menu page 17; full menu tree 1 (from an ordering platform)</td></tr>
+    <tr><td>FAQ</td><td>FAQPage &gt; mainEntity Question &gt; acceptedAnswer Answer</td><td class="n">12</td><td>one form only</td></tr>
+    <tr><td>Rating badge</td><td>LocalBusiness &gt; aggregateRating AggregateRating (ratingValue, reviewCount or ratingCount)</td><td class="n">8</td><td>four combinations of the count properties</td></tr>
+    <tr><td>Service catalogue</td><td>LocalBusiness &gt; hasOfferCatalog OfferCatalog &gt; Offer &gt; itemOffered Service</td><td class="n">4</td><td>one form</td></tr>
+    <tr><td>Product offer</td><td>Product (sku, mpn) &gt; brand Brand; &gt; offers Offer (price, priceCurrency, availability)</td><td class="n">4</td><td>with sku and mpn 2</td></tr>
+  </table></div>
+  <p>The variation is in form, not in meaning: an address as a text string or as a PostalAddress node; hours as a text string ("Mo-Fr 07:00-19:00") or as nodes; a day as "Monday" or as <code>schema:Monday</code>; a logo as an IRI or an ImageObject; the country as GB, UK, England or United Kingdom. Each form is one alternative in the idiom's shape, and each has one rewrite to the canonical form.</p>
+  <div class="two">
+    <div><h3>ShEx: the branch card idiom, open, with its forms</h3>
+<pre>PREFIX s: &lt;https://schema.org/&gt;
+
+&lt;BranchCard&gt; EXTRA a {
+  a [ s:LocalBusiness s:Restaurant s:Store s:Place
+      s:FoodEstablishment s:BarOrPub s:Dentist ] + ;  # and the other subtypes
+  s:name . ? ;
+  s:telephone . * ;
+  s:url . ? ;
+  ( s:address @&lt;Address&gt; | s:address LITERAL ) ? ;
+  s:geo @&lt;Geo&gt; ? ;
+  ( s:openingHoursSpecification @&lt;Hours&gt; *
+  | s:openingHours LITERAL * ) ;
+  ( s:parentOrganization @&lt;OrgCard&gt;
+  | s:brand . | s:branchCode . ) *
+}
+&lt;Address&gt; {
+  s:streetAddress . ? ; s:addressLocality . ? ;
+  s:postalCode . ? ; s:addressRegion . ? ;
+  s:addressCountry . ?        # GB, UK, England, ...
+}
+&lt;Geo&gt;   { s:latitude . ; s:longitude . }
+&lt;Hours&gt; { s:dayOfWeek . * ; s:opens . ? ; s:closes . ? ;
+          s:validFrom . ? ; s:validThrough . ? }
+&lt;OrgCard&gt; { s:name . ? ; s:url . ? ;
+  ( s:logo IRI | s:logo { a [s:ImageObject] ; s:url IRI } ) ? ;
+  s:sameAs IRI * }</pre></div>
+    <div><h3>Canonical form written to the graph</h3>
+<pre># one branch, whatever form the page used
+&lt;branch/...&gt; a s:LocalBusiness ;
+  s:name "Pret A Manger" ;
+  s:address [ s:streetAddress "..." ;
+              s:postalCode "E14 9SH" ;
+              s:addressCountry "GB" ] ;
+  s:geo [ s:latitude 51.50 ; s:longitude -0.02 ] ;
+  s:telephone "+44..." ;            # E.164
+  s:openingHoursSpecification
+     [ s:dayOfWeek s:Monday ; s:opens "07:00" ; s:closes "19:00" ] ;
+  s:parentOrganization &lt;org/pret&gt; ;
+  cwp:idiomForm "address text; hours text" ;  # the form seen
+  prov:wasDerivedFrom &lt;page URL&gt; .</pre>
+    <p>Rewrites: parse a text address into PostalAddress parts (postcode first); expand text hours into one node a day; map day names to <code>schema:</code> IRIs; map country names to ISO codes; turn a logo IRI into an ImageObject. Each rewrite is small and runs only on its own form.</p>
+    </div>
+  </div>
+  <h3>How the shapes are used</h3>
+  <ul>
+    <li><b>Recognise.</b> A ShEx shape map over each page graph tags each node with the idioms it takes part in, and with the form. This gives an index of "what this page says" (a branch card, an organisation card, hours, a menu) without reading the triples.</li>
+    <li><b>Normalise.</b> Each form of an idiom has one rewrite to the canonical form. In SHACL this is a rule (SHACL Advanced Features <code>sh:rule</code> with a SPARQL CONSTRUCT); in ShEx it is a mapping from the matched shape to a template. Either way, the original triples stay in the page's named graph.</li>
+    <li><b>Set aside furniture.</b> The site identity, page frame, search box, breadcrumb and social preview idioms are plugin output. Recognising them lets us keep their useful facts (site name, page dates, section path) and drop the rest from the entity layer.</li>
+    <li><b>Compare sites.</b> The form counts show which publishers write which forms. For example, 24 sites write the address as text and 35 write hours as text. A store-locator platform writes the same form for every branch, so one rewrite covers a whole chain.</li>
+    <li><b>Grow the set.</b> New idioms come from the same mining: a pattern that recurs on several sites and is not yet described is a candidate shape.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>How many descriptions refer to the same thing</h2>
+  <p>Method: take every node that is an organisation or a place (960 after removing navigation markup). Join them with keys in order of strength, and union the joined nodes into groups. Telephone and <code>sameAs</code> joins are allowed only between nodes of the same kind (organisation with organisation, place with place), because an operator and its venue often share a phone number and social profile.</p>
+  <div class="tbl"><table>
+    <tr><th>Keys used</th><th class="n">Entities</th><th class="n">Organisations</th><th class="n">Places</th><th class="n">Merged groups</th><th class="n">Across sites</th><th class="n">Against &gt;1 registry building</th></tr>
+    <tr><td>Same <code>@id</code> IRI</td><td class="n">563</td><td class="n">175</td><td class="n">388</td><td class="n">30</td><td class="n">12</td><td class="n">2</td></tr>
+    <tr><td>+ same site and same normalised name</td><td class="n">432</td><td class="n">131</td><td class="n">301</td><td class="n">78</td><td class="n">11</td><td class="n">7</td></tr>
+    <tr><td>+ same sameAs URL</td><td class="n">429</td><td class="n">130</td><td class="n">299</td><td class="n">80</td><td class="n">12</td><td class="n">7</td></tr>
+    <tr><td>+ same telephone</td><td class="n">421</td><td class="n">130</td><td class="n">291</td><td class="n">84</td><td class="n">13</td><td class="n">8</td></tr>
+    <tr><td>+ same postcode and name</td><td class="n">421</td><td class="n">130</td><td class="n">291</td><td class="n">84</td><td class="n">13</td><td class="n">8</td></tr>
+  </table></div>
+  <h3>Kinds of repetition found</h3>
+  <ul>
+    <li><b>The same organisation on every page of its own site.</b> This is the largest kind: Canary Wharf Group alone is 369 descriptions (one for each archived directory page). Site plus normalised name collapses it.</li>
+    <li><b>One business on two of its own domains or a platform.</b> Same <code>@id</code> IRI on <code>mildreds.com</code> and <code>mildreds.getbento.com</code> (6 IRIs), <code>atis.life</code> and <code>atisfood.com</code>, <code>barrys.com</code> and <code>barrysbootcamp.com</code>, <code>socialpubandkitchen.co.uk</code> and <code>sportsbarandgrill.co.uk</code>.</li>
+    <li><b>One branch on its store page and on the brand's store finder.</b> Pret: two branches with the same IRI and telephone on <code>locations.pret.co.uk</code> and <code>pret.co.uk</code>.</li>
+    <li><b>Brand profiles.</b> Charles Tyrwhitt on <code>charlestyrwhitt.com</code> and <code>ctshirts.co.uk</code>, joined by six shared social and Wikipedia links.</li>
+  </ul>
+  <h3>Where the keys fail</h3>
+  <ul>
+    <li><b>Shared central numbers.</b> Two Post Office branches (Churchill Place, Cubitt Town) share one telephone number. Vision Express and David Clulow share an 0800 number. Telephone must not join branches of a chain without a second key (postcode or coordinates).</li>
+    <li><b>Empty values.</b> An empty <code>sameAs</code> string joined 13 unrelated sites in the first run. Drop empty and bare-domain social URLs before you join.</li>
+    <li><b>Registry conflicts.</b> 8 groups put one web description against two or three registry buildings. Examples: Smilepod (cwb-0466, cwb-0586), Nando's (cwb-0411 Cabot Place, cwb-0586 East Wintergarden), Vision Express (cwb-0411, cwb-0466, cwb-0586). These are mall occupants attached to more than one mall building. They belong in the fault register as one error class, not as single fixes.</li>
+  </ul>
+  <h3>Estimating at a larger scale</h3>
+  <ul>
+    <li><b>Blocking and union.</b> Group by cheap keys (IRI, normalised site and name, postcode, a 50 m geohash cell, telephone), then union the groups. This is the method above; it scales to millions of nodes.</li>
+    <li><b>Precision by sampling.</b> Label a random sample of 100 merged pairs by hand for each key. The share that is right is the precision of that key; it sets the key's weight.</li>
+    <li><b>Missed links by capture and recapture.</b> Two independent keys (for example IRI and sameAs on one side, telephone plus postcode on the other) find two sets of true pairs. With n1 and n2 pairs found and m found by both, the total is about n1 × n2 / m (Lincoln–Petersen). This gives an estimate of the pairs that no key finds.</li>
+    <li><b>Scored matching.</b> For pairs inside one block, add log-likelihood weights for agreement on name, postcode, coordinates within 30 m, telephone and host (Fellegi–Sunter). Set two thresholds: link, and send to a person.</li>
+    <li><b>Agreement with the registry.</b> Each page carries the registry keys that led us to it. On average one registry key leads to 1.76 web entities (usually the branch and its brand). A group that spans two buildings, or a key that leads to two different places, is a fault to check.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Steps done on 2026-10-06 (Factoidal run)</h2>
+  <p>All four next steps are done and committed (commit 2d83b25e). The RDF work uses <code>@factoidal/core</code> 0.7.1: N-Quads parse, SPARQL SELECT, ASK and CONSTRUCT, and ShEx. The counts in this section come from that run, so they differ a little from the rdflib counts above.</p>
+  <h3>1. Idiom shapes and an idiom index for each page</h3>
+  <p>16 idioms (11 content, 5 furniture) as open ShEx shapes. A SPARQL pattern finds the candidate nodes; ShEx recognises the core shape and each form. 824 pages, 4,341 idiom nodes, 16,605 ShEx checks. Three SPARQL CONSTRUCT rewrites (branch, hours, organisation) give a canonical layer of 9,562 quads, one named graph per page.</p>
+  <div class="tbl"><table>
+    <tr><th>Idiom</th><th class="n">Sites</th><th class="n">Nodes</th><th>Forms (sites)</th></tr>
+    <tr><td>BranchCard</td><td class="n">112</td><td class="n">220</td><td>address node 106, address text 22, hours nodes 38, hours text 37, geo 40, telephone 69, full branch 21</td></tr>
+    <tr><td>OrgCard</td><td class="n">162</td><td class="n">642</td><td>logo ImageObject 61, logo IRI 47, logo text 68, sameAs 110</td></tr>
+    <tr><td>WeeklyHours</td><td class="n">39</td><td class="n">462</td><td>day IRI 0, day IRI as text 12, day name 27, special days 1</td></tr>
+    <tr><td>ChainBranchLink</td><td class="n">24</td><td class="n">45</td><td>via parent 16, via brand 7, via branch code 3</td></tr>
+    <tr><td>SiteSearch</td><td class="n">109</td><td class="n">502</td><td>EntryPoint target 70, text target 41</td></tr>
+    <tr><td>Breadcrumb</td><td class="n">105</td><td class="n">502</td><td>last item without a link 71</td></tr>
+    <tr><td>SocialPreview</td><td class="n">270</td><td class="n">698</td><td>image size 92, article times 61</td></tr>
+  </table></div>
+  <p>No site writes <code>dayOfWeek</code> as a schema.org IRI node. 12 sites write the IRI as a text string, and 27 write the day name.</p>
+  <p>Files: <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/idioms/idioms.shex">idioms.shex</a>, <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/idioms/idioms.json">idioms.json</a>, <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/idioms/summary.json">summary.json</a>, <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/web-idioms.mjs">web-idioms.mjs</a>.</p>
+  <h3>2. Entity groups as sameAs links</h3>
+  <p>890 organisation and place descriptions. Each key rule writes its <code>owl:sameAs</code> links in its own named graph, so a person can remove one rule and compute the groups again.</p>
+  <div class="tbl"><table>
+    <tr><th>After rule</th><th class="n">Entities</th></tr>
+    <tr><td>Same IRI</td><td class="n">493</td></tr>
+    <tr><td>+ same site and name (places also need the same postcode)</td><td class="n">401</td></tr>
+    <tr><td>+ same sameAs URL</td><td class="n">399</td></tr>
+    <tr><td>+ same telephone</td><td class="n">396</td></tr>
+    <tr><td>+ same postcode and name</td><td class="n">396</td></tr>
+  </table></div>
+  <p>Result: 396 entities (151 organisations, 245 places), 73 with more than one description, 14 across sites. Two changes from the first run stop over-merges. Two branches with the same name on one site join only when they have the same postcode (this kept Pret branches apart). Two places with different postcodes never join by telephone or sameAs (this kept the Post Office, Tom Davies, Bread &amp; Truffle and CCT branches apart). Files: <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/coref/entities.json">entities.json</a>, <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/web-coref.mjs">web-coref.mjs</a>.</p>
+  <h3>3. Fault class F46</h3>
+  <p>F46: one branch, two building records from two sources. A conflict now counts only when the place is the only place on its page. 6 conflicts remain, for example Atis (cwb-0466, cwb-0418), Le Chalet (cwb-0421, cwb-0466) and Charbonnel et Walker (cwb-0411, cwb-0455). Status: open. Register: <a href="https://github.com/danbri/londat/blob/main/cwplans/skills/docklands-data-curation/SKILL.md">docklands-data-curation skill</a>.</p>
+  <h3>4. Typed occupant list from canarywharf.com</h3>
+  <p>374 directory entries; 357 have page data from the archive and 321 have a registry building. The schema.org type comes from the CWG category by a table in the tool, not from the publisher. Largest types: Restaurant 68, CafeOrCoffeeShop 33, Store 31, HealthAndBeautyBusiness 23. First listed: 90 in 2013, 55 in 2025. Last edited: 308 in 2024 or 2025. Files: <a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory-typed.json">cwg-directory-typed.json</a>, <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/cwg-directory-typed.mjs">cwg-directory-typed.mjs</a>.</p>
+  <h3>Factoidal fault found</h3>
+  <p><code>serialize()</code> drops quads without an error when a quad uses a blank node that a CONSTRUCT made with <code>BNODE()</code>. <code>toNQuads()</code> keeps them. The tools use SHA-1 IRIs for new nodes to avoid this.</p>
+</section>
+
+<footer>Source: <code>third_party/cwplans-structured-data/all.nq.gz</code> and <code>pages/*.jsonl</code> in danbri/glitchcan-minigam until 2026-10-07 (now danbri/londat), crawled 2026-10-03 for scoping under the owner's crawl rule. First counts made on 2026-10-06 with rdflib 7.6; the steps-done section with @factoidal/core 0.7.1. The data is the site owners' published markup; it is kept for scoping and is re-checked before anything leaves the prototyping phase.</footer>
+</div>
+
+<script>
+(() => {
+  const data = [["WebSite",187],["Organization",161],["WebPage",121],["SearchAction",111],["ListItem",106],["PostalAddress",106],["BreadcrumbList",105],["ImageObject",89],["EntryPoint",74],["ReadAction",62],["LocalBusiness",56],["PropertyValueSpecification",49],["GeoCoordinates",44],["OpeningHoursSpecification",39],["ContactPoint",25],["Person",24],["Restaurant",22],["WPFooter",22],["Place",18],["WPHeader",18],["SiteNavigationElement",16],["Brand",15],["Offer",13],["FAQPage",12]];
+  const g = document.getElementById('bars'), NS = 'http://www.w3.org/2000/svg', x0 = 190, x1 = 610, max = 200, rowH = 19, top = 24;
+  const sx = v => x0 + (x1 - x0) * v / max, el = (n, a, t) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (t != null) e.textContent = t; g.appendChild(e); return e; };
+  for (const v of [0, 50, 100, 150, 200]) { el('line', { x1: sx(v), x2: sx(v), y1: top - 6, y2: top + data.length * rowH, class: 'grid' }); el('text', { x: sx(v), y: top - 10, 'text-anchor': 'middle', class: 'ax' }, v); }
+  data.forEach(([name, n], i) => { const y = top + i * rowH;
+    el('text', { x: x0 - 8, y: y + 13, 'text-anchor': 'end' }, name);
+    el('rect', { x: x0, y: y + 3, width: sx(n) - x0, height: rowH - 6, class: 'bar', rx: 2 });
+    el('text', { x: sx(n) + 5, y: y + 13, class: 'ax' }, n); });
+  el('text', { x: x1, y: top + data.length * rowH + 18, 'text-anchor': 'end', class: 'ax' }, 'sites using the type');
+})();
+</script>
+
+</body>
+</html>

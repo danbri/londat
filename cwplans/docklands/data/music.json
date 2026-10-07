@@ -1,0 +1,9 @@
+{
+  "about": "Tracks for the music visualiser in the 3D page. All CC BY 3.0 by Kevin MacLeod (incompetech.com), from Wikimedia Commons, which serves them with Access-Control-Allow-Origin: * so the page can analyse them. Credit is shown in the page while a track plays. A local copy, when present, is listed first.",
+  "checked": "2026-10-03",
+  "tracks": [
+    { "title": "Militaire Electronic", "artist": "Kevin MacLeod", "licence": "CC BY 3.0", "url": "https://upload.wikimedia.org/wikipedia/commons/2/21/Militaire_Electronic_%28ISRC_USUAN1100442%29.mp3", "page": "https://commons.wikimedia.org/wiki/File:Militaire_Electronic_(ISRC_USUAN1100442).mp3", "source": "Wikimedia Commons" },
+    { "title": "EDM Detection Mode", "artist": "Kevin MacLeod", "licence": "CC BY 3.0", "url": "https://upload.wikimedia.org/wikipedia/commons/9/94/EDM_Detection_Mode_%28ISRC_USUAN1500026%29.mp3", "page": "https://commons.wikimedia.org/wiki/File:EDM_Detection_Mode_(ISRC_USUAN1500026).mp3", "source": "Wikimedia Commons" },
+    { "title": "Rollin at 5 (electronic)", "artist": "Kevin MacLeod", "licence": "CC BY 3.0", "url": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Rollin_at_5_-_electronic_%28ISRC_USUAN1400028%29.mp3", "page": "https://commons.wikimedia.org/wiki/File:Rollin_at_5_-_electronic_(ISRC_USUAN1400028).mp3", "source": "Wikimedia Commons" }
+  ]
+}

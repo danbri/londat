@@ -1,0 +1,1644 @@
+{
+ "about": "What people have built from or alongside TfL's axonometric station diagrams (FOI, 2015 and later), as a baseline for 3D station modelling in magpie/cwplans. Links and facts only: no third-party model or image is copied.",
+ "made": "2026-10-05",
+ "method": "web search, direct fetches where robots.txt allows, Sketchfab API v3, GitHub search and raw files, ArcGIS Hub API, HTTP HEAD on foi.tfl.gov.uk, and the local OSM extract (osmfr-greater-london, 2026-10-01T01:43:50Z) read with osmium",
+ "licence_classes": {
+  "open": "an open licence (CC BY, OGL, TfL open data terms, ODbL, GPL); share_alike true marks ODbL, CC BY-SA, GPL and BY-NC-SA",
+  "restricted": "all rights reserved, non-commercial, paid, or FOI/RPSI re-use only",
+  "unclear": "no licence read",
+  "none": "no licence stated"
+ },
+ "relations": {
+  "source": "the release itself",
+  "derived": "made from the sheets",
+  "used as reference": "the sheets were read but not copied",
+  "independent": "made without the sheets",
+  "unclear": "not known"
+ },
+ "evidence_values": {
+  "fetched": "page read directly",
+  "search-snippet": "only search-engine results were read",
+  "api": "a public API",
+  "osm-extract": "the local OSM extract",
+  "http-head": "an HTTP HEAD request only",
+  "repo record": "already recorded in this repository"
+ },
+ "not_read": [
+  {
+   "site": "ianvisits.co.uk",
+   "why": "robots.txt disallows anthropic-ai and Claude-Web"
+  },
+  {
+   "site": "architectsjournal.co.uk",
+   "why": "robots.txt disallows Claude-Web, ClaudeBot, Claude-SearchBot, Claude-User"
+  },
+  {
+   "site": "brixtonbuzz.com",
+   "why": "robots.txt disallows all agents"
+  },
+  {
+   "site": "railforums.co.uk",
+   "why": "robots.txt disallows ClaudeBot and anthropic-ai"
+  },
+  {
+   "site": "x.com",
+   "why": "robots.txt disallows all agents"
+  },
+  {
+   "site": "reddit.com",
+   "why": "robots.txt disallows all agents"
+  },
+  {
+   "site": "skyscrapercity.com",
+   "why": "robots.txt disallows Claude-Web, ClaudeBot and anthropic-ai"
+  },
+  {
+   "site": "whatdotheyknow.com",
+   "why": "Cloudflare challenge to scripts"
+  },
+  {
+   "site": "archpaper.com",
+   "why": "Cloudflare managed challenge"
+  },
+  {
+   "site": "tfl.gov.uk and techforum.tfl.gov.uk",
+   "why": "\"Verification required\" bot page"
+  },
+  {
+   "site": "turbosquid.com, planetminecraft.com, ltmuseum.co.uk, londonist.com, boingboing.net",
+   "why": "HTTP 403 to the fetch tool (not retried)"
+  }
+ ],
+ "entries": [
+  {
+   "id": "foi-2015-axonometric-diagrams",
+   "title": "Axonometric diagrams - London Underground Stations (FOI request, 2015 release of 124 sheets)",
+   "url": "https://www.whatdotheyknow.com/request/axonometric_diagrams_london_unde",
+   "author": "Georges Vehres (requester); Transport for London (author of the drawings)",
+   "date": "2015-07",
+   "kind": "FOI",
+   "stations": [
+    "all 124 \"section 12\" LU stations A to W",
+    "Canada Water",
+    "Canary Wharf",
+    "North Greenwich",
+    "Bermondsey",
+    "London Bridge",
+    "Southwark",
+    "Tower Hill",
+    "Whitechapel"
+   ],
+   "format": "raster drawings (JPEG/PDF), not to scale, partly redacted",
+   "downloadable": "yes (from WhatDoTheyKnow by hand; scripts get a Cloudflare challenge)",
+   "licence_as_stated": "\"Copyright of the diagrams is owned by TfL. If you would like to re-use the information please contact TfL.\" (quoted by Ian Visits; RPSI Regulations 2005)",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "Section 12 (King's Cross fire) fire-brigade location guides; labels, escalator and lift numbers, levels; steep vertical exaggeration; redaction blobs",
+   "usefulness": "high",
+   "usefulness_reason": "The baseline itself. The owner approved use of the TfL sheets (2026-10-05); Canada Water and Canary Wharf are held in londat/third_party/tfl/am3d/.",
+   "evidence": "search-snippet",
+   "read_status": "not read: WhatDoTheyKnow answers scripts with a Cloudflare challenge",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "Bermondsey",
+     "London Bridge",
+     "North Greenwich",
+     "Southwark",
+     "Tower Hill",
+     "Whitechapel"
+    ]
+   }
+  },
+  {
+   "id": "foi-axonometric-drawings-every-station",
+   "title": "Axonometric drawings of every station (FOI request to TfL)",
+   "url": "https://www.whatdotheyknow.com/request/axonometric_drawings_of_every_st",
+   "author": "WhatDoTheyKnow requester (name not read)",
+   "date": "unknown (after 2015)",
+   "kind": "FOI",
+   "stations": [
+    "LU stations (scope not read)"
+   ],
+   "format": "FOI correspondence; attachments not read",
+   "downloadable": "unknown",
+   "licence_as_stated": "not read",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "not read",
+   "usefulness": "medium",
+   "usefulness_reason": "Second FOI thread named by the owner; a search summary says drawings exist only for section 12 stations, usually one overview per station.",
+   "evidence": "search-snippet",
+   "read_status": "not read: Cloudflare challenge",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "foi-updated-axonometric-2023",
+   "title": "Updated axonometric drawings of stations (FOI request to TfL, TfL ref 3536-2223)",
+   "url": "https://www.whatdotheyknow.com/request/updated_axonometric_drawings_of",
+   "author": "WhatDoTheyKnow requester (name not read); TfL",
+   "date": "2023-03-27 (request), 2023-04-24 (response, per search snippet)",
+   "kind": "FOI",
+   "stations": [
+    "Bank/Monument",
+    "Battersea Power Station",
+    "Nine Elms",
+    "Whitechapel",
+    "Canary Wharf (Elizabeth line, asked for)",
+    "Woolwich (Elizabeth line, asked for)"
+   ],
+   "format": "zip of drawings (per search snippet)",
+   "downloadable": "yes (by hand from WhatDoTheyKnow)",
+   "licence_as_stated": "not read",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "updated sheets for changed or new stations",
+   "usefulness": "medium",
+   "usefulness_reason": "Shows TfL keeps the series current. A search-engine summary says the Elizabeth line Canary Wharf sheet was refused under FOI s24 (national security) and s38 (health and safety); this is NOT verified, because the thread could not be read.",
+   "evidence": "search-snippet",
+   "read_status": "not read: Cloudflare challenge",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "Whitechapel"
+    ]
+   }
+  },
+  {
+   "id": "foi-3336-2223-section12-updates",
+   "title": "TfL FOI-3336-2223: axonometric diagrams of section 12 stations updated since 2015",
+   "url": "https://tfl.gov.uk/corporate/transparency/freedom-of-information/foi-request-detail?referenceId=FOI-3336-2223",
+   "author": "TfL",
+   "date": "2022/23 (TfL year 2223)",
+   "kind": "FOI",
+   "stations": [
+    "Bank/Monument (updated map released)",
+    "Whitechapel (in progress then)",
+    "Liverpool Street",
+    "Moorgate"
+   ],
+   "format": "FOI response page and attachments",
+   "downloadable": "unknown",
+   "licence_as_stated": "not read",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "per search snippet: the axonometric is the overview sheet of a larger Station Layout document with 2D plans and drawing reference numbers",
+   "usefulness": "medium",
+   "usefulness_reason": "Confirms the sheets index a set of 2D plans (cf. drawing ref J009-06 on our Canada Water sheet): a target for a more specific FOI request.",
+   "evidence": "search-snippet",
+   "read_status": "not read: tfl.gov.uk answers scripts with a \"Verification required\" page",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "foi-2821-2425-elizabeth-line",
+   "title": "Axonometric maps of stations on the Elizabeth line (FOI, TfL ref FOI-2821-2425)",
+   "url": "https://www.whatdotheyknow.com/request/axonometric_maps_of_stations_on",
+   "author": "WhatDoTheyKnow requester; TfL",
+   "date": "2024-12-20 (release, per search snippet)",
+   "kind": "FOI",
+   "stations": [
+    "Bond Street",
+    "Liverpool Street",
+    "Farringdon",
+    "Whitechapel"
+   ],
+   "format": "drawings (PDF)",
+   "downloadable": "yes (by hand)",
+   "licence_as_stated": "not read",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "\"only axonometric diagrams for Bond Street, Liverpool Street, Farringdon, and Whitechapel stations are provided, as previous diagrams remain unchanged\" (X post quoting the release)",
+   "usefulness": "medium",
+   "usefulness_reason": "Whitechapel is a zone station; no Canary Wharf Elizabeth line sheet was released here.",
+   "evidence": "search-snippet",
+   "read_status": "not read: Cloudflare challenge (WhatDoTheyKnow) and robots.txt (x.com)",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": [
+     "Whitechapel"
+    ]
+   }
+  },
+  {
+   "id": "foi-1497-2425-tottenham-court-road",
+   "title": "TfL FOI-1497-2425: Tottenham Court Road (Elizabeth line) axonometric, file \"Tottenham Court Road 2.pdf\"",
+   "url": "https://foi.tfl.gov.uk/FOI-1497-2425/Tottenham%20Court%20Road%202.pdf",
+   "author": "TfL",
+   "date": "2024-10-01 (Last-Modified header)",
+   "kind": "FOI",
+   "stations": [
+    "Tottenham Court Road"
+   ],
+   "format": "PDF, 70,725 bytes (HEAD request only, not downloaded)",
+   "downloadable": "yes (direct from foi.tfl.gov.uk; no robots.txt on that host)",
+   "licence_as_stated": "none in the HTTP response; TfL FOI disclosure",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "not opened",
+   "usefulness": "low",
+   "usefulness_reason": "Outside the zone, but shows that foi.tfl.gov.uk serves FOI attachments to scripts; a Canary Wharf or Canada Water update would land there.",
+   "evidence": "http-head",
+   "read_status": "HEAD only",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "foi-maps-public-corridors-jubilee",
+   "title": "Maps of public corridors on large stations: \"3d jubilee stations Redacted.pdf\" (WhatDoTheyKnow response 674923)",
+   "url": "https://www.whatdotheyknow.com/request/maps_of_public_corridors_on_larg",
+   "author": "TfL (FOI response)",
+   "date": "archived 2025-09-24",
+   "kind": "FOI",
+   "stations": [
+    "Jubilee line stations",
+    "Canary Wharf",
+    "Canada Water",
+    "North Greenwich",
+    "Bermondsey",
+    "London Bridge",
+    "Southwark",
+    "Canning Town",
+    "West Ham",
+    "Stratford"
+   ],
+   "format": "PDF drawings, redacted",
+   "downloadable": "yes: Internet Archive copy https://web.archive.org/web/20250924072810/https://www.whatdotheyknow.com/request/maps_of_public_corridors_on_larg/response/674923/attach/6/3d%20jubilee%20stations%20Redacted.pdf",
+   "licence_as_stated": "\"Copyright of the diagrams is owned by TfL. If you would like to re-use the information please contact TfL.\" (as recorded in feeds/underground/tunnels.json)",
+   "licence_class": "restricted",
+   "relation": "source",
+   "quality": "the same series as the 2015 sheets, one file for the Jubilee line",
+   "usefulness": "high",
+   "usefulness_reason": "Already catalogued in feeds/underground/tunnels.json (2026-10-03); a scripted route (Internet Archive) to the Jubilee line sheets for the other JLE stations in the zone.",
+   "evidence": "repo record",
+   "read_status": "recorded by an earlier agent; not re-read",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "Bermondsey",
+     "Canning Town",
+     "London Bridge",
+     "North Greenwich",
+     "Southwark",
+     "Stratford",
+     "West Ham"
+    ]
+   }
+  },
+  {
+   "id": "ianvisits-3d-maps-every-station",
+   "title": "Ian Visits: \"3D maps of every Underground station\" (five pages A-B, C-G, H-M, N-S, T-W)",
+   "url": "https://www.ianvisits.co.uk/articles/3d-maps-of-every-underground-station-cdefg-14651/",
+   "author": "Ian Mansfield",
+   "date": "2015-07-12 (republished/updated 2022)",
+   "kind": "visualisation",
+   "stations": [
+    "all 124 LU stations in the 2015 set",
+    "Canada Water",
+    "Canary Wharf"
+   ],
+   "format": "JPEG images on web pages, \"cleaned up\" (redaction blobs removed, per search snippet)",
+   "downloadable": "yes (by hand; robots.txt blocks Anthropic agents)",
+   "licence_as_stated": "\"Copyright of the diagrams is owned by TfL. If you would like to re-use the information please contact TfL.\"",
+   "licence_class": "restricted",
+   "relation": "derived",
+   "quality": "the most-copied version; cleaned images; the source of our two sheets",
+   "usefulness": "high",
+   "usefulness_reason": "Our Canada Water and Canary Wharf JPEGs come from here (downloaded by the owner).",
+   "evidence": "search-snippet",
+   "read_status": "not read: robots.txt disallows anthropic-ai and Claude-Web",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "archpaper-2015-axonometrics",
+   "title": "The Architect's Newspaper: \"Open data from Transport for London spurs 3D axonometric plans of the Tube\"",
+   "url": "https://www.archpaper.com/2015/08/open-data-from-transport-for-london-spurs-3d-axonometric-plans-of-the-tube-so-passengers-can-mentally-map-their-next-trip/",
+   "author": "The Architect's Newspaper",
+   "date": "2015-08",
+   "kind": "visualisation",
+   "stations": [
+    "all (article)"
+   ],
+   "format": "article",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "used as reference",
+   "quality": "press; per search snippet: \"most of the plans released are heavily redacted ... images circulating on the internet show most of the axonometrics 'cleaned up'\"; links Bruno Imbrizi's 3D train map",
+   "usefulness": "low",
+   "usefulness_reason": "Context only.",
+   "evidence": "search-snippet",
+   "read_status": "not read: Cloudflare managed challenge",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "architectsjournal-2015-axonometrics",
+   "title": "Architects' Journal: \"TfL releases striking 3D maps of tube stations after FOI bid\"",
+   "url": "https://www.architectsjournal.co.uk/news/tfl-releases-striking-3d-maps-of-tube-stations-after-foi-bid",
+   "author": "Architects' Journal",
+   "date": "2015-07",
+   "kind": "visualisation",
+   "stations": [
+    "all (article)"
+   ],
+   "format": "article",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "used as reference",
+   "quality": "press",
+   "usefulness": "low",
+   "usefulness_reason": "Context only.",
+   "evidence": "search-snippet",
+   "read_status": "not read: robots.txt disallows Claude-Web, ClaudeBot, Claude-SearchBot, Claude-User",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "brixtonbuzz-2015",
+   "title": "Brixton Buzz: \"Gaze in awe at axonometric diagrams of Brixton and Stockwell tubes\"",
+   "url": "https://www.brixtonbuzz.com/2015/07/gaze-in-awe-at-axonometric-diagrams-of-brixton-and-stockwell-tubes/",
+   "author": "Brixton Buzz",
+   "date": "2015-07",
+   "kind": "visualisation",
+   "stations": [
+    "Brixton",
+    "Stockwell"
+   ],
+   "format": "article",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "derived",
+   "quality": "press; a search snippet says the diagrams were produced for the London Fire Brigade under the section 12 conditions after the King's Cross fire",
+   "usefulness": "low",
+   "usefulness_reason": "Outside the zone; context.",
+   "evidence": "search-snippet",
+   "read_status": "not read: robots.txt disallows all agents",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "timeout-2015-3d-maps",
+   "title": "Time Out London: \"Unlock the secrets of the tube with these 3D maps\"",
+   "url": "https://www.timeout.com/london/blog/unlock-the-secrets-of-the-tube-with-these-3d-maps-073015",
+   "author": "Time Out London",
+   "date": "2015-07-30",
+   "kind": "visualisation",
+   "stations": [
+    "all (article)"
+   ],
+   "format": "article",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "used as reference",
+   "quality": "press",
+   "usefulness": "low",
+   "usefulness_reason": "Context only.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet only",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "iamcal-2015-axonometric-tube",
+   "title": "iamcal.com: \"Axonometric Tube\"",
+   "url": "https://www.iamcal.com/2015-07/axonometric-tube/",
+   "author": "Cal Henderson",
+   "date": "2015-07-17",
+   "kind": "visualisation",
+   "stations": [
+    "all (link post)"
+   ],
+   "format": "blog post linking Ian Visits",
+   "downloadable": "no",
+   "licence_as_stated": "none stated",
+   "licence_class": "none",
+   "relation": "used as reference",
+   "quality": "a link post: \"Looking at stations you've walked through thousands of times is still a little confusing.\"",
+   "usefulness": "low",
+   "usefulness_reason": "Nothing built.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "disassociated-2022-repost",
+   "title": "disassociated.com: \"3D maps of all London Underground tube stations\"",
+   "url": "https://disassociated.com/3d-maps-of-all-london-underground-tube-stations/",
+   "author": "site author (credits Ian Mansfield)",
+   "date": "2022-06-29",
+   "kind": "visualisation",
+   "stations": [
+    "all (repost)"
+   ],
+   "format": "blog post",
+   "downloadable": "no",
+   "licence_as_stated": "none stated",
+   "licence_class": "none",
+   "relation": "derived",
+   "quality": "repost of the Ian Visits pages",
+   "usefulness": "low",
+   "usefulness_reason": "Nothing built.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "hn-31881625-2022",
+   "title": "Hacker News: \"3D Diagrams of London Underground Stations\" (discussion)",
+   "url": "https://news.ycombinator.com/item?id=31881625",
+   "author": "submitted by s3ctor8",
+   "date": "2022-06-26",
+   "kind": "visualisation",
+   "stations": [
+    "all (discussion)"
+   ],
+   "format": "discussion thread",
+   "downloadable": "no",
+   "licence_as_stated": "no licence discussion",
+   "licence_class": "none",
+   "relation": "used as reference",
+   "quality": "lists comparable official 3D station maps (Hong Kong MTR layout PDFs, Tokyo Metro 3D maps), a Vienna U-Bahn AR app, OpenStationMap, a European station-diagram archive, the STATIONflow game and Londonist cutaways",
+   "usefulness": "low",
+   "usefulness_reason": "A pointer list; see the separate entries.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "x-clondoner92-2026",
+   "title": "X posts by @CLondoner92 on further axonometric FOI releases (Underground, DLR, Elizabeth line)",
+   "url": "https://x.com/CLondoner92/status/2022659728170782819",
+   "author": "CLondoner92",
+   "date": "2024-12 and 2026-02 (status ids)",
+   "kind": "FOI",
+   "stations": [
+    "Underground, DLR and Elizabeth line stations (list not read)"
+   ],
+   "format": "social posts",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "used as reference",
+   "quality": "\"There are many more axonometric drawings of London's transport system that have been released following multiple FOI requests.\" (search snippet); says DLR drawings exist too",
+   "usefulness": "medium",
+   "usefulness_reason": "The only hint that DLR axonometrics were released: Heron Quays, West India Quay, Canary Wharf DLR are zone stations. Follow up by an FOI search on WhatDoTheyKnow by hand.",
+   "evidence": "search-snippet",
+   "read_status": "not read: x.com robots.txt disallows all agents",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "osm-gloucester-road-source-tfl-axonometric",
+   "title": "OpenStreetMap: Gloucester Road Piccadilly platforms tagged source=TfL axonometric",
+   "url": "https://www.openstreetmap.org/changeset/178320189",
+   "author": "OSM user 小智智 (uid 1870014)",
+   "date": "2026-02-09",
+   "kind": "OSM",
+   "stations": [
+    "Gloucester Road"
+   ],
+   "format": "OSM ways w687155960, w1475635372 (railway=platform, area, note \"Piccadilly Westbound Rough layout\", fixme \"platform shape not surveyed yet\")",
+   "downloadable": "yes (OSM data)",
+   "licence_as_stated": "ODbL 1.0 (OSM); source tag \"TfL axonometric\"",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "derived",
+   "quality": "rough platform shapes; the only OSM elements in our Greater London extract (2026-10-01) whose source names the TfL axonometrics (3 of all elements grep \"axonom\")",
+   "usefulness": "medium",
+   "usefulness_reason": "Evidence that an active London indoor mapper used the sheets as a source in OSM. TfL holds copyright and OSM has no TfL consent for these drawings, so these two ways are a possible copyright problem for OSM; we only record the ids.",
+   "evidence": "osm-extract",
+   "read_status": "OSM extract osmfr-greater-london 2026-10-01T01:43:50Z; changeset metadata read from api.openstreetmap.org",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "osm-baker-street-redacted-axonometric-note",
+   "title": "OpenStreetMap: Baker Street emergency exit placed with a note on the redacted axonometric",
+   "url": "https://www.openstreetmap.org/node/12957095300",
+   "author": "OSM user Dee Kaart (uid 11552918)",
+   "date": "2025-06-30 (changeset 168323727, \"Updates at Baker Street Station\")",
+   "kind": "OSM",
+   "stations": [
+    "Baker Street"
+   ],
+   "format": "OSM node, level=-1, entrance=emergency",
+   "downloadable": "yes (OSM data)",
+   "licence_as_stated": "ODbL 1.0",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "used as reference",
+   "quality": "note: \"The redacted axonometric view of the station doesn't show a route past it; this location is best guess.\"",
+   "usefulness": "low",
+   "usefulness_reason": "Shows mappers read the sheets to check survey gaps, not to copy.",
+   "evidence": "osm-extract",
+   "read_status": "OSM extract 2026-10-01",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "osm-canada-water-indoor",
+   "title": "OpenStreetMap indoor mapping of Canada Water station (Simple Indoor Tagging)",
+   "url": "https://www.openstreetmap.org/#map=19/51.4980/-0.0497",
+   "author": "mostly OSM user Weltstaat (425 of the indoor/level elements, 2018); later 小智智, DaveF and others (2024-2026)",
+   "date": "2018 to 2026",
+   "kind": "OSM",
+   "stations": [
+    "Canada Water"
+   ],
+   "format": "OSM: indoor=yes 107, indoor=corridor 18, indoor=room 3, indoor=door 5, highway=corridor 12, steps 13; Jubilee platforms level -3 (w437217009, w568126849), Windrush line platforms level -2 (r8095040, r8095041); intermediate levels such as -0.3, -0.7, -2.3, -2.7 on ramps and stairs",
+   "downloadable": "yes (OSM data)",
+   "licence_as_stated": "ODbL 1.0",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "multi-level corridors, platforms and doors; no element in the bbox cites the axonometrics (source tags: \"interpolation within known platform constraints\" 5, survey 2)",
+   "usefulness": "high",
+   "usefulness_reason": "The best open, georeferenced geometry for Canada Water. ODbL share-alike: allowed in cwplans for now and tracked in the data register.",
+   "evidence": "osm-extract",
+   "read_status": "counts from OSM extract 2026-10-01, bbox -0.054,51.496,-0.046,51.500",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "osm-canary-wharf-indoor",
+   "title": "OpenStreetMap indoor and level mapping at Canary Wharf (Jubilee line station and DLR)",
+   "url": "https://www.openstreetmap.org/#map=18/51.5036/-0.0187",
+   "author": "mostly OSM user 小智智 (123 elements, 2025); nlme (39, 2022); JJ_P and others",
+   "date": "2012 to 2026",
+   "kind": "OSM",
+   "stations": [
+    "Canary Wharf",
+    "Heron Quays"
+   ],
+   "format": "OSM: Jubilee platforms w168226385, w168226386 at level -3; highway=elevator 26, highway=steps 114, indoor=yes 84 (mostly covered footways in the malls); DLR platforms at layer 1-2; no indoor=room/corridor for the Jubilee ticket hall",
+   "downloadable": "yes (OSM data)",
+   "licence_as_stated": "ODbL 1.0",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "platforms, lifts and steps are mapped; the Jubilee ticket hall and escalator banks are not drawn as indoor areas",
+   "usefulness": "high",
+   "usefulness_reason": "Open georeference for platforms and lifts; the ticket hall must come from the TfL sheet (approved) and our own levels.",
+   "evidence": "osm-extract",
+   "read_status": "counts from OSM extract 2026-10-01, bbox -0.026,51.499,-0.014,51.507 (includes the DLR and the malls)",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "Heron Quays"
+    ]
+   }
+  },
+  {
+   "id": "osm-wiki-london-stations-list",
+   "title": "OpenStreetMap Wiki: List of railway stations in London (indoor mapping status column)",
+   "url": "https://wiki.openstreetmap.org/wiki/List_of_railway_stations_in_London",
+   "author": "OSM wiki contributors",
+   "date": "live page (read 2026-10-05)",
+   "kind": "OSM",
+   "stations": [
+    "all London stations",
+    "Canary Wharf",
+    "Canada Water",
+    "North Greenwich",
+    "London Bridge"
+   ],
+   "format": "wiki table",
+   "downloadable": "yes",
+   "licence_as_stated": "OSM wiki content (CC BY-SA 2.0)",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "status codes: \"Stop (3/4) The station is completely mapped with indoor mapping, with concourse, passageways and platform shapes accurately depicted.\"; Canary Wharf row dates from 2007 entrance survey; no mention of the axonometrics or of copyright",
+   "usefulness": "low",
+   "usefulness_reason": "Status tracker, out of date for the zone.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "London Bridge",
+     "North Greenwich"
+    ]
+   }
+  },
+  {
+   "id": "osm-wiki-london-underground",
+   "title": "OpenStreetMap Wiki: London Underground (sources and copyright notes)",
+   "url": "https://wiki.openstreetmap.org/wiki/London_Underground",
+   "author": "OSM wiki contributors",
+   "date": "live page (read 2026-10-05)",
+   "kind": "OSM",
+   "stations": [
+    "network"
+   ],
+   "format": "wiki page",
+   "downloadable": "yes",
+   "licence_as_stated": "\"In 2024, TfL consented to usage of the 'Line of Route' and 'Zone of Influence' datasets\"; \"All edits must be manually reviewed; there is no import consent as of yet.\"",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "no mention of the axonometric diagrams; JLE alignments noted as \"too new to be out of copyright\"",
+   "usefulness": "medium",
+   "usefulness_reason": "Records the only TfL consent OSM has (route lines, not station drawings): our reason to keep the sheets out of anything ODbL.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "openstationmap",
+   "title": "OpenStationMap (renderer of OSM station indoor, levels and 3D)",
+   "url": "https://wiki.openstreetmap.org/wiki/OpenStationMap",
+   "author": "OpenStationMap project (geofabrik/OSM community)",
+   "date": "live",
+   "kind": "OSM",
+   "stations": [
+    "any station mapped in OSM"
+   ],
+   "format": "web map from OSM data, per-level layers",
+   "downloadable": "no (data is OSM)",
+   "licence_as_stated": "OSM data ODbL",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "renders levels, doors, steps, lifts and simple 3D buildings",
+   "usefulness": "medium",
+   "usefulness_reason": "Quick visual check of the OSM indoor data at Canada Water and Canary Wharf against the sheets.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet; site http://openstationmap.org not fetched",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "aeracode-station-viewer",
+   "title": "Station Viewer: 3D maps of London Underground/DLR stations (WebGL, Three.js)",
+   "url": "https://stations.aeracode.org/",
+   "author": "Andrew Godwin",
+   "date": "2012",
+   "kind": "3D model",
+   "stations": [
+    "Bank/Monument",
+    "Walthamstow Central",
+    "Old Street",
+    "King's Cross St. Pancras",
+    "Shadwell",
+    "West Silvertown",
+    "Seven Sisters",
+    "Oxford Circus"
+   ],
+   "format": "Three.js JSON models (build/london/_system.json, <code>.three, <code>.json)",
+   "downloadable": "yes (static JSON files on the site)",
+   "licence_as_stated": "\"All code and content © Andrew Godwin 2012\" with Creative Commons BY-NC-SA 3.0",
+   "licence_class": "restricted",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "hand-built from the author's own knowledge (\"only ones I know well, but hopefully expanding ... if I get help or detailed station plans\"); predates the 2015 release",
+   "usefulness": "medium",
+   "usefulness_reason": "The closest earlier web 3D-station viewer to our page (tickethall, stairs, lift materials, line colours); Shadwell and West Silvertown are zone DLR/Overground stations. NC and SA: reference only, link not copy.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05 (page, build/stations.js, build/london/_system.json)",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": [
+     "Shadwell",
+     "West Silvertown"
+    ]
+   }
+  },
+  {
+   "id": "station-master-3d-maps",
+   "title": "Station Master app: 3D maps of all 270 Tube stations",
+   "url": "https://www.stationmasterapp.com/3dmaps.html",
+   "author": "Geoff Marshall and team (Station Master)",
+   "date": "2013 (Zone 1) to 2014 (all Tube stations)",
+   "kind": "app",
+   "stations": [
+    "all 270 Tube stations",
+    "Canada Water",
+    "Canary Wharf",
+    "North Greenwich"
+   ],
+   "format": "iOS app, drawn 3D maps with door positions, steps counts and lifts",
+   "downloadable": "no (in-app)",
+   "licence_as_stated": "\"Copyright ©\" (no holder or year in the page text)",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "surveyed in person: \"visited all stations ... counted every step on every staircase\" (search snippet); \"We've now completed all 270 3D maps for Tube stations, and partially completed the ones for Overground and DLR stations.\"",
+   "usefulness": "medium",
+   "usefulness_reason": "Best independent 3D survey of every station incl. Canada Water and Canary Wharf; app only, all rights reserved: compare by eye, do not copy.",
+   "evidence": "fetched",
+   "read_status": "fetched 2026-10-05 (3dmaps.html); Londonist articles 403",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "North Greenwich"
+    ]
+   }
+  },
+  {
+   "id": "turbosquid-1975930-bank-street-jubilee",
+   "title": "TurboSquid 1975930: Bank Street Canary Wharf with Jubilee Station",
+   "url": "https://www.turbosquid.com/3d-models/bank-street-canary-wharf-with-jubilee-station-3d-model-1975930",
+   "author": "maqyko (TurboSquid seller)",
+   "date": "unknown",
+   "kind": "3D model",
+   "stations": [
+    "Canary Wharf"
+   ],
+   "format": "max, obj, fbx, 3dm (per search snippet)",
+   "downloadable": "yes (paid)",
+   "licence_as_stated": "\"Standard\" (TurboSquid 3D Model License)",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "\"All dimensions are correct according to floorplans, elevations and site plan\" (seller); likely the surface canopies and Bank Street towers, interior not confirmed",
+   "usefulness": "low",
+   "usefulness_reason": "Paid, no redistribution; surface only as far as known.",
+   "evidence": "search-snippet",
+   "read_status": "not read: HTTP 403 to WebFetch",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "3dwarehouse-canary-wharf-jubilee-west-end",
+   "title": "3D Warehouse: \"Canary Wharf Jubilee Station West End\"",
+   "url": "https://3dwarehouse.sketchup.com/model/1865ca0db0f3601af42b80606c2f3752/Canary-Wharf-Jubilee-Station-West-End",
+   "author": "James Cannam",
+   "date": "unknown",
+   "kind": "3D model",
+   "stations": [
+    "Canary Wharf"
+   ],
+   "format": "SketchUp",
+   "downloadable": "yes (3D Warehouse account)",
+   "licence_as_stated": "not read (3D Warehouse General Model License applies to the site)",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "west entrance canopy (search snippet: about 3K downloads)",
+   "usefulness": "low",
+   "usefulness_reason": "Surface canopy only; we have our own canopy geometry plan.",
+   "evidence": "search-snippet",
+   "read_status": "page shell only (content is rendered by script)",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "3dwarehouse-london3dproject-canada-water",
+   "title": "3D Warehouse: \"Canada Water 14 - London3Dproject\"",
+   "url": "https://3dwarehouse.sketchup.com/model/e63fc6418a7dff46c125e5c9239d492f/Canada-Water-14-London3Dproject",
+   "author": "London3Dproject",
+   "date": "unknown",
+   "kind": "3D model",
+   "stations": [
+    "Canada Water (area tile; station content not confirmed)"
+   ],
+   "format": "SketchUp",
+   "downloadable": "yes",
+   "licence_as_stated": "not read",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "14th tile of a Canada Water area set (117 downloads per snippet)",
+   "usefulness": "low",
+   "usefulness_reason": "Area massing, not the station interior.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "sketchfab-generic-tube-stations",
+   "title": "Sketchfab: generic London-style tube station models (BOXjordiHEAD \"London Underground Metro Station\"; omarme37 \"5 underground stations and train\"; Aceantt \"London Tube Station Hub Environment\")",
+   "url": "https://sketchfab.com/3d-models/london-tube-station-hub-environment-a328bfb44aea431b95320e1c207c346a",
+   "author": "BOXjordiHEAD (2021-10-16, 1,416 faces, not downloadable); omarme37 (2024-09-10, 2.5M faces, store, Standard); Aceantt (2020-01-06, 37,958 faces, CC BY, downloadable)",
+   "date": "2020 to 2024",
+   "kind": "3D model",
+   "stations": [
+    "none (generic)"
+   ],
+   "format": "Sketchfab (glTF/FBX downloads where allowed)",
+   "downloadable": "Aceantt only (free); omarme37 paid",
+   "licence_as_stated": "Aceantt: \"CC Attribution\"; omarme37: \"Standard\"; BOXjordiHEAD: none",
+   "licence_class": "open",
+   "relation": "independent",
+   "quality": "game-style environments, not real stations",
+   "usefulness": "low",
+   "usefulness_reason": "At most a CC BY prop source (tiles, benches) for a stylised interior; no station geometry.",
+   "evidence": "api",
+   "read_status": "Sketchfab API v3 search and model records, 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "sketchfab-artfletch-london-scans",
+   "title": "Sketchfab: artfletch photogrammetry of London Underground street furniture (Bank Tube Station Vent, Vauxhall Tube Vent, Cattle Trough Canada Water, Barbican Station Boundary Stone)",
+   "url": "https://sketchfab.com/3d-models/cattle-trough-canada-water-8a833db75dc1431ab60b1ac1c24b834f",
+   "author": "artfletch",
+   "date": "2020 to 2023",
+   "kind": "3D model",
+   "stations": [
+    "Canada Water (street, cattle trough)",
+    "Bank",
+    "Vauxhall",
+    "Barbican"
+   ],
+   "format": "photogrammetry meshes, downloadable",
+   "downloadable": "yes",
+   "licence_as_stated": "\"CC Attribution\"",
+   "licence_class": "open",
+   "relation": "independent",
+   "quality": "high-detail scans (about 1-2M faces) of objects at street level, not station interiors",
+   "usefulness": "low",
+   "usefulness_reason": "Open (CC BY) surface props near Canada Water; not station structure.",
+   "evidence": "api",
+   "read_status": "Sketchfab API v3, 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "sketchfab-virtuallybuilt-switchroom",
+   "title": "Sketchfab: \"3D Scan - Rail Underground Station Switchroom\" (London Underground)",
+   "url": "https://sketchfab.com/3d-models/3d-scan-rail-underground-station-switchroom-f939a3b9e54941ab97c288ac2562f7a7",
+   "author": "Virtually Built Ltd (virtually-Built)",
+   "date": "2017-03-06",
+   "kind": "3D model",
+   "stations": [
+    "unnamed LU station"
+   ],
+   "format": "laser/photo scan mesh, 2.4M faces",
+   "downloadable": "yes",
+   "licence_as_stated": "\"CC Attribution-NonCommercial\"",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "real scan of a back-of-house room under refurbishment",
+   "usefulness": "low",
+   "usefulness_reason": "Non-commercial; not a public area of a zone station.",
+   "evidence": "api",
+   "read_status": "Sketchfab API v3, 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "blendswap-10069-monument-station",
+   "title": "Blend Swap 10069: tube station based on Monument",
+   "url": "https://www.blendswap.com/blend/10069",
+   "author": "saliiim",
+   "date": "unknown (Blender 2.6x era, about 2012-2014)",
+   "kind": "3D model",
+   "stations": [
+    "Monument"
+   ],
+   "format": ".blend",
+   "downloadable": "yes (account)",
+   "licence_as_stated": "not read",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "not inspected",
+   "usefulness": "low",
+   "usefulness_reason": "Outside the zone.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "planetminecraft-canary-wharf-1-1",
+   "title": "Planet Minecraft: \"Canary Wharf Underground Station 1:1\" (The London Project)",
+   "url": "https://www.planetminecraft.com/project/canary-wharf-underground-station-1-1/",
+   "author": "The London Project (Minecraft server team)",
+   "date": "2021-02-09",
+   "kind": "game build",
+   "stations": [
+    "Canary Wharf"
+   ],
+   "format": "Minecraft build on a server (\"/warp CanaryWharf\"), \"100% complete\"",
+   "downloadable": "no (server visit)",
+   "licence_as_stated": "not read",
+   "licence_class": "unclear",
+   "relation": "unclear (project uses DEFRA LIDAR for buildings; interior reference not stated in the snippet)",
+   "quality": "1:1 block build; the project also built Waterloo, St Pancras and ExCeL",
+   "usefulness": "low",
+   "usefulness_reason": "Shows public interest in a walkable Canary Wharf station; no data to reuse.",
+   "evidence": "search-snippet",
+   "read_status": "not read: HTTP 403 to WebFetch",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "roblox-djmn-lines",
+   "title": "Roblox: DJMN Lines (Jubilee line game)",
+   "url": "https://www.roblox.com/games/5177561496/STATION-TRAIN-ANNS-V1-14-9-DJMN-Lines",
+   "author": "DJMN Lines developers",
+   "date": "2020s (active)",
+   "kind": "game build",
+   "stations": [
+    "Jubilee line stations",
+    "Canary Wharf",
+    "Canada Water",
+    "North Greenwich",
+    "Canning Town",
+    "West Ham",
+    "Stratford"
+   ],
+   "format": "Roblox game",
+   "downloadable": "no",
+   "licence_as_stated": "Roblox terms",
+   "licence_class": "restricted",
+   "relation": "unclear",
+   "quality": "drive 1996 stock along the Jubilee line; station fidelity not checked",
+   "usefulness": "low",
+   "usefulness_reason": "Game; nothing reusable.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "Canning Town",
+     "North Greenwich",
+     "Stratford",
+     "West Ham"
+    ]
+   }
+  },
+  {
+   "id": "game-assets-cities-skylines-mtr",
+   "title": "Cities: Skylines Workshop and Minecraft Transit Railway \"The Tube\" addon (London Underground trains and entrances)",
+   "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=1549929737",
+   "author": "various Workshop and Modrinth authors",
+   "date": "2015 to 2023",
+   "kind": "game build",
+   "stations": [
+    "none specific (trains, entrances)"
+   ],
+   "format": "game assets",
+   "downloadable": "yes (in game)",
+   "licence_as_stated": "Steam Workshop / Modrinth terms",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "rolling stock and generic entrances; some items removed over copyright",
+   "usefulness": "low",
+   "usefulness_reason": "No station interiors found for the zone.",
+   "evidence": "search-snippet",
+   "read_status": "search snippets",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "tfl-foi-0493-2223-station-depths",
+   "title": "TfL FOI-0493-2223: station ground levels and platform rail levels (CSV)",
+   "url": "https://foi.tfl.gov.uk/FOI-0493-2223/Copy%20of%20Station%20depths.csv",
+   "author": "TfL",
+   "date": "2022",
+   "kind": "dataset",
+   "stations": [
+    "all LU stations",
+    "Canada Water",
+    "Canary Wharf",
+    "North Greenwich"
+   ],
+   "format": "CSV, levels in London Underground Datum (+100 m offset)",
+   "downloadable": "yes",
+   "licence_as_stated": "\"FOI disclosure; no open licence stated\" (our register, source tfl-foi)",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "numeric levels per platform; companion to the sheets, which are not to scale",
+   "usefulness": "high",
+   "usefulness_reason": "Gives the vertical truth the sheets lack; already used in data/sourced-levels.json (six values).",
+   "evidence": "repo record",
+   "read_status": "already in the data register",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "North Greenwich"
+    ]
+   }
+  },
+  {
+   "id": "tfl-station-topology",
+   "title": "TfL station topology data (detailed CSV and GTFS pathways)",
+   "url": "https://api.tfl.gov.uk/stationdata/tfl-stationdata-detailed.zip",
+   "author": "TfL",
+   "date": "2026-08-03 (file date recorded 2026-10-03)",
+   "kind": "dataset",
+   "stations": [
+    "all TfL stations",
+    "Canada Water",
+    "Canary Wharf",
+    "North Greenwich",
+    "Heron Quays"
+   ],
+   "format": "CSV (levels, areas, entrances, platforms, lifts) and GTFS pathways",
+   "downloadable": "yes",
+   "licence_as_stated": "TfL open data terms (Transport Data Service)",
+   "licence_class": "open",
+   "relation": "independent",
+   "quality": "topology and levels, no geometry; Canary Wharf hub HUBCAW 24 levels, Canada Water HUBZCW 10 (feeds/underground/stations.json)",
+   "usefulness": "high",
+   "usefulness_reason": "The open graph to hang the sheet's spaces on (named levels, lifts, entrances).",
+   "evidence": "repo record",
+   "read_status": "already catalogued in feeds/underground/stations.json",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": [
+     "Heron Quays",
+     "North Greenwich"
+    ]
+   }
+  },
+  {
+   "id": "imbrizi-3d-tube-2013",
+   "title": "Bruno Imbrizi: real-time 3D map of the London Underground (three.js)",
+   "url": "https://transitmap.net/imbrizi-london-3d/",
+   "author": "Bruno Imbrizi",
+   "date": "2013-08",
+   "kind": "visualisation",
+   "stations": [
+    "all LU stations (9 lines)"
+   ],
+   "format": "web (three.js)",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "independent",
+   "quality": "stations as orbs at depth, trains from TfL predictions; depths \"obtained through Freedom of Information requests\" (snippet)",
+   "usefulness": "low",
+   "usefulness_reason": "Network scale, no station interiors; predates the sheets.",
+   "evidence": "search-snippet",
+   "read_status": "search snippets",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "ckanz-3d-tube-visualisation",
+   "title": "GitHub ckanz/3d-tube-visualisation: station depths and entrance heights (Unity)",
+   "url": "https://github.com/ckanz/3d-tube-visualisation",
+   "author": "ckanz",
+   "date": "2019-01-01 (repo created)",
+   "kind": "visualisation",
+   "stations": [
+    "all LU stations"
+   ],
+   "format": "Unity C# project with a CSV (name, GPS, height, depth OD, zone, line, entries/exits)",
+   "downloadable": "yes",
+   "licence_as_stated": "GNU GPL v3 (LICENSE file)",
+   "licence_class": "open",
+   "share_alike": true,
+   "relation": "independent",
+   "quality": "depth data from the Ian Visits 2011 \"How deep is every tube station\" list; bubbles, no interiors",
+   "usefulness": "low",
+   "usefulness_reason": "Copyleft and network scale; the TfL depth CSV is a better source.",
+   "evidence": "fetched",
+   "read_status": "README and LICENSE read from raw.githubusercontent.com",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "progress-agent-underground",
+   "title": "GitHub progress-agent/underground: depth-aware London Underground in Three.js",
+   "url": "https://github.com/progress-agent/underground",
+   "author": "progress-agent",
+   "date": "2026",
+   "kind": "visualisation",
+   "stations": [
+    "248 stations incl. all 27 Jubilee line stations"
+   ],
+   "format": "Three.js/Vite; shafts.json per line, station_depths.csv, crossrail_depths.csv, tideway_depths.csv",
+   "downloadable": "yes",
+   "licence_as_stated": "no licence file",
+   "licence_class": "none",
+   "relation": "independent",
+   "quality": "twin tunnels, station shafts, strata, EA LiDAR terrain; depths from a TfL PDF and \"curated depth anchors\"",
+   "usefulness": "medium",
+   "usefulness_reason": "Closest web analogue to our page's tunnel layer; no licence, so reference only.",
+   "evidence": "fetched",
+   "read_status": "README read from raw.githubusercontent.com",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "daniel-silva-depth-diagrams-2018",
+   "title": "Daniel Silva: London Underground Depth Diagrams",
+   "url": "https://www.maproomblog.com/2018/07/london-underground-depth-diagrams/",
+   "author": "Daniel Silva",
+   "date": "2018-07-12",
+   "kind": "visualisation",
+   "stations": [
+    "all LU lines"
+   ],
+   "format": "PDF diagrams and posters",
+   "downloadable": "yes (PDF, per the article)",
+   "licence_as_stated": "not read",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "platform level vs ground and sea level per line, \"from TfL's own spreadsheets\"",
+   "usefulness": "low",
+   "usefulness_reason": "Line profiles; we use the TfL CSV directly.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "cults3d-underground-depth-map",
+   "title": "Cults3D: \"3D London Underground Depth Map\" (printable wall art)",
+   "url": "https://cults3d.com/en/3d-model/art/3d-london-underground-depth-map-wall-art",
+   "author": "Cults3D designer (name not read)",
+   "date": "unknown (2025-2026)",
+   "kind": "3D model",
+   "stations": [
+    "all LU stations"
+   ],
+   "format": "STL, one part per line",
+   "downloadable": "yes (Cults3D)",
+   "licence_as_stated": "not read",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "routes \"taken from OpenStreetMap route relations rather than traced from a diagram\"; vertical axis \"driven by Transport for London's own published station levels\"",
+   "usefulness": "low",
+   "usefulness_reason": "Same method as our tunnel layer (OSM + TfL levels); confirms the approach.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "londonist-cutaways",
+   "title": "Londonist: \"London's hidden tunnels revealed in amazing cutaways\" (Tim Dunn) and earlier 3D cutaway collections",
+   "url": "https://londonist.com/london/transport/london-cutaways",
+   "author": "Tim Dunn (Londonist); london-underground.blogspot.com (2012)",
+   "date": "various",
+   "kind": "visualisation",
+   "stations": [
+    "Piccadilly Circus",
+    "Bond Street and others"
+   ],
+   "format": "scanned illustrations",
+   "downloadable": "no",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "independent",
+   "quality": "historic cutaways (e.g. 1989 Piccadilly Circus by Gavin Dunn)",
+   "usefulness": "low",
+   "usefulness_reason": "Style reference only.",
+   "evidence": "search-snippet",
+   "read_status": "search snippets",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "ltmuseum-jle-station-models",
+   "title": "London Transport Museum: JLE station models (Canary Wharf c.1995, 2000/10191; Canada Water c.1995, 2000/19061; Canada Water street level c.1992, 2001/4930)",
+   "url": "https://www.ltmuseum.co.uk/collections/collections-online/models/item/2000-10191",
+   "author": "Foster and Partners (Canary Wharf model); JLE project (Canada Water models)",
+   "date": "c.1992 to c.1995",
+   "kind": "3D model",
+   "stations": [
+    "Canary Wharf",
+    "Canada Water"
+   ],
+   "format": "physical models (Canary Wharf 972 x 2072 x 1462 mm; Canada Water 460 x 1330 x 915 mm, a cross-section showing the glass drum booking hall, escalators and platforms); collection photos",
+   "downloadable": "no (Acton Depot)",
+   "licence_as_stated": "not read",
+   "licence_class": "none",
+   "relation": "independent",
+   "quality": "design-stage architect's models",
+   "usefulness": "medium",
+   "usefulness_reason": "Independent 3D views of exactly our two stations; a visit to the Acton Depot or the museum photos can check the sheets' proportions.",
+   "evidence": "search-snippet",
+   "read_status": "not read: HTTP 403 to WebFetch",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": true,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "stephen-wiltshire-canary-wharf",
+   "title": "Stephen Wiltshire: drawings of Canary Wharf tube station (2002 and 2008)",
+   "url": "https://www.stephenwiltshire.co.uk/original/drawings/canary-wharf-tube-station/1539",
+   "author": "Stephen Wiltshire",
+   "date": "2002, 2008",
+   "kind": "visualisation",
+   "stations": [
+    "Canary Wharf"
+   ],
+   "format": "drawings, prints for sale",
+   "downloadable": "no",
+   "licence_as_stated": "artist's copyright",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "art",
+   "usefulness": "low",
+   "usefulness_reason": "Art only.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "applied-wayfinding-canary-wharf",
+   "title": "Applied Information Group: Canary Wharf wayfinding (axonometric mapping of the malls)",
+   "url": "https://appliedinformation.group/projects/canary-wharf",
+   "author": "Applied Information Group for Canary Wharf Group",
+   "date": "unknown",
+   "kind": "app",
+   "stations": [
+    "Canary Wharf estate (malls linking the stations)"
+   ],
+   "format": "case study page",
+   "downloadable": "no",
+   "licence_as_stated": "\"Applied's copyright\" (feeds/underground/estate.json)",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "axonometric maps of the multi-level malls for signage",
+   "usefulness": "medium",
+   "usefulness_reason": "The estate's own axonometric style; the malls join the Jubilee, DLR and Elizabeth line stations. Already in estate.json.",
+   "evidence": "repo record",
+   "read_status": "recorded 2026-10-03",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "waymap-tfl-trial",
+   "title": "Waymap: indoor navigation trial in a TfL Underground station (EIT Urban Mobility)",
+   "url": "https://marketplace.eiturbanmobility.eu/best-practices/testing-accessible-navigation-in-the-london-underground",
+   "author": "Waymap with TfL",
+   "date": "2022-2023",
+   "kind": "app",
+   "stations": [
+    "one LU station (name not read)"
+   ],
+   "format": "smartphone app, proprietary station maps",
+   "downloadable": "no",
+   "licence_as_stated": "proprietary",
+   "licence_class": "restricted",
+   "relation": "unclear (station maps are Waymap's own)",
+   "quality": "4 sessions, 8 blind or visually impaired testers; \"84% ... more likely to use TfL services\"",
+   "usefulness": "low",
+   "usefulness_reason": "Shows the indoor-route use case; no data.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "tfl-gis-hub-stations",
+   "title": "TfL GIS open data hub: \"TfL stations\" and \"Underground Stations\" layers",
+   "url": "https://gis-tfl.opendata.arcgis.com/maps/5dcb79b6817b4bf89732de68a0337312",
+   "author": "TfL",
+   "date": "2026-07 (modified)",
+   "kind": "dataset",
+   "stations": [
+    "all TfL stations"
+   ],
+   "format": "ArcGIS feature service (points)",
+   "downloadable": "yes",
+   "licence_as_stated": "\"TfL stations\": no licence text in the hub record; other layers in the hub: OGL v3",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "station points only, no interiors",
+   "usefulness": "low",
+   "usefulness_reason": "Points, not geometry.",
+   "evidence": "api",
+   "read_status": "ArcGIS Hub search API, 2026-10-05",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "crossrail-bim-virtual-railway",
+   "title": "Crossrail Learning Legacy: \"Building a virtual version of London's Elizabeth line\" (12F-001) and \"Application of BIM and lessons learned\"",
+   "url": "https://learninglegacy.crossrail.co.uk/wp-content/uploads/2017/09/12F-001-Building-a-virtual-version-of-Londons-Elizabeth-line.pdf",
+   "author": "Crossrail Ltd",
+   "date": "2017",
+   "kind": "paper",
+   "stations": [
+    "Elizabeth line stations incl. Canary Wharf (Elizabeth line) and Whitechapel"
+   ],
+   "format": "PDF papers; the BIM models themselves are not published",
+   "downloadable": "papers yes; models no",
+   "licence_as_stated": "Crossrail Learning Legacy terms (no open licence stated)",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "describes the BIM environment (\"two railways: one virtual\")",
+   "usefulness": "low",
+   "usefulness_reason": "Confirms the 3D sources exist and are not public.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "crossrail-pedestrian-modelling-archive",
+   "title": "Crossrail Learning Legacy: Station Pedestrian Modelling Archive (Legion), e.g. Farringdon Legion modelling report",
+   "url": "https://learninglegacy.crossrail.co.uk/documents/station-pedestrian-modelling-archive/",
+   "author": "Crossrail Ltd and consultants",
+   "date": "2010s",
+   "kind": "paper",
+   "stations": [
+    "Elizabeth line stations (Farringdon report seen)"
+   ],
+   "format": "PDF reports with plan geometry and flows",
+   "downloadable": "yes (PDF)",
+   "licence_as_stated": "not read",
+   "licence_class": "unclear",
+   "relation": "independent",
+   "quality": "Legion models built \"from precise architectural plans\" to London Underground planning standards",
+   "usefulness": "medium",
+   "usefulness_reason": "A Canary Wharf (Elizabeth line) report, if in the archive, would give scaled concourse geometry and flows; check by hand.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "legion-calibration-canary-wharf-escalators",
+   "title": "Paper: \"Calibration and validation of the Legion simulation model using empirical data\" (escalator queues filmed at Canary Wharf)",
+   "url": "https://link.springer.com/chapter/10.1007/978-3-540-47064-9_15",
+   "author": "Legion Ltd authors (Pedestrian and Evacuation Dynamics 2005)",
+   "date": "2007",
+   "kind": "paper",
+   "stations": [
+    "Canary Wharf"
+   ],
+   "format": "book chapter",
+   "downloadable": "paywalled",
+   "licence_as_stated": "Springer copyright",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "\"Real escalator queues were filmed on Canary Wharf and compared with a snapshot of the Legion Simulator\" (snippet)",
+   "usefulness": "low",
+   "usefulness_reason": "Crowd behaviour on the Canary Wharf escalator banks; no geometry.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": true,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "tfl-spinview-digital-twin",
+   "title": "TfL and Spinview: digital twin of the London Underground (Piccadilly line first)",
+   "url": "https://www.newcivilengineer.com/latest/tfl-to-create-digital-twin-of-london-underground-to-monitor-track-and-tunnels-11-01-2022/",
+   "author": "TfL, Spinview",
+   "date": "2022-01",
+   "kind": "paper",
+   "stations": [
+    "Piccadilly line"
+   ],
+   "format": "private 3D scans",
+   "downloadable": "no",
+   "licence_as_stated": "private",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "track and tunnel scans for maintenance",
+   "usefulness": "low",
+   "usefulness_reason": "Not public; not the zone.",
+   "evidence": "search-snippet",
+   "read_status": "search snippet",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "candy-chan-project-subway-nyc",
+   "title": "Candy Chan: Project Subway NYC (axonometric station drawings)",
+   "url": "https://transitmap.net/ny-station-diagrams-chan/",
+   "author": "Candy Chan",
+   "date": "2015",
+   "kind": "visualisation",
+   "stations": [
+    "New York: Columbus Circle, Times Square, Herald Square, Madison Square, Union Square"
+   ],
+   "format": "drawings (AutoCAD, Rhino, Illustrator), posters",
+   "downloadable": "no",
+   "licence_as_stated": "artist's copyright",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "surveyed by hand (\"counting subway tiles and stairs\"); exaggerated vertical scale so upper levels do not hide lower ones",
+   "usefulness": "low",
+   "usefulness_reason": "Comparison: the same drawing convention made from survey, not from operator drawings.",
+   "evidence": "search-snippet",
+   "read_status": "search snippets",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  },
+  {
+   "id": "official-3d-station-maps-elsewhere",
+   "title": "Official 3D station layouts elsewhere: Hong Kong MTR station layout PDFs, Tokyo Metro 3D station maps; RATP République laser scan (LevelS3D/NavVis)",
+   "url": "https://www.mtr.com.hk/en/customer/services/system_map.html",
+   "author": "MTR, Tokyo Metro, RATP",
+   "date": "various",
+   "kind": "visualisation",
+   "stations": [
+    "Hong Kong, Tokyo and Paris stations"
+   ],
+   "format": "PDF / web / private scan",
+   "downloadable": "MTR PDFs yes",
+   "licence_as_stated": "operators' terms (not read)",
+   "licence_class": "restricted",
+   "relation": "independent",
+   "quality": "operators publish 3D layouts for passengers; RATP's scan is for maintenance",
+   "usefulness": "low",
+   "usefulness_reason": "Comparison: TfL does not publish passenger 3D layouts; London has only the FOI sheets.",
+   "evidence": "search-snippet",
+   "read_status": "HN thread and search snippets",
+   "notes": "",
+   "zone_flags": {
+    "canada_water": false,
+    "canary_wharf": false,
+    "other_zone_stations": []
+   }
+  }
+ ]
+}

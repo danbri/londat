@@ -1,0 +1,1732 @@
+{
+ "query": "QLever SERVICE spatialSearch: (algorithm s2, maxDistance 1000 m, payload <all>; bindDistance is in km) around POINT(-0.0195 51.5049) over wdt:P625; then labels, P31 and P1716/P127/P749/P137 for those items by VALUES",
+ "generated": "2026-10-03T05:16:27.972Z",
+ "items_within_1km": 266,
+ "items_linked_to_nsi_brand": 6,
+ "linked": [
+  {
+   "qid": "Q97040028",
+   "label": "KPMG (United Kingdom)",
+   "coord": "POINT(-0.019582 51.506533)",
+   "dist_m": 182,
+   "types": "business | enterprise",
+   "links": [
+    {
+     "p": "P749",
+     "t": "Q493751"
+    }
+   ],
+   "nsi_brand_links": [
+    {
+     "p": "P749",
+     "t": "Q493751"
+    }
+   ]
+  },
+  {
+   "qid": "Q6772998",
+   "label": "London Marriott Hotel Canary Wharf",
+   "coord": "POINT(-0.021130 51.507420)",
+   "dist_m": 302,
+   "types": "hotel",
+   "links": [
+    {
+     "p": "P127",
+     "t": "Q19956972"
+    },
+    {
+     "p": "P137",
+     "t": "Q3918608"
+    }
+   ],
+   "nsi_brand_links": [
+    {
+     "p": "P137",
+     "t": "Q3918608"
+    }
+   ]
+  },
+  {
+   "qid": "Q138768",
+   "label": "One Churchill Place",
+   "coord": "POINT(-0.014445 51.505278)",
+   "dist_m": 352,
+   "types": "headquarters | skyscraper",
+   "links": [
+    {
+     "p": "P127",
+     "t": "Q245343"
+    }
+   ],
+   "nsi_brand_links": [
+    {
+     "p": "P127",
+     "t": "Q245343"
+    }
+   ]
+  },
+  {
+   "qid": "Q122759269",
+   "label": "The Ledger Building",
+   "coord": "POINT(-0.024547 51.507661)",
+   "dist_m": 465,
+   "types": "pub",
+   "links": [
+    {
+     "p": "P127",
+     "t": "Q6109362"
+    }
+   ],
+   "nsi_brand_links": [
+    {
+     "p": "P127",
+     "t": "Q6109362"
+    }
+   ]
+  },
+  {
+   "qid": "Q5475511",
+   "label": "Canary Riverside Plaza Hotel",
+   "coord": "POINT(-0.028100 51.506100)",
+   "dist_m": 610,
+   "types": "hotel",
+   "links": [
+    {
+     "p": "P127",
+     "t": "Q19956972"
+    },
+    {
+     "p": "P137",
+     "t": "Q1424786"
+    }
+   ],
+   "nsi_brand_links": [
+    {
+     "p": "P137",
+     "t": "Q1424786"
+    }
+   ]
+  },
+  {
+   "qid": "Q17444904",
+   "label": "DoubleTree by Hilton Hotel London - Docklands Riverside",
+   "coord": "POINT(-0.033179 51.504387)",
+   "dist_m": 948,
+   "types": "hotel",
+   "links": [
+    {
+     "p": "P137",
+     "t": "Q1057464"
+    },
+    {
+     "p": "P137",
+     "t": "Q2504643"
+    }
+   ],
+   "nsi_brand_links": [
+    {
+     "p": "P137",
+     "t": "Q2504643"
+    }
+   ]
+  }
+ ],
+ "all": [
+  {
+   "qid": "Q133876645",
+   "label": "Blumont Annuity",
+   "dist_m": 4,
+   "types": "business"
+  },
+  {
+   "qid": "Q1014325",
+   "label": "Canada Square",
+   "dist_m": 5,
+   "types": "square | office plaza"
+  },
+  {
+   "qid": "Q124377",
+   "label": "Canary Wharf",
+   "dist_m": 12,
+   "types": "area of London | privately owned public space | central business district"
+  },
+  {
+   "qid": "Q20876413",
+   "label": "UCL School of Management",
+   "dist_m": 14,
+   "types": "academic institution"
+  },
+  {
+   "qid": "Q503477",
+   "label": "One Canada Square",
+   "dist_m": 36,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q112127933",
+   "label": "London Joint City and Midland Bank War Memorial",
+   "dist_m": 49,
+   "types": "war memorial"
+  },
+  {
+   "qid": "Q131532735",
+   "label": "GP at Hand - Cabot Place",
+   "dist_m": 60,
+   "types": "doctor's office | branch office"
+  },
+  {
+   "qid": "Q56583825",
+   "label": "Block Dox (United Kingdom)",
+   "dist_m": 75,
+   "types": "business"
+  },
+  {
+   "qid": "Q47661781",
+   "label": "33 Canada Square",
+   "dist_m": 90,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q2817763",
+   "label": "5 Canada Square",
+   "dist_m": 95,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q20711962",
+   "label": "30 South Colonnade",
+   "dist_m": 98,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q1032811",
+   "label": "Canary Wharf",
+   "dist_m": 99,
+   "types": "elevated station | Docklands Light Railway station"
+  },
+  {
+   "qid": "Q124041",
+   "label": "London Docklands",
+   "dist_m": 101,
+   "types": "area of London | waterfront"
+  },
+  {
+   "qid": "Q67312575",
+   "label": "Reuters Plaza",
+   "dist_m": 101,
+   "types": "square"
+  },
+  {
+   "qid": "Q123024158",
+   "label": "Thomson Magazines",
+   "dist_m": 106,
+   "types": "publishing house | magazine publisher"
+  },
+  {
+   "qid": "Q2815351",
+   "label": "25 North Colonnade",
+   "dist_m": 109,
+   "types": "multi-story urban building"
+  },
+  {
+   "qid": "Q42117465",
+   "label": "Everyman Canary Wharf",
+   "dist_m": 123,
+   "types": "movie theater"
+  },
+  {
+   "qid": "Q138195296",
+   "label": "Eden Dock",
+   "dist_m": 138,
+   "types": "urban park"
+  },
+  {
+   "qid": "Q867663",
+   "label": "Citigroup Centre",
+   "dist_m": 138,
+   "types": "building complex"
+  },
+  {
+   "qid": "Q572887",
+   "label": "8 Canada Square",
+   "dist_m": 152,
+   "types": "skyscraper | office building"
+  },
+  {
+   "qid": "Q1032842",
+   "label": "Canary Wharf",
+   "dist_m": 156,
+   "types": "underground station | London Underground station"
+  },
+  {
+   "qid": "Q6549183",
+   "label": "Limehouse Studios",
+   "dist_m": 164,
+   "types": "television studio"
+  },
+  {
+   "qid": "Q5015776",
+   "label": "Cabot Hall",
+   "dist_m": 169,
+   "types": "convention center"
+  },
+  {
+   "qid": "Q30292166",
+   "label": "Ideas Foundation",
+   "dist_m": 176,
+   "types": "charitable organization | nonprofit organization"
+  },
+  {
+   "qid": "Q136345828",
+   "label": null,
+   "dist_m": 177,
+   "types": "government agency"
+  },
+  {
+   "qid": "Q97040028",
+   "label": "KPMG (United Kingdom)",
+   "dist_m": 182,
+   "types": "business | enterprise"
+  },
+  {
+   "qid": "Q17528165",
+   "label": "Quay walls, copings and buttresses to Import Dock And Export Dock",
+   "dist_m": 191,
+   "types": "wall"
+  },
+  {
+   "qid": "Q20711649",
+   "label": "Crossrail Place",
+   "dist_m": 192,
+   "types": "roof garden | retail environment"
+  },
+  {
+   "qid": "Q3649219",
+   "label": "Cabot Square",
+   "dist_m": 194,
+   "types": "square"
+  },
+  {
+   "qid": "Q65963822",
+   "label": "Bank Street",
+   "dist_m": 199,
+   "types": "street"
+  },
+  {
+   "qid": "Q1971670",
+   "label": "West India Quay",
+   "dist_m": 208,
+   "types": "elevated station | Docklands Light Railway station"
+  },
+  {
+   "qid": "Q1459844",
+   "label": "Heron Quays",
+   "dist_m": 214,
+   "types": "elevated station | Docklands Light Railway station"
+  },
+  {
+   "qid": "Q123360",
+   "label": "Poplar",
+   "dist_m": 223,
+   "types": "area of London"
+  },
+  {
+   "qid": "Q1642944",
+   "label": "West India Docks",
+   "dist_m": 224,
+   "types": "dock"
+  },
+  {
+   "qid": "Q2814703",
+   "label": "20 Canada Square",
+   "dist_m": 225,
+   "types": "office building"
+  },
+  {
+   "qid": "Q130251332",
+   "label": "The Wake",
+   "dist_m": 225,
+   "types": "proposed entity"
+  },
+  {
+   "qid": "Q138752",
+   "label": "25 Bank Street",
+   "dist_m": 239,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q15059601",
+   "label": "North Quay, London",
+   "dist_m": 240,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q132181405",
+   "label": "Global Future Academy",
+   "dist_m": 243,
+   "types": "company"
+  },
+  {
+   "qid": "Q136434640",
+   "label": "15 Canada Square",
+   "dist_m": 245,
+   "types": "building"
+  },
+  {
+   "qid": "Q2813525",
+   "label": "1 West India Quay",
+   "dist_m": 259,
+   "types": "tower block | skyscraper"
+  },
+  {
+   "qid": "Q138755",
+   "label": "40 Bank Street",
+   "dist_m": 267,
+   "types": "multi-story urban building | skyscraper"
+  },
+  {
+   "qid": "Q7985439",
+   "label": "West India Quay",
+   "dist_m": 275,
+   "types": "wharf"
+  },
+  {
+   "qid": "Q21079113",
+   "label": "West India Quay Footbridge",
+   "dist_m": 280,
+   "types": "footbridge | pontoon bridge"
+  },
+  {
+   "qid": "Q30765817",
+   "label": null,
+   "dist_m": 283,
+   "types": "watercraft"
+  },
+  {
+   "qid": "Q5634458",
+   "label": "HMS Stalker",
+   "dist_m": 283,
+   "types": "preserved watercraft | tank landing ship"
+  },
+  {
+   "qid": "Q4630530",
+   "label": "20 Bank Street",
+   "dist_m": 287,
+   "types": "building"
+  },
+  {
+   "qid": "Q15223735",
+   "label": "Heron Quays",
+   "dist_m": 288,
+   "types": "area of London"
+  },
+  {
+   "qid": "Q5031204",
+   "label": "Canary Wharf railway station",
+   "dist_m": 290,
+   "types": "railway station | underground railway station"
+  },
+  {
+   "qid": "Q1101257",
+   "label": "Clifford Chance",
+   "dist_m": 300,
+   "types": "business | organization | law firm"
+  },
+  {
+   "qid": "Q5743521",
+   "label": "Heron Quays West",
+   "dist_m": 302,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q6772998",
+   "label": "London Marriott Hotel Canary Wharf",
+   "dist_m": 302,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q2815350",
+   "label": "25 Cabot Square",
+   "dist_m": 315,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q138760",
+   "label": "10 Upper Bank Street",
+   "dist_m": 319,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q2813508",
+   "label": "1 Cabot Square",
+   "dist_m": 321,
+   "types": "office building | tower block"
+  },
+  {
+   "qid": "Q86661166",
+   "label": "South Quay Footbridge",
+   "dist_m": 322,
+   "types": "footbridge"
+  },
+  {
+   "qid": "Q21549099",
+   "label": "Poplar Station High-Level Walkway",
+   "dist_m": 331,
+   "types": "footbridge"
+  },
+  {
+   "qid": "Q55125879",
+   "label": "Idea Store Canary Wharf Library",
+   "dist_m": 340,
+   "types": "public library"
+  },
+  {
+   "qid": "Q7229394",
+   "label": "Poplar DLR depot",
+   "dist_m": 350,
+   "types": "traction maintenance depot"
+  },
+  {
+   "qid": "Q1526395",
+   "label": "Poplar DLR station",
+   "dist_m": 350,
+   "types": "station located on surface | Docklands Light Railway station"
+  },
+  {
+   "qid": "Q138768",
+   "label": "One Churchill Place",
+   "dist_m": 352,
+   "types": "headquarters | skyscraper"
+  },
+  {
+   "qid": "Q111961449",
+   "label": "Man with Arms Open",
+   "dist_m": 352,
+   "types": "statue"
+  },
+  {
+   "qid": "Q4632156",
+   "label": "25 Churchill Place",
+   "dist_m": 361,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q109321776",
+   "label": "Hertsmere Road",
+   "dist_m": 378,
+   "types": "street"
+  },
+  {
+   "qid": "Q131225851",
+   "label": "One Bank Street",
+   "dist_m": 380,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q105107778",
+   "label": "St Peter's Church",
+   "dist_m": 384,
+   "types": "barge | church building"
+  },
+  {
+   "qid": "Q15917518",
+   "label": "Newfoundland",
+   "dist_m": 392,
+   "types": "apartment building | skyscraper"
+  },
+  {
+   "qid": "Q97376052",
+   "label": "Hibbert Gate",
+   "dist_m": 395,
+   "types": "replica | gate | arch | sculpture | structure"
+  },
+  {
+   "qid": "Q1093866",
+   "label": "City Canal",
+   "dist_m": 397,
+   "types": "canal"
+  },
+  {
+   "qid": "Q2904846",
+   "label": "London Museum Docklands",
+   "dist_m": 406,
+   "types": "maritime museum | independent museum | slavery museum | transport museum | local museum"
+  },
+  {
+   "qid": "Q96183031",
+   "label": "Statue of Robert Milligan",
+   "dist_m": 408,
+   "types": "monument | statue"
+  },
+  {
+   "qid": "Q21549166",
+   "label": "South Dock Pontoon Bridge",
+   "dist_m": 413,
+   "types": "bridge"
+  },
+  {
+   "qid": "Q754680",
+   "label": "Traffic Light tree",
+   "dist_m": 413,
+   "types": "sculpture"
+  },
+  {
+   "qid": "Q2911699",
+   "label": "Billingsgate Fish Market",
+   "dist_m": 422,
+   "types": "fish market"
+  },
+  {
+   "qid": "Q15059605",
+   "label": "World Trade Centre (London)",
+   "dist_m": 423,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q61599152",
+   "label": "London River Man",
+   "dist_m": 424,
+   "types": "statue"
+  },
+  {
+   "qid": "Q5150139",
+   "label": "Columbus Tower",
+   "dist_m": 424,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q778089",
+   "label": "15 Westferry Circus",
+   "dist_m": 425,
+   "types": "multi-story urban building"
+  },
+  {
+   "qid": "Q4547785",
+   "label": "11 Westferry Circus",
+   "dist_m": 426,
+   "types": "office building"
+  },
+  {
+   "qid": "Q24298842",
+   "label": "Hertsmere House",
+   "dist_m": 432,
+   "types": "building"
+  },
+  {
+   "qid": "Q110779170",
+   "label": "Columbus Courtyard",
+   "dist_m": 437,
+   "types": "square"
+  },
+  {
+   "qid": "Q66232810",
+   "label": "New City College Corporation",
+   "dist_m": 441,
+   "types": "further education college"
+  },
+  {
+   "qid": "Q17528176",
+   "label": "Warehouses And General Offices At Western End Of North Quay",
+   "dist_m": 442,
+   "types": "warehouse"
+  },
+  {
+   "qid": "Q42117435",
+   "label": "Cineworld Cinema West India Quay",
+   "dist_m": 445,
+   "types": "movie theater"
+  },
+  {
+   "qid": "Q56008749",
+   "label": "Hilton London Canary Wharf",
+   "dist_m": 452,
+   "types": "hotel | geographical feature"
+  },
+  {
+   "qid": "Q21585412",
+   "label": "South Quay Plaza",
+   "dist_m": 455,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q49001837",
+   "label": "New City College",
+   "dist_m": 458,
+   "types": "college | built structure"
+  },
+  {
+   "qid": "Q7829663",
+   "label": "Tower Hamlets College",
+   "dist_m": 458,
+   "types": "school"
+  },
+  {
+   "qid": "Q27082769",
+   "label": "Poplar Technical College",
+   "dist_m": 460,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q27084890",
+   "label": "Entrance Gates To West India Docks",
+   "dist_m": 462,
+   "types": "gate"
+  },
+  {
+   "qid": "Q122759269",
+   "label": "The Ledger Building",
+   "dist_m": 465,
+   "types": "pub"
+  },
+  {
+   "qid": "Q136211103",
+   "label": "Theatreship",
+   "dist_m": 466,
+   "types": "arts center"
+  },
+  {
+   "qid": "Q28457351",
+   "label": "54 Marsh Wall",
+   "dist_m": 470,
+   "types": "building"
+  },
+  {
+   "qid": "Q19870793",
+   "label": "Wardian London",
+   "dist_m": 474,
+   "types": "building complex"
+  },
+  {
+   "qid": "Q111369012",
+   "label": "Novotel London Canary Wharf",
+   "dist_m": 476,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q16258428",
+   "label": "Landmark Pinnacle",
+   "dist_m": 476,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q7594715",
+   "label": "St Matthias Old Church",
+   "dist_m": 478,
+   "types": "former church building"
+  },
+  {
+   "qid": "Q27081847",
+   "label": "Former West Entrance Lock To South Dock, West India Docks",
+   "dist_m": 485,
+   "types": "lock"
+  },
+  {
+   "qid": "Q28404263",
+   "label": "40 Marsh Wall",
+   "dist_m": 490,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q4631317",
+   "label": "22 Marsh Wall",
+   "dist_m": 490,
+   "types": "building complex"
+  },
+  {
+   "qid": "Q24039419",
+   "label": "Alpha Square",
+   "dist_m": 490,
+   "types": "building"
+  },
+  {
+   "qid": "Q27084900",
+   "label": "Railings And Gatepiers To Former Excise Office",
+   "dist_m": 494,
+   "types": "guard rail | gatepost"
+  },
+  {
+   "qid": "Q26318817",
+   "label": "Railings To West Of Main Gate At West India Dock",
+   "dist_m": 496,
+   "types": "guard rail"
+  },
+  {
+   "qid": "Q3496849",
+   "label": "Riverside South",
+   "dist_m": 498,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q27081781",
+   "label": "Former Excise Office",
+   "dist_m": 499,
+   "types": "custom house"
+  },
+  {
+   "qid": "Q4591331",
+   "label": "1996 Docklands bombing",
+   "dist_m": 511,
+   "types": "bomb attack"
+  },
+  {
+   "qid": "Q49001617",
+   "label": "Poplar High Street",
+   "dist_m": 511,
+   "types": "street"
+  },
+  {
+   "qid": "Q26318175",
+   "label": "Sign on Forecourt of former White Horse Public House",
+   "dist_m": 516,
+   "types": "sculpture | inn sign"
+  },
+  {
+   "qid": "Q26318852",
+   "label": "West India Dock Former Guard House",
+   "dist_m": 516,
+   "types": "building"
+  },
+  {
+   "qid": "Q65940091",
+   "label": "Marsh Wall",
+   "dist_m": 517,
+   "types": "street"
+  },
+  {
+   "qid": "Q22083678",
+   "label": "Westferry Circus",
+   "dist_m": 518,
+   "types": "square"
+  },
+  {
+   "qid": "Q27081853",
+   "label": "Former West Entrance Gate To West India Docks With Curved Walling And Bollards",
+   "dist_m": 523,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q7567064",
+   "label": "South Dock railway station",
+   "dist_m": 524,
+   "types": "railway station"
+  },
+  {
+   "qid": "Q7985437",
+   "label": "West India Docks railway station",
+   "dist_m": 524,
+   "types": "railway station"
+  },
+  {
+   "qid": "Q27085136",
+   "label": "Meridian House",
+   "dist_m": 526,
+   "types": "venue | clergy house"
+  },
+  {
+   "qid": "Q7186893",
+   "label": "Phoenix Heights",
+   "dist_m": 526,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q27085065",
+   "label": "Salvation Army Hostel",
+   "dist_m": 529,
+   "types": "hostel"
+  },
+  {
+   "qid": "Q111409661",
+   "label": "Lansbury Heritage Hotel",
+   "dist_m": 533,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q6860128",
+   "label": "Millwall Junction railway station",
+   "dist_m": 535,
+   "types": "railway station"
+  },
+  {
+   "qid": "Q20713184",
+   "label": "Poplar Rates Rebellion Mural",
+   "dist_m": 536,
+   "types": "mural"
+  },
+  {
+   "qid": "Q27082782",
+   "label": "Old Poplar Town Hall And Council Offices",
+   "dist_m": 543,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q3070493",
+   "label": "Pan Peninsula",
+   "dist_m": 545,
+   "types": "building complex"
+  },
+  {
+   "qid": "Q1032451",
+   "label": "Poplar and Limehouse",
+   "dist_m": 546,
+   "types": "constituency of the House of Commons"
+  },
+  {
+   "qid": "Q26318770",
+   "label": "Unidentified Body Stone Tomb West Of South East Gate, St Matthias Churchyard",
+   "dist_m": 557,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318283",
+   "label": "16 And 18, Garford Street E14",
+   "dist_m": 559,
+   "types": "building"
+  },
+  {
+   "qid": "Q16257747",
+   "label": "Charlie Brown's, Limehouse",
+   "dist_m": 564,
+   "types": "pub | destroyed building or structure"
+  },
+  {
+   "qid": "Q26318176",
+   "label": "3 Piers Immediately In Front Of No 127  Coroner's Court",
+   "dist_m": 564,
+   "types": "building"
+  },
+  {
+   "qid": "Q66229558",
+   "label": "South Quay College",
+   "dist_m": 564,
+   "types": "free school"
+  },
+  {
+   "qid": "Q55099352",
+   "label": "Cascades",
+   "dist_m": 564,
+   "types": "apartment building"
+  },
+  {
+   "qid": "Q27082809",
+   "label": "14, Garford Street E14",
+   "dist_m": 565,
+   "types": "building"
+  },
+  {
+   "qid": "Q67149623",
+   "label": "Our Lady and St Joseph Catholic Primary School",
+   "dist_m": 567,
+   "types": "voluntary aided school | primary school"
+  },
+  {
+   "qid": "Q111369013",
+   "label": "Fraser Place Canary Wharf",
+   "dist_m": 569,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q26318771",
+   "label": "Tomb Of Hugh Mcintosh,St Mattias",
+   "dist_m": 571,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318772",
+   "label": "Tomb Of Captain Samuel Jones And Family, St Mattias",
+   "dist_m": 573,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318818",
+   "label": "Quadrangle Stores At West India Dock",
+   "dist_m": 573,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318282",
+   "label": "10 and 12, Garford Street E14",
+   "dist_m": 574,
+   "types": "building"
+  },
+  {
+   "qid": "Q1459835",
+   "label": "South Quay DLR station",
+   "dist_m": 586,
+   "types": "elevated station | Docklands Light Railway station"
+  },
+  {
+   "qid": "Q22915232",
+   "label": "Pan Peninsula East Tower",
+   "dist_m": 592,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q17528180",
+   "label": "Blackwall Basin",
+   "dist_m": 593,
+   "types": "dock"
+  },
+  {
+   "qid": "Q27084930",
+   "label": "Tomb Of Samuel Coppendale, St Mattias",
+   "dist_m": 594,
+   "types": "tomb"
+  },
+  {
+   "qid": "Q26318773",
+   "label": "Tomb Of John Smart, St Mattias",
+   "dist_m": 599,
+   "types": "building"
+  },
+  {
+   "qid": "Q27081846",
+   "label": "Fitch And Sons Works",
+   "dist_m": 600,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q136227841",
+   "label": "40 Charter Street",
+   "dist_m": 600,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q26318774",
+   "label": "Tomb Of Solomon Baker",
+   "dist_m": 601,
+   "types": "building"
+  },
+  {
+   "qid": "Q5475511",
+   "label": "Canary Riverside Plaza Hotel",
+   "dist_m": 610,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q8032285",
+   "label": "Wood Wharf",
+   "dist_m": 610,
+   "types": "building complex"
+  },
+  {
+   "qid": "Q112013282",
+   "label": "Marlin Apartments Canary Wharf",
+   "dist_m": 614,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q42117520",
+   "label": "Ideal Cinema",
+   "dist_m": 615,
+   "types": "movie theater | destroyed building or structure"
+  },
+  {
+   "qid": "Q59536574",
+   "label": "Fab Foundation",
+   "dist_m": 618,
+   "types": "organization"
+  },
+  {
+   "qid": "Q98526135",
+   "label": "Woodstock Terrace",
+   "dist_m": 619,
+   "types": "street"
+  },
+  {
+   "qid": "Q20713829",
+   "label": "Maine Tower",
+   "dist_m": 635,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q5031202",
+   "label": "Canary Wharf Pier",
+   "dist_m": 637,
+   "types": "pier | landing"
+  },
+  {
+   "qid": "Q27081724",
+   "label": "Pope John House",
+   "dist_m": 658,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q96414457",
+   "label": "West India Pier",
+   "dist_m": 662,
+   "types": "pier"
+  },
+  {
+   "qid": "Q42117472",
+   "label": "Gaiety Cinema",
+   "dist_m": 663,
+   "types": "movie theater | destroyed building or structure"
+  },
+  {
+   "qid": "Q42117541",
+   "label": "Poplar Hippodrome Theatre",
+   "dist_m": 663,
+   "types": "movie theater | destroyed building or structure"
+  },
+  {
+   "qid": "Q42117548",
+   "label": "St. George's Picture Hall",
+   "dist_m": 665,
+   "types": "movie theater"
+  },
+  {
+   "qid": "Q130758506",
+   "label": "Amory Tower",
+   "dist_m": 670,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318324",
+   "label": "Poplar Recreation Ground Memorial",
+   "dist_m": 671,
+   "types": "war memorial"
+  },
+  {
+   "qid": "Q66220400",
+   "label": "River House Montessori School",
+   "dist_m": 691,
+   "types": "independent school"
+  },
+  {
+   "qid": "Q27081727",
+   "label": "Gate And End Piers To No 133 (Department Of Health Social Security)",
+   "dist_m": 691,
+   "types": "gate"
+  },
+  {
+   "qid": "Q129793154",
+   "label": "Congregational Library London",
+   "dist_m": 692,
+   "types": "religious library"
+  },
+  {
+   "qid": "Q7842858",
+   "label": "Trinity Independent Chapel",
+   "dist_m": 692,
+   "types": "church building"
+  },
+  {
+   "qid": "Q6784622",
+   "label": "Massey Shaw",
+   "dist_m": 694,
+   "types": "ship"
+  },
+  {
+   "qid": "Q513260",
+   "label": "Westferry DLR Station",
+   "dist_m": 704,
+   "types": "station located on surface | Docklands Light Railway station"
+  },
+  {
+   "qid": "Q27082762",
+   "label": "Accumulator Tower On The West Side Of Poplar Dock",
+   "dist_m": 704,
+   "types": "tower"
+  },
+  {
+   "qid": "Q61610403",
+   "label": "Lincoln Plaza London, Curio Collection by Hilton",
+   "dist_m": 706,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q27085051",
+   "label": "133 East India Dock Road",
+   "dist_m": 708,
+   "types": "apartment building"
+  },
+  {
+   "qid": "Q131532736",
+   "label": "Wood Wharf Health Centre",
+   "dist_m": 715,
+   "types": "branch office | doctor's office"
+  },
+  {
+   "qid": "Q28458132",
+   "label": "Lincoln Plaza",
+   "dist_m": 723,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q29378816",
+   "label": "One Park Drive",
+   "dist_m": 726,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318873",
+   "label": "14-26, Upper North Street E14",
+   "dist_m": 738,
+   "types": "building"
+  },
+  {
+   "qid": "Q6146231",
+   "label": "Jamestown Harbour",
+   "dist_m": 743,
+   "types": "building"
+  },
+  {
+   "qid": "Q67147584",
+   "label": "Mayflower Primary School",
+   "dist_m": 746,
+   "types": "primary school | community school"
+  },
+  {
+   "qid": "Q26318326",
+   "label": "153, East India Dock Road E14",
+   "dist_m": 749,
+   "types": "building"
+  },
+  {
+   "qid": "Q137896168",
+   "label": null,
+   "dist_m": 755,
+   "types": "educational institution"
+  },
+  {
+   "qid": "Q27085050",
+   "label": "Railed Wall And Gate Piers At All Saints Church With St Frideswide",
+   "dist_m": 762,
+   "types": "wall"
+  },
+  {
+   "qid": "Q21585376",
+   "label": "Rotherhithe crossing",
+   "dist_m": 764,
+   "types": null
+  },
+  {
+   "qid": "Q7229378",
+   "label": "Poplar Baths",
+   "dist_m": 765,
+   "types": "spa house"
+  },
+  {
+   "qid": "Q26318232",
+   "label": "5 Mountague Place",
+   "dist_m": 766,
+   "types": "building"
+  },
+  {
+   "qid": "Q66221017",
+   "label": "Cyril Jackson Primary School",
+   "dist_m": 768,
+   "types": "primary school | community school"
+  },
+  {
+   "qid": "Q27081758",
+   "label": "6, Mountague Place",
+   "dist_m": 771,
+   "types": "building"
+  },
+  {
+   "qid": "Q86027080",
+   "label": "University of Cumbria - London Campus",
+   "dist_m": 774,
+   "types": "academic department"
+  },
+  {
+   "qid": "Q26318233",
+   "label": "7 Mountague Place",
+   "dist_m": 776,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318325",
+   "label": "Statue of Richard Green",
+   "dist_m": 776,
+   "types": "statue"
+  },
+  {
+   "qid": "Q27082761",
+   "label": "Poplar Dock Original Eastern Part",
+   "dist_m": 779,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q27085112",
+   "label": "All Saints Rectory",
+   "dist_m": 780,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q27081759",
+   "label": "8 Mountague Place",
+   "dist_m": 781,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318414",
+   "label": "Greenwich Pensioner Public House",
+   "dist_m": 782,
+   "types": "pub"
+  },
+  {
+   "qid": "Q18619636",
+   "label": "Limehouse Causeway",
+   "dist_m": 783,
+   "types": "street"
+  },
+  {
+   "qid": "Q26318234",
+   "label": "9 Mountague Place",
+   "dist_m": 785,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318180",
+   "label": "Bridge House",
+   "dist_m": 786,
+   "types": "house"
+  },
+  {
+   "qid": "Q66221048",
+   "label": "Seven Mills Primary School",
+   "dist_m": 787,
+   "types": "community school | primary school"
+  },
+  {
+   "qid": "Q26318235",
+   "label": "10 Mountague Place",
+   "dist_m": 790,
+   "types": "building"
+  },
+  {
+   "qid": "Q27081760",
+   "label": "11 Mountague Place",
+   "dist_m": 795,
+   "types": "building"
+  },
+  {
+   "qid": "Q1974942",
+   "label": "All Saints",
+   "dist_m": 795,
+   "types": "Docklands Light Railway station | station located on surface"
+  },
+  {
+   "qid": "Q918636",
+   "label": "Poplar Dock",
+   "dist_m": 796,
+   "types": "dock"
+  },
+  {
+   "qid": "Q27086079",
+   "label": "Church of St Mary and St Joseph",
+   "dist_m": 796,
+   "types": "Catholic church building"
+  },
+  {
+   "qid": "Q27085084",
+   "label": "Numbers 1-3, 24 Bazely Street",
+   "dist_m": 799,
+   "types": "building"
+  },
+  {
+   "qid": "Q44750696",
+   "label": "Dollar Bay",
+   "dist_m": 802,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q131525587",
+   "label": "The Barkantine Practice",
+   "dist_m": 807,
+   "types": "doctor's office"
+  },
+  {
+   "qid": "Q138426781",
+   "label": "Digital Realty LHR20",
+   "dist_m": 810,
+   "types": "data center"
+  },
+  {
+   "qid": "Q7229374",
+   "label": "Poplar (East India Road) railway station",
+   "dist_m": 810,
+   "types": "railway station"
+  },
+  {
+   "qid": "Q131525581",
+   "label": "Gough Walk Practice",
+   "dist_m": 812,
+   "types": "doctor's office"
+  },
+  {
+   "qid": "Q27085049",
+   "label": "Inner London Education Authority Office  Westminster Bank",
+   "dist_m": 815,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q55125746",
+   "label": "Idea Store Chrisp Street Library",
+   "dist_m": 816,
+   "types": "Idea Store"
+  },
+  {
+   "qid": "Q65939230",
+   "label": "Westferry Road",
+   "dist_m": 816,
+   "types": "street"
+  },
+  {
+   "qid": "Q27081833",
+   "label": "Accumulator Tower To South East Corner Of Poplar Dock",
+   "dist_m": 816,
+   "types": "tower"
+  },
+  {
+   "qid": "Q26318205",
+   "label": "Gate Piers At Children's Playground",
+   "dist_m": 817,
+   "types": "gatepost"
+  },
+  {
+   "qid": "Q27085021",
+   "label": "45-51 Bazely Street",
+   "dist_m": 818,
+   "types": "building"
+  },
+  {
+   "qid": "Q26318323",
+   "label": "Garden Wall, Piers And Railings At No 52",
+   "dist_m": 822,
+   "types": "wall"
+  },
+  {
+   "qid": "Q26318863",
+   "label": "Wall Adjoining Number 90",
+   "dist_m": 826,
+   "types": "wall"
+  },
+  {
+   "qid": "Q4729513",
+   "label": "All Saints Church, Poplar",
+   "dist_m": 829,
+   "types": "church building"
+  },
+  {
+   "qid": "Q65939184",
+   "label": "West India Dock Road",
+   "dist_m": 844,
+   "types": "street"
+  },
+  {
+   "qid": "Q63928183",
+   "label": "East India Dock Road",
+   "dist_m": 850,
+   "types": "road"
+  },
+  {
+   "qid": "Q66231879",
+   "label": "Bygrove Primary School",
+   "dist_m": 851,
+   "types": "academy school | primary school"
+  },
+  {
+   "qid": "Q5764552",
+   "label": "Nelson Dock Pier",
+   "dist_m": 853,
+   "types": "pier | landing"
+  },
+  {
+   "qid": "Q27085087",
+   "label": "Limekiln Dock",
+   "dist_m": 854,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q27081835",
+   "label": "80, Three Colt Street E14",
+   "dist_m": 855,
+   "types": "building"
+  },
+  {
+   "qid": "Q59647450",
+   "label": "Barkantine Estate",
+   "dist_m": 856,
+   "types": null
+  },
+  {
+   "qid": "Q26318332",
+   "label": "5 And 7, Coldharbour E14",
+   "dist_m": 857,
+   "types": "building"
+  },
+  {
+   "qid": "Q27085056",
+   "label": "3, Coldharbour E14",
+   "dist_m": 859,
+   "types": "building"
+  },
+  {
+   "qid": "Q5031206",
+   "label": "Canary Wharf – Rotherhithe Ferry",
+   "dist_m": 859,
+   "types": "ferry route"
+  },
+  {
+   "qid": "Q26318331",
+   "label": "Isle House 1 Coldharbour",
+   "dist_m": 860,
+   "types": "house"
+  },
+  {
+   "qid": "Q27087015",
+   "label": "15, Coldharbour",
+   "dist_m": 861,
+   "types": "building"
+  },
+  {
+   "qid": "Q27081763",
+   "label": "148-150, Narrow Street E14 8BP",
+   "dist_m": 861,
+   "types": "building"
+  },
+  {
+   "qid": "Q121634",
+   "label": "Coldharbour",
+   "dist_m": 863,
+   "types": "area of London"
+  },
+  {
+   "qid": "Q5314855",
+   "label": "Dundee Wharf",
+   "dist_m": 863,
+   "types": "housing development"
+  },
+  {
+   "qid": "Q55076584",
+   "label": "Strangers' Home for Asiatics, Africans and South Sea Islanders",
+   "dist_m": 867,
+   "types": null
+  },
+  {
+   "qid": "Q26318333",
+   "label": "Blackwall River Police Station 19 Coldharbour",
+   "dist_m": 869,
+   "types": "police station"
+  },
+  {
+   "qid": "Q26318241",
+   "label": "St Dunstan's Wharf",
+   "dist_m": 870,
+   "types": "building"
+  },
+  {
+   "qid": "Q107420073",
+   "label": "Jubilee line tunnels",
+   "dist_m": 873,
+   "types": "railway tunnel"
+  },
+  {
+   "qid": "Q106094566",
+   "label": "Tower Hamlets Recycling Centre",
+   "dist_m": 875,
+   "types": "recycling center"
+  },
+  {
+   "qid": "Q66478618",
+   "label": "The Festival Inn",
+   "dist_m": 875,
+   "types": "pub"
+  },
+  {
+   "qid": "Q27082799",
+   "label": "Dunbar Wharf 4 Warehouses Numbered 136,136 1/2, 138,140",
+   "dist_m": 880,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q16993490",
+   "label": "The Gun",
+   "dist_m": 882,
+   "types": "pub"
+  },
+  {
+   "qid": "Q16837452",
+   "label": "Baltimore Tower",
+   "dist_m": 890,
+   "types": "skyscraper"
+  },
+  {
+   "qid": "Q7352508",
+   "label": "Robin Hood Gardens",
+   "dist_m": 891,
+   "types": "housing estate | built structure"
+  },
+  {
+   "qid": "Q26665612",
+   "label": "Nelson Dry Dock Including Gate",
+   "dist_m": 898,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q42117457",
+   "label": "Essoldo Poplar",
+   "dist_m": 902,
+   "types": "movie theater | destroyed building or structure"
+  },
+  {
+   "qid": "Q27081844",
+   "label": "Sailmakers And Chandlers",
+   "dist_m": 904,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q5108598",
+   "label": "Chrisp Street Market",
+   "dist_m": 916,
+   "types": "built structure | market"
+  },
+  {
+   "qid": "Q66479100",
+   "label": "Chrisp Street Market Clock Tower",
+   "dist_m": 916,
+   "types": "clock tower"
+  },
+  {
+   "qid": "Q880956",
+   "label": "Blackwall DLR station",
+   "dist_m": 923,
+   "types": "Docklands Light Railway station | elevated station"
+  },
+  {
+   "qid": "Q5192350",
+   "label": "Cuckold's Point",
+   "dist_m": 928,
+   "types": "geographic location"
+  },
+  {
+   "qid": "Q17444904",
+   "label": "DoubleTree by Hilton Hotel London - Docklands Riverside",
+   "dist_m": 948,
+   "types": "hotel"
+  },
+  {
+   "qid": "Q6549186",
+   "label": "Limehouse railway station",
+   "dist_m": 949,
+   "types": "railway station"
+  },
+  {
+   "qid": "Q98596445",
+   "label": "East Ferry Road",
+   "dist_m": 950,
+   "types": "street"
+  },
+  {
+   "qid": "Q131525586",
+   "label": "The Limehouse Practice",
+   "dist_m": 953,
+   "types": "doctor's office"
+  },
+  {
+   "qid": "Q7229433",
+   "label": "Poplar railway station",
+   "dist_m": 957,
+   "types": "railway station"
+  },
+  {
+   "qid": "Q34807318",
+   "label": "Columbia Wharf, Rotherhithe",
+   "dist_m": 957,
+   "types": "building"
+  },
+  {
+   "qid": "Q27085022",
+   "label": "8 Beccles Street and area railings",
+   "dist_m": 959,
+   "types": "house | guard rail"
+  },
+  {
+   "qid": "Q106542221",
+   "label": null,
+   "dist_m": 964,
+   "types": null
+  },
+  {
+   "qid": "Q115486583",
+   "label": "Mute Publishing",
+   "dist_m": 964,
+   "types": "publishing house | magazine publisher | digital arts organisation | technology company | book publisher | academic publisher"
+  },
+  {
+   "qid": "Q21585405",
+   "label": "Lansbury Lawrence Primary School",
+   "dist_m": 965,
+   "types": "community school | primary school"
+  },
+  {
+   "qid": "Q6669850",
+   "label": "London Arena",
+   "dist_m": 967,
+   "types": "arena"
+  },
+  {
+   "qid": "Q26318177",
+   "label": "Bridge Parapet Above Entrance To Blackwall Tunnel",
+   "dist_m": 968,
+   "types": "bridge"
+  },
+  {
+   "qid": "Q26665611",
+   "label": "Nelson Dock Patent Slip, Including Gates",
+   "dist_m": 970,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q26665606",
+   "label": "Canada Wharf And Columbia Wharf, Including Former Engine House And Boiler To South",
+   "dist_m": 976,
+   "types": "built structure"
+  },
+  {
+   "qid": "Q42117441",
+   "label": "Electric Theatre",
+   "dist_m": 976,
+   "types": "movie theater"
+  },
+  {
+   "qid": "Q24884223",
+   "label": "Glengall Bridge",
+   "dist_m": 977,
+   "types": "bascule bridge"
+  },
+  {
+   "qid": "Q18161291",
+   "label": "Charrington Tower, London",
+   "dist_m": 979,
+   "types": "tower block"
+  },
+  {
+   "qid": "Q27081810",
+   "label": "680, Commercial Road E14",
+   "dist_m": 984,
+   "types": "building"
+  },
+  {
+   "qid": "Q7193436",
+   "label": "Pigott Street",
+   "dist_m": 992,
+   "types": "street"
+  },
+  {
+   "qid": "Q26318862",
+   "label": "Limehouse Church Institute",
+   "dist_m": 997,
+   "types": "building"
+  },
+  {
+   "qid": "Q17531401",
+   "label": "Nelson House Including Railings To Steps",
+   "dist_m": 997,
+   "types": "built structure"
+  }
+ ]
+}

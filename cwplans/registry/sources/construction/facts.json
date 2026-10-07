@@ -1,0 +1,63 @@
+{
+  "about": "Hand-written facts about named construction schemes, from crawled developer, project and press pages (facts only: no text, images or tables copied; each fact with its URL and fetch date) and from the owner's CC0 photos of 4 October 2026. Joined to registry/sources/construction/sites.json by planning reference base. Crawls allowed for scoping (CLAUDE.md, cwplans exception, 2026-10-03); robots.txt checked for each host.",
+  "crawls": [
+    { "url": "https://30marshwall.co.uk/", "fetched": "2026-10-04", "method": "one direct GET (curl), robots.txt allows /", "facts_taken": "48 storeys, 1,068 student rooms, Tide Construction, construction start October 2025 after Building Safety Regulator approval, piles completed December 2025, frame from late spring / early summer 2026, opening summer 2028, Cuba Street footpath closed for the works" },
+    { "url": "https://www.constructionenquirer.com/2022/08/07/tide-gets-green-light-for-uks-tallest-modular-tower/", "fetched": "2026-10-04", "method": "one direct GET, robots.txt allows /", "facts_taken": "156 m, 48 storeys, modules by Vision Modular Systems (sister company), architect EPR Architects" },
+    { "url": "https://www.constructionenquirer.com/2025/02/27/funding-deal-for-237m-tide-construction-student-tower-scheme/", "fetched": "2026-10-04", "method": "one direct GET, robots.txt allows /", "facts_taken": "client Vita Group, Tide Construction developer and contractor, completion due 2028" },
+    { "url": "https://www.ballymoregroup.com/project/25-cuba", "fetched": "2026-10-04", "method": "one direct GET, robots.txt allows /", "facts_taken": "421 homes, a single parkside tower, gym at level 32, a new public park" },
+    { "url": "https://25cuba.com/", "fetched": "2026-10-04", "method": "one direct GET, robots.txt allows / (except asset and completions libraries)", "facts_taken": "none beyond the name (marketing site)" },
+    { "url": "https://www.skyscrapercenter.com/building/25-cuba-street/41578", "fetched": "2026-10-04", "method": "one direct GET, robots.txt allows the page (only /map/ disallowed); CTBUH data, facts only", "facts_taken": "174.1 m, 52 floors, other name 22 Cuba Street, developer Ballymore Properties, architect Morris + Company, construction start 2025, expected completion 2029" },
+    { "url": "https://development.towerhamlets.gov.uk/robots.txt", "fetched": "2026-10-04", "method": "robots.txt read: Disallow: / for every agent", "facts_taken": "none: the Tower Hamlets planning register (Idox) is not crawled; its links are kept as URLs from the Planning London Datahub" }
+  ],
+  "sites": [
+    {
+      "key": "30-marsh-wall",
+      "name": "30 Marsh Wall",
+      "planning_refs": ["PA/20/02588"],
+      "developer": [
+        { "name": "Tide Construction", "role": "developer and contractor", "source": "https://30marshwall.co.uk/", "fetched": "2026-10-04" },
+        { "name": "Vita Group", "role": "client (student accommodation operator)", "source": "https://www.constructionenquirer.com/2025/02/27/funding-deal-for-237m-tide-construction-student-tower-scheme/", "fetched": "2026-10-04" }
+      ],
+      "contractor": [
+        { "name": "Tide Construction", "role": "main contractor", "source": "https://30marshwall.co.uk/", "fetched": "2026-10-04" },
+        { "name": "Vision Modular Systems", "role": "modules (sister company of Tide)", "source": "https://www.constructionenquirer.com/2022/08/07/tide-gets-green-light-for-uks-tallest-modular-tower/", "fetched": "2026-10-04" }
+      ],
+      "approved_web": { "storeys": 48, "height_m": 156, "height_meaning": "\"rise to 156m\" (press; datum not stated)", "rooms": 1068, "architect": "EPR Architects", "expected_opening": "summer 2028", "sources": ["https://30marshwall.co.uk/", "https://www.constructionenquirer.com/2022/08/07/tide-gets-green-light-for-uks-tallest-modular-tower/"] },
+      "current": {
+        "date": "2026-10-04",
+        "what": "concrete core with blue \"TIDE\" climbing screens at the top and two tower cranes; no floors or modules around it yet",
+        "built_storeys_min": 31,
+        "top_m_od": 115,
+        "top_m_od_uncertainty": 5,
+        "method": "floor numbers 24 to 31 painted on the core's east face (zoom-tide-core-cranes.jpg, zoom-one-canada-square-core.jpg); the core continues under the screens, about 3 floors more. Top of the screens measured in pier-wide-skyline.jpg through the camera fitted by tools/solve-photo-sun.mjs: pixel (926, 957.5), elevation 6.64 degrees, azimuth 33.3 degrees grid (the site's bearing 33.05), at 952 m: 115 m OD (+-5 m: fit rms 3.8 px, distance +-30 m)",
+        "source": "owner photos, CC0 1.0, docklands/reference/day-2026-10-04/"
+      },
+      "photo_evidence": [
+        { "file": "docklands/reference/day-2026-10-04/zoom-tide-core-cranes.jpg", "what": "\"TIDE\" on the core screens and both crane jibs; floor numbers 24 to 31" },
+        { "file": "docklands/reference/day-2026-10-04/pier-wide-skyline.jpg", "what": "core and cranes left of One Canada Square; bearing from the pier 33.3 degrees grid" }
+      ]
+    },
+    {
+      "key": "25-cuba",
+      "name": "25 Cuba Street (25 Cuba)",
+      "planning_refs": ["PA/20/02128", "PA/24/00733"],
+      "developer": [
+        { "name": "Ballymore", "role": "developer (joint venture with Penta Real Estate)", "source": "https://www.ballymoregroup.com/project/25-cuba", "fetched": "2026-10-04" },
+        { "name": "Penta Real Estate", "role": "joint venture partner", "source": "owner photo zoom-one-canada-square-cranes-citi.jpg (\"PENTA\" on the climbing screens beside \"ballymore\"); the 50:50 joint venture is reported in the press (ukreiif.com, not fetched)", "fetched": "2026-10-04" }
+      ],
+      "contractor": [],
+      "approved_web": { "storeys": 52, "height_m": 174.1, "height_meaning": "CTBUH height to architectural top", "homes": 421, "architect": "Morris + Company", "expected_completion": "2029", "sources": ["https://www.skyscrapercenter.com/building/25-cuba-street/41578", "https://www.ballymoregroup.com/project/25-cuba"] },
+      "current": {
+        "date": "2026-10-04",
+        "what": "the tower rising inside a full-height wrap printed \"25 CUBA\", with \"ballymore\" and \"PENTA\" climbing screens at the top",
+        "top_m_od": 80,
+        "top_m_od_uncertainty": 5,
+        "method": "top of the screens in pier-wide-skyline.jpg through the fitted camera: pixel (935, 994), elevation 4.83 degrees, azimuth 33.85 degrees grid (the site's bearing 33.17), at 892 m: 80 m OD (+-5 m); about 23 storeys at 3.2 m above a 5 m OD ground",
+        "source": "owner photos, CC0 1.0, docklands/reference/day-2026-10-04/"
+      },
+      "photo_evidence": [
+        { "file": "docklands/reference/day-2026-10-04/zoom-one-canada-square-cranes-citi.jpg", "what": "\"25 CUBA\" wrap, \"ballymore\" and \"PENTA\" screens, in front of the 30 Marsh Wall core" }
+      ]
+    }
+  ]
+}

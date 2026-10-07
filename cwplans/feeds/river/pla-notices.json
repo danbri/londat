@@ -1,0 +1,408 @@
+{
+ "meta": {
+  "source": "pla-notices",
+  "fetched": "2026-10-04T08:28:19Z",
+  "url": "https://maps.pla.co.uk/server/rest/services/Hosted/NtMs_Live/FeatureServer/0/query?where=1%3D1&geometry=-0.095,51.474,0.085,51.528&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=id,district,name,reach_from,reach_to,title,start_date,end_date,last_edited,issuer_title,link,closure,published,archived&returnGeometry=true&outSR=4326&f=json",
+  "layer": "https://maps.pla.co.uk/server/rest/services/Hosted/NtMs_Live/FeatureServer/0",
+  "licence": "Not stated: public ArcGIS items of the Port of London Authority carry no licence text. Facts and links only (notice number, title, dates, reach, a centroid and a bounding box); the notice text, the polygons, the internal comments, invoice references and staff names are not copied. Ask the PLA before production",
+  "attribution": "Port of London Authority",
+  "method": "ArcGIS REST query of the PLA live Notices to Mariners layer (NtMs_Live) with the zone envelope, every notice whose polygon intersects it. pla.co.uk itself answers scripts with a Cloudflare challenge; this map server does not. The notice number comes from the link (the name field holds placeholders such as \"M##-25\"). kind is classified from the title by keyword (thames-barrier, exclusion-zone, closure, survey, publication, event, works, notice).",
+  "counts": {
+   "items": 13,
+   "kinds": {
+    "exclusion-zone": 2,
+    "event": 2,
+    "works": 5,
+    "thames-barrier": 2,
+    "survey": 1,
+    "publication": 1
+   },
+   "closures": 1,
+   "portwide": 3
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "pla-ntm:M21-26",
+   "kind": "event",
+   "title": "Upper Pool - THE TOWER OF LONDON -  GUN SALUTES 2026",
+   "validity": {
+    "start": "2026-03-11",
+    "end": "2026-11-15"
+   },
+   "position": {
+    "lat": 51.50729,
+    "lon": -0.07905,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [-0.08095,51.50604,-0.0766,51.50807]
+   },
+   "values": {
+    "notice": "M21-26",
+    "district": "Middle",
+    "reach_from": "Upper Pool",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Assistant Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-03-11 09:52:55.641517",
+    "layer_object_id": 1641
+   },
+   "url": "https://pla.co.uk/notices/M21-26"
+  },
+  {
+   "id": "pla-ntm:M56-26",
+   "kind": "event",
+   "title": "Greenwich Reach - Lambeth Reach: Thames Historic Barge Driving Events 2026",
+   "validity": {
+    "start": "2026-06-26",
+    "end": "2026-10-05"
+   },
+   "position": {
+    "lat": 51.499,
+    "lon": -0.05499,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [-0.12541,51.48109,-0.00046,51.51196]
+   },
+   "values": {
+    "notice": "M56-26",
+    "district": "Middle",
+    "reach_from": "Greenwich Reach",
+    "reach_to": "Lambeth Reach",
+    "closure": false,
+    "issued_by_role": "Assistant Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-06-26 14:48:45.958276",
+    "layer_object_id": 1723
+   },
+   "url": "https://pla.co.uk/notices/M56-26"
+  },
+  {
+   "id": "pla-ntm:M153-25",
+   "kind": "exclusion-zone",
+   "title": "Blackwall Reach - Victoria Deep Water Terminal: Berth Repair Works & Exclusion Zone",
+   "validity": {
+    "start": "2025-12-09",
+    "end": "2026-12-28"
+   },
+   "position": {
+    "lat": 51.49654,
+    "lon": -0.00059,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [-0.00242,51.49465,0.00132,51.49772]
+   },
+   "values": {
+    "notice": "M153-25",
+    "district": "Middle",
+    "reach_from": "Blackwall Reach",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2025-12-09 10:08:36.38247",
+    "layer_object_id": 1591
+   },
+   "url": "https://pla.co.uk/notices/M153-25"
+  },
+  {
+   "id": "pla-ntm:M40-26",
+   "kind": "exclusion-zone",
+   "title": "Blackwall Reach - Brunswick wharf: Exclusion Zone",
+   "validity": {
+    "start": "2026-05-11",
+    "end": "2026-12-01"
+   },
+   "position": {
+    "lat": 51.50742,
+    "lon": -0.00117,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [-0.00206,51.50677,0.0003,51.50799]
+   },
+   "values": {
+    "notice": "M40-26",
+    "district": "Middle",
+    "reach_from": "Blackwall Reach",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-05-11 11:35:11.324244",
+    "layer_object_id": 1689
+   },
+   "url": "https://pla.co.uk/notices/M40-26"
+  },
+  {
+   "id": "pla-ntm:P3-26",
+   "kind": "publication",
+   "title": "Tide Tables and Port Information 2026  Publication Corrections",
+   "validity": {
+    "start": "2026-03-13",
+    "end": "2026-10-31"
+   },
+   "position": {
+    "lat": 51.48195,
+    "lon": 0.03746,
+    "precision": "mean of the notice polygon vertices",
+    "zone": null,
+    "bbox": [-0.33143,51.41125,1.68169,51.73105]
+   },
+   "values": {
+    "notice": "P3-26",
+    "district": "Portwide",
+    "reach_from": null,
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "portwide (polygon over 0.3 degrees)",
+    "archived": false,
+    "last_edited": "2026-03-13 11:24:42.603964",
+    "layer_object_id": 1645
+   },
+   "url": "https://pla.co.uk/notices/P3-26"
+  },
+  {
+   "id": "pla-ntm:P6-26",
+   "kind": "survey",
+   "title": "Port Wide - Tidal Thames Fish Surveys",
+   "validity": {
+    "start": "2026-09-08",
+    "end": "2026-10-14"
+   },
+   "position": {
+    "lat": 51.49395,
+    "lon": 0.32318,
+    "precision": "mean of the notice polygon vertices",
+    "zone": null,
+    "bbox": [-0.35219,51.40494,1.42845,51.78037]
+   },
+   "values": {
+    "notice": "P6-26",
+    "district": "Portwide",
+    "reach_from": "Gravesend Reach",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "portwide (polygon over 0.3 degrees)",
+    "archived": false,
+    "last_edited": "2026-09-08 14:30:02.8386",
+    "layer_object_id": 1779
+   },
+   "url": "https://pla.co.uk/notices/P6-26"
+  },
+  {
+   "id": "pla-ntm:P2-26",
+   "kind": "thames-barrier",
+   "title": "Woolwich Reach - Environment Agency: Thames Barrier Closures",
+   "validity": {
+    "start": "2026-01-16",
+    "end": "2026-10-31"
+   },
+   "position": {
+    "lat": 51.49767,
+    "lon": 0.03569,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "east",
+    "bbox": [0.03161,51.49339,0.04156,51.5006]
+   },
+   "values": {
+    "notice": "P2-26",
+    "district": "Portwide",
+    "reach_from": "Woolwich Reach",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-01-16 12:56:20.298571",
+    "layer_object_id": 1609
+   },
+   "url": "https://pla.co.uk/notices/P2-26"
+  },
+  {
+   "id": "pla-ntm:P5-26",
+   "kind": "thames-barrier",
+   "title": "Woolwich Reach, Barking Reach and Dartford Creek - Environment Agency Thames Barrier and Associated Gates Closures",
+   "validity": {
+    "start": "2026-07-27",
+    "end": "2027-04-30"
+   },
+   "position": {
+    "lat": 51.49144,
+    "lon": 0.1598,
+    "precision": "mean of the notice polygon vertices",
+    "zone": null,
+    "bbox": [0.03365,51.45125,0.28216,51.52207]
+   },
+   "values": {
+    "notice": "P5-26",
+    "district": "Portwide",
+    "reach_from": "Woolwich Reach",
+    "reach_to": "Long Reach",
+    "closure": false,
+    "issued_by_role": "Harbour Master SMS & VTS",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-07-27 12:27:37.247092",
+    "layer_object_id": 1743
+   },
+   "url": "https://pla.co.uk/notices/P5-26"
+  },
+  {
+   "id": "pla-ntm:M56-24",
+   "kind": "works",
+   "title": "A13 Bridge Works River Lee",
+   "validity": {
+    "start": "2024-07-29",
+    "end": "2026-12-31"
+   },
+   "position": {
+    "lat": 51.5147,
+    "lon": 0.00345,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [0.00275,51.51326,0.00432,51.51569]
+   },
+   "values": {
+    "notice": "M56-24",
+    "district": "Middle",
+    "reach_from": null,
+    "reach_to": null,
+    "closure": true,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2024-07-29 11:53:53.592372",
+    "layer_object_id": 1125
+   },
+   "url": "https://pla.co.uk/notices/M56-24"
+  },
+  {
+   "id": "pla-ntm:M75-26",
+   "kind": "works",
+   "title": "Lower Pool - Wapping Police Pier & Police Engineers Pier : Scaffolding & River Wall Repair Works",
+   "validity": {
+    "start": "2026-09-02",
+    "end": "2027-02-02"
+   },
+   "position": {
+    "lat": 51.5068,
+    "lon": -0.04585,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [-0.0604,51.50003,-0.0348,51.51083]
+   },
+   "values": {
+    "notice": "M75-26",
+    "district": "Middle",
+    "reach_from": "Lower Pool",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-09-02 13:02:50.943106",
+    "layer_object_id": 1772
+   },
+   "url": "https://pla.co.uk/notices/M75-26"
+  },
+  {
+   "id": "pla-ntm:M76-26",
+   "kind": "works",
+   "title": "Woolwich Reach - Durham Wharf Temporary Pontoon",
+   "validity": {
+    "start": "2026-09-04",
+    "end": "2027-02-28"
+   },
+   "position": {
+    "lat": 51.49678,
+    "lon": 0.04317,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "east",
+    "bbox": [0.01632,51.4937,0.07939,51.50028]
+   },
+   "values": {
+    "notice": "M76-26",
+    "district": "Middle",
+    "reach_from": "Woolwich Reach",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-09-04 13:13:08.615517",
+    "layer_object_id": 1774
+   },
+   "url": "https://pla.co.uk/notices/M76-26"
+  },
+  {
+   "id": "pla-ntm:M78-26",
+   "kind": "works",
+   "title": "Kings Reach - Blackfriars Bridge No2 Arch",
+   "validity": {
+    "start": "2026-09-16",
+    "end": "2026-12-18"
+   },
+   "position": {
+    "lat": 51.50643,
+    "lon": -0.11041,
+    "precision": "mean of the notice polygon vertices",
+    "zone": null,
+    "bbox": [-0.12655,51.50071,-0.08724,51.51156]
+   },
+   "values": {
+    "notice": "M78-26",
+    "district": "Middle",
+    "reach_from": "Kings Reach",
+    "reach_to": null,
+    "closure": false,
+    "issued_by_role": "Deputy Harbour Master",
+    "scope": "local",
+    "archived": false,
+    "last_edited": "2026-09-10 14:18:19.652653",
+    "layer_object_id": 1783
+   },
+   "url": "https://pla.co.uk/notices/M78-26"
+  },
+  {
+   "id": "pla-ntm:P7-26",
+   "kind": "works",
+   "title": "Portwide - River Medway : SS Richard Montgomery Planned Mast Removal Works",
+   "validity": {
+    "start": "2026-09-15",
+    "end": "2026-10-31"
+   },
+   "position": {
+    "lat": 51.48007,
+    "lon": -0.00942,
+    "precision": "mean of the notice polygon vertices",
+    "zone": "model",
+    "bbox": [-0.33846,51.40572,1.45067,51.78008]
+   },
+   "values": {
+    "notice": "P7-26",
+    "district": "Portwide",
+    "reach_from": "Cross Deep",
+    "reach_to": "Thames Estuary",
+    "closure": false,
+    "issued_by_role": "Harbour Master",
+    "scope": "portwide (polygon over 0.3 degrees)",
+    "archived": false,
+    "last_edited": "2026-09-15 12:53:40.728827",
+    "layer_object_id": 1791
+   },
+   "url": "https://pla.co.uk/notices/P7-26"
+  }
+ ]
+}

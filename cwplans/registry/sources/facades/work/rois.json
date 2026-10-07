@@ -1,0 +1,252 @@
+{
+ "ocs-a": {
+  "src": "orig/54911790284.jpg",
+  "building": "cwb-0413",
+  "roi": [
+   0.38,
+   0.11,
+   0.67,
+   0.57
+  ]
+ },
+ "ocs-b": {
+  "src": "orig/49416072577.jpg",
+  "building": "cwb-0413",
+  "roi": [
+   0.38,
+   0.11,
+   0.7,
+   0.77
+  ]
+ },
+ "hsbc-cabot": {
+  "src": "orig/54911790284.jpg",
+  "building": "cwb-0417",
+  "roi": [
+   0.17,
+   0.31,
+   0.36,
+   0.57
+  ]
+ },
+ "citi-cabot": {
+  "src": "orig/54911790284.jpg",
+  "building": "cwb-0520",
+  "roi": [
+   0.69,
+   0.36,
+   0.9,
+   0.5
+  ]
+ },
+ "pinnacle-edge": {
+  "src": "orig/51154600226.jpg",
+  "building": "cwb-0577",
+  "roi": [
+   0.02,
+   0.05,
+   0.42,
+   0.97
+  ]
+ },
+ "hampton-sqp": {
+  "src": "orig/54914359145.jpg",
+  "building": "cwb-0715",
+  "roi": [
+   0.4,
+   0.18,
+   0.56,
+   0.68
+  ]
+ },
+ "newf-diagrid": {
+  "src": "orig/48063457661.jpg",
+  "building": "cwb-0451",
+  "roi": [
+   0.0,
+   0.0,
+   0.78,
+   1.0
+  ]
+ },
+ "hsbc-e": {
+  "src": "orig/54419488598.jpg",
+  "building": "cwb-0417",
+  "roi": [
+   0.49,
+   0.15,
+   0.74,
+   0.95
+  ]
+ },
+ "wardian-a": {
+  "src": "orig/52197497711.jpg",
+  "building": "cwb-0645",
+  "roi": [
+   0.08,
+   0.08,
+   0.45,
+   0.82
+  ]
+ },
+ "wardian-b": {
+  "src": "orig/55175159283.jpg",
+  "building": "cwb-0647",
+  "roi": [
+   0.05,
+   0.15,
+   0.55,
+   0.95
+  ]
+ },
+ "amory": {
+  "src": "orig/52535970543.jpg",
+  "building": "cwb-0813",
+  "roi": [
+   0.37,
+   0.12,
+   0.62,
+   0.75
+  ]
+ },
+ "ocp": {
+  "src": "orig/54921012630.jpg",
+  "building": "cwb-0424",
+  "roi": [
+   0.48,
+   0.15,
+   0.73,
+   0.75
+  ]
+ },
+ "obs": {
+  "src": "orig/51155384484.jpg",
+  "building": "cwb-0514",
+  "roi": [
+   0.02,
+   0.15,
+   0.4,
+   0.95
+  ]
+ },
+ "novotel": {
+  "src": "orig/48053768112.jpg",
+  "building": "cwb-0701",
+  "roi": [
+   0.4,
+   0.05,
+   0.62,
+   0.55
+  ]
+ },
+ "citi-top": {
+  "src": "orig/54416200163.jpg",
+  "building": "cwb-0520",
+  "roi": [
+   0.3,
+   0.33,
+   0.62,
+   0.98
+  ]
+ },
+ "opd": {
+  "src": "orig/51152317073.jpg",
+  "building": "cwb-0590",
+  "roi": [
+   0.33,
+   0.08,
+   0.47,
+   0.75
+  ]
+ },
+ "newf-dock": {
+  "src": "orig/51398723196.jpg",
+  "building": "cwb-0451",
+  "roi": [
+   0.39,
+   0.03,
+   0.58,
+   0.4
+  ]
+ },
+ "ubs10": {
+  "src": "orig/commons-10UBS-Mortadella42.jpg",
+  "building": "cwb-0589",
+  "roi": [
+   0.53,
+   0.12,
+   0.7,
+   0.85
+  ]
+ },
+ "harcourt": {
+  "src": "orig/commons-SQP4-1-Mortadella42.jpg",
+  "building": "cwb-0712",
+  "roi": [
+   0.36,
+   0.12,
+   0.62,
+   0.9
+  ]
+ },
+ "bank25": {
+  "src": "orig/6453681243.jpg",
+  "building": "cwb-0582",
+  "roi": [
+   0.4,
+   0.1,
+   0.97,
+   0.95
+  ]
+ },
+ "bank40": {
+  "src": "orig/6453677865.jpg",
+  "building": "cwb-0585",
+  "roi": [
+   0.3,
+   0.1,
+   0.66,
+   0.85
+  ]
+ },
+ "ch25": {
+  "src": "orig/14602887430.jpg",
+  "building": "cwb-0525",
+  "roi": [
+   0.4,
+   0.1,
+   0.63,
+   0.8
+  ]
+ },
+ "wiq1": {
+  "src": "orig/6455129143.jpg",
+  "building": "cwb-0317",
+  "roi": [
+   0.12,
+   0.02,
+   0.72,
+   0.55
+  ]
+ },
+ "pinnacle-mercury": {
+  "src": "orig/54148261054.jpg",
+  "building": "cwb-0577",
+  "roi": [
+   0.45,
+   0.06,
+   0.78,
+   0.95
+  ]
+ },
+ "bank25-b": {
+  "src": "orig/26313668335.jpg",
+  "building": "cwb-0582",
+  "roi": [
+   0.14,
+   0.06,
+   0.62,
+   0.6
+  ]
+ }
+}

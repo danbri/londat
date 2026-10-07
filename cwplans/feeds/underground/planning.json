@@ -1,0 +1,1016 @@
+[
+ {
+  "id": "pl-01",
+  "name": "Crossrail Place: retail, community use and roof park over the Isle of Dogs (Canary Wharf) Crossrail station",
+  "kind": "planning application",
+  "site": "Crossrail Place (Canary Wharf Elizabeth line station oversite)",
+  "reference": "PA/08/01666/A1",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_57793",
+  "archived_url": null,
+  "date": "2009-02-13",
+  "what_it_shows": "Decision 'Permit' 2009-02-13. Erection of a building over the Crossrail station in North Dock: 10,517 m2 GIA retail (A1-A4), 1,135 m2 GIA community use (D1/D2) and a publicly accessible roof park (layer text is cut at 'publicly accessi...'). This is the four-storey Crossrail Place block with the retail levels -1/0/+1 above the station box. Document list not reachable (robots.txt).",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "yes, for footprint and level names when drawings are obtained; levels already sourced from 7K-005",
+  "notes": "GLA Planning London Datahub: commenced 2010-05-17, completed 2016-01-27. Related: PA/10/00665/NC (non-material amendment, 2010-05-15), PA/12/02546/R (withdrawn NMA, 2012), PA/15/03298/NC (canopy over the retail mall southern entrance, 2016-02-01), PA/14/00446/S (Schedule 7 lighting). The slab levels for this structure are already in magpie/cwplans/data/sourced-levels.json from Crossrail Learning Legacy paper 7K-005 (Park +1 17.10 m OD ... Base slab -6 -20.40 m OD); the planning drawings would give the retail-level setting-out but could not be read."
+ },
+ {
+  "id": "pl-02",
+  "name": "Schedule 7 (Crossrail Act 2008) plans and specifications for the Isle of Dogs Crossrail station, to take oversite development",
+  "kind": "planning application",
+  "site": "Canary Wharf Elizabeth line station box (Crossrail Place)",
+  "reference": "PA/08/01642",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_57749",
+  "archived_url": null,
+  "date": "2008-10-20",
+  "what_it_shows": "Decision 'Permit' 2008-10-20. Submission for approval of plans and specifications of the station structure so that it can carry the oversite development (Crossrail Place). Schedule 7 submissions are usually general-arrangement plans and sections of the station box; titles not reachable.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "probably (station box plans and sections), not read",
+  "notes": "Pairs with pl-01. A later Schedule 7 submission for the same station is PA/14/00446/S (artificial lighting, 2014-04-23)."
+ },
+ {
+  "id": "pl-03",
+  "name": "Subterranean pedestrian link between Canary Wharf Jubilee line station and the proposed retail mall at RT3 (now Jubilee Place)",
+  "kind": "planning application",
+  "site": "Jubilee Place (RT3) and the link to Canary Wharf Jubilee line station",
+  "reference": "PA/00/01363",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_18591",
+  "archived_url": null,
+  "date": "2000-12-12",
+  "what_it_shows": "Decision 'Permit' 2000-12-12. Site: land south of Canary Wharf Underground station, South Colonnade. A below-ground pedestrian link from the Jubilee line station to the RT3 mall under Jubilee Park. The Jubilee Place committee report (pl-r1) confirms the result: 'The lower car park level connects to the Jubilee Line with escalators linking the retail to Canary Wharf.'",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Companion applications on the same day: PA/00/01124 (breaching part of the dock wall for the subterranean link, Heron Quays station) and PA/00/01125 (listed building consent for the dock wall breach). PA/01/01054 (2001-09-14): revised road and pedestrian layout HQ1 to HQ2 'plus a pedestrian link to the retail mall RT3 and riverside boardwalk'. Plans and sections of the link would give its level against the dock wall; not reachable."
+ },
+ {
+  "id": "pl-04",
+  "name": "Jubilee Place: change of use of service area (2,800 m2) and car park (9,684 m2) to Class A retail with mall circulation",
+  "kind": "planning application",
+  "site": "Jubilee Place (RT3)",
+  "reference": "PA/07/03151",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_47434",
+  "archived_url": "https://web.archive.org/web/20250126104733/http://democracy.towerhamlets.gov.uk/documents/s9431/7.3_Jubilee%20Place%20Heron%20Quay%20E14%204JB.pdf",
+  "date": "2008-09-17",
+  "what_it_shows": "Decision 'Permit' 2008-09-17 (committee 27 August 2008). Drawings approved: 733-50020 C, 733-50030 C, 733-50200 C, 733-59020 D, 733-59030 D, 733-59200 C, 733-51900 C (titles not given in the report). Layout (report para 4.2-4.3): 650 car parking spaces; 366 to change use; 'Due to the existing floor to ceiling heights for the car park, the proposal utilises both levels of car parking for a single retail level'; Jubilee Place is 'a single subterranean retail floor running adjacent to the Jubilee Line Station with two levels of parking below'; the lower car park level connects to the Jubilee line; 'The retail level is linked to the ground level above via a central mezzanine level sitting directly below a glazed pavilion.'",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "yes for the level structure (retail, mezzanine, two car park levels, link to Jubilee line); drawing geometry not read",
+  "notes": "GLA Planning London Datahub gives status 'Lapsed' (lapsed 2011-09-17): this permission was not built, so the 2008 car park layout probably still holds below the retail level, apart from later changes (PA/13/01366/A1 part of level B3 to retail storage, 2013; PA/25/01579/NC Level 1 car park to retail, 2026). Datahub site polygon (EPSG:27700 and WGS84) is available for the Jubilee Place outline.",
+  "documents": {
+   "committee_report": "https://web.archive.org/web/20250126104733/http://democracy.towerhamlets.gov.uk/documents/s9431/7.3_Jubilee%20Place%20Heron%20Quay%20E14%204JB.pdf",
+   "drawing_numbers": [
+    "733-50020 C",
+    "733-50030 C",
+    "733-50200 C",
+    "733-59020 D",
+    "733-59030 D",
+    "733-59200 C",
+    "733-51900 C"
+   ]
+  }
+ },
+ {
+  "id": "pl-05",
+  "name": "Jubilee Place car park Level 1: change of use from car parking to retail (Class E)",
+  "kind": "planning application",
+  "site": "Jubilee Place car park",
+  "reference": "PA/25/01579/NC",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_148936",
+  "archived_url": null,
+  "date": "2026-02-05",
+  "what_it_shows": "Decision 'Permit' 2026-02-05. Site at Level 1, Jubilee Place Car Park, Bank Street. Change of use from car parking (sui generis) to retail (Class E) and associated works. Its 'existing' and 'proposed' Level 1 plans would show the current car park layout below Jubilee Place.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Related: PA/13/01366/A1 (2013-08-06) change of use of part of level B3 of Jubilee Place car park to retail storage; PA/20/01832/NC (2020-10-23) 40 Bank Street and Jubilee Place Car Park. The car park level names in these applications (B3, Level 1) are a second naming scheme beside the mall's own level names (see fault F9 in the curation skill)."
+ },
+ {
+  "id": "pl-06",
+  "name": "Churchill Place mall: two-storey building on former parcel RT4 with shops, food and drink, library space and a 1,944 m2 concourse",
+  "kind": "planning application",
+  "site": "Churchill Place mall (former parcel RT4)",
+  "reference": "PA/02/00060",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_24287",
+  "archived_url": null,
+  "date": "2002-03-04",
+  "what_it_shows": "Decision 'Permit' 2002-03-04. Erection of a two storey building: 1,440 m2 Class A1 shops, 388 m2 Class A3, 929 m2 Class A1 or D1(f) public library, and a concourse of 1,944 m2. This is the Churchill Place mall.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Details approvals: PA/03/01725 (materials, 2004-01-12) and PA/03/01705 (landscaping, 2004-01-20). Unit changes 2004 (PA/04/01337 to 01340) and 2022 (PA/22/00893/NC) name 'Unit A', 'Unit 1', 'Unit 11', 'Unit 12' of RT4."
+ },
+ {
+  "id": "pl-07",
+  "name": "Park Pavilion: extension of One Canada Square by a linked pavilion with A1-A4 uses, services, storage and mall circulation space",
+  "kind": "planning application",
+  "site": "Park Pavilion (40 Canada Square)",
+  "reference": "PA/07/02224/A1",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_46747",
+  "archived_url": null,
+  "date": "2007-11-30",
+  "what_it_shows": "Decision 'Permit' 2007-11-30. 'Extension of One Canada Square by erection of a linked pavilion for Classes A1/A2/A3/A4 uses with ancillary services, storage and mall circulation space with hard and soft landscaping.' Site 'Land East Of 1, Canada Square'.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "probably (pavilion plans with the link to the One Canada Square mall), not read",
+  "notes": "Identified as Park Pavilion because the layer's polygon centroid (-0.01872, 51.50486) is within 10 m of the centroid of PA/23/02323/NC 'Unit 4, Park Pavilion, 40 Canada Square' (-0.01883, 51.50487). PA/23/02323/NC (2024-02-14) adds a winter garden at roof level."
+ },
+ {
+  "id": "pl-08",
+  "name": "New building for A2/A3/A4 uses with services, storage and mall circulation space, east end of Canada Square park",
+  "kind": "planning application",
+  "site": "Building between North Colonnade, South Colonnade and Churchill Place",
+  "reference": "PA/07/02753/A1",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_47017",
+  "archived_url": null,
+  "date": "2007-12-21",
+  "what_it_shows": "Decision 'Permit' 2007-12-21. 'Erection of a new building for Class A2/A3/A4 uses with ancillary services, storage and mall circulation space'. Polygon centroid (-0.01476, 51.50443), beside the Churchill Place mall (pl-06).",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "unknown",
+  "notes": "Not yet matched to a named building. On the 2013 CWG 'Existing and Future Development Plan' (pl-h9) a round building stands at this position west of Churchill Place; check before use."
+ },
+ {
+  "id": "pl-09",
+  "name": "Canada Place: change of use of 1,096 m2 of car parking at the P1 basement level to Class A1 retail",
+  "kind": "planning application",
+  "site": "Canada Place mall and Canada Square car park (level P1)",
+  "reference": "PA/11/00293/NC",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_98235",
+  "archived_url": null,
+  "date": "2011-04-08",
+  "what_it_shows": "Decision 'Permit' 2011-04-08. Site 'Canada Place, P1 Level Car Park, Canada Square'. The mall expanded into the P1 car park level in steps: PA/10/00387/A1 (305 m2, 2010-04-15, with Unit 16 of Canada Place Retail Mall), PA/11/00316/NC (469 m2, 2011-04-11), PA/11/01338/NC (490 m2 'relating to above Unit 7'), PA/11/01346/NC (425 m2 'relating to above Unit 27'), PA/14/03269/A1 (75 m2, 2015-01-23), PA/15/01796/NC (2015-08-19).",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "The phrases 'relating to above Unit 7' and 'above Unit 27' show that P1 lies directly below the Canada Place mall level. Each of these small applications normally has an existing and proposed P1 plan; together they would give much of the P1 layout."
+ },
+ {
+  "id": "pl-10",
+  "name": "Canada Place Mall Car Park: retail storage units at level P2, motorcycle spaces at level P3",
+  "kind": "planning application",
+  "site": "Canada Place mall car park (levels P2, P3)",
+  "reference": "PA/17/02714/A1",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_123512",
+  "archived_url": null,
+  "date": "2017-11-29",
+  "what_it_shows": "Decision 'Permit' 2017-11-29. 'Provision of retail storage units in place of 121 existing motorcycle spaces at level P2 of the Canada Place Mall Car Park. Re-provision of 40 motorcycle spaces in place of 6 car parking spaces at level P3.' Confirms at least three car park levels (P1, P2, P3) below Canada Place mall.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Location text says 'Cabot Place' but the polygon centroid (-0.01644, 51.50478) is east of Canada Place mall."
+ },
+ {
+  "id": "pl-11",
+  "name": "Cabot Hall and Cabot Place West retail mall: change of use, no more than 12,587 m2 gross, with minor external works",
+  "kind": "planning application",
+  "site": "Cabot Place West and Cabot Hall",
+  "reference": "PA/05/02114",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_42595",
+  "archived_url": null,
+  "date": "2006-04-21",
+  "what_it_shows": "Decision 'Permit' 2006-04-21. Change of use of Cabot Hall and the Cabot Place West retail mall, gross total floor space no more than 12,587 m2 (layer text cut).",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Other Cabot Place applications that would carry level plans: PA/10/00855/NC (127 m2 car park to retail, Cabot Place West, 2010-06-21); PA/15/01073/NC (P1 basement level of Cabot Place car park to A3, 2015-06-08); PA/17/00999/NC (Promenade Level, Cabot Place East: bank and toilets to retail, removal of 23 car spaces and 29 motorcycle spaces, 2017-05-31); PA/17/03124/NC (Cabot Place West car park level P4: remote kitchen, 2018-02-02). These name the levels 'Promenade' and P1 to P4 for the Cabot Place car parks."
+ },
+ {
+  "id": "pl-12",
+  "name": "Columbus Courtyard: demolition of the link bridge and office floorspace between 17 and 20 Columbus Courtyard, new facades",
+  "kind": "planning application",
+  "site": "Columbus Courtyard link bridge",
+  "reference": "PA/22/00669/NC",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_137810",
+  "archived_url": null,
+  "date": "2022-06-10",
+  "what_it_shows": "Decision 'Permit' 2022-06-10. 'Demolition of the existing link bridge and office floorspace and provision of new building facades and other associated works at ground floor level.' The bridge is above ground; the Survey of London (pl-h2) says that in March 1994 the basement car parking of 17 and 20 Columbus Courtyard 'was in place and decked over'.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Above-ground change; useful for dating the model (bridge removed after 2022)."
+ },
+ {
+  "id": "pl-13",
+  "name": "Wood Wharf outline planning permission: mixed-use redevelopment with tall buildings and basements, structures in Blackwall Basin, Graving Dock and South Dock, bridge links",
+  "kind": "planning application",
+  "site": "Wood Wharf (outline masterplan)",
+  "reference": "PA/13/02966 (layer: PA/13/02966/P0)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_108309",
+  "archived_url": "https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309",
+  "date": "2014-12-24",
+  "what_it_shows": "Decision 'Permit' 2014-12-24 (Strategic Development Committee 21 July 2014; listed building consent PA/13/02967 for the dock walls). Approved parameter plans WWMP_PP_001 to 013 (see pl-d1 to pl-d6), Design Guidelines and Development Specification (May 2014). Committee report: 16 development zones, 42 development plots, up to 728,880 m2 GIA; car and motorcycle parking 600 to 1,300 spaces; a 'potential pedestrian connection to the existing Canary Wharf retail centre may be created through Development Zone B'; a vehicle and pedestrian bridge to Montgomery Square and a pedestrian bridge to the lower levels of the Montgomery Street dockside walkway; the Jubilee line runs west-east under the centre of the site with a vent shaft south of Graving Dock.",
+  "levels_found": [
+   {
+    "what": "dock operating level (Blackwall Basin, South Dock)",
+    "value": "3.8 to 4.23",
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "a dock operating level between 3.8m to 4.23m AOD",
+    "page": 12
+   },
+   {
+    "what": "existing site level (general)",
+    "value": 5.5,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "the existing site is broadly flat at around 5.50m AOD with the exception of Cartier Circle rising up to 12.75m AOD",
+    "page": 27
+   },
+   {
+    "what": "Cartier Circle (highest existing point)",
+    "value": 12.75,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "Cartier Circle rising up to 12.75m AOD",
+    "page": 27
+   },
+   {
+    "what": "proposed site level (general)",
+    "value": 6.5,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "The proposed levels are also broadly flat at around 1m higher (6.5m AOD)",
+    "page": 27
+   },
+   {
+    "what": "site flood defence level capacity",
+    "value": 6.2,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "has the capacity to raise site level defences to 6.2m AOD in accordance with the Environment Agencys TE2100 plan",
+    "page": 154
+   }
+  ],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html;charset=ISO-8859-1",
+   "status": "live URL not fetched (robots.txt Disallow: /); the archived documents tab (archived_url) fetched: HTTP 200"
+  },
+  "usable_for_3d": "yes for site and dock levels and parameter outlines; plan geometry only if the parameter plans are obtained",
+  "notes": "The documents tab was archived by the Wayback Machine on 2025-02-19 (263 rows); see pl-d1 to pl-d8 for drawing titles. The PDFs themselves are not archived. Datahub: commenced 2015-12-14.",
+  "documents": {
+   "committee_report": "https://web.archive.org/web/20210302133008/https://democracy.towerhamlets.gov.uk/documents/s59188/pa-13-02966",
+   "documents_tab_archive": "https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309"
+  }
+ },
+ {
+  "id": "pl-14",
+  "name": "Wood Wharf reserved matters RM04: Development Zone T, the basement",
+  "kind": "planning application",
+  "site": "Wood Wharf basement (Development Zone T)",
+  "reference": "PA/15/00019/P1",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_112597",
+  "archived_url": null,
+  "date": "2015-07-27",
+  "what_it_shows": "Decision 'Permit' 2015-07-27. 'Details of all reserved matters (Access, Appearance, Layout and Scale) pursuant to condition 4(b) of outline planning permission ref PA/13/02966 ... relating to the following areas of the Wood Wharf ...' (layer text cut). Location 'Wood Wharf RM04 (Development Zone T - Basement)'. This is the application that would hold the detailed basement plans (levels, ramps, car parking, servicing) of Wood Wharf.",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "probably the best Wood Wharf basement source; not read",
+  "notes": "The most relevant single Wood Wharf application for the underground model. Related: PA/15/01025/S (2015-08-13) scheme of safeguarding of the Jubilee line tunnels (condition 6 of PA/13/02969); PA/16/00113/S (bridge structures in Zone K). Committee report for the outline mentions the basement roof soil depth (page 40)."
+ },
+ {
+  "id": "pl-15",
+  "name": "Newfoundland: 58-storey tower and linked 2-storey building with 3 basement levels",
+  "kind": "planning application",
+  "site": "Newfoundland (1 Park Place / Heron Quay Road)",
+  "reference": "PA/13/01455/A1",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_106699",
+  "archived_url": null,
+  "date": "2014-06-10",
+  "what_it_shows": "Decision 'Permit' 2014-06-10. 'Erection of a 58 storey and linked 2 storey building with 3 basement levels' with 568 residential units, 7 guest units and flexible retail (layer text cut). Later full permission with the same description: PA/14/02134/A2 (2014-12-05).",
+  "levels_found": [],
+  "format": "Idox public access record (HTML; documents as PDF)",
+  "licence_or_terms": "Application record: Tower Hamlets ArcGIS layer, no licence on the item. Drawings and documents: copyright of their authors (architects, engineers, applicant); Tower Hamlets publishes them for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "partial",
+  "notes": "The 3 basement levels are the only below-ground figure in the layer text. No committee report for 2014 found in the Wayback captures of democracy.towerhamlets.gov.uk (searched 19,176 captured documents by name). Neighbouring 1 Bank Street (Heron Quays West, PA/14/02617/A2, 2015-03-30) has 'three basement levels' and partial infilling of South Dock."
+ },
+ {
+  "id": "pl-d1",
+  "name": "Wood Wharf parameter plan WWMP_PP_006 Development Zones & Uses Below Ground",
+  "kind": "drawing",
+  "site": "Wood Wharf",
+  "reference": "WWMP_PP_006 (application PA/13/02966)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/ACBD0B75B7F53223653FD51580544196/pdf/PA_13_02966_P0-DEVELOPMENT_ZONES___USES_BELOW_GROUND-846557.pdf",
+  "archived_url": null,
+  "date": "2013-12-19 (received; approved 2014-12-24)",
+  "what_it_shows": "Approved parameter plan for the extent and uses of the basement zones below ground at Wood Wharf (title). Expected content: basement zone outlines with limits of deviation and use (parking, servicing, plant).",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's architects (Wood Wharf masterplan team); published by Tower Hamlets for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Title, date and file URL read from the Wayback capture of the documents tab: https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309 (HTTP 200). The PDF is not in the Wayback Machine."
+  },
+  "usable_for_3d": "yes, if obtained",
+  "notes": "The key below-ground drawing for Wood Wharf."
+ },
+ {
+  "id": "pl-d2",
+  "name": "Wood Wharf parameter plan WWMP_PP_012 Existing Site Levels",
+  "kind": "drawing",
+  "site": "Wood Wharf",
+  "reference": "WWMP_PP_012 (application PA/13/02966)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/8735DC816B90B49B5304A87DE36C7AB1/pdf/PA_13_02966_P0-EXISTING_SITE_LEVELS-846570.pdf",
+  "archived_url": null,
+  "date": "2013-12-19 (received; approved 2014-12-24)",
+  "what_it_shows": "Existing ground levels across Wood Wharf. The committee report summarises it: broadly flat at about 5.50 m AOD, Cartier Circle up to 12.75 m AOD.",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's architects (Wood Wharf masterplan team); published by Tower Hamlets for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Title, date and file URL read from the Wayback capture of the documents tab: https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309 (HTTP 200). The PDF is not in the Wayback Machine."
+  },
+  "usable_for_3d": "yes, if obtained",
+  "notes": "Summary values are in pl-13."
+ },
+ {
+  "id": "pl-d3",
+  "name": "Wood Wharf parameter plan WWMP_PP_013 Proposed Site Levels",
+  "kind": "drawing",
+  "site": "Wood Wharf",
+  "reference": "WWMP_PP_013 (application PA/13/02966)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/31B93C04DCED20039AF654864BDF09EC/pdf/PA_13_02966_P0-PROPOSED_SITE_LEVELS-846572.pdf",
+  "archived_url": null,
+  "date": "2013-12-19 (received; approved 2014-12-24)",
+  "what_it_shows": "Proposed ground levels; the committee report summarises it as broadly flat at about 6.5 m AOD (about 1 m above existing), Cartier Circle excepted.",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's architects (Wood Wharf masterplan team); published by Tower Hamlets for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Title, date and file URL read from the Wayback capture of the documents tab: https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309 (HTTP 200). The PDF is not in the Wayback Machine."
+  },
+  "usable_for_3d": "yes, if obtained",
+  "notes": "Summary values are in pl-13."
+ },
+ {
+  "id": "pl-d4",
+  "name": "Wood Wharf parameter plan WWMP-PP004 Rev A Parameter Plans - Access & Circulation Routes",
+  "kind": "drawing",
+  "site": "Wood Wharf",
+  "reference": "WWMP-PP004 Rev A (application PA/13/02966)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/00BCEB15020975B555E0472EBE4EFFC7/pdf/PA_13_02966_P0-PARAMETER_PLANS_-_ACCESS___CIRCULATION_ROUTES-881555.pdf",
+  "archived_url": null,
+  "date": "2013-12-19 (received; approved 2014-12-24)",
+  "what_it_shows": "Vehicle and pedestrian accesses and routes, including the bridges to Montgomery Square and to the lower level of the Montgomery Street dockside walkway, and the 'potential pedestrian connection to the existing Canary Wharf retail centre' through Development Zone B (committee report para 4.45).",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's architects (Wood Wharf masterplan team); published by Tower Hamlets for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Title, date and file URL read from the Wayback capture of the documents tab: https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309 (HTTP 200). The PDF is not in the Wayback Machine."
+  },
+  "usable_for_3d": "yes, if obtained",
+  "notes": "Revision A dated 15 May 2014 in the document list."
+ },
+ {
+  "id": "pl-d5",
+  "name": "Wood Wharf parameter plan WWMP_PP_008 Upper Ground Level Uses - Frontages Only",
+  "kind": "drawing",
+  "site": "Wood Wharf",
+  "reference": "WWMP_PP_008 (application PA/13/02966)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/1B535662BE2E4A3544E24FEFB0EF9550/pdf/PA_13_02966_P0-UPPER_GROUND_LEVEL_USES_-_FRONTAGES_ONLY-846563.pdf",
+  "archived_url": null,
+  "date": "2013-12-19 (received; approved 2014-12-24)",
+  "what_it_shows": "Uses of the upper ground level frontages; shows that Wood Wharf has a ground and an upper ground level (title).",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's architects (Wood Wharf masterplan team); published by Tower Hamlets for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Title, date and file URL read from the Wayback capture of the documents tab: https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309 (HTTP 200). The PDF is not in the Wayback Machine."
+  },
+  "usable_for_3d": "partial",
+  "notes": "Pair with WWMP_PP_007 'Ground Level Uses - Frontages & Water Spaces Only'."
+ },
+ {
+  "id": "pl-d6",
+  "name": "Wood Wharf parameter plan WWMP_PP_011 New Land / Structures into Dock",
+  "kind": "drawing",
+  "site": "Wood Wharf",
+  "reference": "WWMP_PP_011 (application PA/13/02966)",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/E608A0C24AC032950FB875DCC0986E1D/pdf/PA_13_02966_P0-NEW_LAND___STRUCTURES_INTO_DOCK-846568.pdf",
+  "archived_url": null,
+  "date": "2013-12-19 (received; approved 2014-12-24)",
+  "what_it_shows": "Areas of new land and decks built into South Dock, Blackwall Basin and Graving Dock. The committee report reproduces Development Specification Table 6: 'Areas of new land into dock (basement / marine deck)' a 286.5 120.5 7.5; b 63.0 14.5 6.5; c 14.0 10.0 6.5; nature conservation area 43.5 32.0 7.0; moorings and pontoons 205.0 82.0 7.0 (page 27).",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's architects (Wood Wharf masterplan team); published by Tower Hamlets for inspection only. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Title, date and file URL read from the Wayback capture of the documents tab: https://web.archive.org/web/20250219122927/https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=documents&keyVal=DCAPR_108309 (HTTP 200). The PDF is not in the Wayback Machine."
+  },
+  "usable_for_3d": "partial",
+  "notes": "The column headings of Table 6 were lost in the text extraction; the third figure (6.5 to 7.5) is probably a level in m AOD but this is not confirmed, so it is not entered as a level."
+ },
+ {
+  "id": "pl-d7",
+  "name": "Wood Wharf Design and Access Statement Vol 3 Access, Chapter 05 Basement",
+  "kind": "design and access statement chapter",
+  "site": "Wood Wharf",
+  "reference": "PA/13/02966 DAS Vol 3 ch. 05",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/files/A0077A11C0E3187EAAFECAFEBEE31F2B/pdf/PA_13_02966_P0-VOL_3_-_ACCESS_-_CHAPTER_05_-_BASEMENT-845542.pdf",
+  "archived_url": null,
+  "date": "2013-12-16",
+  "what_it_shows": "Access strategy for the Wood Wharf basement (title). Expected: basement plan diagrams with ramps, cores, lifts, parking and cycle access.",
+  "levels_found": [],
+  "format": "PDF (Idox)",
+  "licence_or_terms": "Copyright of the applicant's design team. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: robots.txt Disallow: /. Listed in the Wayback capture of the documents tab (HTTP 200)."
+  },
+  "usable_for_3d": "probably",
+  "notes": "Also listed: Vol 3 ch. 06 Buildings, Vol 4 Indicative Scheme parts 01-02 (Dec 2013) and Part 1-2 (May 2014), WWMP_PP_003 Development Zones - Ground Level & Above, WWMP_PP_010 Development Plots & Maximum Heights."
+ },
+ {
+  "id": "pl-d8",
+  "name": "Wood Wharf dock edge sections (listed building consent PA/13/02967)",
+  "kind": "drawing",
+  "site": "Wood Wharf dock edges (Blackwall Basin, Export Dock east quay, Middle Cut)",
+  "reference": "WWMP-MA-07-130; WWMP-MA-07-400 to 415",
+  "url": "https://web.archive.org/web/20210302133008/https://democracy.towerhamlets.gov.uk/documents/s59188/pa-13-02966",
+  "archived_url": "https://web.archive.org/web/20210302133008/https://democracy.towerhamlets.gov.uk/documents/s59188/pa-13-02966",
+  "date": "2014 (approved with PA/13/02967)",
+  "what_it_shows": "Titles from the committee report (page 2): WWMP-MA-07-130 Indicative Scheme Dock Edge Sections Key Plan; WWMP-MA-07-400/401 Existing/Proposed Section AA; 402/403 BB; 404/405 CC; 406/407 DD; 408/409 EE; 410/411 FF; 412/413 GG; 414/415 HH. Existing and proposed sections through the listed dock walls where Wood Wharf builds over or beside the water.",
+  "levels_found": [],
+  "format": "titles only (in a PDF committee report)",
+  "licence_or_terms": "Drawings: copyright of the applicant's design team. Committee report: London Borough of Tower Hamlets.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "report capture fetched (range request 206; full download 200). The drawings themselves: no URL found."
+  },
+  "usable_for_3d": "yes for dock wall and deck levels, if obtained",
+  "notes": "The PA/13/02967 documents tab is not archived."
+ },
+ {
+  "id": "pl-d9",
+  "name": "Jubilee Place drawings 733-50020 C to 733-59200 C (PA/07/03151)",
+  "kind": "drawing",
+  "site": "Jubilee Place (RT3) mall and car park",
+  "reference": "733-50020 C, 733-50030 C, 733-50200 C, 733-59020 D, 733-59030 D, 733-59200 C, 733-51900 C; FRA 733-RP251",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=DCAPR_47434",
+  "archived_url": "https://web.archive.org/web/20250126104733/http://democracy.towerhamlets.gov.uk/documents/s9431/7.3_Jubilee%20Place%20Heron%20Quay%20E14%204JB.pdf",
+  "date": "2007 (application); approved 2008-09-17",
+  "what_it_shows": "Drawing numbers only, from the committee report (page 1). The 5xxxx numbers are probably proposed plans and the 59xxx numbers existing plans or sections of the retail and car park levels; titles are not given, so this is not confirmed.",
+  "levels_found": [],
+  "format": "numbers only",
+  "licence_or_terms": "Copyright of the drawings' authors. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": null,
+   "content_type": null,
+   "status": "not fetched: https://development.towerhamlets.gov.uk/robots.txt is 'User-agent: * / Disallow: /' (fetched 2026-10-03, HTTP 200 text/plain). URL taken from the 'url' field of the Tower Hamlets ArcGIS decided-applications layer (query HTTP 200 application/json)."
+  },
+  "usable_for_3d": "unknown until obtained",
+  "notes": "The permission lapsed in 2011 (Datahub), but the 'existing' drawings would still show the car park as built."
+ },
+ {
+  "id": "pl-r1",
+  "name": "Development Committee report, 27 August 2008: Jubilee Place, Heron Quay, E14 4JB (PA/07/03151)",
+  "kind": "committee report",
+  "site": "Jubilee Place (RT3)",
+  "reference": "PA/07/03151; agenda item 7.3; democracy document s9431",
+  "url": "https://democracy.towerhamlets.gov.uk/documents/s9431/7.3_Jubilee%20Place%20Heron%20Quay%20E14%204JB.pdf",
+  "archived_url": "https://web.archive.org/web/20250126104733/http://democracy.towerhamlets.gov.uk/documents/s9431/7.3_Jubilee%20Place%20Heron%20Quay%20E14%204JB.pdf",
+  "date": "2008-08-27",
+  "what_it_shows": "8 pages. Approved drawing numbers; the vertical structure of Jubilee Place: one subterranean retail floor beside the Jubilee line station, two car park levels below, the lower car park level connected to the Jubilee line, escalators linking retail to Canary Wharf, a central mezzanine under a glazed pavilion linking the retail level to ground. 650 car spaces before the scheme. Distances: about 50 m to the Jubilee line station, about 180 m to Heron Quays DLR.",
+  "levels_found": [],
+  "format": "PDF, text layer, 1,178,310 bytes",
+  "licence_or_terms": "London Borough of Tower Hamlets committee paper; no open licence stated.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "archived copy fetched (200, 1,178,310 bytes; range check 206). Live URL: HTTP 403 Azure WAF JavaScript challenge, not bypassed."
+  },
+  "usable_for_3d": "yes (level structure, no numbers)",
+  "notes": "Downloaded to scratch (th_s9431_jubilee_place.pdf); not committed. Section 7 (local representation) was not copied."
+ },
+ {
+  "id": "pl-r2",
+  "name": "Strategic Development Committee report, 21 July 2014: Wood Wharf (PA/13/02966 and PA/13/02967)",
+  "kind": "committee report",
+  "site": "Wood Wharf",
+  "reference": "PA/13/02966; democracy document s59188",
+  "url": "https://democracy.towerhamlets.gov.uk/documents/s59188/pa-13-02966",
+  "archived_url": "https://web.archive.org/web/20210302133008/https://democracy.towerhamlets.gov.uk/documents/s59188/pa-13-02966",
+  "date": "2014-07-21",
+  "what_it_shows": "Approved drawing list (parameter plans and dock edge sections), the site and dock levels in m AOD (see pl-13 levels_found), Development Specification Table 5 maximum plot heights in m AOD (e.g. 'Development Plot F1 is up to 190m high (AOD)'; the tallest plot is given as '211' followed after a break in the extracted text by '.5m AOD in the south-west corner', probably 211.5 m AOD; One Canada Square 244 m AOD), Table 6 new land into dock, access routes, and the statement that the Jubilee line runs under the site.",
+  "levels_found": [
+   {
+    "what": "dock operating level",
+    "value": "3.8 to 4.23",
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "a dock operating level between 3.8m to 4.23m AOD",
+    "page": 12
+   },
+   {
+    "what": "existing site level",
+    "value": 5.5,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "broadly flat at around 5.50m AOD",
+    "page": 27
+   },
+   {
+    "what": "proposed site level",
+    "value": 6.5,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "broadly flat at around 1m higher (6.5m AOD)",
+    "page": 27
+   },
+   {
+    "what": "Cartier Circle top",
+    "value": 12.75,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "Cartier Circle rising up to 12.75m AOD",
+    "page": 27
+   },
+   {
+    "what": "flood defence capacity",
+    "value": 6.2,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "raise site level defences to 6.2m AOD",
+    "page": 154
+   },
+   {
+    "what": "One Canada Square top",
+    "value": 244,
+    "unit": "m",
+    "datum": "AOD",
+    "source_text": "a landmark building at 50 storeys (244m AOD)",
+    "page": 12
+   }
+  ],
+  "format": "PDF; the Wayback capture is cut at 1,048,576 bytes of 7,196,760 (header x-archive-orig-x-crawler-content-length)",
+  "licence_or_terms": "London Borough of Tower Hamlets committee paper; no open licence stated.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "archived copy fetched but truncated: fonts are missing, so pdftotext gives nothing; text recovered by decompressing the 166 page content streams. Page numbers are content-stream order. Live URL: Azure WAF challenge (403)."
+  },
+  "usable_for_3d": "yes for levels in m AOD",
+  "notes": "Figures (parameter plans 003 to 011 are reproduced as Figures 4 to 12) are in the lost part or are images; not read."
+ },
+ {
+  "id": "pl-h1",
+  "name": "Survey of London fig. 269: Canary Wharf (a) Olympia & York development plan 1988, (b) state of development March 1993",
+  "kind": "historic plan",
+  "site": "Canary Wharf estate, phase 1 parcels",
+  "reference": "Survey of London vols 43-44, fig. 269, p. 708 (BHO image fig274.gif)",
+  "url": "https://www.british-history.ac.uk/sites/default/files/publications/pubid-369/images/fig274.gif",
+  "archived_url": null,
+  "date": "1994 (plans dated November 1988 and March 1993)",
+  "what_it_shows": "Two plans, 839 x 771 px GIF, with a scale bar (0-800 ft, 0-240 m) and north arrow. (a) parcel designations of the 1988 master plan: WF-1 to WF-8, FC-1 to FC-6, DS-1 to DS-7, BP-1 to BP-4, 'Retail RT-1' west of the DLR station and 'Retail RT-2' east of DS-7 (under the later Canada Square / Canada Place area), Canary Wharf DLR station. (b) as built in March 1993: Cabot Place W, 1 Canada Sq, 10/20/25 Cabot Sq, 25 N. Colonnade, 30 S. Colonnade, Westferry Circus, Heron Quays and Heron Quays station.",
+  "levels_found": [],
+  "format": "GIF image",
+  "licence_or_terms": "British History Online (University of London / Institute of Historical Research). Page states 'This free content was digitised by double rekeying. All rights reserved.' Survey of London volumes 43-44 (1994) were published by the Royal Commission on the Historical Monuments of England. Not an open licence: do not commit images.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "image/gif",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes for parcel names and outlines (georeference by the dock edges); no levels",
+  "notes": "The RT-1/RT-2 and DS/FC/BP parcel codes are the codes the Tower Hamlets applications still use (RT3, RT4, DS3, DS8, BP1, HQ1-HQ2). Text page: pl-h2."
+ },
+ {
+  "id": "pl-h2",
+  "name": "Survey of London vols 43-44: Modern Docklands, gazetteer of modern non-housing developments (Canary Wharf entry)",
+  "kind": "book or survey",
+  "site": "Canary Wharf estate (Cabot Place, Westferry Circus, Columbus Courtyard)",
+  "reference": "Survey of London vols 43-44 (1994), pp. 707-724",
+  "url": "https://www.british-history.ac.uk/survey-london/vols43-4/pp707-724",
+  "archived_url": null,
+  "date": "1994",
+  "what_it_shows": "Text: the landscape 'sits on top of five levels of car parking and services'; 'Cabot Place, East and West (RT1), at the foot of No. 1 Canada Square and extending through to the east end of Cabot Square, provides 9,500 sq.m of retail space, including four levels of shopping, with a glass-domed rotunda with a diameter of 26 metres at the east end and Cabot Hall ... at the west end'; the DLR station in the middle has 'four lines' serving 'six platforms'; Westferry Circus is 'a circular, two-tier structure' with a covered traffic roundabout at ground level and approach roads rising to the main site; 17 and 20 Columbus Courtyard had 'basement car-parking ... in place and decked over' in March 1994; all phase one buildings except No. 1 Cabot Square and Cabot Place are 'largely built over water in the dock, using steel piles'.",
+  "levels_found": [
+   {
+    "what": "car parking and service levels under the phase 1 landscape",
+    "value": 5,
+    "unit": "levels",
+    "datum": null,
+    "source_text": "it sits on top of five levels of car parking and services",
+    "page": "p. 708 (print)"
+   },
+   {
+    "what": "shopping levels in Cabot Place East and West",
+    "value": 4,
+    "unit": "levels",
+    "datum": null,
+    "source_text": "including four levels of shopping",
+    "page": "Canary Wharf entry, pp. 707-724"
+   },
+   {
+    "what": "Cabot Place rotunda diameter",
+    "value": 26,
+    "unit": "m",
+    "datum": null,
+    "source_text": "a glass-domed rotunda with a diameter of 26 metres at the east end",
+    "page": "Canary Wharf entry, pp. 707-724"
+   }
+  ],
+  "format": "HTML",
+  "licence_or_terms": "British History Online (University of London / Institute of Historical Research). Page states 'This free content was digitised by double rekeying. All rights reserved.' Survey of London volumes 43-44 (1994) were published by the Royal Commission on the Historical Monuments of England. Not an open licence: do not commit images.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "text/html; charset=UTF-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes (level counts and dimensions; no datums)",
+  "notes": "Figure list: https://www.british-history.ac.uk/survey-london/vols43-4/vii-ix (HTTP 206 text/html)."
+ },
+ {
+  "id": "pl-h3",
+  "name": "Survey of London plan pocket C: (a) Modern Docklands: the Enterprise Zone and other new developments on the Isle of Dogs, 1981-92; (b) LDDC administrative boundary",
+  "kind": "historic plan",
+  "site": "Isle of Dogs (whole); Canary Wharf as item 7",
+  "reference": "Survey of London vols 43-44, end pocket plan C (BHO image fig4.gif)",
+  "url": "https://www.british-history.ac.uk/sites/default/files/publications/pubid-369/images/fig4.gif",
+  "archived_url": null,
+  "date": "1994 (state 1981-92)",
+  "what_it_shows": "6272 x 7704 px GIF, map of the Isle of Dogs with a grid A-D / 1-6, the Enterprise Zone boundary, and 72 numbered developments with a key (7 Canary Wharf B2, 30 Heron Quays A3, 49 Mercury Earth Satellite Station ... Wood Wharf C3).",
+  "levels_found": [],
+  "format": "GIF image",
+  "licence_or_terms": "British History Online (University of London / Institute of Historical Research). Page states 'This free content was digitised by double rekeying. All rights reserved.' Survey of London volumes 43-44 (1994) were published by the Royal Commission on the Historical Monuments of England. Not an open licence: do not commit images.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "image/gif",
+   "status": "ok"
+  },
+  "usable_for_3d": "context only",
+  "notes": "Plan pocket page: https://www.british-history.ac.uk/survey-london/vols43-4/plan-pocket (HTTP 206 text/html)."
+ },
+ {
+  "id": "pl-h4",
+  "name": "Survey of London plan pocket B: The West India Docks in 1881",
+  "kind": "historic plan",
+  "site": "West India Docks (the water and quays that Canary Wharf was built on)",
+  "reference": "Survey of London vols 43-44, end pocket plan B, reproduced from a plan in the Museum in Docklands (BHO image fig3.gif)",
+  "url": "https://www.british-history.ac.uk/sites/default/files/publications/pubid-369/images/fig3.gif",
+  "archived_url": null,
+  "date": "1881 (published 1994)",
+  "what_it_shows": "6636 x 4776 px GIF of the three West India Docks with warehouses, sheds and dock dimensions. Canary Wharf stands on the quay between the Import Dock (now North Dock) and the Export Dock (now Middle Dock), with phase 1 buildings piled into the water.",
+  "levels_found": [
+   {
+    "what": "West India Import Dock (North Dock) depth, 1881",
+    "value": "26 ft 3 in",
+    "unit": "ft-in",
+    "datum": "not stated on the plan",
+    "source_text": "Length 2600' 0\" Width 500' 0\" Depth 26' 3\" (30 Acres)",
+    "page": "plan B"
+   },
+   {
+    "what": "West India Export Dock (Middle Dock) depth, 1881",
+    "value": "23 ft 9 in",
+    "unit": "ft-in",
+    "datum": "not stated on the plan",
+    "source_text": "Length 2600' 0\" Width 400' 0\" Depth 23' 9\" (24 Acres)",
+    "page": "plan B"
+   },
+   {
+    "what": "South West India Dock (South Dock) depth, 1881",
+    "value": "29 ft 0 in",
+    "unit": "ft-in",
+    "datum": "not stated on the plan",
+    "source_text": "Length 2650' 0\" Width 450' 0\" Depth 29' 0\" (26 3/4 Acres)",
+    "page": "plan B"
+   }
+  ],
+  "format": "GIF image",
+  "licence_or_terms": "British History Online (University of London / Institute of Historical Research). Page states 'This free content was digitised by double rekeying. All rights reserved.' Survey of London volumes 43-44 (1994) were published by the Royal Commission on the Historical Monuments of England. Not an open licence: do not commit images. The 1881 original is out of copyright; the 1994 reproduction is not openly licensed.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "image/gif",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes for historic dock outlines; depths need a datum before use",
+  "notes": "Depths read by eye from a crop of the image; check against the Survey text (pp. 268-281, 'The West India Docks: The docks') before use."
+ },
+ {
+  "id": "pl-h5",
+  "name": "LDDC completion booklet: Isle of Dogs (de-designated 10 October 1997)",
+  "kind": "historic plan",
+  "site": "Isle of Dogs; Canary Wharf shopping and transport",
+  "reference": "lddc-history.org.uk /iod/",
+  "url": "http://www.lddc-history.org.uk/iod/",
+  "archived_url": "https://web.archive.org/web/20050219102452/http://www.lddc-history.org.uk:80/iod/",
+  "date": "1997 (booklet); captured 2005-02-19",
+  "what_it_shows": "Text with small illustrations iod1.JPG to iod22.JPG (photographs and small maps, 3 to 60 kB). States that 'the shopping centre on either side of the DLR station contains over 30 shops' and describes the transport links (DLR, Jubilee line extension, roads, LDDC footbridges).",
+  "levels_found": [],
+  "format": "HTML with JPEG images",
+  "licence_or_terms": "Reproduced on the site 'by kind permission of the Commission for the New Towns now known as English Partnerships'; no open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "live site down (www.lddc-history.org.uk: DNS failure; lddc-history.org.uk: proxy 502); archived copy HTTP 200"
+  },
+  "usable_for_3d": "no (context)",
+  "notes": "The LDDC site has 1,874 archived captures (CDX), incl. 323 PDFs; no mall or estate plan drawings were found among the file names."
+ },
+ {
+  "id": "pl-h6",
+  "name": "LDDC monograph: A Strategy for Regeneration (planning), November 1997",
+  "kind": "book or survey",
+  "site": "London Docklands (planning history; Isle of Dogs Enterprise Zone)",
+  "reference": "lddc-history.org.uk /planning/index.html; images 1plan1.jpg to 1plan27.jpg",
+  "url": "http://lddc-history.org.uk/planning/index.html",
+  "archived_url": "https://web.archive.org/web/20050205051803/http://lddc-history.org.uk:80/planning/index.html",
+  "date": "1997; captured 2005-02-05",
+  "what_it_shows": "Planning history text and 27 small images (8 to 34 kB). Text notes that in the Isle of Dogs Enterprise Zone (1982-1992) 'normal planning controls were lifted'.",
+  "levels_found": [],
+  "format": "HTML with JPEG images",
+  "licence_or_terms": "Reproduced 'by kind permission of the Commission for the New Towns'; no open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "archived copy HTTP 200; live site down"
+  },
+  "usable_for_3d": "no",
+  "notes": "Explains why there are no borough planning applications for the phase 1 malls (Cabot Place, the first Canada Square works): they were built in the Enterprise Zone under the simplified planning regime, before Tower Hamlets became planning authority (October 1997). The ArcGIS layer starts in 1999."
+ },
+ {
+  "id": "pl-h7",
+  "name": "Olympia & York Canary Wharf project fact sheet (LDDC archive 'earlycwnote')",
+  "kind": "book or survey",
+  "site": "Canary Wharf master plan (1988)",
+  "reference": "lddc-history.org.uk /other/earlycwnote.pdf",
+  "url": "http://www.lddc-history.org.uk/other/earlycwnote.pdf",
+  "archived_url": "https://web.archive.org/web/20151023210434/http://www.lddc-history.org.uk/other/earlycwnote.pdf",
+  "date": "about 1988 (OCR text mentions events to April 1988 and opening of the first building in mid 1990)",
+  "what_it_shows": "13 scanned pages (OCR). Site: 'The Wharf (380' wide 2,500' long) 21 acres; building platforms above existing dock water 25 acres; land between the Wharf and the River Thames 25 acres'. Master plan: 24 building sites; up to 500,000 sq ft retail, restaurants and leisure, mostly 'in the central buildings close to the Tower and the railway'; a food court for 600 in the central retail building; design for about 8,300 car spaces, 6,500 planned, over 3,000 in phase 1; phase 1 includes 'covered car parking and the railway station'.",
+  "levels_found": [],
+  "format": "PDF, scanned images (PaperPort), no text layer",
+  "licence_or_terms": "Olympia & York document reproduced on the LDDC history site; no licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "no (quantities only)",
+  "notes": "The site plan the text refers to ('A plan is attached overleaf') is not in the scan."
+ },
+ {
+  "id": "pl-h8",
+  "name": "Canary Wharf Group plc Report and Accounts 1998, pp. 49-51: Properties of the Canary Wharf Estate",
+  "kind": "historic plan",
+  "site": "Canary Wharf estate (all parcels, 1998)",
+  "reference": "CWG 1998 annual report, propscwest.pdf",
+  "url": "http://www.canarywharf.com/financial/results/2001/financialrepo/ann_repo/reports/1998/downloads/propscwest.pdf",
+  "archived_url": "https://web.archive.org/web/20030909140933/http://www.canarywharf.com:80/financial/results/2001/financialrepo/ann_repo/reports/1998/downloads/propscwest.pdf",
+  "date": "1998 (status at 30 June 1998)",
+  "what_it_shows": "3 pages, A4. Table of properties built, sold and under construction with letters A-R (G = Cabot Place, 96,300 sq ft net, 95.7% let; O = Canada Square Retail Centre, 65,000 sq ft, expected March 2000) and an aerial perspective drawing keyed to them. Properties awaiting development by parcel: DS1, DS3, DS4, DS5, DS8 Retail (190,000 sq ft), HQ1-HQ5/4b, BP1-BP3.",
+  "levels_found": [],
+  "format": "PDF (QuarkXPress, Acrobat Distiller 4.0), 2,598,366 bytes",
+  "licence_or_terms": "Canary Wharf Group plc copyright; no licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "partial (parcel codes, dates of the Canada Square retail centre)",
+  "notes": "Downloaded to scratch only. Other archived annual report parts 1998-2000 exist under the same path (CDX)."
+ },
+ {
+  "id": "pl-h9",
+  "name": "Canary Wharf Group: Existing and Future Development Plan (26 June 2013)",
+  "kind": "historic plan",
+  "site": "Canary Wharf estate, Wood Wharf, North Quay, Newfoundland (2013)",
+  "reference": "26.06.2013_Existing_and_Future_Development_Plan.pdf",
+  "url": "http://www.canarywharf.com/Documents/2013/26.06.2013_Existing_and_Future_Development_Plan.pdf",
+  "archived_url": "https://web.archive.org/web/20140327085328/http://www.canarywharf.com:80/Documents/2013/26.06.2013_Existing_and_Future_Development_Plan.pdf",
+  "date": "2013-06-26",
+  "what_it_shows": "One A3 vector plan (QuarkXPress 9.5). Buildings coloured existing / under construction / construction to grade / future development; labels 'Crossrail Station', 'Canada Square Retail and Parking', 'Jubilee Park Retail and Parking', 'Churchill Place Retail and Parking', 'Park Pavilion', 'Cabot Place', bus stops, Underground and DLR stations, car park symbols. Shows Crossrail Place under construction and Wood Wharf, Newfoundland, North Quay, HQ1 as future.",
+  "levels_found": [],
+  "format": "PDF (vector)",
+  "licence_or_terms": "Canary Wharf Group copyright; no licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "ok"
+  },
+  "usable_for_3d": "yes for naming which retail and parking areas lie below each square (2D only)",
+  "notes": "The PDF title field reads 'W SITEPLAN 2001 NO SCITEX': the base drawing dates from 2001."
+ },
+ {
+  "id": "pl-h10",
+  "name": "Canary Wharf Estate Plan, scale 1:3000 at A3 (injunction plan, 23 February 2018)",
+  "kind": "historic plan",
+  "site": "Canary Wharf estate, Wood Wharf, North Quay (2018)",
+  "reference": "A3_CWEP_Legal_REV03_180212",
+  "url": "https://cwg.com/wp-content/uploads/2021/02/canary-wharf-estate-plan-injunction-23022018.pdf",
+  "archived_url": "https://web.archive.org/web/20210620134637/https://group.canarywharf.com/wp-content/uploads/2021/02/canary-wharf-estate-plan-injunction-23022018.pdf",
+  "date": "2018-02-12 (drawing revision 03); published for the 23 February 2018 injunction",
+  "what_it_shows": "One A3 sheet over an OS-style base map with a grid: boundary of CWG property, CWG buildings, public areas, construction sites, pedestrian access and road access arrows, bridges and piers, DLR, Underground and DLR stations, Elizabeth line, bus stops, riverbus pier and car parking entrances (P symbols).",
+  "levels_found": [],
+  "format": "PDF (Adobe InDesign CC 13), 873,300 bytes",
+  "licence_or_terms": "Canary Wharf Group copyright; base map probably Ordnance Survey (not credited on the sheet); no licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "live: group.canarywharf.com answers 301 to https://cwg.com/wp-content/uploads/2021/02/canary-wharf-estate-plan-injunction-23022018.pdf (206 application/pdf); archived copy also 206"
+  },
+  "usable_for_3d": "yes for car park and road access points and the private estate boundary (2D)",
+  "notes": "Downloaded to scratch only."
+ },
+ {
+  "id": "pl-o1",
+  "name": "Tower Hamlets decided planning applications (ArcGIS feature layer)",
+  "kind": "dataset",
+  "site": "Isle of Dogs",
+  "reference": "internet_planning_application_decided_view_v2 layer 0",
+  "url": "https://services1.arcgis.com/KZuCGRSe2K5BiG1Z/arcgis/rest/services/internet_planning_application_decided_view_v2/FeatureServer/0?f=json",
+  "archived_url": null,
+  "date": "1999-10-18 to 2026-10-02",
+  "what_it_shows": "Search used for this list. Keyword query (location or proposal like Cabot Place, Jubilee Place, Crossrail Place, Canada Place, Churchill Place, Columbus Courtyard, Park Pavilion, Wood Wharf, Newfoundland, mall, travelator, pedestrian link): 1,164 rows; spatial query on -0.032,51.498,-0.005,51.509: 2,000 rows (transfer limit reached). Fields: application_no, location, proposal (cut at about 200 characters), decision_date, decision_type, url (Idox keyVal), polygon.",
+  "levels_found": [],
+  "format": "ArcGIS REST JSON",
+  "licence_or_terms": "No licence on the ArcGIS item (see feeds/SURVEY-2026-10-03.md).",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/json; charset=utf-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "site outlines only",
+  "notes": "The spatial query hit the 2,000-row limit; a paged query would be needed for a complete list."
+ },
+ {
+  "id": "pl-o2",
+  "name": "GLA Planning London Datahub records for the same applications",
+  "kind": "dataset",
+  "site": "Crossrail Place, Jubilee Place, Wood Wharf, Newfoundland",
+  "reference": "id Tower_Hamlets-PA_08_01666, Tower_Hamlets-PA_07_03151, Tower_Hamlets-PA_13_02966",
+  "url": "https://planningdata.london.gov.uk/api-guest/applications/_search",
+  "archived_url": null,
+  "date": "records last updated 2025-08 to 2026-06",
+  "what_it_shows": "Status and dates the council layer does not give: PA/08/01666 commenced 2010-05-17, completed 2016-01-27; PA/07/03151 'Lapsed' 2011-09-17; PA/13/02966 commenced 2015-12-14. Site polygons in EPSG:27700 and WGS84 (empty for PA/08/01666 apart from a 3 m square).",
+  "levels_found": [],
+  "format": "Elasticsearch JSON (POST _search)",
+  "licence_or_terms": "Not stated at the endpoint (see feeds/SURVEY-2026-10-03.md).",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=UTF-8",
+   "status": "ok"
+  },
+  "usable_for_3d": "dates and outlines",
+  "notes": "url_planning_app is null for all three: the Datahub holds no documents or drawings."
+ },
+ {
+  "id": "pl-i1",
+  "name": "Wood Wharf, Canary Wharf new district plan E14 (photograph of a plan board)",
+  "kind": "image",
+  "site": "Wood Wharf",
+  "reference": "Wikimedia Commons File:Wood Wharf, Canary Wharf new district plan E14.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Wood_Wharf,_Canary_Wharf_new_district_plan_E14.jpg",
+  "archived_url": null,
+  "date": null,
+  "what_it_shows": "JPEG 3072 x 2304, uploader/artist 'sludgegulper'; description 'Wood Wharf, Canary Wharf new district plan E14'. Not opened: a photograph of a public plan board, no levels expected.",
+  "levels_found": [],
+  "format": "JPEG",
+  "licence_or_terms": "CC BY-SA 2.0 (share-alike). Project rule: no share-alike source other than OSM without the owner's agreement. Do not commit.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json",
+   "status": "found through the Commons API search (HTTP 200); the file page itself was not fetched because Commons answered 429 to 5 of 6 searches"
+  },
+  "usable_for_3d": "no",
+  "notes": "Only Commons result. Searches for map, diagram, drawings in the Canary Wharf category, 'Crossrail Place' and 'Jubilee Place' all got HTTP 429 at one request per 70 s and were skipped."
+ }
+]

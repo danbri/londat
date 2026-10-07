@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+ <head>
+  <title>London feeds (verified 2026-10-04), magpie/cwplans</title>
+  <dateCreated>Sun, 04 Oct 2026 09:30:13 GMT</dateCreated>
+  <ownerId>https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/discovery/README.md</ownerId>
+  <docs>http://opml.org/spec2.opml</docs>
+ </head>
+ <body>
+  <outline text="business" title="business">
+   <outline type="rss" text="Poplar Farm School » Feed" title="Poplar Farm School » Feed" xmlUrl="https://poplar-cit.co.uk/feed/" htmlUrl="https://poplar-cit.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Ross Watch Repairs » Feed" title="Ross Watch Repairs » Feed" xmlUrl="https://rosswatchrepairs.co.uk/feed/" htmlUrl="https://rosswatchrepairs.com/" category="site-crawl"/>
+   <outline type="rss" text="Greenwich Send Voice » Feed" title="Greenwich Send Voice » Feed" xmlUrl="https://greenwichsendvoice.co.uk/feed/" htmlUrl="https://greenwichsendvoice.co.uk/2026/03/27/schools-white-paper-and-send-reform-consultation/" category="common-crawl"/>
+   <outline type="rss" text="Docklands Academy London » Feed" title="Docklands Academy London » Feed" xmlUrl="https://docklandsacademy.co.uk/feed/" htmlUrl="https://docklandsacademy.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Millwall Fans - RSS" title="Millwall Fans - RSS" xmlUrl="https://www.millwallsupportersclub.co.uk/blog-feed.xml" htmlUrl="https://www.millwallsupportersclub.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="CBT Canary Wharf | Cognitive Behavioural Therapy | Marla Stromberg » Feed" title="CBT Canary Wharf | Cognitive Behavioural Therapy | Marla Stromberg » Feed" xmlUrl="https://www.cbtcanarywharf.co.uk/feed/" htmlUrl="https://www.cbtcanarywharf.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Market Halls » Feed" title="Market Halls » Feed" xmlUrl="https://markethalls.co.uk/feed/" htmlUrl="https://markethalls.co.uk/venue/canary-wharf/" category="site-crawl"/>
+   <outline type="rss" text="ManAndVanCanaryWharf.co.uk » Feed" title="ManAndVanCanaryWharf.co.uk » Feed" xmlUrl="https://www.manandvancanarywharf.co.uk/feed/" htmlUrl="https://www.manandvancanarywharf.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Canarywharfcleaners ® » Feed" title="Canarywharfcleaners ® » Feed" xmlUrl="https://www.canarywharfcleaners.co.uk/feed/" htmlUrl="https://www.canarywharfcleaners.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="The wapping Group of Artists Shop » Feed" title="The wapping Group of Artists Shop » Feed" xmlUrl="https://www.thewappinggroupofartists.co.uk/feed/" htmlUrl="https://www.thewappinggroupofartists.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Canada Water Dental Surgery » Feed" title="Canada Water Dental Surgery » Feed" xmlUrl="https://www.canadawaterdental.co.uk/feed/" htmlUrl="https://www.canadawaterdental.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Rotherhithe Primary School » Feed" title="Rotherhithe Primary School » Feed" xmlUrl="https://rotherhitheprimary.co.uk/feed/" htmlUrl="https://rotherhitheprimary.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="London Work Hub" title="London Work Hub" xmlUrl="https://joblondon.uk/rss.xml" htmlUrl="https://joblondon.uk/" category="common-crawl"/>
+   <outline type="rss" text="Mercato Metropolitano » Feed" title="Mercato Metropolitano » Feed" xmlUrl="https://mercatometropolitano.com/feed/" htmlUrl="https://mercatometropolitano.com/locations/wood-wharf/" category="site-crawl"/>
+   <outline type="rss" text="Mulberry Wood Wharf » Feed" title="Mulberry Wood Wharf » Feed" xmlUrl="https://www.mulberrywoodwharf.org/feed/" htmlUrl="https://www.mulberrywoodwharf.org/" category="site-crawl"/>
+   <outline type="rss" text="Greater London Commercial » Feed" title="Greater London Commercial » Feed" xmlUrl="https://greaterlondoncommercial.co.uk/feed/" htmlUrl="https://greaterlondoncommercial.co.uk/138-hillview-avenue-hornchurch-sold-then-let-for-new-buyer/" category="common-crawl"/>
+   <outline type="rss" text="London Bike Box Hire » Feed" title="London Bike Box Hire » Feed" xmlUrl="https://londonbikebox.co.uk/feed/" htmlUrl="https://londonbikebox.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="International Wine &amp; Food Society, London Branch » Feed" title="International Wine &amp; Food Society, London Branch » Feed" xmlUrl="https://www.iwfs.london/feed/" htmlUrl="https://www.iwfs.london/" category="common-crawl"/>
+   <outline type="rss" text="Estate Agents Royal Dock » 3 Major Benefits of Homeownership in London: Expert Insights from Estate Agents Royal Docks Comments Feed" title="Estate Agents Royal Dock » 3 Major Benefits of Homeownership in London: Expert Insights from Estate Agents Royal Docks Comments Feed" xmlUrl="http://estateagentsroyaldocks.co.uk/3-major-benefits-of-homeownership-in-london-expert-insights-from-estate-agents-royal-docks/feed/" htmlUrl="http://estateagentsroyaldocks.co.uk/3-major-benefits-of-homeownership-in-london-expert-insights-from-estate-agents-royal-docks/" category="common-crawl"/>
+   <outline type="rss" text="John Nicholas Antiques » Home Comments Feed" title="John Nicholas Antiques » Home Comments Feed" xmlUrl="http://johnnicholas.london/home/feed/" htmlUrl="http://johnnicholas.london/" category="common-crawl"/>
+   <outline type="rss" text="Feed" title="Feed" xmlUrl="https://blacksheepcoffee.us/blogs/locations.atom" htmlUrl="https://blacksheepcoffee.co.uk/blogs/locations/canary-wharf" category="site-crawl"/>
+   <outline type="rss" text="Bohemia House | London » Feed" title="Bohemia House | London » Feed" xmlUrl="https://bohemiahouse.london/feed/" htmlUrl="https://bohemiahouse.london/" category="common-crawl"/>
+   <outline type="rss" text="Broadwick » Feed" title="Broadwick » Feed" xmlUrl="https://broadwick.com/feed/" htmlUrl="https://broadwick.com/divisions/broadwick-studio/" category="site-crawl"/>
+   <outline type="rss" text="#CEWeek2026 » Posts by admin Feed" title="#CEWeek2026 » Posts by admin Feed" xmlUrl="https://ceweek.london/author/admin/feed/" htmlUrl="https://ceweek.london/author/admin/" category="common-crawl"/>
+   <outline type="rss" text="Commercial Gas London » Feed" title="Commercial Gas London » Feed" xmlUrl="https://commercialgaslondon.co.uk/feed/" htmlUrl="https://commercialgaslondon.co.uk/carbon-monoxide-alarm/" category="common-crawl"/>
+   <outline type="rss" text="dancap.london » Comments Feed" title="dancap.london » Comments Feed" xmlUrl="https://dancap.london/?feed=comments-rss2" htmlUrl="https://dancap.london/" category="common-crawl"/>
+   <outline type="rss" text="dancap.london » Feed" title="dancap.london » Feed" xmlUrl="https://dancap.london/?feed=rss2" htmlUrl="https://dancap.london/" category="common-crawl"/>
+   <outline type="rss" text="Feed" title="Feed" xmlUrl="https://dmr.co.uk/collections/rolex.atom" htmlUrl="https://www.davidmrobinson.co.uk/product-category/watches/rolex/" category="site-crawl"/>
+   <outline type="rss" text="Ecoworks London » Feed" title="Ecoworks London » Feed" xmlUrl="https://ecoworks.london/feed/" htmlUrl="https://ecoworks.london/a-homeowners-guide-to-vaillant-gas-boilers-choosing-the-right-model/" category="common-crawl"/>
+   <outline type="rss" text="ESAW Dubai » Feed" title="ESAW Dubai » Feed" xmlUrl="https://esaw.london/feed/" htmlUrl="https://esaw.london/" category="common-crawl"/>
+   <outline type="rss" text="London and Overseas Area of NAFAS » Feed" title="London and Overseas Area of NAFAS » Feed" xmlUrl="https://flowerarranginglondon.org.uk/feed/" htmlUrl="https://flowerarranginglondon.org.uk/" category="common-crawl"/>
+   <outline type="rss" text="RSS feed for Accounting/Big Four" title="RSS feed for Accounting/Big Four" xmlUrl="https://forum.canarywharfian.co.uk/forums/accounting/index.rss" htmlUrl="https://forum.canarywharfian.co.uk/forums/accounting/" category="common-crawl"/>
+   <outline type="rss" text="Happy Dog Plumbing and Heating » Feed" title="Happy Dog Plumbing and Heating » Feed" xmlUrl="https://happydogplumbing.london/feed" htmlUrl="https://happydogplumbing.london/" category="common-crawl"/>
+   <outline type="rss" text="Feed" title="Feed" xmlUrl="https://indiebridelondon.co.uk/blogs/blog.atom" htmlUrl="https://indiebridelondon.co.uk/blogs/blog/the-prairie-song-unveiling-our-new-modern-bohemian-wedding-dress-collection" category="common-crawl"/>
+   <outline type="rss" text="Jesus London » Feed" title="Jesus London » Feed" xmlUrl="https://jesus.london/feed/" htmlUrl="https://jesus.london/" category="common-crawl"/>
+   <outline type="rss" text="DIGITAL SOLUTIONS » Feed" title="DIGITAL SOLUTIONS » Feed" xmlUrl="https://jollondon.co.uk/feed/" htmlUrl="https://jollondon.co.uk/ai-detector/" category="common-crawl"/>
+   <outline type="rss" text="Kricket » Feed" title="Kricket » Feed" xmlUrl="https://kricketrestaurants.com/feed/" htmlUrl="https://kricket.co.uk/" category="site-crawl"/>
+   <outline type="rss" text="Kubiti » Feed" title="Kubiti » Feed" xmlUrl="https://kubiti.org/feed/" htmlUrl="https://kubiti.org/nail-trends/?q=Catherine+Nails+Blackwall" category="site-crawl"/>
+   <outline type="rss" text="Feed" title="Feed" xmlUrl="https://londoncaviar.co.uk/blogs/guides.atom" htmlUrl="https://londoncaviar.co.uk/blogs/guides/blog-unveiling-the-mystique-of-caviar-facts-and-myths" category="common-crawl"/>
+   <outline type="rss" text="Etude » Feed" title="Etude » Feed" xmlUrl="https://londonicon.co.uk/feed/" htmlUrl="https://londonicon.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="London Mail » Feed" title="London Mail » Feed" xmlUrl="https://londonmail.co.uk/feed/" htmlUrl="https://londonmail.co.uk/2023/11/18/the-camper-chronicles-the-bournemouth-observer/" category="common-crawl"/>
+   <outline type="rss" text="London Modern Quilt Guild » Feed" title="London Modern Quilt Guild » Feed" xmlUrl="https://londonmodernquiltguild.co.uk/feed/" htmlUrl="https://londonmodernquiltguild.co.uk/2012/01/" category="common-crawl"/>
+   <outline type="rss" text="London SEO Masters » Feed" title="London SEO Masters » Feed" xmlUrl="https://londonseomasters.co.uk/feed/" htmlUrl="https://londonseomasters.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="London Specialist Dentists » Feed" title="London Specialist Dentists » Feed" xmlUrl="https://londonspecialistdentist.co.uk/feed/" htmlUrl="https://londonspecialistdentist.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Marugame Udon » Feed" title="Marugame Udon » Feed" xmlUrl="https://marugame.co.uk/feed/" htmlUrl="https://marugame.co.uk/blog/location/canary-wharf/" category="site-crawl"/>
+   <outline type="rss" text="Medic Pro » Feed" title="Medic Pro » Feed" xmlUrl="https://medicpro.london/feed/" htmlUrl="https://medicpro.london/2017/02/14/cost-of-a-pmta/" category="common-crawl"/>
+   <outline type="rss" text="Our Hubs BD » Feed" title="Our Hubs BD » Feed" xmlUrl="https://ourhubsbd.london/feed/" htmlUrl="https://ourhubsbd.london/" category="common-crawl"/>
+   <outline type="rss" text="Plated » Feed" title="Plated » Feed" xmlUrl="https://plated.london/feed/" htmlUrl="https://plated.london/" category="common-crawl"/>
+   <outline type="rss" text="Main Feed" title="Main Feed" xmlUrl="https://privatedetective.london/feed/" htmlUrl="https://privatedetective.london/" category="common-crawl"/>
+   <outline type="rss" text="Pure Sports Medicine » Feed" title="Pure Sports Medicine » Feed" xmlUrl="https://puresportsmed.com/feed/" htmlUrl="http://www.puresportsmed.com" category="site-crawl"/>
+   <outline type="rss" text="Stack London » Feed" title="Stack London » Feed" xmlUrl="https://stacklondon.co.uk/feed/" htmlUrl="https://stacklondon.co.uk/arial-footage-of-raf-stanbridge/" category="common-crawl"/>
+   <outline type="rss" text="Stitch London » Hello world! Comments Feed" title="Stitch London » Hello world! Comments Feed" xmlUrl="https://stitchlondon.co.uk/hello-world/feed/" htmlUrl="https://stitchlondon.co.uk/hello-world/" category="common-crawl"/>
+   <outline type="rss" text="St John’s Catholic Primary School » Feed" title="St John’s Catholic Primary School » Feed" xmlUrl="https://stjohnsrotherhithe.co.uk/feed/" htmlUrl="https://stjohnsrotherhithe.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Digital SEO London » Feed" title="Digital SEO London » Feed" xmlUrl="https://thedigitalseolondon.co.uk/feed/" htmlUrl="https://thedigitalseolondon.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Hawksmoor RSS Feed" title="Hawksmoor RSS Feed" xmlUrl="https://thehawksmoor.com/feed/" htmlUrl="https://thehawksmoor.com/" category="site-crawl"/>
+   <outline type="rss" text="The Pelligon » Feed" title="The Pelligon » Feed" xmlUrl="https://thepelligon.com/feed/" htmlUrl="https://thepelligon.com/" category="site-crawl"/>
+   <outline type="rss" text="Traffic Management London » Feed" title="Traffic Management London » Feed" xmlUrl="https://trafficmanagement.london/feed/" htmlUrl="https://trafficmanagement.london/construction-management-plan-cocp/" category="common-crawl"/>
+   <outline type="rss" text="Trending Today London » Feed" title="Trending Today London » Feed" xmlUrl="https://trendingtoday.london/feed/" htmlUrl="https://trendingtoday.london/" category="common-crawl"/>
+   <outline type="rss" text="Dòng thông tin UU88 ⭐️ Link Kéo Khách Vào UU88 COM | Đăng Ký + 25 USDT »" title="Dòng thông tin UU88 ⭐️ Link Kéo Khách Vào UU88 COM | Đăng Ký + 25 USDT »" xmlUrl="https://uu88.london/feed/" htmlUrl="https://uu88.london/" category="common-crawl"/>
+   <outline type="rss" text="24hr Mobile Tyre Fitting London | Quick Tyre Services Ltd » Feed" title="24hr Mobile Tyre Fitting London | Quick Tyre Services Ltd » Feed" xmlUrl="https://www.24hrmobiletyrefitting.london/feed/" htmlUrl="https://www.24hrmobiletyrefitting.london/" category="common-crawl"/>
+   <outline type="rss" text="Anthony Kingsley MSTAT | Alexander Technique London &amp; North London NW11 » Feed" title="Anthony Kingsley MSTAT | Alexander Technique London &amp; North London NW11 » Feed" xmlUrl="https://www.alexander-technique-london.co.uk/feed/" htmlUrl="https://www.alexander-technique-london.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="Art Smart London - Interior Design » Feed" title="Art Smart London - Interior Design » Feed" xmlUrl="https://www.artsmartlondon.co.uk/feed/" htmlUrl="https://www.artsmartlondon.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="My Site 5 - RSS" title="My Site 5 - RSS" xmlUrl="https://www.assuredproperties.london/blog-feed.xml" htmlUrl="https://www.assuredproperties.london/" category="common-crawl"/>
+   <outline type="rss" text="Magazine RSS feed for Boisdale" title="Magazine RSS feed for Boisdale" xmlUrl="https://www.boisdale.co.uk/magazine/feed" htmlUrl="https://www.boisdale.co.uk/canary-wharf/the-venue/" category="site-crawl"/>
+   <outline type="rss" text="thesassenachsceilidhband - RSS" title="thesassenachsceilidhband - RSS" xmlUrl="https://www.ceilidh.london/blog-feed.xml" htmlUrl="https://www.ceilidh.london/" category="common-crawl"/>
+   <outline type="rss" text="Driving Schools in South West London Blog » Feed" title="Driving Schools in South West London Blog » Feed" xmlUrl="https://www.drivingschoolsinsouthwestlondon.co.uk/1/feed" htmlUrl="https://www.drivingschoolsinsouthwestlondon.co.uk/areas.html" category="common-crawl"/>
+   <outline type="rss" text="RSS 2.0" title="RSS 2.0" xmlUrl="https://www.lewishamlibdems.org.uk/index.rss" htmlUrl="https://www.lewishamlibdems.org.uk/" category="common-crawl"/>
+   <outline type="rss" text="Leytonstoner » Feed" title="Leytonstoner » Feed" xmlUrl="https://www.leytonstoner.london/feed/" htmlUrl="https://www.leytonstoner.london/" category="common-crawl"/>
+   <outline type="rss" text="London and Zurich » Feed" title="London and Zurich » Feed" xmlUrl="https://www.londonandzurich.co.uk/feed/" htmlUrl="https://www.londonandzurich.co.uk/8939-2/" category="common-crawl"/>
+   <outline type="rss" text="photography courses and tours » Feed" title="photography courses and tours » Feed" xmlUrl="https://www.londonphototours.co.uk/feed/" htmlUrl="https://www.londonphototours.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="London Speech Therapy » Feed" title="London Speech Therapy » Feed" xmlUrl="https://www.londonspeechtherapy.co.uk/feed/" htmlUrl="https://www.londonspeechtherapy.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="MoreYoga » Feed" title="MoreYoga » Feed" xmlUrl="https://www.moreyoga.co.uk/feed" htmlUrl="https://www.moreyoga.co.uk/" category="site-crawl"/>
+   <outline type="rss" text="Poplars Construction - RSS" title="Poplars Construction - RSS" xmlUrl="https://www.poplarsconstruction.co.uk/blog-feed.xml" htmlUrl="https://www.poplarsconstruction.co.uk/blog" category="common-crawl"/>
+   <outline type="rss" text="Seo Service London » Feed" title="Seo Service London » Feed" xmlUrl="https://www.seo-services.london/feed/" htmlUrl="https://www.seo-services.london/" category="common-crawl"/>
+   <outline type="rss" text="South London Drones - RSS" title="South London Drones - RSS" xmlUrl="https://www.southlondondrones.co.uk/blog-feed.xml" htmlUrl="https://www.southlondondrones.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="TAVLA » Feed" title="TAVLA » Feed" xmlUrl="https://www.tavla.london/feed/" htmlUrl="https://www.tavla.london/" category="common-crawl"/>
+   <outline type="rss" text="Thelondongym - RSS" title="Thelondongym - RSS" xmlUrl="https://www.thelondongym.co.uk/blog-feed.xml" htmlUrl="https://www.thelondongym.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="TheraFit London - RSS" title="TheraFit London - RSS" xmlUrl="https://www.therafitlondon.co.uk/blog-feed.xml" htmlUrl="https://www.therafitlondon.co.uk/" category="common-crawl"/>
+   <outline type="rss" text="The Salad Kitchen - RSS" title="The Salad Kitchen - RSS" xmlUrl="https://www.thesaladkitchen.com/blog-feed.xml" htmlUrl="https://www.thesaladkitchen.com/" category="site-crawl"/>
+   <outline type="rss" text="The Temple Tattoo - RSS" title="The Temple Tattoo - RSS" xmlUrl="https://www.thetemple.london/blog-feed.xml" htmlUrl="https://www.thetemple.london/" category="common-crawl"/>
+  </outline>
+  <outline text="community forum" title="community forum">
+   <outline type="rss" text="feddit.uk c/london" title="feddit.uk c/london" xmlUrl="https://feddit.uk/feeds/c/london.xml" category="lemmy"/>
+   <outline type="rss" text="George Green's School" title="George Green's School" xmlUrl="https://www.georgegreens.com/rss" htmlUrl="https://www.georgegreens.com/" category="hand-community"/>
+   <outline type="rss" text="Poplar HARCA" title="Poplar HARCA" xmlUrl="https://www.poplarharca.co.uk/feed/" htmlUrl="https://www.poplarharca.co.uk/" category="hand-community"/>
+  </outline>
+  <outline text="council" title="council">
+   <outline type="rss" text="Royal Borough of Greenwich – News" title="Royal Borough of Greenwich – News" xmlUrl="https://www.royalgreenwich.gov.uk/rss.xml" htmlUrl="https://www.royalgreenwich.gov.uk/news" category="github-list,council-sites"/>
+   <outline type="rss" text="NHS South East London – News" title="NHS South East London – News" xmlUrl="https://www.selondonics.org/feed/" htmlUrl="https://www.selondonics.org/icb/about-us/news/" category="github-list"/>
+   <outline type="rss" text="GLA: FOI disclosure log" title="GLA: FOI disclosure log" xmlUrl="https://www.london.gov.uk/rss-feeds/80628" category="public-bodies"/>
+   <outline type="rss" text="Southwark Council - News" title="Southwark Council - News" xmlUrl="https://www.southwark.gov.uk/rss.xml" htmlUrl="https://www.southwark.gov.uk/news" category="github-list,council-sites"/>
+   <outline type="rss" text="Greenwich: democracy what's new (ModernGov RSS)" title="Greenwich: democracy what's new (ModernGov RSS)" xmlUrl="https://greenwich.moderngov.co.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="GLA: Mayoral decisions" title="GLA: Mayoral decisions" xmlUrl="https://www.london.gov.uk/rss-feeds/80606" category="public-bodies"/>
+   <outline type="rss" text="GLA: All consultations" title="GLA: All consultations" xmlUrl="https://www.london.gov.uk/rss-feeds/80614" category="public-bodies"/>
+   <outline type="rss" text="Barnet: democracy what's new (ModernGov RSS)" title="Barnet: democracy what's new (ModernGov RSS)" xmlUrl="https://barnet.moderngov.co.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Barnet Post" title="Barnet Post" xmlUrl="https://barnetpost.co.uk/feed/" htmlUrl="https://barnetpost.co.uk/" category="github-list,icnn-map"/>
+   <outline type="rss" text="Brent: democracy what's new (ModernGov RSS)" title="Brent: democracy what's new (ModernGov RSS)" xmlUrl="https://democracy.brent.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Hammersmith and Fulham: democracy what's new (ModernGov RSS)" title="Hammersmith and Fulham: democracy what's new (ModernGov RSS)" xmlUrl="https://democracy.lbhf.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Tower Hamlets: democracy what's new (ModernGov RSS)" title="Tower Hamlets: democracy what's new (ModernGov RSS)" xmlUrl="https://democracy.towerhamlets.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Enfield: democracy what's new (ModernGov RSS)" title="Enfield: democracy what's new (ModernGov RSS)" xmlUrl="https://governance.enfield.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Hackney: democracy what's new (ModernGov RSS)" title="Hackney: democracy what's new (ModernGov RSS)" xmlUrl="https://hackney.moderngov.co.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Lewisham: democracy what's new (ModernGov RSS)" title="Lewisham: democracy what's new (ModernGov RSS)" xmlUrl="https://lewisham.moderngov.co.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Lambeth Council – News" title="Lambeth Council – News" xmlUrl="https://love.lambeth.gov.uk/feed/" htmlUrl="https://love.lambeth.gov.uk/all-posts/" category="github-list"/>
+   <outline type="rss" text="Kingston: democracy what's new (ModernGov RSS)" title="Kingston: democracy what's new (ModernGov RSS)" xmlUrl="https://moderngov.kingston.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Sutton: democracy what's new (ModernGov RSS)" title="Sutton: democracy what's new (ModernGov RSS)" xmlUrl="https://moderngov.sutton.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Hackney Council – News" title="Hackney Council – News" xmlUrl="https://news.hackney.gov.uk/feed/rss" htmlUrl="https://news.hackney.gov.uk/" category="github-list"/>
+   <outline type="rss" text="NHS North East London – News" title="NHS North East London – News" xmlUrl="https://northeastlondon.icb.nhs.uk/feed/" htmlUrl="https://northeastlondon.icb.nhs.uk/news/" category="github-list,council-sites"/>
+   <outline type="rss" text="Hillingdon Council – News" title="Hillingdon Council – News" xmlUrl="https://pre.hillingdon.gov.uk/rss/news" htmlUrl="https://pre.hillingdon.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="Ealing Council – News" title="Ealing Council – News" xmlUrl="https://www.aroundealing.com/feed/" htmlUrl="https://www.ealing.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="Bromley Council – Newsroom" title="Bromley Council – Newsroom" xmlUrl="https://www.bromley.gov.uk/rss/news" htmlUrl="https://www.bromley.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="Competition and Markets Authority" title="Competition and Markets Authority" xmlUrl="https://www.gov.uk/government/organisations/competition-and-markets-authority.atom" htmlUrl="https://www.gov.uk/government/organisations/competition-and-markets-authority" category="site-crawl"/>
+   <outline type="rss" text="Serious Fraud Office - Atom Feed" title="Serious Fraud Office - Atom Feed" xmlUrl="https://www.gov.uk/government/organisations/serious-fraud-office.atom" category="github-list"/>
+   <outline type="rss" text="Harrow Council – News" title="Harrow Council – News" xmlUrl="https://www.harrow.gov.uk/rss/news" htmlUrl="https://www.harrow.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="Havering Council – News" title="Havering Council – News" xmlUrl="https://www.havering.gov.uk/rss/news" htmlUrl="https://www.havering.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="Hounslow Council – News" title="Hounslow Council – News" xmlUrl="https://www.hounslow.gov.uk/rss/news" htmlUrl="https://www.hounslow.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="Islington Council – News" title="Islington Council – News" xmlUrl="https://www.islington.media/feed/rss" htmlUrl="https://www.islington.media/news/" category="github-list"/>
+   <outline type="rss" text="King's College Hospital NHS Foundation Trust – News" title="King's College Hospital NHS Foundation Trust – News" xmlUrl="https://www.kch.nhs.uk/feed/" htmlUrl="https://www.kch.nhs.uk/news/" category="github-list"/>
+   <outline type="rss" text="Kingston Council – News" title="Kingston Council – News" xmlUrl="https://www.kingston.gov.uk/news/7/feed.rss" htmlUrl="https://www.kingston.gov.uk/news" category="github-list"/>
+   <outline type="rss" text="London Assembly: democracy what's new (ModernGov RSS)" title="London Assembly: democracy what's new (ModernGov RSS)" xmlUrl="https://www.london.gov.uk/about-us/londonassembly/meetings/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="GLA: London Assembly Research Unit publications" title="GLA: London Assembly Research Unit publications" xmlUrl="https://www.london.gov.uk/rss-feeds/1273970" category="public-bodies"/>
+   <outline type="rss" text="GLA: Upcoming events" title="GLA: Upcoming events" xmlUrl="https://www.london.gov.uk/rss-feeds/80117" category="public-bodies"/>
+   <outline type="rss" text="GLA: Greater London Returning Officer decisions" title="GLA: Greater London Returning Officer decisions" xmlUrl="https://www.london.gov.uk/rss-feeds/80143" category="public-bodies"/>
+   <outline type="rss" text="GLA: Business and economy publications" title="GLA: Business and economy publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80173" category="public-bodies"/>
+   <outline type="rss" text="GLA: Motions from the London Assembly" title="GLA: Motions from the London Assembly" xmlUrl="https://www.london.gov.uk/rss-feeds/80219" category="public-bodies"/>
+   <outline type="rss" text="GLA: OPDC Decisions" title="GLA: OPDC Decisions" xmlUrl="https://www.london.gov.uk/rss-feeds/80586" category="public-bodies"/>
+   <outline type="rss" text="GLA: MOPAC Decisions" title="GLA: MOPAC Decisions" xmlUrl="https://www.london.gov.uk/rss-feeds/80603" category="public-bodies"/>
+   <outline type="rss" text="GLA: Assistant directors' decisions" title="GLA: Assistant directors' decisions" xmlUrl="https://www.london.gov.uk/rss-feeds/80604" category="public-bodies"/>
+   <outline type="rss" text="Mayor of London – Press Releases" title="Mayor of London – Press Releases" xmlUrl="https://www.london.gov.uk/rss-feeds/80610" htmlUrl="https://www.london.gov.uk/media-centre/mayors-press-releases" category="github-list,public-bodies"/>
+   <outline type="rss" text="GLA: London Assembly press releases" title="GLA: London Assembly press releases" xmlUrl="https://www.london.gov.uk/rss-feeds/80611" htmlUrl="https://www.london.gov.uk/who-we-are/what-london-assembly-does/london-assembly-press-releases" category="public-bodies,github-list"/>
+   <outline type="rss" text="London Assembly - Press Releases" title="London Assembly - Press Releases" xmlUrl="https://www.london.gov.uk/rss-feeds/80611?source=enfield-council-news" category="github-list"/>
+   <outline type="rss" text="GLA: Assembly Member press releases" title="GLA: Assembly Member press releases" xmlUrl="https://www.london.gov.uk/rss-feeds/80612" category="public-bodies"/>
+   <outline type="rss" text="GLA: London Assembly current investigations" title="GLA: London Assembly current investigations" xmlUrl="https://www.london.gov.uk/rss-feeds/80616" category="public-bodies"/>
+   <outline type="rss" text="GLA: Arts and culture consultations" title="GLA: Arts and culture consultations" xmlUrl="https://www.london.gov.uk/rss-feeds/80617" category="public-bodies"/>
+   <outline type="rss" text="GLA: London Assembly petitions" title="GLA: London Assembly petitions" xmlUrl="https://www.london.gov.uk/rss-feeds/80627" category="public-bodies"/>
+   <outline type="rss" text="GLA: MOPAC disclosure log" title="GLA: MOPAC disclosure log" xmlUrl="https://www.london.gov.uk/rss-feeds/80630" category="public-bodies"/>
+   <outline type="rss" text="GLA: London Assembly publications" title="GLA: London Assembly publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80633" category="public-bodies"/>
+   <outline type="rss" text="GLA: Committee publications" title="GLA: Committee publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80635" category="public-bodies"/>
+   <outline type="rss" text="GLA: Our publications" title="GLA: Our publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80636" category="public-bodies"/>
+   <outline type="rss" text="GLA: Team London Publications" title="GLA: Team London Publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80637" category="public-bodies"/>
+   <outline type="rss" text="GLA: Health and Wellbeing publications" title="GLA: Health and Wellbeing publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80639" category="public-bodies"/>
+   <outline type="rss" text="GLA: Housing and land publications" title="GLA: Housing and land publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80642" category="public-bodies"/>
+   <outline type="rss" text="GLA: Environment and Climate Change publications" title="GLA: Environment and Climate Change publications" xmlUrl="https://www.london.gov.uk/rss-feeds/80644" category="public-bodies"/>
+   <outline type="rss" text="GLA: Regeneration projects" title="GLA: Regeneration projects" xmlUrl="https://www.london.gov.uk/rss-feeds/81960" category="public-bodies"/>
+   <outline type="rss" text="GLA: Past events" title="GLA: Past events" xmlUrl="https://www.london.gov.uk/rss-feeds/81996" category="public-bodies"/>
+   <outline type="rss" text="Haringey: democracy what's new (ModernGov RSS)" title="Haringey: democracy what's new (ModernGov RSS)" xmlUrl="https://www.minutes.haringey.gov.uk/mgRss.aspx" category="moderngov"/>
+   <outline type="rss" text="Newham Council – News" title="Newham Council – News" xmlUrl="https://www.newham.gov.uk/rss/news" htmlUrl="https://www.newham.gov.uk/news" category="github-list,council-sites"/>
+   <outline type="rss" text="Queen Elizabeth Olympic Park / LLDC" title="Queen Elizabeth Olympic Park / LLDC" xmlUrl="https://www.queenelizabetholympicpark.co.uk/rss.xml" htmlUrl="https://www.queenelizabetholympicpark.co.uk/" category="council-sites"/>
+   <outline type="rss" text="Sutton Council – News" title="Sutton Council – News" xmlUrl="https://www.sutton.gov.uk/news/7/feed.rss" htmlUrl="https://www.sutton.gov.uk/news" category="github-list"/>
+  </outline>
+  <outline text="events" title="events">
+   <outline type="rss" text="Royal Museums Greenwich" title="Royal Museums Greenwich" xmlUrl="https://www.rmg.co.uk/rss.xml" htmlUrl="https://www.rmg.co.uk/" category="hand-community"/>
+   <outline type="rss" text="Poplar Union" title="Poplar Union" xmlUrl="https://poplarunion.com/feed/" htmlUrl="https://poplarunion.com/" category="hand-community"/>
+   <outline type="link" text="Poplar Farm School" title="Poplar Farm School" xmlUrl="https://poplar-cit.co.uk/events/?ical=1" htmlUrl="https://poplar-cit.co.uk/" category="common-crawl"/>
+   <outline type="link" text="St John&amp;rsquo;s Catholic Primary School" title="St John&amp;rsquo;s Catholic Primary School" xmlUrl="https://stjohnsrotherhithe.co.uk/events/?ical=1" htmlUrl="https://stjohnsrotherhithe.co.uk/" category="common-crawl"/>
+  </outline>
+  <outline text="news" title="news">
+   <outline type="rss" text="Time Out London" title="Time Out London" xmlUrl="https://www.timeout.com/london/blog/feed.rss" category="feedspot"/>
+   <outline type="rss" text="Londonist - Things to see and do in London" title="Londonist - Things to see and do in London" xmlUrl="https://londonist.com/feed" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="Londonist » History" title="Londonist » History" xmlUrl="https://londonist.com/category/features/history/feed" category="feedspot"/>
+   <outline type="rss" text="diamond geezer" title="diamond geezer" xmlUrl="http://feeds.feedburner.com/blogspot/HcFb" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Diamond Geezer" title="Diamond Geezer" xmlUrl="https://feeds.feedburner.com/blogspot/HcFb" htmlUrl="https://diamondgeezer.blogspot.com/" category="feedspot,hand-local-news"/>
+   <outline type="rss" text="Old Deptford History" title="Old Deptford History" xmlUrl="http://feeds.feedburner.com/olddeptfordhistory/ifLg" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Roman Road London" title="Roman Road London" xmlUrl="https://towerhamletsslice.co.uk/feed/" htmlUrl="https://romanroadlondon.com/" category="icnn-map,hand-local-news"/>
+   <outline type="rss" text="Murky Depths" title="Murky Depths" xmlUrl="https://www.fromthemurkydepths.co.uk/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="853" title="853" xmlUrl="https://greenwichwire.co.uk/feed/" htmlUrl="http://853london.com/" category="ooh-directory,github-list,icnn-map,hand-local-news"/>
+   <outline type="rss" text="Transpontine" title="Transpontine" xmlUrl="http://transpont.blogspot.com/feeds/posts/default" htmlUrl="https://transpont.blogspot.com/" category="ooh-directory,github-list,hand-local-news"/>
+   <outline type="rss" text="Londonology - Blog" title="Londonology - Blog" xmlUrl="https://luxeonlesslondon.com/feed/" category="ooh-directory"/>
+   <outline type="rss" text="City A.M." title="City A.M." xmlUrl="https://www.cityam.com/feed/" htmlUrl="https://www.cityam.com/" category="feedspot,wikipedia-wikidata,hand-local-news"/>
+   <outline type="rss" text="Theatre Reviews" title="Theatre Reviews" xmlUrl="https://www.londonpubtheatres.com/feed/rss2" category="feedspot"/>
+   <outline type="rss" text="OnLondon" title="OnLondon" xmlUrl="https://www.onlondon.co.uk/feed/" htmlUrl="https://www.onlondon.co.uk/" category="feedspot,hand-local-news"/>
+   <outline type="rss" text="Lsbo Blog" title="Lsbo Blog" xmlUrl="https://lsbo.co.uk/blog/feed/" category="feedspot"/>
+   <outline type="rss" text="Newham Cyclists" title="Newham Cyclists" xmlUrl="https://newhamcyclists.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="London Life Archives - SilverSpoon London" title="London Life Archives - SilverSpoon London" xmlUrl="https://silverspoonlondon.co.uk/category/london/feed" category="feedspot"/>
+   <outline type="rss" text="SilverSpoon London" title="SilverSpoon London" xmlUrl="https://silverspoonlondon.co.uk/feed" category="feedspot"/>
+   <outline type="rss" text="Spitalfields Life" title="Spitalfields Life" xmlUrl="https://spitalfieldslife.com/feed/" htmlUrl="https://spitalfieldslife.com/" category="ooh-directory,github-list,feedspot,hand-local-news"/>
+   <outline type="rss" text="Blog - DEBUT" title="Blog - DEBUT" xmlUrl="https://debut.org.uk/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Inspiring City" title="Inspiring City" xmlUrl="https://inspiringcity.com/feed/" category="feedspot"/>
+   <outline type="rss" text="The Diary of Samuel Pepys" title="The Diary of Samuel Pepys" xmlUrl="http://feeds.feedburner.com/PepysDiary" category="ooh-directory,github-list"/>
+   <outline type="rss" text="The London Dead" title="The London Dead" xmlUrl="http://thelondondead.blogspot.com/feeds/posts/default" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Caroline's Miscellany" title="Caroline's Miscellany" xmlUrl="https://carolineld.blogspot.com/feeds/posts/default" category="ooh-directory,github-list"/>
+   <outline type="rss" text="The Picky Glutton" title="The Picky Glutton" xmlUrl="https://pickyglutton.com/feed/" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="Artistic Child Photography" title="Artistic Child Photography" xmlUrl="https://achphotography.com/feed/" category="feedspot"/>
+   <outline type="rss" text="A London Inheritance" title="A London Inheritance" xmlUrl="https://alondoninheritance.com/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="A LONDON MISCELLANY" title="A LONDON MISCELLANY" xmlUrl="https://alondonmiscellany.blog/feed/" category="feedspot"/>
+   <outline type="rss" text="London Wedding Photographer | F5 Photography | Rahul Khona" title="London Wedding Photographer | F5 Photography | Rahul Khona" xmlUrl="https://f5blog.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Friends of Brockley &amp; Ladywell Cemeteries" title="Friends of Brockley &amp; Ladywell Cemeteries" xmlUrl="https://foblc.org.uk/feed/" category="ooh-directory"/>
+   <outline type="rss" text="London history – History@Kingston" title="London history – History@Kingston" xmlUrl="https://historyatkingston.wordpress.com/category/london-history/feed/" category="feedspot"/>
+   <outline type="rss" text="London Turkish Gazette" title="London Turkish Gazette" xmlUrl="https://londragazete.com/index.php/feed/" htmlUrl="http://www.londragazete.com/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="The Mayfair Foodie" title="The Mayfair Foodie" xmlUrl="https://mayfairfoodie.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Musical Theatre Review" title="Musical Theatre Review" xmlUrl="https://musicaltheatrereview.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Nigel Noshes" title="Nigel Noshes" xmlUrl="https://nigelnoshes.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Secret London" title="Secret London" xmlUrl="https://secretldn.com/feed/" category="github-list"/>
+   <outline type="rss" text="Stuff About London" title="Stuff About London" xmlUrl="https://stuffaboutlondon.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="the lost byway" title="the lost byway" xmlUrl="https://thelostbyway.com/feed" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Wanstead Meteo" title="Wanstead Meteo" xmlUrl="https://wansteadmeteo.com/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="London Unattached" title="London Unattached" xmlUrl="https://www.london-unattached.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Hackney Citizen" title="Hackney Citizen" xmlUrl="https://hackneycitizen.co.uk/latest/rss/" htmlUrl="https://www.hackneycitizen.co.uk/" category="icnn-map"/>
+   <outline type="rss" text="LouReviews" title="LouReviews" xmlUrl="https://loureviews.blog/feed/" category="feedspot"/>
+   <outline type="rss" text="London Remembers" title="London Remembers" xmlUrl="http://feeds.feedburner.com/LondonRemembers" category="ooh-directory,github-list"/>
+   <outline type="rss" text="News – Official London Theatre" title="News – Official London Theatre" xmlUrl="https://officiallondontheatre.com/news/feed/" category="feedspot"/>
+   <outline type="rss" text="The Journal | Photography Blog - Kirsty Hamilton - London Photographer" title="The Journal | Photography Blog - Kirsty Hamilton - London Photographer" xmlUrl="https://www.kirstyhamiltonphotography.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="London Clarion Cycle Club" title="London Clarion Cycle Club" xmlUrl="https://www.londonclarion.org.uk/blog-feed.xml" category="feedspot"/>
+   <outline type="rss" text="London Remembers" title="London Remembers" xmlUrl="https://www.londonremembers.com/feed" category="feedspot"/>
+   <outline type="rss" text="BBC News - London RSS" title="BBC News - London RSS" xmlUrl="https://feeds.bbci.co.uk/news/england/london/rss.xml" category="github-list,hand-local-news"/>
+   <outline type="rss" text="My London - Home" title="My London - Home" xmlUrl="https://www.mylondon.news/?service=rss" category="feedspot"/>
+   <outline type="rss" text="MyLondon" title="MyLondon" xmlUrl="https://www.mylondon.news/?service=rss" htmlUrl="https://www.mylondon.news/" category="hand-local-news"/>
+   <outline type="rss" text="Metro (British newspaper)" title="Metro (British newspaper)" xmlUrl="https://metro.co.uk/feed/" htmlUrl="https://metro.co.uk/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="Love London" title="Love London" xmlUrl="https://love-london.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="LCCmunicipal" title="LCCmunicipal" xmlUrl="https://lccmunicipal.com/feed/" category="ooh-directory"/>
+   <outline type="rss" text="London Food, Things to Do in London - Eating Europe" title="London Food, Things to Do in London - Eating Europe" xmlUrl="https://www.eatingeurope.com/category/london/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog | Katie Rogers Photography" title="Blog | Katie Rogers Photography" xmlUrl="https://www.katierogersphotography.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="London holidays | The Guardian" title="London holidays | The Guardian" xmlUrl="https://www.theguardian.com/travel/london/rss" category="feedspot"/>
+   <outline type="rss" text="wildcornerz" title="wildcornerz" xmlUrl="http://wildcornerz.blogspot.com/feeds/posts/default" category="ooh-directory,github-list"/>
+   <outline type="rss" text="UK Planning Law Blog" title="UK Planning Law Blog" xmlUrl="https://www.planninglawblog.com/feed/" category="feedspot"/>
+   <outline type="rss" text="London Datastore – News" title="London Datastore – News" xmlUrl="https://data.london.gov.uk/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="East London Girl" title="East London Girl" xmlUrl="https://eastlondongirl.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Jordanna Marston Photography – Creative Wedding Photographer" title="Jordanna Marston Photography – Creative Wedding Photographer" xmlUrl="https://jordannamarston.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Made by TfL blog" title="Made by TfL blog" xmlUrl="https://madeby.tfl.gov.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Restaurants Archives - SilverSpoon London" title="Restaurants Archives - SilverSpoon London" xmlUrl="https://silverspoonlondon.co.uk/category/restaurant/feed" category="feedspot"/>
+   <outline type="rss" text="Norfolk wedding photographer | Ellie Gillard photography" title="Norfolk wedding photographer | Ellie Gillard photography" xmlUrl="https://www.elliegillard.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="THE PECKHAM PECULIAR" title="THE PECKHAM PECULIAR" xmlUrl="https://peckhampeculiar.tumblr.com/rss" htmlUrl="http://peckhampeculiar.tumblr.com/" category="ooh-directory,github-list,icnn-map"/>
+   <outline type="rss" text="Street Photography Blog - StreetSnappers Street Photography Workshops" title="Street Photography Blog - StreetSnappers Street Photography Workshops" xmlUrl="https://streetsnappers.com/street-photography-blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="London weddings blog" title="London weddings blog" xmlUrl="https://www.dianavphotography.co.uk/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="https://www.oliverholder.co.uk/blog?format=rss" title="https://www.oliverholder.co.uk/blog?format=rss" xmlUrl="https://www.oliverholder.co.uk/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Stuart Bailey Photography" title="Stuart Bailey Photography" xmlUrl="https://www.stuartbaileyphoto.com/blog-feed.xml" category="feedspot"/>
+   <outline type="rss" text="Edith's Streets" title="Edith's Streets" xmlUrl="http://edithsstreets.blogspot.com/feeds/posts/default" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Jane's London" title="Jane's London" xmlUrl="http://www.janeslondon.com/feeds/posts/default" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Cheese and Biscuits" title="Cheese and Biscuits" xmlUrl="https://cheesenbiscuits.blogspot.com/feeds/posts/default?alt=rss" category="feedspot"/>
+   <outline type="rss" text="Alex Upton's Architectural Photography Blog" title="Alex Upton's Architectural Photography Blog" xmlUrl="http://feeds.feedburner.com/AlexUptonPhotography" category="feedspot"/>
+   <outline type="rss" text="Urban Pixxels" title="Urban Pixxels" xmlUrl="http://feeds.feedburner.com/UrbanPixxels" category="feedspot"/>
+   <outline type="rss" text="Her Favourite Food &amp; Travel | The Luxury of Slow Travel" title="Her Favourite Food &amp; Travel | The Luxury of Slow Travel" xmlUrl="http://www.herfavfood.com/blog?format=RSS" category="feedspot"/>
+   <outline type="rss" text="Art Plugged" title="Art Plugged" xmlUrl="https://artplugged.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="ArtReview RSS Feed" title="ArtReview RSS Feed" xmlUrl="https://artreview.com/rss.xml" category="feedspot"/>
+   <outline type="rss" text="baste cut fold" title="baste cut fold" xmlUrl="https://bastecutfold.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Tales from the Café" title="Tales from the Café" xmlUrl="https://blog.londonbicyclecafe.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Brentford TW8" title="Brentford TW8" xmlUrl="https://brentfordtw8.com/rss.xml" htmlUrl="http://brentfordtw8.com/" category="icnn-map"/>
+   <outline type="rss" text="Art &amp; Culture Archives - BRICKS Magazine" title="Art &amp; Culture Archives - BRICKS Magazine" xmlUrl="https://bricksmagazine.co.uk/category/art-culture/feed/" category="feedspot"/>
+   <outline type="rss" text="Local history – Brixton Blog" title="Local history – Brixton Blog" xmlUrl="https://brixtonblog.com/category/explore/local-history/feed/" category="feedspot"/>
+   <outline type="rss" text="Brixton Blog" title="Brixton Blog" xmlUrl="https://brixtonblog.com/feed/" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="CabbieBlog" title="CabbieBlog" xmlUrl="https://cabbieblog.com/feed/" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="Camden Cyclists" title="Camden Cyclists" xmlUrl="https://camdencyclists.org.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Candace Abroad" title="Candace Abroad" xmlUrl="https://candaceabroad.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Cemetery Club" title="Cemetery Club" xmlUrl="https://cemeteryclub.wordpress.com/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Ceri Jones Chef" title="Ceri Jones Chef" xmlUrl="https://cerijoneschef.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Cavendish" title="Cavendish" xmlUrl="https://clglaw.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Couple of London Photography and Films" title="Couple of London Photography and Films" xmlUrl="https://coupleoflondon.com/feed/" category="feedspot"/>
+   <outline type="rss" text="ELEPHANT" title="ELEPHANT" xmlUrl="https://elephant.art/feed/" category="feedspot"/>
+   <outline type="rss" text="Emily Underworld" title="Emily Underworld" xmlUrl="https://emilyunderworld.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Enfield Dispatch" title="Enfield Dispatch" xmlUrl="https://enfielddispatch.co.uk/feed/" htmlUrl="https://enfielddispatch.co.uk/" category="icnn-map"/>
+   <outline type="rss" text="Global Arab Network" title="Global Arab Network" xmlUrl="https://english.globalarabnetwork.com/feed/" htmlUrl="http://www.english.globalarabnetwork.com/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="EU Law Analysis" title="EU Law Analysis" xmlUrl="https://eulawanalysis.blogspot.com/feeds/posts/default" category="feedspot"/>
+   <outline type="rss" text="UK-EU Relations Law" title="UK-EU Relations Law" xmlUrl="https://eurelationslaw.com/feed" category="feedspot"/>
+   <outline type="rss" text="Everything Theatre" title="Everything Theatre" xmlUrl="https://everything-theatre.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="FAD Magazine" title="FAD Magazine" xmlUrl="https://fadmagazine.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Cooksister | Food, Travel, Photography" title="Cooksister | Food, Travel, Photography" xmlUrl="https://feeds.feedburner.com/cooksister/GyEf" category="feedspot"/>
+   <outline type="rss" text="Giày trekking Humtto-SpottedByLocals" title="Giày trekking Humtto-SpottedByLocals" xmlUrl="https://feeds.feedburner.com/London-SpottedByLocals" category="feedspot"/>
+   <outline type="rss" text="London Reconnections" title="London Reconnections" xmlUrl="https://feeds.feedburner.com/londonreconnections" category="feedspot"/>
+   <outline type="rss" text="Photography Blog (en)" title="Photography Blog (en)" xmlUrl="https://feeds.feedburner.com/photographyblog" category="feedspot"/>
+   <outline type="rss" text="Felix (newspaper)" title="Felix (newspaper)" xmlUrl="https://felixonline.co.uk/rss/" htmlUrl="http://www.felixonline.co.uk/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="Fitzrovia News" title="Fitzrovia News" xmlUrl="https://fitzrovianews.com/feed/" htmlUrl="http://news.fitzrovia.org.uk/" category="wikipedia-wikidata,icnn-map"/>
+   <outline type="rss" text="FortySeven" title="FortySeven" xmlUrl="https://fortyseven47.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Helen's Fuss Free Flavours" title="Helen's Fuss Free Flavours" xmlUrl="https://fussfreeflavours.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Halal Food Guy" title="Halal Food Guy" xmlUrl="https://halalfoodguy.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Heart London Magazine" title="Heart London Magazine" xmlUrl="https://heartlondonmagazine.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog - Helen Bartlett Photography" title="Blog - Helen Bartlett Photography" xmlUrl="https://helenbartlett.co.uk/blog/feed/" category="feedspot"/>
+   <outline type="rss" text="Homegirl London" title="Homegirl London" xmlUrl="https://homegirllondon.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Indie Dock Music Blog" title="Indie Dock Music Blog" xmlUrl="https://indiedockmusicblog.co.uk/?feed=rss2" category="feedspot"/>
+   <outline type="rss" text="https://insearchofmedia.com/feed/" title="https://insearchofmedia.com/feed/" xmlUrl="https://insearchofmedia.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Inside Croydon" title="Inside Croydon" xmlUrl="https://insidecroydon.com/feed/" htmlUrl="https://insidecroydon.com/" category="icnn-map"/>
+   <outline type="rss" text="https://jessmorganphotography.co.uk/feed/" title="https://jessmorganphotography.co.uk/feed/" xmlUrl="https://jessmorganphotography.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog" title="Blog" xmlUrl="https://lashmarcreative.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Undergraduate Laws Blog" title="Undergraduate Laws Blog" xmlUrl="https://lawsblog.london.ac.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Living London History" title="Living London History" xmlUrl="https://livinglondonhistory.com/feed/" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="Londonaire" title="Londonaire" xmlUrl="https://londonaire.co.uk/feed/" category="ooh-directory,feedspot"/>
+   <outline type="rss" text="London Historians' Blog" title="London Historians' Blog" xmlUrl="https://londonhistorians.wordpress.com/feed/" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="londonliving.at" title="londonliving.at" xmlUrl="https://londonliving.at/feed/" category="feedspot"/>
+   <outline type="rss" text="London Loves Business" title="London Loves Business" xmlUrl="https://londonlovesbusiness.com/feed/" htmlUrl="https://www.londonlovesbusiness.com/" category="hand-local-news"/>
+   <outline type="rss" text="London Loves Business" title="London Loves Business" xmlUrl="https://londonlovesbusiness.com/feed/atom/" htmlUrl="https://www.londonlovesbusiness.com/" category="hand-local-news"/>
+   <outline type="rss" text="London Post Daily - London News! » Feed" title="London Post Daily - London News! » Feed" xmlUrl="https://londonpostdaily.co.uk/feed/" htmlUrl="https://londonpostdaily.co.uk/additions-aesthetics-a-new-standard-in-advanced-aesthetic-care/" category="common-crawl"/>
+   <outline type="rss" text="London On The Inside" title="London On The Inside" xmlUrl="https://londontheinside.com/feed/" category="feedspot"/>
+   <outline type="rss" text="LONDØNWORKS - LONDONWORKS lifestyle, art and music blog." title="LONDØNWORKS - LONDONWORKS lifestyle, art and music blog." xmlUrl="https://londonworks.com/blogs/news.atom" category="feedspot"/>
+   <outline type="rss" text="London Archives | Love and London" title="London Archives | Love and London" xmlUrl="https://loveandlondon.com/category/london/feed/" category="feedspot"/>
+   <outline type="rss" text="Love and London" title="Love and London" xmlUrl="https://loveandlondon.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Luisa-Christie" title="Luisa-Christie" xmlUrl="https://luisachristie.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Maison Cupcake" title="Maison Cupcake" xmlUrl="https://maisoncupcake.com/feed/" category="feedspot"/>
+   <outline type="rss" text="MAKING A MARK" title="MAKING A MARK" xmlUrl="https://makingamark.blogspot.com/feeds/posts/default" category="feedspot"/>
+   <outline type="rss" text="Mapping London" title="Mapping London" xmlUrl="https://mappinglondon.co.uk/feed/" category="ooh-directory,github-list,feedspot"/>
+   <outline type="rss" text="Mark Chivers Photography" title="Mark Chivers Photography" xmlUrl="https://markchivers.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Matt Parry Photography" title="Matt Parry Photography" xmlUrl="https://mattparryphotography.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Metro (British newspaper)" title="Metro (British newspaper)" xmlUrl="https://metro.co.uk/entertainment/feed/" htmlUrl="https://metro.co.uk/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="Metro (British newspaper)" title="Metro (British newspaper)" xmlUrl="https://metro.co.uk/lifestyle/feed/" htmlUrl="https://metro.co.uk/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="Mini Adventures Travel Blog" title="Mini Adventures Travel Blog" xmlUrl="https://mini-adventures.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Tasty Food for Busy Mums" title="Tasty Food for Busy Mums" xmlUrl="https://mummysfastandeasy.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog for Nathan Clarke | Nathan Clarke Photography | London Photographer - Nathan Clarke Photography" title="Blog for Nathan Clarke | Nathan Clarke Photography | London Photographer - Nathan Clarke Photography" xmlUrl="https://nathanclarkephotography.co.uk/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Nearly Legal: Housing Law News and Comment" title="Nearly Legal: Housing Law News and Comment" xmlUrl="https://nearlylegal.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Panopticon" title="Panopticon" xmlUrl="https://panopticonblog.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog | Paola De Paola Photography" title="Blog | Paola De Paola Photography" xmlUrl="https://paoladepaola.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Maternity &amp; Newborn Photographer London- Photography by Valentina" title="Maternity &amp; Newborn Photographer London- Photography by Valentina" xmlUrl="https://photographybyvalentina.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Pretty You London - Pretty You London Blog" title="Pretty You London - Pretty You London Blog" xmlUrl="https://prettyyoulondon.com/blogs/pretty-you-london-blog.atom" category="feedspot"/>
+   <outline type="rss" text="RECLAIM EC1" title="RECLAIM EC1" xmlUrl="https://reclaimec1.wordpress.com/feed/" category="ooh-directory"/>
+   <outline type="rss" text="Refugee Law Initiative Blog" title="Refugee Law Initiative Blog" xmlUrl="https://rli.blogs.sas.ac.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Sandhya's Kitchen" title="Sandhya's Kitchen" xmlUrl="https://sandhyahariharan.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="sebmatthews.net" title="sebmatthews.net" xmlUrl="https://sebmatthews.net/feed/" category="feedspot"/>
+   <outline type="rss" text="Top Photographers Blog Best photography blog – Silvergumtype – Hub for creativity in for photographers" title="Top Photographers Blog Best photography blog – Silvergumtype – Hub for creativity in for photographers" xmlUrl="https://silvergumtype.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Siorna Photography. Artistic, Empowering Portrait Experiences" title="Siorna Photography. Artistic, Empowering Portrait Experiences" xmlUrl="https://siornaphotography.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Social Pantry" title="Social Pantry" xmlUrl="https://socialpantry.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="StreetArtNews" title="StreetArtNews" xmlUrl="https://streetartnews.net/feed" category="feedspot"/>
+   <outline type="rss" text="Sugar Free Londoner" title="Sugar Free Londoner" xmlUrl="https://sugarfreelondoner.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Sunny in London" title="Sunny in London" xmlUrl="https://sunnyinlondon.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Supper in the Suburbs" title="Supper in the Suburbs" xmlUrl="https://supperinthesuburbs.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Sutton Music Trust" title="Sutton Music Trust" xmlUrl="https://suttonmusictrust.org.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="The Latest - Theatre and Tonic" title="The Latest - Theatre and Tonic" xmlUrl="https://theatreandtonic.co.uk/blog/tag/London?format=rss" category="feedspot"/>
+   <outline type="rss" text="Theatre Things" title="Theatre Things" xmlUrl="https://theblogoftheatrethings.com/feed/" category="feedspot"/>
+   <outline type="rss" text="The Flexitarian" title="The Flexitarian" xmlUrl="https://theflexitarian.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="The London Chronicle » Feed" title="The London Chronicle » Feed" xmlUrl="https://thelondonchronicle.co.uk/feed/" htmlUrl="https://thelondonchronicle.co.uk/3-smart-buying-tips-for-first-car/" category="common-crawl"/>
+   <outline type="rss" text="the london thing" title="the london thing" xmlUrl="https://thelondonthing.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Theatre blog – Tom Bolton" title="Theatre blog – Tom Bolton" xmlUrl="https://tombolton.co.uk/category/theatre-blog/feed/" category="feedspot"/>
+   <outline type="rss" text="Waltham Forest Echo" title="Waltham Forest Echo" xmlUrl="https://walthamforestecho.co.uk/feed/" htmlUrl="http://walthamforestecho.co.uk/" category="icnn-map"/>
+   <outline type="rss" text="Life in the Cheap Seats – Webcowgirl’s London theatre reviews" title="Life in the Cheap Seats – Webcowgirl’s London theatre reviews" xmlUrl="https://webcowgirl.wordpress.com/feed/" category="feedspot"/>
+   <outline type="rss" text="West End Wilma" title="West End Wilma" xmlUrl="https://westendwilma.com/feed/" category="feedspot"/>
+   <outline type="rss" text="West London Times (WLT) » Feed" title="West London Times (WLT) » Feed" xmlUrl="https://westlondontimes.co.uk/feed/" htmlUrl="https://westlondontimes.co.uk/area-guide/after-school-activities-in-west-london-complete-guide-2026/" category="common-crawl"/>
+   <outline type="rss" text="What Olivia Did" title="What Olivia Did" xmlUrl="https://whatoliviadid.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Willesden Cycling Club" title="Willesden Cycling Club" xmlUrl="https://willesdencyclingclub.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="36exp Photographers' School" title="36exp Photographers' School" xmlUrl="https://www.36exp.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="A Lady in London" title="A Lady in London" xmlUrl="https://www.aladyinlondon.com/feed" category="feedspot"/>
+   <outline type="rss" text="The Lifestyle – The Arbuturian" title="The Lifestyle – The Arbuturian" xmlUrl="https://www.arbuturian.com/section/lifestyle/feed" category="feedspot"/>
+   <outline type="rss" text="ArtistAnd" title="ArtistAnd" xmlUrl="https://www.artistand.co.uk/blog-feed.xml" category="feedspot"/>
+   <outline type="rss" text="Good Food" title="Good Food" xmlUrl="https://www.bbcgoodfood.com/feed/atom" category="feedspot"/>
+   <outline type="rss" text="The Beaver (newspaper)" title="The Beaver (newspaper)" xmlUrl="https://www.beaveronline.co.uk/feed/" htmlUrl="http://www.beaveronline.co.uk/" category="wikipedia-wikidata"/>
+   <outline type="rss" text="Corporate Photography London" title="Corporate Photography London" xmlUrl="https://www.corporatephotographylondon.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Eco Travel Diaries: London, UK | Curiously Conscious" title="Eco Travel Diaries: London, UK | Curiously Conscious" xmlUrl="https://www.curiouslyconscious.com/category/london/feed/" category="feedspot"/>
+   <outline type="rss" text="Cyclist" title="Cyclist" xmlUrl="https://www.cyclist.co.uk/feed" category="feedspot"/>
+   <outline type="rss" text="Eastlondonlines" title="Eastlondonlines" xmlUrl="https://www.eastlondonlines.co.uk/feed/" htmlUrl="https://www.eastlondonlines.co.uk/" category="github-list,hand-local-news"/>
+   <outline type="rss" text="Eat Cook Explore" title="Eat Cook Explore" xmlUrl="https://www.eatcookexplore.com/feed/" category="feedspot"/>
+   <outline type="rss" text="EC1 Echo" title="EC1 Echo" xmlUrl="https://www.ec1echo.co.uk/feed/" htmlUrl="https://www.ec1echo.co.uk/" category="icnn-map"/>
+   <outline type="rss" text="Emma Inks" title="Emma Inks" xmlUrl="https://www.emmainks.com/feed/" category="feedspot"/>
+   <outline type="rss" text="ET Food Voyage" title="ET Food Voyage" xmlUrl="https://www.etfoodvoyage.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Gousto Blog" title="Gousto Blog" xmlUrl="https://www.gousto.co.uk/blog/feed" category="feedspot"/>
+   <outline type="rss" text="Half Moon" title="Half Moon" xmlUrl="https://www.halfmoon.org.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog - London Wedding Photographer - Helen Abraham" title="Blog - London Wedding Photographer - Helen Abraham" xmlUrl="https://www.helenabrahamphotography.com/blog?format=RSS" category="feedspot"/>
+   <outline type="rss" text="Case Studies" title="Case Studies" xmlUrl="https://www.howlettphoto.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Iain Sinclair" title="Iain Sinclair" xmlUrl="https://www.iainsinclair.org.uk/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="ianVisits" title="ianVisits" xmlUrl="https://www.ianvisits.co.uk/articles/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="IanVisits" title="IanVisits" xmlUrl="https://www.ianvisits.co.uk/articles/feed/" htmlUrl="https://www.ianvisits.co.uk/" category="hand-local-news"/>
+   <outline type="rss" text="Jim Carroll's Blog" title="Jim Carroll's Blog" xmlUrl="https://www.jimcarrollsblog.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="Architectural Photographer UK | Blog - Architectural &amp; Commercial Property Photographer for Developers &amp; Asset Managers " title="Architectural Photographer UK | Blog - Architectural &amp; Commercial Property Photographer for Developers &amp; Asset Managers " xmlUrl="https://www.joasphotographer.com/architectural-photography-blog?format=RSS" category="feedspot"/>
+   <outline type="rss" text="Kentishtowner" title="Kentishtowner" xmlUrl="https://www.kentishtowner.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Blog" title="Blog" xmlUrl="https://www.koby.photography/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="London Wedding Photographer – Lee Allison Photography" title="London Wedding Photographer – Lee Allison Photography" xmlUrl="https://www.leeallison.co/feed/" category="feedspot"/>
+   <outline type="rss" text="Legal Cheek" title="Legal Cheek" xmlUrl="https://www.legalcheek.com/feed/" category="feedspot"/>
+   <outline type="rss" text="LIFT" title="LIFT" xmlUrl="https://www.liftfestival.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Alexander JLO – A Highly Respected Firm of London Solicitors" title="Alexander JLO – A Highly Respected Firm of London Solicitors" xmlUrl="https://www.london-law.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="London Kensington Guide" title="London Kensington Guide" xmlUrl="https://www.londonkensingtonguide.com/feed/" category="feedspot"/>
+   <outline type="rss" text="London Reconnections" title="London Reconnections" xmlUrl="https://londonreconnections.com/rss/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="London Theatre Walking Tour" title="London Theatre Walking Tour" xmlUrl="https://www.londontheatrewalk.com/blog-feed.xml" category="feedspot"/>
+   <outline type="rss" text="blog - London Wedding Photographer | documentary + editorial wedding photography" title="blog - London Wedding Photographer | documentary + editorial wedding photography" xmlUrl="https://www.martailardophotography.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="My Fussy Eater | Easy Family Recipes" title="My Fussy Eater | Easy Family Recipes" xmlUrl="https://www.myfussyeater.com/feed/" category="feedspot"/>
+   <outline type="rss" text="NME" title="NME" xmlUrl="https://www.nme.com/feed" category="feedspot"/>
+   <outline type="rss" text="Our Bow" title="Our Bow" xmlUrl="https://www.ourbow.com/feed/" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Peter Berthoud | Blog" title="Peter Berthoud | Blog" xmlUrl="https://www.peterberthoud.co.uk/blog-feed.xml" category="ooh-directory,github-list"/>
+   <outline type="rss" text="Poppy Loves London" title="Poppy Loves London" xmlUrl="https://www.poppyloves.co.uk/feed" category="feedspot"/>
+   <outline type="rss" text="Printing Company London - Atom" title="Printing Company London - Atom" xmlUrl="https://www.printingcompany.london/feeds/posts/default" htmlUrl="https://www.printingcompany.london/2025/11/how-to-print-in-london.html" category="common-crawl"/>
+   <outline type="rss" text="Printing Company London - RSS" title="Printing Company London - RSS" xmlUrl="https://www.printingcompany.london/feeds/posts/default?alt=rss" htmlUrl="https://www.printingcompany.london/2025/11/how-to-print-in-london.html" category="common-crawl"/>
+   <outline type="rss" text="Right Chord Music Blog" title="Right Chord Music Blog" xmlUrl="https://www.rightchordmusic.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Scentered - Blogs" title="Scentered - Blogs" xmlUrl="https://www.scentered.com/blogs/news.atom" category="feedspot"/>
+   <outline type="rss" text="Shoreditch Street Art Tours London" title="Shoreditch Street Art Tours London" xmlUrl="https://www.shoreditchstreetarttours.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="The last word on luxury in London | Sphere Magazine - Sphere Magazine" title="The last word on luxury in London | Sphere Magazine - Sphere Magazine" xmlUrl="https://www.spherelife.com/rss/all/rss.xml" category="feedspot"/>
+   <outline type="rss" text="The Standard Business" title="The Standard Business" xmlUrl="https://www.standard.co.uk/business/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Music" title="The Standard Music" xmlUrl="https://www.standard.co.uk/culture/music/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Culture" title="The Standard Culture" xmlUrl="https://www.standard.co.uk/culture/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Homes &amp; Property" title="The Standard Homes &amp; Property" xmlUrl="https://www.standard.co.uk/homesandproperty/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Crime" title="The Standard Crime" xmlUrl="https://www.standard.co.uk/news/crime/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard London" title="The Standard London" xmlUrl="https://www.standard.co.uk/news/london/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Politics" title="The Standard Politics" xmlUrl="https://www.standard.co.uk/news/politics/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard News" title="The Standard News" xmlUrl="https://www.standard.co.uk/news/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard UK" title="The Standard UK" xmlUrl="https://www.standard.co.uk/news/uk/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard World" title="The Standard World" xmlUrl="https://www.standard.co.uk/news/world/rss" category="feedspot"/>
+   <outline type="rss" text="Evening Standard" title="Evening Standard" xmlUrl="https://www.standard.co.uk/rss" htmlUrl="https://www.standard.co.uk/" category="feedspot,hand-local-news"/>
+   <outline type="rss" text="The Standard Showbiz" title="The Standard Showbiz" xmlUrl="https://www.standard.co.uk/showbiz/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Football" title="The Standard Football" xmlUrl="https://www.standard.co.uk/sport/football/rss" category="feedspot"/>
+   <outline type="rss" text="The Standard Sport" title="The Standard Sport" xmlUrl="https://www.standard.co.uk/sport/rss" category="feedspot"/>
+   <outline type="rss" text="Stylish London Living" title="Stylish London Living" xmlUrl="https://www.stylishlondonliving.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Supergolden Bakes" title="Supergolden Bakes" xmlUrl="https://www.supergoldenbakes.com/feed/" category="feedspot"/>
+   <outline type="rss" text="The Art Newspaper" title="The Art Newspaper" xmlUrl="https://www.theartnewspaper.com/rss.xml" htmlUrl="http://theartnewspaper.com/" category="feedspot,wikipedia-wikidata"/>
+   <outline type="rss" text="Harshini Shanker" title="Harshini Shanker" xmlUrl="https://www.theatrebee.com/theatre-savings-blog/feed/blog-feed.xml" category="feedspot"/>
+   <outline type="rss" text="London Theatre Breaks" title="London Theatre Breaks" xmlUrl="https://www.theatrebreaks.co.uk/feed" category="feedspot"/>
+   <outline type="rss" text="The English Kitchen" title="The English Kitchen" xmlUrl="https://www.theenglishkitchen.co/feeds/posts/default?alt=rss" category="feedspot"/>
+   <outline type="rss" text="The London Wire » Feed" title="The London Wire » Feed" xmlUrl="https://www.thelondonwire.co.uk/feed/" htmlUrl="https://www.thelondonwire.co.uk/10-reasons-to-hire-an-ecommerce-seo-agency/" category="common-crawl"/>
+   <outline type="rss" text="The Petite Cook™" title="The Petite Cook™" xmlUrl="https://www.thepetitecook.com/feed/" category="feedspot"/>
+   <outline type="rss" text="Music Reviews - The Pit London" title="Music Reviews - The Pit London" xmlUrl="https://www.thepitldn.com/pitnews?format=rss" category="feedspot"/>
+   <outline type="rss" text="Blog | Tom Trevatt Photography | London" title="Blog | Tom Trevatt Photography | London" xmlUrl="https://www.tomtrevatt.com/blog?format=rss" category="feedspot"/>
+   <outline type="rss" text="West London Living" title="West London Living" xmlUrl="https://www.westlondonliving.co.uk/feed/" category="feedspot"/>
+   <outline type="rss" text="Within London" title="Within London" xmlUrl="https://www.withinlondon.com/blog-feed.xml" category="feedspot"/>
+   <outline type="rss" text="Blog - London Personal Brand Photography for Founders &amp; Clinicians" title="Blog - London Personal Brand Photography for Founders &amp; Clinicians" xmlUrl="https://www.yolandedevries.photography/blog?format=rss" category="feedspot"/>
+  </outline>
+  <outline text="social" title="social">
+   <outline type="rss" text="#greenwich on mastodon.london" title="#greenwich on mastodon.london" xmlUrl="https://mastodon.london/tags/greenwich.rss" category="mastodon"/>
+   <outline type="rss" text="#greenwich on mastodon.social" title="#greenwich on mastodon.social" xmlUrl="https://mastodon.social/tags/greenwich.rss" category="mastodon"/>
+   <outline type="rss" text="#poplar on mastodon.social" title="#poplar on mastodon.social" xmlUrl="https://mastodon.social/tags/poplar.rss" category="mastodon"/>
+   <outline type="rss" text="#docklands on mastodon.social" title="#docklands on mastodon.social" xmlUrl="https://mastodon.social/tags/docklands.rss" category="mastodon"/>
+   <outline type="rss" text="#deptford on mastodon.london" title="#deptford on mastodon.london" xmlUrl="https://mastodon.london/tags/deptford.rss" category="mastodon"/>
+   <outline type="rss" text="#deptford on mastodon.social" title="#deptford on mastodon.social" xmlUrl="https://mastodon.social/tags/deptford.rss" category="mastodon"/>
+   <outline type="rss" text="#rotherhithe on mastodon.london" title="#rotherhithe on mastodon.london" xmlUrl="https://mastodon.london/tags/rotherhithe.rss" category="mastodon"/>
+   <outline type="rss" text="#docklands on mastodon.london" title="#docklands on mastodon.london" xmlUrl="https://mastodon.london/tags/docklands.rss" category="mastodon"/>
+   <outline type="rss" text="#limehouse on mastodon.social" title="#limehouse on mastodon.social" xmlUrl="https://mastodon.social/tags/limehouse.rss" category="mastodon"/>
+   <outline type="rss" text="#rotherhithe on mastodon.social" title="#rotherhithe on mastodon.social" xmlUrl="https://mastodon.social/tags/rotherhithe.rss" category="mastodon"/>
+   <outline type="rss" text="#wapping on mastodon.social" title="#wapping on mastodon.social" xmlUrl="https://mastodon.social/tags/wapping.rss" category="mastodon"/>
+   <outline type="rss" text="#canarywharf on mastodon.social" title="#canarywharf on mastodon.social" xmlUrl="https://mastodon.social/tags/canarywharf.rss" category="mastodon"/>
+   <outline type="rss" text="#wapping on mastodon.london" title="#wapping on mastodon.london" xmlUrl="https://mastodon.london/tags/wapping.rss" category="mastodon"/>
+   <outline type="rss" text="#limehouse on mastodon.london" title="#limehouse on mastodon.london" xmlUrl="https://mastodon.london/tags/limehouse.rss" category="mastodon"/>
+   <outline type="rss" text="#canarywharf on mastodon.london" title="#canarywharf on mastodon.london" xmlUrl="https://mastodon.london/tags/canarywharf.rss" category="mastodon"/>
+   <outline type="rss" text="#poplar on mastodon.london" title="#poplar on mastodon.london" xmlUrl="https://mastodon.london/tags/poplar.rss" category="mastodon"/>
+   <outline type="rss" text="#isleofdogs on mastodon.social" title="#isleofdogs on mastodon.social" xmlUrl="https://mastodon.social/tags/isleofdogs.rss" category="mastodon"/>
+   <outline type="rss" text="Newham Cyclists" title="Newham Cyclists" xmlUrl="https://bsky.app/profile/did:plc:dtnetrsrncpi55koopzpq4zq/rss" category="bluesky"/>
+   <outline type="rss" text="#isleofdogs on mastodon.london" title="#isleofdogs on mastodon.london" xmlUrl="https://mastodon.london/tags/isleofdogs.rss" category="mastodon"/>
+   <outline type="rss" text="#towerhamlets on mastodon.social" title="#towerhamlets on mastodon.social" xmlUrl="https://mastodon.social/tags/towerhamlets.rss" category="mastodon"/>
+   <outline type="rss" text="#london on mastodon.london" title="#london on mastodon.london" xmlUrl="https://mastodon.london/tags/london.rss" category="mastodon"/>
+   <outline type="rss" text="#royaldocks on mastodon.london" title="#royaldocks on mastodon.london" xmlUrl="https://mastodon.london/tags/royaldocks.rss" category="mastodon"/>
+   <outline type="rss" text="#towerhamlets on mastodon.london" title="#towerhamlets on mastodon.london" xmlUrl="https://mastodon.london/tags/towerhamlets.rss" category="mastodon"/>
+   <outline type="rss" text="#london on mastodon.social" title="#london on mastodon.social" xmlUrl="https://mastodon.social/tags/london.rss" category="mastodon"/>
+   <outline type="rss" text="#royaldocks on mastodon.social" title="#royaldocks on mastodon.social" xmlUrl="https://mastodon.social/tags/royaldocks.rss" category="mastodon"/>
+  </outline>
+  <outline text="transport" title="transport">
+   <outline type="rss" text="London Reconnections" title="London Reconnections" xmlUrl="https://londonreconnections.com/rss/" htmlUrl="https://www.londonreconnections.com/" category="public-bodies"/>
+   <outline type="rss" text="Mayor of London - Press Releases" title="Mayor of London - Press Releases" xmlUrl="https://www.london.gov.uk/rss-feeds/80610?source=tfl-press-releases" category="github-list"/>
+   <outline type="rss" text="London Assembly - Press Releases" title="London Assembly - Press Releases" xmlUrl="https://www.london.gov.uk/rss-feeds/80611?source=tfl-press-releases-html" category="github-list"/>
+  </outline>
+ </body>
+</opml>

@@ -1,0 +1,1115 @@
+[
+ {
+  "id": "tfl-foi-1700-1213-station-depths",
+  "name": "TfL FOI 1700-1213 (2013): Station depths.xls, rail levels in every London Underground platform",
+  "kind": "dataset",
+  "subject": "stations: Jubilee, District, Northern and other LU lines (no DLR, no Elizabeth line)",
+  "url": "https://www.whatdotheyknow.com/request/depth_of_tube_stations_and_tube",
+  "archived_url": "https://web.archive.org/web/20250820180018/https://www.whatdotheyknow.com/request/depth_of_tube_stations_and_tube/response/366374/attach/4/Station%20depths.xls",
+  "date": "2013-03-05",
+  "what_it_shows": "For each LU station: indicative ground level outside the station (m OD) and the rail level of each platform road in London Underground Datum (ODN - 100 m). Also a sheet of disused stations. The same response refused tunnel alignments between stations under FOI section 38 (health and safety), citing security.",
+  "levels_found": [
+   {
+    "place": "Bermondsey station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": -12.5,
+    "unit": "m",
+    "datum": "OD (sheet value 87.5 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'Bermondsey ', ground level outside station 2, Jubilee Eastbound 87.5, Westbound 87.5",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Bermondsey station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 14.5,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (2 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "Canada Water station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": -13.325,
+    "unit": "m",
+    "datum": "OD (sheet value 86.675 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'Canada Water ', ground level outside station 5, Jubilee Eastbound 86.675, Westbound 86.675",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Canada Water station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 18.33,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (5 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "Canary Wharf station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": -15.65,
+    "unit": "m",
+    "datum": "OD (sheet value 84.35 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'Canary Wharf ', ground level outside station 3, Jubilee Eastbound 84.35, Westbound 84.35",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Canary Wharf station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 18.65,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (3 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "Canning Town station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": 0.0,
+    "unit": "m",
+    "datum": "OD (sheet value 100.0 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'Canning Town ', ground level outside station 2, Jubilee Eastbound 100.0, Westbound 100.0",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Canning Town station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 2.0,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (2 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "London Bridge station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": -23.2,
+    "unit": "m",
+    "datum": "OD (sheet value 76.8 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'London Bridge ', ground level outside station 4, Jubilee Eastbound 76.8, Westbound 76.8",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "London Bridge station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 27.2,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (4 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "North Greenwich station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": -13.54,
+    "unit": "m",
+    "datum": "OD (sheet value 86.46 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'North Greenwich ', ground level outside station 2, Jubilee Eastbound 86.46, Westbound 86.46",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "North Greenwich station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 15.54,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (2 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "Southwark station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": -20.49,
+    "unit": "m",
+    "datum": "OD (sheet value 79.51 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'Southwark ', ground level outside station 4, Jubilee Eastbound 79.51, Westbound 79.51",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Southwark station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 24.49,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (4 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "West Ham station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": 1.2,
+    "unit": "m",
+    "datum": "OD (sheet value 101.2 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'West Ham ', ground level outside station 1, Jubilee Eastbound 101.2, Westbound 101.2",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "West Ham station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": -0.2,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (1 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "Stratford station",
+    "what": "Jubilee line rail level in platforms (eastbound and westbound the same)",
+    "value": 4.0,
+    "unit": "m",
+    "datum": "OD (sheet value 104.0 in London Underground Datum = ODN - 100 m)",
+    "chainage": null,
+    "quote": "'Stratford ', ground level outside station 4, Jubilee Eastbound 104.0, Westbound 104.0",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Stratford station",
+    "what": "rail level below ground level outside station (computed: ground minus rail OD)",
+    "value": 0.0,
+    "unit": "m",
+    "datum": "below the sheet's indicative ground level (4 m OD)",
+    "chainage": null,
+    "quote": "'The Ground Level Outside Station, is indicative and is the height above Ordnance Datum'",
+    "page": "sheet 'Rail Levels', footnote"
+   },
+   {
+    "place": "London Bridge station",
+    "what": "Northern line rail level (northbound 80.39, southbound 80.42)",
+    "value": -19.6,
+    "unit": "m",
+    "datum": "OD (LU Datum - 100 m)",
+    "chainage": null,
+    "quote": "'London Bridge ', 4, ... Northern 80.39, 80.42",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "West Ham station",
+    "what": "District line rail level",
+    "value": 4.7,
+    "unit": "m",
+    "datum": "OD",
+    "chainage": null,
+    "quote": "'West Ham ', 1, District 104.7, 104.7",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "Whitechapel station",
+    "what": "District line rail level (eastbound 109.11, westbound 109.12); ground 12",
+    "value": 9.1,
+    "unit": "m",
+    "datum": "OD",
+    "chainage": null,
+    "quote": "'Whitechapel ', 12, District 109.11, 109.12",
+    "page": "sheet 'Rail Levels'"
+   },
+   {
+    "place": "all stations",
+    "what": "datum statement",
+    "value": -100,
+    "unit": "m",
+    "datum": "London Underground Datum relative to ODN",
+    "chainage": null,
+    "quote": "'Levels are referred to London Underground Datum' / 'London Underground Datum is 100m below Ordnance Datum Newlyn'",
+    "page": "sheet 'Rail Levels', footnotes"
+   }
+  ],
+  "format": "Excel 97 .xls (2 sheets: 'Dis-used Stations', 'Rail Levels')",
+  "licence_or_terms": "FOI disclosure by TfL; the response attaches TfL's 'right to appeal / copyright' sheet. No open licence is stated. Values are facts we can cite; ask the owner before committing the file itself.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/vnd.ms-excel (archived copy); live page 403 Cloudflare challenge",
+   "status": "live WhatDoTheyKnow page blocked by a bot challenge; file read from the Internet Archive copy of 2025-08-20"
+  },
+  "usable_for_3d": true,
+  "notes": "Best station control source found. Replaces our current controls: Canada Water Jubilee rail -13.3 m OD (we use -16.6 from Wikipedia '22 m below'); North Greenwich -13.5 m OD (we use about -19.7 from an interview). Canary Wharf Jubilee rail -15.65 m OD gives the pit level we lacked. Canning Town value 100.0 (0 m OD) looks like a surface placeholder. Local copy: scratchpad/indoor/tunnels/station-depths.xls."
+ },
+ {
+  "id": "tfl-foi-0493-2223-station-depths-csv",
+  "name": "TfL FOI-0493-2223 (2022): Copy of Station depths.csv",
+  "kind": "dataset",
+  "subject": "stations: LU lines (TfL: 'with the exclusion of Elizabeth Line. We do not hold complete Elizabeth Line data as yet')",
+  "url": "https://foi.tfl.gov.uk/FOI-0493-2223/Copy%20of%20Station%20depths.csv",
+  "archived_url": "https://web.archive.org/web/20251216121956/https://tfl.gov.uk/corporate/transparency/freedom-of-information/foi-request-detail?referenceId=FOI-0493-2223",
+  "date": "2022-06-28",
+  "what_it_shows": "The same table as the 2013 spreadsheet, values rounded to 0.1 m (Canary Wharf 84.4, Canada Water 86.7, North Greenwich 86.5, Bermondsey 87.5, Southwark 79.5, London Bridge 76.8 / Northern 80.4, Canning Town 100.0, West Ham 101.2 / District 104.7, Stratford 104.0, Whitechapel District 109.1).",
+  "levels_found": [
+   {
+    "place": "Canary Wharf station",
+    "what": "Jubilee rail level",
+    "value": -15.6,
+    "unit": "m",
+    "datum": "OD (84.4 LU Datum)",
+    "chainage": null,
+    "quote": "Canary Wharf ,3, ... ,84.4,84.4",
+    "page": "CSV row"
+   },
+   {
+    "place": "North Greenwich station",
+    "what": "Jubilee rail level",
+    "value": -13.5,
+    "unit": "m",
+    "datum": "OD (86.5 LU Datum)",
+    "chainage": null,
+    "quote": "North Greenwich ,2, ... ,86.5,86.5",
+    "page": "CSV row"
+   }
+  ],
+  "format": "CSV",
+  "licence_or_terms": "FOI disclosure; TfL copyright information sheet; no open licence stated",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/octet-stream",
+   "status": "CSV fetched live 2026-10-03 (33,212 bytes); the tfl.gov.uk request page returns 403 to us, read from the Internet Archive copy"
+  },
+  "usable_for_3d": true,
+  "notes": "Confirms the 2013 values. Local copy: scratchpad/indoor/tunnels/station-depths-2022.csv."
+ },
+ {
+  "id": "crossrail-geological-long-section-post-construction",
+  "name": "Crossrail Geological Long Section - Post-Construction Update (Figure 1 of Learning Legacy paper 7A-025)",
+  "kind": "plans and sections",
+  "subject": "Elizabeth line: Royal Oak to Pudding Mill Lane, and Stepney Green to Plumstead Portal (Whitechapel, Canary Wharf, Limmo, Custom House, Thames tunnel, Woolwich)",
+  "url": "https://learninglegacy.crossrail.co.uk/wp-content/uploads/2016/12/7A-025_2-Figure-1-post-construction-geological-profile.pdf",
+  "archived_url": null,
+  "date": "2016-04-04 (drawing); published 2016-12",
+  "what_it_shows": "One-sheet vector long section (MicroStation export) with geology and the Eastbound (black) and Westbound (red) tunnels drawn as crown and invert lines against 'Eastbound Chainage (m)' and 'Reduced Level (mATD)', vertical exaggeration x10. Westbound is drawn only near Stepney Green Junction. The station boxes, shafts and portals are labelled. We digitised the eastbound crown and invert every 50 m (scratchpad/indoor/tunnels/crossrail-eb-tunnel-digitised.csv, 150 rows; script digitise.py). Axis calibration from the tick marks: 28.34 pt per 10 m vertical, 283.47 pt per 1000 m horizontal. Checks: the crown-invert gap is 7.3-7.6 m everywhere (tunnel external size); the Canary Wharf box is drawn 259 m long (published 260 m); the invert at the box (79.2 mATD) is 2.75 m under the published platform slab 81.95 mATD (Arup paper).",
+  "levels_found": [
+   {
+    "place": "Whitechapel station (Elizabeth line platform tunnel)",
+    "what": "invert of the drawn platform tunnel (crown 93.2 mATD)",
+    "value": -17.8,
+    "unit": "m",
+    "datum": "OD (converted from 82.2 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 10300 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "east of Whitechapel",
+    "what": "eastbound running tunnel invert (crown -13.0 m OD)",
+    "value": -20.4,
+    "unit": "m",
+    "datum": "OD (converted from 79.6 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 11000 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "between Stepney Green and Canary Wharf (low point, under Limehouse)",
+    "what": "eastbound tunnel invert (crown -26.4 m OD)",
+    "value": -33.9,
+    "unit": "m",
+    "datum": "OD (converted from 66.1 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 12570 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "Canary Wharf station box, west end",
+    "what": "eastbound tunnel invert at the box wall (crown 86.6 mATD = -13.4 m OD)",
+    "value": -20.8,
+    "unit": "m",
+    "datum": "OD (converted from 79.2 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 13625 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "Canary Wharf station box, east end",
+    "what": "eastbound tunnel invert at the box wall (crown -13.5 m OD); box drawn ch 13625-13884 = 259 m, matching the published 260 m box",
+    "value": -20.8,
+    "unit": "m",
+    "datum": "OD (converted from 79.2 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 13884 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "between Canary Wharf and Limmo (low point, Poplar/Blackwall)",
+    "what": "eastbound tunnel invert (crown -28.4 m OD)",
+    "value": -35.7,
+    "unit": "m",
+    "datum": "OD (converted from 64.3 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 14550 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "Limmo Peninsula shaft, west side",
+    "what": "eastbound tunnel invert",
+    "value": -29.2,
+    "unit": "m",
+    "datum": "OD (converted from 70.8 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 15599 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "Limmo Peninsula shaft, east side",
+    "what": "eastbound tunnel invert",
+    "value": -28.3,
+    "unit": "m",
+    "datum": "OD (converted from 71.7 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 15751 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "approach to Victoria Dock Portal",
+    "what": "eastbound tunnel invert near the portal (crown -1.9 m OD)",
+    "value": -9.2,
+    "unit": "m",
+    "datum": "OD (converted from 90.8 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 16553 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "North Woolwich Portal (start of Thames tunnel)",
+    "what": "eastbound tunnel invert (crown -2.5 m OD)",
+    "value": -9.9,
+    "unit": "m",
+    "datum": "OD (converted from 90.1 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 19576 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "under the River Thames (low point)",
+    "what": "eastbound tunnel invert (crown about -22 m OD)",
+    "value": -29.5,
+    "unit": "m",
+    "datum": "OD (converted from 70.5 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 20250 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "Woolwich station box, west end",
+    "what": "eastbound tunnel invert (crown -0.3 m OD)",
+    "value": -7.8,
+    "unit": "m",
+    "datum": "OD (converted from 92.2 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 20981 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "Woolwich station box, east end",
+    "what": "eastbound tunnel invert",
+    "value": -7.8,
+    "unit": "m",
+    "datum": "OD (converted from 92.2 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 21287 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   },
+   {
+    "place": "approach to Plumstead Portal",
+    "what": "eastbound tunnel invert",
+    "value": -10.5,
+    "unit": "m",
+    "datum": "OD (converted from 89.5 mATD; mATD = OD + 100 m)",
+    "chainage": "eastbound chainage 22555 m",
+    "quote": "digitised from the vector line drawn as 'Eastbound Tunnel' against the axis 'Reduced Level (mATD)'; the sheet says 'Vertical Exaggeration x 10'",
+    "page": "single sheet, lower band (Stepney Green to Plumstead Portal)"
+   }
+  ],
+  "format": "PDF, 1 page 4762 x 842 pt, vector",
+  "licence_or_terms": "Crossrail Learning Legacy; the landing page gives no open licence. The figure is described as part of report CRL1-GCG-C2-DWG-CRG03-50001; the source report says the section is indicative. Use digitised values as cited approximations, do not redistribute the drawing.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "fetched and parsed"
+  },
+  "usable_for_3d": true,
+  "notes": "Accuracy: about +/-1 m vertically from the drawing alone, more from the 'indicative' status. The chainage is the Crossrail eastbound chainage, not a map position; place it by the labelled structures (box ch 13625-13884, Limmo 15599-15751, Victoria Dock Portal about 16550-16920, North Woolwich Portal 19576, Woolwich box 20981-21287, Plumstead Portal about 22555) and the OSM tunnel ways. Landing page: https://learninglegacy.crossrail.co.uk/documents/crossrail-geological-long-section-post-construction-update/ (200 text/html)."
+ },
+ {
+  "id": "silvertown-dco-2-8-engineering-sections",
+  "name": "Silvertown Tunnel DCO, document 2.8 Engineering Section Drawings and Plans, revision R1 (TR010021-001617)",
+  "kind": "plans and sections",
+  "subject": "Silvertown Tunnel (road), Greenwich Peninsula to Tidal Basin",
+  "url": "https://infrastructure.planninginspectorate.gov.uk/wp-content/ipc/uploads/projects/TR010021/TR010021-001617-TfL%202.8%20Engineering%20Section%20Drawings%20and%20Plans%20R1.pdf",
+  "archived_url": "https://web.archive.org/web/20221011171719/https://infrastructure.planninginspectorate.gov.uk/wp-content/ipc/uploads/projects/TR010021/TR010021-001617-TfL%202.8%20Engineering%20Section%20Drawings%20and%20Plans%20R1.pdf",
+  "date": "2016-04-28 (P01) / 2017-04-05 (R1)",
+  "what_it_shows": "26 A3 pages: key plan and 23 sheets. Sheets 1-3 northbound and 4-6 southbound tunnel long sections with a table every 10 m: CHAINAGE, PROPOSED LEVELS (highway alignment) and EXISTING LEVELS (ground or river bed), plus gradients and curve data; sheets 7-12 approach roads; sections A-A to M-M. Sheet notes give MEAN LOW WATER LEVEL -2.9, MEAN WATER LEVEL 0.0, MEAN HIGH WATER LEVEL 3.76. Extracted to scratchpad/indoor/tunnels/silvertown-levels.json (all rows, pages 4-9).",
+  "levels_found": [
+   {
+    "place": "Silvertown Tunnel northbound",
+    "what": "proposed road level, lowest point (existing level, river bed, -10.584)",
+    "value": -25.837,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 2000 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 2000.000 / PROPOSED LEVELS -25.837",
+    "page": "PDF p5/p8 (sheets 2 and 5)"
+   },
+   {
+    "place": "Silvertown Tunnel southbound",
+    "what": "proposed road level, lowest point (existing -10.677)",
+    "value": -25.871,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 2000 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 2000.000 / PROPOSED LEVELS -25.871",
+    "page": "PDF p5/p8 (sheets 2 and 5)"
+   },
+   {
+    "place": "Silvertown Tunnel northbound",
+    "what": "proposed road level (south of the river, Greenwich side)",
+    "value": -11.8,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 1400 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 1400.000 / PROPOSED LEVELS -11.8",
+    "page": "PDF p4 (sheet 1)"
+   },
+   {
+    "place": "Silvertown Tunnel northbound",
+    "what": "proposed road level",
+    "value": -22.096,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 1800 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 1800.000 / PROPOSED LEVELS -22.096",
+    "page": "PDF p5 (sheet 2)"
+   },
+   {
+    "place": "Silvertown Tunnel northbound",
+    "what": "proposed road level (north of the river)",
+    "value": -10.589,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 2400 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 2400.000 / PROPOSED LEVELS -10.589",
+    "page": "PDF p6 (sheet 3)"
+   },
+   {
+    "place": "Silvertown Tunnel northbound",
+    "what": "proposed road level near north portal",
+    "value": -1.917,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 2600 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 2600.000 / PROPOSED LEVELS -1.917",
+    "page": "PDF p6 (sheet 3)"
+   },
+   {
+    "place": "Silvertown Tunnel southbound",
+    "what": "proposed road level",
+    "value": -7.164,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 1200 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 1200.000 / PROPOSED LEVELS -7.164",
+    "page": "PDF p9 (sheet 6)"
+   },
+   {
+    "place": "Silvertown Tunnel southbound",
+    "what": "proposed road level",
+    "value": -18.943,
+    "unit": "m",
+    "datum": "OD (inferred: the sheets give mean water level 0.0 and mean high water 3.76; no datum line is printed)",
+    "chainage": "tunnel chainage 2200 m (runs south to north, about 680 to 2830)",
+    "quote": "CHAINAGE 2200.000 / PROPOSED LEVELS -18.943",
+    "page": "PDF p7 (sheet 4)"
+   }
+  ],
+  "format": "PDF, A3, text layer from AutoCAD (tables extractable)",
+  "licence_or_terms": "Planning Inspectorate DCO application document (TfL); OS base map Crown copyright 100018928. No open licence; levels are cited facts.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "fetched from the Internet Archive (live old-site URL now redirects 301; the same file name on nsip-documents.planninginspectorate.gov.uk returned 404). The current project pages on national-infrastructure-consenting.planninginspectorate.gov.uk disallow AI agents (anthropic-ai, ClaudeBot) in robots.txt, so they were not used."
+  },
+  "usable_for_3d": true,
+  "notes": "Road levels, not tunnel invert. Order: The Silvertown Tunnel Order 2018, https://www.legislation.gov.uk/uksi/2018/574 (200). Outside the Isle of Dogs (east of the Blackwall Tunnel) but inside the wider Docklands box."
+ },
+ {
+  "id": "tfl-silvertown-gi-desk-study",
+  "name": "TfL River Crossings - Ground Investigation Desk Study (Mott MacDonald, 320530/MNC/TUN/002/B, 22 May 2013)",
+  "kind": "paper",
+  "subject": "Blackwall Tunnels, Thames bed, Greenwich Peninsula",
+  "url": "https://content.tfl.gov.uk/st-river-crossings-ground-investigation-desk-study-pssr.pdf",
+  "archived_url": null,
+  "date": "2013-05-22",
+  "what_it_shows": "Desk study for the Silvertown crossing with historic records of the Blackwall Tunnels, scour hollows, river bed levels and strata levels in m OD.",
+  "levels_found": [
+   {
+    "place": "Blackwall Tunnel, upstream (1897) bore",
+    "what": "invert level through the gravel-filled hollow",
+    "value": -20.4,
+    "unit": "m",
+    "datum": "OD",
+    "chainage": null,
+    "quote": "the tunnelling in 1895-6 passed through a gravel and sand-filled hollow about 183 metres broad, at invert levels of about -20.4 mOD",
+    "page": "PDF p27 (report p18-19)"
+   },
+   {
+    "place": "Blackwall Tunnel, second (1960s) bore, about 213 m downstream",
+    "what": "invert level",
+    "value": -24.4,
+    "unit": "m",
+    "datum": "OD",
+    "chainage": null,
+    "quote": "Tunnelling in 1963 passed through a hollow of similar width to the upstream tunnel at invert levels of about -24.4mOD",
+    "page": "PDF p27"
+   },
+   {
+    "place": "River Thames on the Blackwall Tunnel line",
+    "what": "deepest part of scour hole",
+    "value": -30.5,
+    "unit": "m",
+    "datum": "OD",
+    "chainage": null,
+    "quote": "deepest known part occurring within the River Thames at approximately -30.5 mOD",
+    "page": "PDF p27"
+   },
+   {
+    "place": "River Thames at the crossing",
+    "what": "river bed, transverse range",
+    "value": -10,
+    "unit": "m",
+    "datum": "OD",
+    "chainage": null,
+    "quote": "The bed of the Thames is anticipated to have a gentle transverse dip ranging from -3 m AOD to -10 m AOD.",
+    "page": "text line 729"
+   }
+  ],
+  "format": "PDF, 99 pages",
+  "licence_or_terms": "TfL published document; no open licence stated",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "fetched and searched"
+  },
+  "usable_for_3d": true,
+  "notes": "Closes the README gap 'depths of the Blackwall Tunnel'. Also mentions JLE Thames-crossing boreholes but gives no JLE tunnel levels. Page 77 notes 'extremely low ground cover beneath the river ... northbound Blackwall Tunnel'."
+ },
+ {
+  "id": "ice-tideway-kemp-2025",
+  "name": "Thames Tideway Tunnel: King Edward Memorial Park Foreshore: collaborative major change (ICE Civil Engineering 178(6), 2025)",
+  "kind": "paper",
+  "subject": "Tideway main tunnel shaft at King Edward Memorial Park (Shadwell)",
+  "url": "https://doi.org/10.1680/jcien.25.00021",
+  "archived_url": null,
+  "date": "2025",
+  "what_it_shows": "Design and construction of the KEMP CSO site; Figure 10 section with levels in mATD.",
+  "levels_found": [
+   {
+    "place": "King Edward Memorial Park foreshore",
+    "what": "foreshore level (Figure 10)",
+    "value": -3.4,
+    "unit": "m",
+    "datum": "OD (96.6 mATD)",
+    "chainage": null,
+    "quote": "foreshore level at 96.6 metres A T D",
+    "page": "Figure 10 caption"
+   },
+   {
+    "place": "King Edward Memorial Park",
+    "what": "cofferdam platform (Figure 10)",
+    "value": 4.6,
+    "unit": "m",
+    "datum": "OD (104.6 mATD)",
+    "chainage": null,
+    "quote": "cofferdam platform at 104.6 metres A T D",
+    "page": "Figure 10 caption"
+   },
+   {
+    "place": "King Edward Memorial Park drop shaft",
+    "what": "shaft depth",
+    "value": 60,
+    "unit": "m",
+    "datum": "depth",
+    "chainage": null,
+    "quote": "a 20 m dia., 60 m deep drop shaft",
+    "page": "section 2.1"
+   }
+  ],
+  "format": "HTML/PDF article",
+  "licence_or_terms": "CC BY 4.0 (stated on the article page)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 302,
+   "content_type": "redirect to emerald.com (403 to curl; read through the WebFetch tool)",
+   "status": "DOI resolves; article page blocks our curl client"
+  },
+  "usable_for_3d": true,
+  "notes": "Tideway ES volume 21 (https://www.tideway.london/media/1749/6221-environmental-statement-volume-21-king-edward-memorial-park-foreshore-site-assessment-sections-1-to-15.pdf, 200 application/pdf, PDF p24) says 'depth (to invert level) of 60 metres' measured 'from the proposed final ground level'. If that ground is the 104.6 mATD platform, the shaft invert is about 44.6 mATD (-55.4 m OD): an inference, not a published value. Companion open-access paper: https://doi.org/10.1680/jcien.25.00054 (design; no invert levels found in it)."
+ },
+ {
+  "id": "tideway-dco-works-plans-sections",
+  "name": "Thames Tideway Tunnel Order 2014: works plans and sections DCO-WP-000-ZZZZZ-010001 to 010060",
+  "kind": "plans and sections",
+  "subject": "Tideway main tunnel, Greenwich connection tunnel, Chambers Wharf, KEMP, Abbey Mills",
+  "url": "https://www.legislation.gov.uk/uksi/2014/2384",
+  "archived_url": null,
+  "date": "2014",
+  "what_it_shows": "The Order (SI 2014/2384) certifies works plans and sections that show the tunnel alignments and levels. We did not obtain the sheets.",
+  "levels_found": [],
+  "format": "PDF drawings (not retrieved)",
+  "licence_or_terms": "DCO documents; no open licence",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html;charset=utf-8",
+   "status": "Order page only"
+  },
+  "usable_for_3d": false,
+  "notes": "Blocked: the project document list (national-infrastructure-consenting.planninginspectorate.gov.uk/projects/WW010001/documents) is disallowed to AI agents in robots.txt; the Internet Archive index of the old site lists ES and planning documents but not the plan sheets; the 7.18 Engineering Design Statement (archived) cut off at 1 MB on four tries. Next step: ask the owner to download the works plans and sections by hand, or request them from Tideway."
+ },
+ {
+  "id": "crossrail-act-2008",
+  "name": "Crossrail Act 2008 (deposited plans and sections for the Elizabeth line)",
+  "kind": "plans and sections",
+  "subject": "Crossrail Act 2008 (deposited plans and sections for the Elizabeth line)",
+  "url": "https://www.legislation.gov.uk/ukpga/2008/18/contents",
+  "archived_url": null,
+  "date": "2008",
+  "what_it_shows": "Act text only; it names deposited plans and sections",
+  "levels_found": [],
+  "format": "HTML",
+  "licence_or_terms": "Act text: Open Government Licence (legislation.gov.uk)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html;charset=utf-8",
+   "status": "Act page only; plans not available online"
+  },
+  "usable_for_3d": false,
+  "notes": "The Act refers to deposited plans and sections (centre line, lateral limits, a level per work). They are not on legislation.gov.uk and no online copy was found. Crossrail information paper B2 (https://learninglegacy.crossrail.co.uk/wp-content/uploads/2023/03/b2limitsofdeviation.pdf, 200 application/pdf): vertical limits 'not exceeding three metres upwards and to any extent downwards' (six metres for three tunnel sections). Paper copies: Parliamentary Archives (deposited plans), not searched online."
+ },
+ {
+  "id": "lu-act-1992-jle",
+  "name": "London Underground Act 1992 (Jubilee Line Extension)",
+  "kind": "plans and sections",
+  "subject": "London Underground Act 1992 (Jubilee Line Extension)",
+  "url": "https://www.legislation.gov.uk/ukla/1992/3/enacted",
+  "archived_url": null,
+  "date": "1992",
+  "what_it_shows": "Act text only; it names deposited plans and sections",
+  "levels_found": [],
+  "format": "HTML",
+  "licence_or_terms": "Act text: Open Government Licence (legislation.gov.uk)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html;charset=utf-8",
+   "status": "Act page only; plans not available online"
+  },
+  "usable_for_3d": false,
+  "notes": "Section 4: works 'according to the levels shown on the deposited sections' (deposited November 1989, May 1990, November 1990). Sections not online. Tunnel levels between stations: TfL refused them in FOI 1700-1213 (section 38)."
+ },
+ {
+  "id": "dlr-lewisham-act-1993",
+  "name": "London Docklands Railway (Lewisham) Act 1993",
+  "kind": "plans and sections",
+  "subject": "London Docklands Railway (Lewisham) Act 1993",
+  "url": "https://www.legislation.gov.uk/ukla/1993/7/enacted",
+  "archived_url": null,
+  "date": "1993",
+  "what_it_shows": "Act text only; it names deposited plans and sections",
+  "levels_found": [],
+  "format": "HTML",
+  "licence_or_terms": "Act text: Open Government Licence (legislation.gov.uk)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html;charset=utf-8",
+   "status": "Act page only; plans not available online"
+  },
+  "usable_for_3d": false,
+  "notes": "DLR Island Gardens to Lewisham under the Thames. Deposited sections not online."
+ },
+ {
+  "id": "ice-jle-tunnels-1999",
+  "name": "Design and construction of the Jubilee Line Extension tunnels (Proc. ICE Civil Engineering 132(6) 26-35, 1999)",
+  "kind": "paper",
+  "subject": "Jubilee line tunnels incl. Thames crossings near Canary Wharf and North Greenwich",
+  "url": "https://doi.org/10.1680/icien.1999.132.6.26",
+  "archived_url": null,
+  "date": "1999-11",
+  "what_it_shows": "Not read: paywalled (DOI redirects to emerald.com, which returns 403 to our client).",
+  "levels_found": [],
+  "format": "PDF (paywall)",
+  "licence_or_terms": "publisher copyright",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 302,
+   "content_type": "redirect to http://www.emerald.com/jcien/article/132/6/26-35/398247",
+   "status": "not read"
+  },
+  "usable_for_3d": false,
+  "notes": "Same issue has papers on Westminster station and station architecture. CIRIA SP200 (2001, JLE building response to tunnelling) is cited by the TfL desk study; print only."
+ },
+ {
+  "id": "dlr-lewisham-slurry-shield-paper",
+  "name": "Observations of ground movements during tunnel construction by slurry shield method at the DLR Lewisham Extension (Soils and Foundations)",
+  "kind": "paper",
+  "subject": "DLR Island Gardens to Greenwich tunnels under the Thames",
+  "url": "https://www.sciencedirect.com/science/article/pii/S0038080620310908",
+  "archived_url": null,
+  "date": "1990s",
+  "what_it_shows": "Abstract only: twin bored tunnels Island Gardens to Greenwich, about 4.2 km, slurry shield 5.85 m diameter, 'at shallow depth' in Woolwich and Reading Beds. No level read.",
+  "levels_found": [],
+  "format": "article",
+  "licence_or_terms": "unknown (page 403)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 403,
+   "content_type": "text/html",
+   "status": "blocked to our client"
+  },
+  "usable_for_3d": false,
+  "notes": "No DLR tunnel or Island Gardens platform level found anywhere. Cutty Sark '20 m below street' (Wikipedia) remains the only DLR control."
+ },
+ {
+  "id": "diamondgeezer-how-deep-is-crossrail",
+  "name": "diamond geezer: How deep is Crossrail? (blog, 2024-01-06)",
+  "kind": "other",
+  "subject": "Elizabeth line station depths",
+  "url": "https://diamondgeezer.blogspot.com/2024/01/how-deep-is-crossrail.html",
+  "archived_url": null,
+  "date": "2024-01-06",
+  "what_it_shows": "Platform depths estimated by the author from the Crossrail geological long section, relative to sea level; says TfL refused the data.",
+  "levels_found": [
+   {
+    "place": "Whitechapel Elizabeth line",
+    "what": "platform, blog estimate",
+    "value": -14,
+    "unit": "m",
+    "datum": "sea level (blog)",
+    "chainage": null,
+    "quote": "14m below",
+    "page": "web page"
+   },
+   {
+    "place": "Canary Wharf Elizabeth line",
+    "what": "platform, blog estimate",
+    "value": -19,
+    "unit": "m",
+    "datum": "sea level (blog)",
+    "chainage": null,
+    "quote": "19m below",
+    "page": "web page"
+   },
+   {
+    "place": "Woolwich Elizabeth line",
+    "what": "platform, blog estimate",
+    "value": -7,
+    "unit": "m",
+    "datum": "sea level (blog)",
+    "chainage": null,
+    "quote": "7m below",
+    "page": "web page"
+   }
+  ],
+  "format": "HTML",
+  "licence_or_terms": "blog, all rights reserved (cite only)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=UTF-8",
+   "status": "fetched"
+  },
+  "usable_for_3d": false,
+  "notes": "Secondary; agrees roughly with our own digitising. Custom House is 'above ground' in the blog."
+ },
+ {
+  "id": "tfl-3d-station-diagrams-foi",
+  "name": "TfL axonometric 3D station diagrams (FOI response, WhatDoTheyKnow 'maps_of_public_corridors_on_larg'), Jubilee line file",
+  "kind": "3D model",
+  "subject": "Jubilee line stations incl. Canary Wharf, Canada Water, North Greenwich (drawings, not model files)",
+  "url": "https://www.whatdotheyknow.com/request/maps_of_public_corridors_on_larg",
+  "archived_url": "https://web.archive.org/web/20250924072810/https://www.whatdotheyknow.com/request/maps_of_public_corridors_on_larg/response/674923/attach/6/3d%20jubilee%20stations%20Redacted.pdf",
+  "date": "FOI response 674923 (archived 2025-09-24)",
+  "what_it_shows": "Axonometric drawings of public corridors, escalators and platforms per station (redacted). Mirror article: https://www.ianvisits.co.uk/articles/3d-maps-of-every-underground-station-cdefg-14651/ (200).",
+  "levels_found": [],
+  "format": "PDF drawings",
+  "licence_or_terms": "ianVisits: 'Copyright of the diagrams is owned by TfL. If you would like to re-use the information please contact TfL.' Reference only.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf (archive index)",
+   "status": "index entry checked; file not downloaded"
+  },
+  "usable_for_3d": false,
+  "notes": "Useful by eye for the station layout (levels of concourses relative to platforms); not for copying."
+ },
+ {
+  "id": "sketchfab-95a251ff",
+  "name": "Greenwich Foot Tunnel North (Sketchfab, artfletch)",
+  "kind": "3D model",
+  "subject": "Greenwich foot tunnel, north rotunda at Island Gardens",
+  "url": "https://sketchfab.com/3d-models/greenwich-foot-tunnel-north-95a251ff2d054fc7a4ba260a8d8110cb",
+  "archived_url": null,
+  "date": "2020-12-04",
+  "what_it_shows": "Videogrammetry capture of the north entrance and part of the tunnel, Island Gardens. Page 200 text/html.",
+  "levels_found": [],
+  "format": "Sketchfab model, 2131795 faces; download (glTF/GLB) needs a Sketchfab login, so not downloaded",
+  "licence_or_terms": "CC BY 4.0 (Sketchfab API license 'CC Attribution', slug 'by'); credit artfletch",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json (api.sketchfab.com/v3/models/95a251ff2d054fc7a4ba260a8d8110cb)",
+   "status": "licence read from the API"
+  },
+  "usable_for_3d": true,
+  "notes": "Credit line: 'Greenwich Foot Tunnel North' by artfletch (Sketchfab), CC BY 4.0."
+ },
+ {
+  "id": "sketchfab-d5279893",
+  "name": "Brunel Museum Tunnel Shaft and Engine House (Sketchfab, PhilHudson)",
+  "kind": "3D model",
+  "subject": "Thames Tunnel (Rotherhithe shaft)",
+  "url": "https://sketchfab.com/3d-models/brunel-museum-tunnel-shaft-and-engine-house-d5279893aa524e06b0df6d47406b7a20",
+  "archived_url": null,
+  "date": "2023-11-04",
+  "what_it_shows": "Scan of the Thames Tunnel shaft and engine house at Rotherhithe. Model page returned 202 (challenge) to curl; API 200.",
+  "levels_found": [],
+  "format": "Sketchfab model, 0 faces; download (glTF/GLB) needs a Sketchfab login, so not downloaded",
+  "licence_or_terms": "CC BY 4.0 (Sketchfab API license 'CC Attribution', slug 'by'); credit PhilHudson",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json (api.sketchfab.com/v3/models/d5279893aa524e06b0df6d47406b7a20)",
+   "status": "licence read from the API"
+  },
+  "usable_for_3d": true,
+  "notes": "Credit line: 'Brunel Museum Tunnel Shaft and Engine House' by PhilHudson (Sketchfab), CC BY 4.0."
+ },
+ {
+  "id": "sketchfab-3f456f2d",
+  "name": "Blackwall Basin Swing Bridge Feature (Sketchfab, artfletch)",
+  "kind": "3D model",
+  "subject": "Blackwall Basin / Poplar Dock lock, Isle of Dogs (street object)",
+  "url": "https://sketchfab.com/3d-models/blackwall-basin-swing-bridge-feature-3f456f2dd27f4dae9683fca01e685364",
+  "archived_url": null,
+  "date": "2022-12-12",
+  "what_it_shows": "Photogrammetry of the swing bridge anchor at the Blackwall Basin to Poplar Dock cut.",
+  "levels_found": [],
+  "format": "Sketchfab model, 388248 faces; download (glTF/GLB) needs a Sketchfab login, so not downloaded",
+  "licence_or_terms": "CC BY 4.0 (Sketchfab API license 'CC Attribution', slug 'by'); credit artfletch",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json (api.sketchfab.com/v3/models/3f456f2dd27f4dae9683fca01e685364)",
+   "status": "licence read from the API"
+  },
+  "usable_for_3d": true,
+  "notes": "Credit line: 'Blackwall Basin Swing Bridge Feature' by artfletch (Sketchfab), CC BY 4.0."
+ },
+ {
+  "id": "sketchfab-b364f976",
+  "name": "1959 Tube Driver Car - London Underground (Sketchfab, timblewee)",
+  "kind": "3D model",
+  "subject": "tube train (1959 stock; not a Jubilee 1996 stock)",
+  "url": "https://sketchfab.com/3d-models/1959-tube-driver-car-london-underground-b364f976f2374335b5ec3627c6a4bf59",
+  "archived_url": null,
+  "date": "2022-02-27",
+  "what_it_shows": "Hand-made model; author says it uses artistic licence.",
+  "levels_found": [],
+  "format": "Sketchfab model, 345008 faces; download (glTF/GLB) needs a Sketchfab login, so not downloaded",
+  "licence_or_terms": "CC BY 4.0 (Sketchfab API license 'CC Attribution', slug 'by'); credit timblewee",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json (api.sketchfab.com/v3/models/b364f976f2374335b5ec3627c6a4bf59)",
+   "status": "licence read from the API"
+  },
+  "usable_for_3d": true,
+  "notes": "Credit line: '1959 Tube Driver Car - London Underground' by timblewee (Sketchfab), CC BY 4.0."
+ },
+ {
+  "id": "sketchfab-a6718eff",
+  "name": "Bombardier S Stock London Underground (Sketchfab, timblewee)",
+  "kind": "3D model",
+  "subject": "sub-surface train (Metropolitan line S stock; District line at West Ham/Whitechapel uses S7)",
+  "url": "https://sketchfab.com/3d-models/bombardier-s-stock-london-underground-a6718eff2dc843c48fd54376b4c70b06",
+  "archived_url": null,
+  "date": "2022-02-06",
+  "what_it_shows": "Rigged doors.",
+  "levels_found": [],
+  "format": "Sketchfab model, 585045 faces; download (glTF/GLB) needs a Sketchfab login, so not downloaded",
+  "licence_or_terms": "CC BY 4.0 (Sketchfab API license 'CC Attribution', slug 'by'); credit timblewee",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json (api.sketchfab.com/v3/models/a6718eff2dc843c48fd54376b4c70b06)",
+   "status": "licence read from the API"
+  },
+  "usable_for_3d": true,
+  "notes": "Credit line: 'Bombardier S Stock London Underground' by timblewee (Sketchfab), CC BY 4.0."
+ },
+ {
+  "id": "sketchfab-a328bfb4",
+  "name": "London Tube Station Hub Environment (Sketchfab, Aceantt)",
+  "kind": "3D model",
+  "subject": "generic tube station kit (not a real station)",
+  "url": "https://sketchfab.com/3d-models/london-tube-station-hub-environment-a328bfb44aea431b95320e1c207c346a",
+  "archived_url": null,
+  "date": "2020-01-06",
+  "what_it_shows": "Modular low-poly game kit.",
+  "levels_found": [],
+  "format": "Sketchfab model, 37958 faces; download (glTF/GLB) needs a Sketchfab login, so not downloaded",
+  "licence_or_terms": "CC BY 4.0 (Sketchfab API license 'CC Attribution', slug 'by'); credit Aceantt",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json (api.sketchfab.com/v3/models/a328bfb44aea431b95320e1c207c346a)",
+   "status": "licence read from the API"
+  },
+  "usable_for_3d": true,
+  "notes": "Credit line: 'London Tube Station Hub Environment' by Aceantt (Sketchfab), CC BY 4.0."
+ },
+ {
+  "id": "google-photorealistic-3d-tiles",
+  "name": "Google Photorealistic 3D Tiles (Map Tiles API)",
+  "kind": "API",
+  "subject": "surface buildings and stations (no underground)",
+  "url": "https://developers.google.com/maps/documentation/tile/3d-tiles",
+  "archived_url": null,
+  "date": "current",
+  "what_it_shows": "Textured mesh tiles of London",
+  "levels_found": [],
+  "format": "OGC 3D Tiles",
+  "licence_or_terms": "Google Maps Platform terms; API key; no caching or export",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "docs page"
+  },
+  "usable_for_3d": false,
+  "notes": "Record only; needs a key."
+ },
+ {
+  "id": "cesium-osm-buildings",
+  "name": "Cesium OSM Buildings",
+  "kind": "API",
+  "subject": "surface buildings",
+  "url": "https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/",
+  "archived_url": null,
+  "date": "current",
+  "what_it_shows": "OSM building extrusions as 3D Tiles",
+  "levels_found": [],
+  "format": "3D Tiles via Cesium ion (token)",
+  "licence_or_terms": "ODbL data; Cesium ion terms; token needed",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "page"
+  },
+  "usable_for_3d": false,
+  "notes": "Adds nothing over our own OSM + LiDAR heights."
+ },
+ {
+  "id": "overture-buildings",
+  "name": "Overture Maps buildings theme",
+  "kind": "dataset",
+  "subject": "surface buildings (heights where known)",
+  "url": "https://docs.overturemaps.org/guides/buildings/",
+  "archived_url": null,
+  "date": "current",
+  "what_it_shows": "Building footprints with height and floor counts from OSM and other sources",
+  "levels_found": [],
+  "format": "GeoParquet",
+  "licence_or_terms": "ODbL for the theme (includes OSM)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "docs page"
+  },
+  "usable_for_3d": false,
+  "notes": "Share-alike; covered by the owner's ODbL decision only if treated like OSM; ask first. No underground data."
+ },
+ {
+  "id": "crossrail-bim-learning-legacy",
+  "name": "Crossrail Project: Application of BIM and Lessons Learned; Crossrail BIM Principles",
+  "kind": "paper",
+  "subject": "Elizabeth line station and tunnel BIM",
+  "url": "https://learninglegacy.crossrail.co.uk/documents/crossrail-project-application-of-bim-building-information-modelling-and-lessons-learned/",
+  "archived_url": null,
+  "date": "2016-2017",
+  "what_it_shows": "Process documents. No model files (IFC, glTF) are published.",
+  "levels_found": [],
+  "format": "HTML + PDF (BIM Principles: https://learninglegacy.crossrail.co.uk/wp-content/uploads/2017/02/12F-002-03_Crossrail-BIM-Principles_CR-XRL-Z3-RGN-CR001-50005-Revision-5.0.pdf, 200 application/pdf)",
+  "licence_or_terms": "no open licence stated",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "fetched"
+  },
+  "usable_for_3d": false,
+  "notes": "No public BIM, IFC or CityGML of TfL or Crossrail stations or tunnels was found. TfL's open data has station topology (already used) but no 3D geometry."
+ },
+ {
+  "id": "wikipedia-foot-tunnels",
+  "name": "Wikipedia: Greenwich foot tunnel; Woolwich foot tunnel",
+  "kind": "other",
+  "subject": "Greenwich and Woolwich foot tunnels",
+  "url": "https://en.wikipedia.org/wiki/Greenwich_foot_tunnel",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "Lengths and depths without a datum",
+  "levels_found": [
+   {
+    "place": "Greenwich foot tunnel",
+    "what": "depth",
+    "value": 15.2,
+    "unit": "m",
+    "datum": "none stated",
+    "chainage": null,
+    "quote": "The cast-iron tunnel is 370.2 metres (1,215 ft) long, 15.2 metres (50 ft) deep and has an internal diameter of about 9 feet (2.74 m).",
+    "page": "article"
+   },
+   {
+    "place": "Woolwich foot tunnel",
+    "what": "roof below river bed at deepest",
+    "value": 3,
+    "unit": "m",
+    "datum": "below river bed",
+    "chainage": null,
+    "quote": "at its deepest, the tunnel roof is about 3 metres (9.8 ft) below the river bed",
+    "page": "https://en.wikipedia.org/wiki/Woolwich_foot_tunnel"
+   }
+  ],
+  "format": "HTML",
+  "licence_or_terms": "CC BY-SA 4.0 text (facts only cited)",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=UTF-8",
+   "status": "both pages"
+  },
+  "usable_for_3d": true,
+  "notes": "Weak controls (no datum)."
+ }
+]

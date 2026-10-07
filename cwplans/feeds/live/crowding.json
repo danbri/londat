@@ -1,0 +1,414 @@
+{
+ "meta": {
+  "source": "crowding",
+  "url": "https://api.tfl.gov.uk/crowding/{naptan}/Live",
+  "fetched": "2026-10-04T08:27:12.011Z",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
+  "method": "GET /crowding/{naptan}/Live for every Tube, DLR, Elizabeth line and Overground station naptan in the zone, one at a time; percentageOfBaseline as published (a fraction of the typical busyness for that time of day, from Wi-Fi and gate data); stations with dataAvailable false or 404 are counted, not listed",
+  "counts": {
+   "items": 20,
+   "model_box": 20,
+   "east_margin": 0,
+   "asked": 65,
+   "no_data": 45,
+   "not_found": 0
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "910GCANWHRF",
+   "kind": "station-busyness",
+   "name": "Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.506203,
+    "lon": -0.018834
+   },
+   "values": {
+    "percentage_of_baseline": 0.096,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "elizabeth-line"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/910GCANWHRF/Live"
+  },
+  {
+   "id": "910GLIVSTLL",
+   "kind": "station-busyness",
+   "name": "Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.517721,
+    "lon": -0.082043
+   },
+   "values": {
+    "percentage_of_baseline": 0.069,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "elizabeth-line"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/910GLIVSTLL/Live"
+  },
+  {
+   "id": "910GWCHAPXR",
+   "kind": "station-busyness",
+   "name": "Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.520392,
+    "lon": -0.060121
+   },
+   "values": {
+    "percentage_of_baseline": 0.098,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "elizabeth-line"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/910GWCHAPXR/Live"
+  },
+  {
+   "id": "940GZZLUADE",
+   "kind": "station-busyness",
+   "name": "Aldgate East Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.515037,
+    "lon": -0.072384
+   },
+   "values": {
+    "percentage_of_baseline": 0.124,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUADE/Live"
+  },
+  {
+   "id": "940GZZLUALD",
+   "kind": "station-busyness",
+   "name": "Aldgate Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.514246,
+    "lon": -0.075689
+   },
+   "values": {
+    "percentage_of_baseline": 0.035,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUALD/Live"
+  },
+  {
+   "id": "940GZZLUBMY",
+   "kind": "station-busyness",
+   "name": "Bermondsey Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:16:00.000Z",
+   "position": {
+    "lat": 51.49775,
+    "lon": -0.063993
+   },
+   "values": {
+    "percentage_of_baseline": 0.002,
+    "time_local": "2026-10-04 09:16:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUBMY/Live"
+  },
+  {
+   "id": "940GZZLUBNK",
+   "kind": "station-busyness",
+   "name": "Bank Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:16:00.000Z",
+   "position": {
+    "lat": 51.513132,
+    "lon": -0.090047
+   },
+   "values": {
+    "percentage_of_baseline": 0.031,
+    "time_local": "2026-10-04 09:16:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUBNK/Live"
+  },
+  {
+   "id": "940GZZLUBOR",
+   "kind": "station-busyness",
+   "name": "Borough Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:16:00.000Z",
+   "position": {
+    "lat": 51.501199,
+    "lon": -0.09337
+   },
+   "values": {
+    "percentage_of_baseline": 0.067,
+    "time_local": "2026-10-04 09:16:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUBOR/Live"
+  },
+  {
+   "id": "940GZZLUCST",
+   "kind": "station-busyness",
+   "name": "Cannon Street Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.51151,
+    "lon": -0.090432
+   },
+   "values": {
+    "percentage_of_baseline": 0.066,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUCST/Live"
+  },
+  {
+   "id": "940GZZLUCWR",
+   "kind": "station-busyness",
+   "name": "Canada Water Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.497931,
+    "lon": -0.049405
+   },
+   "values": {
+    "percentage_of_baseline": 0.004,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUCWR/Live"
+  },
+  {
+   "id": "940GZZLUCYF",
+   "kind": "station-busyness",
+   "name": "Canary Wharf Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:16:00.000Z",
+   "position": {
+    "lat": 51.503488,
+    "lon": -0.018246
+   },
+   "values": {
+    "percentage_of_baseline": 0.014,
+    "time_local": "2026-10-04 09:16:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUCYF/Live"
+  },
+  {
+   "id": "940GZZLULNB",
+   "kind": "station-busyness",
+   "name": "London Bridge Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.505721,
+    "lon": -0.088873
+   },
+   "values": {
+    "percentage_of_baseline": 0.06,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLULNB/Live"
+  },
+  {
+   "id": "940GZZLULVT",
+   "kind": "station-busyness",
+   "name": "Liverpool Street Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.517372,
+    "lon": -0.083182
+   },
+   "values": {
+    "percentage_of_baseline": 0.066,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLULVT/Live"
+  },
+  {
+   "id": "940GZZLUMGT",
+   "kind": "station-busyness",
+   "name": "Moorgate Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.518176,
+    "lon": -0.088322
+   },
+   "values": {
+    "percentage_of_baseline": 0.052,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUMGT/Live"
+  },
+  {
+   "id": "940GZZLUMMT",
+   "kind": "station-busyness",
+   "name": "Monument Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.5107,
+    "lon": -0.085969
+   },
+   "values": {
+    "percentage_of_baseline": 0.032,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUMMT/Live"
+  },
+  {
+   "id": "940GZZLUMSH",
+   "kind": "station-busyness",
+   "name": "Mansion House Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.512117,
+    "lon": -0.094009
+   },
+   "values": {
+    "percentage_of_baseline": 0.055,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUMSH/Live"
+  },
+  {
+   "id": "940GZZLUNGW",
+   "kind": "station-busyness",
+   "name": "North Greenwich Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.50047,
+    "lon": 0.004287
+   },
+   "values": {
+    "percentage_of_baseline": 0.026,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUNGW/Live"
+  },
+  {
+   "id": "940GZZLUSGN",
+   "kind": "station-busyness",
+   "name": "Stepney Green Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.521858,
+    "lon": -0.046596
+   },
+   "values": {
+    "percentage_of_baseline": 0.101,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUSGN/Live"
+  },
+  {
+   "id": "940GZZLUTWH",
+   "kind": "station-busyness",
+   "name": "Tower Hill Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.509971,
+    "lon": -0.076546
+   },
+   "values": {
+    "percentage_of_baseline": 0.1,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUTWH/Live"
+  },
+  {
+   "id": "940GZZLUWPL",
+   "kind": "station-busyness",
+   "name": "Whitechapel Underground Station",
+   "zone": "model",
+   "time": "2026-10-04T08:21:00.000Z",
+   "position": {
+    "lat": 51.519518,
+    "lon": -0.059971
+   },
+   "values": {
+    "percentage_of_baseline": 0.112,
+    "time_local": "2026-10-04 09:21:00",
+    "modes": [
+     "tube"
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/crowding/940GZZLUWPL/Live"
+  }
+ ]
+}

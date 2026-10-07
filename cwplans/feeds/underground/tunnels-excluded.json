@@ -1,0 +1,102 @@
+[
+ {
+  "name": "Docklands Light Rail B92 Stock (Sketchfab, bjm042703)",
+  "url": "https://sketchfab.com/3d-models/docklands-light-rail-b92-stock-321640894ffc460b81c440e74e97ebad",
+  "reason": "no licence, not downloadable"
+ },
+ {
+  "name": "DLR B07 Rolling Stock (Sketchfab, josiahsal)",
+  "url": "https://api.sketchfab.com/v3/search?type=models&q=DLR%20train",
+  "reason": "no licence, not downloadable (found in search results)"
+ },
+ {
+  "name": "Bristish Railway Class 345 TFL Train Untextured (Sketchfab)",
+  "url": "https://sketchfab.com/3d-models/bristish-railway-class-345-tfl-train-untextured-0401bf6c99ad471d96f3bb1aa8e1ea7a",
+  "reason": "no licence, not downloadable"
+ },
+ {
+  "name": "BECTON DLR DEPOT (Sketchfab, PeeJaa)",
+  "url": "https://sketchfab.com/3d-models/becton-dlr-depot-93c498aeaa3444eba1a7726fc6e39ca6",
+  "reason": "Sketchfab 'Free Standard' licence, not CC0/CC BY"
+ },
+ {
+  "name": "THAMES BARRIER (Sketchfab, PeeJaa)",
+  "url": "https://api.sketchfab.com/v3/search?type=models&q=north%20greenwich",
+  "reason": "'Free Standard' licence"
+ },
+ {
+  "name": "One Canada Square London; HSBC Building; UK London Canary Wharf lumaai; Cadmapper Isle of Dogs (Sketchfab)",
+  "url": "https://sketchfab.com/3d-models/cadmapper-isle-of-dogs-cc072cf764774763843f00e6d0c1dd5e",
+  "reason": "no licence, not downloadable"
+ },
+ {
+  "name": "LEGO London Tube 1996 Stock Train MOC (Sketchfab, bobbybrix)",
+  "url": "https://api.sketchfab.com/v3/search?type=models&q=1996%20stock",
+  "reason": "CC BY-NC (non-commercial)"
+ },
+ {
+  "name": "Greenwich Power Station Art 8K (Sketchfab)",
+  "url": "https://api.sketchfab.com/v3/search?type=models&q=cutty%20sark",
+  "reason": "CC BY-SA (share-alike, not allowed without the owner)"
+ },
+ {
+  "name": "London Underground Train at Platform (Sketchfab, moussasy.sy715)",
+  "url": "https://sketchfab.com/3d-models/london-underground-train-at-platform-5066c6382dba43c79b75835fa66eaa0c",
+  "reason": "CC BY but AI-generated (Meshy) generic scene; low value"
+ },
+ {
+  "name": "Planning Inspectorate project pages (WW010001, TR010021)",
+  "url": "https://national-infrastructure-consenting.planninginspectorate.gov.uk/projects/WW010001/documents",
+  "reason": "robots.txt disallows AI agents (anthropic-ai, ClaudeBot, Claude-Web); not used beyond one status check"
+ },
+ {
+  "name": "WhatDoTheyKnow (live)",
+  "url": "https://www.whatdotheyknow.com/request/depth_of_tube_stations_and_tube",
+  "reason": "Cloudflare bot challenge (403); Internet Archive copies used instead"
+ },
+ {
+  "name": "tfl.gov.uk FOI pages (live)",
+  "url": "https://tfl.gov.uk/corporate/transparency/freedom-of-information/foi-request-detail?referenceId=FOI-0493-2223",
+  "reason": "403 to our client; Internet Archive copy used; the CSV on foi.tfl.gov.uk is live"
+ },
+ {
+  "name": "Tideway 7.18 Engineering Design Statement (archived)",
+  "url": "https://web.archive.org/web/20210128120652/https://infrastructure.planninginspectorate.gov.uk/wp-content/ipc/uploads/projects/WW010001/WW010001-001203-7.18_Engineering_Design_Statement.pdf",
+  "reason": "download cut at 1 MB four times (archive connection resets); not read"
+ },
+ {
+  "name": "majorprojects.org copies of ICE Tideway papers",
+  "url": "https://majorprojects.org/wp-content/uploads/2026/01/jcien.25.00054en.pdf",
+  "reason": "202 bot challenge; the DOI versions were used"
+ },
+ {
+  "name": "Londonist: How deep is your tube station?",
+  "url": "https://londonist.com/london/transport/how-deep-is-your-commute-these-diagrams-show-the-depth-of-each-station",
+  "reason": "403; secondary to the TfL FOI data"
+ },
+ {
+  "name": "ckanz/3d-tube-visualisation (GitHub)",
+  "url": "https://github.com/ckanz/3d-tube-visualisation",
+  "reason": "GitHub blocked through the session proxy (403); licence not checked; secondary to the TfL FOI data"
+ },
+ {
+  "name": "OS NGD Buildings product page",
+  "url": "https://www.ordnancesurvey.co.uk/products/os-ngd-buildings",
+  "reason": "404 (guessed path, not used); OS NGD building heights are a premium product in any case"
+ },
+ {
+  "name": "AccuCities and VU.CITY London models",
+  "url": "https://www.accucities.com/",
+  "reason": "commercial models; recorded only (https://www.vu.city/ also 200)"
+ },
+ {
+  "name": "Crossrail 'Machine-driven tunnels on the Elizabeth line' paper",
+  "url": "https://learninglegacy.crossrail.co.uk/wp-content/uploads/2017/04/Machine-driven-tunnels-on-the-Elizabeth-line-London.pdf",
+  "reason": "fetched; no levels"
+ },
+ {
+  "name": "Limehouse Link ISSMGE 1994 paper",
+  "url": "https://www.issmge.org/uploads/publications/1/32/1994_02_0101.pdf",
+  "reason": "scanned PDF, no text layer; already in FACTS.md (base slab about 20 m below ground)"
+ }
+]

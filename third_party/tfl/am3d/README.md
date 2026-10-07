@@ -8,7 +8,8 @@ requests (first set published July 2015, 124 stations A to W, many parts redacte
 - Rights holder: Transport for London. Re-use is under the Re-use of Public Sector Information Regulations (TfL's
   FOI responses). This is not an open licence.
 - Use in this project: **approved by the project owner, danbri, 2026-10-05**, for the Canary Wharf / Docklands
-  scoping and prototyping work (magpie/cwplans in danbri/glitchcan-minigam). Review before any use outside that phase.
+  scoping and prototyping work (magpie/cwplans in danbri/glitchcan-minigam; since 2026-10-07 `cwplans/` in this
+  repository). Review before any use outside that phase.
 
 ## Sources
 
@@ -18,8 +19,8 @@ requests (first set published July 2015, 124 stations A to W, many parts redacte
 - Ian Visits articles that republish the set (C to G includes Canada Water and Canary Wharf):
   https://www.ianvisits.co.uk/articles/3d-maps-of-every-underground-station-cdefg-14651/
 - What other people built from or alongside these diagrams (54 projects, licences, best baselines for Canada Water and
-  Canary Wharf): https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/underground/AXONOMETRIC-USES.md
-  (records: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/underground/axonometric-uses.json ; 2026-10-05)
+  Canary Wharf): https://danbri.github.io/londat/cwplans/feeds/underground/AXONOMETRIC-USES.md
+  (records: https://danbri.github.io/londat/cwplans/feeds/underground/axonometric-uses.json ; 2026-10-05)
 
 ## How files get here
 

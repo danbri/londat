@@ -1,0 +1,13 @@
+exec(open(WORK + "/steps/cw_axis.py").read())
+top = ST; base = ST - V(st, "jl_box_depth")
+o = obox("CW.box.jubilee", c, u, 0, V(st, "jl_box_width"), base, top, SM - 75, SM + 75)
+finish(o, st, "box", "published size (150 x 23 x 22 m); centred on the OSM platforms along the OSM track axis (judged)", "Wikipedia (facts.json); OSM Jubilee Line tracks", base, {"top_m_od": top})
+# ELL slot: 130 m long, 13 m deep, tapering (22 m to 15 m, judged), centred on the crossing (judged)
+ve = (-ue[1], ue[0]); Ls = V(st, "ell_slot_len"); w0, w1 = V(st, "ell_slot_width")
+ring = [(X[0] + ue[0]*s + ve[0]*t, X[1] + ue[1]*s + ve[1]*t) for s, t in ((-Ls/2, -w0/2), (Ls/2, -w1/2), (Ls/2, w1/2), (-Ls/2, w0/2))]
+o = prism("CW.box.ell_slot", ring, ST - V(st, "ell_slot_depth"), ST)
+finish(o, st, "box", "published length and depth; width tapering judged; centred on the OSM track crossing (judged)", "Wikipedia: slot at right angles 130 m long, 13 m deep, tapering in width", ST - 13)
+g = prism("CW.ground.street_reference", rect(c, u, 0, 170, SM - 120, SM + 120), ST - 0.05, ST)
+finish(g, st, "ground", "LiDAR ground at the OSM station node", "street reference plane at 5.4 m OD", ST)
+frame_view(b3(c[0], c[1], -4), 300, 25, -40)
+print("c", c, "u", u, "ue", ue, "X", X, "SM", SM, "deg", math.degrees(math.atan2(u[1],u[0])), math.degrees(math.atan2(ue[1],ue[0])))

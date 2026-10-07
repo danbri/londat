@@ -1,0 +1,262 @@
+<title>Canary Wharf hours and plans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; charts break out to the column's full width and scroll inside their own box on phones. */
+:root {
+  --ground: #f2f3ef; --paper: #fbfbf8; --ink: #1c2124; --muted: #5d666a; --rule: #d5d8d2;
+  --accent: #a4561a; --accent-soft: #f0dcc8; --heat0: #eceee8; --heat1: #a4561a;
+  --l-3: #6b4fa0; --l-2: #2f7f86; --l-1: #b5481f; --l0: #57803a; --l1: #b08a1e; --l2: #7a5a3a; --lx: #8d9497;
+  --display: "Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #15191b; --paper: #1c2124; --ink: #e6e8e3; --muted: #9aa3a6; --rule: #343b3e;
+  --accent: #e08a4a; --accent-soft: #4a3020; --heat0: #22282b; --heat1: #e8955a;
+  --l-3: #a78ad8; --l-2: #5fbac2; --l-1: #ea7a50; --l0: #8fbe68; --l1: #e0bc52; --l2: #c49a72; --lx: #7c8588; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #15191b; --paper: #1c2124; --ink: #e6e8e3; --muted: #9aa3a6; --rule: #343b3e;
+  --accent: #e08a4a; --accent-soft: #4a3020; --heat0: #22282b; --heat1: #e8955a;
+  --l-3: #a78ad8; --l-2: #5fbac2; --l-1: #ea7a50; --l0: #8fbe68; --l1: #e0bc52; --l2: #c49a72; --lx: #7c8588; color-scheme: dark }
+body { background: var(--ground); color: var(--ink); font: 400 1rem/1.55 var(--body); }
+.wrap { max-width: 62rem; margin: 0 auto; padding-inline: 1rem; padding-block: 2rem 4rem; display: grid; gap: 2.5rem; }
+header { display: grid; gap: .5rem; }
+.eyebrow { font: 600 .75rem/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 700 clamp(1.9rem, 4vw, 2.7rem)/1.05 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 700 1.6rem/1.1 var(--display); margin: 0; text-wrap: balance; }
+h3 { font: 600 1.1rem/1.2 var(--display); margin: 0; letter-spacing: .01em; }
+p { margin: 0; max-width: 68ch; overflow-wrap: anywhere; }
+li, footer, .note { overflow-wrap: anywhere; }
+section { display: grid; gap: 1rem; min-width: 0; }
+.lede { color: var(--muted); max-width: 68ch; }
+ul.facts { margin: 0; padding-left: 1.1rem; display: grid; gap: .35rem; max-width: 70ch; }
+code, .mono { font-family: var(--mono); font-size: .86em; }
+a { color: var(--accent); text-underline-offset: 2px; }
+.panel { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem; display: grid; gap: .75rem; min-width: 0; }
+.scroll { overflow-x: auto; min-width: 0; }
+table { border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; width: 100%; }
+th, td { text-align: left; padding: .3rem .55rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 600 .74rem/1.2 var(--display); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+td.n, th.n { text-align: right; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chips button { font: 500 .85rem/1 var(--body); padding: .4rem .7rem; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chips button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select { font: 400 .95rem var(--body); padding: .35rem .5rem; background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 4px; max-width: 100%; width: 100%; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .85rem; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: .8rem; height: .8rem; border-radius: 2px; vertical-align: -1px; margin-right: .3rem; }
+.bar { display: flex; height: 1.6rem; border-radius: 3px; overflow: hidden; }
+.bar span { display: block; height: 100%; }
+.note { font-size: .88rem; color: var(--muted); }
+.tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--paper); font: 500 .8rem/1.3 var(--body); padding: .35rem .5rem; border-radius: 4px; max-width: 18rem; z-index: 5; }
+svg text { fill: var(--muted); font: 400 10px var(--mono); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .75rem; }
+.kpi { display: grid; gap: .1rem; }
+.kpi b { font: 700 1.5rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: .85rem; color: var(--muted); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+pre.issue { white-space: pre-wrap; font: 400 .8rem/1.45 var(--mono); max-height: 18rem; overflow: auto; background: var(--ground); padding: .75rem; border-radius: 4px; margin: 0; }
+footer { font-size: .85rem; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 1rem; display: grid; gap: .4rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Docklands web harvest · deep dive · 2026-10-06</div>
+  <h1>Site search, opening hours and mall plans</h1>
+  <p class="lede">What the SearchAction data lets us search, how opening hours differ by mall and area, and how far the data can place shops on a plan of each mall. Sources: 824 harvested pages, 374 Canary Wharf Group directory pages (Internet Archive copies), OSM and the registry.</p>
+</header>
+
+<section id="summary">
+  <h2>Findings</h2>
+  <ul class="facts" id="findings"></ul>
+</section>
+
+<section id="search">
+  <h2>1. Site search (SearchAction)</h2>
+  <p>111 sites publish a schema.org SearchAction. We filled each template with "Canary Wharf", with "E14 5AB" and with a nonsense control query, and fetched each result page once (robots.txt obeyed, 1.1 s between requests to a host). A result counts only if the place query adds links or mentions that the control page does not have, because site menus and footers name Canary Wharf on every page.</p>
+  <div class="panel">
+    <div class="bar" id="searchBar" role="img" aria-label="Sites by search outcome"></div>
+    <div class="legend" id="searchLegend"></div>
+  </div>
+  <div class="two">
+    <div class="panel"><h3>What the templates are</h3><ul class="facts" id="searchKinds"></ul></div>
+    <div class="panel"><h3>Use it for</h3><ul class="facts" id="searchUse"></ul></div>
+  </div>
+  <div class="panel"><h3>Sites where search found a Canary Wharf branch page</h3><div class="scroll"><table id="searchHits"></table></div></div>
+</section>
+
+<section id="hours">
+  <h2>2. Opening hours by mall and area</h2>
+  <p>Every hours text we hold, on one half-hour grid of a week, read with the same reader as the 3D page. Each cell shows the share of places in that row that are open. Rows are malls (CWG directory), the street-level estate, Wood Wharf, and postcode sectors for places outside the CWG list.</p>
+  <div class="panel">
+    <div class="chips" id="kindChips" role="group" aria-label="Kind of place"></div>
+    <div class="scroll"><svg id="heat" role="img" aria-label="Share open by half hour, per area"></svg></div>
+    <div class="legend"><span><span class="sw" style="background:var(--heat0)"></span>none open</span><span><span class="sw" style="background:var(--heat1)"></span>all open</span><span>n = places in the row</span></div>
+  </div>
+  <div class="kpis" id="testKpis"></div>
+  <div class="panel"><h3>By mall and finer kind (CWG directory, 3 or more places)</h3><div class="scroll"><table id="fineTable"></table></div></div>
+  <div class="panel">
+    <h3>Every place in one area</h3>
+    <label class="note" for="areaSel">Area and kind</label>
+    <select id="areaSel"></select>
+    <div class="scroll"><svg id="strip" role="img" aria-label="Weekly hours of each place in the chosen area"></svg></div>
+  </div>
+  <div class="panel"><h3>Sources that disagree</h3><p class="note" id="agreeNote"></p><div class="scroll"><table id="agreeTable"></table></div></div>
+  <div class="panel"><h3>From parsed address to mall</h3><p class="note" id="pcNote"></p><div class="scroll"><table id="pcTable"></table></div></div>
+</section>
+
+<section id="plans">
+  <h2>3. Can we reconstruct mall plans?</h2>
+  <p id="planLede"></p>
+  <div class="panel">
+    <div class="chips" id="mallChips" role="group" aria-label="Mall"></div>
+    <div class="chips" id="levelChips" role="group" aria-label="Level"></div>
+    <div class="scroll"><svg id="plan" role="img" aria-label="Draft plan: OSM footways and placed occupants"></svg></div>
+    <div class="legend" id="planLegend"></div>
+    <p class="note">Positions are OSM points matched by name, not unit outlines. Grey lines: footways and indoor ways near the mall; dark lines: those on the chosen CWG level (OSM level:ref, else level). © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.</p>
+  </div>
+  <div class="panel"><h3>Coverage per mall</h3><div class="scroll"><table id="planTable"></table></div></div>
+  <div class="panel"><h3>What a full plan still needs</h3><ul class="facts" id="planNeeds"></ul></div>
+</section>
+
+<section id="factoidal">
+  <h2>4. Factoidal fault</h2>
+  <p>The issue could not be filed from this session: access to danbri/factoidal was refused. The text below is ready to post at <a href="https://github.com/danbri/factoidal/issues/new">github.com/danbri/factoidal/issues/new</a>.</p>
+  <div class="panel"><pre class="issue" id="issue"></pre><div><button type="button" id="copyIssue" class="chipbtn">Copy issue text</button> <span class="note" id="copyMsg"></span></div></div>
+</section>
+
+<footer>
+  <div>Files: <span id="fileLinks"></span></div>
+  <div>Crawls for scoping under the owner's rule of 2026-10-03. CWG hours are as each page showed them on its archive date. OSM data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL.</div>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+(() => {
+const D = JSON.parse(document.getElementById('data').textContent);
+const $ = id => document.getElementById(id), NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (parent) parent.appendChild(e); return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const tip = $('tip');
+const showTip = (e, html) => { tip.innerHTML = html; tip.hidden = false; const x = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; };
+const hideTip = () => { tip.hidden = true; };
+const unhex = h => { const g = new Uint8Array(336); for (let i = 0; i < 84; i++) { const v = parseInt(h[i], 16); g[i * 4] = v >> 3 & 1; g[i * 4 + 1] = v >> 2 & 1; g[i * 4 + 2] = v >> 1 & 1; g[i * 4 + 3] = v & 1; } return g; };
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const slotLabel = i => `${DAYS[Math.floor(i / 48)]} ${String(Math.floor(i % 48 / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`;
+function table(id, head, rows) { const t = $(id); t.innerHTML = '<thead><tr>' + head.map(h => `<th${h.n ? ' class="n"' : ''}>${esc(h.t ?? h)}</th>`).join('') + '</tr></thead><tbody>' + rows.map(r => '<tr>' + r.map((c, i) => `<td${head[i].n ? ' class="n"' : ''}>${c}</td>`).join('') + '</tr>').join('') + '</tbody>'; }
+
+// findings
+$('findings').innerHTML = D.findings.map(f => `<li>${f}</li>`).join('');
+
+// 1. search
+const S = D.search, CL = [
+  ['finds-branch', 'finds a branch page', '--l0'], ['finds-place-content', 'finds other place content', '--l1'], ['no-place-result', 'no result for the place', '--lx'],
+  ['script-rendered', 'results drawn by script', '--l-2'], ['robots-disallowed', 'robots.txt disallows', '--l-3'], ['blocked', 'blocked (403, challenge)', '--l-1'], ['broken', 'no page (202)', '--l2'], ['no-placeholder', 'no {placeholder}', '--muted']];
+const tot = Object.values(S.counts).reduce((a, b) => a + b, 0);
+function drawSearch() {
+  $('searchBar').innerHTML = CL.filter(c => S.counts[c[0]]).map(c => `<span style="width:${100 * S.counts[c[0]] / tot}%;background:${css(c[2])}" title="${c[1]}: ${S.counts[c[0]]}"></span>`).join('');
+  $('searchLegend').innerHTML = CL.filter(c => S.counts[c[0]]).map(c => `<span><span class="sw" style="background:${css(c[2])}"></span>${c[1]} <b>${S.counts[c[0]]}</b></span>`).join('');
+}
+drawSearch();
+$('searchKinds').innerHTML = S.kinds.map(k => `<li>${k}</li>`).join('');
+$('searchUse').innerHTML = S.use.map(k => `<li>${k}</li>`).join('');
+table('searchHits', ['Site', 'Template', { t: 'New pages', n: 1 }, 'Example hit'], S.hits.map(h => [esc(h.site), `<code>${esc(h.template)}</code>`, h.new, h.example ? `<a href="${esc(h.example)}">${esc(h.example.replace(/^https?:\/\/(www\.)?/, ''))}</a>` : '']));
+
+// 2. hours heatmap
+const H = D.hours, KINDS = ['all kinds', 'food and drink', 'shop', 'service, leisure, stay'];
+let kind = 'all kinds';
+const rowsFor = k => {
+  const by = {};
+  for (const r of H.records) { if (k !== 'all kinds' && r.kind !== k) continue; (by[r.area] ||= []).push(unhex(r.grid)); }
+  return H.areaOrder.filter(a => by[a]?.length >= 3).map(a => { const gs = by[a], p = new Array(336).fill(0); for (const g of gs) for (let i = 0; i < 336; i++) p[i] += g[i]; return { area: a, n: gs.length, p: p.map(v => v / gs.length) }; });
+};
+function mix(t) { const a = css('--heat0'), b = css('--heat1'); const h = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16)); const A = h(a), B = h(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',')})`; }
+function drawHeat() {
+  const rows = rowsFor(kind), L = 210, cw = 2.2, rh = 18, top = 22, W = L + 336 * cw + 34, Hh = top + rows.length * rh + 6;
+  const svg = $('heat'); svg.innerHTML = ''; svg.setAttribute('viewBox', `0 0 ${W} ${Hh}`); svg.setAttribute('width', W); svg.setAttribute('height', Hh);
+  DAYS.forEach((d, i) => { el('text', { x: L + i * 48 * cw + 2, y: 12 }, svg).textContent = d; el('line', { x1: L + i * 48 * cw, x2: L + i * 48 * cw, y1: 16, y2: Hh, stroke: css('--rule'), 'stroke-width': 1 }, svg); });
+  rows.forEach((r, j) => {
+    const y = top + j * rh; el('text', { x: 0, y: y + 12 }, svg).textContent = r.area.length > 34 ? r.area.slice(0, 33) + '…' : r.area;
+    el('text', { x: L + 336 * cw + 4, y: y + 12 }, svg).textContent = 'n ' + r.n;
+    for (let i = 0; i < 336; i++) { const c = el('rect', { x: L + i * cw, y, width: cw + .05, height: rh - 3, fill: mix(r.p[i]) }, svg); c.addEventListener('mousemove', e => showTip(e, `<b>${esc(r.area)}</b><br>${slotLabel(i)}: ${Math.round(r.p[i] * 100)}% of ${r.n} open`)); c.addEventListener('mouseleave', hideTip); }
+  });
+}
+$('kindChips').innerHTML = KINDS.map(k => `<button type="button" aria-pressed="${k === kind}" data-k="${esc(k)}">${esc(k)}</button>`).join('');
+$('kindChips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; kind = b.dataset.k; [...$('kindChips').children].forEach(x => x.setAttribute('aria-pressed', x === b)); drawHeat(); });
+drawHeat();
+$('testKpis').innerHTML = H.tests.map(t => `<div class="panel kpi"><b>${t.value}</b><span>${t.label}</span></div>`).join('');
+table('fineTable', ['Kind', 'Area', { t: 'n', n: 1 }, { t: 'Hours / week', n: 1 }, { t: 'Opens (weekday)', n: 1 }, { t: 'Closes (weekday)', n: 1 }, { t: 'Open Sunday', n: 1 }, { t: 'Open after 22:00', n: 1 }],
+  H.fine.map(s => [esc(s.kind), esc(s.area), s.n, s.median_hours_week, s.median_opens_weekday ?? '', s.median_closes_weekday ?? '', Math.round(s.open_sunday * 100) + '%', Math.round(s.late_after_22 * 100) + '%']));
+// strip chart for one area
+const opts = []; for (const a of H.areaOrder) for (const k of KINDS) { const n = H.records.filter(r => r.area === a && (k === 'all kinds' || r.kind === k)).length; if (n >= 3 && (k === 'all kinds' || n < H.records.filter(r => r.area === a).length)) opts.push([a, k, n]); }
+$('areaSel').innerHTML = opts.map(([a, k, n], i) => `<option value="${i}">${esc(a)} · ${esc(k)} (${n})</option>`).join('');
+function drawStrip() {
+  const [a, k] = opts[+$('areaSel').value] || opts[0];
+  const rs = H.records.filter(r => r.area === a && (k === 'all kinds' || r.kind === k)).map(r => ({ ...r, g: unhex(r.grid) })).sort((x, y) => y.g.reduce((s, v) => s + v, 0) - x.g.reduce((s, v) => s + v, 0));
+  const L = 200, cw = 2.2, rh = 13, top = 22, W = L + 336 * cw + 8, Hh = top + rs.length * rh + 4, svg = $('strip');
+  svg.innerHTML = ''; svg.setAttribute('viewBox', `0 0 ${W} ${Hh}`); svg.setAttribute('width', W); svg.setAttribute('height', Hh);
+  DAYS.forEach((d, i) => { el('text', { x: L + i * 48 * cw + 2, y: 12 }, svg).textContent = d; el('line', { x1: L + i * 48 * cw, x2: L + i * 48 * cw, y1: 16, y2: Hh, stroke: css('--rule') }, svg); });
+  rs.forEach((r, j) => {
+    const y = top + j * rh; const t = el('text', { x: 0, y: y + 9 }, svg); t.textContent = (r.name || '').length > 30 ? r.name.slice(0, 29) + '…' : r.name;
+    let i = 0; while (i < 336) { if (!r.g[i]) { i++; continue; } let e2 = i; while (e2 < 336 && r.g[e2]) e2++; const rect = el('rect', { x: L + i * cw, y, width: (e2 - i) * cw, height: rh - 4, fill: css(r.source === 'cwg' ? '--accent' : r.source === 'osm' ? '--l0' : '--l-2'), rx: 1 }, svg);
+      rect.addEventListener('mousemove', ev => showTip(ev, `<b>${esc(r.name)}</b> (${esc(r.source)})<br><span class="mono">${esc(r.opening_hours)}</span>${r.level ? '<br>' + esc(r.level) : ''}`)); rect.addEventListener('mouseleave', hideTip); i = e2; }
+  });
+}
+$('areaSel').addEventListener('change', drawStrip); drawStrip();
+$('agreeNote').innerHTML = H.agreeNote;
+table('agreeTable', ['Place', 'Sources', { t: 'Agree', n: 1 }, 'Hours A', 'Hours B'], H.worst.map(p => [esc(p.name), esc(p.a + ' / ' + p.b), p.agreement, `<code>${esc(p.a_text)}</code>`, `<code>${esc(p.b_text)}</code>`]));
+$('pcNote').innerHTML = H.pcNote;
+table('pcTable', ['Postcode', 'Mall', { t: 'Share', n: 1 }, { t: 'Entries', n: 1 }], H.pc.map(r => [`<span class="mono">${esc(r.postcode)}</span>`, esc(r.mall), Math.round(r.share * 100) + '%', r.entries]));
+
+// 3. plans
+const P = D.plans, LV = { '-3': '--l-3', '-2': '--l-2', '-1': '--l-1', '0': '--l0', '1': '--l1', '2': '--l2' };
+$('planLede').innerHTML = P.lede;
+let mall = P.malls[0].name, level = 'all';
+const levelColour = l => css(LV[String(l)] || '--lx');
+const wayLevelRef = w => { const r = w.level_ref ?? w.level; return r == null ? null : String(r).split(';').map(Number); };
+function drawPlan() {
+  const M = P.malls.find(m => m.name === mall), svg = $('plan'); svg.innerHTML = '';
+  const pts = M.points, ws = M.ways;
+  // frame: the placed points with a 40 m margin, at least 160 m across; ways outside the frame are cut by the viewBox
+  const xs = pts.map(p => p.xy[0]), ys = pts.map(p => p.xy[1]), cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const hw = Math.max(80, (Math.max(...xs) - Math.min(...xs)) / 2 + 40), hh = Math.max(60, (Math.max(...ys) - Math.min(...ys)) / 2 + 40);
+  const x0 = cx - hw, x1 = cx + hw, y0 = cy - hh, y1 = cy + hh;
+  const W = 760, s = W / (x1 - x0), Hh = (y1 - y0) * s; svg.style.overflow = 'hidden';
+  svg.setAttribute('viewBox', `0 0 ${W} ${Hh}`); svg.setAttribute('width', W); svg.setAttribute('height', Hh);
+  const X = x => (x - x0) * s, Y = y => Hh - (y - y0) * s;
+  for (const w of ws) { const lr = wayLevelRef(w), on = level !== 'all' && !!lr?.includes(+level);
+    el('polyline', { points: w.xy.map(p => `${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' '), fill: 'none', stroke: css(on ? '--ink' : '--rule'), 'stroke-width': on ? 1.6 : 1, 'stroke-linejoin': 'round', opacity: on ? .75 : 1 }, svg); }
+  for (const p of pts) { if (level !== 'all' && String(p.level) !== level) continue;
+    const c = el('circle', { cx: X(p.xy[0]), cy: Y(p.xy[1]), r: 5, fill: levelColour(p.level), stroke: css('--paper'), 'stroke-width': 1.5 }, svg);
+    c.addEventListener('mousemove', e => showTip(e, `<b>${esc(p.name)}</b><br>CWG: ${esc(p.cwg_level || 'no level')}<br>OSM level ${esc(p.osm_level ?? '–')}, level:ref ${esc(p.osm_level_ref ?? '–')}${p.osm_unit ? '<br>' + esc(p.osm_unit) : ''}`)); c.addEventListener('mouseleave', hideTip); }
+  // scale bar: 50 m
+  el('line', { x1: 12, x2: 12 + 50 * s, y1: Hh - 12, y2: Hh - 12, stroke: css('--ink'), 'stroke-width': 2 }, svg); el('text', { x: 12, y: Hh - 18 }, svg).textContent = '50 m';
+  const lvls = [...new Set(M.points.map(p => p.level).filter(v => v != null))].sort((a, b) => a - b);
+  $('levelChips').innerHTML = ['all', ...lvls.map(String)].map(l => `<button type="button" aria-pressed="${l === level}" data-l="${l}">${l === 'all' ? 'all levels' : 'CWG level ' + l}</button>`).join('');
+  $('planLegend').innerHTML = lvls.map(l => `<span><span class="sw" style="background:${levelColour(l)}"></span>level ${l} (${M.points.filter(p => p.level === l).length})</span>`).join('') + `<span>${M.unplaced} of ${M.entries} not placed</span>`;
+}
+$('mallChips').innerHTML = P.malls.map(m => `<button type="button" aria-pressed="${m.name === mall}" data-m="${esc(m.name)}">${esc(m.name)}</button>`).join('');
+$('mallChips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; mall = b.dataset.m; level = 'all'; [...$('mallChips').children].forEach(x => x.setAttribute('aria-pressed', x === b)); drawPlan(); });
+$('levelChips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; level = b.dataset.l; drawPlan(); });
+drawPlan();
+table('planTable', ['Mall', { t: 'CWG entries', n: 1 }, { t: 'with a level', n: 1 }, { t: 'placed by OSM', n: 1 }, { t: 'OSM unit no.', n: 1 }, { t: 'levels agree', n: 1 }, { t: 'disagree', n: 1 }, { t: 'levelled ways', n: 1 }],
+  P.malls.map(m => [esc(m.name), m.entries, m.entries_with_level, m.placed, m.placed_with_osm_unit, m.level_agree, m.level_disagree, m.indoor_ways_with_level]));
+$('planNeeds').innerHTML = P.needs.map(n => `<li>${n}</li>`).join('');
+
+// 4. issue
+$('issue').textContent = D.issue;
+$('copyIssue').className = ''; $('copyIssue').style.cssText = 'font:500 .85rem var(--body);padding:.4rem .7rem;border-radius:4px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer';
+$('copyIssue').addEventListener('click', () => { navigator.clipboard.writeText(D.issue).then(() => { $('copyMsg').textContent = 'Copied.'; }, () => { const r = document.createRange(); r.selectNodeContents($('issue')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('copyMsg').textContent = 'Copy was refused. The text is selected: copy it by hand.'; }); });
+$('fileLinks').innerHTML = D.files.map(f => `<a href="${f[1]}">${esc(f[0])}</a>`).join(' · ');
+
+// redraw colours on a theme change
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawSearch(); drawHeat(); drawStrip(); drawPlan(); });
+new MutationObserver(() => { drawSearch(); drawHeat(); drawStrip(); drawPlan(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>

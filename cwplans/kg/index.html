@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Canary Wharf graph search</title>
+<meta name="description" content="Search and query the cwplans knowledge graph of Canary Wharf: buildings, occupants, mall units, opening hours and cited facts, with SPARQL in the browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%230f6e78'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* One column: a search bar, a row of preset views, and one result area that shows a table, an entity or a query. */
+:root { color-scheme: light;
+  --bg: #f4f5f2; --panel: #fdfdfb; --ink: #1b2023; --muted: #5f686c; --rule: #d6d9d3; --accent: #0f6e78; --accent-ink: #ffffff;
+  --mark: #fde9b8; --bad: #a33a25;
+  --head: "IBM Plex Sans Condensed", "Arial Narrow", Arial, sans-serif; --body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
+  --bg: #121618; --panel: #1a2023; --ink: #e5e8e4; --muted: #9aa4a8; --rule: #30383b; --accent: #4cc0cc; --accent-ink: #0b1416; --mark: #4a3d16; --bad: #ef8a6f; } }
+:root[data-theme="dark"] { color-scheme: dark;
+  --bg: #121618; --panel: #1a2023; --ink: #e5e8e4; --muted: #9aa4a8; --rule: #30383b; --accent: #4cc0cc; --accent-ink: #0b1416; --mark: #4a3d16; --bad: #ef8a6f; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--body); }
+.wrap { max-width: 66rem; margin: 0 auto; padding-inline: 1rem; padding-block: 1.5rem 3rem; display: grid; gap: 1.25rem; }
+header { display: grid; gap: .3rem; }
+h1 { font: 600 clamp(1.6rem, 3.5vw, 2.2rem)/1.1 var(--head); margin: 0; }
+h2 { font: 600 1.25rem/1.2 var(--head); margin: 0; }
+h3 { font: 600 1rem/1.2 var(--head); margin: 0; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+p { margin: 0; max-width: 72ch; }
+.muted { color: var(--muted); font-size: .9rem; }
+a { color: var(--accent); text-underline-offset: 2px; overflow-wrap: anywhere; }
+.status { font: 400 .85rem/1.4 var(--mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+.status b { color: var(--ink); font-weight: 500; }
+form.search { display: flex; gap: .5rem; }
+input[type=search], textarea { width: 100%; min-width: 0; font: 400 1rem var(--body); padding: .6rem .7rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); }
+textarea { font: 400 .85rem/1.45 var(--mono); min-height: 12rem; resize: vertical; }
+button { font: 500 .9rem var(--body); padding: .55rem .9rem; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); cursor: pointer; white-space: nowrap; }
+button.ghost { background: var(--panel); color: var(--ink); border-color: var(--rule); }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.views { display: flex; flex-wrap: wrap; gap: .4rem; }
+.views button { background: var(--panel); color: var(--ink); border-color: var(--rule); font-size: .85rem; padding: .4rem .7rem; }
+.views button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem; display: grid; gap: .75rem; min-width: 0; }
+.scroll { overflow-x: auto; min-width: 0; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: .3rem .5rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 600 .74rem var(--head); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); position: sticky; top: 0; background: var(--panel); }
+td { overflow-wrap: anywhere; }
+.iri { font-family: var(--mono); font-size: .82rem; }
+.g { font: 400 .75rem var(--mono); color: var(--muted); white-space: nowrap; }
+.err { color: var(--bad); font-family: var(--mono); font-size: .85rem; white-space: pre-wrap; }
+.row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+details summary { cursor: pointer; color: var(--muted); }
+footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rule); padding-top: .75rem; display: grid; gap: .3rem; }
+@media (max-width: 30rem) { form.search { flex-wrap: wrap; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Canary Wharf graph search</h1>
+  <p class="muted">Buildings, occupants, mall units, opening hours and cited facts from the cwplans scoping data, as one RDF graph. Queries run in your browser with the Factoidal engine over a Shardborough store; the parts of the store you use are kept on this device.</p>
+  <div class="status" id="status" aria-live="polite"><span>engine: <b id="st-engine">not loaded</b></span><span>graph: <b id="st-data">not loaded</b></span><span>cache: <b id="st-cache">–</b></span></div>
+</header>
+
+<form class="search" id="searchForm" role="search">
+  <label for="q" class="muted" hidden>Search names</label>
+  <input type="search" id="q" placeholder="Search a name: Nando's, One Canada Square, Jubilee Place, lift…" autocomplete="off">
+  <button type="submit" id="go" disabled>Search</button>
+</form>
+
+<div class="views" id="views" role="group" aria-label="Views"></div>
+
+<section class="panel" id="out" aria-live="polite">
+  <h2 id="outTitle">Loading</h2>
+  <p class="muted" id="outNote">The engine (about 6 MB) loads once. Each query fetches only the store blocks it needs; all of them come from this device after that.</p>
+  <div class="scroll" id="outBody"></div>
+</section>
+
+<details class="panel" id="sparqlBox">
+  <summary>SPARQL</summary>
+  <p class="muted">Every quad is in a named graph, so wrap patterns in <code>GRAPH ?g { … }</code>. Prefixes s:, rdfs:, owl:, geo:, dct:, void:, cwk: are added for you.</p>
+  <label for="sparql" hidden>SPARQL query</label>
+  <textarea id="sparql" spellcheck="false"></textarea>
+  <div class="row"><button type="button" id="run" disabled>Run query</button><span class="muted" id="runInfo"></span></div>
+</details>
+
+<footer>
+  <div>Data: <a href="https://github.com/danbri/londat/tree/main/kgx">danbri/londat kgx</a> (N-Quads, COTTAS, Shardborough), built by <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/build-kgx.mjs">build-kgx.mjs</a>. Each graph names its sources and licence (view "Graphs and licences"). Scoping data, not reviewed for production.</div>
+  <div>Buildings and occupants include data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL. Mall units: Canary Wharf Group / Living Map, archived for reference. Engine: <a href="https://github.com/danbri/factoidal">Factoidal</a>.</div>
+  <div class="row"><button type="button" class="ghost" id="clearCache">Remove the graph from this device</button><span id="cacheMsg"></span></div>
+</footer>
+</div>
+
+<script type="module">
+const params = new URLSearchParams(location.search);
+const BASE = params.get('base') || '../../kgx/';   // same site: https://danbri.github.io/londat/kgx/ (?base= for another copy)
+const PFX = `PREFIX s: <https://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+`;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const lit = s => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"';
+const SHORT = [['https://schema.org/', 's:'], ['http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:'], ['http://www.w3.org/2000/01/rdf-schema#', 'rdfs:'], ['http://www.w3.org/2002/07/owl#', 'owl:'],
+  ['http://www.opengis.net/ont/geosparql#', 'geo:'], ['http://purl.org/dc/terms/', 'dct:'], ['http://rdfs.org/ns/void#', 'void:'], ['http://www.w3.org/ns/prov#', 'prov:'], ['https://danbri.github.io/londat/kgx/vocab#', 'cwk:'],
+  ['https://danbri.github.io/londat/kgx/graph/', 'graph:'], ['https://danbri.github.io/londat/kgx/id/', 'id:'], ['http://www.wikidata.org/entity/', 'wd:']];
+const short = u => { for (const [a, b] of SHORT) if (u.startsWith(a)) return b + u.slice(a.length); return u; };
+let handle = false;
+// Factoidal runs in a worker, so a long query never freezes the page
+const worker = new Worker('worker.js', { type: 'module' }); let seq = 0; const pending = new Map();
+worker.onmessage = ({ data }) => { const p = pending.get(data.id); if (!p) return; pending.delete(data.id); data.ok ? p.resolve(data.r) : p.reject(new Error(data.error)); };
+worker.onerror = e => { for (const p of pending.values()) p.reject(new Error(e.message || 'worker failed')); pending.clear(); };
+const ask = msg => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); worker.postMessage({ ...msg, id }); });
+
+// --- the service worker keeps engine and graph on the device
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.addEventListener('message', e => { if (e.data?.type === 'cache') { const n = e.data.urls.filter(u => /\/shardborough\/gen-/.test(u)).length; $('st-cache').textContent = n ? `${n} store files kept on this device` : 'nothing kept yet'; } });
+}
+const swPost = msg => navigator.serviceWorker?.controller?.postMessage(msg);
+
+async function boot() {
+  try {
+    $('st-engine').textContent = 'loading…';
+    const info = await ask({ type: 'init', base: new URL(BASE, location.href).href });
+    $("st-engine").textContent = `Factoidal Lean engine (${info.engine.split(" (")[0]})`;
+    const man = await (await fetch(BASE + 'manifest.json')).json().catch(() => null);
+    $('st-data').textContent = `${info.rows.toLocaleString('en-GB')} quads, ${info.blocks} blocks in ${info.graphs} graph parts (store ${info.generation}, wire ${info.wire})${man ? `, ${Object.keys(man.graphs).length} graphs` : ''}`;
+    handle = true; swPost({ type: 'keep-generation', generation: info.generation });
+    $('go').disabled = false; $('run').disabled = false;
+    const h = location.hash.slice(1);
+    if (h.startsWith('e=')) showEntity(decodeURIComponent(h.slice(2))); else if (VIEWS[h]) showView(h); else showView('graphs');
+  } catch (err) {
+    $('outTitle').textContent = 'The graph could not be loaded'; $('outNote').textContent = '';
+    $('outBody').innerHTML = `<p class="err">${esc(err.message || err)}</p>`;
+  }
+}
+
+let lastStats = '';
+const fmtStats = r => `${r.blocks} blocks planned (${r.zoneExcluded} skipped by zone maps), ${r.fetchedBytes ? (r.fetchedBytes / 1e6).toFixed(2) + ' MB fetched' : 'nothing fetched'}${r.opened ? `, opened a handle of ${r.handleBlocks} blocks` : `, reused a handle of ${r.handleBlocks} blocks`}`;
+async function select(q, page = 0, pageSize = 200) {
+  const r = await ask({ type: 'query', sparql: PFX + q, page, pageSize });
+  lastStats = fmtStats(r); swPost({ type: 'status' });
+  if (r.kind !== 'select') return { vars: ['result'], rows: [{ result: { type: 'literal', value: JSON.stringify(r.boolean ?? r) } }], count: null };
+  return { vars: r.srj.head.vars, rows: r.srj.results.bindings, count: r.count, more: r.more, page: r.page, pageSize: r.pageSize };
+}
+function cell(b) {
+  if (!b) return '';
+  if (b.type === 'uri') { const ext = /^https?:\/\//.test(b.value) && !b.value.startsWith('https://danbri.github.io/londat/kgx/graph/');
+    return `<a class="iri" href="#e=${encodeURIComponent(b.value)}" data-e="${esc(b.value)}">${esc(short(b.value))}</a>${ext && !b.value.startsWith('https://danbri.github.io/londat/kgx/') ? ` <a href="${esc(b.value)}" target="_blank" rel="noopener" title="open the page">↗</a>` : ''}`; }
+  return esc(b.value);
+}
+function table(vars, rows) {
+  if (!rows.length) return '<p class="muted">No rows.</p>';
+  return `<table><thead><tr>${vars.map(v => `<th>${esc(v)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${vars.map(v => `<td class="${v === 'g' ? 'g' : ''}">${cell(r[v])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function show(title, note, html) { $('outTitle').textContent = title; $('outNote').innerHTML = note || ''; $('outBody').innerHTML = html; }
+// a query is counted first, then shown a page at a time (LIMIT/OFFSET in the worker)
+let current = null;
+async function run(title, note, q, page = 0) {
+  current = { title, note, q, page };
+  show(title, 'Running…', ''); $('sparql').value = q.trim();
+  const t0 = performance.now();
+  try {
+    const r = await select(q, page);
+    const n = r.count, from = page * (r.pageSize || 0);
+    const later = n != null ? from + r.rows.length < n : !!r.more;
+    const span = !r.rows.length ? '0 rows' : n == null && !later && !page ? `${r.rows.length} rows` : `rows ${from + 1}–${from + r.rows.length}${n != null ? ` of ${n}` : later ? ', more follow' : ''}`;
+    const pager = later || page ? `<div class="row"><button type="button" class="ghost" data-page="${page - 1}" ${page ? '' : 'disabled'}>Earlier rows</button><button type="button" class="ghost" data-page="${page + 1}" ${later ? '' : 'disabled'}>Later rows</button></div>` : '';
+    show(title, `${note ? note + ' · ' : ''}${span}, ${Math.round(performance.now() - t0)} ms · ${lastStats}`, pager + table(r.vars, r.rows) + pager);
+  } catch (err) { show(title, '', `<p class="err">${esc(err.message || err)}</p>`); }
+}
+$('outBody').addEventListener('click', e => { const b = e.target.closest('button[data-page]'); if (!b || !current) return; run(current.title, current.note, current.q, +b.dataset.page); });
+
+// --- name search
+$('searchForm').addEventListener('submit', e => { e.preventDefault(); const q = $('q').value.trim(); if (!q) return;
+  setPressed(null); history.replaceState(null, '', '#');
+  run(`Names containing “${q}”`, 'Click a name to see everything the graph says about it.',
+    `SELECT ?thing ?name ?g WHERE { GRAPH ?g { ?thing s:name|rdfs:label ?name . FILTER(CONTAINS(LCASE(STR(?name)), ${lit(q.toLowerCase())})) } } ORDER BY ?name`); });
+
+// --- one thing: what it says, what points at it
+async function showEntity(iri) {
+  setPressed(null); history.replaceState(null, '', '#e=' + encodeURIComponent(iri));
+  show(short(iri), 'Loading…', '');
+  try {
+    const d = await ask({ type: 'describe', iri }); swPost({ type: 'status' });
+    const out = { rows: d.out }, inc = { rows: d.in };
+    const more = (n, shown) => n != null && n > shown ? ` (first ${shown} of ${n})` : '';
+    const name = out.rows.find(r => /name$|label$/.test(r.p.value))?.o.value;
+    const hours = out.rows.filter(r => r.p.value.endsWith('openingHoursSpecification')).length;
+    let extra = '';
+    if (hours) { const h = await select(`SELECT ?day ?opens ?closes WHERE { GRAPH ?g1 { <${iri}> s:openingHoursSpecification ?h } GRAPH ?g2 { ?h s:dayOfWeek ?d ; s:opens ?opens ; s:closes ?closes } BIND(STRAFTER(STR(?d), "https://schema.org/") AS ?day) }`, 0, 0);
+      const order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']; h.rows.sort((a, b) => order.indexOf(a.day.value) - order.indexOf(b.day.value));
+      extra = `<h3>Weekly hours</h3>${table(['day', 'opens', 'closes'], h.rows)}`; }
+    show(name || short(iri), `<span class="iri">${esc(iri)}</span> · ${d.ms} ms, ${d.blocks} blocks, ${d.fetchedBytes ? (d.fetchedBytes / 1e6).toFixed(2) + ' MB fetched' : 'nothing fetched'}${/^https?:\/\//.test(iri) && !iri.startsWith('https://danbri.github.io/londat/') ? ` · <a href="${esc(iri)}" target="_blank" rel="noopener">open ↗</a>` : ''}`,
+      `${extra}<h3>What the graph says${more(d.outCount, out.rows.length)}</h3>${table(['p', 'o', 'g'], out.rows.map(r => ({ ...r, p: { type: 'literal', value: short(r.p.value) } })))}
+       <h3>What points here${more(d.inCount, inc.rows.length)}</h3>${table(['s', 'p', 'g'], inc.rows.map(r => ({ ...r, p: { type: 'literal', value: short(r.p.value) } })))}`);
+  } catch (err) { show(short(iri), '', `<p class="err">${esc(err.message || err)}</p>`); }
+}
+$('outBody').addEventListener('click', e => { const a = e.target.closest('a[data-e]'); if (!a) return; e.preventDefault(); showEntity(a.dataset.e); window.scrollTo({ top: $('out').offsetTop - 8, behavior: 'smooth' }); });
+
+// --- preset views
+function londonNow() { const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()).map(x => [x.type, x.value])); return { day: p.weekday, min: +p.hour * 60 + +p.minute, text: `${p.weekday} ${p.hour}:${p.minute}` }; }
+// The store's graphs are parts of graph versions (by subject), so a pattern that joins two subjects needs one GRAPH
+// block per subject. Skill cwplans-kgx, "Query rule".
+const VIEWS = {
+  graphs: ['Graphs and versions', 'Each graph name, its current version (named by its RDFC-1.0 hash), size and licence.', () =>
+    `SELECT ?name ?version ?triples ?title ?licence WHERE { GRAPH ?m { ?name cwk:current ?version . ?version void:triples ?triples ; dct:title ?title ; dct:license ?licence } } ORDER BY DESC(?triples)`],
+  lineage: ['Lineage: operations and outputs', 'Every operation in the log: which skill and tool it belongs to, and the graph versions it made from its inputs.', () =>
+    `SELECT ?operation ?skill ?tool ?activity ?generated WHERE { GRAPH ?l1 { ?activity a prov:Activity ; cwk:operation ?op ; prov:generated ?generated } GRAPH ?l2 { ?op cwk:skill ?skill ; cwk:tool ?tool } BIND(STRAFTER(STR(?op), "/operation/") AS ?operation) } ORDER BY ?operation ?generated`],
+  open: ['Open now', 'CWG directory hours (as archived) for the current time in London. Places open past midnight from the previous day are not shown.', () => { const n = londonNow();
+    return `SELECT ?place ?name ?opens ?closes WHERE { GRAPH ?g1 { ?h s:dayOfWeek s:${n.day} ; cwk:opensMinute ?o ; cwk:closesMinute ?c ; s:opens ?opens ; s:closes ?closes . FILTER(?o <= ${n.min} && ?c > ${n.min}) } GRAPH ?g2 { ?place s:openingHoursSpecification ?h ; s:name ?name } } ORDER BY ?name`; }],
+  units: ['Mall units by mall and floor', 'Named indoor units from the Living Map data behind map.canarywharf.com.', () =>
+    `SELECT ?mall ?floor (COUNT(?u) AS ?units) WHERE { GRAPH ?g { ?u a cwk:MallUnit ; cwk:mall ?mall ; cwk:floorName ?floor ; cwk:floorLevel ?lv } } GROUP BY ?mall ?floor ?lv ORDER BY ?mall ?lv`],
+  stepfree: ['Step-free: lifts, ramps, escalators by floor', 'Lifts, ramps, escalators, stairs and entrances in the mall map, counted by mall and floor. Each point has a position (s:latitude, s:longitude): list them in the SPARQL box.', () =>
+    `SELECT ?mall ?floor ?type (COUNT(?f) AS ?count) WHERE { GRAPH ?g { ?f a cwk:Facility ; cwk:unitType ?type ; cwk:floorName ?floor ; cwk:floorLevel ?lv . OPTIONAL { ?f cwk:mall ?m0 } BIND(COALESCE(?m0, "(no mall)") AS ?mall) FILTER(?type IN ("lift", "ramp", "escalator", "stairs", "entrance")) } } GROUP BY ?mall ?floor ?lv ?type ORDER BY ?mall ?lv ?type`],
+  access: ['Toilets and facilities by floor', 'Toilets, baby change, defibrillators, drinking water and other facilities in the mall map, with their floor.', () =>
+    `SELECT ?mall ?floor ?type ?name ?thing WHERE { GRAPH ?g { ?thing cwk:unitClass ?class ; cwk:unitType ?type ; cwk:floorName ?floor . OPTIONAL { ?thing s:name ?name } OPTIONAL { ?thing cwk:mall ?mall } FILTER(?class IN ("restroom", "facility", "emergency")) } } ORDER BY ?mall ?floor ?type`],
+  hours: ['Hours: CWG directory and mall map', 'The same name in both sources, side by side (exact name match).', () =>
+    `SELECT ?name ?cwg ?mallmap ?e WHERE { GRAPH ?g1 { ?e s:openingHours ?cwg ; s:name ?name ; cwk:levelText ?lt } GRAPH ?g2 { ?u a cwk:MallUnit ; s:name ?name ; cwk:openingTimesText ?mallmap } } ORDER BY ?name`],
+  tall: ['Tallest buildings', 'Registry buildings by height (OSM height tag, metres).', () =>
+    `SELECT ?building ?name ?height ?levels WHERE { GRAPH ?g { ?building cwk:heightMetres ?height . OPTIONAL { ?building s:name ?name } OPTIONAL { ?building cwk:levels ?levels } } } ORDER BY DESC(?height)`],
+  facts: ['Cited facts', 'Depths, levels and sizes from cited sources, with a short quote each.', () =>
+    `SELECT ?subject ?property ?value ?unit ?source WHERE { GRAPH ?g1 { ?f a cwk:CitedFact ; cwk:about ?x ; s:propertyID ?property ; s:value ?value ; s:citation ?source . OPTIONAL { ?f s:unitText ?unit } } GRAPH ?g2 { ?x rdfs:label ?subject } } ORDER BY ?subject ?property`],
+  same: ['Same thing on several web pages', 'Links made by the key rules (IRI, site and name, sameAs, telephone, postcode and name).', () =>
+    `SELECT ?a ?b ?g WHERE { GRAPH ?g { ?a owl:sameAs ?b } }`],
+  occupants: ['Occupants by building', 'Occupant counts per registry building.', () =>
+    `SELECT ?building ?name (COUNT(?o) AS ?occupants) WHERE { GRAPH ?g1 { ?o s:containedInPlace ?building } GRAPH ?g2 { ?building a cwk:Building . OPTIONAL { ?building s:name ?name } } } GROUP BY ?building ?name ORDER BY DESC(?occupants)`],
+};
+function setPressed(k) { for (const b of $('views').children) b.setAttribute('aria-pressed', String(b.dataset.v === k)); }
+function showView(k) { const [t, n, q] = VIEWS[k]; setPressed(k); history.replaceState(null, '', '#' + k); run(t, n, q()); }
+$('views').innerHTML = Object.entries(VIEWS).map(([k, [t]]) => `<button type="button" data-v="${k}" aria-pressed="false">${esc(t)}</button>`).join('');
+$('views').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (b && handle) showView(b.dataset.v); });
+$('run').addEventListener('click', () => { setPressed(null); run('Query result', '', $('sparql').value.replace(/^PREFIX[^\n]*\n/gm, '')); });
+$('clearCache').addEventListener('click', () => { swPost({ type: 'clear' }); $('cacheMsg').textContent = 'Removed. The next visit loads the graph again.'; $('st-cache').textContent = 'removed'; });
+boot();
+</script>
+</body>
+</html>

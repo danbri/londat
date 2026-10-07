@@ -1,0 +1,145 @@
+{
+ "about": "Entries for data-register.json and pipeline.json from the website crawl of 2026-10-03, written by the crawl session for the main session to merge (this session did not edit those files, another agent was editing them). After the merge this file can be deleted, or kept and registered with the entry for it below.",
+ "sources": {
+  "web-crawl": {
+   "name": "web pages linked from the registry: occupant and brand websites, brand store pages, and the Canary Wharf Group directory pages as Internet Archive copies",
+   "licence": "none stated (all rights reserved by default)",
+   "note": "Crawl for scoping, allowed by the owner (2026-10-03: \"Website crawls - direct and via IA or CommonCrawl etc are fair use for our scoping purposes.\"). Only structured facts and short fields are kept (schema.org values, page title, OpenGraph title/type, OpenGraph description cut to 200 characters, link URLs). Re-check before anything leaves the prototyping phase.",
+   "crawl": {
+    "method": "direct HTTP GET with User-Agent \"glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)\", robots.txt obeyed (RFC 9309), one request at a time per host at least 1.5 s apart, at most 4 hosts at once; canarywharf.com pages read only as Internet Archive id_ copies (fetched by fetch-cwg.mjs on 2026-10-03 and reused)",
+    "date": "2026-10-03",
+    "tool": "tools/crawl-sites.mjs"
+   }
+  }
+ },
+ "files": [
+  {
+   "path": "registry/sources/web/site-facts.json",
+   "what": "structured facts from the web pages the registry links to: schema.org businesses, organisations and events (JSON-LD and microdata), OpenGraph, page language, HTTP status and final URL, feeds, booking/menu/events links, and whether the page names the Canary Wharf branch",
+   "sources": [
+    "web-crawl",
+    "cwg-site",
+    "brand-sites",
+    "own"
+   ],
+   "osm": {
+    "use": "ids",
+    "what": "join keys only: branch keys hold OSM element ids (branch:<brand QID>@node/<id>), occupant keys hold the registry occupant name (from OSM for OSM-placed occupants)"
+   },
+   "produced_by": "tools/crawl-sites.mjs",
+   "crawl": "direct fetch of brand and occupant sites, and Internet Archive copies of canarywharf.com (entry pages mostly November 2025), 2026-10-03; allowed for scoping under the crawl policy",
+   "review": "no open licence on the crawled sites: short fields only; re-check before anything leaves the prototyping phase"
+  },
+  {
+   "path": "registry/sources/web/discovered-feeds.json",
+   "what": "RSS, Atom, JSON Feed and iCalendar URLs found in the crawled pages and not yet in feeds/events.json or feeds/feeds.json (not fetched or verified)",
+   "sources": [
+    "web-crawl",
+    "cwg-site",
+    "own"
+   ],
+   "osm": {
+    "use": "ids",
+    "what": "join keys of the pages each feed was found for (see site-facts.json)"
+   },
+   "produced_by": "tools/crawl-sites.mjs",
+   "crawl": "as site-facts.json, 2026-10-03"
+  },
+  {
+   "path": "registry/sources/web/README.md",
+   "what": "crawl method, fields and counts",
+   "sources": [
+    "own"
+   ],
+   "osm": {
+    "use": "none"
+   },
+   "produced_by": "hand-written"
+  },
+  {
+   "path": "registry/sources/web/register-entries.json",
+   "what": "hand-off of data-register and pipeline entries for this crawl (delete after merging, or keep with this entry)",
+   "sources": [
+    "own"
+   ],
+   "osm": {
+    "use": "none"
+   },
+   "produced_by": "hand-written"
+  }
+ ],
+ "activities": [
+  {
+   "id": "crawl-sites",
+   "tool": "tools/crawl-sites.mjs",
+   "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/crawl-sites.mjs",
+   "kind": "fetch",
+   "used": [
+    {
+     "file": "registry/buildings.json"
+    },
+    {
+     "file": "registry/sources/brands/branches.json"
+    },
+    {
+     "file": "registry/sources/brands/storelocator.json"
+    },
+    {
+     "file": "registry/sources/brands/cwg-directory.json"
+    },
+    {
+     "file": "feeds/events.json"
+    },
+    {
+     "file": "feeds/feeds.json"
+    },
+    {
+     "local": "data/raw/registry/cwg/pages/"
+    },
+    {
+     "local": "data/raw/crawl/"
+    },
+    {
+     "source": "brand-sites",
+     "endpoint": "occupants[].website and .store_url in buildings.json; branches[].website, .cwg_website, .store_url; storelocator checked[].store_url; cwg-directory directory[].website",
+     "request": "robots.txt once per host, then one GET per URL with redirects followed by hand (robots.txt checked on each new host), User-Agent glitchcan-cwplans/0.1, one request at a time per host at least 1.5 s apart, at most 4 hosts at once, 20 s timeout, up to 4 tries with backoff on 429, 5xx, timeouts and resets"
+    },
+    {
+     "source": "cwg-site",
+     "endpoint": "https://web.archive.org/web/<timestamp>id_/https://canarywharf.com/<kind>/<slug>/",
+     "request": "the archived copy named in cwg-directory.json; the copy fetch-cwg.mjs saved in data/raw/registry/cwg/pages/ is reused, so no request is made when it exists"
+    }
+   ],
+   "generated": [
+    {
+     "file": "registry/sources/web/site-facts.json"
+    },
+    {
+     "file": "registry/sources/web/discovered-feeds.json"
+    },
+    {
+     "local": "data/raw/crawl/<host>/<hash>.html.gz, <hash>.json, robots.json"
+    }
+   ],
+   "method": "Fetches the web pages the registry and the brand sources already link to and extracts structured facts: schema.org JSON-LD and microdata (businesses, organisations, events), OpenGraph, page language, HTTP status and final URL, feeds, booking/menu/events links, and whether the page names the entry's Canary Wharf postcode or address.",
+   "rules": [
+    "Skipped: FSA ratings pages (data from the FSA API), OSM, Wikidata, Companies House and Land Registry links (data from their APIs or bulk files), Wikipedia (CC BY-SA, share-alike), canarywharf.com pages with no archived copy (the live site answers scripts with an Imperva challenge).",
+    "A canarywharf.com URL is replaced by its Internet Archive copy from cwg-directory.json.",
+    "robots.txt per RFC 9309: the group for 'glitchcan-cwplans', else '*'; longest match wins, Allow wins a tie; a 4xx robots.txt allows all; a 5xx or unreachable robots.txt disallows all.",
+    "Failure classes: robots disallowed, robots unreachable, bot challenge (Cloudflare, Imperva, Akamai, DataDome, PerimeterX pages), 401/403 refused, 404/410 not found, 4xx other, 429, 5xx, timeout, dns, tls, connection, not HTML, too many redirects.",
+    "Kept per page: schema.org name, telephone, address, geo, opening hours, price range, cuisine, menu, sameAs, reservations; events with name, dates, location, URL; page title and OpenGraph title/type (cut to 200 characters), OpenGraph description cut to 200 characters; html lang; feed and link URLs. No other page text.",
+    "names_branch: true when the entry's postcode is in the page text or structured data, or an address phrase (street, mall, branch name) is on a page that is not the site's home page; 'home page lists the place' when only a phrase is on a home page; 'scripts only' when the match is only inside page scripts.",
+    "A URL with a stored result is not fetched again (--refresh fetches all; --retry-failed fetches transient failures again)."
+   ],
+   "network": true,
+   "deterministic": false,
+   "after": [
+    "fetch-cwg",
+    "storelocator",
+    "build-branches",
+    "build-registry"
+   ]
+  }
+ ],
+ "activity_log": "2026-10-03 — Website crawl, tools/crawl-sites.mjs (new). 859 URLs on 393 hosts from buildings.json occupants, branches.json, storelocator.json and cwg-directory.json (FSA, OSM, Wikidata, Wikipedia, Companies House and Land Registry links skipped by rule). 737 pages read (369 CWG pages as Internet Archive copies reused from fetch-cwg.mjs, 368 direct); 122 not read (bot challenge 59, 404/410 18, 401/403 15, TLS 10, timeout 7, DNS 4, robots.txt 4, 429 2, connection 2, 5xx 1). Direct pages: JSON-LD 246, opening hours 61, schema.org telephone 77, names the branch 154 (235 are home pages). 61 new feed URLs (registry/sources/web/discovered-feeds.json), not yet verified. Out: registry/sources/web/site-facts.json, discovered-feeds.json, README.md. Open: merge register-entries.json into data-register.json and pipeline.json; verify the feeds; script-rendered store pages give no facts without a browser."
+}

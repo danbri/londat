@@ -1,7 +1,7 @@
 # Canary Wharf Group maps and guides: cwg
 
 Printed maps and guides that Canary Wharf Group publishes on https://canarywharf.com/maps/ , for the Canary Wharf /
-Docklands project (magpie/cwplans in danbri/glitchcan-minigam).
+Docklands project (`cwplans/` in this repository; until 2026-10-07 magpie/cwplans in danbri/glitchcan-minigam).
 
 ## Status of use
 
@@ -29,4 +29,5 @@ popup images, archived as served at the owner's request (2026-10-06). See `mallm
 ## How they are used
 
 Facts only (a shop's mall, level and grid square; where a lift or toilet is), joined to the registry in
-magpie/cwplans. No page or image is copied into the main repository. Skill: `cwplans-web-harvest`, "Mall plans".
+`cwplans/`. No page or image is copied into `cwplans/`; `third_party/` stays out of the Pages site. Skill:
+`cwplans-web-harvest`, "Mall plans".

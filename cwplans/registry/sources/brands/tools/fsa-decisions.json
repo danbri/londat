@@ -1,0 +1,218 @@
+{
+ "Coco|cocofreshteaandjuice-859a55": {
+  "keep": false,
+  "reason": "single generic word; NSI alternate name only; not confirmed as the CoCo tea chain"
+ },
+ "Cineworld Cinema|cineworld-5b33a1": {
+  "keep": true,
+  "reason": "brand + 'Cinema'"
+ },
+ "Pure Gym|puregym-2770cb": {
+  "keep": true,
+  "reason": "NSI primary name; FSA files gyms as 'Retailers - other'"
+ },
+ "Browns|browns-9b5453": {
+  "keep": true,
+  "reason": "Browns Brasserie & Bar; FSA type agrees (restaurant)"
+ },
+ "Bright Horizons Columbus Courtyard Day Nursery & Preschool Kitchen|brighthorizons-ab065c": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "Bright Horizons Canada Square Day Nursery & Preschool Kitchen|brighthorizons-ab065c": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "Bright Horizons Bank Street Day Nursery & Preschool Kitchen|brighthorizons-ab065c": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "Bright Horizons Heron Quays Day Nursery & Preschool Kitchen|brighthorizons-ab065c": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "London Cocktail Club|thecocktailclub-149b5d": {
+  "keep": true,
+  "reason": "NSI lists 'London Cocktail Club' as a name of The Cocktail Club"
+ },
+ "Chevron Staff Restaurant|chevron-43b899": {
+  "keep": false,
+  "reason": "NSI 'Chevron' at this point is a car-wash brand; this is an oil company's staff restaurant"
+ },
+ "Morgan Stanley Conference Services|morganstanley-433028": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "Morgan Stanley Staff Restaurant|morganstanley-433028": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "KPMG Hospitality Kitchen|kpmg-2207a5": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "KPMG Staff Restaurant|kpmg-2207a5": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "KPMG Fine Dining Restaurant|kpmg-2207a5": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "KPMG|kpmg-2207a5": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "EY|ey-2207a5": {
+  "keep": true,
+  "reason": "staff or client catering inside the brand's own office: evidence of an office, not a public outlet"
+ },
+ "WeWork Barista Station|wework-cfb41b": {
+  "keep": true,
+  "reason": "cafe counter inside a WeWork coworking site"
+ },
+ "Spaces Coffee Club|spaces-92cb94": {
+  "keep": true,
+  "reason": "probably the cafe inside an IWG Spaces coworking site; low confidence"
+ },
+ "Wasabi Sushi & Bento|wasabi-7f8d78": {
+  "keep": true,
+  "reason": "brand + its own strapline"
+ },
+ "Flip Out Canary Wharf|flipout-002cc1": {
+  "keep": true,
+  "reason": "trampoline park cafe; place suffix removed"
+ },
+ "Nando's Chickenland|nandos-32ebee": {
+  "keep": true,
+  "reason": "brand + its own strapline"
+ },
+ "Nando's Restaurant|nandos-32ebee": {
+  "keep": true,
+  "reason": "brand + 'Restaurant'"
+ },
+ "Blank Street|blankstreetcoffee-345870": {
+  "keep": true,
+  "reason": "NSI alternate name of Blank Street Coffee"
+ },
+ "Oasis Bar and Terrace|oasis-cefcc8": {
+  "keep": false,
+  "reason": "NSI Oasis is a clothes shop; this is a bar"
+ },
+ "Krispy Kreme Doughnuts|krispykreme-3d3675": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Boots The Chemist (3)|boots-b67e62": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Boots the Chemist (4)|boots-b67e62": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Barry's|barrys-1b6d66": {
+  "keep": true,
+  "reason": "NSI primary name (Barry's fitness); FSA files it as 'Retailers - other'"
+ },
+ "Everyman Cinema|everyman-5b33a1": {
+  "keep": true,
+  "reason": "brand + 'Cinema'"
+ },
+ "T4|t4teaforu-e1ef51": {
+  "keep": true,
+  "reason": "NSI alternate name of T4 Tea House; OSM also has a T4 Tea House in the box"
+ },
+ "Nicolas|maisonnicolas-44f3b7": {
+  "keep": true,
+  "reason": "Nicolas wine shop/bar; OSM has 'Nicolas Wine Bar'"
+ },
+ "GAIL's Canary Wharf- Waitrose|gails-00bbe7": {
+  "keep": true,
+  "reason": "GAIL's concession inside Waitrose"
+ },
+ "The Ivy in the Park|theivy-bd06d9": {
+  "keep": true,
+  "reason": "The Ivy Collection restaurant"
+ },
+ "Wahaca Canary Wharf Van|wahaca-2c96f3": {
+  "keep": true,
+  "reason": "mobile caterer: a van, not a fixed branch"
+ },
+ "Wahaca Restaurant|wahaca-2c96f3": {
+  "keep": true,
+  "reason": "brand + 'Restaurant'"
+ },
+ "Tribe Hotel Canary Wharf Restaurant|tribe-779ccb": {
+  "keep": true,
+  "reason": "restaurant of the TRIBE hotel"
+ },
+ "Notes Music & Coffee Ltd|notes-eb3447": {
+  "keep": true,
+  "reason": "Notes coffee chain, legal-style name"
+ },
+ "Chipotle Mexican Grill|chipotle-9b2018": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Leon Restaurant|leon-04566a": {
+  "keep": true,
+  "reason": "brand + 'Restaurant'"
+ },
+ "Marks & Spencer Simply Food|mandssimplyfood-a8278b": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Starbucks Coffee|starbucks-795f60": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Starbucks Coffee Company (UK) Ltd|starbucks-795f60": {
+  "keep": true,
+  "reason": "operating company name"
+ },
+ "C & A Seafoods (Billingsgate) Ltd|canda-3937bd": {
+  "keep": false,
+  "reason": "seafood trader at Billingsgate, not the C&A clothes chain"
+ },
+ "Premier Inn London Canary Wharf Westferry Restaurant|premierinn-a7b4e2": {
+  "keep": true,
+  "reason": "restaurant of a Premier Inn hotel"
+ },
+ "Gaucho Canary|gaucho-9b5453": {
+  "keep": true,
+  "reason": "brand + truncated place name"
+ },
+ "Ibis Hotel Kitchen/Bar|ibis-8a2ff3": {
+  "keep": true,
+  "reason": "kitchen of an Ibis hotel"
+ },
+ "Majestic Wine Warehouses Ltd|majestic-30632a": {
+  "keep": true,
+  "reason": "operating company name"
+ },
+ "Zia Lucia South Quays Ltd|zialucia-e997f8": {
+  "keep": true,
+  "reason": "brand + place + Ltd"
+ },
+ "Vagabond Wines|vagabond-149b5d": {
+  "keep": true,
+  "reason": "full brand name"
+ },
+ "Greggs PLC|greggs-45095e": {
+  "keep": true,
+  "reason": "registered as 'Manufacturers/packers' (a Greggs that bakes on site); company name"
+ },
+ "Buns From Home|bunsfromhome-68933a": {
+  "keep": true,
+  "reason": "registered as 'Manufacturers/packers' (bakes on site); full brand name"
+ },
+ "Wraps & Wings, Wicked, EggsQuisite, Maida|wrapsandwings-45095e": {
+  "keep": true,
+  "reason": "a delivery kitchen trading under several names; low confidence as a public branch"
+ },
+ "Shahs Halal Food|shahshalalfood-5e3e19": {
+  "keep": true,
+  "reason": "mobile caterer: a cart or van, not a fixed branch"
+ }
+}

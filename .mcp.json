@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "docklands-view": {
+      "command": "node",
+      "args": [
+        "tools/view-mcp/server.mjs"
+      ]
+    }
+  }
+}

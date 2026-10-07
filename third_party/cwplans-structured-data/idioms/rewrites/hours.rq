@@ -1,0 +1,12 @@
+# Canonical weekly hours: dayOfWeek always a schema.org day IRI (text names in any case, and the http:// namespace, mapped).
+PREFIX s: <https://schema.org/>
+CONSTRUCT { ?x a s:OpeningHoursSpecification ; s:dayOfWeek ?day ; s:opens ?o ; s:closes ?c ; s:validFrom ?vf ; s:validThrough ?vt . }
+WHERE {
+  #CANDIDATES
+  OPTIONAL { ?x s:opens ?o } OPTIONAL { ?x s:closes ?c } OPTIONAL { ?x s:validFrom ?vf } OPTIONAL { ?x s:validThrough ?vt }
+  OPTIONAL { ?x s:dayOfWeek ?d0 .
+    BIND(REPLACE(STR(?d0), "^.*[/#]", "") AS ?name)
+    BIND(CONCAT(UCASE(SUBSTR(?name, 1, 1)), LCASE(SUBSTR(?name, 2))) AS ?cap)
+    BIND(IF(?cap IN ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "PublicHolidays"),
+            IRI(CONCAT("https://schema.org/", ?cap)), ?d0) AS ?day) }
+}

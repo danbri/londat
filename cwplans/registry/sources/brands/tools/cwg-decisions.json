@@ -1,0 +1,154 @@
+{
+ "blink-brow-bar": {
+  "keep": false,
+  "reason": "NSI 'Blink' at this point is an EV-charging brand; Blink Brow Bar is not in NSI"
+ },
+ "london-marriott-executive-apartments-canary-wharf": {
+  "keep": true,
+  "reason": "brand + place"
+ },
+ "ryman-stationery": {
+  "keep": true,
+  "reason": "brand + trade"
+ },
+ "ismash": {
+  "keep": true,
+  "reason": "NSI files iSmash as craft=electronics_repair; CWG lists it as a shop"
+ },
+ "photo-me-booth-canada-place-1": {
+  "keep": false,
+  "reason": "a photo booth: street furniture, not a branch"
+ },
+ "photo-me-booth-canada-place-2": {
+  "keep": false,
+  "reason": "a photo booth: street furniture, not a branch"
+ },
+ "bupa-health-and-dental-centre-crossrail-place": {
+  "keep": true,
+  "reason": "Bupa health and dental centre"
+ },
+ "bupa-dental-centre-columbus-courtyard": {
+  "keep": true,
+  "reason": "NSI lists 'Bupa Dental Centre' as a name of Bupa Dental Care"
+ },
+ "pure-sports-medicine": {
+  "keep": false,
+  "reason": "a clinic; NSI 'Pure' is a food chain"
+ },
+ "amazon-hub-lockers": {
+  "keep": false,
+  "reason": "parcel lockers: street furniture, not a branch"
+ },
+ "inpost": {
+  "keep": false,
+  "reason": "parcel lockers: street furniture, not a branch"
+ },
+ "barclays-bank": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "boots-the-chemist-canada-place": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "the-post-office-chancellor-passage": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "the-post-office-churchill-place": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "boss": {
+  "keep": true,
+  "reason": "NSI alternate name of Hugo Boss"
+ },
+ "hackett": {
+  "keep": true,
+  "reason": "NSI alternate name of Hackett London"
+ },
+ "nicolas-wine-spirits-specialist": {
+  "keep": true,
+  "reason": "Nicolas wine shop"
+ },
+ "mulberry-wood-wharf-primary": {
+  "keep": false,
+  "reason": "a primary school, not the Mulberry shop"
+ },
+ "waitrose-partners": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "john-lewis-partners": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "kiehls-since-1851": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "bright-horizons-columbus-courtyard-day-nursery-preschool": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "bright-horizons-canada-square-day-nursery-preschool": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "bright-horizons-bank-street-day-nursery-preschool": {
+  "keep": true,
+  "reason": "brand + nursery name"
+ },
+ "browns-tanning": {
+  "keep": false,
+  "reason": "a tanning salon, not Browns restaurants"
+ },
+ "costa-coffee-cabot-place": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "notes-coffee-roasters-bar": {
+  "keep": true,
+  "reason": "Notes coffee chain"
+ },
+ "itsu-kiosk-canada-place-2": {
+  "keep": true,
+  "reason": "an itsu kiosk"
+ },
+ "marks-and-spencer-simply-food": {
+  "keep": true,
+  "reason": "M&S Food, listed by CWG under eat & drink"
+ },
+ "blank-street": {
+  "keep": true,
+  "reason": "NSI alternate name"
+ },
+ "t4": {
+  "keep": true,
+  "reason": "NSI alternate name of T4 Tea House"
+ },
+ "hotel-chocolat-cafe": {
+  "keep": true,
+  "reason": "the Hotel Chocolat cafe"
+ },
+ "the-ivy-in-the-park": {
+  "keep": true,
+  "reason": "The Ivy Collection"
+ },
+ "oasis-bar-terrace": {
+  "keep": false,
+  "reason": "a bar; NSI Oasis is a clothes shop"
+ },
+ "hawksmoor-bar": {
+  "keep": true,
+  "reason": "bar of the Hawksmoor restaurant"
+ },
+ "everyman-cinema": {
+  "keep": true,
+  "reason": "brand + 'Cinema'"
+ },
+ "third-space-recovery-spa": {
+  "keep": true,
+  "reason": "part of a Third Space club"
+ }
+}

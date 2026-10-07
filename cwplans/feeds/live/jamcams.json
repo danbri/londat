@@ -1,0 +1,2103 @@
+{
+ "meta": {
+  "source": "jamcams",
+  "url": "https://api.tfl.gov.uk/Place/Type/JamCam",
+  "fetched": "2026-10-04T08:27:13.655Z",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
+  "method": "GET /Place/Type/JamCam (every camera, one request); kept: cameras in the zone; image and video URLs recorded, no image fetched or stored (a page loads the current still from TfL); time = newest property \"modified\"",
+  "counts": {
+   "items": 115,
+   "model_box": 107,
+   "east_margin": 8,
+   "london_cameras": 890,
+   "available": 815
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "JamCams_00001.02001",
+   "kind": "traffic-camera",
+   "name": "Goodmans Yard/ Mansell Street",
+   "zone": "model",
+   "time": "2026-09-27T12:18:06.817Z",
+   "position": {
+    "lat": 51.5112,
+    "lon": -0.07301
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom West-Twd Minories",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02001.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02001.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02001.jpg"
+  },
+  {
+   "id": "JamCams_00001.02025",
+   "kind": "traffic-camera",
+   "name": "Leman St / Prescot St",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.512,
+    "lon": -0.06927
+   },
+   "values": {
+    "available": true,
+    "view": "SOUTH-Leman St",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02025.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02025.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02025.jpg"
+  },
+  {
+   "id": "JamCams_00001.02075",
+   "kind": "traffic-camera",
+   "name": "Commercial St/Brushfield",
+   "zone": "model",
+   "time": "2026-10-03T08:23:42.92Z",
+   "position": {
+    "lat": 51.5192,
+    "lon": -0.07464
+   },
+   "values": {
+    "available": true,
+    "view": "ZOOM - Brick Lane",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02075.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02075.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02075.jpg"
+  },
+  {
+   "id": "JamCams_00001.02100",
+   "kind": "traffic-camera",
+   "name": "Whitechapel High St/Mansell St",
+   "zone": "model",
+   "time": "2026-10-03T08:23:42.92Z",
+   "position": {
+    "lat": 51.5144,
+    "lon": -0.0741
+   },
+   "values": {
+    "available": false,
+    "view": "ZOOM - Whitechapel High St corner with Commerical St",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02100.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02100.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02100.jpg"
+  },
+  {
+   "id": "JamCams_00001.02101",
+   "kind": "traffic-camera",
+   "name": "Whitechapel Rd/White Church Ln",
+   "zone": "model",
+   "time": "2026-10-01T17:22:31.093Z",
+   "position": {
+    "lat": 51.5163,
+    "lon": -0.06894
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom-jct Commercial Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02101.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02101.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02101.jpg"
+  },
+  {
+   "id": "JamCams_00001.02102",
+   "kind": "traffic-camera",
+   "name": "Whitechapel Rd / Plumbers Row",
+   "zone": "model",
+   "time": "2026-10-02T22:23:10.44Z",
+   "position": {
+    "lat": 51.5173,
+    "lon": -0.06668
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-A11 Whitechapel Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02102.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02102.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02102.jpg"
+  },
+  {
+   "id": "JamCams_00001.02103",
+   "kind": "traffic-camera",
+   "name": "Whitechapel Rd/Court St",
+   "zone": "model",
+   "time": "2026-10-02T19:23:00.727Z",
+   "position": {
+    "lat": 51.5187,
+    "lon": -0.0611
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-Whitechapel Rd twds Aldgate",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02103.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02103.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02103.jpg"
+  },
+  {
+   "id": "JamCams_00001.02104",
+   "kind": "traffic-camera",
+   "name": "Mile End Rd/Cleveland Way",
+   "zone": "model",
+   "time": "2026-10-02T21:23:04.663Z",
+   "position": {
+    "lat": 51.5205,
+    "lon": -0.05217
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-Mile End Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02104.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02104.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02104.jpg"
+  },
+  {
+   "id": "JamCams_00001.02105",
+   "kind": "traffic-camera",
+   "name": "Mile End Rd/Cephas Ave",
+   "zone": "model",
+   "time": "2026-10-02T16:22:51.753Z",
+   "position": {
+    "lat": 51.5212,
+    "lon": -0.04894
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom East- Globe Road jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02105.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02105.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02105.jpg"
+  },
+  {
+   "id": "JamCams_00001.02109",
+   "kind": "traffic-camera",
+   "name": "Mile End Rd/Cambridge Heath Rd",
+   "zone": "model",
+   "time": "2026-10-02T21:23:04.663Z",
+   "position": {
+    "lat": 51.5199,
+    "lon": -0.05565
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Brady St jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02109.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02109.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02109.jpg"
+  },
+  {
+   "id": "JamCams_00001.02115",
+   "kind": "traffic-camera",
+   "name": "Mile End Rd/Globe Rd",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.5218,
+    "lon": -0.04605
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-A11 Mile End Rd twd Whitechapel Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02115.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02115.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02115.jpg"
+  },
+  {
+   "id": "JamCams_00001.02202",
+   "kind": "traffic-camera",
+   "name": "Burdett Rd/Eric St",
+   "zone": "model",
+   "time": "2026-10-01T23:22:06.18Z",
+   "position": {
+    "lat": 51.5208,
+    "lon": -0.03275
+   },
+   "values": {
+    "available": true,
+    "view": "SOUTH-A1205 Burdett Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02202.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02202.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02202.jpg"
+  },
+  {
+   "id": "JamCams_00001.02204",
+   "kind": "traffic-camera",
+   "name": "Burdett Rd/Pixley St",
+   "zone": "model",
+   "time": "2026-10-02T14:22:47.027Z",
+   "position": {
+    "lat": 51.5143,
+    "lon": -0.02834
+   },
+   "values": {
+    "available": true,
+    "view": "SOUTH-A1025 Burdett Rd twds A13 jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02204.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02204.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02204.jpg"
+  },
+  {
+   "id": "JamCams_00001.02205",
+   "kind": "traffic-camera",
+   "name": "Burdett Rd/Dod St",
+   "zone": "model",
+   "time": "2026-10-02T21:23:04.663Z",
+   "position": {
+    "lat": 51.5135,
+    "lon": -0.02767
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom South-A13 jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02205.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02205.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02205.jpg"
+  },
+  {
+   "id": "JamCams_00001.02252",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Gowers Walk",
+   "zone": "model",
+   "time": "2026-10-02T18:23:28.12Z",
+   "position": {
+    "lat": 51.5149,
+    "lon": -0.06808
+   },
+   "values": {
+    "available": true,
+    "view": "East-A13 Commercial Rd twds Limehouse",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02252.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02252.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02252.jpg"
+  },
+  {
+   "id": "JamCams_00001.02253",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/New Rd",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.5148,
+    "lon": -0.06227
+   },
+   "values": {
+    "available": true,
+    "view": "NORTH-New Rd jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02253.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02253.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02253.jpg"
+  },
+  {
+   "id": "JamCams_00001.02254",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Cannon St Rd",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.5147,
+    "lon": -0.06163
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-A13 Commerical Rd twds Limehouse",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02254.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02254.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02254.jpg"
+  },
+  {
+   "id": "JamCams_00001.02255",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Dean Cross St",
+   "zone": "model",
+   "time": "2026-10-03T09:23:43.38Z",
+   "position": {
+    "lat": 51.5143,
+    "lon": -0.05451
+   },
+   "values": {
+    "available": false,
+    "view": "WEST-A13 Commercial Rd twds Whitechapel",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02255.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02255.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02255.jpg"
+  },
+  {
+   "id": "JamCams_00001.02256",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Jubilee St",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.514,
+    "lon": -0.05251
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-A13 Commercial Rd twds Whitechapel",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02256.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02256.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02256.jpg"
+  },
+  {
+   "id": "JamCams_00001.02257",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Belgrave St",
+   "zone": "model",
+   "time": "2026-10-01T17:22:31.093Z",
+   "position": {
+    "lat": 51.513,
+    "lon": -0.04164
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom-Rotherhithe Tunnel jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02257.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02257.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02257.jpg"
+  },
+  {
+   "id": "JamCams_00001.02258",
+   "kind": "traffic-camera",
+   "name": "A13 Commercial Road/Salmon Lane",
+   "zone": "model",
+   "time": "2026-10-02T21:23:04.663Z",
+   "position": {
+    "lat": 51.5124,
+    "lon": -0.032
+   },
+   "values": {
+    "available": true,
+    "view": "NORTH-Salmon Lane",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02258.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02258.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02258.jpg"
+  },
+  {
+   "id": "JamCams_00001.02259",
+   "kind": "traffic-camera",
+   "name": "East India Dock Rd/Amoy Pl",
+   "zone": "model",
+   "time": "2026-10-02T12:23:00.653Z",
+   "position": {
+    "lat": 51.5117,
+    "lon": -0.02756
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-A13 East India Dock Rd twds Limehouse",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02259.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02259.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02259.jpg"
+  },
+  {
+   "id": "JamCams_00001.02260",
+   "kind": "traffic-camera",
+   "name": "East India Dock Rd/Upper Nth St",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5109,
+    "lon": -0.02134
+   },
+   "values": {
+    "available": false,
+    "view": "EAST-East India Dock Rd twds Canning Town",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02260.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02260.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02260.jpg"
+  },
+  {
+   "id": "JamCams_00001.02262",
+   "kind": "traffic-camera",
+   "name": "East India Dock Rd/Chrisp St",
+   "zone": "model",
+   "time": "2026-10-01T20:22:18.567Z",
+   "position": {
+    "lat": 51.5112,
+    "lon": -0.01399
+   },
+   "values": {
+    "available": true,
+    "view": "East India Dock Rd - West",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02262.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02262.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02262.jpg"
+  },
+  {
+   "id": "JamCams_00001.02263",
+   "kind": "traffic-camera",
+   "name": "East India Dock Rd/Leamouth Rd",
+   "zone": "model",
+   "time": "2026-10-02T18:23:28.12Z",
+   "position": {
+    "lat": 51.5128,
+    "lon": -0.00081
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - A13 \\/ A12 BTNA junction",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02263.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02263.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02263.jpg"
+  },
+  {
+   "id": "JamCams_00001.02265",
+   "kind": "traffic-camera",
+   "name": "Aspen Way/Cotton Street",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5072,
+    "lon": -0.01003
+   },
+   "values": {
+    "available": true,
+    "view": "West zoom twds Upper Bank Street jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02265.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02265.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02265.jpg"
+  },
+  {
+   "id": "JamCams_00001.02267",
+   "kind": "traffic-camera",
+   "name": "A13 East India Dock/Cotton St",
+   "zone": "model",
+   "time": "2026-10-02T16:22:51.753Z",
+   "position": {
+    "lat": 51.5115,
+    "lon": -0.00971
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-(A13 twds Limehouse)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02267.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02267.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02267.jpg"
+  },
+  {
+   "id": "JamCams_00001.02268",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Albert Gardens",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5133,
+    "lon": -0.04692
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-A13 Commercial Rd twds Limehouse",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02268.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02268.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02268.jpg"
+  },
+  {
+   "id": "JamCams_00001.02269",
+   "kind": "traffic-camera",
+   "name": "Commercial Rd/Westport St",
+   "zone": "model",
+   "time": "2026-10-02T22:23:10.44Z",
+   "position": {
+    "lat": 51.5132,
+    "lon": -0.04356
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Butcher Row jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02269.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02269.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02269.jpg"
+  },
+  {
+   "id": "JamCams_00001.02301",
+   "kind": "traffic-camera",
+   "name": "Barking Rd/Chargable Lane",
+   "zone": "east",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.5217,
+    "lon": 0.02102
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-Barking Rd twds Canning Town",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02301.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02301.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02301.jpg"
+  },
+  {
+   "id": "JamCams_00001.02310",
+   "kind": "traffic-camera",
+   "name": "Connaught Bridge/Connaught Rd",
+   "zone": "east",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5049,
+    "lon": 0.03964
+   },
+   "values": {
+    "available": true,
+    "view": "North - Connaught Bridge",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02310.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02310.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02310.jpg"
+  },
+  {
+   "id": "JamCams_00001.02313",
+   "kind": "traffic-camera",
+   "name": "Lwr Lea Crossing/Blackwall Way",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5101,
+    "lon": 0.00205
+   },
+   "values": {
+    "available": true,
+    "view": "East India DLR platforms",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02313.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02313.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02313.jpg"
+  },
+  {
+   "id": "JamCams_00001.02351",
+   "kind": "traffic-camera",
+   "name": "The Highway/Vaughan Way",
+   "zone": "model",
+   "time": "2026-10-01T06:22:22.94Z",
+   "position": {
+    "lat": 51.509,
+    "lon": -0.06752
+   },
+   "values": {
+    "available": true,
+    "view": "SOUTH-Vaughan Way",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02351.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02351.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02351.jpg"
+  },
+  {
+   "id": "JamCams_00001.02352",
+   "kind": "traffic-camera",
+   "name": "The Highway/Glamis Road",
+   "zone": "model",
+   "time": "2026-10-01T04:21:43.03Z",
+   "position": {
+    "lat": 51.5097,
+    "lon": -0.05046
+   },
+   "values": {
+    "available": true,
+    "view": "VMS 5\\/742",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02352.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02352.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02352.jpg"
+  },
+  {
+   "id": "JamCams_00001.02353",
+   "kind": "traffic-camera",
+   "name": "The Highway/Wapping Lane",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5097,
+    "lon": -0.05876
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Cannon Street Road jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02353.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02353.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.02353.jpg"
+  },
+  {
+   "id": "JamCams_00001.03005",
+   "kind": "traffic-camera",
+   "name": "Millennium Wy/Edmund Halley Wy",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4978,
+    "lon": 0.00289
+   },
+   "values": {
+    "available": true,
+    "view": "North Greenwich station",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03005.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03005.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03005.jpg"
+  },
+  {
+   "id": "JamCams_00001.03007",
+   "kind": "traffic-camera",
+   "name": "West Parkside/John Harrison Wy",
+   "zone": "model",
+   "time": "2026-10-02T20:23:12.103Z",
+   "position": {
+    "lat": 51.4949,
+    "lon": 0.01184
+   },
+   "values": {
+    "available": true,
+    "view": "South - John Harrison Way (twds Blackwall Lane)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03007.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03007.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03007.jpg"
+  },
+  {
+   "id": "JamCams_00001.03105",
+   "kind": "traffic-camera",
+   "name": "Trafalgar Rd/Greenwich Pk St",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4837,
+    "lon": -0.00014
+   },
+   "values": {
+    "available": true,
+    "view": "West zoom - Park Row jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03105.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03105.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03105.jpg"
+  },
+  {
+   "id": "JamCams_00001.03108",
+   "kind": "traffic-camera",
+   "name": "Woolwich Rd/Hatcliffe st",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4862,
+    "lon": 0.00843
+   },
+   "values": {
+    "available": true,
+    "view": "East zoom - Hazel Lane jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03108.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03108.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03108.jpg"
+  },
+  {
+   "id": "JamCams_00001.03488",
+   "kind": "traffic-camera",
+   "name": "Tower Bridge Rd/Rothsay St",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.4961,
+    "lon": -0.08297
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Long Lane jct Bermondsey St",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03488.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03488.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03488.jpg"
+  },
+  {
+   "id": "JamCams_00001.03490",
+   "kind": "traffic-camera",
+   "name": "Twr Brdge Rd/Grange Rd",
+   "zone": "model",
+   "time": "2026-10-03T08:23:42.92Z",
+   "position": {
+    "lat": 51.4968,
+    "lon": -0.08186
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Grange Road",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03490.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03490.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03490.jpg"
+  },
+  {
+   "id": "JamCams_00001.03500",
+   "kind": "traffic-camera",
+   "name": "Tower Bridge App./East Smithfield",
+   "zone": "model",
+   "time": "2026-09-30T22:21:21.697Z",
+   "position": {
+    "lat": 51.509,
+    "lon": -0.07368
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-twds Blackfriars",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03500.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03500.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03500.jpg"
+  },
+  {
+   "id": "JamCams_00001.03505",
+   "kind": "traffic-camera",
+   "name": "Tooley St/Abbots Lane",
+   "zone": "model",
+   "time": "2026-10-03T08:23:42.92Z",
+   "position": {
+    "lat": 51.5039,
+    "lon": -0.08136
+   },
+   "values": {
+    "available": true,
+    "view": "Tooley St towards Tower Br",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03505.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03505.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03505.jpg"
+  },
+  {
+   "id": "JamCams_00001.03506",
+   "kind": "traffic-camera",
+   "name": "Tooley St/Boss St",
+   "zone": "model",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.502,
+    "lon": -0.07681
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-Tooley St",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03506.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03506.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03506.jpg"
+  },
+  {
+   "id": "JamCams_00001.03507",
+   "kind": "traffic-camera",
+   "name": "Tooley St/Bermondsey St",
+   "zone": "model",
+   "time": "2026-10-02T12:23:00.653Z",
+   "position": {
+    "lat": 51.5046,
+    "lon": -0.08342
+   },
+   "values": {
+    "available": true,
+    "view": "West - Tooley St twds London Bridge",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03507.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03507.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03507.jpg"
+  },
+  {
+   "id": "JamCams_00001.03551",
+   "kind": "traffic-camera",
+   "name": "Jamaica Rd E of Abbey St",
+   "zone": "model",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.4985,
+    "lon": -0.06964
+   },
+   "values": {
+    "available": true,
+    "view": "WEST-Jamaica Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03551.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03551.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03551.jpg"
+  },
+  {
+   "id": "JamCams_00001.03553",
+   "kind": "traffic-camera",
+   "name": "Jamaica Rd / Major Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4981,
+    "lon": -0.06409
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-Jamaica Rd twds Rotherhothe Tunnel",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03553.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03553.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03553.jpg"
+  },
+  {
+   "id": "JamCams_00001.03555",
+   "kind": "traffic-camera",
+   "name": "Jamaica Rd W of Lower Rd",
+   "zone": "model",
+   "time": "2026-10-02T15:23:22.917Z",
+   "position": {
+    "lat": 51.4991,
+    "lon": -0.05633
+   },
+   "values": {
+    "available": true,
+    "view": "SOUTH-Lower Road",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03555.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03555.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03555.jpg"
+  },
+  {
+   "id": "JamCams_00001.03556",
+   "kind": "traffic-camera",
+   "name": "Evelyn Street / Bestwood St",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.49,
+    "lon": -0.04228
+   },
+   "values": {
+    "available": true,
+    "view": "ZOOM - Evelyn Street (twds Deptford)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03556.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03556.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03556.jpg"
+  },
+  {
+   "id": "JamCams_00001.03557",
+   "kind": "traffic-camera",
+   "name": "Lower Rd/Rotherhithe Old Rd",
+   "zone": "model",
+   "time": "2026-10-02T22:23:10.44Z",
+   "position": {
+    "lat": 51.4937,
+    "lon": -0.04832
+   },
+   "values": {
+    "available": true,
+    "view": "NORTH-Canada Water station\\/Deal Porters Way",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03557.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03557.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03557.jpg"
+  },
+  {
+   "id": "JamCams_00001.03606",
+   "kind": "traffic-camera",
+   "name": "New Kent Rd / Balfour St",
+   "zone": "model",
+   "time": "2026-10-03T02:23:22.027Z",
+   "position": {
+    "lat": 51.4941,
+    "lon": -0.09159
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom twds Elephant & Castle",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03606.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03606.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03606.jpg"
+  },
+  {
+   "id": "JamCams_00001.03651",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/Preston Cls",
+   "zone": "model",
+   "time": "2026-10-01T17:22:31.093Z",
+   "position": {
+    "lat": 51.4925,
+    "lon": -0.08363
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - East St jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03651.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03651.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03651.jpg"
+  },
+  {
+   "id": "JamCams_00001.03652",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/Hendre Rd",
+   "zone": "model",
+   "time": "2026-10-01T18:22:21.967Z",
+   "position": {
+    "lat": 51.4913,
+    "lon": -0.08167
+   },
+   "values": {
+    "available": true,
+    "view": "NORTH-Flyover and Bricklayers Rbt Zoom",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03652.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03652.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03652.jpg"
+  },
+  {
+   "id": "JamCams_00001.03653",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/Albany Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4881,
+    "lon": -0.07669
+   },
+   "values": {
+    "available": true,
+    "view": "North - Humphrey Street",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03653.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03653.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03653.jpg"
+  },
+  {
+   "id": "JamCams_00001.03654",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/Glengall Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4861,
+    "lon": -0.07211
+   },
+   "values": {
+    "available": true,
+    "view": "N\\/WEST-A2 Old Kent Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03654.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03654.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03654.jpg"
+  },
+  {
+   "id": "JamCams_00001.03656",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/St James Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4839,
+    "lon": -0.06639
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Peckham Park Road jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03656.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03656.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03656.jpg"
+  },
+  {
+   "id": "JamCams_00001.03657",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/Peckham Pk R",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.483,
+    "lon": -0.06422
+   },
+   "values": {
+    "available": true,
+    "view": "N\\/WEST-A2 Old Kent Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03657.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03657.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03657.jpg"
+  },
+  {
+   "id": "JamCams_00001.03659",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/Billington Rd",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.4757,
+    "lon": -0.04707
+   },
+   "values": {
+    "available": true,
+    "view": "N\\/WEST-A2 New Cross Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03659.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03659.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03659.jpg"
+  },
+  {
+   "id": "JamCams_00001.03660",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/Besson St",
+   "zone": "model",
+   "time": "2026-10-01T18:22:21.967Z",
+   "position": {
+    "lat": 51.4753,
+    "lon": -0.04715
+   },
+   "values": {
+    "available": true,
+    "view": "WEST - Besson St",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03660.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03660.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03660.jpg"
+  },
+  {
+   "id": "JamCams_00001.03662",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/Nettleton Rd",
+   "zone": "model",
+   "time": "2026-10-02T04:22:22.783Z",
+   "position": {
+    "lat": 51.4744,
+    "lon": -0.04327
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-A2 New Cross Rd",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03662.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03662.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03662.jpg"
+  },
+  {
+   "id": "JamCams_00001.03663",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/St James",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.475,
+    "lon": -0.03958
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Sainsburys access road",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03663.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03663.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03663.jpg"
+  },
+  {
+   "id": "JamCams_00001.03664",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/Florence Rd",
+   "zone": "model",
+   "time": "2026-09-26T19:17:15.097Z",
+   "position": {
+    "lat": 51.4754,
+    "lon": -0.02898
+   },
+   "values": {
+    "available": true,
+    "view": "West - A2 twds New Cross",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03664.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03664.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03664.jpg"
+  },
+  {
+   "id": "JamCams_00001.03665",
+   "kind": "traffic-camera",
+   "name": "Deptford Broadway/Deptford Ch St",
+   "zone": "model",
+   "time": "2026-10-01T15:22:18.43Z",
+   "position": {
+    "lat": 51.4747,
+    "lon": -0.0242
+   },
+   "values": {
+    "available": true,
+    "view": "Deptford Bridge DLR Entrance and Platform",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03665.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03665.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03665.jpg"
+  },
+  {
+   "id": "JamCams_00001.03667",
+   "kind": "traffic-camera",
+   "name": "Old Kent Rd/Humphrey St",
+   "zone": "model",
+   "time": "2026-10-03T09:23:43.38Z",
+   "position": {
+    "lat": 51.4883,
+    "lon": -0.07644
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Dunton Road jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03667.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03667.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03667.jpg"
+  },
+  {
+   "id": "JamCams_00001.03672",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/Avonley Rd",
+   "zone": "model",
+   "time": "2026-10-01T02:21:27.447Z",
+   "position": {
+    "lat": 51.4778,
+    "lon": -0.05185
+   },
+   "values": {
+    "available": true,
+    "view": "East (A2 twds New Cross)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03672.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03672.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03672.jpg"
+  },
+  {
+   "id": "JamCams_00001.03674",
+   "kind": "traffic-camera",
+   "name": "A2 New Cross Rd/Lewisham Way",
+   "zone": "model",
+   "time": "2026-10-02T20:23:12.103Z",
+   "position": {
+    "lat": 51.4757,
+    "lon": -0.03625
+   },
+   "values": {
+    "available": true,
+    "view": "West (twds Peckham)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03674.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03674.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03674.jpg"
+  },
+  {
+   "id": "JamCams_00001.03675",
+   "kind": "traffic-camera",
+   "name": "Blackheath Rd/Greenwich High Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4742,
+    "lon": -0.02073
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom west - Deptford Bridge",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03675.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03675.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03675.jpg"
+  },
+  {
+   "id": "JamCams_00001.03700",
+   "kind": "traffic-camera",
+   "name": "A20 Lewisham Way/Parkfield Rd",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.4745,
+    "lon": -0.03458
+   },
+   "values": {
+    "available": true,
+    "view": "WEST - Lewisham Way",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03700.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03700.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03700.jpg"
+  },
+  {
+   "id": "JamCams_00001.03825",
+   "kind": "traffic-camera",
+   "name": "Camberwell Rd/Albany Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4824,
+    "lon": -0.0946
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom north twds East Street",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03825.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03825.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.03825.jpg"
+  },
+  {
+   "id": "JamCams_00001.04338",
+   "kind": "traffic-camera",
+   "name": "Camberwell Ch St/Camberwell Grn",
+   "zone": "model",
+   "time": "2026-10-03T03:23:26.33Z",
+   "position": {
+    "lat": 51.4742,
+    "lon": -0.09223
+   },
+   "values": {
+    "available": true,
+    "view": "Wren Road",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04338.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04338.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04338.jpg"
+  },
+  {
+   "id": "JamCams_00001.04341",
+   "kind": "traffic-camera",
+   "name": "Peckham Rd/Kelly Ave/Lyndhrst Wy",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.474,
+    "lon": -0.07443
+   },
+   "values": {
+    "available": true,
+    "view": "West (twds Camberwell Green)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04341.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04341.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04341.jpg"
+  },
+  {
+   "id": "JamCams_00001.04344",
+   "kind": "traffic-camera",
+   "name": "Queens Road/Woods Road",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.474,
+    "lon": -0.06234
+   },
+   "values": {
+    "available": true,
+    "view": "EAST-A202 Queens Rd twds New Cross",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04344.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04344.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04344.jpg"
+  },
+  {
+   "id": "JamCams_00001.04601",
+   "kind": "traffic-camera",
+   "name": "Borough High St/Southwark St",
+   "zone": "model",
+   "time": "2026-10-03T07:23:37.94Z",
+   "position": {
+    "lat": 51.5048,
+    "lon": -0.09006
+   },
+   "values": {
+    "available": false,
+    "view": "Zoom - Tooley St jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04601.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04601.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04601.jpg"
+  },
+  {
+   "id": "JamCams_00001.04680",
+   "kind": "traffic-camera",
+   "name": "Borough High St/Grt Dover St",
+   "zone": "model",
+   "time": "2026-10-02T17:23:07.367Z",
+   "position": {
+    "lat": 51.5011,
+    "lon": -0.09317
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom - Union Street jct",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04680.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04680.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04680.jpg"
+  },
+  {
+   "id": "JamCams_00001.09096",
+   "kind": "traffic-camera",
+   "name": "Pier Road/Woolwich Ferry",
+   "zone": "east",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4989,
+    "lon": 0.06368
+   },
+   "values": {
+    "available": true,
+    "view": "Zoom south - A206 Beresford St Rbt",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.09096.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.09096.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.09096.jpg"
+  },
+  {
+   "id": "JamCams_00002.00304",
+   "kind": "traffic-camera",
+   "name": "A102 Tunnel Avenue",
+   "zone": "model",
+   "time": "2026-10-02T05:22:17.723Z",
+   "position": {
+    "lat": 51.49638,
+    "lon": 0.00262
+   },
+   "values": {
+    "available": true,
+    "view": "OHVD1 (home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00304.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00304.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00304.jpg"
+  },
+  {
+   "id": "JamCams_00002.00305",
+   "kind": "traffic-camera",
+   "name": "A102 Pear Island",
+   "zone": "model",
+   "time": "2026-10-03T09:23:43.38Z",
+   "position": {
+    "lat": 51.49612,
+    "lon": 0.00227
+   },
+   "values": {
+    "available": false,
+    "view": "Facing South (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00305.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00305.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00305.jpg"
+  },
+  {
+   "id": "JamCams_00002.00323",
+   "kind": "traffic-camera",
+   "name": "A12 Carradale House",
+   "zone": "model",
+   "time": "2026-10-02T22:23:10.44Z",
+   "position": {
+    "lat": 51.51484,
+    "lon": -0.00869
+   },
+   "values": {
+    "available": true,
+    "view": "East Home",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00323.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00323.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00323.jpg"
+  },
+  {
+   "id": "JamCams_00002.00324",
+   "kind": "traffic-camera",
+   "name": "A13/A102 EIDR",
+   "zone": "model",
+   "time": "2026-10-02T16:22:51.753Z",
+   "position": {
+    "lat": 51.5114,
+    "lon": -0.00758
+   },
+   "values": {
+    "available": true,
+    "view": "Blackwall Tunnel Portal",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00324.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00324.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00324.jpg"
+  },
+  {
+   "id": "JamCams_00002.00325",
+   "kind": "traffic-camera",
+   "name": "Blackwall Nth Portal",
+   "zone": "model",
+   "time": "2026-10-01T05:21:57.11Z",
+   "position": {
+    "lat": 51.5103,
+    "lon": -0.00684
+   },
+   "values": {
+    "available": true,
+    "view": "A102\\/3009B23",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00325.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00325.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00325.jpg"
+  },
+  {
+   "id": "JamCams_00002.00326",
+   "kind": "traffic-camera",
+   "name": "A102 Brunswick Rd",
+   "zone": "model",
+   "time": "2026-09-30T17:21:28.083Z",
+   "position": {
+    "lat": 51.51333,
+    "lon": -0.00809
+   },
+   "values": {
+    "available": true,
+    "view": "North Facing (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00326.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00326.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00326.jpg"
+  },
+  {
+   "id": "JamCams_00002.00327",
+   "kind": "traffic-camera",
+   "name": "A12 Blackwall Tunnel Nthern App/Gillender St",
+   "zone": "model",
+   "time": "2026-10-02T19:23:00.727Z",
+   "position": {
+    "lat": 51.52123,
+    "lon": -0.01031
+   },
+   "values": {
+    "available": true,
+    "view": "South facing",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00327.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00327.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00327.jpg"
+  },
+  {
+   "id": "JamCams_00002.00329",
+   "kind": "traffic-camera",
+   "name": "A13 Cotton St",
+   "zone": "model",
+   "time": "2026-10-02T01:22:04.01Z",
+   "position": {
+    "lat": 51.51129,
+    "lon": -0.01077
+   },
+   "values": {
+    "available": true,
+    "view": "Facing East (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00329.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00329.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00329.jpg"
+  },
+  {
+   "id": "JamCams_00002.00330",
+   "kind": "traffic-camera",
+   "name": "A13 Burdett Rd",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.51189,
+    "lon": -0.02849
+   },
+   "values": {
+    "available": true,
+    "view": "East Facing",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00330.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00330.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00330.jpg"
+  },
+  {
+   "id": "JamCams_00002.00347",
+   "kind": "traffic-camera",
+   "name": "A102 Woolwich Rd (N)",
+   "zone": "model",
+   "time": "2026-10-01T04:21:43.03Z",
+   "position": {
+    "lat": 51.48858,
+    "lon": 0.01447
+   },
+   "values": {
+    "available": true,
+    "view": "South (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00347.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00347.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00347.jpg"
+  },
+  {
+   "id": "JamCams_00002.00348",
+   "kind": "traffic-camera",
+   "name": "A102 Blackwall Lane",
+   "zone": "model",
+   "time": "2026-10-03T09:23:43.38Z",
+   "position": {
+    "lat": 51.49395,
+    "lon": 0.00646
+   },
+   "values": {
+    "available": false,
+    "view": "Barrier - A102\\/1196K1B",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00348.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00348.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00348.jpg"
+  },
+  {
+   "id": "JamCams_00002.00349",
+   "kind": "traffic-camera",
+   "name": "A102 Tunnel House S",
+   "zone": "model",
+   "time": "2026-10-01T13:21:56.987Z",
+   "position": {
+    "lat": 51.49652,
+    "lon": 0.00205
+   },
+   "values": {
+    "available": true,
+    "view": "Barrier - A102\\/1173A1B",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00349.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00349.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00349.jpg"
+  },
+  {
+   "id": "JamCams_00002.00361",
+   "kind": "traffic-camera",
+   "name": "Limehouse Tunnel/Butcher Row",
+   "zone": "model",
+   "time": "2026-10-01T20:22:18.567Z",
+   "position": {
+    "lat": 51.5106,
+    "lon": -0.04182
+   },
+   "values": {
+    "available": true,
+    "view": "West",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00361.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00361.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00361.jpg"
+  },
+  {
+   "id": "JamCams_00002.00362",
+   "kind": "traffic-camera",
+   "name": "Limehouse Tunnel/The Highway",
+   "zone": "model",
+   "time": "2026-10-01T08:21:38.22Z",
+   "position": {
+    "lat": 51.51071,
+    "lon": -0.04053
+   },
+   "values": {
+    "available": true,
+    "view": "West Facing (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00362.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00362.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00362.jpg"
+  },
+  {
+   "id": "JamCams_00002.00378",
+   "kind": "traffic-camera",
+   "name": "Limehouse Tnl HH Westferry Rd Exit",
+   "zone": "model",
+   "time": "2026-09-29T20:20:05.79Z",
+   "position": {
+    "lat": 51.50791,
+    "lon": -0.02752
+   },
+   "values": {
+    "available": true,
+    "view": "portal",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00378.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00378.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00378.jpg"
+  },
+  {
+   "id": "JamCams_00002.00389",
+   "kind": "traffic-camera",
+   "name": "Limehouse Tnl East Portal E/B",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.50847,
+    "lon": -0.0223
+   },
+   "values": {
+    "available": true,
+    "view": "East Facing (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00389.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00389.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00389.jpg"
+  },
+  {
+   "id": "JamCams_00002.00390",
+   "kind": "traffic-camera",
+   "name": "Limehouse Tnl Aspen Way",
+   "zone": "model",
+   "time": "2026-09-30T15:21:04.947Z",
+   "position": {
+    "lat": 51.50825,
+    "lon": -0.02122
+   },
+   "values": {
+    "available": true,
+    "view": "East Facing (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00390.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00390.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00390.jpg"
+  },
+  {
+   "id": "JamCams_00002.00403",
+   "kind": "traffic-camera",
+   "name": "Limehouse Tnl Westferry Rd Entr",
+   "zone": "model",
+   "time": "2026-10-03T01:23:17.93Z",
+   "position": {
+    "lat": 51.50773,
+    "lon": -0.02766
+   },
+   "values": {
+    "available": true,
+    "view": "Facing Portal (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00403.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00403.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00403.jpg"
+  },
+  {
+   "id": "JamCams_00002.00421",
+   "kind": "traffic-camera",
+   "name": "A13 Branch Road",
+   "zone": "model",
+   "time": "2026-10-01T00:21:23.11Z",
+   "position": {
+    "lat": 51.51281,
+    "lon": -0.0388
+   },
+   "values": {
+    "available": true,
+    "view": "Facing South (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00421.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00421.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00421.jpg"
+  },
+  {
+   "id": "JamCams_00002.00422",
+   "kind": "traffic-camera",
+   "name": "Rotherhithe Tunnel Barrier N",
+   "zone": "model",
+   "time": "2026-10-03T09:23:43.38Z",
+   "position": {
+    "lat": 51.51229,
+    "lon": -0.03911
+   },
+   "values": {
+    "available": true,
+    "view": "A101\\/6268L",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00422.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00422.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00422.jpg"
+  },
+  {
+   "id": "JamCams_00002.00433",
+   "kind": "traffic-camera",
+   "name": "Rotherhithe Tunnel Barrier S",
+   "zone": "model",
+   "time": "2026-10-02T10:23:04.343Z",
+   "position": {
+    "lat": 51.49923,
+    "lon": -0.05514
+   },
+   "values": {
+    "available": true,
+    "view": "Home",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00433.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00433.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00433.jpg"
+  },
+  {
+   "id": "JamCams_00002.00434",
+   "kind": "traffic-camera",
+   "name": "A200 Jamaica Road",
+   "zone": "model",
+   "time": "2026-10-02T08:22:35.477Z",
+   "position": {
+    "lat": 51.49909,
+    "lon": -0.0561
+   },
+   "values": {
+    "available": true,
+    "view": "A101\\/6461A02",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00434.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00434.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00434.jpg"
+  },
+  {
+   "id": "JamCams_00002.00435",
+   "kind": "traffic-camera",
+   "name": "Tunnel House",
+   "zone": "model",
+   "time": "2026-10-02T14:22:47.027Z",
+   "position": {
+    "lat": 51.49672,
+    "lon": 0.00205
+   },
+   "values": {
+    "available": true,
+    "view": "Home",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00435.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00435.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00435.jpg"
+  },
+  {
+   "id": "JamCams_00002.00450",
+   "kind": "traffic-camera",
+   "name": "A102 Tunnel House N",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.4969,
+    "lon": 0.00193
+   },
+   "values": {
+    "available": true,
+    "view": "North (home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00450.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00450.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00450.jpg"
+  },
+  {
+   "id": "JamCams_00002.00605",
+   "kind": "traffic-camera",
+   "name": "ASPEN WAY - UPPER BANK STREET",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.50706,
+    "lon": -0.0162
+   },
+   "values": {
+    "available": true,
+    "view": "West Facing (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00605.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00605.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00605.jpg"
+  },
+  {
+   "id": "JamCams_00002.00606",
+   "kind": "traffic-camera",
+   "name": "ASPEN WAY - BLACKWALL WAY",
+   "zone": "model",
+   "time": "2026-09-30T12:20:56.537Z",
+   "position": {
+    "lat": 51.50841,
+    "lon": -0.00388
+   },
+   "values": {
+    "available": true,
+    "view": "West (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00606.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00606.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00606.jpg"
+  },
+  {
+   "id": "JamCams_00002.00607",
+   "kind": "traffic-camera",
+   "name": "EIDT West Ramp Gantry",
+   "zone": "model",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.50984,
+    "lon": -0.00254
+   },
+   "values": {
+    "available": true,
+    "view": "Barrier - A1261\\/5038B1B",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00607.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00607.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00607.jpg"
+  },
+  {
+   "id": "JamCams_00002.00616",
+   "kind": "traffic-camera",
+   "name": "EIDT East Portal Pole",
+   "zone": "model",
+   "time": "2026-09-29T10:19:36.773Z",
+   "position": {
+    "lat": 51.51336,
+    "lon": 0.00141
+   },
+   "values": {
+    "available": true,
+    "view": "Facing East (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00616.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00616.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00616.jpg"
+  },
+  {
+   "id": "JamCams_00002.00617",
+   "kind": "traffic-camera",
+   "name": "Leamouth Road",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.5127,
+    "lon": -0.00048
+   },
+   "values": {
+    "available": true,
+    "view": "East Facing (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00617.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00617.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00617.jpg"
+  },
+  {
+   "id": "JamCams_00002.00618",
+   "kind": "traffic-camera",
+   "name": "EIDT East Ramp",
+   "zone": "model",
+   "time": "2026-09-26T13:16:45.187Z",
+   "position": {
+    "lat": 51.51414,
+    "lon": 0.00238
+   },
+   "values": {
+    "available": true,
+    "view": "West Facing",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00618.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00618.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00618.jpg"
+  },
+  {
+   "id": "JamCams_00002.00619",
+   "kind": "traffic-camera",
+   "name": "Silvertown Way",
+   "zone": "model",
+   "time": "2026-09-30T17:21:28.083Z",
+   "position": {
+    "lat": 51.51533,
+    "lon": 0.00814
+   },
+   "values": {
+    "available": true,
+    "view": "East",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00619.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00619.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00619.jpg"
+  },
+  {
+   "id": "JamCams_00002.00620",
+   "kind": "traffic-camera",
+   "name": "Prince Regents Lane W",
+   "zone": "east",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.51689,
+    "lon": 0.02795
+   },
+   "values": {
+    "available": true,
+    "view": "A13\\/8062A",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00620.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00620.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00620.jpg"
+  },
+  {
+   "id": "JamCams_00002.00621",
+   "kind": "traffic-camera",
+   "name": "Prince Regents Lane Jn",
+   "zone": "east",
+   "time": "2026-10-01T20:22:18.567Z",
+   "position": {
+    "lat": 51.51749,
+    "lon": 0.03219
+   },
+   "values": {
+    "available": true,
+    "view": "Facing South",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00621.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00621.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00621.jpg"
+  },
+  {
+   "id": "JamCams_00002.00622",
+   "kind": "traffic-camera",
+   "name": "Prince Regents Lane E",
+   "zone": "east",
+   "time": "2026-09-30T18:21:33.033Z",
+   "position": {
+    "lat": 51.51803,
+    "lon": 0.03557
+   },
+   "values": {
+    "available": true,
+    "view": "Facing East (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00622.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00622.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00622.jpg"
+  },
+  {
+   "id": "JamCams_00002.00623",
+   "kind": "traffic-camera",
+   "name": "Noel Road",
+   "zone": "east",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.52026,
+    "lon": 0.04645
+   },
+   "values": {
+    "available": false,
+    "view": "North",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00623.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00623.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00623.jpg"
+  },
+  {
+   "id": "JamCams_00002.00624",
+   "kind": "traffic-camera",
+   "name": "Woolwich Manor Way",
+   "zone": "east",
+   "time": "2026-10-02T11:22:37.833Z",
+   "position": {
+    "lat": 51.52049,
+    "lon": 0.05882
+   },
+   "values": {
+    "available": true,
+    "view": "South",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00624.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00624.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00624.jpg"
+  },
+  {
+   "id": "JamCams_00002.00640",
+   "kind": "traffic-camera",
+   "name": "NEWHAM WAY - FORTY ACRE LANE",
+   "zone": "model",
+   "time": "2026-09-29T14:19:53.77Z",
+   "position": {
+    "lat": 51.51575,
+    "lon": 0.01067
+   },
+   "values": {
+    "available": true,
+    "view": "west",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00640.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00640.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00640.jpg"
+  },
+  {
+   "id": "JamCams_00002.00910",
+   "kind": "traffic-camera",
+   "name": "Tidal Basin Roundabout East",
+   "zone": "model",
+   "time": "2026-09-24T15:14:48.15Z",
+   "position": {
+    "lat": 51.50861,
+    "lon": 0.01418
+   },
+   "values": {
+    "available": true,
+    "view": "Rbt Southside (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00910.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00910.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00910.jpg"
+  },
+  {
+   "id": "JamCams_00002.00911",
+   "kind": "traffic-camera",
+   "name": "Tidal Basin Roundabout West",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.50816,
+    "lon": 0.01192
+   },
+   "values": {
+    "available": true,
+    "view": "Home",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00911.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00911.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00911.jpg"
+  },
+  {
+   "id": "JamCams_00002.00925",
+   "kind": "traffic-camera",
+   "name": "STT Southern Portal Bus Lane",
+   "zone": "model",
+   "time": "2026-09-30T14:21:02.21Z",
+   "position": {
+    "lat": 51.49794,
+    "lon": 0.00199
+   },
+   "values": {
+    "available": true,
+    "view": "Facing South (Home)",
+    "image_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00925.jpg",
+    "video_url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00925.mp4"
+   },
+   "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00002.00925.jpg"
+  }
+ ]
+}

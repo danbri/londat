@@ -1,0 +1,378 @@
+{
+ "ocs-a": {
+  "orth": {
+   "f_px": 4888.4,
+   "f_over_long": 1.212,
+   "aspect_sy_over_sx": 1.159
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.132
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.121
+  }
+ },
+ "ocs-b": {
+  "orth": {
+   "f_px": 2066.7,
+   "f_over_long": 1.009,
+   "aspect_sy_over_sx": 1.743
+  },
+  "iphone26": {
+   "f_px": 1478.7,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.598
+  },
+  "wide13": {
+   "f_px": 739.3,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.474
+  }
+ },
+ "hsbc-cabot": {
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.177
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.163
+  }
+ },
+ "citi-cabot": {
+  "orth": {
+   "f_px": 2890.1,
+   "f_over_long": 0.717,
+   "aspect_sy_over_sx": 1.139
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.139
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.125
+  }
+ },
+ "pinnacle-edge": {
+  "orth": {
+   "f_px": 4725.1,
+   "f_over_long": 1.172,
+   "aspect_sy_over_sx": 1.787
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.586
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.483
+  }
+ },
+ "hampton-sqp": {
+  "orth": {
+   "f_px": 2061.7,
+   "f_over_long": 0.511,
+   "aspect_sy_over_sx": 1.611
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.499
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.704
+  }
+ },
+ "newf-diagrid": {
+  "orth": {
+   "f_px": 22039.8,
+   "f_over_long": 5.381,
+   "aspect_sy_over_sx": 0.966
+  },
+  "iphone26": {
+   "f_px": 2957.3,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.054
+  },
+  "wide13": {
+   "f_px": 1478.7,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.056
+  }
+ },
+ "hsbc-e": {
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.209
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.129
+  }
+ },
+ "wardian-a": {
+  "orth": {
+   "f_px": 7092.8,
+   "f_over_long": 1.759,
+   "aspect_sy_over_sx": 1.224
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.29
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.302
+  }
+ },
+ "amory": {
+  "orth": {
+   "f_px": 4689.7,
+   "f_over_long": 1.163,
+   "aspect_sy_over_sx": 1.354
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.285
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.251
+  }
+ },
+ "ocp": {
+  "orth": {
+   "f_px": 13402.5,
+   "f_over_long": 3.324,
+   "aspect_sy_over_sx": 0.964
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 0.98
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 0.981
+  }
+ },
+ "novotel": {
+  "orth": {
+   "f_px": 3460.3,
+   "f_over_long": 0.845,
+   "aspect_sy_over_sx": 2.698
+  },
+  "iphone26": {
+   "f_px": 2957.3,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 2.468
+  },
+  "wide13": {
+   "f_px": 1478.7,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.893
+  }
+ },
+ "citi-top": {
+  "orth": {
+   "f_px": 8632.7,
+   "f_over_long": 2.141,
+   "aspect_sy_over_sx": 1.264
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.099
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.079
+  }
+ },
+ "opd": {
+  "orth": {
+   "f_px": 2332.7,
+   "f_over_long": 0.579,
+   "aspect_sy_over_sx": 1.484
+  },
+  "iphone26": {
+   "f_px": 2911.1,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.527
+  },
+  "wide13": {
+   "f_px": 1455.6,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.436
+  }
+ },
+ "newf-dock": {
+  "iphone26": {
+   "f_px": 2957.3,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 0.841
+  },
+  "wide13": {
+   "f_px": 1478.7,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 0.876
+  }
+ },
+ "ubs10": {
+  "orth": {
+   "f_px": 2117.4,
+   "f_over_long": 0.827,
+   "aspect_sy_over_sx": 1.893
+  },
+  "iphone26": {
+   "f_px": 1848.3,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.898
+  },
+  "wide13": {
+   "f_px": 924.2,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.913
+  }
+ },
+ "harcourt": {
+  "orth": {
+   "f_px": 2025.2,
+   "f_over_long": 1.005,
+   "aspect_sy_over_sx": 1.641
+  },
+  "iphone26": {
+   "f_px": 1455.6,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.6
+  },
+  "wide13": {
+   "f_px": 727.8,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.562
+  }
+ },
+ "bank25": {
+  "orth": {
+   "f_px": 3809.6,
+   "f_over_long": 1.044,
+   "aspect_sy_over_sx": 2.111
+  },
+  "iphone26": {
+   "f_px": 2633.9,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.969
+  },
+  "wide13": {
+   "f_px": 1316.9,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.843
+  }
+ },
+ "bank40": {
+  "orth": {
+   "f_px": 3596.3,
+   "f_over_long": 0.986,
+   "aspect_sy_over_sx": 1.303
+  },
+  "iphone26": {
+   "f_px": 2633.9,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.258
+  },
+  "wide13": {
+   "f_px": 1316.9,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.216
+  }
+ },
+ "ch25": {
+  "orth": {
+   "f_px": 4369.5,
+   "f_over_long": 2.134,
+   "aspect_sy_over_sx": 1.116
+  },
+  "iphone26": {
+   "f_px": 1478.7,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.066
+  },
+  "wide13": {
+   "f_px": 739.3,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.061
+  }
+ },
+ "wiq1": {
+  "orth": {
+   "f_px": 5756.6,
+   "f_over_long": 1.578,
+   "aspect_sy_over_sx": 1.114
+  },
+  "iphone26": {
+   "f_px": 2633.9,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.144
+  },
+  "wide13": {
+   "f_px": 1316.9,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.151
+  }
+ },
+ "pinnacle-mercury": {
+  "orth": {
+   "f_px": 11379.0,
+   "f_over_long": 2.778,
+   "aspect_sy_over_sx": 0.699
+  },
+  "iphone26": {
+   "f_px": 2957.3,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.285
+  },
+  "wide13": {
+   "f_px": 1478.7,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.383
+  }
+ },
+ "bank25-b": {
+  "orth": {
+   "f_px": 3191.4,
+   "f_over_long": 0.831,
+   "aspect_sy_over_sx": 1.37
+  },
+  "iphone26": {
+   "f_px": 2772.5,
+   "f_over_long": 0.722,
+   "aspect_sy_over_sx": 1.387
+  },
+  "wide13": {
+   "f_px": 1386.2,
+   "f_over_long": 0.361,
+   "aspect_sy_over_sx": 1.438
+  }
+ }
+}

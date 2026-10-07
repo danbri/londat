@@ -1,7 +1,8 @@
 # Hourly snapshot of live state in the Canary Wharf / Docklands zone: one small run file per run in cwplans/cache/runs/
 # and cwplans/cache/latest.json; the first run of a month writes the previous month's cwplans/cache/live-YYYY-MM.sqlite
-# once and removes that month's run files. No binary file is committed hourly. The tools live in danbri/glitchcan-minigam (magpie/cwplans/tools/cache-londat.mjs,
-# which runs fetch-live.mjs, fetch-river.mjs and fetch-ais.mjs with their own politeness). Skill: cwplans-londat-cache.
+# once and removes that month's run files. No binary file is committed hourly. The tools are in this repository since
+# 2026-10-07 (cwplans/tools/cache-londat.mjs, which runs fetch-live.mjs, fetch-river.mjs and fetch-ais.mjs with their own
+# politeness); before that the workflow checked them out from danbri/glitchcan-minigam. Skill: cwplans-londat-cache.
 # About 120 requests per run to TfL, EA, NATS, UK Power Networks, Thames Water/Stream, Open Waters and Open-Meteo,
 # one at a time per host. Size per run: see the skill cwplans-londat-cache, "Sizes and growth".
 name: cache-live
@@ -19,37 +20,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out londat
+      - name: Check out
         uses: actions/checkout@v4
         with:
-          path: londat
           fetch-depth: 1
-      - name: Check out the tools (sparse)
-        uses: actions/checkout@v4
-        with:
-          repository: danbri/glitchcan-minigam
-          path: main
-          fetch-depth: 1
-          filter: blob:none
-          sparse-checkout: |
-            magpie/cwplans/tools
-            magpie/cwplans/feeds/live
-            magpie/cwplans/feeds/river
-            magpie/cwplans/data-register.json
-          sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install the three libraries the fetch tools import
-        working-directory: main
-        run: npm install --no-save --no-audit --no-fund --no-package-lock proj4@^2.22.0 geotiff@^2.1.3 earcut@^3.2.4
+      - name: Install the three libraries the fetch tools import (package.json "dependencies"; the build tools are devDependencies)
+        run: npm ci --omit=dev --no-audit --no-fund
       - name: Fetch and append
-        working-directory: main
-        env:
-          LONDAT_DIR: ${{ github.workspace }}/londat
-        run: node magpie/cwplans/tools/cache-londat.mjs
+        run: node cwplans/tools/cache-londat.mjs
       - name: Commit
-        working-directory: londat
         run: |
           git config user.name 'londat cache bot'
           git config user.email 'londat-cache@users.noreply.github.com'
@@ -57,5 +39,7 @@ jobs:
           git add cwplans/cache/live-*.sqlite 2>/dev/null || true
           if git diff --cached --quiet; then echo 'nothing new'; exit 0; fi
           git commit -q -m "cache: live state $(date -u +%Y-%m-%dT%H:%MZ)"
+          # the fetch tools also rewrote the snapshot files in cwplans/feeds/ (not committed hourly): set them aside
+          git stash push -q --include-untracked -m 'snapshots of this run' || true
           for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep 10; done
           exit 1

@@ -1,0 +1,196 @@
+{
+ "meta": {
+  "source": "thames-barrier",
+  "fetched": "2026-10-04T08:28:20Z",
+  "url": "https://www.gov.uk/api/content/guidance/the-thames-barrier",
+  "page": "https://www.gov.uk/guidance/the-thames-barrier",
+  "licence": "Open Government Licence v3.0",
+  "attribution": "Contains public sector information licensed under the Open Government Licence v3.0",
+  "page_updated": "2026-03-30T12:23:05+01:00",
+  "method": "GOV.UK content API for the Thames Barrier guidance page: the table \"Planned tests of the Thames Barrier\" (date, weekday, approximate river closure start and end, London time). The page says closures may start up to an hour early and may be cancelled. No machine-readable feed of flood-defence closures was found; the live signal is the DIFF_* level differences in levels.json.",
+  "totals": {
+   "flood_defence_closures": 221,
+   "as_at": "17 November 2025",
+   "tidal": 119,
+   "tidal_fluvial": 102
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  },
+  "counts": {
+   "items": 8
+  }
+ },
+ "items": [
+  {
+   "id": "thames-barrier:test-2026-03-09",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-03-09T09:50:00+00:00",
+    "end": "2026-03-09T12:20:00+00:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Monday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-04-07",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-04-07T10:15:00+01:00",
+    "end": "2026-04-07T12:45:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Tuesday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-05-06",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-05-06T09:45:00+01:00",
+    "end": "2026-05-06T12:15:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Wednesday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-06-04",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-06-04T09:30:00+01:00",
+    "end": "2026-06-04T12:00:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Thursday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-07-06",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-07-06T11:15:00+01:00",
+    "end": "2026-07-06T13:45:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Monday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-08-03",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-08-03T10:30:00+01:00",
+    "end": "2026-08-03T13:00:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Monday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-09-14",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-09-14T09:45:00+01:00",
+    "end": "2026-09-14T12:15:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Monday",
+    "approximate": true,
+    "past": true
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  },
+  {
+   "id": "thames-barrier:test-2026-10-11",
+   "kind": "planned-closure",
+   "time": {
+    "start": "2026-10-11T08:05:00+01:00",
+    "end": "2026-10-11T18:05:00+01:00"
+   },
+   "position": {
+    "lat": 51.49689,
+    "lon": 0.03729,
+    "precision": "Thames Barrier (OSM node 389783501)",
+    "zone": "east"
+   },
+   "values": {
+    "purpose": "monthly maintenance and test closure",
+    "weekday": "Sunday",
+    "approximate": true,
+    "past": false
+   },
+   "url": "https://www.gov.uk/guidance/the-thames-barrier"
+  }
+ ]
+}

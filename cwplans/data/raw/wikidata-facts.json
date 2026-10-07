@@ -1,0 +1,1293 @@
+{
+  "head" : {
+    "vars" : [ "item", "itemLabel", "prop", "propLabel", "val", "valLabel", "unitLabel" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1032006"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q124282"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Canada Water"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "dock"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1619"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q800610"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1999-08-19T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Canada Water station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "date of official opening"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1999-08-19T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P571"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q800610"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1999-01-01T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Canada Water station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "inception"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1999-01-01T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q800610"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q55491"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Canada Water station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "underground railway station"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q800610"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q14562709"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Canada Water station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "London Underground station"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1544727"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q124282"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Greenland Dock"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "dock"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1435"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q17642970"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q219538"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Pumping engine house for Brunel's Thames tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "heritage designation"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "scheduled monument"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1435"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q17642970"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q15700834"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Pumping engine house for Brunel's Thames tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "heritage designation"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Grade II listed building"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q17642970"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1342377"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Pumping engine house for Brunel's Thames tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "engine house"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q17642970"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q170477"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Pumping engine house for Brunel's Thames tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "chimney"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1619"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q175256"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1869-01-01T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Rotherhithe railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "date of official opening"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1869-01-01T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q175256"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q55488"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Rotherhithe railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "railway station"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q175256"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q98280550"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Rotherhithe railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "station located in a cut"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P137"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q175256"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q682520"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Rotherhithe railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "operator"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "TfL"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P127"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q175256"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1501071"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Rotherhithe railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "owned by"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Network Rail"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q128924146"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q336764"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Silwood Junction"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "railway junction"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P2048"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q7604796"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "30"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Stave Hill"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "height"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "30"
+      },
+      "unitLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "foot"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P2048"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q7604796"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "9.1"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Stave Hill"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "height"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "9.1"
+      },
+      "unitLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "metre"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P571"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q7604796"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1985-01-01T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Stave Hill"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "inception"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1985-01-01T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q7604796"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q10460934"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Stave Hill"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "artificial hill"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P2046"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2368643"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "372"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Commercial Docks"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "area"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "372"
+      },
+      "unitLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "acre"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1619"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2368643"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1807-01-01T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Commercial Docks"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "date of official opening"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1807-01-01T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P576"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2368643"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1970-12-01T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Commercial Docks"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "dissolved, abolished or demolished"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1970-12-01T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2368643"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q15324"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Commercial Docks"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "body of water"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2368643"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q124282"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Commercial Docks"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "dock"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1435"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q26665615"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q15700834"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Portal Of The Rotherhithe Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "heritage designation"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Grade II listed building"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q26665615"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q75556601"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Portal Of The Rotherhithe Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "tunnel portal"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1619"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1869-12-07T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "date of official opening"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1869-12-07T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q55488"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "railway station"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1448"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Docks"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "official name"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "Surrey Docks"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1448"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Deptford Road"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "official name"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "Deptford Road"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1448"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "official name"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "Surrey Quays"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P137"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24298982"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "operator"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Arriva Rail London"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P127"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801499"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1501071"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Surrey Quays railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "owned by"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Network Rail"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1435"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1190691"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q56637937"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Thames Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "heritage designation"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Historic Civil Engineering Landmark"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1435"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1190691"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q15700831"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Thames Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "heritage designation"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Grade II* listed building"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P571"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1190691"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1843-01-01T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Thames Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "inception"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1843-01-01T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1190691"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1311958"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Thames Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "railway tunnel"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P2043"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1190691"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "396"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Thames Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "length"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "396"
+      },
+      "unitLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "metre"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P2043"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1190691"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "1300"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Thames Tunnel"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "length"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1300"
+      },
+      "unitLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "foot"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P1619"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801580"
+      },
+      "val" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1869-12-07T00:00:00Z"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wapping railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "date of official opening"
+      },
+      "valLabel" : {
+        "type" : "literal",
+        "value" : "1869-12-07T00:00:00Z"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801580"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q55488"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wapping railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "railway station"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P31"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801580"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q22808403"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wapping railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "instance of"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "underground station"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P137"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801580"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24298982"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wapping railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "operator"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Arriva Rail London"
+      }
+    }, {
+      "prop" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/P127"
+      },
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q801580"
+      },
+      "val" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1501071"
+      },
+      "itemLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wapping railway station"
+      },
+      "propLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "owned by"
+      },
+      "valLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Network Rail"
+      }
+    } ]
+  }
+}

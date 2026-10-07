@@ -1,0 +1,6586 @@
+{
+ "meta": {
+  "source": "river-bus",
+  "fetched": "2026-10-04T08:33:00Z",
+  "url": "https://api.tfl.gov.uk/Line/Mode/river-bus",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
+  "method": "TfL Unified API for every river-bus line (RB1, RB4, RB6, Woolwich Ferry): the longest stop sequence and route line per direction, the timetable from the first pier in the zone per direction (departures and minutes to the later zone piers per interval set), and the live arrival predictions at zone piers at fetch time. TfL publishes no vessel positions: the vessel_id of a prediction is the only per-boat handle, and a boat between piers can be placed only by interpolating along the route line. River-bus planned closures are in feeds/works/tfl-lines.json (tools/fetch-works.mjs).",
+  "errors": [],
+  "counts": {
+   "items": 86,
+   "piers": 12,
+   "arrivals": 48,
+   "timetables": 18
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "tfl-pier:930GCAW",
+   "kind": "pier",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Canary Wharf Pier",
+    "naptan": "930GCAW"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW"
+  },
+  {
+   "id": "tfl-pier:930GGLP",
+   "kind": "pier",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Greenland Surrey Quays Pier",
+    "naptan": "930GGLP"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP"
+  },
+  {
+   "id": "tfl-pier:930GGNW",
+   "kind": "pier",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Greenwich Pier",
+    "naptan": "930GGNW"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGNW"
+  },
+  {
+   "id": "tfl-pier:930GLBR",
+   "kind": "pier",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "London Bridge City Pier",
+    "naptan": "930GLBR"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR"
+  },
+  {
+   "id": "tfl-pier:930GMHT",
+   "kind": "pier",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Masthouse Terrace Pier",
+    "naptan": "930GMHT"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT"
+  },
+  {
+   "id": "tfl-pier:930GMIL",
+   "kind": "pier",
+   "position": {
+    "lat": 51.50209,
+    "lon": 0.00877,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "North Greenwich Pier",
+    "naptan": "930GMIL"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMIL"
+  },
+  {
+   "id": "tfl-pier:930GNEL",
+   "kind": "pier",
+   "position": {
+    "lat": 51.50455,
+    "lon": -0.03179,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Rotherhithe Pier",
+    "naptan": "930GNEL"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GNEL"
+  },
+  {
+   "id": "tfl-pier:930GTMP",
+   "kind": "pier",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Tower Pier",
+    "naptan": "930GTMP"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP"
+  },
+  {
+   "id": "tfl-pier:930GWAS",
+   "kind": "pier",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "name": "Woolwich Arsenal Pier",
+    "naptan": "930GWAS"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWAS"
+  },
+  {
+   "id": "tfl-pier:930GWRF",
+   "kind": "pier",
+   "position": {
+    "lat": 51.49755,
+    "lon": 0.0249,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "name": "Royal Wharf Pier",
+    "naptan": "930GWRF"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWRF"
+  },
+  {
+   "id": "tfl-pier:930GWWC",
+   "kind": "pier",
+   "position": {
+    "lat": 51.49776,
+    "lon": 0.06078,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "name": "Woolwich Ferry North Pier",
+    "naptan": "930GWWC"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWWC"
+  },
+  {
+   "id": "tfl-pier:930GWWS",
+   "kind": "pier",
+   "position": {
+    "lat": 51.49517,
+    "lon": 0.06209,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "name": "Woolwich Ferry South Pier",
+    "naptan": "930GWWS"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWWS"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108623:930GMIL:2026-10-04T09:00:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:00:00Z",
+   "position": {
+    "lat": 51.50209,
+    "lon": 0.00877,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GMIL",
+    "pier_name": "North Greenwich Pier",
+    "vessel_id": "9015450000108623",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 1632,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMIL/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108623:930GWAS:2026-10-04T09:13:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:13:00Z",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GWAS",
+    "pier_name": "Woolwich Arsenal Pier",
+    "vessel_id": "9015450000108623",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 2412,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWAS/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108623:930GWRF:2026-10-04T09:04:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:04:00Z",
+   "position": {
+    "lat": 51.49755,
+    "lon": 0.0249,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GWRF",
+    "pier_name": "Royal Wharf Pier",
+    "vessel_id": "9015450000108623",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 1872,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWRF/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108629:930GWAS:2026-10-04T08:36:48Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:36:48Z",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GWAS",
+    "pier_name": "Woolwich Arsenal Pier",
+    "vessel_id": "9015450000108629",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 240,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWAS/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108630:930GGNW:2026-10-04T09:28:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:28:00Z",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GGNW",
+    "pier_name": "Greenwich Pier",
+    "vessel_id": "9015450000108630",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 3312,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGNW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108630:930GMHT:2026-10-04T09:32:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:32:00Z",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GMHT",
+    "pier_name": "Masthouse Terrace Pier",
+    "vessel_id": "9015450000108630",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 3552,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108630:930GMIL:2026-10-04T09:17:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:17:00Z",
+   "position": {
+    "lat": 51.50209,
+    "lon": 0.00877,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GMIL",
+    "pier_name": "North Greenwich Pier",
+    "vessel_id": "9015450000108630",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 2652,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMIL/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108630:930GWAS:2026-10-04T09:04:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:04:00Z",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GWAS",
+    "pier_name": "Woolwich Arsenal Pier",
+    "vessel_id": "9015450000108630",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 1872,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWAS/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108630:930GWRF:2026-10-04T09:12:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:12:00Z",
+   "position": {
+    "lat": 51.49755,
+    "lon": 0.0249,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GWRF",
+    "pier_name": "Royal Wharf Pier",
+    "vessel_id": "9015450000108630",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 2352,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWRF/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GCAW:2026-10-04T09:05:05Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:05:05Z",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GCAW",
+    "pier_name": "Canary Wharf Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 1937,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GGLP:2026-10-04T09:00:38Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:00:38Z",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GGLP",
+    "pier_name": "Greenland Surrey Quays Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 1670,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GGNW:2026-10-04T08:52:04Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:52:04Z",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GGNW",
+    "pier_name": "Greenwich Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 1156,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGNW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GLBR:2026-10-04T09:24:43Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:24:43Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 3115,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GMHT:2026-10-04T08:56:29Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:56:29Z",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GMHT",
+    "pier_name": "Masthouse Terrace Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 1421,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GMIL:2026-10-04T08:40:58Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:40:58Z",
+   "position": {
+    "lat": 51.50209,
+    "lon": 0.00877,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GMIL",
+    "pier_name": "North Greenwich Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 490,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMIL/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GTMP:2026-10-04T09:17:09Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:17:09Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 2661,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108636:930GWRF:2026-10-04T08:36:17Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:36:17Z",
+   "position": {
+    "lat": 51.49755,
+    "lon": 0.0249,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GWRF",
+    "pier_name": "Royal Wharf Pier",
+    "vessel_id": "9015450000108636",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 209,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GWRF/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108654:930GCAW:2026-10-04T08:38:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:38:00Z",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GCAW",
+    "pier_name": "Canary Wharf Pier",
+    "vessel_id": "9015450000108654",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 312,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108654:930GGLP:2026-10-04T08:34:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:34:00Z",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GGLP",
+    "pier_name": "Greenland Surrey Quays Pier",
+    "vessel_id": "9015450000108654",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 72,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108654:930GLBR:2026-10-04T08:54:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:54:00Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000108654",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 1272,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108654:930GTMP:2026-10-04T08:49:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:49:00Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000108654",
+    "direction": "inbound",
+    "destination": "Battersea Power Station Pier",
+    "seconds_to_pier": 972,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108663:930GCAW:2026-10-04T09:18:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:18:00Z",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GCAW",
+    "pier_name": "Canary Wharf Pier",
+    "vessel_id": "9015450000108663",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 2712,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108663:930GGLP:2026-10-04T09:23:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:23:00Z",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GGLP",
+    "pier_name": "Greenland Surrey Quays Pier",
+    "vessel_id": "9015450000108663",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 3012,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108663:930GLBR:2026-10-04T09:01:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:01:00Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000108663",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 1692,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108663:930GMHT:2026-10-04T09:28:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:28:00Z",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GMHT",
+    "pier_name": "Masthouse Terrace Pier",
+    "vessel_id": "9015450000108663",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 3312,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000108663:930GTMP:2026-10-04T09:06:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:06:00Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000108663",
+    "direction": "outbound",
+    "destination": "Barking Riverside Pier",
+    "seconds_to_pier": 1992,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603807:930GCAW:2026-10-04T08:53:49Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:53:49Z",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GCAW",
+    "pier_name": "Canary Wharf Pier",
+    "vessel_id": "9015450000603807",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 1261,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603807:930GGLP:2026-10-04T08:49:27Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:49:27Z",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GGLP",
+    "pier_name": "Greenland Surrey Quays Pier",
+    "vessel_id": "9015450000603807",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 999,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603807:930GGNW:2026-10-04T08:41:20Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:41:20Z",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GGNW",
+    "pier_name": "Greenwich Pier",
+    "vessel_id": "9015450000603807",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 512,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGNW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603807:930GLBR:2026-10-04T09:09:45Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:09:45Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000603807",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 2217,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603807:930GMHT:2026-10-04T08:44:17Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:44:17Z",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GMHT",
+    "pier_name": "Masthouse Terrace Pier",
+    "vessel_id": "9015450000603807",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 689,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603807:930GTMP:2026-10-04T09:02:39Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:02:39Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000603807",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 1791,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603813:930GLBR:2026-10-04T08:47:33Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:47:33Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000603813",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 885,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603813:930GTMP:2026-10-04T08:41:16Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:41:16Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000603813",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 508,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603831:930GCAW:2026-10-04T08:57:19Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:57:19Z",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GCAW",
+    "pier_name": "Canary Wharf Pier",
+    "vessel_id": "9015450000603831",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 1471,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603831:930GGLP:2026-10-04T09:02:06Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:02:06Z",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GGLP",
+    "pier_name": "Greenland Surrey Quays Pier",
+    "vessel_id": "9015450000603831",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 1758,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603831:930GGNW:2026-10-04T09:13:02Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:13:02Z",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GGNW",
+    "pier_name": "Greenwich Pier",
+    "vessel_id": "9015450000603831",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 2414,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGNW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603831:930GLBR:2026-10-04T08:41:07Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:41:07Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000603831",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 499,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603831:930GMHT:2026-10-04T09:06:49Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:06:49Z",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GMHT",
+    "pier_name": "Masthouse Terrace Pier",
+    "vessel_id": "9015450000603831",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 2041,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603831:930GTMP:2026-10-04T08:46:28Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T08:46:28Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000603831",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 820,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603832:930GMIL:2026-10-04T09:27:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:27:00Z",
+   "position": {
+    "lat": 51.50209,
+    "lon": 0.00877,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GMIL",
+    "pier_name": "North Greenwich Pier",
+    "vessel_id": "9015450000603832",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 3252,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMIL/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603838:930GLBR:2026-10-04T09:20:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:20:00Z",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GLBR",
+    "pier_name": "London Bridge City Pier",
+    "vessel_id": "9015450000603838",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 2832,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GLBR/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603838:930GTMP:2026-10-04T09:25:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:25:00Z",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.07909,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GTMP",
+    "pier_name": "Tower Pier",
+    "vessel_id": "9015450000603838",
+    "direction": "outbound",
+    "destination": "North Greenwich Pier",
+    "seconds_to_pier": 3132,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GTMP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603845:930GCAW:2026-10-04T09:24:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:24:00Z",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GCAW",
+    "pier_name": "Canary Wharf Pier",
+    "vessel_id": "9015450000603845",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 3072,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GCAW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603845:930GGLP:2026-10-04T09:20:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:20:00Z",
+   "position": {
+    "lat": 51.49469,
+    "lon": -0.03276,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GGLP",
+    "pier_name": "Greenland Surrey Quays Pier",
+    "vessel_id": "9015450000603845",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 2832,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGLP/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603845:930GGNW:2026-10-04T09:10:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:10:00Z",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GGNW",
+    "pier_name": "Greenwich Pier",
+    "vessel_id": "9015450000603845",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 2232,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GGNW/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603845:930GMHT:2026-10-04T09:15:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:15:00Z",
+   "position": {
+    "lat": 51.4875,
+    "lon": -0.02193,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GMHT",
+    "pier_name": "Masthouse Terrace Pier",
+    "vessel_id": "9015450000603845",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 2532,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMHT/Arrivals"
+  },
+  {
+   "id": "tfl-river:arrival:9015450000603845:930GMIL:2026-10-04T09:00:00Z",
+   "kind": "predicted-arrival",
+   "time": "2026-10-04T09:00:00Z",
+   "position": {
+    "lat": 51.50209,
+    "lon": 0.00877,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "pier": "930GMIL",
+    "pier_name": "North Greenwich Pier",
+    "vessel_id": "9015450000603845",
+    "direction": "inbound",
+    "destination": "Putney Pier",
+    "seconds_to_pier": 1632,
+    "predicted_at": "2026-10-04T08:32:48.7678119Z"
+   },
+   "url": "https://api.tfl.gov.uk/StopPoint/930GMIL/Arrivals"
+  },
+  {
+   "id": "tfl-river:rb1:inbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "rb1",
+    "name": "RB1",
+    "direction": "inbound",
+    "stops": [
+     {
+      "id": "930GBRVS",
+      "name": "Barking Riverside Pier",
+      "lat": 51.51618,
+      "lon": 0.11766,
+      "in_zone": false
+     },
+     {
+      "id": "930GWAS",
+      "name": "Woolwich Arsenal Pier",
+      "lat": 51.49516,
+      "lon": 0.07057,
+      "in_zone": true
+     },
+     {
+      "id": "930GWRF",
+      "name": "Royal Wharf Pier",
+      "lat": 51.49755,
+      "lon": 0.0249,
+      "in_zone": true
+     },
+     {
+      "id": "930GMIL",
+      "name": "North Greenwich Pier",
+      "lat": 51.50209,
+      "lon": 0.00877,
+      "in_zone": true
+     },
+     {
+      "id": "930GGNW",
+      "name": "Greenwich Pier",
+      "lat": 51.48362,
+      "lon": -0.00966,
+      "in_zone": true
+     },
+     {
+      "id": "930GMHT",
+      "name": "Masthouse Terrace Pier",
+      "lat": 51.4875,
+      "lon": -0.02193,
+      "in_zone": true
+     },
+     {
+      "id": "930GGLP",
+      "name": "Greenland Surrey Quays Pier",
+      "lat": 51.49469,
+      "lon": -0.03276,
+      "in_zone": true
+     },
+     {
+      "id": "930GCAW",
+      "name": "Canary Wharf Pier",
+      "lat": 51.50569,
+      "lon": -0.02848,
+      "in_zone": true
+     },
+     {
+      "id": "930GTMP",
+      "name": "Tower Pier",
+      "lat": 51.50781,
+      "lon": -0.07909,
+      "in_zone": true
+     },
+     {
+      "id": "930GLBR",
+      "name": "London Bridge City Pier",
+      "lat": 51.5066,
+      "lon": -0.08476,
+      "in_zone": true
+     },
+     {
+      "id": "930GSWK",
+      "name": "Bankside Pier",
+      "lat": 51.50839,
+      "lon": -0.09638,
+      "in_zone": false
+     }
+    ],
+    "line_string": [
+     [0.11766,51.51618],
+     [0.07057,51.49516],
+     [0.0249,51.49755],
+     [0.00877,51.50209],
+     [-0.00966,51.48362],
+     [-0.02193,51.4875],
+     [-0.03276,51.49469],
+     [-0.02848,51.50569],
+     [-0.07909,51.50781],
+     [-0.08476,51.5066],
+     [-0.09638,51.50839],
+     [-0.10196,51.51076],
+     [-0.12143,51.50739],
+     [-0.12374,51.50156],
+     [-0.12512,51.4922],
+     [-0.12688,51.48646],
+     [-0.14416,51.4835]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb1/Route/Sequence/inbound"
+  },
+  {
+   "id": "tfl-river:rb1:outbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "rb1",
+    "name": "RB1",
+    "direction": "outbound",
+    "stops": [
+     {
+      "id": "930GSWK",
+      "name": "Bankside Pier",
+      "lat": 51.50839,
+      "lon": -0.09638,
+      "in_zone": false
+     },
+     {
+      "id": "930GLBR",
+      "name": "London Bridge City Pier",
+      "lat": 51.5066,
+      "lon": -0.08476,
+      "in_zone": true
+     },
+     {
+      "id": "930GTMP",
+      "name": "Tower Pier",
+      "lat": 51.50781,
+      "lon": -0.07909,
+      "in_zone": true
+     },
+     {
+      "id": "930GCAW",
+      "name": "Canary Wharf Pier",
+      "lat": 51.50569,
+      "lon": -0.02848,
+      "in_zone": true
+     },
+     {
+      "id": "930GGLP",
+      "name": "Greenland Surrey Quays Pier",
+      "lat": 51.49469,
+      "lon": -0.03276,
+      "in_zone": true
+     }
+    ],
+    "line_string": [
+     [-0.14416,51.4835],
+     [-0.12688,51.48646],
+     [-0.12512,51.4922],
+     [-0.12374,51.50156],
+     [-0.11944,51.50361],
+     [-0.12143,51.50739],
+     [-0.10196,51.51076],
+     [-0.09638,51.50839],
+     [-0.08476,51.5066],
+     [-0.07909,51.50781],
+     [-0.02848,51.50569],
+     [-0.03276,51.49469],
+     [-0.02193,51.4875],
+     [-0.00966,51.48362],
+     [0.00877,51.50209],
+     [0.0249,51.49755],
+     [0.07057,51.49516],
+     [0.11766,51.51618]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb1/Route/Sequence/outbound"
+  },
+  {
+   "id": "tfl-river:rb4:inbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "rb4",
+    "name": "RB4",
+    "direction": "inbound",
+    "stops": [
+     {
+      "id": "930GCAW",
+      "name": "Canary Wharf Pier",
+      "lat": 51.50569,
+      "lon": -0.02848,
+      "in_zone": true
+     },
+     {
+      "id": "930GNEL",
+      "name": "Rotherhithe Pier",
+      "lat": 51.50455,
+      "lon": -0.03179,
+      "in_zone": true
+     }
+    ],
+    "line_string": [
+     [-0.02848,51.50569],
+     [-0.03179,51.50455]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb4/Route/Sequence/inbound"
+  },
+  {
+   "id": "tfl-river:rb4:outbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "rb4",
+    "name": "RB4",
+    "direction": "outbound",
+    "stops": [
+     {
+      "id": "930GNEL",
+      "name": "Rotherhithe Pier",
+      "lat": 51.50455,
+      "lon": -0.03179,
+      "in_zone": true
+     },
+     {
+      "id": "930GCAW",
+      "name": "Canary Wharf Pier",
+      "lat": 51.50569,
+      "lon": -0.02848,
+      "in_zone": true
+     }
+    ],
+    "line_string": [
+     [-0.03179,51.50455],
+     [-0.02848,51.50569]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb4/Route/Sequence/outbound"
+  },
+  {
+   "id": "tfl-river:rb6:inbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "rb6",
+    "name": "RB6",
+    "direction": "inbound",
+    "stops": [
+     {
+      "id": "930GBRVS",
+      "name": "Barking Riverside Pier",
+      "lat": 51.51618,
+      "lon": 0.11766,
+      "in_zone": false
+     },
+     {
+      "id": "930GWAS",
+      "name": "Woolwich Arsenal Pier",
+      "lat": 51.49516,
+      "lon": 0.07057,
+      "in_zone": true
+     },
+     {
+      "id": "930GWRF",
+      "name": "Royal Wharf Pier",
+      "lat": 51.49755,
+      "lon": 0.0249,
+      "in_zone": true
+     },
+     {
+      "id": "930GMIL",
+      "name": "North Greenwich Pier",
+      "lat": 51.50209,
+      "lon": 0.00877,
+      "in_zone": true
+     },
+     {
+      "id": "930GGNW",
+      "name": "Greenwich Pier",
+      "lat": 51.48362,
+      "lon": -0.00966,
+      "in_zone": true
+     }
+    ],
+    "line_string": [
+     [0.11766,51.51618],
+     [0.07057,51.49516],
+     [0.0249,51.49755],
+     [0.00877,51.50209],
+     [-0.00966,51.48362],
+     [-0.02193,51.4875],
+     [-0.03276,51.49469],
+     [-0.02848,51.50569],
+     [-0.07909,51.50781],
+     [-0.08476,51.5066],
+     [-0.09638,51.50839],
+     [-0.10196,51.51076],
+     [-0.12143,51.50739],
+     [-0.12374,51.50156],
+     [-0.12512,51.4922],
+     [-0.12688,51.48646],
+     [-0.14416,51.4835],
+     [-0.16652,51.48326],
+     [-0.18033,51.47415],
+     [-0.18192,51.46683],
+     [-0.19899,51.46288],
+     [-0.21577,51.46708]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb6/Route/Sequence/inbound"
+  },
+  {
+   "id": "tfl-river:rb6:outbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "rb6",
+    "name": "RB6",
+    "direction": "outbound",
+    "stops": [
+     {
+      "id": "930GGNW",
+      "name": "Greenwich Pier",
+      "lat": 51.48362,
+      "lon": -0.00966,
+      "in_zone": true
+     },
+     {
+      "id": "930GMIL",
+      "name": "North Greenwich Pier",
+      "lat": 51.50209,
+      "lon": 0.00877,
+      "in_zone": true
+     },
+     {
+      "id": "930GWRF",
+      "name": "Royal Wharf Pier",
+      "lat": 51.49755,
+      "lon": 0.0249,
+      "in_zone": true
+     },
+     {
+      "id": "930GWAS",
+      "name": "Woolwich Arsenal Pier",
+      "lat": 51.49516,
+      "lon": 0.07057,
+      "in_zone": true
+     },
+     {
+      "id": "930GBRVS",
+      "name": "Barking Riverside Pier",
+      "lat": 51.51618,
+      "lon": 0.11766,
+      "in_zone": false
+     }
+    ],
+    "line_string": [
+     [-0.21577,51.46708],
+     [-0.19899,51.46288],
+     [-0.18192,51.46683],
+     [-0.18033,51.47415],
+     [-0.16652,51.48326],
+     [-0.14416,51.4835],
+     [-0.12688,51.48646],
+     [-0.12512,51.4922],
+     [-0.12374,51.50156],
+     [-0.11944,51.50361],
+     [-0.12143,51.50739],
+     [-0.10196,51.51076],
+     [-0.09638,51.50839],
+     [-0.08476,51.5066],
+     [-0.07909,51.50781],
+     [-0.02848,51.50569],
+     [-0.03276,51.49469],
+     [-0.02193,51.4875],
+     [-0.00966,51.48362],
+     [0.00877,51.50209],
+     [0.0249,51.49755],
+     [0.07057,51.49516],
+     [0.11766,51.51618]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb6/Route/Sequence/outbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:inbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "woolwich-ferry",
+    "name": "Woolwich Ferry",
+    "direction": "inbound",
+    "stops": [
+     {
+      "id": "930GWWC",
+      "name": "Woolwich Ferry North Pier",
+      "lat": 51.49776,
+      "lon": 0.06078,
+      "in_zone": true
+     },
+     {
+      "id": "930GWWS",
+      "name": "Woolwich Ferry South Pier",
+      "lat": 51.49517,
+      "lon": 0.06209,
+      "in_zone": true
+     }
+    ],
+    "line_string": [
+     [0.06078,51.49776],
+     [0.06209,51.49517]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Route/Sequence/inbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:outbound:route",
+   "kind": "river-bus-route",
+   "position": null,
+   "values": {
+    "line": "woolwich-ferry",
+    "name": "Woolwich Ferry",
+    "direction": "outbound",
+    "stops": [
+     {
+      "id": "930GWWS",
+      "name": "Woolwich Ferry South Pier",
+      "lat": 51.49517,
+      "lon": 0.06209,
+      "in_zone": true
+     },
+     {
+      "id": "930GWWC",
+      "name": "Woolwich Ferry North Pier",
+      "lat": 51.49776,
+      "lon": 0.06078,
+      "in_zone": true
+     }
+    ],
+    "line_string": [
+     [0.06209,51.49517],
+     [0.06078,51.49776]
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Route/Sequence/outbound"
+  },
+  {
+   "id": "tfl-river:rb1:inbound:930GWAS:Monday to Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "direction": "inbound",
+    "from_pier": "930GWAS",
+    "from_name": "Woolwich Arsenal Pier",
+    "schedule": "Monday to Friday",
+    "departures": [
+     {
+      "t": "07:19",
+      "iv": "0"
+     },
+     {
+      "t": "07:49",
+      "iv": "0"
+     },
+     {
+      "t": "08:19",
+      "iv": "0"
+     },
+     {
+      "t": "08:49",
+      "iv": "0"
+     },
+     {
+      "t": "09:19",
+      "iv": "0"
+     },
+     {
+      "t": "09:59",
+      "iv": "5"
+     },
+     {
+      "t": "10:24",
+      "iv": "5"
+     },
+     {
+      "t": "11:19",
+      "iv": "1"
+     },
+     {
+      "t": "12:19",
+      "iv": "1"
+     },
+     {
+      "t": "13:19",
+      "iv": "1"
+     },
+     {
+      "t": "14:19",
+      "iv": "1"
+     },
+     {
+      "t": "15:19",
+      "iv": "3"
+     },
+     {
+      "t": "16:19",
+      "iv": "0"
+     },
+     {
+      "t": "17:19",
+      "iv": "0"
+     },
+     {
+      "t": "17:44",
+      "iv": "0"
+     },
+     {
+      "t": "18:14",
+      "iv": "0"
+     },
+     {
+      "t": "18:44",
+      "iv": "0"
+     },
+     {
+      "t": "19:14",
+      "iv": "0"
+     },
+     {
+      "t": "19:44",
+      "iv": "0"
+     },
+     {
+      "t": "20:14",
+      "iv": "0"
+     },
+     {
+      "t": "20:44",
+      "iv": "0"
+     },
+     {
+      "t": "21:34",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 20,
+      "930GMHT": 24,
+      "930GGLP": 28,
+      "930GCAW": 32,
+      "930GTMP": 43,
+      "930GLBR": 47
+     },
+     "1": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 22,
+      "930GMHT": 26,
+      "930GGLP": 31,
+      "930GCAW": 35,
+      "930GTMP": 47,
+      "930GLBR": 52
+     },
+     "2": {
+      "930GWAS": 0,
+      "930GWRF": 8,
+      "930GMIL": 12,
+      "930GGNW": 23,
+      "930GMHT": 28,
+      "930GGLP": 32,
+      "930GCAW": 37,
+      "930GTMP": 48,
+      "930GLBR": 53
+     },
+     "3": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 21,
+      "930GMHT": 25,
+      "930GGLP": 29,
+      "930GCAW": 33,
+      "930GTMP": 45,
+      "930GLBR": 49
+     },
+     "4": {
+      "930GWAS": 0,
+      "930GWRF": 8,
+      "930GMIL": 11
+     },
+     "5": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 21,
+      "930GMHT": 25,
+      "930GGLP": 29,
+      "930GCAW": 33,
+      "930GTMP": 44,
+      "930GLBR": 48
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "7:00",
+      "to": "7:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "8:00",
+      "to": "8:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "9:00",
+      "to": "9:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "11:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "17:00",
+      "to": "17:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "18:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb1/Timetable/930GWAS?direction=inbound"
+  },
+  {
+   "id": "tfl-river:rb1:inbound:930GWAS:Saturday and Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb1",
+    "direction": "inbound",
+    "from_pier": "930GWAS",
+    "from_name": "Woolwich Arsenal Pier",
+    "schedule": "Saturday and Sunday",
+    "departures": [
+     {
+      "t": "07:49",
+      "iv": "1"
+     },
+     {
+      "t": "08:29",
+      "iv": "1"
+     },
+     {
+      "t": "09:04",
+      "iv": "1"
+     },
+     {
+      "t": "09:29",
+      "iv": "1"
+     },
+     {
+      "t": "10:04",
+      "iv": "1"
+     },
+     {
+      "t": "10:34",
+      "iv": "1"
+     },
+     {
+      "t": "11:20",
+      "iv": "1"
+     },
+     {
+      "t": "12:27",
+      "iv": "2"
+     },
+     {
+      "t": "13:03",
+      "iv": "1"
+     },
+     {
+      "t": "13:47",
+      "iv": "2"
+     },
+     {
+      "t": "14:12",
+      "iv": "2"
+     },
+     {
+      "t": "14:52",
+      "iv": "1"
+     },
+     {
+      "t": "15:18",
+      "iv": "1"
+     },
+     {
+      "t": "15:37",
+      "iv": "1"
+     },
+     {
+      "t": "16:35",
+      "iv": "1"
+     },
+     {
+      "t": "17:10",
+      "iv": "1"
+     },
+     {
+      "t": "17:44",
+      "iv": "2"
+     },
+     {
+      "t": "18:20",
+      "iv": "4"
+     },
+     {
+      "t": "18:58",
+      "iv": "4"
+     },
+     {
+      "t": "19:30",
+      "iv": "1"
+     },
+     {
+      "t": "20:14",
+      "iv": "1"
+     },
+     {
+      "t": "20:54",
+      "iv": "2"
+     },
+     {
+      "t": "21:34",
+      "iv": "2"
+     },
+     {
+      "t": "22:09",
+      "iv": "2"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 20,
+      "930GMHT": 24,
+      "930GGLP": 28,
+      "930GCAW": 32,
+      "930GTMP": 43,
+      "930GLBR": 47
+     },
+     "1": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 22,
+      "930GMHT": 26,
+      "930GGLP": 31,
+      "930GCAW": 35,
+      "930GTMP": 47,
+      "930GLBR": 52
+     },
+     "2": {
+      "930GWAS": 0,
+      "930GWRF": 8,
+      "930GMIL": 12,
+      "930GGNW": 23,
+      "930GMHT": 28,
+      "930GGLP": 32,
+      "930GCAW": 37,
+      "930GTMP": 48,
+      "930GLBR": 53
+     },
+     "3": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 21,
+      "930GMHT": 25,
+      "930GGLP": 29,
+      "930GCAW": 33,
+      "930GTMP": 45,
+      "930GLBR": 49
+     },
+     "4": {
+      "930GWAS": 0,
+      "930GWRF": 8,
+      "930GMIL": 11
+     },
+     "5": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 21,
+      "930GMHT": 25,
+      "930GGLP": 29,
+      "930GCAW": 33,
+      "930GTMP": 44,
+      "930GLBR": 48
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "7:00",
+      "to": "7:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "8:00",
+      "to": "8:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "9:00",
+      "to": "9:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "13:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "16:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "17:00",
+      "to": "17:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "18:00",
+      "to": "18:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb1/Timetable/930GWAS?direction=inbound"
+  },
+  {
+   "id": "tfl-river:rb1:outbound:930GLBR:Monday to Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "direction": "outbound",
+    "from_pier": "930GLBR",
+    "from_name": "London Bridge City Pier",
+    "schedule": "Monday to Friday",
+    "departures": [
+     {
+      "t": "08:48",
+      "iv": "0"
+     },
+     {
+      "t": "09:20",
+      "iv": "3"
+     },
+     {
+      "t": "09:50",
+      "iv": "0"
+     },
+     {
+      "t": "10:24",
+      "iv": "3"
+     },
+     {
+      "t": "10:54",
+      "iv": "0"
+     },
+     {
+      "t": "11:34",
+      "iv": "3"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:05",
+      "iv": "0"
+     },
+     {
+      "t": "13:25",
+      "iv": "3"
+     },
+     {
+      "t": "14:05",
+      "iv": "0"
+     },
+     {
+      "t": "14:25",
+      "iv": "3"
+     },
+     {
+      "t": "15:05",
+      "iv": "0"
+     },
+     {
+      "t": "15:25",
+      "iv": "3"
+     },
+     {
+      "t": "16:05",
+      "iv": "0"
+     },
+     {
+      "t": "16:25",
+      "iv": "0"
+     },
+     {
+      "t": "17:03",
+      "iv": "0"
+     },
+     {
+      "t": "17:33",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:28",
+      "iv": "0"
+     },
+     {
+      "t": "18:59",
+      "iv": "0"
+     },
+     {
+      "t": "19:22",
+      "iv": "0"
+     },
+     {
+      "t": "19:52",
+      "iv": "0"
+     },
+     {
+      "t": "20:22",
+      "iv": "0"
+     },
+     {
+      "t": "20:52",
+      "iv": "0"
+     },
+     {
+      "t": "21:22",
+      "iv": "0"
+     },
+     {
+      "t": "21:52",
+      "iv": "0"
+     },
+     {
+      "t": "22:22",
+      "iv": "0"
+     },
+     {
+      "t": "23:12",
+      "iv": "3"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GLBR": 0,
+      "930GTMP": 4,
+      "930GCAW": 15,
+      "930GGLP": 20
+     },
+     "1": {
+      "930GLBR": 0,
+      "930GTMP": 5,
+      "930GCAW": 17,
+      "930GGLP": 22
+     },
+     "2": {
+      "930GLBR": 0,
+      "930GTMP": 4,
+      "930GCAW": 16,
+      "930GGLP": 20
+     },
+     "3": {
+      "930GLBR": 0,
+      "930GTMP": 4,
+      "930GCAW": 15,
+      "930GGLP": 19
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "8:00",
+      "to": "8:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "9:00",
+      "to": "9:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "13:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "17:00",
+      "to": "17:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "18:00",
+      "to": "18:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "19:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb1/Timetable/930GLBR?direction=outbound"
+  },
+  {
+   "id": "tfl-river:rb1:outbound:930GLBR:Saturday and Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.5066,
+    "lon": -0.08476,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb1",
+    "direction": "outbound",
+    "from_pier": "930GLBR",
+    "from_name": "London Bridge City Pier",
+    "schedule": "Saturday and Sunday",
+    "departures": [
+     {
+      "t": "10:01",
+      "iv": "0"
+     },
+     {
+      "t": "10:49",
+      "iv": "0"
+     },
+     {
+      "t": "11:21",
+      "iv": "0"
+     },
+     {
+      "t": "11:54",
+      "iv": "0"
+     },
+     {
+      "t": "12:31",
+      "iv": "0"
+     },
+     {
+      "t": "13:06",
+      "iv": "1"
+     },
+     {
+      "t": "14:01",
+      "iv": "0"
+     },
+     {
+      "t": "14:50",
+      "iv": "0"
+     },
+     {
+      "t": "15:26",
+      "iv": "0"
+     },
+     {
+      "t": "16:03",
+      "iv": "0"
+     },
+     {
+      "t": "16:37",
+      "iv": "0"
+     },
+     {
+      "t": "17:16",
+      "iv": "0"
+     },
+     {
+      "t": "17:44",
+      "iv": "3"
+     },
+     {
+      "t": "18:08",
+      "iv": "0"
+     },
+     {
+      "t": "18:55",
+      "iv": "0"
+     },
+     {
+      "t": "19:35",
+      "iv": "0"
+     },
+     {
+      "t": "20:13",
+      "iv": "1"
+     },
+     {
+      "t": "20:43",
+      "iv": "0"
+     },
+     {
+      "t": "21:46",
+      "iv": "3"
+     },
+     {
+      "t": "23:02",
+      "iv": "0"
+     },
+     {
+      "t": "23:33",
+      "iv": "2"
+     },
+     {
+      "t": "23:59",
+      "iv": "3"
+     },
+     {
+      "t": "24:22",
+      "iv": "3"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GLBR": 0,
+      "930GTMP": 4,
+      "930GCAW": 15,
+      "930GGLP": 20
+     },
+     "1": {
+      "930GLBR": 0,
+      "930GTMP": 5,
+      "930GCAW": 17,
+      "930GGLP": 22
+     },
+     "2": {
+      "930GLBR": 0,
+      "930GTMP": 4,
+      "930GCAW": 16,
+      "930GGLP": 20
+     },
+     "3": {
+      "930GLBR": 0,
+      "930GTMP": 4,
+      "930GCAW": 15,
+      "930GGLP": 19
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "13:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "16:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "17:00",
+      "to": "17:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "18:00",
+      "to": "18:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "0:00",
+      "to": "0:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb1/Timetable/930GLBR?direction=outbound"
+  },
+  {
+   "id": "tfl-river:rb4:inbound:930GCAW:Monday to Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb4",
+    "direction": "inbound",
+    "from_pier": "930GCAW",
+    "from_name": "Canary Wharf Pier",
+    "schedule": "Monday to Friday",
+    "departures": [
+     {
+      "t": "06:35",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "06:55",
+      "iv": "0"
+     },
+     {
+      "t": "07:05",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:25",
+      "iv": "0"
+     },
+     {
+      "t": "07:35",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:55",
+      "iv": "0"
+     },
+     {
+      "t": "08:05",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:25",
+      "iv": "0"
+     },
+     {
+      "t": "08:35",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:55",
+      "iv": "0"
+     },
+     {
+      "t": "09:05",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:27",
+      "iv": "0"
+     },
+     {
+      "t": "09:37",
+      "iv": "0"
+     },
+     {
+      "t": "09:47",
+      "iv": "0"
+     },
+     {
+      "t": "09:57",
+      "iv": "0"
+     },
+     {
+      "t": "10:07",
+      "iv": "0"
+     },
+     {
+      "t": "10:18",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:57",
+      "iv": "0"
+     },
+     {
+      "t": "11:09",
+      "iv": "0"
+     },
+     {
+      "t": "11:24",
+      "iv": "0"
+     },
+     {
+      "t": "11:40",
+      "iv": "0"
+     },
+     {
+      "t": "11:50",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:20",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:11",
+      "iv": "0"
+     },
+     {
+      "t": "13:26",
+      "iv": "0"
+     },
+     {
+      "t": "13:40",
+      "iv": "0"
+     },
+     {
+      "t": "13:51",
+      "iv": "0"
+     },
+     {
+      "t": "14:06",
+      "iv": "0"
+     },
+     {
+      "t": "14:20",
+      "iv": "0"
+     },
+     {
+      "t": "14:31",
+      "iv": "0"
+     },
+     {
+      "t": "14:46",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:12",
+      "iv": "0"
+     },
+     {
+      "t": "15:26",
+      "iv": "0"
+     },
+     {
+      "t": "15:41",
+      "iv": "0"
+     },
+     {
+      "t": "15:55",
+      "iv": "0"
+     },
+     {
+      "t": "16:10",
+      "iv": "0"
+     },
+     {
+      "t": "16:20",
+      "iv": "0"
+     },
+     {
+      "t": "16:33",
+      "iv": "0"
+     },
+     {
+      "t": "16:43",
+      "iv": "0"
+     },
+     {
+      "t": "16:53",
+      "iv": "0"
+     },
+     {
+      "t": "17:03",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:25",
+      "iv": "0"
+     },
+     {
+      "t": "17:35",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:55",
+      "iv": "0"
+     },
+     {
+      "t": "18:05",
+      "iv": "0"
+     },
+     {
+      "t": "18:16",
+      "iv": "0"
+     },
+     {
+      "t": "18:28",
+      "iv": "0"
+     },
+     {
+      "t": "18:38",
+      "iv": "0"
+     },
+     {
+      "t": "18:48",
+      "iv": "0"
+     },
+     {
+      "t": "18:58",
+      "iv": "0"
+     },
+     {
+      "t": "19:10",
+      "iv": "0"
+     },
+     {
+      "t": "19:20",
+      "iv": "0"
+     },
+     {
+      "t": "19:35",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:55",
+      "iv": "0"
+     },
+     {
+      "t": "20:10",
+      "iv": "0"
+     },
+     {
+      "t": "20:37",
+      "iv": "0"
+     },
+     {
+      "t": "20:50",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:10",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:30",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "21:55",
+      "iv": "0"
+     },
+     {
+      "t": "22:10",
+      "iv": "0"
+     },
+     {
+      "t": "22:25",
+      "iv": "0"
+     },
+     {
+      "t": "22:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:55",
+      "iv": "0"
+     },
+     {
+      "t": "23:10",
+      "iv": "0"
+     },
+     {
+      "t": "23:25",
+      "iv": "0"
+     },
+     {
+      "t": "23:40",
+      "iv": "0"
+     },
+     {
+      "t": "23:55",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GCAW": 0,
+      "930GNEL": 3
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyMinutes",
+      "from": "7:00",
+      "to": "9:59",
+      "every_min": [12,10]
+     },
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "13:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyMinutes",
+      "from": "16:00",
+      "to": "18:59",
+      "every_min": [13,10]
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb4/Timetable/930GCAW?direction=inbound"
+  },
+  {
+   "id": "tfl-river:rb4:inbound:930GCAW:Saturday and Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.50569,
+    "lon": -0.02848,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb4",
+    "direction": "inbound",
+    "from_pier": "930GCAW",
+    "from_name": "Canary Wharf Pier",
+    "schedule": "Saturday and Sunday",
+    "departures": [
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:28",
+      "iv": "0"
+     },
+     {
+      "t": "14:40",
+      "iv": "0"
+     },
+     {
+      "t": "14:55",
+      "iv": "0"
+     },
+     {
+      "t": "15:10",
+      "iv": "0"
+     },
+     {
+      "t": "15:25",
+      "iv": "0"
+     },
+     {
+      "t": "15:40",
+      "iv": "0"
+     },
+     {
+      "t": "15:55",
+      "iv": "0"
+     },
+     {
+      "t": "16:10",
+      "iv": "0"
+     },
+     {
+      "t": "16:22",
+      "iv": "0"
+     },
+     {
+      "t": "16:35",
+      "iv": "0"
+     },
+     {
+      "t": "16:50",
+      "iv": "0"
+     },
+     {
+      "t": "17:05",
+      "iv": "0"
+     },
+     {
+      "t": "17:20",
+      "iv": "0"
+     },
+     {
+      "t": "17:35",
+      "iv": "0"
+     },
+     {
+      "t": "17:48",
+      "iv": "0"
+     },
+     {
+      "t": "18:05",
+      "iv": "0"
+     },
+     {
+      "t": "18:20",
+      "iv": "0"
+     },
+     {
+      "t": "18:35",
+      "iv": "0"
+     },
+     {
+      "t": "18:50",
+      "iv": "0"
+     },
+     {
+      "t": "19:05",
+      "iv": "0"
+     },
+     {
+      "t": "19:20",
+      "iv": "0"
+     },
+     {
+      "t": "19:35",
+      "iv": "0"
+     },
+     {
+      "t": "20:10",
+      "iv": "0"
+     },
+     {
+      "t": "20:40",
+      "iv": "0"
+     },
+     {
+      "t": "20:55",
+      "iv": "0"
+     },
+     {
+      "t": "21:10",
+      "iv": "0"
+     },
+     {
+      "t": "21:25",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "21:55",
+      "iv": "0"
+     },
+     {
+      "t": "22:10",
+      "iv": "0"
+     },
+     {
+      "t": "22:25",
+      "iv": "0"
+     },
+     {
+      "t": "22:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:55",
+      "iv": "0"
+     },
+     {
+      "t": "23:10",
+      "iv": "0"
+     },
+     {
+      "t": "23:25",
+      "iv": "0"
+     },
+     {
+      "t": "23:40",
+      "iv": "0"
+     },
+     {
+      "t": "23:55",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GCAW": 0,
+      "930GNEL": 3
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "8:00",
+      "to": "8:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "9:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "16:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "17:00",
+      "to": "17:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "18:00",
+      "to": "18:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "21:00",
+      "to": "22:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb4/Timetable/930GCAW?direction=inbound"
+  },
+  {
+   "id": "tfl-river:rb4:outbound:930GNEL:Monday to Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.50455,
+    "lon": -0.03179,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb4",
+    "direction": "outbound",
+    "from_pier": "930GNEL",
+    "from_name": "Rotherhithe Pier",
+    "schedule": "Monday to Friday",
+    "departures": [
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:40",
+      "iv": "0"
+     },
+     {
+      "t": "06:50",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:10",
+      "iv": "0"
+     },
+     {
+      "t": "07:20",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:40",
+      "iv": "0"
+     },
+     {
+      "t": "07:50",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:10",
+      "iv": "0"
+     },
+     {
+      "t": "08:20",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:40",
+      "iv": "0"
+     },
+     {
+      "t": "08:50",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:10",
+      "iv": "0"
+     },
+     {
+      "t": "09:22",
+      "iv": "0"
+     },
+     {
+      "t": "09:32",
+      "iv": "0"
+     },
+     {
+      "t": "09:42",
+      "iv": "0"
+     },
+     {
+      "t": "09:52",
+      "iv": "0"
+     },
+     {
+      "t": "10:02",
+      "iv": "0"
+     },
+     {
+      "t": "10:12",
+      "iv": "0"
+     },
+     {
+      "t": "10:24",
+      "iv": "0"
+     },
+     {
+      "t": "10:39",
+      "iv": "0"
+     },
+     {
+      "t": "10:51",
+      "iv": "0"
+     },
+     {
+      "t": "11:03",
+      "iv": "0"
+     },
+     {
+      "t": "11:18",
+      "iv": "0"
+     },
+     {
+      "t": "11:33",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:55",
+      "iv": "0"
+     },
+     {
+      "t": "12:55",
+      "iv": "0"
+     },
+     {
+      "t": "13:05",
+      "iv": "0"
+     },
+     {
+      "t": "13:20",
+      "iv": "0"
+     },
+     {
+      "t": "13:35",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:25",
+      "iv": "0"
+     },
+     {
+      "t": "14:40",
+      "iv": "0"
+     },
+     {
+      "t": "14:55",
+      "iv": "0"
+     },
+     {
+      "t": "15:06",
+      "iv": "0"
+     },
+     {
+      "t": "15:20",
+      "iv": "0"
+     },
+     {
+      "t": "15:35",
+      "iv": "0"
+     },
+     {
+      "t": "15:50",
+      "iv": "0"
+     },
+     {
+      "t": "16:05",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:28",
+      "iv": "0"
+     },
+     {
+      "t": "16:38",
+      "iv": "0"
+     },
+     {
+      "t": "16:48",
+      "iv": "0"
+     },
+     {
+      "t": "16:58",
+      "iv": "0"
+     },
+     {
+      "t": "17:10",
+      "iv": "0"
+     },
+     {
+      "t": "17:20",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:40",
+      "iv": "0"
+     },
+     {
+      "t": "17:50",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:10",
+      "iv": "0"
+     },
+     {
+      "t": "18:23",
+      "iv": "0"
+     },
+     {
+      "t": "18:33",
+      "iv": "0"
+     },
+     {
+      "t": "18:43",
+      "iv": "0"
+     },
+     {
+      "t": "18:53",
+      "iv": "0"
+     },
+     {
+      "t": "19:05",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:40",
+      "iv": "0"
+     },
+     {
+      "t": "19:50",
+      "iv": "0"
+     },
+     {
+      "t": "20:05",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:55",
+      "iv": "0"
+     },
+     {
+      "t": "21:05",
+      "iv": "0"
+     },
+     {
+      "t": "21:15",
+      "iv": "0"
+     },
+     {
+      "t": "21:25",
+      "iv": "0"
+     },
+     {
+      "t": "21:35",
+      "iv": "0"
+     },
+     {
+      "t": "21:50",
+      "iv": "0"
+     },
+     {
+      "t": "22:05",
+      "iv": "0"
+     },
+     {
+      "t": "22:20",
+      "iv": "0"
+     },
+     {
+      "t": "22:35",
+      "iv": "0"
+     },
+     {
+      "t": "22:50",
+      "iv": "0"
+     },
+     {
+      "t": "23:05",
+      "iv": "0"
+     },
+     {
+      "t": "23:20",
+      "iv": "0"
+     },
+     {
+      "t": "23:35",
+      "iv": "0"
+     },
+     {
+      "t": "23:50",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GNEL": 0,
+      "930GCAW": 3
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyMinutes",
+      "from": "7:00",
+      "to": "9:59",
+      "every_min": [12,10]
+     },
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "13:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyMinutes",
+      "from": "16:00",
+      "to": "18:59",
+      "every_min": [13,10]
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb4/Timetable/930GNEL?direction=outbound"
+  },
+  {
+   "id": "tfl-river:rb4:outbound:930GNEL:Saturday and Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.50455,
+    "lon": -0.03179,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb4",
+    "direction": "outbound",
+    "from_pier": "930GNEL",
+    "from_name": "Rotherhithe Pier",
+    "schedule": "Saturday and Sunday",
+    "departures": [
+     {
+      "t": "08:24",
+      "iv": "0"
+     },
+     {
+      "t": "08:39",
+      "iv": "0"
+     },
+     {
+      "t": "08:54",
+      "iv": "0"
+     },
+     {
+      "t": "09:09",
+      "iv": "0"
+     },
+     {
+      "t": "09:24",
+      "iv": "0"
+     },
+     {
+      "t": "09:39",
+      "iv": "0"
+     },
+     {
+      "t": "09:54",
+      "iv": "0"
+     },
+     {
+      "t": "10:09",
+      "iv": "0"
+     },
+     {
+      "t": "10:24",
+      "iv": "0"
+     },
+     {
+      "t": "10:39",
+      "iv": "0"
+     },
+     {
+      "t": "10:54",
+      "iv": "0"
+     },
+     {
+      "t": "11:09",
+      "iv": "0"
+     },
+     {
+      "t": "11:24",
+      "iv": "0"
+     },
+     {
+      "t": "11:39",
+      "iv": "0"
+     },
+     {
+      "t": "11:54",
+      "iv": "0"
+     },
+     {
+      "t": "12:09",
+      "iv": "0"
+     },
+     {
+      "t": "12:24",
+      "iv": "0"
+     },
+     {
+      "t": "12:39",
+      "iv": "0"
+     },
+     {
+      "t": "12:54",
+      "iv": "0"
+     },
+     {
+      "t": "13:09",
+      "iv": "0"
+     },
+     {
+      "t": "13:24",
+      "iv": "0"
+     },
+     {
+      "t": "13:39",
+      "iv": "0"
+     },
+     {
+      "t": "13:54",
+      "iv": "0"
+     },
+     {
+      "t": "14:09",
+      "iv": "0"
+     },
+     {
+      "t": "14:22",
+      "iv": "0"
+     },
+     {
+      "t": "14:34",
+      "iv": "0"
+     },
+     {
+      "t": "14:49",
+      "iv": "0"
+     },
+     {
+      "t": "15:04",
+      "iv": "0"
+     },
+     {
+      "t": "15:19",
+      "iv": "0"
+     },
+     {
+      "t": "15:34",
+      "iv": "0"
+     },
+     {
+      "t": "15:49",
+      "iv": "0"
+     },
+     {
+      "t": "16:04",
+      "iv": "0"
+     },
+     {
+      "t": "16:16",
+      "iv": "0"
+     },
+     {
+      "t": "16:29",
+      "iv": "0"
+     },
+     {
+      "t": "16:44",
+      "iv": "0"
+     },
+     {
+      "t": "16:59",
+      "iv": "0"
+     },
+     {
+      "t": "17:14",
+      "iv": "0"
+     },
+     {
+      "t": "17:29",
+      "iv": "0"
+     },
+     {
+      "t": "17:44",
+      "iv": "0"
+     },
+     {
+      "t": "17:59",
+      "iv": "0"
+     },
+     {
+      "t": "18:14",
+      "iv": "0"
+     },
+     {
+      "t": "18:29",
+      "iv": "0"
+     },
+     {
+      "t": "18:44",
+      "iv": "0"
+     },
+     {
+      "t": "18:59",
+      "iv": "0"
+     },
+     {
+      "t": "19:14",
+      "iv": "0"
+     },
+     {
+      "t": "19:29",
+      "iv": "0"
+     },
+     {
+      "t": "20:04",
+      "iv": "0"
+     },
+     {
+      "t": "20:34",
+      "iv": "0"
+     },
+     {
+      "t": "20:49",
+      "iv": "0"
+     },
+     {
+      "t": "21:04",
+      "iv": "0"
+     },
+     {
+      "t": "21:19",
+      "iv": "0"
+     },
+     {
+      "t": "21:34",
+      "iv": "0"
+     },
+     {
+      "t": "21:49",
+      "iv": "0"
+     },
+     {
+      "t": "22:04",
+      "iv": "0"
+     },
+     {
+      "t": "22:19",
+      "iv": "0"
+     },
+     {
+      "t": "22:34",
+      "iv": "0"
+     },
+     {
+      "t": "22:49",
+      "iv": "0"
+     },
+     {
+      "t": "23:04",
+      "iv": "0"
+     },
+     {
+      "t": "23:19",
+      "iv": "0"
+     },
+     {
+      "t": "23:34",
+      "iv": "0"
+     },
+     {
+      "t": "23:49",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GNEL": 0,
+      "930GCAW": 3
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "8:00",
+      "to": "8:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "9:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "16:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "17:00",
+      "to": "18:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "21:00",
+      "to": "22:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb4/Timetable/930GNEL?direction=outbound"
+  },
+  {
+   "id": "tfl-river:rb6:inbound:930GWAS:Monday to Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb6",
+    "direction": "inbound",
+    "from_pier": "930GWAS",
+    "from_name": "Woolwich Arsenal Pier",
+    "schedule": "Monday to Friday",
+    "departures": [
+     {
+      "t": "06:19",
+      "iv": "0"
+     },
+     {
+      "t": "06:49",
+      "iv": "1"
+     },
+     {
+      "t": "09:39",
+      "iv": "2"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 19
+     },
+     "1": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 19
+     },
+     "2": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 21
+     },
+     "3": {
+      "930GWAS": 0,
+      "930GWRF": 9,
+      "930GMIL": 13,
+      "930GGNW": 23
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "9:00",
+      "to": "9:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb6/Timetable/930GWAS?direction=inbound"
+  },
+  {
+   "id": "tfl-river:rb6:inbound:930GWAS:Saturday and Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49516,
+    "lon": 0.07057,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "rb6",
+    "direction": "inbound",
+    "from_pier": "930GWAS",
+    "from_name": "Woolwich Arsenal Pier",
+    "schedule": "Saturday and Sunday",
+    "departures": [
+     {
+      "t": "09:17",
+      "iv": "3"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 19
+     },
+     "1": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 19
+     },
+     "2": {
+      "930GWAS": 0,
+      "930GWRF": 7,
+      "930GMIL": 11,
+      "930GGNW": 21
+     },
+     "3": {
+      "930GWAS": 0,
+      "930GWRF": 9,
+      "930GMIL": 13,
+      "930GGNW": 23
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "9:00",
+      "to": "9:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb6/Timetable/930GWAS?direction=inbound"
+  },
+  {
+   "id": "tfl-river:rb6:outbound:930GGNW:Monday to Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "direction": "outbound",
+    "from_pier": "930GGNW",
+    "from_name": "Greenwich Pier",
+    "schedule": "Monday to Friday",
+    "departures": [
+     {
+      "t": "08:26",
+      "iv": "1"
+     },
+     {
+      "t": "10:37",
+      "iv": "0"
+     },
+     {
+      "t": "11:07",
+      "iv": "0"
+     },
+     {
+      "t": "11:37",
+      "iv": "0"
+     },
+     {
+      "t": "12:07",
+      "iv": "0"
+     },
+     {
+      "t": "12:44",
+      "iv": "0"
+     },
+     {
+      "t": "13:14",
+      "iv": "0"
+     },
+     {
+      "t": "14:14",
+      "iv": "0"
+     },
+     {
+      "t": "15:14",
+      "iv": "0"
+     },
+     {
+      "t": "15:40",
+      "iv": "0"
+     },
+     {
+      "t": "16:14",
+      "iv": "0"
+     },
+     {
+      "t": "16:40",
+      "iv": "0"
+     },
+     {
+      "t": "19:11",
+      "iv": "1"
+     },
+     {
+      "t": "21:30",
+      "iv": "0"
+     },
+     {
+      "t": "22:07",
+      "iv": "0"
+     },
+     {
+      "t": "22:39",
+      "iv": "0"
+     },
+     {
+      "t": "23:10",
+      "iv": "0"
+     },
+     {
+      "t": "24:02",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GGNW": 0,
+      "930GMIL": 7
+     },
+     "1": {
+      "930GGNW": 0,
+      "930GMIL": 10,
+      "930GWRF": 14,
+      "930GWAS": 22
+     },
+     "2": {
+      "930GGNW": 0,
+      "930GMIL": 10,
+      "930GWRF": 12
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "8:00",
+      "to": "8:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "13:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "15:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "23:00",
+      "to": "23:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "0:00",
+      "to": "0:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb6/Timetable/930GGNW?direction=outbound"
+  },
+  {
+   "id": "tfl-river:rb6:outbound:930GGNW:Saturday and Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.48362,
+    "lon": -0.00966,
+    "precision": "TfL pier position",
+    "zone": "model"
+   },
+   "values": {
+    "line": "rb6",
+    "direction": "outbound",
+    "from_pier": "930GGNW",
+    "from_name": "Greenwich Pier",
+    "schedule": "Saturday and Sunday",
+    "departures": [
+     {
+      "t": "10:13",
+      "iv": "0"
+     },
+     {
+      "t": "10:50",
+      "iv": "0"
+     },
+     {
+      "t": "11:34",
+      "iv": "0"
+     },
+     {
+      "t": "12:02",
+      "iv": "0"
+     },
+     {
+      "t": "12:43",
+      "iv": "0"
+     },
+     {
+      "t": "13:24",
+      "iv": "0"
+     },
+     {
+      "t": "13:57",
+      "iv": "0"
+     },
+     {
+      "t": "14:16",
+      "iv": "0"
+     },
+     {
+      "t": "15:05",
+      "iv": "0"
+     },
+     {
+      "t": "15:44",
+      "iv": "0"
+     },
+     {
+      "t": "16:13",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:04",
+      "iv": "0"
+     },
+     {
+      "t": "18:25",
+      "iv": "0"
+     },
+     {
+      "t": "19:06",
+      "iv": "0"
+     },
+     {
+      "t": "19:56",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:59",
+      "iv": "0"
+     },
+     {
+      "t": "21:39",
+      "iv": "1"
+     },
+     {
+      "t": "21:54",
+      "iv": "2"
+     },
+     {
+      "t": "22:29",
+      "iv": "1"
+     },
+     {
+      "t": "22:59",
+      "iv": "1"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GGNW": 0,
+      "930GMIL": 7
+     },
+     "1": {
+      "930GGNW": 0,
+      "930GMIL": 10,
+      "930GWRF": 14,
+      "930GWAS": 22
+     },
+     "2": {
+      "930GGNW": 0,
+      "930GMIL": 10,
+      "930GWRF": 12
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "10:00",
+      "to": "10:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "11:00",
+      "to": "11:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "12:00",
+      "to": "12:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "13:00",
+      "to": "13:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "14:00",
+      "to": "14:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "15:00",
+      "to": "15:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "16:00",
+      "to": "16:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "17:00",
+      "to": "17:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "18:00",
+      "to": "18:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "19:00",
+      "to": "19:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "20:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/rb6/Timetable/930GGNW?direction=outbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:inbound:930GWWC:Monday - Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49776,
+    "lon": 0.06078,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "woolwich-ferry",
+    "direction": "inbound",
+    "from_pier": "930GWWC",
+    "from_name": "Woolwich Ferry North Pier",
+    "schedule": "Monday - Friday",
+    "departures": [
+     {
+      "t": "06:00",
+      "iv": "0"
+     },
+     {
+      "t": "06:15",
+      "iv": "0"
+     },
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:30",
+      "iv": "0"
+     },
+     {
+      "t": "14:45",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:15",
+      "iv": "0"
+     },
+     {
+      "t": "15:30",
+      "iv": "0"
+     },
+     {
+      "t": "15:45",
+      "iv": "0"
+     },
+     {
+      "t": "16:00",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:30",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:00",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:15",
+      "iv": "0"
+     },
+     {
+      "t": "18:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:00",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:00",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:00",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWWC": 0,
+      "930GWWS": 5
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "7:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Timetable/930GWWC?direction=inbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:inbound:930GWWC:Saturdays and Public Holidays",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49776,
+    "lon": 0.06078,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "woolwich-ferry",
+    "direction": "inbound",
+    "from_pier": "930GWWC",
+    "from_name": "Woolwich Ferry North Pier",
+    "schedule": "Saturdays and Public Holidays",
+    "departures": [
+     {
+      "t": "06:00",
+      "iv": "0"
+     },
+     {
+      "t": "06:15",
+      "iv": "0"
+     },
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:30",
+      "iv": "0"
+     },
+     {
+      "t": "14:45",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:15",
+      "iv": "0"
+     },
+     {
+      "t": "15:30",
+      "iv": "0"
+     },
+     {
+      "t": "15:45",
+      "iv": "0"
+     },
+     {
+      "t": "16:00",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:30",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:00",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:15",
+      "iv": "0"
+     },
+     {
+      "t": "18:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:00",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:00",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:00",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWWC": 0,
+      "930GWWS": 5
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "7:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Timetable/930GWWC?direction=inbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:inbound:930GWWC:Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49776,
+    "lon": 0.06078,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "woolwich-ferry",
+    "direction": "inbound",
+    "from_pier": "930GWWC",
+    "from_name": "Woolwich Ferry North Pier",
+    "schedule": "Sunday",
+    "departures": [
+     {
+      "t": "06:00",
+      "iv": "0"
+     },
+     {
+      "t": "06:15",
+      "iv": "0"
+     },
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:30",
+      "iv": "0"
+     },
+     {
+      "t": "14:45",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:15",
+      "iv": "0"
+     },
+     {
+      "t": "15:30",
+      "iv": "0"
+     },
+     {
+      "t": "15:45",
+      "iv": "0"
+     },
+     {
+      "t": "16:00",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:30",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:00",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:15",
+      "iv": "0"
+     },
+     {
+      "t": "18:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:00",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:00",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:00",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWWC": 0,
+      "930GWWS": 5
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "7:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Timetable/930GWWC?direction=inbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:outbound:930GWWS:Monday - Friday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49517,
+    "lon": 0.06209,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "woolwich-ferry",
+    "direction": "outbound",
+    "from_pier": "930GWWS",
+    "from_name": "Woolwich Ferry South Pier",
+    "schedule": "Monday - Friday",
+    "departures": [
+     {
+      "t": "06:00",
+      "iv": "0"
+     },
+     {
+      "t": "06:15",
+      "iv": "0"
+     },
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:30",
+      "iv": "0"
+     },
+     {
+      "t": "14:45",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:15",
+      "iv": "0"
+     },
+     {
+      "t": "15:30",
+      "iv": "0"
+     },
+     {
+      "t": "15:45",
+      "iv": "0"
+     },
+     {
+      "t": "16:00",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:30",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:00",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:15",
+      "iv": "0"
+     },
+     {
+      "t": "18:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:00",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:00",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:00",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWWS": 0,
+      "930GWWC": 5
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "7:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Timetable/930GWWS?direction=outbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:outbound:930GWWS:Saturdays and Public Holidays",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49517,
+    "lon": 0.06209,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "woolwich-ferry",
+    "direction": "outbound",
+    "from_pier": "930GWWS",
+    "from_name": "Woolwich Ferry South Pier",
+    "schedule": "Saturdays and Public Holidays",
+    "departures": [
+     {
+      "t": "06:00",
+      "iv": "0"
+     },
+     {
+      "t": "06:15",
+      "iv": "0"
+     },
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:30",
+      "iv": "0"
+     },
+     {
+      "t": "14:45",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:15",
+      "iv": "0"
+     },
+     {
+      "t": "15:30",
+      "iv": "0"
+     },
+     {
+      "t": "15:45",
+      "iv": "0"
+     },
+     {
+      "t": "16:00",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:30",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:00",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:15",
+      "iv": "0"
+     },
+     {
+      "t": "18:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:00",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:00",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:00",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWWS": 0,
+      "930GWWC": 5
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "7:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Timetable/930GWWS?direction=outbound"
+  },
+  {
+   "id": "tfl-river:woolwich-ferry:outbound:930GWWS:Sunday",
+   "kind": "river-bus-timetable",
+   "position": {
+    "lat": 51.49517,
+    "lon": 0.06209,
+    "precision": "TfL pier position",
+    "zone": "east"
+   },
+   "values": {
+    "line": "woolwich-ferry",
+    "direction": "outbound",
+    "from_pier": "930GWWS",
+    "from_name": "Woolwich Ferry South Pier",
+    "schedule": "Sunday",
+    "departures": [
+     {
+      "t": "06:00",
+      "iv": "0"
+     },
+     {
+      "t": "06:15",
+      "iv": "0"
+     },
+     {
+      "t": "06:30",
+      "iv": "0"
+     },
+     {
+      "t": "06:45",
+      "iv": "0"
+     },
+     {
+      "t": "07:00",
+      "iv": "0"
+     },
+     {
+      "t": "07:15",
+      "iv": "0"
+     },
+     {
+      "t": "07:30",
+      "iv": "0"
+     },
+     {
+      "t": "07:45",
+      "iv": "0"
+     },
+     {
+      "t": "08:00",
+      "iv": "0"
+     },
+     {
+      "t": "08:15",
+      "iv": "0"
+     },
+     {
+      "t": "08:30",
+      "iv": "0"
+     },
+     {
+      "t": "08:45",
+      "iv": "0"
+     },
+     {
+      "t": "09:00",
+      "iv": "0"
+     },
+     {
+      "t": "09:15",
+      "iv": "0"
+     },
+     {
+      "t": "09:30",
+      "iv": "0"
+     },
+     {
+      "t": "09:45",
+      "iv": "0"
+     },
+     {
+      "t": "10:00",
+      "iv": "0"
+     },
+     {
+      "t": "10:15",
+      "iv": "0"
+     },
+     {
+      "t": "10:30",
+      "iv": "0"
+     },
+     {
+      "t": "10:45",
+      "iv": "0"
+     },
+     {
+      "t": "11:00",
+      "iv": "0"
+     },
+     {
+      "t": "11:15",
+      "iv": "0"
+     },
+     {
+      "t": "11:30",
+      "iv": "0"
+     },
+     {
+      "t": "11:45",
+      "iv": "0"
+     },
+     {
+      "t": "12:00",
+      "iv": "0"
+     },
+     {
+      "t": "12:15",
+      "iv": "0"
+     },
+     {
+      "t": "12:30",
+      "iv": "0"
+     },
+     {
+      "t": "12:45",
+      "iv": "0"
+     },
+     {
+      "t": "13:00",
+      "iv": "0"
+     },
+     {
+      "t": "13:15",
+      "iv": "0"
+     },
+     {
+      "t": "13:30",
+      "iv": "0"
+     },
+     {
+      "t": "13:45",
+      "iv": "0"
+     },
+     {
+      "t": "14:00",
+      "iv": "0"
+     },
+     {
+      "t": "14:15",
+      "iv": "0"
+     },
+     {
+      "t": "14:30",
+      "iv": "0"
+     },
+     {
+      "t": "14:45",
+      "iv": "0"
+     },
+     {
+      "t": "15:00",
+      "iv": "0"
+     },
+     {
+      "t": "15:15",
+      "iv": "0"
+     },
+     {
+      "t": "15:30",
+      "iv": "0"
+     },
+     {
+      "t": "15:45",
+      "iv": "0"
+     },
+     {
+      "t": "16:00",
+      "iv": "0"
+     },
+     {
+      "t": "16:15",
+      "iv": "0"
+     },
+     {
+      "t": "16:30",
+      "iv": "0"
+     },
+     {
+      "t": "16:45",
+      "iv": "0"
+     },
+     {
+      "t": "17:00",
+      "iv": "0"
+     },
+     {
+      "t": "17:15",
+      "iv": "0"
+     },
+     {
+      "t": "17:30",
+      "iv": "0"
+     },
+     {
+      "t": "17:45",
+      "iv": "0"
+     },
+     {
+      "t": "18:00",
+      "iv": "0"
+     },
+     {
+      "t": "18:15",
+      "iv": "0"
+     },
+     {
+      "t": "18:30",
+      "iv": "0"
+     },
+     {
+      "t": "18:45",
+      "iv": "0"
+     },
+     {
+      "t": "19:00",
+      "iv": "0"
+     },
+     {
+      "t": "19:15",
+      "iv": "0"
+     },
+     {
+      "t": "19:30",
+      "iv": "0"
+     },
+     {
+      "t": "19:45",
+      "iv": "0"
+     },
+     {
+      "t": "20:00",
+      "iv": "0"
+     },
+     {
+      "t": "20:15",
+      "iv": "0"
+     },
+     {
+      "t": "20:30",
+      "iv": "0"
+     },
+     {
+      "t": "20:45",
+      "iv": "0"
+     },
+     {
+      "t": "21:00",
+      "iv": "0"
+     },
+     {
+      "t": "21:20",
+      "iv": "0"
+     },
+     {
+      "t": "21:40",
+      "iv": "0"
+     },
+     {
+      "t": "22:00",
+      "iv": "0"
+     }
+    ],
+    "minutes_to_later_zone_piers_by_interval": {
+     "0": {
+      "930GWWS": 0,
+      "930GWWC": 5
+     }
+    },
+    "periods": [
+     {
+      "type": "Normal",
+      "from": "6:00",
+      "to": "6:59",
+      "every_min": null
+     },
+     {
+      "type": "FrequencyHours",
+      "from": "7:00",
+      "to": "20:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "21:00",
+      "to": "21:59",
+      "every_min": null
+     },
+     {
+      "type": "Normal",
+      "from": "22:00",
+      "to": "22:59",
+      "every_min": null
+     }
+    ]
+   },
+   "url": "https://api.tfl.gov.uk/Line/woolwich-ferry/Timetable/930GWWS?direction=outbound"
+  }
+ ]
+}

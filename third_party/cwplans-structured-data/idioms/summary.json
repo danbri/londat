@@ -1,0 +1,207 @@
+{
+ "meta": {
+  "generated": "2026-10-06T14:01:47.287Z",
+  "tool": "magpie/cwplans/tools/web-idioms.mjs",
+  "engine": "@factoidal/core 0.7.1",
+  "stats": {
+   "pages": 824,
+   "nodes": 4341,
+   "shex": 16605,
+   "deferred": 0,
+   "nsRemapped": 57
+  }
+ },
+ "idioms": [
+  {
+   "id": "BranchCard",
+   "label": "Branch card: a place with address, hours, coordinates, telephone",
+   "kind": "content",
+   "sites": 112,
+   "pages": 135,
+   "nodes": 220,
+   "forms": {
+    "AddressNode": 106,
+    "AddressText": 22,
+    "HoursNodes": 38,
+    "HoursText": 37,
+    "GeoNode": 40,
+    "HasTelephone": 69,
+    "FullBranch": 21
+   }
+  },
+  {
+   "id": "ChainBranchLink",
+   "label": "Chain branch link: a branch names its parent organisation, brand or branch code",
+   "kind": "content",
+   "sites": 24,
+   "pages": 35,
+   "nodes": 45,
+   "forms": {
+    "ViaParent": 16,
+    "ViaBrand": 7,
+    "ViaBranchCode": 3
+   }
+  },
+  {
+   "id": "WeeklyHours",
+   "label": "Weekly hours: OpeningHoursSpecification",
+   "kind": "content",
+   "sites": 39,
+   "pages": 45,
+   "nodes": 462,
+   "forms": {
+    "DayIri": 0,
+    "DayIriAsText": 12,
+    "DayName": 27,
+    "SpecialDays": 1
+   }
+  },
+  {
+   "id": "OrgCard",
+   "label": "Organisation card: name, url, logo, sameAs",
+   "kind": "content",
+   "sites": 162,
+   "pages": 556,
+   "nodes": 642,
+   "forms": {
+    "LogoImageObject": 61,
+    "LogoIri": 47,
+    "LogoText": 68,
+    "HasSameAs": 110
+   }
+  },
+  {
+   "id": "ContactPoint",
+   "label": "Contact point",
+   "kind": "content",
+   "sites": 25,
+   "pages": 29,
+   "nodes": 32,
+   "forms": {}
+  },
+  {
+   "id": "Person",
+   "label": "Person: staff or author",
+   "kind": "content",
+   "sites": 24,
+   "pages": 26,
+   "nodes": 95,
+   "forms": {
+    "WithJobTitle": 8,
+    "WithWorksFor": 5
+   }
+  },
+  {
+   "id": "Menu",
+   "label": "Menu: a link to a menu page, or a menu tree",
+   "kind": "content",
+   "sites": 18,
+   "pages": 23,
+   "nodes": 36,
+   "forms": {
+    "MenuTree": 1
+   }
+  },
+  {
+   "id": "FAQ",
+   "label": "FAQ: FAQPage > Question > Answer",
+   "kind": "content",
+   "sites": 12,
+   "pages": 12,
+   "nodes": 12,
+   "forms": {}
+  },
+  {
+   "id": "RatingBadge",
+   "label": "Rating badge: AggregateRating",
+   "kind": "content",
+   "sites": 9,
+   "pages": 13,
+   "nodes": 14,
+   "forms": {}
+  },
+  {
+   "id": "ServiceCatalogue",
+   "label": "Service catalogue: OfferCatalog > Offer > Service",
+   "kind": "content",
+   "sites": 4,
+   "pages": 9,
+   "nodes": 9,
+   "forms": {}
+  },
+  {
+   "id": "ProductOffer",
+   "label": "Product offer: Product > Offer, Brand",
+   "kind": "content",
+   "sites": 4,
+   "pages": 4,
+   "nodes": 13,
+   "forms": {
+    "WithOffer": 3,
+    "WithSkuMpn": 2
+   }
+  },
+  {
+   "id": "SiteIdentity",
+   "label": "Site identity: WebSite (and its publisher)",
+   "kind": "furniture",
+   "sites": 187,
+   "pages": 581,
+   "nodes": 588,
+   "forms": {
+    "WithPublisher": 73
+   }
+  },
+  {
+   "id": "SiteSearch",
+   "label": "Site search box: WebSite > SearchAction > EntryPoint",
+   "kind": "furniture",
+   "sites": 109,
+   "pages": 494,
+   "nodes": 502,
+   "forms": {
+    "TargetEntryPoint": 70,
+    "TargetIri": 0,
+    "TargetText": 41,
+    "QueryInputSpec": 49,
+    "QueryInputText": 62
+   }
+  },
+  {
+   "id": "PageFrame",
+   "label": "Page frame: WebPage > isPartOf, breadcrumb, primary image, about",
+   "kind": "furniture",
+   "sites": 85,
+   "pages": 468,
+   "nodes": 471,
+   "forms": {
+    "WithBreadcrumb": 66,
+    "WithPrimaryImage": 43,
+    "WithAbout": 44
+   }
+  },
+  {
+   "id": "Breadcrumb",
+   "label": "Breadcrumb trail: BreadcrumbList > ListItem",
+   "kind": "furniture",
+   "sites": 105,
+   "pages": 496,
+   "nodes": 502,
+   "forms": {
+    "LastItemUnlinked": 71
+   }
+  },
+  {
+   "id": "SocialPreview",
+   "label": "Social preview: Open Graph tags",
+   "kind": "furniture",
+   "sites": 270,
+   "pages": 698,
+   "nodes": 698,
+   "forms": {
+    "ImageSize": 92,
+    "ArticleTimes": 61
+   }
+  }
+ ]
+}

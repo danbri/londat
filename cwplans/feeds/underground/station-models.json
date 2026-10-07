@@ -1,0 +1,126 @@
+{
+ "about": "Index of the Blender station box models of Canada Water and Canary Wharf (made 2026-10-05 through the blender-mcp MCP server; skill blender-station-models). The models live in danbri/londat; this file says where, in which frame, and which levels were chosen.",
+ "licence": "The models contain OpenStreetMap-derived geometry (ODbL 1.0, © OpenStreetMap contributors). Layout from the TfL axonometric sheets (RPSI re-use, approved by danbri 2026-10-05 for the scoping phase). This index: facts and URLs.",
+ "frame": {
+  "crs": "EPSG:27700 + ODN",
+  "E0": 537550,
+  "N0": 180300,
+  "glb_obj_fbx": "Y up: x = E - E0, y = m OD, z = -(N - N0) (the 3D page frame)",
+  "blend_usdc_stl": "Z up: X = E - E0, Y = N - N0, Z = m OD"
+ },
+ "files": [
+  {
+   "file": "stations-blend.zip",
+   "bytes": 1841025,
+   "sha256": "ce3c3f40660a64eacaea8cae6f2054bd8c420507c5e4c4b4e4ffd826fe132ff4",
+   "contains": [
+    "stations.blend"
+   ]
+  },
+  {
+   "file": "stations-exports.zip",
+   "bytes": 8898451,
+   "sha256": "7637b3e80e19a93066c9ae503274d06b3db3a3014590e02225d2075e8ce924ac",
+   "contains": [
+    "stations.glb",
+    "canary-wharf.glb",
+    "canada-water.glb",
+    "stations.obj",
+    "stations.mtl",
+    "stations.fbx",
+    "canary-wharf.stl",
+    "canada-water.stl",
+    "stations.usdc"
+   ]
+  },
+  {
+   "file": "making_of.zip",
+   "bytes": 6345917,
+   "sha256": "a2587aa67dbe9e0208b6b55988eb401789d9f48947446b680073c7e5434bd673",
+   "contains": [
+    "screenshots (68, every 5 s, scripted rebuild of 2026-10-05 19:45-19:51 UTC; the 102 10-second captures of the authoring session are in londat commit 0077caa)",
+    "timelapse.mp4",
+    "contact-sheet.jpg",
+    "stills",
+    "plans",
+    "scripts",
+    "MAKING-OF.md"
+   ]
+  }
+ ],
+ "url_base": "https://github.com/danbri/londat/blob/main/third_party/tfl/am3d/models/",
+ "raw_base": "https://raw.githubusercontent.com/danbri/londat/main/third_party/tfl/am3d/models/",
+ "readme": "https://github.com/danbri/londat/blob/main/third_party/tfl/am3d/models/README.md",
+ "stations": {
+  "canary-wharf": {
+   "objects": "CWF.*",
+   "axis": {
+    "E": 537700.78,
+    "N": 180131.46,
+    "bearing_deg": 98.79
+   },
+   "levels_m_od": {
+    "jl_rail": -15.6,
+    "jl_platform": -14.6,
+    "ticket_hall": -3.1,
+    "mezzanine": 3.0,
+    "street": 8.4,
+    "box_base": -17.8,
+    "box_top": 9.2
+   },
+   "level_sources": {
+    "jl_rail": "TfL FOI-0493-2223",
+    "street": "sheet 23.0 m below street + rail",
+    "ticket_hall": "judged from the published hall height 10.8 m",
+    "mezzanine": "judged"
+   },
+   "contents": "box 313.85 x 35 x 27 m (architect), OSM platforms 174.9 m, OSM hall floors + published hall 222.79 x 32.7 x 10.8 m, mezzanine, ESC 1-20 (OSM positions, sheet numbering), B1 stair, 2 lifts (OSM), stairs C and D (sheet), canopies A, B (OSM footprints) and B1 (judged), 3 entrances, tracks and tunnel stubs"
+  },
+  "canada-water": {
+   "objects": "CW.*",
+   "axis": {
+    "jubilee": {
+     "E": 535472.61,
+     "N": 179468.26,
+     "bearing_deg": 81.71
+    },
+    "east_london": {
+     "E": 535455.48,
+     "N": 179465.76,
+     "bearing_deg": 162.08
+    }
+   },
+   "levels_m_od": {
+    "jl_rail": -13.3,
+    "jl_platform": -12.3,
+    "ell_platform": -5.6,
+    "ticket_hall": 0.9,
+    "street": 5.4,
+    "drum_top": 13.0
+   },
+   "alternatives_m_od": {
+    "jl_platform": {
+     "sheet 15.0 m below street": -9.6,
+     "Wikipedia 22 m below ground": -16.6
+    },
+    "ell_platform": {
+     "sheet 8.0 m below street": -2.6
+    }
+   },
+   "level_sources": {
+    "jl_rail": "TfL FOI-0493-2223 (supersedes Wikipedia 22 m, audit AT-5)",
+    "ell_platform": "Wikipedia 11 m below ground (the 3D page control cw-ell-platform)",
+    "ticket_hall": "judged",
+    "drum_top": "judged"
+   },
+   "contents": "JL box 150 x 23 x 22 m and ELL slot 130 m x 13 m deep (Wikipedia), OSM JL platforms 135.4 m, ELL platforms 3 and 4 (judged), OSM hall, ELL-level concourse, glass drum 25 m (centre fitted to OSM), 12 escalators (8 OSM + 4 judged middles), 22 OSM stair flights, lifts 1-4 and escape stair 3 (sheet), 5 entrances, tracks and tunnel stubs"
+  }
+ },
+ "made_by": "magpie/cwplans/tools/blender-stations/ (Blender 4.0.2 + mcp-for-blender 2.1.8)",
+ "on_3d_page": {
+  "data": "magpie/cwplans/docklands/data/stations.json",
+  "tool": "magpie/cwplans/tools/build-station-mesh.mjs",
+  "layer": "magpie/cwplans/docklands/stations-layer.js",
+  "page": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=under (Menu > Layers > Show > Station models)"
+ }
+}

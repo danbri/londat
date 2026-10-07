@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Canary Wharf postcodes</title>
+<style>
+:root{--bg:#0f1215;--panel:#15191d;--line:#323940;--fg:#e8eaec;--muted:#a9b1b9;--link:#9cc8ff;
+  --core:#ffb347;--ward:#6fd38f;--box:#7fb2ff;--term:#ff7a7a;--never:#59616a;--other:#8a939c}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f7f8;--panel:#fff;--line:#d5d9de;--fg:#16191c;--muted:#59626b;--link:#0b5fbf;--core:#c46a00;--ward:#16794a;--box:#1f5fbf;--term:#b3261e;--never:#b8bec5;--other:#7d868f}}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,sans-serif}
+a{color:var(--link)}
+main{max-width:1150px;margin:0 auto;padding:16px}
+h1{font-size:1.35rem;margin:.2em 0}h2{font-size:1.1rem;margin:1.2em 0 .4em}
+.small{color:var(--muted);font-size:13px}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:120px}
+.tile b{display:block;font-size:1.3rem}
+.bar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line);z-index:1}
+input[type=search],select{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+input[type=search]{flex:1 1 160px;min-width:0}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:4px 8px 4px 0;text-align:left;vertical-align:top;white-space:nowrap}
+td.wrap2{white-space:normal;min-width:180px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+svg{width:100%;max-width:760px;height:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;display:block}
+details{margin:6px 0}summary{cursor:pointer}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;margin:6px 0}dt{color:var(--muted)}dd{margin:0}
+</style>
+</head>
+<body>
+<main>
+<h1>Canary Wharf postcodes: actual and possible</h1>
+<p class="small">Every syntactically valid postcode in the E14 district (10 sectors × 400 unit codes), checked against the ONS Postcode Directory (August 2026). "Actual" postcodes are in the directory (live or terminated); "possible" ones are valid codes that Royal Mail has never allocated. Each actual postcode is placed by its ONS grid reference and classified against two definitions of Canary Wharf: the official ward and the 3D model's estate box. Method and limits: <a href="https://github.com/danbri/londat/blob/main/cwplans/postcodes/README.md">README</a>. Data: <a href="postcodes.csv">postcodes.csv</a> · <a href="postcodes.json">postcodes.json</a> · <a href="queries.json">queries.json</a> · <a href="canary-wharf-ward.geojson">ward boundary</a>. Related: <a href="../atlas/">atlas</a> · <a href="../docklands/">Docklands 3D</a> · <a href="../feeds/">feeds and APIs</a>. Contains OS data © Crown copyright and database right 2026; contains Royal Mail data © Royal Mail copyright and database right 2026; source: Office for National Statistics, licensed under the Open Government Licence v3.0. OSM streets and counts: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL). <a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">Data licences</a>.</p>
+<div class="tiles" id="tiles"></div>
+<h2>Openings and closings</h2>
+<p class="small">Four official signals from the data on this page. FSA "Awaiting Inspection": a food business that has registered but has not had its first inspection, usually because it is new. Newest ratings: inspections in the last weeks (new or changed premises). New postcodes: Royal Mail allocates them for new buildings or large users. Terminated postcodes: addresses that no longer exist as such.</p>
+<div id="signals" class="small"></div>
+<h2>Where they are</h2>
+<svg id="map" role="img" aria-label="Postcode centroids around Canary Wharf, coloured by tier, with the Canary Wharf ward boundary"></svg>
+<div class="small" id="legend"></div>
+<details><summary>Definitions</summary><dl id="defs"></dl></details>
+<h2>All postcodes</h2>
+<div class="bar">
+  <input type="search" id="q" placeholder="Postcode, street or ward" aria-label="Search">
+  <select id="tier" aria-label="Tier"><option value="cw">Canary Wharf (core, ward, box)</option><option value="">All tiers</option></select>
+  <select id="sector" aria-label="Sector"><option value="">All sectors</option></select>
+  <label class="small"><input type="checkbox" id="lu"> Large users only</label>
+  <span class="small" id="count" aria-live="polite"></span>
+</div>
+<div class="wrap"><table id="tab"></table></div>
+<p class="small" id="more"></p>
+</main>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id), esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const TIERS = {
+  'cw-core': ['core', 'Live, inside the Canary Wharf ward and the estate box', '--core'],
+  'cw-ward': ['ward', 'Live, in the Canary Wharf ward but outside the box', '--ward'],
+  'cw-box-other-ward': ['box', 'Live, inside the box but in another ward (Poplar, Blackwall & Cubitt Town, Limehouse)', '--box'],
+  'terminated-cw': ['terminated (CW)', 'Terminated; was in the ward or the box', '--term'],
+  'e14-other': ['other E14', 'Live, elsewhere in E14', '--other'],
+  'terminated-other': ['terminated (other)', 'Terminated, elsewhere in E14', '--other'],
+  'possible-unallocated': ['possible', 'Valid code, never allocated (not in the ONS directory)', '--never'],
+};
+const col = t => getComputedStyle(document.documentElement).getPropertyValue(TIERS[t][2]).trim();
+const ym = v => v ? String(v).replace(/^(\d{4})(\d{2})$/, '$1-$2') : '';
+let P = [], S = null, Q = {}, ward = null;
+Promise.all([fetch('postcodes.json').then(r => r.json()), fetch('canary-wharf-ward.geojson').then(r => r.json()).catch(() => null), fetch('queries.json').then(r => r.ok ? r.json() : null).catch(() => null)])
+  .then(([d, w, q]) => { P = d.postcodes; S = d.summary; ward = w; Q = q ? q.results : {}; window.__qgen = q ? q.generated : ''; init(); })
+  .catch(e => { $('tab').innerHTML = `<tr><td>Could not load the data (${esc(e.message)}). Opened from a file? Use <a href="https://danbri.github.io/londat/cwplans/postcodes/">https://danbri.github.io/londat/cwplans/postcodes/</a></td></tr>`; });
+function init() {
+  const t = S.tiers, cw = (t['cw-core'] || 0) + (t['cw-ward'] || 0) + (t['cw-box-other-ward'] || 0);
+  $('tiles').innerHTML = [[S.candidates, 'candidate codes in E14'], [S.live, 'live'], [S.terminated, 'terminated'], [S.never, 'never allocated'], [t['cw-core'], 'Canary Wharf core'], [cw, 'Canary Wharf, any definition'], [t['terminated-cw'], 'terminated in Canary Wharf'], [S.large_user_live_cw, 'large-user postcodes in Canary Wharf']]
+    .map(([n, l]) => `<div class="tile"><b>${n}</b><span class="small">${esc(l)}</span></div>`).join('');
+  $('defs').innerHTML = Object.entries(TIERS).map(([k, [n, d]]) => `<dt><span class="dot" style="background:${col(k)}"></span>${esc(n)}</dt><dd>${esc(d)} (${t[k] || 0})</dd>`).join('') +
+    `<dt>Ward</dt><dd>Tower Hamlets ward "${esc(S.cw_ward.name)}" (${esc(S.cw_ward.code)}), from the ONS directory field wd26cd</dd><dt>Box</dt><dd>${S.box.join(', ')} (west, south, east, north): the 3D model's Canary Wharf box (estate, Wood Wharf, Heron Quays, Crossrail Place)</dd><dt>Large user</dt><dd>A postcode given to one organisation that receives a lot of mail (ONS usrtypind = 1)</dd>`;
+  $('sector').innerHTML += S.sectors.map(s => `<option>${esc(s)}</option>`).join('');
+  map(); signals();
+  for (const id of ['q', 'tier', 'sector', 'lu']) $(id).oninput = render;
+  render();
+}
+function map() {
+  const pts = P.filter(p => p.lat != null && p.tier !== 'e14-other' && p.tier !== 'terminated-other');
+  const lon0 = -0.036, lon1 = 0.0, lat0 = 51.493, lat1 = 51.513, k = Math.cos(51.5 * Math.PI / 180), W = 760, H = Math.round(W * (lat1 - lat0) / ((lon1 - lon0) * k));
+  const X = lon => (lon - lon0) / (lon1 - lon0) * W, Y = lat => (lat1 - lat) / (lat1 - lat0) * H;
+  let s = '';
+  if (ward) for (const f of ward.features) { const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates; for (const pl of polys) for (const ring of pl) s += `<path d="${ring.map((c, i) => (i ? 'L' : 'M') + X(c[0]).toFixed(1) + ' ' + Y(c[1]).toFixed(1)).join('')}Z" fill="none" stroke="var(--ward)" stroke-width="1.5" stroke-dasharray="5 3"/>`; }
+  s += `<rect x="${X(S.box[0])}" y="${Y(S.box[3])}" width="${X(S.box[2]) - X(S.box[0])}" height="${Y(S.box[1]) - Y(S.box[3])}" fill="none" stroke="var(--core)" stroke-width="1"/>`;
+  for (const p of pts) s += `<circle cx="${X(p.lon).toFixed(1)}" cy="${Y(p.lat).toFixed(1)}" r="${p.large_user ? 3.2 : 2}" fill="${col(p.tier)}" fill-opacity="${p.status === 'terminated' ? .55 : .9}"><title>${esc(p.pc)} · ${esc(TIERS[p.tier][0])}${p.large_user ? ' · large user' : ''}${p.osm_streets ? ' · ' + esc(p.osm_streets.join(', ')) : ''}</title></circle>`;
+  const ocs = P.find(p => p.pc === 'E14 5AB'); if (ocs) s += `<text x="${X(ocs.lon) + 6}" y="${Y(ocs.lat) - 6}" font-size="12" fill="var(--fg)">One Canada Square</text>`;
+  $('map').setAttribute('viewBox', `0 0 ${W} ${H}`); $('map').innerHTML = s;
+  $('legend').innerHTML = ['cw-core', 'cw-ward', 'cw-box-other-ward', 'terminated-cw'].map(k => `<span class="dot" style="background:${col(k)}"></span>${esc(TIERS[k][0])}`).join(' &nbsp; ') + ' &nbsp; dashed line: Canary Wharf ward · rectangle: estate box · larger dots: large-user postcodes. Hover a dot for its postcode.';
+}
+function signals() {
+  const cw = new Set(P.filter(p => /^cw-/.test(p.tier)).map(p => p.pc));
+  const fsa = Object.entries(Q).filter(([pc]) => cw.has(pc)).flatMap(([pc, r]) => (r.fsa && r.fsa.items || []).map(e => ({ pc, ...e })));
+  const li = (arr, f) => arr.length ? '<ul>' + arr.map(f).join('') + '</ul>' : '<p>none in the data</p>';
+  const awaiting = fsa.filter(e => /Awaiting/i.test(e.rating)), newest = fsa.filter(e => e.rating_date).sort((a, b) => b.rating_date.localeCompare(a.rating_date)).slice(0, 12);
+  const intro = P.filter(p => /^cw-/.test(p.tier)).sort((a, b) => b.introduced - a.introduced).slice(0, 12), term = P.filter(p => p.tier === 'terminated-cw').sort((a, b) => b.terminated - a.terminated).slice(0, 12);
+  $('signals').innerHTML = (fsa.length ? `<details open><summary>FSA awaiting inspection (${awaiting.length})</summary>${li(awaiting, e => `<li><a href="${esc(e.url)}">${esc(e.name)}</a>, ${esc(e.pc)}, ${esc(e.type)}</li>`)}</details>
+    <details><summary>FSA newest ratings</summary>${li(newest, e => `<li>${esc(e.rating_date)}: <a href="${esc(e.url)}">${esc(e.name)}</a>, ${esc(e.pc)}, rating ${esc(e.rating)}</li>`)}</details>` : '<p>Load queries.json for the FSA signals.</p>') +
+    `<details><summary>Newest postcodes (ONSPD introduction date)</summary>${li(intro, p => `<li>${ym(p.introduced)}: ${esc(p.pc)}${p.osm_streets ? ', ' + esc(p.osm_streets.join(', ')) : ''}</li>`)}</details>
+    <details><summary>Most recently terminated postcodes</summary>${li(term, p => `<li>${ym(p.terminated)}: ${esc(p.pc)} (introduced ${ym(p.introduced)})${p.osm_streets ? ', ' + esc(p.osm_streets.join(', ')) : ''}</li>`)}</details>
+    <p>FSA data from the queries run on ${esc((window.__qgen || ''))}. Run <code>postcodes.mjs query</code> again for fresh results.</p>`;
+}
+function links(p) {
+  const q = encodeURIComponent(`"${p.pc}"`);
+  return [p.lat != null ? `<a href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=18/${p.lat}/${p.lon}">map</a>` : '',
+    `<a href="https://www.gov.uk/search/news-and-communications?keywords=${q}">GOV.UK news</a>`,
+    `<a href="https://en.wikipedia.org/w/index.php?search=${q}&fulltext=1">Wikipedia</a>`,
+    `<a href="https://duckduckgo.com/?q=${encodeURIComponent(`"${p.pc}" "Canary Wharf"`)}">web</a>`].filter(Boolean).join(' · ');
+}
+function found(p) {
+  const r = Q[p.pc]; if (!r) return '';
+  const bits = [];
+  if (r.fsa && r.fsa.items && r.fsa.items.length) bits.push(`<details><summary>${r.fsa.items.length} food premises</summary>${r.fsa.items.slice(0, 30).map(e => `<div><a href="${esc(e.url)}">${esc(e.name)}</a> <span class="small">${esc(e.type)} · rating ${esc(e.rating)} ${esc(e.rating_date)}${e.new_rating_pending ? ' · new rating pending' : ''}</span></div>`).join('')}</details>`);
+  if (r.govuk && r.govuk.items && r.govuk.items.length) bits.push(`<details><summary>${r.govuk.items.length} GOV.UK</summary>${r.govuk.items.map(e => `<div><a href="${esc(e.url)}">${esc(e.title)}</a> <span class="small">${esc(e.format)} ${esc(e.date)}</span></div>`).join('')}</details>`);
+  if (r.wiki && r.wiki.items && r.wiki.items.length) bits.push(`<details><summary>${r.wiki.items.length} Wikipedia</summary>${r.wiki.items.map(e => `<div><a href="${esc(e.url)}">${esc(e.title)}</a></div>`).join('')}</details>`);
+  if (r.wikidata && r.wikidata.length) bits.push(`<details><summary>${r.wikidata.length} Wikidata</summary>${r.wikidata.map(e => `<div><a href="https://www.wikidata.org/wiki/${esc(e.item)}">${esc(e.label)}</a></div>`).join('')}</details>`);
+  return bits.join('');
+}
+function render() {
+  const q = $('q').value.trim().toLowerCase().replace(/\s+/g, ' '), tier = $('tier').value, sec = $('sector').value, lu = $('lu').checked;
+  const hit = P.filter(p => (!tier || (tier === 'cw' ? /^cw-|terminated-cw/.test(p.tier) : p.tier === tier)) && (!sec || p.sector === sec) && (!lu || p.large_user)
+    && (!q || [p.pc, p.ward_name, ...(p.osm_streets || [])].join(' ').toLowerCase().includes(q)));
+  const show = hit.slice(0, 600);
+  $('tab').innerHTML = '<tr><th>Postcode</th><th>Tier</th><th>Introduced</th><th>Terminated</th><th>Ward</th><th>From One Canada Sq</th><th>Streets (OSM)</th><th>Found by postcode</th><th>Look up</th></tr>' +
+    show.map(p => `<tr><td><span class="dot" style="background:${col(p.tier)}"></span><b>${esc(p.pc)}</b>${p.large_user ? ' <span class="small">large user</span>' : ''}</td><td>${esc(TIERS[p.tier][0])}</td><td>${ym(p.introduced)}</td><td>${ym(p.terminated)}</td><td>${esc(p.ward_name || '')}</td><td>${p.m_from_one_canada_sq != null ? p.m_from_one_canada_sq + ' m' : ''}</td><td class="wrap2">${esc((p.osm_streets || []).join(', '))}</td><td class="wrap2">${found(p)}</td><td>${p.status === 'never' ? '' : links(p)}</td></tr>`).join('');
+  $('count').textContent = `${hit.length} postcodes`;
+  $('more').textContent = hit.length > show.length ? `Showing the first ${show.length}; narrow the filters or download postcodes.csv for all of them.` : '';
+}
+})();
+</script>
+</body>
+</html>

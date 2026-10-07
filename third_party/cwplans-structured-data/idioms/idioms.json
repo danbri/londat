@@ -1,0 +1,191 @@
+{
+ "about": "Catalogue of the descriptive idioms in the publisher schema.org markup of the Docklands web harvest. Each idiom: candidate nodes (a SPARQL WHERE pattern binding ?x), a core ShEx shape and form shapes in idioms.shex (prefix i:), optional SPARQL forms, and the rewrite to the canonical layer. Content idioms describe businesses; furniture idioms are SEO-plugin output. Tool: magpie/cwplans/tools/web-idioms.mjs (Factoidal).",
+ "prefixes": {
+  "s": "https://schema.org/",
+  "og": "http://ogp.me/ns#",
+  "xsd": "http://www.w3.org/2001/XMLSchema#",
+  "i": "https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/idioms/idioms.shex#"
+ },
+ "idioms": [
+  {
+   "id": "BranchCard",
+   "label": "Branch card: a place with address, hours, coordinates, telephone",
+   "kind": "content",
+   "candidates": "?x a ?t . VALUES ?t { s:LocalBusiness s:Restaurant s:FoodEstablishment s:FastFoodRestaurant s:Store s:Dentist s:BarOrPub s:CafeOrCoffeeShop s:HealthClub s:ChildCare s:RealEstateAgent s:MovieTheater s:ElectronicsStore s:MensClothingStore s:HealthAndBeautyBusiness s:ProfessionalService s:FinancialService s:LegalService s:MusicVenue s:Florist s:SportsActivityLocation s:EventVenue s:BeautySalon s:HairSalon s:Hotel s:ClothingStore s:JewelryStore s:Bakery s:IceCreamShop s:Optician s:Pharmacy s:DaySpa s:NightClub s:SportsClub s:ExerciseGym s:ShoeStore s:MedicalBusiness s:EntertainmentBusiness s:LodgingBusiness s:ShoppingCenter s:Place s:TouristAttraction s:Library s:BankOrCreditUnion s:AutomotiveBusiness s:HomeAndConstructionBusiness s:FurnitureStore s:GroceryStore s:ConvenienceStore s:BookStore s:ToyStore s:SportingGoodsStore s:OutletStore s:DepartmentStore s:HobbyShop s:PetStore s:WineBar s:Brewery s:Winery s:Distillery s:CivicStructure s:TrainStation s:ChildCare s:Physician s:MedicalClinic s:Hospital s:VeterinaryCare s:Accommodation } FILTER EXISTS { ?x s:address|s:geo|s:openingHoursSpecification|s:openingHours|s:telephone ?v }",
+   "core": "BranchCard",
+   "forms": [
+    "AddressNode",
+    "AddressText",
+    "HoursNodes",
+    "HoursText",
+    "GeoNode",
+    "HasTelephone",
+    "FullBranch"
+   ],
+   "rewrite": "rewrites/branch.rq"
+  },
+  {
+   "id": "ChainBranchLink",
+   "label": "Chain branch link: a branch names its parent organisation, brand or branch code",
+   "kind": "content",
+   "candidates": "?x a ?t . VALUES ?t { s:LocalBusiness s:Restaurant s:FoodEstablishment s:FastFoodRestaurant s:Store s:Dentist s:BarOrPub s:CafeOrCoffeeShop s:HealthClub s:ChildCare s:RealEstateAgent s:MovieTheater s:ElectronicsStore s:MensClothingStore s:HealthAndBeautyBusiness s:ProfessionalService s:FinancialService s:LegalService s:MusicVenue s:Florist s:SportsActivityLocation s:EventVenue s:BeautySalon s:HairSalon s:Hotel s:ClothingStore s:JewelryStore s:Bakery s:IceCreamShop s:Optician s:Pharmacy s:DaySpa s:NightClub s:SportsClub s:ExerciseGym s:ShoeStore s:MedicalBusiness s:EntertainmentBusiness s:LodgingBusiness s:ShoppingCenter s:Place s:TouristAttraction s:Library s:BankOrCreditUnion s:AutomotiveBusiness s:HomeAndConstructionBusiness s:FurnitureStore s:GroceryStore s:ConvenienceStore s:BookStore s:ToyStore s:SportingGoodsStore s:OutletStore s:DepartmentStore s:HobbyShop s:PetStore s:WineBar s:Brewery s:Winery s:Distillery s:CivicStructure s:TrainStation s:ChildCare s:Physician s:MedicalClinic s:Hospital s:VeterinaryCare s:Accommodation } FILTER EXISTS { ?x s:parentOrganization|s:brand|s:branchCode ?v }",
+   "core": "ChainBranchLink",
+   "forms": [
+    "ViaParent",
+    "ViaBrand",
+    "ViaBranchCode"
+   ],
+   "rewrite": "rewrites/branch.rq"
+  },
+  {
+   "id": "WeeklyHours",
+   "label": "Weekly hours: OpeningHoursSpecification",
+   "kind": "content",
+   "candidates": "?x a s:OpeningHoursSpecification",
+   "core": "WeeklyHours",
+   "forms": [
+    "DayIri",
+    "DayIriAsText",
+    "DayName",
+    "SpecialDays"
+   ],
+   "rewrite": "rewrites/hours.rq"
+  },
+  {
+   "id": "OrgCard",
+   "label": "Organisation card: name, url, logo, sameAs",
+   "kind": "content",
+   "candidates": "?x a ?t . VALUES ?t { s:Organization s:Corporation s:NGO s:OnlineStore s:EducationalOrganization s:MedicalOrganization s:GovernmentOrganization s:SportsOrganization s:NewsMediaOrganization s:PerformingGroup s:Airline s:Consortium s:FundingScheme s:LibrarySystem s:ResearchOrganization s:WorkersUnion s:Project s:Brand } FILTER NOT EXISTS { ?x a ?l . VALUES ?l { s:LocalBusiness s:Restaurant s:FoodEstablishment s:FastFoodRestaurant s:Store s:Dentist s:BarOrPub s:CafeOrCoffeeShop s:HealthClub s:ChildCare s:RealEstateAgent s:MovieTheater s:ElectronicsStore s:MensClothingStore s:HealthAndBeautyBusiness s:ProfessionalService s:FinancialService s:LegalService s:MusicVenue s:Florist s:SportsActivityLocation s:EventVenue s:BeautySalon s:HairSalon s:Hotel s:ClothingStore s:JewelryStore s:Bakery s:IceCreamShop s:Optician s:Pharmacy s:DaySpa s:NightClub s:SportsClub s:ExerciseGym s:ShoeStore s:MedicalBusiness s:EntertainmentBusiness s:LodgingBusiness s:ShoppingCenter s:Place s:TouristAttraction s:Library s:BankOrCreditUnion s:AutomotiveBusiness s:HomeAndConstructionBusiness s:FurnitureStore s:GroceryStore s:ConvenienceStore s:BookStore s:ToyStore s:SportingGoodsStore s:OutletStore s:DepartmentStore s:HobbyShop s:PetStore s:WineBar s:Brewery s:Winery s:Distillery s:CivicStructure s:TrainStation s:ChildCare s:Physician s:MedicalClinic s:Hospital s:VeterinaryCare s:Accommodation } }",
+   "core": "OrgCard",
+   "forms": [
+    "LogoImageObject",
+    "LogoIri",
+    "LogoText",
+    "HasSameAs"
+   ],
+   "rewrite": "rewrites/org.rq"
+  },
+  {
+   "id": "ContactPoint",
+   "label": "Contact point",
+   "kind": "content",
+   "candidates": "?x a s:ContactPoint",
+   "core": "ContactPoint",
+   "forms": []
+  },
+  {
+   "id": "Person",
+   "label": "Person: staff or author",
+   "kind": "content",
+   "candidates": "?x a s:Person",
+   "core": "Person",
+   "forms": [
+    "WithJobTitle",
+    "WithWorksFor"
+   ]
+  },
+  {
+   "id": "Menu",
+   "label": "Menu: a link to a menu page, or a menu tree",
+   "kind": "content",
+   "candidates": "?x s:hasMenu|s:menu ?m",
+   "core": "MenuLink",
+   "forms": [
+    "MenuTree"
+   ]
+  },
+  {
+   "id": "FAQ",
+   "label": "FAQ: FAQPage > Question > Answer",
+   "kind": "content",
+   "candidates": "?x a s:FAQPage",
+   "core": "FAQ",
+   "forms": []
+  },
+  {
+   "id": "RatingBadge",
+   "label": "Rating badge: AggregateRating",
+   "kind": "content",
+   "candidates": "?x a s:AggregateRating",
+   "core": "RatingBadge",
+   "forms": []
+  },
+  {
+   "id": "ServiceCatalogue",
+   "label": "Service catalogue: OfferCatalog > Offer > Service",
+   "kind": "content",
+   "candidates": "?x a s:OfferCatalog",
+   "core": "ServiceCatalogue",
+   "forms": []
+  },
+  {
+   "id": "ProductOffer",
+   "label": "Product offer: Product > Offer, Brand",
+   "kind": "content",
+   "candidates": "?x a s:Product",
+   "core": "ProductOffer",
+   "forms": [
+    "WithOffer",
+    "WithSkuMpn"
+   ]
+  },
+  {
+   "id": "SiteIdentity",
+   "label": "Site identity: WebSite (and its publisher)",
+   "kind": "furniture",
+   "candidates": "?x a s:WebSite",
+   "core": "SiteIdentity",
+   "forms": [
+    "WithPublisher"
+   ]
+  },
+  {
+   "id": "SiteSearch",
+   "label": "Site search box: WebSite > SearchAction > EntryPoint",
+   "kind": "furniture",
+   "candidates": "?x a s:SearchAction",
+   "core": "SiteSearch",
+   "forms": [
+    "TargetEntryPoint",
+    "TargetIri",
+    "TargetText",
+    "QueryInputSpec",
+    "QueryInputText"
+   ]
+  },
+  {
+   "id": "PageFrame",
+   "label": "Page frame: WebPage > isPartOf, breadcrumb, primary image, about",
+   "kind": "furniture",
+   "candidates": "?x a s:WebPage ; s:isPartOf ?w",
+   "core": "PageFrame",
+   "forms": [
+    "WithBreadcrumb",
+    "WithPrimaryImage",
+    "WithAbout"
+   ]
+  },
+  {
+   "id": "Breadcrumb",
+   "label": "Breadcrumb trail: BreadcrumbList > ListItem",
+   "kind": "furniture",
+   "candidates": "?x a s:BreadcrumbList",
+   "core": "Breadcrumb",
+   "forms": [],
+   "sparql_forms": {
+    "LastItemUnlinked": "ASK { ?x s:itemListElement ?li . ?li s:position ?p . FILTER NOT EXISTS { ?x s:itemListElement ?l2 . ?l2 s:position ?p2 . FILTER(xsd:integer(?p2) > xsd:integer(?p)) } FILTER NOT EXISTS { ?li s:item ?it } }"
+   }
+  },
+  {
+   "id": "SocialPreview",
+   "label": "Social preview: Open Graph tags",
+   "kind": "furniture",
+   "candidates": "?x og:title ?t",
+   "core": "SocialPreview",
+   "forms": [
+    "ImageSize",
+    "ArticleTimes"
+   ]
+  }
+ ]
+}

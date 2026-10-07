@@ -1,0 +1,420 @@
+[
+ {
+  "id": "cw-store-guide-2025-11",
+  "name": "Canary Wharf Shopping Malls and Estate map (store guide), November 2025",
+  "kind": "map PDF",
+  "url": "https://canarywharf.com/wp-content/uploads/2025/11/251118_store_guide_NOV_composite_v77_vec.pdf",
+  "archived_url": "https://web.archive.org/web/20260201044620id_/https://canarywharf.com/wp-content/uploads/2025/11/251118_store_guide_NOV_composite_v77_vec.pdf",
+  "date": "2025-11-18 (PDF created; details correct 16-19 November 2025); capture 2026-02-01",
+  "what_it_shows": "2 pages, vector (Adobe Illustrator), north arrow, no scale. Page 1 'Shopping Malls': schematic plan of all five malls, colour coded (Cabot Place teal, Canada Place red, Churchill Place green, Crossrail Place purple, Jubilee Place orange) plus Park Pavilion and One Canada Square Lobby, on a lettered grid A-Q x 1-16. Level numbers are shown as circled badges: Cabot Place has separate insets for levels 0, 1 and 2 beside the -1 mall plan; badges -1, -2 and -3 mark parts of Crossrail Place, Jubilee Place and the Canada Place area, and 0 marks street entrances (read from a low-resolution render; check each badge at full resolution before use). Shows every shop unit with name, lifts, escalators, toilets, accessible toilets (with hoist), baby change, prayer room, ATMs, car park payment points, the Canary Wharf DLR ticket concourse and DLR platforms inside Cabot Place, West India Quay and Heron Quays DLR, Jubilee line entrances (Jubilee Plaza, Montgomery Square), Elizabeth line at Crossrail Place, links such as Adams Plaza Bridge, Canada Walk, Jubilee Walk, Bellmouth Passage, and red notes for 'access to Crossrail Place level -1 from Canada Place via Adams Plaza' and 'lift to K1/-4 Cabot Place car park'. Key says 'Floor level indicator 0 equals street level'. A directory lists about 300 shops, restaurants, cafes, services with grid refs. Page 2 'Canary Wharf Estate': street-level estate plan, grid A-J x 1-23, from Westferry Circus to Wood Wharf, building addresses, street retail, office tenants, estate residential, cycle hire, bus stops, taxi ranks, Thames Clippers pier.",
+  "format": "PDF 2 pages, 1842x2806 pt, vector artwork with outlined text (pdftotext returns nothing)",
+  "licence_or_terms": "Credit on sheet: 'Design Paul Anthony, Ravenshaw Studios Limited. (c) Copyright Ravenshaw Studios Limited and Paul & Linda Anthony 2025'. Plus canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (2,809,589 bytes); the original host serves an Imperva challenge to scripts"
+  },
+  "usable_for_3d": "Best single source for mall topology: georeference page 1 against OS/OSM building outlines and trace per-level unit polygons, lift and escalator positions and inter-mall links; use the level numbers to stack the malls.",
+  "notes": "Schematic, not to scale; the insets for Cabot Place levels 0-2 are drawn beside the plan, not in place. The canarywharf.com/maps/ page (archived 2026-08-15) links a newer edition, 260720_store_guide_JULY_composite_v85_vec.pdf, which is not in the Wayback index. Earlier archived editions: 2024-06 (v54), 2024-10 (v59), 2025-02 (v64), 2025-06/07 (v72), 2025-10 (v75)."
+ },
+ {
+  "id": "cw-store-guide-2025-07",
+  "name": "Canary Wharf store guide, June/July 2025 edition (v72)",
+  "kind": "map PDF",
+  "url": "https://canarywharf.com/wp-content/uploads/2025/03/250701_store_guide_JUNE_composite_v72_vec.pdf",
+  "archived_url": "https://web.archive.org/web/20250707202355id_/https://canarywharf.com/wp-content/uploads/2025/03/250701_store_guide_JUNE_composite_v72_vec.pdf",
+  "date": "2025-07-01 (file name); capture 2025-07-07",
+  "what_it_shows": "Earlier edition of the same two-page mall and estate map as cw-store-guide-2025-11 (not opened; identified by file name pattern and size 2.66 MB).",
+  "format": "PDF",
+  "licence_or_terms": "Ravenshaw Studios copyright (by series); canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "range request to Internet Archive copy succeeded; not downloaded"
+  },
+  "usable_for_3d": "Use to date changes in unit layout between editions.",
+  "notes": "Series runs at least from 2024-06 to 2025-11 in the archive."
+ },
+ {
+  "id": "cw-accessibility-map-2026-01",
+  "name": "Canary Wharf Step-free access map, January 2026",
+  "kind": "map PDF",
+  "url": "https://canarywharf.com/wp-content/uploads/2026/01/AccesibilityMap_JAN-2026_v3.pdf",
+  "archived_url": "https://web.archive.org/web/20260122161536id_/https://canarywharf.com/wp-content/uploads/2026/01/AccesibilityMap_JAN-2026_v3.pdf",
+  "date": "2026-01-15 (PDF created); capture 2026-01-22",
+  "what_it_shows": "One landscape sheet, street-level plan of the whole estate (Westferry Circus to Wood Wharf and Poplar DLR) with building names/numbers. Marks every public lift (blue 'Lift' icons, e.g. at 17 Columbus Courtyard, 1 Cabot Square/Wren Landing, Cubitt Steps, Canary Wharf DLR at North and South Colonnade, around One Canada Square, Crossrail Place, Jubilee Park), accessible toilets at street level and inside malls with the mall level (e.g. 'Cabot Place Level -1', 'Crossrail Place Level -3', hoist facilities), accessible ramps (orange bars), outdoor toilets (seasonal), parent baby change, car parks, bus and Superloop stops, Riverbus pier, taxi ranks, Jubilee line, DLR (Canary Wharf, West India Quay, Heron Quays, Poplar) and Elizabeth line entrances, named passages (Frobisher Passage, Chancellor Passage, Adams Plaza Bridge, North Dock Footbridge, Fishermans Walk, McKenzie Walk).",
+  "format": "PDF 1 page, 1094x615 pt, vector with live text",
+  "licence_or_terms": "No credit or licence on the sheet. canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (3,640,288 bytes)"
+  },
+  "usable_for_3d": "Georeference and digitise lift, ramp and accessible-toilet points as the vertical-circulation layer at street level; the text is extractable, so labels can be matched automatically.",
+  "notes": "Earlier editions archived: AccessibleMap_printable_v3.pdf (2024-01) and AccesibilityMap_MAY-2025_v2.pdf (2025-08, linked from the accessibility page). Spelling 'Accesibility' is in the original file name."
+ },
+ {
+  "id": "cw-accessibility-page",
+  "name": "canarywharf.com Accessibility page (lifts, toilets, blue-badge parking by mall and level)",
+  "kind": "web page",
+  "url": "https://canarywharf.com/accessibility/",
+  "archived_url": "https://web.archive.org/web/20260304070837/https://canarywharf.com/accessibility/",
+  "date": "capture 2026-03-04",
+  "what_it_shows": "Text list of 34 lifts by mall and level with a landmark, e.g. 'Cabot Place, Mall Level -1, next to Barker Shoes'; 'Cabot Place, Upper Level 2, behind Boisdale'; 'Canada Place, Mall Level -1, either side of Waitrose & Partners'; 'Jubilee Place, Lower Mall Level -2, behind Rituals'; 'Jubilee Place, Street Level 0, opposite Obica in West Wintergarden'; 'The Park Pavilion, Upper Level 1, adjacent to Wahaca'. Also toilets per mall and level (Crossrail Place Mall Level -3 via lift), hoist toilets in Canada Place and Churchill Place, 47 blue-badge bays (Cabot Square 10, Canada Square 21, Jubilee Place 9, Westferry Circus 7), 2 m car-park height limit, loan wheelchair service. Names the level scheme: Lower Mall -2, Mall -1, Street 0, Upper 1 and 2.",
+  "format": "HTML",
+  "licence_or_terms": "canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=UTF-8",
+   "status": "read from Internet Archive capture 20260304070837; capture 20260508113752 is an Incapsula block page"
+  },
+  "usable_for_3d": "Gives an attributed list of lift locations per level to place and check lift shafts against the store guide.",
+  "notes": "Text saved locally at scratchpad indoor/acc-lifts.txt (not committed)."
+ },
+ {
+  "id": "livingmap-canary-wharf-web",
+  "name": "Canary Wharf online mall map (Living Map web app)",
+  "kind": "interactive indoor map",
+  "url": "https://map.canarywharf.com/?screenmode=base&floor=0#hash=16/51.50509/-0.021/-80.1",
+  "archived_url": "https://web.archive.org/web/20240423104642/https://map.canarywharf.com/?floor=0",
+  "date": "live 2026-10-03; first archived capture 2023-02-14; linked from canarywharf.com/maps/ (capture 2026-08-15)",
+  "what_it_shows": "React single-page app by Living Map (livingmap.com) on Mapbox GL. Floor switcher with 9 levels (-4, -3, -2, -1, -1M, 0, M, 1, 2), search, POI pages (/poi?feature=<32-hex id>), step-free routing, kiosk mode. Living Map press release says 11 totems with 22 screens run the same UI on the estate.",
+  "format": "HTML + JS (static/js/main.*.js), hosted on Google Cloud Storage",
+  "licence_or_terms": "On-map attribution: '(c) Living Map, (c) OpenStreetMap contributors'. robots.txt: 'User-agent: * / Disallow:' (nothing disallowed). No public data licence found; Living Map's website-terms page is a customer (B2B) SaaS agreement.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "index page 1,142 bytes; robots.txt 200 text/plain"
+  },
+  "usable_for_3d": "Reference for checking our traced levels and links by eye; the data behind it is proprietary to Living Map / CWG and should not be copied into the repo.",
+  "notes": "Vendor identified from the app's meta description ('provided by livingmap.com') and API base URL in the bundle. No Mappedin, Mapwize, Pointr, Jibestream, Concept3D, Meridian, Situm, Steerpath or MapsIndoors code found."
+ },
+ {
+  "id": "livingmap-api-config",
+  "name": "Living Map map-config API for Canary Wharf (venue description)",
+  "kind": "indoor map API",
+  "url": "https://map-api.prod.livingmap.com/v1/maps?host=map.canarywharf.com",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "JSON, 29.7 KB, no key needed, CORS *. Project id 'canary_wharf'. Centre 51.50509,-0.021, bearing -80.1, extents 51.4943,-0.0569 to 51.5120,0.0098, zoom 14-21. Floors (id, number, short name): 8 -4.0 '-4'; 1 -3.0 '-3'; 2 -2.0 '-2'; 3 -1.0 '-1'; 7 -0.5 '-1M'; 4 0.0 '0' (default); 9 0.5 'M'; 5 1.0 '1'; 6 2.0 '2'. 8 region polygons with their floors: Westferry Circus (-2,-1,0), Cabot Place & Canada Place (-4 to 2 incl. -1M), Wood Wharf (-1,0), Crossrail Place (-4,-3,-2,-1,0,1), Churchill Place (-1,0), Jubilee Place (-3,-2,-1,-1M,0,1), Canary Wharf main (-1,0), House of Gods (0,M,1). Bookmarks for One Canada Square, Cabot Place, Canada Place, Churchill Place, Crossrail Place, Jubilee Place, Wood Wharf. Routing: step_free_enabled true, directions_enabled false, multi-floor display. Search tags: Coffee, Food & Drink, Parking, Toilets, Transport. Also contains a Mapbox public token (pk.*) issued to Living Map.",
+  "format": "JSON",
+  "licence_or_terms": "No licence or terms in the response; data (c) Living Map / Canary Wharf Group. The Mapbox token belongs to Living Map and is for their app; do not reuse it.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "fetched once"
+  },
+  "usable_for_3d": "Confirms the authoritative level list (including mezzanines -1M and M and car-park levels -3/-4) and which malls span which levels; the region outlines give mall footprints to cross-check.",
+  "notes": "Other endpoints in the app bundle (not called): /v1/maps/{project}/features, /features/{id}, /features-uid/{uid}, /search, /search/tag/{id}, /feature-names, /feature-objects, /geofences, POST routing and sessions/events. robots.txt on map-api host returns 404 (no rules)."
+ },
+ {
+  "id": "livingmap-api-style",
+  "name": "Living Map style sheet and vector tile sources for Canary Wharf",
+  "kind": "indoor map API",
+  "url": "https://map-api.prod.livingmap.com/v1/maps/canary_wharf/styles/styles.json",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "Mapbox GL style 'canary_wharf-living-map-platform-prod' (version 8, 256 layers, 160 KB). Sources: 'lm' vector tiles https://prod.cdn.livingmap.com/tiles/canary_wharf/{z}/{x}/{y}.pbf?lang=en-GB (zoom 0-19, source-layers 'indoor' and 'outdoor'); 'lm_osm' basemap https://prod.cdn.livingmap.com/canary_wharf_basemap/{z}/{x}/{y} (OSM, zoom 0-16). Indoor feature model from the layer filters: category room/unit/barrier/object/amenity/route; types floor, corridor, unenclosed_area, vista (open to below), back_of_house, seating_area, section; circulation types lift, escalator, stairs, steps, ramp, travelator; barrier types wall, partition, door, threshold, security; objects column, structure, planter, water_feature; transport stops and stations, gates/platforms; emergency and sensor icons; properties include name, local_rank, landmark, closed, brunnel (tunnel/bridge), oneway, icon_id. Routes are drawn from client-side GeoJSON returned by a POST routing call, so no routing graph is exposed.",
+  "format": "JSON (Mapbox GL style v8); tiles are Mapbox Vector Tile .pbf",
+  "licence_or_terms": "No licence stated; basemap source carries '(c) OpenStreetMap contributors'. Indoor tiles are Living Map / CWG proprietary data.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/json; charset=utf-8",
+   "status": "fetched once; no tiles were fetched"
+  },
+  "usable_for_3d": "Shows that per-level polygons for walls, units, lifts, escalators and voids exist; useful as a checklist of feature classes for our own model, not as a data source (no licence).",
+  "notes": "Tiles not downloaded, per the scoping rule."
+ },
+ {
+  "id": "cw-app",
+  "name": "Canary Wharf app (iOS id1634144755, Android com.canarywharf)",
+  "kind": "interactive indoor map",
+  "url": "https://apps.apple.com/us/app/canary-wharf/id1634144755",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "Official estate app linked from canarywharf.com footer. Not installed or inspected; probably embeds the same Living Map map (not verified).",
+  "format": "mobile app",
+  "licence_or_terms": "App store terms; not read.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "App Store page; Google Play page https://play.google.com/store/apps/details?id=com.canarywharf also 200"
+  },
+  "usable_for_3d": "None directly.",
+  "notes": "Do not decompile."
+ },
+ {
+  "id": "cwmap3d-gltf-2021",
+  "name": "canarywharfmap.com 3D estate map (glTF model, 2021)",
+  "kind": "other",
+  "url": "https://canarywharfmap.com/assets/map/CanaryWharf.gltf",
+  "archived_url": "https://web.archive.org/web/20210422052419id_/https://canarywharfmap.com/assets/map/CanaryWharf.gltf",
+  "date": "captures 2021-04-22 and 2021-07-03; linked from canarywharf.com/maps/ in 2022; host now 301-redirects to canarywharf.com/maps/",
+  "what_it_shows": "glTF 2.0 exported from 3ds Max with the babylon.js exporter; 177 nodes, 98 meshes, 16 materials, 32 images; binary Canarywharf.bin (6.2 MB) and baked textures (Build1-8, Lands1-2, diffuse/normal/roughness). Nodes are named per estate building (e.g. Building_OneCanadaSquare, Building_8CanadaSquare_HSBC, Building_Crossrail, Building_CanaryWharfStation, Building_HQW1, Building_D3D4_Catwalk, Building_C2_Stairs, Building_Pavillion, Building_20BankStreetDLR25BankStreet), plus Landscape_ElevatedRail, DLR, MainRoads, Water, TreesA/B, Landscape_OSMBuildings, Landscape_OuterContext. Exterior only: no mall interiors.",
+  "format": "glTF 2.0 JSON + .bin + JPEG textures",
+  "licence_or_terms": "No licence; CWG content under canarywharf.com terms; contains a node named Landscape_OSMBuildings, so part of the context is OSM-derived (ODbL).",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "(none; JSON body)",
+   "status": "gltf fetched from the Internet Archive (98,630 bytes); .bin range request 206 application/octet-stream, not downloaded"
+  },
+  "usable_for_3d": "Shows the estate's own exterior massing per named building; could be used to check building heights and the Crossrail Place and station canopies, but it cannot be redistributed.",
+  "notes": "A 'Mobile/CanaryWharf.gltf' variant was captured 2023-09-19. The .gltf served may be the newer capture (Wayback redirect); node list read from it."
+ },
+ {
+  "id": "cw-estate-map-2018-02",
+  "name": "Canary Wharf Estate Map and Shopping Malls, February 2018",
+  "kind": "map PDF",
+  "url": "https://canarywharf.com/wp-content/uploads/2018/02/canary-wharf-estate-map-february-2018.pdf",
+  "archived_url": "https://web.archive.org/web/20180415190245id_/https://canarywharf.com/wp-content/uploads/2018/02/canary-wharf-estate-map-february-2018.pdf",
+  "date": "2018-02-14 (details correct); capture 2018-04-15",
+  "what_it_shows": "2 pages. Page 1 store guide cover, key and street-level estate plan (grid A-L x 1-23) with retail and office directory. Page 2 'Canary Wharf Shopping Malls' (grid A-V x 1-22): Cabot Place, Canada Place, Churchill Place, Crossrail Place, Jubilee Place, Park Pavilion restaurants colour coded; key defines 'Upper levels 1-4, Street level 0, Mall level -1, Lower mall level -2'; lifts, escalators, stairs, wheelchair access, accessible toilets, 'promenade' and 'underground' pedestrian links, Jubilee line and DLR entrances, red notes for street-level access to Crossrail Place.",
+  "format": "PDF 2 pages, 1417x1191 pt, vector",
+  "licence_or_terms": "Credit: 'Design Paul Anthony, Ravenshaw Studios Limited'. canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (6,240,084 bytes)"
+  },
+  "usable_for_3d": "Second epoch for the mall plan, shortly before the Elizabeth line opened; compare with 2025 to see which links changed.",
+  "notes": "Also hosted on group.canarywharf.com (capture 2021-04-07)."
+ },
+ {
+  "id": "cw-malls-2013",
+  "name": "Canary Wharf Shopping store guide 'CW_Malls', June 2013",
+  "kind": "map PDF",
+  "url": "http://www.canarywharf.com/Documents/2013/Retail/CW_Malls.pdf",
+  "archived_url": "https://web.archive.org/web/20131007212059id_/http://www.canarywharf.com:80/Documents/2013/Retail/CW_Malls.pdf",
+  "date": "2013-06-21 (details correct); capture 2013-10-07",
+  "what_it_shows": "1 page mall plan before Crossrail Place: Cabot Place, Canada Place, The Park Pavilion, Jubilee Place, Churchill Place, with older level names 'Promenade level P', 'Street level S', 'Floor level 1-4'; DLR, Jubilee line, lifts, escalators, stairs, toilets, pedestrian underground and covered links; retail directory.",
+  "format": "PDF 1 page, vector with live text",
+  "licence_or_terms": "Credit: 'Design Paul Anthony, Ravenshaw Studios Limited (c) Ravenshaw Studios Limited 2013'. canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (891,742 bytes)"
+  },
+  "usable_for_3d": "Historic epoch; shows the old level naming (P/S/1-4) that must be mapped to today's -2..2 scheme.",
+  "notes": "Other 2011-2015 store and estate guides are archived (Store Guide March 2011, Estate-Guide-241013, Canary-Wharf-Estate-Guide-Feb-2014, canary-wharf-estate-guide-april-2015 and others)."
+ },
+ {
+  "id": "cw-estate-guide-2013-10",
+  "name": "Canary Wharf Estate Guide, October 2013",
+  "kind": "map PDF",
+  "url": "http://canarywharf.com/Documents/2013/Retail/Estate-Guide-241013.pdf",
+  "archived_url": "https://web.archive.org/web/20140326213737id_/http://canarywharf.com/Documents/2013/Retail/Estate-Guide-241013.pdf",
+  "date": "2013-10-24 (file name); capture 2014-03-26",
+  "what_it_shows": "Not opened (6.7 MB). Estate guide of the same series; expected to hold estate and mall maps.",
+  "format": "PDF",
+  "licence_or_terms": "canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "range request to Internet Archive copy succeeded"
+  },
+  "usable_for_3d": "Possible extra epoch; read only if 2013 detail is needed.",
+  "notes": "Download budget used on other files."
+ },
+ {
+  "id": "cwg-estate-plan-2018",
+  "name": "Canary Wharf Estate Plan (legal / injunction plan), February 2018",
+  "kind": "map PDF",
+  "url": "https://cwg.com/wp-content/uploads/2021/02/canary-wharf-estate-plan-injunction-23022018.pdf",
+  "archived_url": "https://web.archive.org/web/20260312011508id_/https://cwg.com/wp-content/uploads/2021/02/canary-wharf-estate-plan-injunction-23022018.pdf",
+  "date": "2018-02-12 (drawing ref A3_CWEP_Legal_REV03_180212); capture 2026-03-12",
+  "what_it_shows": "A3 plan at stated scale 1:3000 on a large-scale base map with a grid: boundary of CWG property (red), CWG owned and managed buildings, CWG owned public areas (yellow), construction sites (Wood Wharf, North Quay), buildings under third-party management, pedestrian and road access points, bridges and piers owned by CWG, DLR, Underground and DLR stations, bus stops, Riverbus pier, Elizabeth line (opening 2018), car parking.",
+  "format": "PDF 1 page, A3, InDesign",
+  "licence_or_terms": "No credit for the base map on the sheet; CWG copyright; cwg.com robots.txt disallows /wp-content/uploads, so only the archive copy was read.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (873,300 bytes)"
+  },
+  "usable_for_3d": "Has a stated scale and a real base map, so it georeferences well; gives the private-estate boundary and public-realm extent for the street level.",
+  "notes": "Also on group.canarywharf.com (capture 2021-06-20)."
+ },
+ {
+  "id": "cw-development-plan-2009",
+  "name": "Canary Wharf 'Existing and Future Development Plan' (estate map), 2009-2011",
+  "kind": "map PDF",
+  "url": "http://www.canarywharf.com/media/Canary%20Wharf%20Estate%20Map.pdf",
+  "archived_url": "https://web.archive.org/web/20110303181624id_/http://www.canarywharf.com:80/media/Canary%20Wharf%20Estate%20Map.pdf",
+  "date": "2009-07-07 (PDF created); capture 2011-03-03",
+  "what_it_shows": "A3 plan of the estate with building footprints coloured as existing, under construction, construction to grade, in design, future development; building numbers and names; Crossrail station box in North Dock; DLR, Underground, bus stops, car parking; tenant list per building.",
+  "format": "PDF 1 page, A3 (QuarkXPress)",
+  "licence_or_terms": "canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (479,515 bytes)"
+  },
+  "usable_for_3d": "Footprints by building number for the 2009-2011 epoch; street level only.",
+  "notes": "A 2013 version is archived: Documents/2013/26.06.2013_Existing_and_Future_Development_Plan.pdf (range request 206 application/pdf)."
+ },
+ {
+  "id": "cw-40-bank-street-ground-2002",
+  "name": "40 Bank Street (HQ3) ground floor reception plan, 2002",
+  "kind": "map PDF",
+  "url": "http://www.canarywharf.com/estate/estate/hq3/HQ3/pdfs/HQ3_GroundFloor.pdf",
+  "archived_url": "https://web.archive.org/web/20030824235145id_/http://www.canarywharf.com:80/estate/estate/hq3/HQ3/pdfs/HQ3_GroundFloor.pdf",
+  "date": "2002-07-16 (PDF created); capture 2003-08-24",
+  "what_it_shows": "Architectural ground-floor plan of 40 Bank Street: reception (1,075 sq m), lift cores, columns, East and West Winter Garden on either side, Bank Street frontage. Sibling files HQ3_MidRise.pdf and HQ3_HighRise.pdf (floor plates) and 1 Churchill Place pdf were also archived (letting brochures).",
+  "format": "PDF 1 page, vector",
+  "licence_or_terms": "canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "application/pdf",
+   "status": "downloaded from the Internet Archive (564,246 bytes)"
+  },
+  "usable_for_3d": "Real-scale floor plate for one office building that sits between the Wintergardens and Jubilee Place; useful for the link from Jubilee Place to Bank Street.",
+  "notes": "Office letting brochures with floor plates exist for other buildings too; not searched further."
+ },
+ {
+  "id": "cw-maps-page",
+  "name": "canarywharf.com Maps & Getting Here page (/maps/)",
+  "kind": "web page",
+  "url": "https://canarywharf.com/maps/",
+  "archived_url": "https://web.archive.org/web/20260815153152/https://canarywharf.com/maps/",
+  "date": "capture 2026-08-15 (page modified 2026-07-20)",
+  "what_it_shows": "Links: online mall map (map.canarywharf.com), current map PDF (260720_store_guide_JULY_composite_v85_vec.pdf), Art Map, Children's Art Trail, Accessibility Map (May 2025). In the 2022-08-12 capture it linked canary-wharf-map-30-june-22.pdf and a '3D map' at canarywharfmap.com.",
+  "format": "HTML",
+  "licence_or_terms": "canarywharf.com website terms (archived 2026-08-05, https://web.archive.org/web/20260805150550/https://canarywharf.com/terms-conditions/): all rights reserved by Canary Wharf Group plc; you may print and download, but not modify or reproduce without prior written consent. No open licence.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html",
+   "status": "live request returned 200 text/html with an Incapsula/Imperva challenge (960 bytes), not bypassed; content read from the archive"
+  },
+  "usable_for_3d": "Index of the current official map files.",
+  "notes": "Earlier 'canary-wharf-map-<date>.pdf' series runs 2020-06 to 2024-10 in the archive."
+ },
+ {
+  "id": "accessable-cw-guides",
+  "name": "AccessAble detailed access guides: Cabot Place, Canada Place Mall, Canada Place building, Churchill Place, Jubilee Place Mall",
+  "kind": "accessibility guide",
+  "url": "https://www.accessable.co.uk/tower-hamlets-council/access-guides/canada-place-mall",
+  "archived_url": "https://web.archive.org/web/20220818035933/https://www.accessable.co.uk/tower-hamlets-council/access-guides/canada-place-mall",
+  "date": "captures 2022-08-18",
+  "what_it_shows": "Structured surveyed guide (formerly DisabledGo, commissioned by Tower Hamlets Council). Sections: Opening Times, Location, Parking (8 designated bays 360x500 cm, 7 m from entrance, 2.00 m height barrier), Outside Access (level access, automatic doors), Inside Access, Other Floors (floors reachable by stairs '-2,-1,B,LG,G', 15+ steps between floors, handrails both sides), Lift (standard lift, floors -2,-1,B,LG,G, 192x135 cm, visual indicator, audible announcer, tactile not Braille), Accessible Toilet (139x230 cm, door opens inwards, grab rails both sides), Standard Toilets (baby change), Additional Info. Other guides seen in the archive: cabot-place, canada-place-building, churchill-place, jubilee-place-mall; search results also list Canary Wharf DLR station and individual shops.",
+  "format": "HTML",
+  "licence_or_terms": "AccessAble content copyright; terms not read (live site blocked). robots.txt allows /, Crawl-delay 5, disallows /*location_query=*.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "live https://www.accessable.co.uk/venues/cabot-place returned 403 Cloudflare block; one guide read from the Internet Archive; four other guides range-checked 206"
+  },
+  "usable_for_3d": "Gives measured lift sizes, step counts and level labels per mall to check lift and stair placement; note AccessAble's own floor labels (B, LG, G) differ from the estate's -2..2.",
+  "notes": "Survey date is not shown on the page; data may be years old."
+ },
+ {
+  "id": "euansguide-cw",
+  "name": "Euan's Guide: Canary Wharf Shopping Centre, Underground station, DLR station",
+  "kind": "accessibility guide",
+  "url": "https://www.euansguide.com/venues/canary-wharf-shopping-centre-london-16639",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "User reviews with ratings only. Shopping centre: 1 review (Nov 2024, rating 0.5) about not finding a hoisted (Changing Places) toilet and small signage. Separate venue pages for Canary Wharf Underground station (id 4317) and DLR station (id 2960).",
+  "format": "HTML",
+  "licence_or_terms": "Euan's Guide terms not read; robots.txt allows / and disallows /api/.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "fetched once each (3 pages)"
+  },
+  "usable_for_3d": "Qualitative only; no plans or levels.",
+  "notes": ""
+ },
+ {
+  "id": "applied-wayfinding-cw",
+  "name": "Applied Information Group: Canary Wharf wayfinding programme (case study)",
+  "kind": "web page",
+  "url": "https://appliedinformation.group/projects/canary-wharf",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "Wayfinding consultant's case study for Canary Wharf Group: 'five multi-level malls', axonometric mapping for complex buildings, new icon set, sign design, information curation. Images not inspected for plans.",
+  "format": "HTML",
+  "licence_or_terms": "Applied's copyright; robots.txt only lists a sitemap.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "fetched once"
+  },
+  "usable_for_3d": "Names the estate's signage designer; the axonometric maps, if published as images, would show stacked levels.",
+  "notes": ""
+ },
+ {
+  "id": "signbox-crossrail-place",
+  "name": "Signbox: Crossrail Place signage case study",
+  "kind": "web page",
+  "url": "https://www.signbox.co.uk/case-studies/crossrail-place/",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "Signage contractor (for Built UK and CWG) at Crossrail Place: canopy, wayfinding and branding; about 20 photos. No plans seen in the text.",
+  "format": "HTML",
+  "licence_or_terms": "Signbox copyright; robots.txt returned 403.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=UTF-8",
+   "status": "fetched once"
+  },
+  "usable_for_3d": "Photos only; may help with sign positions and finishes.",
+  "notes": ""
+ },
+ {
+  "id": "livingmap-case-study",
+  "name": "Living Map case study and press release on Canary Wharf",
+  "kind": "web page",
+  "url": "https://www.livingmap.com/blog/press-release-canary-wharf-group-enhances-visitor-experience-with-living-maps-advanced-digital-mapping-technology",
+  "archived_url": null,
+  "date": "2026-10-03",
+  "what_it_shows": "Confirms Living Map as CWG's mapping vendor; 11 totems with 22 kiosk screens; blue-line wayfinding, accessibility controls; a separate Winter Lights map. Case study page: https://www.livingmap.com/use-cases/retail/case-study-indoor-mapping-for-a-shopping-mall (200).",
+  "format": "HTML",
+  "licence_or_terms": "Living Map copyright.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 200,
+   "content_type": "text/html; charset=utf-8",
+   "status": "both pages fetched once"
+  },
+  "usable_for_3d": "Provenance only.",
+  "notes": ""
+ },
+ {
+  "id": "cwg-north-quay-das-2020",
+  "name": "North Quay Design and Access Statement, parts 1-5 (July 2020)",
+  "kind": "other",
+  "url": "https://cwg.com/wp-content/uploads/2021/04/NQ.LBC_.04_Design-Access-Statement_Part-1-July-2020.pdf",
+  "archived_url": "https://web.archive.org/web/20260519041858id_/https://cwg.com/wp-content/uploads/2021/04/NQ.LBC_.04_Design-Access-Statement_Part-1-July-2020.pdf",
+  "date": "2020-07; capture 2026-05-19",
+  "what_it_shows": "Not opened. Planning application documents for North Quay (next to Crossrail Place), likely with site plans and level plans for the link to the Elizabeth line.",
+  "format": "PDF (4.5 MB archive copy; group.canarywharf.com copies 12-27 MB)",
+  "licence_or_terms": "CWG copyright; the same documents are on the Tower Hamlets planning register.",
+  "verified": {
+   "date": "2026-10-03",
+   "http": 206,
+   "content_type": "application/pdf",
+   "status": "range request to Internet Archive copy"
+  },
+  "usable_for_3d": "Possible source for the North Quay / Crossrail Place interface levels.",
+  "notes": ""
+ }
+]

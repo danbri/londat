@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Canary Wharf atlas</title>
+<meta name="description" content="Canary Wharf and the Isle of Dogs from open data: buildings, occupants, postcodes, levels below ground, heritage records, the river, live feeds and sources.">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --panel2: #eef1f5; --line: #d8dde4; --fg: #15191e; --muted: #5d6773; --link: #0b5cad;
+  --accent: #c2410c; --accent2: #0f766e; --warn: #a15c00; --bad: #b42318; --good: #15803d; --water: #2f7fb8; --chip: #e7ebf0;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1215; --panel: #161a1f; --panel2: #1d2228; --line: #2e353d; --fg: #e8eaec; --muted: #9aa4ae; --link: #8cc4ff;
+  --accent: #ff8a3d; --accent2: #2cc3b5; --warn: #ffd26f; --bad: #ff7a6e; --good: #6fdc8c; --water: #5aa9e0; --chip: #232a31;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+} }
+:root[data-theme="dark"] {
+  --bg: #0f1215; --panel: #161a1f; --panel2: #1d2228; --line: #2e353d; --fg: #e8eaec; --muted: #9aa4ae; --link: #8cc4ff;
+  --accent: #ff8a3d; --accent2: #2cc3b5; --warn: #ffd26f; --bad: #ff7a6e; --good: #6fdc8c; --water: #5aa9e0; --chip: #232a31;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--link); }
+html{overscroll-behavior:none;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+img,a{-webkit-user-drag:none}
+button,select,label,nav,.tabs{-webkit-user-select:none;user-select:none;touch-action:manipulation}
+#mapwrap { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: none; }
+#mapwrap.attr-folded .leaflet-control-attribution { display: none; }
+#attrI { position: absolute; z-index: 800; right: 6px; bottom: 6px; width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font: italic 600 14px/1 Georgia, serif; cursor: pointer; }
+#attrI[hidden] { display: none; }
+/* locate button (Leaflet control, bottom right above the credit): outline = off, blue = located, filled = centred */
+.loc-ctl.leaflet-bar { margin-bottom: 38px; border-radius: 50%; }
+.loc-ctl button { width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: var(--panel); color: #8a929c; display: flex; align-items: center; justify-content: center; cursor: pointer; touch-action: manipulation; }
+.loc-ctl button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+.loc-ctl button .f { fill: currentColor; stroke: none; }
+.loc-ctl button[data-s=located], .loc-ctl button[data-s=centred] { color: #1a73e8; }
+.loc-ctl button[data-s=waiting] svg { animation: locPulse 1s ease-in-out infinite; } @keyframes locPulse { 50% { opacity: .35; } }
+#locMsg { position: absolute; z-index: 900; left: 50%; transform: translateX(-50%); top: 10px; width: max-content; max-width: calc(100% - 32px); box-sizing: border-box; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 13px; box-shadow: 0 2px 8px #0006; }
+#locMsg[hidden] { display: none; }
+button, select, input { font: inherit; color: inherit; }
+.small { font-size: .85em; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+header { position: sticky; top: 0; z-index: 1000; background: var(--panel); border-bottom: 1px solid var(--line); }
+.bar { display: flex; gap: 12px; align-items: center; padding: 8px 16px; max-width: 1500px; margin: 0 auto; }
+.brand { font-weight: 700; white-space: nowrap; text-decoration: none; color: var(--fg); }
+.brand span { color: var(--accent); }
+.search { position: relative; flex: 1; max-width: 560px; }
+.search input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel2); }
+#results { position: absolute; left: 0; right: 0; top: 42px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); max-height: 70vh; overflow: auto; display: none; }
+#results .grp { padding: 6px 12px 2px; font-size: .75em; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+#results button { display: block; width: 100%; text-align: left; padding: 6px 12px; border: 0; background: none; cursor: pointer; }
+#results button:hover, #results button:focus { background: var(--panel2); outline: none; }
+nav { display: flex; gap: 2px; overflow-x: auto; padding: 0 12px; max-width: 1500px; margin: 0 auto; scrollbar-width: none; }
+nav a { padding: 8px 12px; white-space: nowrap; text-decoration: none; color: var(--muted); border-bottom: 2px solid transparent; }
+nav a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent); }
+#theme { border: 1px solid var(--line); background: var(--panel2); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+main { max-width: 1500px; margin: 0 auto; padding: 16px; }
+section.view { display: none; }
+section.view.on { display: block; }
+h1 { font-size: 1.5em; margin: 4px 0 8px; }
+h2 { font-size: 1.15em; margin: 24px 0 8px; }
+h3 { font-size: 1em; margin: 16px 0 6px; }
+.lede { max-width: 900px; color: var(--muted); margin: 0 0 16px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; box-shadow: var(--shadow); text-decoration: none; color: inherit; display: block; }
+a.card:hover { border-color: var(--accent); }
+.card .big { font-size: 1.7em; font-weight: 700; font-variant-numeric: tabular-nums; }
+.card .k { font-weight: 600; }
+.card p { margin: 4px 0 0; color: var(--muted); font-size: .9em; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; box-shadow: var(--shadow); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+.grid2 > * { min-width: 0; }
+#section, #skyline, #pcTime { overflow-x: auto; }
+#section svg { min-width: 860px; }
+#skyline svg, #pcTime svg { min-width: 680px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: .85em; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 12px; }
+.tools input[type=search], .tools select { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); max-width: 100%; }
+.btn { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel2); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+table { border-collapse: collapse; width: 100%; font-size: .9em; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { position: sticky; top: 0; background: var(--panel2); cursor: pointer; white-space: nowrap; user-select: none; }
+td.r, th.r { text-align: right; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--panel2); }
+.tablewrap { overflow: auto; max-height: 70vh; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.bars { display: grid; grid-template-columns: minmax(0, max-content) minmax(40px, 1fr) max-content; gap: 3px 8px; align-items: center; font-size: .88em; }
+.bars > span { overflow-wrap: anywhere; }
+.bars .b { height: 10px; border-radius: 3px; background: var(--accent2); }
+.tag { display: inline-block; padding: 0 6px; border-radius: 4px; background: var(--chip); font-size: .8em; color: var(--muted); }
+.tag.warn { color: var(--warn); }
+.quote { border-left: 3px solid var(--line); padding-left: 8px; color: var(--muted); font-style: italic; }
+/* map */
+#mapwrap { position: relative; height: calc(100vh - 150px); min-height: 420px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+#map { position: absolute; inset: 0; background: var(--panel2); }
+.dark-tiles .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9); }
+#layers { position: absolute; z-index: 500; top: 10px; right: 10px; width: 270px; max-height: calc(100% - 20px); overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 10px 12px; font-size: .9em; }
+#layers summary { font-weight: 600; cursor: pointer; }
+#layers label { display: flex; gap: 6px; align-items: baseline; margin: 4px 0; }
+#layers .legend { margin: 2px 0 6px 22px; }
+.ramp { height: 8px; border-radius: 4px; margin: 2px 0; }
+.leaflet-container { font: inherit; }
+.leaflet-popup-content { margin: 8px 10px; }
+/* dossier */
+#dossier { position: fixed; z-index: 1200; top: 0; right: 0; bottom: 0; width: min(460px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: var(--shadow); overflow: auto; transform: translateX(105%); transition: transform .2s; }
+#dossier.on { transform: none; }
+#dossier .head { position: sticky; top: 0; background: var(--panel); border-bottom: 1px solid var(--line); padding: 10px 14px; display: flex; gap: 8px; align-items: flex-start; }
+#dossier .head h2 { margin: 0; flex: 1; font-size: 1.1em; }
+#dossier .body { padding: 6px 14px 40px; }
+#dossier .close { border: 0; background: var(--panel2); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+@media (max-width: 700px) {
+  #dossier { top: auto; left: 0; width: 100vw; max-height: 72vh; border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0; transform: translateY(105%); }
+  #layers { width: auto; right: 10px; max-height: 45%; }
+  #layers { left: 56px; }
+  #layers:not([open]) { left: auto; }
+  main { padding: 12px; }
+  .bar { padding: 8px 12px; }
+}
+.kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin: 10px 0; }
+.kv div { background: var(--panel2); border-radius: 8px; padding: 6px 8px; }
+.kv b { display: block; font-size: 1.15em; font-variant-numeric: tabular-nums; }
+.kv span { font-size: .78em; color: var(--muted); }
+.links { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .9em; margin: 6px 0; }
+.stack { display: grid; grid-template-columns: 54px 1fr; gap: 2px 8px; font-size: .88em; margin: 8px 0; }
+.stack .lv { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 3px; }
+.stack .fl { border-radius: 4px; padding: 3px 8px; background: var(--panel2); min-height: 22px; }
+.stack .fl.below { background: color-mix(in srgb, var(--accent2) 18%, var(--panel2)); }
+.stack .fl.ground { outline: 2px solid var(--accent); }
+.occ { padding: 2px 0; }
+svg text { fill: var(--fg); font: 12px system-ui, sans-serif; }
+svg .muted { fill: var(--muted); }
+.live p { margin: 6px 0; }
+.foot { margin: 32px 0 8px; font-size: .82em; color: var(--muted); }
+.more { margin: 8px 0; }
+.hidden { display: none !important; }
+.qcheck { margin: 10px 0; }
+.qcheck summary { cursor: pointer; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.qcheck summary .id { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3.2em; }
+.qcheck summary .t { flex: 1; min-width: 200px; }
+.sev-high { color: var(--bad); } .sev-medium { color: var(--warn); } .sev-low { color: var(--muted); }
+.qrate { height: 6px; border-radius: 3px; background: var(--chip); margin-top: 4px; }
+.qrate i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a class="brand" href="#overview">Canary Wharf <span>atlas</span></a>
+    <div class="search" role="search">
+      <input id="q" type="search" placeholder="Search buildings, occupants, brands, postcodes, places…" aria-label="Search the atlas" autocomplete="off">
+      <div id="results" role="listbox"></div>
+    </div>
+    <button id="theme" type="button" aria-label="Switch light or dark theme">◐</button>
+  </div>
+  <nav aria-label="Atlas sections">
+    <a href="#overview">Overview</a><a href="#map">Map</a><a href="#buildings">Buildings</a><a href="#business">Businesses</a>
+    <a href="#postcodes">Postcodes</a><a href="#under">Below ground</a><a href="#heritage">Heritage</a><a href="#river">River</a><a href="#lds">London Datastore</a>
+    <a href="#sources">Live and sources</a><a href="#quality">Data quality</a><a href="#data">Data and licences</a>
+  </nav>
+</header>
+
+<main>
+<section class="view" id="v-overview">
+  <h1>Canary Wharf and the Isle of Dogs, from open data</h1>
+  <p class="lede">Everything collected for this project, joined in one place: 1,129 buildings with internal ids and their occupants, owners, homes and registered companies; every possible E14 postcode; published levels below ground; museum and heritage records; the Thames bed and its flood walls; and 324 live feeds and event sources. Tap a number to explore it. The 3D models are separate pages: <a href="../docklands/">Docklands 3D</a> and <a href="../">Canada Water corridor</a>.</p>
+  <div class="cards" id="ovCards"></div>
+  <h2>Now</h2>
+  <div class="panel live" id="ovLive"><p class="small">The page asks no outside service for data until you press the button. Tide, weather, lines and storm overflows then come from the hourly <a href="https://github.com/danbri/londat/tree/main/cwplans/cache">londat cache</a> (air quality from the London Air Quality Network); tick "Live" to ask each publisher directly.</p><button class="btn primary" type="button" data-live>Load live data</button> <label class="small"><input type="checkbox" data-direct> Live</label><div data-liveout></div></div>
+  <p class="foot" id="ovFoot"></p>
+</section>
+
+<section class="view" id="v-map">
+  <div id="mapwrap">
+    <div id="map" role="application" aria-label="Map of Canary Wharf and the Docklands"></div>
+    <button type="button" id="attrI" hidden aria-label="Map credits: © OpenStreetMap contributors and others" title="Map credits">i</button>
+    <details id="layers" open>
+      <summary>Layers</summary>
+      <div id="layerList"></div>
+    </details>
+  </div>
+  <p class="small">Tap a feature for its record. Basemap and building outlines: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL). Other layers: see <a href="#data">Data and licences</a>.</p>
+  <p class="small">Your location: the round button at the bottom right of the map asks for it only when you tap it, then centres the map on a blue dot (a drag stops following; hold the button to turn it off). The page sends your position nowhere, stores it nowhere and does not put it in the address. As with any place you look at, the map tiles around it come from tile.openstreetmap.org.</p>
+</section>
+
+<section class="view" id="v-buildings">
+  <h1>Buildings</h1>
+  <p class="lede">Every OSM building outline in the Canary Wharf box has an internal id (<code>cwb-NNNN</code>) that stays the same between rebuilds. Heights come from OSM, the EA LiDAR or Wikidata; floors from OSM <code>building:levels</code> or Wikidata.</p>
+  <h2>Tallest, with floors above and below ground</h2>
+  <div class="panel" id="skyline"></div>
+  <h2>All buildings</h2>
+  <div class="tools">
+    <input type="search" id="bq" placeholder="Filter by name, id or postcode" aria-label="Filter buildings">
+    <div class="chips" id="bf"></div>
+    <span class="small" id="bcount"></span>
+  </div>
+  <div class="tablewrap"><table id="bt"></table></div>
+  <button class="btn more" type="button" id="bmore">Show more</button>
+</section>
+
+<section class="view" id="v-business">
+  <h1>Businesses</h1>
+  <p class="lede">Occupants come from OSM, the FSA food hygiene file, Wikidata and the Canary Wharf Group directory (Internet Archive copies). Chain-store branches are matched to the OSM name-suggestion-index. Registered companies come from Companies House: a registered office is not proof that a company works there.</p>
+  <div class="cards" id="bizCards"></div>
+  <h2>Malls by level</h2>
+  <p class="small">Occupants with a mall (CWG directory) or a level (OSM <code>level</code>), stacked from the highest level to the lowest.</p>
+  <div class="grid2" id="malls"></div>
+  <div class="grid2">
+    <div><h2>Kinds of occupant</h2><div class="panel bars" id="roleBars"></div></div>
+    <div><h2>Food hygiene ratings</h2><div class="panel bars" id="fsaBars"></div></div>
+  </div>
+  <h2>Brands</h2>
+  <div class="tools"><input type="search" id="brq" placeholder="Filter brands" aria-label="Filter brands"><div class="chips" id="brf"></div></div>
+  <div class="cards" id="brands"></div>
+  <h2>Occupant directory</h2>
+  <div class="tools"><input type="search" id="oq" placeholder="Filter occupants" aria-label="Filter occupants"><select id="or" aria-label="Kind of occupant"></select><span class="small" id="ocount"></span></div>
+  <div class="tablewrap"><table id="ot"></table></div>
+  <button class="btn more" type="button" id="omore">Show more</button>
+</section>
+
+<section class="view" id="v-postcodes">
+  <h1>Postcodes</h1>
+  <p class="lede">Every syntactically valid postcode in E14 (4,000 candidates), checked against the ONS Postcode Directory (August 2026). "Never allocated" codes are the pool that new buildings will get. Introductions and terminations are an official record of change. Method: <a href="../postcodes/">postcode page</a>.</p>
+  <div class="cards" id="pcCards"></div>
+  <h2>Introduced and terminated by year (Canary Wharf ward and box)</h2>
+  <div class="panel" id="pcTime"></div>
+  <h2>All allocated postcodes</h2>
+  <div class="tools"><input type="search" id="pq" placeholder="Filter by postcode or street" aria-label="Filter postcodes"><div class="chips" id="pf"></div><span class="small" id="pcount"></span></div>
+  <div class="tablewrap"><table id="pt"></table></div>
+  <button class="btn more" type="button" id="pmore">Show more</button>
+</section>
+
+<section class="view" id="v-under">
+  <h1>Below ground</h1>
+  <p class="lede">Published levels, in metres above Ordnance Datum Newlyn (m OD), on one scale. The Elizabeth line box at Canary Wharf was built in the drained West India Dock: its base slab is 25 m below the dock water. Every value links to its source. Tower roofs are drawn at a compressed scale.</p>
+  <div class="panel" id="section"></div>
+  <div class="grid2">
+    <div><h2>Basements</h2><p class="small">Floors below ground from OSM <code>building:levels:underground</code> or Wikidata. The 3D model takes 4 m per floor; that is an assumption.</p><div class="tablewrap" style="max-height:420px"><table id="basements"></table></div></div>
+    <div><h2>Not found in any source</h2><ul id="gaps" class="small"></ul></div>
+  </div>
+  <h2>Cited facts</h2>
+  <div class="tools"><input type="search" id="fq" placeholder="Filter facts (station, tunnel, tower, dock…)" aria-label="Filter facts"><span class="small" id="fcount"></span></div>
+  <div id="facts"></div>
+  <button class="btn more" type="button" id="fmore">Show more</button>
+</section>
+
+<section class="view" id="v-heritage">
+  <h1>Heritage records</h1>
+  <p class="lede">Open museum and heritage records with a position: Wikidata (objects kept in museums in the area; the coordinate is where the object is kept), Historic England scheduled monuments, wrecks and research reports, and OGL or CC-BY records from the ADS/ARIADNE catalogue. Records flagged as burials or memorials are not published.</p>
+  <div class="cards" id="herCards"></div>
+  <div class="grid2">
+    <div><h2>Places with the most records</h2><div class="tablewrap" style="max-height:520px"><table id="herPlaces"></table></div></div>
+    <div><h2>Kinds of record</h2><div class="panel bars" id="herTypes"></div></div>
+  </div>
+</section>
+
+<section class="view" id="v-river">
+  <h1>River and flood defences</h1>
+  <p class="lede">The Thames bed from UKHO bathymetry (the PLA multibeam survey of 2013–2017, converted from chart datum to ODN), wrecks and obstructions, and the Environment Agency tidal flood defences with their surveyed crest levels. Not for navigation.</p>
+  <div class="cards" id="rivCards"></div>
+  <div class="grid2">
+    <div><h2>Riverbed levels</h2><div class="panel" id="bedHist"></div></div>
+    <div><h2>Flood-wall crest levels</h2><div class="panel" id="crestHist"></div><p><button class="btn" type="button" id="tideBtn">Compare with the tide now</button> <span class="small" id="tideOut"></span></p></div>
+  </div>
+  <h2>Wrecks and obstructions</h2>
+  <div class="tablewrap" style="max-height:420px"><table id="wrecks"></table></div>
+  <h2>River state: dated snapshots</h2>
+  <p class="small">Snapshots of 4 October 2026 from <code>feeds/river/</code> (<code>tools/fetch-river.mjs</code>): harbour notices, canal notices, locks, swim water, Thames Barrier tests, river buses and moorings. Not live: each block gives its fetch time and source. The same data is on the <a href="../docklands/">3D page</a> (Menu &gt; Layers &gt; River) and on the <a href="#map">map</a> (layer "River snapshots").</p>
+  <div id="rivSnap"><p class="small">Loading…</p></div>
+</section>
+
+<section class="view" id="v-lds">
+  <h1>London Datastore, clipped to the zone</h1>
+  <p class="lede">Every dataset of the London Datastore (data.london.gov.uk) was triaged by written rules; the open ones that hold data for the Docklands model box were harvested here, zone rows and features only. Tap "map" for a layer on the <a href="#map">map</a>; each layer's records name their source, dates and licence. Building facts (heat demand, solar potential, Census context of the LSOA, venues) are in each building's record. Method: <a href="https://github.com/danbri/londat/blob/main/cwplans/feeds/london-datastore/README.md">README</a>.</p>
+  <div class="cards" id="ldsCards"></div>
+  <div class="tools"><div class="chips" id="ldsTheme"></div><input type="search" id="ldsq" placeholder="Filter datasets" aria-label="Filter datasets"><span class="small" id="ldscount"></span></div>
+  <div id="ldsList"></div>
+  <p class="small" id="ldsFoot"></p>
+</section>
+
+<section class="view" id="v-sources">
+  <h1>Live data and sources</h1>
+  <div class="panel live" id="srcLive"><b>Now</b> <span class="small">(EA tide gauges, Open-Meteo, London Air Quality Network, TfL, Thames Water storm overflows)</span><br><button class="btn primary" type="button" data-live>Load live data</button> <label class="small"><input type="checkbox" data-direct> Live: ask the sources directly</label><div data-liveout></div></div>
+  <h2>Catalogue</h2>
+  <p class="small">Every URL was fetched and checked from this project's container (dates on each entry). The full write-ups: <a href="../feeds/">feeds page</a>.</p>
+  <div class="tools">
+    <div class="chips" id="srcKind"></div>
+    <input type="search" id="sq" placeholder="Filter sources" aria-label="Filter sources">
+    <select id="sarea" aria-label="Survey area"></select>
+    <select id="scat" aria-label="Category"></select>
+    <label class="small"><input type="checkbox" id="scors"> works in the browser (CORS)</label>
+    <span class="small" id="scount"></span>
+  </div>
+  <div class="cards" id="srcCards"></div>
+  <button class="btn more" type="button" id="smore">Show more</button>
+</section>
+
+<section class="view" id="v-quality">
+  <h1>Data quality</h1>
+  <p class="lede">The same checks run on every rebuild, in eight classes. They measure where sources disagree, where joins fail and where our own tools damage the data, so that the rules for combining sources are built on measured error classes. Nothing here is corrected automatically. Analysis and proposed compositing rules: <a href="https://github.com/danbri/londat/blob/main/cwplans/quality/README.md">README</a> · all tables: <a href="https://github.com/danbri/londat/blob/main/cwplans/quality/CATALOGUE.md">CATALOGUE</a>.</p>
+  <div class="cards" id="qCards"></div>
+  <div class="tools"><div class="chips" id="qCls"></div><div class="chips" id="qSev"></div></div>
+  <div id="qChecks"></div>
+</section>
+
+<section class="view" id="v-data">
+  <h1>Data and licences</h1>
+  <p class="lede">Every committed data file, its sources and licences, and how it uses OpenStreetMap. Generated from <code>data-register.json</code>; the readable version is <a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">DATA-REGISTER.md</a>.</p>
+  <h2>Attribution</h2>
+  <ul id="attrib" class="small"></ul>
+  <p class="small">Map: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL; basemap tiles from tile.openstreetmap.org and building outlines); EA, UKHO, ONS, HM Land Registry, FSA, Historic England (OGL v3.0); Wikidata (CC0); river snapshots: Port of London Authority and Canal &amp; River Trust (facts and links only), GOV.UK and EA (OGL v3.0), TfL ("Powered by TfL Open Data"), Sea Lanes Canary Wharf and Royal Docks Waterways (results as published); map software <a href="https://leafletjs.com/">Leaflet</a> (BSD-2-Clause). The map corner shows the OpenStreetMap credit when the map opens and folds it to an (i) button after 5 seconds or at the first move.</p>
+  <h2>Files</h2>
+  <div class="tablewrap"><table id="files"></table></div>
+  <h2>Method notes</h2>
+  <ul class="small">
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/README.md">Building registry</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md">Docklands 3D model</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/postcodes/README.md">Postcodes</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/README.md">Chain-store branches</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/museums/README.md">Heritage records</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/pla/README.md">River and wet areas</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/SOURCES-companies-property.md">Company and property sources</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/research-report-2026-10.md">The October 2026 research report</a></li>
+  </ul>
+</section>
+</main>
+
+<aside id="dossier" aria-live="polite" aria-label="Selected record"><div class="head"><h2 id="dTitle"></h2><button class="close" type="button" id="dClose" aria-label="Close">✕</button></div><div class="body" id="dBody"></div></aside>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script>
+// window lock (skill docklands-3d-page, "Window lock"): no browser zoom, pull-to-refresh, drag-out or file drop on the page
+(() => { const no = e => e.preventDefault(), field = e => e.target instanceof Element && e.target.closest('input,textarea,select');
+  addEventListener('wheel', e => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive: false, capture: true });
+  addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['+', '=', '-', '_', '0'].includes(e.key)) e.preventDefault(); });
+  for (const t of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(t, no, { passive: false });
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !(e.target instanceof Element && e.target.closest('.leaflet-container'))) e.preventDefault(); }, { passive: false });
+  document.addEventListener('dragstart', e => { if (!field(e)) e.preventDefault(); }, true);
+  addEventListener('dragover', e => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'none'; });
+  addEventListener('drop', no); })();
+</script>
+<script src="../docklands/opening-hours.js"></script>
+<script src="../data-base.js"></script>
+<script src="../live-cache.js"></script>
+<script src="../feeds/london-datastore/lds-building.js"></script>
+<script>
+'use strict';
+(() => {
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nf = new Intl.NumberFormat('en-GB'), N = v => v == null ? '—' : typeof v === 'number' ? nf.format(v) : esc(v);
+const money = v => v == null ? '—' : '£' + nf.format(Math.round(v));
+const a = (href, text) => href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(text)}</a>` : '';
+const ym = v => v ? `${String(v).slice(0, 4)}-${String(v).slice(4, 6)}` : '';
+const cache = new Map();
+const load = (path, gz) => {
+  if (!cache.has(path)) cache.set(path, fetch(path).then(async r => {
+    if (!r.ok) throw new Error(`${path}: HTTP ${r.status}`);
+    if (!gz) return r.json();
+    const s = r.body.pipeThrough(new DecompressionStream('gzip'));
+    return JSON.parse(await new Response(s).text());
+  }));
+  return cache.get(path);
+};
+const P = {
+  atlas: 'data/atlas.json', reg: '../registry/buildings.json', branches: '../registry/sources/brands/branches.json',
+  facts: '../docklands/facts.json', feeds: '../feeds/feeds.json', events: '../feeds/events.json',
+  records: '../registry/sources/museums/records-open.json', apa: '../registry/sources/museums/apa_greater_london.geojson',
+  companies: '../registry/companies-by-postcode.json', homes: '../registry/homes-by-postcode.json', queries: '../postcodes/queries.json',
+  register: '../data-register.json', levels: '../data/sourced-levels.json', quality: '../quality/issues.json',
+  lds: CwData.url('feeds/london-datastore/index.json'),   // hosted in danbri/londat (../data-base.js)
+};
+let A = null, REG = null, regById = new Map();
+const B = new Map(); // atlas building index by id
+const getReg = async () => { if (!REG) { REG = await load(P.reg); regById = new Map(REG.buildings.map(b => [b.id, b])); } return REG; };
+const HT = b => b.wh || b.h || b.mh || null;   // Wikidata, else OSM tag, else the 3D model (LiDAR)
+const decLL = q => { const o = []; let la = 0, lo = 0; for (let i = 0; i < q.length; i += 2) { la += q[i]; lo += q[i + 1]; o.push([la / 1e6, lo / 1e6]); } return o; };
+
+// ---------- colour ramps
+const lerpHex = (stops, t) => {
+  t = Math.max(0, Math.min(1, t)); const k = t * (stops.length - 1), i = Math.min(stops.length - 2, Math.floor(k)), f = k - i;
+  const c = [0, 1, 2].map(j => Math.round(parseInt(stops[i].slice(1 + 2 * j, 3 + 2 * j), 16) * (1 - f) + parseInt(stops[i + 1].slice(1 + 2 * j, 3 + 2 * j), 16) * f));
+  return '#' + c.map(v => v.toString(16).padStart(2, '0')).join('');
+};
+const RAMP = ['#fde725', '#5ec962', '#21918c', '#3b528b', '#440154'];          // viridis, reversed: low = yellow
+const DEPTH = ['#c6e9ff', '#6cb4e8', '#2f7fb8', '#1d4f91', '#0b1f4d'];          // shallow to deep
+const rampCss = s => `linear-gradient(90deg, ${s.join(',')})`;
+
+// ---------- theme
+const themeBtn = $('theme');
+const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+try { const t = localStorage.getItem('cw-atlas-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) { /* storage may be blocked */ }
+themeBtn.onclick = () => {
+  const t = isDark() ? 'light' : 'dark'; document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('cw-atlas-theme', t); } catch (e) { /* ignore */ }
+  if (map) $('map').classList.toggle('dark-tiles', isDark());
+};
+
+// ---------- router: #view or #view/kind/id (kind: b building, pc postcode, h heritage place)
+const VIEWS = ['overview', 'map', 'buildings', 'business', 'postcodes', 'under', 'heritage', 'river', 'lds', 'sources', 'quality', 'data'];
+let current = null; const shown = new Set();
+function route() {
+  let h = decodeURIComponent(location.hash.slice(1));
+  if (/^cwb-\d+$/.test(h)) h = 'map/b/' + h;                          // registry-page style links
+  const [v0, kind, ...rest] = h.split('/'), id = rest.join('/');
+  const v = VIEWS.includes(v0) ? v0 : (kind ? 'map' : 'overview');
+  show(v);
+  if (kind && id) open(kind, id, false); else { dos.classList.remove('on'); hilite(null); }
+}
+function show(v) {
+  if (current !== v) {
+    current = v;
+    for (const s of document.querySelectorAll('section.view')) s.classList.toggle('on', s.id === 'v-' + v);
+    for (const l of document.querySelectorAll('nav a')) { if (l.getAttribute('href') === '#' + v) l.setAttribute('aria-current', 'page'); else l.removeAttribute('aria-current'); }
+    if (!shown.has(v)) { shown.add(v); Promise.resolve().then(() => INIT[v]?.()).catch(e => { console.error(e); $('v-' + v).insertAdjacentHTML('beforeend', `<p class="small" style="color:var(--bad)">${esc(e.message)}</p>`); }); }
+    if (v === 'map' && map) setTimeout(() => map.invalidateSize(), 50);
+    scrollTo(0, 0);
+  }
+}
+window.addEventListener('hashchange', route);
+const setHash = h => { if (location.hash.slice(1) !== h) history.replaceState(null, '', '#' + h); };
+
+// ---------- dossier
+const dos = $('dossier');
+$('dClose').onclick = () => { dos.classList.remove('on'); setHash(current); hilite(null); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('dClose').onclick(); });
+function dossier(title, html) { $('dTitle').innerHTML = title; $('dBody').innerHTML = html; dos.classList.add('on'); dos.scrollTop = 0; }
+async function open(kind, id, push = true) {
+  if (push) setHash(`${current}/${kind}/${id}`);
+  try {
+    if (kind === 'b') return await openBuilding(id);
+    if (kind === 'pc') return await openPostcode(id.replace(/-/g, ' '));
+    if (kind === 'h') return await openHeritage(+id);
+    if (kind === 'brand') return await openBrand(id);
+    if (kind === 'q') { const el = document.getElementById('qc-' + id); if (el) { el.open = true; el.scrollIntoView({ block: 'start' }); } return; }
+  } catch (e) { dossier('Error', `<p class="small">${esc(e.message)}</p>`); }
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-open]'); if (!t) return;
+  e.preventDefault(); const [k, ...r] = t.dataset.open.split('/'); open(k, r.join('/'));
+  if (t.closest('#results')) { $('results').style.display = 'none'; }
+});
+const linkB = (id, text) => `<a href="#" data-open="b/${esc(id)}">${esc(text || B.get(id)?.n || id)}</a>`;
+const linkPc = pc => `<a href="#" data-open="pc/${esc(pc.replace(' ', '-'))}">${esc(pc)}</a>`;
+
+// ---------- data-quality issues, indexed by entity
+let QI = null;
+const getQ = async () => { if (!QI) { const q = await load(P.quality); QI = { q, by: new Map() }; for (const i of q.issues) { const k = `${i.ent}/${i.id}`; if (!QI.by.has(k)) QI.by.set(k, []); QI.by.get(k).push(i); } } return QI; };
+const qNotes = async (ent, id) => {
+  try { const { q, by } = await getQ(), list = by.get(`${ent}/${id}`) || []; if (!list.length) return '';
+    const title = Object.fromEntries(q.checks.map(c => [c.id, c.title]));
+    return `<h3>Data quality (${list.length})</h3>${list.map(i => `<div class="small"><a href="#quality/q/${esc(i.check)}">${esc(i.check)}</a> <span class="sev-${esc(i.sev)}">${esc(i.sev)}</span> ${esc(title[i.check] || '')}: ${esc(i.note)}</div>`).join('')}`;
+  } catch (e) { return ''; } };
+
+// ---------- building dossier
+const levelNum = l => { const n = parseFloat(String(l).replace(/[^\d.\-;]/g, '').split(';')[0]); return Number.isFinite(n) ? n : null; };
+async function openBuilding(id) {
+  const ab = B.get(id); if (!ab) throw new Error(`no building ${id}`);
+  dossier(esc(ab.n || id), '<p class="small">Loading the full record…</p>');
+  hilite(id);
+  const [, qn] = await Promise.all([getReg(), qNotes('b', id)]); const b = regById.get(id);
+  const roof = HT(ab);
+  const kv = [['height', roof != null ? `${roof} m` : '—'], ['LiDAR / model', ab.mh != null ? `${ab.mh} m` : '—'], ['floors', ab.lv ?? '—'], ['below ground', ab.lu ?? '—'], ['footprint', b.area_m2 ? `${N(b.area_m2)} m²` : '—'],
+    ['occupants', b.occupants.length], ['homes', b.homes ? (typeof b.homes.count === 'number' ? N(b.homes.count) : esc(b.homes.count)) : 0], ['companies', N(ab.co)], ['UPRNs', b.uprns ?? '—']];
+  // stack of floors with occupants placed by OSM level
+  const byLevel = new Map(), noLevel = [];
+  for (const o of b.occupants) { const l = levelNum(o.level); if (l == null) noLevel.push(o); else { if (!byLevel.has(l)) byLevel.set(l, []); byLevel.get(l).push(o); } }
+  const top = Math.max(0, ...byLevel.keys(), Math.min(ab.lv ? ab.lv - 1 : 0, 6)), bot = Math.min(0, ...byLevel.keys(), ab.lu ? -ab.lu : 0);
+  let stack = '';
+  if (byLevel.size || ab.lu || ab.lv) {
+    const rows = [];
+    let gap = null;   // runs of empty floors above ground are drawn as one row
+    const flushGap = () => { if (gap) rows.push(`<div class="lv">${gap[0] === gap[1] ? '+' + gap[0] : `+${gap[1]}…${gap[0]}`}</div><div class="fl small">${gap[0] === gap[1] ? '—' : `${gap[1] - gap[0] + 1} floors, no occupant mapped`}</div>`); gap = null; };
+    for (let l = top; l >= bot; l--) {
+      const os = byLevel.get(l) || [];
+      if (!os.length && l > 0) { gap = gap ? [l, gap[1]] : [l, l]; continue; }
+      flushGap();
+      rows.push(`<div class="lv">${l === 0 ? 'ground' : l > 0 ? '+' + l : l}</div><div class="fl${l < 0 ? ' below' : ''}${l === 0 ? ' ground' : ''}">${os.map(o => esc(o.name)).join(' · ') || '<span class="small">—</span>'}</div>`);
+    }
+    flushGap();
+    if (ab.lv && ab.lv - 1 > top) rows.unshift(`<div class="lv">+${ab.lv - 1}</div><div class="fl small">top floor (${ab.lv} floors above ground${ab.wh ? `, ${ab.wh} m` : ''})</div>`);
+    stack = `<h3>Floors</h3><div class="stack">${rows.join('')}</div><p class="small">Occupants are placed by their OSM <code>level</code>, which is a floor index, not a height.${noLevel.length ? ` ${noLevel.length} occupants have no level.` : ''}</p>`;
+  }
+  // opening hours: the occupant's own page (web facts) first, else its OSM tag; open now in London time
+  const ohLine = o => { const h = o.web && o.web.opening_hours && o.web.scope !== 'chain' ? [o.web.opening_hours, 'web page'] : o.opening_hours ? [o.opening_hours, 'OSM'] : o.web && o.web.opening_hours ? [o.web.opening_hours, 'chain web page'] : null;
+    const ph = (o.web && o.web.phone) || o.phone; if (!h && !ph) return '';
+    const st = h && window.OpeningHours ? OpeningHours.openState(h[0]) : null;
+    return `<div class="small">${h ? `${st ? (st.open ? `<b style="color:#2e8b57">open${st.until ? ' to ' + st.until : ''}</b> · ` : `closed${st.from ? ', opens ' + st.from : ''} · `) : ''}${esc(h[0])} <span class="tag">${h[1]}</span>` : ''}${ph ? `${h ? ' · ' : ''}${esc(ph)}` : ''}</div>`; };
+  const occ = b.occupants.map(o => `<div class="occ"><b>${esc(o.name)}</b> <span class="tag">${esc(o.role)}</span>${o.level != null ? ` <span class="tag">level ${esc(o.level)}</span>` : ''}${o.brand ? ` <a href="#" data-open="brand/${esc(o.brand)}" class="tag">${esc(o.brand)}</a>` : ''}${o.rating ? ` <span class="tag">FSA ${esc(o.rating)}</span>` : ''}${o.mall ? ` <span class="tag">${esc(o.mall)}${o.level_cwg ? ', ' + esc(o.level_cwg) : ''}</span>` : ''}${ohLine(o)}
+    <div class="links small">${o.web && o.web.page ? a(o.web.page, 'its web page') : ''}${o.osm ? a('https://www.openstreetmap.org/' + o.osm, 'OSM') : ''}${o.url ? a(o.url, 'FSA') : ''}${o.wikidata ? a('https://www.wikidata.org/wiki/' + o.wikidata, 'Wikidata') : ''}${o.cwg_archived ? a(o.cwg_archived, 'CWG page (archived)') : ''}${o.store_url ? a(o.store_url, 'store page') : ''}</div></div>`).join('');
+  const facts = Object.entries(b.facts || {}).filter(([k]) => k !== 'classes').map(([k, v]) => `<tr><th style="position:static">${esc(k)}</th><td>${v.map(esc).join(', ')}</td></tr>`).join('');
+  const homes = b.homes && typeof b.homes === 'object' ? `<h3>Homes</h3><p>${typeof b.homes.count === 'number' ? N(b.homes.count) : esc(b.homes.count)} homes <span class="small">(${esc(b.homes.source || 'GLA London Building Stock Model 2')})</span></p>${['property_type', 'construction_age_band', 'epc_rating'].filter(k => b.homes[k]).map(k => `<div class="small">${esc(k.replace(/_/g, ' '))}: ${Object.entries(b.homes[k]).map(([x, n]) => `${esc(x)} ${N(n)}`).join(', ')}</div>`).join('')}` : '';
+  const sales = b.sales ? `<h3>Sales (HM Land Registry)</h3><p>${N(b.sales.homes_sold_since_1995)} homes sold since 1995 in ${N(b.sales.sales)} sales, ${esc(b.sales.first)} to ${esc(b.sales.last)}; median ${money(b.sales.median_price)}${b.sales.new_build_sales ? `; ${N(b.sales.new_build_sales)} new-build sales` : ''}.</p>${sparkYears(b.sales.sales_by_year)}` : '';
+  const comp = Array.isArray(b.companies) ? `<h3>Registered companies (${b.companies.length})</h3><div class="small">${b.companies.slice(0, 60).map(c => `${a('https://find-and-update.company-information.service.gov.uk/company/' + c.number, c.name)} <span class="tag">${esc(c.incorporated || '')}</span>`).join('<br>')}${b.companies.length > 60 ? `<br>… and ${b.companies.length - 60} more` : ''}</div>` : b.companies ? `<h3>Registered companies</h3><p>${N(b.companies.count)} <span class="small">${esc(b.companies.note || '')}</span></p>` : '';
+  const pcs = (b.postcode_info || []).map(p => `${linkPc(p.pc)} <span class="tag">${esc(p.tier || p.status)}</span>${p.large_user ? ' <span class="tag">large user</span>' : ''}`).join(' · ');
+  const L = b.links || {};
+  dossier(esc(b.name || id), `
+    <div class="small">${esc(id)}${b.osm_name && b.osm_name !== b.name ? ` · OSM name “${esc(b.osm_name)}”` : ''}${b.building && b.building !== 'yes' ? ` · ${esc(b.building)}` : ''}${b.description ? ` · ${esc(b.description)}` : ''}</div>
+    ${b.address ? `<div>${esc(b.address)}</div>` : ''}
+    <div class="kv">${kv.map(([k, v]) => `<div><b>${v}</b><span>${k}</span></div>`).join('')}</div>
+    <div class="links">
+      <a href="#" data-flyto="${ab.lat},${ab.lon}">show on map</a>
+      <a href="../docklands/#at=${ab.x},${ab.z},${Math.max(350, Math.min(1400, (roof || 30) * 5))}" target="_blank" rel="noopener">open in 3D</a>
+      <a href="../registry/#${esc(id)}" target="_blank" rel="noopener">registry page</a>
+      ${(L.osm || []).map(u => a(u, 'OSM')).join('')}${L.wikidata ? a(L.wikidata, 'Wikidata') : ''}${b.wikipedia ? a(b.wikipedia, 'Wikipedia') : ''}
+    </div>
+    ${b.owners.length ? `<h3>Owners</h3><p>${b.owners.map(o => `${esc(o.name)} <span class="small">(${esc(o.source)})</span>`).join(', ')}</p>` : ''}
+    ${stack}
+    ${b.occupants.length ? `<h3>Occupants (${b.occupants.length})</h3>${occ}` : ''}
+    ${b.features?.length ? `<h3>Features</h3><p class="small">${b.features.map(f => `${esc(f.name)} (${esc(f.kind)})`).join(', ')}</p>` : ''}
+    ${facts ? `<h3>Wikidata</h3><table>${facts}</table>` : ''}
+    ${homes}${sales}${comp}
+    <div id="ldsDos"></div>
+    ${pcs ? `<h3>Postcodes</h3><p>${pcs}</p>` : ''}
+    ${qn}
+    <h3>Identifiers</h3><p class="small">${b.toids?.length ? `OS TOID ${b.toids.map(esc).join(', ')}<br>` : ''}${b.usrns?.length ? `USRN ${b.usrns.map(esc).join(', ')}<br>` : ''}${b.inspire?.length ? `HM Land Registry INSPIRE ${b.inspire.map(esc).join(', ')} (index polygons, not title numbers)<br>` : ''}${(L.companies_house_by_postcode || []).map(u => a(u, 'Companies House search')).join(' ')} ${(L.land_registry_price_paid_by_postcode || []).map(u => a(u, 'price paid search')).join(' ')}</p>`);
+  ldsDossier(id);
+}
+// London Datastore facts of the building (heat, solar, Census context, venues; tools/join-lds.mjs), filled when loaded
+function ldsDossier(id) { if (!window.LdsBuilding) return; LdsBuilding.load('../').then(() => { const el = $('ldsDos'); if (el && regById.has(id)) { const h = LdsBuilding.html(id, esc); el.innerHTML = h ? '<h3>London Datastore</h3>' + h : ''; } }).catch(() => {}); }
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-flyto]'); if (!t) return; e.preventDefault();
+  const [la, lo] = t.dataset.flyto.split(',').map(Number); location.hash = 'map'; show('map');
+  setTimeout(() => map && map.setView([la, lo], 18), 80);
+});
+function sparkYears(byYear) {
+  const ys = Object.keys(byYear || {}).map(Number); if (!ys.length) return '';
+  const y0 = Math.min(...ys), y1 = Math.max(2026, ...ys), mx = Math.max(...Object.values(byYear)), w = 300, h = 40, bw = w / (y1 - y0 + 1);
+  return `<svg viewBox="0 0 ${w} ${h + 14}" width="100%" role="img" aria-label="Sales per year">${Object.entries(byYear).map(([y, n]) => `<rect x="${(y - y0) * bw}" y="${h - n / mx * h}" width="${Math.max(1, bw - 1)}" height="${n / mx * h}" fill="var(--accent2)"><title>${y}: ${n}</title></rect>`).join('')}<text x="0" y="${h + 12}" class="muted">${y0}</text><text x="${w}" y="${h + 12}" text-anchor="end" class="muted">${y1}</text></svg>`;
+}
+
+// ---------- postcode dossier
+async function openPostcode(pc) {
+  const p = A.postcodes.find(x => x.pc === pc);
+  dossier(esc(pc), '<p class="small">Loading…</p>');
+  const [co, hm, qs, qn] = await Promise.all([load(P.companies), load(P.homes), load(P.queries).catch(() => null), qNotes('pc', pc)]);
+  const comps = co.postcodes[pc] || [], h = hm.postcodes[pc];
+  const inB = [...B.values()].filter(b => b.pc.includes(pc));
+  const qr = qs?.results?.[pc] || {}, found = ['govuk', 'wiki'].flatMap(k => (qr[k]?.items || []).map(it => ({ ...it, src: k === 'govuk' ? 'GOV.UK' : 'Wikipedia' })));
+  const tpl = (qs?.search_engine_templates || []).map(t => t.replace('{postcode}', pc));
+  dossier(esc(pc), `
+    ${p ? `<div class="kv"><div><b>${esc(p.s)}</b><span>status</span></div><div><b>${esc(ym(p.in))}</b><span>introduced</span></div>${p.out ? `<div><b>${esc(ym(p.out))}</b><span>terminated</span></div>` : ''}<div><b>${esc(p.t)}</b><span>tier</span></div><div><b>${N(comps.length)}</b><span>companies</span></div><div><b>${N(p.of)}</b><span>OSM features</span></div></div>
+    <p class="small">Ward: ${esc(p.w || '—')}${p.lu ? ' · large-user postcode (one organisation)' : ''}${p.st.length ? ` · streets in OSM: ${p.st.map(esc).join(', ')}` : ''}</p>
+    <div class="links"><a href="#" data-flyto="${p.lat},${p.lon}">show on map</a>${a('https://find-and-update.company-information.service.gov.uk/advanced-search/get-results?registeredOfficeAddress=' + encodeURIComponent(pc), 'Companies House search')}${a('https://landregistry.data.gov.uk/app/ppd/search?postcode=' + encodeURIComponent(pc), 'price paid search')}${a('https://www.openstreetmap.org/?mlat=' + p.lat + '&mlon=' + p.lon + '#map=18/' + p.lat + '/' + p.lon, 'OSM')}</div>` : '<p class="small">Not an allocated postcode, or no position in the ONSPD.</p>'}
+    ${qn}
+    ${inB.length ? `<h3>Buildings with this postcode</h3><p>${inB.map(b => linkB(b.id)).join(' · ')}</p>` : ''}
+    ${h ? `<h3>Home sales (HM Land Registry)</h3><p>${N(h.homes_sold_since_1995)} homes sold since 1995 in ${N(h.sales)} sales; median ${money(h.median_price)}; last ${esc(h.last)}.</p>${sparkYears(h.sales_by_year)}` : ''}
+    ${comps.length ? `<h3>Registered companies (${comps.length})</h3><div class="tools"><input type="search" placeholder="Filter companies" aria-label="Filter companies" oninput="this.parentNode.nextElementSibling.querySelectorAll('div').forEach(d=>d.style.display=d.textContent.toLowerCase().includes(this.value.toLowerCase())?'':'none')"></div><div class="small">${comps.map(c => `<div>${a('https://find-and-update.company-information.service.gov.uk/company/' + c.number, c.name)} <span class="tag">${esc(c.status)}</span> <span class="tag">${esc(c.incorporated)}</span>${c.sic?.length ? ` <span class="tag">SIC ${c.sic.map(esc).join(' ')}</span>` : ''}</div>`).join('')}</div>` : ''}
+    ${found.length ? `<h3>Found by postcode search</h3><div class="small">${found.map(x => `${a(x.url, x.title)} <span class="tag">${esc(x.src)}</span>${x.date ? ` <span class="tag">${esc(x.date)}</span>` : ''}`).join('<br>')}</div>` : ''}
+    ${(qr.fsa?.items || []).length ? `<h3>Food premises (FSA)</h3><div class="small">${qr.fsa.items.map(x => `${a(x.url, x.name)} <span class="tag">${esc(x.type)}</span> <span class="tag">rating ${esc(x.rating)}</span>`).join('<br>')}</div>` : ''}
+    ${tpl.length ? `<h3>Web searches to run</h3><div class="small">${tpl.map(t => a('https://duckduckgo.com/?q=' + encodeURIComponent(t), t)).join('<br>')}</div>` : ''}`);
+}
+
+// ---------- heritage dossier
+async function openHeritage(i) {
+  const g = A.heritage[i]; if (!g) throw new Error('no heritage place');
+  dossier(esc(g.label || 'Heritage records'), `<p>${N(g.n)} records. Loading them…</p>`);
+  const R = (await load(P.records)).records, recs = g.ix.map(k => R[k]);
+  let shownN = 50;
+  const render = () => {
+    $('dBody').innerHTML = `<p>${N(g.n)} records at this point · ${Object.entries(g.src).map(([s, n]) => `${esc(s)} ${N(n)}`).join(', ')}</p>
+    <p class="small">${esc(recs[0]?.precision || '')}${recs[0]?.relation ? ' · ' + esc(recs[0].relation) : ''}</p>
+    <div class="links"><a href="#" data-flyto="${g.lat},${g.lon}">show on map</a></div>
+    <div class="tools"><input type="search" id="hq" placeholder="Filter records" aria-label="Filter records"></div>
+    <div id="hlist">${recs.slice(0, shownN).map(r => `<div class="occ">${a(r.url, r.title || `${r.object_type || 'record'} ${r.id}`)} ${r.title ? `<span class="tag">${esc(r.object_type || '')}</span>` : ''} <span class="tag">${esc(r.date || '')}</span><div class="small">${esc(r.collection || r.place || '')} · ${esc(r.licence || '')}</div></div>`).join('')}</div>
+    ${recs.length > shownN ? `<button class="btn more" type="button" id="hmore">Show more (${N(recs.length - shownN)})</button>` : ''}`;
+    const hm = $('hmore'); if (hm) hm.onclick = () => { shownN += 200; render(); };
+    $('hq').oninput = e => { const v = e.target.value.toLowerCase(); $('hlist').innerHTML = recs.filter(r => JSON.stringify(r).toLowerCase().includes(v)).slice(0, 300).map(r => `<div class="occ">${a(r.url, r.title || r.object_type || r.id)} <span class="tag">${esc(r.object_type || '')}</span> <span class="tag">${esc(r.date || '')}</span></div>`).join(''); };
+  };
+  render();
+}
+
+// ---------- brand dossier
+async function openBrand(name) {
+  const br = await load(P.branches), list = br.branches.filter(b => b.brand === name);
+  dossier(esc(name), `<p>${list.length} branch${list.length === 1 ? '' : 'es'} at Canary Wharf${list[0]?.brand_wikidata ? ` · ${a('https://www.wikidata.org/wiki/' + list[0].brand_wikidata, 'Wikidata')}` : ''}</p>
+  ${list.map(b => `<div class="occ"><b>${esc(b.name)}</b> <span class="tag">${esc(b.category)}</span> <span class="tag">${esc(b.sources.join('+'))}</span> <span class="tag">${esc(b.confidence)}</span><div class="small">${esc([b.address, b.postcode].filter(Boolean).join(', '))}</div><div class="links small">${b.lat ? `<a href="#" data-flyto="${b.lat},${b.lon}">map</a>` : ''}${b.osm_id ? a('https://www.openstreetmap.org/' + b.osm_id, 'OSM') : ''}${b.cwg_url ? a(b.cwg_archived || b.cwg_url, 'CWG') : ''}${b.store_url ? a(b.store_url, 'store page') : ''}${b.fhrs_id ? a('https://ratings.food.gov.uk/business/' + b.fhrs_id, 'FSA') : ''}${b.mall ? `<span>${esc(b.mall)}${b.level_cwg ? ', ' + esc(b.level_cwg) : ''}</span>` : ''}</div></div>`).join('')}`);
+}
+
+// ---------- search
+const qEl = $('q'), resEl = $('results');
+qEl.addEventListener('focus', () => { getReg().catch(() => {}); });
+qEl.addEventListener('input', () => {
+  const v = qEl.value.trim().toLowerCase(); if (v.length < 2) { resEl.style.display = 'none'; return; }
+  const groups = [], take = (arr, n) => arr.slice(0, n);
+  const bs = take([...B.values()].filter(b => (b.n || '').toLowerCase().includes(v) || b.id.includes(v)), 8);
+  if (bs.length) groups.push(['Buildings', bs.map(b => [`b/${b.id}`, `${b.n || b.id} <span class="small">${b.id}</span>`])]);
+  if (REG) {
+    const occ = []; for (const b of REG.buildings) for (const o of b.occupants) if (o.name.toLowerCase().includes(v)) occ.push([`b/${b.id}`, `${esc(o.name)} <span class="small">in ${esc(b.name || b.id)}</span>`]);
+    if (occ.length) groups.push(['Occupants', take(occ, 10)]);
+    const brands = [...new Set(REG.buildings.flatMap(b => b.occupants.map(o => o.brand)).filter(x => x && x.toLowerCase().includes(v)))];
+    if (brands.length) groups.push(['Brands', take(brands, 6).map(x => [`brand/${x}`, esc(x)])]);
+  }
+  const vp = v.replace(/\s+/g, '');
+  const pcs = take(A.postcodes.filter(p => p.pc.toLowerCase().replace(' ', '').startsWith(vp) || p.st.some(s => s.toLowerCase().includes(v))), 8);
+  if (pcs.length) groups.push(['Postcodes', pcs.map(p => [`pc/${p.pc.replace(' ', '-')}`, `${p.pc} <span class="small">${esc(p.s)}${p.st[0] ? ', ' + esc(p.st[0]) : ''}</span>`])]);
+  const hs = take(A.heritage.map((g, i) => [g, i]).filter(([g]) => (g.label || '').toLowerCase().includes(v)), 5);
+  if (hs.length) groups.push(['Heritage places', hs.map(([g, i]) => [`h/${i}`, `${esc(g.label)} <span class="small">${N(g.n)} records</span>`])]);
+  const wd = take(A.wikidata.filter(w => w.n.toLowerCase().includes(v)), 6);
+  resEl.innerHTML = groups.map(([g, rows]) => `<div class="grp">${g}</div>${rows.map(([k, html]) => `<button type="button" data-open="${esc(k)}">${html}</button>`).join('')}`).join('')
+    + (wd.length ? `<div class="grp">Wikidata items</div>${wd.map(w => `<button type="button" data-flyto="${w.lat},${w.lon}">${esc(w.n)} <span class="small">${esc(w.d)}</span></button>`).join('')}` : '')
+    || '<div class="grp">No match</div>';
+  resEl.style.display = 'block';
+});
+document.addEventListener('click', e => { if (!e.target.closest('.search')) resEl.style.display = 'none'; else if (e.target.closest('[data-flyto]')) resEl.style.display = 'none'; });
+
+// ---------- live data (only on request)
+const getJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); };
+const when = t => new Date(t).toLocaleString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+let lastTide = null;
+async function tideNow() {
+  const g = async id => (await getJSON(`https://environment.data.gov.uk/flood-monitoring/id/stations/${id}/readings?latest`)).items[0];
+  const [tp, sv] = await Promise.all([g('0007'), g('0001')]); lastTide = tp.value; return [tp, sv];
+}
+async function loadLive(box) {
+  const out = box.querySelector('[data-liveout]'), parts = {}, btn = box.querySelector('[data-live]'), direct = !!(box.querySelector('[data-direct]') || {}).checked;
+  btn.disabled = true; out.textContent = 'Loading…';
+  const showP = () => { out.innerHTML = ['tide', 'weather', 'air', 'lines', 'overflows'].map(k => parts[k] ? `<p>${parts[k]}</p>` : '').join(''); };
+  const job = async (k, fn) => { try { parts[k] = await fn(); } catch (e) { parts[k] = `<span style="color:var(--warn)">${esc(k)}: ${esc(e.message || e)}</span>`; } showP(); };
+  const crests = A.defences.map(d => d.c).sort((x, y) => x - y);
+  // londat cache first (cache/latest.json via ../live-cache.js); the publishers' APIs when "Live" is ticked or the cache is over an hour old
+  const sayTide = (tp, sv) => `<b>Thames</b> (EA tide gauges, m OD): Tower Pier ${tp.value.toFixed(2)} m at ${when(tp.dateTime)}, Silvertown ${sv.value.toFixed(2)} m. The lowest flood-wall crest in the area is ${crests[0].toFixed(2)} m OD, ${(crests[0] - tp.value).toFixed(2)} m above the water.`;
+  const sayWx = c => `<b>Weather</b> (Open-Meteo, ${esc(String(c.time).replace('T', ' '))}): ${c.temperature_2m} °C, wind ${c.wind_speed_10m} km/h from ${c.wind_direction_10m}°, cloud ${c.cloud_cover}%, rain ${c.precipitation} mm.`;
+  await Promise.all([
+    job('tide', async () => (await CwLive.pick('tide', t => { const st = id => { const k = Object.keys(t.stations).find(x => x.startsWith(`ea-level:${id}-`)), l = k && t.stations[k].latest; if (!l) throw new Error('no reading'); return { value: l[1], dateTime: l[0] }; }; const tp = st('0007'); lastTide = tp.value; return sayTide(tp, st('0001')); },
+      async () => { const [tp, sv] = await tideNow(); return sayTide(tp, sv); }, direct)).html),
+    job('weather', async () => (await CwLive.pick('weather', t => sayWx({ time: when(t.time), temperature_2m: t.current.temp_c, wind_speed_10m: t.current.wind_kmh, wind_direction_10m: t.current.wind_dir, cloud_cover: t.current.cloud_pct, precipitation: t.current.precip_mm }),
+      async () => sayWx((await getJSON('https://api.open-meteo.com/v1/forecast?latitude=51.505&longitude=-0.02&current=temperature_2m,wind_speed_10m,wind_direction_10m,cloud_cover,precipitation&timezone=Europe/London')).current), direct)).html),
+    job('air', async () => { const s = (await getJSON('https://api.erg.ic.ac.uk/AirQuality/Hourly/MonitoringIndex/SiteCode=TH4/Json')).HourlyAirQualityIndex.LocalAuthority.Site; return `<b>Air</b> (${esc(s['@SiteName'])}, LAQN): ` + [].concat(s.species || []).map(x => `${esc(x['@SpeciesCode'])} ${x['@AirQualityBand'] === 'No data' ? 'no data' : `${esc(x['@AirQualityIndex'])} (${esc(x['@AirQualityBand'])})`}`).join(', '); }),
+    job('lines', async () => { const ids = ['jubilee', 'dlr', 'elizabeth', 'windrush', 'london-cable-car'], NAME = { jubilee: 'Jubilee', dlr: 'DLR', elizabeth: 'Elizabeth line', windrush: 'Windrush', 'london-cable-car': 'London Cable Car' };
+      return (await CwLive.pick('line_status', t => '<b>Lines</b> (TfL): ' + ids.map(id => { const st = CwLive.rowsOf(t).filter(r => r.line === id); if (!st.length) throw new Error(`no status for ${id}`); return `${esc(NAME[id])}: ${esc(st.map(r => r.status).join(' / '))}`; }).join(' · '),
+        async () => '<b>Lines</b> (TfL): ' + (await getJSON('https://api.tfl.gov.uk/Line/jubilee,dlr,elizabeth,windrush,london-cable-car/Status')).map(l => `${esc(l.name)}: ${esc(l.lineStatuses.map(s => s.statusSeverityDescription).join(' / '))}`).join(' · '), direct)).html; }),
+    job('overflows', async () => { const say = f => { const n = v => f.filter(x => x.Status === v).length; return `<b>Storm overflows</b> (Thames Water): ${f.length} monitored in the area, ${n(1)} discharging, ${n(0)} not, ${n(-1)} offline.` + (n(1) ? ' Discharging: ' + f.filter(x => x.Status === 1).map(x => `${esc(x.Id)} into ${esc(x.ReceivingWaterCourse)}`).join('; ') : ''); };
+      return (await CwLive.pick('overflows', t => say(CwLive.rowsOf(t).filter(r => r.lon <= 0.015 && r.lon >= -0.095 && r.lat >= 51.474 && r.lat <= 51.522).map(r => ({ Id: r.id, Status: r.status, ReceivingWaterCourse: r.receiving_water }))),
+        async () => say((await getJSON('https://services2.arcgis.com/g6o32ZDQ33GpCIu3/arcgis/rest/services/Thames_Water_Storm_Overflow_Activity_(Production)_view/FeatureServer/0/query?geometry=-0.095%2C51.474%2C0.015%2C51.522&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=Id%2CStatus%2CReceivingWaterCourse&returnGeometry=false&f=json')).features.map(x => x.attributes)), direct)).html; }),
+  ]);
+  btn.disabled = false; btn.textContent = 'Reload live data';
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-live]'); if (b) loadLive(b.closest('.live')); });
+
+// ---------- small chart helpers
+// label positions with at least `gap` px between them, as close as possible to their wanted y (sorted top to bottom)
+const spread = (ys, gap = 14) => { const o = ys.map((y, i) => ({ y, i })).sort((p, q) => p.y - q.y), out = []; let last = -1e9; for (const it of o) { const y = Math.max(it.y, last + gap); out[it.i] = y; last = y; } return out; };
+const barsHtml = (rows, onclick) => { const mx = Math.max(...rows.map(r => r[1]), 1); return rows.map(([k, n]) => `<span>${onclick ? `<a href="#" ${onclick(k)}>${esc(k)}</a>` : esc(k)}</span><div class="b" style="width:${Math.max(2, n / mx * 100)}%"></div><span class="num">${N(n)}</span>`).join(''); };
+function hist(values, lo, hi, step, color, mark) {
+  const n = Math.ceil((hi - lo) / step), c = new Array(n).fill(0);
+  for (const v of values) { const i = Math.floor((v - lo) / step); if (i >= 0 && i < n) c[i]++; }
+  const mx = Math.max(...c, 1), w = 520, h = 140, bw = w / n;
+  const x = v => (v - lo) / (hi - lo) * w;
+  return `<svg viewBox="-4 0 ${w + 8} ${h + 30}" width="100%" role="img">${c.map((k, i) => `<rect x="${i * bw}" y="${h - k / mx * h}" width="${bw - 1}" height="${k / mx * h}" fill="${typeof color === 'function' ? color(lo + (i + .5) * step) : color}"><title>${(lo + i * step).toFixed(1)} to ${(lo + (i + 1) * step).toFixed(1)} m: ${k}</title></rect>`).join('')}
+    ${[[lo, 'start'], [(lo + hi) / 2, 'middle'], [hi, 'end']].map(([v, an]) => `<text x="${x(v)}" y="${h + 16}" text-anchor="${an}" class="muted">${v} m OD</text>`).join('')}
+    ${mark != null ? `<line x1="${x(mark)}" x2="${x(mark)}" y1="0" y2="${h}" stroke="var(--bad)" stroke-width="2"/><text x="${x(mark) + 4}" y="12" style="fill:var(--bad)">tide now ${mark.toFixed(2)} m</text>` : ''}</svg>`;
+}
+function sortable(table, cols, rows, onRow, limitBtn, initial = 0, desc = true) {
+  let key = initial, dir = desc ? -1 : 1, lim = 100;
+  const draw = () => {
+    const c = cols[key], sorted = [...rows].sort((x, y) => { const va = c.v(x), vb = c.v(y); return (va == null) - (vb == null) || (va < vb ? -1 : va > vb ? 1 : 0) * dir; });
+    table.innerHTML = `<thead><tr>${cols.map((c2, i) => `<th class="${c2.r ? 'r' : ''}" data-k="${i}" aria-sort="${i === key ? (dir < 0 ? 'descending' : 'ascending') : 'none'}">${c2.h}${i === key ? (dir < 0 ? ' ↓' : ' ↑') : ''}</th>`).join('')}</tr></thead><tbody>${sorted.slice(0, lim).map(r => `<tr data-row="${esc(onRow(r))}">${cols.map(c2 => `<td class="${c2.r ? 'r num' : ''}">${c2.f ? c2.f(r) : N(c2.v(r))}</td>`).join('')}</tr>`).join('')}</tbody>`;
+    table.querySelectorAll('th').forEach(th => th.onclick = () => { const k = +th.dataset.k; if (k === key) dir = -dir; else { key = k; dir = cols[k].r ? -1 : 1; } draw(); });
+    table.querySelectorAll('tbody tr').forEach(tr => tr.onclick = () => { const [k, ...r] = tr.dataset.row.split('/'); open(k, r.join('/')); });
+    if (limitBtn) limitBtn.classList.toggle('hidden', sorted.length <= lim);
+  };
+  if (limitBtn) limitBtn.onclick = () => { lim += 200; draw(); };
+  return { draw, set(r) { rows = r; lim = 100; draw(); } };
+}
+
+// ---------- views
+const INIT = {};
+INIT.overview = () => {
+  const c = A.counts;
+  const cards = [
+    ['../docklands/', 'Docklands 3D', N(c.model_buildings), 'buildings in the 3D model from London Bridge to Cody Dock, with tunnels, basements, indoor levels, flood walls and the riverbed'],
+    ['#buildings', 'Buildings', N(c.registry_buildings), `buildings at Canary Wharf with internal ids; ${N(c.occupants)} occupants; ${N(c.with_owner)} with a named owner`],
+    ['#map', 'Map', '12', 'layers: buildings, branches, postcodes, heritage, priority areas, Wikidata, riverbed, wrecks, flood walls, stations, data-quality issues, traffic cameras'],
+    ['#business', 'Businesses', N(c.branches), `chain-store branches of ${N(c.brands)} brands; ${N(c.companies)} registered companies at Canary Wharf postcodes`],
+    ['#buildings/homes', 'Homes', N(c.homes), `homes in ${N(c.homes_buildings)} residential buildings (GLA London Building Stock Model), with sales from HM Land Registry`],
+    ['#postcodes', 'Postcodes', N(c.postcodes_candidates), `E14 candidates: ${N(c.postcodes_live)} live, ${N(c.postcodes_terminated)} terminated, ${N(c.postcodes_never)} never allocated`],
+    ['#under', 'Below ground', N(c.published_levels), `published levels in m OD, from the Elizabeth line base slab to the dock bed; ${N(c.facts)} cited facts`],
+    ['#heritage', 'Heritage', N(c.heritage_records), `museum and heritage records at ${N(c.heritage_places)} places`],
+    ['#river', 'River', N(c.soundings), `riverbed soundings, ${N(c.wrecks)} wrecks and obstructions, ${N(c.defences)} flood-wall segments with crest levels`],
+    ['#sources', 'Live and sources', N(c.feeds + c.events), `${N(c.feeds)} data feeds and APIs and ${N(c.events)} event, news and openings sources, each checked`],
+    ['#map', 'Wikidata', N(c.wikidata), 'Wikidata items with coordinates in the Docklands box'],
+    ['#quality', 'Data quality', '<span id="ovQ">…</span>', 'issue records from the checks run on every rebuild: identity, position, attribute conflicts, validity, our own pipeline, currency, coverage, meaning'],
+    ['#data', 'Data and licences', N(c.register_files), 'committed data files, each with its sources, licence and use of OpenStreetMap'],
+  ];
+  $('ovCards').innerHTML = cards.map(([h, k, big, p]) => `<a class="card" href="${h}"${h.startsWith('..') ? ' target="_blank" rel="noopener"' : ''}><div class="k">${k}</div><div class="big">${big}</div><p>${p}</p></a>`).join('');
+  getQ().then(({ q }) => { $('ovQ').textContent = N(q.summary.issues); }).catch(() => { $('ovQ').textContent = '—'; });
+  $('ovFoot').innerHTML = `Atlas data built ${esc(A.built)}. ` + A.attribution.map(s => a(s.url, s.text)).join(' · ');
+};
+
+INIT.buildings = () => {
+  // skyline: tallest buildings with floors above and below
+  const tall = [...B.values()].filter(b => b.n && HT(b)).sort((x, y) => HT(y) - HT(x)).filter((b, i, arr) => arr.findIndex(z => z.n === b.n) === i).slice(0, 24);
+  const W = 1000, H = 300, base = 230, mx = Math.max(...tall.map(HT)), bw = W / tall.length, sc = (base - 20) / mx, under = 6;
+  $('skyline').innerHTML = `<svg viewBox="0 0 ${W + 70} ${H + 100}" width="100%" role="img" aria-label="Tallest buildings at Canary Wharf with floors above and below ground">
+    <rect x="0" y="${base}" width="${W}" height="${H - base + 10}" fill="color-mix(in srgb, var(--accent2) 10%, transparent)"/>
+    <line x1="0" x2="${W}" y1="${base}" y2="${base}" stroke="var(--muted)"/>
+    ${tall.map((b, i) => { const hgt = HT(b) * sc, x = i * bw + bw * .15, w = bw * .7;
+      return `<g data-open="b/${b.id}" style="cursor:pointer"><title>${esc(b.n)}: ${HT(b)} m${b.lv ? `, ${b.lv} floors` : ''}${b.lu ? `, ${b.lu} below ground` : ''}</title>
+      <rect x="${x}" y="${base - hgt}" width="${w}" height="${hgt}" rx="2" fill="${lerpHex(RAMP, HT(b) / mx)}"/>
+      ${b.lu ? `<rect x="${x}" y="${base}" width="${w}" height="${b.lu * under}" fill="var(--accent2)"/>` : ''}
+      <text x="${x + w / 2}" y="${base - hgt - 4}" text-anchor="middle" style="font-size:10px">${Math.round(HT(b))}</text>
+      <text transform="translate(${x + w / 2},${base + 32}) rotate(50)" style="font-size:11px">${esc((b.n || b.id).replace(/, London$/, '').slice(0, 19))}</text></g>`; }).join('')}
+    <text x="0" y="${H + 94}" class="muted" style="font-size:12px">Bars: roof height in metres. Green below the ground line: floors below ground (${under} px each). Tap a bar for the building.</text></svg>`;
+  const F = { all: () => true, named: b => b.n, occupied: b => b.o > 0, homes: b => b.hm, companies: b => b.co > 0, basement: b => b.lu > 0, owner: b => b.own.length, wikidata: b => b.wd };
+  let f = location.hash.includes('homes') ? 'homes' : 'all';
+  $('bf').innerHTML = Object.keys(F).map(k => `<button class="chip" type="button" data-f="${k}" aria-pressed="${k === f}">${k}</button>`).join('');
+  const cols = [
+    { h: 'id', v: b => b.id }, { h: 'name', v: b => b.n, f: b => esc(b.n || '—') },
+    { h: 'height m', v: HT, r: 1 }, { h: 'floors', v: b => b.lv, r: 1 }, { h: 'below', v: b => b.lu, r: 1 },
+    { h: 'occupants', v: b => b.o, r: 1 }, { h: 'homes', v: b => b.hm < 0 ? 1 : b.hm, f: b => b.hm < 0 ? '&lt;5' : N(b.hm), r: 1 }, { h: 'companies', v: b => b.co, r: 1 },
+    { h: 'owner', v: b => b.own.join(', '), f: b => esc(b.own.join(', ')) }, { h: 'postcodes', v: b => b.pc.join(' '), f: b => esc(b.pc.slice(0, 3).join(', ')) },
+  ];
+  const T = sortable($('bt'), cols, [], b => `b/${b.id}`, $('bmore'), 2);
+  const apply = () => { const v = $('bq').value.toLowerCase(); const rows = [...B.values()].filter(b => F[f](b) && (!v || (b.n || '').toLowerCase().includes(v) || b.id.includes(v) || b.pc.some(p => p.toLowerCase().includes(v)))); $('bcount').textContent = `${N(rows.length)} buildings`; T.set(rows); };
+  $('bf').onclick = e => { const c = e.target.closest('[data-f]'); if (!c) return; f = c.dataset.f; $('bf').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === c))); apply(); };
+  $('bq').oninput = apply; apply();
+};
+
+INIT.business = async () => {
+  $('bizCards').innerHTML = '<p class="small">Loading occupants…</p>';
+  const [reg, br] = await Promise.all([getReg(), load(P.branches)]);
+  const occ = reg.buildings.flatMap(b => b.occupants.map(o => ({ ...o, b }))).concat(Object.values(reg.unplaced_by_postcode || {}).flat().map(o => ({ ...o, b: null })));
+  const fsa = occ.filter(o => o.source === 'fsa'), c = A.counts;
+  $('bizCards').innerHTML = [
+    ['Occupants', N(occ.length), 'placed in a building, or listed by postcode only'], ['Branches', N(c.branches), `of ${N(c.brands)} chain brands`],
+    ['Food premises', N(fsa.length), 'in the FSA Tower Hamlets file'], ['Companies', N(c.companies), 'registered at Canary Wharf postcodes (Companies House)'],
+  ].map(([k, n, p]) => `<div class="card"><div class="k">${k}</div><div class="big">${n}</div><p>${p}</p></div>`).join('');
+  // malls by level
+  const malls = new Map();
+  for (const o of occ) { if (!o.mall) continue; const l = levelNum(o.level_cwg?.match(/-?\d+/)?.[0] ?? o.level); if (!malls.has(o.mall)) malls.set(o.mall, new Map()); const m = malls.get(o.mall), k = l ?? 'level not stated'; if (!m.has(k)) m.set(k, []); m.get(k).push(o); }
+  $('malls').innerHTML = [...malls.entries()].sort((x, y) => [...y[1].values()].flat().length - [...x[1].values()].flat().length).map(([name, m]) => {
+    const ks = [...m.keys()].sort((x, y) => (typeof y === 'number' ? y : -99) - (typeof x === 'number' ? x : -99));
+    return `<div class="panel"><h3 style="margin-top:0">${esc(name)} <span class="small">${N([...m.values()].flat().length)} occupants</span></h3><div class="stack">${ks.map(k => `<div class="lv">${typeof k === 'number' ? (k === 0 ? 'street 0' : k) : '?'}</div><div class="fl${typeof k === 'number' && k < 0 ? ' below' : ''}">${m.get(k).map(o => o.b ? `<a href="#" data-open="b/${o.b.id}">${esc(o.name)}</a>` : esc(o.name)).join(' · ')}</div>`).join('')}</div></div>`;
+  }).join('');
+  const roles = {}; for (const o of occ) { const r = o.source === 'fsa' ? 'food business (FSA)' : o.role.split(':')[0]; roles[r] = (roles[r] || 0) + 1; }
+  $('roleBars').innerHTML = barsHtml(Object.entries(roles).sort((x, y) => y[1] - x[1]).slice(0, 14));
+  const rat = {}; for (const o of fsa) rat[o.rating || 'none'] = (rat[o.rating || 'none'] || 0) + 1;
+  $('fsaBars').innerHTML = barsHtml(Object.entries(rat).sort((x, y) => String(y[0]).localeCompare(String(x[0]))));
+  // brands
+  const byBrand = new Map(); for (const b of br.branches) { if (!byBrand.has(b.brand)) byBrand.set(b.brand, []); byBrand.get(b.brand).push(b); }
+  const cats = [...new Set(br.branches.map(b => b.category))].sort(); let cat = 'all';
+  $('brf').innerHTML = ['all', ...cats].map(k => `<button class="chip" type="button" data-c="${esc(k)}" aria-pressed="${k === 'all'}">${esc(k)}</button>`).join('');
+  const drawBrands = () => { const v = $('brq').value.toLowerCase(); $('brands').innerHTML = [...byBrand.entries()].filter(([n, l]) => (cat === 'all' || l[0].category === cat) && n.toLowerCase().includes(v)).sort((x, y) => y[1].length - x[1].length || x[0].localeCompare(y[0])).map(([n, l]) => `<a class="card" href="#" data-open="brand/${esc(n)}"><div class="k">${esc(n)}</div><p>${l.length} branch${l.length > 1 ? 'es' : ''} · ${esc(l[0].category)}</p></a>`).join(''); };
+  $('brf').onclick = e => { const c2 = e.target.closest('[data-c]'); if (!c2) return; cat = c2.dataset.c; $('brf').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === c2))); drawBrands(); };
+  $('brq').oninput = drawBrands; drawBrands();
+  // occupant directory
+  $('or').innerHTML = '<option value="">all kinds</option>' + Object.keys(roles).sort().map(r => `<option>${esc(r)}</option>`).join('');
+  const cols = [
+    { h: 'name', v: o => o.name, f: o => esc(o.name) }, { h: 'kind', v: o => o.role }, { h: 'level', v: o => levelNum(o.level), f: o => esc(o.level ?? '') , r: 1 },
+    { h: 'building', v: o => o.b?.name || '', f: o => o.b ? esc(o.b.name || o.b.id) : `<span class="small">${esc(o.postcode || '')} (postcode only)</span>` },
+    { h: 'brand', v: o => o.brand || '', f: o => esc(o.brand || '') }, { h: 'FSA', v: o => o.rating || '', f: o => esc(o.rating || '') }, { h: 'source', v: o => o.source },
+  ];
+  const T = sortable($('ot'), cols, [], o => o.b ? `b/${o.b.id}` : `pc/${(o.postcode || '').replace(' ', '-')}`, $('omore'), 0, false);
+  const apply = () => { const v = $('oq').value.toLowerCase(), r = $('or').value; const rows = occ.filter(o => (!r || (o.source === 'fsa' ? 'food business (FSA)' : o.role.split(':')[0]) === r) && (!v || o.name.toLowerCase().includes(v) || (o.brand || '').toLowerCase().includes(v))); $('ocount').textContent = `${N(rows.length)} occupants`; T.set(rows); };
+  $('oq').oninput = apply; $('or').onchange = apply; apply();
+};
+
+INIT.postcodes = () => {
+  const c = A.counts, tiers = {}; for (const p of A.postcodes) tiers[p.t] = (tiers[p.t] || 0) + 1;
+  const TN = { 'cw-core': 'Canary Wharf core (ward and box)', 'cw-ward': 'Canary Wharf ward only', 'cw-box-other-ward': 'in the estate box, other ward', 'terminated-cw': 'terminated, Canary Wharf', 'e14-other': 'rest of E14', 'terminated-other': 'terminated, rest of E14' };
+  $('pcCards').innerHTML = [['Candidates', c.postcodes_candidates, 'every valid E14 unit code'], ['Live', c.postcodes_live, 'in use now'], ['Terminated', c.postcodes_terminated, 'used once, now ended'], ['Never allocated', c.postcodes_never, 'valid but never used']]
+    .concat(Object.entries(TN).map(([k, t]) => [t, tiers[k] || 0, k])).map(([k, n, p]) => `<div class="card"><div class="k">${esc(k)}</div><div class="big">${N(n)}</div><p>${esc(p)}</p></div>`).join('');
+  // timeline
+  const cw = A.postcodes.filter(p => /cw/.test(p.t)), ins = {}, outs = {};
+  for (const p of cw) { if (p.in) ins[String(p.in).slice(0, 4)] = (ins[String(p.in).slice(0, 4)] || 0) + 1; if (p.out) outs[String(p.out).slice(0, 4)] = (outs[String(p.out).slice(0, 4)] || 0) + 1; }
+  const ys = [...new Set([...Object.keys(ins), ...Object.keys(outs)])].map(Number).sort(), y0 = Math.max(1980, ys[0]), y1 = 2026, W = 1000, H = 120, bw = W / (y1 - y0 + 1);
+  const mx = Math.max(...Object.entries(ins).filter(([k]) => +k > y0).map(e => e[1]), ...Object.values(outs));   // the first year holds every code in use when the directory began
+  $('pcTime').innerHTML = `<svg viewBox="0 0 ${W} ${2 * H + 30}" width="100%" role="img" aria-label="Postcodes introduced and terminated per year">
+    ${Array.from({ length: y1 - y0 + 1 }, (_, i) => { const y = y0 + i, a1 = ins[y] || 0, o1 = outs[y] || 0; const ah = Math.min(H, a1 / mx * H); return `<rect x="${i * bw}" y="${H - ah}" width="${bw - 2}" height="${ah}" fill="var(--accent2)"><title>${y}: ${a1} introduced${y === y0 ? ' (in use when the directory began; bar cut off)' : ''}</title></rect>${y === y0 ? `<text x="${i * bw + 4}" y="${H + 100}" style="font-size:11px" class="muted">${y0}: ${a1} codes already in use when the directory began (bar cut off)</text>` : ''}<rect x="${i * bw}" y="${H}" width="${bw - 2}" height="${o1 / mx * H}" fill="var(--accent)"><title>${y}: ${o1} terminated</title></rect>${y % 5 === 0 ? `<text x="${i * bw}" y="${2 * H + 22}" class="muted" style="font-size:11px">${y}</text>` : ''}`; }).join('')}
+    <line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--muted)"/><text x="${W}" y="14" text-anchor="end" style="fill:var(--accent2)">introduced</text><text x="${W}" y="${2 * H - 4}" text-anchor="end" style="fill:var(--accent)">terminated</text></svg>`;
+  let f = 'Canary Wharf';
+  const FF = { 'Canary Wharf': p => /cw/.test(p.t), live: p => p.s === 'live', terminated: p => p.s === 'terminated', 'large user': p => p.lu, 'with companies': p => p.co > 0, all: () => true };
+  $('pf').innerHTML = Object.keys(FF).map(k => `<button class="chip" type="button" data-f="${k}" aria-pressed="${k === f}">${k}</button>`).join('');
+  const cols = [
+    { h: 'postcode', v: p => p.pc }, { h: 'status', v: p => p.s }, { h: 'tier', v: p => p.t }, { h: 'introduced', v: p => p.in, f: p => ym(p.in) }, { h: 'ended', v: p => p.out, f: p => ym(p.out) },
+    { h: 'companies', v: p => p.co, r: 1 }, { h: 'homes sold', v: p => p.hs, r: 1 }, { h: 'median £', v: p => p.mp, f: p => p.mp ? money(p.mp) : '—', r: 1 }, { h: 'OSM', v: p => p.of, r: 1 },
+    { h: 'streets (OSM)', v: p => p.st.join(', '), f: p => esc(p.st.slice(0, 2).join(', ')) },
+  ];
+  const T = sortable($('pt'), cols, [], p => `pc/${p.pc.replace(' ', '-')}`, $('pmore'), 0, false);
+  const apply = () => { const v = $('pq').value.toLowerCase().replace(/\s+/g, ''); const rows = A.postcodes.filter(p => FF[f](p) && (!v || p.pc.toLowerCase().replace(' ', '').includes(v) || p.st.some(s => s.toLowerCase().replace(/\s+/g, '').includes(v)))); $('pcount').textContent = `${N(rows.length)} postcodes`; T.set(rows); };
+  $('pf').onclick = e => { const c2 = e.target.closest('[data-f]'); if (!c2) return; f = c2.dataset.f; $('pf').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === c2))); apply(); };
+  $('pq').oninput = apply; apply();
+};
+
+INIT.under = async () => {
+  // section: linear from -25 to +30 m OD, towers compressed above
+  const L = A.levels, W = 1120, top = 30, mid = 520, lo = -25, hi = 30, y = v => top + 120 + (hi - v) / (hi - lo) * (mid - 120);
+  const yT = v => top + 110 - (Math.min(v, 260) - hi) / (260 - hi) * 100;
+  const cols = { tower: [40, 220], slab: [260, 470], platform: [500, 720], water: [790, 1000] };
+  const slabs = L.filter(l => l.kind === 'slab').sort((p, q) => q.od - p.od), plats = L.filter(l => l.kind === 'platform').sort((p, q) => q.od - p.od);
+  const dockW = L.find(l => l.kind === 'water'), dockB = L.find(l => l.kind === 'bed'), riv = L.filter(l => l.kind === 'river');
+  const ticks = []; for (let v = lo; v <= hi; v += 5) ticks.push(v);
+  let s = `<svg viewBox="0 0 ${W} ${mid + 60}" width="100%" role="img" aria-label="Section of published levels at Canary Wharf, in metres above Ordnance Datum">
+    <rect x="0" y="${y(5)}" width="${W}" height="${y(lo) - y(5)}" fill="color-mix(in srgb, var(--warn) 8%, transparent)"/>
+    ${ticks.map(v => `<line x1="30" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="26" y="${y(v) + 4}" text-anchor="end" class="muted" style="font-size:10px">${v}</text>`).join('')}
+    <line x1="30" x2="${W}" y1="${y(5)}" y2="${y(5)}" stroke="var(--muted)" stroke-dasharray="4 3"/><text x="${cols.platform[0]}" y="${y(5) - 4}" class="muted" style="font-size:11px">typical ground, about 5 m OD (EA LiDAR)</text>
+    <text x="26" y="${y(hi) - 8}" text-anchor="end" class="muted" style="font-size:10px">m OD</text>
+    <text x="${cols.tower[0]}" y="16" style="font-weight:600">Tower roofs (compressed scale)</text>
+    <text x="${cols.slab[0]}" y="16" style="font-weight:600">Crossrail Place, slab levels</text>
+    <text x="${cols.platform[0]}" y="16" style="font-weight:600">Station platforms</text>
+    <text x="${cols.water[0]}" y="16" style="font-weight:600">Dock and river</text>`;
+  L.filter(l => l.kind === 'tower').forEach((t, i) => { const x = cols.tower[0] + i * 22; s += `<g ${t.id ? `data-open="b/${t.id}" style="cursor:pointer"` : ''}><title>${esc(t.place)}: ${t.od} m OD (${esc(t.what)})</title><rect x="${x}" y="${yT(t.od)}" width="18" height="${y(5) - yT(t.od)}" fill="${lerpHex(RAMP, .35 + t.od / 600)}"/><text transform="translate(${x + 13},${yT(t.od) + 6}) rotate(90)" style="font-size:10px;fill:#fff">${esc(t.place.slice(0, 26))} · ${Math.round(t.od)}</text></g>`; });
+  s += `<line x1="${cols.tower[0]}" x2="${cols.tower[1]}" y1="${top + 112}" y2="${top + 112}" stroke="var(--muted)" stroke-dasharray="2 4"/><text x="${cols.tower[0] + 182}" y="${top + 116}" class="muted" style="font-size:10px">← scale changes at +30 m</text>`;
+  slabs.forEach((l, i) => { const n = slabs[i + 1]; if (n) s += `<rect x="${cols.slab[0]}" y="${y(l.od)}" width="90" height="${y(n.od) - y(l.od)}" fill="${l.od < 4.23 ? 'color-mix(in srgb, var(--accent2) 25%, transparent)' : 'color-mix(in srgb, var(--accent) 18%, transparent)'}" stroke="var(--line)"/>`; s += `<line x1="${cols.slab[0]}" x2="${cols.slab[0] + 96}" y1="${y(l.od)}" y2="${y(l.od)}" stroke="var(--fg)"/><text x="${cols.slab[0] + 100}" y="${y(l.od) + 4}" style="font-size:11px">${esc(l.what)} ${l.od}</text>`; });
+  const plY = spread(plats.map(l => y(l.od)), 15);
+  plats.forEach((l, i) => { s += `<g><title>${esc(l.place)}: ${esc(l.what)} ${l.od} m OD. “${esc(l.quote || '')}”</title><circle cx="${cols.platform[0] + 8}" cy="${y(l.od)}" r="5" fill="var(--accent)"/><path d="M${cols.platform[0] + 14},${y(l.od)} L${cols.platform[0] + 26},${plY[i]}" stroke="var(--muted)" fill="none"/><a href="${esc(l.src)}" target="_blank"><text x="${cols.platform[0] + 30}" y="${plY[i] + 4}" style="font-size:11px;fill:var(--link)">${esc(l.place.replace(/ (DLR |tube |Elizabeth line )?station$/, '').replace(/ for Maritime Greenwich/, ''))}: ${esc(l.what.replace(/ platforms?$/i, '').replace(/ \(Windrush\)/, '').replace(/ \(approximate$/, ' (approx.)'))} ${l.od}</text></a></g>`; });
+  const wl = []; if (dockW && dockB) { s += `<rect x="${cols.water[0]}" y="${y(dockW.od)}" width="50" height="${y(dockB.od) - y(dockW.od)}" fill="var(--water)" opacity=".55"/>`; wl.push([dockW.od, `North Dock water ${dockW.od}`], [dockB.od, `North Dock bed ${dockB.od}`]); }
+  riv.forEach(r => { s += `<line x1="${cols.water[0]}" x2="${cols.water[0] + 50}" y1="${y(r.od)}" y2="${y(r.od)}" stroke="var(--water)" stroke-width="3" stroke-dasharray="${/median/.test(r.what) ? '6 3' : ''}"/>`; wl.push([r.od, `Thames bed, ${/median/.test(r.what) ? 'median' : 'deepest'} ${r.od}`]); });
+  const wY = spread(wl.map(w => y(w[0])), 15);
+  wl.forEach(([od, t], i) => { s += `<path d="M${cols.water[0] + 52},${y(od)} L${cols.water[0] + 62},${wY[i]}" stroke="var(--muted)" fill="none"/><text x="${cols.water[0] + 66}" y="${wY[i] + 4}" style="font-size:11px">${esc(t)}</text>`; });
+  s += `<text x="${cols.slab[0]}" y="${mid + 38}" class="muted" style="font-size:11px">Slab levels: Arup paper, Crossrail Learning Legacy, Figure 6 (m OD = mATD − 100 m).</text><text x="${cols.slab[0]}" y="${mid + 54}" class="muted" style="font-size:11px">River: UKHO soundings, chart datum taken as 3.20–3.35 m below ODN. Tower roofs: height plus LiDAR ground.</text></svg>`;
+  $('section').innerHTML = s;
+  // basements
+  const bs = [...B.values()].filter(b => b.lu > 0).sort((p, q) => q.lu - p.lu);
+  $('basements').innerHTML = `<thead><tr><th>building</th><th class="r">floors below</th><th class="r">model depth (×4 m)</th></tr></thead><tbody>${bs.map(b => `<tr data-open="b/${b.id}"><td>${esc(b.n || b.id)}</td><td class="r num">${b.lu}</td><td class="r num">${b.lu * 4} m</td></tr>`).join('')}</tbody>`;
+  const F = await load(P.facts);
+  $('gaps').innerHTML = (F.not_found || []).map(g => `<li>${esc(g.subject)}: ${esc(g.property)}</li>`).join('');
+  let lim = 60;
+  const draw = () => {
+    const v = $('fq').value.toLowerCase(), rows = F.facts.filter(f => !v || JSON.stringify(f).toLowerCase().includes(v));
+    $('fcount').textContent = `${N(rows.length)} of ${N(F.facts.length)} facts`;
+    $('facts').innerHTML = `<div class="cards">${rows.slice(0, lim).map(f => `<div class="card"><div class="k">${esc(f.subject)}</div><div><b class="num">${esc(f.value)} ${esc(f.unit || '')}</b> <span class="small">${esc(f.property)}${f.reference_level ? ' · ' + esc(f.reference_level) : ''}</span></div>${f.quote ? `<p class="quote">“${esc(f.quote)}”</p>` : ''}<div class="links small">${a(f.source_url, (f.source_url || '').replace(/^https?:\/\/(www\.)?/, '').split('/')[0])}${f.wikidata ? a('https://www.wikidata.org/wiki/' + f.wikidata, f.wikidata) : ''}<span>${esc(f.retrieved || '')}</span></div></div>`).join('')}</div>`;
+    $('fmore').classList.toggle('hidden', rows.length <= lim);
+  };
+  $('fq').oninput = () => { lim = 60; draw(); }; $('fmore').onclick = () => { lim += 120; draw(); }; draw();
+};
+
+INIT.heritage = () => {
+  const c = A.counts, src = {}, types = {};
+  for (const g of A.heritage) { for (const [k, n] of Object.entries(g.src)) src[k] = (src[k] || 0) + n; for (const [k, n] of g.types) types[k] = (types[k] || 0) + n; }
+  $('herCards').innerHTML = [['Records', c.heritage_records, 'with a position in the area'], ['Places', c.heritage_places, 'distinct positions']].concat(Object.entries(src).map(([k, n]) => [k.replace(/-/g, ' '), n, 'records'])).map(([k, n, p]) => `<div class="card"><div class="k">${esc(k)}</div><div class="big">${N(n)}</div><p>${esc(p)}</p></div>`).join('');
+  const rows = A.heritage.map((g, i) => [g, i]).sort((p, q) => q[0].n - p[0].n);
+  $('herPlaces').innerHTML = `<thead><tr><th>place</th><th class="r">records</th><th>most common</th></tr></thead><tbody>${rows.map(([g, i]) => `<tr data-open="h/${i}"><td>${esc(g.label || '—')}</td><td class="r num">${N(g.n)}</td><td class="small">${esc(g.types.slice(0, 2).map(t => t[0]).join(', '))}</td></tr>`).join('')}</tbody>`;
+  $('herTypes').innerHTML = barsHtml(Object.entries(types).sort((p, q) => q[1] - p[1]).slice(0, 18));
+};
+
+INIT.river = () => {
+  const s = A.soundings.map(x => x[2]).sort((p, q) => p - q), c = A.counts, crest = A.defences.map(d => d.c).sort((p, q) => p - q);
+  $('rivCards').innerHTML = [['Soundings', c.soundings, 'UKHO, in the area'], ['Deepest', `${s[0]} m OD`, 'bed level'], ['Median bed', `${s[s.length >> 1]} m OD`, ''], ['Flood-wall segments', c.defences, 'EA, tidal'], ['Lowest crest', `${crest[0]} m OD`, `median ${crest[crest.length >> 1]} m OD`], ['Wrecks and obstructions', c.wrecks, 'UKHO']]
+    .map(([k, n, p]) => `<div class="card"><div class="k">${k}</div><div class="big">${typeof n === 'number' ? N(n) : esc(n)}</div><p>${esc(p)}</p></div>`).join('');
+  $('bedHist').innerHTML = hist(s, -16, 4, .5, v => lerpHex(DEPTH, (2 - v) / 16)) + '<p class="small">Bed level of each sounding in m OD. Positive values are foreshore or shallows that dry at low tide.</p>';
+  const drawCrest = () => { $('crestHist').innerHTML = hist(crest, 4, 9, .1, 'var(--accent2)', lastTide) + '<p class="small">Surveyed crest level of each EA flood-defence segment (actual upstream crest, else downstream, else design).</p>'; };
+  drawCrest();
+  $('tideBtn').onclick = async () => { $('tideOut').textContent = 'Loading…'; try { const [tp] = await tideNow(); $('tideOut').textContent = `Tower Pier ${tp.value.toFixed(2)} m OD at ${when(tp.dateTime)} (EA).`; drawCrest(); } catch (e) { $('tideOut').textContent = e.message; } };
+  $('wrecks').innerHTML = `<thead><tr><th>kind</th><th>water level</th><th class="r">depth over (m below CD)</th><th>name</th><th>position</th></tr></thead><tbody>${A.wrecks.map(w => `<tr><td>${esc(w.catobs || w.catwrk || '')}</td><td>${esc(w.watlev || '')}</td><td class="r">${esc(w.valsou ?? '')}</td><td>${esc(w.objnam || '')}</td><td><a href="#" data-flyto="${w.lat},${w.lon}">map</a></td></tr>`).join('')}</tbody>`;
+  riverSnap().catch(e => { $('rivSnap').innerHTML = `<p class="small">River snapshots did not load: ${esc(e.message)}</p>`; });
+};
+
+// ---------- River state (feeds/river/*.json, tools/fetch-river.mjs; skill cwplans-river-and-water): lists with dates and sources
+const RIVF = k => load('../feeds/river/' + k + '.json');
+const RIVK = ['pla-notices', 'crt-notices', 'locks', 'eden-dock', 'royal-docks', 'thames-barrier', 'river-bus', 'pla-moorings', 'osm-river', 'wikidata-vessels', 'levels', 'ea-flood-warnings'];
+const rivAll = () => Promise.all(RIVK.map(k => RIVF(k).catch(() => null))).then(L => Object.fromEntries(RIVK.map((k, i) => [k, L[i]])));
+const rivSrc = m => m ? `<p class="small">Snapshot ${esc(when(m.fetched))} (London time). Source: ${esc(m.attribution || m.source)}. Licence: ${esc(m.licence || '')}</p>` : '<p class="small">File not loaded.</p>';
+const rivMap = p => p && p.lat ? `<a href="#" data-flyto="${p.lat},${p.lon}">map</a>` : '';
+const rivTab = (head, rows) => `<div class="tablewrap" style="max-height:360px"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+const dLdn = s => s ? new Date(s).toLocaleString('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+async function riverSnap() {
+  const R = await rivAll(), out = [];
+  const tb = R['thames-barrier'];
+  if (tb) out.push('<h3>Thames Barrier: planned test closures (GOV.UK)</h3>' + rivTab(['closes (about)', 'reopens (about)', 'purpose', ''], tb.items.map(i => `<tr><td>${esc(dLdn(i.time.start))}</td><td>${esc(dLdn(i.time.end))}</td><td>${esc(i.values.purpose)}</td><td class="small">${Date.parse(i.time.end) < Date.now() ? 'past' : 'planned'}</td></tr>`)) + '<p class="small">Gates may move up to an hour early; tests can be cancelled. ' + (tb.meta.totals ? `Flood-defence closures since 1982: ${N(tb.meta.totals.flood_defence_closures)} (as at ${esc(tb.meta.totals.as_at)}).` : '') + '</p>' + rivSrc(tb.meta));
+  out.push('<h3>Tower Bridge lifts</h3><p class="small">Not copied. The lift times (date, time, vessel, direction) are published at ' + a('https://www.towerbridge.org.uk/bridge-lifts', 'towerbridge.org.uk/bridge-lifts') + '; the site\'s terms (Legal statement clauses 2.5 and 5.3, read 4 October 2026) forbid scraping, data mining and reuse of its data. Waiting on the owner.</p>');
+  const pn = R['pla-notices'];
+  if (pn) out.push('<h3>Harbour notices (PLA Notices to Mariners in force)</h3>' + rivTab(['notice', 'title', 'kind', 'in force', 'reach', ''], pn.items.map(i => `<tr><td>${a(i.url, i.values.notice)}</td><td>${esc(i.title)}</td><td>${esc(i.kind)}${i.values.closure ? ' (closure)' : ''}${/portwide/.test(i.values.scope) ? ' · port-wide' : ''}</td><td>${esc(i.validity.start || '')} to ${esc(i.validity.end || '')}</td><td>${esc(i.values.reach_from || '')}${i.values.reach_to ? ' to ' + esc(i.values.reach_to) : ''}</td><td>${/portwide/.test(i.values.scope) ? '' : rivMap(i.position)}</td></tr>`)) + '<p class="small">Facts and links only; the notice text is on pla.co.uk.</p>' + rivSrc(pn.meta));
+  const cn = R['crt-notices'];
+  if (cn) out.push('<h3>Canal &amp; River Trust notices (zone)</h3>' + rivTab(['title', 'type', 'from', 'to', 'state', ''], cn.items.slice().sort((p, q) => p.validity.start < q.validity.start ? 1 : -1).map(i => `<tr><td>${a(i.url, i.title)}</td><td>${esc(i.values.type)}, ${esc(i.values.reason)}</td><td>${esc(dLdn(i.validity.start))}</td><td>${esc(i.validity.end ? dLdn(i.validity.end) : 'open-ended')}</td><td>${esc(i.values.state)}</td><td>${rivMap(i.position)}</td></tr>`)) + rivSrc(cn.meta));
+  const lk = R.locks;
+  if (lk) out.push('<h3>Locks</h3>' + rivTab(['lock', 'links', 'tide window', 'staffed', 'CRT notices', ''], lk.items.map(i => { const v = i.values, w = v.window; return `<tr><td>${esc(i.name)}</td><td class="small">${esc(v.links || '')}</td><td class="small">${w ? `${esc(w.kind)}: ${w.open_hours_before ?? w.closed_hours_before} h before to ${w.open_hours_after ?? w.closed_hours_after} h after ${esc(w.reference)}` : esc(v.status || '')}</td><td class="small">${esc((v.hours || []).map(h => `${h.season || h.days || ''} ${h.from}–${h.to}`).join('; '))}</td><td class="r">${(v.crt_notices || []).length}</td><td>${rivMap(i.position)}</td></tr>`; })) + '<p class="small">Rules paraphrased by hand from the operator pages (feeds/river/locks-facts.json); two CRT pages disagree on the West India Dock Entrance Lock window (both kept). The 3D page colours each lock for its clock.</p>' + rivSrc(lk.meta));
+  const ed = R['eden-dock'], rd = R['royal-docks'];
+  if (ed) { const S = ed.items.filter(i => i.kind === 'bathing-sample'), tp = ed.items.find(i => i.kind === 'water-temperature');
+    out.push('<h3>Swim water: Eden Dock (Sea Lanes Canary Wharf)</h3>' + rivTab(['sample', 'rating', 'E. coli', 'intestinal enterococci'], S.map(i => `<tr><td>${esc(i.time)}</td><td>${esc(i.values.rating)}</td><td class="r">${i.values.e_coli_cfu_100ml}</td><td class="r">${i.values.intestinal_enterococci_cfu_100ml}</td></tr>`)) + `<p class="small">cfu per 100 ml. ${tp ? `Water temperature ${tp.values.temperature_c} °C as shown when fetched (the page gives no measurement time). ` : ''}${rivMap(S[0] && S[0].position)}</p>` + rivSrc(ed.meta)); }
+  if (rd) { const S = rd.items.filter(i => i.kind === 'bathing-sample');
+    out.push('<h3>Swim water: Royal Docks (certificate)</h3>' + rivTab(['site', 'E. coli', 'enterococci', '°C', 'pH', 'result', ''], S.map(i => { const v = i.values; return `<tr><td>${esc(v.location)}</td><td class="r">${v.e_coli_per_100ml}</td><td class="r">${v.enterococci_per_100ml}</td><td class="r">${v.temperature_c}</td><td class="r">${v.pH}</td><td>${esc(v.interpretation_e_coli || '')}</td><td>${rivMap(i.position)}</td></tr>`; })) + `<p class="small">Sampled ${esc(S[0] ? S[0].time : '')}; per 100 ml; positions approximate (a fifth of each dock). ${a(S[0] && S[0].url, 'certificate (PDF)')}</p>` + rivSrc(rd.meta)); }
+  const rb = R['river-bus'];
+  if (rb) { const piers = rb.items.filter(i => i.kind === 'pier'), lines = {}; for (const r of rb.items.filter(i => i.kind === 'river-bus-route')) for (const s of r.values.stops) (lines[s.id] = lines[s.id] || new Set()).add(r.values.name);
+    out.push('<h3>River buses: piers (TfL)</h3>' + rivTab(['pier', 'lines', ''], piers.map(i => `<tr><td>${esc(i.values.name)}</td><td>${esc([...(lines[i.values.naptan] || [])].join(', '))}</td><td>${rivMap(i.position)}</td></tr>`)) + `<p class="small">${N(rb.meta.counts.timetables)} timetables and ${N(rb.meta.counts.arrivals)} arrival predictions at the fetch time. TfL gives no boat positions: the 3D page places boats by the timetable for its clock, or by live arrivals after a tap.</p>` + rivSrc(rb.meta)); }
+  const pm = R['pla-moorings'], om = R['osm-river'], wd = R['wikidata-vessels'];
+  if (pm) out.push('<h3>Visitor moorings (PLA)</h3>' + rivTab(['mooring', 'run by', ''], pm.items.map(i => `<tr><td>${esc(i.title)}</td><td>${i.values.website ? a(i.values.website, i.values.ownership || i.values.website) : esc(i.values.ownership || '')}</td><td>${rivMap(i.position)}</td></tr>`)) + rivSrc(pm.meta));
+  if (om) out.push('<h3>OpenStreetMap: moorings, piers, locks, houseboats, ships</h3><p class="small">' + Object.entries(om.meta.counts).filter(([k]) => k !== 'items').map(([k, n]) => `${esc(k)} ${N(n)}`).join(' · ') + '. Houseboats are homes: names are the boats\' as mapped.</p>' + rivSrc(om.meta));
+  if (wd) out.push('<h3>Named vessels (Wikidata)</h3>' + rivTab(['vessel', 'description', ''], wd.items.map(i => `<tr><td>${a(i.url, i.title || i.values.qid)}</td><td class="small">${esc(i.values.description || '')}</td><td>${rivMap(i.position)}</td></tr>`)) + '<p class="small">The Wikidata position (P625) can be a former berth.</p>' + rivSrc(wd.meta));
+  const lv = R.levels, fw = R['ea-flood-warnings'];
+  if (lv) out.push('<h3>Tide and river gauges (EA)</h3>' + rivTab(['station', 'kind', 'latest', 'at'], lv.items.map(i => { const r = (i.values.readings || []).at(-1) || []; return `<tr><td>${esc(i.values.label || i.values.station)}</td><td>${esc(i.kind)}</td><td class="r">${r[1] ?? ''} ${esc(i.values.unit || '')}</td><td>${esc(dLdn(r[0]))}</td></tr>`; })) + `<p class="small">${fw ? `Flood warnings and alerts in force at the fetch time: ${N(fw.items.length)}.` : ''}</p>` + rivSrc(lv.meta));
+  $('rivSnap').innerHTML = out.join('');
+}
+
+INIT.sources = async () => {
+  const [fd, ev] = await Promise.all([load(P.feeds), load(P.events)]);
+  const all = fd.sources.map(x => ({ ...x, kind: 'feed' })).concat(ev.sources.map(x => ({ ...x, kind: 'event' })));
+  let kind = 'all', lim = 60;
+  $('srcKind').innerHTML = [['all', all.length], ['feed', fd.sources.length], ['event', ev.sources.length]].map(([k, n]) => `<button class="chip" type="button" data-k="${k}" aria-pressed="${k === 'all'}">${k === 'all' ? 'all' : k === 'feed' ? 'data feeds and APIs' : 'events and news'} (${n})</button>`).join('');
+  const cats = [...new Set(all.map(x => x.category))].sort();
+  $('scat').innerHTML = '<option value="">all categories</option>' + cats.map(c => `<option>${esc(c)}</option>`).join('');
+  const areas = [...new Set(all.map(x => x.area).filter(Boolean))].sort();
+  $('sarea').innerHTML = '<option value="">all areas</option>' + areas.map(c => `<option>${esc(c)}</option>`).join('');
+  const st = x => x.verified?.status || (x.verified?.http ? (x.verified.http < 400 ? 'verified' : 'HTTP ' + x.verified.http) : '');
+  const draw = () => {
+    const v = $('sq').value.toLowerCase(), c = $('scat').value, ar = $('sarea').value, cors = $('scors').checked;
+    const rows = all.filter(x => (kind === 'all' || x.kind === kind) && (!c || x.category === c) && (!ar || x.area === ar) && (!cors || x.cors) && (!v || JSON.stringify(x).toLowerCase().includes(v)));
+    $('scount').textContent = `${N(rows.length)} sources`;
+    $('srcCards').innerHTML = rows.slice(0, lim).map(x => `<div class="card"><div class="k">${esc(x.name)}</div><div class="small">${esc(x.provider || '')} · ${esc(x.category)}${x.subject ? ' · ' + esc(x.subject) : ''}</div>
+      <div class="links small">${a(x.url, 'page')}${a(x.api || x.feed, x.feed ? 'feed' : 'API')}${a(x.sample, 'sample')}</div>
+      <div class="chips" style="margin-top:6px">${[x.format, x.auth && x.auth !== 'none' ? 'auth: ' + x.auth : 'no key', x.licence, x.cors ? 'CORS' : null, x.update, st(x)].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+      ${x.canary_wharf_relevance ? `<p>${esc(x.canary_wharf_relevance)}</p>` : x.coverage ? `<p>${esc(x.coverage)}</p>` : ''}${x.personal_data ? '<p class="small">Holds personal data: catalogued only.</p>' : ''}${x.sample?.titles ? `<p class="small">${x.sample.titles.slice(0, 3).map(esc).join(' · ')}</p>` : ''}</div>`).join('');
+    $('smore').classList.toggle('hidden', rows.length <= lim);
+  };
+  $('srcKind').onclick = e => { const b = e.target.closest('[data-k]'); if (!b) return; kind = b.dataset.k; $('srcKind').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); lim = 60; draw(); };
+  $('sq').oninput = $('scat').onchange = $('sarea').onchange = $('scors').onchange = () => { lim = 60; draw(); };
+  $('smore').onclick = () => { lim += 120; draw(); }; draw();
+};
+
+INIT.quality = async () => {
+  const { q } = await getQ(), CLS = [...new Set(q.checks.map(c => c.cls))];
+  const byCls = {}; for (const c of q.checks) { byCls[c.cls] ||= { checks: 0, issues: 0 }; byCls[c.cls].checks++; byCls[c.cls].issues += c.issues || 0; }
+  $('qCards').innerHTML = [['All issues', q.summary.issues, `${q.summary.checks} checks · ${q.summary.buildings_with_issues} buildings · ${q.summary.postcodes_with_issues} postcodes`]]
+    .concat(Object.entries(byCls).map(([k, v]) => [k, v.issues, `${v.checks} check${v.checks > 1 ? 's' : ''}`]))
+    .map(([k, n, p]) => `<div class="card"><div class="k">${esc(k)}</div><div class="big">${N(n)}</div><p>${esc(p)}</p></div>`).join('');
+  let cls = 'all', sev = 'all';
+  $('qCls').innerHTML = ['all', ...CLS].map(k => `<button class="chip" type="button" data-c="${esc(k)}" aria-pressed="${k === 'all'}">${esc(k)}</button>`).join('');
+  $('qSev').innerHTML = ['all', 'high', 'medium', 'low'].map(k => `<button class="chip" type="button" data-s="${k}" aria-pressed="${k === 'all'}">${k === 'all' ? 'any severity' : k}</button>`).join('');
+  const entLink = i => i.ent === 'b' ? linkB(i.id) : i.ent === 'pc' ? linkPc(i.id) : i.ent === 'brand' ? `<a href="#" data-open="brand/${esc(i.id)}">${esc(i.id)}</a>` : i.ent === 'osm' ? a('https://www.openstreetmap.org/' + i.id, i.id) : i.ent === 'fsa' ? a('https://ratings.food.gov.uk/business/' + i.id, 'FSA ' + i.id) : esc(i.ent + ' ' + i.id);
+  const tbl = (obj, h1, h2) => `<table><thead><tr><th style="position:static">${h1}</th><th class="r" style="position:static">${h2}</th></tr></thead><tbody>${Object.entries(obj).map(([k, v]) => `<tr style="cursor:default"><td>${esc(k)}</td><td class="r num">${typeof v === 'object' ? esc(JSON.stringify(v)) : N(v)}</td></tr>`).join('')}</tbody></table>`;
+  const detail = c => {
+    const list = q.issues.filter(i => i.check === c.id && (sev === 'all' || i.sev === sev));
+    return `<p class="small"><b>Method.</b> ${esc(c.method)}</p><p class="small"><b>Compositing rule.</b> ${esc(c.rule)}</p>
+      ${c.breakdown ? tbl(c.breakdown, 'case', 'count') : ''}${c.stats ? tbl(c.stats, 'measure', 'value') : ''}
+      ${c.offsets_by_mall ? tbl(Object.fromEntries(Object.entries(c.offsets_by_mall).map(([m, o]) => [m, Object.entries(o).map(([k, n]) => `${k > 0 ? '+' + k : k}: ${n}`).join(', ')])), 'mall: CWG level minus OSM level', 'count') : ''}
+      ${c.crosswalk ? tbl(Object.fromEntries(c.crosswalk.slice(0, 20).map(r => [r.pair, r.n])), 'OSM tag | FSA type', 'count') : ''}
+      ${c.values ? `<p class="small">Values: ${Object.entries(c.values).map(([k, n]) => `<code>${esc(k)}</code> ${n}`).join(', ')}</p>` : ''}
+      ${c.count_only ? `<p class="small">Counted only: ${esc(c.count_only)}.</p>` : list.length ? `<div class="small">${list.slice(0, 300).map(i => `<div><span class="sev-${esc(i.sev)}">${esc(i.sev)}</span> ${entLink(i)}: ${esc(i.note)}</div>`).join('')}${list.length > 300 ? `<div>… ${N(list.length - 300)} more in issues.json</div>` : ''}</div>` : '<p class="small">No issues at this severity.</p>'}`;
+  };
+  const draw = () => {
+    $('qChecks').innerHTML = q.checks.filter(c => cls === 'all' || c.cls === cls).map(c => {
+      const r = c.population ? Math.min(1, (c.issues || 0) / c.population) : null;
+      return `<details class="panel qcheck" id="qc-${esc(c.id)}"><summary><span class="id">${esc(c.id)}</span><span class="t">${esc(c.title)} <span class="tag">${esc(c.cls)}</span></span><span class="num">${N(c.issues || 0)}${c.population != null ? ` of ${N(c.population)}` : ''}</span></summary>${r != null ? `<div class="qrate" title="${(r * 100).toFixed(1)}%"><i style="width:${Math.max(1, r * 100)}%"></i></div>` : ''}<div data-d></div></details>`;
+    }).join('');
+    $('qChecks').querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => { if (d.open && !d.dataset.done) { d.dataset.done = 1; d.querySelector('[data-d]').innerHTML = detail(q.checks.find(c => 'qc-' + c.id === d.id)); } }));
+  };
+  $('qCls').onclick = e => { const b = e.target.closest('[data-c]'); if (!b) return; cls = b.dataset.c; $('qCls').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); draw(); };
+  $('qSev').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return; sev = b.dataset.s; $('qSev').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); draw(); };
+  draw();
+  const m = /quality\/q\/([A-Z]{2}-\d+)/.exec(location.hash); if (m) open('q', m[1], false);
+};
+
+INIT.data = async () => {
+  $('attrib').innerHTML = A.attribution.map(s => `<li>${a(s.url, s.text)}</li>`).join('');
+  const R = await load(P.register);
+  for (const [k, s] of Object.entries(R.sources)) if (s.attribution) $('attrib').insertAdjacentHTML('beforeend', `<li>${esc(s.name)}: ${esc(s.attribution)}</li>`);
+  $('files').innerHTML = `<thead><tr><th>file</th><th>what</th><th>sources</th><th>OSM use</th><th>note</th></tr></thead><tbody>${R.files.map(f => `<tr><td><code>${esc(f.path)}</code></td><td>${esc(f.what)}</td><td class="small">${f.sources.map(s => `${esc(R.sources[s]?.name?.split(' (')[0] || s)} <span class="tag">${esc(R.sources[s]?.licence || '')}</span>`).join('<br>')}</td><td>${esc(f.osm.use)}</td><td class="small">${esc(f.review || '')}</td></tr>`).join('')}</tbody>`;
+  $('files').querySelectorAll('tbody tr').forEach(tr => tr.style.cursor = 'default');
+};
+
+// ---------- map
+let map = null, hiLayer = null; const layers = {};
+function hilite(id) {
+  if (!map) return;
+  if (hiLayer) { map.removeLayer(hiLayer); hiLayer = null; }
+  const b = id && B.get(id); if (!b || !b.g.length) return;
+  hiLayer = L.polygon(b.g.map(decLL), { color: '#ff2d55', weight: 3, fill: false, interactive: false }).addTo(map);
+}
+INIT.map = () => {
+  map = L.map('map', { preferCanvas: true, zoomControl: true, minZoom: 12, maxZoom: 20 }).setView([51.5045, -0.0185], 16);
+  $('map').classList.toggle('dark-tiles', isDark());
+  const base = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 20, maxNativeZoom: 19, attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>' }).addTo(map);
+  map.attributionControl.setPrefix(false);   // Leaflet (BSD-2-Clause) is credited in Data and licences
+  { const wrap = $('mapwrap'), btn = $('attrI'); let t = 0;
+    const fold = () => { clearTimeout(t); wrap.classList.add('attr-folded'); btn.hidden = false; };
+    const show = () => { wrap.classList.remove('attr-folded'); btn.hidden = true; clearTimeout(t); t = setTimeout(fold, 5000); };
+    btn.onclick = e => { e.stopPropagation(); show(); }; map.on('movestart zoomstart click', fold); show(); }
+  // locate (Google Maps convention): tap = ask (only now) and centre on a blue dot with its accuracy circle; a drag stops
+  // following and keeps the dot; tap again to centre; hold to turn off. The position is not sent, stored or put in the URL.
+  { const IC = { off: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>', centred: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><circle class="f" cx="12" cy="12" r="3.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>' };
+    IC.waiting = IC.located = IC.off;
+    const TXT = { off: 'Show my location', waiting: 'Finding your location', located: 'Centre the map on my location', centred: 'Centred on my location (hold to turn off)' };
+    const S = { mode: 'off', ll: null, acc: 0, dot: null, ring: null, err: null }, msg = document.createElement('div'); msg.id = 'locMsg'; msg.hidden = true; msg.setAttribute('role', 'status'); $('mapwrap').appendChild(msg);
+    const say = t => { msg.textContent = t || ''; msg.hidden = !t; clearTimeout(say.t); if (t) say.t = setTimeout(() => { msg.hidden = true; }, 9000); };
+    let b; const set = m => { S.mode = m; b.dataset.s = m; b.innerHTML = IC[m]; b.setAttribute('aria-label', TXT[m]); b.title = TXT[m]; b.setAttribute('aria-pressed', String(m === 'centred')); };
+    const C = L.Control.extend({ options: { position: 'bottomright' }, onAdd() { const d = L.DomUtil.create('div', 'leaflet-bar loc-ctl'); b = L.DomUtil.create('button', '', d); b.type = 'button'; L.DomEvent.disableClickPropagation(d); return d; } });
+    map.addControl(new C()); set('off');
+    const start = () => map.locate({ watch: true, setView: false, enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 });
+    const off = () => { map.stopLocate(); for (const k of ['dot', 'ring']) if (S[k]) { map.removeLayer(S[k]); S[k] = null; } S.ll = null; set('off'); };
+    let following = false;
+    map.on('locationfound', e => {
+      S.err = null; const first = !S.ll; let ll = e.latlng;
+      if (S.ll && S.ll.distanceTo(ll) < Math.max(30, 2 * e.accuracy + S.acc)) { const k = Math.min(.8, Math.max(.25, S.acc / (S.acc + e.accuracy))); ll = L.latLng(S.ll.lat + (ll.lat - S.ll.lat) * k, S.ll.lng + (ll.lng - S.ll.lng) * k); }   // jitter smoothing
+      S.ll = ll; S.acc = e.accuracy;
+      if (!S.ring) { S.ring = L.circle(ll, { radius: S.acc, color: '#1a73e8', weight: 1, opacity: .55, fillColor: '#1a73e8', fillOpacity: .15, interactive: false }).addTo(map); S.dot = L.circleMarker(ll, { radius: 8, color: '#fff', weight: 2.5, fillColor: '#1a73e8', fillOpacity: 1, interactive: false }).addTo(map); }
+      else { S.ring.setLatLng(ll).setRadius(S.acc); S.dot.setLatLng(ll); }
+      if (S.mode === 'waiting') { set('centred'); following = true; map.setView(ll, Math.max(map.getZoom(), 17)); following = false; }
+      else if (S.mode === 'centred') { following = true; map.panTo(ll, { animate: !first }); following = false; }
+    });
+    map.on('locationerror', e => {
+      S.err = e.code; if (S.ll && e.code !== 1) return;   // a later timeout while we have a fix: keep the dot
+      off();
+      say(e.code === 1 ? 'Location is blocked for this page. To allow it, open the site settings (the icon left of the address) and set Location to Allow; on an iPhone also Settings > Privacy & Security > Location Services > Safari Websites.' : e.code === 3 ? 'Finding your location took too long. Tap the button to try again.' : 'Your location is not available now. Check that location is on, then tap the button to try again.');
+    });
+    map.on('dragstart', () => { if (S.mode === 'centred' && !following) set('located'); });
+    b.onclick = () => {
+      if (b.dataset.lp) { delete b.dataset.lp; return; }
+      if (S.mode === 'off') { if (!window.isSecureContext) return say('Location works only on a secure (https) page.'); if (!navigator.geolocation) return say('This browser does not give a location.'); say(''); set('waiting'); start(); }
+      else if (S.mode === 'waiting') off();
+      else { set('centred'); if (S.ll) map.setView(S.ll, Math.max(map.getZoom(), 16)); }
+    };
+    { let t = 0; b.addEventListener('pointerdown', () => { delete b.dataset.lp; clearTimeout(t); t = setTimeout(() => { if (S.mode !== 'off') { off(); b.dataset.lp = '1'; say('Location off'); } }, 800); });
+      for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) b.addEventListener(ev, () => clearTimeout(t)); }
+    document.addEventListener('visibilitychange', () => { if (S.mode === 'off') return; if (document.hidden) map.stopLocate(); else start(); });
+    window.__atlasLocate = { get state() { return { mode: S.mode, ll: S.ll && [+S.ll.lat.toFixed(6), +S.ll.lng.toFixed(6)], acc: S.acc, err: S.err, msg: msg.hidden ? '' : msg.textContent }; } }; }
+  const canvas = L.canvas({ padding: .3 });
+  const pop = (html, ll) => L.popup({ maxWidth: 320 }).setLatLng(ll).setContent(html).openOn(map);
+
+  // buildings, coloured by a chosen measure
+  const MEAS = {
+    height: { f: HT, max: 200, ramp: RAMP, label: 'height 0–200 m' },
+    occupants: { f: b => b.o, max: 30, ramp: RAMP, label: 'occupants 0–30' },
+    homes: { f: b => b.hm < 0 ? 2 : b.hm, max: 300, ramp: RAMP, label: 'homes 0–300' },
+    companies: { f: b => b.co, max: 200, ramp: RAMP, label: 'registered companies 0–200' },
+    'floors below': { f: b => b.lu, max: 5, ramp: DEPTH, label: 'floors below ground 0–5' },
+  };
+  let meas = 'height';
+  const bStyle = b => { const m = MEAS[meas], v = m.f(b); return { renderer: canvas, weight: .6, color: '#333', fillOpacity: v ? .75 : .15, fillColor: v ? lerpHex(m.ramp, Math.sqrt(v / m.max)) : '#999' }; };
+  const bl = L.layerGroup();
+  for (const b of B.values()) if (b.g.length) { const p = L.polygon(b.g.map(decLL), bStyle(b)); p.on('click', () => open('b', b.id)); p.bindTooltip(esc(b.n || b.id), { sticky: true }); p._b = b; bl.addLayer(p); }
+  const restyle = () => bl.eachLayer(p => p.setStyle(bStyle(p._b)));
+
+  const pt = (ll, color, r = 4, extra = {}) => L.circleMarker(ll, { renderer: canvas, radius: r, color: '#222', weight: .5, fillColor: color, fillOpacity: .9, ...extra });
+  const TIERC = { 'cw-core': '#c2410c', 'cw-ward': '#f59e0b', 'cw-box-other-ward': '#a855f7', 'terminated-cw': '#6b7280', 'e14-other': '#0ea5e9', 'terminated-other': '#9ca3af' };
+  const DEF = [
+    ['buildings', 'Buildings (registry)', true, () => bl, () => `<label class="small">colour by <select id="meas">${Object.keys(MEAS).map(k => `<option${k === meas ? ' selected' : ''}>${k}</option>`).join('')}</select></label><div class="ramp" style="background:${rampCss(RAMP)}"></div><div class="small" id="measL">${MEAS[meas].label} (square-root scale)</div>`],
+    ['branches', 'Chain-store branches', false, async () => { const br = await load(P.branches); const g = L.layerGroup(); for (const b of br.branches) if (b.lat) g.addLayer(pt([b.lat, b.lon], '#e11d48', 5).on('click', () => open('brand', b.brand)).bindTooltip(esc(b.name))); return g; }, () => '<div class="small">tap: the brand\'s branches</div>'],
+    ['postcodes', 'Postcodes (ONSPD)', false, () => { const g = L.layerGroup(); for (const p of A.postcodes) g.addLayer(pt([p.lat, p.lon], TIERC[p.t] || '#999', 3.5).on('click', () => open('pc', p.pc.replace(' ', '-'))).bindTooltip(esc(p.pc))); return g; }, () => `<div class="small">${Object.entries(TIERC).map(([k, c]) => `<span style="color:${c}">●</span> ${k}`).join('<br>')}</div>`],
+    ['heritage', 'Heritage records', false, () => { const g = L.layerGroup(); A.heritage.forEach((h, i) => g.addLayer(pt([h.lat, h.lon], '#7c3aed', Math.min(18, 3 + Math.sqrt(h.n)), { fillOpacity: .6 }).on('click', () => open('h', i)).bindTooltip(`${esc(h.label || '')}: ${N(h.n)}`))); return g; }, () => '<div class="small">circle size: number of records</div>'],
+    ['apa', 'Archaeological Priority Areas', false, async () => { const gj = await load(P.apa); return L.geoJSON(gj, { renderer: canvas, style: { color: '#7c3aed', weight: 1, fillOpacity: .08, dashArray: '4 3' }, onEachFeature: (f, l) => l.on('click', e => pop(`<b>${esc(f.properties.designatio || 'Archaeological Priority Area')}</b><div class="small">${esc((f.properties.descriptio || '').replace(/<[^>]+>/g, ' ').slice(0, 400))}…</div>`, e.latlng)) }); }, () => ''],
+    ['wikidata', 'Wikidata items', false, () => { const g = L.layerGroup(); for (const w of A.wikidata) g.addLayer(pt([w.lat, w.lon], '#0ea5e9', 3).on('click', e => pop(`<b>${esc(w.n)}</b><div class="small">${esc(w.d)}</div><div class="small">${esc(w.c.join(', '))}</div><div class="links small">${a('https://www.wikidata.org/wiki/' + w.q, w.q)}${a(w.wp, 'Wikipedia')}</div>`, e.latlng))); return g; }, () => ''],
+    ['bed', 'Riverbed (UKHO soundings)', false, () => { const g = L.layerGroup(); for (const [la, lo, od] of A.soundings) g.addLayer(L.circleMarker([la, lo], { renderer: canvas, radius: 3, stroke: false, fillColor: lerpHex(DEPTH, (2 - od) / 16), fillOpacity: .9 }).on('click', e => pop(`Bed ${od} m OD<div class="small">UKHO bathymetry, chart datum converted to ODN. Not for navigation.</div>`, e.latlng))); return g; }, () => `<div class="ramp" style="background:${rampCss(DEPTH)}"></div><div class="small">+2 to −14 m OD</div>`],
+    ['wrecks', 'Wrecks and obstructions', false, () => { const g = L.layerGroup(); for (const w of A.wrecks) g.addLayer(pt([w.lat, w.lon], '#111', 5, { color: '#fff', weight: 1 }).on('click', e => pop(`<b>${esc(w.catobs || w.catwrk || 'obstruction')}</b><div class="small">${esc(w.watlev || '')}${w.objnam ? ' · ' + esc(w.objnam) : ''}</div>`, e.latlng))); return g; }, () => ''],
+    ['defences', 'Flood defences (EA)', false, () => { const g = L.layerGroup(); for (const d of A.defences) g.addLayer(L.polyline(decLL(d.g), { renderer: canvas, color: lerpHex(['#b42318', '#f59e0b', '#15803d'], (d.c - 5) / 1.5), weight: 4 }).on('click', e => pop(`<b>${esc(d.t)}</b>, crest ${d.c} m OD<div class="small">design ${d.d ?? '—'} m OD · standard of protection 1 in ${d.sop ?? '—'} · ${esc(d.la || '')} · inspected ${esc(d.insp || '—')} · EA asset ${esc(d.id)}</div>${lastTide != null ? `<div class="small">${(d.c - lastTide).toFixed(2)} m above the tide at Tower Pier now</div>` : ''}`, e.latlng))); return g; }, () => `<div class="ramp" style="background:${rampCss(['#b42318', '#f59e0b', '#15803d'])}"></div><div class="small">crest 5.0 to 6.5 m OD</div>`],
+    ['levels', 'Published station levels', true, () => { const g = L.layerGroup(); for (const l of A.levels.filter(x => x.lat)) g.addLayer(pt([l.lat, l.lon], '#f97316', 7, { color: '#fff', weight: 2 }).on('click', e => pop(`<b>${esc(l.place)}</b><div>${esc(l.what)}: <b>${l.od} m OD</b>${l.ground != null ? ` (ground ${l.ground} m OD)` : ''}</div><p class="quote small">“${esc(l.quote || '')}”</p><div class="small">${a(l.src, 'source')}</div>`, e.latlng))); return g; }, () => ''],
+    ['quality', 'Data-quality issues', false, async () => { const { q } = await getQ(); const g = L.layerGroup(), C = { high: '#b42318', medium: '#f59e0b', low: '#94a3b8' }, pcp = new Map(A.postcodes.map(p => [p.pc, p]));
+      for (const i of q.issues) { let ll = i.lat != null ? [i.lat, i.lon] : null; if (!ll && i.ent === 'b' && B.get(i.id)) ll = [B.get(i.id).lat, B.get(i.id).lon]; if (!ll && i.ent === 'pc' && pcp.get(i.id)) ll = [pcp.get(i.id).lat, pcp.get(i.id).lon]; if (!ll) continue;
+        g.addLayer(pt(ll, C[i.sev], i.sev === 'high' ? 7 : 4).on('click', e => pop(`<b>${esc(i.check)}</b> <span class="sev-${esc(i.sev)}">${esc(i.sev)}</span><div class="small">${esc(i.note)}</div><div class="links small"><a href="#quality/q/${esc(i.check)}">the check</a>${i.ent === 'b' ? `<a href="#" data-open="b/${esc(i.id)}">building</a>` : ''}${i.ent === 'pc' ? `<a href="#" data-open="pc/${esc(i.id.replace(' ', '-'))}">postcode</a>` : ''}</div>`, e.latlng))); }
+      return g; }, () => '<div class="small"><span style="color:#b42318">●</span> high <span style="color:#f59e0b">●</span> medium <span style="color:#94a3b8">●</span> low</div>'],
+    ['river', 'River snapshots (notices, locks, swim water, piers, moorings)', false, async () => { const R = await rivAll(), g = L.layerGroup(), PC = { closure: '#dc2626', 'exclusion-zone': '#dc2626', works: '#f59e0b', event: '#a855f7', 'thames-barrier': '#3b82f6' }, src = m => m ? `<div class="small">Snapshot ${esc(when(m.fetched))} · ${esc(m.attribution || '')}</div>` : '';
+      if (R['pla-notices']) for (const i of R['pla-notices'].items) { if (/portwide/.test(i.values.scope)) continue; const [w, s, e, n] = i.position.bbox; g.addLayer(L.rectangle([[s, w], [n, e]], { renderer: canvas, color: PC[i.kind] || '#64748b', weight: 2, fillOpacity: .06 }).on('click', ev => pop(`<b>${esc(i.title)}</b><div class="small">PLA ${esc(i.values.notice)} · ${esc(i.kind)} · ${esc(i.validity.start)} to ${esc(i.validity.end)} · outline = bounding box</div><div class="links small">${a(i.url, 'notice')}</div>${src(R['pla-notices'].meta)}`, ev.latlng))); }
+      if (R['crt-notices']) for (const i of R['crt-notices'].items) g.addLayer(pt([i.position.lat, i.position.lon], '#7c3aed', 4).on('click', ev => pop(`<b>${esc(i.title)}</b><div class="small">CRT ${esc(i.values.type)} · ${esc(dLdn(i.validity.start))} to ${esc(i.validity.end ? dLdn(i.validity.end) : 'open-ended')} · ${esc(i.values.state)}</div><div class="links small">${a(i.url, 'notice')}</div>${src(R['crt-notices'].meta)}`, ev.latlng)));
+      if (R.locks) for (const i of R.locks.items) g.addLayer(pt([i.position.lat, i.position.lon], i.values.window ? '#16a34a' : '#64748b', 7, { color: '#fff', weight: 2 }).on('click', ev => pop(`<b>${esc(i.name)}</b><div class="small">${esc(i.values.window ? `${i.values.window.kind}, ${i.values.window.reference}` : i.values.status || '')}</div>${src(R.locks.meta)}`, ev.latlng)));
+      for (const k of ['eden-dock', 'royal-docks']) if (R[k]) for (const i of R[k].items.filter(x => x.kind === 'bathing-sample').slice(-6)) g.addLayer(pt([i.position.lat, i.position.lon], '#0891b2', 6, { color: '#fff', weight: 1.5 }).on('click', ev => pop(`<b>${esc(i.values.location || 'Eden Dock')}</b><div class="small">${esc(i.time)} · E. coli ${i.values.e_coli_cfu_100ml ?? i.values.e_coli_per_100ml} · ${esc(i.values.rating || i.values.interpretation_e_coli || '')}</div>${src(R[k].meta)}`, ev.latlng)));
+      if (R['river-bus']) for (const i of R['river-bus'].items.filter(x => x.kind === 'pier')) g.addLayer(pt([i.position.lat, i.position.lon], '#2563eb', 6, { color: '#fff', weight: 2 }).bindTooltip(esc(i.values.name)));
+      if (R['pla-moorings']) for (const i of R['pla-moorings'].items) g.addLayer(pt([i.position.lat, i.position.lon], '#14b8a6', 5).bindTooltip(esc(i.title)));
+      if (R['osm-river']) for (const i of R['osm-river'].items) { if (!/^(mooring|houseboat|ship)$/.test(i.kind)) continue; g.addLayer(pt([i.position.lat, i.position.lon], i.kind === 'ship' ? '#d97706' : i.kind === 'houseboat' ? '#92400e' : '#60a5fa', i.kind === 'mooring' ? 2.5 : 4).on('click', ev => pop(`<b>${esc(i.values.name || i.kind)}</b><div class="small">${esc(i.kind)} · ${a(i.url, 'OSM')}</div>`, ev.latlng))); }
+      if (R['wikidata-vessels']) for (const i of R['wikidata-vessels'].items) g.addLayer(pt([i.position.lat, i.position.lon], '#facc15', 5, { color: '#222', weight: 1 }).on('click', ev => pop(`<b>${esc(i.title || i.values.qid)}</b><div class="small">${esc(i.values.description || '')}</div><div class="links small">${a(i.url, i.values.qid)}</div>`, ev.latlng)));
+      return g; }, () => '<div class="small"><span style="color:#dc2626">▭</span> PLA closures and exclusion zones <span style="color:#f59e0b">▭</span> works <span style="color:#a855f7">▭</span> events · <span style="color:#7c3aed">●</span> CRT notices <span style="color:#16a34a">●</span> locks <span style="color:#0891b2">●</span> swim water <span style="color:#2563eb">●</span> piers <span style="color:#14b8a6">●</span> visitor moorings <span style="color:#facc15">●</span> named vessels. Snapshots of 4 Oct 2026.</div>'],
+    ['cams', 'Traffic cameras (TfL, live)', false, async () => { const d = await getJSON('https://api.tfl.gov.uk/Place?type=JamCam&lat=51.497&lon=-0.04&radius=4500'); const g = L.layerGroup(); for (const c of d.places || d) { const prop = k => (c.additionalProperties.find(p => p.key === k) || {}).value; g.addLayer(pt([c.lat, c.lon], '#16a34a', 6).on('click', e => pop(`<b>${esc(c.commonName)}</b><br><img src="${esc(prop('imageUrl'))}?t=${Date.now()}" alt="TfL traffic camera still" style="width:280px;border-radius:6px"><div class="small">${a(prop('videoUrl'), 'short clip')} · TfL JamCam</div>`, e.latlng))); } return g; }, () => '<div class="small">loads from TfL when switched on</div>'],
+  ];
+  $('layerList').innerHTML = DEF.map(([k, label, on, , leg]) => `<label><input type="checkbox" data-layer="${k}"${on ? ' checked' : ''}> ${label}</label><div class="legend" data-leg="${k}">${on ? leg() : ''}</div>`).join('')
+    + `<label><input type="checkbox" id="baseOn" checked> OSM basemap</label>`;
+  const toggle = async (k, on) => {
+    const d = DEF.find(x => x[0] === k), legEl = document.querySelector(`[data-leg="${k}"]`);
+    if (on) { try { if (!layers[k]) { legEl.innerHTML = '<span class="small">loading…</span>'; layers[k] = await d[3](); } layers[k].addTo(map); legEl.innerHTML = d[4](); } catch (e) { legEl.innerHTML = `<span class="small" style="color:var(--bad)">${esc(e.message)}</span>`; } }
+    else { if (layers[k]) map.removeLayer(layers[k]); legEl.innerHTML = ''; }
+    const ms = $('meas'); if (ms) ms.onchange = () => { meas = ms.value; restyle(); $('measL').textContent = MEAS[meas].label + ' (square-root scale)'; };
+  };
+  $('layerList').addEventListener('change', e => { const k = e.target.dataset.layer; if (k) toggle(k, e.target.checked); if (e.target.id === 'baseOn') e.target.checked ? base.addTo(map) : map.removeLayer(base); });
+  for (const [k, , on] of DEF) if (on) toggle(k, true);
+  if (matchMedia('(max-width: 700px)').matches) $('layers').open = false;
+  const m = /\/b\/(cwb-\d+)/.exec(location.hash); if (m) { const b = B.get(m[1]); if (b) map.setView([b.lat, b.lon], 18); hilite(m[1]); }
+};
+
+// ---------- London Datastore (feeds/london-datastore/index.json, tools/lds-harvest-auto.mjs index; skill cwplans-london-datastore)
+const LDSC = { 'buildings-places': '#c2410c', 'people-housing': '#7c3aed', environment: '#15803d', transport: '#2563eb', 'occupants-organisations': '#db2777', 'events-works': '#ca8a04', heritage: '#0f766e' };
+const ldsLayers = new Map();
+let LDSI = null; const getLds = async () => LDSI ||= await load(P.lds);
+function ldsPopup(x, f) {
+  const P2 = f.properties || {}, skip = /^(in_cw|whole_in_zone|layer|fid|objectid|shape_(length|area)|globalid)$/i;
+  const kv = Object.entries(P2).filter(([k, v]) => v != null && v !== '' && !skip.test(k)).slice(0, 14).map(([k, v]) => `<tr><th style="position:static">${esc(k)}</th><td>${esc(String(typeof v === 'object' ? JSON.stringify(v) : v).slice(0, 160))}</td></tr>`).join('');
+  return `<b>${esc(x.title)}</b>${P2.layer ? `<div class="small">${esc(P2.layer)}</div>` : ''}<table class="small">${kv}</table><div class="small">Dataset updated ${esc(x.dataset_modified || '?')}${x.resource_dates ? `; files ${esc(x.resource_dates[0])} to ${esc(x.resource_dates[1])}` : ''}; fetched ${esc(x.fetched || '?')}. ${a(x.page, 'London Datastore page')} · ${esc(x.licence || '')}. ${esc(x.attribution || '')}</div>`;
+}
+async function ldsMap(path, on = true) {
+  const I = await getLds(), x = I.datasets.find(d => d.files.some(f => f.path === path)); if (!x) return;
+  if (!map) { location.hash = 'map'; show('map'); await new Promise(r => setTimeout(r, 120)); }
+  let Lr = ldsLayers.get(path);
+  if (on && !Lr) {
+    const gj = await load(CwData.url(path), /\.gz$/.test(path)), col = LDSC[x.theme] || '#475569', canvas = L.canvas({ padding: .3 });
+    Lr = L.geoJSON(gj, { renderer: canvas, style: () => ({ color: col, weight: 1.2, fillOpacity: .08 }), pointToLayer: (f, ll) => L.circleMarker(ll, { renderer: canvas, radius: 4, color: '#222', weight: .5, fillColor: col, fillOpacity: .85 }),
+      onEachFeature: (f, l) => l.on('click', e => L.popup({ maxWidth: 340 }).setLatLng(e.latlng).setContent(ldsPopup(x, f)).openOn(map)) });
+    ldsLayers.set(path, Lr);
+    $('layerList').insertAdjacentHTML('beforeend', `<label><input type="checkbox" data-ldsl="${esc(path)}" checked> <span style="color:${col}">■</span> ${esc(x.title)}</label>`);
+  }
+  if (!Lr) return;
+  if (on) Lr.addTo(map); else map.removeLayer(Lr);
+  const cb = document.querySelector(`[data-ldsl="${CSS.escape(path)}"]`); if (cb) cb.checked = on;
+}
+document.addEventListener('change', e => { const p = e.target.dataset && e.target.dataset.ldsl; if (p) ldsMap(p, e.target.checked); });
+document.addEventListener('click', e => { const t = e.target.closest('[data-ldsmap]'); if (!t) return; e.preventDefault(); ldsMap(t.dataset.ldsmap, true); location.hash = 'map'; show('map'); });
+// a theme's layers at once: every GeoJSON of the theme up to 2 MB (bigger ones one by one from the list)
+document.addEventListener('click', async e => { const t = e.target.closest('[data-ldstheme]'); if (!t) return; e.preventDefault(); const I = await getLds();
+  const paths = I.datasets.filter(d => d.theme_name === t.dataset.ldstheme).flatMap(d => d.files.filter(f => f.kind === 'geojson' && f.bytes <= 2e6).map(f => f.path));
+  location.hash = 'map'; show('map'); for (const p of paths) await ldsMap(p, true); });
+INIT.lds = async () => {
+  const I = await getLds(), st = I.meta.final_states, sum = Object.values(st).reduce((p, q) => p + q, 0);
+  $('ldsCards').innerHTML = [['harvested', 'datasets held (harvested or registered)'], ['listed-for-harvest', 'listed for harvest, not yet taken'], ['not-relevant', 'no data in the zone (by the data or the metadata)'], ['not-open', 'no open licence: metadata only'], ['deferred', 'deferred (documents, links only, by hand, unreadable)'], ['unavailable', 'unavailable'], ['sensitive', 'sensitive titles: never harvested']]
+    .map(([k, t]) => `<div class="card"><div class="k">${esc(k)}</div><div class="big">${N(st[k] || 0)}</div><p>${esc(t)}</p></div>`).join('') + `<div class="card"><div class="k">catalogue</div><div class="big">${N(sum)}</div><p>datasets, each with one final state</p></div>`;
+  const themes = [...new Set(I.datasets.map(d => d.theme_name))].sort();
+  let th = 'all';
+  $('ldsTheme').innerHTML = ['all', ...themes].map(t => `<button class="chip" type="button" data-t="${esc(t)}" aria-pressed="${t === th}">${esc(t)}</button>`).join('');
+  const kb = b => b >= 1e6 ? (b / 1e6).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' kB';
+  const draw = () => {
+    const q = $('ldsq').value.toLowerCase(), rows = I.datasets.filter(d => (th === 'all' || d.theme_name === th) && (!q || (d.title + ' ' + d.dataset + ' ' + (d.publisher || '')).toLowerCase().includes(q)));
+    $('ldscount').textContent = `${rows.length} of ${I.datasets.length}`;
+    const by = {}; for (const d of rows) (by[d.theme_name] ||= []).push(d);
+    $('ldsList').innerHTML = Object.entries(by).sort().map(([t, ds]) => `<h2>${esc(t)} (${ds.length}) <a href="#" class="small" data-ldstheme="${esc(t)}">map this theme</a></h2><div class="cards">${ds.map(d => `<div class="card"><div class="k"><span style="color:${LDSC[d.theme] || '#475569'}">■</span> ${esc(d.dataset)} · ${esc(d.licence || '')}</div><p><b>${esc(d.title)}</b></p>
+      <p class="small">${esc(d.publisher || '')}${d.geo ? ' · ' + esc(d.geo) : ''} · updated ${esc(d.dataset_modified || '?')}${d.resource_dates ? ` · files ${esc(d.resource_dates[0])}${d.resource_dates[1] !== d.resource_dates[0] ? ' to ' + esc(d.resource_dates[1]) : ''}` : ''} · fetched ${esc(d.fetched || '?')}</p>
+      <p class="small">${d.files.map(f => `${f.kind === 'geojson' ? `${N(f.features)} features${f.in_cw ? ` (${N(f.in_cw)} at Canary Wharf)` : ''}` : `${N(f.rows)} zone rows in ${N(f.tables)} tables`} <span class="tag">${kb(f.bytes)}</span>${f.note ? ` <span class="tag">${esc(f.note)}</span>` : ''} ${a(CwData.url(f.path), 'file')}${f.kind === 'geojson' ? ` <a href="#" data-ldsmap="${esc(f.path)}">map</a>` : ''}`).join('<br>')}</p>
+      <div class="links small">${a(d.page, 'Datastore page')}</div></div>`).join('')}</div>`).join('');
+  };
+  $('ldsTheme').onclick = e => { const c = e.target.closest('[data-t]'); if (!c) return; th = c.dataset.t; $('ldsTheme').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === c))); draw(); };
+  $('ldsq').oninput = draw; draw();
+  $('ldsFoot').innerHTML = `Index built ${esc(I.meta.made)}. ${esc(I.meta.credit)} ${a('https://data.london.gov.uk/about/terms-and-conditions', 'Datastore terms')}.`;
+};
+
+// ---------- boot
+load(P.atlas).then(data => {
+  A = data; for (const b of A.buildings) B.set(b.id, b);
+  window.__atlas = { A, B, open, show, get map() { return map; }, layers };
+  route();
+}).catch(e => { document.querySelector('main').innerHTML = `<p>Could not load the atlas data: ${esc(e.message)}</p>`; });
+})();
+</script>
+<script type="module" src="kml-atlas.js"></script>
+</body>
+</html>

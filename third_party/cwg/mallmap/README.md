@@ -12,11 +12,11 @@ large pseudo-public spaces.").
 - The basemap tiles (`tiles/basemap/`) are derived from OpenStreetMap: © OpenStreetMap contributors, ODbL
   (https://www.openstreetmap.org/copyright), as the map's own style states.
 - Use in this project: approved by the owner on 2026-10-06 for the scoping and prototyping phase of magpie/cwplans in
-  danbri/glitchcan-minigam. Review before any use outside that phase.
+  danbri/glitchcan-minigam (since 2026-10-07 `cwplans/` in this repository). Review before any use outside that phase.
 
 ## How it was made
 
-`magpie/cwplans/tools/archive-cwg-mallmap.mjs` in the main repository (skill `cwplans-web-harvest`, "Mall plans").
+`cwplans/tools/archive-cwg-mallmap.mjs` in this repository (skill `cwplans-web-harvest`, "Mall plans").
 robots.txt of map.canarywharf.com allows all. One request at a time per host: 1.1 s apart on the API hosts, 0.5 s on
 the tile CDN. No key, no cookie, no login. Every file is the response body unchanged. `manifest.json` maps each URL to
 its file with HTTP status, content type, size, SHA-256 and fetch time; URLs that answered 204 (an empty tile) or 404
@@ -51,7 +51,7 @@ event POST calls (the page's usage logging), and third-party scripts (Mapbox GL,
 
 ## Reading the tiles
 
-Node: `@mapbox/vector-tile` and `pbf` (both in the main repository's devDependencies).
+Node: `@mapbox/vector-tile` and `pbf` (both in this repository's devDependencies: `npm install` at the root).
 
     import { VectorTile } from '@mapbox/vector-tile'; import Protobuf from 'pbf';
     const t = new VectorTile(new Protobuf(fs.readFileSync('tiles/indoor/17/65528/43586.pbf')));

@@ -1,0 +1,2610 @@
+{
+ "meta": {
+  "source": "ea-wims",
+  "fetched": "2026-10-04T08:49:21Z",
+  "url": "https://environment.data.gov.uk/water-quality/sampling-point?latitude=..&longitude=..&radius=..",
+  "licence": "Open Government Licence v3.0",
+  "attribution": "Contains public sector information licensed under the Open Government Licence v3.0",
+  "method": "EA Water Quality Archive API (2025 version, Accept: application/ld+json): every sampling point from three radius searches that cover the zone, kept when its BNG point converts into the zone. For open and closed water sampling points (estuarine, rivers, freshwater, lakes, canals) the last 60 observations are read and the latest sample kept. Discharge points are trade and sewage outfalls (organisation names; cwplans exception).",
+  "counts": {
+   "items": 41,
+   "points": 41,
+   "water_points": 21,
+   "open": 13
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "ea-wims:TH-PLEE0129",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.51348,
+    "lon": 0.00492,
+    "precision": "EA grid reference 539220 181300 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "PURA FOODS C/W :POPLAR",
+    "type": "TRADE DISCHARGES - COOLING WATER",
+    "status": "CLOSED",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PLEE0129"
+  },
+  {
+   "id": "ea-wims:TH-PLEE0188",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.518,
+    "lon": -0.00195,
+    "precision": "EA grid reference 538730 181790 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "NATIONAL GRID CEGB 1000 X 500MM CABLE C/W :WEST HAM",
+    "type": "TRADE DISCHARGES - COOLING WATER",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PLEE0188"
+  },
+  {
+   "id": "ea-wims:TH-PRVE0007",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.48148,
+    "lon": -0.01694,
+    "precision": "EA grid reference 537800 177700 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "EUROMIX CONCRETE (RMC) :DEPTFORD",
+    "type": "MISCELLANEOUS DISCHARGES - SURFACE WATER",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PRVE0007"
+  },
+  {
+   "id": "ea-wims:TH-PTNE0100",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.49931,
+    "lon": 0.04925,
+    "precision": "EA grid reference 542340 179810 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "TATE & LYLE C/W :SILVERTOWN",
+    "type": "TRADE DISCHARGES - COOLING WATER",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNE0100"
+  },
+  {
+   "id": "ea-wims:TH-PTNE0158",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.5026,
+    "lon": -0.02179,
+    "precision": "EA grid reference 537400 180040 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THE INTERNATIONAL HOTEL, MARSH WALL :LONDON",
+    "type": "TRADE DISCHARGES - COOLING WATER",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNE0158"
+  },
+  {
+   "id": "ea-wims:TH-PTNE0159",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50274,
+    "lon": -0.02466,
+    "precision": "EA grid reference 537200 180050 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "SCANDANAVIA CENTRE C/W, W.I.DOCKS SOUTH :LONDON (CEASED 09/2003)",
+    "type": "TRADE DISCHARGES - COOLING WATER",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNE0159"
+  },
+  {
+   "id": "ea-wims:TH-PTNE0200",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50543,
+    "lon": -0.02596,
+    "precision": "EA grid reference 537102 180347 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "NEWFOUNDLAND QUAY",
+    "type": "TRADE DISCHARGES - SITE DRAINAGE",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNE0200"
+  },
+  {
+   "id": "ea-wims:TH-PTNE0201",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50143,
+    "lon": -0.0095,
+    "precision": "EA grid reference 538256 179933 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "WOOD WHARF",
+    "type": "TRADE DISCHARGES - SITE DRAINAGE",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNE0201"
+  },
+  {
+   "id": "ea-wims:TH-PTNE0202",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50332,
+    "lon": -0.0268,
+    "precision": "EA grid reference 537050 180111 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "HERON QUAYS, 10 BANK STREET",
+    "type": "TRADE DISCHARGES - SITE DRAINAGE",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNE0202"
+  },
+  {
+   "id": "ea-wims:TH-PTSE0144",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50011,
+    "lon": -0.00215,
+    "precision": "EA grid reference 538770 179800 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "BLACKWALL AGGREGATES T/E :GREENWICH (CEASED 02/2005)",
+    "type": "MISCELLANEOUS DISCHARGES - SURFACE WATER",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTSE0144"
+  },
+  {
+   "id": "ea-wims:TH-PTSE0160",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.49385,
+    "lon": 0.00089,
+    "precision": "EA grid reference 539000 179110 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "TUNNEL REFINERIES T/E :GREENWICH",
+    "type": "TRADE DISCHARGES - PROCESS EFFLUENT - NOT WATER COMPANY",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTSE0160"
+  },
+  {
+   "id": "ea-wims:TH-PTSE0166",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50482,
+    "lon": -0.07947,
+    "precision": "EA grid reference 533390 180180 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "GLA BUILDING C/W :LONDON",
+    "type": "TRADE DISCHARGES - COOLING WATER",
+    "status": "OPEN",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTSE0166"
+  },
+  {
+   "id": "ea-wims:TH-PTSE0167",
+   "kind": "discharge-point",
+   "position": {
+    "lat": 51.50496,
+    "lon": -0.07716,
+    "precision": "EA grid reference 533550 180200 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "MORE LONDON BRIDGE DEVELOPMENT T/E :LONDON (CEASED 09/2003)",
+    "type": "TRADE DISCHARGES - UNSPECIFIED",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTSE0167"
+  },
+  {
+   "id": "ea-wims:TH-PGWU1416",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.5139,
+    "lon": -0.09062,
+    "precision": "EA grid reference 532590 181170 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "CENTRAL LONDON, MIDLAND BANK, POULTRY, BH4, 110M :TQ38/353D",
+    "type": "GROUNDWATER - BOREHOLE",
+    "status": "CLOSED",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PGWU1416"
+  },
+  {
+   "id": "ea-wims:TH-PGWU1419",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.51964,
+    "lon": 0.04382,
+    "precision": "EA grid reference 541900 182060 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "BECKTON, BECKTON PARK BH :TQ48/095",
+    "type": "GROUNDWATER - BOREHOLE",
+    "status": "CLOSED",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PGWU1419"
+  },
+  {
+   "id": "ea-wims:TH-PGWU1591",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.50098,
+    "lon": -0.00024,
+    "precision": "EA grid reference 538900 179900 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "GREENWICH, PIONEER BH, TUNNEL AVE :TQ37/166D",
+    "type": "GROUNDWATER - BOREHOLE",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PGWU1591"
+  },
+  {
+   "id": "ea-wims:TH-PGWU1827",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.52148,
+    "lon": -0.03423,
+    "precision": "EA grid reference 536480 182116 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "TOWER HAMLETS, MILE END PARK B/H",
+    "type": "GROUNDWATER - BOREHOLE",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PGWU1827"
+  },
+  {
+   "id": "ea-wims:TH-PGWU1828",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.50162,
+    "lon": -0.02258,
+    "precision": "EA grid reference 537348 179929 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "MILLWALL, BRITANNIA INTERNATIONAL HOTEL B/H",
+    "type": "GROUNDWATER - BOREHOLE",
+    "status": "CLOSED",
+    "area": "THAMES - HERTS AND NORTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PGWU1828"
+  },
+  {
+   "id": "ea-wims:TH-PGWU1888",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.49601,
+    "lon": 0.00098,
+    "precision": "EA grid reference 539000 179350 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "GREENWICH, VICTORIA DEEP WATER TERMINAL B/H",
+    "type": "GROUNDWATER - BOREHOLE",
+    "status": "OPEN",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PGWU1888"
+  },
+  {
+   "id": "ea-wims:TH-PTNR0040",
+   "kind": "other-sampling-point",
+   "position": {
+    "lat": 51.49913,
+    "lon": 0.04938,
+    "precision": "EA grid reference 542350 179790 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "THAMES AT TATE AND LYLE'S MAIN INTAKE, SILVERTOWN",
+    "type": "SALINE WATER - COMPARATIVE INLET POINT",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTNR0040"
+  },
+  {
+   "id": "ea-wims:TH-PLER0056",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.51528,
+    "lon": 0.00471,
+    "precision": "EA grid reference 539200 181500 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "LEE AT CANNING TOWN BRIDGE",
+    "type": "FRESHWATER - RIVERS",
+    "status": "CLOSED",
+    "area": "THAMES - HERTS AND NORTH LONDON",
+    "observations": 1542,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 8.1,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 11.48,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "Conductivity at 25 C",
+      "value": 951,
+      "unit": "uS/cm"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.181,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 8.61,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrate as N",
+      "value": 8.49,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrite as N",
+      "value": 0.125,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00368,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Alkalinity to pH 4.5 as CaCO3",
+      "value": 214,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 0.919,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 96,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 10.4,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2009-12-10T14:00:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PLER0056",
+   "time": "2010-04-16T14:00:00"
+  },
+  {
+   "id": "ea-wims:TH-PLER0081",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.52721,
+    "lon": -0.00919,
+    "precision": "EA grid reference 538200 182800 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "lea"
+   },
+   "values": {
+    "name": "LEE NAV SUBSIDIARY A AT THREE MILLS LANE",
+    "type": "FRESHWATER - RIVERS",
+    "status": "OPEN",
+    "area": "THAMES - HERTS AND NORTH LONDON",
+    "observations": 3210,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.99,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 7.3,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "Conductivity at 25 C",
+      "value": 769,
+      "unit": "uS/cm"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": "<0.03",
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 12,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrate as N",
+      "value": 12,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrite as N",
+      "value": 0.013,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": "<0.00044",
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Alkalinity to pH 4.5 as CaCO3",
+      "value": 150,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 0.24,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 92.9,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 11.2,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2019-11-18T13:25:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PLER0081",
+   "time": "2020-03-06T10:26:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTF0001",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.49673,
+    "lon": 0.06296,
+    "precision": "EA grid reference 543300 179550 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "BIOTA SITE, WOOLWICH",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 975,
+    "latest_sample": [
+     {
+      "determinand": "Sample Depth below surface",
+      "value": 6.13,
+      "unit": "m"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 13.098,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "Water Depth",
+      "value": 7.19,
+      "unit": "m"
+     },
+     {
+      "determinand": "NGR : Easting",
+      "value": 544432,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "NGR : Northing",
+      "value": 180477,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 8.506,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 72.9,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 7.29,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2013-11-08T12:02:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTF0001",
+   "time": "2015-11-17T12:23:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTG0031",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.48405,
+    "lon": -0.00963,
+    "precision": "EA grid reference 538300 178000 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "SEDIMENT SITE, GREENWICH",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 496,
+    "latest_sample": [
+     {
+      "determinand": "Cadmium : Dry Wt",
+      "value": 0.165,
+      "unit": "mg/kg"
+     },
+     {
+      "determinand": "Mercury : Dry Wt",
+      "value": "<0.1",
+      "unit": "mg/kg"
+     },
+     {
+      "determinand": "Aldrin : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "HCH -alpha : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "HCH -beta : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "HCH -gamma : Dry Wt :- {Lindane}",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Dieldrin : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "DDT -op : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "DDE -pp : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "DDT -pp : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "TDE -pp : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Endrin : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "1,3,5-Trichlorobenzene : Dry Wt",
+      "value": "<1",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Pentachlorophenol : Dry Wt",
+      "value": "<3000",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "1,2,3-Trichlorobenzene : Dry Wt",
+      "value": "<0.8",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "1,2,4-Trichlorobenzene : Dry Wt",
+      "value": "<0.8",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Isodrin : Dry Wt",
+      "value": "<2",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Trichlorobenzene : Total (123-, 124-, 135-) : Dry Wt",
+      "value": "<2.6",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Hexachlorobutadiene : Dry Wt",
+      "value": "<0.9",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Hexachlorobenzene : Dry Wt",
+      "value": "<0.9",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "HCH : Total (Alpha, Beta, Gamma) : Dry Wt",
+      "value": "<6",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Grain Size Fraction : 500 to 999 microns",
+      "value": 42.5,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size : 4000 to 7999 microns",
+      "value": 6.64,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size fraction : < 20um",
+      "value": 0,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size Fraction : > 8000um",
+      "value": 0.08,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size Median",
+      "value": 0.498,
+      "unit": "mm"
+     },
+     {
+      "determinand": "Grain Size Mean",
+      "value": 0.765,
+      "unit": "mm"
+     },
+     {
+      "determinand": "Grain Size Kurtosis",
+      "value": 24.4,
+      "unit": "UNITLESS"
+     },
+     {
+      "determinand": "DDT : Total Isomers (DDT op pp, DDE pp, TDE pp) : Dry Wt",
+      "value": "<8",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Grain Size Fraction : 62.5 to 124 microns",
+      "value": 0,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size Fraction : 125 to 249 microns",
+      "value": 2.57,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size Fraction : 250 to 499 microns",
+      "value": 47.9,
+      "unit": "%"
+     },
+     {
+      "determinand": "Drins : Total (Aldrin, Dieldrin, Endrin, Isodrin) : Dry Wt",
+      "value": "<8",
+      "unit": "ug/kg"
+     },
+     {
+      "determinand": "Sorting Coefficient",
+      "value": 0.93,
+      "unit": "UNITLESS"
+     },
+     {
+      "determinand": "Inclusive Graphic Skewness :- {SKI}",
+      "value": 0.32,
+      "unit": "UNITLESS"
+     },
+     {
+      "determinand": "Carbon, Organic : Dry Wt as C",
+      "value": "<0.8",
+      "unit": "%"
+     },
+     {
+      "determinand": "Sample Preparation",
+      "value": 1,
+      "unit": "Text"
+     },
+     {
+      "determinand": "Solids, Volatile at 400 C",
+      "value": 0.04,
+      "unit": "%"
+     },
+     {
+      "determinand": "Solids, Volatile at 480 C",
+      "value": 0.24,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size Fraction : 1000 to 2000 microns",
+      "value": 0.12,
+      "unit": "%"
+     },
+     {
+      "determinand": "Grain Size Fraction : 2000 to 4000 microns",
+      "value": 0.2,
+      "unit": "%"
+     },
+     {
+      "determinand": "Dry Solids at 30 C",
+      "value": 78.1,
+      "unit": "%"
+     },
+     {
+      "determinand": "Solids, < 63 um",
+      "value": 0,
+      "unit": "%"
+     }
+    ],
+    "first_of_last_60": "2010-12-09T11:00:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTG0031",
+   "time": "2011-10-21T14:55:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0011",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.08641,
+    "precision": "EA grid reference 532900 180500 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT LONDON BRIDGE",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "OPEN",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 22131,
+    "latest_sample": [
+     {
+      "determinand": "Time of high tide",
+      "value": 8.36,
+      "unit": "hh.mm"
+     },
+     {
+      "determinand": "Sample Depth below surface",
+      "value": 0.2,
+      "unit": "m"
+     },
+     {
+      "determinand": "Lead, Dissolved",
+      "value": 0.069,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 22.8,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "Mercury, Dissolved",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Cadmium, Dissolved",
+      "value": 0.042,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Carbon, Organic, Dissolved as C :- {DOC}",
+      "value": 4.4,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Benzo(g,h,i)Perylene",
+      "value": 0.029,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Benzo(b)Fluoranthene",
+      "value": 0.03,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Benzo(k)Fluoranthene",
+      "value": 0.016,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Fluoranthene",
+      "value": 0.039,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Indeno(1,2,3-cd)pyrene",
+      "value": 0.029,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Zinc, Dissolved",
+      "value": 5.2,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Nickel, Dissolved",
+      "value": 3.3,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Water Depth",
+      "value": 8.9,
+      "unit": "m"
+     },
+     {
+      "determinand": "Turbidity : In Situ",
+      "value": 92.4,
+      "unit": "FTU"
+     },
+     {
+      "determinand": "Phytoplankton",
+      "value": "Sample sent to sub contract lab",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Volume of Sample Filtered",
+      "value": 270,
+      "unit": "ml"
+     },
+     {
+      "determinand": "Nitrogen, Dissolved Inorganic : as N",
+      "value": 14,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "GCMS Screen : Target Based multi-residue screening : Semi Quantitative",
+      "value": 1,
+      "unit": "Text"
+     },
+     {
+      "determinand": "Triphenyl Tin as Cation",
+      "value": "<0.00002",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "NGR : Easting",
+      "value": 532862,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "NGR : Northing",
+      "value": 180498,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "Arsenic, Dissolved",
+      "value": 2.9,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Benzo(a)Pyrene",
+      "value": 0.035,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Copper, Dissolved",
+      "value": 5.3,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Nitrite, Filtered as N",
+      "value": 0.0054,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "LCMS Screen : Semi Quantitative",
+      "value": 1,
+      "unit": "Text"
+     },
+     {
+      "determinand": "Time of sampling relative to previous high water",
+      "value": 10.21,
+      "unit": "hh.mm"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 4.17,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 15,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Tributyl Tin as Cation",
+      "value": 0.00061,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Perfluorooctanoate anion",
+      "value": 0.0045,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Perfluorooctylsulphonate anion",
+      "value": 0.011,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Nitrate, Filtered as N",
+      "value": 14,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, Filtered as P",
+      "value": 1.6,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silicate, Filtered as SiO2",
+      "value": 5.7,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 82.7,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 6.95,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised, Filtered as N",
+      "value": 14,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen, Filtered as N",
+      "value": "<0.01",
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2026-06-30T15:05:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0011",
+   "time": "2026-08-06T06:20:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0012",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50193,
+    "lon": -0.05712,
+    "precision": "EA grid reference 534950 179900 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT CHERRY GARDEN ( 1.9KMS BELOW LONDON BRIDGE )",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 3601,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 8.01,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 18.34,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 6.9,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.011,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 7.63,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00037,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 318,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 137,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 0.69,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 4.81,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 0.26,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 299,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 85.7,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 8.03,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2008-04-18T08:10:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0012",
+   "time": "2008-07-08T09:55:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0013",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.5042,
+    "lon": -0.03108,
+    "precision": "EA grid reference 536750 180200 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT WEST INDIA DOCK ( 4.7KMS BELOW LONDON BRIDGE )",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 2954,
+    "latest_sample": [
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 4,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.015,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 7.68,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 211,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 244,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 0.69,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 3.83,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 188,
+      "unit": "ug/l"
+     }
+    ],
+    "first_of_last_60": "2008-04-18T08:05:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0013",
+   "time": "2008-07-08T10:05:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0014",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.48455,
+    "lon": -0.01248,
+    "precision": "EA grid reference 538100 178050 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT GREENWICH ( 7.7KMS BELOW LONDON BRIDGE )",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 6981,
+    "latest_sample": [
+     {
+      "determinand": "Zinc, Dissolved",
+      "value": 7.8,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Triphenyl Tin as Cation",
+      "value": "<0.002",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Boron",
+      "value": "<700",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Copper, Dissolved",
+      "value": 2.57,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Iron, Dissolved",
+      "value": "<100",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Tributyl Tin as Cation",
+      "value": 0.00145,
+      "unit": "ug/l"
+     }
+    ],
+    "first_of_last_60": "2010-07-13T12:16:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0014",
+   "time": "2012-10-05T13:19:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0015",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50396,
+    "lon": 0.00925,
+    "precision": "EA grid reference 539550 180250 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT VICTORIA DOCK ( 11.4KMS BELOW LONDON BRIDGE )",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "OPEN",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 7068,
+    "latest_sample": [
+     {
+      "determinand": "Time of high tide",
+      "value": 14.19,
+      "unit": "hh.mm"
+     },
+     {
+      "determinand": "Sample Depth below surface",
+      "value": 0.2,
+      "unit": "m"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 7.6,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "Carbon, Organic, Dissolved as C :- {DOC}",
+      "value": 6.3,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Zinc, Dissolved",
+      "value": 5,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Water Depth",
+      "value": 9.31,
+      "unit": "m"
+     },
+     {
+      "determinand": "Turbidity : In Situ",
+      "value": 50.4,
+      "unit": "FTU"
+     },
+     {
+      "determinand": "NGR : Easting",
+      "value": 539557,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "NGR : Northing",
+      "value": 180237,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "Copper, Dissolved",
+      "value": 3,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Time of sampling relative to previous high water",
+      "value": 1.56,
+      "unit": "hh.mm"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 0.27,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 91.7,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 10.9,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2019-03-18T14:45:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0015",
+   "time": "2020-03-09T16:17:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0016",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.49673,
+    "lon": 0.06296,
+    "precision": "EA grid reference 543300 179550 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "THAMES AT WOOLWICH ( 14.7KMS BELOW LONDON BRIDGE )",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 17659,
+    "latest_sample": [
+     {
+      "determinand": "2,4-D :- {2,4-Dichlorophenoxyacetic acid}",
+      "value": 0.00916,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Mecoprop",
+      "value": 0.0271,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Benzene",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Toluene :- {Methylbenzene}",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Bentazone",
+      "value": "<0.005",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Demetons : Sum of (-S Me Sox, -S Me, -S Me Sone)",
+      "value": "<0.03",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Triphenyl Tin as Cation",
+      "value": "<0.002",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Arsenic, Dissolved",
+      "value": 2.8,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Boron",
+      "value": 763,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Vanadium",
+      "value": "<20",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Turbidity",
+      "value": 38.3,
+      "unit": "NTU"
+     },
+     {
+      "determinand": "Dimethoate",
+      "value": "<0.006",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Copper, Dissolved",
+      "value": 1.91,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Iron, Dissolved",
+      "value": "<100",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Triazophos",
+      "value": "<0.005",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2-Chloro-4-nitrotoluene",
+      "value": "<1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2-Chloro-6-nitrotoluene",
+      "value": "<1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "4-Chloro-2-nitrotoluene :- {2-Nitro-4-Chlorotoluene}",
+      "value": "<1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Demeton-S-methyl sulphoxide (Oxydemeton-methyl)",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Hexachlorobutadiene",
+      "value": "<0.003",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Dimethylbenzene : Sum of isomers (1,3- 1,4-)",
+      "value": 0.22,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Trichlorobenzene : Total (123-, 124-, 135-)",
+      "value": "<0.03",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Drins : Total (Aldrin, Dieldrin, Endrin, Isodrin)",
+      "value": "<0.007",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "HCH : Total (Alpha, Beta, Gamma)",
+      "value": "<0.009",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 4.826,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Omethoate",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Biphenyl",
+      "value": "<3",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Chloronitrotoluene : Total Isomers",
+      "value": "<5",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "4-Chloro-3-nitrotoluene",
+      "value": "<1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2-Chloro-5-nitrotoluene",
+      "value": "<1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Methyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Ethyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Iso Propyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Butyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Iso Butyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Iso Octyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Glycol Butyl Ester",
+      "value": "<0.1",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Dimethylbenzene : Sum of (1,2- 1,3- 1,4-) :- {Xylene}",
+      "value": 0.43,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-D Esters : Total",
+      "value": "<0.4",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Demeton-S-methyl sulphone",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Tributyl Tin as Cation",
+      "value": 0.00078,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "1,2,3-Trichlorobenzene",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "1,2,4-Trichlorobenzene",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "1,3,5-Trichlorobenzene",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "cis-Permethrin",
+      "value": "<0.002",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "trans-Permethrin",
+      "value": "<0.001",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Demeton-S-methyl",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Mevinphos",
+      "value": "<0.008",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Isodrin",
+      "value": "<0.001",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "PCSDs :- {chlorphenylid}",
+      "value": "<0.002",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Naphthalene",
+      "value": "<0.01",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Azinphos-methyl",
+      "value": "<0.003",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Fenitrothion",
+      "value": "<0.001",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "1,1,2-Trichloroethane",
+      "value": "<0.5",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2-Chlorophenol",
+      "value": "<0.02",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "2,4-Dichlorophenol",
+      "value": "<0.02",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "1,2-Dimethylbenzene :- {o-Xylene}",
+      "value": 0.21,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 52.3,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 5.15,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Trifluralin",
+      "value": "<0.002",
+      "unit": "ug/l"
+     }
+    ],
+    "first_of_last_60": "2012-10-05T14:00:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0016",
+   "time": "2012-10-05T14:00:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0049",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50781,
+    "lon": -0.08639,
+    "precision": "EA grid reference 532901 180500 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES ZONE 10 ( MIDPOINT 0KMS )",
+    "type": "SALINE WATER - ESTUARINE SITES - CORRECTED",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 1164,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.84,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 18.63,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 2.2,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.107,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 8.12,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00256,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 13.6,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 901,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 1.467,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 0.881,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 1.8,
+      "unit": "g/l"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 35,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 69,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 6.38,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2002-06-06T09:40:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0049",
+   "time": "2004-07-08T07:15:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0050",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50763,
+    "lon": -0.04823,
+    "precision": "EA grid reference 535550 180550 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES ZONE 11 ( MIDPOINT 3KMS )",
+    "type": "SALINE WATER - ESTUARINE SITES - CORRECTED",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 512,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.7,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 18.7,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 2.2,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.204,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 8.931,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00357,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 18,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 1410,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 1.433,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 0.929,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 2.82,
+      "unit": "g/l"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 31,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 52.9,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 4.86,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2000-05-04T12:20:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0050",
+   "time": "2004-07-08T06:50:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0051",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50015,
+    "lon": -0.03126,
+    "precision": "EA grid reference 536750 179750 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES ZONE 12 ( MIDPOINT 5KMS )",
+    "type": "SALINE WATER - ESTUARINE SITES - CORRECTED",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 575,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.65,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 18.77,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 2,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.143,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 7.804,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00225,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 25.1,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 2000,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 1.712,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 1.552,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 3.63,
+      "unit": "g/l"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 28.7,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 48.1,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 4.39,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2000-07-27T12:06:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0051",
+   "time": "2004-07-08T06:43:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0052",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.4907,
+    "lon": -0.00429,
+    "precision": "EA grid reference 538650 178750 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES ZONE 13 ( MIDPOINT 9KMS )",
+    "type": "SALINE WATER - ESTUARINE SITES - CORRECTED",
+    "status": "CLOSED",
+    "area": "THAMES - HERTS AND NORTH LONDON",
+    "observations": 485,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.63,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 18.84,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 2.2,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.138,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 8.644,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00208,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 19.7,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 1920,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 1.389,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 1.522,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 3.9,
+      "unit": "g/l"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 36.3,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 45.9,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 4.18,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2000-07-27T12:13:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0052",
+   "time": "2004-07-08T06:30:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0053",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.49648,
+    "lon": 0.02585,
+    "precision": "EA grid reference 540725 179450 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "THAMES ZONE 14 ( MIDPOINT 13KMS )",
+    "type": "SALINE WATER - ESTUARINE SITES - CORRECTED",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 537,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.53,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 19,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 2.4,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.261,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 6.015,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": 0.00318,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 27.8,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 3520,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 1.17,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 1.597,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 6.77,
+      "unit": "g/l"
+     },
+     {
+      "determinand": "Chlorophyll : Acetone Extract",
+      "value": 21.7,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 39.7,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 3.55,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2000-06-22T14:00:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0053",
+   "time": "2004-07-08T06:05:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0054",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50029,
+    "lon": 0.07825,
+    "precision": "EA grid reference 544350 179975 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "THAMES ZONE 15 ( MIDPOINT 16KMS )",
+    "type": "SALINE WATER - ESTUARINE SITES - CORRECTED",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 379,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 7.7,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 19.8,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 2.1,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammoniacal Nitrogen as N",
+      "value": 0.0371,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Nitrogen, Total Oxidised as N",
+      "value": 7.38,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Ammonia un-ionised as N",
+      "value": "<0.001",
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 66,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 2500,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Orthophosphate, reactive as P",
+      "value": 2.05,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Silica, reactive as SiO2",
+      "value": 6.9,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Suite Indicator : BT",
+      "value": 1,
+      "unit": "UNITLESS"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 5.1,
+      "unit": "g/l"
+     },
+     {
+      "determinand": "Chlorophyll : Methanol Extract",
+      "value": 29,
+      "unit": "ug/l"
+     }
+    ],
+    "first_of_last_60": "2000-07-13T12:37:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0054",
+   "time": "2000-07-27T12:41:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0074",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.48403,
+    "lon": -0.00847,
+    "precision": "EA grid reference 538380 178000 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT AQMS GREENWICH",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 25,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 8.1,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 21,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 4.9,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 17.5,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Suite Indicator : BT",
+      "value": 1,
+      "unit": "UNITLESS"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 33,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 2.93,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2001-06-18T08:25:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0074",
+   "time": "2001-07-09T11:40:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0075",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.50243,
+    "lon": -0.06012,
+    "precision": "EA grid reference 534740 179950 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT AQMS WAPPING",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 44,
+    "latest_sample": [
+     {
+      "determinand": "pH",
+      "value": 8.1,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 22,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 4.9,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 20.7,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Suite Indicator : BT",
+      "value": 1,
+      "unit": "UNITLESS"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 46,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 4.01,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2001-06-18T08:42:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0075",
+   "time": "2001-07-09T12:14:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0092",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.4857,
+    "lon": -0.00106,
+    "precision": "EA grid reference 538890 178200 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "THAMES AT LTE INLET, GREENWICH",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "CLOSED",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 21,
+    "latest_sample": [
+     {
+      "determinand": "Lead",
+      "value": 0.828,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Lead, Dissolved",
+      "value": 0.4,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "pH",
+      "value": 8.25,
+      "unit": "PHUNITS"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 5.68,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "BOD : 5 Day ATU",
+      "value": 1.93,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Cadmium, Dissolved",
+      "value": "<0.04",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Cadmium",
+      "value": "<0.04",
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Solids, Suspended at 105 C",
+      "value": 9.8,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Solids, non-volatile at 500 C",
+      "value": "<20",
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chloride",
+      "value": 2050,
+      "unit": "mg/l"
+     },
+     {
+      "determinand": "Chromium",
+      "value": 0.728,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Type of flow as description",
+      "value": "Normal",
+      "unit": "Coded Result"
+     },
+     {
+      "determinand": "Zinc, Dissolved",
+      "value": 32.9,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Chromium, Dissolved",
+      "value": 0.352,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Nickel, Dissolved",
+      "value": 4.57,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Copper, Dissolved",
+      "value": 5.89,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Copper",
+      "value": 4.62,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Zinc",
+      "value": 31.8,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Nickel",
+      "value": 3.94,
+      "unit": "ug/l"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 109.6,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 13.4,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2006-02-14T13:10:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0092",
+   "time": "2006-02-14T13:10:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0106",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.484,
+    "lon": -0.00675,
+    "precision": "EA grid reference 538500 178000 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "model"
+   },
+   "values": {
+    "name": "WFD FISH TRAC - THAMES AT GREENWICH",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "OPEN",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 120,
+    "latest_sample": [
+     {
+      "determinand": "Sample Depth below surface",
+      "value": 0,
+      "unit": "m"
+     },
+     {
+      "determinand": "Temperature of Water",
+      "value": 18.7,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "Water Depth",
+      "value": 4,
+      "unit": "m"
+     },
+     {
+      "determinand": "NGR : Easting",
+      "value": 538499,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "NGR : Northing",
+      "value": 178000,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 2.48,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 87.8,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 8.07,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2013-05-29T11:53:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0106",
+   "time": "2025-09-11T15:58:00"
+  },
+  {
+   "id": "ea-wims:TH-PTTR0108",
+   "kind": "water-sampling-point",
+   "position": {
+    "lat": 51.49568,
+    "lon": 0.04165,
+    "precision": "EA grid reference 541824 179391 (BNG, converted with a Helmert transform, about 5 m)",
+    "zone": "east"
+   },
+   "values": {
+    "name": "THAMES AT AWQMS BARRIER GARDENS PIER WOOLWICH",
+    "type": "SALINE WATER - ESTUARINE SITES - NON BATHING/SHELLFISH",
+    "status": "OPEN",
+    "area": "THAMES - KENT AND SOUTH LONDON",
+    "observations": 651,
+    "latest_sample": [
+     {
+      "determinand": "Temperature of Water",
+      "value": 20.7,
+      "unit": "CEL"
+     },
+     {
+      "determinand": "NGR : Easting",
+      "value": 541873,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "NGR : Northing",
+      "value": 179430,
+      "unit": "NGR"
+     },
+     {
+      "determinand": "Salinity : In Situ",
+      "value": 11.83,
+      "unit": "ppt"
+     },
+     {
+      "determinand": "Oxygen, Dissolved, % Saturation",
+      "value": 81.2,
+      "unit": "%"
+     },
+     {
+      "determinand": "Oxygen, Dissolved as O2",
+      "value": 6.81,
+      "unit": "mg/l"
+     }
+    ],
+    "first_of_last_60": "2026-03-31T10:29:00"
+   },
+   "url": "https://environment.data.gov.uk/water-quality/sampling-point/TH-PTTR0108",
+   "time": "2026-09-04T05:10:00"
+  }
+ ]
+}

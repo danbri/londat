@@ -1,0 +1,113 @@
+{
+ "about": "Hand-written lock rules for the Docklands zone, read on 2026-10-04 from the operators' pages and written here as structured facts in our own words (no page text is copied). tools/fetch-river.mjs locks adds OSM positions, live Canal & River Trust notices (crt_match keywords) and an HTTP check of each source. Windows are hours either side of high (HW) or low (LW) water at the named place. Where two pages of one operator disagree, both are kept under conflicts.",
+ "read": "2026-10-04",
+ "locks": [
+  {
+   "id": "limehouse",
+   "name": "Limehouse Lock (Limehouse Basin ship lock, Thames entrance)",
+   "osm": "way/1480133733",
+   "operator": "Canal & River Trust",
+   "links": "Thames (Limehouse Reach) to Limehouse Basin, and on to the Regent's Canal and the Limehouse Cut",
+   "status": "in service, staffed only for booked moves",
+   "window": { "kind": "closed around low water", "reference": "LW London Bridge", "closed_hours_before": 2, "closed_hours_after": 2, "approximate": true },
+   "hours": [ { "season": "summer, 1 April to 31 October", "from": "07:00", "to": "19:00" }, { "season": "winter, 1 November to 31 March", "from": "08:00", "to": "16:00" } ],
+   "booking": "online, at least 2 working days ahead; telephone and e-mail bookings confirmed 08:00 to 15:30 Monday to Friday; re-book if more than 30 minutes late; lock keepers on VHF channel 80",
+   "crt_match": [ "Limehouse Lock" ],
+   "sources": [ { "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames", "title": "Locks to the River Thames (CRT; page 'Last Edited: 22 September 2026')", "read": "2026-10-04" } ],
+   "notes": "A CRT notice of August 2026, 'Changes to Limehouse Lock operating times' (reason: low water levels), is open-ended: see crt_notices."
+  },
+  {
+   "id": "west-india-entrance",
+   "name": "West India Dock Entrance Lock (Blackwall entrance to West India and Millwall Docks)",
+   "osm": "way/1479670697",
+   "operator": "Canal & River Trust",
+   "links": "Thames (Blackwall Reach) to Blackwall Basin, West India Docks and Millwall Docks",
+   "status": "in service by booking",
+   "window": { "kind": "open around high water", "reference": "HW North Woolwich", "open_hours_before": 3, "open_hours_after": 3 },
+   "hours": [ { "season": "all year", "days": "Monday to Friday", "from": "08:30", "to": "15:30", "note": "bookings guaranteed in these hours as the tide allows; other times by arrangement" } ],
+   "booking": "by e-mail, seven days ahead; full salvage or wreck-removal insurance required to enter West India Dock; West India and Millwall Docks harbour regulations apply",
+   "conflicts": [ { "claim": "open one hour either side of high water at London Bridge (minus about 20 minutes), 08:30 to 15:30, booked in advance (no notice period stated); no charge only with a confirmed berth or booked visitor mooring", "source": "https://canalrivertrust.org.uk/canals-and-rivers/london-docklands/boating-london-docklands", "read": "2026-10-04" } ],
+   "crt_match": [ "West India Dock Entrance", "West India Dock" ],
+   "sources": [
+    { "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames", "title": "Locks to the River Thames (CRT; 'Last Edited: 22 September 2026')", "read": "2026-10-04" },
+    { "url": "https://canalrivertrust.org.uk/canals-and-rivers/london-docklands/boating-london-docklands", "title": "Boating London Docklands (CRT)", "read": "2026-10-04" }
+   ]
+  },
+  {
+   "id": "bow-locks",
+   "name": "Bow Locks (Bow Creek to the Lee Navigation and Limehouse Cut)",
+   "osm": "node/259200697",
+   "operator": "Canal & River Trust",
+   "links": "tidal Bow Creek (River Lea) to the Lee Navigation, Three Mills and the Limehouse Cut",
+   "status": "in service by booking",
+   "window": { "kind": "open around high water", "reference": "HW London Bridge", "open_hours_before": 2, "open_hours_after": 2 },
+   "hours": [ { "season": "all year", "days": "Monday to Friday", "from": "09:30", "to": "16:30" } ],
+   "booking": "by e-mail to the CRT Harbour Master, seven days ahead",
+   "crt_match": [ "Bow Lock", "Bow Creek" ],
+   "sources": [ { "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames", "title": "Locks to the River Thames (CRT)", "read": "2026-10-04" } ],
+   "notes": "OSM has the lock gates (node/259200697 and neighbours at 51.523, -0.008) but no named lock way; the position is the first gate."
+  },
+  {
+   "id": "south-dock",
+   "name": "South Dock Lock (Greenland Dock and South Dock Marina sea lock)",
+   "osm": "way/411108591",
+   "operator": "Southwark Council (South Dock Marina)",
+   "links": "Thames (Limehouse Reach, beside Greenland Pier) to South Dock Marina; Greenland Dock behind it",
+   "status": "in service in office hours when there is enough water",
+   "window": { "kind": "open around high water", "reference": "HW (local, for a 2 m draft)", "open_hours_before": 2, "open_hours_after": 1.5, "approximate": true },
+   "hours": [ { "days": "Monday to Friday", "from": "07:00", "to": "19:00" }, { "days": "weekends and bank holidays", "from": "08:00", "to": "17:00" } ],
+   "booking": "advised (booking and registration form); VHF channels 37 and 80, callsign 'South Dock Marina'; waiting berth on the inner side of Greenland Pier",
+   "dimensions": { "cill_above_chart_datum_m": 2.85, "safety_margin_suggested_m": 0.3 },
+   "sources": [ { "url": "https://www.southwark.gov.uk/culture-and-sport/south-dock-marina/navigation-thames", "title": "South Dock Marina: navigation on the Thames (Southwark Council)", "read": "2026-10-04" } ],
+   "notes": "Depth over the cill = predicted tide level (above chart datum) minus 2.85 m. Chart datum near London Bridge is 3.20 m below OD (registry/sources/pla/README.md), so the cill is near -0.35 m OD."
+  },
+  {
+   "id": "commercial-road",
+   "name": "Commercial Road Lock 12 (Regent's Canal)",
+   "osm": "way/243977333",
+   "operator": "Canal & River Trust",
+   "links": "Limehouse Basin to the Regent's Canal",
+   "status": "boater-operated canal lock (no booking); see notices",
+   "crt_match": [ "Commercial Road" ],
+   "sources": [ { "url": "https://canalrivertrust.org.uk/notices", "title": "CRT notices", "read": "2026-10-04" } ],
+   "notes": "CRT notices of August 2026 announce ongoing overnight closures (14:00 to 09:00) at Commercial Road, Salmon Lane and Mile End locks for low water levels."
+  },
+  {
+   "id": "salmon-lane",
+   "name": "Salmon Lane Lock 11 (Regent's Canal)",
+   "osm": "way/23914320",
+   "operator": "Canal & River Trust",
+   "links": "Regent's Canal",
+   "status": "boater-operated canal lock; see notices",
+   "crt_match": [ "Salmon Lane" ],
+   "sources": [ { "url": "https://canalrivertrust.org.uk/notices", "title": "CRT notices", "read": "2026-10-04" } ]
+  },
+  {
+   "id": "blackwall-basin-entrance",
+   "name": "Blackwall Basin Entrance Lock (former entrance)",
+   "osm": "way/189816285",
+   "operator": null,
+   "links": "Blackwall Basin to the Thames (historic)",
+   "status": "no operating rules found; the CRT pages name only the West India Dock Entrance Lock as the tidal lock of West India Docks",
+   "sources": [ { "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames", "title": "Locks to the River Thames (CRT): lists the tidal locks", "read": "2026-10-04" } ]
+  },
+  {
+   "id": "st-katharine",
+   "name": "St Katharine Docks Lock",
+   "osm": "way/951522044",
+   "operator": "St Katharine Docks marina",
+   "links": "Thames (Upper Pool) to St Katharine Docks",
+   "status": "rules not collected (the marina's pages were not read in this pass)",
+   "sources": []
+  },
+  {
+   "id": "king-george-v",
+   "name": "King George V Lock (Royal Docks)",
+   "osm": "way/946639100",
+   "operator": "Royal Docks Waterways (Royal Docks Management Authority)",
+   "links": "Thames (Gallions Reach) to King George V Dock and the Royal Docks",
+   "status": "rules not collected; Royal Docks Waterways publishes booking forms and a port safety code (royaldockswaterways.com/booking-forms/)",
+   "sources": [ { "url": "https://royaldockswaterways.com/booking-forms/", "title": "Royal Docks Waterways booking forms (linked from the home page; not read)", "read": null } ]
+  }
+ ]
+}
