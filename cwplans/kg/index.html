@@ -79,7 +79,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 
 <details class="panel" id="sparqlBox">
   <summary>SPARQL</summary>
-  <p class="muted">Every quad is in a named graph, so wrap patterns in <code>GRAPH ?g { … }</code>. Prefixes s:, rdfs:, owl:, geo:, dct:, void:, prov:, cwk: and id: are added for you.</p>
+  <p class="muted">Every quad is in a named graph, so wrap patterns in <code>GRAPH ?g { … }</code>. Prefixes s:, rdfs:, owl:, geo:, dct:, void:, prov:, cwk: (https://kgx.foaf.tv/vocab#), cwp: (https://kgx.foaf.tv/pipeline#) and id: are added for you.</p>
   <label for="sparql" hidden>SPARQL query</label>
   <textarea id="sparql" spellcheck="false"></textarea>
   <div class="row"><button type="button" id="run" disabled>Run query</button><span class="muted" id="runInfo"></span></div>
@@ -88,7 +88,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 <footer>
   <div>Data: <a href="https://github.com/danbri/londat/tree/main/kgx">danbri/londat kgx</a> (N-Quads, COTTAS, Shardborough), built by <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/build-kgx.mjs">build-kgx.mjs</a>. Each graph names its sources and licence (view "Graphs and licences"). Scoping data, not reviewed for production.</div>
   <div>Buildings and occupants include data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL. Mall units: Canary Wharf Group / Living Map, archived for reference. Engine: <a href="https://github.com/danbri/factoidal">Factoidal</a>.</div>
-  <div>Things, graph versions and activities have IDs <code>https://kgx.foaf.tv/id/…</code> (shown as <code>id:…</code>). Nothing is served at those addresses yet, so an ID opens here; link to one with <code>#e=id:…</code>.</div>
+  <div>Things, graph versions and activities have IDs <code>https://kgx.foaf.tv/id/…</code> (shown as <code>id:…</code>). The vocabulary is under the same domain (<code>cwk:</code> <code>https://kgx.foaf.tv/vocab#</code>, <code>cwp:</code> <code>https://kgx.foaf.tv/pipeline#</code>). Nothing is served at those addresses yet, so an ID or a term opens here; link to one with <code>#e=id:…</code>.</div>
   <div class="row"><button type="button" class="ghost" id="clearCache">Remove the graph from this device</button><span id="cacheMsg"></span></div>
 </footer>
 </div>

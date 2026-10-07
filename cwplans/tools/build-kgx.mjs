@@ -224,7 +224,9 @@ for (const v of Object.values(versions)) {
   if (!v.blank && createHash('sha256').update(lines.join('\n') + '\n').digest('hex') !== v.rdfc10_sha256) throw new Error(`${v.name}: lines read back do not hash to the version`);
   const chunks = partitionLines(lines, PART);
   const outs = await flow.run(OPS.partition, [v], { target: PART }, async () => Object.fromEntries(chunks.map((c, k) => [`${v.name}.p${String(k).padStart(2, '0')}`, { lines: c, about: { partOf: v.iri, part: k } }])));
-  parts[v.name] = Object.values(outs);
+  // a part can have the content (and so the IRI) of a part of an earlier head, and its record in log/versions.jsonl then
+  // names that head: describe each part as a part of this head
+  parts[v.name] = Object.values(outs).map(p => ({ ...p, partOf: v.iri, part: +p.name.slice(p.name.lastIndexOf('.p') + 2) }));
 }
 
 // ---- describe the versions (meta), then lift the activity log (log): both pure functions of what they are given

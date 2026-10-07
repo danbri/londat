@@ -16,9 +16,14 @@ import { LONDAT_DIR } from './londat.mjs';
 const K = join(LONDAT_DIR, 'kgx'), heads = JSON.parse(readFileSync(join(K, 'heads.json'), 'utf8')).heads;
 const vers = readFileSync(join(K, 'log', 'versions.jsonl'), 'utf8').split('\n').filter(Boolean).map(JSON.parse);
 const cur = new Set(Object.values(heads)), read = v => gunzipSync(readFileSync(join(K, v.file))).toString();
-const members = [...vers.filter(v => cur.has(v.partOf)), ...vers.filter(v => v.iri === heads.meta || v.iri === heads.log)].sort((a, b) => a.iri.localeCompare(b.iri));
+// the parts of a head are the outputs of the partition activity on it (newest operation version): not the partOf of a
+// version record, which names the first head a part was cut from when a later head has a part with the same content
+const acts = readFileSync(join(K, 'log', 'activities.jsonl'), 'utf8').split('\n').filter(Boolean).map(JSON.parse);
+const byIri = new Map(vers.map(v => [v.iri, v])), partsOf = new Map();
+for (const a of acts) if (a.operation === 'partition-by-subject-key' && cur.has(a.inputs[0]) && (partsOf.get(a.inputs[0])?.version ?? -1) < a.operation_version) partsOf.set(a.inputs[0], { version: a.operation_version, outputs: a.outputs });
+const members = [...[...partsOf.values()].flatMap(p => p.outputs.map(o => byIri.get(o))), ...vers.filter(v => v.iri === heads.meta || v.iri === heads.log)].sort((a, b) => a.iri.localeCompare(b.iri));
 // the store holds the parts of the heads that have parts (a head kept out of the store, such as model-building-keys, has none)
-const stored = Object.values(heads).filter(iri => iri === heads.meta || iri === heads.log || vers.some(v => v.partOf === iri));
+const stored = Object.values(heads).filter(iri => iri === heads.meta || iri === heads.log || partsOf.has(iri));
 const partitioned = members.map(read).join(''), whole = stored.map(iri => read(vers.find(v => v.iri === iri))).join('');
 const gen = readFileSync(join(K, 'shardborough', 'CURRENT'), 'utf8').trim();
 const inputHash = createHash('sha256').update(partitioned).digest('hex').slice(0, 16);
