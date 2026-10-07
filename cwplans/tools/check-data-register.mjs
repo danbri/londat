@@ -20,6 +20,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from '
 import { execFileSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { kid } from './kgx-ids.mjs';
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
 const reg = JSON.parse(readFileSync(join(CW, 'data-register.json'), 'utf8'));
 const problems = [];
@@ -167,8 +168,10 @@ if (process.argv.includes('--write')) {
   writeFileSync(join(CW, 'DATA-REGISTER.md'), out);
   console.log('wrote DATA-REGISTER.md');
   if (pipe) {   // JSON-LD for a knowledge graph: activities, the files they used and made, and the external sources
+    // committed files by their GitHub URL; sources, tool activities and local files by their knowledge-graph IDs
+    // (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; kgx-ids.mjs); the cwp: vocabulary keeps its namespace
     const BASE = 'https://github.com/danbri/londat/blob/main/cwplans/', REG = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#';
-    const fileId = p => BASE + p, srcId = k => REG + 'source/' + k, actId = id => REG + 'activity/' + id, localId = p => 'urn:cwplans:local:' + encodeURI(p);
+    const fileId = p => BASE + p, srcId = k => kid('source', k), actId = id => kid('tool', id), localId = p => kid('local', p);
     // a local path with a placeholder (<run>, <E>_<N>) is a pattern, not one file: a blank node with the pattern
     const ref = u => u.file ? { '@id': fileId(u.file) } : u.local ? (/[<>]/.test(u.local) ? { 'cwp:pathPattern': u.local } : { '@id': localId(u.local) }) : { '@id': srcId(u.source), ...(u.endpoint ? { 'dcat:accessURL': u.endpoint } : {}), ...(u.request ? { 'dct:description': u.request } : {}) };
     const graph = [];

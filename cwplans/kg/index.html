@@ -79,7 +79,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 
 <details class="panel" id="sparqlBox">
   <summary>SPARQL</summary>
-  <p class="muted">Every quad is in a named graph, so wrap patterns in <code>GRAPH ?g { … }</code>. Prefixes s:, rdfs:, owl:, geo:, dct:, void:, cwk: are added for you.</p>
+  <p class="muted">Every quad is in a named graph, so wrap patterns in <code>GRAPH ?g { … }</code>. Prefixes s:, rdfs:, owl:, geo:, dct:, void:, prov:, cwk: and id: are added for you.</p>
   <label for="sparql" hidden>SPARQL query</label>
   <textarea id="sparql" spellcheck="false"></textarea>
   <div class="row"><button type="button" id="run" disabled>Run query</button><span class="muted" id="runInfo"></span></div>
@@ -88,6 +88,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 <footer>
   <div>Data: <a href="https://github.com/danbri/londat/tree/main/kgx">danbri/londat kgx</a> (N-Quads, COTTAS, Shardborough), built by <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/build-kgx.mjs">build-kgx.mjs</a>. Each graph names its sources and licence (view "Graphs and licences"). Scoping data, not reviewed for production.</div>
   <div>Buildings and occupants include data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL. Mall units: Canary Wharf Group / Living Map, archived for reference. Engine: <a href="https://github.com/danbri/factoidal">Factoidal</a>.</div>
+  <div>Things, graph versions and activities have IDs <code>https://kgx.foaf.tv/id/…</code> (shown as <code>id:…</code>). Nothing is served at those addresses yet, so an ID opens here; link to one with <code>#e=id:…</code>.</div>
   <div class="row"><button type="button" class="ghost" id="clearCache">Remove the graph from this device</button><span id="cacheMsg"></span></div>
 </footer>
 </div>
@@ -95,6 +96,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 <script type="module">
 const params = new URLSearchParams(location.search);
 const BASE = params.get('base') || '../../kgx/';   // same site: https://danbri.github.io/londat/kgx/ (?base= for another copy)
+const ID = 'https://kgx.foaf.tv/id/';             // the graph's IDs (things, graph versions, activities); skill cwplans-kgx
 const PFX = `PREFIX s: <https://schema.org/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -104,14 +106,20 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX id: <https://kgx.foaf.tv/id/>
 `;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const lit = s => '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"';
 const SHORT = [['https://schema.org/', 's:'], ['http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:'], ['http://www.w3.org/2000/01/rdf-schema#', 'rdfs:'], ['http://www.w3.org/2002/07/owl#', 'owl:'],
   ['http://www.opengis.net/ont/geosparql#', 'geo:'], ['http://purl.org/dc/terms/', 'dct:'], ['http://rdfs.org/ns/void#', 'void:'], ['http://www.w3.org/ns/prov#', 'prov:'], ['https://danbri.github.io/londat/kgx/vocab#', 'cwk:'],
-  ['https://danbri.github.io/londat/kgx/graph/', 'graph:'], ['https://danbri.github.io/londat/kgx/id/', 'id:'], ['http://www.wikidata.org/entity/', 'wd:']];
+  [ID, 'id:'], ['http://www.wikidata.org/entity/', 'wd:']];
 const short = u => { for (const [a, b] of SHORT) if (u.startsWith(a)) return b + u.slice(a.length); return u; };
+// an ID (nothing is hosted at https://kgx.foaf.tv/id/ yet) or a vocabulary term opens in this page only; another http(s)
+// IRI also gets a link out. In a hash an ID is written short: #e=id:cwb0413
+const outside = u => /^https?:\/\//.test(u) && !u.startsWith(ID) && !u.startsWith('https://danbri.github.io/londat/kgx/');
+const hashOf = iri => '#e=' + (iri.startsWith(ID) ? 'id:' + iri.slice(ID.length) : encodeURIComponent(iri));
+const expand = s => /^id:[a-z0-9]+$/.test(s) ? ID + s.slice(3) : s;
 let handle = false;
 // Factoidal runs in a worker, so a long query never freezes the page
 const worker = new Worker('worker.js', { type: 'module' }); let seq = 0; const pending = new Map();
@@ -136,7 +144,7 @@ async function boot() {
     handle = true; swPost({ type: 'keep-generation', generation: info.generation });
     $('go').disabled = false; $('run').disabled = false;
     const h = location.hash.slice(1);
-    if (h.startsWith('e=')) showEntity(decodeURIComponent(h.slice(2))); else if (VIEWS[h]) showView(h); else showView('graphs');
+    if (h.startsWith('e=')) showEntity(expand(decodeURIComponent(h.slice(2)))); else if (VIEWS[h]) showView(h); else showView('graphs');
   } catch (err) {
     $('outTitle').textContent = 'The graph could not be loaded'; $('outNote').textContent = '';
     $('outBody').innerHTML = `<p class="err">${esc(err.message || err)}</p>`;
@@ -153,8 +161,7 @@ async function select(q, page = 0, pageSize = 200) {
 }
 function cell(b) {
   if (!b) return '';
-  if (b.type === 'uri') { const ext = /^https?:\/\//.test(b.value) && !b.value.startsWith('https://danbri.github.io/londat/kgx/graph/');
-    return `<a class="iri" href="#e=${encodeURIComponent(b.value)}" data-e="${esc(b.value)}">${esc(short(b.value))}</a>${ext && !b.value.startsWith('https://danbri.github.io/londat/kgx/') ? ` <a href="${esc(b.value)}" target="_blank" rel="noopener" title="open the page">↗</a>` : ''}`; }
+  if (b.type === 'uri') return `<a class="iri" href="${esc(hashOf(b.value))}" data-e="${esc(b.value)}">${esc(short(b.value))}</a>${outside(b.value) ? ` <a href="${esc(b.value)}" target="_blank" rel="noopener" title="open the page">↗</a>` : ''}`;
   return esc(b.value);
 }
 function table(vars, rows) {
@@ -187,7 +194,7 @@ $('searchForm').addEventListener('submit', e => { e.preventDefault(); const q = 
 
 // --- one thing: what it says, what points at it
 async function showEntity(iri) {
-  setPressed(null); history.replaceState(null, '', '#e=' + encodeURIComponent(iri));
+  setPressed(null); history.replaceState(null, '', hashOf(iri));
   show(short(iri), 'Loading…', '');
   try {
     const d = await ask({ type: 'describe', iri }); swPost({ type: 'status' });
@@ -199,7 +206,7 @@ async function showEntity(iri) {
     if (hours) { const h = await select(`SELECT ?day ?opens ?closes WHERE { GRAPH ?g1 { <${iri}> s:openingHoursSpecification ?h } GRAPH ?g2 { ?h s:dayOfWeek ?d ; s:opens ?opens ; s:closes ?closes } BIND(STRAFTER(STR(?d), "https://schema.org/") AS ?day) }`, 0, 0);
       const order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']; h.rows.sort((a, b) => order.indexOf(a.day.value) - order.indexOf(b.day.value));
       extra = `<h3>Weekly hours</h3>${table(['day', 'opens', 'closes'], h.rows)}`; }
-    show(name || short(iri), `<span class="iri">${esc(iri)}</span> · ${d.ms} ms, ${d.blocks} blocks, ${d.fetchedBytes ? (d.fetchedBytes / 1e6).toFixed(2) + ' MB fetched' : 'nothing fetched'}${/^https?:\/\//.test(iri) && !iri.startsWith('https://danbri.github.io/londat/') ? ` · <a href="${esc(iri)}" target="_blank" rel="noopener">open ↗</a>` : ''}`,
+    show(name || short(iri), `<span class="iri">${esc(iri)}</span> · ${d.ms} ms, ${d.blocks} blocks, ${d.fetchedBytes ? (d.fetchedBytes / 1e6).toFixed(2) + ' MB fetched' : 'nothing fetched'}${outside(iri) ? ` · <a href="${esc(iri)}" target="_blank" rel="noopener">open ↗</a>` : ''}`,
       `${extra}<h3>What the graph says${more(d.outCount, out.rows.length)}</h3>${table(['p', 'o', 'g'], out.rows.map(r => ({ ...r, p: { type: 'literal', value: short(r.p.value) } })))}
        <h3>What points here${more(d.inCount, inc.rows.length)}</h3>${table(['s', 'p', 'g'], inc.rows.map(r => ({ ...r, p: { type: 'literal', value: short(r.p.value) } })))}`);
   } catch (err) { show(short(iri), '', `<p class="err">${esc(err.message || err)}</p>`); }
@@ -212,9 +219,9 @@ function londonNow() { const p = Object.fromEntries(new Intl.DateTimeFormat('en-
 // block per subject. Skill cwplans-kgx, "Query rule".
 const VIEWS = {
   graphs: ['Graphs and versions', 'Each graph name, its current version (named by its RDFC-1.0 hash), size and licence.', () =>
-    `SELECT ?name ?version ?triples ?title ?licence WHERE { GRAPH ?m { ?name cwk:current ?version . ?version void:triples ?triples ; dct:title ?title ; dct:license ?licence } } ORDER BY DESC(?triples)`],
+    `SELECT ?name ?version ?triples ?title ?licence WHERE { GRAPH ?m { ?graph cwk:current ?version ; rdfs:label ?name . ?version void:triples ?triples ; dct:title ?title ; dct:license ?licence } } ORDER BY DESC(?triples)`],
   lineage: ['Lineage: operations and outputs', 'Every operation in the log: which skill and tool it belongs to, and the graph versions it made from its inputs.', () =>
-    `SELECT ?operation ?skill ?tool ?activity ?generated WHERE { GRAPH ?l1 { ?activity a prov:Activity ; cwk:operation ?op ; prov:generated ?generated } GRAPH ?l2 { ?op cwk:skill ?skill ; cwk:tool ?tool } BIND(STRAFTER(STR(?op), "/operation/") AS ?operation) } ORDER BY ?operation ?generated`],
+    `SELECT ?operation ?skill ?tool ?activity ?generated WHERE { GRAPH ?l1 { ?activity a prov:Activity ; cwk:operation ?op ; prov:generated ?generated } GRAPH ?l2 { ?op rdfs:label ?operation ; cwk:skill ?skill ; cwk:tool ?tool } } ORDER BY ?operation ?generated`],
   open: ['Open now', 'CWG directory hours (as archived) for the current time in London. Places open past midnight from the previous day are not shown.', () => { const n = londonNow();
     return `SELECT ?place ?name ?opens ?closes WHERE { GRAPH ?g1 { ?h s:dayOfWeek s:${n.day} ; cwk:opensMinute ?o ; cwk:closesMinute ?c ; s:opens ?opens ; s:closes ?closes . FILTER(?o <= ${n.min} && ?c > ${n.min}) } GRAPH ?g2 { ?place s:openingHoursSpecification ?h ; s:name ?name } } ORDER BY ?name`; }],
   units: ['Mall units by mall and floor', 'Named indoor units from the Living Map data behind map.canarywharf.com.', () =>

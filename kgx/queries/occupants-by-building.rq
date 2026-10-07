@@ -6,6 +6,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX id: <https://kgx.foaf.tv/id/>
 # The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Occupant counts per registry building
 SELECT ?building ?name (COUNT(?o) AS ?occupants) WHERE { GRAPH ?g1 { ?o s:containedInPlace ?building } GRAPH ?g2 { ?building a cwk:Building . OPTIONAL { ?building s:name ?name } } } GROUP BY ?building ?name ORDER BY DESC(?occupants)

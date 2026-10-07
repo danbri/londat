@@ -22,7 +22,8 @@ import { dataFactory as F } from '@factoidal/core';
 import { TOOLS, bngProjector, clipRing, simplify, polyArea, poly, joinRings } from './lib.mjs';
 import { DIR, BOX_BNG, ORIGIN } from './fetch-docklands.mjs';
 import { LONDAT_DIR } from './londat.mjs';
-import { Flow, KG } from './kgx-ops.mjs';
+import { Flow } from './kgx-ops.mjs';
+import { kid, osmKeyOf, VOCAB } from './kgx-ids.mjs';
 
 const CW = join(TOOLS, '..'), AREA = join(CW, 'docklands', 'data', 'area.js'), CLIP = join(DIR, 'osm-clip.json.gz');
 const ATLAS = join(CW, 'atlas', 'data', 'atlas.json'), OUT = join(CW, 'docklands', 'data', 'building-keys.json'), PBF = join(DIR, 'greater_london-latest.osm.pbf');
@@ -31,7 +32,7 @@ const sha = b => createHash('sha256').update(b).digest('hex');
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
 const inputs = [flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(CLIP, 'cwplans/data/raw/docklands/osm-clip.json.gz (local, not committed: OSM clip of the openstreetmap.fr Greater London extract)'),
   flow.file(PBF, 'cwplans/data/raw/docklands/greater_london-latest.osm.pbf (local, not committed: the openstreetmap.fr Greater London extract, data of 2026-10-01, ODbL)'), flow.file(ATLAS, 'cwplans/atlas/data/atlas.json')];
-const op = { id: 'key-model-buildings', version: 2, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
+const op = { id: 'key-model-buildings', version: 3, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
   about: 'area.js buildings + the OSM clip they were built from + the atlas -> the OSM way or relation of every model building (exact outline match, aligned in build order), part parents, registry links and OSM name, address, type, levels, Wikidata' };
 
 const v = (await flow.run(op, inputs, {}, async () => {
@@ -90,11 +91,12 @@ const v = (await flow.run(op, inputs, {}, async () => {
   // ---- registry links from the atlas (model index -> cwb id)
   const reg = new Map(); for (const b of JSON.parse(readFileSync(ATLAS, 'utf8')).buildings) for (const mi of b.mi || []) reg.set(mi, b.id);
   // ---- the graph
-  const ID = KG + 'id/', V = KG + 'vocab#', S = 'https://schema.org/', XSD = 'http://www.w3.org/2001/XMLSchema#', T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
+  const V = VOCAB, S = 'https://schema.org/', XSD = 'http://www.w3.org/2001/XMLSchema#', T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
   const N = F.namedNode, q = [], add = (s, p, o) => { if (o != null && o !== '') q.push(F.quad(N(s), N(p), typeof o === 'string' ? N(o) : o, F.defaultGraph())); };
   const lit = (v, dt) => v == null || v === '' ? null : F.literal(String(v), dt ? N(XSD + dt) : undefined);
-  const osmKey = el => (el.type === 'relation' ? 'r' : 'w') + el.id, iriOf = el => `${ID}building/osm-${osmKey(el)}`;
-  const model = `${ID}model/docklands-area/${areaSha.slice(0, 16)}`;
+  // IDs (kgx-ids.mjs): https://kgx.foaf.tv/id/osmw<id> or osmr<id>, the model model<name><sha16>, registry buildings cwb<n>
+  const osmKey = el => (el.type === 'relation' ? 'r' : 'w') + el.id, iriOf = el => kid('building', `osm-${osmKey(el)}`);
+  const model = kid('model', 'docklands-area', areaSha.slice(0, 16));
   // one node for the model version; per OSM element: its OSM page, the model indices, and facts only where OSM has them
   // (no rdf:type, no building=yes: they would add 85,000 triples that say nothing)
   add(model, V + 'sha256', lit(areaSha)); add(model, V + 'file', lit('cwplans/docklands/data/area.js')); add(model, V + 'buildingCount', lit(A.buildings.length, 'integer'));
@@ -105,7 +107,7 @@ const v = (await flow.run(op, inputs, {}, async () => {
     const b = t['building:part'] && t['building:part'] !== 'no' ? 'part:' + t['building:part'] : t.building; if (b && b !== 'yes' && b !== 'part:yes') add(s, V + 'osmBuilding', lit(b));
     add(s, V + 'levels', lit(t['building:levels'])); if (/^Q\d+$/.test(t.wikidata || '')) add(s, S + 'sameAs', 'http://www.wikidata.org/entity/' + t.wikidata); };
   keyOf.forEach((o, i) => {
-    const s = iriOf(o.el); add(s, V + 'modelIndex', lit(i, 'integer')); if (reg.has(i)) add(s, V + 'registryBuilding', `${ID}building/${reg.get(i)}`);
+    const s = iriOf(o.el); add(s, V + 'modelIndex', lit(i, 'integer')); if (reg.has(i)) add(s, V + 'registryBuilding', kid('building', reg.get(i)));
     if (done.has(s)) return; done.add(s); facts(s, o.el, tagsOf(o.el, o.t)); if (o.parent) add(s, V + 'partOf', iriOf(o.parent.el));
   });
   for (const o of new Set(keyOf.map(o => o.parent).filter(Boolean))) { const s = iriOf(o.el); if (!done.has(s)) { done.add(s); facts(s, o.el, tagsOf(o.el, o.t)); } }
@@ -118,17 +120,17 @@ const v = (await flow.run(op, inputs, {}, async () => {
 const areaSha = sha(readFileSync(AREA)), actx = {}; vm.createContext(actx); vm.runInContext(readFileSync(AREA, 'utf8'), actx);
 const modelFp = A => `${A.buildings.length}:${Array.from(A.buildings[0].p.slice(0, 6)).join('.')}:${Array.from(A.buildings.at(-1).p.slice(0, 6)).join('.')}`;
 const fp = modelFp(actx.DOCKLANDS_AREA);
-const ids = [], info = {}, V = KG + 'vocab#', S = 'https://schema.org/';
+const ids = [], info = {}, V = VOCAB, S = 'https://schema.org/';
 const facts = new Map(), get = s => facts.get(s) || facts.set(s, {}).get(s);
 for (const line of flow.read(v).split('\n')) {
   const m = line.match(/^<([^>]+)> <([^>]+)> (<[^>]*>|"(?:[^"\\]|\\.)*"(?:\^\^<[^>]+>)?) /); if (!m) continue;
   const [, s, p, o] = m, val = o[0] === '<' ? o.slice(1, -1) : JSON.parse(o.replace(/\^\^<[^>]+>$/, '')), f = get(s);
-  if (p === V + 'modelIndex') ids[+val] = s.split('/osm-')[1];
+  if (p === V + 'modelIndex') ids[+val] = osmKeyOf(s);
   else if (p === S + 'name') f.n = val; else if (p === V + 'houseName') f.h = val; else if (p === S + 'streetAddress') f.a = val; else if (p === S + 'postalCode') f.pc = val;
-  else if (p === V + 'osmBuilding') f.b = val; else if (p === V + 'levels') f.l = val; else if (p === V + 'partOf') f.p = val.split('/osm-')[1];
+  else if (p === V + 'osmBuilding') f.b = val; else if (p === V + 'levels') f.l = val; else if (p === V + 'partOf') f.p = osmKeyOf(val);
   else if (p === S + 'sameAs' && val.includes('wikidata.org')) f.wd = val.split('/').pop();
 }
-for (const [s, f] of facts) { const k = s.split('/osm-')[1]; if (k && Object.keys(f).length) info[k] = f; }
+for (const [s, f] of facts) { const k = osmKeyOf(s); if (k && Object.keys(f).length) info[k] = f; }
 writeFileSync(OUT, JSON.stringify({ about: 'OpenStreetMap key of every building of the 3D model: ids[i] is the OSM way (w) or relation (r) of area.js building i; osm[id] holds its OSM facts where OSM has them: n name, h addr:housename, a house number and street, pc postcode, b building type other than yes (part:<type> for a building:part), l building:levels, wd Wikidata item, p the parent building of a part. Made by tools/key-model-buildings.mjs (operation key-model-buildings).',
   model: { file: 'data/area.js', sha256: areaSha, fp }, graph: v.iri, licence: '© OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright)',
   ids: ids.join(','), osm: info }) + '\n');

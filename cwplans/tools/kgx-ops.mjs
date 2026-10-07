@@ -3,31 +3,34 @@
 // named by its content: the RDFC-1.0 SHA-256 (@factoidal/core fn.hash; for graphs without blank nodes the SHA-256 of
 // the sorted unique N-Triples lines, which is the same value). Each run of an operation is a prov:Activity whose IRI is
 // the hash of (operation, operation version, input identities, parameters), so an activity already in the log is not
-// run again and the same inputs always name the same outputs. Library; used by build-kgx.mjs. Skill: cwplans-dataflow.
+// run again and the same inputs always name the same outputs. Every IRI here is an ID under https://kgx.foaf.tv/id/
+// (kgx-ids.mjs kid): input files sha256<hash>, graph versions graph<name><hash16>, activities act<hash16>. Operation
+// map-legacy-ids (mapLegacyVersion) gives a version written with names of the old namespaces again with the IDs.
+// Library; used by build-kgx.mjs and the tools that write graph versions. Skills: cwplans-dataflow, cwplans-kgx.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
 import { createHash } from 'crypto';
 import { join, dirname } from 'path';
 import { serialize, Dataset, dataFactory as F } from '@factoidal/core';
 import * as fn from '@factoidal/core/fn';
+import { kid, mapLegacy } from './kgx-ids.mjs';
 
-export const KG = 'https://danbri.github.io/londat/kgx/';
 const sha256 = b => createHash('sha256').update(b).digest('hex');
 const short = h => h.slice(0, 16);
 
 export class Flow {
   constructor(out) {
     this.out = out; this.logFile = join(out, 'log', 'activities.jsonl'); mkdirSync(dirname(this.logFile), { recursive: true });
-    this.log = new Map(); this.files = new Map(); this.versions = new Map(); this.heads = new Map(); this.used = []; this.ran = [];
+    this.log = new Map(); this.files = new Map(); this.versions = new Map(); this.fileOf = new Map(); this.heads = new Map(); this.used = []; this.ran = [];
     if (existsSync(this.logFile)) for (const l of readFileSync(this.logFile, 'utf8').split('\n')) if (l.trim()) { const a = JSON.parse(l); this.log.set(a.id, a); }
     const vf = join(out, 'log', 'versions.jsonl');
-    if (existsSync(vf)) for (const l of readFileSync(vf, 'utf8').split('\n')) if (l.trim()) { const v = JSON.parse(l); this.versions.set(v.iri, v); }
+    if (existsSync(vf)) for (const l of readFileSync(vf, 'utf8').split('\n')) if (l.trim()) { const v = JSON.parse(l); this.versions.set(v.iri, v); if (!this.fileOf.has(v.file)) this.fileOf.set(v.file, v.iri); }
   }
   // a file input: identified by the SHA-256 of its bytes
   file(path, label = path) {
     if (this.files.has(path)) return this.files.get(path);
     const b = readFileSync(path), h = sha256(b);
-    const f = { kind: 'file', iri: KG + 'artifact/sha256/' + h, sha256: h, bytes: b.length, label }; this.files.set(path, f); return f;
+    const f = { kind: 'file', iri: kid('artifact', 'sha256', h), sha256: h, bytes: b.length, label }; this.files.set(path, f); return f;
   }
   // canonical N-Triples lines of a quad list (graph term dropped), unique and sorted, and their RDFC-1.0 hash
   async canonical(quads) {
@@ -49,12 +52,16 @@ export class Flow {
     return this.write(name, lines, hash, about);
   }
   write(name, lines, hash, about) {
-    const iri = `${KG}graph/${name}/${short(hash)}`;
-    const rel = `graphs/${name}/${short(hash)}.nq.gz`, path = join(this.out, rel);
+    const iri = kid('graph', name, short(hash)), known = this.versions.get(iri);
+    // every line of a version file carries the version IRI as its graph term. A file written before 2026-10-07 under a
+    // name of the old namespace keeps that name, so a new version of the same content gets its own file (-id)
+    let rel = known ? known.file : `graphs/${name}/${short(hash)}.nq.gz`;
+    if (!known && this.fileOf.has(rel) && this.fileOf.get(rel) !== iri) rel = `graphs/${name}/${short(hash)}-id.nq.gz`;
+    const path = join(this.out, rel);
     if (!existsSync(path)) { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, gzipSync(lines.map(l => l.replace(/ \.$/, ` <${iri}> .`)).join('\n') + '\n')); }
     const blank = lines.some(l => l.startsWith('_:') || / _:\S+ \.$/.test(l));
     const v = { kind: 'graph', name, iri, rdfc10_sha256: hash, triples: lines.length, file: rel, ...(blank ? { blank } : {}), ...about };
-    if (!this.versions.has(iri)) { this.versions.set(iri, v); appendFileSync(join(this.out, 'log', 'versions.jsonl'), JSON.stringify(v) + '\n'); }
+    if (!known) { this.versions.set(iri, v); this.fileOf.set(rel, iri); appendFileSync(join(this.out, 'log', 'versions.jsonl'), JSON.stringify(v) + '\n'); }
     return v;
   }
   // read a graph version back as quads in its own named graph
@@ -62,7 +69,7 @@ export class Flow {
   // run an operation: op = { id, version, skill, tool, about }; inputs = graph versions or files; body returns
   // { <outputName>: { quads, about } } or [quads, about] for one output named op.output
   async run(op, inputs, params, body) {
-    const id = KG + 'activity/' + short(sha256(JSON.stringify([op.id, op.version, inputs.map(i => i.iri), params ?? null])));
+    const id = kid('activity', short(sha256(JSON.stringify([op.id, op.version, inputs.map(i => i.iri), params ?? null]))));
     const known = this.log.get(id);
     if (known && known.outputs.every(o => this.versions.has(o) && existsSync(join(this.out, this.versions.get(o).file)))) {
       this.used.push(id); return Object.fromEntries(known.outputs.map(o => [this.versions.get(o).name, this.versions.get(o)]));
@@ -82,7 +89,27 @@ export class Flow {
 export const OPS = {
   partition: { id: 'partition-by-subject-key', version: 4, skill: 'cwplans-dataflow', tool: 'cwplans/tools/kgx-ops.mjs',
     about: 'Split one graph version into parts of about params.target triples: subjects in Shardborough zone-key order (type byte, UTF-8 length as 4 bytes little-endian, UTF-8 text, first 64 bytes), a subject never split; each part canonical (sorted lines); the parts union to the input.' },
+  mapLegacyIds: { id: 'map-legacy-ids', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/kgx-ops.mjs (mapLegacy in cwplans/tools/kgx-ids.mjs)',
+    about: 'One graph version -> the same triples with mapLegacy() applied to every IRI term: names of the old namespaces (https://danbri.github.io/londat/kgx/, the register and web-harvest names under https://danbri.github.io/glitchcan-minigam/, urn:cwplans:local:, CWG address and hours nodes) become IDs under https://kgx.foaf.tv/id/; literals, vocabulary terms and other IRIs unchanged.' },
 };
+// a quad with mapLegacy() applied to every IRI term, in the default graph (the runtime names the version)
+const mapTerm = t => t.termType === 'NamedNode' ? F.namedNode(mapLegacy(t.value)) : t;
+export const mapQuad = q => F.quad(mapTerm(q.subject), mapTerm(q.predicate), mapTerm(q.object), F.defaultGraph());
+// the quads of N-Quads text, parsed by Factoidal a chunk of lines at a time: N-Quads has one statement per line, and one
+// parse grows faster than the text (17,148 lines 15 s, 294,405 lines more than 10 minutes; 2,000 lines about 0.7 s).
+// A blank node label holds only inside one parse: give text with blank nodes chunk = Infinity.
+export async function quadsOf(text, chunk = 2000) {
+  const lines = text.split('\n').filter(Boolean), out = [];
+  for (let i = 0; i < lines.length; i += chunk) for (const q of (await fn.parse(lines.slice(i, i + chunk).join('\n') + '\n', { format: 'nquads' })).toArray()) out.push(q);
+  return out;
+}
+// operation map-legacy-ids on one version (a version made by another tool before 2026-10-07, named in
+// external-heads.json): the same name, title and licence; the content with IDs
+export async function mapLegacyVersion(flow, v) {
+  const outs = await flow.run(OPS.mapLegacyIds, [v], null, async () => ({
+    [v.name]: { quads: (await quadsOf(flow.read(v), v.blank ? Infinity : 2000)).map(mapQuad), about: { title: v.title, licence: v.licence, ...(v.osm ? { osm: true } : {}) } } }));
+  return outs[v.name];
+}
 // the Shardborough wire-version-10 zone key of an IRI (the manifest stores the first 64 bytes of the smallest and the
 // largest key of each block; a query with a constant subject or object skips a block whose range cannot hold it)
 export function zoneKey(iri) { const b = Buffer.from(iri, 'utf8'), h = Buffer.alloc(5); h.writeUInt32LE(b.length, 1); return Buffer.concat([h, b]).subarray(0, 64); }

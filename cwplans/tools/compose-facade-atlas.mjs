@@ -16,7 +16,8 @@ import vm from 'vm';
 import { dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 import { LONDAT_DIR } from './londat.mjs';
-import { Flow, KG } from './kgx-ops.mjs';
+import { Flow } from './kgx-ops.mjs';
+import { kid, osmKeyOf, VOCAB } from './kgx-ids.mjs';
 
 const CW = join(TOOLS, '..'), TEX = join(CW, 'docklands', 'data', 'tex'), AREA = join(CW, 'docklands', 'data', 'area.js');
 const PY = process.env.FACADE_PY || 'python3', TOOL = join(TOOLS, 'facade-tile.py'), K = join(LONDAT_DIR, 'kgx');
@@ -26,7 +27,7 @@ const eh = JSON.parse(readFileSync(join(K, 'external-heads.json'), 'utf8')), iri
 const tileSets = Object.keys(eh).filter(n => n.startsWith('facade-tiles-')).sort().map(n => flow.versions.get(iriOf(eh[n])));
 const keysV = flow.versions.get(iriOf(eh['model-building-keys']));
 if (!keysV || tileSets.some(v => !v)) throw new Error('model-building-keys or a facade-tiles head is not in the log: run key-model-buildings.mjs and contrib-photos.mjs first');
-const ID = KG + 'id/', V = KG + 'vocab#', S = 'https://schema.org/', T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
+const V = VOCAB, S = 'https://schema.org/', T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 // N-Quads lines of a version -> [s, p, o-value, isIri]
 const triples = v => flow.read(v).split('\n').map(l => l.match(/^<([^>]+)> <([^>]+)> (?:<([^>]+)>|("(?:[^"\\]|\\.)*")(?:\^\^<[^>]+>)?) /)).filter(Boolean)
   .map(m => [m[1], m[2], m[3] ?? JSON.parse(m[4]), !!m[3]]);
@@ -42,7 +43,7 @@ tiles.sort((a, b) => a.iri.localeCompare(b.iri));
 const inputs = [flow.file(join(TEX, 'facades-registry.jpg'), 'cwplans/docklands/data/tex/facades-registry.jpg'), flow.file(join(TEX, 'facades-registry.json'), 'cwplans/docklands/data/tex/facades-registry.json'),
   flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(TOOL, 'cwplans/tools/facade-tile.py'), keysV, ...tileSets,
   ...tiles.map(t => flow.file(join(LONDAT_DIR, t.file), 'danbri/londat ' + t.file))];
-const op = { id: 'compose-facade-atlas', version: 1, skill: 'docklands-3d-page', tool: 'cwplans/tools/compose-facade-atlas.mjs (facade-tile.py)',
+const op = { id: 'compose-facade-atlas', version: 2, skill: 'docklands-3d-page', tool: 'cwplans/tools/compose-facade-atlas.mjs (facade-tile.py)',
   about: 'registry facade atlas + contributed tile sets + model building keys -> the page atlas: contributed tiles in the next slots, keyed by OSM id with model indices and a point' };
 
 const v = (await flow.run(op, inputs, {}, async () => {
@@ -57,12 +58,12 @@ const v = (await flow.run(op, inputs, {}, async () => {
   const model_fp = `${A.buildings.length}:${Array.from(A.buildings[0].p.slice(0, 6)).join('.')}:${Array.from(A.buildings.at(-1).p.slice(0, 6)).join('.')}`;
   const out = { ...reg.buildings }, q = [], N = F.namedNode, lit = (x, dt) => F.literal(String(x), dt ? N('http://www.w3.org/2001/XMLSchema#' + dt) : undefined);
   const addQ = (s, p, o) => q.push(F.quad(N(s), N(p), o, F.defaultGraph()));
-  const atlas = `${ID}facade-atlas/docklands`;
+  const atlas = kid('facade-atlas', 'docklands');
   tiles.forEach((t, k) => {
     const slot = first + k; t.slot = slot;
     addQ(t.iri, V + 'atlasSlot', lit(slot, 'integer')); addQ(t.iri, V + 'inAtlas', N(atlas));
     for (const pl of t.placements) {
-      const key = 'osm:' + pl.building.split('/osm-')[1], idx = mi.get(pl.building) || [];
+      const key = 'osm:' + osmKeyOf(pl.building), idx = mi.get(pl.building) || [];
       if (!idx.length) throw new Error(`${pl.building} has no model building in model-building-keys`);
       out[key] = { slot, w_m: t.w, h_m: t.h, at: pl.at, mi: idx.sort((a, b) => a - b), model_fp, method: t.method, what: t.what, licence: t.licence, page: t.page, tile: `${t.page.replace('/tree/main/', '/blob/main/')}/tiles/${t.file.split('/').pop()}` };
       addQ(pl.building, V + 'facadeSlot', lit(slot, 'integer'));

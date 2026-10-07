@@ -15,7 +15,8 @@ import { join } from 'path';
 import { dataFactory as F } from '@factoidal/core';
 import { UA, RAW } from './lib.mjs';
 import { LONDAT_DIR } from './londat.mjs';
-import { Flow, KG } from './kgx-ops.mjs';
+import { Flow } from './kgx-ops.mjs';
+import { kid, VOCAB } from './kgx-ids.mjs';
 
 // boxes W, S, E, N (WGS84); drawn by hand round each place, so neighbours touch or overlap a little
 export const AREAS = {
@@ -91,36 +92,37 @@ if (!offline) {
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
 const files = [...readdirSync(OPEN).map(f => join(OPEN, f)), ...(existsSync(LOCAL) ? readdirSync(LOCAL).map(f => join(LOCAL, f)) : [])].sort();
 const inputs = files.map(p => flow.file(p, p.startsWith(LONDAT_DIR) ? 'danbri/londat ' + p.slice(LONDAT_DIR.length + 1) : 'cwplans/data/raw/' + p.slice(RAW.length + 1) + ' (local, not committed)'));
-const op = { id: 'lift-imagery-coverage', version: 1, skill: 'docklands-data-curation', tool: 'cwplans/tools/probe-imagery-coverage.mjs',
+const op = { id: 'lift-imagery-coverage', version: 2, skill: 'docklands-data-curation', tool: 'cwplans/tools/probe-imagery-coverage.mjs',
   about: 'Imagery coverage answers (OpenAerialMap, Panoramax, KartaView, EA survey catalogue, Mapillary status) per study area -> cwk:CoverageCount per source and area (count, years, licences, first and last date), cwk:StudyArea with box, OpenAerialMap images and EA products by year and resolution. Share-alike sources give counts only.' };
 const out = await flow.run(op, inputs, { run, areas: AREAS }, async ({ run, areas }) => {
-  const ID = KG + 'id/', V = KG + 'vocab#', S = 'https://schema.org/', XSD = 'http://www.w3.org/2001/XMLSchema#';
+  // IDs (kgx-ids.mjs): area<slug>, imagery<source>, cov<run><source><area>..., oam<id>
+  const V = VOCAB, S = 'https://schema.org/', XSD = 'http://www.w3.org/2001/XMLSchema#';
   const N = F.namedNode, q = [], add = (s, p, o) => o != null && q.push(F.quad(N(s), N(p), typeof o === 'string' ? N(o) : o, F.defaultGraph()));
   const L = (v, dt) => v == null || v === '' ? null : F.literal(String(v), dt ? N(XSD + dt) : typeof v === 'number' ? N(XSD + (Number.isInteger(v) ? 'integer' : 'decimal')) : undefined);
   const T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', LABEL = 'http://www.w3.org/2000/01/rdf-schema#label', WKT = 'http://www.opengis.net/ont/geosparql#asWKT', GEOM = 'http://www.opengis.net/ont/geosparql#hasGeometry';
   const wkt = ([w, s, e, n]) => F.literal(`POLYGON((${w} ${s},${e} ${s},${e} ${n},${w} ${n},${w} ${s}))`, N('http://www.opengis.net/ont/geosparql#wktLiteral'));
-  for (const [slug, a] of Object.entries(areas)) { const s = ID + 'area/' + slug; add(s, T, V + 'StudyArea'); add(s, LABEL, L(a.label)); add(s, GEOM, s + '/geometry'); add(s + '/geometry', WKT, wkt(a.box)); }
+  for (const [slug, a] of Object.entries(areas)) { const s = kid('area', slug), sg = kid('area', slug, 'geometry'); add(s, T, V + 'StudyArea'); add(s, LABEL, L(a.label)); add(s, GEOM, sg); add(sg, WKT, wkt(a.box)); }
   const SRC = { openaerialmap: ['OpenAerialMap', 'CC BY 4.0'], panoramax: ['Panoramax (federated, api.panoramax.xyz)', 'per picture; CC BY-SA 4.0 seen'], kartaview: ['KartaView (Grab)', 'CC BY-SA 4.0'], 'ea-survey': ['Environment Agency survey catalogue', 'OGL v3.0'], mapillary: ['Mapillary (Meta)', 'CC BY-SA 4.0'] };
-  for (const [k, [label, lic]] of Object.entries(SRC)) { add(ID + 'imagery-source/' + k, T, V + 'ImagerySource'); add(ID + 'imagery-source/' + k, LABEL, L(label)); add(ID + 'imagery-source/' + k, S + 'license', L(lic)); }
+  for (const [k, [label, lic]] of Object.entries(SRC)) { const s = kid('imagery-source', k); add(s, T, V + 'ImagerySource'); add(s, LABEL, L(label)); add(s, S + 'license', L(lic)); }
   for (const f of files) {
-    const d = JSON.parse(readFileSync(f, 'utf8')); if (!d.area) { add(ID + 'imagery-source/' + d.source, V + 'status', L(d.status)); continue; }
-    const c = `${ID}coverage/${run}/${d.source}/${d.area}`, items = d.items;
-    add(c, T, V + 'CoverageCount'); add(c, V + 'source', ID + 'imagery-source/' + d.source); add(c, V + 'area', ID + 'area/' + d.area);
+    const d = JSON.parse(readFileSync(f, 'utf8')); if (!d.area) { add(kid('imagery-source', d.source), V + 'status', L(d.status)); continue; }
+    const cp = [run, d.source, d.area], c = kid('coverage', ...cp), items = d.items;
+    add(c, T, V + 'CoverageCount'); add(c, V + 'source', kid('imagery-source', d.source)); add(c, V + 'area', kid('area', d.area));
     add(c, V + 'count', L(items.length)); add(c, 'http://purl.org/dc/terms/date', L(run, 'date')); add(c, V + 'request', L(d.request));
     if (d.calls != null) add(c, V + 'requests', L(d.calls)); if (d.timeouts) add(c, V + 'timeouts', L(d.timeouts)); if (d.capped) add(c, V + 'capped', L('true', 'boolean'));
     const date = x => (x.datetime || x.shot || x.start || (x.year ? x.year + '-01-01' : '') || '').slice(0, 10);
     const dates = items.map(date).filter(Boolean).sort(); if (dates.length) { add(c, V + 'firstDate', L(dates[0], 'date')); add(c, V + 'lastDate', L(dates.at(-1), 'date')); }
     const byYear = {}; for (const x of items) { const y = date(x).slice(0, 4); if (y) byYear[y] = (byYear[y] || 0) + 1; }
-    for (const [y, n] of Object.entries(byYear)) { const yc = `${c}/year-${y}`; add(c, V + 'inYear', yc); add(yc, V + 'year', L(y, 'gYear')); add(yc, V + 'count', L(n)); }
+    for (const [y, n] of Object.entries(byYear)) { const yc = kid('coverage', ...cp, `year-${y}`); add(c, V + 'inYear', yc); add(yc, V + 'year', L(y, 'gYear')); add(yc, V + 'count', L(n)); }
     const byLic = {}; for (const x of items) if (x.licence) byLic[x.licence] = (byLic[x.licence] || 0) + 1;
-    for (const [l, n] of Object.entries(byLic)) { const lc = `${c}/licence-${l.replace(/[^A-Za-z0-9.]+/g, '-')}`; add(c, V + 'byLicence', lc); add(lc, S + 'license', L(l)); add(lc, V + 'count', L(n)); }
+    for (const [l, n] of Object.entries(byLic)) { const lc = kid('coverage', ...cp, `licence-${l.replace(/[^A-Za-z0-9.]+/g, '-')}`); add(c, V + 'byLicence', lc); add(lc, S + 'license', L(l)); add(lc, V + 'count', L(n)); }
     if (d.source === 'panoramax') { add(c, V + 'withSemantics', L(items.filter(x => x.semantics).length)); add(c, V + 'collections', L(new Set(items.map(x => x.collection)).size)); }
     if (d.source === 'kartaview') add(c, V + 'sequences', L(new Set(items.map(x => x.sequence)).size));
-    if (d.source === 'openaerialmap') for (const x of items) { const s = ID + 'oam/' + x.id;
+    if (d.source === 'openaerialmap') for (const x of items) { const s = kid('oam', x.id), sg = kid('oam', x.id, 'geometry');
       add(s, T, V + 'AerialImage'); add(s, S + 'name', L(x.title)); add(s, S + 'dateCreated', L(x.start)); add(s, V + 'gsdMetres', L(x.gsd)); add(s, V + 'platform', L(x.platform));
-      add(s, S + 'license', L(x.licence)); add(s, S + 'contentUrl', x.url); add(s, V + 'inArea', ID + 'area/' + d.area); add(s, GEOM, s + '/geometry'); add(s + '/geometry', WKT, wkt(x.bbox)); }
+      add(s, S + 'license', L(x.licence)); add(s, S + 'contentUrl', x.url); add(s, V + 'inArea', kid('area', d.area)); add(s, GEOM, sg); add(sg, WKT, wkt(x.bbox)); }
     if (d.source === 'ea-survey') { const g = {}; for (const x of items) (g[`${x.product}|${x.resolution}|${x.year}`] ||= []).push(x);
-      for (const [k, xs] of Object.entries(g)) { const [p, r, y] = k.split('|'), s = `${c}/${p}-${r.replace(/[^0-9a-z.]+/gi, '')}-${y}`;
+      for (const [k, xs] of Object.entries(g)) { const [p, r, y] = k.split('|'), s = kid('coverage', ...cp, `${p}-${r.replace(/[^0-9a-z.]+/gi, '')}-${y}`);
         add(c, V + 'product', s); add(s, LABEL, L(xs[0].productLabel)); add(s, V + 'resolution', L(r)); add(s, V + 'year', L(y, 'gYear')); add(s, V + 'tiles', L(xs.length)); } }
   }
   return { 'coverage-imagery': { quads: q, about: { title: `Open imagery coverage of the first cwplans areas, ${run}: OpenAerialMap images, EA survey products, and counts of Panoramax and KartaView pictures (counts only: CC BY-SA)`, licence: 'CC0 for the counts; OpenAerialMap metadata CC BY 4.0; EA catalogue OGL v3.0' } } };

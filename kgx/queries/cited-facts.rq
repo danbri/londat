@@ -6,6 +6,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX id: <https://kgx.foaf.tv/id/>
 # The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Cited facts with their subject label and source
 SELECT ?subject ?property ?value ?unit ?source WHERE { GRAPH ?g1 { ?f a cwk:CitedFact ; cwk:about ?x ; s:propertyID ?property ; s:value ?value ; s:citation ?source . OPTIONAL { ?f s:unitText ?unit } } GRAPH ?g2 { ?x rdfs:label ?subject } } ORDER BY ?subject ?property

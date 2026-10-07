@@ -6,6 +6,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX id: <https://kgx.foaf.tv/id/>
 # The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Registry buildings by height (OSM height tag, metres)
 SELECT ?building ?name ?height ?levels WHERE { GRAPH ?g { ?building cwk:heightMetres ?height . OPTIONAL { ?building s:name ?name } OPTIONAL { ?building cwk:levels ?levels } } } ORDER BY DESC(?height)

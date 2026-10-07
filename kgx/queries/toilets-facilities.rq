@@ -6,6 +6,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX id: <https://kgx.foaf.tv/id/>
 # The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Toilets, baby change, defibrillators and other facilities with their floor
 SELECT ?mall ?floor ?type ?name ?thing WHERE { GRAPH ?g { ?thing cwk:unitClass ?class ; cwk:unitType ?type ; cwk:floorName ?floor . OPTIONAL { ?thing s:name ?name } OPTIONAL { ?thing cwk:mall ?mall } FILTER(?class IN ("restroom", "facility", "emergency")) } } ORDER BY ?mall ?floor ?type

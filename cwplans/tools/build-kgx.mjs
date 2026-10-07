@@ -2,7 +2,9 @@
 // operations turn input files (identified by SHA-256) into immutable graph versions (identified by their RDFC-1.0 hash);
 // pure operations then partition each version by subject (small Shardborough blocks), describe the versions, lift the
 // activity log and the earlier pipeline provenance, and pack the store. An activity already in the log is not run again.
-// All RDF work with @factoidal/core. No blank nodes in lifted graphs (the pipeline graph is skolemized).
+// All RDF work with @factoidal/core. No blank nodes in lifted graphs (the pipeline graph is skolemized). Every IRI this
+// project mints is an ID under https://kgx.foaf.tv/id/ (kgx-ids.mjs): minted with kid(), and every IRI term of every
+// graph written here goes through mapLegacy(), so names of the old namespaces in inputs become IDs too.
 //   node cwplans/tools/build-kgx.mjs [--no-store]
 //   out: $LONDAT_DIR/kgx/  graphs/<name>/<hash16>.nq.gz, log/, shardborough/, current.nq.gz, heads.json, manifest.json
 // Skills: cwplans-kgx (graphs, store, page), cwplans-dataflow (operations, versions, log).
@@ -15,13 +17,14 @@ import { join, relative } from 'path';
 import { parse, jsonldToRdf, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 import { LONDAT_DIR } from './londat.mjs';
-import { Flow, OPS, KG, partitionLines } from './kgx-ops.mjs';
+import { Flow, OPS, partitionLines, mapLegacyVersion } from './kgx-ops.mjs';
+import { kid, mapLegacy, cwgPath, ID_BASE, VOCAB } from './kgx-ids.mjs';
 
 const CW = join(TOOLS, '..'), ROOT = join(CW, '..'), OUT = join(LONDAT_DIR, 'kgx');
-const ID = KG + 'id/', V = KG + 'vocab#';
+const V = VOCAB;
 const NS = { s: 'https://schema.org/', rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#', rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   xsd: 'http://www.w3.org/2001/XMLSchema#', owl: 'http://www.w3.org/2002/07/owl#', geo: 'http://www.opengis.net/ont/geosparql#',
-  dct: 'http://purl.org/dc/terms/', prov: 'http://www.w3.org/ns/prov#', void: 'http://rdfs.org/ns/void#', wd: 'http://www.wikidata.org/entity/', cwk: V };
+  dct: 'http://purl.org/dc/terms/', prov: 'http://www.w3.org/ns/prov#', void: 'http://rdfs.org/ns/void#', wd: 'http://www.wikidata.org/entity/', cwk: V, id: ID_BASE };
 const OH = createRequire(import.meta.url)(join(CW, 'docklands', 'opening-hours.js'));
 const sha = s => createHash('sha1').update(s).digest('hex').slice(0, 12);
 const slug = s => String(s || '').normalize('NFKD').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'x';
@@ -29,17 +32,20 @@ const iri = (p, l) => F.namedNode(NS[p] + l), N = u => F.namedNode(u);
 const lit = (v, dt) => v == null || v === '' ? null : typeof v === 'number' ? F.literal(String(v), iri('xsd', Number.isInteger(v) ? 'integer' : 'decimal')) : dt ? F.literal(String(v), iri('xsd', dt)) : F.literal(String(v));
 const TYPE = iri('rdf', 'type');
 const TP = join(ROOT, 'third_party', 'cwplans-structured-data'), CWG = join(LONDAT_DIR, 'third_party', 'cwg');
-const bIri = id => ID + 'building/' + id;
+const bIri = (id, ...more) => kid('building', id, ...more);
 
-// a quad collector for one graph (default graph: the runtime names the version)
+// a quad collector for one graph (default graph: the runtime names the version). Every IRI term goes through
+// mapLegacy(): an ID or an external IRI stays, a name of the old namespaces becomes its ID
+const T = x => typeof x === 'string' ? N(mapLegacy(x)) : x.termType === 'NamedNode' ? N(mapLegacy(x.value)) : x;
 function G() { const quads = [];
-  const add = (s, p, o) => { if (s && p && o != null) quads.push(F.quad(typeof s === 'string' ? N(s) : s, p, typeof o === 'string' ? N(o) : o, F.defaultGraph())); };
+  const add = (s, p, o) => { if (s && p && o != null) quads.push(F.quad(T(s), T(p), T(o), F.defaultGraph())); };
   return { quads, add, lit: (s, p, v, dt) => { const l = lit(v, dt); if (l) add(s, p, l); } }; }
 
 const flow = new Flow(OUT);
 const rel = p => relative(ROOT, p).startsWith('..') ? 'danbri/londat ' + relative(LONDAT_DIR, p) : relative(ROOT, p);
 const file = p => flow.file(p, rel(p));
-const LIFT = (id, about) => ({ id, version: 1, skill: 'cwplans-kgx', tool: 'cwplans/tools/build-kgx.mjs', about });
+// version 2 (2026-10-07): IDs under https://kgx.foaf.tv/id/ (version 1: names under https://danbri.github.io/londat/kgx/)
+const LIFT = (id, about) => ({ id, version: 2, skill: 'cwplans-kgx', tool: 'cwplans/tools/build-kgx.mjs', about });
 const versions = {};
 
 // ---- lift operations: input files -> one graph version each
@@ -47,7 +53,7 @@ const versions = {};
   Object.assign(versions, await flow.run(LIFT('lift-cited-facts', 'docklands/facts.json -> cwk:CitedFact nodes about Wikidata items: property, value, unit, reference level, citation, quote, date'), [inF], null, async () => {
     const g = G();
     for (const x of JSON.parse(readFileSync(join(CW, 'docklands/facts.json'), 'utf8')).facts) {
-      const id = ID + 'fact/' + sha(JSON.stringify([x.subject, x.property, x.value, x.source_url])), subj = x.wikidata ? NS.wd + x.wikidata : ID + 'thing/' + slug(x.subject);
+      const id = kid('fact', sha(JSON.stringify([x.subject, x.property, x.value, x.source_url]))), subj = x.wikidata ? NS.wd + x.wikidata : kid('thing', slug(x.subject));
       g.add(id, TYPE, iri('cwk', 'CitedFact')); g.add(id, iri('cwk', 'about'), subj); g.lit(subj, iri('rdfs', 'label'), x.subject);
       g.lit(id, iri('s', 'propertyID'), x.property); g.lit(id, iri('s', 'value'), x.value); g.lit(id, iri('s', 'unitText'), x.unit);
       g.lit(id, iri('cwk', 'referenceLevel'), x.reference_level); if (x.source_url) g.add(id, iri('s', 'citation'), x.source_url);
@@ -71,7 +77,7 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-buildings', 'registry
     if (b.wikidata) g.add(s, iri('owl', 'sameAs'), NS.wd + b.wikidata);
     for (const t of b.toids || []) g.lit(s, iri('cwk', 'toid'), t);
     const rings = atlasG.get(b.id);
-    if (rings?.length) { const geom = s + '/geometry';
+    if (rings?.length) { const geom = bIri(b.id, 'geometry');
       const wkt = 'POLYGON(' + rings.map(q => { const pts = []; let la = 0, lo = 0; for (let i = 0; i < q.length; i += 2) { la += q[i]; lo += q[i + 1]; pts.push(`${(lo / 1e6).toFixed(6)} ${(la / 1e6).toFixed(6)}`); } if (pts[0] !== pts.at(-1)) pts.push(pts[0]); return '(' + pts.join(', ') + ')'; }).join(', ') + ')';
       g.add(s, iri('geo', 'hasGeometry'), geom); g.add(geom, TYPE, iri('geo', 'Geometry')); g.add(geom, iri('geo', 'asWKT'), F.literal(wkt, iri('geo', 'wktLiteral'))); }
   }
@@ -81,7 +87,7 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-buildings', 'registry
 Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry/buildings.json occupants -> schema.org LocalBusiness/Store/FoodEstablishment: role, level, mall, hours, links to the building, OSM, CWG, brand'), [regF], null, async () => {
   const g = G();
   for (const b of B()) (b.occupants || []).forEach((o, i) => {
-    const s = `${bIri(b.id)}/occupant/${slug(o.name)}-${sha(JSON.stringify([o.name, o.osm, o.source, i]))}`;
+    const s = bIri(b.id, 'occupant', `${slug(o.name)}-${sha(JSON.stringify([o.name, o.osm, o.source, i]))}`);
     g.add(s, TYPE, iri('s', /food/.test(o.role || '') ? 'FoodEstablishment' : /^shop/.test(o.role || '') ? 'Store' : 'LocalBusiness'));
     g.lit(s, iri('s', 'name'), o.name); g.lit(s, iri('cwk', 'role'), o.role); g.lit(s, iri('cwk', 'sourceKind'), o.source); g.add(s, iri('s', 'containedInPlace'), bIri(b.id));
     g.lit(s, iri('cwk', 'level'), o.level ?? o.level_cwg); g.lit(s, iri('cwk', 'mall'), o.mall); g.lit(s, iri('s', 'openingHours'), o.opening_hours);
@@ -103,12 +109,12 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
     const DAY = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], hm = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
     for (const h of JSON.parse(readFileSync(join(CW, 'registry/sources/brands/cwg-hours.json'), 'utf8')).entries) {
       const t = typed.get(h.slug); if (!t) continue; const s = t.cwg_url.replace(/\/?$/, '/') + '#entity';
-      if (h.mall) { const m = ID + 'mall/' + slug(h.mall); g.add(s, iri('s', 'containedInPlace'), m); g.add(m, TYPE, iri('s', ['Cabot Place', 'Canada Place', 'Jubilee Place', 'Crossrail Place', 'Churchill Place'].includes(h.mall) ? 'ShoppingCenter' : 'Place')); g.lit(m, iri('s', 'name'), h.mall); }
+      if (h.mall) { const m = kid('mall', slug(h.mall)); g.add(s, iri('s', 'containedInPlace'), m); g.add(m, TYPE, iri('s', ['Cabot Place', 'Canada Place', 'Jubilee Place', 'Crossrail Place', 'Churchill Place'].includes(h.mall) ? 'ShoppingCenter' : 'Place')); g.lit(m, iri('s', 'name'), h.mall); }
       g.lit(s, iri('cwk', 'levelText'), h.level); for (const b of t.registry_buildings || []) g.add(s, iri('cwk', 'registryBuilding'), bIri(b));
       if (!h.opening_hours) { if (h.state === 'coming-soon') g.lit(s, iri('cwk', 'status'), 'coming soon'); continue; }
       g.lit(s, iri('s', 'openingHours'), h.opening_hours); g.lit(s, iri('cwk', 'hoursAsOf'), h.archived_on ? `${h.archived_on.slice(0, 4)}-${h.archived_on.slice(4, 6)}-${h.archived_on.slice(6, 8)}` : null, 'date');
       const P = OH.parse(h.opening_hours); if (!P) continue;
-      P.week.forEach((spans, d) => (spans || []).forEach(([o, c], k) => { const n = `${s}-hours-${DAY[d]}-${k}`; g.add(s, iri('s', 'openingHoursSpecification'), n); g.add(n, TYPE, iri('s', 'OpeningHoursSpecification'));
+      P.week.forEach((spans, d) => (spans || []).forEach(([o, c], k) => { const n = kid('hours', cwgPath(t.cwg_url), DAY[d], k); g.add(s, iri('s', 'openingHoursSpecification'), n); g.add(n, TYPE, iri('s', 'OpeningHoursSpecification'));
         g.add(n, iri('s', 'dayOfWeek'), iri('s', DAY[d])); g.lit(n, iri('s', 'opens'), hm(o)); g.lit(n, iri('s', 'closes'), hm(c)); g.lit(n, iri('cwk', 'opensMinute'), o); g.lit(n, iri('cwk', 'closesMinute'), c); }));
     }
     return { cwg: { quads: g.quads, about: { title: 'Canary Wharf Group directory: typed occupants, malls, levels, page dates and weekly opening hours', licence: 'Canary Wharf Group pages as archived by the Internet Archive; crawl rule of 2026-10-03, scoping only' } } };
@@ -145,12 +151,12 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
       const g = G();
       for (const f of floorFiles) for (const { properties: p, geometry: gm } of JSON.parse(readFileSync(join(TMI, f), 'utf8')).features) {
         const poly = /Polygon/.test(gm.type), point = gm.type === 'Point'; if (!(poly && p.name) && !(point && p.type !== 'arrow')) continue;
-        const s = ID + (poly ? 'unit/' : 'facility/') + p.uid; g.add(s, TYPE, iri('cwk', poly ? 'MallUnit' : 'Facility'));
+        const kind = poly ? 'unit' : 'facility', s = kid(kind, p.uid); g.add(s, TYPE, iri('cwk', poly ? 'MallUnit' : 'Facility'));
         g.lit(s, iri('s', 'name'), p.name); g.lit(s, iri('cwk', 'unitClass'), p.class); g.lit(s, iri('cwk', 'unitType'), p.type);
         g.lit(s, iri('cwk', 'mall'), p.location_name); g.lit(s, iri('cwk', 'floorName'), p.floor_name); g.lit(s, iri('cwk', 'floorLevel'), Number(p.floor_level));
         g.lit(s, iri('cwk', 'openingTimesText'), p.opening_times); g.lit(s, iri('s', 'telephone'), p.tel_number); g.lit(s, iri('s', 'address'), p.street_address);
         if (/^https?:\/\//.test(p.url || '')) g.add(s, iri('s', 'url'), p.url);
-        const wkt = wktOf(gm); if (wkt) { const geom = s + '/geometry'; g.add(s, iri('geo', 'hasGeometry'), geom); g.add(geom, TYPE, iri('geo', 'Geometry')); g.add(geom, iri('geo', 'asWKT'), F.literal(wkt, iri('geo', 'wktLiteral'))); }
+        const wkt = wktOf(gm); if (wkt) { const geom = kid(kind, p.uid, 'geometry'); g.add(s, iri('geo', 'hasGeometry'), geom); g.add(geom, TYPE, iri('geo', 'Geometry')); g.add(geom, iri('geo', 'asWKT'), F.literal(wkt, iri('geo', 'wktLiteral'))); }
         const [cx, cy] = centreOf(gm); g.lit(s, iri('s', 'longitude'), +cx.toFixed(7)); g.lit(s, iri('s', 'latitude'), +cy.toFixed(7));
       }
       return { mallmap: { quads: g.quads, about: { title: 'Mall units and facilities (lifts, escalators, ramps, stairs, entrances, toilets, defibrillators and more) from the Living Map data behind map.canarywharf.com', licence: "Canary Wharf Group / Living Map; archived at the owner's request 2026-10-06 for reference and accessibility design study, scoping only" } } };
@@ -162,7 +168,7 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
     const g = G();
     for (const e of JSON.parse(readFileSync(SG, 'utf8')).entries) {
       if (e.section === 'legend' || !e.name) continue;
-      const s = ID + 'storeguide/p' + e.page + '/' + slug(e.section) + '/' + slug(e.name) + '-' + sha(JSON.stringify([e.name, e.grid_refs, e.bbox]));
+      const s = kid('storeguide', 'p' + e.page, slug(e.section), slug(e.name) + '-' + sha(JSON.stringify([e.name, e.grid_refs, e.bbox])));
       g.add(s, TYPE, iri('cwk', 'GuideEntry')); g.lit(s, iri('s', 'name'), e.name); g.lit(s, iri('cwk', 'guideSection'), e.section); g.lit(s, iri('cwk', 'guideGroup'), e.group);
       g.lit(s, iri('cwk', 'guidePage'), e.page); for (const r of e.grid_refs || []) g.lit(s, iri('cwk', 'gridRef'), `${r.row}${r.col}`);
       g.lit(s, iri('cwk', 'levelText'), e.level); g.lit(s, iri('rdfs', 'comment'), e.extra); g.lit(s, iri('cwk', 'ocrText'), e.ocr_text); g.lit(s, iri('cwk', 'ocrConfidence'), e.ocr_confidence);
@@ -183,7 +189,7 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
   const arts = present.map(([u, p]) => [u, file(p)]);
   Object.assign(versions, await flow.run(LIFT('lift-pipeline-provenance', 'pipeline.jsonld (prov:Activity per tool, used and generated files) -> RDF, blank nodes skolemized; each named file present at build time -> cwk:contentAtBuild artifact with SHA-256'), [pF, ...arts.map(a => a[1])], null, async () => {
     const ds = await jsonldToRdf(readFileSync(join(CW, 'pipeline.jsonld'), 'utf8'));
-    const sk = t => t.termType === 'BlankNode' ? N(KG + 'genid/pipeline/' + sha(pF.sha256 + '\t' + t.value)) : t;
+    const sk = t => t.termType === 'BlankNode' ? N(kid('genid', 'pipeline', sha(pF.sha256 + '\t' + t.value))) : t;
     const g = G(); for (const q of ds.toArray()) g.add(sk(q.subject), q.predicate, sk(q.object));
     for (const [u, a] of arts) { g.add(u, iri('cwk', 'contentAtBuild'), a.iri); g.lit(a.iri, iri('cwk', 'sha256'), a.sha256); g.lit(a.iri, iri('cwk', 'bytes'), a.bytes); }
     return { pipeline: { quads: g.quads, about: { title: 'Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build', licence: 'CC0 (descriptions of tools and files)' } } };
@@ -191,13 +197,19 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
 
 // ---- graph versions made by other tools' operations: kgx/external-heads.json maps a name to a version in the log, or
 // to { iri, store: false } for a version that is a head and in meta and current.nq.gz but not in the browser store
-// (too large for what a query there gains: model-building-keys)
+// (too large for what a query there gains: model-building-keys). A version named in the old namespace (made before
+// 2026-10-07) goes through operation map-legacy-ids first, and external-heads.json then names the mapped version: the
+// tools mint the IDs themselves since then, and the mapping gives the same IDs, so a re-run of a tool converges.
 const offStore = new Set();
 { const ehF = join(OUT, 'external-heads.json');
-  if (existsSync(ehF)) for (const [name, e] of Object.entries(JSON.parse(readFileSync(ehF, 'utf8')))) {
-    const iri = typeof e === 'string' ? e : e.iri, v = flow.versions.get(iri);
-    if (!v || !existsSync(join(OUT, v.file))) throw new Error(`external head ${name}: ${iri} is not in log/versions.jsonl or its file is missing`);
-    versions[name] = v; if (typeof e === 'object' && e.store === false) offStore.add(name);
+  if (existsSync(ehF)) { const eh = JSON.parse(readFileSync(ehF, 'utf8')); let mapped = 0;
+    for (const [name, e] of Object.entries(eh)) {
+      const iri = typeof e === 'string' ? e : e.iri; let v = flow.versions.get(iri);
+      if (!v || !existsSync(join(OUT, v.file))) throw new Error(`external head ${name}: ${iri} is not in log/versions.jsonl or its file is missing`);
+      if (!iri.startsWith(ID_BASE)) { v = await mapLegacyVersion(flow, v); eh[name] = typeof e === 'string' ? v.iri : { ...e, iri: v.iri }; mapped++; }
+      versions[name] = v; if (typeof e === 'object' && e.store === false) offStore.add(name);
+    }
+    if (mapped) writeFileSync(ehF, JSON.stringify(eh, null, 1) + '\n');
   } }
 
 // ---- partition every source version by subject key for the store (blocks with narrow, disjoint zone maps)
@@ -217,31 +229,33 @@ for (const v of Object.values(versions)) {
 const heads = Object.fromEntries(Object.values(versions).map(v => [v.name, v.iri]));
 const genBy = {}; for (const a of flow.log.values()) for (const o of a.outputs) (genBy[o] ||= []).push(a.id);
 const describedVersions = [...Object.values(versions), ...Object.values(parts).flat()];
-const metaV = await flow.run({ id: 'describe-graph-versions', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'graph versions -> void:Dataset per version (name, title, licence, RDFC-1.0 hash, triples, generating activity, parts) and the heads (graph name -> current version)' },
+const metaV = await flow.run({ id: 'describe-graph-versions', version: 2, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'graph versions -> void:Dataset per version (name, title, licence, RDFC-1.0 hash, triples, generating activity, parts) and the heads (graph name, with its name as rdfs:label -> current version); every IRI an ID under https://kgx.foaf.tv/id/' },
   describedVersions, { heads, genBy: Object.fromEntries(describedVersions.map(v => [v.iri, genBy[v.iri] || []])) }, async ({ heads, genBy }) => {
     const g = G();
     for (const v of describedVersions) { const s = v.iri;
-      g.add(s, TYPE, iri('void', 'Dataset')); g.add(s, TYPE, iri('prov', 'Entity')); g.add(s, iri('cwk', 'graphName'), KG + 'graph/' + v.name);
+      g.add(s, TYPE, iri('void', 'Dataset')); g.add(s, TYPE, iri('prov', 'Entity')); g.add(s, iri('cwk', 'graphName'), kid('graph', v.name));
       g.lit(s, iri('cwk', 'rdfc10Sha256'), v.rdfc10_sha256); g.lit(s, iri('void', 'triples'), v.triples); g.lit(s, iri('cwk', 'file'), v.file);
       for (const a of genBy[s] || []) g.add(s, iri('prov', 'wasGeneratedBy'), a);
       if (v.partOf) { g.add(s, iri('dct', 'isPartOf'), v.partOf); g.lit(s, iri('cwk', 'part'), v.part); continue; }
       g.lit(s, iri('dct', 'title'), v.title); g.lit(s, iri('dct', 'license'), v.licence);
       if (v.osm) g.lit(s, iri('dct', 'rights'), '© OpenStreetMap contributors, ODbL 1.0, https://www.openstreetmap.org/copyright');
     }
-    for (const [name, vi] of Object.entries(heads)) { g.add(KG + 'graph/' + name, iri('cwk', 'current'), vi); g.add(KG + 'graph/' + name, TYPE, iri('cwk', 'GraphName')); }
+    for (const [name, vi] of Object.entries(heads)) { const gn = kid('graph', name); g.add(gn, iri('cwk', 'current'), vi); g.add(gn, TYPE, iri('cwk', 'GraphName')); g.lit(gn, iri('rdfs', 'label'), name); }
     return { meta: { quads: g.quads, about: { title: 'Descriptions of the graph versions and the current version of each graph name', licence: 'CC0 (descriptions only)' } } };
   });
 // the log as RDF: every activity except lifts of the log and packs of the store (the store holds this graph, so it
 // cannot describe its own packing; those two stay in log/activities.jsonl and manifest.json). An unchanged pipeline
 // then gives the same log version, the same store input and the same generation.
 const logActs = [...flow.log.values()].filter(a => a.operation !== 'lift-activity-log' && a.operation !== 'pack-shardborough').sort((a, b) => a.id.localeCompare(b.id));
-const logBlob = { kind: 'file', iri: KG + 'artifact/sha256/' + createHash('sha256').update(JSON.stringify(logActs)).digest('hex'), label: 'kgx/log/activities.jsonl (without lift-activity-log entries)' };
-const logV = await flow.run({ id: 'lift-activity-log', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'activity log -> prov:Activity per run: operation, version, skill, tool, inputs (prov:used), parameters, outputs (prov:generated), times' }, [logBlob], null, async () => {
+// Activities logged before 2026-10-07 name their inputs and outputs in the old namespace: the collector maps them to IDs
+// (the log files keep the names they were written with).
+const logBlob = { kind: 'file', iri: kid('artifact', 'sha256', createHash('sha256').update(JSON.stringify(logActs)).digest('hex')), label: 'kgx/log/activities.jsonl (without lift-activity-log entries)' };
+const logV = await flow.run({ id: 'lift-activity-log', version: 2, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'activity log -> prov:Activity per run: operation (with its name as rdfs:label), version, skill, tool, inputs (prov:used), parameters, outputs (prov:generated), times; every IRI an ID under https://kgx.foaf.tv/id/, also for activities logged under the old names' }, [logBlob], null, async () => {
   const g = G();
-  for (const a of logActs) { const s = a.id;
-    g.add(s, TYPE, iri('prov', 'Activity')); g.add(s, iri('cwk', 'operation'), KG + 'operation/' + a.operation); g.lit(s, iri('cwk', 'operationVersion'), a.operation_version);
-    g.add(KG + 'operation/' + a.operation, TYPE, iri('cwk', 'Operation')); g.lit(KG + 'operation/' + a.operation, iri('rdfs', 'comment'), a.about);
-    g.lit(KG + 'operation/' + a.operation, iri('cwk', 'skill'), a.skill); g.lit(KG + 'operation/' + a.operation, iri('cwk', 'tool'), a.tool);
+  for (const a of logActs) { const s = a.id, op = kid('operation', a.operation);
+    g.add(s, TYPE, iri('prov', 'Activity')); g.add(s, iri('cwk', 'operation'), op); g.lit(s, iri('cwk', 'operationVersion'), a.operation_version);
+    g.add(op, TYPE, iri('cwk', 'Operation')); g.lit(op, iri('rdfs', 'label'), a.operation); g.lit(op, iri('rdfs', 'comment'), a.about);
+    g.lit(op, iri('cwk', 'skill'), a.skill); g.lit(op, iri('cwk', 'tool'), a.tool);
     for (const i of a.inputs) g.add(s, iri('prov', 'used'), i); for (const o of a.outputs) g.add(s, iri('prov', 'generated'), o);
     if (a.params != null) g.lit(s, iri('cwk', 'params'), JSON.stringify(a.params).slice(0, 2000));
     g.lit(s, iri('prov', 'startedAtTime'), a.started, 'dateTime'); g.lit(s, iri('prov', 'endedAtTime'), a.ended, 'dateTime');
@@ -260,21 +274,21 @@ if (!process.argv.includes('--no-store')) {
   const input = members.map(v => flow.read(v)).join('');                 // grouped by graph, subjects sorted inside each
   const genName = 'gen-' + createHash('sha256').update(input).digest('hex').slice(0, 16), sdir = join(OUT, 'shardborough');
   mkdirSync(sdir, { recursive: true });
-  const inBlob = { kind: 'file', iri: KG + 'artifact/sha256/' + createHash('sha256').update(input).digest('hex'), label: 'store input: the part versions, meta and log, in graph order' };
+  const inBlob = { kind: 'file', iri: kid('artifact', 'sha256', createHash('sha256').update(input).digest('hex')), label: 'store input: the part versions, meta and log, in graph order' };
   const op = { id: 'pack-shardborough', version: 1, skill: 'cwplans-kgx', tool: 'factoidal pack --layout ibk5 + factoidal activate', about: 'graph versions -> one Shardborough generation (wire version 10, zone maps), activated' };
-  const actId = KG + 'activity/' + createHash('sha256').update(JSON.stringify([op.id, op.version, members.map(m => m.iri), { layout: 'ibk5' }])).digest('hex').slice(0, 16);
+  const actId = kid('activity', createHash('sha256').update(JSON.stringify([op.id, op.version, members.map(m => m.iri), { layout: 'ibk5' }])).digest('hex').slice(0, 16));
   if (!existsSync(join(sdir, genName, 'manifest.sbm2'))) {
     const tmp = join(OUT, '.store-input.nq'); writeFileSync(tmp, input); const bin = join(ROOT, 'node_modules', '.bin', 'factoidal');
     execFileSync(bin, ['pack', tmp, join(sdir, genName), '--layout', 'ibk5'], { stdio: 'inherit' }); rmSync(tmp);
   }
   execFileSync(join(ROOT, 'node_modules', '.bin', 'factoidal'), ['activate', sdir, genName], { stdio: 'inherit' });
   for (const d of readdirSync(sdir)) if (d.startsWith('gen-') && d !== genName) rmSync(join(sdir, d), { recursive: true });
-  if (!flow.log.has(actId)) { const a = { id: actId, operation: op.id, operation_version: op.version, skill: op.skill, tool: op.tool, about: op.about, inputs: members.map(m => m.iri), params: { layout: 'ibk5' }, outputs: [KG + 'store/' + genName], started: new Date().toISOString(), ended: new Date().toISOString() };
+  if (!flow.log.has(actId)) { const a = { id: actId, operation: op.id, operation_version: op.version, skill: op.skill, tool: op.tool, about: op.about, inputs: members.map(m => m.iri), params: { layout: 'ibk5' }, outputs: [kid('store', genName)], started: new Date().toISOString(), ended: new Date().toISOString() };
     flow.log.set(actId, a); flow.ran.push(actId); writeFileSync(flow.logFile, readFileSync(flow.logFile, 'utf8') + JSON.stringify(a) + '\n'); }
   store = { generation: genName, members: members.length, files: readdirSync(join(sdir, genName)).length, bytes: readdirSync(join(sdir, genName)).reduce((a, f) => a + statSync(join(sdir, genName, f)).size, 0) };
 }
 for (const d of ['nq', 'cottas', 'hdt']) if (existsSync(join(OUT, d))) rmSync(join(OUT, d), { recursive: true });   // the first layout; in git history
-const manifest = { about: 'cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.', base: KG, built: new Date().toISOString(),
+const manifest = { about: 'cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.', base: ID_BASE, vocab: V, built: new Date().toISOString(),
   tool: 'cwplans/tools/build-kgx.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(ROOT, 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
   prefixes: NS, heads: { ...heads, meta: metaV.meta.iri, log: logV.log.iri },
   graphs: Object.fromEntries(current.map(v => [v.name, { version: v.iri, rdfc10_sha256: v.rdfc10_sha256, triples: v.triples, file: v.file, parts: (parts[v.name] || []).length, title: v.title, licence: v.licence }])),

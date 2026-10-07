@@ -6,6 +6,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX cwk: <https://danbri.github.io/londat/kgx/vocab#>
+PREFIX id: <https://kgx.foaf.tv/id/>
 # The store's graphs are parts of graph versions, cut by subject: write one GRAPH block per subject.
 # Each graph name, its current version (named by its RDFC-1.0 hash), size and licence
-SELECT ?name ?version ?triples ?title ?licence WHERE { GRAPH ?m { ?name cwk:current ?version . ?version void:triples ?triples ; dct:title ?title ; dct:license ?licence } } ORDER BY DESC(?triples)
+SELECT ?name ?version ?triples ?title ?licence WHERE { GRAPH ?m { ?graph cwk:current ?version ; rdfs:label ?name . ?version void:triples ?triples ; dct:title ?title ; dct:license ?licence } } ORDER BY DESC(?triples)
