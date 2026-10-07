@@ -70,6 +70,19 @@ graph `facade-patches-cwdock`; the judged patterns are in `photos.json` (`buildi
 often picks a brick course (7 to 9 px); the floor periods that are floors are the 17-storey tower (67 px), The Founding's
 red part (71 px), 11 Maritime Street (103 px) and Dock Shed (113 px).
 
+## Tiles on the 3D model
+
+`tiles/` holds one 256 px tile per building (CC0), which the 3D page repeats on every wall at its size in metres:
+`brick-tower-17.png` (the 17-storey tower's south-south-east face: its left half and the mirror image, 27.0 m by 4
+floors, 12.6 m), `decathlon.png` (two bays by one storey of dark brick and large windows, 10.0 m by 6.1 m; the netted top
+storey and the shop front do not repeat, so they are left out) and `dock-shed.png` (one bay by one floor of black frame,
+glazing and the fin band, 12.6 m by 3.17 m, the model's own floor). Sizes, crops and reasons are in `photos.json`
+(`tiles`). The colours are the photos' Display P3 values read as sRGB (fault F51). Not tiled: 11 Maritime Street (the
+rectified face keeps a 3 deg tilt; the other face has projecting balconies), The Founding (it has a tile from cwlibrary;
+these photos show its three parts, which one model outline cannot carry), Three Deal Porters (the model is a guessed
+6 m, fault F52). The page draws the tiles from the facade atlas (slots 16 to 18):
+https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-1915,848,15,130,0.9,0.25&n=0&u=0
+
 ## Found with this set
 
 - The 3D model shows a pit where a tower of about 216 m OD now stands on Marsh Wall (OSM way 988728458; the 2022 LiDAR
@@ -86,8 +99,8 @@ for faces and readable number plates and blur them. Nothing here describes or ta
 
 ## In the knowledge graph
 
-The operations `rectify-facade-patches` and `lift-contrib-photos` (`magpie/cwplans/tools/contrib-photos.mjs` in
-danbri/glitchcan-minigam) make the graphs `facade-patches-cwdock` and `photos-cwdock` in [`kgx/`](../../../../kgx/); the
-activity log names the inputs (these photos and `photos.json`) by SHA-256. Buildings seen in both sets (the library,
-Ontario Point, The Founding, the station, Columbia and Regina Point) have the same IRI in both graphs. OSM names and tags
-quoted are © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright).
+The operations `rectify-facade-patches`, `lift-contrib-photos` and `cut-facade-tiles` (`magpie/cwplans/tools/contrib-photos.mjs`
+in danbri/glitchcan-minigam) make the graphs `facade-patches-cwdock`, `photos-cwdock` and `facade-tiles-cwdock` in
+[`kgx/`](../../../../kgx/); the activity log names the inputs (these photos and `photos.json`) by SHA-256. Buildings
+seen in both sets (the library, Ontario Point, The Founding, the station, Columbia and Regina Point) have the same IRI in
+both graphs. OSM names and tags quoted are © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright).
