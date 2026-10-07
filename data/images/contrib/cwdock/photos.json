@@ -1,0 +1,596 @@
+{
+ "about": "Twenty photographs taken round the Canada Water dock (Canada Water lake), SE16, on the morning of 7 October 2026 and given to the project under CC0 by the owner. This file holds the hand-made part: what each photo shows, how each building was identified, the camera position evidence, the white calibration and the facade regions to rectify. The measurements are made by the logged operation rectify-facade-patches and the graph by lift-contrib-photos (magpie/cwplans/tools/contrib-photos.mjs). Skills: docklands-data-curation ('Contributed photos'), photo-view-reconstruction.",
+ "set": "cwdock",
+ "licence": "CC0 1.0",
+ "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "creator": "danbri (project owner)",
+ "date": "2026-10-07",
+ "time": "about 09:00 BST (08:00 UTC) on 7 October 2026 (owner: 'taken NOW'); the owner's phone map screenshot of the walk is timed 09:08:43 BST. The JPEG files carry no EXIF time, GPS or camera model",
+ "owner_words": "i will supply more photos of canada water taken NOW near the Dock by the Library. I include one of some stickers on the library door for white calibration. Weather at 9am is overcast, light drizzle. Save these in usual place as my cc0 contribs.",
+ "files_as_delivered": "JPEG originals, unchanged bytes (renamed only). Each has EXIF orientation, resolution, ExifVersion 0221, ColorSpace sRGB and SceneCaptureType only, and an embedded ICC profile 'Display P3' (Apple, 2022): the pixel values are Display P3, although the EXIF ColorSpace tag says sRGB. No date, time, GPS, make, model, lens or exposure tags.",
+ "weather": {
+  "owner": "overcast, light drizzle at 09:00",
+  "cache": "Open-Meteo in the londat cache (cwplans/cache/runs/2026-10-07/live-2026-10-07T0843Z.json.gz, weather row for 08:30 UTC): 14.9 C, humidity 89 %, wind 14.4 km/h from 354 deg, gusts 29.5 km/h, cloud 100 %, precipitation 0.1 mm, WMO code 51 (light drizzle)",
+  "light": "diffuse: no shadows, no sunlit faces; the sun (behind cloud) was at azimuth 122 deg true, altitude 16 deg at 08:09 UTC (astronomy-engine, tools/view-mcp sunAt). Good light for facade colours: every face has about the same light, unlike the evening set cwlibrary"
+ },
+ "position_evidence": {
+  "source": "a screenshot of the owner's phone map app, EXIF time 2026-10-07 09:08:43 (BST). NOT STORED in either repository: it shows the map provider's imagery and map data, which are not the owner's to license, and the owner's profile picture. Only the position below, derived by us, is recorded",
+  "fix_wgs84": [-0.04740, 51.49760],
+  "fix_model_xz": [-1914.6, 863.7],
+  "uncertainty_m": 10,
+  "how": "The blue position dot was located by laying the OSM outlines of the Canada Water lake (relation 18015947), the library, Dock X and Decathlon over the screenshot at the screenshot's own scale bar (50 m = 216 px, 4.33 px per metre, north up). The outlines fit the imagery to about 2 to 3 m. The app showed no accuracy circle larger than the dot (about 4 m radius); urban phone fixes are often 5 to 15 m off, so 10 m is our judged one-sigma.",
+  "where": "on the plaza at the south corner of Decathlon (9 Maritime Street), about 2 m from its south-south-east face, 22 m east of the north-east corner of the dock",
+  "heading": "the app's view cone pointed about west (280 deg, cone about 45 deg wide): this is the phone compass while the screenshot was taken, not the direction of a photo",
+  "per_photo": "Each photo's camera note below is judged from its content (the faces seen, the bearings between identified buildings); only photo 01 has a solved camera. Several photos (03, 04, 07, 08, 09, 10, 11) were taken within about 60 m of the fix."
+ },
+ "osm_extract": "openstreetmap.fr greater_london-latest.osm.pbf (data as of 2026-10-01, fetched 2026-10-02; data-register osm_extracts osmfr-greater-london; magpie/cwplans/data/raw/docklands/), cut with osmium to -0.060,51.493,-0.038,51.503 and, for the photo 01 skyline, -0.032,51.495,-0.005,51.510. Face lengths and outward normals are from the OSM outlines.",
+ "model": "magpie/cwplans/docklands/data/area.js built 2026-10-03 (sha256 29a3eb87...), keyed by docklands/data/building-keys.json: model index, height above the ground (height_m), ground (base_m_od), roof (top_m_od = base_m_od + height_m) and height source at that build.",
+ "calibration": {
+  "photo": "2026-10-07-cw-19-white-calibration-stickers.jpg",
+  "what": "Safety stickers on the glass entrance door of Canada Water Library (north face): 'CCTV in operation' (yellow on white), 'Automatic door' (black on white) and 'Keep clear' (blue on white). The white sign backgrounds are the white reference. The printed safety yellow and blue are secondary references only: their print colour is not known.",
+  "white": {
+   "boxes": [[260, 1590, 1040, 1780], [260, 2060, 1040, 2200]],
+   "where": "clean white areas of the 'Automatic door' sign, above the word Automatic and below the word door (pixel boxes x0 y0 x1 y1 in the stored photo)",
+   "pixels": 257400,
+   "mean_rgb_p3": [216.1, 217.5, 212.4],
+   "sd_rgb": [2.1, 2.1, 2.3],
+   "hex_p3": "#d8dad4",
+   "srgb": [215.8, 217.6, 212.0],
+   "lab_d65": [86.6, -1.63, 2.54],
+   "xy": [0.3152, 0.3353],
+   "r_over_g_linear": 0.9852,
+   "b_over_g_linear": 0.9481,
+   "gains_linear_rgb": [1.015, 1.0, 1.0547],
+   "cast": "slightly yellow-green: b* +2.5 (blue 5 % low against green in linear light), a* -1.6; L* 86.6 (not clipped). As rendered, the white point is a little warmer and greener than D65 (x,y 0.3127, 0.3290); McCamy CCT of the rendered white about 6,330 K. This is the phone's processed result (auto white balance already applied), not a measurement of the daylight."
+  },
+  "yellow_secondary": {"box": [470, 840, 560, 880], "mean_rgb_p3": [219.0, 200.6, 18.5], "srgb": [222.9, 199.8, 0.0], "lab_d65": [79.9, -9.58, 103.11], "note": "inside the CCTV triangle; out of the sRGB gamut (blue clips to 0)"},
+  "blue_secondary": {"box": [1350, 1500, 1500, 1700], "mean_rgb_p3": [0.8, 47.4, 136.4], "srgb": [0.0, 48.5, 141.8], "lab_d65": [23.6, 25.05, -55.84], "note": "inside the 'Keep clear' disc"},
+  "sky_per_photo_lab": {"01": [81.0, -1.36, -2.89], "02": [93.5, -1.33, -2.81], "03": [90.8, -0.86, -0.29], "04": [91.3, -3.43, -2.3], "05": [90.5, -0.63, 0.38], "06": [88.6, -1.46, 1.32], "07": [89.2, -0.04, -1.22], "08": [89.8, -0.49, -2.56], "09": [90.1, -0.86, -0.29], "10": [93.7, -3.83, -2.42], "11": [89.1, -0.23, -0.69], "12": [93.2, -1.05, 0.24], "13": [93.9, -0.91, -2.67], "14": [88.6, -1.26, 0.78], "15": [89.1, -0.46, -1.36], "16": [90.5, -0.43, -0.15], "17": [90.7, -1.11, -2.16], "18": [87.5, -1.32, -1.64], "20": [92.9, -0.66, -0.82]},
+  "sky_method": "median of bright, low-chroma pixels (min channel > 150, max - min < 30) in the top 40 % of each photo; Display P3 values converted to CIELAB D65",
+  "how_to_use": [
+   "Photo 19 itself: multiply linear-light R by 1.015 and B by 1.055 (decode the Display P3 values with the sRGB curve, scale, re-encode); the white sign then reads neutral.",
+   "The other photos: do not copy these gains blindly. The phone set white balance for each shot separately, so the cast differs from shot to shot. Balance each photo on a neutral in that photo (the overcast sky near the horizon, white paint such as Dock X's canopy columns, the white van in 03 and 04) and use photo 19 to check the method and the size of the error.",
+   "Size of the error: the overcast sky came out within 4 units of neutral in every photo (a* -3.8 to 0.0, b* -2.9 to +1.3) and the white sign at b* +2.5, so colours read from these photos are within about 3 to 5 CIELAB units of a balanced result. That is good enough for brick, render and metal tones.",
+   "Before any colour is measured, convert from Display P3 to sRGB with the embedded profile (fault F51): read as sRGB, red-brown brick is wrong by about 6 CIELAB units; the neutrals by less than 1.",
+   "The sticker is vinyl on the glass of the door, under the library's overhang; some warm interior light may pass through it. A white card held in open light would be a better reference next time."
+  ]
+ },
+ "buildings": {
+  "newfoundland": {
+   "name": "Newfoundland (Newfoundland Quay)",
+   "osm": "https://www.openstreetmap.org/way/532616070",
+   "wikidata": "Q15917518",
+   "osm_tags": {"addr:housename": "Newfoundland Quay", "building": "apartments", "building:levels": "58"},
+   "model": {"index": 14815, "height_m": 218.6, "base_m_od": 5.8, "top_m_od": 224.4, "height_source": "lidar"},
+   "identified_by": ["the white diagrid facade and the crown of triangles, unique in the skyline", "the photo 01 camera solve: its top tier centre fits to 2.8 px"],
+   "confidence": "certain"
+  },
+  "landmark-pinnacle": {
+   "name": "Landmark Pinnacle",
+   "osm": "https://www.openstreetmap.org/way/365809822",
+   "wikidata": "Q16258428",
+   "osm_tags": {"addr:housename": "Landmark Pinnacle", "building": "apartments", "building:levels": "75"},
+   "model": {"index": 9794, "height_m": 233.5, "base_m_od": 5.4, "top_m_od": 238.9, "height_source": "lidar"},
+   "identified_by": ["the tallest tower in photo 01, dark, flat top; at 1.6 km it is the nearest of the tall towers on this bearing", "camera solve: top fits to 1.9 px"],
+   "confidence": "probable"
+  },
+  "one-canada-square": {
+   "name": "One Canada Square",
+   "osm": "https://www.openstreetmap.org/way/5986754",
+   "wikidata": "Q503477",
+   "osm_tags": {"building": "commercial", "building:levels": "50"},
+   "model": {"index": 38760, "height_m": 235, "base_m_od": 9.9, "top_m_od": 244.9, "height_source": "tag", "note": "the pyramid part (OSM way 432777466, a building:part of way 5986754); the shaft parts are model buildings 38761 and 38583 to 38586"},
+   "identified_by": ["the left edge of a pyramid roof just left of Landmark Pinnacle in photo 01; the camera solve puts the apex behind Landmark Pinnacle and the left base corner of the pyramid where the edge is seen"],
+   "confidence": "probable"
+  },
+  "one-bank-street": {
+   "name": "One Bank Street",
+   "osm": "https://www.openstreetmap.org/way/532616071",
+   "osm_tags": {"addr:housenumber": "1-5", "addr:street": "Bank Street", "building": "office", "building:levels": "26"},
+   "model": {"index": 14816, "height_m": 142.9, "base_m_od": 5.7, "top_m_od": 148.6, "height_source": "lidar", "note": "OSM has no name on this way (address 1-5 Bank Street); towers.json (cwb-0514 One Bank Street) uses model building 14816"},
+   "identified_by": ["the dark glass block left of Landmark Pinnacle in photo 01: the camera solve puts its top at (737, 1445) px, the block's top is at about 1450 px"],
+   "confidence": "probable"
+  },
+  "citigroup-centre": {
+   "name": "Citigroup Centre, 25 Canada Square",
+   "osm": "https://www.openstreetmap.org/way/190714752",
+   "wikidata": "Q867663",
+   "osm_tags": {"name": "Citi", "addr:housenumber": "25", "addr:street": "Canada Square", "building": "office", "building:levels": "45"},
+   "model": {"index": 5459, "height_m": 200, "base_m_od": 10.1, "top_m_od": 210.1, "height_source": "tag"},
+   "identified_by": ["two 'citi' logos at the top of the building in photo 01", "its top elevation fits 25 Canada Square (200 m) and not 33 Canada Square (also Citi, 87 m)"],
+   "confidence": "certain"
+  },
+  "25-bank-street": {
+   "name": "25 Bank Street",
+   "osm": "https://www.openstreetmap.org/way/140144145",
+   "wikidata": "Q138752",
+   "osm_tags": {"name": "JP Morgan", "addr:housenumber": "25", "addr:street": "Bank Street", "building": "office", "building:levels": "33"},
+   "model": {"index": 3884, "height_m": 153, "base_m_od": 7, "top_m_od": 160, "height_source": "tag"},
+   "identified_by": ["'J.P.Morgan' lettering read on the building right of the Citi logos in photo 01; bearing and height fit the camera solve"],
+   "confidence": "probable"
+  },
+  "one-park-drive": {
+   "name": "One Park Drive",
+   "osm": "https://www.openstreetmap.org/way/534219763",
+   "wikidata": "Q29378816",
+   "osm_tags": {"building": "apartments", "building:levels": "57", "height": "205"},
+   "model": {"index": 14855, "height_m": 205, "base_m_od": 5.9, "top_m_od": 210.9, "height_source": "tag"},
+   "identified_by": ["a round tower with a chequered facade in photo 01", "camera solve: top fits to 2.5 px"],
+   "confidence": "probable"
+  },
+  "wardian": {
+   "name": "Wardian London (Bagshaw Building, east, and Hobart Building, west)",
+   "osm": "https://www.openstreetmap.org/way/499615259",
+   "osm_tags": {"name": "Bagshaw Building (Wardian East)", "building": "residential", "building:levels": "55"},
+   "model": {"index": 14229, "height_m": 183.7, "base_m_od": 5.4, "top_m_od": 189.1, "height_source": "lidar", "note": "Hobart Building (Wardian West): OSM way 499615258, model building 14228, roof 172.8 m OD"},
+   "identified_by": ["the tower with deep horizontal balcony bands in photo 01; the camera solve projects Wardian East's top onto it"],
+   "confidence": "probable"
+  },
+  "hampton-tower": {
+   "name": "Hampton Tower (South Quay Plaza)",
+   "osm": "https://www.openstreetmap.org/way/362219033",
+   "wikidata": "Q56300795",
+   "osm_tags": {"name": "Hampton Tower", "addr:housenumber": "75", "addr:street": "Marsh Wall", "building": "apartments", "building:levels": "68"},
+   "model": {"index": 40224, "height_m": 214.4, "base_m_od": 5.5, "top_m_od": 219.9, "height_source": "lidar", "note": "the tall part, OSM way 977629881 (building:part, 56 levels); the lower part is way 977629880, model building 40223"},
+   "identified_by": ["held out of the camera solve: its predicted top falls 8 px from the top of the light, vertically striped tower in photo 01"],
+   "confidence": "probable"
+  },
+  "consort-place-tower": {
+   "name": "tall residential tower on Marsh Wall at Consort Place (no name in OSM)",
+   "osm": "https://www.openstreetmap.org/way/988728458",
+   "osm_tags": {"addr:street": "Marsh Wall", "building": "apartments"},
+   "model": {"index": 21116, "height_m": 7.4, "base_m_od": -7.5, "top_m_od": -0.1, "height_source": "lidar", "note": "the model shows a pit: the 2022 LiDAR saw the site during excavation. The tower in photo 01 tops out at about 216 m OD (+-15 m): elevation 6.7 deg at 1.77 km from the solved camera. Fault F52."},
+   "identified_by": ["a dark tall tower in photo 01 (x 1612 to 1722 px) that no model or towers.json building explains; the ray through its top passes 3 m from the centroid of OSM way 988728458, next to 'Consort Place Marketing Suite' (way 966789110)", "its name is not in OSM; that it is the Consort Place tower is a guess"],
+   "confidence": "guess"
+  },
+  "brick-tower-17": {
+   "name": "17-storey brick residential tower north-east of Decathlon (no name in OSM)",
+   "osm": "https://www.openstreetmap.org/way/729958295",
+   "osm_tags": {"building": "apartments", "building:levels": "17"},
+   "model": {"index": 17650, "height_m": 57.8, "base_m_od": 5.9, "top_m_od": 63.7, "height_source": "lidar"},
+   "footprint": "27.5 m by 16.6 m; long faces with outward normals 150 deg (south-south-east) and 333 deg",
+   "facade": {
+    "faces_seen": {"south-south-east": "photo 02, frontal, in diffuse light", "south-west": "photo 04, behind Decathlon (right)"},
+    "pattern": "Dark purple-brown brick with pale (stone or precast) string courses at every floor; 7 bays on the south-south-east face: 6 bays of paired windows with dark frames, and one bay (fifth from the left) of recessed balconies with dark rails; double-height ground floor with tall openings.",
+    "count": "16 window rows above a double-height ground floor = 17 levels (rectified patch brick-tower-sse)",
+    "how": "judged from photo 02 and the rectified patch"
+   },
+   "identified_by": ["floor count 17 = OSM building:levels 17, the only 17-level building here", "position: north-east of Decathlon, with an 8-storey wing (OSM way 729958294, 8 levels) to its east, as in photo 02"],
+   "confidence": "probable"
+  },
+  "brick-wing-8": {
+   "name": "8-storey brick wing east of the 17-storey tower (no name in OSM)",
+   "osm": "https://www.openstreetmap.org/way/729958294",
+   "osm_tags": {"building": "apartments", "building:levels": "8"},
+   "model": {"index": 17649, "height_m": 29.2, "base_m_od": 6.0, "top_m_od": 35.2, "height_source": "lidar"},
+   "facade": {"pattern": "lighter mixed brown brick, windows in pairs and recessed balconies; 7 window rows above the ground floor", "how": "judged from photo 02"},
+   "identified_by": ["7 window rows plus the ground floor = OSM 8 levels; adjacent to the 17-storey tower on its east"],
+   "confidence": "probable"
+  },
+  "decathlon": {
+   "name": "Decathlon, 9 Maritime Street",
+   "osm": "https://www.openstreetmap.org/way/729958296",
+   "osm_tags": {"name": "Decathlon", "addr:housenumber": "9", "addr:street": "Maritime Street", "building": "retail", "building:levels": "3", "shop": "sports"},
+   "model": {"index": 17651, "height_m": 18.3, "base_m_od": 5.8, "top_m_od": 24.1, "height_source": "lidar"},
+   "footprint": "36.2 m by 20.8 m; faces with outward normals 153 deg (south-south-east, 36.2 m), 244 deg (west-south-west, towards the dock, 20.8 m)",
+   "facade": {
+    "faces_seen": {"west-south-west": "photo 09 (frontal), photos 07 and 08", "south-south-east": "photos 03 and 04 (oblique)"},
+    "pattern": "Dark grey-brown mixed brick with tall brick piers; a pale stone band and sill at each level; large windows with bronze frames, one a bay; double-height shop front at the ground; the top storey is an open frame of brick piers with black netting (a rooftop sports pitch: OSM leisure=pitch 'Decathlon Sports Pitch', way 997577288); DECATHLON sign on both faces near the south corner",
+    "how": "judged from photos 03, 04, 09 and the rectified patch decathlon-wsw"
+   },
+   "identified_by": ["the name DECATHLON on the building", "OSM way 729958296 (shop sports, 3 levels)"],
+   "confidence": "certain"
+  },
+  "11-maritime-street": {
+   "name": "11 Maritime Street (13-storey red-brick tower; no name in OSM)",
+   "osm": "https://www.openstreetmap.org/way/729958291",
+   "osm_tags": {"building": "apartments", "building:levels": "13"},
+   "model": {"index": 17646, "height_m": 45.6, "base_m_od": 5.1, "top_m_od": 50.7, "height_source": "lidar"},
+   "footprint": "long faces 46.4 m (outward normal 109 deg) and 53.4 m (289 deg); the south-south-west end is 16.7 m in three short facets (normal 201 deg)",
+   "facade": {
+    "faces_seen": {"south-south-west": "photo 10 (left), 4 bays, no balconies", "east-south-east": "photos 08 and 10 (right), with two columns of projecting balconies"},
+    "pattern": "Red multi-tone brick; deep-set windows with dark frames (six panes); pale stone bands at several floors and a thick band over the double-height ground floor; ground floor of tall openings framed in pale stone; the lower block to the east has brick screens (lattice) over its windows",
+    "count": "12 window rows above a double-height ground floor = 13 levels",
+    "how": "judged from photos 08 and 10 and the rectified patch eleven-maritime-ssw (its bands keep a residual tilt of about 3 deg)"
+   },
+   "identified_by": ["'11' and a plate 'Maritime Street' at the entrance in photo 10", "the 'Mouse Tail Coffee' shop front in the same photo; OSM node 7049906551 (Mouse Tail Coffee Stories, 13 Maritime Street) lies inside OSM way 729958291", "12 window rows plus the ground floor = OSM 13 levels"],
+   "confidence": "certain"
+  },
+  "dock-x": {
+   "name": "Dock X, 1 Surrey Quays Road (the white retail shed; hoarding 'Dockside Canada Water')",
+   "osm": "https://www.openstreetmap.org/way/23045192",
+   "osm_tags": {"name": "Dock X", "addr:housenumber": "1", "addr:street": "Surrey Quays Road", "building": "yes", "building:levels": "1"},
+   "model": {"index": 69, "height_m": 7.8, "base_m_od": 5.9, "top_m_od": 13.7, "height_source": "lidar"},
+   "footprint": "72 m by 51 m; the west-south-west face (72.3 m, outward normal 243 deg) runs along the dock",
+   "facade": {
+    "faces_seen": {"west-south-west": "photo 05: long canopy on white round columns along the dock side", "east-north-east": "photo 02 (left)", "north-north-west": "photo 03 (left): a blue printed hoarding"},
+    "pattern": "Grey metal cladding panels; a deep metal canopy on white round steel columns with a lower glazed canopy under it; a printed hoarding 'DOCKSIDE CANADA WATER' (Art Invest Real Estate) on the north-west corner",
+    "how": "judged from photos 02, 03 and 05"
+   },
+   "identified_by": ["position: the large shed east of the dock and south of Decathlon, with the dock railings beside its canopy (photo 05)", "OSM way 23045192 'Dock X'; the hoarding names the planned 'Dockside' scheme, not the building"],
+   "confidence": "probable"
+  },
+  "surrey-quays-centre": {
+   "name": "Surrey Quays Shopping Centre (north side, with Corner Corner)",
+   "osm": "https://www.openstreetmap.org/way/219881447",
+   "wikidata": "Q18162110",
+   "osm_tags": {"name": "Surrey Quays Shopping Centre", "addr:housename": "Surrey Quays Centre", "addr:street": "Redriff Road", "building": "retail", "building:levels": "2", "shop": "mall"},
+   "model": {"index": 6725, "height_m": 11.4, "base_m_od": 6.1, "top_m_od": 17.5, "height_source": "lidar"},
+   "facade": {
+    "faces_seen": {"north-north-west": "photo 06, across the south end of the dock"},
+    "pattern": "Four white gabled bays clad in white panels with a strip of small windows, green awnings over the entrance, two dark pyramid roofs and glass pyramid roof lights; a green square tower with the sign CORNER CORNER; a green-clad block to the right",
+    "how": "judged from photo 06"
+   },
+   "identified_by": ["the sign CORNER CORNER on the green tower; OSM nodes 12718169329 and 12734667701 (Corner Corner, 1 Redriff Road) lie inside OSM way 219881447", "the glass pyramid roof lights of the shopping centre"],
+   "confidence": "certain"
+  },
+  "canada-water-library": {
+   "name": "Canada Water Library",
+   "osm": "https://www.openstreetmap.org/way/157137089",
+   "wikidata": "Q55125811",
+   "model": {"index": 4393, "height_m": 20.0, "base_m_od": 5.0, "top_m_od": 25.0, "height_source": "lidar"},
+   "facade": {
+    "faces_seen": {"north": "photos 15, 16 (right), 17 and 19 (door)", "east": "photo 16 (left), photos 08 and 11 from across the dock"},
+    "pattern": "As in set cwlibrary: bronze expanded-metal mesh panels in a staggered grid, projecting window boxes; this light shows the mesh as warm grey-brown without the evening shade. North face: a black fascia 'CANADA WATER LIBRARY THEATRE' over a glazed ground floor, maroon double doors with a leisure centre poster.",
+    "how": "judged from photos 15 to 17"
+   },
+   "identified_by": ["the words CANADA WATER LIBRARY (THEATRE) on the building", "the inverted-pyramid form"],
+   "confidence": "certain"
+  },
+  "ontario-point": {
+   "name": "Ontario Point",
+   "osm": "https://www.openstreetmap.org/way/204580680",
+   "osm_tags": {"addr:housename": "Ontario Point", "building": "apartments", "building:levels": "25"},
+   "model": {"index": 6448, "height_m": 82.2, "base_m_od": 5.7, "top_m_od": 87.9, "height_source": "lidar"},
+   "facade": {
+    "faces_seen": {"see note": "photo 18 repeats the view of cwlibrary photo 1 almost exactly"},
+    "note": "Open question about set cwlibrary: in photo 18 the brick chimney (OSM way 1175339088) is about 20 deg left of the tower and the station drum's disc roof about 30 deg left, with the main lens (focal about 1,860 px assumed). Those two bearings put the camera about 65 m south-south-east of the tower, by the drum, not south-west of it as cwlibrary judged. From there the wide face would be the east-south-east face (OSM 24.2 m, outward normal 117 deg) and the narrow left face, with the name, the south-west face (24.0 m, 239 deg). Not resolved: a camera solve on the roof corners is needed before the cwlibrary face names and the 24.0 m tile width are trusted or changed.",
+    "how": "judged from photo 18 and the OSM outline"
+   },
+   "identified_by": ["the name ONTARIO POIN(T) on the base in photo 18", "the glass tower with an open roof frame, as in cwlibrary"],
+   "confidence": "certain"
+  },
+  "canada-water-station": {
+   "name": "Canada Water station (Jubilee line ticket hall drum)",
+   "osm": "https://www.openstreetmap.org/way/41599363",
+   "wikidata": "Q800610",
+   "model": {"index": null, "note": "no outline of its own in the model (as in cwlibrary)"},
+   "facade": {"form": "Glass drum under a wide, thin disc roof with a dark underside and a light edge; mullions in a regular grid; 'CANADA WATER' roundel signs inside", "how": "judged from photo 20"},
+   "identified_by": ["the glass drum with a disc roof", "OSM way 41599363 (building train_station, name Canada Water)"],
+   "confidence": "certain"
+  },
+  "canada-water-bus-station": {
+   "name": "Canada Water bus station",
+   "osm": "https://www.openstreetmap.org/way/140147695",
+   "wikidata": "Q5029446",
+   "facade": {"form": "Low canopy with a pitched translucent roof, left of the drum in photo 20", "how": "judged from photo 20"},
+   "identified_by": ["position: the canopy beside the drum"],
+   "confidence": "probable"
+  },
+  "regina-point": {
+   "name": "Regina Point (OSM name Regina House)",
+   "osm": "https://www.openstreetmap.org/way/52588474",
+   "osm_tags": {"addr:housename": "Regina Point", "name": "Regina House", "building": "apartments", "building:levels": "20"},
+   "model": {"index": 769, "height_m": 61.7, "base_m_od": 2.4, "top_m_od": 64.1, "height_source": "lidar"},
+   "identified_by": ["the twin cream-and-red-brown towers of about 20 floors west of the drum (as in cwlibrary)", "photo 11: 21 deg left of Ontario Point, and Columbia Point 44 deg left, fit a camera on the pontoon ramp at about -0.0482, 51.4976 (focal about 1,860 px assumed); photos 08, 15 and 20: the tower at the bearing of Regina Point from the judged cameras"],
+   "confidence": "probable"
+  },
+  "columbia-point": {
+   "name": "Columbia Point",
+   "osm": "https://www.openstreetmap.org/way/52588475",
+   "osm_tags": {"addr:housename": "Columbia Point", "building": "apartments", "building:levels": "20"},
+   "model": {"index": 770, "height_m": 61.7, "base_m_od": 2.4, "top_m_od": 64.1, "height_source": "lidar"},
+   "identified_by": ["photo 11: the left of the two twin towers, south of Regina Point (see regina-point)"],
+   "confidence": "probable"
+  },
+  "the-founding": {
+   "name": "The Founding (Canada Water plot A1)",
+   "osm": "https://www.openstreetmap.org/way/1330247335",
+   "osm_tags": {"addr:housename": "The Founding", "building": "apartments", "building:levels": "35"},
+   "model": {"index": 36201, "height_m": 106, "base_m_od": 5.4, "top_m_od": 111.4, "height_source": "levels: 35 x 3 m + 1 m (newer than the 2022 LiDAR)"},
+   "footprint": "33.3 m by 24.8 m; the face to the dock has outward normal 76 deg (east-north-east, 33.3 m)",
+   "facade": {
+    "faces_seen": {"east-north-east": "photo 14 (frontal, across the dock), photos 03, 07 and 13"},
+    "parts": "Three parts side by side on the east-north-east face, as the published 'tripartite tower': left, a light part (white or pale grey frame, dark windows), the tallest, with an open crown of screens; centre, an oxide-red framed part with a column of projecting balconies at each side, the lowest of the three; right, a charcoal grey part with a window grid and a column of balconies at its right.",
+    "counts": "On the rectified patches: the red part about 23 floors over 5 taller podium floors (larger windows), the grey part about 4 floors taller than the red; counts +-1",
+    "how": "judged from photo 14 and the rectified patches the-founding-red and the-founding-grey; diffuse light, so the colours are close to the materials"
+   },
+   "identified_by": ["as in cwlibrary: the only building near with 30 or more levels; in photo 14 the three parts and the red frame match cwlibrary photo 4", "position: across the dock to the west-south-west, next to Three Deal Porters"],
+   "confidence": "certain"
+  },
+  "three-deal-porters": {
+   "name": "Three Deal Porters",
+   "osm": "https://www.openstreetmap.org/way/1428008978",
+   "osm_tags": {"name": "Three Deal Porters", "building": "office"},
+   "model": {"index": 36552, "height_m": 6, "base_m_od": 5.4, "top_m_od": 11.4, "height_source": "guess", "note": "the photo shows 6 storeys (ground floor and 5 floors, the top one a row of recessed loggias) and a roof terrace with pergolas: about 25 to 28 m, not 6 m. Fault F52."},
+   "footprint": "the OSM outline wraps the base of The Founding; its face to the dock is 27.9 m (outward normal 73 deg)",
+   "facade": {
+    "faces_seen": {"east-north-east": "photo 13 (frontal, across the dock), photo 14 (left, lower)"},
+    "pattern": "Buff (yellow-grey) brick in a grid of wide brick piers and floor bands, 5 bays; each bay a dark-framed window of 4 panes over a dark spandrel panel; brick headers in a dog-tooth course at each floor band; top floor of recessed loggias with black rails; roof terrace with steel pergolas",
+    "how": "judged from photo 13 and the rectified patch three-deal-porters-ene"
+   },
+   "identified_by": ["the letters 'THRE... D...' on the sign over the ground floor in photo 13 (partly hidden by a tree)", "position: next to The Founding on its south, as in OSM"],
+   "confidence": "certain"
+  },
+  "dock-shed": {
+   "name": "Dock Shed",
+   "osm": "https://www.openstreetmap.org/way/1427207669",
+   "osm_tags": {"name": "Dock Shed", "addr:street": "Deal Porters Way", "building": "office", "building:levels": "6"},
+   "model": {"index": 36551, "height_m": 19, "base_m_od": 5.5, "top_m_od": 24.5, "height_source": "levels"},
+   "footprint": "65 m by 58 m; the face to the dock has outward normal 56 deg (north-east, 63.1 m)",
+   "facade": {
+    "faces_seen": {"north-east": "photo 12 (frontal, across the dock), photo 16 (background left), photo 03 (distance)"},
+    "pattern": "Black steel frame of 5 wide bays under a saw-tooth roof (5 gables); full-height glazing; at each floor a continuous balcony with a band of vertical fins in a light timber tone; 4 or 5 floors above a glazed ground floor",
+    "how": "judged from photo 12 and the rectified patch dock-shed-ne"
+   },
+   "identified_by": ["position: the building at the south-west corner of the dock, south of Three Deal Porters, as in OSM", "the saw-tooth roof fits the name 'Dock Shed'"],
+   "confidence": "probable"
+  }
+ },
+ "photos": [
+  {
+   "file": "2026-10-07-cw-01-canary-wharf-skyline.jpg",
+   "size": [2576, 1932],
+   "title": "Canary Wharf and Isle of Dogs skyline over a dark hoarding, overcast",
+   "camera": "solved (photo-view-reconstruction method, view-lib solveCamera; 4 tower tops, rms 2.2 px, Hampton Tower held out at 8 px): eye about -0.0466, 51.4953 (model x -1851, z 1115), one standard error 60 m east-west and 34 m north-south, so south-east of the dock about 250 m south of the 09:08 fix; heading 63.9 deg grid (65.4 deg true), pitch 9.3 deg, roll -1.3 deg; focal 5,570 px (horizontal field 26 deg: the 3x telephoto). The towers right of the lamp post are not identified: the solve puts Amory Tower (model roof 184.6 m OD) where the photo shows sky; not resolved",
+   "depicts": [
+    {"building": "newfoundland", "role": "left"},
+    {"building": "one-canada-square", "role": "behind Landmark Pinnacle, only the left edge of its pyramid"},
+    {"building": "one-bank-street", "role": "left of Landmark Pinnacle, lower"},
+    {"building": "landmark-pinnacle", "role": "centre left, tallest in the photo"},
+    {"building": "citigroup-centre", "role": "centre, 'citi' logos"},
+    {"building": "25-bank-street", "role": "behind and right of the Citi building"},
+    {"building": "wardian", "role": "centre right"},
+    {"building": "consort-place-tower", "role": "centre right, dark tower (guess)"},
+    {"building": "one-park-drive", "role": "right of centre, round"},
+    {"building": "hampton-tower", "role": "right, light and vertically striped"},
+    {"name": "tower cranes", "role": "left and centre"},
+    {"name": "a street lamp post and a one-way arrow sign", "role": "foreground right"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-02-brick-tower-and-dock-x.jpg",
+   "size": [2576, 1932],
+   "title": "17-storey brick tower and its 8-storey wing, Dock X's canopy on the left, horse chestnut trees",
+   "camera": "judged: beside Dock X's east-north-east face, south-south-east of the tower, looking north-north-west; the tower's south-south-east face is frontal",
+   "depicts": [
+    {"building": "brick-tower-17", "role": "subject"},
+    {"building": "brick-wing-8", "role": "right"},
+    {"building": "dock-x", "role": "left, canopy"},
+    {"name": "horse chestnut trees in autumn colour", "role": "right"},
+    {"name": "a skip and bins", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-03-decathlon-and-the-founding.jpg",
+   "size": [2576, 1932],
+   "title": "Looking west between Decathlon and Dock X to the dock, The Founding beyond",
+   "camera": "judged: on the plaza between Decathlon (right) and Dock X (left), east of the 09:08 fix, looking west-south-west (about 250 deg) along Decathlon's south-south-east face",
+   "depicts": [
+    {"building": "decathlon", "role": "right"},
+    {"building": "dock-x", "role": "left, printed hoarding"},
+    {"building": "the-founding", "role": "centre, distance"},
+    {"building": "three-deal-porters", "role": "left of The Founding, distance"},
+    {"building": "dock-shed", "role": "left, distance"},
+    {"name": "Rafter Walk (red boardwalk) across the dock", "osm": "https://www.openstreetmap.org/way/1312927014", "role": "distance"},
+    {"name": "a tree on the plaza", "role": "left"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-04-decathlon-south.jpg",
+   "size": [2576, 1932],
+   "title": "Decathlon from the south, 11 Maritime Street on the left and the 17-storey tower behind",
+   "camera": "judged: on the plaza south of Decathlon's south corner, near the 09:08 fix, looking north-north-east; the south-south-east face recedes to the right",
+   "depicts": [
+    {"building": "decathlon", "role": "subject"},
+    {"building": "11-maritime-street", "role": "left"},
+    {"building": "brick-tower-17", "role": "right, behind"},
+    {"building": "ontario-point", "role": "far left, partly"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-05-dock-x-canopy.jpg",
+   "size": [1932, 2576],
+   "title": "Dock X's canopy along the dock, the 'Dockside Canada Water' hoarding",
+   "camera": "judged: at Dock X's north-west corner, looking south-south-east along its west-south-west face; the dock railings on the right",
+   "depicts": [
+    {"building": "dock-x", "role": "subject"},
+    {"building": "surrey-quays-centre", "role": "distance, green building and a glass pyramid"},
+    {"name": "the railings of the dock's east quay (Maritime Street)", "role": "right"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-06-surrey-quays-corner-corner.jpg",
+   "size": [2576, 1932],
+   "title": "Across the dock to the Surrey Quays Shopping Centre and Corner Corner",
+   "camera": "judged: on the dock's east quay, looking south across the south end of the dock",
+   "depicts": [
+    {"building": "surrey-quays-centre", "role": "subject"},
+    {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "foreground"},
+    {"name": "a life ring and street lamps on the quay", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-07-dock-panorama.jpg",
+   "size": [2576, 596],
+   "title": "Panorama of the dock from its north-east corner: pontoon, Rafter Walk, The Founding, the library, Ontario Point, 11 Maritime Street, Decathlon",
+   "camera": "judged: at the north-east corner of the dock by the pontoon ramp, near the 09:08 fix; a sweep of about 300 deg from south (left) through west to east (right)",
+   "depicts": [
+    {"building": "dock-x", "role": "left"},
+    {"name": "a floating pontoon with a green ramp", "role": "foreground"},
+    {"building": "three-deal-porters", "role": "centre left, distance"},
+    {"building": "the-founding", "role": "centre left"},
+    {"building": "canada-water-library", "role": "centre"},
+    {"building": "ontario-point", "role": "centre"},
+    {"building": "11-maritime-street", "role": "centre right"},
+    {"building": "decathlon", "role": "right, both faces with the sign"},
+    {"building": "brick-tower-17", "role": "right, behind Decathlon"},
+    {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "centre"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-08-library-and-11-maritime-street.jpg",
+   "size": [2576, 1932],
+   "title": "Canada Water Library, Ontario Point and 11 Maritime Street from the north-east corner of the dock",
+   "camera": "judged: at the top of the pontoon ramp at the dock's north-east corner, looking west-north-west",
+   "depicts": [
+    {"building": "canada-water-library", "role": "left"},
+    {"building": "regina-point", "role": "behind the library (probable)"},
+    {"building": "ontario-point", "role": "centre"},
+    {"building": "11-maritime-street", "role": "right"},
+    {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "left"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-09-decathlon-entrance.jpg",
+   "size": [1932, 2576],
+   "title": "Decathlon's west-south-west face with its entrance, the brick screens of 11 Maritime Street's lower block on the left",
+   "camera": "judged: on the dock side south-west of Decathlon, looking east-north-east and up at its west-south-west face",
+   "depicts": [
+    {"building": "decathlon", "role": "subject"},
+    {"building": "11-maritime-street", "role": "left"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-10-11-maritime-street.jpg",
+   "size": [1932, 2576],
+   "title": "11 Maritime Street from the south-south-west, entrance '11' and a coffee shop",
+   "camera": "judged: south-south-west of the tower at the north-east corner of the dock, looking north-north-east and up",
+   "depicts": [
+    {"building": "11-maritime-street", "role": "subject"},
+    {"building": "ontario-point", "role": "left, partly"},
+    {"building": "decathlon", "role": "right edge, partly"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-11-library-across-the-dock.jpg",
+   "size": [1932, 2576],
+   "title": "Canada Water Library across the dock, Columbia Point and Regina Point behind, Ontario Point on the right",
+   "camera": "judged: on the pontoon ramp near the dock's north-east corner, about -0.0482, 51.4976 (from the bearings between Ontario Point, Regina Point and Columbia Point), looking west",
+   "depicts": [
+    {"building": "canada-water-library", "role": "subject"},
+    {"building": "columbia-point", "role": "left"},
+    {"building": "regina-point", "role": "centre, behind the library"},
+    {"building": "canada-water-station", "role": "centre, low"},
+    {"building": "ontario-point", "role": "right"},
+    {"name": "a raking lighting mast with floodlights", "role": "centre"},
+    {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-12-dock-shed.jpg",
+   "size": [2576, 1932],
+   "title": "Dock Shed across the dock: black frame and saw-tooth roof, Rafter Walk and reeds in front",
+   "camera": "judged: on the dock's east quay, looking south-west across the water at the Dock Shed's north-east face",
+   "depicts": [
+    {"building": "dock-shed", "role": "subject"},
+    {"building": "three-deal-porters", "role": "right edge"},
+    {"name": "Rafter Walk (red boardwalk)", "osm": "https://www.openstreetmap.org/way/1312927014", "role": "middle"},
+    {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-13-three-deal-porters.jpg",
+   "size": [2576, 1932],
+   "title": "Three Deal Porters across the dock, The Founding's red part on the right",
+   "camera": "judged: on the dock's east quay, looking west-south-west across the water",
+   "depicts": [
+    {"building": "three-deal-porters", "role": "subject"},
+    {"building": "the-founding", "role": "right"},
+    {"name": "Rafter Walk (red boardwalk)", "osm": "https://www.openstreetmap.org/way/1354094052", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-14-the-founding.jpg",
+   "size": [1932, 2576],
+   "title": "The Founding: three tower parts (light, red, charcoal) over Three Deal Porters",
+   "camera": "judged: on the dock's east quay, looking west-south-west and up at the east-north-east face",
+   "depicts": [
+    {"building": "the-founding", "role": "subject"},
+    {"building": "three-deal-porters", "role": "bottom left"},
+    {"name": "Rafter Walk (red boardwalk)", "role": "bottom"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-15-library-plaza.jpg",
+   "size": [2576, 1932],
+   "title": "The plaza north-east of the library: the library, the station drum, Ontario Point, hire bikes",
+   "camera": "judged: on the plaza north-east of the library, looking west",
+   "depicts": [
+    {"building": "canada-water-library", "role": "left"},
+    {"building": "canada-water-station", "role": "centre"},
+    {"building": "regina-point", "role": "behind the drum (probable)"},
+    {"building": "ontario-point", "role": "right"},
+    {"name": "parked dockless hire bikes", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-16-library-mesh-and-mast.jpg",
+   "size": [2576, 1932],
+   "title": "Canada Water Library from the north-east: the bronze mesh, window boxes and a raking lighting mast",
+   "camera": "judged: on the plaza at the library's north-east corner, looking south-west",
+   "depicts": [
+    {"building": "canada-water-library", "role": "subject"},
+    {"building": "dock-shed", "role": "background left, across the dock"},
+    {"building": "canada-water-station", "role": "right edge"},
+    {"name": "a raking lighting mast with floodlights", "role": "centre"},
+    {"name": "parked dockless hire bikes", "role": "foreground"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-17-library-theatre-fascia.jpg",
+   "size": [2576, 1932],
+   "title": "Canada Water Library's north face: 'CANADA WATER LIBRARY THEATRE' fascia, maroon doors, window boxes",
+   "camera": "judged: on the plaza north of the library, looking south and up; the photographer's finger at the bottom left",
+   "depicts": [
+    {"building": "canada-water-library", "role": "subject"},
+    {"name": "Canada Water (the lake)", "osm": "https://www.openstreetmap.org/relation/18015947", "role": "far left"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-18-ontario-point.jpg",
+   "size": [1932, 2576],
+   "title": "Ontario Point from below, buses at the bus station, the brick chimney on the left",
+   "camera": "judged: nearly the same view as cwlibrary photo 1; the bearings of the chimney and the station drum put the camera about 65 m south-south-east of the tower, by the drum (see buildings.ontario-point.facade.note)",
+   "depicts": [
+    {"building": "ontario-point", "role": "subject"},
+    {"building": "canada-water-station", "role": "left edge, disc roof"},
+    {"building": "canada-water-bus-station", "role": "left, buses"},
+    {"osm": "https://www.openstreetmap.org/way/1175339088", "name": "brick chimney (OSM man_made chimney, Wikidata Q26665763)", "role": "background left"},
+    {"name": "a lighting mast with floodlights", "role": "right"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-19-white-calibration-stickers.jpg",
+   "size": [1932, 2576],
+   "title": "White calibration: safety stickers on the library's glass entrance door",
+   "camera": "close-up of the door at the library's north entrance, from in front",
+   "depicts": [
+    {"building": "canada-water-library", "role": "the entrance door"},
+    {"name": "white reference: the white backgrounds of the 'Automatic door' and 'CCTV in operation' signs (measured in calibration.white)", "role": "subject"},
+    {"name": "secondary references: printed safety yellow and safety blue (print colour unknown)", "role": "subject"}
+   ]
+  },
+  {
+   "file": "2026-10-07-cw-20-canada-water-station.jpg",
+   "size": [2576, 1932],
+   "title": "Canada Water station's glass drum and disc roof, a twin tower behind",
+   "camera": "judged: on the road east of the drum, looking west",
+   "depicts": [
+    {"building": "canada-water-station", "role": "subject"},
+    {"building": "canada-water-bus-station", "role": "left"},
+    {"building": "regina-point", "role": "behind the drum (probable)"},
+    {"name": "a street information kiosk", "role": "foreground"}
+   ]
+  }
+ ],
+ "patches": [
+  {"id": "brick-tower-sse", "photo": "2026-10-07-cw-02-brick-tower-and-dock-x.jpg", "building": "brick-tower-17", "face": "south-south-east", "roi": [860, 240, 1540, 1250], "box": [50, 45, 810, 745], "face_width_m": 27.5, "note": "the whole face, top floor down to the canopy edge; diffuse light"},
+  {"id": "decathlon-wsw", "photo": "2026-10-07-cw-09-decathlon-entrance.jpg", "building": "decathlon", "face": "west-south-west", "roi": [800, 700, 1700, 1800], "box": [0, 105, 1150, 845], "note": "three bays: the open netted top storey and the first floor, above the sign; a wider ROI failed (the other face's lines took the horizontal vanishing point)"},
+  {"id": "eleven-maritime-ssw", "photo": "2026-10-07-cw-10-11-maritime-street.jpg", "building": "11-maritime-street", "face": "south-south-west", "roi": [330, 300, 860, 1800], "box": [155, 210, 790, 1460], "note": "4 bays, no balconies; the bands keep a tilt of about 3 deg after rectification"},
+  {"id": "the-founding-red", "photo": "2026-10-07-cw-14-the-founding.jpg", "building": "the-founding", "face": "east-north-east (red part)", "roi": [745, 300, 1118, 2380], "box": [40, 10, 440, 1650], "note": "the red part above its podium floors"},
+  {"id": "the-founding-grey", "photo": "2026-10-07-cw-14-the-founding.jpg", "building": "the-founding", "face": "east-north-east (charcoal part)", "roi": [1125, 120, 1375, 2280], "box": [0, 60, 271, 2100], "note": "the charcoal part, two window columns and one balcony column"},
+  {"id": "three-deal-porters-ene", "photo": "2026-10-07-cw-13-three-deal-porters.jpg", "building": "three-deal-porters", "face": "east-north-east", "roi": [380, 300, 2175, 1450], "box": [10, 30, 1700, 700], "face_width_m": 27.9, "note": "the whole face, 5 bays; box above the trees: parapet, loggia row and two office floors; face width from the OSM side judged to be this face"},
+  {"id": "dock-shed-ne", "photo": "2026-10-07-cw-12-dock-shed.jpg", "building": "dock-shed", "face": "north-east", "roi": [410, 380, 2260, 1000], "box": [0, 0, 1650, 380], "face_width_m": 63.1, "note": "the whole face, 5 saw-tooth bays; box above the trees"}
+ ]
+}

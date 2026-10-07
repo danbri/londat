@@ -7,5 +7,7 @@
   "store": false
  },
  "facade-tiles-cwlibrary": "https://danbri.github.io/londat/kgx/graph/facade-tiles-cwlibrary/715b1baf3e58edff",
- "facade-atlas": "https://danbri.github.io/londat/kgx/graph/facade-atlas/7de3e3bd47784eef"
+ "facade-atlas": "https://danbri.github.io/londat/kgx/graph/facade-atlas/7de3e3bd47784eef",
+ "facade-patches-cwdock": "https://danbri.github.io/londat/kgx/graph/facade-patches-cwdock/df7ef411b4ef1e21",
+ "photos-cwdock": "https://danbri.github.io/londat/kgx/graph/photos-cwdock/c92a4335eab7028a"
 }

@@ -41,17 +41,19 @@ The rule and the operations: the `cwplans-dataflow` skill in the main repository
 | `coref-<rule>` | 4,417 | owl:sameAs links between web descriptions, one graph per key rule (5 rules) |
 | `mallmap` | 19,250 | Living Map data behind map.canarywharf.com: units (name, class, mall, floor, hours, outline) and facilities (lifts, escalators, ramps, stairs, entrances, toilets) |
 | `storeguide` | 5,732 | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
-| `pipeline` | 13,666 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
+| `pipeline` | 13,667 | provenance of the earlier cwplans pipeline (`pipeline.jsonld`): each tool as a prov:Activity with the files it used and made, each file tied to its SHA-256 at build time |
 | `coverage-imagery` | 1,407 | open imagery coverage of the first study areas (OpenAerialMap, Panoramax, KartaView, EA survey catalogue): counts per source and area, OpenAerialMap images, EA products; made by `tools/probe-imagery-coverage.mjs` and named in `external-heads.json` |
 | `facade-patches-cwlibrary` | 171 | rectified facade patches from the contributed Canada Water photos: periods and colours (operation `rectify-facade-patches`) |
 | `photos-cwlibrary` | 237 | the contributed photos (CC0) and the buildings identified in them, with evidence (operation `lift-contrib-photos`; see `data/images/contrib/cwlibrary/`) |
 | `facade-tiles-cwlibrary` | 77 | the facade tiles cut or drawn from the contributed Canada Water photos (CC0): size on the wall, buildings, method (operation `cut-facade-tiles`) |
+| `facade-patches-cwdock` | 241 | rectified facade patches from the second contributed set, round the Canada Water dock (7 October 2026): periods and colours (operation `rectify-facade-patches`) |
+| `photos-cwdock` | 1,038 | the second contributed set (20 CC0 photos round the dock, 7 October 2026) and the buildings identified in them, with evidence (operation `lift-contrib-photos`; see `data/images/contrib/cwdock/`) |
 | `facade-atlas` | 17 | the 3D page's facade atlas, slot by slot (operation `compose-facade-atlas`) |
 | `model-building-keys` | 183,485 | the OSM way or relation of every building of the 3D model, with model indices, part parents, registry links and OSM name, address, type, levels, Wikidata (operation `key-model-buildings`). **Not in the browser store** (`external-heads.json`: `store: false`); in `graphs/` and `current.nq.gz` |
-| `meta` | 629 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
-| `log` | 5,160 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
+| `meta` | 670 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`graph/<name> cwk:current <version>`) |
+| `log` | 5,705 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation, skill, tool) |
 
-Total 292,259 triples, of which 108,774 in the browser store. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
+Total 294,125 triples, of which 110,640 in the browser store. Things are `https://danbri.github.io/londat/kgx/id/…`; the vocabulary is
 `https://danbri.github.io/londat/kgx/vocab#` (prefix `cwk:`), with schema.org first. There are no blank nodes (the
 `pipeline` graph is skolemized to `https://danbri.github.io/londat/kgx/genid/pipeline/…`).
 
