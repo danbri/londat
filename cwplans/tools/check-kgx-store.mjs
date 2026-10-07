@@ -2,7 +2,7 @@
 // through a store handle and through the in-memory engine on the store's own input (the part versions, meta and log),
 // and the joins also on the data with one graph per source. Exits 1 when the store and the in-memory engine disagree.
 // The in-memory parse of about 100k quads takes several minutes.
-//   node magpie/cwplans/tools/check-kgx-store.mjs [--write]   (--write: the result in londat kgx/checks/store-vs-memory.json)
+//   node cwplans/tools/check-kgx-store.mjs [--write]   (--write: the result in londat kgx/checks/store-vs-memory.json)
 // Skill: cwplans-kgx ("Checks").
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'fs';
 import { gunzipSync } from 'zlib';
@@ -48,6 +48,6 @@ for (const [name, q] of Object.entries(Q)) {
   results[name] = { store: st.length, memory: mp.length, memory_one_graph_per_source: mw?.length ?? null, identical: same };
   console.log(`${same ? 'same' : 'DIFFERENT'}  ${name}: store ${st.length}, memory ${mp.length}${mw ? `, one graph per source ${mw.length}` : ''}`);
 }
-const report = { checked: new Date().toISOString(), generation: gen, quads: dsP.size ?? null, engine: '@factoidal/core ' + JSON.parse(readFileSync(new URL('../../../node_modules/@factoidal/core/package.json', import.meta.url), 'utf8')).version, queries: results, different: bad };
+const report = { checked: new Date().toISOString(), generation: gen, quads: dsP.size ?? null, engine: '@factoidal/core ' + JSON.parse(readFileSync(new URL('../../node_modules/@factoidal/core/package.json', import.meta.url), 'utf8')).version, queries: results, different: bad };
 if (process.argv.includes('--write')) { mkdirSync(join(K, 'checks'), { recursive: true }); writeFileSync(join(K, 'checks', 'store-vs-memory.json'), JSON.stringify(report, null, 1) + '\n'); }
 process.exit(bad ? 1 : 0);

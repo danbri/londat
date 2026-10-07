@@ -1,7 +1,7 @@
 // Record what https://map.canarywharf.com/ asks the network for: one page load at floor 0 and one at floor -1 in headless
 // Chromium; every request's method, type, URL, headers and status, and the bodies of JSON and vector-tile answers.
 // Used to find the Living Map API behind the page. Nothing is committed: the output stays in data/raw/cwg-map/.
-//   node magpie/cwplans/tools/probe-cwg-map.mjs [outdir]
+//   node cwplans/tools/probe-cwg-map.mjs [outdir]
 // Skill: cwplans-web-harvest, "Mall plans" (the Living Map service; harvest only after the owner decides).
 import { chromium } from 'playwright';
 import { writeFileSync, mkdirSync } from 'fs';

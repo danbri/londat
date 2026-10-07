@@ -2,11 +2,11 @@
 
 `sites.json` lists the construction sites of the Docklands zone (the 3D model box, WGS84 -0.095, 51.474 to 0.015, 51.522,
 plus the Royal Docks margin 0.015 to 0.085, 51.495 to 51.522), one record per site. Built by
-`node magpie/cwplans/tools/build-construction-index.mjs` (add `--no-fetch` to rebuild from the caches in
+`node cwplans/tools/build-construction-index.mjs` (add `--no-fetch` to rebuild from the caches in
 `data/raw/construction/`). Method, rules and traps: skill `cwplans-construction`
-(https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/skills/cwplans-construction/SKILL.md).
+(https://github.com/danbri/londat/blob/main/cwplans/skills/cwplans-construction/SKILL.md).
 Shown on the 3D page, Layers > "Works in progress":
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/
+https://danbri.github.io/londat/cwplans/docklands/
 
 Owner, 2026-10-04: "Note the works in progress on far side of the central tower - do we have an index of these?" Before this
 there was no index: cranes were in `feeds/live/notams.json`, highway cranes and hoardings in

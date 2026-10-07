@@ -80,7 +80,7 @@ export class Flow {
 
 // operations shared by every pipeline: set algebra and the store partition, all value to value
 export const OPS = {
-  partition: { id: 'partition-by-subject-key', version: 4, skill: 'cwplans-dataflow', tool: 'magpie/cwplans/tools/kgx-ops.mjs',
+  partition: { id: 'partition-by-subject-key', version: 4, skill: 'cwplans-dataflow', tool: 'cwplans/tools/kgx-ops.mjs',
     about: 'Split one graph version into parts of about params.target triples: subjects in Shardborough zone-key order (type byte, UTF-8 length as 4 bytes little-endian, UTF-8 text, first 64 bytes), a subject never split; each part canonical (sorted lines); the parts union to the input.' },
 };
 // the Shardborough wire-version-10 zone key of an IRI (the manifest stores the first 64 bytes of the smallest and the

@@ -86,7 +86,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 </details>
 
 <footer>
-  <div>Data: <a href="https://github.com/danbri/londat/tree/main/kgx">danbri/londat kgx</a> (N-Quads, COTTAS, Shardborough), built by <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/build-kgx.mjs">build-kgx.mjs</a>. Each graph names its sources and licence (view "Graphs and licences"). Scoping data, not reviewed for production.</div>
+  <div>Data: <a href="https://github.com/danbri/londat/tree/main/kgx">danbri/londat kgx</a> (N-Quads, COTTAS, Shardborough), built by <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/build-kgx.mjs">build-kgx.mjs</a>. Each graph names its sources and licence (view "Graphs and licences"). Scoping data, not reviewed for production.</div>
   <div>Buildings and occupants include data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL. Mall units: Canary Wharf Group / Living Map, archived for reference. Engine: <a href="https://github.com/danbri/factoidal">Factoidal</a>.</div>
   <div class="row"><button type="button" class="ghost" id="clearCache">Remove the graph from this device</button><span id="cacheMsg"></span></div>
 </footer>
@@ -94,7 +94,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 
 <script type="module">
 const params = new URLSearchParams(location.search);
-const BASE = params.get('base') || 'https://raw.githubusercontent.com/danbri/londat/main/kgx/';
+const BASE = params.get('base') || '../../kgx/';   // same site: https://danbri.github.io/londat/kgx/ (?base= for another copy)
 const PFX = `PREFIX s: <https://schema.org/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

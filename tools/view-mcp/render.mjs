@@ -39,7 +39,7 @@ export async function renderView({ camera, view, t, width, height, dpr = 1, out,
   width ||= camera?.width || 1195; height ||= camera?.height || 689;
   const root = base || await startSite(), q = new URLSearchParams();
   if (view) q.set('view', view); if (t) q.set('t', t); if (style === 'night') q.set('night', '');
-  const url = `${root.replace(/\/$/, '')}/magpie/cwplans/docklands/index.html?${q.toString().replace(/=(&|$)/g, '$1')}`;
+  const url = `${root.replace(/\/$/, '')}/cwplans/docklands/index.html?${q.toString().replace(/=(&|$)/g, '$1')}`;
   const ctx = await (await browser()).newContext({ viewport: { width, height }, deviceScaleFactor: dpr });
   const page = await ctx.newPage(), errors = [];
   page.on('pageerror', e => errors.push(String(e))); page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

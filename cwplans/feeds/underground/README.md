@@ -38,7 +38,7 @@ Nothing here is copied into the model except cited level values, which are in `d
 | [Paoletti R. Architectural design of the Jubilee Line Extension stations. Proc ICE Civil Engineering 132(6), No](https://doi.org/10.1680/icien.1999.132.6.19) | paper | 1999-11 | 0 | yes | ICE Publishing / Emerald, paywalled |
 | [Architects' Journal: In pictures: Foster's Canary Wharf Crossrail platform level completes (28 March 2012)](https://www.architectsjournal.co.uk/archive/in-pictures-fosters-canary-wharf-crossrail-platform-level-completes) | other | 2012-03-28 | 1 | yes | AJ copyright; quote only |
 | [aLL Design (Will Alsop): Heron Quays DLR station project page](https://all.design/willalsop/heronquays) | other | unknown | 0 | yes | architect website; quote only |
-| [OpenStreetMap indoor and level tagging around the stations (local Greater London extract, 2026-10-01)](https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/greater_london-latest.osm.pbf) | dataset | 2026-10-01 | 0 | yes | ODbL 1.0 (share-alike); allowed in magpie/cwplans for now, must be tracked in data-registe |
+| [OpenStreetMap indoor and level tagging around the stations (local Greater London extract, 2026-10-01)](https://download.openstreetmap.fr/extracts/europe/united_kingdom/england/greater_london-latest.osm.pbf) | dataset | 2026-10-01 | 0 | yes | ODbL 1.0 (share-alike); allowed in cwplans for now, must be tracked in data-registe |
 
 Excluded or not reachable: [stations-excluded.json](stations-excluded.json).
 

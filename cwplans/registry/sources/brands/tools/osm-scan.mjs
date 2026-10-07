@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Step 3a input: every tagged OSM feature in the Canary Wharf box, with all its tags.
-//   node magpie/cwplans/registry/sources/brands/tools/osm-scan.mjs
+//   node cwplans/registry/sources/brands/tools/osm-scan.mjs
 // in:  data/raw/docklands/greater_london-latest.osm.pbf
 // out: data/raw/registry/osm-box-features.json (not committed; ~1 min)
 // Kept: nodes/ways/relations in the box carrying shop, amenity, office, tourism, leisure, craft,

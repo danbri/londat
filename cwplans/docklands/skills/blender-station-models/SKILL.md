@@ -20,8 +20,8 @@ via its MCP running in your virtual machine. Take a screenshot of your work ever
 
 Deliverables (danbri/londat, `third_party/tfl/am3d/models/`; README there):
 https://github.com/danbri/londat/tree/main/third_party/tfl/am3d/models
-Index in this repo: `magpie/cwplans/feeds/underground/station-models.json`.
-Scripts: `magpie/cwplans/tools/blender-stations/`.
+Index in this repo: `cwplans/feeds/underground/station-models.json`.
+Scripts: `cwplans/tools/blender-stations/`.
 
 ## 1. Setup (about 3 minutes, measured)
 
@@ -56,7 +56,7 @@ search_assets, import_asset. Only execute_blender_code, get_scene_info and look 
 
 `step.sh steps/NN-x.py` wraps a step: it sets `BLENDER_STATIONS_WORK`, execs `stations_lib.py`, then the step,
 through execute_blender_code. A work folder is a copy of `tools/blender-stations/` plus `osm-stations.json`
-(`node magpie/cwplans/tools/blender-stations/extract-osm.mjs $WORK/osm-stations.json`). Exporter log lines come back
+(`node cwplans/tools/blender-stations/extract-osm.mjs $WORK/osm-stations.json`). Exporter log lines come back
 in the tool result (hundreds of lines for glTF): pipe through `head`.
 
 ## 3. Screenshots every 10 s
@@ -122,7 +122,7 @@ usdc 1.2 MB, blend 1.9 MB; the three zips 1.8, 8.9 and 8.3 MB.
 
 ## 8. On the 3D page (2026-10-05)
 
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=under (Menu > Layers > Show > Station
+Live: https://danbri.github.io/londat/cwplans/docklands/?view=under (Menu > Layers > Show > Station
 models, on by default). Pan to Canada Water (x -2077, z 832) or stay at Canary Wharf (x 143, z 167).
 
 - **Converter** `tools/build-station-mesh.mjs --glb <stations-exports.zip | stations.glb>` -> `docklands/data/stations.json`.

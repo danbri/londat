@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Recover UPRNs that a spreadsheet rounded (1E+11, 200000000000), in a COPY of a file, with every change recorded.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/amend-uprns.mjs cultural-infrastructure [--refresh] [--validate]
-//   node magpie/cwplans/tools/amend-uprns.mjs --in <file.geojson|.csv> --uprn-field <f> --id-field <f[,f]> \
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/amend-uprns.mjs cultural-infrastructure [--refresh] [--validate]
+//   node cwplans/tools/amend-uprns.mjs --in <file.geojson|.csv> --uprn-field <f> --id-field <f[,f]> \
 //        [--name-field name] [--group-field layer] [--ref a:<file>]... [--ref c:<file>]... \
 //        [--open-uprn <osopenuprn zip or csv>] [--footprints <osm-clip.json.gz>] --out <copy> --amendments <json>
 // The source file is read, never written. Only cells in the rounded classes are changed; each change and each
@@ -453,7 +453,7 @@ const counts = {
   distinct_venues_rounded: new Set(suspects.map(s => norm(s.name))).size,
   distinct_venues_amended: new Set(suspects.filter(s => s.amended).map(s => norm(s.name))).size,
 };
-const rel = f => f.startsWith(LONDAT_CW + '/') ? relative(LONDAT_CW, f) : relative(CW, f);   // paths relative to magpie/cwplans, also for files in the londat checkout
+const rel = f => f.startsWith(LONDAT_CW + '/') ? relative(LONDAT_CW, f) : relative(CW, f);   // paths relative to cwplans/
 const meta = {
   input: rel(P.in), input_untouched: true, output: rel(P.out), tool: 'tools/amend-uprns.mjs' + (recipeKey ? ` ${recipeKey}` : ''), date: today,
   column: P.uprnField, row_id: P.idField.join('#'),

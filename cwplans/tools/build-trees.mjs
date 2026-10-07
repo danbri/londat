@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Trees and green areas for the Docklands 3D model, from open sources, in model metres.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-trees.mjs fetch   # downloads into data/raw/trees/ (network, 2 s between requests)
-//   node --max-old-space-size=6000 magpie/cwplans/tools/build-trees.mjs   # builds docklands/data/trees.json (no network, about 2 minutes)
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/build-trees.mjs fetch   # downloads into data/raw/trees/ (network, 2 s between requests)
+//   node --max-old-space-size=6000 cwplans/tools/build-trees.mjs   # builds docklands/data/trees.json (no network, about 2 minutes)
 // in:  data/raw/trees/* (fetch), data/raw/docklands/greater_london-latest.osm.pbf (fetch-docklands.mjs osm), the OSTN15 grid
 // out: docklands/data/trees.json
 // Sources, licences, precedence and the fields dropped: pipeline.json activity "build-trees", data-register.json,

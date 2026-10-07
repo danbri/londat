@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // OCR and normalise the Canary Wharf Group maps and guides in danbri/londat third_party/cwg/maps/ into
 // third_party/cwg/_TMI/ (store guide: render with pdf.js, OCR with tesseract.js; the other PDFs: pdf.js text layer).
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/cwg-maps-tmi.mjs              # all four files
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/cwg-maps-tmi.mjs              # all four files
 //   ... --only=store|access|trail|art  one file;  --png, --debug  keep list tiles / ordered list lines in data/raw/cwg-maps-tmi/
 // Needs the npm devDependencies pdfjs-dist, @napi-rs/canvas, tesseract.js. eng.traineddata (tesseract.js 4.0.0_best_int)
 // is downloaded once into data/raw/cwg-maps-tmi/ (not committed). LONDAT_DIR as in londat.mjs.
@@ -466,7 +466,7 @@ async function storeGuide() {
   const ocrMeta = { engine: 'tesseract.js ' + require('tesseract.js/package.json').version, model: 'eng 4.0.0_best_int', model_sha256: (await getWorker()).modelSha256, renderer: 'pdfjs-dist ' + require('pdfjs-dist/package.json').version + ' + @napi-rs/canvas', dpi_lists: 400, dpi_plan: 300 };
   const out = {
     source: { file: `third_party/cwg/maps/${FILES.store}`, sha256: pdf.sha256, bytes: pdf.bytes, pages: pdf.doc.numPages, rights: 'Canary Wharf Group; design Paul Anthony, Ravenshaw Studios Limited. No open licence; scoping use only (see ../README.md).' },
-    generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-maps-tmi.mjs (danbri/glitchcan-minigam)', ocr: ocrMeta,
+    generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-maps-tmi.mjs (danbri/londat)', ocr: ocrMeta,
     coordinates: 'bbox = [x0, y0, x1, y1] in PDF points, origin at the top left of the page, y down; grid_refs row = number, col = letter',
     pages: meta, grids,
     counts: { entries: entries.length, by_section: entries.reduce((o, e) => ((o[`${e.group}/${e.section}`] = (o[`${e.group}/${e.section}`] || 0) + 1), o), {}), name_matched: entries.filter(e => e.name_matched).length, ocr_fixed_refs: entries.flatMap(e => e.grid_refs).filter(r => r.ocr_fixed_from).length, mall_labels: labels.length, level_badges: badges.length },
@@ -544,7 +544,7 @@ async function accessMap() {
   const map = merged.filter(l => !inLegend(l)).map(l => ({ ...l, kind: /^[a-z]/.test(l.text) || /[a-z]/.test(l.text) && l.text.split(' ').length <= 4 && /(Street|Way|Walk|Road|Place|Avenue|Quay|Drive|Lane|Bridge|Footbridge|Steps|Colonnade)$/i.test(l.text) ? 'street or path' : 'place, building or station' }));
   const out = {
     source: { file: `third_party/cwg/maps/${FILES.access}`, sha256: pdf.sha256, bytes: pdf.bytes, pages: 1, page_size_pt: [r1(page.view[2] - page.view[0]), r1(page.view[3] - page.view[1])], rights: 'Canary Wharf Group. No open licence; scoping use only (see ../README.md).' },
-    generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-maps-tmi.mjs (danbri/glitchcan-minigam)', method: 'pdf.js text layer (no OCR)',
+    generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-maps-tmi.mjs (danbri/londat)', method: 'pdf.js text layer (no OCR)',
     coordinates: 'bbox = [x0, y0, x1, y1] in PDF points, origin at the top left of the page, y down; angle in degrees (0 = horizontal)',
     counts: { labels: map.length, legend: legend.length },
     legend, labels: map,
@@ -584,7 +584,7 @@ async function artTrail() {
   entries.sort((a, b) => (a.number ?? 99) - (b.number ?? 99));
   const out = {
     source: { file: `third_party/cwg/maps/${FILES.trail}`, sha256: pdf.sha256, bytes: pdf.bytes, pages: pdf.doc.numPages, rights: 'Canary Wharf Group (photographs and quotes credited in the file). No open licence; scoping use only.' },
-    generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-maps-tmi.mjs (danbri/glitchcan-minigam)', method: 'pdf.js text layer (no OCR)',
+    generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-maps-tmi.mjs (danbri/londat)', method: 'pdf.js text layer (no OCR)',
     coordinates: 'bbox = [x0, y0, x1, y1] in PDF points, origin at the top left of the page, y down; map_markers = boxes of the numbered markers on the page 2 map with that number (a number can occur more than once)',
     counts: { artworks: entries.length, with_map_marker: entries.filter(e => e.map_markers).length },
     entries, map_markers: markers,
@@ -654,7 +654,7 @@ async function artBrochure() {
   for (const e of entries) if (e.zone && zones[e.zone]) e.zone_name = zones[e.zone];
   const out = {
     source: { file: `third_party/cwg/maps/${FILES.art}`, sha256: pdf.sha256, bytes: pdf.bytes, pages: pdf.doc.numPages, rights: 'Canary Wharf Group; artworks and photographs by their artists and photographers. No open licence; scoping use only.' },
-    generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-maps-tmi.mjs (danbri/glitchcan-minigam)', method: 'pdf.js text layer (no OCR)',
+    generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-maps-tmi.mjs (danbri/londat)', method: 'pdf.js text layer (no OCR)',
     coordinates: 'bbox = the heading, [x0, y0, x1, y1] in PDF points, origin at the top left of the page, y down',
     zones, counts: { entries: entries.length, by_kind: entries.reduce((o, e) => ((o[e.kind] = (o[e.kind] || 0) + 1), o), {}), with_code: entries.filter(e => e.code).length, with_artist_year: entries.filter(e => e.year).length, with_location: entries.filter(e => e.location).length },
     entries,

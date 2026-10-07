@@ -7,8 +7,9 @@ _TMI").
 **Rights.** The PDFs and their text belong to Canary Wharf Group; the store guide is designed by Paul Anthony, Ravenshaw
 Studios Limited ("© Copyright Ravenshaw Studios Limited and Paul & Linda Anthony 2026"); artworks, photographs and
 quotes belong to the artists, photographers and authors named in the files. No open licence. These files are for the
-scoping and prototyping phase of magpie/cwplans only, like the PDFs (see `../README.md`). The art texts (descriptions)
-are copied here because the PDFs are here; do not copy them into the main repository. Use facts only there.
+scoping and prototyping phase of cwplans only, like the PDFs (see `../README.md`). The art texts (descriptions)
+are copied here because the PDFs are here; do not copy them into `cwplans/` (the Pages site publishes it, not
+`third_party/`). Use facts only there.
 
 ## Files
 
@@ -27,10 +28,10 @@ Grid references: `row` is the number, `col` the letter. The store guide grids ha
 
 ## Method
 
-Tool: `magpie/cwplans/tools/cwg-maps-tmi.mjs` in danbri/glitchcan-minigam (npm only: pdfjs-dist 6.4.299,
-@napi-rs/canvas, tesseract.js 7.0.0 with the eng `4.0.0_best_int` model). Re-run:
+Tool: `cwplans/tools/cwg-maps-tmi.mjs` in this repository (npm only: pdfjs-dist 6.4.299,
+@napi-rs/canvas, tesseract.js 7.0.0 with the eng `4.0.0_best_int` model). Re-run from the repository root:
 
-    cd glitchcan-minigam && NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/cwg-maps-tmi.mjs   # about 2 minutes
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/cwg-maps-tmi.mjs   # about 2 minutes
 
 - Store guide: each page is rendered with pdf.js. The lists are OCR'd at 400 dpi in tiles (3,200 px high, 240 px
   overlap; a line belongs to the tile whose core holds its centre). Lines are put into columns by their left edge;
@@ -80,7 +81,7 @@ brochure's "ScibbleForm" in the trail ("ScribbleForm" in the brochure) and "Skyc
 
 ## mallmap/ (the Living Map archive, normalised)
 
-Made by `magpie/cwplans/tools/cwg-mallmap-tmi.mjs` from `../mallmap/`. Every feature of the indoor tiles once, with its
+Made by `cwplans/tools/cwg-mallmap-tmi.mjs` from `../mallmap/`. Every feature of the indoor tiles once, with its
 properties as served, its geometry in WGS84 (7 decimal places) from the most precise zoom at which it lies whole in one
 tile (`zoom_used`; 10,088 of 10,092 whole; the other 4 are their pieces at the lowest zoom as a Multi* geometry,
 `whole: false`). One FeatureCollection per floor (`indoor-floor-<floor_level>.geojson`, -4.0 to 2.0, with -0.5 = Level

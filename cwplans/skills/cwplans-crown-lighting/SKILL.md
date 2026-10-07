@@ -1,7 +1,7 @@
 ---
 name: cwplans-crown-lighting
 description: >-
-  The coloured lighting at the tops of the Canary Wharf towers in magpie/cwplans — One Canada Square's pyramid and
+  The coloured lighting at the tops of the Canary Wharf towers in cwplans — One Canada Square's pyramid and
   its lit band (the "halo"), and the crowns of 25 Bank Street, 8 Canada Square and Newfoundland: how a colour is
   chosen (Canary Wharf Group campaigns with charities, the council and events; no public request form or schedule
   found), why the white flashing aviation light at the apex is a separate system, where a history of colours exists
@@ -12,7 +12,7 @@ description: >-
   Square pink tonight?".
 ---
 
-# Crown lighting (magpie/cwplans)
+# Crown lighting (cwplans)
 
 Policy, the fault register and the activity log are in the hub skill `docklands-data-curation`. Crawls and the
 Internet Archive: `cwplans-web-harvest`. Night mode on the page: `docklands-3d-page`. Append to `ACTIVITY-LOG.md`.
@@ -65,7 +65,7 @@ So the observation list is a **sample**, not a schedule. Never fill gaps between
 
 ## Method
 
-1. `NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs` (`--press`, `--commons`, `--no-fetch`).
+1. `NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs` (`--press`, `--commons`, `--no-fetch`).
    - press: cwg.com sitemaps (served to scripts; robots.txt allows them) and the canarywharf.com news sitemap (Internet
      Archive); slugs filtered by a rule (lit, illuminated, halo, pyramid, turns <colour>, lights up <colour>) plus a
      hand list of pages found by search; each page read as an Internet Archive `id_` copy (availability API first;

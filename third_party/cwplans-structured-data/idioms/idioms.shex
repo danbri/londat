@@ -1,5 +1,5 @@
 # Descriptive idioms in publisher schema.org markup (Docklands web harvest). Open shapes: they recognise a recurring
-# group of triples and its known forms; they do not reject data. Catalogue: idioms.json. Tool: magpie/cwplans/tools/web-idioms.mjs.
+# group of triples and its known forms; they do not reject data. Catalogue: idioms.json. Tool: cwplans/tools/web-idioms.mjs.
 # Checked with @factoidal/core shexValidate. Skill: cwplans-web-harvest, "Idioms".
 PREFIX s:   <https://schema.org/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

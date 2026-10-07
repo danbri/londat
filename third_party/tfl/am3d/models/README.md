@@ -2,21 +2,22 @@
 
 Low-poly 3D models of the underground station boxes at Canada Water (Jubilee and East London / Windrush lines) and
 Canary Wharf (Jubilee line), made in Blender 4.0.2 through the blender-mcp MCP server on 2026-10-05.
-They are a scoping and prototyping model for magpie/cwplans (danbri/glitchcan-minigam). They are not survey data.
+They are a scoping and prototyping model for cwplans (`cwplans/` in this repository since 2026-10-07; before that
+magpie/cwplans in danbri/glitchcan-minigam). They are not survey data.
 
 ## Basis and licence
 
 - **Contains OpenStreetMap-derived geometry, ODbL 1.0. © OpenStreetMap contributors.** Platform outlines, the
   ticket hall outlines, track centrelines, escalator and stair positions and directions, lift and entrance positions,
   canopy footprints and the drum centre come from OSM (Greater London extract of 2026-10-02, as built into the
-  Docklands 3D page data `magpie/cwplans/docklands/data/under.js`, `area.js`, `indoor.js`). As a derived database
+  Docklands 3D page data `cwplans/docklands/data/under.js`, `area.js`, `indoor.js`). As a derived database
   that uses OSM, these files are under ODbL share-alike terms; keep the attribution.
 - **TfL axonometric sheets** (`../stations/*/`, 2015 FOI release, rights Transport for London, RPSI re-use, use
   approved by the owner danbri on 2026-10-05 for the scoping phase): used as a layout guide only (which levels, how
   many escalators in a bank, which entrances, lifts and stairs, numbering). Nothing is traced from them; they are not
   to scale. Review before any use outside the scoping phase.
-- Published sizes and levels (each cited with a quote in `magpie/cwplans/docklands/facts.json` and
-  `magpie/cwplans/data/sourced-levels.json`): TfL FOI-0493-2223 rail levels, Wikipedia (Canada Water box, slot,
+- Published sizes and levels (each cited with a quote in `cwplans/docklands/facts.json` and
+  `cwplans/data/sourced-levels.json`): TfL FOI-0493-2223 rail levels, Wikipedia (Canada Water box, slot,
   drum, ELL depth), the architect's figures for Canary Wharf (box and ticket hall). Ground from EA LiDAR (OGL).
 
 ## Frame and units

@@ -1,5 +1,5 @@
 // Solve a daytime photo's camera and time from tower tops and shadows on a level deck.
-// Run: node magpie/cwplans/tools/solve-photo-sun.mjs [magpie/cwplans/docklands/reference/day-2026-10-04/points.json]
+// Run: node cwplans/tools/solve-photo-sun.mjs [cwplans/docklands/reference/day-2026-10-04/points.json]
 // Reads the points file (landmark pixels, shadow foot/tip pixels, eye), docklands/data/towers.json (tower tops) and the
 // vendored astronomy-engine (docklands/vendor/astronomy.browser.min.js). Prints JSON: the fitted pinhole camera
 // (heading from grid north, tilt, roll, focal length), the residuals, the sun azimuth from each shadow, and the UTC times

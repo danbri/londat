@@ -1,6 +1,6 @@
 {
-  "about": "Provenance of every transform in magpie/cwplans, modelled on W3C PROV (prov:Activity used / generated). Checked and exported to pipeline.jsonld by tools/check-data-register.mjs. Edit by hand when a tool changes.",
-  "conventions": "Paths are relative to magpie/cwplans. \"file\" = tracked in git; \"local\" = not committed (gitignored raw data, caches, excluded outputs, or files a tool takes as arguments); \"source\" = a key of data-register.json sources. A source entry with \"access\": \"manual download\" means the file was downloaded by hand before the run and the tool reads only the local copy. Read from the code on 2026-10-03. \"area\" is a key of \"areas\" (the sections of METHODS.md); \"faults\" are F-numbers of the fault register in skills/docklands-data-curation/SKILL.md; \"judgement\" says where a hand decision enters and where it is recorded. \"manual_activities\" are methods that are not tools (hand curation, research catalogues, licence decisions); \"gap\" says what of a method is not committed as code.",
+  "about": "Provenance of every transform in cwplans, modelled on W3C PROV (prov:Activity used / generated). Checked and exported to pipeline.jsonld by tools/check-data-register.mjs. Edit by hand when a tool changes.",
+  "conventions": "Paths are relative to cwplans. \"file\" = tracked in git; \"local\" = not committed (gitignored raw data, caches, excluded outputs, or files a tool takes as arguments); \"source\" = a key of data-register.json sources. A source entry with \"access\": \"manual download\" means the file was downloaded by hand before the run and the tool reads only the local copy. Read from the code on 2026-10-03. \"area\" is a key of \"areas\" (the sections of METHODS.md); \"faults\" are F-numbers of the fault register in skills/docklands-data-curation/SKILL.md; \"judgement\" says where a hand decision enters and where it is recorded. \"manual_activities\" are methods that are not tools (hand curation, research catalogues, licence decisions); \"gap\" says what of a method is not committed as code.",
   "areas": [
     {
       "id": "terrain",
@@ -104,11 +104,11 @@
     }
   ],
   "activities": [
-    {"id": "find-kml", "tool": "tools/find-kml.mjs", "command": "NODE_USE_ENV_PROXY=1 KML_DOM_DIR=<dir with @xmldom/xmldom and linkedom> node magpie/cwplans/tools/find-kml.mjs <copy [id ...]|probe|all>", "kind": "fetch", "network": true, "deterministic": false, "after": ["walk-portals"], "area": "feeds", "method": "Answers the owner's question 'Can you find any kml resources for the area?' (2026-10-05). A hand list of candidates, found by searching the project's own catalogues (London Datastore resources with format kml/kmz, the raw data.gov.uk walk: 4,499 of 59,451 datasets have a KML resource) and the open-data hubs of TfL, Walk Wheel Cycle Trust and Canal & River Trust, is fetched as the 3D page would fetch it (Origin header of the Pages site) and read with the page's own reader docklands/kml.js (a DOMParser from @xmldom/xmldom, description HTML through linkedom). For each: HTTP status, https, the CORS header, the counts of placemarks in the zone and in the model box, unsupported elements. Open layers that cannot be opened by URL (no KML, or a whole-London file) are written as zone-clipped KML with the page's writer into the londat checkout (cwplans/feeds/kml/), with the source, licence and attribution in the Document description. Result: feeds/kml/catalogue.json and README.md.", "rules": ["Politeness: one request at a time, at least 1.1 s apart, robots.txt read per host with walk-portals.mjs allowed() and obeyed, the project User-Agent.", "Licence class as walk-portals.mjs licenceClass; only ogl, cc-by, odc-by and public-domain layers are copied or offered as examples; share-alike (except OSM content inside an open layer, marked odbl and osm derived), restricted and no-licence resources are listed with the reason.", "cors yes = HTTP 200 over https and Access-Control-Allow-Origin * or https://danbri.github.io; a ?kml= link is made only for a file the reader parsed with at least one placemark in the zone.", "Zone = the model box plus the Royal Docks and the Thames Barrier, WGS84 -0.095, 51.47, 0.08, 51.53; copies keep features that meet the box (polygons whole, lines cut at the box edge with one vertex beyond), the names and a few fields.", "The copies are pushed to danbri/londat before the probe, which then reads them from raw.githubusercontent.com; the headless page test of every ?kml= link is stored in the catalogue as page_test."], "judgement": "The candidate list, the fields kept in each copy and the colours are chosen by hand in the tool; the reasons for each listed (not usable) resource are in the tool and in feeds/kml/README.md.", "used": [{"source": "kml-catalogue"}, {"source": "kml-tfl-gis-hub"}, {"source": "kml-sustrans-ncn"}, {"source": "kml-crt-locks"}, {"source": "lds-2jx1l"}, {"file": "feeds/portals/dgu/national-trails-england3/national-trails-england3.geojson"}, {"file": "feeds/portals/pdg/listed-building/listed-building.geojson"}, {"file": "feeds/portals/pdg/world-heritage-site/world-heritage-site.geojson"}, {"file": "feeds/portals/pdg/world-heritage-site-buffer-zone/world-heritage-site-buffer-zone.geojson"}, {"file": "feeds/portals/pdg/heritage-at-risk/heritage-at-risk.geojson"}, {"file": "feeds/portals/pdg/park-and-garden/park-and-garden.geojson"}, {"file": "feeds/london-datastore/conservation-areas/conservation-areas.geojson"}, {"file": "docklands/kml.js"}], "generated": [{"file": "feeds/kml/catalogue.json"}, {"file": "feeds/kml/tfl-cycle-routes.kml"}, {"file": "feeds/kml/tfl-river-piers.kml"}, {"file": "feeds/kml/tfl-river-services.kml"}, {"file": "feeds/kml/sustrans-ncn.kml"}, {"file": "feeds/kml/crt-locks.kml"}, {"file": "feeds/kml/ne-thames-path.kml"}, {"file": "feeds/kml/he-listed-buildings.kml"}, {"file": "feeds/kml/he-world-heritage.kml"}, {"file": "feeds/kml/he-heritage-at-risk.kml"}, {"file": "feeds/kml/he-parks-gardens.kml"}, {"file": "feeds/kml/gla-conservation-areas.kml"}, {"file": "feeds/kml/lds-wards-2016-zone.kml"}]},
+    {"id": "find-kml", "tool": "tools/find-kml.mjs", "command": "NODE_USE_ENV_PROXY=1 KML_DOM_DIR=<dir with @xmldom/xmldom and linkedom> node cwplans/tools/find-kml.mjs <copy [id ...]|probe|all>", "kind": "fetch", "network": true, "deterministic": false, "after": ["walk-portals"], "area": "feeds", "method": "Answers the owner's question 'Can you find any kml resources for the area?' (2026-10-05). A hand list of candidates, found by searching the project's own catalogues (London Datastore resources with format kml/kmz, the raw data.gov.uk walk: 4,499 of 59,451 datasets have a KML resource) and the open-data hubs of TfL, Walk Wheel Cycle Trust and Canal & River Trust, is fetched as the 3D page would fetch it (Origin header of the Pages site) and read with the page's own reader docklands/kml.js (a DOMParser from @xmldom/xmldom, description HTML through linkedom). For each: HTTP status, https, the CORS header, the counts of placemarks in the zone and in the model box, unsupported elements. Open layers that cannot be opened by URL (no KML, or a whole-London file) are written as zone-clipped KML with the page's writer into cwplans/feeds/kml/, with the source, licence and attribution in the Document description. Result: feeds/kml/catalogue.json and README.md.", "rules": ["Politeness: one request at a time, at least 1.1 s apart, robots.txt read per host with walk-portals.mjs allowed() and obeyed, the project User-Agent.", "Licence class as walk-portals.mjs licenceClass; only ogl, cc-by, odc-by and public-domain layers are copied or offered as examples; share-alike (except OSM content inside an open layer, marked odbl and osm derived), restricted and no-licence resources are listed with the reason.", "cors yes = HTTP 200 over https and Access-Control-Allow-Origin * or https://danbri.github.io; a ?kml= link is made only for a file the reader parsed with at least one placemark in the zone.", "Zone = the model box plus the Royal Docks and the Thames Barrier, WGS84 -0.095, 51.47, 0.08, 51.53; copies keep features that meet the box (polygons whole, lines cut at the box edge with one vertex beyond), the names and a few fields.", "The copies are pushed to danbri/londat before the probe, which then reads them from raw.githubusercontent.com; the headless page test of every ?kml= link is stored in the catalogue as page_test."], "judgement": "The candidate list, the fields kept in each copy and the colours are chosen by hand in the tool; the reasons for each listed (not usable) resource are in the tool and in feeds/kml/README.md.", "used": [{"source": "kml-catalogue"}, {"source": "kml-tfl-gis-hub"}, {"source": "kml-sustrans-ncn"}, {"source": "kml-crt-locks"}, {"source": "lds-2jx1l"}, {"file": "feeds/portals/dgu/national-trails-england3/national-trails-england3.geojson"}, {"file": "feeds/portals/pdg/listed-building/listed-building.geojson"}, {"file": "feeds/portals/pdg/world-heritage-site/world-heritage-site.geojson"}, {"file": "feeds/portals/pdg/world-heritage-site-buffer-zone/world-heritage-site-buffer-zone.geojson"}, {"file": "feeds/portals/pdg/heritage-at-risk/heritage-at-risk.geojson"}, {"file": "feeds/portals/pdg/park-and-garden/park-and-garden.geojson"}, {"file": "feeds/london-datastore/conservation-areas/conservation-areas.geojson"}, {"file": "docklands/kml.js"}], "generated": [{"file": "feeds/kml/catalogue.json"}, {"file": "feeds/kml/tfl-cycle-routes.kml"}, {"file": "feeds/kml/tfl-river-piers.kml"}, {"file": "feeds/kml/tfl-river-services.kml"}, {"file": "feeds/kml/sustrans-ncn.kml"}, {"file": "feeds/kml/crt-locks.kml"}, {"file": "feeds/kml/ne-thames-path.kml"}, {"file": "feeds/kml/he-listed-buildings.kml"}, {"file": "feeds/kml/he-world-heritage.kml"}, {"file": "feeds/kml/he-heritage-at-risk.kml"}, {"file": "feeds/kml/he-parks-gardens.kml"}, {"file": "feeds/kml/gla-conservation-areas.kml"}, {"file": "feeds/kml/lds-wards-2016-zone.kml"}]},
     {
       "id": "fetch-works",
       "tool": "tools/fetch-works.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-works.mjs [tfl-lines tfl-bus tfl-road street-manager gazette th-licences planning markets venue-events] [--no-fetch] [--refresh] [--days=90] [--month=YYYY-MM]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-works.mjs [tfl-lines tfl-bus tfl-road street-manager gazette th-licences planning markets venue-events] [--no-fetch] [--refresh] [--days=90] [--month=YYYY-MM]",
       "kind": "fetch",
       "used": [
         {
@@ -242,7 +242,7 @@
     {
       "id": "fetch-raw-grid",
       "tool": "tools/fetch-raw.mjs",
-      "command": "node magpie/cwplans/tools/fetch-raw.mjs grid",
+      "command": "node cwplans/tools/fetch-raw.mjs grid",
       "kind": "fetch",
       "used": [
         {
@@ -269,7 +269,7 @@
     {
       "id": "fetch-raw-osm",
       "tool": "tools/fetch-raw.mjs",
-      "command": "node magpie/cwplans/tools/fetch-raw.mjs osm",
+      "command": "node cwplans/tools/fetch-raw.mjs osm",
       "kind": "fetch",
       "used": [
         {
@@ -310,7 +310,7 @@
     {
       "id": "fetch-raw-lidar",
       "tool": "tools/fetch-raw.mjs",
-      "command": "node magpie/cwplans/tools/fetch-raw.mjs lidar",
+      "command": "node cwplans/tools/fetch-raw.mjs lidar",
       "kind": "fetch",
       "used": [
         {
@@ -346,7 +346,7 @@
     {
       "id": "fetch-raw-wikidata",
       "tool": "tools/fetch-raw.mjs",
-      "command": "node magpie/cwplans/tools/fetch-raw.mjs wikidata",
+      "command": "node cwplans/tools/fetch-raw.mjs wikidata",
       "kind": "fetch",
       "used": [
         {
@@ -381,7 +381,7 @@
     {
       "id": "fetch-docklands-osm",
       "tool": "tools/fetch-docklands.mjs",
-      "command": "node magpie/cwplans/tools/fetch-docklands.mjs osm",
+      "command": "node cwplans/tools/fetch-docklands.mjs osm",
       "kind": "fetch",
       "used": [
         {
@@ -409,7 +409,7 @@
     {
       "id": "fetch-docklands-lidar",
       "tool": "tools/fetch-docklands.mjs",
-      "command": "node magpie/cwplans/tools/fetch-docklands.mjs lidar",
+      "command": "node cwplans/tools/fetch-docklands.mjs lidar",
       "kind": "fetch",
       "used": [
         {
@@ -446,7 +446,7 @@
     {
       "id": "fetch-docklands-defences",
       "tool": "tools/fetch-docklands.mjs",
-      "command": "node magpie/cwplans/tools/fetch-docklands.mjs defences",
+      "command": "node cwplans/tools/fetch-docklands.mjs defences",
       "kind": "fetch",
       "used": [
         {
@@ -475,7 +475,7 @@
     {
       "id": "fetch-docklands-wikidata",
       "tool": "tools/fetch-docklands.mjs",
-      "command": "node magpie/cwplans/tools/fetch-docklands.mjs wikidata",
+      "command": "node cwplans/tools/fetch-docklands.mjs wikidata",
       "kind": "fetch",
       "used": [
         {
@@ -510,7 +510,7 @@
     {
       "id": "fetch_wet-soundings",
       "tool": "registry/sources/pla/fetch_wet.py",
-      "command": "python3 magpie/cwplans/registry/sources/pla/fetch_wet.py soundings",
+      "command": "python3 cwplans/registry/sources/pla/fetch_wet.py soundings",
       "kind": "fetch",
       "used": [
         {
@@ -550,7 +550,7 @@
     {
       "id": "fetch_wet-layers",
       "tool": "registry/sources/pla/fetch_wet.py",
-      "command": "python3 magpie/cwplans/registry/sources/pla/fetch_wet.py layers",
+      "command": "python3 cwplans/registry/sources/pla/fetch_wet.py layers",
       "kind": "fetch",
       "used": [
         {
@@ -596,7 +596,7 @@
     {
       "id": "fetch_records",
       "tool": "registry/sources/museums/fetch_records.py",
-      "command": "python3 magpie/cwplans/registry/sources/museums/fetch_records.py",
+      "command": "python3 cwplans/registry/sources/museums/fetch_records.py",
       "kind": "fetch",
       "used": [
         {
@@ -655,7 +655,7 @@
     {
       "id": "fetch-cwg",
       "tool": "registry/sources/brands/tools/fetch-cwg.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/registry/sources/brands/tools/fetch-cwg.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/registry/sources/brands/tools/fetch-cwg.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -703,7 +703,7 @@
     {
       "id": "postcodes-fetch",
       "tool": "tools/postcodes.mjs",
-      "command": "node magpie/cwplans/tools/postcodes.mjs fetch",
+      "command": "node cwplans/tools/postcodes.mjs fetch",
       "kind": "fetch",
       "used": [
         {
@@ -752,7 +752,7 @@
     {
       "id": "registry-wikidata",
       "tool": "tools/registry-wikidata.mjs",
-      "command": "node magpie/cwplans/tools/registry-wikidata.mjs",
+      "command": "node cwplans/tools/registry-wikidata.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -795,7 +795,7 @@
     {
       "id": "registry-fhrs",
       "tool": "tools/registry-fhrs.mjs",
-      "command": "node magpie/cwplans/tools/registry-fhrs.mjs",
+      "command": "node cwplans/tools/registry-fhrs.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -835,7 +835,7 @@
     {
       "id": "osm-clip-docklands",
       "tool": "tools/osm-clip-docklands.mjs",
-      "command": "node --max-old-space-size=6000 magpie/cwplans/tools/osm-clip-docklands.mjs",
+      "command": "node --max-old-space-size=6000 cwplans/tools/osm-clip-docklands.mjs",
       "kind": "clip",
       "used": [
         {
@@ -867,7 +867,7 @@
     {
       "id": "registry-osm",
       "tool": "tools/registry-osm.mjs",
-      "command": "node --max-old-space-size=6000 magpie/cwplans/tools/registry-osm.mjs",
+      "command": "node --max-old-space-size=6000 cwplans/tools/registry-osm.mjs",
       "kind": "clip",
       "used": [
         {
@@ -901,7 +901,7 @@
     {
       "id": "osm-scan",
       "tool": "registry/sources/brands/tools/osm-scan.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/osm-scan.mjs",
+      "command": "node cwplans/registry/sources/brands/tools/osm-scan.mjs",
       "kind": "clip",
       "used": [
         {
@@ -928,7 +928,7 @@
     {
       "id": "london-brand-counts",
       "tool": "registry/sources/brands/tools/london-brand-counts.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/london-brand-counts.mjs",
+      "command": "node cwplans/registry/sources/brands/tools/london-brand-counts.mjs",
       "kind": "derive",
       "used": [
         {
@@ -955,7 +955,7 @@
     {
       "id": "postcodes-osm",
       "tool": "tools/postcodes.mjs",
-      "command": "node magpie/cwplans/tools/postcodes.mjs osm",
+      "command": "node cwplans/tools/postcodes.mjs osm",
       "kind": "derive",
       "used": [
         {
@@ -985,7 +985,7 @@
     {
       "id": "build-data",
       "tool": "tools/build-data.mjs",
-      "command": "node magpie/cwplans/tools/build-data.mjs",
+      "command": "node cwplans/tools/build-data.mjs",
       "kind": "derive",
       "used": [
         {
@@ -1049,7 +1049,7 @@
     {
       "id": "build-docklands",
       "tool": "tools/build-docklands.mjs",
-      "command": "node --max-old-space-size=8000 magpie/cwplans/tools/build-docklands.mjs",
+      "command": "node --max-old-space-size=8000 cwplans/tools/build-docklands.mjs",
       "kind": "derive",
       "used": [
         {
@@ -1138,7 +1138,7 @@
     {
       "id": "postcodes-build",
       "tool": "tools/postcodes.mjs",
-      "command": "node magpie/cwplans/tools/postcodes.mjs build",
+      "command": "node cwplans/tools/postcodes.mjs build",
       "kind": "join",
       "used": [
         {
@@ -1185,7 +1185,7 @@
     {
       "id": "postcodes-query",
       "tool": "tools/postcodes.mjs",
-      "command": "node magpie/cwplans/tools/postcodes.mjs query [tier ...]",
+      "command": "node cwplans/tools/postcodes.mjs query [tier ...]",
       "kind": "fetch",
       "used": [
         {
@@ -1234,7 +1234,7 @@
     {
       "id": "registry-uprn",
       "tool": "tools/registry-uprn.mjs",
-      "command": "node magpie/cwplans/tools/registry-uprn.mjs",
+      "command": "node cwplans/tools/registry-uprn.mjs",
       "kind": "clip",
       "used": [
         {
@@ -1285,7 +1285,7 @@
     {
       "id": "registry-lbsm",
       "tool": "tools/registry-lbsm.mjs",
-      "command": "node magpie/cwplans/tools/registry-lbsm.mjs",
+      "command": "node cwplans/tools/registry-lbsm.mjs",
       "kind": "derive",
       "used": [
         {
@@ -1326,7 +1326,7 @@
     {
       "id": "registry-inspire",
       "tool": "tools/registry-inspire.mjs",
-      "command": "node magpie/cwplans/tools/registry-inspire.mjs",
+      "command": "node cwplans/tools/registry-inspire.mjs",
       "kind": "clip",
       "used": [
         {
@@ -1363,7 +1363,7 @@
     {
       "id": "registry-companies",
       "tool": "tools/registry-companies.mjs",
-      "command": "node magpie/cwplans/tools/registry-companies.mjs [path/to/BasicCompanyDataAsOneFile-YYYY-MM-DD.zip]",
+      "command": "node cwplans/tools/registry-companies.mjs [path/to/BasicCompanyDataAsOneFile-YYYY-MM-DD.zip]",
       "kind": "parse",
       "used": [
         {
@@ -1405,7 +1405,7 @@
     {
       "id": "registry-landregistry",
       "tool": "tools/registry-landregistry.mjs",
-      "command": "node magpie/cwplans/tools/registry-landregistry.mjs",
+      "command": "node cwplans/tools/registry-landregistry.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -1442,7 +1442,7 @@
     {
       "id": "registry-voa",
       "tool": "tools/registry-voa.mjs",
-      "command": "node magpie/cwplans/tools/registry-voa.mjs [path/to/list-entries.zip]",
+      "command": "node cwplans/tools/registry-voa.mjs [path/to/list-entries.zip]",
       "kind": "parse",
       "used": [
         {
@@ -1483,7 +1483,7 @@
     {
       "id": "build-uk-brands",
       "tool": "registry/sources/brands/tools/build-uk-brands.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/build-uk-brands.mjs",
+      "command": "node cwplans/registry/sources/brands/tools/build-uk-brands.mjs",
       "kind": "derive",
       "used": [
         {
@@ -1518,7 +1518,7 @@
     {
       "id": "wikidata-brands",
       "tool": "registry/sources/brands/tools/wikidata-brands.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/registry/sources/brands/tools/wikidata-brands.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/registry/sources/brands/tools/wikidata-brands.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -1566,7 +1566,7 @@
     {
       "id": "match-osm",
       "tool": "registry/sources/brands/tools/match-osm.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/match-osm.mjs",
+      "command": "node cwplans/registry/sources/brands/tools/match-osm.mjs",
       "kind": "join",
       "used": [
         {
@@ -1609,7 +1609,7 @@
     {
       "id": "match-fsa-fetch",
       "tool": "registry/sources/brands/tools/match-fsa.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/registry/sources/brands/tools/match-fsa.mjs --fetch",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/registry/sources/brands/tools/match-fsa.mjs --fetch",
       "kind": "join",
       "used": [
         {
@@ -1666,7 +1666,7 @@
     {
       "id": "match-fsa",
       "tool": "registry/sources/brands/tools/match-fsa.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/match-fsa.mjs",
+      "command": "node cwplans/registry/sources/brands/tools/match-fsa.mjs",
       "kind": "join",
       "used": [
         {
@@ -1715,7 +1715,7 @@
     {
       "id": "build-branches",
       "tool": "registry/sources/brands/tools/build-branches.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/build-branches.mjs",
+      "command": "node cwplans/registry/sources/brands/tools/build-branches.mjs",
       "kind": "join",
       "used": [
         {
@@ -1794,7 +1794,7 @@
     {
       "id": "storelocator",
       "tool": "registry/sources/brands/tools/storelocator.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/registry/sources/brands/tools/storelocator.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/registry/sources/brands/tools/storelocator.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -1848,7 +1848,7 @@
     {
       "id": "readme-tables",
       "tool": "registry/sources/brands/tools/readme-tables.mjs",
-      "command": "node magpie/cwplans/registry/sources/brands/tools/readme-tables.mjs > /tmp/tables.md",
+      "command": "node cwplans/registry/sources/brands/tools/readme-tables.mjs > /tmp/tables.md",
       "kind": "export",
       "used": [
         {
@@ -1876,7 +1876,7 @@
     {
       "id": "fetch-registers",
       "tool": "tools/fetch-registers.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs [gias|cqc|ods|charities|ofsted-childcare|gambling|active-places|fsa-pubs ...] [--refresh]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-registers.mjs [gias|cqc|ods|charities|ofsted-childcare|gambling|active-places|fsa-pubs ...] [--refresh]",
       "kind": "fetch",
       "used": [
         {
@@ -1986,7 +1986,7 @@
     {
       "id": "crawl-sites",
       "tool": "tools/crawl-sites.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/crawl-sites.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/crawl-sites.mjs",
       "kind": "fetch",
       "used": [
         {
@@ -2061,7 +2061,7 @@
     {
       "id": "render-structured-data",
       "tool": "tools/render-structured-data.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs [--retry-failed] [--storefinder-only] [--build-only]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs [--retry-failed] [--storefinder-only] [--build-only]",
       "kind": "fetch",
       "used": [
         {
@@ -2102,10 +2102,10 @@
       ],
       "generated": [
         {
-          "file": "../../third_party/cwplans-structured-data/pages"
+          "file": "../third_party/cwplans-structured-data/pages"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/index.json"
+          "file": "../third_party/cwplans-structured-data/index.json"
         },
         {
           "local": "data/raw/rendered/<host>/<sha1(url)[0:16]>.html.gz (rendered DOM), .json (result), robots.json; data/raw/rendered/_storefinder/"
@@ -2119,7 +2119,7 @@
         "A cookie banner is clicked only when the page shows no structured data and a known consent button is visible. No logins, no forms other than a store-finder search box with a UK postcode.",
         "Store finder: a result link is followed only when its text, URL or card names the branch postcode, a street or mall phrase of the branch, or (for a brand with one branch here) Canary Wharf.",
         "Blocks over 200 kB are dropped and counted.",
-        "User-Agent: a desktop Chrome string plus \" glitchcan-cwplans/0.1 (+https://github.com/danbri/glitchcan-minigam)\"; robots.txt fetched with Node (15 s timeout), else through Chromium.",
+        "User-Agent: a desktop Chrome string plus \" glitchcan-cwplans/0.1 (+https://github.com/danbri/londat)\"; robots.txt fetched with Node (15 s timeout), else through Chromium.",
         "Each page: wait for load and network idle, at most 20 s (CAP_MS), then 1.5 s (LATE_MS) for late JSON-LD.",
         "Store finders: one postcode search per brand and postcode; the postcode is the branch's own, else E14 4QT (owner rule 2026-10-03: \"we are permitted per industry convention to submit storefinder forms with UK postcodes\"). No other forms.",
         "Resumable: a URL with a stored result in data/raw/rendered/ is not rendered again unless --retry-failed and its failure was transient."
@@ -2135,14 +2135,14 @@
     {
       "id": "extract-structured-data",
       "tool": "tools/extract-structured-data.mjs",
-      "command": "node magpie/cwplans/tools/extract-structured-data.mjs",
+      "command": "node cwplans/tools/extract-structured-data.mjs",
       "kind": "derive",
       "used": [
         {
-          "file": "../../third_party/cwplans-structured-data/pages"
+          "file": "../third_party/cwplans-structured-data/pages"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/index.json"
+          "file": "../third_party/cwplans-structured-data/index.json"
         },
         {
           "file": "registry/buildings.json"
@@ -2170,7 +2170,7 @@
       ],
       "generated": [
         {
-          "file": "../../third_party/cwplans-structured-data/all.nq.gz"
+          "file": "../third_party/cwplans-structured-data/all.nq.gz"
         },
         {
           "file": "registry/sources/web/structured-facts.json"
@@ -2196,20 +2196,20 @@
       "id": "web-idioms",
       "area": "structured",
       "tool": "tools/web-idioms.mjs",
-      "command": "node magpie/cwplans/tools/web-idioms.mjs",
+      "command": "node cwplans/tools/web-idioms.mjs",
       "kind": "derive",
       "used": [
         {
-          "file": "../../third_party/cwplans-structured-data/all.nq.gz"
+          "file": "../third_party/cwplans-structured-data/all.nq.gz"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/idioms.json"
+          "file": "../third_party/cwplans-structured-data/idioms/idioms.json"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/idioms.shex"
+          "file": "../third_party/cwplans-structured-data/idioms/idioms.shex"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/rewrites"
+          "file": "../third_party/cwplans-structured-data/idioms/rewrites"
         },
         {
           "source": "factoidal",
@@ -2219,13 +2219,13 @@
       ],
       "generated": [
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/page-idioms.json"
+          "file": "../third_party/cwplans-structured-data/idioms/page-idioms.json"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/summary.json"
+          "file": "../third_party/cwplans-structured-data/idioms/summary.json"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/canonical.nq.gz"
+          "file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"
         }
       ],
       "method": "For each page graph (as a default graph, schema.org namespace variants mapped to https://schema.org/), finds candidate nodes for each idiom by SPARQL, checks the idiom's core ShEx shape and each form shape with Factoidal, runs the SPARQL forms, and rewrites the content idioms to the canonical layer with SPARQL CONSTRUCT.",
@@ -2244,17 +2244,17 @@
       "id": "web-coref",
       "area": "structured",
       "tool": "tools/web-coref.mjs",
-      "command": "node magpie/cwplans/tools/web-coref.mjs",
+      "command": "node cwplans/tools/web-coref.mjs",
       "kind": "derive",
       "used": [
         {
-          "file": "../../third_party/cwplans-structured-data/all.nq.gz"
+          "file": "../third_party/cwplans-structured-data/all.nq.gz"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/pages"
+          "file": "../third_party/cwplans-structured-data/pages"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/idioms/idioms.json"
+          "file": "../third_party/cwplans-structured-data/idioms/idioms.json"
         },
         {
           "source": "factoidal",
@@ -2264,13 +2264,13 @@
       ],
       "generated": [
         {
-          "file": "../../third_party/cwplans-structured-data/coref/sameas.nq.gz"
+          "file": "../third_party/cwplans-structured-data/coref/sameas.nq.gz"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/coref/descriptions.json"
+          "file": "../third_party/cwplans-structured-data/coref/descriptions.json"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/coref/entities.json"
+          "file": "../third_party/cwplans-structured-data/coref/entities.json"
         }
       ],
       "method": "Reads name, telephone, sameAs, postcode and coordinates of every organisation and place description; applies the key rules in order (same IRI; same site and name, for places also the postcode; same sameAs URL; same telephone; same postcode and name) and writes each link in the named graph of its rule; groups by union; flags a branch page that links to more than one registry building.",
@@ -2291,14 +2291,14 @@
       "id": "cwg-directory-typed",
       "area": "structured",
       "tool": "tools/cwg-directory-typed.mjs",
-      "command": "node magpie/cwplans/tools/cwg-directory-typed.mjs",
+      "command": "node cwplans/tools/cwg-directory-typed.mjs",
       "kind": "derive",
       "used": [
         {
-          "file": "../../third_party/cwplans-structured-data/all.nq.gz"
+          "file": "../third_party/cwplans-structured-data/all.nq.gz"
         },
         {
-          "file": "../../third_party/cwplans-structured-data/pages"
+          "file": "../third_party/cwplans-structured-data/pages"
         },
         {
           "file": "registry/sources/brands/cwg-directory.json"
@@ -2328,14 +2328,14 @@
         "extract-structured-data"
       ]
     },
-    {"id": "probe-site-search", "area": "structured", "tool": "tools/probe-site-search.mjs", "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/probe-site-search.mjs [--offline]", "kind": "fetch", "used": [{"file": "../../third_party/cwplans-structured-data/all.nq.gz"}, {"file": "../../third_party/cwplans-structured-data/pages"}, {"source": "web-crawl"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse (N-Quads), query (SPARQL SELECT of SearchAction templates)"}], "generated": [{"file": "../../third_party/cwplans-structured-data/search/probe.json"}], "method": "Reads every SearchAction template in the harvest; per site picks one template with a placeholder; fills it with a nonsense control query, \"Canary Wharf\" and \"E14 5AB\"; fetches each result page once; counts only the same-site links (assets left out) and mentions that a place query adds over the control; classes each site (finds a branch page, finds other place content, no place result, results drawn by script, robots.txt disallows, blocked, no page); marks the branch-like hits not yet in the harvest.", "rules": ["Politeness: robots.txt per host (cached crawl rules, else fetched), the project User-Agent, one request at a time per host, 1.1 s apart.", "Only GET URLs that the site publishes as its own SearchAction; no forms, no login.", "Kept: status, counts, JSON-LD types, result URLs. No page text; the raw result pages stay in data/raw/site-search/ (not committed)."], "judgement": "The branch-like path pattern and the wall pattern are chosen by hand in the tool; a hit list was checked by hand on 2026-10-06 (about a third are blog or news posts).", "network": true, "deterministic": false, "after": ["extract-structured-data"]},
-    {"id": "cwg-hours", "area": "structured", "tool": "tools/cwg-hours.mjs", "command": "node magpie/cwplans/tools/cwg-hours.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-directory.json"}, {"source": "cwg-site"}], "generated": [{"file": "registry/sources/brands/cwg-hours.json"}], "method": "Reads the seven-row hours table of each cached CWG directory page (Internet Archive copy saved by fetch-cwg.mjs): 9am, 7.30am, 12noon, Midnight, Closed, Open 24hrs, Coming Soon; groups days with the same hours into OSM opening_hours text.", "rules": ["A closing time at or before the opening time runs past midnight.", "A row that is not a time (\"109am\", \"4m\", \"12pm - 10\") is listed in problems and left out, never guessed.", "All coming soon: no hours."], "network": false, "deterministic": true, "after": ["cwg-directory-typed"]},
-    {"id": "hours-by-place", "area": "structured", "tool": "tools/hours-by-place.mjs", "command": "node magpie/cwplans/tools/hours-by-place.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-hours.json"}, {"file": "registry/sources/brands/cwg-directory.json"}, {"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/buildings.json"}, {"file": "../../third_party/cwplans-structured-data/idioms/canonical.nq.gz"}, {"file": "docklands/opening-hours.js"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse (N-Quads), query (SPARQL SELECT of branch, postcode and OpeningHoursSpecification)"}], "generated": [{"file": "registry/sources/web/hours-by-place.json"}], "method": "Puts every hours text on a 336-slot half-hour week with docklands/opening-hours.js (the 3D page's reader) and the canonical schema.org hours with their dayOfWeek, opens and closes; groups places by area (CWG mall, street-level estate, Wood Wharf, postcode sector outside the CWG list) and kind (coarse: food and drink, shop, service; fine for CWG from schema.org types); medians and shares per group; stratified permutation tests (5,000, fixed seed) of the mall effect on hours per week and weekday closing time within a fine kind; agreement (share of open slots in common) for the same occupant across CWG, OSM and web; postcode unit to mall from the whole CWG list (one mall in at least 80% of 3 or more entries) to place web branches by their parsed postcode.", "rules": ["Dated special hours (validFrom) are not the weekly pattern and are left out.", "An occupant in the CWG list is counted once, from its CWG page; its OSM and web hours are used only for the agreement check."], "network": false, "deterministic": true, "after": ["cwg-hours", "web-idioms"]},
-    {"id": "mall-plan-evidence", "area": "structured", "tool": "tools/mall-plan-evidence.mjs", "command": "node magpie/cwplans/tools/mall-plan-evidence.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/buildings.json"}, {"source": "osm"}], "generated": [{"file": "registry/sources/brands/mall-plan-evidence.json"}], "method": "For each mall: the anchor is the median position of the registry buildings its CWG entries link to; each CWG entry is matched by normalised name (or brand) to the nearest OSM shop, amenity, office or leisure point within 250 m; the CWG level (signage number) is compared with OSM level:ref, else level; footways with a level and indoor ways within 250 m are kept as polylines in metres from the anchor.", "rules": ["Read level:ref before level (fault F48).", "No unit outlines are made: positions are OSM points."], "judgement": "The name normalisation (dropping the mall name and common words) is chosen by hand; a wrong branch of a chain can be matched when two are within 250 m.", "network": false, "deterministic": true, "after": ["cwg-directory-typed", "registry-osm"]},
+    {"id": "probe-site-search", "area": "structured", "tool": "tools/probe-site-search.mjs", "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/probe-site-search.mjs [--offline]", "kind": "fetch", "used": [{"file": "../third_party/cwplans-structured-data/all.nq.gz"}, {"file": "../third_party/cwplans-structured-data/pages"}, {"source": "web-crawl"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse (N-Quads), query (SPARQL SELECT of SearchAction templates)"}], "generated": [{"file": "../third_party/cwplans-structured-data/search/probe.json"}], "method": "Reads every SearchAction template in the harvest; per site picks one template with a placeholder; fills it with a nonsense control query, \"Canary Wharf\" and \"E14 5AB\"; fetches each result page once; counts only the same-site links (assets left out) and mentions that a place query adds over the control; classes each site (finds a branch page, finds other place content, no place result, results drawn by script, robots.txt disallows, blocked, no page); marks the branch-like hits not yet in the harvest.", "rules": ["Politeness: robots.txt per host (cached crawl rules, else fetched), the project User-Agent, one request at a time per host, 1.1 s apart.", "Only GET URLs that the site publishes as its own SearchAction; no forms, no login.", "Kept: status, counts, JSON-LD types, result URLs. No page text; the raw result pages stay in data/raw/site-search/ (not committed)."], "judgement": "The branch-like path pattern and the wall pattern are chosen by hand in the tool; a hit list was checked by hand on 2026-10-06 (about a third are blog or news posts).", "network": true, "deterministic": false, "after": ["extract-structured-data"]},
+    {"id": "cwg-hours", "area": "structured", "tool": "tools/cwg-hours.mjs", "command": "node cwplans/tools/cwg-hours.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-directory.json"}, {"source": "cwg-site"}], "generated": [{"file": "registry/sources/brands/cwg-hours.json"}], "method": "Reads the seven-row hours table of each cached CWG directory page (Internet Archive copy saved by fetch-cwg.mjs): 9am, 7.30am, 12noon, Midnight, Closed, Open 24hrs, Coming Soon; groups days with the same hours into OSM opening_hours text.", "rules": ["A closing time at or before the opening time runs past midnight.", "A row that is not a time (\"109am\", \"4m\", \"12pm - 10\") is listed in problems and left out, never guessed.", "All coming soon: no hours."], "network": false, "deterministic": true, "after": ["cwg-directory-typed"]},
+    {"id": "hours-by-place", "area": "structured", "tool": "tools/hours-by-place.mjs", "command": "node cwplans/tools/hours-by-place.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-hours.json"}, {"file": "registry/sources/brands/cwg-directory.json"}, {"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/buildings.json"}, {"file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"}, {"file": "docklands/opening-hours.js"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse (N-Quads), query (SPARQL SELECT of branch, postcode and OpeningHoursSpecification)"}], "generated": [{"file": "registry/sources/web/hours-by-place.json"}], "method": "Puts every hours text on a 336-slot half-hour week with docklands/opening-hours.js (the 3D page's reader) and the canonical schema.org hours with their dayOfWeek, opens and closes; groups places by area (CWG mall, street-level estate, Wood Wharf, postcode sector outside the CWG list) and kind (coarse: food and drink, shop, service; fine for CWG from schema.org types); medians and shares per group; stratified permutation tests (5,000, fixed seed) of the mall effect on hours per week and weekday closing time within a fine kind; agreement (share of open slots in common) for the same occupant across CWG, OSM and web; postcode unit to mall from the whole CWG list (one mall in at least 80% of 3 or more entries) to place web branches by their parsed postcode.", "rules": ["Dated special hours (validFrom) are not the weekly pattern and are left out.", "An occupant in the CWG list is counted once, from its CWG page; its OSM and web hours are used only for the agreement check."], "network": false, "deterministic": true, "after": ["cwg-hours", "web-idioms"]},
+    {"id": "mall-plan-evidence", "area": "structured", "tool": "tools/mall-plan-evidence.mjs", "command": "node cwplans/tools/mall-plan-evidence.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/buildings.json"}, {"source": "osm"}], "generated": [{"file": "registry/sources/brands/mall-plan-evidence.json"}], "method": "For each mall: the anchor is the median position of the registry buildings its CWG entries link to; each CWG entry is matched by normalised name (or brand) to the nearest OSM shop, amenity, office or leisure point within 250 m; the CWG level (signage number) is compared with OSM level:ref, else level; footways with a level and indoor ways within 250 m are kept as polylines in metres from the anchor.", "rules": ["Read level:ref before level (fault F48).", "No unit outlines are made: positions are OSM points."], "judgement": "The name normalisation (dropping the mall name and common words) is chosen by hand; a wrong branch of a chain can be matched when two are within 250 m.", "network": false, "deterministic": true, "after": ["cwg-directory-typed", "registry-osm"]},
     {
       "id": "build-registry",
       "tool": "tools/build-registry.mjs",
-      "command": "node magpie/cwplans/tools/build-registry.mjs",
+      "command": "node cwplans/tools/build-registry.mjs",
       "kind": "join",
       "used": [
         {
@@ -2482,7 +2482,7 @@
     {
       "id": "join-web-facts",
       "tool": "tools/join-web-facts.mjs",
-      "command": "node magpie/cwplans/tools/join-web-facts.mjs",
+      "command": "node cwplans/tools/join-web-facts.mjs",
       "kind": "derive",
       "used": [
         {
@@ -2515,7 +2515,7 @@
     {
       "id": "build-categories",
       "tool": "tools/build-categories.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-categories.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-categories.mjs",
       "kind": "derive",
       "used": [
         {
@@ -2579,7 +2579,7 @@
     {
       "id": "scan-model-pois",
       "tool": "tools/scan-model-pois.mjs",
-      "command": "node --max-old-space-size=6000 magpie/cwplans/tools/scan-model-pois.mjs",
+      "command": "node --max-old-space-size=6000 cwplans/tools/scan-model-pois.mjs",
       "kind": "derive",
       "used": [
         {
@@ -2612,7 +2612,7 @@
     {
       "id": "build-atlas",
       "tool": "tools/build-atlas.mjs",
-      "command": "node magpie/cwplans/tools/build-atlas.mjs",
+      "command": "node cwplans/tools/build-atlas.mjs",
       "kind": "join",
       "used": [
         {
@@ -2717,7 +2717,7 @@
     {
       "id": "build-indoor",
       "tool": "tools/build-indoor.mjs",
-      "command": "node magpie/cwplans/tools/build-indoor.mjs",
+      "command": "node cwplans/tools/build-indoor.mjs",
       "kind": "derive",
       "used": [
         {
@@ -2777,7 +2777,7 @@
     {
       "id": "build-imagery",
       "tool": "tools/build-imagery.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-imagery.mjs [from-date]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-imagery.mjs [from-date]",
       "kind": "derive",
       "used": [
         {
@@ -2816,7 +2816,7 @@
     {
       "id": "build-aerial-rgb2008",
       "tool": "tools/build-aerial.py",
-      "command": "python3 magpie/cwplans/tools/build-aerial.py rgb2008",
+      "command": "python3 cwplans/tools/build-aerial.py rgb2008",
       "kind": "derive",
       "used": [
         {
@@ -2861,7 +2861,7 @@
     {
       "id": "build-aerial-night2012",
       "tool": "tools/build-aerial.py",
-      "command": "python3 magpie/cwplans/tools/build-aerial.py night2012",
+      "command": "python3 cwplans/tools/build-aerial.py night2012",
       "kind": "derive",
       "used": [
         {
@@ -2905,7 +2905,7 @@
     {
       "id": "build-aerial-intensity2020",
       "tool": "tools/build-aerial.py",
-      "command": "python3 magpie/cwplans/tools/build-aerial.py intensity2020",
+      "command": "python3 cwplans/tools/build-aerial.py intensity2020",
       "kind": "derive",
       "used": [
         {
@@ -2946,7 +2946,7 @@
     {
       "id": "fetch-dsm",
       "tool": "tools/fetch-dsm.sh",
-      "command": "bash magpie/cwplans/tools/fetch-dsm.sh",
+      "command": "bash cwplans/tools/fetch-dsm.sh",
       "kind": "fetch",
       "used": [
         {
@@ -2974,7 +2974,7 @@
     {
       "id": "build-skyline",
       "tool": "tools/build-skyline.mjs",
-      "command": "node magpie/cwplans/tools/build-skyline.mjs",
+      "command": "node cwplans/tools/build-skyline.mjs",
       "kind": "derive",
       "used": [
         {
@@ -3015,7 +3015,7 @@
     {
       "id": "build-towers",
       "tool": "tools/build-towers.py",
-      "command": "/opt/towers-venv/bin/python magpie/cwplans/tools/build-towers.py",
+      "command": "/opt/towers-venv/bin/python cwplans/tools/build-towers.py",
       "kind": "derive",
       "used": [
         {
@@ -3063,7 +3063,7 @@
     {
       "id": "facade-measure",
       "tool": "registry/sources/facades/tools/facade.py",
-      "command": "cd magpie/cwplans/registry/sources/facades/work && python3 ../tools/facade.py <img> <out_prefix> x0 y0 x1 y1",
+      "command": "cd cwplans/registry/sources/facades/work && python3 ../tools/facade.py <img> <out_prefix> x0 y0 x1 y1",
       "kind": "derive",
       "used": [
         {
@@ -3094,7 +3094,7 @@
     {
       "id": "facade-measure-patch",
       "tool": "registry/sources/facades/tools/measure.py",
-      "command": "cd magpie/cwplans/registry/sources/facades/work && python3 ../tools/measure.py <img> x0 y0 x1 y1 <out.jpg> [k]",
+      "command": "cd cwplans/registry/sources/facades/work && python3 ../tools/measure.py <img> x0 y0 x1 y1 <out.jpg> [k]",
       "kind": "derive",
       "used": [
         {
@@ -3120,7 +3120,7 @@
     {
       "id": "facade-metric",
       "tool": "registry/sources/facades/tools/metric.py",
-      "command": "cd magpie/cwplans/registry/sources/facades/work && python3 ../tools/metric.py",
+      "command": "cd cwplans/registry/sources/facades/work && python3 ../tools/metric.py",
       "kind": "derive",
       "used": [
         {
@@ -3152,7 +3152,7 @@
     {
       "id": "facade-build",
       "tool": "registry/sources/facades/tools/build.py",
-      "command": "cd magpie/cwplans/registry/sources/facades/work && python3 ../tools/build.py",
+      "command": "cd cwplans/registry/sources/facades/work && python3 ../tools/build.py",
       "kind": "derive",
       "used": [
         {
@@ -3191,7 +3191,7 @@
     {
       "id": "facade-write",
       "tool": "registry/sources/facades/tools/write_facades.py",
-      "command": "cd magpie/cwplans/registry/sources/facades/work && python3 ../tools/write_facades.py",
+      "command": "cd cwplans/registry/sources/facades/work && python3 ../tools/write_facades.py",
       "kind": "derive",
       "used": [
         {
@@ -3224,7 +3224,7 @@
     {
       "id": "build-facade-atlas",
       "tool": "tools/build-facade-atlas.py",
-      "command": "python3 magpie/cwplans/tools/build-facade-atlas.py",
+      "command": "python3 cwplans/tools/build-facade-atlas.py",
       "kind": "derive",
       "used": [
         {
@@ -3266,7 +3266,7 @@
     {
       "id": "build-splats",
       "tool": "tools/build-splats.mjs",
-      "command": "node magpie/cwplans/tools/build-splats.mjs [--ground 4] [--cell 7.2] [--box x0,x1,z0,z1]",
+      "command": "node cwplans/tools/build-splats.mjs [--ground 4] [--cell 7.2] [--box x0,x1,z0,z1]",
       "kind": "derive",
       "used": [
         {
@@ -3321,7 +3321,7 @@
     {
       "id": "build-river",
       "tool": "tools/build-river.mjs",
-      "command": "node magpie/cwplans/tools/build-river.mjs",
+      "command": "node cwplans/tools/build-river.mjs",
       "kind": "derive",
       "used": [
         {
@@ -3351,7 +3351,7 @@
     {
       "id": "fetch-sky",
       "tool": "tools/fetch-sky.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-sky.mjs [stars] [lines] [sats] [weather] [tide] [names] [messier] [clouds [2026-10-03T23:00Z]] [lcy] [--date 2026-10-03]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-sky.mjs [stars] [lines] [sats] [weather] [tide] [names] [messier] [clouds [2026-10-03T23:00Z]] [lcy] [--date 2026-10-03]",
       "kind": "fetch",
       "used": [
         {
@@ -3451,7 +3451,7 @@
     {
       "id": "walk-london-datastore",
       "tool": "tools/walk-london-datastore.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs walk [--details] [--refresh]; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs refs; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs refs-old-wards; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs probe [id ...]; node magpie/cwplans/tools/walk-london-datastore.mjs triage; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs harvest [key ...] [--refresh]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs walk [--details] [--refresh]; NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs refs; NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs refs-old-wards; NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs probe [id ...]; node cwplans/tools/walk-london-datastore.mjs triage; NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs harvest [key ...] [--refresh]",
       "kind": "fetch",
       "used": [
         {
@@ -3780,7 +3780,7 @@
         "Catalogue: publisher = organisation (logo title), else CKAN maintainer, else custom.author; geo = custom.geo (spatial granularity); update_frequency = custom.update_frequency; resource format = file extension; resource URL = https://data.london.gov.uk/download/{dataset}/{id}/{file}. Not kept: descriptions, contact names and emails, logos.",
         "Licence class: OGL v2/v3 -> ogl; Creative Commons Attribution -> cc-by; ODC Attribution -> odc-by; Public Domain, PDDL -> public-domain (these four are open); CC BY-SA and ODbL -> share-alike (never harvested, CLAUDE.md); CC Non-Commercial and All Rights Reserved -> restricted; TfL Transport Data Service Licence -> other; empty -> none (never harvested).",
         "Relevance, first match: zone-place (title or tag names a place in the 3D model box; \"upon Thames\", \"Thames Estuary\", \"Thames Gateway\", \"Thamesmead\" removed first); zone-borough (names only Tower Hamlets, Southwark, Lewisham, Greenwich, Newham, City of London); other-area (names 1-3 places, none in the zone); london-fine (geo finer than a borough, or with no geo a ward/LSOA/MSOA/OA/postcode/UPRN/TOID word or a spatial format); london-borough; london-coarse; unknown.",
-        "Have: a dataset id or slug in a committed file of magpie/cwplans: data-register.json, pipeline.json, tools, data files -> held; a .md note, feeds catalogues, the 2026-10-03 survey -> listed; an \"excluded\" list or a survey \"left out\" line -> excluded-before; else new. feeds/london-datastore/ and the generated docs are not read.",
+        "Have: a dataset id or slug in a committed file of cwplans: data-register.json, pipeline.json, tools, data files -> held; a .md note, feeds catalogues, the 2026-10-03 survey -> listed; an \"excluded\" list or a survey \"left out\" line -> excluded-before; else new. feeds/london-datastore/ and the generated docs are not read.",
         "Sensitive (catalogued, score 0, never harvested): title names homicide, victims, strip or intimate searches, suicide, custody, stop and search, hate crime, domestic abuse, sexual offences, safeguarding, missing persons, rough sleeping (CHAIN), bariatric incidents.",
         "Score = relevance weight (zone-place 5, zone-borough 4, london-fine 3, london-borough 1.5, unknown 1, london-coarse 0.3, other-area 0) x max(theme value, 0.5) x recency (newest resource year >= 2024: 1, >= 2021: 0.8, >= 2016: 0.5, else 0.3) x (machine-readable format ? 1 : 0.4) x (a join key finer than a borough ? 1.3 : 1) x (open ? 1 : 0) x (held 0, listed 0.8, new 1).",
         "Harvest zone: a feature is kept when its geometry meets the 3D model box (BNG E 532400-539900, N 176700-182300): a vertex inside, an edge crossing (Liang-Barsky) or the box centre inside a polygon. Whole geometries kept, not cut; whole_in_zone and in_cw (meets the Canary Wharf registry box -0.03, 51.498, -0.005, 51.51) are added.",
@@ -3812,7 +3812,7 @@
     {
       "id": "lds-harvest-auto",
       "tool": "tools/lds-harvest-auto.mjs",
-      "command": "node magpie/cwplans/tools/lds-harvest-auto.mjs plan [id ...]; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]; node magpie/cwplans/tools/lds-harvest-auto.mjs register",
+      "command": "node cwplans/tools/lds-harvest-auto.mjs plan [id ...]; NODE_USE_ENV_PROXY=1 node cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]; node cwplans/tools/lds-harvest-auto.mjs register",
       "kind": "fetch",
       "used": [
         {
@@ -5434,7 +5434,7 @@
     {
       "id": "join-lds",
       "tool": "tools/join-lds.mjs",
-      "command": "node magpie/cwplans/tools/join-lds.mjs",
+      "command": "node cwplans/tools/join-lds.mjs",
       "kind": "join",
       "used": [
         {
@@ -5509,7 +5509,7 @@
     {
       "id": "amend-uprns",
       "tool": "tools/amend-uprns.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/amend-uprns.mjs cultural-infrastructure [--refresh]; generic: node magpie/cwplans/tools/amend-uprns.mjs --in <file> --uprn-field <f> --id-field <f[,f]> [--ref a:<file>]... [--ref c:<file>]... [--open-uprn <zip|csv>] [--footprints <osm-clip.json.gz>] --out <copy> --amendments <json>",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/amend-uprns.mjs cultural-infrastructure [--refresh]; generic: node cwplans/tools/amend-uprns.mjs --in <file> --uprn-field <f> --id-field <f[,f]> [--ref a:<file>]... [--ref c:<file>]... [--open-uprn <zip|csv>] [--footprints <osm-clip.json.gz>] --out <copy> --amendments <json>",
       "kind": "transform",
       "used": [
         {
@@ -5609,7 +5609,7 @@
     {
       "id": "check-fp16-shaders",
       "tool": "tools/check-fp16-shaders.mjs",
-      "command": "node magpie/cwplans/tools/check-fp16-shaders.mjs [--no-browser]",
+      "command": "node cwplans/tools/check-fp16-shaders.mjs [--no-browser]",
       "kind": "check",
       "used": [
         {
@@ -5640,7 +5640,7 @@
     {
       "id": "check-line-styles",
       "tool": "tools/check-line-styles.mjs",
-      "command": "node magpie/cwplans/tools/check-line-styles.mjs [--out DIR] [--style lines|vectrex]",
+      "command": "node cwplans/tools/check-line-styles.mjs [--out DIR] [--style lines|vectrex]",
       "kind": "check",
       "used": [
         {
@@ -5670,7 +5670,7 @@
     {
       "id": "fetch-crown-lighting",
       "tool": "tools/fetch-crown-lighting.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs [--press] [--commons] [--thumbs] [--no-fetch]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs [--press] [--commons] [--thumbs] [--no-fetch]",
       "kind": "fetch",
       "used": [
         {
@@ -5711,7 +5711,7 @@
         "Pages are read only as Internet Archive id_ copies (cwg.com and canarywharf.com answer scripts with an Imperva challenge; their sitemaps are served and robots.txt allows them). Kept in the committed file: URL, slug date (ddmmyy code at the end of the slug), archive URL, title, published time, the colour words that occur in sentences naming One Canada Square, a pyramid, halo, crown or tower. Page text stays in the local cache.",
         "Commons: a search hit is kept only if its title or description names the place (Canary Wharf, Canada Square, Docklands, Isle of Dogs, West India, Millwall, Blackwall, Cabot Square, Poplar); category members are kept. Use = fact only for CC BY-SA or GFDL; no image is committed.",
         "Politeness: one request at a time; at least 3 s per host for cwg.com and web.archive.org, 2 s for archive.org and the Commons API, 3 s for upload.wikimedia.org; up to 4 tries with backoff (Retry-After, else 10, 30, 90 s, at most 600 s) on 429, 5xx and resets; 2 tries for an archive copy; thumbnails stop at the first refusal (2026-10-04: 429 after 31). Failures are written to data/raw/registry/lighting/log-<date>.txt and to the page status.",
-        "User-Agent glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)."
+        "User-Agent glitchcan-cwplans/0.1 (https://github.com/danbri/londat)."
       ],
       "network": true,
       "deterministic": false,
@@ -5722,7 +5722,7 @@
     {
       "id": "fetch-trees",
       "tool": "tools/build-trees.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-trees.mjs fetch [gla|osgs|tpo|tow ...]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-trees.mjs fetch [gla|osgs|tpo|tow ...]",
       "kind": "fetch",
       "used": [
         {
@@ -5773,7 +5773,7 @@
     {
       "id": "build-trees",
       "tool": "tools/build-trees.mjs",
-      "command": "node --max-old-space-size=6000 magpie/cwplans/tools/build-trees.mjs",
+      "command": "node --max-old-space-size=6000 cwplans/tools/build-trees.mjs",
       "kind": "derive",
       "used": [
         {
@@ -5825,7 +5825,7 @@
     {
       "id": "drone-flight",
       "tool": "tools/drone-flight.mjs",
-      "command": "node magpie/cwplans/tools/drone-flight.mjs [--out path.json] [--svg plan.svg] [--coverage 480]",
+      "command": "node cwplans/tools/drone-flight.mjs [--out path.json] [--svg plan.svg] [--coverage 480]",
       "kind": "derive",
       "used": [
         {
@@ -5864,7 +5864,7 @@
     {
       "id": "drone-capture",
       "tool": "tools/drone-capture.mjs",
-      "command": "python3 -m http.server 8765 --bind 127.0.0.1 & node magpie/cwplans/tools/drone-capture.mjs --run trial --frames 480",
+      "command": "python3 -m http.server 8765 --bind 127.0.0.1 & node cwplans/tools/drone-capture.mjs --run trial --frames 480",
       "kind": "render",
       "used": [
         {
@@ -5953,7 +5953,7 @@
     {
       "id": "train-splat",
       "tool": "tools/train-splat.sh",
-      "command": "magpie/cwplans/tools/train-splat.sh DATASET [-n 7000] [-d 2] [--sh 3] [--name NAME]",
+      "command": "cwplans/tools/train-splat.sh DATASET [-n 7000] [-d 2] [--sh 3] [--name NAME]",
       "kind": "derive",
       "used": [
         {
@@ -6004,7 +6004,7 @@
     {
       "id": "ply-to-splat",
       "tool": "tools/ply-to-splat.mjs",
-      "command": "node magpie/cwplans/tools/ply-to-splat.mjs in.ply out.splat",
+      "command": "node cwplans/tools/ply-to-splat.mjs in.ply out.splat",
       "kind": "export",
       "used": [
         {
@@ -6033,7 +6033,7 @@
     {
       "id": "publish-trained-splat",
       "tool": "tools/publish-trained-splat.mjs",
-      "command": "node magpie/cwplans/tools/publish-trained-splat.mjs data/raw/drone/<run>/<name>.splat <set-name> \"<title>\"",
+      "command": "node cwplans/tools/publish-trained-splat.mjs data/raw/drone/<run>/<name>.splat <set-name> \"<title>\"",
       "kind": "derive",
       "used": [
         {
@@ -6082,7 +6082,7 @@
     {
       "id": "audit-quality",
       "tool": "tools/audit-quality.mjs",
-      "command": "node magpie/cwplans/tools/audit-quality.mjs",
+      "command": "node cwplans/tools/audit-quality.mjs",
       "kind": "audit",
       "used": [
         {
@@ -6184,7 +6184,7 @@
     {
       "id": "check-feeds",
       "tool": "feeds/check-feeds.mjs",
-      "command": "node magpie/cwplans/feeds/check-feeds.mjs [source ids] [--json] [--live]",
+      "command": "node cwplans/feeds/check-feeds.mjs [source ids] [--json] [--live]",
       "kind": "check",
       "used": [
         {
@@ -6213,7 +6213,7 @@
     {
       "id": "check-events",
       "tool": "feeds/check-events.mjs",
-      "command": "node magpie/cwplans/feeds/check-events.mjs [source ids] [--json] [--live] [--url URL]",
+      "command": "node cwplans/feeds/check-events.mjs [source ids] [--json] [--live] [--url URL]",
       "kind": "check",
       "used": [
         {
@@ -6242,7 +6242,7 @@
     {
       "id": "discover-feeds",
       "tool": "tools/discover-feeds.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs [seed|cc|autodiscover|verify|build] [--refresh] [--no-merge] (cc needs CC_LIBS=<dir with hyparquet>)",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs [seed|cc|autodiscover|verify|build] [--refresh] [--no-merge] (cc needs CC_LIBS=<dir with hyparquet>)",
       "kind": "fetch",
       "used": [
         {
@@ -6318,7 +6318,7 @@
     {
       "id": "fetch-live",
       "tool": "tools/fetch-live.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs [bikes lifts crowding jamcams ukpn overflows notams helicopters] [--no-fetch]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs [bikes lifts crowding jamcams ukpn overflows notams helicopters] [--no-fetch]",
       "kind": "fetch",
       "used": [
         {
@@ -6418,7 +6418,7 @@
     {
       "id": "check-data-register",
       "tool": "tools/check-data-register.mjs",
-      "command": "node magpie/cwplans/tools/check-data-register.mjs",
+      "command": "node cwplans/tools/check-data-register.mjs",
       "kind": "check",
       "used": [
         {
@@ -6468,22 +6468,22 @@
       "note": "Child process: git ls-files. Run last, after every rebuild.",
       "area": "provenance"
     },
-    {"id": "check-factoidal", "area": "structured", "tool": "tools/check-factoidal.mjs", "command": "node magpie/cwplans/tools/check-factoidal.mjs", "kind": "check", "used": [{"source": "factoidal", "endpoint": "npm @factoidal/core (local)", "request": "parse, query (SELECT, CONSTRUCT), serialize, toNQuads on tiny in-memory cases"}], "generated": [], "method": "Re-tests the known @factoidal/core faults and behaviours on tiny in-memory datasets and prints STILL or FIXED for each: BNODE() labels with a colon, serialize() dropping their quads, parse() of toNQuads() dropping lines, SELECT BNODE() values with a _: prefix, blank nodes renamed per query, no default-graph view of named graphs. Also the store points of Factoidal issue 697: one block per (predicate, graph), zone keys sorted by length first, a COUNT over a subquery planning every block (small stores packed in a temporary folder and removed), the unexported README import path, and an IRI with several \"#\" accepted.", "rules": ["Run after every Factoidal upgrade; remove a workaround in web-idioms.mjs or elsewhere only when its line says FIXED.", "No network; the store checks pack small stores in a temporary folder and remove it; nothing in the repository is written."], "network": false, "deterministic": true, "after": []},
-    {"id": "probe-cwg-map", "area": "brands", "tool": "tools/probe-cwg-map.mjs", "command": "node magpie/cwplans/tools/probe-cwg-map.mjs", "kind": "fetch", "used": [{"source": "livingmap-cwg"}], "generated": [], "method": "Loads https://map.canarywharf.com/ twice (floor 0, floor -1) in headless Chromium and logs every request (method, type, URL, request headers, POST body, status, response headers) and saves JSON and vector-tile bodies to data/raw/cwg-map/ (not committed).", "rules": ["robots.txt of map.canarywharf.com allows all (checked 2026-10-06).", "One run is two page loads; no harvest loop.", "Nothing from the service is committed until the owner decides (source livingmap-cwg)."], "network": true, "deterministic": false, "after": []},
-    {"id": "archive-cwg-mallmap", "area": "brands", "tool": "tools/archive-cwg-mallmap.mjs", "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/archive-cwg-mallmap.mjs [--only=tiles|api|media|app]", "kind": "fetch", "used": [{"source": "livingmap-cwg"}, {"source": "osm"}], "generated": [], "method": "Fetches, as served, the app shell of map.canarywharf.com, the map config, the GET API answers (feature-objects, feature-names, geofences, styles, each config search tag, /features?long_name= for every feature name), the sprite and language file, every indoor vector tile at zoom 0-19 and basemap tile at zoom 0-16 whose square meets the config extents, and every popup image named by tiles or features; writes the bytes unchanged under danbri/londat third_party/cwg/mallmap/ and a manifest.json (URL, file, status, type, size, SHA-256, time).", "rules": ["Owner, 2026-10-06: archive everything as is, for reference and accessibility design study; scoping phase.", "robots.txt of map.canarywharf.com allows all; one request at a time per host, 1.1 s apart (API hosts) or 0.5 s (the tile CDN); no key, no login; the page's Origin and Referer are sent.", "Not fetched: Gotham font glyphs (commercial typeface), session and event POSTs (usage logging), third-party scripts.", "Restartable: a URL in the manifest with a file, a 204 or a 404 is not fetched again."], "network": true, "deterministic": false, "after": ["probe-cwg-map"]},
-    {"id": "cwg-maps-tmi", "area": "brands", "tool": "tools/cwg-maps-tmi.mjs", "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/cwg-maps-tmi.mjs [--only=store|access|trail|art]", "kind": "derive", "used": [{"source": "cwg-maps"}, {"file": "registry/sources/brands/cwg-directory.json"}], "generated": [], "method": "Renders the store guide pages with pdf.js and OCRs them in tiles with tesseract.js (the text is vector outlines); reads the text layers of the access map, art trail and art guide; fits the map grids; writes normalised entries (section, name, grid squares, level, OCR text and confidence, bbox) and the raw OCR words to danbri/londat third_party/cwg/_TMI.", "rules": ["Never invent a name: a fuzzy match to a CWG directory title is recorded as name_matched beside the raw OCR text.", "Errors printed in the guide are kept as printed.", "Measured on a 100-entry sample by eye: 99 raw lines exact, all grid squares right; cross-checked with native Tesseract 5.3.4 once."], "network": true, "deterministic": false, "after": []},
-    {"id": "cwg-mallmap-tmi", "area": "brands", "tool": "tools/cwg-mallmap-tmi.mjs", "command": "node magpie/cwplans/tools/cwg-mallmap-tmi.mjs", "kind": "derive", "used": [{"source": "livingmap-cwg"}], "generated": [], "method": "Decodes every archived indoor tile (zoom 12 and above); for each feature takes the geometry from the most precise zoom at which it lies whole in one tile, else its pieces at the lowest zoom as a Multi* geometry; writes one GeoJSON FeatureCollection per floor and one for outdoor features, the API feature records (one per id) and the place list to danbri/londat third_party/cwg/_TMI/mallmap.", "rules": ["Properties are kept as served; zoom_used and whole are added.", "Coordinates are rounded to 7 decimal places (about 1 cm)."], "network": false, "deterministic": true, "after": ["archive-cwg-mallmap"]},
-    {"id": "build-kgx", "area": "structured", "tool": "tools/build-kgx.mjs", "command": "node magpie/cwplans/tools/build-kgx.mjs [--no-store]", "kind": "derive", "used": [{"file": "docklands/facts.json"}, {"file": "registry/buildings.json"}, {"file": "atlas/data/atlas.json"}, {"file": "registry/sources/brands/cwg-directory-typed.nq"}, {"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/sources/brands/cwg-hours.json"}, {"file": "../../third_party/cwplans-structured-data/idioms/canonical.nq.gz"}, {"file": "../../third_party/cwplans-structured-data/coref/sameas.nq.gz"}, {"file": "../../third_party/cwplans-structured-data/coref/descriptions.json"}, {"file": "pipeline.jsonld"}, {"note": "graph versions named in kgx/external-heads.json (coverage-imagery from probe-imagery-coverage)", "source": "kgx"}, {"source": "livingmap-cwg"}, {"source": "cwg-maps"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse, serialize (N-Quads), jsonldToRdf, fn.hash (RDFC-1.0, for graphs with blank nodes), factoidal pack --layout ibk5 and activate (Shardborough)"}], "generated": [], "method": "Every step is a logged operation (tools/kgx-ops.mjs, skill cwplans-dataflow) over inputs fixed by content hash. Lift operations turn the source files into one graph version each (facts, buildings with WKT outlines, occupants, cwg with daily opening-hours specifications, web, coref per key rule, mallmap units and facilities, storeguide entries, pipeline provenance from pipeline.jsonld with blank nodes skolemized); partition-by-subject-key cuts each version into parts of about 3,000 triples in Shardborough zone-key order; describe-graph-versions makes meta (void:Dataset per version and part, heads); lift-activity-log makes log; pack-shardborough packs the parts, meta and log (ibk5) and activates the generation. Writes graphs/<name>/<hash16>.nq.gz, log/activities.jsonl and versions.jsonl, heads.json, current.nq.gz, manifest.json and shardborough/ into danbri/londat kgx/. An activity already in the log is not run again; a second run gives the same generation.", "rules": ["No blank nodes: every node has an IRI under https://danbri.github.io/londat/kgx/ (the pipeline graph is skolemized).", "serialize() output is checked to have one line per distinct quad; lines read back must hash to their version.", "Graph versions are immutable and named by their RDFC-1.0 hash; an activity is named by (operation, operation version, input IRIs, parameters) and is not run again.", "Bump an operation's version when its code changes.", "The log graph leaves out log lifts and store packs, so an unchanged pipeline gives the same store generation.", "Only the current Shardborough generation is kept in the folder; git keeps history."], "network": false, "deterministic": false, "after": ["cwg-hours", "web-idioms", "web-coref", "cwg-maps-tmi", "cwg-mallmap-tmi", "probe-imagery-coverage", "contrib-photos", "key-model-buildings", "compose-facade-atlas"]},
-    {"id": "kgx-query", "area": "structured", "tool": "tools/kgx-query.mjs", "command": "node magpie/cwplans/tools/kgx-query.mjs <file.rq | SPARQL> [store dir]", "kind": "check", "used": [{"source": "kgx"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "openStore, openStoreHandle ({ sparql }), handle query"}], "generated": [], "method": "Opens a store handle on the kgx Shardborough store with the artifacts the query's plan names (no 64-block cap) and prints the answer as tab-separated rows.", "rules": ["Opens only the artifacts the query's plan names.", "Read-only: writes nothing."], "network": false, "deterministic": true, "after": ["build-kgx"]},
-    {"id": "check-kgx-store", "area": "structured", "tool": "tools/check-kgx-store.mjs", "command": "node magpie/cwplans/tools/check-kgx-store.mjs [--write]", "kind": "check", "used": [{"source": "kgx"}, {"source": "factoidal", "endpoint": "npm @factoidal/core (local)", "request": "parse, query (in memory); openStore, openStoreHandle"}], "generated": [{"source": "kgx", "note": "--write: londat kgx/checks/store-vs-memory.json"}], "method": "Rebuilds the store's input from the part versions, meta and log (its SHA-256 prefix must equal the generation name), runs every kgx/queries/*.rq and cross-subject joins through a store handle and through the in-memory engine, and compares the solution multisets; the joins also on the data with one graph per source.", "rules": ["Exit 1 on any difference between the store and the in-memory engine.", "Refuses a store that was not packed from the current versions."], "network": false, "deterministic": true, "after": ["build-kgx"]},
-    {"id": "probe-imagery-coverage", "area": "structured", "tool": "tools/probe-imagery-coverage.mjs", "command": "node magpie/cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]", "kind": "fetch", "used": [{"source": "openaerialmap"}, {"source": "panoramax"}, {"source": "kartaview"}, {"source": "ea-survey-catalogue"}, {"source": "mapillary"}], "generated": [{"file": "coverage/raw/*/openaerialmap-*.json"}, {"file": "coverage/raw/*/ea-survey-*.json"}, {"file": "coverage/raw/*/mapillary.json"}, {"local": "data/raw/coverage/<date>/panoramax-*.json, kartaview-*.json (CC BY-SA: not committed)"}, {"source": "kgx"}], "method": "For each study area box (Canary Wharf, Isle of Dogs south, Limehouse, Rotherhithe / SE16, the zone): OpenAerialMap /meta by box; Panoramax /api/search by box, split in quarters while an answer is full (500); KartaView /2.0/photo at the points of a 200 m grid with a 145 m radius (areas only), halving the radius on a timeout; EA survey catalogue search by polygon. Answers are cut to the fields used. Then the operation lift-imagery-coverage (kgx-ops Flow) turns the answer files into the kgx graph version coverage-imagery and names it in kgx/external-heads.json.", "rules": ["Share-alike sources (Panoramax, KartaView, Mapillary) give counts only; their raw answers stay local.", "Uploader and photographer names are not kept.", "About one request a second; KartaView at most 150 items a page."], "network": true, "deterministic": false, "after": []},
-    {"id": "contrib-photos", "area": "structured", "tool": "tools/contrib-photos.mjs", "command": "FACADE_PY=<venv python> node magpie/cwplans/tools/contrib-photos.mjs <set>", "kind": "derive", "used": [{"source": "contrib-photos"}, {"source": "osm", "note": "names and tags of the identified buildings, quoted in photos.json"}, {"file": "registry/sources/facades/tools/facade.py"}, {"file": "registry/sources/facades/tools/measure.py"}, {"file": "tools/facade-tile.py"}], "generated": [{"source": "kgx", "note": "graphs facade-patches-<set> and photos-<set>; rectified patches in londat data/images/contrib/<set>/rect/"}], "method": "Operation rectify-facade-patches: for each facade region in photos.json, facade.py rectifies it (LSD segments, RANSAC vanishing points, homography) and measure.py cuts the measuring box and gives bay and floor periods (autocorrelation) and three colours (k-means in Lab); the patch is written to rect/<id>.jpg. Operation lift-contrib-photos: photos.json (identifications with evidence and confidence, judged facade notes, model heights) and the patch graph give a schema.org Photograph per photo and a node per building. Both graphs are named in kgx/external-heads.json. Operation cut-facade-tiles: the photos.json tiles (a cut of a rectified patch, a mirrored half for a symmetric face, or a vector pattern in metres with judged colours) -> 256 px PNG tiles (and SVG for a pattern) in tiles/ and the graph facade-tiles-<set>.", "rules": ["Inputs by SHA-256: the photos, photos.json, facade.py and measure.py.", "Identifications and facade patterns are judgement, written in photos.json with their evidence; the tool only lifts them.", "Measured colours are as photographed (shade, backlight)."], "network": false, "deterministic": true, "after": []},
-    {"id": "key-model-buildings", "area": "structured", "tool": "tools/key-model-buildings.mjs", "command": "node --max-old-space-size=6000 magpie/cwplans/tools/key-model-buildings.mjs", "kind": "derive", "used": [{"file": "docklands/data/area.js"}, {"local": "data/raw/docklands/osm-clip.json.gz"}, {"local": "data/raw/docklands/greater_london-latest.osm.pbf"}, {"file": "atlas/data/atlas.json"}, {"source": "osm"}], "generated": [{"file": "docklands/data/building-keys.json"}, {"source": "kgx", "note": "graph model-building-keys (a head, not in the browser store)"}], "method": "Operation key-model-buildings: every OSM building and building:part outline of the clip is put through the build's own steps (build-docklands.mjs polysOf, toRings with the focus-box tolerance, poly) and its encoded outline compared with the model's; the build's order (outlines without parts, then parts) aligns the model list with the OSM elements, so equal outlines (a multipolygon's outer that is also a building way) get the right element. Tags come from the full extract (osmium getid; the clip keeps no addresses). The graph holds, per OSM element, its OSM page, model indices, parent building of a part, registry link from the atlas, and the OSM name, house name, address, postcode, building type other than yes, levels and Wikidata item. building-keys.json is its projection for the page, with the SHA-256 of area.js and a fingerprint the page checks.", "rules": ["Fails when a model building has no OSM outline in the clip (the clip is not the one area.js was built from).", "Rerun after build-docklands.mjs: the indices are for one area.js."], "network": false, "deterministic": true, "after": ["build-docklands", "build-atlas"]},
-    {"id": "compose-facade-atlas", "area": "structured", "tool": "tools/compose-facade-atlas.mjs", "command": "FACADE_PY=<python with Pillow> node magpie/cwplans/tools/compose-facade-atlas.mjs", "kind": "derive", "used": [{"file": "docklands/data/tex/facades-registry.jpg"}, {"file": "docklands/data/tex/facades-registry.json"}, {"file": "docklands/data/area.js"}, {"file": "tools/facade-tile.py"}, {"source": "kgx", "note": "graphs facade-tiles-<set> and model-building-keys"}, {"source": "contrib-photos"}], "generated": [{"file": "docklands/data/tex/facades.jpg"}, {"file": "docklands/data/tex/facades.json"}, {"source": "kgx", "note": "graph facade-atlas"}], "method": "Operation compose-facade-atlas: the registry atlas (slots 0 to 15) and every contributed tile in the next slots (32 in all); each contributed tile's buildings are keyed by OSM id with the model indices of this area.js (from model-building-keys, parts included) and a WGS84 point inside the building for a rebuilt model.", "rules": ["Fails past 32 slots (the atlas and the shader hold 32).", "Rerun after build-facade-atlas.py, contrib-photos.mjs or key-model-buildings.mjs."], "network": false, "deterministic": true, "after": ["build-facade-atlas", "contrib-photos", "key-model-buildings"]},
+    {"id": "check-factoidal", "area": "structured", "tool": "tools/check-factoidal.mjs", "command": "node cwplans/tools/check-factoidal.mjs", "kind": "check", "used": [{"source": "factoidal", "endpoint": "npm @factoidal/core (local)", "request": "parse, query (SELECT, CONSTRUCT), serialize, toNQuads on tiny in-memory cases"}], "generated": [], "method": "Re-tests the known @factoidal/core faults and behaviours on tiny in-memory datasets and prints STILL or FIXED for each: BNODE() labels with a colon, serialize() dropping their quads, parse() of toNQuads() dropping lines, SELECT BNODE() values with a _: prefix, blank nodes renamed per query, no default-graph view of named graphs. Also the store points of Factoidal issue 697: one block per (predicate, graph), zone keys sorted by length first, a COUNT over a subquery planning every block (small stores packed in a temporary folder and removed), the unexported README import path, and an IRI with several \"#\" accepted.", "rules": ["Run after every Factoidal upgrade; remove a workaround in web-idioms.mjs or elsewhere only when its line says FIXED.", "No network; the store checks pack small stores in a temporary folder and remove it; nothing in the repository is written."], "network": false, "deterministic": true, "after": []},
+    {"id": "probe-cwg-map", "area": "brands", "tool": "tools/probe-cwg-map.mjs", "command": "node cwplans/tools/probe-cwg-map.mjs", "kind": "fetch", "used": [{"source": "livingmap-cwg"}], "generated": [], "method": "Loads https://map.canarywharf.com/ twice (floor 0, floor -1) in headless Chromium and logs every request (method, type, URL, request headers, POST body, status, response headers) and saves JSON and vector-tile bodies to data/raw/cwg-map/ (not committed).", "rules": ["robots.txt of map.canarywharf.com allows all (checked 2026-10-06).", "One run is two page loads; no harvest loop.", "Nothing from the service is committed until the owner decides (source livingmap-cwg)."], "network": true, "deterministic": false, "after": []},
+    {"id": "archive-cwg-mallmap", "area": "brands", "tool": "tools/archive-cwg-mallmap.mjs", "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/archive-cwg-mallmap.mjs [--only=tiles|api|media|app]", "kind": "fetch", "used": [{"source": "livingmap-cwg"}, {"source": "osm"}], "generated": [], "method": "Fetches, as served, the app shell of map.canarywharf.com, the map config, the GET API answers (feature-objects, feature-names, geofences, styles, each config search tag, /features?long_name= for every feature name), the sprite and language file, every indoor vector tile at zoom 0-19 and basemap tile at zoom 0-16 whose square meets the config extents, and every popup image named by tiles or features; writes the bytes unchanged under danbri/londat third_party/cwg/mallmap/ and a manifest.json (URL, file, status, type, size, SHA-256, time).", "rules": ["Owner, 2026-10-06: archive everything as is, for reference and accessibility design study; scoping phase.", "robots.txt of map.canarywharf.com allows all; one request at a time per host, 1.1 s apart (API hosts) or 0.5 s (the tile CDN); no key, no login; the page's Origin and Referer are sent.", "Not fetched: Gotham font glyphs (commercial typeface), session and event POSTs (usage logging), third-party scripts.", "Restartable: a URL in the manifest with a file, a 204 or a 404 is not fetched again."], "network": true, "deterministic": false, "after": ["probe-cwg-map"]},
+    {"id": "cwg-maps-tmi", "area": "brands", "tool": "tools/cwg-maps-tmi.mjs", "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/cwg-maps-tmi.mjs [--only=store|access|trail|art]", "kind": "derive", "used": [{"source": "cwg-maps"}, {"file": "registry/sources/brands/cwg-directory.json"}], "generated": [], "method": "Renders the store guide pages with pdf.js and OCRs them in tiles with tesseract.js (the text is vector outlines); reads the text layers of the access map, art trail and art guide; fits the map grids; writes normalised entries (section, name, grid squares, level, OCR text and confidence, bbox) and the raw OCR words to danbri/londat third_party/cwg/_TMI.", "rules": ["Never invent a name: a fuzzy match to a CWG directory title is recorded as name_matched beside the raw OCR text.", "Errors printed in the guide are kept as printed.", "Measured on a 100-entry sample by eye: 99 raw lines exact, all grid squares right; cross-checked with native Tesseract 5.3.4 once."], "network": true, "deterministic": false, "after": []},
+    {"id": "cwg-mallmap-tmi", "area": "brands", "tool": "tools/cwg-mallmap-tmi.mjs", "command": "node cwplans/tools/cwg-mallmap-tmi.mjs", "kind": "derive", "used": [{"source": "livingmap-cwg"}], "generated": [], "method": "Decodes every archived indoor tile (zoom 12 and above); for each feature takes the geometry from the most precise zoom at which it lies whole in one tile, else its pieces at the lowest zoom as a Multi* geometry; writes one GeoJSON FeatureCollection per floor and one for outdoor features, the API feature records (one per id) and the place list to danbri/londat third_party/cwg/_TMI/mallmap.", "rules": ["Properties are kept as served; zoom_used and whole are added.", "Coordinates are rounded to 7 decimal places (about 1 cm)."], "network": false, "deterministic": true, "after": ["archive-cwg-mallmap"]},
+    {"id": "build-kgx", "area": "structured", "tool": "tools/build-kgx.mjs", "command": "node cwplans/tools/build-kgx.mjs [--no-store]", "kind": "derive", "used": [{"file": "docklands/facts.json"}, {"file": "registry/buildings.json"}, {"file": "atlas/data/atlas.json"}, {"file": "registry/sources/brands/cwg-directory-typed.nq"}, {"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/sources/brands/cwg-hours.json"}, {"file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"}, {"file": "../third_party/cwplans-structured-data/coref/sameas.nq.gz"}, {"file": "../third_party/cwplans-structured-data/coref/descriptions.json"}, {"file": "pipeline.jsonld"}, {"note": "graph versions named in kgx/external-heads.json (coverage-imagery from probe-imagery-coverage)", "source": "kgx"}, {"source": "livingmap-cwg"}, {"source": "cwg-maps"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse, serialize (N-Quads), jsonldToRdf, fn.hash (RDFC-1.0, for graphs with blank nodes), factoidal pack --layout ibk5 and activate (Shardborough)"}], "generated": [], "method": "Every step is a logged operation (tools/kgx-ops.mjs, skill cwplans-dataflow) over inputs fixed by content hash. Lift operations turn the source files into one graph version each (facts, buildings with WKT outlines, occupants, cwg with daily opening-hours specifications, web, coref per key rule, mallmap units and facilities, storeguide entries, pipeline provenance from pipeline.jsonld with blank nodes skolemized); partition-by-subject-key cuts each version into parts of about 3,000 triples in Shardborough zone-key order; describe-graph-versions makes meta (void:Dataset per version and part, heads); lift-activity-log makes log; pack-shardborough packs the parts, meta and log (ibk5) and activates the generation. Writes graphs/<name>/<hash16>.nq.gz, log/activities.jsonl and versions.jsonl, heads.json, current.nq.gz, manifest.json and shardborough/ into danbri/londat kgx/. An activity already in the log is not run again; a second run gives the same generation.", "rules": ["No blank nodes: every node has an IRI under https://danbri.github.io/londat/kgx/ (the pipeline graph is skolemized).", "serialize() output is checked to have one line per distinct quad; lines read back must hash to their version.", "Graph versions are immutable and named by their RDFC-1.0 hash; an activity is named by (operation, operation version, input IRIs, parameters) and is not run again.", "Bump an operation's version when its code changes.", "The log graph leaves out log lifts and store packs, so an unchanged pipeline gives the same store generation.", "Only the current Shardborough generation is kept in the folder; git keeps history."], "network": false, "deterministic": false, "after": ["cwg-hours", "web-idioms", "web-coref", "cwg-maps-tmi", "cwg-mallmap-tmi", "probe-imagery-coverage", "contrib-photos", "key-model-buildings", "compose-facade-atlas"]},
+    {"id": "kgx-query", "area": "structured", "tool": "tools/kgx-query.mjs", "command": "node cwplans/tools/kgx-query.mjs <file.rq | SPARQL> [store dir]", "kind": "check", "used": [{"source": "kgx"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "openStore, openStoreHandle ({ sparql }), handle query"}], "generated": [], "method": "Opens a store handle on the kgx Shardborough store with the artifacts the query's plan names (no 64-block cap) and prints the answer as tab-separated rows.", "rules": ["Opens only the artifacts the query's plan names.", "Read-only: writes nothing."], "network": false, "deterministic": true, "after": ["build-kgx"]},
+    {"id": "check-kgx-store", "area": "structured", "tool": "tools/check-kgx-store.mjs", "command": "node cwplans/tools/check-kgx-store.mjs [--write]", "kind": "check", "used": [{"source": "kgx"}, {"source": "factoidal", "endpoint": "npm @factoidal/core (local)", "request": "parse, query (in memory); openStore, openStoreHandle"}], "generated": [{"source": "kgx", "note": "--write: londat kgx/checks/store-vs-memory.json"}], "method": "Rebuilds the store's input from the part versions, meta and log (its SHA-256 prefix must equal the generation name), runs every kgx/queries/*.rq and cross-subject joins through a store handle and through the in-memory engine, and compares the solution multisets; the joins also on the data with one graph per source.", "rules": ["Exit 1 on any difference between the store and the in-memory engine.", "Refuses a store that was not packed from the current versions."], "network": false, "deterministic": true, "after": ["build-kgx"]},
+    {"id": "probe-imagery-coverage", "area": "structured", "tool": "tools/probe-imagery-coverage.mjs", "command": "node cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]", "kind": "fetch", "used": [{"source": "openaerialmap"}, {"source": "panoramax"}, {"source": "kartaview"}, {"source": "ea-survey-catalogue"}, {"source": "mapillary"}], "generated": [{"file": "coverage/raw/*/openaerialmap-*.json"}, {"file": "coverage/raw/*/ea-survey-*.json"}, {"file": "coverage/raw/*/mapillary.json"}, {"local": "data/raw/coverage/<date>/panoramax-*.json, kartaview-*.json (CC BY-SA: not committed)"}, {"source": "kgx"}], "method": "For each study area box (Canary Wharf, Isle of Dogs south, Limehouse, Rotherhithe / SE16, the zone): OpenAerialMap /meta by box; Panoramax /api/search by box, split in quarters while an answer is full (500); KartaView /2.0/photo at the points of a 200 m grid with a 145 m radius (areas only), halving the radius on a timeout; EA survey catalogue search by polygon. Answers are cut to the fields used. Then the operation lift-imagery-coverage (kgx-ops Flow) turns the answer files into the kgx graph version coverage-imagery and names it in kgx/external-heads.json.", "rules": ["Share-alike sources (Panoramax, KartaView, Mapillary) give counts only; their raw answers stay local.", "Uploader and photographer names are not kept.", "About one request a second; KartaView at most 150 items a page."], "network": true, "deterministic": false, "after": []},
+    {"id": "contrib-photos", "area": "structured", "tool": "tools/contrib-photos.mjs", "command": "FACADE_PY=<venv python> node cwplans/tools/contrib-photos.mjs <set>", "kind": "derive", "used": [{"source": "contrib-photos"}, {"source": "osm", "note": "names and tags of the identified buildings, quoted in photos.json"}, {"file": "registry/sources/facades/tools/facade.py"}, {"file": "registry/sources/facades/tools/measure.py"}, {"file": "tools/facade-tile.py"}], "generated": [{"source": "kgx", "note": "graphs facade-patches-<set> and photos-<set>; rectified patches in londat data/images/contrib/<set>/rect/"}], "method": "Operation rectify-facade-patches: for each facade region in photos.json, facade.py rectifies it (LSD segments, RANSAC vanishing points, homography) and measure.py cuts the measuring box and gives bay and floor periods (autocorrelation) and three colours (k-means in Lab); the patch is written to rect/<id>.jpg. Operation lift-contrib-photos: photos.json (identifications with evidence and confidence, judged facade notes, model heights) and the patch graph give a schema.org Photograph per photo and a node per building. Both graphs are named in kgx/external-heads.json. Operation cut-facade-tiles: the photos.json tiles (a cut of a rectified patch, a mirrored half for a symmetric face, or a vector pattern in metres with judged colours) -> 256 px PNG tiles (and SVG for a pattern) in tiles/ and the graph facade-tiles-<set>.", "rules": ["Inputs by SHA-256: the photos, photos.json, facade.py and measure.py.", "Identifications and facade patterns are judgement, written in photos.json with their evidence; the tool only lifts them.", "Measured colours are as photographed (shade, backlight)."], "network": false, "deterministic": true, "after": []},
+    {"id": "key-model-buildings", "area": "structured", "tool": "tools/key-model-buildings.mjs", "command": "node --max-old-space-size=6000 cwplans/tools/key-model-buildings.mjs", "kind": "derive", "used": [{"file": "docklands/data/area.js"}, {"local": "data/raw/docklands/osm-clip.json.gz"}, {"local": "data/raw/docklands/greater_london-latest.osm.pbf"}, {"file": "atlas/data/atlas.json"}, {"source": "osm"}], "generated": [{"file": "docklands/data/building-keys.json"}, {"source": "kgx", "note": "graph model-building-keys (a head, not in the browser store)"}], "method": "Operation key-model-buildings: every OSM building and building:part outline of the clip is put through the build's own steps (build-docklands.mjs polysOf, toRings with the focus-box tolerance, poly) and its encoded outline compared with the model's; the build's order (outlines without parts, then parts) aligns the model list with the OSM elements, so equal outlines (a multipolygon's outer that is also a building way) get the right element. Tags come from the full extract (osmium getid; the clip keeps no addresses). The graph holds, per OSM element, its OSM page, model indices, parent building of a part, registry link from the atlas, and the OSM name, house name, address, postcode, building type other than yes, levels and Wikidata item. building-keys.json is its projection for the page, with the SHA-256 of area.js and a fingerprint the page checks.", "rules": ["Fails when a model building has no OSM outline in the clip (the clip is not the one area.js was built from).", "Rerun after build-docklands.mjs: the indices are for one area.js."], "network": false, "deterministic": true, "after": ["build-docklands", "build-atlas"]},
+    {"id": "compose-facade-atlas", "area": "structured", "tool": "tools/compose-facade-atlas.mjs", "command": "FACADE_PY=<python with Pillow> node cwplans/tools/compose-facade-atlas.mjs", "kind": "derive", "used": [{"file": "docklands/data/tex/facades-registry.jpg"}, {"file": "docklands/data/tex/facades-registry.json"}, {"file": "docklands/data/area.js"}, {"file": "tools/facade-tile.py"}, {"source": "kgx", "note": "graphs facade-tiles-<set> and model-building-keys"}, {"source": "contrib-photos"}], "generated": [{"file": "docklands/data/tex/facades.jpg"}, {"file": "docklands/data/tex/facades.json"}, {"source": "kgx", "note": "graph facade-atlas"}], "method": "Operation compose-facade-atlas: the registry atlas (slots 0 to 15) and every contributed tile in the next slots (32 in all); each contributed tile's buildings are keyed by OSM id with the model indices of this area.js (from model-building-keys, parts included) and a WGS84 point inside the building for a rebuilt model.", "rules": ["Fails past 32 slots (the atlas and the shader hold 32).", "Rerun after build-facade-atlas.py, contrib-photos.mjs or key-model-buildings.mjs."], "network": false, "deterministic": true, "after": ["build-facade-atlas", "contrib-photos", "key-model-buildings"]},
     {
       "id": "check-data-register-write",
       "tool": "tools/check-data-register.mjs",
-      "command": "node magpie/cwplans/tools/check-data-register.mjs --write",
+      "command": "node cwplans/tools/check-data-register.mjs --write",
       "kind": "export",
       "used": [
         {
@@ -6531,7 +6531,7 @@
     {
       "id": "fetch-river",
       "tool": "tools/fetch-river.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs [pla-notices crt-notices thames-barrier levels osm-river locks eden-dock royal-docks ea-sondes ea-wims river-bus pla-moorings wikidata-vessels] [--no-fetch] [--list]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs [pla-notices crt-notices thames-barrier levels osm-river locks eden-dock royal-docks ea-sondes ea-wims river-bus pla-moorings wikidata-vessels] [--no-fetch] [--list]",
       "kind": "fetch",
       "used": [
         {
@@ -6684,7 +6684,7 @@
     {
       "id": "solve-photo-sun",
       "tool": "tools/solve-photo-sun.mjs",
-      "command": "node magpie/cwplans/tools/solve-photo-sun.mjs [docklands/reference/day-2026-10-04/points.json]",
+      "command": "node cwplans/tools/solve-photo-sun.mjs [docklands/reference/day-2026-10-04/points.json]",
       "kind": "derive",
       "used": [
         {
@@ -6716,8 +6716,8 @@
     },
     {
       "id": "solve-photo-view",
-      "tool": "../../tools/view-mcp/solve.mjs",
-      "command": "node tools/view-mcp/solve.mjs magpie/cwplans/docklands/reference/plane-2026-10/points.json [--k1] --out magpie/cwplans/docklands/reference/plane-2026-10/solution.json",
+      "tool": "../tools/view-mcp/solve.mjs",
+      "command": "node tools/view-mcp/solve.mjs cwplans/docklands/reference/plane-2026-10/points.json [--k1] --out cwplans/docklands/reference/plane-2026-10/solution.json",
       "kind": "derive",
       "used": [
         {
@@ -6758,7 +6758,7 @@
     {
       "id": "build-construction-index",
       "tool": "tools/build-construction-index.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-construction-index.mjs [--no-fetch] [--refresh]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-construction-index.mjs [--no-fetch] [--refresh]",
       "kind": "derive",
       "used": [
         {
@@ -6838,7 +6838,7 @@
       "id": "fetch-ais",
       "area": "water",
       "tool": "tools/fetch-ais.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-ais.mjs [--listen=600] [--no-fetch]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-ais.mjs [--listen=600] [--no-fetch]",
       "kind": "fetch",
       "used": [
         {
@@ -6869,7 +6869,7 @@
     {
       "id": "walk-portals",
       "tool": "tools/walk-portals.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs <dgu|pdg|boroughs|nomis|onsgeo|national> walk [--refresh]; node magpie/cwplans/tools/walk-portals.mjs <portal> triage; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs <portal> harvest [key ...]; node magpie/cwplans/tools/walk-portals.mjs dgu catalogue; node magpie/cwplans/tools/walk-portals.mjs index",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs <dgu|pdg|boroughs|nomis|onsgeo|national> walk [--refresh]; node cwplans/tools/walk-portals.mjs <portal> triage; NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs <portal> harvest [key ...]; node cwplans/tools/walk-portals.mjs dgu catalogue; node cwplans/tools/walk-portals.mjs index",
       "kind": "fetch",
       "method": "Walks the open-data portals other than the London Datastore that cover the zone, one adapter per portal (tools/portals/*.mjs): reads each catalogue whole (data.gov.uk CKAN: all 59,451 datasets; planning.data.gov.uk: all 222 datasets with a count of the entities that meet the zone; the six zone borough portals; Nomis Census 2021 bulk tables; the ONS Open Geography Portal; the national sources of the brief), triages every dataset in scope by written rules to one final state (harvested, held, listed-for-harvest, deferred, not-relevant, not-open, unavailable, sensitive, walked-elsewhere), and harvests the open, relevant datasets clipped to the 3D model box as GeoJSON (WGS84) or JSON rows with a meta member (source, API, fetch date, licence, attribution, method, counts).",
       "rules": [
@@ -8190,7 +8190,7 @@
       "id": "cache-londat",
       "area": "feeds",
       "tool": "tools/cache-londat.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 LONDAT_DIR=../londat node magpie/cwplans/tools/cache-londat.mjs [--no-fetch] [--themes=bikes,lifts,...] [--vacuum]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/cache-londat.mjs [--no-fetch] [--themes=bikes,lifts,...] [--vacuum]",
       "kind": "fetch",
       "method": "Runs a subset of the existing fetch tools as child processes with their own politeness (fetch-live.mjs bikes lifts crowding ukpn overflows notams; fetch-river.mjs levels river-bus; fetch-ais.mjs --listen=0), asks two small endpoints itself (TfL line status by mode, Open-Meteo current weather; one request each), reads the snapshot JSON the tools wrote, replays this month's run files (cache/runs/) into a working SQLite (node:sqlite, WITHOUT ROWID tables with primary keys on the source's fetch or reading time), inserts the new snapshots and writes only the rows that were new as one small gzip JSON run file. The first run of a new month replays the previous month's run files into cache/live-YYYY-MM.sqlite (VACUUM) and removes them. Then writes cache/latest.json: per theme the newest fetch in compact columns and a 24 h series. --no-fetch appends from the snapshots already in the checkout. Planned to run hourly from a GitHub Actions workflow in danbri/londat (skill cwplans-londat-cache).",
       "rules": [
@@ -8270,7 +8270,7 @@
       "id": "build-zone-gpkg",
       "area": "feeds",
       "tool": "tools/build-zone-gpkg.mjs",
-      "command": "LONDAT_DIR=../londat node magpie/cwplans/tools/build-zone-gpkg.mjs [--core]",
+      "command": "node cwplans/tools/build-zone-gpkg.mjs [--core]",
       "kind": "build",
       "method": "Writes the static zone layers to three GeoPackages for GIS users (zone-core, zone-lds, zone-portals; each under GitHub's 50 MB warning) with GDAL ogr2ogr: the 3D model's buildings (with base, height and the atlas cwb- id), water, greens, roads and railways and EA flood defences in EPSG:27700 (area.js coordinates are x = E - 537550, z = -(N - 180300)); registry building outlines (atlas.json), construction sites and river snapshot points in EPSG:4326; every London Datastore and portal GeoJSON already in londat in its own CRS. Each layer's gpkg_contents.description carries its licence and attribution from data-register.json (ODbL first where OSM data is in it); a table layer_licences lists layer, file, sources, licences and OSM use. Empty geometries are set to NULL (validate_gpkg.py Req 152), then VACUUM.",
       "rules": [
@@ -8299,7 +8299,7 @@
           "file": "data-register.json"
         },
         {
-          "local": "the londat checkout: feeds/london-datastore/**/*.geojson and feeds/portals/**/*.geojson(.gz)"
+          "local": "this checkout: feeds/london-datastore/**/*.geojson and feeds/portals/**/*.geojson(.gz)"
         }
       ],
       "generated": [
@@ -8324,7 +8324,7 @@
       "id": "blender-station-models",
       "area": "underground",
       "tool": "tools/blender-stations/step.sh",
-      "command": "BLENDER_STATIONS_WORK=<work> magpie/cwplans/tools/blender-stations/step.sh <work>/steps/NN-*.py (Blender GUI under Xvfb with the blender-mcp add-on; see skill blender-station-models)",
+      "command": "BLENDER_STATIONS_WORK=<work> cwplans/tools/blender-stations/step.sh <work>/steps/NN-*.py (Blender GUI under Xvfb with the blender-mcp add-on; see skill blender-station-models)",
       "kind": "build",
       "used": [
         {
@@ -8372,7 +8372,7 @@
       "id": "station-mesh",
       "area": "underground",
       "tool": "tools/build-station-mesh.mjs",
-      "command": "node magpie/cwplans/tools/build-station-mesh.mjs --glb <londat>/third_party/tfl/am3d/models/stations-exports.zip",
+      "command": "node cwplans/tools/build-station-mesh.mjs --glb <londat>/third_party/tfl/am3d/models/stations-exports.zip",
       "kind": "build",
       "used": [
         {
@@ -8864,7 +8864,7 @@
     },
     {
       "tool": "tools/londat.mjs",
-      "provides": "Where the files hosted in danbri/londat are on disk: LONDAT_DIR (env, default a londat clone next to the main repository), LONDAT_CW, HOSTED_DIRS (feeds/london-datastore/, feeds/portals/; code and README.md stay here), isHostedPath(rel), cwPath(rel). Used by walk-london-datastore, lds-harvest-auto, join-lds, amend-uprns, build-construction-index, walk-portals and check-data-register."
+      "provides": "Paths of the project in this repository (since 2026-10-07 one checkout holds everything): LONDAT_DIR (env; default the checkout that holds the tool), LONDAT_CW (cwplans/), cwPath(rel) (the file on disk), and HOSTED_DIRS and isHostedPath(rel) (the folders that were in danbri/londat while the rest was in danbri/glitchcan-minigam, 2026-10-05 to 2026-10-07; kept for the tools that name them). Used by walk-london-datastore, lds-harvest-auto, join-lds, amend-uprns, build-construction-index, walk-portals and the tools that write kgx/, data/images/ and third_party/."
     },
     {
       "tool": "tools/lib.mjs",

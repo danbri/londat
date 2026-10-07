@@ -2,14 +2,14 @@
 // Also usable on its own: import { solveCamera, project, landmarks } from './view-lib.mjs'.
 // Model metres of the Docklands 3D page: x = E - 537550, z = -(N - 180300) (north is -z), y = metres above ODN.
 // The method, the error budget and what fails: the photo-view-reconstruction skill
-// (magpie/cwplans/docklands/skills/photo-view-reconstruction/SKILL.md).
+// (cwplans/docklands/skills/photo-view-reconstruction/SKILL.md).
 import { readFileSync } from 'node:fs';
 import { createContext, runInContext } from 'node:vm';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const REPO = join(dirname(fileURLToPath(import.meta.url)), '../..');
-export const DOCK = join(REPO, 'magpie/cwplans/docklands');
+export const DOCK = join(REPO, 'cwplans/docklands');
 const D = Math.PI / 180;
 
 // ---------- the model data (loaded once)

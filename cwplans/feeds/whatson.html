@@ -48,7 +48,7 @@ footer{margin-top:2em;border-top:1px solid var(--line);padding-top:.6em}
 <body>
 <main>
 <h1>Docklands: what's on, and what's closed</h1>
-<p class="small">Across the zone: Tower Hamlets (Canary Wharf, the Isle of Dogs, Poplar, Limehouse, Wapping, Whitechapel), Rotherhithe, Surrey Quays and Bermondsey, Deptford, Greenwich and North Greenwich, the east edge of the City, and the Royal Docks and ExCeL. Snapshots of open public sources, not live: each source's fetch date is in the table at the end. Method and gaps: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/works/README.md">README</a>. Data: <a href="works/works.json">works.json</a>. Other catalogues: <a href="./">data feeds</a>.</p>
+<p class="small">Across the zone: Tower Hamlets (Canary Wharf, the Isle of Dogs, Poplar, Limehouse, Wapping, Whitechapel), Rotherhithe, Surrey Quays and Bermondsey, Deptford, Greenwich and North Greenwich, the east edge of the City, and the Royal Docks and ExCeL. Snapshots of open public sources, not live: each source's fetch date is in the table at the end. Method and gaps: <a href="https://github.com/danbri/londat/blob/main/cwplans/feeds/works/README.md">README</a>. Data: <a href="works/works.json">works.json</a>. Other catalogues: <a href="./">data feeds</a>.</p>
 <div class="tabs" role="tablist">
   <button role="tab" id="tab-on" aria-selected="true" aria-controls="view-on">What's on <span id="n-on" class="small"></span></button>
   <button role="tab" id="tab-cl" aria-selected="false" aria-controls="view-cl">Closures and works <span id="n-cl" class="small"></span></button>
@@ -207,7 +207,7 @@ fetch('works/works.json').then(r => { if (!r.ok) throw new Error('HTTP ' + r.sta
   $('tab-on').addEventListener('click', () => tab('tab-on')); $('tab-cl').addEventListener('click', () => tab('tab-cl'));
   renderOn(); renderCl();
   if (location.hash === '#closures') tab('tab-cl');
-}).catch(e => { $('out-on').innerHTML = `<p class="small">Could not load works.json (${esc(e.message)}). Published page: <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html</a></p>`; });
+}).catch(e => { $('out-on').innerHTML = `<p class="small">Could not load works.json (${esc(e.message)}). Published page: <a href="https://danbri.github.io/londat/cwplans/feeds/whatson.html">https://danbri.github.io/londat/cwplans/feeds/whatson.html</a></p>`; });
 })();
 </script>
 </body>

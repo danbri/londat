@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Regulatory and public registers for the Canary Wharf box and E14: schools, childcare, care and NHS sites,
 // charities, gambling premises, sports sites, pubs and bars. One file per source.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs [source ...] [--refresh]
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-registers.mjs [source ...] [--refresh]
 //   sources: gias cqc ods charities ofsted-childcare gambling active-places fsa-pubs (default: all)
 // out: registry/sources/registers/<source>.json  {meta, records}; raw downloads in data/raw/registers/ (not committed).
 // A raw file fetched earlier is reused unless --refresh is given. Kept: postcode in E14, or a source coordinate
@@ -370,7 +370,7 @@ const SOURCES = {
   async 'fsa-pubs'() {
     const dir = join(RAW, 'registry', 'fhrs');
     const f = existsSync(dir) && readdirSync(dir).filter(x => /^FHRS530-\d{4}-\d{2}-\d{2}\.json\.gz$/.test(x)).sort().at(-1);
-    if (!f) throw new Error('no FHRS snapshot: run node magpie/cwplans/tools/registry-fhrs.mjs first');
+    if (!f) throw new Error('no FHRS snapshot: run node cwplans/tools/registry-fhrs.mjs first');
     const snap = JSON.parse(gunzipSync(readFileSync(join(dir, f))));
     const recs = snap.establishments.filter(e => e.type === 'Pub/bar/nightclub').map(e => place({
       id: `fhrs:${e.id}`, name: e.name, kind: e.type, address: e.address, postcode: e.postcode, status: 'registered food business',

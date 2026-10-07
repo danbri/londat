@@ -5,7 +5,7 @@
 // 1 and 2 px (recall: plot ink with a line-drawing line near it; precision: the other way). Exit 1 on a page error or a
 // value under the floor.
 //
-//   node magpie/cwplans/tools/check-line-styles.mjs [--out DIR] [--style lines|vectrex]
+//   node cwplans/tools/check-line-styles.mjs [--out DIR] [--style lines|vectrex]
 //
 // --out writes, per view, the line drawing, the SVG and a diff (grey both, red plot only, blue line drawing only).
 // Method, measurements and limits: the docklands-3d-page skill, "Line styles".
@@ -14,7 +14,7 @@ import { createServer } from 'http';
 import { join, extname } from 'path';
 import { TOOLS } from './lib.mjs';
 
-const ROOT = join(TOOLS, '..', '..', '..'), arg = k => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
+const ROOT = join(TOOLS, '..', '..'), arg = k => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
 const OUT = arg('--out'), STYLE = arg('--style') || 'lines', FLOOR = { recall2: .95, precision2: .97 };
 // view, CSS size, pixel ratio; the compare runs at pixel ratio 1 (the plot's raster is at most 2400 px wide)
 const VIEWS = [['cw', 1600, 900, 1], ['rotherhithe', 1600, 900, 1], ['cw', 390, 844, 1], ['cw', 390, 844, 3]];
@@ -56,7 +56,7 @@ async function compare(png, svg, cw, ch) {
 for (const [view, W, H, DPR] of VIEWS) {
   const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: DPR }), page = await ctx.newPage(), errors = [];
   page.on('pageerror', e => errors.push(String(e))); page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(`http://127.0.0.1:${port}/magpie/cwplans/docklands/index.html?${STYLE}&view=${view}`, { timeout: 240000 });
+  await page.goto(`http://127.0.0.1:${port}/cwplans/docklands/index.html?${STYLE}&view=${view}`, { timeout: 240000 });
   await page.waitForFunction(() => window.__docklands?.AT && window.__docklands.MVP && globalThis.DocklandsPlot && globalThis.DocklandsLines?.built, null, { timeout: 240000, polling: 500 });
   await page.waitForTimeout(3000);
   const r = await page.evaluate(() => { const D = window.__docklands, cv = document.getElementById('c'), gl = cv.getContext('webgl'), px = new Uint8Array(4), t0 = performance.now();

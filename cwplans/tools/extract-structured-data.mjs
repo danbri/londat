@@ -2,7 +2,7 @@
 // Pull facts out of the structured data that tools/render-structured-data.mjs stored in
 // third_party/cwplans-structured-data/pages/*.jsonl, with Factoidal (npm @factoidal/core): opening hours, telephone,
 // address, geo, events and a few more, per entity the registry tracks. No network.
-//   node magpie/cwplans/tools/extract-structured-data.mjs
+//   node cwplans/tools/extract-structured-data.mjs
 // Steps: (1) clean each JSON-LD block (jsonld-clean.mjs; every repair counted by class), (2) JSON-LD to RDF with
 // Factoidal's jsonldToRdf, microdata JSON to RDF here (schema.org vocabulary), RDFa N-Triples parsed by Factoidal,
 // (3) one named graph per page (graph IRI = the page URL) written to third_party/cwplans-structured-data/all.nq,
@@ -20,7 +20,7 @@ import { jsonldToRdf, parse, query } from '@factoidal/core';
 import { cleanJsonLd } from './jsonld-clean.mjs';
 
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
-const TP = join(CW, '../../third_party/cwplans-structured-data');
+const TP = join(CW, '../third_party/cwplans-structured-data');
 const readJSON = p => JSON.parse(readFileSync(join(CW, p), 'utf8'));
 const T0 = Date.now();
 const S = 'https://schema.org/', RDF_TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
@@ -286,7 +286,7 @@ const cnt = (f) => entities.filter(f).length;
 const keysWith = (f) => new Set(entities.filter(f).map(e => e.key)).size;
 const index = JSON.parse(readFileSync(join(TP, 'index.json'), 'utf8'));
 const meta = {
-  generated: new Date().toISOString(), tool: 'tools/extract-structured-data.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(CW, '../../node_modules/@factoidal/core/package.json'), 'utf8')).version,
+  generated: new Date().toISOString(), tool: 'tools/extract-structured-data.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(CW, '../node_modules/@factoidal/core/package.json'), 'utf8')).version,
   input: 'third_party/cwplans-structured-data/pages/*.jsonl (tools/render-structured-data.mjs)', dataset: 'third_party/cwplans-structured-data/all.nq.gz (gzipped N-Quads; one named graph per page; graph IRI = page URL)',
   rule: 'A node is attributed to a Canary Wharf entity (scope "branch") only when its postcode equals the entity\'s or its geo is within 300 m of the building (confidence high), it has no address and the page is the branch\'s own page: a store_url field, a store-finder result or a URL that names the place (medium), or its postcode is another E14/E20 postcode with any geo within 1.5 km (low: may be a sibling branch). A node with no address on a general page is scope "chain" when the entity is a chain branch (chain-wide facts, not branch facts), else "organisation" (the organisation\'s own site, which may be its only place). Nodes with an address or position elsewhere are not attributed (counted as elsewhere).',
   render: index.counts,

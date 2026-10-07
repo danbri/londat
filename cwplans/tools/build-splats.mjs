@@ -2,8 +2,8 @@
 // about 300 m round it. Ground discs take the 2008 EA aerial photograph; roofs of low buildings too; walls are
 // wall-colour discs per 3.6 m storey and 7.2 m of wall (--cell), each with one glass-band disc in front.
 //
-//   node magpie/cwplans/tools/build-splats.mjs [--ground 4] [--cell 7.2] [--box x0,x1,z0,z1]
-// Every input and output, with endpoints and rules: magpie/cwplans/pipeline.json, activity "build-splats".
+//   node cwplans/tools/build-splats.mjs [--ground 4] [--cell 7.2] [--box x0,x1,z0,z1]
+// Every input and output, with endpoints and rules: cwplans/pipeline.json, activity "build-splats".
 //
 // in:  docklands/data/area.js (buildings, terrain), data/raw/imagery/rgb2008.ppm (raw copy written by tools/build-aerial.py)
 // out: docklands/data/splats/cw-synth.groups.bin.gz  the building of each splat (for animation; see cw-synth.json groups)

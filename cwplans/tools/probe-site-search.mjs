@@ -4,8 +4,8 @@
 // Templates are read with @factoidal/core SPARQL. Only counts, types and result URLs are kept, no page text.
 //   in:  third_party/cwplans-structured-data/all.nq.gz; data/raw/crawl/<host>/robots.json (cached rules, else fetched)
 //   out: third_party/cwplans-structured-data/search/probe.json; raw result pages in data/raw/site-search/ (gitignored)
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/probe-site-search.mjs [--host=h]
-//   node magpie/cwplans/tools/probe-site-search.mjs --offline     # re-read the cached result pages; no requests
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/probe-site-search.mjs [--host=h]
+//   node cwplans/tools/probe-site-search.mjs --offline     # re-read the cached result pages; no requests
 // Skill: cwplans-web-harvest, "Site search (SearchAction)".
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { gunzipSync, gzipSync } from 'zlib';
@@ -14,7 +14,7 @@ import { join } from 'path';
 import { parse, query } from '@factoidal/core';
 import { TOOLS, RAW, UA } from './lib.mjs';
 
-const TP = join(TOOLS, '..', '..', '..', 'third_party', 'cwplans-structured-data'), OUT = join(TP, 'search'), CACHE = join(RAW, 'site-search');
+const TP = join(TOOLS, '..', '..', 'third_party', 'cwplans-structured-data'), OUT = join(TP, 'search'), CACHE = join(RAW, 'site-search');
 mkdirSync(OUT, { recursive: true }); mkdirSync(CACHE, { recursive: true });
 const OFFLINE = process.argv.includes('--offline'), PREV = OFFLINE ? JSON.parse(readFileSync(join(OUT, 'probe.json'), 'utf8')) : null;
 const QUERIES = ['Canary Wharf', 'E14 5AB'], CONTROL = 'zqxjvw', GAP = 1100, onlyHost = process.argv.find(a => a.startsWith('--host='))?.slice(7);
@@ -160,6 +160,6 @@ const have = new Set(readdirSync(join(TP, 'pages')).flatMap(f => readFileSync(jo
 for (const s of out) { const hits = [...new Set((s.results || []).flatMap(r => r.added_branch_links || []))]; if (hits.length) { s.hits_new = hits.filter(u => !have.has(key(u))); s.hits_harvested = hits.filter(u => have.has(key(u))); } }
 out.sort((a, b) => a.site.localeCompare(b.site));
 const counts = out.reduce((m, r) => (m[r.class] = (m[r.class] || 0) + 1, m), {});
-writeFileSync(join(OUT, 'probe.json'), JSON.stringify({ meta: { generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/probe-site-search.mjs', queries: QUERIES, control_query: CONTROL, gap_ms: GAP, user_agent: UA,
+writeFileSync(join(OUT, 'probe.json'), JSON.stringify({ meta: { generated: new Date().toISOString(), tool: 'cwplans/tools/probe-site-search.mjs', queries: QUERIES, control_query: CONTROL, gap_ms: GAP, user_agent: UA,
   note: 'One fetch per site and query of the SearchAction template the site publishes. Counts, types and result URLs only; no page text is kept.', sites: out.length, counts, hits_new: out.reduce((a, s) => a + (s.hits_new?.length || 0), 0), hits_harvested: out.reduce((a, s) => a + (s.hits_harvested?.length || 0), 0) }, sites: out }, null, 1) + '\n');
 console.log(JSON.stringify(counts));

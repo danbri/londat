@@ -6,7 +6,7 @@
 //   in:  registry/sources/brands/cwg-hours.json, cwg-directory.json, cwg-directory-typed.json, registry/buildings.json,
 //        third_party/cwplans-structured-data/idioms/canonical.nq.gz
 //   out: registry/sources/web/hours-by-place.json
-//   node magpie/cwplans/tools/hours-by-place.mjs
+//   node cwplans/tools/hours-by-place.mjs
 // Skill: cwplans-web-harvest, "Opening hours".
 import { readFileSync, writeFileSync } from 'fs';
 import { gunzipSync } from 'zlib';
@@ -15,7 +15,7 @@ import { join } from 'path';
 import { parse, query } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
-const CW = join(TOOLS, '..'), TP = join(CW, '..', '..', 'third_party', 'cwplans-structured-data');
+const CW = join(TOOLS, '..'), TP = join(CW, '..', 'third_party', 'cwplans-structured-data');
 const OH = createRequire(import.meta.url)(join(CW, 'docklands', 'opening-hours.js'));
 const J = f => JSON.parse(readFileSync(join(CW, f), 'utf8'));
 const hours = J('registry/sources/brands/cwg-hours.json').entries, dir = J('registry/sources/brands/cwg-directory.json').directory;
@@ -139,7 +139,7 @@ const agree = k => { const ps = pairs.filter(p => `${p.a}-${p.b}` === k); return
 // 8. the web branches placed by their parsed postcode
 const webPlaced = webBranches.filter(w => w.in_zone);
 const out = {
-  generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/hours-by-place.mjs', engine: '@factoidal/core (canonical hours) and docklands/opening-hours.js (hours text)',
+  generated: new Date().toISOString(), tool: 'cwplans/tools/hours-by-place.mjs', engine: '@factoidal/core (canonical hours) and docklands/opening-hours.js (hours text)',
   note: 'Grid: 336 half-hour slots, Monday 00:00 first, as hex (4 slots a digit). Hours are as each source gave them on its date; CWG pages carry their archive date. Kinds: CWG kinds from the schema.org types in cwg-directory-typed.json; registry kinds from the occupant role.',
   counts: { records: recs.length, by_source: recs.reduce((m, r) => (m[r.source] = (m[r.source] || 0) + 1, m), {}), cwg_with_hours: recs.filter(r => r.source === 'cwg').length,
     web_branches_with_postcode_and_hours: webBranches.length, in_zone: webPlaced.length, placed_in_mall_by_postcode: webPlaced.filter(w => w.mall_by_postcode).length },

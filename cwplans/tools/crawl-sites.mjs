@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Crawl the web pages the registry already links to, and extract structured facts from each.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/crawl-sites.mjs            # fetch what is not cached, then extract
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/crawl-sites.mjs            # fetch what is not cached, then extract
 //   ... --list           count the URLs by source and stop (no network)
 //   ... --no-fetch       extract from the cache only
 //   ... --refresh        fetch every URL again
@@ -24,7 +24,7 @@ import { fileURLToPath } from 'url';
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CRAWL = join(CW, 'data/raw/crawl');
 const OUTDIR = join(CW, 'registry/sources/web');
-const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)';
+const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 const UA_TOKEN = 'glitchcan-cwplans';
 const GAP_MS = 1500, TIMEOUT_MS = 20000, HOSTS_PARALLEL = 4, MAX_REDIRECTS = 8, MAX_TRIES = 4;
 const args = new Set(process.argv.slice(2));

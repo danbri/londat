@@ -3,7 +3,7 @@
 // pure operations then partition each version by subject (small Shardborough blocks), describe the versions, lift the
 // activity log and the earlier pipeline provenance, and pack the store. An activity already in the log is not run again.
 // All RDF work with @factoidal/core. No blank nodes in lifted graphs (the pipeline graph is skolemized).
-//   node magpie/cwplans/tools/build-kgx.mjs [--no-store]
+//   node cwplans/tools/build-kgx.mjs [--no-store]
 //   out: $LONDAT_DIR/kgx/  graphs/<name>/<hash16>.nq.gz, log/, shardborough/, current.nq.gz, heads.json, manifest.json
 // Skills: cwplans-kgx (graphs, store, page), cwplans-dataflow (operations, versions, log).
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, readdirSync, statSync } from 'fs';
@@ -17,7 +17,7 @@ import { TOOLS } from './lib.mjs';
 import { LONDAT_DIR } from './londat.mjs';
 import { Flow, OPS, KG, partitionLines } from './kgx-ops.mjs';
 
-const CW = join(TOOLS, '..'), ROOT = join(CW, '..', '..'), OUT = join(LONDAT_DIR, 'kgx');
+const CW = join(TOOLS, '..'), ROOT = join(CW, '..'), OUT = join(LONDAT_DIR, 'kgx');
 const ID = KG + 'id/', V = KG + 'vocab#';
 const NS = { s: 'https://schema.org/', rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#', rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   xsd: 'http://www.w3.org/2001/XMLSchema#', owl: 'http://www.w3.org/2002/07/owl#', geo: 'http://www.opengis.net/ont/geosparql#',
@@ -39,7 +39,7 @@ function G() { const quads = [];
 const flow = new Flow(OUT);
 const rel = p => relative(ROOT, p).startsWith('..') ? 'danbri/londat ' + relative(LONDAT_DIR, p) : relative(ROOT, p);
 const file = p => flow.file(p, rel(p));
-const LIFT = (id, about) => ({ id, version: 1, skill: 'cwplans-kgx', tool: 'magpie/cwplans/tools/build-kgx.mjs', about });
+const LIFT = (id, about) => ({ id, version: 1, skill: 'cwplans-kgx', tool: 'cwplans/tools/build-kgx.mjs', about });
 const versions = {};
 
 // ---- lift operations: input files -> one graph version each
@@ -217,7 +217,7 @@ for (const v of Object.values(versions)) {
 const heads = Object.fromEntries(Object.values(versions).map(v => [v.name, v.iri]));
 const genBy = {}; for (const a of flow.log.values()) for (const o of a.outputs) (genBy[o] ||= []).push(a.id);
 const describedVersions = [...Object.values(versions), ...Object.values(parts).flat()];
-const metaV = await flow.run({ id: 'describe-graph-versions', version: 1, skill: 'cwplans-dataflow', tool: 'magpie/cwplans/tools/build-kgx.mjs', about: 'graph versions -> void:Dataset per version (name, title, licence, RDFC-1.0 hash, triples, generating activity, parts) and the heads (graph name -> current version)' },
+const metaV = await flow.run({ id: 'describe-graph-versions', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'graph versions -> void:Dataset per version (name, title, licence, RDFC-1.0 hash, triples, generating activity, parts) and the heads (graph name -> current version)' },
   describedVersions, { heads, genBy: Object.fromEntries(describedVersions.map(v => [v.iri, genBy[v.iri] || []])) }, async ({ heads, genBy }) => {
     const g = G();
     for (const v of describedVersions) { const s = v.iri;
@@ -236,7 +236,7 @@ const metaV = await flow.run({ id: 'describe-graph-versions', version: 1, skill:
 // then gives the same log version, the same store input and the same generation.
 const logActs = [...flow.log.values()].filter(a => a.operation !== 'lift-activity-log' && a.operation !== 'pack-shardborough').sort((a, b) => a.id.localeCompare(b.id));
 const logBlob = { kind: 'file', iri: KG + 'artifact/sha256/' + createHash('sha256').update(JSON.stringify(logActs)).digest('hex'), label: 'kgx/log/activities.jsonl (without lift-activity-log entries)' };
-const logV = await flow.run({ id: 'lift-activity-log', version: 1, skill: 'cwplans-dataflow', tool: 'magpie/cwplans/tools/build-kgx.mjs', about: 'activity log -> prov:Activity per run: operation, version, skill, tool, inputs (prov:used), parameters, outputs (prov:generated), times' }, [logBlob], null, async () => {
+const logV = await flow.run({ id: 'lift-activity-log', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/build-kgx.mjs', about: 'activity log -> prov:Activity per run: operation, version, skill, tool, inputs (prov:used), parameters, outputs (prov:generated), times' }, [logBlob], null, async () => {
   const g = G();
   for (const a of logActs) { const s = a.id;
     g.add(s, TYPE, iri('prov', 'Activity')); g.add(s, iri('cwk', 'operation'), KG + 'operation/' + a.operation); g.lit(s, iri('cwk', 'operationVersion'), a.operation_version);
@@ -275,7 +275,7 @@ if (!process.argv.includes('--no-store')) {
 }
 for (const d of ['nq', 'cottas', 'hdt']) if (existsSync(join(OUT, d))) rmSync(join(OUT, d), { recursive: true });   // the first layout; in git history
 const manifest = { about: 'cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.', base: KG, built: new Date().toISOString(),
-  tool: 'magpie/cwplans/tools/build-kgx.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(ROOT, 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
+  tool: 'cwplans/tools/build-kgx.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(ROOT, 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
   prefixes: NS, heads: { ...heads, meta: metaV.meta.iri, log: logV.log.iri },
   graphs: Object.fromEntries(current.map(v => [v.name, { version: v.iri, rdfc10_sha256: v.rdfc10_sha256, triples: v.triples, file: v.file, parts: (parts[v.name] || []).length, title: v.title, licence: v.licence }])),
   total_triples: current.reduce((a, v) => a + v.triples, 0), store, activities_this_run: flow.used.length, activities_run_new: flow.ran.length, activities_in_log: flow.log.size };

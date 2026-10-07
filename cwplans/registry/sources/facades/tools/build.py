@@ -1,5 +1,5 @@
 import json,cv2,os,shutil
-R='/home/user/glitchcan-minigam/magpie/cwplans/data/raw/facades'
+R=os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../../../data/raw/facades'))  # cwplans/data/raw/facades
 rois=json.load(open('rois.json')); asp=json.load(open('aspect.json')); meas=json.load(open('meas.json'))
 H={'cwb-0413':(195,50),'cwb-0577':(233,75),'cwb-0451':(220,58),'cwb-0715':(214.5,68),'cwb-0590':(205,57),'cwb-0520':(200,45),'cwb-0417':(200,45),'cwb-0647':(187.2,55),'cwb-0813':(182,54),'cwb-0712':(192.4,56),'cwb-0645':(168,50),'cwb-0424':(156,32),'cwb-0582':(153,33),'cwb-0585':(153,33),'cwb-0589':(151,32),'cwb-0701':(121,39),'cwb-0525':(130,23),'cwb-0317':(111,33)}
 # key: (cwb, bay_px, floor_px, aspect_mode, face, face_m, face_px, face_how)
@@ -45,7 +45,7 @@ for k,(b,bpx,fpx,mode,face,fm,fpxw,how) in S.items():
     s=min(1.0,2048/max(p2.shape[:2])); 
     if s<1: p2=cv2.resize(p2,None,fx=s,fy=s,interpolation=cv2.INTER_AREA)
     os.makedirs(f'{R}/{b}',exist_ok=True)
-    fn=f'{R}/{b}/rect-{k}.jpg'; cv2.imwrite(fn,p2,[cv2.IMWRITE_JPEG_QUALITY,90]); r['rect_file']=fn.split('magpie/cwplans/')[1]; r['rect_px']=[p2.shape[1],p2.shape[0]]
+    fn=f'{R}/{b}/rect-{k}.jpg'; cv2.imwrite(fn,p2,[cv2.IMWRITE_JPEG_QUALITY,90]); r['rect_file']=fn.split('cwplans/')[1]; r['rect_px']=[p2.shape[1],p2.shape[0]]
     out[k]=r
     print(k,b,face,'bay_w',r.get('bay_m_from_width'),'bay_f',r.get('bay_m_from_floor'),'floor_meas',r.get('floor_m_measured'),'floor_ass',floor_assumed,'asp',ar,mode)
 json.dump(out,open('results.json','w'),indent=1)

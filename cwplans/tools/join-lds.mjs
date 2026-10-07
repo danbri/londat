@@ -4,7 +4,7 @@
 // sites and other point datasets by position in the building outline, and the 2021 Census context of the building's
 // LSOA and ward (centre in polygon). Every link keeps its key, precision and confidence, as build-registry.mjs does
 // for the registers.
-//   node magpie/cwplans/tools/join-lds.mjs        # -> registry/sources/lds/building-links.json, area-context.json
+//   node cwplans/tools/join-lds.mjs        # -> registry/sources/lds/building-links.json, area-context.json
 // Inputs: registry/buildings.json and ids.json, data/raw/registry/osm-cw.json.gz (committed: the OSM outlines of the
 // registry), OS Open UPRN (data/raw/registry/osopenuprn_*.zip, raw cache), feeds/london-datastore/*.
 // Rules, measured counts and the traps: skills/cwplans-london-datastore/SKILL.md, "Joins to the building registry".

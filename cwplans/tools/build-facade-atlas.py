@@ -2,7 +2,7 @@
 """Facade texture atlas for the 3D page: one tile per tower, cut from its rectified open photo (CC BY / PD) so that it
 holds whole floors and whole bays and repeats along the walls without a visible seam.
 
-  python3 magpie/cwplans/tools/build-facade-atlas.py        (Pillow only)
+  python3 cwplans/tools/build-facade-atlas.py        (Pillow only)
 
 in:  registry/sources/facades/work/results.json (periods of each patch), facades.json (floor and bay metres),
      photos.json (author, licence, page), data/raw/facades/<cwb-id>/rect-<key>.jpg (patches, not committed)

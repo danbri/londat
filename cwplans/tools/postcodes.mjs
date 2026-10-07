@@ -2,11 +2,11 @@
 // Canary Wharf postcodes: actual (ONS Postcode Directory) vs possible (every valid unit code in the sectors),
 // classified by the official ward, the model's estate box and OSM addresses; then postcode-keyed queries
 // against open web sources.
-//   node magpie/cwplans/tools/postcodes.mjs fetch    # ONSPD rows for the districts, ward names, ward boundary, OSM addresses
-//   node magpie/cwplans/tools/postcodes.mjs osm      # only the OSM address tally (no network)
-//   node magpie/cwplans/tools/postcodes.mjs build    # -> magpie/cwplans/postcodes/postcodes.json, .csv, canary-wharf-ward.geojson
-//   node magpie/cwplans/tools/postcodes.mjs query    # -> magpie/cwplans/postcodes/queries.json (GOV.UK, Wikipedia, FSA, Wikidata)
-// Method, definitions and limits: magpie/cwplans/postcodes/README.md.
+//   node cwplans/tools/postcodes.mjs fetch    # ONSPD rows for the districts, ward names, ward boundary, OSM addresses
+//   node cwplans/tools/postcodes.mjs osm      # only the OSM address tally (no network)
+//   node cwplans/tools/postcodes.mjs build    # -> cwplans/postcodes/postcodes.json, .csv, canary-wharf-ward.geojson
+//   node cwplans/tools/postcodes.mjs query    # -> cwplans/postcodes/queries.json (GOV.UK, Wikipedia, FSA, Wikidata)
+// Method, definitions and limits: cwplans/postcodes/README.md.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, createReadStream } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
 import { join } from 'path';
@@ -26,7 +26,7 @@ const BOX = [-0.0300, 51.4980, -0.0050, 51.5100];
 // Unit letters: Royal Mail never uses C I K M O V in the inward code's last two letters.
 const UNIT_LETTERS = 'ABDEFGHJLNPQRSTUWXYZ';
 const norm = pc => pc.toUpperCase().replace(/\s+/g, '').replace(/^(.+)(\d[A-Z]{2})$/, '$1 $2');
-const UA = { headers: { 'User-Agent': 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)' } };
+const UA = { headers: { 'User-Agent': 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)' } };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function fetchAll() {

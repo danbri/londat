@@ -96,7 +96,7 @@ function onErr(e) {
   else say('Your location is not available now. Check that location is on for this device, then try again.', ['Try again', () => { say(''); locate(); }]);
 }
 function locate() {
-  if (!window.isSecureContext) return say('Location works only on a secure (https) page. Open <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/">the https address</a> and try again.');
+  if (!window.isSecureContext) return say('Location works only on a secure (https) page. Open <a href="https://danbri.github.io/londat/cwplans/docklands/">the https address</a> and try again.');
   if (!navigator.geolocation) return say('This browser does not give a location.');
   setMode('waiting'); startWatch();
 }

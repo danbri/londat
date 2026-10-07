@@ -1,7 +1,7 @@
 ---
 name: cwplans-construction
 description: >-
-  The index of works in progress (construction sites) in the magpie/cwplans Docklands zone: registry/sources/construction/
+  The index of works in progress (construction sites) in the cwplans Docklands zone: registry/sources/construction/
   sites.json built by tools/build-construction-index.mjs from the Planning London Datahub (borough decisions with the London
   Development Database commencement and completion dates), joined by position to NOTAM cranes, DfT Street Manager crane and
   hoarding activities, OSM construction areas (ODbL), the brownfield register, site allocations and Wikidata (CC0), plus
@@ -13,20 +13,20 @@ description: >-
   you refresh or extend the index, add a source of site status, answer "what is being built there?", or draw sites on a page.
 ---
 
-# Works in progress (magpie/cwplans)
+# Works in progress (cwplans)
 
 Policy, the fault register and the activity log are in the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
 Owner, 2026-10-04: "Note the works in progress on far side of the central tower - do we have an index of these?"
 README with the counts and the answer about the owner's photos:
-https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/construction/README.md
-Page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ (Layers > "Works in progress").
+https://github.com/danbri/londat/blob/main/cwplans/registry/sources/construction/README.md
+Page: https://danbri.github.io/londat/cwplans/docklands/ (Layers > "Works in progress").
 
 ## Run
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-construction-index.mjs            # fetch what is not cached, build
-    node magpie/cwplans/tools/build-construction-index.mjs --no-fetch                      # rebuild from data/raw/construction/
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-construction-index.mjs --refresh  # fetch the PLD, OSM scan and Wikidata again
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/build-construction-index.mjs            # fetch what is not cached, build
+    node cwplans/tools/build-construction-index.mjs --no-fetch                      # rebuild from data/raw/construction/
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/build-construction-index.mjs --refresh  # fetch the PLD, OSM scan and Wikidata again
 
 About 80 s, most of it the OSM scan of the local Greater London extract. Refresh the inputs first when they are old:
 `fetch-live.mjs notams` (NOTAMs change hourly) and `fetch-works.mjs street-manager` (monthly). Without

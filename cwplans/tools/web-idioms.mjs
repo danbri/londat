@@ -3,7 +3,7 @@
 //   in:  third_party/cwplans-structured-data/all.nq.gz, idioms/idioms.json, idioms/idioms.shex, idioms/rewrites/*.rq
 //   out: idioms/page-idioms.json (per page: idioms, nodes, forms), idioms/summary.json (sites per idiom and form),
 //        idioms/canonical.nq.gz (rewritten content idioms, one named graph per page)
-//   node magpie/cwplans/tools/web-idioms.mjs [--limit N]
+//   node cwplans/tools/web-idioms.mjs [--limit N]
 // Skill: cwplans-web-harvest, "Idioms".
 import { readFileSync, writeFileSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
@@ -12,7 +12,7 @@ import { createHash } from 'crypto';
 import { parse, query, graphs, shexValidate, serialize, Dataset, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
-const TP = join(TOOLS, '..', '..', '..', 'third_party', 'cwplans-structured-data'), ID = join(TP, 'idioms');
+const TP = join(TOOLS, '..', '..', 'third_party', 'cwplans-structured-data'), ID = join(TP, 'idioms');
 const cat = JSON.parse(readFileSync(join(ID, 'idioms.json'), 'utf8')), shex = readFileSync(join(ID, 'idioms.shex'), 'utf8');
 const PFX = Object.entries(cat.prefixes).map(([p, u]) => `PREFIX ${p}: <${u}>`).join('\n') + '\n';
 const I = cat.prefixes.i, limit = +(process.argv[process.argv.indexOf('--limit') + 1]) || Infinity;
@@ -69,7 +69,7 @@ for (const [g, gd] of graphs(all)) {
 const summary = cat.idioms.map(d => ({ id: d.id, label: d.label, kind: d.kind, sites: sites[d.id]?.size || 0,
   pages: Object.values(pages).filter(p => p.idioms[d.id]).length, nodes: Object.values(pages).reduce((a, p) => a + (p.idioms[d.id]?.nodes || 0), 0),
   forms: Object.fromEntries([...d.forms, ...Object.keys(d.sparql_forms || {})].map(f => [f, sites[`${d.id}\t${f}`]?.size || 0])) }));
-const meta = { generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/web-idioms.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(TOOLS, '..', '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version, stats: st };
+const meta = { generated: new Date().toISOString(), tool: 'cwplans/tools/web-idioms.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(TOOLS, '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version, stats: st };
 writeFileSync(join(ID, 'page-idioms.json'), JSON.stringify({ meta, pages }, null, 0) + '\n');
 writeFileSync(join(ID, 'summary.json'), JSON.stringify({ meta, idioms: summary }, null, 1) + '\n');
 writeFileSync(join(ID, 'canonical.nq.gz'), gzipSync(await serialize(new Dataset(canon), { format: 'nquads' })));

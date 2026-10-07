@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Cut the Docklands study box out of the Greater London OSM extract into a small JSON the build reads.
-//   node magpie/cwplans/tools/osm-clip-docklands.mjs
+//   node cwplans/tools/osm-clip-docklands.mjs
 // in:  data/raw/docklands/greater_london-latest.osm.pbf (fetch-docklands.mjs osm)
 // out: data/raw/docklands/osm-clip.json.gz  {nodes: {id: [lon, lat]}, ways, rels, pois}
 // Keeps only features the model uses (see KEEP_WAY); ways that reach outside the box are kept whole.

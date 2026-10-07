@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Canary Wharf building registry: internal building ids, cross-references, occupants and owners.
-//   node magpie/cwplans/tools/registry-osm.mjs        # OSM features with tags in the Canary Wharf box
-//   node magpie/cwplans/tools/registry-wikidata.mjs   # Wikidata via QLever (geo)
-//   node magpie/cwplans/tools/registry-fhrs.mjs       # FSA Tower Hamlets file, dated snapshot
-//   node magpie/cwplans/tools/build-registry.mjs      # -> magpie/cwplans/registry/buildings.json, ids.json
+//   node cwplans/tools/registry-osm.mjs        # OSM features with tags in the Canary Wharf box
+//   node cwplans/tools/registry-wikidata.mjs   # Wikidata via QLever (geo)
+//   node cwplans/tools/registry-fhrs.mjs       # FSA Tower Hamlets file, dated snapshot
+//   node cwplans/tools/build-registry.mjs      # -> cwplans/registry/buildings.json, ids.json
 // Ids: "cwb-NNNN", minted once and kept in registry/ids.json (keyed by OSM element); a rebuild reuses them.
-// Only organisations appear as occupants or owners. Method and limits: magpie/cwplans/registry/README.md.
+// Only organisations appear as occupants or owners. Method and limits: cwplans/registry/README.md.
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { gunzipSync } from 'zlib';
 import { join } from 'path';

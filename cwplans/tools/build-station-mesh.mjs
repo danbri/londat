@@ -2,7 +2,7 @@
 // to docklands/data/stations.json for the 3D page's "Station models" layer (docklands/stations-layer.js).
 // Keeps positions (cm, relative to each object's origin) and triangle indices; drops the text labels and the street
 // reference plane. Skill: blender-station-models, "On the 3D page".
-//   node magpie/cwplans/tools/build-station-mesh.mjs --glb <stations.glb | stations-exports.zip> [--out <file>]
+//   node cwplans/tools/build-station-mesh.mjs --glb <stations.glb | stations-exports.zip> [--out <file>]
 import { readFileSync, writeFileSync } from 'fs';
 import { execFileSync } from 'child_process';
 import { createHash } from 'crypto';

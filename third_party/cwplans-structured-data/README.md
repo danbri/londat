@@ -1,12 +1,12 @@
 # cwplans structured data (schema.org from rendered web pages)
 
 The schema.org structured data that the web pages of the entities tracked by the Canary Wharf / Docklands project
-(`magpie/cwplans/`) publish about themselves: JSON-LD, HTML microdata and RDFa. This is the site owners' data,
+(`cwplans/`) publish about themselves: JSON-LD, HTML microdata and RDFa. This is the site owners' data,
 published for search engines. It is kept here for scoping, under the owner's crawl rule (2026-10-03: "Website crawls -
 direct and via IA or CommonCrawl etc are fair use for our scoping purposes."). Re-check it before anything leaves
 the prototyping phase. **The full pages are not stored here**: only the structured-data blocks, the page title, the
 final URL, the HTTP status and a SHA-256 of the rendered HTML (the rendered pages stay in the gitignored
-`magpie/cwplans/data/raw/rendered/`).
+`cwplans/data/raw/rendered/`).
 
 ## Files
 
@@ -28,7 +28,7 @@ Entity keys: `cwb-0411|Aesop` (registry building and occupant), `branch:<brand Q
   Companies House, Land Registry, register pages, social networks, and the live canarywharf.com (it blocks scripts).
   Order: store pages first, then pages the plain crawl (`site-facts.json`) got no structured data from, then the rest.
 - Rendering: headless Chromium (Playwright), User-Agent a desktop Chrome string plus
-  ` glitchcan-cwplans/0.1 (+https://github.com/danbri/glitchcan-minigam)`; images, media and fonts not loaded;
+  ` glitchcan-cwplans/0.1 (+https://github.com/danbri/londat)`; images, media and fonts not loaded;
   robots.txt obeyed (RFC 9309, token `glitchcan-cwplans`, checked for every page navigation and redirect; an
   unreachable robots.txt means no visit); at most 3 pages at once, one page at a time per host, at least 2 s between
   page loads on a host; wait for load and network idle (20 s cap), then 1.5 s for late JSON-LD. A cookie banner was
@@ -48,11 +48,11 @@ Entity keys: `cwb-0411|Aesop` (registry building and occupant), `branch:<brand Q
 
 ## Rebuild
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs                 # render (resumable)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs --retry-failed  # transient failures again
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs --storefinder-only
-    node magpie/cwplans/tools/render-structured-data.mjs --build-only                        # this folder, no network
-    node magpie/cwplans/tools/extract-structured-data.mjs                                    # all.nq(.gz) + registry/sources/web/structured-facts.json
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs                 # render (resumable)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs --retry-failed  # transient failures again
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs --storefinder-only
+    node cwplans/tools/render-structured-data.mjs --build-only                        # this folder, no network
+    node cwplans/tools/extract-structured-data.mjs                                    # all.nq(.gz) + registry/sources/web/structured-facts.json
 
 Chromium needs the proxy CA in its NSS store in the cloud container (see the curation skill).
-Method, lessons and limits: `magpie/cwplans/skills/docklands-data-curation/SKILL.md`, "Structured data from rendered pages".
+Method, lessons and limits: `cwplans/skills/docklands-data-curation/SKILL.md`, "Structured data from rendered pages".

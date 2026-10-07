@@ -3,7 +3,7 @@
 Snapshots of things in the zone that change by the minute or the day: hire bikes, station lifts and busyness, traffic
 cameras, power cuts, storm overflows, NOTAMs (cranes and temporary airspace) and the published helicopter structure.
 First run: 4 October 2026, 08:24 to 08:27 UTC (a Sunday morning). Tool: `tools/fetch-live.mjs`. Method and lessons:
-skill `cwplans-live-state` (`magpie/cwplans/skills/cwplans-live-state/SKILL.md`).
+skill `cwplans-live-state` (`cwplans/skills/cwplans-live-state/SKILL.md`).
 
 Zone: the 3D model box (WGS84 -0.095, 51.474 to 0.015, 51.522) plus the east margin used by `feeds/works/`
 (0.015 to 0.085, 51.495 to 51.522: Royal Docks, ExCeL, London City Airport). Every item has `zone` = `model`,
@@ -12,9 +12,9 @@ Zone: the 3D model box (WGS84 -0.095, 51.474 to 0.015, 51.522) plus the east mar
 Each file: `{meta: {source, url, fetched, licence, attribution, method, counts, zone}, items: [{id, kind, name, zone,
 time, position: {lat, lon[, alt_ft]}, values, url}]}`.
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs            # every source (about 3 minutes; 65 crowding requests)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs bikes lifts
-    node magpie/cwplans/tools/fetch-live.mjs --no-fetch                      # rebuild from data/raw/live/
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs            # every source (about 3 minutes; 65 crowding requests)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs bikes lifts
+    node cwplans/tools/fetch-live.mjs --no-fetch                      # rebuild from data/raw/live/
 
 ## The snapshots
 

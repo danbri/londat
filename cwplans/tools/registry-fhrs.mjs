@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Food Standards Agency hygiene ratings, Tower Hamlets open-data file (FHRS530), as dated E14 snapshots.
-//   node magpie/cwplans/tools/registry-fhrs.mjs
+//   node cwplans/tools/registry-fhrs.mjs
 // out: data/raw/registry/fhrs/FHRS530-<date>.json.gz (E14 premises) and, when an earlier snapshot exists,
 //      registry/fhrs-changes.json: ids added (registrations, usually openings) and removed (closures, de-registrations)
 // Premises without address lines are home-based businesses whose address the FSA withholds: not kept.

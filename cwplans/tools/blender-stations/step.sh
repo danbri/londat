@@ -1,5 +1,5 @@
 #!/bin/bash
-# Skill: magpie/cwplans/docklands/skills/blender-station-models/SKILL.md
+# Skill: cwplans/docklands/skills/blender-station-models/SKILL.md
 # usage: step.sh steps/NN-name.py  -> runs lib + step inside Blender through the MCP execute_blender_code tool
 W=${BLENDER_STATIONS_WORK:?set BLENDER_STATIONS_WORK to the work folder (copy of this folder + osm-stations.json)}
 f=$W/.code-$$.py

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Step 3b: FSA food premises in Canary Wharf postcodes whose name matches an NSI UK brand.
-//   node magpie/cwplans/registry/sources/brands/tools/match-fsa.mjs [--fetch]
+//   node cwplans/registry/sources/brands/tools/match-fsa.mjs [--fetch]
 // in:  postcodes/postcodes.json (tiers), postcodes/queries.json (results[pc].fsa.items), brands-uk.json, tools/fsa-decisions.json
-// Every input and output, with endpoints and rules: magpie/cwplans/pipeline.json, activity "match-fsa".
+// Every input and output, with endpoints and rules: cwplans/pipeline.json, activity "match-fsa".
 // out: data/raw/registry/fsa-branches.json; with --fetch, each matched premises' address and
 //      geocode from https://api.ratings.food.gov.uk/Establishments/{fhrs_id} (cached in data/raw/registry/fsa-detail/)
 // Rule: NSI Matcher over every brand key=value, name variants from nameVariants(); a hit must be

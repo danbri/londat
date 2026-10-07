@@ -1,5 +1,5 @@
 // HM Land Registry Price Paid Data for every Canary Wharf postcode, via the Land Registry SPARQL endpoint.
-// Run: node magpie/cwplans/tools/registry-landregistry.mjs
+// Run: node cwplans/tools/registry-landregistry.mjs
 // Writes registry/sources/landregistry/price-paid-by-postcode.json and price-paid-summary.json.
 // Price Paid holds addresses and prices only (no names). Licence: OGL v3 (see SOURCES-companies-property.md).
 import { writeFileSync, mkdirSync } from 'fs';

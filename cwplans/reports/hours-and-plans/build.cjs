@@ -1,15 +1,15 @@
 // The deep-dive report on site search, opening hours by mall and mall plans (2026-10-06).
 const fs = require('fs'), path = require('path');
 // Builds reports/hours-and-plans/index.html from template.html and the committed JSON files; no network.
-//   node magpie/cwplans/reports/hours-and-plans/build.cjs
+//   node cwplans/reports/hours-and-plans/build.cjs
 // Skill: cwplans-web-harvest, "Reports".
-const here = __dirname, root = path.join(here, '..', '..', '..', '..'), outFile = path.join(here, 'index.html');
+const here = __dirname, root = path.join(here, '..', '..', '..'), outFile = path.join(here, 'index.html');
 const R = f => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
-const G = 'https://github.com/danbri/glitchcan-minigam/blob/master/';
+const G = 'https://github.com/danbri/londat/blob/main/';
 const probe = R('third_party/cwplans-structured-data/search/probe.json');
-const hours = R('magpie/cwplans/registry/sources/web/hours-by-place.json');
-const mall = R('magpie/cwplans/registry/sources/brands/mall-plan-evidence.json');
-const cwgH = R('magpie/cwplans/registry/sources/brands/cwg-hours.json');
+const hours = R('cwplans/registry/sources/web/hours-by-place.json');
+const mall = R('cwplans/registry/sources/brands/mall-plan-evidence.json');
+const cwgH = R('cwplans/registry/sources/brands/cwg-hours.json');
 const pct = (a, b) => Math.round(100 * a / b) + '%';
 
 // search
@@ -71,10 +71,10 @@ const findings = [
   `Mall plans: a draft per level is possible now (OSM corridors plus about half the shops as dots, levels checked against CWG). Unit outlines are not in any source we hold.`,
   'The Factoidal fault is wider than first reported: the BNODE() labels are not valid N-Quads, and parse() of that output also drops lines silently. Factoidal also renames the data\'s blank nodes per query, which broke the links between the branch and hours rewrites; the canonical layer is now skolemized and rebuilt. The issue text is below; it was not filed.'];
 
-const files = [['probe.json', G + 'third_party/cwplans-structured-data/search/probe.json'], ['cwg-hours.json', G + 'magpie/cwplans/registry/sources/brands/cwg-hours.json'],
-  ['hours-by-place.json', G + 'magpie/cwplans/registry/sources/web/hours-by-place.json'], ['mall-plan-evidence.json', G + 'magpie/cwplans/registry/sources/brands/mall-plan-evidence.json'],
-  ['probe-site-search.mjs', G + 'magpie/cwplans/tools/probe-site-search.mjs'], ['hours-by-place.mjs', G + 'magpie/cwplans/tools/hours-by-place.mjs'], ['mall-plan-evidence.mjs', G + 'magpie/cwplans/tools/mall-plan-evidence.mjs']];
-const issue = fs.readFileSync(path.join(root, 'magpie/cwplans/skills/cwplans-web-harvest/factoidal-issue-2026-10-06.md'), 'utf8');
+const files = [['probe.json', G + 'third_party/cwplans-structured-data/search/probe.json'], ['cwg-hours.json', G + 'cwplans/registry/sources/brands/cwg-hours.json'],
+  ['hours-by-place.json', G + 'cwplans/registry/sources/web/hours-by-place.json'], ['mall-plan-evidence.json', G + 'cwplans/registry/sources/brands/mall-plan-evidence.json'],
+  ['probe-site-search.mjs', G + 'cwplans/tools/probe-site-search.mjs'], ['hours-by-place.mjs', G + 'cwplans/tools/hours-by-place.mjs'], ['mall-plan-evidence.mjs', G + 'cwplans/tools/mall-plan-evidence.mjs']];
+const issue = fs.readFileSync(path.join(root, 'cwplans/skills/cwplans-web-harvest/factoidal-issue-2026-10-06.md'), 'utf8');
 const data = JSON.stringify({ findings, search, hours: H, plans, issue, files }).replace(/</g, '\\u003c');
 const SKEL = '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n</head>\n<body>\n';
 fs.writeFileSync(outFile, SKEL + fs.readFileSync(path.join(here, 'template.html'), 'utf8').replace('/*DATA*/', () => data) + '\n</body>\n</html>\n');

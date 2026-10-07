@@ -1,7 +1,7 @@
 ---
 name: cwplans-public-registers
 description: >-
-  The regulatory and public registers in magpie/cwplans (Canary Wharf, Isle of Dogs, E14): DfE GIAS schools, CQC
+  The regulatory and public registers in cwplans (Canary Wharf, Isle of Dogs, E14): DfE GIAS schools, CQC
   care directory, NHS ODS, Charity Commission, Ofsted childcare, Gambling Commission premises, Sport England Active
   Places and FSA pubs and bars. Covers their licences, the fetch tool (tools/fetch-registers.mjs), the fields dropped
   even under the cwplans exception, how build-registry.mjs joins them to buildings (UPRN first, then the register's
@@ -13,18 +13,18 @@ description: >-
   the register join, or explain why a school, clinic or charity sits in the wrong building or in none.
 ---
 
-# Public registers for magpie/cwplans
+# Public registers for cwplans
 
 Policy, the fault register (F-numbers) and the activity log are in the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
-Source README: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/registers/README.md.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
+Source README: https://github.com/danbri/londat/blob/main/cwplans/registry/sources/registers/README.md.
 Checked against `tools/fetch-registers.mjs`, `tools/build-registry.mjs`, the committed files and `quality/issues.json`
 on 2026-10-04.
 
 ## Fetch
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs              # all
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs ods cqc      # some; --refresh re-downloads
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-registers.mjs              # all
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-registers.mjs ods cqc      # some; --refresh re-downloads
 
 Sources: `gias cqc ods charities ofsted-childcare gambling active-places fsa-pubs`. One request at a time per host, at
 least 1 s apart, up to 6 tries with Retry-After or doubling pauses on 429 and 5xx. A raw file already in
@@ -126,7 +126,7 @@ link, so the atlas can show how sure a placement is; never place by postcode alo
    records with dates; record `fields_dropped` and counts.
 3. Add a row to `REGS` in `build-registry.mjs` (ids, "current" test, exclusion rule); name the address roles it has.
 4. Register the file in `data-register.json` and the tool change in `pipeline.json` in the same commit; run
-   `node magpie/cwplans/tools/check-data-register.mjs --write`.
+   `node cwplans/tools/check-data-register.mjs --write`.
 5. Rebuild (hub skill, "Rebuild order"), run the audit, and write the counts before and after in the activity log. A new
    trap is a new check and an F-number, not a hand fix.
 

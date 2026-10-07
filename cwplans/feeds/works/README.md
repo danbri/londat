@@ -4,7 +4,7 @@ Dated snapshots of local-authority permissions (licence notices, street events, 
 applications, markets), road works and closures, and planned rail, bus and river works, for the whole zone. Made by
 `tools/fetch-works.mjs` (method, traps and rejected sources: skill
 [cwplans-permits-and-works](../../skills/cwplans-permits-and-works/SKILL.md)). Page by date and place:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html
+https://danbri.github.io/londat/cwplans/feeds/whatson.html
 
 Owner, 2026-10-04: "look into local authority permissioning for events, street closures, markets and events across
 entire zone - these could inform us about adhoc events" and "get tfl and road/bus/train planned works".
@@ -13,8 +13,9 @@ entire zone - these could inform us about adhoc events" and "get tfl and road/bu
 about buildings or occupants; nothing joins them to the building registry yet. They sit with the other feeds.
 
 **Snapshots:** one file per source with a fixed name; `meta.fetched` is the date and git keeps the history (re-run
-weekly). `works.json` holds every item in one shape: `id, source, kind, title, start, end, recurring, location, street,
-postcode, borough, lat, lon, zone, url`.
+weekly; before 2026-10-07 in danbri/glitchcan-minigam:
+https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans/feeds/works). `works.json` holds every item
+in one shape: `id, source, kind, title, start, end, recurring, location, street, postcode, borough, lat, lon, zone, url`.
 
 **Zone:** `model` = the 3D model box (`docklands/data/area.js` meta.extent; BNG E 532400 to 539900, N 176700 to
 182300; WGS84 -0.095, 51.474 to 0.015, 51.522), which takes in the east City and Whitechapel; `east` = Royal Docks,
@@ -41,7 +42,7 @@ ExCeL and City Airport (0.015 to 0.085, 51.495 to 51.522); `line` = a line servi
 
 ## The page
 
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html has two views. **What's on** (the
+https://danbri.github.io/londat/cwplans/feeds/whatson.html has two views. **What's on** (the
 default): venue programmes, Temporary Event Notices and licence applications, street events and planned events on
 roads, temporary-event planning applications and markets, by day (today, each day of the next 30, later), then the
 programme items the feeds give no date for, then markets and regular events. **Closures and works**

@@ -4,9 +4,9 @@
 // per-frame building visibility (coverage.json), a pose check, preview.mp4 and a contact sheet.
 //
 //   python3 -m http.server 8765 --bind 127.0.0.1          # from the repo root, in another shell
-//   node magpie/cwplans/tools/drone-capture.mjs --run trial --frames 480
+//   node cwplans/tools/drone-capture.mjs --run trial --frames 480
 //
-// Options: --run NAME (folder under magpie/cwplans/data/raw/drone/), --frames N (default 480), --every K (take every
+// Options: --run NAME (folder under cwplans/data/raw/drone/), --frames N (default 480), --every K (take every
 // K-th frame of the 30 fps path; default spreads N frames over the whole path), --size 960x540, --fov 60 (vertical,
 // degrees), --ground rgb2008|night2012|intensity2020|s2|none, --points 200000, --path path.json (from drone-flight.mjs
 // --out; default: plan it now), --url (page), --quality 0.92, --no-video, --redo (ignore frames already written).
@@ -20,7 +20,7 @@ import { CW, D2R, R2D, ESTATE, ESTATE_POLY, inEstate, NEAR, loadModel, loadRegis
 const argv = process.argv.slice(2), opt = (k, d) => { const i = argv.indexOf('--' + k); return i >= 0 ? argv[i + 1] : d; }, flag = k => argv.includes('--' + k);
 const RUN = opt('run', 'run-' + new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')), OUT = path.join(CW, 'data/raw/drone', RUN);
 const NFR = +opt('frames', 480), EVERY = opt('every') ? +opt('every') : null, [W, H] = opt('size', '960x540').split('x').map(Number), FOV = +opt('fov', 60) * D2R;
-const GROUND = opt('ground', 'rgb2008'), NPTS = +opt('points', 200000), Q = +opt('quality', .92), URL = opt('url', 'http://127.0.0.1:8765/magpie/cwplans/docklands/?capture');
+const GROUND = opt('ground', 'rgb2008'), NPTS = +opt('points', 200000), Q = +opt('quality', .92), URL = opt('url', 'http://127.0.0.1:8765/cwplans/docklands/?capture');
 const MIN_PX = 30;   // a building counts as seen in a frame when at least this many of its pixels are visible
 const pad = n => String(n).padStart(5, '0');
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
@@ -103,7 +103,7 @@ const transforms = {
   ply_file_path: 'sparse_pc.ply',
   frames: recs.map(r => ({ file_path: r.file, transform_matrix: c2w(r.eye, r.target).map(row => row.map(r6)), colmap_im_id: r.n })),
   // not read by nerfstudio: where the data came from
-  generator: 'magpie/cwplans/tools/drone-capture.mjs', world: 'model metres: x = E - 537550 (east), y = m above OD (up), z = -(N - 180300) (south); camera-to-world, OpenGL camera (x right, y up, looks along -z)',
+  generator: 'cwplans/tools/drone-capture.mjs', world: 'model metres: x = E - 537550 (east), y = m above OD (up), z = -(N - 180300) (south); camera-to-world, OpenGL camera (x right, y up, looks along -z)',
   ground: GROUND, fovY_deg: +(recs[0].fovY * R2D).toFixed(4),
 };
 fs.writeFileSync(path.join(OUT, 'transforms.json'), JSON.stringify(transforms, null, 1));

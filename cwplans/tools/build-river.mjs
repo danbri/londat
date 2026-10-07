@@ -2,7 +2,7 @@
 // with the half-width at each point (so boats keep to lanes on the water), and the outline of Eden Dock (the swimming
 // area in Middle Dock).
 //
-//   node magpie/cwplans/tools/build-river.mjs
+//   node cwplans/tools/build-river.mjs
 //
 // in:  docklands/data/area.js (water polygons: the unnamed tidal polygons are the Thames)
 // out: docklands/data/river.json  { thames: [[x, z, half-width m]...] west to east, every 20 m; eden: ring }

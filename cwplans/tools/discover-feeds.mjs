@@ -3,19 +3,19 @@
 // Docklands zone, and write the catalogue: feeds/discovery/candidates.json, feeds/discovery/london-feeds.opml,
 // and the verified zone feeds merged into feeds/events.json.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs              # every stage
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs seed         # directories, lists, hand lists
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs cc           # Common Crawl index + WARC sample
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs autodiscover # home pages -> <link rel=alternate>
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs verify       # fetch, parse, count, CORS
-//   node magpie/cwplans/tools/discover-feeds.mjs build                             # write outputs, no network
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs              # every stage
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs seed         # directories, lists, hand lists
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs cc           # Common Crawl index + WARC sample
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs autodiscover # home pages -> <link rel=alternate>
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs verify       # fetch, parse, count, CORS
+//   node cwplans/tools/discover-feeds.mjs build                             # write outputs, no network
 //   options: --refresh (ignore cached stage results), --no-merge (build without touching events.json)
 //
 // The cc stage needs hyparquet and hyparquet-compressors (pure JS, MIT), not a project dependency:
 //   npm i --prefix /tmp/cclibs hyparquet hyparquet-compressors   then   CC_LIBS=/tmp/cclibs node ... cc
 // Stage results are cached in data/raw/feed-discovery/ (gitignored); delete a file there to redo that stage.
 // Method, rules, and what was excluded and why: skill cwplans-feed-discovery
-// (magpie/cwplans/skills/cwplans-feed-discovery/SKILL.md) and feeds/discovery/README.md.
+// (cwplans/skills/cwplans-feed-discovery/SKILL.md) and feeds/discovery/README.md.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -28,7 +28,7 @@ const TOOLS = dirname(fileURLToPath(import.meta.url));
 const CW = join(TOOLS, '..');
 const RAW = join(CW, 'data', 'raw', 'feed-discovery');
 const OUT = join(CW, 'feeds', 'discovery');
-const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)';
+const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 const UA_TOKEN = 'glitchcan-cwplans';
 const ORIGIN = 'https://danbri.github.io';
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -871,9 +871,9 @@ function buildStage(seedsOut, cc, auto, verify) {
   const opml = `<?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
  <head>
-  <title>London feeds (verified ${TODAY}), magpie/cwplans</title>
+  <title>London feeds (verified ${TODAY}), cwplans</title>
   <dateCreated>${new Date().toUTCString()}</dateCreated>
-  <ownerId>https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/discovery/README.md</ownerId>
+  <ownerId>https://github.com/danbri/londat/blob/main/cwplans/feeds/discovery/README.md</ownerId>
   <docs>http://opml.org/spec2.opml</docs>
  </head>
  <body>

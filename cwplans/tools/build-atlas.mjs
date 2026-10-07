@@ -1,8 +1,8 @@
 // Builds atlas/data/atlas.json: the compact index the atlas page loads first.
 //
-//   node magpie/cwplans/tools/build-atlas.mjs        # about 5 seconds
+//   node cwplans/tools/build-atlas.mjs        # about 5 seconds
 //
-// Every input and output, with endpoints and rules: magpie/cwplans/pipeline.json, activity "build-atlas".
+// Every input and output, with endpoints and rules: cwplans/pipeline.json, activity "build-atlas".
 // in:  registry/buildings.json, registry/categories.json, data/raw/registry/osm-cw.json.gz (outlines),
 //      postcodes/postcodes.json, registry/companies-by-postcode.json, registry/homes-by-postcode.json, docklands/facts.json,
 //      feeds/feeds.json, feeds/events.json, registry/sources/brands/branches.json, data-register.json, the OSTN15 grid,

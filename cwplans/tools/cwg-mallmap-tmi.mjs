@@ -2,7 +2,7 @@
 // third_party/cwg/_TMI/mallmap/: every indoor and outdoor feature once, with its properties as served, its geometry in
 // WGS84 from the most precise zoom at which it lies whole in one tile (else its pieces at the lowest zoom, as a Multi*
 // geometry), one FeatureCollection per floor; the feature records from the API (one per id); the place list.
-//   node magpie/cwplans/tools/cwg-mallmap-tmi.mjs
+//   node cwplans/tools/cwg-mallmap-tmi.mjs
 // Skill: cwplans-web-harvest, "Mall plans".
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
@@ -53,6 +53,6 @@ if (existsSync(dir)) for (const f of readdirSync(dir)) { try { for (const d of J
 writeFileSync(join(OUT, 'features.json'), JSON.stringify({ source: 'map-api.prod.livingmap.com /v1/maps/canary_wharf/features?long_name=<each name>', records: [...recs.values()].sort((a, b) => a.id.localeCompare(b.id)) }) + '\n');
 const objs = existsSync(join(MM, 'api', 'feature-objects.json')) ? JSON.parse(readFileSync(join(MM, 'api', 'feature-objects.json'), 'utf8')).data : [];
 writeFileSync(join(OUT, 'places.json'), JSON.stringify({ source: 'map-api.prod.livingmap.com /v1/maps/canary_wharf/feature-objects', places: objs }) + '\n');
-const summary = { generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-mallmap-tmi.mjs', zooms_read: ZOOMS, ...stats, api_feature_records: recs.size, places: objs.length, files };
+const summary = { generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-mallmap-tmi.mjs', zooms_read: ZOOMS, ...stats, api_feature_records: recs.size, places: objs.length, files };
 writeFileSync(join(OUT, 'summary.json'), JSON.stringify(summary, null, 1) + '\n');
 console.log(JSON.stringify({ ...summary, files: files.map(f => `${f.file} ${f.features}/${f.named}`) }, null, 1));

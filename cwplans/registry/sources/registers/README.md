@@ -2,10 +2,10 @@
 
 Built 2026-10-03 by `tools/fetch-registers.mjs`. One file per source, each `{meta, records}`. `meta` holds the
 source URL, fetch date, licence (and where the licence was read), method, counts and the fields dropped.
-Raw downloads are in `magpie/cwplans/data/raw/registers/` (gitignored).
+Raw downloads are in `cwplans/data/raw/registers/` (gitignored).
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs            # all sources
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs ods cqc    # some; --refresh re-downloads
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-registers.mjs            # all sources
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-registers.mjs ods cqc    # some; --refresh re-downloads
 
 Area: the registry box WGS84 [-0.030, 51.498, -0.005, 51.510] (Canary Wharf estate and the north Isle of Dogs)
 and the postcode district E14. A record is kept when its postcode is in E14 or its source coordinate is in the

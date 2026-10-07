@@ -3,11 +3,11 @@
 // feeds/london-datastore/<key>/<key>.geojson and/or <key>.json with a meta member, and record the outcome of every
 // dataset in feeds/london-datastore/harvest-log.json (triage reads it: no zone rows -> not-relevant, unreadable ->
 // deferred). It imports the walk tool (its polite fetch queue, readers and harvestGeo):
-//   node magpie/cwplans/tools/lds-harvest-auto.mjs plan [id ...] [--rank a-b]                  # resources only
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]
-//   node magpie/cwplans/tools/lds-harvest-auto.mjs register     # data-register.json lines and the pipeline.json activity
-//   node magpie/cwplans/tools/lds-harvest-auto.mjs index        # feeds/london-datastore/index.json for the atlas and the 3D page
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/lds-harvest-auto.mjs zone-names   # zone-names.json: station and town centre names
+//   node cwplans/tools/lds-harvest-auto.mjs plan [id ...] [--rank a-b]                  # resources only
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]
+//   node cwplans/tools/lds-harvest-auto.mjs register     # data-register.json lines and the pipeline.json activity
+//   node cwplans/tools/lds-harvest-auto.mjs index        # feeds/london-datastore/index.json for the atlas and the 3D page
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/lds-harvest-auto.mjs zone-names   # zone-names.json: station and town centre names
 // register edits the shared files line by line (sources and files are one line each there): it replaces or adds only
 // the lines of the datasets in harvest-log.json, so another agent's lines are never rewritten.
 // Readers: GeoPackage, GeoJSON, shapefile zips (walk tool), CSV streamed line by line (never stored when large),
@@ -523,7 +523,7 @@ export async function autoHarvest(argv) {
 // ---- register: one source line lds-<id> and one file line per output in data-register.json; the activity in pipeline.json
 const LIC = { 'Open Government Licence v3': 'OGL v3.0', 'Open Government Licence v2': 'OGL v2.0', 'Creative Commons Attribution': 'CC BY (version not stated by the Datastore)', 'Creative Commons Attribution 4.0': 'CC BY 4.0', 'Open Data Commons Attribution License': 'ODC-By 1.0', 'Public Domain': 'Public Domain', 'Open Data Commons Public Domain Dedication and License (PDDL)': 'PDDL' };
 function register(cat) {
-  const L = loadLog(), CWD = CW;   // data-register.json and pipeline.json stay here; OUT is in the londat checkout
+  const L = loadLog(), CWD = CW;   // data-register.json, pipeline.json and OUT are all in this checkout
   const regFile = join(CWD, 'data-register.json'); let lines = readFileSync(regFile, 'utf8').split('\n');
   const upsert = (key, line, anchor) => {            // key: a string that only that line holds; anchor: insert after the last line matching it
     const i = lines.findIndex(l => l.includes(key));
@@ -557,18 +557,18 @@ function register(cat) {
         : `${d.title}: ${c.zone_rows} zone rows of ${c.rows_read} in ${c.tables_read} tables (keys: ${Object.entries(c.zone_rows_by_key || {}).map(([k, v]) => `${k} ${v}`).join(', ')}); JSON tables with zone_keys and a meta member (rule-driven harvest)`;
       const sources = [`lds-${id}`, ...(geo ? ['os-ostn15'] : []), ...(!geo && Object.keys(c.zone_rows_by_key || {}).some(k => /postcode|sector|ward2003/.test(k)) ? ['onspd'] : []), ...(Object.keys(c.zone_rows_by_key || {}).some(k => /uprn|toid/.test(k)) ? ['os-open-uprn'] : [])];
       const path = `feeds/london-datastore/${f}`;
-      upsert(`"path":"${path}"`, `    ${JSON.stringify({ path, hosted: 'londat', what, sources, osm: { use: 'none' }, produced_by: `tools/lds-harvest-auto.mjs run ${id}`, shown_on: [] })}`, l => l.includes('"path":"feeds/london-datastore/') || l.includes('"path": "feeds/london-datastore/')); nFile++;
+      upsert(`"path":"${path}"`, `    ${JSON.stringify({ path, what, sources, osm: { use: 'none' }, produced_by: `tools/lds-harvest-auto.mjs run ${id}`, shown_on: [] })}`, l => l.includes('"path":"feeds/london-datastore/') || l.includes('"path": "feeds/london-datastore/')); nFile++;
       generated.push({ file: path });
     }
   }
-  upsert('"path":"feeds/london-datastore/harvest-log.json"', `    ${JSON.stringify({ path: 'feeds/london-datastore/harvest-log.json', hosted: 'londat', what: 'outcome of the rule-driven harvest for every dataset run (harvested with files and counts, no zone rows with the evidence, not readable, documents only, by hand, held for the owner); its meta repeats the rules', sources: ['lds-catalogue', 'own'], osm: { use: 'none' }, produced_by: 'tools/lds-harvest-auto.mjs run', shown_on: [] })}`, l => l.includes('"path":"feeds/london-datastore/') || l.includes('"path": "feeds/london-datastore/'));
-  upsert('"path":"feeds/london-datastore/index.json"', `    ${JSON.stringify({ path: 'feeds/london-datastore/index.json', hosted: 'londat', what: 'index of every London Datastore folder harvested to the zone (both harvest tools): title, theme, licence and credit, dates, files with counts and sizes, and the final-state counts of the triage; loaded first by the atlas view "London Datastore"', sources: ['lds-catalogue', 'own'], osm: { use: 'none' }, produced_by: 'tools/lds-harvest-auto.mjs index', shown_on: ['atlas/index.html'] })}`, l => l.includes('"path":"feeds/london-datastore/') || l.includes('"path": "feeds/london-datastore/'));
+  upsert('"path":"feeds/london-datastore/harvest-log.json"', `    ${JSON.stringify({ path: 'feeds/london-datastore/harvest-log.json', what: 'outcome of the rule-driven harvest for every dataset run (harvested with files and counts, no zone rows with the evidence, not readable, documents only, by hand, held for the owner); its meta repeats the rules', sources: ['lds-catalogue', 'own'], osm: { use: 'none' }, produced_by: 'tools/lds-harvest-auto.mjs run', shown_on: [] })}`, l => l.includes('"path":"feeds/london-datastore/') || l.includes('"path": "feeds/london-datastore/'));
+  upsert('"path":"feeds/london-datastore/index.json"', `    ${JSON.stringify({ path: 'feeds/london-datastore/index.json', what: 'index of every London Datastore folder harvested to the zone (both harvest tools): title, theme, licence and credit, dates, files with counts and sizes, and the final-state counts of the triage; loaded first by the atlas view "London Datastore"', sources: ['lds-catalogue', 'own'], osm: { use: 'none' }, produced_by: 'tools/lds-harvest-auto.mjs index', shown_on: ['atlas/index.html'] })}`, l => l.includes('"path":"feeds/london-datastore/') || l.includes('"path": "feeds/london-datastore/'));
   tidy();
   JSON.parse(lines.join('\n'));                                       // still JSON
   writeFileSync(regFile, lines.join('\n'));
   const act = {
     id: 'lds-harvest-auto', tool: 'tools/lds-harvest-auto.mjs',
-    command: 'node magpie/cwplans/tools/lds-harvest-auto.mjs plan [id ...]; NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]; node magpie/cwplans/tools/lds-harvest-auto.mjs register',
+    command: 'node cwplans/tools/lds-harvest-auto.mjs plan [id ...]; NODE_USE_ENV_PROXY=1 node cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]; node cwplans/tools/lds-harvest-auto.mjs register',
     kind: 'fetch', used, generated,
     method: 'Harvests the London Datastore datasets that triage.json lists for harvest, by written rules instead of a hand table: picks the readable resources (one per file stem, best format, size caps, hand rules where the general rules would take too much or the wrong file), reads every row and feature (CSV streamed, large xlsx streamed with ExcelJS, xls/ods with SheetJS, GeoPackage, GeoJSON, shapefiles, zips entry by entry), keeps the zone rows (zone codes, postcodes and sectors in profiled columns, UPRNs, TOIDs, coordinates) and the features that meet the 3D model box, and records the outcome of every dataset in harvest-log.json; triage then states no-zone-rows datasets not relevant (F8b) and unreadable ones deferred (F10b).',
     rules: Object.entries(AUTO_RULES).map(([k, v]) => `${k}: ${v}`).concat(Object.entries(HAND).map(([k, v]) => `hand rule ${k}: ${v.why || v.skip}`), Object.entries(OWNER_HOLD).map(([k, v]) => `held for the owner ${k}: ${v}`)),

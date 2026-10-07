@@ -6,7 +6,7 @@ description: >-
   sameAs groups, Living Map mall units and facilities, the OCR'd store guide, pipeline provenance) into immutable graph
   versions; IRIs and vocabulary; the Shardborough store (wire version 10, parts cut in zone-key order, the 64-block cap
   of the stateless call, store handles, the query rule of one GRAPH block per subject, measured plans); the page
-  magpie/cwplans/kg/ (Lean engine in a Web Worker, blocks only, handles, count then page, ServiceWorker); COTTAS and
+  cwplans/kg/ (Lean engine in a Web Worker, blocks only, handles, count then page, ServiceWorker); COTTAS and
   HDT measured and dropped. Reach for it before you add a graph, change an IRI, query the store, or change the page.
 ---
 
@@ -23,10 +23,10 @@ Later the same day: "Concentrate on making shardborough work for browser somehow
 an operation on immutable named graphs (the `cwplans-dataflow` skill).
 
 - Data: https://github.com/danbri/londat/tree/main/kgx (README, `manifest.json`, `heads.json`, `queries/*.rq`).
-- Page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/kg/ (`kg/index.html`, `kg/worker.js`, `kg/sw.js`).
-- Build: `node magpie/cwplans/tools/build-kgx.mjs [--no-store]` (all RDF work with @factoidal/core). Run it twice: the
-  second run must print `new: 0` and the same generation. Commit the output in londat.
-- Query in Node: `node magpie/cwplans/tools/kgx-query.mjs <file.rq | 'SPARQL'>` (store handle, no block cap).
+- Page: https://danbri.github.io/londat/cwplans/kg/ (`kg/index.html`, `kg/worker.js`, `kg/sw.js`).
+- Build: `node cwplans/tools/build-kgx.mjs [--no-store]` (all RDF work with @factoidal/core). Run it twice: the
+  second run must print `new: 0` and the same generation. Commit the output (`kgx/`).
+- Query in Node: `node cwplans/tools/kgx-query.mjs <file.rq | 'SPARQL'>` (store handle, no block cap).
 - Policy, register and activity log: the hub skill `docklands-data-curation`.
 
 ## Graphs, IRIs, vocabulary
@@ -34,6 +34,12 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
 - Base `https://danbri.github.io/londat/kgx/`: things `id/…`, graph versions `graph/<name>/<hash16>`, store parts
   `graph/<name>.pNN/<hash16>`, activities `activity/<hash16>`, input files `artifact/sha256/<hash>`, vocabulary `vocab#`
   (prefix `cwk:`), schema.org first. No blank nodes (the `pipeline` graph is skolemized to `genid/pipeline/…`).
+- Names under `https://danbri.github.io/glitchcan-minigam/` were kept on purpose at the move to this repository
+  (2026-10-07): `…/magpie/cwplans/data-register.json#` (sources, activities and the `cwp:` vocabulary, in `pipeline`
+  and `web`) and `…/third_party/cwplans-structured-data/` (descriptions, genids and the idioms namespace, in `web` and
+  `coref-<rule>`). They are names, not links. Changing them would be a new operation version and a new graph version:
+  the owner's decision. The file IRIs in `pipeline.jsonld` become `https://github.com/danbri/londat/blob/main/cwplans/…`
+  at the next `check-data-register.mjs --write`, so the next build gives a new `pipeline` version.
 - Graph names: `facts`, `buildings` (cwb- ids, outline as `geo:asWKT`), `occupants`, `cwg` (typed CWG directory and
   `s:OpeningHoursSpecification` per day with `cwk:opensMinute`/`cwk:closesMinute`), `web`, `coref-<rule>`, `mallmap`
   (`cwk:MallUnit` with outline, `cwk:Facility` points: lifts, escalators, ramps, stairs, entrances, toilets,
@@ -42,7 +48,7 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   imagery source and study area), `photos-<set>`, `facade-patches-<set>`, `facade-tiles-<set>` (contributed photos),
   `facade-atlas`, `model-building-keys` (every model building's OSM key; not in the store), `meta`
   (`void:Dataset` per version and part; heads as `graph/<name> cwk:current <version>`), `log` (the activities).
-  Counts: the londat README.
+  Counts: `kgx/README.md`.
 - Joins across sources go through `s:sameAs` to the CWG entity IRI (`https://canarywharf.com/<kind>/<slug>/#entity`),
   OSM element URLs and Wikidata items. Mall units join by exact name only, for now.
 
@@ -102,7 +108,7 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 
 ## Checks
 
-- `node magpie/cwplans/tools/check-kgx-store.mjs [--write]`: every `queries/*.rq` and the joins through the store and
+- `node cwplans/tools/check-kgx-store.mjs [--write]`: every `queries/*.rq` and the joins through the store and
   through the in-memory engine on the store's own input; exits 1 on any difference; `--write` puts the result in londat
   `kgx/checks/store-vs-memory.json`. It refuses when the store was not packed from the current versions. It reads only the graphs
   the store holds (a head kept out of the store is skipped: with `model-building-keys` the parse took over 15 minutes).
@@ -139,16 +145,19 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   one entity (out and in links) 2.8 s, 106 blocks, 1.14 MB; no console errors.
 - **raw.githubusercontent.com rate-limits.** The first test of the public page (2026-10-06, 12 fetches at a time, several
   hundred block requests in about a minute) got one 429 on the "Open now" view. Hence 6 at a time and the retry. GitHub
-  Pages for londat may avoid this limit (not tested; open item below).
-- Data base: `?base=` overrides the default `https://raw.githubusercontent.com/danbri/londat/main/kgx/` (sends
-  `Access-Control-Allow-Origin: *`). Test locally with `python3 -m http.server` at the folder above both checkouts and
-  `?base=/londat/kgx/`.
+  Pages for londat may avoid this limit (not tested; open item below). Since 2026-10-07 the page reads the store from
+  its own site (next item).
+- Data base: `?base=` overrides the default `../../kgx/`, the same site as the page (https://danbri.github.io/londat/kgx/;
+  until 2026-10-07 `https://raw.githubusercontent.com/danbri/londat/main/kgx/`, which sends
+  `Access-Control-Allow-Origin: *`). Test locally with `python3 -m http.server 8080` in the repository root, then
+  http://127.0.0.1:8080/cwplans/kg/ (no `?base=` needed).
 
 ## Open
 
 - Step-free routes: the facilities are in; the corridors (indoor lines) and floor links are not yet.
 - Units: join to CWG entities by a better key than the exact name (normalised name, mall, level).
 - A building-level link from mall units and guide grid squares to registry buildings (position in the outline).
-- Turn on GitHub Pages for londat and point the page at it.
+- Turn on GitHub Pages for londat (the owner, once: Settings > Pages > Source: "GitHub Actions"). The page points at
+  it since 2026-10-07 (`../../kgx/`). Then measure whether Pages avoids the 429s.
 - Ask Factoidal for: a handle that keeps the parsed manifest (each call parses it again), a planner that looks inside
   subqueries, and an export path for `bin/engine.mjs` (or a README fix).

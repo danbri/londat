@@ -2,7 +2,7 @@
 // alcohol, education, health, sport, arts, charity (registers). Drives the "glow" outlines in the 3D page (the first five) and the counts
 // in the atlas.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-categories.mjs     # two QLever queries the first time, then cached
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/build-categories.mjs     # two QLever queries the first time, then cached
 //
 // in:  registry/buildings.json, data/raw/registry/osm-cw.json.gz (OSM tags by id: the registry keeps only a role),
 //      registry/sources/brands/cwg-directory.json (section and category labels of the entries occupants are joined to),
@@ -10,7 +10,7 @@
 // out: registry/categories.json  { rules, buildings: { cwb-id: { finance: [{ name, source, why, link?, start?, end? }], ... } }, former: { ... } }
 // Rules: a category comes only from a class stated by a source (an OSM tag, a Wikidata class or industry, the FSA
 // business type, or the branch role from the brand table, whose category comes from the brand's NSI or OSM tag).
-// Every input and output, with endpoints and rules: magpie/cwplans/pipeline.json, activity "build-categories". Names are never used to guess a class. Companies House registered
+// Every input and output, with endpoints and rules: cwplans/pipeline.json, activity "build-categories". Names are never used to guess a class. Companies House registered
 // offices are not occupants (audit SE-1) and are not used. Wikidata occupant links: an end date or a dissolved
 // organisation makes the entry "former" and it does not count; most links have no qualifier and are marked "undated".
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';

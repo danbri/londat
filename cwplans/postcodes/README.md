@@ -1,6 +1,6 @@
 # Canary Wharf postcodes: actual and possible
 
-Page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/postcodes/
+Page: https://danbri.github.io/londat/cwplans/postcodes/
 
 A complete list of the postcodes that could belong to Canary Wharf, with each one marked as actual (in the ONS Postcode Directory, live or terminated) or possible (a valid code that has never been allocated). The actual ones are classified against two definitions of Canary Wharf and used as search keys against open sources.
 
@@ -17,9 +17,9 @@ A complete list of the postcodes that could belong to Canary Wharf, with each on
 
 Rebuild:
 
-    node --max-old-space-size=6000 magpie/cwplans/tools/postcodes.mjs fetch   # ONSPD, ward names and boundary, OSM addresses (about 1 minute)
-    node magpie/cwplans/tools/postcodes.mjs build
-    node magpie/cwplans/tools/postcodes.mjs query                              # about 12 minutes, about one request a second per source
+    node --max-old-space-size=6000 cwplans/tools/postcodes.mjs fetch   # ONSPD, ward names and boundary, OSM addresses (about 1 minute)
+    node cwplans/tools/postcodes.mjs build
+    node cwplans/tools/postcodes.mjs query                              # about 12 minutes, about one request a second per source
 
 ## Method
 

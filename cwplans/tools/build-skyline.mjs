@@ -1,8 +1,8 @@
 // Measured skyline by year: the height of each model building on the Canary Wharf estate (and 300 m round it) in every
 // EA LiDAR surface model from 1999 to 2022. Drives the year slider in the 3D page.
 //
-//   bash magpie/cwplans/tools/fetch-dsm.sh          # the DSM tiles (TQ3575, TQ3580; about 1 GB of ZIPs, not committed)
-//   node magpie/cwplans/tools/build-skyline.mjs
+//   bash cwplans/tools/fetch-dsm.sh          # the DSM tiles (TQ3575, TQ3580; about 1 GB of ZIPs, not committed)
+//   node cwplans/tools/build-skyline.mjs
 //
 // in:  data/raw/dsm/<product>-<year>-<res>-<tile>.zip (GeoTIFF or ESRI ASCII grid inside), docklands/data/area.js
 // out: docklands/data/skyline.json  { years, surveys, buildings: { <model building index>: [dm per year | null] } }

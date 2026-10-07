@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Print the Markdown tables for README.md from branches.json (paste between the TABLE markers).
-//   node magpie/cwplans/registry/sources/brands/tools/readme-tables.mjs > /tmp/tables.md
+//   node cwplans/registry/sources/brands/tools/readme-tables.mjs > /tmp/tables.md
 import { join } from 'path';
 import { OUT, readJSON } from './lib.mjs';
 const { meta, branches, cwg_not_matched } = readJSON(join(OUT, 'branches.json'));

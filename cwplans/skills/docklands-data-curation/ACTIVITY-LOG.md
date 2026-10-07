@@ -1479,3 +1479,90 @@ CLAUDE.md, every SKILL.md, this log and the londat READMEs: 69 found, 13 partly,
   blender-station-models (1,134), cwplans-public-registers (1,133).
 - Not reviewed: `cwplans-web-harvest`, the londat cache folder against `cwplans-londat-cache`, and the contributed
   photo files: the environment's safety check refused those reads in this session.
+
+## 2026-10-07 (midday): the project moves to danbri/londat (Opus)
+
+Owner: "Migrate docklands 3d map, data tools, lg etc from magpie/cwplans/* into londat repo." and "Let me know
+where/how to configure github" ("lg" read as the kg page; the logs moved too, because the whole folder moved).
+From this entry on, paths are relative to danbri/londat and commit ids are londat commits unless named otherwise.
+
+What changed (londat branch `claude/docklands-migration-londat-hr8hoz`; glitchcan-minigam the same branch name):
+- **Copy** (londat d312be6, no file changed): glitchcan-minigam 7be94dc `magpie/cwplans/` to `cwplans/` (447 files),
+  `third_party/cwplans-structured-data/` (451 files) and `tools/view-mcp/` (6 files), 904 files, git archive of tracked
+  files. One path was in both trees: `cwplans/data-register.json` (the copy of the hosted entries), replaced by the full
+  register. History before the move: https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans
+- **Paths and URLs**: a one-off script rewrote 178 files (code, pages, current docs, `data-register.json`,
+  `pipeline.json`; not data files, not generated docs, not dated docs such as `research-report-2026-10.md`, this log,
+  `feeds/SURVEY-2026-10-03.md`, the Factoidal issue texts): `magpie/cwplans/` to `cwplans/`; the glitchcan-minigam Pages
+  and GitHub URLs of the moved files to the londat ones; `../../third_party/` and `../../tools/view-mcp/` (relative to
+  cwplans) to `../`. The knowledge-graph IRI namespaces under https://danbri.github.io/glitchcan-minigam/ were protected
+  and kept. Then by hand: repository-root paths one level shorter in 12 tools; `tools/londat.mjs` (LONDAT_DIR = this
+  checkout); `check-data-register.mjs` without the two-repository logic (pattern entries matched for tracked files too);
+  the facade Python scripts' absolute paths made relative; the hours report builder's root; the User-Agent contact URL
+  (`glitchcan-cwplans/0.1 (https://github.com/danbri/londat)`, token unchanged); comments and labels that named
+  glitchcan-minigam as the place of the tools.
+- **Register**: `"hosted": "londat"` removed from 421 entries; `lds-harvest-auto.mjs` no longer writes it;
+  `build-zone-gpkg.mjs` picks the London Datastore and portal GeoJSON by folder (it filtered on `hosted`);
+  `osm_elsewhere_in_repo` now names glitchcan-minigam paths and is checked only with a glitchcan-minigam checkout next
+  to this one. `--write` regenerated DATA-REGISTER.md, METHODS.md and pipeline.jsonld: file IRIs are now londat blob
+  URLs (1,742; 0 glitchcan-minigam).
+- **Pages**: `data-base.js` reads every path from the same site except `cache/` (raw.githubusercontent.com, new each
+  hour); the kg page reads `../../kgx/`. No other page code changed beyond the URL rewrite.
+- **Repository**: `package.json` and lock (proj4, geotiff, earcut as dependencies; the rest devDependencies; Playwright
+  pinned to 1.56.1 for the container's Chromium 1194), `.gitignore`, `CLAUDE.md` (the owner's rules carried over with
+  their words and dates), `README.md`, a landing `index.html`, `.claude/skills/` (18 links), `tools/check-skills.mjs`
+  (copied from glitchcan-minigam), `.mcp.json` (docklands-view), `.github/workflows/pages.yml` (new: deploys on a push
+  to main that changes more than `cwplans/cache/`; not published: `third_party/`, `cwplans/cache/runs/`,
+  `cwplans/cache/*.sqlite`, `.claude/`), `.github/workflows/cache-live.yml` (runs the tools from here: `npm ci
+  --omit=dev`, a stash of the rewritten snapshot files before the pull).
+- **Skills and docs**: this session updated `docklands-data-curation` ("Data hosted in danbri/londat" rewritten for
+  the move, with the history kept) and `cwplans-londat-cache`; three subagents updated the other 16 skills and the
+  folder READMEs (`cwplans/`, `kgx/`, `data/images/contrib/`, `third_party/`); also `methods-intro.md`,
+  `LICENSE-DATA.md`, `SOURCES-TO-INVESTIGATE.md`, `sources-to-investigate.json`.
+- **Skill descriptions** (a separate commit): the six descriptions over 1,024 characters (listed in the
+  glitchcan-minigam `CLAUDE.md` on 2026-10-07) were cut to 963 to 1,020 characters, details that the body repeats taken
+  out: blender-station-models, docklands-sky, cwplans-live-state, cwplans-feed-discovery (by the subagents),
+  cwplans-construction, cwplans-public-registers. All 18 are now 1,024 or fewer (measured with a YAML parser).
+- **glitchcan-minigam** (commit 95539f4 on its branch): 910 files removed; 11 redirect pages at the old page
+  addresses (query and hash kept; the kg page's service worker unregistered first) and a README; the 18 skill links
+  and the docklands-view MCP entry removed; `CLAUDE.md`: the cwplans exception points to the londat `CLAUDE.md` and
+  applies to no directory there, the 18 skill rows became one row.
+
+Measured:
+- `check-data-register.mjs`: 706 entries, 683 data files tracked, 0 problems (a test file left unregistered in
+  `feeds/portals/` was reported). `npm test`: 15 of 15. `check-factoidal.mjs`: STILL for all 12 (as before).
+  `tools/view-mcp/test.mjs`: all passed, including `render_view ?view=plane` with 0 console errors.
+  `check-kgx-store.mjs`: 17 of 17 queries and joins gave the same counts from the store and from memory (exit 0;
+  about 12 minutes here).
+- Offline rebuilds to test the tools (outputs not committed): `build-atlas.mjs` (after `fetch-raw.mjs grid`) gave the
+  committed atlas.json except `built` and three counts whose inputs changed after 2026-10-03 (feeds 541 to 554, events
+  124 to 313, register files 120 to 706); `audit-quality.mjs`: 39 checks, all counts the same except TM-4 30 to 34
+  (Wikidata qualifiers; the registry changed after the last audit).
+- Redirect pages: 8 cases, headless, with the new site mocked: each kept the query and the hash.
+- Pages site staged as the workflow does it: 430 MB (limit 1 GB; the workflow stops at 950 MB).
+- Pages, old copy (7be94dc) against the new one, headless (subagent), 21 loads on each side: every page; the 3D page
+  with `?view=greenland`, `?t=photo&view=greenland`, the London Datastore overlays (by menu and by share hash), Live
+  and a building card; the atlas with `#view/b/cwb-0413`, `#quality`, the London Datastore view and Live; the kg page
+  with a query. The same number of requests on every load, 0 page errors, 0 failed requests and 0 HTTP errors on both
+  sides; the only console error (two loads, both sides) is /favicon.ico from the local server. Requests to
+  raw.githubusercontent.com: 90 old (63 from the kg page), 2 new (`cache/latest.json` for Live).
+
+Open items (changes to the list of the skills review entry above; the other items stand):
+- Item 8 (GitHub Pages for londat) is now four steps for the owner, in this order: Settings > Pages > Source: GitHub
+  Actions; merge the londat branch; check https://danbri.github.io/londat/cwplans/docklands/ ; then merge the
+  glitchcan-minigam branch (before the site is on, the redirects would lead to a 404). `data-base.js` and the kg page
+  need no further edit.
+- Item 5: the links are now https://danbri.github.io/londat/cwplans/docklands/?lines and
+  https://danbri.github.io/londat/cwplans/docklands/?vectrex (the old ones redirect after the merge).
+- New: the IRI namespaces under https://danbri.github.io/glitchcan-minigam/ (register sources, activities, the `cwp:`
+  vocabulary; structured-data descriptions and genids) were kept as names. A londat namespace would be new operation
+  versions and new graph versions: the owner's decision.
+- New: `build-kgx.mjs` was not run after the move. The next run gives a new pipeline-provenance graph version (file
+  IRIs are now londat blob URLs, and every edited tool has a new hash).
+- New: the register covers `cwplans/` and `third_party/cwplans-structured-data/`; `kgx/`, `data/images/`,
+  `third_party/tfl/` and `third_party/cwg/` have READMEs and manifests but no register entries.
+- New: glitchcan-minigam `package.json` keeps devDependencies that only cwplans used (proj4, geotiff, earcut,
+  @factoidal/core, xlsx, exceljs, tesseract.js, pdfjs-dist, @napi-rs/canvas, pbf, @mapbox/vector-tile); check for other
+  users before removing any.
+- New: the hourly cache ran 7 times from 2026-10-05 23:09 to 2026-10-07 08:38 UTC (all successful): GitHub delays or
+  drops scheduled runs, so the runs were 3.8 to 7.3 hours apart, not 1. Not changed by the move.

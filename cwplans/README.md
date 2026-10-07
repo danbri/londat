@@ -1,13 +1,13 @@
 # cwplans: Canada Water → Surrey Quays corridor model
 
-Live page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/
+Live page: https://danbri.github.io/londat/cwplans/
 
-Atlas (everything joined: map, buildings, businesses, postcodes, levels below ground, heritage, river, live feeds, sources): https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/ . Its index `atlas/data/atlas.json` is built by `node magpie/cwplans/tools/build-atlas.mjs` from the committed registry, postcode, heritage, river and 3D-model files; the page loads the detail files on demand. Leaflet 1.9.4 (BSD-2-Clause) is vendored in `atlas/vendor/leaflet/`.
+Atlas (everything joined: map, buildings, businesses, postcodes, levels below ground, heritage, river, live feeds, sources): https://danbri.github.io/londat/cwplans/atlas/ . Its index `atlas/data/atlas.json` is built by `node cwplans/tools/build-atlas.mjs` from the committed registry, postcode, heritage, river and 3D-model files; the page loads the detail files on demand. Leaflet 1.9.4 (BSD-2-Clause) is vendored in `atlas/vendor/leaflet/`.
 
-Data quality: `node magpie/cwplans/tools/audit-quality.mjs` runs 28 checks after each rebuild and writes `quality/issues.json` and `quality/CATALOGUE.md`; the analysis and the proposed compositing layers are in `quality/README.md`. Browse: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#quality . Curation notes, the fault register and the activity log: `skills/docklands-data-curation/`.
+Data quality: `node cwplans/tools/audit-quality.mjs` runs 28 checks after each rebuild and writes `quality/issues.json` and `quality/CATALOGUE.md`; the analysis and the proposed compositing layers are in `quality/README.md`. Browse: https://danbri.github.io/londat/cwplans/atlas/#quality . Curation notes, the fault register and the activity log: `skills/docklands-data-curation/`.
 
-Data licences and OpenStreetMap use for the whole project: `DATA-REGISTER.md` (generated from `data-register.json`; check with `node magpie/cwplans/tools/check-data-register.mjs`).
-First schematic (hand-placed boxes, kept for reference): https://danbri.github.io/glitchcan-minigam/magpie/cwplans/schematic.html
+Data licences and OpenStreetMap use for the whole project: `DATA-REGISTER.md` (generated from `data-register.json`; check with `node cwplans/tools/check-data-register.mjs`).
+First schematic (hand-placed boxes, kept for reference): https://danbri.github.io/londat/cwplans/schematic.html
 
 A 3D view and a long section of the East London Line (London Overground) from Wapping, through the Thames Tunnel, Rotherhithe and Canada Water, to Surrey Quays and Silwood Junction. It is built from open data only. Ground, buildings and the levels of open track are measured. Tunnel levels are modelled, because no open source publishes them.
 
@@ -26,15 +26,15 @@ A 3D view and a long section of the East London Line (London Overground) from Wa
 | `tools/build-data.mjs` | builds `data/cwplans-data.js` from the raw data |
 | `research-report-2026-10.md` | the source survey supplied by the owner, unchanged; read the review below first |
 | `data/sourced-levels.json` | hand-curated published levels (platform depths, slab levels, dock bed) with source URL and quote; used by both builds |
-| `docklands/` | the wider Docklands model (London Bridge to Cody Dock, Canary Wharf above and below ground): https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ |
-| `feeds/` | 200 checked data sources, feeds and APIs for the area, browsable at https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/ (`feeds/README.md`, `feeds/feeds.json`) |
+| `docklands/` | the wider Docklands model (London Bridge to Cody Dock, Canary Wharf above and below ground): https://danbri.github.io/londat/cwplans/docklands/ |
+| `feeds/` | 200 checked data sources, feeds and APIs for the area, browsable at https://danbri.github.io/londat/cwplans/feeds/ (`feeds/README.md`, `feeds/feeds.json`) |
 
 Rebuild:
 
-    node magpie/cwplans/tools/fetch-raw.mjs        # all sources; or name some: osm lidar wikidata grid
-    node magpie/cwplans/tools/build-data.mjs
+    node cwplans/tools/fetch-raw.mjs        # all sources; or name some: osm lidar wikidata grid
+    node cwplans/tools/build-data.mjs
 
-The tools use the repo's `geotiff`, `proj4` and `earcut` dev dependencies (pure JavaScript, no GDAL needed).
+The tools use `geotiff`, `proj4` and `earcut` (pure JavaScript, no GDAL needed), the "dependencies" of the repository's `package.json`: run `npm install` in the repository root first.
 
 ## Sources and licences
 

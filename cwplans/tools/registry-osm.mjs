@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // OSM features with full tags inside the Canary Wharf box, for the building registry (build-registry.mjs).
-//   node --max-old-space-size=6000 magpie/cwplans/tools/registry-osm.mjs
+//   node --max-old-space-size=6000 cwplans/tools/registry-osm.mjs
 // in:  data/raw/docklands/greater_london-latest.osm.pbf (fetch-docklands.mjs osm)
 // out: data/raw/registry/osm-cw.json.gz  {nodes: {id: [lon, lat]}, features: [{type, id, tags, refs|members|lon,lat}]}
 // Tags kept: everything except mappers' notes and the few that reach a person, not a business (see DROP).

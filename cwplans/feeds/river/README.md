@@ -3,16 +3,18 @@
 Snapshots for the Docklands zone made by `tools/fetch-river.mjs` on 2026-10-04 (UTC times in each file's `meta.fetched`).
 Zone: the 3D model box (WGS84 -0.095, 51.474 to 0.015, 51.522), the Royal Docks margin (0.015 to 0.085, 51.495 to 51.522)
 and a strip north to Bow Locks (-0.025 to 0.01, 51.522 to 51.528). Method, licences and lessons: skill
-`cwplans-river-and-water` (`magpie/cwplans/skills/cwplans-river-and-water/SKILL.md`).
+`cwplans-river-and-water` (`cwplans/skills/cwplans-river-and-water/SKILL.md`).
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs            # all sources (about 6 minutes, polite)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs levels     # one source
-    node magpie/cwplans/tools/fetch-river.mjs --no-fetch                      # rebuild from data/raw/river/
-    node magpie/cwplans/tools/fetch-river.mjs --list
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs            # all sources (about 6 minutes, polite)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs levels     # one source
+    node cwplans/tools/fetch-river.mjs --no-fetch                      # rebuild from data/raw/river/
+    node cwplans/tools/fetch-river.mjs --list
 
 Every file: `{meta: {source, url, fetched, licence, attribution, method, counts, zone}, items: [{id, kind, time or validity,
 position {lat, lon, precision, zone}, values, url}]}`. Files are overwritten on each run; git history keeps the dated
-versions. "Live" below means the source changes within minutes or hours, so the snapshot is a sample of that moment.
+versions (before 2026-10-07 in danbri/glitchcan-minigam:
+https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans/feeds/river). "Live" below means the source
+changes within minutes or hours, so the snapshot is a sample of that moment.
 
 ## Files
 

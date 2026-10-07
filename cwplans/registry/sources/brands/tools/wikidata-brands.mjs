@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Step 2: Wikidata facts for the NSI UK brand QIDs, through QLever (https://qlever.dev/api/wikidata).
-//   node magpie/cwplans/registry/sources/brands/tools/wikidata-brands.mjs
+//   node cwplans/registry/sources/brands/tools/wikidata-brands.mjs
 // in:  brands-uk.json
 // out: wikidata-brands.json (label, official website P856, parent organisation P749, count of items
 //      anywhere with P1716 brand = QID and a P625 coordinate) and wikidata-near.json (every item

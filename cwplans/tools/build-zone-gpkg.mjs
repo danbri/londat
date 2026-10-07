@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Write the static zone layers of magpie/cwplans into one GeoPackage in the danbri/londat checkout, for GIS users (QGIS,
+// Write the static zone layers of cwplans into GeoPackages in cwplans/cache/, for GIS users (QGIS,
 // GDAL). Needs GDAL's ogr2ogr on the PATH (apt-get install -y gdal-bin).
 //
-//   node magpie/cwplans/tools/build-zone-gpkg.mjs                        # all three files
-//   node magpie/cwplans/tools/build-zone-gpkg.mjs --part=core,lds,portals   # some of them
+//   node cwplans/tools/build-zone-gpkg.mjs                        # all three files
+//   node cwplans/tools/build-zone-gpkg.mjs --part=core,lds,portals   # some of them
 //
 // In:  docklands/data/area.js (model buildings, water, greens, roads and railways, flood defences; EPSG:27700 by its
 //      origin), atlas/data/atlas.json (registry building outlines with cwb- ids), registry/sources/construction/sites.json,
@@ -30,7 +30,7 @@ const licText = path => { const f = byPath.get(path); if (!f) throw new Error(`n
   const odbl = f.osm && !['none', 'ids', 'counts', 'notes'].includes(f.osm.use);
   return (odbl ? 'Contains OpenStreetMap data, © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright). ' : '') +
     'Sources: ' + f.sources.map(k => reg.sources[k] ? `${reg.sources[k].name.split(' (')[0]} (${reg.sources[k].licence}${reg.sources[k].attribution ? '; ' + reg.sources[k].attribution : ''})` : k).join('; ') +
-    (f.review ? ` REVIEW: ${f.review}` : '') + ` Register: magpie/cwplans/data-register.json, ${path}.`; };
+    (f.review ? ` REVIEW: ${f.review}` : '') + ` Register: cwplans/data-register.json, ${path}.`; };
 let licRows = [], nLayers = 0;
 const startPart = name => { OUT = join(LONDAT_CW, 'cache', `zone-${name}.gpkg`); if (existsSync(OUT)) rmSync(OUT); licRows = []; nLayers = 0; };
 function ogr(srcFile, layer, { srs, desc, file, nlt = 'PROMOTE_TO_MULTI' }) {
@@ -56,7 +56,7 @@ const line3 = o => { if (!o.q) return (o.pts || []).map(p => bng(p[0], p[1]));  
   const q = dec(o.q, 3), pts = []; for (let i = 0; i < q.length; i += 3) pts.push(bng(q[i], q[i + 1])); return pts; };
 const AT = JSON.parse(readFileSync(join(CW, 'atlas/data/atlas.json'), 'utf8'));
 const cwbOf = new Map(); AT.buildings.forEach(b => (b.mi || []).forEach(i => cwbOf.set(i, b.id)));
-const areaDesc = (what, extra = '') => `${what}. From the Docklands 3D model (magpie/cwplans/docklands/data/area.js, built ${A.meta.built}), EPSG:27700. ${extra}${licText('docklands/data/area.js')}`;
+const areaDesc = (what, extra = '') => `${what}. From the Docklands 3D model (cwplans/docklands/data/area.js, built ${A.meta.built}), EPSG:27700. ${extra}${licText('docklands/data/area.js')}`;
 ogr(fc('model_buildings', A.buildings.map((b, i) => ({ type: 'Feature', properties: { model_index: i, cwb_id: cwbOf.get(i) || null, name: b.n || null, wikidata: b.wd || null, base_m_od: b.b, height_m: b.h, min_height_m: b.mh || 0, top_m_od: Math.round((b.b + b.h) * 10) / 10, floors: b.fl ?? null },
   geometry: { type: 'Polygon', coordinates: rings(b) } })).filter(f => f.geometry.coordinates.length)), 'model_buildings',
   { srs: 'EPSG:27700', file: 'docklands/data/area.js', desc: areaDesc('Building outlines of the 3D model with base and height (m above ODN) and the registry id (cwb_id) where the atlas links one', 'Outlines OSM; heights from EA LiDAR DSM minus DTM. ') });
@@ -67,34 +67,34 @@ ogr(fc('model_greens', A.greens.map(g => ({ type: 'Feature', properties: {}, geo
 ogr(fc('model_lines', A.lines.map(l => ({ type: 'Feature', properties: { kind: l.k, name: l.name || null, bridge: l.bridge ? 1 : 0, tunnel: l.tunnel ? 1 : 0 }, geometry: { type: 'LineString', coordinates: line3(l) } })).filter(f => f.geometry.coordinates.length >= 2)), 'model_lines',
   { srs: 'EPSG:27700', file: 'docklands/data/area.js', desc: areaDesc('Roads, footways, railways, DLR and Underground lines (kind = road, foot, rail, light_rail, subway)') });
 ogr(fc('model_flood_defences', A.defences.map(d => ({ type: 'Feature', properties: { ea_asset: d.id, type: d.t, crest_m_od: d.c, design_m_od: d.d ?? null, standard_of_protection: d.sop ?? null }, geometry: { type: 'LineString', coordinates: line3(d) } })).filter(f => f.geometry.coordinates.length >= 2)), 'model_flood_defences',
-  { srs: 'EPSG:27700', file: 'docklands/data/area.js', desc: `Environment Agency Spatial Flood Defences in the model box: asset id, type, crest and design level (m above ODN), standard of protection. EPSG:27700. Environment Agency, Open Government Licence v3.0. Register: magpie/cwplans/data-register.json, docklands/data/area.js.` });
+  { srs: 'EPSG:27700', file: 'docklands/data/area.js', desc: `Environment Agency Spatial Flood Defences in the model box: asset id, type, crest and design level (m above ODN), standard of protection. EPSG:27700. Environment Agency, Open Government Licence v3.0. Register: cwplans/data-register.json, docklands/data/area.js.` });
 
 // ---- 2. registry buildings (atlas.json outlines in microdegrees)
 const decLL = q => { const o = []; let la = 0, lo = 0; for (let i = 0; i < q.length; i += 2) { la += q[i]; lo += q[i + 1]; o.push([lo / 1e6, la / 1e6]); } if (o.length && (o[0][0] !== o.at(-1)[0] || o[0][1] !== o.at(-1)[1])) o.push(o[0]); return o; };
 ogr(fc('registry_buildings', AT.buildings.map(b => ({ type: 'Feature', properties: { cwb_id: b.id, name: b.n || null, type: b.t || null, levels: b.lv ?? null, levels_underground: b.lu ?? null, height_m: b.h ?? null, model_height_m: b.wh ?? null, area_m2: b.a ?? null, homes: b.hm ?? null, companies: b.co ?? null, occupants: b.o ?? null, wikidata: b.wd || null, postcodes: (b.pc || []).join(' ') || null, lat: b.lat, lon: b.lon },
   geometry: b.g && b.g.length ? { type: 'Polygon', coordinates: b.g.map(decLL).filter(r => r.length >= 4) } : { type: 'Point', coordinates: [b.lon, b.lat] } }))), 'registry_buildings',
-  { srs: 'EPSG:4326', file: 'atlas/data/atlas.json', nlt: 'GEOMETRY', desc: `Registry buildings (cwb- ids) of the Canary Wharf box with outline (or point where no outline), name, type, levels, heights, homes, company and occupant counts, postcodes. From magpie/cwplans/atlas/data/atlas.json (built ${AT.built}); full records: registry/buildings.json. EPSG:4326. ${licText('atlas/data/atlas.json')}` });
+  { srs: 'EPSG:4326', file: 'atlas/data/atlas.json', nlt: 'GEOMETRY', desc: `Registry buildings (cwb- ids) of the Canary Wharf box with outline (or point where no outline), name, type, levels, heights, homes, company and occupant counts, postcodes. From cwplans/atlas/data/atlas.json (built ${AT.built}); full records: registry/buildings.json. EPSG:4326. ${licText('atlas/data/atlas.json')}` });
 
 // ---- 3. construction sites
 const SITES = JSON.parse(readFileSync(join(CW, 'registry/sources/construction/sites.json'), 'utf8'));
 ogr(fc('construction_sites', SITES.sites.map(s => ({ type: 'Feature', properties: { site_id: s.id, name: s.name, address: s.address || null, borough: s.borough || null, status: s.status, status_rule: s.status_rule || null, status_confidence: s.status_confidence || null, decision: s.dates?.decision || null, commenced: s.dates?.commenced || null, completed: s.dates?.completed || null, area_m2: s.footprint?.area_m2 ?? null },
   geometry: s.footprint?.ring_wgs84?.length >= 4 ? { type: 'Polygon', coordinates: [s.footprint.ring_wgs84] } : { type: 'Point', coordinates: [s.position.lon, s.position.lat] } }))), 'construction_sites',
-  { srs: 'EPSG:4326', file: 'registry/sources/construction/sites.json', nlt: 'GEOMETRY', desc: `Works in progress: construction sites in the zone with status, rule, confidence and dates (footprint or point). From magpie/cwplans/registry/sources/construction/sites.json (${SITES.meta?.built || SITES.meta?.generated || ''}). EPSG:4326. ${licText('registry/sources/construction/sites.json')}` });
+  { srs: 'EPSG:4326', file: 'registry/sources/construction/sites.json', nlt: 'GEOMETRY', desc: `Works in progress: construction sites in the zone with status, rule, confidence and dates (footprint or point). From cwplans/registry/sources/construction/sites.json (${SITES.meta?.built || SITES.meta?.generated || ''}). EPSG:4326. ${licText('registry/sources/construction/sites.json')}` });
 
 // ---- 4. river snapshots (points; one layer per snapshot file that has positions)
 for (const name of ['locks', 'eden-dock', 'royal-docks', 'ea-sondes', 'ea-wims', 'pla-moorings', 'osm-river', 'wikidata-vessels', 'river-bus', 'levels']) {
   const rel = `feeds/river/${name}.json`, d = JSON.parse(readFileSync(join(CW, rel), 'utf8'));
   const feats = d.items.filter(i => i.position && isFinite(i.position.lat) && isFinite(i.position.lon)).map(i => ({ type: 'Feature', properties: { id: i.id, kind: i.kind, name: i.name || i.values?.name || i.values?.label || null, time: i.time || null, url: i.url || null }, geometry: { type: 'Point', coordinates: [i.position.lon, i.position.lat] } }));
   if (!feats.length) continue;
-  ogr(fc('river_' + name, feats), 'river_' + name.replace(/-/g, '_'), { srs: 'EPSG:4326', file: rel, desc: `River snapshot ${name} (fetched ${d.meta.fetched}): ${feats.length} positioned items, id, kind, name, time. From magpie/cwplans/${rel}. EPSG:4326. ${licText(rel)}` });
+  ogr(fc('river_' + name, feats), 'river_' + name.replace(/-/g, '_'), { srs: 'EPSG:4326', file: rel, desc: `River snapshot ${name} (fetched ${d.meta.fetched}): ${feats.length} positioned items, id, kind, name, time. From cwplans/${rel}. EPSG:4326. ${licText(rel)}` });
 }
 
 finish(); }
 
-// ---- 5. the London Datastore and portal extracts already in londat (GeoJSON, own CRS), one file each
+// ---- 5. the London Datastore and portal extracts (GeoJSON, own CRS), one file each
 for (const [part, prefix] of [['lds', 'feeds/london-datastore/'], ['portals', 'feeds/portals/']]) { if (!PARTS.includes(part)) continue; startPart(part);
-for (const f of reg.files.filter(f => f.hosted === 'londat' && f.path.startsWith(prefix) && /\.geojson(\.gz)?$/.test(f.path))) {
-  const src = join(LONDAT_CW, f.path); if (!existsSync(src)) { console.error(`missing in londat: ${f.path}`); continue; }
+for (const f of reg.files.filter(f => f.path.startsWith(prefix) && /\.geojson(\.gz)?$/.test(f.path))) {
+  const src = join(LONDAT_CW, f.path); if (!existsSync(src)) { console.error(`missing: ${f.path}`); continue; }
   const base = f.path.replace(/^feeds\/london-datastore\//, 'lds_').replace(/^feeds\/portals\//, 'portal_').replace(/\.geojson(\.gz)?$/, '').split('/');
   let layer = (base.length > 1 && base.at(-1) === base.at(-2) ? base.slice(0, -1) : base).join('_').replace(/[^A-Za-z0-9_]/g, '_').toLowerCase().slice(0, 60);
   ogr(f.path.endsWith('.gz') ? '/vsigzip/' + src : src, layer, { file: f.path, desc: `${f.what}. londat cwplans/${f.path}. ${licText(f.path)}` });
@@ -107,7 +107,7 @@ rmSync(TMP, { recursive: true, force: true });
 function finish() {
 const csv = [Object.keys(licRows[0]).join(','), ...licRows.map(r => Object.values(r).map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))].join('\n');
 writeFileSync(join(TMP, 'layer_licences.csv'), csv);
-execFileSync('ogr2ogr', ['-update', '-f', 'GPKG', OUT, join(TMP, 'layer_licences.csv'), '-nln', 'layer_licences', '-lco', 'DESCRIPTION=One row per layer of this GeoPackage: the file it was made from (path relative to magpie/cwplans in danbri/glitchcan-minigam, or to cwplans/ in danbri/londat), the register source keys, their licences and the OSM use. The register is the authority: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/data-register.json']);
+execFileSync('ogr2ogr', ['-update', '-f', 'GPKG', OUT, join(TMP, 'layer_licences.csv'), '-nln', 'layer_licences', '-lco', 'DESCRIPTION=One row per layer of this GeoPackage: the file it was made from (path relative to cwplans/ in danbri/londat), the register source keys, their licences and the OSM use. The register is the authority: https://github.com/danbri/londat/blob/main/cwplans/data-register.json']);
 // an empty geometry must carry the GeoPackage empty flag (validate_gpkg.py Req 152); GDAL writes some from GeoJSON without
 // it (59 in portal_pdg_flood_risk_zone on 2026-10-05), so they become NULL geometries and keep their attributes
 const sqlOut = q => execFileSync('ogrinfo', ['-q', OUT, '-sql', q], { encoding: 'utf8' });

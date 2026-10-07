@@ -68,7 +68,7 @@ Checks where a known value exists:
 - Data register: these files are not yet in `data-register.json`. Before committing, add entries for
   `registry/sources/facades/photos.json` and `facades.json` (sources: Flickr CC BY photos, Wikimedia Commons,
   Wikipedia/Wikidata text, OSM footprint widths — `osm.use: derived`) and run
-  `node magpie/cwplans/tools/check-data-register.mjs --write`.
+  `node cwplans/tools/check-data-register.mjs --write`.
 
 ## Tools and intermediate files
 

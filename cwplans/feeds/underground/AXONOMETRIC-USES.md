@@ -1,6 +1,6 @@
 # What people built from TfL's axonometric station diagrams
 
-Survey made 2026-10-05 for the 3D station modelling in magpie/cwplans. The baseline is the set of axonometric (3D-style)
+Survey made 2026-10-05 for the 3D station modelling in cwplans. The baseline is the set of axonometric (3D-style)
 drawings of London Underground stations that TfL released under FOI in July 2015 (124 stations, A to W, raster, not to
 scale, partly redacted) and the later FOI updates. We hold the Canada Water and Canary Wharf sheets in
 [danbri/londat third_party/tfl/am3d](https://github.com/danbri/londat/tree/main/third_party/tfl/am3d) (use approved by the
@@ -8,7 +8,8 @@ owner, 2026-10-05).
 
 Full records: [axonometric-uses.json](axonometric-uses.json) (54 entries: id, URL, author, date, kind, stations and
 zone flags, format, downloadable, licence as stated, licence class, relation to the sheets, quality, usefulness, how the
-evidence was read). Links and facts only: no third-party model or image is copied into this repository.
+evidence was read). Links and facts only: no third-party model or image is copied into this repository, except the
+TfL sheets above (`third_party/tfl/am3d/`, approved by the owner).
 
 Counts by kind: visualisation 16, 3D model 10, FOI 8, OSM 7, paper 4, app 3, game build 3, dataset 3. By licence class: restricted 23, none 12, open 11, unclear 8. By relation to the sheets: independent 33, source 7, used as reference 7, derived 4, unclear (project uses DEFRA LIDAR for buildings; interior reference not stated in the snippet) 1, unclear 1, unclear (station maps are Waymap's own) 1.
 

@@ -2,7 +2,7 @@
 // How many branches each brand has across Greater London in OSM (brand:wikidata on a shop/amenity/
 // office/tourism/leisure/healthcare feature) - the size measure used to pick the 30 brands whose
 // own store pages are checked (step 3c). Greater London is a proxy for "UK branches": the GB extract is 1.9 GB.
-//   node magpie/cwplans/registry/sources/brands/tools/london-brand-counts.mjs
+//   node cwplans/registry/sources/brands/tools/london-brand-counts.mjs
 // out: data/raw/registry/london-brand-counts.json
 import { createReadStream, writeFileSync } from 'fs';
 import { Writable } from 'stream';

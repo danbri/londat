@@ -1,6 +1,6 @@
 // OS Open UPRN + OS Open Linked Identifiers (LIDS) for the Canary Wharf box.
-// Run: node magpie/cwplans/tools/registry-uprn.mjs
-// Needs, in magpie/cwplans/data/raw/registry/ (from the OS Downloads API, no key needed):
+// Run: node cwplans/tools/registry-uprn.mjs
+// Needs, in cwplans/data/raw/registry/ (from the OS Downloads API, no key needed):
 //   osopenuprn_YYYYMM_csv.zip                         https://api.os.uk/downloads/v1/products/OpenUPRN/downloads
 //   lids-YYYY-MM_csv_BLPU-UPRN-TopographicArea-TOID-5.zip   https://api.os.uk/downloads/v1/products/LIDS/downloads
 //   lids-YYYY-MM_csv_BLPU-UPRN-Street-USRN-11.zip

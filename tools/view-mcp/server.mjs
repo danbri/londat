@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // view-mcp — an MCP server (stdio) for reconstructing photo views of the Docklands zone on the 3D page
-// (magpie/cwplans/docklands). Registered in the repo's .mcp.json as "docklands-view".
+// (cwplans/docklands). Registered in the repo's .mcp.json as "docklands-view".
 //
 //   node tools/view-mcp/server.mjs          (Claude Code starts it; it speaks JSON-RPC on stdin/stdout)
 //   node tools/view-mcp/test.mjs            (drives it the way a client does, and checks every tool)
 //
 // Method, error budget and limits: the photo-view-reconstruction skill
-// (magpie/cwplans/docklands/skills/photo-view-reconstruction/SKILL.md).
+// (cwplans/docklands/skills/photo-view-reconstruction/SKILL.md).
 import path from 'node:path';
 import { geo, lonlat, landmarks, landmarkById, project, groundPoint, groundAt, solveCamera, sunAt, timeFromSun, camAxes, hfov } from './view-lib.mjs';
 import { drawOverlay } from './overlay.mjs';
@@ -49,7 +49,7 @@ const TOOLS = [
   { name: 'overlay', description: 'Draw the model (OSM water outlines blue, rail orange, tower tops and bases yellow, model box red, landmark points) projected through a camera onto a photo; returns the PNG path. The way to see whether a guess or a solve lines up.',
     inputSchema: { type: 'object', properties: { photo: { type: 'string' }, camera: CAMERA, points: { type: 'array', items: { type: 'object' } }, out: { type: 'string' } }, required: ['photo', 'camera'] },
     run: async a => { const c = cam(a.camera), pts = (a.points || []).map(p => ({ ...p, xyz: p.xyz || p.id || p.lonlat ? point3(p) : undefined })); return json({ png: await drawOverlay(a.photo, c, a.out || tmp('overlay'), { points: pts }) }); } },
-  { name: 'render_view', description: 'Render the Docklands 3D page headless (SwiftShader WebGL) from a camera, or from a ?view= name (e.g. plane, greenlandday, rotherhithe); t = London time for the sky clock (e.g. 2026-10-05T17:40); style "night" turns Night on. base: the site root (default: this checkout on 127.0.0.1; or https://danbri.github.io/glitchcan-minigam for the live page). Returns the PNG path, console errors and the page projection of the given landmarks. 30 s to 2 min.',
+  { name: 'render_view', description: 'Render the Docklands 3D page headless (SwiftShader WebGL) from a camera, or from a ?view= name (e.g. plane, greenlandday, rotherhithe); t = London time for the sky clock (e.g. 2026-10-05T17:40); style "night" turns Night on. base: the site root (default: this checkout on 127.0.0.1; or https://danbri.github.io/londat for the live page). Returns the PNG path, console errors and the page projection of the given landmarks. 30 s to 2 min.',
     inputSchema: { type: 'object', properties: { camera: CAMERA, view: { type: 'string' }, t: { type: 'string' }, style: { type: 'string' }, width: { type: 'number' }, height: { type: 'number' }, dpr: { type: 'number' }, base: { type: 'string' }, landmarks: POINTS, out: { type: 'string' } } },
     run: async a => json(await renderView({ camera: a.camera ? cam(a.camera) : null, view: a.view, t: a.t, style: a.style, width: a.width, height: a.height, dpr: a.dpr, base: a.base, landmarks: a.landmarks || [], out: a.out || tmp('render') })) },
   { name: 'compare', description: 'Compare a photo with a render: side-by-side PNG, mean luma (whole, top third, lower two thirds; Rec. 709) and, for correspondences with px, the pixel error of the camera (and of the page projection from render_view when given).',
@@ -66,7 +66,7 @@ const TOOLS = [
     run: async a => { if (a.lonlat) { const [x, z] = geo(a.lonlat[0], a.lonlat[1]); return json({ x: +x.toFixed(1), z: +z.toFixed(1), ground_m_od: +groundAt(x, z).toFixed(1) }); } if (a.xz) { const [lon, lat] = lonlat(...a.xz); return json({ lon: +lon.toFixed(6), lat: +lat.toFixed(6) }); } throw new Error('give lonlat or xz'); } },
 ];
 
-// ── MCP over stdio: newline-delimited JSON-RPC 2.0 (the pattern of tools/game-mcp/server.mjs) ─────────────
+// ── MCP over stdio: newline-delimited JSON-RPC 2.0 (the pattern of tools/game-mcp/server.mjs in danbri/glitchcan-minigam) ─────────────
 const VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const send = msg => process.stdout.write(JSON.stringify(msg) + '\n');
 async function handle(msg) {

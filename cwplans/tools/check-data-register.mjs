@@ -1,7 +1,7 @@
-// Checks magpie/cwplans/data-register.json against the committed files, and writes DATA-REGISTER.md.
+// Checks cwplans/data-register.json against the committed files, and writes DATA-REGISTER.md.
 //
-//   node magpie/cwplans/tools/check-data-register.mjs           # check only; exit 1 on a problem
-//   node magpie/cwplans/tools/check-data-register.mjs --write   # check, then write DATA-REGISTER.md, METHODS.md and pipeline.jsonld
+//   node cwplans/tools/check-data-register.mjs           # check only; exit 1 on a problem
+//   node cwplans/tools/check-data-register.mjs --write   # check, then write DATA-REGISTER.md, METHODS.md and pipeline.jsonld
 //
 // Provenance (pipeline.json, hand-kept): every tool is an activity that used files, local raw data or external
 // sources and generated files. Checked here: each tool exists and is listed (or listed as a library or test); each
@@ -10,18 +10,16 @@
 // fault ids that the fault register in the curation skill has. --write exports pipeline.jsonld (W3C PROV-O, DCAT,
 // Dublin Core) for a knowledge graph and writes METHODS.md (methods-intro.md + pipeline.json + the fault register).
 //
-// Checks: every committed or staged data file in magpie/cwplans has an entry; every entry's file exists;
+// Checks: every committed or staged data file in cwplans has an entry; every entry's file exists;
 // every source and OSM extract named is defined; every page that loads OSM-derived data shows the
 // "© OpenStreetMap contributors" notice with a link to https://www.openstreetmap.org/copyright.
 // Data file = any tracked file except code (.mjs, .py, .c, .html), .gitignore, vendor/ directories (third-party code) and
 // skills/ directories (at any depth: docklands/skills/ too).
-// Why the register exists: CLAUDE.md, Data ethics, the magpie/cwplans exception.
-import { readFileSync, writeFileSync, existsSync, statSync, readdirSync, mkdirSync } from 'node:fs';
+// Why the register exists: CLAUDE.md, Data ethics, the cwplans exception.
+import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LONDAT_DIR, LONDAT_CW, londatPresent, isHostedPath } from './londat.mjs';
-
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
 const reg = JSON.parse(readFileSync(join(CW, 'data-register.json'), 'utf8'));
 const problems = [];
@@ -31,45 +29,36 @@ const tracked = execFileSync('git', ['ls-files', '--cached', '--', '.'], { cwd: 
 const isData = p => !/\.(mjs|py|c|sh|html)$/.test(p) && !p.endsWith('.gitignore') && !p.includes('vendor/') && !/(^|\/)skills\//.test(p)
   && !['data-register.json', 'DATA-REGISTER.md'].includes(p);
 const byPath = new Map(reg.files.map(f => [f.path, f]));
-// Bulk extracts live in danbri/londat (owner, 2026-10-05; tools/londat.mjs): an entry with "hosted": "londat" is checked
-// in the londat checkout (LONDAT_DIR) when one is present, and must not be tracked here.
-const LONDAT = londatPresent(), trackedSet = new Set(tracked);
-const hostedHere = f => f.hosted === 'londat';
-const loc = p => ((byPath.get(p) ? hostedHere(byPath.get(p)) : isHostedPath(p)) ? join(LONDAT_CW, p) : join(CW, p));
-let hostedUnchecked = 0;
-// A hosted entry may name a family of files with a * in its file name (cache/live-*.sqlite: one SQLite per month, added by
-// the londat workflow with no edit here). It covers every such file in that londat folder; at least one must exist unless
-// the entry has "may_be_empty": true (the monthly SQLite before the first month is closed).
+// Until 2026-10-07 the bulk folders were in danbri/londat and the rest in danbri/glitchcan-minigam, and entries for the
+// bulk files had "hosted": "londat". Since the move every file is in this repository and no entry has "hosted".
+const loc = p => join(CW, p);
+// An entry may name a family of files with a * (cache/live-*.sqlite: one SQLite per month; cache/runs/*/live-*.json.gz: one
+// file per hourly run), added by the cache workflow with no edit here. It covers every such file in that folder; at least
+// one must exist unless the entry has "may_be_empty": true (the monthly SQLite before the first month is closed).
 const isPattern = p => p.includes('*');
 const patRe = p => new RegExp('^' + p.split('*').map(x => x.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('[^/]*') + '$');
 const patterns = reg.files.filter(f => isPattern(f.path)).map(f => [patRe(f.path), f]);
 const entryOf = p => byPath.get(p) || (patterns.find(([re]) => re.test(p)) || [])[1];
 const filesOf = p => { if (!isPattern(p)) return existsSync(loc(p)) ? [loc(p)] : [];   // a * may stand in a folder name too (cache/runs/*/live-*.json.gz)
-  const base = p.slice(0, p.indexOf('*')).replace(/[^/]*$/, ''), re = patRe(p), dir = join(LONDAT_CW, base);
+  const base = p.slice(0, p.indexOf('*')).replace(/[^/]*$/, ''), re = patRe(p), dir = join(CW, base);
   const walk = (d, rel) => readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(join(d, e.name), rel + e.name + '/') : [rel + e.name]);
-  return existsSync(dir) ? walk(dir, base).filter(r => re.test(r)).map(r => join(LONDAT_CW, r)) : []; };
+  return existsSync(dir) ? walk(dir, base).filter(r => re.test(r)).map(r => join(CW, r)) : []; };
 
-for (const p of tracked.filter(isData)) if (!byPath.has(p)) problems.push(`not in the register: ${p}`);
+for (const p of tracked.filter(isData)) if (!entryOf(p)) problems.push(`not in the register: ${p}`);
 for (const f of reg.files) {
-  if (f.hosted !== undefined && f.hosted !== 'londat') problems.push(`${f.path}: hosted "${f.hosted}" is not "londat"`);
-  if (hostedHere(f)) {
-    if (trackedSet.has(f.path)) problems.push(`${f.path}: hosted in londat but still tracked in this repository`);
-    if (!LONDAT) hostedUnchecked++;
-    else if (!filesOf(f.path).length && !(isPattern(f.path) && f.may_be_empty)) problems.push(`register entry has no file in the londat checkout: ${f.path} (${LONDAT_DIR})`);
-  } else if (!existsSync(join(CW, f.path))) problems.push(`register entry has no file: ${f.path}`);
-  if (isHostedPath(f.path) !== hostedHere(f)) problems.push(`${f.path}: ${isHostedPath(f.path) ? 'in a londat folder (tools/londat.mjs HOSTED_DIRS) but has no "hosted": "londat"' : 'has "hosted": "londat" but is not in a londat folder (tools/londat.mjs HOSTED_DIRS)'}`);
+  if (f.hosted !== undefined) problems.push(`${f.path}: "hosted" is no longer used (every file is in this repository since 2026-10-07)`);
+  if (!filesOf(f.path).length && !(isPattern(f.path) && f.may_be_empty)) problems.push(`register entry has no file: ${f.path}`);
   for (const s of f.sources) if (!reg.sources[s]) problems.push(`${f.path}: unknown source "${s}"`);
   if (!(f.osm?.use in reg.osm_use_values)) problems.push(`${f.path}: osm.use "${f.osm?.use}" is not one of ${Object.keys(reg.osm_use_values).join(', ')}`);
   if (f.osm?.extract && !reg.osm_extracts[f.osm.extract]) problems.push(`${f.path}: unknown OSM extract "${f.osm.extract}"`);
   if (f.osm?.use !== 'none' && !f.sources.includes('osm') && f.osm?.use !== 'notes') problems.push(`${f.path}: uses OSM but "osm" is not in its sources`);
   if (f.sources.includes('osm') && f.osm?.use === 'none') problems.push(`${f.path}: lists "osm" as a source but osm.use is none`);
 }
-if (LONDAT) {   // every file in the londat checkout's cwplans/ has a hosted entry (its own README, licence notes and register copy aside)
-  const walk = (d, rel = '') => readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(join(d, e.name), rel + e.name + '/') : [rel + e.name]);
-  if (existsSync(LONDAT_CW)) for (const p of walk(LONDAT_CW)) if (p !== 'data-register.json' && !(entryOf(p) && hostedHere(entryOf(p)))) problems.push(`in the londat checkout but not registered as hosted: cwplans/${p}`);
-}
-for (const e of reg.osm_elsewhere_in_repo.paths)
-  if (!existsSync(join(CW, '..', '..', e.path))) problems.push(`osm_elsewhere_in_repo: no file ${e.path}`);
+// OSM use in the owner's other repository (danbri/glitchcan-minigam, not this project): checked when a checkout of it is
+// next to this one (or at GLITCHCAN_DIR)
+const GLITCHCAN = process.env.GLITCHCAN_DIR || join(CW, '..', '..', 'glitchcan-minigam');
+if (existsSync(join(GLITCHCAN, '.git'))) for (const e of reg.osm_elsewhere_in_repo.paths)
+  if (!existsSync(join(GLITCHCAN, e.path))) problems.push(`osm_elsewhere_in_repo: no file ${e.path} in ${GLITCHCAN}`);
 
 const OSM_NOTICE = /href="https:\/\/www\.openstreetmap\.org\/copyright"[^>]*>© OpenStreetMap contributors</;
 const odblFiles = new Set(reg.files.filter(f => ['raw', 'derived', 'counts'].includes(f.osm.use)).map(f => f.path));
@@ -104,7 +93,7 @@ if (pipe) {
     for (const f of a.faults || []) if (!faultIds.has(f)) problems.push(`pipeline.json ${what} ${a.id}: fault ${f} is not in the fault register (${SKILL_PATH})`);
   }
   for (const m of manual) for (const u of [...(m.used || []), ...(m.generated || [])]) {
-    if (u.file && !(LONDAT || !isHostedPath(u.file) ? (filesOf(u.file).length > 0 || !!byPath.get(u.file)?.may_be_empty) : true)) problems.push(`pipeline.json manual activity ${m.id}: no committed file ${u.file}`);
+    if (u.file && !(filesOf(u.file).length > 0 || !!byPath.get(u.file)?.may_be_empty)) problems.push(`pipeline.json manual activity ${m.id}: no committed file ${u.file}`);
     if (u.source && !reg.sources[u.source]) problems.push(`pipeline.json manual activity ${m.id}: unknown source ${u.source}`);
   }
   const made = new Set();
@@ -112,7 +101,7 @@ if (pipe) {
     if (!existsSync(join(CW, a.tool))) problems.push(`pipeline.json ${a.id}: no tool ${a.tool}`);
     for (const d of a.after || []) if (!ids.has(d)) problems.push(`pipeline.json ${a.id}: after names unknown activity ${d}`);
     for (const u of [...(a.used || []), ...(a.generated || [])]) {
-      if (u.file && !(LONDAT || !isHostedPath(u.file) ? (filesOf(u.file).length > 0 || !!byPath.get(u.file)?.may_be_empty) : true)) problems.push(`pipeline.json ${a.id}: no committed file ${u.file}`);
+      if (u.file && !(filesOf(u.file).length > 0 || !!byPath.get(u.file)?.may_be_empty)) problems.push(`pipeline.json ${a.id}: no committed file ${u.file}`);
       if (u.source && !reg.sources[u.source]) problems.push(`pipeline.json ${a.id}: unknown source ${u.source}`);
     }
     for (const g of a.generated || []) if (g.file) made.add(g.file);
@@ -120,22 +109,17 @@ if (pipe) {
   for (const f of reg.files) if (/tools\/[\w-]+\.(mjs|py|sh)/.test(f.produced_by || '') && !made.has(f.path)) problems.push(`pipeline.json: no activity generates ${f.path} (register: produced by ${f.produced_by})`);
 }
 
-// Without a londat checkout, a hosted file keeps the size its row had in the last DATA-REGISTER.md, so a --write from a
-// checkout with no londat does not rewrite every hosted row.
-const prevSize = new Map();
-if (!LONDAT && existsSync(join(CW, 'DATA-REGISTER.md'))) for (const l of readFileSync(join(CW, 'DATA-REGISTER.md'), 'utf8').split('\n')) { const m = /^\| `([^`]+)`[^|]*\| ([^|]+) \|/.exec(l); if (m) prevSize.set(m[1], m[2].trim()); }
-const size = p => { if (isPattern(p)) { const fs = filesOf(p), n = fs.reduce((a, f) => a + statSync(f).size, 0); return fs.length ? `${fs.length} files, ${n > 1e6 ? (n / 1e6).toFixed(1) + ' MB' : Math.ceil(n / 1e3) + ' kB'}` : (prevSize.get(p) || 'londat'); }
-  if (!existsSync(loc(p))) return (byPath.get(p) && hostedHere(byPath.get(p))) ? (prevSize.get(p) || 'londat') : '(written below)'; const n = statSync(loc(p)).size; return n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.ceil(n / 1e3)} kB`; };
+const size = p => { if (isPattern(p)) { const fs = filesOf(p), n = fs.reduce((a, f) => a + statSync(f).size, 0); return fs.length ? `${fs.length} files, ${n > 1e6 ? (n / 1e6).toFixed(1) + ' MB' : Math.ceil(n / 1e3) + ' kB'}` : '0 files'; }
+  if (!existsSync(loc(p))) return '(written below)'; const n = statSync(loc(p)).size; return n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.ceil(n / 1e3)} kB`; };
 const osmRows = reg.files.filter(f => f.osm.use !== 'none');
 const reviews = reg.files.filter(f => f.review);
-const nHosted = reg.files.filter(hostedHere).length;
-console.log(`${reg.files.length} files registered, ${tracked.filter(isData).length} data files tracked, ${nHosted} hosted in danbri/londat (${LONDAT ? 'checked in ' + LONDAT_DIR : `no checkout at ${LONDAT_DIR}: ${hostedUnchecked} not checked; set LONDAT_DIR`}); ${osmRows.length} use OSM (${[...odblFiles].length} hold OSM data); ${reviews.length} marked for review.`);
+console.log(`${reg.files.length} files registered, ${tracked.filter(isData).length} data files tracked; ${osmRows.length} use OSM (${[...odblFiles].length} hold OSM data); ${reviews.length} marked for review.`);
 
 if (process.argv.includes('--write')) {
   const esc = s => String(s).replace(/\|/g, '\\|');
   const lic = s => reg.sources[s] ? `${reg.sources[s].name.split(' (')[0]} (${reg.sources[s].licence})` : s;
   const out = [
-    '# Data register: magpie/cwplans',
+    '# Data register: cwplans',
     '',
     `Generated from \`data-register.json\` by \`tools/check-data-register.mjs --write\` on ${new Date().toISOString().slice(0, 10)}. Edit the JSON, not this file.`,
     '',
@@ -157,7 +141,7 @@ if (process.argv.includes('--write')) {
     '',
     'Use values: ' + Object.entries(reg.osm_use_values).map(([k, v]) => `**${k}**: ${v}`).join('; ') + '.',
     '',
-    '### OSM elsewhere in the repository (not this project)',
+    '### OSM in danbri/glitchcan-minigam (not this project)',
     '',
     reg.osm_elsewhere_in_repo.note,
     '',
@@ -171,7 +155,7 @@ if (process.argv.includes('--write')) {
     '',
     '| file | size | what | sources (licence) |',
     '|---|---|---|---|',
-    ...reg.files.map(f => `| \`${f.path}\`${hostedHere(f) ? ' ([londat](https://github.com/danbri/londat/blob/main/cwplans/' + f.path + '))' : ''} | ${size(f.path)} | ${esc(f.what)} | ${esc(f.sources.map(lic).join('; '))} |`),
+    ...reg.files.map(f => `| \`${f.path}\` | ${size(f.path)} | ${esc(f.what)} | ${esc(f.sources.map(lic).join('; '))} |`),
     '',
     '## Sources',
     '',
@@ -182,17 +166,8 @@ if (process.argv.includes('--write')) {
   ].join('\n');
   writeFileSync(join(CW, 'DATA-REGISTER.md'), out);
   console.log('wrote DATA-REGISTER.md');
-  if (LONDAT) {   // the londat copy of the register: the hosted entries with their sources and OSM extracts (this file is the authority)
-    const files = reg.files.filter(hostedHere), srcKeys = [...new Set(files.flatMap(f => f.sources))].sort(), ext = [...new Set(files.map(f => f.osm?.extract).filter(Boolean))];
-    const sub = { about: 'Copy of the entries of https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/data-register.json for the files in this folder (paths relative to cwplans/). That file is the authority; this copy is written by tools/check-data-register.mjs --write in the main repository. Each file keeps the licence of its source; there is no blanket licence.',
-      authority: 'https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/data-register.json', policy: reg.policy, osm_use_values: reg.osm_use_values,
-      osm_extracts: Object.fromEntries(ext.map(k => [k, reg.osm_extracts[k]])), sources: Object.fromEntries(srcKeys.map(k => [k, reg.sources[k]])), files };
-    mkdirSync(LONDAT_CW, { recursive: true });
-    writeFileSync(join(LONDAT_CW, 'data-register.json'), '{\n' + Object.entries(sub).map(([k, v]) => k === 'files' ? ` "files": [\n${v.map(f => '  ' + JSON.stringify(f)).join(',\n')}\n ]` : ` ${JSON.stringify(k)}: ${JSON.stringify(v, null, 1).replace(/\n/g, '\n ')}`).join(',\n') + '\n}\n');
-    console.log(`wrote ${join(LONDAT_CW, 'data-register.json')}: ${files.length} files, ${srcKeys.length} sources`);
-  }
   if (pipe) {   // JSON-LD for a knowledge graph: activities, the files they used and made, and the external sources
-    const BASE = 'https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/', REG = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#';
+    const BASE = 'https://github.com/danbri/londat/blob/main/cwplans/', REG = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#';
     const fileId = p => BASE + p, srcId = k => REG + 'source/' + k, actId = id => REG + 'activity/' + id, localId = p => 'urn:cwplans:local:' + encodeURI(p);
     // a local path with a placeholder (<run>, <E>_<N>) is a pattern, not one file: a blank node with the pattern
     const ref = u => u.file ? { '@id': fileId(u.file) } : u.local ? (/[<>]/.test(u.local) ? { 'cwp:pathPattern': u.local } : { '@id': localId(u.local) }) : { '@id': srcId(u.source), ...(u.endpoint ? { 'dcat:accessURL': u.endpoint } : {}), ...(u.request ? { 'dct:description': u.request } : {}) };
@@ -224,7 +199,7 @@ function writeMethods(esc) {
     done.add(pick.id); order.push(pick);
   }
   const rank = new Map(order.map((a, i) => [a.id, i + 1]));
-  const SKILL_URL = 'https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/' + SKILL_PATH;
+  const SKILL_URL = 'https://github.com/danbri/londat/blob/main/cwplans/' + SKILL_PATH;
   const lnk = p => `[${p}](${p})`;
   const ref = u => u.file ? lnk(u.file)
     : u.local ? `\`${u.local}\` (local, not committed)`
@@ -253,7 +228,7 @@ function writeMethods(esc) {
   const citing = f => [...acts, ...manual].filter(a => (a.faults || []).includes(f)).map(a => `\`${a.id}\``).join(', ');
   const intro = existsSync(join(CW, 'methods-intro.md')) ? readFileSync(join(CW, 'methods-intro.md'), 'utf8').trim() : '(methods-intro.md is missing)';
   const out = [
-    '# Methods: magpie/cwplans',
+    '# Methods: cwplans',
     '',
     `Generated by \`tools/check-data-register.mjs --write\` on ${new Date().toISOString().slice(0, 10)} from \`methods-intro.md\` (hand-written), \`pipeline.json\` (one activity per tool, ${acts.length} activities, and ${manual.length} hand steps), the fault register in \`${SKILL_PATH}\` and \`quality/issues.json\`. Edit those files, not this one.`,
     '',

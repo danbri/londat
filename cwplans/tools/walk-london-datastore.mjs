@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // A recorded walk through the London Datastore (data.london.gov.uk, a DataPress site): the whole catalogue, a
 // triage of every dataset by written rules, and a harvest of the shortlisted open datasets clipped to the zone.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs walk [--details] [--refresh]
-//   node magpie/cwplans/tools/walk-london-datastore.mjs triage
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs harvest [key ...] [--refresh]
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs walk [--details] [--refresh]
+//   node cwplans/tools/walk-london-datastore.mjs triage
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs harvest [key ...] [--refresh]
 // walk:    GET /api/v3/datasets/export.json (every public dataset, one response) and the CKAN-compatible
 //          /api/action/package_search (owner organisation); --details also GETs /api/v3/dataset/<id> for each dataset
 //          (resource format, archivedAt). Out: feeds/london-datastore/catalogue.json (one dataset per line).
@@ -206,7 +206,7 @@ const RELEVANCE_W = { 'zone-place': 5, 'zone-borough': 4, 'london-fine': 3, 'lon
 
 // what the project already has: dataset ids and slugs in the committed files, by role
 function projectHas(cat) {
-  // the committed files here plus the files hosted in the londat checkout (feeds/portals/; tools/londat.mjs)
+  // the committed files plus the files on disk in feeds/portals/ (tools/londat.mjs)
   const inLondat = (d, rel) => existsSync(d) ? readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? inLondat(join(d, e.name), rel + e.name + '/') : [rel + e.name]) : [];
   const files = [...new Set([...execFileSync('git', ['ls-files', '--cached', '--', '.'], { cwd: CW, encoding: 'utf8' }).split('\n').filter(Boolean), ...inLondat(join(LONDAT_CW, 'feeds', 'portals'), 'feeds/portals/')])]
     .filter(p => !p.startsWith('feeds/london-datastore/') && /\.(json|md|mjs|js)$/.test(p) && !/^(METHODS|DATA-REGISTER)\.md$|pipeline\.jsonld$/.test(p));
@@ -369,7 +369,7 @@ function triage() {
       licence: 'license title -> class: Open Government Licence v2/v3 -> ogl; Creative Commons Attribution -> cc-by; Open Data Commons Attribution -> odc-by; Public Domain / PDDL -> public-domain (all four open); CC BY-SA and ODbL -> share-alike (not allowed, CLAUDE.md); CC Non-Commercial and All Rights Reserved -> restricted; Transport Data Service Licence -> other; empty -> none.',
       relevance: `first match wins: zone-place (title or tag names a place in the model box, after removing "upon Thames", "Thames Estuary", "Thames Gateway" and "Thamesmead": ${ZONE_PLACES.join(', ')}); zone-borough (names only zone boroughs: ${Object.keys(ZONE_BOROUGHS).join(', ')}); other-area (names 1-3 places, none in the zone); london-fine (geo field ${GEO.fine.join(', ')}; or, with no geo field, a ward/LSOA/MSOA/OA/postcode/UPRN/TOID word or a spatial file format); london-borough (geo ${GEO.borough.join(', ')}, or a borough word); london-coarse (geo ${GEO.coarse.join(', ')}); else unknown. Relevant = zone-place, zone-borough, london-fine.`,
       kind: 'update_frequency: One off -> static; Daily, Hourly, Realtime -> live; any other value -> periodic; unset -> unknown. stale = newest resource timestamp (else dataset modified) before 2020-01-01.',
-      have: 'dataset id or slug found in a committed file of magpie/cwplans (not this folder or generated docs): in data-register.json, pipeline.json, tools or data files -> held; in a hand-written note (.md), feeds catalogues (feeds.json sources, events.json, feeds/works, feeds/underground) or the 2026-10-03 survey -> listed; in an "excluded" list or a survey "left out" line -> excluded-before; else new.',
+      have: 'dataset id or slug found in a committed file of cwplans (not this folder or generated docs): in data-register.json, pipeline.json, tools or data files -> held; in a hand-written note (.md), feeds catalogues (feeds.json sources, events.json, feeds/works, feeds/underground) or the 2026-10-03 survey -> listed; in an "excluded" list or a survey "left out" line -> excluded-before; else new.',
       value: 'themes by keyword on title and tags, plus the Datastore topics (' + Object.entries(TOPIC_THEMES).map(([k, v]) => `${k} -> ${v}`).join(', ') + '); weights: ' + Object.entries(THEMES).map(([k, [w]]) => `${k} ${w}`).join(', ') + '. value = sum of the weights.',
       keys: 'join keys named in title, tags, slug or geo: ' + Object.keys(JOIN_KEYS).join(', ') + '; coordinates when geo is a point or a spatial format is present.',
       sensitive: 'title matches ' + SENSITIVE.source + ' -> catalogued, score 0, never harvested.',

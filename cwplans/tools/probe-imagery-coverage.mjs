@@ -5,10 +5,10 @@
 // catalogue search by polygon. Mapillary needs a token: skipped unless MAPILLARY_TOKEN is set (not written yet).
 // Answers are cut to the fields used and kept as input files: open licences (OAM CC BY 4.0, EA OGL) in londat
 // cwplans/coverage/raw/<date>/ (committed); share-alike sources (Panoramax, KartaView: CC BY-SA 4.0) in
-// magpie/cwplans/data/raw/coverage/<date>/ (gitignored: only counts are committed).
+// cwplans/data/raw/coverage/<date>/ (gitignored: only counts are committed).
 // Operation lift-imagery-coverage (kgx-ops Flow, log in londat kgx/log): the input files -> graph version
 // `coverage-imagery`, named in kgx/external-heads.json so build-kgx packs it.
-//   node magpie/cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]
+//   node cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]
 // Skills: docklands-data-curation ("Sources to investigate"), cwplans-dataflow.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
@@ -90,8 +90,8 @@ if (!offline) {
 // ---- the operation: input files -> graph version `coverage-imagery`
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
 const files = [...readdirSync(OPEN).map(f => join(OPEN, f)), ...(existsSync(LOCAL) ? readdirSync(LOCAL).map(f => join(LOCAL, f)) : [])].sort();
-const inputs = files.map(p => flow.file(p, p.startsWith(LONDAT_DIR) ? 'danbri/londat ' + p.slice(LONDAT_DIR.length + 1) : 'magpie/cwplans/data/raw/' + p.slice(RAW.length + 1) + ' (local, not committed)'));
-const op = { id: 'lift-imagery-coverage', version: 1, skill: 'docklands-data-curation', tool: 'magpie/cwplans/tools/probe-imagery-coverage.mjs',
+const inputs = files.map(p => flow.file(p, p.startsWith(LONDAT_DIR) ? 'danbri/londat ' + p.slice(LONDAT_DIR.length + 1) : 'cwplans/data/raw/' + p.slice(RAW.length + 1) + ' (local, not committed)'));
+const op = { id: 'lift-imagery-coverage', version: 1, skill: 'docklands-data-curation', tool: 'cwplans/tools/probe-imagery-coverage.mjs',
   about: 'Imagery coverage answers (OpenAerialMap, Panoramax, KartaView, EA survey catalogue, Mapillary status) per study area -> cwk:CoverageCount per source and area (count, years, licences, first and last date), cwk:StudyArea with box, OpenAerialMap images and EA products by year and resolution. Share-alike sources give counts only.' };
 const out = await flow.run(op, inputs, { run, areas: AREAS }, async ({ run, areas }) => {
   const ID = KG + 'id/', V = KG + 'vocab#', S = 'https://schema.org/', XSD = 'http://www.w3.org/2001/XMLSchema#';

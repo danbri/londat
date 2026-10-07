@@ -1,7 +1,7 @@
 # Docklands: London Bridge to Cody Dock
 
-Live page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/
-Canada Water corridor (the first, smaller model): https://danbri.github.io/glitchcan-minigam/magpie/cwplans/
+Live page: https://danbri.github.io/londat/cwplans/docklands/
+Canada Water corridor (the first, smaller model): https://danbri.github.io/londat/cwplans/
 
 A 3D model of the Thames from London Bridge to Cody Dock and from Limehouse to Greenwich, with the most detail at Canary Wharf, above and below ground. It is built from open data only. The page also loads live readings on request (tides, weather, air quality, line status, storm overflows, traffic cameras).
 
@@ -15,15 +15,15 @@ A 3D model of the Thames from London Bridge to Cody Dock and from Limehouse to G
 | `facts.json`, `FACTS.md` | 360 cited facts about station depths, tunnels, towers, docks and ground, each with a quote from the page it came from |
 | `vendor/earcut.min.js` | polygon triangulation in the browser (earcut, ISC licence, `vendor/earcut.LICENSE`) |
 | `../data/sourced-levels.json` | the published levels the model uses (a hand-picked subset of `facts.json`) |
-| `../feeds/` | 200 checked data sources and APIs for the area; browsable at https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/ |
+| `../feeds/` | 200 checked data sources and APIs for the area; browsable at https://danbri.github.io/londat/cwplans/feeds/ |
 | `../tools/fetch-docklands.mjs`, `osm-clip-docklands.mjs`, `build-docklands.mjs`, `lib.mjs` | the pipeline |
 
 Rebuild (raw files are not committed except the Wikidata snapshots):
 
-    node magpie/cwplans/tools/fetch-raw.mjs grid                               # OSTN15 grid
-    node magpie/cwplans/tools/fetch-docklands.mjs                              # OSM extract (150 MB), 96 LiDAR tiles, EA flood defences, Wikidata
-    node --max-old-space-size=6000 magpie/cwplans/tools/osm-clip-docklands.mjs  # about 1 minute
-    node --max-old-space-size=8000 magpie/cwplans/tools/build-docklands.mjs     # about 30 seconds
+    node cwplans/tools/fetch-raw.mjs grid                               # OSTN15 grid
+    node cwplans/tools/fetch-docklands.mjs                              # OSM extract (150 MB), 96 LiDAR tiles, EA flood defences, Wikidata
+    node --max-old-space-size=6000 cwplans/tools/osm-clip-docklands.mjs  # about 1 minute
+    node --max-old-space-size=8000 cwplans/tools/build-docklands.mjs     # about 30 seconds
 
 ## Area and coordinates
 
@@ -80,7 +80,7 @@ Geofabrik and Overpass were unreachable from the build container, so the OSM dat
 - The link from 3D buildings to registry ids is built by `tools/build-atlas.mjs` (`mi` in `atlas/data/atlas.json`): 1,188 model buildings belong to 1,079 registry buildings. Buildings outside the Canary Wharf box have no registry record (dark grey in the colour modes).
 - "Colour buildings by": height, occupants, homes, registered companies, floors below ground, data-quality issues (square-root colour scale).
 - Pins: heritage records (`registry/sources/museums/`), data-quality issues by severity (`quality/issues.json`), and crime for the latest month from police.uk (live, on request; police.uk locations are anonymised points, Open Government Licence).
-- Satellite colours: the terrain coloured from the least cloudy recent Sentinel-2 true-colour image (13 August 2026, 0.01% cloud, 10 m), sampled once per terrain vertex. Rebuild with `NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-imagery.mjs 2026-06-01` (reads only the model window of the COG by HTTP range requests). Copernicus licence; not share-alike.
+- Satellite colours: the terrain coloured from the least cloudy recent Sentinel-2 true-colour image (13 August 2026, 0.01% cloud, 10 m), sampled once per terrain vertex. Rebuild with `NODE_USE_ENV_PROXY=1 node cwplans/tools/build-imagery.mjs 2026-06-01` (reads only the model window of the COG by HTTP range requests). Copernicus licence; not share-alike.
 
 ## Using the page on a phone (redesigned 2026-10-03)
 
@@ -278,7 +278,7 @@ Second pass (2026-10-04, the open issues):
   Drive's lit roof is below a darker, taller block; Newfoundland's lit crown may rise above the LiDAR roof), and the
   phone's processing (multi-frame night mode, crop; the files have no EXIF). Nothing in the model or the page view was
   changed. To settle it: a photo with EXIF (focal length, crop) or more landmarks of known height near the frame centre.
-- **Phone GPUs**: `node magpie/cwplans/tools/check-fp16-shaders.mjs` captures every shader the page compiles (headless
+- **Phone GPUs**: `node cwplans/tools/check-fp16-shaders.mjs` captures every shader the page compiles (headless
   Chromium), counts uniform rows, varyings, samplers and attributes per program against the WebGL 1 minimums, and re-runs
   the risky maths in fp16. It found the glow pulse of the ground program (`mediump`, `time` = seconds since load) off by
   0.19 after 10 minutes and 0.37 after an hour on an fp16 GPU; `time` is now wrapped to 10 periods (largest error 0.018).
@@ -296,8 +296,8 @@ the moonlight's strength is drawn, not calibrated against a moonlit photo; the c
 `tools/drone-capture.mjs` renders it in this page (`?capture`: photo style on the 2008 aerial photo) and writes a training set to `data/raw/drone/<run>/` (not committed): `images/`, `transforms.json` (nerfstudio, OPENCV without distortion, OpenGL camera-to-world in model metres and axes), `sparse_pc.ply` (182,830 points from the model), a COLMAP text model, coverage and pose checks, `preview.mp4`, `contact.jpg`. The run `cw-photo-480`: 480 frames at 960 × 540; 196 of the 197 estate buildings seen from 3 or more of 8 directions; projected roof outlines land within 0.34 px (median) of the rendered buildings. About 3 s a frame on SwiftShader.
 
     python3 -m http.server 8765 --bind 127.0.0.1
-    node magpie/cwplans/tools/drone-flight.mjs --out path.json --svg plan.svg --coverage 480
-    node magpie/cwplans/tools/drone-capture.mjs --run cw-photo-480 --frames 480
+    node cwplans/tools/drone-flight.mjs --out path.json --svg plan.svg --coverage 480
+    node cwplans/tools/drone-capture.mjs --run cw-photo-480 --frames 480
 
 Found on the way: 28 model buildings belong to two registry records each, and the pick buffer answers with the later one (the parts of 8 Canada Square answer as an unnamed record): a registry duplicate class for the quality catalogue.
 
@@ -311,11 +311,11 @@ Layers, "Music": the synthesised splats become a music visualiser. Each splat kn
 
 ## Skyline by year (added 2026-10-03)
 
-Layers, "Skyline by year": the buildings on the estate and 300 m round it take their measured height in each Environment Agency LiDAR surface model that flew them: 1999 (2 m), 2003 (1 m), 2007 (0.5 m), 2012 (0.5 and 1 m), 2018, 2020 and 2022 (1 m). The 2015 survey is left out: it flew under 20% of the box (its tile over the estate is 99% empty). Height = 90th percentile of the surface model inside today's OSM outline minus the model ground; a building under 3 m, or under a quarter of its height today (a cleared site with hoardings), is not standing that year. Checked against known dates: 8 Canada Square (2002) absent in 1999 and 209 m from 2007; Landmark Pinnacle 87 m in 2018 (under construction) and 234 m from 2020; One Park Drive measured 51 m in 2018, under a quarter of its 204 m, so it shows from 2020. The 2022 composite has no flight dates in its file names. Limits: today's outlines only, so buildings demolished before today do not appear; a building that a survey did not fly keeps today's height that year, drawn in slate blue (the note under the slider gives the count). Build: `bash magpie/cwplans/tools/fetch-dsm.sh` (1 GB into data/raw/dsm/, not committed) and `node --max-old-space-size=12000 magpie/cwplans/tools/build-skyline.mjs` (about 7 minutes). Output `data/skyline.json` with the survey dates.
+Layers, "Skyline by year": the buildings on the estate and 300 m round it take their measured height in each Environment Agency LiDAR surface model that flew them: 1999 (2 m), 2003 (1 m), 2007 (0.5 m), 2012 (0.5 and 1 m), 2018, 2020 and 2022 (1 m). The 2015 survey is left out: it flew under 20% of the box (its tile over the estate is 99% empty). Height = 90th percentile of the surface model inside today's OSM outline minus the model ground; a building under 3 m, or under a quarter of its height today (a cleared site with hoardings), is not standing that year. Checked against known dates: 8 Canada Square (2002) absent in 1999 and 209 m from 2007; Landmark Pinnacle 87 m in 2018 (under construction) and 234 m from 2020; One Park Drive measured 51 m in 2018, under a quarter of its 204 m, so it shows from 2020. The 2022 composite has no flight dates in its file names. Limits: today's outlines only, so buildings demolished before today do not appear; a building that a survey did not fly keeps today's height that year, drawn in slate blue (the note under the slider gives the count). Build: `bash cwplans/tools/fetch-dsm.sh` (1 GB into data/raw/dsm/, not committed) and `node --max-old-space-size=12000 cwplans/tools/build-skyline.mjs` (about 7 minutes). Output `data/skyline.json` with the survey dates.
 
 ## Walking network and routes (added 2026-10-03)
 
-- `data/indoor.js` (built by `node magpie/cwplans/tools/build-indoor.mjs`, about 1 minute): the OSM walking network of the Canary Wharf area with each point on its level: 10,647 points, 13,044 links (277 stair, 46 escalator and 47 lift links), levels -4 to +2, and 789 named places (shops, food and drink, entertainment, services, platforms, entrances).
+- `data/indoor.js` (built by `node cwplans/tools/build-indoor.mjs`, about 1 minute): the OSM walking network of the Canary Wharf area with each point on its level: 10,647 points, 13,044 links (277 stair, 46 escalator and 47 lift links), levels -4 to +2, and 789 named places (shops, food and drink, entertainment, services, platforms, entrances).
 - How it is built: one network point per (OSM node, level); stairs and escalators are oriented by the levels their ends touch (or `incline`); lifts join their listed levels; walkable areas (platforms, concourses, indoor corridors and rooms) get a hub joined to every path end inside them or within 3 m of their edge; nodes that ways reach at two levels with no connector are joined and counted as faults.
 - In the page (Route tab): "Show the walking network" draws it (pink indoor, orange stairs, yellow escalators, blue lifts); "Route from … to …" finds the quickest route (walking 1.3 m/s, stairs 0.5 m/s, escalators 0.75 m/s, lifts 25 s + 4 s a level), with a step-free option that uses lifts and ramps only, and lists the steps. A typed name with several branches resolves to the one nearest the start.
 - Example: Jubilee line westbound platform (level -3) to Rituals (Jubilee Place, level -2): 192 m by escalator; step-free 284 m by lift.

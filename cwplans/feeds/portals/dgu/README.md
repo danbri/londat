@@ -16,11 +16,11 @@ Portal: https://www.data.gov.uk/ (CKAN API `api/action/package_search`; robots.t
 
 ## Final states (25,492 in scope; after the service probe)
 
-`node magpie/cwplans/tools/walk-portals.mjs dgu triage` on 2026-10-04 after the probe: not-relevant 9,145,
+`node cwplans/tools/walk-portals.mjs dgu triage` on 2026-10-04 after the probe: not-relevant 9,145,
 walked-elsewhere 5,109, not-open 4,809, unavailable 3,199, deferred 1,990, listed-for-harvest 1,126, sensitive 72,
 held 28, harvested 14. The counts below are from the first triage, before the probe.
 
-Run `node magpie/cwplans/tools/walk-portals.mjs dgu triage` for the current counts; on 2026-10-04: not-relevant
+Run `node cwplans/tools/walk-portals.mjs dgu triage` for the current counts; on 2026-10-04: not-relevant
 9,035, walked-elsewhere 5,113, not-open 4,809, unavailable 3,199, deferred 1,990, listed-for-harvest 1,257,
 sensitive 72, held 17 (GLA records that the London Datastore walk has harvested count as held). `triage.json` lists one by one the datasets that need a decision or hold data (listed,
 deferred with area unknown, held, sensitive); the bulk states are name lists in `by_state`, keyed

@@ -1,6 +1,6 @@
 // Fields of a Canary Wharf Group directory entry, read from its address lines; and the name keys used to join an
 // entry to an occupant from another source. Used by fetch-cwg.mjs (fields) and tools/build-registry.mjs (join).
-// Tests: magpie/cwplans/tools/test/cwg-fields.test.mjs. Why the rules are strict: skill docklands-data-curation,
+// Tests: cwplans/tools/test/cwg-fields.test.mjs. Why the rules are strict: skill docklands-data-curation,
 // fault register (CWG level, mall and postcode parse).
 
 // Places CWG names in its addresses: malls, squares, streets. The first in this order wins, but never a name inside a

@@ -1,7 +1,7 @@
 ---
 name: photo-view-reconstruction
 description: >-
-  Reconstruct the view of a photo of the magpie/cwplans Docklands zone (ground or air) on the 3D page: identify
+  Reconstruct the view of a photo of the cwplans Docklands zone (ground or air) on the 3D page: identify
   landmarks (tower tops, river bends, docks, piers, rail), fit a camera by least squares (eye, heading, pitch, roll,
   focal, optional radial k1) to points, shorelines and the horizon, judge the error with hold-outs, place a camera from
   bearings, solve the time from the sun or moon, and add a ?view= entry or render and compare headless. Tools:
@@ -35,7 +35,9 @@ Worked case and numbers: `docklands/reference/plane-2026-10/README.md`. Ground c
    Quays car park in the aircraft photo, and showed the photo's "east end of Greenland Dock" was really the Steelyard
    cut: the east third of the dock is hidden behind the buildings on its north bank at an 18 deg look-down.
 4. **Read pixels on a grid**: crop at 2x to 3x with lines every 25 px (ImageMagick installs in seconds: the
-   `container-improver` skill). Points read this way are good to about 3 to 5 px.
+   `container-improver` skill in danbri/glitchcan-minigam,
+   https://github.com/danbri/glitchcan-minigam/blob/master/.claude/skills/container-improver/SKILL.md). Points read
+   this way are good to about 3 to 5 px.
 5. **Fit** (`solve.mjs` / MCP `solve_camera`), with three kinds of evidence:
    - points: a pixel and a landmark id (`cwb-xxxx` tower top, `place:<name>`), or `xyz`, or `lonlat`;
    - **outlines**: a pixel anywhere on a shoreline, `outline: 'water:tidal'` (all Thames polygons), `'water:<name>'`
@@ -101,7 +103,8 @@ and needs k1 (the Greenland day photo: 99.8 deg).
 ## The owner's photos and their licence
 
 The aircraft photo is CC0 1.0 with the owner (danbri) as photographer and copyright holder: "Plane photo - yes cc0,
-record me as owner" (2026-10-05 12:23 UTC; `docklands/reference/plane-2026-10/README.md`, commit 2f2772fb). The day
+record me as owner" (2026-10-05 12:23 UTC; `docklands/reference/plane-2026-10/README.md`, glitchcan-minigam commit
+2f2772fb). The day
 photos from Greenland Pier ("I am copyright holder but will CC0 them.", 2026-10-04; `docklands/reference/day-2026-10-04/`)
 and the sets cwlibrary and cwdock (londat `data/images/contrib/`) are CC0 too. The night photos of 2026-10-03
 (`docklands/reference/night-2026-10-03/`) are not: the owner's copyright, kept with permission as reference ("Keep my
@@ -151,7 +154,7 @@ final. No published departure or Heathrow procedures are in the repo; one photo 
 `eyeView` puts the orbit centre 1.2 km along the line of sight; `roll` turns the look-at up vector (`rolledUp`), and
 `setView`/`setEye` clear it. The page has no k1: refit with `k1 = 0` for the page (the rms change says what it costs).
 Add `&t=<London time>` for the sky clock (day light from the sun direction). URL:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=plane&t=2026-10-05T17:40
+https://danbri.github.io/londat/cwplans/docklands/?view=plane&t=2026-10-05T17:40
 
 Check the page against the solver: `render.mjs` returns `page_projection` (landmarks through `__docklands.MVP`); for the
 plane view it agreed with view-lib to 0.2 px. Test headless at 1600 x 900 DPR 1 and 390 x 844 DPR 3 plus the photo size,
@@ -175,7 +178,8 @@ parameters, `points` (`px` plus `id` | `xyz` | `lonlat` | `outline`; `w` weight;
 
 ### The MCP server (docklands-view)
 
-Hand-rolled stdio JSON-RPC like `tools/game-mcp/server.mjs` (no SDK dependency). Cameras are objects
+Hand-rolled stdio JSON-RPC like `tools/game-mcp/server.mjs` in danbri/glitchcan-minigam
+(https://github.com/danbri/glitchcan-minigam/blob/master/tools/game-mcp/server.mjs; no SDK dependency). Cameras are objects
 `{ eye:[x,y,z], heading_deg, pitch_deg, roll_deg, focal_px | hfov_deg, k1, width, height }`.
 
 | tool | does |

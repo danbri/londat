@@ -2,13 +2,13 @@
 // Crown lighting of the Canary Wharf towers: find the press pages and the dated open photos that say which colour
 // a crown (One Canada Square's pyramid "halo" first) showed on which night. The colour judgement itself is a hand
 // step, recorded in registry/sources/lighting/crown-lighting.json. Method, rules and gaps: the cwplans-crown-lighting
-// skill (magpie/cwplans/skills/cwplans-crown-lighting/SKILL.md).
+// skill (cwplans/skills/cwplans-crown-lighting/SKILL.md).
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs              # all steps
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs --press      # CWG sitemaps + archived press pages
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs --commons    # Commons night photos + thumbnails
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs --thumbs     # only the missing thumbnails
-//   node magpie/cwplans/tools/fetch-crown-lighting.mjs --no-fetch                         # rebuild outputs from the cache
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs              # all steps
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs --press      # CWG sitemaps + archived press pages
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs --commons    # Commons night photos + thumbnails
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs --thumbs     # only the missing thumbnails
+//   node cwplans/tools/fetch-crown-lighting.mjs --no-fetch                         # rebuild outputs from the cache
 //
 // Out (committed): registry/sources/lighting/press-pages.json, registry/sources/lighting/commons-photos.json.
 // Cache (gitignored, data/raw/registry/lighting/): sitemaps, archived pages (.html), page text snippets, thumbnails.

@@ -9,7 +9,7 @@
 // remade from the log): index-aligned OSM ids for this area.js (with its SHA-256) and the OSM facts by id.
 // Exact: each OSM outline is put through the build's own steps (build-docklands.mjs: polysOf, toRings, poly) and the
 // encoded outline is compared; the build's order (outlines, then parts) aligns the duplicates.
-//   node --max-old-space-size=6000 magpie/cwplans/tools/key-model-buildings.mjs
+//   node --max-old-space-size=6000 cwplans/tools/key-model-buildings.mjs
 // Skills: docklands-3d-page ("Building keys"), cwplans-dataflow.
 import { readFileSync, writeFileSync, existsSync, mkdtempSync, rmSync } from 'fs';
 import { execFileSync } from 'child_process';
@@ -29,9 +29,9 @@ const ATLAS = join(CW, 'atlas', 'data', 'atlas.json'), OUT = join(CW, 'docklands
 const sha = b => createHash('sha256').update(b).digest('hex');
 
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
-const inputs = [flow.file(AREA, 'magpie/cwplans/docklands/data/area.js'), flow.file(CLIP, 'magpie/cwplans/data/raw/docklands/osm-clip.json.gz (local, not committed: OSM clip of the openstreetmap.fr Greater London extract)'),
-  flow.file(PBF, 'magpie/cwplans/data/raw/docklands/greater_london-latest.osm.pbf (local, not committed: the openstreetmap.fr Greater London extract, data of 2026-10-01, ODbL)'), flow.file(ATLAS, 'magpie/cwplans/atlas/data/atlas.json')];
-const op = { id: 'key-model-buildings', version: 2, skill: 'docklands-3d-page', tool: 'magpie/cwplans/tools/key-model-buildings.mjs',
+const inputs = [flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(CLIP, 'cwplans/data/raw/docklands/osm-clip.json.gz (local, not committed: OSM clip of the openstreetmap.fr Greater London extract)'),
+  flow.file(PBF, 'cwplans/data/raw/docklands/greater_london-latest.osm.pbf (local, not committed: the openstreetmap.fr Greater London extract, data of 2026-10-01, ODbL)'), flow.file(ATLAS, 'cwplans/atlas/data/atlas.json')];
+const op = { id: 'key-model-buildings', version: 2, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
   about: 'area.js buildings + the OSM clip they were built from + the atlas -> the OSM way or relation of every model building (exact outline match, aligned in build order), part parents, registry links and OSM name, address, type, levels, Wikidata' };
 
 const v = (await flow.run(op, inputs, {}, async () => {
@@ -97,7 +97,7 @@ const v = (await flow.run(op, inputs, {}, async () => {
   const model = `${ID}model/docklands-area/${areaSha.slice(0, 16)}`;
   // one node for the model version; per OSM element: its OSM page, the model indices, and facts only where OSM has them
   // (no rdf:type, no building=yes: they would add 85,000 triples that say nothing)
-  add(model, V + 'sha256', lit(areaSha)); add(model, V + 'file', lit('magpie/cwplans/docklands/data/area.js')); add(model, V + 'buildingCount', lit(A.buildings.length, 'integer'));
+  add(model, V + 'sha256', lit(areaSha)); add(model, V + 'file', lit('cwplans/docklands/data/area.js')); add(model, V + 'buildingCount', lit(A.buildings.length, 'integer'));
   const done = new Set(), facts = (s, el, t) => {
     add(s, S + 'sameAs', `https://www.openstreetmap.org/${el.type}/${el.id}`);
     add(s, S + 'name', lit(t.name)); add(s, V + 'houseName', lit(t['addr:housename']));

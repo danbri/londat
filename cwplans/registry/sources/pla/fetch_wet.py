@@ -2,18 +2,18 @@
 """Fetch open data for the wet areas of the Docklands model (tidal Thames, docks, basins, creeks).
 
 Run from the repository root:
-    python3 magpie/cwplans/registry/sources/pla/fetch_wet.py            # all layers
-    python3 magpie/cwplans/registry/sources/pla/fetch_wet.py soundings  # only the UKHO soundings
+    python3 cwplans/registry/sources/pla/fetch_wet.py            # all layers
+    python3 cwplans/registry/sources/pla/fetch_wet.py soundings  # only the UKHO soundings
 
 Needs curl and GDAL's ogr2ogr (clip to the box). Raw responses go to
-magpie/cwplans/data/raw/registry/pla/ (not committed); clipped GeoJSON (WGS84) goes next to
+cwplans/data/raw/registry/pla/ (not committed); clipped GeoJSON (WGS84) goes next to
 this script. What each layer is, its licence and its datum: README.md in this folder.
 """
 import json, os, re, subprocess, sys, time, urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW = os.path.normpath(os.path.join(HERE, '../../../data/raw/registry/pla'))
-UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)'
+UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)'
 BOX = (-0.0950, 51.4740, 0.0150, 51.5220)  # W S E N, WGS84
 
 PLA = 'https://services8.arcgis.com/QgdzYlEcjteGD0VH/arcgis/rest/services/'

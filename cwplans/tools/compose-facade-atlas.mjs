@@ -6,7 +6,7 @@
 // Contributed tiles take the next slots (32 in all: 8 x 4 tiles of 256 px). Their buildings are keyed by OSM id
 // ("osm:w204580680"), with the model indices of this area.js (mi, model_fp) and a WGS84 point inside (at) that the page
 // uses when the model was rebuilt and model_fp no longer matches.
-//   FACADE_PY=<python with Pillow> node magpie/cwplans/tools/compose-facade-atlas.mjs
+//   FACADE_PY=<python with Pillow> node cwplans/tools/compose-facade-atlas.mjs
 // Skills: docklands-3d-page ("Building keys", "Styles"), docklands-data-curation ("Contributed photos"), cwplans-dataflow.
 import { readFileSync, writeFileSync } from 'fs';
 import { execFileSync } from 'child_process';
@@ -39,10 +39,10 @@ for (const v of tileSets) {
     placements: (n[V + 'placement'] || []).map(r => ({ building: by.get(r)[V + 'building'][0], at: by.get(r)[V + 'at'][0].split(' ').map(Number) })) });
 }
 tiles.sort((a, b) => a.iri.localeCompare(b.iri));
-const inputs = [flow.file(join(TEX, 'facades-registry.jpg'), 'magpie/cwplans/docklands/data/tex/facades-registry.jpg'), flow.file(join(TEX, 'facades-registry.json'), 'magpie/cwplans/docklands/data/tex/facades-registry.json'),
-  flow.file(AREA, 'magpie/cwplans/docklands/data/area.js'), flow.file(TOOL, 'magpie/cwplans/tools/facade-tile.py'), keysV, ...tileSets,
+const inputs = [flow.file(join(TEX, 'facades-registry.jpg'), 'cwplans/docklands/data/tex/facades-registry.jpg'), flow.file(join(TEX, 'facades-registry.json'), 'cwplans/docklands/data/tex/facades-registry.json'),
+  flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(TOOL, 'cwplans/tools/facade-tile.py'), keysV, ...tileSets,
   ...tiles.map(t => flow.file(join(LONDAT_DIR, t.file), 'danbri/londat ' + t.file))];
-const op = { id: 'compose-facade-atlas', version: 1, skill: 'docklands-3d-page', tool: 'magpie/cwplans/tools/compose-facade-atlas.mjs (facade-tile.py)',
+const op = { id: 'compose-facade-atlas', version: 1, skill: 'docklands-3d-page', tool: 'cwplans/tools/compose-facade-atlas.mjs (facade-tile.py)',
   about: 'registry facade atlas + contributed tile sets + model building keys -> the page atlas: contributed tiles in the next slots, keyed by OSM id with model indices and a point' };
 
 const v = (await flow.run(op, inputs, {}, async () => {
@@ -74,7 +74,7 @@ const v = (await flow.run(op, inputs, {}, async () => {
   writeFileSync(join(TEX, 'facades.json'), JSON.stringify({ built: reg.built, composed: 'tools/compose-facade-atlas.mjs (operation compose-facade-atlas)', tile_px: 256, cols: 8, rows: 4,
     about: `${reg.about}. Slots ${first} and on: tiles from contributed photos (CC0), keyed by OSM id ("osm:w<id>"), with the model indices of this area.js (mi, valid while model_fp matches the page's) and a WGS84 point inside the building (at) for a rebuilt model.`,
     attribution, licences: tiles.length ? 'CC BY, CC0' : 'CC BY', model: { fp: model_fp, sha256: sha(readFileSync(AREA)) }, buildings: out }, null, 1) + '\n');
-  addQ(atlas, V + 'sha256', lit(sha(readFileSync(join(TEX, 'facades.jpg'))))); addQ(atlas, V + 'file', lit('magpie/cwplans/docklands/data/tex/facades.jpg'));
+  addQ(atlas, V + 'sha256', lit(sha(readFileSync(join(TEX, 'facades.jpg'))))); addQ(atlas, V + 'file', lit('cwplans/docklands/data/tex/facades.jpg'));
   addQ(atlas, V + 'slotsUsed', lit(first + tiles.length, 'integer')); addQ(atlas, V + 'slotsMax', lit(32, 'integer'));
   return { 'facade-atlas': { quads: q, about: { title: `The 3D page's facade atlas: ${first} registry tower tiles and ${tiles.length} contributed tiles, slot by slot`, licence: 'CC BY (registry tiles, see facades.json attribution) and CC0 (contributed tiles)' } } };
 }))['facade-atlas'];

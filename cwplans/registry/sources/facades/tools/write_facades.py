@@ -1,5 +1,5 @@
-import json
-D='/home/user/glitchcan-minigam/magpie/cwplans/registry/sources/facades'
+import json,os
+D=os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..'))  # cwplans/registry/sources/facades
 res=json.load(open('results.json')); fp=json.load(open('footprints.json'))
 P=json.load(open(f'{D}/photos.json'))
 pages={}

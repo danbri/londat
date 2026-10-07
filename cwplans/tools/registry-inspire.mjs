@@ -1,6 +1,6 @@
 // HM Land Registry INSPIRE Index Polygons (freehold title extents) for Tower Hamlets, clipped to the Canary Wharf box.
-// Run: node magpie/cwplans/tools/registry-inspire.mjs
-// Needs magpie/cwplans/data/raw/registry/inspire/Land_Registry_Cadastral_Parcels.gml, from
+// Run: node cwplans/tools/registry-inspire.mjs
+// Needs cwplans/data/raw/registry/inspire/Land_Registry_Cadastral_Parcels.gml, from
 //   https://use-land-property-data.service.gov.uk/datasets/inspire/download/London_Borough_of_Tower_Hamlets.zip
 //   (no account; the site sets a session cookie first, so fetch the download page with a cookie jar, then the zip.
 //    The older name Tower_Hamlets.zip still answers, with a stale 2023 file.)

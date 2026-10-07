@@ -1,7 +1,7 @@
 ---
 name: cwplans-river-and-water
 description: >-
-  The river, docks, locks, water quality and boats of the magpie/cwplans Docklands zone, as dated snapshots in
+  The river, docks, locks, water quality and boats of the cwplans Docklands zone, as dated snapshots in
   feeds/river/ made by tools/fetch-river.mjs: PLA Notices to Mariners, Canal & River Trust stoppages, Thames Barrier
   test closures, EA flood warnings, tide and river levels, tidal lock rules, swim-water results (Eden Dock, Royal
   Docks), EA sondes and the Water Quality Archive, TfL river buses, OSM moorings and houseboats, Wikidata vessels. AIS:
@@ -12,19 +12,19 @@ description: >-
   today?", "is the lock open?" or "what ships are on the river?".
 ---
 
-# River, docks and water for magpie/cwplans
+# River, docks and water for cwplans
 
 Policy, the fault register and the activity log are in the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`. Sources, counts and
-rejected sources as a table: `magpie/cwplans/feeds/river/README.md`
-(https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/river/README.md). Written 2026-10-04.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`. Sources, counts and
+rejected sources as a table: `cwplans/feeds/river/README.md`
+(https://github.com/danbri/londat/blob/main/cwplans/feeds/river/README.md). Written 2026-10-04.
 
 ## Run
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs              # all 14 sources, about 6 minutes
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs crt-notices locks   # locks reads crt-notices.json: run it after
-    node magpie/cwplans/tools/fetch-river.mjs --no-fetch                        # rebuild every file from data/raw/river/
-    node magpie/cwplans/tools/fetch-river.mjs --list
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs              # all 14 sources, about 6 minutes
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs crt-notices locks   # locks reads crt-notices.json: run it after
+    node cwplans/tools/fetch-river.mjs --no-fetch                        # rebuild every file from data/raw/river/
+    node cwplans/tools/fetch-river.mjs --list
 
 Needs `osmium` (installed) and `pdftotext` (`apt-get install -y poppler-utils`; it was missing in a fresh container),
 and the local OSM extract `data/raw/docklands/greater_london-latest.osm.pbf` (`tools/fetch-docklands.mjs osm`).
@@ -139,9 +139,9 @@ verify the terms and the coverage at the source before any fetch, and record the
 
 ## AIS: Open Waters (measured 2026-10-04)
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-ais.mjs                # snapshot + stations + 10 min listen
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-ais.mjs --listen=0     # snapshot only
-    node magpie/cwplans/tools/fetch-ais.mjs --no-fetch                          # rebuild ais.json from the newest raw run
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-ais.mjs                # snapshot + stations + 10 min listen
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-ais.mjs --listen=0     # snapshot only
+    node cwplans/tools/fetch-ais.mjs --no-fetch                          # rebuild ais.json from the newest raw run
 
 Out: `feeds/river/ais.json`. Raw runs: `data/raw/ais/<stamp>/` (gitignored: they hold AISHub and aisstream events).
 
@@ -257,9 +257,9 @@ none open (the X account is excluded; PLA notices do not list lifts). The 3D pag
 
 ## On the 3D page and the atlas (built 2026-10-04)
 
-3D page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ (Menu > Layers > River; all off by
-default). Atlas: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#river (lists with dates and sources)
-and https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#map (layer "River snapshots"). The atlas reads
+3D page: https://danbri.github.io/londat/cwplans/docklands/ (Menu > Layers > River; all off by
+default). Atlas: https://danbri.github.io/londat/cwplans/atlas/#river (lists with dates and sources)
+and https://danbri.github.io/londat/cwplans/atlas/#map (layer "River snapshots"). The atlas reads
 `feeds/river/*.json` at run time; `atlas/data/atlas.json` and `tools/build-atlas.mjs` are not involved. Page side,
 code and tests: skill `docklands-3d-page`, "River layer".
 

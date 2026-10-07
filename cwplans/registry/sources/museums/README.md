@@ -2,9 +2,9 @@
 
 Area: WGS84 −0.0950, 51.4740 to 0.0150, 51.5220. Collected 2026-10-03.
 
-Rebuild (from the repository root; raw responses go to `magpie/cwplans/data/raw/registry/museums/`, not committed):
+Rebuild (from the repository root; raw responses go to `cwplans/data/raw/registry/museums/`, not committed):
 
-    python3 magpie/cwplans/registry/sources/museums/fetch_records.py
+    python3 cwplans/registry/sources/museums/fetch_records.py
 
 ## Files
 

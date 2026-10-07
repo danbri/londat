@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 // River, docks, locks, water quality, moorings and boats across the Docklands zone, as dated snapshots.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs                     # every source
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-river.mjs pla-notices levels   # some sources
-//   node magpie/cwplans/tools/fetch-river.mjs --no-fetch                              # rebuild from the raw cache, no network
-//   node magpie/cwplans/tools/fetch-river.mjs --list                                  # the sources and what each is
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs                     # every source
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-river.mjs pla-notices levels   # some sources
+//   node cwplans/tools/fetch-river.mjs --no-fetch                              # rebuild from the raw cache, no network
+//   node cwplans/tools/fetch-river.mjs --list                                  # the sources and what each is
 //
-// Out:  magpie/cwplans/feeds/river/<source>.json  {meta: {source, url, fetched, licence, attribution, method, counts}, items}
+// Out:  cwplans/feeds/river/<source>.json  {meta: {source, url, fetched, licence, attribution, method, counts}, items}
 //       each item: {id, kind, time or validity, position {lat, lon, precision}, values, url}
 // In:   feeds/river/locks-facts.json (hand-written lock rules, with the page each fact came from)
 //       data/raw/docklands/greater_london-latest.osm.pbf (tools/fetch-docklands.mjs osm) for the OSM source and positions
-// Raw:  magpie/cwplans/data/raw/river/ (gitignored)
+// Raw:  cwplans/data/raw/river/ (gitignored)
 // Zone: the 3D model box (WGS84 -0.095, 51.474 to 0.015, 51.522), the east margin of tools/fetch-works.mjs for the
 //       Royal Docks (0.015 to 0.085, 51.495 to 51.522) and a strip north to Bow Locks (-0.025 to 0.01, 51.522 to 51.528).
 // Polite HTTP: one request at a time per host, at least 1 s apart (Wayback and QLever slower), backoff on 429/5xx/resets,
 // User-Agent from tools/lib.mjs. Licences, rules, rejected sources and lessons: skill cwplans-river-and-water
-// (magpie/cwplans/skills/cwplans-river-and-water/SKILL.md); sources and counts: magpie/cwplans/feeds/river/README.md.
+// (cwplans/skills/cwplans-river-and-water/SKILL.md); sources and counts: cwplans/feeds/river/README.md.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';

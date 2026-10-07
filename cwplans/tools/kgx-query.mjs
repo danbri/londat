@@ -1,6 +1,6 @@
 // Ask the kgx Shardborough store one SPARQL query through a store handle (no 64-block cap; `factoidal query` is the
 // stateless call and refuses a plan above 64 blocks). Prints tab-separated rows.
-//   node magpie/cwplans/tools/kgx-query.mjs <file.rq | 'SPARQL'> [store dir, default $LONDAT_DIR/kgx/shardborough]
+//   node cwplans/tools/kgx-query.mjs <file.rq | 'SPARQL'> [store dir, default $LONDAT_DIR/kgx/shardborough]
 // Skill: cwplans-kgx.
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';

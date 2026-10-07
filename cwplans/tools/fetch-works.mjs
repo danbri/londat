@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 // Permits, works, closures and planned events across the Docklands zone, as dated snapshots.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-works.mjs                 # every source, then the combined file
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-works.mjs tfl-lines tfl-road   # some sources (combined file rebuilt from all snapshots)
-//   node magpie/cwplans/tools/fetch-works.mjs --no-fetch          # rebuild every snapshot from the raw cache, no network
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-works.mjs                 # every source, then the combined file
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-works.mjs tfl-lines tfl-road   # some sources (combined file rebuilt from all snapshots)
+//   node cwplans/tools/fetch-works.mjs --no-fetch          # rebuild every snapshot from the raw cache, no network
 //   options: --refresh (re-download cached raw files: NaPTAN, Street Manager archives, Gazette notices),
 //            --days=90 (TfL look-ahead), --month=2026-09 (Street Manager archive month; default the last full month)
 //
 // Sources: tfl-lines tfl-bus tfl-road street-manager gazette th-licences planning markets venue-events
-// Out:  magpie/cwplans/feeds/works/<source>.json  {meta: {source, url, fetched, licence, attribution, method, counts}, items}
-//       magpie/cwplans/feeds/works/works.json     every item in the zone from every snapshot, one normalised list
-// Raw:  magpie/cwplans/data/raw/works/ (gitignored)
+// Out:  cwplans/feeds/works/<source>.json  {meta: {source, url, fetched, licence, attribution, method, counts}, items}
+//       cwplans/feeds/works/works.json     every item in the zone from every snapshot, one normalised list
+// Raw:  cwplans/data/raw/works/ (gitignored)
 // Zone: the 3D model's box (docklands/data/area.js meta.extent; WGS84 -0.095, 51.474 to 0.015, 51.522) plus an east
 //       margin for the Royal Docks, ExCeL and London City Airport (0.015 to 0.085, 51.495 to 51.522).
 // Method, licences, rejected sources and lessons: skill cwplans-permits-and-works
-// (magpie/cwplans/skills/cwplans-permits-and-works/SKILL.md); sources and counts: magpie/cwplans/feeds/works/README.md.
+// (cwplans/skills/cwplans-permits-and-works/SKILL.md); sources and counts: cwplans/feeds/works/README.md.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, readdirSync, createReadStream } from 'node:fs';
 import { spawn, spawnSync } from 'node:child_process';
 import { StringDecoder } from 'node:string_decoder';

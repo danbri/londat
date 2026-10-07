@@ -1,10 +1,10 @@
 ---
 name: docklands-data-curation
 description: >-
-  Curate the Canary Wharf, Isle of Dogs and Docklands open data in magpie/cwplans — the building registry
+  Curate the Canary Wharf, Isle of Dogs and Docklands open data in cwplans — the building registry
   (cwb- ids), occupants, postcodes, chain-store branches, heritage, river, feeds, the atlas, the 3D model data,
   the data register, pipeline.json and METHODS.md, and the data-quality audit. Use this when rebuilding or adding a
-  source, joining two sources, changing a tool in magpie/cwplans/tools/, judging why two sources disagree, or about
+  source, joining two sources, changing a tool in cwplans/tools/, judging why two sources disagree, or about
   to correct a wrong value. READ "CATALOGUE FIRST" BEFORE PATCHING ANYTHING: the owner's direction (October 2026) is
   to catalogue and analyse error classes, not to fix records one at a time, because the classes drive the
   compositing layers. Holds the fault register (F1...) and the rebuild order. The 3D page itself, web crawls and the
@@ -14,9 +14,14 @@ description: >-
 
 # Docklands data curation
 
-Pages: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/ (everything joined; data quality at
-`#quality`), https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ (3D).
-Policy for this directory: the repo `CLAUDE.md`, Data ethics, "EXCEPTION — magpie/cwplans/" (personal,
+Pages: https://danbri.github.io/londat/cwplans/atlas/ (everything joined; data quality at
+`#quality`), https://danbri.github.io/londat/cwplans/docklands/ (3D).
+**Repository.** Since 2026-10-07 the whole project (pages, tools, skills, data) is in danbri/londat, folder `cwplans/`
+(before: danbri/glitchcan-minigam, folder `magpie/cwplans/`; history there:
+https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans). Commit ids before 2026-10-07 in this skill
+and in the activity log are glitchcan-minigam commits unless they are named as londat commits. Details: "Data hosted in
+danbri/londat" below.
+Policy for this directory: the londat `CLAUDE.md`, "Data policy (the cwplans exception)" (personal,
 organisation and address data allowed during prototyping; no proprietary or restricted-licence data; OSM
 under ODbL allowed and tracked; website crawls allowed for scoping and recorded). The owner's rules with their dates
 are in `methods-intro.md` (top of METHODS.md).
@@ -33,35 +38,38 @@ start there, and move an item out when the owner answers.
 
 | skill | home | reach for it when |
 |---|---|---|
-| `docklands-data-curation` (this one) | `magpie/cwplans/skills/` | policy, catalogue first, the fault register, joins, rebuild order, methods, provenance, the data register |
-| `docklands-3d-page` | `magpie/cwplans/docklands/skills/` | editing `docklands/index.html` and its scripts: programs and vertex formats, interface, styles (Line drawing, Vector CRT), splats, Night mode and its calibration, the fp16 lesson, the plotter SVG and the owner's iDraw 2.0 A3, building keys and the facade atlas, headless testing, shipping |
-| `photo-view-reconstruction` | `magpie/cwplans/docklands/skills/` | the owner sends a photo: landmarks, the least-squares camera, hold-outs, the time from the sun, a `?view=` entry; telephoto skylines and bearings (set cwdock) |
-| `blender-station-models` | `magpie/cwplans/docklands/skills/` | station boxes in Blender through blender-mcp under Xvfb; the models in londat `third_party/tfl/am3d/models/` |
-| `cwplans-kgx` | `magpie/cwplans/skills/` | the knowledge graph in londat `kgx/`: graphs, IRIs, the Shardborough store, `tools/check-kgx-store.mjs`, the search page `kg/`, Factoidal issue 697 |
-| `cwplans-dataflow` | `magpie/cwplans/skills/` | the owner's rule for pipeline work: operations on immutable named graphs (`tools/kgx-ops.mjs`, `Flow`), the operations and their versions, the order of runs, the idempotence test |
-| `cwplans-feed-discovery` | `magpie/cwplans/skills/` | London RSS, Atom and iCal feeds at scale (`tools/discover-feeds.mjs`, `feeds/discovery/`) |
-| `cwplans-permits-and-works` | `magpie/cwplans/skills/` | permits, works, closures and what's on (`tools/fetch-works.mjs`, `feeds/works/`, `feeds/whatson.html`) |
-| `cwplans-web-harvest` | `magpie/cwplans/skills/` | crawling entity websites, the headless render, store finders, JSON-LD repair, Factoidal and N-Quads (known faults, `tools/check-factoidal.mjs`), idioms, sameAs groups, the typed CWG directory, site search, opening hours by mall, mall plans, what the markup is for, the reports, the Chromium proxy CA fix |
-| `cwplans-public-registers` | `magpie/cwplans/skills/` | GIAS, CQC, ODS, charities, Ofsted, gambling, Active Places, FSA pubs: licences, fields dropped, the join and its traps (F17 to F20), rejected sources |
-| `cwplans-london-datastore` | `magpie/cwplans/skills/` | the London Datastore walk: the v3 export API and terms, `tools/walk-london-datastore.mjs` (walk, triage, harvest), the triage rules, the rule-driven harvest of the listed datasets (`tools/lds-harvest-auto.mjs`, harvest-log.json, F36 to F41), the joins to the registry (`tools/join-lds.mjs`), the ranked backlog, F22 and F23; amending rounded UPRNs in a copy (`tools/amend-uprns.mjs`, F22, F25) |
-| `cwplans-open-portals` | `magpie/cwplans/skills/` | the other open-data portals (data.gov.uk, planning.data.gov.uk, borough portals, Nomis / ONS, national APIs): `tools/walk-portals.mjs`, licence classes, triage states, harvests in `feeds/portals/`, size rules |
-| `docklands-sky` | `magpie/cwplans/docklands/skills/` | the page clock and `?t=`, the sky (sun, moon phase and limb, planets, stars, constellation lines, Milky Way, satellites), Open-Meteo weather, EA tide at the time shown, the photo-time solution, `tools/fetch-sky.mjs` and the snapshots, their licences |
-| `cwplans-river-and-water` | `magpie/cwplans/skills/` | the river, docks and water: PLA notices to mariners, CRT stoppages, Thames Barrier tests, EA tide and feeder-river levels, tidal lock rules, swim-water results for Eden Dock and the Royal Docks, EA sondes and WIMS, TfL river buses, moorings and vessels (`tools/fetch-river.mjs`, `feeds/river/`); no open live AIS |
-| `cwplans-crown-lighting` | `magpie/cwplans/skills/` | the coloured crown lighting (One Canada Square's halo, 25 Bank Street, Newfoundland): how colours are chosen, the aviation flash, the (incomplete) history, `tools/fetch-crown-lighting.mjs`, `registry/sources/lighting/`, judging a colour from a photo |
-| `cwplans-live-state` | `magpie/cwplans/skills/` | live state in the zone (`tools/fetch-live.mjs`, `feeds/live/`): hire bikes, lift outages, station busyness, JamCams, power cuts, storm overflows, NOTAM cranes, the helicopter route H4 and EGR159; what cannot be known (live helicopter positions, dockless bikes) and the ranked backlog |
-| `cwplans-londat-cache` | `magpie/cwplans/skills/` | the londat cache: hourly history of live state (`tools/cache-londat.mjs`, run files in `cache/runs/`, `cache/live-*.sqlite` per closed month, workflow in londat), `cache/latest.json` read first by the pages (`live-cache.js`), `cache/zone-{core,lds,portals}.gpkg` for QGIS (`tools/build-zone-gpkg.mjs`) |
-| `cwplans-construction` | `magpie/cwplans/skills/` | the index of works in progress (`registry/sources/construction/sites.json`, `tools/build-construction-index.mjs`): Planning London Datahub status with LDD dates, the status rules S1 to S5, joins to NOTAM cranes, Street Manager, OSM, brownfield, site allocations and Wikidata, F32 to F35, identifying a site in a photo |
+| `docklands-data-curation` (this one) | `cwplans/skills/` | policy, catalogue first, the fault register, joins, rebuild order, methods, provenance, the data register |
+| `docklands-3d-page` | `cwplans/docklands/skills/` | editing `docklands/index.html` and its scripts: programs and vertex formats, interface, styles (Line drawing, Vector CRT), splats, Night mode and its calibration, the fp16 lesson, the plotter SVG and the owner's iDraw 2.0 A3, building keys and the facade atlas, headless testing, shipping |
+| `photo-view-reconstruction` | `cwplans/docklands/skills/` | the owner sends a photo: landmarks, the least-squares camera, hold-outs, the time from the sun, a `?view=` entry; telephoto skylines and bearings (set cwdock) |
+| `blender-station-models` | `cwplans/docklands/skills/` | station boxes in Blender through blender-mcp under Xvfb; the models in londat `third_party/tfl/am3d/models/` |
+| `cwplans-kgx` | `cwplans/skills/` | the knowledge graph in londat `kgx/`: graphs, IRIs, the Shardborough store, `tools/check-kgx-store.mjs`, the search page `kg/`, Factoidal issue 697 |
+| `cwplans-dataflow` | `cwplans/skills/` | the owner's rule for pipeline work: operations on immutable named graphs (`tools/kgx-ops.mjs`, `Flow`), the operations and their versions, the order of runs, the idempotence test |
+| `cwplans-feed-discovery` | `cwplans/skills/` | London RSS, Atom and iCal feeds at scale (`tools/discover-feeds.mjs`, `feeds/discovery/`) |
+| `cwplans-permits-and-works` | `cwplans/skills/` | permits, works, closures and what's on (`tools/fetch-works.mjs`, `feeds/works/`, `feeds/whatson.html`) |
+| `cwplans-web-harvest` | `cwplans/skills/` | crawling entity websites, the headless render, store finders, JSON-LD repair, Factoidal and N-Quads (known faults, `tools/check-factoidal.mjs`), idioms, sameAs groups, the typed CWG directory, site search, opening hours by mall, mall plans, what the markup is for, the reports, the Chromium proxy CA fix |
+| `cwplans-public-registers` | `cwplans/skills/` | GIAS, CQC, ODS, charities, Ofsted, gambling, Active Places, FSA pubs: licences, fields dropped, the join and its traps (F17 to F20), rejected sources |
+| `cwplans-london-datastore` | `cwplans/skills/` | the London Datastore walk: the v3 export API and terms, `tools/walk-london-datastore.mjs` (walk, triage, harvest), the triage rules, the rule-driven harvest of the listed datasets (`tools/lds-harvest-auto.mjs`, harvest-log.json, F36 to F41), the joins to the registry (`tools/join-lds.mjs`), the ranked backlog, F22 and F23; amending rounded UPRNs in a copy (`tools/amend-uprns.mjs`, F22, F25) |
+| `cwplans-open-portals` | `cwplans/skills/` | the other open-data portals (data.gov.uk, planning.data.gov.uk, borough portals, Nomis / ONS, national APIs): `tools/walk-portals.mjs`, licence classes, triage states, harvests in `feeds/portals/`, size rules |
+| `docklands-sky` | `cwplans/docklands/skills/` | the page clock and `?t=`, the sky (sun, moon phase and limb, planets, stars, constellation lines, Milky Way, satellites), Open-Meteo weather, EA tide at the time shown, the photo-time solution, `tools/fetch-sky.mjs` and the snapshots, their licences |
+| `cwplans-river-and-water` | `cwplans/skills/` | the river, docks and water: PLA notices to mariners, CRT stoppages, Thames Barrier tests, EA tide and feeder-river levels, tidal lock rules, swim-water results for Eden Dock and the Royal Docks, EA sondes and WIMS, TfL river buses, moorings and vessels (`tools/fetch-river.mjs`, `feeds/river/`); no open live AIS |
+| `cwplans-crown-lighting` | `cwplans/skills/` | the coloured crown lighting (One Canada Square's halo, 25 Bank Street, Newfoundland): how colours are chosen, the aviation flash, the (incomplete) history, `tools/fetch-crown-lighting.mjs`, `registry/sources/lighting/`, judging a colour from a photo |
+| `cwplans-live-state` | `cwplans/skills/` | live state in the zone (`tools/fetch-live.mjs`, `feeds/live/`): hire bikes, lift outages, station busyness, JamCams, power cuts, storm overflows, NOTAM cranes, the helicopter route H4 and EGR159; what cannot be known (live helicopter positions, dockless bikes) and the ranked backlog |
+| `cwplans-londat-cache` | `cwplans/skills/` | the londat cache: hourly history of live state (`tools/cache-londat.mjs`, run files in `cache/runs/`, `cache/live-*.sqlite` per closed month, workflow in londat), `cache/latest.json` read first by the pages (`live-cache.js`), `cache/zone-{core,lds,portals}.gpkg` for QGIS (`tools/build-zone-gpkg.mjs`) |
+| `cwplans-construction` | `cwplans/skills/` | the index of works in progress (`registry/sources/construction/sites.json`, `tools/build-construction-index.mjs`): Planning London Datahub status with LDD dates, the status rules S1 to S5, joins to NOTAM cranes, Street Manager, OSM, brownfield, site allocations and Wikidata, F32 to F35, identifying a site in a photo |
 
 ## Ship at once
 
 Owner, 2026-10-03: "shipping immediately to live site is fine and urgent. Don't batch things up, as live site is my only
-way to see progress." Commit and push each working change to master as soon as it passes its check (syntax, a headless
+way to see progress." Commit and push each working change to `main` as soon as it passes its check (syntax, a headless
 load with no page errors, `check-data-register.mjs`), then confirm the live file matches the commit
-(https://danbri.github.io/glitchcan-minigam/ + path). Do not hold finished work back to bundle it with other work.
+(https://danbri.github.io/londat/ + path; `.github/workflows/pages.yml` deploys a few minutes after the push). Do not
+hold finished work back to bundle it with other work. (Until 2026-10-07: master of danbri/glitchcan-minigam and
+https://danbri.github.io/glitchcan-minigam/ + path.)
 The page-side recipe and the lesson behind "re-read the whole line" are in `docklands-3d-page`.
 
 **Check that git took every new file.** A container can carry a local `.git/info/exclude` that ignores
-`magpie/cwplans/registry/sources/` (seen 2026-10-06), although files there are tracked. `git add <dir>` then skips new
+`magpie/cwplans/registry/sources/` (seen 2026-10-06 in a glitchcan-minigam checkout; the same can happen to
+`cwplans/...` here), although files there are tracked. `git add <dir>` then skips new
 files silently, and `check-data-register.mjs` still passes (it checks the disk, not git). Commit 2d83b25e said it held
 `cwg-directory-typed.json` and `.nq` and did not. After `git add`, run `git status --short` and look for each new
 file; `git check-ignore -v <file>` names the rule; add a needed file with `git add -f <file>`.
@@ -69,13 +77,15 @@ file; `git check-ignore -v <file>` names the rule; add a needed file with `git a
 ## Ways of working (the owner's words)
 
 Collected on 2026-10-07 from the owner's messages of the session of 2026-10-02 to 2026-10-07. Repo-wide rules
-(ASD-STE100 reports, full URLs, no Haiku without agreement) are in the repo `CLAUDE.md`.
+(ASD-STE100 reports, full URLs, no Haiku without agreement) are in the londat `CLAUDE.md` (and in the
+glitchcan-minigam one).
 
 - **Reports.** "Please answer with specificity appropriate for a GIS pro reader. Assume I have forgotten details
   already, links into our gh repo(s) are v useful. I forget what is moved into londat already." (2026-10-05). Long
   answers in one block: "Give me part 3 in a single copy-pastable block. In ios app the ui breaks" (2026-10-05).
   Results on the live pages: "Can we see the results in the web app, via deeplinks?" (2026-10-05): give the
-  https://danbri.github.io/glitchcan-minigam/... link with the `?view=`, share hash or `id=osm:` that shows the result.
+  https://danbri.github.io/londat/... link (before 2026-10-07: https://danbri.github.io/glitchcan-minigam/...) with the
+  `?view=`, share hash or `id=osm:` that shows the result.
 - **Releases.** "let me know when you have pushed release to check" (2026-10-03): after a push, say so and give the live
   URL ("Ship at once" below).
 - **Scope.** "Prioritise sure, but do the whole lot" (2026-10-03). "Also don’t stop any of our earlier in-progress
@@ -299,25 +309,27 @@ Registers (GIAS, CQC, ODS and the rest): `cwplans-public-registers`.
 
 ## Rebuild order
 
-    node magpie/cwplans/tools/build-registry.mjs        # registry/buildings.json (needs data/raw/registry/*)
-    node magpie/cwplans/tools/join-web-facts.mjs        # occupants[].web from registry/sources/web/structured-facts.json
-    node magpie/cwplans/tools/build-categories.mjs      # registry/categories.json (QLever only when its cache lacks an item)
-    node magpie/cwplans/tools/build-atlas.mjs           # atlas/data/atlas.json (reads the registry and docklands/data/area.js)
-    node magpie/cwplans/tools/audit-quality.mjs         # quality/issues.json, quality/CATALOGUE.md (reads the atlas)
-    node magpie/cwplans/tools/check-data-register.mjs --write   # every committed data file registered?
+From the repository root:
+
+    node cwplans/tools/build-registry.mjs        # registry/buildings.json (needs data/raw/registry/*)
+    node cwplans/tools/join-web-facts.mjs        # occupants[].web from registry/sources/web/structured-facts.json
+    node cwplans/tools/build-categories.mjs      # registry/categories.json (QLever only when its cache lacks an item)
+    node cwplans/tools/build-atlas.mjs           # atlas/data/atlas.json (reads the registry and docklands/data/area.js)
+    node cwplans/tools/audit-quality.mjs         # quality/issues.json, quality/CATALOGUE.md (reads the atlas)
+    node cwplans/tools/check-data-register.mjs --write   # every committed data file registered?
 
 After a rebuild of `docklands/data/area.js` or new contributed photos, the keyed and graph steps follow:
 `key-model-buildings.mjs` (after area.js only), `contrib-photos.mjs <set>`, `compose-facade-atlas.mjs`,
 `build-kgx.mjs` twice, `check-kgx-store.mjs --write` (skill `cwplans-dataflow`, "Order of runs").
 
-The fetch and 3D steps are in `magpie/cwplans/docklands/README.md` and `registry/README.md`; the web and register
+The fetch and 3D steps are in `cwplans/docklands/README.md` and `registry/README.md`; the web and register
 fetches in their skills. The order of every tool is the `after` list of its activity in `pipeline.json`. Raw extracts
 over a few MB stay local (gitignored); `data-register.json` says what is committed and why.
 
 ## Methods
 
 Owner, 2026-10-03: "record ALL our data methods in skills or other concrete committed artifacts". The method catalogue
-is [METHODS.md](../../METHODS.md) (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/METHODS.md):
+is [METHODS.md](../../METHODS.md) (https://github.com/danbri/londat/blob/main/cwplans/METHODS.md):
 the owner rules, every tool by subject area in rebuild order, the hand-judgement steps and the fault register summary.
 It is generated: edit `pipeline.json` (tool activities, and `manual_activities` for hand steps) and `methods-intro.md`
 (the hand-written policy section), never METHODS.md.
@@ -325,7 +337,7 @@ It is generated: edit `pipeline.json` (tool activities, and `manual_activities` 
   endpoint, query, join keys and thresholds, precedence, what is dropped and why, units and rounding, cache,
   politeness), `area`, `faults` (F-numbers below) and `judgement` (where a hand decision enters and where it is
   recorded). A hand step with no committed script gets a `manual_activities` entry with a `gap`.
-- `node magpie/cwplans/tools/check-data-register.mjs --write` regenerates METHODS.md, DATA-REGISTER.md and
+- `node cwplans/tools/check-data-register.mjs --write` regenerates METHODS.md, DATA-REGISTER.md and
   pipeline.jsonld. The check fails on an unlisted tool, an empty method or rules, an unknown area and a fault id that
   is not in the fault register.
 
@@ -339,7 +351,7 @@ into a Knowledge Graph environment. Bear that in mind as we record sources and t
 - Keep source identifiers as they come (OSM type/id, Wikidata QID, UPRN, TOID, FHRS id, company number, cwb- id):
   they become IRIs. Never replace a source id with a name.
 - Keep dates and qualifiers with values (fetch date, survey date, P580/P582): a graph without time repeats F8.
-- `node magpie/cwplans/tools/check-data-register.mjs --write` checks the manifest against the tools and the register
+- `node cwplans/tools/check-data-register.mjs --write` checks the manifest against the tools and the register
   and writes `pipeline.jsonld` (W3C PROV-O, DCAT, Dublin Core).
 
 ## Data register
@@ -354,41 +366,62 @@ too) and `vendor/` are not data and are not registered.
 ## Data hosted in danbri/londat
 
 Owner, 2026-10-04 19:50 UTC: "Created londat repo"; 2026-10-05 11:27 UTC: "londat repo fixed for Claude." (first commit
-48e4851, 2026-10-05 11:29 UTC). https://github.com/danbri/londat holds the bulk open-data extracts, because the
-main repository (about 1.5 GB tracked in all directories, pack about 1 GB) and its Pages site (1 GB limit) were at
-their limits. Old blobs stay in this repository's history: do not rewrite history (owner decision).
+48e4851, 2026-10-05 11:29 UTC). From 2026-10-05 https://github.com/danbri/londat held the bulk open-data extracts,
+because the main repository of that time (danbri/glitchcan-minigam: about 1.5 GB tracked in all directories, pack about
+1 GB) and its Pages site (1 GB limit) were at their limits. Old blobs stay in that repository's history: do not rewrite
+history (owner decision).
 
-- **Rule.** A file moves to londat when it is a data file (not `.js` code, not a `README.md`) in `feeds/london-datastore/`
-  or `feeds/portals/`. Those folders are bulk, clipped open-data extracts that no page needs on its first load. Their
-  `.js` code and READMEs stay here. Other files over 1 MB stay here because a page loads them at first load
+**The move of 2026-10-07: the whole project is here.** Owner, 2026-10-07: "Migrate docklands 3d map, data tools, lg etc
+from magpie/cwplans/* into londat repo." and "Let me know where/how to configure github" ("lg" was read as the kg
+search page). Copied at glitchcan-minigam 7be94dc (londat commit d312be6, an unchanged copy; the adaptations follow in
+the next commits): `magpie/cwplans/` to `cwplans/` (447 files, same relative paths, merged with the bulk folders
+already here), `third_party/cwplans-structured-data/` to `third_party/cwplans-structured-data/`, and the docklands-view
+MCP server `tools/view-mcp/` to `tools/view-mcp/` (`.mcp.json` here). In glitchcan-minigam, `magpie/cwplans/` then keeps
+only redirect pages that send each old page URL, with its query and hash, to the same page here (from the merge of
+that side, which waits until the site here is on).
+
+- **One checkout.** Tools find every path through `cwplans/tools/londat.mjs`: `LONDAT_DIR` is the checkout that holds
+  it (set it only to read another copy), `LONDAT_CW` is `cwplans/`, `cwPath()` gives the local file. Paths to the
+  repository root went one level shorter (`cwplans/` is one folder deep; `magpie/cwplans/` was two): `node_modules/`,
+  `third_party/`, `kgx/` and `tools/view-mcp/` are at the root. Commands run from the root: `node cwplans/tools/x.mjs`.
+  Libraries: `package.json` at the root (`npm install`; Playwright pinned to 1.56.1 for the container's Chromium 1194).
+- **Register.** One register, `cwplans/data-register.json` (the londat copy of the hosted entries is gone). The field
+  `"hosted": "londat"` was removed from its 421 entries, `lds-harvest-auto.mjs` no longer writes it, and
+  `build-zone-gpkg.mjs` picks the London Datastore and portal GeoJSON by folder. `check-data-register.mjs` checks every
+  file in `cwplans/` in this checkout, patterns (`cache/runs/*/live-*.json.gz`) included. `osm_elsewhere_in_repo` now
+  lists OSM use in danbri/glitchcan-minigam (trees/, ua17, edot), checked when a glitchcan-minigam checkout is next to
+  this one (or at `GLITCHCAN_DIR`). The register covers `cwplans/` and `third_party/cwplans-structured-data/`; `kgx/`,
+  `data/images/`, `third_party/tfl/` and `third_party/cwg/` have READMEs and manifests but no register entries (open).
+- **Site.** One GitHub Pages site, https://danbri.github.io/londat/ (landing page `index.html` at the root; the 3D page
+  is https://danbri.github.io/londat/cwplans/docklands/). `.github/workflows/pages.yml` deploys on each push to `main`
+  that changes more than `cwplans/cache/` (the owner switches it on once: Settings > Pages > Source: GitHub Actions).
+  Not published: `third_party/` (no open licence, or the crawl data of the scoping phase), `cwplans/cache/runs/` and
+  `cwplans/cache/*.sqlite`. Size at the move: 430 MB of the 1 GB limit (the workflow stops at 950 MB).
+- **Pages** read data through `data-base.js` (`CwData.url(path)`, `CwData.json(path)`; a `.gz` name is gunzipped with
+  DecompressionStream): every path from the same site, except `cache/` (`latest.json`, read by `live-cache.js`), which
+  comes from `https://raw.githubusercontent.com/danbri/londat/main/cwplans/` because the site is not redeployed on the
+  hourly cache commits (raw.githubusercontent.com caches about 5 minutes and sends `Access-Control-Allow-Origin: *`).
+  The kg page reads its store from `../../kgx/` (same site; `?base=` reads another copy).
+- **Cache workflow.** `.github/workflows/cache-live.yml` runs `cwplans/tools/cache-londat.mjs` from this repository
+  (`npm ci --omit=dev`: proj4, geotiff, earcut); before the move it checked the tools out of glitchcan-minigam.
+- **Knowledge-graph names kept.** The IRI namespaces `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#`
+  (sources, activities, the `cwp:` vocabulary) and `https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/`
+  (descriptions, genids, the idioms ShEx) are names and did not change at the move; a new namespace would be a new
+  operation version and new graph versions (skill `cwplans-kgx`), the owner's decision. File IRIs in `pipeline.jsonld`
+  are now `https://github.com/danbri/londat/blob/main/cwplans/...`, so the next `build-kgx.mjs` run gives a new
+  pipeline-provenance graph version.
+- **Sizes.** Push in batches well under 500 MB; no file over 100 MB; keep the site under 1 GB.
+- **Until 2026-10-07 (history).** The rule was: a file moved to londat when it was a data file (not `.js` code, not a
+  `README.md`) in `feeds/london-datastore/` or `feeds/portals/` (later also `feeds/kml/` copies, `cache/`,
+  `coverage/`); other files over 1 MB stayed in glitchcan-minigam because a page loaded them at first load
   (`docklands/data/area.js`, `trees.json`, `atlas/data/atlas.json`, `registry/buildings.json`, `postcodes/postcodes.json`,
-  textures, splats), or they are the owner's photos (`docklands/reference/`), or they are registry inputs that
-  `build-registry.mjs` and the atlas read (`registry/companies-by-postcode.json`, `registry/sources/museums/records-open.json`,
-  `registry/sources/web/site-facts.json`, `registry/sources/landregistry/inspire-canary-wharf.geojson`,
-  `registry/sources/construction/sites.json`, `data/raw/osm-map.json.gz`; about 13 MB). Move one of those only together
-  with every tool that reads it.
-- **First move (2026-10-05):** 400 files, 189.7 MB: 237 in `feeds/london-datastore/` (172.1 MB) and 163 in
-  `feeds/portals/` (17.7 MB). The same relative path under `cwplans/` in londat:
-  `feeds/london-datastore/heat-demand/heat-demand.json` is
-  https://github.com/danbri/londat/blob/main/cwplans/feeds/london-datastore/heat-demand/heat-demand.json.
-- **Register.** Each moved file keeps its entry in `data-register.json` (the authority) with `"hosted": "londat"`.
-  `check-data-register.mjs` checks a hosted file in the londat checkout (`LONDAT_DIR`, default `../londat` next to this
-  repository's folder), fails when a hosted file is still tracked here, when a file in a londat folder has no
-  `hosted`, or when a file in the londat checkout has no entry; without a checkout it says how many it did not check.
-  `--write` also writes the londat copy `cwplans/data-register.json` (the hosted entries, their sources and OSM extracts).
-  londat also has a README (licences per folder, the GLA statement, OSM attribution), `LICENSE-DATA.md` (no blanket
-  licence: each file keeps its source licence) and `.nojekyll`.
-- **Tools** find the files through `tools/londat.mjs` (`LONDAT_DIR`, `LONDAT_CW`, `HOSTED_DIRS`, `isHostedPath`,
-  `cwPath`): `walk-london-datastore.mjs` and `walk-portals.mjs` (their `OUT`), `lds-harvest-auto.mjs` (writes register
-  lines with `hosted`), `join-lds.mjs`, `amend-uprns.mjs`, `build-construction-index.mjs`. Commit the data in londat,
-  and the register and tools here. Push londat in batches well under 500 MB; no file over 100 MB.
-- **Pages** read the files through `data-base.js`: one constant, `DATA_BASE`; `CwData.url(path)` and `CwData.json(path)`
-  (a `.gz` name is gunzipped with DecompressionStream). The atlas (London Datastore view, its map layers and file links)
-  and the 3D page (overlays: conservation areas, designated open space, safeguarded wharves, cultural venues) use it.
-  The building cards (heat, solar, Census) read `registry/sources/lds/`, which stays here.
-  Base in use: `https://raw.githubusercontent.com/danbri/londat/main/cwplans/` (sends `Access-Control-Allow-Origin: *`)
-  until GitHub Pages is on for londat; then set `DATA_BASE = PAGES` (`https://danbri.github.io/londat/cwplans/`, same
-  origin as the site). Check that https://danbri.github.io/londat/README.md answers 200 first.
+  textures, splats), or they were the owner's photos (`docklands/reference/`), or registry inputs (about 13 MB). First
+  move (2026-10-05): 400 files, 189.7 MB: 237 in `feeds/london-datastore/` (172.1 MB) and 163 in `feeds/portals/`
+  (17.7 MB), at the same relative path under `cwplans/` (e.g.
+  https://github.com/danbri/londat/blob/main/cwplans/feeds/london-datastore/heat-demand/heat-demand.json). Each moved
+  file had `"hosted": "londat"` in the register, `check-data-register.mjs` checked hosted files in a londat checkout next
+  to the main one (`LONDAT_DIR`, default `../londat`), and `--write` wrote a londat copy of the hosted entries. The pages
+  read the hosted files from raw.githubusercontent.com through `DATA_BASE` in `data-base.js`.
 - **Not done yet:** London Datastore files over 1 MB (40 files, the largest about 10 MB; check with `find`) are not gzipped in londat, because its tools read and
   write plain JSON. Gzip them only together with a `.gz`-aware reader in those tools (as `readOut` in walk-portals.mjs).
   The portal files keep their own rule (`writeOut`: over 1 MB as `.gz`).
@@ -401,9 +434,9 @@ Rotherhithe, Limehouse, Canary Wharf, Isle of Dogs etc etc.)."
 
 - The queue: https://github.com/danbri/londat/blob/main/SOURCES-TO-INVESTIGATE.md and `sources-to-investigate.json`
   (id, API, licence and class, status, what we already hold, next step). Before adding an item, search this repository
-  and londat for the name: most items in the Gemini answer were already catalogued or in use (Mapillary, KartaView,
+  (and danbri/glitchcan-minigam for work before 2026-10-07) for the name: most items in the Gemini answer were already catalogued or in use (Mapillary, KartaView,
   Panoramax, OpenAerialMap, EA aerial photography and LiDAR, the London Green Infrastructure Framework).
-- First check of the areas: `node magpie/cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]`. Fetch step,
+- First check of the areas: `node cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]`. Fetch step,
   then the operation `lift-imagery-coverage` (skill `cwplans-dataflow`) gives the graph `coverage-imagery` in kgx
   (named in `kgx/external-heads.json`; `build-kgx.mjs` packs it). Areas are hand-drawn boxes in the tool (`AREAS`):
   Canary Wharf, Isle of Dogs south, Limehouse, Rotherhithe / SE16, and the zone.
@@ -425,7 +458,7 @@ textures for their 3D models."
   `README.md`, and `photos.json`, the hand-made part: licence, creator, date and time, what each photo depicts, each
   building with its OSM way, model index and height, evidence and confidence, judged facade notes, and the facade
   regions (`patches`: photo, ROI in photo pixels, measuring box in rectified pixels, face, face width).
-- **Run:** `FACADE_PY=<venv python> node magpie/cwplans/tools/contrib-photos.mjs <set>`: operation
+- **Run:** `FACADE_PY=<venv python> node cwplans/tools/contrib-photos.mjs <set>`: operation
   `rectify-facade-patches` (facade.py and measure.py in `registry/sources/facades/tools/`, writes `rect/<id>.jpg`) then
   `lift-contrib-photos`; graphs `facade-patches-<set>` and `photos-<set>` named in `kgx/external-heads.json`; then
   `build-kgx.mjs`. Python here: Debian's numpy does not import; make a venv (`python3 -m venv v && v/bin/pip install
@@ -462,7 +495,7 @@ textures for their 3D models."
   out what does not repeat (the library's window boxes: mesh only). Metres: a known size first (the OSM face width, the
   floor from levels and the LiDAR height), the metric aspect from the vanishing points (`registry/sources/facades/tools/
   metric.py`) only where nothing else is known; on Ontario Point it was 10% from the known sizes.
-- **Atlas:** `FACADE_PY=<venv python> node magpie/cwplans/tools/compose-facade-atlas.mjs` puts the tiles into slots 16 on
+- **Atlas:** `FACADE_PY=<venv python> node cwplans/tools/compose-facade-atlas.mjs` puts the tiles into slots 16 on
   of `docklands/data/tex/facades.jpg/.json`, keyed by OSM id with model indices from `key-model-buildings.mjs`. The page
   draws them on any building (skill `docklands-3d-page`, "Building keys"). Order after new photos: `contrib-photos.mjs
   <set>`, `compose-facade-atlas.mjs`, `build-kgx.mjs`; after a model rebuild: `key-model-buildings.mjs` first.
@@ -505,7 +538,9 @@ textures for their 3D models."
   routes: `#view`, `#view/b/cwb-0413`, `#view/pc/E14-5AB`, `#quality/q/SP-6`; `#cwb-NNNN` also works.
   `window.__atlas.open(kind, id)` opens a record. Building and postcode records list their quality issues.
 - The 3D page: `docklands-3d-page` (URL switches, `window.__docklands`, the headless recipe).
-- Test headless with Playwright from a local `python3 -m http.server` (fetch needs http). The atlas basemap comes from
+- Test headless with Playwright from a local `python3 -m http.server` in the repository root (fetch needs http), at
+  http://127.0.0.1:<port>/cwplans/atlas/ and the other pages; `npm install` first. The atlas basemap comes from
   tile.openstreetmap.org: an October 2026 session could not reach it from the container, and on 2026-10-04 `curl`
   through the proxy got HTTP 200. Check before you report a missing basemap, and say which it was.
-- `node --test magpie/cwplans/tools/test/*.test.mjs`: parser fixtures (15 tests on 2026-10-04).
+- `node --test cwplans/tools/test/*.test.mjs` (`npm test`): parser fixtures (15 tests on 2026-10-04; 15 pass in londat on
+  2026-10-07).

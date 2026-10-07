@@ -2,20 +2,20 @@
 // Live state in the Docklands zone, as dated snapshots: hire bikes, station lifts and crowding, traffic cameras,
 // power cuts, storm overflows, NOTAMs (cranes, temporary airspace) and the published helicopter structure.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs                  # every source
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs bikes lifts      # some sources
-//   node magpie/cwplans/tools/fetch-live.mjs --no-fetch                            # rebuild from the raw cache, no network
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs                  # every source
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs bikes lifts      # some sources
+//   node cwplans/tools/fetch-live.mjs --no-fetch                            # rebuild from the raw cache, no network
 //
 // Sources: bikes lifts crowding jamcams ukpn overflows notams helicopters
-// Out:  magpie/cwplans/feeds/live/<source>.json  {meta: {source, url, fetched, licence, attribution, method, counts, zone}, items}
+// Out:  cwplans/feeds/live/<source>.json  {meta: {source, url, fetched, licence, attribution, method, counts, zone}, items}
 //       items: {id, kind, time, position: {lat, lon[, alt_ft]}, values, url}
-// Raw:  magpie/cwplans/data/raw/live/ (gitignored)
+// Raw:  cwplans/data/raw/live/ (gitignored)
 // Zone: the 3D model's box (fetch-docklands.mjs BOX_WGS84: -0.095, 51.474 to 0.015, 51.522) plus the east margin of
 //       fetch-works.mjs (0.015 to 0.085, 51.495 to 51.522: Royal Docks, ExCeL, London City Airport).
 // Politeness: one request at a time per host, at least 1.5 s apart, User-Agent glitchcan-cwplans/0.1, up to 5 tries
 //       with Retry-After or a doubling pause on 429, 5xx, timeouts and resets.
 // Method, licences, what cannot be known and the backlog: skill cwplans-live-state
-// (magpie/cwplans/skills/cwplans-live-state/SKILL.md); sources and counts: magpie/cwplans/feeds/live/README.md.
+// (cwplans/skills/cwplans-live-state/SKILL.md); sources and counts: cwplans/feeds/live/README.md.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { TOOLS, RAW, UA } from './lib.mjs';

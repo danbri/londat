@@ -1,7 +1,7 @@
 ---
 name: cwplans-open-portals
 description: >-
-  The open-data catalogues other than the London Datastore, walked for the magpie/cwplans Docklands zone with
+  The open-data catalogues other than the London Datastore, walked for the cwplans Docklands zone with
   tools/walk-portals.mjs and one adapter per portal in tools/portals/: data.gov.uk (all 59,451 datasets),
   planning.data.gov.uk, the six zone borough portals, Nomis Census 2021 bulk zips (the Nomis API is disallowed by
   robots.txt), the ONS Open Geography Portal and national sources (DfT, police.uk, DESNZ). Each portal's API,
@@ -12,29 +12,29 @@ description: >-
   portal for cwplans, or answer "is dataset X open and in the zone?".
 ---
 
-# Open-data portals for magpie/cwplans
+# Open-data portals for cwplans
 
 Policy, the fault register and the activity log: the hub skill `docklands-data-curation`. Append what you did to its
 `ACTIVITY-LOG.md`. The London Datastore has its own skill (`cwplans-london-datastore`) and tool; this walk copies its
 method (walk, area from the data, written triage rules, one final state per dataset, harvest clipped to the zone,
-size caps) for the other portals. Results: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/portals/README.md.
+size caps) for the other portals. Results: https://github.com/danbri/londat/blob/main/cwplans/feeds/portals/README.md.
 Checked against the tool and the files on 2026-10-04.
 
 ## Run
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs dgu walk        # 60 pages, ~2 min; raw all.jsonl.gz (7 MB)
-    node magpie/cwplans/tools/walk-portals.mjs dgu triage                            # no network
-    node magpie/cwplans/tools/walk-portals.mjs dgu catalogue                         # the committed compact catalogue
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs pdg walk         # 478 requests, ~9 min
-    node magpie/cwplans/tools/walk-portals.mjs pdg triage
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs pdg harvest [dataset ...]
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs boroughs walk    # 662 requests, ~20 min (observatory metadata)
-    node magpie/cwplans/tools/walk-portals.mjs boroughs triage; ... boroughs harvest [key ...]
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs nomis walk; ... nomis harvest [TS001 ...]
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs onsgeo walk; ... onsgeo harvest [key ...]
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs national harvest [dft-aadf dft-stats19 police-crime desnz-energy]
-    node magpie/cwplans/tools/walk-portals.mjs index                                 # feeds/portals/index.json
-    node magpie/cwplans/tools/check-data-register.mjs --write
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs dgu walk        # 60 pages, ~2 min; raw all.jsonl.gz (7 MB)
+    node cwplans/tools/walk-portals.mjs dgu triage                            # no network
+    node cwplans/tools/walk-portals.mjs dgu catalogue                         # the committed compact catalogue
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs pdg walk         # 478 requests, ~9 min
+    node cwplans/tools/walk-portals.mjs pdg triage
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs pdg harvest [dataset ...]
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs boroughs walk    # 662 requests, ~20 min (observatory metadata)
+    node cwplans/tools/walk-portals.mjs boroughs triage; ... boroughs harvest [key ...]
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs nomis walk; ... nomis harvest [TS001 ...]
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs onsgeo walk; ... onsgeo harvest [key ...]
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs national harvest [dft-aadf dft-stats19 police-crime desnz-energy]
+    node cwplans/tools/walk-portals.mjs index                                 # feeds/portals/index.json
+    node cwplans/tools/check-data-register.mjs --write
 
 `--refresh` re-downloads raw files (`data/raw/portals/<portal>/`, gitignored). Order per portal: walk, triage,
 harvest, register, triage again (harvested datasets become `harvested`), index. The zone reference is
@@ -174,8 +174,9 @@ only under the size cap (6,000 features, 1.5 MB on disk). 384 probed on 2026-10-
 ## KML sources (2026-10-05)
 
 Owner, 2026-10-05: "Can you find any kml resources for the area?" Tool `tools/find-kml.mjs` (copy, probe, all); results
-`feeds/kml/catalogue.json` and `feeds/kml/README.md` (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/kml/README.md);
-copies in danbri/londat `cwplans/feeds/kml/` (in `HOSTED_DIRS`; the catalogue and README stay in this repository).
+`feeds/kml/catalogue.json` and `feeds/kml/README.md` (https://github.com/danbri/londat/blob/main/cwplans/feeds/kml/README.md);
+copies in danbri/londat `cwplans/feeds/kml/` (in `HOSTED_DIRS`; since 2026-10-07 the catalogue and README are in the
+same folder).
 
 - **Where KML is.** Search our own catalogues first: London Datastore `catalogue.json` (resource `format` kml/kmz; 11
   of 11,348 resources) and the raw data.gov.uk walk `data/raw/portals/dgu/all.jsonl.gz` (4,499 of 59,451 datasets have a
@@ -191,7 +192,8 @@ copies in danbri/londat `cwplans/feeds/kml/` (in `HOSTED_DIRS`; the catalogue an
 - **So we copy.** Open layers (OGL, CC BY) are fetched as GeoJSON with an envelope query (or read from our harvests),
   cut to the zone and written with the page's own `writeKml` (one shared Style, names and a few fields, source, licence
   and attribution in the Document description). raw.githubusercontent.com sends CORS `*`, so
-  `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=<encoded raw URL>` works.
+  `https://danbri.github.io/londat/cwplans/docklands/?kml=<encoded raw URL>` works once the londat Pages site is on (the
+  old links to https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ redirect to it with the query).
 - **Licences.** Share-alike (Curio Canopy, Wikimapia, Wikipedia "Attached KML") is never copied; Curio Canopy opens by
   link only and is not an example. The National Cycle Network layer is OGL but the publisher says it contains OSM: its
   copy is registered `osm: derived` with "osm" in its sources. Items with no licence text (TfL stations, Tower Hamlets
@@ -206,15 +208,17 @@ copies in danbri/londat `cwplans/feeds/kml/` (in `HOSTED_DIRS`; the catalogue an
 
 ## Size rules
 
-**Where the files are (2026-10-05):** the data files of `feeds/portals/` live in the repository
-https://github.com/danbri/londat, under `cwplans/feeds/portals/` (same relative paths); the READMEs stay here.
-`walk-portals.mjs` writes to the londat checkout (`OUT`; `LONDAT_DIR`, default `../londat` next to this repository's
-folder; `tools/londat.mjs`). Register entries have `"hosted": "londat"`. Commit and push the data there, the register,
-READMEs and tools here. Rule and checks: `docklands-data-curation`, "Data hosted in danbri/londat". The size rules
-below still apply in londat (its Pages site has the same 1 GB limit).
+**Where the files are:** the data files of `feeds/portals/` moved to the repository https://github.com/danbri/londat on
+2026-10-05, under `cwplans/feeds/portals/` (same relative paths); since 2026-10-07 the READMEs, the tools and the
+register are in the same repository. `walk-portals.mjs` writes to this checkout (`OUT`; `tools/londat.mjs`;
+`LONDAT_DIR` defaults to the checkout itself). Register entries have no `"hosted"` field (removed on 2026-10-07).
+Commit and push the data, the register, READMEs and tools together. History of the two-repository layout (2026-10-05
+to 2026-10-07): `docklands-data-curation`, "Data hosted in danbri/londat". The size rules below still apply in londat
+(its Pages site has the same 1 GB limit).
 
-Coordinator, 2026-10-04: the repository (531 MB tracked, 1 GB pack) and the Pages site (1 GB limit) are near their
-limits. `writeOut` in walk-portals.mjs writes any output over 1 MB gzipped (`<file>.gz`; pages read it with
+Coordinator, 2026-10-04: the repository (then danbri/glitchcan-minigam: 531 MB tracked, 1 GB pack) and the Pages site
+(1 GB limit) are near their limits.
+`writeOut` in walk-portals.mjs writes any output over 1 MB gzipped (`<file>.gz`; pages read it with
 DecompressionStream) and removes the plain file; `outExists` and `readOut` read either. Commit only compact zone
 extracts with rounded coordinates and the fields used; large tables stay raw and are listed as "available on
 request" in the README; stop and report before the walk's committed additions pass 40 MB.

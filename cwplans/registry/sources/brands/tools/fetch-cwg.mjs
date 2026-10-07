@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Step 3d: Canary Wharf Group's own directory (shops, restaurants/bars, hotels, see & do).
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/registry/sources/brands/tools/fetch-cwg.mjs   (Node's fetch must use the proxy)
+//   NODE_USE_ENV_PROXY=1 node cwplans/registry/sources/brands/tools/fetch-cwg.mjs   (Node's fetch must use the proxy)
 // canarywharf.com answers every scripted request with an Imperva/Incapsula bot challenge (checked
 // 2026-10-03), so this reads the Internet Archive's copies instead: the site's own Yoast sitemaps as
 // archived on 2026-03-04 give the directory (the list of entries), and each entry page's archived copy

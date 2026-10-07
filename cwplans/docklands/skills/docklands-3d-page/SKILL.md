@@ -1,7 +1,7 @@
 ---
 name: docklands-3d-page
 description: >-
-  Work on the Docklands 3D page, magpie/cwplans/docklands/index.html and its scripts (WebGL 1, 15 shader programs):
+  Work on the Docklands 3D page, cwplans/docklands/index.html and its scripts (WebGL 1, 15 shader programs):
   vertex formats (the alpha byte is not opacity; g carries building use and roof top), picking by model index, the
   drawer, card, search, routes, gestures, phone audio; the styles (map, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
@@ -14,35 +14,40 @@ description: >-
 
 # The Docklands 3D page
 
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/
-(night from the river: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=rotherhithe).
-Data and method notes: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/docklands/README.md.
+Live: https://danbri.github.io/londat/cwplans/docklands/
+(night from the river: https://danbri.github.io/londat/cwplans/docklands/?view=rotherhithe).
+Data and method notes: https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md.
 Data policy, the fault register and the activity log are in the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
 
 The sections are dated: each was read from the code on its date. "Architecture" was checked again on 2026-10-07
-(master a2781653). Counts marked "measured" were run with the recipe in "Testing".
+(master a2781653). Counts marked "measured" were run with the recipe in "Testing". Commit ids from before 2026-10-07
+are commits of danbri/glitchcan-minigam, where the page was `magpie/cwplans/docklands/` until it moved to this
+repository that day: https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans .
 
 ## Ship at once, and re-read the whole line
 
 Owner, 2026-10-03: "shipping immediately to live site is fine and urgent. Don't batch things up, as live site is my
-only way to see progress." Commit and push each working change to master as soon as it passes the load test below,
-then confirm that the live file is the commit:
+only way to see progress." Commit and push each working change to main (since 2026-10-07; before, master of
+danbri/glitchcan-minigam) as soon as it passes the load test below, then confirm that the live file is the commit:
 
-    curl -s https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/index.html | sha1sum
-    git show HEAD:magpie/cwplans/docklands/index.html | sha1sum      # equal once Pages has deployed
+    curl -s https://danbri.github.io/londat/cwplans/docklands/index.html | sha1sum
+    git show HEAD:cwplans/docklands/index.html | sha1sum      # equal once Pages has deployed
+
+The Pages workflow (`.github/workflows/pages.yml`) deploys each push to main; londat `CLAUDE.md`, "Always give the full
+URL", says how to check that the site is on.
 
 Other agents commit in the same working tree, often with files staged. Commit only your own content: build a temporary
-index from the remote (`git fetch origin master`, `GIT_INDEX_FILE=... git read-tree origin/master`), add your blobs,
-`git commit-tree -p origin/master`, and push that commit (`git push origin <commit>:refs/heads/master`; it is refused if
+index from the remote (`git fetch origin main`, `GIT_INDEX_FILE=... git read-tree origin/main`), add your blobs,
+`git commit-tree -p origin/main`, and push that commit (`git push origin <commit>:refs/heads/main`; it is refused if
 the remote moved, then start again). For a shared file (data-register.json, pipeline.json, ACTIVITY-LOG.md) apply your
-insertion to `git show origin/master:<file>` at commit time (the coordinator's rule), never to a copy read earlier: on 2026-10-04 a copy read a few minutes before the commit undid another agent's register entries (repaired
+insertion to `git show origin/main:<file>` at commit time (the coordinator's rule), never to a copy read earlier: on 2026-10-04 a copy read a few minutes before the commit undid another agent's register entries (repaired
 in the next commit).
 
 **Give your worktree a name no other agent will use.** The scratchpad directory is shared by every agent of the session:
 on 2026-10-04 a worktree at `scratchpad/wt` was deleted by another agent mid-task (uncommitted edits lost; the server then
 answered 404 and the tests timed out, which looked like a page fault). Use `scratchpad/<your-task>/wt`, keep each step's edits
-as a re-runnable apply script (it also re-applies cleanly after `git rebase origin/master`), and commit each step at once.
+as a re-runnable apply script (it also re-applies cleanly after `git rebase origin/main`), and commit each step at once.
 
 Most of the page is long one-line statements. On 2026-10-03 a comment inserted in the middle of a line commented out
 `gl.colorMask(true, ...)` and left the page black after "Splats only". `render()` now resets blend, depth mask,
@@ -211,7 +216,7 @@ Test hooks: `window.__docklands` (`cam`, `draw`, `renderNow`, `setView`, `setNig
 
 ## Night (`?night`, Layers > Style > Night)
 
-Method and every number: README "Night" (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/docklands/README.md#night-added-2026-10-04).
+Method and every number: README "Night" (https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md#night-added-2026-10-04).
 The reference is the owner's six photos of 3 October 2026 in `docklands/reference/night-2026-10-03/` (owner,
 2026-10-04: "Keep my photos"; the owner's copyright, not an open licence; no EXIF survived).
 
@@ -292,7 +297,7 @@ Measured 2026-10-04: 3,554 of 3,600 cells hash to 0 in fp16 (README: 3,550 on it
 
 ### fp16 and WebGL 1 limits, checked without a phone (2026-10-04)
 
-`node magpie/cwplans/tools/check-fp16-shaders.mjs` (about 40 s; `--no-browser` for the maths only) captures every shader
+`node cwplans/tools/check-fp16-shaders.mjs` (about 40 s; `--no-browser` for the maths only) captures every shader
 the page compiles in headless Chromium, prints per program its precision and its uniform rows, varyings, samplers and
 attributes (counted without packing) against the WebGL 1 minimums, and re-runs the risky maths with every intermediate
 rounded to binary16 (with exponent range, subnormals and overflow). It fails on a `mediump` case that goes wrong and on a
@@ -314,8 +319,8 @@ with the splats, trees and facade atlas loaded; audio and touch (separate rules 
 
 ## Crown halo by date and overlays (2026-10-04)
 
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?t=photo (red halo, pyramid faces dark) and
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?t=2022-05-26T22:00&night (purple, Elizabeth line week).
+Live: https://danbri.github.io/londat/cwplans/docklands/?t=photo (red halo, pyramid faces dark) and
+https://danbri.github.io/londat/cwplans/docklands/?t=2022-05-26T22:00&night (purple, Elizabeth line week).
 
 - **Crown halo** (`CROWN`, `crownFor(day)`, `crownNow()`; Layers > "Crown halo colour by date", on): for the page clock's
   *evening* (London date of the clock minus 6 h, so 01:00 belongs to the night before) take a One Canada Square campaign
@@ -364,7 +369,7 @@ What went wrong first (and the rule):
 
 ## River layer (2026-10-04)
 
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ (Menu > Layers > River). Data and methods:
+Live: https://danbri.github.io/londat/cwplans/docklands/ (Menu > Layers > River). Data and methods:
 skill `cwplans-river-and-water`, "On the 3D page and the atlas".
 
 - **Its own file**, `docklands/river-layer.js` (like `sky.js`), so that agents working in parallel on `index.html` meet
@@ -414,7 +419,7 @@ window". Commits 6064852 (3D page) and 4405c42 (atlas, What's on).
 - **Other licences.** OGL v3.0 and CC BY ask for an attribution statement, not a place on the map: the Credits section is
   enough. Toasts are over the city, so they carry no credit text (ground image, trees, crime: the credit stays in the
   drawer note).
-- **Atlas** (https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#map): Leaflet's attribution shows the OSM
+- **Atlas** (https://danbri.github.io/londat/cwplans/atlas/#map): Leaflet's attribution shows the OSM
   credit only (`setPrefix(false)`); it folds the same way to `#attrI` (map `movestart zoomstart click`, or 5 s); the (i)
   shows it again. EA, UKHO, ONS, HMLR, FSA, Historic England, Wikidata and Leaflet are listed in "Data and licences".
 
@@ -454,7 +459,7 @@ from another app need a real device to see. The headless test shows the events a
 
 ## Works in progress and the day view from Greenland Pier (2026-10-04)
 
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=greenlandday&t=2026-10-04T11:30 (then Menu >
+Live: https://danbri.github.io/londat/cwplans/docklands/?view=greenlandday&t=2026-10-04T11:30 (then Menu >
 Layers > Works in progress > Construction sites). Data and rules: skill `cwplans-construction`.
 
 - **Layer** (`ov_works`, off; `OVL.works` = `../registry/sources/construction/sites.json`, 1.75 MB, loaded on first tick):
@@ -573,7 +578,7 @@ and e78a8671 (atlas, and the hold fix on both).
   `navigator.geolocation` -> said. Without permission the page works as before.
 - **Privacy**: no request carries the position, nothing is stored, the URL does not change (About > "Your location"; the
   atlas says the same under the map and adds that map tiles around any place viewed come from tile.openstreetmap.org).
-- **Atlas** (https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#map): a Leaflet control at the bottom right
+- **Atlas** (https://danbri.github.io/londat/cwplans/atlas/#map): a Leaflet control at the bottom right
   (38 px above the corner so the (i) stays clear), `map.locate({ watch: true, enableHighAccuracy: true })`, `L.circle` with
   the accuracy and an `L.circleMarker` dot; tap = ask and centre (zoom 17 or closer), `dragstart` -> located, tap = centre,
   hold = off; no heading (the map does not rotate). Hook `__atlasLocate.state`.
@@ -599,7 +604,7 @@ watch restarts after the phone sleeps; battery use with high accuracy on.
 
 ## Ships (AIS) (2026-10-04)
 
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#at=-4330,-90,500 (the Pool of London: HANSEATIC
+Live: https://danbri.github.io/londat/cwplans/docklands/#at=-4330,-90,500 (the Pool of London: HANSEATIC
 SPIRIT alongside HMS Belfast on 4 October 2026). Data, licences and the review flag: skill `cwplans-river-and-water`, "AIS:
 Open Waters" and "Review before scaling" (AISHub and aisstream.io shown for scoping by the owner's decision of 2026-10-04).
 
@@ -709,7 +714,7 @@ snapshot before a move, `cv` and `#labels` bubble listeners to read the result a
   | `id` | the record on the card: a `cwb-` id, a label's Wikidata id, or `l:` + label name |
   | `cap` | `?capture` look |
 
-  Example (1600 x 900 test): `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-512.3,321.1,12.3,2345,1.1235,0.4321&f=0.9&n=1&t=2026-10-04T23:56&u=1&on=showTrees,glow-finance,ov_works&off=crownDate,showLabels&s=colourBy:height&g=cut:-5,vz:2&id=cwb-0413`.
+  Example (1600 x 900 test): `https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-512.3,321.1,12.3,2345,1.1235,0.4321&f=0.9&n=1&t=2026-10-04T23:56&u=1&on=showTrees,glow-finance,ov_works&off=crownDate,showLabels&s=colourBy:height&g=cut:-5,vz:2&id=cwb-0413`.
   On load (`DOMContentLoaded`, after sky.js) the order is: view, clock, radios (waits for pixel art, which saves and
   replaces the camera), checkboxes, selects, gauge, ranges, Night, capture, camera, then the record (waits for the
   atlas). A bad number keeps the default; ranges are clamped to their min and max. `#at=x,z[,dist]` still works (no
@@ -725,8 +730,8 @@ snapshot before a move, `cv` and `#labels` bubble listeners to read the result a
 
 ## KML (2026-10-05)
 
-Owner, 2026-10-05: "Also look into basic KML support". Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/
-(Menu > Layers > My KML) and https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#map (Layers box, "KML").
+Owner, 2026-10-05: "Also look into basic KML support". Live: https://danbri.github.io/londat/cwplans/docklands/
+(Menu > Layers > My KML) and https://danbri.github.io/londat/cwplans/atlas/#map (Layers box, "KML").
 
 - **Files.** `docklands/kml.js`: an ES module with no dependencies, shared by both pages (`readKml`, `parseKml`, `writeKml`,
   `toGeoJSON`, `placemarksFromGeoJSON`, `kmlColor`, `download`). `docklands/kml-layer.js`: the 3D page's layer, a module.
@@ -1064,11 +1069,11 @@ S0-S1000, engraving 0-5,000 mm/min), writing 0-12,000 mm/min, 115200 baud.
 Owner, 2026-10-07: "is this stylized view possible to add within the app itself? Ideally in realtime? Use webgpu and wasm
 if needed. Possible variations: a crt style ui in tribute to classic vectrex console- which drew lines directly as needed".
 Layers > Style > "Line drawing" (`?lines`) and "Vector CRT" (`?vectrex`). Live:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?lines
-and https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?vectrex. Code: `docklands/line-styles.js`
+https://danbri.github.io/londat/cwplans/docklands/?lines
+and https://danbri.github.io/londat/cwplans/docklands/?vectrex. Code: `docklands/line-styles.js`
 (`DocklandsLines`). Hooks in index.html: the radios, `lineOn()` (`nightOn()` asks it: Night is off in these styles), a
 branch at the top of `render()` after the fresh state, `setStyle()` (now a wrapper; pixel art is `setPixStyle()`),
-`DocklandsLinesCtx`, and the script tag after plotter-svg.js. Check tool: `node magpie/cwplans/tools/check-line-styles.mjs
+`DocklandsLinesCtx`, and the script tag after plotter-svg.js. Check tool: `node cwplans/tools/check-line-styles.mjs
 [--out DIR] [--style vectrex]` (about 2 min).
 
 - **No WebGPU, no wasm.** WebGL 1 with `ANGLE_instanced_arrays` (the splats need it already) is enough: the edges are built
@@ -1162,7 +1167,7 @@ measurements and the open Windrush-level finding: skill `blender-station-models`
 
 Owner, 2026-10-06 (after the Canada Water photos): "change the 3D page to find buildings by OSM id or position? ... Yes,
 do our whole area and be mindful of possible future expansion". Live (tap any building, or search "Ontario Point"):
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&u=0&id=osm:w204580680
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0799,0.6315&n=0&u=0&id=osm:w204580680
 
 - **The keys.** `tools/key-model-buildings.mjs` (operation `key-model-buildings`, skill `cwplans-dataflow`) gives every
   one of the 41,803 model buildings its OSM way or relation, exactly: each OSM outline of `osm-clip.json.gz` goes through
@@ -1210,7 +1215,7 @@ https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-2040
 
 ## Testing
 
-Headless Chromium with SwiftShader (repo `CLAUDE.md`, "Headless browser"), from a local server (fetch needs http):
+Headless Chromium with SwiftShader (repo `CLAUDE.md`, "Development"), from a local server (fetch needs http):
 
     python3 -m http.server 8791 --bind 127.0.0.1      # from the repo root, in the background; stop it afterwards
 
@@ -1221,7 +1226,7 @@ const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3 });
 const page = await ctx.newPage(), errors = [];
 page.on('pageerror', e => errors.push(String(e))); page.on('console', m => m.type() === 'error' && errors.push(m.text()));
-await page.goto('http://127.0.0.1:8791/magpie/cwplans/docklands/index.html?view=rotherhithe');
+await page.goto('http://127.0.0.1:8791/cwplans/docklands/index.html?view=rotherhithe');
 await page.waitForFunction(() => window.__docklands?.AT && window.__docklands.NIGHT.built, null, { timeout: 240000 });
 const png = await page.evaluate(() => { window.__docklands.renderNow(); return document.getElementById('c').toDataURL('image/png'); });
 ```

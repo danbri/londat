@@ -1,6 +1,6 @@
 # Canary Wharf building registry
 
-Page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/registry/ (a building: `…/registry/#cwb-0413`)
+Page: https://danbri.github.io/londat/cwplans/registry/ (a building: `…/registry/#cwb-0413`)
 
 Internal ids for the buildings of Canary Wharf, cross-referenced to OSM, Wikidata, postcodes and open registers, with their occupants and owners. Occupants and owners are organisations only. The registry never records private individuals: no residents, no company officers, no individual owners.
 
@@ -20,10 +20,10 @@ Data policy: in October 2026 the owner suspended the normal restrictions on pers
 
 Rebuild:
 
-    node --max-old-space-size=6000 magpie/cwplans/tools/registry-osm.mjs
-    node magpie/cwplans/tools/registry-wikidata.mjs
-    node magpie/cwplans/tools/registry-fhrs.mjs
-    node magpie/cwplans/tools/build-registry.mjs
+    node --max-old-space-size=6000 cwplans/tools/registry-osm.mjs
+    node cwplans/tools/registry-wikidata.mjs
+    node cwplans/tools/registry-fhrs.mjs
+    node cwplans/tools/build-registry.mjs
 
 ## Ids
 

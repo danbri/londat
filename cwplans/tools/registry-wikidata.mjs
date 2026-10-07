@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Wikidata for the building registry, through QLever (https://qlever.dev/api/wikidata) and its geo functions.
-//   node magpie/cwplans/tools/registry-wikidata.mjs
+//   node cwplans/tools/registry-wikidata.mjs
 // out: data/raw/registry/wikidata-cw.json  {items: [...], hq: [...]}
 // People (Q5) and memorials are excluded (repo data-ethics rule), as items and as owner/occupant values.
 import { writeFileSync, mkdirSync } from 'fs';

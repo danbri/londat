@@ -1,7 +1,7 @@
 ---
 name: cwplans-londat-cache
 description: >-
-  The cache of magpie/cwplans in danbri/londat: an append-only hourly history of live state in the Docklands zone (one
+  The cache of cwplans in danbri/londat: an append-only hourly history of live state in the Docklands zone (one
   gzip JSON run file per run in cwplans/cache/runs/<day>/, replayed into cwplans/cache/live-YYYY-MM.sqlite when the
   month closes: hire-bike docks, lift outages, crowding, power cuts, storm overflows, NOTAM cranes, AIS without small
   craft, tide and river levels, line status, river buses, weather), cwplans/cache/latest.json that the atlas and the
@@ -15,8 +15,10 @@ description: >-
 # The londat cache (cwplans)
 
 Owner, 2026-10-05: "Now we have londata repo are we caching more fetches there and preloading? If not, we should!
-Sqlite files would be a simple start. Keep trying". This skill is the answer. Rules of londat itself (what moves there,
-the register, `tools/londat.mjs`, `data-base.js`): skill `docklands-data-curation`, "Data hosted in danbri/londat".
+Sqlite files would be a simple start. Keep trying". This skill is the answer. Since 2026-10-07 the tools, the pages and
+the cache are all in danbri/londat (before, the tools and pages were in danbri/glitchcan-minigam). The repository
+layout, the register, `tools/londat.mjs` and `data-base.js`: skill `docklands-data-curation`, "Data hosted in
+danbri/londat".
 
 ## What is where
 
@@ -31,22 +33,25 @@ the register, `tools/londat.mjs`, `data-base.js`): skill `docklands-data-curatio
 | https://github.com/danbri/londat/blob/main/.github/workflows/cache-live.yml | the hourly job | by hand | - |
 
 Pages read `latest.json` at `https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json`
-(`CwData.url('cache/latest.json')`; `data-base.js` treats `cache/` as hosted).
+(`CwData.url('cache/latest.json')`): `data-base.js` sends every `cache/` path to raw.githubusercontent.com, because the
+Pages site (https://danbri.github.io/londat/) is not redeployed on the hourly cache commits.
 
 ## Commands
 
-    NODE_USE_ENV_PROXY=1 LONDAT_DIR=/home/user/londat node magpie/cwplans/tools/cache-londat.mjs        # fetch + append (about 6 min)
-    LONDAT_DIR=/home/user/londat node magpie/cwplans/tools/cache-londat.mjs --no-fetch                  # append the snapshots in this checkout
+From the repository root (no LONDAT_DIR needed since 2026-10-07: the tools write into their own checkout):
+
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/cache-londat.mjs        # fetch + append (about 6 min)
+    node cwplans/tools/cache-londat.mjs --no-fetch                  # append the snapshots in this checkout
     options: --themes=bikes,tide,...  --dry  --vacuum (when a month is closed)
-    LONDAT_DIR=/home/user/londat node magpie/cwplans/tools/build-zone-gpkg.mjs [--part=core,lds,portals]   # needs ogr2ogr (apt-get install -y gdal-bin)
+    node cwplans/tools/build-zone-gpkg.mjs [--part=core,lds,portals]   # needs ogr2ogr (apt-get install -y gdal-bin)
     python3.12 /usr/lib/python3/dist-packages/osgeo_utils/samples/validate_gpkg.py /home/user/londat/cwplans/cache/zone-core.gpkg
 
 `cache-londat.mjs` runs `fetch-live.mjs bikes lifts crowding ukpn overflows notams`, `fetch-river.mjs levels river-bus`
 and `fetch-ais.mjs --listen=0` as child processes (their politeness unchanged), then asks two endpoints itself: TfL
 `/Line/Mode/tube,dlr,elizabeth-line,overground,river-bus,cable-car/Status` and Open-Meteo `current=` (one request
 each, saved in `data/raw/cache/`, gitignored). The fetch tools rewrite their snapshot files in the checkout as always:
-in a working copy of the main repository, `git checkout -- magpie/cwplans/feeds/` afterwards unless you mean to commit
-fresh snapshots. About 120 requests per run; the crowding loop (65 stations, 1.5 s apart) is most of the 6 minutes.
+in a working copy, `git checkout -- cwplans/feeds/` afterwards unless you mean to commit fresh snapshots (the
+workflow stashes them before it pulls). About 120 requests per run; the crowding loop (65 stations, 1.5 s apart) is most of the 6 minutes.
 
 ## Database: node:sqlite
 
@@ -151,24 +156,27 @@ In the container, Open-Meteo sometimes fails CORS through the proxy with Live ti
 
 ## Scheduling
 
-`.github/workflows/cache-live.yml` in londat: cron `17 * * * *` and `workflow_dispatch`; sparse checkout of
-`magpie/cwplans/tools`, `feeds/live`, `feeds/river` and `data-register.json` from glitchcan-minigam master (verified to
-be enough by running the tools in such a checkout), `npm install` of proj4, geotiff and earcut, the tool, then a commit
-of `cache/runs/`, `cache/latest.json` and any new `cache/live-*.sqlite` with three pull-rebase-push tries; `concurrency` stops overlap. The
+`.github/workflows/cache-live.yml` in londat: cron `17 * * * *` and `workflow_dispatch`; a checkout of londat (the
+tools are here since 2026-10-07; before, a sparse checkout of `magpie/cwplans/tools`, `feeds/live`, `feeds/river` and
+`data-register.json` from glitchcan-minigam master), `npm ci --omit=dev` (proj4, geotiff and earcut: the
+"dependencies" of package.json; the build tools are devDependencies), the tool, then a commit of `cache/runs/`,
+`cache/latest.json` and any new `cache/live-*.sqlite`, a stash of the snapshot files the fetch tools rewrote, and three
+pull-rebase-push tries; `concurrency` stops overlap. The commit, made with the workflow token, starts no other workflow,
+and `pages.yml` ignores `cwplans/cache/**`, so the hourly run does not redeploy the site. The
 session could push the workflow file to londat (2026-10-05) but could not start it by API (403 "Resource not accessible
 by integration"): the first run is the first cron after the push. Check the Actions tab of londat. A Claude Routine is
 not used for this.
 
 ## Register
 
-- `data-register.json` has hosted entries for `cache/runs/*/live-*.json.gz` and `cache/live-*.sqlite` (families:
-  `check-data-register.mjs` matches `*` in folder and file names against the londat checkout and needs at least one file
+- `data-register.json` has entries for `cache/runs/*/live-*.json.gz` and `cache/live-*.sqlite` (families:
+  `check-data-register.mjs` matches `*` in folder and file names and needs at least one file
   unless the entry has `"may_be_empty": true`, as the monthly SQLite has until November; a new day or month needs no
   edit), `cache/latest.json`, and `cache/zone-core.gpkg`, `zone-lds.gpkg` (osm use "derived") and `zone-portals.gpkg`,
   each with the union of its inputs' sources. AIS rows carry the AIS review note.
 - `pipeline.json` activities `cache-londat` and `build-zone-gpkg` (area feeds).
-- `tools/londat.mjs` `HOSTED_DIRS` includes `cache/`; `data-base.js` treats `cache/` as hosted.
-- Run `LONDAT_DIR=/home/user/londat node magpie/cwplans/tools/check-data-register.mjs --write` and read the exit code.
+- `data-base.js` sends `cache/` paths to raw.githubusercontent.com (`CwData.hosted(path)` is true for them).
+- Run `node cwplans/tools/check-data-register.mjs --write` and read the exit code.
 
 ## The GeoPackages in QGIS and GDAL
 
@@ -189,4 +197,5 @@ Traps found while building it:
   empty geometries to NULL and keeps their attributes. The system `python3` has no working GDAL bindings; `python3.12`
   has.
 - A `file://` clone ignores `--filter=blob:none`: a test clone of glitchcan-minigam took 1.1 GB of a 1.4 GB free disk.
-  Test sparse checkouts with `git worktree add --no-checkout` instead.
+  Test sparse checkouts with `git worktree add --no-checkout` instead. (The workflow needs no sparse checkout since
+  2026-10-07.)

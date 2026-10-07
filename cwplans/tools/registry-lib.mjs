@@ -1,6 +1,6 @@
 // Shared pieces for the registry-*.mjs tools (company-level and property-level open data for Canary Wharf postcodes).
-// Output: magpie/cwplans/registry/sources/. Raw downloads: magpie/cwplans/data/raw/registry/ (not committed).
-// Notes on each dataset: magpie/cwplans/registry/sources/SOURCES-companies-property.md.
+// Output: cwplans/registry/sources/. Raw downloads: cwplans/data/raw/registry/ (not committed).
+// Notes on each dataset: cwplans/registry/sources/SOURCES-companies-property.md.
 import { readFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { TOOLS, RAW, UA, get } from './lib.mjs';

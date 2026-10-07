@@ -3,7 +3,7 @@ name: cwplans-dataflow
 description: >-
   The rule for all cwplans cleanup, pipeline and normalisation work: express it and log it as operations (tools or
   tasks named in skills) applied to immutable named graphs, giving new immutable graph versions. How the kgx runtime
-  (magpie/cwplans/tools/kgx-ops.mjs, Flow) names inputs (SHA-256), graph versions (RDFC-1.0 hash), activities (hash of
+  (cwplans/tools/kgx-ops.mjs, Flow) names inputs (SHA-256), graph versions (RDFC-1.0 hash), activities (hash of
   operation, version, inputs, parameters), memoises runs, writes the logs and heads; the operations that exist; when to
   bump an operation version; the idempotence test; the faults met (a log that describes its own store, a regex that cut
   literals). Reach for it before you add a step to build-kgx, write a tool that cleans or joins data for the graph, or
@@ -40,6 +40,11 @@ Data: https://github.com/danbri/londat/tree/main/kgx (README). Graph, store and 
 | `flow.read(v)` | the version's N-Quads text |
 
 - Version IRI `kgx/graph/<name>/<hash16>`, file `graphs/<name>/<hash16>.nq.gz`, graph term = version IRI.
+- In these IRIs `kgx/` stands for `https://danbri.github.io/londat/kgx/`. Names that inputs carry under
+  `https://danbri.github.io/glitchcan-minigam/` (sources, activities and the `cwp:` vocabulary of `pipeline.jsonld`; the
+  web harvest's descriptions and genids) were kept on purpose at the move to this repository (2026-10-07): they are
+  names, not links. Changing them would be a new operation version and a new graph version, the owner's decision
+  (`cwplans-kgx`, "Graphs, IRIs, vocabulary").
 - Hash: RDFC-1.0 SHA-256 (`@factoidal/core/fn` `hash`) when the graph has blank nodes; else the SHA-256 of the sorted
   unique N-Triples lines plus a final newline, which is the same value (checked on three graphs) and takes 4 to 45 ms
   against 1 to 12 s. `canonical()` throws if `serialize()` lost or merged quads (Factoidal drops `BNODE()` blank
@@ -71,9 +76,10 @@ is described in `meta` and is in `current.nq.gz`, but is not packed into the bro
 
 **Order of runs** (as run on 2026-10-06 and 2026-10-07): after an `area.js` rebuild, `key-model-buildings.mjs` first;
 after new contributed photos, `contrib-photos.mjs <set>`, then `compose-facade-atlas.mjs`, then `build-kgx.mjs` twice
-(the second run prints `new: 0`), then `check-kgx-store.mjs --write`. Push londat first, then the page files here
-(`docklands/data/tex/facades.*`, `docklands/data/building-keys.json`), as for the cwdock set (londat 8c28efa, then
-master 142db243; londat 44da043, then master a2781653).
+(the second run prints `new: 0`), then `check-kgx-store.mjs --write`. Commit `kgx/` and the page files
+(`docklands/data/tex/facades.*`, `docklands/data/building-keys.json`) together and push to `main` (since 2026-10-07 one
+repository; before, londat was pushed first, then the page files in danbri/glitchcan-minigam, as for the cwdock set:
+londat 8c28efa, then master 142db243; londat 44da043, then master a2781653).
 
 **Side files** (a page file, tiles, an atlas) are written inside an operation's body, so a run that the log already has
 does not write them again. Write a projection of the output graph outside the body when it can be (building-keys.json

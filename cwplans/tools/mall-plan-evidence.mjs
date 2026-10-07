@@ -4,7 +4,7 @@
 // that could carry a plan. Local metres from the mall anchor, for drawing.
 //   in:  registry/sources/brands/cwg-directory-typed.json, registry/buildings.json, data/raw/registry/osm-cw.json.gz (not committed)
 //   out: registry/sources/brands/mall-plan-evidence.json   (OSM-derived: ODbL, © OpenStreetMap contributors)
-//   node magpie/cwplans/tools/mall-plan-evidence.mjs
+//   node cwplans/tools/mall-plan-evidence.mjs
 // Skill: cwplans-web-harvest, "Mall plans".
 import { readFileSync, writeFileSync } from 'fs';
 import { gunzipSync } from 'zlib';
@@ -64,7 +64,7 @@ for (const mall of MALLS) {
     indoor_ways: ways.length, indoor_ways_with_level: ways.filter(w => w.level != null).length, placed_points: placed, unplaced, ways };
 }
 const summary = Object.fromEntries(Object.entries(out).map(([k, v]) => [k, Object.fromEntries(Object.entries(v).filter(([kk]) => !['placed_points', 'unplaced', 'ways', 'anchor'].includes(kk)))]));
-writeFileSync(join(CW, 'registry/sources/brands/mall-plan-evidence.json'), JSON.stringify({ generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/mall-plan-evidence.mjs',
+writeFileSync(join(CW, 'registry/sources/brands/mall-plan-evidence.json'), JSON.stringify({ generated: new Date().toISOString(), tool: 'cwplans/tools/mall-plan-evidence.mjs',
   osm_extract: osm.extracted, attribution: '© OpenStreetMap contributors (ODbL)', radius_m: RADIUS,
   note: 'CWG level = the signed number on CWG signage. In this part of OSM, level is the physical level (0 = ground) and level:ref the CWG number (note:level on way 193407928); not every mapper follows it. level_agrees compares the CWG level with level:ref when present, else with level. Positions are OSM points, not unit outlines.',
   summary, malls: out }) + '\n');

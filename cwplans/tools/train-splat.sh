@@ -5,7 +5,7 @@
 # survives the shell that started it.
 #
 # USAGE
-#   magpie/cwplans/tools/train-splat.sh DATASET [options]
+#   cwplans/tools/train-splat.sh DATASET [options]
 #     DATASET   folder with transforms.json (+ the "ply_file_path" it names,
 #               e.g. sparse_pc.ply) and the images. A COLMAP folder
 #               (sparse/0/*.txt|bin) also works when transforms.json is absent.
@@ -42,7 +42,7 @@
 # POSES: transforms.json "transform_matrix" is camera-to-world in the OpenGL /
 # nerfstudio convention (camera +x right, +y up, looking along -z). OpenSplat
 # reads it as is and flips y and z itself; give it NO conversion. Checked with
-# magpie/cwplans/tools/splat-pose-test.py (boxes land where they were drawn; a
+# cwplans/tools/splat-pose-test.py (boxes land where they were drawn; a
 # dataset written in the OpenCV convention fails that check).
 #
 # SPEED: see the MEASURED block below (also printed by --help).

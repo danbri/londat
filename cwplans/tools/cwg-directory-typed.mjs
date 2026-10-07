@@ -4,7 +4,7 @@
 // from the CWG kind and category by the table below.
 //   in:  third_party/cwplans-structured-data/all.nq.gz, pages/web.archive.org.jsonl, registry/sources/brands/cwg-directory.json
 //   out: registry/sources/brands/cwg-directory-typed.json, cwg-directory-typed.nq
-//   node magpie/cwplans/tools/cwg-directory-typed.mjs
+//   node cwplans/tools/cwg-directory-typed.mjs
 // Skill: cwplans-web-harvest, "The canarywharf.com directory".
 import { readFileSync, writeFileSync } from 'fs';
 import { gunzipSync } from 'zlib';
@@ -12,7 +12,7 @@ import { join } from 'path';
 import { parse, query, serialize, Dataset, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
-const CW = join(TOOLS, '..'), TP = join(CW, '..', '..', 'third_party', 'cwplans-structured-data');
+const CW = join(TOOLS, '..'), TP = join(CW, '..', 'third_party', 'cwplans-structured-data');
 const dir = JSON.parse(readFileSync(join(CW, 'registry/sources/brands/cwg-directory.json'), 'utf8'));
 // CWG category -> schema.org type; a category not here falls back to the kind's type
 const CAT = {
@@ -74,7 +74,7 @@ for (const e of dir.directory) {
 }
 const years = k => out.reduce((m, r) => { const y = (r[k] || '').slice(0, 4); if (y) m[y] = (m[y] || 0) + 1; return m; }, {});
 const doc = { source: 'Canary Wharf Group directory pages as archived by the Internet Archive (crawl for scoping, owner rule of 2026-10-03), joined to registry/sources/brands/cwg-directory.json',
-  generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-directory-typed.mjs',
+  generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-directory-typed.mjs',
   note: 'schema_types come from the CWG kind and category by the table in the tool, not from the publisher: the pages type only the publisher (WebPage, WebSite, Organization). first_listed and last_edited are the pages\' datePublished and dateModified.',
   counts: { entries: out.length, with_structured_data: out.filter(r => r.structured_data).length, with_registry_building: out.filter(r => r.registry_buildings.length).length,
     by_type: out.flatMap(r => r.schema_types).reduce((m, t) => (m[t] = (m[t] || 0) + 1, m), {}), first_listed_by_year: years('first_listed'), last_edited_by_year: years('last_edited') },

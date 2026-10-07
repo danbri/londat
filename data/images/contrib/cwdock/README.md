@@ -81,7 +81,7 @@ glazing and the fin band, 12.6 m by 3.17 m, the model's own floor). Sizes, crops
 rectified face keeps a 3 deg tilt; the other face has projecting balconies), The Founding (it has a tile from cwlibrary;
 these photos show its three parts, which one model outline cannot carry), Three Deal Porters (the model is a guessed
 6 m, fault F52). The page draws the tiles from the facade atlas (slots 16 to 18):
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/#v=1&c=-1915,848,15,130,0.9,0.25&n=0&u=0
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1915,848,15,130,0.9,0.25&n=0&u=0
 
 ## Found with this set
 
@@ -99,8 +99,9 @@ for faces and readable number plates and blur them. Nothing here describes or ta
 
 ## In the knowledge graph
 
-The operations `rectify-facade-patches`, `lift-contrib-photos` and `cut-facade-tiles` (`magpie/cwplans/tools/contrib-photos.mjs`
-in danbri/glitchcan-minigam) make the graphs `facade-patches-cwdock`, `photos-cwdock` and `facade-tiles-cwdock` in
+The operations `rectify-facade-patches`, `lift-contrib-photos` and `cut-facade-tiles` (`cwplans/tools/contrib-photos.mjs`
+in this repository; `magpie/cwplans/tools/` in danbri/glitchcan-minigam until 2026-10-07) make the graphs
+`facade-patches-cwdock`, `photos-cwdock` and `facade-tiles-cwdock` in
 [`kgx/`](../../../../kgx/); the activity log names the inputs (these photos and `photos.json`) by SHA-256. Buildings
 seen in both sets (the library, Ontario Point, The Founding, the station, Columbia and Regina Point) have the same IRI in
 both graphs. OSM names and tags quoted are © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright).

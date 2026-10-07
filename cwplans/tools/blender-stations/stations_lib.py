@@ -1,5 +1,5 @@
 # Station box modelling helpers, run inside Blender (exec'd by each MCP execute_blender_code call).
-# How to run, and why: skill magpie/cwplans/docklands/skills/blender-station-models/SKILL.md
+# How to run, and why: skill cwplans/docklands/skills/blender-station-models/SKILL.md
 # Frame: the Docklands 3D page model frame. x = E - E0, z = -(N - N0), y = m OD (ODN).
 # Blender is Z-up, so a model point (x, z, y) is the Blender point (x, -z, y): Blender X = east, Y = north, Z = m OD.
 import bpy, bmesh, json, math, os

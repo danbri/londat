@@ -426,7 +426,7 @@ function exportView(opts = {}) {
     const pms = ab.mi.map(i => { const b = C.A.buildings[i], f = C.dec(b.p), ring = []; for (let k = 0; k < f.length; k += 2) { const [lon, lat] = lonLatOf(f[k], f[k + 1]); ring.push([lon, lat, b.b + b.h]); }
       return { type: 'Polygon', rings: [ring], altitudeMode: 'absolute', extrude: true }; });
     folders.push({ name: 'Selected building', placemarks: [{ name: ab.n || ab.id, description: `Registry record ${ab.id}. Outline ${OSM_CREDIT}; roof height (m above Ordnance Datum Newlyn, about mean sea level) from Environment Agency LiDAR, OGL v3.0.`,
-      extended: [['registry id', ab.id], ['roof m OD', +(Math.max(...ab.mi.map(i => C.A.buildings[i].b + C.A.buildings[i].h))).toFixed(1)], ['outline licence', OSM_CREDIT], ['atlas', `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#map/b/${ab.id}`]],
+      extended: [['registry id', ab.id], ['roof m OD', +(Math.max(...ab.mi.map(i => C.A.buildings[i].b + C.A.buildings[i].h))).toFixed(1)], ['outline licence', OSM_CREDIT], ['atlas', `https://danbri.github.io/londat/cwplans/atlas/#map/b/${ab.id}`]],
       style: { line: [1, .25, .65, 1], width: 3, poly: [1, .25, .65, .35] }, geoms: pms }] });
     osm.used = true; credits.add('Selected building outline: ' + OSM_CREDIT + '. Roof height: Environment Agency LiDAR DSM 1 m, © Environment Agency copyright and/or database right, OGL v3.0.');
   }
@@ -467,7 +467,7 @@ function exportView(opts = {}) {
     if (pms.length) folders.push({ name: `My KML: ${F.name}`, description: F.doc.description, placemarks: pms }); credits.add(`My KML "${F.file}": your own file, under its own terms.`);
   }
   if (osm.used) credits.add('Map data: ' + OSM_CREDIT + '. Geometry marked with it is OpenStreetMap-derived.');
-  const page = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/';
+  const page = 'https://danbri.github.io/londat/cwplans/docklands/';
   const desc = `View exported from the Docklands 3D page (${page}) on ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC. Camera: eye at ${v.alt.toFixed(1)} m above Ordnance Datum Newlyn (about mean sea level; KML absolute altitude), heading ${v.heading.toFixed(1)}°, tilt ${v.tilt.toFixed(1)}°, horizontal field ${v.horizFov.toFixed(1)}° (gx:horizFov).\n\nCredits and licences:\n- ${[...credits].join('\n- ') || 'camera only'}\n\nFull credits: ${page} (Menu > About > Credits). Not for navigation.`;
   const name = `Docklands view ${now.toISOString().slice(0, 10)}`;
   const text = writeKml({ name, description: desc, view: v, folders });
@@ -503,7 +503,7 @@ function injectUi() {
 // KML sources: the catalogue (feeds/kml/catalogue.json, made by tools/find-kml.mjs), fetched when the panel is first opened.
 // One row per resource: Open (a file the page reads: open licence, CORS, at least one feature in the zone), Link only
 // (share-alike: the publisher's page in a new tab, never loaded here), or Not usable with the reason.
-const CATALOGUE = '../feeds/kml/catalogue.json', README = 'https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/kml/README.md';
+const CATALOGUE = '../feeds/kml/catalogue.json', README = 'https://github.com/danbri/londat/blob/main/cwplans/feeds/kml/README.md';
 const OPEN_CLASSES = new Set(['ogl', 'cc-by', 'odc-by', 'public-domain', 'cc0']);
 const KS = { rows: [], cls: 'all', q: '' };
 function srcAction(e) {

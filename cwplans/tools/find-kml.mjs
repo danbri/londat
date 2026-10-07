@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // KML and KMZ resources for the Docklands zone: a catalogue of candidates (feeds/kml/catalogue.json), each one fetched
 // and read with the page's own reader (docklands/kml.js), and zone-clipped KML copies of open layers that cannot be
-// opened by URL (no CORS, no KML, or too big) in the londat checkout (cwplans/feeds/kml/<id>.kml).
-//   NODE_USE_ENV_PROXY=1 KML_DOM_DIR=<dir with node_modules/@xmldom/xmldom and linkedom> node magpie/cwplans/tools/find-kml.mjs probe
-//   NODE_USE_ENV_PROXY=1 KML_DOM_DIR=... node magpie/cwplans/tools/find-kml.mjs copy      # write the londat copies, then probe them
-//   node magpie/cwplans/tools/find-kml.mjs all                                            # copy, then probe everything
+// opened by URL (no CORS, no KML, or too big) in cwplans/feeds/kml/<id>.kml.
+//   NODE_USE_ENV_PROXY=1 KML_DOM_DIR=<dir with node_modules/@xmldom/xmldom and linkedom> node cwplans/tools/find-kml.mjs probe
+//   NODE_USE_ENV_PROXY=1 KML_DOM_DIR=... node cwplans/tools/find-kml.mjs copy      # write the londat copies, then probe them
+//   node cwplans/tools/find-kml.mjs all                                            # copy, then probe everything
 // (npm i --prefix <dir> @xmldom/xmldom linkedom: kml.js needs a DOMParser; XML through xmldom, description HTML through linkedom.)
 // Network: one request at a time, >= 1.1 s apart, robots.txt read per host (walk-portals.mjs allowed()), the project User-Agent.
 // The candidates, their licence classes, the rules and what was blocked: skills/cwplans-open-portals/SKILL.md, "KML sources".
@@ -18,7 +18,7 @@ import { allowed, meets, ZONE, CW, today } from './walk-portals.mjs';
 
 const OUTDIR = join(CW, 'feeds', 'kml'), COPYDIR = join(LONDAT_CW, 'feeds', 'kml');
 const RAW_BASE = 'https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/';
-const PAGE = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=';
+const PAGE = 'https://danbri.github.io/londat/cwplans/docklands/?kml=';
 // the zone of the brief: the model box plus the Royal Docks and the Thames Barrier (the 3D page cuts at the model box)
 const ZONE_WIDE = [-0.095, 51.47, 0.08, 51.53];
 const ORIGIN = 'https://danbri.github.io';
@@ -197,7 +197,7 @@ async function copy(only) {
       placemarks.push({ name: String(nameOf(p) ?? ''), extended: (c.keep || Object.keys(p).filter(x => x !== 'name')).filter(x => p[x] != null && p[x] !== '').map(x => [x, p[x]]), styleUrl: c.style ? '#layer' : '', geoms });
     }
     const description = `${c.title}. Source: ${c.publisher}, ${c.page}. Licence: ${c.licence}. Attribution: ${c.attribution}`
-      + `${c.odbl ? ' This file contains OpenStreetMap-derived data under the ODbL.' : ''} Fetched ${today} from ${api}; clipped to WGS84 ${box.join(', ')} (features that meet the box; lines cut at the edge) by magpie/cwplans/tools/find-kml.mjs for https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/ .`;
+      + `${c.odbl ? ' This file contains OpenStreetMap-derived data under the ODbL.' : ''} Fetched ${today} from ${api}; clipped to WGS84 ${box.join(', ')} (features that meet the box; lines cut at the edge) by cwplans/tools/find-kml.mjs for https://danbri.github.io/londat/cwplans/docklands/ .`;
     const text = k.writeKml({ name: c.title, description, styles: c.style ? { layer: c.style } : {}, placemarks });
     writeFileSync(join(COPYDIR, `${c.id}.kml`), text);
     c.copied = { features: placemarks.length, bytes: Buffer.byteLength(text), box, fetched: today };
@@ -243,7 +243,7 @@ async function probe() {
   }
   const all = [...rows, ...LISTED];
   const byClass = {}; for (const r of all) byClass[r.licence_class] = (byClass[r.licence_class] || 0) + 1;
-  const meta = { about: 'KML and KMZ resources for the Docklands zone (magpie/cwplans), each fetched and read with docklands/kml.js; zone-clipped KML copies of open layers hosted in danbri/londat', tool: 'tools/find-kml.mjs',
+  const meta = { about: 'KML and KMZ resources for the Docklands zone (cwplans), each fetched and read with docklands/kml.js; zone-clipped KML copies of open layers hosted in danbri/londat', tool: 'tools/find-kml.mjs',
     probed: today, origin_checked: ORIGIN, model_box: ZONE, zone: ZONE_WIDE, zone_text: 'zone = the model box plus the Royal Docks and the Thames Barrier, WGS84 ' + ZONE_WIDE.join(', ') + '; the 3D page draws only inside the model box',
     rules: ['cors yes = HTTP 200 over https with Access-Control-Allow-Origin * or the Pages origin: the ?kml= link works', 'open_link only for a file the page reader parsed with at least one placemark in the zone', 'example = open_link and an open licence class (ogl, cc-by, odc-by, public-domain); share-alike, restricted and no-licence files are never examples or copies (OSM-derived content inside an OGL layer is marked odbl)', 'copies: features that meet the box (polygons whole, lines cut at the edge), names and a few fields kept, the source licence and attribution in the Document description'],
     counts: { entries: all.length, by_kind: Object.fromEntries(['native', 'copy', 'listed'].map(k => [k, all.filter(r => r.kind === k).length])), by_licence_class: byClass, with_open_link: rows.filter(r => r.open_link).length, examples: rows.filter(r => r.example).length } };

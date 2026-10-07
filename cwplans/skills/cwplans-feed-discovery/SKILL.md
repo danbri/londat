@@ -1,7 +1,7 @@
 ---
 name: cwplans-feed-discovery
 description: >-
-  Find London RSS, Atom, JSON Feed and iCalendar feeds at scale for magpie/cwplans and verify them: the tool
+  Find London RSS, Atom, JSON Feed and iCalendar feeds at scale for cwplans and verify them: the tool
   tools/discover-feeds.mjs (stages seed, cc, autodiscover, verify, build), every discovery method and its rules
   (the earlier site crawl's 61 feeds, ooh.directory OPML, GitHub lists, Feedspot London lists, Wikipedia category and
   list to Wikidata P856 websites, the ICNN member map, hand lists of local news, hyperlocal, community, faith, school
@@ -15,25 +15,25 @@ description: >-
   extend feeds/discovery/, add a feed directory or social platform, or answer "where is a big stash of London feeds?".
 ---
 
-# London feed discovery (magpie/cwplans)
+# London feed discovery (cwplans)
 
 Owner, 2026-10-04: "where we can find a huge stash of London-related rss/Atom feeds? Forums, mailing lists, FB groups
 etc.?" Policy, the fault register and the activity log are in the hub skill `docklands-data-curation`; crawls (direct,
 Internet Archive, Common Crawl) are allowed for scoping (owner, 2026-10-03). Append each session to its `ACTIVITY-LOG.md`.
 
-Output: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/discovery/README.md
+Output: https://github.com/danbri/londat/blob/main/cwplans/feeds/discovery/README.md
 (`candidates.json`, `london-feeds.opml`); verified zone feeds also go into `feeds/events.json`
-(https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/ shows them).
+(https://danbri.github.io/londat/cwplans/feeds/ shows them).
 
 ## Run
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs seed          # directories, lists, hand lists (about 4 min)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs seed          # directories, lists, hand lists (about 4 min)
     npm i --prefix /tmp/cclibs hyparquet hyparquet-compressors                      # once; not a project dependency
-    CC_LIBS=/tmp/cclibs NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs cc
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs autodiscover  # home pages -> <link rel=alternate>
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs verify        # every feed: fetch, parse, count, CORS
-    node magpie/cwplans/tools/discover-feeds.mjs build [--no-merge]                 # no network; writes the outputs
-    node magpie/cwplans/tools/check-data-register.mjs --write
+    CC_LIBS=/tmp/cclibs NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs cc
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs autodiscover  # home pages -> <link rel=alternate>
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs verify        # every feed: fetch, parse, count, CORS
+    node cwplans/tools/discover-feeds.mjs build [--no-merge]                 # no network; writes the outputs
+    node cwplans/tools/check-data-register.mjs --write
 
 Stage results are cached in `data/raw/feed-discovery/` (gitignored): `seeds.json`, `cc-footers-<crawl>.json`,
 `cc-feeds.json`, `autodiscover.json`, `verify.json`, `robots.json`. Delete a file, or pass `--refresh`, to redo a stage.

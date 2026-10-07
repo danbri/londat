@@ -24,7 +24,7 @@ Measured tones and the calibration of the renders against these photos: dockland
 
 Result: **3 October 2026, 23:56 BST (22:56 UTC), about ±4 minutes**, for `promenade-skyline-railing.jpg`; the bollard photo
 fits the same few minutes. The 3D page shows it with `?t=photo` or Menu > Sky > "Photo time (3 Oct)":
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?t=photo
+https://danbri.github.io/londat/cwplans/docklands/?t=photo
 
 Method (scripts were run from the session scratchpad; the numbers are below so the result can be checked):
 1. The moon's centre in the full-size frame (2576 x 1932): a least-squares circle through four points on the lit limb and the

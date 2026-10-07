@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Step 3c: the brand's own page for each Canary Wharf branch, for the 30 brands with the most branches
 // (counted across Greater London in OSM, london-brand-counts.mjs) that are present in the box.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/registry/sources/brands/tools/storelocator.mjs
+//   NODE_USE_ENV_PROXY=1 node cwplans/registry/sources/brands/tools/storelocator.mjs
 // in:  branches.json (a first build-branches.mjs pass), data/raw/registry/london-brand-counts.json,
 //      tools/storelocator-manual.json (URLs found by hand on the brand's own site, keyed by branch ref), wikidata-brands.json,
 //      data/raw/registry/storelocator-cache.json (read and written)
-// Every input and output, with endpoints and rules: magpie/cwplans/pipeline.json, activity "storelocator".
+// Every input and output, with endpoints and rules: cwplans/pipeline.json, activity "storelocator".
 // out: storelocator.json; then re-run build-branches.mjs to attach the verified URLs.
 // A candidate is the OSM website=* of the branch when it is a page below the brand's own domain (not its
 // home page, not canarywharf.com), else the manual entry. Each is fetched once (GET, identifying

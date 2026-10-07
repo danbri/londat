@@ -3,10 +3,10 @@
 Area: the Docklands box, WGS84 −0.0950, 51.4740 to 0.0150, 51.5220 (London Bridge to Cody Dock, Limehouse to Greenwich).
 Collected 2026-10-03. All GeoJSON files are WGS84 (RFC 7946), clipped to the box unless the table says "not clipped".
 
-Rebuild (from the repository root; raw responses go to `magpie/cwplans/data/raw/registry/pla/`, which is not committed):
+Rebuild (from the repository root; raw responses go to `cwplans/data/raw/registry/pla/`, which is not committed):
 
-    python3 magpie/cwplans/registry/sources/pla/fetch_wet.py             # everything
-    python3 magpie/cwplans/registry/sources/pla/fetch_wet.py soundings   # or: pla, crt
+    python3 cwplans/registry/sources/pla/fetch_wet.py             # everything
+    python3 cwplans/registry/sources/pla/fetch_wet.py soundings   # or: pla, crt
 
 `pla_tidal_flow_model.json` and the two `ukho_wrecks_obstructions_*.geojson` files were made by hand from raw downloads; the steps are in the sections below.
 

@@ -7,14 +7,14 @@ description: >-
   (tools/check-factoidal.mjs), branch / chain / organisation scopes, descriptive idioms (ShEx) and the canonical layer,
   sameAs groups, the typed CWG directory and its hours, site search (SearchAction), opening hours by mall and area,
   how far mall plans can be rebuilt from CWG and OSM, what the markup is for, and the reports. Reach for it before
-  you crawl or render a site for magpie/cwplans, add a store finder, attribute a page fact to a branch, read hours or
+  you crawl or render a site for cwplans, add a store finder, attribute a page fact to a branch, read hours or
   phone numbers from the web, or do RDF work on the harvest.
 ---
 
-# Web harvest for magpie/cwplans
+# Web harvest for cwplans
 
 Policy, the fault register and the activity log are in the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
 Checked against the code and the committed outputs on 2026-10-04; counts are from the runs of 2026-10-03 unless
 marked otherwise.
 
@@ -37,13 +37,13 @@ marked otherwise.
 
 ## Order and commands
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/crawl-sites.mjs                  # plain fetch; --list, --no-fetch, --retry-failed, --refresh, --host=h
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs       # headless render, resumable
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs --retry-failed
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs --storefinder-only   # (--storefinder: after the render)
-    node magpie/cwplans/tools/render-structured-data.mjs --build-only              # third_party copy, no network
-    node magpie/cwplans/tools/extract-structured-data.mjs                          # all.nq(.gz) + registry/sources/web/structured-facts.json
-    node magpie/cwplans/tools/join-web-facts.mjs                                   # after build-registry, before build-categories and build-atlas
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/crawl-sites.mjs                  # plain fetch; --list, --no-fetch, --retry-failed, --refresh, --host=h
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs       # headless render, resumable
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs --retry-failed
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs --storefinder-only   # (--storefinder: after the render)
+    node cwplans/tools/render-structured-data.mjs --build-only              # third_party copy, no network
+    node cwplans/tools/extract-structured-data.mjs                          # all.nq(.gz) + registry/sources/web/structured-facts.json
+    node cwplans/tools/join-web-facts.mjs                                   # after build-registry, before build-categories and build-atlas
 
 Also: `--list` and `--list-missing` (render, no network), `--limit=N --host=h` (test runs). Without
 `NODE_USE_ENV_PROXY=1`, Node `fetch` ignores `HTTPS_PROXY` here. Activities in `pipeline.json`: `crawl-sites` (area
@@ -54,7 +54,7 @@ crawl), `render-structured-data`, `extract-structured-data`, `join-web-facts` (a
 - URLs from `registry/buildings.json` occupants (`website`, `store_url`, `cwg_archived`), `branches.json`,
   `storelocator.json` and `cwg-directory.json`: 859 URLs on 393 hosts (2026-10-03).
 - Node fetch, redirects followed by hand (at most 8), final URL recorded; User-Agent
-  `glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)`; one request at a time per host, 1.5 s apart,
+  `glitchcan-cwplans/0.1 (https://github.com/danbri/londat)`; one request at a time per host, 1.5 s apart,
   4 hosts at once, 20 s timeout, up to 4 tries with backoff (Retry-After, else 4, 12, 36 s) on 429, 5xx, timeouts and
   resets. Raw: `data/raw/crawl/<host>/<sha1(url)[0:16]>.html.gz` + `.json`, `robots.json` per host (gitignored).
 - Out: `registry/sources/web/site-facts.json`, `discovered-feeds.json` (61 feed URLs, **not verified**: check each with
@@ -72,7 +72,7 @@ crawl), `render-structured-data`, `extract-structured-data`, `join-web-facts` (a
   (`registry/sources/registers/charities.json`): 1,025 URLs on 559 hosts. Order: store pages first, then pages the plain
   crawl got no structured data from, then the rest.
 - Playwright Chromium (`/opt/pw-browsers/chromium-1194/...`), User-Agent a desktop Chrome string plus
-  ` glitchcan-cwplans/0.1 (+https://github.com/danbri/glitchcan-minigam)`; images, media and fonts not loaded.
+  ` glitchcan-cwplans/0.1 (+https://github.com/danbri/londat)`; images, media and fonts not loaded.
   `PARALLEL = 3` pages, one page at a time per host, `HOST_GAP_MS = 2000` between page loads on a host, wait for load
   and network idle (`CAP_MS = 20000`), then `LATE_MS = 1500` for late JSON-LD; blocks over 200 kB dropped and counted.
 - robots.txt is checked for **every document navigation, redirects included** (a route handler aborts a disallowed
@@ -125,7 +125,7 @@ Measured on 932 real blocks: remote schema.org context 929 (inlined as `{"@vocab
 `@graph` beside other keys 508 (unwrapped, or the nodes land in a named graph inside the page graph), HTML entities in
 strings 411, top-level arrays 24, `http://schema.org/` IRIs 12, no context 7, raw control characters 2, missing
 commas 2 (bigeasy.co.uk). After cleaning, Factoidal loaded all 932. Tests: `tools/test/jsonld-clean.test.mjs`
-(`node --test magpie/cwplans/tools/test/*.test.mjs`: 15 of 15 pass, 2026-10-04). Add a class with a test, never a
+(`node --test cwplans/tools/test/*.test.mjs`: 15 of 15 pass, 2026-10-04). Add a class with a test, never a
 silent fix.
 
 ## Factoidal and the N-Quads dataset
@@ -153,7 +153,7 @@ if needed" (also in the repo CLAUDE.md). What we learned with `@factoidal/core` 
   a relative label (`<Branch>`) fails with "could not decode schema". Value sets, `EXTRA`, `@ref`, `|` alternatives,
   cardinalities and regex facets (`LITERAL /^https?:/`) work. A focus can be the RDF/JS term from a SPARQL binding,
   blank nodes included. About 30 ms a check on a page graph (16,143 checks in 9.5 minutes).
-- **Check after any Factoidal upgrade:** `node magpie/cwplans/tools/check-factoidal.mjs` prints each fault below as
+- **Check after any Factoidal upgrade:** `node cwplans/tools/check-factoidal.mjs` prints each fault below as
   STILL or FIXED (all STILL on 0.7.1, 2026-10-06). Remove a workaround only when its line says FIXED.
 - **Fault, not yet filed:** the issue text is `factoidal-issue-2026-10-06.md` in this skill's folder. The session of
   2026-10-06 could not reach danbri/factoidal (add_repo refused); post it at https://github.com/danbri/factoidal/issues/new
@@ -203,6 +203,12 @@ JSON-LD without `@id` turns IRIs into text: day names arrive as the text "https:
 targets as URL strings. These are forms, not faults; the rewrites map them (hours.rq strips the namespace and
 capitalises the day; org.rq makes any logo an ImageObject with a url; branch.rq writes E.164 UK telephones, ISO country
 codes, and the postcode of a text address, with the address text kept as `cwp:addressText`).
+
+IRIs: the `…` of the genids (above) and of the descriptions and rule graphs (below) is
+`https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/`, which also starts the idioms
+namespace `i:`; `cwp:` is `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/`. They
+are names, not links, and were kept on purpose at the move to danbri/londat (2026-10-07). Changing them would be a new
+operation version and a new graph version (`web`, `coref-<rule>` in kgx): the owner's decision.
 
 ## Same thing (2026-10-06): `coref/`, `tools/web-coref.mjs`
 
@@ -280,11 +286,12 @@ them in londat: https://github.com/danbri/londat/tree/main/third_party/cwg (READ
   read names by eye or OCR (render with `pdftoppm -r 150`); never guess a name from a shape.
 - `AccesibilityMap_MAY-2025_v2.pdf` (step-free access: lifts, toilets in and outside the malls, ramps, car parks;
   has a text layer), children's art trail (June 2025, 3 pages), art guide (April 2025, 20 pages, over 100 artworks).
-- Design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026, for CWG. Facts only into this repository.
+- Design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026, for CWG. Facts only into `cwplans/`; the PDFs stay
+  in `third_party/`, which the Pages workflow does not publish.
 
 ### The Living Map service behind map.canarywharf.com (probed 2026-10-06, not harvested)
 
-`node magpie/cwplans/tools/probe-cwg-map.mjs` loads the page twice in headless Chromium (needs the NSS proxy CA fix
+`node cwplans/tools/probe-cwg-map.mjs` loads the page twice in headless Chromium (needs the NSS proxy CA fix
 below) and logs every request to `data/raw/cwg-map/requests.json` (not committed). robots.txt allows all. The page is
 a React app on Mapbox GL; its data comes from Living Map (livingmap.com):
 - `GET https://map-api.prod.livingmap.com/v1/maps?host=map.canarywharf.com`: map config: floors (id, `floor` -4.0 to
@@ -345,8 +352,8 @@ Read before you decide what to extract or how much to trust a field. Counts from
 
 | Report | On the site | Private artifact (owner) | How it is made |
 |---|---|---|---|
-| schema.org data: entities, search features, idioms, same-thing groups | https://danbri.github.io/glitchcan-minigam/magpie/cwplans/reports/schema-org/ | https://claude.ai/artifact/8syFhnR1EaJEmJJQdqLmn5 | a snapshot (`reports/schema-org/index.html`), not rebuilt |
-| site search, opening hours by mall, mall plans | https://danbri.github.io/glitchcan-minigam/magpie/cwplans/reports/hours-and-plans/ | https://claude.ai/artifact/HX1DxWzvEvkXTnTauGGWFC | `node magpie/cwplans/reports/hours-and-plans/build.cjs` from the committed JSON (template.html + build.cjs) |
+| schema.org data: entities, search features, idioms, same-thing groups | https://danbri.github.io/londat/cwplans/reports/schema-org/ | https://claude.ai/artifact/8syFhnR1EaJEmJJQdqLmn5 | a snapshot (`reports/schema-org/index.html`), not rebuilt |
+| site search, opening hours by mall, mall plans | https://danbri.github.io/londat/cwplans/reports/hours-and-plans/ | https://claude.ai/artifact/HX1DxWzvEvkXTnTauGGWFC | `node cwplans/reports/hours-and-plans/build.cjs` from the committed JSON (template.html + build.cjs) |
 
 After a rebuild, republish the artifact with the Artifact tool, passing the artifact URL above as `url` (read it
 first); the repo copy is the source. The report pages are not in the atlas or the 3D page.
@@ -356,7 +363,7 @@ first); the repo copy is the source. The report pages are not in the atlas or th
 **No full pages.** `pages/<host>.jsonl` (one line per rendered page: URL, final URL, status, method, title, lang,
 `html_sha256`, entity keys, source fields, `jsonld_raw` and origin, `microdata`, `rdfa_ntriples`, `via`,
 `consent_clicked`), `index.json` (every URL with its outcome, counts, store-finder runs), `all.nq.gz`, README. The
-rendered DOMs stay in `magpie/cwplans/data/raw/rendered/` (gitignored). It is the site owners' data published for search
+rendered DOMs stay in `cwplans/data/raw/rendered/` (gitignored). It is the site owners' data published for search
 engines, kept for scoping under the crawl rule.
 
 ## Attribution: branch, chain, organisation (`tools/extract-structured-data.mjs`)

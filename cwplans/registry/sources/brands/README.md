@@ -15,7 +15,7 @@ reviewers or other people are recorded.
 | `storelocator.json` | the store-page check for the 30 largest brands present |
 | `tools/` | the scripts (below) and the two hand-decision files `fsa-decisions.json`, `cwg-decisions.json`, plus `storelocator-manual.json` |
 
-Raw downloads (not committed) are in `magpie/cwplans/data/raw/registry/`: the NSI npm package, the OSM box
+Raw downloads (not committed) are in `cwplans/data/raw/registry/`: the NSI npm package, the OSM box
 scan, FSA premises details, QLever responses, the CWG pages from the Internet Archive, the store-page cache.
 
 ## Method
@@ -24,8 +24,8 @@ Run from the repository root, in this order. Node's `fetch` does not use the pro
 so the network steps need `NODE_USE_ENV_PROXY=1`.
 
 ```sh
-(cd magpie/cwplans/data/raw/registry/nsi && npm install name-suggestion-index@8.0.20260918 @rapideditor/location-conflation @rapideditor/country-coder)
-T=magpie/cwplans/registry/sources/brands/tools
+(cd cwplans/data/raw/registry/nsi && npm install name-suggestion-index@8.0.20260918 @rapideditor/location-conflation @rapideditor/country-coder)
+T=cwplans/registry/sources/brands/tools
 node $T/build-uk-brands.mjs                              # 1. brands-uk.json
 NODE_USE_ENV_PROXY=1 node $T/wikidata-brands.mjs         # 2. wikidata-brands.json, wikidata-near.json
 node $T/osm-scan.mjs && node $T/match-osm.mjs            # 3a. OSM (local PBF)
@@ -142,7 +142,7 @@ Lloyds Bank, Wetherspoon, GAIL's, Santander, HSBC UK, Halifax, PureGym, Snappy S
 
 For their 64 branches in the box, the candidate page is the OSM `website=*` when it is a page below the
 brand's own domain, else a page found by hand on the brand's locator (`storelocator-manual.json`).
-Each was fetched once (GET, User-Agent `glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)`,
+Each was fetched once (GET, User-Agent `glitchcan-cwplans/0.1 (https://github.com/danbri/londat)`,
 redirects followed, at most 1 request/s per host). **verified** = 2xx, no bot-challenge page, and the page
 text or the URL path names Canary Wharf, the postcode, the mall or the street.
 

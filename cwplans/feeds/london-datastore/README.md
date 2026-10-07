@@ -1,6 +1,6 @@
 # London Datastore walk (2026-10-04)
 
-**The data files of this folder are in https://github.com/danbri/londat/tree/main/cwplans/feeds/london-datastore (moved 2026-10-05; same relative paths). This README and the code stay here.**
+**The data files of this folder are in https://github.com/danbri/londat/tree/main/cwplans/feeds/london-datastore (moved 2026-10-05; same relative paths). This README and the code followed on 2026-10-07: all are in danbri/londat now.**
 
 A recorded walk through the whole London Datastore (https://data.london.gov.uk/, Greater London Authority) for the
 Docklands zone: the catalogue, a triage of every dataset by written rules, and a harvest of 31 open datasets clipped
@@ -9,16 +9,16 @@ Open London Dataset Left Unexplored" and "look into unknown area datasets - area
 the details of all 1,305 datasets, the area read from inside the data of 671 datasets, and a final state for every
 dataset (below).
 
-- Tool: `tools/walk-london-datastore.mjs` (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/walk-london-datastore.mjs)
+- Tool: `tools/walk-london-datastore.mjs` (https://github.com/danbri/londat/blob/main/cwplans/tools/walk-london-datastore.mjs)
 - Method, rules and how to re-walk: skill `cwplans-london-datastore`
-  (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/skills/cwplans-london-datastore/SKILL.md)
+  (https://github.com/danbri/londat/blob/main/cwplans/skills/cwplans-london-datastore/SKILL.md)
 - Files here: `catalogue.json` (every dataset, one per line, with its details), `triage.json` (class, reasons, final
   state and the rule that fired, per dataset; ranked list), `probe.json` (the area found inside the data, with the
   evidence), `zone-codes.json` (the zone's OA/LSOA/MSOA/ward codes and postcodes), one folder per harvested dataset
   with a `.geojson` or a `.json` table that carries a `meta` member (source, URLs, fetch date, licence, attribution,
   method, counts).
-- Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/london-datastore/triage.json and
-  https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/london-datastore/probe.json
+- Live: https://danbri.github.io/londat/cwplans/feeds/london-datastore/triage.json and
+  https://danbri.github.io/londat/cwplans/feeds/london-datastore/probe.json
 
 ## Source, API and terms
 
@@ -32,7 +32,7 @@ dataset (below).
   each dataset has its own licence; a re-user must state that **the GLA cannot warrant the quality or accuracy of the
   data**, and must not imply GLA endorsement. robots.txt disallows only `/debug`, `/manage/`, `/login`, `/logout`.
 - Politeness: one request at a time, at least 1.1 s apart, backoff on 429 and 5xx, User-Agent
-  `glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)`. The walk itself is two requests; the harvest
+  `glitchcan-cwplans/0.1 (https://github.com/danbri/londat)`. The walk itself is two requests; the harvest
   made 18 downloads (91 MB, including the two later dropped: Flood Risk and the 2024 LGBTQ venue list). The details walk (`--details`) covers all 1,305 datasets
   (second walk): 0 archived, 0 resources that the export lacks, `geo` the same as the export; it adds the generic
   format, an md5 per resource and the description, from which only area words are kept (`details` in the catalogue).
@@ -165,13 +165,13 @@ Zone = the 3D model box (WGS84 -0.095, 51.474 to 0.015, 51.522). Whole geometrie
 **Rounded UPRNs (F22): the amended copy.** `cultural-infrastructure/cultural-infrastructure.uprn-amended.geojson` is a
 copy of the harvested file in which only recovered UPRN cells differ; every change, every value left unknown, the
 detection catalogue and the measured precision are in `cultural-infrastructure.uprn-amendments.json`. Made by
-`tools/amend-uprns.mjs cultural-infrastructure` (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/amend-uprns.mjs).
+`tools/amend-uprns.mjs cultural-infrastructure` (https://github.com/danbri/londat/blob/main/cwplans/tools/amend-uprns.mjs).
 2026-10-04: 56 rounded rows (49 venues); fixed 12 rows (12 venues): 6 from other releases of the same map (high
 confidence), 6 from OS Open UPRN points in the venue's building (medium); 44 rows still unknown (3 with only a
 low-confidence candidate, not applied; 41 with two or more candidates or none). Join on the amended copy, high and
 medium values only. Also found: in 10 of the 26 layers the venue points sit a constant (-112, +54) m from their own
 UPRN's point (F25). Method: skill `cwplans-london-datastore`, "Amending rounded UPRNs".
-Live: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/london-datastore/cultural-infrastructure/cultural-infrastructure.uprn-amendments.json
+Live: https://danbri.github.io/londat/cwplans/feeds/london-datastore/cultural-infrastructure/cultural-infrastructure.uprn-amendments.json
 
 Attribution for every file: "Contains public sector information licensed under the Open Government Licence v3.0"
 (CC BY for the air quality sites) with the publisher named in `meta.attribution`, and "The GLA cannot warrant the
@@ -190,10 +190,10 @@ Choices made by hand from the ranked list (also in the tool's `HARVEST` table):
 ## Third walk: the listed datasets harvested by rules (2026-10-04)
 
 Owner, 2026-10-04: "Keep working thru datasets". The 219 datasets listed for harvest were run through
-`tools/lds-harvest-auto.mjs` (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/lds-harvest-auto.mjs):
+`tools/lds-harvest-auto.mjs` (https://github.com/danbri/londat/blob/main/cwplans/tools/lds-harvest-auto.mjs):
 written rules choose the resources, every row and feature is read, and only the zone's rows and features are kept.
 The outcome of every dataset is in `harvest-log.json`
-(https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/london-datastore/harvest-log.json) and triage reads it:
+(https://danbri.github.io/londat/cwplans/feeds/london-datastore/harvest-log.json) and triage reads it:
 no zone rows -> not-relevant (rule F8b, with the counts read as evidence), documents only -> deferred (F7), a hand
 decision -> deferred (F3c), unreadable -> deferred (F10b). Rules, hand rules and traps: skill `cwplans-london-datastore`,
 "Rule-driven harvest". Faults found: F36 to F41.
@@ -237,11 +237,11 @@ links on 808 buildings by TOID (1,229 high, 79 medium); solar potential 1,266 li
 high, 61 medium); venues 13 (11 by UPRN, high; 2 by position, low); other point records 73 on 35 buildings (position in
 the outline, medium); brownfield 1 (low); Census LSOA context for 1,129 buildings (position, high; 25 LSOAs).
 
-Browse: the atlas view "London Datastore" (https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#lds), with
+Browse: the atlas view "London Datastore" (https://danbri.github.io/londat/cwplans/atlas/#lds), with
 a map layer per dataset or per theme, and the building records (heat demand, solar potential, Census context of the
 LSOA, venues and other records placed in the building) in the atlas and on the 3D page
-(https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/). Index:
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/london-datastore/index.json
+(https://danbri.github.io/londat/cwplans/docklands/). Index:
+https://danbri.github.io/londat/cwplans/feeds/london-datastore/index.json
 
 ## Ranked backlog before the third walk (219 listed for harvest; now run through the rules above)
 

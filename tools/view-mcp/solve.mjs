@@ -1,5 +1,5 @@
 // solve — fit a camera to a points file (pixels <-> landmarks, shorelines, horizon) and print the camera, rms and residuals.
-//   node tools/view-mcp/solve.mjs magpie/cwplans/docklands/reference/plane-2026-10/points.json [--k1] [--out solution.json]
+//   node tools/view-mcp/solve.mjs cwplans/docklands/reference/plane-2026-10/points.json [--k1] [--out solution.json]
 // Points file format and method: the photo-view-reconstruction skill.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { solveCamera } from './view-lib.mjs';

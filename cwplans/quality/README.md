@@ -1,11 +1,11 @@
 # Data quality: error classes and what they mean for compositing
 
-Browse the issues: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#quality
+Browse the issues: https://danbri.github.io/londat/cwplans/atlas/#quality
 Generated tables with every check, its method and examples: [CATALOGUE.md](CATALOGUE.md). Machine-readable: `issues.json`.
 
 Re-run after any rebuild:
 
-    node magpie/cwplans/tools/audit-quality.mjs
+    node cwplans/tools/audit-quality.mjs
 
 The audit does not correct anything. It measures the same 34 checks on every rebuild, so that the rules for combining sources (the compositing layers) are designed from the error classes that actually occur, and so that a rule change shows up as a change in the counts.
 

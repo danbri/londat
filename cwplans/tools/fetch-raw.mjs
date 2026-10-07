@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Fetch the raw open data behind magpie/cwplans into magpie/cwplans/data/raw/.
-//   node magpie/cwplans/tools/fetch-raw.mjs [osm|lidar|wikidata|grid ...]   (default: all)
-// Sources, licences and the reasons for each choice: magpie/cwplans/README.md.
+// Fetch the raw open data behind cwplans into cwplans/data/raw/.
+//   node cwplans/tools/fetch-raw.mjs [osm|lidar|wikidata|grid ...]   (default: all)
+// Sources, licences and the reasons for each choice: cwplans/README.md.
 // The LiDAR GeoTIFFs (2 x 21 MB) are not committed; this script re-fetches them.
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { gzipSync } from 'zlib';
@@ -9,7 +9,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const RAW = join(dirname(fileURLToPath(import.meta.url)), '..', 'data', 'raw');
-const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)';
+const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 
 // Study area. WGS84 box for OSM; BNG box (EPSG:27700, metres) for the LiDAR.
 export const BBOX_WGS84 = { west: -0.0620, south: 51.4880, east: -0.0380, north: 51.5070 };

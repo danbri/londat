@@ -6,9 +6,9 @@ Area: Canary Wharf and the Isle of Dogs (E14) first; then SE16 (Rotherhithe, Sur
 
 Every URL was fetched from this container on 2026-10-03: 124 sources, of which 107 verified, 6 need a key and 11 could not be verified. Each source records the HTTP status, content type, CORS, the number of items in the feed, the newest item date and up to three sample titles. The machine-readable version is [events.json](events.json). Re-check everything with:
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/feeds/check-events.mjs          # all sources
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/feeds/check-events.mjs --live   # only the ones a static page can read
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/feeds/check-events.mjs --url <any feed URL>
+    NODE_USE_ENV_PROXY=1 node cwplans/feeds/check-events.mjs          # all sources
+    NODE_USE_ENV_PROXY=1 node cwplans/feeds/check-events.mjs --live   # only the ones a static page can read
+    NODE_USE_ENV_PROXY=1 node cwplans/feeds/check-events.mjs --url <any feed URL>
 
 In `events.json`, `machine_readable` uses one value outside the planned list: `xml`, for the ModernGov web service and for sitemaps, which are XML and nothing else.
 
@@ -296,7 +296,7 @@ Key required (endpoint checked, no key used or stored):
 
 ## Permits, works and closures (added 2026-10-04)
 
-Sources fetched by `tools/fetch-works.mjs` into dated snapshots in [works/](works/) and shown by date and place on [whatson.html](https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html). Items are counted in the zone (the 3D model box plus the Royal Docks). Method, gaps and rejected sources: [works/README.md](works/README.md).
+Sources fetched by `tools/fetch-works.mjs` into dated snapshots in [works/](works/) and shown by date and place on [whatson.html](https://danbri.github.io/londat/cwplans/feeds/whatson.html). Items are counted in the zone (the 3D model box plus the Royal Docks). Method, gaps and rejected sources: [works/README.md](works/README.md).
 
 | Source | Feed | Status | Items | Newest | Sample |
 |---|---|---|---:|---|---|

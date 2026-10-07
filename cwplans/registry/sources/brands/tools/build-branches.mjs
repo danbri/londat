@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Step 4: merge OSM, FSA, CWG directory, Wikidata and brand store pages into one branch list.
-//   node magpie/cwplans/registry/sources/brands/tools/build-branches.mjs
+//   node cwplans/registry/sources/brands/tools/build-branches.mjs
 // in:  data/raw/registry/{osm,fsa}-branches.json, cwg-directory.json, wikidata-near.json, wikidata-brands.json, storelocator.json
 //      (if present), tools/cwg-decisions.json, postcodes/postcodes.json
-// Every input and output, with endpoints and rules: magpie/cwplans/pipeline.json, activity "build-branches".
+// Every input and output, with endpoints and rules: cwplans/pipeline.json, activity "build-branches".
 // out: registry/sources/brands/branches.json
 // Joining rule: records join only when they are the same brand (same Wikidata QID, else same NSI id) AND
 // the same place: within 120 m, or the same postcode, or the same mall named in both addresses.

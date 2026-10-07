@@ -1,5 +1,5 @@
-// Shared pieces for the magpie/cwplans data tools: HTTP, coordinates (OSTN15), LiDAR rasters, polygon helpers.
-// Shared helpers imported by most tools in magpie/cwplans/tools (pipeline.json "libraries"). README: magpie/cwplans/docklands/README.md.
+// Shared pieces for the cwplans data tools: HTTP, coordinates (OSTN15), LiDAR rasters, polygon helpers.
+// Shared helpers imported by most tools in cwplans/tools (pipeline.json "libraries"). README: cwplans/docklands/README.md.
 import { readFileSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -9,7 +9,7 @@ import earcut from 'earcut';
 
 export const TOOLS = dirname(fileURLToPath(import.meta.url));
 export const RAW = join(TOOLS, '..', 'data', 'raw');
-export const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)';
+export const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 
 export async function get(url, opts = {}) {
   const r = await fetch(url, { ...opts, headers: { 'User-Agent': UA, ...(opts.headers || {}) } });
@@ -55,7 +55,7 @@ export const wcsUrl = (name, e0, e1, n0, n1) => {
 // ---- WGS84 -> BNG through the OS OSTN15 grid (a Helmert transform is ~1.8 m out in this area)
 export const GRID = join(RAW, 'uk_os_OSTN15_NTv2_OSGBtoETRS.tif');
 export async function bngProjector() {
-  if (!existsSync(GRID)) throw new Error(`missing ${GRID}: run node magpie/cwplans/tools/fetch-raw.mjs grid`);
+  if (!existsSync(GRID)) throw new Error(`missing ${GRID}: run node cwplans/tools/fetch-raw.mjs grid`);
   const b = readFileSync(GRID);
   await proj4.nadgrid('ostn15', await fromArrayBuffer(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength))).ready;
   proj4.defs('BNG', '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs +nadgrids=ostn15');

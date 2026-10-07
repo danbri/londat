@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Append the live snapshots of the Docklands zone to an SQLite history in the danbri/londat checkout, and write the
+// Append the live snapshots of the Docklands zone to an SQLite history in cwplans/cache/, and write the
 // compact "latest + last 24 h" file that the pages read before they ask any third-party service.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/cache-londat.mjs            # run the fetch tools (subset), then append
-//   node magpie/cwplans/tools/cache-londat.mjs --no-fetch                      # append from the snapshot JSON in this checkout
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/cache-londat.mjs            # run the fetch tools (subset), then append
+//   node cwplans/tools/cache-londat.mjs --no-fetch                      # append from the snapshot JSON in this checkout
 //   options: --themes=bikes,lifts,...   (default: all)   --dry   (no write)   --vacuum   (VACUUM the month file)
 //
 // Fetch mode runs, one after the other and with their own politeness unchanged:
@@ -21,7 +21,7 @@
 // Each run rebuilds the current month in a working SQLite (data/raw/cache/, gitignored) from the run files, adds its own
 // rows and records the ones that were new. Idempotent: every table has a primary key with the source's own fetch time
 // (or reading time); a second run on the same snapshots adds no rows and writes no run file. Schema, sizes, refresh plan and licences: skill cwplans-londat-cache
-// (magpie/cwplans/skills/cwplans-londat-cache/SKILL.md).
+// (cwplans/skills/cwplans-londat-cache/SKILL.md).
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, readdirSync, rmSync } from 'node:fs';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { join } from 'node:path';
@@ -157,7 +157,7 @@ const upsert = sql => { const st = db.prepare(sql); return { run: (...r) => { co
 const counts = {};
 db.exec('BEGIN');
 const metaRows = [
-  ['schema', '1'], ['month', MONTH], ['about', 'History of live state in the Canary Wharf / Docklands zone, appended by magpie/cwplans/tools/cache-londat.mjs in https://github.com/danbri/glitchcan-minigam. Times are Unix seconds (UTC). Skill: magpie/cwplans/skills/cwplans-londat-cache/SKILL.md'],
+  ['schema', '1'], ['month', MONTH], ['about', 'History of live state in the Canary Wharf / Docklands zone, appended by cwplans/tools/cache-londat.mjs in https://github.com/danbri/londat. Times are Unix seconds (UTC). Skill: cwplans/skills/cwplans-londat-cache/SKILL.md'],
   ['licence', 'No blanket licence: each table keeps the licence of its source (table sources). AIS rows from AISHub and aisstream.io are accepted for scoping only (owner, 2026-10-04) and marked review.'],
   ['zone', 'model box WGS84 -0.095, 51.474 to 0.015, 51.522; east margin 0.015, 51.495 to 0.085, 51.522; Lea strip -0.025, 51.522 to 0.01, 51.528 (river and AIS)']];
 const sourceRows = THEMES.map(t => { const [k, pol] = SRC[t], s = REG[k] || {}, m = snaps[t]?.meta || {};
@@ -211,7 +211,7 @@ if (rowsTotal) {   // meta, sources and the run's own row go into the run file o
 db.exec('COMMIT');
 if (rowsTotal && !DRY) {
   runFile = `${iso(RUN_T).slice(0, 10)}/live-${iso(RUN_T).slice(0, 16).replace(':', '')}Z.json.gz`; mkdirSync(join(RUNS, iso(RUN_T).slice(0, 10)), { recursive: true });
-  const gz = gzipSync(JSON.stringify({ format: 1, run_time: iso(RUN_T), tool: 'magpie/cwplans/tools/cache-londat.mjs', statements: [...REC] }), { level: 9 });
+  const gz = gzipSync(JSON.stringify({ format: 1, run_time: iso(RUN_T), tool: 'cwplans/tools/cache-londat.mjs', statements: [...REC] }), { level: 9 });
   writeFileSync(join(RUNS, runFile), gz);
 }
 console.log(`${DRY ? '(dry) ' : ''}${MONTH}: ${nReplayed} run files replayed; +${rowsTotal} rows ${JSON.stringify(counts)}; ${runFile ? `cache/runs/${runFile} ${statSync(join(RUNS, runFile)).size} bytes` : 'no run file (nothing new)'}`);
@@ -227,7 +227,7 @@ function writeLatest() {
   const last = tbl => one(`SELECT max(fetch_time) t FROM ${both(tbl)}`).t;
   const P = new Map(all(`SELECT * FROM ${both('places')}`).map(p => [p.id, p]));   // this month's rows come last and win
   const src = Object.fromEntries(all('SELECT * FROM sources').map(r => [r.theme, { licence: r.licence, attribution: r.attribution, url: r.url, ...(r.review ? { review: r.review } : {}) }]));
-  const out = { about: 'Latest live state of the Canary Wharf / Docklands zone and the last 24 hours, written by magpie/cwplans/tools/cache-londat.mjs (danbri/glitchcan-minigam) from the history in this folder. Times: ISO UTC. Each theme keeps the licence of its source (sources).',
+  const out = { about: 'Latest live state of the Canary Wharf / Docklands zone and the last 24 hours, written by cwplans/tools/cache-londat.mjs (danbri/londat) from the history in this folder. Times: ISO UTC. Each theme keeps the licence of its source (sources).',
     written: iso(Math.round(Date.now() / 1000)), history: `cache/runs/${MONTH}-DD/live-*.json.gz (this month, one file per run); cache/live-YYYY-MM.sqlite (closed months)`, sources: src, themes: {} };
   const T = out.themes, nm = id => P.get(id)?.name ?? null, pos = id => P.get(id) ? [P.get(id).lat, P.get(id).lon] : [null, null];
   let t;

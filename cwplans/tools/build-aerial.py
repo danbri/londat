@@ -3,7 +3,7 @@
 # 2008 colour aerial photography (40 cm), 2012 night-time aerial photography (20 cm) and the 2020 National LiDAR
 # Programme intensity (1 m). Each is cut to the model box and resampled to one JPEG at 3 m per pixel.
 #
-#   python3 magpie/cwplans/tools/build-aerial.py [rgb2008] [night2012] [intensity2020]
+#   python3 cwplans/tools/build-aerial.py [rgb2008] [night2012] [intensity2020]
 #
 # in:  data/raw/imagery/*.zip, fetched from https://environment.data.gov.uk/tiles/collections/survey/<product>/<year>/<res>/<tile>
 #      (tiles TQ3075, TQ3080, TQ3575, TQ3580; see docklands/README.md). The aerial photographs are ECW files; they are

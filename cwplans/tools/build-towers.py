@@ -2,8 +2,8 @@
 """Tiered geometry for the tallest Canary Wharf towers, measured from the EA LiDAR surface model.
 
   python3 -m venv /opt/towers-venv && /opt/towers-venv/bin/pip install numpy scipy scikit-learn scikit-image rasterio shapely pillow
-  bash magpie/cwplans/tools/fetch-dsm.sh                     # the DSM ZIPs (data/raw/dsm/, not committed)
-  /opt/towers-venv/bin/python magpie/cwplans/tools/build-towers.py [--only cwb-0413,...]
+  bash cwplans/tools/fetch-dsm.sh                     # the DSM ZIPs (data/raw/dsm/, not committed)
+  /opt/towers-venv/bin/python cwplans/tools/build-towers.py [--only cwb-0413,...]
 
 in:  data/raw/dsm/*.zip (2022 composite first-return DSM 1 m, 2020 and 2018 NLP DSM 1 m),
      docklands/data/area.js (model footprints, base levels), atlas/data/atlas.json (registry -> model link, heights),
@@ -699,7 +699,7 @@ def main():
     doc = dict(
         about='Tiered geometry of the Canary Wharf towers of 100 m or more (registry buildings), measured from the '
               'Environment Agency 1 m first-return LiDAR surface model, to replace footprint extrusions in the 3D model. '
-              'Built by magpie/cwplans/tools/build-towers.py; do not edit by hand.',
+              'Built by cwplans/tools/build-towers.py; do not edit by hand.',
         coordinates='x = E - 537550, z = -(N - 180300) (north is -z), y = metres above Ordnance Datum Newlyn; rings in local metres, 0.1 m',
         method=METHOD, sources=SOURCES, references=REFERENCES, skipped=skipped, buildings=out)
     txt = json.dumps(doc, separators=(',', ':'), ensure_ascii=False)

@@ -21,7 +21,7 @@ the drone dataset uses. Then, after training, checks where the gaussians went.
 
 Needs numpy + Pillow (the system numpy here is broken for python3.11):
   python3 -m venv /opt/splat-venv && /opt/splat-venv/bin/pip install numpy pillow
-  /opt/splat-venv/bin/python magpie/cwplans/tools/splat-pose-test.py gen /path/out
+  /opt/splat-venv/bin/python cwplans/tools/splat-pose-test.py gen /path/out
 """
 import json
 import math

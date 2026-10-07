@@ -1,7 +1,7 @@
 ---
 name: cwplans-live-state
 description: >-
-  Live and fast-changing state in the magpie/cwplans Docklands zone, as dated snapshots in feeds/live/ made by
+  Live and fast-changing state in the cwplans Docklands zone, as dated snapshots in feeds/live/ made by
   tools/fetch-live.mjs: Santander Cycles docks (TfL BikePoint: bikes, e-bikes, empty and broken docks), TfL lift
   outages and live station busyness (crowding), TfL JamCam traffic cameras, UK Power Networks power cuts (CC BY 4.0),
   Thames Water storm overflow monitors (CC BY 4.0, via Stream), NOTAMs from the NATS hourly full UK PIB (crane positions
@@ -17,15 +17,15 @@ description: >-
 
 # Live state in the Docklands zone
 
-Data: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/live/ (README.md there has the table of
+Data: https://danbri.github.io/londat/cwplans/feeds/live/ (README.md there has the table of
 snapshots, counts, the helicopter facts and the ranked backlog). Tool: `tools/fetch-live.mjs`. Policy: the curation
 skill `docklands-data-curation` and the cwplans exception in the repo CLAUDE.md. Log every session in
 `skills/docklands-data-curation/ACTIVITY-LOG.md`.
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs                 # every source, about 3 min
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-live.mjs bikes ukpn      # some
-    node magpie/cwplans/tools/fetch-live.mjs --no-fetch                           # rebuild from data/raw/live/ (gitignored)
-    node magpie/cwplans/tools/check-data-register.mjs --write                     # then
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs                 # every source, about 3 min
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live.mjs bikes ukpn      # some
+    node cwplans/tools/fetch-live.mjs --no-fetch                           # rebuild from data/raw/live/ (gitignored)
+    node cwplans/tools/check-data-register.mjs --write                     # then
 
 Tower Bridge lifts: the site's terms forbid scraping and reuse (checked 2026-10-04); not fetched. Details: skill
 `cwplans-river-and-water`, "Tower Bridge lift times: not fetched".

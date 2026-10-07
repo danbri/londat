@@ -1,6 +1,6 @@
 // Companies House "Basic Company Data" (free bulk product), filtered to the Canary Wharf postcodes.
-// Run: node magpie/cwplans/tools/registry-companies.mjs [path/to/BasicCompanyDataAsOneFile-YYYY-MM-DD.zip]
-//   (default: newest BasicCompanyDataAsOneFile-*.zip in magpie/cwplans/data/raw/registry/;
+// Run: node cwplans/tools/registry-companies.mjs [path/to/BasicCompanyDataAsOneFile-YYYY-MM-DD.zip]
+//   (default: newest BasicCompanyDataAsOneFile-*.zip in cwplans/data/raw/registry/;
 //    download from https://download.companieshouse.gov.uk/en_output.html, about 0.5 GB)
 // Writes registry/sources/companies/companies-by-postcode.json and companies-summary.json.
 // COMPANY-LEVEL ONLY: this product has no officers or PSCs, and this tool must never fetch them.

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Re-check every url, api and sample in feeds.json and print what each returns.
 //
-//   node magpie/cwplans/feeds/check-feeds.mjs                 # all sources
-//   node magpie/cwplans/feeds/check-feeds.mjs tfl-jamcams ea-tide-tower-pier
-//   node magpie/cwplans/feeds/check-feeds.mjs --json > check.json
-//   node magpie/cwplans/feeds/check-feeds.mjs --live          # only the no-key, CORS-on sources
+//   node cwplans/feeds/check-feeds.mjs                 # all sources
+//   node cwplans/feeds/check-feeds.mjs tfl-jamcams ea-tide-tower-pier
+//   node cwplans/feeds/check-feeds.mjs --json > check.json
+//   node cwplans/feeds/check-feeds.mjs --live          # only the no-key, CORS-on sources
 //
 // Node 22+, no dependencies. Columns: HTTP status; CORS, shown when a request carrying
 // Origin: https://danbri.github.io gets Access-Control-Allow-Origin of * or that origin;
@@ -14,7 +14,7 @@
 
 import { readFileSync } from 'node:fs';
 
-const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)';
+const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 // politeness: at most one request at a time to a host, and 1 s between requests to the same host
 const hostQueue = new Map();
 function politely(u, fn) {

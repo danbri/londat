@@ -84,10 +84,10 @@ function exportLayer() {
       p.style = { line: line || [1, .8, 0, 1], width: o.weight || 2, poly: poly || [1, .8, 0, .3], icon: poly ? [poly[0], poly[1], poly[2], 1] : [1, .8, 0, 1] };
       if (osm) p.extended.push(['geometry licence', OSM_CREDIT]); pms.push(p); };
     lay.eachLayer(leaf);
-    credits.add(`Layer "${label}" of the Canary Wharf and Docklands atlas: sources and licences of every file at https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#data and https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/DATA-REGISTER.md.`);
+    credits.add(`Layer "${label}" of the Canary Wharf and Docklands atlas: sources and licences of every file at https://danbri.github.io/londat/cwplans/atlas/#data and https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md.`);
     if (osm) credits.add('Building outlines: ' + OSM_CREDIT + '.'); }
   const view = { type: 'LookAt', lon: c.lng, lat: c.lat, alt: 0, heading: 0, tilt: 0, range: Math.max(200, map.distance(b.getNorthWest(), b.getNorthEast()) / 1.15), altitudeMode: 'clampToGround' };
-  const desc = `Exported from the atlas map (https://danbri.github.io/glitchcan-minigam/magpie/cwplans/atlas/#map) on ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC: layer "${label}", ${pms.length} features in the map window.\n\nCredits and licences:\n- ${[...credits].join('\n- ')}\n- Basemap (not exported): ${OSM_CREDIT}.`;
+  const desc = `Exported from the atlas map (https://danbri.github.io/londat/cwplans/atlas/#map) on ${now.toISOString().slice(0, 16).replace('T', ' ')} UTC: layer "${label}", ${pms.length} features in the map window.\n\nCredits and licences:\n- ${[...credits].join('\n- ')}\n- Basemap (not exported): ${OSM_CREDIT}.`;
   const text = writeKml({ name: `Atlas: ${label}`, description: desc, view, folders: [{ name: label, placemarks: pms }] });
   const fn = `atlas-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)}-${now.toISOString().slice(0, 10)}.kml`;
   download(text, fn); note(`Exported ${pms.length} features as ${fn}.`); return { text, count: pms.length, filename: fn, osm };

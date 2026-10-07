@@ -279,7 +279,7 @@ svg .muted { fill: var(--muted); }
 
 <section class="view" id="v-lds">
   <h1>London Datastore, clipped to the zone</h1>
-  <p class="lede">Every dataset of the London Datastore (data.london.gov.uk) was triaged by written rules; the open ones that hold data for the Docklands model box were harvested here, zone rows and features only. Tap "map" for a layer on the <a href="#map">map</a>; each layer's records name their source, dates and licence. Building facts (heat demand, solar potential, Census context of the LSOA, venues) are in each building's record. Method: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/london-datastore/README.md">README</a>.</p>
+  <p class="lede">Every dataset of the London Datastore (data.london.gov.uk) was triaged by written rules; the open ones that hold data for the Docklands model box were harvested here, zone rows and features only. Tap "map" for a layer on the <a href="#map">map</a>; each layer's records name their source, dates and licence. Building facts (heat demand, solar potential, Census context of the LSOA, venues) are in each building's record. Method: <a href="https://github.com/danbri/londat/blob/main/cwplans/feeds/london-datastore/README.md">README</a>.</p>
   <div class="cards" id="ldsCards"></div>
   <div class="tools"><div class="chips" id="ldsTheme"></div><input type="search" id="ldsq" placeholder="Filter datasets" aria-label="Filter datasets"><span class="small" id="ldscount"></span></div>
   <div id="ldsList"></div>
@@ -305,7 +305,7 @@ svg .muted { fill: var(--muted); }
 
 <section class="view" id="v-quality">
   <h1>Data quality</h1>
-  <p class="lede">The same checks run on every rebuild, in eight classes. They measure where sources disagree, where joins fail and where our own tools damage the data, so that the rules for combining sources are built on measured error classes. Nothing here is corrected automatically. Analysis and proposed compositing rules: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/quality/README.md">README</a> · all tables: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/quality/CATALOGUE.md">CATALOGUE</a>.</p>
+  <p class="lede">The same checks run on every rebuild, in eight classes. They measure where sources disagree, where joins fail and where our own tools damage the data, so that the rules for combining sources are built on measured error classes. Nothing here is corrected automatically. Analysis and proposed compositing rules: <a href="https://github.com/danbri/londat/blob/main/cwplans/quality/README.md">README</a> · all tables: <a href="https://github.com/danbri/londat/blob/main/cwplans/quality/CATALOGUE.md">CATALOGUE</a>.</p>
   <div class="cards" id="qCards"></div>
   <div class="tools"><div class="chips" id="qCls"></div><div class="chips" id="qSev"></div></div>
   <div id="qChecks"></div>
@@ -313,7 +313,7 @@ svg .muted { fill: var(--muted); }
 
 <section class="view" id="v-data">
   <h1>Data and licences</h1>
-  <p class="lede">Every committed data file, its sources and licences, and how it uses OpenStreetMap. Generated from <code>data-register.json</code>; the readable version is <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/DATA-REGISTER.md">DATA-REGISTER.md</a>.</p>
+  <p class="lede">Every committed data file, its sources and licences, and how it uses OpenStreetMap. Generated from <code>data-register.json</code>; the readable version is <a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">DATA-REGISTER.md</a>.</p>
   <h2>Attribution</h2>
   <ul id="attrib" class="small"></ul>
   <p class="small">Map: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL; basemap tiles from tile.openstreetmap.org and building outlines); EA, UKHO, ONS, HM Land Registry, FSA, Historic England (OGL v3.0); Wikidata (CC0); river snapshots: Port of London Authority and Canal &amp; River Trust (facts and links only), GOV.UK and EA (OGL v3.0), TfL ("Powered by TfL Open Data"), Sea Lanes Canary Wharf and Royal Docks Waterways (results as published); map software <a href="https://leafletjs.com/">Leaflet</a> (BSD-2-Clause). The map corner shows the OpenStreetMap credit when the map opens and folds it to an (i) button after 5 seconds or at the first move.</p>
@@ -321,14 +321,14 @@ svg .muted { fill: var(--muted); }
   <div class="tablewrap"><table id="files"></table></div>
   <h2>Method notes</h2>
   <ul class="small">
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/README.md">Building registry</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/docklands/README.md">Docklands 3D model</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/postcodes/README.md">Postcodes</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/brands/README.md">Chain-store branches</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/museums/README.md">Heritage records</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/pla/README.md">River and wet areas</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/SOURCES-companies-property.md">Company and property sources</a></li>
-    <li><a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/research-report-2026-10.md">The October 2026 research report</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/README.md">Building registry</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md">Docklands 3D model</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/postcodes/README.md">Postcodes</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/README.md">Chain-store branches</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/museums/README.md">Heritage records</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/pla/README.md">River and wet areas</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/SOURCES-companies-property.md">Company and property sources</a></li>
+    <li><a href="https://github.com/danbri/londat/blob/main/cwplans/research-report-2026-10.md">The October 2026 research report</a></li>
   </ul>
 </section>
 </main>

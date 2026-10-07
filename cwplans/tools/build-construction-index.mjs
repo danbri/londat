@@ -4,9 +4,9 @@
 // NOTAM cranes, Street Manager highway activities, OSM construction areas, the brownfield register, site allocations,
 // Wikidata items, and facts from crawled developer pages and the owner's photos.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-construction-index.mjs            # fetch what is not cached, build
-//   node magpie/cwplans/tools/build-construction-index.mjs --no-fetch                      # build from the caches only
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/build-construction-index.mjs --refresh  # fetch again
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/build-construction-index.mjs            # fetch what is not cached, build
+//   node cwplans/tools/build-construction-index.mjs --no-fetch                      # build from the caches only
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/build-construction-index.mjs --refresh  # fetch again
 //
 // In:   Planning London Datahub (POST, one query), QLever (one query), data/raw/docklands/greater_london-latest.osm.pbf,
 //       feeds/live/notams.json, feeds/works/street-manager-activities.json, feeds/london-datastore/{brownfield-register,
@@ -14,7 +14,7 @@
 // Out:  registry/sources/construction/sites.json. Raw: data/raw/construction/ (gitignored).
 // Zone: the 3D model box plus the east margin (fetch-works.mjs MODEL and EAST).
 // Method, status and match rules, confidence, traps and gaps: skill cwplans-construction
-// (magpie/cwplans/skills/cwplans-construction/SKILL.md); README: registry/sources/construction/README.md.
+// (cwplans/skills/cwplans-construction/SKILL.md); README: registry/sources/construction/README.md.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, createReadStream } from 'node:fs';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
@@ -34,7 +34,7 @@ const addYears = (iso, y) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCF
 // status windows (written rules; see the skill)
 const RECENT_COMPLETION = addYears(TODAY, -2), STALE_COMMENCEMENT = addYears(TODAY, -7), RECENT_DECISION = addYears(TODAY, -5);
 const PLD = 'https://planningdata.london.gov.uk/api-guest/applications/_search';
-const readJ = p => JSON.parse(readFileSync(cwPath(p), 'utf8'));   // cwPath: London Datastore files are in the londat checkout
+const readJ = p => JSON.parse(readFileSync(cwPath(p), 'utf8'));   // cwPath: the file on disk (tools/londat.mjs)
 const r6 = v => Math.round(v * 1e6) / 1e6, r1 = v => Math.round(v * 10) / 10;
 const dmy = s => { const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s || ''); return m ? `${m[3]}-${m[2]}-${m[1]}` : null; };
 const cut = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };

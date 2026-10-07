@@ -3,7 +3,7 @@
 // with the mall, level and postcode the page gives.
 //   in:  registry/sources/brands/cwg-directory.json; data/raw/registry/cwg/pages/<kind>__<slug>.html (not committed)
 //   out: registry/sources/brands/cwg-hours.json
-//   node magpie/cwplans/tools/cwg-hours.mjs
+//   node cwplans/tools/cwg-hours.mjs
 // Skill: cwplans-web-harvest, "Opening hours".
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
@@ -49,7 +49,7 @@ for (const e of dir.directory) {
 }
 const counts = out.reduce((m, r) => (m[r.state] = (m[r.state] || 0) + 1, m), {});
 writeFileSync(join(CW, 'registry/sources/brands/cwg-hours.json'), JSON.stringify({ source: 'Canary Wharf Group directory pages as archived by the Internet Archive (crawl for scoping, owner rule of 2026-10-03)',
-  generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/cwg-hours.mjs',
+  generated: new Date().toISOString(), tool: 'cwplans/tools/cwg-hours.mjs',
   note: 'Hours as the page showed them on its archive date (archived_on). opening_hours is OSM syntax; a closing time at or before the opening time runs past midnight. Rows that are not a time are listed in problems and left out.',
   counts, entries: out }, null, 1) + '\n');
 console.log(counts); console.log(Object.entries(forms).sort((a, b) => b[1] - a[1]).slice(0, 12));

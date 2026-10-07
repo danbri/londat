@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Re-check the event and real-time feeds in events.json, or probe one URL.
 //
-//   node magpie/cwplans/feeds/check-events.mjs                  # every source
-//   node magpie/cwplans/feeds/check-events.mjs th-moderngov-ics # some sources
-//   node magpie/cwplans/feeds/check-events.mjs --live           # no key + CORS only
-//   node magpie/cwplans/feeds/check-events.mjs --json > out.json
-//   node magpie/cwplans/feeds/check-events.mjs --url https://example.org/feed.ics [--header 'x-api-version: 2']
+//   node cwplans/feeds/check-events.mjs                  # every source
+//   node cwplans/feeds/check-events.mjs th-moderngov-ics # some sources
+//   node cwplans/feeds/check-events.mjs --live           # no key + CORS only
+//   node cwplans/feeds/check-events.mjs --json > out.json
+//   node cwplans/feeds/check-events.mjs --url https://example.org/feed.ics [--header 'x-api-version: 2']
 //
 // Item counts here come from small generic parsers, so for a few JSON/XML APIs (TfL date
 // ranges, ModernGov GetMeetings, Hansard) they can differ from the hand-tuned sample in
@@ -22,7 +22,7 @@
 
 import { readFileSync } from 'node:fs';
 
-const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)';
+const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 // politeness: at most one request at a time to a host, and 1 s between requests to the same host
 const hostQueue = new Map();
 function politely(u, fn) {

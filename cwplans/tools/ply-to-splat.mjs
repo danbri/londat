@@ -8,7 +8,7 @@
 // Sorted by exp(sum log scale) * opacity, largest first (the antimatter15
 // viewer's own order). No dependencies; used by train-splat.sh.
 //
-//   node magpie/cwplans/tools/ply-to-splat.mjs in.ply out.splat
+//   node cwplans/tools/ply-to-splat.mjs in.ply out.splat
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const [inPath, outPath] = process.argv.slice(2);

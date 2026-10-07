@@ -4,8 +4,8 @@
 // the language file, every indoor vector tile (zoom 0-19) and basemap tile (zoom 0-16) over the map's extents, and
 // the popup images that tiles and features name. Bytes are written unchanged; manifest.json maps each URL to its file
 // with status, type, size, SHA-256 and time. Restartable: a URL already in the manifest is not fetched again.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/archive-cwg-mallmap.mjs [--only=tiles|api|media|app]
-//   out: danbri/londat third_party/cwg/mallmap/ (LONDAT_DIR, default ../londat)
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/archive-cwg-mallmap.mjs [--only=tiles|api|media|app]
+//   out: third_party/cwg/mallmap/ at the repository root (LONDAT_DIR, default this checkout)
 // Not fetched: the Gotham font glyphs (a commercial typeface, Hoefler&Co), the session and event POSTs (usage logging),
 // third-party scripts (Mapbox, marker.io). Skill: cwplans-web-harvest, "Mall plans".
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';

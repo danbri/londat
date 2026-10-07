@@ -11,9 +11,9 @@ fetched and checked on 2026-10-04.
 - [london-feeds.opml](london-feeds.opml): the 414 live feeds (verified, an item in the last 365 days), grouped by kind,
   for any feed reader.
 - [../events.json](../events.json): 179 of them were added as `disc-*` sources (rule below), which the feeds page
-  shows: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/
+  shows: https://danbri.github.io/londat/cwplans/feeds/
 - Tool: [../../tools/discover-feeds.mjs](../../tools/discover-feeds.mjs). Method in full: skill
-  `cwplans-feed-discovery` (https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/skills/cwplans-feed-discovery/SKILL.md).
+  `cwplans-feed-discovery` (https://github.com/danbri/londat/blob/main/cwplans/skills/cwplans-feed-discovery/SKILL.md).
 
 No feed item text is stored. Kept: feed URL, feed title, counts, dates, and for news, council, transport, events and
 business feeds at most two item titles cut to 80 characters. Social, forum and mailing-list feeds keep counts only.
@@ -136,13 +136,13 @@ and says Time Out has no feed; both are left for the catalogue's owner.
 
 ## Re-run
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs seed
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs seed
     npm i --prefix /tmp/cclibs hyparquet hyparquet-compressors
-    CC_LIBS=/tmp/cclibs NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs cc
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs autodiscover
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/discover-feeds.mjs verify
-    node magpie/cwplans/tools/discover-feeds.mjs build
-    node magpie/cwplans/tools/check-data-register.mjs --write
+    CC_LIBS=/tmp/cclibs NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs cc
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs autodiscover
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/discover-feeds.mjs verify
+    node cwplans/tools/discover-feeds.mjs build
+    node cwplans/tools/check-data-register.mjs --write
 
-Caches in `magpie/cwplans/data/raw/feed-discovery/` (gitignored); `--refresh` redoes a stage. Run times on
+Caches in `cwplans/data/raw/feed-discovery/` (gitignored); `--refresh` redoes a stage. Run times on
 2026-10-04: seed 4 min, cc 28 min, autodiscover 6 min, verify about 15 min.

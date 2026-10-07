@@ -2,10 +2,10 @@
 // drone-flight.mjs: a synthetic drone flight over the Canary Wharf 3D model (docklands/data/area.js), for
 // Gaussian-splat training captures (drone-capture.mjs renders it). Module and CLI.
 //
-//   node magpie/cwplans/tools/drone-flight.mjs                      # plan, check, print statistics
-//   node magpie/cwplans/tools/drone-flight.mjs --out path.json      # also write the 30 fps path
-//   node magpie/cwplans/tools/drone-flight.mjs --svg plan.svg       # top-down plan of the path
-//   node magpie/cwplans/tools/drone-flight.mjs --coverage 480       # estimate building coverage for 480 frames
+//   node cwplans/tools/drone-flight.mjs                      # plan, check, print statistics
+//   node cwplans/tools/drone-flight.mjs --out path.json      # also write the 30 fps path
+//   node cwplans/tools/drone-flight.mjs --svg plan.svg       # top-down plan of the path
+//   node cwplans/tools/drone-flight.mjs --coverage 480       # estimate building coverage for 480 frames
 //
 // Coordinates are model metres: x = E - 537550 (east), y = m above Ordnance Datum (up), z = -(N - 180300) (south).
 // The flight: centripetal Catmull-Rom splines through eye and look-target waypoints; speed limited by turn rate,
@@ -351,7 +351,7 @@ export function svgPlan(M, P) {
 
 export function pathJSON(P) {
   const { repairs, ...st } = P.stats;
-  return { generator: 'magpie/cwplans/tools/drone-flight.mjs', fps: P.fps, coordinates: 'model metres: x = E - 537550 (east), y = m above OD (up), z = -(N - 180300) (south)', stats: st, repairs,
+  return { generator: 'cwplans/tools/drone-flight.mjs', fps: P.fps, coordinates: 'model metres: x = E - 537550 (east), y = m above OD (up), z = -(N - 180300) (south)', stats: st, repairs,
     waypoints: P.waypoints.map(w => ({ eye: w.e.map(v => +v.toFixed(2)), target: w.look.p, speed: w.v, part: w.tag })),
     frames: P.frames.map(f => ({ t: +f.t.toFixed(3), eye: f.e.map(v => +v.toFixed(3)), target: f.target.map(v => +v.toFixed(3)), yaw: +f.yaw.toFixed(3), pitch: +f.pitch.toFixed(3), part: f.tag })) };
 }

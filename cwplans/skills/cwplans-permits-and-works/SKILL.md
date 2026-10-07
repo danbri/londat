@@ -1,7 +1,7 @@
 ---
 name: cwplans-permits-and-works
 description: >-
-  Permits, works, closures and planned events across the magpie/cwplans Docklands zone (the 3D model box plus the
+  Permits, works, closures and planned events across the cwplans Docklands zone (the 3D model box plus the
   Royal Docks): Tower Hamlets licence applications and Temporary Event Notices, DfT Street Manager permits and street
   events, TfL road disruptions, planned line closures and bus diversions (stops placed through NaPTAN), Gazette traffic
   orders and TTROs, temporary-event planning applications, markets, and venue and council programmes from the verified
@@ -12,22 +12,22 @@ description: >-
   closure or works item is or is not on the page.
 ---
 
-# Permits, works and closures (magpie/cwplans)
+# Permits, works and closures (cwplans)
 
 Policy, the fault register and the activity log are in the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
 Owner instructions behind this work (2026-10-04): "look into local authority permissioning for events, street closures,
 markets and events across entire zone - these could inform us about adhoc events" and "get tfl and road/bus/train
 planned works". Written from the first run on 2026-10-04; counts are from that run.
 
-Page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html
-Sources, counts and gaps: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/works/README.md
+Page: https://danbri.github.io/londat/cwplans/feeds/whatson.html
+Sources, counts and gaps: https://github.com/danbri/londat/blob/main/cwplans/feeds/works/README.md
 
 ## Run
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-works.mjs                  # all sources, then works.json
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-works.mjs tfl-lines tfl-bus  # some sources
-    node magpie/cwplans/tools/fetch-works.mjs --no-fetch                           # rebuild from data/raw/works/
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-works.mjs                  # all sources, then works.json
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-works.mjs tfl-lines tfl-bus  # some sources
+    node cwplans/tools/fetch-works.mjs --no-fetch                           # rebuild from data/raw/works/
     options: --refresh (re-download kept raw files), --days=90 (TfL look-ahead), --month=2026-09 (Street Manager)
 
 Sources: `tfl-lines tfl-bus tfl-road street-manager gazette th-licences planning markets venue-events` (street-manager
@@ -39,7 +39,9 @@ OSM extract (markets), and 10 s per Gazette request. Without `NODE_USE_ENV_PROXY
 Output: `feeds/works/<source>.json` = `{meta: {source, url, fetched, licence, attribution, method, zone, counts}, items}`
 and `feeds/works/works.json` (every item, one shape: `id, source, kind, title, start, end, recurring, location, street,
 postcode, borough, lat, lon, zone, url`). **Snapshots keep fixed file names**: the date is in `meta.fetched`, the
-history is git. So the data register needs no new entry per run. Raw responses: `data/raw/works/` (gitignored).
+history is git (before 2026-10-07 in danbri/glitchcan-minigam:
+https://github.com/danbri/glitchcan-minigam/commits/7be94dc/magpie/cwplans/feeds/works). So the data register needs no
+new entry per run. Raw responses: `data/raw/works/` (gitignored).
 
 ## The zone
 
@@ -160,7 +162,7 @@ Manager works and no venue programmes were in it. Now two views:
 - A new source: a function in `SOURCES` of `fetch-works.mjs` that writes `feeds/works/<id>.json` with `write()`; record
   the licence and attribution in `meta`; register the file in `data-register.json` and the source in its `sources`
   table; update the `fetch-works` activity in `pipeline.json`; run
-  `node magpie/cwplans/tools/check-data-register.mjs --write`.
+  `node cwplans/tools/check-data-register.mjs --write`.
 - Run weekly at least (the Tower Hamlets page shows one week; TfL looks 90 days ahead; Street Manager monthly).
 - The page reads only `works.json`; it groups by London date: on now, each of the next 21 days, later, long-running
   (ends more than 30 days ahead), markets. Minor Street Manager works (no road closure) are hidden by default.

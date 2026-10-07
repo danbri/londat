@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Points of interest of the October 2026 occupant categories (pubs and bars, alcohol shops, education, health, sport,
 // arts venues) across the whole 3D model box, and whether the building registry has them yet.
-//   node --max-old-space-size=6000 magpie/cwplans/tools/scan-model-pois.mjs
+//   node --max-old-space-size=6000 cwplans/tools/scan-model-pois.mjs
 // in:  data/raw/docklands/greater_london-latest.osm.pbf (fetch-docklands.mjs osm), registry/buildings.json
 // out: registry/model-box-pois.json  { counts: { category: { total, in_registry, in_registry_box_not_in_registry, outside_registry_box } }, pois: [...] }
 // Classes: the OSM tags of tools/build-categories.mjs (stated classes only, never a name). A feature is "in the registry"
 // when its OSM id is an occupant or a building outline of registry/buildings.json. Activity "scan-model-pois" in
-// magpie/cwplans/pipeline.json; why: skill docklands-data-curation.
+// cwplans/pipeline.json; why: skill docklands-data-curation.
 import { createReadStream, readFileSync, writeFileSync } from 'fs';
 import { Writable } from 'stream';
 import { createRequire } from 'module';

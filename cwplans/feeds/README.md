@@ -1,6 +1,6 @@
 # Open data feeds for a Docklands model
 
-A catalogue of public data sources, feeds and APIs for an open-data 3D model of London Docklands. Generated 2026-10-02. Machine-readable version: [feeds.json](https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/feeds.json). Re-check script: `node magpie/cwplans/feeds/check-feeds.mjs`.
+A catalogue of public data sources, feeds and APIs for an open-data 3D model of London Docklands. Generated 2026-10-02. Machine-readable version: [feeds.json](https://danbri.github.io/londat/cwplans/feeds/feeds.json). Re-check script: `node cwplans/feeds/check-feeds.mjs`.
 
 **Survey of 2026-10-03:** 341 more sources in seven areas (courts and registers; national government and regulators; London and local government; police and safety; river and water; property and rentals; web data, dataset search and MCP servers), merged into feeds.json with an `area` field. Tables and the sources left out: [SURVEY-2026-10-03.md](SURVEY-2026-10-03.md).
 
@@ -707,7 +707,7 @@ Caveats for some of these:
 - **EA LiDAR Composite DTM 1 m (WCS)** (Environment Agency). [page](https://environment.data.gov.uk/survey) · API: `https://environment.data.gov.uk/spatialdata/lidar-composite-digital-terrain-model-dtm-1m/wcs`
   - Sample: <https://environment.data.gov.uk/spatialdata/lidar-composite-digital-terrain-model-dtm-1m/wcs?service=WCS&version=2.0.1&request=DescribeCoverage&CoverageId=13787b9a-26a4-4775-8523-806d13af58fc__Lidar_Composite_Elevation_DTM_1m>
   - Auth: none. Licence: Open Government Licence v3.0. Update: yearly. CORS: yes. Status: verified.
-  - Coverage: England at 1 m; used by magpie/cwplans already.
+  - Coverage: England at 1 m; used by cwplans already.
   - Returned: WCS DescribeCoverage for the 1 m DTM coverage.
   - DSM (first return) at …/lidar-composite-digital-surface-model-first-return-dsm-1m/wcs.
 - **EA LiDAR Composite first-return DSM 1 m (WCS)** (Environment Agency). [page](https://environment.data.gov.uk/survey) · API: `https://environment.data.gov.uk/spatialdata/lidar-composite-digital-surface-model-first-return-dsm-1m/wcs`
@@ -1063,10 +1063,10 @@ Left out under the ethics limits for this catalogue: official, published or open
 ## Re-checking
 
 ```
-node magpie/cwplans/feeds/check-feeds.mjs            # every page, sample and keyless api
-node magpie/cwplans/feeds/check-feeds.mjs --live     # only the live-callable list above
-node magpie/cwplans/feeds/check-feeds.mjs tfl-jamcams ea-tide-tower-pier
-node magpie/cwplans/feeds/check-feeds.mjs --json > /tmp/feeds-check.json
+node cwplans/feeds/check-feeds.mjs            # every page, sample and keyless api
+node cwplans/feeds/check-feeds.mjs --live     # only the live-callable list above
+node cwplans/feeds/check-feeds.mjs tfl-jamcams ea-tide-tower-pier
+node cwplans/feeds/check-feeds.mjs --json > /tmp/feeds-check.json
 ```
 
 The script prints the HTTP status, whether CORS allows a GitHub Pages origin, and marks any status that changed since feeds.json was generated. It never sends API keys; keyed sources answer 401 or 403, which is the expected result. Results can differ from the curl checks recorded here: some sites refuse one HTTP client and accept another, a few hosts were intermittently reset by the session proxy (shown as 503 or ERR), and the HM Land Registry INSPIRE page needs cookies, so a cookieless fetch loops on redirects.

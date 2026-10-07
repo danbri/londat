@@ -1,4 +1,4 @@
-// usage: node magpie/cwplans/tools/blender-stations/extract-osm.mjs <work>/osm-stations.json  (skill: blender-station-models)
+// usage: node cwplans/tools/blender-stations/extract-osm.mjs <work>/osm-stations.json  (skill: blender-station-models)
 // Decode the 3D page's OSM-derived data around the two stations into one JSON for Blender.
 import { fileURLToPath } from 'url'; import { dirname, join } from 'path';
 const D = join(dirname(fileURLToPath(import.meta.url)), '../../docklands/data/');

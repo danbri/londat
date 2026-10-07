@@ -2,20 +2,20 @@
 // AIS vessel positions on the Thames in the Docklands zone from Open Waters AIS (https://openwaters.io/ais/), as dated facts,
 // kept only where the event's own source licence is open.
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-ais.mjs                 # snapshot + stations + 10 min listen
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-ais.mjs --listen=1200   # listen for 20 minutes (max 1800)
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-ais.mjs --listen=0      # snapshot only
-//   node magpie/cwplans/tools/fetch-ais.mjs --no-fetch                           # rebuild from the newest raw run
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-ais.mjs                 # snapshot + stations + 10 min listen
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-ais.mjs --listen=1200   # listen for 20 minutes (max 1800)
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-ais.mjs --listen=0      # snapshot only
+//   node cwplans/tools/fetch-ais.mjs --no-fetch                           # rebuild from the newest raw run
 //
-// Out:  magpie/cwplans/feeds/river/ais.json  {meta: {source, url, fetched, licence, attribution, method, rules, counts,
+// Out:  cwplans/feeds/river/ais.json  {meta: {source, url, fetched, licence, attribution, method, rules, counts,
 //       coverage, not_kept_would_gain}, items: [{id, kind, mmsi, name, callsign, ship_type, class, position, values,
 //       time, source, licence, attribution}]}
-// Raw:  magpie/cwplans/data/raw/ais/<run stamp>/ (gitignored): vessels.json, stations.json, stream.sse (with receive times)
+// Raw:  cwplans/data/raw/ais/<run stamp>/ (gitignored): vessels.json, stations.json, stream.sse (with receive times)
 // API:  anonymous tier (no key): GET /v1/vessels?bbox, GET /v1/stations, SSE GET /v1/stream?bbox&snapshot=1.
 //       Limits on 2026-10-04: 120 HTTP requests a minute, 2 streams per address, 20 messages a second, 100 square degrees.
 // Polite: one request at a time, at least 2 s apart, one stream, User-Agent from tools/lib.mjs.
 // Licence filter, the small-craft rule, terms quoted and coverage measured: skill cwplans-river-and-water
-// (magpie/cwplans/skills/cwplans-river-and-water/SKILL.md), section "AIS: Open Waters".
+// (cwplans/skills/cwplans-river-and-water/SKILL.md), section "AIS: Open Waters".
 import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { TOOLS, RAW, UA } from './lib.mjs';

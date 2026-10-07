@@ -7,7 +7,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const here = path.dirname(fileURLToPath(import.meta.url)), REF = path.join(here, '../../magpie/cwplans/docklands/reference/plane-2026-10');
+const here = path.dirname(fileURLToPath(import.meta.url)), REF = path.join(here, '../../cwplans/docklands/reference/plane-2026-10');
 const srv = spawn(process.execPath, [path.join(here, 'server.mjs')], { stdio: ['pipe', 'pipe', 'inherit'] });
 let buf = '', nextId = 1; const waiting = new Map();
 srv.stdout.setEncoding('utf8');

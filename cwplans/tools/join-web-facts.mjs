@@ -1,7 +1,7 @@
 // Adds the facts read from the entities' own web pages (opening hours, phone, events, menu, price range, cuisine) to the
 // building occupants in the registry, as occupant.web, with the page, the scope and the confidence of the match.
 //
-//   node magpie/cwplans/tools/join-web-facts.mjs          (after build-registry, before build-categories and build-atlas)
+//   node cwplans/tools/join-web-facts.mjs          (after build-registry, before build-categories and build-atlas)
 //
 // in:  registry/buildings.json, registry/sources/web/structured-facts.json (tools/extract-structured-data.mjs)
 // out: registry/buildings.json (occupants[].web; summary.joins.web_facts)

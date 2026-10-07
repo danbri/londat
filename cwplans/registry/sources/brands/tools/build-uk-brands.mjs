@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Step 1: the UK brand list, from the OSM name-suggestion-index (NSI, BSD-3-Clause).
-//   node magpie/cwplans/registry/sources/brands/tools/build-uk-brands.mjs
+//   node cwplans/registry/sources/brands/tools/build-uk-brands.mjs
 // in:  data/raw/registry/nsi/node_modules/name-suggestion-index/dist/json/{nsi,featureCollection}.json
 // out: registry/sources/brands/brands-uk.json
 // A brand is kept when it sits in the NSI "brands/" tree and its locationSet, resolved by

@@ -2,7 +2,7 @@
 // Render every web page the registry links to in headless Chromium and extract its schema.org structured data:
 // JSON-LD (raw text), microdata (as JSON) and RDFa (as N-Triples). Then write the committed copy in
 // third_party/cwplans-structured-data/. Facts are pulled out of that copy by tools/extract-structured-data.mjs.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs          # render what is not done, then build
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/render-structured-data.mjs          # render what is not done, then build
 //   ... --list           count URLs by source and priority, no network
 //   ... --refresh        render every URL again
 //   ... --retry-failed   render again the URLs whose last attempt failed with a transient error
@@ -27,13 +27,13 @@ import { fileURLToPath } from 'url';
 import { extractStructuredData } from './structured-dom.mjs';
 
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
-const REPO = join(CW, '../..');
+const REPO = join(CW, '..');
 const OUT_RAW = join(CW, 'data/raw/rendered');
 const CRAWL = join(CW, 'data/raw/crawl');
 const TP = join(REPO, 'third_party/cwplans-structured-data');
 const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const UA_TOKEN = 'glitchcan-cwplans';
-const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 glitchcan-cwplans/0.1 (+https://github.com/danbri/glitchcan-minigam)';
+const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 glitchcan-cwplans/0.1 (+https://github.com/danbri/londat)';
 const PARALLEL = 3, HOST_GAP_MS = 2000, CAP_MS = 20000, LATE_MS = 1500, MAX_BLOCK = 200 * 1024;
 const argv = process.argv.slice(2), args = new Set(argv);
 const opt = k => (argv.find(a => a.startsWith(`--${k}=`)) || '').slice(k.length + 3) || null;
@@ -548,7 +548,7 @@ mkdirSync(join(TP, 'pages'), { recursive: true });
 for (const [host, rows] of byHost) writeFileSync(join(TP, 'pages', host.replace(/[^\w.-]/g, '_') + '.jsonl'), rows.sort((a, b) => a.url.localeCompare(b.url)).map(r => JSON.stringify(r)).join('\n') + '\n');
 const dates = recs.map(r => r.fetched).filter(Boolean).sort();
 writeFileSync(join(TP, 'index.json'), JSON.stringify({
-  generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/render-structured-data.mjs', rendered_between: [dates[0], dates[dates.length - 1]], user_agent: UA,
+  generated: new Date().toISOString(), tool: 'cwplans/tools/render-structured-data.mjs', rendered_between: [dates[0], dates[dates.length - 1]], user_agent: UA,
   url_references_by_source: refsBySource, skipped_references: skipped, counts: meta,
   storefinder: sfOut.length ? { searches: sfOut.length, brands: new Set(sfOut.map(o => o.qid)).size, by_outcome: sfOut.reduce((a, o) => (a[o.outcome] = (a[o.outcome] || 0) + 1, a), {}),
     by_method: sfOut.filter(o => o.via).reduce((a, o) => (a[o.via.method] = (a[o.via.method] || 0) + 1, a), {}),

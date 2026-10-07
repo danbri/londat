@@ -1,4 +1,4 @@
-// What a phone GPU would do with the 3D page's shaders, checked without a phone (magpie/cwplans/docklands/index.html,
+// What a phone GPU would do with the 3D page's shaders, checked without a phone (cwplans/docklands/index.html,
 // sky.js and line-styles.js). Two parts:
 //  1. The page is opened in headless Chromium (SwiftShader); every shader source the page compiles is captured, and for
 //     each program (the line styles are switched on once so that their programs compile) the tool lists its precision and counts its uniform vectors, varyings, attributes and samplers
@@ -8,7 +8,7 @@
 //     infinity), against the same maths in fp32. Each case names the shader text it mirrors; the tool fails when that
 //     text is no longer in the page (the case would be stale).
 //
-//   node magpie/cwplans/tools/check-fp16-shaders.mjs [--no-browser]
+//   node cwplans/tools/check-fp16-shaders.mjs [--no-browser]
 //
 // Method, results and what only a real phone can show: the docklands-3d-page skill, "fp16 and WebGL 1 limits".
 import { readFileSync } from 'fs';
@@ -16,7 +16,7 @@ import { createServer } from 'http';
 import { join, extname } from 'path';
 import { TOOLS } from './lib.mjs';
 
-const ROOT = join(TOOLS, '..', '..', '..'), PAGE = join(TOOLS, '..', 'docklands', 'index.html'), SKY = join(TOOLS, '..', 'docklands', 'sky.js'), LINES = join(TOOLS, '..', 'docklands', 'line-styles.js');
+const ROOT = join(TOOLS, '..', '..'), PAGE = join(TOOLS, '..', 'docklands', 'index.html'), SKY = join(TOOLS, '..', 'docklands', 'sky.js'), LINES = join(TOOLS, '..', 'docklands', 'line-styles.js');
 const src = readFileSync(PAGE, 'utf8') + readFileSync(SKY, 'utf8') + readFileSync(LINES, 'utf8');
 let failed = 0;
 
@@ -102,7 +102,7 @@ async function capture() {
     const at = P.attachShader; P.attachShader = function (p, s) { (p.__sh || (p.__sh = [])).push(S.get(s)); return at.call(this, p, s); };
     const lk = P.linkProgram; P.linkProgram = function (p) { out.push((p.__sh || []).map(o => ({ type: o.t === this.FRAGMENT_SHADER ? 'fragment' : 'vertex', src: o.src }))); return lk.call(this, p); };
     const gc = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function (k, o) { const g = gc.call(this, k, o); if (g && /webgl/.test(k) && !window.__gl) window.__gl = g; return g; }; });
-  await page.goto(`http://127.0.0.1:${port}/magpie/cwplans/docklands/index.html?t=photo&view=greenland`);
+  await page.goto(`http://127.0.0.1:${port}/cwplans/docklands/index.html?t=photo&view=greenland`);
   await page.waitForFunction(() => window.__docklands?.AT && window.__docklands.NIGHT.built && window.DocklandsSky?.S?.ready, null, { timeout: 240000 });
   for (const m of ['lines', 'vectrex']) {   // the line styles compile their programs when first drawn
     await page.evaluate(m => window.__docklands.setStyle(m), m); await page.waitForFunction(() => window.DocklandsLines?.built, null, { timeout: 240000 });

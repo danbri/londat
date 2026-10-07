@@ -1,6 +1,6 @@
 // VOA non-domestic rating list (business rates), 2026 list, filtered to the Canary Wharf postcodes.
-// Run: node magpie/cwplans/tools/registry-voa.mjs [path/to/list-entries.zip]
-//   (default: magpie/cwplans/data/raw/registry/voa/ndr-2026-listentries-*.zip, from
+// Run: node cwplans/tools/registry-voa.mjs [path/to/list-entries.zip]
+//   (default: cwplans/data/raw/registry/voa/ndr-2026-listentries-*.zip, from
 //    https://voaratinglists.blob.core.windows.net/html/rlidata.htm — free, no login, but a RESTRICTED licence, not OGL)
 // Writes:
 //   data/raw/registry/voa/voa-ndr-2026-canary-wharf.json        per-property extract (NOT committed: restricted licence)

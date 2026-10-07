@@ -4,7 +4,7 @@
 //   out: third_party/cwplans-structured-data/coref/sameas.nq.gz   (owl:sameAs between description IRIs; graph = key rule)
 //        coref/descriptions.json  (description IRI -> page, node, kind, name, keys)
 //        coref/entities.json      (groups: members, rules that joined them, sites, registry keys, conflicts)
-//   node magpie/cwplans/tools/web-coref.mjs
+//   node cwplans/tools/web-coref.mjs
 // Remove a bad key rule by dropping its named graph and recomputing the closure. Skill: cwplans-web-harvest, "Same thing".
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
@@ -13,7 +13,7 @@ import { join } from 'path';
 import { parse, query, serialize, Dataset, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
-const TP = join(TOOLS, '..', '..', '..', 'third_party', 'cwplans-structured-data'), OUT = join(TP, 'coref');
+const TP = join(TOOLS, '..', '..', 'third_party', 'cwplans-structured-data'), OUT = join(TP, 'coref');
 mkdirSync(OUT, { recursive: true });
 const BASE = 'https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/';
 const cat = JSON.parse(readFileSync(join(TP, 'idioms', 'idioms.json'), 'utf8'));
@@ -98,8 +98,8 @@ const entities = [...groups.values()].map((m, n) => {
     members: ds_.map(d => d.iri), rules: [...new Set(m.flatMap(i => [...edgeRules[i]]))], registry_keys: regs, branch_page_buildings: bld,
     conflict: bld.length > 1 ? 'one branch (its own page), more than one registry building' : null };
 }).sort((a, b) => b.members.length - a.members.length);
-const meta = { generated: new Date().toISOString(), tool: 'magpie/cwplans/tools/web-coref.mjs',
-  engine: '@factoidal/core ' + JSON.parse(readFileSync(join(TOOLS, '..', '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
+const meta = { generated: new Date().toISOString(), tool: 'cwplans/tools/web-coref.mjs',
+  engine: '@factoidal/core ' + JSON.parse(readFileSync(join(TOOLS, '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
   rules: RULES, descriptions: descs.length, entities: entities.length, ladder,
   cross_site: entities.filter(e => e.sites.length > 1).length, conflicts: entities.filter(e => e.conflict).length };
 writeFileSync(join(OUT, 'sameas.nq.gz'), gzipSync(await serialize(new Dataset(quads), { format: 'nquads' })));

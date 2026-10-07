@@ -2,7 +2,7 @@
 // docklands/data/sky/. Method and rules: pipeline.json activity "fetch-sky"; lessons: docklands/README.md
 // "Sky, time, weather and tide".
 //
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-sky.mjs [stars] [lines] [sats] [weather] [tide] [names] [messier] [clouds [2026-10-03T23:00Z]] [lcy] [--date 2026-10-03]
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-sky.mjs [stars] [lines] [sats] [weather] [tide] [names] [messier] [clouds [2026-10-03T23:00Z]] [lcy] [--date 2026-10-03]
 //
 // With no part named, all nine run. --date picks the evening of the weather and tide snapshots (London date; the
 // snapshot covers that day and the next, so the hours after midnight are in it). Satellites are always the current

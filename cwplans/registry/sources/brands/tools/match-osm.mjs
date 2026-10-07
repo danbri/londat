@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Step 3a: branded OSM features in the box.
-//   node magpie/cwplans/registry/sources/brands/tools/match-osm.mjs
+//   node cwplans/registry/sources/brands/tools/match-osm.mjs
 // in:  data/raw/registry/osm-box-features.json (osm-scan.mjs), brands-uk.json
 // out: data/raw/registry/osm-branches.json
 // Rules (see README "Match rules"): a business feature (shop/amenity/office/tourism/leisure/healthcare/craft)

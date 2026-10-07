@@ -2,10 +2,10 @@
 """Fetch geocoded museum and archaeological records inside the Docklands box.
 
 Run from the repository root:
-    python3 magpie/cwplans/registry/sources/museums/fetch_records.py
+    python3 cwplans/registry/sources/museums/fetch_records.py
 
 Needs curl, pyproj (BNG -> WGS84) and GDAL's ogr2ogr. Raw responses go to
-magpie/cwplans/data/raw/registry/museums/ (not committed). Output: records.json and
+cwplans/data/raw/registry/museums/ (not committed). Output: records.json and
 apa_greater_london.geojson next to this script. Sources, licences and precision: README.md.
 
 Personal data: no finder, landowner, donor or author names are kept. Records whose
@@ -16,7 +16,7 @@ from pyproj import Transformer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW = os.path.normpath(os.path.join(HERE, '../../../data/raw/registry/museums'))
-UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)'
+UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)'
 W, S, E, N = -0.0950, 51.4740, 0.0150, 51.5220
 QLEVER = 'https://qlever.dev/api/wikidata'
 HE = 'https://services-eu1.arcgis.com/ZOdPfBS3aqqDYPUQ/arcgis/rest/services/'

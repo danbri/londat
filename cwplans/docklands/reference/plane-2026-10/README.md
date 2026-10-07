@@ -18,7 +18,7 @@ lower right corner. Low evening sun behind cloud at the right, out of the frame.
 
 ## The camera (solved 2026-10-05)
 
-`node tools/view-mcp/solve.mjs magpie/cwplans/docklands/reference/plane-2026-10/points.json` (output: `solution.json`).
+`node tools/view-mcp/solve.mjs cwplans/docklands/reference/plane-2026-10/points.json` (output: `solution.json`).
 A pinhole camera with roll, fitted by Levenberg-Marquardt to 2 tower tops (`towers.json`), Greenland Pier (places list,
 weight 0.5), 32 shoreline pixels (each one's distance to the projected OSM water outline: Greenland Dock's south bank,
 both banks of Limehouse Reach, the Rotherhithe north shore) and 12 pixels on the visible horizon (the sea-level dip from
@@ -68,7 +68,7 @@ direction of flight; no published departure route was checked. Unproven.
 
 ## The view on the 3D page
 
-https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=plane&t=2026-10-05T17:40
+https://danbri.github.io/londat/cwplans/docklands/?view=plane&t=2026-10-05T17:40
 
 `plane` in `VIEWS` (index.html): `eyeView([211, 802, -845], 223.84, -13.56, 56.9)` with `roll: 9.18` and `night: false`.
 The model ends at the box edge (x -5150 to 2350, z -2000 to 3600: from London Bridge to Leamouth, from Stepney to New

@@ -2,7 +2,7 @@
 // drone frames cover, drops floaters and oversized splats, gives each splat its model building (for the music
 // visualiser), and writes the set, its metadata and its line in the set list.
 //
-//   node magpie/cwplans/tools/publish-trained-splat.mjs data/raw/drone/<run>/<name>.splat <set-name> "<title>"
+//   node cwplans/tools/publish-trained-splat.mjs data/raw/drone/<run>/<name>.splat <set-name> "<title>"
 //
 // in:  the .splat (32 bytes a splat), the run's transforms.json (frame positions), docklands/data/splats/cw-synth.json
 //      (building groups: [centre x, centre z, base, top, model building index]), docklands/data/area.js (footprints)

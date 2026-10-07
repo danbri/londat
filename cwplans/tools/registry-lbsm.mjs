@@ -1,6 +1,6 @@
 // GLA London Building Stock Model 2 (LBSM2, OGL v3): homes in the Canary Wharf postcodes and box, aggregated per postcode
-// and per building (MasterMap TOID). Run: node magpie/cwplans/tools/registry-lbsm.mjs
-// Needs magpie/cwplans/data/raw/registry/lbsm/LBSMv2_Tower_Hamlets.csv from https://data.london.gov.uk/dataset/2k55d
+// and per building (MasterMap TOID). Run: node cwplans/tools/registry-lbsm.mjs
+// Needs cwplans/data/raw/registry/lbsm/LBSMv2_Tower_Hamlets.csv from https://data.london.gov.uk/dataset/2k55d
 // Writes registry/sources/uprn/lbsm2-homes-summary.json.
 // AGGREGATES ONLY. LBSM2 holds one row per home, including modelled tenure, fuel poverty and deprivation fields.
 // Those describe households, so this tool never reads them out, and it writes no per-home rows.

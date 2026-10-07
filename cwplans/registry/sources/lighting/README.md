@@ -72,7 +72,7 @@ What the photos show (judged by eye, colours measured from the brightest pixels;
 1. Web searches for the policy, the lighting system, campaigns and contractors; each fact kept in our words with its
    URL and date (`policy_sources`). Where a page could not be read (CWG pages answer scripts with an Imperva
    challenge), the fact comes from a search-engine summary or a republished copy, and `read` says so.
-2. `NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-crown-lighting.mjs`: cwg.com sitemaps (served to scripts;
+2. `NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-crown-lighting.mjs`: cwg.com sitemaps (served to scripts;
    robots.txt allows them), slug filter, Internet Archive availability API and `id_` copies; Commons categories
    "One Canada Square at night" and "Canary Wharf at night" plus four searches, with capture date, licence and author,
    and 960 px thumbnails cached in `data/raw/registry/lighting/` (gitignored). Search hits must name the place

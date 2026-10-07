@@ -1,7 +1,7 @@
 ---
 name: cwplans-london-datastore
 description: >-
-  The London Datastore (data.london.gov.uk, GLA) walked for magpie/cwplans: the v3 export API (all 1,305 datasets in
+  The London Datastore (data.london.gov.uk, GLA) walked for cwplans: the v3 export API (all 1,305 datasets in
   one answer; the CKAN-style search ignores its parameters), the site terms, tools/walk-london-datastore.mjs (walk,
   refs, probe, triage, harvest), the written triage rules and the final state of every dataset (219 harvested after
   the rule-driven harvest of 2026-10-04, tools/lds-harvest-auto.mjs, harvest-log.json), the area read from inside the
@@ -12,29 +12,31 @@ description: >-
   files to the registry, or repair a rounded or damaged column in a spreadsheet-sourced file.
 ---
 
-# London Datastore for magpie/cwplans
+# London Datastore for cwplans
 
 Policy, the fault register (F-numbers) and the activity log: the hub skill `docklands-data-curation`
-(`magpie/cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
-Results and the ranked backlog: https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/london-datastore/README.md.
+(`cwplans/skills/docklands-data-curation/`). Append what you did to its `ACTIVITY-LOG.md`.
+Results and the ranked backlog: https://github.com/danbri/londat/blob/main/cwplans/feeds/london-datastore/README.md.
 Checked against the tool and the files on 2026-10-04.
 
 ## Run
 
-**Where the files are (2026-10-05):** the data files of `feeds/london-datastore/` live in the repository
-https://github.com/danbri/londat, under `cwplans/feeds/london-datastore/` (same relative paths); `lds-building.js` and
-`README.md` stay here. The tools write to the londat checkout (`LONDAT_DIR`, default `../londat` next to this
-repository's folder; `tools/londat.mjs`); commit and push the data there, the register and tools here. A new register
-line has `"hosted": "londat"` (`lds-harvest-auto.mjs register` writes it). Pages read the files through `data-base.js`
-(`CwData.url`). Rule and checks: `docklands-data-curation`, "Data hosted in danbri/londat".
+**Where the files are:** the data files of `feeds/london-datastore/` moved to the repository
+https://github.com/danbri/londat on 2026-10-05, under `cwplans/feeds/london-datastore/` (same relative paths); since
+2026-10-07 `lds-building.js`, `README.md`, the tools and the register are in the same repository. The tools write to
+this checkout (`tools/londat.mjs`; `LONDAT_DIR` defaults to the checkout itself: no second checkout to set up); commit
+and push the data, the register and the tools together. Register lines have no `"hosted"` field (removed on
+2026-10-07; `lds-harvest-auto.mjs register` no longer writes it). Pages read the files through `data-base.js`
+(`CwData.url`, from the same site). History of the two-repository layout (2026-10-05 to 2026-10-07):
+`docklands-data-curation`, "Data hosted in danbri/londat".
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs walk          # catalogue.json (2 requests)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs walk --details   # + 1,305 detail records (~35 min)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs refs          # zone-codes.json (ONSPD, 20od9; ~3 min)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs probe [id ...] [--rescan]   # probe.json (~30 min)
-    node magpie/cwplans/tools/walk-london-datastore.mjs triage                             # triage.json (no network)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-london-datastore.mjs harvest [key ...]   # feeds/london-datastore/<key>/
-    node magpie/cwplans/tools/check-data-register.mjs --write
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs walk          # catalogue.json (2 requests)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs walk --details   # + 1,305 detail records (~35 min)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs refs          # zone-codes.json (ONSPD, 20od9; ~3 min)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs probe [id ...] [--rescan]   # probe.json (~30 min)
+    node cwplans/tools/walk-london-datastore.mjs triage                             # triage.json (no network)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-london-datastore.mjs harvest [key ...]   # feeds/london-datastore/<key>/
+    node cwplans/tools/check-data-register.mjs --write
 
 `--refresh` re-downloads (raw files in `data/raw/london-datastore/`, gitignored, are reused otherwise). `--details`
 also GETs `/api/v3/dataset/<id>` for every dataset (done for all 1,305 on 2026-10-04: 0 archived, 0 resources the
@@ -73,7 +75,8 @@ the project User-Agent. Do not run two copies at once (two processes are two que
   excluded-before. `feeds/london-datastore/` itself and the generated docs are not read. After you register a harvest,
   re-run triage: the harvested datasets become held and drop out of the ranking.
 - **Sensitive** titles (homicide, custody, strip and intimate searches, stop and search, suicide, rough sleeping,
-  bariatric incidents...) score 0 and are never harvested, whatever the licence (data ethics in `CLAUDE.md`).
+  bariatric incidents...) score 0 and are never harvested, whatever the licence (data ethics in the
+  danbri/glitchcan-minigam `CLAUDE.md`: https://github.com/danbri/glitchcan-minigam/blob/master/CLAUDE.md).
 - **Score** = relevance weight x theme value x recency x machine-readable x join key x open x (held 0, listed 0.8).
   It ranks; it does not decide. The themes are keyword lists and the Datastore topics add themes broadly, so read the
   `reasons` and the resources before choosing.
@@ -132,8 +135,8 @@ Owner, 2026-10-04: "Can we record a methodology for fixing this by copying and a
 is general: it applies to any spreadsheet-sourced file with an identifier column (UPRN, USRN, company number, phone).
 Tool: `tools/amend-uprns.mjs` (recipe `cultural-infrastructure`, or generic flags; see its header).
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/amend-uprns.mjs cultural-infrastructure   # about 3 min first run
-    node magpie/cwplans/tools/check-data-register.mjs --write
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/amend-uprns.mjs cultural-infrastructure   # about 3 min first run
+    node cwplans/tools/check-data-register.mjs --write
 
 **Rules.**
 
@@ -237,13 +240,13 @@ checked; match on latitude and longitude, not on eastings).
 Owner, 2026-10-04: "Keep working thru datasets". The hand table `HARVEST` of the walk tool does not scale to 219 listed
 datasets, so a second tool harvests by written rules and records the outcome of every dataset it runs.
 
-    node magpie/cwplans/tools/lds-harvest-auto.mjs plan [id ...] [--rank a-b]          # the resources the rules pick (no network)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/lds-harvest-auto.mjs zone-names     # zone-names.json (stations, town centres, OAs)
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]
-    node magpie/cwplans/tools/lds-harvest-auto.mjs register                            # data-register.json lines, pipeline.json activity
-    node magpie/cwplans/tools/walk-london-datastore.mjs triage                          # harvest-log.json outcomes -> final states
-    node magpie/cwplans/tools/lds-harvest-auto.mjs index                               # index.json for the atlas and the 3D page
-    node magpie/cwplans/tools/join-lds.mjs                                             # joins to the registry (below)
+    node cwplans/tools/lds-harvest-auto.mjs plan [id ...] [--rank a-b]          # the resources the rules pick (no network)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/lds-harvest-auto.mjs zone-names     # zone-names.json (stations, town centres, OAs)
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/lds-harvest-auto.mjs run [id ...] [--rank a-b] [--again]
+    node cwplans/tools/lds-harvest-auto.mjs register                            # data-register.json lines, pipeline.json activity
+    node cwplans/tools/walk-london-datastore.mjs triage                          # harvest-log.json outcomes -> final states
+    node cwplans/tools/lds-harvest-auto.mjs index                               # index.json for the atlas and the 3D page
+    node cwplans/tools/join-lds.mjs                                             # joins to the registry (below)
 
 The tool imports the walk tool (its polite queue, readers and `harvestGeo`), so it runs on its own: importing it from
 the walk tool deadlocked (two modules waiting on each other's top-level await). `LDS_HARVEST_LOG=<file>` writes the

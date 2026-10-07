@@ -1,7 +1,7 @@
 // Re-test the known @factoidal/core faults and behaviours this project works around. Prints each one as STILL or
 // FIXED, so after a Factoidal upgrade you know which workarounds can go. No network; the store checks pack small stores
 // in a temporary folder and remove it.
-//   node magpie/cwplans/tools/check-factoidal.mjs
+//   node cwplans/tools/check-factoidal.mjs
 // Skills: cwplans-web-harvest, "Factoidal notes" (issue text skills/cwplans-web-harvest/factoidal-issue-2026-10-06.md);
 // cwplans-kgx (store checks: https://github.com/danbri/factoidal/issues/697).
 import { readFileSync, writeFileSync, mkdtempSync, rmSync, readdirSync } from 'fs';
@@ -12,7 +12,7 @@ import { loadL4 } from '@factoidal/core/l4-assets/l4factoidal.js';
 import { parse, query, serialize, toCottas, openCottas, queryCottas, closeCottas, Dataset, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
-const pkg = JSON.parse(readFileSync(join(TOOLS, '..', '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8'));
+const pkg = JSON.parse(readFileSync(join(TOOLS, '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8'));
 console.log('@factoidal/core', pkg.version);
 const lines = s => s.trim().split('\n').filter(Boolean).length;
 const ds = await parse('<http://ex/a> <http://ex/p> "x" .\n', { format: 'nquads' });
@@ -35,7 +35,7 @@ const nq4 = '<http://ex/a> <http://ex/p> "x" <http://ex/g> .\n';
 const cs = await toCottas(nq4), hs = await openCottas(cs); const nStr = (await queryCottas(hs, 'SELECT * WHERE { GRAPH ?g { ?s ?p ?o } }')).length; await closeCottas(hs);
 checks.push(['toCottas() of an N-Quads string writes an empty store (pass a parsed Dataset)', nStr === 0]);
 // store behaviours of issue 697 (small versions of its repro): 400 subjects, 3 predicates
-const tmp = mkdtempSync(join(tmpdir(), 'factoidal-check-')), bin = join(TOOLS, '..', '..', '..', 'node_modules', '.bin', 'factoidal');
+const tmp = mkdtempSync(join(tmpdir(), 'factoidal-check-')), bin = join(TOOLS, '..', '..', 'node_modules', '.bin', 'factoidal');
 const nq = (subs, graphOf) => subs.flatMap((s, i) => [`<${s}> <http://ex.org/name> "n${i}" <${graphOf(i)}> .`, `<${s}> <http://ex.org/size> "${i % 7}" <${graphOf(i)}> .`,
   `<${s}> <http://ex.org/next> <${subs[(i + 1) % subs.length]}> <${graphOf(i)}> .`]).sort().join('\n') + '\n';
 const fixed = Array.from({ length: 400 }, (_, i) => `http://ex.org/thing/${String(i).padStart(3, '0')}`), varied = Array.from({ length: 400 }, (_, i) => `http://ex.org/thing/${i}`).sort();

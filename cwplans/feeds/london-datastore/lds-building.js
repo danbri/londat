@@ -34,7 +34,7 @@
       out.push(`<div><b>Records placed in this building</b> <span class="small">(record point inside the outline, medium)</span><ul class="small" style="margin:2px 0 0 16px;padding:0">${Object.entries(by).map(([k, ps]) => { used.add(k); const s = M.sources[k] || {}; return `<li>${esc((s.title || k).replace(/^London Datastore: /, ''))}: ${ps.length}${ps.some(p => p.name) ? ' (' + ps.filter(p => p.name).slice(0, 3).map(p => esc(p.name)).join('; ') + (ps.length > 3 ? '…' : '') + ')' : ''}</li>`; }).join('')}</ul></div>`); }
     if (!out.length) return '';
     const cred = [...used].map(k => M.sources[k]).filter(Boolean).map(s => `<a href="${esc(s.page)}">${esc(s.title.replace(/^London Datastore: /, ''))}</a> (${esc(s.licence)})`).join('; ');
-    return `<div class="lds-building">${out.join('')}<div class="small" style="margin-top:4px">London Datastore: ${cred}. The GLA cannot warrant the quality or accuracy of the data. Join keys and confidence: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/skills/cwplans-london-datastore/SKILL.md">method</a>.</div></div>`;
+    return `<div class="lds-building">${out.join('')}<div class="small" style="margin-top:4px">London Datastore: ${cred}. The GLA cannot warrant the quality or accuracy of the data. Join keys and confidence: <a href="https://github.com/danbri/londat/blob/main/cwplans/skills/cwplans-london-datastore/SKILL.md">method</a>.</div></div>`;
   }
   window.LdsBuilding = { load, html, get state() { return { loaded: !!S.links, buildings: S.links ? Object.keys(S.links.buildings).length : 0 }; } };
 })();

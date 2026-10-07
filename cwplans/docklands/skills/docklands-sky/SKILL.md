@@ -1,7 +1,7 @@
 ---
 name: docklands-sky
 description: >-
-  The sky, the page clock, the weather and the tide on the Docklands 3D page (magpie/cwplans/docklands/sky.js, Menu >
+  The sky, the page clock, the weather and the tide on the Docklands 3D page (cwplans/docklands/sky.js, Menu >
   Sky, ?t=2026-10-03T22:30 or ?t=photo): astronomy-engine for the sun, the moon's phase and bright limb, planets,
   Jupiter's moons, rise/set, twilight, golden and blue hour; Bright Star Catalogue stars with a light-pollution star
   limit; d3-celestial constellation lines; a Milky Way band computed from galactic coordinates; CelesTrak satellites
@@ -17,10 +17,10 @@ description: >-
 
 # Docklands sky, time, weather and tide
 
-Page: https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?t=photo (Menu > Sky).
-Code: `magpie/cwplans/docklands/sky.js` (one classic script, global `DocklandsSky`). Readable method and numbers:
+Page: https://danbri.github.io/londat/cwplans/docklands/?t=photo (Menu > Sky).
+Code: `cwplans/docklands/sky.js` (one classic script, global `DocklandsSky`). Readable method and numbers:
 `docklands/README.md` "Sky, time, weather and tide"
-(https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/docklands/README.md). The photo solution:
+(https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md). The photo solution:
 `docklands/reference/night-2026-10-03/README.md`. The rest of the page is the `docklands-3d-page` skill; data policy
 is `docklands-data-curation`.
 
@@ -93,7 +93,7 @@ eye on the wall, measure the moon by limb and cusps, and report the azimuth-time
 
 ### Photo time from shadows (day photos, 2026-10-04)
 
-`node magpie/cwplans/tools/solve-photo-sun.mjs` (input `docklands/reference/day-2026-10-04/points.json`) solves a day photo
+`node cwplans/tools/solve-photo-sun.mjs` (input `docklands/reference/day-2026-10-04/points.json`) solves a day photo
 with the sun out of frame: a pinhole camera fitted to tower tops (`towers.json`), the foot of a vertical post and the shadow of
 its top back-projected onto a level deck, sun azimuth = shadow bearing + 180° (+ 1.54° grid to true), matched to
 astronomy-engine (the vendored browser build, run in a `vm` context; pass it that realm's `Date`, or its `instanceof Date`
@@ -105,11 +105,11 @@ when a photo has them; lit and dark faces of towers with known orientation are a
 
 ## Refresh the snapshots
 
-    NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-sky.mjs [stars] [lines] [sats] [weather] [tide] [names] [messier] [clouds [2026-10-03T23:00Z]] [lcy] [--date 2026-10-03]
+    NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-sky.mjs [stars] [lines] [sats] [weather] [tide] [names] [messier] [clouds [2026-10-03T23:00Z]] [lcy] [--date 2026-10-03]
 
 Method and rules: `pipeline.json` activity `fetch-sky` (area "sky"). CelesTrak keeps no history: fetch satellites within
 a day or two of the date. A new date's files need new names in `sky.js` (`SNAP`) and register entries; then run
-`node magpie/cwplans/tools/check-data-register.mjs --write` (must exit 0). Node fetches through the agent proxy time out
+`node cwplans/tools/check-data-register.mjs --write` (must exit 0). Node fetches through the agent proxy time out
 now and then (`UND_ERR_CONNECT_TIMEOUT` while curl works): the tool retries three times.
 
 ## Tests

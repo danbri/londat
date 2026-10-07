@@ -59,7 +59,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
 
 <div class="wrap">
 <header>
-  <div class="eyebrow">magpie/cwplans · web harvest · report of 2026-10-06</div>
+  <div class="eyebrow">cwplans · web harvest · report of 2026-10-06</div>
   <h1>The schema.org data that Docklands businesses publish about themselves</h1>
   <p class="lede">What we extracted from the websites of the occupants, brands and charities that the Canary Wharf registry links to: the entities, the search features the markup targets, shape patterns we can check, and how many descriptions refer to the same real thing.</p>
 </header>
@@ -268,7 +268,7 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <tr><td>SocialPreview</td><td class="n">270</td><td class="n">698</td><td>image size 92, article times 61</td></tr>
   </table></div>
   <p>No site writes <code>dayOfWeek</code> as a schema.org IRI node. 12 sites write the IRI as a text string, and 27 write the day name.</p>
-  <p>Files: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/third_party/cwplans-structured-data/idioms/idioms.shex">idioms.shex</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/third_party/cwplans-structured-data/idioms/idioms.json">idioms.json</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/third_party/cwplans-structured-data/idioms/summary.json">summary.json</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/web-idioms.mjs">web-idioms.mjs</a>.</p>
+  <p>Files: <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/idioms/idioms.shex">idioms.shex</a>, <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/idioms/idioms.json">idioms.json</a>, <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/idioms/summary.json">summary.json</a>, <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/web-idioms.mjs">web-idioms.mjs</a>.</p>
   <h3>2. Entity groups as sameAs links</h3>
   <p>890 organisation and place descriptions. Each key rule writes its <code>owl:sameAs</code> links in its own named graph, so a person can remove one rule and compute the groups again.</p>
   <div class="tbl"><table>
@@ -279,16 +279,16 @@ footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);paddin
     <tr><td>+ same telephone</td><td class="n">396</td></tr>
     <tr><td>+ same postcode and name</td><td class="n">396</td></tr>
   </table></div>
-  <p>Result: 396 entities (151 organisations, 245 places), 73 with more than one description, 14 across sites. Two changes from the first run stop over-merges. Two branches with the same name on one site join only when they have the same postcode (this kept Pret branches apart). Two places with different postcodes never join by telephone or sameAs (this kept the Post Office, Tom Davies, Bread &amp; Truffle and CCT branches apart). Files: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/third_party/cwplans-structured-data/coref/entities.json">entities.json</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/web-coref.mjs">web-coref.mjs</a>.</p>
+  <p>Result: 396 entities (151 organisations, 245 places), 73 with more than one description, 14 across sites. Two changes from the first run stop over-merges. Two branches with the same name on one site join only when they have the same postcode (this kept Pret branches apart). Two places with different postcodes never join by telephone or sameAs (this kept the Post Office, Tom Davies, Bread &amp; Truffle and CCT branches apart). Files: <a href="https://github.com/danbri/londat/blob/main/third_party/cwplans-structured-data/coref/entities.json">entities.json</a>, <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/web-coref.mjs">web-coref.mjs</a>.</p>
   <h3>3. Fault class F46</h3>
-  <p>F46: one branch, two building records from two sources. A conflict now counts only when the place is the only place on its page. 6 conflicts remain, for example Atis (cwb-0466, cwb-0418), Le Chalet (cwb-0421, cwb-0466) and Charbonnel et Walker (cwb-0411, cwb-0455). Status: open. Register: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/skills/docklands-data-curation/SKILL.md">docklands-data-curation skill</a>.</p>
+  <p>F46: one branch, two building records from two sources. A conflict now counts only when the place is the only place on its page. 6 conflicts remain, for example Atis (cwb-0466, cwb-0418), Le Chalet (cwb-0421, cwb-0466) and Charbonnel et Walker (cwb-0411, cwb-0455). Status: open. Register: <a href="https://github.com/danbri/londat/blob/main/cwplans/skills/docklands-data-curation/SKILL.md">docklands-data-curation skill</a>.</p>
   <h3>4. Typed occupant list from canarywharf.com</h3>
-  <p>374 directory entries; 357 have page data from the archive and 321 have a registry building. The schema.org type comes from the CWG category by a table in the tool, not from the publisher. Largest types: Restaurant 68, CafeOrCoffeeShop 33, Store 31, HealthAndBeautyBusiness 23. First listed: 90 in 2013, 55 in 2025. Last edited: 308 in 2024 or 2025. Files: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/sources/brands/cwg-directory-typed.json">cwg-directory-typed.json</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/tools/cwg-directory-typed.mjs">cwg-directory-typed.mjs</a>.</p>
+  <p>374 directory entries; 357 have page data from the archive and 321 have a registry building. The schema.org type comes from the CWG category by a table in the tool, not from the publisher. Largest types: Restaurant 68, CafeOrCoffeeShop 33, Store 31, HealthAndBeautyBusiness 23. First listed: 90 in 2013, 55 in 2025. Last edited: 308 in 2024 or 2025. Files: <a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory-typed.json">cwg-directory-typed.json</a>, <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/cwg-directory-typed.mjs">cwg-directory-typed.mjs</a>.</p>
   <h3>Factoidal fault found</h3>
   <p><code>serialize()</code> drops quads without an error when a quad uses a blank node that a CONSTRUCT made with <code>BNODE()</code>. <code>toNQuads()</code> keeps them. The tools use SHA-1 IRIs for new nodes to avoid this.</p>
 </section>
 
-<footer>Source: <code>third_party/cwplans-structured-data/all.nq.gz</code> and <code>pages/*.jsonl</code> in danbri/glitchcan-minigam, crawled 2026-10-03 for scoping under the owner's crawl rule. First counts made on 2026-10-06 with rdflib 7.6; the steps-done section with @factoidal/core 0.7.1. The data is the site owners' published markup; it is kept for scoping and is re-checked before anything leaves the prototyping phase.</footer>
+<footer>Source: <code>third_party/cwplans-structured-data/all.nq.gz</code> and <code>pages/*.jsonl</code> in danbri/glitchcan-minigam until 2026-10-07 (now danbri/londat), crawled 2026-10-03 for scoping under the owner's crawl rule. First counts made on 2026-10-06 with rdflib 7.6; the steps-done section with @factoidal/core 0.7.1. The data is the site owners' published markup; it is kept for scoping and is re-checked before anything leaves the prototyping phase.</footer>
 </div>
 
 <script>

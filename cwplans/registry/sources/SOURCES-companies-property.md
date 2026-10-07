@@ -1,6 +1,6 @@
 # Company-level and property-level open data for the Canary Wharf postcodes
 
-Fetched 2026-10-03. Input: `magpie/cwplans/postcodes/postcodes.json`. The Canary Wharf set is the tiers
+Fetched 2026-10-03. Input: `cwplans/postcodes/postcodes.json`. The Canary Wharf set is the tiers
 `cw-core` (325), `cw-ward` (80) and `cw-box-other-ward` (253): 658 live postcodes. The 224 `terminated-cw`
 postcodes are kept for history, so most tools query 882 postcodes. The Canary Wharf box is WGS84
 [-0.0300, 51.4980, -0.0050, 51.5100]; the Docklands box is [-0.0950, 51.4740, 0.0150, 51.5220].
@@ -10,9 +10,9 @@ directors, residents, tenants or owners who are private individuals. No tool her
 filing-history data. Price Paid, UPRN and LBSM2 rows are addresses or properties; nothing here links them
 to people.
 
-Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools are in
-`magpie/cwplans/tools/registry-*.mjs` (Node 22, no new packages). All HTTP uses the User-Agent
-`glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)`.
+Raw downloads are in `cwplans/data/raw/registry/` (git-ignored). Tools are in
+`cwplans/tools/registry-*.mjs` (Node 22, no new packages). All HTTP uses the User-Agent
+`glitchcan-cwplans/0.1 (https://github.com/danbri/londat)`.
 
 | dataset | access | licence | Canary Wharf result | output |
 |---|---|---|---|---|
@@ -25,7 +25,7 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
 | VOA non-domestic rating list 2026 | open download, no login | **restricted VOA licence, not OGL** | 4,546 rated properties at 289 postcodes, RV £457.1m | aggregates: `companies/voa-ndr-2026-summary.json`; per-property extract in raw only |
 | EPC non-domestic (and domestic) bulk | **GOV.UK One Login account** | OGL (register terms) | not downloaded | — |
 | GLA London Building Stock Model 2 | open, London Datastore | OGL v3 | 20,570 homes, 441 postcodes, 1,433 TOIDs | `uprn/lbsm2-homes-summary.json` (aggregates only) |
-| Planning London Datahub | open guest API | OGL v3 | 2,931 applications in the box (count only) | already in `magpie/cwplans/feeds/`; not duplicated |
+| Planning London Datahub | open guest API | OGL v3 | 2,931 applications in the box (count only) | already in `cwplans/feeds/`; not duplicated |
 | London Development Database | open, London Datastore, frozen 2020 | OGL v3 | not downloaded | — |
 
 ## 1. Companies House — Basic Company Data
@@ -36,7 +36,7 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
 - URL: https://download.companieshouse.gov.uk/en_output.html — file
   `BasicCompanyDataAsOneFile-2026-10-01.zip` (494 MB zip, 2.8 GB CSV, 5,704,712 rows). Monthly.
 - Licence: Companies House bulk data is free to reuse (OGL terms for Companies House public data).
-- Tool: `node magpie/cwplans/tools/registry-companies.mjs` (about 80 s; streams the zip through `unzip -p`).
+- Tool: `node cwplans/tools/registry-companies.mjs` (about 80 s; streams the zip through `unzip -p`).
 - Result: **16,619 companies** with a registered office at **523** of the 882 postcodes
   (cw-core 10,068; cw-ward 3,555; cw-box-other-ward 2,971; terminated-cw 25).
   Status: Active 14,717; Proposal to Strike off 1,048; Liquidation 705; In Administration 122.
@@ -76,7 +76,7 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
   (pp-complete.csv, about 5 GB) was not needed.
 - Licence: OGL v3. Attribution: "Contains HM Land Registry data © Crown copyright and database right 2026.
   This data is licensed under the Open Government Licence v3.0."
-- Tool: `node magpie/cwplans/tools/registry-landregistry.mjs` (about 1 minute).
+- Tool: `node cwplans/tools/registry-landregistry.mjs` (about 1 minute).
 - Result: **22,752 transactions at 453 postcodes**, latest 2026-08-04. **14,261 homes** (distinct
   SAON+PAON+street among residential types; type `other` is excluded). Flats/maisonettes are 21,449 of
   the transactions; `other` (offices, units, car spaces, land) 500.
@@ -104,7 +104,7 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
   Show both statements: "This information is subject to Crown copyright and database rights 2026 and is
   reproduced with the permission of HM Land Registry." and "The polygons (including the associated geometry,
   namely x, y co-ordinates) are subject to Crown copyright and database rights 2026 Ordnance Survey 100026316."
-- Tool: `node magpie/cwplans/tools/registry-inspire.mjs` (about 1 s).
+- Tool: `node cwplans/tools/registry-inspire.mjs` (about 1 s).
 - Result: borough file 23,391 polygons; **1,182 intersect the Canary Wharf box** (1,067 fully inside),
   3.42 km² in total. Converted to WGS84 with the OSTN15 grid; `area_m2` and `centroid_bng` come from the
   original BNG geometry. Properties: `inspire_id`, `valid_from`, `begin_lifespan`, `area_m2`, `centroid`,
@@ -131,7 +131,7 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
 - LIDS: https://api.os.uk/downloads/v1/products/LIDS/downloads — `lids-2026-09_csv_BLPU-UPRN-TopographicArea-TOID-5.zip`
   (841 MB) and `lids-2026-09_csv_BLPU-UPRN-Street-USRN-11.zip` (921 MB).
 - Licence: OGL v3. "Contains OS data © Crown copyright and database right 2026."
-- Tool: `node magpie/cwplans/tools/registry-uprn.mjs` (about 3 minutes).
+- Tool: `node cwplans/tools/registry-uprn.mjs` (about 3 minutes).
 - Result: Docklands box 355,085 UPRNs; **Canary Wharf box 30,712 UPRNs**. 30,711 have a TopographicArea
   TOID (**1,851 distinct TOIDs** — the MasterMap polygon the address point is in, usually the building);
   30,555 have a USRN (**211 streets**). The TOID with most UPRNs has 996 (near 51.50272, -0.025454).
@@ -150,7 +150,7 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
   2026 list live from 1 April 2026; full epoch files every 2 months, change files twice a week).
 - Licence: **restricted VOA licence, not OGL** (https://www.tax.service.gov.uk/view-my-valuation/terms-and-conditions).
   Data may be passed on only if the receiver is told those terms apply.
-- Tool: `node magpie/cwplans/tools/registry-voa.mjs` (about 5 s).
+- Tool: `node cwplans/tools/registry-voa.mjs` (about 5 s).
 - Result: **4,546 rated properties at 289 postcodes**, total rateable value **£457,142,247**.
   Offices 1,761; car parking spaces about 1,300; shops 332; stores 190; restaurants 107; market stalls 81.
   Top by RV: E14 5AA £70.2m (Canada Square / Churchill Place); E14 5LE £34.0m (Bank Street, 2 entries);
@@ -172,14 +172,14 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
 - **London Building Stock Model 2** (https://data.london.gov.uk/dataset/2k55d, OGL v3, updated 2025-04-03):
   one row per home with UPRN, TOID, postcode, construction age band, built form, EPC rating (real or
   modelled), floor area and floor count. Downloaded the Tower Hamlets CSV (85 MB, 144,191 homes).
-  Tool: `node magpie/cwplans/tools/registry-lbsm.mjs`. Result: **20,570 homes**, 441 postcodes, 1,433 TOIDs,
+  Tool: `node cwplans/tools/registry-lbsm.mjs`. Result: **20,570 homes**, 441 postcodes, 1,433 TOIDs,
   written as **aggregates only** (`uprn/lbsm2-homes-summary.json`). LBSM2 also has modelled tenure, fuel
   poverty and deprivation per home; those describe households, so the tool never reads them out.
 - **Planning London Datahub** (replaces the LDD): guest API
   `https://planningdata.london.gov.uk/api-guest/applications/_search` answers without a key. A
   `geo_bounding_box` query on the Canary Wharf box gives **2,931 applications**. The fields seen hold site
   names, descriptions and `lead_developer_company_name`; no applicant or agent person fields were seen in a
-  50-record sample. It is already catalogued in `magpie/cwplans/feeds/README.md`, so it is not duplicated here.
+  50-record sample. It is already catalogued in `cwplans/feeds/README.md`, so it is not duplicated here.
 - **London Development Database** (https://data.london.gov.uk/dataset/2jxq0 and the SQL extract
   https://data.london.gov.uk/dataset/2koxx): OGL v3, open, frozen in 2020 ("replaced by the Planning London
   Datahub"). Not downloaded; useful only for history before 2020.
@@ -188,9 +188,9 @@ Raw downloads are in `magpie/cwplans/data/raw/registry/` (git-ignored). Tools ar
 
 ## Re-run
 
-    node magpie/cwplans/tools/registry-companies.mjs     # needs the CH zip in data/raw/registry/
-    node magpie/cwplans/tools/registry-landregistry.mjs  # live SPARQL
-    node magpie/cwplans/tools/registry-inspire.mjs       # needs data/raw/registry/inspire/*.gml
-    node magpie/cwplans/tools/registry-uprn.mjs          # needs Open UPRN + two LIDS zips
-    node magpie/cwplans/tools/registry-voa.mjs           # needs data/raw/registry/voa/ndr-2026-listentries-*.zip
-    node magpie/cwplans/tools/registry-lbsm.mjs          # needs data/raw/registry/lbsm/LBSMv2_Tower_Hamlets.csv; run after registry-uprn
+    node cwplans/tools/registry-companies.mjs     # needs the CH zip in data/raw/registry/
+    node cwplans/tools/registry-landregistry.mjs  # live SPARQL
+    node cwplans/tools/registry-inspire.mjs       # needs data/raw/registry/inspire/*.gml
+    node cwplans/tools/registry-uprn.mjs          # needs Open UPRN + two LIDS zips
+    node cwplans/tools/registry-voa.mjs           # needs data/raw/registry/voa/ndr-2026-listentries-*.zip
+    node cwplans/tools/registry-lbsm.mjs          # needs data/raw/registry/lbsm/LBSMv2_Tower_Hamlets.csv; run after registry-uprn

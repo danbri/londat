@@ -41,7 +41,7 @@ Result: **4 October 2026, about 11:30 BST (10:29 UTC), between 11:05 and 12:10 B
 The other photos were taken from the same place with a zoom lens and show the same lighting (south-south-east faces lit);
 their order is not known.
 
-Method (`node magpie/cwplans/tools/solve-photo-sun.mjs`, input `points.json` in this folder):
+Method (`node cwplans/tools/solve-photo-sun.mjs`, input `points.json` in this folder):
 1. A pinhole camera (heading, tilt, roll, focal length) fitted by least squares to four tower tops of the model
    (`docklands/data/towers.json`: Newfoundland's crown, Landmark Pinnacle's roof, One Canada Square's apex, and the Citigroup
    Centre's roof sign horizontally only), eye on the pontoon at (-830, 4.5 m OD, 1158). Result: heading 51.9° from grid north,

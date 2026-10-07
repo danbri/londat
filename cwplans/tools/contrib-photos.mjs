@@ -9,7 +9,7 @@
 //     also as tiles/<id>.svg) by tools/facade-tile.py -> graph version facade-tiles-<set>, which
 //     tools/compose-facade-atlas.mjs puts into the 3D page's facade atlas.
 // All three are named in kgx/external-heads.json, so build-kgx.mjs packs them.
-//   FACADE_PY=<python with numpy, opencv-python-headless, scikit-learn> node magpie/cwplans/tools/contrib-photos.mjs <set>
+//   FACADE_PY=<python with numpy, opencv-python-headless, scikit-learn> node cwplans/tools/contrib-photos.mjs <set>
 // Skills: docklands-data-curation ("Contributed photos"), cwplans-dataflow, photo-view-reconstruction.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, mkdtempSync, rmSync } from 'fs';
 import { execFileSync } from 'child_process';
@@ -40,11 +40,11 @@ const buildingIri = key => { const b = spec.buildings[key]; const m = b?.osm?.ma
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
 const photoFiles = spec.photos.map(p => flow.file(join(DIR, p.file), `danbri/londat data/images/contrib/${set}/${p.file}`));
 const specFile = flow.file(join(DIR, 'photos.json'), `danbri/londat data/images/contrib/${set}/photos.json`);
-const facadeTools = ['facade.py', 'measure.py'].map(f => flow.file(join(FT, f), 'magpie/cwplans/registry/sources/facades/tools/' + f));
+const facadeTools = ['facade.py', 'measure.py'].map(f => flow.file(join(FT, f), 'cwplans/registry/sources/facades/tools/' + f));
 
 // ---- 1. rectify and measure the facade patches
 const patches = spec.patches.map(p => ({ ...p, building_iri: buildingIri(p.building) }));
-const op1 = { id: 'rectify-facade-patches', version: 1, skill: 'docklands-data-curation', tool: 'magpie/cwplans/tools/contrib-photos.mjs (facade.py, measure.py)',
+const op1 = { id: 'rectify-facade-patches', version: 1, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs (facade.py, measure.py)',
   about: 'photos + facade regions -> affine-rectified patches (LSD segments, RANSAC vanishing points, homography), bay and floor periods (autocorrelation of gradient profiles) and three colours (k-means in Lab) per patch' };
 const v1 = (await flow.run(op1, [...photoFiles, ...facadeTools], { set, patches }, async ({ set, patches }) => {
   const g = G(), tmp = mkdtempSync(join(tmpdir(), 'rect-')); mkdirSync(join(DIR, 'rect'), { recursive: true });
@@ -67,7 +67,7 @@ const v1 = (await flow.run(op1, [...photoFiles, ...facadeTools], { set, patches 
 }))[`facade-patches-${set}`];
 
 // ---- 2. the photos, what they depict and the buildings, from the hand-made photos.json
-const op2 = { id: 'lift-contrib-photos', version: 2, skill: 'docklands-data-curation', tool: 'magpie/cwplans/tools/contrib-photos.mjs',
+const op2 = { id: 'lift-contrib-photos', version: 2, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs',
   about: 'photos.json (identifications, evidence, judged facade notes, model heights) + photos + facade patches -> schema.org Photograph per photo with what it depicts, and a building node per identified building' };
 const v2 = (await flow.run(op2, [specFile, ...photoFiles, v1], { set }, async () => {
   const g = G(), patchLines = flow.read(v1).split('\n');
@@ -98,10 +98,10 @@ const v2 = (await flow.run(op2, [specFile, ...photoFiles, v1], { set }, async ()
 
 // ---- 3. facade tiles for the 3D page: a cut of a rectified patch, or a vector pattern drawn from the sizes in photos.json
 const tiles = spec.tiles || [], TOOL = join(TOOLS, 'facade-tile.py');
-const op3 = { id: 'cut-facade-tiles', version: 1, skill: 'docklands-data-curation', tool: 'magpie/cwplans/tools/contrib-photos.mjs (facade-tile.py)',
+const op3 = { id: 'cut-facade-tiles', version: 1, skill: 'docklands-data-curation', tool: 'cwplans/tools/contrib-photos.mjs (facade-tile.py)',
   about: 'photos.json tiles + rectified patches -> 256 px facade tiles (photo cut, mirrored half for a symmetric face, or a vector pattern in metres with judged colours) with their size on the wall in metres, the buildings they are for and a point inside each' };
 const patchFiles = [...new Set(tiles.filter(t => t.patch).map(t => t.patch))].map(id => flow.file(join(DIR, 'rect', id + '.jpg'), `danbri/londat data/images/contrib/${set}/rect/${id}.jpg`));
-const v3 = tiles.length ? (await flow.run(op3, [specFile, ...patchFiles, flow.file(TOOL, 'magpie/cwplans/tools/facade-tile.py')], { set }, async () => {
+const v3 = tiles.length ? (await flow.run(op3, [specFile, ...patchFiles, flow.file(TOOL, 'cwplans/tools/facade-tile.py')], { set }, async () => {
   const g = G(); mkdirSync(join(DIR, 'tiles'), { recursive: true });
   for (const t of tiles) {
     const png = join(DIR, 'tiles', t.id + '.png'), svg = t.method === 'pattern' ? join(DIR, 'tiles', t.id + '.svg') : null;

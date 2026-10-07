@@ -14,7 +14,7 @@ re-check before anything leaves the prototyping phase.
 | `structured-facts.json` | facts from the schema.org structured data of the rendered pages (`tools/extract-structured-data.mjs` over `third_party/cwplans-structured-data/`): per entity and page the types, name, opening hours (raw, specification, special, and OSM `opening_hours` syntax), telephone, address, geo, events, and the scope (branch with a confidence, chain, organisation) with how the node was matched |
 | `structured-register-entries.json` | data-register and pipeline entries for the headless render and the extraction, for the main session to merge |
 
-Tool: `NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/crawl-sites.mjs` (`--list` counts URLs without
+Tool: `NODE_USE_ENV_PROXY=1 node cwplans/tools/crawl-sites.mjs` (`--list` counts URLs without
 fetching, `--no-fetch` extracts from the cache, `--retry-failed` fetches transient failures again,
 `--refresh` fetches all, `--host=h` tests one host). Raw pages: `data/raw/crawl/<host>/<sha1(url)[0:16]>.html.gz`
 with a `.json` record beside each and `robots.json` per host (not committed, 40 MB).
@@ -43,7 +43,7 @@ with a `.json` record beside each and `robots.json` per host (not committed, 40 
   a 4xx robots.txt allows all; a 5xx or unreachable one disallows all), checked again on every redirect to a
   new host. One request at a time per host, at least 1.5 s apart, at most 4 hosts at once, 20 s timeout,
   up to 4 tries with backoff (Retry-After, else 4, 12, 36 s) on 429, 5xx, timeouts and resets. User-Agent
-  `glitchcan-cwplans/0.1 (https://github.com/danbri/glitchcan-minigam)`. Redirects followed by hand; the
+  `glitchcan-cwplans/0.1 (https://github.com/danbri/londat)`. Redirects followed by hand; the
   final URL is recorded.
 - Extracted (`facts`): schema.org JSON-LD and microdata, as `entities` (businesses and organisations: name,
   telephone, address, geo, opening hours, price range, cuisine, menu, reservations, sameAs) and `events`

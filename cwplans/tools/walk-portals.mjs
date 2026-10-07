@@ -2,10 +2,10 @@
 // A recorded walk through the open-data portals other than the London Datastore that cover the Docklands zone:
 // catalogue, triage by written rules (a final state per dataset), and a harvest of the open, relevant datasets
 // clipped to the zone (the 3D model box). One adapter per portal.
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs <portal> walk [--refresh]
-//   node magpie/cwplans/tools/walk-portals.mjs <portal> triage
-//   NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/walk-portals.mjs <portal> harvest [key ...] [--refresh]
-//   node magpie/cwplans/tools/walk-portals.mjs index            # feeds/portals/index.json (counts per portal)
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs <portal> walk [--refresh]
+//   node cwplans/tools/walk-portals.mjs <portal> triage
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/walk-portals.mjs <portal> harvest [key ...] [--refresh]
+//   node cwplans/tools/walk-portals.mjs index            # feeds/portals/index.json (counts per portal)
 // Portals: dgu (data.gov.uk CKAN), pdg (planning.data.gov.uk), boroughs (the six zone borough portals),
 //          nomis (Nomis / ONS Census 2021 tables), onsgeo (ONS Open Geography Portal), national (other national APIs).
 // Out: feeds/portals/<portal>/catalogue.json, triage.json, <key>/<key>.(geo)json with a meta member.
