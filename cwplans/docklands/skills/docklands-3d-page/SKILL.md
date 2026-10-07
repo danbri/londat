@@ -127,6 +127,9 @@ Test hooks: `window.__docklands` (`cam`, `draw`, `renderNow`, `setView`, `setNig
 - **Record card** (`#sheet`): a tap on a building, a label or a pin opens it. Heights: 0, 38% and 80% of the screen on
   a phone; docked bottom right on a wide screen. Drag the grip to resize; a tap on the grip (moved under 6 px) steps to
   the next size; the cross closes it.
+- **Card links** (registry card, last line): "full record in the atlas" (`../atlas/#map/b/cwb-NNNN`), "knowledge graph"
+  (`../kg/#e=id:cwbNNNN`: the cwb id without its hyphen, added 2026-10-07), OSM, Wikidata, clear. Menu > About links
+  `../kg/` after the atlas.
 - **Search**: two characters or more; buildings with registry records, labelled places, and every routable place of the
   walking network (`data/indoor.js`, loaded when the box gets focus); prefix matches first; at most 14; Enter takes the
   first. A place below ground also cuts the model away above its level.
@@ -1185,7 +1188,7 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0
   area.js and the page says so instead of naming the wrong building.
 - **The OSM card**: name (OSM name, else house name, else the parent's for a part, else the address, else the type), OSM
   type and id, address, model height and its source, roof and ground in m OD, OSM levels, the facade tile if any,
-  "No registry record", route buttons, OSM and Wikidata links. A part stands for its parent: every part is outlined.
+  "No registry record", route buttons, OSM, knowledge graph (`../kg/#e=id:osmw<id>`) and Wikidata links. A part stands for its parent: every part is outlined.
   **Search** adds OSM names, house names and addresses of buildings with no registry record (at most 40, then the page's
   sort and cut at 14). **Share**: `id=osm:w204580680` (nav.js), restored after the keys load.
 - **Facades for any building.** `tools/compose-facade-atlas.mjs` (operation `compose-facade-atlas`) writes the page's

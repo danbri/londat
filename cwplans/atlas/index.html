@@ -171,7 +171,7 @@ svg .muted { fill: var(--muted); }
 <main>
 <section class="view" id="v-overview">
   <h1>Canary Wharf and the Isle of Dogs, from open data</h1>
-  <p class="lede">Everything collected for this project, joined in one place: 1,129 buildings with internal ids and their occupants, owners, homes and registered companies; every possible E14 postcode; published levels below ground; museum and heritage records; the Thames bed and its flood walls; and 324 live feeds and event sources. Tap a number to explore it. The 3D models are separate pages: <a href="../docklands/">Docklands 3D</a> and <a href="../">Canada Water corridor</a>.</p>
+  <p class="lede">Everything collected for this project, joined in one place: 1,129 buildings with internal ids and their occupants, owners, homes and registered companies; every possible E14 postcode; published levels below ground; museum and heritage records; the Thames bed and its flood walls; and 324 live feeds and event sources. Tap a number to explore it. The 3D models are separate pages: <a href="../docklands/">Docklands 3D</a> and <a href="../">Canada Water corridor</a>. The <a href="../kg/">knowledge graph</a> search page holds the same records as linked data.</p>
   <div class="cards" id="ovCards"></div>
   <h2>Now</h2>
   <div class="panel live" id="ovLive"><p class="small">The page asks no outside service for data until you press the button. Tide, weather, lines and storm overflows then come from the hourly <a href="https://github.com/danbri/londat/tree/main/cwplans/cache">londat cache</a> (air quality from the London Air Quality Network); tick "Live" to ask each publisher directly.</p><button class="btn primary" type="button" data-live>Load live data</button> <label class="small"><input type="checkbox" data-direct> Live</label><div data-liveout></div></div>
@@ -510,6 +510,7 @@ async function openBuilding(id) {
       <a href="#" data-flyto="${ab.lat},${ab.lon}">show on map</a>
       <a href="../docklands/#at=${ab.x},${ab.z},${Math.max(350, Math.min(1400, (roof || 30) * 5))}" target="_blank" rel="noopener">open in 3D</a>
       <a href="../registry/#${esc(id)}" target="_blank" rel="noopener">registry page</a>
+      <a href="../kg/#e=id:${esc(id.replace(/-/g, '').toLowerCase())}" target="_blank" rel="noopener">knowledge graph</a>
       ${(L.osm || []).map(u => a(u, 'OSM')).join('')}${L.wikidata ? a(L.wikidata, 'Wikidata') : ''}${b.wikipedia ? a(b.wikipedia, 'Wikipedia') : ''}
     </div>
     ${b.owners.length ? `<h3>Owners</h3><p>${b.owners.map(o => `${esc(o.name)} <span class="small">(${esc(o.source)})</span>`).join(', ')}</p>` : ''}

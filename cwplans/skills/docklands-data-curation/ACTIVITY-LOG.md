@@ -1693,3 +1693,18 @@ Open items now: the list of the move entry above, less items 2, 3 and 4 there; p
 keep their namespaces (not IDs; ask the owner before a move); nothing is hosted at https://kgx.foaf.tv/ yet (a
 redirect of `/id/<local>` to https://danbri.github.io/londat/cwplans/kg/#e=id:<local> would make the IDs resolve);
 F53; the glitchcan-minigam branch with the redirect pages is not merged yet (the dashboard shows it).
+
+## 2026-10-07 (afternoon): links to the knowledge-graph search page (Opus, subagent)
+
+Owner, 2026-10-07: "Yes add links". Links (relative) to https://danbri.github.io/londat/cwplans/kg/ :
+- 3D page (https://danbri.github.io/londat/cwplans/docklands/): Menu > About, "knowledge graph" after "atlas"; the
+  registry card, "knowledge graph" after "full record in the atlas" (`../kg/#e=id:cwbNNNN`, the cwb id without the
+  hyphen); the OSM card (`building-keys.js`), "knowledge graph" after "OSM" (`../kg/#e=id:osmw<id>` or `osmr<id>`).
+- Atlas (https://danbri.github.io/londat/cwplans/atlas/): the overview text, after the 3D page links; the building
+  dossier, "knowledge graph" after "registry page" (e.g.
+  https://danbri.github.io/londat/cwplans/kg/#e=id:cwb0413).
+- Not changed: `cwplans/kg/`. Postcodes and other kinds have no kg ID and get no link. Not checked: that every OSM-only
+  model building has a node in the graph (an unknown ID shows the kg page's own "not found").
+- Tested headless (SwiftShader, 1400 x 900): card of cwb-0413 -> `../kg/#e=id:cwb0413`; OSM card of model index 0 ->
+  `../kg/#e=id:osmw4366294`; atlas `#view/b/cwb-0413` -> `../kg/#e=id:cwb0413`; 0 page errors on both pages;
+  `check-data-register.mjs` passes.

@@ -41,7 +41,7 @@
       ${fac ? `<div class="small">Facade: ${esc(fac.what || 'a tile from a photo')}${fac.page ? ` (<a href="${esc(fac.page)}" target="_blank" rel="noopener">photos</a>)` : ''}</div>` : ''}
       <div class="small">No registry record: the registry covers the Canary Wharf box. Facts from OpenStreetMap (© OpenStreetMap contributors, ODbL).</div>
       ${c.routeBtns(Math.round(x), Math.round(z), name)}
-      <div class="small" style="margin-top:6px"><a href="${osmUrl(id)}" target="_blank" rel="noopener">OSM</a>${f.wd ? ` · <a href="https://www.wikidata.org/wiki/${esc(f.wd)}" target="_blank" rel="noopener">Wikidata</a>` : ''} · <a href="#" id="unselect">clear</a></div>`;
+      <div class="small" style="margin-top:6px"><a href="${osmUrl(id)}" target="_blank" rel="noopener">OSM</a> · <a href="../kg/#e=id:osm${esc(id)}">knowledge graph</a>${f.wd ? ` · <a href="https://www.wikidata.org/wiki/${esc(f.wd)}" target="_blank" rel="noopener">Wikidata</a>` : ''} · <a href="#" id="unselect">clear</a></div>`;
     c.openPane('paneInfo');
     const u = document.getElementById('unselect'); if (u) u.onclick = e => { e.preventDefault(); c.clearSelection(); c.resetInfo(); c.draw(); };
     c.draw();
