@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>londat dashboard</title>
+<meta name="description" content="The health of the cwplans project in danbri/londat on one page: the hourly cache runs, the site deploys, the age of the live data, the knowledge graph, the data register and quality checks, the old-site redirect and recent activity, with links to every page.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='.5' y='.5' width='15' height='15' rx='3' fill='%2315191d'/%3E%3Cpath d='M2.5 9h2.6l1.6-4.5 2.2 7 1.6-3.5h3' fill='none' stroke='%230ca30c' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<!--
+  londat dashboard: is each moving part of the cwplans project healthy? Everything is fetched in the browser when the page
+  opens (no build step, no external script): the GitHub REST API without sign-in (60 requests an hour for each internet
+  address; answers are kept in sessionStorage for 5 minutes), cwplans/cache/latest.json from raw.githubusercontent.com
+  (through ../cwplans/data-base.js), and files of this site (kgx/manifest.json, the data register, the quality issues, the
+  activity log). Each section shows its own error; the others still work.
+  Live: https://danbri.github.io/londat/dashboard/  Local test: python3 -m http.server 8080 in the repository root, then
+  http://127.0.0.1:8080/dashboard/
+-->
+<style>
+:root{color-scheme:dark;--bg:#101316;--panel:#15191d;--line:#333a41;--grid:#262c32;--fg:#e8eaec;--muted:#aab2ba;--link:#9cc8ff;
+  --good:#0ca30c;--warn:#fab219;--serious:#ec835a;--bad:#d03b3b;--shadow:0 6px 22px rgba(0,0,0,.5)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){color-scheme:light;--bg:#f7f8f9;--panel:#fff;--line:#d5d9dd;--grid:#eceef0;--fg:#15191d;--muted:#56606a;--link:#0b5cad;--shadow:0 6px 22px rgba(21,25,29,.16)}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:52rem;margin:0 auto;padding:1.25rem max(1rem,env(safe-area-inset-right)) 3rem max(1rem,env(safe-area-inset-left))}
+h1{font-size:1.4rem;margin:.2rem 0 .4rem}
+h2{font-size:1.08rem;margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .6rem}
+h3{font-size:.95rem;margin:1.1rem 0 .4rem}
+p{margin:.45rem 0}
+a{color:var(--link);overflow-wrap:anywhere}
+a:focus-visible,button:focus-visible,summary:focus-visible,svg:focus-visible,input:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+.small{color:var(--muted);font-size:.875rem}
+code{font:.85em ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+ul{margin:.4rem 0;padding-left:1.1rem}
+li{margin:.2rem 0}
+section{background:var(--panel);border:1px solid var(--line);border-radius:.6rem;padding:.9rem 1rem;margin:1rem 0;min-width:0;transition:opacity .2s}
+body.busy section.part{opacity:.55}
+.crumb{margin:0}
+.checkbar{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .8rem;margin:.6rem 0 .2rem}
+button{font:inherit;font-size:.95rem;font-weight:600;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:.5rem;padding:.45rem .9rem;cursor:pointer;min-height:2.5rem}
+button:disabled{opacity:.6;cursor:default}
+label.toggle{display:inline-flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);cursor:pointer;min-height:2.25rem}
+label.toggle input{width:1.15rem;height:1.15rem;margin:0;flex:none;accent-color:var(--link)}
+/* status: an icon in the status colour and a word in the text colour, never the colour alone */
+.chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.8rem;font-weight:600;line-height:1.2;padding:.2rem .55rem .2rem .4rem;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--fg);white-space:nowrap}
+.ico{flex:none;width:16px;height:16px}
+.i-good{fill:var(--good)}.i-warn{fill:var(--warn)}.i-bad{fill:var(--bad)}
+.i-on{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.i-ink{fill:none;stroke:#15191d;stroke-width:1.8;stroke-linecap:round}.i-inkdot{fill:#15191d}
+.i-line{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linecap:round}.i-dot{fill:var(--muted)}
+.summary{list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.15rem}
+.summary li{margin:0;padding:.45rem 0;border-top:1px solid var(--line)}
+.summary li:first-child{border-top:0}
+.summary .top{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .6rem}
+.summary .top a{font-weight:600}
+.summary .text{color:var(--muted);font-size:.875rem;margin-top:.1rem}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;margin:.75rem 0}
+@media (min-width:40rem){.tiles{grid-template-columns:repeat(var(--cols,3),minmax(0,1fr))}}
+.tile{background:var(--bg);border:1px solid var(--line);border-radius:.5rem;padding:.5rem .65rem;min-width:0}
+.tile .k{font-size:.8rem;color:var(--muted)}
+.tile .v{font-size:1.3rem;font-weight:650;line-height:1.25;overflow-wrap:anywhere}
+.tile .s{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.line{display:flex;gap:.5rem;align-items:flex-start;margin:.5rem 0}
+.line .ico{margin-top:.2rem}
+.err{display:flex;gap:.5rem;align-items:flex-start;padding:.5rem .6rem;border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:.4rem;background:var(--bg);margin:.5rem 0;font-size:.9rem;overflow-wrap:anywhere}
+.err .ico{margin-top:.15rem}
+.scroll{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:.3rem .45rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;white-space:nowrap}
+td.n,th.n{text-align:right}
+td.n,td.w,.nw{white-space:nowrap;overflow-wrap:normal}
+td.wrap{overflow-wrap:anywhere}
+details{margin:.6rem 0}
+summary{cursor:pointer;color:var(--muted);font-size:.9rem;min-height:1.75rem}
+.rows{list-style:none;padding:0;margin:.5rem 0}
+.rows li{display:grid;grid-template-columns:auto 1fr auto;gap:0 .5rem;align-items:start;padding:.35rem 0;border-top:1px solid var(--line);margin:0}
+.rows li:first-child{border-top:0}
+.rows .ico{margin-top:.2rem}
+.rows .age{font-weight:600;white-space:nowrap}
+.rows .sub{grid-column:2/4;color:var(--muted);font-size:.8rem}
+.list{padding-left:0;list-style:none}
+.list li{padding:.35rem 0;border-top:1px solid var(--line);margin:0}
+.list li:first-child{border-top:0}
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(19rem,100%),1fr));gap:.1rem 1.2rem;list-style:none;padding:0}
+.links li{padding:.35rem 0;border-top:1px solid var(--line);margin:0;min-width:0}
+.links b{display:block;font-weight:600;font-size:.95rem}
+.links a{font-size:.86rem}
+/* the timeline of cache runs */
+figure{margin:.75rem 0 0}
+figcaption{color:var(--muted);font-size:.8rem;margin-top:.3rem}
+.legend{display:flex;flex-wrap:wrap;gap:.2rem .9rem;list-style:none;padding:0;margin:.3rem 0 .4rem;font-size:.8rem;color:var(--muted)}
+.legend li{display:inline-flex;align-items:center;gap:.35rem;margin:0}
+.legend svg{flex:none}
+.plot{position:relative}
+.plot svg{display:block;max-width:100%;height:auto;touch-action:manipulation}
+.tl text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.tl .grid{stroke:var(--grid);stroke-width:1}
+.tl .track{stroke:var(--line);stroke-width:1}
+.tl .lbl{fill:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.tl .day{fill:var(--fg);font-size:12px}
+.gapbar{fill:var(--serious)}
+.tl .gl{fill:var(--muted);font-size:10px;text-anchor:middle;font-variant-numeric:tabular-nums}
+.nowline{stroke:var(--fg);stroke-width:1.5}
+.m-ok{fill:var(--good);stroke:var(--panel);stroke-width:2}
+.m-ring{fill:var(--panel)}
+.m-x{stroke:var(--bad);stroke-width:2.5;stroke-linecap:round;fill:none}
+.m-other{fill:var(--panel);stroke:var(--muted);stroke-width:2}
+.m-run{fill:var(--panel);stroke:var(--fg);stroke-width:2}
+.tl .sel{fill:none;stroke:var(--fg);stroke-width:1.5}
+.tip{position:absolute;z-index:2;max-width:16rem;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:.45rem;box-shadow:var(--shadow);padding:.4rem .6rem;font-size:.82rem;line-height:1.35;pointer-events:none}
+.tip.pinned{pointer-events:auto}
+.tip strong{display:block;font-size:.95rem}
+.tip .small{font-size:.78rem}
+.tip a{display:inline-block;margin-top:.2rem;min-height:1.5rem}
+footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
+@media (max-width:30rem){section{padding:.8rem .75rem}.tile .v{font-size:1.2rem}}
+@media (max-width:22rem){table{font-size:.78rem}th,td{padding:.3rem .25rem}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="small crumb"><a href="https://danbri.github.io/londat/">londat</a> / dashboard</p>
+    <h1>londat dashboard</h1>
+    <p class="small">The moving parts of the Canary Wharf / Docklands project (cwplans) on one page. Your browser checks each part when the page opens. Times are London time.</p>
+    <div class="checkbar">
+      <button type="button" id="reload">Reload</button>
+      <span id="checked" class="small" aria-live="polite">Checking…</span>
+    </div>
+    <p id="apinote" class="small">GitHub API: without sign-in, GitHub allows 60 requests an hour for each internet address. This page makes about 5 for each check and keeps the answers in this tab for 5 minutes.</p>
+  </header>
+
+  <section id="summary" aria-labelledby="summary-h">
+    <h2 id="summary-h">Summary</h2>
+    <ul class="summary" id="summary-list"></ul>
+  </section>
+
+  <section id="cache" class="part" aria-labelledby="cache-h">
+    <h2 id="cache-h"><span>Hourly cache runs</span><span id="cache-chip"></span></h2>
+    <p class="small">The workflow <a href="https://github.com/danbri/londat/blob/main/.github/workflows/cache-live.yml">cache-live.yml</a> fetches the live state of the zone and commits <code>cwplans/cache/latest.json</code>. Schedule: cron <code class="nw">17 * * * *</code>, each hour at 17 minutes past (UTC). GitHub can start a scheduled run late, or not at all, when it is busy.</p>
+    <div id="cache-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="deploy" class="part" aria-labelledby="deploy-h">
+    <h2 id="deploy-h"><span>Site deploys</span><span id="deploy-chip"></span></h2>
+    <p class="small">The workflow <a href="https://github.com/danbri/londat/blob/main/.github/workflows/pages.yml">pages.yml</a> publishes the site after each push to main that changes more than <code>cwplans/cache/</code>.</p>
+    <div id="deploy-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="live" class="part" aria-labelledby="live-h">
+    <h2 id="live-h"><span>Live data freshness</span><span id="live-chip"></span></h2>
+    <p class="small">The pages read <code>cache/latest.json</code> before they ask a third-party service. A theme is stale when its newest fetch is more than 2 hours old.</p>
+    <div id="live-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="kg" class="part" aria-labelledby="kg-h">
+    <h2 id="kg-h"><span>Knowledge graph</span><span id="kg-chip"></span></h2>
+    <p class="small">The graph versions and the Shardborough store in <a href="https://github.com/danbri/londat/tree/main/kgx">kgx/</a>, read by the search page <a href="https://danbri.github.io/londat/cwplans/kg/">https://danbri.github.io/londat/cwplans/kg/</a>.</p>
+    <div id="kg-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="register" class="part" aria-labelledby="register-h">
+    <h2 id="register-h"><span>Data register and quality</span><span id="register-chip"></span></h2>
+    <p class="small"><a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">DATA-REGISTER.md</a> · <a href="https://github.com/danbri/londat/blob/main/cwplans/METHODS.md">METHODS.md</a> · <a href="https://github.com/danbri/londat/blob/main/cwplans/quality/CATALOGUE.md">quality/CATALOGUE.md</a></p>
+    <div id="register-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="redirect" class="part" aria-labelledby="redirect-h">
+    <h2 id="redirect-h"><span>Old site redirect</span><span id="redirect-chip"></span></h2>
+    <p class="small">The old address <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/</a> must become a redirect page (title "Moved: …") to <a href="https://danbri.github.io/londat/cwplans/docklands/">https://danbri.github.io/londat/cwplans/docklands/</a>.</p>
+    <div id="redirect-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="activity" class="part" aria-labelledby="activity-h">
+    <h2 id="activity-h"><span>Activity</span><span id="activity-chip"></span></h2>
+    <div id="activity-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="links" aria-labelledby="links-h">
+    <h2 id="links-h">Pages and links</h2>
+    <h3>Pages on the site</h3>
+    <ul class="links">
+      <li><b>Landing page</b><a href="https://danbri.github.io/londat/">https://danbri.github.io/londat/</a></li>
+      <li><b>Docklands 3D</b><a href="https://danbri.github.io/londat/cwplans/docklands/">https://danbri.github.io/londat/cwplans/docklands/</a></li>
+      <li><b>Atlas</b><a href="https://danbri.github.io/londat/cwplans/atlas/">https://danbri.github.io/londat/cwplans/atlas/</a></li>
+      <li><b>Knowledge graph search</b><a href="https://danbri.github.io/londat/cwplans/kg/">https://danbri.github.io/londat/cwplans/kg/</a></li>
+      <li><b>Feeds and sources</b><a href="https://danbri.github.io/londat/cwplans/feeds/">https://danbri.github.io/londat/cwplans/feeds/</a></li>
+      <li><b>What's on</b><a href="https://danbri.github.io/londat/cwplans/feeds/whatson.html">https://danbri.github.io/londat/cwplans/feeds/whatson.html</a></li>
+      <li><b>Building registry</b><a href="https://danbri.github.io/londat/cwplans/registry/">https://danbri.github.io/londat/cwplans/registry/</a></li>
+      <li><b>Postcodes</b><a href="https://danbri.github.io/londat/cwplans/postcodes/">https://danbri.github.io/londat/cwplans/postcodes/</a></li>
+      <li><b>Report: schema.org markup</b><a href="https://danbri.github.io/londat/cwplans/reports/schema-org/">https://danbri.github.io/londat/cwplans/reports/schema-org/</a></li>
+      <li><b>Report: site search, opening hours and mall plans</b><a href="https://danbri.github.io/londat/cwplans/reports/hours-and-plans/">https://danbri.github.io/londat/cwplans/reports/hours-and-plans/</a></li>
+      <li><b>Canada Water to Surrey Quays (the corridor page)</b><a href="https://danbri.github.io/londat/cwplans/">https://danbri.github.io/londat/cwplans/</a></li>
+      <li><b>First schematic</b><a href="https://danbri.github.io/londat/cwplans/schematic.html">https://danbri.github.io/londat/cwplans/schematic.html</a></li>
+      <li><b>This dashboard</b><a href="https://danbri.github.io/londat/dashboard/">https://danbri.github.io/londat/dashboard/</a></li>
+    </ul>
+    <h3>Repository and settings</h3>
+    <ul class="links">
+      <li><b>Repository</b><a href="https://github.com/danbri/londat">https://github.com/danbri/londat</a></li>
+      <li><b>CLAUDE.md (rules for working here)</b><a href="https://github.com/danbri/londat/blob/main/CLAUDE.md">https://github.com/danbri/londat/blob/main/CLAUDE.md</a></li>
+      <li><b>Activity log</b><a href="https://github.com/danbri/londat/blob/main/cwplans/skills/docklands-data-curation/ACTIVITY-LOG.md">https://github.com/danbri/londat/blob/main/cwplans/skills/docklands-data-curation/ACTIVITY-LOG.md</a></li>
+      <li><b>Actions (all workflow runs)</b><a href="https://github.com/danbri/londat/actions">https://github.com/danbri/londat/actions</a></li>
+      <li><b>Hourly cache workflow runs</b><a href="https://github.com/danbri/londat/actions/workflows/cache-live.yml">https://github.com/danbri/londat/actions/workflows/cache-live.yml</a></li>
+      <li><b>Site deploy workflow runs</b><a href="https://github.com/danbri/londat/actions/workflows/pages.yml">https://github.com/danbri/londat/actions/workflows/pages.yml</a></li>
+      <li><b>Settings &gt; Pages</b><a href="https://github.com/danbri/londat/settings/pages">https://github.com/danbri/londat/settings/pages</a></li>
+      <li><b>Data register</b><a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md</a></li>
+      <li><b>Methods</b><a href="https://github.com/danbri/londat/blob/main/cwplans/METHODS.md">https://github.com/danbri/londat/blob/main/cwplans/METHODS.md</a></li>
+      <li><b>Quality catalogue</b><a href="https://github.com/danbri/londat/blob/main/cwplans/quality/CATALOGUE.md">https://github.com/danbri/londat/blob/main/cwplans/quality/CATALOGUE.md</a></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Status: scoping, planning and prototyping. Sources: the GitHub REST API, <a href="https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json">cache/latest.json</a> on raw.githubusercontent.com, and the files of this site. Source of this page: <a href="https://github.com/danbri/londat/blob/main/dashboard/index.html">https://github.com/danbri/londat/blob/main/dashboard/index.html</a></p>
+  </footer>
+</main>
+
+<script src="../cwplans/data-base.js"></script>
+<script>
+(() => {
+  'use strict';
+  const REPO = 'danbri/londat';
+  const API = 'https://api.github.com/repos/' + REPO;
+  const GH = 'https://github.com/' + REPO;
+  const BLOB = GH + '/blob/main/';
+  const SITE = 'https://danbri.github.io/londat/';
+  const LIVE_SITE = location.hostname === 'danbri.github.io';
+  const RAW_LATEST = 'https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json';
+  const CW = window.CwData ? CwData.base : new URL('../cwplans/', location.href).href;
+  const KGX = new URL('../kgx/', location.href).href;
+  const LOG_PATH = 'cwplans/skills/docklands-data-curation/ACTIVITY-LOG.md';
+  const TZ = 'Europe/London';
+  const MIN = 60e3, HOUR = 60 * MIN, DAY = 24 * HOUR;
+  const LATE = 2 * HOUR;               // a run gap or a live theme older than this is late
+  const API_TTL = 5 * MIN;             // GitHub API answers kept in this tab (sessionStorage)
+  const KEY = 'londat-dashboard:v1:';
+  const FAILED = new Set(['failure', 'timed_out', 'startup_failure']);
+  const $ = id => document.getElementById(id);
+
+  // ---------- small DOM helpers (all text goes in as text nodes, never as HTML)
+  const NS = 'http://www.w3.org/2000/svg';
+  const add = (el, kids) => { for (const k of kids.flat(Infinity)) if (k != null && k !== false) el.append(k instanceof Node ? k : String(k)); return el; };
+  const put = (el, ...kids) => { el.replaceChildren(); return add(el, kids); };   // replaceChildren would print a null as "null"
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v; else if (k.startsWith('on')) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v === true ? '' : v);
+    }
+    return add(el, kids);
+  }
+  function s(tag, attrs, ...kids) {
+    const el = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) if (v != null) el.setAttribute(k, v);
+    return add(el, kids);
+  }
+  const a = (href, text) => h('a', { href }, text ?? href);
+  const anw = (href, text) => h('a', { href, class: 'nw' }, text);   // a short link that must not break
+  const num = n => Number(n).toLocaleString('en-GB');
+  const plural = (n, word, many = word + 's') => `${num(n)} ${n === 1 ? word : many}`;
+  const cap = t => t ? t[0].toUpperCase() + t.slice(1) : t;
+  const short = sha => String(sha || '').slice(0, 7);
+  const mb = b => (b / 1e6).toFixed(1) + ' MB';
+
+  // ---------- time
+  const fmtWhen = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const fmtSec = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+  const fmtTime = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const fmtRow = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const fmtParts = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+  const when = t => fmtWhen.format(t);
+  function local(t) {   // London calendar day and hour of day (0 to 24) of an instant
+    const p = {};
+    for (const x of fmtParts.formatToParts(t)) p[x.type] = x.value;
+    return { day: `${p.year}-${p.month}-${p.day}`, h: (+p.hour % 24) + +p.minute / 60 + +p.second / 3600 };
+  }
+  const sameDay = (x, y) => local(x).day === local(y).day;
+  const span = (x, y) => `${when(x)} to ${sameDay(x, y) ? fmtTime.format(y) : when(y)}`;
+  function dur(ms) {
+    const m = Math.max(0, Math.round(ms / MIN));
+    if (m < 1) return 'under 1 min';
+    if (m < 60) return m + ' min';
+    const hh = Math.floor(m / 60), mm = m % 60;
+    if (hh < 48) return mm ? `${hh} h ${mm} min` : `${hh} h`;
+    const d = Math.floor(hh / 24), rh = hh % 24;
+    return rh ? `${d} d ${rh} h` : `${d} d`;
+  }
+  const ago = t => dur(Date.now() - t) + ' ago';
+  const hrs = ms => (ms / HOUR).toFixed(1) + ' h';
+
+  // ---------- status: an icon (status colour) with a word (text colour)
+  const ICON = {
+    ok: [['circle', { class: 'i-good', cx: 8, cy: 8, r: 7 }], ['path', { class: 'i-on', d: 'M4.6 8.3l2.2 2.2 4.6-4.8' }]],
+    warn: [['path', { class: 'i-warn', d: 'M8 1.3 15.2 14.3H.8z' }], ['path', { class: 'i-ink', d: 'M8 6v3.8' }], ['circle', { class: 'i-inkdot', cx: 8, cy: 11.9, r: 1 }]],
+    bad: [['circle', { class: 'i-bad', cx: 8, cy: 8, r: 7 }], ['path', { class: 'i-on', d: 'M5.4 5.4l5.2 5.2M10.6 5.4l-5.2 5.2' }]],
+    info: [['circle', { class: 'i-line', cx: 8, cy: 8, r: 6.3 }], ['path', { class: 'i-line', d: 'M8 7.3v3.8' }], ['circle', { class: 'i-dot', cx: 8, cy: 4.9, r: 1 }]],
+    wait: [['circle', { class: 'i-line', cx: 8, cy: 8, r: 6.3 }], ['circle', { class: 'i-dot', cx: 5.2, cy: 8, r: 1 }], ['circle', { class: 'i-dot', cx: 8, cy: 8, r: 1 }], ['circle', { class: 'i-dot', cx: 10.8, cy: 8, r: 1 }]]
+  };
+  const icon = kind => s('svg', { class: 'ico', viewBox: '0 0 16 16', width: 16, height: 16, 'aria-hidden': 'true' }, ICON[kind].map(([t, at]) => s(t, at)));
+  const chip = (kind, label) => h('span', { class: 'chip' }, icon(kind), label);
+  const line = (kind, ...kids) => h('div', { class: 'line' }, icon(kind), h('div', {}, kids));
+  const errBox = (what, e) => h('div', { class: 'err', role: 'alert' }, icon('bad'), h('div', {}, `${what}: ${e && e.message ? e.message : e}`));
+  const tile = (k, v, sub) => h('div', { class: 'tile' }, h('div', { class: 'k' }, k), h('div', { class: 'v' }, v), sub != null && sub !== '' ? h('div', { class: 's' }, sub) : null);
+
+  // ---------- fetching
+  async function getJSON(url) {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+    return r.json();
+  }
+  async function getText(url) {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+    return r.text();
+  }
+
+  // GitHub REST API without sign-in: 60 requests an hour for each address. Answers (trimmed to the fields used) are kept
+  // in sessionStorage for API_TTL; on a refusal or a network fault an older kept answer is shown and the note says so.
+  let api, memo;
+  const resetApi = () => { api = { made: 0, reused: 0, oldest: 0, rl: null, limited: '', stale: 0, staleWhy: '' }; memo = new Map(); };
+  function gh(path, trim, ttl = API_TTL) {
+    if (!memo.has(path)) memo.set(path, ghFetch(path, trim, ttl));
+    return memo.get(path);
+  }
+  function keep(key) { try { return JSON.parse(sessionStorage.getItem(key) || 'null'); } catch { return null; } }
+  function useKept(kept, why) { api.stale = Math.max(api.stale, Date.now() - kept.t); api.staleWhy = why; return kept.body; }
+  async function ghFetch(path, trim, ttl) {
+    const key = KEY + path, kept = keep(key);
+    if (kept && Date.now() - kept.t < ttl) { api.reused++; api.oldest = Math.max(api.oldest, Date.now() - kept.t); return kept.body; }
+    let r;
+    try { r = await fetch(API + path); }
+    catch (e) { if (kept) return useKept(kept, 'the GitHub API did not answer'); throw new Error('the GitHub API did not answer (' + e.message + ')'); }
+    api.made++;
+    const rl = { limit: r.headers.get('x-ratelimit-limit'), left: r.headers.get('x-ratelimit-remaining'), reset: +r.headers.get('x-ratelimit-reset') || 0 };
+    if (rl.left != null && (!api.rl || +rl.left < +api.rl.left)) api.rl = rl;   // requests run in parallel: keep the lowest count
+    if (r.status === 403 || r.status === 429) {
+      const retry = +r.headers.get('retry-after') || 0;
+      const msg = rl.left === '0' || r.status === 429
+        ? `GitHub API limit reached (${rl.limit || 60} requests an hour for each internet address without sign-in)` + (rl.reset ? `; it resets at ${fmtTime.format(rl.reset * 1000)}` : retry ? `; try again in ${retry} s` : '')
+        : `the GitHub API refused the request (HTTP ${r.status})`;
+      api.limited = msg;
+      if (kept) return useKept(kept, msg);
+      throw new Error(msg);
+    }
+    if (!r.ok) {
+      if (kept && r.status >= 500) return useKept(kept, `the GitHub API answered HTTP ${r.status}`);
+      throw new Error(`GitHub API ${path.split('?')[0]}: HTTP ${r.status}`);
+    }
+    const body = trim(await r.json());
+    try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), body })); } catch { /* storage full or blocked: no reuse */ }
+    return body;
+  }
+  const trimRuns = d => ({ total: d.total_count, runs: (d.workflow_runs || []).map(r => ({
+    id: r.id, n: r.run_number, event: r.event, status: r.status, conclusion: r.conclusion, created: r.created_at,
+    started: r.run_started_at, updated: r.updated_at, url: r.html_url, sha: r.head_sha, title: r.display_title })) });
+  const trimWorkflow = d => ({ state: d.state, created: d.created_at, url: d.html_url });
+  const trimCommits = d => (Array.isArray(d) ? d : []).map(c => ({ sha: c.sha, url: c.html_url,
+    msg: String((c.commit && c.commit.message) || '').split('\n')[0], author: (c.commit && c.commit.author && c.commit.author.name) || '',
+    t: Date.parse((c.commit && ((c.commit.committer && c.commit.committer.date) || (c.commit.author && c.commit.author.date))) || '') }));
+  const trimCompare = d => ({ status: d.status, ahead: d.ahead_by, behind: d.behind_by, files: (d.files || []).map(f => f.filename), url: d.html_url });
+
+  // ---------- workflow runs
+  const runOf = r => ({ ...r, t: Date.parse(r.created), took: r.status === 'completed' ? Date.parse(r.updated) - Date.parse(r.started || r.created) : null });
+  const RESULT = { success: 'succeeded', failure: 'failed', cancelled: 'cancelled', skipped: 'skipped', timed_out: 'timed out',
+    startup_failure: 'failed to start', neutral: 'neutral', action_required: 'waiting for approval', stale: 'stale' };
+  const resultOf = r => r.status !== 'completed' ? (r.status === 'in_progress' ? 'running' : r.status) : (RESULT[r.conclusion] || r.conclusion || 'unknown');
+  const kindOf = r => r.status !== 'completed' ? 'run' : r.conclusion === 'success' ? 'ok' : FAILED.has(r.conclusion) ? 'x' : 'other';
+  const EVENT = { schedule: 'scheduled', workflow_dispatch: 'started by hand', push: 'after a push' };
+  const eventOf = e => EVENT[e] || e;
+  const isCacheCommit = c => c.author === 'londat cache bot' || /^cache: live state/.test(c.msg);
+
+  // ---------- the summary at the top
+  const SECTIONS = [
+    ['cache', 'Hourly cache runs', sectionCache],
+    ['deploy', 'Site deploys', sectionDeploy],
+    ['live', 'Live data freshness', sectionLive],
+    ['kg', 'Knowledge graph', sectionKg],
+    ['register', 'Data register and quality', sectionRegister],
+    ['redirect', 'Old site redirect', sectionRedirect],
+    ['activity', 'Activity', sectionActivity]
+  ];
+  for (const [id, name] of SECTIONS) {
+    $('summary-list').append(h('li', { id: 'sum-' + id }, h('div', { class: 'top' }, a('#' + id, name), h('span', { class: 'st' }, chip('wait', 'Checking'))), h('div', { class: 'text' }, '')));
+  }
+  function setStatus(id, { state, label, text }) {
+    const li = $('sum-' + id);
+    put(li.querySelector('.st'), chip(state, label));
+    li.querySelector('.text').textContent = text || '';
+    put($(id + '-chip'), chip(state, label));
+  }
+
+  // ---------- 1. hourly cache runs
+  let cacheObserver = null;
+  async function sectionCache(el) {
+    const now = Date.now();
+    const since = new Date(now - 8 * DAY).toISOString().slice(0, 10);   // a date, so that the address (and the kept answer) holds for a day
+    const wfP = gh('/actions/workflows/cache-live.yml', trimWorkflow, HOUR).catch(() => null);
+    const byId = new Map();
+    for (let page = 1; page <= 3; page++) {
+      const d = await gh(`/actions/workflows/cache-live.yml/runs?per_page=100&created=%3E%3D${since}&page=${page}`, trimRuns);
+      for (const r of d.runs) byId.set(r.id, runOf(r));
+      if (byId.size >= d.total || !d.runs.length) break;
+    }
+    const wf = await wfP;
+    const runs = [...byId.values()].sort((x, y) => x.t - y.t);
+    const wfStart = wf && wf.created ? Date.parse(wf.created) : runs.length ? runs[0].t : now - 7 * DAY;
+    const start = Math.max(now - 7 * DAY, wfStart);
+    const expected = from => Math.max(0, Math.floor((now - Math.max(from, wfStart)) / HOUR));
+    const in24 = runs.filter(r => r.t > now - DAY), in7 = runs.filter(r => r.t > now - 7 * DAY);
+    const exp24 = expected(now - DAY), exp7 = expected(now - 7 * DAY);
+    const last = runs[runs.length - 1];
+    const lastDone = [...runs].reverse().find(r => r.status === 'completed');
+    // gaps between runs (a run before the window counts as the start of the first gap), then the open gap to now
+    const gaps = [];
+    for (let i = 1; i < runs.length; i++) if (runs[i].t > now - 7 * DAY) gaps.push({ a: runs[i - 1].t, b: runs[i].t });
+    const open = last ? { a: last.t, b: now, open: true } : null;
+    const first7 = in7[0];
+    const startGap = first7 && wfStart > now - 7 * DAY && !runs.some(r => r.t < first7.t) ? { a: wfStart, b: first7.t, first: true } : null;
+    const closed = gaps.map(g => g.b - g.a).sort((x, y) => x - y);
+    const median = closed.length ? (closed.length % 2 ? closed[(closed.length - 1) / 2] : (closed[closed.length / 2 - 1] + closed[closed.length / 2]) / 2) : null;
+    let longest = gaps.reduce((m, g) => !m || g.b - g.a > m.b - m.a ? g : m, null);
+    if (open && (!longest || open.b - open.a > longest.b - longest.a)) longest = open;
+    const lateGaps = [startGap, ...gaps, open].filter(g => g && g.b - g.a > LATE);
+    const failed7 = in7.filter(r => FAILED.has(r.conclusion));
+    const other7 = in7.filter(r => r.status === 'completed' && r.conclusion !== 'success' && !FAILED.has(r.conclusion));
+    const age = last ? now - last.t : Infinity;
+    const pct = (n, e) => e ? ` (${Math.round(100 * n / e)} %)` : '';
+
+    let state = 'ok', label = 'OK';
+    if (wf && wf.state && wf.state !== 'active') { state = 'bad'; label = 'Turned off'; }
+    else if (!last) { state = 'bad'; label = 'No runs'; }
+    else if (lastDone && FAILED.has(lastDone.conclusion)) { state = 'bad'; label = 'Failed'; }
+    else if (age > 12 * HOUR) { state = 'bad'; label = 'Very late'; }
+    else if (age > LATE) { state = 'warn'; label = 'Late'; }
+    else if (in24.some(r => FAILED.has(r.conclusion))) { state = 'warn'; label = 'Failures'; }
+    else if (in24.length < exp24 / 2) { state = 'warn'; label = 'Missed runs'; }
+    const text = last ? `Last run ${dur(age)} ago (${resultOf(last)}${lastDone && lastDone !== last ? `; the last finished run ${resultOf(lastDone)}` : ''}). ${num(in24.length)} of ${num(exp24)} expected runs in 24 h; ${num(in7.length)} of ${num(exp7)} in 7 days.` : 'No run in the last 8 days.';
+
+    const tiles = h('div', { class: 'tiles' },
+      tile('Last run', last ? dur(age) + ' ago' : 'none', last ? [when(last.t), ' · ', resultOf(last), last.took != null ? ' in ' + dur(last.took) : '', ' · ', anw(last.url, 'run ' + last.n)] : 'no run in 8 days'),
+      tile('Last 24 hours', plural(in24.length, 'run'), `of ${num(exp24)} expected${pct(in24.length, exp24)}`),
+      tile('Last 7 days', plural(in7.length, 'run'), `of ${num(exp7)} expected${pct(in7.length, exp7)}${wfStart > now - 7 * DAY ? `; the workflow was added ${when(wfStart)}` : ''}`),
+      tile('Median gap', median != null ? hrs(median) : '–', 'between runs; the schedule asks for 1 h'),
+      tile('Longest gap', longest ? hrs(longest.b - longest.a) : '–', longest ? (longest.open ? `since ${when(longest.a)}, still open` : span(longest.a, longest.b)) : ''),
+      tile('Failures', num(failed7.length), `in 7 days${other7.length ? `; ${num(other7.length)} cancelled or skipped` : ''}`));
+
+    const plot = h('div', { class: 'plot' });
+    const model = { runs: in7.filter(r => r.t >= start), gaps: lateGaps, start, now,
+      label: `Cache runs by day, London time, ${when(start)} to now: ${plural(in7.length, 'run')}, ${num(failed7.length)} failed, ${plural(lateGaps.length, 'gap')} of more than 2 hours. The table below lists the same runs.` };
+    const fig = h('figure', {},
+      legend(),
+      plot,
+      h('figcaption', {}, `One mark for each run of cache-live.yml at the time GitHub created it, one row for each day (London time), from ${when(start)} to now. A bar marks a gap of more than 2 hours without a run. Tap or click a mark or a bar for details.`));
+
+    const tableRows = [...in7].reverse().map(r => {
+      const i = runs.indexOf(r), prev = runs[i - 1];
+      return h('tr', {}, h('td', { class: 'n' }, a(r.url, String(r.n))), h('td', { class: 'w' }, fmtRow.format(r.t)),
+        h('td', {}, resultOf(r) + (r.event !== 'schedule' ? ', ' + eventOf(r.event) : '')),
+        h('td', { class: 'n' }, r.took != null ? dur(r.took) : ''), h('td', { class: 'n' }, prev ? hrs(r.t - prev.t) : ''));
+    });
+    const table = h('details', {}, h('summary', {}, `Table of the runs in the last 7 days (${num(in7.length)})`),
+      in7.length ? h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', { class: 'n' }, 'Run'), h('th', {}, 'Created'), h('th', {}, 'Result'), h('th', { class: 'n' }, 'Took'), h('th', { class: 'n', title: 'time since the run before' }, 'Gap'))), h('tbody', {}, tableRows)))
+        : h('p', { class: 'small' }, 'No runs.'));
+
+    const notes = [];
+    if (wf && wf.state && wf.state !== 'active') notes.push(line('bad', `The workflow is turned off (state: ${wf.state}). GitHub turns off a schedule after 60 days with no commit to the repository. Turn it on in the Actions tab: `, a(GH + '/actions/workflows/cache-live.yml')));
+    if (failed7.length) notes.push(h('div', {}, h('h3', {}, 'Failed runs'), h('ul', {}, failed7.slice().reverse().map(r => h('li', {}, a(r.url, 'Run ' + r.n), ` ${when(r.t)}: ${resultOf(r)}`)))));
+    put(el, tiles, fig, table, ...notes,
+      h('p', { class: 'small' }, 'All runs: ', a(GH + '/actions/workflows/cache-live.yml'), wf && wf.state ? ` · workflow state: ${wf.state}` : ''));
+
+    if (cacheObserver) cacheObserver.disconnect();
+    let drawnW = 0;
+    const draw = () => { const w = Math.floor(plot.clientWidth); if (w && Math.abs(w - drawnW) > 2) { drawnW = w; timeline(plot, model); } };
+    draw();
+    if (window.ResizeObserver) { cacheObserver = new ResizeObserver(() => requestAnimationFrame(draw)); cacheObserver.observe(plot); }
+    else window.addEventListener('resize', draw);
+    return { state, label, text };
+  }
+
+  function legend() {
+    const sw = (...kids) => s('svg', { width: 18, height: 14, viewBox: '0 0 18 14', 'aria-hidden': 'true' }, kids);
+    const item = (svgEl, text) => h('li', {}, svgEl, text);
+    return h('ul', { class: 'legend' },
+      item(sw(s('circle', { class: 'm-ok', cx: 9, cy: 7, r: 4 })), 'succeeded'),
+      item(sw(s('path', { class: 'm-x', d: 'M5 3l8 8M13 3l-8 8' })), 'failed'),
+      item(sw(s('rect', { class: 'm-other', x: 5, y: 3, width: 8, height: 8 })), 'cancelled or skipped'),
+      item(sw(s('circle', { class: 'm-run', cx: 9, cy: 7, r: 4 })), 'running or queued'),
+      item(sw(s('rect', { class: 'gapbar', x: 1, y: 4, width: 16, height: 6, rx: 3 })), 'no run for more than 2 h'),
+      item(sw(s('line', { class: 'nowline', x1: 9, x2: 9, y1: 1, y2: 13 })), 'now'));
+  }
+
+  // The timeline: one row for each London day, x = hour of the day, one mark per run, bars for the gaps.
+  function timeline(plot, m) {
+    const W = Math.max(260, Math.floor(plot.clientWidth));
+    const narrow = W < 520;
+    const LEFT = narrow ? 46 : 86, RIGHT = 10, TOP = 2, ROW = 30, AXIS = 20;
+    const P = W - LEFT - RIGHT;
+    const X = hh => LEFT + hh / 24 * P;
+    const L0 = local(m.start), LN = local(m.now);
+    const days = [];
+    for (let t = m.start; t < m.now + HOUR; t += HOUR) { const d = local(Math.min(t, m.now)).day; if (days[days.length - 1] !== d) days.push(d); }
+    const rowOf = d => days.indexOf(d);
+    const Y = i => TOP + i * ROW + 19;
+    const H = TOP + days.length * ROW + AXIS;
+    const svg = s('svg', { class: 'tl', width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', tabindex: 0, 'aria-label': m.label });
+    const ticks = narrow ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24];
+    for (const k of ticks) {
+      svg.append(s('line', { class: 'grid', x1: X(k), x2: X(k), y1: TOP, y2: TOP + days.length * ROW }));
+      svg.append(s('text', { class: 'lbl', x: X(k), y: H - 5, 'text-anchor': k === 0 ? 'start' : k === 24 ? 'end' : 'middle' }, String(k).padStart(2, '0') + (narrow ? '' : ':00')));
+    }
+    const dayFmt = new Intl.DateTimeFormat('en-GB', narrow ? { timeZone: 'UTC', weekday: 'short', day: 'numeric' } : { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+    days.forEach((d, i) => {
+      svg.append(s('text', { class: 'day', x: 0, y: Y(i) + 4 }, dayFmt.format(new Date(d + 'T12:00:00Z'))));
+      const x1 = X(d === L0.day ? L0.h : 0), x2 = X(d === LN.day ? LN.h : 24);
+      if (x2 > x1) svg.append(s('line', { class: 'track', x1, x2, y1: Y(i), y2: Y(i) }));
+    });
+    const gapHits = [];
+    for (const g of m.gaps) {
+      const ga = Math.max(g.a, m.start); if (g.b <= ga) continue;
+      const la = local(ga), lb = local(g.b), i0 = rowOf(la.day), i1 = rowOf(lb.day);
+      let best = null;
+      for (let i = i0; i <= i1; i++) {
+        const x1 = X(i === i0 ? la.h : 0), x2 = X(i === i1 ? lb.h : 24);
+        if (x2 - x1 < 0.5) continue;
+        svg.append(s('rect', { class: 'gapbar', x: x1, y: Y(i) - 3, width: x2 - x1, height: 6, rx: 3 }));
+        gapHits.push({ i, x1, x2, g });
+        if (!best || x2 - x1 > best.x2 - best.x1) best = { i, x1, x2 };
+      }
+      if (best && best.x2 - best.x1 >= 30) svg.append(s('text', { class: 'gl', x: (best.x1 + best.x2) / 2, y: Y(best.i) - 8 }, hrs(g.b - g.a)));
+    }
+    const iN = rowOf(LN.day);
+    svg.append(s('line', { class: 'nowline', x1: X(LN.h), x2: X(LN.h), y1: Y(iN) - 9, y2: Y(iN) + 9 }));
+    const marks = [];
+    for (const r of m.runs) {
+      const l = local(r.t), i = rowOf(l.day); if (i < 0) continue;
+      const x = X(l.h), y = Y(i), k = kindOf(r);
+      if (k === 'ok') svg.append(s('circle', { class: 'm-ok', cx: x, cy: y, r: 4 }));
+      else if (k === 'x') svg.append(s('circle', { class: 'm-ring', cx: x, cy: y, r: 6.5 }), s('path', { class: 'm-x', d: `M${x - 4} ${y - 4}L${x + 4} ${y + 4}M${x + 4} ${y - 4}L${x - 4} ${y + 4}` }));
+      else if (k === 'other') svg.append(s('rect', { class: 'm-other', x: x - 4, y: y - 4, width: 8, height: 8 }));
+      else svg.append(s('circle', { class: 'm-run', cx: x, cy: y, r: 4 }));
+      marks.push({ x, y, i, r });
+    }
+    const sel = s('circle', { class: 'sel', cx: -99, cy: -99, r: 8.5 });
+    svg.append(sel);
+    const tip = h('div', { class: 'tip', hidden: true, role: 'status', 'aria-live': 'polite' });
+    put(plot, svg, tip);
+
+    // interaction: the nearest mark in the row under the pointer (within 14 px), else a gap bar; tap or click pins
+    let pinned = false, cur = -1;
+    const scale = () => { const rect = svg.getBoundingClientRect(); return { rect, k: rect.width ? W / rect.width : 1 }; };
+    function place(x, y) {
+      const { k } = scale(), pw = plot.clientWidth;
+      tip.hidden = false;
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      const left = Math.min(Math.max(0, x / k - tw / 2), Math.max(0, pw - tw));
+      let top = y / k - th - 12; if (top < 0) top = y / k + 14;
+      tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    }
+    function hide() { tip.hidden = true; pinned = false; tip.classList.remove('pinned'); sel.setAttribute('cx', -99); }
+    function showRun(mk, pin) {
+      const r = mk.r;
+      pinned = pin; tip.classList.toggle('pinned', pin);
+      put(tip, h('strong', {}, cap(resultOf(r))), h('div', {}, `Run ${r.n}, ${eventOf(r.event)}`),
+        h('div', {}, when(r.t) + (r.took != null ? ` · took ${dur(r.took)}` : '')),
+        pin ? h('a', { href: r.url, target: '_blank', rel: 'noopener' }, 'Open the run on GitHub') : h('div', { class: 'small' }, 'Click for the link to the run'));
+      sel.setAttribute('cx', mk.x); sel.setAttribute('cy', mk.y);
+      place(mk.x, mk.y);
+    }
+    function showGap(z, x, pin) {
+      const g = z.g;
+      pinned = pin; tip.classList.toggle('pinned', pin);
+      put(tip, h('strong', {}, `No run for ${hrs(g.b - g.a)}${g.open ? ' so far' : ''}`),
+        h('div', {}, g.open ? `since ${when(g.a)}` : span(g.a, g.b)), g.first ? h('div', { class: 'small' }, 'after the workflow was added') : null);
+      sel.setAttribute('cx', -99);
+      place(x, Y(z.i));
+    }
+    function pick(e, pin) {
+      const { rect, k } = scale();
+      const px = (e.clientX - rect.left) * k, py = (e.clientY - rect.top) * k, i = Math.floor((py - TOP) / ROW);
+      let best = null;
+      marks.forEach((mk, j) => { if (mk.i !== i) return; const d = Math.abs(mk.x - px); if (d <= 14 && (!best || d < best.d)) best = { j, d }; });
+      if (best) { cur = best.j; return showRun(marks[best.j], pin); }
+      const z = gapHits.find(q => q.i === i && px >= q.x1 - 3 && px <= q.x2 + 3);
+      if (z) return showGap(z, px, pin);
+      hide();
+    }
+    svg.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && !pinned) pick(e, false); });
+    svg.addEventListener('pointerleave', () => { if (!pinned) hide(); });
+    svg.addEventListener('click', e => pick(e, true));
+    const byKeyboard = () => { try { return svg.matches(':focus-visible'); } catch { return false; } };
+    svg.addEventListener('focus', () => { if (!marks.length || !byKeyboard()) return; if (cur < 0) cur = marks.length - 1; showRun(marks[cur], true); });
+    svg.addEventListener('keydown', e => {
+      if (!marks.length) return;
+      const k = e.key;
+      if (k === 'ArrowRight' || k === 'ArrowDown') cur = Math.min(marks.length - 1, cur + 1);
+      else if (k === 'ArrowLeft' || k === 'ArrowUp') cur = Math.max(0, cur < 0 ? marks.length - 1 : cur - 1);
+      else if (k === 'Home') cur = 0;
+      else if (k === 'End') cur = marks.length - 1;
+      else if (k === 'Escape') { hide(); return; }
+      else if (k === 'Enter') { if (cur >= 0) window.open(marks[cur].r.url, '_blank', 'noopener'); return; }
+      else return;
+      e.preventDefault(); showRun(marks[cur], true);
+    });
+    plot._hide = hide;
+  }
+  document.addEventListener('click', e => { document.querySelectorAll('.plot').forEach(p => { if (p._hide && !p.contains(e.target)) p._hide(); }); });
+
+  // ---------- 2. site deploys
+  async function sectionDeploy(el) {
+    const [pr, commits] = await Promise.all([gh('/actions/workflows/pages.yml/runs?per_page=10', trimRuns), gh('/commits?sha=main&per_page=40', trimCommits)]);
+    const runs = pr.runs.map(runOf);   // newest first
+    const head = commits[0];
+    if (!head) throw new Error('no commits on main in the API answer');
+    const last = runs[0], deployed = runs.find(r => r.conclusion === 'success'), busy = runs.find(r => r.status !== 'completed');
+    const out = [];
+    let state, label, text;
+    if (!deployed) {
+      state = 'bad'; label = 'No deploy'; text = 'No successful deploy in the last 10 runs of pages.yml.';
+      out.push(line('bad', text));
+    } else if (deployed.sha === head.sha) {
+      state = 'ok'; label = 'Up to date'; text = `The site is up to date: it serves ${short(head.sha)}, the newest commit on main (deployed ${ago(deployed.t)}).`;
+      out.push(line('ok', 'The site is up to date: it serves the newest commit on main, ', a(GH + '/commit/' + head.sha, short(head.sha)), '.'));
+    } else {
+      const cmp = await gh(`/compare/${deployed.sha}...${head.sha}?per_page=1`, trimCompare);
+      const served = cmp.files.filter(f => !f.startsWith('cwplans/cache/'));
+      const idx = commits.findIndex(c => c.sha === deployed.sha);
+      const newer = idx >= 0 ? commits.slice(0, idx) : null;
+      const cacheN = newer ? newer.filter(isCacheCommit).length : null;
+      const behindTxt = `${plural(cmp.ahead, 'commit')}${cacheN != null ? ` (${num(cacheN)} of them hourly cache commits)` : ''}`;
+      if (cmp.status !== 'ahead') {
+        state = 'warn'; label = 'Check'; text = `The deployed commit ${short(deployed.sha)} is not an older commit of main (compare: ${cmp.status}).`;
+        out.push(line('warn', text + ' ', a(cmp.url, 'Compare on GitHub')));
+      } else if (!served.length) {
+        state = 'ok'; label = 'Up to date'; text = `The site is up to date. Main is ${behindTxt} ahead of the deployed commit, but they change only cwplans/cache/.`;
+        out.push(line('ok', `The site is up to date. Main is ${behindTxt} ahead of the deployed commit ${short(deployed.sha)}, but they change only cwplans/cache/ (the hourly cache), which does not deploy the site: the pages read cache/latest.json from raw.githubusercontent.com. `, a(cmp.url, 'Compare on GitHub')));
+      } else if (busy) {
+        state = 'info'; label = 'Deploying'; text = `A deploy is ${resultOf(busy)} for ${short(busy.sha)}. The site serves ${short(deployed.sha)}, ${behindTxt} behind main.`;
+        out.push(line('info', `A deploy is ${resultOf(busy)} (`, a(busy.url, 'run ' + busy.n), `) for commit ${short(busy.sha)}. Until it ends, the site serves ${short(deployed.sha)}, ${behindTxt} behind main.`));
+      } else {
+        state = 'warn'; label = 'Behind'; text = `The site is ${behindTxt} behind main; ${plural(served.length, 'file')}${cmp.files.length >= 300 ? ' or more' : ''} outside cwplans/cache/ changed.`;
+        out.push(line('warn', `The site is ${behindTxt} behind main: ${plural(served.length, 'file')}${cmp.files.length >= 300 ? ' or more' : ''} outside cwplans/cache/ changed since the deployed commit ${short(deployed.sha)}. A push to main normally deploys in a few minutes; if no deploy started, run pages.yml by hand (Actions > pages > Run workflow). `, a(cmp.url, 'Compare on GitHub')));
+      }
+    }
+    if (last && last !== deployed && last.status === 'completed' && last.conclusion !== 'success') {
+      state = 'bad'; label = 'Deploy failed';
+      text = `The newest deploy (run ${last.n}, ${when(last.t)}) ${resultOf(last)}.` + (deployed ? ` The site serves ${short(deployed.sha)}.` : '');
+      out.unshift(line('bad', `The newest deploy (`, a(last.url, 'run ' + last.n), `, ${when(last.t)}) ${resultOf(last)}.` + (deployed ? ` The site still serves ${short(deployed.sha)}.` : '') + ' If it stopped at "Set up Pages", check Settings > Pages > Source: GitHub Actions: ', a(GH + '/settings/pages')));
+    }
+    const tiles = h('div', { class: 'tiles', style: '--cols:2' },
+      tile('Last deploy', deployed ? ago(deployed.t) : 'none', deployed ? [when(deployed.t), ' · ', anw(deployed.url, 'run ' + deployed.n), ' · commit ', anw(GH + '/commit/' + deployed.sha, short(deployed.sha))] : ''),
+      tile('Newest commit on main', short(head.sha), [when(head.t), ' · ', a(head.url, head.msg)]));
+    const table = h('details', {}, h('summary', {}, `Recent deploys (${num(runs.length)})`),
+      h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', { class: 'n' }, 'Run'), h('th', {}, 'Created'), h('th', {}, 'Result'), h('th', {}, 'Commit'))),
+        h('tbody', {}, runs.map(r => h('tr', {}, h('td', { class: 'n' }, a(r.url, String(r.n))), h('td', { class: 'w' }, fmtRow.format(r.t)), h('td', {}, resultOf(r)), h('td', { class: 'wrap' }, anw(GH + '/commit/' + r.sha, short(r.sha)), ' ', r.title || '')))))));
+    put(el, ...out, tiles, table,
+      h('p', { class: 'small' }, 'All deploys: ', a(GH + '/actions/workflows/pages.yml'), ' · Settings > Pages: ', a(GH + '/settings/pages')));
+    return { state, label, text };
+  }
+
+  // ---------- 3. live data freshness
+  const THEMES = { bikes: 'Hire bike docks (Santander Cycles)', lifts: 'Lift outages (TfL)', crowding: 'Station busyness (TfL)',
+    power_cuts: 'Power cuts (UK Power Networks)', overflows: 'Storm overflows (Thames Water)', notams: 'NOTAMs: cranes and areas (NATS)',
+    ais: 'Ships (AIS)', tide: 'Tide and river levels (Environment Agency)', line_status: 'Line status (TfL)', river_bus: 'River bus arrivals (TfL)',
+    weather: 'Weather (Open-Meteo)' };
+  async function sectionLive(el) {
+    const url = window.CwData ? CwData.url('cache/latest.json') : RAW_LATEST;
+    const d = await getJSON(url);
+    const now = Date.now();
+    const themes = Object.entries(d.themes || {}).map(([k, t]) => ({ k, label: THEMES[k] || k, t: Date.parse(t.fetched),
+      n: Array.isArray(t.rows) ? plural(t.rows.length, 'row') : t.stations ? plural(Object.keys(t.stations).length, 'station') : t.current ? 'current values' : '' }));
+    const timed = themes.filter(x => !isNaN(x.t));
+    if (!timed.length) throw new Error('latest.json has no theme with a fetch time');
+    const fresh = themes.filter(x => now - x.t <= LATE), stale = themes.filter(x => !(now - x.t <= LATE));
+    const newest = Math.max(...timed.map(x => x.t)), oldest = Math.min(...timed.map(x => x.t)), written = Date.parse(d.written);
+    let state = 'ok', label = 'Fresh';
+    if (stale.length === themes.length && now - newest > 12 * HOUR) { state = 'bad'; label = 'Stale'; }
+    else if (stale.length) { state = 'warn'; label = 'Stale'; }
+    const text = `${plural(themes.length, 'theme')}: ${num(fresh.length)} fresh, ${num(stale.length)} more than 2 h old. Newest fetch ${dur(now - newest)} ago.`;
+    const list = h('ul', { class: 'rows' }, themes.map(x => {
+      const ok = now - x.t <= LATE;
+      if (isNaN(x.t)) return h('li', {}, icon('warn'), h('span', {}, x.label), h('span', { class: 'age' }, '?'), h('span', { class: 'sub' }, 'no fetch time'));
+      return h('li', {}, icon(ok ? 'ok' : 'warn'), h('span', {}, x.label), h('span', { class: 'age' }, dur(now - x.t)),
+        h('span', { class: 'sub' }, `fetched ${when(x.t)}${x.n ? ' · ' + x.n : ''} · ${ok ? 'fresh' : 'stale'}`));
+    }));
+    put(el,
+      h('div', { class: 'tiles' },
+        tile('Written', isNaN(written) ? '–' : dur(now - written) + ' ago', isNaN(written) ? '' : when(written)),
+        tile('Fresh themes', `${num(fresh.length)} of ${num(themes.length)}`, 'fetched in the last 2 h'),
+        tile('Oldest theme', dur(now - oldest), timed.find(x => x.t === oldest).label)),
+      list,
+      h('p', { class: 'small' }, 'Read from ', a(url), ' (GitHub keeps a copy for about 5 minutes). The workflow writes it after each run: when the runs are late, this data is late.'));
+    return { state, label, text };
+  }
+
+  // ---------- 4. knowledge graph
+  async function sectionKg(el) {
+    const [man, ext, current, check] = await Promise.all([
+      getJSON(KGX + 'manifest.json'),
+      getJSON(KGX + 'external-heads.json').catch(() => null),
+      getText(KGX + 'shardborough/CURRENT').then(t => t.trim()).catch(() => null),
+      getJSON(KGX + 'checks/store-vs-memory.json').catch(() => null)]);
+    const graphs = man.graphs || {};
+    const names = Object.keys(man.heads || graphs);
+    const outOfStore = new Set(Object.entries(ext || {}).filter(([, v]) => v && typeof v === 'object' && v.store === false).map(([k]) => k));
+    const triples = man.total_triples != null ? man.total_triples : names.reduce((n, k) => n + ((graphs[k] && graphs[k].triples) || 0), 0);
+    const quads = triples - [...outOfStore].reduce((n, k) => n + ((graphs[k] && graphs[k].triples) || 0), 0);
+    const st = man.store || {}, built = Date.parse(man.built);
+    let state = 'ok', label = 'OK';
+    const out = [];
+    if (current && st.generation && current !== st.generation) {
+      state = 'warn'; label = 'Mismatch';
+      out.push(line('warn', `The store's CURRENT names ${current}, the manifest names ${st.generation}. The search page reads CURRENT.`));
+    }
+    if (check) {
+      const qs = Object.values(check.queries || {}), same = qs.filter(q => q.identical).length;
+      const forThis = check.generation === st.generation;
+      if (same < qs.length && state === 'ok') { state = 'warn'; label = 'Check differs'; }
+      out.push(line(same === qs.length ? (forThis ? 'ok' : 'info') : 'warn',
+        `Store check (`, a(GH + '/blob/main/kgx/checks/store-vs-memory.json', 'store-vs-memory.json'), `): ${num(same)} of ${num(qs.length)} queries give the same rows through the store and in memory; checked ${when(Date.parse(check.checked))}, ${forThis ? 'on this store generation' : `on ${check.generation}, not on this generation: run node cwplans/tools/check-kgx-store.mjs --write`}.`));
+    }
+    const text = `${num(triples)} triples in ${plural(names.length, 'graph')}; ${num(quads)} quads in the browser store (${st.generation || 'no generation'}). Built ${isNaN(built) ? '?' : dur(Date.now() - built) + ' ago'}.`;
+    const rows = names.map(k => ({ k, g: graphs[k] || {} })).sort((x, y) => (y.g.triples || 0) - (x.g.triples || 0));
+    put(el,
+      h('div', { class: 'tiles' },
+        tile('Triples', num(triples), `in ${plural(names.length, 'graph')} (the heads)`),
+        tile('Quads in the store', num(quads), outOfStore.size ? `all graphs but ${[...outOfStore].join(', ')}` : 'all graphs'),
+        tile('Store', st.members != null ? plural(st.members, 'part') : '–', [st.generation || '', st.files != null ? ` · ${num(st.files)} files, ${mb(st.bytes || 0)}` : '']),
+        tile('Built', isNaN(built) ? '–' : dur(Date.now() - built) + ' ago', [isNaN(built) ? '' : when(built), man.engine ? ' · ' + man.engine : '']),
+        tile('Activities in the log', man.activities_in_log != null ? num(man.activities_in_log) : '–', man.activities_run_new != null ? `${num(man.activities_run_new)} new in the last build` : '')),
+      ...out,
+      h('details', {}, h('summary', {}, `The ${num(names.length)} graphs`),
+        h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Graph'), h('th', { class: 'n' }, 'Triples'), h('th', { class: 'n' }, 'Parts'), h('th', {}, 'In the store'))),
+          h('tbody', {}, rows.map(({ k, g }) => h('tr', { title: g.title || '' }, h('td', {}, k), h('td', { class: 'n' }, g.triples != null ? num(g.triples) : ''), h('td', { class: 'n' }, g.parts ? num(g.parts) : outOfStore.has(k) ? '–' : 'whole'), h('td', {}, outOfStore.has(k) ? 'no' : 'yes'))))))),
+      h('p', { class: 'small' }, 'Search page: ', a(SITE + 'cwplans/kg/'), ' · manifest: ', a(GH + '/blob/main/kgx/manifest.json'), ' · rebuild: ', h('code', {}, 'node cwplans/tools/build-kgx.mjs')));
+    return { state, label, text };
+  }
+
+  // ---------- 5. data register and quality
+  async function sectionRegister(el) {
+    const regBox = h('div'), qBox = h('div');
+    put(el, h('h3', {}, 'Data register'), regBox, h('h3', {}, 'Quality checks'), qBox);
+    const [reg, q] = await Promise.allSettled([getJSON(CW + 'data-register.json'), getJSON(CW + 'quality/issues.json')]);
+    const texts = [];
+    if (reg.status === 'fulfilled') {
+      const r = reg.value, files = r.files || [];
+      const osm = files.filter(f => f.osm && f.osm.use && f.osm.use !== 'none');
+      const byUse = {};
+      for (const f of osm) byUse[f.osm.use] = (byUse[f.osm.use] || 0) + 1;
+      const review = files.filter(f => f.review), crawls = files.filter(f => f.crawl);
+      put(regBox, h('div', { class: 'tiles', style: '--cols:4' },
+        tile('Files', num(files.length), r.updated ? ['register updated ', h('span', { class: 'nw' }, r.updated)] : ''),
+        tile('Sources', num(Object.keys(r.sources || {}).length), r.pages ? `${plural(r.pages.length, 'page')} listed with the data they load` : ''),
+        tile('Files that use OSM', num(osm.length), Object.entries(byUse).sort((x, y) => y[1] - x[1]).map(([k, n]) => `${k} ${n}`).join(', ')),
+        tile('Files marked for review', num(review.length), crawls.length ? `${plural(crawls.length, 'file')} from website crawls` : '')),
+        h('p', { class: 'small' }, 'Readable view: ', a(BLOB + 'cwplans/DATA-REGISTER.md'), ' · check: ', h('code', {}, 'npm run check')));
+      texts.push(`${num(files.length)} files, ${num(Object.keys(r.sources || {}).length)} sources, ${num(osm.length)} use OSM, ${num(review.length)} marked for review`);
+    } else put(regBox, errBox('The data register did not load', reg.reason));
+    if (q.status === 'fulfilled') {
+      const v = q.value, sm = v.summary || {}, sev = sm.by_severity || {}, checks = (v.checks || []).slice().sort((x, y) => (y.issues || 0) - (x.issues || 0));
+      const gen = Date.parse(v.generated);
+      put(qBox, h('div', { class: 'tiles', style: '--cols:4' },
+        tile('Checks', num(sm.checks != null ? sm.checks : checks.length), v.generated ? ['generated ', h('span', { class: 'nw' }, v.generated), isNaN(gen) ? '' : ` (${dur(Date.now() - gen)} ago)`] : ''),
+        tile('Issue records', num(sm.issues != null ? sm.issues : (v.issues || []).length), Object.entries(sev).map(([k, n]) => `${num(n)} ${k}`).join(', ')),
+        tile('Buildings with issues', sm.buildings_with_issues != null ? num(sm.buildings_with_issues) : '–', 'registry buildings'),
+        tile('Postcodes with issues', sm.postcodes_with_issues != null ? num(sm.postcodes_with_issues) : '–', '')),
+        h('p', { class: 'small' }, 'The checks with the most cases (found of checked; some checks report counts only, so these counts are larger than the issue records):'),
+        h('ul', { class: 'list' }, checks.slice(0, 5).map(c => h('li', {}, h('b', {}, c.id), ` ${c.title} `, h('span', { class: 'small' }, `(${c.cls}): ${num(c.issues || 0)}${c.population != null ? ' of ' + num(c.population) : ''}`)))),
+        h('details', {}, h('summary', {}, `All ${num(checks.length)} checks`),
+          h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Check'), h('th', {}, 'What it finds'), h('th', { class: 'n' }, 'Found'), h('th', { class: 'n' }, 'Checked'))),
+            h('tbody', {}, checks.map(c => h('tr', {}, h('td', { class: 'w' }, c.id), h('td', {}, `${c.title} (${c.cls})`), h('td', { class: 'n' }, num(c.issues || 0)), h('td', { class: 'n' }, c.population != null ? num(c.population) : ''))))))),
+        h('p', { class: 'small' }, 'Catalogue: ', a(BLOB + 'cwplans/quality/CATALOGUE.md'), ' · re-run: ', h('code', {}, 'node cwplans/tools/audit-quality.mjs'), ' · browse the issues in the atlas: ', a(SITE + 'cwplans/atlas/#quality')));
+      texts.push(`${num(sm.checks != null ? sm.checks : checks.length)} quality checks, ${num(sm.issues || 0)} issue records (${num(sev.high || 0)} high)`);
+    } else put(qBox, errBox('The quality issues did not load', q.reason));
+    const failed = [reg, q].filter(x => x.status === 'rejected').length;
+    if (failed === 2) throw new Error('neither the register nor the quality issues loaded');
+    return failed ? { state: 'warn', label: 'Part failed', text: texts.join('; ') } : { state: 'info', label: 'Info', text: texts.join('; ') + '.' };
+  }
+
+  // ---------- 6. old site redirect
+  const OLD = 'https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/';
+  const MIGRATION = 'https://github.com/danbri/glitchcan-minigam/compare/master...claude/docklands-migration-londat-hr8hoz';
+  async function pageTitle(url) {   // reads only the start of the page: the title is in the head
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    let text = '';
+    if (r.body && r.body.getReader) {
+      const reader = r.body.getReader(), dec = new TextDecoder();
+      while (text.length < 262144) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        text += dec.decode(value, { stream: true });
+        if (/<\/title>/i.test(text)) break;
+      }
+      reader.cancel().catch(() => {});
+    } else text = await r.text();
+    return new DOMParser().parseFromString(text, 'text/html').title.trim();
+  }
+  async function sectionRedirect(el) {
+    let title, err = null;
+    try { title = await pageTitle(LIVE_SITE ? new URL('/glitchcan-minigam/magpie/cwplans/docklands/', location.origin).href : OLD); }
+    catch (e) { err = e; }
+    const localNote = LIVE_SITE ? null : h('p', { class: 'small' }, 'This page is open from ', location.origin, ', not from the live site. This check needs the live site: ', a(SITE + 'dashboard/'), err ? '.' : '. (Here GitHub Pages allowed a read across sites.)');
+    if (err) {
+      if (!LIVE_SITE) {
+        put(el, line('info', `The old page could not be read from here (${err.message}).`), localNote);
+        return { state: 'info', label: 'Needs the live site', text: 'This check needs the live site, https://danbri.github.io/londat/dashboard/ .' };
+      }
+      throw new Error(`the old address did not load (${err.message})`);
+    }
+    if (/^Moved:/.test(title)) {
+      put(el, line('ok', `Redirected: the old address shows the redirect page ("${title}"), which forwards to `, a(SITE + 'cwplans/docklands/'), ' with the query and the hash.'), localNote);
+      return { state: 'ok', label: 'Redirected', text: `The old address shows "${title}" and forwards to the new site.` };
+    }
+    put(el, line('warn', `Not redirected: the old address still serves the old page (title "${title || 'none'}"). The redirect pages are on the branch claude/docklands-migration-londat-hr8hoz of danbri/glitchcan-minigam; they go live when it is merged into master: `, a(MIGRATION)), localNote);
+    return { state: 'warn', label: 'Not redirected', text: 'The old address still serves the old page; the migration branch of glitchcan-minigam is not merged.' };
+  }
+
+  // ---------- 7. activity
+  const plain = t => t.replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[`*]/g, '').trim();
+  const slugOf = t => t.toLowerCase().replace(/[^\p{L}\p{M}\p{N}\p{Pc} -]/gu, '').replace(/ /g, '-');   // GitHub's heading anchors
+  function headings(md) {
+    const seen = new Map(), out = []; let fence = null;
+    for (const ln of md.split('\n')) {
+      const f = ln.match(/^\s{0,3}(`{3,}|~{3,})/);
+      if (f) { if (!fence) fence = f[1][0]; else if (f[1][0] === fence) fence = null; continue; }
+      if (fence) continue;
+      const m = ln.match(/^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$/);
+      if (!m) continue;
+      const text = plain(m[2]); let slug = slugOf(text);
+      const n = seen.get(slug) || 0; seen.set(slug, n + 1); if (n) slug += '-' + n;
+      out.push({ level: m[1].length, text, slug });
+    }
+    return out;
+  }
+  async function sectionActivity(el) {
+    const logBox = h('div'), comBox = h('div');
+    put(el, h('h3', {}, 'Activity log: the newest entries'), logBox, h('h3', {}, 'Newest commits on main'), comBox);
+    const [lg, cm] = await Promise.allSettled([
+      getText(new URL('../' + LOG_PATH, location.href).href),
+      gh('/commits?sha=main&per_page=40', trimCommits)]);
+    const texts = [];
+    if (lg.status === 'fulfilled') {
+      const entries = headings(lg.value).filter(x => x.level === 2).slice(-6).reverse();   // the log is newest last
+      put(logBox, h('ul', { class: 'list' }, entries.map(x => h('li', {}, a(BLOB + LOG_PATH + '#' + x.slug, x.text)))),
+        h('p', { class: 'small' }, 'Whole log: ', a(BLOB + LOG_PATH)));
+      if (entries[0]) texts.push(`Newest log entry: ${entries[0].text}`);
+    } else put(logBox, errBox('The activity log did not load', lg.reason));
+    if (cm.status === 'fulfilled') {
+      const all = cm.value, list = h('ul', { class: 'list' });
+      const box = h('input', { type: 'checkbox' });
+      const draw = () => {
+        const shown = (box.checked ? all : all.filter(c => !isCacheCommit(c))).slice(0, 10);
+        put(list, ...shown.map(c => h('li', {}, a(c.url, c.msg || short(c.sha)), h('br'),
+          h('span', { class: 'small' }, `${when(c.t)} · ${short(c.sha)} · ${c.author}${isCacheCommit(c) ? ' · hourly cache' : ''}`))));
+      };
+      box.addEventListener('change', draw); draw();
+      const nCache = all.filter(isCacheCommit).length;
+      put(comBox, h('label', { class: 'toggle' }, box, `Show the hourly cache commits too (${num(nCache)} of the ${num(all.length)} newest)`), list,
+        h('p', { class: 'small' }, 'All commits: ', a(GH + '/commits/main')));
+      if (all[0]) texts.push(`newest commit ${ago(all[0].t)}`);
+    } else put(comBox, errBox('The commits did not load', cm.reason));
+    const failed = [lg, cm].filter(x => x.status === 'rejected').length;
+    if (failed === 2) throw new Error('neither the activity log nor the commits loaded');
+    return { state: failed ? 'warn' : 'info', label: failed ? 'Part failed' : 'Info', text: texts.join('; ') + '.' };
+  }
+
+  // ---------- run all checks
+  let lastChecked = 0, running = false;
+  function apiNote() {
+    const bits = [];
+    if (api.made) bits.push(`${plural(api.made, 'request')} made`);
+    if (api.reused) bits.push(`${plural(api.reused, 'answer')} reused from this tab (up to ${dur(api.oldest)} old; kept 5 minutes)`);
+    if (api.rl && api.rl.left != null) bits.push(`${api.rl.left} of ${api.rl.limit} requests left this hour for this internet address${api.rl.reset ? `, the count resets at ${fmtTime.format(api.rl.reset * 1000)}` : ''}`);
+    if (api.limited) bits.push(api.limited);
+    if (api.stale) bits.push(`some sections show older answers kept in this tab (${dur(api.stale)} old) because ${api.staleWhy}`);
+    $('apinote').textContent = `GitHub API: ${bits.join('; ') || 'no requests'}. Without sign-in GitHub allows 60 requests an hour for each internet address; this page makes about 5 for each check.`;
+  }
+  function checkedNote() {
+    if (lastChecked) $('checked').textContent = `Last checked ${fmtSec.format(lastChecked)} (${dur(Date.now() - lastChecked)} ago)`;
+  }
+  async function runAll() {
+    if (running) return;
+    running = true;
+    resetApi();
+    document.body.classList.add('busy');
+    $('reload').disabled = true; $('reload').textContent = 'Checking…';
+    await Promise.allSettled(SECTIONS.map(async ([id, name, fn]) => {
+      try { setStatus(id, await fn($(id + '-body'))); }
+      catch (e) {
+        put($(id + '-body'), errBox('This check failed', e));
+        setStatus(id, { state: 'bad', label: 'Error', text: e && e.message ? e.message : String(e) });
+      }
+    }));
+    lastChecked = Date.now(); checkedNote(); apiNote();
+    document.body.classList.remove('busy');
+    $('reload').disabled = false; $('reload').textContent = 'Reload';
+    running = false;
+  }
+  $('reload').addEventListener('click', runAll);
+  setInterval(checkedNote, 30e3);
+  // a tab that comes back (or a page restored from the back-forward cache) checks again when its answers are over 10 minutes old
+  const again = () => { if (document.visibilityState === 'visible' && lastChecked && Date.now() - lastChecked > 10 * MIN) runAll(); };
+  document.addEventListener('visibilitychange', again);
+  window.addEventListener('pageshow', e => { if (e.persisted) again(); });
+  runAll();
+})();
+</script>
+</body>
+</html>

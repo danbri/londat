@@ -15,6 +15,7 @@ Site: https://danbri.github.io/londat/ (published by `.github/workflows/pages.ym
 | Feeds and sources, what's on | https://danbri.github.io/londat/cwplans/feeds/ , https://danbri.github.io/londat/cwplans/feeds/whatson.html |
 | Building registry, postcodes | https://danbri.github.io/londat/cwplans/registry/ , https://danbri.github.io/londat/cwplans/postcodes/ |
 | Canada Water to Surrey Quays (where the project started) | https://danbri.github.io/londat/cwplans/ |
+| Status dashboard: hourly cache runs, site deploys, age of the live data, knowledge graph, register and quality, old-site redirect, activity | https://danbri.github.io/londat/dashboard/ |
 
 ## History
 
@@ -46,6 +47,7 @@ to the same page here, with the query and the hash kept.
 | `third_party/tfl/am3d/` | TfL axonometric station diagrams (FOI release, not an open licence; use approved by the owner 2026-10-05) and the Blender station models made from them |
 | `third_party/cwg/` | Canary Wharf Group printed maps and guides, supplied by the owner 2026-10-06; not an open licence; see its README |
 | `third_party/cwplans-structured-data/` | schema.org data from the websites the registry links to (crawl of the scoping phase); [README](third_party/cwplans-structured-data/README.md) |
+| `dashboard/` | the status dashboard (one page, no build step; it reads the GitHub API, `cache/latest.json` and files of this site in the browser) |
 | `tools/view-mcp/` | the `docklands-view` MCP server (`.mcp.json`): landmarks, camera solve, headless renders of the 3D page |
 | `tools/check-skills.mjs` | checks that every skill is linked into `.claude/skills/` |
 
