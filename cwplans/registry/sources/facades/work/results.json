@@ -1,0 +1,904 @@
+{
+ "ocs-a": {
+  "building": "cwb-0413",
+  "src": "orig/54911790284.jpg",
+  "face": "W",
+  "face_how": "Cabot Square fountain in the foreground; HSBC to the left (north), Citi to the right (south)",
+  "bay_px": 50,
+  "floor_px": 59.1,
+  "aspect": 1.159,
+  "aspect_from": "orth",
+  "f_over_long": 1.212,
+  "floor_m_assumed": 3.9,
+  "colours": [
+   {
+    "hex": "#bdc5c3",
+    "share": 0.518,
+    "L": 79.1
+   },
+   {
+    "hex": "#6e7e78",
+    "share": 0.327,
+    "L": 51.7
+   },
+   {
+    "hex": "#434f4b",
+    "share": 0.155,
+    "L": 32.8
+   }
+  ],
+  "patch_px": [
+   754,
+   1744
+  ],
+  "bay_m_from_floor": 2.85,
+  "bays_across_face": 19.9,
+  "bay_m_from_width": 2.97,
+  "floor_m_measured": 4.07,
+  "rect_file": "data/raw/facades/cwb-0413/rect-ocs-a.jpg",
+  "rect_px": [
+   754,
+   2021
+  ]
+ },
+ "ocs-b": {
+  "building": "cwb-0413",
+  "src": "orig/49416072577.jpg",
+  "face": "S",
+  "face_how": "Thomson Reuters building (30 South Colonnade, south-west of the tower) on the left; a sister shot by the same view (39878263614) is geotagged 72 m SSW",
+  "bay_px": 37,
+  "floor_px": 31.3,
+  "aspect": 1.743,
+  "aspect_from": "orth",
+  "f_over_long": 1.009,
+  "floor_m_assumed": 3.9,
+  "colours": [
+   {
+    "hex": "#8d9393",
+    "share": 0.406,
+    "L": 60.6
+   },
+   {
+    "hex": "#d8d9db",
+    "share": 0.33,
+    "L": 86.7
+   },
+   {
+    "hex": "#475155",
+    "share": 0.264,
+    "L": 34.1
+   }
+  ],
+  "patch_px": [
+   540,
+   851
+  ],
+  "bay_m_from_floor": 2.64,
+  "rect_file": "data/raw/facades/cwb-0413/rect-ocs-b.jpg",
+  "rect_px": [
+   540,
+   1483
+  ]
+ },
+ "hsbc-cabot": {
+  "building": "cwb-0417",
+  "src": "orig/54911790284.jpg",
+  "face": "W",
+  "face_how": "same Cabot Square view as ocs-a",
+  "bay_px": 17.6,
+  "floor_px": 39.9,
+  "aspect": 1.177,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 4.44,
+  "colours": [
+   {
+    "hex": "#445b60",
+    "share": 0.421,
+    "L": 37.0
+   },
+   {
+    "hex": "#9eb4b7",
+    "share": 0.392,
+    "L": 71.8
+   },
+   {
+    "hex": "#72878a",
+    "share": 0.188,
+    "L": 55.0
+   }
+  ],
+  "patch_px": [
+   627,
+   420
+  ],
+  "bay_m_from_floor": 1.66,
+  "bays_across_face": 40.5,
+  "bay_m_from_width": 1.47,
+  "floor_m_measured": 3.92,
+  "rect_file": "data/raw/facades/cwb-0417/rect-hsbc-cabot.jpg",
+  "rect_px": [
+   627,
+   494
+  ]
+ },
+ "hsbc-e": {
+  "building": "cwb-0417",
+  "src": "orig/54419488598.jpg",
+  "face": "unknown",
+  "face_how": "no geotag; sunlit face at 14:29 in March, so probably S or W",
+  "bay_px": 33,
+  "floor_px": 77,
+  "aspect": 1.209,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 4.44,
+  "colours": [
+   {
+    "hex": "#d3e7e5",
+    "share": 0.494,
+    "L": 90.4
+   },
+   {
+    "hex": "#263a3e",
+    "share": 0.4,
+    "L": 23.5
+   },
+   {
+    "hex": "#728784",
+    "share": 0.107,
+    "L": 54.6
+   }
+  ],
+  "patch_px": [
+   1018,
+   1210
+  ],
+  "bay_m_from_floor": 1.57,
+  "rect_file": "data/raw/facades/cwb-0417/rect-hsbc-e.jpg",
+  "rect_px": [
+   1018,
+   1463
+  ]
+ },
+ "citi-cabot": {
+  "building": "cwb-0520",
+  "src": "orig/54911790284.jpg",
+  "face": "W",
+  "face_how": "same Cabot Square view as ocs-a",
+  "bay_px": 53,
+  "floor_px": 41,
+  "aspect": 1.139,
+  "aspect_from": "orth",
+  "f_over_long": 0.717,
+  "floor_m_assumed": 4.44,
+  "colours": [
+   {
+    "hex": "#64777a",
+    "share": 0.644,
+    "L": 48.9
+   },
+   {
+    "hex": "#b5c3c2",
+    "share": 0.19,
+    "L": 77.7
+   },
+   {
+    "hex": "#39484b",
+    "share": 0.165,
+    "L": 29.6
+   }
+  ],
+  "patch_px": [
+   501,
+   306
+  ],
+  "bay_m_from_floor": 5.04,
+  "rect_file": "data/raw/facades/cwb-0520/rect-citi-cabot.jpg",
+  "rect_px": [
+   501,
+   349
+  ]
+ },
+ "citi-top": {
+  "building": "cwb-0520",
+  "src": "orig/54416200163.jpg",
+  "face": "unknown",
+  "face_how": "no geotag",
+  "bay_px": 129,
+  "floor_px": 96,
+  "aspect": 1.099,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 4.44,
+  "colours": [
+   {
+    "hex": "#151f23",
+    "share": 0.543,
+    "L": 11.3
+   },
+   {
+    "hex": "#566060",
+    "share": 0.299,
+    "L": 40.1
+   },
+   {
+    "hex": "#d5d9d6",
+    "share": 0.157,
+    "L": 86.7
+   }
+  ],
+  "patch_px": [
+   1358,
+   983
+  ],
+  "bay_m_from_floor": 5.43,
+  "rect_file": "data/raw/facades/cwb-0520/rect-citi-top.jpg",
+  "rect_px": [
+   1358,
+   1080
+  ]
+ },
+ "pinnacle-edge": {
+  "building": "cwb-0577",
+  "src": "orig/51154600226.jpg",
+  "face": "N or S",
+  "face_how": "narrow end face; OSM footprint narrow sides (24.5 m) face north and south",
+  "bay_px": null,
+  "floor_px": 57.3,
+  "aspect": 1.787,
+  "aspect_from": "orth",
+  "f_over_long": 1.172,
+  "floor_m_assumed": 3.11,
+  "colours": [
+   {
+    "hex": "#393e45",
+    "share": 0.777,
+    "L": 26.1
+   },
+   {
+    "hex": "#11151b",
+    "share": 0.198,
+    "L": 6.7
+   },
+   {
+    "hex": "#b5bbc2",
+    "share": 0.025,
+    "L": 75.9
+   }
+  ],
+  "patch_px": [
+   856,
+   2041
+  ],
+  "rect_file": "data/raw/facades/cwb-0577/rect-pinnacle-edge.jpg",
+  "rect_px": [
+   481,
+   2048
+  ]
+ },
+ "pinnacle-mercury": {
+  "building": "cwb-0577",
+  "src": "orig/54148261054.jpg",
+  "face": "E or W",
+  "face_how": "long face; OSM footprint long sides (48.6 m) face east and west",
+  "bay_px": 20,
+  "floor_px": 50,
+  "aspect": 1.285,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 3.11,
+  "colours": [
+   {
+    "hex": "#88919a",
+    "share": 0.43,
+    "L": 59.8
+   },
+   {
+    "hex": "#e0ddd8",
+    "share": 0.407,
+    "L": 88.5
+   },
+   {
+    "hex": "#3d4046",
+    "share": 0.163,
+    "L": 27.3
+   }
+  ],
+  "patch_px": [
+   789,
+   2917
+  ],
+  "bay_m_from_floor": 0.97,
+  "bays_across_face": 51.5,
+  "bay_m_from_width": 0.94,
+  "floor_m_measured": 3.02,
+  "rect_file": "data/raw/facades/cwb-0577/rect-pinnacle-mercury.jpg",
+  "rect_px": [
+   431,
+   2048
+  ]
+ },
+ "hampton-sqp": {
+  "building": "cwb-0715",
+  "src": "orig/54914359145.jpg",
+  "face": "N",
+  "face_how": "dock water in the foreground; South Dock lies north of the tower",
+  "bay_px": null,
+  "floor_px": 32,
+  "aspect": 1.611,
+  "aspect_from": "orth",
+  "f_over_long": 0.511,
+  "floor_m_assumed": 3.15,
+  "colours": [
+   {
+    "hex": "#9da8b1",
+    "share": 0.516,
+    "L": 68.4
+   },
+   {
+    "hex": "#5e6771",
+    "share": 0.243,
+    "L": 43.2
+   },
+   {
+    "hex": "#181d24",
+    "share": 0.24,
+    "L": 10.7
+   }
+  ],
+  "patch_px": [
+   181,
+   1452
+  ],
+  "rect_file": "data/raw/facades/cwb-0715/rect-hampton-sqp.jpg",
+  "rect_px": [
+   158,
+   2048
+  ]
+ },
+ "newf-diagrid": {
+  "building": "cwb-0451",
+  "src": "orig/48063457661.jpg",
+  "face": "W",
+  "face_how": "Flickr geotag 108 m west of the tower centroid",
+  "bay_px": 65,
+  "floor_px": 173,
+  "aspect": 1.054,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 3.79,
+  "colours": [
+   {
+    "hex": "#9f9f9f",
+    "share": 0.423,
+    "L": 65.8
+   },
+   {
+    "hex": "#5b5b5b",
+    "share": 0.355,
+    "L": 39.0
+   },
+   {
+    "hex": "#1e1e1e",
+    "share": 0.222,
+    "L": 11.5
+   }
+  ],
+  "patch_px": [
+   2073,
+   4096
+  ],
+  "bay_m_from_floor": 1.35,
+  "rect_file": "data/raw/facades/cwb-0451/rect-newf-diagrid.jpg",
+  "rect_px": [
+   983,
+   2048
+  ]
+ },
+ "newf-dock": {
+  "building": "cwb-0451",
+  "src": "orig/51398723196.jpg",
+  "face": "E",
+  "face_how": "view west along Middle Dock with the DLR bridge in the foreground",
+  "bay_px": null,
+  "floor_px": 29,
+  "aspect": 0.841,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 3.79,
+  "colours": [
+   {
+    "hex": "#787c82",
+    "share": 0.392,
+    "L": 51.9
+   },
+   {
+    "hex": "#c2c4c8",
+    "share": 0.354,
+    "L": 79.5
+   },
+   {
+    "hex": "#35373b",
+    "share": 0.254,
+    "L": 23.4
+   }
+  ],
+  "patch_px": [
+   396,
+   1410
+  ],
+  "rect_file": "data/raw/facades/cwb-0451/rect-newf-dock.jpg",
+  "rect_px": [
+   396,
+   1186
+  ]
+ },
+ "wardian-a": {
+  "building": "cwb-0645",
+  "src": "orig/52197497711.jpg",
+  "face": "unknown",
+  "face_how": "no geotag",
+  "bay_px": 85,
+  "floor_px": 75,
+  "aspect": 1.29,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 3.36,
+  "colours": [
+   {
+    "hex": "#010506",
+    "share": 0.519,
+    "L": 1.4
+   },
+   {
+    "hex": "#cad5d2",
+    "share": 0.255,
+    "L": 84.3
+   },
+   {
+    "hex": "#66757c",
+    "share": 0.226,
+    "L": 48.6
+   }
+  ],
+  "patch_px": [
+   1171,
+   2387
+  ],
+  "bay_m_from_floor": 2.95,
+  "rect_file": "data/raw/facades/cwb-0645/rect-wardian-a.jpg",
+  "rect_px": [
+   779,
+   2048
+  ]
+ },
+ "amory": {
+  "building": "cwb-0813",
+  "src": "orig/52535970543.jpg",
+  "face": "unknown",
+  "face_how": "no geotag",
+  "bay_px": 51,
+  "floor_px": 54,
+  "aspect": 1.354,
+  "aspect_from": "orth",
+  "f_over_long": 1.163,
+  "floor_m_assumed": 3.37,
+  "colours": [
+   {
+    "hex": "#3e4f60",
+    "share": 0.351,
+    "L": 33.3
+   },
+   {
+    "hex": "#1b2631",
+    "share": 0.333,
+    "L": 14.8
+   },
+   {
+    "hex": "#768492",
+    "share": 0.316,
+    "L": 54.8
+   }
+  ],
+  "patch_px": [
+   551,
+   2007
+  ],
+  "bay_m_from_floor": 2.35,
+  "rect_file": "data/raw/facades/cwb-0813/rect-amory.jpg",
+  "rect_px": [
+   415,
+   2048
+  ]
+ },
+ "ocp": {
+  "building": "cwb-0424",
+  "src": "orig/54921012630.jpg",
+  "face": "unknown",
+  "face_how": "no geotag; Barclays sign on this face",
+  "bay_px": 77,
+  "floor_px": 112,
+  "aspect": 0.98,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 4.88,
+  "colours": [
+   {
+    "hex": "#3c515c",
+    "share": 0.398,
+    "L": 33.4
+   },
+   {
+    "hex": "#b3c7c7",
+    "share": 0.318,
+    "L": 78.8
+   },
+   {
+    "hex": "#627b82",
+    "share": 0.285,
+    "L": 50.1
+   }
+  ],
+  "patch_px": [
+   975,
+   1415
+  ],
+  "bay_m_from_floor": 3.42,
+  "rect_file": "data/raw/facades/cwb-0424/rect-ocp.jpg",
+  "rect_px": [
+   975,
+   1387
+  ]
+ },
+ "novotel": {
+  "building": "cwb-0701",
+  "src": "orig/48053768112.jpg",
+  "face": "N",
+  "face_how": "Flickr geotag 17 m from the centroid, bearing 169 (close range, low confidence)",
+  "bay_px": null,
+  "floor_px": 99,
+  "aspect": 2.698,
+  "aspect_from": "orth",
+  "f_over_long": 0.845,
+  "floor_m_assumed": 3.1,
+  "colours": [
+   {
+    "hex": "#b1c4da",
+    "share": 0.735,
+    "L": 78.5
+   },
+   {
+    "hex": "#8094af",
+    "share": 0.168,
+    "L": 61.0
+   },
+   {
+    "hex": "#3c4350",
+    "share": 0.097,
+    "L": 28.5
+   }
+  ],
+  "patch_px": [
+   424,
+   1331
+  ],
+  "rect_file": "data/raw/facades/cwb-0701/rect-novotel.jpg",
+  "rect_px": [
+   242,
+   2048
+  ]
+ },
+ "opd": {
+  "building": "cwb-0590",
+  "src": "orig/51152317073.jpg",
+  "face": "unknown",
+  "face_how": "cylindrical tower; a homography only flattens a narrow vertical strip",
+  "bay_px": null,
+  "floor_px": 55,
+  "aspect": 1.484,
+  "aspect_from": "orth",
+  "f_over_long": 0.579,
+  "floor_m_assumed": 3.6,
+  "colours": [
+   {
+    "hex": "#282c2b",
+    "share": 0.39,
+    "L": 17.7
+   },
+   {
+    "hex": "#b0b5b4",
+    "share": 0.336,
+    "L": 73.5
+   },
+   {
+    "hex": "#6a7070",
+    "share": 0.274,
+    "L": 47.0
+   }
+  ],
+  "patch_px": [
+   584,
+   2431
+  ],
+  "rect_file": "data/raw/facades/cwb-0590/rect-opd.jpg",
+  "rect_px": [
+   331,
+   2048
+  ]
+ },
+ "ubs10": {
+  "building": "cwb-0589",
+  "src": "orig/commons-10UBS-Mortadella42.jpg",
+  "face": "S",
+  "face_how": "HSBC crown visible to the north-east; dock railing in the foreground",
+  "bay_px": 67,
+  "floor_px": 49,
+  "aspect": 1.893,
+  "aspect_from": "orth",
+  "f_over_long": 0.827,
+  "floor_m_assumed": 4.72,
+  "colours": [
+   {
+    "hex": "#39598a",
+    "share": 0.699,
+    "L": 38.0
+   },
+   {
+    "hex": "#294676",
+    "share": 0.269,
+    "L": 30.0
+   },
+   {
+    "hex": "#96b1dd",
+    "share": 0.032,
+    "L": 71.9
+   }
+  ],
+  "patch_px": [
+   451,
+   841
+  ],
+  "bay_m_from_floor": 3.41,
+  "rect_file": "data/raw/facades/cwb-0589/rect-ubs10.jpg",
+  "rect_px": [
+   451,
+   1592
+  ]
+ },
+ "harcourt": {
+  "building": "cwb-0712",
+  "src": "orig/commons-SQP4-1-Mortadella42.jpg",
+  "face": "unknown",
+  "face_how": "no geotag",
+  "bay_px": 42,
+  "floor_px": null,
+  "aspect": 1.641,
+  "aspect_from": "orth",
+  "f_over_long": 1.005,
+  "floor_m_assumed": 3.44,
+  "colours": [
+   {
+    "hex": "#edece4",
+    "share": 0.431,
+    "L": 93.5
+   },
+   {
+    "hex": "#4e5254",
+    "share": 0.416,
+    "L": 34.7
+   },
+   {
+    "hex": "#919393",
+    "share": 0.154,
+    "L": 61.2
+   }
+  ],
+  "patch_px": [
+   587,
+   1117
+  ],
+  "bays_across_face": 14.0,
+  "bay_m_from_width": 2.37,
+  "rect_file": "data/raw/facades/cwb-0712/rect-harcourt.jpg",
+  "rect_px": [
+   587,
+   1833
+  ]
+ },
+ "bank25": {
+  "building": "cwb-0582",
+  "src": "orig/6453681243.jpg",
+  "face": "N",
+  "face_how": "Flickr geotag 22 m north of the centroid (close range)",
+  "bay_px": 46,
+  "floor_px": 58,
+  "aspect": 2.111,
+  "aspect_from": "orth",
+  "f_over_long": 1.044,
+  "floor_m_assumed": 4.64,
+  "colours": [
+   {
+    "hex": "#757b84",
+    "share": 0.405,
+    "L": 51.5
+   },
+   {
+    "hex": "#9fa5af",
+    "share": 0.402,
+    "L": 67.5
+   },
+   {
+    "hex": "#42444c",
+    "share": 0.193,
+    "L": 29.4
+   }
+  ],
+  "patch_px": [
+   1772,
+   1488
+  ],
+  "bay_m_from_floor": 1.74,
+  "rect_file": "data/raw/facades/cwb-0582/rect-bank25.jpg",
+  "rect_px": [
+   1155,
+   2048
+  ]
+ },
+ "bank25-b": {
+  "building": "cwb-0582",
+  "src": "orig/26313668335.jpg",
+  "face": "unknown",
+  "face_how": "seen from beyond the DLR viaduct; no geotag",
+  "bay_px": 19,
+  "floor_px": 40,
+  "aspect": 1.37,
+  "aspect_from": "orth",
+  "f_over_long": 0.831,
+  "floor_m_assumed": 4.64,
+  "colours": [
+   {
+    "hex": "#7d8894",
+    "share": 0.409,
+    "L": 56.2
+   },
+   {
+    "hex": "#525a65",
+    "share": 0.306,
+    "L": 38.1
+   },
+   {
+    "hex": "#a5b1c0",
+    "share": 0.284,
+    "L": 71.8
+   }
+  ],
+  "patch_px": [
+   749,
+   871
+  ],
+  "bay_m_from_floor": 1.61,
+  "rect_file": "data/raw/facades/cwb-0582/rect-bank25-b.jpg",
+  "rect_px": [
+   749,
+   1193
+  ]
+ },
+ "bank40": {
+  "building": "cwb-0585",
+  "src": "orig/6453677865.jpg",
+  "face": "W",
+  "face_how": "Flickr geotag 23 m north-west of the centroid (close range)",
+  "bay_px": 90,
+  "floor_px": 95,
+  "aspect": 1.303,
+  "aspect_from": "orth",
+  "f_over_long": 0.986,
+  "floor_m_assumed": 4.64,
+  "colours": [
+   {
+    "hex": "#5e5f69",
+    "share": 0.451,
+    "L": 40.7
+   },
+   {
+    "hex": "#4a4d57",
+    "share": 0.307,
+    "L": 33.3
+   },
+   {
+    "hex": "#2b2f34",
+    "share": 0.242,
+    "L": 19.6
+   }
+  ],
+  "patch_px": [
+   806,
+   2243
+  ],
+  "bay_m_from_floor": 3.37,
+  "rect_file": "data/raw/facades/cwb-0585/rect-bank40.jpg",
+  "rect_px": [
+   565,
+   2048
+  ]
+ },
+ "ch25": {
+  "building": "cwb-0525",
+  "src": "orig/14602887430.jpg",
+  "face": "unknown",
+  "face_how": "no geotag; seen across water",
+  "bay_px": 47,
+  "floor_px": 38,
+  "aspect": 1.066,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 5.65,
+  "colours": [
+   {
+    "hex": "#668da9",
+    "share": 0.452,
+    "L": 56.9
+   },
+   {
+    "hex": "#9db7c9",
+    "share": 0.381,
+    "L": 73.1
+   },
+   {
+    "hex": "#deecf5",
+    "share": 0.167,
+    "L": 92.9
+   }
+  ],
+  "patch_px": [
+   428,
+   957
+  ],
+  "bay_m_from_floor": 6.56,
+  "rect_file": "data/raw/facades/cwb-0525/rect-ch25.jpg",
+  "rect_px": [
+   428,
+   1020
+  ]
+ },
+ "wiq1": {
+  "building": "cwb-0317",
+  "src": "orig/6455129143.jpg",
+  "face": "E",
+  "face_how": "Flickr geotag 16 m from the centroid (close range, low confidence)",
+  "bay_px": 43,
+  "floor_px": 104,
+  "aspect": 1.144,
+  "aspect_from": "iphone26",
+  "f_over_long": 0.722,
+  "floor_m_assumed": 3.36,
+  "colours": [
+   {
+    "hex": "#868f94",
+    "share": 0.459,
+    "L": 59.1
+   },
+   {
+    "hex": "#41494e",
+    "share": 0.396,
+    "L": 30.7
+   },
+   {
+    "hex": "#c8d4da",
+    "share": 0.145,
+    "L": 84.6
+   }
+  ],
+  "patch_px": [
+   849,
+   1160
+  ],
+  "bay_m_from_floor": 1.21,
+  "rect_file": "data/raw/facades/cwb-0317/rect-wiq1.jpg",
+  "rect_px": [
+   849,
+   1327
+  ]
+ }
+}

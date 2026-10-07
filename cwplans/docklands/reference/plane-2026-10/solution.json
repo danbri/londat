@@ -1,0 +1,348 @@
+{
+ "solved": "2026-10-05",
+ "input": "magpie/cwplans/docklands/reference/plane-2026-10/points.json",
+ "camera": {
+  "eye": [
+   210.2,
+   802.7,
+   -846.3
+  ],
+  "heading_deg": 223.76,
+  "pitch_deg": -13.56,
+  "roll_deg": 9.17,
+  "focal_px": 1102.5,
+  "k1": 0,
+  "width": 1195,
+  "height": 689,
+  "cx": 597.5,
+  "cy": 344.5
+ },
+ "eye_wgs84": {
+  "lon": -0.01614,
+  "lat": 51.51246,
+  "alt_m_od": 803,
+  "alt_ft": 2634
+ },
+ "hfov_deg": 56.9,
+ "rms_px": 4.77,
+ "rms_px_dof": 5.22,
+ "n_obs": 43,
+ "n_params": 7,
+ "free": [
+  "x",
+  "y",
+  "z",
+  "heading_deg",
+  "pitch_deg",
+  "roll_deg",
+  "focal_px"
+ ],
+ "sigma": {
+  "x": 16.2,
+  "y": 10.9,
+  "z": 26,
+  "heading_deg": 0.365,
+  "pitch_deg": 0.147,
+  "roll_deg": 0.212,
+  "focal_px": 12.5
+ },
+ "residuals": [
+  {
+   "id": "cwb-0451",
+   "name": "Newfoundland, top of the crown",
+   "photo": [
+    363,
+    600
+   ],
+   "model": [
+    356.3,
+    596
+   ],
+   "err_px": 7.8,
+   "range_m": 1249
+  },
+  {
+   "id": "cwb-0577",
+   "name": "Landmark Pinnacle, roof",
+   "photo": [
+    301,
+    506
+   ],
+   "model": [
+    302.4,
+    517.1
+   ],
+   "err_px": 11.2,
+   "range_m": 1386
+  },
+  {
+   "id": "place:Greenland Pier",
+   "name": "Greenland Pier pontoon",
+   "photo": [
+    280,
+    421
+   ],
+   "model": [
+    275.7,
+    423.6
+   ],
+   "err_px": 5.1,
+   "range_m": 2395
+  },
+  {
+   "outline": "water:Greenland Dock",
+   "name": "Greenland Dock south bank",
+   "photo": [
+    440,
+    395
+   ],
+   "err_px": 1.8
+  },
+  {
+   "outline": "water:Greenland Dock",
+   "name": "Greenland Dock south bank",
+   "photo": [
+    490,
+    380
+   ],
+   "err_px": 3.6
+  },
+  {
+   "outline": "water:Greenland Dock",
+   "name": "Greenland Dock south bank",
+   "photo": [
+    530,
+    371
+   ],
+   "err_px": 2.5
+  },
+  {
+   "outline": "water:Greenland Dock",
+   "name": "Greenland Dock south bank",
+   "photo": [
+    563,
+    373
+   ],
+   "err_px": 9
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    645,
+    670
+   ],
+   "err_px": 5.7
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    550,
+    605
+   ],
+   "err_px": 3.1
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    475,
+    550
+   ],
+   "err_px": 2.4
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    440,
+    525
+   ],
+   "err_px": 7.1
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    400,
+    492
+   ],
+   "err_px": 1
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    350,
+    457
+   ],
+   "err_px": 0.1
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe east shore",
+   "photo": [
+    310,
+    432
+   ],
+   "err_px": 1.7
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Deptford shore",
+   "photo": [
+    240,
+    395
+   ],
+   "err_px": 2
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Deptford shore",
+   "photo": [
+    175,
+    370
+   ],
+   "err_px": 0.9
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Deptford shore",
+   "photo": [
+    100,
+    347
+   ],
+   "err_px": 2.2
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Deptford shore",
+   "photo": [
+    25,
+    330
+   ],
+   "err_px": 0.3
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Isle of Dogs west shore",
+   "photo": [
+    0,
+    380
+   ],
+   "err_px": 1
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Isle of Dogs west shore",
+   "photo": [
+    50,
+    400
+   ],
+   "err_px": 2
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Isle of Dogs west shore",
+   "photo": [
+    100,
+    425
+   ],
+   "err_px": 1.7
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1160,
+    423
+   ],
+   "err_px": 0.1
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1110,
+    438
+   ],
+   "err_px": 11.3
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1087,
+    452
+   ],
+   "err_px": 7.3
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1085,
+    473
+   ],
+   "err_px": 4
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1097,
+    497
+   ],
+   "err_px": 2.7
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1113,
+    517
+   ],
+   "err_px": 1.4
+  },
+  {
+   "outline": "water:tidal",
+   "name": "Rotherhithe north shore",
+   "photo": [
+    1133,
+    530
+   ],
+   "err_px": 3.5
+  }
+ ],
+ "holdout": [
+  {
+   "id": "place:Sir John McDougall Gardens",
+   "name": "Sir John McDougall Gardens, middle",
+   "photo": [
+    107,
+    497
+   ],
+   "model": [
+    148.2,
+    493.3
+   ],
+   "err_px": 41.4,
+   "range_m": 2037
+  },
+  {
+   "id": null,
+   "name": "Greenland Dock, west end",
+   "photo": [
+    578,
+    383
+   ],
+   "model": [
+    561.6,
+    383
+   ],
+   "err_px": 16.4,
+   "range_m": 2933
+  }
+ ]
+}

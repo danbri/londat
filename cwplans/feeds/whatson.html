@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Docklands what's on</title>
+<meta name="description" content="What's on across the Docklands zone (venue programmes, events, temporary event notices, street events, markets) and, in a second view, closures and works (rail, bus, roads), by date and place, from open public sources.">
+<style>
+:root{--bg:#0f1215;--panel:#15191d;--card:#181d22;--line:#323940;--fg:#e8eaec;--muted:#a9b1b9;--link:#9cc8ff;--ev:#c9a2ff;--road:#ffd26f;--rail:#7cc4ff;--mk:#6fd38f;--pl:#ff9f7a;--acc:#9cc8ff}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f7f8;--panel:#fff;--card:#fff;--line:#d5d9de;--fg:#16191c;--muted:#59626b;--link:#0b5fbf;--ev:#6b3fb8;--road:#8a5a00;--rail:#0b5fbf;--mk:#16794a;--pl:#b3461e;--acc:#0b5fbf}}
+:root[data-theme="dark"]{--bg:#0f1215;--panel:#15191d;--card:#181d22;--line:#323940;--fg:#e8eaec;--muted:#a9b1b9;--link:#9cc8ff}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,sans-serif}
+a{color:var(--link);overflow-wrap:anywhere}
+html{overscroll-behavior:none;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+img,a{-webkit-user-drag:none}
+button,select,label,nav,.tabs{-webkit-user-select:none;user-select:none;touch-action:manipulation}
+main{max-width:1000px;margin:0 auto;padding:16px}
+h1{font-size:1.35rem;margin:.2em 0 .3em}
+h2{font-size:1.05rem;margin:1.3em 0 .3em;border-bottom:1px solid var(--line);padding-bottom:.2em;display:flex;gap:8px;align-items:baseline}
+h2 .n{color:var(--muted);font-weight:400;font-size:13px}
+.small{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;margin:10px 0 0;border-bottom:1px solid var(--line)}
+.tabs button{font:inherit;font-weight:600;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--acc)}
+.bar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line);z-index:1}
+input[type=search],input[type=date],select{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0}
+input[type=search]{flex:1 1 180px}
+ul.items{list-style:none;margin:0;padding:0}
+ul.items li{border-left:3px solid var(--line);background:var(--card);margin:6px 0;padding:6px 10px;border-radius:0 8px 8px 0}
+li.g-ev{border-left-color:var(--ev)}li.g-road{border-left-color:var(--road)}li.g-rail{border-left-color:var(--rail)}li.g-mk{border-left-color:var(--mk)}li.g-pl{border-left-color:var(--pl)}
+.k{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.g-ev .k{color:var(--ev)}.g-road .k{color:var(--road)}.g-rail .k{color:var(--rail)}.g-mk .k{color:var(--mk)}.g-pl .k{color:var(--pl)}
+.t{margin:2px 0;overflow-wrap:anywhere}
+.m{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 12px}
+details.grp{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:5px 0;padding:4px 10px}
+details.grp>summary{cursor:pointer;display:flex;gap:6px 12px;flex-wrap:wrap;align-items:baseline}
+details.grp>summary b{font-weight:600}
+details.more>summary{cursor:pointer;color:var(--muted);font-size:13px;margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;border-bottom:1px solid var(--line);padding:4px 6px;vertical-align:top}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+footer{margin-top:2em;border-top:1px solid var(--line);padding-top:.6em}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>Docklands: what's on, and what's closed</h1>
+<p class="small">Across the zone: Tower Hamlets (Canary Wharf, the Isle of Dogs, Poplar, Limehouse, Wapping, Whitechapel), Rotherhithe, Surrey Quays and Bermondsey, Deptford, Greenwich and North Greenwich, the east edge of the City, and the Royal Docks and ExCeL. Snapshots of open public sources, not live: each source's fetch date is in the table at the end. Method and gaps: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/works/README.md">README</a>. Data: <a href="works/works.json">works.json</a>. Other catalogues: <a href="./">data feeds</a>.</p>
+<div class="tabs" role="tablist">
+  <button role="tab" id="tab-on" aria-selected="true" aria-controls="view-on">What's on <span id="n-on" class="small"></span></button>
+  <button role="tab" id="tab-cl" aria-selected="false" aria-controls="view-cl">Closures and works <span id="n-cl" class="small"></span></button>
+</div>
+<section id="view-on" role="tabpanel" aria-labelledby="tab-on">
+  <div class="bar">
+    <input type="search" id="q-on" placeholder="Search: venue, event, street…" aria-label="Search events">
+    <select id="k-on" aria-label="Type of event">
+      <option value="">All events</option>
+      <option value="venue">Venue programmes</option>
+      <option value="licence">Temporary event notices and licences</option>
+      <option value="street">Street and road events</option>
+      <option value="planning">Temporary event planning applications</option>
+      <option value="market">Markets</option>
+    </select>
+    <select id="b-on" aria-label="Borough"><option value="">All boroughs</option></select>
+  </div>
+  <div id="out-on"><p class="small">Loading…</p></div>
+</section>
+<section id="view-cl" role="tabpanel" aria-labelledby="tab-cl" hidden>
+  <div class="bar">
+    <select id="d-cl" aria-label="When">
+      <option value="today">Today</option>
+      <option value="week" selected>Next 7 days</option>
+      <option value="day">A chosen day</option>
+      <option value="all">Any date</option>
+    </select>
+    <input type="date" id="day-cl" aria-label="Chosen day" hidden>
+    <select id="k-cl" aria-label="Kind">
+      <option value="">All kinds</option>
+      <option value="rail">Rail, DLR, Overground, river</option>
+      <option value="bus">Bus diversions and stops</option>
+      <option value="closure">Road closures</option>
+      <option value="works">Road works (no closure)</option>
+      <option value="order">Traffic orders</option>
+    </select>
+    <input type="search" id="q-cl" placeholder="Street, station, route…" aria-label="Search closures">
+  </div>
+  <div id="out-cl"></div>
+</section>
+<footer class="small">
+  <h2>Sources and attribution</h2>
+  <p>Map data and markets: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL). Rail, bus and road disruptions: Powered by TfL Open Data. Contains public sector information licensed under the Open Government Licence v3.0 (DfT Street Manager, The Gazette, NaPTAN, ONS Postcode Directory). Venue and council event listings, Tower Hamlets licence notices and markets, Planning London Datahub: titles, dates, places and links only; each item links to its source.</p>
+  <div class="scroll"><table id="src"><thead><tr><th>source</th><th>items</th><th>shown</th><th>fetched</th><th>attribution and licence</th></tr></thead><tbody></tbody></table></div>
+</footer>
+</main>
+<script>
+// window lock (skill docklands-3d-page, "Window lock"): no browser zoom, pull-to-refresh, drag-out or file drop on the page
+(() => { const no = e => e.preventDefault(), field = e => e.target instanceof Element && e.target.closest('input,textarea,select');
+  addEventListener('wheel', e => { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive: false, capture: true });
+  addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['+', '=', '-', '_', '0'].includes(e.key)) e.preventDefault(); });
+  for (const t of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(t, no, { passive: false });
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !(e.target instanceof Element && e.target.closest('.leaflet-container'))) e.preventDefault(); }, { passive: false });
+  document.addEventListener('dragstart', e => { if (!field(e)) e.preventDefault(); }, true);
+  addEventListener('dragover', e => { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'none'; });
+  addEventListener('drop', no); })();
+</script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// What's on = events; Closures and works = everything that stops or diverts movement
+const ONKIND = x => x.kind === 'venue event' ? 'venue' : /\bTEN\b/.test(x.kind) || /licen/i.test(x.kind) ? 'licence'
+  : /street event|event \(road\)/.test(x.kind) ? 'street' : /^planning/.test(x.kind) ? 'planning' : x.kind === 'market' ? 'market' : null;
+const CLKIND = x => x.source === 'tfl-lines' ? 'rail' : /bus/.test(x.kind) ? 'bus'
+  : /traffic order|TTRO/.test(x.kind) ? 'order' : /closure/.test(x.kind) ? 'closure' : 'works';
+const CLASS = { venue: 'ev', licence: 'ev', street: 'ev', planning: 'pl', market: 'mk', rail: 'rail', bus: 'rail', closure: 'road', works: 'road', order: 'road' };
+const LON = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' });
+const dayOf = s => { if (!s) return null; const d = new Date(s.length === 10 ? s + 'T12:00:00Z' : s); if (isNaN(d)) return null; const p = LON.formatToParts(d), g = t => p.find(x => x.type === t).value; return `${g('year')}-${g('month')}-${g('day')}`; };
+const LONG = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long' });
+const dayName = d => LONG.format(new Date(d + 'T12:00:00Z'));
+const YEAR = new Date().getFullYear();
+const fmt = s => { if (!s) return ''; const d = new Date(s.length === 10 ? s + 'T12:00:00Z' : s); if (isNaN(d)) return s; const y = d.getFullYear() !== YEAR;
+  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: s.length === 10 && !y ? 'short' : undefined, day: 'numeric', month: 'short', year: y ? 'numeric' : undefined, hour: s.length === 10 ? undefined : '2-digit', minute: s.length === 10 ? undefined : '2-digit' }).format(d); };
+const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+const today = dayOf(new Date().toISOString());
+const boroughOf = x => { const b = String(x.borough || '').replace(/^(LONDON BOROUGH OF|ROYAL BOROUGH OF|THE )\s*/i, '').replace(/\s*\(.*\)$/, '').trim(); return b ? b.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase()).replace(/ Of /g, ' of ') : ''; };
+let on = [], cl = [];
+
+function card(x, cls) {
+  const when = x.recurring ? esc(x.recurring) : [x.start && fmt(x.start), x.end && x.end !== x.start && 'to ' + fmt(x.end)].filter(Boolean).join(' ') || 'date on the venue page';
+  const map = x.lat != null ? ` · <a href="https://www.openstreetmap.org/?mlat=${x.lat}&amp;mlon=${x.lon}#map=17/${x.lat}/${x.lon}">map</a>` : '';
+  return `<li class="g-${cls}"><div class="k">${esc(x.kind)}</div><div class="t">${esc(x.title)}</div><div class="m"><span>${when}</span>${x.location ? `<span>${esc(x.location)}</span>` : ''}${boroughOf(x) ? `<span>${esc(boroughOf(x))}</span>` : ''}<span>${x.url ? `<a href="${esc(x.url)}">${esc(x.source)}</a>` : esc(x.source)}${map}</span></div></li>`;
+}
+const list = (xs, f) => `<ul class="items">${xs.map(f).join('')}</ul>`;
+const head = (t, n) => `<h2>${t} <span class="n">${n}</span></h2>`;
+
+// ---- What's on: by day; undated programmes and markets after
+function renderOn() {
+  const q = $('q-on').value.trim().toLowerCase(), k = $('k-on').value, b = $('b-on').value;
+  const xs = on.filter(x => (!k || ONKIND(x) === k) && (!b || boroughOf(x) === b) && (!q || [x.title, x.location, x.borough, x.kind].join(' ').toLowerCase().includes(q)));
+  const days = new Map(), later = [], undated = [], recurring = [], running = [], horizon = addDays(today, 30);
+  for (const x of xs) {
+    if (x.recurring) { recurring.push(x); continue; }
+    if (!x.start) { undated.push(x); continue; }
+    const s = dayOf(x.start), e = dayOf(x.end) || s;
+    if (e < today) continue;
+    if (s < today) { running.push(x); continue; }
+    if (s <= horizon) { if (!days.has(s)) days.set(s, []); days.get(s).push(x); } else later.push(x);
+  }
+  const c = x => card(x, CLASS[ONKIND(x)]);
+  let h = running.length ? head('Running now', running.length) + list(running, c) : '';
+  for (const d of [...days.keys()].sort()) h += head(d === today ? `Today, ${dayName(d)}` : dayName(d), days.get(d).length) + list(days.get(d), c);
+  if (later.length) h += head(`Later (after ${dayName(horizon)})`, later.length) + `<details class="more"><summary>Show ${later.length}</summary>${list(later, c)}</details>`;
+  if (undated.length) h += head('On the programme (the feed gives no date: see the venue page)', undated.length) + list(undated, c);
+  if (recurring.length) h += head('Markets and other regular events', recurring.length) + list(recurring, c);
+  $('out-on').innerHTML = h || '<p class="small">Nothing matches.</p>';
+}
+
+// ---- Closures and works: rail first, then buses, closures, traffic orders; road works grouped by street
+function inWhen(x) {
+  const w = $('d-cl').value; if (w === 'all') return true;
+  const s = dayOf(x.start) || today, e = dayOf(x.end) || s;
+  const day = $('day-cl').value || today;
+  const [a, z] = w === 'today' ? [today, today] : w === 'week' ? [today, addDays(today, 6)] : [day, day];
+  return s <= z && e >= a;
+}
+function groupByStreet(xs, cls) {
+  const g = new Map();
+  for (const x of xs) { const key = `${(x.street || x.location || 'unnamed').toUpperCase()}|${boroughOf(x)}`; if (!g.has(key)) g.set(key, []); g.get(key).push(x); }
+  return [...g.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0])).map(([key, v]) => {
+    const [street, bor] = key.split('|'); const s = v.map(x => dayOf(x.start)).filter(Boolean).sort()[0], e = v.map(x => dayOf(x.end)).filter(Boolean).sort().at(-1);
+    return `<details class="grp"><summary><b>${esc(street)}</b><span class="small">${esc(bor)}</span><span class="small">${v.length} item${v.length > 1 ? 's' : ''}</span><span class="small">${s ? fmt(s) : ''}${e && e !== s ? ' to ' + fmt(e) : ''}</span></summary>${list(v, x => card(x, cls))}</details>`;
+  }).join('');
+}
+function renderCl() {
+  $('day-cl').hidden = $('d-cl').value !== 'day';
+  const q = $('q-cl').value.trim().toLowerCase(), k = $('k-cl').value;
+  const xs = cl.filter(x => inWhen(x) && (!k || CLKIND(x) === k) && (!q || [x.title, x.location, x.street, x.borough, x.kind].join(' ').toLowerCase().includes(q)));
+  const by = { rail: [], bus: [], closure: [], order: [], works: [] };
+  for (const x of xs) by[CLKIND(x)].push(x);
+  let h = '';
+  if (by.rail.length) h += head('Rail, DLR, Overground and river closures', by.rail.length) + list(by.rail, x => card(x, 'rail'));
+  if (by.bus.length) h += head('Bus diversions and stop closures', by.bus.length) + list(by.bus, x => card(x, 'rail'));
+  if (by.closure.length) h += head('Road closures, by street', by.closure.length) + groupByStreet(by.closure, 'road');
+  if (by.order.length) h += head('Traffic orders (The Gazette)', by.order.length) + list(by.order, x => card(x, 'road'));
+  if (by.works.length) h += head('Road works with no closure, by street', by.works.length) + groupByStreet(by.works, 'road');
+  $('out-cl').innerHTML = h || '<p class="small">Nothing in this period.</p>';
+}
+function tab(which) {
+  for (const [t, v] of [['tab-on', 'view-on'], ['tab-cl', 'view-cl']]) { const sel = t === which; $(t).setAttribute('aria-selected', sel); $(v).hidden = !sel; }
+  try { history.replaceState(null, '', which === 'tab-cl' ? '#closures' : '#'); } catch (e) { /* file: or sandbox */ }
+}
+fetch('works/works.json').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(j => {
+  on = j.items.filter(x => ONKIND(x)); cl = j.items.filter(x => !ONKIND(x));
+  $('n-on').textContent = `(${on.length})`; $('n-cl').textContent = `(${cl.length})`;
+  const bs = [...new Set(on.map(boroughOf).filter(Boolean))].sort();
+  $('b-on').insertAdjacentHTML('beforeend', bs.map(b => `<option>${esc(b)}</option>`).join(''));
+  const shown = id => { const a = j.items.filter(x => x.source === id); return `${a.filter(ONKIND).length} on, ${a.filter(x => !ONKIND(x)).length} closures`; };
+  $('src').querySelector('tbody').innerHTML = j.meta.sources.map(s => `<tr><td>${esc(s.id)}</td><td class="n">${s.items}</td><td>${shown(s.id)}</td><td>${esc(s.fetched)}</td><td>${esc(s.attribution || '')} <span class="small">Licence: ${esc(s.licence || '')}</span></td></tr>`).join('')
+    + `<tr><td>all</td><td class="n">${j.items.length}</td><td>${on.length} on, ${cl.length} closures</td><td>${esc(j.meta.built)}</td><td>tools/fetch-works.mjs</td></tr>`;
+  $('day-cl').value = today;
+  for (const id of ['q-on', 'k-on', 'b-on']) $(id).addEventListener('input', renderOn);
+  for (const id of ['q-cl', 'k-cl', 'd-cl', 'day-cl']) $(id).addEventListener('input', renderCl);
+  $('tab-on').addEventListener('click', () => tab('tab-on')); $('tab-cl').addEventListener('click', () => tab('tab-cl'));
+  renderOn(); renderCl();
+  if (location.hash === '#closures') tab('tab-cl');
+}).catch(e => { $('out-on').innerHTML = `<p class="small">Could not load works.json (${esc(e.message)}). Published page: <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/whatson.html</a></p>`; });
+})();
+</script>
+</body>
+</html>

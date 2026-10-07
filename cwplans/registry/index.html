@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Canary Wharf building registry</title>
+<style>
+:root{--bg:#0f1215;--panel:#15191d;--line:#323940;--fg:#e8eaec;--muted:#a9b1b9;--link:#9cc8ff;--dot:#7f8a95;--hit:#ffb347;--sel:#ff6b6b}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f7f8;--panel:#fff;--line:#d5d9de;--fg:#16191c;--muted:#59626b;--link:#0b5fbf;--dot:#9aa3ac;--hit:#c46a00;--sel:#c62828}}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,sans-serif}
+a{color:var(--link);overflow-wrap:anywhere}
+main{max-width:1150px;margin:0 auto;padding:16px}
+h1{font-size:1.35rem;margin:.2em 0}h2{font-size:1.1rem;margin:1.1em 0 .4em}h3{font-size:1rem;margin:1em 0 .3em}
+.small{color:var(--muted);font-size:13px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px}
+@media (max-width:800px){.cols{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+input[type=search],select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+input[type=search]{flex:1 1 160px;min-width:0}
+#list{max-height:70vh;overflow:auto}
+.row{display:block;padding:5px 6px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--fg)}
+.row:hover,.row[aria-current=true]{background:var(--bg)}
+.row b{font-weight:600}
+svg{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;width:100%}th,td{border-bottom:1px solid var(--line);padding:3px 8px 3px 0;text-align:left;vertical-align:top}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;margin:4px 0}dt{color:var(--muted)}dd{margin:0;min-width:0}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:0 7px;color:var(--muted);margin-right:4px}
+</style>
+</head>
+<body>
+<main>
+<h1>Canary Wharf building registry</h1>
+<p class="small">Every OSM building outline in the Canary Wharf box has an internal id (<code>cwb-NNNN</code>, kept between rebuilds) cross-referenced to OSM, Wikidata, postcodes, occupants and owners. Occupants and owners are organisations only. Sources: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL), Wikidata via QLever (CC0), FSA food hygiene ratings (OGL), ONS Postcode Directory (OGL). Method and limits: <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/registry/README.md">README</a>. Data: <a href="buildings.json">buildings.json</a> · <a href="ids.json">ids.json</a>. Related: <a href="../atlas/">atlas</a> · <a href="../docklands/">Docklands 3D</a> · <a href="../postcodes/">postcodes</a> · <a href="../feeds/">feeds</a>. · <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/DATA-REGISTER.md">data licences</a>.</p>
+<p class="small" id="sum"></p>
+<p class="small">Also used: OS Open UPRN and Open Linked Identifiers (OGL); GLA London Building Stock Model 2 (OGL); HM Land Registry Price Paid and INSPIRE Index Polygons: "This information is subject to Crown copyright and database rights 2026 and is reproduced with the permission of HM Land Registry. The polygons (including the associated geometry, namely x, y co-ordinates) are subject to Crown copyright and database rights 2026 Ordnance Survey 100026316."; Companies House Basic Company Data. Figures about homes are given only where at least 5 homes are counted.</p>
+<div class="cols">
+  <div class="panel">
+    <div class="bar"><input type="search" id="q" placeholder="Name, id, occupant, postcode" aria-label="Search buildings"><select id="f" aria-label="Filter"><option value="occ">With occupants</option><option value="named">Named</option><option value="wd">With Wikidata</option><option value="">All</option></select></div>
+    <div class="small" id="count" aria-live="polite"></div>
+    <div id="list"></div>
+  </div>
+  <div>
+    <svg id="map" role="img" aria-label="Building centroids in the Canary Wharf box; the selected building is highlighted"></svg>
+    <div class="panel" id="detail" aria-live="polite" style="margin-top:12px"><p class="small">Choose a building.</p></div>
+  </div>
+</div>
+<h2>Occupants listed by postcode only</h2>
+<p class="small">FSA premises in Canary Wharf postcodes that could not be placed in a building: the FSA data has no position for them (often new registrations) or the position is outside every outline.</p>
+<div id="unplaced" class="small"></div>
+</main>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id), esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const a = (u, t) => u ? `<a href="${esc(u)}">${esc(t || u)}</a>` : '';
+let D = null, B = [], byId = new Map();
+fetch('buildings.json').then(r => r.json()).then(d => { D = d; B = d.buildings; byId = new Map(B.map(b => [b.id, b])); init(); })
+  .catch(e => { $('detail').innerHTML = `<p>Could not load buildings.json (${esc(e.message)}). Opened from a file? Use <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/registry/">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/registry/</a></p>`; });
+function init() {
+  const s = D.summary;
+  $('sum').textContent = `${s.buildings} buildings · ${s.named} named · ${s.with_wikidata} with Wikidata · ${s.occupants} occupant records in ${s.with_occupants} buildings · ${s.with_owner} with an owner · ${s.fsa_by_postcode_only} FSA premises by postcode only · built ${s.generated}`;
+  for (const id of ['q', 'f']) $(id).oninput = list;
+  addEventListener('hashchange', show);
+  list(); map(); show();
+  $('unplaced').innerHTML = Object.entries(D.unplaced_by_postcode).sort().map(([pc, os]) => `<details><summary>${esc(pc)} (${os.length})</summary>${os.map(o => `<div>${a(o.url, o.name)} <span class="small">${esc(o.type)} · ${esc(o.address)} · ${esc(o.placed)}${/Awaiting/i.test(o.rating) ? ' · awaiting first inspection' : ''}</span></div>`).join('')}</details>`).join('');
+}
+function hay(b) { return [b.id, b.name, b.osm_name, b.address, ...b.postcodes, ...b.occupants.map(o => o.name + ' ' + (o.brand || ''))].join(' ').toLowerCase(); }
+function list() {
+  const q = $('q').value.trim().toLowerCase(), f = $('f').value;
+  const hit = B.filter(b => (!f || (f === 'occ' ? b.occupants.length : f === 'named' ? b.name : b.wikidata)) && (!q || hay(b).includes(q)))
+    .sort((x, y) => (y.occupants.length - x.occupants.length) || x.id.localeCompare(y.id));
+  $('count').textContent = `${hit.length} buildings`;
+  $('list').innerHTML = hit.slice(0, 400).map(b => `<a class="row" href="#${b.id}" ${location.hash === '#' + b.id ? 'aria-current="true"' : ''}><b>${esc(b.name || b.address || 'unnamed building')}</b> <span class="small">${b.id}${b.occupants.length ? ` · ${b.occupants.length} occupants` : ''}${b.postcodes.length ? ' · ' + esc(b.postcodes.join(', ')) : ''}</span></a>`).join('');
+  map(hit);
+}
+let MAPF = null;
+function map(hit) {
+  const box = D.summary.box, k = Math.cos(51.5 * Math.PI / 180), W = 700, H = Math.round(W * (box[3] - box[1]) / ((box[2] - box[0]) * k));
+  const X = lon => (lon - box[0]) / (box[2] - box[0]) * W, Y = lat => (box[3] - lat) / (box[3] - box[1]) * H, hs = new Set((hit || B).map(b => b.id)), sel = location.hash.slice(1);
+  $('map').setAttribute('viewBox', `0 0 ${W} ${H}`);
+  $('map').innerHTML = B.map(b => `<a href="#${b.id}"><circle cx="${X(b.lon).toFixed(1)}" cy="${Y(b.lat).toFixed(1)}" r="${b.id === sel ? 6 : Math.min(5, 1.6 + Math.sqrt(b.occupants.length) / 2)}" fill="${b.id === sel ? 'var(--sel)' : hs.has(b.id) ? 'var(--hit)' : 'var(--dot)'}" fill-opacity="${hs.has(b.id) || b.id === sel ? .9 : .35}"><title>${esc(b.name || b.address || b.id)} (${b.id})</title></circle></a>`).join('');
+}
+function show() {
+  const b = byId.get(location.hash.slice(1)); if (!b) return;
+  list();
+  const occ = [...b.occupants].sort((x, y) => x.role.localeCompare(y.role) || x.name.localeCompare(y.name));
+  const src = o => o.osm ? a(`https://www.openstreetmap.org/${o.osm}`, 'OSM') : o.url ? a(o.url, 'FSA') : o.wikidata ? a(`https://www.wikidata.org/wiki/${o.wikidata}`, 'Wikidata') : '';
+  const L = b.links;
+  $('detail').innerHTML = `<h2>${esc(b.name || b.address || 'Unnamed building')}</h2>
+  <div class="small">${b.id}${b.description ? ' · ' + esc(b.description) : ''}</div>
+  <dl>
+    <dt>Identifiers</dt><dd>${b.id} · ${b.osm.map(k => a(`https://www.openstreetmap.org/${k}`, 'OSM ' + k)).join(' · ')}${b.wikidata ? ' · ' + a(L.wikidata, 'Wikidata ' + b.wikidata) : ''}${L.wikipedia ? ' · ' + a(L.wikipedia, 'Wikipedia') : ''}</dd>
+    ${b.osm_name && b.osm_name !== b.name ? `<dt>Name in OSM</dt><dd>${esc(b.osm_name)}</dd>` : ''}
+    <dt>Address</dt><dd>${esc(b.address || '–')}</dd>
+    <dt>Postcodes</dt><dd>${b.postcode_info.map(p => `<b>${esc(p.pc)}</b> <span class="small">${esc(p.status)}${p.tier ? ', ' + esc(p.tier) : ''}${p.large_user ? ', large user' : ''}</span>`).join('<br>') || '–'}</dd>
+    <dt>Structure</dt><dd>${[b.building !== 'yes' ? b.building : '', b.levels ? b.levels + ' levels (OSM)' : '', b.levels_underground ? b.levels_underground + ' below ground (OSM)' : '', b.height ? b.height + ' m (OSM)' : '', b.area_m2 + ' m² footprint', b.parts.length ? b.parts.length + ' building parts' : ''].filter(Boolean).map(esc).join(' · ')}</dd>
+    ${Object.keys(b.facts).length ? `<dt>Wikidata</dt><dd>${Object.entries(b.facts).map(([k, v]) => `<span class="small">${esc(k)}:</span> ${esc([].concat(v).join('; '))}`).join('<br>')}</dd>` : ''}
+    <dt>Owners</dt><dd>${b.owners.length ? b.owners.map(o => `${a(`https://www.wikidata.org/wiki/${o.wikidata}`, o.name)} <span class="small">${esc(o.source)}</span>`).join('<br>') : '<span class="small">none recorded in the open data used here</span>'}</dd>
+    ${b.uprns ? `<dt>OS identifiers</dt><dd>${b.uprns} UPRNs inside the outline${b.toids ? ` · TOIDs ${esc(b.toids.slice(0, 6).join(', '))}${b.toids.length > 6 ? ' …' : ''}` : ''}${b.usrns ? ` · ${b.usrns.length} streets (USRN)` : ''}</dd>` : ''}
+    ${b.inspire ? `<dt>Freehold titles</dt><dd>INSPIRE ids ${esc(b.inspire.join(', '))} <span class="small">(HM Land Registry index polygons at the building's centre; not title numbers)</span></dd>` : ''}
+    ${b.homes ? `<dt>Homes</dt><dd>${esc(b.homes.count)} <span class="small">(${esc(b.homes.source)})</span>${b.homes.epc_rating ? `<br><span class="small">EPC: ${esc(Object.entries(b.homes.epc_rating).map(([k, v]) => k + ' ' + v).join(', '))} · built: ${esc(Object.entries(b.homes.construction_age_band).map(([k, v]) => k + ' ' + v).join(', '))}</span>` : ''}</dd>` : ''}
+    ${b.sales ? `<dt>Home sales</dt><dd>${esc(b.sales.homes_sold_since_1995)} homes sold since 1995${b.sales.sales ? ` · ${b.sales.sales} sales, ${esc(b.sales.first)} to ${esc(b.sales.last)} · median £${Number(b.sales.median_price).toLocaleString('en-GB')} · ${b.sales.new_build_sales} new-build sales` : ''} <span class="small">(HM Land Registry Price Paid)</span></dd>` : ''}
+    ${b.companies ? `<dt>Registered companies</dt><dd>${Array.isArray(b.companies) ? `${b.companies.length} with this building in their registered office address <details><summary>list</summary>${b.companies.slice(0, 300).map(c => `<div>${a('https://find-and-update.company-information.service.gov.uk/company/' + c.number, c.name)} <span class="small">${esc(c.number)} · inc. ${esc(c.incorporated || '')}${c.sic && c.sic.length ? ' · SIC ' + esc(c.sic.join(', ')) : ''}</span></div>`).join('')}${b.companies.length > 300 ? '<div class="small">… first 300 shown</div>' : ''}</details><span class="small">A registered office is not proof that a company works in the building.</span>` : `${b.companies.count} <span class="small">(${esc(b.companies.note)})</span>`}</dd>` : ''}
+    <dt>Look up</dt><dd>${b.postcodes.map((pc, i) => `${esc(pc)}: ${a(L.companies_house_by_postcode[i], 'Companies House (registered offices)')} · ${a(L.land_registry_price_paid_by_postcode[i], 'Land Registry price paid')}`).join('<br>') || '<span class="small">no postcode recorded</span>'}</dd>
+  </dl>
+  <h3>Occupants (${occ.length})</h3>
+  ${occ.length ? `<table><tr><th>Name</th><th>Role</th><th>Level</th><th>Source</th></tr>${occ.map(o => `<tr><td>${esc(o.name)}${o.brand ? ` <span class="tag">${o.brand_wikidata ? `<a href="https://www.wikidata.org/wiki/${esc(o.brand_wikidata)}">${esc(o.brand)}</a>` : esc(o.brand)}</span>` : ''}${o.cwg_url ? ` <span class="small">${a(o.cwg_archived || o.cwg_url, 'CWG page' + (o.cwg_archived ? ' (archived)' : ''))}</span>` : ''}${o.store_url ? ` <span class="small">${a(o.store_url, 'store page')}</span>` : ''}${o.rating ? ` <span class="small">FSA ${esc(o.rating)} ${esc(o.rating_date || '')}</span>` : ''}</td><td>${esc(o.role)}</td><td>${esc(o.level || o.level_cwg || '')}${o.mall ? ` <span class="small">${esc(o.mall)}</span>` : ''}</td><td>${src(o)}${o.placed && o.placed !== 'inside' ? ` <span class="small">(${esc(o.placed)})</span>` : ''}</td></tr>`).join('')}</table>` : '<p class="small">None recorded in the open data used here.</p>'}
+  ${b.features.length ? `<h3>Features</h3><p class="small">${b.features.map(f => `${a('https://www.openstreetmap.org/' + f.osm, f.name)} (${esc(f.kind)})`).join(' · ')}</p>` : ''}
+  ${b.parts.length ? `<h3>Building parts</h3><p class="small">${b.parts.map(p => `${a('https://www.openstreetmap.org/' + p.osm, p.name || p.osm)}${p.height ? ` ${p.height} m` : ''}${p.levels ? ` ${p.levels} levels` : ''}`).join(' · ')}</p>` : ''}`;
+}
+})();
+</script>
+</body>
+</html>

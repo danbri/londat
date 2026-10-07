@@ -1,0 +1,9 @@
+{
+ "node/12861063688": {"url": "https://restaurants.subway.com/united-kingdom/en/london/unit-cr66-crossrail-place", "how": "link on restaurants.subway.com/united-kingdom/en/london; OSM node sits in Crossrail Place"},
+ "1965395": {"url": "https://restaurants.subway.com/united-kingdom/en/london/11-westferry-circus", "how": "link on restaurants.subway.com/united-kingdom/en/london; FSA premises at Westferry Circus"},
+ "node/3835357165": {"url": "https://www.hsbc.co.uk/branch-list/canary-wharf-canada-place-cash-withdrawals-and-note-deposits-through-self-service/", "how": "link on hsbc.co.uk/branch-list/ (the OSM contact:website URL now 404s)", "note": "HSBC lists Canada Place as self-service only (cash withdrawals and note deposits)"},
+ "node/6466176064": {"url": "https://www.hsbc.co.uk/branch-list/canary-wharf-jubilee-place-counter-service-available-monday-friday/", "how": "link on hsbc.co.uk/branch-list/ (the OSM website URL now 404s)"},
+ "way/189811893": {"url": "https://www.thegundocklands.com/", "how": "the pub's own site (OSM website=*), a Fuller's managed house"},
+ "none:node/10092576620": {"why": "OSM's Halifax URL is 404 and branches.halifax.co.uk/london lists no Halifax at Canary Wharf (2026-10-03): the OSM branch may have closed"},
+ "none:way/5986805": {"why": "HSBC UK head office (8 Canada Square); the OSM 'relationship management centre' URL is 404 and hsbc.co.uk/branch-list/ has no such entry now"}
+}

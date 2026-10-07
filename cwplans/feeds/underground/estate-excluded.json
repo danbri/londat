@@ -1,0 +1,72 @@
+[
+ {
+  "name": "canarywharf.com live pages and PDFs",
+  "url": "https://canarywharf.com/maps/",
+  "reason": "Imperva (Incapsula) bot challenge to scripts; not bypassed. All content read from the Internet Archive."
+ },
+ {
+  "name": "Store guide July 2026 (v85)",
+  "url": "https://canarywharf.com/wp-content/uploads/2026/07/260720_store_guide_JULY_composite_v85_vec.pdf",
+  "reason": "Linked from the 2026-08-15 maps page but not in the Wayback index; live host blocked."
+ },
+ {
+  "name": "Defibrillator map January 2023",
+  "url": "https://canarywharf.com/wp-content/uploads/2023/01/canary-wharf-defibrillator-map-jan-23.pdf",
+  "reason": "Only archived copy is truncated at 1,048,576 bytes; PDF cannot be opened."
+ },
+ {
+  "name": "Jubilee Line Extension map (2004)",
+  "url": "http://www.canarywharf.com/pdf/jub_map.pdf",
+  "reason": "Downloaded and read: a schematic route map of the Jubilee line, no station or estate detail."
+ },
+ {
+  "name": "Revised pedestrian route, Bank Street (Jan 2017)",
+  "url": "http://canarywharf.com/wp-content/uploads/2017/01/canary-wharf-getting-here-revised-pedestrian-route-bank-street-january-2016.pdf",
+  "reason": "Downloaded and read: temporary 2017-2019 construction diversion via Heron Quays DLR underpass; historic only."
+ },
+ {
+  "name": "Living Map vector tiles",
+  "url": "https://prod.cdn.livingmap.com/tiles/canary_wharf/{z}/{x}/{y}.pbf",
+  "reason": "Not fetched: whole-dataset download is out of scope, and there is no licence."
+ },
+ {
+  "name": "Living Map features/search/routing endpoints",
+  "url": "https://map-api.prod.livingmap.com/v1/maps/canary_wharf/features",
+  "reason": "Not called: only the venue description and style were allowed."
+ },
+ {
+  "name": "AccessAble live site",
+  "url": "https://www.accessable.co.uk/venues/cabot-place",
+  "reason": "Cloudflare 403 block on the first request; used archived guides instead."
+ },
+ {
+  "name": "Wheelmap",
+  "url": "https://wheelmap.org/",
+  "reason": "Cloudflare 'Just a moment' challenge on robots.txt; not bypassed. Wheelmap data is OSM (ODbL) anyway."
+ },
+ {
+  "name": "Wood Wharf site",
+  "url": "https://www.woodwharf.com/",
+  "reason": "TLS certificate does not match host; not fetched."
+ },
+ {
+  "name": "canarywharf.com getting-here page",
+  "url": "https://canarywharf.com/getting-here/",
+  "reason": "Archived 2026-09-28 copy read: travel times and car parks only, no indoor routes."
+ },
+ {
+  "name": "Google Maps / Apple Maps indoor coverage",
+  "url": "https://maps.apple.com/place?place-id=ICFF09224A332CE5F",
+  "reason": "Apple place page exists (200) but whether Apple or Google show indoor floor plans for the malls could not be determined without the apps; no scraping done. Web search found no evidence of either."
+ },
+ {
+  "name": "Canary Wharf Pier",
+  "url": "",
+  "reason": "Not researched in this pass (pier is TfL/Uber Boat, outside the estate owner's map products); the estate maps show the pier location."
+ },
+ {
+  "name": "CWG sustainability and ESG reports 2008-2024, Nature Map 2025",
+  "url": "https://cwg.com/wp-content/uploads/2025/12/01995_Nature-Map_websitev1.pdf",
+  "reason": "Archived (Nature Map range-checked 206 application/pdf) but not opened; outdoor and environmental, unlikely to show mall levels."
+ }
+]

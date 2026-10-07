@@ -1,0 +1,1124 @@
+{
+ "meta": {
+  "source": "tfl-lines",
+  "fetched": "2026-10-04",
+  "url": "https://api.tfl.gov.uk/Line/{ids}/Status/{from}/to/{to}?detail=true",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
+  "naptan": {
+   "url": "https://naptan.api.dft.gov.uk/v1/access-nodes?atcoAreaCodes=910,930,940&dataFormat=csv",
+   "fetched": "2026-10-04",
+   "licence": "Open Government Licence v3.0"
+  },
+  "method": "TfL Unified API line status for 2026-10-04T00:00:00 to 2027-01-02T23:59:00 (90 days) for 29 lines (tube, DLR, Elizabeth line, Overground, river bus, cable car and c2c, southeastern, southern, thameslink, greater-anglia); one status per disruption with its validity periods; kept when an affected stop lies in the zone or, for a status that names no stops, when the line serves the zone.",
+  "window": {
+   "from": "2026-10-04T00:00:00",
+   "to": "2027-01-02T23:59:00"
+  },
+  "counts": {
+   "items": 29,
+   "lines": 29,
+   "statuses": 94,
+   "disrupted": 82,
+   "kept_by_stop": 24,
+   "kept_line_wide": 5,
+   "dropped_outside": 53,
+   "stops_unplaced": 5
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "tfl-line:waterloo-city:7d346c7b",
+   "kind": "rail closure",
+   "title": "Waterloo & City: Waterloo & City line: service operates 06:00 until 00:30, Monday to Friday only. There is no service on Saturdays, Sundays and on bank/public holidays.",
+   "start": "2026-10-03T23:00:00Z",
+   "end": "2026-12-28T23:59:00Z",
+   "periods": [
+    {
+     "from": "2026-10-03T23:00:00Z",
+     "to": "2026-10-04T00:15:00Z"
+    },
+    {
+     "from": "2026-10-04T03:15:00Z",
+     "to": "2026-10-04T22:59:00Z"
+    },
+    {
+     "from": "2026-10-04T23:00:00Z",
+     "to": "2026-10-04T23:45:00Z"
+    },
+    {
+     "from": "2026-10-10T03:15:00Z",
+     "to": "2026-10-10T22:59:00Z"
+    },
+    {
+     "from": "2026-10-10T23:00:00Z",
+     "to": "2026-10-11T00:15:00Z"
+    },
+    {
+     "from": "2026-10-11T03:15:00Z",
+     "to": "2026-10-11T22:59:00Z"
+    },
+    {
+     "from": "2026-10-11T23:00:00Z",
+     "to": "2026-10-11T23:45:00Z"
+    },
+    {
+     "from": "2026-10-17T03:15:00Z",
+     "to": "2026-10-17T22:59:00Z"
+    },
+    {
+     "from": "2026-10-17T23:00:00Z",
+     "to": "2026-10-18T00:15:00Z"
+    },
+    {
+     "from": "2026-10-18T03:15:00Z",
+     "to": "2026-10-18T22:59:00Z"
+    },
+    {
+     "from": "2026-10-18T23:00:00Z",
+     "to": "2026-10-18T23:45:00Z"
+    },
+    {
+     "from": "2026-10-24T03:15:00Z",
+     "to": "2026-10-24T22:59:00Z"
+    },
+    {
+     "from": "2026-10-24T23:00:00Z",
+     "to": "2026-10-25T01:15:00Z"
+    },
+    {
+     "from": "2026-10-25T04:15:00Z",
+     "to": "2026-10-25T23:59:00Z"
+    },
+    {
+     "from": "2026-10-26T00:00:00Z",
+     "to": "2026-10-26T00:45:00Z"
+    },
+    {
+     "from": "2026-10-31T04:15:00Z",
+     "to": "2026-10-31T23:59:00Z"
+    },
+    {
+     "from": "2026-11-01T00:00:00Z",
+     "to": "2026-11-01T01:15:00Z"
+    },
+    {
+     "from": "2026-11-01T04:15:00Z",
+     "to": "2026-11-01T23:59:00Z"
+    },
+    {
+     "from": "2026-11-02T00:00:00Z",
+     "to": "2026-11-02T00:45:00Z"
+    },
+    {
+     "from": "2026-11-07T04:15:00Z",
+     "to": "2026-11-07T23:59:00Z"
+    },
+    {
+     "from": "2026-11-08T00:00:00Z",
+     "to": "2026-11-08T01:15:00Z"
+    },
+    {
+     "from": "2026-11-08T04:15:00Z",
+     "to": "2026-11-08T23:59:00Z"
+    },
+    {
+     "from": "2026-11-09T00:00:00Z",
+     "to": "2026-11-09T00:45:00Z"
+    },
+    {
+     "from": "2026-11-14T04:15:00Z",
+     "to": "2026-11-14T23:59:00Z"
+    },
+    {
+     "from": "2026-11-15T00:00:00Z",
+     "to": "2026-11-15T01:15:00Z"
+    },
+    {
+     "from": "2026-11-15T04:15:00Z",
+     "to": "2026-11-15T23:59:00Z"
+    },
+    {
+     "from": "2026-11-16T00:00:00Z",
+     "to": "2026-11-16T00:45:00Z"
+    },
+    {
+     "from": "2026-11-21T04:15:00Z",
+     "to": "2026-11-21T23:59:00Z"
+    },
+    {
+     "from": "2026-11-22T00:00:00Z",
+     "to": "2026-11-22T01:15:00Z"
+    },
+    {
+     "from": "2026-11-22T04:15:00Z",
+     "to": "2026-11-22T23:59:00Z"
+    },
+    {
+     "from": "2026-11-23T00:00:00Z",
+     "to": "2026-11-23T00:45:00Z"
+    },
+    {
+     "from": "2026-11-28T04:15:00Z",
+     "to": "2026-11-28T23:59:00Z"
+    },
+    {
+     "from": "2026-11-29T00:00:00Z",
+     "to": "2026-11-29T01:15:00Z"
+    },
+    {
+     "from": "2026-11-29T04:15:00Z",
+     "to": "2026-11-29T23:59:00Z"
+    },
+    {
+     "from": "2026-11-30T00:00:00Z",
+     "to": "2026-11-30T00:45:00Z"
+    },
+    {
+     "from": "2026-12-05T04:15:00Z",
+     "to": "2026-12-05T23:59:00Z"
+    },
+    {
+     "from": "2026-12-06T00:00:00Z",
+     "to": "2026-12-06T01:15:00Z"
+    },
+    {
+     "from": "2026-12-06T04:15:00Z",
+     "to": "2026-12-06T23:59:00Z"
+    },
+    {
+     "from": "2026-12-07T00:00:00Z",
+     "to": "2026-12-07T00:45:00Z"
+    },
+    {
+     "from": "2026-12-12T04:15:00Z",
+     "to": "2026-12-12T23:59:00Z"
+    },
+    {
+     "from": "2026-12-13T00:00:00Z",
+     "to": "2026-12-13T01:15:00Z"
+    },
+    {
+     "from": "2026-12-13T04:15:00Z",
+     "to": "2026-12-13T23:59:00Z"
+    },
+    {
+     "from": "2026-12-14T00:00:00Z",
+     "to": "2026-12-14T00:45:00Z"
+    },
+    {
+     "from": "2026-12-19T04:15:00Z",
+     "to": "2026-12-19T23:59:00Z"
+    },
+    {
+     "from": "2026-12-20T00:00:00Z",
+     "to": "2026-12-20T01:15:00Z"
+    },
+    {
+     "from": "2026-12-20T04:15:00Z",
+     "to": "2026-12-20T23:59:00Z"
+    },
+    {
+     "from": "2026-12-21T00:00:00Z",
+     "to": "2026-12-21T00:45:00Z"
+    },
+    {
+     "from": "2026-12-25T04:15:00Z",
+     "to": "2026-12-25T23:59:00Z"
+    },
+    {
+     "from": "2026-12-26T00:00:00Z",
+     "to": "2026-12-26T01:14:00Z"
+    },
+    {
+     "from": "2026-12-26T04:15:00Z",
+     "to": "2026-12-26T23:59:00Z"
+    },
+    {
+     "from": "2026-12-27T00:00:00Z",
+     "to": "2026-12-27T01:15:00Z"
+    },
+    {
+     "from": "2026-12-27T04:15:00Z",
+     "to": "2026-12-27T23:59:00Z"
+    },
+    {
+     "from": "2026-12-28T00:00:00Z",
+     "to": "2026-12-28T00:45:00Z"
+    },
+    {
+     "from": "2026-12-28T04:15:00Z",
+     "to": "2026-12-28T23:59:00Z"
+    }
+   ],
+   "location": "Waterloo & City (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "waterloo-city",
+   "mode": "tube",
+   "severity": "Planned Closure",
+   "category": "Information",
+   "stops_in_zone": [],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:c2c:445de467",
+   "kind": "service change",
+   "title": "c2c: https://www.nationalrail.co.uk/service-disruptions/amended-c-2-c-20260818/",
+   "start": "2026-10-03T23:00:14Z",
+   "end": "2026-10-04T22:59:59Z",
+   "periods": [
+    {
+     "from": "2026-10-03T23:00:14Z",
+     "to": "2026-10-04T22:59:59Z"
+    }
+   ],
+   "location": "c2c (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "c2c",
+   "mode": "national-rail",
+   "severity": "Special Service",
+   "category": "Information",
+   "stops_in_zone": [],
+   "url": "https://www.nationalrail.co.uk/service-disruptions/amended-c-2-c-20260818/"
+  },
+  {
+   "id": "tfl-line:waterloo-city:5ac0696f",
+   "kind": "service change",
+   "title": "Waterloo & City: Waterloo and City Line: Service will resume at 06:00 on Monday.",
+   "start": "2026-10-04T03:25:36Z",
+   "end": "2026-10-04T11:03:57Z",
+   "periods": [
+    {
+     "from": "2026-10-04T03:25:36Z",
+     "to": "2026-10-04T11:03:57Z"
+    }
+   ],
+   "location": "Waterloo & City (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "waterloo-city",
+   "mode": "tube",
+   "severity": "Service Closed",
+   "category": "RealTime",
+   "stops_in_zone": [],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:dlr:5c37a4fd",
+   "kind": "rail closure",
+   "title": "DLR: DOCKLANDS LIGHT RAILWAY: Sunday 4 October, no service between Shadwell and Tower Gateway.",
+   "start": "2026-10-04T03:30:00Z",
+   "end": "2026-10-05T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-04T03:30:00Z",
+     "to": "2026-10-05T00:29:00Z"
+    }
+   ],
+   "location": "Shadwell DLR Station; Tower Gateway DLR Station",
+   "lat": 51.511693,
+   "lon": -0.056643,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "dlr",
+   "mode": "dlr",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZDLSHA",
+    "940GZZDLTWG"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:6d4b0d90",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Sunday 4 October, no service between Surrey Quays and Clapham Junction / Battersea Park. Replacement bus service M operates between Canada Water and Clapham Junction via Surrey Quays, Queens Road Peckham, Peckham Rye, Denmark Hill, Clapham High Street and Wandsworth Road.",
+   "start": "2026-10-04T03:30:00Z",
+   "end": "2026-10-05T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-04T03:30:00Z",
+     "to": "2026-10-05T00:29:00Z"
+    }
+   ],
+   "location": "Surrey Quays Rail Station",
+   "lat": 51.493196,
+   "lon": -0.047519,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GSURREYQ"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:jubilee:fec4c432",
+   "kind": "rail closure",
+   "title": "Jubilee: JUBILEE LINE: From 0530 Sunday 4 October, no service between Green Park and Canary Wharf. If travelling between Central London and North Greenwich, please travel via Stratford.",
+   "start": "2026-10-04T04:30:00Z",
+   "end": "2026-10-05T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-04T04:30:00Z",
+     "to": "2026-10-05T00:29:00Z"
+    }
+   ],
+   "location": "Bermondsey Underground Station; Canada Water Underground Station; Canary Wharf Underground Station; London Bridge Underground Station",
+   "lat": 51.497953,
+   "lon": -0.063769,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "jubilee",
+   "mode": "tube",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUBMY",
+    "940GZZLUCWR",
+    "940GZZLUCYF",
+    "940GZZLULNB"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:woolwich-ferry:57e4a08f",
+   "kind": "reduced service",
+   "title": "Woolwich Ferry: The Woolwich Ferry is operating a one boat service due to a technical fault.",
+   "start": "2026-10-04T05:00:00Z",
+   "end": "2026-10-04T21:00:00Z",
+   "periods": [
+    {
+     "from": "2026-10-04T05:00:00Z",
+     "to": "2026-10-04T21:00:00Z"
+    }
+   ],
+   "location": "Woolwich Ferry (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "woolwich-ferry",
+   "mode": "river-bus",
+   "severity": "Reduced Service",
+   "category": "RealTime",
+   "stops_in_zone": [],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:metropolitan:6a175316",
+   "kind": "reduced service",
+   "title": "Metropolitan: Metropolitan Line: Minor delays while we respond to a fire alert at Harrow-on-the-Hill.",
+   "start": "2026-10-04T08:00:34Z",
+   "end": "2026-10-05T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-04T08:00:34Z",
+     "to": "2026-10-05T00:29:00Z"
+    }
+   ],
+   "location": "Metropolitan (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "metropolitan",
+   "mode": "tube",
+   "severity": "Minor Delays",
+   "category": "RealTime",
+   "stops_in_zone": [],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:cf3f2544",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Monday 5 and Tuesday 6 October, after 2315 each evening, no service between Surrey Quays and Clapham Junction / Battersea Park. Please use local London Buses and London Underground services as no replacement bus service operates for this closure.",
+   "start": "2026-10-05T22:15:00Z",
+   "end": "2026-10-07T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-05T22:15:00Z",
+     "to": "2026-10-05T22:59:00Z"
+    },
+    {
+     "from": "2026-10-05T23:00:00Z",
+     "to": "2026-10-06T00:29:00Z"
+    },
+    {
+     "from": "2026-10-06T22:15:00Z",
+     "to": "2026-10-06T22:59:00Z"
+    },
+    {
+     "from": "2026-10-06T23:00:00Z",
+     "to": "2026-10-07T00:29:00Z"
+    }
+   ],
+   "location": "Surrey Quays Rail Station",
+   "lat": 51.493196,
+   "lon": -0.047519,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GSURREYQ"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:351a652b",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Thursday 8 October, after 2315 each evening, no service between Surrey Quays and Clapham Junction / Battersea Park. Please use local London Buses and London Underground services as no replacement bus service operates for this closure.",
+   "start": "2026-10-08T22:15:00Z",
+   "end": "2026-10-09T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-08T22:15:00Z",
+     "to": "2026-10-08T22:59:00Z"
+    },
+    {
+     "from": "2026-10-08T23:00:00Z",
+     "to": "2026-10-09T00:29:00Z"
+    }
+   ],
+   "location": "Surrey Quays Rail Station",
+   "lat": 51.493196,
+   "lon": -0.047519,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GSURREYQ"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:circle:31e06a0b",
+   "kind": "rail closure",
+   "title": "Circle: CIRCLE LINE: Saturday 10 and Sunday 11 October, no service between Edgware Road and Aldgate (via Victoria)",
+   "start": "2026-10-10T03:30:00Z",
+   "end": "2026-10-12T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-10T03:30:00Z",
+     "to": "2026-10-12T00:29:00Z"
+    }
+   ],
+   "location": "Aldgate Underground Station; Cannon Street Underground Station; Monument Underground Station; Mansion House Underground Station; Tower Hill Underground Station",
+   "lat": 51.514246,
+   "lon": -0.075689,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "circle",
+   "mode": "tube",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUALD",
+    "940GZZLUCST",
+    "940GZZLUMMT",
+    "940GZZLUMSH",
+    "940GZZLUTWH"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:district:46078bd8",
+   "kind": "rail closure",
+   "title": "District: DISTRICT LINE: Saturday 10 and Sunday 11 October, no service between Edgware Road / Tower Hill and Ealing Broadway / Kensington (Olympia) / Richmond / Wimbledon. Use MILDMAY LINE services between Gunnersbury, Kew Gardens and Richmond. Replacement bus services operate.",
+   "start": "2026-10-10T03:30:00Z",
+   "end": "2026-10-12T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-10T03:30:00Z",
+     "to": "2026-10-12T00:29:00Z"
+    }
+   ],
+   "location": "Cannon Street Underground Station; Monument Underground Station; Mansion House Underground Station; Tower Hill Underground Station",
+   "lat": 51.51151,
+   "lon": -0.090432,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "district",
+   "mode": "tube",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUCST",
+    "940GZZLUMMT",
+    "940GZZLUMSH",
+    "940GZZLUTWH"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:dlr:28588460",
+   "kind": "rail closure",
+   "title": "DLR: DOCKLANDS LIGHT RAILWAY: Saturday 10 and Sunday 11 October, no service between Stratford International and Woolwich Arsenal. Please use local London Buses, London Underground and Elizabeth line services (for Woolwich) as no replacement bus services will operate.",
+   "start": "2026-10-10T03:30:00Z",
+   "end": "2026-10-12T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-10T03:30:00Z",
+     "to": "2026-10-12T00:29:00Z"
+    }
+   ],
+   "location": "Canning Town DLR Station; King George V DLR Station; London City Airport DLR Station; Pontoon Dock DLR Station; West Silvertown DLR Station; Star Lane DLR Station",
+   "lat": 51.514127,
+   "lon": 0.008101,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "dlr",
+   "mode": "dlr",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZDLCGT",
+    "940GZZDLKGV",
+    "940GZZDLLCA",
+    "940GZZDLPDK",
+    "940GZZDLWSV",
+    "940GZZDLSTL"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:1b6a3042",
+   "kind": "reduced service",
+   "title": "Windrush: WINDRUSH LINE: Sunday 11 October, the 0001 train from Highbury & Islington to Battersea Park train will not run.",
+   "start": "2026-10-10T23:01:00Z",
+   "end": "2026-10-10T23:45:00Z",
+   "periods": [
+    {
+     "from": "2026-10-10T23:01:00Z",
+     "to": "2026-10-10T23:45:00Z"
+    }
+   ],
+   "location": "Canada Water Rail Station; Rotherhithe Rail Station; Shadwell Rail Station; Surrey Quays Rail Station; Wapping Rail Station; Whitechapel Rail Station",
+   "lat": 51.49799,
+   "lon": -0.04972,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Reduced Service",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GCNDAW",
+    "910GRTHERHI",
+    "910GSHADWEL",
+    "910GSURREYQ",
+    "910GWAPPING",
+    "910GWCHAPEL"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:weaver:8581c1a7",
+   "kind": "rail closure",
+   "title": "Weaver: WEAVER LINE: Sunday 11 October, until 1015, no service between Liverpool Street and Cheshunt / Chingford / Enfield Town. The limited number of GREATER ANGLIA and STANSTED EXPRESS trains which usually stop at Seven Sisters will stop at Tottenham Hale instead, and these trains will not serve Hackney …",
+   "start": "2026-10-11T03:30:00Z",
+   "end": "2026-10-11T09:15:00Z",
+   "periods": [
+    {
+     "from": "2026-10-11T03:30:00Z",
+     "to": "2026-10-11T09:15:00Z"
+    }
+   ],
+   "location": "London Liverpool Street Rail Station",
+   "lat": 51.517991,
+   "lon": -0.081426,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "weaver",
+   "mode": "overground",
+   "severity": "Planned Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GLIVST"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:dlr:bee3018f",
+   "kind": "rail closure",
+   "title": "DLR: DOCKLANDS LIGHT RAILWAY: Sunday 18 October, no service between Shadwell and Tower Gateway.",
+   "start": "2026-10-18T03:30:00Z",
+   "end": "2026-10-19T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-18T03:30:00Z",
+     "to": "2026-10-19T00:29:00Z"
+    }
+   ],
+   "location": "Shadwell DLR Station; Tower Gateway DLR Station",
+   "lat": 51.511693,
+   "lon": -0.056643,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "dlr",
+   "mode": "dlr",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZDLSHA",
+    "940GZZDLTWG"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:ac340c95",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Sunday 18 October, from 2200, no service between Surrey Quays and New Cross.",
+   "start": "2026-10-18T21:00:00Z",
+   "end": "2026-10-19T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-18T21:00:00Z",
+     "to": "2026-10-19T00:29:00Z"
+    }
+   ],
+   "location": "Surrey Quays Rail Station; New Cross ELL Rail Station",
+   "lat": 51.493196,
+   "lon": -0.047519,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GSURREYQ",
+    "910GNWCRELL"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:circle:7e984289",
+   "kind": "rail closure",
+   "title": "Circle: CIRCLE LINE: Saturday 24 and Sunday 25 October, no service between Edgware Road and Tower Hill (via Victoria)",
+   "start": "2026-10-24T03:30:00Z",
+   "end": "2026-10-26T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-24T03:30:00Z",
+     "to": "2026-10-26T01:29:00Z"
+    }
+   ],
+   "location": "Cannon Street Underground Station; Monument Underground Station; Mansion House Underground Station; Tower Hill Underground Station",
+   "lat": 51.51151,
+   "lon": -0.090432,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "circle",
+   "mode": "tube",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUCST",
+    "940GZZLUMMT",
+    "940GZZLUMSH",
+    "940GZZLUTWH"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:circle:a574eeb1",
+   "kind": "rail closure",
+   "title": "Circle: CIRCLE LINE: Saturday 24 and Sunday 25 October, no service between Edgware Road and Aldgate (via Victoria)",
+   "start": "2026-10-24T03:30:00Z",
+   "end": "2026-10-26T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-24T03:30:00Z",
+     "to": "2026-10-26T01:29:00Z"
+    }
+   ],
+   "location": "Aldgate Underground Station; Cannon Street Underground Station; Monument Underground Station; Mansion House Underground Station; Tower Hill Underground Station",
+   "lat": 51.514246,
+   "lon": -0.075689,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "circle",
+   "mode": "tube",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUALD",
+    "940GZZLUCST",
+    "940GZZLUMMT",
+    "940GZZLUMSH",
+    "940GZZLUTWH"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:dlr:e6e511f1",
+   "kind": "rail closure",
+   "title": "DLR: DOCKLANDS LIGHT RAILWAY: Sunday 25 October, no service between Shadwell and Tower Gateway.",
+   "start": "2026-10-25T04:30:00Z",
+   "end": "2026-10-26T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-25T04:30:00Z",
+     "to": "2026-10-26T01:29:00Z"
+    }
+   ],
+   "location": "Shadwell DLR Station; Tower Gateway DLR Station",
+   "lat": 51.511693,
+   "lon": -0.056643,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "dlr",
+   "mode": "dlr",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZDLSHA",
+    "940GZZDLTWG"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:7f8ce7a0",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Monday 26, Tuesday 27, Wednesday 28 and Thursday 29 October, after 2330 each evening, no service between New Cross Gate and West Croydon / Crystal Palace. Rail replacement buses will run as follows: The bus for Crystal Palace will depart London Bridge at 2358 calling at New Cross Gat…",
+   "start": "2026-10-26T23:30:00Z",
+   "end": "2026-10-30T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-26T23:30:00Z",
+     "to": "2026-10-26T23:59:00Z"
+    },
+    {
+     "from": "2026-10-27T00:00:00Z",
+     "to": "2026-10-27T01:29:00Z"
+    },
+    {
+     "from": "2026-10-27T23:30:00Z",
+     "to": "2026-10-27T23:59:00Z"
+    },
+    {
+     "from": "2026-10-28T00:00:00Z",
+     "to": "2026-10-28T01:29:00Z"
+    },
+    {
+     "from": "2026-10-28T23:30:00Z",
+     "to": "2026-10-28T23:59:00Z"
+    },
+    {
+     "from": "2026-10-29T00:00:00Z",
+     "to": "2026-10-29T01:29:00Z"
+    },
+    {
+     "from": "2026-10-29T23:30:00Z",
+     "to": "2026-10-29T23:59:00Z"
+    },
+    {
+     "from": "2026-10-30T00:00:00Z",
+     "to": "2026-10-30T01:29:00Z"
+    }
+   ],
+   "location": "New Cross Gate Rail Station",
+   "lat": 51.475128,
+   "lon": -0.040399,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GNEWXGTE"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:b8a0f82f",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Saturday 31 October and Sunday 1 November, no service between New Cross Gate and West Croydon / Crystal Palace. Rail replacement buses will run as follows: New Cross Gate - Brockley - Honor Oak Park - Forest Hill - Sydenham - Crystal Palace. Tickets will be accepted on Southern Railw…",
+   "start": "2026-10-31T04:30:00Z",
+   "end": "2026-11-02T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-31T04:30:00Z",
+     "to": "2026-11-02T01:29:00Z"
+    }
+   ],
+   "location": "New Cross Gate Rail Station",
+   "lat": 51.475128,
+   "lon": -0.040399,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GNEWXGTE"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:dlr:017a4b94",
+   "kind": "rail closure",
+   "title": "DLR: DOCKLANDS LIGHT RAILWAY: Sunday 1 November, no service between Shadwell and Tower Gateway.",
+   "start": "2026-11-01T04:30:00Z",
+   "end": "2026-11-02T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-11-01T04:30:00Z",
+     "to": "2026-11-02T01:29:00Z"
+    }
+   ],
+   "location": "Shadwell DLR Station; Tower Gateway DLR Station",
+   "lat": 51.511693,
+   "lon": -0.056643,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "dlr",
+   "mode": "dlr",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZDLSHA",
+    "940GZZDLTWG"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:0d6f3093",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Friday 6 November, after 2330, no service between New Cross Gate and West Croydon / Crystal Palace. Rail replacement buses will run as follows: The bus for Crystal Palace will depart London Bridge at 2358 calling at New Cross Gate, Brockley, Honor Oak Park, Forest Hill, Sydenham, Cry…",
+   "start": "2026-11-06T23:30:00Z",
+   "end": "2026-11-07T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-11-06T23:30:00Z",
+     "to": "2026-11-07T01:29:00Z"
+    }
+   ],
+   "location": "New Cross Gate Rail Station",
+   "lat": 51.475128,
+   "lon": -0.040399,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GNEWXGTE"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:circle:03ddacd7",
+   "kind": "rail closure",
+   "title": "Circle: CIRCLE LINE: Saturday 7 November, until 1030, no service on the entire line.",
+   "start": "2026-11-07T04:30:00Z",
+   "end": "2026-11-07T10:30:00Z",
+   "periods": [
+    {
+     "from": "2026-11-07T04:30:00Z",
+     "to": "2026-11-07T10:30:00Z"
+    }
+   ],
+   "location": "Aldgate Underground Station; Cannon Street Underground Station; Liverpool Street Underground Station; Moorgate Underground Station; Monument Underground Station; Mansion House Underground Station; Tower Hill Underground Station",
+   "lat": 51.514246,
+   "lon": -0.075689,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "circle",
+   "mode": "tube",
+   "severity": "Planned Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUALD",
+    "940GZZLUCST",
+    "940GZZLULVT",
+    "940GZZLUMGT",
+    "940GZZLUMMT",
+    "940GZZLUMSH",
+    "940GZZLUTWH"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:district:d41fa20e",
+   "kind": "rail closure",
+   "title": "District: DISTRICT LINE: Saturday 7 November, until 1030, no service on the entire line. Use MILDMAY LINE services between Gunnersbury, Kew Gardens and Richmond. Replacement bus services operate.",
+   "start": "2026-11-07T04:30:00Z",
+   "end": "2026-11-07T10:30:00Z",
+   "periods": [
+    {
+     "from": "2026-11-07T04:30:00Z",
+     "to": "2026-11-07T10:30:00Z"
+    }
+   ],
+   "location": "Aldgate East Underground Station; Cannon Street Underground Station; Monument Underground Station; Mansion House Underground Station; Stepney Green Underground Station; Tower Hill Underground Station; Whitechapel Underground Station",
+   "lat": 51.515037,
+   "lon": -0.072384,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "district",
+   "mode": "tube",
+   "severity": "Planned Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUADE",
+    "940GZZLUCST",
+    "940GZZLUMMT",
+    "940GZZLUMSH",
+    "940GZZLUSGN",
+    "940GZZLUTWH",
+    "940GZZLUWPL"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:hammersmith-city:24843037",
+   "kind": "rail closure",
+   "title": "Hammersmith & City: HAMMERSMITH & CITY LINE: Saturday 7 November, until 1030, no service on the entire line. Replacement bus services operate.",
+   "start": "2026-11-07T04:30:00Z",
+   "end": "2026-11-07T10:30:00Z",
+   "periods": [
+    {
+     "from": "2026-11-07T04:30:00Z",
+     "to": "2026-11-07T10:30:00Z"
+    }
+   ],
+   "location": "Aldgate East Underground Station; Liverpool Street Underground Station; Moorgate Underground Station; Stepney Green Underground Station; Whitechapel Underground Station",
+   "lat": 51.515037,
+   "lon": -0.072384,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "hammersmith-city",
+   "mode": "tube",
+   "severity": "Planned Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUADE",
+    "940GZZLULVT",
+    "940GZZLUMGT",
+    "940GZZLUSGN",
+    "940GZZLUWPL"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:metropolitan:b1fe2c95",
+   "kind": "rail closure",
+   "title": "Metropolitan: METROPOLITAN LINE: Saturday 7 and Sunday 8 November, no service on the entire line. In addition, there will be no CHILTERN RAILWAYS services between Marylebone and Aylesbury Vale Parkway via Amersham. Use PICCADILLY LINE trains between Rayners Lane and Uxbridge, Replacement bus services operate.",
+   "start": "2026-11-07T04:30:00Z",
+   "end": "2026-11-09T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-11-07T04:30:00Z",
+     "to": "2026-11-09T01:29:00Z"
+    }
+   ],
+   "location": "Aldgate Underground Station; Liverpool Street Underground Station; Moorgate Underground Station",
+   "lat": 51.514246,
+   "lon": -0.075689,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "metropolitan",
+   "mode": "tube",
+   "severity": "Planned Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "940GZZLUALD",
+    "940GZZLULVT",
+    "940GZZLUMGT"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:6c6e94d9",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Sunday 8 November, no service between Surrey Quays and Clapham Junction / Battersea Park. Replacement bus service M operates between Canada Water and Clapham Junction via Surrey Quays, Queens Road Peckham, Peckham Rye, Denmark Hill, Clapham High Street and Wandsworth Road. The 0025 l…",
+   "start": "2026-11-08T00:01:00Z",
+   "end": "2026-11-09T01:29:00Z",
+   "periods": [
+    {
+     "from": "2026-11-08T00:01:00Z",
+     "to": "2026-11-09T01:29:00Z"
+    }
+   ],
+   "location": "Surrey Quays Rail Station",
+   "lat": 51.493196,
+   "lon": -0.047519,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GSURREYQ"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  }
+ ]
+}

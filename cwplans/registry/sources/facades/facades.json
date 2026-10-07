@@ -1,0 +1,1730 @@
+{
+ "about": "Facade facts for the Canary Wharf towers of 100 m and over (registry cwb- ids), for texturing the 3D model. Each building lists which fields were measured from open (CC0/PDM/CC BY) photos, which were judged by looking at photos (including CC BY-SA and other reference-only images: facts, not pixels), and which are assumptions.",
+ "checked": "2026-10-03",
+ "method": {
+  "rectification": "OpenCV LSD line segments inside a hand-chosen region of the facade; RANSAC vanishing points for near-vertical and near-horizontal segments; homography that sends the vanishing line to infinity and makes both directions axis-aligned (affine rectification). Orientation forced so the region keeps top and left.",
+  "metric_aspect": "The affine result has an unknown aspect. A focal length (from the two vanishing points when plausible, else 0.722 x long side = 26 mm-equivalent phone lens) gives the plane orientation and a vertical/horizontal scale ratio; rect-*.jpg files are resampled with it. The ratio changed by less than 10% between 13 mm and 26 mm lenses for most photos.",
+  "periods": "Mean absolute Sobel gradient per column and per row; autocorrelation peaks (FFT cross-check); the fundamental chosen by judgement after looking at the patch with period ticks.",
+  "metres": "floor_m: height/floors (stated as assumed) unless a face width gives a scale; bay_m from OSM face width / bay count where the whole face is visible, else floor_m x bay_px / (floor_px x aspect). Where both exist they are compared in measurement.check.",
+  "colours": "k-means (k=3) in Lab on the rectified patch; cluster roles (glass/frame/spandrel) assigned by judgement. Colours depend on light and sky reflection."
+ },
+ "error": {
+  "one_canada_square": "bay count 19.9 vs 19.8 known (+0.5%); floor height +2 to +4% vs assumption",
+  "landmark_pinnacle": "panel width two ways agree within 3%",
+  "hsbc": "floor height -12% vs height/floors (which includes crown and plant)"
+ },
+ "buildings": {
+  "cwb-0413": {
+   "name": "One Canada Square",
+   "wikidata": "Q503477",
+   "architect": "César Pelli & Associates (with Adamson Associates, Frederick Gibberd Coombes)",
+   "completed": 1991,
+   "floors": 50,
+   "height_m": 235,
+   "cladding": "stainless steel with a linen finish; punched square windows (each with a central mullion) in a regular grid; re-entrant stepped corners",
+   "glass_hex": "#434f4b",
+   "frame_hex": "#bdc5c3",
+   "spandrel_hex": "#bdc5c3",
+   "bay_m": 2.97,
+   "floor_m": 4.07,
+   "emphasis": "grid",
+   "crown": "40 m square-based stainless steel pyramid with an aircraft warning beacon at the apex",
+   "setbacks": "none on the shaft; stepped (notched) corners full height",
+   "night_lighting": "pyramid lit by programmable fluorescent tubes; office windows lit in a grid",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m",
+    "floor_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 50,
+      "floor_px": 59.1,
+      "aspect": 1.159,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 2.85,
+      "bay_m_from_width": 2.97,
+      "bays_across_face": 19.9,
+      "floor_m_measured": 4.07,
+      "floor_m_assumed": 3.9,
+      "face": "W",
+      "rect_file": "data/raw/facades/cwb-0413/rect-ocs-a.jpg"
+     },
+     {
+      "bay_px": 37,
+      "floor_px": 31.3,
+      "aspect": 1.743,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 2.64,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.9,
+      "face": "S",
+      "rect_file": "data/raw/facades/cwb-0413/rect-ocs-b.jpg"
+     }
+    ],
+    "check": "19.9 window bays measured across the west face against 19.8 known (3,960 windows / 50 floors / 4 faces): +0.5%. Bay 59.0 m / 19.9 = 2.97 m. Floor height from the metric aspect: 4.07 m (ocs-a) and 4.0 m (ocs-b) against an assumed 3.9 m ((235 - 40 m pyramid) / 50): +2 to +4%.",
+    "colour_note": "k-means (overcast light): #bdc5c3 steel 52%, #6e7e78 glass with sky reflection 33%, #434f4b glass in shade 16%"
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/One_Canada_Square",
+    "https://www.flickr.com/photos/57868312@N00/39878263614/",
+    "https://www.flickr.com/photos/183611874@N08/49416072577/",
+    "https://www.flickr.com/photos/7831824@N04/49863852518/",
+    "https://www.flickr.com/photos/57868312@N00/53253349549/",
+    "https://www.flickr.com/photos/57868312@N00/54911790284/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 63.1,
+    "side_a_bearing": 99.9,
+    "side_b": 59.0,
+    "side_b_bearing": 9.9,
+    "from_osm": "way/5986754",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0577": {
+   "name": "Landmark Pinnacle",
+   "wikidata": "Q16258428",
+   "architect": "Squire and Partners",
+   "completed": 2020,
+   "floors": 75,
+   "height_m": 234,
+   "height_note": "Wikipedia gives 233 m and 76 storeys (75 habitable)",
+   "cladding": "full-height unitised glass curtain wall, dark blue-grey and highly reflective; narrow vertical panels about 0.95 m; dark recessed vertical slots on the corners and in the centre of the end faces with light metal edge bands",
+   "glass_hex": "#393e45",
+   "frame_hex": "#b5bbc2",
+   "spandrel_hex": "#11151b",
+   "bay_m": 0.95,
+   "floor_m": 3.02,
+   "emphasis": "horizontal",
+   "crown": "flat top with a glass balustrade around the sky garden on level 75; plant screened by glazing",
+   "setbacks": "none; slender rectangular slab with chamfered/slotted corners",
+   "night_lighting": "residential windows lit irregularly; red aviation lights on the roof (seen in other towers nearby, not confirmed here)",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m",
+    "floor_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": null,
+      "floor_px": 57.3,
+      "aspect": 1.787,
+      "aspect_from": "orth",
+      "bay_m_from_floor": null,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.11,
+      "face": "N or S",
+      "rect_file": "data/raw/facades/cwb-0577/rect-pinnacle-edge.jpg"
+     },
+     {
+      "bay_px": 20,
+      "floor_px": 50,
+      "aspect": 1.285,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 0.97,
+      "bay_m_from_width": 0.94,
+      "bays_across_face": 51.5,
+      "floor_m_measured": 3.02,
+      "floor_m_assumed": 3.11,
+      "face": "E or W",
+      "rect_file": "data/raw/facades/cwb-0577/rect-pinnacle-mercury.jpg"
+     }
+    ],
+    "check": "panel width 0.94 m from the face width (48.6 m OSM long side / 51.5 panels) and 0.97 m from the assumed floor height (233 / 75 = 3.11 m) and the metric aspect: agree within 3%. Measured floor height 3.02 m against 3.11 m assumed: -3%."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Landmark_Pinnacle",
+    "https://www.flickr.com/photos/57868312@N00/51154600226/",
+    "https://www.flickr.com/photos/winnie_pix/54148261054/",
+    "https://commons.wikimedia.org/wiki/File:The_Landmark_Pinnacle,_Canary_Wharf_(02).jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 24.5,
+    "side_a_bearing": 94.8,
+    "side_b": 48.6,
+    "side_b_bearing": 4.8,
+    "from_osm": "way/365809822",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0451": {
+   "name": "Newfoundland",
+   "wikidata": "Q15917518",
+   "architect": "Horden Cherry Lee (design); Adamson Associates (executive)",
+   "completed": 2021,
+   "floors": 58,
+   "height_m": 220,
+   "cladding": "structural steel diagrid exoskeleton clad in light grey/white metal (\"the diamond tower\") over grey glazing with narrow panes (about 1.35 m) and dark spandrel panels; rounded corners on the long faces",
+   "glass_hex": "#787c82",
+   "frame_hex": "#c2c4c8",
+   "spandrel_hex": "#35373b",
+   "bay_m": 1.35,
+   "floor_m": 3.79,
+   "emphasis": "grid",
+   "pattern": "diagrid: diamonds about 3.5 across the narrow face; a crossing node every 8 to 9 floors (measured 1475 px / 173 px per floor in newf-diagrid)",
+   "crown": "diagrid runs to the roof and closes in a triangulated band; flat roof",
+   "setbacks": "none; plan tapers slightly towards the top (judged from the aerials)",
+   "night_lighting": "diagrid lit in changing colours during the Winter Lights festival (Bex Walton, Flickr 50871287957, not downloaded); otherwise residential windows",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting",
+    "pattern"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 65,
+      "floor_px": 173,
+      "aspect": 1.054,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 1.35,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.79,
+      "face": "W",
+      "rect_file": "data/raw/facades/cwb-0451/rect-newf-diagrid.jpg"
+     },
+     {
+      "bay_px": null,
+      "floor_px": 29,
+      "aspect": 0.841,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": null,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.79,
+      "face": "E",
+      "rect_file": "data/raw/facades/cwb-0451/rect-newf-dock.jpg"
+     }
+    ],
+    "note": "newf-diagrid is a black-and-white photo: geometry only, no colour. Floor height 3.79 m = 220 / 58 includes the crown and podium, so it is an upper bound."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Newfoundland,_London",
+    "https://www.flickr.com/photos/61798879@N00/48063457661/",
+    "https://www.flickr.com/photos/40447441@N03/51398723196/",
+    "https://www.flickr.com/photos/57868312@N00/52197764149/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 26.6,
+    "side_a_bearing": 101.3,
+    "side_b": 56.6,
+    "side_b_bearing": 11.3,
+    "from_osm": "way/532616070",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0715": {
+   "name": "Hampton Tower (South Quay Plaza 1)",
+   "wikidata": "Q56300795",
+   "architect": "Foster + Partners",
+   "completed": 2021,
+   "floors": 68,
+   "height_m": 214,
+   "height_note": "Wikipedia: 214.5 m",
+   "cladding": "unitised curtain wall with triple glazing and stainless steel cladding (Yuanda); blue-grey glass with a dark horizontal louvre/vent band on each floor; faceted plan with deep black vertical slots dividing the faces; winter gardens",
+   "glass_hex": "#9da8b1",
+   "frame_hex": "#5e6771",
+   "spandrel_hex": "#181d24",
+   "bay_m": null,
+   "floor_m": 3.15,
+   "emphasis": "vertical",
+   "crown": "top floors fully flush-glazed (no louvre band); stepped faceted top in tiers",
+   "setbacks": "faces step back in tiers near the top (judged from Commons photo by Mortadella42)",
+   "night_lighting": "residential windows; no feature lighting seen",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": null,
+      "floor_px": 32,
+      "aspect": 1.611,
+      "aspect_from": "orth",
+      "bay_m_from_floor": null,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.15,
+      "face": "N",
+      "rect_file": "data/raw/facades/cwb-0715/rect-hampton-sqp.jpg"
+     }
+    ],
+    "note": "floor period measured (32 px, very clean) but no face width is visible to give a scale; bay not measured (panes too fine at this distance). Floor height 214.5 / 68 assumed."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/South_Quay_Plaza",
+    "https://www.yuanda-europe.com/en/projects/south-quay-plaza/",
+    "https://www.flickr.com/photos/57868312@N00/54914359145/",
+    "https://commons.wikimedia.org/wiki/File:South_Quay_Plaza_1_(November_2023).jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 41.7,
+    "side_a_bearing": 147.8,
+    "side_b": 38.3,
+    "side_b_bearing": 57.8,
+    "from_osm": "way/362219033",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0590": {
+   "name": "One Park Drive",
+   "wikidata": "Q29378816",
+   "architect": "Herzog & de Meuron (Adamson Associates executive)",
+   "completed": 2021,
+   "floors": 57,
+   "height_m": 205,
+   "cladding": "cylindrical tower; three apartment types expressed as different window rhythms (deep loggias in an irregular checker pattern, bay windows, wide panoramic bands at the top); light grey/white frames and balcony edges, dark glass",
+   "glass_hex": "#282c2b",
+   "frame_hex": "#b0b5b4",
+   "spandrel_hex": "#6a7070",
+   "bay_m": null,
+   "floor_m": 3.6,
+   "emphasis": "grid",
+   "crown": "flat top; the top floors (duplex penthouses, floors 55-57) have wider continuous glazing",
+   "setbacks": "none; the pattern changes with height instead (checkerboard loggias low, larger openings high)",
+   "night_lighting": "residential windows; dense irregular pattern",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": null,
+      "floor_px": 55,
+      "aspect": 1.484,
+      "aspect_from": "orth",
+      "bay_m_from_floor": null,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.6,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0590/rect-opd.jpg"
+     }
+    ],
+    "note": "a cylinder cannot be rectified by one homography; the patch is only valid in a narrow vertical strip. Diameter about 43 m (OSM). Floor height 205 / 57 assumed."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/One_Park_Drive",
+    "https://www.flickr.com/photos/57868312@N00/51630857319/",
+    "https://www.flickr.com/photos/57868312@N00/52535901865/",
+    "https://www.flickr.com/photos/57868312@N00/51152317073/",
+    "https://www.flickr.com/photos/57868312@N00/52197497861/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 43.4,
+    "side_a_bearing": 178.3,
+    "side_b": 43.7,
+    "side_b_bearing": 88.3,
+    "from_osm": "way/534219763",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0520": {
+   "name": "Citigroup Centre (25 Canada Square)",
+   "wikidata": "Q867663",
+   "architect": "César Pelli & Associates (Adamson Associates executive)",
+   "completed": 2001,
+   "floors": 45,
+   "height_m": 200,
+   "cladding": "blue-green glass curtain wall with projecting stainless steel vertical fins about every 5 m and finer mullions between (about 3-4 panes per fin bay); lower blocks at the base",
+   "glass_hex": "#64777a",
+   "frame_hex": "#b5c3c2",
+   "spandrel_hex": "#39484b",
+   "bay_m": 5.0,
+   "floor_m": 4.44,
+   "emphasis": "vertical",
+   "crown": "set-back two-storey crown box with an open metal frame/cornice and \"citi\" signs on the faces",
+   "setbacks": "crown set back from the shaft; stepped lower wings",
+   "night_lighting": "illuminated citi logos on the crown",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 53,
+      "floor_px": 41,
+      "aspect": 1.139,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 5.04,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.44,
+      "face": "W",
+      "rect_file": "data/raw/facades/cwb-0520/rect-citi-cabot.jpg"
+     },
+     {
+      "bay_px": 129,
+      "floor_px": 96,
+      "aspect": 1.099,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 5.43,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.44,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0520/rect-citi-top.jpg"
+     }
+    ],
+    "note": "bay_m is the major fin spacing (5.0 and 5.4 m from two photos), derived from the assumed 4.44 m floor height (200/45, includes crown) and the metric aspect; low-medium confidence."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Citigroup_Centre_(London)",
+    "https://www.flickr.com/photos/57868312@N00/54416200163/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 74.8,
+    "side_a_bearing": 99.6,
+    "side_b": 60.7,
+    "side_b_bearing": 9.6,
+    "from_osm": "way/190714752",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0417": {
+   "name": "8 Canada Square (HSBC Tower)",
+   "wikidata": "Q572887",
+   "architect": "Foster + Partners",
+   "completed": 2002,
+   "floors": 45,
+   "height_m": 200,
+   "cladding": "about 4,900 glass panels; pale grey-green glass with alternating bands of vision glass and lighter opaque spandrel glass on every floor; fine vertical mullions about 1.5 m apart",
+   "glass_hex": "#445b60",
+   "frame_hex": "#72878a",
+   "spandrel_hex": "#9eb4b7",
+   "bay_m": 1.47,
+   "floor_m": 3.92,
+   "emphasis": "horizontal",
+   "crown": "flat top with plant behind a glazed band; HSBC lettering and red-and-white hexagon logo high on all four faces",
+   "setbacks": "none",
+   "night_lighting": "HSBC signs: black by day, lit white at night (LED polycarbonate since 2013-14)",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m",
+    "floor_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 17.6,
+      "floor_px": 39.9,
+      "aspect": 1.177,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 1.66,
+      "bay_m_from_width": 1.47,
+      "bays_across_face": 40.5,
+      "floor_m_measured": 3.92,
+      "floor_m_assumed": 4.44,
+      "face": "W",
+      "rect_file": "data/raw/facades/cwb-0417/rect-hsbc-cabot.jpg"
+     },
+     {
+      "bay_px": 33,
+      "floor_px": 77,
+      "aspect": 1.209,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 1.57,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.44,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0417/rect-hsbc-e.jpg"
+     }
+    ],
+    "check": "bay 1.47 m from the west face width (59.4 m OSM / 40.5 mullion bays); 1.57-1.66 m from the assumed floor height. Measured floor height 3.92 m against 4.44 m assumed (200/45 includes crown and plant): -12%."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/8_Canada_Square",
+    "https://www.flickr.com/photos/57868312@N00/54419488598/",
+    "https://www.flickr.com/photos/57868312@N00/55263103908/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 60.5,
+    "side_a_bearing": 99.9,
+    "side_b": 59.4,
+    "side_b_bearing": 9.9,
+    "from_osm": "way/5986805",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0647": {
+   "name": "Bagshaw Building (Wardian East)",
+   "wikidata": null,
+   "architect": "Glenn Howells Architects",
+   "completed": 2020,
+   "floors": 55,
+   "height_m": 184,
+   "height_note": "Wikipedia: East tower 187.2 m, 55 storeys",
+   "cladding": "same as Wardian West: continuous white/light-grey slab edges and balcony bands on every floor over dark glass; balconies with planting",
+   "glass_hex": "#66757c",
+   "frame_hex": "#cad5d2",
+   "spandrel_hex": "#010506",
+   "bay_m": 2.95,
+   "floor_m": 3.36,
+   "emphasis": "horizontal",
+   "crown": "flat top; top floors slightly set back behind the bands",
+   "setbacks": "slab edges step in and out between floors, giving a ribbed profile; podium links the two towers",
+   "night_lighting": "residential windows behind the bands",
+   "measured": [],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting",
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m",
+    "floor_m"
+   ],
+   "measurement": {
+    "note": "no usable rectified patch of the east tower (photo 55175159283 too steep and occluded by trees); values copied from Wardian West (cwb-0645) by judgement, both towers share one design."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Wardian_London",
+    "https://www.flickr.com/photos/57868312@N00/55175159283/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 19.2,
+    "side_a_bearing": 100.2,
+    "side_b": 36.9,
+    "side_b_bearing": 10.2,
+    "from_osm": "way/499615259",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0813": {
+   "name": "Amory Tower",
+   "wikidata": "Q130758506",
+   "architect": "Make Architects",
+   "completed": 2021,
+   "floors": 54,
+   "height_m": 182,
+   "height_note": "Wikipedia: 55 storeys; Wikidata: 53",
+   "cladding": "dark blue-grey glass with vertical fins in a moiré pattern (fin spacing varies, about 0.65 m); cut-throughs for amenity floors",
+   "glass_hex": "#3e4f60",
+   "frame_hex": "#768492",
+   "spandrel_hex": "#1b2631",
+   "bay_m": 2.4,
+   "floor_m": 3.37,
+   "emphasis": "vertical",
+   "crown": "flat top; slight lift of the upper floors (cut-through amenity level near the top)",
+   "setbacks": "a recessed amenity cut-through low on the shaft (16th floor club) and corner reveals",
+   "night_lighting": "residential windows",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 51,
+      "floor_px": 54,
+      "aspect": 1.354,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 2.35,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.37,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0813/rect-amory.jpg"
+     }
+    ],
+    "note": "bay 2.35 m from the assumed floor height (182/54) and metric aspect; the moiré fin rhythm (about 0.65 m) is irregular by design."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Amory_Tower",
+    "https://www.flickr.com/photos/57868312@N00/52535970543/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 29.2,
+    "side_a_bearing": 163.7,
+    "side_b": 39.0,
+    "side_b_bearing": 73.7,
+    "from_osm": "way/373827544",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0712": {
+   "name": "Harcourt Tower (Harcourt Gardens, South Quay Plaza 4)",
+   "wikidata": null,
+   "architect": "Foster + Partners",
+   "completed": 2024,
+   "floors": 56,
+   "height_m": 169,
+   "height_note": "Wikipedia gives Harcourt Gardens 192.4 m, 56 storeys; the registry 169 m disagrees — not patched here",
+   "cladding": "cream/off-white vertical fins (stone-coloured) about 2.4 m apart over dark grey glass; fins read grey when backlit",
+   "glass_hex": "#4e5254",
+   "frame_hex": "#edece4",
+   "spandrel_hex": "#919393",
+   "bay_m": 2.37,
+   "floor_m": 3.44,
+   "emphasis": "vertical",
+   "crown": "fins rise above the roof as a castellated crown; open sky-garden storey a few floors below the top",
+   "setbacks": "a recessed open sky-garden band near the top; shaft otherwise straight",
+   "night_lighting": "residential windows; sky-garden band lit (judged)",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 42,
+      "floor_px": null,
+      "aspect": 1.641,
+      "aspect_from": "orth",
+      "bay_m_from_floor": null,
+      "bay_m_from_width": 2.37,
+      "bays_across_face": 14.0,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.44,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0712/rect-harcourt.jpg"
+     }
+    ],
+    "note": "fin spacing from the face width (OSM about 33 m / 14 fins); floor period not clean (fins dominate). floor_m = 192.4/56."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/South_Quay_Plaza",
+    "https://commons.wikimedia.org/wiki/File:Harcourt_Gardens_(SQP_4)_-_May_2024_(1).jpg",
+    "https://commons.wikimedia.org/wiki/File:Harcourt_Gardens_(SQP_4)_-_May_2024_(2).jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 33.2,
+    "side_a_bearing": 101.3,
+    "side_b": 32.9,
+    "side_b_bearing": 11.3,
+    "from_osm": "way/381545886",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0645": {
+   "name": "Wardian London (West tower)",
+   "wikidata": "Q19870793",
+   "architect": "Glenn Howells Architects",
+   "completed": 2020,
+   "floors": 50,
+   "height_m": 168,
+   "cladding": "continuous white/light-grey slab edges and balcony bands on every floor (balustrade panels about 1 m) over dark glass; deep shadow under each band",
+   "glass_hex": "#66757c",
+   "frame_hex": "#cad5d2",
+   "spandrel_hex": "#010506",
+   "bay_m": 2.95,
+   "floor_m": 3.36,
+   "emphasis": "horizontal",
+   "crown": "flat top",
+   "setbacks": "slab edges vary slightly floor to floor (ribbed profile); podium links to the east tower",
+   "night_lighting": "residential windows behind the bands",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 85,
+      "floor_px": 75,
+      "aspect": 1.29,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 2.95,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.36,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0645/rect-wardian-a.jpg"
+     }
+    ],
+    "note": "bay 2.95 m (85 px period) from the assumed floor height 168/50; a 29 px period is the balustrade panel rhythm (about 1.0 m). Colour: #010506 is the deep shadow under the bands, not a material."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Wardian_London",
+    "https://www.flickr.com/photos/57868312@N00/52197497711/",
+    "https://commons.wikimedia.org/wiki/File:Wardian_London_2025-01-30.jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 21.8,
+    "side_a_bearing": 100.2,
+    "side_b": 38.3,
+    "side_b_bearing": 10.2,
+    "from_osm": "way/499615258",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0658": {
+   "name": "40 Charter Street",
+   "wikidata": "Q136227841",
+   "architect": "Kohn Pedersen Fox",
+   "completed": null,
+   "completed_note": "topped out; Wikipedia gives completion February 2027 (estimated)",
+   "floors": 53,
+   "height_m": 160,
+   "height_note": "Wikipedia: 178.6 m",
+   "cladding": "dark charcoal panels with punched windows in undulating (wavy) horizontal bands; Juliet balconies; rounded corners",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "horizontal",
+   "crown": "flat top, the wave pattern continues to the parapet",
+   "setbacks": "none; undulating plan outline",
+   "night_lighting": null,
+   "measured": [],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks"
+   ],
+   "measurement": {
+    "note": "no open image found; facts from looking at Commons \"40 Charter Street, 29 August 2025.jpg\" (CC BY-SA 4.0, Coz4836)."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/40_Charter_Street",
+    "https://commons.wikimedia.org/wiki/File:40_Charter_Street,_29_August_2025.jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 53.4,
+    "side_a_bearing": 111.2,
+    "side_b": 39.2,
+    "side_b_bearing": 21.2,
+    "from_osm": "way/791658610",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0424": {
+   "name": "One Churchill Place (Barclays)",
+   "wikidata": "Q138768",
+   "architect": "HOK",
+   "completed": 2004,
+   "floors": 32,
+   "height_m": 156,
+   "cladding": "blue-green glass curtain wall with lighter horizontal spandrel bands at every floor and paired vertical mullions; plant floors at the top",
+   "glass_hex": "#3c515c",
+   "frame_hex": "#b3c7c7",
+   "spandrel_hex": "#627b82",
+   "bay_m": 3.4,
+   "floor_m": 4.88,
+   "emphasis": "horizontal",
+   "crown": "flat top with plant and building-maintenance cranes; BARCLAYS sign and eagle logo near the top",
+   "setbacks": "none",
+   "night_lighting": "Barclays sign lit",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 77,
+      "floor_px": 112,
+      "aspect": 0.98,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 3.42,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.88,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0424/rect-ocp.jpg"
+     }
+    ],
+    "note": "bay 3.4 m is a two-pane module (77 px) from the assumed floor height 156/32 = 4.88 m (includes plant); medium confidence."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/One_Churchill_Place",
+    "https://www.flickr.com/photos/57868312@N00/54921012630/",
+    "https://www.flickr.com/photos/57868312@N00/26109088958/",
+    "https://commons.wikimedia.org/wiki/File:One_Churchill_Place.jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 70.3,
+    "side_a_bearing": 100.7,
+    "side_b": 74.4,
+    "side_b_bearing": 10.7,
+    "from_osm": "way/5986929",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0582": {
+   "name": "25 Bank Street (J.P. Morgan)",
+   "wikidata": "Q138752",
+   "architect": "César Pelli (Adamson Associates)",
+   "completed": 2004,
+   "floors": 33,
+   "height_m": 153,
+   "cladding": "grey glass curtain wall with fine vertical mullions about 1.7 m apart and slightly lighter spandrel bands; flat, reflective",
+   "glass_hex": "#525a65",
+   "frame_hex": "#a5b1c0",
+   "spandrel_hex": "#7d8894",
+   "bay_m": 1.7,
+   "floor_m": 4.64,
+   "emphasis": "grid",
+   "crown": "flat top with a J.P. Morgan sign (Lehman Brothers before 2010; CHASE sign seen in the 2026 aerial)",
+   "setbacks": "stepped lower wing on one side",
+   "night_lighting": "sign lit",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 46,
+      "floor_px": 58,
+      "aspect": 2.111,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 1.74,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.64,
+      "face": "N",
+      "rect_file": "data/raw/facades/cwb-0582/rect-bank25.jpg"
+     },
+     {
+      "bay_px": 19,
+      "floor_px": 40,
+      "aspect": 1.37,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 1.61,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.64,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0582/rect-bank25-b.jpg"
+     }
+    ],
+    "check": "bay 1.74 m and 1.61 m from two photos (2011 and 2016), both from the assumed floor height 153/33: they differ by 8%."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/25_Bank_Street",
+    "https://www.flickr.com/photos/39415781@N06/6453681243/",
+    "https://www.flickr.com/photos/14829735@N00/26313668335/",
+    "https://www.flickr.com/photos/39415781@N06/6453748103/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 79.2,
+    "side_a_bearing": 99.8,
+    "side_b": 85.0,
+    "side_b_bearing": 9.8,
+    "from_osm": "way/140144145",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0585": {
+   "name": "40 Bank Street",
+   "wikidata": "Q138755",
+   "architect": "César Pelli",
+   "completed": 2003,
+   "floors": 33,
+   "height_m": 153,
+   "cladding": "dark grey metal and glass grid with square punched-looking windows (similar order to One Canada Square but darker)",
+   "glass_hex": "#2b2f34",
+   "frame_hex": "#5e5f69",
+   "spandrel_hex": "#4a4d57",
+   "bay_m": 3.37,
+   "floor_m": 4.64,
+   "emphasis": "grid",
+   "crown": "flat top",
+   "setbacks": "stepped corner bays",
+   "night_lighting": null,
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 90,
+      "floor_px": 95,
+      "aspect": 1.303,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 3.37,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.64,
+      "face": "W",
+      "rect_file": "data/raw/facades/cwb-0585/rect-bank40.jpg"
+     }
+    ],
+    "note": "photo from 2011 (newest open image found). bay from the assumed floor height 153/33."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/40_Bank_Street",
+    "https://www.flickr.com/photos/39415781@N06/6453677865/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 57.1,
+    "side_a_bearing": 99.8,
+    "side_b": 42.1,
+    "side_b_bearing": 9.8,
+    "from_osm": "way/140129371",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0589": {
+   "name": "10 Upper Bank Street",
+   "wikidata": "Q138760",
+   "architect": "Kohn Pedersen Fox",
+   "completed": 2003,
+   "floors": 32,
+   "height_m": 151,
+   "cladding": "blue glass curtain wall on the main faces framed by silver full-height vertical fins at the edges; the side face is covered by dense vertical silver louvres",
+   "glass_hex": "#39598a",
+   "frame_hex": "#96b1dd",
+   "spandrel_hex": "#294676",
+   "bay_m": null,
+   "floor_m": 4.72,
+   "emphasis": "vertical",
+   "crown": "glazed top storeys with a projecting silver fin frame at the corners",
+   "setbacks": "corner fins project above the roof line",
+   "night_lighting": null,
+   "measured": [
+    "glass_hex"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "frame_hex",
+    "spandrel_hex"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 67,
+      "floor_px": 49,
+      "aspect": 1.893,
+      "aspect_from": "orth",
+      "bay_m_from_floor": 3.41,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 4.72,
+      "face": "S",
+      "rect_file": "data/raw/facades/cwb-0589/rect-ubs10.jpg"
+     }
+    ],
+    "note": "blue sky reflection dominates the colour; the 67 px period (3.4 m) is probably a two-pane module, low confidence, not reported as bay_m. frame_hex #96b1dd is reflection, not the silver fin."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/10_Upper_Bank_Street",
+    "https://www.flickr.com/photos/16801915@N06/7061523825/",
+    "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_-_November_2023.jpg",
+    "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_(66656).jpg"
+   ],
+   "footprint_obb_m": {
+    "side_a": 78.8,
+    "side_a_bearing": 99.8,
+    "side_b": 109.2,
+    "side_b_bearing": 9.8,
+    "from_osm": "way/183241875",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0659": {
+   "name": "50-60 Charter Street",
+   "wikidata": null,
+   "architect": null,
+   "completed": null,
+   "floors": null,
+   "height_m": 151,
+   "cladding": null,
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": null,
+   "crown": null,
+   "setbacks": null,
+   "night_lighting": null,
+   "measurement": {
+    "note": "no image and no text source found in this pass"
+   },
+   "measured": [],
+   "judged": [],
+   "sources": [],
+   "footprint_obb_m": {
+    "side_a": 87.2,
+    "side_a_bearing": 99.5,
+    "side_b": 27.3,
+    "side_b_bearing": 9.5,
+    "from_osm": "way/792032030",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0592": {
+   "name": "10 Park Drive",
+   "wikidata": null,
+   "architect": null,
+   "completed": null,
+   "floors": null,
+   "height_m": 149,
+   "cladding": "dark glass with fine vertical lines (seen beside One Park Drive in the 2026 aerial 55427645026)",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "vertical",
+   "crown": "flat top (aerial)",
+   "setbacks": null,
+   "night_lighting": null,
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown"
+   ],
+   "measurement": {
+    "note": "seen only small in an aerial"
+   },
+   "measured": [],
+   "sources": [],
+   "footprint_obb_m": {
+    "side_a": 34.1,
+    "side_a_bearing": 100.0,
+    "side_b": 73.0,
+    "side_b_bearing": 10.0,
+    "from_osm": "way/534219765",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0801": {
+   "name": "Pan Peninsula",
+   "wikidata": "Q3070493",
+   "architect": "Skidmore, Owings & Merrill (not verified in a source this pass)",
+   "completed": 2009,
+   "floors": 48,
+   "height_m": 147,
+   "cladding": "two towers; white/silver glass curtain wall with projecting balconies and vertical white fins; East tower stepped profile",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "vertical",
+   "crown": "stepped top with a lit crown band on the East tower",
+   "setbacks": "stepped upper floors",
+   "night_lighting": "lit crown band on the East tower (unverified; no night photo checked)",
+   "judged": [
+    "architect",
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting"
+   ],
+   "measurement": {
+    "note": "two open photos (2012, 2015) are small or occluded; not rectified"
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Pan_Peninsula",
+    "https://www.flickr.com/photos/57868312@N00/16967524154/",
+    "https://www.flickr.com/photos/30937273@N06/7623672676/"
+   ],
+   "measured": [],
+   "footprint_obb_m": {
+    "side_a": 94.1,
+    "side_a_bearing": 111.4,
+    "side_b": 53.6,
+    "side_b_bearing": 21.4,
+    "from_osm": "way/189241330",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0514": {
+   "name": "One Bank Street",
+   "wikidata": "Q131225851",
+   "architect": null,
+   "completed": 2019,
+   "floors": 28,
+   "height_m": 143,
+   "cladding": "curved glass facade with dense vertical light-grey fins, bowed in plan and section (\"oddly shaped\"); Société Générale logo on the top",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "vertical",
+   "crown": "flat roof with photovoltaic panels (aerial 55427645026)",
+   "setbacks": "curved setback profile on the west face",
+   "night_lighting": "logo lit",
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting",
+    "completed"
+   ],
+   "measurement": {
+    "note": "curved facade; homography rectification failed; photos 51155384484, 53252111692 kept as references"
+   },
+   "measured": [],
+   "sources": [
+    "https://www.flickr.com/photos/57868312@N00/53252111692/",
+    "https://www.flickr.com/photos/57868312@N00/51155384484/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 72.8,
+    "side_a_bearing": 98.8,
+    "side_b": 57.4,
+    "side_b_bearing": 8.8,
+    "from_osm": "way/532616071",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0641": {
+   "name": "22 Marsh Wall (Landmark East)",
+   "wikidata": "Q4631317",
+   "architect": "Squire and Partners",
+   "completed": 2010,
+   "floors": 44,
+   "height_m": 140,
+   "cladding": null,
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": null,
+   "crown": null,
+   "setbacks": null,
+   "night_lighting": null,
+   "measurement": {
+    "note": "no open image found; Commons P18 is a 2009 CC BY-SA photo, not looked at in detail"
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/24_Marsh_Wall"
+   ],
+   "measured": [],
+   "judged": [],
+   "footprint_obb_m": {
+    "side_a": 20.7,
+    "side_a_bearing": 94.5,
+    "side_b": 39.9,
+    "side_b_bearing": 4.5,
+    "from_osm": "way/140235072",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0963": {
+   "name": "Maine Tower (Harbour Central)",
+   "wikidata": "Q20713829",
+   "architect": null,
+   "completed": 2020,
+   "floors": 41,
+   "height_m": 140,
+   "cladding": "blue glass in bronze-brown aluminium frames grouped into offset four-storey blocks; a recessed balcony column on the main face",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "grid",
+   "crown": "open frame at the top (top storey frame without glass)",
+   "setbacks": "blocks shift a little in and out",
+   "night_lighting": null,
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "completed"
+   ],
+   "measurement": {
+    "note": "reference-only: Commons \"Harbour Central Maine Tower.jpg\" (CC BY-SA 4.0, Caledonianl, 2019)"
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Maine_Tower",
+    "https://commons.wikimedia.org/wiki/File:Harbour_Central_Maine_Tower.jpg"
+   ],
+   "measured": [],
+   "footprint_obb_m": {
+    "side_a": 28.0,
+    "side_a_bearing": 177.7,
+    "side_b": 28.3,
+    "side_b_bearing": 87.7,
+    "from_osm": "way/489800176",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0830": {
+   "name": "One Thames Quay",
+   "wikidata": null,
+   "architect": null,
+   "completed": null,
+   "floors": 46,
+   "height_m": 139,
+   "cladding": null,
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": null,
+   "crown": null,
+   "setbacks": null,
+   "night_lighting": null,
+   "measurement": {
+    "note": "no image found in this pass"
+   },
+   "measured": [],
+   "judged": [],
+   "sources": [],
+   "footprint_obb_m": {
+    "side_a": 41.1,
+    "side_a_bearing": 100.8,
+    "side_b": 28.0,
+    "side_b_bearing": 10.8,
+    "from_osm": "way/190297834",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0343": {
+   "name": "Charrington Tower (Providence Tower)",
+   "wikidata": "Q18161291",
+   "architect": null,
+   "completed": 2019,
+   "floors": 44,
+   "height_m": 136,
+   "cladding": null,
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": null,
+   "crown": null,
+   "setbacks": null,
+   "night_lighting": null,
+   "measurement": {
+    "note": "Commons P18 is a 426 px CC BY-SA photo; not enough for facts"
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Charrington_Tower"
+   ],
+   "measured": [],
+   "judged": [
+    "completed"
+   ],
+   "footprint_obb_m": {
+    "side_a": 45.3,
+    "side_a_bearing": 175.8,
+    "side_b": 25.7,
+    "side_b_bearing": 85.8,
+    "from_osm": "way/448738030",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0525": {
+   "name": "25 Churchill Place",
+   "wikidata": "Q4632156",
+   "architect": "Kohn Pedersen Fox",
+   "completed": 2014,
+   "floors": 23,
+   "height_m": 130,
+   "cladding": "pale blue glass curtain wall with white horizontal spandrel bands at each floor and white vertical mullion lines; white frame at the edges",
+   "glass_hex": "#668da9",
+   "frame_hex": "#9db7c9",
+   "spandrel_hex": "#deecf5",
+   "bay_m": null,
+   "floor_m": 5.65,
+   "emphasis": "horizontal",
+   "crown": "flat top with a glazed plant screen",
+   "setbacks": "none",
+   "night_lighting": null,
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "completed"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 47,
+      "floor_px": 38,
+      "aspect": 1.066,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 6.56,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 5.65,
+      "face": "unknown",
+      "rect_file": "data/raw/facades/cwb-0525/rect-ch25.jpg"
+     }
+    ],
+    "note": "bay not reported: the period/aspect gives 6.6 m, which is not plausible; floor_m = 130/23 includes a tall roof storey."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/25_Churchill_Place",
+    "https://www.flickr.com/photos/110625596@N06/14602887430/",
+    "https://www.flickr.com/photos/57868312@N00/7753334328/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 47.9,
+    "side_a_bearing": 100.3,
+    "side_b": 66.3,
+    "side_b_bearing": 10.3,
+    "from_osm": "way/183241873",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0593": {
+   "name": "Vertus (10 George Street)",
+   "wikidata": null,
+   "architect": null,
+   "completed": null,
+   "floors": 37,
+   "height_m": 122,
+   "cladding": null,
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": null,
+   "crown": null,
+   "setbacks": null,
+   "night_lighting": null,
+   "measurement": {
+    "note": "no image found in this pass"
+   },
+   "measured": [],
+   "judged": [],
+   "sources": [],
+   "footprint_obb_m": {
+    "side_a": 52.8,
+    "side_a_bearing": 100.3,
+    "side_b": 32.0,
+    "side_b_bearing": 10.3,
+    "from_osm": "way/534219762",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0701": {
+   "name": "Novotel London Canary Wharf",
+   "wikidata": "Q111369012",
+   "architect": null,
+   "completed": 2017,
+   "floors": 39,
+   "height_m": 121,
+   "cladding": "glass tower in a random patchwork of light and mid blue panels; gold/yellow metal-clad lower block",
+   "glass_hex": "#8094af",
+   "frame_hex": "#3c4350",
+   "spandrel_hex": "#b1c4da",
+   "bay_m": null,
+   "floor_m": 3.1,
+   "emphasis": "grid",
+   "crown": "NOVOTEL sign near the top; flat top with a frame",
+   "setbacks": "lower gold block projects at the base",
+   "night_lighting": "sign lit",
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "night_lighting",
+    "completed"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": null,
+      "floor_px": 99,
+      "aspect": 2.698,
+      "aspect_from": "orth",
+      "bay_m_from_floor": null,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.1,
+      "face": "N",
+      "rect_file": "data/raw/facades/cwb-0701/rect-novotel.jpg"
+     }
+    ],
+    "note": "photo taken looking steeply up from 17 m; aspect correction 2.7 is large; bay not reported"
+   },
+   "sources": [
+    "https://www.flickr.com/photos/61798879@N00/48053768112/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 38.2,
+    "side_a_bearing": 121.2,
+    "side_b": 24.2,
+    "side_b_bearing": 31.2,
+    "from_osm": "way/365809829",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0966": {
+   "name": "Sirocco Tower",
+   "wikidata": null,
+   "architect": null,
+   "completed": null,
+   "floors": 35,
+   "height_m": 120,
+   "cladding": null,
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": null,
+   "crown": null,
+   "setbacks": null,
+   "night_lighting": null,
+   "measurement": {
+    "note": "no image found in this pass"
+   },
+   "measured": [],
+   "judged": [],
+   "sources": [],
+   "footprint_obb_m": {
+    "side_a": 23.8,
+    "side_a_bearing": 96.7,
+    "side_b": 38.3,
+    "side_b_bearing": 6.7,
+    "from_osm": "way/489800175",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0317": {
+   "name": "1 West India Quay",
+   "wikidata": "Q2813525",
+   "architect": "HOK",
+   "completed": 2004,
+   "floors": 33,
+   "height_m": 111,
+   "cladding": "curved (lens-shaped) glass curtain wall with continuous light-grey horizontal balcony/sunshade bands at every floor; mid-grey glass",
+   "glass_hex": "#41494e",
+   "frame_hex": "#c8d4da",
+   "spandrel_hex": "#868f94",
+   "bay_m": 1.21,
+   "floor_m": 3.36,
+   "emphasis": "horizontal",
+   "crown": "curved flat top",
+   "setbacks": "none",
+   "night_lighting": null,
+   "measured": [
+    "glass_hex",
+    "frame_hex",
+    "spandrel_hex",
+    "bay_m"
+   ],
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks"
+   ],
+   "assumed": [
+    "floor_m"
+   ],
+   "measurement": {
+    "patches": [
+     {
+      "bay_px": 43,
+      "floor_px": 104,
+      "aspect": 1.144,
+      "aspect_from": "iphone26",
+      "bay_m_from_floor": 1.21,
+      "bay_m_from_width": null,
+      "bays_across_face": null,
+      "floor_m_measured": null,
+      "floor_m_assumed": 3.36,
+      "face": "E",
+      "rect_file": "data/raw/facades/cwb-0317/rect-wiq1.jpg"
+     }
+    ],
+    "note": "curved face: only the flattest part was used; photo 2011."
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/1_West_India_Quay",
+    "https://www.flickr.com/photos/39415781@N06/6455129143/",
+    "https://www.flickr.com/photos/129231073@N06/32041163406/"
+   ],
+   "footprint_obb_m": {
+    "side_a": 63.6,
+    "side_a_bearing": 99.8,
+    "side_b": 23.4,
+    "side_b_bearing": 9.8,
+    "from_osm": "way/309188472",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0737": {
+   "name": "Dollar Bay",
+   "wikidata": "Q44750696",
+   "architect": null,
+   "completed": 2017,
+   "floors": 32,
+   "height_m": 109,
+   "cladding": "blue-green reflective glass; faceted, prism-like volumes",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "vertical",
+   "crown": "angled faceted top",
+   "setbacks": "faceted planes",
+   "night_lighting": null,
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown",
+    "setbacks",
+    "completed"
+   ],
+   "measurement": {
+    "note": "reference-only: Commons \"Dollar Bay.jpg\" (CC BY-SA 4.0, mattbuck, 2016, under construction)"
+   },
+   "sources": [
+    "https://commons.wikimedia.org/wiki/File:Dollar_Bay.jpg"
+   ],
+   "measured": [],
+   "footprint_obb_m": {
+    "side_a": 17.2,
+    "side_a_bearing": 99.8,
+    "side_b": 28.9,
+    "side_b_bearing": 9.8,
+    "from_osm": "way/366741338",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  },
+  "cwb-0459": {
+   "name": "33 Canada Square",
+   "wikidata": "Q47661781",
+   "architect": "Foster + Partners",
+   "completed": 1999,
+   "floors": 18,
+   "height_m": 105,
+   "cladding": "grey glass curtain wall with rounded glazed corners and fine mullions (Citi building beside 25 Canada Square)",
+   "glass_hex": null,
+   "frame_hex": null,
+   "spandrel_hex": null,
+   "bay_m": null,
+   "floor_m": null,
+   "emphasis": "grid",
+   "crown": "flat top",
+   "setbacks": null,
+   "night_lighting": null,
+   "judged": [
+    "cladding",
+    "emphasis",
+    "crown"
+   ],
+   "measurement": {
+    "note": "one open photo (2011, close range, 6453670559) kept; not rectified"
+   },
+   "sources": [
+    "https://en.wikipedia.org/wiki/Citigroup_Centre_(London)",
+    "https://www.flickr.com/photos/39415781@N06/6453670559/"
+   ],
+   "measured": [],
+   "footprint_obb_m": {
+    "side_a": 65.8,
+    "side_a_bearing": 100.0,
+    "side_b": 60.7,
+    "side_b_bearing": 10.0,
+    "from_osm": "way/190714750",
+    "note": "oriented bounding box of the OSM outline (ODbL); used only as a scale for bay widths"
+   }
+  }
+ },
+ "note_on_targets": "The target list has 31 cwb- ids (the brief said 33 buildings of 100 m and over); all 31 are here."
+}

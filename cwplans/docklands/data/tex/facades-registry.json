@@ -1,0 +1,154 @@
+{
+ "built": "2026-10-03",
+ "tile_px": 256,
+ "cols": 8,
+ "rows": 4,
+ "about": "facade tiles cut from open photos (CC BY 2.0/4.0, PD) of the towers; each tile holds whole floors and bays; w_m, h_m = tile size on the wall in metres",
+ "attribution": "Elliott Brown (ell brown) (CC BY 2.0): 1 West India Quay, 25 Bank Street (J.P. Morgan), 40 Bank Street; Mark (Mark Wordy) (CC BY 2.0): Newfoundland, Novotel London Canary Wharf; Matt Brown (Matt From London) (CC BY 2.0): 8 Canada Square (HSBC Tower), Amory Tower, Landmark Pinnacle, One Park Drive, Wardian London (West tower); Matt Brown (Matt From London) (CC BY 4.0): Hampton Tower (South Quay Plaza 1), One Canada Square, One Churchill Place (Barclays); Mortadella42 (CC BY 4.0): 10 Upper Bank Street, Harcourt Tower (Harcourt Gardens, South Quay Plaza 4); Urban Sapphire (CC BY 2.0): 25 Churchill Place",
+ "buildings": {
+  "cwb-0413": {
+   "slot": 0,
+   "w_m": 23.77,
+   "h_m": 24.42,
+   "patch": "ocs-a",
+   "photo": "https://www.flickr.com/photos/57868312@N00/54911790284/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 4.0"
+  },
+  "cwb-0417": {
+   "slot": 1,
+   "w_m": 22.03,
+   "h_m": 22.18,
+   "patch": "hsbc-e",
+   "photo": "https://www.flickr.com/photos/57868312@N00/54419488598/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0577": {
+   "slot": 2,
+   "w_m": 24.86,
+   "h_m": 24.86,
+   "patch": "pinnacle-edge",
+   "photo": "https://www.flickr.com/photos/57868312@N00/51154600226/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0715": {
+   "slot": 3,
+   "w_m": 11.06,
+   "h_m": 22.05,
+   "patch": "hampton-sqp",
+   "photo": "https://www.flickr.com/photos/57868312@N00/54914359145/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 4.0"
+  },
+  "cwb-0451": {
+   "slot": 4,
+   "w_m": 22.97,
+   "h_m": 22.75,
+   "patch": "newf-diagrid",
+   "photo": "https://www.flickr.com/photos/61798879@N00/48063457661/",
+   "author": "Mark (Mark Wordy)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0645": {
+   "slot": 5,
+   "w_m": 23.6,
+   "h_m": 23.54,
+   "patch": "wardian-a",
+   "photo": "https://www.flickr.com/photos/57868312@N00/52197497711/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0813": {
+   "slot": 6,
+   "w_m": 21.17,
+   "h_m": 23.56,
+   "patch": "amory",
+   "photo": "https://www.flickr.com/photos/57868312@N00/52535970543/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0424": {
+   "slot": 7,
+   "w_m": 23.96,
+   "h_m": 24.41,
+   "patch": "ocp",
+   "photo": "https://www.flickr.com/photos/57868312@N00/54921012630/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 4.0"
+  },
+  "cwb-0701": {
+   "slot": 8,
+   "w_m": 4.92,
+   "h_m": 15.49,
+   "patch": "novotel",
+   "photo": "https://www.flickr.com/photos/61798879@N00/48053768112/",
+   "author": "Mark (Mark Wordy)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0590": {
+   "slot": 9,
+   "w_m": 21.63,
+   "h_m": 21.63,
+   "patch": "opd",
+   "photo": "https://www.flickr.com/photos/57868312@N00/51152317073/",
+   "author": "Matt Brown (Matt From London)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0589": {
+   "slot": 10,
+   "w_m": 20.46,
+   "h_m": 23.61,
+   "patch": "ubs10",
+   "photo": "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_-_November_2023.jpg",
+   "author": "Mortadella42",
+   "licence": "CC BY 4.0"
+  },
+  "cwb-0712": {
+   "slot": 11,
+   "w_m": 23.7,
+   "h_m": 24.1,
+   "patch": "harcourt",
+   "photo": "https://commons.wikimedia.org/wiki/File:Harcourt_Gardens_(SQP_4)_-_May_2024_(1).jpg",
+   "author": "Mortadella42",
+   "licence": "CC BY 4.0"
+  },
+  "cwb-0582": {
+   "slot": 12,
+   "w_m": 22.68,
+   "h_m": 23.2,
+   "patch": "bank25",
+   "photo": "https://www.flickr.com/photos/39415781@N06/6453681243/",
+   "author": "Elliott Brown (ell brown)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0585": {
+   "slot": 13,
+   "w_m": 23.64,
+   "h_m": 23.21,
+   "patch": "bank40",
+   "photo": "https://www.flickr.com/photos/39415781@N06/6453677865/",
+   "author": "Elliott Brown (ell brown)",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0525": {
+   "slot": 14,
+   "w_m": 19.67,
+   "h_m": 22.6,
+   "patch": "ch25",
+   "photo": "https://www.flickr.com/photos/110625596@N06/14602887430/",
+   "author": "Urban Sapphire",
+   "licence": "CC BY 2.0"
+  },
+  "cwb-0317": {
+   "slot": 15,
+   "w_m": 13.36,
+   "h_m": 13.44,
+   "patch": "wiq1",
+   "photo": "https://www.flickr.com/photos/39415781@N06/6455129143/",
+   "author": "Elliott Brown (ell brown)",
+   "licence": "CC BY 2.0"
+  }
+ }
+}

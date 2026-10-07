@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Canada Water → Surrey Quays 3D</title>
+<style>
+:root{--bg:#101316;--panel:#15191d;--line:#333a41;--fg:#e8eaec;--muted:#aab2ba;--warn:#ffd26f;--link:#9cc8ff;
+  --ell:#ff8a3d;--jub:#c9ced6;--rail:#d9544d;--water:#3f8fc0;--bld:#b9bec4;--bldlv:#e0b25a;--road:#5c636b}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,sans-serif}
+a{color:var(--link)}
+#wrap{position:relative;height:64vh;min-height:420px;overflow:hidden}
+canvas#c{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.hud{position:absolute;left:10px;top:10px;background:#111c;padding:6px 9px;border-radius:8px;font-size:12px;pointer-events:none}
+#labels{position:absolute;inset:0;pointer-events:none}
+.lb{position:absolute;transform:translate(-50%,-100%);font-size:11px;white-space:nowrap;padding:1px 5px;border-radius:5px;background:#0d1013d9;border:1px solid #39424b;pointer-events:auto;cursor:pointer}
+.lb.st{font-size:12px;font-weight:600;border-color:var(--ell)}
+.lb::after{content:"";position:absolute;left:50%;bottom:-5px;width:1px;height:5px;background:#8a949e}
+.panel{padding:12px 16px;background:var(--panel);border-top:1px solid var(--line)}
+.row{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin-top:8px}
+button{font:inherit;color:var(--fg);background:#293038;border:1px solid #59616a;border-radius:10px;padding:8px 13px}
+button[aria-pressed=true]{background:#3d4a57;border-color:#9aa6b2}
+input[type=range]{width:min(220px,58vw);vertical-align:middle}
+.ctl{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}.ctl output{min-width:3.2em}
+.small{color:var(--muted);font-size:13px}.warn{color:var(--warn)}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:13px}
+.sw{width:12px;height:12px;display:inline-block;margin-right:5px;vertical-align:-1px;border-radius:2px}
+#info{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;display:none}
+#profile{width:100%;height:220px;display:block;background:#0d1013;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;font-size:13px;margin-top:6px}td,th{border-bottom:1px solid var(--line);padding:3px 10px 3px 0;text-align:right}td:first-child,th:first-child{text-align:left}
+details{margin-top:10px}summary{cursor:pointer}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c" role="img" aria-label="3D model of the East London Line corridor from Wapping through Canada Water to Surrey Quays, from OpenStreetMap, Environment Agency LiDAR and Wikidata"></canvas><div id="labels"></div><div class="hud" id="hud">Loading…</div></div>
+<div class="panel">
+  <b>Canada Water → Surrey Quays: open-data model</b> <span class="small">· <a href="atlas/">atlas</a> · <a href="schematic.html">first schematic</a> · <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/README.md">data notes</a> · <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/research-report-2026-10.md">source survey</a> · map data <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> (ODbL), EA LiDAR (OGL), Wikidata (CC0) · <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/DATA-REGISTER.md">data licences</a></span>
+  <div class="small">Ground, buildings and open track levels are measured (EA LiDAR 1 m). Tunnel levels are not surveyed in any open source. The model joins the levels that are known: portals and open cuts the LiDAR sees (Rotherhithe, Wapping), and published platform depths (Canada Water: 11 m below ground for the East London line, 22 m for the Jubilee line, Wikipedia). The sliders set the shape between them.</div>
+  <div class="row">
+    <button type="button" id="vPlan" aria-pressed="false">Plan</button><button type="button" id="vObl" aria-pressed="true">Oblique</button><button type="button" id="vSec" aria-pressed="false">Long section</button>
+    <label><input type="checkbox" id="ghost"> Ghost buildings</label><label><input type="checkbox" id="showLabels" checked> Labels</label><label><input type="checkbox" id="showRoads" checked> Roads</label>
+  </div>
+  <div class="row">
+    <span class="ctl"><label>ELL tunnel dip below portal line <input id="dmax" type="range" min="0" max="25" step="0.5" value="8"></label><output id="dmaxO">8 m</output></span>
+    <span class="ctl"><label>Max gradient 1 in <input id="grad" type="range" min="20" max="100" step="5" value="40"></label><output id="gradO">40</output></span>
+  </div>
+  <div class="row">
+    <span class="ctl"><label>Jubilee line depth below ground <input id="djub" type="range" min="10" max="35" step="0.5" value="22"></label><output id="djubO">22 m</output></span>
+    <span class="ctl"><label>Vertical × <input id="vz" type="range" min="1" max="6" step="0.5" value="2"></label><output id="vzO">2×</output></span>
+  </div>
+  <div class="legend row">
+    <span><i class="sw" style="background:var(--ell)"></i>East London Line (tunnel: modelled)</span><span><i class="sw" style="background:var(--jub)"></i>Jubilee line (modelled)</span>
+    <span><i class="sw" style="background:var(--rail)"></i>Other rail</span><span><i class="sw" style="background:var(--water)"></i>Water</span>
+    <span><i class="sw" style="background:var(--bld)"></i>Building, LiDAR height</span><span><i class="sw" style="background:var(--bldlv)"></i>Building, OSM levels</span>
+  </div>
+  <div id="info" aria-live="polite"></div>
+  <details open><summary>Long section, East London Line (Up track), Wapping → Surrey Quays</summary>
+    <svg id="profile" role="img" aria-label="Profile of ground level and East London Line track level along the route"></svg>
+    <div class="small">Height in metres above Ordnance Datum Newlyn against distance along the route. Solid orange: track level measured by LiDAR (open track, portals, and the open cuts at Rotherhithe and Wapping). Ring: published platform level. Dashed orange: modelled tunnel level. Grey: ground (LiDAR DTM).</div>
+  </details>
+  <details><summary>Levels at stations (text)</summary><table id="levels"></table></details>
+  <p class="small" id="attrib"></p>
+</div>
+<script src="data/cwplans-data.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const D = globalThis.CWPLANS_DATA, hud = $('hud');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+if (!D) { hud.textContent = 'Data file data/cwplans-data.js did not load'; return; }
+const cv = $('c'), gl = cv.getContext('webgl', { antialias: true, alpha: false });
+if (!gl) { hud.textContent = 'WebGL unavailable: see the long section and the station table below'; }
+const css = n => { const v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return [1, 3, 5].map(i => parseInt(v.slice(i, i + 2), 16) / 255); };
+const COL = { ell: css('--ell'), jub: css('--jub'), rail: css('--rail'), water: css('--water'), bld: css('--bld'), bldlv: css('--bldlv'), road: css('--road'), ground: [.40, .43, .41] };
+const inputs = ['dmax', 'grad', 'djub', 'vz'].reduce((o, k) => (o[k] = $(k), o), {});
+const P = () => ({ dmax: +inputs.dmax.value, grad: +inputs.grad.value, djub: +inputs.djub.value, vz: +inputs.vz.value });
+
+// ---------- track level model (README: "Tunnel model")
+const isELL = r => /East London/i.test(r.name) || /East London|Silwood/i.test(r.track);
+// Measured controls on a tunnel chain: portal levels at its ends and open cuts/shafts seen by the LiDAR (p[4]).
+// Between two controls the track follows the straight line joining them, dipping below it by at most
+// "dmax" and by no more than the gradient allows from each control. With no control: a fixed depth below ground.
+for (const r of D.rail) if (r.tunnel) {
+  r.ctl = [];   // [s, level, kind]: portal, cut (both LiDAR) or a published level (data/sourced-levels.json)
+  if (r.ends[0] != null) r.ctl.push([0, r.ends[0], 'portal']);
+  for (const p of r.pts) if (p[4] != null) r.ctl.push([p[3], p[4], 'cut']);
+  if (r.ends[1] != null) r.ctl.push([r.len, r.ends[1], 'portal']);
+  for (const c of r.src || []) r.ctl.push([c[0], c[1], 'src', c[2]]);
+  r.ctl.sort((a, b) => a[0] - b[0]);
+}
+const measured = (r, p) => !r.tunnel || p[4] != null;
+const published = (r, p) => r.tunnel && (r.src || []).find(c => Math.abs(c[0] - p[3]) < 12);
+const SRC = Object.fromEntries((D.meta.sourced || []).map(c => [c.id, c]));
+const levelKind = (r, p) => measured(r, p) ? 'measured (LiDAR)' : published(r, p) ? 'published' : 'modelled';
+function trackY(r, p, par) {
+  if (!r.tunnel) return p[3];
+  if (p[4] != null) return p[4];
+  const s = p[3], n = par.grad;
+  let A = null, B = null; for (const c of r.ctl) { if (c[0] <= s) A = c; else { B = c; break; } }
+  if (!A && !B) return p[2] - (r.kind === 'subway' ? par.djub : par.dmax);
+  if (A && B) return A[1] + (B[1] - A[1]) * (s - A[0]) / (B[0] - A[0]) - Math.min(par.dmax, (s - A[0]) / n, (B[0] - s) / n);
+  const C = A || B;
+  // one control only: a published station level holds flat; a portal or cut descends at the gradient
+  return C[2] === 'src' ? C[1] : C[1] - Math.min(par.dmax, Math.abs(s - C[0]) / n);
+}
+const railColour = r => r.kind === 'subway' ? COL.jub : isELL(r) ? COL.ell : COL.rail;
+
+// ---------- the ELL Up track as one route for the profile: Wapping (north) to Surrey Quays (south)
+const station = name => D.places.find(p => p.kind === 'station' && p.name === name);
+const wap = station('Wapping'), sq = station('Surrey Quays');
+const ax = [sq.x - wap.x, sq.z - wap.z], axLen = Math.hypot(...ax), au = ax.map(v => v / axLen);
+const chain = (x, z) => (x - wap.x) * au[0] + (z - wap.z) * au[1];
+const offAxis = (x, z) => Math.abs(-(x - wap.x) * au[1] + (z - wap.z) * au[0]);
+const ellUp = D.rail.filter(r => isELL(r) && /^Up East London/.test(r.track));
+
+if (gl) {
+// ---------- GL setup
+const vs = 'attribute vec3 p;attribute vec3 c;uniform mat4 m;varying vec3 v;void main(){v=c;gl_Position=m*vec4(p,1.);}';
+const fs = 'precision mediump float;varying vec3 v;uniform float a;void main(){gl_FragColor=vec4(v,a);}';
+const sh = (t, s) => { const x = gl.createShader(t); gl.shaderSource(x, s); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; };
+const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr); gl.useProgram(pr);
+const aP = gl.getAttribLocation(pr, 'p'), aC = gl.getAttribLocation(pr, 'c'), uM = gl.getUniformLocation(pr, 'm'), uA = gl.getUniformLocation(pr, 'a');
+gl.enableVertexAttribArray(aP); gl.enableVertexAttribArray(aC);
+const LIGHT = (() => { const l = [-.45, .8, -.35], n = Math.hypot(...l); return l.map(v => v / n); })();
+const shade = (col, n) => { const k = .5 + .5 * Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]); return col.map(c => c * k); };
+function Layer() { return { v: [], buf: gl.createBuffer(), n: 0, idx: null, ni: 0 }; }
+function tri(L, a, b, c, col) {
+  const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], w = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+  let n = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]]; const l = Math.hypot(...n) || 1; n = n.map(x => x / l); if (n[1] < 0) n = n.map(x => -x);
+  const s = shade(col, n); for (const q of [a, b, c]) L.v.push(q[0], q[1], q[2], s[0], s[1], s[2]);
+}
+const quad = (L, a, b, c, d, col) => { tri(L, a, b, c, col); tri(L, a, c, d, col); };
+function upload(L) { gl.bindBuffer(gl.ARRAY_BUFFER, L.buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(L.v), gl.STATIC_DRAW); L.n = L.v.length / 6; L.v = []; }
+// box along a segment a->b (3D centre points), width w, height h
+function beam(L, a, b, w, h, col) {
+  const dx = b[0] - a[0], dz = b[2] - a[2], l = Math.hypot(dx, dz) || 1, ox = -dz / l * w / 2, oz = dx / l * w / 2, H = h / 2;
+  const P = (q, sx, sy) => [q[0] + ox * sx, q[1] + H * sy, q[2] + oz * sx];
+  const a00 = P(a, -1, -1), a10 = P(a, 1, -1), a11 = P(a, 1, 1), a01 = P(a, -1, 1), b00 = P(b, -1, -1), b10 = P(b, 1, -1), b11 = P(b, 1, 1), b01 = P(b, -1, 1);
+  quad(L, a01, a11, b11, b01, col); quad(L, a00, b00, b10, a10, col.map(c => c * .7)); quad(L, a00, a01, b01, b00, col); quad(L, a10, b10, b11, a11, col);
+}
+
+// ---------- static layers
+const terrain = Layer(), bld = Layer(), water = Layer(), roads = Layer(), railOpen = Layer(), tunnels = Layer();
+(function buildTerrain() {
+  const T = D.terrain, h = (i, j) => T.dm[j * T.nx + i] / 10, v = [];
+  for (let j = 0; j < T.nz; j++) for (let i = 0; i < T.nx; i++) {
+    const nx = h(Math.max(0, i - 1), j) - h(Math.min(T.nx - 1, i + 1), j), nz = h(i, Math.max(0, j - 1)) - h(i, Math.min(T.nz - 1, j + 1)), n = [nx, 2 * T.cell, nz], l = Math.hypot(...n);
+    const s = shade(COL.ground, n.map(x => x / l)); v.push(T.x0 + i * T.cell, h(i, j), T.z0 + j * T.cell, ...s);
+  }
+  const idx = [];
+  for (let j = 0; j < T.nz - 1; j++) for (let i = 0; i < T.nx - 1; i++) { const a = j * T.nx + i; idx.push(a, a + 1, a + T.nx, a + 1, a + T.nx + 1, a + T.nx); }
+  gl.bindBuffer(gl.ARRAY_BUFFER, terrain.buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW);
+  terrain.idx = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, terrain.idx); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW); terrain.ni = idx.length;
+})();
+for (const b of D.buildings) {
+  const col = b.s === 1 || b.s === 4 ? COL.bldlv : COL.bld, top = b.b + b.h, pt = k => [b.p[2 * k], top, b.p[2 * k + 1]];
+  for (let k = 0; k < b.t.length; k += 3) tri(bld, pt(b.t[k]), pt(b.t[k + 1]), pt(b.t[k + 2]), col.map(c => c * 1.05));
+  const starts = [0, ...b.holes, b.p.length / 2];
+  for (let r = 0; r < starts.length - 1; r++) for (let k = starts[r]; k < starts[r + 1]; k++) {
+    const k2 = k + 1 < starts[r + 1] ? k + 1 : starts[r], x0 = b.p[2 * k], z0 = b.p[2 * k + 1], x1 = b.p[2 * k2], z1 = b.p[2 * k2 + 1];
+    const n = [z1 - z0, 0, -(x1 - x0)], l = Math.hypot(...n) || 1, s = shade(col, n.map(x => x / l)).map(c => c * .9);
+    for (const q of [[x0, b.b, z0], [x1, b.b, z1], [x1, top, z1], [x0, b.b, z0], [x1, top, z1], [x0, top, z0]]) bld.v.push(...q, ...s);
+  }
+}
+for (const w of D.water) { const y = w.level + .05, pt = k => [w.p[2 * k], y, w.p[2 * k + 1]]; for (let k = 0; k < w.t.length; k += 3) tri(water, pt(w.t[k]), pt(w.t[k + 1]), pt(w.t[k + 2]), COL.water); }
+for (const r of D.roads) for (let i = 1; i < r.pts.length; i++) { const a = r.pts[i - 1], b = r.pts[i]; beam(roads, [a[0], a[2] + .3, a[1]], [b[0], b[2] + .3, b[1]], [0, 9, 6, 4][r.c], .4, COL.road); }
+for (const r of D.rail) if (!r.tunnel) for (let i = 1; i < r.pts.length; i++) { const a = r.pts[i - 1], b = r.pts[i]; beam(railOpen, [a[0], a[3] + .6, a[1]], [b[0], b[3] + .6, b[1]], 3.5, 1.2, railColour(r)); }
+[bld, water, roads, railOpen].forEach(upload);
+let builtKey = '';
+function buildTunnels(par) {
+  const key = `${par.dmax}|${par.grad}|${par.djub}`; if (key === builtKey) return; builtKey = key;
+  for (const r of D.rail) if (r.tunnel) for (let i = 1; i < r.pts.length; i++) {
+    const a = r.pts[i - 1], b = r.pts[i]; beam(tunnels, [a[0], trackY(r, a, par) + 2.5, a[1]], [b[0], trackY(r, b, par) + 2.5, b[1]], 5, 5, railColour(r));
+  }
+  upload(tunnels);
+}
+
+// ---------- camera
+const cam = { tx: -60, ty: 0, tz: -150, yaw: .55, pitch: .62, dist: 1900 };
+const VIEWS = {
+  plan: () => Object.assign(cam, { tx: 0, ty: 0, tz: 0, yaw: 0, pitch: 1.5695, dist: 2600 }),
+  obl: () => Object.assign(cam, { tx: -60, ty: 0, tz: -150, yaw: .55, pitch: .62, dist: 1900 }),
+  // look at the route side-on from the west, level with the tunnels: Wapping left, Surrey Quays right, as in the profile
+  sec: () => Object.assign(cam, { tx: (wap.x + sq.x) / 2, ty: -8, tz: (wap.z + sq.z) / 2, yaw: Math.atan2(-au[1], au[0]), pitch: .015, dist: 1700 }),
+};
+const btn = { plan: $('vPlan'), obl: $('vObl'), sec: $('vSec') };
+const setView = k => { VIEWS[k](); for (const b in btn) btn[b].setAttribute('aria-pressed', String(b === k)); draw(); };
+const unview = () => { for (const b in btn) btn[b].setAttribute('aria-pressed', 'false'); };
+btn.plan.onclick = () => setView('plan'); btn.obl.onclick = () => setView('obl'); btn.sec.onclick = () => setView('sec');
+function mul(a, b) { const o = new Float32Array(16); for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k]; return o; }
+function persp(f, a, n, fa) { const t = 1 / Math.tan(f / 2), o = new Float32Array(16); o[0] = t / a; o[5] = t; o[10] = (fa + n) / (n - fa); o[11] = -1; o[14] = 2 * fa * n / (n - fa); return o; }
+const sub = (a, b) => a.map((v, i) => v - b[i]), dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0), cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], norm = a => { const l = Math.hypot(...a); return a.map(v => v / l); };
+function look(e, t, u) { const z = norm(sub(e, t)), x = norm(cross3(u, z)), y = cross3(z, x); return new Float32Array([x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -dot(x, e), -dot(y, e), -dot(z, e), 1]); }
+const scaleY = s => new Float32Array([1, 0, 0, 0, 0, s, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+let MVP = null;
+
+// ---------- labels
+const labelBox = $('labels'), info = $('info');
+const KEY = /Thames Tunnel|^Canada Water$|Surrey Water|Greenland Dock|Silwood Junction|Brunel Museum|Rotherhithe Tunnel|Stave Hill/;
+const labelled = D.places.filter(p => p.kind === 'station' || KEY.test(p.name));
+const labelEls = labelled.map(p => {
+  const el = document.createElement('button'); el.type = 'button'; el.className = 'lb' + (p.kind === 'station' ? ' st' : ''); el.textContent = p.name.replace(/ railway station$/, '');
+  el.onclick = () => showInfo(p); labelBox.appendChild(el); return el;
+});
+function showInfo(p) {
+  const facts = p.facts ? Object.entries(p.facts).map(([k, v]) => `<div><span class="small">${esc(k)}:</span> ${esc(v.join('; '))}</div>`).join('') : '';
+  const lv = levelAt(p);
+  info.innerHTML = `<b>${esc(p.name)}</b>${p.desc ? ` <span class="small">${esc(p.desc)}</span>` : ''}${facts}` +
+    `<div class="small">Ground ${p.y} m OD (LiDAR)${lv ? ` · ELL track ${lv.y.toFixed(1)} m OD, ${lv.kind}, ${(p.y - lv.y).toFixed(1)} m below ground` : ''}</div>` +
+    `<div class="small">${p.wd ? `<a href="https://www.wikidata.org/wiki/${esc(p.wd)}">Wikidata ${esc(p.wd)}</a>` : ''}${p.wp ? ` · <a href="${esc(p.wp)}">Wikipedia</a>` : ''}${p.osm ? ` · <a href="https://www.openstreetmap.org/${esc(p.osm)}">OSM</a>` : ''}</div>`;
+  info.style.display = 'block';
+}
+function placeLabels() {
+  const show = $('showLabels').checked, w = cv.clientWidth, h = cv.clientHeight, vz = +inputs.vz.value;
+  labelled.forEach((p, i) => {
+    const el = labelEls[i], X = [p.x, p.y + 6 / vz, p.z, 1], c = [0, 1, 2, 3].map(r => MVP[r] * X[0] + MVP[4 + r] * X[1] + MVP[8 + r] * X[2] + MVP[12 + r]);
+    if (!show || c[3] <= 0) { el.style.display = 'none'; return; }
+    const sx = (c[0] / c[3] * .5 + .5) * w, sy = (1 - (c[1] / c[3] * .5 + .5)) * h;
+    if (sx < -50 || sx > w + 50 || sy < -20 || sy > h + 20) { el.style.display = 'none'; return; }
+    el.style.display = ''; el.style.left = sx + 'px'; el.style.top = sy + 'px';
+  });
+}
+
+// ---------- render
+let queued = false; function draw() { if (!queued) { queued = true; requestAnimationFrame(render); } }
+function drawLayer(L, alpha) {
+  if (!L.n && !L.ni) return;
+  gl.bindBuffer(gl.ARRAY_BUFFER, L.buf); gl.vertexAttribPointer(aP, 3, gl.FLOAT, false, 24, 0); gl.vertexAttribPointer(aC, 3, gl.FLOAT, false, 24, 12); gl.uniform1f(uA, alpha);
+  if (L.idx) { gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, L.idx); gl.drawElements(gl.TRIANGLES, L.ni, gl.UNSIGNED_SHORT, 0); } else gl.drawArrays(gl.TRIANGLES, 0, L.n);
+}
+function render() {
+  queued = false; const par = P(); buildTunnels(par);
+  const dpr = devicePixelRatio || 1, w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+  gl.viewport(0, 0, w, h); gl.clearColor(.063, .075, .086, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); gl.enable(gl.DEPTH_TEST);
+  const ce = Math.cos(cam.pitch), eye = [cam.tx + cam.dist * Math.sin(cam.yaw) * ce, cam.ty * par.vz + cam.dist * Math.sin(cam.pitch), cam.tz + cam.dist * Math.cos(cam.yaw) * ce];
+  MVP = mul(mul(persp(.8, w / h, 5, 12000), look(eye, [cam.tx, cam.ty * par.vz, cam.tz], [0, 1, 0])), scaleY(par.vz)); gl.uniformMatrix4fv(uM, false, MVP);
+  const ghost = $('ghost').checked;
+  gl.disable(gl.BLEND); gl.depthMask(true);
+  drawLayer(tunnels, 1); drawLayer(railOpen, 1); drawLayer(water, 1); if ($('showRoads').checked) drawLayer(roads, 1); if (!ghost) drawLayer(bld, 1);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.depthMask(false);
+  if (ghost) drawLayer(bld, .25); drawLayer(terrain, .5); gl.depthMask(true);
+  placeLabels();
+}
+
+// ---------- input: drag orbits, right/shift/two-finger drag pans, wheel/pinch zooms
+const ptrs = new Map(); let pinch = null;
+const mid = () => { const v = [...ptrs.values()]; return [(v[0][0] + v[1][0]) / 2, (v[0][1] + v[1][1]) / 2, Math.hypot(v[0][0] - v[1][0], v[0][1] - v[1][1])]; };
+function pan(dx, dy) { const k = cam.dist * .0012, c = Math.cos(cam.yaw), s = Math.sin(cam.yaw); cam.tx -= (c * dx + s * dy) * k; cam.tz -= (-s * dx + c * dy) * k; }
+const zoom = f => { cam.dist = Math.max(150, Math.min(6000, cam.dist * f)); };
+cv.addEventListener('contextmenu', e => e.preventDefault());
+cv.addEventListener('pointerdown', e => { ptrs.set(e.pointerId, [e.clientX, e.clientY, e.button === 2 || e.shiftKey]); cv.setPointerCapture(e.pointerId); if (ptrs.size === 2) pinch = mid(); });
+cv.addEventListener('pointermove', e => {
+  const last = ptrs.get(e.pointerId); if (!last) return; const cur = [e.clientX, e.clientY, last[2]]; ptrs.set(e.pointerId, cur);
+  if (ptrs.size === 2 && pinch) { const m = mid(); zoom(pinch[2] / Math.max(1, m[2])); pan(m[0] - pinch[0], m[1] - pinch[1]); pinch = m; unview(); draw(); return; }
+  if (ptrs.size !== 1) return; const dx = cur[0] - last[0], dy = cur[1] - last[1];
+  if (cur[2]) pan(dx, dy); else { cam.yaw -= dx * .006; cam.pitch = Math.max(.01, Math.min(1.5695, cam.pitch + dy * .006)); }
+  unview(); draw();
+});
+const end = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; };
+cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+cv.addEventListener('wheel', e => { e.preventDefault(); zoom(Math.exp(e.deltaY * .001)); unview(); draw(); }, { passive: false });
+for (const id of ['ghost', 'showLabels', 'showRoads']) $(id).onchange = draw;
+addEventListener('resize', draw);
+window.__cwplans = { cam, draw, setView };
+hud.textContent = 'Drag: rotate · right-drag / shift-drag / two fingers: pan · wheel / pinch: zoom · tap a label';
+}
+
+// ---------- long section (SVG) and the station table: these work without WebGL
+function levelAt(p) {
+  // nearest Up-track point within 80 m, preferring a measured one (stations sit next to the open cuts)
+  let best = null, bestM = null;
+  for (const r of ellUp) for (const q of r.pts) {
+    const d = Math.hypot(q[0] - p.x, q[1] - p.z); if (d >= 80) continue;
+    const c = { d, y: trackY(r, q, P()), open: measured(r, q), kind: levelKind(r, q), src: published(r, q) };
+    if (!best || d < best.d) best = c; if (c.open && (!bestM || d < bestM.d)) bestM = c;
+  }
+  return bestM || best;
+}
+const svg = $('profile'), NS = 'http://www.w3.org/2000/svg';
+function profile() {
+  const par = P(), W = svg.clientWidth || 800, H = svg.clientHeight || 220, pad = { l: 38, r: 10, t: 12, b: 22 };
+  const pts = [];
+  for (const r of ellUp) for (const q of r.pts) { const c = chain(q[0], q[1]); if (c > -50 && c < axLen + 50 && offAxis(q[0], q[1]) < 150) pts.push({ c, g: q[2], y: trackY(r, q, par), open: measured(r, q) }); }
+  pts.sort((a, b) => a.c - b.c);
+  const c0 = Math.min(...pts.map(p => p.c)), c1 = Math.max(...pts.map(p => p.c)), y0 = Math.floor(Math.min(...pts.map(p => p.y)) / 5) * 5 - 5, y1 = Math.max(10, Math.ceil(Math.max(...pts.map(p => p.g)) / 5) * 5);
+  const X = c => pad.l + (c - c0) / (c1 - c0) * (W - pad.l - pad.r), Y = y => pad.t + (y1 - y) / (y1 - y0) * (H - pad.t - pad.b);
+  const line = (sel, key) => { let d = '', pen = false; for (const p of pts) { if (!sel(p)) { pen = false; continue; } d += (pen ? 'L' : 'M') + X(p.c).toFixed(1) + ' ' + Y(p[key]).toFixed(1); pen = true; } return d; };
+  let s = '';
+  for (let y = y0; y <= y1; y += 5) s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(y)}" y2="${Y(y)}" stroke="#262c32"/><text x="${pad.l - 4}" y="${Y(y) + 4}" fill="#8a949e" font-size="10" text-anchor="end">${y}</text>`;
+  s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="#4a545e" stroke-dasharray="2 3"/>`;
+  s += `<path d="${line(() => true, 'g')}" fill="none" stroke="#9aa3ab" stroke-width="1.5"/>`;
+  s += `<path d="${line(p => !p.open, 'y')}" fill="none" stroke="var(--ell)" stroke-width="2.5" stroke-dasharray="6 4"/>`;
+  s += `<path d="${line(p => p.open, 'y')}" fill="none" stroke="var(--ell)" stroke-width="2.5"/>`;
+  for (const w of D.water.filter(w => /Canada Water/.test(w.n || ''))) {
+    const cs = []; for (let k = 0; k < w.p.length; k += 2) if (offAxis(w.p[k], w.p[k + 1]) < 400) cs.push(chain(w.p[k], w.p[k + 1]));
+    if (cs.length) s += `<rect x="${X(Math.max(c0, Math.min(...cs)))}" width="${X(Math.min(c1, Math.max(...cs))) - X(Math.max(c0, Math.min(...cs)))}" y="${Y(w.level)}" height="3" fill="var(--water)"><title>${esc(w.n)} (lake, ${w.level} m OD), projected onto the route</title></rect>`;
+  }
+  for (const r of ellUp) for (const c of r.src || []) { const q = r.pts.reduce((b, p) => Math.abs(p[3] - c[0]) < Math.abs(b[3] - c[0]) ? p : b); const x = X(chain(q[0], q[1])); s += `<circle cx="${x}" cy="${Y(c[1])}" r="5" fill="none" stroke="var(--ell)" stroke-width="2"><title>${esc((SRC[c[2]] || {}).what || c[2])}: ${c[1]} m OD (published)</title></circle>`; }
+  const tt = D.places.find(p => p.name === 'Thames Tunnel');  // Wikidata point, not the tunnel's midpoint
+  const marks = [...['Wapping', 'Rotherhithe', 'Canada Water', 'Surrey Quays'].map(station).filter(Boolean), ...(tt ? [{ ...tt, name: 'Thames Tunnel' }] : [])];
+  marks.sort((a, b) => chain(a.x, a.z) - chain(b.x, b.z));
+  const rowEnd = [];   // stagger names that would overlap: up to three rows
+  for (const m of marks) {
+    const x = X(chain(m.x, m.z)), wTxt = m.name.length * 6 + 6; let row = rowEnd.findIndex(e => e < x); if (row < 0) row = Math.min(rowEnd.length, 2); rowEnd[row] = x + wTxt;
+    s += `<line x1="${x}" x2="${x}" y1="${pad.t}" y2="${H - pad.b}" stroke="#55606a" stroke-dasharray="3 3"/><text x="${x + wTxt > W - pad.r ? x - 3 : x + 3}" y="${pad.t + 9 + row * 12}" fill="#d6dbe0" font-size="11"${x + wTxt > W - pad.r ? ' text-anchor="end"' : ''}>${esc(m.name)}</text>`;
+  }
+  s += `<text x="${W - pad.r}" y="${H - 6}" fill="#8a949e" font-size="10" text-anchor="end">${W < 560 ? `${Math.round(c1 - c0)} m along route` : `metres along route from Wapping (${Math.round(c1 - c0)} m shown); vertical not to scale`}</text>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = s;
+  // station table
+  const rows = ['Wapping', 'Rotherhithe', 'Canada Water', 'Surrey Quays'].map(station).filter(Boolean).map(st => { const lv = levelAt(st); return `<tr><td>${esc(st.name)}</td><td>${st.y}</td><td>${lv ? lv.y.toFixed(1) : '–'}</td><td>${lv ? (st.y - lv.y).toFixed(1) : '–'}</td><td>${lv ? (lv.src ? `published: <a href="${esc(SRC[lv.src[2]]?.source || '')}">source</a>` : lv.kind) : ''}</td></tr>`; });
+  $('levels').innerHTML = '<tr><th>Station</th><th>Ground m OD</th><th>ELL track m OD</th><th>Depth m</th><th>Track level</th></tr>' + rows.join('');
+}
+const outs = { dmax: v => v + ' m', grad: v => v, djub: v => v + ' m', vz: v => v + '×' };
+for (const k in inputs) inputs[k].oninput = () => { $(k + 'O').value = outs[k](inputs[k].value); profile(); if (gl) window.__cwplans.draw(); };
+addEventListener('resize', profile);
+$('attrib').innerHTML = 'Data: ' + D.meta.sources.map(s => `<a href="${esc(s.url)}">${esc(s.text)}</a>`).join(' · ') + ` · built ${esc(D.meta.built)}`;
+profile(); if (gl) window.__cwplans.draw();
+})();
+</script>
+</body>
+</html>

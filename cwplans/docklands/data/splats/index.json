@@ -1,0 +1,14 @@
+{
+ "sets": [
+  {
+   "name": "cw-synth",
+   "title": "Synthesised from the model (Canary Wharf)",
+   "count": 669306
+  },
+  {
+   "name": "cw-trained",
+   "title": "Trained from drone frames (Canary Wharf, 3,000 steps)",
+   "count": 167073
+  }
+ ]
+}

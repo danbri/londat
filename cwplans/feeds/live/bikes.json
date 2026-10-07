@@ -1,0 +1,3352 @@
+{
+ "meta": {
+  "source": "bikes",
+  "url": "https://api.tfl.gov.uk/BikePoint",
+  "fetched": "2026-10-04T08:24:17.462Z",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
+  "method": "GET /BikePoint (every London dock, one request); kept: docks in the zone; counts as published (NbBikes, NbStandardBikes, NbEBikes, NbEmptyDocks, NbDocks); time = the newest \"modified\" of the dock's properties",
+  "counts": {
+   "items": 138,
+   "model_box": 138,
+   "east_margin": 0,
+   "london_docks": 799,
+   "bikes": 1889,
+   "e_bikes": 132,
+   "empty_docks": 1661,
+   "docks": 3897,
+   "unavailable_docks": 347,
+   "empty_stations": 7,
+   "full_stations": 8,
+   "locked": 0
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "BikePoints_10",
+   "kind": "cycle-hire-dock",
+   "name": "Park Street, Bankside",
+   "zone": "model",
+   "time": "2026-10-04T08:18:15.31Z",
+   "position": {
+    "lat": 51.505974,
+    "lon": -0.092754
+   },
+   "values": {
+    "bikes": 8,
+    "standard_bikes": 8,
+    "e_bikes": 0,
+    "empty_docks": 8,
+    "docks": 18,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001024"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_10"
+  },
+  {
+   "id": "BikePoints_101",
+   "kind": "cycle-hire-dock",
+   "name": "Queen Street 1, Bank",
+   "zone": "model",
+   "time": "2026-10-04T08:16:14.19Z",
+   "position": {
+    "lat": 51.511553,
+    "lon": -0.09294
+   },
+   "values": {
+    "bikes": 4,
+    "standard_bikes": 2,
+    "e_bikes": 2,
+    "empty_docks": 17,
+    "docks": 22,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000999"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_101"
+  },
+  {
+   "id": "BikePoints_102",
+   "kind": "cycle-hire-dock",
+   "name": "Jewry Street, Aldgate",
+   "zone": "model",
+   "time": "2026-10-04T08:11:10.09Z",
+   "position": {
+    "lat": 51.513406,
+    "lon": -0.076793
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 17,
+    "docks": 17,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001045"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_102"
+  },
+  {
+   "id": "BikePoints_104",
+   "kind": "cycle-hire-dock",
+   "name": "Crosswall, Tower",
+   "zone": "model",
+   "time": "2026-10-04T07:51:55.06Z",
+   "position": {
+    "lat": 51.511594,
+    "lon": -0.077121
+   },
+   "values": {
+    "bikes": 23,
+    "standard_bikes": 22,
+    "e_bikes": 1,
+    "empty_docks": 7,
+    "docks": 34,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000991"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_104"
+  },
+  {
+   "id": "BikePoints_115",
+   "kind": "cycle-hire-dock",
+   "name": "Braham Street, Aldgate",
+   "zone": "model",
+   "time": "2026-10-04T07:36:59.33Z",
+   "position": {
+    "lat": 51.514233,
+    "lon": -0.073537
+   },
+   "values": {
+    "bikes": 9,
+    "standard_bikes": 9,
+    "e_bikes": 0,
+    "empty_docks": 21,
+    "docks": 34,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001062"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_115"
+  },
+  {
+   "id": "BikePoints_120",
+   "kind": "cycle-hire-dock",
+   "name": "The Guildhall, Guildhall",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.515735,
+    "lon": -0.09308
+   },
+   "values": {
+    "bikes": 3,
+    "standard_bikes": 3,
+    "e_bikes": 0,
+    "empty_docks": 13,
+    "docks": 17,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001044"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_120"
+  },
+  {
+   "id": "BikePoints_125",
+   "kind": "cycle-hire-dock",
+   "name": "Borough High Street, The Borough",
+   "zone": "model",
+   "time": "2026-10-04T08:18:15.31Z",
+   "position": {
+    "lat": 51.500694,
+    "lon": -0.094524
+   },
+   "values": {
+    "bikes": 5,
+    "standard_bikes": 5,
+    "e_bikes": 0,
+    "empty_docks": 15,
+    "docks": 21,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000996"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_125"
+  },
+  {
+   "id": "BikePoints_127",
+   "kind": "cycle-hire-dock",
+   "name": "Wood Street, Guildhall",
+   "zone": "model",
+   "time": "2026-10-04T00:57:17.373Z",
+   "position": {
+    "lat": 51.517008,
+    "lon": -0.093885
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 15,
+    "docks": 17,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001063"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_127"
+  },
+  {
+   "id": "BikePoints_130",
+   "kind": "cycle-hire-dock",
+   "name": "Tower Gardens , Tower",
+   "zone": "model",
+   "time": "2026-10-04T08:16:14.19Z",
+   "position": {
+    "lat": 51.509506,
+    "lon": -0.075459
+   },
+   "values": {
+    "bikes": 15,
+    "standard_bikes": 12,
+    "e_bikes": 3,
+    "empty_docks": 6,
+    "docks": 24,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001071"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_130"
+  },
+  {
+   "id": "BikePoints_134",
+   "kind": "cycle-hire-dock",
+   "name": "Wapping High Street, Wapping",
+   "zone": "model",
+   "time": "2026-10-04T07:22:46.67Z",
+   "position": {
+    "lat": 51.504904,
+    "lon": -0.06797
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 13,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 20,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001039"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_134"
+  },
+  {
+   "id": "BikePoints_140",
+   "kind": "cycle-hire-dock",
+   "name": "Finsbury Square , Moorgate",
+   "zone": "model",
+   "time": "2026-10-04T07:43:03.227Z",
+   "position": {
+    "lat": 51.520962,
+    "lon": -0.085634
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 6,
+    "e_bikes": 0,
+    "empty_docks": 24,
+    "docks": 33,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001056"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_140"
+  },
+  {
+   "id": "BikePoints_156",
+   "kind": "cycle-hire-dock",
+   "name": "New Kent Road, The Borough",
+   "zone": "model",
+   "time": "2026-10-04T06:38:28.343Z",
+   "position": {
+    "lat": 51.494436,
+    "lon": -0.092921
+   },
+   "values": {
+    "bikes": 22,
+    "standard_bikes": 22,
+    "e_bikes": 0,
+    "empty_docks": 11,
+    "docks": 33,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000966"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_156"
+  },
+  {
+   "id": "BikePoints_175",
+   "kind": "cycle-hire-dock",
+   "name": "Worship Street, Shoreditch",
+   "zone": "model",
+   "time": "2026-10-04T02:13:25.607Z",
+   "position": {
+    "lat": 51.521668,
+    "lon": -0.079608
+   },
+   "values": {
+    "bikes": 4,
+    "standard_bikes": 4,
+    "e_bikes": 0,
+    "empty_docks": 43,
+    "docks": 51,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000997"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_175"
+  },
+  {
+   "id": "BikePoints_194",
+   "kind": "cycle-hire-dock",
+   "name": "Hop Exchange, The Borough",
+   "zone": "model",
+   "time": "2026-10-04T08:19:16.107Z",
+   "position": {
+    "lat": 51.504627,
+    "lon": -0.091773
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 17,
+    "e_bikes": 2,
+    "empty_docks": 34,
+    "docks": 56,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000960"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_194"
+  },
+  {
+   "id": "BikePoints_199",
+   "kind": "cycle-hire-dock",
+   "name": "Great Tower Street, Monument",
+   "zone": "model",
+   "time": "2026-10-04T08:15:12.45Z",
+   "position": {
+    "lat": 51.510484,
+    "lon": -0.082989
+   },
+   "values": {
+    "bikes": 2,
+    "standard_bikes": 1,
+    "e_bikes": 1,
+    "empty_docks": 20,
+    "docks": 24,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001080"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_199"
+  },
+  {
+   "id": "BikePoints_200",
+   "kind": "cycle-hire-dock",
+   "name": "LMU Commercial Road, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T07:55:08.5Z",
+   "position": {
+    "lat": 51.514924,
+    "lon": -0.066078
+   },
+   "values": {
+    "bikes": 5,
+    "standard_bikes": 5,
+    "e_bikes": 0,
+    "empty_docks": 6,
+    "docks": 14,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001105"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_200"
+  },
+  {
+   "id": "BikePoints_202",
+   "kind": "cycle-hire-dock",
+   "name": "Leman Street, Aldgate",
+   "zone": "model",
+   "time": "2026-10-04T08:06:28.833Z",
+   "position": {
+    "lat": 51.512363,
+    "lon": -0.069542
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 13,
+    "e_bikes": 0,
+    "empty_docks": 19,
+    "docks": 37,
+    "unavailable_docks": 5,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001102"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_202"
+  },
+  {
+   "id": "BikePoints_206",
+   "kind": "cycle-hire-dock",
+   "name": "New Road 1 , Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T07:56:56.607Z",
+   "position": {
+    "lat": 51.518154,
+    "lon": -0.062697
+   },
+   "values": {
+    "bikes": 30,
+    "standard_bikes": 28,
+    "e_bikes": 2,
+    "empty_docks": 4,
+    "docks": 36,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001171"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_206"
+  },
+  {
+   "id": "BikePoints_215",
+   "kind": "cycle-hire-dock",
+   "name": "Moorfields, Moorgate",
+   "zone": "model",
+   "time": "2026-10-04T07:50:16.91Z",
+   "position": {
+    "lat": 51.519069,
+    "lon": -0.088285
+   },
+   "values": {
+    "bikes": 11,
+    "standard_bikes": 11,
+    "e_bikes": 0,
+    "empty_docks": 43,
+    "docks": 54,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001092"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_215"
+  },
+  {
+   "id": "BikePoints_217",
+   "kind": "cycle-hire-dock",
+   "name": "Wormwood Street, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T07:55:08.5Z",
+   "position": {
+    "lat": 51.516154,
+    "lon": -0.082422
+   },
+   "values": {
+    "bikes": 3,
+    "standard_bikes": 3,
+    "e_bikes": 0,
+    "empty_docks": 9,
+    "docks": 15,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "002587"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_217"
+  },
+  {
+   "id": "BikePoints_223",
+   "kind": "cycle-hire-dock",
+   "name": "Rodney Road , Walworth",
+   "zone": "model",
+   "time": "2026-10-04T06:56:31.8Z",
+   "position": {
+    "lat": 51.491484,
+    "lon": -0.09022
+   },
+   "values": {
+    "bikes": 8,
+    "standard_bikes": 6,
+    "e_bikes": 2,
+    "empty_docks": 14,
+    "docks": 24,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "003481"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_223"
+  },
+  {
+   "id": "BikePoints_236",
+   "kind": "cycle-hire-dock",
+   "name": "Fashion Street, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T06:57:33.613Z",
+   "position": {
+    "lat": 51.51838,
+    "lon": -0.073438
+   },
+   "values": {
+    "bikes": 2,
+    "standard_bikes": 2,
+    "e_bikes": 0,
+    "empty_docks": 25,
+    "docks": 30,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "003483"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_236"
+  },
+  {
+   "id": "BikePoints_237",
+   "kind": "cycle-hire-dock",
+   "name": "Dock Street, Wapping",
+   "zone": "model",
+   "time": "2026-10-04T08:20:17.537Z",
+   "position": {
+    "lat": 51.509786,
+    "lon": -0.068161
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 15,
+    "e_bikes": 5,
+    "empty_docks": 9,
+    "docks": 30,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "003467"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_237"
+  },
+  {
+   "id": "BikePoints_251",
+   "kind": "cycle-hire-dock",
+   "name": "Brushfield Street, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T08:15:12.45Z",
+   "position": {
+    "lat": 51.518908,
+    "lon": -0.079249
+   },
+   "values": {
+    "bikes": 8,
+    "standard_bikes": 6,
+    "e_bikes": 2,
+    "empty_docks": 24,
+    "docks": 34,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001161"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_251"
+  },
+  {
+   "id": "BikePoints_263",
+   "kind": "cycle-hire-dock",
+   "name": "St. Mary Axe, Aldgate",
+   "zone": "model",
+   "time": "2026-10-04T08:10:08.067Z",
+   "position": {
+    "lat": 51.514225,
+    "lon": -0.08066
+   },
+   "values": {
+    "bikes": 1,
+    "standard_bikes": 1,
+    "e_bikes": 0,
+    "empty_docks": 20,
+    "docks": 21,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001184"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_263"
+  },
+  {
+   "id": "BikePoints_269",
+   "kind": "cycle-hire-dock",
+   "name": "Empire Square, The Borough",
+   "zone": "model",
+   "time": "2026-10-04T07:08:35.65Z",
+   "position": {
+    "lat": 51.500823,
+    "lon": -0.08974
+   },
+   "values": {
+    "bikes": 22,
+    "standard_bikes": 22,
+    "e_bikes": 0,
+    "empty_docks": 24,
+    "docks": 46,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001209"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_269"
+  },
+  {
+   "id": "BikePoints_275",
+   "kind": "cycle-hire-dock",
+   "name": "Barbican Centre, Barbican",
+   "zone": "model",
+   "time": "2026-10-04T00:17:11.267Z",
+   "position": {
+    "lat": 51.520044,
+    "lon": -0.092176
+   },
+   "values": {
+    "bikes": 1,
+    "standard_bikes": 1,
+    "e_bikes": 0,
+    "empty_docks": 18,
+    "docks": 19,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001191"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_275"
+  },
+  {
+   "id": "BikePoints_276",
+   "kind": "cycle-hire-dock",
+   "name": "Lower Thames Street, Monument",
+   "zone": "model",
+   "time": "2026-10-04T01:23:18.113Z",
+   "position": {
+    "lat": 51.509301,
+    "lon": -0.084985
+   },
+   "values": {
+    "bikes": 3,
+    "standard_bikes": 3,
+    "e_bikes": 0,
+    "empty_docks": 18,
+    "docks": 24,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001098"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_276"
+  },
+  {
+   "id": "BikePoints_278",
+   "kind": "cycle-hire-dock",
+   "name": "Tooley Street, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T07:56:13.463Z",
+   "position": {
+    "lat": 51.503493,
+    "lon": -0.07962
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 20,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 27,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001142"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_278"
+  },
+  {
+   "id": "BikePoints_282",
+   "kind": "cycle-hire-dock",
+   "name": "Royal London Hospital, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T08:20:17.537Z",
+   "position": {
+    "lat": 51.518675,
+    "lon": -0.06111
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 17,
+    "e_bikes": 2,
+    "empty_docks": 17,
+    "docks": 42,
+    "unavailable_docks": 6,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001077"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_282"
+  },
+  {
+   "id": "BikePoints_295",
+   "kind": "cycle-hire-dock",
+   "name": "Swan Street, The Borough",
+   "zone": "model",
+   "time": "2026-10-04T06:22:23.76Z",
+   "position": {
+    "lat": 51.500296,
+    "lon": -0.092762
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 13,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 27,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001216"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_295"
+  },
+  {
+   "id": "BikePoints_298",
+   "kind": "cycle-hire-dock",
+   "name": "Curlew Street, Shad Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:11:10.09Z",
+   "position": {
+    "lat": 51.502279,
+    "lon": -0.074189
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 4,
+    "e_bikes": 2,
+    "empty_docks": 11,
+    "docks": 21,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001213"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_298"
+  },
+  {
+   "id": "BikePoints_3",
+   "kind": "cycle-hire-dock",
+   "name": "Christopher Street, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T02:01:24.06Z",
+   "position": {
+    "lat": 51.521283,
+    "lon": -0.084605
+   },
+   "values": {
+    "bikes": 15,
+    "standard_bikes": 15,
+    "e_bikes": 0,
+    "empty_docks": 16,
+    "docks": 32,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001012"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_3"
+  },
+  {
+   "id": "BikePoints_308",
+   "kind": "cycle-hire-dock",
+   "name": "Long Lane , Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T07:51:55.06Z",
+   "position": {
+    "lat": 51.499075,
+    "lon": -0.085666
+   },
+   "values": {
+    "bikes": 9,
+    "standard_bikes": 8,
+    "e_bikes": 1,
+    "empty_docks": 7,
+    "docks": 20,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001189"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_308"
+  },
+  {
+   "id": "BikePoints_314",
+   "kind": "cycle-hire-dock",
+   "name": "Tyers Gate, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T07:34:56.927Z",
+   "position": {
+    "lat": 51.500889,
+    "lon": -0.083159
+   },
+   "values": {
+    "bikes": 23,
+    "standard_bikes": 23,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 36,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "003485"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_314"
+  },
+  {
+   "id": "BikePoints_317",
+   "kind": "cycle-hire-dock",
+   "name": "Dickens Square, Borough",
+   "zone": "model",
+   "time": "2026-10-04T07:15:38.573Z",
+   "position": {
+    "lat": 51.496791,
+    "lon": -0.093913
+   },
+   "values": {
+    "bikes": 17,
+    "standard_bikes": 17,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 32,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001208"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_317"
+  },
+  {
+   "id": "BikePoints_321",
+   "kind": "cycle-hire-dock",
+   "name": "Bermondsey Street, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:12:28.977Z",
+   "position": {
+    "lat": 51.497855,
+    "lon": -0.081608
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 13,
+    "e_bikes": 0,
+    "empty_docks": 7,
+    "docks": 24,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "002637"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_321"
+  },
+  {
+   "id": "BikePoints_33",
+   "kind": "cycle-hire-dock",
+   "name": "Central House, Aldgate",
+   "zone": "model",
+   "time": "2026-10-04T08:08:39.74Z",
+   "position": {
+    "lat": 51.515231,
+    "lon": -0.07015
+   },
+   "values": {
+    "bikes": 9,
+    "standard_bikes": 9,
+    "e_bikes": 0,
+    "empty_docks": 11,
+    "docks": 24,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "003430"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_33"
+  },
+  {
+   "id": "BikePoints_331",
+   "kind": "cycle-hire-dock",
+   "name": "Bunhill Row, Moorgate",
+   "zone": "model",
+   "time": "2026-10-04T08:05:30.763Z",
+   "position": {
+    "lat": 51.520858,
+    "lon": -0.089887
+   },
+   "values": {
+    "bikes": 2,
+    "standard_bikes": 2,
+    "e_bikes": 0,
+    "empty_docks": 26,
+    "docks": 30,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001211"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_331"
+  },
+  {
+   "id": "BikePoints_390",
+   "kind": "cycle-hire-dock",
+   "name": "Buxton Street 1, Shoreditch",
+   "zone": "model",
+   "time": "2026-10-04T07:48:21.81Z",
+   "position": {
+    "lat": 51.521776,
+    "lon": -0.068856
+   },
+   "values": {
+    "bikes": 21,
+    "standard_bikes": 21,
+    "e_bikes": 0,
+    "empty_docks": 20,
+    "docks": 41,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001223"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_390"
+  },
+  {
+   "id": "BikePoints_40",
+   "kind": "cycle-hire-dock",
+   "name": "Commercial Street, Shoreditch",
+   "zone": "model",
+   "time": "2026-10-04T08:00:18.487Z",
+   "position": {
+    "lat": 51.52127,
+    "lon": -0.075578
+   },
+   "values": {
+    "bikes": 12,
+    "standard_bikes": 12,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 16,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001083"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_40"
+  },
+  {
+   "id": "BikePoints_408",
+   "kind": "cycle-hire-dock",
+   "name": "Sun Street, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T08:17:22.653Z",
+   "position": {
+    "lat": 51.520009,
+    "lon": -0.083935
+   },
+   "values": {
+    "bikes": 4,
+    "standard_bikes": 4,
+    "e_bikes": 0,
+    "empty_docks": 17,
+    "docks": 24,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001129"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_408"
+  },
+  {
+   "id": "BikePoints_41",
+   "kind": "cycle-hire-dock",
+   "name": "Pindar Street, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-03T14:26:04.207Z",
+   "position": {
+    "lat": 51.520955,
+    "lon": -0.083493
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 10,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 24,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001084"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_41"
+  },
+  {
+   "id": "BikePoints_410",
+   "kind": "cycle-hire-dock",
+   "name": "Orchard Place, Blackwall Tunnel",
+   "zone": "model",
+   "time": "2026-10-04T07:44:12.863Z",
+   "position": {
+    "lat": 51.510212,
+    "lon": 0.004979
+   },
+   "values": {
+    "bikes": 18,
+    "standard_bikes": 16,
+    "e_bikes": 2,
+    "empty_docks": 5,
+    "docks": 24,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001058"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_410"
+  },
+  {
+   "id": "BikePoints_411",
+   "kind": "cycle-hire-dock",
+   "name": "Rotherhithe Roundabout, Rotherhithe",
+   "zone": "model",
+   "time": "2026-10-04T07:39:00.823Z",
+   "position": {
+    "lat": 51.499169,
+    "lon": -0.055846
+   },
+   "values": {
+    "bikes": 15,
+    "standard_bikes": 15,
+    "e_bikes": 0,
+    "empty_docks": 2,
+    "docks": 19,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "010629"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_411"
+  },
+  {
+   "id": "BikePoints_427",
+   "kind": "cycle-hire-dock",
+   "name": "Cheapside, Bank",
+   "zone": "model",
+   "time": "2026-10-04T08:10:08.067Z",
+   "position": {
+    "lat": 51.51397,
+    "lon": -0.09294
+   },
+   "values": {
+    "bikes": 5,
+    "standard_bikes": 4,
+    "e_bikes": 1,
+    "empty_docks": 37,
+    "docks": 43,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022180"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_427"
+  },
+  {
+   "id": "BikePoints_443",
+   "kind": "cycle-hire-dock",
+   "name": "Philpot Street, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T07:56:56.607Z",
+   "position": {
+    "lat": 51.515256,
+    "lon": -0.058641
+   },
+   "values": {
+    "bikes": 21,
+    "standard_bikes": 19,
+    "e_bikes": 2,
+    "empty_docks": 8,
+    "docks": 30,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200033"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_443"
+  },
+  {
+   "id": "BikePoints_447",
+   "kind": "cycle-hire-dock",
+   "name": "Jubilee Crescent, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T08:07:23.7Z",
+   "position": {
+    "lat": 51.493381,
+    "lon": -0.007542
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 12,
+    "e_bikes": 1,
+    "empty_docks": 38,
+    "docks": 54,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200054"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_447"
+  },
+  {
+   "id": "BikePoints_448",
+   "kind": "cycle-hire-dock",
+   "name": "Fisherman's Walk West, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T08:17:22.653Z",
+   "position": {
+    "lat": 51.50623,
+    "lon": -0.02296
+   },
+   "values": {
+    "bikes": 30,
+    "standard_bikes": 27,
+    "e_bikes": 3,
+    "empty_docks": 2,
+    "docks": 36,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022165"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_448"
+  },
+  {
+   "id": "BikePoints_449",
+   "kind": "cycle-hire-dock",
+   "name": "Shadwell Station, Shadwell",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.511088,
+    "lon": -0.057159
+   },
+   "values": {
+    "bikes": 30,
+    "standard_bikes": 29,
+    "e_bikes": 1,
+    "empty_docks": 3,
+    "docks": 35,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200020"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_449"
+  },
+  {
+   "id": "BikePoints_450",
+   "kind": "cycle-hire-dock",
+   "name": "Jubilee Street, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.515975,
+    "lon": -0.053177
+   },
+   "values": {
+    "bikes": 23,
+    "standard_bikes": 16,
+    "e_bikes": 7,
+    "empty_docks": 4,
+    "docks": 28,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200002"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_450"
+  },
+  {
+   "id": "BikePoints_451",
+   "kind": "cycle-hire-dock",
+   "name": "Hermitage Court, Wapping",
+   "zone": "model",
+   "time": "2026-10-04T07:45:10.09Z",
+   "position": {
+    "lat": 51.504719,
+    "lon": -0.063531
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 8,
+    "e_bikes": 2,
+    "empty_docks": 3,
+    "docks": 16,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200021"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_451"
+  },
+  {
+   "id": "BikePoints_452",
+   "kind": "cycle-hire-dock",
+   "name": "St. Katharine's Way, Tower",
+   "zone": "model",
+   "time": "2026-10-04T08:18:15.31Z",
+   "position": {
+    "lat": 51.505697,
+    "lon": -0.070542
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 10,
+    "e_bikes": 3,
+    "empty_docks": 8,
+    "docks": 24,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200049"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_452"
+  },
+  {
+   "id": "BikePoints_453",
+   "kind": "cycle-hire-dock",
+   "name": "Garnet Street, Shadwell",
+   "zone": "model",
+   "time": "2026-10-04T08:04:04.917Z",
+   "position": {
+    "lat": 51.508447,
+    "lon": -0.055167
+   },
+   "values": {
+    "bikes": 17,
+    "standard_bikes": 16,
+    "e_bikes": 1,
+    "empty_docks": 5,
+    "docks": 24,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200045"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_453"
+  },
+  {
+   "id": "BikePoints_454",
+   "kind": "cycle-hire-dock",
+   "name": "Napier Avenue, Millwall",
+   "zone": "model",
+   "time": "2026-10-04T08:23:17.907Z",
+   "position": {
+    "lat": 51.487679,
+    "lon": -0.021582
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 11,
+    "e_bikes": 2,
+    "empty_docks": 6,
+    "docks": 20,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200046"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_454"
+  },
+  {
+   "id": "BikePoints_455",
+   "kind": "cycle-hire-dock",
+   "name": "East Ferry Road, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T00:00:08.687Z",
+   "position": {
+    "lat": 51.49447,
+    "lon": -0.014409
+   },
+   "values": {
+    "bikes": 14,
+    "standard_bikes": 10,
+    "e_bikes": 4,
+    "empty_docks": 3,
+    "docks": 17,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200031"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_455"
+  },
+  {
+   "id": "BikePoints_458",
+   "kind": "cycle-hire-dock",
+   "name": "Wapping Lane, Wapping",
+   "zone": "model",
+   "time": "2026-10-04T07:06:36.137Z",
+   "position": {
+    "lat": 51.504749,
+    "lon": -0.057544
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 18,
+    "e_bikes": 2,
+    "empty_docks": 4,
+    "docks": 28,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200034"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_458"
+  },
+  {
+   "id": "BikePoints_46",
+   "kind": "cycle-hire-dock",
+   "name": "Nesham Street, Wapping",
+   "zone": "model",
+   "time": "2026-10-04T08:09:25.72Z",
+   "position": {
+    "lat": 51.507131,
+    "lon": -0.06691
+   },
+   "values": {
+    "bikes": 12,
+    "standard_bikes": 12,
+    "e_bikes": 0,
+    "empty_docks": 0,
+    "docks": 16,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001031"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_46"
+  },
+  {
+   "id": "BikePoints_461",
+   "kind": "cycle-hire-dock",
+   "name": "Aston Street, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T08:21:14.047Z",
+   "position": {
+    "lat": 51.516,
+    "lon": -0.038775
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 19,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 26,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": true,
+    "terminal": "200013"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_461"
+  },
+  {
+   "id": "BikePoints_464",
+   "kind": "cycle-hire-dock",
+   "name": "St. Mary & St. Michael Church, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T07:51:55.06Z",
+   "position": {
+    "lat": 51.51417,
+    "lon": -0.052099
+   },
+   "values": {
+    "bikes": 14,
+    "standard_bikes": 13,
+    "e_bikes": 1,
+    "empty_docks": 11,
+    "docks": 25,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200082"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_464"
+  },
+  {
+   "id": "BikePoints_468",
+   "kind": "cycle-hire-dock",
+   "name": "Cantrell Road, Bow",
+   "zone": "model",
+   "time": "2026-10-04T08:05:30.763Z",
+   "position": {
+    "lat": 51.521564,
+    "lon": -0.022694
+   },
+   "values": {
+    "bikes": 11,
+    "standard_bikes": 11,
+    "e_bikes": 0,
+    "empty_docks": 11,
+    "docks": 24,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200150"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_468"
+  },
+  {
+   "id": "BikePoints_469",
+   "kind": "cycle-hire-dock",
+   "name": "Lindfield Street, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:35:59.327Z",
+   "position": {
+    "lat": 51.513757,
+    "lon": -0.020467
+   },
+   "values": {
+    "bikes": 35,
+    "standard_bikes": 34,
+    "e_bikes": 1,
+    "empty_docks": 3,
+    "docks": 44,
+    "unavailable_docks": 6,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022178"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_469"
+  },
+  {
+   "id": "BikePoints_473",
+   "kind": "cycle-hire-dock",
+   "name": "Millharbour, Millwall",
+   "zone": "model",
+   "time": "2026-10-04T05:00:49.86Z",
+   "position": {
+    "lat": 51.496137,
+    "lon": -0.019355
+   },
+   "values": {
+    "bikes": 18,
+    "standard_bikes": 17,
+    "e_bikes": 1,
+    "empty_docks": 1,
+    "docks": 19,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022167"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_473"
+  },
+  {
+   "id": "BikePoints_475",
+   "kind": "cycle-hire-dock",
+   "name": "Lightermans Road, Millwall",
+   "zone": "model",
+   "time": "2026-10-04T08:13:12.777Z",
+   "position": {
+    "lat": 51.499041,
+    "lon": -0.020157
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 19,
+    "e_bikes": 1,
+    "empty_docks": 7,
+    "docks": 31,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200004"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_475"
+  },
+  {
+   "id": "BikePoints_476",
+   "kind": "cycle-hire-dock",
+   "name": "Stebondale Street, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T08:09:25.72Z",
+   "position": {
+    "lat": 51.489096,
+    "lon": -0.009205
+   },
+   "values": {
+    "bikes": 26,
+    "standard_bikes": 26,
+    "e_bikes": 0,
+    "empty_docks": 0,
+    "docks": 29,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200009"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_476"
+  },
+  {
+   "id": "BikePoints_477",
+   "kind": "cycle-hire-dock",
+   "name": "Spindrift Avenue, Millwall",
+   "zone": "model",
+   "time": "2026-10-04T07:58:11.76Z",
+   "position": {
+    "lat": 51.49109,
+    "lon": -0.018716
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 17,
+    "e_bikes": 2,
+    "empty_docks": 14,
+    "docks": 36,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200018"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_477"
+  },
+  {
+   "id": "BikePoints_478",
+   "kind": "cycle-hire-dock",
+   "name": "Stepney Green Station, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T07:56:56.607Z",
+   "position": {
+    "lat": 51.521889,
+    "lon": -0.04667
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 9,
+    "e_bikes": 1,
+    "empty_docks": 8,
+    "docks": 21,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200012"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_478"
+  },
+  {
+   "id": "BikePoints_480",
+   "kind": "cycle-hire-dock",
+   "name": "Flamborough Street, Limehouse",
+   "zone": "model",
+   "time": "2026-10-04T08:16:14.19Z",
+   "position": {
+    "lat": 51.512871,
+    "lon": -0.038986
+   },
+   "values": {
+    "bikes": 18,
+    "standard_bikes": 17,
+    "e_bikes": 1,
+    "empty_docks": 1,
+    "docks": 24,
+    "unavailable_docks": 5,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200115"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_480"
+  },
+  {
+   "id": "BikePoints_481",
+   "kind": "cycle-hire-dock",
+   "name": "Saunders Ness Road, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T08:21:14.047Z",
+   "position": {
+    "lat": 51.487129,
+    "lon": -0.009001
+   },
+   "values": {
+    "bikes": 25,
+    "standard_bikes": 22,
+    "e_bikes": 3,
+    "empty_docks": 3,
+    "docks": 35,
+    "unavailable_docks": 7,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200022"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_481"
+  },
+  {
+   "id": "BikePoints_483",
+   "kind": "cycle-hire-dock",
+   "name": "Albert Gardens, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T08:07:23.7Z",
+   "position": {
+    "lat": 51.51328,
+    "lon": -0.047784
+   },
+   "values": {
+    "bikes": 11,
+    "standard_bikes": 11,
+    "e_bikes": 0,
+    "empty_docks": 22,
+    "docks": 33,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022166"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_483"
+  },
+  {
+   "id": "BikePoints_487",
+   "kind": "cycle-hire-dock",
+   "name": "Canton Street, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.511811,
+    "lon": -0.025626
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 19,
+    "e_bikes": 0,
+    "empty_docks": 2,
+    "docks": 23,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022175"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_487"
+  },
+  {
+   "id": "BikePoints_488",
+   "kind": "cycle-hire-dock",
+   "name": "Reardon Street, Wapping",
+   "zone": "model",
+   "time": "2026-10-03T22:38:51.26Z",
+   "position": {
+    "lat": 51.506946,
+    "lon": -0.058681
+   },
+   "values": {
+    "bikes": 21,
+    "standard_bikes": 21,
+    "e_bikes": 0,
+    "empty_docks": 0,
+    "docks": 22,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022176"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_488"
+  },
+  {
+   "id": "BikePoints_489",
+   "kind": "cycle-hire-dock",
+   "name": "Christian Street, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.513074,
+    "lon": -0.064094
+   },
+   "values": {
+    "bikes": 22,
+    "standard_bikes": 22,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 34,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "022177"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_489"
+  },
+  {
+   "id": "BikePoints_490",
+   "kind": "cycle-hire-dock",
+   "name": "Pennington Street, Wapping",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.508622,
+    "lon": -0.065006
+   },
+   "values": {
+    "bikes": 25,
+    "standard_bikes": 25,
+    "e_bikes": 0,
+    "empty_docks": 18,
+    "docks": 45,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200090"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_490"
+  },
+  {
+   "id": "BikePoints_494",
+   "kind": "cycle-hire-dock",
+   "name": "South Quay East, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T07:34:56.927Z",
+   "position": {
+    "lat": 51.50196,
+    "lon": -0.016251
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 20,
+    "e_bikes": 0,
+    "empty_docks": 15,
+    "docks": 36,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200233"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_494"
+  },
+  {
+   "id": "BikePoints_499",
+   "kind": "cycle-hire-dock",
+   "name": "Furze Green, Bow",
+   "zone": "model",
+   "time": "2026-10-03T19:24:27.017Z",
+   "position": {
+    "lat": 51.519265,
+    "lon": -0.021345
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 0,
+    "docks": 0,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200011"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_499"
+  },
+  {
+   "id": "BikePoints_500",
+   "kind": "cycle-hire-dock",
+   "name": "Ansell House, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T08:01:20.58Z",
+   "position": {
+    "lat": 51.520019,
+    "lon": -0.05438
+   },
+   "values": {
+    "bikes": 17,
+    "standard_bikes": 14,
+    "e_bikes": 3,
+    "empty_docks": 22,
+    "docks": 41,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200148"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_500"
+  },
+  {
+   "id": "BikePoints_503",
+   "kind": "cycle-hire-dock",
+   "name": "Cleveland Way, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.520893,
+    "lon": -0.051394
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 5,
+    "e_bikes": 1,
+    "empty_docks": 27,
+    "docks": 36,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200250"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_503"
+  },
+  {
+   "id": "BikePoints_504",
+   "kind": "cycle-hire-dock",
+   "name": "St. John's Park, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T07:56:13.463Z",
+   "position": {
+    "lat": 51.496454,
+    "lon": -0.009506
+   },
+   "values": {
+    "bikes": 3,
+    "standard_bikes": 3,
+    "e_bikes": 0,
+    "empty_docks": 24,
+    "docks": 30,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200243"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_504"
+  },
+  {
+   "id": "BikePoints_505",
+   "kind": "cycle-hire-dock",
+   "name": "Ackroyd Drive, Bow",
+   "zone": "model",
+   "time": "2026-10-04T08:11:10.09Z",
+   "position": {
+    "lat": 51.520398,
+    "lon": -0.026768
+   },
+   "values": {
+    "bikes": 17,
+    "standard_bikes": 13,
+    "e_bikes": 4,
+    "empty_docks": 6,
+    "docks": 29,
+    "unavailable_docks": 6,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200038"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_505"
+  },
+  {
+   "id": "BikePoints_506",
+   "kind": "cycle-hire-dock",
+   "name": "Bell Lane, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T08:18:15.31Z",
+   "position": {
+    "lat": 51.517475,
+    "lon": -0.075855
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 8,
+    "e_bikes": 2,
+    "empty_docks": 10,
+    "docks": 23,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200036"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_506"
+  },
+  {
+   "id": "BikePoints_508",
+   "kind": "cycle-hire-dock",
+   "name": "Fournier Street, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T08:19:16.107Z",
+   "position": {
+    "lat": 51.519362,
+    "lon": -0.074431
+   },
+   "values": {
+    "bikes": 3,
+    "standard_bikes": 3,
+    "e_bikes": 0,
+    "empty_docks": 13,
+    "docks": 18,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200157"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_508"
+  },
+  {
+   "id": "BikePoints_509",
+   "kind": "cycle-hire-dock",
+   "name": "Fore Street Avenue, Guildhall",
+   "zone": "model",
+   "time": "2026-10-03T18:14:53.74Z",
+   "position": {
+    "lat": 51.517842,
+    "lon": -0.090075
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 19,
+    "docks": 19,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200253"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_509"
+  },
+  {
+   "id": "BikePoints_510",
+   "kind": "cycle-hire-dock",
+   "name": "Westferry DLR, Limehouse",
+   "zone": "model",
+   "time": "2026-10-04T07:32:57.087Z",
+   "position": {
+    "lat": 51.509303,
+    "lon": -0.025996
+   },
+   "values": {
+    "bikes": 38,
+    "standard_bikes": 34,
+    "e_bikes": 4,
+    "empty_docks": 0,
+    "docks": 41,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200238"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_510"
+  },
+  {
+   "id": "BikePoints_511",
+   "kind": "cycle-hire-dock",
+   "name": "Sutton Street, Shadwell",
+   "zone": "model",
+   "time": "2026-10-04T08:16:14.19Z",
+   "position": {
+    "lat": 51.511066,
+    "lon": -0.053558
+   },
+   "values": {
+    "bikes": 25,
+    "standard_bikes": 24,
+    "e_bikes": 1,
+    "empty_docks": 5,
+    "docks": 33,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200256"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_511"
+  },
+  {
+   "id": "BikePoints_513",
+   "kind": "cycle-hire-dock",
+   "name": "Watney Market, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T07:04:34.897Z",
+   "position": {
+    "lat": 51.514222,
+    "lon": -0.055656
+   },
+   "values": {
+    "bikes": 29,
+    "standard_bikes": 29,
+    "e_bikes": 0,
+    "empty_docks": 19,
+    "docks": 51,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200162"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_513"
+  },
+  {
+   "id": "BikePoints_516",
+   "kind": "cycle-hire-dock",
+   "name": "Chrisp Street Market, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:39:59.413Z",
+   "position": {
+    "lat": 51.5112,
+    "lon": -0.014438
+   },
+   "values": {
+    "bikes": 16,
+    "standard_bikes": 16,
+    "e_bikes": 0,
+    "empty_docks": 1,
+    "docks": 18,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200089"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_516"
+  },
+  {
+   "id": "BikePoints_519",
+   "kind": "cycle-hire-dock",
+   "name": "Teviot Street, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:19:49.007Z",
+   "position": {
+    "lat": 51.518811,
+    "lon": -0.011662
+   },
+   "values": {
+    "bikes": 25,
+    "standard_bikes": 22,
+    "e_bikes": 3,
+    "empty_docks": 7,
+    "docks": 33,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200254"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_519"
+  },
+  {
+   "id": "BikePoints_523",
+   "kind": "cycle-hire-dock",
+   "name": "Langdon Park, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:56:13.463Z",
+   "position": {
+    "lat": 51.51549,
+    "lon": -0.013475
+   },
+   "values": {
+    "bikes": 9,
+    "standard_bikes": 7,
+    "e_bikes": 2,
+    "empty_docks": 15,
+    "docks": 24,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200160"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_523"
+  },
+  {
+   "id": "BikePoints_526",
+   "kind": "cycle-hire-dock",
+   "name": "Lancaster Drive, Blackwall",
+   "zone": "model",
+   "time": "2026-10-04T07:14:38.143Z",
+   "position": {
+    "lat": 51.503143,
+    "lon": -0.008428
+   },
+   "values": {
+    "bikes": 5,
+    "standard_bikes": 4,
+    "e_bikes": 1,
+    "empty_docks": 15,
+    "docks": 27,
+    "unavailable_docks": 7,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200143"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_526"
+  },
+  {
+   "id": "BikePoints_530",
+   "kind": "cycle-hire-dock",
+   "name": "Newby Place, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:15:38.573Z",
+   "position": {
+    "lat": 51.508896,
+    "lon": -0.012413
+   },
+   "values": {
+    "bikes": 14,
+    "standard_bikes": 13,
+    "e_bikes": 1,
+    "empty_docks": 1,
+    "docks": 18,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200146"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_530"
+  },
+  {
+   "id": "BikePoints_532",
+   "kind": "cycle-hire-dock",
+   "name": "Jubilee Plaza, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T07:44:12.863Z",
+   "position": {
+    "lat": 51.5034,
+    "lon": -0.020242
+   },
+   "values": {
+    "bikes": 18,
+    "standard_bikes": 17,
+    "e_bikes": 1,
+    "empty_docks": 40,
+    "docks": 63,
+    "unavailable_docks": 5,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200163"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_532"
+  },
+  {
+   "id": "BikePoints_537",
+   "kind": "cycle-hire-dock",
+   "name": "Old Montague Street, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T07:48:21.81Z",
+   "position": {
+    "lat": 51.51793,
+    "lon": -0.067937
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 9,
+    "e_bikes": 1,
+    "empty_docks": 3,
+    "docks": 18,
+    "unavailable_docks": 5,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200239"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_537"
+  },
+  {
+   "id": "BikePoints_538",
+   "kind": "cycle-hire-dock",
+   "name": "Naval Row, Blackwall",
+   "zone": "model",
+   "time": "2026-10-04T06:16:21.05Z",
+   "position": {
+    "lat": 51.508981,
+    "lon": -0.00699
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 4,
+    "e_bikes": 2,
+    "empty_docks": 13,
+    "docks": 21,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200050"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_538"
+  },
+  {
+   "id": "BikePoints_54",
+   "kind": "cycle-hire-dock",
+   "name": "Golden Lane, Barbican",
+   "zone": "model",
+   "time": "2026-10-04T06:48:43.95Z",
+   "position": {
+    "lat": 51.521747,
+    "lon": -0.094475
+   },
+   "values": {
+    "bikes": 1,
+    "standard_bikes": 0,
+    "e_bikes": 1,
+    "empty_docks": 25,
+    "docks": 27,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000967"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_54"
+  },
+  {
+   "id": "BikePoints_542",
+   "kind": "cycle-hire-dock",
+   "name": "Salmon Lane, Limehouse",
+   "zone": "model",
+   "time": "2026-10-04T08:18:15.31Z",
+   "position": {
+    "lat": 51.514115,
+    "lon": -0.033828
+   },
+   "values": {
+    "bikes": 13,
+    "standard_bikes": 13,
+    "e_bikes": 0,
+    "empty_docks": 16,
+    "docks": 33,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200147"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_542"
+  },
+  {
+   "id": "BikePoints_547",
+   "kind": "cycle-hire-dock",
+   "name": "East India DLR, Blackwall",
+   "zone": "model",
+   "time": "2026-10-04T08:21:14.047Z",
+   "position": {
+    "lat": 51.509474,
+    "lon": -0.002275
+   },
+   "values": {
+    "bikes": 44,
+    "standard_bikes": 41,
+    "e_bikes": 3,
+    "empty_docks": 3,
+    "docks": 51,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200127"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_547"
+  },
+  {
+   "id": "BikePoints_55",
+   "kind": "cycle-hire-dock",
+   "name": "Finsbury Circus, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T07:36:59.33Z",
+   "position": {
+    "lat": 51.517075,
+    "lon": -0.086685
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 26,
+    "docks": 33,
+    "unavailable_docks": 7,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000984"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_55"
+  },
+  {
+   "id": "BikePoints_550",
+   "kind": "cycle-hire-dock",
+   "name": "Harford Street, Mile End",
+   "zone": "model",
+   "time": "2026-10-04T08:18:15.31Z",
+   "position": {
+    "lat": 51.521564,
+    "lon": -0.039264
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 5,
+    "e_bikes": 1,
+    "empty_docks": 13,
+    "docks": 23,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200102"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_550"
+  },
+  {
+   "id": "BikePoints_551",
+   "kind": "cycle-hire-dock",
+   "name": "Import Dock, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T08:07:23.7Z",
+   "position": {
+    "lat": 51.505772,
+    "lon": -0.01646
+   },
+   "values": {
+    "bikes": 4,
+    "standard_bikes": 3,
+    "e_bikes": 1,
+    "empty_docks": 32,
+    "docks": 39,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200066"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_551"
+  },
+  {
+   "id": "BikePoints_552",
+   "kind": "cycle-hire-dock",
+   "name": "Watney Street, Shadwell",
+   "zone": "model",
+   "time": "2026-10-04T08:09:25.72Z",
+   "position": {
+    "lat": 51.511542,
+    "lon": -0.056667
+   },
+   "values": {
+    "bikes": 23,
+    "standard_bikes": 23,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 27,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200149"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_552"
+  },
+  {
+   "id": "BikePoints_554",
+   "kind": "cycle-hire-dock",
+   "name": "Aberfeldy Street, Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:55:08.5Z",
+   "position": {
+    "lat": 51.513548,
+    "lon": -0.005659
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 5,
+    "e_bikes": 1,
+    "empty_docks": 6,
+    "docks": 16,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200078"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_554"
+  },
+  {
+   "id": "BikePoints_556",
+   "kind": "cycle-hire-dock",
+   "name": "Heron Quays DLR, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T02:37:28.777Z",
+   "position": {
+    "lat": 51.502661,
+    "lon": -0.021596
+   },
+   "values": {
+    "bikes": 17,
+    "standard_bikes": 16,
+    "e_bikes": 1,
+    "empty_docks": 10,
+    "docks": 27,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200138"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_556"
+  },
+  {
+   "id": "BikePoints_561",
+   "kind": "cycle-hire-dock",
+   "name": "Rectory Square, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T07:56:13.463Z",
+   "position": {
+    "lat": 51.518369,
+    "lon": -0.043371
+   },
+   "values": {
+    "bikes": 8,
+    "standard_bikes": 8,
+    "e_bikes": 0,
+    "empty_docks": 11,
+    "docks": 22,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200037"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_561"
+  },
+  {
+   "id": "BikePoints_563",
+   "kind": "cycle-hire-dock",
+   "name": "Preston's Road, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T08:03:01.84Z",
+   "position": {
+    "lat": 51.499286,
+    "lon": -0.009152
+   },
+   "values": {
+    "bikes": 7,
+    "standard_bikes": 7,
+    "e_bikes": 0,
+    "empty_docks": 16,
+    "docks": 26,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200232"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_563"
+  },
+  {
+   "id": "BikePoints_565",
+   "kind": "cycle-hire-dock",
+   "name": "Selby Street, Whitechapel",
+   "zone": "model",
+   "time": "2026-10-04T05:37:54.46Z",
+   "position": {
+    "lat": 51.521905,
+    "lon": -0.063386
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 16,
+    "docks": 17,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200135"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_565"
+  },
+  {
+   "id": "BikePoints_570",
+   "kind": "cycle-hire-dock",
+   "name": "Upper Bank Street, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T08:12:28.977Z",
+   "position": {
+    "lat": 51.503083,
+    "lon": -0.017676
+   },
+   "values": {
+    "bikes": 27,
+    "standard_bikes": 24,
+    "e_bikes": 3,
+    "empty_docks": 0,
+    "docks": 36,
+    "unavailable_docks": 9,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200099"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_570"
+  },
+  {
+   "id": "BikePoints_576",
+   "kind": "cycle-hire-dock",
+   "name": "Alpha Grove, Millwall",
+   "zone": "model",
+   "time": "2026-10-04T07:29:53.213Z",
+   "position": {
+    "lat": 51.497304,
+    "lon": -0.022793
+   },
+   "values": {
+    "bikes": 17,
+    "standard_bikes": 17,
+    "e_bikes": 0,
+    "empty_docks": 3,
+    "docks": 23,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200109"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_576"
+  },
+  {
+   "id": "BikePoints_579",
+   "kind": "cycle-hire-dock",
+   "name": "Queen Street 2, Bank",
+   "zone": "model",
+   "time": "2026-10-04T06:57:33.613Z",
+   "position": {
+    "lat": 51.511246,
+    "lon": -0.093051
+   },
+   "values": {
+    "bikes": 2,
+    "standard_bikes": 2,
+    "e_bikes": 0,
+    "empty_docks": 28,
+    "docks": 36,
+    "unavailable_docks": 6,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200128"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_579"
+  },
+  {
+   "id": "BikePoints_586",
+   "kind": "cycle-hire-dock",
+   "name": "Mudchute DLR, Cubitt Town",
+   "zone": "model",
+   "time": "2026-10-04T00:48:15.497Z",
+   "position": {
+    "lat": 51.490645,
+    "lon": -0.014582
+   },
+   "values": {
+    "bikes": 1,
+    "standard_bikes": 0,
+    "e_bikes": 1,
+    "empty_docks": 29,
+    "docks": 31,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200092"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_586"
+  },
+  {
+   "id": "BikePoints_587",
+   "kind": "cycle-hire-dock",
+   "name": "Monument Street, Monument",
+   "zone": "model",
+   "time": "2026-10-04T07:47:07.88Z",
+   "position": {
+    "lat": 51.50964,
+    "lon": -0.08497
+   },
+   "values": {
+    "bikes": 4,
+    "standard_bikes": 4,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 22,
+    "unavailable_docks": 6,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200101"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_587"
+  },
+  {
+   "id": "BikePoints_61",
+   "kind": "cycle-hire-dock",
+   "name": "Great Dover Street, The Borough",
+   "zone": "model",
+   "time": "2026-10-04T07:23:46.17Z",
+   "position": {
+    "lat": 51.497382,
+    "lon": -0.089446
+   },
+   "values": {
+    "bikes": 27,
+    "standard_bikes": 26,
+    "e_bikes": 1,
+    "empty_docks": 4,
+    "docks": 33,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001017"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_61"
+  },
+  {
+   "id": "BikePoints_666",
+   "kind": "cycle-hire-dock",
+   "name": "Harris Academy, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:14:13.36Z",
+   "position": {
+    "lat": 51.492668,
+    "lon": -0.07235
+   },
+   "values": {
+    "bikes": 11,
+    "standard_bikes": 10,
+    "e_bikes": 1,
+    "empty_docks": 6,
+    "docks": 18,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300004"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_666"
+  },
+  {
+   "id": "BikePoints_687",
+   "kind": "cycle-hire-dock",
+   "name": "Clements Road, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:11:10.09Z",
+   "position": {
+    "lat": 51.4954,
+    "lon": -0.061698
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 19,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 23,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200216"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_687"
+  },
+  {
+   "id": "BikePoints_706",
+   "kind": "cycle-hire-dock",
+   "name": "Snowsfields, London Bridge",
+   "zone": "model",
+   "time": "2026-10-04T08:17:22.653Z",
+   "position": {
+    "lat": 51.502153,
+    "lon": -0.083632
+   },
+   "values": {
+    "bikes": 21,
+    "standard_bikes": 21,
+    "e_bikes": 0,
+    "empty_docks": 9,
+    "docks": 31,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200193"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_706"
+  },
+  {
+   "id": "BikePoints_712",
+   "kind": "cycle-hire-dock",
+   "name": "Mile End Stadium, Mile End",
+   "zone": "model",
+   "time": "2026-10-04T08:21:14.047Z",
+   "position": {
+    "lat": 51.518541,
+    "lon": -0.034903
+   },
+   "values": {
+    "bikes": 5,
+    "standard_bikes": 5,
+    "e_bikes": 0,
+    "empty_docks": 14,
+    "docks": 22,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300056"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_712"
+  },
+  {
+   "id": "BikePoints_715",
+   "kind": "cycle-hire-dock",
+   "name": "Aylward Street, Stepney",
+   "zone": "model",
+   "time": "2026-10-04T08:23:17.907Z",
+   "position": {
+    "lat": 51.51563,
+    "lon": -0.049067
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 9,
+    "e_bikes": 1,
+    "empty_docks": 11,
+    "docks": 22,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300049"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_715"
+  },
+  {
+   "id": "BikePoints_716",
+   "kind": "cycle-hire-dock",
+   "name": "Stainsby Road , Poplar",
+   "zone": "model",
+   "time": "2026-10-04T07:07:35.883Z",
+   "position": {
+    "lat": 51.515427,
+    "lon": -0.023565
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 6,
+    "e_bikes": 0,
+    "empty_docks": 14,
+    "docks": 24,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300048"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_716"
+  },
+  {
+   "id": "BikePoints_732",
+   "kind": "cycle-hire-dock",
+   "name": "Duke Street Hill, London Bridge",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.506304,
+    "lon": -0.087262
+   },
+   "values": {
+    "bikes": 12,
+    "standard_bikes": 10,
+    "e_bikes": 2,
+    "empty_docks": 0,
+    "docks": 21,
+    "unavailable_docks": 9,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300083"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_732"
+  },
+  {
+   "id": "BikePoints_763",
+   "kind": "cycle-hire-dock",
+   "name": "Mile End Park Leisure Centre, Mile End",
+   "zone": "model",
+   "time": "2026-10-04T08:20:17.537Z",
+   "position": {
+    "lat": 51.520597,
+    "lon": -0.032566
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 19,
+    "e_bikes": 0,
+    "empty_docks": 21,
+    "docks": 47,
+    "unavailable_docks": 7,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300027"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_763"
+  },
+  {
+   "id": "BikePoints_779",
+   "kind": "cycle-hire-dock",
+   "name": "Houndsditch, Aldgate",
+   "zone": "model",
+   "time": "2026-10-03T23:34:03.55Z",
+   "position": {
+    "lat": 51.514449,
+    "lon": -0.077178
+   },
+   "values": {
+    "bikes": 0,
+    "standard_bikes": 0,
+    "e_bikes": 0,
+    "empty_docks": 27,
+    "docks": 28,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200072"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_779"
+  },
+  {
+   "id": "BikePoints_811",
+   "kind": "cycle-hire-dock",
+   "name": "Westferry Circus, Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T07:56:56.607Z",
+   "position": {
+    "lat": 51.505703,
+    "lon": -0.027772
+   },
+   "values": {
+    "bikes": 31,
+    "standard_bikes": 27,
+    "e_bikes": 4,
+    "empty_docks": 1,
+    "docks": 36,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300228"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_811"
+  },
+  {
+   "id": "BikePoints_820",
+   "kind": "cycle-hire-dock",
+   "name": "Victory Place, Walworth",
+   "zone": "model",
+   "time": "2026-10-04T08:12:28.977Z",
+   "position": {
+    "lat": 51.492807,
+    "lon": -0.091938
+   },
+   "values": {
+    "bikes": 6,
+    "standard_bikes": 4,
+    "e_bikes": 2,
+    "empty_docks": 18,
+    "docks": 24,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300239"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_820"
+  },
+  {
+   "id": "BikePoints_838",
+   "kind": "cycle-hire-dock",
+   "name": "Fore Street, Guildhall",
+   "zone": "model",
+   "time": "2026-10-04T06:33:25.973Z",
+   "position": {
+    "lat": 51.518093,
+    "lon": -0.091401
+   },
+   "values": {
+    "bikes": 2,
+    "standard_bikes": 2,
+    "e_bikes": 0,
+    "empty_docks": 22,
+    "docks": 25,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300222"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_838"
+  },
+  {
+   "id": "BikePoints_840",
+   "kind": "cycle-hire-dock",
+   "name": "George Row, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:17:22.653Z",
+   "position": {
+    "lat": 51.498585,
+    "lon": -0.068981
+   },
+   "values": {
+    "bikes": 16,
+    "standard_bikes": 16,
+    "e_bikes": 0,
+    "empty_docks": 5,
+    "docks": 22,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "002679"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_840"
+  },
+  {
+   "id": "BikePoints_841",
+   "kind": "cycle-hire-dock",
+   "name": "Tower Wharf, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:20:17.537Z",
+   "position": {
+    "lat": 51.500845,
+    "lon": -0.074704
+   },
+   "values": {
+    "bikes": 14,
+    "standard_bikes": 14,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 20,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "002667"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_841"
+  },
+  {
+   "id": "BikePoints_844",
+   "kind": "cycle-hire-dock",
+   "name": "Canada Water Station, Rotherhithe",
+   "zone": "model",
+   "time": "2026-10-04T08:10:08.067Z",
+   "position": {
+    "lat": 51.498439,
+    "lon": -0.04915
+   },
+   "values": {
+    "bikes": 27,
+    "standard_bikes": 25,
+    "e_bikes": 2,
+    "empty_docks": 4,
+    "docks": 35,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300252"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_844"
+  },
+  {
+   "id": "BikePoints_845",
+   "kind": "cycle-hire-dock",
+   "name": "Bermondsey Station, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T06:50:29.413Z",
+   "position": {
+    "lat": 51.497995,
+    "lon": -0.063471
+   },
+   "values": {
+    "bikes": 21,
+    "standard_bikes": 18,
+    "e_bikes": 3,
+    "empty_docks": 7,
+    "docks": 30,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300253"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_845"
+  },
+  {
+   "id": "BikePoints_846",
+   "kind": "cycle-hire-dock",
+   "name": "Burgess Park Albany Road, Walworth",
+   "zone": "model",
+   "time": "2026-10-04T08:11:10.09Z",
+   "position": {
+    "lat": 51.48224,
+    "lon": -0.094284
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 17,
+    "e_bikes": 3,
+    "empty_docks": 3,
+    "docks": 30,
+    "unavailable_docks": 7,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300063"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_846"
+  },
+  {
+   "id": "BikePoints_847",
+   "kind": "cycle-hire-dock",
+   "name": "South Bermondsey Station, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T04:03:40.333Z",
+   "position": {
+    "lat": 51.488067,
+    "lon": -0.057774
+   },
+   "values": {
+    "bikes": 21,
+    "standard_bikes": 20,
+    "e_bikes": 1,
+    "empty_docks": 0,
+    "docks": 24,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300062"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_847"
+  },
+  {
+   "id": "BikePoints_849",
+   "kind": "cycle-hire-dock",
+   "name": "Crimscott Street, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:04:04.917Z",
+   "position": {
+    "lat": 51.495598,
+    "lon": -0.078893
+   },
+   "values": {
+    "bikes": 11,
+    "standard_bikes": 11,
+    "e_bikes": 0,
+    "empty_docks": 5,
+    "docks": 19,
+    "unavailable_docks": 3,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300061"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_849"
+  },
+  {
+   "id": "BikePoints_85",
+   "kind": "cycle-hire-dock",
+   "name": "Tanner Street, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:22:18.647Z",
+   "position": {
+    "lat": 51.500647,
+    "lon": -0.0786
+   },
+   "values": {
+    "bikes": 19,
+    "standard_bikes": 19,
+    "e_bikes": 0,
+    "empty_docks": 22,
+    "docks": 41,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "000994"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_85"
+  },
+  {
+   "id": "BikePoints_850",
+   "kind": "cycle-hire-dock",
+   "name": "Brandon Street, Walworth",
+   "zone": "model",
+   "time": "2026-10-04T08:16:14.19Z",
+   "position": {
+    "lat": 51.489102,
+    "lon": -0.091548
+   },
+   "values": {
+    "bikes": 14,
+    "standard_bikes": 10,
+    "e_bikes": 4,
+    "empty_docks": 6,
+    "docks": 22,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300060"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_850"
+  },
+  {
+   "id": "BikePoints_851",
+   "kind": "cycle-hire-dock",
+   "name": "The Blue, Bermondsey",
+   "zone": "model",
+   "time": "2026-10-04T08:16:14.19Z",
+   "position": {
+    "lat": 51.492221,
+    "lon": -0.062513
+   },
+   "values": {
+    "bikes": 20,
+    "standard_bikes": 18,
+    "e_bikes": 2,
+    "empty_docks": 2,
+    "docks": 22,
+    "unavailable_docks": 0,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "300059"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_851"
+  },
+  {
+   "id": "BikePoints_87",
+   "kind": "cycle-hire-dock",
+   "name": "Devonshire Square, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T06:53:31.067Z",
+   "position": {
+    "lat": 51.516468,
+    "lon": -0.079684
+   },
+   "values": {
+    "bikes": 5,
+    "standard_bikes": 5,
+    "e_bikes": 0,
+    "empty_docks": 9,
+    "docks": 16,
+    "unavailable_docks": 2,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "003438"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_87"
+  },
+  {
+   "id": "BikePoints_888",
+   "kind": "cycle-hire-dock",
+   "name": "Norton Folgate, Liverpool Street",
+   "zone": "model",
+   "time": "2026-10-04T08:09:25.72Z",
+   "position": {
+    "lat": 51.521113,
+    "lon": -0.078869
+   },
+   "values": {
+    "bikes": 10,
+    "standard_bikes": 10,
+    "e_bikes": 0,
+    "empty_docks": 12,
+    "docks": 23,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001068"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_888"
+  },
+  {
+   "id": "BikePoints_890",
+   "kind": "cycle-hire-dock",
+   "name": "Burdett Road, Mile End",
+   "zone": "model",
+   "time": "2026-10-04T07:56:56.607Z",
+   "position": {
+    "lat": 51.516196,
+    "lon": -0.029137
+   },
+   "values": {
+    "bikes": 25,
+    "standard_bikes": 25,
+    "e_bikes": 0,
+    "empty_docks": 4,
+    "docks": 33,
+    "unavailable_docks": 4,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "200123"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_890"
+  },
+  {
+   "id": "BikePoints_94",
+   "kind": "cycle-hire-dock",
+   "name": "Bricklayers Arms, Borough",
+   "zone": "model",
+   "time": "2026-10-04T07:04:34.897Z",
+   "position": {
+    "lat": 51.495061,
+    "lon": -0.085814
+   },
+   "values": {
+    "bikes": 26,
+    "standard_bikes": 25,
+    "e_bikes": 1,
+    "empty_docks": 1,
+    "docks": 28,
+    "unavailable_docks": 1,
+    "installed": true,
+    "locked": false,
+    "temporary": false,
+    "terminal": "001070"
+   },
+   "url": "https://api.tfl.gov.uk/BikePoint/BikePoints_94"
+  }
+ ]
+}

@@ -1,0 +1,2189 @@
+{
+ "meta": {
+  "about": "Wikimedia Commons photos of Canary Wharf at night with their capture date (EXIF DateTimeOriginal as Commons shows it), licence and author: the candidates for dated crown-colour observations. No image is committed; thumbnails are cached locally to judge the colour by eye.",
+  "tool": "tools/fetch-crown-lighting.mjs --commons",
+  "run": "2026-10-04",
+  "categories": [
+   "Category:One Canada Square at night",
+   "Category:Canary Wharf at night"
+  ],
+  "searches": [
+   "One Canada Square night",
+   "Canary Wharf night skyline",
+   "Canary Wharf illuminated",
+   "Isle of Dogs skyline night"
+  ]
+ },
+ "photos": [
+  {
+   "title": "File:Canary Wharf (85003953).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_(85003953).jpeg",
+   "captured": "1 October 2014, 00:59:45 (UTC)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Davide D Amico",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Panorama Night.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Panorama_Night.jpg",
+   "captured": "11.08.08",
+   "licence": "CC BY 3.0",
+   "author": "Seb Tyler",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station night 1.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_night_1.jpg",
+   "captured": "16 September 2006 (according to Exif data)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Mcginnly",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station night 2.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_night_2.jpg",
+   "captured": "16 September 2006 (according to Exif data)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Mcginnly",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station night column detail.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_night_column_detail.jpg",
+   "captured": "16 September 2006 (according to Exif data)",
+   "licence": "CC BY-SA 3.0",
+   "author": "No machine-readable author provided. Mcginnly assumed (based on copyright claims).",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station night 3.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_night_3.jpg",
+   "captured": "16 September 2006 (according to Exif data)",
+   "licence": "CC BY-SA 3.0",
+   "author": "No machine-readable author provided. Mcginnly assumed (based on copyright claims).",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:One Canada Square pyramid light.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:One_Canada_Square_pyramid_light.jpg",
+   "captured": "20:56, 29 April 2008 (UTC) (5 tildes)",
+   "licence": "CC BY 3.0",
+   "author": "Chikong (talk)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Station.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Station.jpg",
+   "captured": "2005-08-04",
+   "licence": "Public domain",
+   "author": "Wedesoft (talk) (Uploads)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:08-14-05 Royal Victoria Dock.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:08-14-05_Royal_Victoria_Dock.jpg",
+   "captured": "2005-08-14",
+   "licence": "CC BY-SA 2.0 uk",
+   "author": "Michael Pead",
+   "found_by": "search: Canary Wharf night skyline",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf at night - geograph.org.uk - 112122.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_at_night_-_geograph.org.uk_-_112122.jpg",
+   "captured": "2006-01-07",
+   "licence": "CC BY-SA 2.0",
+   "author": "Timothy Baldwin",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station night 4.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_night_4.jpg",
+   "captured": "2006-09",
+   "licence": "CC BY-SA 3.0",
+   "author": "Mcginnly",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf and the O2 - geograph.org.uk - 1118294.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_and_the_O2_-_geograph.org.uk_-_1118294.jpg",
+   "captured": "2006-10-08",
+   "licence": "CC BY-SA 2.0",
+   "author": "Ian Dalgliesh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Deptford Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Deptford_Canary_Wharf.jpg",
+   "captured": "2006-11-15",
+   "licence": "CC BY 2.0",
+   "author": "Nicobobinus",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:CanaryWharf.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:CanaryWharf.JPG",
+   "captured": "2007-01",
+   "licence": "CC BY 2.5",
+   "author": "Sholva",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Royal Naval College, Greenwich (6) - geograph.org.uk - 597249.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Royal_Naval_College,_Greenwich_(6)_-_geograph.org.uk_-_597249.jpg",
+   "captured": "2007-05-26",
+   "licence": "CC BY-SA 2.0",
+   "author": "Ross",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf at night, from Shadwell.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_at_night,_from_Shadwell.jpg",
+   "captured": "2007-06-13",
+   "licence": "Public domain",
+   "author": "Dave Pape",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf underground station - geograph.org.uk - 861959.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_underground_station_-_geograph.org.uk_-_861959.jpg",
+   "captured": "2007-06-22",
+   "licence": "CC BY-SA 2.0",
+   "author": "Phillip Perry",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Construction site of Riverside South (Canary Wharf) (September 2007) (night).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Construction_site_of_Riverside_South_(Canary_Wharf)_(September_2007)_(night).jpg",
+   "captured": "2007-11",
+   "licence": "CC BY-SA 3.0",
+   "author": "Robert Stainforth",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf - geograph.org.uk - 863302.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_-_geograph.org.uk_-_863302.jpg",
+   "captured": "2008-06-21",
+   "licence": "CC BY-SA 2.0",
+   "author": "Peter McDermott",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Thames, Docklands district (2805692177).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Thames,_Docklands_district_(2805692177).jpg",
+   "captured": "2008-08-20 00:03:04",
+   "licence": "CC BY 2.0",
+   "author": "Luca Nebuloni",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Greenwich rooftops - geograph.org.uk - 1143266.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Greenwich_rooftops_-_geograph.org.uk_-_1143266.jpg",
+   "captured": "2009-01-31",
+   "licence": "CC BY-SA 2.0",
+   "author": "Richard Croft",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Isle of Dogs Evening - geograph.org.uk - 1152289.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Isle_of_Dogs_Evening_-_geograph.org.uk_-_1152289.jpg",
+   "captured": "2009-02-07",
+   "licence": "CC BY-SA 2.0",
+   "author": "Trevor Harris",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:River Thames From London Bridge - geograph.org.uk - 1474920.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:River_Thames_From_London_Bridge_-_geograph.org.uk_-_1474920.jpg",
+   "captured": "2009-09-05",
+   "licence": "CC BY-SA 2.0",
+   "author": "Peter Trimming",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf at night, from Shadwell cropped.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_at_night,_from_Shadwell_cropped.jpg",
+   "captured": "2010-04-24 22:19",
+   "licence": "Public domain",
+   "author": "Canary_Wharf_at_night,_from_Shadwell.jpg: Dave Pape derivative work: Pointillist (talk)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View of One Canada Square at dusk - geograph.org.uk - 2180179.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_One_Canada_Square_at_dusk_-_geograph.org.uk_-_2180179.jpg",
+   "captured": "2010-11-27",
+   "licence": "CC BY-SA 2.0",
+   "author": "Robert Lamb",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/3cc30a08cb9fbc4a.jpg"
+  },
+  {
+   "title": "File:One Canada Square by night - geograph.org.uk - 2318765.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:One_Canada_Square_by_night_-_geograph.org.uk_-_2318765.jpg",
+   "captured": "2011-03-18",
+   "licence": "CC BY-SA 2.0",
+   "author": "Rod Allday",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View from the roof top of Limehouse Cut (Poplar, London).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_from_the_roof_top_of_Limehouse_Cut_(Poplar,_London).jpg",
+   "captured": "2011-09-14",
+   "licence": "CC BY-SA 3.0",
+   "author": "Ctrbtr46",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Alexandra Palace, Canary Wharf view by night - geograph.org.uk - 2786443.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Alexandra_Palace,_Canary_Wharf_view_by_night_-_geograph.org.uk_-_2786443.jpg",
+   "captured": "2012-01-22",
+   "licence": "CC BY-SA 2.0",
+   "author": "Chris Downer",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London Skyline from London Bridge at dusk.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_Skyline_from_London_Bridge_at_dusk.jpg",
+   "captured": "2012-01-30 17:48:46",
+   "licence": "CC BY 2.0",
+   "author": "Donnchadh H",
+   "found_by": "search: Canary Wharf night skyline",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf skyline, from Greenwich at dusk.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_skyline,_from_Greenwich_at_dusk.JPG",
+   "captured": "2012-09-03 19:17:56",
+   "licence": "CC BY-SA 3.0",
+   "author": "Rwendland",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from North Greenwich - at night (8098162067).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_North_Greenwich_-_at_night_(8098162067).jpg",
+   "captured": "2012-10-13 23:06",
+   "licence": "CC BY 2.0",
+   "author": "Elliott Brown from Birmingham, United Kingdom",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB T3 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_T3_Canary_Wharf.jpg",
+   "captured": "2013-05-12 21:45:00",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB X2 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_X2_Canary_Wharf.jpg",
+   "captured": "2013-05-18 22:03:54",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB X3 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_X3_Canary_Wharf.jpg",
+   "captured": "2013-05-18 22:06:42",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB X4 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_X4_Canary_Wharf.jpg",
+   "captured": "2013-05-18 22:06:55",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «B5 West India Quay and 1 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABB5_West_India_Quay_and_1_Cabot_Square.jpg",
+   "captured": "2013-06-13 22:57:46",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «B6 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABB6_West_India_Quay.jpg",
+   "captured": "2013-06-13 22:59:01",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/3a83b8fb0281cfb2.jpg"
+  },
+  {
+   "title": "File:London MMB «B7 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABB7_West_India_Quay.jpg",
+   "captured": "2013-06-13 22:59:28",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/bdea892a93120868.jpg"
+  },
+  {
+   "title": "File:London MMB «B8 1 Canada Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABB8_1_Canada_Square.jpg",
+   "captured": "2013-06-13 23:00:15",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/c9b17bac81a0b9ff.jpg"
+  },
+  {
+   "title": "File:London MMB «B9 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABB9_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:01:06",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «C0 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC0_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:01:35",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/d3459c8b52014d01.jpg"
+  },
+  {
+   "title": "File:London MMB «C1 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC1_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:03:13",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «C2 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC2_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:03:25",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «C3 1 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC3_1_Cabot_Square.jpg",
+   "captured": "2013-06-13 23:05:46",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «C4 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC4_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:06:45",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/ff0e82c0d92a8ddd.jpg"
+  },
+  {
+   "title": "File:London MMB «C5 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC5_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:06:50",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/b1573c452dd6d7ed.jpg"
+  },
+  {
+   "title": "File:London MMB «C6 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC6_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:07:39",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «C7 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC7_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:07:48",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «C8 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC8_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:09:05",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/f92c6083fb08e6eb.jpg"
+  },
+  {
+   "title": "File:London MMB «C9 West India Quay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABC9_West_India_Quay.jpg",
+   "captured": "2013-06-13 23:12:59",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «D0 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD0_Cabot_Square.jpg",
+   "captured": "2013-06-13 23:15:43",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/61c53bf0c494c965.jpg"
+  },
+  {
+   "title": "File:London MMB «D1 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD1_Cabot_Square.jpg",
+   "captured": "2013-06-13 23:16:57",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/93bf1b31f063c245.jpg"
+  },
+  {
+   "title": "File:London MMB «D2 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD2_Cabot_Square.jpg",
+   "captured": "2013-06-13 23:17:54",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/5763dc6f37d05517.jpg"
+  },
+  {
+   "title": "File:London MMB «D4 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD4_Cabot_Square.jpg",
+   "captured": "2013-06-13 23:18:22",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/b8413ed8745f7eb3.jpg"
+  },
+  {
+   "title": "File:London MMB «D6 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD6_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:20:41",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «D7 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD7_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:21:39",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «D8 Citigroup Centre.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD8_Citigroup_Centre.jpg",
+   "captured": "2013-06-13 23:25:47",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «D9 Citigroup Centre.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABD9_Citigroup_Centre.jpg",
+   "captured": "2013-06-13 23:27:41",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «E0 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABE0_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:32:38",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/5c6d544984125976.jpg"
+  },
+  {
+   "title": "File:London MMB «E1 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABE1_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:33:16",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/a4d8ce77ee0f83b5.jpg"
+  },
+  {
+   "title": "File:London MMB «E2 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABE2_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:33:27",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/cd407efdc8b45bac.jpg"
+  },
+  {
+   "title": "File:London MMB «E4 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABE4_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:35:25",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «E5 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABE5_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:38:15",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/7677bb8331ac2934.jpg"
+  },
+  {
+   "title": "File:London MMB «E6 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABE6_Canary_Wharf.jpg",
+   "captured": "2013-06-13 23:39:48",
+   "licence": "CC BY-SA 3.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «K5 1 Canada Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABK5_1_Canada_Square.jpg",
+   "captured": "2013-07-25 23:22:08",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/1ebe115c009b5488.jpg"
+  },
+  {
+   "title": "File:London MMB «K6 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABK6_Canary_Wharf.jpg",
+   "captured": "2013-07-25 23:25:11",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/73a92c60b1b06c7e.jpg"
+  },
+  {
+   "title": "File:Canary Wharf tube station MMB 11.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_MMB_11.jpg",
+   "captured": "2013-07-25 23:27:59",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «K7 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABK7_Canary_Wharf.jpg",
+   "captured": "2013-07-25 23:28:30",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station MMB 12.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_MMB_12.jpg",
+   "captured": "2013-07-25 23:28:57",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station MMB 13.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_MMB_13.jpg",
+   "captured": "2013-07-25 23:29:46",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «K9 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABK9_Canary_Wharf.jpg",
+   "captured": "2013-07-25 23:35:25",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «L0 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABL0_Canary_Wharf.jpg",
+   "captured": "2013-07-25 23:36:08",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB «L1 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%ABL1_Canary_Wharf.jpg",
+   "captured": "2013-07-25 23:36:54",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »036 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB036_Canary_Wharf.jpg",
+   "captured": "2013-12-04 16:16:45",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/145543e27880060c.jpg"
+  },
+  {
+   "title": "File:London MMB »037 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB037_Canary_Wharf.jpg",
+   "captured": "2013-12-04 16:22:20",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/2e8d1b013cd4c640.jpg"
+  },
+  {
+   "title": "File:London MMB »038 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB038_Canary_Wharf.jpg",
+   "captured": "2013-12-04 16:22:59",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/baf69b56604e7fb3.jpg"
+  },
+  {
+   "title": "File:London MMB »039 Canary Wharf and City Canal.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB039_Canary_Wharf_and_City_Canal.jpg",
+   "captured": "2013-12-04 16:23:41",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »040 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB040_Canary_Wharf.jpg",
+   "captured": "2013-12-04 16:24:00",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/6ac0f82d5c158378.jpg"
+  },
+  {
+   "title": "File:London MMB »046 River Thames.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB046_River_Thames.jpg",
+   "captured": "2013-12-09 16:11:21",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »058 Westferry Road.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB058_Westferry_Road.jpg",
+   "captured": "2013-12-10 16:35:51",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »059 Westferry Road.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB059_Westferry_Road.jpg",
+   "captured": "2013-12-10 16:35:51",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »060 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB060_Canary_Wharf.jpg",
+   "captured": "2013-12-10 16:37:53",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »068 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB068_Cabot_Square.jpg",
+   "captured": "2013-12-10 17:04:07",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/ba17152fc262685c.jpg"
+  },
+  {
+   "title": "File:London MMB »069 Cabot Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB069_Cabot_Square.jpg",
+   "captured": "2013-12-10 17:04:39",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/027834269f9570ee.jpg"
+  },
+  {
+   "title": "File:Canary Wharf tube station MMB 14.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_MMB_14.jpg",
+   "captured": "2013-12-10 17:16:35",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf tube station MMB 15.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_tube_station_MMB_15.jpg",
+   "captured": "2013-12-10 17:16:41",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:The Citi Building, Canary Wharf - geograph.org.uk - 3888015.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:The_Citi_Building,_Canary_Wharf_-_geograph.org.uk_-_3888015.jpg",
+   "captured": "2014-02-28",
+   "licence": "CC BY-SA 2.0",
+   "author": "Ian S",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 06.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_06.jpg",
+   "captured": "2014-03-07 21:02:16",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 07.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_07.jpg",
+   "captured": "2014-03-07 21:02:36",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 08.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_08.jpg",
+   "captured": "2014-03-07 21:05:08",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 10.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_10.jpg",
+   "captured": "2014-03-07 21:12:30",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 15.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_15.jpg",
+   "captured": "2014-03-07 21:26:58",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 16.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_16.jpg",
+   "captured": "2014-03-07 21:28:45",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 17.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_17.jpg",
+   "captured": "2014-03-07 21:29:35",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 18.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_18.jpg",
+   "captured": "2014-03-07 21:30:30",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 19.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_19.jpg",
+   "captured": "2014-03-07 21:31:23",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 20.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_20.jpg",
+   "captured": "2014-03-07 21:31:51",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 21.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_21.jpg",
+   "captured": "2014-03-07 21:31:57",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Blackwall DLR station MMB 22.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Blackwall_DLR_station_MMB_22.jpg",
+   "captured": "2014-03-07 21:33:16",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "search: One Canada Square night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »0E5 Blackwall Basin and Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB0E5_Blackwall_Basin_and_Canary_Wharf.jpg",
+   "captured": "2014-03-07 22:19:22",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/b21eb4a05f5a7cd7.jpg"
+  },
+  {
+   "title": "File:Docklands Skyscrapers Reflecting a Sunset (14460947055).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Docklands_Skyscrapers_Reflecting_a_Sunset_(14460947055).jpg",
+   "captured": "2014-06-15 19:36",
+   "licence": "CC BY 2.0",
+   "author": "Charlie Marshall from Bristol UK, United Kingdom",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »1K1 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB1K1_Canary_Wharf.jpg",
+   "captured": "2014-08-06 22:04:27",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »1K2 1 Canada Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB1K2_1_Canada_Square.jpg",
+   "captured": "2014-08-06 22:10:21",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/b31e6a419d831a17.jpg"
+  },
+  {
+   "title": "File:London MMB »1K5 Millwall Dock.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB1K5_Millwall_Dock.jpg",
+   "captured": "2014-08-06 22:27:37",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/32dfb3b343daac95.jpg"
+  },
+  {
+   "title": "File:London MMB »1K7 Pan Peninsula.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB1K7_Pan_Peninsula.jpg",
+   "captured": "2014-08-06 22:29:32",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/e67561767d70e22f.jpg"
+  },
+  {
+   "title": "File:DLR station platform (14951207245).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:DLR_station_platform_(14951207245).jpg",
+   "captured": "2014-08-17 21:00",
+   "licence": "CC BY-SA 2.0",
+   "author": "Aleem Yousaf",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary wharf-0218rs (15388475696).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_wharf-0218rs_(15388475696).jpg",
+   "captured": "2014-09-05 19:55",
+   "licence": "CC BY 2.0",
+   "author": "Tee Cee from Cheshire, UK",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf night.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_night.jpg",
+   "captured": "2014-09-29",
+   "licence": "CC BY-SA 4.0",
+   "author": "Tohma",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from the River Thames - geograph.org.uk - 4195620.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_the_River_Thames_-_geograph.org.uk_-_4195620.jpg",
+   "captured": "2014-10-02",
+   "licence": "CC BY-SA 2.0",
+   "author": "Christine Matthews",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from the River Thames - geograph.org.uk - 4195643.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_the_River_Thames_-_geograph.org.uk_-_4195643.jpg",
+   "captured": "2014-10-02",
+   "licence": "CC BY-SA 2.0",
+   "author": "Christine Matthews",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »278 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB278_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 16:37:42",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »279 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB279_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 17:59:34",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »280 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB280_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 17:59:46",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »281 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB281_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 18:01:02",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »282 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB282_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 18:02:22",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »283 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB283_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 18:08:54",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »284 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB284_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 18:09:51",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »285 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB285_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-11 18:19:45",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »286 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB286_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-12 16:53:32",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »287 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB287_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-12 17:06:37",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »291 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB291_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-12 22:00:42",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »292 City Canal and Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB292_City_Canal_and_Canary_Wharf.jpg",
+   "captured": "2014-11-12 22:05:31",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »293 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB293_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-12 22:08:21",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »297 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB297_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-13 19:40:01",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »298 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB298_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-13 19:42:46",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »299 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB299_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-13 19:44:55",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »2A0 City Canal and \"Kismet\".jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB2A0_City_Canal_and_%22Kismet%22.jpg",
+   "captured": "2014-11-13 19:46:19",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »2A1 City Canal and Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB2A1_City_Canal_and_Canary_Wharf.jpg",
+   "captured": "2014-11-13 19:57:32",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »2A7 Churchill Place.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB2A7_Churchill_Place.jpg",
+   "captured": "2014-11-29 16:41:28",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »2C3 Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB2C3_Canary_Wharf.jpg",
+   "captured": "2014-12-01 17:27:55",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »2C4 1 Churchill Place.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB2C4_1_Churchill_Place.jpg",
+   "captured": "2014-12-01 17:36:51",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:BACF departure London city Airport.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:BACF_departure_London_city_Airport.JPG",
+   "captured": "2014-12-14 18:28:58",
+   "licence": "CC BY-SA 4.0",
+   "author": "Dave Barker",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf railway station MMB 06.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_railway_station_MMB_06.jpg",
+   "captured": "2014-12-16 17:28:37",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London MMB »2M4 5 Canada Square.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB2M4_5_Canada_Square.jpg",
+   "captured": "2014-12-16 17:32:03",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf railway station MMB 07.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_railway_station_MMB_07.jpg",
+   "captured": "2014-12-16 17:34:24",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck (category)",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf towers at night - geograph.org.uk - 4282839.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_towers_at_night_-_geograph.org.uk_-_4282839.jpg",
+   "captured": "2014-12-18",
+   "licence": "CC BY-SA 2.0",
+   "author": "Oast House Archive",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Crossrail at night.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Crossrail_at_night.jpg",
+   "captured": "2015-09-25 19:31:48",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:RHB Night View.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:RHB_Night_View.jpg",
+   "captured": "2015-11-20",
+   "licence": "CC BY-SA 4.0",
+   "author": "EWPMarketing",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Offices at Canary Wharf - geograph.org.uk - 4759005.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Offices_at_Canary_Wharf_-_geograph.org.uk_-_4759005.jpg",
+   "captured": "2015-12-02",
+   "licence": "CC BY-SA 2.0",
+   "author": "Mike Quinn",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Offices at Canary Wharf - geograph.org.uk - 4759803.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Offices_at_Canary_Wharf_-_geograph.org.uk_-_4759803.jpg",
+   "captured": "2015-12-02",
+   "licence": "CC BY-SA 2.0",
+   "author": "Mike Quinn",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View of Canary Wharf illuminated from the ninth floor balcony of the City Hall - geograph.org.uk - 4792759.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_Canary_Wharf_illuminated_from_the_ninth_floor_balcony_of_the_City_Hall_-_geograph.org.uk_-_4792759.jpg",
+   "captured": "2016-01-14",
+   "licence": "CC BY-SA 2.0",
+   "author": "Robert Lamb",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf (24894620604).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_(24894620604).jpg",
+   "captured": "2016-02-28 20:48",
+   "licence": "CC BY 2.0",
+   "author": "Adam Court",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from Limehouse London June 2016 HDR.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_Limehouse_London_June_2016_HDR.jpg",
+   "captured": "2016-06-05 22:10:46",
+   "licence": "CC BY-SA 4.0",
+   "author": "King of Hearts",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:South Dock by night - geograph.org.uk - 5116483.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:South_Dock_by_night_-_geograph.org.uk_-_5116483.jpg",
+   "captured": "2016-09-09",
+   "licence": "CC BY-SA 2.0",
+   "author": "Rod Allday",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:2016 Woolwich by evening, Thames towards Canary Wharf - 1.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:2016_Woolwich_by_evening,_Thames_towards_Canary_Wharf_-_1.jpg",
+   "captured": "2016-12-01 18:53:20",
+   "licence": "CC BY-SA 4.0",
+   "author": "Kleon3",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Crossrail Roof Garden at night.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Crossrail_Roof_Garden_at_night.jpg",
+   "captured": "2017-11-20 16:25:25",
+   "licence": "CC BY 4.0",
+   "author": "JRennocks",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Lightbenches @ Columbus Courtyard (25861564838).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Lightbenches_@_Columbus_Courtyard_(25861564838).jpg",
+   "captured": "2018-01-16 23:09",
+   "licence": "CC BY-SA 2.0",
+   "author": "Loco Steve from Bromley , UK",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:One Canada Square from The Ledger Building, Canary Wharf, London 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:One_Canada_Square_from_The_Ledger_Building,_Canary_Wharf,_London_01.jpg",
+   "captured": "2018-01-18 20:28:27",
+   "licence": "CC BY-SA 4.0",
+   "author": "Acabashi",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/3e73a51559e7644f.jpg"
+  },
+  {
+   "title": "File:One Canada Square from The Ledger Building, Canary Wharf, London 02.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:One_Canada_Square_from_The_Ledger_Building,_Canary_Wharf,_London_02.jpg",
+   "captured": "2018-01-18 20:29:05",
+   "licence": "CC BY-SA 4.0",
+   "author": "Acabashi",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/7d83f5f8281ce2b1.jpg"
+  },
+  {
+   "title": "File:View of illuminated rabbits in Jubilee Park in Canary Wharf - geograph.org.uk - 5660481.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_illuminated_rabbits_in_Jubilee_Park_in_Canary_Wharf_-_geograph.org.uk_-_5660481.jpg",
+   "captured": "2018-01-21",
+   "licence": "CC BY-SA 2.0",
+   "author": "Robert Lamb",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View of an illuminated rabbit in Jubilee Park in Canary Wharf - geograph.org.uk - 5660485.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_an_illuminated_rabbit_in_Jubilee_Park_in_Canary_Wharf_-_geograph.org.uk_-_5660485.jpg",
+   "captured": "2018-01-21",
+   "licence": "CC BY-SA 2.0",
+   "author": "Robert Lamb",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View of Cabot Square Fountain illuminated in different colours as part of the Canary Wharf Winter Lights - geograph.org.uk - 6032966.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_Cabot_Square_Fountain_illuminated_in_different_colours_as_part_of_the_Canary_Wharf_Winter_Lights_-_geograph.org.uk_-_6032966.jpg",
+   "captured": "2019-01-25",
+   "licence": "CC BY-SA 2.0",
+   "author": "Robert Lamb",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View of Cabot Square Fountain illuminated in different colours as part of the Canary Wharf Winter Lights ^2 - geograph.org.uk - 6032972.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_Cabot_Square_Fountain_illuminated_in_different_colours_as_part_of_the_Canary_Wharf_Winter_Lights_%5E2_-_geograph.org.uk_-_6032972.jpg",
+   "captured": "2019-01-25",
+   "licence": "CC BY-SA 2.0",
+   "author": "Robert Lamb",
+   "found_by": "search: Canary Wharf illuminated",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf - London (48071484317).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_-_London_(48071484317).jpg",
+   "captured": "2019-05-06 21:00",
+   "licence": "CC BY 2.0",
+   "author": "Mark from Brighton",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf - London (48071378951).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_-_London_(48071378951).jpg",
+   "captured": "2019-05-06 21:03",
+   "licence": "CC BY 2.0",
+   "author": "Mark from Brighton",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf - London (48071427338).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_-_London_(48071427338).jpg",
+   "captured": "2019-05-06 21:08",
+   "licence": "CC BY 2.0",
+   "author": "Mark from Brighton",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Greenland Dock, October 2021 - 04.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Greenland_Dock,_October_2021_-_04.jpg",
+   "captured": "2021-10-17 18:47:01",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Cabot Square, Canary Wharf at night.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cabot_Square,_Canary_Wharf_at_night.jpg",
+   "captured": "2021-10-25 19:02:02",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Montgomery Square in October 2022 at night.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Montgomery_Square_in_October_2022_at_night.jpg",
+   "captured": "2022-10-03",
+   "licence": "CC BY-SA 4.0",
+   "author": "Editor5807",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Area at Night (01).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Area_at_Night_(01).jpg",
+   "captured": "2022-10-13 17:46:10",
+   "licence": "CC BY-SA 4.0",
+   "author": "Doyle of London",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Area at Night (02).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Area_at_Night_(02).jpg",
+   "captured": "2022-10-13 18:15:23",
+   "licence": "CC BY-SA 4.0",
+   "author": "Doyle of London",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Floating Earth, 25 January 2023.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Floating_Earth,_25_January_2023.jpg",
+   "captured": "2023-01-25 17:28:04",
+   "licence": "CC BY-SA 2.0",
+   "author": "Matt Buck",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:'Floating Earth' by Luke Jerram, Middle Dock.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:%27Floating_Earth%27_by_Luke_Jerram,_Middle_Dock.jpg",
+   "captured": "2023-01-25 18:10:50",
+   "licence": "CC BY-SA 2.0",
+   "author": "Loz Pycock",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:River Thames - London, England 2023-10-27 (15).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:River_Thames_-_London,_England_2023-10-27_(15).jpg",
+   "captured": "2023-10-27 18:36",
+   "licence": "CC BY-SA 4.0",
+   "author": "Ryan Hodnett",
+   "found_by": "Category:One Canada Square at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Hexagonal light sculpture in Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Hexagonal_light_sculpture_in_Canary_Wharf.jpg",
+   "captured": "2024-01-19",
+   "licence": "CC BY 2.0",
+   "author": "Alex Chan",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from Greenwich riverside at night - 2024-04-01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_Greenwich_riverside_at_night_-_2024-04-01.jpg",
+   "captured": "2024-04-01 20:14:42",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Riverside.Reza 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Riverside.Reza_01.jpg",
+   "captured": "2024-10-27 17:24:59",
+   "licence": "CC BY-SA 4.0",
+   "author": "M R Karim Reza",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Riverside.Reza 02.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Riverside.Reza_02.jpg",
+   "captured": "2024-10-27 17:24:59",
+   "licence": "CC BY-SA 4.0",
+   "author": "M R Karim Reza",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Riverside.Reza 03.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Riverside.Reza_03.jpg",
+   "captured": "2024-10-27 17:24:59",
+   "licence": "CC BY-SA 4.0",
+   "author": "M R Karim Reza",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Riverside.Reza 04.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Riverside.Reza_04.jpg",
+   "captured": "2024-10-27 17:24:59",
+   "licence": "CC BY-SA 4.0",
+   "author": "M R Karim Reza",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from Thames Path Greenwich Hospital London England at dusk 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_Thames_Path_Greenwich_Hospital_London_England_at_dusk_01.jpg",
+   "captured": "2025-11-30 17:16:36",
+   "licence": "CC BY-SA 4.0",
+   "author": "Acabashi",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf from Thames Path Greenwich Hospital London England at dusk 02.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_from_Thames_Path_Greenwich_Hospital_London_England_at_dusk_02.jpg",
+   "captured": "2025-11-30 17:17:13",
+   "licence": "CC BY-SA 4.0",
+   "author": "Acabashi",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:New illuminated signpost at Canary Wharf 2026-01-17.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:New_illuminated_signpost_at_Canary_Wharf_2026-01-17.jpg",
+   "captured": "2026-01-17 16:49:32",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:North Dock (and duck), Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:North_Dock_(and_duck),_Canary_Wharf.jpg",
+   "captured": "2026-01-17 18:26:58",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:St Peter's Barge, Canary Wharf 2026-01-17.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:St_Peter%27s_Barge,_Canary_Wharf_2026-01-17.jpg",
+   "captured": "2026-01-17 18:30:25",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Ottotto - The Clew, Canary Wharf.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Ottotto_-_The_Clew,_Canary_Wharf.jpg",
+   "captured": "2026-01-24 17:38:35",
+   "licence": "CC BY-SA 4.0",
+   "author": "The wub",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Thames And Canary Wharf From The Shard (119633797).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Thames_And_Canary_Wharf_From_The_Shard_(119633797).jpeg",
+   "captured": "22 August 2015, 02:19:18 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Alexander Hill",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Thames And Canary Wharf From The Shard (119633915).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Thames_And_Canary_Wharf_From_The_Shard_(119633915).jpeg",
+   "captured": "22 August 2015, 02:20:24 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Alexander Hill",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Thames And Canary Wharf From The Shard (119633975).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Thames_And_Canary_Wharf_From_The_Shard_(119633975).jpeg",
+   "captured": "22 August 2015, 02:52:57 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Alexander Hill",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf (44842978).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_(44842978).jpeg",
+   "captured": "25 March 2012, 00:07:15 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Harri Hälikkä",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Trains (44842976).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Trains_(44842976).jpeg",
+   "captured": "25 March 2012, 00:22:20 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Harri Hälikkä",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:DocklandsNight.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:DocklandsNight.jpg",
+   "captured": "27 December 2005 (according to Exif data)",
+   "licence": "CC BY-SA 3.0",
+   "author": "No machine-readable author provided. Hamish2k~commonswiki assumed (based on copyright claims).",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf Skyline 2, London UK - Oct 2012.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_Skyline_2,_London_UK_-_Oct_2012.jpg",
+   "captured": "29 October 2012 (according to Exif data)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Diliff",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": "data/raw/registry/lighting/thumbs/fa4b9759b37c9549.jpg"
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (15615).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(15615).jpg",
+   "captured": "29 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf HSBC building.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_HSBC_building.jpg",
+   "captured": "29 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:10 Upper Bank Street (31522).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_(31522).jpg",
+   "captured": "29 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:10 Upper Bank Street (66656).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_(66656).jpg",
+   "captured": "29 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:One Churchill Place.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:One_Churchill_Place.jpg",
+   "captured": "29 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London Docklands Two (51053164).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_Docklands_Two_(51053164).jpeg",
+   "captured": "3 November 2013, 06:33:17 (UTC)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Chris Cork",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London Docklands (51053028).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_Docklands_(51053028).jpeg",
+   "captured": "3 November 2013, 06:35:42 (UTC)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Chris Cork",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (65631).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(65631).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (27593).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(27593).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (24005).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(24005).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (66085).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(66085).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (55926).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(55926).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (21373).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(21373).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (29251).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(29251).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (45877).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(45877).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (21434).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(21434).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (47702).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(47702).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (89254).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(89254).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (52258).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(52258).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Amory Tower.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Amory_Tower.jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (47343).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(47343).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (13984).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(13984).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (21448).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(21448).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (82275).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(82275).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (88607).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(88607).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (56171).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(56171).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Poplar DLR station.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Poplar_DLR_station.jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:United Kingdom London Canary Wharf (46166).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:United_Kingdom_London_Canary_Wharf_(46166).jpg",
+   "captured": "30 September 2025 (according to Exif data)",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:500px photo (22809481).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:500px_photo_(22809481).jpeg",
+   "captured": "4 January 2013, 20:28:21 (UTC)",
+   "licence": "CC BY-SA 3.0",
+   "author": "Tânia Roques",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact only (share-alike: URL, date and colour observed; image not copied)",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Out For A Walk (222742873).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Out_For_A_Walk_(222742873).jpeg",
+   "captured": "6 January 2017, 17:35:32 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Tariq Khan",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:London S Financial District At Night (222734443).jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:London_S_Financial_District_At_Night_(222734443).jpeg",
+   "captured": "6 January 2017, 17:39:03 (UTC)",
+   "licence": "CC BY 3.0",
+   "author": "Tariq Khan",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Canary Wharf at night - panoramio.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Canary_Wharf_at_night_-_panoramio.jpg",
+   "captured": "Taken on 18 December 2010",
+   "licence": "CC BY 3.0",
+   "author": "Steve Sea",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:View of Canary Wharf and O2 Arena from the roof of bar Attic - panoramio.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:View_of_Canary_Wharf_and_O2_Arena_from_the_roof_of_bar_Attic_-_panoramio.jpg",
+   "captured": "Taken on 24 August 2012",
+   "licence": "CC BY 3.0",
+   "author": "Alexander Kachkaev",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  },
+  {
+   "title": "File:Night view in Canary Wharf - panoramio.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Night_view_in_Canary_Wharf_-_panoramio.jpg",
+   "captured": "Taken on 6 December 2010",
+   "licence": "CC BY 3.0",
+   "author": "Jie Yang",
+   "found_by": "Category:Canary Wharf at night",
+   "use": "fact; image may be used with attribution",
+   "thumb_cached": null
+  }
+ ]
+}

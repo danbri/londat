@@ -1,0 +1,1172 @@
+{
+ "meta": {
+  "about": "KML and KMZ resources for the Docklands zone (magpie/cwplans), each fetched and read with docklands/kml.js; zone-clipped KML copies of open layers hosted in danbri/londat",
+  "tool": "tools/find-kml.mjs",
+  "probed": "2026-10-05",
+  "origin_checked": "https://danbri.github.io",
+  "model_box": [
+   -0.095,
+   51.474,
+   0.015,
+   51.522
+  ],
+  "zone": [
+   -0.095,
+   51.47,
+   0.08,
+   51.53
+  ],
+  "zone_text": "zone = the model box plus the Royal Docks and the Thames Barrier, WGS84 -0.095, 51.47, 0.08, 51.53; the 3D page draws only inside the model box",
+  "rules": [
+   "cors yes = HTTP 200 over https with Access-Control-Allow-Origin * or the Pages origin: the ?kml= link works",
+   "open_link only for a file the page reader parsed with at least one placemark in the zone",
+   "example = open_link and an open licence class (ogl, cc-by, odc-by, public-domain); share-alike, restricted and no-licence files are never examples or copies (OSM-derived content inside an OGL layer is marked odbl)",
+   "copies: features that meet the box (polygons whole, lines cut at the edge), names and a few fields kept, the source licence and attribution in the Document description"
+  ],
+  "counts": {
+   "entries": 40,
+   "by_kind": {
+    "native": 8,
+    "copy": 12,
+    "listed": 20
+   },
+   "by_licence_class": {
+    "ogl": 18,
+    "cc-by": 2,
+    "share-alike": 5,
+    "none": 8,
+    "per item": 1,
+    "per service": 1,
+    "per dataset": 1,
+    "per page": 1,
+    "restricted": 3
+   },
+   "with_open_link": 17,
+   "examples": 15
+  }
+ },
+ "resources": [
+  {
+   "id": "lds-schools-2016",
+   "kind": "native",
+   "title": "London Schools Atlas: all schools (2016)",
+   "publisher": "Greater London Authority (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/london-schools-atlas-29j4y",
+   "url": "https://data.london.gov.uk/download/29j4y/17d3df74-9338-43ed-813b-989d57689f88/all_schools_2016.kmz",
+   "format": "kmz",
+   "licence": "Open Government Licence v2",
+   "licence_class": "ogl",
+   "note": "school points of 2016 (3,889 in London); placemark names are place names (e.g. \"Millwall\"), not school names; old: use GIAS for current schools",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "application/vnd.google-earth.kmz",
+    "bytes": 468706,
+    "parser": {
+     "ok": true,
+     "document": "all_schools_2016",
+     "placemarks": 3889,
+     "in_model_box": 163,
+     "in_zone": 279,
+     "hidden": 0,
+     "folders": 1,
+     "geometries": {
+      "Point": 3889
+     },
+     "unsupported": {},
+     "network_links": 0,
+     "kmz": {
+      "entry": "doc.kml",
+      "files": 2
+     }
+    }
+   },
+   "zone_features": 279,
+   "model_box_features": 163,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F29j4y%2F17d3df74-9338-43ed-813b-989d57689f88%2Fall_schools_2016.kmz",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 3889,
+    "drawn": 165,
+    "cut_at_edge": 0,
+    "outside_model": 3724,
+    "console_errors": 1
+   }
+  },
+  {
+   "id": "lds-wards-2016",
+   "kind": "native",
+   "title": "London wards (KML from the GLA \"Create your own mapping templates\" add-in)",
+   "publisher": "Greater London Authority (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/create-your-own-mapping-templates-excel-add-in-2jx1l",
+   "url": "https://data.london.gov.uk/download/2jx1l/495e0c34-5da1-4647-baac-c9cb974df3aa/ward-map-kml.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v2",
+   "licence_class": "ogl",
+   "note": "2014 ward boundaries, all London, 6.7 MB; a zone copy is in londat (lds-wards-2016-zone)",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "application/vnd.google-earth.kml+xml",
+    "bytes": 6659164,
+    "parser": {
+     "ok": true,
+     "document": "ward-map-kml",
+     "placemarks": 654,
+     "in_model_box": 66,
+     "in_zone": 92,
+     "hidden": 0,
+     "folders": 1,
+     "geometries": {
+      "Polygon": 654
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 92,
+   "model_box_features": 66,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2jx1l%2F495e0c34-5da1-4647-baac-c9cb974df3aa%2Fward-map-kml.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 654,
+    "drawn": 65,
+    "cut_at_edge": 34,
+    "outside_model": 589,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "lds-bids-2024",
+   "kind": "native",
+   "title": "London Plan: Business Improvement Districts (KML zip, 2024-10-14)",
+   "publisher": "Greater London Authority (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/london-plan-business-improvement-districts-vqmx7",
+   "url": "https://data.london.gov.uk/download/vqmx7/e521c1ed-9787-42da-b229-faff6d4b65e5/business_improvement_districts_kml.zip",
+   "format": "zip (one .kml; read as KMZ)",
+   "licence": "Creative Commons Attribution",
+   "licence_class": "cc-by",
+   "note": "placemark names are generic (kml_3); the BID name is in ExtendedData",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "application/zip",
+    "bytes": 172322,
+    "parser": {
+     "ok": true,
+     "document": "business_improvement_districts",
+     "placemarks": 76,
+     "in_model_box": 7,
+     "in_zone": 7,
+     "hidden": 0,
+     "folders": 1,
+     "geometries": {
+      "Polygon": 77
+     },
+     "unsupported": {},
+     "network_links": 0,
+     "kmz": {
+      "entry": "business_improvement_districts.kml",
+      "files": 1
+     }
+    }
+   },
+   "zone_features": 7,
+   "model_box_features": 7,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2Fvqmx7%2Fe521c1ed-9787-42da-b229-faff6d4b65e5%2Fbusiness_improvement_districts_kml.zip",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 76,
+    "drawn": 7,
+    "cut_at_edge": 3,
+    "outside_model": 69,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "lds-canopy-boroughs",
+   "kind": "native",
+   "title": "Curio Canopy: tree canopy cover by borough",
+   "publisher": "Greater London Authority / Curio (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/curio-canopy-london-tree-canopy-cover-2koz8",
+   "url": "https://data.london.gov.uk/download/2koz8/6c9b249b-9d02-42a7-bae9-67617fa4317c/gla-boroughs-canopy-cover.kml",
+   "format": "kml",
+   "licence": "Creative Commons Attribution Share-Alike",
+   "licence_class": "share-alike",
+   "note": "share-alike: not copied, not in the examples (CLAUDE.md: OSM is the only share-alike exception)",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "application/vnd.google-earth.kml+xml",
+    "bytes": 941010,
+    "parser": {
+     "ok": true,
+     "document": "GLA Borough Level Green Infrastructure Measures",
+     "placemarks": 33,
+     "in_model_box": 8,
+     "in_zone": 10,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 33
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 10,
+   "model_box_features": 8,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2koz8%2F6c9b249b-9d02-42a7-bae9-67617fa4317c%2Fgla-boroughs-canopy-cover.kml",
+   "example": false,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 33,
+    "drawn": 8,
+    "cut_at_edge": 8,
+    "outside_model": 25,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "lds-canopy-wards",
+   "kind": "native",
+   "title": "Curio Canopy: tree canopy cover by ward",
+   "publisher": "Greater London Authority / Curio (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/curio-canopy-london-tree-canopy-cover-2koz8",
+   "url": "https://data.london.gov.uk/download/2koz8/30e728fc-d736-45d7-9853-5e1ac2ff4a3e/gla-wards-canopy-cover.kml",
+   "format": "kml",
+   "licence": "Creative Commons Attribution Share-Alike",
+   "licence_class": "share-alike",
+   "note": "share-alike: not copied; the hexagon-grid file (28.7 MB) and the LSOA zip (22 MB) of the same set were not fetched",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "application/vnd.google-earth.kml+xml",
+    "bytes": 4321361,
+    "parser": {
+     "ok": true,
+     "document": "GLA Ward Level Green Infrastructure Measures",
+     "placemarks": 630,
+     "in_model_box": 45,
+     "in_zone": 71,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 631
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 71,
+   "model_box_features": 45,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2koz8%2F30e728fc-d736-45d7-9853-5e1ac2ff4a3e%2Fgla-wards-canopy-cover.kml",
+   "example": false,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 630,
+    "drawn": 47,
+    "cut_at_edge": 28,
+    "outside_model": 583,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "bgs-625k",
+   "kind": "native",
+   "title": "BGS Geology 625k (DiGMapGB-625) for Google Earth",
+   "publisher": "British Geological Survey",
+   "page": "https://www.data.gov.uk/dataset/bgs-geology-625k-digmapgb-625-2008",
+   "url": "https://ogc.bgs.ac.uk/dppp/kml/digmap625.kml",
+   "format": "kml (NetworkLinks to WMS overlays)",
+   "licence": "not stated on the data.gov.uk record (BGS 625k data is offered under OGL on the BGS site)",
+   "licence_class": "none",
+   "note": "robots.txt of ogc.bgs.ac.uk disallows all agents but Spatineo, so the tool does not fetch it. One manual fetch on 2026-10-05, before the robots.txt check, showed NetworkLinks (WMS overlays) and a ScreenOverlay only: the page would list the links and draw nothing",
+   "cors": "unknown (robots)",
+   "probe": {
+    "status": "robots",
+    "https": true,
+    "cors": null
+   },
+   "zone_features": null,
+   "model_box_features": null,
+   "open_link": null,
+   "example": false
+  },
+  {
+   "id": "bgs-sobi",
+   "kind": "native",
+   "title": "BGS Single Onshore Borehole Index for Google Earth",
+   "publisher": "British Geological Survey",
+   "page": "https://www.data.gov.uk/dataset/single-onshore-borehole-index",
+   "url": "https://ogc.bgs.ac.uk/dppp/kml/sobi.kml",
+   "format": "kml (NetworkLink)",
+   "licence": "not stated on the data.gov.uk record",
+   "licence_class": "none",
+   "note": "robots.txt disallows (see bgs-625k); the same manual fetch showed one NetworkLink only: nothing to draw",
+   "cors": "unknown (robots)",
+   "probe": {
+    "status": "robots",
+    "https": true,
+    "cors": null
+   },
+   "zone_features": null,
+   "model_box_features": null,
+   "open_link": null,
+   "example": false
+  },
+  {
+   "id": "lambeth-river-bus-stops",
+   "kind": "native",
+   "title": "London river bus stops (Lambeth open mapping data, ArcGIS Hub)",
+   "publisher": "London Borough of Lambeth",
+   "page": "https://www.data.gov.uk/dataset/london-river-bus-stops",
+   "url": "http://lambethopenmappingdata-lambethcouncil.opendata.arcgis.com/datasets/b9eeb8aa5d8949108d406b557bced486_1.kml",
+   "format": "kml (ArcGIS Hub export)",
+   "licence": "none on the data.gov.uk record",
+   "licence_class": "none",
+   "note": "old Hub export URL from data.gov.uk answers 400 (retired Hub URL form); no licence: metadata only",
+   "cors": "unknown (400)",
+   "probe": {
+    "status": 400,
+    "https": false,
+    "cors": "*",
+    "content_type": "application/json",
+    "bytes": 53,
+    "final_url": "https://hub.arcgis.com/api/download/v1/items/b9eeb8aa5d8949108d406b557bced486/kml?redirect=true&layers=1"
+   },
+   "zone_features": null,
+   "model_box_features": null,
+   "open_link": null,
+   "example": false
+  },
+  {
+   "id": "tfl-cycle-routes",
+   "kind": "copy",
+   "title": "TfL Cycle Routes (Cycleways, Quietways, Superhighways) in the zone",
+   "publisher": "Transport for London (GIS Open Data Hub)",
+   "page": "https://gis-tfl.opendata.arcgis.com/datasets/cycle-routes",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/tfl-cycle-routes.kml",
+   "format": "kml",
+   "licence": "Open Government Licence (item licence: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/)",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "https://services1.arcgis.com/YswvgzOodUvqkoCN/arcgis/rest/services/Cycle_Routes/FeatureServer/11",
+   "attribution": "Contains Transport for London data licensed under the Open Government Licence v3.0. Powered by TfL Open Data.",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 416949,
+    "parser": {
+     "ok": true,
+     "document": "TfL Cycle Routes (Cycleways, Quietways, Superhighways) in the zone",
+     "placemarks": 420,
+     "in_model_box": 356,
+     "in_zone": 420,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "LineString": 548
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 420,
+   "model_box_features": 356,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-cycle-routes.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 420,
+    "drawn": 356,
+    "cut_at_edge": 218,
+    "outside_model": 64,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "tfl-river-piers",
+   "kind": "copy",
+   "title": "TfL River Piers in the zone",
+   "publisher": "Transport for London (GIS Open Data Hub)",
+   "page": "https://gis-tfl.opendata.arcgis.com/",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/tfl-river-piers.kml",
+   "format": "kml",
+   "licence": "Open Government Licence (item licence)",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "https://services1.arcgis.com/YswvgzOodUvqkoCN/arcgis/rest/services/River_Piers/FeatureServer/34",
+   "attribution": "Contains Transport for London data licensed under the Open Government Licence v3.0. Powered by TfL Open Data.",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 6506,
+    "parser": {
+     "ok": true,
+     "document": "TfL River Piers in the zone",
+     "placemarks": 15,
+     "in_model_box": 12,
+     "in_zone": 15,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Point": 15
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 15,
+   "model_box_features": 12,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-river-piers.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 15,
+    "drawn": 12,
+    "cut_at_edge": 0,
+    "outside_model": 3,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "tfl-river-services",
+   "kind": "copy",
+   "title": "TfL River Services (with stops) in the zone",
+   "publisher": "Transport for London (GIS Open Data Hub)",
+   "page": "https://gis-tfl.opendata.arcgis.com/",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/tfl-river-services.kml",
+   "format": "kml",
+   "licence": "Open Government Licence (item licence)",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "https://services1.arcgis.com/YswvgzOodUvqkoCN/arcgis/rest/services/River_Services__with_stops_/FeatureServer/36",
+   "attribution": "Contains Transport for London data licensed under the Open Government Licence v3.0. Powered by TfL Open Data.",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 88895,
+    "parser": {
+     "ok": true,
+     "document": "TfL River Services (with stops) in the zone",
+     "placemarks": 11,
+     "in_model_box": 10,
+     "in_zone": 11,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "LineString": 11
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 11,
+   "model_box_features": 10,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-river-services.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 11,
+    "drawn": 10,
+    "cut_at_edge": 9,
+    "outside_model": 1,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "sustrans-ncn",
+   "kind": "copy",
+   "title": "National Cycle Network (Walk Wheel Cycle Trust, formerly Sustrans) in the zone",
+   "publisher": "Walk Wheel Cycle Trust (Sustrans)",
+   "page": "https://data-sustrans-uk.opendata.arcgis.com/datasets/Sustrans-UK::national-cycle-network-public-1/about",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/sustrans-ncn.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3.0 (item licence); access information: contains Ordnance Survey data (Crown copyright and database rights 2018) and OpenStreetMap contributions",
+   "licence_class": "ogl",
+   "odbl": true,
+   "hosted": "londat",
+   "source_api": "https://services5.arcgis.com/1ZHcUS1lwPTg4ms0/arcgis/rest/services/National_Cycle_Network_Public/FeatureServer/0",
+   "attribution": "Walk Wheel Cycle Trust (formerly Sustrans) National Cycle Network data, Open Government Licence v3.0. Contains OS data © Crown copyright and database rights 2018. Contains © OpenStreetMap contributors (ODbL, https://www.openstreetmap.org/copyright).",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 348880,
+    "parser": {
+     "ok": true,
+     "document": "National Cycle Network (Walk Wheel Cycle Trust, formerly Sustrans) in the zone",
+     "placemarks": 350,
+     "in_model_box": 294,
+     "in_zone": 350,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "LineString": 350
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 350,
+   "model_box_features": 294,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fsustrans-ncn.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 350,
+    "drawn": 293,
+    "cut_at_edge": 6,
+    "outside_model": 57,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "crt-locks",
+   "kind": "copy",
+   "title": "Canal & River Trust locks in the zone",
+   "publisher": "Canal & River Trust",
+   "page": "https://data-canalrivertrust.opendata.arcgis.com/",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/crt-locks.kml",
+   "format": "kml",
+   "licence": "Open Government Licence (item licence of Canal_And_River_Trust_Locks_View)",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "https://services.arcgis.com/DknzyjEEie5tEW0u/arcgis/rest/services/Canal_And_River_Trust_Locks_View/FeatureServer/0",
+   "attribution": "Contains Canal & River Trust data licensed under the Open Government Licence v3.0.",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 7922,
+    "parser": {
+     "ok": true,
+     "document": "Canal & River Trust locks in the zone",
+     "placemarks": 13,
+     "in_model_box": 8,
+     "in_zone": 13,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Point": 13
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 13,
+   "model_box_features": 8,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fcrt-locks.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 13,
+    "drawn": 8,
+    "cut_at_edge": 0,
+    "outside_model": 5,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "ne-thames-path",
+   "kind": "copy",
+   "title": "Thames Path National Trail in the model box",
+   "publisher": "Natural England (National Trails (England), via data.gov.uk)",
+   "page": "https://www.data.gov.uk/dataset/ac8c851c-99a0-4488-8973-6c8863529c45/national-trails-england3",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/ne-thames-path.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "londat cwplans/feeds/portals/dgu/national-trails-england3/national-trails-england3.geojson",
+   "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (Natural England).",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 19182,
+    "parser": {
+     "ok": true,
+     "document": "Thames Path National Trail in the model box",
+     "placemarks": 1,
+     "in_model_box": 1,
+     "in_zone": 1,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "LineString": 3
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 1,
+   "model_box_features": 1,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fne-thames-path.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 1,
+    "drawn": 1,
+    "cut_at_edge": 1,
+    "outside_model": 0,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "he-listed-buildings",
+   "kind": "copy",
+   "title": "Listed buildings in the model box (Historic England, via planning.data.gov.uk)",
+   "publisher": "Historic England / MHCLG planning.data.gov.uk",
+   "page": "https://www.planning.data.gov.uk/dataset/listed-building",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/he-listed-buildings.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "londat cwplans/feeds/portals/pdg/listed-building/listed-building.geojson",
+   "attribution": "© Historic England 2026. Contains Ordnance Survey data © Crown copyright and database right 2026. Open Government Licence v3.0 (via planning.data.gov.uk).",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 1132476,
+    "parser": {
+     "ok": true,
+     "document": "Listed buildings in the model box (Historic England, via planning.data.gov.uk)",
+     "placemarks": 1769,
+     "in_model_box": 1769,
+     "in_zone": 1769,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Point": 1737,
+      "Polygon": 32
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 1769,
+   "model_box_features": 1769,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-listed-buildings.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 1769,
+    "drawn": 1732,
+    "cut_at_edge": 0,
+    "outside_model": 37,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "he-world-heritage",
+   "kind": "copy",
+   "title": "World Heritage Sites and buffer zone in the model box (Tower of London, Maritime Greenwich)",
+   "publisher": "Historic England / MHCLG planning.data.gov.uk",
+   "page": "https://www.planning.data.gov.uk/dataset/world-heritage-site",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/he-world-heritage.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "londat cwplans/feeds/portals/pdg/world-heritage-site/world-heritage-site.geojson, londat cwplans/feeds/portals/pdg/world-heritage-site-buffer-zone/world-heritage-site-buffer-zone.geojson",
+   "attribution": "© Historic England 2026. Contains Ordnance Survey data © Crown copyright and database right 2026. Open Government Licence v3.0 (via planning.data.gov.uk).",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 22091,
+    "parser": {
+     "ok": true,
+     "document": "World Heritage Sites and buffer zone in the model box (Tower of London, Maritime Greenwich)",
+     "placemarks": 3,
+     "in_model_box": 3,
+     "in_zone": 3,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 3
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 3,
+   "model_box_features": 3,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-world-heritage.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 3,
+    "drawn": 3,
+    "cut_at_edge": 2,
+    "outside_model": 0,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "he-heritage-at-risk",
+   "kind": "copy",
+   "title": "Heritage at Risk in the model box",
+   "publisher": "Historic England / MHCLG planning.data.gov.uk",
+   "page": "https://www.planning.data.gov.uk/dataset/heritage-at-risk",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/he-heritage-at-risk.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "londat cwplans/feeds/portals/pdg/heritage-at-risk/heritage-at-risk.geojson",
+   "attribution": "© Historic England 2026. Contains Ordnance Survey data © Crown copyright and database right 2026. Open Government Licence v3.0 (via planning.data.gov.uk).",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 84567,
+    "parser": {
+     "ok": true,
+     "document": "Heritage at Risk in the model box",
+     "placemarks": 58,
+     "in_model_box": 58,
+     "in_zone": 58,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 61
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 58,
+   "model_box_features": 58,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-heritage-at-risk.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 58,
+    "drawn": 56,
+    "cut_at_edge": 4,
+    "outside_model": 2,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "he-parks-gardens",
+   "kind": "copy",
+   "title": "Registered parks and gardens in the model box",
+   "publisher": "Historic England / MHCLG planning.data.gov.uk",
+   "page": "https://www.planning.data.gov.uk/dataset/park-and-garden",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/he-parks-gardens.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "londat cwplans/feeds/portals/pdg/park-and-garden/park-and-garden.geojson",
+   "attribution": "© Historic England 2026. Contains Ordnance Survey data © Crown copyright and database right 2026. Open Government Licence v3.0 (via planning.data.gov.uk).",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 19707,
+    "parser": {
+     "ok": true,
+     "document": "Registered parks and gardens in the model box",
+     "placemarks": 6,
+     "in_model_box": 6,
+     "in_zone": 6,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 6
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 6,
+   "model_box_features": 6,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-parks-gardens.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 6,
+    "drawn": 5,
+    "cut_at_edge": 2,
+    "outside_model": 1,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "gla-conservation-areas",
+   "kind": "copy",
+   "title": "Conservation areas in the model box (GLA Planning Constraints Map)",
+   "publisher": "Greater London Authority (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/conservation-areas-emqwg",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/gla-conservation-areas.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v3",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "londat cwplans/feeds/london-datastore/conservation-areas/conservation-areas.geojson",
+   "attribution": "Contains public sector information licensed under the Open Government Licence v3 (Planning Constraints Map). The GLA cannot warrant the quality or accuracy of the data.",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 1074985,
+    "parser": {
+     "ok": true,
+     "document": "Conservation areas in the model box (GLA Planning Constraints Map)",
+     "placemarks": 107,
+     "in_model_box": 107,
+     "in_zone": 107,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 109
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 107,
+   "model_box_features": 107,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fgla-conservation-areas.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 107,
+    "drawn": 107,
+    "cut_at_edge": 29,
+    "outside_model": 0,
+    "console_errors": 0
+   }
+  },
+  {
+   "id": "lds-wards-2016-zone",
+   "kind": "copy",
+   "title": "London wards 2014 (GLA ward KML) in the zone",
+   "publisher": "Greater London Authority (London Datastore)",
+   "page": "https://data.london.gov.uk/dataset/create-your-own-mapping-templates-excel-add-in-2jx1l",
+   "url": "https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/lds-wards-2016-zone.kml",
+   "format": "kml",
+   "licence": "Open Government Licence v2",
+   "licence_class": "ogl",
+   "hosted": "londat",
+   "source_api": "https://data.london.gov.uk/download/2jx1l/495e0c34-5da1-4647-baac-c9cb974df3aa/ward-map-kml.kml",
+   "attribution": "Contains public sector information licensed under the Open Government Licence v2.0 (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data.",
+   "cors": "yes",
+   "probe": {
+    "status": 200,
+    "https": true,
+    "cors": "*",
+    "content_type": "text/plain",
+    "bytes": 449701,
+    "parser": {
+     "ok": true,
+     "document": "London wards 2014 (GLA ward KML) in the zone",
+     "placemarks": 92,
+     "in_model_box": 66,
+     "in_zone": 92,
+     "hidden": 0,
+     "folders": 0,
+     "geometries": {
+      "Polygon": 92
+     },
+     "unsupported": {},
+     "network_links": 0
+    }
+   },
+   "zone_features": 92,
+   "model_box_features": 66,
+   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Flds-wards-2016-zone.kml",
+   "example": true,
+   "page_test": {
+    "date": "2026-10-05",
+    "page": "live Pages site, headless Chromium (SwiftShader), 390 x 844",
+    "features": 92,
+    "drawn": 65,
+    "cut_at_edge": 34,
+    "outside_model": 27,
+    "console_errors": 0
+   }
+  },
+  {
+   "kind": "listed",
+   "id": "pdg-entity",
+   "title": "planning.data.gov.uk entities",
+   "publisher": "MHCLG",
+   "url": "https://www.planning.data.gov.uk/entity.kml?dataset=conservation-area",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "state": "not-kml",
+   "reason": "no KML: entity.kml answers 404; the API gives JSON, GeoJSON and CSV (the open layers we hold are copied above as KML)"
+  },
+  {
+   "kind": "listed",
+   "id": "arcgis-hub-download",
+   "title": "ArcGIS Hub KML downloads (TfL, ONS, Sustrans, CRT, Historic England, Tower Hamlets hubs)",
+   "publisher": "Esri ArcGIS Hub",
+   "url": "https://hub.arcgis.com/api/download/v1/items/<item>/kml?layers=<n>",
+   "licence": "per item",
+   "licence_class": "per item",
+   "state": "unreliable",
+   "reason": "generated on request: the first call answers 202 \"being generated\"; a 3-polygon Tower Hamlets item stayed \"PagingData\" for over 15 minutes, TfL items answered 404 \"Layer does not exist\". A ?kml= link would open a JSON message. Hosted feature layers answer only JSON, GeoJSON and PBF to query (no f=kmz). So open layers are copied as KML instead"
+  },
+  {
+   "kind": "listed",
+   "id": "arcgis-server-kmz",
+   "title": "ArcGIS Server map services (City of London INSPIRE, GLA, PLA)",
+   "publisher": "City of London, GLA, PLA",
+   "url": "https://www.mapping.cityoflondon.gov.uk/arcgis/rest/services/INSPIRE/MapServer",
+   "licence": "OGL (City of London); PLA not open",
+   "licence_class": "per service",
+   "state": "not-kml",
+   "reason": "supportedQueryFormats is JSON, geoJSON only: no f=kmz"
+  },
+  {
+   "kind": "listed",
+   "id": "ons-hub-kml",
+   "title": "ONS Open Geography Portal boundaries (2,367 data.gov.uk records with a KML resource)",
+   "publisher": "Office for National Statistics",
+   "url": "https://geoportal.statistics.gov.uk/",
+   "licence": "Open Government Licence v3.0 (ONS terms)",
+   "licence_class": "ogl",
+   "state": "unreliable",
+   "reason": "KML resources are ArcGIS Hub downloads (see arcgis-hub-download); the zone boundaries we need are held as GeoJSON (feeds/portals/onsgeo)"
+  },
+  {
+   "kind": "listed",
+   "id": "dgu-kml",
+   "title": "data.gov.uk: all datasets with a KML or KMZ resource",
+   "publisher": "data.gov.uk",
+   "url": "https://www.data.gov.uk/",
+   "licence": "per dataset",
+   "licence_class": "per dataset",
+   "state": "walked",
+   "reason": "4,499 of the 59,451 datasets have a KML/KMZ resource (raw walk of 2026-10-04): 2,367 ONS, 1,002 Northern Ireland, 237 NSTA; the only London ones are the GLA (above), Lambeth (no licence), BGS (NetworkLinks), DfT TEMPRO zones and NHS CCG boundaries (national, old)"
+  },
+  {
+   "kind": "listed",
+   "id": "open-plaques",
+   "title": "Open Plaques",
+   "publisher": "Open Plaques",
+   "url": "https://openplaques.org/",
+   "licence": "not checked",
+   "licence_class": "none",
+   "state": "blocked",
+   "reason": "robots.txt: \"User-agent: * Disallow: /\"; not fetched"
+  },
+  {
+   "kind": "listed",
+   "id": "wikimapia",
+   "title": "Wikimapia",
+   "publisher": "Wikimapia",
+   "url": "https://wikimapia.org/",
+   "licence": "CC BY-SA 3.0",
+   "licence_class": "share-alike",
+   "state": "share-alike",
+   "reason": "share-alike: not allowed without the owner's agreement (CLAUDE.md); not fetched"
+  },
+  {
+   "kind": "listed",
+   "id": "wikipedia-attached-kml",
+   "title": "Wikipedia \"Attached KML\" templates (e.g. Template:Attached KML/Docklands Light Railway)",
+   "publisher": "Wikipedia editors",
+   "url": "https://en.wikipedia.org/wiki/Template:Attached_KML/Docklands_Light_Railway",
+   "licence": "CC BY-SA 4.0 (Wikipedia text)",
+   "licence_class": "share-alike",
+   "state": "share-alike",
+   "reason": "share-alike, often traced from OSM: listed only, not copied"
+  },
+  {
+   "kind": "listed",
+   "id": "commons-data-map",
+   "title": "Wikimedia Commons Data: .map pages",
+   "publisher": "Wikimedia Commons",
+   "url": "https://commons.wikimedia.org/wiki/Data:",
+   "licence": "per page (CC0 or others)",
+   "licence_class": "per page",
+   "state": "not-kml",
+   "reason": "GeoJSON, not KML"
+  },
+  {
+   "kind": "listed",
+   "id": "google-my-maps",
+   "title": "Google My Maps (local history, walks)",
+   "publisher": "various",
+   "url": "https://www.google.com/maps/d/",
+   "licence": "Google terms; each map's author holds rights",
+   "licence_class": "restricted",
+   "state": "restricted",
+   "reason": "not open data: list only"
+  },
+  {
+   "kind": "listed",
+   "id": "umap",
+   "title": "uMap maps (umap.openstreetmap.fr)",
+   "publisher": "uMap users",
+   "url": "https://umap.openstreetmap.fr/",
+   "licence": "per map; OSM-based (ODbL) by default",
+   "licence_class": "share-alike",
+   "state": "not-fetched",
+   "reason": "KML export is made in the browser; licence per map; OSM layers we need are already derived from our own extract"
+  },
+  {
+   "kind": "listed",
+   "id": "national-trails-site",
+   "title": "National Trails website GPX (Thames Path)",
+   "publisher": "National Trails",
+   "url": "https://www.nationaltrail.co.uk/en_GB/trails/thames-path/",
+   "licence": "not stated for the files",
+   "licence_class": "none",
+   "state": "not-kml",
+   "reason": "GPX, not KML, terms not stated; the Natural England layer (OGL) is copied above as ne-thames-path"
+  },
+  {
+   "kind": "listed",
+   "id": "swc-walks",
+   "title": "Saturday Walkers Club GPX & KML (Thames Path, Jubilee Walk)",
+   "publisher": "Saturday Walkers Club",
+   "url": "https://www.walkingclub.org.uk/long-distance-path/thames-path/download-GPX-KML.html",
+   "licence": "free for non-commercial use only",
+   "licence_class": "restricted",
+   "state": "restricted",
+   "reason": "non-commercial: not copied"
+  },
+  {
+   "kind": "listed",
+   "id": "walkingenglishman",
+   "title": "Walking Englishman Jubilee Greenway KMZ",
+   "publisher": "walkingenglishman.com",
+   "url": "https://www.walkingenglishman.com/ldp/jubileegreenway.html",
+   "licence": "not stated",
+   "licence_class": "none",
+   "state": "not-fetched",
+   "reason": "no licence: metadata only"
+  },
+  {
+   "kind": "listed",
+   "id": "os-opendata",
+   "title": "OS OpenData products",
+   "publisher": "Ordnance Survey",
+   "url": "https://osdatahub.os.uk/downloads/open",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "state": "not-kml",
+   "reason": "no KML format (GeoPackage, shapefile, GML, vector tiles)"
+  },
+  {
+   "kind": "listed",
+   "id": "geonames",
+   "title": "GeoNames",
+   "publisher": "GeoNames",
+   "url": "https://www.geonames.org/",
+   "licence": "CC BY 4.0",
+   "licence_class": "cc-by",
+   "state": "not-kml",
+   "reason": "no KML export from the web services (XML, JSON, RDF, dumps)"
+  },
+  {
+   "kind": "listed",
+   "id": "ea-flood",
+   "title": "Environment Agency flood maps",
+   "publisher": "Environment Agency",
+   "url": "https://environment.data.gov.uk/",
+   "licence": "Open Government Licence v3.0",
+   "licence_class": "ogl",
+   "state": "not-kml",
+   "reason": "WMS/WFS/GeoJSON, no KML; the flood layers are held as GeoJSON (feeds/portals/dgu)"
+  },
+  {
+   "kind": "listed",
+   "id": "pla-arcgis",
+   "title": "Port of London Authority ArcGIS services",
+   "publisher": "PLA",
+   "url": "https://maps.pla.co.uk/server/rest/services",
+   "licence": "PLA terms (facts only)",
+   "licence_class": "restricted",
+   "state": "restricted",
+   "reason": "not open: facts only (cwplans-river-and-water)"
+  },
+  {
+   "kind": "listed",
+   "id": "tfl-stations",
+   "title": "TfL stations (GIS Open Data Hub)",
+   "publisher": "Transport for London",
+   "url": "https://services1.arcgis.com/YswvgzOodUvqkoCN/arcgis/rest/services/TfL_stations/FeatureServer",
+   "licence": "none on the item",
+   "licence_class": "none",
+   "state": "not-copied",
+   "reason": "the item has no licence text: metadata only"
+  },
+  {
+   "kind": "listed",
+   "id": "th-canary-wharf-area",
+   "title": "Tower Hamlets: Canary Wharf Area",
+   "publisher": "London Borough of Tower Hamlets",
+   "url": "https://services1.arcgis.com/KZuCGRSe2K5BiG1Z/arcgis/rest/services/Canary_Wharf_Area/FeatureServer",
+   "licence": "none on the item",
+   "licence_class": "none",
+   "state": "not-copied",
+   "reason": "the item has no licence text: metadata only"
+  }
+ ]
+}

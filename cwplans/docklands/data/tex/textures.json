@@ -1,0 +1,41 @@
+{
+ "box": {
+  "x0": -5150,
+  "x1": 2350,
+  "z0": -2000,
+  "z1": 3600,
+  "res": 3.0,
+  "w": 2500,
+  "h": 1866,
+  "note": "image row 0 is z0 (north), column 0 is x0 (west); local metres, x = E - 537550, z = -(N - 180300)"
+ },
+ "textures": {
+  "night2012": {
+   "file": "night2012.jpg",
+   "what": "night-time aerial photography, 20 cm, flown January to April 2012",
+   "attribution": "Night-time aerial photography 2012 \u00a9 Environment Agency, Open Government Licence v3.0",
+   "licence": "Open Government Licence v3.0",
+   "source": "https://environment.data.gov.uk/survey",
+   "files": 62,
+   "bytes": 791730
+  },
+  "intensity2020": {
+   "file": "intensity2020.jpg",
+   "what": "LiDAR return intensity, 1 m, National LiDAR Programme, flown 2020",
+   "attribution": "LiDAR intensity 2020 \u00a9 Environment Agency, Open Government Licence v3.0",
+   "licence": "Open Government Licence v3.0",
+   "source": "https://environment.data.gov.uk/survey",
+   "files": 4,
+   "bytes": 1427011
+  },
+  "rgb2008": {
+   "file": "rgb2008.jpg",
+   "what": "colour aerial photography, 40 cm, flown 25 August 2007 to 18 October 2008",
+   "attribution": "Aerial photography 2007-08 \u00a9 Environment Agency, Open Government Licence v3.0",
+   "licence": "Open Government Licence v3.0",
+   "source": "https://environment.data.gov.uk/survey",
+   "files": 32,
+   "bytes": 1840215
+  }
+ }
+}

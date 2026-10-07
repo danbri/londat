@@ -1,0 +1,537 @@
+{
+ "meta": {
+  "source": "crt-notices",
+  "fetched": "2026-10-04T08:35:02Z",
+  "url": "https://canalrivertrust.org.uk/api/stoppage/notices?consult=false&start=2026-08-05&end=2027-06-01&fields=title%2Cregion%2Cwaterways%2Cpath%2CtypeId%2CreasonId%2CprogrammeId%2Cstart%2Cend%2Cstate&geometry=point",
+  "page": "https://canalrivertrust.org.uk/notices",
+  "licence": "© Canal & River Trust; no open licence stated for notices (the CRT data licence for its ArcGIS layers excludes commercial use). Facts and links only: title, type, reason, dates, waterway, points, link",
+  "attribution": "Canal & River Trust",
+  "method": "The JSON endpoint behind the CRT notices page, all notices from 2026-08-05 to 2027-06-01 (England and Wales, 1076 notices), kept when one of the notice's points lies in the zone. Type, reason and programme names from the lookups embedded in the notices page (2026-10-04).",
+  "window": {
+   "start": "2026-08-05",
+   "end": "2027-06-01"
+  },
+  "counts": {
+   "items": 18,
+   "national": 1076
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "crt-notice:01969013-0cc5-7cb0-8864-07a4e5eb866f",
+   "kind": "advice",
+   "title": "Limehouse Lock Walkway Closed between - ///added.invite.corn and ///shark.hangs.slower",
+   "validity": {
+    "start": "2025-01-17T09:30:00+00:00",
+    "end": null,
+    "open_ended": true
+   },
+   "position": {
+    "lat": 51.5101,
+    "lon": -0.0367,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0367,51.5101]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "Information",
+    "programme": "notice",
+    "waterways": "Limehouse Basin",
+    "region": "London and South East",
+    "state": "Published"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01969013-0cc5-7cb0-8864-07a4e5eb866f"
+  },
+  {
+   "id": "crt-notice:019d2e76-5e6c-713b-8543-8c49e299415d",
+   "kind": "advice",
+   "title": "London Summer Walk - 22 August - Lee Navigation & Limehouse Cut",
+   "validity": {
+    "start": "2026-08-22T08:00:00+00:00",
+    "end": "2026-08-22T14:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5106,
+    "lon": -0.0334,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0092,51.5332],
+     [-0.0334,51.5106]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "Event",
+    "programme": "notice",
+    "waterways": "St Thomas Creek, Limehouse Cut",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019d2e76-5e6c-713b-8543-8c49e299415d"
+  },
+  {
+   "id": "crt-notice:019dbeb7-7394-777c-ab37-4c62695d04a3",
+   "kind": "advice",
+   "title": "West India Dock Entrance Lock",
+   "validity": {
+    "start": "2026-04-18T17:00:00+00:00",
+    "end": "2026-10-25T18:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5014,
+    "lon": -0.0105,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0105,51.5014]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "Event",
+    "programme": "notice",
+    "waterways": "South Dock",
+    "region": "London and South East",
+    "state": "Published"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019dbeb7-7394-777c-ab37-4c62695d04a3"
+  },
+  {
+   "id": "crt-notice:019fb913-7efe-7a38-8c28-17f22ac5044b",
+   "kind": "advice",
+   "title": "Advice - 3rd Party Works, South Dock, Between West India Dock Entrance Lock and River Thames - on Bridge 1, Manchester Road Bridge, Canary wharf",
+   "validity": {
+    "start": "2026-08-05T07:00:00+00:00",
+    "end": "2026-08-05T16:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5014,
+    "lon": -0.0105,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0105,51.5014],
+     [-0.0087,51.5013]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "3rd Party Works",
+    "programme": "notice",
+    "waterways": "South Dock",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fb913-7efe-7a38-8c28-17f22ac5044b"
+  },
+  {
+   "id": "crt-notice:019ff179-34e0-7e00-a9fe-9d830882d24c",
+   "kind": "advice",
+   "title": "Out of Use, Lower Gate Paddle - Lock 11, Salmon Lane Lock",
+   "validity": {
+    "start": "2026-08-11T15:57:00+00:00",
+    "end": "2026-08-17T13:01:04+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5148,
+    "lon": -0.0348,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0348,51.5148]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "Repair",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019ff179-34e0-7e00-a9fe-9d830882d24c"
+  },
+  {
+   "id": "crt-notice:01a023ac-5409-7411-b312-a0ecdae54d36",
+   "kind": "advice",
+   "title": "Between Old Ford Lock 19 on the Lee Navigation and Limehouse Basin",
+   "validity": {
+    "start": "2026-08-21T09:45:00+00:00",
+    "end": "2026-08-24T08:00:32+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.523,
+    "lon": -0.0082,
+    "precision": "first CRT notice point in the zone",
+    "zone": "lea",
+    "points": [
+     [-0.0082,51.523],
+     [-0.0209,51.5381]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Lee Navigation, Limehouse Cut, Limehouse Basin",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01a023ac-5409-7411-b312-a0ecdae54d36"
+  },
+  {
+   "id": "crt-notice:01a0a475-c168-7446-9c68-48174d70d395",
+   "kind": "advice",
+   "title": "Commercial Road Lock 12 - Regent's Canal",
+   "validity": {
+    "start": "2026-09-15T09:55:00+00:00",
+    "end": "2026-09-17T13:34:03+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5123,
+    "lon": -0.0365,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0365,51.5123]
+    ]
+   },
+   "values": {
+    "type": "Advice",
+    "reason": "Repair",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01a0a475-c168-7446-9c68-48174d70d395"
+  },
+  {
+   "id": "crt-notice:019fc733-4985-79c5-88c1-381337e581d1",
+   "kind": "closure",
+   "title": "Temporary Closure - Limehouse Lock",
+   "validity": {
+    "start": "2026-08-19T06:00:00+00:00",
+    "end": "2026-08-21T18:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5101,
+    "lon": -0.0367,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0367,51.5101]
+    ]
+   },
+   "values": {
+    "type": "Navigation Closure",
+    "reason": "Maintenance",
+    "programme": "notice",
+    "waterways": "Limehouse Basin",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fc733-4985-79c5-88c1-381337e581d1"
+  },
+  {
+   "id": "crt-notice:019fc85e-a8eb-7b22-8e09-e64ebc08c5ea",
+   "kind": "closure",
+   "title": "Towpath Closure - South Dock, Thames Quay, London",
+   "validity": {
+    "start": "2026-08-03T16:07:00+00:00",
+    "end": "2026-08-12T08:19:24+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5012,
+    "lon": -0.0156,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0156,51.5012],
+     [-0.0135,51.5009]
+    ]
+   },
+   "values": {
+    "type": "Towpath Closure",
+    "reason": "Maintenance",
+    "programme": "notice",
+    "waterways": "South Dock",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fc85e-a8eb-7b22-8e09-e64ebc08c5ea"
+  },
+  {
+   "id": "crt-notice:019fcd8f-90ae-7b3c-9d6f-2fc0862179d1",
+   "kind": "closure",
+   "title": "Navigation Closure - Limehouse Lock, Limehouse Basin, London",
+   "validity": {
+    "start": "2026-10-14T06:00:00+00:00",
+    "end": "2026-10-16T18:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5101,
+    "lon": -0.0367,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0367,51.5101]
+    ]
+   },
+   "values": {
+    "type": "Navigation Closure",
+    "reason": "Maintenance",
+    "programme": "notice",
+    "waterways": "Limehouse Basin",
+    "region": "London and South East",
+    "state": "Published"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fcd8f-90ae-7b3c-9d6f-2fc0862179d1"
+  },
+  {
+   "id": "crt-notice:019fd0f7-1633-74ba-93de-73367deefc63",
+   "kind": "closure",
+   "title": "Lock 10, Johnsons Lock to Lock 12, Commercial Road Lock closure on the Regent’s Canal",
+   "validity": {
+    "start": "2026-08-05T09:00:00+00:00",
+    "end": "2026-08-06T09:27:53+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5196,
+    "lon": -0.0363,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0363,51.5196],
+     [-0.0365,51.5123]
+    ]
+   },
+   "values": {
+    "type": "Navigation Closure",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fd0f7-1633-74ba-93de-73367deefc63"
+  },
+  {
+   "id": "crt-notice:019fd673-2404-7cae-b981-fd235ae79f2e",
+   "kind": "closure",
+   "title": "Ongoing Overnight closures at Commercial Road, Lock 12 between 3.30pm and 9am",
+   "validity": {
+    "start": "2026-08-07T14:30:00+00:00",
+    "end": "2026-08-15T08:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5123,
+    "lon": -0.0365,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0365,51.5123]
+    ]
+   },
+   "values": {
+    "type": "Navigation Closure",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fd673-2404-7cae-b981-fd235ae79f2e"
+  },
+  {
+   "id": "crt-notice:019ff52c-f3f8-7fd3-b635-d46b6670f3ae",
+   "kind": "closure",
+   "title": "Navigation Closure - Limehouse Lock, Event - Great River Race",
+   "validity": {
+    "start": "2026-09-12T05:00:00+00:00",
+    "end": "2026-09-12T19:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5101,
+    "lon": -0.0367,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0367,51.5101]
+    ]
+   },
+   "values": {
+    "type": "Navigation Closure",
+    "reason": "Event",
+    "programme": "notice",
+    "waterways": "Limehouse Basin",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019ff52c-f3f8-7fd3-b635-d46b6670f3ae"
+  },
+  {
+   "id": "crt-notice:01a01f77-1358-7b15-9b26-4294e59cf0a9",
+   "kind": "closure",
+   "title": "Temporary Closure Water Management - Limehouse Lock",
+   "validity": {
+    "start": "2026-08-21T18:00:00+00:00",
+    "end": "2026-08-27T06:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5101,
+    "lon": -0.0367,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0367,51.5101]
+    ]
+   },
+   "values": {
+    "type": "Navigation Closure",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Limehouse Basin",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01a01f77-1358-7b15-9b26-4294e59cf0a9"
+  },
+  {
+   "id": "crt-notice:019fcd28-87a4-767a-b668-4bee51b89a06",
+   "kind": "restriction",
+   "title": "Changes to Limehouse Lock operating times",
+   "validity": {
+    "start": "2026-08-05T07:00:00+00:00",
+    "end": null,
+    "open_ended": true
+   },
+   "position": {
+    "lat": 51.5101,
+    "lon": -0.0367,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0367,51.5101]
+    ]
+   },
+   "values": {
+    "type": "Navigation Restriction",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Limehouse Basin",
+    "region": "London and South East",
+    "state": "Published"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/019fcd28-87a4-767a-b668-4bee51b89a06"
+  },
+  {
+   "id": "crt-notice:01a0006a-8d06-7c08-b499-de0cfcd19e1f",
+   "kind": "restriction",
+   "title": "Ongoing Overnight closures at Commercial Road, Lock 12, Salmon Lane Lock 11 and Mile End Lock 9 between 2.00pm and 9am",
+   "validity": {
+    "start": "2026-08-25T13:00:00+00:00",
+    "end": null,
+    "open_ended": true
+   },
+   "position": {
+    "lat": 51.5123,
+    "lon": -0.0365,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0379,51.5251],
+     [-0.0365,51.5123]
+    ]
+   },
+   "values": {
+    "type": "Navigation Restriction",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Published"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01a0006a-8d06-7c08-b499-de0cfcd19e1f"
+  },
+  {
+   "id": "crt-notice:01a01a87-66bc-775a-91d8-c8fc1756385d",
+   "kind": "restriction",
+   "title": "Mooring suspension between Mile End Lock and Commercial Road Lock",
+   "validity": {
+    "start": "2026-08-24T08:00:00+00:00",
+    "end": null,
+    "open_ended": true
+   },
+   "position": {
+    "lat": 51.5123,
+    "lon": -0.0365,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0379,51.5251],
+     [-0.0365,51.5123]
+    ]
+   },
+   "values": {
+    "type": "Navigation Restriction",
+    "reason": "Low Water Levels",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Published"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01a01a87-66bc-775a-91d8-c8fc1756385d"
+  },
+  {
+   "id": "crt-notice:01a0ae4a-f48e-77c2-b2b5-62f9d090f448",
+   "kind": "restriction",
+   "title": "Repair work at Commercial Road Lock, Regent's Canal",
+   "validity": {
+    "start": "2026-09-17T09:00:00+00:00",
+    "end": "2026-09-17T13:00:00+00:00",
+    "open_ended": false
+   },
+   "position": {
+    "lat": 51.5123,
+    "lon": -0.0365,
+    "precision": "first CRT notice point in the zone",
+    "zone": "model",
+    "points": [
+     [-0.0365,51.5123]
+    ]
+   },
+   "values": {
+    "type": "Navigation Restriction",
+    "reason": "Repair",
+    "programme": "notice",
+    "waterways": "Regent's Canal",
+    "region": "London and South East",
+    "state": "Completed"
+   },
+   "url": "https://canalrivertrust.org.uk/notices/01a0ae4a-f48e-77c2-b2b5-62f9d090f448"
+  }
+ ]
+}

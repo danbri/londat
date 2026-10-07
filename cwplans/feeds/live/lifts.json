@@ -1,0 +1,106 @@
+{
+ "meta": {
+  "source": "lifts",
+  "url": "https://api.tfl.gov.uk/Disruptions/Lifts/v2/",
+  "fetched": "2026-10-04T08:24:19.134Z",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
+  "method": "GET /Disruptions/Lifts/v2/ (every current lift outage in the TfL network); each station id placed through StopPoint/Mode/tube,dlr,elizabeth-line,overground (naptanId, then hubNaptanCode); kept: stations in the zone. No item means no reported lift outage at that moment, not that every lift works (the feed covers TfL-managed lifts only)",
+  "counts": {
+   "items": 4,
+   "model_box": 3,
+   "east_margin": 1,
+   "london_outages": 18,
+   "unplaced": 0,
+   "stations_in_zone": 65
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "940GZZDLKGV",
+   "kind": "lift-disruption",
+   "name": "King George V DLR Station",
+   "zone": "east",
+   "time": "2026-10-04T08:24:19.134Z",
+   "position": {
+    "lat": 51.502003,
+    "lon": 0.062624
+   },
+   "values": {
+    "lifts_out": [
+     "940GZZDLKGV-Lift-2"
+    ],
+    "message": "King George V: No Step Free Access  - Step free access is not available due to a faulty lift. Call us on 0343 222 1234 if you need help planning your journey."
+   },
+   "url": "https://tfl.gov.uk/plan-a-journey/step-free-access"
+  },
+  {
+   "id": "HUBBAN",
+   "kind": "lift-disruption",
+   "name": "Bank DLR Station",
+   "zone": "model",
+   "time": "2026-10-04T08:24:19.134Z",
+   "position": {
+    "lat": 51.513233,
+    "lon": -0.088515
+   },
+   "values": {
+    "lifts_out": [
+     "HUBBAN-Lift-7"
+    ],
+    "message": "Bank: No Step Free Access - Step free access is not available to/from the King William Street entrance due to faulty lifts. For step free access to the DLR and the Northern line, use the entrance on Cannon Street."
+   },
+   "url": "https://tfl.gov.uk/plan-a-journey/step-free-access"
+  },
+  {
+   "id": "HUBCAW",
+   "kind": "lift-disruption",
+   "name": "Canary Wharf",
+   "zone": "model",
+   "time": "2026-10-04T08:24:19.134Z",
+   "position": {
+    "lat": 51.506203,
+    "lon": -0.018834
+   },
+   "values": {
+    "lifts_out": [
+     "HUBCAW-Lift-LU 2"
+    ],
+    "message": "Canary Wharf: Step free access is not available to the Jubilee line due to a faulty lift. Call us on 0343 222 1234 if you need help planning your journey."
+   },
+   "url": "https://tfl.gov.uk/plan-a-journey/step-free-access"
+  },
+  {
+   "id": "HUBZCW",
+   "kind": "lift-disruption",
+   "name": "Canada Water Rail Station",
+   "zone": "model",
+   "time": "2026-10-04T08:24:19.134Z",
+   "position": {
+    "lat": 51.49799,
+    "lon": -0.04972
+   },
+   "values": {
+    "lifts_out": [
+     "HUBZCW-Lift-4"
+    ],
+    "message": "CANADA WATER STATION: Until Spring 2027, no step-free access between street and ticket hall level at this station. This is while we carry out lift replacement work. For step-free access to the Jubilee line, take bus 47 or 188 from stop B1 in the bus station to Bermondsey. For step-free access to the Windrush line, take any bus from stop B2, or bus 1 or 381 from stop C in the bus station to Surrey Quays. Alternatively, it is about an 800m journey to Surrey Quays at street level via Deal Porters Way. You will not be able to use the lift between the street and ticket hall to enter the station. Please plan ahead and allow more time for your journey"
+   },
+   "url": "https://tfl.gov.uk/plan-a-journey/step-free-access"
+  }
+ ]
+}

@@ -1,0 +1,485 @@
+{
+ "meta": {
+  "source": "planning",
+  "fetched": "2026-10-04",
+  "url": "https://planningdata.london.gov.uk/api-guest/applications/_search",
+  "page": "https://www.london.gov.uk/programmes-strategies/planning/digital-planning/planning-london-datahub",
+  "licence": "GLA Planning London Datahub terms (not confirmed as OGL): application metadata and the link only, description cut to 220 characters",
+  "attribution": "Source: Planning London Datahub (Greater London Authority and the London boroughs)",
+  "method": "One Elasticsearch query (guest endpoint, POST): description has \"temporary\" and one of event, marquee, festival, stage, market, fair, funfair, ice rink, pop-up, filming, concert, exhibition; site centroid in the zone box; newest 300 by last update; applications validated more than two years before the fetch are counted and dropped. Dates: decision date, else the application valid date (the event dates are in the application documents only).",
+  "query": {
+   "bool": {
+    "must": [
+     {
+      "bool": {
+       "should": [
+        {
+         "match": {
+          "description": "temporary"
+         }
+        },
+        {
+         "match": {
+          "description": "temporarily"
+         }
+        }
+       ],
+       "minimum_should_match": 1
+      }
+     },
+     {
+      "bool": {
+       "should": [
+        {
+         "match_phrase": {
+          "description": "event"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "events"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "marquee"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "festival"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "stage"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "market"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "fair"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "funfair"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "ice rink"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "pop-up"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "filming"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "concert"
+         }
+        },
+        {
+         "match_phrase": {
+          "description": "exhibition"
+         }
+        }
+       ],
+       "minimum_should_match": 1
+      }
+     },
+     {
+      "geo_bounding_box": {
+       "centroid": {
+        "top_left": {
+         "lat": 51.522,
+         "lon": -0.095
+        },
+        "bottom_right": {
+         "lat": 51.474,
+         "lon": 0.085
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "counts": {
+   "items": 18,
+   "total_matching": 93,
+   "returned": 93,
+   "in_zone": 91,
+   "older_than_two_years": 73
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "pld:Islington:P2025/1393/FUL",
+   "kind": "planning: temporary event or structure",
+   "title": "P2025/1393/FUL TEA GARDENS: Temporary Change of Use of Finsbury Square for event days of up to 93 (65 days in addition of the 28 allowed through permitted development) for a 1 year period from 1 November 2025 to 4 January from 2026, including temp…",
+   "start": "2025-05-15",
+   "end": null,
+   "date_meaning": "application valid date",
+   "valid_date": "2025-05-15",
+   "decision": "Withdrawn",
+   "location": "TEA GARDENS",
+   "street": "Finsbury Square",
+   "postcode": null,
+   "borough": "Islington",
+   "lat": 51.520707,
+   "lon": -0.086487,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Southwark:25/AP/0809",
+   "kind": "planning: temporary event or structure",
+   "title": "25/AP/0809 London Bridge City Pier: Temporary installation of a pop-up bar and seating area, including the use of the existing pagodas at London Bridge City Pier for a period from 11th May to 14th September",
+   "start": "2025-05-20",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2025-03-26",
+   "decision": "Approved",
+   "location": "London Bridge City Pier",
+   "street": "The Queens Walk",
+   "postcode": "SE1 2QP",
+   "borough": "London Borough of Southwark",
+   "lat": 51.506892,
+   "lon": -0.084688,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Tower Hamlets:PA/25/01179/NC",
+   "kind": "planning: temporary event or structure",
+   "title": "PA/25/01179/NC Canada Square Park, Canada Square, London, E14: Erection of 1 linked marquee to house a skate exchange with a temporary covered ice rink approximately 1225m2 in size. The build of the venue will start on the 6th October 2025 and will be cleared of all equipment by 15…",
+   "start": "2025-09-12",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2025-07-18",
+   "decision": "Approved",
+   "location": "Canada Square Park, Canada Square, London, E14",
+   "street": null,
+   "postcode": null,
+   "borough": "Tower Hamlets",
+   "lat": 51.504738,
+   "lon": -0.01786,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?keyVal=DCAPR148505&activeTab=summary"
+  },
+  {
+   "id": "pld:Greenwich:25/3391/F",
+   "kind": "planning: temporary event or structure",
+   "title": "25/3391/F Land to the east of East Parkside, south of Edmund Halley Way and west of Olympian Way,Gr…: Temporary use of land for the installation of a demountable structure to be used as a theatre and venue for filming and non-movie and theatre shows (Use Class Sui Generis), restaurant (Use Class E(b)) and drink establis…",
+   "start": "2025-10-10",
+   "end": null,
+   "date_meaning": "application valid date",
+   "valid_date": "2025-10-10",
+   "decision": null,
+   "location": "Land to the east of East Parkside, south of Edmund Halley Way and west of Olympian Way,Greenwich Peninsula, SE10",
+   "street": null,
+   "postcode": null,
+   "borough": "Greenwich",
+   "lat": 51.499134,
+   "lon": 0.009733,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://planning.royalgreenwich.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=_GRNW_DCAPR_126257&activeTab=summary"
+  },
+  {
+   "id": "pld:Southwark:26/AP/0140",
+   "kind": "planning: temporary event or structure",
+   "title": "26/AP/0140 Potters Fields Park: Details of Condition 5 (Habitat Management and Monitoring Plan) as required by full planning permission 25/AP/1899 dated 23/12/2025 for Temporary use of the open space for events with the erection of associated temporar…",
+   "start": "2026-02-12",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-01-19",
+   "decision": "Approved",
+   "location": "Potters Fields Park",
+   "street": "Potters Fields",
+   "postcode": "SE1 2SG",
+   "borough": "London Borough of Southwark",
+   "lat": 51.504016,
+   "lon": -0.078223,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:City of London:25/00751/FULL",
+   "kind": "planning: temporary event or structure",
+   "title": "25/00751/FULL Open Space And Events Area: Temporary permission until August 2025 for seating, pergola structures, bar and pétanque courts, at Broadgate Circle associated with the Summer in the City pop-up.",
+   "start": "2026-02-23",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2025-06-09",
+   "decision": "Withdrawn",
+   "location": "Open Space And Events Area",
+   "street": "Broadgate Circle",
+   "postcode": null,
+   "borough": "City of London",
+   "lat": 51.518806,
+   "lon": -0.083525,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Greenwich:25/4258/F",
+   "kind": "planning: temporary event or structure",
+   "title": "25/4258/F Land at Peninsula Square, Peninsula Square, Greenwich Peninsula, London SE10 0SQ: Temporary permission sought for period of 10 years for a proposed series of dismountable seasonal 'activations' and installations to be erected at various times throughout the year, including (but not limited to) market…",
+   "start": "2026-02-25",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2025-12-19",
+   "decision": "Approved",
+   "location": "Land at Peninsula Square, Peninsula Square, Greenwich Peninsula, London SE10 0SQ",
+   "street": null,
+   "postcode": null,
+   "borough": "Greenwich",
+   "lat": 51.501318,
+   "lon": 0.005074,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://planning.royalgreenwich.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=_GRNW_DCAPR_127125&activeTab=summary"
+  },
+  {
+   "id": "pld:Greenwich:25/0580/F",
+   "kind": "planning: temporary event or structure",
+   "title": "25/0580/F BOROUGH HALL, ROYAL HILL, GREENWICH, LONDON, SE10 8RE: Temporary planning permission for a Change of Use of first floor from Dance Studio and Event Space (Use Class Sui Generis) to a Mixed use Dance Studio and Event Space and Place of Worship (Use Class Sui Generis) and pro…",
+   "start": "2026-03-25",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2025-04-14",
+   "decision": "Approved",
+   "location": "BOROUGH HALL, ROYAL HILL, GREENWICH, LONDON, SE10 8RE",
+   "street": null,
+   "postcode": null,
+   "borough": "Greenwich",
+   "lat": 51.477784,
+   "lon": -0.010763,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://planning.royalgreenwich.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=_GRNW_DCAPR_123441&activeTab=summary"
+  },
+  {
+   "id": "pld:City of London:26/00257/FULL",
+   "kind": "planning: temporary event or structure",
+   "title": "26/00257/FULL Barbican Arts And Conference Centre, Arts Centre: Temporary change of use of a section of Car Park 5 to an exhibition space (Class F1).",
+   "start": "2026-04-13",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-02-17",
+   "decision": "Approved",
+   "location": "Barbican Arts And Conference Centre, Arts Centre",
+   "street": "Silk Street",
+   "postcode": "EC2Y 8DS",
+   "borough": "City of London",
+   "lat": 51.519959,
+   "lon": -0.094129,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Greenwich:26/1142/F",
+   "kind": "planning: temporary event or structure",
+   "title": "26/1142/F GRAND SQUARE, OLD ROYAL NAVAL COLLEGE, KING WILLIAM WALK, GREENWICH, SE10 9NN: Installation of temporary structures and stage, within the Upper and Lower Grand Squares (known as the Grand Axis), King William and King Charles Lawns, Queen Anne, Queen Mary, King Charles and King William Courtyards a…",
+   "start": "2026-07-14",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-04-13",
+   "decision": "Approved",
+   "location": "GRAND SQUARE, OLD ROYAL NAVAL COLLEGE, KING WILLIAM WALK, GREENWICH, SE10 9NN",
+   "street": null,
+   "postcode": null,
+   "borough": "Greenwich",
+   "lat": 51.483664,
+   "lon": -0.005941,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://planning.royalgreenwich.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=_GRNW_DCAPR_128337&activeTab=summary"
+  },
+  {
+   "id": "pld:City of London:26/00394/FULL",
+   "kind": "planning: temporary event or structure",
+   "title": "26/00394/FULL Cannon Bridge House: Refurbishment works to Cannon Bridge House, including enhancement of Atrium building entrance to Dowgate Hill, new south facing terraces to the Atrium Building, landscaping works to the existing River Building roof terr…",
+   "start": "2026-07-17",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-03-18",
+   "decision": "Approved",
+   "location": "Cannon Bridge House",
+   "street": "Dowgate Hill",
+   "postcode": "EC4R 2YA",
+   "borough": "City of London",
+   "lat": 51.51077,
+   "lon": -0.090924,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Tower Hamlets:PA/26/01407",
+   "kind": "planning: temporary event or structure",
+   "title": "PA/26/01407 Railway Arches, Royal Mint Street, London, E1: Temporary planning permission for the installation of two pop-up containers and the temporary change of use from Use Class E(g)(iii) (Industrial Processes) and B8 (Storage and Distribution) to Use Class E(b) (Sale of fo…",
+   "start": "2026-08-10",
+   "end": null,
+   "date_meaning": "application valid date",
+   "valid_date": "2026-08-10",
+   "decision": "Application Under Consideration",
+   "location": "Railway Arches, Royal Mint Street, London, E1",
+   "street": null,
+   "postcode": null,
+   "borough": "Tower Hamlets",
+   "lat": 51.510893,
+   "lon": -0.069316,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?keyVal=DCAPR151305&activeTab=summary"
+  },
+  {
+   "id": "pld:Tower Hamlets:PA/26/01407/NC",
+   "kind": "planning: temporary event or structure",
+   "title": "PA/26/01407/NC Railway Arches, Royal Mint Street, London, E1: Temporary planning permission for the installation of two pop-up containers and the temporary change of use from Use Class E(g)(iii) (Industrial Processes) and B8 (Storage and Distribution) to Use Class E(b) (Sale of fo…",
+   "start": "2026-08-10",
+   "end": null,
+   "date_meaning": "application valid date",
+   "valid_date": "2026-08-10",
+   "decision": "Application Under Consideration",
+   "location": "Railway Arches, Royal Mint Street, London, E1",
+   "street": null,
+   "postcode": null,
+   "borough": "Tower Hamlets",
+   "lat": 51.510893,
+   "lon": -0.069316,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://development.towerhamlets.gov.uk/online-applications/applicationDetails.do?keyVal=DCAPR151305&activeTab=summary"
+  },
+  {
+   "id": "pld:Newham:26/01031/FUL",
+   "kind": "planning: temporary event or structure",
+   "title": "26/01031/FUL Floating Gardens: Proposed street food market consisting of six shipping containers, seating areas, bin store and toilet bloc for a temporary period of three years (amended description).",
+   "start": "2026-09-07",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-07-15",
+   "decision": "Withdrawn",
+   "location": "Floating Gardens",
+   "street": "Excel Marina",
+   "postcode": null,
+   "borough": "London Borough of Newham",
+   "lat": 51.507359,
+   "lon": 0.020931,
+   "zone": "east",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Newham:26/01975/FUL",
+   "kind": "planning: temporary event or structure",
+   "title": "26/01975/FUL Thames Wharf: Temporary change of use of existing buildings as meanwhile event space (Sui Generis) for a maximum of six events within the period to 31st December 2026.",
+   "start": "2026-09-14",
+   "end": null,
+   "date_meaning": "application valid date",
+   "valid_date": "2026-09-14",
+   "decision": "Application Under Consideration",
+   "location": "Thames Wharf",
+   "street": "Dock Road",
+   "postcode": "E16 1AF",
+   "borough": "London Borough of Newham",
+   "lat": 51.507558,
+   "lon": 0.01091,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  },
+  {
+   "id": "pld:Greenwich:26/2405/F",
+   "kind": "planning: temporary event or structure",
+   "title": "26/2405/F ROYAL MUSEUMS GREENWICH, PARK ROW, GREENWICH, LONDON, SE10 9NF: Temporary installation of an outdoor ice rink with associated lighting and walkways; 1 x marquee structure to contain ice skating lockers and exchange area, a cafe and a staff room; 1 x gazebo for ice re-surfacer; plant…",
+   "start": "2026-09-16",
+   "end": null,
+   "date_meaning": "application valid date",
+   "valid_date": "2026-09-16",
+   "decision": "Application Under Consideration",
+   "location": "ROYAL MUSEUMS GREENWICH, PARK ROW, GREENWICH, LONDON, SE10 9NF",
+   "street": null,
+   "postcode": null,
+   "borough": "Greenwich",
+   "lat": 51.481346,
+   "lon": -0.004473,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://planning.royalgreenwich.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=_GRNW_DCAPR_129602&activeTab=summary"
+  },
+  {
+   "id": "pld:Greenwich:26/1247/F",
+   "kind": "planning: temporary event or structure",
+   "title": "26/1247/F Land to the east of East Parkside, south of Edmund Halley Way and west of Olympian Way ('…: Temporary use of land for up to 10 years for the installation of an event space/structure and associated works to create a venue for the hosting of shows and events, including immersive interactive entertainments (Sui G…",
+   "start": "2026-09-24",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-04-21",
+   "decision": "Approved",
+   "location": "Land to the east of East Parkside, south of Edmund Halley Way and west of Olympian Way ('Plot 20.02'), Greenwich Peninsula SE10",
+   "street": null,
+   "postcode": null,
+   "borough": "Greenwich",
+   "lat": 51.498957,
+   "lon": 0.0085,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": "https://planning.royalgreenwich.gov.uk/online-applications/applicationDetails.do?activeTab=summary&keyVal=_GRNW_DCAPR_128442&activeTab=summary"
+  },
+  {
+   "id": "pld:Southwark:26/AP/1131",
+   "kind": "planning: temporary event or structure",
+   "title": "26/AP/1131 London Bridge City Pier: Planning application for the temporary installation of a pop-up bar and decked seating/entertainment area, at London Bridge City Pier for a period from 1st May to 4th October.",
+   "start": "2026-09-25",
+   "end": null,
+   "date_meaning": "decision date",
+   "valid_date": "2026-04-22",
+   "decision": "Approved",
+   "location": "London Bridge City Pier",
+   "street": "The Queens Walk",
+   "postcode": "SE1 2QP",
+   "borough": "London Borough of Southwark",
+   "lat": 51.506892,
+   "lon": -0.084688,
+   "zone": "model",
+   "placed_by": "Planning London Datahub site centroid",
+   "url": null
+  }
+ ]
+}

@@ -1,0 +1,99 @@
+{
+ "meta": {
+  "about": "Canary Wharf Group press and news pages whose slug says a building was lit or illuminated, found in the cwg.com sitemaps (plus pages found by search), read from Internet Archive copies. Facts only: title, dates, the colour words that appear in sentences naming a crown or One Canada Square. Page text is not committed.",
+  "tool": "tools/fetch-crown-lighting.mjs --press",
+  "run": "2026-10-04",
+  "slug_rule": "/(^|-)(lit|illuminat\\w*|halo|pyramid|turns-(purple|pink|red|blue|green|orange|gold|yellow|white|teal))(-|$)|lights-up-(green|red|blue|pink|purple|orange|one-canada)|light-it-|goes-(purple|pink|green|blue)/",
+  "sitemaps": [
+   "https://cwg.com/press-release-sitemap.xml",
+   "https://cwg.com/community_news-sitemap.xml",
+   "https://web.archive.org/web/2026id_/https://canarywharf.com/news-sitemap.xml"
+  ],
+  "known_pages": [
+   "https://canarywharf.com/news/light-it-blue-070121/",
+   "https://cwg.com/press-release/canary-wharf-launches-connected-by-light-30102020/",
+   "https://cwg.com/press-release/canary-wharf-bursts-with-pride-this-june-010621/",
+   "https://cwg.com/community_news/celebrating-the-queens-platinum-jubilee-jun-2022/",
+   "https://cwg.com/press-release/canary-wharf-ignites-the-capital-with-launch-of-summer-lights-240621/"
+  ]
+ },
+ "pages": [
+  {
+   "url": "https://cwg.com/community_news/celebrating-the-queens-platinum-jubilee-jun-2022/",
+   "slug_date": null,
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20240523162445/https://group.canarywharf.com/community_news/celebrating-the-queens-platinum-jubilee-jun-2022/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/bioluminescent-flower-parlour-this-groundbreaking-installation-featuring-glow-in-the-dark-flowers-will-bring-together-nature-art-and-science-to-illuminate-the-botanic-identity-and-wonder-of-flowe/",
+   "slug_date": null,
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260519154434/https://cwg.com/press-release/bioluminescent-flower-parlour-this-groundbreaking-installation-featuring-glow-in-the-dark-flowers-will-bring-together-nature-art-and-science-to-illuminate-the-botanic-identity-and-wonder-of-flowe/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/community_news/canary-wharf-turns-purple-may-2022/",
+   "slug_date": null,
+   "status": "not archived",
+   "archive_url": null,
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/community_news/community-allotment-goes-purple-may-2022/",
+   "slug_date": null,
+   "status": "not archived",
+   "archive_url": null,
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/canary-wharf-launches-connected-by-light-30102020/",
+   "slug_date": "2020-10-30",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260209121932/https://group.canarywharf.com/press-release/canary-wharf-launches-connected-by-light-30102020/",
+   "fetched": null
+  },
+  {
+   "url": "https://canarywharf.com/news/light-it-blue-070121/",
+   "slug_date": "2021-01-07",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260508122511/https://canarywharf.com/news/light-it-blue-070121/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/canary-wharf-bursts-with-pride-this-june-010621/",
+   "slug_date": "2021-06-01",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260613064322/https://cwg.com/press-release/canary-wharf-bursts-with-pride-this-june-010621/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/canary-wharf-ignites-the-capital-with-launch-of-summer-lights-240621/",
+   "slug_date": "2021-06-24",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260209104016/https://group.canarywharf.com/press-release/canary-wharf-ignites-the-capital-with-launch-of-summer-lights-240621/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/floating-flower-display-illuminates-canary-wharf-for-diwali-021121/",
+   "slug_date": "2021-11-02",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260209122053/https://group.canarywharf.com/press-release/floating-flower-display-illuminates-canary-wharf-for-diwali-021121/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/canary-wharf-turns-purple-to-celebrate-elizabeth-line-opening-240522/",
+   "slug_date": "2022-05-24",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20250722011852/https://group.canarywharf.com/press-release/canary-wharf-turns-purple-to-celebrate-elizabeth-line-opening-240522/",
+   "fetched": null
+  },
+  {
+   "url": "https://cwg.com/press-release/londons-one-canada-square-illuminated-red-to-mark-world-aids-day-2024-02-12-24/",
+   "slug_date": "2024-12-02",
+   "status": "archive copy unreachable (connection reset)",
+   "archive_url": "https://web.archive.org/web/20260209111552/https://group.canarywharf.com/press-release/londons-one-canada-square-illuminated-red-to-mark-world-aids-day-2024-02-12-24/",
+   "fetched": null
+  }
+ ]
+}

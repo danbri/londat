@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Canada Water → Surrey Quays 3D</title>
+<style>
+html,body{margin:0;background:#101316;color:#eee;font:15px system-ui}#wrap{position:relative;height:62vh;min-height:420px}canvas{width:100%;height:100%;display:block;touch-action:none}
+.panel{padding:14px 16px;background:#15191d;border-top:1px solid #333}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;color:#eee;background:#293038;border:1px solid #59616a;border-radius:10px;padding:10px 14px}button[aria-pressed=true]{background:#3d4a57;border-color:#9aa6b2}
+input{width:min(320px,55vw)}.warn{color:#ffd26f}.small{color:#bbc2c9}.legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:10px}
+.sw{width:13px;height:13px;display:inline-block;margin-right:5px}.hud{position:absolute;left:10px;top:10px;background:#111c;padding:8px 10px;border-radius:8px;font-size:12px;pointer-events:none}
+</style></head>
+<body>
+<div id="wrap"><canvas id="c" role="img" aria-label="Schematic 3D view of the rail corridor under Canada Water"></canvas><div class="hud" id="hud">Standalone WebGL · drag to orbit · pinch/wheel zoom</div></div>
+<div class="panel"><b>Canada Water → Surrey Quays: subsurface study (first schematic)</b> · <a href="./" style="color:#9cc8ff">open-data model</a>
+<div class="small">Offline-safe renderer. Surface objects are schematic; tunnel depth/profile remains provisional pending TfL engineering levels. Ground is drawn translucent so the tunnel shows through.</div>
+<div class="row" style="margin-top:10px"><label>Depth to centreline <input id="depth" type="range" min="4" max="30" step=".5" value="14"></label><output id="depthOut" for="depth">14 m</output>
+<label>Vertical × <input id="vz" type="range" min="1" max="6" step=".5" value="2"></label><output id="vzOut" for="vz">2×</output></div>
+<div class="row" style="margin-top:10px"><button type="button" id="planBtn" aria-pressed="false">Plan</button><button type="button" id="oblBtn" aria-pressed="true">Oblique</button><button type="button" id="crossBtn" aria-pressed="false" title="Side view along the route, showing the depth profile">Long section</button></div>
+<div class="legend"><span><i class="sw" style="background:#56a7c8"></i>Dock</span><span><i class="sw" style="background:#cf5c54"></i>Rail corridor</span><span><i class="sw" style="background:#5db27c"></i>Leisure centre/pools</span><span><i class="sw" style="background:#aaa"></i>Ground/context</span></div>
+<div class="warn" style="margin-top:8px">Not engineering geometry. This build deliberately keeps the unknown tunnel Z adjustable.</div></div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const cv=$('c'),hud=$('hud'),depthIn=$('depth'),vzIn=$('vz'),depthOut=$('depthOut'),vzOut=$('vzOut');
+const btns={plan:$('planBtn'),orbit:$('oblBtn'),cross:$('crossBtn')};
+const gl=cv.getContext('webgl',{antialias:true,alpha:false});
+if(!gl){hud.textContent='WebGL unavailable in this preview';return}
+const vs=`attribute vec3 p;attribute vec3 c;uniform mat4 m;varying vec3 v;void main(){v=c;gl_Position=m*vec4(p,1.);}`;
+const fs=`precision mediump float;varying vec3 v;uniform float a;void main(){gl_FragColor=vec4(v,a);}`;
+function sh(t,s){let x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x}
+let pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+let P=gl.getAttribLocation(pr,'p'),C=gl.getAttribLocation(pr,'c'),M=gl.getUniformLocation(pr,'m'),A=gl.getUniformLocation(pr,'a');
+const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.enableVertexAttribArray(P);gl.vertexAttribPointer(P,3,gl.FLOAT,false,24,0);gl.enableVertexAttribArray(C);gl.vertexAttribPointer(C,3,gl.FLOAT,false,24,12);
+let verts=[],solidCount=0,totalCount=0,builtDepth=null;
+function tri(a,b,c,col){for(const q of [a,b,c])verts.push(...q,...col)}
+function quad(a,b,c,d,col){tri(a,b,c,col);tri(a,c,d,col)}
+function box(x,y,z,w,h,d,col){let X=x+w/2,x0=x-w/2,Y=y+h/2,y0=y-h/2,Z=z+d/2,z0=z-d/2;
+let p=[[x0,y0,z0],[X,y0,z0],[X,Y,z0],[x0,Y,z0],[x0,y0,Z],[X,y0,Z],[X,Y,Z],[x0,Y,Z]];
+[[0,1,2,3],[4,7,6,5],[0,4,5,1],[3,2,6,7],[1,5,6,2],[0,3,7,4]].forEach(f=>quad(p[f[0]],p[f[1]],p[f[2]],p[f[3]],col))}
+// Geometry is in true metres; vertical exaggeration is applied in the view matrix so it scales everything alike.
+function scene(depth){
+ verts=[];
+ // Canada Water dock
+ box(-90,1,-165,175,2,120,[.20,.55,.72]);
+ // leisure centre mass and two pools
+ box(75,13,-110,155,26,95,[.25,.48,.34]); box(55,27,-110,58,2,22,[.20,.62,.78]); box(105,27,-110,58,2,22,[.20,.62,.78]);
+ // contextual blocks
+ [[-245,18,-60,95,36,100],[220,22,-40,120,44,120],[-220,16,175,110,32,90],[205,20,205,130,40,100]].forEach(b=>box(...b,[.48,.50,.51]));
+ // rail as segmented boxes: centreline at the slider depth mid-route, 22.5% shallower at each end (provisional profile)
+ for(let i=0;i<22;i++){let t=i/21,z=-300+t*600,x=12*Math.sin(t*2.5),y=-depth*(1-Math.abs(t-.5)*.45);box(x,y,z,18,7,32,[.75,.24,.21])}
+ solidCount=verts.length/6;
+ // ground last: drawn translucent so the buried corridor stays visible
+ quad([-360,0,-380],[360,0,-380],[360,0,380],[-360,0,380],[.33,.35,.36]);
+ totalCount=verts.length/6;
+ gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(verts),gl.DYNAMIC_DRAW);builtDepth=depth;
+}
+function mul(a,b){let o=new Float32Array(16);for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o}
+function persp(f,a,n,fa){let t=1/Math.tan(f/2),o=new Float32Array(16);o[0]=t/a;o[5]=t;o[10]=(fa+n)/(n-fa);o[11]=-1;o[14]=2*fa*n/(n-fa);return o}
+const sub=(a,b)=>a.map((v,i)=>v-b[i]),dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0),cross3=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm=a=>{let l=Math.hypot(...a);return a.map(v=>v/l)};
+function look(e,t,u){let z=norm(sub(e,t)),x=norm(cross3(u,z)),y=cross3(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,e),-dot(y,e),-dot(z,e),1])}
+const scaleY=s=>new Float32Array([1,0,0,0,0,s,0,0,0,0,1,0,0,0,0,1]);
+let yaw=.65,pitch=.58,dist=760,mode='orbit';
+// long section: eye level with the tunnel, so the ground is edge-on and the depth profile reads directly
+const focus=()=>mode==='cross'?[0,-.5*(+depthIn.value)*(+vzIn.value),0]:[0,-20,0];
+function eye(){if(mode==='plan')return[0,900,0];if(mode==='cross')return[760,focus()[1],0];return[dist*Math.sin(yaw)*Math.cos(pitch),dist*Math.sin(pitch),dist*Math.cos(yaw)*Math.cos(pitch)]}
+let queued=false;function draw(){if(!queued){queued=true;requestAnimationFrame(render)}}
+function render(){queued=false;let d=+depthIn.value,v=+vzIn.value;if(d!==builtDepth)scene(d);
+ let dpr=devicePixelRatio||1,w=Math.round(cv.clientWidth*dpr),h=Math.round(cv.clientHeight*dpr);if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}
+ gl.viewport(0,0,w,h);gl.clearColor(.063,.075,.086,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+ // plan view looks straight down, so it needs an up vector that is not vertical (north = -z = screen up)
+ let up=mode==='plan'?[0,0,-1]:[0,1,0];
+ let mat=mul(mul(persp(.78,w/h,1,3000),look(eye(),focus(),up)),scaleY(v));gl.uniformMatrix4fv(M,false,mat);
+ gl.disable(gl.BLEND);gl.depthMask(true);gl.uniform1f(A,1);gl.drawArrays(gl.TRIANGLES,0,solidCount);
+ gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.uniform1f(A,.45);gl.drawArrays(gl.TRIANGLES,solidCount,totalCount-solidCount);gl.depthMask(true)}
+function setMode(m){mode=m;for(const k in btns)btns[k].setAttribute('aria-pressed',String(k===m));draw()}
+depthIn.oninput=()=>{depthOut.value=depthIn.value+' m';draw()};vzIn.oninput=()=>{vzOut.value=vzIn.value+'×';draw()};
+btns.plan.onclick=()=>setMode('plan');btns.orbit.onclick=()=>setMode('orbit');btns.cross.onclick=()=>setMode('cross');
+// pointer handling: one pointer orbits (switching to oblique), two pointers pinch-zoom
+const ptrs=new Map();let pinch0=null;
+const spread=()=>{let [a,b]=[...ptrs.values()];return Math.hypot(a[0]-b[0],a[1]-b[1])};
+const zoom=f=>{dist=Math.max(250,Math.min(1500,dist*f));if(mode!=='orbit')setMode('orbit');else draw()};
+cv.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,[e.clientX,e.clientY]);cv.setPointerCapture(e.pointerId);if(ptrs.size===2)pinch0=[spread(),dist]});
+cv.addEventListener('pointermove',e=>{let last=ptrs.get(e.pointerId);if(!last)return;let cur=[e.clientX,e.clientY];ptrs.set(e.pointerId,cur);
+ if(ptrs.size===2&&pinch0){dist=pinch0[1];zoom(pinch0[0]/Math.max(1,spread()));return}
+ if(ptrs.size!==1)return;if(mode!=='orbit')setMode('orbit');
+ yaw+=(cur[0]-last[0])*.006;pitch=Math.max(.08,Math.min(1.45,pitch+(cur[1]-last[1])*.006));draw()});
+const end=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch0=null};
+cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+cv.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(e.deltaY*.001))},{passive:false});
+addEventListener('resize',draw);draw();
+})();
+</script>
+</body></html>

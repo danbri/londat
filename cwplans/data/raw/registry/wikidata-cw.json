@@ -1,0 +1,7080 @@
+{
+ "source": "https://qlever.dev/api/wikidata",
+ "fetched": "2026-10-03",
+ "centre": "POINT(-0.0175 51.5040)",
+ "radius_km": 1.1,
+ "items": [
+  {
+   "id": "Q1014325",
+   "label": "Canada Square",
+   "description": "public square at Canary Wharf, on the Isle of Dogs in London's Docklands",
+   "coord": "POINT(-0.019423 51.504900)",
+   "km": 0.167,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q108862123",
+      "label": "office plaza"
+     },
+     {
+      "id": "Q174782",
+      "label": "square"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1032451",
+   "label": "Poplar and Limehouse",
+   "description": "Parliamentary constituency in the United Kingdom, 2010 onwards",
+   "coord": "POINT(-0.020000 51.500000)",
+   "km": 0.478,
+   "props": {
+    "inception": [
+     "2010-05-06T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q27971968",
+      "label": "constituency of the House of Commons"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1032811",
+   "label": "Canary Wharf",
+   "description": "Docklands Light Railway (DLR) station in London, England",
+   "coord": "POINT(-0.020900 51.505100)",
+   "km": 0.266,
+   "props": {
+    "official website": [
+     {
+      "id": "canary-wharf-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1991-07-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11670533",
+      "label": "elevated station"
+     },
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1032842",
+   "label": "Canary Wharf",
+   "description": "London Underground station",
+   "coord": "POINT(-0.018611 51.503611)",
+   "km": 0.088,
+   "props": {
+    "street address": [
+     "[[Canary Wharf]], [[Tower Hamlets]], [[Londra]]"
+    ],
+    "inception": [
+     "1999-09-17T00:00:00Z"
+    ],
+    "opened": [
+     "1999-09-17T00:00:00Z"
+    ],
+    "architect": [
+     {
+      "id": "Q104898",
+      "label": "Norman Foster"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q14562709",
+      "label": "London Underground station"
+     },
+     {
+      "id": "Q22808403",
+      "label": "underground station"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q682520",
+      "label": "TfL"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q105107778",
+   "label": "St Peter's Church",
+   "description": "floating church barge in West India Quay, London, England, UK",
+   "coord": "POINT(-0.023905 51.507003)",
+   "km": 0.556,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q16518",
+      "label": "barge"
+     },
+     {
+      "id": "Q16970",
+      "label": "church building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q106094566",
+   "label": "Tower Hamlets Recycling Centre",
+   "description": "household waste recycling centre",
+   "coord": "POINT(-0.006854 51.505039)",
+   "km": 0.747,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q27106436",
+      "label": "recycling center"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q106542221",
+   "label": "Q106542221",
+   "description": "",
+   "coord": "POINT(-0.014839 51.496731)",
+   "km": 0.83,
+   "props": {}
+  },
+  {
+   "id": "Q107398243",
+   "label": "Blackwall Tunnel (eastern)",
+   "description": "eastern tunnel of Blackwall Tunnel",
+   "coord": "POINT(-0.001944 51.505278)",
+   "km": 1.087,
+   "props": {
+    "inception": [
+     "1967-08-02T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q2354973",
+      "label": "road tunnel"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q682520",
+      "label": "TfL"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q107398366",
+   "label": "Blackwall Tunnel (western)",
+   "description": "western tunnel of Blackwall Tunnel",
+   "coord": "POINT(-0.003889 51.503611)",
+   "km": 0.944,
+   "props": {
+    "opened": [
+     "1897-05-22T00:00:00Z"
+    ],
+    "structural engineer": [
+     {
+      "id": "Q2255435",
+      "label": "Alexander Binnie"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q2354973",
+      "label": "road tunnel"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q682520",
+      "label": "TfL"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q107420073",
+   "label": "Jubilee line tunnels",
+   "description": "tunnels carrying the Jubilee line under the Thames between Canada Water and Canary Wharf",
+   "coord": "POINT(-0.030000 51.500556)",
+   "km": 0.947,
+   "props": {
+    "inception": [
+     "1999-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1311958",
+      "label": "railway tunnel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q107420083",
+   "label": "Isle of Dogs Jubilee line tunnels",
+   "description": "tunnels carrying the Jubilee line under the Thames between Canary Wharf and North Greenwich stations",
+   "coord": "POINT(-0.005278 51.500278)",
+   "km": 0.943,
+   "props": {
+    "inception": [
+     "1999-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1311958",
+      "label": "railway tunnel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q109321776",
+   "label": "Hertsmere Road",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.022600 51.507700)",
+   "km": 0.543,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1093866",
+   "label": "City Canal",
+   "description": "former canal in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.016944 51.501700)",
+   "km": 0.259,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12284",
+      "label": "canal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1101257",
+   "label": "Clifford Chance",
+   "description": "London headquartered multinational law firm",
+   "coord": "POINT(-0.017000 51.502700)",
+   "km": 0.149,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1802-01-01T00:00:00Z",
+     "1987-01-01T00:00:00Z"
+    ],
+    "headquarters location": [
+     {
+      "id": "Q138760",
+      "label": "10 Upper Bank Street"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q43229",
+      "label": "organization"
+     },
+     {
+      "id": "Q4830453",
+      "label": "business"
+     },
+     {
+      "id": "Q613142",
+      "label": "law firm"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q110779170",
+   "label": "Columbus Courtyard",
+   "description": "Urban square in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.025400 51.506300)",
+   "km": 0.604,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q174782",
+      "label": "square"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q111369012",
+   "label": "Novotel London Canary Wharf",
+   "description": "hotel in London, United Kingdom",
+   "coord": "POINT(-0.023290 51.501330)",
+   "km": 0.499,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q111369013",
+   "label": "Fraser Place Canary Wharf",
+   "description": "hotel in London, United Kingdom",
+   "coord": "POINT(-0.011290 51.505150)",
+   "km": 0.449,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q111409661",
+   "label": "Lansbury Heritage Hotel",
+   "description": "hotel in London, United Kingdom",
+   "coord": "POINT(-0.015510 51.509000)",
+   "km": 0.573,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q111961449",
+   "label": "Man with Arms Open",
+   "description": "sculpture by Giles Penny",
+   "coord": "POINT(-0.024500 51.505500)",
+   "km": 0.513,
+   "props": {
+    "inception": [
+     "1995-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q179700",
+      "label": "statue"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q112013282",
+   "label": "Marlin Apartments Canary Wharf",
+   "description": "hotel in London, United Kingdom",
+   "coord": "POINT(-0.024970 51.500550)",
+   "km": 0.645,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1141277",
+   "label": "Crossharbour",
+   "description": "Docklands Light Railway station",
+   "coord": "POINT(-0.014400 51.495600)",
+   "km": 0.959,
+   "props": {
+    "official website": [
+     {
+      "id": "crossharbour-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11670533",
+      "label": "elevated station"
+     },
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q98596445",
+      "label": "East Ferry Road"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q119449537",
+   "label": "Glengall Road",
+   "description": "Football ground",
+   "coord": "POINT(-0.023197 51.494900)",
+   "km": 1.087,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q17350442",
+      "label": "venue"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q119855829",
+   "label": "Telehouse South",
+   "description": "building in the London Borough of Tower Hamlets, England, UK",
+   "coord": "POINT(-0.003400 51.507100)",
+   "km": 1.036,
+   "props": {
+    "street address": [
+     "Blackwwall Yard, E14 London",
+     "Paul Julius Close, E14 London"
+    ],
+    "postal code": [
+     "E14"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q237412",
+      "label": "Richard Rogers"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     },
+     {
+      "id": "Q671224",
+      "label": "data center"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q121461269",
+   "label": "Sir John McDougall Gardens",
+   "description": "park in London, England",
+   "coord": "POINT(-0.026667 51.496944)",
+   "km": 1.01,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q22698",
+      "label": "park"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q121634",
+   "label": "Coldharbour",
+   "description": "area in the London Borough of Tower Hamlets, United Kingdom",
+   "coord": "POINT(-0.007500 51.502800)",
+   "km": 0.706,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q122750",
+   "label": "Cubitt Town",
+   "description": "area in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.006161 51.497480)",
+   "km": 1.07,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q122759269",
+   "label": "The Ledger Building",
+   "description": "pub in West India Quay, London",
+   "coord": "POINT(-0.024547 51.507661)",
+   "km": 0.636,
+   "props": {
+    "street address": [
+     "4 Hertsmere Road, West India Quay, London, E14 4AL"
+    ],
+    "postal code": [
+     "E14 4AL"
+    ],
+    "official website": [
+     {
+      "id": "the-ledger-building-docklands",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q212198",
+      "label": "pub"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q6109362",
+      "label": "J D Wetherspoon"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q122767",
+   "label": "Blackwall",
+   "description": "district of the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.003400 51.506300)",
+   "km": 1.01,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q123024158",
+   "label": "Thomson Magazines",
+   "description": "UK publishing company (1955-1980s)",
+   "coord": "POINT(-0.018529 51.505641)",
+   "km": 0.196,
+   "props": {
+    "postal code": [
+     "E14 5AQ"
+    ],
+    "street address": [
+     "Five Canada Square, Canary Wharf, London E14 5AQ, United Kingdom"
+    ],
+    "inception": [
+     "1955-12-31T00:00:00Z"
+    ],
+    "dissolved or demolished": [
+     "1980-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q2085381",
+      "label": "publishing house"
+     },
+     {
+      "id": "Q58302943",
+      "label": "magazine publisher"
+     }
+    ],
+    "headquarters location": [
+     {
+      "id": "Q84",
+      "label": "London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q123360",
+   "label": "Poplar",
+   "description": "district of the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.017800 51.506600)",
+   "km": 0.29,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q124041",
+   "label": "London Docklands",
+   "description": "area in east and southeast London, England, UK",
+   "coord": "POINT(-0.018055 51.505000)",
+   "km": 0.118,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1851368",
+      "label": "waterfront"
+     },
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q124377",
+   "label": "Canary Wharf",
+   "description": "privately-owned district in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.019445 51.505000)",
+   "km": 0.175,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     },
+     {
+      "id": "Q7246264",
+      "label": "privately owned public space"
+     },
+     {
+      "id": "Q738570",
+      "label": "central business district"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q129793154",
+   "label": "Congregational Library London",
+   "description": "",
+   "coord": "POINT(-0.019370 51.511125)",
+   "km": 0.804,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q50379845",
+      "label": "religious library"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q130251332",
+   "label": "The Wake",
+   "description": "planned sculpture in London, England",
+   "coord": "POINT(-0.022000 51.506200)",
+   "km": 0.396,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q64728694",
+      "label": "proposed entity"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q130758506",
+   "label": "Amory Tower",
+   "description": "residential building in London, England",
+   "coord": "POINT(-0.013670 51.500090)",
+   "km": 0.51,
+   "props": {
+    "floors above ground": [
+     "53.0"
+    ],
+    "height": [
+     "182.0"
+    ],
+    "street address": [
+     "203 Marsh Wall, London E14 9ZN"
+    ],
+    "postal code": [
+     "E14 9ZN"
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q6714235",
+      "label": "MAKE Architects"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131225851",
+   "label": "One Bank Street",
+   "description": "building in Canary Wharf, London",
+   "coord": "POINT(-0.024478 51.503450)",
+   "km": 0.487,
+   "props": {
+    "floors above ground": [
+     "28.0"
+    ],
+    "height": [
+     "142.9"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131525581",
+   "label": "Gough Walk Practice",
+   "description": "doctors surgery in London, United Kingdom",
+   "coord": "POINT(-0.012720 51.510862)",
+   "km": 0.833,
+   "props": {
+    "postal code": [
+     "E14 0EY"
+    ],
+    "street address": [
+     "Newby Place Health and Wellbeing, 21 Newby Place, London, E14 0EY"
+    ],
+    "instance of": [
+     {
+      "id": "Q718966",
+      "label": "doctor's office"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131525583",
+   "label": "Island Health",
+   "description": "doctors surgery in Isle Of Dogs, London, United Kingdom",
+   "coord": "POINT(-0.013513 51.495357)",
+   "km": 1.001,
+   "props": {
+    "street address": [
+     "145 East Ferry Road, Isle Of Dogs, London, E14 3BQ"
+    ],
+    "postal code": [
+     "E14 3BQ"
+    ],
+    "inception": [
+     "1989-09-25T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q718966",
+      "label": "doctor's office"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q98596445",
+      "label": "East Ferry Road"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131525584",
+   "label": "Roserton Street Surgery",
+   "description": "doctors surgery in London, United Kingdom",
+   "coord": "POINT(-0.009967 51.498058)",
+   "km": 0.843,
+   "props": {
+    "postal code": [
+     "E14 3PG"
+    ],
+    "street address": [
+     "The Island Medical Centre, Roserton Street, London, E14 3PG"
+    ],
+    "instance of": [
+     {
+      "id": "Q4287745",
+      "label": "medical organization"
+     },
+     {
+      "id": "Q718966",
+      "label": "doctor's office"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131525587",
+   "label": "The Barkantine Practice",
+   "description": "doctors surgery in London, United Kingdom",
+   "coord": "POINT(-0.025543 51.498690)",
+   "km": 0.812,
+   "props": {
+    "street address": [
+     "Barkantine Centre, 121 Westferry Road, London, E14 8JH"
+    ],
+    "postal code": [
+     "E14 8JH"
+    ],
+    "inception": [
+     "2002-02-11T00:00:00Z"
+    ],
+    "located on street": [
+     {
+      "id": "Q65939230",
+      "label": "Westferry Road"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q718966",
+      "label": "doctor's office"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131532735",
+   "label": "GP at Hand - Cabot Place",
+   "description": "doctors surgery in London, United Kingdom",
+   "coord": "POINT(-0.020340 51.505032)",
+   "km": 0.228,
+   "props": {
+    "postal code": [
+     "E14 4QT"
+    ],
+    "street address": [
+     "Unit R1:340, Cabot Place, London, E14 4QT"
+    ],
+    "inception": [
+     "2022-10-01T00:00:00Z"
+    ],
+    "parent organisation": [
+     {
+      "id": "Q131529856",
+      "label": "GP at Hand"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q1880737",
+      "label": "branch office"
+     },
+     {
+      "id": "Q718966",
+      "label": "doctor's office"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q131532736",
+   "label": "Wood Wharf Health Centre",
+   "description": "doctors surgery in London, United Kingdom",
+   "coord": "POINT(-0.009902 51.502526)",
+   "km": 0.551,
+   "props": {
+    "street address": [
+     "75 Harbord Square, London, E14 9QH"
+    ],
+    "postal code": [
+     "E14 9QH"
+    ],
+    "inception": [
+     "2023-04-01T00:00:00Z"
+    ],
+    "parent organisation": [
+     {
+      "id": "Q131525584",
+      "label": "Roserton Street Surgery"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q1880737",
+      "label": "branch office"
+     },
+     {
+      "id": "Q718966",
+      "label": "doctor's office"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q132181405",
+   "label": "Global Future Academy",
+   "description": "Academy based in London",
+   "coord": "POINT(-0.019348 51.502714)",
+   "km": 0.192,
+   "props": {
+    "street address": [
+     "40 Bank St, London, E14 5NR, UK"
+    ],
+    "postal code": [
+     "E14 5NR"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q783794",
+      "label": "company"
+     }
+    ],
+    "headquarters location": [
+     {
+      "id": "Q84",
+      "label": "London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q133876645",
+   "label": "Blumont Annuity",
+   "description": "specialist pension insurer",
+   "coord": "POINT(-0.019496 51.504938)",
+   "km": 0.173,
+   "props": {
+    "postal code": [
+     "E14 5AB"
+    ],
+    "street address": [
+     "Level 26, One Canada Square, Canary Wharf, London, E14 5AB"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2025-01-01T00:00:00Z"
+    ],
+    "industry": [
+     {
+      "id": "Q156223",
+      "label": "pension"
+     },
+     {
+      "id": "Q2027846",
+      "label": "defined benefit pension plan"
+     },
+     {
+      "id": "Q43183",
+      "label": "insurance"
+     },
+     {
+      "id": "Q626608",
+      "label": "life insurance"
+     },
+     {
+      "id": "Q837171",
+      "label": "financial services"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q4830453",
+      "label": "business"
+     }
+    ],
+    "headquarters location": [
+     {
+      "id": "Q84",
+      "label": "London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q136211103",
+   "label": "Theatreship",
+   "description": "Theatre in London, England",
+   "coord": "POINT(-0.016149 51.501267)",
+   "km": 0.318,
+   "props": {
+    "inception": [
+     "2022-06-20T00:00:00Z"
+    ],
+    "industry": [
+     {
+      "id": "Q184485",
+      "label": "performing arts"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q2190251",
+      "label": "arts center"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q136227841",
+   "label": "40 Charter Street",
+   "description": "skyscraper under construction in London, England",
+   "coord": "POINT(-0.012300 51.501900)",
+   "km": 0.43,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q136345828",
+   "label": "Q136345828",
+   "description": "Statutory body in England and Wales",
+   "coord": "POINT(-0.021944 51.504444)",
+   "km": 0.312,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1981-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q327333",
+      "label": "government agency"
+     }
+    ],
+    "headquarters location": [
+     {
+      "id": "Q84",
+      "label": "London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q136434640",
+   "label": "15 Canada Square",
+   "description": "commercial offices in London, England",
+   "coord": "POINT(-0.016028 51.505306)",
+   "km": 0.178,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q136633859",
+   "label": "The George",
+   "description": "pub in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.013573 51.496166)",
+   "km": 0.914,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q212198",
+      "label": "pub"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q137896168",
+   "label": "Q137896168",
+   "description": "",
+   "coord": "POINT(-0.014562 51.498848)",
+   "km": 0.609,
+   "props": {
+    "street address": [
+     "2 Harbour Exchange Square, London E14 9GE"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q2385804",
+      "label": "educational institution"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q138195296",
+   "label": "Eden Dock",
+   "description": "dock in Canary Wharf",
+   "coord": "POINT(-0.020000 51.503700)",
+   "km": 0.176,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q22746",
+      "label": "urban park"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q138426781",
+   "label": "Digital Realty LHR20",
+   "description": "data centre in Docklands, London, UK",
+   "coord": "POINT(-0.011080 51.499840)",
+   "km": 0.642,
+   "props": {
+    "official website": [
+     {
+      "id": "lhr20",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q671224",
+      "label": "data center"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q138752",
+   "label": "25 Bank Street",
+   "description": "building in London",
+   "coord": "POINT(-0.021028 51.502972)",
+   "km": 0.27,
+   "props": {
+    "floors above ground": [
+     "33.0"
+    ],
+    "height": [
+     "153.0"
+    ],
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "2004-04-05T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q192314",
+      "label": "JPMorgan Chase"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q29561372",
+      "label": "Adamson Associates"
+     },
+     {
+      "id": "Q309483",
+      "label": "César Pelli"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q65963822",
+      "label": "Bank Street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q138755",
+   "label": "40 Bank Street",
+   "description": "building in London",
+   "coord": "POINT(-0.019445 51.502500)",
+   "km": 0.215,
+   "props": {
+    "floors above ground": [
+     "33.0"
+    ],
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     },
+     {
+      "id": "Q11755959",
+      "label": "multi-story urban building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q309483",
+      "label": "César Pelli"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q138760",
+   "label": "10 Upper Bank Street",
+   "description": "skyscraper in London, England",
+   "coord": "POINT(-0.016389 51.502778)",
+   "km": 0.156,
+   "props": {
+    "floors above ground": [
+     "32.0"
+    ],
+    "height": [
+     "151.0"
+    ],
+    "opened": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "owned by": [
+     {
+      "id": "Q1101257",
+      "label": "Clifford Chance"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q1101257",
+      "label": "Clifford Chance"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q212487",
+      "label": "Kohn Pedersen Fox"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q65963812",
+      "label": "Upper Bank Street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q138768",
+   "label": "One Churchill Place",
+   "description": "skyscraper in London, England",
+   "coord": "POINT(-0.014445 51.505278)",
+   "km": 0.255,
+   "props": {
+    "floors above ground": [
+     "32.0"
+    ],
+    "height": [
+     "156.3"
+    ],
+    "inception": [
+     "2004-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "2005-06-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     },
+     {
+      "id": "Q7540126",
+      "label": "headquarters"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q1602991",
+      "label": "HOK"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q245343",
+      "label": "Barclays"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q245343",
+      "label": "Barclays"
+     }
+    ],
+    "structural engineer": [
+     {
+      "id": "Q423406",
+      "label": "WSP"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1459835",
+   "label": "South Quay DLR station",
+   "description": "Docklands Light Rail station in London",
+   "coord": "POINT(-0.016260 51.500030)",
+   "km": 0.45,
+   "props": {
+    "street address": [
+     "Marsh Wall"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11670533",
+      "label": "elevated station"
+     },
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1459844",
+   "label": "Heron Quays",
+   "description": "Docklands Light Railway station on the Isle of Dogs in east London",
+   "coord": "POINT(-0.021392 51.503378)",
+   "km": 0.278,
+   "props": {
+    "official website": [
+     {
+      "id": "heron-quays-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11670533",
+      "label": "elevated station"
+     },
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q15059601",
+   "label": "North Quay, London",
+   "description": "proposed office development, on the north side of Canary Wharf in London",
+   "coord": "POINT(-0.018689 51.506997)",
+   "km": 0.344,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q5031201",
+      "label": "Canary Wharf Group"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q15059605",
+   "label": "World Trade Centre (London)",
+   "description": "building in London, England",
+   "coord": "POINT(-0.019445 51.501100)",
+   "km": 0.35,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1519503",
+   "label": "Millwall Dock",
+   "description": "dock in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.016111 51.495380)",
+   "km": 0.964,
+   "props": {
+    "opened": [
+     "1868-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q124282",
+      "label": "dock"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q15223735",
+   "label": "Heron Quays",
+   "description": "Area of Canary Wharf, London",
+   "coord": "POINT(-0.023000 51.503500)",
+   "km": 0.385,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q2755753",
+      "label": "area of London"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1526395",
+   "label": "Poplar DLR station",
+   "description": "Docklands Light Railway station",
+   "coord": "POINT(-0.017219 51.507714)",
+   "km": 0.414,
+   "props": {
+    "official website": [
+     {
+      "id": "poplar-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     },
+     {
+      "id": "Q22808404",
+      "label": "station located on surface"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q682520",
+      "label": "TfL"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q15917518",
+   "label": "Newfoundland",
+   "description": "apartment building in London, United Kingdom",
+   "coord": "POINT(-0.025083 51.504306)",
+   "km": 0.527,
+   "props": {
+    "floors below ground": [
+     "3.0"
+    ],
+    "floors above ground": [
+     "58.0"
+    ],
+    "height": [
+     "219.8"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     },
+     {
+      "id": "Q13402009",
+      "label": "apartment building"
+     }
+    ],
+    "structural engineer": [
+     {
+      "id": "Q1333162",
+      "label": "WSP Global"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q16257747",
+   "label": "Charlie Brown's, Limehouse",
+   "description": "pub in Limehouse, London, demolished in 1989",
+   "coord": "POINT(-0.024700 51.508800)",
+   "km": 0.731,
+   "props": {
+    "dissolved or demolished": [
+     "1989-11-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q212198",
+      "label": "pub"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q16258428",
+   "label": "Landmark Pinnacle",
+   "description": "skyscraper in London",
+   "coord": "POINT(-0.025472 51.502778)",
+   "km": 0.569,
+   "props": {
+    "floors below ground": [
+     "2.0"
+    ],
+    "floors above ground": [
+     "75.0"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q7582309",
+      "label": "Squire and Partners"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1642944",
+   "label": "West India Docks",
+   "description": "historic dock in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.017222 51.503472)",
+   "km": 0.062,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q124282",
+      "label": "dock"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q16837452",
+   "label": "Baltimore Tower",
+   "description": "",
+   "coord": "POINT(-0.015000 51.497400)",
+   "km": 0.755,
+   "props": {
+    "floors above ground": [
+     "45.0"
+    ],
+    "official website": [
+     {
+      "id": "www.baltimorewharf.com",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2017-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q16993490",
+   "label": "The Gun",
+   "description": "pub in Coldharbour, London",
+   "coord": "POINT(-0.007756 51.501828)",
+   "km": 0.717,
+   "props": {
+    "street address": [
+     "27 Cold Harbour, London, E14 9NS"
+    ],
+    "postal code": [
+     "E14 9NS"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1900-01-01T00:00:00Z"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q212198",
+      "label": "pub"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q17444904",
+   "label": "DoubleTree by Hilton Hotel London - Docklands Riverside",
+   "description": "hotel in London",
+   "coord": "POINT(-0.033179 51.504387)",
+   "km": 1.087,
+   "props": {
+    "street address": [
+     "265A Rotherhithe Street, London, SE16 5HW"
+    ],
+    "postal code": [
+     "SE16 5HW"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2015-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q17528165",
+   "label": "Quay walls, copings and buttresses to Import Dock And Export Dock",
+   "description": "Grade I listed wall in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.019119 51.506600)",
+   "km": 0.31,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700818",
+      "label": "Grade I listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q42948",
+      "label": "wall"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q17528176",
+   "label": "Warehouses And General Offices At Western End Of North Quay",
+   "description": "warehouse in London Borough of Tower Hamlets, UK",
+   "coord": "POINT(-0.024039 51.507700)",
+   "km": 0.612,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1362225",
+      "label": "warehouse"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700818",
+      "label": "Grade I listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q17528180",
+   "label": "Blackwall Basin",
+   "description": "Grade I listed building in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.011230 51.503500)",
+   "km": 0.438,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q124282",
+      "label": "dock"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700818",
+      "label": "Grade I listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q18161291",
+   "label": "Charrington Tower, London",
+   "description": "building in London, England",
+   "coord": "POINT(-0.005805 51.507100)",
+   "km": 0.881,
+   "props": {
+    "floors above ground": [
+     "44.0"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2016-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q18619636",
+   "label": "Limehouse Causeway",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.028384 51.509257)",
+   "km": 0.955,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1971670",
+   "label": "West India Quay",
+   "description": "Docklands Light Railway station",
+   "coord": "POINT(-0.020300 51.506700)",
+   "km": 0.358,
+   "props": {
+    "official website": [
+     {
+      "id": "west-india-quay-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11670533",
+      "label": "elevated station"
+     },
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q1974942",
+   "label": "All Saints",
+   "description": "Docklands Light Railway station",
+   "coord": "POINT(-0.013000 51.510800)",
+   "km": 0.819,
+   "props": {
+    "official website": [
+     {
+      "id": "all-saints-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     },
+     {
+      "id": "Q22808404",
+      "label": "station located on surface"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q19870793",
+   "label": "Wardian London",
+   "description": "building complex in London Borough of Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.022895 51.501200)",
+   "km": 0.487,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1497364",
+      "label": "building complex"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q20711649",
+   "label": "Crossrail Place",
+   "description": "artificial island in the West India Docks in Canary Wharf",
+   "coord": "POINT(-0.017500 51.506100)",
+   "km": 0.234,
+   "props": {
+    "inception": [
+     "2015-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1156696",
+      "label": "roof garden"
+     },
+     {
+      "id": "Q39659371",
+      "label": "retail environment"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q20711962",
+   "label": "30 South Colonnade",
+   "description": "commercial building on South Colonnade in London’s Canary Wharf",
+   "coord": "POINT(-0.020278 51.504167)",
+   "km": 0.193,
+   "props": {
+    "floors above ground": [
+     "13.0"
+    ],
+    "inception": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "occupant": [
+     {
+      "id": "Q133821494",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q212487",
+      "label": "Kohn Pedersen Fox"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q20713184",
+   "label": "Poplar Rates Rebellion Mural",
+   "description": "mural in Poplar, London, England",
+   "coord": "POINT(-0.017700 51.509590)",
+   "km": 0.622,
+   "props": {
+    "inception": [
+     "1990-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q219423",
+      "label": "mural"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q20713829",
+   "label": "Maine Tower",
+   "description": "building in London, England",
+   "coord": "POINT(-0.020000 51.499200)",
+   "km": 0.562,
+   "props": {
+    "floors above ground": [
+     "41.0"
+    ],
+    "inception": [
+     "2019-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q208152",
+   "label": "London Borough of Tower Hamlets",
+   "description": "borough in the London Region in England",
+   "coord": "POINT(-0.006111 51.510000)",
+   "km": 1.034,
+   "props": {
+    "postal code": [
+     "E"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1965-04-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q211690",
+      "label": "London borough"
+     },
+     {
+      "id": "Q7897276",
+      "label": "unparished area"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q20876413",
+   "label": "UCL School of Management",
+   "description": "Business school of University College London",
+   "coord": "POINT(-0.019611 51.505000)",
+   "km": 0.184,
+   "props": {
+    "official website": [
+     {
+      "id": "www.mgmt.ucl.ac.uk",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2007-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q4671277",
+      "label": "academic institution"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q21079113",
+   "label": "West India Quay Footbridge",
+   "description": "footbridge over the North Dock in Canary Wharf, London",
+   "coord": "POINT(-0.022502 51.506595)",
+   "km": 0.451,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1068842",
+      "label": "footbridge"
+     },
+     {
+      "id": "Q2104072",
+      "label": "pontoon bridge"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q440786",
+      "label": "Amanda Levete"
+     },
+     {
+      "id": "Q555682",
+      "label": "Jan Kaplický"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q21549099",
+   "label": "Poplar Station High-Level Walkway",
+   "description": "Pedestrian bridge (footbridge) in Tower Hamlets, London, England, United Kingdom; Tower Hamlets, London, England, United Kingdom",
+   "coord": "POINT(-0.017928 51.507715)",
+   "km": 0.415,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1068842",
+      "label": "footbridge"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q21549166",
+   "label": "South Dock Pontoon Bridge",
+   "description": "Pedestrian bridge (footbridge) in Tower Hamlets, London, England, United Kingdom",
+   "coord": "POINT(-0.015738 51.502022)",
+   "km": 0.252,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12280",
+      "label": "bridge"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q21585376",
+   "label": "Rotherhithe crossing",
+   "description": "Proposed river crossing",
+   "coord": "POINT(-0.029920 51.502640)",
+   "km": 0.874,
+   "props": {}
+  },
+  {
+   "id": "Q21585405",
+   "label": "Lansbury Lawrence Primary School",
+   "description": "primary school in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.017093 51.513451)",
+   "km": 1.052,
+   "props": {
+    "postal code": [
+     "E14 6DZ"
+    ],
+    "street address": [
+     "Lansbury Lawrence Primary School, Cordelia Street, Poplar, London, E14 6DZ"
+    ],
+    "inception": [
+     "1951-01-01T00:00:00Z",
+     "2002-04-01T00:00:00Z"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q5155053",
+      "label": "community school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q21585412",
+   "label": "South Quay Plaza",
+   "description": "residential in London, England",
+   "coord": "POINT(-0.017303 51.501040)",
+   "km": 0.33,
+   "props": {
+    "official website": [
+     {
+      "id": "www.berkeley-southquay.co.uk",
+      "label": ""
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q1208016",
+      "label": "Foster and Partners"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q4892023",
+      "label": "Berkeley Group Holdings"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q22083678",
+   "label": "Westferry Circus",
+   "description": "road interchange and public square in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.026870 51.505725)",
+   "km": 0.677,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q174782",
+      "label": "square"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q6501684",
+      "label": "Laurie Olin"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q22915232",
+   "label": "Pan Peninsula East Tower",
+   "description": "building in the Pan Peninsula complex, London",
+   "coord": "POINT(-0.017486 51.499722)",
+   "km": 0.476,
+   "props": {
+    "floors below ground": [
+     "1.0"
+    ],
+    "floors above ground": [
+     "48.0"
+    ],
+    "height": [
+     "148.0"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q24039419",
+   "label": "Alpha Square",
+   "description": "building in London, England, UK",
+   "coord": "POINT(-0.022521 51.500912)",
+   "km": 0.489,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q24298842",
+   "label": "Hertsmere House",
+   "description": "Construction Project",
+   "coord": "POINT(-0.024590 51.507150)",
+   "km": 0.604,
+   "props": {
+    "located on street": [
+     {
+      "id": "Q109321776",
+      "label": "Hertsmere Road"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q15902946",
+      "label": "Greenland Holdings Corp., Ltd."
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q24884223",
+   "label": "Glengall Bridge",
+   "description": "double-leaf bascule bridge in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.016970 51.496260)",
+   "km": 0.862,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q911663",
+      "label": "bascule bridge"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318175",
+   "label": "Sign on Forecourt of former White Horse Public House",
+   "description": "old inn sign in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.021183 51.509417)",
+   "km": 0.655,
+   "props": {
+    "street address": [
+     "9–11 Poplar High Street London E14 0DJ"
+    ],
+    "inception": [
+     "1800-01-01T00:00:00Z"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q49001617",
+      "label": "Poplar High Street"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q6035145",
+      "label": "inn sign"
+     },
+     {
+      "id": "Q860861",
+      "label": "sculpture"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318176",
+   "label": "3 Piers Immediately In Front Of No 127  Coroner's Court",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.014735 51.509014)",
+   "km": 0.59,
+   "props": {
+    "street address": [
+     "3 Piers Immediately In Front Of No 127  Coroner's Court, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318177",
+   "label": "Bridge Parapet Above Entrance To Blackwall Tunnel",
+   "description": "bridge in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007183 51.509030)",
+   "km": 0.908,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12280",
+      "label": "bridge"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318180",
+   "label": "Bridge House",
+   "description": "house in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.008181 51.504326)",
+   "km": 0.647,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q3947",
+      "label": "house"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318205",
+   "label": "Gate Piers At Children's Playground",
+   "description": "gatepost in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.012363 51.510755)",
+   "km": 0.832,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q5527082",
+      "label": "gatepost"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318232",
+   "label": "5 Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011535 51.509688)",
+   "km": 0.756,
+   "props": {
+    "street address": [
+     "5 Mountague Place, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318233",
+   "label": "7 Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011390 51.509713)",
+   "km": 0.764,
+   "props": {
+    "street address": [
+     "7 Mountague Place, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318234",
+   "label": "9 Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011245 51.509737)",
+   "km": 0.772,
+   "props": {
+    "street address": [
+     "9 Mountague Place, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318235",
+   "label": "10 Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011158 51.509745)",
+   "km": 0.776,
+   "props": {
+    "street address": [
+     "10 Mountague Place, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318241",
+   "label": "St Dunstan's Wharf",
+   "description": "building in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.030319 51.508881)",
+   "km": 1.041,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318242",
+   "label": "Embankment Wall, Railings And Steps",
+   "description": "wall in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.006607 51.509668)",
+   "km": 0.984,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q42948",
+      "label": "wall"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318282",
+   "label": "10 and 12, Garford Street E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025554 51.508423)",
+   "km": 0.744,
+   "props": {
+    "street address": [
+     "10 And 12, Garford Street E14, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318283",
+   "label": "16 And 18, Garford Street E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025192 51.508471)",
+   "km": 0.729,
+   "props": {
+    "street address": [
+     "16 and 18 Garford Street London, E14 8JG"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318323",
+   "label": "Garden Wall, Piers And Railings At No 52",
+   "description": "wall in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025342 51.511333)",
+   "km": 0.981,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q42948",
+      "label": "wall"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318325",
+   "label": "Statue of Richard Green",
+   "description": "statue in Poplar, London",
+   "coord": "POINT(-0.014115 51.511018)",
+   "km": 0.816,
+   "props": {
+    "inception": [
+     "1865-01-01T00:00:00Z"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q179700",
+      "label": "statue"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318326",
+   "label": "153, East India Dock Road E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.016448 51.511363)",
+   "km": 0.823,
+   "props": {
+    "street address": [
+     "153, East India Dock Road E14, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318331",
+   "label": "Isle House 1 Coldharbour",
+   "description": "house in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007314 51.503394)",
+   "km": 0.709,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q3947",
+      "label": "house"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318332",
+   "label": "5 And 7, Coldharbour E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007423 51.503189)",
+   "km": 0.704,
+   "props": {
+    "street address": [
+     "5 And 7, Coldharbour E14, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318333",
+   "label": "Blackwall River Police Station 19 Coldharbour",
+   "description": "police station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007601 51.502409)",
+   "km": 0.708,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q861951",
+      "label": "police station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318414",
+   "label": "Greenwich Pensioner Public House",
+   "description": "pub in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.010980 51.509517)",
+   "km": 0.762,
+   "props": {
+    "street address": [
+     "2 Bazely Street, London, E14 0ES"
+    ],
+    "postal code": [
+     "E14 0ES"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q212198",
+      "label": "pub"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318770",
+   "label": "Unidentified Body Stone Tomb West Of South East Gate, St Matthias Churchyard",
+   "description": "Tower Hamlets, Greater London, E14 0AE",
+   "coord": "POINT(-0.015758 51.509337)",
+   "km": 0.606,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318771",
+   "label": "Tomb Of Hugh Mcintosh,St Mattias",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.017500 51.509883)",
+   "km": 0.655,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318772",
+   "label": "Tomb Of Captain Samuel Jones And Family, St Mattias",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.016406 51.509681)",
+   "km": 0.637,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318773",
+   "label": "Tomb Of John Smart, St Mattias",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.016310 51.509904)",
+   "km": 0.662,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318774",
+   "label": "Tomb Of Solomon Baker",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.015796 51.509787)",
+   "km": 0.655,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318817",
+   "label": "Railings To West Of Main Gate At West India Dock",
+   "description": "guard rail in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.024546 51.508065)",
+   "km": 0.666,
+   "props": {
+    "street address": [
+     "Hertsmere Road London E14 8JJ"
+    ],
+    "instance of": [
+     {
+      "id": "Q1188866",
+      "label": "guard rail"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318818",
+   "label": "Quadrangle Stores At West India Dock",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.026480 51.507675)",
+   "km": 0.745,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318852",
+   "label": "West India Dock Former Guard House",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025501 51.507658)",
+   "km": 0.688,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318863",
+   "label": "Wall Adjoining Number 90",
+   "description": "wall in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.029735 51.508719)",
+   "km": 0.997,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q42948",
+      "label": "wall"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26318873",
+   "label": "14-26, Upper North Street E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.020391 51.511511)",
+   "km": 0.86,
+   "props": {
+    "street address": [
+     "14-26, Upper North Street E14, Tower Hamlets, Greater London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q26665612",
+   "label": "Nelson Dry Dock Including Gate",
+   "description": "architectural structure in Southwark, London, England, UK",
+   "coord": "POINT(-0.032412 51.504123)",
+   "km": 1.033,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081724",
+   "label": "Pope John House",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.017745 51.510720)",
+   "km": 0.748,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081726",
+   "label": "Plaque On Modern Dock Wall Facing West",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007011 51.510987)",
+   "km": 1.064,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081727",
+   "label": "Gate And End Piers To No 133 (Department Of Health Social Security)",
+   "description": "gate in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.018004 51.511048)",
+   "km": 0.785,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q53060",
+      "label": "gate"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081728",
+   "label": "East India Dock Boundary Wall",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.006728 51.510209)",
+   "km": 1.017,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081758",
+   "label": "6, Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011463 51.509696)",
+   "km": 0.76,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081759",
+   "label": "8 Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011317 51.509730)",
+   "km": 0.768,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081760",
+   "label": "11 Mountague Place",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.011071 51.509761)",
+   "km": 0.781,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081763",
+   "label": "148-150, Narrow Street E14 8BP",
+   "description": "Tower Hamlets, Greater London, E14 8BP",
+   "coord": "POINT(-0.030039 51.509011)",
+   "km": 1.032,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081781",
+   "label": "Former Excise Office",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.024323 51.508241)",
+   "km": 0.668,
+   "props": {
+    "inception": [
+     "1807-01-01T00:00:00Z"
+    ],
+    "located on street": [
+     {
+      "id": "Q109321776",
+      "label": "Hertsmere Road"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q218653",
+      "label": "custom house"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081833",
+   "label": "Accumulator Tower To South East Corner Of Poplar Dock",
+   "description": "tower in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007725 51.504534)",
+   "km": 0.68,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12518",
+      "label": "tower"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081835",
+   "label": "80, Three Colt Street E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.029879 51.509063)",
+   "km": 1.026,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081844",
+   "label": "Sailmakers And Chandlers",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.027386 51.511386)",
+   "km": 1.07,
+   "props": {
+    "street address": [
+     "11 West India Dock Road, LONDON, E14 8EZ"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q65939184",
+      "label": "West India Dock Road"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081846",
+   "label": "Fitch And Sons Works",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.027505 51.506963)",
+   "km": 0.768,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081847",
+   "label": "Former West Entrance Lock To South Dock, West India Docks",
+   "description": "lock in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025926 51.503160)",
+   "km": 0.591,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q105731",
+      "label": "lock"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27081853",
+   "label": "Former West Entrance Gate To West India Docks With Curved Walling And Bollards",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.026000 51.507298)",
+   "km": 0.694,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082152",
+   "label": "Northern Ventilation Shaft To The Blackwall Tunnel Southbound",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.004797 51.507388)",
+   "km": 0.958,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q10565770",
+      "label": "ventilation shaft"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082761",
+   "label": "Poplar Dock Original Eastern Part",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.008533 51.506481)",
+   "km": 0.68,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082762",
+   "label": "Accumulator Tower On The West Side Of Poplar Dock",
+   "description": "tower in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.009347 51.505335)",
+   "km": 0.584,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12518",
+      "label": "tower"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082769",
+   "label": "Poplar Technical College",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.016924 51.508709)",
+   "km": 0.526,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082782",
+   "label": "Old Poplar Town Hall And Council Offices",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.015722 51.509175)",
+   "km": 0.589,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082799",
+   "label": "Dunbar Wharf 4 Warehouses Numbered 136,136 1/2, 138,140",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.030567 51.508804)",
+   "km": 1.052,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27082809",
+   "label": "14, Garford Street E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025351 51.508447)",
+   "km": 0.736,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27084890",
+   "label": "Entrance Gates To West India Docks",
+   "description": "gate in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.023885 51.508027)",
+   "km": 0.63,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q53060",
+      "label": "gate"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27084900",
+   "label": "Railings And Gatepiers To Former Excise Office",
+   "description": "guard rail in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.024178 51.508256)",
+   "km": 0.662,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1188866",
+      "label": "guard rail"
+     },
+     {
+      "id": "Q5527082",
+      "label": "gatepost"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085021",
+   "label": "45-51 Bazely Street",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.010694 51.509809)",
+   "km": 0.8,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085049",
+   "label": "Inner London Education Authority Office  Westminster Bank",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025374 51.511253)",
+   "km": 0.974,
+   "props": {
+    "street address": [
+     "Coalmakers Wharf, Tower Hamlets, London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085050",
+   "label": "Railed Wall And Gate Piers At All Saints Church With St Frideswide",
+   "description": "wall in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.012015 51.509930)",
+   "km": 0.762,
+   "props": {
+    "street address": [
+     "Poplar, Tower Hamlets, London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q42948",
+      "label": "wall"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085051",
+   "label": "133 East India Dock Road",
+   "description": "building in the London Borough of Tower Hamlets, England, UK",
+   "coord": "POINT(-0.018070 51.511202)",
+   "km": 0.803,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "street address": [
+     "Poplar, Tower Hamlets, London, E14"
+    ],
+    "inception": [
+     "1840-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q13402009",
+      "label": "apartment building"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q5260328",
+      "label": "Department of Health and Social Security"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085056",
+   "label": "3, Coldharbour E14",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007361 51.503287)",
+   "km": 0.707,
+   "props": {
+    "street address": [
+     "Blackwall, Tower Hamlets, London, E14"
+    ],
+    "inception": [
+     "1900-01-01T00:00:00Z"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085065",
+   "label": "Salvation Army Hostel",
+   "description": "hostel in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.025091 51.508146)",
+   "km": 0.7,
+   "props": {
+    "street address": [
+     "Poplar, Tower Hamlets, London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q654772",
+      "label": "hostel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085084",
+   "label": "Numbers 1-3, 24 Bazely Street",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.010999 51.509760)",
+   "km": 0.784,
+   "props": {
+    "street address": [
+     "Poplar, Tower Hamlets, London, E14"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085087",
+   "label": "Limekiln Dock",
+   "description": "former dock in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.030120 51.508806)",
+   "km": 1.025,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085112",
+   "label": "All Saints Rectory",
+   "description": "architectural structure in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.012625 51.510462)",
+   "km": 0.795,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27085136",
+   "label": "Meridian House",
+   "description": "house in Poplar, London",
+   "coord": "POINT(-0.015985 51.509089)",
+   "km": 0.576,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q17350442",
+      "label": "venue"
+     },
+     {
+      "id": "Q607241",
+      "label": "clergy house"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27086079",
+   "label": "Church of St Mary and St Joseph",
+   "description": "catholic church in Poplar, London Borough of Tower Hamlets, England, UK",
+   "coord": "POINT(-0.020628 51.512027)",
+   "km": 0.919,
+   "props": {
+    "postal code": [
+     "E14 6DU"
+    ],
+    "street address": [
+     "Upper North Street, Poplar, E14 6DU"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1954-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1088552",
+      "label": "Catholic church building"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q4685049",
+      "label": "Adrian Gilbert Scott"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27087015",
+   "label": "15, Coldharbour",
+   "description": "building in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.007478 51.502928)",
+   "km": 0.705,
+   "props": {
+    "street address": [
+     "15 Cold Harbour London E14 9NS"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q27087079",
+   "label": "Cubitt Town Library",
+   "description": "Carnegie library in Tower Hamlets, Greater London",
+   "coord": "POINT(-0.011804 51.495966)",
+   "km": 0.978,
+   "props": {
+    "inception": [
+     "1905-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1905-05-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1043939",
+      "label": "Carnegie library"
+     },
+     {
+      "id": "Q28564",
+      "label": "public library"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2813508",
+   "label": "1 Cabot Square",
+   "description": "office building in London, England",
+   "coord": "POINT(-0.023889 51.505833)",
+   "km": 0.487,
+   "props": {
+    "floors above ground": [
+     "21.0"
+    ],
+    "height": [
+     "89.0"
+    ],
+    "opened": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "inception": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1021645",
+      "label": "office building"
+     },
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q3649219",
+      "label": "Cabot Square"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q6623279",
+      "label": "Pei Cobb Freed & Partners"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2813525",
+   "label": "1 West India Quay",
+   "description": "skyscraper",
+   "coord": "POINT(-0.021306 51.506944)",
+   "km": 0.421,
+   "props": {
+    "floors above ground": [
+     "36.0"
+    ],
+    "inception": [
+     "2004-01-01T00:00:00Z"
+    ],
+    "located on street": [
+     {
+      "id": "Q109321776",
+      "label": "Hertsmere Road"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     },
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q1602991",
+      "label": "HOK"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2814703",
+   "label": "20 Canada Square",
+   "description": "building located in Canary Wharf in London, Great Britain",
+   "coord": "POINT(-0.016667 51.503900)",
+   "km": 0.059,
+   "props": {
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1021645",
+      "label": "office building"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q106158",
+      "label": "S&P Global Ratings"
+     },
+     {
+      "id": "Q152057",
+      "label": "BP"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q459464",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2815350",
+   "label": "25 Cabot Square",
+   "description": "commercial in London, England",
+   "coord": "POINT(-0.024056 51.505000)",
+   "km": 0.468,
+   "props": {
+    "floors above ground": [
+     "17.0"
+    ],
+    "inception": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q3649219",
+      "label": "Cabot Square"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q459464",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2815351",
+   "label": "25 North Colonnade",
+   "description": "building in Canary Wharf, London, UK",
+   "coord": "POINT(-0.020139 51.505800)",
+   "km": 0.271,
+   "props": {
+    "floors above ground": [
+     "15.0"
+    ],
+    "opened": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "inception": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11755959",
+      "label": "multi-story urban building"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q5449586",
+      "label": "Financial Conduct Authority"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q6247389",
+      "label": "John McAslan"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2817763",
+   "label": "5 Canada Square",
+   "description": "office building in the Canary Wharf financial district of London, England",
+   "coord": "POINT(-0.018611 51.505556)",
+   "km": 0.19,
+   "props": {
+    "floors above ground": [
+     "16.0"
+    ],
+    "postal code": [
+     "E14 5AQ"
+    ],
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "located on street": [
+     {
+      "id": "Q1014325",
+      "label": "Canada Square"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q372657",
+      "label": "Credit Suisse"
+     },
+     {
+      "id": "Q4854043",
+      "label": "Banc of America Securities"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q459464",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q28404263",
+   "label": "40 Marsh Wall",
+   "description": "building in London, England",
+   "coord": "POINT(-0.023261 51.501170)",
+   "km": 0.509,
+   "props": {
+    "floors above ground": [
+     "39.0"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q212599",
+      "label": "Accor"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q28457351",
+   "label": "54 Marsh Wall",
+   "description": "building in London, England, UK",
+   "coord": "POINT(-0.021700 51.500900)",
+   "km": 0.451,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q28458132",
+   "label": "Lincoln Plaza",
+   "description": "on the Isle of Dogs in London",
+   "coord": "POINT(-0.019300 51.498400)",
+   "km": 0.636,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2904846",
+   "label": "London Museum Docklands",
+   "description": "museum in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.023611 51.507500)",
+   "km": 0.575,
+   "props": {
+    "street address": [
+     "1 Warehouse, West India Quay, London E14 4AL"
+    ],
+    "postal code": [
+     "E14 4AL"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q115154402",
+      "label": "independent museum"
+     },
+     {
+      "id": "Q124944396",
+      "label": "slavery museum"
+     },
+     {
+      "id": "Q1595639",
+      "label": "local museum"
+     },
+     {
+      "id": "Q1863818",
+      "label": "maritime museum"
+     },
+     {
+      "id": "Q2516357",
+      "label": "transport museum"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q2911699",
+   "label": "Billingsgate Fish Market",
+   "description": "fish market in Poplar in London, England",
+   "coord": "POINT(-0.013889 51.506389)",
+   "km": 0.365,
+   "props": {
+    "official website": [
+     {
+      "id": "default.aspx",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q1188480",
+      "label": "fish market"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q29378816",
+   "label": "One Park Drive",
+   "description": "residential building in London, England",
+   "coord": "POINT(-0.009990 51.502140)",
+   "km": 0.56,
+   "props": {
+    "floors below ground": [
+     "2.0"
+    ],
+    "floors above ground": [
+     "57.0"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q308776",
+      "label": "Herzog & de Meuron"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q5031201",
+      "label": "Canary Wharf Group"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q30292166",
+   "label": "Ideas Foundation",
+   "description": "nonprofit organization in London, United Kingdom",
+   "coord": "POINT(-0.021633 51.505759)",
+   "km": 0.347,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q163740",
+      "label": "nonprofit organization"
+     },
+     {
+      "id": "Q708676",
+      "label": "charitable organization"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q3069905",
+   "label": "Ontario Tower",
+   "description": "residential tower block in Blackwall in the London Docklands",
+   "coord": "POINT(-0.004690 51.506700)",
+   "km": 0.937,
+   "props": {
+    "floors below ground": [
+     "1.0"
+    ],
+    "floors above ground": [
+     "31.0"
+    ],
+    "height": [
+     "105.5"
+    ],
+    "opened": [
+     "2007-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q459464",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q3070493",
+   "label": "Pan Peninsula",
+   "description": "residential development in the Isle of Dogs, London",
+   "coord": "POINT(-0.017900 51.500100)",
+   "km": 0.435,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2009-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "2009-02-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1497364",
+      "label": "building complex"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q459464",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q30765817",
+   "label": "Q30765817",
+   "description": "",
+   "coord": "POINT(-0.021940 51.506940)",
+   "km": 0.449,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1229765",
+      "label": "watercraft"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q3496849",
+   "label": "Riverside South",
+   "description": "building in London",
+   "coord": "POINT(-0.026583 51.504100)",
+   "km": 0.629,
+   "props": {
+    "inception": [
+     "2016-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q192314",
+      "label": "JPMorgan Chase"
+     }
+    ],
+    "structural engineer": [
+     {
+      "id": "Q5641184",
+      "label": "Halcrow Group"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q6000974",
+      "label": "Rogers Stirk Harbour + Partners"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q3649219",
+   "label": "Cabot Square",
+   "description": "one of the central squares of the Canary Wharf Development on the Isle of Dogs",
+   "coord": "POINT(-0.022222 51.505300)",
+   "km": 0.358,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q174782",
+      "label": "square"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117435",
+   "label": "Cineworld Cinema West India Quay",
+   "description": "cinema in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.023756 51.507898)",
+   "km": 0.613,
+   "props": {
+    "street address": [
+     "9-11 Hertsmere Road, West India Quay, London, E14 4AL, England"
+    ],
+    "official website": [
+     {
+      "id": "london-west-india-quay",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117441",
+   "label": "Electric Theatre",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.010003 51.511392)",
+   "km": 0.973,
+   "props": {
+    "street address": [
+     "263 East India Dock Road, London, E14 0EG, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117446",
+   "label": "Empress Electric Theatre",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.004051 51.508183)",
+   "km": 1.042,
+   "props": {
+    "street address": [
+     "Blackwall Way, London, E14, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117457",
+   "label": "Essoldo Poplar",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.011449 51.511280)",
+   "km": 0.912,
+   "props": {
+    "street address": [
+     "192-194 East India Dock Road, London, E14, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117465",
+   "label": "Everyman Canary Wharf",
+   "description": "cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.019246 51.505999)",
+   "km": 0.253,
+   "props": {
+    "street address": [
+     "Crossrail Place, London, E14 5AR, England"
+    ],
+    "official website": [
+     {
+      "id": "www.everymancinema.com",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117472",
+   "label": "Gaiety Cinema",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.020900 51.510798)",
+   "km": 0.793,
+   "props": {
+    "street address": [
+     "73 East India Dock Road, London, E14, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117512",
+   "label": "Grand Palace Cinema",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.007451 51.510197)",
+   "km": 0.98,
+   "props": {
+    "street address": [
+     "6-10 Robin Hood Lane, London, E14, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117520",
+   "label": "Ideal Cinema",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.024905 51.509295)",
+   "km": 0.781,
+   "props": {
+    "street address": [
+     "West India Dock Road, London, E14, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117541",
+   "label": "Poplar Hippodrome Theatre",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.020947 51.510795)",
+   "km": 0.793,
+   "props": {
+    "street address": [
+     "51-55 East India Dock Road, London, E14, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q19860854",
+      "label": "destroyed building or structure"
+     },
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q42117548",
+   "label": "St. George's Picture Hall",
+   "description": "former cinema in Poplar, Tower Hamlets, London, England",
+   "coord": "POINT(-0.020243 51.510862)",
+   "km": 0.787,
+   "props": {
+    "street address": [
+     "119 East India Dock Road, London, E14 4DE, England"
+    ],
+    "instance of": [
+     {
+      "id": "Q41253",
+      "label": "movie theater"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q44750696",
+   "label": "Dollar Bay",
+   "description": "high-rise in London",
+   "coord": "POINT(-0.010144 51.500641)",
+   "km": 0.632,
+   "props": {
+    "floors above ground": [
+     "31.0"
+    ],
+    "height": [
+     "109.0"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "structural engineer": [
+     {
+      "id": "Q1333162",
+      "label": "WSP Global"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q4547785",
+   "label": "11 Westferry Circus",
+   "description": "",
+   "coord": "POINT(-0.025400 51.506000)",
+   "km": 0.591,
+   "props": {
+    "floors above ground": [
+     "11.0"
+    ],
+    "inception": [
+     "1997-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1021645",
+      "label": "office building"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q22083678",
+      "label": "Westferry Circus"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q371820",
+      "label": "Reader's Digest"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q371820",
+      "label": "Reader's Digest"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q4591331",
+   "label": "1996 Docklands bombing",
+   "description": "London terrorist attack by the Provisional Irish Republican Army",
+   "coord": "POINT(-0.017989 51.500400)",
+   "km": 0.402,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q891854",
+      "label": "bomb attack"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q4630530",
+   "label": "20 Bank Street",
+   "description": "building in London Borough of Tower Hamlets, United Kingdom",
+   "coord": "POINT(-0.022300 51.503000)",
+   "km": 0.351,
+   "props": {
+    "inception": [
+     "2003-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q4631317",
+   "label": "22 Marsh Wall",
+   "description": "pair of residential skyscrapers in Docklands, London",
+   "coord": "POINT(-0.025214 51.502300)",
+   "km": 0.567,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2010-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q1497364",
+      "label": "building complex"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q7582309",
+      "label": "Squire and Partners"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q4632156",
+   "label": "25 Churchill Place",
+   "description": "Skyscraper in East London",
+   "coord": "POINT(-0.014722 51.503600)",
+   "km": 0.198,
+   "props": {
+    "floors above ground": [
+     "23.0"
+    ],
+    "inception": [
+     "2014-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q212487",
+      "label": "Kohn Pedersen Fox"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q4729513",
+   "label": "All Saints Church, Poplar",
+   "description": "church in London Borough of Tower Hamlets, UK",
+   "coord": "POINT(-0.011657 51.510536)",
+   "km": 0.833,
+   "props": {
+    "official website": [
+     {
+      "id": "www.parishofpoplar.org",
+      "label": ""
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q16970",
+      "label": "church building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q47661781",
+   "label": "33 Canada Square",
+   "description": "building in London Borough of Tower Hamlets, England",
+   "coord": "POINT(-0.018844 51.504203)",
+   "km": 0.096,
+   "props": {
+    "floors above ground": [
+     "18.0"
+    ],
+    "height": [
+     "104.8"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q49001617",
+   "label": "Poplar High Street",
+   "description": "street in Poplar in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.015964 51.508936)",
+   "km": 0.56,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q49001837",
+   "label": "New City College",
+   "description": "further education college in England",
+   "coord": "POINT(-0.016600 51.508600)",
+   "km": 0.516,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q189004",
+      "label": "college"
+     },
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5015776",
+   "label": "Cabot Hall",
+   "description": "former banqueting and performance hall in Canary Wharf, London",
+   "coord": "POINT(-0.021900 51.505200)",
+   "km": 0.333,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1378975",
+      "label": "convention center"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5031202",
+   "label": "Canary Wharf Pier",
+   "description": "pier on the River Thames near Canary Wharf",
+   "coord": "POINT(-0.028692 51.505200)",
+   "km": 0.787,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q16938673",
+      "label": "landing"
+     },
+     {
+      "id": "Q863454",
+      "label": "pier"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5031204",
+   "label": "Canary Wharf railway station",
+   "description": "railway station the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.015781 51.506100)",
+   "km": 0.262,
+   "props": {
+    "opened": [
+     "2022-05-24T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     },
+     {
+      "id": "Q55491",
+      "label": "underground railway station"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q682520",
+      "label": "TfL"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5031206",
+   "label": "Canary Wharf – Rotherhithe Ferry",
+   "description": "Ferry service in London",
+   "coord": "POINT(-0.031908 51.504600)",
+   "km": 1.001,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q18984099",
+      "label": "ferry route"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q371343",
+      "label": "London River Services"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q503477",
+   "label": "One Canada Square",
+   "description": "skyscraper in Canary Wharf, London",
+   "coord": "POINT(-0.020000 51.505000)",
+   "km": 0.206,
+   "props": {
+    "floors above ground": [
+     "50.0"
+    ],
+    "height": [
+     "235.0"
+    ],
+    "street address": [
+     "Canada Square 1, London, England"
+    ],
+    "inception": [
+     "1991-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q13683",
+      "label": "NYSE Euronext Liffe"
+     },
+     {
+      "id": "Q1636545",
+      "label": "Reach plc"
+     },
+     {
+      "id": "Q2037125",
+      "label": "State Street Corporation"
+     },
+     {
+      "id": "Q2740021",
+      "label": "National Westminster Bank"
+     },
+     {
+      "id": "Q3696285",
+      "label": "Coutts"
+     },
+     {
+      "id": "Q4159021",
+      "label": "Moody's Investors Service"
+     },
+     {
+      "id": "Q5031201",
+      "label": "Canary Wharf Group"
+     },
+     {
+      "id": "Q589288",
+      "label": "The Bank of New York Mellon"
+     },
+     {
+      "id": "Q607131",
+      "label": "MetLife"
+     },
+     {
+      "id": "Q638053",
+      "label": "Financial Services Authority"
+     },
+     {
+      "id": "Q6510653",
+      "label": "International Business Times"
+     },
+     {
+      "id": "Q683021",
+      "label": "Allianz Trade"
+     },
+     {
+      "id": "Q691632",
+      "label": "International Sugar Organization"
+     },
+     {
+      "id": "Q761072",
+      "label": "IWG plc"
+     },
+     {
+      "id": "Q971680",
+      "label": "Clydesdale Bank"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q309483",
+      "label": "César Pelli"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q5031201",
+      "label": "Canary Wharf Group"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5108598",
+   "label": "Chrisp Street Market",
+   "description": "pedestrian shopping area in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.014400 51.512500)",
+   "km": 0.97,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "opened": [
+     "1951-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q132510",
+      "label": "market"
+     },
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q5497851",
+      "label": "Frederick Gibberd"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q7229403",
+      "label": "Poplar HARCA"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q513260",
+   "label": "Westferry DLR Station",
+   "description": "Docklands Light Railway station",
+   "coord": "POINT(-0.026697 51.509372)",
+   "km": 0.874,
+   "props": {
+    "official website": [
+     {
+      "id": "westferry-dlr-station",
+      "label": ""
+     }
+    ],
+    "opened": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "inception": [
+     "1987-08-31T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     },
+     {
+      "id": "Q22808404",
+      "label": "station located on surface"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5150139",
+   "label": "Columbus Tower",
+   "description": "building in London, England",
+   "coord": "POINT(-0.024500 51.507100)",
+   "km": 0.595,
+   "props": {
+    "floors above ground": [
+     "65.0"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5192350",
+   "label": "Cuckold's Point",
+   "description": "Location in Rotherhithe, London",
+   "coord": "POINT(-0.032900 51.504600)",
+   "km": 1.069,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q2221906",
+      "label": "geographic location"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5314855",
+   "label": "Dundee Wharf",
+   "description": "residential development in Limehouse, London, England, UK",
+   "coord": "POINT(-0.031000 51.507900)",
+   "km": 1.031,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q5916199",
+      "label": "housing development"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5475511",
+   "label": "Canary Riverside Plaza Hotel",
+   "description": "luxury hotel in east London, England",
+   "coord": "POINT(-0.028100 51.506100)",
+   "km": 0.771,
+   "props": {
+    "street address": [
+     "46 Westferry Circus"
+    ],
+    "postal code": [
+     "E14 8RS"
+    ],
+    "official website": [
+     {
+      "id": "en",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q55076584",
+   "label": "Strangers' Home for Asiatics, Africans and South Sea Islanders",
+   "description": "former accommodation for non-European sailors in the Metropolitan Borough of Stepney",
+   "coord": "POINT(-0.027100 51.511100)",
+   "km": 1.033,
+   "props": {}
+  },
+  {
+   "id": "Q55099352",
+   "label": "Cascades",
+   "description": "building in London",
+   "coord": "POINT(-0.026855 51.502714)",
+   "km": 0.664,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q13402009",
+      "label": "apartment building"
+     }
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q55125746",
+   "label": "Idea Store Chrisp Street Library",
+   "description": "public library in London, UK",
+   "coord": "POINT(-0.014360 51.511500)",
+   "km": 0.863,
+   "props": {
+    "postal code": [
+     "E14 6BT"
+    ],
+    "street address": [
+     "Idea Store Chrisp Street Library, 1 Vesey Path, London, E14 6BT"
+    ],
+    "instance of": [
+     {
+      "id": "Q18206517",
+      "label": "Idea Store"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q55125879",
+   "label": "Idea Store Canary Wharf Library",
+   "description": "public library in London, UK",
+   "coord": "POINT(-0.014614 51.504618)",
+   "km": 0.211,
+   "props": {
+    "postal code": [
+     "E14 5RB"
+    ],
+    "street address": [
+     "Idea Store Canary Wharf Library, Churchill Place, London, E14 5RB"
+    ],
+    "instance of": [
+     {
+      "id": "Q28564",
+      "label": "public library"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q56008749",
+   "label": "Hilton London Canary Wharf",
+   "description": "hotel in London, United Kingdom",
+   "coord": "POINT(-0.019555 51.500833)",
+   "km": 0.38,
+   "props": {
+    "street address": [
+     "Marsh Wall, South Quay Square"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q1057464",
+      "label": "Hilton Worldwide"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     },
+     {
+      "id": "Q618123",
+      "label": "geographical feature"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5634458",
+   "label": "HMS Stalker",
+   "description": "1944 LST(3)-class tank landing ship",
+   "coord": "POINT(-0.021940 51.506940)",
+   "km": 0.449,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q11229656",
+      "label": "tank landing ship"
+     },
+     {
+      "id": "Q130326199",
+      "label": "preserved watercraft"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q56583825",
+   "label": "Block Dox (United Kingdom)",
+   "description": "company in London, United Kingdom",
+   "coord": "POINT(-0.018764 51.505392)",
+   "km": 0.178,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2013-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q4830453",
+      "label": "business"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q572887",
+   "label": "8 Canada Square",
+   "description": "skyscraper located in Canary Wharf, London, England",
+   "coord": "POINT(-0.017389 51.505278)",
+   "km": 0.142,
+   "props": {
+    "floors below ground": [
+     "4.0"
+    ],
+    "floors above ground": [
+     "45.0"
+    ],
+    "height": [
+     "199.51"
+    ],
+    "street address": [
+     "8 Canada Square, London E14 5HQ, UK"
+    ],
+    "postal code": [
+     "E14 5HQ"
+    ],
+    "opened": [
+     "2002-01-01T00:00:00Z"
+    ],
+    "inception": [
+     "2002-01-01T00:00:00Z"
+    ],
+    "located on street": [
+     {
+      "id": "Q1014325",
+      "label": "Canada Square"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q1021645",
+      "label": "office building"
+     },
+     {
+      "id": "Q11303",
+      "label": "skyscraper"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q1208016",
+      "label": "Foster and Partners"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q190464",
+      "label": "HSBC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5743521",
+   "label": "Heron Quays West",
+   "description": "building in London, England",
+   "coord": "POINT(-0.023070 51.503340)",
+   "km": 0.393,
+   "props": {
+    "inception": [
+     "2019-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q6000974",
+      "label": "Rogers Stirk Harbour + Partners"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q5764552",
+   "label": "Nelson Dock Pier",
+   "description": "pier on the River Thames near Canary Wharf",
+   "coord": "POINT(-0.031811 51.504600)",
+   "km": 0.994,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q16938673",
+      "label": "landing"
+     },
+     {
+      "id": "Q863454",
+      "label": "pier"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q371343",
+      "label": "London River Services"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q59536574",
+   "label": "Fab Foundation",
+   "description": "organization in London, United Kingdom",
+   "coord": "POINT(-0.027092 51.501980)",
+   "km": 0.702,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2009-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q43229",
+      "label": "organization"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q59647450",
+   "label": "Barkantine Estate",
+   "description": "Housing estate in Millwall, London",
+   "coord": "POINT(-0.025000 51.498000)",
+   "km": 0.846,
+   "props": {}
+  },
+  {
+   "id": "Q60750940",
+   "label": "Glengall Grove",
+   "description": "street on the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.013808 51.496031)",
+   "km": 0.923,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6146231",
+   "label": "Jamestown Harbour",
+   "description": "Housing development in Poplar, London",
+   "coord": "POINT(-0.008889 51.503900)",
+   "km": 0.597,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q41176",
+      "label": "building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q61599152",
+   "label": "London River Man",
+   "description": "statue in London by John W. Mills",
+   "coord": "POINT(-0.021263 51.501251)",
+   "km": 0.402,
+   "props": {
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q179700",
+      "label": "statue"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q61610403",
+   "label": "Lincoln Plaza London, Curio Collection by Hilton",
+   "description": "hotel in Canary Wharf, London, United Kingdom",
+   "coord": "POINT(-0.019438 51.498554)",
+   "km": 0.621,
+   "props": {
+    "street address": [
+     "2 Lincoln Plaza, Canary Wharf, London, E14 9BD"
+    ],
+    "postal code": [
+     "E14 9BD"
+    ],
+    "official website": [
+     {
+      "id": "index.html",
+      "label": ""
+     },
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "opened": [
+     "2018-12-01T00:00:00Z"
+    ],
+    "owned by": [
+     {
+      "id": "Q1057464",
+      "label": "Hilton Worldwide"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q63928183",
+   "label": "East India Dock Road",
+   "description": "major arterial route in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.012611 51.511231)",
+   "km": 0.873,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q34442",
+      "label": "road"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6549183",
+   "label": "Limehouse Studios",
+   "description": "former television studio in London",
+   "coord": "POINT(-0.018333 51.503611)",
+   "km": 0.072,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q511355",
+      "label": "television studio"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q65939184",
+   "label": "West India Dock Road",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.027161 51.510803)",
+   "km": 1.011,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q65939230",
+   "label": "Westferry Road",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.025900 51.498740)",
+   "km": 0.826,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q65940091",
+   "label": "Marsh Wall",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.017790 51.500370)",
+   "km": 0.405,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q65963822",
+   "label": "Bank Street",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.021360 51.503530)",
+   "km": 0.273,
+   "props": {
+    "postal code": [
+     "E14"
+    ],
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66220400",
+   "label": "River House Montessori School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.018138 51.498746)",
+   "km": 0.587,
+   "props": {
+    "postal code": [
+     "E14 9XP"
+    ],
+    "street address": [
+     "River House Montessori School, Unit C, Great Eastern Enterprise, 3 Millharbour, London, E14 9XP"
+    ],
+    "inception": [
+     "1995-01-26T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q2418495",
+      "label": "independent school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66221017",
+   "label": "Cyril Jackson Primary School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.028365 51.509050)",
+   "km": 0.94,
+   "props": {
+    "street address": [
+     "Cyril Jackson Primary School, 51 Three Colt Street, Limehouse, London, E14 8HH"
+    ],
+    "postal code": [
+     "E14 8HH"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q5155053",
+      "label": "community school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66221043",
+   "label": "Woolmore Primary School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.008003 51.510623)",
+   "km": 0.988,
+   "props": {
+    "postal code": [
+     "E14 0EW"
+    ],
+    "street address": [
+     "Woolmore Primary School, Woolmore Street, Poplar, London, E14 0EW"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q5155053",
+      "label": "community school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66221048",
+   "label": "Seven Mills Primary School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.023960 51.498385)",
+   "km": 0.769,
+   "props": {
+    "postal code": [
+     "E14 8LY"
+    ],
+    "street address": [
+     "Seven Mills Primary School, Malabar Street, Isle of Dogs, London, E14 8LY"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q5155053",
+      "label": "community school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66229558",
+   "label": "South Quay College",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.020994 51.499913)",
+   "km": 0.515,
+   "props": {
+    "postal code": [
+     "E14 9UB"
+    ],
+    "street address": [
+     "South Quay College, 32 Mastmaker Court, Mastmaker Road, London, E14 9UB"
+    ],
+    "official website": [
+     {
+      "id": "www.citygatewayap.org.uk",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2012-09-03T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q5500295",
+      "label": "free school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66231429",
+   "label": "Canary Wharf College 3",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.014910 51.494496)",
+   "km": 1.073,
+   "props": {
+    "street address": [
+     "Canary Wharf College 3, 7 Selsdon Way, London, E14 9GL"
+    ],
+    "postal code": [
+     "E14 9GL"
+    ],
+    "official website": [
+     {
+      "id": "www.canarywharfcollege.co.uk",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2016-09-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q159334",
+      "label": "secondary school"
+     },
+     {
+      "id": "Q5500295",
+      "label": "free school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66231879",
+   "label": "Bygrove Primary School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.018880 51.512542)",
+   "km": 0.956,
+   "props": {
+    "street address": [
+     "Bygrove Primary School, Bygrove Street, Poplar, London, E14 6DN"
+    ],
+    "postal code": [
+     "E14 6DN"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2017-07-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q4671329",
+      "label": "academy school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66232810",
+   "label": "New City College Corporation",
+   "description": "college in Tower Hamlets, UK",
+   "coord": "POINT(-0.017755 51.508717)",
+   "km": 0.525,
+   "props": {
+    "postal code": [
+     "E14 0AF"
+    ],
+    "street address": [
+     "New City College Corporation, Poplar High Street, London, E14 0AF"
+    ],
+    "official website": [
+     {
+      "id": "www.ncclondon.ac.uk",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2018-08-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q21822439",
+      "label": "further education college"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66478618",
+   "label": "The Festival Inn",
+   "description": "pub in Tower Hamlets, London, UK",
+   "coord": "POINT(-0.015597 51.512389)",
+   "km": 0.943,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q212198",
+      "label": "pub"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66478796",
+   "label": "Isle of Dogs Pumping Station",
+   "description": "architecturally significant pumping station in Tower Hamlets, London, UK",
+   "coord": "POINT(-0.007917 51.499333)",
+   "km": 0.843,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700831",
+      "label": "Grade II* listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q446013",
+      "label": "pumping station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q66479100",
+   "label": "Chrisp Street Market Clock Tower",
+   "description": "clock tower in Poplar, London",
+   "coord": "POINT(-0.014054 51.512408)",
+   "km": 0.966,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q5497851",
+      "label": "Frederick Gibberd"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q853854",
+      "label": "clock tower"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6669850",
+   "label": "London Arena",
+   "description": "former indoor arena on the Isle of Dogs, London, England, United Kingdom",
+   "coord": "POINT(-0.014840 51.496700)",
+   "km": 0.833,
+   "props": {
+    "opened": [
+     "1989-01-01T00:00:00Z"
+    ],
+    "dissolved or demolished": [
+     "2006-06-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q641226",
+      "label": "arena"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q67147584",
+   "label": "Mayflower Primary School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.020289 51.511589)",
+   "km": 0.867,
+   "props": {
+    "postal code": [
+     "E14 6DU"
+    ],
+    "street address": [
+     "Mayflower Primary School, Upper North Street, Poplar, London, E14 6DU"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q5155053",
+      "label": "community school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q67149623",
+   "label": "Our Lady and St Joseph Catholic Primary School",
+   "description": "school in Tower Hamlets, UK",
+   "coord": "POINT(-0.019703 51.509996)",
+   "km": 0.685,
+   "props": {
+    "postal code": [
+     "E14 0DE"
+    ],
+    "street address": [
+     "Our Lady and St Joseph Catholic Primary School, Wades Place, Poplar, E14 0DE"
+    ],
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "2014-09-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q7940971",
+      "label": "voluntary aided school"
+     },
+     {
+      "id": "Q9842",
+      "label": "primary school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q67312575",
+   "label": "Reuters Plaza",
+   "description": "urban square in Canary Wharf in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.019700 51.504000)",
+   "km": 0.152,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q174782",
+      "label": "square"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6772998",
+   "label": "London Marriott Hotel Canary Wharf",
+   "description": "hotel in London",
+   "coord": "POINT(-0.021130 51.507420)",
+   "km": 0.456,
+   "props": {
+    "opened": [
+     "2004-01-01T00:00:00Z"
+    ],
+    "architect": [
+     {
+      "id": "Q1602991",
+      "label": "HOK"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q27686",
+      "label": "hotel"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6784622",
+   "label": "Massey Shaw",
+   "description": "former London Fire Brigade fireboat",
+   "coord": "POINT(-0.011559 51.501088)",
+   "km": 0.524,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q11446",
+      "label": "ship"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6860127",
+   "label": "Millwall Docks railway station",
+   "description": "railway station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.014400 51.495900)",
+   "km": 0.927,
+   "props": {
+    "opened": [
+     "1871-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q6860128",
+   "label": "Millwall Junction railway station",
+   "description": "railway station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.012800 51.507300)",
+   "km": 0.491,
+   "props": {
+    "opened": [
+     "1871-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7011105",
+   "label": "New Providence Wharf",
+   "description": "residential development in London's Docklands",
+   "coord": "POINT(-0.004722 51.506111)",
+   "km": 0.916,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q13402009",
+      "label": "apartment building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q459464",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7186893",
+   "label": "Phoenix Heights",
+   "description": "residential tower block in Tower Hamlets, London",
+   "coord": "POINT(-0.021300 51.500300)",
+   "km": 0.489,
+   "props": {
+    "floors above ground": [
+     "21.0",
+     "23.0"
+    ],
+    "height": [
+     "54.0",
+     "65.0"
+    ],
+    "street address": [
+     "4 Mastmaker Road"
+    ],
+    "inception": [
+     "2009-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "2009-12-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q18142",
+      "label": "tower block"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7229374",
+   "label": "Poplar (East India Road) railway station",
+   "description": "railway station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.013100 51.511000)",
+   "km": 0.837,
+   "props": {
+    "opened": [
+     "1866-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7229378",
+   "label": "Poplar Baths",
+   "description": "former public bath house in Poplar, London, United Kingdom",
+   "coord": "POINT(-0.014100 51.510900)",
+   "km": 0.803,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700834",
+      "label": "Grade II listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q3200567",
+      "label": "spa house"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7229394",
+   "label": "Poplar DLR depot",
+   "description": "Secondary depot and headquarters for the Docklands Light Railway",
+   "coord": "POINT(-0.016745 51.507539)",
+   "km": 0.397,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q16895517",
+      "label": "traction maintenance depot"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7229433",
+   "label": "Poplar railway station",
+   "description": "railway station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.006600 51.508000)",
+   "km": 0.877,
+   "props": {
+    "opened": [
+     "1840-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7352508",
+   "label": "Robin Hood Gardens",
+   "description": "former residential estate in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.008958 51.509500)",
+   "km": 0.852,
+   "props": {
+    "inception": [
+     "1972-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q12104567",
+      "label": "housing estate"
+     },
+     {
+      "id": "Q811979",
+      "label": "built structure"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q547644",
+      "label": "Alison and Peter Smithson"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7410675",
+   "label": "Samuda Estate",
+   "description": "Social Housing Estate in Tower Hamlets",
+   "coord": "POINT(-0.008889 51.497200)",
+   "km": 0.964,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q4036610",
+      "label": "Council Estate"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q754680",
+   "label": "Traffic Light tree",
+   "description": "sculpture by Pierre Vivant",
+   "coord": "POINT(-0.025261 51.503922)",
+   "km": 0.538,
+   "props": {
+    "height": [
+     "8.0"
+    ],
+    "inception": [
+     "1998-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q860861",
+      "label": "sculpture"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7567064",
+   "label": "South Dock railway station",
+   "description": "railway station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.012900 51.502600)",
+   "km": 0.355,
+   "props": {
+    "opened": [
+     "1872-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7593588",
+   "label": "St John's Estate",
+   "description": "housing scheme in Cubitt Town",
+   "coord": "POINT(-0.011389 51.496700)",
+   "km": 0.916,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12104567",
+      "label": "housing estate"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7594715",
+   "label": "St Matthias Old Church",
+   "description": "church in London Borough of Tower Hamlets, UK",
+   "coord": "POINT(-0.016944 51.508889)",
+   "km": 0.546,
+   "props": {
+    "inception": [
+     "1654-01-01T00:00:00Z"
+    ],
+    "heritage designation": [
+     {
+      "id": "Q15700831",
+      "label": "Grade II* listed building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q1859875",
+      "label": "Robert Shirley"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q19899465",
+      "label": "former church building"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q778089",
+   "label": "15 Westferry Circus",
+   "description": "multi-storey urban building",
+   "coord": "POINT(-0.025639 51.505100)",
+   "km": 0.577,
+   "props": {
+    "floors above ground": [
+     "10.0"
+    ],
+    "inception": [
+     "2001-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11755959",
+      "label": "multi-story urban building"
+     }
+    ],
+    "located on street": [
+     {
+      "id": "Q22083678",
+      "label": "Westferry Circus"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7829663",
+   "label": "Tower Hamlets College",
+   "description": "further education school in London",
+   "coord": "POINT(-0.016600 51.508600)",
+   "km": 0.516,
+   "props": {
+    "official website": [
+     {
+      "id": "tower-hamlets",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q3914",
+      "label": "school"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7842858",
+   "label": "Trinity Independent Chapel",
+   "description": "church in London Borough of Tower Hamlets, UK",
+   "coord": "POINT(-0.019370 51.511125)",
+   "km": 0.804,
+   "props": {
+    "heritage designation": [
+     {
+      "id": "Q15700831",
+      "label": "Grade II* listed building"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q16970",
+      "label": "church building"
+     }
+    ],
+    "architect": [
+     {
+      "id": "Q8012532",
+      "label": "William Hosking"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7985437",
+   "label": "West India Docks railway station",
+   "description": "railway station in Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.024200 51.508600)",
+   "km": 0.691,
+   "props": {
+    "opened": [
+     "1840-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q55488",
+      "label": "railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q7985439",
+   "label": "West India Quay",
+   "description": "redeveloped West India Docks (North)",
+   "coord": "POINT(-0.022222 51.506700)",
+   "km": 0.444,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q828909",
+      "label": "wharf"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q8032285",
+   "label": "Wood Wharf",
+   "description": "building complex in Canary Wharf",
+   "coord": "POINT(-0.011458 51.502653)",
+   "km": 0.445,
+   "props": {
+    "official website": [
+     {
+      "id": "",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q1497364",
+      "label": "building complex"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q86027080",
+   "label": "University of Cumbria - London Campus",
+   "description": "academic department in the UK",
+   "coord": "POINT(-0.024663 51.511078)",
+   "km": 0.931,
+   "props": {
+    "postal code": [
+     "E14 6JE"
+    ],
+    "official website": [
+     {
+      "id": "London",
+      "label": ""
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q2467461",
+      "label": "academic department"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q86661166",
+   "label": "South Quay Footbridge",
+   "description": "",
+   "coord": "POINT(-0.020250 51.502040)",
+   "km": 0.29,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q1068842",
+      "label": "footbridge"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q867663",
+   "label": "Citigroup Centre",
+   "description": "building complex in London, England",
+   "coord": "POINT(-0.018333 51.503889)",
+   "km": 0.059,
+   "props": {
+    "floors above ground": [
+     "45.0"
+    ],
+    "height": [
+     "200.0"
+    ],
+    "opened": [
+     "2001-01-01T00:00:00Z"
+    ],
+    "inception": [
+     "2001-01-01T00:00:00Z"
+    ],
+    "architect": [
+     {
+      "id": "Q1208016",
+      "label": "Foster and Partners"
+     },
+     {
+      "id": "Q309483",
+      "label": "César Pelli"
+     }
+    ],
+    "instance of": [
+     {
+      "id": "Q1497364",
+      "label": "building complex"
+     }
+    ],
+    "occupant": [
+     {
+      "id": "Q219508",
+      "label": "Citigroup"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q880946",
+   "label": "Blackwall Tunnel",
+   "description": "pair of road tunnels underneath the River Thames",
+   "coord": "POINT(-0.003056 51.504444)",
+   "km": 1.002,
+   "props": {
+    "inception": [
+     "1897-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1897-05-22T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q2354973",
+      "label": "road tunnel"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q682520",
+      "label": "TfL"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q880956",
+   "label": "Blackwall DLR station",
+   "description": "Docklands Light Railway station",
+   "coord": "POINT(-0.007000 51.507800)",
+   "km": 0.842,
+   "props": {
+    "official website": [
+     {
+      "id": "blackwall-dlr-station",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1994-01-01T00:00:00Z"
+    ],
+    "opened": [
+     "1994-03-28T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q11670533",
+      "label": "elevated station"
+     },
+     {
+      "id": "Q18516630",
+      "label": "Docklands Light Railway station"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q880959",
+   "label": "Blackwall Yard",
+   "description": "former shipyard on the Thames at Blackwall, London; shipbuilding area since the Middle Ages",
+   "coord": "POINT(-0.003333 51.506900)",
+   "km": 1.033,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q190928",
+      "label": "shipyard"
+     }
+    ],
+    "industry": [
+     {
+      "id": "Q474200",
+      "label": "shipbuilding"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q918636",
+   "label": "Poplar Dock",
+   "description": "dock in London Borough of Tower Hamlets, London, England, UK",
+   "coord": "POINT(-0.008056 51.505600)",
+   "km": 0.678,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q124282",
+      "label": "dock"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q96183031",
+   "label": "Statue of Robert Milligan",
+   "description": "sculpture by Richard Westmacott",
+   "coord": "POINT(-0.023892 51.507354)",
+   "km": 0.579,
+   "props": {
+    "inception": [
+     "1813-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q179700",
+      "label": "statue"
+     },
+     {
+      "id": "Q4989906",
+      "label": "monument"
+     }
+    ],
+    "owned by": [
+     {
+      "id": "Q917820",
+      "label": "London Museum"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q96410517",
+   "label": "Mulberry Place",
+   "description": "former municipal building in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.006200 51.510000)",
+   "km": 1.029,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q25550691",
+      "label": "city hall"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q96414457",
+   "label": "West India Pier",
+   "description": "Disused pier on the River Thames",
+   "coord": "POINT(-0.027222 51.501389)",
+   "km": 0.734,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q863454",
+      "label": "pier"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q97040028",
+   "label": "KPMG (United Kingdom)",
+   "description": "company in London, United Kingdom CAC40 MEKONOMEN FDA EIM",
+   "coord": "POINT(-0.019582 51.506533)",
+   "km": 0.317,
+   "props": {
+    "official website": [
+     {
+      "id": "home.html",
+      "label": ""
+     }
+    ],
+    "inception": [
+     "1987-01-01T00:00:00Z"
+    ],
+    "instance of": [
+     {
+      "id": "Q4830453",
+      "label": "business"
+     },
+     {
+      "id": "Q6881511",
+      "label": "enterprise"
+     }
+    ],
+    "parent organisation": [
+     {
+      "id": "Q493751",
+      "label": "KPMG"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q97376052",
+   "label": "Hibbert Gate",
+   "description": "gate at West India Docks, London",
+   "coord": "POINT(-0.024330 51.506791)",
+   "km": 0.566,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q12277",
+      "label": "arch"
+     },
+     {
+      "id": "Q1232589",
+      "label": "replica"
+     },
+     {
+      "id": "Q53060",
+      "label": "gate"
+     },
+     {
+      "id": "Q6671777",
+      "label": "structure"
+     },
+     {
+      "id": "Q860861",
+      "label": "sculpture"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q98526135",
+   "label": "Woodstock Terrace",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.015780 51.509960)",
+   "km": 0.674,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  },
+  {
+   "id": "Q98596445",
+   "label": "East Ferry Road",
+   "description": "street in the London Borough of Tower Hamlets",
+   "coord": "POINT(-0.011690 51.497880)",
+   "km": 0.791,
+   "props": {
+    "instance of": [
+     {
+      "id": "Q79007",
+      "label": "street"
+     }
+    ]
+   }
+  }
+ ],
+ "hq": [
+  {
+   "org": "Q107432126",
+   "label": "First Hydro Company",
+   "place": "Q1014325",
+   "place_label": "Canada Square",
+   "km": 0.167,
+   "website": null
+  },
+  {
+   "org": "Q1342306",
+   "label": "Samuda Brothers",
+   "place": "Q122750",
+   "place_label": "Cubitt Town",
+   "km": 1.07,
+   "website": null
+  },
+  {
+   "org": "Q10889901",
+   "label": "HSBC Asia Pacific",
+   "place": "Q124377",
+   "place_label": "Canary Wharf",
+   "km": 0.175,
+   "website": null
+  },
+  {
+   "org": "Q7864751",
+   "label": "UK2",
+   "place": "Q124377",
+   "place_label": "Canary Wharf",
+   "km": 0.175,
+   "website": "http://www.uk2group.com/"
+  },
+  {
+   "org": "Q6806324",
+   "label": "Medical Defence Union",
+   "place": "Q124377",
+   "place_label": "Canary Wharf",
+   "km": 0.175,
+   "website": "http://www.themdu.com"
+  },
+  {
+   "org": "Q18215773",
+   "label": "Transfergo",
+   "place": "Q124377",
+   "place_label": "Canary Wharf",
+   "km": 0.175,
+   "website": "http://www.transfergo.com/"
+  },
+  {
+   "org": "Q1101257",
+   "label": "Clifford Chance",
+   "place": "Q138760",
+   "place_label": "10 Upper Bank Street",
+   "km": 0.156,
+   "website": "http://www.cliffordchance.com/"
+  },
+  {
+   "org": "Q1086238",
+   "label": "Olympic Delivery Authority",
+   "place": "Q138768",
+   "place_label": "One Churchill Place",
+   "km": 0.255,
+   "website": "https://www.gov.uk/government/organisations/olympic-delivery-authority"
+  },
+  {
+   "org": "Q245343",
+   "label": "Barclays",
+   "place": "Q138768",
+   "place_label": "One Churchill Place",
+   "km": 0.255,
+   "website": "https://home.barclays/"
+  },
+  {
+   "org": "Q1869042",
+   "label": "London Organising Committee of the Olympic and Paralympic Games",
+   "place": "Q138768",
+   "place_label": "One Churchill Place",
+   "km": 0.255,
+   "website": "http://www.london2012.com"
+  },
+  {
+   "org": "Q133821494",
+   "label": "",
+   "place": "Q20711962",
+   "place_label": "30 South Colonnade",
+   "km": 0.193,
+   "website": null
+  },
+  {
+   "org": "Q4972037",
+   "label": "Broadbean",
+   "place": "Q208152",
+   "place_label": "London Borough of Tower Hamlets",
+   "km": 1.034,
+   "website": "http://www.broadbean.com"
+  },
+  {
+   "org": "Q1636545",
+   "label": "Reach plc",
+   "place": "Q503477",
+   "place_label": "One Canada Square",
+   "km": 0.206,
+   "website": "https://www.reachplc.com/"
+  },
+  {
+   "org": "Q7639452",
+   "label": "Sunday Mirror",
+   "place": "Q503477",
+   "place_label": "One Canada Square",
+   "km": 0.206,
+   "website": "http://www.mirror.co.uk"
+  },
+  {
+   "org": "Q190464",
+   "label": "HSBC",
+   "place": "Q572887",
+   "place_label": "8 Canada Square",
+   "km": 0.142,
+   "website": "https://hsbc.com/"
+  },
+  {
+   "org": "Q140033218",
+   "label": "Queen Victoria Seamen's Rest",
+   "place": "Q63928183",
+   "place_label": "East India Dock Road",
+   "km": 0.873,
+   "website": "https://www.qvsr.org.uk/"
+  },
+  {
+   "org": "Q89212210",
+   "label": "Keolis Amey Docklands",
+   "place": "Q7229394",
+   "place_label": "Poplar DLR depot",
+   "km": 0.397,
+   "website": "https://www.keolisameydlr.co.uk/"
+  }
+ ]
+}

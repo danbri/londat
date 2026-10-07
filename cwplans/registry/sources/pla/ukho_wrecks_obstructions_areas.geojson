@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "INSPIRE_Wrecks_and_Obstructions_UK_EEZ_Areas",
+"features": [
+{ "type": "Feature", "properties": { "catobs": "foul ground", "catwrk": null, "valsou": 0.0, "watlev": "always under water/submerged", "wk_idn": 85451.0, "objnam": null }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0.0022734, 51.4927798 ], [ 0.0020301, 51.4927869 ], [ 0.0020567, 51.4922341 ], [ 0.0021023, 51.4917074 ], [ 0.0025774, 51.4917098 ], [ 0.0026572, 51.4918806 ], [ 0.0025584, 51.4920562 ], [ 0.0024824, 51.4922104 ], [ 0.0024292, 51.4923551 ], [ 0.002338, 51.4925473 ], [ 0.0022962, 51.4926897 ], [ 0.0022734, 51.4927798 ] ] ] } },
+{ "type": "Feature", "properties": { "catobs": "foul ground", "catwrk": null, "valsou": 0.0, "watlev": "always under water/submerged", "wk_idn": 67347.0, "objnam": null }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -0.0148, 51.4844833 ], [ -0.0148333, 51.4843333 ], [ -0.01425, 51.4841667 ], [ -0.01425, 51.48405 ], [ -0.0148333, 51.4838667 ], [ -0.0148333, 51.4837 ], [ -0.01425, 51.4838667 ], [ -0.01375, 51.4840333 ], [ -0.01375, 51.4842 ], [ -0.0148, 51.4844833 ] ] ] } }
+]
+}

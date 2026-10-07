@@ -1,0 +1,67 @@
+[
+ {
+  "name": "Tower Hamlets planning public access (Idox): application pages and documents",
+  "url": "https://development.towerhamlets.gov.uk/online-applications/",
+  "reason": "robots.txt (fetched 2026-10-03, HTTP 200 text/plain) is 'User-agent: * Disallow: /'. No page or document was fetched from this host apart from robots.txt. Only Wayback captures were used."
+ },
+ {
+  "name": "Wayback captures of Tower Hamlets Idox documents",
+  "url": "https://web.archive.org/cdx/search/cdx?url=development.towerhamlets.gov.uk/online-applications/&matchType=prefix",
+  "reason": "392 captures for the whole prefix; the 36 archived files belong to PA/16/00417/A1 and PA/20/01412/NC (not estate malls). Of the target applications only the Wood Wharf documents tab (DCAPR_108309) is archived; its PDFs are not."
+ },
+ {
+  "name": "Tower Hamlets committee papers (live)",
+  "url": "https://democracy.towerhamlets.gov.uk/",
+  "reason": "HTTP 403 with an Azure WAF JavaScript challenge (even for robots.txt). Not bypassed. Wayback captures used instead (19,176 captured documents listed by CDX)."
+ },
+ {
+  "name": "Wood Wharf committee report capture (s59188), full text",
+  "url": "https://web.archive.org/web/20210302133008/https://democracy.towerhamlets.gov.uk/documents/s59188/pa-13-02966",
+  "reason": "The capture stops at 1,048,576 of 7,196,760 bytes. Text was recovered from the page content streams; the figures (parameter plans) are lost."
+ },
+ {
+  "name": "Wood Wharf Health Centre grant report (s154683)",
+  "url": "https://web.archive.org/web/20241011021343/https://democracy.towerhamlets.gov.uk/documents/s154683/wood%20wharf%20report.pdf",
+  "reason": "Fetched (200 application/pdf) because the file name was 'wood wharf report'; it is a 2019 grants report about a health centre, with no plans."
+ },
+ {
+  "name": "Newfoundland Place licensing papers, 3 December 2024 (s246006, s246007, s246378 to s246380)",
+  "url": "https://web.archive.org/web/20250414031210/https://democracy.towerhamlets.gov.uk/documents/s246006/5%20Newfoundland%20Place%20cover%20report%20-%2003%20Dec%2024.pdf",
+  "reason": "Licensing Act application for a cafe; the cover report (fetched, 200) lists resident objectors. Personal data: the appendices and supporting documents were not opened; the cover report was deleted from scratch."
+ },
+ {
+  "name": "LDDC history site (live)",
+  "url": "http://www.lddc-history.org.uk/",
+  "reason": "www.lddc-history.org.uk does not resolve; lddc-history.org.uk gives proxy 502 (2026-10-03). Wayback captures used."
+ },
+ {
+  "name": "GLA planning casework pages on london.gov.uk",
+  "url": "https://www.london.gov.uk/robots.txt",
+  "reason": "robots.txt disallows /search, so the referral pages were not searched. The Planning London Datahub (pl-o2) holds no documents (url_planning_app null)."
+ },
+ {
+  "name": "Planning Inspectorate (appeals, casework portal)",
+  "url": "https://acp.planninginspectorate.gov.uk/",
+  "reason": "Not searched: all 15 applications have decision 'Permit' in the council layer and none shows an appeal; the Inspectorate holds decision letters, not scheme drawings."
+ },
+ {
+  "name": "Phase 1 mall planning drawings (Cabot Place, first Canada Square works)",
+  "url": null,
+  "reason": "Built 1987-1991 in the Isle of Dogs Enterprise Zone under simplified planning; the LDDC was planning authority until 1997 and the Tower Hamlets layer starts in 1999. No borough application exists to search."
+ },
+ {
+  "name": "Current applications 8 Canada Square (PA/26/01142/NC) and 10 Cabot Square (PA/26/00133/A1)",
+  "url": "https://services1.arcgis.com/KZuCGRSe2K5BiG1Z/arcgis/rest/services/internet_planning_application_current_view_v2/FeatureServer",
+  "reason": "Deep retrofits of buildings above Canada Place and Cabot Place; under consideration, documents only on the robots-disallowed Idox host. Re-check when decided."
+ },
+ {
+  "name": "CWG store guides, accessibility maps, Canary Wharf malls 2013 map",
+  "url": "https://web.archive.org/web/20131007212059/http://www.canarywharf.com:80/Documents/2013/Retail/CW_Malls.pdf",
+  "reason": "Found in the same CDX listing of canarywharf.com, but already fetched by the estate research (indoor/estate/); not duplicated here."
+ },
+ {
+  "name": "Wikimedia Commons searches",
+  "url": "https://commons.wikimedia.org/w/api.php",
+  "reason": "Most search requests answered HTTP 429 even at one request per 70 seconds; see planning.json for any file that was returned."
+ }
+]

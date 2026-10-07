@@ -1,0 +1,87 @@
+[
+ {
+  "name": "TfL open data page (direct)",
+  "url": "https://tfl.gov.uk/info-for/open-data-users/our-open-data",
+  "reason": "403 'Error - Transport for London' to this client on 2026-10-03; used the Internet Archive copy of 2026-09-14 instead."
+ },
+ {
+  "name": "TfL transport data service terms",
+  "url": "https://tfl.gov.uk/corporate/terms-and-conditions/transport-data-service",
+  "reason": "403 direct; only a 2014 Internet Archive capture exists; terms not read in this session."
+ },
+ {
+  "name": "TfL Stop Structure (station and stop topology) API",
+  "url": "https://techforum.tfl.gov.uk/t/stop-structure-station-and-stop-topology-api/2796",
+  "reason": "Needs API portal registration (api-portal.tfl.gov.uk); the forum page returns a 'Verification required' bot challenge (403); the archived copy (20250420205849) has no text without JavaScript. Not bypassed."
+ },
+ {
+  "name": "TfL StopPoint with includeLineData",
+  "url": "https://api.tfl.gov.uk/StopPoint/940GZZLUCYF?includeLineData=true",
+  "reason": "404 EntityNotFoundException on 2026-10-03 (the plain /StopPoint/940GZZLUCYF works)."
+ },
+ {
+  "name": "TfL StopPoint placeTypes",
+  "url": "https://api.tfl.gov.uk/StopPoint/940GZZLUCYF/placeTypes",
+  "reason": "404 Resource not found."
+ },
+ {
+  "name": "Canada Water map v4 (TfL content)",
+  "url": "https://content.tfl.gov.uk/canada-water-map-v4.pdf",
+  "reason": "404 live; archived 2024 copy exists but appears to be an area map, not a station plan; not downloaded."
+ },
+ {
+  "name": "Canada Water map and route finder",
+  "url": "https://content.tfl.gov.uk/canada-water-map-and-route-finder.pdf",
+  "reason": "404 live; street area map, not a station plan."
+ },
+ {
+  "name": "National Rail Data Portal (Knowledgebase stations feed)",
+  "url": "https://opendata.nationalrail.co.uk/",
+  "reason": "200 but registration needed for the Knowledgebase feeds; not signed up (record only)."
+ },
+ {
+  "name": "Rail Data Marketplace",
+  "url": "https://raildata.org.uk/",
+  "reason": "200 'Temporarily down for maintenance'; registration needed anyway; record only."
+ },
+ {
+  "name": "Emerald / ICE Virtual Library, JLE station papers",
+  "url": "https://www.emerald.com/jcien/article-abstract/132/6/19/398253/ARCHITECTURAL-DESIGN-OF-THE-JUBILEE-LINE-EXTENSION",
+  "reason": "403 bot challenge and paywall."
+ },
+ {
+  "name": "Foster + Partners JLE Canary Wharf station page",
+  "url": "https://www.fosterandpartners.com/news/jubilee-line-extension-canary-wharf-station",
+  "reason": "403 to this client."
+ },
+ {
+  "name": "Arquitectura Viva, Canary Wharf Crossrail station",
+  "url": "https://arquitecturaviva.com/works/estacion-canary-wharf-crossrail-london",
+  "reason": "403 to this client."
+ },
+ {
+  "name": "Yeow et al 2012, Achieving more for less at Canary Wharf Crossrail station (academia.edu copy)",
+  "url": "https://www.academia.edu/77198077/Achieving_more_for_less_at_Canary_Wharf_Crossrail_station_London",
+  "reason": "403; academia.edu needs login. ICE paper (Civil Engineering 165 CE5, pp 50-57) is paywalled."
+ },
+ {
+  "name": "Travers and Yeow 2014, Canary Wharf Crossrail station cofferdam (ADS abstract)",
+  "url": "https://ui.adsabs.harvard.edu/abs/2014ICEGE.167..169T/abstract",
+  "reason": "405 to curl; ICE Geotechnical Engineering 167 GE2 pp 169-181 is paywalled."
+ },
+ {
+  "name": "e-architect Canary Wharf station page",
+  "url": "https://www.e-architect.com/london/canary-wharf-station",
+  "reason": "200 but no usable text extracted (dimensions already in FACTS.md from the Foster fact sheet)."
+ },
+ {
+  "name": "Crossrail Learning Legacy site search",
+  "url": "https://learninglegacy.crossrail.co.uk/?s=canary+wharf",
+  "reason": "Static site: search returns the home page. Used the Internet Archive index instead; only 7K-005 and two C305 monitoring reports match Canary Wharf."
+ },
+ {
+  "name": "Network Rail station data",
+  "url": "https://www.networkrail.co.uk/",
+  "reason": "Fetched home page only (200 text/html). None of these stations is managed by Network Rail; Canary Wharf (Elizabeth line) is a TfL/Crossrail station. Record only."
+ }
+]

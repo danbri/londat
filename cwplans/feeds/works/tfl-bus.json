@@ -1,0 +1,1074 @@
+{
+ "meta": {
+  "source": "tfl-bus",
+  "fetched": "2026-10-04",
+  "url": "https://api.tfl.gov.uk/Line/Mode/bus/Status?detail=true; https://api.tfl.gov.uk/StopPoint/Mode/bus/Disruption",
+  "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
+  "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]. Stop positions: NaPTAN (DfT), Open Government Licence v3.0",
+  "method": "Route disruptions (current and planned, London-wide), one item per distinct text with the routes it names; kept when the text names a stop that lies in the zone on one of its routes (NaPTAN position), else when its opening \"STREET, DISTRICT:\" names a postcode district wholly in the zone (E1, E1W, E14, E16, EC3*, SE8, SE10, SE16); a borough name alone does not place it. Stop closures placed by the NaPTAN position of the stop (ATCO code), grouped by text and dates.",
+  "naptan": {
+   "url": "https://naptan.api.dft.gov.uk/v1/access-nodes?atcoAreaCodes=490&dataFormat=csv",
+   "fetched": "2026-10-04",
+   "licence": "Open Government Licence v3.0"
+  },
+  "counts": {
+   "items": 53,
+   "routes": 675,
+   "route_statuses_disrupted": 303,
+   "diversions": 155,
+   "kept_stop_named": 28,
+   "kept_district": 0,
+   "dropped": 127,
+   "stop_disruptions": 366,
+   "stop_no_naptan": 0,
+   "stops_in_zone": 43
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "tfl-bus:057cdde3",
+   "kind": "bus diversion",
+   "title": "Routes 133: KING WILLIAM STREET, City of London: Route 133 is on diversion towards Streatham only until 19:00 on 1 February 2027 due to major roadworks. Buses are diverted via New Change and Cannon Street, missing stops St Paul's Station (SY), Bank Station / Poultry (K) and King William Street / Monument Stati…",
+   "start": "2024-07-08T07:00:00Z",
+   "end": "2027-02-01T19:00:00Z",
+   "location": "KING WILLIAM STREET",
+   "street": "KING WILLIAM STREET",
+   "borough": "City of London",
+   "lat": 51.5095,
+   "lon": -0.08703,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Monument)",
+   "routes": [
+    "133"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:616c6b45",
+   "kind": "bus diversion",
+   "title": "Routes 21, 43, 141: KING WILLIAM STREET, City of London: Routes 21 43 and 141 are on diversion southbound only until 19:00 on 1 February 2027 due to major roadworks. Buses are diverted via South Place, Eldon Street, Blomfield Street, London Wall, Bishopsgate and Gracechurch Street, missing stops from Moorgate Station …",
+   "start": "2024-07-08T07:00:00Z",
+   "end": "2027-02-01T19:00:00Z",
+   "location": "KING WILLIAM STREET",
+   "street": "KING WILLIAM STREET",
+   "borough": "City of London",
+   "lat": 51.5095,
+   "lon": -0.08703,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Monument)",
+   "routes": [
+    "141",
+    "21",
+    "43"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:a4d4e351",
+   "kind": "bus diversion",
+   "title": "Routes n21: KING WILLIAM STREET, City of London: Route N21 is on diversion towards Bexleyheath only until 19:00 on 1 February 2027 due to major roadworks. Buses are diverted via Cannon Street, missing stops Bank Station / Poultry (K) and King William Street / Monument Station (G).",
+   "start": "2024-07-08T07:00:00Z",
+   "end": "2027-02-01T19:00:00Z",
+   "location": "KING WILLIAM STREET",
+   "street": "KING WILLIAM STREET",
+   "borough": "Bexley",
+   "lat": 51.5095,
+   "lon": -0.08703,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Monument)",
+   "routes": [
+    "n21"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:05aa8998",
+   "kind": "bus diversion",
+   "title": "Routes 276: ORDNANCE ROAD: Until 23:00 Thursday 31 December 2026, route 276 towards Newham Hospital is on diversion via Manor Road and Barking Road due to signal works at Ordnance Road. Buses are not serving the stops 'Star Lane Station/Star Primary School,' 'Exning Road' and 'Malmesbury Terrace.'",
+   "start": "2025-02-21T09:51:00Z",
+   "end": "2026-12-31T23:00:00Z",
+   "location": "Exning Road",
+   "street": null,
+   "borough": "Newham",
+   "lat": 51.51987,
+   "lon": 0.00952,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Exning Road)",
+   "routes": [
+    "276"
+   ],
+   "category": "RealTime",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490018854E:c4cbfb94",
+   "kind": "bus stop closed",
+   "title": "Exning Road (->E); Star Lane Stn  / Star Primary Sch (Stop E); Malmesbury Terrace (Stop R): Bus stop closed. Signal works.",
+   "start": "2025-03-11T15:05:00Z",
+   "end": "2026-12-31T23:00:00Z",
+   "location": "Exning Road; Star Lane Stn  / Star Primary Sch; Malmesbury Terrace",
+   "lat": 51.51987,
+   "lon": 0.00952,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490018854E",
+    "490012598E",
+    "490010627S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490018854E/"
+  },
+  {
+   "id": "tfl-bus:04a42e17",
+   "kind": "bus diversion",
+   "title": "Routes 276: ORDNANCE ROAD, E16: From 05:00 Thursday 12 June until 23:00 Thursday 31 December 2026, ROUTE 276 towards Newham Hospital is on diversion via Star Lane, Ordinance Road, Malmesbury Road, Oak Crescent and Barking Road (serving Bus Stop J - Rathbone Market) due to maintenance works taking place. Buses …",
+   "start": "2025-06-12T04:00:00Z",
+   "end": "2026-12-31T23:00:00Z",
+   "location": "Rathbone Market",
+   "street": null,
+   "borough": "Newham",
+   "lat": 51.51664,
+   "lon": 0.0098,
+   "postcode": "E16",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Rathbone Market)",
+   "routes": [
+    "276"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490006804N2:e1c8a0c7",
+   "kind": "bus stop closed",
+   "title": "Ferndale Street (Stop X): Bus stop closed until 17:00 Friday 1 January 2027, due to sewer works at Ferndale Street. Use the next or previous stop.",
+   "start": "2026-06-08T07:00:00Z",
+   "end": "2027-01-01T17:00:00Z",
+   "location": "Ferndale Street",
+   "lat": 51.51064,
+   "lon": 0.0681,
+   "borough": null,
+   "zone": "east",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490006804N2"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490006804N2/"
+  },
+  {
+   "id": "tfl-busstop:490013691E:56acdaff",
+   "kind": "bus stop closed",
+   "title": "Tollgate Road (Stop E): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-07-27T06:00:00Z",
+   "end": "2026-11-01T17:00:00Z",
+   "location": "Tollgate Road",
+   "lat": 51.51648,
+   "lon": 0.06042,
+   "borough": null,
+   "zone": "east",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490013691E"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490013691E/"
+  },
+  {
+   "id": "tfl-busstop:490015208N:91c33c4f",
+   "kind": "bus stop closed",
+   "title": "London Wall / Moorgate Station (Stop N): This bus stop is closed due to road works until 16:00 on 30 October, please use the nearby temporary bus stop.",
+   "start": "2026-08-17T15:08:00Z",
+   "end": "2026-10-30T16:00:00Z",
+   "location": "London Wall / Moorgate Station",
+   "lat": 51.51744,
+   "lon": -0.09026,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490015208N"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490015208N/"
+  },
+  {
+   "id": "tfl-busstop:490003783S:4968816c",
+   "kind": "bus stop closed",
+   "title": "Mile End Park Leisure Centre (Stop MF): STOP CLOSED to 30 OCTOBER 18:00 due to a water main replacement Please use next or previous stop",
+   "start": "2026-09-08T17:22:00Z",
+   "end": "2026-10-30T18:00:00Z",
+   "location": "Mile End Park Leisure Centre",
+   "lat": 51.51923,
+   "lon": -0.03068,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490003783S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490003783S/"
+  },
+  {
+   "id": "tfl-bus:c5ae7af1",
+   "kind": "bus diversion",
+   "title": "Routes 69: BARKING ROAD, E16: Until 11:00 on Tuesday 6 October, ROUTE 69 is on diversion in both directions, due to Thames Water works taking place on Barking Road. Towards Walthamstow, bus stops from 'Star Lane' (T) to 'Florence Road' (N) will not be served. Towards Canning Town, bus stops from 'High Street …",
+   "start": "2026-09-09T08:00:00Z",
+   "end": "2026-10-06T10:00:00Z",
+   "location": "Star Lane",
+   "street": null,
+   "borough": null,
+   "lat": 51.51858,
+   "lon": 0.01308,
+   "postcode": "E16",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Star Lane)",
+   "routes": [
+    "69"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:cc612e55",
+   "kind": "bus diversion",
+   "title": "Routes 474: BARKING ROAD, E16: Until 11:00 on Tuesday 6 October, ROUTE 474 is cutting short of its normal route, starting and finishing at Canning Town, due to Thames Water works taking place on Barking Road. Towards Hermit Road, bus stops from 'Canning Town Bus Station' (E) to 'Hermit Road' (L) will not be se…",
+   "start": "2026-09-09T08:00:00Z",
+   "end": "2026-10-06T10:00:00Z",
+   "location": "Canning Town",
+   "street": null,
+   "borough": null,
+   "lat": 51.51431,
+   "lon": 0.00866,
+   "postcode": "E16",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Canning Town)",
+   "routes": [
+    "474"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490004090S:f6c3d947",
+   "kind": "bus stop closed",
+   "title": "Blake Road (->S); Blake Road (->N); Star Lane (Stop T); Star Lane (Stop U): Route 69 is on diversion until 17:00 on Friday 23 October due to Thames Water works. tfl.gov.uk.",
+   "start": "2026-09-09T08:00:00Z",
+   "end": "2026-10-23T16:00:00Z",
+   "location": "Blake Road; Blake Road; Star Lane; Star Lane",
+   "lat": 51.52094,
+   "lon": 0.01241,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490004090S",
+    "490004090N",
+    "490012596N",
+    "490012596S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490004090S/"
+  },
+  {
+   "id": "tfl-bus:2c22cf90",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 21, 43, 141: Road will be closed to facilitate UKPN works from 13 Oct 07:00 until 31 Oct 18:00. Buses will be diverted. 21, 43, 141 towards Lewisham and London Bridge will miss stops Camomile Street and Fenchurch Street.",
+   "start": "2026-09-14T07:26:00Z",
+   "end": "2026-10-31T18:00:00Z",
+   "location": "Camomile Street",
+   "street": null,
+   "borough": "Lewisham",
+   "lat": 51.51573,
+   "lon": -0.082,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Camomile Street)",
+   "routes": [
+    "141",
+    "21",
+    "43"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:97fb8456",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 35, 47, 149, 388: Road will be closed to facilitate UKPN works from 13 Oct 07:00 until 31 Oct 18:00. Buses will be diverted in both directions and will miss stops Monument Station and Fenchurch Street.",
+   "start": "2026-09-14T07:29:00Z",
+   "end": "2026-10-31T18:00:00Z",
+   "location": "Monument",
+   "street": null,
+   "borough": null,
+   "lat": 51.50955,
+   "lon": -0.08731,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Monument)",
+   "routes": [
+    "149",
+    "35",
+    "388",
+    "47"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:3c57d40c",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 344, n133: Road will be closed to facilitate UKPN works from 13 Oct 07:00 until 31 Oct 18:00. Buses will be diverted. 344 and N133 towards Clapham Junction and Morden will miss stops Camomile Street and Fenchurch Street.",
+   "start": "2026-09-14T07:31:00Z",
+   "end": "2026-10-31T18:00:00Z",
+   "location": "Camomile Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51573,
+   "lon": -0.082,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Camomile Street)",
+   "routes": [
+    "344",
+    "n133"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:38f7f016",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 21, 43, 141: Road will be closed to facilitate UKPN works from 7 Nov 00:01-23:59. Buses will be diverted. 21, 43, 141 towards Lewisham and London Bridge will miss stops Camomile Street and Fenchurch Street.",
+   "start": "2026-09-14T08:03:00Z",
+   "end": "2026-11-07T23:59:00Z",
+   "location": "Camomile Street",
+   "street": null,
+   "borough": "Lewisham",
+   "lat": 51.51573,
+   "lon": -0.082,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Camomile Street)",
+   "routes": [
+    "141",
+    "21",
+    "43"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:8db709e7",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 35, 47, 149, 388: Road will be closed to facilitate UKPN works from 7 Nov 00:01-23:59. Buses will be diverted in both directions and will miss stops Monument Station and Fenchurch Street.",
+   "start": "2026-09-14T08:04:00Z",
+   "end": "2026-11-07T23:59:00Z",
+   "location": "Monument",
+   "street": null,
+   "borough": null,
+   "lat": 51.50955,
+   "lon": -0.08731,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Monument)",
+   "routes": [
+    "149",
+    "35",
+    "388",
+    "47"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:ac52577c",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 344, n133: Road will be closed to facilitate UKPN works from 7 Nov 00:01-23:59. Buses will be diverted. 344 and N133 towards Clapham Junction and Morden will miss stops Camomile Street and Fenchurch Street.",
+   "start": "2026-09-14T08:06:00Z",
+   "end": "2026-11-07T23:59:00Z",
+   "location": "Camomile Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51573,
+   "lon": -0.082,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Camomile Street)",
+   "routes": [
+    "344",
+    "n133"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:f8a5572a",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 8, 26, n8, n26, n242: Road will be closed northbound due to water works from 21 Nov 08:00 until 22 Nov 18:00. Buses will be diverted. 8, 26, N8, N26, N242 towards Bow Church, Hackney Wick Hainault, Chingford and Homerton Hospital will miss stop Threadneedle Street.",
+   "start": "2026-09-14T10:44:00Z",
+   "end": "2026-11-22T18:00:00Z",
+   "location": "Threadneedle Street",
+   "street": null,
+   "borough": "Hackney",
+   "lat": 51.51411,
+   "lon": -0.08397,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Threadneedle Street)",
+   "routes": [
+    "26",
+    "8",
+    "n242",
+    "n26",
+    "n8"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:ad0e555f",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 35, 47: Road will be closed northbound due to water works from 21 Nov 08:00 until 22 Nov 18:00. Buses will be diverted. 35 47 towards Shoreditch will miss stop Camomile Street.",
+   "start": "2026-09-14T10:46:00Z",
+   "end": "2026-11-22T18:00:00Z",
+   "location": "Camomile Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51586,
+   "lon": -0.08222,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Camomile Street)",
+   "routes": [
+    "35",
+    "47"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:50ae1ecb",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 100: Road will be closed northbound due to water works from 21 Nov 08:00 until 22 Nov 18:00. Buses will be diverted. 100 towards St. Bartholomews will miss stops between Wormwood Street and St Paul's Station.",
+   "start": "2026-09-14T10:48:00Z",
+   "end": "2026-11-22T18:00:00Z",
+   "location": "Wormwood Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51618,
+   "lon": -0.08229,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Wormwood Street)",
+   "routes": [
+    "100"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:8e1822e6",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 149, 388: Road will be closed northbound due to water works from 21 Nov 08:00 until 22 Nov 18:00. Buses will be diverted. 149, 388 towards Edmonton Green and Stratford will miss stops Threadneedle Street and Camomile Street.",
+   "start": "2026-09-14T10:49:00Z",
+   "end": "2026-11-22T18:00:00Z",
+   "location": "Threadneedle Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51411,
+   "lon": -0.08397,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Threadneedle Street)",
+   "routes": [
+    "149",
+    "388"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490005505W:586adbde",
+   "kind": "bus stop closed",
+   "title": "Colman Road (Stop L): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-09-21T06:00:00Z",
+   "end": "2026-10-11T18:00:00Z",
+   "location": "Colman Road",
+   "lat": 51.51667,
+   "lon": 0.03605,
+   "borough": null,
+   "zone": "east",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490005505W"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490005505W/"
+  },
+  {
+   "id": "tfl-bus:1a946232",
+   "kind": "bus diversion",
+   "title": "Routes 241: ROYAL CREST AVENUE, Silvertown: Route 241 is terminating at 'Thames Barrier' (Q) and starting at 'Mill Road' until 17:00 on Monday 05 October due to roadworks. The stop 'Royal Crest Avenue' will not be served in either direction.",
+   "start": "2026-09-22T18:47:00Z",
+   "end": "2026-10-05T16:00:00Z",
+   "location": "ROYAL CREST AVENUE",
+   "street": "ROYAL CREST AVENUE",
+   "borough": null,
+   "lat": 51.49977,
+   "lon": 0.02757,
+   "postcode": null,
+   "zone": "east",
+   "placed_by": "names a stop in the zone on an affected route (Royal Crest Avenue)",
+   "routes": [
+    "241"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490002298ZZ:6bd48da9",
+   "kind": "bus stop closed",
+   "title": "Royal Crest Avenue (->S): Route 241 is on diversion until 17:00 on Monday 05 October due to utility works. Use stops on North Woolwich Road. tfl.gov.uk.",
+   "start": "2026-09-22T18:49:00Z",
+   "end": "2026-10-05T16:00:00Z",
+   "location": "Royal Crest Avenue",
+   "lat": 51.49977,
+   "lon": 0.02757,
+   "borough": null,
+   "zone": "east",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490002298ZZ"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490002298ZZ/"
+  },
+  {
+   "id": "tfl-bus:c26f53ef",
+   "kind": "bus diversion",
+   "title": "Routes 21, 43, 141: MOORGATE, EC2 - ROUTES 21 43 & 141 are on diversion northbound via Cornhill, Bishopsgate , Wormwood Street and London Wall owing to carriageway resurfacing. Buses are not serving stops between 'Bank Station/King William Street' and 'Moorgate Station'. Please allow extra time for your journey.",
+   "start": "2026-09-26T07:00:00Z",
+   "end": "2026-10-11T17:00:00Z",
+   "location": "London Wall",
+   "street": null,
+   "borough": null,
+   "lat": 51.51562,
+   "lon": -0.08944,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (London Wall)",
+   "routes": [
+    "141",
+    "21",
+    "43"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490009290N:4de3feee",
+   "kind": "bus stop closed",
+   "title": "London Wall (->N); Bank Station  / Princes Street (Stop A): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-09-26T07:00:00Z",
+   "end": "2026-10-11T17:00:00Z",
+   "location": "London Wall; Bank Station  / Princes Street",
+   "lat": 51.51562,
+   "lon": -0.08944,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490009290N",
+    "490011218A"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490009290N/"
+  },
+  {
+   "id": "tfl-bus:29272cc1",
+   "kind": "bus diversion",
+   "title": "Routes 309: Due to UKPN work buses will be diverted from 26 October 07:00 until 31 October 20:00 and will miss stops between Hay Currie Street and Poplar Baptist Church.",
+   "start": "2026-09-27T13:42:00Z",
+   "end": "2026-10-31T20:00:00Z",
+   "location": "Hay Currie Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51388,
+   "lon": -0.01308,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Hay Currie Street)",
+   "routes": [
+    "309"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:ca053511",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes 277, n277: Road will be closed for telecom works from 08:00 on 5 October until 14:00 on 10 October. Buses will be diverted and will miss stops Mudchute Station and Millwall Park.",
+   "start": "2026-09-27T18:45:00Z",
+   "end": "2026-10-10T13:00:00Z",
+   "location": "Mudchute",
+   "street": null,
+   "borough": null,
+   "lat": 51.492,
+   "lon": -0.01465,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Mudchute)",
+   "routes": [
+    "277",
+    "n277"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:99be2c42",
+   "kind": "bus diversion (road closed)",
+   "title": "Routes d3, sl4: Road will be closed eastbound for BT works daily 08:00-17:00 on 7-8 October. Buses Leamouth and Grove park will be diverted and will miss stops between Baffin Way and Leamouth Road.",
+   "start": "2026-09-27T19:39:00Z",
+   "end": "2026-10-08T16:00:00Z",
+   "location": "Baffin Way",
+   "street": null,
+   "borough": null,
+   "lat": 51.50689,
+   "lon": -0.00697,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Baffin Way)",
+   "routes": [
+    "d3",
+    "sl4"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490011450N:4cd5ff53",
+   "kind": "bus stop closed",
+   "title": "Raymouth Road (Stop PC); Raymouth Road (Stop PF): Bus Stop Closed Until 07:55 09 October 2026 Please use the next or previous stop to catch your bus",
+   "start": "2026-09-29T05:54:00Z",
+   "end": "2026-10-09T06:55:00Z",
+   "location": "Raymouth Road; Raymouth Road",
+   "lat": 51.49263,
+   "lon": -0.05881,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490011450N",
+    "490011450S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490011450N/"
+  },
+  {
+   "id": "tfl-busstop:490005608S:e7bc8836",
+   "kind": "bus stop closed",
+   "title": "Langdon Park Station (->SE); Langdon Park Station (->N): Bus Stop Closed",
+   "start": "2026-09-29T08:00:00Z",
+   "end": "2026-10-06T21:00:00Z",
+   "location": "Langdon Park Station; Langdon Park Station",
+   "lat": 51.51487,
+   "lon": -0.01478,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490005608S",
+    "490005608N"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490005608S/"
+  },
+  {
+   "id": "tfl-busstop:490009545S:77bd759d",
+   "kind": "bus stop closed",
+   "title": "Cuba Street (Stop B): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-09-29T08:30:00Z",
+   "end": "2026-10-04T14:00:00Z",
+   "location": "Cuba Street",
+   "lat": 51.50126,
+   "lon": -0.02595,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490009545S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490009545S/"
+  },
+  {
+   "id": "tfl-busstop:490003750M:a5f4e045",
+   "kind": "bus stop closed",
+   "title": "Hermit Road (Stop M); Hermit Road (Stop V); Hermit Road (Stop L): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-09-30T11:55:00Z",
+   "end": "2026-10-06T10:00:00Z",
+   "location": "Hermit Road; Hermit Road; Hermit Road",
+   "lat": 51.51766,
+   "lon": 0.01252,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490003750M",
+    "490013802W",
+    "490003750L"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490003750M/"
+  },
+  {
+   "id": "tfl-busstop:490013846N:9453c9d9",
+   "kind": "bus stop closed",
+   "title": "Ackroyd Drive (Stop MB): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-09-30T14:28:00Z",
+   "end": "2026-10-30T18:00:00Z",
+   "location": "Ackroyd Drive",
+   "lat": 51.51791,
+   "lon": -0.03027,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490013846N"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490013846N/"
+  },
+  {
+   "id": "tfl-busstop:490008899S:5ce47d6f",
+   "kind": "bus stop closed",
+   "title": "Shipwright Road (->S): Bus Stop Closed Until 10:00 06 October 2026 Please use the next or previous stop to catch your bus",
+   "start": "2026-10-01T08:00:00Z",
+   "end": "2026-10-06T09:00:00Z",
+   "location": "Shipwright Road",
+   "lat": 51.49803,
+   "lon": -0.03687,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490008899S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490008899S/"
+  },
+  {
+   "id": "tfl-busstop:490012783W:52f43e7e",
+   "kind": "bus stop closed",
+   "title": "St Mary Axe (Stop Z); St Mary Axe (Stop LR): Bus Stop Closed Until 18:00 08 October 2026 Please use the next available stop to catch your bus",
+   "start": "2026-10-01T11:50:00Z",
+   "end": "2026-10-08T17:00:00Z",
+   "location": "St Mary Axe; St Mary Axe",
+   "lat": 51.51342,
+   "lon": -0.0827,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490012783W",
+    "490012783E"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490012783W/"
+  },
+  {
+   "id": "tfl-busstop:490009037N:8f2e7f8a",
+   "kind": "bus stop closed",
+   "title": "Threadneedle Street (Stop LN); Bishopsgate (Stop R); St Mary Axe (Stop Z); St Mary Axe (Stop LR): Bus Stop Closed Until 18:30 05 October 2026 Please use the next available stop to catch your bus",
+   "start": "2026-10-01T12:03:00Z",
+   "end": "2026-10-05T17:30:00Z",
+   "location": "Threadneedle Street; Bishopsgate; St Mary Axe; St Mary Axe",
+   "lat": 51.51411,
+   "lon": -0.08397,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490009037N",
+    "490015079E",
+    "490012783W",
+    "490012783E"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490009037N/"
+  },
+  {
+   "id": "tfl-busstop:490000039F:cef4f9ba",
+   "kind": "bus stop closed",
+   "title": "Canning Town Bus Station (Stop F): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-10-02T07:00:00Z",
+   "end": "2026-10-23T17:00:00Z",
+   "location": "Canning Town Bus Station",
+   "lat": 51.5145,
+   "lon": 0.00848,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490000039F"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490000039F/"
+  },
+  {
+   "id": "tfl-busstop:490005902E:779b9be9",
+   "kind": "bus stop closed",
+   "title": "Rokeby School (Stop S); Rokeby School (Stop P): Bus stop closed until 18:00 on Friday 30 October due to Thames Water works. tfl.gov.uk.",
+   "start": "2026-10-02T07:00:00Z",
+   "end": "2026-10-30T18:00:00Z",
+   "location": "Rokeby School; Rokeby School",
+   "lat": 51.51956,
+   "lon": 0.01641,
+   "borough": null,
+   "zone": "east",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490005902E",
+    "490005902W"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490005902E/"
+  },
+  {
+   "id": "tfl-bus:2579c4e0",
+   "kind": "bus diversion",
+   "title": "Routes 339: HARFORD STREET, E1: Until Friday 9 October at 18:00, ROUTE 339, in both directions, is on diversion via Burdett Road, St Pauls Way and Rhodes Road due to Thames Water works. Stops from 'Regents Canal' to 'Dongola Road' are not being served. Please allow extra time for your journey.",
+   "start": "2026-10-02T07:37:00Z",
+   "end": "2026-10-09T17:00:00Z",
+   "location": "Harford Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.51834,
+   "lon": -0.03954,
+   "postcode": "E1",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Harford Street)",
+   "routes": [
+    "339"
+   ],
+   "category": "RealTime",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:01a58e05",
+   "kind": "bus diversion",
+   "title": "Routes 21, 43, 141: FINSBURY PAVEMENT, EC2: ROUTES 21 43 141 towards Lewisham and London Bridge are on diversion via Finsbury Square, Chiswell Street, Beech Street, Aldersgate Street and London Wall, due to roadworks taking place at City Road. Bus stop 'Finsbury Square / Moorgate' (K) will not be served. Please use th…",
+   "start": "2026-10-02T21:01:00Z",
+   "end": "2026-10-10T00:29:00Z",
+   "location": "Finsbury Square / Moorgate",
+   "street": null,
+   "borough": "Lewisham",
+   "lat": 51.52009,
+   "lon": -0.08733,
+   "postcode": "EC2",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Finsbury Square / Moorgate)",
+   "routes": [
+    "141",
+    "21",
+    "43"
+   ],
+   "category": "RealTime",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:af0db208",
+   "kind": "bus diversion",
+   "title": "Routes 76: FINSBURY PAVEMENT, EC2: ROUTE 76 towards Waterloo is on diversion via Finsbury Square, Chiswell Street, Beech Street and Aldersgate Street, due to roadworks taking place at Finsbury Pavement. Bus stops from 'Finsbury Square / Moorgate' (K) to 'London Wall' (BH) will not be served. Please allow addi…",
+   "start": "2026-10-02T21:01:00Z",
+   "end": "2026-10-10T00:29:00Z",
+   "location": "Finsbury Square / Moorgate",
+   "street": null,
+   "borough": null,
+   "lat": 51.52009,
+   "lon": -0.08733,
+   "postcode": "EC2",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Finsbury Square / Moorgate)",
+   "routes": [
+    "76"
+   ],
+   "category": "RealTime",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-bus:dd4969a0",
+   "kind": "bus diversion",
+   "title": "Routes 153: FINSBURY PAVEMENT, EC2: ROUTE 153 towards Liverpool Street is on diversion via Aldersgate Street and London Wall, due to roadworks taking place at Finsbury Pavement. Bus stops from 'Beech Street' (BN) to 'Eldon Street' (V) will not be served. Please allow additional time for your journey.",
+   "start": "2026-10-02T21:01:00Z",
+   "end": "2026-10-10T00:29:00Z",
+   "location": "Beech Street",
+   "street": null,
+   "borough": null,
+   "lat": 51.52059,
+   "lon": -0.09443,
+   "postcode": "EC2",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Beech Street)",
+   "routes": [
+    "153"
+   ],
+   "category": "RealTime",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490012755W:2e982569",
+   "kind": "bus stop closed",
+   "title": "St Katharine Cree (Stop W): Bus stop closed until 18:00 on Sunday 04 October due to telecoms works. tfl.gov.uk.",
+   "start": "2026-10-03T09:54:00Z",
+   "end": "2026-10-04T17:00:00Z",
+   "location": "St Katharine Cree",
+   "lat": 51.51327,
+   "lon": -0.07938,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490012755W"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490012755W/"
+  },
+  {
+   "id": "tfl-busstop:490008899S:e0a8d99c",
+   "kind": "bus stop closed",
+   "title": "Shipwright Road (->S): Bus Stop Closed until 17:00 Monday 05 Oct 26 please use the next or previous stop to catch your bus",
+   "start": "2026-10-03T16:33:00Z",
+   "end": "2026-10-05T16:00:00Z",
+   "location": "Shipwright Road",
+   "lat": 51.49803,
+   "lon": -0.03687,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490008899S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490008899S/"
+  },
+  {
+   "id": "tfl-busstop:490012248E:2d579e01",
+   "kind": "bus stop closed",
+   "title": "Peckham Road / Southampton Way (Stop P): Bus Stop Closed Please use the temporary nearby stop to continue your journey.",
+   "start": "2026-10-03T19:43:00Z",
+   "end": "2026-10-06T16:00:00Z",
+   "location": "Peckham Road / Southampton Way",
+   "lat": 51.47418,
+   "lon": -0.07847,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490012248E"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490012248E/"
+  },
+  {
+   "id": "tfl-bus:b396af55",
+   "kind": "bus diversion",
+   "title": "Routes 344: FISH STREET HILL, EC3R: Route 344 is on diversion towards Clapham Junction from 09:00 on Saturday to 18:00 on Sunday on the weekends of Saturday's 03 and 10 October due to a crane operation. Buses are diverted via London Bridge, Borough High Street, Southwark Street and Southwark Bridge Road, missi…",
+   "start": "2026-10-03T23:00:00Z",
+   "end": "2026-10-04T17:00:00Z",
+   "location": "Queen Street Place",
+   "street": null,
+   "borough": "Southwark",
+   "lat": 51.50996,
+   "lon": -0.09336,
+   "postcode": "EC3R",
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Queen Street Place)",
+   "routes": [
+    "344"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490012346S:a872478b",
+   "kind": "bus stop closed",
+   "title": "Southwark Bridge / Bankside Pier (Stop BC); Queen Street Place (->S): This bus stop is closed due to a crane operation until 18:00 on Sunday. Go to stops Fenchurch Street or Southwark Street.",
+   "start": "2026-10-03T23:00:00Z",
+   "end": "2026-10-04T17:00:00Z",
+   "location": "Southwark Bridge / Bankside Pier; Queen Street Place",
+   "lat": 51.50712,
+   "lon": -0.09494,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490012346S",
+    "490011362S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490012346S/"
+  },
+  {
+   "id": "tfl-bus:e340f529",
+   "kind": "bus diversion",
+   "title": "Routes d3, d8, sl4: TRAFALGAR WAY, E14 - From 08:00 until 16:00 on Sunday 04 October, ROUTES D3, D8 and SL4 will be on diversion in both directions due to roadworks. Buses will divert via Aspen Way and Upper Bank Street. Towards Bethnal Green, Crossharbour and Canary Wharf, the stop 'Billingsgate Market' will not be s…",
+   "start": "2026-10-04T07:00:00Z",
+   "end": "2026-10-04T15:00:00Z",
+   "location": "Billingsgate Market",
+   "street": null,
+   "borough": null,
+   "lat": 51.5062,
+   "lon": -0.01048,
+   "postcode": null,
+   "zone": "model",
+   "placed_by": "names a stop in the zone on an affected route (Billingsgate Market)",
+   "routes": [
+    "d3",
+    "d8",
+    "sl4"
+   ],
+   "category": "PlannedWork",
+   "url": "https://tfl.gov.uk/bus/status/"
+  },
+  {
+   "id": "tfl-busstop:490017847E:fa933bda",
+   "kind": "bus stop closed",
+   "title": "Churchill Place (->E); Billingsgate Market (->N); Billingsgate Market (->S): Bus Stop Closed Until 16:00 04 October 2026 Buses are on diversion tfl.gov.uk/bus/status",
+   "start": "2026-10-04T07:00:00Z",
+   "end": "2026-10-04T15:00:00Z",
+   "location": "Churchill Place; Billingsgate Market; Billingsgate Market",
+   "lat": 51.50454,
+   "lon": -0.0143,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490017847E",
+    "490004005N",
+    "490004005S"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490017847E/"
+  },
+  {
+   "id": "tfl-busstop:490007276X:4cc83ff5",
+   "kind": "bus stop closed",
+   "title": "Marquis of Granby / Goldsmiths (Stop X): Bus Stop Closed Please use the next stop or the previous stop to catch your bus",
+   "start": "2026-10-04T18:00:00Z",
+   "end": "2026-10-04T22:59:00Z",
+   "location": "Marquis of Granby / Goldsmiths",
+   "lat": 51.47539,
+   "lon": -0.03601,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "NaPTAN stop position",
+   "stops": [
+    "490007276X"
+   ],
+   "url": "https://tfl.gov.uk/bus/stop/490007276X/"
+  }
+ ]
+}

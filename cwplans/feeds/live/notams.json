@@ -1,0 +1,680 @@
+{
+ "meta": {
+  "source": "notams",
+  "url": "https://pibs.nats.co.uk/operational/pibs/PIB.xml",
+  "fetched": "2026-10-04T08:27:16.015Z",
+  "pib_issued": "2026-10-04T08:00:48+00:00",
+  "licence": "© NATS Limited (UK AIS) / UK AIP Crown copyright; no open licence stated. Facts only (identifiers, positions, heights, times); no NOTAM text, tables or charts copied. Re-check before production",
+  "attribution": "Source: UK AIS (NATS), www.nats.aero/ais",
+  "method": "The contingency full UK PIB XML (all UK NOTAMs valid now and in the next 7 days, refreshed hourly by NATS, no login), one request; a NOTAM is kept when a position in item E lies in the zone, or it has none and the Q-line centre does with a radius of at most 5 NM; duplicates (a NOTAM in two PIB sections) merged by series/number/year; facts kept, text dropped (see the header of tools/fetch-live.mjs)",
+  "counts": {
+   "items": 18,
+   "model_box": 16,
+   "east_margin": 2,
+   "uk_notams": 1265,
+   "cranes": 12,
+   "areas": 6
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "C3859/26",
+   "kind": "obstacle",
+   "name": "SILVERTOWN G-PARK DEVELOPMENT",
+   "zone": "east",
+   "time": "2026-07-02T00:00Z",
+   "position": {
+    "lat": 51.503444,
+    "lon": 0.016278,
+    "alt_ft": 269
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-07-02T00:00Z",
+    "end": "PERM",
+    "lower_fl": 0,
+    "upper_fl": 3,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 256,
+    "height_amsl_ft": 269,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "C4600/26",
+   "kind": "obstacle",
+   "name": "VCY OF SILVERTOWN",
+   "zone": "east",
+   "time": "2026-07-13T00:00Z",
+   "position": {
+    "lat": 51.510833,
+    "lon": 0.04,
+    "alt_ft": 195
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-07-13T00:00Z",
+    "end": "2028-08-13T22:59Z",
+    "lower_fl": 0,
+    "upper_fl": 2,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 187,
+    "height_amsl_ft": 195,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "C4842/26",
+   "kind": "obstacle",
+   "name": "ALLIANZ HOUSE, 60 GRACECHURCH STREET LONDON EC3V 0HR",
+   "zone": "model",
+   "time": "2026-08-06T00:00Z",
+   "position": {
+    "lat": 51.511611,
+    "lon": -0.084722,
+    "alt_ft": 719
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-08-06T00:00Z",
+    "end": "PERM",
+    "lower_fl": 0,
+    "upper_fl": 8,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 666,
+    "height_amsl_ft": 719,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "C4843/26",
+   "kind": "obstacle",
+   "name": "ALLIANZ HOUSE 60 GRACECHURCH STREET LONDON EC3V 0HR",
+   "zone": "model",
+   "time": "2026-08-06T00:00Z",
+   "position": {
+    "lat": 51.511583,
+    "lon": -0.085056,
+    "alt_ft": 707
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-08-06T00:00Z",
+    "end": "PERM",
+    "lower_fl": 0,
+    "upper_fl": 8,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 654,
+    "height_amsl_ft": 707,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "C4844/26",
+   "kind": "obstacle",
+   "name": "ALLIANZ HOUSE 60 GRACECHURCH STREET LONDON EC3V 0HR",
+   "zone": "model",
+   "time": "2026-08-06T00:00Z",
+   "position": {
+    "lat": 51.511444,
+    "lon": -0.084806,
+    "alt_ft": 719
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-08-06T00:00Z",
+    "end": "PERM",
+    "lower_fl": 0,
+    "upper_fl": 8,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 667,
+    "height_amsl_ft": 719,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "C4845/26",
+   "kind": "obstacle",
+   "name": "ALLIANZ HOUSE 60 GRACECHURCH STREET LONDON EC3V 0HR",
+   "zone": "model",
+   "time": "2026-08-06T00:00Z",
+   "position": {
+    "lat": 51.511528,
+    "lon": -0.084778,
+    "alt_ft": 707
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-08-06T00:00Z",
+    "end": "PERM",
+    "lower_fl": 0,
+    "upper_fl": 8,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 654,
+    "height_amsl_ft": 707,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "J3503/26",
+   "kind": "danger area",
+   "name": "TDA",
+   "zone": "model",
+   "time": "2026-10-05T08:00Z",
+   "position": {
+    "lat": 51.5,
+    "lon": -0.1
+   },
+   "values": {
+    "q_code": "QRDCS",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-10-05T08:00Z",
+    "end": "2026-10-05T15:00Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E area",
+    "height_agl_ft": null,
+    "height_amsl_ft": null,
+    "area_vertices": [
+     [
+      51.507222,
+      -0.106111
+     ],
+     [
+      51.504444,
+      -0.085278
+     ],
+     [
+      51.500833,
+      -0.085833
+     ],
+     [
+      51.497778,
+      -0.120556
+     ],
+     [
+      51.501111,
+      -0.12
+     ],
+     [
+      51.507222,
+      -0.106111
+     ]
+    ]
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "J3504/26",
+   "kind": "danger area",
+   "name": "TDA",
+   "zone": "model",
+   "time": "2026-10-06T08:00Z",
+   "position": {
+    "lat": 51.5,
+    "lon": -0.1
+   },
+   "values": {
+    "q_code": "QRDCS",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-10-06T08:00Z",
+    "end": "2026-10-06T15:00Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E area",
+    "height_agl_ft": null,
+    "height_amsl_ft": null,
+    "area_vertices": [
+     [
+      51.507222,
+      -0.106111
+     ],
+     [
+      51.504444,
+      -0.085278
+     ],
+     [
+      51.500833,
+      -0.085833
+     ],
+     [
+      51.497778,
+      -0.120556
+     ],
+     [
+      51.501111,
+      -0.12
+     ],
+     [
+      51.507222,
+      -0.106111
+     ]
+    ]
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "J3505/26",
+   "kind": "danger area",
+   "name": "TDA",
+   "zone": "model",
+   "time": "2026-10-07T08:00Z",
+   "position": {
+    "lat": 51.5,
+    "lon": -0.1
+   },
+   "values": {
+    "q_code": "QRDCS",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-10-07T08:00Z",
+    "end": "2026-10-07T15:00Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E area",
+    "height_agl_ft": null,
+    "height_amsl_ft": null,
+    "area_vertices": [
+     [
+      51.507222,
+      -0.106111
+     ],
+     [
+      51.504444,
+      -0.085278
+     ],
+     [
+      51.500833,
+      -0.085833
+     ],
+     [
+      51.497778,
+      -0.120556
+     ],
+     [
+      51.501111,
+      -0.12
+     ],
+     [
+      51.507222,
+      -0.106111
+     ]
+    ]
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "J3506/26",
+   "kind": "danger area",
+   "name": "TDA",
+   "zone": "model",
+   "time": "2026-10-08T08:00Z",
+   "position": {
+    "lat": 51.5,
+    "lon": -0.1
+   },
+   "values": {
+    "q_code": "QRDCS",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-10-08T08:00Z",
+    "end": "2026-10-08T15:00Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E area",
+    "height_agl_ft": null,
+    "height_amsl_ft": null,
+    "area_vertices": [
+     [
+      51.507222,
+      -0.106111
+     ],
+     [
+      51.504444,
+      -0.085278
+     ],
+     [
+      51.500833,
+      -0.085833
+     ],
+     [
+      51.497778,
+      -0.120556
+     ],
+     [
+      51.501111,
+      -0.12
+     ],
+     [
+      51.507222,
+      -0.106111
+     ]
+    ]
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "J3507/26",
+   "kind": "danger area",
+   "name": "TDA",
+   "zone": "model",
+   "time": "2026-10-09T08:00Z",
+   "position": {
+    "lat": 51.5,
+    "lon": -0.1
+   },
+   "values": {
+    "q_code": "QRDCS",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-10-09T08:00Z",
+    "end": "2026-10-09T15:00Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E area",
+    "height_agl_ft": null,
+    "height_amsl_ft": null,
+    "area_vertices": [
+     [
+      51.507222,
+      -0.106111
+     ],
+     [
+      51.504444,
+      -0.085278
+     ],
+     [
+      51.500833,
+      -0.085833
+     ],
+     [
+      51.497778,
+      -0.120556
+     ],
+     [
+      51.501111,
+      -0.12
+     ],
+     [
+      51.507222,
+      -0.106111
+     ]
+    ]
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "J3528/26",
+   "kind": "reserved area (TRA)",
+   "name": "TRA",
+   "zone": "model",
+   "time": "2026-10-05T08:00Z",
+   "position": {
+    "lat": 51.5,
+    "lon": -0.1
+   },
+   "values": {
+    "q_code": "QRMCA",
+    "fir": "EGTT",
+    "location": "EGLC",
+    "start": "2026-10-05T08:00Z",
+    "end": "2026-10-05T15:00Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E area",
+    "height_agl_ft": null,
+    "height_amsl_ft": null,
+    "area_vertices": [
+     [
+      51.501111,
+      -0.12
+     ],
+     [
+      51.503889,
+      -0.086111
+     ],
+     [
+      51.500833,
+      -0.085556
+     ],
+     [
+      51.497778,
+      -0.120556
+     ],
+     [
+      51.501111,
+      -0.12
+     ]
+    ]
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "N422/26",
+   "kind": "obstacle",
+   "name": "LONDON",
+   "zone": "model",
+   "time": "2026-08-06T23:00Z",
+   "position": {
+    "lat": 51.511389,
+    "lon": -0.084722,
+    "alt_ft": 712
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGTT",
+    "start": "2026-08-06T23:00Z",
+    "end": "2026-11-05T00:00Z",
+    "lower_fl": 0,
+    "upper_fl": 8,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 665,
+    "height_amsl_ft": 712,
+    "area_vertices": null,
+    "crane": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "N518/26",
+   "kind": "obstacle",
+   "name": "LONDON,",
+   "zone": "model",
+   "time": "2026-07-23T23:00Z",
+   "position": {
+    "lat": 51.480833,
+    "lon": -0.058056,
+    "alt_ft": 534
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGTT",
+    "start": "2026-07-23T23:00Z",
+    "end": "2026-10-21T23:00Z",
+    "lower_fl": 0,
+    "upper_fl": 6,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 525,
+    "height_amsl_ft": 534,
+    "area_vertices": null,
+    "crane": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "N759/26",
+   "kind": "obstacle",
+   "name": "SOUTH BERMONDSEY, LONDON",
+   "zone": "model",
+   "time": "2026-10-10T00:00Z",
+   "position": {
+    "lat": 51.483056,
+    "lon": -0.069167,
+    "alt_ft": 416
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGTT",
+    "start": "2026-10-10T00:00Z",
+    "end": "2027-01-08T23:59Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 404,
+    "height_amsl_ft": 416,
+    "area_vertices": null,
+    "crane": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "N818/26",
+   "kind": "obstacle",
+   "name": "BLACKWALL, LONDON",
+   "zone": "model",
+   "time": "2026-09-25T00:00Z",
+   "position": {
+    "lat": 51.511944,
+    "lon": -0.003056,
+    "alt_ft": 392
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGTT",
+    "start": "2026-09-25T00:00Z",
+    "end": "2026-12-23T23:59Z",
+    "lower_fl": 0,
+    "upper_fl": 4,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 374,
+    "height_amsl_ft": 392,
+    "area_vertices": null,
+    "crane": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "N824/26",
+   "kind": "obstacle",
+   "name": "BERMONDSEY, LONDON",
+   "zone": "model",
+   "time": "2026-10-03T00:00Z",
+   "position": {
+    "lat": 51.483889,
+    "lon": -0.053611,
+    "alt_ft": 370
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGTT",
+    "start": "2026-10-03T00:00Z",
+    "end": "2027-01-03T23:59Z",
+    "lower_fl": 0,
+    "upper_fl": 4,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 330,
+    "height_amsl_ft": 370,
+    "area_vertices": null,
+    "crane": true,
+    "lit": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  },
+  {
+   "id": "N842/26",
+   "kind": "obstacle",
+   "name": "LONDON",
+   "zone": "model",
+   "time": "2026-09-30T08:18Z",
+   "position": {
+    "lat": 51.521667,
+    "lon": -0.025278,
+    "alt_ft": 423
+   },
+   "values": {
+    "q_code": "QOBCE",
+    "fir": "EGTT",
+    "location": "EGTT",
+    "start": "2026-09-30T08:18Z",
+    "end": "2026-12-29T23:59Z",
+    "lower_fl": 0,
+    "upper_fl": 5,
+    "q_radius_nm": 1,
+    "position_from": "item E",
+    "height_agl_ft": 391,
+    "height_amsl_ft": 423,
+    "area_vertices": null,
+    "crane": true
+   },
+   "url": "https://nats-uk.ead-it.com/cms-nats/opencms/en/Briefing/contingency-pibs/"
+  }
+ ]
+}

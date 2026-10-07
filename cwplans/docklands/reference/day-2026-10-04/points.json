@@ -1,0 +1,21 @@
+{
+  "about": "Pixel measurements in the owner's photo pier-wide-skyline.jpg (2576 x 1932, full size), read by eye from 2x and 4x enlargements with pixel rulers on 2026-10-04. Input of tools/solve-photo-sun.mjs. Model coordinates: x = E - 537550, z = -(N - 180300), y = m OD.",
+  "photo": "pier-wide-skyline.jpg",
+  "date": "2026-10-04",
+  "eye": { "xyz": [-830, 4.5, 1158], "note": "middle of the Greenland Pier pontoon (places list: x -830, z 1158); 4.5 m OD = deck about 3 m OD plus 1.5 m; the fit is insensitive to it (0.1 degree per metre at 1 km)" },
+  "principal_point": [1288, 966],
+  "landmarks": [
+    { "id": "cwb-0451", "name": "Newfoundland, top of the crown", "px": [692, 856] },
+    { "id": "cwb-0577", "name": "Landmark Pinnacle, roof", "px": [751, 807] },
+    { "id": "cwb-0413", "name": "One Canada Square, pyramid apex", "px": [970, 903] },
+    { "id": "cwb-0520", "name": "Citigroup Centre, middle of the 'citi' roof sign (x only)", "px": [1100, null] }
+  ],
+  "shadows": [
+    { "name": "front bitt, left post: post foot to the shadow of its cap", "foot": [450, 1585], "tip": [380, 1561] },
+    { "name": "front bitt, right post: post foot to the shadow of its cap", "foot": [525, 1610], "tip": [412, 1600] },
+    { "name": "far bitt: post foot to the shadow of its cap", "foot": [160, 1415], "tip": [100, 1412] }
+  ],
+  "camera_height_above_deck_m": [1.3, 1.5, 1.7],
+  "grid_to_true_deg": 1.54,
+  "observer": { "lat": 51.4936, "lon": -0.0335, "height_m": 5 }
+}

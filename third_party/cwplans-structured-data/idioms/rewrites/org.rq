@@ -1,0 +1,11 @@
+# Canonical organisation card: logo always an ImageObject with a url; sameAs kept as IRIs.
+PREFIX s: <https://schema.org/>
+CONSTRUCT { ?x a ?t ; s:name ?n ; s:url ?u ; s:sameAs ?same ; s:logo ?logo . ?logo a s:ImageObject ; s:url ?lu . }
+WHERE {
+  #CANDIDATES
+  OPTIONAL { ?x s:name ?n } OPTIONAL { ?x s:url ?u } OPTIONAL { ?x s:sameAs ?same }
+  OPTIONAL { ?x s:logo ?l0 .
+    OPTIONAL { ?l0 s:url ?luo } OPTIONAL { ?l0 s:contentUrl ?luc }
+    BIND(IF(isLiteral(?l0), IRI(STR(?l0)), ?l0) AS ?logo)
+    BIND(COALESCE(?luo, ?luc, IF(isLiteral(?l0), IRI(STR(?l0)), IF(isIRI(?l0), ?l0, ?unbound))) AS ?lu) }
+}

@@ -1,0 +1,34 @@
+# Canonical branch card: original types and name; telephone in E.164 when it is a UK number; address as PostalAddress
+# (a text address gives its postcode); country as an ISO code; coordinates as decimals; hours nodes are rewritten by hours.rq.
+PREFIX s: <https://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX cwp: <https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/>
+CONSTRUCT {
+  ?x a ?t ; s:name ?name ; s:telephone ?tel ; s:url ?url ; s:openingHoursSpecification ?ohs ;
+     s:parentOrganization ?parent ; s:brand ?brand ; s:branchCode ?code ;
+     s:address ?addr ; s:geo ?geo ; cwp:addressText ?atext ; cwp:hoursText ?htext .
+  ?addr s:streetAddress ?street ; s:addressLocality ?loc ; s:postalCode ?pc ; s:addressCountry ?cc .
+  ?geo s:latitude ?lat ; s:longitude ?lon .
+}
+WHERE {
+  #CANDIDATES
+  OPTIONAL { ?x s:name ?name }
+  OPTIONAL { ?x s:url ?url }
+  OPTIONAL { ?x s:openingHoursSpecification ?ohs }
+  OPTIONAL { ?x s:openingHours ?htext }
+  OPTIONAL { ?x s:parentOrganization ?parent } OPTIONAL { ?x s:brand ?brand } OPTIONAL { ?x s:branchCode ?code }
+  OPTIONAL { ?x s:telephone ?t0 . BIND(REPLACE(STR(?t0), "[^0-9+]", "") AS ?d)
+             BIND(IF(STRSTARTS(?d, "+"), ?d, IF(STRSTARTS(?d, "0") && STRLEN(?d) = 11, CONCAT("+44", SUBSTR(?d, 2)), ?d)) AS ?tel) }
+  OPTIONAL { ?x s:address ?a0 .
+    OPTIONAL { ?a0 s:streetAddress ?street } OPTIONAL { ?a0 s:addressLocality ?loc }
+    OPTIONAL { ?a0 s:postalCode ?pcn } OPTIONAL { ?a0 s:addressCountry ?c0 }
+    BIND(isLiteral(?a0) AS ?isText)
+    BIND(IF(?isText, IRI(CONCAT("https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/idioms/node/address-", SHA1(STR(?a0)))), ?a0) AS ?addr)   # not BNODE(): Factoidal 0.7.1 serialize() drops BNODE() nodes
+    BIND(IF(?isText, ?a0, ?unbound) AS ?atext)
+    BIND(IF(?isText && REGEX(STR(?a0), "[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}", "i"),
+            REPLACE(STR(?a0), "^.*?([A-Za-z]{1,2}[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}).*$", "$1"), ?unbound) AS ?pct)
+    BIND(UCASE(STR(COALESCE(?pcn, ?pct))) AS ?pc)
+    BIND(UCASE(STR(?c0)) AS ?cu)
+    BIND(IF(?cu IN ("GB", "UK", "ENGLAND", "UNITED KINGDOM", "GREAT BRITAIN", "GBR"), "GB", STR(?c0)) AS ?cc) }
+  OPTIONAL { ?x s:geo ?geo . ?geo s:latitude ?la ; s:longitude ?lo . BIND(xsd:decimal(STR(?la)) AS ?lat) BIND(xsd:decimal(STR(?lo)) AS ?lon) }
+}

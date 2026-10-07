@@ -1,0 +1,391 @@
+{
+ "meta": {
+  "source": "overflows",
+  "url": "https://services2.arcgis.com/g6o32ZDQ33GpCIu3/arcgis/rest/services/Thames_Water_Storm_Overflow_Activity_(Production)_view/FeatureServer/0/query?geometry=-0.095,51.474,0.085,51.522&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=false&f=json",
+  "fetched": "2026-10-04T08:27:14.674Z",
+  "licence": "CC BY 4.0",
+  "attribution": "Contains Thames Water storm overflow data licensed under CC BY 4.0, via Stream (National Storm Overflow Hub)",
+  "method": "ArcGIS FeatureServer query, envelope = the zone (model box plus east margin), all fields, no geometry (Latitude and Longitude are attributes); kept as published. Status 1 = an Event Duration Monitor indicates a discharge (not confirmed), 0 = not, -1 = monitor offline (Stream FAQ); times are epoch milliseconds turned into UTC ISO",
+  "counts": {
+   "items": 17,
+   "model_box": 16,
+   "east_margin": 1,
+   "discharging": 0,
+   "offline": 0,
+   "discharged_last_48h": 0
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "TWL00033",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.829Z",
+   "position": {
+    "lat": 51.508993,
+    "lon": -0.046849
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T03:38:00.000Z",
+    "latest_event_start": "2026-06-23T03:20:00.000Z",
+    "latest_event_end": "2026-06-23T03:38:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00153",
+   "kind": "storm-overflow",
+   "name": "River Ravensbourne / Deptford Creek",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.820Z",
+   "position": {
+    "lat": 51.475229,
+    "lon": -0.022946
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T04:18:00.000Z",
+    "latest_event_start": "2026-06-23T03:54:00.000Z",
+    "latest_event_end": "2026-06-23T04:18:00.000Z",
+    "receiving_water": "River Ravensbourne / Deptford Creek",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00154",
+   "kind": "storm-overflow",
+   "name": "River Thames (via the Tideway tunnel)",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.822Z",
+   "position": {
+    "lat": 51.484839,
+    "lon": -0.022243
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-09-24T10:40:00.000Z",
+    "latest_event_start": "2026-01-07T03:02:00.000Z",
+    "latest_event_end": "2026-01-07T03:06:00.000Z",
+    "receiving_water": "River Thames (via the Tideway tunnel)",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00163",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.827Z",
+   "position": {
+    "lat": 51.493097,
+    "lon": -0.03197
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T05:36:00.000Z",
+    "latest_event_start": "2026-06-23T03:40:00.000Z",
+    "latest_event_end": "2026-06-23T05:36:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00200",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.816Z",
+   "position": {
+    "lat": 51.50948,
+    "lon": -0.0928
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T03:22:00.000Z",
+    "latest_event_start": "2026-06-23T03:04:00.000Z",
+    "latest_event_end": "2026-06-23T03:22:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00203",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.829Z",
+   "position": {
+    "lat": 51.483484,
+    "lon": -0.011211
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-09-23T14:04:00.000Z",
+    "latest_event_start": "2026-04-20T10:10:00.000Z",
+    "latest_event_end": "2026-04-20T15:00:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00221",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "east",
+   "time": "2026-10-04T08:23:44.819Z",
+   "position": {
+    "lat": 51.498394,
+    "lon": 0.057588
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2025-12-09T23:40:00.000Z",
+    "latest_event_start": "2025-12-09T23:34:00.000Z",
+    "latest_event_end": "2025-12-09T23:40:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00230",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.825Z",
+   "position": {
+    "lat": 51.509788,
+    "lon": -0.040618
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-07-07T07:42:00.000Z",
+    "latest_event_start": "2026-06-23T03:40:00.000Z",
+    "latest_event_end": "2026-06-23T04:48:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00241",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.829Z",
+   "position": {
+    "lat": 51.506397,
+    "lon": -0.074772
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-09-08T09:12:00.000Z",
+    "latest_event_start": "2026-09-08T08:42:00.000Z",
+    "latest_event_end": "2026-09-08T09:12:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00243",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.820Z",
+   "position": {
+    "lat": 51.499248,
+    "lon": -0.007499
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T04:18:00.000Z",
+    "latest_event_start": "2026-06-23T03:58:00.000Z",
+    "latest_event_end": "2026-06-23T04:18:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00274",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.824Z",
+   "position": {
+    "lat": 51.508664,
+    "lon": -0.086925
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T04:06:00.000Z",
+    "latest_event_start": "2026-06-23T03:10:00.000Z",
+    "latest_event_end": "2026-06-23T04:06:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00282",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.818Z",
+   "position": {
+    "lat": 51.508022,
+    "lon": -0.080611
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-08-09T09:34:00.000Z",
+    "latest_event_start": "2026-08-09T09:30:00.000Z",
+    "latest_event_end": "2026-08-09T09:34:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00311",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.820Z",
+   "position": {
+    "lat": 51.504761,
+    "lon": -0.068212
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T03:56:00.000Z",
+    "latest_event_start": "2026-06-23T03:52:00.000Z",
+    "latest_event_end": "2026-06-23T03:56:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00341",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.825Z",
+   "position": {
+    "lat": 51.509803,
+    "lon": -0.041482
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-07-24T08:02:00.000Z",
+    "latest_event_start": "2025-09-30T23:10:00.000Z",
+    "latest_event_end": "2025-09-30T23:16:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00364",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.828Z",
+   "position": {
+    "lat": 51.502498,
+    "lon": -0.072775
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-06-23T06:02:00.000Z",
+    "latest_event_start": "2026-06-23T03:34:00.000Z",
+    "latest_event_end": "2026-06-23T06:02:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00426",
+   "kind": "storm-overflow",
+   "name": "River Thames",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.825Z",
+   "position": {
+    "lat": 51.503929,
+    "lon": -0.055999
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2025-11-14T13:14:00.000Z",
+    "latest_event_start": "2024-09-23T03:30:00.000Z",
+    "latest_event_end": "2024-09-23T05:30:00.000Z",
+    "receiving_water": "River Thames",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  },
+  {
+   "id": "TWL00658",
+   "kind": "storm-overflow",
+   "name": "River Thames (via the Tideway tunnel)",
+   "zone": "model",
+   "time": "2026-10-04T08:23:44.826Z",
+   "position": {
+    "lat": 51.508638,
+    "lon": -0.047152
+   },
+   "values": {
+    "status": 0,
+    "status_text": "not discharging",
+    "status_start": "2026-09-24T10:40:00.000Z",
+    "latest_event_start": "2026-06-23T03:22:00.000Z",
+    "latest_event_end": "2026-06-23T09:18:00.000Z",
+    "receiving_water": "River Thames (via the Tideway tunnel)",
+    "company": "Thames Water"
+   },
+   "url": "https://www.streamwaterdata.co.uk/"
+  }
+ ]
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Docklands data feeds</title>
+<style>
+:root{--bg:#0f1215;--panel:#15191d;--card:#181d22;--line:#323940;--fg:#e8eaec;--muted:#a9b1b9;--link:#9cc8ff;--ok:#6fd38f;--warn:#ffd26f;--bad:#ff8a7a}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f6f7f8;--panel:#fff;--card:#fff;--line:#d5d9de;--fg:#16191c;--muted:#59626b;--link:#0b5fbf;--ok:#16794a;--warn:#8a5a00;--bad:#b3261e}}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,sans-serif}
+a{color:var(--link);overflow-wrap:anywhere}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:1.35rem;margin:.2em 0 .3em}h2{font-size:1.1rem;margin:1.4em 0 .4em;border-bottom:1px solid var(--line);padding-bottom:.2em}
+.small{color:var(--muted);font-size:13px}
+.bar{position:sticky;top:0;background:var(--bg);padding:10px 0;display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line);z-index:1}
+input[type=search],select{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+input[type=search]{flex:1 1 220px;min-width:0}
+button{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.card h3{font-size:1rem;margin:0 0 4px}
+.tags{display:flex;gap:4px 6px;flex-wrap:wrap;margin:4px 0}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:0 7px;color:var(--muted)}
+.tag.ok{color:var(--ok);border-color:var(--ok)}.tag.warn{color:var(--warn);border-color:var(--warn)}.tag.bad{color:var(--bad);border-color:var(--bad)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:6px 0;font-size:13px}dt{color:var(--muted)}dd{margin:0;min-width:0}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;max-height:260px;overflow:auto;margin:6px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Data feeds and APIs: Canary Wharf, the Isle of Dogs, SE16 and the Docklands</h1>
+<p class="small">Two catalogues: data feeds and APIs (<a href="feeds.json">feeds.json</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/README.md">README</a>) and event and real-time feeds: iCalendar, RSS/Atom, REST, what's-on pages and openings and closings signals (<a href="events.json">events.json</a>, <a href="https://github.com/danbri/glitchcan-minigam/blob/master/magpie/cwplans/feeds/EVENTS.md">EVENTS.md</a>). Every source below was fetched on the date shown. "Browser" means it needs no key and sends CORS headers, so a web page can call it: press "Try" to call the sample request from your browser now. Only official, published or openly licensed sources are listed; the excluded list at the end says what was left out and why. Re-check: <code>node magpie/cwplans/feeds/check-feeds.mjs</code> and <code>check-events.mjs</code>. What is on and what is closed across the zone (events, licence notices, road works and closures, planned rail, bus and river closures, markets), by date and place: <a href="whatson.html">whatson.html</a>. Postcode-keyed results: <a href="../postcodes/">Canary Wharf postcodes</a>. Everything joined: <a href="../atlas/">atlas</a>. Models that use these: <a href="../docklands/">Docklands 3D</a> · <a href="../">Canada Water corridor</a>.</p>
+<div class="bar">
+  <input type="search" id="q" placeholder="Search name, provider, notes, URL" aria-label="Search sources">
+  <select id="cat" aria-label="Category"><option value="">All categories</option></select>
+  <select id="st" aria-label="Status"><option value="">Any status</option><option value="browser">Browser-callable</option><option value="verified">Verified</option><option value="key-required">Needs a key</option><option value="not verified">Not verified</option></select>
+  <span class="small" id="count" aria-live="polite"></span>
+</div>
+<div id="list"></div>
+<h2 id="excluded">Excluded</h2>
+<div id="excl"></div>
+<p class="small" id="foot"></p>
+</main>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const link = u => u ? `<a href="${esc(u)}">${esc(u)}</a>` : '–';
+const browserCallable = s => s.verified?.status === 'verified' && s.cors === true && /^none/.test(s.auth || '') && !!s.sample;
+let F = null;
+// events.json (event and real-time feeds) is shown alongside feeds.json, mapped to the same fields
+const fromEvent = s => ({ id: s.id, name: s.name, category: 'events: ' + s.category, provider: s.provider, url: s.url, api: null, sample: s.feed, format: `${s.format} (${s.machine_readable})`,
+  auth: s.auth, licence: s.licence, cors: s.cors, update: s.update, coverage: s.coverage, verified: s.verified, request_headers: s.request_headers,
+  sample_result: s.sample && s.sample.titles ? `${s.sample.items ?? '?'} items, newest ${s.sample.newest || '?'}${s.sample.titles.length ? ': ' + s.sample.titles.slice(0, 3).join('; ') : ''}` : null, notes: [s.subject, s.notes].filter(Boolean).join(' · ') });
+Promise.all([fetch('feeds.json').then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }), fetch('events.json').then(r => r.ok ? r.json() : null).catch(() => null)])
+  .then(([d, ev]) => { F = d; if (ev) { F = { ...d, sources: [...d.sources, ...ev.sources.map(fromEvent)], excluded: [...d.excluded, ...ev.excluded] }; F.eventsGenerated = ev.generated; } init(); })
+  .catch(e => { $('list').innerHTML = `<p class="small">Could not load feeds.json (${esc(e.message)}). Opened from a file? Use the published page: <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/feeds/</a></p>`; });
+function init() {
+  const cats = [...new Set(F.sources.map(s => s.category))].sort();
+  $('cat').innerHTML += cats.map(c => `<option>${esc(c)}</option>`).join('');
+  $('excl').innerHTML = F.excluded.map(x => `<div class="card"><h3>${esc(x.name)}</h3><div class="small">${esc(x.reason)}</div></div>`).join('');
+  $('foot').textContent = `Data feeds checked ${F.generated}${F.eventsGenerated ? `, event feeds checked ${F.eventsGenerated}` : ''}. ${F.sources.length} sources, ${F.sources.filter(browserCallable).length} browser-callable.`;
+  for (const id of ['q', 'cat', 'st']) $(id).oninput = render;
+  render();
+}
+function statusTag(s) {
+  const v = s.verified?.status;
+  return v === 'verified' ? `<span class="tag ok">verified ${esc(s.verified.date)}</span>` : v === 'key-required' ? '<span class="tag warn">needs a key</span>' : `<span class="tag bad">not verified</span>`;
+}
+function card(s) {
+  const b = browserCallable(s), r = s.verified || {};
+  return `<div class="card" id="${esc(s.id)}"><h3>${esc(s.name)}</h3>
+  <div class="tags"><span class="tag">${esc(s.category)}</span>${statusTag(s)}${b ? '<span class="tag ok">browser</span>' : ''}<span class="tag">${esc(s.update || '')}</span><span class="tag">${esc(s.format || '')}</span></div>
+  <dl><dt>Provider</dt><dd>${esc(s.provider)}</dd><dt>Page</dt><dd>${link(s.url)}</dd><dt>API</dt><dd>${link(s.api)}</dd><dt>Sample</dt><dd>${link(s.sample)}</dd>
+  <dt>Access</dt><dd>${esc(s.auth)}${s.cors === true ? ' · CORS on' : s.cors === false ? ' · no CORS' : ''}${s.request_headers ? ' · header ' + esc(Object.entries(s.request_headers).map(([k, v]) => `${k}: ${v}`).join(', ')) : ''}</dd>
+  <dt>Licence</dt><dd>${esc(s.licence)}</dd><dt>Coverage</dt><dd>${esc(s.coverage)}</dd>
+  ${s.sample_result ? `<dt>Returned</dt><dd>${esc(s.sample_result)}</dd>` : ''}${r.reason ? `<dt>Why not</dt><dd>${esc(r.reason)}</dd>` : ''}${s.notes ? `<dt>Notes</dt><dd>${esc(s.notes)}</dd>` : ''}</dl>
+  ${b ? `<button type="button" data-try="${esc(s.id)}">Try the sample from this browser</button><div class="out"></div>` : ''}</div>`;
+}
+function render() {
+  const q = $('q').value.trim().toLowerCase(), cat = $('cat').value, st = $('st').value;
+  const hit = F.sources.filter(s => (!cat || s.category === cat) && (!st || (st === 'browser' ? browserCallable(s) : s.verified?.status === st))
+    && (!q || [s.name, s.provider, s.notes, s.url, s.api, s.sample, s.coverage, s.category].join(' ').toLowerCase().includes(q)));
+  const groups = new Map(); for (const s of hit) { if (!groups.has(s.category)) groups.set(s.category, []); groups.get(s.category).push(s); }
+  $('list').innerHTML = [...groups.entries()].sort().map(([c, ss]) => `<h2>${esc(c[0].toUpperCase() + c.slice(1))} (${ss.length})</h2>` + ss.map(card).join('')).join('') || '<p class="small">No source matches.</p>';
+  $('count').textContent = `${hit.length} of ${F.sources.length}`;
+  for (const btn of document.querySelectorAll('[data-try]')) btn.onclick = () => tryIt(btn);
+}
+async function tryIt(btn) {
+  const s = F.sources.find(x => x.id === btn.dataset.try), out = btn.nextElementSibling, t0 = performance.now();
+  btn.disabled = true; out.innerHTML = '<p class="small">Calling…</p>';
+  try {
+    const r = await fetch(s.sample, { headers: s.request_headers || {} }), text = await r.text(), ms = Math.round(performance.now() - t0);
+    let body = text; try { body = JSON.stringify(JSON.parse(text), null, 1); } catch (e) { /* not JSON */ }
+    out.innerHTML = `<p class="small">HTTP ${r.status} · ${esc(r.headers.get('content-type') || '')} · ${ms} ms · ${text.length} bytes</p><pre>${esc(body.slice(0, 2500))}${body.length > 2500 ? '\n…' : ''}</pre>`;
+  } catch (e) { out.innerHTML = `<p class="small">The call failed in this browser: ${esc(e.message)}. The source may be rate-limited or down; the sample link above still shows it.</p>`; }
+  btn.disabled = false;
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+{
+ "about": "Entries for data-register.json and pipeline.json from the headless render of entity web pages and the Factoidal extraction (2026-10-03), written by that session for the main session to merge (this session did not edit data-register.json or pipeline.json). Paths under third_party/ are relative to the repository root; all other paths are relative to magpie/cwplans/. After the merge this file can be deleted, or kept and registered with the entry for it below.",
+ "sources": {
+  "web-structured-data": {
+   "name": "schema.org structured data (JSON-LD, microdata, RDFa) published on the web pages of the entities the registry tracks: occupant, brand, store and charity sites",
+   "licence": "none stated (all rights reserved by default); the site owners publish this markup for search engines",
+   "note": "Crawl for scoping, allowed by the owner (2026-10-03: \"Website crawls - direct and via IA or CommonCrawl etc are fair use for our scoping purposes.\"). Store-finder searches with UK postcodes allowed by the owner (2026-10-03: \"we are permitted per industry convention to submit storefinder forms with UK postcodes\"). Only the structured-data blocks, page title, final URL, status and a hash of the rendered HTML are kept; no full pages are committed. Re-check before anything leaves the prototyping phase.",
+   "crawl": {
+    "method": "headless Chromium (Playwright) with a desktop Chrome User-Agent plus \" glitchcan-cwplans/0.1 (+https://github.com/danbri/glitchcan-minigam)\"; robots.txt obeyed (RFC 9309) for every page navigation and redirect; at most 3 pages at once, one page at a time per host, at least 2 s between page loads on a host; images, media and fonts not loaded; load + network idle (20 s cap) + 1.5 s; cookie banners accepted only when a page showed no structured data; store finders searched once per brand and branch postcode; Internet Archive copies of canarywharf.com pages read from the local fetch-cwg.mjs cache with scripts off (no request)",
+    "date": "2026-10-03",
+    "tool": "tools/render-structured-data.mjs"
+   }
+  },
+  "factoidal": {
+   "name": "@factoidal/core 0.7.1 (npm), RDF parsing and SPARQL 1.1 engine used to load and query the structured data",
+   "licence": "Apache-2.0",
+   "note": "software, not data; listed because it produces all.nq and runs the queries behind structured-facts.json"
+  }
+ },
+ "files": [
+  {
+   "path": "third_party/cwplans-structured-data/pages/",
+   "path_base": "repository root",
+   "what": "one JSONL file per host: per rendered page the raw JSON-LD blocks, microdata items (JSON), RDFa (N-Triples), whether each block was in the server HTML or only appeared after scripts, the entity keys and source fields that named the page, final URL, status, title, SHA-256 of the rendered HTML, and for store-finder pages how they were reached (via)",
+   "sources": [
+    "web-structured-data",
+    "cwg-site",
+    "own"
+   ],
+   "osm": {
+    "use": "ids",
+    "what": "join keys only: branch keys hold OSM element ids (branch:<brand QID>@node/<id>)"
+   },
+   "produced_by": "tools/render-structured-data.mjs",
+   "crawl": "headless render of entity pages, 2026-10-03; Internet Archive copies of canarywharf.com pages (mostly November 2025) read from the local cache",
+   "review": "site owners' structured data, no open licence: kept for scoping only; re-check before anything leaves the prototyping phase"
+  },
+  {
+   "path": "third_party/cwplans-structured-data/index.json",
+   "path_base": "repository root",
+   "what": "every URL in scope with its outcome (status, failure class, block counts), the render counts, the store-finder runs (brand, postcode, finder URL, outcome, result URL), URL references by source field and skipped references",
+   "sources": [
+    "web-structured-data",
+    "own"
+   ],
+   "osm": {
+    "use": "ids",
+    "what": "store-finder runs list branch keys holding OSM element ids"
+   },
+   "produced_by": "tools/render-structured-data.mjs"
+  },
+  {
+   "path": "third_party/cwplans-structured-data/all.nq",
+   "path_base": "repository root",
+   "what": "all structured data as RDF N-Quads, one named graph per page (graph IRI = page URL), after JSON-LD cleaning; microdata converted to RDF with the schema.org vocabulary; http://schema.org/ normalised to https://schema.org/",
+   "sources": [
+    "web-structured-data",
+    "cwg-site"
+   ],
+   "osm": {
+    "use": "none"
+   },
+   "produced_by": "tools/extract-structured-data.mjs"
+  },
+  {
+   "path": "third_party/cwplans-structured-data/README.md",
+   "path_base": "repository root",
+   "what": "what the folder is, the crawl method and date, the owner's crawl and store-finder rules, how to rebuild, and that full pages are not stored",
+   "sources": [
+    "own"
+   ],
+   "osm": {
+    "use": "none"
+   },
+   "produced_by": "hand-written"
+  },
+  {
+   "path": "registry/sources/web/structured-facts.json",
+   "what": "per tracked entity and page: schema.org types, name, opening hours (raw text, specification, special hours, and OSM opening_hours syntax), telephone, address, geo, URL, sameAs, price range, cuisine, menu, map, events; scope (branch with a confidence, chain, organisation, events only) and how the node was matched to the entity; meta with counts, JSON-LD repairs by class and parse failures by class",
+   "sources": [
+    "web-structured-data",
+    "own"
+   ],
+   "osm": {
+    "use": "ids",
+    "what": "join keys only: branch keys hold OSM element ids; registry building positions (from OSM outlines) used for the 300 m test"
+   },
+   "produced_by": "tools/extract-structured-data.mjs",
+   "crawl": "as third_party/cwplans-structured-data/, 2026-10-03",
+   "review": "facts from the site owners' structured data, no open licence: scoping only"
+  },
+  {
+   "path": "registry/sources/web/structured-register-entries.json",
+   "what": "hand-off of data-register and pipeline entries for the headless render and the Factoidal extraction (delete after merging, or keep with this entry)",
+   "sources": [
+    "own"
+   ],
+   "osm": {
+    "use": "none"
+   },
+   "produced_by": "hand-written"
+  }
+ ],
+ "activities": [
+  {
+   "id": "render-structured-data",
+   "tool": "tools/render-structured-data.mjs",
+   "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/render-structured-data.mjs [--retry-failed] [--storefinder-only] [--build-only]",
+   "kind": "fetch",
+   "used": [
+    {
+     "file": "registry/buildings.json"
+    },
+    {
+     "file": "registry/sources/brands/branches.json"
+    },
+    {
+     "file": "registry/sources/brands/storelocator.json"
+    },
+    {
+     "file": "registry/sources/brands/cwg-directory.json"
+    },
+    {
+     "file": "registry/sources/brands/wikidata-brands.json"
+    },
+    {
+     "file": "registry/sources/registers/charities.json"
+    },
+    {
+     "file": "registry/sources/web/site-facts.json"
+    },
+    {
+     "file": "tools/structured-dom.mjs"
+    },
+    {
+     "local": "data/raw/crawl/<host>/robots.json and <hash>.html.gz (robots rules and server HTML of the plain crawl, when present)"
+    },
+    {
+     "local": "data/raw/registry/cwg/pages/"
+    },
+    {
+     "source": "web-structured-data",
+     "endpoint": "occupants[].website, .contact:website, .cwg_website, .store_url (buildings.json); branches[].website, .cwg_website, .store_url; storelocator checked[].store_url; cwg-directory directory[].website; charities records[].website (registered charities); brand sites from Wikidata P856 for store finders",
+     "request": "robots.txt once per host (Node fetch, else Chromium), then one headless Chromium page load per URL; robots.txt checked for every main-frame navigation; at most 3 pages at once, one per host, at least 2 s apart; images, media and fonts blocked; store finders: home page, up to three finder pages, one postcode search per brand and postcode, the branch page"
+    }
+   ],
+   "generated": [
+    {
+     "file": "third_party/cwplans-structured-data/pages/<host>.jsonl"
+    },
+    {
+     "file": "third_party/cwplans-structured-data/index.json"
+    },
+    {
+     "local": "data/raw/rendered/<host>/<sha1(url)[0:16]>.html.gz (rendered DOM), .json (result), robots.json; data/raw/rendered/_storefinder/"
+    }
+   ],
+   "method": "Renders every web page the registry links to in headless Chromium and extracts from the rendered DOM: every JSON-LD script text as found, microdata (WHATWG algorithm) as JSON, and RDFa 1.1 as N-Triples. The same extractor runs over the server HTML of the same visit with scripts off, to mark blocks that only scripts made. For chain branches with no store page, searches the brand's store finder with the branch postcode and renders the branch page it links to.",
+   "rules": [
+    "Skipped: FSA ratings pages, OSM, Wikidata, Wikipedia (CC BY-SA), Companies House, Land Registry, register pages, social networks, the live canarywharf.com (Imperva challenge).",
+    "robots.txt per RFC 9309 (token glitchcan-cwplans, else *); an unreachable robots.txt means no visit; the failure is classed by its cause (dns, tls, timeout, 5xx).",
+    "Order: store pages, then pages the plain crawl got no structured data from, then the rest; Internet Archive CWG copies read from cache with scripts off.",
+    "A cookie banner is clicked only when the page shows no structured data and a known consent button is visible. No logins, no forms other than a store-finder search box with a UK postcode.",
+    "Store finder: a result link is followed only when its text, URL or card names the branch postcode, a street or mall phrase of the branch, or (for a brand with one branch here) Canary Wharf.",
+    "Blocks over 200 kB are dropped and counted."
+   ],
+   "network": true,
+   "deterministic": false,
+   "after": [
+    "crawl-sites"
+   ]
+  },
+  {
+   "id": "extract-structured-data",
+   "tool": "tools/extract-structured-data.mjs",
+   "command": "node magpie/cwplans/tools/extract-structured-data.mjs",
+   "kind": "derive",
+   "used": [
+    {
+     "file": "third_party/cwplans-structured-data/pages/<host>.jsonl"
+    },
+    {
+     "file": "third_party/cwplans-structured-data/index.json"
+    },
+    {
+     "file": "registry/buildings.json"
+    },
+    {
+     "file": "registry/sources/brands/branches.json"
+    },
+    {
+     "file": "registry/sources/brands/storelocator.json"
+    },
+    {
+     "file": "registry/sources/brands/cwg-directory.json"
+    },
+    {
+     "file": "registry/sources/registers/charities.json"
+    },
+    {
+     "file": "tools/jsonld-clean.mjs"
+    },
+    {
+     "source": "factoidal",
+     "endpoint": "npm @factoidal/core 0.7.1 (local)",
+     "request": "jsonldToRdf, parse (N-Triples, N-Quads), query (SPARQL 1.1 SELECT over named graphs)"
+    }
+   ],
+   "generated": [
+    {
+     "file": "third_party/cwplans-structured-data/all.nq"
+    },
+    {
+     "file": "registry/sources/web/structured-facts.json"
+    }
+   ],
+   "method": "Cleans each JSON-LD block (jsonld-clean.mjs: wrappers, comments, trailing and missing commas, control characters, invalid escapes, concatenated values, HTML entities, remote schema.org contexts inlined as {\"@vocab\": \"https://schema.org/\"}, @graph unwrapped, http://schema.org/ normalised; every repair counted by class), converts it with Factoidal jsonldToRdf, converts microdata JSON to RDF (schema.org vocabulary), parses RDFa N-Triples with Factoidal, loads one named graph per page, writes all.nq, then runs SPARQL with Factoidal for types, names, telephones, opening hours and their specifications, addresses, geo and events, and attributes each node to the registry entities that link to the page.",
+   "rules": [
+    "Scope branch, confidence high: the node's postcode equals the entity's, or its geo is within 300 m of the building.",
+    "Scope branch, confidence medium: the node has no address and the page is the branch's own page (a store_url field, a store-finder result, or a URL path that names the place).",
+    "Scope branch, confidence low: the node's postcode is another E14/E20 postcode (a sibling branch is possible).",
+    "Scope chain: a chain branch's general page with no address on the node (chain-wide facts, not branch facts). Scope organisation: the same for a non-chain entity's own site.",
+    "Nodes with an address or position elsewhere are not attributed and are counted.",
+    "Opening hours to OSM opening_hours: days grouped, 23:59 closes become 24:00, opens = closes = 00:00 is 'off', dated specifications become date-range rules; unparsed text is kept raw with the problem listed."
+   ],
+   "network": false,
+   "deterministic": true,
+   "after": [
+    "render-structured-data"
+   ]
+  }
+ ],
+ "libraries": [
+  {
+   "tool": "tools/structured-dom.mjs",
+   "provides": "extractStructuredData(): self-contained in-page extractor for Playwright page.evaluate: JSON-LD script texts as found, HTML microdata as JSON (WHATWG algorithm, itemref followed), RDFa 1.1 (Core + HTML+RDFa rules) as N-Triples with the document base."
+  },
+  {
+   "tool": "tools/jsonld-clean.mjs",
+   "provides": "cleanJsonLd(raw): repairs one real-world JSON-LD block and counts each repair by class (HTML comment and CDATA wrappers, JS comments, trailing and missing commas, raw control characters, invalid escapes, concatenated values, HTML entities, remote schema.org contexts inlined, other remote contexts dropped, @graph unwrapped, http://schema.org/ normalised)."
+  }
+ ],
+ "tests": [
+  {
+   "tool": "tools/test/jsonld-clean.test.mjs",
+   "what": "Fixture tests (node --test) for cleanJsonLd in tools/jsonld-clean.mjs, including the bigeasy.co.uk missing-comma block of 2026-10-03."
+  }
+ ],
+ "dev_dependency": {
+  "package": "@factoidal/core",
+  "version": "^0.7.1",
+  "where": "root package.json devDependencies (added with npm install --save-dev; package-lock.json updated)"
+ }
+}

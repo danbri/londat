@@ -1,0 +1,57 @@
+{
+ "meta": {
+  "source": "ukpn",
+  "url": "https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-live-faults/exports/json",
+  "fetched": "2026-10-04T08:27:14.240Z",
+  "licence": "CC BY 4.0",
+  "attribution": "Contains UK Power Networks data licensed under CC BY 4.0 (ukpowernetworks.opendatasoft.com, dataset ukpn-live-faults)",
+  "method": "Opendatasoft export of the whole ukpn-live-faults dataset (one request); kept: incidents whose geopoint is in the zone; the full postcode list and the customer letter text are dropped (fullpostcodedata, mainmessage, plannedincidentreason)",
+  "counts": {
+   "items": 1,
+   "model_box": 1,
+   "east_margin": 0,
+   "network_incidents": 20,
+   "planned": 8
+  },
+  "zone": {
+   "model_box_wgs84": [
+    -0.095,
+    51.474,
+    0.015,
+    51.522
+   ],
+   "east_margin_wgs84": [
+    0.015,
+    51.495,
+    0.085,
+    51.522
+   ]
+  }
+ },
+ "items": [
+  {
+   "id": "INCD-417217-J",
+   "kind": "power-cut",
+   "name": "E1 8;E1W 1;SE2 9;W1J 5",
+   "zone": "model",
+   "time": "2026-10-03T20:13:17",
+   "position": {
+    "lat": 51.50606,
+    "lon": -0.06771
+   },
+   "values": {
+    "type": "Restored",
+    "status_id": 5,
+    "customers_affected": 0,
+    "planned_customers": 0,
+    "calls": 0,
+    "postcode_sectors": "E1 8;E1W 1;SE2 9;W1J 5",
+    "planned_date": null,
+    "estimated_restoration": null,
+    "restored": "2026-10-04T07:33:21.173",
+    "operating_zone": "CENTRAL"
+   },
+   "url": "https://www.ukpowernetworks.co.uk/power-cut/map"
+  }
+ ]
+}

@@ -1,0 +1,573 @@
+{
+ "meta": {
+  "source": "locks",
+  "fetched": "2026-10-04T08:49:21Z",
+  "url": "feeds/river/locks-facts.json (hand-written) + OSM + crt-notices.json",
+  "licence": "Lock rules: facts paraphrased from the operators' pages (CRT, Southwark Council, PLA; all rights reserved), each with its URL and the date read. Positions: OpenStreetMap (ODbL). Notices: crt-notices.json",
+  "attribution": "© OpenStreetMap contributors; Canal & River Trust; Southwark Council",
+  "method": "Each lock in locks-facts.json gets its position from the OSM element named there (centroid), its live CRT notices by keyword from crt-notices.json (run crt-notices first), and a fresh HTTP check of every cited page. The rules are not parsed from the pages: they were read by hand and written as structured windows (hours either side of high or low water at a named place).",
+  "osm_data_as_of": "2026-10-01T01:43:50Z",
+  "counts": {
+   "items": 9,
+   "pages_checked": 5
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "lock:blackwall-basin-entrance",
+   "kind": "lock",
+   "name": "Blackwall Basin Entrance Lock (former entrance)",
+   "position": {
+    "lat": 51.50387,
+    "lon": -0.00743,
+    "precision": "centroid of OSM way/189816285",
+    "zone": "model"
+   },
+   "values": {
+    "operator": null,
+    "links": "Blackwall Basin to the Thames (historic)",
+    "status": "no operating rules found; the CRT pages name only the West India Dock Entrance Lock as the tidal lock of West India Docks",
+    "window": null,
+    "hours": null,
+    "booking": null,
+    "dimensions": null,
+    "conflicts": null,
+    "notes": null,
+    "crt_notices": [],
+    "sources": [
+     {
+      "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames",
+      "title": "Locks to the River Thames (CRT): lists the tidal locks",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames"
+  },
+  {
+   "id": "lock:bow-locks",
+   "kind": "lock",
+   "name": "Bow Locks (Bow Creek to the Lee Navigation and Limehouse Cut)",
+   "position": {
+    "lat": 51.52318,
+    "lon": -0.00801,
+    "precision": "centroid of OSM node/259200697",
+    "zone": "lea"
+   },
+   "values": {
+    "operator": "Canal & River Trust",
+    "links": "tidal Bow Creek (River Lea) to the Lee Navigation, Three Mills and the Limehouse Cut",
+    "status": "in service by booking",
+    "window": {
+     "kind": "open around high water",
+     "reference": "HW London Bridge",
+     "open_hours_before": 2,
+     "open_hours_after": 2
+    },
+    "hours": [
+     {
+      "season": "all year",
+      "days": "Monday to Friday",
+      "from": "09:30",
+      "to": "16:30"
+     }
+    ],
+    "booking": "by e-mail to the CRT Harbour Master, seven days ahead",
+    "dimensions": null,
+    "conflicts": null,
+    "notes": "OSM has the lock gates (node/259200697 and neighbours at 51.523, -0.008) but no named lock way; the position is the first gate.",
+    "crt_notices": [],
+    "sources": [
+     {
+      "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames",
+      "title": "Locks to the River Thames (CRT)",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames"
+  },
+  {
+   "id": "lock:commercial-road",
+   "kind": "lock",
+   "name": "Commercial Road Lock 12 (Regent's Canal)",
+   "position": {
+    "lat": 51.51234,
+    "lon": -0.0365,
+    "precision": "centroid of OSM way/243977333",
+    "zone": "model"
+   },
+   "values": {
+    "operator": "Canal & River Trust",
+    "links": "Limehouse Basin to the Regent's Canal",
+    "status": "boater-operated canal lock (no booking); see notices",
+    "window": null,
+    "hours": null,
+    "booking": null,
+    "dimensions": null,
+    "conflicts": null,
+    "notes": "CRT notices of August 2026 announce ongoing overnight closures (14:00 to 09:00) at Commercial Road, Salmon Lane and Mile End locks for low water levels.",
+    "crt_notices": [
+     {
+      "id": "crt-notice:01a0a475-c168-7446-9c68-48174d70d395",
+      "title": "Commercial Road Lock 12 - Regent's Canal",
+      "type": "Advice",
+      "reason": "Repair",
+      "validity": {
+       "start": "2026-09-15T09:55:00+00:00",
+       "end": "2026-09-17T13:34:03+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01a0a475-c168-7446-9c68-48174d70d395"
+     },
+     {
+      "id": "crt-notice:019fd0f7-1633-74ba-93de-73367deefc63",
+      "title": "Lock 10, Johnsons Lock to Lock 12, Commercial Road Lock closure on the Regent’s Canal",
+      "type": "Navigation Closure",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-05T09:00:00+00:00",
+       "end": "2026-08-06T09:27:53+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019fd0f7-1633-74ba-93de-73367deefc63"
+     },
+     {
+      "id": "crt-notice:019fd673-2404-7cae-b981-fd235ae79f2e",
+      "title": "Ongoing Overnight closures at Commercial Road, Lock 12 between 3.30pm and 9am",
+      "type": "Navigation Closure",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-07T14:30:00+00:00",
+       "end": "2026-08-15T08:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019fd673-2404-7cae-b981-fd235ae79f2e"
+     },
+     {
+      "id": "crt-notice:01a0006a-8d06-7c08-b499-de0cfcd19e1f",
+      "title": "Ongoing Overnight closures at Commercial Road, Lock 12, Salmon Lane Lock 11 and Mile End Lock 9 between 2.00pm and 9am",
+      "type": "Navigation Restriction",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-25T13:00:00+00:00",
+       "end": null,
+       "open_ended": true
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01a0006a-8d06-7c08-b499-de0cfcd19e1f"
+     },
+     {
+      "id": "crt-notice:01a01a87-66bc-775a-91d8-c8fc1756385d",
+      "title": "Mooring suspension between Mile End Lock and Commercial Road Lock",
+      "type": "Navigation Restriction",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-24T08:00:00+00:00",
+       "end": null,
+       "open_ended": true
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01a01a87-66bc-775a-91d8-c8fc1756385d"
+     },
+     {
+      "id": "crt-notice:01a0ae4a-f48e-77c2-b2b5-62f9d090f448",
+      "title": "Repair work at Commercial Road Lock, Regent's Canal",
+      "type": "Navigation Restriction",
+      "reason": "Repair",
+      "validity": {
+       "start": "2026-09-17T09:00:00+00:00",
+       "end": "2026-09-17T13:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01a0ae4a-f48e-77c2-b2b5-62f9d090f448"
+     }
+    ],
+    "sources": [
+     {
+      "url": "https://canalrivertrust.org.uk/notices",
+      "title": "CRT notices",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://canalrivertrust.org.uk/notices"
+  },
+  {
+   "id": "lock:king-george-v",
+   "kind": "lock",
+   "name": "King George V Lock (Royal Docks)",
+   "position": {
+    "lat": 51.50255,
+    "lon": 0.07175,
+    "precision": "centroid of OSM way/946639100",
+    "zone": "east"
+   },
+   "values": {
+    "operator": "Royal Docks Waterways (Royal Docks Management Authority)",
+    "links": "Thames (Gallions Reach) to King George V Dock and the Royal Docks",
+    "status": "rules not collected; Royal Docks Waterways publishes booking forms and a port safety code (royaldockswaterways.com/booking-forms/)",
+    "window": null,
+    "hours": null,
+    "booking": null,
+    "dimensions": null,
+    "conflicts": null,
+    "notes": null,
+    "crt_notices": [],
+    "sources": [
+     {
+      "url": "https://royaldockswaterways.com/booking-forms/",
+      "title": "Royal Docks Waterways booking forms (linked from the home page; not read)",
+      "read": null,
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://royaldockswaterways.com/booking-forms/"
+  },
+  {
+   "id": "lock:limehouse",
+   "kind": "lock",
+   "name": "Limehouse Lock (Limehouse Basin ship lock, Thames entrance)",
+   "position": {
+    "lat": 51.51008,
+    "lon": -0.0367,
+    "precision": "centroid of OSM way/1480133733",
+    "zone": "model"
+   },
+   "values": {
+    "operator": "Canal & River Trust",
+    "links": "Thames (Limehouse Reach) to Limehouse Basin, and on to the Regent's Canal and the Limehouse Cut",
+    "status": "in service, staffed only for booked moves",
+    "window": {
+     "kind": "closed around low water",
+     "reference": "LW London Bridge",
+     "closed_hours_before": 2,
+     "closed_hours_after": 2,
+     "approximate": true
+    },
+    "hours": [
+     {
+      "season": "summer, 1 April to 31 October",
+      "from": "07:00",
+      "to": "19:00"
+     },
+     {
+      "season": "winter, 1 November to 31 March",
+      "from": "08:00",
+      "to": "16:00"
+     }
+    ],
+    "booking": "online, at least 2 working days ahead; telephone and e-mail bookings confirmed 08:00 to 15:30 Monday to Friday; re-book if more than 30 minutes late; lock keepers on VHF channel 80",
+    "dimensions": null,
+    "conflicts": null,
+    "notes": "A CRT notice of August 2026, 'Changes to Limehouse Lock operating times' (reason: low water levels), is open-ended: see crt_notices.",
+    "crt_notices": [
+     {
+      "id": "crt-notice:01969013-0cc5-7cb0-8864-07a4e5eb866f",
+      "title": "Limehouse Lock Walkway Closed between - ///added.invite.corn and ///shark.hangs.slower",
+      "type": "Advice",
+      "reason": "Information",
+      "validity": {
+       "start": "2025-01-17T09:30:00+00:00",
+       "end": null,
+       "open_ended": true
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01969013-0cc5-7cb0-8864-07a4e5eb866f"
+     },
+     {
+      "id": "crt-notice:019fc733-4985-79c5-88c1-381337e581d1",
+      "title": "Temporary Closure - Limehouse Lock",
+      "type": "Navigation Closure",
+      "reason": "Maintenance",
+      "validity": {
+       "start": "2026-08-19T06:00:00+00:00",
+       "end": "2026-08-21T18:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019fc733-4985-79c5-88c1-381337e581d1"
+     },
+     {
+      "id": "crt-notice:019fcd8f-90ae-7b3c-9d6f-2fc0862179d1",
+      "title": "Navigation Closure - Limehouse Lock, Limehouse Basin, London",
+      "type": "Navigation Closure",
+      "reason": "Maintenance",
+      "validity": {
+       "start": "2026-10-14T06:00:00+00:00",
+       "end": "2026-10-16T18:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019fcd8f-90ae-7b3c-9d6f-2fc0862179d1"
+     },
+     {
+      "id": "crt-notice:019ff52c-f3f8-7fd3-b635-d46b6670f3ae",
+      "title": "Navigation Closure - Limehouse Lock, Event - Great River Race",
+      "type": "Navigation Closure",
+      "reason": "Event",
+      "validity": {
+       "start": "2026-09-12T05:00:00+00:00",
+       "end": "2026-09-12T19:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019ff52c-f3f8-7fd3-b635-d46b6670f3ae"
+     },
+     {
+      "id": "crt-notice:01a01f77-1358-7b15-9b26-4294e59cf0a9",
+      "title": "Temporary Closure Water Management - Limehouse Lock",
+      "type": "Navigation Closure",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-21T18:00:00+00:00",
+       "end": "2026-08-27T06:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01a01f77-1358-7b15-9b26-4294e59cf0a9"
+     },
+     {
+      "id": "crt-notice:019fcd28-87a4-767a-b668-4bee51b89a06",
+      "title": "Changes to Limehouse Lock operating times",
+      "type": "Navigation Restriction",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-05T07:00:00+00:00",
+       "end": null,
+       "open_ended": true
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019fcd28-87a4-767a-b668-4bee51b89a06"
+     }
+    ],
+    "sources": [
+     {
+      "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames",
+      "title": "Locks to the River Thames (CRT; page 'Last Edited: 22 September 2026')",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames"
+  },
+  {
+   "id": "lock:salmon-lane",
+   "kind": "lock",
+   "name": "Salmon Lane Lock 11 (Regent's Canal)",
+   "position": {
+    "lat": 51.51485,
+    "lon": -0.0348,
+    "precision": "centroid of OSM way/23914320",
+    "zone": "model"
+   },
+   "values": {
+    "operator": "Canal & River Trust",
+    "links": "Regent's Canal",
+    "status": "boater-operated canal lock; see notices",
+    "window": null,
+    "hours": null,
+    "booking": null,
+    "dimensions": null,
+    "conflicts": null,
+    "notes": null,
+    "crt_notices": [
+     {
+      "id": "crt-notice:019ff179-34e0-7e00-a9fe-9d830882d24c",
+      "title": "Out of Use, Lower Gate Paddle - Lock 11, Salmon Lane Lock",
+      "type": "Advice",
+      "reason": "Repair",
+      "validity": {
+       "start": "2026-08-11T15:57:00+00:00",
+       "end": "2026-08-17T13:01:04+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019ff179-34e0-7e00-a9fe-9d830882d24c"
+     },
+     {
+      "id": "crt-notice:01a0006a-8d06-7c08-b499-de0cfcd19e1f",
+      "title": "Ongoing Overnight closures at Commercial Road, Lock 12, Salmon Lane Lock 11 and Mile End Lock 9 between 2.00pm and 9am",
+      "type": "Navigation Restriction",
+      "reason": "Low Water Levels",
+      "validity": {
+       "start": "2026-08-25T13:00:00+00:00",
+       "end": null,
+       "open_ended": true
+      },
+      "url": "https://canalrivertrust.org.uk/notices/01a0006a-8d06-7c08-b499-de0cfcd19e1f"
+     }
+    ],
+    "sources": [
+     {
+      "url": "https://canalrivertrust.org.uk/notices",
+      "title": "CRT notices",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://canalrivertrust.org.uk/notices"
+  },
+  {
+   "id": "lock:south-dock",
+   "kind": "lock",
+   "name": "South Dock Lock (Greenland Dock and South Dock Marina sea lock)",
+   "position": {
+    "lat": 51.49409,
+    "lon": -0.03349,
+    "precision": "centroid of OSM way/411108591",
+    "zone": "model"
+   },
+   "values": {
+    "operator": "Southwark Council (South Dock Marina)",
+    "links": "Thames (Limehouse Reach, beside Greenland Pier) to South Dock Marina; Greenland Dock behind it",
+    "status": "in service in office hours when there is enough water",
+    "window": {
+     "kind": "open around high water",
+     "reference": "HW (local, for a 2 m draft)",
+     "open_hours_before": 2,
+     "open_hours_after": 1.5,
+     "approximate": true
+    },
+    "hours": [
+     {
+      "days": "Monday to Friday",
+      "from": "07:00",
+      "to": "19:00"
+     },
+     {
+      "days": "weekends and bank holidays",
+      "from": "08:00",
+      "to": "17:00"
+     }
+    ],
+    "booking": "advised (booking and registration form); VHF channels 37 and 80, callsign 'South Dock Marina'; waiting berth on the inner side of Greenland Pier",
+    "dimensions": {
+     "cill_above_chart_datum_m": 2.85,
+     "safety_margin_suggested_m": 0.3
+    },
+    "conflicts": null,
+    "notes": "Depth over the cill = predicted tide level (above chart datum) minus 2.85 m. Chart datum near London Bridge is 3.20 m below OD (registry/sources/pla/README.md), so the cill is near -0.35 m OD.",
+    "crt_notices": [],
+    "sources": [
+     {
+      "url": "https://www.southwark.gov.uk/culture-and-sport/south-dock-marina/navigation-thames",
+      "title": "South Dock Marina: navigation on the Thames (Southwark Council)",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://www.southwark.gov.uk/culture-and-sport/south-dock-marina/navigation-thames"
+  },
+  {
+   "id": "lock:st-katharine",
+   "kind": "lock",
+   "name": "St Katharine Docks Lock",
+   "position": {
+    "lat": 51.5063,
+    "lon": -0.0722,
+    "precision": "centroid of OSM way/951522044",
+    "zone": "model"
+   },
+   "values": {
+    "operator": "St Katharine Docks marina",
+    "links": "Thames (Upper Pool) to St Katharine Docks",
+    "status": "rules not collected (the marina's pages were not read in this pass)",
+    "window": null,
+    "hours": null,
+    "booking": null,
+    "dimensions": null,
+    "conflicts": null,
+    "notes": null,
+    "crt_notices": [],
+    "sources": []
+   },
+   "url": null
+  },
+  {
+   "id": "lock:west-india-entrance",
+   "kind": "lock",
+   "name": "West India Dock Entrance Lock (Blackwall entrance to West India and Millwall Docks)",
+   "position": {
+    "lat": 51.50136,
+    "lon": -0.01057,
+    "precision": "centroid of OSM way/1479670697",
+    "zone": "model"
+   },
+   "values": {
+    "operator": "Canal & River Trust",
+    "links": "Thames (Blackwall Reach) to Blackwall Basin, West India Docks and Millwall Docks",
+    "status": "in service by booking",
+    "window": {
+     "kind": "open around high water",
+     "reference": "HW North Woolwich",
+     "open_hours_before": 3,
+     "open_hours_after": 3
+    },
+    "hours": [
+     {
+      "season": "all year",
+      "days": "Monday to Friday",
+      "from": "08:30",
+      "to": "15:30",
+      "note": "bookings guaranteed in these hours as the tide allows; other times by arrangement"
+     }
+    ],
+    "booking": "by e-mail, seven days ahead; full salvage or wreck-removal insurance required to enter West India Dock; West India and Millwall Docks harbour regulations apply",
+    "dimensions": null,
+    "conflicts": [
+     {
+      "claim": "open one hour either side of high water at London Bridge (minus about 20 minutes), 08:30 to 15:30, booked in advance (no notice period stated); no charge only with a confirmed berth or booked visitor mooring",
+      "source": "https://canalrivertrust.org.uk/canals-and-rivers/london-docklands/boating-london-docklands",
+      "read": "2026-10-04"
+     }
+    ],
+    "notes": null,
+    "crt_notices": [
+     {
+      "id": "crt-notice:019dbeb7-7394-777c-ab37-4c62695d04a3",
+      "title": "West India Dock Entrance Lock",
+      "type": "Advice",
+      "reason": "Event",
+      "validity": {
+       "start": "2026-04-18T17:00:00+00:00",
+       "end": "2026-10-25T18:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019dbeb7-7394-777c-ab37-4c62695d04a3"
+     },
+     {
+      "id": "crt-notice:019fb913-7efe-7a38-8c28-17f22ac5044b",
+      "title": "Advice - 3rd Party Works, South Dock, Between West India Dock Entrance Lock and River Thames - on Bridge 1, Manchester Road Bridge, Canary wharf",
+      "type": "Advice",
+      "reason": "3rd Party Works",
+      "validity": {
+       "start": "2026-08-05T07:00:00+00:00",
+       "end": "2026-08-05T16:00:00+00:00",
+       "open_ended": false
+      },
+      "url": "https://canalrivertrust.org.uk/notices/019fb913-7efe-7a38-8c28-17f22ac5044b"
+     }
+    ],
+    "sources": [
+     {
+      "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames",
+      "title": "Locks to the River Thames (CRT; 'Last Edited: 22 September 2026')",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     },
+     {
+      "url": "https://canalrivertrust.org.uk/canals-and-rivers/london-docklands/boating-london-docklands",
+      "title": "Boating London Docklands (CRT)",
+      "read": "2026-10-04",
+      "checked": "HTTP 200"
+     }
+    ]
+   },
+   "url": "https://canalrivertrust.org.uk/boating/boating-news-and-views/boating-news/boating-facilities/locks-to-the-river-thames"
+  }
+ ]
+}

@@ -1,0 +1,93 @@
+# Descriptive idioms in publisher schema.org markup (Docklands web harvest). Open shapes: they recognise a recurring
+# group of triples and its known forms; they do not reject data. Catalogue: idioms.json. Tool: magpie/cwplans/tools/web-idioms.mjs.
+# Checked with @factoidal/core shexValidate. Skill: cwplans-web-harvest, "Idioms".
+PREFIX s:   <https://schema.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX og:  <http://ogp.me/ns#>
+PREFIX i:   <https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/idioms/idioms.shex#>
+
+# ---------- branch card: a place with an address, hours, coordinates, telephone
+i:BranchCard {
+  s:name . * ; s:telephone . * ; s:url . * ; s:image . * ;
+  s:address . * ; s:geo . * ; s:openingHoursSpecification . * ; s:openingHours . *
+}
+i:AddressNode      { s:address @i:PostalAddress + }
+i:AddressText      { s:address LITERAL + }
+i:PostalAddress    EXTRA rdf:type { rdf:type [s:PostalAddress] ? ;
+  s:streetAddress . * ; s:addressLocality . * ; s:postalCode . * ; s:addressRegion . * ; s:addressCountry . * }
+i:HoursNodes       { s:openingHoursSpecification @i:WeeklyHours + }
+i:HoursText        { s:openingHours LITERAL + }
+i:GeoNode          { s:geo @i:Geo + }
+i:Geo              { s:latitude . ; s:longitude . }
+i:HasTelephone     { s:telephone . + }
+i:FullBranch       { s:name . + ; s:telephone . + ; s:address @i:PostalAddress + ; s:geo @i:Geo + ; s:openingHoursSpecification @i:WeeklyHours + }
+
+# ---------- chain branch link: a branch that names its chain
+i:ChainBranchLink  { s:parentOrganization . * ; s:brand . * ; s:branchCode . * }
+i:ViaParent        { s:parentOrganization . + }
+i:ViaBrand         { s:brand . + }
+i:ViaBranchCode    { s:branchCode . + }
+
+# ---------- weekly hours
+i:WeeklyHours      { s:dayOfWeek . * ; s:opens . * ; s:closes . * ; s:validFrom . * ; s:validThrough . * }
+i:DayIri           { s:dayOfWeek IRI + }
+i:DayText          { s:dayOfWeek LITERAL + }
+i:DayIriAsText     { s:dayOfWeek LITERAL /^https?:\/\/(www\.)?schema\.org\// + }   # JSON-LD without @id: the IRI arrives as text
+i:DayName          { s:dayOfWeek LITERAL /^[A-Za-z]+$/ + }
+i:SpecialDays      { s:validFrom . + }
+
+# ---------- organisation card
+i:OrgCard          { s:name . * ; s:url . * ; s:logo . * ; s:sameAs . * }
+i:LogoImageObject  { s:logo @i:ImageObject + }
+i:LogoIri          { s:logo IRI + }
+i:LogoText         { s:logo LITERAL + }   # mostly an image URL as text (JSON-LD without @id)
+i:ImageObject      EXTRA rdf:type { rdf:type [s:ImageObject] ; s:url . * ; s:contentUrl . * }
+i:HasSameAs        { s:sameAs . + }
+
+# ---------- site identity and the site search box
+i:SiteIdentity     { s:name . * ; s:url . * ; s:publisher . * ; s:potentialAction . * }
+i:WithPublisher    { s:publisher . + }
+i:SiteSearch       { s:target . + ; s:query-input . + }
+i:TargetEntryPoint { s:target @i:EntryPoint + }
+i:EntryPoint       EXTRA rdf:type { rdf:type [s:EntryPoint] ; s:urlTemplate . * }
+i:TargetIri        { s:target IRI + }
+i:TargetText       { s:target LITERAL + }
+i:QueryInputSpec   { s:query-input @i:PropertyValueSpec + }
+i:PropertyValueSpec EXTRA rdf:type { rdf:type [s:PropertyValueSpecification] ; s:valueName . * ; s:valueRequired . * }
+i:QueryInputText   { s:query-input LITERAL + }
+
+# ---------- page frame and breadcrumb trail
+i:PageFrame        { s:isPartOf . + ; s:breadcrumb . * ; s:primaryImageOfPage . * ; s:about . * }
+i:WithBreadcrumb   { s:breadcrumb . + }
+i:WithPrimaryImage { s:primaryImageOfPage . + }
+i:WithAbout        { s:about . + }
+i:Breadcrumb       { s:itemListElement @i:ListItem + }
+i:ListItem         { s:position . ; s:name . * ; s:item . * }
+
+# ---------- social preview (Open Graph, RDFa in the page head)
+i:SocialPreview    { og:title . + ; og:url . * ; og:type . * ; og:image . * }
+i:ImageSize        { <http://ogp.me/ns#image:width> . + }
+i:ArticleTimes     { <article:modified_time> . + }
+
+# ---------- contact point, person
+i:ContactPoint     { s:contactType . * ; s:telephone . * ; s:email . * ; s:areaServed . * ; s:availableLanguage . * }
+i:Person           { s:name . + ; s:jobTitle . * ; s:worksFor . * ; s:url . * ; s:sameAs . * }
+i:WithJobTitle     { s:jobTitle . + }
+i:WithWorksFor     { s:worksFor . + }
+
+# ---------- menu
+i:MenuLink         { s:hasMenu . * ; s:menu . * }
+i:MenuTree         { s:hasMenu @i:Menu + }
+i:Menu             EXTRA rdf:type { rdf:type [s:Menu] ; s:hasMenuSection @i:MenuSection + }
+i:MenuSection      EXTRA rdf:type { rdf:type [s:MenuSection] ; s:hasMenuItem . + }
+
+# ---------- FAQ, rating badge, service catalogue, product offer
+i:FAQ              { s:mainEntity @i:Question + }
+i:Question         EXTRA rdf:type { rdf:type [s:Question] ; s:name . ; s:acceptedAnswer @i:Answer }
+i:Answer           EXTRA rdf:type { rdf:type [s:Answer] ; s:text . }
+i:RatingBadge      { s:ratingValue . ; s:reviewCount . ? ; s:ratingCount . ? ; s:bestRating . ? ; s:worstRating . ? }
+i:ServiceCatalogue { s:itemListElement @i:ServiceOffer + }
+i:ServiceOffer     EXTRA rdf:type { rdf:type [s:Offer] ; s:itemOffered . + }
+i:ProductOffer     { s:name . + ; s:offers . * ; s:brand . * ; s:sku . * ; s:mpn . * }
+i:WithOffer        { s:offers . + }
+i:WithSkuMpn       { s:sku . + }

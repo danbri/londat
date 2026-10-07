@@ -1,0 +1,461 @@
+{
+ "meta": {
+  "source": "wikidata-vessels",
+  "fetched": "2026-10-04T08:33:06Z",
+  "url": "https://qlever.dev/api/wikidata",
+  "licence": "CC0 1.0 (Wikidata)",
+  "attribution": "Wikidata",
+  "query": "PREFIX geof: <http://www.opengis.net/def/function/geosparql/> PREFIX schema: <http://schema.org/>\nSELECT ?item ?label ?desc ?coord ?cls ?clsLabel ?inception ?imo ?mmsi WHERE {\n  ?item wdt:P625 ?coord . ?item wdt:P31 ?cls . ?cls wdt:P279* wd:Q1229765 .\n  FILTER(geof:latitude(?coord) > 51.474 && geof:latitude(?coord) < 51.528 && geof:longitude(?coord) > -0.095 && geof:longitude(?coord) < 0.085)\n  OPTIONAL { ?item rdfs:label ?label FILTER(LANG(?label)='en') } OPTIONAL { ?item schema:description ?desc FILTER(LANG(?desc)='en') }\n  OPTIONAL { ?cls rdfs:label ?clsLabel FILTER(LANG(?clsLabel)='en') } OPTIONAL { ?item wdt:P571 ?inception } OPTIONAL { ?item wdt:P458 ?imo } OPTIONAL { ?item wdt:P587 ?mmsi }\n}",
+  "method": "One QLever query: Wikidata items that are an instance of a subclass of watercraft (Q1229765) and have a coordinate (P625) in the zone envelope, with label, description, classes, inception, IMO and MMSI. These are named boats with a Wikidata record (museum ships, historic vessels, lightships, floating venues), not the boats moored today.",
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  },
+  "counts": {
+   "items": 22
+  }
+ },
+ "items": [
+  {
+   "id": "wikidata:Q105107778",
+   "kind": "vessel",
+   "title": "St Peter's Church",
+   "position": {
+    "lat": 51.507,
+    "lon": -0.0239,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q105107778",
+    "description": "floating church barge in West India Quay, London, England, UK",
+    "classes": ["barge"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q105107778"
+  },
+  {
+   "id": "wikidata:Q109662664",
+   "kind": "vessel",
+   "title": "Light vessel no. 93",
+   "position": {
+    "lat": 51.5058,
+    "lon": 0.0282,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "east"
+   },
+   "values": {
+    "qid": "Q109662664",
+    "description": "lightvessel",
+    "classes": ["lightvessel","preserved watercraft"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q109662664"
+  },
+  {
+   "id": "wikidata:Q111369017",
+   "kind": "vessel",
+   "title": "Sunborn London Yacht Hotel",
+   "position": {
+    "lat": 51.5072,
+    "lon": 0.02477,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "east"
+   },
+   "values": {
+    "qid": "Q111369017",
+    "description": "hotel in London, United Kingdom",
+    "classes": ["botel"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q111369017"
+  },
+  {
+   "id": "wikidata:Q113015411",
+   "kind": "vessel",
+   "title": "CITY GAMMA",
+   "position": {
+    "lat": 51.5027,
+    "lon": 0.07179,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "east"
+   },
+   "values": {
+    "qid": "Q113015411",
+    "description": "Riverboat working on the river thames",
+    "classes": ["inland waterway vessel"],
+    "inception": "1982-01-01",
+    "imo": null,
+    "mmsi": "235054917"
+   },
+   "url": "https://www.wikidata.org/wiki/Q113015411"
+  },
+  {
+   "id": "wikidata:Q171255",
+   "kind": "vessel",
+   "title": "Cutty Sark",
+   "position": {
+    "lat": 51.48278,
+    "lon": -0.00972,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q171255",
+    "description": "British clipper ship",
+    "classes": ["sailboat","museum ship","clipper","preserved watercraft"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q171255"
+  },
+  {
+   "id": "wikidata:Q17650868",
+   "kind": "vessel",
+   "title": "Roman riverboat, 136m west of Greenwood Theatre",
+   "position": {
+    "lat": 51.5026,
+    "lon": -0.08791,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q17650868",
+    "description": "boat in the London Borough of Southwark, England, UK",
+    "classes": ["boat"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q17650868"
+  },
+  {
+   "id": "wikidata:Q18161266",
+   "kind": "vessel",
+   "title": "Prince Frederick's Barge",
+   "position": {
+    "lat": 51.4811,
+    "lon": -0.00556,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q18161266",
+    "description": "British ship",
+    "classes": ["ship"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q18161266"
+  },
+  {
+   "id": "wikidata:Q20870362",
+   "kind": "vessel",
+   "title": "Golden Hinde",
+   "position": {
+    "lat": 51.50694,
+    "lon": -0.09028,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q20870362",
+    "description": "1973 replica of 16th century galleon",
+    "classes": ["galleon","museum ship"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q20870362"
+  },
+  {
+   "id": "wikidata:Q2159691",
+   "kind": "vessel",
+   "title": "SS Robin",
+   "position": {
+    "lat": 51.5058,
+    "lon": 0.0292,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "east"
+   },
+   "values": {
+    "qid": "Q2159691",
+    "description": "world's oldest complete steam coaster",
+    "classes": ["preserved watercraft","ship"],
+    "inception": null,
+    "imo": "5222287",
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q2159691"
+  },
+  {
+   "id": "wikidata:Q30593466",
+   "kind": "vessel",
+   "title": "Knocker White",
+   "position": {
+    "lat": 51.50745,
+    "lon": 0.00813,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q30593466",
+    "description": null,
+    "classes": ["preserved watercraft","tug"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q30593466"
+  },
+  {
+   "id": "wikidata:Q30749858",
+   "kind": "vessel",
+   "title": "Lady Daphne",
+   "position": {
+    "lat": 51.50718,
+    "lon": -0.07332,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q30749858",
+    "description": "boat",
+    "classes": ["boat"],
+    "inception": "1923-01-01",
+    "imo": "5201556",
+    "mmsi": "235054015"
+   },
+   "url": "https://www.wikidata.org/wiki/Q30749858"
+  },
+  {
+   "id": "wikidata:Q30765817",
+   "kind": "vessel",
+   "title": null,
+   "position": {
+    "lat": 51.50694,
+    "lon": -0.02194,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q30765817",
+    "description": null,
+    "classes": ["watercraft"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q30765817"
+  },
+  {
+   "id": "wikidata:Q33189331",
+   "kind": "vessel",
+   "title": "Light vessel no. 95",
+   "position": {
+    "lat": 51.5081,
+    "lon": 0.0091,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q33189331",
+    "description": "lightvessel",
+    "classes": ["lightvessel"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q33189331"
+  },
+  {
+   "id": "wikidata:Q52352168",
+   "kind": "vessel",
+   "title": "Hurricane Clipper",
+   "position": {
+    "lat": 51.50242,
+    "lon": 0.00914,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q52352168",
+    "description": "inland passengers ship built in 2001",
+    "classes": ["River Runner 200 MkII"],
+    "inception": "2001-01-01",
+    "imo": "9249702",
+    "mmsi": "235053188"
+   },
+   "url": "https://www.wikidata.org/wiki/Q52352168"
+  },
+  {
+   "id": "wikidata:Q52379261",
+   "kind": "vessel",
+   "title": "Typhoon Clipper",
+   "position": {
+    "lat": 51.50315,
+    "lon": -0.0667,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q52379261",
+    "description": "inland passengers ship built in 2007",
+    "classes": ["River Runner 200 MkIIb"],
+    "inception": "2001-01-01",
+    "imo": "9451771",
+    "mmsi": "235056986"
+   },
+   "url": "https://www.wikidata.org/wiki/Q52379261"
+  },
+  {
+   "id": "wikidata:Q54817854",
+   "kind": "vessel",
+   "title": "SB Adieu",
+   "position": {
+    "lat": 51.50746,
+    "lon": -0.07322,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q54817854",
+    "description": "Sailing vessel built in 1929",
+    "classes": ["sailing ship","boat"],
+    "inception": "1929-01-01",
+    "imo": "5002699",
+    "mmsi": "235014861"
+   },
+   "url": "https://www.wikidata.org/wiki/Q54817854"
+  },
+  {
+   "id": "wikidata:Q55098893",
+   "kind": "vessel",
+   "title": "SB Ardwina",
+   "position": {
+    "lat": 51.50751,
+    "lon": -0.07325,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q55098893",
+    "description": "Wooden Thames barge, built 1909",
+    "classes": ["sailboat"],
+    "inception": null,
+    "imo": null,
+    "mmsi": "235059333"
+   },
+   "url": "https://www.wikidata.org/wiki/Q55098893"
+  },
+  {
+   "id": "wikidata:Q5634458",
+   "kind": "vessel",
+   "title": "HMS Stalker",
+   "position": {
+    "lat": 51.50694,
+    "lon": -0.02194,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q5634458",
+    "description": "1944 LST(3)-class tank landing ship",
+    "classes": ["tank landing ship","preserved watercraft"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q5634458"
+  },
+  {
+   "id": "wikidata:Q64440545",
+   "kind": "vessel",
+   "title": "Sarah Kathleen",
+   "position": {
+    "lat": 51.50484,
+    "lon": -0.07376,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q64440545",
+    "description": "small open-deck cruise boat used in the London summer seasons for round trips from Westminster, Embankment, Bankside and St Katharine Docks",
+    "classes": ["boat"],
+    "inception": "1963-01-01",
+    "imo": null,
+    "mmsi": "235055651"
+   },
+   "url": "https://www.wikidata.org/wiki/Q64440545"
+  },
+  {
+   "id": "wikidata:Q6720009",
+   "kind": "vessel",
+   "title": "MV Royal Iris",
+   "position": {
+    "lat": 51.4954,
+    "lon": 0.043,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "east"
+   },
+   "values": {
+    "qid": "Q6720009",
+    "description": "ferry operating until 1991",
+    "classes": ["ship"],
+    "inception": null,
+    "imo": "5301332",
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q6720009"
+  },
+  {
+   "id": "wikidata:Q6784622",
+   "kind": "vessel",
+   "title": "Massey Shaw",
+   "position": {
+    "lat": 51.50109,
+    "lon": -0.01156,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q6784622",
+    "description": "former London Fire Brigade fireboat",
+    "classes": ["ship"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q6784622"
+  },
+  {
+   "id": "wikidata:Q757178",
+   "kind": "vessel",
+   "title": "HMS Belfast",
+   "position": {
+    "lat": 51.50667,
+    "lon": -0.08139,
+    "precision": "Wikidata P625 (may be a former berth or the place a ship is kept)",
+    "zone": "model"
+   },
+   "values": {
+    "qid": "Q757178",
+    "description": "1938 Edinburgh-class light cruiser",
+    "classes": ["museum ship","light cruiser","preserved watercraft"],
+    "inception": null,
+    "imo": null,
+    "mmsi": null
+   },
+   "url": "https://www.wikidata.org/wiki/Q757178"
+  }
+ ]
+}

@@ -1,0 +1,160 @@
+{
+ "meta": {
+  "source": "pla-moorings",
+  "fetched": "2026-10-04T08:33:05Z",
+  "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer ; https://services8.arcgis.com/QgdzYlEcjteGD0VH/arcgis/rest/services/Berths_Owners/FeatureServer",
+  "licence": "Not stated on the PLA ArcGIS items. Facts and links only: name, owner or operator organisation, kind, a centroid; the contact numbers and e-mail addresses in the layer are not copied, nor the polygons",
+  "attribution": "Port of London Authority",
+  "method": "ArcGIS REST queries of two public PLA layers with the zone envelope: Visitor Moorings (polygons) and Berths Owners (berths with their owner organisations), centroids kept when inside the zone.",
+  "fields_seen": {
+   "Visitor_Moorings": ["Shape__Area","Shape__Length","OBJECTID","name","description","ownership","contact_number","contact_email","website"],
+   "Berths_Owners": []
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  },
+  "counts": {
+   "items": 8
+  }
+ },
+ "items": [
+  {
+   "id": "pla-visitor-mooring:402",
+   "kind": "visitor-mooring",
+   "title": "Tower Bridge Moorings",
+   "position": {
+    "lat": 51.50217,
+    "lon": -0.06945,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Tower Bridge Moorings",
+    "ownership": "Tower Bridge Moorings",
+    "website": "https://www.towerbridgemoorings.org/"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:403",
+   "kind": "visitor-mooring",
+   "title": "St Katherine Docks",
+   "position": {
+    "lat": 51.50683,
+    "lon": -0.07162,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "St Katherine Docks",
+    "ownership": "St Katharine's Docks",
+    "website": "https://www.skdocks.co.uk/"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:404",
+   "kind": "visitor-mooring",
+   "title": "Butlers Wharf",
+   "position": {
+    "lat": 51.50408,
+    "lon": -0.07342,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Butlers Wharf",
+    "ownership": "Livetts",
+    "website": "https://www.livetts.co.uk/services/piers-moorings-london/"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:405",
+   "kind": "visitor-mooring",
+   "title": "Hermitage Community Moorings",
+   "position": {
+    "lat": 51.50385,
+    "lon": -0.06754,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Hermitage Community Moorings",
+    "ownership": "Hermitage Community Moorings Co-operative",
+    "website": "http://www.hcmoorings.org/"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:406",
+   "kind": "visitor-mooring",
+   "title": "Limehouse Marina",
+   "position": {
+    "lat": 51.51123,
+    "lon": -0.03613,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Limehouse Marina",
+    "ownership": "Aquavista",
+    "website": "https://www.aquavista.com/make-a-mooring-enquiry"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:407",
+   "kind": "visitor-mooring",
+   "title": "South Dock Marina",
+   "position": {
+    "lat": 51.49393,
+    "lon": -0.03502,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "South Dock Marina",
+    "ownership": "South Dock Marina",
+    "website": "https://www.southwark.gov.uk/leisure-and-sport/south-dock-marina"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:408",
+   "kind": "visitor-mooring",
+   "title": "West India Docks",
+   "position": {
+    "lat": 51.5039,
+    "lon": -0.0105,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "West India Docks",
+    "ownership": "Aquavista",
+    "website": "https://www.watersidemooring.com/539-west-india-quay-l1-leisure"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  },
+  {
+   "id": "pla-visitor-mooring:409",
+   "kind": "visitor-mooring",
+   "title": "Greenwich Yacht Club",
+   "position": {
+    "lat": 51.49781,
+    "lon": 0.01487,
+    "precision": "mean of the PLA feature vertices",
+    "zone": "model"
+   },
+   "values": {
+    "name": "Greenwich Yacht Club",
+    "ownership": "Greenwich Yacht Club",
+    "website": "https://www.greenwichyachtclub.co.uk/wiki/Main_Page"
+   },
+   "url": "https://maps.pla.co.uk/server/rest/services/Visitor_Moorings/FeatureServer/1"
+  }
+ ]
+}

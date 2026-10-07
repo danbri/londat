@@ -1,0 +1,62 @@
+data/raw/*.tif
+data/raw/docklands/*.pbf
+data/raw/docklands/lidar/
+data/raw/docklands/osm-clip.json.gz
+data/raw/registry/*
+!data/raw/registry/osm-cw.json.gz
+!data/raw/registry/wikidata-cw.json
+!data/raw/registry/fhrs/
+data/raw/imagery/
+tools/native/ecw2ppm
+data/raw/splats/
+data/raw/drone/
+data/raw/dsm/
+data/raw/facades/
+tools/__pycache__/
+data/raw/towers/
+data/raw/trees/
+
+# website crawl cache (tools/crawl-sites.mjs)
+data/raw/crawl/
+data/raw/site-search/
+data/raw/cwg-map/
+
+# regulatory register downloads (tools/fetch-registers.mjs)
+data/raw/registers/
+
+# headless render cache (tools/render-structured-data.mjs)
+data/raw/rendered/
+
+# permits, works and closures downloads (tools/fetch-works.mjs)
+data/raw/works/
+
+# London Datastore raw downloads (tools/walk-london-datastore.mjs)
+data/raw/london-datastore/
+
+# live-state raw downloads (tools/fetch-live.mjs)
+data/raw/live/
+
+# river, docks and water downloads (tools/fetch-river.mjs)
+data/raw/river/
+
+# reference downloads and the OS Open UPRN clip for tools/amend-uprns.mjs
+data/raw/uprn-amend/
+
+# feed discovery stage caches (tools/discover-feeds.mjs)
+data/raw/feed-discovery/
+# construction index caches (tools/build-construction-index.mjs)
+data/raw/construction/
+
+# AIS raw runs (tools/fetch-ais.mjs): include AISHub and aisstream events, never commit
+data/raw/ais/
+
+# open-data portal walks (tools/walk-portals.mjs): catalogues, probes and national downloads; only zone extracts are committed
+data/raw/portals
+
+# londat cache: the two small responses of tools/cache-londat.mjs, and the GeoJSON that tools/build-zone-gpkg.mjs writes for ogr2ogr
+data/raw/cache/
+data/raw/gpkg/
+
+# CWG maps OCR (tools/cwg-maps-tmi.mjs): tesseract eng.traineddata, rendered tiles, debug lines
+data/raw/cwg-maps-tmi/
+data/raw/coverage/

@@ -1,0 +1,1190 @@
+{
+ "about": "Facade photographs of the Canary Wharf towers of 100 m and over, for texturing the 3D model. Only CC0, Public Domain Mark and CC BY images were downloaded (file is set); CC BY-SA, NC, ND and all-rights-reserved images were only looked at (file is null) and give facts, not pixels. Rectified patches are in data/raw/facades/<cwb-id>/rect-*.jpg (not committed). Attribution for every downloaded image: author, licence and page as listed.",
+ "checked": "2026-10-03",
+ "counts": {
+  "downloaded": 49,
+  "used_for_texture": 21,
+  "reference_only": 35,
+  "youtube_references": 8
+ },
+ "images": [
+  {
+   "building": "cwb-0413",
+   "file": "data/raw/facades/cwb-0413/src-39878263614.jpg",
+   "url": "https://live.staticflickr.com/4666/39878263614_7d1e3d127a_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/39878263614/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2018-02-28 10:08:10",
+   "size_px": [
+    2723,
+    4096
+   ],
+   "note": null,
+   "face": "S",
+   "face_how": "Flickr geotag 72 m SSW of the tower centroid",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.504325,
+    -0.019859
+   ]
+  },
+  {
+   "building": "cwb-0413",
+   "file": "data/raw/facades/cwb-0413/src-49416072577.jpg",
+   "url": "https://live.staticflickr.com/65535/49416072577_acc6e83c45_k.jpg",
+   "page": "https://www.flickr.com/photos/183611874@N08/49416072577/",
+   "licence": "Public Domain Mark 1.0",
+   "author": "patrickleego",
+   "date_taken": "2019-12-22 06:49:36",
+   "size_px": [
+    1365,
+    2048
+   ],
+   "note": null,
+   "face": "S",
+   "face_how": "Thomson Reuters building (30 South Colonnade, SW of the tower) on the left of frame; same clock plaza as 39878263614",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0413/rect-ocs-b.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0413",
+   "file": "data/raw/facades/cwb-0413/src-49863852518.jpg",
+   "url": "https://live.staticflickr.com/65535/49863852518_40037ce19a_4k.jpg",
+   "page": "https://www.flickr.com/photos/7831824@N04/49863852518/",
+   "licence": "CC BY 2.0",
+   "author": "Bex Walton (Bex.Walton)",
+   "date_taken": "2020-05-05 12:55:54",
+   "size_px": [
+    2915,
+    3888
+   ],
+   "note": null,
+   "face": "W",
+   "face_how": "from Cabot Square: HSBC to the left (north), Citi to the right (south)",
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0413",
+   "file": "data/raw/facades/cwb-0413/src-53253349549.jpg",
+   "url": "https://live.staticflickr.com/65535/53253349549_a8600d4e7b_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/53253349549/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2023-10-09 10:34:18",
+   "size_px": [
+    4096,
+    3431
+   ],
+   "note": null,
+   "face": "W",
+   "face_how": "Cabot Square fountain; HSBC left (north), Citi right (south)",
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0413",
+   "file": "data/raw/facades/cwb-0413/src-54911790284.jpg",
+   "url": "https://live.staticflickr.com/65535/54911790284_43e4a7db2d_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/54911790284/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2025-11-06 11:48:39",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": null,
+   "face": "W",
+   "face_how": "from the Cabot Square steps; HSBC left (north), Citi right (south)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0413/rect-ocs-a.jpg",
+    "data/raw/facades/cwb-0417/rect-hsbc-cabot.jpg",
+    "data/raw/facades/cwb-0520/rect-citi-cabot.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0577",
+   "file": "data/raw/facades/cwb-0577/src-51154600226.jpg",
+   "url": "https://live.staticflickr.com/65535/51154600226_cb496716ee_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/51154600226/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2021-04-21 15:58:41",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": null,
+   "face": "N or S",
+   "face_how": "narrow end face; the OSM footprint short sides face north and south",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0577/rect-pinnacle-edge.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0577",
+   "file": "data/raw/facades/cwb-0577/src-54148261054.jpg",
+   "url": "https://live.staticflickr.com/65535/54148261054_08cec215a2_4k.jpg",
+   "page": "https://www.flickr.com/photos/winnie_pix/54148261054/",
+   "licence": "CC BY 2.0",
+   "author": "Winniepix",
+   "date_taken": "2024-11-18 10:04:18",
+   "size_px": [
+    2731,
+    4096
+   ],
+   "note": null,
+   "face": "E or W",
+   "face_how": "long face; the OSM footprint long sides face east and west",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0577/rect-pinnacle-mercury.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0715",
+   "file": "data/raw/facades/cwb-0715/src-54914359145.jpg",
+   "url": "https://live.staticflickr.com/65535/54914359145_dcb4434414_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/54914359145/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2025-11-06 12:33:14",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": null,
+   "face": "N",
+   "face_how": "dock water in the foreground; South Dock lies north of the tower (judged)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0715/rect-hampton-sqp.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0451",
+   "file": "data/raw/facades/cwb-0451/src-48063457661.jpg",
+   "url": "https://live.staticflickr.com/65535/48063457661_eb6a7b3aaf_4k.jpg",
+   "page": "https://www.flickr.com/photos/61798879@N00/48063457661/",
+   "licence": "CC BY 2.0",
+   "author": "Mark (Mark Wordy)",
+   "date_taken": "2019-05-06 19:02:53",
+   "size_px": [
+    2713,
+    4096
+   ],
+   "note": null,
+   "face": "W",
+   "face_how": "Flickr geotag 108 m west of the tower centroid",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0451/rect-newf-diagrid.jpg"
+   ],
+   "geotag": [
+    51.504458,
+    -0.026618
+   ]
+  },
+  {
+   "building": "cwb-0451",
+   "file": "data/raw/facades/cwb-0451/src-51398723196.jpg",
+   "url": "https://live.staticflickr.com/65535/51398723196_bf384076db_4k.jpg",
+   "page": "https://www.flickr.com/photos/40447441@N03/51398723196/",
+   "licence": "CC BY 2.0",
+   "author": "Steve Batch 61",
+   "date_taken": "2021-08-21 11:24:28",
+   "size_px": [
+    2731,
+    4096
+   ],
+   "note": null,
+   "face": "E",
+   "face_how": "view west along Middle Dock under the DLR bridge (judged)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0451/rect-newf-dock.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0514",
+   "file": "data/raw/facades/cwb-0514/src-53252111692.jpg",
+   "url": "https://live.staticflickr.com/65535/53252111692_17027a225b_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/53252111692/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2023-10-09 10:36:46",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": "One Bank Street (curved glass, left) and Newfoundland (right)",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0451",
+   "file": "data/raw/facades/cwb-0451/src-52197764149.jpg",
+   "url": "https://live.staticflickr.com/65535/52197764149_f2182417f0_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/52197764149/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2022-06-30 15:09:58",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "Newfoundland (left) and One Bank Street (right), steep upward view",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0590",
+   "file": "data/raw/facades/cwb-0590/src-51630857319.jpg",
+   "url": "https://live.staticflickr.com/65535/51630857319_8208c2526d_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/51630857319/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2021-10-21 08:59:22",
+   "size_px": [
+    3024,
+    3780
+   ],
+   "note": "One Park Drive, warm evening light; cylinder",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0590",
+   "file": "data/raw/facades/cwb-0590/src-52535901865.jpg",
+   "url": "https://live.staticflickr.com/65535/52535901865_7e4a5ea208_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/52535901865/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2022-11-19 15:00:58",
+   "size_px": [
+    3178,
+    4096
+   ],
+   "note": "One Park Drive (\"The Loofah\"), cylinder",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0590",
+   "file": "data/raw/facades/cwb-0590/src-51152317073.jpg",
+   "url": "https://live.staticflickr.com/65535/51152317073_a5845b64ee_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/51152317073/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2021-04-21 15:06:52",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0590/rect-opd.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0590",
+   "file": "data/raw/facades/cwb-0590/src-52197497861.jpg",
+   "url": "https://live.staticflickr.com/65535/52197497861_372895d1a1_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/52197497861/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2022-06-30 13:40:42",
+   "size_px": [
+    2124,
+    4096
+   ],
+   "note": "One Park Drive, cylinder; full height",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0520",
+   "file": "data/raw/facades/cwb-0520/src-54416200163.jpg",
+   "url": "https://live.staticflickr.com/65535/54416200163_f49c860f2d_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/54416200163/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2025-03-27 14:25:58",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0520/rect-citi-top.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0417",
+   "file": "data/raw/facades/cwb-0417/src-54419488598.jpg",
+   "url": "https://live.staticflickr.com/65535/54419488598_d4a5feddb9_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/54419488598/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2025-03-27 14:29:04",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0417/rect-hsbc-e.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0417",
+   "file": "data/raw/facades/cwb-0417/src-55263103908.jpg",
+   "url": "https://live.staticflickr.com/65535/55263103908_0909d010d4_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55263103908/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-04-29 15:43:54",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "10 Cabot Square in front; HSBC and One Canada Square behind",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0645",
+   "file": "data/raw/facades/cwb-0645/src-52197497711.jpg",
+   "url": "https://live.staticflickr.com/65535/52197497711_71da167ac2_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/52197497711/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2022-06-30 15:12:11",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0645/rect-wardian-a.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0647",
+   "file": "data/raw/facades/cwb-0647/src-55175159283.jpg",
+   "url": "https://live.staticflickr.com/65535/55175159283_51c72e4e16_k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55175159283/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-03-18 11:55:48",
+   "size_px": [
+    1969,
+    2048
+   ],
+   "note": "Wardian towers looking up; trees in front; rectification failed (too steep, occluded)",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0813",
+   "file": "data/raw/facades/cwb-0813/src-52535970543.jpg",
+   "url": "https://live.staticflickr.com/65535/52535970543_a864d344cf_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/52535970543/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2022-11-19 15:03:48",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0813/rect-amory.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0424",
+   "file": "data/raw/facades/cwb-0424/src-54921012630.jpg",
+   "url": "https://live.staticflickr.com/65535/54921012630_85c4920824_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/54921012630/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2025-11-06 13:58:21",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0424/rect-ocp.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0514",
+   "file": "data/raw/facades/cwb-0514/src-51155384484.jpg",
+   "url": "https://live.staticflickr.com/65535/51155384484_c5dfc47491_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/51155384484/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2021-04-21 15:59:12",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "One Bank Street curved facade; curved, so not rectified",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0701",
+   "file": "data/raw/facades/cwb-0701/src-48053768112.jpg",
+   "url": "https://live.staticflickr.com/65535/48053768112_ed83f61bb5_4k.jpg",
+   "page": "https://www.flickr.com/photos/61798879@N00/48053768112/",
+   "licence": "CC BY 2.0",
+   "author": "Mark (Mark Wordy)",
+   "date_taken": "2019-05-06 18:44:49",
+   "size_px": [
+    2731,
+    4096
+   ],
+   "note": null,
+   "face": "N",
+   "face_how": "Flickr geotag 17 m from the centroid, view bearing 169 (close range, low confidence)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0701/rect-novotel.jpg"
+   ],
+   "geotag": [
+    51.50136,
+    -0.023442
+   ]
+  },
+  {
+   "building": "several",
+   "file": "data/raw/facades/_aerial/src-55411945207.jpg",
+   "url": "https://live.staticflickr.com/65535/55411945207_caebb5d39e_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55411945207/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-07-08 10:57:06",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "aerial from the Goodyear airship looking NNE over the whole cluster; crowns and roofs of One Canada Square, HSBC, Citi, 25 Bank Street, Newfoundland, Landmark Pinnacle, Hampton, Harcourt, One Park Drive",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "several",
+   "file": "data/raw/facades/_aerial/src-55413091214.jpg",
+   "url": "https://live.staticflickr.com/65535/55413091214_a72d4cf9c8_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55413091214/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-07-08 10:57:31",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "aerial from the Goodyear airship; roofs of the Isle of Dogs towers",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "several",
+   "file": "data/raw/facades/_aerial/src-55413091249.jpg",
+   "url": "https://live.staticflickr.com/65535/55413091249_8ade89993f_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55413091249/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-07-08 10:57:15",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": "aerial from the Goodyear airship, portrait; crowns",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "several",
+   "file": "data/raw/facades/_aerial/src-55427645026.jpg",
+   "url": "https://live.staticflickr.com/65535/55427645026_b1fccf9f5b_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55427645026/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-07-08 11:18:40",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "aerial from the Goodyear airship looking east: Newfoundland crown, One Canada Square pyramid, Citi crown box, One Bank Street roof",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "several",
+   "file": "data/raw/facades/_aerial/src-55427808109.jpg",
+   "url": "https://live.staticflickr.com/65535/55427808109_81e7dda048_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55427808109/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-07-08 11:18:31",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "aerial from the Goodyear airship: Canary Wharf and the Royal Docks",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "several",
+   "file": "data/raw/facades/_aerial/src-55411030271.jpg",
+   "url": "https://live.staticflickr.com/65535/55411030271_63bbaf0a5b_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/55411030271/",
+   "licence": "CC BY 4.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2026-07-08 10:55:03",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "aerial from the Goodyear airship: Millwall Dock and Canary Wharf",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": null,
+   "file": "data/raw/facades/_unidentified/src-51398723326.jpg",
+   "url": "https://live.staticflickr.com/65535/51398723326_1661955687_k.jpg",
+   "page": "https://www.flickr.com/photos/40447441@N03/51398723326/",
+   "licence": "CC BY 2.0",
+   "author": "Steve Batch 61",
+   "date_taken": "2021-08-21 11:47:24",
+   "size_px": [
+    1971,
+    1971
+   ],
+   "note": "close-up of a stone-and-glass Canary Wharf facade; building not identified",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0582",
+   "file": "data/raw/facades/cwb-0582/src-6453681243.jpg",
+   "url": "https://live.staticflickr.com/7169/6453681243_0d1cef2afc_4k.jpg",
+   "page": "https://www.flickr.com/photos/39415781@N06/6453681243/",
+   "licence": "CC BY 2.0",
+   "author": "Elliott Brown (ell brown)",
+   "date_taken": "2011-11-26 10:53:35",
+   "size_px": [
+    2736,
+    3648
+   ],
+   "note": null,
+   "face": "N",
+   "face_how": "Flickr geotag 22 m north of the centroid (close range)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0582/rect-bank25.jpg"
+   ],
+   "geotag": [
+    51.503042,
+    -0.020642
+   ]
+  },
+  {
+   "building": "cwb-0582",
+   "file": "data/raw/facades/cwb-0582/src-26313668335.jpg",
+   "url": "https://live.staticflickr.com/1550/26313668335_80c7057134_4k.jpg",
+   "page": "https://www.flickr.com/photos/14829735@N00/26313668335/",
+   "licence": "CC BY 2.0",
+   "author": "Dunk  🐝 (dullhunk)",
+   "date_taken": "2016-04-08 17:38:31",
+   "size_px": [
+    2160,
+    3840
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0582/rect-bank25-b.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0585",
+   "file": "data/raw/facades/cwb-0585/src-6453677865.jpg",
+   "url": "https://live.staticflickr.com/7028/6453677865_edd042ab70_4k.jpg",
+   "page": "https://www.flickr.com/photos/39415781@N06/6453677865/",
+   "licence": "CC BY 2.0",
+   "author": "Elliott Brown (ell brown)",
+   "date_taken": "2011-11-26 10:53:30",
+   "size_px": [
+    2736,
+    3648
+   ],
+   "note": null,
+   "face": "W",
+   "face_how": "Flickr geotag 23 m north-west of the centroid (close range)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0585/rect-bank40.jpg"
+   ],
+   "geotag": [
+    51.502685,
+    -0.019751
+   ]
+  },
+  {
+   "building": "cwb-0582",
+   "file": "data/raw/facades/cwb-0582/src-6453748103.jpg",
+   "url": "https://live.staticflickr.com/7029/6453748103_a08a983dab_4k.jpg",
+   "page": "https://www.flickr.com/photos/39415781@N06/6453748103/",
+   "licence": "CC BY 2.0",
+   "author": "Elliott Brown (ell brown)",
+   "date_taken": "2011-11-26 10:57:06",
+   "size_px": [
+    3648,
+    2736
+   ],
+   "note": "25 and 40 Bank Street, 2011",
+   "face": "E",
+   "face_how": "Flickr geotag, view bearing 254 to 25 Bank Street",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.502945,
+    -0.020234
+   ]
+  },
+  {
+   "building": "cwb-0424",
+   "file": "data/raw/facades/cwb-0424/src-26109088958.jpg",
+   "url": "https://live.staticflickr.com/4716/26109088958_9d90504966_4k.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/26109088958/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2018-01-26 13:06:50",
+   "size_px": [
+    4032,
+    3024
+   ],
+   "note": "One Churchill Place (Barclays) with 25 and 20 Churchill Place",
+   "face": "E",
+   "face_how": "Flickr geotag 202 m east of the tower",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.505327,
+    -0.011544
+   ]
+  },
+  {
+   "building": "cwb-0525",
+   "file": "data/raw/facades/cwb-0525/src-14602887430.jpg",
+   "url": "https://live.staticflickr.com/2902/14602887430_501692276d_k.jpg",
+   "page": "https://www.flickr.com/photos/110625596@N06/14602887430/",
+   "licence": "CC BY 2.0",
+   "author": "Urban Sapphire",
+   "date_taken": "2014-07-30 12:48:22",
+   "size_px": [
+    2048,
+    1536
+   ],
+   "note": null,
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0525/rect-ch25.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0525",
+   "file": "data/raw/facades/cwb-0525/src-7753334328.jpg",
+   "url": "https://live.staticflickr.com/8421/7753334328_987f27227b_b.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/7753334328/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2012-08-08 13:49:20",
+   "size_px": [
+    768,
+    1024
+   ],
+   "note": "25 Churchill Place; only 1024 px was available",
+   "face": "W",
+   "face_how": "Flickr geotag 94 m south-west, view bearing 50",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.503199,
+    -0.016007
+   ]
+  },
+  {
+   "building": "cwb-0317",
+   "file": "data/raw/facades/cwb-0317/src-6455129143.jpg",
+   "url": "https://live.staticflickr.com/7018/6455129143_4267f6c1eb_4k.jpg",
+   "page": "https://www.flickr.com/photos/39415781@N06/6455129143/",
+   "licence": "CC BY 2.0",
+   "author": "Elliott Brown (ell brown)",
+   "date_taken": "2011-11-26 11:04:51",
+   "size_px": [
+    3648,
+    2736
+   ],
+   "note": null,
+   "face": "E",
+   "face_how": "Flickr geotag 16 m from the centroid (close range, low confidence)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0317/rect-wiq1.jpg"
+   ],
+   "geotag": [
+    51.507219,
+    -0.021103
+   ]
+  },
+  {
+   "building": "cwb-0317",
+   "file": "data/raw/facades/cwb-0317/src-32041163406.jpg",
+   "url": "https://live.staticflickr.com/568/32041163406_4e6ffad70d_4k.jpg",
+   "page": "https://www.flickr.com/photos/129231073@N06/32041163406/",
+   "licence": "CC BY 2.0",
+   "author": "Fred Romero (corno.fulgur75)",
+   "date_taken": "2016-10-10 11:47:45",
+   "size_px": [
+    4096,
+    2731
+   ],
+   "note": "One West India Quay, curved glass, 2016",
+   "face": "E",
+   "face_how": "Flickr geotag 8 m from the centroid (close range, low confidence)",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.507113,
+    -0.021157
+   ]
+  },
+  {
+   "building": "cwb-0801",
+   "file": "data/raw/facades/cwb-0801/src-16967524154.jpg",
+   "url": "https://live.staticflickr.com/5345/16967524154_2b4ddc8736_b.jpg",
+   "page": "https://www.flickr.com/photos/57868312@N00/16967524154/",
+   "licence": "CC BY 2.0",
+   "author": "Matt Brown (Matt From London)",
+   "date_taken": "2015-05-07 13:58:14",
+   "size_px": [
+    1024,
+    681
+   ],
+   "note": "Pan Peninsula looking up through trees; only 1024 px was available",
+   "face": "W",
+   "face_how": "Flickr geotag 71 m WSW, view bearing 63",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.499716,
+    -0.018723
+   ]
+  },
+  {
+   "building": "cwb-0801",
+   "file": "data/raw/facades/cwb-0801/src-7623672676.jpg",
+   "url": "https://live.staticflickr.com/8009/7623672676_b2137f3e6f_4k.jpg",
+   "page": "https://www.flickr.com/photos/30937273@N06/7623672676/",
+   "licence": "CC BY 2.0",
+   "author": "JULIAN MASON",
+   "date_taken": "2012-07-22 15:00:41",
+   "size_px": [
+    3872,
+    2592
+   ],
+   "note": "Pan Peninsula East and West towers from Millwall Inner Dock, small in frame",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0589",
+   "file": "data/raw/facades/cwb-0589/src-7061523825.jpg",
+   "url": "https://live.staticflickr.com/7278/7061523825_a8d911ed4a_3k.jpg",
+   "page": "https://www.flickr.com/photos/16801915@N06/7061523825/",
+   "licence": "CC BY 2.0",
+   "author": "Reading Tom",
+   "date_taken": "2012-04-07 14:10:40",
+   "size_px": [
+    2304,
+    3072
+   ],
+   "note": "10 Upper Bank Street through trees, 2012",
+   "face": "N",
+   "face_how": "Flickr geotag 73 m north, view bearing 168",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.50323,
+    -0.017145
+   ]
+  },
+  {
+   "building": "cwb-0459",
+   "file": "data/raw/facades/cwb-0459/src-6453670559.jpg",
+   "url": "https://live.staticflickr.com/7004/6453670559_af2186ada3_4k.jpg",
+   "page": "https://www.flickr.com/photos/39415781@N06/6453670559/",
+   "licence": "CC BY 2.0",
+   "author": "Elliott Brown (ell brown)",
+   "date_taken": "2011-11-26 10:53:21",
+   "size_px": [
+    2736,
+    3648
+   ],
+   "note": "33 Canada Square (Citi), close range, 2011",
+   "face": "S",
+   "face_how": "Flickr geotag 17 m SSW (close range)",
+   "use": "reference-only",
+   "rectified": [],
+   "geotag": [
+    51.504101,
+    -0.019301
+   ]
+  },
+  {
+   "building": "cwb-0589",
+   "file": "data/raw/facades/cwb-0589/src-commons-10UBS-Mortadella42.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/10_Upper_Bank_Street_-_November_2023.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_-_November_2023.jpg",
+   "licence": "CC BY 4.0",
+   "author": "Mortadella42",
+   "date_taken": "2023-11-07 14:38:34",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": "downloaded via the fetch tool (commons thumbnail 1920 px); Commons API and upload host returned HTTP 429 to this container",
+   "face": "S",
+   "face_how": "HSBC crown visible to the north-east; dock railing in the foreground (judged)",
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0589/rect-ubs10.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0715",
+   "file": "data/raw/facades/cwb-0715/src-commons-SQP1-Mortadella42.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/South_Quay_Plaza_1_(November_2023).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:South_Quay_Plaza_1_(November_2023).jpg",
+   "licence": "CC BY 4.0",
+   "author": "Mortadella42",
+   "date_taken": "2023-11-07 14:52:24",
+   "size_px": [
+    3024,
+    4032
+   ],
+   "note": "Hampton Tower (SQP1) full height; tapering, faceted, blue glass with deep vertical slots; downloaded via the fetch tool (commons thumbnail 1920 px); Commons API and upload host returned HTTP 429 to this container",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0712",
+   "file": "data/raw/facades/cwb-0712/src-commons-SQP4-1-Mortadella42.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Harcourt_Gardens_(SQP_4)_-_May_2024_(1).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Harcourt_Gardens_(SQP_4)_-_May_2024_(1).jpg",
+   "licence": "CC BY 4.0",
+   "author": "Mortadella42",
+   "date_taken": "2024-05-15",
+   "size_px": [
+    1512,
+    2016
+   ],
+   "note": "downloaded via the fetch tool (original); Commons API and upload host returned HTTP 429 to this container",
+   "face": "unknown",
+   "face_how": null,
+   "use": "texture",
+   "rectified": [
+    "data/raw/facades/cwb-0712/rect-harcourt.jpg"
+   ]
+  },
+  {
+   "building": "cwb-0712",
+   "file": "data/raw/facades/cwb-0712/src-commons-SQP4-2-Mortadella42.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Harcourt_Gardens_(SQP_4)_-_May_2024_(2).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Harcourt_Gardens_(SQP_4)_-_May_2024_(2).jpg",
+   "licence": "CC BY 4.0",
+   "author": "Mortadella42",
+   "date_taken": "2024-05-15",
+   "size_px": [
+    1512,
+    2016
+   ],
+   "note": "Harcourt Tower (SQP4) backlit; fins read grey against the sky; downloaded via the fetch tool (original); Commons API and upload host returned HTTP 429 to this container",
+   "face": "unknown",
+   "face_how": null,
+   "use": "reference-only",
+   "rectified": []
+  },
+  {
+   "building": "cwb-0577",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Landmark_Pinnacle,_Canary_Wharf_(02).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:The_Landmark_Pinnacle,_Canary_Wharf_(02).jpg",
+   "licence": "CC BY-SA 4.0",
+   "author": "Ethan Doyle White",
+   "date_taken": "2021-08-10",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    3448,
+    4592
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only: blue reflective curtain wall, strong horizontal floor lines, dark recessed vertical slots at the corners, flat top with glass parapet"
+  },
+  {
+   "building": "cwb-0645",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wardian_London_2025-01-30.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Wardian_London_2025-01-30.jpg",
+   "licence": "CC BY-SA 2.0",
+   "author": "Tom Page",
+   "date_taken": "2025-01-30",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    5016,
+    3346
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only: both Wardian towers; continuous white slab edges / balcony bands on every floor over dark glass"
+  },
+  {
+   "building": "cwb-0963",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Harbour_Central_Maine_Tower.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Harbour_Central_Maine_Tower.jpg",
+   "licence": "CC BY-SA 4.0",
+   "author": "Caledonianl",
+   "date_taken": "2019-09-13",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    3864,
+    5152
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only: blue glass in bronze-brown frames grouped into offset four-storey blocks; recessed balcony column; open frame at the top"
+  },
+  {
+   "building": "cwb-0658",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/40_Charter_Street,_29_August_2025.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:40_Charter_Street,_29_August_2025.jpg",
+   "licence": "CC BY-SA 4.0",
+   "author": "Coz4836",
+   "date_taken": "2025-08-29",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    3024,
+    4032
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only: dark charcoal panels with punched windows in undulating horizontal bands, rounded corners, waisted outline"
+  },
+  {
+   "building": "cwb-0737",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dollar_Bay.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Dollar_Bay.jpg",
+   "licence": "CC BY-SA 4.0",
+   "author": "mattbuck",
+   "date_taken": "2016-11-10",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    4160,
+    3120
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only (during construction): blue-green reflective glass, faceted prism-like top"
+  },
+  {
+   "building": "cwb-0424",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/One_Churchill_Place.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:One_Churchill_Place.jpg",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "date_taken": "2025-09-29",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    1800,
+    4000
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only: title says One Churchill Place but the photo shows the State Street building (20 Churchill Place) at night; not useful"
+  },
+  {
+   "building": "cwb-0589",
+   "file": null,
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/10_Upper_Bank_Street_(66656).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:10_Upper_Bank_Street_(66656).jpg",
+   "licence": "CC BY-SA 4.0",
+   "author": "Zolfeqar Fatihzadeh",
+   "date_taken": "2025-09-29",
+   "face": "unknown",
+   "face_how": null,
+   "size_px": [
+    1468,
+    3264
+   ],
+   "use": "reference-only",
+   "rectified": [],
+   "note": "looked at only: night view of residential towers with red aviation lights, not 10 Upper Bank Street; title wrong"
+  }
+ ],
+ "videos": [
+  {
+   "url": "https://www.youtube.com/watch?v=hu5zMB2Tr9g",
+   "title": "[4K] Canary Wharf Skyscrapers | London Walking Tour",
+   "channel": "Wandering Momentz",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=DvjgNLfYWcg",
+   "title": "[4K] Canary Wharf Drone Flight",
+   "channel": "Wandering Momentz",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=SAkU2OyXFV4",
+   "title": "[4K] London Financial District | Canary Wharf by Drone",
+   "channel": "Wandering Momentz",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=CzT-LSCqCyc",
+   "title": "[4K] Canary Wharf at Night | London Drone Flight",
+   "channel": "Wandering Momentz",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=p0vX47M-04k",
+   "title": "London from Above: 4K Drone Views - Sunrise at Canary Wharf",
+   "channel": "Demetrios (@DimmyV)",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=m4BPDw_ImdM",
+   "title": "Greenwich, London & Canary Wharf 4k - Beautiful, spectacular drone footage London",
+   "channel": "EyeSky//Media - Amazing Drone Footage",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=tQNOOv-HNRk",
+   "title": "canary wharf london 4k | drone footage",
+   "channel": "Drone Footage",
+   "date": null,
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  },
+  {
+   "url": "https://www.youtube.com/watch?v=AIBfO06_DaY",
+   "title": "Canart Wharf | The O2 | City of London at Sunset - 4K Drone Stock Footage 2024",
+   "channel": "JamieFPV",
+   "date": "2024 (from the title)",
+   "licence": "standard YouTube licence (all rights reserved)",
+   "use": "reference-only",
+   "note": "not downloaded (YouTube terms); title and channel from YouTube oEmbed, 2026-10-03; the watch page itself returned a captcha, so the upload date is not recorded"
+  }
+ ]
+}

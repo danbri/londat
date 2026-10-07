@@ -1,0 +1,315 @@
+{
+ "meta": {
+  "source": "royal-docks",
+  "fetched": "2026-10-04T08:30:33Z",
+  "url": "https://royaldockswaterways.com/impact-responsibility/documents/",
+  "licence": "All rights reserved by the publisher; published results kept as facts with the page URL and fetch date (crawl for scoping, owner 2026-10-03)",
+  "attribution": "Royal Docks Waterways (Royal Docks Management Authority, RoDMA); sampling by Swim Safety (swim-safety.co.uk) per the certificate",
+  "method": "The \"Water Quality Testing Results\" PDF(s) linked from the Royal Docks Waterways documents page, converted with pdftotext -layout; per sample: site code, dock and end, pH, conductivity, temperature, dissolved oxygen, E. coli and enterococci (no/100 ml) with the laboratory's interpretation, and cyanobacteria counts. Positions are approximate (west or east part of the named dock from OSM). The open-water swimming venue (Love Open Water, Royal Victoria Dock) says it is reopening in summer 2026.",
+  "certificates": [
+   {
+    "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf",
+    "certificate": "TSBN9471796",
+    "sampled": "2026-09-09",
+    "report_date": "14/09/2026",
+    "fetched": "2026-10-04T08:30:34Z"
+   }
+  ],
+  "counts": {
+   "items": 6,
+   "certificates": 1
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "royal-docks:TSBN9471796-KG7",
+   "kind": "bathing-sample",
+   "time": "2026-09-09 9:10-10:10 (London time)",
+   "position": {
+    "lat": 51.50339,
+    "lon": 0.05222,
+    "precision": "approximate: the west fifth of OSM way/190792949 (King George V Dock); the certificate's map gives no coordinates",
+    "zone": "east"
+   },
+   "values": {
+    "site": "KG7",
+    "location": "King George V Dock, West",
+    "location_as_written": "Royal George V Dock, West",
+    "pH": 8.96,
+    "conductivity_us_cm": 11182,
+    "temperature_c": 19,
+    "dissolved_oxygen_mg_l": 9.28,
+    "dissolved_oxygen_pct": 111,
+    "e_coli_per_100ml": 3,
+    "enterococci_per_100ml": 0,
+    "interpretation_e_coli": "Pass Excellent",
+    "cyanobacteria": [
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 50,
+      "colonies_ml": 46,
+      "result_as_printed": 2300,
+      "interpretation": "Relatively Low"
+     }
+    ],
+    "certificate": "TSBN9471796"
+   },
+   "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf"
+  },
+  {
+   "id": "royal-docks:TSBN9471796-KG8",
+   "kind": "bathing-sample",
+   "time": "2026-09-09 9:10-10:10 (London time)",
+   "position": {
+    "lat": 51.50352,
+    "lon": 0.0692,
+    "precision": "approximate: the east fifth of OSM way/190792949 (King George V Dock); the certificate's map gives no coordinates",
+    "zone": "east"
+   },
+   "values": {
+    "site": "KG8",
+    "location": "King George V Dock, East",
+    "location_as_written": "Royal George V Dock, East",
+    "pH": 9.06,
+    "conductivity_us_cm": 11820,
+    "temperature_c": 19.5,
+    "dissolved_oxygen_mg_l": 9.28,
+    "dissolved_oxygen_pct": 78.7,
+    "e_coli_per_100ml": 1,
+    "enterococci_per_100ml": 0,
+    "interpretation_e_coli": "Pass Excellent",
+    "cyanobacteria": [
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 50,
+      "colonies_ml": 15,
+      "result_as_printed": 750,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 150,
+      "colonies_ml": 1,
+      "result_as_printed": 150,
+      "interpretation": "Relatively Low"
+     }
+    ],
+    "certificate": "TSBN9471796"
+   },
+   "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf"
+  },
+  {
+   "id": "royal-docks:TSBN9471796-RA3",
+   "kind": "bathing-sample",
+   "time": "2026-09-09 9:10-10:10 (London time)",
+   "position": {
+    "lat": 51.50687,
+    "lon": 0.04086,
+    "precision": "approximate: the west fifth of OSM way/121158887 (Royal Albert Dock); the certificate's map gives no coordinates",
+    "zone": "east"
+   },
+   "values": {
+    "site": "RA3",
+    "location": "Royal Albert Dock, West",
+    "location_as_written": "Royal Albert Dock, West",
+    "pH": 9.06,
+    "conductivity_us_cm": 11231,
+    "temperature_c": 18.9,
+    "dissolved_oxygen_mg_l": 9.28,
+    "dissolved_oxygen_pct": 168.1,
+    "e_coli_per_100ml": 8,
+    "enterococci_per_100ml": 0,
+    "interpretation_e_coli": "Pass Excellent",
+    "cyanobacteria": [
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 50,
+      "colonies_ml": 74,
+      "result_as_printed": 3700,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 150,
+      "colonies_ml": 3,
+      "result_as_printed": 750,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Oscillatoria sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Oscillatoriales",
+      "size_class_cells": 50,
+      "colonies_ml": 3,
+      "result_as_printed": 150,
+      "interpretation": "Relatively Low"
+     }
+    ],
+    "certificate": "TSBN9471796"
+   },
+   "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf"
+  },
+  {
+   "id": "royal-docks:TSBN9471796-RA5",
+   "kind": "bathing-sample",
+   "time": "2026-09-09 9:10-10:10 (London time)",
+   "position": {
+    "lat": 51.50528,
+    "lon": 0.06763,
+    "precision": "approximate: the east fifth of OSM way/121158887 (Royal Albert Dock); the certificate's map gives no coordinates",
+    "zone": "east"
+   },
+   "values": {
+    "site": "RA5",
+    "location": "Royal Albert Dock, East",
+    "location_as_written": "Royal Albert Dock, East",
+    "pH": 9.12,
+    "conductivity_us_cm": 11127,
+    "temperature_c": 19.2,
+    "dissolved_oxygen_mg_l": 9.28,
+    "dissolved_oxygen_pct": 112.1,
+    "e_coli_per_100ml": 12,
+    "enterococci_per_100ml": 6,
+    "interpretation_e_coli": "Pass Excellent",
+    "cyanobacteria": [
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 50,
+      "colonies_ml": 207,
+      "result_as_printed": 10350,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 150,
+      "colonies_ml": 10,
+      "result_as_printed": 1500,
+      "interpretation": "Relatively Low"
+     }
+    ],
+    "certificate": "TSBN9471796"
+   },
+   "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf"
+  },
+  {
+   "id": "royal-docks:TSBN9471796-RV1",
+   "kind": "bathing-sample",
+   "time": "2026-09-09 9:10-10:10 (London time)",
+   "position": {
+    "lat": 51.50704,
+    "lon": 0.01825,
+    "precision": "approximate: the west fifth of OSM way/122304315 (Royal Victoria Dock); the certificate's map gives no coordinates",
+    "zone": "east"
+   },
+   "values": {
+    "site": "RV1",
+    "location": "Royal Victoria Dock, West",
+    "location_as_written": "Royal Victoria Dock, West",
+    "pH": 8.95,
+    "conductivity_us_cm": 12009,
+    "temperature_c": 18.8,
+    "dissolved_oxygen_mg_l": 9.09,
+    "dissolved_oxygen_pct": 161.7,
+    "e_coli_per_100ml": 8,
+    "enterococci_per_100ml": 0,
+    "interpretation_e_coli": "Pass Excellent",
+    "cyanobacteria": [
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 50,
+      "colonies_ml": 48,
+      "result_as_printed": 2400,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 150,
+      "colonies_ml": 5,
+      "result_as_printed": 750,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Oscillatoria sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Oscillatoriales",
+      "size_class_cells": 50,
+      "colonies_ml": 50,
+      "result_as_printed": 50,
+      "interpretation": "Relatively Low"
+     }
+    ],
+    "certificate": "TSBN9471796"
+   },
+   "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf"
+  },
+  {
+   "id": "royal-docks:TSBN9471796-RV2",
+   "kind": "bathing-sample",
+   "time": "2026-09-09 9:10-10:10 (London time)",
+   "position": {
+    "lat": 51.50675,
+    "lon": 0.03868,
+    "precision": "approximate: the east fifth of OSM way/122304315 (Royal Victoria Dock); the certificate's map gives no coordinates",
+    "zone": "east"
+   },
+   "values": {
+    "site": "RV2",
+    "location": "Royal Victoria Dock, East",
+    "location_as_written": "Royal Victoria Dock, East",
+    "pH": 9.11,
+    "conductivity_us_cm": 11655,
+    "temperature_c": 19.4,
+    "dissolved_oxygen_mg_l": 9.28,
+    "dissolved_oxygen_pct": 163.8,
+    "e_coli_per_100ml": 31,
+    "enterococci_per_100ml": 0,
+    "interpretation_e_coli": "Pass Excellent",
+    "cyanobacteria": [
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 50,
+      "colonies_ml": 67,
+      "result_as_printed": 3350,
+      "interpretation": "Relatively Low"
+     },
+     {
+      "taxon": "Microcystis sp.",
+      "phylum": "Cyanobacteria",
+      "order": "Chroococcales",
+      "size_class_cells": 150,
+      "colonies_ml": 6,
+      "result_as_printed": 900,
+      "interpretation": "Relatively Low"
+     }
+    ],
+    "certificate": "TSBN9471796"
+   },
+   "url": "https://cms-live.royaldockswaterways.com/wp-content/uploads/2026/09/Royal-Docks-Management-Authority-RoDMA-Multi-Analysis-09-09-26.pdf"
+  }
+ ]
+}

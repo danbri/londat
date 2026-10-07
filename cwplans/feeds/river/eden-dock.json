@@ -1,0 +1,109 @@
+{
+ "meta": {
+  "source": "eden-dock",
+  "fetched": "2026-10-04T08:30:31Z",
+  "url": "https://sealanescanarywharf.co.uk/water-quality/",
+  "licence": "All rights reserved by the publisher; published results kept as facts with the page URL and fetch date (crawl for scoping, owner 2026-10-03)",
+  "attribution": "Sea Lanes Canary Wharf (SeaLanes Brighton Limited); tests by Canary Wharf Group and Love Open Water per the operator",
+  "method": "The table \"Latest test results\" (date, rating, E. coli and intestinal enterococci in cfu/100 ml) on the Sea Lanes Canary Wharf water-quality page, and the water temperature shown on its Swimming page at fetch time. Eden Dock is the enclosed part of Middle Dock, West India Docks; the operator says it is fed by groundwater and cut off from the Thames, tested fortnightly. These are the operator's figures, not an EA bathing-water classification: Eden Dock is not a designated bathing water.",
+  "counts": {
+   "items": 5,
+   "samples": 4
+  },
+  "zone": {
+   "model_box_wgs84": [-0.095,51.474,0.015,51.522],
+   "east_margin_wgs84": [0.015,51.495,0.085,51.522],
+   "lea_strip_wgs84": [-0.025,51.522,0.01,51.528]
+  }
+ },
+ "items": [
+  {
+   "id": "eden-dock:sample-2026-05-11",
+   "kind": "bathing-sample",
+   "time": "2026-05-11",
+   "position": {
+    "lat": 51.50414,
+    "lon": -0.02265,
+    "precision": "centroid of OSM relation/18985240 (Eden Dock)",
+    "zone": "model"
+   },
+   "values": {
+    "rating": "Excellent",
+    "e_coli_cfu_100ml": 10,
+    "intestinal_enterococci_cfu_100ml": 3,
+    "standard": "EU / England inland bathing water thresholds as quoted on the page (Excellent: EC <= 500, IE <= 200 cfu/100 ml)"
+   },
+   "url": "https://sealanescanarywharf.co.uk/water-quality/"
+  },
+  {
+   "id": "eden-dock:sample-2026-06-23",
+   "kind": "bathing-sample",
+   "time": "2026-06-23",
+   "position": {
+    "lat": 51.50414,
+    "lon": -0.02265,
+    "precision": "centroid of OSM relation/18985240 (Eden Dock)",
+    "zone": "model"
+   },
+   "values": {
+    "rating": "Excellent",
+    "e_coli_cfu_100ml": 56,
+    "intestinal_enterococci_cfu_100ml": 13,
+    "standard": "EU / England inland bathing water thresholds as quoted on the page (Excellent: EC <= 500, IE <= 200 cfu/100 ml)"
+   },
+   "url": "https://sealanescanarywharf.co.uk/water-quality/"
+  },
+  {
+   "id": "eden-dock:sample-2026-07-22",
+   "kind": "bathing-sample",
+   "time": "2026-07-22",
+   "position": {
+    "lat": 51.50414,
+    "lon": -0.02265,
+    "precision": "centroid of OSM relation/18985240 (Eden Dock)",
+    "zone": "model"
+   },
+   "values": {
+    "rating": "Excellent",
+    "e_coli_cfu_100ml": 31,
+    "intestinal_enterococci_cfu_100ml": 16,
+    "standard": "EU / England inland bathing water thresholds as quoted on the page (Excellent: EC <= 500, IE <= 200 cfu/100 ml)"
+   },
+   "url": "https://sealanescanarywharf.co.uk/water-quality/"
+  },
+  {
+   "id": "eden-dock:sample-2026-08-10",
+   "kind": "bathing-sample",
+   "time": "2026-08-10",
+   "position": {
+    "lat": 51.50414,
+    "lon": -0.02265,
+    "precision": "centroid of OSM relation/18985240 (Eden Dock)",
+    "zone": "model"
+   },
+   "values": {
+    "rating": "Excellent",
+    "e_coli_cfu_100ml": 17,
+    "intestinal_enterococci_cfu_100ml": 6,
+    "standard": "EU / England inland bathing water thresholds as quoted on the page (Excellent: EC <= 500, IE <= 200 cfu/100 ml)"
+   },
+   "url": "https://sealanescanarywharf.co.uk/water-quality/"
+  },
+  {
+   "id": "eden-dock:temperature-2026-10-04T08:30",
+   "kind": "water-temperature",
+   "time": "2026-10-04T08:30:33Z",
+   "position": {
+    "lat": 51.50414,
+    "lon": -0.02265,
+    "precision": "centroid of OSM relation/18985240 (Eden Dock)",
+    "zone": "model"
+   },
+   "values": {
+    "temperature_c": 16.6,
+    "note": "the value the Swimming page showed when fetched; the page does not say when it was measured"
+   },
+   "url": "https://sealanescanarywharf.co.uk/swimming/"
+  }
+ ]
+}

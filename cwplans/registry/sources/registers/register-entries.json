@@ -1,0 +1,177 @@
+{
+ "about": "Entries for data-register.json and pipeline.json, written by the registers agent on 2026-10-03 for the main session to merge (this agent does not edit those two files). After the merge this file can be deleted, or kept and registered with the entry at the end of files[].",
+ "sources": {
+  "dfe-gias": {
+   "name": "DfE Get Information About Schools (GIAS), all establishments daily download",
+   "licence": "OGL v3.0",
+   "url": "https://get-information-schools.service.gov.uk/Downloads",
+   "attribution": "Contains public sector information licensed under the Open Government Licence v3.0 (Department for Education)"
+  },
+  "cqc-directory": {
+   "name": "Care Quality Commission care directory (registered locations, CSV)",
+   "licence": "OGL v3.0",
+   "url": "https://www.cqc.org.uk/about-us/transparency/using-cqc-data",
+   "attribution": "Contains CQC information, licensed under the Open Government Licence v3.0"
+  },
+  "nhs-ods": {
+   "name": "NHS Organisation Data Service, ORD API 2-0-0 (directory.spineservices.nhs.uk)",
+   "licence": "OGL v3.0",
+   "url": "https://digital.nhs.uk/services/organisation-data-service",
+   "attribution": "Contains NHS Organisation Data Service data, licensed under the Open Government Licence v3.0",
+   "note": "licence from feeds/feeds.json nhs-ods-ord; the digital.nhs.uk page is behind a Cloudflare challenge for the container, so it was not re-read on 2026-10-03"
+  },
+  "charity-commission": {
+   "name": "Charity Commission for England and Wales, register of charities full extract (publicextract.charity)",
+   "licence": "OGL v3.0",
+   "url": "https://register-of-charities.charitycommission.gov.uk/en/register/full-register-download",
+   "attribution": "Contains Charity Commission data, licensed under the Open Government Licence v3.0"
+  },
+  "ofsted-childcare-mi": {
+   "name": "Ofsted management information: childcare providers and inspections, provider-level CSV (GOV.UK)",
+   "licence": "OGL v3.0",
+   "url": "https://www.gov.uk/government/statistical-data-sets/childcare-providers-and-inspections-management-information",
+   "attribution": "Contains Ofsted data, licensed under the Open Government Licence v3.0",
+   "note": "Ofsted redacts childminders and home childcarers (name, address, postcode); those rows are not kept"
+  },
+  "gambling-commission-premises": {
+   "name": "Gambling Commission register of gambling premises (CSV download)",
+   "licence": "OGL (stated on the Commission's data.gov.uk record 8dc9bef0-ad46-497b-9a74-30a6ce9d2f98; the download page states none); re-check with the Commission before production",
+   "url": "https://www.gamblingcommission.gov.uk/public-register/premises/download",
+   "attribution": "Contains Gambling Commission data, licensed under the Open Government Licence"
+  },
+  "sport-england-active-places": {
+   "name": "Sport England Active Places (ArcGIS feature services: sites and facilities)",
+   "licence": "CC BY 4.0 (personal data excluded from the licence)",
+   "url": "https://www.activeplacespower.com/opendata",
+   "attribution": "Contains Data © Sport England"
+  }
+ },
+ "files": [
+  {
+   "path": "registry/sources/registers/gias.json",
+   "what": "schools and colleges with an E14 postcode, open and closed (URN, type, phase, status, open/close dates, pupils, UKPRN, UPRN, BNG easting/northing)",
+   "sources": ["dfe-gias", "onspd", "os-ostn15"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/cqc.json",
+   "what": "CQC-registered care locations with an E14 postcode (GPs, dentists, homecare, clinics): location and provider ids, service types, date of latest check",
+   "sources": ["cqc-directory", "onspd"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/ods.json",
+   "what": "NHS ODS organisations with an E14 postcode, active and inactive (GP practices, pharmacies, dental and optical sites, trust sites, social care providers, schools): ODS code, roles, operational dates, UPRN",
+   "sources": ["nhs-ods", "onspd"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/charities.json",
+   "what": "registered charities whose contact postcode is in E14: charity and organisation numbers, type, registration date, income, company number",
+   "sources": ["charity-commission", "onspd"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": [],
+   "review": "contact address only; for small charities it can be a trustee's home (allowed under the cwplans exception; do not present it as the charity's premises)"
+  },
+  {
+   "path": "registry/sources/registers/ofsted-childcare.json",
+   "what": "Ofsted-registered childcare on non-domestic premises (nurseries, pre-schools, out-of-school clubs) with an E14 postcode: URN, type, places, registration and latest inspection dates",
+   "sources": ["ofsted-childcare-mi", "onspd"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/gambling.json",
+   "what": "licensed gambling premises (betting shops) with an E14 postcode: operator, operator account, activity, address",
+   "sources": ["gambling-commission-premises", "onspd"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/active-places.json",
+   "what": "Sport England Active Places sites with an E14 postcode or a coordinate in the registry box, with their facilities: site id, facility types, UPRN, TOID, position, open/closed dates",
+   "sources": ["sport-england-active-places"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/fsa-pubs.json",
+   "what": "FSA food premises of business type Pub/bar/nightclub in E14 (stand-in for the council's premises licence register)",
+   "sources": ["fsa", "onspd"],
+   "osm": { "use": "none" },
+   "produced_by": "tools/fetch-registers.mjs",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/README.md",
+   "what": "the registers: sources, licences, counts, fields dropped, gaps and rejected sources, join keys",
+   "sources": ["own", "dfe-gias", "cqc-directory", "nhs-ods", "charity-commission", "ofsted-childcare-mi", "gambling-commission-premises", "sport-england-active-places", "fsa"],
+   "osm": { "use": "none" },
+   "produced_by": "hand-written",
+   "shown_on": []
+  },
+  {
+   "path": "registry/sources/registers/register-entries.json",
+   "what": "proposed data-register and pipeline entries for the registers (merge aid)",
+   "sources": ["own"],
+   "osm": { "use": "none" },
+   "produced_by": "hand-written",
+   "shown_on": []
+  }
+ ],
+ "activities": [
+  {
+   "id": "fetch-registers",
+   "tool": "tools/fetch-registers.mjs",
+   "command": "NODE_USE_ENV_PROXY=1 node magpie/cwplans/tools/fetch-registers.mjs [gias|cqc|ods|charities|ofsted-childcare|gambling|active-places|fsa-pubs ...] [--refresh]",
+   "kind": "fetch",
+   "used": [
+    { "source": "dfe-gias", "endpoint": "https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldata<YYYYMMDD>.csv", "request": "the newest daily all-establishments CSV (today, else up to 9 days back)" },
+    { "source": "cqc-directory", "endpoint": "https://www.cqc.org.uk/about-us/transparency/using-cqc-data", "request": "the page, to find the current *_CQC_directory.csv link; then that CSV (about 19 MB)" },
+    { "source": "nhs-ods", "endpoint": "https://directory.spineservices.nhs.uk/ORD/2-0-0/organisations", "request": "?PostCode=E14&Limit=1000 (one list), then /organisations/<OrgId> for each (422 on 2026-10-03), and /ORD/2-0-0/roles" },
+    { "source": "charity-commission", "endpoint": "https://ccewuksprdoneregsadata1.blob.core.windows.net/data/txt/publicextract.charity.zip", "request": "the daily full extract (about 44 MB, tab-separated)" },
+    { "source": "ofsted-childcare-mi", "endpoint": "https://www.gov.uk/api/content/government/statistical-data-sets/childcare-providers-and-inspections-management-information", "request": "the attachment list; then the newest 'childcare provider(s) data as at' CSV (about 19 MB)" },
+    { "source": "gambling-commission-premises", "endpoint": "https://www.gamblingcommission.gov.uk/downloads/premises-licence-register.csv", "request": "the whole register CSV (about 1.3 MB)" },
+    { "source": "sport-england-active-places", "endpoint": "https://services-eu1.arcgis.com/s9MgJChYyPlPX2Nk/arcgis/rest/services/GIS_Active_Places_Power_Sites/FeatureServer/0/query", "request": "where=postcode LIKE 'E14%'; and an envelope query on the registry box; then GIS_Active_Places_Power_Facility/FeatureServer/1/query where siteid IN (batches of 100)" },
+    { "file": "data/raw/registry/fhrs/FHRS530-2026-10-03.json.gz", "note": "the newest FHRS530 snapshot (fsa-pubs; no network)" },
+    { "file": "postcodes/postcodes.json", "note": "ONSPD centres and box membership of E14 postcodes" },
+    { "local": "data/raw/uk_os_OSTN15_NTv2_OSGBtoETRS.tif", "note": "OSTN15 grid, to convert GIAS Easting/Northing to WGS84" }
+   ],
+   "generated": [
+    { "file": "registry/sources/registers/gias.json" },
+    { "file": "registry/sources/registers/cqc.json" },
+    { "file": "registry/sources/registers/ods.json" },
+    { "file": "registry/sources/registers/charities.json" },
+    { "file": "registry/sources/registers/ofsted-childcare.json" },
+    { "file": "registry/sources/registers/gambling.json" },
+    { "file": "registry/sources/registers/active-places.json" },
+    { "file": "registry/sources/registers/fsa-pubs.json" },
+    { "local": "data/raw/registers/", "note": "raw downloads: edubasealldata<date>.csv, cqc-directory.csv, ods-e14-list.json, ods-e14-details.json, publicextract.charity.zip, ofsted-childcare-<date>.csv, gambling-premises.csv, active-places-e14.json (gitignored; reused unless --refresh)" }
+   ],
+   "method": "Downloads each register (bulk file or query), keeps the records with an E14 postcode or a source coordinate in the registry box, and writes one {meta, records} file per source with the source URL, fetch date, licence, method, counts and the fields dropped.",
+   "rules": [
+    "Kept: postcode district E14, or a source coordinate inside CW_BOX [-0.03, 51.498, -0.005, 51.51].",
+    "Position: the source coordinate when there is one (Active Places lat/long; GIAS Easting/Northing through OSTN15; FSA geocode); else the ONSPD centre of the postcode, marked position = 'postcode centre (ONSPD)'. in_box follows the same position.",
+    "Dropped everywhere: telephone numbers, email addresses, named contact people (Active Places site contacts, GIAS head teachers, CQC registered managers are not in the file used), and Ofsted 'registered person' names unless they look like an organisation.",
+    "Ofsted rows REDACTED by Ofsted (childminders and home childcarers) are not kept.",
+    "GIAS rows administered from an E14 correspondence address (Fieldwork Overseas Establishments; c/o street lines) get address_role; they are not schools in E14.",
+    "Gambling register rows have no premises id: id = gc:<operator account>:<postcode>:<n>.",
+    "Network: one request at a time per host, at least 1 s apart; retries on 429 and 5xx with a doubling pause (Retry-After honoured); User-Agent glitchcan-cwplans/0.1."
+   ],
+   "network": true,
+   "deterministic": false,
+   "after": ["postcodes-build", "registry-fhrs", "fetch-raw-grid"],
+   "note": "Child process: unzip -p (charities). Not reached: the Tower Hamlets premises licence register (alcohol-entertainment.towerhamlets.gov.uk: TLS handshake failure and HTTP 503 on 2026-10-03); see registry/sources/registers/README.md."
+  }
+ ]
+}
