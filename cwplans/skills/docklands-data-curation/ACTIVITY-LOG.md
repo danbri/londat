@@ -1540,12 +1540,20 @@ Measured:
   (Wikidata qualifiers; the registry changed after the last audit).
 - Redirect pages: 8 cases, headless, with the new site mocked: each kept the query and the hash.
 - Pages site staged as the workflow does it: 430 MB (limit 1 GB; the workflow stops at 950 MB).
-- Pages, old copy (7be94dc) against the new one, headless (subagent), 21 loads on each side: every page; the 3D page
-  with `?view=greenland`, `?t=photo&view=greenland`, the London Datastore overlays (by menu and by share hash), Live
-  and a building card; the atlas with `#view/b/cwb-0413`, `#quality`, the London Datastore view and Live; the kg page
-  with a query. The same number of requests on every load, 0 page errors, 0 failed requests and 0 HTTP errors on both
-  sides; the only console error (two loads, both sides) is /favicon.ico from the local server. Requests to
-  raw.githubusercontent.com: 90 old (63 from the kg page), 2 new (`cache/latest.json` for Live).
+- Pages, old copy (7be94dc) against the new one, headless (subagent), two passes (21 and 22 loads on each side):
+  every page; the 3D page with `?view=greenland`, `?t=photo&view=greenland`, the London Datastore overlays (by menu
+  and by share hash), Live, a building card and `?kml=`; the atlas with `#view/b/cwb-0413`, `#quality`, the London
+  Datastore view and Live; the kg page with a query. The same number of requests on every load, 0 page errors and 0
+  HTTP errors on both sides; the only console error common to both is /favicon.ico from the local server. One load
+  in the second pass (new side, `?t=photo&view=greenland`) had one failed request: the Ships layer's own browser call
+  to https://ais.openwaters.io answered without the CORS header; the same code asks the same service in both copies,
+  and the first pass had no such failure. Requests to raw.githubusercontent.com in the first pass: 90 old (63 from the kg
+  page), 2 new (`cache/latest.json` for Live). The `?kml=` load of the second pass asks raw.githubusercontent.com for
+  the KML copy on both sides, because the link names that URL. Screenshots of `?view=greenland`: 30.2 % of pixels
+  not background on both sides. The overlays, the atlas London Datastore view (214 of 214 datasets), the kg page
+  (store gen-94788565be0fae62, 110,920 quads, 24 graphs; "Jubilee Place" 69 rows), the building card of cwb-0413 and
+  `?kml=` (12 piers) gave the same results on both sides. Seen on both sides (not the move): the four London
+  Datastore overlays switched on together send 10 requests for 4 files (`OV.data` is set only when a load ends).
 
 Open items (changes to the list of the skills review entry above; the other items stand):
 - Item 8 (GitHub Pages for londat) is now four steps for the owner, in this order: Settings > Pages > Source: GitHub
@@ -1564,5 +1572,9 @@ Open items (changes to the list of the skills review entry above; the other item
 - New: glitchcan-minigam `package.json` keeps devDependencies that only cwplans used (proj4, geotiff, earcut,
   @factoidal/core, xlsx, exceljs, tesseract.js, pdfjs-dist, @napi-rs/canvas, pbf, @mapbox/vector-tile); check for other
   users before removing any.
+- New: `feeds/kml/catalogue.json` (data, made by `tools/find-kml.mjs`) names the 12 KML copies by their
+  raw.githubusercontent.com URLs and 17 `open_link` values by the glitchcan-minigam page. Both still work (raw sends
+  `Access-Control-Allow-Origin: *`; the old page redirects). A same-site URL needs a re-run of `find-kml.mjs` with its
+  `RAW_BASE` changed.
 - New: the hourly cache ran 7 times from 2026-10-05 23:09 to 2026-10-07 08:38 UTC (all successful): GitHub delays or
   drops scheduled runs, so the runs were 3.8 to 7.3 hours apart, not 1. Not changed by the move.
