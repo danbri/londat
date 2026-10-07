@@ -1665,3 +1665,31 @@ Open items:
   `model-building-keys` in its `graph` field.
 - Three `s:addressCountry` values in the web canonical layer are the text of a genid IRI (a fault of that layer).
 - `tools/check-skills.mjs` scans `.claude/worktrees/` (local agent worktrees) and reports their SKILL.md copies.
+
+## 2026-10-07 (afternoon): owner's answers, status dashboard, F53 (Opus)
+
+Owner's answers to the open items of the move entry above (2026-10-07):
+- `third_party/` on the site: "Repo only for now". The Pages workflow keeps it unpublished; the londat `CLAUDE.md` and
+  "Data hosted in danbri/londat" give the decision.
+- The irregular hourly cache: "Ack'd. Make a unified dashboard url for me." Made by a subagent in its own worktree
+  (londat c610e93): https://danbri.github.io/londat/dashboard/ (`dashboard/index.html`, no build, no outside script).
+  Sections: hourly cache runs (last run, runs against the expected count for 24 h and 7 days, median and longest gap,
+  failures, a 7-day timeline), site deploys (the deployed commit against main; commits that change only `cwplans/cache/`
+  count as up to date), the age of each `latest.json` theme (stale after 2 h), the knowledge graph (`kgx/manifest.json`),
+  the register and the quality checks, the old-site redirect (a same-origin read of the old 3D page's title), the newest
+  log headings and commits, and links to every page. GitHub API without sign-in: 60 requests an hour per address, 4 to 6
+  a check, answers kept 5 minutes in the tab. Values at 14:50 UTC: cache "Late" (last run 6 h before; 4 of 24 runs in
+  24 h, 7 of 46 in 7 days; median gap 5.7 h, longest 7.3 h; 0 failures), site up to date, 11 themes stale, old site not
+  redirected. Tested headless at 390 x 844 (DPR 3) and 1280 x 800, light and dark: 0 page errors; html-validate 0.
+- "build-kgx.mjs did not run after the move": "Ok". It ran with the ID change (entry above).
+- The IRI namespace: the owner's answer gave the ID change (entry above).
+
+Also: fault F53 added to the fault register (the `undefined` OSM URLs of `key-model-buildings.mjs`, found by the ID
+subagent; fix at the tool's next run). It is not yet cited in `pipeline.json`: that would change `pipeline.jsonld` and
+so the pipeline graph one build after the ID rebuild; cite it with the fix. `tools/check-skills.mjs` skips
+`.claude/worktrees/` (local agent checkouts; also in `.gitignore`).
+
+Open items now: the list of the move entry above, less items 2, 3 and 4 there; plus: vocabulary terms (`cwk:`, `cwp:`)
+keep their namespaces (not IDs; ask the owner before a move); nothing is hosted at https://kgx.foaf.tv/ yet (a
+redirect of `/id/<local>` to https://danbri.github.io/londat/cwplans/kg/#e=id:<local> would make the IDs resolve);
+F53; the glitchcan-minigam branch with the redirect pages is not merged yet (the dashboard shows it).

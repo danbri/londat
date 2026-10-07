@@ -54,7 +54,8 @@ planning and prototyping phase."
 - The licence limit stays: never fetch or commit proprietary, restricted-licence (e.g. the VOA rating list) or virally
   licensed (copyleft / share-alike) data. Check the licence of each source before it is committed. Material with no open
   licence that the owner approved or supplied (TfL axonometric sheets, approved 2026-10-05; Canary Wharf Group printed
-  maps, supplied 2026-10-06) is in `third_party/` with its README, and the Pages workflow does not publish `third_party/`.
+  maps, supplied 2026-10-06) is in `third_party/` with its README, and the Pages workflow does not publish `third_party/`
+  (owner, 2026-10-07: "Repo only for now").
 - OpenStreetMap (ODbL, share-alike) is allowed for now (owner, 2026-10-03: "ODbL is ok for now, and will be thoroughly
   reviewed as part of the planning and prototyping activities later. Keep track of our use of this data carefully.").
   No other share-alike source without the owner's agreement.
@@ -126,8 +127,13 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   `feeds/`, `registry/`, `postcodes/`, `reports/`, `index.html`, `schematic.html`), tools (`cwplans/tools/`), skills,
   the register, `pipeline.json` and the data, including the bulk extracts (`feeds/london-datastore/`, `feeds/portals/`,
   `feeds/kml/`, `coverage/`) and the hourly cache (`cache/`).
-- `kgx/`: the knowledge graph (graph versions, logs, the Shardborough store). `data/images/contrib/`: the owner's CC0
+- `kgx/`: the knowledge graph (graph versions, logs, the Shardborough store). Its IDs are
+  `https://kgx.foaf.tv/id/<lowercase alphanumeric>` (owner, 2026-10-07: "Use https://kgx.foaf.tv/id/ prefix for IDs. i own
+  the domain; nothing is hosted there yet. iDs should be alphanumeric"); scheme and codes: the `cwplans-kgx` skill. `data/images/contrib/`: the owner's CC0
   photos. `third_party/`: TfL and Canary Wharf Group material and the crawl data (`cwplans-structured-data/`).
+- `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
+  unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
+  redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).
 - `tools/view-mcp/`: the `docklands-view` MCP server (`.mcp.json`). `tools/check-skills.mjs`: the skills index check.
 - Pages read data through `cwplans/data-base.js` (same site; only `cache/` comes from raw.githubusercontent.com, which is
   new each hour). Tools find paths through `cwplans/tools/londat.mjs`.

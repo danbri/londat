@@ -161,7 +161,8 @@ tools are here since 2026-10-07; before, a sparse checkout of `magpie/cwplans/to
 `data-register.json` from glitchcan-minigam master), `npm ci --omit=dev` (proj4, geotiff and earcut: the
 "dependencies" of package.json; the build tools are devDependencies), the tool, then a commit of `cache/runs/`,
 `cache/latest.json` and any new `cache/live-*.sqlite`, a stash of the snapshot files the fetch tools rewrote, and three
-pull-rebase-push tries; `concurrency` stops overlap. The commit, made with the workflow token, starts no other workflow,
+pull-rebase-push tries; `concurrency` stops overlap. The runs, their gaps and the age of each theme are on
+https://danbri.github.io/londat/dashboard/ (GitHub API, read in the browser). The commit, made with the workflow token, starts no other workflow,
 and `pages.yml` ignores `cwplans/cache/**`, so the hourly run does not redeploy the site. The
 session could push the workflow file to londat (2026-10-05) but could not start it by API (403 "Resource not accessible
 by integration"): the first run is the first cron after the push. Check the Actions tab of londat. A Claude Routine is

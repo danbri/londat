@@ -40,7 +40,7 @@ const FIX = process.argv.includes('--fix');
 // report too, or the count lies. Symlinked entries under it are not descended
 // into, because `withFileTypes` reports a symlink as a symlink and not a
 // directory, so nothing is counted twice.
-const SKIP = new Set(['node_modules', '.git', 'third_party', 'vendor']);
+const SKIP = new Set(['node_modules', '.git', 'third_party', 'vendor', 'worktrees']);   // worktrees: .claude/worktrees/ (local agent checkouts)
 
 /** Every SKILL.md in the tree, except the ones inside the index itself. */
 async function findSkills(dir, out = []) {
