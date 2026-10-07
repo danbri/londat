@@ -48,12 +48,13 @@ Data: https://github.com/danbri/londat/tree/main/kgx (README). Graph, store and 
   `tools/kgx-ids.mjs` (the code table and the rules: `cwplans-kgx`, "Graphs, IRIs, vocabulary"). Until 2026-10-07 the
   names were `https://danbri.github.io/londat/kgx/graph/<name>/<hash16>`, `.../activity/<hash16>`,
   `.../artifact/sha256/<hash>`; `log/*.jsonl` and the version files of that time keep them (history).
-- **Old names in inputs.** `mapLegacy()` gives the ID of an old name and leaves every other IRI as it is. The quad
+- **Old names in inputs.** `mapLegacy()` gives the ID of an old name, the new term of an old vocabulary term, and
+  leaves every other IRI as it is. The quad
   collector of `build-kgx.mjs` puts every IRI term through it, so a graph written there has no old name whatever its
   input holds. A version made by another tool before 2026-10-07 goes through `map-legacy-ids` (`OPS.mapLegacyIds`,
   `mapLegacyVersion` in `kgx-ops.mjs`): the same triples, every IRI term mapped. `build-kgx.mjs` applies it to each
-  external head whose IRI is not under `https://kgx.foaf.tv/id/` and writes the mapped version into
-  `external-heads.json`. The tools mint the IDs themselves since then, and the mapping gives the same IDs, so a re-run
+  external head whose IRI is not under `https://kgx.foaf.tv/id/` or whose text has an IRI in an old namespace
+  (`hasLegacyNames()`: old names or old vocabulary terms) and writes the mapped version into `external-heads.json`. The tools mint the IDs themselves since then, and the mapping gives the same IDs, so a re-run
   of a tool converges on the mapped version (checked for the contributed photos and the facade atlas, 2026-10-07).
 - **Reading a big version.** `quadsOf(text)` parses N-Quads with Factoidal 2,000 lines at a time (N-Quads has one
   statement per line). One parse grows faster than the text: 17,148 lines took 15 s, 294,405 lines more than 10
@@ -69,21 +70,26 @@ Data: https://github.com/danbri/londat/tree/main/kgx (README). Graph, store and 
 
 | operation | version | skill | inputs → outputs |
 |---|---|---|---|
-| `lift-cited-facts`, `lift-registry-buildings`, `lift-registry-occupants`, `lift-cwg-directory`, `lift-web-canonical`, `lift-coref`, `lift-mallmap`, `lift-store-guide` | 2 | cwplans-kgx | source files → `facts`, `buildings`, `occupants`, `cwg`, `web`, `coref-<rule>`, `mallmap`, `storeguide` |
-| `lift-pipeline-provenance` | 2 | cwplans-kgx | `pipeline.jsonld` and every file it names that is present → `pipeline` (blank nodes skolemized; each file tied to its SHA-256 by `cwk:contentAtBuild`) |
+| `lift-cited-facts`, `lift-registry-buildings`, `lift-registry-occupants`, `lift-cwg-directory`, `lift-web-canonical`, `lift-coref`, `lift-mallmap`, `lift-store-guide` | 3 | cwplans-kgx | source files → `facts`, `buildings`, `occupants`, `cwg`, `web`, `coref-<rule>`, `mallmap`, `storeguide` |
+| `lift-pipeline-provenance` | 3 | cwplans-kgx | `pipeline.jsonld` and every file it names that is present → `pipeline` (blank nodes skolemized; each file tied to its SHA-256 by `cwk:contentAtBuild`) |
 | `partition-by-subject-key` | 4 | cwplans-dataflow | one version → parts `<name>.pNN` of about 3,000 triples, subjects in Shardborough zone-key order |
-| `describe-graph-versions` | 2 | cwplans-dataflow | all versions and parts → `meta` (graph names with their name as `rdfs:label`) |
-| `lift-activity-log` | 2 | cwplans-dataflow | the log (less log lifts and packs) → `log` (operations with their id as `rdfs:label`; the old names of earlier activities mapped) |
-| `map-legacy-ids` | 1 | cwplans-dataflow | one version → the same triples with every IRI term through `mapLegacy()` (`kgx-ops.mjs`; applied by `build-kgx.mjs` to external heads named in the old namespace) |
+| `describe-graph-versions` | 3 | cwplans-dataflow | all versions and parts → `meta` (graph names with their name as `rdfs:label`) |
+| `lift-activity-log` | 3 | cwplans-dataflow | the log (less log lifts and packs) → `log` (operations with their id as `rdfs:label`; the old names of earlier activities mapped) |
+| `map-legacy-ids` | 2 | cwplans-dataflow | one version → the same triples with every IRI term through `mapLegacy()` (`kgx-ops.mjs`; applied by `build-kgx.mjs` to an external head named in the old namespace or holding old names or old vocabulary terms, `hasLegacyNames()`) |
 | `pack-shardborough` | 1 | cwplans-kgx | parts + `meta` + `log` → a store generation, `gen-<sha256(store input)[0:16]>` |
-| `lift-imagery-coverage` | 2 | docklands-data-curation | coverage answer files (`tools/probe-imagery-coverage.mjs`) → `coverage-imagery` |
-| `rectify-facade-patches` (2), `lift-contrib-photos` (3), `cut-facade-tiles` (2) | | docklands-data-curation | contributed photos + photos.json (`tools/contrib-photos.mjs`) → `facade-patches-<set>`, `photos-<set>`, `facade-tiles-<set>` |
-| `key-model-buildings` | 3 | docklands-3d-page | area.js + the OSM clip + the Greater London extract + atlas.json → `model-building-keys` (not in the store) and its projection `docklands/data/building-keys.json` |
-| `compose-facade-atlas` | 2 | docklands-3d-page | registry atlas + `facade-tiles-*` + `model-building-keys` + area.js → `facade-atlas` and `docklands/data/tex/facades.jpg/.json` |
+| `lift-imagery-coverage` | 3 | docklands-data-curation | coverage answer files (`tools/probe-imagery-coverage.mjs`) → `coverage-imagery` |
+| `rectify-facade-patches` (3), `lift-contrib-photos` (4), `cut-facade-tiles` (3) | | docklands-data-curation | contributed photos + photos.json (`tools/contrib-photos.mjs`) → `facade-patches-<set>`, `photos-<set>`, `facade-tiles-<set>` |
+| `key-model-buildings` | 4 | docklands-3d-page | area.js + the OSM clip + the Greater London extract + atlas.json → `model-building-keys` (not in the store) and its projection `docklands/data/building-keys.json` |
+| `compose-facade-atlas` | 3 | docklands-3d-page | registry atlas + `facade-tiles-*` + `model-building-keys` + area.js → `facade-atlas` and `docklands/data/tex/facades.jpg/.json` |
 
 Versions changed on 2026-10-07 (IDs under `https://kgx.foaf.tv/id/`): every operation whose body mints IRIs went up one
 version. `partition-by-subject-key` and `pack-shardborough` kept theirs: their bodies did not change, and their
-activity IRIs change anyway with their inputs (version IRIs), so no old output can come back from the log.
+activity IRIs change anyway with their inputs (version IRIs), so no old output can come back from the log. The same
+day the vocabulary moved to `https://kgx.foaf.tv/` (`cwk:` `/vocab#`, `cwp:` `/pipeline#`, `i:` `/idioms#`; owner:
+"move them to kgx.foaf.tv? Yes pls. No dereferencing needed yet"), and every operation whose body writes a term went up
+one version again (the numbers in the table); `partition-by-subject-key` and `pack-shardborough` again kept theirs. The
+four tools other than `build-kgx.mjs` were not re-run: `build-kgx.mjs` put their external heads through
+`map-legacy-ids` version 2, which gives the same terms that a re-run mints.
 
 **Composition across tools.** A tool other than `build-kgx.mjs` runs its own operations with a `Flow` on the same
 londat `kgx/` folder (same log) and names its output version in `kgx/external-heads.json` (graph name → version IRI).
@@ -117,6 +123,11 @@ is remade on every run); otherwise bump the operation version if a side file is 
   previous run, so each run made a new `log` version, a new store input and a new generation, and logged another pack:
   it never converged. Now `log` leaves out log lifts and packs (they stay in `log/activities.jsonl` and
   `manifest.json`).
+- **A version record is not the only place a version occurs.** `write()` keeps the first record of a version IRI, so a
+  part with the content of a part of an earlier head keeps that head as `partOf`. 2026-10-07 (vocabulary build): one
+  geometry-only part of `buildings` and one of `mallmap` did not change; `meta` said `dct:isPartOf` the older head and
+  `check-kgx-store.mjs` counted 47 of 49 parts ("rebuild first"). The build now names the head it cut a part from in this
+  run; the check reads a head's parts from its partition activity. The run was discarded before any commit and rebuilt.
 - **Test idempotence: run the build twice.** The second run must print `new: 0`, the same generation, and leave
   `log/*.jsonl` unchanged. Measured 2026-10-06: first run 95 s, second 40 s (file hashing and `meta` dominate).
 - **Strip a graph term from the end, by position.** The graph term is the last term and an IRI holds no space, so it

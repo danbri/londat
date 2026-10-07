@@ -42,10 +42,22 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   (`node cwplans/tools/kgx-ids.mjs --test`; also in `npm test`). Graph versions, store parts, activities and input
   files are IDs too (`cwplans-dataflow`, the runtime). No blank nodes (the `pipeline` graph is skolemized to
   `id:genidpipeline<sha12>`).
-- **The vocabulary does not change:** `cwk:` = `https://danbri.github.io/londat/kgx/vocab#` (schema.org first), `cwp:` =
-  `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/`, and the idioms ShEx namespace
-  `https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/idioms/idioms.shex#`. External IRIs do
-  not change (schema.org, OSM, Wikidata, the CWG entity IRIs, GitHub and raw.githubusercontent.com URLs).
+- **Vocabulary.** Owner, 2026-10-07, asked whether the vocabulary terms should also move to kgx.foaf.tv: "move them to
+  kgx.foaf.tv? Yes pls. No dereferencing needed yet". So the terms are under `https://kgx.foaf.tv/` too, and keep their
+  local names (schema.org first):
+
+  | prefix | namespace now | until 2026-10-07 | used by |
+  |---|---|---|---|
+  | `cwk:` | `https://kgx.foaf.tv/vocab#` | `https://danbri.github.io/londat/kgx/vocab#` | `build-kgx.mjs`, the four Flow tools, `meta`, `log` |
+  | `cwp:` | `https://kgx.foaf.tv/pipeline#` | `https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/` | `pipeline.jsonld` (`check-data-register.mjs`), the web canonical layer (`cwp:hoursText`, `cwp:addressText`) |
+  | `i:` | `https://kgx.foaf.tv/idioms#` | `https://danbri.github.io/glitchcan-minigam/third_party/cwplans-structured-data/idioms/idioms.shex#` | the ShEx shapes of `idioms.shex` (no term of it is in kgx) |
+
+  `kgx-ids.mjs`: `VOCAB`, `REGISTER_VOCAB`, `IDIOMS_VOCAB`, and `VOCAB_MOVES` (old namespace → new); `mapLegacy()` gives
+  an old term its new IRI, with the same local name. The terms do not resolve (no dereferencing yet; the search page
+  treats every IRI under `https://kgx.foaf.tv/` as internal). External IRIs do not change (schema.org, OSM, Wikidata,
+  the CWG entity IRIs, GitHub and raw.githubusercontent.com URLs). After the build of 2026-10-07 (vocabulary) no IRI
+  under `https://danbri.github.io/londat/kgx/` or `https://danbri.github.io/glitchcan-minigam/` is in `current.nq.gz`
+  or the store.
 - **Codes.** Things had the old base `https://danbri.github.io/londat/kgx/id/<kind>/`; provenance and store
   `https://danbri.github.io/londat/kgx/<kind>/`.
 
@@ -78,8 +90,10 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   join key across sources (below).
 - **What keeps the old names, and why.** The web-harvest files in `third_party/cwplans-structured-data/`,
   `registry/sources/brands/cwg-directory-typed.nq`, `kgx/log/*.jsonl` and the graph version files written before
-  2026-10-07: they are upstream data or history, and a version never changes. `build-kgx.mjs` maps when it lifts: its
-  quad collector puts every IRI term through `mapLegacy()`, so `lift-activity-log` and `describe-graph-versions` name
+  2026-10-07: they are upstream data or history, and a version never changes. The same holds for the old vocabulary
+  terms in `idioms.shex`, `idioms.json` (prefix `i:`), `idioms/rewrites/*.rq` (`cwp:`) and `canonical.nq.gz`:
+  `web-idioms.mjs` reads the ShEx namespace from `idioms.json`, not from a constant, so nothing there had to change.
+  `build-kgx.mjs` maps when it lifts: its quad collector puts every IRI term through `mapLegacy()`, so `lift-activity-log` and `describe-graph-versions` name
   the older activities and versions by their IDs too; the external heads named in the old namespace went through the
   operation `map-legacy-ids` (`cwplans-dataflow`). Literals are not mapped: `cwk:params` of the activities logged
   before 2026-10-07 (the JSON of their parameters, with the old names), and three `s:addressCountry` values of the web
@@ -102,7 +116,10 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
 
 ## The store (Shardborough, `factoidal pack --layout ibk5`)
 
-Build of 2026-10-07 15:11 UTC (the first with the IDs; londat `kgx/manifest.json`): 298,615 triples in 24 head graphs
+Build of 2026-10-07 16:50 UTC (vocabulary under `https://kgx.foaf.tv/`; londat `kgx/manifest.json`): 299,829 triples
+in 24 head graphs, of which 116,344 quads in the browser store (49 parts, `meta` and `log`; generation
+`gen-7d0a65a1b11accc7`, 5,006 files, 19.3 MB); the growth is `log` (10,030 triples, 174 activities) and `meta` (712).
+Build of 2026-10-07 15:11 UTC (the first with the IDs): 298,615 triples in 24 head graphs
 (22 data graphs, `meta` and `log`), of which 115,130 quads in the browser store (49 parts, `meta` and `log`; 834
 blocks, generation `gen-5ad6ded8fc45e17f`, 5,006 files, 19.3 MB; blocks 12.8 MB). The build before it (09:22 UTC, old
 names): 294,405 triples, 110,920 quads, 847 blocks, `gen-94788565be0fae62`, 5,084 files, 21.4 MB, blocks 15.0 MB: the
@@ -165,11 +182,17 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   the store holds (a head kept out of the store is skipped: with `model-building-keys` the parse took over 15 minutes).
   Several minutes (the in-memory parse; not timed). Results: 2026-10-06 (gen-f330e7f03b06d9d9) 17 of 17 the same;
   2026-10-07 09:35 UTC (gen-94788565be0fae62, 110,920 quads) 17 of 17 the same; 2026-10-07 15:20 UTC
-  (gen-5ad6ded8fc45e17f, 115,130 quads, the first build with the IDs) 17 of 17 the same, 9 min 16 s
-  (`checks/store-vs-memory.json`). Run it after a rebuild with new data and after a Factoidal upgrade.
+  (gen-5ad6ded8fc45e17f, 115,130 quads, the first build with the IDs) 17 of 17 the same, 9 min 16 s; 2026-10-07 17:00 UTC
+  (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s
+  (`checks/store-vs-memory.json`). It finds the parts of a head as the outputs of the head's partition activity: the
+  `partOf` of a version record names the first head that a part was cut from, and a later head can have a part with
+  the same content (seen 2026-10-07: geometry-only parts of `buildings` and `mallmap` did not change with the
+  vocabulary; the check then refused, "rebuild first", and `meta` said `dct:isPartOf` the older head; both fixed in
+  londat 0bbb5b8). Run it after a rebuild with new data and after a Factoidal upgrade.
 - No old names in the store: a SPARQL count through a store handle over every quad (`FILTER` on the four positions;
   run with `node --stack-size=60000` and `ulimit -s unlimited`, because 115,130 solutions overflow the default stack)
-  gave 0 quads with a name of the old namespaces in gen-5ad6ded8fc45e17f, and 110,920 of 110,920 in gen-94788565be0fae62
+  gave 0 quads with a name of the old namespaces in gen-7d0a65a1b11accc7 (old vocabulary terms counted too; 43,380 of
+  115,130 quads had one in gen-5ad6ded8fc45e17f; a `COUNT(*)` query needed no larger stack), 0 old names in gen-5ad6ded8fc45e17f, and 110,920 of 110,920 in gen-94788565be0fae62
   (2026-10-07).
 - An independent engine as a third opinion: pyoxigraph in a venv, `Store.bulk_load(path=…, format=RdfFormat.N_QUADS,
   lenient=True)`. Strict loading refuses one IRI in our data (F49).
@@ -197,8 +220,8 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 - Views (`VIEWS` in the page, the same queries as `queries/*.rq`): graphs and versions, lineage (the log), open now,
   mall units, step-free, toilets and facilities, hours CWG against mall map, tallest, cited facts, sameAs, occupants.
 - IDs on the page (2026-10-07): the prefix `id:` (added to every query, shown in the cells); an IRI under
-  `https://kgx.foaf.tv/id/` or the vocabulary opens in the page only, with no outside link (nothing is hosted at
-  kgx.foaf.tv yet); any other http(s) IRI also gets ↗. A hash names an ID short: `#e=id:cwb0413`
+  `https://kgx.foaf.tv/` (an ID or a vocabulary term: `cwk:`, `cwp:`, `i:`) opens in the page only, with no outside
+  link (nothing is hosted at kgx.foaf.tv yet); any other http(s) IRI also gets ↗. A hash names an ID short: `#e=id:cwb0413`
   (https://danbri.github.io/londat/cwplans/kg/#e=id:cwb0413); a full IRI is URL-encoded
   (`#e=https%3A%2F%2Fcanarywharf.com%2Frestaurant%2Fmanhattan-grill%2F%23entity`). "Graphs and versions" and "Lineage"
   read the `rdfs:label` of graph names and operations (their IDs have no hyphens).
@@ -223,11 +246,11 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 ## Open
 
 - IDs (2026-10-07): nothing is served at https://kgx.foaf.tv/ yet (the owner's domain). When it is, an ID could
-  redirect to the page (`https://danbri.github.io/londat/cwplans/kg/#e=id:<local>`). The vocabularies keep their
-  namespaces (`cwk:` under danbri.github.io/londat, `cwp:` and the idioms under danbri.github.io/glitchcan-minigam): a
-  new vocabulary namespace is the owner's decision. `key-model-buildings.mjs` writes `s:sameAs
+  redirect to the page (`https://danbri.github.io/londat/cwplans/kg/#e=id:<local>`); the vocabulary terms
+  (`/vocab#`, `/pipeline#`, `/idioms#`) could get a page of their terms (owner: "No dereferencing needed yet").
+  `key-model-buildings.mjs` writes `s:sameAs
   https://www.openstreetmap.org/undefined/<id>` for every way (42,244 links: the clip's ways have no `type`): fix it at
-  its next run (it needs the local OSM clip and extract), with a new operation version.
+  its next run (it needs the local OSM clip and extract), with operation version 5 (version 4 is the vocabulary).
 - Step-free routes: the facilities are in; the corridors (indoor lines) and floor links are not yet.
 - Units: join to CWG entities by a better key than the exact name (normalised name, mall, level).
 - A building-level link from mall units and guide grid squares to registry buildings (position in the outline).

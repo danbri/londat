@@ -129,7 +129,10 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   `feeds/kml/`, `coverage/`) and the hourly cache (`cache/`).
 - `kgx/`: the knowledge graph (graph versions, logs, the Shardborough store). Its IDs are
   `https://kgx.foaf.tv/id/<lowercase alphanumeric>` (owner, 2026-10-07: "Use https://kgx.foaf.tv/id/ prefix for IDs. i own
-  the domain; nothing is hosted there yet. iDs should be alphanumeric"); scheme and codes: the `cwplans-kgx` skill. `data/images/contrib/`: the owner's CC0
+  the domain; nothing is hosted there yet. iDs should be alphanumeric"); its vocabulary terms are under the same domain
+  (owner, 2026-10-07: "move them to kgx.foaf.tv? Yes pls. No dereferencing needed yet"): `cwk:`
+  `https://kgx.foaf.tv/vocab#`, `cwp:` `https://kgx.foaf.tv/pipeline#`, `i:` `https://kgx.foaf.tv/idioms#`; scheme and
+  codes: the `cwplans-kgx` skill. `data/images/contrib/`: the owner's CC0
   photos. `third_party/`: TfL and Canary Wharf Group material and the crawl data (`cwplans-structured-data/`).
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site

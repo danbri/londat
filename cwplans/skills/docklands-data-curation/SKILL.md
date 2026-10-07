@@ -411,8 +411,9 @@ that side, which waits until the site here is on).
   is `https://kgx.foaf.tv/id/<local>`, with `<local>` lowercase alphanumeric (`cwplans/tools/kgx-ids.mjs`; the code
   table and the rules are in the skill `cwplans-kgx`, "Graphs, IRIs, vocabulary"). In `pipeline.jsonld` a source is
   `src<key>`, a tool activity `tool<id>`, a local file `local<path>`; committed files keep their GitHub URLs. The
-  vocabularies keep their namespaces: `cwk:` (`https://danbri.github.io/londat/kgx/vocab#`), `cwp:`
-  (`https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/`) and the idioms ShEx namespace.
+  vocabularies moved the same day (owner: "move them to kgx.foaf.tv? Yes pls. No dereferencing needed yet"): `cwk:` is
+  `https://kgx.foaf.tv/vocab#`, `cwp:` `https://kgx.foaf.tv/pipeline#`, the idioms ShEx namespace
+  `https://kgx.foaf.tv/idioms#` (until then under danbri.github.io/londat/kgx/ and danbri.github.io/glitchcan-minigam/).
   The web-harvest files in `third_party/cwplans-structured-data/`, `kgx/log/*.jsonl` and the graph versions written
   before 2026-10-07 keep the old names (upstream data and history); `build-kgx.mjs` maps them when it lifts them.
 - **Sizes.** Push in batches well under 500 MB; no file over 100 MB; keep the site under 1 GB.

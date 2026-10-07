@@ -39,13 +39,18 @@ model `id:osmw204580680`, the mall Cabot Place `id:mallcabotplace`, a Living Map
 name `id:graphfacts`. Nothing is served at those addresses yet; the search page opens an ID in the page
 (https://danbri.github.io/londat/cwplans/kg/#e=id:cwb0413). The code table and the rules:
 [`cwplans/tools/kgx-ids.mjs`](https://github.com/danbri/londat/blob/main/cwplans/tools/kgx-ids.mjs) and the
-`cwplans-kgx` skill. The vocabulary does not change: `cwk:` is `https://danbri.github.io/londat/kgx/vocab#`, with
-schema.org first.
+`cwplans-kgx` skill. The vocabulary is under the same domain (owner, 2026-10-07: "move them to kgx.foaf.tv? Yes pls.
+No dereferencing needed yet"): `cwk:` is `https://kgx.foaf.tv/vocab#` (schema.org first), `cwp:` (the pipeline
+provenance and the web layer) `https://kgx.foaf.tv/pipeline#`, the idioms ShEx namespace `https://kgx.foaf.tv/idioms#`;
+terms keep their local names.
 
 Until 2026-10-07 the names were under `https://danbri.github.io/londat/kgx/` (`id/<kind>/…`, `graph/…`,
 `activity/…`, `artifact/sha256/…`) and, for the register and the web harvest, under
 `https://danbri.github.io/glitchcan-minigam/`. `log/*.jsonl` and the version files of that time keep those names
-(history); the build maps them to IDs when it describes them (`meta`, `log`) and when it lifts upstream files.
+(history); the build maps them to IDs when it describes them (`meta`, `log`) and when it lifts upstream files. The
+vocabulary was `https://danbri.github.io/londat/kgx/vocab#` (`cwk:`) and
+`https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/` (`cwp:`) until the vocabulary
+build of 2026-10-07; the build maps old terms the same way.
 
 ## Graphs (current versions)
 
@@ -69,12 +74,14 @@ Until 2026-10-07 the names were under `https://danbri.github.io/londat/kgx/` (`i
 | `facade-tiles-cwdock` | 52 | the facade tiles cut from the cwdock photos (CC0): the 17-storey brick tower north-east of Decathlon, Decathlon, Dock Shed; size on the wall, buildings, method (operation `cut-facade-tiles`) |
 | `facade-atlas` | 26 | the 3D page's facade atlas, slot by slot (operation `compose-facade-atlas`) |
 | `model-building-keys` | 183,485 | the OSM way or relation of every building of the 3D model, with model indices, part parents, registry links and OSM name, address, type, levels, Wikidata (operation `key-model-buildings`). **Not in the browser store** (`external-heads.json`: `store: false`); in `graphs/` and `current.nq.gz` |
-| `meta` | 710 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`id:graph<name> cwk:current <version>`, the name as `rdfs:label`) |
-| `log` | 8,818 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation with its id as `rdfs:label`, skill, tool), 132 activities |
+| `meta` | 712 | a `void:Dataset` for every version and part: name, RDFC-1.0 hash, triples, licence, generating activity; and the heads (`id:graph<name> cwk:current <version>`, the name as `rdfs:label`) |
+| `log` | 10,030 | the activity log as RDF (prov:Activity, prov:used, prov:generated, operation with its id as `rdfs:label`, skill, tool), 174 activities in `log/activities.jsonl` |
 
-Total 298,615 triples (build of 2026-10-07, the first with IDs), of which 115,130 in the browser store. Things are
-`https://kgx.foaf.tv/id/…` (57,034 distinct IDs in `current.nq.gz`); the vocabulary is
-`https://danbri.github.io/londat/kgx/vocab#` (prefix `cwk:`), with schema.org first. There are no blank nodes (the
+Total 299,829 triples (build of 2026-10-07 16:50 UTC, the vocabulary under `https://kgx.foaf.tv/`), of which 116,344 in
+the browser store (`gen-7d0a65a1b11accc7`). Things are `https://kgx.foaf.tv/id/…` (57,157 distinct IDs in
+`current.nq.gz`); the vocabulary is `https://kgx.foaf.tv/vocab#` (prefix `cwk:`) and `https://kgx.foaf.tv/pipeline#`
+(`cwp:`), with schema.org first. No IRI under `https://danbri.github.io/londat/kgx/` or
+`https://danbri.github.io/glitchcan-minigam/` is left in `current.nq.gz` or the store. There are no blank nodes (the
 `pipeline` graph is skolemized to `https://kgx.foaf.tv/id/genidpipeline…`).
 
 ## Files

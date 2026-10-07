@@ -1708,3 +1708,50 @@ Owner, 2026-10-07: "Yes add links". Links (relative) to https://danbri.github.io
 - Tested headless (SwiftShader, 1400 x 900): card of cwb-0413 -> `../kg/#e=id:cwb0413`; OSM card of model index 0 ->
   `../kg/#e=id:osmw4366294`; atlas `#view/b/cwb-0413` -> `../kg/#e=id:cwb0413`; 0 page errors on both pages;
   `check-data-register.mjs` passes.
+
+## 2026-10-07 (evening): the vocabulary under https://kgx.foaf.tv/ (Opus, subagent)
+
+Owner, 2026-10-07, asked whether the vocabulary terms should also move to kgx.foaf.tv: "move them to kgx.foaf.tv? Yes
+pls. No dereferencing needed yet". Done with the method of the ID change (entry above); terms keep their local names:
+- `cwk:` https://danbri.github.io/londat/kgx/vocab# -> https://kgx.foaf.tv/vocab#
+- `cwp:` https://danbri.github.io/glitchcan-minigam/magpie/cwplans/data-register.json#vocab/ -> https://kgx.foaf.tv/pipeline#
+- the idioms ShEx namespace (`i:`) .../third_party/cwplans-structured-data/idioms/idioms.shex# -> https://kgx.foaf.tv/idioms#
+  (no term of it is in kgx).
+
+Commits (londat, not pushed): a06a93d (minting and mapping: `kgx-ids.mjs` VOCAB, REGISTER_VOCAB, IDIOMS_VOCAB,
+VOCAB_MOVES and test cases; `kgx-ops.mjs` map-legacy-ids version 2 and `hasLegacyNames()`; `check-data-register.mjs`
+cwp: in `pipeline.jsonld`; the search page, `kgx/queries/*.rq`, `check-kgx-store.mjs`), 0bbb5b8 (a fault found by the
+rebuild, below), 46923bd (the rebuilt `kgx/`), and the docs commit with this entry.
+- Operation versions: the eight lifts and `lift-pipeline-provenance` 3, `describe-graph-versions` 3, `lift-activity-log`
+  3, `map-legacy-ids` 2; in the tools that were not re-run: `rectify-facade-patches` 3, `lift-contrib-photos` 4,
+  `cut-facade-tiles` 3, `compose-facade-atlas` 3, `key-model-buildings` 4 (so the F53 fix is version 5),
+  `lift-imagery-coverage` 3. `partition-by-subject-key` and `pack-shardborough` kept theirs (bodies unchanged).
+- `contrib-photos.mjs` had the old cwk: namespace in a regex (the `cwk:building` lines of the facade-patches version):
+  now built from VOCAB. `web-idioms.mjs` and `web-coref.mjs` read the ShEx namespace from `idioms.json`: no change; the
+  harvest files (`idioms.shex`, `idioms.json`, `rewrites/*.rq`, `canonical.nq.gz`) and `kgx/log/*.jsonl` keep the old
+  terms (upstream and history); the lift maps them. The dashboard names no vocabulary: no change.
+- Fault found and fixed (0bbb5b8): a part version with the content of a part of an earlier head keeps that head as its
+  `partOf` in `log/versions.jsonl`. One geometry-only part of `buildings` and one of `mallmap` did not change, so `meta`
+  said `dct:isPartOf` the older head and `check-kgx-store.mjs` found 47 of 49 parts and refused ("rebuild first").
+  `build-kgx.mjs` now gives each part the head it was cut from in this run; the check reads a head's parts from its
+  partition activity. The first run's output was discarded before any commit, and the build ran again.
+
+Counts (`current.nq.gz`, IRI terms; the store by a SPARQL `COUNT` through a store handle with a FILTER on the four
+positions): triples 298,615 -> 299,829 (`log` 8,818 -> 10,030, 174 activities; `meta` 710 -> 712); IRI terms in the old
+namespaces 135,986 (162 distinct: 142 cwk:, 20 cwp:) -> 0; new vocabulary terms 0 -> 162; store quads 115,130 ->
+116,344, with an old name or term 43,380 -> 0. Literals keep old names (16 lines: `cwk:params` and `rdfs:comment` of
+older activities and operations, the 3 `s:addressCountry` texts).
+- Store generation `gen-7d0a65a1b11accc7` (49 parts, `meta`, `log`; 5,006 files, 19,322,091 bytes); the previous one
+  (`gen-5ad6ded8fc45e17f`) was removed from the folder (git keeps it). 71 new graph version files, 4.2 MB. Git objects
+  +30.1 MiB (loose, `git count-objects`).
+- Runs: build 1, 12 min 12 s, 42 new activities; build 2, 15 s, `new: 0`, the same generation, `log/*.jsonl`,
+  `heads.json`, `external-heads.json` and `current.nq.gz` unchanged.
+- Checks: kgx-ids self-test ok (33 examples); `npm test` 18 of 18; `npm run check` ok (706 entries); `tools/check-skills.mjs`
+  18 of 18; `check-kgx-store.mjs --write` 17 of 17 the same (9 min 10 s); page test (headless Chromium, local server):
+  the default view, a name search ("Jubilee Place", 69 rows), the 11 views, `#e=id:cwb0413` (One Canada Square), the
+  term `cwk:Building` by its encoded IRI: 0 page errors, 0 console errors, 0 failed requests, no outside link to an IRI
+  under https://kgx.foaf.tv/, no old name shown; the dashboard: 0 page errors.
+
+Open items: nothing is hosted at https://kgx.foaf.tv/ (IDs and terms do not resolve; owner: "No dereferencing needed
+yet"); F53 (`key-model-buildings` version 5); the four Flow tools were not re-run (their heads are the mapped versions;
+a re-run with the same inputs mints the same terms).
