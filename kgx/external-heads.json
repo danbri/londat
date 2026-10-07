@@ -1,14 +1,14 @@
 {
- "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery773bad3b03358d79",
- "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrary6b7d3f00e42917e2",
- "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibrary19f38d3e7559e168",
+ "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
+ "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
+ "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
  "model-building-keys": {
-  "iri": "https://kgx.foaf.tv/id/graphmodelbuildingkeysc9f1761758db48ef",
+  "iri": "https://kgx.foaf.tv/id/graphmodelbuildingkeys40cf5331fa99da1a",
   "store": false
  },
- "facade-tiles-cwlibrary": "https://kgx.foaf.tv/id/graphfacadetilescwlibrary098ee7e176e96ebc",
- "facade-atlas": "https://kgx.foaf.tv/id/graphfacadeatlas391fa2aa04fb9513",
- "facade-patches-cwdock": "https://kgx.foaf.tv/id/graphfacadepatchescwdock41f7db8bc828e3a1",
- "photos-cwdock": "https://kgx.foaf.tv/id/graphphotoscwdock3999dfbfd65d9edc",
- "facade-tiles-cwdock": "https://kgx.foaf.tv/id/graphfacadetilescwdockd82f7700fd8662c9"
+ "facade-tiles-cwlibrary": "https://kgx.foaf.tv/id/graphfacadetilescwlibrary8145d8bf5538cdd1",
+ "facade-atlas": "https://kgx.foaf.tv/id/graphfacadeatlas7b8b264501c0bf49",
+ "facade-patches-cwdock": "https://kgx.foaf.tv/id/graphfacadepatchescwdockca4578da2711a4e3",
+ "photos-cwdock": "https://kgx.foaf.tv/id/graphphotoscwdock04d844938d0212e0",
+ "facade-tiles-cwdock": "https://kgx.foaf.tv/id/graphfacadetilescwdock135d1e694cc185ff"
 }
