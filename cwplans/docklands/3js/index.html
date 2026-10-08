@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Docklands 3D (Three.js, experimental)</title>
+<meta name="description" content="Experimental port of the Docklands 3D page to three.js r186: WebGPU where the browser has it, else WebGL 2; TSL node materials.">
+<style>
+:root{--bg:#0f1215;--fg:#e8ecef;--mut:#9aa4ad;--acc:#2cc3b5;--panel:rgba(16,20,24,.92);--safe:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+#view{position:fixed;inset:0;touch-action:none}
+#view canvas{display:block;width:100%;height:100%}
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lab{position:absolute;left:0;top:0;padding:1px 6px;border-radius:4px;background:rgba(10,14,18,.66);color:#f3f5f7;font-size:12px;white-space:nowrap;will-change:transform}
+.btn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;z-index:5}
+#menu{left:10px}
+#nightBtn{left:62px;font-size:18px}
+#hud{position:fixed;left:116px;top:calc(18px + env(safe-area-inset-top,0px));padding:4px 10px;border-radius:6px;background:var(--panel);color:var(--mut);font-size:12px;z-index:4;transition:opacity 1.5s}
+#hud.fade{opacity:0}
+#drawer{position:fixed;left:10px;top:calc(62px + env(safe-area-inset-top,0px));bottom:calc(40px + var(--safe));width:min(340px,calc(100vw - 20px));overflow:auto;background:var(--panel);border-radius:10px;padding:12px 14px;z-index:6}
+#drawer h3{margin:14px 0 6px;font-size:13px;color:var(--mut);font-weight:600}
+#drawer h3:first-child{margin-top:0}
+.views{display:flex;flex-wrap:wrap;gap:6px}
+.views button{border:1px solid #33404a;background:#1b2229;color:var(--fg);border-radius:6px;padding:5px 9px;cursor:pointer}
+.views button[aria-pressed=true]{border-color:var(--acc);color:var(--acc)}
+label.row{display:flex;align-items:center;gap:8px;margin:5px 0}
+select,input[type=range]{width:100%}
+select{background:#1b2229;color:var(--fg);border:1px solid #33404a;border-radius:6px;padding:4px}
+.small{font-size:12px;color:var(--mut)}
+a{color:var(--acc)}
+#card{position:fixed;right:10px;bottom:calc(36px + var(--safe));width:min(380px,calc(100vw - 20px));max-height:45vh;overflow:auto;background:var(--panel);border-radius:10px;padding:10px 14px;z-index:6}
+#card h2{margin:0 26px 6px 0;font-size:16px}
+#card p{margin:4px 0}
+#cardX{position:absolute;right:8px;top:6px;border:0;background:none;color:var(--fg);font-size:20px;cursor:pointer}
+#credit{position:fixed;right:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
+#stat{position:fixed;left:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
+</style>
+<!-- three.js r186 (0.186.1), vendored in londat third_party/three (MIT): addons import 'three', 'three/webgpu' and 'three/tsl' -->
+<script type="importmap">
+{ "imports": {
+  "three": "../../../third_party/three/build/three.webgpu.js",
+  "three/webgpu": "../../../third_party/three/build/three.webgpu.js",
+  "three/tsl": "../../../third_party/three/build/three.tsl.js",
+  "three/addons/": "../../../third_party/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="view"></div>
+<div id="labels"></div>
+<button id="menu" class="btn" aria-label="Menu" title="Menu">&#9776;</button>
+<button id="nightBtn" class="btn" aria-label="Day or night" title="Day or night">&#9790;</button>
+<div id="hud">Loading the model data...</div>
+<div id="drawer" hidden>
+  <h3>Views</h3>
+  <div class="views">
+    <button data-view="area">Whole area</button><button data-view="cw">Canary Wharf</button><button data-view="plan">Plan</button>
+    <button data-view="rotherhithe">Rotherhithe (night)</button><button data-view="greenland">Greenland Pier</button><button data-view="pier">Pier</button>
+    <button data-view="greenlandday">Greenland (day)</button><button data-view="plane">From a plane</button>
+  </div>
+  <h3>Clock</h3>
+  <div id="clock" class="small"></div>
+  <input id="hour" type="range" min="0" max="23.99" step="0.05" aria-label="Hour of the day (London)">
+  <h3>Layers</h3>
+  <label class="row"><input type="checkbox" id="showLabels" checked> Place names</label>
+  <label class="row"><input type="checkbox" id="showRoads"> Roads</label>
+  <label class="row"><input type="checkbox" id="look"> Realistic buildings (materials.json)</label>
+  <label class="row">Ground <select id="ground"><option value="none">plain</option><option value="rgb2008">aerial 2008</option><option value="night2012">night 2012</option><option value="intensity2020">LiDAR intensity 2020</option></select></label>
+  <h3>Renderer: <span id="backend">?</span></h3>
+  <label class="row"><input type="checkbox" id="shadows"> Sun shadows (cascaded)</label>
+  <label class="row"><input type="checkbox" id="bloom"> Bloom by night</label>
+  <label class="row"><input type="checkbox" id="animate"> Draw every frame (moving water)</label>
+  <p class="small">Experimental port of the 3D page to three.js r186. WebGPU where the browser has it, else WebGL 2 (<a href="?webgl">force WebGL 2</a>). Shadows and bloom are on by default on WebGPU only.
+  Not yet ported: tunnels, below ground, stations, ships, river and tide, splats, styles, routes, search, KML, Drone, WebXR. <a id="glLink" href="../">Open this view in the WebGL page</a>.</p>
+  <p class="small">Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL); Environment Agency LiDAR and aerial images (Open Government Licence v3.0); Yale Bright Star Catalogue. Full list: <a href="../README.md">README</a>.</p>
+</div>
+<div id="card" hidden><button id="cardX" aria-label="Close">&times;</button><div id="cardBody"></div></div>
+<div id="stat"><span id="fps"></span></div>
+<div id="credit">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></div>
+<script src="../vendor/earcut.min.js"></script>
+<script src="../data/area.js"></script>
+<script src="../vendor/astronomy.browser.min.js"></script>
+<script src="../roofs-layer.js"></script>
+<script src="../look-layer.js"></script>
+<script type="module" src="main.js"></script>
+</body>
+</html>

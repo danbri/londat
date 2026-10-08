@@ -6,7 +6,7 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; wind (?wind); the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (3js/, WebGPU/WebGL 2); and the
   headless test recipe (two sizes x two pixel ratios). Sky, clock, weather and
   tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
@@ -1729,6 +1729,50 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1000,9000,50,14000,3.0
   https://danbri.github.io/londat/cwplans/docklands/#v=1&c=6200,3800,120,6000,-1.2,0.12&n=0&u=0&g=vz:2 .
 - **Open:** no water, roads or buildings outside the box (the Thames stops at the box edge); EU-DEM in the river is
   ground, not water; the haze is by distance from the box, not from the eye; not looked at on a phone GPU.
+
+## Three.js port (2026-10-08)
+
+An experimental port to three.js r186: `cwplans/docklands/3js/`, https://danbri.github.io/londat/cwplans/docklands/3js/
+(live once the branch `claude/docklands-threejs-port-ztkuyz` is merged to main). What it covers, the files and the URL
+switches: https://github.com/danbri/londat/blob/main/cwplans/docklands/3js/README.md . three.js is vendored in
+`third_party/three/` (its README says how to upgrade); the Pages workflow publishes that folder only.
+
+- **One renderer, two backends.** `THREE.WebGPURenderer` takes WebGPU where `navigator.gpu` exists and falls back to
+  WebGL 2 by itself; `?webgl` forces WebGL 2. Write materials in TSL (`three/tsl`), never in raw GLSL or WGSL, so one
+  graph serves both. `renderer.backend.isWebGPUBackend` tells which one runs; the page shows it.
+- **Tiers.** Cascaded shadows (`CSMShadowNode`) and night bloom (`BloomNode` in `THREE.RenderPipeline`; `PostProcessing`
+  was renamed in r183) are on by default on WebGPU only. They work on WebGL 2 too (tested headless), at a higher cost.
+- **Reuse, do not convert.** The port reads the WebGL page's data files unchanged. `build.js` `MeshF` keeps the vertex
+  layout of `index.html` (f: x y z u packed-rgba; g: centre x, centre z, base, night kind) so `roofs-layer.js`
+  (`DocklandsRoofs.prism`) and `look-layer.js` (`DocklandsLook.decode`, `attach`, `paint`) run on it as they are; then
+  `toGeometry()` splits it into the attributes `position`, `uw`, `col` (normalised bytes; the alpha byte is the
+  material code, never opacity) and `gk`. A detailed model loads as its glTF file (`../models/*.glb`, page frame,
+  origin at the model's `t` in building-models.json) with `GLTFLoader`.
+- **Shading.** The builders pass an identity `shade()`: three.js lights the faces (`flatShading` normals from the
+  derivatives, `DoubleSide` because the outline rings and the roofs come in both windings). The data colours are sRGB;
+  the TSL graphs convert them with `sRGBTransferEOTF` before lighting.
+- **Night** is the facade program's `nightCol` as `emissiveNode` (scaled by `U.night` from the sun's altitude, -2 to -8
+  degrees), so the lit windows feed the bloom. The halo of One Canada Square is index.html `CROWN.NEUTRAL`; the campaign
+  colours by date are not ported.
+- **Water.** The LiDAR ground over the river is the survey's water surface and hid the water polygons in the first
+  build. `terrainGeometry()` sinks the ground inside each water polygon (eroded by one 20 m cell) to 1.5 m below the
+  water's level.
+- **Sky.** `SkyMesh` (TSL) is scaled to 10 km, drawn first with no depth test (the camera's far plane is 20 km at
+  least); stars are a `Sprite` with `PointsNodeMaterial` and instanced position and size (WebGPU draws points 1 px only).
+- **Near plane.** For a photo view the eye is a few metres above the water: near = min(dist / 400, height above the
+  ground / 2), clamped to 0.5 to 40 m. With dist / 400 alone the foreground was cut away.
+- **Chromium 141 fault.** three.js r186 puts `swizzle: 'rgba'` in every texture view descriptor; Chromium 141 (the
+  container's Playwright browser) throws a TypeError on it and every WebGPU frame failed. `main.js` wraps
+  `GPUTexture.prototype.createView` to retry such a call without the member. Remove the wrapper when the browsers in use
+  accept it.
+- **Test.** `node cwplans/docklands/3js/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
+  SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
+  --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or
+  an HTTP error, and writes screenshots to `3js/test/out/` (ignored by git). Hook: `window.__docklands3` (`backend`,
+  `STATS`, `setView`, `setCam`, `camState`, `setClock`, `pickAt`, `selectModel`, `shareHash`).
+- Measured 2026-10-08 (headless, software): 41,803 buildings in 80 tiles, 1,127,712 triangles, built in 1.8 to 3.5 s;
+  a frame submitted in 15 to 24 ms (WebGL 2) and 47 to 102 ms (WebGPU with shadows and bloom). Software numbers only;
+  not yet measured on a phone GPU.
 
 ## Testing
 

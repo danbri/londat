@@ -1,0 +1,284 @@
+// The Three.js port of the Docklands 3D page (experimental): https://danbri.github.io/londat/cwplans/docklands/3js/
+// three.js r186 from third_party/three (vendored), WebGPURenderer: WebGPU where the browser has it, else the WebGL 2
+// backend (?webgl forces it). The same TSL node materials compile for both. The data are the WebGL page's own files
+// (../data/*.js, *.json) read unchanged; roofs-layer.js and look-layer.js are reused through the mesh-builder interface
+// of build.js. URL switches: ?view=, ?t=, ?night, ?webgl, ?look=real, ?ground=rgb2008|night2012|intensity2020,
+// ?shadows=0|1, ?bloom=0|1, #at=x,z[,dist], and the WebGL page's share hash #v=1&c=tx,tz,ty,dist,yaw,pitch.
+// Skill: docklands-3d-page, "Three.js port".
+import * as THREE from 'three/webgpu';
+import { pass } from 'three/tsl';
+import { bloom } from 'three/addons/tsl/display/BloomNode.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { CSMShadowNode } from 'three/addons/csm/CSMShadowNode.js';
+import { A, MFP, dec, buildBuildings, terrainGeometry, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
+import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
+import { Sky3, fromLondon } from './sky3.js';
+
+const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const flag = (k, dflt) => qs.has(k) ? !/^(0|false|off|no)$/i.test(qs.get(k)) : dflt;
+const DATA = '../data/';
+const loadJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
+const say = t => { hud.textContent = t; };
+let need = true;
+function draw() { need = true; }   // the render loop draws a frame when asked (and while the camera moves)
+
+// ---------- renderer: WebGPU, else WebGL 2
+// three.js r186 passes swizzle: 'rgba' (the identity) in every texture view descriptor; Chromium 141 knows an older form
+// of the member and throws a TypeError, so every frame fails. Retry such a call without the member (it changes nothing).
+if (globalThis.GPUTexture) { const cv = GPUTexture.prototype.createView;
+  GPUTexture.prototype.createView = function (d) { if (!d || d.swizzle !== 'rgba') return cv.call(this, d); try { return cv.call(this, d); } catch (e) { if (!(e instanceof TypeError)) throw e; const { swizzle, ...rest } = d; return cv.call(this, rest); } }; }
+const renderer = new THREE.WebGPURenderer({ antialias: true, forceWebGL: flag('webgl', false), powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+$('view').appendChild(renderer.domElement);
+try { await renderer.init(); } catch (e) { say('This browser has neither WebGPU nor WebGL 2: ' + e.message); throw e; }
+const GPU = !!renderer.backend.isWebGPUBackend, BACKEND = GPU ? 'WebGPU' : 'WebGL 2';
+$('backend').textContent = BACKEND;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45.8, innerWidth / innerHeight, 2, 30000);
+const controls = new OrbitControls(camera, renderer.domElement);
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.12, screenSpacePanning: false, minDistance: 80, maxDistance: 16000, maxPolarAngle: Math.PI / 2 - 0.02, zoomToCursor: true });
+controls.listenToKeyEvents(window);
+
+// ---------- static layers
+say('Building the model...');
+const box = (await loadJSON(DATA + 'tex/textures.json').catch(() => null))?.box || { x0: A.meta.extent.x0, x1: A.meta.extent.x1, z0: A.meta.extent.z0, z1: A.meta.extent.z1 };
+const tmat = terrainMaterial(), terrain = new THREE.Mesh(terrainGeometry(box), tmat); terrain.receiveShadow = true; scene.add(terrain);
+const water = new THREE.Mesh(waterGeometry(), waterMaterial()); water.receiveShadow = true; scene.add(water);
+const greens = new THREE.Mesh(greensGeometry(), vertexColourMaterial()); greens.receiveShadow = true; scene.add(greens);
+const LN = linesGeometry(), lineMat = vertexColourMaterial(), rail = new THREE.Mesh(LN.rail, lineMat), roads = new THREE.Mesh(LN.road, lineMat); scene.add(rail, roads);
+roads.visible = flag('roads', true);
+// keep the flat layers above the ground in the depth buffer (the WebGL page offsets them by 0.1 to 0.4 m)
+for (const m of [water.material, greens.material, lineMat]) { m.polygonOffset = true; m.polygonOffsetFactor = -1; m.polygonOffsetUnits = -4; }
+
+const bmat = buildingMaterial(), buildings = new THREE.Group(); scene.add(buildings);
+let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null;
+const skip = new Set();
+function rebuildBuildings() {
+  for (const m of buildings.children) m.geometry.dispose(); buildings.clear();
+  const t0 = performance.now();
+  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
+  const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
+  STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
+  draw();
+}
+const STATS = {};
+rebuildBuildings();
+
+// ---------- sky and light
+const sky = new Sky3(scene);
+const focus = new THREE.Vector3();
+let clock = qs.get('t') ? fromLondon(qs.get('t')) : Date.now(); if (!isFinite(clock)) clock = Date.now();
+if (qs.has('night') && !qs.get('t')) clock = fromLondon(new Date().toISOString().slice(0, 10) + 'T22:00');
+let NIGHT = false;
+function setClock(t) {
+  clock = t; const s = sky.setTime(t, focus); NIGHT = s.night;
+  U.night.value = THREE.MathUtils.clamp((-s.sun.alt - 2) / 6, 0, 1);
+  scene.background = s.day < 0.02 ? new THREE.Color(0x07080c) : null;
+  bmat.roughness = NIGHT ? 0.5 : 0.82;
+  syncClockUi(); syncPost(); draw();
+}
+
+// ---------- shadows (cascaded, WebGPU by default) and bloom (by night, WebGPU by default)
+let csm = null;
+function setShadows(on) {
+  sky.sun.castShadow = on;
+  if (on && !csm) { const sh = sky.sun.shadow; sh.mapSize.set(2048, 2048); sh.camera.near = 1; sh.camera.far = 9000; sh.bias = -0.0004; sh.normalBias = 0.6;
+    csm = new CSMShadowNode(sky.sun, { cascades: 3, maxFar: 7000, mode: 'practical', lightMargin: 600 }); csm.fade = true; sh.shadowNode = csm; }
+  $('shadows').checked = on; draw();
+}
+const pipe = new THREE.RenderPipeline(renderer), scenePass = pass(scene, camera), scol = scenePass.getTextureNode('output');
+const bloomNode = bloom(scol, 0.9, 0.45, 0.6);
+let BLOOM = flag('bloom', GPU);
+function syncPost() { pipe.outputNode = BLOOM && U.night.value > 0.01 ? scol.add(bloomNode) : scol; pipe.needsUpdate = true; $('bloom').checked = BLOOM; }
+
+// ---------- camera: the WebGL page's (target, yaw, pitch, dist), eye = target + dist (sin yaw cos pitch, sin pitch, cos yaw cos pitch)
+const VIEWS = {
+  area: { tx: -1400, ty: 0, tz: 800, yaw: .35, pitch: .62, dist: 8200 },
+  cw: { tx: 50, ty: 0, tz: 40, yaw: .7, pitch: .5, dist: 1500 },
+  under: { tx: 40, ty: -10, tz: 20, yaw: .75, pitch: .42, dist: 750 },
+  plan: { tx: -1400, ty: 0, tz: 800, yaw: 0, pitch: 1.55, dist: 9500 },
+  rotherhithe: eyeView([-896, 6.9, 1150], 43.3, -1, 42),
+  greenland: eyeView([-825, 5.3, 1160], 39.7, 3.5, 44),
+  pier: eyeView([-740, 6, 140], 83.6, 11, 69),
+  greenlandday: { ...eyeView([-830, 4.5, 1158], 51.9, 6.45, 99.9), night: false },
+  plane: { ...eyeView([211, 802, -845], 223.84, -13.56, 56.9), roll: 9.18, night: false },
+};
+function eyeView(E, az, lp, hfov, D = 1200) {   // index.html eyeView: a photo's camera, orbiting a point 1.2 km along the line of sight
+  const a = az * Math.PI / 180, p = lp * Math.PI / 180;
+  return { tx: E[0] + D * Math.sin(a) * Math.cos(p), ty: E[1] + D * Math.sin(p), tz: E[2] - D * Math.cos(a) * Math.cos(p), yaw: -a, pitch: -p, dist: D, hfov: hfov * Math.PI / 180, night: true };
+}
+let HFOV = null, ROLL = 0;
+function setCam(c) {
+  const ce = Math.cos(c.pitch); controls.target.set(c.tx, c.ty || 0, c.tz);
+  camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, (c.ty || 0) + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce);
+  HFOV = c.hfov || null; ROLL = c.roll || 0; camera.fov = c.fov ? c.fov * 180 / Math.PI : 45.8;
+  // a photo view looks up or level: let the orbit go below the horizontal for it
+  controls.maxPolarAngle = c.pitch < 0.05 ? Math.PI - 0.05 : Math.PI / 2 - 0.02; controls.minDistance = Math.min(80, c.dist);
+  resize(); controls.update(); draw();
+}
+function camState() {
+  const d = camera.position.clone().sub(controls.target), dist = d.length();
+  return { tx: controls.target.x, ty: controls.target.y, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)) };
+}
+function setView(k) {
+  const v = VIEWS[k]; if (!v) return; setCam(v);
+  if (v.night && !qs.get('t')) setClock(fromLondon(new Date(clock).toISOString().slice(0, 10) + 'T21:30'));
+  if (v.night === false && NIGHT && !qs.get('t')) setClock(fromLondon(new Date(clock).toISOString().slice(0, 10) + 'T14:00'));
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === k)));
+}
+
+// ---------- share hash (the WebGL page's #v=1&c=…, nav.js): open the same view on either page
+const parseHash = h => { const m = {}; for (const part of String(h || '').replace(/^#/, '').split('&')) { const i = part.indexOf('='); if (i > 0) try { m[part.slice(0, i)] = decodeURIComponent(part.slice(i + 1)); } catch { /* bad escape */ } } return m; };
+function shareHash() {
+  const c = camState(), r = (x, k = 1) => Math.round(x * k) / k;
+  return `#v=1&c=${[r(c.tx), r(c.tz), r(c.ty), r(c.dist), r(c.yaw, 1000), r(c.pitch, 1000)].join(',')}${NIGHT ? '&n=1' : ''}${qs.get('t') ? '&t=' + encodeURIComponent(qs.get('t')) : ''}${SEL >= 0 && KEYS ? '&id=osm:' + KEYS.ids[SEL] : ''}`;
+}
+let hashTimer = 0;
+const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => { history.replaceState(null, '', location.pathname + location.search + shareHash()); const q = new URLSearchParams(location.search); for (const k of ['webgl', 'shadows', 'bloom', 'look', 'ground', 'roads', 'towers', 'roofs']) q.delete(k); $('glLink').href = '../' + (q.size ? '?' + q : '') + shareHash(); }, 400); };
+
+// ---------- picking and the record card
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let SEL = -1, KEYS = null, keysLoading = null;
+const keys = () => keysLoading || (keysLoading = loadJSON(DATA + 'building-keys.json').then(J => { if (J.model && J.model.fp !== MFP) { console.warn('building-keys.json is for another area.js'); return null; } J.ids = J.ids.split(','); return (KEYS = J); }).catch(e => { console.warn(e); return null; }));
+const selMat = new THREE.MeshBasicNodeMaterial({ color: 0xffd34d, transparent: true, opacity: 0.35, depthTest: true, side: THREE.DoubleSide }), sel = new THREE.Mesh(new THREE.BufferGeometry(), selMat);
+sel.renderOrder = 2; scene.add(sel);
+function pickAt(x, y) {
+  const r = renderer.domElement.getBoundingClientRect(); ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects([...buildings.children, ...models.children], true)[0]; if (!hit) return -1;
+  if (hit.object.userData.model != null) return hit.object.userData.model;
+  let o = hit.object; while (o && o.userData.model == null && o.parent) o = o.parent; if (o && o.userData.model != null) return o.userData.model;
+  return hit.object.geometry.userData.bi ? hit.object.geometry.userData.bi[hit.face.a] : -1;
+}
+function highlight(i) {   // the picked building's outline as a translucent prism
+  sel.geometry.dispose(); if (i < 0) { sel.geometry = new THREE.BufferGeometry(); return; }
+  const b = A.buildings[i], f = dec(b.p), n = b.holes && b.holes.length ? b.holes[0] : f.length / 2, sh = new THREE.Shape();
+  for (let k = 0; k < n; k++) sh[k ? 'lineTo' : 'moveTo'](f[2 * k], -f[2 * k + 1]);
+  const G = new THREE.ExtrudeGeometry(sh, { depth: b.h + 0.6, bevelEnabled: false }); G.rotateX(-Math.PI / 2); G.translate(0, b.b - 0.3, 0); sel.geometry = G;
+}
+async function selectModel(i) {
+  SEL = i; highlight(i); writeHash(); draw();
+  const card = $('card'); if (i < 0) { card.hidden = true; return; }
+  const b = A.buildings[i]; card.hidden = false;
+  $('cardBody').innerHTML = `<h2>Building ${i}</h2><p class="small">Loading the OpenStreetMap key...</p>`;
+  const K = await keys(); if (SEL !== i) return;
+  const id = K ? K.ids[i] : null, o = (K && K.osm[id]) || {}, osmUrl = id ? `https://www.openstreetmap.org/${id[0] === 'w' ? 'way' : 'relation'}/${id.slice(1)}` : null;
+  const name = o.n || o.h || o.a || (id ? `OpenStreetMap ${id}` : `Building ${i}`), rf = ROOFS && ROOFS.get(i), dm = BMOD && BMOD.find(m => m.mi.includes(i));
+  $('cardBody').innerHTML = `<h2>${esc(name)}</h2>` +
+    `<p>${[o.a && o.n ? esc(o.a) : '', o.pc ? esc(o.pc) : '', o.b ? 'type ' + esc(o.b) : '', o.l ? esc(o.l) + ' levels' : ''].filter(Boolean).join(' · ')}</p>` +
+    `<p>Ground ${b.b.toFixed(1)} m OD, height ${b.h.toFixed(1)} m${b.mh ? `, from ${b.mh.toFixed(1)} m` : ''}, top ${(b.b + b.h).toFixed(1)} m OD${rf ? `; roof ${esc(rf.shape === 'parts' ? 'in parts' : rf.shape)}, ridge ${(b.b + rf.ridge).toFixed(1)} m OD` : ''}${dm ? `; detailed model (glTF): ${esc(dm.name)}` : ''}.</p>` +
+    `<p class="small">Model index ${i}${id ? ` · <a href="${osmUrl}" target="_blank" rel="noopener">OpenStreetMap ${esc(id)}</a>` : ''} · <a href="../${id ? '#v=1&id=osm:' + id + '&c=' + shareHash().split('c=')[1].split('&')[0] : ''}">open in the WebGL page</a></p>`;
+  writeHash();
+}
+let down = null;
+renderer.domElement.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+renderer.domElement.addEventListener('pointerup', e => { if (!down) return; const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); if (moved < 6 && performance.now() - down.t < 500) selectModel(pickAt(e.clientX, e.clientY)); down = null; });
+$('cardX').onclick = () => selectModel(-1);
+
+// ---------- labels: the named places of area.js, nearest first, at most one in a 150 x 30 px cell, 36 at most
+const labels = A.places.filter(p => p.name).map(p => { const el = document.createElement('div'); el.className = 'lab'; el.textContent = p.name; $('labels').appendChild(el); return { p, el, v: new THREE.Vector3(p.x, (p.g ?? groundAt(p.x, p.z)) + (p.h || 20), p.z) }; });
+const tmp = new THREE.Vector3();
+function placeLabels() {
+  const W = innerWidth, H = innerHeight, used = new Set(), cam = camera.position, on = $('showLabels').checked;
+  const order = labels.map(l => [l, l.v.distanceToSquared(cam)]).sort((a, b) => a[1] - b[1]);
+  let shown = 0;
+  for (const [l, d2] of order) {
+    tmp.copy(l.v).project(camera); const x = (tmp.x + 1) / 2 * W, y = (1 - tmp.y) / 2 * H, cell = Math.floor(x / 150) + ',' + Math.floor(y / 30);
+    const vis = on && tmp.z < 1 && x > 0 && x < W && y > 40 && y < H && d2 < 6000 * 6000 && !used.has(cell) && shown < 36;
+    if (vis) { used.add(cell); shown++; l.el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; }
+    if (l.el.hidden === vis) l.el.hidden = !vis;
+  }
+}
+
+// ---------- detailed building models: the glTF binary files beside their descriptions (tools/build-building-models.mjs)
+const models = new THREE.Group(); scene.add(models);
+async function loadModels() {
+  const J = await loadJSON(DATA + 'building-models.json').catch(() => null); if (!J) return;
+  BMOD = Object.values(J.models).filter(m => m.model_fp === MFP && m.mi && m.mi.length);
+  const gl = new GLTFLoader();
+  for (const m of BMOD) {
+    const url = '../models/' + m.source.glb.split('/').pop();
+    try { const g = await gl.loadAsync(url); g.scene.position.set(...m.t); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); g.scene.userData.model = m.mi[0]; models.add(g.scene); for (const i of m.mi) skip.add(i); }
+    catch (e) { console.warn('model', url, e); }
+  }
+  if (skip.size) rebuildBuildings();
+}
+
+// ---------- optional data: towers, roof shapes, realistic look, ground images
+async function loadOptional() {
+  const jobs = [];
+  if (flag('towers', true)) jobs.push(loadJSON(DATA + 'towers.json').then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); }).catch(e => console.warn('towers', e)));
+  if (flag('roofs', true) && globalThis.DocklandsRoofs) jobs.push(loadJSON(DATA + 'roofs.json').then(T => { ROOFS = DocklandsRoofs.decode(T, MFP); }).catch(e => console.warn('roofs', e)));
+  if (/^(real|realistic|1)$/i.test(qs.get('look') || '') && globalThis.DocklandsLook) jobs.push(loadJSON(DATA + 'materials.json').then(J => { const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } }).catch(e => console.warn('materials', e)));
+  await Promise.all(jobs); rebuildBuildings();
+  $('look').checked = !!LOOK;
+}
+const texLoader = new THREE.TextureLoader(), texCache = {};
+async function setGround(k) {
+  $('ground').value = k;
+  if (k === 'none') { tmat.setGround(null); draw(); return; }
+  const t = texCache[k] || (texCache[k] = await texLoader.loadAsync(DATA + 'tex/' + k + '.jpg'));
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; tmat.setGround(t); draw();
+}
+
+// ---------- UI
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
+$('menu').onclick = () => { const d = $('drawer'); d.hidden = !d.hidden; };
+$('shadows').onchange = e => setShadows(e.target.checked);
+$('bloom').onchange = e => { BLOOM = e.target.checked; syncPost(); draw(); };
+$('showLabels').onchange = () => draw();
+$('showRoads').checked = roads.visible; $('showRoads').onchange = e => { roads.visible = e.target.checked; draw(); };
+$('ground').onchange = e => setGround(e.target.value);
+$('look').onchange = async e => { if (e.target.checked && !LOOK) { const J = await loadJSON(DATA + 'materials.json'); const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } } else if (!e.target.checked) LOOK = null; rebuildBuildings(); };
+const hourOf = t => { const p = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t)); return p; };
+function syncClockUi() { const s = sky.state; $('clock').textContent = `${new Date(clock).toLocaleDateString('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric' })} ${hourOf(clock)} London · sun ${s ? s.sun.alt.toFixed(1) : '?'}°`; const [hh, mm] = hourOf(clock).split(':').map(Number); $('hour').value = hh + mm / 60; }
+$('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClock(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
+$('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }); setClock(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
+
+// ---------- render loop: on demand (a frame while the camera moves or a clock changes), always while the water moves
+function resize() {
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h;
+  if (HFOV) camera.fov = 2 * Math.atan(Math.tan(HFOV / 2) / camera.aspect) * 180 / Math.PI;   // a photo view keeps its horizontal field on any screen
+  camera.updateProjectionMatrix(); draw();
+}
+addEventListener('resize', resize);
+controls.addEventListener('change', () => { draw(); writeHash(); });
+let frames = 0, fpsT = performance.now(), fps = 0;
+renderer.setAnimationLoop(() => {
+  if (controls.update()) need = true;
+  if (!need && !$('animate').checked) return; need = false;
+  const d = camera.position.distanceTo(controls.target);
+  const above = camera.position.y - groundAt(camera.position.x, camera.position.z); camera.near = THREE.MathUtils.clamp(Math.min(d / 400, above / 2), 0.5, 40); camera.far = Math.max(d * 6 + 6000, 20000); camera.updateProjectionMatrix();
+  if (ROLL) { camera.up.set(0, 1, 0); camera.lookAt(controls.target); camera.rotateZ(-ROLL * Math.PI / 180); }
+  focus.copy(controls.target); sky.sun.position.copy(sky.sky.sunPosition.value).multiplyScalar(4000).add(focus); sky.sun.target.position.copy(focus);
+  if (sky.stars) sky.stars.position.copy(camera.position);
+  sky.sky.position.copy(camera.position);
+  placeLabels();
+  const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0;
+  frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
+  $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
+});
+
+// ---------- start
+setShadows(flag('shadows', GPU));
+const H = parseHash(location.hash), c = (H.c || '').split(',').map(Number), at = /^#at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);
+if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) clock = t; }
+setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(new Date().toISOString().slice(0, 10) + 'T22:00') : clock);
+if (c.length >= 6 && c.every(isFinite)) setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5] });
+else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw: .6, pitch: .6 });
+else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');
+setGround(qs.get('ground') || 'none');
+say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
+sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
+await loadOptional(); await loadModels();
+if (H.id && /^osm:[wr]\d+$/.test(H.id)) { const K = await keys(); const i = K ? K.ids.indexOf(H.id.slice(4)) : -1; if (i >= 0) selectModel(i); }
+say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
+setTimeout(() => $('hud').classList.add('fade'), 4000);
+
+// test hooks (the WebGL page has window.__docklands)
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, fromLondon, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash };
