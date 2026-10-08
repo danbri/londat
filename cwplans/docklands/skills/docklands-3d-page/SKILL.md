@@ -1257,7 +1257,9 @@ as new default for that building." Live: https://danbri.github.io/londat/cwplans
 ## Roof shapes (2026-10-08)
 
 Owner, 2026-10-08: "the buildings without custom models are painfully flat and samey. We should try at a minimum to
-guess roof types, but ultimately to get more realism." Live (terraces in Deptford, then Bow):
+guess roof types, but ultimately to get more realism." Live (terraces in Deptford, then Bow; then terraces with rear
+outriggers and L-shaped blocks drawn in parts, near Deptford Park):
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1450,3480,4,160,0.6,0.7&n=0&u=0 and
 https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1425,1875,4,220,0.3,0.6&n=0&u=0 and
 https://danbri.github.io/londat/cwplans/docklands/#v=1&c=1875,-1875,8,260,0.5,0.65&n=0&u=0
 
@@ -1331,12 +1333,77 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=1875,-1875,8,260,0.5,0.
   so the sign of the ridge offset: the profile check showed ridge cells lower than edge cells. u is now normalised to a
   bearing in 0 to 180 before the fits. (c) OSM `roof:shape=gabled` on buildings whose LiDAR fits slope down to the
   middle (valley or butterfly "London" roofs): the rule against the LiDAR fit removed 486 OSM roofs (852 to 366).
-- **Limits, open.** Complex outlines stay flat (12,513: L and T shapes, wings in one outline, the Pacific Tavern):
-  next, cut an outline into rectangles or grow planes from the cells. A rear outrigger gets the main roof's back slope,
-  clamped at the eave, not its own lower roof. Semi-detached halves (hipped at one end only) come out gabled: OSM hipped
-  is mostly LiDAR gabled; no half-hip, mansard, skillion, butterfly or gambrel shapes. Heights are above the model
-  ground `b`, not the DTM (median DTM minus `b` is about 0). Rerun after build-docklands.mjs and
-  key-model-buildings.mjs; the fingerprint stops the page from using stale rows.
+- **Parts (operation version 2, 2026-10-08).** Owner: the ordinary buildings are "painfully flat and samey". The
+  12,513 complex outlines of version 1 (L and T shapes, wings, rear outriggers) are now cut into parts.
+  - **Cut** (`lidar-roofs.py`, `decompose()`, rules `CUT`, written into roofs.json `cut_rules`): an outline whose area is
+    under 0.9 of its minimum-area rectangle is cut by chords from its reflex corners (turn 20 deg or more; the extension
+    of the edge before or after the corner to the first edge it meets; within 0.3 m of a vertex it snaps to it). A chord
+    must run within 12 deg of an edge of 3 m or more (else a short skewed notch edge cut a long diagonal slice: index 6270,
+    first run). Each piece is cut again while it is under 0.9 of its rectangle, up to 10 pieces, no piece under 10 m2 or
+    2 m wide. Choice: the least waste (rectangle area minus piece area of the two pieces); cuts within 2 m2 (or 5 %) of
+    the best are decided by the LiDAR (the summed error, cells x the best fit's median absolute error). Each piece is
+    fitted like a building (cells 0.75 m from the outline and 0.4 m from the cuts).
+  - **Fifth fit:** one inclined plane (skillion: `h = c + a s + b t`), kept when the slope is 0.08 to 1.0, the rise 0.6 m
+    or more, and its error under 0.8 of the best gable's. The ridge is the high edge, through the outline vertex furthest
+    uphill; bearing 0 to 360, the plane falls to the right of it.
+  - **Choice** (`build-roofs.mjs`, `P.parts_gain` etc.): a complex building with at least one pitched part, or a LiDAR
+    pitched building whose parts' summed error is under 0.75 of its one roof's (the rear outrigger fault), is drawn in
+    parts. A part with no pitched fit is flat at its fitted level (at least 2 m, at most the model height + 1 m); a part
+    with no cells at the highest eave of the others. A gable whose piece ends at a cut that crosses its ridge line,
+    against a gabled or hipped wing whose ridge is 53 to 127 deg from its own (`cross_dot` 0.6) and no more than 0.3 m
+    lower, runs on into that wing up to its ridge (`e0`, `e1`): the two roofs make a valley. A taller wing keeps its
+    gable end at the cut.
+  - **Same pieces in three places.** `roofs-layer.js` `pieces()` / `splitRing()` and `lidar-roofs.py` `split_ring()`
+    must cut alike (a cut is `[piece, edge, t x 10000, edge, t x 10000]` on that piece's ring; the first piece is
+    replaced, the second appended; a vertex within 1 mm of the next is dropped). `build-roofs.mjs` cuts with the page's
+    code and stops when a piece differs from the Python ring by more than 1 cm. Change both or neither.
+  - **roofs.json `m`:** per building: model index delta, number of cuts, the cuts, then 10 integers a part (shape code
+    0 flat, 1 gabled, 2 hipped, 3 pyramidal, 4 skillion; x, z dm; bearing 0.1 deg; eave, ridge cm; half span dm; half
+    ridge length dm or -1; run before / after the piece dm). Single roofs stay in `s`/`r` (code `k` = skillion).
+    1,303 kB, 475 kB gzip (version 1: 641 kB, 235 kB).
+  - **Page** (`prismParts()`): covers = each part's piece and its runs (the outline clipped to the band of the piece
+    across the ridge, beyond the cut line, to the run's end). Outline walls go from the ground to the highest roof over
+    each point (membership tested 2 cm inside); each cover's inner edges (cuts, run boundaries) get a wall only where its
+    roof stands above every other cover there (tested 2 cm outside), so there are no gaps and no coplanar overlaps.
+    Faces: each cover clipped per plane and at the eave and ridge; the depth test draws the union of the roofs. A run
+    only crosses a wing with a different ridge direction, so faces never overlap in one plane (no z-fighting).
+    `__docklands.ROOFS` gives `{ shape: 'parts', cuts, parts, eave, ridge }` for these.
+  - **Measured** (logged run 2026-10-08, 21.5 min, of which lidar-roofs.py about 18 min; graph version
+    `https://kgx.foaf.tv/id/graphroofsb6a65e444fa5affb`, 113,266 triples): 10,739 outlines cut; 5,331 buildings drawn in
+    parts (2,679 were complex, 2,326 gabled, 302 skillion, 17 hipped, 7 pyramidal); parts: gabled 6,976, skillion 2,404,
+    hipped 270, pyramidal 51, flat 5,054; 810 gable runs (valleys). Single roofs: gabled 14,704, skillion 1,745, hipped
+    406, pyramidal 174, OSM 296; flat 6,464; complex 8,594; nodata 960. Of the 12,513 complex of version 1: 2,895 now in
+    parts with a pitched part, 1,024 skillion, 8,594 still flat. 560 of the 7,052 flat became skillion (planes with a fall
+    of 0.6 m or more; on a hand check 5 of 6 fit the DSM to 0.04 m or better).
+  - **Fit against the DSM** (every building in parts; cells 0.75 m inside the outline; median absolute DSM minus drawn
+    roof; a throwaway script, runs approximated as rectangles): were complex (2,923, drawn flat at the model height):
+    median 1.15 m before, 0.24 m after, 90th percentile 2.76 m before, 1.02 m after; better for 2,721, worse for 175.
+    Were one pitched roof (2,408): 0.22 m before, 0.10 m after; better 1,823, worse 132.
+  - **Hand check** (DSM, drawn roof and difference side by side, outline and cuts drawn; random, seed 29): complex now
+    in parts, 9: 5 right (form and ridge directions: 26063, 2254, 13789, 30659, 31078), 4 partly (one or two wings that
+    are pitched in the DSM drawn flat: 11195, 2581, 23694, 13713). Pitched now in parts, 3 of 3 closer to the DSM (an
+    outrigger as a skillion or a lower gable). Complex now skillion, 3: 2 fit, 1 doubtful (2630, a gable in the DSM).
+    Still complex, earlier sample (seed 13) 6: mostly rectangles with no single roof (plant, a half-empty outline, an
+    outline off the building); 1 or 2 look pitched.
+  - **Pacific Tavern** (index 7477, known: south wing eave 6.1 m, ridge 8.7 m; north wing eave 3.4 m, ridge 6.0 m): one
+    cut at ring vertex 4; south piece (with the corner) gabled, ridge 9.04 m, slope 0.665, eave 5.25 m at the OSM outline
+    5.7 m from the ridge (the OSM wing is 11.4 m deep, the building 9.7 m: at 4.85 m from the ridge the plane gives
+    5.8 m); north wing gabled, ridge 6.12 m, eave 3.29 m, and it runs 8 m into the south wing (a valley). Error against
+    the DSM 1.62 m (flat) to 0.16 m. The page draws the detailed model there; turn off Layers > Show > "Detailed models"
+    to see the roof data.
+  - **Faults met.** (d) An oblique chord: the first gable-run rule took the cut's midpoint near the piece end; with wings
+    at 57 deg (the tavern) the midpoint is 3 m short of the end and the run was skipped; `gableEnds()` now takes the
+    point where the ridge line meets the cut, and the run is clipped beyond the cut line. (e) A flat part fitted at 0.2 m
+    (an empty yard inside an outline, index 1838): flat parts are at least 2 m. (f) A skillion ridge centre at the
+    rectangle's projection lay outside the outline box for a diagonal fall (index 1577): it is now the uphill vertex.
+- **Limits, open.** 8,594 outlines stay complex (flat at the model height): mostly rectangles with no single roof shape
+  (several roofs in one rectangle, plant, outlines that do not fit the building); next, grow planes from the cells
+  (region growing or RANSAC) inside one outline. Parts that are pitched in the DSM but fail the rules are drawn flat
+  (about 4 in 9 cut buildings have one). Cuts follow the outline only; a roof split that is not on a corner (a terrace
+  row of one outline with steps in height) is not found. Semi-detached halves (hipped at one end only) come out gabled;
+  no half-hip, mansard, butterfly or gambrel shapes. Heights are above the model ground `b`, not the DTM (median DTM
+  minus `b` is about 0). Rerun after build-docklands.mjs and key-model-buildings.mjs; the fingerprint stops the page
+  from using stale rows.
 - **Rebuild:** `ROOFS_TILES=<dir of the 8 zips> ROOFS_PBF=<extract> node cwplans/tools/build-roofs.mjs` (default dirs:
   `cwplans/data/raw/docklands/lidar/` and `cwplans/data/raw/docklands/greater_london-latest.osm.pbf`, both ignored by
   git); `ROOFS_DRY=1 ROOFS_MEAS=<saved lidar-roofs.py output>` to tune the rules without a log entry. Then `npm test`,

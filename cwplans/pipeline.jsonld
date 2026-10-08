@@ -9856,7 +9856,7 @@
    "@id": "https://kgx.foaf.tv/id/toolbuildroofs",
    "@type": "prov:Activity",
    "rdfs:label": "build-roofs",
-   "dct:description": "tools/lidar-roofs.py mosaics the DSM and DTM tiles (read from the zips), takes for each model building of 25 m or less (no holes, no min_height) the 1 m cells whose centres are inside the outline and 0.75 m or more from its edges, subtracts the model ground, and fits four roofs by least squares with one trimming pass, in the outline's minimum-area rectangle: flat; gable with the ridge along the long side and along the short side (ridge offset searched in 0.5 m steps within 30 % of the span); hipped (equal pitch on four sides). build-roofs.mjs keeps a pitched fit when its slope is 0.18 to 1.8, its rise 1 m or more, its eave 2 m or more, its median absolute error 0.45 m or less and at most 0.7 of the flat fit's and a quarter of the rise; a hipped fit only when its error is under 0.8 of the best gable's (pyramidal when the rectangle's sides are within 1.2 of each other). Else flat (error 0.3 m or less) or complex. Where the LiDAR gives no shape, OSM roof:shape gabled, hipped or pyramidal is used (ridge at the model height, roof:height, roof:levels x 2.5 m or a 35 deg pitch), unless the LiDAR fit in that ridge direction slopes the wrong way. Writes the page file and, per building with a shape, its shape, eave, ridge, ridge bearing and basis to the graph.",
+   "dct:description": "tools/lidar-roofs.py mosaics the DSM and DTM tiles (read from the zips), takes for each model building of 25 m or less (no holes, no min_height) the 1 m cells whose centres are inside the outline and 0.75 m or more from its edges, subtracts the model ground, and fits four roofs by least squares with one trimming pass, in the outline's minimum-area rectangle: flat; gable with the ridge along the long side and along the short side (ridge offset searched in 0.5 m steps within 30 % of the span); hipped (equal pitch on four sides). build-roofs.mjs keeps a pitched fit when its slope is 0.18 to 1.8, its rise 1 m or more, its eave 2 m or more, its median absolute error 0.45 m or less and at most 0.7 of the flat fit's and a quarter of the rise; a hipped fit only when its error is under 0.8 of the best gable's (pyramidal when the rectangle's sides are within 1.2 of each other). Else flat (error 0.3 m or less) or complex. Where the LiDAR gives no shape, OSM roof:shape gabled, hipped or pyramidal is used (ridge at the model height, roof:height, roof:levels x 2.5 m or a 35 deg pitch), unless the LiDAR fit in that ridge direction slopes the wrong way. Writes the page file and, per building with a shape, its shape, eave, ridge, ridge bearing and basis to the graph. Since operation version 2 (2026-10-08): a fifth fit, one inclined plane (skillion, slope 0.08 to 1.0, kept when its error is under 0.8 of the best gable's); an outline that is not a rectangle (area under 0.9 of its minimum-area rectangle) is cut into parts with chords from its reflex corners along a long edge (3 m or more, within 12 deg), the cut chosen by the least waste against the parts' rectangles and, between equal cuts, by the LiDAR error; each part is fitted as a building, with cells 0.4 m or more from the cuts. A complex building with one pitched part, or a pitched building whose parts' summed error is under 0.75 of its one roof's, is drawn in parts (flat parts at their fitted level, at least 2 m); a gable that ends at a cut against a crossing wing (ridges 53 to 127 deg apart, its ridge at most 0.3 m above the other's) runs on to that wing's ridge, so the page draws a valley. The pieces are cut with roofs-layer.js pieces() and checked against the rings of lidar-roofs.py.",
    "prov:used": [
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
@@ -9866,6 +9866,9 @@
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/lidar-roofs.py"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/roofs-layer.js"
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcealidar",
@@ -15699,7 +15702,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "roof shapes of the low model buildings of the 3D page (model height 25 m or less): gabled, hipped or pyramidal, with the ridge line (centre, bearing), half span, half ridge length, eave and ridge heights above the model ground; from robust plane fits to the EA LiDAR first-return DSM 2022 inside each outline, else from the OSM roof tags; the model fingerprint; counts by class and the OSM roof:shape against LiDAR class table",
+   "dct:title": "roof shapes of the low model buildings of the 3D page (model height 25 m or less): gabled, hipped or pyramidal, with the ridge line (centre, bearing), half span, half ridge length, eave and ridge heights above the model ground; skillion roofs; an outline with wings (L, T, rear outriggers) cut into parts by chords from its reflex corners, a roof a part, with the run of a gable into a crossing wing (a valley); from robust plane fits to the EA LiDAR first-return DSM 2022 inside each outline or part, else from the OSM roof tags; the model fingerprint; counts by class and the OSM roof:shape against LiDAR class table",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcealidar"
@@ -15722,7 +15725,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "code, not data: the 3D page's Roof shapes (Layers > Show > Roof shapes): walls up to the roof planes and the roof faces of each building in docklands/data/roofs.json, in the building mesh",
+   "dct:title": "code, not data: the 3D page's Roof shapes (Layers > Show > Roof shapes): walls up to the roof planes and the roof faces of each building in docklands/data/roofs.json, in the building mesh; a building in parts: the outline cut into pieces (pieces(), also used by tools/build-roofs.mjs), walls up to the highest roof, inner walls where one roof stands above the next, gables run into crossing wings",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -15736,7 +15739,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "code, not data: fits flat, gable (ridge along the long or the short side, ridge offset searched) and hipped roofs to the EA LiDAR DSM cells inside each low model building (numpy, tifffile; reads the tile zips)",
+   "dct:title": "code, not data: fits flat, gable (ridge along the long or the short side, ridge offset searched), hipped and skillion roofs to the EA LiDAR DSM cells inside each low model building, and cuts an outline that is not a rectangle into parts fitted the same way (numpy, tifffile; reads the tile zips)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"

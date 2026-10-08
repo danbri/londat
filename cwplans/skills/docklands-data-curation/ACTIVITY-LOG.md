@@ -1879,3 +1879,27 @@ a re-run with the same inputs mints the same terms).
   Open: no era (Victorian against 1980s brick), no
   balconies or bays, windows across party walls inside one outline, shopfront on the whole outline; not seen on a
   phone GPU or in a headset. Skill: docklands-3d-page, "Realistic look".
+
+## 2026-10-08: pitched roofs for the complex outlines (wings in parts; Opus, subagent)
+
+- Owner (2026-10-08): the ordinary buildings are "painfully flat and samey ... at a minimum guess roof types, ultimately
+  more realism". The 12,513 "complex" outlines of build-roofs version 1 stayed flat. Operation build-roofs version 2
+  (same tool, logged; graph version https://kgx.foaf.tv/id/graphroofsb6a65e444fa5affb, 113,266 triples; run 21.5 min):
+  tools/lidar-roofs.py cuts an outline that is not a rectangle into parts with chords from its reflex corners (along a
+  long edge; least waste, ties by the LiDAR error) and fits each part; a fifth fit, one inclined plane (skillion).
+  build-roofs.mjs draws a building in parts when a complex outline has a pitched part, or when the parts fit a pitched
+  building 25 % better (the rear outrigger fault); a gable that ends against a crossing wing runs on to that wing's ridge
+  (a valley). docklands/roofs-layer.js: pieces(), the runs, walls to the highest roof, inner walls only where one roof
+  stands above the next, faces per cover (no gaps, no coplanar overlaps). Inputs: the same EA tiles (SHA-256 as on the
+  first run) and OSM extract, plus roofs-layer.js (its pieces() cuts the parts in the tool too). index.html unchanged.
+- Found: 5,331 buildings in parts (2,679 were complex, 2,326 gabled, 302 skillion); 810 valleys; of the 12,513 complex,
+  2,895 now in parts with a pitched part and 1,024 skillion, 8,594 still flat. Median absolute error of the drawn roof
+  against the DSM, buildings in parts: were complex 1.15 m to 0.24 m; were one pitched roof 0.22 m to 0.10 m. Hand check
+  (seed 29): 5 of 9 cut complex buildings right, 4 partly (a pitched wing drawn flat); 3 of 3 pitched-to-parts closer.
+  Pacific Tavern (index 7477): south wing ridge 9.04 m, eave 5.25 m at the OSM outline (5.8 m at the real wall); north
+  wing ridge 6.12 m, eave 3.29 m (known 6.0, 3.4), running 8 m into the south wing. roofs.json 1,303 kB (475 kB gzip).
+- Page (headless Chromium, SwiftShader WebGL): no page error at ?view=rotherhithe 1600 x 900 DPR 1 and 390 x 844 DPR 3,
+  ?view=greenland 1600 x 900, ?view=pier 390 x 844 DPR 3 and the aerial links; Rotherhithe mean luma with and without
+  roof shapes 0.09409 / 0.09412 (1600) and 0.06951 / 0.06957 (390 DPR 3). Open: 8,594 complex (rectangles with no single
+  roof: grow planes from the cells next), pitched wings that fail the rules are flat. Skill: docklands-3d-page, "Roof
+  shapes", "Parts".
