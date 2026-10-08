@@ -1944,3 +1944,13 @@ can we make it look more watery in future?" Read-only check of the WebGL page (n
   does: docklands/build.js waterSink), the day polygon offset, then depth colour from the UKHO soundings and dock bed
   levels, fresnel and sky reflection, moving ripples. The Three.js port can take the reflection first (TSL reflector or
   screen-space reflections on WebGPU).
+
+## 2026-10-08: headset relief and the water blotches (owner: "Do it")
+
+- Water (index.html): the ground sinks 1.5 m below the level of every water polygon (was: tidal water, only while a tide
+  is set), and the ground is drawn with polygon offset (2, 8) by day too. Before/after renders at the Thames by
+  Deptford and at Greenland Dock: the grey patches on the water are gone. Night ?view=rotherhithe: no page error.
+- Headset (xr-layer.js): table mode at relief 2.5x by default (the page's vz), a Relief button (1, 1.5, 2.5, 4), 1x in
+  street and ride, the page's value back at Exit. test/xr-check.mjs 14 of 14 (new: the relief step).
+- Still open: water depth colour, reflection and ripples by day; Greenland and South Dock bed levels; opaque ground and
+  stronger slope shading in the headset. Skill: docklands-3d-page, "WebXR" and "Water over the LiDAR ground".

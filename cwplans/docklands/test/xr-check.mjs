@@ -52,9 +52,11 @@ const save = async (page, name) => { if (!OUT) return; const png = await page.ev
     M.pads[0].buttons[4].pressed = true; M.step(); M.pads[0].buttons[4].pressed = false; M.step(); const m1 = S.mode; M.pads[0].buttons[4].pressed = true; M.step(); M.pads[0].buttons[4].pressed = false; M.step();
     const r = { moved: Math.hypot(c1[0] - c0[0], c1[2] - c0[2]), m1, m2: S.mode }; M.pads = [null, null]; M.ray2 = null; return r; });
   ok(pd.moved > 50 && pd.m1 === 'street' && pd.m2 === 'table', `controllers: left stick moves over the map (${pd.moved.toFixed(0)} m), A goes to Street and back`);
+  const rl = await page.evaluate(() => { const v = () => +document.getElementById('vz').value, a = v(); DocklandsXR.act('mode:table', DocklandsXR.P.bar); const t0 = v(); DocklandsXR.act('relief', DocklandsXR.P.bar); const t1 = v(); DocklandsXR.act('mode:street', DocklandsXR.P.bar); const s1 = v(); DocklandsXR.act('mode:table', DocklandsXR.P.bar); return { a, t0, t1, s1, back: v() }; });
+  ok(rl.t0 === 2.5 && rl.t1 === 4 && rl.s1 === 1 && rl.back === 4, `relief: table ${rl.t0}x, Relief button ${rl.t1}x, street ${rl.s1}x, table again ${rl.back}x`);
   const st = await page.evaluate(() => { DocklandsXR.act('mode:street', DocklandsXR.P.bar); __xrMock.step(); return [DocklandsXR.S.mode, __xrMock.session.renderState.depthNear, __xrMock.session.renderState.depthFar]; });
   await save(page, 'stereo-street'); ok(st[0] === 'street' && st[1] === .25 && st[2] === 16000, `street mode, depth ${st[1]} to ${st[2]} m`);
-  const ex = await page.evaluate(() => { DocklandsXR.act('exit', DocklandsXR.P.bar); return DocklandsXR.active; }); ok(ex === false, 'exit ends the session');
+  const ex = await page.evaluate(() => { DocklandsXR.act('exit', DocklandsXR.P.bar); return [DocklandsXR.active, +document.getElementById('vz').value]; }); ok(ex[0] === false && ex[1] === 1, `exit ends the session; the page's relief back to ${ex[1]}x`);
   ok(!errors.length, 'stereo: no page error' + (errors.length ? ': ' + errors.join(' | ') : ''));
   await page.context().close();   // the next page shares the software GPU
 }

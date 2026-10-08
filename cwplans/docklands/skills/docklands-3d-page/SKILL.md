@@ -1596,6 +1596,12 @@ opens the one-eye preview (drag to look round, tap to select; iOS Safari has no 
   eyes of the full scene is not measured on a headset; trees and splats are not drawn in a session; panels are
   world-locked, not body-locked; event venues are postcode centroids (O2: one point).
 
+- **Relief in the headset (2026-10-08).** Owner: "in Quest3 city still looks flat". At the 1:1500 table, 42 m of ground
+  (Greenwich Park over the Isle of Dogs) was 28 mm against 157 mm for One Canada Square, at the page's vz 1. The table
+  now sets the page's vz (input `#vz`) to `S.relief` (2.5 by default; bar button "Relief": 1, 1.5, 2.5, 4); street and
+  ride set 1; Exit restores the page's value (`applyRelief`, `setVz` in xr-layer.js). xr-check tests it (14 of 14).
+  Still open: the ground is drawn at alpha 0.5 and its slope shading is weak (no RELIEF factor as in terrain-ring.js).
+
 ## Wind (2026-10-08)
 
 Owner, 2026-10-08: "it would be cool to have weather - can we get wind vectors too?" Live:
@@ -1775,6 +1781,18 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
 - Measured 2026-10-08 (headless, software): 41,803 buildings in 80 tiles, 1,127,712 triangles, built in 1.8 to 3.5 s;
   a frame submitted in 15 to 24 ms (WebGL 2) and 47 to 102 ms (WebGPU with shadows and bloom). Software numbers only;
   not yet measured on a phone GPU.
+
+## Water over the LiDAR ground (2026-10-08)
+
+The LiDAR ground under the river and the docks is the survey's water surface (Thames median 2.8 m OD = the water level).
+Drawn after the water at alpha 0.5, it painted over it on the 20 m grid: 26 to 66 % of the cells of the Thames, Lea and
+Deptford Creek polygons, 7 % of Greenland Dock, 16 to 50 % of South Dock (owner, 2026-10-08: "blotchy and shallow").
+Now `waterMask()` (index.html, was `tidalMask`) sinks the ground inside every water polygon, eroded by one cell, to the
+water's level - 1.5 m, always (a set tide sinks the tidal part further, terrainSink), and the ground is drawn with
+polygon offset (2, 8) by day as by night. Measured by eye on before and after renders (SwiftShader, 1600 x 900): the grey
+patches on the Thames and in the docks are gone; the edge cells stay as a bank strip. Still open (the "shallow" part):
+depth colour from the UKHO soundings and dock bed levels (Greenland Dock and South Dock have no bed level in under.js),
+fresnel and sky reflection, moving ripples by day.
 
 ## Testing
 

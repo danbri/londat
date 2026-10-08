@@ -547,23 +547,25 @@ const cube = (M, x, y, z, s, col) => { const h = s / 2; prism(M, { p: [Math.roun
 // ---------- static layers
 const L = {};
 // terrain grid; colours from the ground colour, or per vertex from imagery (rgb: Uint8Array, 3 bytes per vertex)
-// The LiDAR ground over the river is the water surface of the survey (about 2.8 m OD). A measured tide below it (sky.js,
-// setTidal) would hide under that ground, so while a tide is set the ground inside the tidal water (more than one 20 m cell
-// from its edge) sinks below the water (terrainSink, m OD); the edge cells stay, a strip of foreshore at low water.
+// The LiDAR ground under the river and the docks is the water surface of the survey (Thames about 2.8 m OD, the same as
+// the water's level): drawn after the water, it painted over it cell by cell on the 20 m grid (the blotches, owner
+// 2026-10-08). So the ground inside every water polygon (more than one 20 m cell from its edge) always sinks 1.5 m below
+// that water's level; the edge cells stay, a strip of bank or foreshore. While a measured tide is set (sky.js, setTidal),
+// the tidal water's ground sinks below the tide as well (terrainSink, m OD).
 let terrainSink = null, terrainLast = null, TMASK = null;
-function tidalMask() {   // terrain vertices inside the tidal water (scanline over the water rings), then eroded by one cell
-  if (TMASK) return TMASK; const T = A.terrain, m = new Uint8Array(T.nx * T.nz), out = new Uint8Array(T.nx * T.nz);
-  for (const w of A.water) { if (!w.tidal) continue; const f = dec(w.p), st = [0, ...(w.holes || []), f.length / 2], rows = new Map();
+function waterMask() {   // per terrain vertex: the sink level inside a water polygon (scanline over its rings, eroded by one cell), else NaN; tidal: 1 in tidal water
+  if (TMASK) return TMASK; const T = A.terrain, n = T.nx * T.nz, m = new Float32Array(n).fill(NaN), td = new Uint8Array(n), out = new Float32Array(n).fill(NaN), tidal = new Uint8Array(n);
+  for (const w of A.water) { const f = dec(w.p), st = [0, ...(w.holes || []), f.length / 2], rows = new Map();
     for (let r = 0; r < st.length - 1; r++) for (let i = st[r]; i < st[r + 1]; i++) { const j = i + 1 < st[r + 1] ? i + 1 : st[r], x0 = f[2 * i], z0 = f[2 * i + 1], x1 = f[2 * j], z1 = f[2 * j + 1];
       for (let jj = Math.max(0, Math.ceil((Math.min(z0, z1) - T.z0) / T.cell)); jj <= Math.min(T.nz - 1, Math.floor((Math.max(z0, z1) - T.z0) / T.cell)); jj++) { const zc = T.z0 + jj * T.cell; if ((z0 > zc) === (z1 > zc)) continue; if (!rows.has(jj)) rows.set(jj, []); rows.get(jj).push(x0 + (zc - z0) / (z1 - z0) * (x1 - x0)); } }
-    for (const [jj, xs] of rows) { xs.sort((a, b) => a - b); for (let k = 0; k + 1 < xs.length; k += 2) for (let ii = Math.max(0, Math.ceil((xs[k] - T.x0) / T.cell)); ii <= Math.min(T.nx - 1, Math.floor((xs[k + 1] - T.x0) / T.cell)); ii++) m[jj * T.nx + ii] = 1; } }
-  for (let j = 1; j < T.nz - 1; j++) for (let i = 1; i < T.nx - 1; i++) { const k = j * T.nx + i; out[k] = m[k] & m[k - 1] & m[k + 1] & m[k - T.nx] & m[k + T.nx]; }
-  return (TMASK = out);
+    for (const [jj, xs] of rows) { xs.sort((a, b) => a - b); for (let k = 0; k + 1 < xs.length; k += 2) for (let ii = Math.max(0, Math.ceil((xs[k] - T.x0) / T.cell)); ii <= Math.min(T.nx - 1, Math.floor((xs[k + 1] - T.x0) / T.cell)); ii++) { const q = jj * T.nx + ii, v = w.level - 1.5; m[q] = isNaN(m[q]) ? v : Math.min(m[q], v); if (w.tidal) td[q] = 1; } } }
+  for (let j = 1; j < T.nz - 1; j++) for (let i = 1; i < T.nx - 1; i++) { const k = j * T.nx + i; if (isNaN(m[k]) || isNaN(m[k - 1]) || isNaN(m[k + 1]) || isNaN(m[k - T.nx]) || isNaN(m[k + T.nx])) continue; out[k] = m[k]; tidal[k] = td[k]; }
+  return (TMASK = { sink: out, tidal });
 }
 function buildTerrain(rgb) {   // rgb: per-vertex colours, 'tex' (shading only, the image comes from the texture) or null
   if (L.terrain) L.terrain.free(); terrainLast = rgb;
   const white = rgb === 'tex'; if (white) rgb = null;
-  const T = A.terrain, TM = terrainSink != null ? tidalMask() : null, h = (i, j) => TM && TM[j * T.nx + i] ? Math.min(T.dm[j * T.nx + i] / 10, terrainSink) : T.dm[j * T.nx + i] / 10, M = new Mesh();
+  const T = A.terrain, TM = waterMask(), h = (i, j) => { const k = j * T.nx + i, g = T.dm[k] / 10, sk = TM.sink[k]; if (isNaN(sk)) return g; return Math.min(g, TM.tidal[k] && terrainSink != null ? Math.min(sk, terrainSink) : sk); }, M = new Mesh();
   for (let j = 0; j < T.nz; j++) for (let i = 0; i < T.nx; i++) {
     const nx = h(Math.max(0, i - 1), j) - h(Math.min(T.nx - 1, i + 1), j), nz = h(i, Math.max(0, j - 1)) - h(i, Math.min(T.nz - 1, j + 1)), k = 3 * (j * T.nx + i);
     const col = white ? [1, 1, 1] : rgb ? [rgb[k] / 255, rgb[k + 1] / 255, rgb[k + 2] / 255] : C.ground;
@@ -866,7 +868,7 @@ function render() {
   if (!satOn && !sOnly) drawMesh(L.greens, cutOn ? .2 : .55);
   if (groundTex) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, groundTex); gl.uniform1f(uTex, 1); }
   if (nm) gl.uniform1f(uDim, groundTex && ground === 'night2012' ? 1 : nDim);   // night: the EA night photograph keeps its own light
-  if (nm) { gl.enable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(2, 8); }   // night: where the LiDAR ground lies at the water level, the water (and its reflections) wins
+  gl.enable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(2, 8);   // day and night: where the LiDAR ground lies at the water level (the bank cells), the water (and its reflections) wins
   if (!sOnly) drawMesh(L.terrain, cutOn ? .14 : PIX.on ? 1 : nm ? .95 : satOn ? .97 : .5); gl.disable(gl.POLYGON_OFFSET_FILL); gl.uniform1f(uTex, 0);
   if (globalThis.DocklandsRing && !sOnly) DocklandsRing.draw(cutOn ? .14 : PIX.on ? 1 : nm ? .95 : satOn ? .97 : .5, nDim);   // Hills of London (terrain-ring.js): EU-DEM ground outside the model box, after the LiDAR ground
   gl.uniform1f(uDim, 1); gl.depthMask(true);
