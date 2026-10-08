@@ -58,7 +58,7 @@ colour mask and polygon offset at the start of every frame. After you edit a lon
 - **One page, many scripts.** `docklands/index.html` (2,349 lines, 295 KB on 2026-10-07; 1,840 lines on 2026-10-04)
   holds the CSS, the HTML and one inline script. Script tags, in order: `vendor/earcut.min.js`, `data/area.js`,
   `data/under.js`, `opening-hours.js`, `vendor/astronomy.browser.min.js`, `vendor/satellite.min.js`, `sky.js`,
-  `river-layer.js`, `ships-layer.js`, `stations-layer.js`, `../data-base.js`, `../live-cache.js`,
+  `river-layer.js`, `ships-layer.js`, `stations-layer.js`, `terrain-ring.js`, `../data-base.js`, `../live-cache.js`,
   `../feeds/london-datastore/lds-building.js`, `locate.js`, `building-keys.js`, `kml-layer.js` (module), `nav.js`,
   `drone.js`, `plotter-svg.js`, `line-styles.js`. The rest is fetched on demand (`data/indoor.js`, `data/splats/`,
   `data/tex/`, `data/towers.json`, `data/trees.json`, `data/building-keys.json`, `../atlas/data/atlas.json`,
@@ -1403,6 +1403,65 @@ https://danbri.github.io/londat/cwplans/docklands/?wind&view=cw (Layers > Show >
   request and give a history. The streamlines are of the field at one time (no pathlines); 975 hPa is drawn flat at
   the mean geopotential height; vertical wind is not drawn; the grid (about 1.9 km by 1.9 km) does not resolve the
   towers' own wakes, which no open model gives.
+
+## Terrain of London (2026-10-08)
+
+Owner, 2026-10-08: "we should pull in open(ish) altitude data for all of London from whatever that API is we used on
+the glitchcan-minigam trees bristol game. City would be less flat." That API is OpenTopoData
+(https://www.opentopodata.org/), dataset `eudem25m`, as in danbri/glitchcan-minigam `trees/tools/fetch-elevation.mjs`.
+Live (south over the model to the North Downs, vertical exaggeration 3):
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1000,9000,50,14000,3.0,0.18&n=0&u=0&g=vz:3
+
+- **Source and licence.** EU-DEM v1.1 (Copernicus Land Monitoring Service, 25 m, SRTM and ASTER merged, about 7 m RMSE
+  vertical, EVRS2000, a surface model in part: woods and dense blocks lift it). Copernicus data policy, Regulation (EU)
+  No 1159/2013: full, open and free access; tell the public the source, say that it is modified, do not suggest EU
+  endorsement. Not share-alike. copernicus.eu stopped distributing EU-DEM in January 2024; OpenTopoData hosts v1.1
+  (https://www.opentopodata.org/datasets/eudem/, read 2026-10-08). Register source `copernicus-eudem`. Credit line:
+  page credits, "Ground, heights and river" (injected by terrain-ring.js).
+- **Public API limits** (opentopodata.org, 2026-10-08): 100 locations a request, 1 call a second, 1,000 calls a day.
+- **Files.** `tools/fetch-london-terrain.mjs` fetches, then runs the logged operation `fetch-london-terrain` (kgx graph
+  `london-terrain`, named in `kgx/external-heads.json`; the store is not repacked). Raw: `data/raw/london-eudem25m-250m.json.gz`
+  (398,550 bytes; heights keyed by "lat,lon"; it is also the request cache, saved every 10 requests, so a re-run
+  fetches nothing; `--no-fetch` runs only the operation). Page file: `docklands/data/london-terrain.json` (179,002
+  bytes; Pages serves it gzipped): `x0 -34550, z0 -20700, cell 250, nx 237, nz 185, dm[]` (decimetres, rows north to
+  south as `A.terrain`).
+- **Grid.** BNG E 503000-562000, N 155000-201000 (59 x 46 km: Hampstead, Alexandra Palace, Epping Forest edge, Shooters
+  Hill, Crystal Palace, the North Downs scarp at the south edge). 250 m: 43,845 points, 439 requests, about 14 minutes
+  (1.9 s a request with the 1.1 s wait), 0 no-data points. BNG to WGS84 by the OSGB36 Helmert (about 2 m out; enough
+  for a 25 m DEM at 250 m). A finer grid costs requests by the square: 200 m would be 684 requests, 125 m 2,700 (three
+  days of the public quota).
+- **Measured heights** (max within 1.2 km of the summit): Hampstead Heath 138.0 m, Shooters Hill 128.3, Crystal Palace
+  116.4, Alexandra Palace 108.6, Westerham Heights 247.4 (box maximum 272.7 at E 539250 N 155000, the south edge);
+  minimum -9.4 (E 560000 N 173000, a pit). Thames at Tower Bridge 2.5.
+- **EU-DEM against the LiDAR** inside the model box (690 lattice points, nearest 20 m LiDAR ground point): EU-DEM minus
+  LiDAR median +2.0 m, 10th percentile -0.8, 90th +6.4 (EU-DEM sits on roofs and trees in part).
+- **Page** (`docklands/terrain-ring.js`, Layers > Show > "Hills of London", on): the coarse grid outside the model box
+  (cells that meet the box are left out), plus a strip that zips the box edge (all 1,310 LiDAR edge points, their own
+  heights) to the first coarse grid line outside, so there is no gap and no step. Within 2,500 m of the box the coarse
+  heights take the LiDAR-minus-EU-DEM offset of the nearest edge point (mean of +/- 7 edge points), faded with a
+  smoothstep. Colour: the page's ground colour (`C.ground`, rebuilt when the style changes it), lighter with height
+  above 10 m (up to x 1.45 at 160 m) and slope shading x 6 (a 250 m cell shades almost flat otherwise). Haze: vertex
+  alpha falls from 1 at 2.5 km from the box to 0.2 at 37.5 km. Mesh: 44,465 vertices. Draw: in `render()` after the
+  LiDAR terrain, with its alpha and the night dim (`nDim`); a depth pass, then colour with `LEQUAL`, so a near hill hides
+  the one behind it although the ground is see-through. Not drawn in "Splats only" or Line drawing. VZ applies (page
+  program).
+- **Far plane.** `persp` far = max(cam.dist x 6 + 6000, `DocklandsRing.far()` = 60,000 m while the layer is on). Depth
+  precision is set by the near plane (`max(2, dist / 400)`), not the far, so the change costs nothing measurable in
+  24-bit depth. Free-camera views (`cam.eye`: drone, setEye, share `e=`) keep `cam.far || 20000`.
+- **Measured** (headless Chromium, SwiftShader WebGL, 2026-10-08; before = layer off, after = on, same page): no page
+  error at 1600 x 900 DPR 1 and 390 x 844 DPR 3 in `?view=rotherhithe`, `greenland`, `pier`, `area` and the share links.
+  South view above at 1600 x 900: 34.8% of pixels change, mean luma 0.161 to 0.210. Night photo views: mean luma the
+  same to 4 digits (0.0933, 0.0891, 0.1107 at 1600 x 900); the changed pixels are in the water glitter and the moving
+  sky lines, not the ring (the skyline and the dark ground hide it). `test/xr-check.mjs`: menu and stereo checks pass;
+  the preview step timed out on `page.goto` (30 s, the Python server was slow), not on a fault found.
+- **From the river the ring is mostly hidden.** Greenwich Park (Observatory 46 m) is inside the LiDAR box (the box goes
+  to N 176700), so it was on the page before. At river level (eye 6 m, Island Gardens) the ring changed 0.1% of the
+  pixels: the park, Blackheath's edge and the riverside blocks hide what is behind. Shooters Hill shows from a height:
+  https://danbri.github.io/londat/cwplans/docklands/#v=1&c=2642,1552,70,3000,-2.098,0.06&n=0&u=0 (from about 250 m over
+  Canary Wharf; 9.9% of pixels change) and close to it
+  https://danbri.github.io/londat/cwplans/docklands/#v=1&c=6200,3800,120,6000,-1.2,0.12&n=0&u=0&g=vz:2 .
+- **Open:** no water, roads or buildings outside the box (the Thames stops at the box edge); EU-DEM in the river is
+  ground, not water; the haze is by distance from the box, not from the eye; not looked at on a phone GPU.
 
 ## Testing
 

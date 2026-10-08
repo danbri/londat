@@ -8398,6 +8398,42 @@
       ]
     },
     {
+      "id": "london-terrain",
+      "area": "terrain",
+      "tool": "tools/fetch-london-terrain.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-london-terrain.mjs [--no-fetch]",
+      "kind": "fetch",
+      "used": [
+        {
+          "source": "copernicus-eudem",
+          "endpoint": "https://api.opentopodata.org/v1/eudem25m",
+          "request": "GET ?locations=lat,lon|... (100 points a request, one request every 1.1 s; 439 requests for the full lattice)"
+        },
+        {
+          "file": "docklands/data/area.js",
+          "note": "only for the printed measurement (EU-DEM minus the LiDAR ground in the model box)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "data/raw/london-eudem25m-250m.json.gz"
+        },
+        {
+          "file": "docklands/data/london-terrain.json"
+        }
+      ],
+      "note": "skill docklands-3d-page, \"Terrain of London\"; logged operation fetch-london-terrain (raw file -> page grid), kgx graph london-terrain",
+      "method": "Makes a 250 m lattice in British National Grid (E 503000-562000, N 155000-201000, 237 x 185 points), turns each point to WGS84 (OSGB36 Helmert, about 2 m out) and asks the OpenTopoData public API for EU-DEM v1.1 heights, 100 points a request at most one request a second, with a User-Agent. Points already in the raw file are not asked again (the raw file is the cache; saved every 10 requests). The operation fills no-data points with the mean of their known neighbours and writes the heights in decimetres in the page frame (x = E - 537550, z = -(N - 180300)), north to south as A.terrain. The page (terrain-ring.js) draws the grid outside the model box and joins it to the LiDAR ground at the box edge.",
+      "rules": [
+        "Public API limits: 100 locations a request, 1 call a second, 1,000 calls a day; the full lattice is 439 requests.",
+        "EU-DEM is a surface model with about 7 m RMSE vertical error (SRTM and ASTER): use it for the far hills only, never inside the LiDAR box.",
+        "Credit: \"Produced using Copernicus data and information funded by the European Union: EU-DEM layers\", and say that it is modified (resampled)."
+      ],
+      "network": true,
+      "deterministic": false,
+      "after": []
+    },
+    {
       "id": "building-models",
       "area": "buildings",
       "tool": "tools/build-building-models.mjs",

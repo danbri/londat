@@ -323,6 +323,7 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
 <script src="river-layer.js"></script>
 <script src="ships-layer.js"></script>
 <script src="stations-layer.js"></script>
+<script src="terrain-ring.js"></script>
 <script src="wind-layer.js"></script>
 <script src="../data-base.js"></script>
 <script src="../live-cache.js"></script>
@@ -794,7 +795,7 @@ function render() {
   const fovY = cam.hfov ? 2 * Math.atan(Math.tan(cam.hfov / 2) / (w / h)) : cam.fov || .8;   // a view with a lens keeps its horizontal field on any screen
   CAM = { eye, target: T, fovY, aspect: w / h, w, h };
   if (XV) { CAM = { eye: XV.eye, target: XV.target, fovY: 2 * Math.atan(1 / XV.proj[5]), aspect: w / h, w, h }; PROJ = XV.proj; VIEW = XV.view; MVP = mul(PROJ, VIEW); } else {
-  PROJ = PIX.on ? ortho(cam.dist * .42 * w / h, cam.dist * .42, 10, 14000) : persp(fovY, w / h, cam.eye ? (cam.near || 1) : Math.max(2, cam.dist / 400), cam.eye ? (cam.far || 20000) : cam.dist * 6 + 6000); VIEW = look(eye, T, cam.roll ? rolledUp(eye, T, cam.roll) : [0, 1, 0]); MVP = mul(PROJ, VIEW); }
+  PROJ = PIX.on ? ortho(cam.dist * .42 * w / h, cam.dist * .42, 10, 14000) : persp(fovY, w / h, cam.eye ? (cam.near || 1) : Math.max(2, cam.dist / 400), cam.eye ? (cam.far || 20000) : Math.max(cam.dist * 6 + 6000, globalThis.DocklandsRing ? DocklandsRing.far() : 0)); VIEW = look(eye, T, cam.roll ? rolledUp(eye, T, cam.roll) : [0, 1, 0]); MVP = mul(PROJ, VIEW); }
   const bm = $('bmode').value, cutOn = P.cut < 250, cutY = cutOn ? P.cut : 1e9;
   moonNow(nm); gl.uniform3fv(uMl, MOON.on ? MOON.g : [0, 0, 0]);
   gl.uniformMatrix4fv(uM, false, MVP); gl.uniform1f(uVz, VZ); gl.uniform1f(uCut, cutY); gl.uniform1f(uMono, 0); const nDim = nm ? (cutOn ? .6 : .12) : night ? .45 : 1; gl.uniform1f(uDim, nDim);
@@ -842,7 +843,9 @@ function render() {
   if (groundTex) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, groundTex); gl.uniform1f(uTex, 1); }
   if (nm) gl.uniform1f(uDim, groundTex && ground === 'night2012' ? 1 : nDim);   // night: the EA night photograph keeps its own light
   if (nm) { gl.enable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(2, 8); }   // night: where the LiDAR ground lies at the water level, the water (and its reflections) wins
-  if (!sOnly) drawMesh(L.terrain, cutOn ? .14 : PIX.on ? 1 : nm ? .95 : satOn ? .97 : .5); gl.disable(gl.POLYGON_OFFSET_FILL); gl.uniform1f(uTex, 0); gl.uniform1f(uDim, 1); gl.depthMask(true);
+  if (!sOnly) drawMesh(L.terrain, cutOn ? .14 : PIX.on ? 1 : nm ? .95 : satOn ? .97 : .5); gl.disable(gl.POLYGON_OFFSET_FILL); gl.uniform1f(uTex, 0);
+  if (globalThis.DocklandsRing && !sOnly) DocklandsRing.draw(cutOn ? .14 : PIX.on ? 1 : nm ? .95 : satOn ? .97 : .5, nDim);   // Hills of London (terrain-ring.js): EU-DEM ground outside the model box, after the LiDAR ground
+  gl.uniform1f(uDim, 1); gl.depthMask(true);
   if (!PIX.on && !XV) drawSplats(P);
   if (nm) { drawNight(P); if (BL.on && !XV) bloom(w, h); }
   if (PIX.on) { gl.uniform1f(uCut, 1e9); gl.disable(gl.BLEND); drawMesh(L.trees, 1); drawMesh(PIX.ents, 1); gl.enable(gl.BLEND); }
@@ -2333,6 +2336,8 @@ if (globalThis.DocklandsShips) DocklandsShips.init({ Mesh, beam, shade, geo, gro
 if (globalThis.DocklandsStations) DocklandsStations.init({ Mesh, shade, norm3, esc, drawMesh, ovCard, loadJSON, draw, OV, rebuildUnder: () => { tunnelKey = underKey = walkKey = ''; draw(); } });
 // Wind (wind-layer.js, Layers > Show > Wind, off): the camera, the ground and a redraw
 if (globalThis.DocklandsWind) DocklandsWind.init({ gl, A, cam, geo, groundAt, draw, nightOn, PIX: () => PIX, MVP: () => MVP, CAM: () => CAM, VZ: () => VZ });
+// Hills of London (terrain-ring.js, Layers > Show > Hills of London, on): the coarse London ground outside the model box
+if (globalThis.DocklandsRing) DocklandsRing.init({ A, Mesh, shade, gl, drawMesh, loadJSON, draw, ground: () => C.ground, setDim: v => gl.uniform1f(uDim, v) });
 // My KML (kml-layer.js, Layers > My KML): the helpers it draws with; it runs after this script as a module
 // Plotter SVG (plotter-svg.js, Menu > views > Plotter SVG of this view): the data and camera it draws from
 globalThis.DocklandsPlotCtx = { A, dec, earcut, heightOf, towerOf, groundAt, tunnelY, par, toast, MVP: () => MVP, VZ: () => VZ, CAM: () => CAM, TOWERS: () => TOWERS };

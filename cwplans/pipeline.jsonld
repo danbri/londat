@@ -9775,6 +9775,45 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toollondonterrain",
+   "@type": "prov:Activity",
+   "rdfs:label": "london-terrain",
+   "dct:description": "Makes a 250 m lattice in British National Grid (E 503000-562000, N 155000-201000, 237 x 185 points), turns each point to WGS84 (OSGB36 Helmert, about 2 m out) and asks the OpenTopoData public API for EU-DEM v1.1 heights, 100 points a request at most one request a second, with a User-Agent. Points already in the raw file are not asked again (the raw file is the cache; saved every 10 requests). The operation fills no-data points with the mean of their known neighbours and writes the heights in decimetres in the page frame (x = E - 537550, z = -(N - 180300)), north to south as A.terrain. The page (terrain-ring.js) draws the grid outside the model box and joins it to the LiDAR ground at the box edge.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicuseudem",
+     "dcat:accessURL": "https://api.opentopodata.org/v1/eudem25m",
+     "dct:description": "GET ?locations=lat,lon|... (100 points a request, one request every 1.1 s; 439 requests for the full lattice)"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/london-eudem25m-250m.json.gz"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/london-terrain.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/fetch-london-terrain.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-london-terrain.mjs [--no-fetch]",
+   "cwp:kind": "fetch",
+   "cwp:rule": [
+    "Public API limits: 100 locations a request, 1 call a second, 1,000 calls a day; the full lattice is 439 requests.",
+    "EU-DEM is a surface model with about 7 m RMSE vertical error (SRTM and ASTER): use it for the far hills only, never inside the LiDAR box.",
+    "Credit: \"Produced using Copernicus data and information funded by the European Union: EU-DEM layers\", and say that it is modified (resampled)."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": false,
+   "cwp:after": [],
+   "cwp:area": "terrain",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolbuildingmodels",
    "@type": "prov:Activity",
    "rdfs:label": "building-models",
@@ -14832,6 +14871,20 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/terrain-ring.js",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: the 3D page's Hills of London layer (Layers > Show > Hills of London, on): draws docklands/data/london-terrain.json outside the model box, joined to the LiDAR ground at the box edge, with haze and the EU-DEM credit line",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/stations-layer.js",
    "@type": [
     "prov:Entity",
@@ -15380,6 +15433,40 @@
    },
    "cwp:osmUse": "none",
    "cwp:review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/london-terrain.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "coarse terrain of Greater London for the outer terrain ring of the 3D page (Hills of London): heights on a 250 m BNG lattice E 503000-562000, N 155000-201000 (237 x 185 points) in decimetres, page frame",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicuseudem"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toollondonterrain"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/london-eudem25m-250m.json.gz",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "EU-DEM v1.1 heights as fetched from the OpenTopoData public API at the WGS84 points of a 250 m BNG lattice over Greater London (43,845 points), keyed by lat,lon; also the request cache of the fetch",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicuseudem"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toollondonterrain"
+   },
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-models.json",
@@ -24453,6 +24540,17 @@
    "dct:title": "Wikidata (SPARQL; QLever for the registry)",
    "dct:license": "CC0 1.0",
    "dcat:landingPage": "https://www.wikidata.org/"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srccopernicuseudem",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "EU-DEM v1.1 (Copernicus Land Monitoring Service), 25 m, through the OpenTopoData public API (dataset eudem25m)",
+   "dct:license": "Copernicus data and information policy, Regulation (EU) No 1159/2013: full, open and free access; inform the public of the source, state modifications, no impression of EU endorsement",
+   "dcat:landingPage": "https://www.opentopodata.org/datasets/eudem/",
+   "cwp:attribution": "Produced using Copernicus data and information funded by the European Union: EU-DEM layers"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcealidar",

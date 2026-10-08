@@ -1813,3 +1813,21 @@ a re-run with the same inputs mints the same terms).
 - Open: ICON-D2 requests from the container failed (the fallback, ICON seamless, worked): check on a phone that the
   readout names ICON-D2. A wind grid theme in the hourly cache (cwplans-londat-cache) would remove the third-party
   request and keep a history.
+
+## 2026-10-08: Terrain of London (Hills of London) on the 3D page
+
+- Owner: "we should pull in open(ish) altitude data for all of London from whatever that API is we used on the
+  glitchcan-minigam trees bristol game. City would be less flat." Source: EU-DEM v1.1 (Copernicus; open with
+  attribution, Regulation (EU) No 1159/2013) through the OpenTopoData public API, as in trees/tools/fetch-elevation.mjs.
+  Licence checked on https://www.opentopodata.org/datasets/eudem/ (2026-10-08). Register source copernicus-eudem.
+- New: tools/fetch-london-terrain.mjs (fetch, then operation fetch-london-terrain, graph london-terrain in
+  kgx/external-heads.json; kgx store not repacked), data/raw/london-eudem25m-250m.json.gz (raw heights and request
+  cache), docklands/data/london-terrain.json (237 x 185 points at 250 m, BNG E 503000-562000 N 155000-201000, 179 kB),
+  docklands/terrain-ring.js (Layers > Show > Hills of London, on; strip to the LiDAR edge, offset blend over 2.5 km,
+  haze, credit line), index.html (script tag, far plane 60 km while on, one draw call after the terrain, init).
+- Measured: 439 requests (about 14 minutes), 0 no-data points; Hampstead Heath 138 m, Shooters Hill 128, Crystal
+  Palace 116, Westerham Heights 247; EU-DEM minus LiDAR in the model box median +2.0 m (p10 -0.8, p90 +6.4). Headless:
+  no page error at 1600 x 900 DPR 1 and 390 x 844 DPR 3 (rotherhithe, greenland, pier, area, share links); night photo
+  views unchanged in mean luma. Skill: docklands-3d-page, "Terrain of London".
+- Open: from river level the ring is mostly hidden (Greenwich Park is inside the LiDAR box; 0.1% of pixels change at
+  Island Gardens); no water or buildings outside the box; haze by distance from the box, not the eye.
