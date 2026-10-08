@@ -50,6 +50,6 @@ export default {
     const q = ctx.qs.get('year');
     if (q && /^\d{4}$/.test(q)) { let k = -1; for (let j = 0; j < n; j++) if (Y[j] <= +q) k = j; setYear(k < 0 ? 0 : +q > Y[n - 1] ? n : k); }
     else setYear(n, false);   // today: the page has built it already
-    return { ownUi: true, setYear, get year() { return idx < 0 ? 'today' : Y[idx]; }, stats };
+    return { ownUi: true, setYear, stats };   // stats.year: the year shown; stats.builds: rebuild times
   },
 };

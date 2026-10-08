@@ -97,7 +97,11 @@ export default {
     const group = new THREE.Group(); group.name = 'under';
     const tunnels = new THREE.Mesh(new THREE.BufferGeometry(), mat), under = new THREE.Mesh(new THREE.BufferGeometry(), mat), dock = new THREE.Mesh(dockGeometry(DU), dockMat);
     tunnels.name = 'under:tunnels'; under.name = 'under:levels'; dock.name = 'under:dockVol'; dock.renderOrder = 3;
-    group.add(tunnels, under, dock);
+    // backdrop with the cut on: an unlit plane 60 m below OD over the model box, in the WebGL page's background grey-blue
+    // (measured there: sRGB about 134, 148, 162 through the faint ground); without it the day sky shows white through the ground
+    const ex = A.meta.extent, back = new THREE.Mesh(new THREE.PlaneGeometry(ex.x1 - ex.x0 + 4000, ex.z1 - ex.z0 + 4000), new THREE.MeshBasicNodeMaterial({ color: new THREE.Color().setRGB(0.5, 0.56, 0.62, THREE.SRGBColorSpace) }));
+    back.rotation.x = -Math.PI / 2; back.position.set((ex.x0 + ex.x1) / 2, -60, (ex.z0 + ex.z1) / 2); back.name = 'under:backdrop';
+    group.add(tunnels, under, dock, back);
     const rebuildTunnels = () => { const t0 = performance.now(); tunnels.geometry.dispose(); tunnels.geometry = tunnelsGeometry(P); stats.tunnels = { chains: CTL.size, triangles: tris(tunnels.geometry), ms: Math.round(performance.now() - t0) }; draw(); };
     const rebuildUnder = () => { const t0 = performance.now(); under.geometry.dispose(); under.geometry = underGeometry(DU, P); stats.under = { basements: DU.basements.length, indoor: DU.indoor.length, triangles: tris(under.geometry), ms: Math.round(performance.now() - t0) }; draw(); };
     rebuildTunnels(); rebuildUnder(); stats.dockVol = { triangles: tris(dock.geometry) };
@@ -119,7 +123,7 @@ export default {
     }
 
     // ---------- cut level, gauge and drawer controls
-    let CUT = OFF, visible = on;
+    let CUT = OFF;
     const gauge = document.createElement('div'), gH = document.createElement('div'), gO = document.createElement('output'), gX = document.createElement('button'), track = document.createElement('div');
     gauge.setAttribute('role', 'slider'); gauge.tabIndex = 0; gauge.setAttribute('aria-label', 'Cut away everything above this level, metres above Ordnance Datum'); gauge.setAttribute('aria-valuemin', String(G_BOT)); gauge.setAttribute('aria-valuemax', String(OFF));
     Object.assign(gauge.style, { position: 'fixed', right: '6px', top: 'calc(118px + env(safe-area-inset-top,0px))', height: 'min(50vh, 420px)', width: '96px', touchAction: 'none', userSelect: 'none', zIndex: 5, font: '12px system-ui,sans-serif', color: '#e8ecef' });
@@ -148,7 +152,7 @@ export default {
 
     function setCut(v, from) {
       CUT = v >= OFF ? OFF : Math.max(G_BOT, Math.round(v)); const cutOn = CUT < OFF;
-      UN.cut.value = cutOn ? CUT : 1e9; faint(cutOn); dock.visible = cutOn;
+      UN.cut.value = cutOn ? CUT : 1e9; faint(cutOn); dock.visible = back.visible = cutOn;
       const t = gPos(CUT); gH.style.top = gO.style.top = (t * 100) + '%'; gO.textContent = cutOn ? `${CUT} m OD` : 'cut off';
       gauge.setAttribute('aria-valuenow', String(CUT)); gauge.setAttribute('aria-valuetext', gO.textContent);
       if (from !== 'slider') sCut.input.value = CUT; sCut.label.textContent = 'Cut away above: ' + (cutOn ? CUT + ' m OD' : 'off');
@@ -175,9 +179,8 @@ export default {
     tunnels.visible = tTun.checked; under.visible = tUnd.checked;
 
     return {
-      object: group, ownUi: true, stats, setCut, get cut() { return CUT; },
-      setVisible(v) { visible = v; group.visible = v; draw(); },
-      get visible() { return visible; },
+      object: group, ownUi: true, stats, setCut, showGauge, cutLevel: () => CUT,   // main.js spreads this object: no getters
+      setVisible(v) { group.visible = v; draw(); },
     };
   },
 };

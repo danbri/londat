@@ -22,7 +22,8 @@ function build(D, col) {
   let n = 0;
   const v = (x, y, z, c, a, nx, ny, nz) => { const l = Math.hypot(nx, ny, nz) || 1; P3.push(x, y, z); N3.push(nx / l, ny / l, nz / l); C3.push(...c); AL.push(a); return n++; };
   // a triangle facing up (three.js front faces are counter-clockwise from the eye): the WebGL page draws both windings
-  const tri = (a, b, c) => { const ax = P3[3 * a], az = P3[3 * a + 2], cy = (P3[3 * b] - ax) * (P3[3 * c + 2] - az) - (P3[3 * b + 2] - az) * (P3[3 * c] - ax); if (cy > 0) I.push(a, b, c); else I.push(a, c, b); };
+  const tri = (a, b, c) => {   // cy: y of (b - a) x (c - a)
+    const ax = P3[3 * a], az = P3[3 * a + 2], cy = (P3[3 * b + 2] - az) * (P3[3 * c] - ax) - (P3[3 * b] - ax) * (P3[3 * c + 2] - az); if (cy > 0) I.push(a, b, c); else I.push(a, c, b); };
   const bx0 = T.x0, bx1 = T.x0 + (T.nx - 1) * T.cell, bz0 = T.z0, bz1 = T.z0 + (T.nz - 1) * T.cell;
   const eu = (x, z) => {
     const fi = Math.max(0, Math.min(D.nx - 1.001, (x - D.x0) / D.cell)), fj = Math.max(0, Math.min(D.nz - 1.001, (z - D.z0) / D.cell)), i = Math.floor(fi), j = Math.floor(fj), u = fi - i, w = fj - j, g = (a, b) => D.dm[b * D.nx + a] / 10;

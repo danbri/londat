@@ -55,10 +55,14 @@ export default {
     el.addEventListener('pointerup', e => {
       if (!down || !group.visible) return; const d = down; down = null;
       if (Math.hypot(e.clientX - d.x, e.clientY - d.y) >= 6 || performance.now() - d.t >= 500) return;
-      if (globalThis.__docklands3 && __docklands3.pickAt(e.clientX, e.clientY) >= 0) return;
       const r = el.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, ctx.camera);
-      const hit = ray.intersectObjects(group.children, false)[0]; if (!hit) return;
-      const oi = hit.object.geometry.userData.part[hit.faceIndex]; if (oi != null) card(doc.objects[oi]);
+      const hits = ray.intersectObjects(group.children, false), hit = hits.find(h => !h.object.material.transparent) || hits[0]; if (!hit) return;   // a solid part inside the see-through box first
+      // a building or detailed model in front of the part keeps the page's own card
+      const front = ctx.scene.children.filter(g => g.isGroup && g.visible && g.children.some(c => c.userData.tile || c.userData.model != null));   // main.js buildings, models
+      const b = ray.intersectObjects(front, true)[0]; if (b && b.distance < hit.distance) return;
+      const oi = hit.object.geometry.userData.part[hit.faceIndex]; if (oi == null) return;
+      if (globalThis.__docklands3) __docklands3.selectModel(-1);   // the page picked a building behind the part: drop it
+      card(doc.objects[oi]);
     });
 
     const setVisible = v => { group.visible = v; ctx.draw(); };
