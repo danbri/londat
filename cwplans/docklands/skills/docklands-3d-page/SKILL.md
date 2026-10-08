@@ -6,8 +6,8 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
-  headless test recipe (two sizes x two pixel ratios x the photo views, numbers not one look). Sky, clock, weather and
+  station models; detailed building models; the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
+  headless test recipe (two sizes x two pixel ratios, numbers not one look). Sky, clock, weather and
   tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
 ---
@@ -1215,6 +1215,43 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-2040.8,823.4,0,249,2.0
 - Pick colours hold 24 bits: room for 16.7 million buildings.
 - A contributed set adds tiles without code: photos.json `tiles` (photo cut or vector pattern, metres, a point per
   building), then `contrib-photos.mjs <set>`, `compose-facade-atlas.mjs`, `build-kgx.mjs`.
+
+## Detailed building models (2026-10-08)
+
+Owner, 2026-10-08, with a CC0 photo of the Pacific Tavern, Redriff Road: "Extrapolate a full 3D model and add it to rep
+as new default for that building." Live: https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1494.7,995.9,4,90,0.35,0.4&n=0&u=0&id=osm:w259277099
+
+- **Files.** A hand-made description per building, `docklands/models/<osm id>-<name>.spec.json` (frames on the model
+  outline, sizes, colours, and the evidence for each); `tools/lidar-roof-profile.py` writes the LiDAR roof profile
+  beside it; `tools/build-building-models.mjs` (logged operation `build-building-models`, kgx graph `building-models`)
+  writes `docklands/data/building-models.json` (the page file) and a `.glb` per building. `BM_DRY=1` writes the outputs
+  without a log entry while you edit a description; commit the outputs of a logged run.
+- **Frames.** A frame is three ring vertices of the area.js outline: origin, a second corner (u along the wall), and a
+  corner inside (o into the building). Heights are above `b` (the model ground). A description is for one area.js
+  (`model_fp`); the tool stops when the fingerprint differs. After an area.js rebuild, check the ring vertex numbers.
+- **Builder parts** (in the tool, reusable): gabled wing with gable parapets, coping and kneelers; a wall with
+  rectangular openings (grid cut, reveals 0.12 m, glass, frame and glazing bars 2 cm in front of the glass); boxes
+  (fascia, sills, lintels, pipes, railings); a bay with a segmental lead hood that runs back to the roof; discs (a sign).
+  Every triangle is wound with its normal outward, so the page shades from the winding.
+- **Page.** `bmodF()` in index.html puts the model into the building mesh (`MeshF`) instead of the extruded outline of
+  its model indices (`bmodOf`), when Layers > Show > "Detailed models" is on and no historic skyline is shown. Colours
+  are the model's own in the default colouring (`colourBy` = source), Pixel art and Photo style; a data colouring gives
+  the data colour to every part. `u = -1000` on every vertex (no window grid, no ground image), except glass: each pane
+  gets `u = 0.9 + 1.8 k` (the middle of window cell k), so Night lights panes as it lights windows. Picking, the outline
+  highlight, Line drawing, the plotter and Drone still use the extruded outline. The OSM card has a "Detailed model"
+  row (`modelOf` in `DocklandsKeysCtx`). Hook: `__docklands.BMOD`.
+- **Pacific Tavern** (OSM way 259277099, model index 7477): 24 parts, 2,080 triangles, top 14.72 m OD. The OSM outline
+  is two wings at 57 deg. The photo shows the south wing's east-south-east face (ring 2 to 1, 19.93 m) nearly square on,
+  at about 127 px a metre. LiDAR (DSM 2022 and 2020 minus DTM 2022): south wing ridge 8.7 m, eaves 6.1 m, 9.7 m deep
+  (OSM says 11.4 m: the model keeps the LiDAR); north wing one storey, eaves 3.4 m, ridge 6.0 m. The rear face, the
+  south gable end and the north wing's windows are not in the photo: marked "extrapolated" in each part's basis.
+- **Measured** (headless Chromium, SwiftShader WebGL, 2026-10-08): no page error at 1400 x 900 DPR 1 and 390 x 844 DPR 3
+  and with `?view=rotherhithe`; the card link above opens the card. A share link with `dist` under 80 is raised to 80
+  by the page; at yaw 0.35 a building east-south-east of the tavern then hides it below pitch about 0.3.
+- **Faults met.** Vertex positions rounded to cm put the sign's layers 5 mm apart on one plane (z-fighting): the page
+  file is in mm; keep layers at least 5 mm apart. The bay was in shade in the photo: its colours are judged, not read.
+- **Next building:** copy a spec, set the frames and sizes from a photo (`photos.json` in the contrib set) and the
+  LiDAR profile, run the profile tool, the builder, `npm test` (building-models.test.mjs), the register check.
 
 ## Testing
 

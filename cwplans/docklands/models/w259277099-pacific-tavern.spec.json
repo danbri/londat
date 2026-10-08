@@ -1,0 +1,61 @@
+{
+ "about": "Hand-made description of the Pacific Tavern, 100 Redriff Road, London SE16 7LH (OpenStreetMap way 259277099), for tools/build-building-models.mjs, which makes the triangles for the 3D page (docklands/data/building-models.json) and a glTF binary file (w259277099-pacific-tavern.glb). Every size has its evidence in 'evidence'. Lengths in metres; heights above the model ground (area.js b). Skill: docklands-3d-page, 'Detailed building models'.",
+ "key": "osm:w259277099",
+ "osm": "https://www.openstreetmap.org/way/259277099",
+ "name": "Pacific Tavern",
+ "address": "100 Redriff Road, London SE16 7LH (OSM addr:*)",
+ "osm_building": "restaurant",
+ "model_index": 7477,
+ "model_fp": "41803:-7483.-7463.3.61.18.-1:-40875.2148.56.-152.1172.-136",
+ "at": null,
+ "photo": "data/images/contrib/cwredriff/2026-10-08-cw-01-pacific-tavern.jpg",
+ "lidar_profile": "cwplans/docklands/models/w259277099-lidar-profile.json",
+ "made": "2026-10-08",
+ "licence": "Model: CC0 1.0 for the parts made from the owner's photo and judgement. It also contains OpenStreetMap data (the outline and the corners, ODbL 1.0, © OpenStreetMap contributors) and Environment Agency LiDAR heights (© Environment Agency copyright and/or database right, Open Government Licence v3.0).",
+ "frames": {
+  "S": { "about": "south wing, its south-east face (the face in the photo): origin ring vertex 2 (the south-south-west corner, at the left of the photo), u along the face to ring vertex 1 (bearing 31 deg grid), o into the building (towards ring vertex 3)", "origin": 2, "toward": 1, "inside": 3 },
+  "N": { "about": "north wing, its east-north-east face: origin ring vertex 1 (the outer corner where the wings meet), u to ring vertex 0 (bearing 334 deg grid), o into the building (towards ring vertex 4)", "origin": 1, "toward": 0, "inside": 4 }
+ },
+ "colours": {
+  "brick": "#c49a5c", "brick_sill": "#a9814c", "roof": "#5f5a54", "ridge": "#6a625a", "fascia": "#55585b", "coping": "#b8ad98",
+  "stone": "#cfc8b8", "frame": "#6f9a84", "glass": "#4d5d63", "glass_light": "#9fb0a8", "teal": "#1e5c52", "teal_dark": "#174a42",
+  "cream": "#e3d7a8", "ring": "#2a2a26", "sun": "#c8442c", "wave": "#2d6aa8", "lead": "#a7aaa8", "pipe": "#2b2b2b", "railing": "#1f1f1f"
+ },
+ "south_wing": {
+  "frame": "S", "length": 19.93, "depth": 9.7, "eave": 6.1, "ridge": 8.7, "ridge_o": 4.85, "overhang": 0.2,
+  "parapet": { "thickness": 0.45, "above_roof": 0.35, "coping": 0.07, "coping_overhang": 0.05, "kneeler": [0.6, 0.45] },
+  "fascia": [5.85, 6.1, 0.2],
+  "windows_upper": { "centres_from_middle": [-7.07, -4.2, 4.2, 7.07], "width": 1.1, "y": [4.31, 5.71], "grid": [4, 5], "glass": ["glass_light", "glass", "glass", "glass_light"] },
+  "windows_lower": { "centres_from_middle": [-7.07, -4.2, 4.2, 7.07], "width": 1.12, "y": [0.94, 2.58], "grid": [4, 6], "glass": ["glass_light", "glass_light", "glass", "glass"] },
+  "sill_upper": [4.15, 4.31, 0.08],
+  "lintel_lower": [2.58, 2.83, 0.2],
+  "downpipes_u": [0.9, 18.9],
+  "rear_windows": "extrapolated",
+  "railing": { "o": -1.0, "height": 1.0, "u": [[0.3, 8.2], [11.65, 19.6]], "posts_every": 2.5 }
+ },
+ "bay": {
+  "frame": "S", "u": [8.52, 11.34], "projection": 0.6, "wall_top": 6.5,
+  "hood": { "u": [8.23, 11.61], "spring": 6.46, "apex": 7.17, "thickness": 0.12, "front_overhang": 0.15, "segments": 12 },
+  "window": { "u": [9.08, 10.85], "y": [4.41, 5.91], "grid": [6, 4] },
+  "sign_panel": { "u": [9.06, 10.88], "y": [2.87, 4.24] },
+  "roundel": { "u": 9.97, "y": 3.56, "r": 0.63, "ring": 0.05 },
+  "band": { "u": [8.84, 11.14], "y": [2.64, 2.85], "proud": 0.06 },
+  "door": { "u": [9.09, 10.89], "y": [0, 2.61], "transom": 2.13 }
+ },
+ "north_wing": {
+  "frame": "N", "eave": 3.4, "ridge": 6.0, "corners": [1, 0, 5, 4], "fascia": [3.2, 3.4, 0.15],
+  "windows": "extrapolated: three ground-floor windows of the lower type on each long face, at u 8, 11.5 and 15 m"
+ },
+ "evidence": {
+  "photo_scale": "The face in the photo is the south-east face of the south wing, OSM ring vertices 2 to 1, 19.93 m. It is seen nearly square on: the four upper windows measure 137 to 141 px wide in the 2,576 px photo. The wall runs from x 30 to x 2,555 px (2,525 px), so about 127 px a metre on the wall. The heights below are (1,100 - y px) / 127, with y 1,100 px the foot of the wall at the railings.",
+  "which_face": "The wall in the photo is about 20 m long and has two storeys. Only the south wing has that length and height (LiDAR below). The face looks east-south-east (outward normal 121 deg grid), which a morning sun lights. The lower block at the right edge of the photo, its eave near y 560 px (about 4.3 m), is the north wing behind.",
+  "bay": "The entrance bay is x 1,112 to 1,470 px (2.82 m wide), centred 9.93 m from the left end of a 19.93 m wall: the middle. Its brick goes up to y 275 px (6.5 m); the lead hood spans x 1,075 to 1,505 px and rises from y 280 to y 190 px (6.46 to 7.17 m). The projection (0.6 m, hood 0.15 m more) is from the LiDAR: 4 to 6 m above the ground at o = -1 m only for t 8 to 11 m.",
+  "openings": "Upper windows top y 375, bottom y 553 px (5.71 and 4.31 m); centres 2.90, 5.77, 14.16 and 17.03 m from the left end, symmetric about the middle (4.2 and 7.07 m). Lower windows y 772 to 980 px (2.58 to 0.94 m). Bay window x 1,183 to 1,408, y 350 to 540 px; sign panel y 562 to 735; roundel centre (1,296, 648), radius 80 px; stone band y 738 to 765; door x 1,185 to 1,413 from y 768 px down; 'ENTRANCE' panel to y 830 px.",
+  "glazing": "Glazing bars counted on the photo: upper windows 4 x 5 panes, lower windows 4 x 6, the bay window two sashes of 3 x 4.",
+  "lidar": "EA LiDAR Composite First Return DSM 2022 and NLP DSM 2020 (1 m) minus the Composite DTM 2022, profiles in w259277099-lidar-profile.json (tools/lidar-roof-profile.py). South wing: roof from o = 0 to o = 9.7 m for t = 0.3 to 19.5 m; ridge 8.5 to 8.8 m above the ground at o = 4.5 to 5 m; the roof falls 0.5 m a metre, so 28 deg (the 2020 and 2022 flights agree to 0.1 m). North wing: eaves about 3.4 m, ridge 5.9 to 6.1 m at the middle of its depth, the same pitch: one storey. The OSM inner line of the south wing is 1.7 m deeper than the LiDAR roof (offsets 9.7 to 11.4 m read 0 to 4 m): the model keeps the LiDAR depth.",
+  "eave": "LiDAR roof plane at the wall line 6.3 m; the photo gives 5.75 to 6.0 m to the fascia. The model uses 6.1 m.",
+  "ground": "area.js b = 5.6 m OD; the DTM at the six corners is 5.43 to 5.70 m OD.",
+  "colours": "Judged from the photo after conversion from its Display P3 profile to sRGB (fault F51). The wings are in low warm sun with tree shadows; the bay is in shade. Measured in sRGB: sunlit brick #da9b4b to #e5af60, shaded brick #333330; sunlit window frames #98a681 to #cad8b4; sunlit lead #c6bbaa; the slate roof #62533e to #8d7e6c in sun. The material colours are judged from these, not calibrated (no white reference in this photo).",
+  "not_seen": "The rear (west-north-west) face, the south-south-west gable end and the north wing's faces are not in the photo. The model gives the rear the same window layout as the front, and the north wing three ground-floor windows on each long face: extrapolated, not observed."
+ }
+}

@@ -8369,6 +8369,68 @@
       ]
     },
     {
+      "id": "lidar-roof-profile",
+      "area": "buildings",
+      "tool": "tools/lidar-roof-profile.py",
+      "command": "python3 cwplans/tools/lidar-roof-profile.py cwplans/docklands/data/area.js 7477 <tiles>/TQ37ne_FZ_DSM_1m.tif <tiles>/DSM_TQ3575_P_12151_20201212_20201212.tif --dtm <tiles>/TQ37ne_DTM_1m.tif --face south-wing-front:2:1:3 --face north-wing-front:1:0:4 --out cwplans/docklands/models/w259277099-lidar-profile.json",
+      "kind": "measure",
+      "used": [
+        {
+          "source": "ea-lidar",
+          "request": "EA survey tiles TQ3575: lidar_composite_first_return_dsm/2022/1, national_lidar_programme_dsm/2020/1, lidar_composite_dtm/2022/1 (https://environment.data.gov.uk/tiles/collections/survey, fetched 2026-10-08; not committed, 61 to 68 MB each)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/models/w259277099-lidar-profile.json"
+        }
+      ],
+      "note": "skill docklands-3d-page, \"Detailed building models\"",
+      "method": "Decodes the model outline of one building from area.js, sets a frame on each named wall face (origin corner, direction to a second corner, inward towards a third), and samples DSM minus DTM bilinearly on a 1 m grid of (t along, o inward) from 3 m outside to 16 m inside. Writes the grids per DSM, the corners in each frame and the SHA-256 of each tile.",
+      "rules": [
+        "Heights are above the DTM, not m OD.",
+        "The grid is 1 m: walls and eaves fall between samples, so read an edge as where the values drop, not one sample."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "fetch-raw-lidar"
+      ]
+    },
+    {
+      "id": "building-models",
+      "area": "buildings",
+      "tool": "tools/build-building-models.mjs",
+      "command": "node cwplans/tools/build-building-models.mjs",
+      "kind": "build",
+      "used": [
+        {
+          "source": "contrib-photos",
+          "request": "danbri/londat data/images/contrib/cwredriff/2026-10-08-cw-01-pacific-tavern.jpg (the sizes in the description were measured on it)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/building-models.json"
+        },
+        {
+          "file": "docklands/models/w259277099-pacific-tavern.glb"
+        }
+      ],
+      "note": "skill docklands-3d-page, \"Detailed building models\"; logged operation build-building-models, kgx graph building-models",
+      "method": "For each hand-made description in docklands/models/*.spec.json: checks that the description is for this area.js (fingerprint), sets frames on the model outline, and builds the parts as triangles with outward winding: gabled wings with parapets, coping and kneelers, walls with window openings (reveals, glass, frames and glazing bars), boxes for fascias, sills, lintels and pipes, the entrance bay with its segmental hood, the sign, railings. Writes the page file (mm relative to a centre, one colour a part) and a glTF 2.0 binary per building.",
+      "rules": [
+        "A description gives every size with its evidence; what is not seen is marked extrapolated in the part's basis.",
+        "The page draws a model only while its model_fp matches the page, else at the building that holds its WGS84 point.",
+        "BM_DRY=1 writes the outputs without a log entry while a description is edited; the committed outputs come from a logged run."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "lidar-roof-profile"
+      ]
+    },
+    {
       "id": "station-mesh",
       "area": "underground",
       "tool": "tools/build-station-mesh.mjs",

@@ -1,0 +1,79 @@
+{
+ "about": "One photograph of the Pacific Tavern, Redriff Road, Rotherhithe, SE16, given to the project under CC0 by the owner on 8 October 2026. This file holds the hand-made part: what the photo shows, how the building was identified, and the camera judged from the photo. The graph is made by the logged operation lift-contrib-photos (cwplans/tools/contrib-photos.mjs). The photo is the main source of the detailed 3D model of the building (cwplans/docklands/models/w259277099-pacific-tavern.spec.json, tools/build-building-models.mjs). Skills: docklands-data-curation ('Contributed photos'), docklands-3d-page ('Detailed building models').",
+ "set": "cwredriff",
+ "licence": "CC0 1.0",
+ "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+ "creator": "danbri (project owner)",
+ "date": "2026-10-08",
+ "time": "before 08:53 BST (07:53 UTC) on 8 October 2026, when the owner gave it to the project ('newly taken'). The JPEG carries no EXIF time, GPS or camera model. The face in the photo looks east-south-east (121 deg grid) and is in low sun with long tree shadows: an early-morning sun",
+ "owner_words": "Front view of Pacific Tavern Rother, newly taken cc0 photo contrib, sunlit with shadows from trees. Extrapolate a full 3D model and add it to rep as new default for that building.",
+ "files_as_delivered": "JPEG, unchanged bytes (renamed only), 2,576 x 1,290 px (a 2:1 crop). EXIF: orientation, resolution, ExifVersion 0221, ComponentsConfiguration, FlashPixVersion, ColorSpace sRGB, pixel size, SceneCaptureType; an embedded ICC profile 'Display P3' (Apple): the pixel values are Display P3 although the EXIF ColorSpace tag says sRGB (fault F51). No date, time, GPS, make, model, lens or exposure tags.",
+ "weather": {
+  "owner": "sunlit with shadows from trees",
+  "light": "low direct sun from the left of the camera; the entrance bay and the lower right of the face are in tree and lamp-post shadow"
+ },
+ "osm_extract": "The OSM outline and tags come through the 3D page model: docklands/data/area.js (built 2026-10-03 from the openstreetmap.fr greater_london-latest extract, data as of 2026-10-01) and docklands/data/building-keys.json (OSM way 259277099 = model index 7477).",
+ "model": "cwplans/docklands/data/area.js built 2026-10-03 (sha256 29a3eb87...), keyed by docklands/data/building-keys.json.",
+ "people": "One person is in the photo (right of the middle); no recognisable face. No vehicle and no number plate.",
+ "buildings": {
+  "pacific-tavern": {
+   "name": "Pacific Tavern",
+   "osm": "https://www.openstreetmap.org/way/259277099",
+   "osm_tags": {
+    "building": "restaurant",
+    "name": "Pacific Tavern",
+    "addr:housenumber": "100",
+    "addr:street": "Redriff Road",
+    "addr:postcode": "SE16 7LH"
+   },
+   "model": {
+    "index": 7477,
+    "height_m": 8.4,
+    "base_m_od": 5.6,
+    "top_m_od": 14.0,
+    "height_source": "lidar",
+    "note": "Since 2026-10-08 the 3D page draws the detailed model (top 14.72 m OD, the parapet coping at the ridge) instead of this extruded outline."
+   },
+   "identified_by": [
+    "the name on the building: the roundel 'PACIFIC TAVERN' on the entrance bay",
+    "the street sign 'QUEBEC WAY' in front of it; OSM puts the Pacific Tavern at the corner of Redriff Road and Quebec Way",
+    "the OSM outline: a wing of 19.93 m with the bend at its north end, the length of the wall in the photo; the EA LiDAR gives that wing two storeys and the north wing one"
+   ],
+   "confidence": "certain",
+   "footprint": "OSM way 259277099 is a bent outline of six corners: the south wing (19.93 m x 11.4 m, the LiDAR roof 9.7 m deep) and the north wing (18.1 m x 10.7 m) meet at 57 deg. The photo shows the south wing's east-south-east face (ring corners 2 to 1).",
+   "facade": {
+    "wall": "buff-yellow stock brick, two storeys, gable parapets with stone coping and kneelers at both ends, a dark grey fascia and gutter, slate roof",
+    "windows": "four on each floor, symmetric about the middle: green painted frames; upper 1.1 x 1.4 m (4 x 5 panes) under the eaves on brick-on-edge sills; lower 1.12 x 1.64 m (4 x 6 panes) under stone lintels",
+    "bay": "a central entrance bay 2.82 m wide, 0.6 m proud, up to 6.5 m, with a segmental lead hood (span 3.38 m, top 7.17 m); a window of two 3 x 4 pane sashes, a green panel with the round 'PACIFIC TAVERN' sign (a sun over waves), a stone band, and green double doors with diamond panels under an 'ENTRANCE' panel",
+    "how": "sizes from the photo at about 127 px a metre (the 19.93 m wall over 2,525 px; the face is seen nearly square on); heights checked against the EA LiDAR. Details in cwplans/docklands/models/w259277099-pacific-tavern.spec.json"
+   }
+  }
+ },
+ "photos": [
+  {
+   "file": "2026-10-08-cw-01-pacific-tavern.jpg",
+   "size": [
+    2576,
+    1290
+   ],
+   "title": "Pacific Tavern, Redriff Road: the south wing's east-south-east face in low morning sun, the entrance bay with the 'PACIFIC TAVERN' roundel",
+   "camera": "judged from the photo: about 20 m from the face on its outward normal (bearing 301 deg grid to the wall), level with the middle of the wall, near the roundabout at Redriff Road and Quebec Way: about -0.0411, 51.4962 (model x -1474, z 1009), eye about 1.6 m; focal about 2,560 px on the 2,576 px side. From the right gable coping, which recedes 245 px over the 4.85 m from the wall to the ridge; not a camera solve",
+   "depicts": [
+    {
+     "building": "pacific-tavern",
+     "role": "subject"
+    },
+    {
+     "name": "street sign 'QUEBEC WAY'",
+     "role": "foreground right"
+    },
+    {
+     "name": "chevron sign of a roundabout",
+     "role": "foreground"
+    }
+   ]
+  }
+ ],
+ "patches": [],
+ "tiles": []
+}

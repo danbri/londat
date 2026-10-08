@@ -1755,3 +1755,20 @@ older activities and operations, the 3 `s:addressCountry` texts).
 Open items: nothing is hosted at https://kgx.foaf.tv/ (IDs and terms do not resolve; owner: "No dereferencing needed
 yet"); F53 (`key-model-buildings` version 5); the four Flow tools were not re-run (their heads are the mapped versions;
 a re-run with the same inputs mints the same terms).
+
+## 2026-10-08: Pacific Tavern, the first detailed building model
+
+- The owner gave a CC0 photo of the Pacific Tavern, Redriff Road (set `cwredriff`, data/images/contrib/cwredriff/):
+  "Extrapolate a full 3D model and add it to rep as new default for that building." Identified as OSM way 259277099,
+  model index 7477 (the name on the roundel, the Quebec Way sign, the outline). One person in the photo, no
+  recognisable face, no number plate.
+- New: tools/lidar-roof-profile.py (EA DSM 2022 and 2020 minus DTM 2022, tiles TQ3575 fetched 2026-10-08, not
+  committed), docklands/models/w259277099-pacific-tavern.spec.json (sizes from the photo at about 127 px a metre,
+  heights from the LiDAR, judged colours, each with evidence), tools/build-building-models.mjs (operation
+  build-building-models, graph building-models), docklands/data/building-models.json and a .glb; the 3D page draws the
+  model instead of the extruded outline (Layers > Show > Detailed models; card row; Night lights the panes);
+  tools/test/building-models.test.mjs. contrib-photos.mjs cwredriff: graph photos-cwredriff.
+- Found: the OSM outline is two wings at 57 deg; the south wing (the face in the photo) is 9.7 m deep in the LiDAR
+  against 11.4 m in OSM; the north wing is one storey (eaves 3.4 m, ridge 6.0 m), not two.
+- Open: the rear, the south gable end and the north wing's windows are extrapolated (no photo). The kgx store was not
+  repacked (build-kgx.mjs) in this session. Skill: docklands-3d-page, "Detailed building models".

@@ -10,5 +10,8 @@
  "facade-atlas": "https://kgx.foaf.tv/id/graphfacadeatlas7b8b264501c0bf49",
  "facade-patches-cwdock": "https://kgx.foaf.tv/id/graphfacadepatchescwdockca4578da2711a4e3",
  "photos-cwdock": "https://kgx.foaf.tv/id/graphphotoscwdock04d844938d0212e0",
- "facade-tiles-cwdock": "https://kgx.foaf.tv/id/graphfacadetilescwdock135d1e694cc185ff"
+ "facade-tiles-cwdock": "https://kgx.foaf.tv/id/graphfacadetilescwdock135d1e694cc185ff",
+ "facade-patches-cwredriff": "https://kgx.foaf.tv/id/graphfacadepatchescwredriff01ba4719c80b6fe9",
+ "photos-cwredriff": "https://kgx.foaf.tv/id/graphphotoscwredriffd80b22e8dd216ddf",
+ "building-models": "https://kgx.foaf.tv/id/graphbuildingmodels37aef402548b5b61"
 }

@@ -9740,6 +9740,80 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toollidarroofprofile",
+   "@type": "prov:Activity",
+   "rdfs:label": "lidar-roof-profile",
+   "dct:description": "Decodes the model outline of one building from area.js, sets a frame on each named wall face (origin corner, direction to a second corner, inward towards a third), and samples DSM minus DTM bilinearly on a 1 m grid of (t along, o inward) from 3 m outside to 16 m inside. Writes the grids per DSM, the corners in each frame and the SHA-256 of each tile.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcealidar",
+     "dct:description": "EA survey tiles TQ3575: lidar_composite_first_return_dsm/2022/1, national_lidar_programme_dsm/2020/1, lidar_composite_dtm/2022/1 (https://environment.data.gov.uk/tiles/collections/survey, fetched 2026-10-08; not committed, 61 to 68 MB each)"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/models/w259277099-lidar-profile.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/lidar-roof-profile.py"
+   },
+   "cwp:command": "python3 cwplans/tools/lidar-roof-profile.py cwplans/docklands/data/area.js 7477 <tiles>/TQ37ne_FZ_DSM_1m.tif <tiles>/DSM_TQ3575_P_12151_20201212_20201212.tif --dtm <tiles>/TQ37ne_DTM_1m.tif --face south-wing-front:2:1:3 --face north-wing-front:1:0:4 --out cwplans/docklands/models/w259277099-lidar-profile.json",
+   "cwp:kind": "measure",
+   "cwp:rule": [
+    "Heights are above the DTM, not m OD.",
+    "The grid is 1 m: walls and eaves fall between samples, so read an edge as where the values drop, not one sample."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolfetchrawlidar"
+    }
+   ],
+   "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolbuildingmodels",
+   "@type": "prov:Activity",
+   "rdfs:label": "building-models",
+   "dct:description": "For each hand-made description in docklands/models/*.spec.json: checks that the description is for this area.js (fingerprint), sets frames on the model outline, and builds the parts as triangles with outward winding: gabled wings with parapets, coping and kneelers, walls with window openings (reveals, glass, frames and glazing bars), boxes for fascias, sills, lintels and pipes, the entrance bay with its segmental hood, the sign, railings. Writes the page file (mm relative to a centre, one colour a part) and a glTF 2.0 binary per building.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccontribphotos",
+     "dct:description": "danbri/londat data/images/contrib/cwredriff/2026-10-08-cw-01-pacific-tavern.jpg (the sizes in the description were measured on it)"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-models.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/models/w259277099-pacific-tavern.glb"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-building-models.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-building-models.mjs",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "A description gives every size with its evidence; what is not seen is marked extrapolated in the part's basis.",
+    "The page draws a model only while its model_fp matches the page, else at the building that holds its WGS84 point.",
+    "BM_DRY=1 writes the outputs without a log entry while a description is edited; the committed outputs come from a logged run."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toollidarroofprofile"
+    }
+   ],
+   "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolstationmesh",
    "@type": "prov:Activity",
    "rdfs:label": "station-mesh",
@@ -15244,6 +15318,129 @@
    },
    "cwp:osmUse": "none",
    "cwp:review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-models.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "detailed building models the 3D page draws instead of the extruded outline (first: the Pacific Tavern, Redriff Road, OSM way 259277099): triangles by part (walls, roof, windows, entrance bay and hood, sign, railings) with colours and the basis of each part, model indices with the area.js fingerprint, a WGS84 point",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccontribphotos"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcealidar"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildingmodels"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/models/w259277099-pacific-tavern.spec.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "hand-made description of the Pacific Tavern for tools/build-building-models.mjs: sizes measured on the owner's CC0 photo and the EA LiDAR profile, colours judged from the photo, each with its evidence; what is extrapolated (the rear, the north wing windows) is marked",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccontribphotos"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcealidar"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/models/w259277099-lidar-profile.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "roof profile of model building 7477 (Pacific Tavern) from the EA 1 m LiDAR: DSM 2022 and 2020 minus DTM 2022 on 1 m grids in the frame of each wing face, tile SHA-256s, the outline corners in each frame",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcealidar"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toollidarroofprofile"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/models/w259277099-pacific-tavern.glb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "the Pacific Tavern model as a glTF 2.0 binary file (one mesh, a primitive per part, flat normals, a material per colour; x east, y up, z south, metres, origin in the node extras in British National Grid and m OD), for Blender and other 3D tools",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srccontribphotos"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcealidar"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildingmodels"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-building-models.mjs",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: detailed building models from hand-made descriptions (docklands/models/*.spec.json) and the area.js outline -> docklands/data/building-models.json and a .glb per building; logged operation build-building-models, kgx graph building-models",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/lidar-roof-profile.py",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: the roof profile of one model building from EA LiDAR DSM and DTM tiles, in the frame of each wall face (numpy, tifffile)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/stations.json",

@@ -34,10 +34,11 @@
     c.L.hi = M.upload();
     const b = c.A.buildings[i], top = Math.max(...idx.map(j => c.A.buildings[j].b + c.heightOf(c.A.buildings[j], j))), ground = Math.min(...idx.map(j => c.A.buildings[j].b));
     const [x, z] = centre(idx), name = nameOf(id) || f.a || (typeOf(f.b) ? typeOf(f.b)[0].toUpperCase() + typeOf(f.b).slice(1) : 'Building');
-    const parts = idx.length > 1 ? `${idx.length} parts in the model` : '', fac = c.facadeOf(idx);
+    const parts = idx.length > 1 ? `${idx.length} parts in the model` : '', fac = c.facadeOf(idx), dm = c.modelOf ? c.modelOf(idx) : null;
     c.info.innerHTML = `<b>${esc(name)}</b> <span class="small">OSM ${id[0] === 'r' ? 'relation' : 'way'} ${esc(id.slice(1))}${typeOf(f.b) ? ' · ' + esc(typeOf(f.b)) : ''}${parts ? ' · ' + parts : ''}</span>
       ${f.a || f.pc ? `<div class="small">Address: ${esc([f.a, f.pc].filter(Boolean).join(', '))}</div>` : ''}
       <div class="small">Height: 3D model ${Math.round((top - ground) * 10) / 10} m above the ground (${esc(SRC[b.s] || 'unknown')}) · roof ${Math.round(top)} m OD · ground ${ground} m OD${f.l ? ` · ${esc(f.l)} levels (OSM)` : ''}</div>
+      ${dm ? `<div class="small">Detailed model: ${dm.parts.length} parts, ${dm.triangles.toLocaleString()} triangles, top ${dm.top_m_od} m OD, made ${esc(dm.made)} from a contributed photo and the LiDAR (<a href="https://github.com/danbri/londat/blob/main/${esc(dm.source.description)}" target="_blank" rel="noopener">evidence</a> · <a href="https://github.com/danbri/londat/blob/main/${esc(dm.source.glb)}" target="_blank" rel="noopener">glTF file</a>). Layers &gt; Show &gt; Detailed models.</div>` : ''}
       ${fac ? `<div class="small">Facade: ${esc(fac.what || 'a tile from a photo')}${fac.page ? ` (<a href="${esc(fac.page)}" target="_blank" rel="noopener">photos</a>)` : ''}</div>` : ''}
       <div class="small">No registry record: the registry covers the Canary Wharf box. Facts from OpenStreetMap (© OpenStreetMap contributors, ODbL).</div>
       ${c.routeBtns(Math.round(x), Math.round(z), name)}
