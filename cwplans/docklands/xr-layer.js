@@ -28,7 +28,7 @@ const DEG = Math.PI / 180, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const S = {
   session: null, ref: null, preview: false, ar: false, mode: 'table', s: 1 / 1500, c: [0, 0, 0], O: [0, .78, -1], yaw: 0, lift: 0, floorY: 0,
   W: M.I(), Wi: M.I(), head: [0, 1.6, 0], headF: [0, 0, -1], placed: false, base: { a: 0, p: [0, 1.6, 0] },
-  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), grab: null, press: new Map(), lastRay: new Map(), two: null, sky: 'auto', photos: [], snap: false, ride: true, view: -1, droneT: 0,
+  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), grab: null, press: new Map(), lastRay: new Map(), two: null, sky: 'auto', photos: [], snap: false, ride: true, view: -1, droneT: 0, btn: new Map(), hidePanels: false, pads: false,
   data: null, loading: null, inView: { cats: {}, events: [], works: [], markets: [] }, listT: 0, hiDirty: true, hiMesh: null, labels: [], panels: [],
 };
 function setW() {
@@ -229,7 +229,7 @@ function makePanels() {
   });
   P.focus = new Panel('focus', .95, .36, [0, 1.55, .38, 0], (g, pn) => {
     const f = S.focus; frame(g, pn, f ? clip(g, f.title, PX - 80) : 'Select something', f ? clip(g, f.sub || '', PX - 80) : 'Point and press (or pinch) at a building, a beacon or a list row');
-    if (!f) { g.fillStyle = '#c9d1d9'; g.font = `400 27px ${FONT}`; ['Pinch (or press) on empty space and drag: move the city. Up and down: raise or lower it.', 'Both hands pinched: turn it and change its size.', 'Drag a panel by its title (the bar by its left end) to move it.', 'A short pinch on a row, a label or a building selects it.'].forEach((s, i) => g.fillText(clip(g, s, PX - 80), 40, 160 + i * 38)); return; }
+    if (!f) { g.fillStyle = '#c9d1d9'; g.font = `400 27px ${FONT}`; ['Pinch (or press) on empty space and drag: move the city. Up and down: raise or lower it.', 'Both hands pinched: turn it and change its size.', 'Drag a panel by its title (the bar by its left end) to move it.', 'A short pinch on a row, a label or a building selects it.', 'Controllers: A Table/Street · B Night · X Recentre · Y side panels · sticks move, turn, zoom.'].forEach((s, i) => g.fillText(clip(g, s, PX - 80), 40, 160 + i * 38)); return; }
     let y = 150; g.font = `400 26px ${FONT}`;
     for (const line of (f.lines || []).slice(0, 7)) { g.fillStyle = /^(open|Open)/.test(line) ? '#7dff9b' : '#d5dbe1'; g.fillText(clip(g, line, PX - 300), 40, y); y += 34; }
     if (f.x != null) { pn.btn(g, PX - 250, 140, 210, 62, S.mode === 'street' ? 'Go there' : 'Stand there', false, 'go'); pn.btn(g, PX - 250, 216, 210, 62, 'Centre', false, 'centre'); }
@@ -274,7 +274,7 @@ function after(v) {
   const mvp = M.mul(v.projectionMatrix, v.transform.inverse.matrix);
   gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.enable(gl.DEPTH_TEST); gl.depthMask(false);
   if (LAB.tex) quads(mvp, LAB.tex, labelVerts());
-  gl.depthMask(true); for (const p of S.panels) if (p.tex) quads(mvp, p.tex, p.verts(), 1);
+  gl.depthMask(true); for (const p of S.panels) if (p.tex && !(S.hidePanels && (p === P.places || p === P.whatson))) quads(mvp, p.tex, p.verts(), 1);
   const L = [];
   for (const [, h] of S.hover) { const e = add(h.o, mulv(h.d, h.len)); L.push(...h.o, 1, 1, 1, .2, ...e, 1, 1, 1, .9); }
   if (S.lead) { const a = S.lead.a, b = toUser(S.lead.x, S.lead.y, S.lead.z); L.push(...a, 1, .84, .3, .95, ...b, 1, .84, .3, .95); }
@@ -285,7 +285,7 @@ function after(v) {
 
 // ---------- input: rays from controllers, hands and gaze-and-pinch (transient pointers); select acts, squeeze grabs the table
 function rayOf(frame, src) { const p = frame.getPose(src.targetRaySpace, S.ref); if (!p) return null; const m = p.transform.matrix; return { o: [m[12], m[13], m[14]], d: nrm([-m[8], -m[9], -m[10]]) }; }
-function hitPanels(o, d) { let best = null; for (const p of S.panels) { const h = p.hit(o, d); if (h && (!best || h.t < best.h.t)) best = { p, h }; } return best; }
+function hitPanels(o, d) { let best = null; for (const p of S.panels) { if (S.hidePanels && (p === P.places || p === P.whatson)) continue; const h = p.hit(o, d); if (h && (!best || h.t < best.h.t)) best = { p, h }; } return best; }
 function onSelect(ev) { const r = rayOf(ev.frame, ev.inputSource); if (r) click(r); }
 function click(r) {
   const hp = hitPanels(r.o, r.d);
@@ -381,7 +381,7 @@ function onPressStart(ev) {
 function onPressEnd(ev) {
   const rec = S.press.get(ev.inputSource); S.press.delete(ev.inputSource); if (!rec) return;
   if (S.two) { S.two = null; for (const o of S.press.values()) if (o.kind === 'world') Object.assign(o, { pos0: o.pos, O0: S.O.slice(), c0: S.c.slice(), drag: true }); return; }
-  if (!rec.drag && performance.now() - rec.t0 < 900) click(rec.r);
+  if (!rec.drag && performance.now() - rec.t0 < 900) { click(rec.r); buzz(rec.src, .35, 30); }
   if (rec.kind === 'world' && rec.drag) { S.hiDirty = true; S.listSig = ''; }
 }
 function twoStart() {
@@ -461,8 +461,8 @@ function onFrame(t, frame) {
   droneFrame(t);
   for (const [src, h] of S.hover) S.lastRay.set(src, h); S.hover.clear(); drags(frame);
   for (const src of s.inputSources) { const r = rayOf(frame, src); if (!r) continue; const hp = hitPanels(r.o, r.d); S.hover.set(src, { ...r, len: hp ? hp.h.t : 3 });
-    for (const p of S.panels) { const hv = hp && hp.p === p && hp.h.item ? hp.h.item[4] : null; if (p.hov !== hv) { p.hov = hv; p.dirty = true; } }
-    const gp = src.gamepad; if (gp && gp.axes && gp.axes.length >= 4) stick(gp.axes[2], gp.axes[3], src);
+    for (const p of S.panels) { const hv = hp && hp.p === p && hp.h.item ? hp.h.item[4] : null; if (p.hov !== hv) { p.hov = hv; p.dirty = true; if (hv) buzz(src, .12, 12); } }
+    const gp = src.gamepad; if (gp) pad(gp, src);
     if (S.grab && S.grab.src === src && S.mode === 'table') { S.O = add(S.grab.O, sub(r.o, S.grab.o)); S.Otable = S.O; setW(); } }
   if (t - S.listT > 450) { S.listT = t; updateLists(); }
   if (S.hiDirty) buildHighlights();
@@ -480,6 +480,24 @@ function onFrame(t, frame) {
   if (S.preview) S.prevDrawn = true;
 }
 let stickT = 0;
+// controllers (xr-standard mapping): right stick turns and zooms (table) or snap-turns and walks (street); left stick
+// moves over the map or strafes; A Table/Street, B Night/Day, X Recentre, Y hide or show the side panels,
+// right stick press Photo; a pulse on hover and on a click
+function buzz(src, k, ms) { const h = src && src.gamepad && src.gamepad.hapticActuators && src.gamepad.hapticActuators[0]; try { if (h && h.pulse) h.pulse(k, ms); } catch { /* no haptics */ } }
+function pad(gp, src) {
+  S.pads = true; const B = gp.buttons || [], was = S.btn.get(src) || [], down = B.map(b => !!(b && b.pressed)); S.btn.set(src, down);
+  const hit = i => down[i] && !was[i], right = src.handedness !== 'left';
+  if (hit(4)) act(right ? (S.mode === 'table' ? 'mode:street' : 'mode:table') : 'recentre', P.bar);
+  if (hit(5)) { if (right) act('night', P.bar); else { S.hidePanels = !S.hidePanels; } }
+  if (hit(3) && right) act('photo', P.bar);
+  if (gp.axes && gp.axes.length >= 4) { if (right) stick(gp.axes[2], gp.axes[3]); else move(gp.axes[2], gp.axes[3]); }
+}
+function move(x, y) {
+  const dz = .2; if (Math.abs(x) < dz && Math.abs(y) < dz) return; if (S.mode === 'ride') return;
+  const f = [S.headF[0], 0, S.headF[2]], fl = Math.hypot(f[0], f[2]) || 1, fw = [f[0] / fl, 0, f[2] / fl], rt = [-fw[2], 0, fw[0]];
+  const k = S.mode === 'table' ? .012 : .9, v = add(mulv(fw, -y * k), mulv(rt, x * k)), d = M.dir(S.Wi, v);
+  S.c = [S.c[0] + d[0], 0, S.c[2] + d[2]]; S.c[1] = groundY(S.c[0], S.c[2]); setW(); S.listT = 0;
+}
 function stick(x, y) {
   if (S.mode === 'ride' && droneOn()) { DocklandsDrone.stick(Math.abs(x) > .2 ? x : 0, Math.abs(y) > .2 ? -y : 0); return; }
   const dz = .25; if (Math.abs(x) < dz && Math.abs(y) < dz) return;

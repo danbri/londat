@@ -47,10 +47,16 @@ const save = async (page, name) => { if (!OUT) return; const png = await page.ev
     const r = { on: DocklandsDrone.on, mode: X.S.mode, moved: Math.hypot(p1[0] - p0[0], p1[2] - p0[2]), atEye: Math.hypot(c[0] - p1[0], c[2] - p1[2]) };
     for (let k = 0; k < 6; k++) { X.act('drone', X.P.bar); await new Promise(r => setTimeout(r, 400)); __xrMock.step(); } r.off = !DocklandsDrone.on; r.after = X.S.mode; return r; });
   ok(dn.on && dn.mode === 'ride' && dn.moved > .1 && dn.atEye < .5 && dn.off && dn.after === 'table', `Drone: ride a copter stepped by the headset frames (moved ${dn.moved.toFixed(2)} m), off returns to the table`);
+  const pd = await page.evaluate(() => { const X = DocklandsXR, S = X.S, M = __xrMock; M.ray = { o: [.2, 1.2, -.2], d: [0, -.3, -1] }; M.ray2 = { o: [-.2, 1.2, -.2], d: [0, -.3, -1] };
+    M.pads = [M.pad(), M.pad()]; M.step(); const c0 = S.c.slice(); M.pads[1].axes[3] = -1; for (let k = 0; k < 10; k++) M.step(); M.pads[1].axes[3] = 0; const c1 = S.c.slice();
+    M.pads[0].buttons[4].pressed = true; M.step(); M.pads[0].buttons[4].pressed = false; M.step(); const m1 = S.mode; M.pads[0].buttons[4].pressed = true; M.step(); M.pads[0].buttons[4].pressed = false; M.step();
+    const r = { moved: Math.hypot(c1[0] - c0[0], c1[2] - c0[2]), m1, m2: S.mode }; M.pads = [null, null]; M.ray2 = null; return r; });
+  ok(pd.moved > 50 && pd.m1 === 'street' && pd.m2 === 'table', `controllers: left stick moves over the map (${pd.moved.toFixed(0)} m), A goes to Street and back`);
   const st = await page.evaluate(() => { DocklandsXR.act('mode:street', DocklandsXR.P.bar); __xrMock.step(); return [DocklandsXR.S.mode, __xrMock.session.renderState.depthNear, __xrMock.session.renderState.depthFar]; });
   await save(page, 'stereo-street'); ok(st[0] === 'street' && st[1] === .25 && st[2] === 16000, `street mode, depth ${st[1]} to ${st[2]} m`);
   const ex = await page.evaluate(() => { DocklandsXR.act('exit', DocklandsXR.P.bar); return DocklandsXR.active; }); ok(ex === false, 'exit ends the session');
   ok(!errors.length, 'stereo: no page error' + (errors.length ? ': ' + errors.join(' | ') : ''));
+  await page.context().close();   // the next page shares the software GPU
 }
 { // the preview at phone size
   const { page, errors } = await open(390, 844, 3, '?xr=preview&go', false);

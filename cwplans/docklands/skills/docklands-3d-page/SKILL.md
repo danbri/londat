@@ -1418,6 +1418,11 @@ opens the one-eye preview (drag to look round, tap to select; iOS Safari has no 
     the table and marks the drone with a small cyan diamond. A thumbstick steers while riding. View cycles the page's
     named views: a view with an eye point puts you there at street level (lift = its eye height above the ground),
     the others centre the table. The drone starts from the table centre (the page camera is set there first).
+  - Controllers (owner, 2026-10-08: "I can test with controllers"): xr-standard mapping. Right stick: turn and zoom
+    (table), snap turn and walk (street), steer (ride). Left stick: move over the map (table: 1.2 cm a frame at the
+    table's scale) or strafe (street). A Table/Street, B Night/Day, X Recentre, Y hide or show the side panels, right
+    stick press Photo. A haptic pulse on a hover change (0.12, 12 ms) and on a click (0.35, 30 ms). The mock has
+    `pads[i]`; xr-check.mjs closes the stereo page before the preview (they share the software GPU).
   - The Quest system menu with hands: look at the palm, pinch and hold (the right hand gives the Meta menu, with
     the screenshot); the page cannot change that gesture.
 - **Not done / open:** no real headset test (the owner has to try it on a Quest or Vision Pro); performance with two

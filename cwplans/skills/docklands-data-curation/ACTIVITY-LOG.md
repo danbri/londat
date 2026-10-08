@@ -1852,3 +1852,5 @@ a re-run with the same inputs mints the same terms).
   warn: every building vanished, no console error); a bearing modulo 180 flipped the ridge offsets (seen in the
   profile check, fixed). Open: complex outlines (L shapes, wings) stay flat; rear outriggers get the main roof's
   slope; no half-hip, mansard, butterfly or skillion. Skill: docklands-3d-page, "Roof shapes".
+- Headset controllers: left stick moves over the map, right stick turns and zooms, A/B/X/Y shortcuts, haptic pulses.
+  xr-check.mjs: 13 of 13.

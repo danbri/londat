@@ -9,12 +9,14 @@
     const inv = new Float32Array(16); for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) inv[c * 4 + r] = m[r * 4 + c]; for (let r = 0; r < 3; r++) inv[12 + r] = -(inv[r] * o[0] + inv[4 + r] * o[1] + inv[8 + r] * o[2]); inv[15] = 1;
     return { matrix: m, inverse: { matrix: inv }, position: { x: o[0], y: o[1], z: o[2], w: 1 } }; };
   const persp = (fy, a, n, f) => { const t = 1 / Math.tan(fy / 2), o = new Float32Array(16); o[0] = t / a; o[5] = t; o[10] = (f + n) / (n - f); o[11] = -1; o[14] = 2 * f * n / (n - f); return o; };
-  const M = window.__xrMock = { head: { o: [0, 1.6, 0], f: [0, -.42, -1] }, ray: null, session: null, frames: 0 };
+  // pads[i]: an xr-standard gamepad for controller i ({ axes: [0, 0, x, y], buttons: [{ pressed }] x 6 }) or null
+  const pad = () => ({ axes: [0, 0, 0, 0], buttons: Array.from({ length: 6 }, () => ({ pressed: false, value: 0 })), hapticActuators: [] });
+  const M = window.__xrMock = { head: { o: [0, 1.6, 0], f: [0, -.42, -1] }, ray: null, session: null, frames: 0, pads: [null, null], pad };
   class XRWebGLLayer { constructor(s, gl) { this.gl = gl; this.framebuffer = null; } get framebufferWidth() { return this.gl.drawingBufferWidth; } get framebufferHeight() { return this.gl.drawingBufferHeight; }
     getViewport(v) { const w = this.framebufferWidth / 2; return { x: v.eye === 'left' ? 0 : w, y: 0, width: w, height: this.framebufferHeight }; } }
   window.XRWebGLLayer = XRWebGLLayer;
   WebGLRenderingContext.prototype.makeXRCompatible = function () { return Promise.resolve(); };
-  class Session { constructor(mode) { this.mode = mode; this.ev = {}; this.renderState = { depthNear: .1, depthFar: 1000 }; this.cb = null; this.srcs = [{ targetRayMode: 'tracked-pointer', handedness: 'right', targetRaySpace: { ray: 0 }, gamepad: null }, { targetRayMode: 'tracked-pointer', handedness: 'left', targetRaySpace: { ray: 1 }, gamepad: null }]; }
+  class Session { constructor(mode) { this.mode = mode; this.ev = {}; this.renderState = { depthNear: .1, depthFar: 1000 }; this.cb = null; this.srcs = [{ targetRayMode: 'tracked-pointer', handedness: 'right', targetRaySpace: { ray: 0 }, get gamepad() { return M.pads[0]; } }, { targetRayMode: 'tracked-pointer', handedness: 'left', targetRaySpace: { ray: 1 }, get gamepad() { return M.pads[1]; } }]; }
     get inputSources() { return [M.ray, M.ray2].map((r, i) => r ? this.srcs[i] : null).filter(Boolean); }
     updateRenderState(s) { Object.assign(this.renderState, s); } requestReferenceSpace(t) { return Promise.resolve({ t }); }
     requestAnimationFrame(cb) { this.cb = cb; return 1; } addEventListener(n, f) { (this.ev[n] ||= []).push(f); }
