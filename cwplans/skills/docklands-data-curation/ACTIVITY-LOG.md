@@ -1923,3 +1923,24 @@ a re-run with the same inputs mints the same terms).
 - Tests (headless, SwiftShader): `docklands/test/load.mjs` with no page, console or HTTP error at 1280 x 800 DPR 1 and
   390 x 844 DPR 2 for ?view=cw, rotherhithe (night, with bloom), greenlandday, area with the aerial image, on WebGL 2 and
   on WebGPU (Dawn SwiftShader adapter). 1,127,712 building triangles. WebGL page unchanged.
+
+## 2026-10-08: owner's open items, headset relief and water (checked, not yet changed)
+
+Owner, 2026-10-08: "in Quest3 city still looks flat. And the thames and greenland south dock look blotchy and shallow,
+can we make it look more watery in future?" Read-only check of the WebGL page (no code changed):
+- Relief. LiDAR ground in the box (area.js terrain, 20 m cells): median 4.3 m OD, p95 16.3, max 49.7 (Greenwich Park
+  45.6, Royal Observatory 46.8; Isle of Dogs 4.9, Stepney 11). The ring (london-terrain.json, EU-DEM 250 m) reaches
+  272.7. The headset uses the page's vz (index.html:239, default 1; xr-layer.js:39 reads C.VZ()), and the headset has no
+  vz control. At the 1:1500 table, Greenwich Park stands 28 mm over the Isle of Dogs against 157 mm for One Canada
+  Square; the ground is drawn at alpha 0.5 with no depth write (index.html:862-870) and its slope shading is weak
+  (no RELIEF factor, terrain-ring.js:10 has x6). Options: vz 2.5 to 3 by default in table mode (1 in street and
+  ride), vz buttons on the headset panel, opaque ground in the headset, stronger slope shading or a height tint.
+- Water. Flat opaque #3f8fc0 at level + 0.1 m, no ripple or reflection by day. Cause of the blotches: the LiDAR ground
+  under water is the survey's water surface (Thames median 2.8 = level), drawn after the water at alpha 0.5 with depth
+  LESS; 26 to 66 % of the cells in the Thames, Lea and Deptford Creek polygons, 7 % in Greenland Dock and 16 to 50 % in
+  South Dock are at or above the water and paint over it on the 20 m grid. The night offset (2, 8) and terrainSink
+  (tide set only, tidal polygons only) are not used by day. Shallow: no bed or volume for Greenland Dock and South Dock
+  (only north-dock has one in under.js). Fix list: sink the ground under every water polygon always (the Three.js port
+  does: docklands/build.js waterSink), the day polygon offset, then depth colour from the UKHO soundings and dock bed
+  levels, fresnel and sky reflection, moving ripples. The Three.js port can take the reflection first (TSL reflector or
+  screen-space reflections on WebGPU).
