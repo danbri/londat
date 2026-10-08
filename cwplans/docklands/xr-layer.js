@@ -240,7 +240,7 @@ function makePanels() {
     const st = S.mode === 'street', style = C.lineOn() ? (globalThis.DocklandsLines.mode === 'vectrex' ? 'CRT' : 'Lines') : 'Map', sky = { auto: 'Dark', city: 'City', off: 'Off' }[S.sky];
     const rows = [[['Table', S.mode === 'table', 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], ['Exit', false, 'exit']],
       [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Style: ' + style, false, 'style'], ['Sky: ' + sky, false, 'sky'], [C.NIGHT().on ? 'Day' : 'Night', false, 'night'], [`Photo${S.photos.length ? ' ' + S.photos.length : ''}`, false, 'photo'], ['Recentre', false, 'recentre']],
-      [['Drone: ' + droneName(), droneOn(), 'drone'], [S.ride ? 'Ride' : 'Watch', S.mode === 'ride', 'ride'], ['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view']]];
+      [['Drone: ' + droneName(), droneOn(), 'drone'], [S.ride ? 'Ride' : 'Watch', S.mode === 'ride', 'ride'], ['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view'], ['Wind', !!($('showWind') && $('showWind').checked), 'wind']]];
     const x0 = 64, bh = (H - 56) / 3; rows.forEach((row, r) => { const bw = (W - x0 - 14) / row.length; row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : a === 'drone' ? '#1b8a8a' : null)); });
     pn.hits.push([0, 0, 60, H, 'grab']);
   });
@@ -336,6 +336,7 @@ function act(a, pn) {
     if (!next) { Dr.stop(); if (S.mode === 'ride') setMode('table'); } else { Dr.manual(true); if (!Dr.on) { const cam = C.cam; delete cam.eye; delete cam.target; Object.assign(cam, { tx: S.c[0], tz: S.c[2], ty: 0, dist: 400, pitch: .5, yaw: -S.yaw - S.base.a * DEG }); }
     Dr.start(next).then(ok => { if (ok === false) C.toast('That vehicle cannot start here'); else if (S.ride) startRide(); pn.dirty = true; }); } pn.dirty = true; }
   else if (a === 'ride') { S.ride = !S.ride; if (droneOn()) { if (S.ride) startRide(); else if (S.mode === 'ride') setMode('table'); } pn.dirty = true; }
+  else if (a === 'wind') { const w = $('showWind'); if (w) { w.checked = !w.checked; w.onchange(); } pn.dirty = true; }
   else if (a === 'view') { S.view = (S.view + 1) % VIEWS.length; goView(VIEWS[S.view][0]); pn.dirty = true; }
   else if (a === 'exit') S.session.end();
   else if (a === 'go') { const f = S.focus; if (f) { if (S.mode !== 'street') setMode('street', f); else { const [x, z] = freeSpot(f.x, f.z); teleport(x, z, [f.x, f.z]); } } }
