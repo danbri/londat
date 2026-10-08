@@ -53,7 +53,7 @@ https://danbri.github.io/londat/docklands/?view=greenlandday&webgl .
 
 ## Parity with the WebGL page
 
-Status by feature. "yes" = ported and tested headless on WebGL 2 and WebGPU; "partial" = ported in part (the note says
+Status by feature (2026-10-08). "yes" = ported and tested headless on WebGL 2 and WebGPU; "partial" = ported in part (the note says
 what is missing); "no" = not started. Layers are modules in `layers/` (`export default { id, label, on, init(ctx) }`);
 `?layers=a,b` loads a layer that is not yet in the default list.
 
@@ -63,12 +63,12 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | model | water, greens, rail, roads | yes | no ripples or reflections yet |
 | model | buildings, towers, roof shapes, Realistic colours | partial | no Realistic day facade patterns |
 | model | detailed models (glTF) | yes | |
-| 1 data layers | trees | no | in progress |
-| 1 data layers | terrain ring (Hills of London) | no | in progress |
-| 1 data layers | flood walls, riverbed, floor plates | no | in progress |
-| 1 data layers | tunnels, basements, indoor, cut-away gauge | no | in progress |
-| 1 data layers | station models | no | in progress |
-| 1 data layers | skyline years | no | in progress |
+| 1 data layers | trees | partial | `layers/trees.js`: 2 InstancedMesh; 18,516 trees within 900 m by default, 81,852 with `?trees=all`; no lamp-lit trees at night |
+| 1 data layers | terrain ring (Hills of London) | yes | `layers/ring.js`; receives no shadows (a CSM step at the shadow range); not faint in the cut-away |
+| 1 data layers | flood walls, riverbed, floor plates | yes | `layers/walls.js`, `riverbed.js`, `floors.js` (floors off by default; on, the buildings go see-through); no tap card |
+| 1 data layers | tunnels, basements, indoor, cut-away gauge | partial | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); no station cut-outs, level labels or tap card; faint ground almost invisible at night |
+| 1 data layers | station models | partial | `layers/stations.js`: 127 parts, tap card; seen only from below ground; no night light |
+| 1 data layers | skyline years | yes | `layers/skyline.js`: slider, Play, `?year=` |
 | 2 interface | drawer tabs, search, registry card (atlas, kg links), colour by, routes, press and hold | no | |
 | 3 night | windows, crowns, haze, stars, bloom | partial | crown campaign colours by date not ported |
 | 3 night | light sprites (aviation, lamps, signs), reflections, weather | no | |

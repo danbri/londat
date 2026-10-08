@@ -1773,6 +1773,17 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   container's Playwright browser) throws a TypeError on it and every WebGPU frame failed. `main.js` wraps
   `GPUTexture.prototype.createView` to retry such a call without the member. Remove the wrapper when the browsers in use
   accept it.
+- **Layers (2026-10-08).** Each layer is a module in `docklands/layers/` (`export default { id, label, on, async
+  init(ctx, on) -> { object, setVisible, ownUi } }`), loaded by `loadLayers()` in main.js from `LAYER_IDS` (default: trees,
+  ring, walls, riverbed, floors, under, stations, skyline; `?layers=a,b` loads only those, `?<id>=0|1` its state). `ctx`
+  gives THREE, scene, camera, controls, A, U (with `U.cut`: fragments above it are discarded, for the cut-away), DATA,
+  WEBGL, ui (toggle, slider, section, note into `#layersExtra`), meshes (terrain, water, greens, rail, roads, buildings,
+  models), buildOpts (merged last into buildBuildings: heightOf, colourOf, towers, look, skip), rebuildBuildings, onFrame,
+  showCard, stats. `LAYERS[id]` is `{ mod, api, on }`: the api is kept as returned, so its getters stay live (a spread
+  copied them once). Group 1 was written by four subagents in parallel, one file each, tested with `?layers=`; the
+  parity table is in docklands/README.md. Open framework items: a pick hook for layers (stations and trees add their own
+  pointer handling), a building mode (solid, ghost) in place of floors.js and under.js changing the building material,
+  a CSM `maxFar` fault (a faint band at the far edge of the shadow range on WebGPU).
 - **Test.** `node docklands/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
   SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
   --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or

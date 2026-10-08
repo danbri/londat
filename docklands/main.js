@@ -184,7 +184,7 @@ $('cardX').onclick = () => selectModel(-1);
 const labels = A.places.filter(p => p.name).map(p => { const el = document.createElement('div'); el.className = 'lab'; el.textContent = p.name; $('labels').appendChild(el); return { p, el, v: new THREE.Vector3(p.x, (p.g ?? groundAt(p.x, p.z)) + (p.h || 20), p.z) }; });
 const tmp = new THREE.Vector3();
 function placeLabels() {
-  const W = innerWidth, H = innerHeight, used = new Set(), cam = camera.position, on = $('showLabels').checked;
+  const W = innerWidth, H = innerHeight, used = new Set(), cam = camera.position, on = $('showLabels').checked && U.cut.value >= 250;   // no place names while the model is cut away (the below-ground view)
   const order = labels.map(l => [l, l.v.distanceToSquared(cam)]).sort((a, b) => a[1] - b[1]);
   let shown = 0;
   for (const [l, d2] of order) {
@@ -242,8 +242,8 @@ $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en
 
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
-// ?layers=a,b loads only those (a layer under development is tested that way before it joins the list)
-const LAYER_IDS = (qs.get('layers') ?? '').split(',').filter(Boolean);
+// ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,stations,skyline').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 const ui = {
   host: () => $('layersExtra'),

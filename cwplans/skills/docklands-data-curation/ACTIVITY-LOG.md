@@ -1963,3 +1963,13 @@ Route, About; many checkboxes added one feature at a time) and to the Three.js p
 own controls through ctx.ui (docklands/main.js). Before the rework: list every control with its page, purpose and
 default, group by task (look at the city, find a place, time and sky, data layers, below ground, renderer), and agree the
 structure with the owner. The port's parity work should not copy the WebGL page's menu layout as fixed.
+
+## 2026-10-08: Three.js port, group 1 layers (owner: "Continue everything")
+
+- Layer framework in docklands/main.js (`docklands/layers/`, `?layers=`, ctx; skill docklands-3d-page, "Three.js
+  port", "Layers"). Four subagents ported trees and the terrain ring; flood walls, riverbed and floor plates; below
+  ground (tunnel model, basements, indoor, slabs, gauge, Underground view); station models and skyline years.
+- All eight in the default list. Load test with all eight: WebGL 2 at view=cw, rotherhithe, area with the aerial image;
+  WebGPU at cw, under and area; 1280 x 800 and 390 x 844: no page, console or HTTP error. Place names are hidden while
+  the model is cut away. Parity table: docklands/README.md. Open: pick hook, building mode, CSM band, station night
+  light, lamp-lit trees, the faint cut-away ground at night; then group 2 (interface).
