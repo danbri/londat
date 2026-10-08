@@ -1776,3 +1776,16 @@ a re-run with the same inputs mints the same terms).
   when occluded. Not needed."): no outline round a selected detailed model; every selection outline is now hidden by
   what is in front of it (the route line stays on top). index.html (render and the Line-style top pass,
   selectBuilding) and building-keys.js.
+
+## 2026-10-08: WebXR for the 3D page
+
+- Owner: "add a thoughtfully designed webXR interface which exploits the extra screen space ... highlight businesses in
+  different categories, events coming up that are in view etc." New docklands/xr-layer.js: immersive-vr and
+  immersive-ar sessions and a one-eye preview (?xr=preview&go) for screens with no WebXR; table model and street
+  level; panels Places in view (12 categories, Open now), What's on in view (events, markets, works), Focus (the page's
+  own card), control bar; beacons and labels. index.html: render() takes one WebXR eye; pickRay, drawModelMesh,
+  DocklandsXRCtx. Data found by a subagent inventory: the page had never loaded feeds/works/works.json,
+  registry/model-box-pois.json or the CWG hours; they now feed the headset panels.
+- Tests: docklands/test/xr-check.mjs with docklands/test/webxr-mock.js, 8 of 8 pass (headless Chromium, SwiftShader);
+  the normal page loads with no error. Not tested on a real headset. Skill: docklands-3d-page, "WebXR".
+- Open: events are a snapshot (works.json; re-run tools/fetch-works.mjs); headset frame rate unknown.

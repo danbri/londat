@@ -14770,6 +14770,48 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/xr-layer.js",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: the 3D page in a WebXR headset (immersive-vr, immersive-ar) and a one-eye preview on any screen (?xr=preview): the city as a table model or at street level, panels for places in view by category (registry categories, OSM points, GLA cultural venues), what's on in view (venue and council events, markets, works from feeds/works/works.json), a focus card read from the page's own building card, beacons and labels",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/test/webxr-mock.js",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: a WebXR mock for headless tests of the 3D page (navigator.xr, a stepped session with two eyes, XRWebGLLayer on the default framebuffer, one controller ray)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/test/xr-check.mjs",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: headless check of the WebXR layer with the mock: the headset menu, a stereo session (panel row by a controller ray, street mode depth range, exit) and the preview at phone size (a tap on a label)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/stations-layer.js",
    "@type": [
     "prov:Entity",

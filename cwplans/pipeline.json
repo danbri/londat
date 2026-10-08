@@ -9003,6 +9003,10 @@
   ],
   "tests": [
     {
+      "tool": "tools/test/building-models.test.mjs",
+      "what": "Tests (node --test) of docklands/data/building-models.json against area.js: the model fingerprint, indices, triangle counts, vertices inside the outline box and above the ground, heights near the model roof, and the .glb hash."
+    },
+    {
       "tool": "tools/test/osm-values.test.mjs",
       "what": "Fixture tests (node --test) for osmList, unitLabel, osmLevels and osmLevelsUnread in tools/osm-values.mjs."
     },

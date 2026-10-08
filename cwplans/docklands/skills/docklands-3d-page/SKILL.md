@@ -6,7 +6,7 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
+  station models; detailed building models; WebXR; the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
   headless test recipe (two sizes x two pixel ratios, numbers not one look). Sky, clock, weather and
   tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
@@ -1253,6 +1253,55 @@ as new default for that building." Live: https://danbri.github.io/londat/cwplans
   file is in mm; keep layers at least 5 mm apart. The bay was in shade in the photo: its colours are judged, not read.
 - **Next building:** copy a spec, set the frames and sizes from a photo (`photos.json` in the contrib set) and the
   LiDAR profile, run the profile tool, the builder, `npm test` (building-models.test.mjs), the register check.
+
+## WebXR (2026-10-08)
+
+Owner, 2026-10-08: "add a thoughtfully designed webXR interface which exploits the extra screen space to fully exploit
+the treasure trove of contextual location and event data available, including ways to highlight businesses in
+different categories, events coming up that are in view etc." Live: the headset button (bottom right, above the locate
+button) appears when the browser has WebXR; on any screen https://danbri.github.io/londat/cwplans/docklands/?xr=preview&go
+opens the one-eye preview (drag to look round, tap to select; iOS Safari has no WebXR).
+
+- **Files.** `docklands/xr-layer.js` (the layer), `docklands/test/webxr-mock.js` (a WebXR mock for headless runs),
+  `docklands/test/xr-check.mjs` (8 checks: the menu, a stereo session, the preview at phone size).
+- **Hooks in index.html.** `render()` takes one eye from `DocklandsXR.view` = { fb, x, y, w, h, proj, view, eye,
+  target, noSky, clear, after }: it binds the eye's framebuffer and scissor, uses the given matrices (`CAM` from the
+  projection), and leaves out what needs the whole canvas or the DOM: Line styles, splats, bloom, My KML screen lines,
+  the DOM labels. In a session the page's own frames return at once. `pickRay(o, d)` runs the page's pick pass through
+  a 0.004 rad camera along a ray (model metres, y x VZ). `drawModelMesh(m)` draws a `Mesh` with the page program.
+  `DocklandsXRCtx` gives the layer the page functions.
+- **Frames.** W maps the model (x, y x VZ, z) into the reference space: T(O) Ry(yaw) S(s) T(-c). Each eye's VIEW is the
+  XR view's inverse times W, so the page shaders run unchanged; the eye point for haze and light sprites is W^-1 of the
+  eye. Table: s = 1/1500 at first (+/- by 1.5), O 1.05 m in front at 0.76 m (local-floor), the page's view direction
+  made forward, depth 0.02 to 80 m. Street: s = 1, you stand on the ground at c, Higher/Lower lift you by 30 m, depth
+  0.25 to 16,000 m. A bearing turns by -yaw.
+- **Panels** (canvas textures, world-locked round the place you stood at the start; Recentre moves them):
+  Places in view (left, 50 deg): 12 categories with counts in view / in the model, a tap lights beacons and labels;
+  "Open now" uses the registry occupants' hours (buildings.json, categories.json, the card's `ohOf`), Canary Wharf
+  only. What's on in view (right): dated events within Today / 7 days / 30 days, nearest direction and distance; a row
+  gives a leader line to the venue and the focus; markets with their next opening; Roadworks shows works now as
+  orange stubs. Focus (above the table): the page's own building card read as text (`#info`), or the event or market,
+  with Stand there / Go there and Centre. Control bar (low, tilted): Table, Street, -/+, turn 30 deg, Night,
+  Recentre, Exit.
+- **Data.** Places: `AT.buildings[k].cat` (alcohol counts as bars), `registry/model-box-pois.json` outside the
+  registry box (OSM classes bar, education, health, sport, arts), the GLA cultural venues (category "Cultural venues").
+  Events: `feeds/works/works.json` sources venue-events, planning and th-licences (dates: ISO, a bare date = all day, or
+  none = left out); markets: source markets (OSM opening hours); works: street-manager, tfl-road, tfl-bus. The works
+  file is a snapshot (`tools/fetch-works.mjs`); the panel footer gives its build date.
+- **In view** = within 52 deg of the head's forward direction, horizontally (street: within 4.5 km); recomputed every
+  0.45 s; the panels redraw only when the lists change.
+- **Input.** `select` (trigger, pinch, gaze and pinch on Vision Pro, a tap in the preview): panel rows first, then a
+  label within about 1 deg of the ray, then the page pick, then the ground (table: centre there; street: go there).
+  Squeeze: drag the table (table) or go to the ground point (street). Thumbsticks: turn and scale (table), snap turn
+  and walk (street). Every function is on the panels, so a device with only select works.
+- **Faults met.** A trailing `//` comment put into the middle of a one-line method (Panel.layout, then the check
+  script's save) cut off the rest of the line: put comments on their own line in these files. Chromium has its own
+  `navigator.xr` getter: a mock must use `Object.defineProperty`. The button box (`#locBtns`) is made by locate.js
+  after this layer's first await: wait for it. Labels of one building in several categories stacked: one label a
+  building. On a portrait phone the preview sets the panels 1.35 times farther (same directions).
+- **Not done / open:** no real headset test (the owner has to try it on a Quest or Vision Pro); performance with two
+  eyes of the full scene is not measured on a headset; trees and splats are not drawn in a session; panels are
+  world-locked, not body-locked; event venues are postcode centroids (O2: one point).
 
 ## Testing
 

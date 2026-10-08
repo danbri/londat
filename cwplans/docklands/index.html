@@ -779,22 +779,26 @@ function drawMesh(M, alpha) {
   gl.bindBuffer(gl.ARRAY_BUFFER, M.vb); gl.vertexAttribPointer(aP, 3, gl.FLOAT, false, 16, 0); gl.vertexAttribPointer(aC, 4, gl.UNSIGNED_BYTE, true, 16, 12);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, M.ib); gl.uniform1f(uA, alpha); gl.drawElements(gl.TRIANGLES, M.count, gl.UNSIGNED_INT, 0);
 }
+// XV: one eye of a WebXR frame (xr-layer.js sets DocklandsXR.view and calls render once an eye): its framebuffer, viewport,
+// projection, view (model metres to the eye) and eye point. In a session the page's own frames draw nothing.
 function render() {
+  const XR = globalThis.DocklandsXR, XV = XR && XR.view; if (XR && XR.active && !XV) { queued = false; return; }
   queued = false; const P = par(); VZ = P.vz; buildTunnels(P); buildUnder(P); if (NET) buildWalk();
-  const dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-  if (PIX.on) pixBegin(); else gl.viewport(0, 0, w, h); const nm = nightOn(), night = nm || ground === 'night2012'; if (night) gl.clearColor(.05, .048, .048, 1); else if (satOn) gl.clearColor(.70, .76, .82, 1); else gl.clearColor(.059, .071, .082, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT); gl.enable(gl.DEPTH_TEST); gl.disable(gl.STENCIL_TEST);
+  const dpr = Math.min(2, devicePixelRatio || 1), w = XV ? XV.w : Math.round(cv.clientWidth * dpr), h = XV ? XV.h : Math.round(cv.clientHeight * dpr); if (!XV && (cv.width !== w || cv.height !== h)) { cv.width = w; cv.height = h; }
+  if (XV) { gl.bindFramebuffer(gl.FRAMEBUFFER, XV.fb); gl.viewport(XV.x, XV.y, w, h); gl.enable(gl.SCISSOR_TEST); gl.scissor(XV.x, XV.y, w, h); } else if (PIX.on) pixBegin(); else gl.viewport(0, 0, w, h); const nm = nightOn(), night = nm || ground === 'night2012'; if (night) gl.clearColor(.05, .048, .048, 1); else if (satOn) gl.clearColor(.70, .76, .82, 1); else gl.clearColor(.059, .071, .082, 1); if (XV && XV.clear) gl.clearColor(...XV.clear); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT); gl.enable(gl.DEPTH_TEST); gl.disable(gl.STENCIL_TEST);
   const ce = Math.cos(cam.pitch); let T = [cam.tx, cam.ty * VZ, cam.tz], eye = [T[0] + cam.dist * Math.sin(cam.yaw) * ce, T[1] + cam.dist * Math.sin(cam.pitch), T[2] + cam.dist * Math.cos(cam.yaw) * ce];
   // free camera (drone flights, setEye): eye and target in model metres, vertical field of view in radians
   if (cam.eye) { eye = [cam.eye[0], cam.eye[1] * VZ, cam.eye[2]]; T = [cam.target[0], cam.target[1] * VZ, cam.target[2]]; }
   if (PIX.on) { const D = 6000, cp = Math.cos(cam.pitch); eye = [T[0] + D * Math.sin(cam.yaw) * cp, T[1] + D * Math.sin(cam.pitch), T[2] + D * Math.cos(cam.yaw) * cp]; }
   const fovY = cam.hfov ? 2 * Math.atan(Math.tan(cam.hfov / 2) / (w / h)) : cam.fov || .8;   // a view with a lens keeps its horizontal field on any screen
   CAM = { eye, target: T, fovY, aspect: w / h, w, h };
-  PROJ = PIX.on ? ortho(cam.dist * .42 * w / h, cam.dist * .42, 10, 14000) : persp(fovY, w / h, cam.eye ? (cam.near || 1) : Math.max(2, cam.dist / 400), cam.eye ? (cam.far || 20000) : cam.dist * 6 + 6000); VIEW = look(eye, T, cam.roll ? rolledUp(eye, T, cam.roll) : [0, 1, 0]); MVP = mul(PROJ, VIEW);
+  if (XV) { CAM = { eye: XV.eye, target: XV.target, fovY: 2 * Math.atan(1 / XV.proj[5]), aspect: w / h, w, h }; PROJ = XV.proj; VIEW = XV.view; MVP = mul(PROJ, VIEW); } else {
+  PROJ = PIX.on ? ortho(cam.dist * .42 * w / h, cam.dist * .42, 10, 14000) : persp(fovY, w / h, cam.eye ? (cam.near || 1) : Math.max(2, cam.dist / 400), cam.eye ? (cam.far || 20000) : cam.dist * 6 + 6000); VIEW = look(eye, T, cam.roll ? rolledUp(eye, T, cam.roll) : [0, 1, 0]); MVP = mul(PROJ, VIEW); }
   const bm = $('bmode').value, cutOn = P.cut < 250, cutY = cutOn ? P.cut : 1e9;
   moonNow(nm); gl.uniform3fv(uMl, MOON.on ? MOON.g : [0, 0, 0]);
   gl.uniformMatrix4fv(uM, false, MVP); gl.uniform1f(uVz, VZ); gl.uniform1f(uCut, cutY); gl.uniform1f(uMono, 0); const nDim = nm ? (cutOn ? .6 : .12) : night ? .45 : 1; gl.uniform1f(uDim, nDim);
   gl.disable(gl.BLEND); gl.depthMask(true); gl.colorMask(true, true, true, true); gl.disable(gl.POLYGON_OFFSET_FILL);   // a fresh state every frame
-  if (lineOn() && DocklandsLines.ready(P)) {   // Line drawing and Vector CRT (line-styles.js): the solids hide the edges; the sky, night, splats and overlays are off
+  if (lineOn() && !XV && DocklandsLines.ready(P)) {   // Line drawing and Vector CRT (line-styles.js): the solids hide the edges; the sky, night, splats and overlays are off
     DocklandsLines.frame({ P, w, h, cutOn, cutY, bm, occlude() { if (bm === 'solid') drawFacades(L.bld, 1, P); if (!cutOn) drawMesh(L.terrain, 1); else if (globalThis.DocklandsStations) DocklandsStations.draw(0); },
       top() { if (L.hi || L.route) { gl.enable(gl.BLEND); drawMesh(L.hi, .9); gl.disable(gl.DEPTH_TEST); drawMesh(L.route, .95); gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST); } } });
     placeLabels(); if (globalThis.DocklandsSky) DocklandsSky.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: false });
@@ -802,7 +806,7 @@ function render() {
     if (globalThis.DocklandsKML) DocklandsKML.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: false });
     return;
   }
-  if (nm || (!PIX.on && globalThis.DocklandsSky && DocklandsSky.day)) drawSky(nm);   // night (or the clock's day sky): the sky behind everything
+  if ((nm || (!PIX.on && globalThis.DocklandsSky && DocklandsSky.day)) && !(XV && XV.noSky)) drawSky(nm);   // night (or the clock's day sky): the sky behind everything
   const sOnly = SPL.mode === 'only' && SPL.n;
   if (sOnly) {   // invisible occluders: depth only, pushed back a little so splats lying on a wall or the ground pass the test
     gl.colorMask(false, false, false, false); gl.enable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(2, 8);
@@ -837,12 +841,13 @@ function render() {
   if (nm) gl.uniform1f(uDim, groundTex && ground === 'night2012' ? 1 : nDim);   // night: the EA night photograph keeps its own light
   if (nm) { gl.enable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(2, 8); }   // night: where the LiDAR ground lies at the water level, the water (and its reflections) wins
   if (!sOnly) drawMesh(L.terrain, cutOn ? .14 : PIX.on ? 1 : nm ? .95 : satOn ? .97 : .5); gl.disable(gl.POLYGON_OFFSET_FILL); gl.uniform1f(uTex, 0); gl.uniform1f(uDim, 1); gl.depthMask(true);
-  if (!PIX.on) drawSplats(P);
-  if (nm) { drawNight(P); if (BL.on) bloom(w, h); }
+  if (!PIX.on && !XV) drawSplats(P);
+  if (nm) { drawNight(P); if (BL.on && !XV) bloom(w, h); }
   if (PIX.on) { gl.uniform1f(uCut, 1e9); gl.disable(gl.BLEND); drawMesh(L.trees, 1); drawMesh(PIX.ents, 1); gl.enable(gl.BLEND); }
   drawGlow();
-  if (globalThis.DocklandsKML && DocklandsKML.drawGL(w, h)) gl.useProgram(pr);   // My KML (kml-layer.js): screen-space lines over the ground
+  if (!XV && globalThis.DocklandsKML && DocklandsKML.drawGL(w, h)) gl.useProgram(pr);   // My KML (kml-layer.js): screen-space lines over the ground
   if (L.hi || L.route) { drawMesh(L.hi, .9); gl.disable(gl.DEPTH_TEST); drawMesh(L.route, .95); gl.enable(gl.DEPTH_TEST); }   // the selection outline is hidden by what is in front of it (owner, 2026-10-08); the route stays on top
+  if (XV) { if (XV.after) XV.after(); gl.useProgram(pr); gl.disable(gl.SCISSOR_TEST); return; }   // the headset: xr-layer.js draws its own labels, beacons and panels
   if (PIX.on) pixEnd(w, h);
   placeLabels(); if (globalThis.DocklandsSky) DocklandsSky.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: PIX.on });
   if (globalThis.DocklandsLocate) DocklandsLocate.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: PIX.on });   // locate.js: the blue dot
@@ -2327,6 +2332,11 @@ globalThis.DocklandsPlotCtx = { A, dec, earcut, heightOf, towerOf, groundAt, tun
 // Line drawing and Vector CRT (line-styles.js, Layers > Style): GL helpers, the night-bloom passes and the camera
 globalThis.DocklandsLinesCtx = { gl, cv, sh, instExt, BP, bTex, quad, aP, aC, pr, L, par, toast, draw, setStyle, MVP: () => MVP, PROJ: () => PROJ, VZ: () => VZ, CAM: () => CAM };   // ?lines and ?vectrex are read in line-styles.js: a timer set here can fire before that script has loaded
 globalThis.DocklandsKMLctx = { Mesh, beam, shade, geo, groundAt, inBox, ovCard, ovOn, dec, earcut, draw, toast, unview, A, OV, labels, labelBox, cam, get CAM() { return CAM; }, get VZ() { return VZ; }, get MVP() { return MVP; }, get PROJ() { return PROJ; }, gl, cv, sel: () => selected >= 0 && AT ? AT.buildings[selected] : null };
+// WebXR (xr-layer.js): a pick along a ray (model metres, y x VZ) through the page's own pick pass, and a mesh drawn with the page program
+function pickRay(o, d) { const keep = MVP, up = Math.abs(d[1]) > .99 ? [0, 0, -1] : [0, 1, 0]; MVP = mul(persp(.004, cv.width / cv.height, .3, 40000), look(o, [o[0] + d[0], o[1] + d[1], o[2] + d[2]], up)); let i = -1; try { i = pickAt(cv.clientWidth / 2, cv.clientHeight / 2); } finally { MVP = keep; gl.bindFramebuffer(gl.FRAMEBUFFER, null); } return i; }
+function drawModelMesh(m) { gl.useProgram(pr); gl.enableVertexAttribArray(aP); gl.enableVertexAttribArray(aC); gl.uniform1f(uDim, 1); gl.uniform1f(uTex, 0); gl.uniform1f(uMono, 0); gl.uniform1f(uGlow, 0); gl.uniform1f(uCut, 1e9); drawMesh(m, 1); }
+globalThis.DocklandsXRCtx = { gl, pr, aP, aC, cv, A, Mesh, dec, geo, groundAt, inBox, heightOf, mul, cam, GLOW, getReg, getCats, ohOf, selectModel, setNight, setStyle, toast, draw, render, pickRay, drawModelMesh, lineOn,
+  AT: () => AT, VZ: () => VZ, NIGHT: () => NIGHT, PIX: () => PIX };
 globalThis.DocklandsKeysCtx = { A, MFP, dec, Mesh, L, outline, heightOf, clearSelection, resetInfo, openPane, info, routeBtns, flyTo, cam, toast, draw, esc, regOf, modelOf: idx => { if (!BMOD || !$('showModels').checked) return null; for (const i of idx) if (bmodOf.has(i)) return bmodOf.get(i); return null; }, facadeOf: idx => { if (!FT || !FT.byModel) return null; for (const i of idx) { const s = FT.byModel.get(i); if (s != null) return Object.values(FT.buildings).find(f => f.slot === s) || null; } return null; } };   // building-keys.js
 window.__docklands = { cam, draw, setView, geo, groundAt, toast, L, labels, pickAt, selectBuilding, regOf, get AT() { return AT; }, loadNet, route, doRoute, get NET() { return NET; }, setGround, openPane, vertexAt, openPress, setEnd, vertexEnd, showPlace, searchItems, get ground() { return ground; }, VIZ, PIX, AUDst: () => AUD.ctx ? { ctx: AUD.ctx.state, paused: AUD.el.paused, t: +AUD.el.currentTime.toFixed(1), state: AUD.state } : null, setStyle, setSplatMode, get SPL() { return SPL; }, captureMode, renderNow, get CAM() { return CAM; }, setNight, NIGHT, sunMoon, AVL, BL, nightRebuild() { buildNightLights(); draw(); }, get CROWN() { return CROWN; }, crownNow, crownText, OV, buildOverlays, ovTapPoint, ovTapGround, groundUnder, tunnelY, par, get tidalField() { return tidalField; },
   // sky.js: the Thames at a measured level (null: the LiDAR level), and the light from a direction (null: the default)
@@ -2364,5 +2374,6 @@ hud.textContent = ''; ATTR.start();
 <script src="drone.js"></script>
 <script src="plotter-svg.js"></script>
 <script src="line-styles.js"></script>
+<script src="xr-layer.js"></script>
 </body>
 </html>
