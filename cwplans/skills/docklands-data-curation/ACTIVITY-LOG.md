@@ -1831,3 +1831,5 @@ a re-run with the same inputs mints the same terms).
   views unchanged in mean luma. Skill: docklands-3d-page, "Terrain of London".
 - Open: from river level the ring is mostly hidden (Greenwich Park is inside the LiDAR box; 0.1% of pixels change at
   Island Gardens); no water or buildings outside the box; haze by distance from the box, not the eye.
+- Headset view, Drone and views (owner: "Also dont forget Drone etc mode"): a third bar row: Drone (six vehicles,
+  stepped from the headset frames), Ride or Watch, View (the page's named views). xr-check.mjs: 12 of 12.

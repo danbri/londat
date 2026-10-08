@@ -13,7 +13,7 @@ const fails = [], ok = (c, m) => { console.log((c ? 'ok   ' : 'FAIL ') + m); if 
 async function open(w, h, dpr, q, mock) {
   const page = await (await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr })).newPage(), errors = [];
   page.on('pageerror', e => errors.push(String(e))); page.on('console', m => m.type() === 'error' && errors.push(m.text()));
-  if (mock) await page.addInitScript(MOCK); await page.goto(BASE + '/cwplans/docklands/index.html' + q, { timeout: 240000 }); return { page, errors };
+  if (mock) await page.addInitScript(MOCK); await page.goto(BASE + '/cwplans/docklands/index.html' + q, { timeout: 240000, waitUntil: 'domcontentloaded' }); return { page, errors };
 }
 // a frame and its read in one task: the canvas has no preserveDrawingBuffer
 const save = async (page, name) => { if (!OUT) return; const png = await page.evaluate(() => { if (window.__xrMock && __xrMock.session) __xrMock.step(); return document.getElementById('c').toDataURL('image/png'); }); writeFileSync(`${OUT}/${name}.png`, Buffer.from(png.split(',')[1], 'base64')); };
@@ -42,6 +42,11 @@ const save = async (page, name) => { if (!OUT) return; const png = await page.ev
   const sty = await page.evaluate(async () => { await DocklandsXR.act('style', DocklandsXR.P.bar); await new Promise(r => setTimeout(r, 2500)); __xrMock.step(); __xrMock.step(); return globalThis.DocklandsLines && DocklandsLines.mode; });
   await save(page, 'stereo-lines'); ok(sty === 'lines', 'Style: Line drawing in a session (' + sty + ')');
   await page.evaluate(async () => { await DocklandsXR.act('style', DocklandsXR.P.bar); await new Promise(r => setTimeout(r, 1500)); await DocklandsXR.act('style', DocklandsXR.P.bar); await new Promise(r => setTimeout(r, 1500)); __xrMock.step(); });
+  const dn = await page.evaluate(async () => { const X = DocklandsXR; X.act('drone', X.P.bar); await new Promise(r => setTimeout(r, 1500)); __xrMock.step(); const p0 = DocklandsDrone.S.p.slice();
+    for (let k = 0; k < 20; k++) { await new Promise(r => setTimeout(r, 50)); __xrMock.step(); } const p1 = DocklandsDrone.S.p.slice(), c = X.S.c.slice();
+    const r = { on: DocklandsDrone.on, mode: X.S.mode, moved: Math.hypot(p1[0] - p0[0], p1[2] - p0[2]), atEye: Math.hypot(c[0] - p1[0], c[2] - p1[2]) };
+    for (let k = 0; k < 6; k++) { X.act('drone', X.P.bar); await new Promise(r => setTimeout(r, 400)); __xrMock.step(); } r.off = !DocklandsDrone.on; r.after = X.S.mode; return r; });
+  ok(dn.on && dn.mode === 'ride' && dn.moved > .1 && dn.atEye < .5 && dn.off && dn.after === 'table', `Drone: ride a copter stepped by the headset frames (moved ${dn.moved.toFixed(2)} m), off returns to the table`);
   const st = await page.evaluate(() => { DocklandsXR.act('mode:street', DocklandsXR.P.bar); __xrMock.step(); return [DocklandsXR.S.mode, __xrMock.session.renderState.depthNear, __xrMock.session.renderState.depthFar]; });
   await save(page, 'stereo-street'); ok(st[0] === 'street' && st[1] === .25 && st[2] === 16000, `street mode, depth ${st[1]} to ${st[2]} m`);
   const ex = await page.evaluate(() => { DocklandsXR.act('exit', DocklandsXR.P.bar); return DocklandsXR.active; }); ok(ex === false, 'exit ends the session');

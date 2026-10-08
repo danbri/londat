@@ -28,11 +28,11 @@ const DEG = Math.PI / 180, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const S = {
   session: null, ref: null, preview: false, ar: false, mode: 'table', s: 1 / 1500, c: [0, 0, 0], O: [0, .78, -1], yaw: 0, lift: 0, floorY: 0,
   W: M.I(), Wi: M.I(), head: [0, 1.6, 0], headF: [0, 0, -1], placed: false, base: { a: 0, p: [0, 1.6, 0] },
-  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), grab: null, press: new Map(), lastRay: new Map(), two: null, sky: 'auto', photos: [], snap: false,
+  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), grab: null, press: new Map(), lastRay: new Map(), two: null, sky: 'auto', photos: [], snap: false, ride: true, view: -1, droneT: 0,
   data: null, loading: null, inView: { cats: {}, events: [], works: [], markets: [] }, listT: 0, hiDirty: true, hiMesh: null, labels: [], panels: [],
 };
 function setW() {
-  const s = S.s, c = S.c, O = S.mode === 'street' ? [S.O[0], S.floorY - S.lift, S.O[2]] : S.O;
+  const s = S.s, c = S.c, O = S.mode === 'ride' ? S.rideO : S.mode === 'street' ? [S.O[0], S.floorY - S.lift, S.O[2]] : S.O;
   S.W = M.mul(M.T(...O), M.mul(M.Ry(S.yaw), M.mul(M.S(s), M.T(-c[0], -c[1], -c[2]))));
   S.Wi = M.mul(M.T(...c), M.mul(M.S(1 / s), M.mul(M.Ry(-S.yaw), M.T(-O[0], -O[1], -O[2]))));
 }
@@ -234,13 +234,14 @@ function makePanels() {
     for (const line of (f.lines || []).slice(0, 7)) { g.fillStyle = /^(open|Open)/.test(line) ? '#7dff9b' : '#d5dbe1'; g.fillText(clip(g, line, PX - 300), 40, y); y += 34; }
     if (f.x != null) { pn.btn(g, PX - 250, 140, 210, 62, S.mode === 'street' ? 'Go there' : 'Stand there', false, 'go'); pn.btn(g, PX - 250, 216, 210, 62, 'Centre', false, 'centre'); }
   });
-  P.bar = new Panel('bar', .66, .2, [-28, .78, -.3, 22], (g, pn) => {
+  P.bar = new Panel('bar', .66, .29, [-28, .78, -.3, 22], (g, pn) => {
     const W = pn.cv.width, H = pn.cv.height; g.fillStyle = 'rgba(13,16,21,.92)'; rr(g, 0, 0, W, H, 34); g.fill();
     g.fillStyle = pn.hov === 'grab' ? '#fff' : '#6c7680'; for (let k = 0; k < 6; k++) for (let j = 0; j < 2; j++) { g.beginPath(); g.arc(24 + j * 18, H / 2 - 50 + k * 20, 5, 0, 7); g.fill(); }
     const st = S.mode === 'street', style = C.lineOn() ? (globalThis.DocklandsLines.mode === 'vectrex' ? 'CRT' : 'Lines') : 'Map', sky = { auto: 'Dark', city: 'City', off: 'Off' }[S.sky];
-    const rows = [[['Table', !st, 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], ['Exit', false, 'exit']],
-      [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Style: ' + style, false, 'style'], ['Sky: ' + sky, false, 'sky'], [C.NIGHT().on ? 'Day' : 'Night', false, 'night'], [`Photo${S.photos.length ? ' ' + S.photos.length : ''}`, false, 'photo'], ['Recentre', false, 'recentre']]];
-    const x0 = 64, bw = (W - x0 - 14) / 7, bh = (H - 42) / 2; rows.forEach((row, r) => row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : null)));
+    const rows = [[['Table', S.mode === 'table', 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], ['Exit', false, 'exit']],
+      [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Style: ' + style, false, 'style'], ['Sky: ' + sky, false, 'sky'], [C.NIGHT().on ? 'Day' : 'Night', false, 'night'], [`Photo${S.photos.length ? ' ' + S.photos.length : ''}`, false, 'photo'], ['Recentre', false, 'recentre']],
+      [['Drone: ' + droneName(), droneOn(), 'drone'], [S.ride ? 'Ride' : 'Watch', S.mode === 'ride', 'ride'], ['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view']]];
+    const x0 = 64, bh = (H - 56) / 3; rows.forEach((row, r) => { const bw = (W - x0 - 14) / row.length; row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : a === 'drone' ? '#1b8a8a' : null)); });
     pn.hits.push([0, 0, 60, H, 'grab']);
   });
   S.panels = [P.places, P.whatson, P.focus, P.bar];
@@ -277,7 +278,7 @@ function after(v) {
   const L = [];
   for (const [, h] of S.hover) { const e = add(h.o, mulv(h.d, h.len)); L.push(...h.o, 1, 1, 1, .2, ...e, 1, 1, 1, .9); }
   if (S.lead) { const a = S.lead.a, b = toUser(S.lead.x, S.lead.y, S.lead.z); L.push(...a, 1, .84, .3, .95, ...b, 1, .84, .3, .95); }
-  gl.depthMask(false); lines(mvp, L); const dots = []; for (const [, h] of S.hover) { const e = add(h.o, mulv(h.d, h.len)), s = .006 + h.len * .004; for (const [dx, dy] of [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]]) dots.push(e[0] + dx * s, e[1] + dy * s, e[2], 1, 1, 1, .9); }
+  gl.depthMask(false); lines(mvp, L); droneMarker(mvp); const dots = []; for (const [, h] of S.hover) { const e = add(h.o, mulv(h.d, h.len)), s = .006 + h.len * .004; for (const [dx, dy] of [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]]) dots.push(e[0] + dx * s, e[1] + dy * s, e[2], 1, 1, 1, .9); }
   gl.disable(gl.DEPTH_TEST); lines(mvp, dots, gl.TRIANGLES); gl.enable(gl.DEPTH_TEST); gl.depthMask(true); gl.disable(gl.BLEND);
   attribs(0); gl.enableVertexAttribArray(C.aP); gl.enableVertexAttribArray(C.aC); gl.useProgram(C.pr);
 }
@@ -330,6 +331,12 @@ function act(a, pn) {
   else if (a === 'style') { const LS = globalThis.DocklandsLines, cur = C.lineOn() ? LS.mode : 'normal', next = { normal: 'lines', lines: 'vectrex', vectrex: 'normal' }[cur]; C.setStyle(next).then(() => { pn.dirty = true; S.hiDirty = true; }); }
   else if (a === 'sky') { S.sky = { auto: 'city', city: 'off', off: 'auto' }[S.sky]; pn.dirty = true; }
   else if (a === 'photo') { S.snap = true; }
+  // Drone: a press always moves on round the vehicles (one that cannot start here does not hold the cycle)
+  else if (a === 'drone') { const Dr = globalThis.DocklandsDrone; if (!Dr) return; S.dIdx = droneOn() ? ((S.dIdx || 0) + 1) % DRONES.length : 1; const next = DRONES[S.dIdx];
+    if (!next) { Dr.stop(); if (S.mode === 'ride') setMode('table'); } else { Dr.manual(true); if (!Dr.on) { const cam = C.cam; delete cam.eye; delete cam.target; Object.assign(cam, { tx: S.c[0], tz: S.c[2], ty: 0, dist: 400, pitch: .5, yaw: -S.yaw - S.base.a * DEG }); }
+    Dr.start(next).then(ok => { if (ok === false) C.toast('That vehicle cannot start here'); else if (S.ride) startRide(); pn.dirty = true; }); } pn.dirty = true; }
+  else if (a === 'ride') { S.ride = !S.ride; if (droneOn()) { if (S.ride) startRide(); else if (S.mode === 'ride') setMode('table'); } pn.dirty = true; }
+  else if (a === 'view') { S.view = (S.view + 1) % VIEWS.length; goView(VIEWS[S.view][0]); pn.dirty = true; }
   else if (a === 'exit') S.session.end();
   else if (a === 'go') { const f = S.focus; if (f) { if (S.mode !== 'street') setMode('street', f); else { const [x, z] = freeSpot(f.x, f.z); teleport(x, z, [f.x, f.z]); } } }
   else if (a === 'centre') { const f = S.focus; if (f) { S.c = [f.x, groundY(f.x, f.z), f.z]; setW(); S.hiDirty = true; } }
@@ -350,12 +357,13 @@ function focusBuilding(i) {   // the page's own card (registry or OpenStreetMap)
   setTimeout(read, 300); setTimeout(read, 1500); setTimeout(read, 4000); return f;
 }
 function setMode(m, at) {
+  if (S.mode === 'ride' && m !== 'ride' && S.preRide) S.s = S.preRide.s;
   S.mode = m; const f = at || S.focus;
   if (m === 'street') { S.s = 1; S.lift = 0; if (f && f.x != null) { const [x, z] = freeSpot(f.x, f.z); teleport(x, z, [f.x, f.z]); } else { const [x, z] = freeSpot(S.c[0], S.c[2]); teleport(x, z); } }
   else { S.s = S.sTable || 1 / 1500; S.O = S.Otable || S.O; if (f && f.x != null) S.c = [f.x, groundY(f.x, f.z), f.z]; }
   if (m === 'table') S.sTable = S.s; renderState(); setW(); S.hiDirty = true; S.listSig = ''; P.bar.dirty = true;
 }
-function renderState() { const st = S.mode === 'street'; try { S.session.updateRenderState({ depthNear: st ? .25 : .08, depthFar: st ? 16000 : 60 }); } catch { /* preview */ } }
+function renderState() { const st = S.mode === 'street' || S.mode === 'ride'; try { S.session.updateRenderState({ depthNear: st ? .25 : .08, depthFar: st ? 16000 : 60 }); } catch { /* preview */ } }
 
 // ---------- presses: a short press is a click (on the ray of the frame before the pinch); a press that moves drags.
 // On empty space one hand moves the city (up and down too), two hands turn it and change its size; on a panel's
@@ -393,10 +401,35 @@ function drags(frame) {
     if (rec.kind === 'panel') { const r = rayOf(frame, rec.src); if (!r) continue; rec.panel.moveTo(sub(add(r.o, mulv(r.d, rec.dist)), rec.off)); continue; }
     if (rec.kind !== 'world') continue; const d = sub(rec.pos, rec.pos0);
     if (S.mode === 'table') { S.O = add(rec.O0, d); S.Otable = S.O; }
+    else if (S.mode === 'ride') continue;
     else { const g = 30, v = M.dir(M.Ry(-S.yaw), [d[0], 0, d[2]]); S.c = [rec.c0[0] - v[0] * g, 0, rec.c0[2] - v[2] * g]; S.c[1] = groundY(S.c[0], S.c[2]); }
     setW();
   }
 }
+// Drone (drone.js): stepped from the headset frame (the window's own animation loop pauses in an immersive session).
+// Watch: the drone flies over the table, marked; Ride: you sit at its eye at full scale, the world turning with its heading.
+const DRONES = [null, 'copter', 'plane', 'boat', 'tube', 'walk', 'under'], droneOn = () => !!(globalThis.DocklandsDrone && DocklandsDrone.on);
+const droneName = () => droneOn() ? DocklandsDrone.S.mode.replace(/^./, c => c.toUpperCase()) : 'Off';
+function startRide() { if (S.mode !== 'ride') { S.preRide = { s: S.s }; } S.mode = 'ride'; S.s = 1; S.rideO = [S.base.p[0], S.head[1], S.base.p[2]]; renderState(); rideFollow(1); S.hiDirty = true; P.bar.dirty = true; }
+function rideFollow(k) { const Dr = DocklandsDrone.S, p = Dr.p, h = Dr.h + (Dr.ly || 0); S.c = [p[0], p[1] * vz(), p[2]];
+  const want = Math.atan2(Math.sin(h), -Math.cos(h)) - S.base.a * DEG; let d = want - S.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); S.yaw += d * k; setW(); }
+function droneFrame(t) {
+  if (!droneOn()) { if (S.mode === 'ride') setMode('table'); S.droneT = t; return; }
+  const dt = clamp((t - (S.droneT || t)) / 1000, 0, .1); S.droneT = t; DocklandsDrone.step(dt, 120);
+  if (S.mode === 'ride') rideFollow(1 - Math.exp(-dt / .35));
+}
+// the page's named views: a photo view (an eye point) puts you at street level there; the others centre the table
+const VIEWS = [['cw', 'Canary Wharf'], ['rotherhithe', 'Rotherhithe night'], ['greenland', 'Greenland'], ['pier', 'Pier'], ['greenlandday', 'Greenland day'], ['plane', 'Plane'], ['area', 'Area']];
+function goView(k) {
+  const D = window.__docklands; if (!D || !D.setView) return; D.setView(k); const cam = C.cam;
+  if (cam.eye) { const [ex, ey, ez] = cam.eye, g = C.groundAt(ex, ez); setMode('street'); teleport(ex, ez, cam.target ? [cam.target[0], cam.target[2]] : null); S.lift = clamp(ey - g - S.head[1], 0, 600); setW(); }
+  else { setMode('table'); S.c = [cam.tx, groundY(cam.tx, cam.tz), cam.tz]; setW(); }
+  S.hiDirty = true; S.listSig = '';
+}
+// a marker for the drone over the table (Watch): a small diamond in the reference space
+function droneMarker(mvp) { if (!droneOn() || S.mode === 'ride') return; const p = DocklandsDrone.S.p, q = toUser(p[0], p[1], p[2]), r = .012, c = [.3, 1, 1, .95], v = [];
+  const pts = [[r, 0, 0], [0, 0, r], [-r, 0, 0], [0, 0, -r]]; for (let i = 0; i < 4; i++) { const a = add(q, pts[i]), b = add(q, pts[(i + 1) % 4]); for (const tip of [add(q, [0, r * 1.4, 0]), add(q, [0, -r * 1.4, 0])]) v.push(...a, ...c, ...b, ...c, ...tip, ...c); }
+  lines(mvp, v, gl.TRIANGLES); }
 // the sky's view: the eye's rotation and the model's yaw, no scale and no translation (the table is 1:1500)
 function skyViewOf(v) { const m = new Float32Array(v.transform.inverse.matrix); m[12] = m[13] = m[14] = 0; return M.mul(m, M.Ry(S.yaw)); }
 // a picture of the left eye, kept until the session ends (the page offers them then)
@@ -425,6 +458,7 @@ function onFrame(t, frame) {
   const pose = frame.getViewerPose(S.ref); if (!pose) return; const m = pose.transform.matrix;
   S.head = [m[12], m[13], m[14]]; S.headF = nrm([-m[8], -m[9], -m[10]]);
   if (!S.placed) place(pose);
+  droneFrame(t);
   for (const [src, h] of S.hover) S.lastRay.set(src, h); S.hover.clear(); drags(frame);
   for (const src of s.inputSources) { const r = rayOf(frame, src); if (!r) continue; const hp = hitPanels(r.o, r.d); S.hover.set(src, { ...r, len: hp ? hp.h.t : 3 });
     for (const p of S.panels) { const hv = hp && hp.p === p && hp.h.item ? hp.h.item[4] : null; if (p.hov !== hv) { p.hov = hv; p.dirty = true; } }
@@ -447,6 +481,7 @@ function onFrame(t, frame) {
 }
 let stickT = 0;
 function stick(x, y) {
+  if (S.mode === 'ride' && droneOn()) { DocklandsDrone.stick(Math.abs(x) > .2 ? x : 0, Math.abs(y) > .2 ? -y : 0); return; }
   const dz = .25; if (Math.abs(x) < dz && Math.abs(y) < dz) return;
   if (S.mode === 'table') { S.yaw += x * .03; if (Math.abs(y) > dz) S.s = clamp(S.s * (1 - y * .02), 1 / 20000, 1 / 40); S.sTable = S.s; setW(); S.hiDirty = Math.abs(y) > dz || S.hiDirty; return; }
   const n = performance.now(); if (Math.abs(x) > .7 && n - stickT > 350) { stickT = n; S.yaw += Math.sign(x) * 30 * DEG; setW(); S.listSig = ''; }
@@ -469,7 +504,7 @@ async function start(kind) {
   session.addEventListener('selectstart', onPressStart); session.addEventListener('selectend', onPressEnd);
   session.addEventListener('squeezestart', onPressStart); session.addEventListener('squeezeend', ev => { const rec = S.press.get(ev.inputSource); if (rec) rec.drag = true; onPressEnd(ev); });
   const K0 = globalThis.DocklandsSky, dark0 = K0 && K0.S ? K0.S.dark : null;
-  session.addEventListener('end', () => { if (dark0 != null) K0.S.dark = dark0; S.session = null; XR.active = false; XR.view = null; S.grab = null; S.press.clear(); S.two = null; offerPhotos(); gl.bindFramebuffer(gl.FRAMEBUFFER, null); if ($('labels')) $('labels').style.visibility = ''; C.draw(); });
+  session.addEventListener('end', () => { if (dark0 != null) K0.S.dark = dark0; if (droneOn()) DocklandsDrone.manual(false); S.session = null; XR.active = false; XR.view = null; S.grab = null; S.press.clear(); S.two = null; offerPhotos(); gl.bindFramebuffer(gl.FRAMEBUFFER, null); if ($('labels')) $('labels').style.visibility = ''; C.draw(); });
   XR.active = true; if ($('labels')) $('labels').style.visibility = 'hidden';
   loadData().catch(e => C.toast('Listings did not load: ' + e.message));
   session.requestAnimationFrame(onFrame);
@@ -494,7 +529,7 @@ class PreviewSession {
   fire(n, r) { const src = { targetRayMode: 'screen', handedness: 'none', targetRaySpace: { r } }, fr = this.frameObj(); if (n === 'select') { for (const k of ['selectstart', 'selectend']) for (const f of this.ev[k] || []) f({ inputSource: src, frame: fr }); return; } for (const f of this.ev[n] || []) f({ inputSource: src, frame: fr }); }
   frameObj() { const H = this.headM(), inv = inverseRigid(H), a = C.cv.width / C.cv.height, view = { eye: 'none', projectionMatrix: M.persp(this.fov(), a, this.renderState.depthNear, this.renderState.depthFar), transform: { matrix: H, inverse: { matrix: inv } } };
     return { getViewerPose: () => ({ transform: { matrix: H }, views: [view] }), getPose: sp => { const r = sp.r; const z = nrm(mulv(r.d, -1)), x = nrm(cross([0, 1, 0], z)), y = cross(z, x); return { transform: { matrix: new Float32Array([...x, 0, ...y, 0, ...z, 0, ...r.o, 1]) } }; } }; }
-  loop() { if (this.ended) return; requestAnimationFrame(() => this.loop()); if (!this.cb) return; const due = this.dirty || S.hiDirty || S.panels.some(p => p.dirty) || performance.now() - (this.last || 0) > 900; if (!due) return;
+  loop() { if (this.ended) return; requestAnimationFrame(() => this.loop()); if (!this.cb) return; const due = this.dirty || S.hiDirty || droneOn() || S.panels.some(p => p.dirty) || performance.now() - (this.last || 0) > 900; if (!due) return;
     this.dirty = false; this.last = performance.now(); const cb = this.cb; this.cb = null; this.inputSources = this.hoverRay ? [{ targetRayMode: 'screen', targetRaySpace: { r: this.hoverRay } }] : []; cb(performance.now(), this.frameObj()); }
   requestAnimationFrame(cb) { this.cb = cb; return 1; }
   updateRenderState(s) { Object.assign(this.renderState, s); this.dirty = true; }

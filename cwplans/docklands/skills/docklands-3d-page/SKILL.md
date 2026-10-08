@@ -1323,6 +1323,13 @@ opens the one-eye preview (drag to look round, tap to select; iOS Safari has no 
     offered: an orthographic view per eye does not make a stereo picture.
   - The sky in a table view uses the eye's rotation and the model's yaw, without the 1:1500 scale (`XV.skyView`).
   - Trees are on by default on the page (loaded quietly 1.5 s after start) and in a session.
+  - Drone and views (owner: "Also dont forget Drone etc mode"): a third bar row. Drone cycles Off, Copter, Plane,
+    Boat, Tube, Walk, Under (drone.js); in a session the drone is stepped from the headset frame (`manual(true)`,
+    `step(dt, 120)`), because the window's own animation loop pauses in an immersive session; `manual(false)` at Exit.
+    Ride (default) puts its eye at your head at 1:1 and turns the world with its heading (eased, 0.35 s); Watch keeps
+    the table and marks the drone with a small cyan diamond. A thumbstick steers while riding. View cycles the page's
+    named views: a view with an eye point puts you there at street level (lift = its eye height above the ground),
+    the others centre the table. The drone starts from the table centre (the page camera is set there first).
   - The Quest system menu with hands: look at the palm, pinch and hold (the right hand gives the Meta menu, with
     the screenshot); the page cannot change that gesture.
 - **Not done / open:** no real headset test (the owner has to try it on a Quest or Vision Pro); performance with two
