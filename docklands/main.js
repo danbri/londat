@@ -254,13 +254,13 @@ const ui = {
 };
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
-  materials: { vertexColourMaterial }, buildOpts, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
+  materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
 };
 async function loadLayers() {
   for (const id of LAYER_IDS) {
     let mod; try { mod = (await import(`./layers/${id}.js`)).default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
-    try { const on = flag(id, mod.on !== false), L = (await mod.init(ctx, on)) || {}; LAYERS[id] = { ...mod, ...L, on };
+    try { const on = flag(id, mod.on !== false), L = (await mod.init(ctx, on)) || {}; LAYERS[id] = { mod, api: L, on };   // api kept as returned: its getters stay live
       if (L.object) { L.object.visible = on; scene.add(L.object); }
       if (mod.label && !L.ownUi) ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; });
     } catch (e) { console.warn('layer', id, e); }
