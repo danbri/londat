@@ -4,7 +4,8 @@
 // clusters), One Canada Square's halo, Newfoundland's diagrid crown and a band at the top of other towers, as emissive
 // light, so the bloom pass picks them up. Skill: docklands-3d-page, "Three.js port".
 import * as THREE from 'three/webgpu';
-import { If, Discard, Fn, attribute, positionWorld, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF } from 'three/tsl';
+import { If, Discard, Fn, attribute, positionWorld, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF, normalize, pow, reflect, transformNormalToView, screenUV } from 'three/tsl';
+import { waterDepth, WU, DEPTH } from './water.js';
 
 export const U = {
   night: uniform(0),              // 0 day, 1 night: the windows' light
@@ -90,13 +91,48 @@ export function terrainMaterial() {
   return m;
 }
 
-// water: a dark glossy surface with a small moving ripple in the normal (WebGPU and WebGL 2 alike)
-export function waterMaterial() {
-  const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.12, metalness: 0.0, side: THREE.DoubleSide });
-  m.colorNode = lin(vec3(0.16, 0.36, 0.5));
-  const p = positionWorld.xz;
-  const n = vn(p.mul(0.08).add(vec2(time.mul(0.3), time.mul(0.2)))).sub(0.5).mul(0.12).add(vn(p.mul(0.31).sub(vec2(time.mul(0.5), 0))).sub(0.5).mul(0.06));
-  m.roughnessNode = float(0.1).add(n.abs());
+// water: colour by depth (docklands/water.js: the depth map from the UKHO soundings and the dock beds), moving ripples
+// (two octaves of value noise with time, as normals; they fade out with distance, 40 to 450 m, before they are under a pixel), fresnel (Schlick,
+// water F0 = 0.02), the sun's glint from the lights' specular (low roughness), and a reflection: the mirror of
+// layers/water.js (TSL reflector, set with m.setReflector) where it is on, else the sky by a gradient (day, U.night).
+// One graph for WebGPU and WebGL 2. Skill: docklands-3d-page, "Three.js port".
+const wrap = q => q.sub(floor(q.div(256)).mul(256));   // the hash keeps its precision far from the origin and as time grows
+const vnw = Fn(([q]) => { const i = floor(q), f0 = fract(q), f = f0.mul(f0).mul(float(3).sub(f0.mul(2))), a = wrap(i), b = wrap(i.add(1));
+  return mix(mix(h(a), h(vec2(b.x, a.y)), f.x), mix(h(vec2(a.x, b.y)), h(b), f.x), f.y); });
+// gradient of one octave of the height field at p (m), wavelength 1 / s m, moving with v (cells a second)
+const octave = (p, s, v, e) => { const q = p.mul(s).add(time.mul(v)), h0 = vnw(q); return vec2(vnw(q.add(vec2(e * s, 0))).sub(h0), vnw(q.add(vec2(0, e * s))).sub(h0)).div(e); };
+export function waterMaterial(opts = {}) {
+  const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.05, metalness: 0.0, side: THREE.DoubleSide });
+  const D = waterDepth(), p = positionWorld.xz;
+  const depth = texture(D.tex, p.sub(vec2(D.x0, D.z0)).div(vec2(D.w, D.h))).x.mul(DEPTH.scale);
+  const toCam = cameraPosition.sub(positionWorld), dist = length(toCam), V = toCam.div(max(dist, 0.001));
+  const fw = length(fwidth(p));   // metres a pixel
+  const g = octave(p, 0.16, vec2(0.45, 0.3), 0.4).mul(smoothstep(450, 120, dist)).mul(0.35)
+    .add(octave(p, 0.55, vec2(-0.7, 0.55), 0.15).mul(smoothstep(140, 40, dist)).mul(0.14)).mul(WU.ripple);
+  const N = normalize(vec3(g.x.negate(), 1, g.y.negate()));
+  m.normalNode = transformNormalToView(N);
+  m.roughnessNode = float(0.05).add(smoothstep(2, 30, fw).mul(0.2));   // far water: a wider glint where the ripples are under a pixel
+  const F = float(0.02).add(float(0.98).mul(pow(float(1).sub(clamp(dot(N, V), 0, 1)), 5)));
+  // the water's own colour, deeper = darker and more green-blue (sRGB 0.33 0.45 0.43 at 0 m to 0.04 0.14 0.17 deep)
+  const body = lin(mix(vec3(0.33, 0.45, 0.43), vec3(0.04, 0.14, 0.17), float(1).sub(exp(depth.div(-3.5)))));
+  m.colorNode = vec4(body.mul(float(1).sub(F)), 1);
+  const R = reflect(V.negate(), N), ry = clamp(R.y, 0, 1);
+  const sky = mix(mix(vec3(WU.skyHorizon), vec3(WU.skyZenith), pow(ry, 0.6)), mix(lin(vec3(U.haze)).mul(0.8), vec3(0.003, 0.004, 0.008), pow(ry, 0.5)), U.night);
+  m.setReflector = r => {
+    let refl = sky;
+    // ripples stretch reflected lights into vertical streaks (as on a real river at night): seven samples of the mirror along
+    // screen y (a streak about 4 % of the screen high, weighted to its middle), shifted a little by screen-space noise. A crisp
+    // mirror read as a copy of the city; one displaced sample broke the window rows into zigzags (2026-10-08)
+    if (r) {
+      const st = vnw(vec2(screenUV.x.mul(160), screenUV.y.mul(6).add(time.mul(0.25)))).sub(0.5);
+      const base = r.uvNode.add(vec2(N.x.mul(clamp(float(6).div(dist), 0.002, 0.02)), st.mul(0.006)));
+      let acc = null, wsum = 0;
+      for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, k * 0.0065))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
+      refl = acc.div(wsum).mul(0.75);
+    }
+    m.emissiveNode = refl.mul(F); WU.reflect.value = r ? 1 : 0; m.needsUpdate = true;
+  };
+  m.setReflector(opts.reflector || null);
   return m;
 }
 

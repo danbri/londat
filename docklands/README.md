@@ -34,7 +34,8 @@ improvements."
 | `index.html` | page, import map, menu, card |
 | `main.js` | renderer, camera and views, share hash, picking, card, labels, shadows, bloom, render loop |
 | `build.js` | area.js decoding, buildings in 800 m tiles, towers, roofs, terrain, water, greens, rail and roads |
-| `materials.js` | TSL: buildings (day window grid; night windows, crowns, haze), terrain, water |
+| `materials.js` | TSL: buildings (day window grid; night windows, crowns, haze), terrain, water (depth colour, ripples, fresnel, sky or mirror) |
+| `water.js` | the water depth map (made at load time) and the water uniforms; `layers/water.js` is the mirror (TSL reflector) |
 | `sky3.js` | sun and moon (Astronomy Engine), `SkyMesh`, stars (instanced sprites), the light rig |
 | `test/load.mjs` | headless load test: two sizes, WebGL 2 or `--webgpu` in software (`node docklands/test/load.mjs` from the repository root) |
 
@@ -60,7 +61,7 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | group | feature | status | note |
 |---|---|---|---|
 | model | terrain, ground images | yes | ground sinks under water polygons |
-| model | water, greens, rail, roads | yes | no ripples or reflections yet |
+| model | water, greens, rail, roads | yes | water: depth colour, ripples, fresnel, sun glint; mirror on WebGPU by default (`layers/water.js`, `?water=0|1`), sky by fresnel on WebGL 2 |
 | model | buildings, towers, roof shapes, Realistic colours | partial | no Realistic day facade patterns |
 | model | detailed models (glTF) | yes | |
 | 1 data layers | trees | partial | `layers/trees.js`: 2 InstancedMesh; 18,516 trees within 900 m by default, 81,852 with `?trees=all`; no lamp-lit trees at night |
@@ -69,12 +70,38 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 1 data layers | tunnels, basements, indoor, cut-away gauge | partial | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); no station cut-outs, level labels or tap card; faint ground almost invisible at night |
 | 1 data layers | station models | partial | `layers/stations.js`: 127 parts, tap card; seen only from below ground; no night light |
 | 1 data layers | skyline years | yes | `layers/skyline.js`: slider, Play, `?year=` |
-| 2 interface | drawer tabs, search, registry card (atlas, kg links), colour by, routes, press and hold | no | |
+| 2 interface | search | yes | `layers/search.js`: registry, places, walking network; flies there; a place below ground cuts away |
+| 2 interface | registry card (atlas, kg links), night use from the registry | yes | `layers/registry.js`, ctx.addCard; no occupant labels at their floors, no London Datastore facts |
+| 2 interface | routes, press and hold | yes | `layers/routes.js`: same network and weights; 4 test routes equal to the WebGL page |
+| 2 interface | drawer tabs, colour by | no | the menus are to be reworked first (owner, 2026-10-08) |
 | 3 night | windows, crowns, haze, stars, bloom | partial | crown campaign colours by date not ported |
-| 3 night | light sprites (aviation, lamps, signs), reflections, weather | no | |
+| 3 night | reflections | partial | WebGPU mirror (TSL reflector, one plane), streaks by seven vertical samples; WebGL 2: sky by fresnel only (mirror with `?water=1`) |
+| 3 night | light sprites (aviation, lamps, signs), weather | no | |
 | 4 live | ships and AIS, river and tide, overlays, locate, wind, KML | no | |
 | 5 styles | photo facades, pixel art, Line drawing, Vector CRT, splats | no | splats need a three.js splat renderer (licence check first) |
 | 6 other | Drone, plotter SVG, music, WebXR | no | the WebGL page's headset layer stays in use until then |
+
+## Water (2026-10-08)
+
+Owner, 2026-10-08: "the thames and greenland south dock look blotchy and shallow, can we make it look more watery".
+- **Depth.** `water.js` `waterDepth()` makes a 750 x 560 depth map (10 m cells over the model extent, R8 texture, 0.1 m a
+  step, linear filtering, land 0) at load time (70 to 400 ms headless). Depth = the polygon's level (area.js `w.level`) minus
+  the bed. Tidal polygons: the UKHO soundings (`A.riverbed`, m OD), inverse-distance mean within 30 m (42,465 of 50,790
+  water cells); tidal cells with no sounding (foreshore, creeks): distance to the shore / 8, 0.5 to 4 m (a stated
+  default). North Dock: the published bed, -5.365 m OD (`data/under.js`, Canal & River Trust). Other docks and basins:
+  **10 m (a stated default; no published bed level for Greenland Dock, South Dock or the others)**. Ponds, lakes and
+  fountains: 2 m (a stated default). Mean depth 8.3 m, deepest 17.4 m. The water mesh is not densified (4,077 vertices,
+  3,819 triangles): the material samples the map by world position.
+- **Material** (`materials.js` `waterMaterial`, TSL, both backends): colour from shallow sRGB (0.33, 0.45, 0.43) to deep
+  (0.04, 0.14, 0.17), 1 - exp(-depth / 3.5 m); ripple normals from two octaves of value noise moving with `time`
+  (wavelengths about 6 m and 1.8 m; they fade out from 40 to 450 m); fresnel (Schlick, F0 = 0.02); the sun's glint is
+  the directional light's specular at roughness 0.05 (wider far away). The reflection is added as emitted light x fresnel.
+- **Reflection.** WebGPU: `layers/water.js` puts one TSL `reflector()` (half resolution, no bounces) in a horizontal plane
+  at 2.74 m OD + 0.1 m (the area-weighted mean level of the polygons from 2 to 5 m OD; the Thames is at 2.6 to 2.8 m,
+  the docks at 3.3 to 4.2 m, so a reflected dock edge is out by up to 3 m; not visible at these distances), distorted by
+  the ripples. At night the lit windows come back in the water and feed the bloom. WebGL 2: off by default; the
+  material shows a sky gradient (day colours, darkened by `U.night`) by fresnel. `?water=1` (or Menu > "Water mirror")
+  turns the mirror on in WebGL 2 too (tested headless), `?water=0` off on WebGPU. The mirror draws the scene a second time.
 
 ## Ported and not ported (2026-10-08)
 
@@ -84,5 +111,5 @@ glTF model, the photo views, the clock with sun, moon and stars, night windows a
 place labels, the share hash.
 
 Not yet ported: tunnels and below ground, station models, ships and AIS, river and tide, splats, pixel art, line
-styles, photo facades, the night light sprites (aviation lights, lamps), reflections, routes, search, KML, Drone,
+styles, photo facades, the night light sprites (aviation lights, lamps) and their reflection sprites, routes, search, KML, Drone,
 plotter, wind, music, WebXR, the One Canada Square crown campaign colours.

@@ -1973,3 +1973,13 @@ structure with the owner. The port's parity work should not copy the WebGL page'
   WebGPU at cw, under and area; 1280 x 800 and 390 x 844: no page, console or HTTP error. Place names are hidden while
   the model is cut away. Parity table: docklands/README.md. Open: pick hook, building mode, CSM band, station night
   light, lamp-lit trees, the faint cut-away ground at night; then group 2 (interface).
+
+## 2026-10-08: Three.js port, search, registry card, routes, water
+
+- Three subagents: search and the registry card (night use from the registry: 658 homes, 293 offices, 4 hotels); walking
+  routes (4 test routes equal to the WebGL page in metres, seconds and steps); water (depth map from the UKHO soundings,
+  ripples, fresnel, a WebGPU mirror). The coordinator replaced the crisp mirror with vertical streaks (seven samples) and
+  repaired the selection highlight (r186 empty-geometry fault).
+- Each part committed alone and tested from its own worktree before the push; the subagents' unfinished work went to the
+  feature branch only. Owner's open items: the menu rework; water depth for Greenland and South Dock (no bed level: 10 m
+  default); the mirror's cost on a phone GPU is not measured.

@@ -146,8 +146,8 @@ const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => 
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 let SEL = -1, KEYS = null, keysLoading = null;
 const keys = () => keysLoading || (keysLoading = loadJSON(DATA + 'building-keys.json').then(J => { if (J.model && J.model.fp !== MFP) { console.warn('building-keys.json is for another area.js'); return null; } J.ids = J.ids.split(','); return (KEYS = J); }).catch(e => { console.warn(e); return null; }));
-const selMat = new THREE.MeshBasicNodeMaterial({ color: 0xffd34d, transparent: true, opacity: 0.35, depthTest: true, side: THREE.DoubleSide }), sel = new THREE.Mesh(new THREE.BufferGeometry(), selMat);
-sel.renderOrder = 2; scene.add(sel);
+const selMat = new THREE.MeshBasicNodeMaterial({ color: 0xffd34d, transparent: true, opacity: 0.35, depthTest: true, side: THREE.DoubleSide }), sel = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), selMat);
+sel.visible = false; sel.renderOrder = 2; scene.add(sel);
 function aim(x, y) { const r = renderer.domElement.getBoundingClientRect(); ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera); return ray; }
 function pickHit() {   // the building or detailed model under the ray: { i: model index, d: distance } or null
   const hit = ray.intersectObjects([...buildings.children, ...models.children], true).find(h => U.cut.value >= 250 || h.point.y <= U.cut.value); if (!hit) return null;   // a part cut away cannot be tapped
@@ -172,7 +172,8 @@ function setBuildingMode(mode, who) {
   if (bmat.transparent !== g) { Object.assign(bmat, g ? { transparent: true, opacity: .22, depthWrite: false } : { transparent: false, opacity: 1, depthWrite: true }); bmat.needsUpdate = true; } draw();
 }
 function highlight(i) {   // the picked building's outline as a translucent prism
-  sel.geometry.dispose(); if (i < 0) { sel.geometry = new THREE.BufferGeometry(); return; }
+  if (i < 0) { sel.visible = false; return; }   // r186 WebGPURenderer: a mesh first drawn with an empty geometry is never drawn again, so it keeps a geometry and hides
+  sel.geometry.dispose(); sel.visible = true;
   const b = A.buildings[i], f = dec(b.p), n = b.holes && b.holes.length ? b.holes[0] : f.length / 2, sh = new THREE.Shape();
   for (let k = 0; k < n; k++) sh[k ? 'lineTo' : 'moveTo'](f[2 * k], -f[2 * k + 1]);
   const G = new THREE.ExtrudeGeometry(sh, { depth: b.h + 0.6, bevelEnabled: false }); G.rotateX(-Math.PI / 2); G.translate(0, b.b - 0.3, 0); sel.geometry = G;
@@ -261,7 +262,7 @@ $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,stations,skyline,registry,search,routes').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,stations,skyline,registry,search,routes').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 const ui = {
   host: () => $('layersExtra'),

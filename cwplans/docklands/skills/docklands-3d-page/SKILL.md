@@ -1783,7 +1783,15 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   copied them once). Group 1 was written by four subagents in parallel, one file each, tested with `?layers=`; the
   parity table is in docklands/README.md. `ctx.addPick(ray => null | { distance, open() })`: a tap opens the nearest of the
   building under the ray and the layers' hits (stations uses it); `ctx.setBuildingMode('ghost' | 'solid', who)`: the
-  buildings see-through while any layer asks (floors). Open framework item: a CSM `maxFar` fault (a faint band at the far edge of the shadow range on WebGPU).
+  buildings see-through while any layer asks (floors). Water (2026-10-08, a subagent; streaks by the
+  coordinator): docklands/water.js makes a depth map (750 x 560, 10 m cells, R8) from the UKHO soundings and the dock
+  beds (North Dock from under.js; other docks 10 m, ponds 2 m: stated defaults); materials.js waterMaterial: colour by
+  depth, two octaves of ripple normals, Schlick fresnel; layers/water.js: one TSL `reflector()` at the area-weighted mean
+  level (2.74 m OD), on by default on WebGPU, `?water=1` on WebGL 2. One displaced mirror sample broke the lit window
+  rows into zigzags; seven samples along screen y (weights 1 to 4) give the vertical streaks of a river at night.
+  three.js r186 fault: a mesh first drawn with an empty BufferGeometry is never drawn after it gets a geometry
+  ("position not found"): start with a real geometry and hide the mesh (main.js `sel`, layers/routes.js). Open framework
+  item: a CSM `maxFar` fault (a faint band at the far edge of the shadow range on WebGPU).
 - **Test.** `node docklands/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
   SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
   --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or
