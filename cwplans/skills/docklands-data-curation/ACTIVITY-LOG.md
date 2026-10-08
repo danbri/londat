@@ -1794,3 +1794,22 @@ a re-run with the same inputs mints the same terms).
   two-hand turn and scale of the city, panels moved by their titles, a two-row control bar at chest height (floor up and
   down, Style: Map / Lines / CRT, Sky: Dark / City / Off, Photo), trees on by default. xr-check.mjs: 11 of 11.
   Roof shapes, London-wide terrain and wind were given to three subagents the same day (their own entries follow).
+
+## 2026-10-08: Wind on the 3D page
+
+- Owner: "it would be cool to have weather - can we get wind vectors too?" New docklands/wind-layer.js: Layers > Show >
+  Wind (off by default; `?wind`), https://danbri.github.io/londat/cwplans/docklands/?wind&view=cw . Moving streaks
+  along streamlines at 10 m, 120 m and 975 hPa (about 300 to 400 m, over the towers), coloured by speed, widths in
+  metres (also in the WebXR eyes); a readout with speed (km/h, m/s), direction, gusts, temperature, weather, cloud,
+  precipitation, the model and the clock time. Follows the page clock (sky.js).
+- Data: Open-Meteo forecast API in the browser, one request for a 5 x 4 grid over the model box, 6 hours round the
+  clock; model DWD ICON-D2 (about 2 km), then ICON seamless; fallback the 10 m wind of cache/latest.json. Nothing is
+  stored. Licence: Open-Meteo CC BY 4.0, DWD CC BY 4.0 (new register source `dwd-icon`). Refused: the UK Met Office
+  2 km model on Open-Meteo, which is CC BY-SA 4.0 (share-alike; londat CLAUDE.md allows only OSM).
+- Cost (SwiftShader): 5,880 segments, 575 kB static buffers, no upload per frame (the animation is in the fragment
+  shader); a redraw every 40 ms only while Wind is on and the tab is visible.
+- Tests: headless, mocked API and real API, 1600 x 900 DPR 1 and 390 x 844 DPR 3, Rotherhithe (night and day) and the
+  plan view: no page errors. Skill: docklands-3d-page, "Wind (2026-10-08)".
+- Open: ICON-D2 requests from the container failed (the fallback, ICON seamless, worked): check on a phone that the
+  readout names ICON-D2. A wind grid theme in the hourly cache (cwplans-londat-cache) would remove the third-party
+  request and keep a history.

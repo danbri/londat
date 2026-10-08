@@ -323,6 +323,7 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
 <script src="river-layer.js"></script>
 <script src="ships-layer.js"></script>
 <script src="stations-layer.js"></script>
+<script src="wind-layer.js"></script>
 <script src="../data-base.js"></script>
 <script src="../live-cache.js"></script>
 <script src="../feeds/london-datastore/lds-building.js"></script>
@@ -846,6 +847,7 @@ function render() {
   if (nm) { drawNight(P); if (BL.on && !XV) bloom(w, h); }
   if (PIX.on) { gl.uniform1f(uCut, 1e9); gl.disable(gl.BLEND); drawMesh(L.trees, 1); drawMesh(PIX.ents, 1); gl.enable(gl.BLEND); }
   drawGlow();
+  if (globalThis.DocklandsWind && DocklandsWind.drawGL()) gl.useProgram(pr);   // Wind (wind-layer.js): moving streaks at three heights, also in each headset eye
   if (!XV && globalThis.DocklandsKML && DocklandsKML.drawGL(w, h)) gl.useProgram(pr);   // My KML (kml-layer.js): screen-space lines over the ground
   if (L.hi || L.route) { drawMesh(L.hi, .9); gl.disable(gl.DEPTH_TEST); drawMesh(L.route, .95); gl.enable(gl.DEPTH_TEST); }   // the selection outline is hidden by what is in front of it (owner, 2026-10-08); the route stays on top
   if (XV) { if (XV.after) XV.after(); gl.useProgram(pr); gl.disable(gl.SCISSOR_TEST); return; }   // the headset: xr-layer.js draws its own labels, beacons and panels
@@ -2329,6 +2331,8 @@ if (globalThis.DocklandsRiver) DocklandsRiver.init({ Mesh, beam, shade, geo, gro
 if (globalThis.DocklandsShips) DocklandsShips.init({ Mesh, beam, shade, geo, groundAt, inBox, ovCard, ovCredit, londonTime, loadJSON, draw, note, A, OV, labels, labelBox, info, buildOverlays, wl: () => tidalLevel ?? (A.water.find(w => w.tidal && !w.n) || { level: 2.4 }).level });
 // Station models (stations-layer.js, Layers > Underground > Station models, on)
 if (globalThis.DocklandsStations) DocklandsStations.init({ Mesh, shade, norm3, esc, drawMesh, ovCard, loadJSON, draw, OV, rebuildUnder: () => { tunnelKey = underKey = walkKey = ''; draw(); } });
+// Wind (wind-layer.js, Layers > Show > Wind, off): the camera, the ground and a redraw
+if (globalThis.DocklandsWind) DocklandsWind.init({ gl, A, cam, geo, groundAt, draw, nightOn, PIX: () => PIX, MVP: () => MVP, CAM: () => CAM, VZ: () => VZ });
 // My KML (kml-layer.js, Layers > My KML): the helpers it draws with; it runs after this script as a module
 // Plotter SVG (plotter-svg.js, Menu > views > Plotter SVG of this view): the data and camera it draws from
 globalThis.DocklandsPlotCtx = { A, dec, earcut, heightOf, towerOf, groundAt, tunnelY, par, toast, MVP: () => MVP, VZ: () => VZ, CAM: () => CAM, TOWERS: () => TOWERS };

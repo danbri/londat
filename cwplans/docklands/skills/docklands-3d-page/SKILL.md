@@ -6,7 +6,7 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
   headless test recipe (two sizes x two pixel ratios, numbers not one look). Sky, clock, weather and
   tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
@@ -1328,6 +1328,81 @@ opens the one-eye preview (drag to look round, tap to select; iOS Safari has no 
 - **Not done / open:** no real headset test (the owner has to try it on a Quest or Vision Pro); performance with two
   eyes of the full scene is not measured on a headset; trees and splats are not drawn in a session; panels are
   world-locked, not body-locked; event venues are postcode centroids (O2: one point).
+
+## Wind (2026-10-08)
+
+Owner, 2026-10-08: "it would be cool to have weather - can we get wind vectors too?" Live:
+https://danbri.github.io/londat/cwplans/docklands/?wind&view=cw (Layers > Show > Wind; `?wind` ticks it at load).
+
+- **File.** `docklands/wind-layer.js` (global `DocklandsWind`; `init(ctx)`, `drawGL()`, `S` for tests). Hooks in
+  index.html: the script tag after `stations-layer.js`, `DocklandsWind.init({ gl, A, cam, geo, groundAt, draw, nightOn,
+  PIX, MVP, CAM, VZ })` before the My KML context, and in `render()` after `drawGlow()`:
+  `if (globalThis.DocklandsWind && DocklandsWind.drawGL()) gl.useProgram(pr);`. That line is before the WebXR return,
+  so each headset eye draws the wind too. Not drawn in Line drawing / Vector CRT (render returns earlier) or pixel art.
+- **Off by default.** The layer animates (a redraw every 40 ms while it is on and the tab is visible; it stops when the
+  tab is hidden, when Wind is unticked, and in a WebXR session, whose own loop draws), and the page's rule is no
+  third-party request before the visitor asks (skill `docklands-sky`, "Weather and tide"). The first request goes when
+  Wind is ticked.
+- **Data.** Open-Meteo forecast API in the browser (no key, CORS), CC BY 4.0; the link "Weather data by Open-Meteo.com"
+  is in the readout, as Open-Meteo asks ("a link next to any location Open-Meteo data are displayed"), and in Credits
+  (Sky, weather and tide). One request for 20 points: a 5 x 4 grid over `A.meta.extent` (corners included; points are
+  page metres turned into lon/lat by Newton steps on `A.meta.geo`), `cell_selection=nearest`, `wind_speed_unit=ms`,
+  `timeformat=unixtime`, `start_hour`/`end_hour` = 6 hours from 2 hours before the page clock (`DocklandsSky.t`, else
+  now). Variables: wind speed and direction at 10, 80, 120, 180 m and 975 hPa, `geopotential_height_975hPa`,
+  `wind_gusts_10m`, `temperature_2m`, `cloud_cover`, `precipitation`, `weather_code`. More than 85 days back: the
+  `historical-forecast-api` host.
+- **Model.** `icon_d2` (DWD ICON-D2, 0.02 deg, about 2 km, hourly, 2 days ahead, runs every 3 h; London is inside its
+  Central Europe domain), then `icon_seamless` when ICON-D2 has no value for the hour (beyond 2 days) or fails. DWD
+  re-use is CC BY 4.0 with the source acknowledged (https://www.dwd.de/EN/service/legal_notice/legal_notice_node.html);
+  register source `dwd-icon`. **Not the UK Met Office 2 km model** (`ukmo_uk_deterministic_2km`, which Open-Meteo has):
+  Open-Meteo states that UK Met Office data is CC BY-SA 4.0, and londat `CLAUDE.md` allows no share-alike source other
+  than OSM without the owner's agreement. Météo-France AROME HD (1.5 km, Etalab open licence, covers London) is the
+  other candidate; not used.
+- **Fallback.** If both models fail: the 10 m wind of the londat cache (`CwLive.theme('weather', 180)`, one point,
+  Open-Meteo best match) when the clock is within 90 minutes of its time; a uniform field, 10 m only, and the readout
+  says so. Else the readout says why ("did not load: ..."). After a failure the next try is 10 minutes later or when
+  the clock moves an hour.
+- **Field.** Per hour and point, speed and the direction it blows FROM (true) become a vector in page metres through
+  the local unit vectors of true east and true north from `geo()` (true north is about 1.5 deg off grid north). Linear
+  in time between hours, bilinear between grid points, clamped at the box edge. The readout direction is the mean
+  vector turned back to a true bearing (16 compass points and degrees).
+- **Drawing.** Three levels: 10 m above the ground (`groundAt`), 120 m above the ground (80 m or 180 m if 120 m is
+  missing), 975 hPa at its geopotential height (about 300 to 400 m, over the towers). Per level 140 streamlines: half
+  seeded over the whole box, half in a square round the camera target (side 1.6 x the camera distance, 1.2 to 7 km),
+  R2 low-discrepancy seeds; RK2, 14 steps; a line stops at the box edge. Line duration T = clamp(L / mean speed,
+  20 s, 1500 s), L = 0.14 x the square's side (250 to 900 m). Rebuilt when the target moves a quarter of the side, the
+  side changes 1.5 x, or the field changes (each minute of the clock, or new data). Static buffers; nothing is
+  uploaded per frame. The animation is in the fragment shader: a comet head runs along each line at
+  `S.spd` model seconds a real second (the 10 m level crosses its line in about 3.2 s; the same rate for all levels, so
+  the upper streaks are faster on screen in the true ratio); the readout gives the rate ("streaks 31x real time").
+- **Program.** Own program (attributes 0 to 2 bound by name; enabled state restored after). A ribbon a segment, turned
+  to the eye (`cross(tangent, eye - p)`), width in metres = clamp(0.0032 x distance from the eye, 0.6 m, 16 m), so it
+  is about 3 px on a 900 px view and a fixed angle in a headset (no screen-pixel term). Colour by speed (blue 0, cyan 3,
+  green 6, yellow 9, orange 13, red 18, magenta 25 m/s and more; key 0 to 90 km/h). Night: additive blending. Day: a
+  dark edge 2.4 x wider first, then the colour with normal blending. Depth test on, no depth write.
+- **Readout** (`#windKey` in `#top`, under the HUD; a tap folds it to one line): speed in km/h and m/s, direction,
+  gusts at 10 m, temperature, the WMO weather word, cloud, precipitation, the model and the clock time (London), the
+  animation rate, the Open-Meteo link. `#windNote` under Layers > Show: the model and the streak count.
+- **Cost (measured 2026-10-08, headless SwiftShader).** 5,880 segments, 12,600 vertices (40 bytes each), 575 kB of
+  static buffers; a rebuild 20 to 120 ms of CPU; `drawGL()` 1 to 11 ms of CPU (two draw calls by day, one at night).
+  Frame time with a readback, `?view=cw` 1600 x 900 DPR 1: 3.7 to 5.8 s with Wind, 3.5 to 5.1 s without (SwiftShader
+  noise is as large as the difference). Not measured on a phone GPU.
+- **Tests.** Mock the API with `page.route(/open-meteo\.com\/v1\/forecast/, ...)` (an array of 20 objects with
+  `hourly.time` in Unix seconds from `start_hour`), then read `DocklandsWind.S` (`field`, `stats`, `data.model`,
+  `tried`, `err`) and `#windKey`. Runs: `?view=rotherhithe&wind` 1600 x 900 DPR 1 (night), `?view=plan&wind` 390 x 844
+  DPR 3, `?t=2026-10-08T13:00&view=rotherhithe&wind` (day), and `?view=cw&wind` with the real API: no page errors.
+- **Faults met.** (a) In the container, `api.open-meteo.com` answered curl with "Daily API request limit exceeded"
+  (shared address), yet the browser got `icon_seamless` data. Every `icon_d2` request from the container failed
+  after about 30 s ("Failed to fetch" from a blank page, one point or 20; in the page, the 30 s header limit), and one
+  `icon_seamless` body arrived cut. Cause not found (the agent proxy, or the API). So ICON-D2 for London was not seen
+  from here; the fallback worked. The header limit is now 25 s (the body has none), so a visitor waits at most 25 s
+  before the fallback. Check on a phone: the readout names the model. (b) The first seeding left a quarter of the box empty (stratified cells counted past the seed
+  number): R2 sequence instead.
+- **Open.** The wind grid is not in the hourly cache (the cache has one point, `current` only); a `wind_grid` theme
+  in `cache-londat.mjs` (one request, 20 points x 5 levels, a few kB) would make the layer work with no third-party
+  request and give a history. The streamlines are of the field at one time (no pathlines); 975 hPa is drawn flat at
+  the mean geopotential height; vertical wind is not drawn; the grid (about 1.9 km by 1.9 km) does not resolve the
+  towers' own wakes, which no open model gives.
 
 ## Testing
 

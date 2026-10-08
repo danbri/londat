@@ -14812,6 +14812,26 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/wind-layer.js",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: the 3D page's Wind layer (Layers > Show > Wind, off by default; ?wind): asks the Open-Meteo forecast API in the browser, after the visitor ticks Wind, for a 5 x 4 grid of points over the model box (models icon_d2, then icon_seamless; wind at 10, 80, 120, 180 m and 975 hPa, gusts, temperature, cloud, rain) for 6 hours round the page clock; falls back to the 10 m wind of cache/latest.json; draws moving streaks along streamlines at 10 m, 120 m and 975 hPa, coloured by speed, with a readout. Nothing is stored",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcopenmeteo"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcdwdicon"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/stations-layer.js",
    "@type": [
     "prov:Entity",
@@ -25048,6 +25068,17 @@
    "dct:license": "CC BY 4.0 (data); API free for non-commercial use",
    "dcat:landingPage": "https://open-meteo.com/",
    "cwp:attribution": "Weather data by Open-Meteo.com (CC BY 4.0)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcdwdicon",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Deutscher Wetterdienst ICON models (ICON-D2 about 2 km, ICON-EU 7 km, ICON global 11 km), read through the Open-Meteo forecast API",
+   "dct:license": "CC BY 4.0 (DWD: re-use under CC BY 4.0 with the source acknowledged; Open-Meteo output CC BY 4.0)",
+   "dcat:landingPage": "https://www.dwd.de/EN/service/legal_notice/legal_notice_node.html",
+   "cwp:attribution": "Source: Deutscher Wetterdienst (ICON); Weather data by Open-Meteo.com (CC BY 4.0)"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcopenwatersais",
