@@ -188,7 +188,7 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
       <div id="rampKey" class="small"></div>
       <h3>Show</h3>
       <div class="chips">
-        <label><input type="checkbox" id="showWindows" checked> Windows</label><label><input type="checkbox" id="showLabels" checked> Labels</label><label><input type="checkbox" id="showRoads" checked> Roads</label><label><input type="checkbox" id="showUnder" checked> Underground</label><label><input type="checkbox" id="showFloors"> Floors</label><label><input type="checkbox" id="showWalls" checked> Flood walls</label><label><input type="checkbox" id="showBed" checked> Riverbed</label><label><input type="checkbox" id="showTrees" checked> Trees</label><label><input type="checkbox" id="showPhotos" checked> Photo facades</label><label><input type="checkbox" id="showModels" checked> Detailed models</label>
+        <label><input type="checkbox" id="showWindows" checked> Windows</label><label><input type="checkbox" id="showLabels" checked> Labels</label><label><input type="checkbox" id="showRoads" checked> Roads</label><label><input type="checkbox" id="showUnder" checked> Underground</label><label><input type="checkbox" id="showFloors"> Floors</label><label><input type="checkbox" id="showWalls" checked> Flood walls</label><label><input type="checkbox" id="showBed" checked> Riverbed</label><label><input type="checkbox" id="showTrees" checked> Trees</label><label><input type="checkbox" id="showPhotos" checked> Photo facades</label><label><input type="checkbox" id="showModels" checked> Detailed models</label><label><input type="checkbox" id="showRoofs" checked> Roof shapes</label>
       </div>
       <h3>Gaussian splats</h3>
       <div class="chips" role="radiogroup" aria-label="Gaussian splats">
@@ -323,6 +323,7 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
 <script src="river-layer.js"></script>
 <script src="ships-layer.js"></script>
 <script src="stations-layer.js"></script>
+<script src="roofs-layer.js"></script>
 <script src="terrain-ring.js"></script>
 <script src="wind-layer.js"></script>
 <script src="../data-base.js"></script>
@@ -573,6 +574,7 @@ const heightOf = (b, i) => { if (!SKY || skyIdx < 0) return b.h; const v = SKY.b
 const notFlown = i => SKY && skyIdx >= 0 && SKY.buildings[i] && SKY.buildings[i][skyIdx] == null;   // that survey did not cover it: today's height, slate colour
 // measured tower massing (data/towers.json, tools/build-towers.py): stacked tiers, and One Canada Square's pyramid, in
 // place of one prism per OSM outline for the towers of 100 m and over. Only for today's skyline (the year slider uses prisms).
+let ROOFS = null;   // data/roofs.json (tools/build-roofs.mjs, roofs-layer.js): model index -> roof shape (gabled, hipped, pyramidal)
 let BMOD = null; const bmodOf = new Map();   // data/building-models.json (tools/build-building-models.mjs): detailed models drawn instead of the extruded outline; model index -> model
 let TOWERS = null, FAC = null, FT = null, FTX = null;   // FT: data/tex/facades.json (photo facade tiles, tools/build-facade-atlas.py), FTX: its texture
 // the photo tile of model building i, when photo facades are on and the colours mean "what it looks like"
@@ -613,9 +615,9 @@ function bmodF(M, m) {
     if (p.cls === 'glass') pane += p.i.length / 6; }
   M.hold = false;
 }
-function buildBld() { if (L.bld) L.bld.free(); const M = new MeshF(), useT = TOWERS && skyIdx < 0, useM = BMOD && skyIdx < 0 && $('showModels').checked;
+function buildBld() { if (L.bld) L.bld.free(); const M = new MeshF(), useT = TOWERS && skyIdx < 0, useM = BMOD && skyIdx < 0 && $('showModels').checked, useR = ROOFS && skyIdx < 0 && $('showRoofs').checked;
   const look = (b, i) => { const sl = facSlot(i); return sl != null ? [[.9, .9, .9], -1 - sl] : [buildingColour(b, i), buildingMat && buildingMat(b, i)]; };
-  A.buildings.forEach((b, i) => { if (useT && towerOf.has(i)) return; if (useM && bmodOf.has(i)) return; const h = heightOf(b, i); if (!(h > 0)) return; const [c, m] = notFlown(i) ? [[.36, .42, .52], null] : look(b, i); M.kind = nightKind(i, b.b + h); prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, m); });
+  A.buildings.forEach((b, i) => { if (useT && towerOf.has(i)) return; if (useM && bmodOf.has(i)) return; const h = heightOf(b, i); if (!(h > 0)) return; const [c, m] = notFlown(i) ? [[.36, .42, .52], null] : look(b, i); const rf = useR && ROOFS.get(i); M.kind = nightKind(i, b.b + (rf ? rf.ridge : h)); if (rf) DocklandsRoofs.prism(M, b, rf, c, alOf(m), { dec, shade, earcut }); else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, m); });
   if (useT) for (const t of TOWERS) { const mi = t.model_buildings[0], [c, m] = look(A.buildings[mi], mi); M.kind = nightKind(mi, towerTop(t)); towerF(M, t, c, m); }
   if (useM) for (const m of BMOD) bmodF(M, m);
   L.bld = M.upload(); L.bld.kinds = !!NREG; }
@@ -888,7 +890,7 @@ cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end)
   labelBox.addEventListener('click', e => { if (lbMoved) { e.stopPropagation(); e.preventDefault(); } lbMoved = false; lbDown = null; }, true); }
 cv.addEventListener('wheel', e => { e.preventDefault(); zoom(Math.exp(e.deltaY * .001)); unview(); draw(); }, { passive: false });
 ['bmode', 'showLabels', 'showRoads', 'showUnder'].forEach(id => $(id).onchange = draw);
-$('showPhotos').onchange = () => { buildBld(); draw(); }; $('showModels').onchange = () => { buildBld(); draw(); }; $('showWalls').onchange = draw; $('showBed').onchange = draw; $('showWindows').onchange = draw;
+$('showPhotos').onchange = () => { buildBld(); draw(); }; $('showModels').onchange = () => { buildBld(); draw(); }; $('showRoofs').onchange = () => { buildBld(); draw(); }; $('showWalls').onchange = draw; $('showBed').onchange = draw; $('showWindows').onchange = draw;
 $('showFloors').onchange = () => { if ($('showFloors').checked && $('bmode').value === 'solid') { $('bmode').value = 'ghost'; syncBmode(); } draw(); };
 const FMT = { cut: v => +v >= 250 ? 'off' : v + ' m OD', vz: v => v + '×', storey: v => v + ' m', dmax: v => v + ' m', grad: v => v, ddeep: v => v + ' m' };
 function outs() { for (const k of ids) $(k + 'O').value = FMT[k](inp[k].value); }
@@ -2372,6 +2374,8 @@ loadJSON('data/building-models.json').then(T => { const hx = s => [1, 3, 5].map(
   BMOD = Object.values(T.models).map(m => ({ ...m, mi: m.model_fp === MFP && m.mi ? m.mi : modelAt(m.at), parts: m.parts.map(p => ({ ...p, c: hx(p.col) })) })).filter(m => m.mi.length);
   for (const m of BMOD) for (const i of m.mi) bmodOf.set(i, m); buildBld(); draw(); }).catch(e => console.warn('building-models.json', e));
 Object.defineProperty(window.__docklands, 'BMOD', { get: () => BMOD });
+if (globalThis.DocklandsRoofs) loadJSON('data/roofs.json').then(T => { ROOFS = DocklandsRoofs.decode(T, MFP); if (ROOFS) { buildBld(); draw(); } }).catch(e => console.warn('roofs.json', e));   // roofs-layer.js
+Object.defineProperty(window.__docklands, 'ROOFS', { get: () => ROOFS });
 loadJSON('data/towers.json').then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); for (const t of TOWERS) for (const mi of t.model_buildings) towerOf.set(mi, t); buildBld(); if (NIGHT.built) buildNightLights(); draw(); }).catch(e => console.warn('towers.json', e));
 // #at=x,z[,dist]: start looking at a point in local metres (the atlas links here with a building's x, z)
 const atM = /(?:^#|&)at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);

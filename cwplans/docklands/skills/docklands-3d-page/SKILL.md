@@ -58,10 +58,10 @@ colour mask and polygon offset at the start of every frame. After you edit a lon
 - **One page, many scripts.** `docklands/index.html` (2,349 lines, 295 KB on 2026-10-07; 1,840 lines on 2026-10-04)
   holds the CSS, the HTML and one inline script. Script tags, in order: `vendor/earcut.min.js`, `data/area.js`,
   `data/under.js`, `opening-hours.js`, `vendor/astronomy.browser.min.js`, `vendor/satellite.min.js`, `sky.js`,
-  `river-layer.js`, `ships-layer.js`, `stations-layer.js`, `terrain-ring.js`, `../data-base.js`, `../live-cache.js`,
+  `river-layer.js`, `ships-layer.js`, `stations-layer.js`, `roofs-layer.js`, `terrain-ring.js`, `../data-base.js`, `../live-cache.js`,
   `../feeds/london-datastore/lds-building.js`, `locate.js`, `building-keys.js`, `kml-layer.js` (module), `nav.js`,
   `drone.js`, `plotter-svg.js`, `line-styles.js`. The rest is fetched on demand (`data/indoor.js`, `data/splats/`,
-  `data/tex/`, `data/towers.json`, `data/trees.json`, `data/building-keys.json`, `../atlas/data/atlas.json`,
+  `data/tex/`, `data/towers.json`, `data/roofs.json`, `data/trees.json`, `data/building-keys.json`, `../atlas/data/atlas.json`,
   `data/music.json`, `data/pixel-palette.json`, `data/river.json`). A script tag added later in the page is not
   there when an inline timer fires (section "Line styles", fault b).
 - **WebGL1.** `getContext('webgl', { antialias: true, alpha: false, stencil: true })` (the stencil marks night
@@ -114,7 +114,7 @@ plane), `?night`, `?pixel`, `?lines`, `?vectrex` (read in line-styles.js), `?cap
 frames), `?t=` (page clock, sky.js; `?t=photo` also opens `rotherhithe`), `?drone=` (drone.js), `?kml=` (kml-layer.js),
 `#music`, `#at=`, and the share hash `#v=1&c=…` (nav.js; `id=osm:w<id>` opens an OSM card).
 Test hooks: `window.__docklands` (`cam`, `draw`, `renderNow`, `setView`, `setNight`, `setStyle`, `setSplatMode`,
-`setGround`, `captureMode`, `pickAt` (model index), `selectBuilding`, `selectModel`, `MFP`, `modelAt`, `FT`, `searchItems`, `route`, `setEye`/`clearEye`, `screenOf`,
+`setGround`, `captureMode`, `pickAt` (model index), `selectBuilding`, `selectModel`, `MFP`, `modelAt`, `FT`, `ROOFS`, `searchItems`, `route`, `setEye`/`clearEye`, `screenOf`,
 `NIGHT`, `AVL`, `BL`, `PIX`, `VIZ`, `SPL`, `AT`, `AUDst`, and `setTidal`, `relight` for sky.js).
 
 ## Interface (owner, 2026-10-03: "The city is the star not our endless word buttons")
@@ -1253,6 +1253,94 @@ as new default for that building." Live: https://danbri.github.io/londat/cwplans
   file is in mm; keep layers at least 5 mm apart. The bay was in shade in the photo: its colours are judged, not read.
 - **Next building:** copy a spec, set the frames and sizes from a photo (`photos.json` in the contrib set) and the
   LiDAR profile, run the profile tool, the builder, `npm test` (building-models.test.mjs), the register check.
+
+## Roof shapes (2026-10-08)
+
+Owner, 2026-10-08: "the buildings without custom models are painfully flat and samey. We should try at a minimum to
+guess roof types, but ultimately to get more realism." Live (terraces in Deptford, then Bow):
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1425,1875,4,220,0.3,0.6&n=0&u=0 and
+https://danbri.github.io/londat/cwplans/docklands/#v=1&c=1875,-1875,8,260,0.5,0.65&n=0&u=0
+
+- **Files.** `tools/lidar-roofs.py` (the measurement), `tools/build-roofs.mjs` (logged operation `build-roofs`, kgx
+  graph `roofs`, skill `cwplans-dataflow`), `docklands/data/roofs.json` (the page file, 641 kB, 235 kB gzip),
+  `docklands/roofs-layer.js` (the page builder), `tools/test/roofs.test.mjs`.
+- **Evidence.** EA LiDAR composite first-return DSM 2022 1 m and composite DTM 2022 1 m (OGL v3.0), tiles TQ3075,
+  TQ3080, TQ3575, TQ3580 (5 km; the model box x -5150 to 2350, z -2000 to 3600 is E 532400 to 539900, N 176700 to
+  182300). URL: `https://environment.data.gov.uk/tiles/collections/survey/<product>/2022/1/<tile>`; saved as
+  `<product>-2022-1-<tile>.zip`, not committed (60 to 72 MB each), read from the zips. SHA-256 (also in the activity
+  log): dsm TQ3075 c9f1aa1f..., TQ3080 efc1b560..., TQ3575 63198a13..., TQ3580 35b92868...; dtm TQ3075 88209ad5...,
+  TQ3080 ac6d4197..., TQ3575 819827eb..., TQ3580 de716810... . OSM: `roof:shape`, `roof:height`, `roof:levels`,
+  `roof:orientation` from the openstreetmap.fr Greater London extract of 2026-10-07 (osmium tags-filter), joined by the
+  OSM id of each model index (`building-keys.json`).
+- **Method.** For each model building with height 25 m or less, no holes and no min_height (38,674 of 41,803): the
+  1 m cells whose centres are inside the outline and 0.75 m or more from its edges (8 or more cells, else "nodata"),
+  DSM minus the model ground `b`. In the outline's minimum-area rectangle (u along the long side, bearing in 0 to 180
+  deg; v across), four fits by least squares with one trimming pass (cells off by more than max(0.3 m, 2.5 robust
+  sigma) out): flat; gable with the ridge along u; gable with the ridge along v (each with the ridge offset searched in
+  0.5 m steps within 30 % of the span: a London house with a rear outrigger has its ridge off the middle); hipped
+  (`R - k max(|t|, |s| - (L - W)/2)`, one slope on four sides). Score: median absolute residual (MAD).
+- **Rules** (`P` in build-roofs.mjs, written into roofs.json `rules`): a pitched fit is kept when slope k is 0.18 to
+  1.8 (10 to 61 deg), rise k x span/2 is 1 m or more, eave 2 m or more, MAD 0.45 m or less, MAD at most 0.7 x the flat
+  fit's and at most a quarter of the rise. Hipped only when its MAD is under 0.8 x the best gable's; pyramidal when the
+  rectangle's sides are within 1.2 of each other. Else flat (flat MAD 0.3 m or less) or complex. Eave = ridge - k x
+  span/2 (with an offset ridge: the mean of the two sides). OSM `roof:shape` gabled / hipped / pyramidal is used only
+  where the LiDAR gave no shape (complex, nodata) and the LiDAR gable fit in that ridge direction does not slope the
+  wrong way (k >= 0.18); then ridge = model height, eave from `roof:height`, else `roof:levels` x 2.5 m, else 35 deg.
+- **roofs.json.** `model` {fp = `MFP`, sha256 of area.js}; `s` (comma-joined codes g, h, p; `go`, `ho`, `po` from OSM);
+  `r` (8 integers a row: model index as a delta, ridge centre x and z in dm, ridge bearing in 0.1 deg, eave and ridge in
+  cm above `b`, half span in dm, half ridge length in dm or -1 for a gable); `counts`; `osm_vs_lidar`.
+- **Page.** `roofs-layer.js` loads before the inline script; index.html loads `data/roofs.json` after the start,
+  `DocklandsRoofs.decode(T, MFP)` (null and a console warning when the fingerprint differs), and `buildBld()` calls
+  `DocklandsRoofs.prism(M, b, roof, col, alOf(mat), { dec, shade, earcut })` instead of `prismF` for those buildings
+  when Layers > Show > "Roof shapes" (`#showRoofs`, on) is on and no skyline year is shown. The roof is the lower
+  envelope of the planes (two, or four when hipped), never below the eave or above the ridge. Walls: each outline edge
+  is cut where the envelope changes plane or meets the eave, so gable ends are the walls' sloped tops (window grid on
+  them, as on any wall). Roof faces: the outline clipped (Sutherland-Hodgman) to the region where each plane is lowest,
+  earcut, lifted onto the plane, u = -(1 + ridge) (no window grid; the ground image on roofs under 40 m). Night kind
+  uses the ridge. Picking, Line drawing, the plotter, Drone and the selection outline keep the prism. Hook:
+  `__docklands.ROOFS` (Map model index -> roof).
+- **Measured** (logged run 2026-10-08, 9 min 52 s, of which lidar-roofs.py about 7.5 min; graph version
+  `https://kgx.foaf.tv/id/graphroofsb45bbd1ff77f4146`, 90,735 triples): LiDAR gabled 17,167, hipped 433, pyramidal 183;
+  OSM gabled 287, hipped 49, pyramidal 30 (18,149 roofs drawn); flat 7,052; complex 12,513 (stay flat); nodata 960.
+  - **Hand check against the DSM** (two throwaway scripts, not committed: DSM height and hillshade with
+    the outline and the ridge line, and the profile across the ridge; a random sample stratified by class, seed 11):
+    pitched 17: 12 right (form and ridge direction), 4 doubtful or not checkable (a small outline on a larger roof,
+    one OSM turret with no cells), 1 wrong ridge direction (index 33539, an outline on a T-shaped building). Flat 6 of
+    6 right. Complex 6: 4 have pitched roofs in the DSM (missed), 2 unclear. An earlier sample (seed 7, rules before
+    the eave change) gave 15 right and 2 doubtful of 17 pitched, 4 of 6 flat right (one terrace of pitched roofs classed
+    flat), 4 of 6 complex missed pitched roofs.
+  - **Fit against the raw cells** (29 LiDAR-pitched buildings of both samples): ridge height minus the 75th percentile
+    of the cells within 0.75 m of the ridge line: median +0.08 m, median absolute 0.18 m, 90th percentile 0.38 m; the
+    roof height at the outermost 1 m of cells minus their median: median absolute 0.10 m, 90th percentile 0.63 m.
+  - **Pacific Tavern** (index 7477; known: gable, eave 6.1 m, ridge 8.7 m, 28 deg): as one L-shaped outline it is
+    "complex" (stays flat; the page draws its detailed model anyway). Its south wing alone (frame S of the spec, 19.93
+    x 9.7 m, as a one-building area.js): gable along the long side, ridge 8.82 m, eave 6.30 m, slope 0.516 (27.3 deg),
+    MAD 0.08 m against flat 0.55 m.
+  - **OSM `roof:shape` against the LiDAR class** (elements with both): OSM gabled 4,576: LiDAR gabled 3,546 (77 %),
+    complex 749, flat 244 (5 %), hipped 17, pyramidal 8. OSM hipped 718: LiDAR gabled 507, hipped 20, complex 140, flat
+    38. OSM flat 1,839: LiDAR flat 889, complex 655, gabled 149 (8 %), nodata 131. Of the LiDAR pitched roofs with an
+    OSM flat / gabled / hipped / pyramidal tag, 3.7 % have OSM flat.
+  - Page (headless Chromium, SwiftShader WebGL): no page error with `?view=rotherhithe` at 1600 x 900 DPR 1 and
+    390 x 844 DPR 3, `?view=greenland` (1600 x 900), `?view=pier` (390 x 844 DPR 3) and the aerial links; Rotherhithe view mean luma with and
+    without roof shapes 0.09340 / 0.09348 (1600) and 0.06705 / 0.06711 (390 DPR 3): the night photo view barely
+    changes; the terraces in the aerial links show pitched roofs.
+- **Faults met.** (a) `earcut` is not a global function on this page (`globalThis.earcut.default`, bound in the inline
+  script): roofs-layer.js threw inside `buildBld()`, which runs in the `.then` of four loaders whose `.catch` only
+  warns, so every building vanished with no console error. Pass page functions in the context; capture console
+  warnings in headless runs. (b) The bearing was first written modulo 180, which flipped u for half the buildings and
+  so the sign of the ridge offset: the profile check showed ridge cells lower than edge cells. u is now normalised to a
+  bearing in 0 to 180 before the fits. (c) OSM `roof:shape=gabled` on buildings whose LiDAR fits slope down to the
+  middle (valley or butterfly "London" roofs): the rule against the LiDAR fit removed 486 OSM roofs (852 to 366).
+- **Limits, open.** Complex outlines stay flat (12,513: L and T shapes, wings in one outline, the Pacific Tavern):
+  next, cut an outline into rectangles or grow planes from the cells. A rear outrigger gets the main roof's back slope,
+  clamped at the eave, not its own lower roof. Semi-detached halves (hipped at one end only) come out gabled: OSM hipped
+  is mostly LiDAR gabled; no half-hip, mansard, skillion, butterfly or gambrel shapes. Heights are above the model
+  ground `b`, not the DTM (median DTM minus `b` is about 0). Rerun after build-docklands.mjs and
+  key-model-buildings.mjs; the fingerprint stops the page from using stale rows.
+- **Rebuild:** `ROOFS_TILES=<dir of the 8 zips> ROOFS_PBF=<extract> node cwplans/tools/build-roofs.mjs` (default dirs:
+  `cwplans/data/raw/docklands/lidar/` and `cwplans/data/raw/docklands/greater_london-latest.osm.pbf`, both ignored by
+  git); `ROOFS_DRY=1 ROOFS_MEAS=<saved lidar-roofs.py output>` to tune the rules without a log entry. Then `npm test`,
+  `node cwplans/tools/check-data-register.mjs --write`, a headless load.
 
 ## WebXR (2026-10-08)
 

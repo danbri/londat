@@ -8467,6 +8467,56 @@
       ]
     },
     {
+      "id": "build-roofs",
+      "area": "buildings",
+      "tool": "tools/build-roofs.mjs",
+      "command": "ROOFS_TILES=<dir of the 8 tile zips> ROOFS_PBF=<greater_london-latest.osm.pbf> node cwplans/tools/build-roofs.mjs",
+      "kind": "build",
+      "used": [
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "docklands/data/building-keys.json"
+        },
+        {
+          "file": "tools/lidar-roofs.py"
+        },
+        {
+          "source": "ea-lidar",
+          "request": "EA survey tiles TQ3075, TQ3080, TQ3575, TQ3580: lidar_composite_first_return_dsm/2022/1 and lidar_composite_dtm/2022/1 (https://environment.data.gov.uk/tiles/collections/survey/<product>/2022/1/<tile>, fetched 2026-10-08; not committed, 60 to 72 MB each; SHA-256 in the activity log)"
+        },
+        {
+          "local": "data/raw/docklands/greater_london-latest.osm.pbf"
+        },
+        {
+          "source": "osm"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/roofs.json"
+        },
+        {
+          "source": "kgx",
+          "note": "graph roofs"
+        }
+      ],
+      "note": "skill docklands-3d-page, \"Roof shapes\"; logged operation build-roofs, kgx graph roofs",
+      "method": "tools/lidar-roofs.py mosaics the DSM and DTM tiles (read from the zips), takes for each model building of 25 m or less (no holes, no min_height) the 1 m cells whose centres are inside the outline and 0.75 m or more from its edges, subtracts the model ground, and fits four roofs by least squares with one trimming pass, in the outline's minimum-area rectangle: flat; gable with the ridge along the long side and along the short side (ridge offset searched in 0.5 m steps within 30 % of the span); hipped (equal pitch on four sides). build-roofs.mjs keeps a pitched fit when its slope is 0.18 to 1.8, its rise 1 m or more, its eave 2 m or more, its median absolute error 0.45 m or less and at most 0.7 of the flat fit's and a quarter of the rise; a hipped fit only when its error is under 0.8 of the best gable's (pyramidal when the rectangle's sides are within 1.2 of each other). Else flat (error 0.3 m or less) or complex. Where the LiDAR gives no shape, OSM roof:shape gabled, hipped or pyramidal is used (ridge at the model height, roof:height, roof:levels x 2.5 m or a 35 deg pitch), unless the LiDAR fit in that ridge direction slopes the wrong way. Writes the page file and, per building with a shape, its shape, eave, ridge, ridge bearing and basis to the graph.",
+      "rules": [
+        "Towers (over 25 m) keep their flat tops (data/towers.json models the tall ones); outlines with holes or a min_height stay prisms.",
+        "The page draws a roof only while roofs.json's model fingerprint matches the page (MFP); rerun after build-docklands.mjs and key-model-buildings.mjs.",
+        "ROOFS_DRY=1 with ROOFS_MEAS=<lidar-roofs.py output> writes the page file without a log entry while the rules are tuned; the committed file comes from a logged run."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "key-model-buildings",
+        "fetch-raw-lidar"
+      ]
+    },
+    {
       "id": "station-mesh",
       "area": "underground",
       "tool": "tools/build-station-mesh.mjs",
@@ -8953,6 +9003,10 @@
   ],
   "libraries": [
     {
+      "tool": "tools/lidar-roofs.py",
+      "provides": "Roof fits (numpy, tifffile): the EA LiDAR DSM and DTM tile zips as one mosaic; per low model building the 1 m cells inside its outline (0.75 m inset) minus the model ground, and flat, gable (ridge along the long or the short side, ridge offset searched) and hipped fits in the outline's minimum-area rectangle, with their errors. Used by build-roofs."
+    },
+    {
       "tool": "tools/facade-tile.py",
       "provides": "Facade tiles (Pillow): a 256 px cut of a rectified patch (a mirrored half for a symmetric face), a vector pattern drawn in metres to PNG and SVG, and the composed 8 x 4 atlas. Used by contrib-photos (cut-facade-tiles) and compose-facade-atlas."
     },
@@ -9041,6 +9095,10 @@
     {
       "tool": "tools/test/building-models.test.mjs",
       "what": "Tests (node --test) of docklands/data/building-models.json against area.js: the model fingerprint, indices, triangle counts, vertices inside the outline box and above the ground, heights near the model roof, and the .glb hash."
+    },
+    {
+      "tool": "tools/test/roofs.test.mjs",
+      "what": "Tests (node --test) of docklands/data/roofs.json against area.js (fingerprint, low buildings only, eave below ridge, ridge centre near the outline) and of the page's roof builder in docklands/roofs-layer.js (every vertex finite, inside the outline box, between the ground and the ridge; roof vertices not below the eave)."
     },
     {
       "tool": "tools/test/osm-values.test.mjs",

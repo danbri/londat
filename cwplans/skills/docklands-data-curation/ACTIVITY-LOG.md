@@ -1833,3 +1833,22 @@ a re-run with the same inputs mints the same terms).
   Island Gardens); no water or buildings outside the box; haze by distance from the box, not the eye.
 - Headset view, Drone and views (owner: "Also dont forget Drone etc mode"): a third bar row: Drone (six vehicles,
   stepped from the headset frames), Ride or Watch, View (the page's named views). xr-check.mjs: 12 of 12.
+
+## 2026-10-08: roof shapes for the ordinary model buildings (Opus, subagent)
+
+- Owner: "the buildings without custom models are painfully flat and samey. We should try at a minimum to guess roof
+  types, but ultimately to get more realism." New: tools/lidar-roofs.py (fits flat, gable and hipped roofs to the EA
+  LiDAR composite first-return DSM 2022 1 m in each outline's minimum-area rectangle; tiles TQ3075, TQ3080, TQ3575,
+  TQ3580, DSM and DTM, fetched 2026-10-08, not committed, SHA-256 in the activity log), tools/build-roofs.mjs (logged
+  operation build-roofs, graph roofs; the rules; OSM roof tags from the openstreetmap.fr extract of 2026-10-07 where the
+  LiDAR gives no shape), docklands/data/roofs.json, docklands/roofs-layer.js (Layers > Show > Roof shapes, on),
+  tools/test/roofs.test.mjs. index.html: one script tag, the loader, one branch in buildBld(), the checkbox.
+- Found: of 38,674 buildings of 25 m or less, 17,783 pitched from the LiDAR (gabled 17,167, hipped 433, pyramidal
+  183) and 366 from OSM; 7,052 flat; 12,513 complex (stay flat); 960 no data. Hand check (random sample by class):
+  12 of 17 pitched right, 4 doubtful, 1 wrong ridge direction; 6 of 6 flat right; 4 of 6 complex are pitched roofs that
+  the method misses. Ridge height against the raw cells: median absolute 0.18 m. Pacific Tavern south wing alone:
+  ridge 8.82 m (known 8.7), eave 6.30 m (6.1), 27.3 deg (28). OSM gabled is LiDAR gabled for 77 %, flat for 5 %.
+- Faults: earcut is `globalThis.earcut.default` on the page (a bare call threw inside buildBld in loaders that only
+  warn: every building vanished, no console error); a bearing modulo 180 flipped the ridge offsets (seen in the
+  profile check, fixed). Open: complex outlines (L shapes, wings) stay flat; rear outriggers get the main roof's
+  slope; no half-hip, mansard, butterfly or skillion. Skill: docklands-3d-page, "Roof shapes".
