@@ -9910,6 +9910,65 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildmaterials",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-materials",
+   "dct:description": "For each model building: the OSM element (building-keys.json; a part also reads its parent) gives the building type, levels and, from the extract (osmium tags-filter), building:material, building:colour, roof:material, roof:colour, shop and amenity. OSM shop and amenity nodes (shops, cafes, restaurants, pubs, bars, banks, pharmacies and similar) are projected to the model through OSTN15 and matched to the outline that holds them, else to the nearest outline edge within 2.5 m. A facade style follows from the type, height, footprint area and registry use (rules R); the wall material is the OSM tag when there is one, else a weighted pick by style, seeded by a hash of the OSM id so that neighbours differ; an OSM colour replaces the material colour (glass: mixed with it). The storey class is the nearest of four storey heights of the style to the wall height (to the eave of a roofs.json roof) over the OSM levels, else a hashed spread round the default. Pitched and flat roof colours come from roof:material and roof:colour, else weighted picks. The guessed Night use (homes, offices) is only used where the registry gives none.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-keys.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/roofs.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/atlas/data/atlas.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawdocklandsgreaterlondonlatestosmpbf"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosostn15"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/materials.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-materials.mjs"
+   },
+   "cwp:command": "MAT_PBF=<greater_london-latest.osm.pbf> node cwplans/tools/build-materials.mjs",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "Everything without an evidence bit in materials.json is a guess by the rules (written in the file as rules.R), not an observation.",
+    "The page uses the file only while its model fingerprint matches the page (MFP); rerun after build-docklands.mjs, key-model-buildings.mjs and build-roofs.mjs.",
+    "MAT_DRY=1 writes the page file without a log entry while the rules are tuned; the committed file comes from a logged run."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolkeymodelbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildroofs"
+    }
+   ],
+   "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolstationmesh",
    "@type": "prov:Activity",
    "rdfs:label": "station-mesh",
@@ -15706,6 +15765,68 @@
     "dcat:Distribution"
    ],
    "dct:title": "code, not data: tests of docklands/data/roofs.json against area.js and of the page's roof builder (docklands/roofs-layer.js)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/materials.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "the \"Realistic\" look of the model buildings of the 3D page (Layers > Style > Realistic buildings, ?look=real): per model index a facade style (house, flats, estate, office, ribbon, curtain wall, shed, civic), a storey height class, a ground-floor shopfront flag, the wall colour, the pitched and the flat roof colour (palettes), a guessed use for Night and evidence bits; from OSM building, building:material, building:colour, roof:material, roof:colour and levels tags, OSM shop and amenity points in or at the outline, the registry use, the model height and footprint, roofs.json eaves; weighted guesses by type where no tag says; the model fingerprint and counts",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildmaterials"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/look-layer.js",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: the 3D page's Realistic look (Layers > Style > Realistic buildings, ?look=real): loads docklands/data/materials.json and paints the building mesh (wall and roof colours, the facade code in the alpha byte, the Night use); DocklandsLook.set(true) for other layers such as the headset view",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-materials.mjs",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: the Realistic look of the 3D page's buildings from OSM tags and points, the registry use and the model geometry -> docklands/data/materials.json; logged operation build-materials, kgx graph materials",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/test/materials.test.mjs",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: tests of docklands/data/materials.json against area.js and of the page's painter (docklands/look-layer.js)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"

@@ -1857,3 +1857,25 @@ a re-run with the same inputs mints the same terms).
 - Works and events refreshed 2026-10-08 (fetch-works.mjs venue-events tfl-road tfl-bus tfl-lines th-licences planning):
   venue-events 215 (174 from today on), works.json 1,557 items. The markets source gave 0 items in this container (its
   OSM raw input is not here): the 2026-10-04 markets.json was kept and works.json rebuilt from the snapshots.
+
+## 2026-10-08: Realistic look for the ordinary model buildings (Opus, subagent)
+
+- Owner: "the buildings without custom models are painfully flat and samey ... ultimately to get more realism." New
+  option, the default Map look unchanged: Layers > Style > "Realistic buildings", `?look=real`
+  (https://danbri.github.io/londat/cwplans/docklands/?look=real&view=cw). New: tools/build-materials.mjs (logged
+  operation build-materials, graph materials, `https://kgx.foaf.tv/id/graphmaterialsca718efee790144e`),
+  docklands/data/materials.json, docklands/look-layer.js (`DocklandsLook.set(true)` for the headset layer),
+  tools/test/materials.test.mjs. index.html: one script tag, the checkbox, the init line, the look path in buildBld(),
+  and in the facade shader lookSet()/lookWall() and the night grid by bay, storey and shopfront (no new uniform or
+  varying).
+- Evidence: OSM tags of the 41,803 model buildings from the openstreetmap.fr extract of 2026-10-07 (building:material
+  5,061, building:colour 2,923, roof:material 1,991, roof:colour 3,277, levels 12,979), OSM shop and amenity nodes
+  (4,370 of 4,958 matched to an outline; 3,745 shopfronts), the registry use (509). The rest is a weighted guess by
+  type and size, seeded by the OSM id. Styles: house 23,092, flats 11,738, shed 2,126, estate 1,982, curtain 876,
+  civic 761, ribbon 665, office 563.
+- Faults: derivatives inside the look function were per-pixel noise on SwiftShader (now taken once at the top of
+  main); `h(gk.xy * k)` of the interpolated building centre is noise per pixel (the look hashes floor(gk.xy), also at night; the
+  Map look keeps its old seed, still a fault in the Map look). Option off: photo views equal in mean luma at a fixed page clock (390 x 844 DPR 3: 0.07341, 0.09434, 0.08736 / 0.08732).
+  Open: no era (Victorian against 1980s brick), no
+  balconies or bays, windows across party walls inside one outline, shopfront on the whole outline; not seen on a
+  phone GPU or in a headset. Skill: docklands-3d-page, "Realistic look".

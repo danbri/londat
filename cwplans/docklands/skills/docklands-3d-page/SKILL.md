@@ -3,11 +3,11 @@ name: docklands-3d-page
 description: >-
   Work on the Docklands 3D page, cwplans/docklands/index.html and its scripts (WebGL 1, 15 shader programs):
   vertex formats (the alpha byte is not opacity; g carries building use and roof top), picking by model index, the
-  drawer, card, search, routes, gestures, phone audio; the styles (map, pixel art, photo facades in a 32-slot atlas,
+  drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
   station models; detailed building models; WebXR; wind (?wind); the plotter SVG and the owner's iDraw 2.0 A3; building keys (any building by OSM id); and the
-  headless test recipe (two sizes x two pixel ratios, numbers not one look). Sky, clock, weather and
+  headless test recipe (two sizes x two pixel ratios). Sky, clock, weather and
   tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
 ---
@@ -110,7 +110,7 @@ colour mask and polygon offset at the start of every frame. After you edit a lon
   bound while it is the render target is a feedback loop, and every draw fails.
 
 URL switches: `?view=<name>` (any key of `VIEWS`: area, cw, under, plan, rotherhithe, greenland, pier, greenlandday,
-plane), `?night`, `?pixel`, `?lines`, `?vectrex` (read in line-styles.js), `?capture` (no overlays, photo colours: drone
+plane), `?night`, `?pixel`, `?lines`, `?vectrex` (read in line-styles.js), `?look=real` (look-layer.js), `?capture` (no overlays, photo colours: drone
 frames), `?t=` (page clock, sky.js; `?t=photo` also opens `rotherhithe`), `?drone=` (drone.js), `?kml=` (kml-layer.js),
 `#music`, `#at=`, and the share hash `#v=1&c=…` (nav.js; `id=osm:w<id>` opens an OSM card).
 Test hooks: `window.__docklands` (`cam`, `draw`, `renderNow`, `setView`, `setNight`, `setStyle`, `setSplatMode`,
@@ -1342,6 +1342,103 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=1875,-1875,8,260,0.5,0.
   git); `ROOFS_DRY=1 ROOFS_MEAS=<saved lidar-roofs.py output>` to tune the rules without a log entry. Then `npm test`,
   `node cwplans/tools/check-data-register.mjs --write`, a headless load.
 
+## Realistic look (2026-10-08)
+
+Owner, 2026-10-08 (after the headset test): "the buildings without custom models are painfully flat and samey. We
+should try at a minimum to guess roof types, but ultimately to get more realism." Roofs: section "Roof shapes". This is
+the second half: materials, colours and window rhythm, as a new option (Layers > Style > "Realistic buildings",
+`?look=real`); the default Map look is unchanged. Live (terraces in Deptford, Canary Wharf):
+https://danbri.github.io/londat/cwplans/docklands/?look=real#v=1&c=-1425,1875,4,90,0.3,0.25&n=0&u=0 and
+https://danbri.github.io/londat/cwplans/docklands/?look=real&view=cw
+
+- **Files.** `tools/build-materials.mjs` (logged operation `build-materials`, kgx graph `materials`, skill
+  `cwplans-dataflow`), `docklands/data/materials.json` (the page file, about 510 kB, 96 kB gzip, loaded only when the
+  look is turned on), `docklands/look-layer.js` (`DocklandsLook`), `tools/test/materials.test.mjs`.
+- **Evidence and rules** (all in the tool; `rules` in materials.json): the OSM element of each model index
+  (`building-keys.json`; a part also reads its parent's tags) gives the type and `building:levels`; the extract
+  (osmium tags-filter) gives `building:material`, `building:colour`, `roof:material`, `roof:colour`, `shop`, `amenity`.
+  OSM shop and amenity nodes are projected through OSTN15 (`node cwplans/tools/fetch-raw.mjs grid` first) and matched to
+  the outline that holds them, else to the nearest outline edge within 2.5 m. The registry use (atlas.json, as
+  `nightUse`) marks homes and offices where OSM says only "yes". Then:
+  - **Style** (8; the shader's window patterns): house, flats, estate (slab or tower block), office (punched), ribbon,
+    curtain wall, shed (industrial, warehouse, garages, big retail), civic (school, church, hall). From the type, height
+    (flats to 21 m, estate to 60 m, curtain above for homes; offices curtain from 35 m), footprint (a "yes" under
+    150 m2 and 12 m is a house; over 1,500 m2 retail under 16 m is a shed) and the registry use. A glass material
+    makes a tall building ribbon or curtain.
+  - **Wall material**: the OSM tag (brick is split stock / red / brown by hash), else a weighted pick by style (house:
+    stock brick 45, red 14, brown 12, white render 15, cream 8, pastel 6; estate: concrete 40 ...; curtain: three
+    glass tints and silver metal), seeded by an FNV hash of the OSM id, so neighbours differ. `building:colour` replaces
+    the material colour (named values are toned to building colours: "brown" is brick brown, not #a52a2a; glass mixes
+    55 % of the colour with its tint).
+  - **Storey class**: the nearest of four storey heights of the style (house 2.6, 2.83, 3.06, 3.29 m; office and
+    ribbon 3.3 to 4.3; curtain 3.5 to 4.5; shed 4 to 7.9; civic 3.3 to 4.6) to the wall height (to the eave of a
+    roofs.json roof) over the OSM levels, else a hashed spread (25 / 50 / 25 %) round the default. The bay widths (house
+    2.3 m, flats 3.0, estate 3.3, office 1.6, ribbon and curtain 1.5, civic 3.4) vary by +/- 10 % per building in the
+    shader for the brick styles.
+  - **Shopfront**: a shop or amenity point in or at the outline, or a shop tag on the building, on a building of 4 m or
+    more that is not a shed or civic: a ground floor of max(3.8 m, 1.2 storeys) with glass bays of 2.6 m, mullions and
+    a fascia (dark blue or dark red by hash); a house with a shop becomes flats over a shop.
+  - **Roofs**: pitched (where roofs.json gives a shape) slate, clay tiles or brown concrete tiles for houses, slate,
+    grey concrete tiles or clay for others; flat: felt, gravel or a light membrane (towers over 40 m: mostly membrane);
+    `roof:material` and `roof:colour` first. The aerial roof image (`roofTex`, a ground image chosen) still replaces
+    roof colours under 40 m, as in the Map look.
+  - **Night use**: homes for house, flats and estate styles, offices for office styles, only where the registry gives
+    no use: Night then lights the ordinary buildings by use too.
+- **materials.json**: base-36 strings, one fixed-width cell per model index: `c` code (2 digits: style x 8 +
+  shopfront x 4 + storey class, 0 to 63), `w` wall colour (2 digits into `wall`, 164 colours), `p` and `f` pitched and
+  flat roof colour (2 digits into `roof`, 102), `u` Night use, `e` evidence bits (3 digits: 1 building:material, 2
+  building:colour, 4 roof:material, 8 roof:colour, 32 shop tag, 64 shop point, 128 registry use, 256 storey from
+  levels). Everything without a bit is a guess. `model.fp` = `MFP`; the page warns and does nothing when it differs.
+- **Page.** index.html: the script tag, the checkbox, `DocklandsLook.init({ MFP, load, rebuild })` after the roofs
+  loader, and in `buildBld()` a look building (no photo facade tile; Map style, not Pixel art or Photo; colour by
+  height source; no skyline year) is built white, then `DocklandsLook.paint(M, first vertex, model index, pitched)`
+  multiplies each vertex's face shading (the white colour times `shade()`) by the wall or roof colour (u >= 0 or < 0),
+  with +/- 7 % brightness and a slight warm or cool shift per model index, writes the alpha byte 132 + code, and adds
+  1000 x use to `g.w` where the use is 0. Detailed models keep their own parts; photo facade tiles stay.
+- **Shader** (prF, no new uniform or varying): alpha 132 to 195 is a look vertex. `lookSet()` at the start of `main`
+  sets the globals BW (bay), FH (storey), GF (shopfront height) and LST (style); `nightCol` uses BW, FH, GF (1.8, 3.6, 0
+  for every other vertex, so the Map look is unchanged) and lights shopfronts warm (70 %); `lookWall()` by day: slow
+  wall mottling (3 m noise, faded with distance), grime at the foot, a light coping line under flat roofs, then per
+  style: house windows with white frames and a door (dark or red) on a third of the ground-floor bays; flats; estate
+  with lighter spandrel panels; office; ribbon bands; curtain wall (the wall colour is the glass tint, sky in the upper
+  part, spandrels, light mullions); shed (cladding ribs, a 1.2 m block plinth, roller doors every 14 m); civic (a
+  mullion per window). Glass: a sky gradient, some blinds. A window under about 3 pixels fades to its mean.
+- **API for other layers** (the headset view draws with the page's `render()`, so the look shows there too):
+  `await DocklandsLook.set(true | false)` (loads the file on first use, ticks the box, rebuilds, resolves to the state in
+  force); `DocklandsLook.on()`; `DocklandsLook.data` (decoded arrays). xr-layer.js does not call it yet.
+- **Night.** Look buildings light by use (most ordinary buildings now have one); the per-building seed and the window
+  derivatives in `nightCol` come from `floor(gk.xy)` and `DW` for look vertices only, so the Map look's night is the same
+  as before. The Map look's own seed `h(gk.xy * .0137)` still changes from pixel to pixel: a fault still in the Map look.
+- **Faults met.** (a) Derivatives taken inside `lookWall` (called in a branch, using globals set in another branch)
+  came out as per-pixel noise on SwiftShader: `fwidth` is now taken once at the top of `main` (`DW`) and divided by
+  the bay and storey. (b) `h(gk.xy * .0137)` (the per-building seed the Night code also uses) is noise per pixel: the
+  interpolated building centre differs in its last bits from pixel to pixel and the hash multiplies that by 43,758.
+  The look hashes `floor(gk.xy)` (also in `nightCol` for look vertices: lit flats were speckled before). Both were found by rendering the inputs as colours (vec3(far, det, mask)) and reading a crop at 3x.
+- **Measured** (logged run 2026-10-08, 40 s; graph version `https://kgx.foaf.tv/id/graphmaterialsca718efee790144e`, 40,958 triples: the buildings with OSM evidence): of 41,803 model buildings: house
+  23,092, flats 11,738, shed 2,126, estate 1,982, curtain 876, civic 761, ribbon 665, office 563; shopfronts 3,745 (OSM
+  points 2,911 buildings, shop tags 1,168; 4,370 of 4,958 shop and amenity nodes in the box matched); OSM
+  building:material 5,061, building:colour 2,923, roof:material 1,991, roof:colour 3,277; storey from levels 12,979;
+  registry use 509. Walls: stock brick 14,704, brown 6,549, red 5,917, white render 5,203, concrete 2,513, cream 2,241,
+  pastel 1,307, metal 1,596, glass 1,066, stone 674, timber 33. Headless (SwiftShader WebGL, 2026-10-08): no page error or
+  console error at 1600 x 900 DPR 1 and 390 x 844 DPR 3 with and without `?look=real` (Deptford terraces, Bow, Rotherhithe,
+  `?view=cw`, `?view=rotherhithe` at night, `?pixel`). Option off, `&t=2026-10-03T21:30` fixed (the page clock moves the
+  sky and the river traffic between runs: without it two runs of the same page differed by 0.008 in mean luma):
+  rotherhithe, pier, greenland at 390 x 844 DPR 3: 0.07341 / 0.07341, 0.09434 / 0.09434, 0.08736 / 0.08732 (old / new
+  page); pier at 1600 x 900: 0.10969 / 0.10971; the 1600 x 900 rotherhithe and greenland frames differed only where boats
+  stood. Cost: turning the look on rebuilds the building mesh, 1.1 s (1.3 s the first time, with the fetch); a frame of
+  `?view=cw` 3.2 to 3.6 s on SwiftShader with and without the look (no measurable change). `check-fp16-shaders.mjs`:
+  prF still 25 fragment uniform rows and 8 varyings; passes.
+- **Open.** The guesses carry no era: Victorian stock brick and 1980s Docklands brown brick get the same weights
+  everywhere (OSM `start_date`, the LDDC estates or the Historic England list could set them); no balconies, bay
+  windows, chimneys, dormers or parapets in the geometry; windows run across party walls of an outline that holds
+  several houses; the shopfront follows the whole outline, not the shop's own frontage; pitched roofs have no tile
+  courses; curtain walls show no reflections of the neighbours; window light at night is still drawn, not known.
+  Not tested on a phone GPU or in a headset.
+- **Rebuild:** `MAT_PBF=<extract> node cwplans/tools/build-materials.mjs` (default `cwplans/data/raw/docklands/
+  greater_london-latest.osm.pbf`, ignored by git; needs osmium and the OSTN15 grid); `MAT_DRY=1` to tune the rules
+  without a log entry. Then `npm test`, `node cwplans/tools/check-data-register.mjs --write`, a headless load. Rerun after
+  build-docklands.mjs, key-model-buildings.mjs and build-roofs.mjs.
+
 ## WebXR (2026-10-08)
 
 Owner, 2026-10-08: "add a thoughtfully designed webXR interface which exploits the extra screen space to fully exploit
@@ -1610,7 +1707,7 @@ const png = await page.evaluate(() => { window.__docklands.renderNow(); return d
 
 ## Known limits (from the README and the code)
 
-Window light is drawn, not known; the window grid is 1.8 m x 3.6 m everywhere; red lights still outnumber the photos
+Window light is drawn, not known; the window grid is 1.8 m x 3.6 m everywhere in the Map look (the Realistic look has bays and storeys by style); red lights still outnumber the photos
 (the model lights every 100 m roof); the LiDAR foreshore at Greenland Pier is one tide state; reflections are of point
 lights and columns, not a mirror image of the facades; a level is a floor index, not a measured height; the splat order
 is sorted for the still model, so strong music stretch shows small sorting errors. Not yet measured on a phone GPU.

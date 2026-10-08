@@ -8517,6 +8517,58 @@
       ]
     },
     {
+      "id": "build-materials",
+      "area": "buildings",
+      "tool": "tools/build-materials.mjs",
+      "command": "MAT_PBF=<greater_london-latest.osm.pbf> node cwplans/tools/build-materials.mjs",
+      "kind": "build",
+      "used": [
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "docklands/data/building-keys.json"
+        },
+        {
+          "file": "docklands/data/roofs.json"
+        },
+        {
+          "file": "atlas/data/atlas.json"
+        },
+        {
+          "local": "data/raw/docklands/greater_london-latest.osm.pbf"
+        },
+        {
+          "source": "os-ostn15"
+        },
+        {
+          "source": "osm"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/materials.json"
+        },
+        {
+          "source": "kgx",
+          "note": "graph materials"
+        }
+      ],
+      "note": "skill docklands-3d-page, \"Realistic look\"; logged operation build-materials, kgx graph materials",
+      "method": "For each model building: the OSM element (building-keys.json; a part also reads its parent) gives the building type, levels and, from the extract (osmium tags-filter), building:material, building:colour, roof:material, roof:colour, shop and amenity. OSM shop and amenity nodes (shops, cafes, restaurants, pubs, bars, banks, pharmacies and similar) are projected to the model through OSTN15 and matched to the outline that holds them, else to the nearest outline edge within 2.5 m. A facade style follows from the type, height, footprint area and registry use (rules R); the wall material is the OSM tag when there is one, else a weighted pick by style, seeded by a hash of the OSM id so that neighbours differ; an OSM colour replaces the material colour (glass: mixed with it). The storey class is the nearest of four storey heights of the style to the wall height (to the eave of a roofs.json roof) over the OSM levels, else a hashed spread round the default. Pitched and flat roof colours come from roof:material and roof:colour, else weighted picks. The guessed Night use (homes, offices) is only used where the registry gives none.",
+      "rules": [
+        "Everything without an evidence bit in materials.json is a guess by the rules (written in the file as rules.R), not an observation.",
+        "The page uses the file only while its model fingerprint matches the page (MFP); rerun after build-docklands.mjs, key-model-buildings.mjs and build-roofs.mjs.",
+        "MAT_DRY=1 writes the page file without a log entry while the rules are tuned; the committed file comes from a logged run."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "key-model-buildings",
+        "build-roofs"
+      ]
+    },
+    {
       "id": "station-mesh",
       "area": "underground",
       "tool": "tools/build-station-mesh.mjs",
@@ -9099,6 +9151,10 @@
     {
       "tool": "tools/test/roofs.test.mjs",
       "what": "Tests (node --test) of docklands/data/roofs.json against area.js (fingerprint, low buildings only, eave below ridge, ridge centre near the outline) and of the page's roof builder in docklands/roofs-layer.js (every vertex finite, inside the outline box, between the ground and the ridge; roof vertices not below the eave)."
+    },
+    {
+      "tool": "tools/test/materials.test.mjs",
+      "what": "Tests (node --test) of docklands/data/materials.json against area.js (fingerprint, one fixed-width cell a building, codes 0 to 63, palettes and uses in range, style counts) and of the page painter in docklands/look-layer.js (wall and roof colours times the shading, alpha 132 + code, the Night use added only where none)."
     },
     {
       "tool": "tools/test/osm-values.test.mjs",

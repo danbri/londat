@@ -164,7 +164,7 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
       <div class="chips" role="radiogroup" aria-label="Style">
         <label><input type="radio" name="style" value="normal" checked> Map</label><label><input type="radio" name="style" value="pixel"> Isometric pixel art</label><label><input type="radio" name="style" value="lines"> Line drawing</label><label><input type="radio" name="style" value="vectrex"> Vector CRT</label>
       </div>
-      <div class="chips row"><label><input type="checkbox" id="nightMode"> Night</label><label><input type="checkbox" id="crownDate" checked> Crown halo colour by date</label></div>
+      <div class="chips row"><label><input type="checkbox" id="nightMode"> Night</label><label><input type="checkbox" id="lookReal"> Realistic buildings</label><label><input type="checkbox" id="crownDate" checked> Crown halo colour by date</label></div>
       <p class="small" id="crownNote" hidden></p>
       <p class="small" id="nightNote" hidden></p>
       <div class="chips row" id="crtRow" hidden><label><input type="checkbox" id="crtOverlay"> Colour overlay</label></div>
@@ -324,6 +324,7 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
 <script src="ships-layer.js"></script>
 <script src="stations-layer.js"></script>
 <script src="roofs-layer.js"></script>
+<script src="look-layer.js"></script>
 <script src="terrain-ring.js"></script>
 <script src="wind-layer.js"></script>
 <script src="../data-base.js"></script>
@@ -403,25 +404,44 @@ const ffs = (FLOD ? '#extension GL_EXT_shader_texture_lod : enable\n#extension G
   'float vn(vec2 q){vec2 i=floor(q),f=fract(q);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+1.),f.x),f.y);}' +
   // night (map style): dark walls; lit windows by the building's use (registry homes and occupant types): homes warm
   // (2700-3200 K) in clusters of flats, offices cool white by floors and floor bands, a few blue-white; lit crowns; haze
-  'vec3 nightCol(vec3 base,float photo,float mk){float ty=floor(gk.w/1000.+.001),top=gk.w-ty*1000.,ht=max(1.,top-gk.z),sd=h(gk.xy*.0137+.31);' +
+  'float BW=1.8,FH=3.6,GF=0.,LST=-1.;vec2 DW=vec2(0.);' +   // window bay, storey, shopfront height, look style: set by lookSet() for a Realistic building (alpha 132 to 195)
+  'void lookSet(float lk){float st=floor(lk/8.+.001),r=lk-st*8.,sh=step(3.5,r),cl=r-4.*sh;vec3 S=st<.5?vec3(2.3,2.6,.23):st<1.5?vec3(3.,2.7,.23):st<2.5?vec3(3.3,2.6,.23):st<3.5?vec3(1.6,3.3,.33):st<4.5?vec3(1.5,3.3,.33):st<5.5?vec3(1.5,3.5,.33):st<6.5?vec3(1.,4.,1.3):vec3(3.4,3.3,.43);' +
+  'BW=S.x*(st>2.5&&st<6.5?1.:.9+.2*h(floor(gk.xy)*.0137+.71));FH=S.y+S.z*cl;GF=sh*max(3.8,FH*1.2);LST=st;}' +   // the tables of tools/build-materials.mjs STYLES; hashes of floor(gk.xy): the interpolated centre differs in its last bits from pixel to pixel, and h() of it was noise
+  'vec3 nightCol(vec3 base,float photo,float mk){float ty=floor(gk.w/1000.+.001),top=gk.w-ty*1000.,ht=max(1.,top-gk.z),sd=h((LST>-.5?floor(gk.xy):gk.xy)*.0137+.31);' +
   'vec3 col;if(uu<0.){col=base*.035+vec3(.006);if(ty>4.5&&wy>top+.5&&night.x>1.5)col=mix(night.yzw*.32,night.yzw*.1,clamp((wy-top)/14.,0.,1.));}' +   // roofs; One Canada Square: the pyramid lit from its base when a source says so (night.x 2)
   'else{col=base*(.045+.02*photo)+vec3(.008,.008,.01);' +
-  'if(win>.5){float off=step(1.5,ty)*step(ty,2.5);vec2 gg=vec2(uu/1.8,(wy-gk.z)/3.6),cell=floor(gg),f=fract(gg);' +
+  'if(win>.5){float off=step(1.5,ty)*step(ty,2.5);vec2 gg=vec2(uu/BW,(wy-gk.z-GF)/FH),cell=floor(gg),f=fract(gg);' +
   'float wm=off>.5?step(.06,f.x)*step(f.x,.94)*step(.16,f.y)*step(f.y,.82):step(.16,f.x)*step(f.x,.84)*step(.22,f.y)*step(f.y,.82);' +
-  'vec2 f2=smoothstep(.5,1.3,FW2(gg));float fw=FWID(gg);wm=mix(wm,off>.5?.7:.6,smoothstep(.35,.9,fw));fw=max(f2.x,f2.y);vec3 L;' +   // far away a window is under a pixel: its mean, not moire
+  'vec2 f2=smoothstep(.5,1.3,LST>-.5?DW/vec2(BW,FH):FW2(gg));float fw=LST>-.5?max(DW.x/BW,DW.y/FH):FWID(gg);wm=mix(wm,off>.5?.7:.6,smoothstep(.35,.9,fw));fw=max(f2.x,f2.y);vec3 L;' +   // far away a window is under a pixel: its mean, not moire
   'if(off>.5){float fl=cell.y,lf=step(h(vec2(fl,sd*13.)),.36),sg=h(vec2(floor(cell.x/9.),fl)+sd*5.),lit=lf*step(.22,sg)+(1.-lf)*step(.94,sg);' +
   'vec3 Lc=mix(vec3(.74,.84,1.),vec3(.95,.96,.92),h(vec2(fl,2.)+sd));L=Lc*(.6+.25*h(vec2(floor(cell.x/9.),fl)))*lit;L=mix(L,Lc*.725*(lf*.78+(1.-lf)*.06),f2.x);L=mix(L,vec3(.195,.208,.222),f2.y);}' +   // far: the mean along a floor (lit floors stay bands), then of all floors (32% of windows lit)
   'else{float fl=cell.y,fid=floor((cell.x+floor(h(vec2(fl,sd))*3.))/3.),p=(ty>2.5?.45:ty>.5?.33:.24)*(ht<30.?.7:1.);' +
   'float pl=clamp(p+(vn(vec2(cell.x/7.,fl/3.)+sd*41.)-.5)*1.1,0.,1.),hf=h(vec2(fid,fl)+sd*31.),lit=step(hf,pl)*step(.15,h(cell+sd*7.));' +
   'L=mix(vec3(1.,.74,.46),vec3(1.,.90,.66),h(vec2(fid,fl)+3.1));if(h(vec2(fid,fl)+5.7)<.05)L=vec3(.70,.80,1.);L*=(.7+.5*h(cell+1.7))*lit;L=mix(L,vec3(.93,.78,.55)*p*.85,fw);}' +   // warm as the photos (#c1a573 at the median); far: the mean
-  'col=mix(col,vec3(.018,.02,.026)+L,wm);}' +
+  'col=mix(col,vec3(.018,.02,.026)+L,wm);if(GF>0.&&wy-gk.z<GF){vec2 sq=vec2(uu/2.6,(wy-gk.z)/GF),sf=fract(sq);float sm=step(.05,sf.x)*step(sf.x,.95)*step(.06,sf.y)*step(sf.y,.74);sm=mix(sm,.6,smoothstep(.35,.9,max(DW.x/2.6,DW.y/GF)));col=mix(col,vec3(1.,.84,.6)*(.45+.4*h(vec2(floor(sq.x/3.),sd))),sm*step(.3,h(vec2(sd,floor(sq.x/4.)))));}}' +   // a Realistic shopfront: lit, most of them
   'float tb=top-wy;if(ty>3.5&&ty<4.5&&tb<13.){float tri=abs(fract(uu/9.)*2.-1.),yy=1.-tb/13.,ln=min(abs(tri-yy),abs(tri-(1.-yy)));col=mix(vec3(.10,.08,.06),vec3(1.,.90,.70),smoothstep(.04,.12,ln));}' +   // Newfoundland: the lit diagrid crown
   'else if(ty>4.5&&tb<7.)col=mix(col,night.yzw,.85*step(.01,night.y+night.z+night.w));' +   // One Canada Square: the halo band under the pyramid in the colour of the evening (CROWN)
   'else if(ht>90.&&tb<3.5)col+=vec3(.32,.30,.27)*smoothstep(3.5,.5,tb);}' +   // other towers: a soft band at the top
   'col+=base*mlc*mk;' +   // moonlight (README "Night": strength from the moon's magnitude and altitude, cool tint)
   'if(win<-.5)col=base*.6;' +   // a data colour mode: keep its colours readable
   'return mix(col,vec3(.085,.07,.058),(1.-exp(-dist/5200.))*.6);}' +   // haze in the colour of the sky glow
+  'vec3 lookWall(vec3 c,float lum){float y=wy-gk.z,sd=h(floor(gk.xy)*.0137+.31),fw=max(DW.x,DW.y),tx=1.-smoothstep(.4,1.5,fw),top=gk.w-floor(gk.w/1000.+.001)*1000.;' +   // Realistic look by day: wall texture, windows by style
+  'c*=1.+.07*(vn(vec2(uu*.35,wy*.7)+sd*50.)-.5)*tx;c*=.86+.14*smoothstep(0.,2.5,y);if(LST>.5&&LST!=6.&&top-wy>0.&&top-wy<.35)c=min(vec3(1.),c*1.16+.03);' +   // mottling, grime at the foot, a coping line under a flat roof
+  'vec3 gl;float wm,cov;if(GF>0.&&y<GF){vec2 sq=vec2(uu/2.6,y/GF),sf=fract(sq);wm=step(.05,sf.x)*step(sf.x,.95)*step(.06,sf.y)*step(sf.y,.74);cov=.6;float fa=step(.78,sf.y)*step(sf.y,.95)*tx;' +   // shopfront: glass, mullions, a fascia
+  'c=mix(c,mix(vec3(.13,.16,.22),vec3(.42,.13,.11),step(.5,h(vec2(floor(sq.x/3.),sd)))),fa);gl=vec3(.24,.26,.26)+vec3(.12,.08,.03)*h(floor(sq)+sd);}' +
+  'else{vec2 g=vec2(uu/BW,(y-GF)/FH),cell=floor(g),f=fract(g);vec4 B=LST<.5?vec4(.30,.70,.32,.80):LST<1.5?vec4(.20,.80,.30,.78):LST<2.5?vec4(.08,.92,.34,.80):LST<3.5?vec4(.22,.78,.16,.86):LST<4.5?vec4(.0,1.,.40,.88):LST<5.5?vec4(.0,1.,.14,1.):LST<6.5?vec4(0.):vec4(.12,.88,.18,.86);' +
+  'wm=step(B.x,f.x)*step(f.x,B.y)*step(B.z,f.y)*step(f.y,B.w);cov=(B.y-B.x)*(B.w-B.z);vec2 cp=DW/vec2(BW,FH);float cq=max(cp.x,cp.y),far=smoothstep(.12,.45,cq),det=1.-smoothstep(.05,.18,cq);' +
+  'gl=mix(vec3(.09,.12,.16),vec3(.30,.38,.46),.2+(.4*f.y+.3*h(cell+sd)-.35)*det)+vec3(.16,.14,.11)*mix(.18,step(.82,h(cell+sd*3.)),det);' +   // glass: sky in the upper panes, some blinds
+  'if(LST<.5){float fr=(step(B.x-.05,f.x)*step(f.x,B.y+.05)*step(B.z-.04,f.y)*step(f.y,B.w+.03)-wm)*det;c=mix(c,vec3(.84,.83,.80)*(.6+.5*lum),fr);' +   // house: white frames, a door on some ground-floor bays
+  'if(cell.y<.5&&h(vec2(cell.x,sd*7.))<.35){float dr=step(.36,f.x)*step(f.x,.64)*step(f.y,.74)*det;c=mix(c,mix(vec3(.12,.14,.16),vec3(.36,.10,.10),step(.5,h(vec2(cell.x,sd)))),dr);wm*=1.-dr;}}' +
+  'else if(LST<2.5&&LST>1.5)c*=1.+.07*step(f.y,B.z-.03)*tx;' +   // estate: lighter spandrel panels
+  'else if(LST>4.5&&LST<5.5){gl=mix(c,vec3(.62,.68,.74),.28+.3*f.y)+vec3(.04,.05,.06)*(h(vec2(cell.x,floor(cell.y/3.))+sd)-.5);float mu=mix(.05,step(f.x,.05),det);c=mix(c*.8,vec3(.58,.61,.64),mu);wm*=1.-mu;}' +   // curtain wall: the wall colour is the glass tint; spandrels, mullions
+  'else if(LST>5.5&&LST<6.5){c*=1.-.10*mix(.2,step(.8,f.x),det);if(y<1.2)c*=.78;float dr=step(fract(uu/14.+sd),.28)*step(y,4.2)*tx;c=mix(c,c*(.82+.06*step(.5,fract(y*3.))),dr);}' +   // shed: cladding ribs, a block plinth, roller doors
+  'else if(LST>6.5)wm*=1.-step(abs(f.x-.5),.02)*det;' +   // civic: a mullion in each window
+  'wm=mix(wm,cov,far);}' +   // far away a window is under a pixel: its mean
+  'return mix(c,LST>4.5&&LST<5.5?gl:gl*(.75+.5*lum),wm);}' +
   'void main(){if(wy>cut)discard;vec3 col=v.rgb;float lum=dot(v.rgb,vec3(.33));' +
+  '{DW=FW2(vec2(uu,wy));float a8=v.a*255.;if(a8>131.5&&a8<195.5&&pxm==0.)lookSet(floor(a8-132.+.5));}' +   // a Realistic building: its bays, storeys and shopfront (night and day); DW: derivatives taken here, outside every branch (inside lookWall they came out as noise on SwiftShader)
   'if(night.x>.5&&pxm==0.){float ab=v.a*255.,ph=0.;vec3 b=col;if(uu>=0.&&ftex>.5&&ab>99.5&&ab<131.5){float sl=floor(ab-100.+.5),hs=floor(sl*.5);vec4 S4=vec4(10.);for(int i=0;i<16;i++)if(float(i)==hs)S4=fslot[i];vec2 S=sl-2.*hs<.5?S4.xy:S4.zw;' +   // photo facade: the tile, dark
   'vec2 tc=vec2(uu/S.x,wy/S.y),q=fract(tc),st=vec2(mod(sl,8.),floor(sl/8.));float lod=LODOF(tc*256.),e=.5*exp2(floor(lod)+1.);b=TEXL(ftx,vec2(st.x*256.+e+q.x*(256.-2.*e),st.y*256.+e+(1.-q.y)*(256.-2.*e))/vec2(2048.,1024.),lod).rgb;ph=1.;}' +
   'float mk=0.;if(mlc.b>0.){' + (FLOD ? 'vec3 N=normalize(cross(dFdx(wq),dFdy(wq)));if(dot(N,ev)<0.)N=-N;mk=max(dot(N,md),0.);' : 'mk=uu<0.?max(md.y,0.):.32*sqrt(max(0.,1.-md.y*md.y));') + '}' +
@@ -431,6 +451,7 @@ const ffs = (FLOD ? '#extension GL_EXT_shader_texture_lod : enable\n#extension G
   'if(uu>=0.&&ftex>.5&&ab>99.5&&ab<131.5){float sl=floor(ab-100.+.5),hs=floor(sl*.5);vec4 S4=vec4(10.);for(int i=0;i<16;i++)if(float(i)==hs)S4=fslot[i];vec2 S=sl-2.*hs<.5?S4.xy:S4.zw;' +   // photo facade: the tower's tile, repeated by its size in metres
   'vec2 tc=vec2(uu/S.x,wy/S.y),q=fract(tc),st=vec2(mod(sl,8.),floor(sl/8.));float lod=LODOF(tc*256.),e=.5*exp2(floor(lod)+1.);' +
   'col=TEXL(ftx,vec2(st.x*256.+e+q.x*(256.-2.*e),st.y*256.+e+(1.-q.y)*(256.-2.*e))/vec2(2048.,1024.),lod).rgb*(.45+.75*lum);if(night.x>.5)col*=.35;}' +
+  'else if(LST>-.5&&uu>=0.&&win>.5)col=lookWall(col,lum);' +   // Realistic look by day
   'else if(uu>=0.&&win>.5&&pxm>0.&&pxm<1.5){float fl=wy/(pxm*4.),fy=fract(fl),fx=floor(gl_FragCoord.x),m=v.a<.99?floor((v.a*255.-200.)/8.+.5):3.;' +   // pixel art: a pattern per material on the art-pixel grid (no moire)
   'if(m<.5){float w=step(mod(fx,4.),1.)*step(.3,fy)*step(fy,.8);col=mix(col,col*.55+vec3(.05,.07,.11),w);}' +   // brick: punched windows
   'else if(m<1.5){float w=step(mod(fx,5.),1.)*step(.3,fy)*step(fy,.8);col=mix(col,vec3(.33,.40,.50),w*.85);}' +   // render: punched windows, darker glass
@@ -616,9 +637,10 @@ function bmodF(M, m) {
   M.hold = false;
 }
 function buildBld() { if (L.bld) L.bld.free(); const M = new MeshF(), useT = TOWERS && skyIdx < 0, useM = BMOD && skyIdx < 0 && $('showModels').checked, useR = ROOFS && skyIdx < 0 && $('showRoofs').checked;
-  const look = (b, i) => { const sl = facSlot(i); return sl != null ? [[.9, .9, .9], -1 - sl] : [buildingColour(b, i), buildingMat && buildingMat(b, i)]; };
-  A.buildings.forEach((b, i) => { if (useT && towerOf.has(i)) return; if (useM && bmodOf.has(i)) return; const h = heightOf(b, i); if (!(h > 0)) return; const [c, m] = notFlown(i) ? [[.36, .42, .52], null] : look(b, i); const rf = useR && ROOFS.get(i); M.kind = nightKind(i, b.b + (rf ? rf.ridge : h)); if (rf) DocklandsRoofs.prism(M, b, rf, c, alOf(m), { dec, shade, earcut }); else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, m); });
-  if (useT) for (const t of TOWERS) { const mi = t.model_buildings[0], [c, m] = look(A.buildings[mi], mi); M.kind = nightKind(mi, towerTop(t)); towerF(M, t, c, m); }
+  const LK = globalThis.DocklandsLook && DocklandsLook.on() && !PIX.on && !PHOTO && $('colourBy').value === 'source' && skyIdx < 0 ? DocklandsLook : null;   // Realistic look (look-layer.js): built white, then painted
+  const look = (b, i) => { const sl = facSlot(i); return sl != null ? [[.9, .9, .9], -1 - sl] : LK ? [[1, 1, 1], null, 1] : [buildingColour(b, i), buildingMat && buildingMat(b, i)]; };
+  A.buildings.forEach((b, i) => { if (useT && towerOf.has(i)) return; if (useM && bmodOf.has(i)) return; const h = heightOf(b, i); if (!(h > 0)) return; const [c, m, lk] = notFlown(i) ? [[.36, .42, .52], null] : look(b, i); const rf = useR && ROOFS.get(i), n0 = M.n; M.kind = nightKind(i, b.b + (rf ? rf.ridge : h)); if (rf) DocklandsRoofs.prism(M, b, rf, c, alOf(m), { dec, shade, earcut }); else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, m); if (lk) LK.paint(M, n0, i, !!rf); });
+  if (useT) for (const t of TOWERS) { const mi = t.model_buildings[0], [c, m, lk] = look(A.buildings[mi], mi), n0 = M.n; M.kind = nightKind(mi, towerTop(t)); towerF(M, t, c, m); if (lk) LK.paint(M, n0, mi, false); }
   if (useM) for (const m of BMOD) bmodF(M, m);
   L.bld = M.upload(); L.bld.kinds = !!NREG; }
 buildBld();
@@ -2375,6 +2397,7 @@ loadJSON('data/building-models.json').then(T => { const hx = s => [1, 3, 5].map(
   for (const m of BMOD) for (const i of m.mi) bmodOf.set(i, m); buildBld(); draw(); }).catch(e => console.warn('building-models.json', e));
 Object.defineProperty(window.__docklands, 'BMOD', { get: () => BMOD });
 if (globalThis.DocklandsRoofs) loadJSON('data/roofs.json').then(T => { ROOFS = DocklandsRoofs.decode(T, MFP); if (ROOFS) { buildBld(); draw(); } }).catch(e => console.warn('roofs.json', e));   // roofs-layer.js
+if (globalThis.DocklandsLook) DocklandsLook.init({ MFP, load: loadJSON, rebuild: () => { buildBld(); draw(); } });   // Realistic look (look-layer.js, Layers > Style > Realistic buildings, ?look=real)
 Object.defineProperty(window.__docklands, 'ROOFS', { get: () => ROOFS });
 loadJSON('data/towers.json').then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); for (const t of TOWERS) for (const mi of t.model_buildings) towerOf.set(mi, t); buildBld(); if (NIGHT.built) buildNightLights(); draw(); }).catch(e => console.warn('towers.json', e));
 // #at=x,z[,dist]: start looking at a point in local metres (the atlas links here with a building's x, z)
