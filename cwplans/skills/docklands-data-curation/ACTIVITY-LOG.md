@@ -1772,3 +1772,7 @@ a re-run with the same inputs mints the same terms).
   against 11.4 m in OSM; the north wing is one storey (eaves 3.4 m, ridge 6.0 m), not two.
 - Open: the rear, the south gable end and the north wing's windows are extrapolated (no photo). The kgx store was not
   repacked (build-kgx.mjs) in this session. Skill: docklands-3d-page, "Detailed building models".
+- Later the same day (owner, with two phone screenshots: the pink selection boxes round custom models "are drawn even
+  when occluded. Not needed."): no outline round a selected detailed model; every selection outline is now hidden by
+  what is in front of it (the route line stays on top). index.html (render and the Line-style top pass,
+  selectBuilding) and building-keys.js.

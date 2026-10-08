@@ -1237,8 +1237,9 @@ as new default for that building." Live: https://danbri.github.io/londat/cwplans
   its model indices (`bmodOf`), when Layers > Show > "Detailed models" is on and no historic skyline is shown. Colours
   are the model's own in the default colouring (`colourBy` = source), Pixel art and Photo style; a data colouring gives
   the data colour to every part. `u = -1000` on every vertex (no window grid, no ground image), except glass: each pane
-  gets `u = 0.9 + 1.8 k` (the middle of window cell k), so Night lights panes as it lights windows. Picking, the outline
-  highlight, Line drawing, the plotter and Drone still use the extruded outline. The OSM card has a "Detailed model"
+  gets `u = 0.9 + 1.8 k` (the middle of window cell k), so Night lights panes as it lights windows. Picking, Line drawing, the plotter and Drone still use the extruded outline. A selected detailed model gets no
+  pink outline, and since 2026-10-08 every selection outline is depth-tested (owner: the boxes "are drawn even when
+  occluded. Not needed."); the route line stays on top. The OSM card has a "Detailed model"
   row (`modelOf` in `DocklandsKeysCtx`). Hook: `__docklands.BMOD`.
 - **Pacific Tavern** (OSM way 259277099, model index 7477): 24 parts, 2,080 triangles, top 14.72 m OD. The OSM outline
   is two wings at 57 deg. The photo shows the south wing's east-south-east face (ring 2 to 1, 19.93 m) nearly square on,

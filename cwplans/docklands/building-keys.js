@@ -30,8 +30,8 @@
     const id0 = K.ids[i]; if (!id0) return;
     const [id, idx] = groupOf(id0), f = facts(id), esc = c.esc;
     c.clearSelection(); K.sel = id;
-    const M = new c.Mesh(); for (const j of idx) { const b = c.A.buildings[j]; c.outline(M, b, b.b + (b.mh || 0), b.b + c.heightOf(b, j) + .5, [1, .25, .65]); }
-    c.L.hi = M.upload();
+    const M = new c.Mesh(); if (!(c.modelOf && c.modelOf(idx))) for (const j of idx) { const b = c.A.buildings[j]; c.outline(M, b, b.b + (b.mh || 0), b.b + c.heightOf(b, j) + .5, [1, .25, .65]); }   // no outline round a detailed model
+    c.L.hi = M.n ? M.upload() : null;
     const b = c.A.buildings[i], top = Math.max(...idx.map(j => c.A.buildings[j].b + c.heightOf(c.A.buildings[j], j))), ground = Math.min(...idx.map(j => c.A.buildings[j].b));
     const [x, z] = centre(idx), name = nameOf(id) || f.a || (typeOf(f.b) ? typeOf(f.b)[0].toUpperCase() + typeOf(f.b).slice(1) : 'Building');
     const parts = idx.length > 1 ? `${idx.length} parts in the model` : '', fac = c.facadeOf(idx), dm = c.modelOf ? c.modelOf(idx) : null;

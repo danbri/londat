@@ -796,7 +796,7 @@ function render() {
   gl.disable(gl.BLEND); gl.depthMask(true); gl.colorMask(true, true, true, true); gl.disable(gl.POLYGON_OFFSET_FILL);   // a fresh state every frame
   if (lineOn() && DocklandsLines.ready(P)) {   // Line drawing and Vector CRT (line-styles.js): the solids hide the edges; the sky, night, splats and overlays are off
     DocklandsLines.frame({ P, w, h, cutOn, cutY, bm, occlude() { if (bm === 'solid') drawFacades(L.bld, 1, P); if (!cutOn) drawMesh(L.terrain, 1); else if (globalThis.DocklandsStations) DocklandsStations.draw(0); },
-      top() { if (L.hi || L.route) { gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND); drawMesh(L.hi, .9); drawMesh(L.route, .95); gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST); } } });
+      top() { if (L.hi || L.route) { gl.enable(gl.BLEND); drawMesh(L.hi, .9); gl.disable(gl.DEPTH_TEST); drawMesh(L.route, .95); gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST); } } });
     placeLabels(); if (globalThis.DocklandsSky) DocklandsSky.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: false });
     if (globalThis.DocklandsLocate) DocklandsLocate.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: false });
     if (globalThis.DocklandsKML) DocklandsKML.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: false });
@@ -842,7 +842,7 @@ function render() {
   if (PIX.on) { gl.uniform1f(uCut, 1e9); gl.disable(gl.BLEND); drawMesh(L.trees, 1); drawMesh(PIX.ents, 1); gl.enable(gl.BLEND); }
   drawGlow();
   if (globalThis.DocklandsKML && DocklandsKML.drawGL(w, h)) gl.useProgram(pr);   // My KML (kml-layer.js): screen-space lines over the ground
-  if (L.hi || L.route) { gl.disable(gl.DEPTH_TEST); drawMesh(L.hi, .9); drawMesh(L.route, .95); gl.enable(gl.DEPTH_TEST); }
+  if (L.hi || L.route) { drawMesh(L.hi, .9); gl.disable(gl.DEPTH_TEST); drawMesh(L.route, .95); gl.enable(gl.DEPTH_TEST); }   // the selection outline is hidden by what is in front of it (owner, 2026-10-08); the route stays on top
   if (PIX.on) pixEnd(w, h);
   placeLabels(); if (globalThis.DocklandsSky) DocklandsSky.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: PIX.on });
   if (globalThis.DocklandsLocate) DocklandsLocate.after({ MVP, VZ, cssW: cv.clientWidth, cssH: cv.clientHeight, pix: PIX.on });   // locate.js: the blue dot
@@ -1044,8 +1044,8 @@ let occLabels = [];
 function clearSelection() { if (globalThis.DocklandsKeys) DocklandsKeys.sel = null; if (L.hi) { L.hi.free(); L.hi = null; } for (const l of occLabels) { l.el.remove(); labels.splice(labels.indexOf(l), 1); } occLabels = []; selected = -1; }
 async function selectBuilding(k) {
   clearSelection(); selected = k; const ab = AT.buildings[k], M = new Mesh();
-  for (const i of ab.mi) { const b = A.buildings[i]; outline(M, b, b.b + (b.mh || 0), b.b + b.h + .5, [1, .25, .65]); }
-  L.hi = M.upload(); draw();
+  for (const i of ab.mi) { if (bmodOf.has(i) && $('showModels').checked) continue; const b = A.buildings[i]; outline(M, b, b.b + (b.mh || 0), b.b + b.h + .5, [1, .25, .65]); }   // no outline round a detailed model
+  L.hi = M.n ? M.upload() : null; draw();
   info.innerHTML = `<b>${esc(ab.n || ab.id)}</b> <span class="small">${esc(ab.id)} · loading the record…</span>`; openPane('paneInfo');
   const [reg, qi, cats] = await Promise.all([getReg(), getQI().catch(() => null), getCats().catch(() => null)]);
   if (selected !== k) return;
