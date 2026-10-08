@@ -1905,3 +1905,21 @@ a re-run with the same inputs mints the same terms).
   shapes", "Parts".
 - Headset: Look button (Map / Real), the Realistic look by default in a session. Map night-window seed: floor(gk.xy)
   (per-pixel noise fix). xr-check 13 of 13; fp16 check unchanged (prF 25 fragment uniform rows).
+
+## 2026-10-08: Three.js port of the 3D page (experimental)
+
+- Owner, 2026-10-08: port the 3D page to three.js and its ecosystem (TSL), vendor the latest three.js in third_party,
+  work on any WebGL 2 system, be ready for WebGPU. Branch `claude/docklands-threejs-port-ztkuyz`; on the owner's word the same day ("Change it to serve from top level /docklands/ folder, and merge") it moved from `cwplans/docklands/3js/` to the top-level `docklands/` and was merged to main: https://danbri.github.io/londat/docklands/
+- three.js r186 (0.186.1) vendored in `third_party/three/` (build files and `examples/jsm`, MIT, 15 MB); the Pages
+  workflow now publishes that one folder of `third_party/`. Page `docklands/`: `WebGPURenderer` (WebGPU, else
+  WebGL 2), TSL materials, cascaded shadows and night bloom on by default on WebGPU only. No data converted: it reads
+  the WebGL page's files and reuses roofs-layer.js and look-layer.js unchanged; the Pacific Tavern loads as its glTF.
+- Ported: terrain and ground images, water, greens, rail and roads, 41,803 buildings with towers, roof shapes and the
+  Realistic colours, the photo views, the clock (sun, moon, stars), night windows and crowns, picking with the OSM card,
+  labels, the share hash (same format as the WebGL page). Not ported: see `docklands/README.md`.
+- Faults met: the LiDAR water surface hid the river (the ground now sinks under water polygons); the near plane cut away
+  the foreground of the photo views; three.js r186 texture views carry `swizzle`, which Chromium 141 rejects (a
+  wrapper retries without it). Skill: docklands-3d-page, "Three.js port".
+- Tests (headless, SwiftShader): `docklands/test/load.mjs` with no page, console or HTTP error at 1280 x 800 DPR 1 and
+  390 x 844 DPR 2 for ?view=cw, rotherhithe (night, with bloom), greenlandday, area with the aerial image, on WebGL 2 and
+  on WebGPU (Dawn SwiftShader adapter). 1,127,712 building triangles. WebGL page unchanged.

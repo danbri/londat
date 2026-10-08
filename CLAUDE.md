@@ -49,7 +49,7 @@ exception, for the scoping, planning and prototyping phase only. Owner instructi
 project and we will be suspending our normal restrictions on personal org and address data while in the scoping,
 planning and prototyping phase."
 - The exception applied to `magpie/cwplans/` in the main repository; since the move it applies to this repository,
-  which holds only this project (`cwplans/`, `kgx/`, `data/`, `third_party/`, `tools/`). Company addresses, occupant
+  which holds only this project (`cwplans/`, `docklands/`, `kgx/`, `data/`, `third_party/`, `tools/`). Company addresses, occupant
   and owner records, and postcode-level business and home data may be fetched, joined and committed here.
 - The licence limit stays: never fetch or commit proprietary, restricted-licence (e.g. the VOA rating list) or virally
   licensed (copyleft / share-alike) data. Check the licence of each source before it is committed. Material with no open
@@ -134,6 +134,9 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   `https://kgx.foaf.tv/vocab#`, `cwp:` `https://kgx.foaf.tv/pipeline#`, `i:` `https://kgx.foaf.tv/idioms#`; scheme and
   codes: the `cwplans-kgx` skill. `data/images/contrib/`: the owner's CC0
   photos. `third_party/`: TfL and Canary Wharf Group material and the crawl data (`cwplans-structured-data/`).
+- `docklands/`: the Three.js port of the 3D page (experimental, three.js r186 in `third_party/three/`, WebGPU or WebGL 2),
+  https://danbri.github.io/londat/docklands/ ; it reads the data of `cwplans/docklands/`. Skill: `docklands-3d-page`,
+  "Three.js port".
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).

@@ -3,3 +3,4 @@ node_modules/
 __pycache__/
 _site/
 .claude/worktrees/
+docklands/test/out/
