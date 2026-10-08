@@ -88,7 +88,7 @@ export default {
     mat.opacityNode = attribute('alpha', 'float');
     mat.polygonOffset = true; mat.polygonOffsetFactor = -1; mat.polygonOffsetUnits = -1;   // the colour pass wins against its own depth pass on any backend
     const depth = new THREE.Mesh(G, depthMat), mesh = new THREE.Mesh(G, mat);
-    depth.renderOrder = -1; mesh.receiveShadow = true;
+    depth.renderOrder = -1;   // no shadows on it: with the cascaded shadows (WebGPU) the ring showed a step at the far edge of the shadow range
     const group = new THREE.Group(); group.name = 'ring'; group.add(depth, mesh);
     ctx.onFrame(() => { if (group.visible && ctx.camera.far < FAR) { ctx.camera.far = FAR; ctx.camera.updateProjectionMatrix(); } });
     ctx.ui.note('Hills of London: EU-DEM v1.1 (Copernicus data, modified; through OpenTopoData), 250 m, outside the model box. Not endorsed by the European Union.');

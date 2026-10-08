@@ -22,7 +22,8 @@ for (const [w, h, dpr] of [[1280, 800, 1], [390, 844, 2]]) for (const q of QUERI
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
   page.on('response', r => { if (r.status() >= 400 && !/favicon/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   const t0 = Date.now();
-  await page.goto(`${BASE}/docklands/?${q}${WEBGPU ? '' : '&webgl'}`);
+  const [qq, hh] = q.split('#');   // &webgl goes in the query, before a share hash
+  await page.goto(`${BASE}/docklands/?${qq}${WEBGPU ? '' : '&webgl'}${hh ? '#' + hh : ''}`);
   const ok = await page.waitForFunction(() => globalThis.__docklands3 && globalThis.__docklands3.ready, null, { timeout: 180000 }).then(() => true).catch(() => false);
   await page.waitForTimeout(4000);
   const info = ok ? await page.evaluate(() => ({ backend: __docklands3.backend, stats: __docklands3.STATS, night: __docklands3.night, cam: __docklands3.camState(), hash: __docklands3.shareHash() })) : null;

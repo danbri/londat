@@ -6,7 +6,7 @@
 // Port of index.html tunnelY, buildTunnels, buildUnder, L.dockVol, the gauge and render() (cut branch).
 // URL: ?layers=under, ?cut=<m OD> (off at 250 or more), ?view=under (cut 2 m OD, as the WebGL page's view).
 // Skill: docklands-3d-page, "Three.js port".
-import { attribute, sRGBTransferEOTF } from 'three/tsl';
+import { attribute, sRGBTransferEOTF, mix, vec3 } from 'three/tsl';
 import { A, Mesh, flat, dec, earcut, lineColour, C as BC } from '../build.js';
 
 const hex = v => [1, 3, 5].map(i => parseInt(v.slice(i, i + 2), 16) / 255);
@@ -99,7 +99,8 @@ export default {
     tunnels.name = 'under:tunnels'; under.name = 'under:levels'; dock.name = 'under:dockVol'; dock.renderOrder = 3;
     // backdrop with the cut on: an unlit plane 60 m below OD over the model box, in the WebGL page's background grey-blue
     // (measured there: sRGB about 134, 148, 162 through the faint ground); without it the day sky shows white through the ground
-    const ex = A.meta.extent, back = new THREE.Mesh(new THREE.PlaneGeometry(ex.x1 - ex.x0 + 4000, ex.z1 - ex.z0 + 4000), new THREE.MeshBasicNodeMaterial({ color: new THREE.Color().setRGB(0.5, 0.56, 0.62, THREE.SRGBColorSpace) }));
+    const ex = A.meta.extent, back = new THREE.Mesh(new THREE.PlaneGeometry(ex.x1 - ex.x0 + 4000, ex.z1 - ex.z0 + 4000), new THREE.MeshBasicNodeMaterial());
+    back.material.colorNode = mix(sRGBTransferEOTF(vec3(0.5, 0.56, 0.62)), sRGBTransferEOTF(vec3(0.05, 0.048, 0.048)), UN.night);   // by night the WebGL page's night clear colour
     back.rotation.x = -Math.PI / 2; back.position.set((ex.x0 + ex.x1) / 2, -60, (ex.z0 + ex.z1) / 2); back.name = 'under:backdrop';
     group.add(tunnels, under, dock, back);
     const rebuildTunnels = () => { const t0 = performance.now(); tunnels.geometry.dispose(); tunnels.geometry = tunnelsGeometry(P); stats.tunnels = { chains: CTL.size, triangles: tris(tunnels.geometry), ms: Math.round(performance.now() - t0) }; draw(); };
