@@ -1,7 +1,7 @@
-// The Three.js port of the Docklands 3D page (experimental): https://danbri.github.io/londat/cwplans/docklands/3js/
+// The Three.js port of the Docklands 3D page (experimental): https://danbri.github.io/londat/docklands/
 // three.js r186 from third_party/three (vendored), WebGPURenderer: WebGPU where the browser has it, else the WebGL 2
 // backend (?webgl forces it). The same TSL node materials compile for both. The data are the WebGL page's own files
-// (../data/*.js, *.json) read unchanged; roofs-layer.js and look-layer.js are reused through the mesh-builder interface
+// (cwplans/docklands/data/*.js, *.json) read unchanged; roofs-layer.js and look-layer.js are reused through the mesh-builder interface
 // of build.js. URL switches: ?view=, ?t=, ?night, ?webgl, ?look=real, ?ground=rgb2008|night2012|intensity2020,
 // ?shadows=0|1, ?bloom=0|1, #at=x,z[,dist], and the WebGL page's share hash #v=1&c=tx,tz,ty,dist,yaw,pitch.
 // Skill: docklands-3d-page, "Three.js port".
@@ -18,7 +18,7 @@ import { Sky3, fromLondon } from './sky3.js';
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const flag = (k, dflt) => qs.has(k) ? !/^(0|false|off|no)$/i.test(qs.get(k)) : dflt;
-const DATA = '../data/';
+const WEBGL = '../cwplans/docklands/', DATA = WEBGL + 'data/';   // the WebGL page and its data
 const loadJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
 const say = t => { hud.textContent = t; };
 let need = true;
@@ -140,7 +140,7 @@ function shareHash() {
   return `#v=1&c=${[r(c.tx), r(c.tz), r(c.ty), r(c.dist), r(c.yaw, 1000), r(c.pitch, 1000)].join(',')}${NIGHT ? '&n=1' : ''}${qs.get('t') ? '&t=' + encodeURIComponent(qs.get('t')) : ''}${SEL >= 0 && KEYS ? '&id=osm:' + KEYS.ids[SEL] : ''}`;
 }
 let hashTimer = 0;
-const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => { history.replaceState(null, '', location.pathname + location.search + shareHash()); const q = new URLSearchParams(location.search); for (const k of ['webgl', 'shadows', 'bloom', 'look', 'ground', 'roads', 'towers', 'roofs']) q.delete(k); $('glLink').href = '../' + (q.size ? '?' + q : '') + shareHash(); }, 400); };
+const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => { history.replaceState(null, '', location.pathname + location.search + shareHash()); const q = new URLSearchParams(location.search); for (const k of ['webgl', 'shadows', 'bloom', 'look', 'ground', 'roads', 'towers', 'roofs']) q.delete(k); $('glLink').href = WEBGL + (q.size ? '?' + q : '') + shareHash(); }, 400); };
 
 // ---------- picking and the record card
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -172,7 +172,7 @@ async function selectModel(i) {
   $('cardBody').innerHTML = `<h2>${esc(name)}</h2>` +
     `<p>${[o.a && o.n ? esc(o.a) : '', o.pc ? esc(o.pc) : '', o.b ? 'type ' + esc(o.b) : '', o.l ? esc(o.l) + ' levels' : ''].filter(Boolean).join(' · ')}</p>` +
     `<p>Ground ${b.b.toFixed(1)} m OD, height ${b.h.toFixed(1)} m${b.mh ? `, from ${b.mh.toFixed(1)} m` : ''}, top ${(b.b + b.h).toFixed(1)} m OD${rf ? `; roof ${esc(rf.shape === 'parts' ? 'in parts' : rf.shape)}, ridge ${(b.b + rf.ridge).toFixed(1)} m OD` : ''}${dm ? `; detailed model (glTF): ${esc(dm.name)}` : ''}.</p>` +
-    `<p class="small">Model index ${i}${id ? ` · <a href="${osmUrl}" target="_blank" rel="noopener">OpenStreetMap ${esc(id)}</a>` : ''} · <a href="../${id ? '#v=1&id=osm:' + id + '&c=' + shareHash().split('c=')[1].split('&')[0] : ''}">open in the WebGL page</a></p>`;
+    `<p class="small">Model index ${i}${id ? ` · <a href="${osmUrl}" target="_blank" rel="noopener">OpenStreetMap ${esc(id)}</a>` : ''} · <a href="${WEBGL}${id ? '#v=1&id=osm:' + id + '&c=' + shareHash().split('c=')[1].split('&')[0] : ''}">open in the WebGL page</a></p>`;
   writeHash();
 }
 let down = null;
@@ -202,7 +202,7 @@ async function loadModels() {
   BMOD = Object.values(J.models).filter(m => m.model_fp === MFP && m.mi && m.mi.length);
   const gl = new GLTFLoader();
   for (const m of BMOD) {
-    const url = '../models/' + m.source.glb.split('/').pop();
+    const url = WEBGL + 'models/' + m.source.glb.split('/').pop();
     try { const g = await gl.loadAsync(url); g.scene.position.set(...m.t); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); g.scene.userData.model = m.mi[0]; models.add(g.scene); for (const i of m.mi) skip.add(i); }
     catch (e) { console.warn('model', url, e); }
   }

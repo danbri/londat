@@ -1,6 +1,7 @@
 # Docklands 3D, Three.js port (experimental)
 
-Live (after the branch is merged to `main`): https://danbri.github.io/londat/cwplans/docklands/3js/
+Live: https://danbri.github.io/londat/docklands/ (top-level folder `docklands/`; owner, 2026-10-08: "Change it to serve
+from top level /docklands/ folder, and merge")
 The WebGL 1 page that it ports: https://danbri.github.io/londat/cwplans/docklands/
 
 Started 2026-10-08. Owner, 2026-10-08: "Experimentally create a port of https://danbri.github.io/londat/cwplans/docklands/
@@ -20,9 +21,9 @@ improvements."
 - Materials are TSL node graphs (`materials.js`): one graph compiles to WGSL on WebGPU and to GLSL ES 3.0 on WebGL 2.
 - Tiers: on WebGPU, cascaded sun shadows (`CSMShadowNode`) and night bloom (`BloomNode` in a `RenderPipeline`) are on by
   default; on WebGL 2 they are off by default and can be switched on in the menu (`?shadows=1`, `?bloom=1`).
-- No data are converted or copied. The page reads the WebGL page's own files: `../data/area.js`, `towers.json`,
+- No data are converted or copied. The page reads the WebGL page's own files in `../cwplans/docklands/data/`: `area.js`, `towers.json`,
   `roofs.json`, `materials.json` (with `?look=real`), `building-keys.json` (on the first tap), `building-models.json`,
-  `tex/*.jpg`, `sky/stars.json`. The detailed building models load as glTF binary files from `../models/*.glb`
+  `tex/*.jpg`, `sky/stars.json`. The detailed building models load as glTF binary files from `../cwplans/docklands/models/*.glb`
   (already made by `cwplans/tools/build-building-models.mjs`, in the page frame with origin at the model's `t`).
 - `roofs-layer.js` and `look-layer.js` of the WebGL page are reused unchanged: `build.js` keeps the vertex layout of
   `index.html` `MeshF` (5 numbers a vertex in `f`, 4 in `g`) and converts it to three.js attributes (`position`,
@@ -35,7 +36,7 @@ improvements."
 | `build.js` | area.js decoding, buildings in 800 m tiles, towers, roofs, terrain, water, greens, rail and roads |
 | `materials.js` | TSL: buildings (day window grid; night windows, crowns, haze), terrain, water |
 | `sky3.js` | sun and moon (Astronomy Engine), `SkyMesh`, stars (instanced sprites), the light rig |
-| `test/load.mjs` | headless load test: two sizes, WebGL 2 or `--webgpu` in software |
+| `test/load.mjs` | headless load test: two sizes, WebGL 2 or `--webgpu` in software (`node docklands/test/load.mjs` from the repository root) |
 
 ## URL
 
@@ -46,9 +47,9 @@ improvements."
 on the WebGL page.
 
 Examples:
-https://danbri.github.io/londat/cwplans/docklands/3js/?view=rotherhithe&t=2026-10-03T22:30 ,
-https://danbri.github.io/londat/cwplans/docklands/3js/?view=cw&t=2026-10-08T13:00&ground=rgb2008 ,
-https://danbri.github.io/londat/cwplans/docklands/3js/?view=greenlandday&webgl .
+https://danbri.github.io/londat/docklands/?view=rotherhithe&t=2026-10-03T22:30 ,
+https://danbri.github.io/londat/docklands/?view=cw&t=2026-10-08T13:00&ground=rgb2008 ,
+https://danbri.github.io/londat/docklands/?view=greenlandday&webgl .
 
 ## Ported and not ported (2026-10-08)
 

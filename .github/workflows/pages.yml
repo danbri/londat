@@ -33,7 +33,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/site"
           tar -c --exclude=./.git --exclude=./.github --exclude=./.claude --exclude=./node_modules --exclude=./third_party \
             --exclude=./cwplans/cache/runs --exclude='./cwplans/cache/*.sqlite' . | tar -x -C "$RUNNER_TEMP/site"
-          # third_party/three (three.js, MIT) is published: the Three.js port of the 3D page (cwplans/docklands/3js/) loads it
+          # third_party/three (three.js, MIT) is published: the Three.js port of the 3D page (docklands/) loads it
           mkdir -p "$RUNNER_TEMP/site/third_party" && cp -r third_party/three "$RUNNER_TEMP/site/third_party/three"
           du -sh "$RUNNER_TEMP/site"
           test "$(du -sm "$RUNNER_TEMP/site" | cut -f1)" -lt 950   # the Pages limit is 1 GB

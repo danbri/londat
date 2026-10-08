@@ -39,10 +39,10 @@ a{color:var(--acc)}
 <!-- three.js r186 (0.186.1), vendored in londat third_party/three (MIT): addons import 'three', 'three/webgpu' and 'three/tsl' -->
 <script type="importmap">
 { "imports": {
-  "three": "../../../third_party/three/build/three.webgpu.js",
-  "three/webgpu": "../../../third_party/three/build/three.webgpu.js",
-  "three/tsl": "../../../third_party/three/build/three.tsl.js",
-  "three/addons/": "../../../third_party/three/examples/jsm/"
+  "three": "../third_party/three/build/three.webgpu.js",
+  "three/webgpu": "../third_party/three/build/three.webgpu.js",
+  "three/tsl": "../third_party/three/build/three.tsl.js",
+  "three/addons/": "../third_party/three/examples/jsm/"
 } }
 </script>
 </head>
@@ -72,17 +72,17 @@ a{color:var(--acc)}
   <label class="row"><input type="checkbox" id="bloom"> Bloom by night</label>
   <label class="row"><input type="checkbox" id="animate"> Draw every frame (moving water)</label>
   <p class="small">Experimental port of the 3D page to three.js r186. WebGPU where the browser has it, else WebGL 2 (<a href="?webgl">force WebGL 2</a>). Shadows and bloom are on by default on WebGPU only.
-  Not yet ported: tunnels, below ground, stations, ships, river and tide, splats, styles, routes, search, KML, Drone, WebXR. <a id="glLink" href="../">Open this view in the WebGL page</a>.</p>
-  <p class="small">Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL); Environment Agency LiDAR and aerial images (Open Government Licence v3.0); Yale Bright Star Catalogue. Full list: <a href="../README.md">README</a>.</p>
+  Not yet ported: tunnels, below ground, stations, ships, river and tide, splats, styles, routes, search, KML, Drone, WebXR. <a id="glLink" href="../cwplans/docklands/">Open this view in the WebGL page</a>.</p>
+  <p class="small">Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL); Environment Agency LiDAR and aerial images (Open Government Licence v3.0); Yale Bright Star Catalogue. Full list: <a href="https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md">README</a>.</p>
 </div>
 <div id="card" hidden><button id="cardX" aria-label="Close">&times;</button><div id="cardBody"></div></div>
 <div id="stat"><span id="fps"></span></div>
 <div id="credit">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></div>
-<script src="../vendor/earcut.min.js"></script>
-<script src="../data/area.js"></script>
-<script src="../vendor/astronomy.browser.min.js"></script>
-<script src="../roofs-layer.js"></script>
-<script src="../look-layer.js"></script>
+<script src="../cwplans/docklands/vendor/earcut.min.js"></script>
+<script src="../cwplans/docklands/data/area.js"></script>
+<script src="../cwplans/docklands/vendor/astronomy.browser.min.js"></script>
+<script src="../cwplans/docklands/roofs-layer.js"></script>
+<script src="../cwplans/docklands/look-layer.js"></script>
 <script type="module" src="main.js"></script>
 </body>
 </html>

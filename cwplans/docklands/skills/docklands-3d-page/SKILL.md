@@ -6,7 +6,7 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (3js/, WebGPU/WebGL 2); and the
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (docklands/, WebGPU/WebGL 2); and the
   headless test recipe (two sizes x two pixel ratios). Sky, clock, weather and
   tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
@@ -1732,9 +1732,11 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=-1000,9000,50,14000,3.0
 
 ## Three.js port (2026-10-08)
 
-An experimental port to three.js r186: `cwplans/docklands/3js/`, https://danbri.github.io/londat/cwplans/docklands/3js/
-(live once the branch `claude/docklands-threejs-port-ztkuyz` is merged to main). What it covers, the files and the URL
-switches: https://github.com/danbri/londat/blob/main/cwplans/docklands/3js/README.md . three.js is vendored in
+An experimental port to three.js r186 in the top-level folder `docklands/` (not under `cwplans/`; owner, 2026-10-08:
+"Change it to serve from top level /docklands/ folder, and merge"): https://danbri.github.io/londat/docklands/ . It reads
+the data, vendor scripts and models of the WebGL page through `../cwplans/docklands/`; the data register covers only
+`cwplans/`, so the port's code files have no register entries. What it covers, the files and the URL
+switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three.js is vendored in
 `third_party/three/` (its README says how to upgrade); the Pages workflow publishes that folder only.
 
 - **One renderer, two backends.** `THREE.WebGPURenderer` takes WebGPU where `navigator.gpu` exists and falls back to
@@ -1746,7 +1748,7 @@ switches: https://github.com/danbri/londat/blob/main/cwplans/docklands/3js/READM
   layout of `index.html` (f: x y z u packed-rgba; g: centre x, centre z, base, night kind) so `roofs-layer.js`
   (`DocklandsRoofs.prism`) and `look-layer.js` (`DocklandsLook.decode`, `attach`, `paint`) run on it as they are; then
   `toGeometry()` splits it into the attributes `position`, `uw`, `col` (normalised bytes; the alpha byte is the
-  material code, never opacity) and `gk`. A detailed model loads as its glTF file (`../models/*.glb`, page frame,
+  material code, never opacity) and `gk`. A detailed model loads as its glTF file (`../cwplans/docklands/models/*.glb`, page frame,
   origin at the model's `t` in building-models.json) with `GLTFLoader`.
 - **Shading.** The builders pass an identity `shade()`: three.js lights the faces (`flatShading` normals from the
   derivatives, `DoubleSide` because the outline rings and the roofs come in both windings). The data colours are sRGB;
@@ -1765,10 +1767,10 @@ switches: https://github.com/danbri/londat/blob/main/cwplans/docklands/3js/READM
   container's Playwright browser) throws a TypeError on it and every WebGPU frame failed. `main.js` wraps
   `GPUTexture.prototype.createView` to retry such a call without the member. Remove the wrapper when the browsers in use
   accept it.
-- **Test.** `node cwplans/docklands/3js/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
+- **Test.** `node docklands/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
   SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
   --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or
-  an HTTP error, and writes screenshots to `3js/test/out/` (ignored by git). Hook: `window.__docklands3` (`backend`,
+  an HTTP error, and writes screenshots to `docklands/test/out/` (ignored by git). Hook: `window.__docklands3` (`backend`,
   `STATS`, `setView`, `setCam`, `camState`, `setClock`, `pickAt`, `selectModel`, `shareHash`).
 - Measured 2026-10-08 (headless, software): 41,803 buildings in 80 tiles, 1,127,712 triangles, built in 1.8 to 3.5 s;
   a frame submitted in 15 to 24 ms (WebGL 2) and 47 to 102 ms (WebGPU with shadows and bloom). Software numbers only;

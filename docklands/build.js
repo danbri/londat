@@ -1,4 +1,4 @@
-// Geometry of the Three.js port of the Docklands 3D page (cwplans/docklands/3js/): area.js (DOCKLANDS_AREA) -> three.js
+// Geometry of the Three.js port of the Docklands 3D page (docklands/): area.js (DOCKLANDS_AREA) -> three.js
 // BufferGeometry. The builders keep the vertex layout of the WebGL page (index.html MeshF: f = [x y z u packed-rgba],
 // g = [centre x, centre z, base m OD, night kind]) so that roofs-layer.js (DocklandsRoofs.prism) and look-layer.js
 // (DocklandsLook.paint) work on them unchanged; toGeometry() then splits them into three.js attributes.
