@@ -177,11 +177,13 @@ function highlight(i) {   // the picked building's outline as a translucent pris
   for (let k = 0; k < n; k++) sh[k ? 'lineTo' : 'moveTo'](f[2 * k], -f[2 * k + 1]);
   const G = new THREE.ExtrudeGeometry(sh, { depth: b.h + 0.6, bevelEnabled: false }); G.rotateX(-Math.PI / 2); G.translate(0, b.b - 0.3, 0); sel.geometry = G;
 }
+const cardHooks = [];   // ctx.addCard(i => html | Promise<html> | null)
 async function selectModel(i) {
   SEL = i; highlight(i); writeHash(); draw();
   const card = $('card'); if (i < 0) { card.hidden = true; return; }
   const b = A.buildings[i]; card.hidden = false;
-  $('cardBody').innerHTML = `<h2>Building ${i}</h2><p class="small">Loading the OpenStreetMap key...</p>`;
+  $('cardBody').innerHTML = `<h2>Building ${i}</h2><p class="small">Loading the record...</p>`;
+  for (const f of cardHooks) { let h = null; try { h = await f(i); } catch (e) { console.warn('card', e); } if (SEL !== i) return; if (h) { $('cardBody').innerHTML = h; writeHash(); return; } }   // a layer's card first (layers/registry.js: the registry card)
   const K = await keys(); if (SEL !== i) return;
   const id = K ? K.ids[i] : null, o = (K && K.osm[id]) || {}, osmUrl = id ? `https://www.openstreetmap.org/${id[0] === 'w' ? 'way' : 'relation'}/${id.slice(1)}` : null;
   const name = o.n || o.h || o.a || (id ? `OpenStreetMap ${id}` : `Building ${i}`), rf = ROOFS && ROOFS.get(i), dm = BMOD && BMOD.find(m => m.mi.includes(i));
@@ -259,7 +261,7 @@ $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,stations,skyline').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,stations,skyline,registry,search').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 const ui = {
   host: () => $('layersExtra'),
@@ -271,7 +273,7 @@ const ui = {
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
-  addPick: f => pickHooks.push(f), setBuildingMode,
+  addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
 };
 async function loadLayers() {

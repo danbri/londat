@@ -95,12 +95,12 @@ export function buildBuildings(opts = {}) {
   A.buildings.forEach((b, i) => {
     const h = hOf(b, i); if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || !(h > 0)) return;
     const M = tileOf(b.p[0] / 10, b.p[1] / 10), rf = !opts.heightOf && RF && RF.get(i), n0 = M.n, c = colourOf(b, i);
-    M.model = i; M.kind = nightKind(0, b.b + (rf ? rf.ridge : h));
+    M.model = i; M.kind = nightKind(opts.useOf ? opts.useOf(i) : 0, b.b + (rf ? rf.ridge : h));
     if (rf && R) { const t0 = M.idx.length; R.prism(M, b, rf, c, 1, helpers); flip(M, t0); } else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, null);
     if (LK) LK.paint(M, n0, i, !!rf);
   });
   for (const t of opts.towers || []) { const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring, M = tileOf(r0[0][0], r0[0][1]), n0 = M.n;
-    M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : 0, towerTop(t)); towerF(M, t, colourOf(b, mi), null); if (LK) LK.paint(M, n0, mi, false); }
+    M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : opts.useOf ? opts.useOf(mi) : 0, towerTop(t)); towerF(M, t, colourOf(b, mi), null); if (LK) LK.paint(M, n0, mi, false); }
   return [...tiles.values()].filter(M => M.n).map(toGeometry);
 }
 // roofs-layer.js winds its triangles clockwise from above (the WebGL page draws both sides): turn them for three.js
