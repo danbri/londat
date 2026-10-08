@@ -84,22 +84,23 @@ export const towerTop = t => Math.max(...t.tiers.filter((tr, k) => !(k === t.tie
 const nightKind = (use, top) => use * 1000 + Math.max(0, Math.min(999, top));
 
 // all buildings into tiles of TILE metres (frustum culling and faster picking); opts: { towers, roofs, look, skip (Set of
-// model indexes drawn by a detailed model) }
+// model indexes drawn by a detailed model), heightOf(b, i) (a height in place of b.h, e.g. a skyline year; <= 0: not drawn),
+// colourOf(b, i) (a colour [r, g, b] in place of the data colour, or null) }
 export const TILE = 800;
 export function buildBuildings(opts = {}) {
   const tiles = new Map(), tileOf = (x, z) => { const k = Math.floor(x / TILE) + ',' + Math.floor(z / TILE); if (!tiles.has(k)) tiles.set(k, new MeshF()); return tiles.get(k); };
   const towerOf = new Map(); for (const t of opts.towers || []) for (const mi of t.model_buildings) towerOf.set(mi, t);
   const RF = opts.roofs, LK = opts.look, R = globalThis.DocklandsRoofs, helpers = { dec, shade, earcut };
-  const colourOf = b => LK ? [1, 1, 1] : (b.s === 1 || b.s === 4 ? C.bldlv : C.bld);
+  const colourOf = (b, i) => (opts.colourOf && opts.colourOf(b, i)) || (LK ? [1, 1, 1] : (b.s === 1 || b.s === 4 ? C.bldlv : C.bld)), hOf = (b, i) => opts.heightOf ? opts.heightOf(b, i) : b.h;
   A.buildings.forEach((b, i) => {
-    if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || !(b.h > 0)) return;
-    const M = tileOf(b.p[0] / 10, b.p[1] / 10), rf = RF && RF.get(i), n0 = M.n, c = colourOf(b);
-    M.model = i; M.kind = nightKind(0, b.b + (rf ? rf.ridge : b.h));
-    if (rf && R) { const t0 = M.idx.length; R.prism(M, b, rf, c, 1, helpers); flip(M, t0); } else prismF(M, b, b.b + (b.mh || 0), b.b + b.h, c, !!b.mh, null);
+    const h = hOf(b, i); if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || !(h > 0)) return;
+    const M = tileOf(b.p[0] / 10, b.p[1] / 10), rf = !opts.heightOf && RF && RF.get(i), n0 = M.n, c = colourOf(b, i);
+    M.model = i; M.kind = nightKind(0, b.b + (rf ? rf.ridge : h));
+    if (rf && R) { const t0 = M.idx.length; R.prism(M, b, rf, c, 1, helpers); flip(M, t0); } else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, null);
     if (LK) LK.paint(M, n0, i, !!rf);
   });
   for (const t of opts.towers || []) { const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring, M = tileOf(r0[0][0], r0[0][1]), n0 = M.n;
-    M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : 0, towerTop(t)); towerF(M, t, colourOf(b), null); if (LK) LK.paint(M, n0, mi, false); }
+    M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : 0, towerTop(t)); towerF(M, t, colourOf(b, mi), null); if (LK) LK.paint(M, n0, mi, false); }
   return [...tiles.values()].filter(M => M.n).map(toGeometry);
 }
 // roofs-layer.js winds its triangles clockwise from above (the WebGL page draws both sides): turn them for three.js

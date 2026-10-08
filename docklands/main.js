@@ -50,7 +50,7 @@ say('Building the model...');
 const box = (await loadJSON(DATA + 'tex/textures.json').catch(() => null))?.box || { x0: A.meta.extent.x0, x1: A.meta.extent.x1, z0: A.meta.extent.z0, z1: A.meta.extent.z1 };
 const tmat = terrainMaterial(), terrain = new THREE.Mesh(terrainGeometry(box), tmat); terrain.receiveShadow = true; scene.add(terrain);
 const water = new THREE.Mesh(waterGeometry(), waterMaterial()); water.receiveShadow = true; scene.add(water);
-const greens = new THREE.Mesh(greensGeometry(), vertexColourMaterial()); greens.receiveShadow = true; scene.add(greens);
+const greens = new THREE.Mesh(greensGeometry(), vertexColourMaterial({ cut: false })); greens.receiveShadow = true; scene.add(greens);
 const LN = linesGeometry(), lineMat = vertexColourMaterial(), rail = new THREE.Mesh(LN.rail, lineMat), roads = new THREE.Mesh(LN.road, lineMat); scene.add(rail, roads);
 roads.visible = flag('roads', true);
 // keep the flat layers above the ground in the depth buffer (the WebGL page offsets them by 0.1 to 0.4 m)
@@ -62,12 +62,12 @@ const skip = new Set();
 function rebuildBuildings() {
   for (const m of buildings.children) m.geometry.dispose(); buildings.clear();
   const t0 = performance.now();
-  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
+  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
   draw();
 }
-const STATS = {};
+const STATS = {}, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null)
 rebuildBuildings();
 
 // ---------- sky and light
@@ -240,6 +240,34 @@ function syncClockUi() { const s = sky.state; $('clock').textContent = `${new Da
 $('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClock(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
 $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }); setClock(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
 
+// ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
+// a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
+// ?layers=a,b loads only those (a layer under development is tested that way before it joins the list)
+const LAYER_IDS = (qs.get('layers') ?? '').split(',').filter(Boolean);
+const LAYERS = {}, frameHooks = [];
+const ui = {
+  host: () => $('layersExtra'),
+  section(title) { const h = document.createElement('h3'); h.textContent = title; ui.host().appendChild(h); return h; },
+  toggle(label, on, cb) { const l = document.createElement('label'); l.className = 'row'; const i = document.createElement('input'); i.type = 'checkbox'; i.checked = !!on; i.onchange = () => { cb(i.checked); draw(); }; l.append(i, ' ' + label); ui.host().appendChild(l); return i; },
+  slider(label, min, max, step, value, cb) { const l = document.createElement('label'); l.className = 'row'; l.style.flexWrap = 'wrap'; const t = document.createElement('span'); t.textContent = label; t.style.width = '100%'; const i = document.createElement('input'); i.type = 'range'; Object.assign(i, { min, max, step, value }); i.oninput = () => { cb(+i.value, t); draw(); }; l.append(t, i); ui.host().appendChild(l); return { input: i, label: t }; },
+  note(html) { const p = document.createElement('p'); p.className = 'small'; p.innerHTML = html; ui.host().appendChild(p); return p; },
+};
+const ctx = {
+  THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
+  materials: { vertexColourMaterial }, buildOpts, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
+  showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
+};
+async function loadLayers() {
+  for (const id of LAYER_IDS) {
+    let mod; try { mod = (await import(`./layers/${id}.js`)).default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
+    try { const on = flag(id, mod.on !== false), L = (await mod.init(ctx, on)) || {}; LAYERS[id] = { ...mod, ...L, on };
+      if (L.object) { L.object.visible = on; scene.add(L.object); }
+      if (mod.label && !L.ownUi) ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; });
+    } catch (e) { console.warn('layer', id, e); }
+  }
+  STATS.layers = Object.keys(LAYERS); draw();
+}
+
 // ---------- render loop: on demand (a frame while the camera moves or a clock changes), always while the water moves
 function resize() {
   const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h;
@@ -259,6 +287,7 @@ renderer.setAnimationLoop(() => {
   if (sky.stars) sky.stars.position.copy(camera.position);
   sky.sky.position.copy(camera.position);
   placeLabels();
+  for (const f of frameHooks) f();
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0;
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
   $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
@@ -276,9 +305,10 @@ setGround(qs.get('ground') || 'none');
 say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
 sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
 await loadOptional(); await loadModels();
+await loadLayers();
 if (H.id && /^osm:[wr]\d+$/.test(H.id)) { const K = await keys(); const i = K ? K.ids.indexOf(H.id.slice(4)) : -1; if (i >= 0) selectModel(i); }
 say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
 setTimeout(() => $('hud').classList.add('fade'), 4000);
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, fromLondon, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash };
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, fromLondon, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx };

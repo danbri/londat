@@ -4,7 +4,7 @@
 // clusters), One Canada Square's halo, Newfoundland's diagrid crown and a band at the top of other towers, as emissive
 // light, so the bloom pass picks them up. Skill: docklands-3d-page, "Three.js port".
 import * as THREE from 'three/webgpu';
-import { Fn, attribute, positionWorld, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF } from 'three/tsl';
+import { If, Discard, Fn, attribute, positionWorld, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF } from 'three/tsl';
 
 export const U = {
   night: uniform(0),              // 0 day, 1 night: the windows' light
@@ -13,6 +13,7 @@ export const U = {
   crownOn: uniform(1),
   haze: uniform(new THREE.Color(0.085, 0.07, 0.058)),
   groundTex: uniform(0),          // 1: the terrain shows the ground image
+  cut: uniform(1e9),              // m OD: buildings and structures above it are cut away (the below-ground view; layers/under.js sets it)
 };
 
 const h = Fn(([q]) => fract(sin(dot(q, vec2(12.9898, 78.233))).mul(43758.5453)));
@@ -27,6 +28,7 @@ export function buildingMaterial() {
 
   // by day: the map style's window grid (3.6 m storeys, 1.8 m bays), fading with distance
   m.colorNode = Fn(() => {
+    If(wy.greaterThan(U.cut), () => { Discard(); });
     const base = col.rgb, lum = dot(base, vec3(0.33));
     const g = vec2(uw.div(1.8), wy.div(3.6)), cell = floor(g), f = fract(g);
     const w = step(0.14, f.x).mul(step(f.x, 0.86)).mul(step(0.2, f.y)).mul(step(f.y, 0.84)).mul(clamp(float(1.4).sub(dist.div(900)), 0.15, 1));
@@ -99,7 +101,7 @@ export function waterMaterial() {
 }
 
 export function vertexColourMaterial(opts = {}) {
-  const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.9, metalness: 0, side: THREE.DoubleSide, ...opts });
-  m.colorNode = lin(attribute('color', 'vec3'));
+  const { cut, ...rest } = opts, m = new THREE.MeshStandardNodeMaterial({ roughness: 0.9, metalness: 0, side: THREE.DoubleSide, ...rest });
+  m.colorNode = opts.cut === false ? lin(attribute('color', 'vec3')) : Fn(() => { If(positionWorld.y.greaterThan(U.cut), () => { Discard(); }); return lin(attribute('color', 'vec3')); })();
   return m;
 }
