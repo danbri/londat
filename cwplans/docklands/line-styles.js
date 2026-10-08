@@ -190,8 +190,9 @@ function crt(f) {
 // f: { P, w, h, cutOn, cutY, bm, occlude(), top() } from the page's render()
 function frame(f) {
   programs();
-  if (S.mode === 'vectrex') crt(f);
-  else { gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, f.w, f.h); scene(f, [1, 1, 1], false); }
+  // a headset eye (f.xr): its framebuffer and viewport; Vector CRT without its afterglow and glow (they use whole-canvas buffers)
+  if (S.mode === 'vectrex' && !f.xr) crt(f);
+  else { gl.bindFramebuffer(gl.FRAMEBUFFER, f.fb || null); gl.viewport(f.vx || 0, f.vy || 0, f.w, f.h); scene(f, S.mode === 'vectrex' ? [0, 0, 0] : [1, 1, 1], S.mode === 'vectrex'); }
 }
 
 // ---------- switching

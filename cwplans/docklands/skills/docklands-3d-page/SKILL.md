@@ -1299,6 +1299,32 @@ opens the one-eye preview (drag to look round, tap to select; iOS Safari has no 
   `navigator.xr` getter: a mock must use `Object.defineProperty`. The button box (`#locBtns`) is made by locate.js
   after this layer's first await: wait for it. Labels of one building in several categories stacked: one label a
   building. On a portrait phone the preview sets the panels 1.35 times farther (same directions).
+- **Owner's first headset test (2026-10-08, Quest, hand gestures only: the controller batteries were dead)** and the
+  changes made the same day: framerate "felt fine"; "some items flicker"; "the lovely gold river lighting at night
+  spews out everywhere"; the control strip "below table height", unnoticed "for ages"; "clicks seem not to hit";
+  wanted "a grab mechanism to move city around me or reposition windows", other styles, "option to drop or raise the
+  floor", a night sky over passthrough, trees and greenspace by default.
+  - Gold everywhere: the `XRWebGLLayer` had no stencil buffer (the default is `stencil: false`), and night reflections
+    are drawn only where the water marked the stencil. Fix: `{ depth: true, stencil: true }`. The preview never showed
+    it (the page canvas has a stencil).
+  - Flicker: table depth range 0.08 to 60 m (was 0.02 to 80); with the stencil the layer gets a 24-bit depth buffer on
+    most devices. Not verified on the Quest.
+  - Presses (selectstart/selectend, also squeeze): a short press (< 2.5 cm of hand movement, < 0.9 s) is a click on the
+    ray of the frame before the pinch (a hand's pinch moves its own ray); label hits within 0.045 rad. A press that
+    moves drags: on empty space one hand moves the table in 3D (up and down raises or lowers it); two hands turn it and
+    scale it about their midpoint (street: turn only, one hand pulls the ground 30x); a panel's title (the bar's left
+    end, the dots) moves the panel, which turns to face you. Hand position: `gripSpace`, else the ray origin.
+  - Control bar: two rows at 28 deg left, chest height, 0.78 m: Table, Street, -/+, turn, Exit / Floor up, Floor down,
+    Style (Map, Lines, CRT), Sky (Dark: the dark-site sky with the Milky Way, the default, also over passthrough at
+    night; City: London's sky glow; Off), Night/Day, Photo (the left eye as a PNG; the page offers the photos after
+    Exit), Recentre. Places and What's on moved to 62 deg.
+  - Styles: Line drawing and Vector CRT draw into the eye (line-styles.js `frame()` takes fb and viewport); the CRT has
+    no afterglow or glow in a headset (they use whole-canvas buffers). Pixel art and its isometric camera are not
+    offered: an orthographic view per eye does not make a stereo picture.
+  - The sky in a table view uses the eye's rotation and the model's yaw, without the 1:1500 scale (`XV.skyView`).
+  - Trees are on by default on the page (loaded quietly 1.5 s after start) and in a session.
+  - The Quest system menu with hands: look at the palm, pinch and hold (the right hand gives the Meta menu, with
+    the screenshot); the page cannot change that gesture.
 - **Not done / open:** no real headset test (the owner has to try it on a Quest or Vision Pro); performance with two
   eyes of the full scene is not measured on a headset; trees and splats are not drawn in a session; panels are
   world-locked, not body-locked; event venues are postcode centroids (O2: one point).

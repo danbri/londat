@@ -13,7 +13,7 @@ const fails = [], ok = (c, m) => { console.log((c ? 'ok   ' : 'FAIL ') + m); if 
 async function open(w, h, dpr, q, mock) {
   const page = await (await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr })).newPage(), errors = [];
   page.on('pageerror', e => errors.push(String(e))); page.on('console', m => m.type() === 'error' && errors.push(m.text()));
-  if (mock) await page.addInitScript(MOCK); await page.goto(BASE + '/cwplans/docklands/index.html' + q); return { page, errors };
+  if (mock) await page.addInitScript(MOCK); await page.goto(BASE + '/cwplans/docklands/index.html' + q, { timeout: 240000 }); return { page, errors };
 }
 // a frame and its read in one task: the canvas has no preserveDrawingBuffer
 const save = async (page, name) => { if (!OUT) return; const png = await page.evaluate(() => { if (window.__xrMock && __xrMock.session) __xrMock.step(); return document.getElementById('c').toDataURL('image/png'); }); writeFileSync(`${OUT}/${name}.png`, Buffer.from(png.split(',')[1], 'base64')); };
@@ -32,6 +32,16 @@ const save = async (page, name) => { if (!OUT) return; const png = await page.ev
   await page.evaluate(() => { __xrMock.step(); }); await save(page, 'stereo-table');
   ok(r.panels.every(Boolean) && r.places > 1000 && r.events > 50, `stereo: 4 panels drawn, ${r.places} places, ${r.events} events`);
   ok(r.lit && r.beacons, 'controller ray on the Places row "Food and drink" lights its beacons');
+  const dr = await page.evaluate(() => { const S = DocklandsXR.S, o0 = S.O.slice(); __xrMock.ray = { o: [0, 1.0, -.2], d: [0, -.6, -1] }; __xrMock.step(); __xrMock.step();
+    __xrMock.press(0); __xrMock.ray = { o: [.2, 1.1, -.2], d: [0, -.6, -1] }; __xrMock.step(); __xrMock.release(0); const o1 = S.O.slice();
+    __xrMock.ray = { o: [-.1, 1.0, -.3], d: [0, -.6, -1] }; __xrMock.ray2 = { o: [.1, 1.0, -.3], d: [0, -.6, -1] }; __xrMock.step(); const s0 = S.s;
+    __xrMock.press(0); __xrMock.press(1); __xrMock.ray = { o: [-.2, 1.0, -.3], d: [0, -.6, -1] }; __xrMock.ray2 = { o: [.2, 1.0, -.3], d: [0, -.6, -1] }; __xrMock.step(); __xrMock.release(1); __xrMock.release(0); __xrMock.ray2 = null;
+    return { dx: o1[0] - o0[0], dy: o1[1] - o0[1], k: S.s / s0 }; });
+  ok(Math.abs(dr.dx - .2) < 1e-6 && Math.abs(dr.dy - .1) < 1e-6, `one-hand drag moves the table by the hand (${dr.dx.toFixed(3)}, ${dr.dy.toFixed(3)} m)`);
+  ok(Math.abs(dr.k - 2) < 1e-6, `two-hand pinch apart doubles the scale (x${dr.k.toFixed(3)})`);
+  const sty = await page.evaluate(async () => { await DocklandsXR.act('style', DocklandsXR.P.bar); await new Promise(r => setTimeout(r, 2500)); __xrMock.step(); __xrMock.step(); return globalThis.DocklandsLines && DocklandsLines.mode; });
+  await save(page, 'stereo-lines'); ok(sty === 'lines', 'Style: Line drawing in a session (' + sty + ')');
+  await page.evaluate(async () => { await DocklandsXR.act('style', DocklandsXR.P.bar); await new Promise(r => setTimeout(r, 1500)); await DocklandsXR.act('style', DocklandsXR.P.bar); await new Promise(r => setTimeout(r, 1500)); __xrMock.step(); });
   const st = await page.evaluate(() => { DocklandsXR.act('mode:street', DocklandsXR.P.bar); __xrMock.step(); return [DocklandsXR.S.mode, __xrMock.session.renderState.depthNear, __xrMock.session.renderState.depthFar]; });
   await save(page, 'stereo-street'); ok(st[0] === 'street' && st[1] === .25 && st[2] === 16000, `street mode, depth ${st[1]} to ${st[2]} m`);
   const ex = await page.evaluate(() => { DocklandsXR.act('exit', DocklandsXR.P.bar); return DocklandsXR.active; }); ok(ex === false, 'exit ends the session');

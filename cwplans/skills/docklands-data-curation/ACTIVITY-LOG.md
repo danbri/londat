@@ -1789,3 +1789,8 @@ a re-run with the same inputs mints the same terms).
 - Tests: docklands/test/xr-check.mjs with docklands/test/webxr-mock.js, 8 of 8 pass (headless Chromium, SwiftShader);
   the normal page loads with no error. Not tested on a real headset. Skill: docklands-3d-page, "WebXR".
 - Open: events are a snapshot (works.json; re-run tools/fetch-works.mjs); headset frame rate unknown.
+- Later the same day, after the owner's first test on a Quest (hands only): stencil and depth on the XR layer (the gold
+  river reflections were drawn everywhere), a nearer-far depth range, presses with click-or-drag, one-hand move and
+  two-hand turn and scale of the city, panels moved by their titles, a two-row control bar at chest height (floor up and
+  down, Style: Map / Lines / CRT, Sky: Dark / City / Off, Photo), trees on by default. xr-check.mjs: 11 of 11.
+  Roof shapes, London-wide terrain and wind were given to three subagents the same day (their own entries follow).

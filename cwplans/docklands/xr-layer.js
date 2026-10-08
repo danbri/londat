@@ -28,7 +28,7 @@ const DEG = Math.PI / 180, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const S = {
   session: null, ref: null, preview: false, ar: false, mode: 'table', s: 1 / 1500, c: [0, 0, 0], O: [0, .78, -1], yaw: 0, lift: 0, floorY: 0,
   W: M.I(), Wi: M.I(), head: [0, 1.6, 0], headF: [0, 0, -1], placed: false, base: { a: 0, p: [0, 1.6, 0] },
-  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), grab: null,
+  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), grab: null, press: new Map(), lastRay: new Map(), two: null, sky: 'auto', photos: [], snap: false,
   data: null, loading: null, inView: { cats: {}, events: [], works: [], markets: [] }, listT: 0, hiDirty: true, hiMesh: null, labels: [], panels: [],
 };
 function setW() {
@@ -174,6 +174,11 @@ class Panel {
     this.c = [base.p[0] + r * Math.sin(A), base.p[1] + dy, base.p[2] - r * Math.cos(A)];
     const n = [-Math.sin(A), 0, Math.cos(A)], R = [Math.cos(A), 0, Math.sin(A)], U = [0, 1, 0], t = (tilt || 0) * DEG;
     this.n = nrm(add(mulv(n, Math.cos(t)), mulv(U, Math.sin(t)))); this.R = R; this.U = nrm(sub(mulv(U, Math.cos(t)), mulv(n, Math.sin(t)))); }
+  orient(A, tilt) { const n = [-Math.sin(A), 0, Math.cos(A)], R = [Math.cos(A), 0, Math.sin(A)], U = [0, 1, 0], t = (tilt || 0) * DEG;
+    this.n = nrm(add(mulv(n, Math.cos(t)), mulv(U, Math.sin(t)))); this.R = R; this.U = nrm(sub(mulv(U, Math.cos(t)), mulv(n, Math.sin(t)))); }
+  // a dragged panel: its centre where the hand puts it, turned to face the head (same tilt)
+  moveTo(c) { this.c = c; this.orient(Math.atan2(c[0] - S.head[0], -(c[2] - S.head[2])), this.place[3]); }
+  grabZone(px, py) { return this.key === 'bar' ? px < 70 : py < 125; }
   redraw() { const g = this.cv.getContext('2d'); g.clearRect(0, 0, this.cv.width, this.cv.height); this.hits = []; this.drawFn(g, this); if (!this.tex) this.tex = newTex(); upload(this.tex, this.cv); this.dirty = false; }
   verts() { const c = this.c, R = mulv(this.R, this.w / 2), U = mulv(this.U, this.h / 2), tl = add(sub(c, R), U), tr = add(add(c, R), U), bl = sub(sub(c, R), U), br = sub(add(c, R), U);
     return [...tl, 0, 0, ...bl, 0, 1, ...br, 1, 1, ...tl, 0, 0, ...br, 1, 1, ...tr, 1, 0]; }
@@ -189,7 +194,7 @@ function frame(g, pn, title, sub_) { const W = pn.cv.width, H = pn.cv.height; g.
 function clip(g, s, w) { if (g.measureText(s).width <= w) return s; let a = 0, b = s.length; while (a < b) { const m = (a + b + 1) >> 1; if (g.measureText(s.slice(0, m) + '…').width <= w) a = m; else b = m - 1; } return s.slice(0, a) + '…'; }
 const P = {};
 function makePanels() {
-  P.places = new Panel('places', .62, .9, [-50, 1.25, -.1, 0], (g, pn) => {
+  P.places = new Panel('places', .62, .9, [-62, 1.2, -.1, 0], (g, pn) => {
     frame(g, pn, 'Places in view', S.data ? 'Tap a category: beacons light its buildings' : 'Loading places…');
     pn.btn(g, 40, 140, 300, 64, S.openNow ? '● Open now' : '○ Open now', S.openNow, 'open', '#1f8f55'); pn.btn(g, 360, 140, 300, 64, 'All off', false, 'catsoff');
     g.fillStyle = '#9aa4ae'; g.font = `400 24px ${FONT}`; g.fillText(S.openNow ? 'Hours: Canary Wharf registry only' : 'in view / in the model', 690, 182);
@@ -205,7 +210,7 @@ function makePanels() {
     g.fillStyle = '#7f8993'; g.font = `400 22px ${FONT}`;
     ['Canary Wharf: registry occupants by category (OSM, FSA, CWG directory).', 'Elsewhere: OSM points (bars, sport, health, education, arts) and', 'GLA Cultural Infrastructure Map venues. © OpenStreetMap contributors.'].forEach((s, i) => g.fillText(s, 40, y + 30 + i * 30));
   });
-  P.whatson = new Panel('whatson', .62, .9, [50, 1.25, -.1, 0], (g, pn) => {
+  P.whatson = new Panel('whatson', .62, .9, [62, 1.2, -.1, 0], (g, pn) => {
     frame(g, pn, "What's on in view", S.data ? `${S.inView.events.length} events · ${S.inView.markets.length} markets · ${S.inView.works.length} works now` : 'Loading listings…');
     [[1, 'Today'], [7, '7 days'], [30, '30 days']].forEach(([d, t], i) => pn.btn(g, 40 + i * 200, 140, 184, 64, t, S.win === d, 'win:' + d));
     pn.btn(g, 660, 140, 324, 64, S.works ? '● Roadworks' : '○ Roadworks', S.works, 'works', '#c76a1c');
@@ -224,14 +229,19 @@ function makePanels() {
   });
   P.focus = new Panel('focus', .95, .36, [0, 1.55, .38, 0], (g, pn) => {
     const f = S.focus; frame(g, pn, f ? clip(g, f.title, PX - 80) : 'Select something', f ? clip(g, f.sub || '', PX - 80) : 'Point and press (or pinch) at a building, a beacon or a list row');
-    if (!f) return; let y = 150; g.font = `400 26px ${FONT}`;
+    if (!f) { g.fillStyle = '#c9d1d9'; g.font = `400 27px ${FONT}`; ['Pinch (or press) on empty space and drag: move the city. Up and down: raise or lower it.', 'Both hands pinched: turn it and change its size.', 'Drag a panel by its title (the bar by its left end) to move it.', 'A short pinch on a row, a label or a building selects it.'].forEach((s, i) => g.fillText(clip(g, s, PX - 80), 40, 160 + i * 38)); return; }
+    let y = 150; g.font = `400 26px ${FONT}`;
     for (const line of (f.lines || []).slice(0, 7)) { g.fillStyle = /^(open|Open)/.test(line) ? '#7dff9b' : '#d5dbe1'; g.fillText(clip(g, line, PX - 300), 40, y); y += 34; }
     if (f.x != null) { pn.btn(g, PX - 250, 140, 210, 62, S.mode === 'street' ? 'Go there' : 'Stand there', false, 'go'); pn.btn(g, PX - 250, 216, 210, 62, 'Centre', false, 'centre'); }
   });
-  P.bar = new Panel('bar', 1.0, .12, [0, .5, -.7, 55], (g, pn) => {
-    const W = pn.cv.width, H = pn.cv.height; g.fillStyle = 'rgba(13,16,21,.9)'; rr(g, 0, 0, W, H, 40); g.fill();
-    const st = S.mode === 'street', items = [['Table', !st, 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], [C.NIGHT().on ? 'Day' : 'Night', false, 'night'], ['Recentre', false, 'recentre'], ['Exit', false, 'exit']];
-    const bw = (W - 40) / items.length; items.forEach(([t, on, a], i) => pn.btn(g, 20 + i * bw + 4, 18, bw - 8, H - 36, t, on, a, a === 'exit' ? '#9c2b2b' : null));
+  P.bar = new Panel('bar', .66, .2, [-28, .78, -.3, 22], (g, pn) => {
+    const W = pn.cv.width, H = pn.cv.height; g.fillStyle = 'rgba(13,16,21,.92)'; rr(g, 0, 0, W, H, 34); g.fill();
+    g.fillStyle = pn.hov === 'grab' ? '#fff' : '#6c7680'; for (let k = 0; k < 6; k++) for (let j = 0; j < 2; j++) { g.beginPath(); g.arc(24 + j * 18, H / 2 - 50 + k * 20, 5, 0, 7); g.fill(); }
+    const st = S.mode === 'street', style = C.lineOn() ? (globalThis.DocklandsLines.mode === 'vectrex' ? 'CRT' : 'Lines') : 'Map', sky = { auto: 'Dark', city: 'City', off: 'Off' }[S.sky];
+    const rows = [[['Table', !st, 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], ['Exit', false, 'exit']],
+      [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Style: ' + style, false, 'style'], ['Sky: ' + sky, false, 'sky'], [C.NIGHT().on ? 'Day' : 'Night', false, 'night'], [`Photo${S.photos.length ? ' ' + S.photos.length : ''}`, false, 'photo'], ['Recentre', false, 'recentre']]];
+    const x0 = 64, bw = (W - x0 - 14) / 7, bh = (H - 42) / 2; rows.forEach((row, r) => row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : null)));
+    pn.hits.push([0, 0, 60, H, 'grab']);
   });
   S.panels = [P.places, P.whatson, P.focus, P.bar];
 }
@@ -275,8 +285,9 @@ function after(v) {
 // ---------- input: rays from controllers, hands and gaze-and-pinch (transient pointers); select acts, squeeze grabs the table
 function rayOf(frame, src) { const p = frame.getPose(src.targetRaySpace, S.ref); if (!p) return null; const m = p.transform.matrix; return { o: [m[12], m[13], m[14]], d: nrm([-m[8], -m[9], -m[10]]) }; }
 function hitPanels(o, d) { let best = null; for (const p of S.panels) { const h = p.hit(o, d); if (h && (!best || h.t < best.h.t)) best = { p, h }; } return best; }
-function onSelect(ev) {
-  const r = rayOf(ev.frame, ev.inputSource); if (!r) return; const hp = hitPanels(r.o, r.d);
+function onSelect(ev) { const r = rayOf(ev.frame, ev.inputSource); if (r) click(r); }
+function click(r) {
+  const hp = hitPanels(r.o, r.d);
   if (hp) { if (hp.h.item) act(hp.h.item[4], hp.p, hp.h); return; }
   const mo = M.ap(S.Wi, r.o), md = nrm(M.dir(S.Wi, r.d));
   const near = nearestMarker(r.o, r.d); if (near) { if (near.kind !== 'building') focusOn(near); return; }
@@ -284,7 +295,7 @@ function onSelect(ev) {
   const g = groundHit(mo, md); if (g) { if (S.mode === 'table') { S.c = [g[0], groundY(g[0], g[2]), g[2]]; setW(); S.hiDirty = true; } else teleport(g[0], g[2]); }
 }
 function nearestMarker(o, d) {   // a label or beacon top within a small angle of the ray (the labels are the targets you see)
-  let best = null; for (const l of LAB.items) { const p = toUser(l.x, l.y, l.z), q = sub(p, o), t = dot(q, d); if (t <= 0) continue; const off = len(sub(q, mulv(d, t))) / t; if (off < .02 && (!best || off < best.off)) best = { off, l }; }
+  let best = null; for (const l of LAB.items) { const p = toUser(l.x, l.y, l.z), q = sub(p, o), t = dot(q, d); if (t <= 0) continue; const off = len(sub(q, mulv(d, t))) / t; if (off < .045 && (!best || off < best.off)) best = { off, l }; }
   if (!best) return null; const l = best.l; if (l.focus) return null;
   if (l.mk) { const m = S.inView.markets.find(m => m.id === l.mk); if (m) return marketFocus(m); }
   if (l.ev) { const e = S.inView.events.find(e => Math.abs(e.x - l.x) < 1 && Math.abs(e.z - l.z) < 1); if (e) return eventFocus(e); }
@@ -315,6 +326,10 @@ function act(a, pn) {
   else if (a === 'turnL' || a === 'turnR') { S.yaw += (a === 'turnL' ? -1 : 1) * 30 * DEG; setW(); S.listSig = ''; }
   else if (a === 'night') { C.setNight(!C.NIGHT().on); pn.dirty = true; }
   else if (a === 'recentre') { S.placed = false; }
+  else if (a === 'floorUp' || a === 'floorDn') { const d = a === 'floorUp' ? .1 : -.1; if (S.mode === 'table') { S.O = [S.O[0], S.O[1] + d, S.O[2]]; S.Otable = S.O; } else S.lift = clamp(S.lift - d * 10, 0, 600); setW(); }
+  else if (a === 'style') { const LS = globalThis.DocklandsLines, cur = C.lineOn() ? LS.mode : 'normal', next = { normal: 'lines', lines: 'vectrex', vectrex: 'normal' }[cur]; C.setStyle(next).then(() => { pn.dirty = true; S.hiDirty = true; }); }
+  else if (a === 'sky') { S.sky = { auto: 'city', city: 'off', off: 'auto' }[S.sky]; pn.dirty = true; }
+  else if (a === 'photo') { S.snap = true; }
   else if (a === 'exit') S.session.end();
   else if (a === 'go') { const f = S.focus; if (f) { if (S.mode !== 'street') setMode('street', f); else { const [x, z] = freeSpot(f.x, f.z); teleport(x, z, [f.x, f.z]); } } }
   else if (a === 'centre') { const f = S.focus; if (f) { S.c = [f.x, groundY(f.x, f.z), f.z]; setW(); S.hiDirty = true; } }
@@ -340,7 +355,63 @@ function setMode(m, at) {
   else { S.s = S.sTable || 1 / 1500; S.O = S.Otable || S.O; if (f && f.x != null) S.c = [f.x, groundY(f.x, f.z), f.z]; }
   if (m === 'table') S.sTable = S.s; renderState(); setW(); S.hiDirty = true; S.listSig = ''; P.bar.dirty = true;
 }
-function renderState() { const st = S.mode === 'street'; try { S.session.updateRenderState({ depthNear: st ? .25 : .02, depthFar: st ? 16000 : 80 }); } catch { /* preview */ } }
+function renderState() { const st = S.mode === 'street'; try { S.session.updateRenderState({ depthNear: st ? .25 : .08, depthFar: st ? 16000 : 60 }); } catch { /* preview */ } }
+
+// ---------- presses: a short press is a click (on the ray of the frame before the pinch); a press that moves drags.
+// On empty space one hand moves the city (up and down too), two hands turn it and change its size; on a panel's
+// title (the bar's left end) the hand moves the panel. Hands, controllers and gaze-and-pinch all give selectstart/end.
+const handPos = (frame, src) => { const p = frame.getPose(src.gripSpace || src.targetRaySpace, S.ref); if (!p) return null; const m = p.transform.matrix; return [m[12], m[13], m[14]]; };
+const bearing = v => Math.atan2(v[0], -v[2]);
+function onPressStart(ev) {
+  const src = ev.inputSource, r = S.lastRay.get(src) || rayOf(ev.frame, src) || null; if (!r) return; const pos = handPos(ev.frame, src) || r.o, hp = hitPanels(r.o, r.d);
+  const rec = { src, r, t0: performance.now(), pos0: pos, pos, moved: 0, drag: false };
+  if (hp && hp.p.grabZone(hp.h.px, hp.h.py)) Object.assign(rec, { kind: 'panel', panel: hp.p, dist: hp.h.t, off: sub(hp.h.p, hp.p.c) });
+  else if (hp) rec.kind = 'ui';
+  else Object.assign(rec, { kind: 'world', O0: S.O.slice(), c0: S.c.slice() });
+  S.press.set(src, rec); twoStart();
+}
+function onPressEnd(ev) {
+  const rec = S.press.get(ev.inputSource); S.press.delete(ev.inputSource); if (!rec) return;
+  if (S.two) { S.two = null; for (const o of S.press.values()) if (o.kind === 'world') Object.assign(o, { pos0: o.pos, O0: S.O.slice(), c0: S.c.slice(), drag: true }); return; }
+  if (!rec.drag && performance.now() - rec.t0 < 900) click(rec.r);
+  if (rec.kind === 'world' && rec.drag) { S.hiDirty = true; S.listSig = ''; }
+}
+function twoStart() {
+  const w = [...S.press.values()].filter(o => o.kind === 'world'); if (w.length !== 2) return;
+  const [a, b] = w, mid = mulv(add(a.pos, b.pos), .5); a.drag = b.drag = true;
+  S.two = { a, b, a0: a.pos, b0: b.pos, d0: Math.max(.02, len(sub(b.pos, a.pos))), ang0: bearing(sub(b.pos, a.pos)), s0: S.s, yaw0: S.yaw, m0: M.ap(S.Wi, mid), c0: S.c.slice() };
+}
+function drags(frame) {
+  for (const rec of S.press.values()) { const p = handPos(frame, rec.src); if (!p) continue; rec.pos = p; rec.moved = Math.max(rec.moved, len(sub(p, rec.pos0))); if (rec.moved > .025) rec.drag = true; }
+  const T = S.two;
+  if (T) { const a = T.a.pos, b = T.b.pos, mid = mulv(add(a, b), .5), k = len(sub(b, a)) / T.d0, dA = bearing(sub(b, a)) - T.ang0;
+    S.yaw = T.yaw0 - dA;
+    if (S.mode === 'table') { S.s = clamp(T.s0 * k, 1 / 30000, 1 / 30); S.sTable = S.s; const v = M.dir(M.Ry(S.yaw), mulv(sub(T.m0, S.c), S.s)); S.O = sub(mid, v); S.Otable = S.O; }
+    setW(); S.hiDirty = true; return; }
+  for (const rec of S.press.values()) {
+    if (!rec.drag) continue;
+    if (rec.kind === 'panel') { const r = rayOf(frame, rec.src); if (!r) continue; rec.panel.moveTo(sub(add(r.o, mulv(r.d, rec.dist)), rec.off)); continue; }
+    if (rec.kind !== 'world') continue; const d = sub(rec.pos, rec.pos0);
+    if (S.mode === 'table') { S.O = add(rec.O0, d); S.Otable = S.O; }
+    else { const g = 30, v = M.dir(M.Ry(-S.yaw), [d[0], 0, d[2]]); S.c = [rec.c0[0] - v[0] * g, 0, rec.c0[2] - v[2] * g]; S.c[1] = groundY(S.c[0], S.c[2]); }
+    setW();
+  }
+}
+// the sky's view: the eye's rotation and the model's yaw, no scale and no translation (the table is 1:1500)
+function skyViewOf(v) { const m = new Float32Array(v.transform.inverse.matrix); m[12] = m[13] = m[14] = 0; return M.mul(m, M.Ry(S.yaw)); }
+// a picture of the left eye, kept until the session ends (the page offers them then)
+function snapshot(fb, vp) {
+  try { gl.bindFramebuffer(gl.FRAMEBUFFER, fb); const w = vp.width, h = vp.height, px = new Uint8Array(w * h * 4); gl.readPixels(vp.x, vp.y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d'), im = g.createImageData(w, h);
+    for (let y = 0; y < h; y++) im.data.set(px.subarray((h - 1 - y) * w * 4, (h - y) * w * 4), y * w * 4); for (let i = 3; i < im.data.length; i += 4) im.data[i] = 255; g.putImageData(im, 0, 0);
+    cv.toBlob(b => { if (b) { S.photos.push({ url: URL.createObjectURL(b), t: new Date() }); P.bar.dirty = true; } }, 'image/png'); }
+  catch (e) { C.toast('Photo failed: ' + e.message); }
+}
+function offerPhotos() {
+  if (!S.photos.length) return; const box = document.createElement('div'); box.style.cssText = 'position:fixed;z-index:60;left:50%;transform:translateX(-50%);bottom:90px;background:#11151b;border:1px solid #2a313a;border-radius:14px;padding:12px 14px;color:#eef2f6;font:500 15px system-ui;max-width:90vw';
+  box.innerHTML = `<div style="margin-bottom:6px">Headset photos: ${S.photos.length}</div>` + S.photos.map((p, i) => `<a style="color:#8cc4ff;margin-right:10px" download="docklands-headset-${p.t.toISOString().slice(0, 19).replace(/:/g, '')}.png" href="${p.url}">Photo ${i + 1}</a>`).join('') + ' <button style="margin-left:8px">Close</button>';
+  box.querySelector('button').onclick = () => box.remove(); document.body.appendChild(box);
+}
 
 // ---------- the frame loop
 function place(pose) {
@@ -354,7 +425,7 @@ function onFrame(t, frame) {
   const pose = frame.getViewerPose(S.ref); if (!pose) return; const m = pose.transform.matrix;
   S.head = [m[12], m[13], m[14]]; S.headF = nrm([-m[8], -m[9], -m[10]]);
   if (!S.placed) place(pose);
-  S.hover.clear();
+  for (const [src, h] of S.hover) S.lastRay.set(src, h); S.hover.clear(); drags(frame);
   for (const src of s.inputSources) { const r = rayOf(frame, src); if (!r) continue; const hp = hitPanels(r.o, r.d); S.hover.set(src, { ...r, len: hp ? hp.h.t : 3 });
     for (const p of S.panels) { const hv = hp && hp.p === p && hp.h.item ? hp.h.item[4] : null; if (p.hov !== hv) { p.hov = hv; p.dirty = true; } }
     const gp = src.gamepad; if (gp && gp.axes && gp.axes.length >= 4) stick(gp.axes[2], gp.axes[3], src);
@@ -362,11 +433,15 @@ function onFrame(t, frame) {
   if (t - S.listT > 450) { S.listT = t; updateLists(); }
   if (S.hiDirty) buildHighlights();
   for (const p of S.panels) if (p.dirty) p.redraw();
-  const L = s.renderState.baseLayer, tbl = S.mode === 'table';
+  const L = s.renderState.baseLayer, tbl = S.mode === 'table', night = C.NIGHT().on, noSky = S.sky === 'off' || (S.ar && !night), K = globalThis.DocklandsSky;
+  // Sky: Dark (the default: the dark-site sky with the Milky Way, also over passthrough at night), City (London's sky glow), Off
+  if (K && K.S) K.S.dark = S.sky === 'auto';
+  let first = true;
   for (const v of pose.views) {
     const vp = L.getViewport(v), view = M.mul(v.transform.inverse.matrix, S.W), vm = v.transform.matrix, eye = M.ap(S.Wi, [vm[12], vm[13], vm[14]]), fw = nrm(M.dir(S.Wi, [-vm[8], -vm[9], -vm[10]]));
-    XR.view = { fb: L.framebuffer, x: vp.x, y: vp.y, w: vp.width, h: vp.height, proj: v.projectionMatrix, view, eye, target: add(eye, mulv(fw, 100)), noSky: tbl, clear: S.ar && tbl ? [0, 0, 0, 0] : tbl ? [.075, .085, .1, 1] : null, after: () => after(v) };
+    XR.view = { fb: L.framebuffer, x: vp.x, y: vp.y, w: vp.width, h: vp.height, proj: v.projectionMatrix, view, eye, target: add(eye, mulv(fw, 100)), noSky, skyView: skyViewOf(v), clear: S.ar && noSky ? [0, 0, 0, 0] : tbl ? [.075, .085, .1, 1] : null, after: () => after(v) };
     try { C.render(); } finally { XR.view = null; }
+    if (first && S.snap) { S.snap = false; snapshot(L.framebuffer, vp); } first = false;
   }
   if (S.preview) S.prevDrawn = true;
 }
@@ -381,19 +456,20 @@ function stick(x, y) {
 // ---------- sessions: a real one (immersive-vr or immersive-ar) or the preview on the page canvas
 async function start(kind) {
   if (S.session) return; const prev = kind === 'preview';
-  if (C.PIX().on || C.lineOn()) await C.setStyle('normal');
+  if (C.PIX().on) await C.setStyle('normal');
+  const tr = $('showTrees'); if (tr && !tr.checked) { tr.checked = true; tr.onchange(); }
   if (!TP) progs(); if (!S.panels.length) makePanels();
   let session;
   if (prev) session = new PreviewSession();
   else { await gl.makeXRCompatible(); session = await navigator.xr.requestSession(kind, { optionalFeatures: ['local-floor', 'hand-tracking'] }); }
   S.session = session; S.preview = prev; S.ar = kind === 'immersive-ar';
-  if (!prev) session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl, { antialias: true, alpha: S.ar }) });
+  if (!prev) session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl, { antialias: true, alpha: S.ar, depth: true, stencil: true }) });
   try { S.ref = await session.requestReferenceSpace('local-floor'); S.floor = true; } catch { S.ref = await session.requestReferenceSpace('local'); S.floor = false; }
   S.mode = 'table'; S.s = 1 / 1500; const T = [C.cam.tx, C.cam.tz]; S.c = [T[0], groundY(T[0], T[1]), T[1]]; S.placed = false; renderState();
-  session.addEventListener('select', onSelect);
-  session.addEventListener('squeezestart', ev => { const r = rayOf(ev.frame, ev.inputSource); if (!r) return; if (S.mode === 'table') S.grab = { src: ev.inputSource, o: r.o, O: S.O }; else { const g = groundHit(M.ap(S.Wi, r.o), nrm(M.dir(S.Wi, r.d))); if (g) teleport(g[0], g[2]); } });
-  session.addEventListener('squeezeend', () => { S.grab = null; });
-  session.addEventListener('end', () => { S.session = null; XR.active = false; XR.view = null; S.grab = null; gl.bindFramebuffer(gl.FRAMEBUFFER, null); if ($('labels')) $('labels').style.visibility = ''; C.draw(); });
+  session.addEventListener('selectstart', onPressStart); session.addEventListener('selectend', onPressEnd);
+  session.addEventListener('squeezestart', onPressStart); session.addEventListener('squeezeend', ev => { const rec = S.press.get(ev.inputSource); if (rec) rec.drag = true; onPressEnd(ev); });
+  const K0 = globalThis.DocklandsSky, dark0 = K0 && K0.S ? K0.S.dark : null;
+  session.addEventListener('end', () => { if (dark0 != null) K0.S.dark = dark0; S.session = null; XR.active = false; XR.view = null; S.grab = null; S.press.clear(); S.two = null; offerPhotos(); gl.bindFramebuffer(gl.FRAMEBUFFER, null); if ($('labels')) $('labels').style.visibility = ''; C.draw(); });
   XR.active = true; if ($('labels')) $('labels').style.visibility = 'hidden';
   loadData().catch(e => C.toast('Listings did not load: ' + e.message));
   session.requestAnimationFrame(onFrame);
@@ -415,7 +491,7 @@ class PreviewSession {
     this.btn.onclick = () => this.end(); document.body.appendChild(this.btn); this.loop(); }
   fov() { return C.cv.width < C.cv.height ? 1.45 : 1.15; }
   headM() { return M.mul(M.T(0, 1.6, 0), M.mul(M.Ry(this.yaw), (() => { const o = M.I(), c = Math.cos(this.pitch), s = Math.sin(this.pitch); o[5] = c; o[6] = s; o[9] = -s; o[10] = c; return o; })())); }
-  fire(n, r) { const src = { targetRayMode: 'screen', handedness: 'none', targetRaySpace: { r } }; for (const f of this.ev[n] || []) f({ inputSource: src, frame: this.frameObj() }); }
+  fire(n, r) { const src = { targetRayMode: 'screen', handedness: 'none', targetRaySpace: { r } }, fr = this.frameObj(); if (n === 'select') { for (const k of ['selectstart', 'selectend']) for (const f of this.ev[k] || []) f({ inputSource: src, frame: fr }); return; } for (const f of this.ev[n] || []) f({ inputSource: src, frame: fr }); }
   frameObj() { const H = this.headM(), inv = inverseRigid(H), a = C.cv.width / C.cv.height, view = { eye: 'none', projectionMatrix: M.persp(this.fov(), a, this.renderState.depthNear, this.renderState.depthFar), transform: { matrix: H, inverse: { matrix: inv } } };
     return { getViewerPose: () => ({ transform: { matrix: H }, views: [view] }), getPose: sp => { const r = sp.r; const z = nrm(mulv(r.d, -1)), x = nrm(cross([0, 1, 0], z)), y = cross(z, x); return { transform: { matrix: new Float32Array([...x, 0, ...y, 0, ...z, 0, ...r.o, 1]) } }; } }; }
   loop() { if (this.ended) return; requestAnimationFrame(() => this.loop()); if (!this.cb) return; const due = this.dirty || S.hiDirty || S.panels.some(p => p.dirty) || performance.now() - (this.last || 0) > 900; if (!due) return;
