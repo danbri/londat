@@ -148,12 +148,28 @@ let SEL = -1, KEYS = null, keysLoading = null;
 const keys = () => keysLoading || (keysLoading = loadJSON(DATA + 'building-keys.json').then(J => { if (J.model && J.model.fp !== MFP) { console.warn('building-keys.json is for another area.js'); return null; } J.ids = J.ids.split(','); return (KEYS = J); }).catch(e => { console.warn(e); return null; }));
 const selMat = new THREE.MeshBasicNodeMaterial({ color: 0xffd34d, transparent: true, opacity: 0.35, depthTest: true, side: THREE.DoubleSide }), sel = new THREE.Mesh(new THREE.BufferGeometry(), selMat);
 sel.renderOrder = 2; scene.add(sel);
-function pickAt(x, y) {
-  const r = renderer.domElement.getBoundingClientRect(); ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera);
-  const hit = ray.intersectObjects([...buildings.children, ...models.children], true)[0]; if (!hit) return -1;
-  if (hit.object.userData.model != null) return hit.object.userData.model;
-  let o = hit.object; while (o && o.userData.model == null && o.parent) o = o.parent; if (o && o.userData.model != null) return o.userData.model;
-  return hit.object.geometry.userData.bi ? hit.object.geometry.userData.bi[hit.face.a] : -1;
+function aim(x, y) { const r = renderer.domElement.getBoundingClientRect(); ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera); return ray; }
+function pickHit() {   // the building or detailed model under the ray: { i: model index, d: distance } or null
+  const hit = ray.intersectObjects([...buildings.children, ...models.children], true).find(h => U.cut.value >= 250 || h.point.y <= U.cut.value); if (!hit) return null;   // a part cut away cannot be tapped
+  let o = hit.object; while (o && o.userData.model == null && o.parent) o = o.parent;
+  const i = o && o.userData.model != null ? o.userData.model : hit.object.geometry.userData.bi ? hit.object.geometry.userData.bi[hit.face.a] : -1;
+  return i >= 0 ? { i, d: hit.distance } : null;
+}
+function pickAt(x, y) { aim(x, y); const h = pickHit(); return h ? h.i : -1; }
+// a tap: the nearest of the building under the ray and what the layers' pick hooks find (ctx.addPick(ray => null | { distance, open() }))
+const pickHooks = [];
+function tap(x, y) {
+  aim(x, y); const b = pickHit(); let best = b ? { distance: b.d, open: () => selectModel(b.i) } : null;
+  for (const f of pickHooks) { let r = null; try { r = f(ray); } catch (e) { console.warn('pick', e); } if (r && (!best || r.distance < best.distance)) best = r; }
+  if (!best) { selectModel(-1); return; }
+  if (!b || best.distance !== b.d) { SEL = -1; highlight(-1); writeHash(); }
+  best.open();
+}
+// building mode: 'ghost' (see-through, no depth write) while any layer asks for it (floors), else solid
+const ghosts = new Set();
+function setBuildingMode(mode, who) {
+  if (mode === 'ghost') ghosts.add(who); else ghosts.delete(who); const g = ghosts.size > 0;
+  if (bmat.transparent !== g) { Object.assign(bmat, g ? { transparent: true, opacity: .22, depthWrite: false } : { transparent: false, opacity: 1, depthWrite: true }); bmat.needsUpdate = true; } draw();
 }
 function highlight(i) {   // the picked building's outline as a translucent prism
   sel.geometry.dispose(); if (i < 0) { sel.geometry = new THREE.BufferGeometry(); return; }
@@ -177,7 +193,7 @@ async function selectModel(i) {
 }
 let down = null;
 renderer.domElement.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
-renderer.domElement.addEventListener('pointerup', e => { if (!down) return; const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); if (moved < 6 && performance.now() - down.t < 500) selectModel(pickAt(e.clientX, e.clientY)); down = null; });
+renderer.domElement.addEventListener('pointerup', e => { if (!down) return; const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); if (moved < 6 && performance.now() - down.t < 500) tap(e.clientX, e.clientY); down = null; });
 $('cardX').onclick = () => selectModel(-1);
 
 // ---------- labels: the named places of area.js, nearest first, at most one in a 150 x 30 px cell, 36 at most
@@ -255,6 +271,7 @@ const ui = {
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
+  addPick: f => pickHooks.push(f), setBuildingMode,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
 };
 async function loadLayers() {
@@ -311,4 +328,4 @@ say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.trian
 setTimeout(() => $('hud').classList.add('fade'), 4000);
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, fromLondon, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx };
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, fromLondon, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap };

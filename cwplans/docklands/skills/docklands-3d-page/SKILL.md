@@ -1781,9 +1781,9 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   models), buildOpts (merged last into buildBuildings: heightOf, colourOf, towers, look, skip), rebuildBuildings, onFrame,
   showCard, stats. `LAYERS[id]` is `{ mod, api, on }`: the api is kept as returned, so its getters stay live (a spread
   copied them once). Group 1 was written by four subagents in parallel, one file each, tested with `?layers=`; the
-  parity table is in docklands/README.md. Open framework items: a pick hook for layers (stations and trees add their own
-  pointer handling), a building mode (solid, ghost) in place of floors.js and under.js changing the building material,
-  a CSM `maxFar` fault (a faint band at the far edge of the shadow range on WebGPU).
+  parity table is in docklands/README.md. `ctx.addPick(ray => null | { distance, open() })`: a tap opens the nearest of the
+  building under the ray and the layers' hits (stations uses it); `ctx.setBuildingMode('ghost' | 'solid', who)`: the
+  buildings see-through while any layer asks (floors). Open framework item: a CSM `maxFar` fault (a faint band at the far edge of the shadow range on WebGPU).
 - **Test.** `node docklands/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
   SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
   --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or

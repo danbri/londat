@@ -49,20 +49,12 @@ export default {
         `<p class="small">Model made in Blender on 2026-10-05 (scoping, not survey data). ${esc(doc.meta.licence)} ` +
         `Files: <a href="${doc.meta.source}" target="_blank" rel="noopener">danbri/londat am3d/models</a>.</p>`);
     }
-    // tap: a station part, when the page's own pick (buildings, detailed models) finds nothing there
-    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), el = ctx.renderer.domElement; let down = null;
-    el.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
-    el.addEventListener('pointerup', e => {
-      if (!down || !group.visible) return; const d = down; down = null;
-      if (Math.hypot(e.clientX - d.x, e.clientY - d.y) >= 6 || performance.now() - d.t >= 500) return;
-      const r = el.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, ctx.camera);
-      const hits = ray.intersectObjects(group.children, false), hit = hits.find(h => !h.object.material.transparent) || hits[0]; if (!hit) return;   // a solid part inside the see-through box first
-      // a building or detailed model in front of the part keeps the page's own card
-      const front = ctx.scene.children.filter(g => g.isGroup && g.visible && g.children.some(c => c.userData.tile || c.userData.model != null));   // main.js buildings, models
-      const b = ray.intersectObjects(front, true)[0]; if (b && b.distance < hit.distance) return;
-      const oi = hit.object.geometry.userData.part[hit.faceIndex]; if (oi == null) return;
-      if (globalThis.__docklands3) __docklands3.selectModel(-1);   // the page picked a building behind the part: drop it
-      card(doc.objects[oi]);
+    // tap: a station part (the page compares it with the building under the ray and opens the nearer; ctx.addPick)
+    ctx.addPick(ray => {
+      if (!group.visible) return null;
+      const hits = ray.intersectObjects(group.children, false), hit = hits.find(h => !h.object.material.transparent) || hits[0]; if (!hit) return null;   // a solid part inside the see-through box first
+      const oi = hit.object.geometry.userData.part[hit.faceIndex]; if (oi == null) return null;
+      return { distance: hit.distance, open: () => card(doc.objects[oi]) };
     });
 
     const setVisible = v => { group.visible = v; ctx.draw(); };

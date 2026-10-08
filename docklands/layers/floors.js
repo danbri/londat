@@ -30,15 +30,12 @@ export default {
   async init(ctx, on) {
     const { THREE, scene } = ctx, mesh = new THREE.Mesh(new THREE.BufferGeometry(), ctx.materials.vertexColourMaterial());
     mesh.name = 'floors'; mesh.frustumCulled = false;
-    let built = false, saved = null;
+    let built = false;
     const ensure = () => { if (built) return; built = true; const t0 = performance.now(), { M, nb } = build();
       mesh.geometry.dispose(); mesh.geometry = M.geometry(); mesh.frustumCulled = true;
       mesh.userData.stats = { buildings: nb, triangles: M.idx.length / 3, ms: Math.round(performance.now() - t0) }; };
-    // the building material: the one on the building tiles (main.js userData.tile)
-    const bmat = () => { let m = null; scene.traverse(o => { if (!m && o.userData && o.userData.tile && o.material) m = o.material; }); return m; };
-    const ghost = g => { const m = bmat(); if (!m) return;
-      if (g && !saved) { saved = { transparent: m.transparent, opacity: m.opacity, depthWrite: m.depthWrite }; Object.assign(m, { transparent: true, opacity: .22, depthWrite: false }); m.needsUpdate = true; }
-      else if (!g && saved) { Object.assign(m, saved); saved = null; m.needsUpdate = true; } };
+    // the buildings see-through while the floors show (the WebGL page: alpha 0.22); main.js ctx.setBuildingMode
+    const ghost = g => ctx.setBuildingMode(g ? 'ghost' : 'solid', 'floors');
     const setVisible = v => { if (v) ensure(); mesh.visible = v; ghost(v); ctx.draw(); };
     if (on) { ensure(); ghost(true); }   // the buildings are in the scene before the layers load
     return { object: mesh, setVisible };
