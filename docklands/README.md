@@ -51,6 +51,31 @@ https://danbri.github.io/londat/docklands/?view=rotherhithe&t=2026-10-03T22:30 ,
 https://danbri.github.io/londat/docklands/?view=cw&t=2026-10-08T13:00&ground=rgb2008 ,
 https://danbri.github.io/londat/docklands/?view=greenlandday&webgl .
 
+## Parity with the WebGL page
+
+Status by feature. "yes" = ported and tested headless on WebGL 2 and WebGPU; "partial" = ported in part (the note says
+what is missing); "no" = not started. Layers are modules in `layers/` (`export default { id, label, on, init(ctx) }`);
+`?layers=a,b` loads a layer that is not yet in the default list.
+
+| group | feature | status | note |
+|---|---|---|---|
+| model | terrain, ground images | yes | ground sinks under water polygons |
+| model | water, greens, rail, roads | yes | no ripples or reflections yet |
+| model | buildings, towers, roof shapes, Realistic colours | partial | no Realistic day facade patterns |
+| model | detailed models (glTF) | yes | |
+| 1 data layers | trees | no | in progress |
+| 1 data layers | terrain ring (Hills of London) | no | in progress |
+| 1 data layers | flood walls, riverbed, floor plates | no | in progress |
+| 1 data layers | tunnels, basements, indoor, cut-away gauge | no | in progress |
+| 1 data layers | station models | no | in progress |
+| 1 data layers | skyline years | no | in progress |
+| 2 interface | drawer tabs, search, registry card (atlas, kg links), colour by, routes, press and hold | no | |
+| 3 night | windows, crowns, haze, stars, bloom | partial | crown campaign colours by date not ported |
+| 3 night | light sprites (aviation, lamps, signs), reflections, weather | no | |
+| 4 live | ships and AIS, river and tide, overlays, locate, wind, KML | no | |
+| 5 styles | photo facades, pixel art, Line drawing, Vector CRT, splats | no | splats need a three.js splat renderer (licence check first) |
+| 6 other | Drone, plotter SVG, music, WebXR | no | the WebGL page's headset layer stays in use until then |
+
 ## Ported and not ported (2026-10-08)
 
 Ported: terrain (with the three ground images), water (the ground sinks under water polygons), greens, open-air rail
