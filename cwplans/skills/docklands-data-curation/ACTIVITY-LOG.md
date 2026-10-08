@@ -1954,3 +1954,12 @@ can we make it look more watery in future?" Read-only check of the WebGL page (n
   street and ride, the page's value back at Exit. test/xr-check.mjs 14 of 14 (new: the relief step).
 - Still open: water depth colour, reflection and ripples by day; Greenland and South Dock bed levels; opaque ground and
   stronger slope shading in the headset. Skill: docklands-3d-page, "WebXR" and "Water over the LiDAR ground".
+
+## 2026-10-08: owner's note on the menus (open item)
+
+Owner, 2026-10-08: "Note that the content and organization of our main menus lacks discipline and clarity, and we ought
+to rework later as implementors get used to AI." Not started. Applies to the WebGL page's drawer (views, Layers, Sky,
+Route, About; many checkboxes added one feature at a time) and to the Three.js port, whose layer modules each add their
+own controls through ctx.ui (docklands/main.js). Before the rework: list every control with its page, purpose and
+default, group by task (look at the city, find a place, time and sky, data layers, below ground, renderer), and agree the
+structure with the owner. The port's parity work should not copy the WebGL page's menu layout as fixed.
