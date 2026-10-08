@@ -1854,3 +1854,6 @@ a re-run with the same inputs mints the same terms).
   slope; no half-hip, mansard, butterfly or skillion. Skill: docklands-3d-page, "Roof shapes".
 - Headset controllers: left stick moves over the map, right stick turns and zooms, A/B/X/Y shortcuts, haptic pulses.
   xr-check.mjs: 13 of 13.
+- Works and events refreshed 2026-10-08 (fetch-works.mjs venue-events tfl-road tfl-bus tfl-lines th-licences planning):
+  venue-events 215 (174 from today on), works.json 1,557 items. The markets source gave 0 items in this container (its
+  OSM raw input is not here): the 2026-10-04 markets.json was kept and works.json rebuilt from the snapshots.

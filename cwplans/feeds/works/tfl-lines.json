@@ -1,28 +1,28 @@
 {
  "meta": {
   "source": "tfl-lines",
-  "fetched": "2026-10-04",
+  "fetched": "2026-10-08",
   "url": "https://api.tfl.gov.uk/Line/{ids}/Status/{from}/to/{to}?detail=true",
   "licence": "TfL open data terms (Transport Data Service; OGL-based, attribution required). The terms page refuses scripted requests: re-check before production",
   "attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]",
   "naptan": {
    "url": "https://naptan.api.dft.gov.uk/v1/access-nodes?atcoAreaCodes=910,930,940&dataFormat=csv",
-   "fetched": "2026-10-04",
+   "fetched": "2026-10-08",
    "licence": "Open Government Licence v3.0"
   },
-  "method": "TfL Unified API line status for 2026-10-04T00:00:00 to 2027-01-02T23:59:00 (90 days) for 29 lines (tube, DLR, Elizabeth line, Overground, river bus, cable car and c2c, southeastern, southern, thameslink, greater-anglia); one status per disruption with its validity periods; kept when an affected stop lies in the zone or, for a status that names no stops, when the line serves the zone.",
+  "method": "TfL Unified API line status for 2026-10-08T00:00:00 to 2027-01-06T23:59:00 (90 days) for 29 lines (tube, DLR, Elizabeth line, Overground, river bus, cable car and c2c, southeastern, southern, thameslink, greater-anglia); one status per disruption with its validity periods; kept when an affected stop lies in the zone or, for a status that names no stops, when the line serves the zone.",
   "window": {
-   "from": "2026-10-04T00:00:00",
-   "to": "2027-01-02T23:59:00"
+   "from": "2026-10-08T00:00:00",
+   "to": "2027-01-06T23:59:00"
   },
   "counts": {
-   "items": 29,
+   "items": 24,
    "lines": 29,
-   "statuses": 94,
-   "disrupted": 82,
-   "kept_by_stop": 24,
-   "kept_line_wide": 5,
-   "dropped_outside": 53,
+   "statuses": 88,
+   "disrupted": 76,
+   "kept_by_stop": 21,
+   "kept_line_wide": 3,
+   "dropped_outside": 52,
    "stops_unplaced": 5
   },
   "zone": {
@@ -42,24 +42,123 @@
  },
  "items": [
   {
-   "id": "tfl-line:waterloo-city:7d346c7b",
-   "kind": "rail closure",
-   "title": "Waterloo & City: Waterloo & City line: service operates 06:00 until 00:30, Monday to Friday only. There is no service on Saturdays, Sundays and on bank/public holidays.",
-   "start": "2026-10-03T23:00:00Z",
-   "end": "2026-12-28T23:59:00Z",
+   "id": "tfl-line:southern:a36fbae1",
+   "kind": "service change",
+   "title": "Southern: https://www.nationalrail.co.uk/service-disruptions/godstone-20261007/",
+   "start": "2026-10-08T13:57:57Z",
+   "end": "2026-10-08T22:59:59Z",
    "periods": [
     {
-     "from": "2026-10-03T23:00:00Z",
-     "to": "2026-10-04T00:15:00Z"
+     "from": "2026-10-08T13:57:57Z",
+     "to": "2026-10-08T22:59:59Z"
+    }
+   ],
+   "location": "Southern (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "southern",
+   "mode": "national-rail",
+   "severity": "Special Service",
+   "category": "Information",
+   "stops_in_zone": [],
+   "url": "https://www.nationalrail.co.uk/service-disruptions/godstone-20261007/"
+  },
+  {
+   "id": "tfl-line:northern:3d4b4579",
+   "kind": "reduced service",
+   "title": "Northern: Northern Line: No service between Moorgate and Morden via Bank while we fix a signal failure at Stockwell. SEVERE DELAYS on the rest of the line. Tickets are being accepted on London Buses, Thameslink, Great Northern, South Western Railway and London Trams.",
+   "start": "2026-10-08T14:50:15Z",
+   "end": "2026-10-09T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-08T14:50:15Z",
+     "to": "2026-10-09T00:29:00Z"
+    }
+   ],
+   "location": "Northern (line-wide)",
+   "lat": null,
+   "lon": null,
+   "borough": null,
+   "zone": "line",
+   "placed_by": "line serves the zone; no stops named",
+   "line": "northern",
+   "mode": "tube",
+   "severity": "Severe Delays",
+   "category": "RealTime",
+   "stops_in_zone": [],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:northern:3d4b4579",
+   "kind": "service change",
+   "title": "Northern: Northern Line: No service between Moorgate and Morden via Bank while we fix a signal failure at Stockwell. SEVERE DELAYS on the rest of the line. Tickets are being accepted on London Buses, Thameslink, Great Northern, South Western Railway and London Trams.",
+   "start": "2026-10-08T14:50:15Z",
+   "end": "2026-10-08T18:38:19Z",
+   "periods": [
+    {
+     "from": "2026-10-08T14:50:15Z",
+     "to": "2026-10-08T18:38:19Z"
+    }
+   ],
+   "location": "Bank Underground Station; Borough Underground Station; London Bridge Underground Station; Moorgate Underground Station",
+   "lat": 51.51342,
+   "lon": -0.088954,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "northern",
+   "mode": "tube",
+   "severity": "Part Suspended",
+   "category": "RealTime",
+   "stops_in_zone": [
+    "940GZZLUBNK",
+    "940GZZLUBOR",
+    "940GZZLULNB",
+    "940GZZLUMGT"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:windrush:351a652b",
+   "kind": "rail closure",
+   "title": "Windrush: WINDRUSH LINE: Thursday 8 October, after 2315 each evening, no service between Surrey Quays and Clapham Junction / Battersea Park. Please use local London Buses and London Underground services as no replacement bus service operates for this closure.",
+   "start": "2026-10-08T22:15:00Z",
+   "end": "2026-10-09T00:29:00Z",
+   "periods": [
+    {
+     "from": "2026-10-08T22:15:00Z",
+     "to": "2026-10-08T22:59:00Z"
     },
     {
-     "from": "2026-10-04T03:15:00Z",
-     "to": "2026-10-04T22:59:00Z"
-    },
-    {
-     "from": "2026-10-04T23:00:00Z",
-     "to": "2026-10-04T23:45:00Z"
-    },
+     "from": "2026-10-08T23:00:00Z",
+     "to": "2026-10-09T00:29:00Z"
+    }
+   ],
+   "location": "Surrey Quays Rail Station",
+   "lat": 51.493196,
+   "lon": -0.047519,
+   "borough": null,
+   "zone": "model",
+   "placed_by": "affected stop in the zone",
+   "line": "windrush",
+   "mode": "overground",
+   "severity": "Part Closure",
+   "category": "PlannedWork",
+   "stops_in_zone": [
+    "910GSURREYQ"
+   ],
+   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
+  },
+  {
+   "id": "tfl-line:waterloo-city:743ff6d5",
+   "kind": "rail closure",
+   "title": "Waterloo & City: Waterloo & City line: service operates 06:00 until 00:30, Monday to Friday only. There is no service on Saturdays, Sundays and on bank/public holidays.",
+   "start": "2026-10-10T03:15:00Z",
+   "end": "2026-12-28T23:59:00Z",
+   "periods": [
     {
      "from": "2026-10-10T03:15:00Z",
      "to": "2026-10-10T22:59:00Z"
@@ -276,261 +375,6 @@
    "severity": "Planned Closure",
    "category": "Information",
    "stops_in_zone": [],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:c2c:445de467",
-   "kind": "service change",
-   "title": "c2c: https://www.nationalrail.co.uk/service-disruptions/amended-c-2-c-20260818/",
-   "start": "2026-10-03T23:00:14Z",
-   "end": "2026-10-04T22:59:59Z",
-   "periods": [
-    {
-     "from": "2026-10-03T23:00:14Z",
-     "to": "2026-10-04T22:59:59Z"
-    }
-   ],
-   "location": "c2c (line-wide)",
-   "lat": null,
-   "lon": null,
-   "borough": null,
-   "zone": "line",
-   "placed_by": "line serves the zone; no stops named",
-   "line": "c2c",
-   "mode": "national-rail",
-   "severity": "Special Service",
-   "category": "Information",
-   "stops_in_zone": [],
-   "url": "https://www.nationalrail.co.uk/service-disruptions/amended-c-2-c-20260818/"
-  },
-  {
-   "id": "tfl-line:waterloo-city:5ac0696f",
-   "kind": "service change",
-   "title": "Waterloo & City: Waterloo and City Line: Service will resume at 06:00 on Monday.",
-   "start": "2026-10-04T03:25:36Z",
-   "end": "2026-10-04T11:03:57Z",
-   "periods": [
-    {
-     "from": "2026-10-04T03:25:36Z",
-     "to": "2026-10-04T11:03:57Z"
-    }
-   ],
-   "location": "Waterloo & City (line-wide)",
-   "lat": null,
-   "lon": null,
-   "borough": null,
-   "zone": "line",
-   "placed_by": "line serves the zone; no stops named",
-   "line": "waterloo-city",
-   "mode": "tube",
-   "severity": "Service Closed",
-   "category": "RealTime",
-   "stops_in_zone": [],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:dlr:5c37a4fd",
-   "kind": "rail closure",
-   "title": "DLR: DOCKLANDS LIGHT RAILWAY: Sunday 4 October, no service between Shadwell and Tower Gateway.",
-   "start": "2026-10-04T03:30:00Z",
-   "end": "2026-10-05T00:29:00Z",
-   "periods": [
-    {
-     "from": "2026-10-04T03:30:00Z",
-     "to": "2026-10-05T00:29:00Z"
-    }
-   ],
-   "location": "Shadwell DLR Station; Tower Gateway DLR Station",
-   "lat": 51.511693,
-   "lon": -0.056643,
-   "borough": null,
-   "zone": "model",
-   "placed_by": "affected stop in the zone",
-   "line": "dlr",
-   "mode": "dlr",
-   "severity": "Part Closure",
-   "category": "PlannedWork",
-   "stops_in_zone": [
-    "940GZZDLSHA",
-    "940GZZDLTWG"
-   ],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:windrush:6d4b0d90",
-   "kind": "rail closure",
-   "title": "Windrush: WINDRUSH LINE: Sunday 4 October, no service between Surrey Quays and Clapham Junction / Battersea Park. Replacement bus service M operates between Canada Water and Clapham Junction via Surrey Quays, Queens Road Peckham, Peckham Rye, Denmark Hill, Clapham High Street and Wandsworth Road.",
-   "start": "2026-10-04T03:30:00Z",
-   "end": "2026-10-05T00:29:00Z",
-   "periods": [
-    {
-     "from": "2026-10-04T03:30:00Z",
-     "to": "2026-10-05T00:29:00Z"
-    }
-   ],
-   "location": "Surrey Quays Rail Station",
-   "lat": 51.493196,
-   "lon": -0.047519,
-   "borough": null,
-   "zone": "model",
-   "placed_by": "affected stop in the zone",
-   "line": "windrush",
-   "mode": "overground",
-   "severity": "Part Closure",
-   "category": "PlannedWork",
-   "stops_in_zone": [
-    "910GSURREYQ"
-   ],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:jubilee:fec4c432",
-   "kind": "rail closure",
-   "title": "Jubilee: JUBILEE LINE: From 0530 Sunday 4 October, no service between Green Park and Canary Wharf. If travelling between Central London and North Greenwich, please travel via Stratford.",
-   "start": "2026-10-04T04:30:00Z",
-   "end": "2026-10-05T00:29:00Z",
-   "periods": [
-    {
-     "from": "2026-10-04T04:30:00Z",
-     "to": "2026-10-05T00:29:00Z"
-    }
-   ],
-   "location": "Bermondsey Underground Station; Canada Water Underground Station; Canary Wharf Underground Station; London Bridge Underground Station",
-   "lat": 51.497953,
-   "lon": -0.063769,
-   "borough": null,
-   "zone": "model",
-   "placed_by": "affected stop in the zone",
-   "line": "jubilee",
-   "mode": "tube",
-   "severity": "Part Closure",
-   "category": "PlannedWork",
-   "stops_in_zone": [
-    "940GZZLUBMY",
-    "940GZZLUCWR",
-    "940GZZLUCYF",
-    "940GZZLULNB"
-   ],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:woolwich-ferry:57e4a08f",
-   "kind": "reduced service",
-   "title": "Woolwich Ferry: The Woolwich Ferry is operating a one boat service due to a technical fault.",
-   "start": "2026-10-04T05:00:00Z",
-   "end": "2026-10-04T21:00:00Z",
-   "periods": [
-    {
-     "from": "2026-10-04T05:00:00Z",
-     "to": "2026-10-04T21:00:00Z"
-    }
-   ],
-   "location": "Woolwich Ferry (line-wide)",
-   "lat": null,
-   "lon": null,
-   "borough": null,
-   "zone": "line",
-   "placed_by": "line serves the zone; no stops named",
-   "line": "woolwich-ferry",
-   "mode": "river-bus",
-   "severity": "Reduced Service",
-   "category": "RealTime",
-   "stops_in_zone": [],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:metropolitan:6a175316",
-   "kind": "reduced service",
-   "title": "Metropolitan: Metropolitan Line: Minor delays while we respond to a fire alert at Harrow-on-the-Hill.",
-   "start": "2026-10-04T08:00:34Z",
-   "end": "2026-10-05T00:29:00Z",
-   "periods": [
-    {
-     "from": "2026-10-04T08:00:34Z",
-     "to": "2026-10-05T00:29:00Z"
-    }
-   ],
-   "location": "Metropolitan (line-wide)",
-   "lat": null,
-   "lon": null,
-   "borough": null,
-   "zone": "line",
-   "placed_by": "line serves the zone; no stops named",
-   "line": "metropolitan",
-   "mode": "tube",
-   "severity": "Minor Delays",
-   "category": "RealTime",
-   "stops_in_zone": [],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:windrush:cf3f2544",
-   "kind": "rail closure",
-   "title": "Windrush: WINDRUSH LINE: Monday 5 and Tuesday 6 October, after 2315 each evening, no service between Surrey Quays and Clapham Junction / Battersea Park. Please use local London Buses and London Underground services as no replacement bus service operates for this closure.",
-   "start": "2026-10-05T22:15:00Z",
-   "end": "2026-10-07T00:29:00Z",
-   "periods": [
-    {
-     "from": "2026-10-05T22:15:00Z",
-     "to": "2026-10-05T22:59:00Z"
-    },
-    {
-     "from": "2026-10-05T23:00:00Z",
-     "to": "2026-10-06T00:29:00Z"
-    },
-    {
-     "from": "2026-10-06T22:15:00Z",
-     "to": "2026-10-06T22:59:00Z"
-    },
-    {
-     "from": "2026-10-06T23:00:00Z",
-     "to": "2026-10-07T00:29:00Z"
-    }
-   ],
-   "location": "Surrey Quays Rail Station",
-   "lat": 51.493196,
-   "lon": -0.047519,
-   "borough": null,
-   "zone": "model",
-   "placed_by": "affected stop in the zone",
-   "line": "windrush",
-   "mode": "overground",
-   "severity": "Part Closure",
-   "category": "PlannedWork",
-   "stops_in_zone": [
-    "910GSURREYQ"
-   ],
-   "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
-  },
-  {
-   "id": "tfl-line:windrush:351a652b",
-   "kind": "rail closure",
-   "title": "Windrush: WINDRUSH LINE: Thursday 8 October, after 2315 each evening, no service between Surrey Quays and Clapham Junction / Battersea Park. Please use local London Buses and London Underground services as no replacement bus service operates for this closure.",
-   "start": "2026-10-08T22:15:00Z",
-   "end": "2026-10-09T00:29:00Z",
-   "periods": [
-    {
-     "from": "2026-10-08T22:15:00Z",
-     "to": "2026-10-08T22:59:00Z"
-    },
-    {
-     "from": "2026-10-08T23:00:00Z",
-     "to": "2026-10-09T00:29:00Z"
-    }
-   ],
-   "location": "Surrey Quays Rail Station",
-   "lat": 51.493196,
-   "lon": -0.047519,
-   "borough": null,
-   "zone": "model",
-   "placed_by": "affected stop in the zone",
-   "line": "windrush",
-   "mode": "overground",
-   "severity": "Part Closure",
-   "category": "PlannedWork",
-   "stops_in_zone": [
-    "910GSURREYQ"
-   ],
    "url": "https://tfl.gov.uk/tube-dlr-overground/status/"
   },
   {

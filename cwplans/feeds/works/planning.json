@@ -1,7 +1,7 @@
 {
  "meta": {
   "source": "planning",
-  "fetched": "2026-10-04",
+  "fetched": "2026-10-08",
   "url": "https://planningdata.london.gov.uk/api-guest/applications/_search",
   "page": "https://www.london.gov.uk/programmes-strategies/planning/digital-planning/planning-london-datahub",
   "licence": "GLA Planning London Datahub terms (not confirmed as OGL): application metadata and the link only, description cut to 220 characters",
