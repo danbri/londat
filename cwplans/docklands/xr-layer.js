@@ -240,7 +240,7 @@ function makePanels() {
     const st = S.mode === 'street', style = C.lineOn() ? (globalThis.DocklandsLines.mode === 'vectrex' ? 'CRT' : 'Lines') : 'Map', sky = { auto: 'Dark', city: 'City', off: 'Off' }[S.sky];
     const rows = [[['Table', S.mode === 'table', 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], ['Exit', false, 'exit']],
       [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Style: ' + style, false, 'style'], ['Sky: ' + sky, false, 'sky'], [C.NIGHT().on ? 'Day' : 'Night', false, 'night'], [`Photo${S.photos.length ? ' ' + S.photos.length : ''}`, false, 'photo'], ['Recentre', false, 'recentre']],
-      [['Drone: ' + droneName(), droneOn(), 'drone'], [S.ride ? 'Ride' : 'Watch', S.mode === 'ride', 'ride'], ['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view'], ['Wind', !!($('showWind') && $('showWind').checked), 'wind']]];
+      [['Drone: ' + droneName(), droneOn(), 'drone'], [S.ride ? 'Ride' : 'Watch', S.mode === 'ride', 'ride'], ['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view'], ['Wind', !!($('showWind') && $('showWind').checked), 'wind'], ['Look: ' + (globalThis.DocklandsLook && DocklandsLook.on() ? 'Real' : 'Map'), false, 'look']]];
     const x0 = 64, bh = (H - 56) / 3; rows.forEach((row, r) => { const bw = (W - x0 - 14) / row.length; row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : a === 'drone' ? '#1b8a8a' : null)); });
     pn.hits.push([0, 0, 60, H, 'grab']);
   });
@@ -336,6 +336,7 @@ function act(a, pn) {
     if (!next) { Dr.stop(); if (S.mode === 'ride') setMode('table'); } else { Dr.manual(true); if (!Dr.on) { const cam = C.cam; delete cam.eye; delete cam.target; Object.assign(cam, { tx: S.c[0], tz: S.c[2], ty: 0, dist: 400, pitch: .5, yaw: -S.yaw - S.base.a * DEG }); }
     Dr.start(next).then(ok => { if (ok === false) C.toast('That vehicle cannot start here'); else if (S.ride) startRide(); pn.dirty = true; }); } pn.dirty = true; }
   else if (a === 'ride') { S.ride = !S.ride; if (droneOn()) { if (S.ride) startRide(); else if (S.mode === 'ride') setMode('table'); } pn.dirty = true; }
+  else if (a === 'look') { const Lk = globalThis.DocklandsLook; if (Lk) Lk.set(!Lk.on()).then(() => { pn.dirty = true; S.hiDirty = true; }); }
   else if (a === 'wind') { const w = $('showWind'); if (w) { w.checked = !w.checked; w.onchange(); } pn.dirty = true; }
   else if (a === 'view') { S.view = (S.view + 1) % VIEWS.length; goView(VIEWS[S.view][0]); pn.dirty = true; }
   else if (a === 'exit') S.session.end();
@@ -512,6 +513,8 @@ async function start(kind) {
   if (S.session) return; const prev = kind === 'preview';
   if (C.PIX().on) await C.setStyle('normal');
   const tr = $('showTrees'); if (tr && !tr.checked) { tr.checked = true; tr.onchange(); }
+  // the headset starts with the Realistic look (owner: ordinary buildings "painfully flat and samey"); the page's own look comes back at Exit
+  const Lk = globalThis.DocklandsLook; S.look0 = Lk ? Lk.on() : null; if (Lk && !S.look0) Lk.set(true).catch(() => {});
   if (!TP) progs(); if (!S.panels.length) makePanels();
   let session;
   if (prev) session = new PreviewSession();
@@ -523,7 +526,7 @@ async function start(kind) {
   session.addEventListener('selectstart', onPressStart); session.addEventListener('selectend', onPressEnd);
   session.addEventListener('squeezestart', onPressStart); session.addEventListener('squeezeend', ev => { const rec = S.press.get(ev.inputSource); if (rec) rec.drag = true; onPressEnd(ev); });
   const K0 = globalThis.DocklandsSky, dark0 = K0 && K0.S ? K0.S.dark : null;
-  session.addEventListener('end', () => { if (dark0 != null) K0.S.dark = dark0; if (droneOn()) DocklandsDrone.manual(false); S.session = null; XR.active = false; XR.view = null; S.grab = null; S.press.clear(); S.two = null; offerPhotos(); gl.bindFramebuffer(gl.FRAMEBUFFER, null); if ($('labels')) $('labels').style.visibility = ''; C.draw(); });
+  session.addEventListener('end', () => { if (dark0 != null) K0.S.dark = dark0; if (S.look0 === false && globalThis.DocklandsLook) DocklandsLook.set(false).catch(() => {}); if (droneOn()) DocklandsDrone.manual(false); S.session = null; XR.active = false; XR.view = null; S.grab = null; S.press.clear(); S.two = null; offerPhotos(); gl.bindFramebuffer(gl.FRAMEBUFFER, null); if ($('labels')) $('labels').style.visibility = ''; C.draw(); });
   XR.active = true; if ($('labels')) $('labels').style.visibility = 'hidden';
   loadData().catch(e => C.toast('Listings did not load: ' + e.message));
   session.requestAnimationFrame(onFrame);

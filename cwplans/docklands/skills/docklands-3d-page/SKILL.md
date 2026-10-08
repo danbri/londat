@@ -1587,6 +1587,9 @@ opens the one-eye preview (drag to look round, tap to select; iOS Safari has no 
     table's scale) or strafe (street). A Table/Street, B Night/Day, X Recentre, Y hide or show the side panels, right
     stick press Photo; Wind (bar row 3) switches the wind layer. A haptic pulse on a hover change (0.12, 12 ms) and on a click (0.35, 30 ms). The mock has
     `pads[i]`; xr-check.mjs closes the stereo page before the preview (they share the software GPU).
+  - Look (bar row 3): Map or Real (`DocklandsLook.set`). A session starts with the Realistic look; the page's own
+    look comes back at Exit. The night-window seed of the Map look now also hashes floor(gk.xy) (the interpolated
+    building centre gave per-pixel noise; found by the Realistic-look work), so Map night windows change pattern.
   - The Quest system menu with hands: look at the palm, pinch and hold (the right hand gives the Meta menu, with
     the screenshot); the page cannot change that gesture.
 - **Not done / open:** no real headset test (the owner has to try it on a Quest or Vision Pro); performance with two

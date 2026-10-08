@@ -1903,3 +1903,5 @@ a re-run with the same inputs mints the same terms).
   roof shapes 0.09409 / 0.09412 (1600) and 0.06951 / 0.06957 (390 DPR 3). Open: 8,594 complex (rectangles with no single
   roof: grow planes from the cells next), pitched wings that fail the rules are flat. Skill: docklands-3d-page, "Roof
   shapes", "Parts".
+- Headset: Look button (Map / Real), the Realistic look by default in a session. Map night-window seed: floor(gk.xy)
+  (per-pixel noise fix). xr-check 13 of 13; fp16 check unchanged (prF 25 fragment uniform rows).
