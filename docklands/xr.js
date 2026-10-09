@@ -3,7 +3,11 @@
 // street level (1:1), panels round you (Places in view, What's on in view, a Focus card, the control bar), controller and
 // hand rays, one-hand grab, two-hand pinch (turn and size), passthrough (immersive-ar), and the one-eye preview for screens
 // with no WebXR (?xr=preview, ?xr=preview&go starts it). Headset sessions run on the WebGL 2 backend: on a WebGPU page the
-// headset button reloads the page with ?webgl&xr=1 and asks for one more tap.
+// headset button reloads the page with ?webgl&xr=1 and asks for one more tap. Bar row 3: Drone (drone.js, stepped from the
+// headset frame; cycles Off, Copter, Plane, Boat, Tube, Walk, Under), Ride or Watch (ride: your eye at the drone's, 1:1, the
+// world turning with its heading; watch: a cyan marker over the table), View (the page's named views; a photo view puts you
+// at street level at its eye), Wind (the wind layer, layers/wind.js, and wind arrows downwind of WU.windDir); row 2: Photo
+// (the left eye as a PNG; the page offers the photos after Exit).
 // The model is NOT moved: the scene stays in model metres (the TSL graphs read positionWorld for the water depth, the
 // window grid and the cut-away), and the eye camera is a child of a rig whose matrix is W^-1, W = T(O) Ry(yaw) S(s, s r, s)
 // T(-c) (reference space <- model). The view of each eye is then pose^-1 W, the same as a scaled scene group.
@@ -11,6 +15,7 @@
 // loop while a session or the preview runs. Skill: docklands-3d-page, "WebXR" and "Three.js port".
 import * as THREE from 'three/webgpu';
 import { geoOf, inBoxOf, RMesh } from './overlay-kit.js';
+import { WU } from './water.js';
 
 // ---------- 4x4 column-major matrices (xr-layer.js)
 const M = {
@@ -32,11 +37,11 @@ const $ = id => document.getElementById(id);
 let C = null, THREEr = null;
 const XR = { active: false };
 
-// ---------- state (xr-layer.js S; no drone, ride or photo here)
+// ---------- state (xr-layer.js S)
 const S = {
   session: null, ref: null, preview: false, ar: false, mode: 'table', s: 1 / 1500, c: [0, 0, 0], O: [0, .78, -1], yaw: 0, lift: 0, floorY: 0,
   W: M.I(), Wi: M.I(), head: [0, 1.6, 0], headF: [0, 0, -1], placed: false, base: { a: 0, p: [0, 1.6, 0] },
-  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), press: new Map(), lastRay: new Map(), two: null, sky: true, view: -1, btn: new Map(), hidePanels: false, pads: false, relief: 2.5,
+  cats: new Set(), openNow: false, win: 7, works: false, focus: null, lead: null, hover: new Map(), press: new Map(), lastRay: new Map(), two: null, sky: true, view: -1, btn: new Map(), hidePanels: false, pads: false, relief: 2.5, photos: [], snap: false, ride: true, droneT: 0, dIdx: 0, wind: false, windSig: '',
   data: null, loading: null, inView: { cats: {}, events: [], works: [], markets: [] }, listT: 0, hiDirty: true, labels: [], panels: [], saved: null,
 };
 // relief: the vertical exaggeration of the table (2.5x by default; the bar's Relief button: 1, 1.5, 2.5, 4); street is 1.
@@ -44,7 +49,7 @@ const S = {
 const RELIEFS = [1, 1.5, 2.5, 4];
 const reliefNow = () => S.mode === 'table' ? S.relief : 1;
 function setW() {
-  const s = S.s, r = reliefNow(), c = S.c, O = S.mode === 'street' ? [S.O[0], S.floorY - S.lift, S.O[2]] : S.O;
+  const s = S.s, r = reliefNow(), c = S.c, O = S.mode === 'ride' ? S.rideO : S.mode === 'street' ? [S.O[0], S.floorY - S.lift, S.O[2]] : S.O;
   S.W = M.mul(M.T(...O), M.mul(M.Ry(S.yaw), M.mul(M.S(s, s * r, s), M.T(-c[0], -c[1], -c[2]))));
   S.Wi = M.mul(M.T(...c), M.mul(M.S(1 / s, 1 / (s * r), 1 / s), M.mul(M.Ry(-S.yaw), M.T(-O[0], -O[1], -O[2]))));
 }
@@ -107,7 +112,7 @@ function viewTest(x, z, y) {
   const p = toUser(x, y, z), d = sub(p, S.head), dh = Math.hypot(d[0], d[2]); if (dh < 1e-6) return null;
   const f = S.headF, fh = Math.hypot(f[0], f[2]) || 1, ca = (d[0] * f[0] + d[2] * f[2]) / (dh * fh), side = (f[0] * d[2] - f[2] * d[0]) / (dh * fh);
   const ang = Math.atan2(side, ca), md = len(sub(M.ap(S.Wi, S.head), [x, y, z]));
-  return { ok: Math.abs(ang) < 52 * DEG && (S.mode === 'table' ? true : md < 4500), ang, p, dist: S.mode === 'street' ? md : Math.hypot(x - S.c[0], z - S.c[2]) };
+  return { ok: Math.abs(ang) < 52 * DEG && (S.mode === 'table' ? true : md < 4500), ang, p, dist: S.mode !== 'table' ? md : Math.hypot(x - S.c[0], z - S.c[2]) };
 }
 const arrow = a => a < -60 * DEG ? '←' : a < -20 * DEG ? '↖' : a <= 20 * DEG ? '↑' : a <= 60 * DEG ? '↗' : '→';
 const km = m => m < 950 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1)} km`;
@@ -134,7 +139,7 @@ function updateLists() {
 }
 
 // ---------- three.js objects: the rig (W^-1) with the eye camera and the reference-space UI; the beacons in model space
-let rig = null, eyeCam = null, prevCam = null, ui = null, beacons = null, beaconMat = null, labMesh = null, rayLines = null, dots = [];
+let rig = null, eyeCam = null, prevCam = null, ui = null, beacons = null, beaconMat = null, labMesh = null, rayLines = null, dots = [], droneMark = null, windMesh = null;
 function makeObjects() {
   rig = new THREE.Group(); rig.name = 'xr-rig'; rig.matrixAutoUpdate = false;
   eyeCam = new THREE.PerspectiveCamera(80, 1, .08, 60); eyeCam.matrixAutoUpdate = false; rig.add(eyeCam);
@@ -144,6 +149,10 @@ function makeObjects() {
   // r186: a mesh first drawn with an empty geometry is never drawn again, so the beacons start with one small triangle and hide
   const bm = new RMesh(); bm.tri(bm.v(0, -1e4, 0, [0, 0, 0]), bm.v(1, -1e4, 0, [0, 0, 0]), bm.v(0, -1e4, 1, [0, 0, 0]));
   beacons = new THREE.Mesh(bm.geometry(), beaconMat); beacons.visible = false; beacons.frustumCulled = false; beacons.name = 'xr-beacons';
+  windMesh = new THREE.Mesh(bm.geometry(), beaconMat); windMesh.visible = false; windMesh.frustumCulled = false; windMesh.name = 'xr-wind';
+  // the drone in Watch: a small cyan diamond in the reference space (xr-layer.js droneMarker)
+  droneMark = new THREE.Mesh(new THREE.OctahedronGeometry(1, 0), new THREE.MeshBasicNodeMaterial({ color: 0x4dffff, transparent: true, opacity: .95, fog: false, toneMapped: false }));
+  droneMark.scale.set(.012, .0168, .012); droneMark.visible = false; droneMark.renderOrder = 8; droneMark.name = 'xr-drone';
   // labels: one atlas canvas (2 x 32 slots of 1024 x 64 px), up to 64 billboards facing the head
   LAB.cv = document.createElement('canvas'); LAB.cv.width = 2048; LAB.cv.height = 2048;
   LAB.tex = new THREE.CanvasTexture(LAB.cv); LAB.tex.flipY = false; LAB.tex.colorSpace = THREE.SRGBColorSpace;
@@ -154,6 +163,7 @@ function makeObjects() {
   const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(6 * 3), 3).setUsage(THREE.DynamicDrawUsage)); rg.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(6 * 4), 4).setUsage(THREE.DynamicDrawUsage));
   rayLines = new THREE.LineSegments(rg, new THREE.LineBasicNodeMaterial({ vertexColors: true, transparent: true, depthWrite: false, fog: false, toneMapped: false }));
   rayLines.frustumCulled = false; rayLines.renderOrder = 7; ui.add(rayLines);
+  ui.add(droneMark);
   for (let k = 0; k < 2; k++) { const d = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 6), new THREE.MeshBasicNodeMaterial({ color: 0xffffff, transparent: true, opacity: .9, depthTest: false, fog: false, toneMapped: false })); d.renderOrder = 8; d.visible = false; ui.add(d); dots.push(d); }
 }
 function syncRig() { rig.matrix.fromArray(S.Wi); rig.matrixWorldNeedsUpdate = true; rig.updateMatrixWorld(true); }
@@ -224,7 +234,8 @@ function frame(g, pn, title, sub_) {
 }
 function clip(g, s, w) { s = String(s ?? ''); if (g.measureText(s).width <= w) return s; let a = 0, b = s.length; while (a < b) { const m = (a + b + 1) >> 1; if (g.measureText(s.slice(0, m) + '…').width <= w) a = m; else b = m - 1; } return s.slice(0, a) + '…'; }
 const P = {};
-const VIEWS = [['cw', 'Canary Wharf'], ['rotherhithe', 'Rotherhithe'], ['greenland', 'Greenland'], ['pier', 'Pier'], ['area', 'Area']];
+// the page's named views (main.js VIEWS); eye: a photo view (an eye point), which puts you at street level there
+const VIEWS = [['cw', 'Canary Wharf'], ['rotherhithe', 'Rotherhithe night', true], ['greenland', 'Greenland', true], ['pier', 'Pier', true], ['greenlandday', 'Greenland day', true], ['plane', 'Plane', true], ['area', 'Area']];
 const lookOn = () => !!($('look') && $('look').checked);
 function makePanels() {
   P.places = new Panel('places', .62, .9, [-62, 1.2, -.1, 0], (g, pn) => {
@@ -267,14 +278,14 @@ function makePanels() {
     for (const line of (f.lines || []).slice(0, 7)) { g.fillStyle = /^(open|Open)/.test(line) ? '#7dff9b' : '#d5dbe1'; g.fillText(clip(g, line, PX - 300), 40, y); y += 34; }
     if (f.x != null) { pn.btn(g, PX - 250, 140, 210, 62, S.mode === 'street' ? 'Go there' : 'Stand there', false, 'go'); pn.btn(g, PX - 250, 216, 210, 62, 'Centre', false, 'centre'); }
   });
-  P.bar = new Panel('bar', .66, .29, [-28, .78, -.3, 22], (g, pn) => {
+  P.bar = new Panel('bar', .78, .29, [-28, .78, -.3, 22], (g, pn) => {
     const W = pn.cv.width, H = pn.cv.height; g.fillStyle = 'rgba(13,16,21,.92)'; rr(g, 0, 0, W, H, 34); g.fill();
     g.fillStyle = pn.hov === 'grab' ? '#fff' : '#6c7680'; for (let k = 0; k < 6; k++) for (let j = 0; j < 2; j++) { g.beginPath(); g.arc(24 + j * 18, H / 2 - 50 + k * 20, 5, 0, 7); g.fill(); }
     const st = S.mode === 'street', style = globalThis.__docklandsStyles ? globalThis.__docklandsStyles.mode : 'map';
     const rows = [[['Table', S.mode === 'table', 'mode:table'], ['Street', st, 'mode:street'], [st ? 'Lower' : '−', false, 'minus'], [st ? 'Higher' : '+', false, 'plus'], ['⟲', false, 'turnL'], ['⟳', false, 'turnR'], ['Exit', false, 'exit']],
-      [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Look: ' + (lookOn() ? 'Real' : 'Map'), lookOn(), 'look'], ['Sky: ' + (S.sky ? 'On' : 'Off'), false, 'sky'], [C.night ? 'Day' : 'Night', false, 'night'], ['Recentre', false, 'recentre']],
-      [['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view'], [S.mode === 'table' ? `Relief ${S.relief}×` : 'Relief 1×', S.mode === 'table' && S.relief > 1, 'relief'], ['Style: ' + ({ map: 'Map', pixel: 'Pixel', lines: 'Lines', vectrex: 'CRT' }[style] || style), style !== 'map', 'style'], [S.hidePanels ? 'Panels: off' : 'Panels: on', !S.hidePanels, 'panels']]];
-    const x0 = 64, bh = (H - 56) / 3; rows.forEach((row, r) => { const bw = (W - x0 - 14) / row.length; row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : null)); });
+      [['Floor ▲', false, 'floorUp'], ['Floor ▼', false, 'floorDn'], ['Look: ' + (lookOn() ? 'Real' : 'Map'), lookOn(), 'look'], ['Sky: ' + (S.sky ? 'On' : 'Off'), false, 'sky'], [C.night ? 'Day' : 'Night', false, 'night'], [`Photo${S.photos.length ? ' ' + S.photos.length : ''}`, false, 'photo'], ['Recentre', false, 'recentre']],
+      [['Drone: ' + droneName(), droneOn(), 'drone'], [S.ride ? 'Ride' : 'Watch', S.mode === 'ride', 'ride'], ['View: ' + (VIEWS[S.view] ? VIEWS[S.view][1] : '—'), false, 'view'], ['Wind', S.wind, 'wind'], [S.mode === 'table' ? `Relief ${S.relief}×` : 'Relief 1×', S.mode === 'table' && S.relief > 1, 'relief'], ['Style: ' + ({ map: 'Map', pixel: 'Pixel', lines: 'Lines', vectrex: 'CRT' }[style] || style), style !== 'map', 'style'], [S.hidePanels ? 'Panels: off' : 'Panels: on', !S.hidePanels, 'panels']]];
+    const x0 = 64, bh = (H - 56) / 3; rows.forEach((row, r) => { const bw = (W - x0 - 14) / row.length; row.forEach(([t, on, a], i) => pn.btn(g, x0 + i * bw + 4, 14 + r * (bh + 14), bw - 8, bh, t, on, a, a === 'exit' ? '#9c2b2b' : a === 'drone' ? '#1b8a8a' : null)); });
     pn.hits.push([0, 0, 60, H, 'grab']);
   });
   S.panels = [P.places, P.whatson, P.focus, P.bar];
@@ -333,7 +344,7 @@ function click(r) {
   const mo = M.ap(S.Wi, r.o), md = nrm(M.dir(S.Wi, r.d));
   const near = nearestMarker(r.o, r.d); if (near) { if (near.kind !== 'building') focusOn(near); return; }
   const i = pickRay(mo, md); if (i >= 0) return focusBuilding(i);
-  const g = groundHit(mo, md); if (g) { if (S.mode === 'table') { S.c = [g[0], groundY(g[0], g[2]), g[2]]; setW(); S.hiDirty = true; } else teleport(g[0], g[2]); }
+  const g = groundHit(mo, md); if (g) { if (S.mode === 'table') { S.c = [g[0], groundY(g[0], g[2]), g[2]]; setW(); S.hiDirty = true; } else if (S.mode === 'ride') { if (droneOn()) DocklandsDrone.goTo(g[0], g[2]); } else teleport(g[0], g[2]); }
 }
 // a label within a small angle of the ray (the labels are the targets you see)
 function nearestMarker(o, d) {
@@ -379,7 +390,17 @@ function act(a, pn = P.bar) {
   else if (a === 'style') { const St = globalThis.__docklandsStyles; if (St && St.mode !== 'map') St.setStyle('map').catch(() => {}); focusOn({ kind: 'note', title: 'Styles', sub: 'Pixel art, Line drawing and Vector CRT: on the screen only', lines: ['They are passes of the screen pipeline (styles.js).', 'A headset session draws the Map look; Look: Real gives the Realistic colours.'] }); pn.dirty = true; }
   else if (a === 'panels') { S.hidePanels = !S.hidePanels; pn.dirty = true; }
   else if (a === 'relief') { S.relief = RELIEFS[(RELIEFS.indexOf(S.relief) + 1) % RELIEFS.length]; if (S.mode === 'table') { applyRelief(); setW(); } pn.dirty = true; }
-  else if (a === 'view') { S.view = (S.view + 1) % VIEWS.length; goView(VIEWS[S.view][0]); pn.dirty = true; }
+  else if (a === 'view') { S.view = (S.view + 1) % VIEWS.length; goView(VIEWS[S.view]); pn.dirty = true; }
+  else if (a === 'photo') { S.snap = true; if (S.preview && S.session) S.session.dirty = true; }
+  // Drone: a press always moves on round the vehicles (one that cannot start here does not hold the cycle); after Under: Off
+  else if (a === 'drone') { const Dr = globalThis.DocklandsDrone; if (!Dr) { focusOn({ kind: 'note', title: 'Drone', sub: 'The drone layer is not loaded', lines: ['Load the page without ?layers=, or add drone to it.'] }); return; }
+    S.dIdx = droneOn() ? (S.dIdx + 1) % DRONES.length : 1; const next = DRONES[S.dIdx];
+    if (!next) { Dr.manual(false); Dr.stop(); C.controls.enabled = false; if (S.mode === 'ride') setMode('table'); S.droneP = Promise.resolve(null); }
+    else { if (!Dr.on) droneFromTable(); Dr.manual(true);
+      S.droneP = Promise.resolve(Dr.start(next)).then(ok => { C.controls.enabled = false; if (ok === false) focusOn({ kind: 'note', title: 'Drone', sub: `${next.replace(/^./, c => c.toUpperCase())}: that vehicle cannot start here`, lines: ['Press Drone again for the next vehicle.'] }); else if (S.ride) startRide(); P.bar.dirty = true; return ok; }); }
+    pn.dirty = true; }
+  else if (a === 'ride') { S.ride = !S.ride; if (droneOn()) { if (S.ride) startRide(); else if (S.mode === 'ride') setMode('table'); } pn.dirty = true; }
+  else if (a === 'wind') { setWind(!S.wind); pn.dirty = true; }
   else if (a === 'exit') S.session.end();
   else if (a === 'go') { const f = S.focus; if (f && f.x != null) { if (S.mode !== 'street') setMode('street', f); else { const [x, z] = freeSpot(f.x, f.z); teleport(x, z, [f.x, f.z]); } } }
   else if (a === 'centre') { const f = S.focus; if (f && f.x != null) { S.c = [f.x, groundY(f.x, f.z), f.z]; setW(); S.hiDirty = true; } }
@@ -408,6 +429,7 @@ function focusBuilding(i) {
   Promise.resolve(sel).then(read).catch(() => {}); setTimeout(read, 300); setTimeout(read, 1500); setTimeout(read, 4000); return f;
 }
 function setMode(m, at) {
+  if (S.mode === 'ride' && m !== 'ride' && S.preRide) { S.s = S.preRide.s; S.preRide = null; }
   S.mode = m; const f = at || S.focus; applyRelief();
   if (m === 'street') { S.s = 1; S.lift = 0; if (f && f.x != null) { const [x, z] = freeSpot(f.x, f.z); teleport(x, z, [f.x, f.z]); } else { const [x, z] = freeSpot(S.c[0], S.c[2]); teleport(x, z); } }
   else { S.s = S.sTable || 1 / 1500; S.O = S.Otable || S.O; if (f && f.x != null) S.c = [f.x, groundY(f.x, f.z), f.z]; }
@@ -415,9 +437,86 @@ function setMode(m, at) {
 }
 // the eye's depth range (metres of the reference space): the table 0.08 to 60 m; street 0.25 to 16 km. three.js passes the
 // eye camera's near and far to session.updateRenderState
-function depthRange() { const st = S.mode === 'street'; eyeCam.near = st ? .25 : .08; eyeCam.far = st ? 16000 : 60; if (S.preview) S.session.updateRenderState({ depthNear: eyeCam.near, depthFar: eyeCam.far }); }
-// the page's named views: the table centred on the view's target
-function goView(k) { const D = D3(); if (!D || !D.setView) return; D.setView(k); const c = D.camState(); setMode('table'); S.c = [c.tx, groundY(c.tx, c.tz), c.tz]; S.yaw = -S.base.a * DEG - c.yaw; setW(); S.hiDirty = true; S.listSig = ''; }
+function depthRange() { const st = S.mode !== 'table'; eyeCam.near = st ? .25 : .08; eyeCam.far = st ? 16000 : 60; if (S.preview) S.session.updateRenderState({ depthNear: eyeCam.near, depthFar: eyeCam.far }); }
+// the page's named views: a photo view (an eye point) puts you at street level at its eye, facing its target (lift = the eye's
+// height above the ground less your head's); the others centre the table on the view's target
+function goView([k, , eye]) {
+  const D = D3(); if (!D || !D.setView) return; D.setView(k); const c = D.camState();
+  if (eye) { const E = D.camera.position, g = C.groundAt(E.x, E.z); setMode('street'); teleport(E.x, E.z, [c.tx, c.tz]); S.lift = clamp(E.y - g - S.head[1], 0, 600); setW(); }
+  else { setMode('table'); S.c = [c.tx, groundY(c.tx, c.tz), c.tz]; S.yaw = -S.base.a * DEG - c.yaw; setW(); }
+  S.hiDirty = true; S.listSig = '';
+}
+
+// ---------- Drone (drone.js), stepped from the headset frame (the window's own animation loop pauses in an immersive
+// session): manual(true), step(dt, 120); the drone owns the page camera while it flies. Ride: your eye at its eye at 1:1, the
+// world turning with its heading (eased, 0.35 s); Watch: the table stays, the drone marked by a cyan diamond.
+const DRONES = [null, 'copter', 'plane', 'boat', 'tube', 'walk', 'under'], droneOn = () => !!(globalThis.DocklandsDrone && DocklandsDrone.on);
+const droneName = () => droneOn() ? DocklandsDrone.S.mode.replace(/^./, c => c.toUpperCase()) : 'Off';
+// the drone starts 300 m from the table centre, looking along your forward direction (drone.js start: from the orbit view)
+function droneFromTable() {
+  const yaw = -S.yaw - S.base.a * DEG, pitch = .5, dist = 400, ce = Math.cos(pitch);
+  C.controls.target.set(S.c[0], 0, S.c[2]); C.camera.position.set(S.c[0] + dist * Math.sin(yaw) * ce, dist * Math.sin(pitch), S.c[2] + dist * Math.cos(yaw) * ce);
+}
+function startRide() { if (S.mode !== 'ride') S.preRide = { s: S.s }; S.mode = 'ride'; applyRelief(); S.s = 1; S.rideO = [S.base.p[0], S.head[1], S.base.p[2]]; depthRange(); rideFollow(1); S.hiDirty = true; S.listSig = ''; if (P.bar) P.bar.dirty = true; }
+function rideFollow(k) {
+  const Dr = DocklandsDrone.S, p = Dr.p, h = Dr.h + (Dr.ly || 0); S.c = [p[0], p[1], p[2]];
+  const want = Math.atan2(Math.sin(h), -Math.cos(h)) - S.base.a * DEG; let d = want - S.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); S.yaw += d * k; setW();
+}
+function droneFrame(t) {
+  if (!droneOn()) { if (S.mode === 'ride') setMode('table'); S.droneT = t; droneMark.visible = false; C.controls.enabled = false; return; }
+  const dt = clamp((t - (S.droneT || t)) / 1000, 0, .1); S.droneT = t; DocklandsDrone.step(dt, 120);
+  if (S.mode === 'ride') { rideFollow(1 - Math.exp(-dt / .35)); droneMark.visible = false; }
+  else { const p = DocklandsDrone.S.p; droneMark.position.set(...toUser(p[0], p[1], p[2])); droneMark.visible = true; }
+}
+
+// ---------- Wind: the wind layer (layers/wind.js: water surface, debris, the note) and arrows in the model, downwind of
+// WU.windDir (degrees FROM, grid north = -z), longer with WU.windSpeed; a 7 x 7 grid round the table centre (150 m apart at
+// 1:1500) or a 9 x 9 grid round you (60 m apart, 25 m above the ground) in the street and on a ride
+function windLayer() { const D = D3(); return D && D.layers && D.layers.wind; }
+function setWind(on) {
+  S.wind = on; const L = windLayer(); if (L) { L.on = on; if (L.api && L.api.setVisible) L.api.setVisible(on); }
+  S.windSig = ''; if (on) { const D = D3(), w = D && D.STATS && D.STATS.surface && D.STATS.surface.wind;
+    focusOn({ kind: 'note', title: 'Wind', sub: `${WU.windSpeed.value.toFixed(1)} m/s from ${Math.round(WU.windDir.value)}°${w && w.gust ? ', gusts ' + w.gust + ' m/s' : ''}`, lines: [`Source: ${w ? w.source : 'stated default (the wind layer is not loaded)'}`, 'Arrows point downwind; their length grows with the speed.', L ? 'The water surface and the floating debris follow it.' : ''].filter(Boolean) }); }
+  if (P.bar) P.bar.dirty = true;
+}
+function windArrows() {
+  if (!S.wind) { windMesh.visible = false; return; }
+  const tbl = S.mode === 'table', sp = tbl ? .1 / S.s : 60, n = tbl ? 7 : 9, ws = Math.max(.5, WU.windSpeed.value), wr = WU.windDir.value * DEG;
+  const gx = Math.round(S.c[0] / sp) * sp, gz = Math.round(S.c[2] / sp) * sp, sig = [S.mode, gx, gz, S.s, reliefNow(), ws.toFixed(1), Math.round(WU.windDir.value)].join();
+  if (sig === S.windSig) return; S.windSig = sig;
+  const Mw = new RMesh(), d = [-Math.sin(wr), Math.cos(wr)], q = [-d[1], d[0]], L = tbl ? (.022 + .004 * ws) / S.s : 6 + 1.5 * ws, w = L * .14, hw = L * .32, col = [.96, .96, .9], col2 = [.75, .75, .7];
+  const up = tbl ? .05 / S.s / reliefNow() : 25;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const x = gx + (i - (n - 1) / 2) * sp, z = gz + (j - (n - 1) / 2) * sp, y = C.groundAt(x, z) + up, P_ = (a, b) => [x + d[0] * a + q[0] * b, y, z + d[1] * a + q[1] * b];
+    Mw.quad(P_(-L / 2, -w / 2), P_(L * .15, -w / 2), P_(L * .15, w / 2), P_(-L / 2, w / 2), col2);
+    Mw.tri(Mw.v(...P_(L * .15, -hw), col), Mw.v(...P_(L / 2, 0), col), Mw.v(...P_(L * .15, hw), col));
+  }
+  windMesh.geometry.dispose(); windMesh.geometry = Mw.geometry(); windMesh.visible = true;
+}
+
+// ---------- Photo: the left eye as a PNG, kept until the session ends; the page offers them after Exit (xr-layer.js snapshot)
+// the canvas is held until toBlob answers (an unreferenced canvas lost its callback in Chromium 141 on the WebGPU preview)
+const PENDING = new Set();
+function pushPhoto(cv) { PENDING.add(cv); cv.toBlob(b => { PENDING.delete(cv); if (b) { S.photos.push({ url: URL.createObjectURL(b), t: new Date(), w: cv.width, h: cv.height }); P.bar.dirty = true; if (S.preview && S.session) S.session.dirty = true; } }, 'image/png'); }
+function snapshot(pose) {
+  try {
+    const cv = document.createElement('canvas'), g = cv.getContext('2d');
+    if (S.preview) {
+      // the page canvas, read in the same task as its frame (no preserveDrawingBuffer)
+      const src = C.renderer.domElement; cv.width = src.width; cv.height = src.height; g.drawImage(src, 0, 0); return pushPhoto(cv);
+    }
+    // the XR layer's framebuffer, the left eye's viewport; the binding three.js left is put back
+    const gl = C.renderer.backend.gl, L = S.session.renderState.baseLayer, vp = L.getViewport(pose.views[0]), w = vp.width, h = vp.height, px = new Uint8Array(w * h * 4);
+    const was = gl.getParameter(gl.FRAMEBUFFER_BINDING); gl.bindFramebuffer(gl.FRAMEBUFFER, L.framebuffer); gl.readPixels(vp.x, vp.y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px); gl.bindFramebuffer(gl.FRAMEBUFFER, was);
+    cv.width = w; cv.height = h; const im = g.createImageData(w, h);
+    for (let y = 0; y < h; y++) im.data.set(px.subarray((h - 1 - y) * w * 4, (h - y) * w * 4), y * w * 4); for (let i = 3; i < im.data.length; i += 4) im.data[i] = 255; g.putImageData(im, 0, 0); pushPhoto(cv);
+  } catch (e) { console.warn('xr: photo', e); focusOn({ kind: 'note', title: 'Photo failed', sub: e.message, lines: [] }); }
+}
+function offerPhotos() {
+  if (!S.photos.length) return; const box = document.createElement('div'); box.id = 'xrPhotos'; box.style.cssText = 'position:fixed;z-index:60;left:50%;transform:translateX(-50%);bottom:90px;background:#11151b;border:1px solid #2a313a;border-radius:14px;padding:12px 14px;color:#eef2f6;font:500 15px system-ui;max-width:90vw';
+  box.innerHTML = `<div style="margin-bottom:6px">Headset photos: ${S.photos.length}</div>` + S.photos.map((p, i) => `<a style="color:#8cc4ff;margin-right:10px" download="docklands-headset-${p.t.toISOString().slice(0, 19).replace(/:/g, '')}.png" href="${p.url}">Photo ${i + 1}</a>`).join('') + ' <button type="button" style="margin-left:8px">Close</button>';
+  box.querySelector('button').onclick = () => box.remove(); document.body.appendChild(box);
+}
 
 // ---------- presses: a short press is a click (on the ray of the frame before the pinch); a press that moves drags.
 // On empty space one hand moves the city (up and down too), two hands turn it and change its size; on a panel's
@@ -455,6 +554,7 @@ function drags(fr) {
     if (rec.kind === 'panel') { const r = rayOf(fr, rec.src); if (!r) continue; rec.panel.moveTo(sub(add(r.o, mulv(r.d, rec.dist)), rec.off)); continue; }
     if (rec.kind !== 'world') continue; const d = sub(rec.pos, rec.pos0);
     if (S.mode === 'table') { S.O = add(rec.O0, d); S.Otable = S.O; }
+    else if (S.mode === 'ride') continue;
     else { const g = 30, v = M.dir(M.Ry(-S.yaw), [d[0], 0, d[2]]); S.c = [rec.c0[0] - v[0] * g, 0, rec.c0[2] - v[2] * g]; S.c[1] = groundY(S.c[0], S.c[2]); }
     setW();
   }
@@ -467,7 +567,7 @@ function place(pose) {
   for (const p of S.panels) { p.layout(S.base); p.dirty = true; }
   const camYaw = D3() ? D3().camState().yaw : 0;
   if (S.mode === 'table') { S.O = [m[12] + f[0] * 1.05, S.floor ? .76 : m[13] - .85, m[14] + f[2] * 1.05]; S.Otable = S.O; }
-  S.yaw = -a - camYaw;
+  S.yaw = -a - camYaw; if (S.mode === 'ride') S.rideO = [m[12], m[13], m[14]];
   S.floorY = S.floor ? 0 : m[13] - 1.6; setW(); S.placed = true; S.listSig = '';
 }
 const _v = new THREE.Vector3(), _q = new THREE.Quaternion(), _m = new THREE.Matrix4();
@@ -476,17 +576,21 @@ function onFrame(t, fr, hooks) {
   const pose = fr.getViewerPose(S.ref); if (!pose) return; const m = pose.transform.matrix;
   S.head = [m[12], m[13], m[14]]; S.headF = nrm([-m[8], -m[9], -m[10]]);
   if (!S.placed) place(pose);
+  if (S.adoptRide && droneOn()) { S.adoptRide = false; if (S.ride) startRide(); }
+  droneFrame(t);
   for (const [src, h] of S.hover) S.lastRay.set(src, h); S.hover.clear(); drags(fr);
   for (const src of s.inputSources) { const r = rayOf(fr, src); if (!r) continue; const hp = hitPanels(r.o, r.d); S.hover.set(src, { ...r, len: hp ? hp.h.t : 3 });
     for (const p of S.panels) { const hv = hp && hp.p === p && hp.h.item ? hp.h.item[4] : null; if (p.hov !== hv) { p.hov = hv; p.dirty = true; if (hv) buzz(src, .12, 12); } }
     const gp = src.gamepad; if (gp) pad(gp, src); }
   if (t - S.listT > 450) { S.listT = t; updateLists(); }
   if (S.hiDirty) buildHighlights();
+  windArrows();
   for (const p of S.panels) if (p.dirty) p.redraw();
   syncRig(); labelVerts(); overlay();
-  // the page camera follows the head in model metres (layers place their levels of detail by ctx.camera.position)
+  // the page camera follows the head in model metres (layers place their levels of detail by ctx.camera.position); while the
+  // drone flies it owns the page camera (its frame hook stops the drone when another mover takes the camera)
   const head = M.ap(S.Wi, S.head), fw = nrm(M.dir(S.Wi, S.headF)), cam = C.camera;
-  cam.position.set(...head); _v.set(head[0] + fw[0], head[1] + fw[1], head[2] + fw[2]); cam.up.set(0, 1, 0); cam.lookAt(_v); cam.updateMatrixWorld();
+  if (!droneOn()) { cam.position.set(...head); _v.set(head[0] + fw[0], head[1] + fw[1], head[2] + fw[2]); cam.up.set(0, 1, 0); cam.lookAt(_v); cam.updateMatrixWorld(); }
   // sky and sun: round the head; the sun's light over the table centre; the sky and stars as the Sky button says (passthrough: off by day)
   const sky = C.sky, showSky = S.sky && !(S.ar && !C.night);
   sky.sky.visible = showSky; if (sky.stars) sky.stars.visible = showSky; sky.sky.position.set(...head); if (sky.stars) sky.stars.position.set(...head);
@@ -500,10 +604,12 @@ function onFrame(t, fr, hooks) {
     // three.js makes the projection (its depth convention and clip space) from the preview's field and the depth range
     const cv = C.renderer.domElement; Object.assign(prevCam, { fov: S.session.fov() / DEG, aspect: cv.clientWidth / cv.clientHeight, near: eyeCam.near, far: eyeCam.far }); prevCam.updateProjectionMatrix(); }
   C.renderer.render(C.scene, S.preview ? prevCam : eyeCam);
+  if (S.snap) { S.snap = false; snapshot(pose); }
   S.frames = (S.frames || 0) + 1;
 }
 // controllers (xr-standard mapping): right stick turns and zooms (table) or snap-turns and walks (street); left stick
-// moves over the map or strafes; A Table/Street, B Night/Day, X Recentre, Y hide or show the side panels; a pulse on hover and on a click
+// moves over the map or strafes; A Table/Street, B Night/Day, X Recentre, Y hide or show the side panels, right stick press
+// Photo; on a ride the right stick steers the drone; a pulse on hover and on a click
 let stickT = 0;
 function buzz(src, k, ms) { const h = src && src.gamepad && src.gamepad.hapticActuators && src.gamepad.hapticActuators[0]; try { if (h && h.pulse) h.pulse(k, ms); } catch { /* no haptics */ } }
 function pad(gp, src) {
@@ -511,15 +617,17 @@ function pad(gp, src) {
   const hit = i => down[i] && !was[i], right = src.handedness !== 'left';
   if (hit(4)) act(right ? (S.mode === 'table' ? 'mode:street' : 'mode:table') : 'recentre', P.bar);
   if (hit(5)) { if (right) act('night', P.bar); else { S.hidePanels = !S.hidePanels; P.bar.dirty = true; } }
+  if (hit(3) && right) act('photo', P.bar);
   if (gp.axes && gp.axes.length >= 4) { if (right) stick(gp.axes[2], gp.axes[3]); else move(gp.axes[2], gp.axes[3]); }
 }
 function move(x, y) {
-  const dz = .2; if (Math.abs(x) < dz && Math.abs(y) < dz) return;
+  const dz = .2; if (Math.abs(x) < dz && Math.abs(y) < dz) return; if (S.mode === 'ride') return;
   const f = [S.headF[0], 0, S.headF[2]], fl = Math.hypot(f[0], f[2]) || 1, fw = [f[0] / fl, 0, f[2] / fl], rt = [-fw[2], 0, fw[0]];
   const k = S.mode === 'table' ? .012 : .9, v = add(mulv(fw, -y * k), mulv(rt, x * k)), d = M.dir(S.Wi, v);
   S.c = [S.c[0] + d[0], 0, S.c[2] + d[2]]; S.c[1] = groundY(S.c[0], S.c[2]); setW(); S.listT = 0;
 }
 function stick(x, y) {
+  if (S.mode === 'ride' && droneOn()) { DocklandsDrone.stick(Math.abs(x) > .2 ? x : 0, Math.abs(y) > .2 ? -y : 0); return; }
   const dz = .25; if (Math.abs(x) < dz && Math.abs(y) < dz) return;
   if (S.mode === 'table') { S.yaw += x * .03; if (Math.abs(y) > dz) S.s = clamp(S.s * (1 - y * .02), 1 / 20000, 1 / 40); S.sTable = S.s; setW(); S.hiDirty = Math.abs(y) > dz || S.hiDirty; return; }
   const n = performance.now(); if (Math.abs(x) > .7 && n - stickT > 350) { stickT = n; S.yaw += Math.sign(x) * 30 * DEG; setW(); S.listSig = ''; }
@@ -553,18 +661,25 @@ async function start(kind) {
   C.controls.enabled = false;
   S.mode = 'table'; S.s = 1 / 1500; S.sTable = S.s; S.Otable = null; const T = S.saved.cam ? [S.saved.cam.tx, S.saved.cam.tz] : [0, 0]; S.c = [T[0], groundY(T[0], T[1]), T[1]]; S.placed = false; S.frames = 0;
   depthRange(); setW();
-  C.scene.add(rig, beacons);
+  C.scene.add(rig, beacons, windMesh);
+  S.photos = []; S.snap = false; S.wind = false; S.windSig = ''; S.windLayer0 = windLayer() ? windLayer().on : null; S.view = -1; document.body.classList.add('xr3');
+  // a drone already flying: the headset steps it, and rides it once the panels are placed
+  if (droneOn()) { DocklandsDrone.manual(true); S.dIdx = Math.max(1, DRONES.indexOf(DocklandsDrone.S.mode)); S.adoptRide = true; } else S.dIdx = 0;
   ses.addEventListener('selectstart', onPressStart); ses.addEventListener('selectend', onPressEnd);
   ses.addEventListener('squeezestart', onPressStart); ses.addEventListener('squeezeend', ev => { const rec = S.press.get(ev.inputSource); if (rec) rec.drag = true; onPressEnd(ev); });
   ses.addEventListener('end', () => {
     C.xrFrame = null; S.session = null; XR.active = false; S.press.clear(); S.two = null; S.hover.clear();
     if (!prev) R.xr.enabled = false;
-    C.scene.remove(rig, beacons); C.scene.background = S.saved.background; C.sky.sky.visible = S.saved.sky; if (C.sky.stars && S.saved.stars != null) C.sky.stars.visible = S.saved.stars;
+    // the drone lands (drone.js stop restores the cut-away); the page camera comes back below
+    if (droneOn()) { DocklandsDrone.manual(false); DocklandsDrone.stop(); } if (S.mode === 'ride') S.mode = 'table'; droneMark.visible = false;
+    const WL = windLayer(); if (WL && S.windLayer0 != null && WL.on !== S.windLayer0) { WL.on = S.windLayer0; if (WL.api && WL.api.setVisible) WL.api.setVisible(S.windLayer0); }
+    document.body.classList.remove('xr3');
+    C.scene.remove(rig, beacons, windMesh); C.scene.background = S.saved.background; C.sky.sky.visible = S.saved.sky; if (C.sky.stars && S.saved.stars != null) C.sky.stars.visible = S.saved.stars;
     R.setClearColor(S.saved.clear, S.saved.clearAlpha); C.controls.enabled = S.saved.controls;
     if (S.saved.shadows && D && D.setShadows) D.setShadows(true);
     if (!S.saved.look && $('look') && $('look').checked) { $('look').checked = false; $('look').dispatchEvent(new Event('change')); }
     if (D && S.saved.cam) D.setCam(S.saved.cam);
-    if ($('labels')) $('labels').style.visibility = ''; C.draw();
+    if ($('labels')) $('labels').style.visibility = ''; C.draw(); offerPhotos();
   });
   XR.active = true; if ($('labels')) $('labels').style.visibility = 'hidden';
   loadData().catch(e => console.warn('xr: listings did not load', e));
@@ -606,7 +721,7 @@ class PreviewSession {
     return { getViewerPose: () => ({ transform: { matrix: H }, views: [view] }), getPose: sp => { const r = sp.r; const z = nrm(mulv(r.d, -1)), x = nrm(cross([0, 1, 0], z)), y = cross(z, x); return { transform: { matrix: new Float32Array([...x, 0, ...y, 0, ...z, 0, ...r.o, 1]) } }; } };
   }
   // the preview draws when something changed (or every 0.9 s for the clock and the lists), not every animation frame
-  due() { const n = performance.now(), d = this.dirty || S.hiDirty || S.panels.some(p => p.dirty) || n - this.last > 900; if (d) { this.dirty = false; this.last = n; } return d; }
+  due() { const n = performance.now(), d = this.dirty || S.hiDirty || droneOn() || S.snap || S.panels.some(p => p.dirty) || n - this.last > 900; if (d) { this.dirty = false; this.last = n; } return d; }
   updateRenderState(s) { Object.assign(this.renderState, s); this.dirty = true; }
   requestReferenceSpace(t) { return Promise.resolve({ t }); }
   addEventListener(n, f) { (this.ev[n] ||= []).push(f); }
@@ -617,10 +732,12 @@ const PREV_EV = [['pointerdown', 'down'], ['pointermove', 'move'], ['pointerup',
 // ---------- the button (shown when the browser has WebXR; ?xr=preview also offers the preview)
 const ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 8.5C3 7.1 4.1 6 5.5 6h13C19.9 6 21 7.1 21 8.5v6c0 1.4-1.1 2.5-2.5 2.5h-3.2c-.8 0-1.5-.4-1.9-1.1l-.6-1c-.4-.7-1.2-.7-1.6 0l-.6 1c-.4.7-1.1 1.1-1.9 1.1H5.5C4.1 17 3 15.9 3 14.5z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8" cy="11.5" r="1.6" fill="currentColor"/><circle cx="16" cy="11.5" r="1.6" fill="currentColor"/></svg>';
 export async function init(ctx) {
-  C = ctx; THREEr = ctx.THREE; geo = geoOf(ctx.A); inBox = inBoxOf(ctx.A); CW = ctx.WEBGL.replace(/docklands\/$/, '');
+  C = ctx; THREEr = ctx.THREE;
+  // the drone's touch controls (drone.js #drone) cover the canvas: hidden while a headset session or the preview runs
+  { const st = document.createElement('style'); st.textContent = 'body.xr3 #drone{display:none!important}'; document.head.appendChild(st); } geo = geoOf(ctx.A); inBox = inBoxOf(ctx.A); CW = ctx.WEBGL.replace(/docklands\/$/, '');
   const qs = ctx.qs, xr = navigator.xr, vr = xr && await xr.isSessionSupported('immersive-vr').catch(() => false), ar = xr && await xr.isSessionSupported('immersive-ar').catch(() => false);
   const wantPrev = /^preview/.test(qs.get('xr') || ''), back = qs.get('xr') === '1';
-  const api = { renderNow() { if (S.preview && S.session) { S.session.dirty = true; C.xrFrame(performance.now(), undefined, []); } }, S, P, act, LAB, toUser, setMode, start, loadData, updateLists, reliefNow, get active() { return XR.active; }, get rig() { return rig; }, get eyeCam() { return eyeCam; }, get panels() { return S.panels; } };
+  const api = { renderNow() { if (S.preview && S.session) { S.session.dirty = true; C.xrFrame(performance.now(), undefined, []); } }, S, P, act, LAB, VIEWS, toUser, setMode, start, loadData, updateLists, reliefNow, get active() { return XR.active; }, get rig() { return rig; }, get droneMark() { return droneMark; }, get windMesh() { return windMesh; }, get eyeCam() { return eyeCam; }, get panels() { return S.panels; } };
   globalThis.DocklandsXR3 = api;
   if (!vr && !ar && !wantPrev) return api;
   // the button box of layers/locate.js (made after that layer's init); without it, a box of our own at the same place

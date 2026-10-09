@@ -1,8 +1,10 @@
 // Headless check of the headset mode of the Three.js port (docklands/xr.js, layer "xr") with the WebXR mock
 // (webxr-mock.js): the headset button and its menu, a stereo session on the WebGL 2 backend through three.js renderer.xr
 // (two eyes drawn, controller ray on a panel row, one-hand drag, two-hand pinch, relief 2.5 on the table and 1 in the
-// street, the street depth range, a pick, Exit restores the page), and the one-eye preview (?xr=preview&go) at phone size
-// with a tap on a label. With --webgpu also: the preview on the WebGPU backend, and the headset menu offers the reload to
+// street, the street depth range, a pick, the View list (a photo view puts you at its eye in the street), the Drone from the
+// bar (Ride at 1:1 at the drone's eye, stepped from the headset frame; Watch with its marker; next vehicle round to Off),
+// Wind (the wind layer and its arrows), Photo (the left eye as a PNG, offered after Exit), Exit restores the page), and the
+// one-eye preview (?xr=preview&go) at phone size with a tap on a label and a photo. With --webgpu also: the preview on the WebGPU backend, and the headset menu offers the reload to
 // WebGL 2. Exits 1 on a page error or a failed step.
 //   python3 -m http.server 8266 --bind 127.0.0.1 &      (from the repository root)
 //   node docklands/test/xr-check.mjs [--base http://127.0.0.1:8266] [--out dir] [--webgpu]
@@ -17,10 +19,12 @@ const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--en
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
 const fails = [], ok = (c, m) => { console.log((c ? 'ok   ' : 'FAIL ') + m); if (!c) fails.push(m); };
-const LAYERS = 'registry,locate,xr';
+const LAYERS = 'registry,locate,wind,drone,xr';
+const savePhoto = async (page, name) => { const u = await page.evaluate(async () => { const p = DocklandsXR3.S.photos.at(-1); if (!p) return null; const b = await (await fetch(p.url)).blob(); return await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); }); });
+  if (u && OUT) writeFileSync(`${OUT}/${name}.png`, Buffer.from(u.split(',')[1], 'base64')); return !!u; };
 async function open(w, h, dpr, q, mock) {
   const page = await (await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr })).newPage(), errors = [];
-  page.on('pageerror', e => errors.push(String(e))); page.on('console', m => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(m.text()));
+  page.on('pageerror', e => errors.push(String(e))); page.on('console', m => m.type() === 'warning' && /^layer /.test(m.text()) && console.log('page warning: ' + m.text().slice(0, 200))); page.on('console', m => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(m.text()));
   if (mock) await page.addInitScript(MOCK);
   await page.goto(`${BASE}/docklands/?${q}`, { timeout: 240000, waitUntil: 'domcontentloaded' }); return { page, errors };
 }
@@ -80,7 +84,41 @@ const grab = async (page, name, step) => {
     return S.focus ? { kind: S.focus.kind, title: S.focus.title, sub: S.focus.sub } : null; });
   await grab(page, 'xr-stereo-pick', true);
   ok(pk && pk.kind === 'building', `a ray on a tower opens the Focus card: ${pk ? pk.kind + ' "' + pk.title + '" ' + pk.sub : 'none'}`);
+  // View: the page's named views; a photo view (Rotherhithe night) puts the head at its eye at street level
+  const vw = await page.evaluate(() => { const X = DocklandsXR3, S = X.S, D = __docklands3; X.act('view'); __xrMock.step(); const v0 = [X.VIEWS[S.view][0], S.mode];
+    X.act('view'); const E = D.camera.position.clone(); __xrMock.step(); const H = D.camera.position; return { n: X.VIEWS.length, names: X.VIEWS.map(v => v[0]).join(','), v0, v1: [X.VIEWS[S.view][0], S.mode], dh: Math.hypot(H.x - E.x, H.z - E.z), dy: H.y - E.y }; });
+  await grab(page, 'xr-stereo-view-rotherhithe', true);
+  ok(vw.n === 7 && vw.v0[0] === 'cw' && vw.v0[1] === 'table' && vw.v1[0] === 'rotherhithe' && vw.v1[1] === 'street' && vw.dh < .5 && Math.abs(vw.dy) < 1, `View list (${vw.names}): ${vw.v0.join(' ')}, then ${vw.v1.join(' ')} with the head ${vw.dh.toFixed(2)} m from the photo's eye (height ${vw.dy.toFixed(2)} m)`);
+  // Drone from the bar, ridden: the rig at 1:1, the head at the drone's eye, the drone stepped by the headset frames
+  const rd = await page.evaluate(async () => { const X = DocklandsXR3, S = X.S, Dr = DocklandsDrone, T = __docklands3.THREE; X.act('mode:table'); X.act('view'); X.act('view'); X.act('view'); X.act('view'); X.act('view'); X.act('recentre'); __xrMock.step();
+    X.act('drone'); const ok = await S.droneP; const t0 = Dr.state.t;
+    for (let k = 0; k < 12; k++) { await new Promise(r => setTimeout(r, 60)); __xrMock.step(); }
+    const e = X.rig.matrix.elements, h = new T.Vector3(...S.head).applyMatrix4(X.rig.matrix), p = Dr.S.p;
+    return { ok, on: Dr.on, mode: Dr.S.mode, xm: S.mode, t: Dr.state.t - t0, scale: Math.hypot(e[0], e[1], e[2]), d: Math.hypot(h.x - p[0], h.y - p[1], h.z - p[2]), dn: __xrMock.session.renderState.depthNear, view: X.VIEWS[S.view][0] }; });
+  await grab(page, 'xr-stereo-ride', true);
+  ok(rd.ok && rd.on && rd.mode === 'copter' && rd.xm === 'ride' && Math.abs(rd.scale - 1) < 1e-6 && rd.d < .5 && rd.t > .1 && rd.dn === .25, `Drone: ${rd.mode} rides at 1:1 (rig scale ${rd.scale.toFixed(3)}), head ${rd.d.toFixed(2)} m from its eye, ${rd.t.toFixed(2)} s stepped by the headset frames (view list back at ${rd.view})`);
+  const wt = await page.evaluate(() => { const X = DocklandsXR3, S = X.S, Dr = DocklandsDrone; X.act('ride'); __xrMock.step(); __xrMock.step(); const m = X.droneMark, p = Dr.S.p, q = X.toUser(p[0], p[1], p[2]);
+    return { xm: S.mode, on: Dr.on, vis: m.visible, d: Math.hypot(m.position.x - q[0], m.position.y - q[1], m.position.z - q[2]), label: S.ride ? 'Ride' : 'Watch' }; });
+  await grab(page, 'xr-stereo-watch', true);
+  ok(wt.xm === 'table' && wt.on && wt.vis && wt.d < 1e-3 && wt.label === 'Watch', `Watch: the table back, the drone flying, its marker at the drone (${wt.d.toExponential(1)} m)`);
+  const nx = await page.evaluate(async () => { const X = DocklandsXR3, S = X.S, Dr = DocklandsDrone, seq = [];
+    for (let k = 0; k < 6; k++) { X.act('drone'); const ok = await S.droneP; __xrMock.step(); seq.push(`${Dr.on ? Dr.S.mode : 'off'}${ok === false ? '(cannot start)' : ''}`); }
+    return { seq, on: Dr.on, xm: S.mode }; });
+  ok(nx.seq[0] === 'plane' && nx.seq[5] === 'off' && !nx.on && nx.xm === 'table', `Drone: next vehicle round to Off: ${nx.seq.join(' > ')}`);
+  // Wind: the wind layer on, arrows downwind (WU.windDir is where it blows FROM; grid north = -z)
+  const wd = await page.evaluate(() => { const X = DocklandsXR3, S = X.S, D = __docklands3, L = D.layers.wind; X.act('wind'); __xrMock.step(); const m = X.windMesh, g = m.geometry, n = g.index.count / 3;
+    const P = g.attributes.position, tip = [P.getX(5), P.getZ(5)], bs = [(P.getX(4) + P.getX(6)) / 2, (P.getZ(4) + P.getZ(6)) / 2], a = Math.atan2(tip[0] - bs[0], -(tip[1] - bs[1])) * 180 / Math.PI, w = D.STATS.surface && D.STATS.surface.wind;
+    const r = { on: S.wind, layer: L && L.on, vis: m.visible, n, to: (a + 360) % 360, from: w ? w.dir : null, focus: S.focus && S.focus.title }; X.act('wind'); __xrMock.step(); r.off = !m.visible && !S.wind; X.act('wind'); __xrMock.step(); return r; });
+  await grab(page, 'xr-stereo-wind', true);
+  const dd = Math.abs((((wd.to - (wd.from + 180)) % 360) + 540) % 360 - 180);
+  ok(wd.on && wd.layer && wd.vis && wd.n === 49 * 3 && dd < 1 && wd.off && wd.focus === 'Wind', `Wind: layer on ${wd.layer}, ${wd.n / 3} arrows to ${wd.to.toFixed(0)}° (wind from ${wd.from}°), off again ${wd.off}`);
+  // Photo: the left eye of the next frame as a PNG
+  const ph = await page.evaluate(async () => { const X = DocklandsXR3, S = X.S; X.act('photo'); __xrMock.step(); for (let k = 0; k < 40 && !S.photos.length; k++) await new Promise(r => setTimeout(r, 100)); const p = S.photos[0], L = __xrMock.layer; return { n: S.photos.length, w: p && p.w, h: p && p.h, lw: L.w / 2, lh: L.h }; });
+  const phs = await savePhoto(page, 'xr-stereo-photo');
+  ok(ph.n === 1 && ph.w === ph.lw && ph.h === ph.lh && phs, `Photo: ${ph.n} photo of the left eye, ${ph.w} x ${ph.h} px`);
   const ex = await page.evaluate(async () => { DocklandsXR3.act('exit'); await new Promise(r => setTimeout(r, 300)); const D = __docklands3; return { active: DocklandsXR3.active, presenting: D.renderer.xr.isPresenting, controls: D.controls.enabled, cam: D.camState(), rig: !!D.scene.getObjectByName('xr-rig') }; });
+  const offer = await page.$$eval('#xrPhotos a', as => as.map(a => a.download));
+  ok(offer.length === 1 && /^docklands-headset-.*\.png$/.test(offer[0]), `after Exit the page offers the photos: ${offer.join(', ')}`);
   ok(!ex.active && !ex.presenting && ex.controls && !ex.rig && Math.hypot(ex.cam.tx - cam0.tx, ex.cam.tz - cam0.tz) < 1 && Math.abs(ex.cam.dist - cam0.dist) < 1, `Exit ends the session and restores the page camera (${ex.cam.tx.toFixed(0)}, ${ex.cam.tz.toFixed(0)}, dist ${ex.cam.dist.toFixed(0)})`);
   await page.waitForTimeout(1500); await grab(page, 'xr-after-exit', false);
   ok(!errors.length, 'stereo: no page error' + (errors.length ? ': ' + errors.slice(0, 5).join(' | ') : ''));
@@ -100,6 +138,9 @@ async function previewRun(webgpu) {
   // the WebGPU canvas cannot be read back after the frame: a page screenshot
   let pv = null; if (webgpu) await page.screenshot({ path: `${OUT}/${name}.png`, timeout: 180000 }); else pv = await grab(page, name, true);
   if (pv) ok(pv.st[0].sd > .05 && pv.st[1].sd > .05, `preview draws the table and the panels (luma sd ${pv.st[0].sd.toFixed(3)} / ${pv.st[1].sd.toFixed(3)})`);
+  const pp = await page.evaluate(async () => { const X = DocklandsXR3, S = X.S; X.act('photo'); X.renderNow(); for (let k = 0; k < 200 && !S.photos.length; k++) await new Promise(r => setTimeout(r, 100)); const p = S.photos[0], cv = __docklands3.renderer.domElement; return { n: S.photos.length, w: p && p.w, h: p && p.h, cw: cv.width, ch: cv.height }; });
+  const pps = await savePhoto(page, `${name}-photo`);
+  ok(pp.n === 1 && pp.w === pp.cw && pp.h === pp.ch && pps, `preview Photo: ${pp.n} photo, ${pp.w} x ${pp.h} px (the page canvas)`);
   ok(!!r.focus, `preview (${backend}): a tap on the label "${r.label}" gives a ${r.focus} focus (${r.frames} frames)`);
   const ex = await page.evaluate(() => { [...document.querySelectorAll('button')].find(b => b.textContent === 'Exit headset preview')?.click(); return { active: DocklandsXR3.active, controls: __docklands3.controls.enabled }; });
   ok(!ex.active && ex.controls, 'preview: Exit button ends it');
