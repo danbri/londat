@@ -121,6 +121,10 @@ if (/^(0|off|no)$/i.test(new URLSearchParams(location.search).get('cams') || '')
 $('liveCams').disabled = false;
 const camsStart = () => { if (globalThis.__docklands3?.ctx) loadCams(false).catch(e => console.warn('cams', e)); else setTimeout(camsStart, 1000); };
 camsStart();
-$('liveCams').onchange = () => globalThis.__docklands3?.draw?.();
+$('liveCams').onchange = () => { const m = $('camsLayer'); if (m) m.checked = $('liveCams').checked; globalThis.__docklands3?.draw?.(); };
+// the same switch in Layers > Live, where a visitor looks for a map layer (the About box is closed by default)
+{ const gb = document.querySelector('#paneLayers .grp[data-g="live"] .gb');
+  if (gb) { const l = document.createElement('label'); l.className = 'row'; const i = document.createElement('input'); i.type = 'checkbox'; i.id = 'camsLayer'; i.checked = $('liveCams').checked;
+    i.onchange = () => { $('liveCams').checked = i.checked; $('liveCams').onchange(); }; l.append(i, ' Traffic cameras (TfL JamCams)'); gb.appendChild(l); gb.closest('.grp').hidden = false; } }
 $('ugBox').addEventListener('toggle', e => { if (e.target.open) textTables(); });
 globalThis.__docklandsAbout = { loadLive, textTables, get cams() { return cams.length; } };

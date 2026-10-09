@@ -22,7 +22,7 @@ const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw
 
 // the Menu map: [tab, selector or text of the control]; a text is matched inside the pane (label, heading or button)
 const MAP = [
-  ['Go', 'text=Show the walking network'], ['Time', 'text=Constellation lines'], ['Time', 'text=Star names and Messier objects (those the sky shows)'], ['Time', 'text=Sky as from a dark site'], ['Time', 'text=London City Airport approach paths'], ['Time', 'text=Sun and moon lines on the map'], ['Time', '#skxVp'], ['About', '#liveBox'], ['About', '#liveDirect'], ['About', '#liveCams'], ['About', '#ugBox'], ['Layers', 'text=Station, district and dock names'],
+  ['Go', 'text=Show the walking network'], ['Time', 'text=Constellation lines'], ['Time', 'text=Star names and Messier objects (those the sky shows)'], ['Time', 'text=Sky as from a dark site'], ['Time', 'text=London City Airport approach paths'], ['Time', 'text=Sun and moon lines on the map'], ['Time', '#skxVp'], ['About', '#liveBox'], ['About', '#liveDirect'], ['About', '#liveCams'], ['Layers', '#camsLayer'], ['About', '#ugBox'], ['Layers', 'text=Station, district and dock names'],
   ['Views', '[data-view=cw]'], ['Views', '[data-view=area]'], ['Views', '[data-view=under]'], ['Views', '[data-view=plan]'],
   ['Views', '[data-view=rotherhithe]'], ['Views', '[data-view=greenland]'], ['Views', '[data-view=pier]'], ['Views', '[data-view=greenlandday]'], ['Views', '[data-view=plane]'], ['Views', '#shareBtn'], ['Views', '#glLink'],
   ['Look', '#styleProxy'], ['Look', '#look'], ['Look', '#facades'], ['Look', '#ground'], ['Look', 'text=Colour buildings by'], ['Look', 'text=Water mirror (reflections)'], ['Look', 'text=Gaussian splats'], ['Look', 'text=Music'], ['Look', 'text=Windows'], ['Look', '#vz3'],
@@ -61,6 +61,7 @@ for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
     if (sel.startsWith('text=')) { const t = sel.slice(5); el = [...pane.querySelectorAll('label,h3,.gt,button,p,span')].find(e => e.textContent.trim() === t || (e.tagName === 'LABEL' && e.textContent.trim().startsWith(t))); }
     else el = pane.querySelector(sel);
     if (!el) return `${tab} > ${sel}: not found`;
+    for (let x = el.closest('details:not([open])'); x; x = x.parentElement && x.parentElement.closest('details:not([open])')) x.open = true;   // a person opens a closed box first
     el.scrollIntoView({ block: 'center' }); const r = el.getBoundingClientRect(), D = d.getBoundingClientRect();
     if (!el.checkVisibility() || r.width === 0 || r.left < D.left - 1 || r.right > D.right + 1 || r.top < D.top || r.bottom > D.bottom) return `${tab} > ${sel}: not visible (${Math.round(r.left)},${Math.round(r.top)} ${Math.round(r.width)}x${Math.round(r.height)})`;
     return null;
