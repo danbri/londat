@@ -70,8 +70,8 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 1 data layers | trees | yes | `layers/trees.js`, `tree-species.js`: all 81,875 trees by default (`?trees=near`); 43 species profiles from the GLA London Public Realm Trees (OGL) and OSM leaf tags, 20,480 inferred from the setting (flagged); seasons (leaf-out, autumn colours, bare crowns, cherry blossom), wind sway; LOD: full crowns within 380 m (9,000 nearest), a 10-triangle far form to 6.5 km: about 0.8 to 0.9 M triangles a frame |
 | 1 data layers | terrain ring (Hills of London) | yes | `layers/ring.js`; receives no shadows (a CSM step at the shadow range); not faint in the cut-away |
 | 1 data layers | flood walls, riverbed, floor plates | yes | `layers/walls.js`, `riverbed.js`, `floors.js` (floors off by default; on, the buildings go see-through); no tap card |
-| 1 data layers | tunnels, basements, indoor, cut-away gauge | partial | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); no station cut-outs, level labels or tap card; faint ground almost invisible at night |
-| 1 data layers | station models | yes | `layers/stations.js`: 127 parts, tap card, a dim night light; seen from below ground |
+| 1 data layers | tunnels, basements, indoor, cut-away gauge | yes | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); the station cut-outs (with the station models shown, the OSM indoor floors and points inside each of the 2 station rectangles are left out and the tunnels stop at the box faces: stations-layer.js inside, outside, levelY), the yellow labels of published levels, a tap card for tunnels, indoor levels, basements, points and slabs, a fill light by night |
+| 1 data layers | station models | yes | `layers/stations.js`: 127 parts, tap card, a dim night light; seen from below ground; gives `ctx.stationCut` (the cut-outs) to `layers/under.js` |
 | 1 data layers | skyline years | yes | `layers/skyline.js`: slider, Play, `?year=` |
 | 2 interface | search | yes | `layers/search.js`: registry, places, walking network; flies there; a place below ground cuts away |
 | 2 interface | registry card (atlas, kg links), night use from the registry | yes | `layers/registry.js`, ctx.addCard; no occupant labels at their floors, no London Datastore facts |
@@ -90,10 +90,10 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 4 live | wildlife (simulated from records) | yes | `layers/wildlife.js`: 20 birds and the fox, weighted by NBN Atlas and GBIF records (CC0, CC-BY, OGL) |
 | 4 live | overlays, river, locate, KML, building keys | yes | `overlay-kit.js` (shared builders, materials, taps, labels) and `layers/overlays.js` (bike docks, lift outages, cranes, H4 and EGR159, GLA outlines and venues, works in progress; `?ov=bikes,works`), `layers/river.js` (river buses, locks, PLA notices, swim water, moorings, ships; `?river=`), `layers/locate.js`, `layers/kml.js` (`?kml=`; screen-space lines with Line2NodeMaterial; the WebGL page's kml.js reused), `layers/keys.js` (OSM card with parts, kg, Wikidata); files load only when ticked. Not ported: the selected building in the KML export, the Tower Bridge note, Sky panel rows |
 | framework | reveal sheet | yes | `reveal.js`: a frosted sheet with the layer drawn on it falls when a layer is ticked on; `?reveal=0` |
-| 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art has no photo facades or animated actors |
+| 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art with the photo facade tiles, the measured facade colours (snapped to the palette), box trees and the 441 animated actors of the WebGL page (people, cyclists, traffic, river boats, gulls, swimmers); Vector CRT "Colour overlay" (`?crt=overlay`); the style note under Look > Style |
 | 5 styles | splats | yes | `layers/splats.js`, `splat-worker.js`: own TSL renderer (Spark 2.3.1 and gaussian-splats-3d 0.4.7, both MIT, need WebGL), off by default, `?splats=with|only`, `?splatset=`; music switches to "only" in the map style; a full page with splats takes 24 to 39 s a frame in software |
 | 6 other | Drone, plotter SVG, music | yes | `drone.js`, `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
-| 6 other | WebXR | partial | `xr.js`, `layers/xr.js`: table 1:1500 with relief 2.5x (Relief button), street 1:1, the four panels, rays, grab and pinch, passthrough, the one-eye preview (`?xr=preview&go`); on the WebGL 2 backend (three.js r186 WebXR on WebGPU needs an XR-compatible adapter at start and XRGPUBinding): from WebGPU it reloads with `?webgl&xr=1`; no Ride, Drone, Photo, Wind; `test/xr-check.mjs` 23 steps with the mock; not yet tried on a real headset |
+| 6 other | WebXR | yes | `xr.js`, `layers/xr.js`: table 1:1500 with relief 2.5x (Relief button), street 1:1, the four panels, rays, grab and pinch, passthrough, the one-eye preview (`?xr=preview&go`); bar row 3 as xr-layer.js: Drone (Off, Copter, Plane, Boat, Tube, Walk, Under; stepped from the headset frame), Ride (your eye at the drone's, 1:1) or Watch (a cyan marker over the table), View (the page's named views; a photo view puts you at its eye), Wind (the wind layer and arrows); Photo (the left eye as a PNG, offered after Exit); on the WebGL 2 backend (three.js r186 WebXR on WebGPU needs an XR-compatible adapter at start and XRGPUBinding): from WebGPU it reloads with `?webgl&xr=1`; `test/xr-check.mjs` 26 steps with the mock (32 with `--webgpu`; all pass on 2026-10-09); not yet tried on a real headset |
 
 ## Menu map (2026-10-09)
 
@@ -133,12 +133,12 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Night | Time > Day or night (and the moon button at the top left) |
 | Realistic buildings | Look > Realistic buildings (on by default since 2026-10-09; `?look=0`) |
 | Crown halo colour by date | Layers > City > Night lights > Crown halo colour by date |
-| Colour overlay (vector CRT), style notes | WebGL only |
+| Colour overlay (vector CRT), style notes | Look > Style ("Colour overlay" shows in Vector CRT, `?crt=overlay`; the style's note under it) |
 | Ground image: plain, aerial 2008, night 2012, LiDAR intensity 2020 | Look > Ground |
-| Ground image: Satellite 2026 | WebGL only |
-| Buildings: solid, see-through, hidden | Layers > Below ground > Floors (see-through); solid and hidden: WebGL only |
+| Ground image: Satellite 2026 | Look > Ground > Satellite 2026 (`?ground=s2`; `layers/model.js`) |
+| Buildings: solid, see-through, hidden | Look > Buildings (`?bmode=solid|ghost|off`; `layers/model.js`); Layers > Below ground > Floors also makes them see-through |
 | Colour by (height source, height, occupants, homes, companies, below ground, quality) | Look > Colour buildings by |
-| Show: Windows, Detailed models, Roof shapes | WebGL only (always on in the port; `?roofs=0`, `?towers=0`) |
+| Show: Windows, Detailed models, Roof shapes | Look > Detailed models (glTF), Roof shapes (`?models=0`, `?roofshapes=0`; `layers/model.js`); Windows: WebGL only (always on in the port) |
 | Show: Labels | Layers > City > Place names |
 | Show: Roads | Layers > City > Roads |
 | Show: Underground | Layers > Below ground > Below ground (tunnels, basements, gauge, storey and tunnel settings) |
@@ -157,7 +157,7 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Skyline by year (slider, play) | Layers > City > Skyline by year |
 | Shape: cut away above | Layers > Below ground > Below ground (cut slider; the depth gauge) |
 | Model settings: storey height, tunnel dip, gradient, depth | Layers > Below ground > Below ground (sliders); vertical exaggeration: WebGL only |
-| Key to colours | WebGL only |
+| Key to colours | Look > Key to colours (`layers/model.js`) |
 | Station models | Layers > Below ground > Station models |
 | River (river buses, locks, notices, swim water, moorings) | Layers > Water and river > River |
 | Piers and berthed vessels | Layers > Water and river |

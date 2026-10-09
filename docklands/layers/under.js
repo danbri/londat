@@ -218,11 +218,11 @@ export default {
       return null;
     });
 
-    // ---------- cut level, gauge and drawer controls
+    // ---------- cut level, gauge and drawer controls (the gauge starts below the time wheels, carousel.js: top 60 px + 64 px, so its × stays clear of them on a phone)
     let CUT = OFF;
     const gauge = document.createElement('div'), gH = document.createElement('div'), gO = document.createElement('output'), gX = document.createElement('button'), track = document.createElement('div');
     gauge.setAttribute('role', 'slider'); gauge.tabIndex = 0; gauge.setAttribute('aria-label', 'Cut away everything above this level, metres above Ordnance Datum'); gauge.setAttribute('aria-valuemin', String(G_BOT)); gauge.setAttribute('aria-valuemax', String(OFF));
-    Object.assign(gauge.style, { position: 'fixed', right: '6px', top: 'calc(118px + env(safe-area-inset-top,0px))', height: 'min(50vh, 420px)', width: '96px', touchAction: 'none', userSelect: 'none', zIndex: 5, font: '12px system-ui,sans-serif', color: '#e8ecef' });
+    Object.assign(gauge.style, { position: 'fixed', right: '6px', top: 'calc(178px + env(safe-area-inset-top,0px))', height: 'min(50vh, 420px)', width: '96px', touchAction: 'none', userSelect: 'none', zIndex: 5, font: '12px system-ui,sans-serif', color: '#e8ecef' });
     Object.assign(track.style, { position: 'absolute', right: '20px', top: 0, bottom: 0, width: '6px', borderRadius: '3px', background: 'linear-gradient(#5d7a8f,#5d7a8f 10%,#8a6a4a 48%,#4a3426)' });
     Object.assign(gH.style, { position: 'absolute', right: '8px', width: '30px', height: '30px', marginTop: '-15px', borderRadius: '50%', background: '#e8eaec', border: '3px solid #15191d', boxShadow: '0 1px 4px #000a', boxSizing: 'border-box' });
     Object.assign(gO.style, { position: 'absolute', right: '44px', transform: 'translateY(-50%)', fontWeight: 600, background: 'rgba(17,17,17,.85)', padding: '2px 6px', borderRadius: '6px', whiteSpace: 'nowrap' });

@@ -258,10 +258,11 @@ function pixExtrasShow(on) {
 }
 
 // ---------- line drawing and Vector CRT
-const LN = { focal: uniform(500), lo: uniform(4), pass: null, near: uniform(1), far: uniform(20000), off: uniform(new THREE.Vector2(1, 1)), damp: uniform(0.83), flick: uniform(1), last: 0, mats: null };
+const LN = { focal: uniform(500), lo: uniform(4), pass: null, near: uniform(1), far: uniform(20000), off: uniform(new THREE.Vector2(1, 1)), damp: uniform(0.83), flick: uniform(1), last: 0, mats: null, tint: uniform(0) };   // tint 1: Vector CRT "Colour overlay" (line-styles.js TINT)
 // layer numbers in the pass (blue channel / 16): 1 buildings, 2 railways, 3 water, 4 greens, 5 roads, 6 terrain (hides, no pen)
 const PEN = ['#000000', '#c0392b', '#1f5fbf', '#2e8b3a', '#777777'].map(hexc);   // plotter-svg.js LAYERS: buildings, railways, water, greens, roads
 const BEAM = [0.9, 0.7, 0.55, 0.42, 0.34], PHOS = [0.80, 0.92, 1];               // line-styles.js: brightness per layer, one phosphor
+const TINT = [[0.85, 0.95, 1], [1, 0.38, 0.3], [0.3, 0.6, 1], [0.35, 1, 0.5], [0.7, 0.7, 0.75]];   // line-styles.js TINT in this order (buildings, railways, water, greens, roads)
 function idMaterial(id, src, sized) {   // sized (buildings): under LO px on the screen a building is layer 7 (it hides, draws no line)
   const m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
   m.colorNode = Fn(() => {
@@ -309,7 +310,7 @@ function lineMask(crt) {   // per pixel: the layer of the edge through it (0 non
     for (const [a, b] of [[l, r], [d, u]]) best = min(best, pick(bc.mul(step(c.iz.mul(0.04), abs(a.iz.add(b.iz).sub(c.iz.mul(2))))).mul(step(max(a.iz, b.iz), c.iz)), float(1), float(99)));
     const k = best;
     if (!crt) return PEN.reduce((acc, p, i) => pick(eq(k, i + 1), vec3(...p), acc), vec3(1));
-    return BEAM.reduce((acc, b, i) => pick(eq(k, i + 1), vec3(...PHOS).mul(b), acc), vec3(0));
+    return BEAM.reduce((acc, b, i) => pick(eq(k, i + 1), mix(vec3(...PHOS), vec3(...TINT[i]), LN.tint).mul(b), acc), vec3(0));
   })();
 }
 function lineFrame() {
@@ -387,6 +388,8 @@ function sync() {   // the control, the body classes (label look), the URL
   $('isoBtns').hidden = MODE !== 'pixel'; $('nightBtn').hidden = MODE !== 'map';
   $('labels').style.visibility = MODE === 'pixel' ? 'hidden' : '';   // no names in pixel art (the WebGL page), and the layers' labels follow the orbit camera
   document.body.classList.toggle('lstyle-lines', MODE === 'lines'); document.body.classList.toggle('lstyle-crt', MODE === 'vectrex');
+  const nt = $('styleNote'); if (nt) { nt.hidden = !NOTE[MODE]; nt.textContent = NOTE[MODE] || ''; }   // index.html pixNote, line-styles.js NOTE
+  if ($('crtRow')) $('crtRow').hidden = MODE !== 'vectrex';
   const q = new URLSearchParams(location.search); if (MODE === 'map') q.delete('style'); else q.set('style', MODE);
   history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + location.hash);
 }
@@ -399,6 +402,11 @@ function frame() {
   const P = H.pipe; if (P.outputNode !== OUT || P.outputColorTransform) { P.outputNode = OUT; P.outputColorTransform = false; P.needsUpdate = true; }
 }
 
+// the style notes under Look > Style (index.html #pixNote, line-styles.js NOTE), as true for this port
+const NOTE = {
+  pixel: 'Pixel art: an isometric view in a 33-colour palette with stylised trees, people, cyclists, buses, cabs, now and then a police car, ambulance or fire engine, gulls, river traffic (Thames Clipper catamarans, tourist boats, tugs towing waste barges, aggregate barges, speedboats) and swimmers in Eden Dock. Photo facades and the measured facade colours are kept. The arrows at the top right turn the view by a quarter. Night is off in this style. The animals and traffic are illustrative, not live data.',
+  lines: 'Line drawing: the plotter drawing in real time. Building edges with hidden lines removed, and water, parks, roads and railways in the plotter\'s pen colours. A building smaller than 5 px on the screen draws no edges. Night, overlays and splats are off in this style. About > Plotter makes the file for a pen plotter.',
+  vectrex: 'Vector CRT, after the Vectrex console (1982), which drew each line with the electron beam: bright phosphor lines on black, a glow, a short afterglow when the view moves and a slight flicker. There are no scanlines, because a vector screen has none. "Colour overlay" tints each kind of line, as the Vectrex\'s plastic overlays coloured its screen. The screen redraws all the time in this style, which uses more battery.' };
 function ui() {
   const css = document.createElement('style');
   css.textContent = '#styleBox{position:fixed;right:10px;top:calc(10px + env(safe-area-inset-top,0px));z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:6px}' +
@@ -411,6 +419,15 @@ function ui() {
   box.innerHTML = `<select id="styleSel" aria-label="Drawing style" title="Drawing style">${STYLES.map(s => `<option value="${s}">${NAMES[s]}</option>`).join('')}</select>` +
     '<div id="isoBtns" hidden><button id="isoL" aria-label="Turn left by a quarter" title="Turn left by a quarter">&#8634;</button><button id="isoR" aria-label="Turn right by a quarter" title="Turn right by a quarter">&#8635;</button></div>';
   document.body.appendChild(box);
+  // Look > Style: the style's note and, in Vector CRT, "Colour overlay" (index.html #crtRow, #crtOverlay; ?crt=overlay)
+  const after = $('styleProxy') && $('styleProxy').closest('label');
+  if (after) {
+    const row = document.createElement('label'); row.className = 'row'; row.id = 'crtRow'; row.hidden = true;
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'crtOverlay'; cb.checked = new URLSearchParams(location.search).get('crt') === 'overlay'; LN.tint.value = cb.checked ? 1 : 0;
+    cb.onchange = () => { LN.tint.value = cb.checked ? 1 : 0; C.draw(); }; row.append(cb, ' Colour overlay');
+    const note = document.createElement('p'); note.className = 'small'; note.id = 'styleNote'; note.hidden = true;
+    after.after(row, note);
+  }
   $('styleSel').onchange = e => setStyle(e.target.value).catch(err => console.warn('style', err));
   const turn = a => { const s = H.camState(); H.setCam({ ...s, yaw: s.yaw + a }); };
   $('isoL').onclick = () => turn(Math.PI / 2); $('isoR').onclick = () => turn(-Math.PI / 2);

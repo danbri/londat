@@ -295,7 +295,7 @@ $('tNow').onclick = clockNow;
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,drone,plotter,music,splats,overlays,river,kml,locate,xr').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,drone,plotter,music,splats,overlays,river,kml,locate,model,xr').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 // where each layer's controls go in the menu (menu.js; the Menu map in README.md): a pane ('look', 'go', 'time', 'about')
 // or a group of the Layers pane ('layers/city' ...). A module may say { menu: '...' } itself; the default is 'layers/city'.
@@ -369,7 +369,7 @@ setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(londonDate(Date.now())
 if (c.length >= 6 && c.every(isFinite)) setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5] });
 else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw: .6, pitch: .6 });
 else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');
-setGround(qs.get('ground') || 'none');
+if (qs.get('ground') !== 's2') setGround(qs.get('ground') || 'none');   // s2 (Satellite 2026): layers/model.js
 const wheels = initCarousel({ clock: () => clock, setClock: t => setClockUser(t), now: clockNow, fromLondon, A, flag, predict, tide: () => LAYERS.tide?.api?.harmonics || null });
 clockHooks.push(() => wheels.draw());
 say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
