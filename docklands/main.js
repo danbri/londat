@@ -58,12 +58,12 @@ roads.visible = flag('roads', true);
 for (const m of [water.material, greens.material, lineMat]) { m.polygonOffset = true; m.polygonOffsetFactor = -1; m.polygonOffsetUnits = -4; }
 
 const bmat = buildingMaterial(), buildings = new THREE.Group(); scene.add(buildings);
-let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null;
+let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null, FACADE = null;   // FACADE(i): the photo facade slot of model building i, or null
 const skip = new Set();
 function rebuildBuildings() {
   for (const m of buildings.children) m.geometry.dispose(); buildings.clear();
   const t0 = performance.now();
-  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
+  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADE, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
   draw();
@@ -231,10 +231,19 @@ async function loadModels() {
 
 // ---------- optional data: towers, roof shapes, realistic look, ground images
 async function loadOptional() {
-  const jobs = [];
-  if (flag('towers', true)) jobs.push(loadJSON(DATA + 'towers.json').then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); }).catch(e => console.warn('towers', e)));
+  const jobs = [], towersP = loadJSON(DATA + 'towers.json');
+  if (flag('towers', true)) jobs.push(towersP.then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); }).catch(e => console.warn('towers', e)));
   if (flag('roofs', true) && globalThis.DocklandsRoofs) jobs.push(loadJSON(DATA + 'roofs.json').then(T => { ROOFS = DocklandsRoofs.decode(T, MFP); }).catch(e => console.warn('roofs', e)));
   if (/^(real|realistic|1)$/i.test(qs.get('look') || '') && globalThis.DocklandsLook) jobs.push(loadJSON(DATA + 'materials.json').then(J => { const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } }).catch(e => console.warn('materials', e)));
+  // photo facades (index.html facSlot; ?facades=0 off): data/tex/facades.json gives a slot and the tile size in metres by registry id
+  // (the tower's model buildings, towers.json) or by OSM key (mi, while model_fp matches this area.js); facades.jpg is the atlas
+  if (flag('facades', true)) jobs.push(Promise.all([loadJSON(DATA + 'tex/facades.json'), towersP.catch(() => null), texLoader.loadAsync(DATA + 'tex/facades.jpg')]).then(([F, T, tex]) => {
+    const by = new Map(), slots = [];
+    for (const [key, f] of Object.entries(F.buildings)) { slots[f.slot] = [f.w_m, f.h_m];
+      const mi = /^cwb-/.test(key) ? (T && T.buildings[key] ? T.buildings[key].model_buildings : []) : f.model_fp === MFP && f.mi ? f.mi : (console.warn('facades.json', key, 'is for another area.js'), []);
+      for (const i of mi) by.set(i, f.slot); }
+    tex.colorSpace = THREE.SRGBColorSpace; bmat.setFacades(tex, slots); FACADE = i => by.has(i) ? by.get(i) : null; STATS.facades = { buildings: by.size, slots: slots.filter(Boolean).length };
+  }).catch(e => console.warn('facades', e)));
   await Promise.all(jobs); rebuildBuildings();
   $('look').checked = !!LOOK;
 }
@@ -264,7 +273,7 @@ $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,registry,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,drone,plotter,music,overlays,river,kml,locate').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 const ui = {
   host: () => $('layersExtra'),
@@ -302,7 +311,8 @@ function resize() {
 addEventListener('resize', resize);
 controls.addEventListener('change', () => { draw(); writeHash(); });
 let frames = 0, fpsT = performance.now(), fps = 0;
-renderer.setAnimationLoop(() => {
+renderer.setAnimationLoop((time, xrFrame) => {
+  if (ctx.xrFrame) { ctx.xrFrame(time, xrFrame, frameHooks); return; }   // layers/xr.js: a headset session (renderer.xr) or its one-eye preview draws the frame
   if (controls.update()) need = true;
   if (!need && !$('animate').checked) return; need = false;
   const d = camera.position.distanceTo(controls.target);
@@ -317,6 +327,11 @@ renderer.setAnimationLoop(() => {
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
   $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
 });
+
+// ---------- drawing styles (styles.js, ?style=map|pixel|lines|vectrex): the hook gives a style the pipeline (it sets
+// pipe.outputNode in an onFrame hook), the pick ray (pixel art casts it from its orthographic camera) and the camera functions
+export const styleHook = { pipe, scenePass, ray, syncPost, setCam, camState, setClock, setShadows, ctx };
+import('./styles.js').then(m => m.init(styleHook)).catch(e => console.warn('styles', e));
 
 // ---------- start
 setShadows(flag('shadows', GPU));

@@ -62,19 +62,20 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 |---|---|---|---|
 | model | terrain, ground images | yes | ground sinks under water polygons |
 | model | water, greens, rail, roads | yes | water: depth colour, ripples, fresnel, sun glint; mirror on WebGPU by default (`layers/water.js`, `?water=0|1`), sky by fresnel on WebGL 2 |
-| model | buildings, towers, roof shapes, Realistic colours | partial | no Realistic day facade patterns |
+| model | buildings, towers, roof shapes, Realistic look, photo facades | yes | roofs checked exact (22,654); `materials.js` buildingMaterial: the Realistic day patterns (styles 0-7), the 32-slot photo facade atlas (`?facades=0`), night windows by style |
 | model | detailed models (glTF) | yes | |
 | 1 data layers | trees | yes | `layers/trees.js`, `tree-species.js`: all 81,875 trees by default (`?trees=near`); 43 species profiles from the GLA London Public Realm Trees (OGL) and OSM leaf tags, 20,480 inferred from the setting (flagged); seasons (leaf-out, autumn colours, bare crowns, cherry blossom), wind sway; LOD: full crowns within 380 m (9,000 nearest), a 10-triangle far form to 6.5 km: about 0.8 to 0.9 M triangles a frame |
 | 1 data layers | terrain ring (Hills of London) | yes | `layers/ring.js`; receives no shadows (a CSM step at the shadow range); not faint in the cut-away |
 | 1 data layers | flood walls, riverbed, floor plates | yes | `layers/walls.js`, `riverbed.js`, `floors.js` (floors off by default; on, the buildings go see-through); no tap card |
 | 1 data layers | tunnels, basements, indoor, cut-away gauge | partial | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); no station cut-outs, level labels or tap card; faint ground almost invisible at night |
-| 1 data layers | station models | partial | `layers/stations.js`: 127 parts, tap card; seen only from below ground; no night light |
+| 1 data layers | station models | yes | `layers/stations.js`: 127 parts, tap card, a dim night light; seen from below ground |
 | 1 data layers | skyline years | yes | `layers/skyline.js`: slider, Play, `?year=` |
 | 2 interface | search | yes | `layers/search.js`: registry, places, walking network; flies there; a place below ground cuts away |
 | 2 interface | registry card (atlas, kg links), night use from the registry | yes | `layers/registry.js`, ctx.addCard; no occupant labels at their floors, no London Datastore facts |
 | 2 interface | routes, press and hold | yes | `layers/routes.js`: same network and weights; 4 test routes equal to the WebGL page |
-| 2 interface | drawer tabs, colour by | no | the menus are to be reworked first (owner, 2026-10-08) |
-| 3 night | windows, crowns, haze, stars, bloom | partial | crown campaign colours by date not ported |
+| 2 interface | colour buildings by, building keys | yes | `layers/overlays.js` (6 modes, `?colour=`; no windows by night in a data colour), `layers/keys.js` |
+| 2 interface | drawer tabs | no | the menus are to be reworked first (owner, 2026-10-08) |
+| 3 night | windows, crowns, haze, stars, bloom | yes | `crown.js`: the halo colour by date (cwplans-crown-lighting rules); generic tower signs in `layers/nightlights.js` |
 | 3 night | reflections | partial | WebGPU mirror (TSL reflector, one plane), streaks by seven vertical samples; WebGL 2: sky by fresnel only (mirror with `?water=1`) |
 | 3 night | aviation lights, apex light, riverside lamps | yes | `layers/nightlights.js`: the WebGL page's rules and seeds; no tower signs |
 | 3 sky | sun, moon, stars, clock, weather | yes | `sky3.js` (true north from the area.js geo, night by the geometric altitude, the moon disc with phase and limb), `layers/weather.js` (cloud, haze, rain and snow; Open-Meteo only on request, `?weather=meteo`); checked by `test/clock-check.mjs` (sun and moon within 0.02 deg) |
@@ -84,10 +85,12 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 4 live | piers, berths, berthed vessels | yes | `layers/piers.js`, `piers-models.js`: 275 piers and pontoons on the tide, HMS Belfast, 5 other vessels, simulated Clipper, ferry and tour boat calls |
 | 4 live | aircraft (simulated) | yes | `layers/planes.js`: London City procedures and hours, Heathrow streams, H4 helicopters; no live ADS-B (licences) |
 | 4 live | wildlife (simulated from records) | yes | `layers/wildlife.js`: 20 birds and the fox, weighted by NBN Atlas and GBIF records (CC0, CC-BY, OGL) |
-| 4 live | overlays, locate, KML | no | |
+| 4 live | overlays, river, locate, KML, building keys | yes | `overlay-kit.js` (shared builders, materials, taps, labels) and `layers/overlays.js` (bike docks, lift outages, cranes, H4 and EGR159, GLA outlines and venues, works in progress; `?ov=bikes,works`), `layers/river.js` (river buses, locks, PLA notices, swim water, moorings, ships; `?river=`), `layers/locate.js`, `layers/kml.js` (`?kml=`; screen-space lines with Line2NodeMaterial; the WebGL page's kml.js reused), `layers/keys.js` (OSM card with parts, kg, Wikidata); files load only when ticked. Not ported: the selected building in the KML export, the Tower Bridge note, Sky panel rows |
 | framework | reveal sheet | yes | `reveal.js`: a frosted sheet with the layer drawn on it falls when a layer is ticked on; `?reveal=0` |
-| 5 styles | photo facades, pixel art, Line drawing, Vector CRT, splats | no | splats need a three.js splat renderer (licence check first) |
-| 6 other | Drone, plotter SVG, music, WebXR | no | the WebGL page's headset layer stays in use until then |
+| 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art has no photo facades or animated actors |
+| 5 styles | splats | no | in progress (own or vendored renderer: licence check) |
+| 6 other | Drone, plotter SVG, music | yes | `drone.js`, `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
+| 6 other | WebXR | no | in progress; the WebGL page's headset layer stays in use until then |
 
 ## Water (2026-10-08)
 

@@ -5,9 +5,11 @@
 // (every 16 to 26 m along the EA flood walls by the tidal water, 3 m inland, and along footpaths within 15 m of it; low-pressure
 // sodium orange or warm white LED). Same rules and seeds as the WebGL page. Drawn as instanced sprites (PointsNodeMaterial
 // on a Sprite: WebGPU draws points 1 px only), a fixed size in pixels, additive, depth-tested, bright only by night
-// (U.night), so the bloom picks them up. Not ported: the reflection sprites (the WebGPU mirror reflects these points), the
-// crown halo sprites (the bloom stands in), the generic tower signs. Skill: docklands-3d-page, "Three.js port".
-import { instancedBufferAttribute, vec4, float, uv, smoothstep, length, uniform, viewportSize } from 'three/tsl';
+// (U.night), so the bloom picks them up. Also the generic lit signs of office towers of 150 m or more (bars, no names) and
+// the crown halo colour by date (crown.js; the material draws it). Not ported: the reflection sprites (the WebGPU mirror
+// reflects these points), the crown halo sprites (the bloom stands in). Skill: docklands-3d-page, "Three.js port".
+import { instancedBufferAttribute, vec4, vec3, float, uv, smoothstep, length, uniform, viewportSize, step, positionWorld } from 'three/tsl';
+import { initCrown } from '../crown.js';
 
 const AVL = { min: 100, mid: 150, step: 52 };
 const ringOf = (dec, o) => { const f = dec(o.p), n = o.holes && o.holes.length ? o.holes[0] : f.length / 2, r = []; for (let i = 0; i < n; i++) r.push([f[2 * i], f[2 * i + 1]]); return r; };
@@ -83,7 +85,33 @@ export default {
     mat.colorNode = vec4(instancedBufferAttribute(Cc).mul(U.night), float(1));
     mat.opacityNode = smoothstep(0.5, 0.1, length(uv().sub(0.5))).mul(U.night);
     const sp = new THREE.Sprite(mat); sp.count = n; sp.frustumCulled = false; sp.renderOrder = 4; sp.name = 'nightlights';
-    stats.nightlights = { aviation: nRed, apex: nApex, lamps: nLamp, ms: Math.round(performance.now() - t0) };
-    return { object: sp };
+    stats.nightlights = { aviation: nRed, apex: nApex, lamps: nLamp, signs: 0, ms: Math.round(performance.now() - t0) };
+    const group = new THREE.Group(); group.name = 'nightlights'; group.add(sp);
+    // generic lit signs near the top of office towers of 150 m or more (index.html buildNightLights): a short cool-white bar,
+    // 30 % of the face, 6 m under the top, 0.7 m out, on the two longest faces. No names or logos: the real signs are
+    // trademarks, and which face carries one is not in our data. Built when the registry gives the towers' use (registry.js
+    // sets ctx.buildOpts.useOf); additive, so by day (U.night 0) it adds nothing.
+    let signsDone = false;
+    const buildSigns = useOf => {
+      const p = [], idx = [];
+      for (const t of TOWERS) { const top = towerTop(t), base = t.base_m_od ?? t.tiers[0].y0; if (top - base < 150 || useOf(t.model_buildings[0]) !== 2) continue;
+        const ring = (t.tiers.find(tr => top - 6 >= tr.y0 - .01 && top - 6 <= tr.y1 + .01) || t.tiers.at(-1)).ring, { cx, cz } = centre(ring), m = ring.length;   // the tier at the sign's height (index.html takes the one at top - 1: on 8 Canada Square a rooftop plant tier, which put the bars inside the tower)
+        const edges = ring.map((q, i) => [q, ring[(i + 1) % m]]).sort((a, b) => Math.hypot(b[1][0] - b[0][0], b[1][1] - b[0][1]) - Math.hypot(a[1][0] - a[0][0], a[1][1] - a[0][1])).slice(0, 2);
+        for (const [a, b] of edges) { const mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2, l = Math.hypot(mx - cx, mz - cz) || 1, ox = (mx - cx) / l * .7, oz = (mz - cz) / l * .7, y = top - 6, k = p.length / 3;
+          const P = f => [a[0] + (b[0] - a[0]) * f + ox, a[1] + (b[1] - a[1]) * f + oz];
+          const [x0, z0] = P(.35), [x1, z1] = P(.65); p.push(x0, y - .5, z0, x1, y - .5, z1, x1, y + .5, z1, x0, y + .5, z0); idx.push(k, k + 1, k + 2, k, k + 2, k + 3); stats.nightlights.signs++; } }
+      if (!idx.length) return;
+      const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); G.setIndex(idx); G.computeBoundingSphere();
+      const sm = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+      const lin = v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4;
+      sm.colorNode = vec4(vec3(lin(.88), lin(.94), 1).mul(.55 * 3).mul(U.night).mul(step(positionWorld.y, U.cut)), float(1));
+      const mesh = new THREE.Mesh(G, sm); mesh.name = 'tower signs'; mesh.renderOrder = 4; group.add(mesh); ctx.draw();
+    };
+    ctx.onFrame(() => { if (!signsDone && ctx.buildOpts.useOf) { signsDone = true; buildSigns(ctx.buildOpts.useOf); } });
+    // One Canada Square's halo in the colour of the evening (crown.js): a toggle and the note, as Layers > "Crown halo colour by date"
+    const crown = initCrown(ctx);
+    ctx.ui.toggle('Crown halo colour by date', true, v => crown.setOn(v));
+    const note = ctx.ui.note(''); crown.onChange = () => { note.textContent = `One Canada Square's halo, ${crown.text()}.`; stats.nightlights.crown = crown.text(); };
+    return { object: group, crown };
   },
 };

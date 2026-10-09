@@ -2031,3 +2031,16 @@ official data."
   greenlandday at two sizes); clock-check 0 failed; npm test 33 of 33; register check passes.
 - Open: menus (owner's rework); wind data for times with no source (default 4 m/s from 240 deg unless Open-Meteo is asked);
   foreshore profiles are defaults; aircraft and berth calls are simulated; real-device GPU cost not measured.
+
+## 2026-10-09: Three.js port, third wave (facades, styles, overlays, Drone, plotter, music)
+
+- Four subagents: building appearance (photo facades, the Realistic day patterns, crown colours by date, tower signs,
+  station night light); styles (pixel art, Line drawing, Vector CRT: `docklands/styles.js`); overlays, river, KML, locate,
+  building keys; Drone, plotter SVG (the WebGL page's plotter-svg.js: 22,605 paths against 22,719 for the same view),
+  music. Coordinator: no lit windows in a data colour mode (U.dataColour); fixed `col` out of scope in the emissive graph.
+- Fault in the WebGL page's data found by the port (F-candidate, not fixed there): atlas record cwb-0418 (no name) has
+  the same model buildings as cwb-0417, so the later record wins in regOf and 8 Canada Square shows no photo tile; the
+  port takes model buildings from towers.json and shows it. Also index.html places the tower signs on the tier at top -
+  1 m, inside 8 Canada Square's plant tier.
+- Tests on the release state (exported index, splats and WebXR left out): load test WebGL 2 6/6, WebGPU 6/6 (cw with the
+  Realistic look, Rotherhithe night, Line drawing); register check passes. Splats and WebXR are still in progress.

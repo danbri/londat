@@ -4,6 +4,7 @@
 // write, drawn after the opaque scene). The page's own tunnels are not drawn here, so the "tunnel" parts are left out as
 // on the WebGL page. Tap a part for its card. ?stations=0 starts with the layer off.
 // Skills: docklands-3d-page, "Three.js port" and "Station models"; blender-station-models, section 8.
+import { attribute, sRGBTransferEOTF } from 'three/tsl';
 const STYLE = {   // stations-layer.js STYLE: colour and opacity by element class (--plat #ff8a3d, --jub #c9ced6)
   platform: ['#ff8a3d', 1], escalator: ['#ffd23f', 1], stair: ['#f2dcb0', 1], lift: ['#ececec', 1], entrance: ['#ff6a5c', 1],
   track: ['#4a4f57', 1], tunnel: ['#c9ced6', 1], hall: ['#cbbfae', .32], canopy: ['#e6e6e6', .35], box: ['#e8ecf0', .1],
@@ -11,6 +12,7 @@ const STYLE = {   // stations-layer.js STYLE: colour and opacity by element clas
 const NAME = { box: 'Station box (structure)', track: 'Track', tunnel: 'Tunnel', platform: 'Platform', hall: 'Ticket hall / concourse',
   escalator: 'Escalator', stair: 'Stairs', lift: 'Lift', canopy: 'Canopy', entrance: 'Entrance' };
 const STN = { 'canary-wharf': 'Canary Wharf', 'canada-water': 'Canada Water' };
+const NIGHT_GLOW = 0.12;   // share of the part's colour emitted at full night
 const rgb = s => { const n = parseInt(s.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; };
 
 export default {
@@ -35,6 +37,7 @@ export default {
       G.setAttribute('position', new THREE.Float32BufferAttribute(B.p, 3)); G.setAttribute('color', new THREE.Float32BufferAttribute(B.c, 3));
       G.computeVertexNormals(); G.computeBoundingSphere(); G.userData.part = Int32Array.from(B.part);
       const glass = alpha < 1, m = ctx.materials.vertexColourMaterial(glass ? { transparent: true, opacity: alpha, depthWrite: false, flatShading: true } : { flatShading: true });
+      m.emissiveNode = sRGBTransferEOTF(attribute('color', 'vec3')).mul(ctx.U.night).mul(NIGHT_GLOW);   // by night a dim light of their own (the WebGL page draws them at the night ground's dim, not black)
       const mesh = new THREE.Mesh(G, m); mesh.renderOrder = glass ? 3 + Math.round((1 - alpha) * 10) : 0;   // the faintest (the box) last
       mesh.castShadow = !glass; mesh.receiveShadow = true; mesh.userData.stations = true; group.add(mesh);
     }
