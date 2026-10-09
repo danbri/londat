@@ -27,7 +27,7 @@ const CSS = `#wheels{position:fixed;left:10px;right:10px;top:calc(60px + env(saf
 body.wheels #rtPanel,body.wheels #findBox,body.wheels #locMsg{top:calc(132px + env(safe-area-inset-top,0px))}
 body.wheels #drBar{top:calc(132px + env(safe-area-inset-top,0px))}
 body.wheels #isoBtns{margin-top:72px}
-@media (min-width:900px){body.drawerOpen #wheels{left:calc(var(--dw,400px) + 10px)}}`;   /* the open drawer (menu.js) leaves the map undimmed on a wide screen: the wheels move right of it and shrink */
+@media (min-width:900px){body.drawerOpen #wheels{left:calc(var(--dwv,var(--dw,400px)) + 10px)}}`;   /* the open drawer (menu.js) leaves the map undimmed on a wide screen: the wheels move right of it and shrink */
 
 export function initCarousel(C) {   // C: { clock(), setClock(t), now(), fromLondon, A, tide() -> harmonics | null, predict, flag }
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);

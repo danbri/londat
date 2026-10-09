@@ -1,5 +1,5 @@
-// Search (layer "search", no menu entry) of the Three.js port: a round Search button at the top left (after Menu and
-// Day or night) and its box. The WebGL page's rules (index.html searchItems): two characters or more; buildings with
+// Search (layer "search", no menu entry) of the Three.js port: the search box at the top of the menu (since 2026-10-09;
+// before, a round Search button at the top left, now the Labels button) and its results. The WebGL page's rules (index.html searchItems): two characters or more; buildings with
 // registry records (layers/registry.js), labelled places (area.js places, stations and places of under.js, named docks
 // and basins, published levels), and every routable place of the walking network (../cwplans/docklands/data/indoor.js,
 // loaded when the box gets focus); prefix matches first; at most 14; Enter takes the first. A result flies the camera
@@ -16,23 +16,33 @@ export default {
 
     // ---------- the button and the box (built here; index.html is not changed)
     const css = document.createElement('style');
-    css.textContent = `#findBtn{left:114px;font-size:19px}#hud{left:168px!important}
-#findBox{position:fixed;left:10px;top:calc(62px + env(safe-area-inset-top,0px));width:min(380px,calc(100vw - 20px));z-index:7}
+    css.textContent = `#labelsBtn{left:114px;font-size:19px}#findBtn{display:none}#hud{left:168px!important}
+#findBox{flex:none;padding:2px 10px 8px;position:relative}
 #findBox input{width:100%;height:44px;padding:0 12px;border-radius:10px;border:1px solid #33404a;background:var(--panel);color:var(--fg);font:16px system-ui,sans-serif}
 #findBox input:focus{outline:2px solid var(--acc);outline-offset:0}
-#findRes{list-style:none;margin:6px 0 0;padding:4px;max-height:min(60vh,520px);overflow:auto;background:var(--panel);border-radius:10px}
+#findRes{list-style:none;margin:6px 0 0;padding:4px;max-height:min(55vh,480px);overflow:auto;background:#161c22;border-radius:10px}
+#labelsBtn[aria-pressed=false]{opacity:.55}
+#labelsBtn[aria-pressed=false] .x{display:inline}#labelsBtn .x{display:none}
 #findRes:empty{display:none}
 #findRes button{display:block;width:100%;min-height:40px;text-align:left;border:0;background:none;color:var(--fg);padding:8px 10px;border-radius:6px;font:14px system-ui,sans-serif;cursor:pointer}
 #findRes button:hover,#findRes button:focus{background:#1b2229}
 #findRes .k{color:var(--mut);font-size:12px;margin-left:6px}`;
     document.head.appendChild(css);
-    const btn = document.createElement('button'); btn.id = 'findBtn'; btn.className = 'btn'; btn.type = 'button'; btn.setAttribute('aria-label', 'Search'); btn.title = 'Search'; btn.setAttribute('aria-expanded', 'false');
-    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:middle"><circle cx="10" cy="10" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15 15l6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+    // the round button at the top left is now Labels on or off (owner, 2026-10-09: "an easy way to toggle labels by single
+    // click icon. It can replace the search option on frontpage, with a search box appearing at top of slide out
+    // hamburger'd side menus instead"); #findBtn stays as a hidden button that opens the menu at the search box
+    const lb = document.createElement('button'); lb.id = 'labelsBtn'; lb.className = 'btn'; lb.type = 'button'; lb.title = 'Labels on or off'; lb.setAttribute('aria-label', 'Labels');
+    lb.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:middle"><path d="M3 12V4h8l10 10-8 8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="7.5" cy="8.5" r="1.6" fill="currentColor"/><path class="x" d="M3 21L21 3" stroke="currentColor" stroke-width="2.2"/></svg>';
+    const showL = document.getElementById('showLabels'), syncL = () => lb.setAttribute('aria-pressed', String(!showL || showL.checked));
+    lb.onclick = () => { if (!showL) return; showL.checked = !showL.checked; showL.dispatchEvent(new Event('change')); syncL(); };
+    showL?.addEventListener('change', syncL); syncL();
+    const btn = document.createElement('button'); btn.id = 'findBtn'; btn.type = 'button'; btn.hidden = true; btn.setAttribute('aria-label', 'Search');
     const box = document.createElement('div'); box.id = 'findBox'; box.hidden = true; box.setAttribute('role', 'search');
     const qIn = document.createElement('input'); qIn.type = 'search'; qIn.placeholder = 'Building, place, station, platform'; qIn.setAttribute('aria-label', 'Search buildings and places'); qIn.autocomplete = 'off'; qIn.enterKeyHint = 'search';
     const qRes = document.createElement('ul'); qRes.id = 'findRes'; qRes.setAttribute('aria-label', 'Results');
-    box.append(qIn, qRes);
-    const night = document.getElementById('nightBtn'); (night || document.body.firstChild).after(btn); btn.after(box);
+    box.hidden = false; box.append(qIn, qRes);
+    const night = document.getElementById('nightBtn'); (night || document.body.firstChild).after(lb); lb.after(btn);
+    const dHead = document.getElementById('dHead'); if (dHead) dHead.after(box); else btn.after(box);   // the search box: the top of the menu
 
     // ---------- camera flight: a smooth (smoothstep) tween of the orbit target and the camera, same yaw and pitch
     let flight = 0;
@@ -94,21 +104,21 @@ export default {
       last = searchItems(qIn.value); qRes.innerHTML = '';
       for (const it of last) { const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.innerHTML = `${esc(it.t)}<span class="k">${esc(it.k)}</span>`; b.onclick = () => pick(it); li.appendChild(b); qRes.appendChild(li); }
     }
-    function pick(it) { qRes.innerHTML = ''; qIn.blur(); close(); it.go(); }
-    function open() { box.hidden = false; btn.setAttribute('aria-expanded', 'true'); const d = document.getElementById('drawer'); if (d) d.hidden = true; qIn.focus(); }
-    function close() { box.hidden = true; btn.setAttribute('aria-expanded', 'false'); qRes.innerHTML = ''; }
-    btn.onclick = () => box.hidden ? open() : (close(), qIn.value = '');
+    const drawerEl = () => document.getElementById('drawer');
+    function pick(it) { qRes.innerHTML = ''; qIn.blur(); if (innerWidth < 900) document.getElementById('drawerX')?.click(); it.go(); }
+    function open() { const d = drawerEl(); if (d && d.hidden) document.getElementById('menu')?.click(); qIn.focus(); }
+    function close() { qRes.innerHTML = ''; }
+    btn.onclick = open;
     qIn.addEventListener('input', runSearch);
     qIn.addEventListener('focus', () => { loadNet().then(() => { if (qIn.value) runSearch(); }); ctx.registry?.ready?.then(() => { if (qIn.value) runSearch(); }); });
     qIn.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); runSearch(); if (last[0]) pick(last[0]); }
-      else if (e.key === 'Escape') { close(); btn.focus(); }
+      else if (e.key === 'Escape') { close(); qIn.value = ''; }
       else if (e.key === 'ArrowDown') { const b = qRes.querySelector('button'); if (b) { e.preventDefault(); b.focus(); } }
       e.stopPropagation();   // OrbitControls listens to the arrow keys on window
     });
     qRes.addEventListener('keydown', e => { const bs = [...qRes.querySelectorAll('button')], i = bs.indexOf(document.activeElement); if (e.key === 'ArrowDown' && bs[i + 1]) { e.preventDefault(); bs[i + 1].focus(); } if (e.key === 'ArrowUp') { e.preventDefault(); (bs[i - 1] || qIn).focus(); } if (e.key === 'Escape') { close(); btn.focus(); } e.stopPropagation(); });
-    ctx.renderer.domElement.addEventListener('pointerdown', () => { if (!box.hidden && !qIn.value) close(); else qRes.innerHTML = ''; if (document.activeElement === qIn) qIn.blur(); });
-    document.getElementById('menu')?.addEventListener('click', () => { if (!box.hidden) close(); });
+    ctx.renderer.domElement.addEventListener('pointerdown', () => { qRes.innerHTML = ''; if (document.activeElement === qIn) qIn.blur(); });
 
     return { searchItems, flyTo, loadNet, open, close, labels: labels.length };
   },

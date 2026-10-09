@@ -34,10 +34,24 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
   const wide = () => innerWidth >= 900;
   const isOpen = () => !drawer.hidden;
   // body.drawerOpen: on a wide screen (map not dimmed) the time wheels (carousel.js) move to the right of the drawer
-  const sync = () => { const on = isOpen(); scrim.hidden = !on || wide(); $('menu').setAttribute('aria-expanded', String(on)); document.body.classList.toggle('drawerOpen', on); };
+  const sync = () => { const on = isOpen(); scrim.hidden = !on || wide() || OFF < 0; $('menu').setAttribute('aria-expanded', String(on)); document.body.classList.toggle('drawerOpen', on); };
   new MutationObserver(sync).observe(drawer, { attributes: true, attributeFilter: ['hidden'] });
   addEventListener('resize', sync);
-  function open(on) { drawer.hidden = !on; sync(); }
+  // slid in by any amount (owner, 2026-10-09: "allow those menus to be slid in by any amount, and to be toggled closed by
+  // tapping their header too. Give some more translucency too when they are only partially open"): OFF is the offset in
+  // px (0 = fully open, negative = slid out to the left); the drawer keeps it after a drag; the less it shows, the more
+  // translucent it is (and the map is not dimmed). Closing or opening by a button resets it to fully open.
+  let OFF = 0;
+  const dw = () => drawer.getBoundingClientRect().width || 400;
+  function setOff(v) {
+    OFF = Math.max(-(dw() - 56), Math.min(0, v)); const f = 1 + OFF / dw();
+    drawer.style.transform = OFF ? `translateX(${OFF}px)` : '';
+    drawer.style.background = OFF ? `rgba(16,20,24,${(.35 + .6 * f * f).toFixed(3)})` : '';
+    drawer.style.backdropFilter = drawer.style.webkitBackdropFilter = OFF ? 'blur(3px)' : '';
+    scrim.hidden = !isOpen() || wide() || OFF < 0;   // a menu slid out by any amount leaves the map free to use
+    document.body.style.setProperty('--dwv', Math.round(dw() + OFF) + 'px');
+  }
+  function open(on) { drawer.hidden = !on; if (on || OFF) setOff(0); sync(); }
   let pane = store.get('d3.pane') || 'paneViews'; if (!$(pane)) pane = 'paneViews';
   function openPane(id) {
     pane = id; store.set('d3.pane', id);
@@ -49,12 +63,18 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
   $('menu').onclick = () => isOpen() ? open(false) : openPane(pane);
   $('drawerX').onclick = scrim.onclick = () => open(false);
   addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen()) open(false); });
-  // a swipe left of more than 70 px closes it (not from a field or a slider)
-  { let x0 = null, y0 = 0, dx = 0;
-    drawer.addEventListener('pointerdown', e => { if (!e.isPrimary || e.pointerType === 'mouse' || e.target.closest('input,select,textarea')) { x0 = null; return; } x0 = e.clientX; y0 = e.clientY; dx = 0; });
-    drawer.addEventListener('pointermove', e => { if (x0 == null) return; dx = Math.min(0, e.clientX - x0); if (Math.abs(e.clientY - y0) > 30 && dx > -20) { x0 = null; drawer.style.transform = ''; return; } if (dx < -12) { drawer.classList.add('drag'); drawer.style.transform = `translateX(${dx}px)`; } });
-    const up = () => { if (x0 == null) return; x0 = null; drawer.classList.remove('drag'); drawer.style.transform = ''; if (dx < -70) open(false); };
-    drawer.addEventListener('pointerup', up); drawer.addEventListener('pointercancel', up); }
+  // drag sideways (not from a field or a slider) to slide it by any amount; let go with less than 15 % showing: closed;
+  // a quick flick: all the way. A tap on the header (not its buttons or the search box): closed.
+  { let x0 = null, y0 = 0, o0 = 0, t0 = 0, moved = false;
+    drawer.addEventListener('pointerdown', e => { if (!e.isPrimary || (e.pointerType === 'mouse' && !e.target.closest('#dHead')) || e.target.closest('input,select,textarea')) { x0 = null; return; } x0 = e.clientX; y0 = e.clientY; o0 = OFF; t0 = performance.now(); moved = false; });
+    drawer.addEventListener('pointermove', e => { if (x0 == null) return; const dx = e.clientX - x0; if (!moved && Math.abs(e.clientY - y0) > 30 && Math.abs(dx) < 20) { x0 = null; return; } if (moved || Math.abs(dx) > 12) { moved = true; drawer.classList.add('drag'); setOff(o0 + dx); } });
+    const up = e => { if (x0 == null) return; const v = (e.clientX - x0) / Math.max(1, performance.now() - t0); x0 = null; drawer.classList.remove('drag'); if (!moved) return;
+      if (v < -1.2 || 1 + OFF / dw() < .15) open(false); else if (v > 1.2) setOff(0); };
+    drawer.addEventListener('pointerup', up); drawer.addEventListener('pointercancel', up);
+    $('dHead').addEventListener('click', e => { if (moved || e.target.closest('button,input,a')) return; open(false); });
+    $('dHead').style.cursor = 'pointer'; $('dHead').title = 'Tap to close; drag sideways to slide the menu';
+    // a tap on a tab of a slid-out menu brings it fully back
+    tabs.forEach(t => t.addEventListener('click', () => { if (OFF) setOff(0); })); }
   // a view button closes the drawer on a phone, so the view shows
   drawer.addEventListener('click', e => { if (e.target.closest('[data-view]') && !wide()) open(false); });
   openPane(pane); open(false);
@@ -80,7 +100,7 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
   // ---------- Go: proxies for the round buttons of the layers, and the route finder (layers/routes.js api)
   const L = id => { const l = M.layers()[id]; return l && l.api; };
   const clickIf = (id, close = true) => { const b = $(id); if (!b) return false; if (close && !wide()) open(false); b.click(); return true; };
-  $('goSearch').onclick = () => clickIf('findBtn');
+  $('goSearch').onclick = () => clickIf('findBtn', false);   // the search box is at the top of this menu
   $('goLocate').onclick = () => clickIf('locBtn');
   $('goXr').onclick = () => clickIf('xrBtn');
   const out = $('rOut');

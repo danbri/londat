@@ -21,7 +21,7 @@ button,label,select,#credit,#attribI{touch-action:manipulation}
 #hud.fade{opacity:0}
 /* the drawer (menu.js): header, tabs, one pane at a time; closes by its cross, the dimmed map, Escape, a swipe left.
    Width --dw; while it is open the body has the class drawerOpen (on a wide screen the time wheels move right of it) */
-#scrim{position:fixed;inset:0;background:#0006;z-index:7}
+#scrim{position:fixed;inset:0;background:#0006;z-index:7;pointer-events:auto}
 #scrim[hidden]{display:none}
 #drawer{position:fixed;left:0;top:0;bottom:0;width:var(--dw);background:#101418;border-right:1px solid var(--line);z-index:8;display:flex;flex-direction:column;box-shadow:4px 0 18px #0009;padding-top:var(--top);touch-action:pan-y}
 #drawer[hidden]{display:none}
@@ -78,7 +78,7 @@ a{color:var(--acc)}
 #stat{position:fixed;left:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
 @media (min-width:900px){#scrim{display:none!important}}
 /* the bottom-left notes (#blNotes: layers/planes.js, layers/wind.js; inline position) move right of the open drawer on a wide screen */
-@media (min-width:900px){body.drawerOpen #blNotes{left:calc(var(--dw) + 8px)!important;max-width:min(640px,calc(100vw - var(--dw) - 78px))!important}}
+@media (min-width:900px){body.drawerOpen #blNotes{left:calc(var(--dwv,var(--dw)) + 8px)!important;max-width:min(640px,calc(100vw - var(--dwv,var(--dw)) - 78px))!important}}
 </style>
 <!-- three.js r186 (0.186.1), vendored in londat third_party/three (MIT): addons import 'three', 'three/webgpu' and 'three/tsl' -->
 <script type="importmap">
@@ -209,14 +209,14 @@ a{color:var(--acc)}
         <li>Sun, moon and planets: <a href="https://github.com/cosinekitty/astronomy">Astronomy Engine</a> (Don Cross, MIT); stars: <a href="https://cdsarc.cds.unistra.fr/viz-bin/cat/V/50">Yale Bright Star Catalogue 5th ed.</a> (Hoffleit &amp; Warren 1991, public domain)</li>
         <li>Constellation lines: <a href="https://github.com/ofrohn/d3-celestial">d3-celestial</a> (Olaf Frohn, BSD-3-Clause); star names: <a href="https://www.iau.org/public/themes/naming_stars/">IAU Working Group on Star Names</a> (CC BY); Messier objects: <a href="https://heasarc.gsfc.nasa.gov/W3Browse/all/messier.html">NASA HEASARC</a> (public domain)</li>
         <li>Satellites: <a href="https://celestrak.org/">CelesTrak</a> GP data, <a href="https://github.com/shashwatak/satellite-js">satellite.js</a> (MIT); cloud mask: contains modified EUMETSAT Meteosat data 2026 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); London City runway thresholds: © OpenStreetMap contributors (ODbL)</li>
-        <li>Weather and wind: <a href="https://open-meteo.com/">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), from the londat hourly cache or, when you tick it, from the Open-Meteo API</li></ul>
+        <li>Weather and wind: <a href="https://open-meteo.com/">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), from the londat hourly cache or, when you tick it, from the Open-Meteo API; London City Airport METAR from the <a href="https://aviationweather.gov/">NOAA Aviation Weather Center</a> (public domain), copied every 5 minutes by the live-cache job</li></ul>
       <h3>Transport, river and live data</h3><ul class="small">
         <li>River buses, piers, hire bike docks, lift outages, step-free routes: Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]</li>
         <li>River: Port of London Authority notices, Canal &amp; River Trust locks, Environment Agency water quality (OGL v3.0), the Thames Barrier (GOV.UK, OGL v3.0)</li>
-        <li>Ships: <a href="https://openwaters.io/ais/">Open Waters AIS</a> (AISHub, aisstream.io), accepted for scoping, licence under review; small private craft as counts only. Not for navigation.</li>
+        <li>Ships: <a href="https://openwaters.io/ais/">Open Waters AIS</a> (AISHub, aisstream.io), accepted for scoping, licence under review; small private craft as counts only; asked by your browser and, every 5 minutes with the last 2 hours kept, by the <a href="https://github.com/danbri/londat/tree/live-cache">live-cache</a> job. Not for navigation.</li>
         <li>Aircraft, simulated: UK AIP (NATS) facts for London City and route H4; CAA monthly totals; London City runway thresholds from OpenStreetMap (ODbL).</li>
         <li>Recorded aircraft (by default): the adsb.lol daily history (<a href="https://github.com/adsblol/globe_history_2026">adsblol/globe_history_2026</a>), © adsb.lol contributors, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>; the last 7 days within 25 nm, in the <a href="https://github.com/danbri/londat/tree/adsb-cache">adsb-cache</a> branch; operator callsign and type only, no registration</li>
-        <li>Live aircraft (only after you tap "Live aircraft"): <a href="https://adsb.lol/">adsb.lol</a>, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>, asked by your browser; nothing stored</li>
+        <li>Near-live aircraft (by default near now): <a href="https://adsb.lol/">adsb.lol</a> live API, © adsb.lol contributors, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>, asked every 5 minutes by the <a href="https://github.com/danbri/londat/tree/live-cache">live-cache</a> job (the last hour kept); operator callsign and type only. Live aircraft (only after you tap "Live aircraft"): adsb.lol, asked by your browser; nothing stored</li>
         <li>Live data box (About): line status and traffic cameras, Powered by TfL Open Data; air quality: London Air Quality Network (Environmental Research Group, Imperial College London); storm overflows: Thames Water (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); tide gauges: Environment Agency (OGL v3.0); weather: Open-Meteo (CC BY 4.0)</li>
         <li>Cranes: Source: UK AIS (NATS), facts only; helicopter route H4 and restricted area EGR159: Source: UK AIP, NATS, facts only</li></ul>
       <h3>London Datastore and planning</h3><ul class="small">
