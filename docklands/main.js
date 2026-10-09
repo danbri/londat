@@ -393,6 +393,18 @@ controls.addEventListener('change', () => { draw(); writeHash(); });
 controls.addEventListener('start', () => { VIEWNAME = null; document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', 'false')); leavePhoto(); });   // a drag leaves the named view (nav.js: no vw=)
 // a wheel over a label button (traffic cameras) zooms the map as over the canvas
 $('labels').addEventListener('wheel', e => { e.preventDefault(); renderer.domElement.dispatchEvent(new WheelEvent('wheel', e)); }, { passive: false });
+// a touch that starts on a label button ("cam", place names) goes to the map too, so a pinch or drag that begins there works;
+// a short still tap (under 300 ms and 10 px) still opens the label (owner, 2026-10-09: a pinch on a "cam" label did nothing)
+{ const taps = new Map();   // pointerId -> { el, x, y, t }
+  $('labels').addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' || !e.target.closest('button,.lab,.pnl')) return;
+    e.preventDefault(); taps.set(e.pointerId, { el: e.target.closest('button,.lab,.pnl'), x: e.clientX, y: e.clientY, t: performance.now() });
+    renderer.domElement.dispatchEvent(new PointerEvent('pointerdown', e)); }, { passive: false });
+  // the moves and the lift of each such finger go to the map as well (the canvas did not capture these pointers)
+  const fwd = e => { if (taps.has(e.pointerId) && e.target !== renderer.domElement) renderer.domElement.dispatchEvent(new PointerEvent(e.type, e)); };
+  addEventListener('pointermove', fwd, true);
+  addEventListener('pointerup', e => { const T = taps.get(e.pointerId); if (!T) return; fwd(e); taps.delete(e.pointerId);
+    if (!taps.size && performance.now() - T.t < 300 && Math.hypot(e.clientX - T.x, e.clientY - T.y) < 10) T.el.click(); }, true);
+  addEventListener('pointercancel', e => { if (taps.has(e.pointerId)) { fwd(e); taps.delete(e.pointerId); } }, true); }
 // a photo view keeps the photo's horizontal field, but on a portrait screen the vertical field is capped at PHOTO_VMAX
 // (390 x 844: Rotherhithe 79 deg, Greenland day 138 deg uncapped, a fisheye); the landscape frame is the WebGL page's
 const PHOTO_VMAX = 70;
