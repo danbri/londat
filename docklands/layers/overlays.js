@@ -221,7 +221,7 @@ export default {
     if (prevTab) ctx.ui.tab(prevTab);
 
     // ---------- start: every part (or ?ov=a,b) and ?colour=
-    for (const k of (ctx.qs.has('ov') ? ctx.qs.get('ov') : Object.keys(P).join(',')).split(',').filter(k => P[k])) setPart(k, true, true);   // all on by default (owner, 2026-10-09); ?ov= or ?ov=a,b for fewer
+    for (const k of (ctx.qs.has('ov') ? ctx.qs.get('ov') : Object.keys(P).filter(k => k !== 'heli').join(',')).split(',').filter(k => P[k])) setPart(k, true, true);   // all on by default except the helicopter route (owner, 2026-10-09); ?ov= or ?ov=a,b to choose
     if (MODES[ctx.qs.get('colour')]) setColour(ctx.qs.get('colour'));
 
     const api = { object: root, ownUi: true, setPart, setColour, parts: P, data, stats,
