@@ -10,9 +10,18 @@
 //   works   construction sites: footprint ribbons by status, frames (edges only) to the approved height, cranes, the height built so far
 // A tap within 22 CSS px of a marker, or on the ground inside an outline, opens its card (snapshot date and the source's
 // credit line). Colour by: height, occupants, homes, companies, floors below ground, quality issues, through
-// ctx.buildOpts.colourOf (the registry layer's atlas index). URL: ?ov=bikes,works (parts on at load), ?colour=height.
+// ctx.buildOpts.colourOf (the registry layer's atlas index). In Menu > Layers > Who is inside (a group this layer makes):
+//   Glow: who is inside (index.html GLOW, buildGlow, drawGlow): buildings whose registry record (atlas index cat, from
+//     registry/categories.json) has an occupant of a ticked kind get an aura (the outline pushed out 4 m, from the ground
+//     to 6 m above the roof) and lit edges (roof and base outline, corner posts), additive, pulsing; the edges also a faint
+//     pass through nearer buildings (no depth test, 0.14), as the WebGL page.
+//   Data on the model (index.html buildPins): heritage records (atlas heritage groups as violet sticks, 6 + 4 sqrt(n) m;
+//     a label at 30 records or more), quality issues (a stick on the roof per building: red high, amber medium, grey low),
+//     crime of the latest month (live from data.police.uk for the Canary Wharf box: a stick per anonymised point, 3 + 2.5 n m).
+// URL: ?ov=bikes,works (parts on at load), ?colour=height, ?glow=finance,shop, ?pins=heritage,quality,crime.
 // Skill: docklands-3d-page, "Crown halo by date and overlays", "Works in progress", "Three.js port".
-import { FT2M, RMesh, beam, stick, ribbon, fence, prismRing, geoOf, inBoxOf, pointIn, bboxOf, londonTime, buildGroup, disposeGroup, addTaps, toast, revealPart } from '../overlay-kit.js';
+import { FT2M, RMesh, beam, stick, ribbon, fence, prismRing, geoOf, inBoxOf, pointIn, bboxOf, londonTime, buildGroup, disposeGroup, addTaps, toast, revealPart, makeLabels } from '../overlay-kit.js';
+import { attribute, float, sin, time, positionWorld, sRGBTransferEOTF } from 'three/tsl';
 
 const PARTS = [
   ['bikes', 'Hire bike docks', 'live/bikes.json'], ['lifts', 'Station lift outages', 'live/lifts.json'], ['cranes', 'Cranes (NOTAMs)', 'live/notams.json'],
@@ -26,6 +35,11 @@ const LDS = { wharf: [[.25, .66, .96], 1], dos: [[.37, .82, .48], 2], cons: [[.7
 const LDSNAME = { cons: 'Conservation area', dos: 'Designated open space', wharf: 'Safeguarded wharf', venues: 'Cultural venue' };
 const HT = b => b.wh || b.h || b.mh || 0;
 const rampCol = t => { const S = [[59, 15, 112], [140, 41, 129], [222, 73, 104], [254, 159, 109], [252, 253, 191]]; t = Math.max(0, Math.min(1, t)) * 4; const i = Math.min(3, Math.floor(t)), f = t - i; return [0, 1, 2].map(c => (S[i][c] + (S[i + 1][c] - S[i][c]) * f) / 255); };
+// Glow: who is inside (index.html GLOW, GLOW_ALSO and the chips' labels and order)
+const GLOW = { finance: [1, .19, .19], shop: [.72, 1, .18], catering: [1, .63, .25], leisure: [.36, 1, .48], entertainment: [1, .31, .85], bar: [1, .83, 0], education: [1, .95, .42], health: [.97, .97, 1], sport: [.85, .6, .35], arts: [.7, .42, 1], charity: [.45, 1, .85] };
+const GLOW_ALSO = { bar: ['alcohol'] };   // a chip that also lights a related category (pubs and bars: alcohol shops too)
+const GLOW_NAME = { finance: 'Banks and finance', shop: 'Shops', catering: 'Food and drink', leisure: 'Leisure', entertainment: 'Entertainment', bar: 'Pubs, bars, alcohol', education: 'Schools and colleges', health: 'Health', sport: 'Sport', arts: 'Arts and music venues', charity: 'Charities' };
+const PINS = [['heritage', 'Heritage records'], ['quality', 'Quality issues'], ['crime', 'Crime, latest month (live)']];
 const MODES = { height: [b => HT(b), 200, 'height 0–200 m'], occupants: [b => b.o, 30, 'occupants 0–30'], homes: [b => Math.max(0, b.hm), 300, 'homes 0–300'], companies: [b => b.co, 200, 'registered companies 0–200'], below: [b => b.lu || 0, 5, 'floors below ground 0–5'], quality: [b => b.qc || 0, 6, 'quality issues 0–6'] };
 
 export default {
@@ -218,13 +232,107 @@ export default {
     const sel = document.createElement('select'); sel.innerHTML = '<option value="source">height source</option>' + Object.entries(MODES).map(([k, m]) => `<option value="${k}">${esc(m[2].replace(/ \d.*$/, ''))}</option>`).join('');
     sel.onchange = () => setColour(sel.value); row.appendChild(sel); ctx.ui.host().appendChild(row);
     const key = ctx.ui.note('');
+    // ---------- Layers > Who is inside (owner, 2026-10-09: "colour coded business/building types"): the WebGL page's chips
+    // "Glow: who is inside" and "Data on the model" in one group of the Layers pane, made here (index.html has no such group)
+    let gIn = document.querySelector('#paneLayers .grp[data-g="inside"] .gb');
+    if (!gIn) { const g = document.createElement('div'); g.className = 'grp'; g.dataset.g = 'inside'; g.innerHTML = '<div class="gt">Who is inside</div><div class="gb"></div>';
+      const ref = document.querySelector('#paneLayers .grp[data-g="overlays"]'); if (ref) ref.before(g); else document.getElementById('paneLayers')?.appendChild(g); gIn = g.querySelector('.gb'); }
+    const chipBox = document.createElement('div'); chipBox.style.cssText = 'display:flex;flex-wrap:wrap;gap:2px 10px'; chipBox.id = 'glowChips3'; gIn.appendChild(chipBox);
+    const sw = c => { const i = document.createElement('i'); i.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px;background:rgb(${c.map(v => Math.round(v * 255)).join(',')})`; return i; };
+    const chip = (c, text, onchange) => { const l = document.createElement('label'); l.className = 'row'; l.style.margin = '2px 0'; const i = document.createElement('input'); i.type = 'checkbox'; i.onchange = onchange; l.append(i, sw(c), text); chipBox.appendChild(l); return i; };
+    const glowChk = {}, pinChk = {};
+    for (const [k, c] of Object.entries(GLOW)) { glowChk[k] = chip(c, GLOW_NAME[k], () => setGlow(Object.keys(glowChk).filter(q => glowChk[q].checked))); glowChk[k].dataset.glow = k; }
+    const PINCOL = { heritage: [.71, .55, 1], quality: [.95, .2, .2], crime: [.95, .35, .25] };
+    for (const [k, t] of PINS) { pinChk[k] = chip(PINCOL[k], t, () => setPins(Object.keys(pinChk).filter(q => pinChk[q].checked))); pinChk[k].id = 'pin3-' + k; }
+    const note = h => { const p = document.createElement('p'); p.className = 'small'; p.innerHTML = h; gIn.appendChild(p); return p; };
+    note('Buildings glow when a source states that such an occupant is inside: OSM tags, Wikidata classes, the FSA business type or the Canary Wharf Group directory. Registered offices are not counted. Wikidata occupant links have no dates, so some are former tenants.');
+    const pinNote = note('Tap a building at Canary Wharf for its record. Heritage: violet sticks, 6 m + 4 m × √records; quality issues: a stick on the roof (red high, amber medium, grey low); crime: a red stick at each anonymised point of the latest month, 3 m + 2.5 m a record (asks data.police.uk).');
+    note('The orange buildings of the WebGL page are not occupants: in its Map look the default colour is the height source (orange #e0b25a: OSM levels, or a building newer than the LiDAR survey). Here: Look > Realistic buildings off, or Look > Colour buildings by.');
     if (prevTab) ctx.ui.tab(prevTab);
+
+    // ---------- Glow: who is inside (index.html buildGlow, drawGlow). Vertex colour: rgb the kind's colour, alpha the
+    // building's seed (the phase of the pulse). Pulse k = 0.55 + 0.45 sin(3.3 t + 0.09 y + 40 seed); colour x (1 + 0.6 k),
+    // alpha k x pass alpha (aura 0.3, edges 1; the edges again with no depth test at 0.14), added (SRC_ALPHA, ONE).
+    const glowRoot = new ctx.THREE.Group(); glowRoot.name = 'glow'; scene.add(glowRoot);
+    const GM = {}, glowMat = (a, depth) => { const T = ctx.THREE, m = new T.MeshBasicNodeMaterial({ transparent: true, depthWrite: false, depthTest: depth, side: T.DoubleSide, blending: T.AdditiveBlending, fog: false });
+      const c = attribute('color', 'vec4'), k = sin(time.mul(3.3).add(positionWorld.y.mul(0.09)).add(c.w.mul(40))).mul(0.45).add(0.55);
+      m.colorNode = sRGBTransferEOTF(c.xyz).mul(k.mul(0.6).add(1)); m.opacityNode = k.mul(a); return m; };
+    let glowOn = [];
+    const glowStats = { buildings: 0, triangles: 0 };
+    async function setGlow(list) {
+      list = (list || []).filter(k => GLOW[k]); glowOn = list; for (const [k, i] of Object.entries(glowChk)) i.checked = list.includes(k);
+      for (const m of [...glowRoot.children]) { m.geometry.dispose(); glowRoot.remove(m); } glowStats.buildings = glowStats.triangles = 0;
+      if (!list.length) { draw(); return 0; }
+      const R = ctx.registry; if (!R || !(await R.ready)) { toast('Glow needs the atlas index (registry layer); it did not load.'); for (const i of Object.values(glowChk)) i.checked = false; glowOn = []; return 0; }
+      if (glowOn !== list) return 0;   // a newer choice while the index loaded
+      const AT = R.AT, regOf = R.regOf, O = ctx.buildOpts, E = new RMesh(), Hm = new RMesh(); let n = 0;
+      A.buildings.forEach((b, i) => {
+        const k = regOf[i]; if (k < 0) return; const cat = AT.buildings[k].cat; if (!cat) return;
+        const hit = list.filter(c => cat[c] || (GLOW_ALSO[c] || []).some(x => cat[x])); if (!hit.length) return; n++;
+        const hh = O.heightOf ? O.heightOf(b, i) : b.h; if (!(hh > 0)) return;
+        const col = GLOW[hit[0]], seed = ((k * 2654435761) >>> 0) / 4294967296, f = ctx.dec(b.p), y0 = b.b + (b.mh || 0), y1 = b.b + hh, nv = (b.holes && b.holes.length ? b.holes[0] : f.length / 2);
+        const Es = { quad: (p0, p1, p2, p3, c) => E.quad(p0, p1, p2, p3, c, seed) };   // beam() with the seed in the alpha
+        let cx = 0, cz = 0; for (let j = 0; j < nv; j++) { cx += f[2 * j]; cz += f[2 * j + 1]; } cx /= nv; cz /= nv;
+        const out = j => { const dx = f[2 * j] - cx, dz = f[2 * j + 1] - cz, r = Math.hypot(dx, dz) || 1; return [f[2 * j] + dx / r * 4, f[2 * j + 1] + dz / r * 4]; };
+        for (let j = 0; j < nv; j++) { const a = out(j), c = out((j + 1) % nv); Hm.quad([a[0], y0, a[1]], [c[0], y0, c[1]], [c[0], y1 + 6, c[1]], [a[0], y1 + 6, a[1]], col, seed); }
+        for (let j = 0; j < nv; j++) { const j2 = (j + 1) % nv, jp = (j + nv - 1) % nv, A0 = [f[2 * j], f[2 * j + 1]], A1 = [f[2 * j2], f[2 * j2 + 1]], Ap = [f[2 * jp], f[2 * jp + 1]];
+          for (const y of [y0 + .5, y1 + .5]) beam(Es, [A0[0], y, A0[1]], [A1[0], y, A1[1]], 1.6, 1.6, col);
+          const t1 = Math.atan2(A0[1] - Ap[1], A0[0] - Ap[0]), t2 = Math.atan2(A1[1] - A0[1], A1[0] - A0[0]), turn = Math.abs(((t2 - t1 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI);
+          if (turn > .35) beam(Es, [A0[0], y0, A0[1]], [A0[0] + .01, y1 + .5, A0[1]], 1.6, 1.6, col); }
+      });
+      const add = (M, mk, a, depth, order) => { if (!M.n) return; const g = M.geometry(), m = new ctx.THREE.Mesh(g, GM[mk] || (GM[mk] = glowMat(a, depth))); m.name = 'glow:' + mk; m.renderOrder = order; m.frustumCulled = false; glowRoot.add(m); glowStats.triangles += M.idx.length / 3; };
+      add(Hm, 'aura', .3, true, 20); add(E, 'edges', 1, true, 21); add(E, 'through', .14, false, 22);
+      glowStats.buildings = n; toast(`${n} buildings: ${list.join(', ')}`); draw(); return n;
+    }
+    ctx.onFrame(() => { if (glowOn.length && glowRoot.children.length) draw(); });   // the pulse: keep drawing while a glow shows (index.html glowTick)
+
+    // ---------- Data on the model (index.html buildPins): heritage, quality issues, crime (live, police.uk)
+    const pinRoot = new ctx.THREE.Group(); pinRoot.name = 'pins'; scene.add(pinRoot);
+    const pinLabels = makeLabels(ctx), pinSrc = { hits: [] }, pinStats = {};
+    let crime = null, pinsOn = [];
+    addTaps(ctx, () => pinRoot.visible && pinSrc.hits.length ? [pinSrc] : []);
+    async function setPins(list) {
+      list = (list || []).filter(k => pinChk[k]); pinsOn = list; for (const [k, i] of Object.entries(pinChk)) i.checked = list.includes(k);
+      const R = ctx.registry, needAT = list.some(k => k !== 'crime');
+      if (needAT && !(R && await R.ready)) { toast('Heritage and quality pins need the atlas index (registry layer); it did not load.'); list = list.filter(k => k === 'crime'); for (const k of ['heritage', 'quality']) pinChk[k].checked = false; }
+      const M = { S: new RMesh() }, hits = [], AT = R && R.AT, st = (x, z, y0, hgt, w, col) => stick(M.S, x, z, y0, y0 + hgt, w, col);
+      pinLabels.clear(); for (const k of Object.keys(pinStats)) delete pinStats[k];
+      if (list.includes('heritage') && AT) { pinStats.heritage = 0;
+        for (const g of AT.heritage) { const [x, z] = geo(g.lon, g.lat), y = groundAt(x, z), hgt = 6 + 4 * Math.sqrt(g.n); st(x, z, y, hgt, 3, [.71, .55, 1]); pinStats.heritage++;
+          const cd = () => card(`<b>${esc(g.label || 'Heritage records')}</b><div class="small">${g.n} records · ${Object.entries(g.src).map(([s2, n]) => `${esc(s2)} ${n}`).join(', ')}<br>${g.types.map(t => `${esc(t[0])} ${t[1]}`).join(', ')}</div><div class="small"><a href="${CW}atlas/#heritage">heritage in the atlas</a></div>`);
+          hits.push({ x, y: y + hgt, z, card: cd });
+          if (g.n >= 30) pinLabels.add(`${g.label || 'records'}: ${g.n.toLocaleString('en-GB')}`, x, y + hgt, z, 2, cd, () => pinRoot.visible); } }
+      if (list.includes('quality') && AT) {
+        try { const q = await loadJSON(CW + 'quality/issues.json'), by = new Map(); pinStats.quality = 0;
+          for (const i of q.issues) if (i.ent === 'b') { const s2 = by.get(i.id) || { n: 0, high: 0, med: 0 }; s2.n++; if (i.sev === 'high') s2.high++; else if (i.sev === 'medium') s2.med++; by.set(i.id, s2); }
+          const ix = new Map(AT.buildings.map(b => [b.id, b]));
+          for (const [id, s2] of by) { const b = ix.get(id); if (!b || !b.mi.length) continue; const top = Math.max(...b.mi.map(i => A.buildings[i].b + A.buildings[i].h)); st(b.x, b.z, top, 4 + 3 * s2.n, 2.5, s2.high ? [.95, .2, .2] : s2.med ? [1, .7, .2] : [.6, .65, .7]); pinStats.quality++;
+            hits.push({ x: b.x, y: top + 4 + 3 * s2.n, z: b.z, card: () => card(`<b>${esc(b.n || id)}</b> <span class="small">${esc(id)}</span><div>${s2.n} data-quality issues (${s2.high} high, ${s2.med} medium)</div><div class="small">Tap the building for the list (registry card). <a href="${CW}quality/">quality report</a></div>`) }); } }
+        catch (e) { toast('The quality issues did not load: ' + esc(e.message)); pinChk.quality.checked = false; } }
+      if (list.includes('crime')) {
+        if (!crime) { pinNote.textContent = 'Loading crime records from police.uk…'; try {
+          const poly = '51.498,-0.030:51.510,-0.030:51.510,-0.005:51.498,-0.005';   // the Canary Wharf box (index.html)
+          const get = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u.split('?')[0] + ' ' + r.status); return r.json(); };
+          const [upd, cl] = await Promise.all([get('https://data.police.uk/api/crime-last-updated'), get(`https://data.police.uk/api/crimes-street/all-crime?poly=${poly}`)]);
+          crime = { month: cl[0]?.month || upd.date, list: cl }; } catch (e) { pinNote.textContent = 'police.uk did not answer: ' + e.message; pinChk.crime.checked = false; } }
+        if (crime && pinChk.crime.checked) { const at = new Map(), cats = {}; for (const c of crime.list) { cats[c.category] = (cats[c.category] || 0) + 1; const k = c.location.latitude + ',' + c.location.longitude; at.set(k, (at.get(k) || 0) + 1); }
+          for (const [k, n] of at) { const [la, lo] = k.split(',').map(Number), [x, z] = geo(lo, la), g = groundAt(x, z); st(x, z, g, 3 + 2.5 * n, 2.2, [.95, .35, .25]);
+            hits.push({ x, y: g + 3 + 2.5 * n, z, card: () => card(`<b>${n} crime record${n > 1 ? 's' : ''}, ${esc(crime.month)}</b><div class="small">At one anonymised point (police.uk snaps each record to a nearby map point). ${esc(crime.list.filter(c => c.location.latitude + ',' + c.location.longitude === k).map(c => c.category.replace(/-/g, ' ')).join(', '))}. Source: data.police.uk, Open Government Licence v3.0.</div>`) }); }
+          pinStats.crime = { month: crime.month, records: crime.list.length, points: at.size };
+          pinNote.textContent = `Crime ${crime.month}: ${crime.list.length} records at ${at.size} anonymised points in the Canary Wharf box (police.uk, Open Government Licence). ` + Object.entries(cats).sort((p, q) => q[1] - p[1]).slice(0, 6).map(([c, n]) => `${c.replace(/-/g, ' ')} ${n}`).join(', '); }
+      }
+      for (const g of [...pinRoot.children]) disposeGroup(g);
+      pinSrc.hits = hits; if (M.S.n) pinRoot.add(buildGroup(M, 'pins')); draw();
+    }
+    const qList = k => (ctx.qs.get(k) || '').split(',').filter(Boolean);
 
     // ---------- start: every part (or ?ov=a,b) and ?colour=
     for (const k of (ctx.qs.has('ov') ? ctx.qs.get('ov') : Object.keys(P).filter(k => k !== 'heli').join(',')).split(',').filter(k => P[k])) setPart(k, true, true);   // all on by default except the helicopter route (owner, 2026-10-09); ?ov= or ?ov=a,b to choose
     if (MODES[ctx.qs.get('colour')]) setColour(ctx.qs.get('colour'));
+    if (qList('glow').length) setGlow(qList('glow'));
+    if (qList('pins').length) setPins(qList('pins'));
 
-    const api = { object: root, ownUi: true, setPart, setColour, parts: P, data, stats,
+    const api = { object: root, ownUi: true, setPart, setColour, setGlow, setPins, parts: P, data, stats, glowStats, pinStats, get glow() { return glowOn.slice(); }, get pins() { return pinsOn.slice(); },
       get state() { return { colour: colourMode, parts: Object.fromEntries(Object.values(P).map(p => [p.k, { on: p.on, n: p.n, hits: p.hits.length, polys: p.polys.length, tris: p.tris, ms: p.ms }])), ...stats }; } };
     ctx.overlays = api;
     return api;

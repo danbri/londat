@@ -15,20 +15,23 @@ the history results are kept in https://github.com/danbri/londat/tree/main/dockl
 
 | item | verdict | key numbers |
 |---|---|---|
-| 1 time vs historical data | PARTIAL | sun and moon within 0.02°; tide rms 0.25 m on held-out days, high water 13 to 16 min mean timing error; wind −0.8 m/s bias and 14° direction error against London City Airport METARs; low cloud class agrees 73 % of hours |
+| 1 time vs historical data | PARTIAL | sun and moon within 0.02°; tide: EA readings where they cover the clock, else prediction + a fading measured residual (rms 0.27 → 0.13 m in the first hour, high water height 0.31 → 0.22 m on held-out days); prediction alone 0.25 m rms on held-out days; wind −0.8 m/s bias and +10° direction bias in the data against London City Airport METARs (grid north fixed); low cloud class agrees 70 % of hours |
 | 2 roof shapes ported | PASS | 22,654 roof prisms in each page, same shapes for each of the 8 kinds; screenshots match |
-| 3 piers, berths, boats | PASS | 8 of 8 TfL river-bus piers in the box; 275 piers and pontoons; HMS Belfast and 5 other vessels; the Woolwich Ferry is 3.2 km outside the box |
+| 3 piers, berths, boats | PASS | 8 of 8 TfL river-bus piers in the box; 275 piers and pontoons; HMS Belfast and 5 other vessels; the Woolwich Ferry is 3.2 km outside the box; Blackwall Pier is now a fixed masonry pier (Grade II), not a pontoon |
 | 4 birds and foxes from data | PASS (after a fix) | 21 species, 9,974 open records (NBN Atlas 8,405, GBIF 1,569); 34 of 34 foxes seen were on wood or park cells |
-| 5 trees: species and seasons | PASS | species known for 59.1 % of 81,875 trees, genus or family for 15.9 % more; green share of tree pixels 7 % (Jan), 44 % (Apr), 94 % (Jul), 48 % (Oct) |
+| 5 trees: species and seasons | PASS | taxon from the source for 75.0 % of 81,852 trees (species 59.1 %); STATS.trees: in January evergreens 1.0 in leaf, deciduous 0.0; bloom peaks day 101 (cherry) to 125 (hawthorn); autumn colour half-way from day 261 (horse chestnut) to 303 (oak); green share of tree pixels 7 % (Jan), 44 % (Apr), 94 % (Jul), 48 % (Oct) |
 | 6 reveal sheet | PASS | falls from 951 m, lands at 1.2 s, squash and stretch from −3.0 % to +1.9 %, bounce, dissolve, done by 2.9 s; the same on WebGL 2 and WebGPU |
 
 Faults that this audit fixed are in "Faults fixed". Faults that stay open are in "Faults left open".
 
 ## 1. Time scrubber vs historical data: sun, moon, tide, wind, weather
 
-**Verdict: PARTIAL.** The sun and the moon are correct. The tide is a good harmonic prediction, but it has no surge. Wind
-and cloud follow Open-Meteo, which agrees reasonably with airport observations. But when Open-Meteo refuses requests
-(HTTP 429), the page shows a stated default wind and no weather.
+**Verdict: PARTIAL.** The sun and the moon are correct. The tide now shows the EA readings where they cover the clock
+time, and near the readings the prediction plus a fading measured residual (the surge). Older than 4 weeks, it is the
+harmonic prediction without surge. Wind and cloud follow Open-Meteo, which agrees reasonably with airport observations;
+the wind is now turned from true north to the model grid. The Open-Meteo wind is 0.8 to 1.3 m/s below the airport
+anemometer, and no correction is applied. When Open-Meteo refuses requests (HTTP 429), the page shows a stated default
+wind and no weather.
 
 ### Method
 
@@ -45,6 +48,13 @@ and cloud follow Open-Meteo, which agrees reasonably with airport observations. 
     at k mod 7 = 3.
   - **In the fit's period:** the EA API's last 28 days.
   - clock-check.mjs `--live` also reads the level that the page shows, through the tide layer, on 4 test days.
+  - **Surge (added 2026-10-09, after the audit):** history-check.mjs, section "nowcast", gives the page's level
+    (https://github.com/danbri/londat/blob/main/docklands/tide.js `nowcast`) with only the readings up to a cut-off time
+    T0, and compares it and the prediction alone with the readings after T0. Cut-offs: every 2 h over the EA API's last
+    4 weeks (leads to 48 h); 06, 09 and 12 UTC on the 7 held-out days (leads to the end of the day). High and low waters
+    in the 12 h after T0: the page's rule (`extremesNear`). In range: every other reading left out and interpolated.
+  - https://github.com/danbri/londat/blob/main/docklands/test/tide-source-check.mjs opens the page and reads the source
+    of the level at 6 clock times, with the EA API on (the default) and with `?ea=0`.
 - **Wind and cloud.** history-check.mjs takes METARs of London City Airport (EGLC, about 2 km east of Canary Wharf) from
   the Iowa Environmental Mesonet ASOS archive. These are observations that the page does not use. The script compares
   them with each source that the page uses for a clock time:
@@ -77,9 +87,25 @@ and cloud follow Open-Meteo, which agrees reasonably with airport observations. 
 - **Tide in the EA API's last 28 days** (inside the fit's period): rms mean 0.24 to 0.26 m, worst day 0.49 m (Tower Pier,
   20 Sep, neap), worst reading 1.15 m off. High water time error 13 min mean, 52 to 56 min worst. High water height
   error 0.15 to 0.16 m.
-- **Tide on the page.** On 3 and 4 Oct the page shows the EA readings themselves: rms 0.00 m. At other times it shows the
-  prediction. On the 4 test days in clock-check, high- and low-water times are within 45 min, with a mean of 14 min
-  (39 extremes).
+- **Tide on the page, before the surge fix.** On 3 and 4 Oct and in the fit file's last 7 days the page showed the EA
+  readings themselves: rms 0.00 m. At other times it showed the prediction. On the 4 test days in clock-check, high- and
+  low-water times are within 45 min, with a mean of 14 min (39 extremes).
+- **Tide on the page, after the surge fix** (prediction = before; page = after; rms in m):
+
+  | readings up to T0, then | lead 0-1 h | 1-3 h | 3-6 h | 6-12 h | 12-24 h | 24-48 h | HW height MAE, next 12 h | HW time MAE |
+  |---|---|---|---|---|---|---|---|---|
+  | EA API, 4 weeks (3 gauges, 336 cut-offs each) | 0.27 → 0.13 | 0.27 → 0.23 | 0.27 → 0.25 | 0.27 → 0.25 | 0.26 → 0.26 | 0.26 → 0.26 | 0.17 → 0.16 m | 12 → 8 min |
+  | held-out days (7) | 0.21 → 0.08 | 0.23 → 0.23 | 0.20 → 0.18 | 0.24 → 0.20 | 0.31 → 0.31 | | 0.31 → 0.22 m | 12 → 10 min |
+  | held-out winter days (14 Nov, 9 Jan, 27 Feb) | 0.28 → 0.10 | 0.30 → 0.31 | 0.24 → 0.23 | 0.30 → 0.25 | 0.41 → 0.41 | | 0.48 → 0.35 m (bias −0.48 → −0.35) | 14 → 15 min |
+
+  - Inside the readings the page interpolates between 15-minute readings: rms 0.03 to 0.04 m over 30-minute gaps.
+  - Beyond 12 h the residual has faded (8 h e-folding) and the level is the prediction again. The one worse bin, winter
+    1-3 h (+0.01 m), is on one-day files: there is no tidal cycle of readings before 06:00.
+  - Live, 9 Oct 2026 at 10:45Z the EA readings were 0.67 m below the prediction (`tide-source-check.mjs`). The page
+    showed the readings; 2 h after the last reading it showed prediction − 0.13 m, 6.5 h after it prediction − 0.29 m.
+  - The tide note says the source: "EA readings", "prediction − 0.13 m measured residual, from an EA reading 2.5 h
+    before, fading", or "prediction, no surge".
+  - Full results: https://github.com/danbri/londat/blob/main/docklands/test/audit/history.json (`nowcast`).
 - **Wind and cloud against the EGLC METARs** (264 hours for ERA5, 168 for the forecast API, 46 for the snapshot):
 
   | source the page uses | days | speed bias | speed MAE | direction MAE | low-cloud class agrees |
@@ -92,7 +118,13 @@ and cloud follow Open-Meteo, which agrees reasonably with airport observations. 
   - Direction error is counted when both speeds are 2 m/s or more.
   - Cloud classes are < 25 %, 25 to 75 % and > 75 %. The page's low cloud is compared with the METAR cover. METAR codes
     count as FEW 19 %, SCT 44 %, BKN 75 %, OVC 100 %, NCD 0 %.
-  - Open-Meteo directions are clockwise of the METARs by +7° to +15° on most days.
+  - Open-Meteo directions are clockwise of the METARs by +7° to +15° on most days: the mean direction bias is +10°
+    (forecast API, 8 days: +3, +7, +9, +15, +18, 0, +15, +14) and +5° (ERA5, 8 days with a direction).
+  - **True north (fixed 2026-10-09):** the page used the data's true direction as a grid direction. True north is 1.55°
+    west of grid north at the model centre (`sky3.js GRID_CONV` = −1.55°, from the derivatives of `area.js meta.geo`), so
+    the waves, debris, rain and tree sway pointed 1.55° clockwise of the data. Now `WU.windDir` = true direction +
+    GRID_CONV; `STATS.surface.wind` gives `dir` (true, as the note), `gridDir` and `gridConv` (load.mjs: 249° true,
+    247.7° grid). Against the METARs, the drawn direction bias goes from about +11.6° to +10.1° (forecast API days).
   - Total cloud is 29 to 65 points above the METAR cover. An automatic airport station reports only low and middle
     cloud (NCD = no cloud detected), so this difference is expected.
   - Rain: 4 of 5 rain hours (8 Oct, 21 Dec) are rain in Open-Meteo too. On 28 Aug, ERA5 had 10 false rain hours.
@@ -106,6 +138,9 @@ and cloud follow Open-Meteo, which agrees reasonably with airport observations. 
   its own address and its own limit.
 
 Live deep links:
+- The tide now, with the EA readings and the fading residual (Menu > Tide gives the source):
+  https://danbri.github.io/londat/docklands/?view=greenland
+- The same without the EA API (the hourly cache and the prediction only): https://danbri.github.io/londat/docklands/?view=greenland&ea=0
 - Spring tide, high water 14:43, from Greenland Pier:
   https://danbri.github.io/londat/docklands/?view=greenland&t=2026-10-11T14:43
 - Low water 08:55 the same day: https://danbri.github.io/londat/docklands/?view=greenland&t=2026-10-11T08:55
@@ -121,11 +156,19 @@ Live deep links:
 - **Open: shared request limit.** One Open-Meteo request limit serves the wind layer and the weather layer, and each
   layer makes its own request for each day. One request could serve both layers. That change needs `layers/wind.js`,
   which this audit could only read.
-- **Open: wind speed is low.** The model wind is 0.8 m/s (forecast) to 1.3 m/s (ERA5) below the airport anemometer.
-  Applying a correction factor is an option. It is not done.
-- **Open: grid north.** `layers/wind.js` uses the data's true north as grid north, which is 1.5° out (known and stated).
-- **Open: no surge in the tide.** In winter, high water is 0.4 to 0.7 m above the prediction (27 Feb, 9 Jan). A live EA
-  reading on request (the WebGL page's rule) is not ported.
+- **Open: wind speed is low (no correction applied).** The model wind is 0.76 m/s (forecast API, 192 hours) to
+  1.26 m/s (ERA5, 264 hours) below the airport anemometer; the snapshot 0.50 m/s. No documented, standard correction
+  applies: both are 10 m winds, and the difference is the model grid cell's rougher (urban) surface against an open
+  airport mast on the dock. An empirical factor from 11 days would be a tuned value, not a standard. The numbers are
+  reported, not applied.
+- **Fixed: grid north.** `layers/wind.js` now turns the data's true direction to the model grid (−1.55°).
+- **Fixed in part: no surge in the tide.** The page uses the EA readings (the fit file's last 7 days, the 3-4 Oct
+  snapshot, the hourly cache's last 24 h, and the EA API for the clock's day and the days either side, back 4 weeks) and
+  carries the measured residual from the nearest reading, fading over about 8 h. Open: before 4 weeks back (for
+  example the winter days in this table) the page has no readings and shows the prediction without surge; the EA daily
+  archive is a 59 MB file of the whole country for each day. No surge forecast ahead of the readings.
+- **Decision for the owner:** the EA API request is on by default, as the weather is (owner, 2026-10-09: "all
+  wind/weather"); `?ea=0` or the box in Menu > Tide switches it off. The WebGL page asks only after a tap.
 
 ## 2. Roof model approximation ported
 
@@ -224,7 +267,7 @@ outside the box.
   - Knocker White (tug).
   - SS Robin.
   - Suncrest.
-- **What the page builds:** 275 piers and pontoons, 245 pontoons, 38 gangways, 1,768 floating parts, 244 lamps,
+- **What the page builds:** 275 piers and pontoons, 245 pontoons (244 after the Blackwall Pier fix), 38 gangways, 1,768 floating parts (1,766), 244 lamps,
   6 vessels, and 24 model buildings hidden under the vessels.
 - **SIMULATED boats alongside (TfL timetable calls, tour frequencies):**
 
@@ -244,9 +287,27 @@ Live deep links:
 
 ### Faults
 
-- **Open: Blackwall Pier.** Blackwall Pier (OSM way 190723549) has the water class "land" but is drawn as a floating
-  pontoon at the tide level. Its outline is at the Leamouth bank. Check it against the river polygon in
-  `cwplans/tools/build-piers.mjs`.
+- **Fixed: Blackwall Pier (2026-10-09).** OSM way 190723549 (`man_made=pier`, `area=yes`, name "Blackwall Pier",
+  `wikidata=Q27082768`) has no `floating` tag. The tool made it float only because its name has "Pier". The evidence:
+  - Wikidata Q27082768 is "Blackwall Pier And Entrance Lock To Former East India Dock Basin": instance of pier and of
+    lock, a Grade II listed building (NHLE 1260086), "architectural structure in Tower Hamlets". It is the masonry
+    pier head at the entrance of the East India Dock Basin, not a pontoon.
+  - Under its 912 m² outline, 1 m cells: 896 are land (2.6 to 4.9 m OD in the LiDAR terrain), 15 are tidal water, 1 is
+    dock. The centre is on land.
+  - In the port before the fix (screenshots, top row): at low water (11 Oct 08:55, −2.43 m OD) a 49 × 22 m pontoon lay on
+    the foreshore below the bank; at high water (14:43, +3.99 m OD) it floated over the bank.
+
+  The fix, in https://github.com/danbri/londat/blob/main/cwplans/tools/build-piers.mjs : a pier floats by its name only
+  when its centre is on water (`floating=yes` still floats anywhere). Blackwall Pier is now a fixed pier: its OSM outline,
+  deck 4.9 m OD (the highest land under it), kind "jetty". It is the only pier that changed: 128 floating (was 129),
+  244 pontoons (was 245), 147 jetties (was 146); the vessels and the other 274 piers are the same. The data register
+  check passes (733 files registered).
+  - Screenshots, before (top) and after (bottom), low water left, high water right:
+    https://github.com/danbri/londat/blob/main/docklands/test/audit/blackwall-pier.jpg
+  - Live deep links: https://danbri.github.io/londat/docklands/#v=1&c=1578,-409,4,170,2.2,0.42&n=0&t=2026-10-11T08:55 (low
+    water) and https://danbri.github.io/londat/docklands/#v=1&c=1578,-409,4,170,2.2,0.42&n=0&t=2026-10-11T14:43 (high
+    water).
+  - OSM: https://www.openstreetmap.org/way/190723549 ; Wikidata: https://www.wikidata.org/wiki/Q27082768
 - **Open: no positions.** The boats are simulated, not real positions. TfL publishes no positions for river buses. AIS
   vessels within 25 m of a berth replace the simulated boat (`layers/ships.js`).
 
@@ -344,16 +405,23 @@ https://danbri.github.io/londat/docklands/?wildlife=big#v=1&c=1250,3000,2,160,0.
 
 ## 5. Trees: species and seasonality
 
-**Verdict: PASS.**
+**Verdict: PASS** for "trees more realistic including seasonality, species from OSM or official data" (re-checked
+2026-10-09 with the new `STATS.trees` hook: 6 of 6 criteria pass). The limits: the leaf calendars are typical dates for
+London by species (stated values, ±5 days a tree), not this year's weather; the 25 % of trees with an inferred species
+were all deciduous (fixed in the mixes, takes effect at the next species build).
 
 ### Method
 
 - Read https://github.com/danbri/londat/blob/main/cwplans/docklands/data/tree-species.json , made by
   https://github.com/danbri/londat/blob/main/cwplans/tools/build-tree-species.mjs .
 - https://github.com/danbri/londat/blob/main/docklands/test/trees-season.mjs shows two views of Mudchute with only the
-  trees layer, at noon on the 15th of January, April, July and October 2026. For each date it renders a frame with the
-  trees layer hidden as the baseline. It classes the pixels that the trees change as green, autumn-coloured, or bare and
-  other.
+  trees layer, at noon on 15 January, 20 March, 15 April, 15 July, 15 October and 15 November 2026. For each date it
+  renders a frame with the trees layer hidden as the baseline. It classes the pixels that the trees change as green,
+  autumn-coloured, blossom (pale), or bare and other.
+- The same script reads `STATS.trees` (https://github.com/danbri/londat/blob/main/docklands/layers/trees.js , new): the
+  counts, and `seasonAt(day)` for every second day of 2026. `seasonAt` computes on the CPU, with the shader's formulas,
+  the leaf fraction (0 bare, 1 full), the autumn-colour share of the foliage and the share of trees in flower, for all
+  trees, evergreen, deciduous, and the 12 most common profiles. It prints 6 criteria with PASS, PARTIAL or FAIL.
 
 ### Evidence
 
@@ -375,7 +443,20 @@ https://danbri.github.io/londat/docklands/?wildlife=big#v=1&c=1250,3000,2,160,0.
   - planning.data.gov.uk TPO trees: 534.
 - **Profiles:** 43 profiles are used, plus one fallback. The most common are plane (16,292), lime (6,952), birch (5,376),
   cherry (5,217), ash (4,544) and oak (4,056).
-- **Season, share of tree pixels:**
+- **Criteria (trees-season.mjs, 2026-10-09):**
+
+  | criterion | verdict | evidence |
+  |---|---|---|
+  | species from official or OSM data | PASS | taxon from the source for 75.0 % of 81,852 trees drawn (species 59.1 %); 20,460 inferred |
+  | January: evergreens in leaf, deciduous bare | PASS | 15 Jan: leaf fraction 1.0 for 2,764 evergreens, 0.0 for 79,088 deciduous trees |
+  | spring flowering by species | PASS | bloom peaks (day of year): cherry 101, wild cherry 103, horse chestnut 123, hawthorn 125, whitebeam 125 (cherry plum, bloom day 78, and magnolia, 90, are profiles too, but not among the 12 most common that STATS lists); share in flower on 15 Apr 0.105 |
+  | species-specific autumn timing | PASS | autumn colour passes half the foliage: horse chestnut 261, cherry 281, lime 285, birch 285, ash 287, maple 291, plane 299, oak 303 (spread 42 days); half the leaves down: horse chestnut 287 to oak 327; leaf-out: horse chestnut 91 to ash 131 |
+  | pixels follow the season | PASS | close view, green share 0.07 (Jan), 0.08 (20 Mar), 0.44 (Apr), 0.94 (Jul), 0.48 (Oct); autumn share 0.005 (Jul), 0.08 (Oct), 0.32 (15 Nov) |
+  | no page errors | PASS | none |
+
+- **Drawn:** 81,852 trees (23 over 35 m skipped); about 2,000 full trees within 380 m and 79,600 far forms
+  (`STATS.trees.drawn`).
+- **Season, share of tree pixels (the first audit run, 4 dates):**
 
   | view | 15 Jan | 15 Apr | 15 Jul | 15 Oct |
   |---|---|---|---|---|
@@ -383,10 +464,10 @@ https://danbri.github.io/londat/docklands/?wildlife=big#v=1&c=1250,3000,2,160,0.
   | Mudchute, 120 m: green / autumn / bare and other | 0.067 / 0.066 / 0.867 | 0.443 / 0.016 / 0.541 | 0.940 / 0.005 / 0.055 | 0.477 / 0.078 / 0.445 |
 
   The tree pixel count rises from 21,920 in January (bare crowns) to 41,983 in July (full crowns), in the 120 m view.
-- **Screenshots** (top row 300 m, bottom row 120 m; January, April, July, October):
-  https://github.com/danbri/londat/blob/main/docklands/test/audit/trees-seasons.jpg . In January the twigs are bare. In
-  April there is fresh green and blossom. July has full crowns. In October there is yellow and red autumn colour, with
-  evergreens still green.
+- **Screenshots** (top row 300 m, bottom row 120 m; 15 January, 20 March, 15 April, 15 July, 15 October, 15 November):
+  https://github.com/danbri/londat/blob/main/docklands/test/audit/trees-seasons.jpg . In January and March the twigs are
+  bare. In April there is fresh green and blossom. July has full crowns. In October there is yellow and red autumn
+  colour, with evergreens still green; in November most crowns are thin and orange-brown.
 - **Page errors:** none.
 
 Live deep links (the same view in each month):
@@ -397,8 +478,20 @@ Live deep links (the same view in each month):
 
 ### Faults
 
-- **Open: no stats hook.** The trees layer has no `STATS.trees` hook, so a test cannot read the season day or the LOD
-  counts directly. The pixel method was used instead.
+- **Fixed: no stats hook.** `STATS.trees` now gives the counts (trees, drawn: full and far forms, species known and its
+  share, evergreen, deciduous, by profile) and `season` / `seasonAt(day)` (above).
+- **Fixed: green on bare trees in blossom.** Before the leaves (cherry plum, magnolia, early cherries), the crown
+  showed blossom only in noise patches and the young-leaf green between them, so a bare tree in flower looked half in
+  leaf. Now the whole crown is flower before the leaves, and patches when in leaf (`crownColour` in trees.js).
+- **Fixed in the mixes, not yet in the data: inferred trees were all deciduous.** Of the trees with a taxon from the
+  source, 4.5 % are evergreen (2,748 of 61,395: conifer 846, holly 547, other evergreen 488, pine 461, evergreen oak 157,
+  palm 157, columnar cypress 92). Of the 20,460 trees with an inferred species (street, park, wood and waterside mixes),
+  0 % were evergreen, so all of them were bare in winter. The street, park and wood mixes in
+  https://github.com/danbri/londat/blob/main/docklands/tree-species.js now carry about 4.5 % evergreens. This takes
+  effect when `node cwplans/tools/build-tree-species.mjs` rebuilds `cwplans/docklands/data/tree-species.json` (then run
+  the register check); that file was outside this change.
+- **Open: the calendar is not this year's weather.** Leaf-out, colour and leaf-fall days are typical London dates by
+  species, ±5 days a tree. A warm spring or a late autumn does not move them.
 
 ## 6. The falling translucent data sheet
 
@@ -461,10 +554,20 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
   there is no weather (for example, Open-Meteo HTTP 429).
 - https://github.com/danbri/londat/blob/main/docklands/test/clock-check.mjs : the "no weather" warning gives the
   layer's reason, not "without Open-Meteo ticked".
+- https://github.com/danbri/londat/blob/main/docklands/tide.js and
+  https://github.com/danbri/londat/blob/main/docklands/layers/tide.js : the measured level and the surge (`nowcast`,
+  `mergeReadings`, `extremesNear`, `SURGE`); readings from the hourly cache and the EA API; the tide note gives the source.
+- https://github.com/danbri/londat/blob/main/docklands/layers/wind.js : true north to grid north (−1.55°).
+- https://github.com/danbri/londat/blob/main/cwplans/tools/build-piers.mjs and
+  https://github.com/danbri/londat/blob/main/cwplans/docklands/data/piers.json : Blackwall Pier is a fixed pier.
+- https://github.com/danbri/londat/blob/main/docklands/layers/trees.js : `STATS.trees`; blossom before the leaves.
+- https://github.com/danbri/londat/blob/main/docklands/tree-species.js : evergreens in the setting mixes (needs the
+  species build).
 
 ## New tests
 
-- https://github.com/danbri/londat/blob/main/docklands/test/history-check.mjs (tide and wind, no browser)
+- https://github.com/danbri/londat/blob/main/docklands/test/history-check.mjs (tide, tide nowcast and wind, no browser)
+- https://github.com/danbri/londat/blob/main/docklands/test/tide-source-check.mjs (the source of the page's tide level)
 - https://github.com/danbri/londat/blob/main/docklands/test/roofs-compare.mjs
 - https://github.com/danbri/londat/blob/main/docklands/test/piers-check.mjs
 - https://github.com/danbri/londat/blob/main/docklands/test/wildlife-check.mjs
@@ -475,10 +578,12 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
 
 1. Open-Meteo HTTP 429 from a shared address leaves the default wind and no weather. Wind and weather make two requests
    for each day; one request could serve both (needs `layers/wind.js`).
-2. Model wind is 0.8 to 1.3 m/s below the EGLC anemometer, and its direction is +7° to +15° from the METARs. Also,
-   grid north is used as true north (1.5°).
-3. The tide has no surge. In winter, high water is up to 0.7 m above the prediction. No live EA reading on request.
-4. Blackwall Pier (OSM way 190723549) has the water class "land" but floats at the tide level.
+2. Model wind is 0.76 to 1.26 m/s below the EGLC anemometer, and its direction is +5° to +10° (mean) from the METARs.
+   Not corrected: no standard correction applies (section 1). Grid north is fixed.
+3. The tide has a surge only within about 8 h of EA readings, and the page reads them back 4 weeks. Older days show the
+   prediction without surge (in winter high water up to 0.7 m above it). No surge forecast.
+4. (Fixed: Blackwall Pier is a fixed pier.)
 5. The wildlife reporting rate is computed in the page. The tool could write it into the file. Land birds still show
    a spring peak, from breeding-season surveys.
-6. The trees layer has no `STATS.trees` for tests.
+6. (Fixed: `STATS.trees`.) The 20,460 trees with an inferred species stay all deciduous until
+   `cwplans/tools/build-tree-species.mjs` runs with the new mixes. Leaf calendars are typical dates, not this year's.

@@ -20,9 +20,11 @@ import * as THREE from 'three/webgpu';
 import { Fn, attribute, positionLocal, positionWorld, vec2, vec3, vec4, float, mix, clamp, smoothstep, step, exp, floor, fract, sin, dot, texture, uniform, sRGBTransferEOTF, abs } from 'three/tsl';
 import { A, dec } from '../build.js';
 import { WU } from '../water.js';
-import { TideModel, predict, extremes, tideU, tideOffset } from '../tide.js';
+import { TideModel, predict, extremes, extremesNear, nowcast, mergeReadings, tideU, tideOffset } from '../tide.js';
 
 const CELL = 5, MATCH = 15, SNAP = 7.1;
+const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
+const CACHE = local ? ['../cwplans/cache/latest.json'] : ['https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json', '../cwplans/cache/latest.json'];
 const KIND = { Wall: 'wall', 'Flood Gate': 'wall', 'Bridge Abutment': 'wall', Embankment: 'revetment', 'Engineered High Ground': 'revetment' };
 const lin = c => sRGBTransferEOTF(c);
 const hh = Fn(([q]) => fract(sin(dot(q, vec2(12.9898, 78.233))).mul(43758.5453)));
@@ -207,17 +209,30 @@ export default {
     const amp = k => (Hc.h[k] || [0])[0], mhws = Hc.z0 + amp('M2') + amp('S2'), mhwn = Hc.z0 + amp('M2') - amp('S2'), mlws = Hc.z0 - amp('M2') - amp('S2'), mlwn = Hc.z0 - amp('M2') + amp('S2');
     const U = { mhws: uniform(mhws), mhwn: uniform(mhwn) };
 
-    // measured levels: the recent readings of the fit file; 3 and 4 October from the snapshot, loaded when asked
-    const meas = {}; const addSeries = (id, start, step, vals) => { (meas[id] ||= []).push({ start, step, vals }); };
-    if (J.recent) for (const [id, v] of Object.entries(J.recent.stations)) addSeries(id, Date.parse(J.recent.start), J.recent.step_min * 60e3, v);
-    let snapLoaded = false;
-    const loadSnap = () => { if (snapLoaded) return; snapLoaded = true; loadJSON(DATA + 'sky/tide-2026-10-03.json').then(S => { for (const [id, s] of Object.entries(S.stations)) { const r = s.readings.map(([t, v]) => [Date.parse(t), v]); meas[id] ||= []; meas[id].push({ pts: r }); } last = NaN; draw(); }).catch(e => console.warn('tide snapshot', e)); };
-    const measured = (id, t) => { for (const s of meas[id] || []) {
-      if (s.pts) { for (let i = 1; i < s.pts.length; i++) if (s.pts[i][0] >= t) { const a = s.pts[i - 1], b = s.pts[i]; if (a[0] <= t && b[0] - a[0] <= 1800e3) { const r = model.J.stations[id] ? predict(model.J.stations[id], t) : 0; const v = a[1] + (b[1] - a[1]) * (t - a[0]) / (b[0] - a[0]); return Math.abs(v - r) < 1.2 ? v : null; } break; } continue; }
-      const f = (t - s.start) / s.step, i = Math.floor(f); if (i < 0 || i + 1 >= s.vals.length) continue; const a = s.vals[i], b = s.vals[i + 1]; if (a == null || b == null) continue; return a + (b - a) * (f - i); }
-      return null; };
-    const levelsAt = t => { if (t >= Date.parse('2026-10-03T00:00Z') && t < Date.parse('2026-10-05T00:00Z')) loadSnap(); let n = 0;
-      const L = model.st.map(s => { const m = measured(s.id, t); if (m != null) { n++; return m; } return predict(s.H, t); }); return { L, measured: n }; };
+    // measured levels (docklands/tide.js nowcast: the readings where they are, else the prediction plus the residual of the
+    // nearest reading, decaying; skill docklands-sky, "Tide surge"). Sources, merged per gauge: the last 7 days of the fit
+    // file; 3 and 4 October from the snapshot (loaded when asked); the londat hourly cache (cache/latest.json theme tide: the
+    // last 24 h, loaded when the clock is within 3 days of now); the EA flood-monitoring API (OGL v3.0, CORS open) for the
+    // clock's day and the days either side, back 4 weeks (on by default, as the weather; ?ea=0 or the menu box: off).
+    let ver = 0, ready = false;   // ver: a new set of readings (the frame hook updates)
+    const ID = id => `${id}-level-tidal_level-i-15_min-mAOD`, SRC = {}, RD = {}, got = { snap: false, cache: false, ea: {} }, eaErr = { msg: null };
+    const setSrc = (id, k, list) => { if (!J.stations[id]) return; (SRC[id] ||= {})[k] = list; RD[id] = mergeReadings(J.stations[id], ...Object.values(SRC[id])); ver++; if (ready) draw(); };
+    if (J.recent) for (const [id, v] of Object.entries(J.recent.stations)) { const t0 = Date.parse(J.recent.start), st = J.recent.step_min * 60e3; setSrc(id, 'fit', v.map((x, i) => [t0 + i * st, x])); }
+    const loadSnap = () => { if (got.snap) return; got.snap = true; loadJSON(DATA + 'sky/tide-2026-10-03.json').then(S => { for (const [id, s] of Object.entries(S.stations)) setSrc(id, 'snap', s.readings.map(([t, v]) => [Date.parse(t), v])); }).catch(e => console.warn('tide snapshot', e)); };
+    const loadCache = () => { if (got.cache) return; got.cache = true; (async () => { for (const u of CACHE) { try { const r = await fetch(u, { cache: 'no-cache' }); if (!r.ok) continue; const T = (await r.json()).themes?.tide; if (!T) return;
+      for (const id of Object.keys(J.stations)) { const s = T.stations['ea-level:' + ID(id)]; if (s && s.series) setSrc(id, 'cache', s.series.map(([t, v]) => [Date.parse(t), v])); } return; } catch { /* next */ } } })(); };
+    let eaOn = !/^(0|off|no)$/i.test(ctx.qs.get('ea') || '');
+    const loadEA = t => { const day = new Date(t).toISOString().slice(0, 10), now = Date.now();
+      if (!eaOn || got.ea[day] || t < now - 27 * 864e5 || t > now + 2 * 864e5) return; got.ea[day] = true;
+      const a = new Date(Math.max(t - 864e5, now - 28 * 864e5)).toISOString().slice(0, 10), b = new Date(Math.min(t + 864e5, now)).toISOString().slice(0, 10);
+      for (const id of Object.keys(J.stations)) fetch(`https://environment.data.gov.uk/flood-monitoring/id/measures/${ID(id)}/readings?startdate=${a}&enddate=${b}&_sorted&_limit=2000`)
+        .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))).then(R => { eaErr.msg = null; setSrc(id, 'ea' + day, R.items.filter(x => typeof x.value === 'number').map(x => [Date.parse(x.dateTime), x.value])); })
+        .catch(e => { eaErr.msg = e.message; got.ea[day] = false; console.warn('tide: EA API', e); }); };
+    const kindsAt = t => model.st.map(s => nowcast(s.H, RD[s.id], t));   // no loading: for scans along the time axis
+    const levelsAt = t => { if (t >= Date.parse('2026-10-03T00:00Z') && t < Date.parse('2026-10-05T00:00Z')) loadSnap();
+      if (Math.abs(t - Date.now()) < 3 * 864e5) loadCache(); loadEA(t);
+      let n = 0, nr = 0; const K = kindsAt(t); for (const k of K) { if (k.kind === 'reading') n++; else if (k.kind === 'residual') nr++; }
+      return { L: K.map(k => k.v), measured: n, residual: nr, K }; };
 
     // the water: per-vertex position along the gauges, and the offset on the GPU
     const wm = ctx.meshes.water, wg = wm.geometry, P = wg.attributes.position, td = wg.attributes.tidal;
@@ -244,11 +259,14 @@ export default {
     ui.section('Tide');
     const note = ui.note('');
     const hm = t => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t));
-    const cred = ui.note('Tide: our harmonic prediction from Environment Agency gauge readings (Tower Pier, Charlton, Silvertown). This uses Environment Agency flood and river level data from the real-time data API (Beta), <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">OGL v3.0</a>. Not for navigation.');
+    ui.toggle('Measured tide levels from the EA API for the clock time (asks environment.data.gov.uk)', eaOn, v => { eaOn = v;
+      if (!v) for (const id of Object.keys(SRC)) { for (const k of Object.keys(SRC[id])) if (k.startsWith('ea')) delete SRC[id][k]; RD[id] = mergeReadings(J.stations[id], ...Object.values(SRC[id])); }
+      got.ea = {}; ver++; draw(); });
+    const cred = ui.note('Tide: EA readings where they cover the clock time; elsewhere our harmonic prediction from Environment Agency gauge readings (Tower Pier, Charlton, Silvertown), plus the residual (surge) of the nearest reading, fading over a day. This uses Environment Agency flood and river level data from the real-time data API (Beta), <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">OGL v3.0</a>. Not for navigation.');
     cred.style.opacity = '0.75';
     let last = NaN, visible = on, info = {};
     function update() {
-      const t = ctx.clock, { L, measured: nm } = levelsAt(t), dt = 5 * 60e3, La = levelsAt(t - dt).L, Lb = levelsAt(t + dt).L;
+      const t = ctx.clock, { L, measured: nm, residual: nr, K } = levelsAt(t), dt = 5 * 60e3, La = levelsAt(t - dt).L, Lb = levelsAt(t + dt).L;
       L.forEach((v, i) => { if (tideU.l[i]) tideU.l[i].value = v; }); for (let i = L.length; i < tideU.l.length; i++) tideU.l[i].value = L[L.length - 1];
       tideU.on.value = visible ? 1 : 0;
       const lev = model.along(L, chC), rate = (model.along(Lb, chC) - model.along(La, chC)) / (2 * dt / 36e5);
@@ -257,21 +275,26 @@ export default {
       const back = []; for (let k = 0; k <= 15 * 12; k++) back.push(predict(Hc, t - k * 5 * 60e3) + (k ? 0 : lev - predict(Hc, t)));
       for (let i = 0; i < DRY.n; i++) { const y = DRY.y0 + (DRY.y1 - DRY.y0) * i / (DRY.n - 1); let k = 0; while (k < back.length && back[k] < y) k++; dryData[i] = Math.round(Math.min(1, k * 5 / 60 / DRY.hmax) * 255); }
       dryTex.needsUpdate = true;
-      const X = extremes(Hc, t - 7 * 36e5, t + 26 * 36e5), nh = X.find(e => e.hw && e.t > t), nl = X.find(e => !e.hw && e.t > t);
+      // high and low waters: of the page's level at the centre (readings, or prediction + residual) near each predicted one
+      // (within 90 min) when readings are near; else the prediction's (the virtual station at the centre)
+      const XP = extremes(Hc, t - 7 * 36e5, t + 26 * 36e5), X = nm || nr ? extremesNear(u => model.along(kindsAt(u).map(k => k.v), chC), XP) : XP, nh = X.find(e => e.hw && e.t > t), nl = X.find(e => !e.hw && e.t > t);
       // range of this tide: the high and low water either side of now; spring or neap by the mean spring and neap ranges here
       const prev = X.filter(e => e.t <= t).pop(), nxt = X.find(e => e.t > t), range = prev && nxt ? Math.abs(nxt.v - prev.v) : NaN;
       const sp = 2 * (amp('M2') + amp('S2')), np = 2 * (amp('M2') - amp('S2')), f = (range - np) / (sp - np);
       const later = X.filter(e => e.t > t + 20 * 36e5).slice(0, 2), r2 = later.length === 2 ? Math.abs(later[1].v - later[0].v) : range;
       const phase = f > 0.8 ? 'spring tides' : f < 0.2 ? 'neap tides' : r2 > range ? 'between neaps and springs (ranges growing)' : 'between springs and neaps (ranges falling)';
-      info = { level: +lev.toFixed(2), rate: +rate.toFixed(2), measured: nm, stations: model.st.map((s, i) => [s.name, +L[i].toFixed(2)]), nextHW: nh && [hm(nh.t), +nh.v.toFixed(2)], nextLW: nl && [hm(nl.t), +nl.v.toFixed(2)], range: +range.toFixed(2), phase };
+      const rc = lev - model.along(model.levels(t), chC), ages = K.filter(k => k.kind === 'residual').map(k => k.ageH), age = ages.length ? Math.min(...ages) : null;
+      const srcTxt = nm === model.st.length ? 'EA readings' : nr || nm ? `prediction ${rc >= 0 ? '+' : '−'} ${Math.abs(rc).toFixed(2)} m measured residual${age != null ? `, from an EA reading ${age < 1 ? Math.round(age * 60) + ' min' : age.toFixed(1) + ' h'} ${K.find(k => k.kind === 'residual').from < t ? 'before' : 'after'}, fading` : ''}` : `prediction, no surge${eaOn ? '' : ' (EA readings off)'}`;
+      info = { level: +lev.toFixed(2), rate: +rate.toFixed(2), measured: nm, residual: nr, source: srcTxt, residualCentre: +rc.toFixed(3), fromReadingH: age != null ? +age.toFixed(2) : null, eaError: eaErr.msg, stations: model.st.map((s, i) => [s.name, +L[i].toFixed(2)]), nextHW: nh && [hm(nh.t), +nh.v.toFixed(2)], nextLW: nl && [hm(nl.t), +nl.v.toFixed(2)], range: +range.toFixed(2), phase };
       note.innerHTML = `Thames ${lev.toFixed(2)} m OD at the model centre, ${Math.abs(rate) < 0.05 ? 'slack' : rate > 0 ? 'rising' : 'falling'} ${Math.abs(rate).toFixed(2)} m an hour` +
-        ` (${nm === model.st.length ? 'EA readings' : nm ? 'readings and prediction' : 'prediction'}).<br>` +
+        ` (${esc(srcTxt)}).<br>` +
         `${nh ? `High water ${esc(hm(nh.t))}, ${nh.v.toFixed(2)} m` : ''}${nh && nl ? ' · ' : ''}${nl ? `low water ${esc(hm(nl.t))}, ${nl.v.toFixed(2)} m` : ''}.<br>` +
         `Range ${isFinite(range) ? range.toFixed(1) : '?'} m: ${esc(phase)} (mean springs ${sp.toFixed(1)} m, neaps ${np.toFixed(1)} m).<br>` +
         `<span style="opacity:.75">${model.st.map((s, i) => `${esc(s.name)} ${L[i].toFixed(2)}`).join(' · ')} m OD</span>`;
     }
-    ctx.onFrame(() => { if (ctx.clock !== last) { last = ctx.clock; update(); } });
-    update(); last = ctx.clock;
+    let lastVer = -1;
+    ctx.onFrame(() => { if (ctx.clock !== last || ver !== lastVer) { last = ctx.clock; lastVer = ver; update(); } });
+    update(); last = ctx.clock; lastVer = ver; ready = true;
 
     stats.tide = { get now() { return info; }, foreshore: FS.stats, check_max_diff_m: +chk.toFixed(5), datums_centre: { mhws: +mhws.toFixed(2), mhwn: +mhwn.toFixed(2), mlwn: +mlwn.toFixed(2), mlws: +mlws.toFixed(2) },
       stations: model.st.map(s => ({ id: s.id, name: s.name, chainage: Math.round(s.ch) })), fit: Object.fromEntries(Object.entries(J.stations).map(([id, s]) => [id, s.fit && s.fit.rms])), ms: Math.round(performance.now() - t0) };

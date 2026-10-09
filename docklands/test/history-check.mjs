@@ -3,6 +3,8 @@
 //   readings (OGL v3.0) on HELD-OUT days: EA daily archive files of days that the fit did not read (the fit read the API's
 //   last weeks and one archive day in seven, at 10, 17, 24 ... days before 2026-10-09; here days 42, 77, ... before it),
 //   plus the API's last 4 weeks (in the fit: reported apart). Rms, max, high- and low-water time and height errors.
+// - tide nowcast: the page's level (tide.js nowcast: readings, else prediction + the nearest reading's residual, fading)
+//   with readings up to a cut-off, against the prediction alone, by lead time; high and low waters in the next 12 h.
 // - wind and cloud: the page's data sources for a clock time (the committed snapshot weather-2026-10-03.json, the hourly
 //   cache runs cwplans/cache/runs/, the Open-Meteo forecast API past hours, the Open-Meteo archive ERA5) vs the METARs of
 //   London City Airport (EGLC, 2 km east of Canary Wharf) from the Iowa Environmental Mesonet ASOS archive. Wind speed and
@@ -12,7 +14,7 @@
 //   NODE_USE_ENV_PROXY=1 node docklands/test/history-check.mjs [--json docklands/test/out/audit/history.json]
 // Results and their reading: docklands/AUDIT.md, item 1. Skill: docklands-sky, "Three.js port clock".
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { predict, extremes } from '../tide.js';
+import { predict, extremes, extremesNear, nowcast, mergeReadings, SURGE } from '../tide.js';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const CACHE = 'docklands/test/out/history-cache'; mkdirSync(CACHE, { recursive: true });
@@ -100,6 +102,38 @@ function summ(block) {
 }
 OUT.tideSummary = { heldOut: summ(OUT.tideHeldOut), api4weeks: summ(OUT.tideApi) };
 
+// ======================= 1b. nowcast: the page's level with readings up to a cut-off time T0 (docklands/tide.js nowcast:
+// readings in range, else prediction + the nearest reading's residual, fading) against the prediction alone, at the times
+// after T0. API set: a cut-off every 2 h over the 4 weeks, leads to 48 h. Held-out days: cut-offs 06, 09 and 12 UTC, leads to
+// the day's end. High and low waters within 12 h after T0: time and height errors (the page's rule: tide.js extremesNear).
+// In range: every other reading left out, the page's interpolation of the rest at the left-out times (30-minute gaps).
+const BINS = [[0, 1], [1, 3], [3, 6], [6, 12], [12, 24], [24, 48]];
+function readingExtremes(r) {   // as tideDay: +-1 h local extremes of the readings, parabola
+  const ext = []; for (let i = 4; i < r.length - 4; i++) { const v = r[i][1], w = [-4, -3, -2, -1, 1, 2, 3, 4].map(k => r[i + k][1]); if (r[i + 4][0] - r[i - 4][0] > 135 * 6e4) continue;
+    const hw = w.every(x => v >= x), lw = w.every(x => v <= x); if (!hw && !lw) continue; const a = r[i - 1][1], c = r[i + 1][1], den = a - 2 * v + c, dx = den ? 0.5 * (a - c) / den : 0; ext.push({ t: r[i][0] + dx * 15 * 6e4, v: v - 0.25 * (a - c) * dx, hw }); }
+  const ex = []; for (const x of ext) if (!ex.some(y => y.hw === x.hw && Math.abs(y.t - x.t) < 3 * 36e5)) ex.push(x); return ex; }
+function nowcastSet(name, sets) {   // sets: [{ id, R (cleaned, sorted), cuts }]
+  const acc = BINS.map(() => ({ p: [], n: [] })), hw = { pT: [], nT: [], pH: [], nH: [] }, lw = { pT: [], nT: [], pH: [], nH: [] }, gap = [];
+  for (const { id, R, cuts } of sets) { const S = H.stations[id];
+    for (let i = 1; i + 1 < R.length; i += 2) { const sub = [R[i - 1], R[i + 1]]; if (sub[1][0] - sub[0][0] > 31 * 6e4) continue; gap.push(nowcast(S, sub, R[i][0]).v - R[i][1]); }
+    const ex = readingExtremes(R);
+    for (const T0 of cuts) { const known = R.filter(x => x[0] <= T0); if (known.length < 20 || T0 - known[known.length - 1][0] > 30 * 6e4) continue;
+      for (const [t, v] of R) { if (t <= T0) continue; const L = (t - T0) / 36e5, b = BINS.findIndex(([a, c]) => L > a && L <= c); if (b < 0) continue; acc[b].p.push(predict(S, t) - v); acc[b].n.push(nowcast(S, known, t).v - v); }
+      const PE = extremes(S, T0, T0 + 13 * 36e5), NE = extremesNear(t => nowcast(S, known, t).v, PE);
+      for (const x of ex) { if (x.t <= T0 + 15 * 6e4 || x.t > T0 + 12 * 36e5) continue; const near = L => L.filter(q => q.hw === x.hw).sort((a, b) => Math.abs(a.t - x.t) - Math.abs(b.t - x.t))[0];
+        const p = near(PE), n = near(NE); if (!p || !n || Math.abs(p.t - x.t) > 3 * 36e5 || Math.abs(n.t - x.t) > 3 * 36e5) continue; const o = x.hw ? hw : lw;
+        o.pT.push((p.t - x.t) / 6e4); o.nT.push((n.t - x.t) / 6e4); o.pH.push(p.v - x.v); o.nH.push(n.v - x.v); } } }
+  const ext = o => o.pT.length ? { n: o.pT.length, timeMaeMin: [Math.round(mae(o.pT)), Math.round(mae(o.nT))], heightMae: [r2(mae(o.pH)), r2(mae(o.nH))], heightBias: [r2(mean(o.pH)), r2(mean(o.nH))], heightWorst: [r2(Math.max(...o.pH.map(Math.abs))), r2(Math.max(...o.nH.map(Math.abs)))] } : null;
+  return { set: name, inRangeRms30min: gap.length ? r2(rms(gap) * 100) / 100 : null, inRangeN: gap.length,
+    leads: Object.fromEntries(BINS.map(([a, c], b) => [`${a}-${c} h`, acc[b].p.length ? { n: acc[b].p.length, rmsPrediction: r2(rms(acc[b].p) * 1000) / 1000, rmsPage: r2(rms(acc[b].n) * 1000) / 1000 } : null]).filter(([, v]) => v)),
+    hw12h: ext(hw), lw12h: ext(lw), note: '[prediction, page]' };
+}
+{ const apiSets = [], dSets = [];
+  for (const id of Object.keys(ST)) { const R = mergeReadings(H.stations[id], ...Object.values(api).map(D => D[id] || [])); if (R.length) apiSets.push({ id, R, cuts: R.filter((x, i) => i % 8 === 0).map(x => x[0]) }); }
+  for (const [d, D] of Object.entries(days)) { const C = clean(D); for (const [id, r] of Object.entries(C)) if (H.stations[id]) { const R = mergeReadings(H.stations[id], r); dSets.push({ id, R, cuts: [6, 9, 12].map(h => Date.parse(d + 'T00:00Z') + h * 36e5) }); } }
+  OUT.nowcast = { params: { ...SURGE }, api4weeks: nowcastSet('EA API last 4 weeks (in the fit period)', apiSets), heldOut: nowcastSet('held-out EA archive days', dSets),
+    winter: nowcastSet('held-out winter days (14 Nov, 9 Jan, 27 Feb)', dSets.filter((s, i) => /^(2025-11-14|2026-01-09|2026-02-27)/.test(new Date(s.cuts[0]).toISOString()))) }; }
+
 // ======================= 2. wind and cloud vs EGLC METAR
 const WDAYS = ['2025-12-21', '2026-03-15', '2026-06-21', '2026-08-28', '2026-09-12', '2026-09-20', '2026-09-29', '2026-10-03', '2026-10-04', '2026-10-06', '2026-10-08'];
 const cover = c => ({ NCD: 0, NSC: 0, CLR: 0, SKC: 0, CAVOK: 0, VV: 100, FEW: 19, SCT: 44, BKN: 75, OVC: 100 })[c];
@@ -170,6 +204,7 @@ OUT.wind = compare; OUT.windSummary = Object.fromEntries(Object.entries(compare)
 console.log('TIDE, held-out EA archive days', heldOut.join(' '));
 for (const [d, o] of Object.entries(OUT.tideHeldOut)) for (const [id, x] of Object.entries(o)) console.log(`  ${d} ${ST[id].padEnd(10)} range ${x.range.toFixed(1)} m  rms ${x.rms.toFixed(2)}  bias ${x.bias.toFixed(2)}  max ${x.max.toFixed(2)}  HW ${x.hw ? `${x.hw.n}x ${x.hw.timeMaeMin} min (worst ${x.hw.timeMaxMin}) ${x.hw.heightMae} m` : '-'}  LW ${x.lw ? `${x.lw.n}x ${x.lw.timeMaeMin} min ${x.lw.heightMae} m` : '-'}  (n ${x.n}, dropped ${x.dropped})`);
 console.log('TIDE summary', JSON.stringify(OUT.tideSummary, null, 1));
+console.log('NOWCAST (readings up to T0, then prediction + fading residual) [prediction, page]'); for (const k of ['api4weeks', 'heldOut', 'winter']) console.log(' ', k, JSON.stringify(OUT.nowcast[k]));
 console.log('WIND / CLOUD vs EGLC METAR'); for (const [k, v] of Object.entries(compare)) { console.log(' ', k); for (const x of v) console.log('   ', JSON.stringify(x)); }
 console.log('WIND summary', JSON.stringify(OUT.windSummary, null, 1)); if (Object.keys(SRC).length) console.log('source errors', SRC);
 const J = arg('--json'); if (J) { mkdirSync(J.replace(/\/[^/]*$/, ''), { recursive: true }); writeFileSync(J, JSON.stringify(OUT, null, 1)); }

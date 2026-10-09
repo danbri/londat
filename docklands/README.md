@@ -39,6 +39,7 @@ improvements."
 | `menu.js` | the drawer (tabs, closing, swipe), `ctx.ui` with a place for each control, the Go proxies and route finder, the corner credit and (i) |
 | `carousel.js` | the time wheels at the top (time of day, day of the year) |
 | `sky3.js` | sun and moon (Astronomy Engine), `SkyMesh`, stars (instanced sprites), the light rig |
+| `about-extra.js` | Menu > About: the Live data box (londat cache or the sources' APIs, traffic camera markers) and the below-ground text |
 | `test/menu-check.mjs` | headless check of the Menu map (every row by its click path), the four ways to close the drawer, and the time wheels |
 | `test/load.mjs` | headless load test: two sizes, WebGL 2 or `--webgpu` in software (`node docklands/test/load.mjs` from the repository root) |
 
@@ -67,28 +68,30 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | model | water, greens, rail, roads | yes | water: depth colour, ripples, fresnel, sun glint; mirror on WebGPU by default (`layers/water.js`, `?water=0|1`), sky by fresnel on WebGL 2 |
 | model | buildings, towers, roof shapes, Realistic look, photo facades | yes | roofs checked exact (22,654); `materials.js` buildingMaterial: the Realistic day patterns (styles 0-7), the 32-slot photo facade atlas (`?facades=0`), night windows by style |
 | model | detailed models (glTF) | yes | |
+| model | windows on or off, vertical exaggeration | yes | `layers/model.js`: Windows (`materials.js` `U.win`: off gives the plain wall by day and no lit windows or shopfronts by night; photo facades and crowns stay; `?windows=0`); vertical exaggeration 1 to 5 (`?vz=`; `main.js` `setVz`: a y scale of 1 / vz in the camera's world matrix, so the scene stays in model metres and picking, labels, the share hash and the cut keep model heights; not applied in pixel art, the water mirror image, Drone, `&planecam` or a headset) |
 | 1 data layers | trees | yes | `layers/trees.js`, `tree-species.js`: all 81,875 trees by default (`?trees=near`); 43 species profiles from the GLA London Public Realm Trees (OGL) and OSM leaf tags, 20,480 inferred from the setting (flagged); seasons (leaf-out, autumn colours, bare crowns, cherry blossom), wind sway; LOD: full crowns within 380 m (9,000 nearest), a 10-triangle far form to 6.5 km: about 0.8 to 0.9 M triangles a frame |
 | 1 data layers | terrain ring (Hills of London) | yes | `layers/ring.js`; receives no shadows (a CSM step at the shadow range); not faint in the cut-away |
 | 1 data layers | flood walls, riverbed, floor plates | yes | `layers/walls.js`, `riverbed.js`, `floors.js` (floors off by default; on, the buildings go see-through); no tap card |
-| 1 data layers | tunnels, basements, indoor, cut-away gauge | yes | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); the station cut-outs (with the station models shown, the OSM indoor floors and points inside each of the 2 station rectangles are left out and the tunnels stop at the box faces: stations-layer.js inside, outside, levelY), the yellow labels of published levels, a tap card for tunnels, indoor levels, basements, points and slabs, a fill light by night |
+| 1 data layers | tunnels, basements, indoor, cut-away gauge | yes | `layers/under.js`: tunnel model, basements, indoor levels, slabs, North Dock volume, gauge, Underground view (`?view=under`, `?cut=`); the station cut-outs (with the station models shown, the OSM indoor floors and points inside each of the 2 station rectangles are left out and the tunnels stop at the box faces: stations-layer.js inside, outside, levelY), the yellow labels of published levels, a tap card for tunnels, indoor levels, basements, points and slabs, a fill light by night; with the cut on, a flat dark backdrop (#0f1215) in place of the day sky until the visitor sets the clock (wheels, slider, Day or night, `?t=`, a hash `t=`), as the WebGL page (`sky3.js` `setCutDark`) |
 | 1 data layers | station models | yes | `layers/stations.js`: 127 parts, tap card, a dim night light; seen from below ground; gives `ctx.stationCut` (the cut-outs) to `layers/under.js` |
 | 1 data layers | skyline years | yes | `layers/skyline.js`: slider, Play, `?year=` |
 | 2 interface | search | yes | `layers/search.js`: registry, places, walking network; flies there; a place below ground cuts away |
 | 2 interface | registry card (atlas, kg links), night use from the registry | yes | `layers/registry.js`, ctx.addCard; no occupant labels at their floors, no London Datastore facts |
-| 2 interface | routes, press and hold | yes | `layers/routes.js`: same network and weights; 4 test routes equal to the WebGL page |
+| 2 interface | routes, press and hold, walking network | yes | `layers/routes.js`: same network and weights; 4 test routes equal to the WebGL page; Go > "Show the walking network" (`?walk=1`): every link but streets as coloured beams at the WebGL page's heights (vY: station floors while the station models show), lifts out of service now in red, cut away with the model |
 | 2 interface | colour buildings by, building keys | yes | `layers/overlays.js` (6 modes, `?colour=`; no windows by night in a data colour), `layers/keys.js` |
+| 2 interface | glow: who is inside; data on the model | yes | Layers > Who is inside, `layers/overlays.js`: the glow of the WebGL page (aura 4 m out to 6 m above the roof, lit edges, a faint pass through, the pulse; 11 kinds from the atlas index `cat`; `?glow=`); heritage, quality and crime pins (crime live from data.police.uk, OGL; `?pins=`), labels for heritage groups of 30 records or more, a tap card for each pin |
 | 2 interface | drawer tabs | yes | reworked by task (owner, 2026-10-09): Views, Look, Layers, Go, Time, About; time wheels at the top; see "Menu map" |
 | 3 night | windows, crowns, haze, stars, bloom | yes | `crown.js`: the halo colour by date (cwplans-crown-lighting rules); generic tower signs in `layers/nightlights.js` |
 | 3 night | reflections | partial | WebGPU mirror (TSL reflector, one plane), streaks by seven vertical samples; WebGL 2: sky by fresnel only (mirror with `?water=1`) |
 | 3 night | aviation lights, apex light, riverside lamps | yes | `layers/nightlights.js`: the WebGL page's rules and seeds; no tower signs |
-| 3 sky | sun, moon, stars, clock, weather | yes | `sky3.js` (true north from the area.js geo, night by the geometric altitude, the moon disc with phase and limb), `layers/weather.js` (cloud, haze, rain and snow; Open-Meteo for wind and weather on by default since 2026-10-09, `?weather=0` switches it off; Realistic buildings on by default, `?look=0` for flat); checked by `test/clock-check.mjs` (sun and moon within 0.02 deg) |
+| 3 sky | sun, moon, stars, clock, weather | yes | `sky3.js` (true north from the area.js geo, night by the geometric altitude, the moon disc with phase and limb), `layers/weather.js` (cloud, haze, rain and snow; Open-Meteo for wind and weather on by default since 2026-10-09, `?weather=0` switches it off; Realistic buildings on by default, `?look=0` for flat); checked by `test/clock-check.mjs` (sun and moon within 0.02 deg). The rest of the WebGL page's Sky tab: `layers/sky-extra.js` (planets and Jupiter's moons, CelesTrak satellites and the next ISS pass, constellation lines, IAU star names and Messier objects not behind buildings, the Milky Way band, the cloud mask as a cloud deck at 1 km, London City approach paths, sun and moon azimuth lines from a viewpoint, Look at the moon or sun, the Sky panel rows) |
 | 4 live | ships and AIS | yes | `layers/ships.js`, `ships-data.js`: the WebGL page's sources and privacy rule, cache history for past clocks, dead reckoning, navigation lights, wakes; `?ships=test` |
 | 4 live | tide and foreshore | yes | `tide.js`, `layers/tide.js`: own harmonic prediction from EA readings (held-out rms about 0.2 m), the river at the tide level, the ground to the UKHO bed, walls vs mud and shingle |
 | 4 live | water surface: wind, current, debris, wakes | yes | `layers/wind.js`, `debris.js`, `water.js`, `materials.js`: fetch-limited wind waves, a flow map from the tide rate, Kelvin wakes summed in the shader, reflection at walls; `?wind=`, `?current=`, `?wakes=test` |
 | 4 live | piers, berths, berthed vessels | yes | `layers/piers.js`, `piers-models.js`: 275 piers and pontoons on the tide, HMS Belfast, 5 other vessels, simulated Clipper, ferry and tour boat calls |
 | 4 live | aircraft (recorded, live, simulated) | yes | `layers/planes.js`, `planes-live.js`: by default RECORDED tracks from the 7-day adsb.lol history cache (ODbL; branch `adsb-cache`, `cwplans/tools/fetch-adsb-cache.mjs`, daily workflow `adsb-cache.yml`) for the clock's date, or the held day with the same weekday, at the same London time; live adsb.lol on request (blocked in browsers: no CORS header; `?adsb=<relay>`); SIMULATED London City procedures and hours, Heathrow streams and H4 helicopters as the fallback; `?adsbcache=<base>`, `?adsbrec=0` |
 | 4 live | wildlife (simulated from records) | yes | `layers/wildlife.js`: 20 birds and the fox, weighted by NBN Atlas and GBIF records (CC0, CC-BY, OGL) |
-| 4 live | overlays, river, locate, KML, building keys | yes | `overlay-kit.js` (shared builders, materials, taps, labels) and `layers/overlays.js` (bike docks, lift outages, cranes, H4 and EGR159, GLA outlines and venues, works in progress; `?ov=bikes,works`), `layers/river.js` (river buses, locks, PLA notices, swim water, moorings, ships; `?river=`), `layers/locate.js`, `layers/kml.js` (`?kml=`; screen-space lines with Line2NodeMaterial; the WebGL page's kml.js reused), `layers/keys.js` (OSM card with parts, kg, Wikidata); files load only when ticked. Not ported: the selected building in the KML export, the Tower Bridge note, Sky panel rows |
+| 4 live | overlays, river, locate, KML, building keys | yes | `overlay-kit.js` (shared builders, materials, taps, labels) and `layers/overlays.js` (bike docks, lift outages, cranes, H4 and EGR159, GLA outlines and venues, works in progress; `?ov=bikes,works`), `layers/river.js` (river buses, locks, PLA notices, swim water, moorings, ships; `?river=`), `layers/locate.js`, `layers/kml.js` (`?kml=`; screen-space lines with Line2NodeMaterial; the WebGL page's kml.js reused), `layers/keys.js` (OSM card with parts, kg, Wikidata); files load only when ticked. Not ported: the selected building in the KML export, the Tower Bridge note |
 | framework | reveal sheet | yes | `reveal.js`: a frosted sheet with the layer drawn on it falls when a layer is ticked on; `?reveal=0` |
 | 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art with the photo facade tiles, the measured facade colours (snapped to the palette), box trees and the 441 animated actors of the WebGL page (people, cyclists, traffic, river boats, gulls, swimmers); Vector CRT "Colour overlay" (`?crt=overlay`); the style note under Look > Style |
 | 5 styles | splats | yes | `layers/splats.js`, `splat-worker.js`: own TSL renderer (Spark 2.3.1 and gaussian-splats-3d 0.4.7, both MIT, need WebGL), off by default, `?splats=with|only`, `?splatset=`; music switches to "only" in the map style; a full page with splats takes 24 to 39 s a frame in software |
@@ -138,8 +141,8 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Ground image: Satellite 2026 | Look > Ground > Satellite 2026 (`?ground=s2`; `layers/model.js`) |
 | Buildings: solid, see-through, hidden | Look > Buildings (`?bmode=solid|ghost|off`; `layers/model.js`); Layers > Below ground > Floors also makes them see-through |
 | Colour by (height source, height, occupants, homes, companies, below ground, quality) | Look > Colour buildings by |
-| Show: Windows, Detailed models, Roof shapes | Look > Detailed models (glTF), Roof shapes (`?models=0`, `?roofshapes=0`; `layers/model.js`); Windows: WebGL only (always on in the port) |
-| Show: Labels | Layers > City > Place names |
+| Show: Windows, Detailed models, Roof shapes | Look > Detailed models (glTF), Roof shapes, Windows (`?models=0`, `?roofshapes=0`, `?windows=0`; `layers/model.js`) |
+| Show: Labels | Layers > City > Place names; station (bold orange), district (italic) and dock names: Layers > City > Station, district and dock names (`layers/placenames.js`) |
 | Show: Roads | Layers > City > Roads |
 | Show: Underground | Layers > Below ground > Below ground (tunnels, basements, gauge, storey and tunnel settings) |
 | Show: Floors | Layers > Below ground > Floors |
@@ -149,14 +152,14 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Hills of London | Layers > City > Hills of London |
 | Gaussian splats (off, with the model, only; splat set) | Look > Gaussian splats |
 | Music (track, own file, stretch, noise, swirl, orbit) | Look > Music |
-| Glow: who is inside | WebGL only |
-| Data on the model: heritage, quality, crime | WebGL only (quality: Look > Colour buildings by > data-quality issues) |
+| Glow: who is inside | Layers > Who is inside (11 kinds, `?glow=finance,shop`; `layers/overlays.js`) |
+| Data on the model: heritage, quality, crime | Layers > Who is inside (`?pins=heritage,quality,crime`; `layers/overlays.js`); also Look > Colour buildings by > data-quality issues |
 | Live state: bike docks, lift outages, cranes, H4 and EGR159 | Layers > Data overlays |
 | London Datastore: conservation areas, open space, wharves, venues | Layers > Data overlays |
 | Works in progress | Layers > Data overlays |
 | Skyline by year (slider, play) | Layers > City > Skyline by year |
 | Shape: cut away above | Layers > Below ground > Below ground (cut slider; the depth gauge) |
-| Model settings: storey height, tunnel dip, gradient, depth | Layers > Below ground > Below ground (sliders); vertical exaggeration: WebGL only |
+| Model settings: storey height, tunnel dip, gradient, depth | Layers > Below ground > Below ground (sliders); vertical exaggeration: Look > Model settings (`?vz=1` to `5`; `layers/model.js`) |
 | Key to colours | Look > Key to colours (`layers/model.js`) |
 | Station models | Layers > Below ground > Station models |
 | River (river buses, locks, notices, swim water, moorings) | Layers > Water and river > River |
@@ -170,19 +173,20 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Water mirror (reflections) | Look > Water mirror |
 | Search (round button) | Go > Search (and the round button) |
 | Route tab: from, to, swap, step-free, find | Go > Route on foot (and press and hold on the model) |
-| Route tab: show the walking network | WebGL only |
+| Route tab: show the walking network | Go > Show the walking network (`?walk=1`; `layers/routes.js`) |
 | Drone | Go > Move > Drone |
 | My location (round button at the bottom right) | Go > Move > My location (and the round button) |
 | Headset (WebXR button) | Go > Move > Headset |
 | Sky tab: clock, hour slider | Time > Clock; the time wheels |
 | Sky tab: sun, moon | Time > sunrise, sunset, moon line; the wheels |
-| Sky tab: satellites, constellations, planets list, Messier objects, cloud mask | WebGL only |
+| Sky tab: satellites, constellations, star names and Messier objects, Milky Way, dark site, cloud mask, planets list, next ISS pass, twilight and golden hours | Time > Planets, satellites, constellations, Milky Way (`layers/sky-extra.js`; `?sky-extra=0`, `?skydark=1`, `?skyfetch=1`): its switches, and "Sky now" for the panel rows |
+| Sky tab: viewpoint, sun and moon lines on the map, London City approach paths, Look at the moon or sun, Photo time, Fetch | Time > Planets, satellites, constellations, Milky Way (`layers/sky-extra.js`); weather and tide are the port's own (Time > Weather, Tide) |
 | Tide (level, rising or falling, next high and low, springs or neaps) | Time > Tide |
 | Weather (cloud, haze, rain; Open-Meteo for other times) | Time > Weather |
 | Wind, current, floating debris | Time > Water surface |
 | About: links (atlas, knowledge graph, data notes) | About |
 | About: how to use it | About > How to use it |
-| About: your location text, Live data box, below ground text | WebGL only |
+| About: your location text, Live data box, below ground text | About > Your location; About > Live data (`about-extra.js`: tide, weather, air, lines, overflows from the londat cache or, with "Live: ask the sources directly", the sources; "Tidal Thames at the Tower Pier level" sets the clock to now and the tide layer to EA readings; traffic camera markers on the model from page load, `?cams=0`); About > Canary Wharf below ground (text); the depth gauge and pixel art help under How to use it |
 | Renderer: shadows, bloom, draw every frame, backend (port) | About > Settings |
 | Plotter (SVG for a pen plotter) | About > Plotter |
 | Credits and data licences; the OSM corner credit folds to (i) after 5 s or the first touch | About > Credits; the (i) button and "credits" in the corner open it |

@@ -125,11 +125,14 @@ export function profileOf(sci, common) {
 }
 
 // the mixes for a tree with no taxon, by setting (stated assumptions, not data): street trees, parks and gardens,
-// woods and tree groups, waterside (within 25 m of water)
+// woods and tree groups, waterside (within 25 m of water). Evergreens: 4.5 % of the trees with a taxon from the source
+// are evergreen (2,748 of 61,395 on 2026-10-09: conifer 846, holly 547, other evergreen 488, pine 461, evergreen oak 157,
+// palm 157, columnar cypress 92); the park, wood and street mixes carry about that share (before 2026-10-09 they had
+// none, so all 20,460 inferred trees were bare in winter). Takes effect when cwplans/tools/build-tree-species.mjs runs.
 export const MIXES = {
-  street: [['plane', 30], ['lime', 15], ['cherry', 14], ['maple', 9], ['pear', 8], ['hornbeam', 7], ['birch', 6], ['whitebeam', 5], ['apple', 3], ['locust', 3]],
-  park: [['oak', 18], ['horse-chestnut', 12], ['birch', 12], ['lime', 11], ['plane', 10], ['sycamore', 9], ['maple', 7], ['ash', 7], ['cherry', 5], ['hawthorn', 5], ['beech', 4]],
-  wood: [['birch', 22], ['oak', 18], ['sycamore', 16], ['ash', 14], ['hawthorn', 10], ['willow-small', 8], ['alder', 6], ['small', 6]],
+  street: [['plane', 30], ['lime', 15], ['cherry', 14], ['maple', 9], ['pear', 8], ['hornbeam', 7], ['birch', 6], ['whitebeam', 5], ['apple', 3], ['locust', 3], ['evergreen', 2], ['holly', 1.5], ['conifer', 1]],
+  park: [['oak', 18], ['horse-chestnut', 12], ['birch', 12], ['lime', 11], ['plane', 10], ['sycamore', 9], ['maple', 7], ['ash', 7], ['cherry', 5], ['hawthorn', 5], ['beech', 4], ['conifer', 2], ['holly', 1.5], ['pine', 1.5], ['oak-evergreen', 0.5]],
+  wood: [['birch', 22], ['oak', 18], ['sycamore', 16], ['ash', 14], ['hawthorn', 10], ['willow-small', 8], ['alder', 6], ['small', 6], ['holly', 3], ['pine', 1.5], ['conifer', 0.5]],
   water: [['willow', 35], ['alder', 25], ['poplar', 15], ['birch', 10], ['plane', 10], ['willow-small', 5]],
 };
 export const pickMix = (mix, r) => { const tot = mix.reduce((s, m) => s + m[1], 0); let x = r * tot; for (const [id, w] of mix) { if ((x -= w) < 0) return id; } return mix[0][0]; };

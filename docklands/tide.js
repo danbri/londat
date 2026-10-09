@@ -81,6 +81,53 @@ export function extremes(S, t0, t1, step = 6 * 60e3) {
   }
   return out;
 }
+// high and low waters of a level function f(t) (the page's level with readings and residual), one for each extreme P of the
+// prediction: the highest (lowest) value of f within WIN of it, 6-minute steps and a parabola. Anchoring on the prediction
+// keeps a wobble or a faulty reading from becoming an extra high water.
+export function extremesNear(f, P, win = 90 * 60e3, step = 6 * 60e3) {
+  return P.map(p => { let bt = p.t, bv = f(p.t); const sg = p.hw ? 1 : -1;
+    for (let t = p.t - win; t <= p.t + win; t += step) { const v = f(t); if (sg * v > sg * bv) { bv = v; bt = t; } }
+    const a = f(bt - step), c = f(bt + step), den = a - 2 * bv + c, dx = den && sg * (a - bv) <= 0 && sg * (c - bv) <= 0 ? Math.max(-1, Math.min(1, 0.5 * (a - c) / den)) : 0;
+    return { t: bt + dx * step, v: bv - 0.25 * (a - c) * dx, hw: p.hw }; });
+}
+// ---------- measured levels and the surge (skill docklands-sky, "Tide surge")
+// The harmonic prediction has no weather: the surge (wind, pressure, river flow) puts winter high waters up to 0.7 m above
+// it. Where readings exist the level is the readings (linear between 15-minute readings, no more than GAP apart). Away from
+// them the level is the prediction plus the residual (reading - prediction) carried from the nearest reading R at distance
+// d: r = (a r0 + (1 - a) rc) w, a = exp(-d / FAST), w = exp(-d / SLOW); r0 the residual at R, rc the residual at the same
+// tidal phase whole M2 periods (12.42 h) back towards R (most of the residual repeats with the tide: the fit's timing
+// errors), 0 when the readings do not reach back that far (then only the fast part). None beyond MAX. FAST, SLOW and MAX were chosen on 4 weeks of EA readings and 7 held-out
+// archive days (docklands/test/history-check.mjs, section "nowcast"); they are tuned values, not a surge model.
+export const SURGE = { GAP: 30 * 60e3, FAST: 2 * 36e5, SLOW: 8 * 36e5, MAX: 48 * 36e5, M2: 12.4206012 * 36e5, BAD: 1.5 };
+// readings R: [[t ms, v m OD], ...] sorted by t; the level by linear interpolation at t, or null over a gap
+function interpAt(R, t) {
+  let lo = 0, hi = R.length; while (lo < hi) { const m = (lo + hi) >> 1; if (R[m][0] < t) lo = m + 1; else hi = m; }
+  if (lo < R.length && R[lo][0] === t) return R[lo][1];
+  if (lo === 0 || lo === R.length) return null; const a = R[lo - 1], b = R[lo]; if (b[0] - a[0] > SURGE.GAP) return null;
+  return a[1] + (b[1] - a[1]) * (t - a[0]) / (b[0] - a[0]);
+}
+// the level at t for one station: { v, kind: 'reading' | 'residual' | 'prediction', resid (m, added to the prediction),
+// from (ms, the reading the residual comes from), ageH }
+export function nowcast(S, R, t) {
+  const p = predict(S, t);
+  if (!R || !R.length) return { v: p, kind: 'prediction', resid: 0 };
+  const m = interpAt(R, t); if (m != null) return { v: m, kind: 'reading', resid: m - p, from: t, ageH: 0 };
+  let lo = 0, hi = R.length; while (lo < hi) { const k = (lo + hi) >> 1; if (R[k][0] < t) lo = k + 1; else hi = k; }
+  const before = lo > 0 ? R[lo - 1] : null, after = lo < R.length ? R[lo] : null;
+  const n = !after || (before && t - before[0] <= after[0] - t) ? before : after, d = Math.abs(t - n[0]);
+  if (d > SURGE.MAX) return { v: p, kind: 'prediction', resid: 0 };
+  const r0 = n[1] - predict(S, n[0]), dir = n[0] < t ? -1 : 1, k = Math.max(1, Math.ceil(d / SURGE.M2)), tc = t + dir * k * SURGE.M2;
+  const vc = interpAt(R, tc), rc = vc == null ? 0 : vc - predict(S, tc), a = Math.exp(-d / SURGE.FAST), w = Math.exp(-d / SURGE.SLOW);
+  const resid = (a * r0 + (1 - a) * rc) * w;
+  return { v: p + resid, kind: 'residual', resid, from: n[0], ageH: d / 36e5 };
+}
+// merge readings into a sorted, de-duplicated list (a later source wins at the same time); drops readings more than BAD
+// from the prediction (a faulty gauge, as the fit's cleaning)
+export function mergeReadings(S, ...lists) {
+  const m = new Map(); for (const L of lists) for (const [t, v] of L || []) if (isFinite(t) && v != null && isFinite(v) && (!S || Math.abs(v - predict(S, t)) < SURGE.BAD)) m.set(t, v);
+  return [...m.entries()].sort((a, b) => a[0] - b[0]);
+}
+
 // the tide along the river: chainage (m) along a centreline [[x, z], ...] (sky.js chainage: the nearest vertex; beyond
 // the ends, minus or plus the distance) and the stations' positions in the same frame
 export function chainage(P) {

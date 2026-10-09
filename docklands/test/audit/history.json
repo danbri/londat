@@ -2185,6 +2185,234 @@
    }
   }
  },
+ "nowcast": {
+  "params": {
+   "GAP": 1800000,
+   "FAST": 7200000,
+   "SLOW": 28800000,
+   "MAX": 172800000,
+   "M2": 44714164.32,
+   "BAD": 1.5
+  },
+  "api4weeks": {
+   "set": "EA API last 4 weeks (in the fit period)",
+   "inRangeRms30min": 0.0421,
+   "inRangeN": 4056,
+   "leads": {
+    "0-1 h": {
+     "n": 4041,
+     "rmsPrediction": 0.26692,
+     "rmsPage": 0.13072
+    },
+    "1-3 h": {
+     "n": 8060,
+     "rmsPrediction": 0.26547000000000004,
+     "rmsPage": 0.22558
+    },
+    "3-6 h": {
+     "n": 12046,
+     "rmsPrediction": 0.26554,
+     "rmsPage": 0.25109
+    },
+    "6-12 h": {
+     "n": 23928,
+     "rmsPrediction": 0.26631,
+     "rmsPage": 0.25081
+    },
+    "12-24 h": {
+     "n": 47208,
+     "rmsPrediction": 0.26494,
+     "rmsPage": 0.26247000000000004
+    },
+    "24-48 h": {
+     "n": 91827,
+     "rmsPrediction": 0.26352,
+     "rmsPage": 0.26303
+    }
+   },
+   "hw12h": {
+    "n": 938,
+    "timeMaeMin": [
+     12,
+     8
+    ],
+    "heightMae": [
+     0.17,
+     0.16
+    ],
+    "heightBias": [
+     -0.04,
+     -0.04
+    ],
+    "heightWorst": [
+     0.58,
+     0.56
+    ]
+   },
+   "lw12h": {
+    "n": 944,
+    "timeMaeMin": [
+     17,
+     13
+    ],
+    "heightMae": [
+     0.19,
+     0.18
+    ],
+    "heightBias": [
+     0.05,
+     0.06
+    ],
+    "heightWorst": [
+     0.62,
+     0.6
+    ]
+   },
+   "note": "[prediction, page]"
+  },
+  "heldOut": {
+   "set": "held-out EA archive days",
+   "inRangeRms30min": 0.032400000000000005,
+   "inRangeN": 853,
+   "leads": {
+    "0-1 h": {
+     "n": 224,
+     "rmsPrediction": 0.20855,
+     "rmsPage": 0.08388
+    },
+    "1-3 h": {
+     "n": 442,
+     "rmsPrediction": 0.23212,
+     "rmsPage": 0.225
+    },
+    "3-6 h": {
+     "n": 652,
+     "rmsPrediction": 0.19887,
+     "rmsPage": 0.17844
+    },
+    "6-12 h": {
+     "n": 1272,
+     "rmsPrediction": 0.23544,
+     "rmsPage": 0.19656
+    },
+    "12-24 h": {
+     "n": 608,
+     "rmsPrediction": 0.31457999999999997,
+     "rmsPage": 0.31199
+    }
+   },
+   "hw12h": {
+    "n": 48,
+    "timeMaeMin": [
+     12,
+     10
+    ],
+    "heightMae": [
+     0.31,
+     0.22
+    ],
+    "heightBias": [
+     -0.23,
+     -0.15
+    ],
+    "heightWorst": [
+     0.71,
+     0.72
+    ]
+   },
+   "lw12h": {
+    "n": 50,
+    "timeMaeMin": [
+     16,
+     13
+    ],
+    "heightMae": [
+     0.16,
+     0.14
+    ],
+    "heightBias": [
+     0.07,
+     0.02
+    ],
+    "heightWorst": [
+     0.33,
+     0.31
+    ]
+   },
+   "note": "[prediction, page]"
+  },
+  "winter": {
+   "set": "held-out winter days (14 Nov, 9 Jan, 27 Feb)",
+   "inRangeRms30min": 0.025099999999999997,
+   "inRangeN": 348,
+   "leads": {
+    "0-1 h": {
+     "n": 92,
+     "rmsPrediction": 0.27949,
+     "rmsPage": 0.09773
+    },
+    "1-3 h": {
+     "n": 178,
+     "rmsPrediction": 0.29761000000000004,
+     "rmsPage": 0.30771
+    },
+    "3-6 h": {
+     "n": 258,
+     "rmsPrediction": 0.24076,
+     "rmsPage": 0.23268
+    },
+    "6-12 h": {
+     "n": 496,
+     "rmsPrediction": 0.29968,
+     "rmsPage": 0.24609
+    },
+    "12-24 h": {
+     "n": 236,
+     "rmsPrediction": 0.41223000000000004,
+     "rmsPage": 0.40814
+    }
+   },
+   "hw12h": {
+    "n": 18,
+    "timeMaeMin": [
+     14,
+     15
+    ],
+    "heightMae": [
+     0.48,
+     0.35
+    ],
+    "heightBias": [
+     -0.48,
+     -0.35
+    ],
+    "heightWorst": [
+     0.71,
+     0.72
+    ]
+   },
+   "lw12h": {
+    "n": 19,
+    "timeMaeMin": [
+     20,
+     17
+    ],
+    "heightMae": [
+     0.15,
+     0.14
+    ],
+    "heightBias": [
+     -0.01,
+     -0.07
+    ],
+    "heightWorst": [
+     0.27,
+     0.31
+    ]
+   },
+   "note": "[prediction, page]"
+  }
+ },
  "wind": {
   "era5": [
    {
@@ -2365,6 +2593,22 @@
    }
   ],
   "forecastApi": [
+   {
+    "day": "2026-08-28",
+    "n": 24,
+    "speedBias": -0.73,
+    "speedMae": 0.82,
+    "speedRms": 1.1,
+    "dirN": 24,
+    "dirMae": 10,
+    "dirBias": 3,
+    "cloudN": 23,
+    "cloudLowClassAgree": 43,
+    "cloudTotalMinusMetarMean": 32,
+    "rainHours": 2,
+    "rainHit": 0,
+    "rainFalse": 2
+   },
    {
     "day": "2026-09-12",
     "n": 24,
@@ -2555,12 +2799,12 @@
    "cloudLowClassAgree": 71
   },
   "forecastApi": {
-   "days": 7,
-   "n": 168,
-   "speedBias": -0.77,
+   "days": 8,
+   "n": 192,
+   "speedBias": -0.76,
    "speedMae": 0.88,
-   "dirMae": 14,
-   "cloudLowClassAgree": 73
+   "dirMae": 13,
+   "cloudLowClassAgree": 70
   },
   "snapshot": {
    "days": 2,
@@ -2579,7 +2823,5 @@
    "cloudLowClassAgree": null
   }
  },
- "sourceErrors": {
-  "forecast 2026-08-28": "HTTP 429 {\"error\":true,\"reason\":\"Daily API request limit exceeded. Please try again tomorrow.\"}"
- }
+ "sourceErrors": {}
 }

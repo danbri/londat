@@ -176,8 +176,44 @@ is in the output. The fit stage reads only the cache. Not a kgx graph step, so n
   with wetness from the tide curve, shingle, walls with a wet band and weed below high water. The foreshore profiles are
   stated defaults, not surveyed; OSM beach and mud polygons are not in the local data.
 - Spring and neap: example 11 Oct 2026, low water 08:55 at -2.43 m OD, high water 14:43 at +3.99 m OD.
-- Open: a live EA fetch on request (the WebGL page's rule: no fetch before the visitor asks); the wetness uses one tide
-  curve at the model centre.
+- Open: the wetness uses one tide curve at the model centre (the prediction, offset to the level now). The live EA
+  fetch is done (below, "Tide surge").
+
+### Tide surge (Three.js port, 2026-10-09)
+
+The harmonic fit has no weather. The surge (wind, pressure, river flow) is the residual reading - prediction: in winter
+high water was 0.4 to 0.7 m above the prediction (27 Feb, 9 Jan 2026); on 9 Oct 2026 at 10:30Z the river was 0.65 m
+below it. `docklands/tide.js nowcast(S, readings, t)` gives the level of one gauge:
+- inside the readings (15-minute steps, no gap over 30 min): the readings, linear (30-minute interpolation rms 0.03 to
+  0.04 m);
+- elsewhere: prediction + r, r = (a r0 + (1 - a) rc) w from the nearest reading at distance d, a = exp(-d / 2 h),
+  w = exp(-d / 8 h); r0 = its residual; rc = the residual at the same tidal phase whole M2 periods back towards the
+  readings (most of the residual repeats with the tide: the fit's timing errors), 0 when the readings do not reach;
+  none beyond 48 h. `SURGE` holds the constants.
+- Tuning (history-check.mjs "nowcast", readings up to a cut-off, then the page's level, rms by lead): EA API 4 weeks
+  0.27 -> 0.13 m (0-1 h), 0.27 -> 0.23 (1-3 h), 0.27 -> 0.25 (3-12 h), the same as the prediction beyond 12 h;
+  held-out days 0.21 -> 0.08 (0-1 h), 0.24 -> 0.20 (6-12 h); high water in the next 12 h (the page's level near each
+  predicted extreme, `extremesNear`, 90 min): height 0.31 -> 0.22 m on held-out days (winter 0.48 -> 0.35, bias
+  -0.48 -> -0.35), time 12 -> 8 min (API 4 weeks), 12 -> 10 (held out), 14 -> 15 (winter: no better). Winter 1-3 h is
+  0.30 -> 0.31 (a one-day file has no cycle before the cut-off). Extremes found freely on the readings gave a false high
+  water at -0.7 m from the faulty F21 readings of 4 Oct: anchor on the predicted extremes.
+- What failed: carrying r0 alone (better for 1 h, worse than the prediction at 3 to 6 h: a timing error changes sign at
+  every high and low water); the mean residual of the last cycle (the daily means alternate +-0.2 m in Sep-Oct 2026, a
+  fit artefact, so it does not persist); a time shift plus offset fitted to the last 6 or 12 h (worse at every lead);
+  rc = r0 when the readings are short (worse at 1-3 h on one-day files).
+- Sources in the layer (`layers/tide.js`), merged per gauge (`mergeReadings`, readings more than 1.5 m from the
+  prediction dropped): the fit file's last 7 days, the 3-4 Oct snapshot, the hourly cache (`cache/latest.json` theme
+  `tide`, last 24 h, loaded when the clock is within 3 days of now), and the EA API itself
+  (`/flood-monitoring/id/measures/<id>-level-tidal_level-i-15_min-mAOD/readings?startdate&enddate`, OGL v3.0, answers
+  with `access-control-allow-origin: *`, keeps about 4 weeks) for the clock's day and the days either side. On by
+  default, as the weather (owner, 2026-10-09: "all wind/weather"); `?ea=0` or Menu > Tide box switches it off. The tide
+  note says which source: "EA readings", "prediction + 0.15 m measured residual, from an EA reading 2.4 h before,
+  fading" or "prediction, no surge". `STATS.tide.now`: `source`, `residualCentre`, `fromReadingH`, `eaError`.
+- Check: `node docklands/test/tide-source-check.mjs --base http://127.0.0.1:<port>` (source kinds at 3 h ago, 2 and 6 h
+  ahead, 10 days ago, 9 Jan, 3 Oct; with and without `?ea=0`).
+- Open: the page does not fetch days older than 4 weeks (the EA daily archive CSV is the whole country, 59 MB for
+  9 Jan 2026), so a past winter day shows the prediction without surge; no surge forecast (the EA / Met Office storm
+  tide forecast is not open).
 
 ## Three.js port clock (2026-10-09)
 

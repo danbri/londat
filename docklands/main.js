@@ -48,6 +48,24 @@ const camera = new THREE.PerspectiveCamera(45.8, innerWidth / innerHeight, 2, 30
 const controls = new OrbitControls(camera, renderer.domElement);
 Object.assign(controls, { enableDamping: true, dampingFactor: 0.12, screenSpacePanning: false, minDistance: 80, maxDistance: 16000, maxPolarAngle: Math.PI / 2 - 0.02, zoomToCursor: true });
 controls.listenToKeyEvents(window);
+// vertical exaggeration (Look > Model settings, ?vz=1 to 5; index.html vz: gl_Position = m * (x, y * vz, z)): the scene stays
+// in model metres (the TSL graphs read positionWorld) and the camera's world matrix takes a y scale of 1 / VZ, so the view
+// matrix is V x diag(1, VZ, 1). The orbit (camera.position, controls.target) is in the exaggerated space, as the WebGL
+// page's T = (tx, ty x VZ, tz); everything that reads camera.matrixWorld (Raycaster.setFromCamera, Vector3.project, the
+// cameraPosition node, frustum culling) then works in model metres. r186 Camera.updateMatrixWorld and updateWorldMatrix
+// rebuild matrixWorldInverse without scale, so both are wrapped. Not in a headset session (layers/xr.js draws those).
+let VZ = 1;
+const SINV = new THREE.Matrix4();
+const vzFix = () => { if (VZ !== 1 && !ctx?.xrFrame) { camera.matrixWorld.premultiply(SINV); camera.matrixWorldInverse.copy(camera.matrixWorld).invert(); } };
+{ const umw = camera.updateMatrixWorld, uwm = camera.updateWorldMatrix;
+  camera.updateMatrixWorld = function (force) { umw.call(this, force); vzFix(); };
+  camera.updateWorldMatrix = function (up, down) { uwm.call(this, up, down); vzFix(); }; }
+function setVz(v) {
+  v = THREE.MathUtils.clamp(+v || 1, 1, 5); if (v === VZ) return;
+  const ty = controls.target.y; controls.target.y = ty / VZ * v; camera.position.y += controls.target.y - ty;   // the eye keeps its offset from the target (index.html T.y = ty x VZ)
+  VZ = v; SINV.makeScale(1, 1 / v, 1); sky.setVz(v); camera.updateMatrixWorld(); draw(); writeHash();
+}
+const eyeM = new THREE.Vector3();   // the eye in model metres
 
 // ---------- static layers
 say('Building the model...');
@@ -82,10 +100,11 @@ if (qs.has('night') && !qs.get('t')) clock = fromLondon(londonDate(Date.now()) +
 let NIGHT = false;
 const clockHooks = [];   // carousel.js: redraw the wheels when the clock changes
 let TSHARE = null;   // the London wall-clock time the visitor chose (wheels, slider, day or night): in the share hash as t=
+let DRIVE = !!qs.get('t');   // the visitor (or ?t=, a hash t=) set the clock: the WebGL page's sky.js S.drive (never reset; "Now" does not set it)
 const londonStr = t => `${londonDate(t)}T${new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t))}`;
 function setClockUser(t, live = false) {   // a clock the visitor set: it replaces ?t= (so views may change day and night again) and goes in the hash
   if (qs.has('t')) { qs.delete('t'); const q = new URLSearchParams(location.search); q.delete('t'); history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + location.hash); }
-  TSHARE = live ? null : londonStr(t); setClock(t); writeHash();
+  TSHARE = live ? null : londonStr(t); if (!live) DRIVE = true; setClock(t); writeHash();
 }
 function setClock(t) {
   clock = t; const s = sky.setTime(t, focus); NIGHT = s.night;
@@ -126,8 +145,8 @@ function eyeView(E, az, lp, hfov, D = 1200) {   // index.html eyeView: a photo's
 }
 let HFOV = null, ROLL = 0;
 function setCam(c) {
-  const ce = Math.cos(c.pitch); controls.target.set(c.tx, c.ty || 0, c.tz);
-  camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, (c.ty || 0) + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce);
+  const ce = Math.cos(c.pitch), ty = (c.ty || 0) * VZ; controls.target.set(c.tx, ty, c.tz);   // ty in model metres; the orbit is in the exaggerated space
+  camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce);
   HFOV = c.hfov || null; ROLL = c.roll || 0; camera.fov = c.fov ? c.fov * 180 / Math.PI : 45.8;
   // a photo view looks up or level: let the orbit go below the horizontal for it
   controls.maxPolarAngle = c.pitch < 0.05 ? Math.PI - 0.05 : Math.PI / 2 - 0.02; controls.minDistance = Math.min(80, c.dist);
@@ -135,7 +154,7 @@ function setCam(c) {
 }
 function camState() {
   const d = camera.position.clone().sub(controls.target), dist = d.length();
-  return { tx: controls.target.x, ty: controls.target.y, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)) };
+  return { tx: controls.target.x, ty: controls.target.y / VZ, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)) };
 }
 function setView(k) {
   const v = VIEWS[k]; if (!v) return; setCam(v);
@@ -214,7 +233,7 @@ $('cardX').onclick = () => selectModel(-1);
 const labels = A.places.filter(p => p.name).map(p => { const el = document.createElement('div'); el.className = 'lab'; el.textContent = p.name; $('labels').appendChild(el); return { p, el, v: new THREE.Vector3(p.x, (p.g ?? groundAt(p.x, p.z)) + (p.h || 20), p.z) }; });
 const tmp = new THREE.Vector3();
 function placeLabels() {
-  const W = innerWidth, H = innerHeight, used = new Set(), cam = camera.position, on = $('showLabels').checked && U.cut.value >= 250;   // no place names while the model is cut away (the below-ground view)
+  const W = innerWidth, H = innerHeight, used = new Set(), cam = eyeM, on = $('showLabels').checked && U.cut.value >= 250;   // no place names while the model is cut away (the below-ground view)
   const order = labels.map(l => [l, l.v.distanceToSquared(cam)]).sort((a, b) => a[1] - b[1]);
   let shown = 0;
   for (const [l, d2] of order) {
@@ -307,7 +326,7 @@ const ui = makeUi(draw);
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
-  addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode,
+  addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; },
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
 };
 async function loadLayers() {
@@ -341,11 +360,14 @@ renderer.setAnimationLoop((time, xrFrame) => {
   if (controls.update()) need = true;
   if (!need && !$('animate').checked) return; need = false;
   const d = camera.position.distanceTo(controls.target);
-  const above = camera.position.y - groundAt(camera.position.x, camera.position.z); camera.near = THREE.MathUtils.clamp(Math.min(d / 400, above / 2), 0.5, 40); camera.far = Math.max(d * 6 + 6000, 20000); camera.updateProjectionMatrix();
+  const above = camera.position.y - groundAt(camera.position.x, camera.position.z) * VZ; camera.near = THREE.MathUtils.clamp(Math.min(d / 400, above / 2), 0.5, 40); camera.far = Math.max(d * 6 + 6000, 20000); camera.updateProjectionMatrix();
   if (ROLL) { camera.up.set(0, 1, 0); camera.lookAt(controls.target); camera.rotateZ(-ROLL * Math.PI / 180); }
-  focus.copy(controls.target); sky.sun.position.copy(sky.sky.sunPosition.value).multiplyScalar(4000).add(focus); sky.sun.target.position.copy(focus);
-  if (sky.stars) sky.stars.position.copy(camera.position);
-  sky.sky.position.copy(camera.position);
+  camera.updateMatrixWorld(); eyeM.setFromMatrixPosition(camera.matrixWorld);   // the eye in model metres (= camera.position while VZ is 1)
+  focus.copy(controls.target); focus.y /= VZ; sky.sun.position.copy(sky.sky.sunPosition.value).multiplyScalar(4000).add(focus); sky.sun.target.position.copy(focus);
+  if (sky.stars) sky.stars.position.copy(eyeM);
+  sky.sky.position.copy(eyeM);
+  // the cut-away view: a dark backdrop until the visitor sets the clock (index.html, sky.js DocklandsSky.day = S.drive && sun > -6)
+  sky.setCutDark(U.cut.value < 250 && !DRIVE);
   placeLabels();
   for (const f of frameHooks) f();
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0;
@@ -364,11 +386,12 @@ const menu = initMenu({ setView, layers: () => LAYERS });
 // ---------- start
 setShadows(flag('shadows', GPU));
 const H = parseHash(location.hash), c = (H.c || '').split(',').map(Number), at = /^#at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);
-if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) clock = t; if (H.t && isFinite(t)) TSHARE = H.t; }
+if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) { clock = t; DRIVE = true; } if (H.t && isFinite(t)) TSHARE = H.t; }
 setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(londonDate(Date.now()) + 'T22:00') : clock);
 if (c.length >= 6 && c.every(isFinite)) setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5] });
 else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw: .6, pitch: .6 });
 else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');
+if (qs.has('vz')) setVz(qs.get('vz'));   // vertical exaggeration (layers/model.js has the slider)
 if (qs.get('ground') !== 's2') setGround(qs.get('ground') || 'none');   // s2 (Satellite 2026): layers/model.js
 const wheels = initCarousel({ clock: () => clock, setClock: t => setClockUser(t), now: clockNow, fromLondon, A, flag, predict, tide: () => LAYERS.tide?.api?.harmonics || null });
 clockHooks.push(() => wheels.draw());
@@ -382,4 +405,4 @@ setTimeout(() => $('hud').classList.add('fade'), 4000);
 menu.creditsStart();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap };
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; } };

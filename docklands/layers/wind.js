@@ -1,6 +1,7 @@
 // Layer "wind" of the Three.js port (docklands/): what moves the water surface (materials.js waterMaterial).
-// - Wind: writes WU.windSpeed (m/s at 10 m) and WU.windDir (degrees FROM, meteorological; the data's true north is used as
-//   grid north, 1.5 degrees out) for the page clock, from the first source that covers it:
+// - Wind: writes WU.windSpeed (m/s at 10 m) and WU.windDir (degrees FROM, meteorological, on the model grid: the source's
+//   true direction + sky3.js GRID_CONV, the grid bearing of true north from area.js meta.geo, about -1.5 degrees) for the
+//   page clock, from the first source that covers it (the notes show the true direction):
 //     ?wind=speed,dir (tests); data/sky/weather-2026-10-03.json (Open-Meteo best match, hourly, 3 and 4 October 2026, CC BY
 //     4.0; the WebGL page's photo-time file); the londat hourly cache (cache/latest.json theme weather, Open-Meteo, the
 //     latest hour only, when the clock is within 90 minutes of it; with gusts); ?wind=meteo asks the Open-Meteo API for the
@@ -18,7 +19,7 @@
 // Skill: docklands-3d-page, "Three.js port" (Water surface).
 import { WU, SU, setFetch, setRiver, surfaceData, setWakes } from '../water.js';
 import { riverLine, makeDebris } from '../debris.js';
-import { fromLondon } from '../sky3.js';
+import { fromLondon, GRID_CONV } from '../sky3.js';
 import { forecastDay } from '../meteo.js';
 
 const D2R = Math.PI / 180;
@@ -64,7 +65,7 @@ export default {
           if (c && Math.abs(t - wt) <= 90 * 6e4 && c.current.wind_kmh != null) w = { speed: c.current.wind_kmh / 3.6, dir: c.current.wind_dir, gust: c.current.gust_kmh != null ? c.current.gust_kmh / 3.6 : null, src: `londat hourly cache, Open-Meteo at ${hhmm(wt)} (CC BY 4.0)` }; }
         if (!w && meteoOn) { const M = await getMeteo(t), v = M && interp(M.rows, t); if (v) w = { ...v, src: 'Open-Meteo forecast API, hourly (CC BY 4.0)' }; }
         if (!w) w = { speed: 4, dir: 240, gust: null, src: `default, no wind data for ${hhmm(t)}${meteoOn && src.meteoErr ? ' (Open-Meteo: ' + src.meteoErr + ')' : ''}` };
-        W = w; WU.windSpeed.value = w.speed; WU.windDir.value = w.dir;
+        W = w; WU.windSpeed.value = w.speed; WU.windDir.value = (w.dir + GRID_CONV + 360) % 360;   // true -> grid (model -z)
         SU.gust.value = w.gust != null && w.speed > 0.5 ? Math.max(0.15, Math.min(1, w.gust / w.speed - 1)) : 0.5;
         setFetch(w.dir); showNote(); ctx.draw();
       } finally { busy = false; }
@@ -101,7 +102,7 @@ export default {
         { name: 'tug', c0: gp + 60, u: 0, dirn: -1, speed: 4, len: 25, accel: 0 },
       ].map(b => ({ ...b, c: b.c0 }));
     }
-    stats.surface = { get wind() { return W && { speed: +W.speed.toFixed(1), dir: Math.round(W.dir), gust: W.gust && +W.gust.toFixed(1), source: W.src }; }, get current() { return +SU.current.value.toFixed(2); },
+    stats.surface = { get wind() { return W && { speed: +W.speed.toFixed(1), dir: Math.round(W.dir), gridDir: +WU.windDir.value.toFixed(1), gridConv: +GRID_CONV.toFixed(2), gust: W.gust && +W.gust.toFixed(1), source: W.src }; }, get current() { return +SU.current.value.toFixed(2); },
       debris: debris ? debris.count : 0, wakes: test ? 'test' : 'ships layer', data: S.stats };
     // ---------- each frame
     let tPrev = performance.now();

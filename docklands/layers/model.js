@@ -7,9 +7,14 @@
 //  - Ground: Satellite 2026 (index.html setGround 's2'): data/imagery.js, one Sentinel-2 colour per 20 m terrain point,
 //    resampled on a canvas into the box of data/tex/textures.json, so the terrain material's ground image shows it;
 //    the greens are hidden while it shows (index.html: !satOn).
+//  - Show: Windows (index.html showWindows, the facade program's uniform win): materials.js U.win; off leaves the plain wall
+//    colour by day (no Map window grid, no Realistic walls) and no lit windows or shopfronts by night; photo facades and
+//    the crowns stay.
+//  - Vertical exaggeration (index.html Model settings vz, 1 to 5): main.js setVz (a y scale in the camera's world matrix;
+//    the scene stays in model metres, so picking, labels and the share hash keep model heights).
 //  - Key to colours (index.html <details> "Key to colours"), with the colours of build.js, layers/under.js, walls.js and
 //    riverbed.js (the same values as the WebGL page's :root).
-// URL: ?bmode=solid|ghost|off, ?models=0, ?roofshapes=0, ?ground=s2. Skill: docklands-3d-page, "Three.js port".
+// URL: ?bmode=solid|ghost|off, ?models=0, ?roofshapes=0, ?windows=0, ?vz=2, ?ground=s2. Skill: docklands-3d-page, "Three.js port".
 import { MFP } from '../build.js';
 
 const KEY = [['#b9bec4', 'Building, LiDAR height (Map look)'], ['#e0b25a', 'Building, OSM levels or newer than LiDAR (Map look)'],
@@ -21,7 +26,7 @@ const KEY = [['#b9bec4', 'Building, LiDAR height (Map look)'], ['#e0b25a', 'Buil
 export default {
   id: 'model', label: null, on: true, menu: 'look', reveal: false,
   async init(ctx) {
-    const { THREE, qs, meshes: M, buildOpts: O } = ctx, $ = id => document.getElementById(id), S = { bmode: 'solid', models: true, roofs: true, ground: null };
+    const { THREE, qs, meshes: M, buildOpts: O } = ctx, $ = id => document.getElementById(id), S = { bmode: 'solid', models: true, roofs: true, windows: true, ground: null };
 
     // ---------- Buildings: solid, see-through, hidden
     ctx.ui.section('Buildings');
@@ -49,6 +54,9 @@ export default {
     const roofsSaved = { had: 'roofs' in O, v: O.roofs };
     const tModels = ctx.ui.toggle('Detailed models (glTF)', true, v => { S.models = v; M.models.visible = v && S.bmode !== 'off'; ctx.rebuildBuildings(); });
     const tRoofs = ctx.ui.toggle('Roof shapes', true, v => { S.roofs = v; if (v) { if (roofsSaved.had) O.roofs = roofsSaved.v; else delete O.roofs; } else O.roofs = null; ctx.rebuildBuildings(); });
+    // Windows (a uniform: no rebuild)
+    const setWindows = v => { S.windows = !!v; ctx.U.win.value = v ? 1 : 0; tWin.checked = !!v; ctx.draw(); };
+    const tWin = ctx.ui.toggle('Windows', true, v => setWindows(v)); tWin.id = 'showWindows3';
 
     // ---------- Ground: Satellite 2026 (data/imagery.js), an option of Look > Ground
     const sel = $('ground'), credit = document.createElement('span');
@@ -88,14 +96,23 @@ export default {
     ctx.ui.note('<details><summary>Key to colours</summary>' + KEY.map(([c, t]) => `<span style="display:inline-flex;align-items:center;gap:6px;margin:2px 12px 2px 0"><i style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${c}"></i>${t}</span>`).join('') +
       '<br>The Realistic look (on by default) colours the buildings by their materials; Look > Colour buildings by puts a data colour on them.</details>');
 
+    // ---------- Model settings: vertical exaggeration (index.html #vz: "for the terrain; buildings are measured")
+    ctx.ui.section('Model settings');
+    const vzOut = v => `Vertical exaggeration: ${v}× (for the terrain; buildings are measured)`;
+    const vz = ctx.ui.slider(vzOut(1), 1, 5, 0.5, 1, (v, t) => { t.textContent = vzOut(v); ctx.setVz(v); });
+    vz.input.id = 'vz3'; vz.input.setAttribute('aria-label', 'Vertical exaggeration');
+    const syncVz = () => { const v = ctx.vz || 1; vz.input.value = v; vz.label.textContent = vzOut(v); };
+
     // ---------- start state from the URL
     if (qs.get('models') === '0') { tModels.checked = false; S.models = false; M.models.visible = false; }
     if (qs.get('roofshapes') === '0') { tRoofs.checked = false; S.roofs = false; O.roofs = null; }
+    if (/^(0|off|no|false)$/i.test(qs.get('windows') || '')) setWindows(false);
+    syncVz();   // main.js has applied ?vz= before the layers load
     if (!S.models || !S.roofs) ctx.rebuildBuildings();
     setBmode(qs.get('bmode') || 'solid');
     if (qs.get('ground') === 's2' && sel) { sel.value = 's2'; sel.onchange(new Event('change')); }
 
-    const api = { ownUi: true, get state() { return { ...S }; }, setBmode, satellite, stats: { modelBuildings: mi.size } };
+    const api = { ownUi: true, get state() { return { ...S, vz: ctx.vz }; }, setBmode, setWindows, setVz: v => { ctx.setVz(v); syncVz(); }, satellite, stats: { modelBuildings: mi.size } };
     globalThis.__docklandsModel = api;
     return api;
   },

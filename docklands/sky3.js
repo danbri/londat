@@ -43,7 +43,8 @@ const MOON_R = 14000, MOON_MIN = 0.3;   // the disc's distance (m, inside the fa
 
 export class Sky3 {
   constructor(scene) {
-    this.scene = scene; this.t = Date.now(); this.wx = null; this.base = null;
+    this.scene = scene; this.t = Date.now(); this.wx = null; this.base = null; this.cutDark = false;
+    this.vzInv = uniform(1);   // 1 / the vertical exaggeration (main.js setVz): keeps the moon disc round
     this.sky = new SkyMesh(); this.sky.scale.setScalar(10000); this.sky.material.depthTest = false; this.sky.material.depthWrite = false; this.sky.renderOrder = -10; this.sky.frustumCulled = false;   // drawn first, behind everything, inside the far plane (20 km at least)
     this.sky.turbidity.value = 4; this.sky.rayleigh.value = 1.6; this.sky.mieCoefficient.value = 0.004; this.sky.mieDirectionalG.value = 0.8;
     if (this.sky.cloudCoverage) this.sky.cloudCoverage.value = 0.25;
@@ -64,7 +65,7 @@ export class Sky3 {
   makeMoon() {
     const U = this.moonU = { c: uniform(new THREE.Vector3(0, 1e4, 0)), r: uniform(new THREE.Vector3(1, 0, 0)), u: uniform(new THREE.Vector3(0, 1, 0)), s: uniform(new THREE.Vector3(0, 0, 1)), gain: uniform(1), shine: uniform(0) };
     const m = new THREE.MeshBasicNodeMaterial({ transparent: true, depthWrite: false, depthTest: true, fog: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });   // added to the sky: brighter than the day sky behind it
-    m.positionNode = cameraPosition.add(U.c).add(U.r.mul(positionGeometry.x)).add(U.u.mul(positionGeometry.y));
+    m.positionNode = cameraPosition.add(U.c).add(U.r.mul(positionGeometry.x).add(U.u.mul(positionGeometry.y)).mul(vec3(1, this.vzInv, 1)));   // the view scales y by the exaggeration: the disc's own extent is scaled back
     const p = uv().mul(2).sub(1), r2 = dot(p, p), n = vec3(p.x, p.y, sqrt(max(float(0), float(1).sub(r2))));
     const lit = smoothstep(-0.04, 0.06, dot(n, U.s)), disc = smoothstep(1.0, 0.9, sqrt(r2));
     const lum = mix(U.shine, float(1), lit).mul(n.z.mul(0.25).add(0.75));   // a little limb darkening
@@ -114,6 +115,11 @@ export class Sky3 {
     this.applyLight();
     return this.state;
   }
+  // the cut-away (below-ground) view before the visitor has set the clock: a flat dark backdrop in place of the day sky, as
+  // the WebGL page (index.html clears to #0f1215 and draws the day sky only when DocklandsSky.day: sky.js S.drive and the
+  // sun above -6 degrees). main.js calls it when the cut or the clock source changes.
+  setCutDark(on) { on = !!on; if (on === this.cutDark) return; this.cutDark = on; this.applyLight(); }
+  setVz(v) { this.vzInv.value = 1 / v; }
   // weather (layers/weather.js): { cover, low, mid, high (0 to 1), visibility (m) or null, precip (mm/h) } or null (none known)
   setWeather(w) { this.wx = w; this.applyLight(); }
   applyLight() {
@@ -124,7 +130,7 @@ export class Sky3 {
     this.sun.intensity = 3.2 * up * tr; this.sun.color.setHSL(0.08, 0.6 * (0.4 + 0.6 * tr), 0.55 + 0.4 * sstep(S.alt, 0, 25));
     this.moon.intensity = M.alt > 0 ? 0.25 * ph * (1 - day) * (1 - 0.85 * cover) : 0;
     this.fill.intensity = (0.18 + 1.0 * day) * (1 - 0.25 * cover); this.fill.color.setHSL(0.6, 0.5 * (1 - 0.7 * cover), 0.45 + 0.3 * day);
-    this.sky.visible = day > 0.02; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
+    this.sky.visible = day > 0.02 && !this.cutDark; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
     if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? cover : 0.25; this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
     const vis = w && w.visibility != null ? w.visibility : null;
     this.sky.turbidity.value = vis ? 2 + 8 * clamp01(1 - vis / 40000) : 4;
@@ -135,7 +141,7 @@ export class Sky3 {
     this.fogU.sigma.value = vis ? 3.912 / Math.max(200, vis) : 0;
     const night = new THREE.Color(0x1c1a1c).lerp(new THREE.Color(0x3a2f27), cover), dayc = new THREE.Color(0xc4ccd6).lerp(new THREE.Color(0x9ea3a8), cover);
     this.fogU.color.value.copy(night).lerp(dayc, day);
-    this.scene.background = day < 0.02 ? new THREE.Color(0x07080c).lerp(new THREE.Color(0x2a231e), 0.85 * cover) : null;
+    this.scene.background = day < 0.02 ? new THREE.Color(0x07080c).lerp(new THREE.Color(0x2a231e), 0.85 * cover) : this.cutDark ? new THREE.Color(0x0f1215) : null;
     if (this.state) this.state.weather = w ? { cover, low, mid, high, visibility: vis, sunTransmission: +tr.toFixed(3) } : null;
   }
 }

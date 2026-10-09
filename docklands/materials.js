@@ -18,6 +18,7 @@ export const U = {
   haze: uniform(new THREE.Color(0.085, 0.07, 0.058)),
   groundTex: uniform(0),          // 1: the terrain shows the ground image
   cut: uniform(1e9),              // m OD: buildings and structures above it are cut away (the below-ground view; layers/under.js sets it)
+  win: uniform(1),                // 0: no windows (Look > Model > Windows, ?windows=0; index.html showWindows, uniform win): no day window grid or Realistic walls, no lit windows or shopfronts by night; photo facades and crowns stay
 };
 
 const h = Fn(([q]) => fract(sin(dot(q, vec2(12.9898, 78.233))).mul(43758.5453)));
@@ -120,12 +121,12 @@ export function buildingMaterial() {
       If(K.wy.greaterThan(U.cut), () => { Discard(); });
       const out = vec3(0).toVar();
       If(K.fac.greaterThan(0.5), () => { out.assign(K.tile.mul(K.lum.mul(0.75).add(0.45))); })   // photo facade: the building's tile, repeated by its size in metres
-        .ElseIf(K.LST.greaterThan(-0.5).and(K.wall.greaterThan(0.5)), () => { out.assign(lin(lookWall(K))); })   // Realistic look by day
+        .ElseIf(K.LST.greaterThan(-0.5).and(K.wall.greaterThan(0.5)).and(U.win.greaterThan(0.5)), () => { out.assign(lin(lookWall(K))); })   // Realistic look by day (windows on)
         .Else(() => {   // the Map look's window grid (3.6 m storeys, 1.8 m bays), fading with distance
           const g = vec2(K.uw.div(1.8), K.wy.div(3.6)), cell = floor(g), f = fract(g);
           const w = step(0.14, f.x).mul(step(f.x, 0.86)).mul(step(0.2, f.y)).mul(step(f.y, 0.84)).mul(clamp(float(1.4).sub(K.dist.div(900)), 0.15, 1));
           const glass = mix(vec3(0.13, 0.18, 0.25), vec3(0.42, 0.52, 0.62), clamp(K.wy.div(300), 0, 1).add(h(cell).mul(0.12))).mul(K.lum.mul(0.7).add(0.55));
-          out.assign(lin(mix(K.base, glass, w.mul(0.8).mul(K.wall))));
+          out.assign(lin(mix(K.base, glass, w.mul(0.8).mul(K.wall).mul(U.win))));   // windows off: the plain wall colour (index.html win 0)
         });
       return vec4(out, 1);
     })();
@@ -154,11 +155,11 @@ export function buildingMaterial() {
       let LH = mix(vec3(1, 0.74, 0.46), vec3(1, 0.9, 0.66), h(vec2(fid, fl).add(3.1)));
       LH = select(h(vec2(fid, fl).add(5.7)).lessThan(0.05), vec3(0.7, 0.8, 1), LH);
       LH = mix(LH.mul(h(cell.add(1.7)).mul(0.5).add(0.7)).mul(litH), vec3(0.93, 0.78, 0.55).mul(p).mul(0.5), clamp(fwm, 0, 1));
-      let L = mix(LH, LO, off).mul(wm).mul(wall);
+      let L = mix(LH, LO, off).mul(wm).mul(wall).mul(U.win);   // windows off: none lit (index.html nightCol: the win > .5 block)
       // a Realistic shopfront: lit, most of them, warm
       const ys = wy.sub(gk.z), gf = max(GF, 0.01), sq = vec2(uw.div(2.6), ys.div(gf)), sf = fract(sq);
       const sm = mix(step(0.05, sf.x).mul(step(sf.x, 0.95)).mul(step(0.06, sf.y)).mul(step(sf.y, 0.74)), 0.6, smoothstep(0.35, 0.9, max(DW.x.div(2.6), DW.y.div(gf))));
-      const shop = step(0.01, GF).mul(step(ys, GF)).mul(wall).mul(sm).mul(step(0.3, h(vec2(sd, floor(sq.x.div(4))))));
+      const shop = step(0.01, GF).mul(step(ys, GF)).mul(wall).mul(sm).mul(step(0.3, h(vec2(sd, floor(sq.x.div(4)))))).mul(U.win);
       L = mix(L, vec3(1, 0.84, 0.6).mul(h(vec2(floor(sq.x.div(3)), sd)).mul(0.4).add(0.45)), shop);
       // a photo facade: the tile, faintly, under the lit windows (nightCol: base x (0.045 + 0.02))
       if (FAC.tex) L = L.add(tile.mul(fac).mul(0.04));

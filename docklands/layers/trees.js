@@ -14,7 +14,9 @@
 // a structure the LiDAR took for a tree). Default: every tree of the file (?trees=near: the trees within 900 m of the estate).
 // Seasons (no rebuild: per-instance attributes and one uniform, the day of the year of the page clock in London):
 // leaf-out, young green, full green, the profile's autumn colour, leaf-fall (the crown shrinks and opens: noise holes,
-// discarded fragments), bare (crown collapsed, twigs); blossom around the profile's bloom day; evergreens unchanged.
+// discarded fragments), bare (crown collapsed, twigs); blossom around the profile's bloom day (the whole crown when it
+// comes before the leaves, patches in leaf); evergreens unchanged. STATS.trees: counts (trees, drawn, species known), and
+// .season / .seasonAt(day): leaf fraction, autumn-colour share, bloom share, for all, evergreen, deciduous and by profile.
 // Wind: the crowns sway in the vertex stage, in proportion to WU.windSpeed towards WU.windDir (water.js), while frames run.
 // Skill: docklands-3d-page, "Three.js port" (Trees).
 import { Fn, If, Discard, positionWorld, positionGeometry, positionLocal, vec2, vec3, vec4, float, uniform, instancedBufferAttribute, smoothstep,
@@ -74,7 +76,7 @@ export default {
     const rows = [];
     D.trees.forEach((t, k) => { if (t[2] > 35) return;
       const prof = sp ? B64.indexOf(sp.p[k]) : t[4] >= 0 && spProf[t[4]] >= 0 ? spProf[t[4]] : PROFILE.broadleaf;
-      rows.push({ t, k, prof, est: t[0] >= B[0] && t[0] <= B[1] && t[1] >= B[2] && t[1] <= B[3], inferred: sp ? !/[SG]/.test(sp.b[k]) : !(t[4] >= 0 && spProf[t[4]] >= 0) }); });
+      rows.push({ t, k, prof, est: t[0] >= B[0] && t[0] <= B[1] && t[1] >= B[2] && t[1] <= B[3], inferred: sp ? !/[SG]/.test(sp.b[k]) : !(t[4] >= 0 && spProf[t[4]] >= 0), species: sp ? sp.b[k] === 'S' : false }); });
     const N = rows.length, nEst = rows.filter(r => r.est).length;
 
     // ---- one store of every tree's instance data (matrices and attributes), copied into the meshes' slots on re-select
@@ -122,7 +124,8 @@ export default {
       const autumn = mix(aut.xyz, aut.xyz.mul(.55).add(vec3(.05, .03, .01)), late.mul(.6));
       const c = select(cal.w.greaterThan(.5), leaf.xyz, mix(young, autumn, t)).toVar();
       const spot = mx_noise_float(p.mul(14).add(leaf.w.mul(7))).mul(.5).add(.5);
-      c.assign(mix(c, bloom.xyz, bl.mul(smoothstep(.3, .55, spot)).mul(grow.mul(.35).oneMinus())));   // blossom: more of it before the leaves
+      // blossom: before the leaves the whole crown is flower (no green on a bare tree: cherry plum, magnolia); in leaf, patches
+      c.assign(mix(c, bloom.xyz, bl.mul(mix(float(1), smoothstep(.3, .55, spot), grow)).mul(grow.mul(.35).oneMinus())));
       return { c, dens };
     };
     const swayed = (nd, q, p) => {
@@ -252,6 +255,33 @@ export default {
     const inferred = rows.filter(r => r.inferred).length;
     const stats = { file: D.trees.length, over35: D.trees.length - N, near900: nEst, instances: 0, near: 0, far: 0, triangles: 0, drawCalls: meshes.filter(Boolean).length,
       lod: { nearM: NEAR_M, nearMax: NEAR_MAX, farM: FAR_M, reselectM: RESELECT_M }, deciduous: nDec, inferred, speciesFile: !!sp, day: 0, reselects: 0, reselectMs: 0, loadMs: Math.round(tLoad), buildMs: 0 };
+    // STATS.trees.season: the leaf state of the shown trees on the clock's day, computed on the CPU with the shader's formulas
+    // (season(), crownColour()): leaf = foliage density (0 bare, 1 full), autumn = the autumn-colour mix t, bloom = blossom
+    // strength. leafFraction: mean leaf; autumnShare: the share of the foliage (leaf-weighted) whose colour is more than half
+    // autumn; bloomShare: the share of trees with blossom above 0.5; byProfile: the same per profile (the 12 most common).
+    const ss = (a, b, x) => { const u = Math.max(0, Math.min(1, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
+    const leafState = (i, day) => { const o = 4 * i, c = ST.cal, bw = ST.bloom[o + 3], ever = c[o + 3] > .5;
+      const grow = ss(c[o] - 12, c[o] + 20, day), fall = ss(c[o + 1] + 12, c[o + 2], day), bl = bw > 0 ? 1 - ss(4, 14, Math.abs(day - bw)) : 0;
+      return { ever, leaf: ever ? 1 : grow * (1 - fall), aut: ever ? 0 : ss(c[o + 1] - 8, c[o + 1] + 18, day), bl }; };
+    const topProfiles = Object.entries(rows.reduce((o, r) => ((o[r.prof] = (o[r.prof] || 0) + 1), o), {})).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k]) => +k);
+    let seasonCache = null;
+    function seasonStats(day) {
+      if (seasonCache && seasonCache.day === day && seasonCache.all === ALL) return seasonCache.v;
+      const acc = () => ({ n: 0, leaf: 0, autLeaf: 0, bloom: 0 }), all = acc(), ev = acc(), de = acc(), bp = {};
+      for (let i = 0; i < N; i++) { if (!ALL && !rows[i].est) continue; const s = leafState(i, day), a = s.aut > .5 ? s.leaf : 0, b = s.bl > .5 ? 1 : 0;
+        for (const q of [all, s.ever ? ev : de, bp[rows[i].prof] ||= acc()]) { q.n++; q.leaf += s.leaf; q.autLeaf += a; q.bloom += b; } }
+      const out = q => q.n ? { trees: q.n, leafFraction: +(q.leaf / q.n).toFixed(3), autumnShare: q.leaf > 1e-6 ? +(q.autLeaf / q.leaf).toFixed(3) : 0, bloomShare: +(q.bloom / q.n).toFixed(3) } : null;
+      const v = { day: Math.round(day * 10) / 10, ...out(all), evergreen: out(ev), deciduous: out(de),
+        byProfile: Object.fromEntries(topProfiles.filter(k => bp[k]).map(k => [PROFILES[k].id, out(bp[k])])) };
+      seasonCache = { day, all: ALL, v }; return v;
+    }
+    const nSpecies = rows.filter(r => r.species).length;
+    Object.assign(stats, { trees: N, speciesKnown: N - inferred, speciesKnownShare: +((N - inferred) / N).toFixed(3), speciesLevel: nSpecies, speciesLevelShare: +(nSpecies / N).toFixed(3),
+      evergreen: N - nDec, byProfile });
+    Object.defineProperty(stats, 'drawn', { enumerable: true, get: () => ({ full: stats.near, farForms: stats.far, total: stats.near + stats.far }) });
+    Object.defineProperty(stats, 'season', { enumerable: true, get: () => seasonStats(uDay.value) });
+    stats.seasonAt = day => seasonStats(day);   // tests: the season stats of any day of the year without a render
+    ctx.stats.trees = stats;
     ctx.onFrame(() => {
       if (ctx.clock !== lastClock) { lastClock = ctx.clock; uDay.value = dayOf(lastClock); stats.day = Math.round(uDay.value * 10) / 10; }
       if (group.visible && (!last || last.distanceTo(camera.position) > RESELECT_M)) reselect();

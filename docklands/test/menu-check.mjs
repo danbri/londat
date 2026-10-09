@@ -24,11 +24,12 @@ const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw
 const MAP = [
   ['Views', '[data-view=cw]'], ['Views', '[data-view=area]'], ['Views', '[data-view=under]'], ['Views', '[data-view=plan]'],
   ['Views', '[data-view=rotherhithe]'], ['Views', '[data-view=greenland]'], ['Views', '[data-view=pier]'], ['Views', '[data-view=greenlandday]'], ['Views', '[data-view=plane]'], ['Views', '#shareBtn'], ['Views', '#glLink'],
-  ['Look', '#styleProxy'], ['Look', '#look'], ['Look', '#facades'], ['Look', '#ground'], ['Look', 'text=Colour buildings by'], ['Look', 'text=Water mirror (reflections)'], ['Look', 'text=Gaussian splats'], ['Look', 'text=Music'],
+  ['Look', '#styleProxy'], ['Look', '#look'], ['Look', '#facades'], ['Look', '#ground'], ['Look', 'text=Colour buildings by'], ['Look', 'text=Water mirror (reflections)'], ['Look', 'text=Gaussian splats'], ['Look', 'text=Music'], ['Look', 'text=Windows'], ['Look', '#vz3'],
   ['Layers', '#showLabels'], ['Layers', '#showRoads'], ['Layers', 'text=Trees'], ['Layers', 'text=Hills of London'], ['Layers', 'text=Skyline by year'], ['Layers', 'text=Night lights (aviation, riverside lamps)'], ['Layers', 'text=Crown halo colour by date'],
   ['Layers', 'text=Floors (see-through buildings)'], ['Layers', 'text=Below ground'], ['Layers', 'text=Tunnels (modelled levels)'], ['Layers', 'text=Depth gauge (right edge)'], ['Layers', 'text=Station models'],
   ['Layers', 'text=Flood walls (EA, to crest level)'], ['Layers', 'text=Riverbed (UKHO soundings)'], ['Layers', 'text=River'], ['Layers', 'text=Piers, pontoons and berthed vessels'],
   ['Layers', 'text=Ships (AIS), live'], ['Layers', 'text=Aircraft (recorded'], ['Layers', 'text=Live aircraft (adsb.lol, ODbL)'], ['Layers', 'text=Birds and foxes (simulated from open records)'], ['Layers', 'text=Hire bike docks'], ['Layers', 'text=My KML'],
+  ['Layers', 'text=Banks and finance'], ['Layers', 'text=Charities'], ['Layers', 'text=Heritage records'], ['Layers', 'text=Quality issues'], ['Layers', 'text=Crime, latest month (live)'],
   ['Go', '#goSearch'], ['Go', '#rFrom'], ['Go', '#rTo'], ['Go', '#rStepFree'], ['Go', '#rGo'], ['Go', '#droneBtn'], ['Go', '#goLocate'], ['Go', '#goXr'],
   ['Time', '#hour'], ['Time', '#tNow'], ['Time', '#tNight'], ['Time', '#wheelsChk'], ['Time', '#skyNote'], ['Time', 'text=Tide'], ['Time', 'text=Weather (cloud, haze, rain) for the clock time'], ['Time', 'text=Wind from Open-Meteo for the clock time (asks api.open-meteo.com)'], ['Time', 'text=Floating debris (Thames)'],
   ['About', '#shadows'], ['About', '#bloom'], ['About', '#animate'], ['About', '#backend'], ['About', 'text=Plotter'], ['About', '#creditsH'],
