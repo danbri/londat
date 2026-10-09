@@ -13,10 +13,13 @@ export default {
     const SKY = await ctx.loadJSON(ctx.DATA + 'skyline.json'), Y = SKY.years, n = Y.length, nb = Object.keys(SKY.buildings).length;
     const H = SKY.buildings, O = ctx.buildOpts, stats = { builds: [] };
     const models = () => ctx.scene.children.find(o => o.isGroup && o.children.some(c => c.userData.model != null));   // main.js `models` (glTF)
-    let idx = -1;
+    let idx = -1, saved = null;
     function setYear(k, rebuild = true) {
       idx = k >= n || k < 0 ? -1 : k; ui.input.value = idx < 0 ? n : idx;
-      if (idx < 0) { for (const key of ['heightOf', 'colourOf', 'towers', 'look', 'skip']) delete O[key]; }
+      // a past year replaces these build options; today puts back what was there before (another layer's skip set, e.g. piers)
+      const KEYS = ['heightOf', 'colourOf', 'towers', 'look', 'skip'];
+      if (idx >= 0 && !saved) saved = Object.fromEntries(KEYS.filter(key => key in O).map(key => [key, O[key]]));
+      if (idx < 0) { for (const key of KEYS) delete O[key]; if (saved) Object.assign(O, saved); saved = null; }
       else Object.assign(O, {
         heightOf: (b, i) => { const v = H[i]; return !v || v[idx] == null ? b.h : v[idx] / 10; },
         colourOf: (b, i) => { const v = H[i]; return v && v[idx] == null ? SLATE : null; },

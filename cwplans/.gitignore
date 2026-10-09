@@ -60,3 +60,6 @@ data/raw/gpkg/
 # CWG maps OCR (tools/cwg-maps-tmi.mjs): tesseract eng.traineddata, rendered tiles, debug lines
 data/raw/cwg-maps-tmi/
 data/raw/coverage/
+
+# wildlife raw downloads (tools/fetch-wildlife.mjs: NBN Atlas, GBIF); only the aggregates in docklands/data/wildlife.json are committed
+data/raw/wildlife/

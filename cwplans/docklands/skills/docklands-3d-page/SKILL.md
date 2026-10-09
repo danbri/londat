@@ -1792,6 +1792,49 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   three.js r186 fault: a mesh first drawn with an empty BufferGeometry is never drawn after it gets a geometry
   ("position not found"): start with a real geometry and hide the mesh (main.js `sel`, layers/routes.js). Open framework
   item: a CSM `maxFar` fault (a faint band at the far edge of the shadow range on WebGPU).
+- **Trees: species and seasons (2026-10-09).** Owner, 2026-10-09: "make trees more realistic including seasonality,
+  ideally taking species from osm or elsewhere official data." `docklands/layers/trees.js` reads `data/trees.json` and
+  `data/tree-species.json` (`cwplans/tools/build-tree-species.mjs`; activities `fetch-tree-leaf-tags`,
+  `build-tree-species`): one profile letter and one basis letter per tree, in the order of trees.json (the page uses the
+  file only if `n` matches; else it maps each taxon itself). Profiles, taxon rules and setting mixes are in
+  `docklands/tree-species.js` (Node imports it too). Basis: S species, G genus or family (from the source), L OSM
+  `leaf_type`/`leaf_cycle`, T street, P park or garden (and every TOW crown outside water and woods), W wood, R within 15 m
+  of water: L, T, P, W, R are INFERRED (20,480 of 81,875 on 2026-10-09: all 12,670 TOW crowns, 7,471 OSM nodes, 224 GLA and 115
+  TPO records with no usable taxon such as "New tree pit"; OSM leaf tags decided 437 of them). The GLA Public Realm Trees (Nov 2025) already hold the borough inventories (the older London Datastore "Local
+  Authority Maintained Trees" is the same kind of data, older): 54,836 of 55,060 GLA trees have a taxon. Drawing: one
+  InstancedMesh per shape class (broad 36 triangles, conical 21, columnar 48, weeping 70, small 20, birch 40), one for
+  trunks (5-sided, 10), one for twigs (3 crossed quads, 6, alpha-tested branch pattern; deciduous only), one for the far
+  form (10 triangles): 9 draw calls. **Level of detail** (coordinator, 2026-10-09: the first version cost about 5.4 M
+  triangles a frame; budget 1.5 M for phones and the Quest 3): full trees within 380 m (3D) of the camera, at most the
+  9,000 nearest; beyond, the far form to 6.5 km, no trunk, no shadow; re-selected when the camera has moved 25 m. The
+  near meshes get the near trees copied into preallocated buffers (mesh.count, update ranges); the far mesh holds every
+  tree once and its vertex stage collapses the ones within the near radius of the last re-select (`uSel`, `uNearR2`) and
+  beyond 6.5 km, so a re-select costs a loop over the trees plus at most 9,000 copies (about 9 ms in software). Far
+  forms of bare trees are a thin twig-coloured haze (holes at 45 % or more).
+  The season is the uniform `uDay` (day of the year of the page clock in London, set in an `onFrame` hook when
+  `ctx.clock` changes); per instance: leaf and autumn colours, (leaf-out, autumn, bare) days +-5 days a tree, evergreen,
+  airiness, bloom colour and day. Leaf density = smoothstep(out - 12, out + 20) x (1 - smoothstep(autumn + 12, bare));
+  fragments are discarded where 3D noise of the unit crown position is above it (leaf-fall holes, airy crowns); the crown
+  shrinks to 0.6 and collapses below 0.04; twigs collapse behind a full closed crown. Wind: the crown tops sway by
+  `WU.windSpeed` x 0.003 x crown height towards `WU.windDir` (TSL `time`, so only while frames run). **three.js r186: a
+  material's `positionNode` replaces `positionLocal` AFTER the instance matrix** (the first try, written in unit space,
+  drew every crown at the origin): work in model metres from `positionLocal`, with a per-instance crown centre; read
+  `positionGeometry` in the fragment stage for noise fixed to the crown. To count a frame's triangles set
+  `renderer.info.autoReset = false`, `reset()`, draw once (the default sums or resets per render call).
+- **Second wave (2026-10-09, nine subagents and the coordinator).** Layers: tide (`tide.js`, own EA harmonic fit; skill
+  docklands-sky "Tide prediction"), water surface (`layers/wind.js`, `debris.js`), ships (`layers/ships.js`), piers
+  (`layers/piers.js`), aircraft (`layers/planes.js`, simulated), wildlife (`layers/wildlife.js`), night lights
+  (`layers/nightlights.js`), weather (`layers/weather.js`), species trees with seasons and LOD (`layers/trees.js`,
+  `tree-species.js`), the reveal sheet (`reveal.js`, called from loadLayers). Shared contract in `water.js`: WU.tideLevel,
+  tideRate, windSpeed, windDir, and boat wake slots (setWakes, MAXW 16). The roof port was checked exact for all 22,654
+  roof buildings. Faults met: in r186 a mesh's `positionNode` acts before the instance matrix only from `positionLocal`;
+  WebGPU allows 8 vertex buffers; point sprites need their size scaled by `viewportSize.y / canvas height` or the mirror
+  (0.35 scale) draws them 3x too big; an unlit (MeshBasic) part needs dimming by `U.night` or it glows at night;
+  photo views stand on pontoons, so pier parts and vessels within a few metres of the camera hide; a layer that replaces
+  `buildOpts` keys must restore the earlier values (skyline vs piers); concurrent writes to `pipeline.json` by subagents
+  lost activities (integrate shared files once, at the end). Cost: trees with species crowns cost 5.4 M triangles a frame
+  before LOD (0.8 to 0.9 M after). The full page in software WebGPU takes 70 to 120 s to a screenshot; under a load
+  average of 25 to 50 it never got there: test when the container is quiet.
 - **Test.** `node docklands/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
   SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
   --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or

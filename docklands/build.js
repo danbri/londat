@@ -109,26 +109,45 @@ function flip(M, t0) { const I = M.idx; for (let k = t0; k < I.length; k += 3) {
 // ---------- terrain, water, greens, lines
 export const groundAt = (x, z) => { const T = A.terrain, i = Math.max(0, Math.min(T.nx - 1, Math.round((x - T.x0) / T.cell))), j = Math.max(0, Math.min(T.nz - 1, Math.round((z - T.z0) / T.cell))); return T.dm[j * T.nx + i] / 10; };
 // The LiDAR ground over the river and the docks is the water surface of the survey: it would hide the water polygons
-// (index.html sinks it only while a measured tide is set). Here the ground inside each water polygon, more than one 20 m
-// cell from its edge, sinks 1.5 m below that water's level; the edge cells stay (the bank).
+// (index.html sinks it only while a measured tide is set). Inside each water polygon that is not tidal, the ground more
+// than one 20 m cell from its edge sinks 1.5 m below that water's level (the edge cells stay: the bank). Inside the tidal
+// water (w.tidal: the Thames, the creeks, the Lea) every grid point sinks to the river bed, so that the bed shows as the
+// tide falls: 0.4 m under the UKHO soundings (A.riverbed, inverse-distance mean within 40 m, as water.js), at most -0.5 m
+// OD, where there are some; else -5 m OD (below the lowest low water). layers/tide.js draws the foreshore (mud, shingle,
+// walls) over it, from the edge down to the bed (skill docklands-sky, "Tide prediction"). out.tidal marks those points.
 function waterSink() {
-  const T = A.terrain, m = new Float32Array(T.nx * T.nz).fill(NaN), out = new Float32Array(T.nx * T.nz).fill(NaN);
+  const T = A.terrain, N = T.nx * T.nz, m = new Float32Array(N).fill(NaN), tm = new Uint8Array(N), out = new Float32Array(N).fill(NaN);
   for (const w of A.water) { const f = dec(w.p), st = [0, ...(w.holes || []), f.length / 2], rows = new Map();
     for (let r = 0; r < st.length - 1; r++) for (let i = st[r]; i < st[r + 1]; i++) { const j = i + 1 < st[r + 1] ? i + 1 : st[r], x0 = f[2 * i], z0 = f[2 * i + 1], x1 = f[2 * j], z1 = f[2 * j + 1];
       for (let jj = Math.max(0, Math.ceil((Math.min(z0, z1) - T.z0) / T.cell)); jj <= Math.min(T.nz - 1, Math.floor((Math.max(z0, z1) - T.z0) / T.cell)); jj++) { const zc = T.z0 + jj * T.cell; if ((z0 > zc) === (z1 > zc)) continue; if (!rows.has(jj)) rows.set(jj, []); rows.get(jj).push(x0 + (zc - z0) / (z1 - z0) * (x1 - x0)); } }
-    for (const [jj, xs] of rows) { xs.sort((a, b) => a - b); for (let k = 0; k + 1 < xs.length; k += 2) for (let ii = Math.max(0, Math.ceil((xs[k] - T.x0) / T.cell)); ii <= Math.min(T.nx - 1, Math.floor((xs[k + 1] - T.x0) / T.cell)); ii++) m[jj * T.nx + ii] = w.level - 1.5; } }
+    for (const [jj, xs] of rows) { xs.sort((a, b) => a - b); for (let k = 0; k + 1 < xs.length; k += 2) for (let ii = Math.max(0, Math.ceil((xs[k] - T.x0) / T.cell)); ii <= Math.min(T.nx - 1, Math.floor((xs[k + 1] - T.x0) / T.cell)); ii++) { const q = jj * T.nx + ii; if (w.tidal) tm[q] = 1; else m[q] = w.level - 1.5; } } }
   for (let j = 1; j < T.nz - 1; j++) for (let i = 1; i < T.nx - 1; i++) { const k = j * T.nx + i; if (!isNaN(m[k]) && !isNaN(m[k - 1]) && !isNaN(m[k + 1]) && !isNaN(m[k - T.nx]) && !isNaN(m[k + T.nx])) out[k] = m[k]; }
+  // the bed under the tidal water: soundings in 40 m buckets
+  const B = 40, bk = new Map(), key = (a, b) => a * 100003 + b;
+  for (const r of A.riverbed || []) { const q = dec(r.q, 3); for (let i = 0; i < q.length; i += 3) { const kk = key(Math.floor(q[i] / B), Math.floor(q[i + 1] / B)); if (!bk.has(kk)) bk.set(kk, []); bk.get(kk).push(q[i], q[i + 1], q[i + 2]); } }
+  for (let k = 0; k < N; k++) { if (!tm[k]) continue; const x = T.x0 + (k % T.nx) * T.cell, z = T.z0 + Math.floor(k / T.nx) * T.cell, bx = Math.floor(x / B), bz = Math.floor(z / B); let sw = 0, sb = 0;
+    for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) { const L = bk.get(key(bx + a, bz + b)); if (!L) continue; for (let s = 0; s < L.length; s += 3) { const d2 = (L[s] - x) ** 2 + (L[s + 1] - z) ** 2; if (d2 > B * B) continue; const wt = 1 / (d2 + 25); sw += wt; sb += wt * L[s + 2]; } }
+    out[k] = sw ? Math.min(sb / sw - 0.4, -0.5) : -5; }
+  out.tidal = tm;
   return out;
 }
 export function terrainGeometry(box) {   // box: data/tex/textures.json box, for the ground image's uv
   const T = A.terrain, n = T.nx * T.nz, sink = waterSink(), pos = new Float32Array(n * 3), uv = new Float32Array(n * 2), idx = new Uint32Array((T.nx - 1) * (T.nz - 1) * 6);
   for (let j = 0; j < T.nz; j++) for (let i = 0; i < T.nx; i++) { const k = j * T.nx + i, x = T.x0 + i * T.cell, z = T.z0 + j * T.cell;
-    pos[3 * k] = x; pos[3 * k + 1] = isNaN(sink[k]) ? T.dm[k] / 10 : Math.min(T.dm[k] / 10, sink[k]); pos[3 * k + 2] = z; uv[2 * k] = (x - box.x0) / (box.x1 - box.x0); uv[2 * k + 1] = 1 - (z - box.z0) / (box.z1 - box.z0); }
+    pos[3 * k] = x; pos[3 * k + 1] = isNaN(sink[k]) ? T.dm[k] / 10 : sink.tidal[k] ? sink[k] : Math.min(T.dm[k] / 10, sink[k]); pos[3 * k + 2] = z; uv[2 * k] = (x - box.x0) / (box.x1 - box.x0); uv[2 * k + 1] = 1 - (z - box.z0) / (box.z1 - box.z0); }
   let o = 0; for (let j = 0; j < T.nz - 1; j++) for (let i = 0; i < T.nx - 1; i++) { const a = j * T.nx + i; idx[o++] = a; idx[o++] = a + T.nx; idx[o++] = a + 1; idx[o++] = a + 1; idx[o++] = a + T.nx; idx[o++] = a + T.nx + 1; }
-  const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(pos, 3)); G.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); G.setIndex(new THREE.BufferAttribute(idx, 1)); G.computeVertexNormals(); G.computeBoundingSphere(); return G;
+  const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(pos, 3)); G.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); G.setIndex(new THREE.BufferAttribute(idx, 1)); G.computeVertexNormals(); G.computeBoundingSphere();
+  G.userData.tidal = sink.tidal;   // 1 where the grid point is in the tidal water (sunk to the bed)
+  return G;
 }
 export function flat(M, o, y, col) { const f = dec(o.p), holes = o.holes || [], tris = earcut(f, holes.length ? holes : undefined, 2), base = M.n; for (let i = 0; i < f.length / 2; i++) M.v(f[2 * i], typeof y === 'function' ? y(f[2 * i], f[2 * i + 1]) : y, f[2 * i + 1], col); for (let k = 0; k < tris.length; k += 3) M.tri(base + tris[k], base + tris[k + 2], base + tris[k + 1]); }
-export function waterGeometry() { const M = new Mesh(); for (const w of A.water) flat(M, w, w.level + .1, C.water); return M.geometry(); }
+// the water polygons, each flat at its level + 0.1 m; attributes 'tidal' (1 for a tidal polygon) and 'tbase' (the height it
+// was built at): layers/tide.js moves the tidal ones to the tide's level on the GPU (docklands/tide.js tideOffset), no rebuild
+export function waterGeometry() {
+  const M = new Mesh(), tidal = [], tbase = [];
+  for (const w of A.water) { const n0 = M.n; flat(M, w, w.level + .1, C.water); for (let i = n0; i < M.n; i++) { tidal.push(w.tidal ? 1 : 0); tbase.push(w.level + .1); } }
+  const G = M.geometry(); G.setAttribute('tidal', new THREE.Float32BufferAttribute(tidal, 1)); G.setAttribute('tbase', new THREE.Float32BufferAttribute(tbase, 1)); return G;
+}
 export function greensGeometry() { const M = new Mesh(); for (const g of A.greens) { const f = dec(g.p); flat(M, g, groundAt(f[0], f[1]) + .4, C.green); } return M.geometry(); }
 function beam(M, a, b, w, h, col) {
   const dx = b[0] - a[0], dz = b[2] - a[2], l = Math.hypot(dx, dz) || 1, ox = -dz / l * w / 2, oz = dx / l * w / 2, H = h / 2;

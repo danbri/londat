@@ -8,6 +8,64 @@
  },
  "@graph": [
   {
+   "@id": "https://kgx.foaf.tv/id/toolfetchwildlife",
+   "@type": "prov:Activity",
+   "rdfs:label": "fetch-wildlife",
+   "dct:description": "Fetches the open occurrence records of 21 species (20 urban and river birds, the red fox) in the model box from NBN Atlas and GBIF into data/raw/wildlife/ (fetch), then classifies each record located to 100 m or better by a 10 m habitat raster made from area.js water and the trees.json green areas, and writes counts per species, habitat class and month, flock sizes and blended habitat weights to docklands/data/wildlife.json (build; no network).",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnbnatlas",
+     "dcat:accessURL": "https://records-ws.nbnatlas.org/occurrences/search",
+     "dct:description": "q=*:*, wkt = the model box, fq=species:<name>, fq=license:(CC0 OR CC-BY OR OGL), 1,000 a page; fields lat, lon, uncertainty, month, year, resource, licence, count"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcgbif",
+     "dcat:accessURL": "https://api.gbif.org/v1/occurrence/search",
+     "dct:description": "geometry = the model box, taxonKey (species/match), datasetKey = the three allowed, license = CC0_1_0 or CC_BY_4_0, 300 a page"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/trees.json"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawwildlife"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/wildlife.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/fetch-wildlife.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-wildlife.mjs [fetch|build]",
+   "cwp:kind": "fetch",
+   "cwp:rule": [
+    "Box: the model extent (area.js meta.extent) as a WGS84 polygon through the inverse of meta.geo.",
+    "Licences: NBN Atlas records with record licence CC0, CC-BY or OGL, less the resources with a non-commercial resource licence (dr2992 Birda, dr671 National Mammal Atlas Project); GBIF records with licence CC0 or CC BY from iNaturalist research grade, NABU|naturgucker and TIPU only. eBird, every CC BY-NC record and GiGL are not used.",
+    "Politeness: one request at a time, at least 1 s apart; retried with a doubling pause on 429 or 5xx.",
+    "Habitat raster: water by the docklands/water.js rule (tidal = river; a dock or basin name, or 20,000 m2 and over below 6 m OD = dock; else pond); green kinds: wood (wood, forest, scrub, nature reserve, TOW small woodland and NFI) over park (parks, grass, pitches, recreation grounds, playing fields) over garden (gardens, allotments, churchyards, cemeteries); water over greens.",
+    "A record of a waterbird within 30 m of water counts as that water (records made from the bank); other species: the class at the point.",
+    "Weights: fewer than 10 located records: the ecology prior of the tool; else half the prior and half the record share (scaled to the prior maximum). Season: three-month smoothed monthly counts, scaled to a peak of 1, when 24 or more records are dated."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": false,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuilddocklands"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildtrees"
+    }
+   ],
+   "cwp:area": "water",
+   "cwp:fault": [],
+   "cwp:judgement": "The ecology priors (relative weights per habitat), the season priors of the layer and the densities per habitat class (docklands/layers/wildlife.js DENS) are hand-entered from general knowledge of London birds; they are stated in the file and on the page."
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolfindkml",
    "@type": "prov:Activity",
    "rdfs:label": "find-kml",
@@ -4014,6 +4072,119 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildpiers",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-piers",
+   "dct:description": "Piers, pontoons and berthed vessels in the 3D model box for the Three.js port's piers layer. Reads the OSM pier shapes (man_made=pier ways and multipolygons, with inner rings) and ship outlines (building=ship, historic=ship) from the local Greater London extract; a fixed pier keeps its outline, with its deck at the highest land under it; a floating pier is rasterised at 0.5 m and cut by local width into pontoons (oriented rectangles) and gangways or walks (shore end and the height of the land there). Joins the TfL river-bus piers of feeds/river/river-bus.json with the lines TfL lists at each pier (one StopPoint request; offline: the held route sequences), the tour-boat facts read from two operators' pages (City Cruises, Thames River Sightseeing; held in the tool with URL and date), and Wikidata items of feeds/river/wikidata-vessels.json; finds the berth beside each passenger pier's largest pontoon, and for each ship outline its length, beam, heading (bow = the narrower end) and the model buildings it replaces.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawdocklandsgreaterlondonlatestosmpbf"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srctflunifiedapi",
+     "dcat:accessURL": "https://api.tfl.gov.uk/StopPoint/Mode/river-bus",
+     "dct:description": "one GET: the lines at each river-bus pier (skipped with --offline)"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/river.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/river/river-bus.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/river/wikidata-vessels.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srctouroperatorpages"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/piers.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-piers.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-piers.mjs [--offline]",
+   "cwp:kind": "derive",
+   "cwp:rule": [
+    "Floating: floating=yes, or a name with Pier or Pontoon and no floating=no; a name with Jetty or ending in Wharf (and no Pier) is fixed.",
+    "Cut: a part is wide when it is within T of a cell at least T from the outside (an opening); T = 0.62 x the largest half-width, at least 2.2 m and at most 4.5 m, raised 0.4 m at a time (to 0.9 x) while a wide part fills under 60 % of its rectangle; wide parts of 40 m2 or more are pontoons; a narrow part at least 5.5 m wide and 15 m long is a pontoon unless it touches a pontoon and is 3.5 times as long as wide (then an access bridge, drawn as a gangway up to 6 m wide).",
+    "TfL pier join: the named floating OSM pier with the largest pontoon within 80 m of the TfL position; no shape (Doubletree Docklands / Nelson Dock Pier): a 30 x 7 m pontoon 18 m from the bank with a gangway (stated default).",
+    "Berth: the long side of the largest pontoon nearer the Thames centreline (docklands/data/river.json); bow upstream = towards the lower centreline index.",
+    "Heights: land = the terrain of area.js where the point is not in a water polygon; default 5.3 m OD on the Thames (river wall) and 1 m above a dock.",
+    "Ships: only outlines in water polygons (Cutty Sark, in dry dock, stays a building); hidden model buildings = those whose outline centre is inside the ship's rectangle plus 1 m.",
+    "Rounding: 0.1 m, angles 0.001 rad. The OSM read is cached in the system temp folder by extract size and time; the output is the same from run to run when the inputs and the TfL lines are the same."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": false,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuilddocklands"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildriver"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolfetchriver"
+    }
+   ],
+   "cwp:area": "water",
+   "cwp:fault": [],
+   "cwp:judgement": "The tour-boat facts (piers, frequencies, first and last departures by season) and the stated defaults (Thames River Sightseeing frequency, the synthetic pontoon, the heights) are hand-entered in the tool, with the page and date in docklands/data/piers.json meta.tours."
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolfittideharmonics",
+   "@type": "prov:Activity",
+   "rdfs:label": "fit-tide-harmonics",
+   "dct:description": "Fits a mean and tidal harmonic constituents by least squares to the Environment Agency 15-minute tidal levels of the three gauges round the 3D model, so that the 3D pages can show the tide at any time (the EA publishes readings, not predictions; PLA and UKHO predictions are not open). Two stages: a fetch stage (network, cached) and a fit stage that reads only the cached files.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srceafloodmonitoring",
+     "dcat:accessURL": "https://environment.data.gov.uk/flood-monitoring/id/measures/{station}-level-tidal_level-i-15_min-mAOD/readings",
+     "dct:description": "stations 0007 Tower Pier, 0003 Charlton, 0001 Silvertown; startdate=today-45 days, enddate=today, _sorted, _limit=10000 (the API keeps about four weeks); plus /id/stations/{station} for the position"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srceafloodmonitoring",
+     "dcat:accessURL": "https://environment.data.gov.uk/flood-monitoring/archive/readings-{YYYY-MM-DD}.csv",
+     "dct:description": "one daily archive file (all stations, about 60 MB) every 7 days from 10 to 371 days back, streamed; only the lines of the three tidal-level measures are kept"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawrivertideapidatejsondatarawrivertidearchivedatecsvthecachedreadingstheirsha256iswrittenintotheoutput"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/tide-harmonics.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/fit-tide-harmonics.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--no-fetch]",
+   "cwp:kind": "derive",
+   "cwp:rule": [
+    "Readings: the API readings (about four weeks) and one archive day in seven back to a year (no archive file for some days: skipped); one request at a time; three retries 3, 6 and 9 s apart on timeouts and 5xx; User-Agent glitchcan-cwplans/0.1; cached files are not fetched again.",
+    "Cleaning: a reading is dropped when its difference from the nearest other gauge departs more than 0.45 m from the median of that difference over 2 h either side (docklands/sky.js cleanGauges, fault F21); after a first fit, readings with a residual over 1.2 m are dropped (gauge faults and the largest surges).",
+    "Constituents, in priority order M2, S2, N2, K1, O1, M4, MS4, MN4, M6, K2, P1, L2, NU2, MU2, 2N2, Q1, MK4, S4, 2MS6, 2MN6, M3, MK3, MO3, J1, OO1, M8, 3MS8, 2SM6, T2, MSf, Mf, Mm, Ssa, Sa; one is kept only when its speed differs from every kept one by at least 360 degrees over the span of the readings (Rayleigh criterion 1).",
+    "Arguments: mean longitudes of the Moon, Sun, lunar perigee, node and solar perigee (Meeus), tau = 15 deg/h x UT + h - s; nodal factors f and u by the formulas of Pugh (1987, table 4.3); compound tides from their parts; L2 takes the M2 factors (a simplification). Phases are lags on these arguments, not Admiralty phases. The code is docklands/tide.js, which the 3D page uses too.",
+    "Validation: a fit without 3 and 4 October 2026 (UTC) and the last 48 h of readings is compared with them (rms, maximum, high and low water height and time); the constituents written use all readings. Units m AOD, phases in degrees, amplitudes to 0.1 mm.",
+    "Output also holds the cleaned readings of the last 7 days (15-minute slots, null where none), so the page shows a measured level where it has one, and check values (predictions every 6 h on 10 October 2026) that the page compares with its own prediction."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": false,
+   "cwp:after": [],
+   "cwp:area": "sky",
+   "cwp:fault": [
+    "F21"
+   ],
+   "cwp:judgement": "The choice of constituents, the cleaning thresholds and the one-day-in-seven archive sampling are stated defaults (this activity's rules); the foreshore profiles drawn from the prediction are defaults in docklands/layers/tide.js."
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolfetchsky",
    "@type": "prov:Activity",
    "rdfs:label": "fetch-sky",
@@ -6525,6 +6696,84 @@
    "cwp:area": "trees",
    "cwp:fault": [],
    "cwp:judgement": "The 35 m cut-off for \"lone trees\" that are cranes or structures is applied on the page, not in the file; the source precedence order is a judgement."
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolfetchtreeleaftags",
+   "@type": "prov:Activity",
+   "rdfs:label": "fetch-tree-leaf-tags",
+   "dct:description": "Reads the leaf_type and leaf_cycle tags of the OSM natural=tree nodes in the model box (the Greater London PBF extract of build-trees is not committed and build-trees drops these tags). Keeps node id, leaf_type and leaf_cycle only.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm",
+     "dcat:accessURL": "https://overpass-api.de/api/interpreter, then https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+     "dct:description": "[out:json];node[\"natural\"=\"tree\"](model box, WGS84);out tags; (one request; up to 3 rounds over the two servers, 2 s apart)"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/trees/osm-tree-leaf.json.gz"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-tree-species.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-tree-species.mjs fetch [--from saved-overpass-answer.json]",
+   "cwp:kind": "fetch",
+   "cwp:rule": [
+    "Only nodes with leaf_type or leaf_cycle are kept: 11,993 of 34,445 (OSM data of 2026-10-09T02:53:01Z).",
+    "2026-10-09: overpass-api.de reset the connection and the mail.ru mirror answered 504 to the tool; the file was written with --from from an answer to the same query fetched from the mail.ru mirror an hour before.",
+    "User-Agent glitchcan-cwplans/0.1 (https://github.com/danbri/londat)."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": false,
+   "cwp:after": [],
+   "cwp:area": "trees",
+   "cwp:fault": []
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolbuildtreespecies",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-tree-species",
+   "dct:description": "Gives each tree of trees.json a species profile of the 3D page (docklands/tree-species.js in danbri/londat: crown shape, leaf and autumn colours, bark, leaf-out, autumn and leaf-fall days, blossom) and the basis of that profile. A pure function of the three inputs (their SHA-256 are written into the output) and the parameters (waterM 15, waterCell 5).",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/trees.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/trees/osm-tree-leaf.json.gz"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/tree-species.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-tree-species.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-tree-species.mjs",
+   "cwp:kind": "derive",
+   "cwp:rule": [
+    "Taxon first: the scientific and common name of the tree (trees.json species) through the ordered rules of tree-species.js profileOf(); basis S for a species or cultivar, G for a genus, family or vague name.",
+    "Names that say nothing about the tree (New tree pit, Misc group, Mixed species, Unplantable, Mistaken, Vacant, unknown, ?) count as no taxon.",
+    "No taxon: the setting is waterside if a 5 m cell inside an area.js water polygon lies within 15 m; else wood if inside a trees.json green of kind natural=wood, scrub, landuse=forest or a TOW group or woodland; else park if inside any other green, or if the tree is a TOW lone-tree crown (gardens and courtyards); else street. The profile is drawn from the setting mix (tree-species.js MIXES) with a hash of the record id (stable). Basis R, W, P, T: INFERRED.",
+    "OSM leaf tags on a tree with no taxon: needleleaved gives conifer (deciduous: conifer-deciduous), palm gives palm, evergreen or semi_evergreen gives evergreen broadleaf, else the setting mix; basis L."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildtrees"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolfetchtreeleaftags"
+    }
+   ],
+   "cwp:area": "trees",
+   "cwp:fault": []
   },
   {
    "@id": "https://kgx.foaf.tv/id/tooldroneflight",
@@ -14900,6 +15149,23 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/tide-harmonics.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "our own tide prediction: harmonic constituents (a mean z0 and 34 constituents, amplitude and phase lag) fitted per gauge at Tower Pier, Charlton and Silvertown to cleaned EA 15-minute tidal levels (m AOD), with the fit period, rms residual, high- and low-water errors, a validation on held-out days, the cleaned readings of the last 7 days and check values for the page code",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srceafloodmonitoring"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolfittideharmonics"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/sky.js",
    "@type": [
     "prov:Entity",
@@ -15263,6 +15529,53 @@
    },
    "cwp:osmUse": "derived",
    "cwp:review": "ethics (CLAUDE.md, Data ethics): only position, taxon, height, crown, source and record id are kept; the dropped fields of each source are listed in the file (sources[].dropped)."
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/tree-species.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "a species profile (crown shape, colours, leaf calendar of the Three.js port) for each of the 81,875 trees of trees.json, one letter per tree, and how it was found: the source taxon (species or genus), the OSM leaf_type / leaf_cycle tags, or a mix INFERRED from the setting (street, park, wood, waterside within 15 m of water) where no source gives a taxon; counts by profile and basis; the SHA-256 of each input",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcglapublicrealmtrees"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcplanningdatatree"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcfrtow"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopengreenspace"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildtreespecies"
+   },
+   "cwp:osmUse": "derived",
+   "cwp:review": "inferred profiles are assumptions, not data (basis letters T, P, W, R, L); no fields beyond taxon and position are used."
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/trees/osm-tree-leaf.json.gz",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "OSM natural=tree nodes in the model box with leaf_type or leaf_cycle: node id and those two tags only (11,993 of 34,445 nodes), Overpass API, OSM data of 2026-10-09",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolfetchtreeleaftags"
+   },
+   "cwp:osmUse": "raw"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/pipeline.json",
@@ -21336,6 +21649,61 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/piers.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "piers, pontoons, gangways and fixed jetties in the 3D model box (cut from OSM pier shapes), the TfL river-bus piers with their lines, tour-boat piers with the operators' published frequencies, the berth of each passenger pier, and the berthed vessels with an OSM outline (HMS Belfast with facts, light vessel, tug, steam coasters, the floating church) with their size, heading and the model buildings they replace",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srctflunifiedapi"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwikidata"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srctouroperatorpages"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildpiers"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/wildlife.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "aggregates of open wildlife records in the model box for the Three.js port's wildlife layer: for 20 bird species and the red fox, the number of records, records per habitat class (records located to 100 m or better), per month, years and flock sizes, the weights per habitat blended with general ecology; and a 10 m habitat class raster (river, dock, pond, park, wood, garden; RLE). No record points.",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnbnatlas"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcgbif"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopengreenspace"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcfrtow"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolfetchwildlife"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/river/osm-river.json",
    "@type": [
     "prov:Entity",
@@ -25138,6 +25506,28 @@
    "dcat:landingPage": "https://www.planning.data.gov.uk/dataset/tree"
   },
   {
+   "@id": "https://kgx.foaf.tv/id/srcnbnatlas",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "NBN Atlas occurrence records (records-ws.nbnatlas.org occurrences/search), species in the model box (WKT polygon); records with record licence CC0, CC-BY or OGL only; resources with a non-commercial resource licence left out (Birda dr2992, National Mammal Atlas Project dr671)",
+   "dct:license": "CC0 1.0, CC BY 4.0 and OGL v3.0 (per record); data partners: BTO/JNCC/RSPB partnership (OGL), Birdex (CC BY), iRecord via the Biological Records Centre (CC BY), RSPB, Mammal Society Mammal Mapper (CC BY)",
+   "dcat:landingPage": "https://nbnatlas.org/",
+   "cwp:attribution": "NBN Atlas (https://nbnatlas.org) and its data partners"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcgbif",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "GBIF.org occurrence search API: iNaturalist Research-grade Observations (records with CC0 or CC BY only), NABU|naturgucker and the TIPU ringing database, in the model box",
+   "dct:license": "CC0 1.0 and CC BY 4.0 (per record)",
+   "dcat:landingPage": "https://www.gbif.org/",
+   "cwp:attribution": "GBIF.org; iNaturalist contributors (CC BY records); NABU|naturgucker; TIPU"
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/srcfrtow",
    "@type": [
     "prov:Entity",
@@ -27986,6 +28376,15 @@
    "dct:license": "TfL open data terms (Transport Data Service; OGL-based, attribution required); the terms page refuses scripted requests: re-check before production",
    "dcat:landingPage": "https://api-portal.tfl.gov.uk/",
    "cwp:attribution": "Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srctouroperatorpages",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Thames tour-boat operators' own pages: City Cruises sightseeing schedule (https://www.cityexperiences.com/london/city-cruises/sightseeing-schedule/) and Thames River Sightseeing (https://thamesriversightseeing.com/), read 2026-10-09",
+   "dct:license": "none stated (all rights reserved by default)"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcdftstreetmanager",

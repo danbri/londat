@@ -262,6 +262,12 @@ and the determinant rule, depth compositing, drone frames, OpenSplat training an
   source and record id are kept (the Bristol rule applies here too). GLA canopy and green cover 2024 are all rights
   reserved, Curio Canopy is CC BY-SA: not used. 20 TOW "lone trees" are over 35 m (cranes or structures): the page
   leaves out trees over 35 m; they are not corrected in the file.
+- `docklands/data/tree-species.json` (`tools/build-tree-species.mjs`, 2026-10-09): a species profile per tree of
+  trees.json for the Three.js port, from the taxon (61,395 trees: 48,397 species, 12,998 genus or family), else OSM
+  `leaf_type`/`leaf_cycle` (437; Overpass, OSM of 2026-10-09, `data/raw/trees/osm-tree-leaf.json.gz`), else a mix
+  INFERRED from the setting: street 3,488, park or garden 13,615, wood 1,966, waterside 974 (basis letters; mixes in
+  `docklands/tree-species.js`). Taxon coverage by source: GLA 99.6 %, TPO 78 %, OSM 45 %, TOW none (the TOW map has no
+  species). No borough inventory adds to the GLA file: it is compiled from the borough inventories (Nov 2025).
 - `registry/sources/facades/`: measured bays and colours from CC BY and PD photos. Check against a known count where
   one exists (One Canada Square: 19.9 bays measured, 19.8 known). Most recent Commons photos of the new towers are
   CC BY-SA: look only. Commons and Flickr rate-limit the container (429, retry after 600 s).

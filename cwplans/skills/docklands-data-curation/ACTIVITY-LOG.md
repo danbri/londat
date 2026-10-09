@@ -2000,3 +2000,34 @@ reflection of waves."
   to the bed, foreshore mesh: walls vs mud and shingle, wetness); the surface (wind on the docks with fetch, the river's
   flow map from the tide rate and the centreline, floating debris, analytic Kelvin wakes summed in the shader, wave
   reflection at walls); ships (AIS as in the WebGL page, dead reckoning, navigation lights, feeding the wakes).
+
+## 2026-10-09: Three.js port, tree species and seasons (a subagent; not committed by it)
+
+Owner, 2026-10-09: "make trees more realistic including seasonality, ideally taking species from osm or elsewhere
+official data."
+- Data: trees.json already had the GLA Public Realm Trees taxa (OGL v3.0; compiled from the borough inventories,
+  so no separate borough fetch). New: `data/raw/trees/osm-tree-leaf.json.gz` (OSM leaf_type/leaf_cycle, ODbL, Overpass
+  mail.ru mirror; overpass-api.de reset the connection) and `docklands/data/tree-species.json`
+  (`tools/build-tree-species.mjs`; activities fetch-tree-leaf-tags, build-tree-species; register entries and the
+  extract `overpass-2026-10-09`). Profile from the taxon for 61,395 of 81,875 trees; 20,480 inferred (basis letters).
+- Page: `docklands/layers/trees.js` and `docklands/tree-species.js`: 6 crown shapes, trunks with bark patterns, twig
+  crowns, the season from the page clock, blossom, wind sway. Skill: docklands-3d-page, "Trees: species and seasons".
+
+## 2026-10-09: Three.js port, second wave (tide, water surface, ships, piers, aircraft, wildlife, trees, night lights, weather, reveal)
+
+- Owner's goal (2026-10-09): feature parity; aircraft; piers and berthed vessels incl. HMS Belfast; check the time
+  scrubber against history; check the roof port; wildlife from real data; tree species and seasons; a falling data sheet
+  when a layer is added. Nine subagents, then the coordinator integrated, repaired and tested.
+- Results: roof port exact (22,654 buildings); tide fit held-out rms about 0.2 m (4 weeks: worst day 0.49 m); clock check
+  168 rows, 0 failed (sun and moon within 0.02 deg; true north fixed, 1.55 deg); ships as the WebGL page (private craft
+  counted only); piers 275 with HMS Belfast; aircraft simulated (no live ADS-B); wildlife from NBN Atlas and GBIF (CC0,
+  CC-BY, OGL; eBird and NC rejected); trees 43 species profiles from the GLA London Public Realm Trees (OGL) with seasons
+  and LOD (5.4 M to 0.9 M triangles).
+- Coordinator repairs: skyline restores other layers' build options; riverbed only in the cut-away; pipeline.json lost
+  activities restored (fit-tide-harmonics, the tide test); raw wildlife downloads gitignored; pier parts and vessels at the
+  camera hidden (Greenland Pier view); ship type plates dimmed at night; London date in main.js; one Open-Meteo switch for
+  wind and weather; night-light sprites sized for the mirror.
+- Tests on the integrated tree: load test 12 of 12 (WebGL 2 cw, rotherhithe, area at two sizes; WebGPU cw, rotherhithe night,
+  greenlandday at two sizes); clock-check 0 failed; npm test 33 of 33; register check passes.
+- Open: menus (owner's rework); wind data for times with no source (default 4 m/s from 240 deg unless Open-Meteo is asked);
+  foreshore profiles are defaults; aircraft and berth calls are simulated; real-device GPU cost not measured.

@@ -19,6 +19,9 @@ export default {
     const mesh = new THREE.Mesh(M.geometry(), ctx.materials.vertexColourMaterial());
     mesh.receiveShadow = true; mesh.name = 'riverbed';
     mesh.userData.stats = { soundings: n, triangles: M.idx.length / 3 };
-    return { object: mesh, setVisible(on) { mesh.visible = on; } };
+    // drawn only in the cut-away view: since the tide layer (2026-10-09) the ground sinks to the bed and the foreshore shows
+    // at low water, and the 25 m sounding squares stood above it there
+    let want = true; const sync = () => { mesh.visible = want && ctx.U.cut.value < 250; }; ctx.onFrame(sync); sync();
+    return { object: mesh, setVisible(on) { want = on; sync(); } };
   },
 };

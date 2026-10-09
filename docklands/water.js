@@ -95,7 +95,7 @@ export function waterDepth(refresh = false) {
   if (cached) { cached.tex.image.data.set(data); cached.tex.needsUpdate = true; }   // a refresh (under.js has loaded): same texture
   const tex = cached ? cached.tex : new THREE.DataTexture(data, nx, nz, THREE.RedFormat, THREE.UnsignedByteType);
   tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping; tex.generateMipmaps = false; tex.needsUpdate = true;
-  cached = { tex, under: !!globalThis.DOCKLANDS_UNDER, x0: E.x0, z0: E.z0, w: nx * c, h: nz * c, nx, nz,
+  cached = { tex, under: !!globalThis.DOCKLANDS_UNDER, x0: E.x0, z0: E.z0, w: nx * c, h: nz * c, nx, nz, cell: c, kind,
     stats: { grid: `${nx} x ${nz} at ${c} m`, waterCells: cells, soundedCells: sounded, soundings: ns, polygons: polys, meanDepth: +(sumD / Math.max(1, cells)).toFixed(1), maxDepth: +maxD.toFixed(1), ms: Math.round(performance.now() - t0) } };
   return cached;
 }
@@ -105,4 +105,118 @@ export function mirrorLevel() {
   let s = 0, a = 0;
   for (const w of A.water) { if (!(w.level >= 2 && w.level <= 5)) continue; const f = dec(w.p), n = w.holes && w.holes.length ? w.holes[0] : f.length / 2, ar = area(f, n); s += ar * w.level; a += ar; }
   return a ? s / a : 3;
+}
+
+// ---------- the water surface (2026-10-09): what moves it. Made at load time on the depth map's grid (10 m cells, same uv):
+//   flowTex (RGBA8): RG the flow direction of the tidal Thames x a speed factor (128 = 0, 1.5 at 255), B the fetch in 10 m
+//     steps (the open water upwind of the cell, for the wind direction now; setFetch), A 255 on tidal water;
+//   wallTex (RGBA8): RG the normal of the nearest water edge (into the water, 128 = 0), B the distance to it (0.25 m steps,
+//     to 63.75 m), A its reflectivity: EA wall, flood gate or bridge abutment within 15 m 0.9, pier 0.8, embankment 0.35,
+//     natural foreshore 0.08; dock edges (quays) 0.9, pond edges 0.4;
+//   noiseTex (RGBA8, 256 x 256, tiles, mipmapped): the gradient of a band-limited wave field, a sum of 40 sinusoids with
+//     integer wave vectors (7 to 13 cycles a tile): RG waves spread +-75 degrees about +x (wind waves), BA all directions.
+// SU: the surface uniforms that are not in the shared contract. Skill: docklands-3d-page, "Three.js port" (Water surface).
+export const SU = {
+  current: uniform(0.08),   // m/s along the flow field, + downstream (ebb, east); layers/wind.js sets it each frame from WU.tideRate
+  gust: uniform(0.5),       // 0 steady to 1 gusty: the contrast of the moving cat's-paw patches (gust / mean speed - 1)
+};
+const WALLR = { wall: 0.9, pier: 0.8, revetment: 0.35, natural: 0.08, dock: 0.9, pond: 0.4 };
+const DEF_KIND = { Wall: 'wall', 'Flood Gate': 'wall', 'Bridge Abutment': 'wall', Embankment: 'revetment', 'Engineered High Ground': 'revetment' };
+let surf = null;
+export function surfaceData() {
+  if (surf) return surf;
+  const t0 = performance.now(), D = waterDepth(), { nx, nz, cell: c, x0, z0 } = D, N = nx * nz, K = D.kind;
+  const flow = new Uint8Array(N * 4), wall = new Uint8Array(N * 4);
+  for (let m = 0; m < N; m++) { flow[4 * m] = flow[4 * m + 1] = 128; flow[4 * m + 3] = K[m] === 1 ? 255 : 0; wall[4 * m] = wall[4 * m + 1] = 128; wall[4 * m + 2] = 255; }
+  const cellOf = (x, z) => { const i = Math.floor((x - x0) / c), j = Math.floor((z - z0) / c); return i < 0 || j < 0 || i >= nx || j >= nz ? -1 : j * nx + i; };
+  // EA defences in 30 m buckets
+  const DB = 30, dh = new Map(), dk = (a, b) => a * 100003 + b;
+  for (const d of A.defences || []) { const kd = DEF_KIND[d.t]; if (!kd) continue; const q = dec(d.q, 3);
+    for (let i = 3; i < q.length; i += 3) { const s = [q[i - 3], q[i - 2], q[i], q[i + 1], kd], k = dk(Math.floor((s[0] + s[2]) / 2 / DB), Math.floor((s[1] + s[3]) / 2 / DB)); if (!dh.has(k)) dh.set(k, []); dh.get(k).push(s); } }
+  const segD = (px, pz, ax, az, bx, bz) => { const vx = bx - ax, vz = bz - az, l2 = vx * vx + vz * vz || 1e-9, u = Math.max(0, Math.min(1, ((px - ax) * vx + (pz - az) * vz) / l2)), cx = ax + u * vx, cz = az + u * vz; return [Math.hypot(px - cx, pz - cz), cx, cz]; };
+  const defNear = (x, z) => { let best = null, bd = 15; const bx = Math.floor(x / DB), bz = Math.floor(z / DB);
+    for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (const s of dh.get(dk(bx + a, bz + b)) || []) { const [d] = segD(x, z, s[0], s[1], s[2], s[3]); if (d < bd) { bd = d; best = s[4]; } }
+    return best; };
+  // the edges of every water polygon in pieces of 10 m at most, typed; edges with water on both sides (locks, joins) skipped
+  const EB = 20, enx = Math.ceil(nx * c / EB) + 1, enz = Math.ceil(nz * c / EB) + 1, eh = new Array(enx * enz), ebk = (x, z) => { const i = Math.floor((x - x0) / EB), j = Math.floor((z - z0) / EB); return i < 0 || j < 0 || i >= enx || j >= enz ? -1 : j * enx + i; };
+  let pieces = 0; const plen = {};
+  for (const w of A.water) { const f = dec(w.p), st = [0, ...(w.holes || []), f.length / 2];
+    for (let r = 0; r < st.length - 1; r++) { let s2 = 0; for (let i = st[r], j = st[r + 1] - 1; i < st[r + 1]; j = i++) s2 += (f[2 * j] - f[2 * i]) * (f[2 * j + 1] + f[2 * i + 1]);
+      for (let i = st[r]; i < st[r + 1]; i++) { const j = i + 1 < st[r + 1] ? i + 1 : st[r], ax = f[2 * i], az = f[2 * i + 1], bx = f[2 * j], bz = f[2 * j + 1], L = Math.hypot(bx - ax, bz - az); if (L < 0.01) continue;
+        const n = Math.ceil(L / 10);
+        for (let k = 0; k < n; k++) { const px = ax + (bx - ax) * k / n, pz = az + (bz - az) * k / n, qx = ax + (bx - ax) * (k + 1) / n, qz = az + (bz - az) * (k + 1) / n, mx = (px + qx) / 2, mz = (pz + qz) / 2;
+          let ox = (qz - pz) / (L / n), oz = -(qx - px) / (L / n);   // a normal; made to point to the land below
+          const ia = cellOf(mx + ox * 6, mz + oz * 6), ib = cellOf(mx - ox * 6, mz - oz * 6); if ((ia >= 0 && K[ia]) && !(ib >= 0 && K[ib])) { ox = -ox; oz = -oz; } else if (!(ia >= 0 && K[ia]) === !(ib >= 0 && K[ib])) { if ((s2 > 0) === (r === 0)) { ox = -ox; oz = -oz; } }
+          const out = cellOf(mx + ox * 14, mz + oz * 14), inn = cellOf(mx - ox * 6, mz - oz * 6);
+          let kind;
+          if (r > 0) kind = 'pier';
+          else if (out >= 0 && K[out]) continue;   // water beyond: a lock gate or a join between polygons
+          else if (w.tidal) kind = defNear(mx, mz) || 'natural';
+          else kind = inn >= 0 && K[inn] === 3 ? 'pond' : 'dock';
+          plen[kind] = (plen[kind] || 0) + L / n; pieces++;
+          const e = [px, pz, qx, qz, WALLR[kind], -ox, -oz], kk = ebk(mx, mz); if (kk >= 0) (eh[kk] || (eh[kk] = [])).push(e); } } } }
+  // each water cell: the nearest edge piece within 64 m
+  for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { const m = j * nx + i; if (!K[m]) continue;
+    const x = x0 + (i + 0.5) * c, z = z0 + (j + 0.5) * c, bx = Math.floor((x - x0) / EB), bz = Math.floor((z - z0) / EB); let bd = 64, be = null, bcx = 0, bcz = 0;
+    for (let b = Math.max(0, bz - 3); b <= Math.min(enz - 1, bz + 3); b++) for (let a = Math.max(0, bx - 3); a <= Math.min(enx - 1, bx + 3); a++) { const L = eh[b * enx + a]; if (L) for (const e of L) { const [d, cx, cz] = segD(x, z, e[0], e[1], e[2], e[3]); if (d < bd) { bd = d; be = e; bcx = cx; bcz = cz; } } }
+    if (!be) continue;
+    let ux = be[5], uz = be[6]; if (bd > 0.5) { ux = (x - bcx) / bd; uz = (z - bcz) / bd; }
+    wall[4 * m] = Math.round(128 + 127 * ux); wall[4 * m + 1] = Math.round(128 + 127 * uz); wall[4 * m + 2] = Math.min(255, Math.round(bd * 4)); wall[4 * m + 3] = Math.round(be[4] * 255); }
+  const mk = (data, w, h, mip) => { const t = new THREE.DataTexture(data, w, h, THREE.RGBAFormat, THREE.UnsignedByteType);
+    t.magFilter = THREE.LinearFilter; t.minFilter = mip ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; t.generateMipmaps = !!mip; t.wrapS = t.wrapT = mip ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping; if (mip) t.anisotropy = 4; t.needsUpdate = true; return t; };
+  const wallMs = Math.round(performance.now() - t0), t1 = performance.now();
+  surf = { flow, wall, flowTex: mk(flow, nx, nz), wallTex: mk(wall, nx, nz), noiseTex: mk(noiseField(), 256, 256, true), fetchDir: null,
+    stats: { edgePieces: pieces, edgeMetres: Object.fromEntries(Object.entries(plen).map(([k, v]) => [k, Math.round(v)])), wallMs, noiseMs: Math.round(performance.now() - t1), flowMs: null, fetchMs: null, flowCells: 0 } };
+  return surf;
+}
+// the fetch for a wind from dir (degrees, meteorological): open water upwind of each cell, in 10 m steps (at most 2,550 m)
+export function setFetch(dir) {
+  const S = surfaceData(); if (S.fetchDir != null && Math.abs(((dir - S.fetchDir + 540) % 360) - 180) < 4) return;
+  const t0 = performance.now(), D = waterDepth(), { nx, nz, cell: c, x0, z0 } = D, K = D.kind, a = dir * Math.PI / 180, sx = Math.sin(a), sz = -Math.cos(a);
+  for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { const m = j * nx + i; if (!K[m]) continue; let k = 1;
+    for (; k < 255; k++) { const ii = Math.floor(i + 0.5 + sx * k), jj = Math.floor(j + 0.5 + sz * k); if (ii < 0 || jj < 0 || ii >= nx || jj >= nz || !K[jj * nx + ii]) break; }
+    S.flow[4 * m + 2] = k; }
+  S.flowTex.needsUpdate = true; S.fetchDir = dir; S.stats.fetchMs = Math.round(performance.now() - t0);
+}
+// the flow field of the tidal Thames from its centreline (data/river.json: thames [x, z, distance to the bank], west to
+// east = downstream, every 20 m): each tidal cell gets the tangent at the nearest centreline point x a speed factor
+// (narrower = faster, sqrt(130 m / half width), 0.7 to 1.4; slower towards the banks; nothing in inlets more than 10 to 80 m
+// beyond the half width: creeks, docks entrances)
+export function setRiver(R) {
+  const S = surfaceData(), P = R && R.thames; if (!P || P.length < 3) return;
+  const t0 = performance.now(), D = waterDepth(), { nx, nz, cell: c, x0, z0 } = D, K = D.kind, n = P.length, N = nx * nz;
+  const hw = P.map((_, i) => { let s = 0, w = 0; for (let k = Math.max(0, i - 3); k <= Math.min(n - 1, i + 3); k++) { s += P[k][2]; w++; } return Math.max(20, s / w); });
+  // the nearest centreline point of every cell: seeds at the points' cells, then two raster passes (8 neighbours)
+  const near = new Int32Array(N).fill(-1), nd = new Float32Array(N).fill(1e18), cx = i => x0 + (i % nx + 0.5) * c, cz = i => z0 + (Math.floor(i / nx) + 0.5) * c;
+  for (let i = 0; i < n; i++) { const ii = Math.floor((P[i][0] - x0) / c), jj = Math.floor((P[i][1] - z0) / c); if (ii < 0 || jj < 0 || ii >= nx || jj >= nz) continue; const m = jj * nx + ii, d = (P[i][0] - cx(m)) ** 2 + (P[i][1] - cz(m)) ** 2; if (d < nd[m]) { nd[m] = d; near[m] = i; } }
+  const relax = (m, o) => { const q = near[o]; if (q < 0) return; const d = (P[q][0] - cx(m)) ** 2 + (P[q][1] - cz(m)) ** 2; if (d < nd[m]) { nd[m] = d; near[m] = q; } };
+  for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { const m = j * nx + i; if (i > 0) relax(m, m - 1); if (j > 0) { relax(m, m - nx); if (i > 0) relax(m, m - nx - 1); if (i < nx - 1) relax(m, m - nx + 1); } }
+  for (let j = nz - 1; j >= 0; j--) for (let i = nx - 1; i >= 0; i--) { const m = j * nx + i; if (i < nx - 1) relax(m, m + 1); if (j < nz - 1) { relax(m, m + nx); if (i < nx - 1) relax(m, m + nx + 1); if (i > 0) relax(m, m + nx - 1); } }
+  let cells = 0;
+  for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { const m = j * nx + i; if (K[m] !== 1) continue;
+    let bi = near[m], bd = nd[m];
+    if (bi < 0) continue; bd = Math.sqrt(bd);
+    const a0 = P[Math.max(0, bi - 1)], a1 = P[Math.min(n - 1, bi + 1)], tl = Math.hypot(a1[0] - a0[0], a1[1] - a0[1]) || 1, h = hw[bi];
+    const fade = Math.max(0, Math.min(1, (h + 80 - bd) / 70)), s = Math.min(1.4, Math.max(0.7, Math.sqrt(130 / h))) * Math.max(0.3, 1 - 0.5 * Math.min(1, bd / h) ** 2) * fade;
+    if (s > 0) cells++;
+    S.flow[4 * m] = Math.round(128 + 127 * Math.max(-1, Math.min(1, (a1[0] - a0[0]) / tl * s / 1.5))); S.flow[4 * m + 1] = Math.round(128 + 127 * Math.max(-1, Math.min(1, (a1[1] - a0[1]) / tl * s / 1.5))); }
+  S.flowTex.needsUpdate = true; S.stats.flowMs = Math.round(performance.now() - t0); S.stats.flowCells = cells;
+}
+// RG: directional (+-75 degrees about +x, amplitude cos^2), BA: isotropic; each the gradient normalised to an rms length of 1,
+// stored / 3 (decode: (v * 2 - 1) * 3). Separable: cos(A(x) + B(y)) from two tables of 256 a wave.
+function noiseField() {
+  const S = 256, out = new Uint8Array(S * S * 4), gx = new Float32Array(S * S * 2), gy = new Float32Array(S * S * 2);
+  let seed = 20261009; const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  for (let set = 0; set < 2; set++) { const used = new Set();
+    for (let w = 0; w < 40; w++) {
+      let kx, ky, amp;
+      for (let tries = 0; ; tries++) { const th = set ? rnd() * Math.PI * 2 : (rnd() - 0.5) * 2 * 1.31, km = 7 + rnd() * 6; kx = Math.round(km * Math.cos(th)); ky = Math.round(km * Math.sin(th));
+        amp = (set ? 1 : Math.cos(th) ** 2) * (0.6 + 0.4 * rnd()) / km; if (!used.has(kx + ',' + ky) || tries > 20) break; }
+      used.add(kx + ',' + ky); const ph = rnd() * Math.PI * 2, ca = new Float32Array(S), sa = new Float32Array(S), cb = new Float32Array(S), sb = new Float32Array(S);
+      for (let i = 0; i < S; i++) { const A1 = 2 * Math.PI * kx * i / S + ph, B1 = 2 * Math.PI * ky * i / S; ca[i] = Math.cos(A1); sa[i] = Math.sin(A1); cb[i] = Math.cos(B1); sb[i] = Math.sin(B1); }
+      const ax = amp * 2 * Math.PI * kx / S * S / 10, ay = amp * 2 * Math.PI * ky / S * S / 10;   // per tile/10 (one wavelength about 1)
+      for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { const cs = ca[x] * cb[y] - sa[x] * sb[y], m = (y * S + x) * 2 + set; gx[m] += ax * cs; gy[m] += ay * cs; } } }
+  for (let set = 0; set < 2; set++) { let s2 = 0; for (let m = set; m < S * S * 2; m += 2) s2 += gx[m] ** 2 + gy[m] ** 2; const f = 1 / Math.sqrt(s2 / (S * S));
+    for (let p = 0; p < S * S; p++) { const m = p * 2 + set; out[p * 4 + set * 2] = Math.max(0, Math.min(255, Math.round(127.5 + 127.5 * gx[m] * f / 3))); out[p * 4 + set * 2 + 1] = Math.max(0, Math.min(255, Math.round(127.5 + 127.5 * gy[m] * f / 3))); } }
+  return out;
 }

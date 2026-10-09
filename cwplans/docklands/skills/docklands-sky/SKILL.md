@@ -155,6 +155,71 @@ Lessons: an EA gauge can go bad for hours near low water while its neighbours st
 with itself (a jump test kept two of the five bad readings). A WMS that answers with CORS is usable live from the page;
 check the data policy category (Core or Recommended) per product and per time step, not per provider.
 
+## Tide prediction (2026-10-09)
+
+PLA and UKHO tide predictions are not open, so the project fits its own. `cwplans/tools/fit-tide-harmonics.mjs` reads EA
+flood-monitoring 15-minute tidal readings (OGL v3.0; the API keeps about 4 weeks, plus one archive day in seven back one
+year: 72 to 76 days a gauge) for Tower Pier 0007, Charlton 0003 and Silvertown 0001, fits 34 constituents by least
+squares with nodal corrections (L2 uses the M2 factors) and writes `docklands/data/sky/tide-harmonics.json`
+(register entry; pipeline.json activity fit-tide-harmonics). The raw readings are cached and gitignored; their SHA-256
+is in the output. The fit stage reads only the cache. Not a kgx graph step, so no Flow activity.
+- Fit rms 0.24 to 0.25 m; M2 2.53 m at Tower Pier. Held out on 3-4 Oct (the snapshot in tide-2026-10-03.json): rms 0.19
+  to 0.22 m, max 0.37 to 0.51 m, high water within 0.23 m and 5 to 9 min, low water within 0.20 m and 8 to 11 min.
+  Held out on the last 48 h: rms 0.25 to 0.26 m, high-water time 23 to 31 min out (the surge is not in a harmonic fit).
+- The page (Three.js port): `docklands/tide.js` holds the prediction (the fit tool imports the same file: one copy) and
+  the level along the river by chainage between the gauges, as sky.js does; `docklands/layers/tide.js` sets the tidal
+  water's height through the water material's positionNode (attributes `tidal`, `tbase`), writes `WU.tideLevel` and
+  `WU.tideRate`, sinks the ground in the tidal water to the UKHO bed - 0.4 m (else -5 m), and draws a foreshore mesh:
+  edges classed walled (EA defences, 38.4 km, plus 0.6 km bridge piers), revetment (0.5 km), natural (1.3 km); wet mud
+  with wetness from the tide curve, shingle, walls with a wet band and weed below high water. The foreshore profiles are
+  stated defaults, not surveyed; OSM beach and mud polygons are not in the local data.
+- Spring and neap: example 11 Oct 2026, low water 08:55 at -2.43 m OD, high water 14:43 at +3.99 m OD.
+- Open: a live EA fetch on request (the WebGL page's rule: no fetch before the visitor asks); the wetness uses one tide
+  curve at the model centre.
+
+## Three.js port clock (2026-10-09)
+
+The port (`docklands/`) has its own clock: `main.js setClock(t)` (Menu > Clock, `?t=`, share hash `t=`) calls
+`sky3.js Sky3.setTime` (sun and moon from the same astronomy-engine build, SkyMesh, stars, moon disc, light rig); the tide
+layer, the wind layer and the weather layer follow `ctx.clock` in their frame hooks (one frame late: their data are
+asynchronous). Check: `node docklands/test/clock-check.mjs --base http://127.0.0.1:8251 [--live] [--render]` (server on the
+repository root). It compares the page with references that do not use the page's code: sun and moon by Meeus
+(ch. 25, 47 truncated, 48 for the phase; topocentric parallax in altitude), published facts (timeanddate London sunrise
+21 Jun 2026 04:43 BST at 49 degrees, sunset 21 Dec 2025 15:53 GMT at 231 degrees, full moon 26 Sep 2026 16:49 UTC, new moon
+10 Oct 2026 15:50 UTC, the photo moon above), EA readings (snapshot; `--live`: 4 weeks from the API, cached 6 h in the
+temporary directory) and Open-Meteo (snapshot; `--live`: archive API, ERA5); prints a table, exits 1 beyond the stated
+tolerances. `--render` checks the shadow of a 300 m test pole at Mudchute (plan view, bearing by a 2-degree histogram of
+the darker pixels) and the moon disc in a 4-degree view aimed at the computed moon.
+- Measured (2026-10-09, after the fixes): sun azimuth and altitude within 0.01 degree of Meeus; moon within 0.02 degree,
+  lit fraction within 0.005; photo moon 7.26 degrees up at 57.86, 46%, limb 227.2 (published 7.25, 57.85, 46%, 227);
+  sunrise and sunset altitudes -0.19 and -0.20 degrees at the published minutes; light direction 0.00 degree from the
+  computed sun; night begins at civil dusk to the minute; London time to UTC right on both switch days.
+- Faults found and fixed in `sky3.js`: (1) directions used grid north as true north: the sun light, the SkyMesh sun and
+  the stars were 1.55 degrees out (true north is 1.55 degrees west of grid north at the observer; now from the
+  derivatives of `area.js meta.geo`, as sky.js `setObserver`); (2) night (`sun < -6`) used the apparent altitude, and
+  astronomy-engine's `'normal'` refraction adds about 0.64 degrees even far below the horizon, so night began 4 to 6
+  minutes late (3.8 min on 3 Oct, 6.2 min at midsummer); now `altGeo` (no refraction); (3) in the repeated hour when the
+  clocks go back (25 Oct 2026 01:00 to 01:59) `fromLondon` gave the second (GMT) instant, so 00:00 to 00:59 UTC could not
+  be set; now the first (BST); (4) no moon was drawn: now a disc with phase and bright limb (lit by the sun direction in
+  the disc's frame, additive, real size but at least 0.3 degree radius, earthshine by night, hidden by cloud).
+- Weather (`docklands/layers/weather.js`, new): snapshot 3-4 Oct, the hourly cache within 90 min of its hour (total cloud
+  only), or Open-Meteo on request (Menu box or `?weather=meteo`; forecast API back 85 days, archive before). Sets
+  `Sky3.setWeather`: SkyMesh cloud coverage, sun dimmed by the layers (stated factors: low passes 15%, mid 30%, high 70%),
+  stars, moon and moonlight hidden by cloud, the night background lit by the city under cloud, haze `scene.fogNode`
+  1 - exp(-3.912 d / visibility) at most 0.85, rain or snow streaks round the camera slanted by the wind. Without data:
+  a fair sky, and the menu says so.
+- Open: the wind layer (`layers/wind.js`) has data only for 3-4 Oct, the hour of the cache, or with its own Open-Meteo box;
+  other times show a default 4 m/s from 240 degrees (the check marks these WARN). The weather layer exposes `ctx.weather`
+  (`now`, `evaluate`); one fetch could serve both. Wet ground needs the ground material (`materials.js`). The tide
+  prediction has no surge: over 4 weeks of EA readings (12 Sep to 9 Oct 2026, in the fit's period) the worst day
+  rms is 0.49 m (neap, 20 Sep), the worst high or low water 45 min and 0.49 m out, the worst single reading 0.99 m; the
+  check's tide tolerances (rms 0.5 m, 60 min, 0.6 m) are those of a surge-free fit, not of a forecast. Inside the fit
+  file's last 7 days and on 3-4 Oct the page shows the readings themselves. The EA's Tower Pier readings of 4 Oct
+  00:00-01:30 UTC are F21 (faulty) and the check leaves them out.
+- The check ran clean on 2026-10-09 (263 rows, 0 failures, 16 warnings: the wind default at 10 times, the Open-Meteo
+  snapshot's cloud 37% above ERA5 at 22:30 on 3 Oct: two models). Open-Meteo answered HTTP 429 to the browser once that
+  day (a shared address): the weather layer then says "did not answer" and draws a fair sky.
+
 ## Not done
 
 Cloud heights and small clouds (the mask has neither); live aircraft (licence); tide predictions for future times (no

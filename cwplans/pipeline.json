@@ -104,7 +104,158 @@
     }
   ],
   "activities": [
-    {"id": "find-kml", "tool": "tools/find-kml.mjs", "command": "NODE_USE_ENV_PROXY=1 KML_DOM_DIR=<dir with @xmldom/xmldom and linkedom> node cwplans/tools/find-kml.mjs <copy [id ...]|probe|all>", "kind": "fetch", "network": true, "deterministic": false, "after": ["walk-portals"], "area": "feeds", "method": "Answers the owner's question 'Can you find any kml resources for the area?' (2026-10-05). A hand list of candidates, found by searching the project's own catalogues (London Datastore resources with format kml/kmz, the raw data.gov.uk walk: 4,499 of 59,451 datasets have a KML resource) and the open-data hubs of TfL, Walk Wheel Cycle Trust and Canal & River Trust, is fetched as the 3D page would fetch it (Origin header of the Pages site) and read with the page's own reader docklands/kml.js (a DOMParser from @xmldom/xmldom, description HTML through linkedom). For each: HTTP status, https, the CORS header, the counts of placemarks in the zone and in the model box, unsupported elements. Open layers that cannot be opened by URL (no KML, or a whole-London file) are written as zone-clipped KML with the page's writer into cwplans/feeds/kml/, with the source, licence and attribution in the Document description. Result: feeds/kml/catalogue.json and README.md.", "rules": ["Politeness: one request at a time, at least 1.1 s apart, robots.txt read per host with walk-portals.mjs allowed() and obeyed, the project User-Agent.", "Licence class as walk-portals.mjs licenceClass; only ogl, cc-by, odc-by and public-domain layers are copied or offered as examples; share-alike (except OSM content inside an open layer, marked odbl and osm derived), restricted and no-licence resources are listed with the reason.", "cors yes = HTTP 200 over https and Access-Control-Allow-Origin * or https://danbri.github.io; a ?kml= link is made only for a file the reader parsed with at least one placemark in the zone.", "Zone = the model box plus the Royal Docks and the Thames Barrier, WGS84 -0.095, 51.47, 0.08, 51.53; copies keep features that meet the box (polygons whole, lines cut at the box edge with one vertex beyond), the names and a few fields.", "The copies are pushed to danbri/londat before the probe, which then reads them from raw.githubusercontent.com; the headless page test of every ?kml= link is stored in the catalogue as page_test."], "judgement": "The candidate list, the fields kept in each copy and the colours are chosen by hand in the tool; the reasons for each listed (not usable) resource are in the tool and in feeds/kml/README.md.", "used": [{"source": "kml-catalogue"}, {"source": "kml-tfl-gis-hub"}, {"source": "kml-sustrans-ncn"}, {"source": "kml-crt-locks"}, {"source": "lds-2jx1l"}, {"file": "feeds/portals/dgu/national-trails-england3/national-trails-england3.geojson"}, {"file": "feeds/portals/pdg/listed-building/listed-building.geojson"}, {"file": "feeds/portals/pdg/world-heritage-site/world-heritage-site.geojson"}, {"file": "feeds/portals/pdg/world-heritage-site-buffer-zone/world-heritage-site-buffer-zone.geojson"}, {"file": "feeds/portals/pdg/heritage-at-risk/heritage-at-risk.geojson"}, {"file": "feeds/portals/pdg/park-and-garden/park-and-garden.geojson"}, {"file": "feeds/london-datastore/conservation-areas/conservation-areas.geojson"}, {"file": "docklands/kml.js"}], "generated": [{"file": "feeds/kml/catalogue.json"}, {"file": "feeds/kml/tfl-cycle-routes.kml"}, {"file": "feeds/kml/tfl-river-piers.kml"}, {"file": "feeds/kml/tfl-river-services.kml"}, {"file": "feeds/kml/sustrans-ncn.kml"}, {"file": "feeds/kml/crt-locks.kml"}, {"file": "feeds/kml/ne-thames-path.kml"}, {"file": "feeds/kml/he-listed-buildings.kml"}, {"file": "feeds/kml/he-world-heritage.kml"}, {"file": "feeds/kml/he-heritage-at-risk.kml"}, {"file": "feeds/kml/he-parks-gardens.kml"}, {"file": "feeds/kml/gla-conservation-areas.kml"}, {"file": "feeds/kml/lds-wards-2016-zone.kml"}]},
+    {
+      "id": "fetch-wildlife",
+      "tool": "tools/fetch-wildlife.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-wildlife.mjs [fetch|build]",
+      "kind": "fetch",
+      "network": true,
+      "deterministic": false,
+      "after": [
+        "build-docklands",
+        "build-trees"
+      ],
+      "area": "water",
+      "method": "Fetches the open occurrence records of 21 species (20 urban and river birds, the red fox) in the model box from NBN Atlas and GBIF into data/raw/wildlife/ (fetch), then classifies each record located to 100 m or better by a 10 m habitat raster made from area.js water and the trees.json green areas, and writes counts per species, habitat class and month, flock sizes and blended habitat weights to docklands/data/wildlife.json (build; no network).",
+      "rules": [
+        "Box: the model extent (area.js meta.extent) as a WGS84 polygon through the inverse of meta.geo.",
+        "Licences: NBN Atlas records with record licence CC0, CC-BY or OGL, less the resources with a non-commercial resource licence (dr2992 Birda, dr671 National Mammal Atlas Project); GBIF records with licence CC0 or CC BY from iNaturalist research grade, NABU|naturgucker and TIPU only. eBird, every CC BY-NC record and GiGL are not used.",
+        "Politeness: one request at a time, at least 1 s apart; retried with a doubling pause on 429 or 5xx.",
+        "Habitat raster: water by the docklands/water.js rule (tidal = river; a dock or basin name, or 20,000 m2 and over below 6 m OD = dock; else pond); green kinds: wood (wood, forest, scrub, nature reserve, TOW small woodland and NFI) over park (parks, grass, pitches, recreation grounds, playing fields) over garden (gardens, allotments, churchyards, cemeteries); water over greens.",
+        "A record of a waterbird within 30 m of water counts as that water (records made from the bank); other species: the class at the point.",
+        "Weights: fewer than 10 located records: the ecology prior of the tool; else half the prior and half the record share (scaled to the prior maximum). Season: three-month smoothed monthly counts, scaled to a peak of 1, when 24 or more records are dated."
+      ],
+      "judgement": "The ecology priors (relative weights per habitat), the season priors of the layer and the densities per habitat class (docklands/layers/wildlife.js DENS) are hand-entered from general knowledge of London birds; they are stated in the file and on the page.",
+      "used": [
+        {
+          "source": "nbn-atlas",
+          "endpoint": "https://records-ws.nbnatlas.org/occurrences/search",
+          "request": "q=*:*, wkt = the model box, fq=species:<name>, fq=license:(CC0 OR CC-BY OR OGL), 1,000 a page; fields lat, lon, uncertainty, month, year, resource, licence, count"
+        },
+        {
+          "source": "gbif",
+          "endpoint": "https://api.gbif.org/v1/occurrence/search",
+          "request": "geometry = the model box, taxonKey (species/match), datasetKey = the three allowed, license = CC0_1_0 or CC_BY_4_0, 300 a page"
+        },
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "docklands/data/trees.json"
+        }
+      ],
+      "generated": [
+        {
+          "local": "data/raw/wildlife/"
+        },
+        {
+          "file": "docklands/data/wildlife.json"
+        }
+      ]
+    },
+    {
+      "id": "find-kml",
+      "tool": "tools/find-kml.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 KML_DOM_DIR=<dir with @xmldom/xmldom and linkedom> node cwplans/tools/find-kml.mjs <copy [id ...]|probe|all>",
+      "kind": "fetch",
+      "network": true,
+      "deterministic": false,
+      "after": [
+        "walk-portals"
+      ],
+      "area": "feeds",
+      "method": "Answers the owner's question 'Can you find any kml resources for the area?' (2026-10-05). A hand list of candidates, found by searching the project's own catalogues (London Datastore resources with format kml/kmz, the raw data.gov.uk walk: 4,499 of 59,451 datasets have a KML resource) and the open-data hubs of TfL, Walk Wheel Cycle Trust and Canal & River Trust, is fetched as the 3D page would fetch it (Origin header of the Pages site) and read with the page's own reader docklands/kml.js (a DOMParser from @xmldom/xmldom, description HTML through linkedom). For each: HTTP status, https, the CORS header, the counts of placemarks in the zone and in the model box, unsupported elements. Open layers that cannot be opened by URL (no KML, or a whole-London file) are written as zone-clipped KML with the page's writer into cwplans/feeds/kml/, with the source, licence and attribution in the Document description. Result: feeds/kml/catalogue.json and README.md.",
+      "rules": [
+        "Politeness: one request at a time, at least 1.1 s apart, robots.txt read per host with walk-portals.mjs allowed() and obeyed, the project User-Agent.",
+        "Licence class as walk-portals.mjs licenceClass; only ogl, cc-by, odc-by and public-domain layers are copied or offered as examples; share-alike (except OSM content inside an open layer, marked odbl and osm derived), restricted and no-licence resources are listed with the reason.",
+        "cors yes = HTTP 200 over https and Access-Control-Allow-Origin * or https://danbri.github.io; a ?kml= link is made only for a file the reader parsed with at least one placemark in the zone.",
+        "Zone = the model box plus the Royal Docks and the Thames Barrier, WGS84 -0.095, 51.47, 0.08, 51.53; copies keep features that meet the box (polygons whole, lines cut at the box edge with one vertex beyond), the names and a few fields.",
+        "The copies are pushed to danbri/londat before the probe, which then reads them from raw.githubusercontent.com; the headless page test of every ?kml= link is stored in the catalogue as page_test."
+      ],
+      "judgement": "The candidate list, the fields kept in each copy and the colours are chosen by hand in the tool; the reasons for each listed (not usable) resource are in the tool and in feeds/kml/README.md.",
+      "used": [
+        {
+          "source": "kml-catalogue"
+        },
+        {
+          "source": "kml-tfl-gis-hub"
+        },
+        {
+          "source": "kml-sustrans-ncn"
+        },
+        {
+          "source": "kml-crt-locks"
+        },
+        {
+          "source": "lds-2jx1l"
+        },
+        {
+          "file": "feeds/portals/dgu/national-trails-england3/national-trails-england3.geojson"
+        },
+        {
+          "file": "feeds/portals/pdg/listed-building/listed-building.geojson"
+        },
+        {
+          "file": "feeds/portals/pdg/world-heritage-site/world-heritage-site.geojson"
+        },
+        {
+          "file": "feeds/portals/pdg/world-heritage-site-buffer-zone/world-heritage-site-buffer-zone.geojson"
+        },
+        {
+          "file": "feeds/portals/pdg/heritage-at-risk/heritage-at-risk.geojson"
+        },
+        {
+          "file": "feeds/portals/pdg/park-and-garden/park-and-garden.geojson"
+        },
+        {
+          "file": "feeds/london-datastore/conservation-areas/conservation-areas.geojson"
+        },
+        {
+          "file": "docklands/kml.js"
+        }
+      ],
+      "generated": [
+        {
+          "file": "feeds/kml/catalogue.json"
+        },
+        {
+          "file": "feeds/kml/tfl-cycle-routes.kml"
+        },
+        {
+          "file": "feeds/kml/tfl-river-piers.kml"
+        },
+        {
+          "file": "feeds/kml/tfl-river-services.kml"
+        },
+        {
+          "file": "feeds/kml/sustrans-ncn.kml"
+        },
+        {
+          "file": "feeds/kml/crt-locks.kml"
+        },
+        {
+          "file": "feeds/kml/ne-thames-path.kml"
+        },
+        {
+          "file": "feeds/kml/he-listed-buildings.kml"
+        },
+        {
+          "file": "feeds/kml/he-world-heritage.kml"
+        },
+        {
+          "file": "feeds/kml/he-heritage-at-risk.kml"
+        },
+        {
+          "file": "feeds/kml/he-parks-gardens.kml"
+        },
+        {
+          "file": "feeds/kml/gla-conservation-areas.kml"
+        },
+        {
+          "file": "feeds/kml/lds-wards-2016-zone.kml"
+        }
+      ]
+    },
     {
       "id": "fetch-works",
       "tool": "tools/fetch-works.mjs",
@@ -2328,10 +2479,160 @@
         "extract-structured-data"
       ]
     },
-    {"id": "probe-site-search", "area": "structured", "tool": "tools/probe-site-search.mjs", "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/probe-site-search.mjs [--offline]", "kind": "fetch", "used": [{"file": "../third_party/cwplans-structured-data/all.nq.gz"}, {"file": "../third_party/cwplans-structured-data/pages"}, {"source": "web-crawl"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse (N-Quads), query (SPARQL SELECT of SearchAction templates)"}], "generated": [{"file": "../third_party/cwplans-structured-data/search/probe.json"}], "method": "Reads every SearchAction template in the harvest; per site picks one template with a placeholder; fills it with a nonsense control query, \"Canary Wharf\" and \"E14 5AB\"; fetches each result page once; counts only the same-site links (assets left out) and mentions that a place query adds over the control; classes each site (finds a branch page, finds other place content, no place result, results drawn by script, robots.txt disallows, blocked, no page); marks the branch-like hits not yet in the harvest.", "rules": ["Politeness: robots.txt per host (cached crawl rules, else fetched), the project User-Agent, one request at a time per host, 1.1 s apart.", "Only GET URLs that the site publishes as its own SearchAction; no forms, no login.", "Kept: status, counts, JSON-LD types, result URLs. No page text; the raw result pages stay in data/raw/site-search/ (not committed)."], "judgement": "The branch-like path pattern and the wall pattern are chosen by hand in the tool; a hit list was checked by hand on 2026-10-06 (about a third are blog or news posts).", "network": true, "deterministic": false, "after": ["extract-structured-data"]},
-    {"id": "cwg-hours", "area": "structured", "tool": "tools/cwg-hours.mjs", "command": "node cwplans/tools/cwg-hours.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-directory.json"}, {"source": "cwg-site"}], "generated": [{"file": "registry/sources/brands/cwg-hours.json"}], "method": "Reads the seven-row hours table of each cached CWG directory page (Internet Archive copy saved by fetch-cwg.mjs): 9am, 7.30am, 12noon, Midnight, Closed, Open 24hrs, Coming Soon; groups days with the same hours into OSM opening_hours text.", "rules": ["A closing time at or before the opening time runs past midnight.", "A row that is not a time (\"109am\", \"4m\", \"12pm - 10\") is listed in problems and left out, never guessed.", "All coming soon: no hours."], "network": false, "deterministic": true, "after": ["cwg-directory-typed"]},
-    {"id": "hours-by-place", "area": "structured", "tool": "tools/hours-by-place.mjs", "command": "node cwplans/tools/hours-by-place.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-hours.json"}, {"file": "registry/sources/brands/cwg-directory.json"}, {"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/buildings.json"}, {"file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"}, {"file": "docklands/opening-hours.js"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse (N-Quads), query (SPARQL SELECT of branch, postcode and OpeningHoursSpecification)"}], "generated": [{"file": "registry/sources/web/hours-by-place.json"}], "method": "Puts every hours text on a 336-slot half-hour week with docklands/opening-hours.js (the 3D page's reader) and the canonical schema.org hours with their dayOfWeek, opens and closes; groups places by area (CWG mall, street-level estate, Wood Wharf, postcode sector outside the CWG list) and kind (coarse: food and drink, shop, service; fine for CWG from schema.org types); medians and shares per group; stratified permutation tests (5,000, fixed seed) of the mall effect on hours per week and weekday closing time within a fine kind; agreement (share of open slots in common) for the same occupant across CWG, OSM and web; postcode unit to mall from the whole CWG list (one mall in at least 80% of 3 or more entries) to place web branches by their parsed postcode.", "rules": ["Dated special hours (validFrom) are not the weekly pattern and are left out.", "An occupant in the CWG list is counted once, from its CWG page; its OSM and web hours are used only for the agreement check."], "network": false, "deterministic": true, "after": ["cwg-hours", "web-idioms"]},
-    {"id": "mall-plan-evidence", "area": "structured", "tool": "tools/mall-plan-evidence.mjs", "command": "node cwplans/tools/mall-plan-evidence.mjs", "kind": "derive", "used": [{"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/buildings.json"}, {"source": "osm"}], "generated": [{"file": "registry/sources/brands/mall-plan-evidence.json"}], "method": "For each mall: the anchor is the median position of the registry buildings its CWG entries link to; each CWG entry is matched by normalised name (or brand) to the nearest OSM shop, amenity, office or leisure point within 250 m; the CWG level (signage number) is compared with OSM level:ref, else level; footways with a level and indoor ways within 250 m are kept as polylines in metres from the anchor.", "rules": ["Read level:ref before level (fault F48).", "No unit outlines are made: positions are OSM points."], "judgement": "The name normalisation (dropping the mall name and common words) is chosen by hand; a wrong branch of a chain can be matched when two are within 250 m.", "network": false, "deterministic": true, "after": ["cwg-directory-typed", "registry-osm"]},
+    {
+      "id": "probe-site-search",
+      "area": "structured",
+      "tool": "tools/probe-site-search.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/probe-site-search.mjs [--offline]",
+      "kind": "fetch",
+      "used": [
+        {
+          "file": "../third_party/cwplans-structured-data/all.nq.gz"
+        },
+        {
+          "file": "../third_party/cwplans-structured-data/pages"
+        },
+        {
+          "source": "web-crawl"
+        },
+        {
+          "source": "factoidal",
+          "endpoint": "npm @factoidal/core 0.7.1 (local)",
+          "request": "parse (N-Quads), query (SPARQL SELECT of SearchAction templates)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "../third_party/cwplans-structured-data/search/probe.json"
+        }
+      ],
+      "method": "Reads every SearchAction template in the harvest; per site picks one template with a placeholder; fills it with a nonsense control query, \"Canary Wharf\" and \"E14 5AB\"; fetches each result page once; counts only the same-site links (assets left out) and mentions that a place query adds over the control; classes each site (finds a branch page, finds other place content, no place result, results drawn by script, robots.txt disallows, blocked, no page); marks the branch-like hits not yet in the harvest.",
+      "rules": [
+        "Politeness: robots.txt per host (cached crawl rules, else fetched), the project User-Agent, one request at a time per host, 1.1 s apart.",
+        "Only GET URLs that the site publishes as its own SearchAction; no forms, no login.",
+        "Kept: status, counts, JSON-LD types, result URLs. No page text; the raw result pages stay in data/raw/site-search/ (not committed)."
+      ],
+      "judgement": "The branch-like path pattern and the wall pattern are chosen by hand in the tool; a hit list was checked by hand on 2026-10-06 (about a third are blog or news posts).",
+      "network": true,
+      "deterministic": false,
+      "after": [
+        "extract-structured-data"
+      ]
+    },
+    {
+      "id": "cwg-hours",
+      "area": "structured",
+      "tool": "tools/cwg-hours.mjs",
+      "command": "node cwplans/tools/cwg-hours.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "registry/sources/brands/cwg-directory.json"
+        },
+        {
+          "source": "cwg-site"
+        }
+      ],
+      "generated": [
+        {
+          "file": "registry/sources/brands/cwg-hours.json"
+        }
+      ],
+      "method": "Reads the seven-row hours table of each cached CWG directory page (Internet Archive copy saved by fetch-cwg.mjs): 9am, 7.30am, 12noon, Midnight, Closed, Open 24hrs, Coming Soon; groups days with the same hours into OSM opening_hours text.",
+      "rules": [
+        "A closing time at or before the opening time runs past midnight.",
+        "A row that is not a time (\"109am\", \"4m\", \"12pm - 10\") is listed in problems and left out, never guessed.",
+        "All coming soon: no hours."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "cwg-directory-typed"
+      ]
+    },
+    {
+      "id": "hours-by-place",
+      "area": "structured",
+      "tool": "tools/hours-by-place.mjs",
+      "command": "node cwplans/tools/hours-by-place.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "registry/sources/brands/cwg-hours.json"
+        },
+        {
+          "file": "registry/sources/brands/cwg-directory.json"
+        },
+        {
+          "file": "registry/sources/brands/cwg-directory-typed.json"
+        },
+        {
+          "file": "registry/buildings.json"
+        },
+        {
+          "file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"
+        },
+        {
+          "file": "docklands/opening-hours.js"
+        },
+        {
+          "source": "factoidal",
+          "endpoint": "npm @factoidal/core 0.7.1 (local)",
+          "request": "parse (N-Quads), query (SPARQL SELECT of branch, postcode and OpeningHoursSpecification)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "registry/sources/web/hours-by-place.json"
+        }
+      ],
+      "method": "Puts every hours text on a 336-slot half-hour week with docklands/opening-hours.js (the 3D page's reader) and the canonical schema.org hours with their dayOfWeek, opens and closes; groups places by area (CWG mall, street-level estate, Wood Wharf, postcode sector outside the CWG list) and kind (coarse: food and drink, shop, service; fine for CWG from schema.org types); medians and shares per group; stratified permutation tests (5,000, fixed seed) of the mall effect on hours per week and weekday closing time within a fine kind; agreement (share of open slots in common) for the same occupant across CWG, OSM and web; postcode unit to mall from the whole CWG list (one mall in at least 80% of 3 or more entries) to place web branches by their parsed postcode.",
+      "rules": [
+        "Dated special hours (validFrom) are not the weekly pattern and are left out.",
+        "An occupant in the CWG list is counted once, from its CWG page; its OSM and web hours are used only for the agreement check."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "cwg-hours",
+        "web-idioms"
+      ]
+    },
+    {
+      "id": "mall-plan-evidence",
+      "area": "structured",
+      "tool": "tools/mall-plan-evidence.mjs",
+      "command": "node cwplans/tools/mall-plan-evidence.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "registry/sources/brands/cwg-directory-typed.json"
+        },
+        {
+          "file": "registry/buildings.json"
+        },
+        {
+          "source": "osm"
+        }
+      ],
+      "generated": [
+        {
+          "file": "registry/sources/brands/mall-plan-evidence.json"
+        }
+      ],
+      "method": "For each mall: the anchor is the median position of the registry buildings its CWG entries link to; each CWG entry is matched by normalised name (or brand) to the nearest OSM shop, amenity, office or leisure point within 250 m; the CWG level (signage number) is compared with OSM level:ref, else level; footways with a level and indoor ways within 250 m are kept as polylines in metres from the anchor.",
+      "rules": [
+        "Read level:ref before level (fault F48).",
+        "No unit outlines are made: positions are OSM points."
+      ],
+      "judgement": "The name normalisation (dropping the mall name and common words) is chosen by hand; a wrong branch of a chain can be matched when two are within 250 m.",
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "cwg-directory-typed",
+        "registry-osm"
+      ]
+    },
     {
       "id": "build-registry",
       "tool": "tools/build-registry.mjs",
@@ -3347,6 +3648,104 @@
         "build-docklands"
       ],
       "area": "water"
+    },
+    {
+      "id": "build-piers",
+      "tool": "tools/build-piers.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-piers.mjs [--offline]",
+      "kind": "derive",
+      "network": true,
+      "deterministic": false,
+      "after": [
+        "build-docklands",
+        "build-river",
+        "fetch-river"
+      ],
+      "area": "water",
+      "method": "Piers, pontoons and berthed vessels in the 3D model box for the Three.js port's piers layer. Reads the OSM pier shapes (man_made=pier ways and multipolygons, with inner rings) and ship outlines (building=ship, historic=ship) from the local Greater London extract; a fixed pier keeps its outline, with its deck at the highest land under it; a floating pier is rasterised at 0.5 m and cut by local width into pontoons (oriented rectangles) and gangways or walks (shore end and the height of the land there). Joins the TfL river-bus piers of feeds/river/river-bus.json with the lines TfL lists at each pier (one StopPoint request; offline: the held route sequences), the tour-boat facts read from two operators' pages (City Cruises, Thames River Sightseeing; held in the tool with URL and date), and Wikidata items of feeds/river/wikidata-vessels.json; finds the berth beside each passenger pier's largest pontoon, and for each ship outline its length, beam, heading (bow = the narrower end) and the model buildings it replaces.",
+      "rules": [
+        "Floating: floating=yes, or a name with Pier or Pontoon and no floating=no; a name with Jetty or ending in Wharf (and no Pier) is fixed.",
+        "Cut: a part is wide when it is within T of a cell at least T from the outside (an opening); T = 0.62 x the largest half-width, at least 2.2 m and at most 4.5 m, raised 0.4 m at a time (to 0.9 x) while a wide part fills under 60 % of its rectangle; wide parts of 40 m2 or more are pontoons; a narrow part at least 5.5 m wide and 15 m long is a pontoon unless it touches a pontoon and is 3.5 times as long as wide (then an access bridge, drawn as a gangway up to 6 m wide).",
+        "TfL pier join: the named floating OSM pier with the largest pontoon within 80 m of the TfL position; no shape (Doubletree Docklands / Nelson Dock Pier): a 30 x 7 m pontoon 18 m from the bank with a gangway (stated default).",
+        "Berth: the long side of the largest pontoon nearer the Thames centreline (docklands/data/river.json); bow upstream = towards the lower centreline index.",
+        "Heights: land = the terrain of area.js where the point is not in a water polygon; default 5.3 m OD on the Thames (river wall) and 1 m above a dock.",
+        "Ships: only outlines in water polygons (Cutty Sark, in dry dock, stays a building); hidden model buildings = those whose outline centre is inside the ship's rectangle plus 1 m.",
+        "Rounding: 0.1 m, angles 0.001 rad. The OSM read is cached in the system temp folder by extract size and time; the output is the same from run to run when the inputs and the TfL lines are the same."
+      ],
+      "judgement": "The tour-boat facts (piers, frequencies, first and last departures by season) and the stated defaults (Thames River Sightseeing frequency, the synthetic pontoon, the heights) are hand-entered in the tool, with the page and date in docklands/data/piers.json meta.tours.",
+      "used": [
+        {
+          "local": "data/raw/docklands/greater_london-latest.osm.pbf"
+        },
+        {
+          "source": "tfl-unified-api",
+          "endpoint": "https://api.tfl.gov.uk/StopPoint/Mode/river-bus",
+          "request": "one GET: the lines at each river-bus pier (skipped with --offline)"
+        },
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "docklands/data/river.json"
+        },
+        {
+          "file": "feeds/river/river-bus.json"
+        },
+        {
+          "file": "feeds/river/wikidata-vessels.json"
+        },
+        {
+          "source": "tour-operator-pages"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/piers.json"
+        }
+      ]
+    },
+    {
+      "id": "fit-tide-harmonics",
+      "tool": "tools/fit-tide-harmonics.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--no-fetch]",
+      "kind": "derive",
+      "network": true,
+      "deterministic": false,
+      "after": [],
+      "area": "sky",
+      "faults": [
+        "F21"
+      ],
+      "used": [
+        {
+          "source": "ea-flood-monitoring",
+          "endpoint": "https://environment.data.gov.uk/flood-monitoring/id/measures/{station}-level-tidal_level-i-15_min-mAOD/readings",
+          "request": "stations 0007 Tower Pier, 0003 Charlton, 0001 Silvertown; startdate=today-45 days, enddate=today, _sorted, _limit=10000 (the API keeps about four weeks); plus /id/stations/{station} for the position"
+        },
+        {
+          "source": "ea-flood-monitoring",
+          "endpoint": "https://environment.data.gov.uk/flood-monitoring/archive/readings-{YYYY-MM-DD}.csv",
+          "request": "one daily archive file (all stations, about 60 MB) every 7 days from 10 to 371 days back, streamed; only the lines of the three tidal-level measures are kept"
+        },
+        {
+          "local": "data/raw/river/tide/api-{date}.json, data/raw/river/tide/archive-{date}.csv (the cached readings; their SHA-256 is written into the output)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/sky/tide-harmonics.json"
+        }
+      ],
+      "method": "Fits a mean and tidal harmonic constituents by least squares to the Environment Agency 15-minute tidal levels of the three gauges round the 3D model, so that the 3D pages can show the tide at any time (the EA publishes readings, not predictions; PLA and UKHO predictions are not open). Two stages: a fetch stage (network, cached) and a fit stage that reads only the cached files.",
+      "rules": [
+        "Readings: the API readings (about four weeks) and one archive day in seven back to a year (no archive file for some days: skipped); one request at a time; three retries 3, 6 and 9 s apart on timeouts and 5xx; User-Agent glitchcan-cwplans/0.1; cached files are not fetched again.",
+        "Cleaning: a reading is dropped when its difference from the nearest other gauge departs more than 0.45 m from the median of that difference over 2 h either side (docklands/sky.js cleanGauges, fault F21); after a first fit, readings with a residual over 1.2 m are dropped (gauge faults and the largest surges).",
+        "Constituents, in priority order M2, S2, N2, K1, O1, M4, MS4, MN4, M6, K2, P1, L2, NU2, MU2, 2N2, Q1, MK4, S4, 2MS6, 2MN6, M3, MK3, MO3, J1, OO1, M8, 3MS8, 2SM6, T2, MSf, Mf, Mm, Ssa, Sa; one is kept only when its speed differs from every kept one by at least 360 degrees over the span of the readings (Rayleigh criterion 1).",
+        "Arguments: mean longitudes of the Moon, Sun, lunar perigee, node and solar perigee (Meeus), tau = 15 deg/h x UT + h - s; nodal factors f and u by the formulas of Pugh (1987, table 4.3); compound tides from their parts; L2 takes the M2 factors (a simplification). Phases are lags on these arguments, not Admiralty phases. The code is docklands/tide.js, which the 3D page uses too.",
+        "Validation: a fit without 3 and 4 October 2026 (UTC) and the last 48 h of readings is compared with them (rms, maximum, high and low water height and time); the constituents written use all readings. Units m AOD, phases in degrees, amplitudes to 0.1 mm.",
+        "Output also holds the cleaned readings of the last 7 days (15-minute slots, null where none), so the page shows a measured level where it has one, and check values (predictions every 6 h on 10 October 2026) that the page compares with its own prediction."
+      ],
+      "judgement": "The choice of constituents, the cleaning thresholds and the one-day-in-seven archive sampling are stated defaults (this activity's rules); the foreshore profiles drawn from the prediction are defaults in docklands/layers/tide.js."
     },
     {
       "id": "fetch-sky",
@@ -5823,6 +6222,70 @@
       "judgement": "The 35 m cut-off for \"lone trees\" that are cranes or structures is applied on the page, not in the file; the source precedence order is a judgement."
     },
     {
+      "id": "fetch-tree-leaf-tags",
+      "tool": "tools/build-tree-species.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-tree-species.mjs fetch [--from saved-overpass-answer.json]",
+      "kind": "fetch",
+      "used": [
+        {
+          "source": "osm",
+          "endpoint": "https://overpass-api.de/api/interpreter, then https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+          "request": "[out:json];node[\"natural\"=\"tree\"](model box, WGS84);out tags; (one request; up to 3 rounds over the two servers, 2 s apart)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "data/raw/trees/osm-tree-leaf.json.gz"
+        }
+      ],
+      "method": "Reads the leaf_type and leaf_cycle tags of the OSM natural=tree nodes in the model box (the Greater London PBF extract of build-trees is not committed and build-trees drops these tags). Keeps node id, leaf_type and leaf_cycle only.",
+      "rules": [
+        "Only nodes with leaf_type or leaf_cycle are kept: 11,993 of 34,445 (OSM data of 2026-10-09T02:53:01Z).",
+        "2026-10-09: overpass-api.de reset the connection and the mail.ru mirror answered 504 to the tool; the file was written with --from from an answer to the same query fetched from the mail.ru mirror an hour before.",
+        "User-Agent glitchcan-cwplans/0.1 (https://github.com/danbri/londat)."
+      ],
+      "network": true,
+      "deterministic": false,
+      "after": [],
+      "area": "trees"
+    },
+    {
+      "id": "build-tree-species",
+      "tool": "tools/build-tree-species.mjs",
+      "command": "node cwplans/tools/build-tree-species.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "docklands/data/trees.json"
+        },
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "data/raw/trees/osm-tree-leaf.json.gz"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/tree-species.json"
+        }
+      ],
+      "method": "Gives each tree of trees.json a species profile of the 3D page (docklands/tree-species.js in danbri/londat: crown shape, leaf and autumn colours, bark, leaf-out, autumn and leaf-fall days, blossom) and the basis of that profile. A pure function of the three inputs (their SHA-256 are written into the output) and the parameters (waterM 15, waterCell 5).",
+      "rules": [
+        "Taxon first: the scientific and common name of the tree (trees.json species) through the ordered rules of tree-species.js profileOf(); basis S for a species or cultivar, G for a genus, family or vague name.",
+        "Names that say nothing about the tree (New tree pit, Misc group, Mixed species, Unplantable, Mistaken, Vacant, unknown, ?) count as no taxon.",
+        "No taxon: the setting is waterside if a 5 m cell inside an area.js water polygon lies within 15 m; else wood if inside a trees.json green of kind natural=wood, scrub, landuse=forest or a TOW group or woodland; else park if inside any other green, or if the tree is a TOW lone-tree crown (gardens and courtyards); else street. The profile is drawn from the setting mix (tree-species.js MIXES) with a hash of the record id (stable). Basis R, W, P, T: INFERRED.",
+        "OSM leaf tags on a tree with no taxon: needleleaved gives conifer (deciduous: conifer-deciduous), palm gives palm, evergreen or semi_evergreen gives evergreen broadleaf, else the setting mix; basis L."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "build-trees",
+        "fetch-tree-leaf-tags"
+      ],
+      "area": "trees"
+    },
+    {
       "id": "drone-flight",
       "tool": "tools/drone-flight.mjs",
       "command": "node cwplans/tools/drone-flight.mjs [--out path.json] [--svg plan.svg] [--coverage 480]",
@@ -6468,18 +6931,451 @@
       "note": "Child process: git ls-files. Run last, after every rebuild.",
       "area": "provenance"
     },
-    {"id": "check-factoidal", "area": "structured", "tool": "tools/check-factoidal.mjs", "command": "node cwplans/tools/check-factoidal.mjs", "kind": "check", "used": [{"source": "factoidal", "endpoint": "npm @factoidal/core (local)", "request": "parse, query (SELECT, CONSTRUCT), serialize, toNQuads on tiny in-memory cases"}], "generated": [], "method": "Re-tests the known @factoidal/core faults and behaviours on tiny in-memory datasets and prints STILL or FIXED for each: BNODE() labels with a colon, serialize() dropping their quads, parse() of toNQuads() dropping lines, SELECT BNODE() values with a _: prefix, blank nodes renamed per query, no default-graph view of named graphs. Also the store points of Factoidal issue 697: one block per (predicate, graph), zone keys sorted by length first, a COUNT over a subquery planning every block (small stores packed in a temporary folder and removed), the unexported README import path, and an IRI with several \"#\" accepted.", "rules": ["Run after every Factoidal upgrade; remove a workaround in web-idioms.mjs or elsewhere only when its line says FIXED.", "No network; the store checks pack small stores in a temporary folder and remove it; nothing in the repository is written."], "network": false, "deterministic": true, "after": []},
-    {"id": "probe-cwg-map", "area": "brands", "tool": "tools/probe-cwg-map.mjs", "command": "node cwplans/tools/probe-cwg-map.mjs", "kind": "fetch", "used": [{"source": "livingmap-cwg"}], "generated": [], "method": "Loads https://map.canarywharf.com/ twice (floor 0, floor -1) in headless Chromium and logs every request (method, type, URL, request headers, POST body, status, response headers) and saves JSON and vector-tile bodies to data/raw/cwg-map/ (not committed).", "rules": ["robots.txt of map.canarywharf.com allows all (checked 2026-10-06).", "One run is two page loads; no harvest loop.", "Nothing from the service is committed until the owner decides (source livingmap-cwg)."], "network": true, "deterministic": false, "after": []},
-    {"id": "archive-cwg-mallmap", "area": "brands", "tool": "tools/archive-cwg-mallmap.mjs", "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/archive-cwg-mallmap.mjs [--only=tiles|api|media|app]", "kind": "fetch", "used": [{"source": "livingmap-cwg"}, {"source": "osm"}], "generated": [], "method": "Fetches, as served, the app shell of map.canarywharf.com, the map config, the GET API answers (feature-objects, feature-names, geofences, styles, each config search tag, /features?long_name= for every feature name), the sprite and language file, every indoor vector tile at zoom 0-19 and basemap tile at zoom 0-16 whose square meets the config extents, and every popup image named by tiles or features; writes the bytes unchanged under danbri/londat third_party/cwg/mallmap/ and a manifest.json (URL, file, status, type, size, SHA-256, time).", "rules": ["Owner, 2026-10-06: archive everything as is, for reference and accessibility design study; scoping phase.", "robots.txt of map.canarywharf.com allows all; one request at a time per host, 1.1 s apart (API hosts) or 0.5 s (the tile CDN); no key, no login; the page's Origin and Referer are sent.", "Not fetched: Gotham font glyphs (commercial typeface), session and event POSTs (usage logging), third-party scripts.", "Restartable: a URL in the manifest with a file, a 204 or a 404 is not fetched again."], "network": true, "deterministic": false, "after": ["probe-cwg-map"]},
-    {"id": "cwg-maps-tmi", "area": "brands", "tool": "tools/cwg-maps-tmi.mjs", "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/cwg-maps-tmi.mjs [--only=store|access|trail|art]", "kind": "derive", "used": [{"source": "cwg-maps"}, {"file": "registry/sources/brands/cwg-directory.json"}], "generated": [], "method": "Renders the store guide pages with pdf.js and OCRs them in tiles with tesseract.js (the text is vector outlines); reads the text layers of the access map, art trail and art guide; fits the map grids; writes normalised entries (section, name, grid squares, level, OCR text and confidence, bbox) and the raw OCR words to danbri/londat third_party/cwg/_TMI.", "rules": ["Never invent a name: a fuzzy match to a CWG directory title is recorded as name_matched beside the raw OCR text.", "Errors printed in the guide are kept as printed.", "Measured on a 100-entry sample by eye: 99 raw lines exact, all grid squares right; cross-checked with native Tesseract 5.3.4 once."], "network": true, "deterministic": false, "after": []},
-    {"id": "cwg-mallmap-tmi", "area": "brands", "tool": "tools/cwg-mallmap-tmi.mjs", "command": "node cwplans/tools/cwg-mallmap-tmi.mjs", "kind": "derive", "used": [{"source": "livingmap-cwg"}], "generated": [], "method": "Decodes every archived indoor tile (zoom 12 and above); for each feature takes the geometry from the most precise zoom at which it lies whole in one tile, else its pieces at the lowest zoom as a Multi* geometry; writes one GeoJSON FeatureCollection per floor and one for outdoor features, the API feature records (one per id) and the place list to danbri/londat third_party/cwg/_TMI/mallmap.", "rules": ["Properties are kept as served; zoom_used and whole are added.", "Coordinates are rounded to 7 decimal places (about 1 cm)."], "network": false, "deterministic": true, "after": ["archive-cwg-mallmap"]},
-    {"id": "build-kgx", "area": "structured", "tool": "tools/build-kgx.mjs", "command": "node cwplans/tools/build-kgx.mjs [--no-store]", "kind": "derive", "used": [{"file": "docklands/facts.json"}, {"file": "registry/buildings.json"}, {"file": "atlas/data/atlas.json"}, {"file": "registry/sources/brands/cwg-directory-typed.nq"}, {"file": "registry/sources/brands/cwg-directory-typed.json"}, {"file": "registry/sources/brands/cwg-hours.json"}, {"file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"}, {"file": "../third_party/cwplans-structured-data/coref/sameas.nq.gz"}, {"file": "../third_party/cwplans-structured-data/coref/descriptions.json"}, {"file": "pipeline.jsonld"}, {"note": "graph versions named in kgx/external-heads.json (coverage-imagery from probe-imagery-coverage)", "source": "kgx"}, {"source": "livingmap-cwg"}, {"source": "cwg-maps"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "parse, serialize (N-Quads), jsonldToRdf, fn.hash (RDFC-1.0, for graphs with blank nodes), factoidal pack --layout ibk5 and activate (Shardborough)"}], "generated": [], "method": "Every step is a logged operation (tools/kgx-ops.mjs, skill cwplans-dataflow) over inputs fixed by content hash. Lift operations turn the source files into one graph version each (facts, buildings with WKT outlines, occupants, cwg with daily opening-hours specifications, web, coref per key rule, mallmap units and facilities, storeguide entries, pipeline provenance from pipeline.jsonld with blank nodes skolemized); partition-by-subject-key cuts each version into parts of about 3,000 triples in Shardborough zone-key order; describe-graph-versions makes meta (void:Dataset per version and part, heads); lift-activity-log makes log; pack-shardborough packs the parts, meta and log (ibk5) and activates the generation. Writes graphs/<name>/<hash16>.nq.gz, log/activities.jsonl and versions.jsonl, heads.json, current.nq.gz, manifest.json and shardborough/ into danbri/londat kgx/. An activity already in the log is not run again; a second run gives the same generation.", "rules": ["No blank nodes: every node has an ID under https://kgx.foaf.tv/id/ (lowercase alphanumeric local name, tools/kgx-ids.mjs; the pipeline graph is skolemized). Every IRI term goes through mapLegacy(), so names of the old namespaces in inputs (and external heads named before 2026-10-07, through operation map-legacy-ids) become IDs; vocabularies (cwk:, cwp:) unchanged.", "serialize() output is checked to have one line per distinct quad; lines read back must hash to their version.", "Graph versions are immutable and named by their RDFC-1.0 hash; an activity is named by (operation, operation version, input IRIs, parameters) and is not run again.", "Bump an operation's version when its code changes.", "The log graph leaves out log lifts and store packs, so an unchanged pipeline gives the same store generation.", "Only the current Shardborough generation is kept in the folder; git keeps history."], "network": false, "deterministic": false, "after": ["cwg-hours", "web-idioms", "web-coref", "cwg-maps-tmi", "cwg-mallmap-tmi", "probe-imagery-coverage", "contrib-photos", "key-model-buildings", "compose-facade-atlas"]},
-    {"id": "kgx-query", "area": "structured", "tool": "tools/kgx-query.mjs", "command": "node cwplans/tools/kgx-query.mjs <file.rq | SPARQL> [store dir]", "kind": "check", "used": [{"source": "kgx"}, {"source": "factoidal", "endpoint": "npm @factoidal/core 0.7.1 (local)", "request": "openStore, openStoreHandle ({ sparql }), handle query"}], "generated": [], "method": "Opens a store handle on the kgx Shardborough store with the artifacts the query's plan names (no 64-block cap) and prints the answer as tab-separated rows.", "rules": ["Opens only the artifacts the query's plan names.", "Read-only: writes nothing."], "network": false, "deterministic": true, "after": ["build-kgx"]},
-    {"id": "check-kgx-store", "area": "structured", "tool": "tools/check-kgx-store.mjs", "command": "node cwplans/tools/check-kgx-store.mjs [--write]", "kind": "check", "used": [{"source": "kgx"}, {"source": "factoidal", "endpoint": "npm @factoidal/core (local)", "request": "parse, query (in memory); openStore, openStoreHandle"}], "generated": [{"source": "kgx", "note": "--write: londat kgx/checks/store-vs-memory.json"}], "method": "Rebuilds the store's input from the part versions, meta and log (its SHA-256 prefix must equal the generation name), runs every kgx/queries/*.rq and cross-subject joins through a store handle and through the in-memory engine, and compares the solution multisets; the joins also on the data with one graph per source.", "rules": ["Exit 1 on any difference between the store and the in-memory engine.", "Refuses a store that was not packed from the current versions."], "network": false, "deterministic": true, "after": ["build-kgx"]},
-    {"id": "probe-imagery-coverage", "area": "structured", "tool": "tools/probe-imagery-coverage.mjs", "command": "node cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]", "kind": "fetch", "used": [{"source": "openaerialmap"}, {"source": "panoramax"}, {"source": "kartaview"}, {"source": "ea-survey-catalogue"}, {"source": "mapillary"}], "generated": [{"file": "coverage/raw/*/openaerialmap-*.json"}, {"file": "coverage/raw/*/ea-survey-*.json"}, {"file": "coverage/raw/*/mapillary.json"}, {"local": "data/raw/coverage/<date>/panoramax-*.json, kartaview-*.json (CC BY-SA: not committed)"}, {"source": "kgx"}], "method": "For each study area box (Canary Wharf, Isle of Dogs south, Limehouse, Rotherhithe / SE16, the zone): OpenAerialMap /meta by box; Panoramax /api/search by box, split in quarters while an answer is full (500); KartaView /2.0/photo at the points of a 200 m grid with a 145 m radius (areas only), halving the radius on a timeout; EA survey catalogue search by polygon. Answers are cut to the fields used. Then the operation lift-imagery-coverage (kgx-ops Flow) turns the answer files into the kgx graph version coverage-imagery and names it in kgx/external-heads.json.", "rules": ["Share-alike sources (Panoramax, KartaView, Mapillary) give counts only; their raw answers stay local.", "Uploader and photographer names are not kept.", "About one request a second; KartaView at most 150 items a page."], "network": true, "deterministic": false, "after": []},
-    {"id": "contrib-photos", "area": "structured", "tool": "tools/contrib-photos.mjs", "command": "FACADE_PY=<venv python> node cwplans/tools/contrib-photos.mjs <set>", "kind": "derive", "used": [{"source": "contrib-photos"}, {"source": "osm", "note": "names and tags of the identified buildings, quoted in photos.json"}, {"file": "registry/sources/facades/tools/facade.py"}, {"file": "registry/sources/facades/tools/measure.py"}, {"file": "tools/facade-tile.py"}], "generated": [{"source": "kgx", "note": "graphs facade-patches-<set> and photos-<set>; rectified patches in londat data/images/contrib/<set>/rect/"}], "method": "Operation rectify-facade-patches: for each facade region in photos.json, facade.py rectifies it (LSD segments, RANSAC vanishing points, homography) and measure.py cuts the measuring box and gives bay and floor periods (autocorrelation) and three colours (k-means in Lab); the patch is written to rect/<id>.jpg. Operation lift-contrib-photos: photos.json (identifications with evidence and confidence, judged facade notes, model heights) and the patch graph give a schema.org Photograph per photo and a node per building. Both graphs are named in kgx/external-heads.json. Operation cut-facade-tiles: the photos.json tiles (a cut of a rectified patch, a mirrored half for a symmetric face, or a vector pattern in metres with judged colours) -> 256 px PNG tiles (and SVG for a pattern) in tiles/ and the graph facade-tiles-<set>.", "rules": ["Inputs by SHA-256: the photos, photos.json, facade.py and measure.py.", "Identifications and facade patterns are judgement, written in photos.json with their evidence; the tool only lifts them.", "Measured colours are as photographed (shade, backlight)."], "network": false, "deterministic": true, "after": []},
-    {"id": "key-model-buildings", "area": "structured", "tool": "tools/key-model-buildings.mjs", "command": "node --max-old-space-size=6000 cwplans/tools/key-model-buildings.mjs", "kind": "derive", "used": [{"file": "docklands/data/area.js"}, {"local": "data/raw/docklands/osm-clip.json.gz"}, {"local": "data/raw/docklands/greater_london-latest.osm.pbf"}, {"file": "atlas/data/atlas.json"}, {"source": "osm"}], "generated": [{"file": "docklands/data/building-keys.json"}, {"source": "kgx", "note": "graph model-building-keys (a head, not in the browser store)"}], "method": "Operation key-model-buildings: every OSM building and building:part outline of the clip is put through the build's own steps (build-docklands.mjs polysOf, toRings with the focus-box tolerance, poly) and its encoded outline compared with the model's; the build's order (outlines without parts, then parts) aligns the model list with the OSM elements, so equal outlines (a multipolygon's outer that is also a building way) get the right element. Tags come from the full extract (osmium getid; the clip keeps no addresses). The graph holds, per OSM element, its OSM page, model indices, parent building of a part, registry link from the atlas, and the OSM name, house name, address, postcode, building type other than yes, levels and Wikidata item. building-keys.json is its projection for the page, with the SHA-256 of area.js and a fingerprint the page checks.", "rules": ["Fails when a model building has no OSM outline in the clip (the clip is not the one area.js was built from).", "Rerun after build-docklands.mjs: the indices are for one area.js."], "network": false, "deterministic": true, "after": ["build-docklands", "build-atlas"]},
-    {"id": "compose-facade-atlas", "area": "structured", "tool": "tools/compose-facade-atlas.mjs", "command": "FACADE_PY=<python with Pillow> node cwplans/tools/compose-facade-atlas.mjs", "kind": "derive", "used": [{"file": "docklands/data/tex/facades-registry.jpg"}, {"file": "docklands/data/tex/facades-registry.json"}, {"file": "docklands/data/area.js"}, {"file": "tools/facade-tile.py"}, {"source": "kgx", "note": "graphs facade-tiles-<set> and model-building-keys"}, {"source": "contrib-photos"}], "generated": [{"file": "docklands/data/tex/facades.jpg"}, {"file": "docklands/data/tex/facades.json"}, {"source": "kgx", "note": "graph facade-atlas"}], "method": "Operation compose-facade-atlas: the registry atlas (slots 0 to 15) and every contributed tile in the next slots (32 in all); each contributed tile's buildings are keyed by OSM id with the model indices of this area.js (from model-building-keys, parts included) and a WGS84 point inside the building for a rebuilt model.", "rules": ["Fails past 32 slots (the atlas and the shader hold 32).", "Rerun after build-facade-atlas.py, contrib-photos.mjs or key-model-buildings.mjs."], "network": false, "deterministic": true, "after": ["build-facade-atlas", "contrib-photos", "key-model-buildings"]},
+    {
+      "id": "check-factoidal",
+      "area": "structured",
+      "tool": "tools/check-factoidal.mjs",
+      "command": "node cwplans/tools/check-factoidal.mjs",
+      "kind": "check",
+      "used": [
+        {
+          "source": "factoidal",
+          "endpoint": "npm @factoidal/core (local)",
+          "request": "parse, query (SELECT, CONSTRUCT), serialize, toNQuads on tiny in-memory cases"
+        }
+      ],
+      "generated": [],
+      "method": "Re-tests the known @factoidal/core faults and behaviours on tiny in-memory datasets and prints STILL or FIXED for each: BNODE() labels with a colon, serialize() dropping their quads, parse() of toNQuads() dropping lines, SELECT BNODE() values with a _: prefix, blank nodes renamed per query, no default-graph view of named graphs. Also the store points of Factoidal issue 697: one block per (predicate, graph), zone keys sorted by length first, a COUNT over a subquery planning every block (small stores packed in a temporary folder and removed), the unexported README import path, and an IRI with several \"#\" accepted.",
+      "rules": [
+        "Run after every Factoidal upgrade; remove a workaround in web-idioms.mjs or elsewhere only when its line says FIXED.",
+        "No network; the store checks pack small stores in a temporary folder and remove it; nothing in the repository is written."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": []
+    },
+    {
+      "id": "probe-cwg-map",
+      "area": "brands",
+      "tool": "tools/probe-cwg-map.mjs",
+      "command": "node cwplans/tools/probe-cwg-map.mjs",
+      "kind": "fetch",
+      "used": [
+        {
+          "source": "livingmap-cwg"
+        }
+      ],
+      "generated": [],
+      "method": "Loads https://map.canarywharf.com/ twice (floor 0, floor -1) in headless Chromium and logs every request (method, type, URL, request headers, POST body, status, response headers) and saves JSON and vector-tile bodies to data/raw/cwg-map/ (not committed).",
+      "rules": [
+        "robots.txt of map.canarywharf.com allows all (checked 2026-10-06).",
+        "One run is two page loads; no harvest loop.",
+        "Nothing from the service is committed until the owner decides (source livingmap-cwg)."
+      ],
+      "network": true,
+      "deterministic": false,
+      "after": []
+    },
+    {
+      "id": "archive-cwg-mallmap",
+      "area": "brands",
+      "tool": "tools/archive-cwg-mallmap.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/archive-cwg-mallmap.mjs [--only=tiles|api|media|app]",
+      "kind": "fetch",
+      "used": [
+        {
+          "source": "livingmap-cwg"
+        },
+        {
+          "source": "osm"
+        }
+      ],
+      "generated": [],
+      "method": "Fetches, as served, the app shell of map.canarywharf.com, the map config, the GET API answers (feature-objects, feature-names, geofences, styles, each config search tag, /features?long_name= for every feature name), the sprite and language file, every indoor vector tile at zoom 0-19 and basemap tile at zoom 0-16 whose square meets the config extents, and every popup image named by tiles or features; writes the bytes unchanged under danbri/londat third_party/cwg/mallmap/ and a manifest.json (URL, file, status, type, size, SHA-256, time).",
+      "rules": [
+        "Owner, 2026-10-06: archive everything as is, for reference and accessibility design study; scoping phase.",
+        "robots.txt of map.canarywharf.com allows all; one request at a time per host, 1.1 s apart (API hosts) or 0.5 s (the tile CDN); no key, no login; the page's Origin and Referer are sent.",
+        "Not fetched: Gotham font glyphs (commercial typeface), session and event POSTs (usage logging), third-party scripts.",
+        "Restartable: a URL in the manifest with a file, a 204 or a 404 is not fetched again."
+      ],
+      "network": true,
+      "deterministic": false,
+      "after": [
+        "probe-cwg-map"
+      ]
+    },
+    {
+      "id": "cwg-maps-tmi",
+      "area": "brands",
+      "tool": "tools/cwg-maps-tmi.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/cwg-maps-tmi.mjs [--only=store|access|trail|art]",
+      "kind": "derive",
+      "used": [
+        {
+          "source": "cwg-maps"
+        },
+        {
+          "file": "registry/sources/brands/cwg-directory.json"
+        }
+      ],
+      "generated": [],
+      "method": "Renders the store guide pages with pdf.js and OCRs them in tiles with tesseract.js (the text is vector outlines); reads the text layers of the access map, art trail and art guide; fits the map grids; writes normalised entries (section, name, grid squares, level, OCR text and confidence, bbox) and the raw OCR words to danbri/londat third_party/cwg/_TMI.",
+      "rules": [
+        "Never invent a name: a fuzzy match to a CWG directory title is recorded as name_matched beside the raw OCR text.",
+        "Errors printed in the guide are kept as printed.",
+        "Measured on a 100-entry sample by eye: 99 raw lines exact, all grid squares right; cross-checked with native Tesseract 5.3.4 once."
+      ],
+      "network": true,
+      "deterministic": false,
+      "after": []
+    },
+    {
+      "id": "cwg-mallmap-tmi",
+      "area": "brands",
+      "tool": "tools/cwg-mallmap-tmi.mjs",
+      "command": "node cwplans/tools/cwg-mallmap-tmi.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "source": "livingmap-cwg"
+        }
+      ],
+      "generated": [],
+      "method": "Decodes every archived indoor tile (zoom 12 and above); for each feature takes the geometry from the most precise zoom at which it lies whole in one tile, else its pieces at the lowest zoom as a Multi* geometry; writes one GeoJSON FeatureCollection per floor and one for outdoor features, the API feature records (one per id) and the place list to danbri/londat third_party/cwg/_TMI/mallmap.",
+      "rules": [
+        "Properties are kept as served; zoom_used and whole are added.",
+        "Coordinates are rounded to 7 decimal places (about 1 cm)."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "archive-cwg-mallmap"
+      ]
+    },
+    {
+      "id": "build-kgx",
+      "area": "structured",
+      "tool": "tools/build-kgx.mjs",
+      "command": "node cwplans/tools/build-kgx.mjs [--no-store]",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "docklands/facts.json"
+        },
+        {
+          "file": "registry/buildings.json"
+        },
+        {
+          "file": "atlas/data/atlas.json"
+        },
+        {
+          "file": "registry/sources/brands/cwg-directory-typed.nq"
+        },
+        {
+          "file": "registry/sources/brands/cwg-directory-typed.json"
+        },
+        {
+          "file": "registry/sources/brands/cwg-hours.json"
+        },
+        {
+          "file": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz"
+        },
+        {
+          "file": "../third_party/cwplans-structured-data/coref/sameas.nq.gz"
+        },
+        {
+          "file": "../third_party/cwplans-structured-data/coref/descriptions.json"
+        },
+        {
+          "file": "pipeline.jsonld"
+        },
+        {
+          "note": "graph versions named in kgx/external-heads.json (coverage-imagery from probe-imagery-coverage)",
+          "source": "kgx"
+        },
+        {
+          "source": "livingmap-cwg"
+        },
+        {
+          "source": "cwg-maps"
+        },
+        {
+          "source": "factoidal",
+          "endpoint": "npm @factoidal/core 0.7.1 (local)",
+          "request": "parse, serialize (N-Quads), jsonldToRdf, fn.hash (RDFC-1.0, for graphs with blank nodes), factoidal pack --layout ibk5 and activate (Shardborough)"
+        }
+      ],
+      "generated": [],
+      "method": "Every step is a logged operation (tools/kgx-ops.mjs, skill cwplans-dataflow) over inputs fixed by content hash. Lift operations turn the source files into one graph version each (facts, buildings with WKT outlines, occupants, cwg with daily opening-hours specifications, web, coref per key rule, mallmap units and facilities, storeguide entries, pipeline provenance from pipeline.jsonld with blank nodes skolemized); partition-by-subject-key cuts each version into parts of about 3,000 triples in Shardborough zone-key order; describe-graph-versions makes meta (void:Dataset per version and part, heads); lift-activity-log makes log; pack-shardborough packs the parts, meta and log (ibk5) and activates the generation. Writes graphs/<name>/<hash16>.nq.gz, log/activities.jsonl and versions.jsonl, heads.json, current.nq.gz, manifest.json and shardborough/ into danbri/londat kgx/. An activity already in the log is not run again; a second run gives the same generation.",
+      "rules": [
+        "No blank nodes: every node has an ID under https://kgx.foaf.tv/id/ (lowercase alphanumeric local name, tools/kgx-ids.mjs; the pipeline graph is skolemized). Every IRI term goes through mapLegacy(), so names of the old namespaces in inputs (and external heads named before 2026-10-07, through operation map-legacy-ids) become IDs; vocabularies (cwk:, cwp:) unchanged.",
+        "serialize() output is checked to have one line per distinct quad; lines read back must hash to their version.",
+        "Graph versions are immutable and named by their RDFC-1.0 hash; an activity is named by (operation, operation version, input IRIs, parameters) and is not run again.",
+        "Bump an operation's version when its code changes.",
+        "The log graph leaves out log lifts and store packs, so an unchanged pipeline gives the same store generation.",
+        "Only the current Shardborough generation is kept in the folder; git keeps history."
+      ],
+      "network": false,
+      "deterministic": false,
+      "after": [
+        "cwg-hours",
+        "web-idioms",
+        "web-coref",
+        "cwg-maps-tmi",
+        "cwg-mallmap-tmi",
+        "probe-imagery-coverage",
+        "contrib-photos",
+        "key-model-buildings",
+        "compose-facade-atlas"
+      ]
+    },
+    {
+      "id": "kgx-query",
+      "area": "structured",
+      "tool": "tools/kgx-query.mjs",
+      "command": "node cwplans/tools/kgx-query.mjs <file.rq | SPARQL> [store dir]",
+      "kind": "check",
+      "used": [
+        {
+          "source": "kgx"
+        },
+        {
+          "source": "factoidal",
+          "endpoint": "npm @factoidal/core 0.7.1 (local)",
+          "request": "openStore, openStoreHandle ({ sparql }), handle query"
+        }
+      ],
+      "generated": [],
+      "method": "Opens a store handle on the kgx Shardborough store with the artifacts the query's plan names (no 64-block cap) and prints the answer as tab-separated rows.",
+      "rules": [
+        "Opens only the artifacts the query's plan names.",
+        "Read-only: writes nothing."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "build-kgx"
+      ]
+    },
+    {
+      "id": "check-kgx-store",
+      "area": "structured",
+      "tool": "tools/check-kgx-store.mjs",
+      "command": "node cwplans/tools/check-kgx-store.mjs [--write]",
+      "kind": "check",
+      "used": [
+        {
+          "source": "kgx"
+        },
+        {
+          "source": "factoidal",
+          "endpoint": "npm @factoidal/core (local)",
+          "request": "parse, query (in memory); openStore, openStoreHandle"
+        }
+      ],
+      "generated": [
+        {
+          "source": "kgx",
+          "note": "--write: londat kgx/checks/store-vs-memory.json"
+        }
+      ],
+      "method": "Rebuilds the store's input from the part versions, meta and log (its SHA-256 prefix must equal the generation name), runs every kgx/queries/*.rq and cross-subject joins through a store handle and through the in-memory engine, and compares the solution multisets; the joins also on the data with one graph per source.",
+      "rules": [
+        "Exit 1 on any difference between the store and the in-memory engine.",
+        "Refuses a store that was not packed from the current versions."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "build-kgx"
+      ]
+    },
+    {
+      "id": "probe-imagery-coverage",
+      "area": "structured",
+      "tool": "tools/probe-imagery-coverage.mjs",
+      "command": "node cwplans/tools/probe-imagery-coverage.mjs [--offline <date>]",
+      "kind": "fetch",
+      "used": [
+        {
+          "source": "openaerialmap"
+        },
+        {
+          "source": "panoramax"
+        },
+        {
+          "source": "kartaview"
+        },
+        {
+          "source": "ea-survey-catalogue"
+        },
+        {
+          "source": "mapillary"
+        }
+      ],
+      "generated": [
+        {
+          "file": "coverage/raw/*/openaerialmap-*.json"
+        },
+        {
+          "file": "coverage/raw/*/ea-survey-*.json"
+        },
+        {
+          "file": "coverage/raw/*/mapillary.json"
+        },
+        {
+          "local": "data/raw/coverage/<date>/panoramax-*.json, kartaview-*.json (CC BY-SA: not committed)"
+        },
+        {
+          "source": "kgx"
+        }
+      ],
+      "method": "For each study area box (Canary Wharf, Isle of Dogs south, Limehouse, Rotherhithe / SE16, the zone): OpenAerialMap /meta by box; Panoramax /api/search by box, split in quarters while an answer is full (500); KartaView /2.0/photo at the points of a 200 m grid with a 145 m radius (areas only), halving the radius on a timeout; EA survey catalogue search by polygon. Answers are cut to the fields used. Then the operation lift-imagery-coverage (kgx-ops Flow) turns the answer files into the kgx graph version coverage-imagery and names it in kgx/external-heads.json.",
+      "rules": [
+        "Share-alike sources (Panoramax, KartaView, Mapillary) give counts only; their raw answers stay local.",
+        "Uploader and photographer names are not kept.",
+        "About one request a second; KartaView at most 150 items a page."
+      ],
+      "network": true,
+      "deterministic": false,
+      "after": []
+    },
+    {
+      "id": "contrib-photos",
+      "area": "structured",
+      "tool": "tools/contrib-photos.mjs",
+      "command": "FACADE_PY=<venv python> node cwplans/tools/contrib-photos.mjs <set>",
+      "kind": "derive",
+      "used": [
+        {
+          "source": "contrib-photos"
+        },
+        {
+          "source": "osm",
+          "note": "names and tags of the identified buildings, quoted in photos.json"
+        },
+        {
+          "file": "registry/sources/facades/tools/facade.py"
+        },
+        {
+          "file": "registry/sources/facades/tools/measure.py"
+        },
+        {
+          "file": "tools/facade-tile.py"
+        }
+      ],
+      "generated": [
+        {
+          "source": "kgx",
+          "note": "graphs facade-patches-<set> and photos-<set>; rectified patches in londat data/images/contrib/<set>/rect/"
+        }
+      ],
+      "method": "Operation rectify-facade-patches: for each facade region in photos.json, facade.py rectifies it (LSD segments, RANSAC vanishing points, homography) and measure.py cuts the measuring box and gives bay and floor periods (autocorrelation) and three colours (k-means in Lab); the patch is written to rect/<id>.jpg. Operation lift-contrib-photos: photos.json (identifications with evidence and confidence, judged facade notes, model heights) and the patch graph give a schema.org Photograph per photo and a node per building. Both graphs are named in kgx/external-heads.json. Operation cut-facade-tiles: the photos.json tiles (a cut of a rectified patch, a mirrored half for a symmetric face, or a vector pattern in metres with judged colours) -> 256 px PNG tiles (and SVG for a pattern) in tiles/ and the graph facade-tiles-<set>.",
+      "rules": [
+        "Inputs by SHA-256: the photos, photos.json, facade.py and measure.py.",
+        "Identifications and facade patterns are judgement, written in photos.json with their evidence; the tool only lifts them.",
+        "Measured colours are as photographed (shade, backlight)."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": []
+    },
+    {
+      "id": "key-model-buildings",
+      "area": "structured",
+      "tool": "tools/key-model-buildings.mjs",
+      "command": "node --max-old-space-size=6000 cwplans/tools/key-model-buildings.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "local": "data/raw/docklands/osm-clip.json.gz"
+        },
+        {
+          "local": "data/raw/docklands/greater_london-latest.osm.pbf"
+        },
+        {
+          "file": "atlas/data/atlas.json"
+        },
+        {
+          "source": "osm"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/building-keys.json"
+        },
+        {
+          "source": "kgx",
+          "note": "graph model-building-keys (a head, not in the browser store)"
+        }
+      ],
+      "method": "Operation key-model-buildings: every OSM building and building:part outline of the clip is put through the build's own steps (build-docklands.mjs polysOf, toRings with the focus-box tolerance, poly) and its encoded outline compared with the model's; the build's order (outlines without parts, then parts) aligns the model list with the OSM elements, so equal outlines (a multipolygon's outer that is also a building way) get the right element. Tags come from the full extract (osmium getid; the clip keeps no addresses). The graph holds, per OSM element, its OSM page, model indices, parent building of a part, registry link from the atlas, and the OSM name, house name, address, postcode, building type other than yes, levels and Wikidata item. building-keys.json is its projection for the page, with the SHA-256 of area.js and a fingerprint the page checks.",
+      "rules": [
+        "Fails when a model building has no OSM outline in the clip (the clip is not the one area.js was built from).",
+        "Rerun after build-docklands.mjs: the indices are for one area.js."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "build-docklands",
+        "build-atlas"
+      ]
+    },
+    {
+      "id": "compose-facade-atlas",
+      "area": "structured",
+      "tool": "tools/compose-facade-atlas.mjs",
+      "command": "FACADE_PY=<python with Pillow> node cwplans/tools/compose-facade-atlas.mjs",
+      "kind": "derive",
+      "used": [
+        {
+          "file": "docklands/data/tex/facades-registry.jpg"
+        },
+        {
+          "file": "docklands/data/tex/facades-registry.json"
+        },
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "tools/facade-tile.py"
+        },
+        {
+          "source": "kgx",
+          "note": "graphs facade-tiles-<set> and model-building-keys"
+        },
+        {
+          "source": "contrib-photos"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/tex/facades.jpg"
+        },
+        {
+          "file": "docklands/data/tex/facades.json"
+        },
+        {
+          "source": "kgx",
+          "note": "graph facade-atlas"
+        }
+      ],
+      "method": "Operation compose-facade-atlas: the registry atlas (slots 0 to 15) and every contributed tile in the next slots (32 in all); each contributed tile's buildings are keyed by OSM id with the model indices of this area.js (from model-building-keys, parts included) and a WGS84 point inside the building for a rebuilt model.",
+      "rules": [
+        "Fails past 32 slots (the atlas and the shader hold 32).",
+        "Rerun after build-facade-atlas.py, contrib-photos.mjs or key-model-buildings.mjs."
+      ],
+      "network": false,
+      "deterministic": true,
+      "after": [
+        "build-facade-atlas",
+        "contrib-photos",
+        "key-model-buildings"
+      ]
+    },
     {
       "id": "check-data-register-write",
       "tool": "tools/check-data-register.mjs",
@@ -8251,9 +9147,9 @@
       "generated": [
         {
           "file": "cache/runs/*/live-*.json.gz"
-      },
-      {
-        "file": "cache/live-*.sqlite"
+        },
+        {
+          "file": "cache/live-*.sqlite"
         },
         {
           "file": "cache/latest.json"
@@ -8305,12 +9201,12 @@
       "generated": [
         {
           "file": "cache/zone-core.gpkg"
-      },
-      {
-        "file": "cache/zone-lds.gpkg"
-      },
-      {
-        "file": "cache/zone-portals.gpkg"
+        },
+        {
+          "file": "cache/zone-lds.gpkg"
+        },
+        {
+          "file": "cache/zone-portals.gpkg"
         }
       ],
       "network": false,
@@ -8604,7 +9500,24 @@
     }
   ],
   "manual_activities": [
-    {"id": "cwg-maps-pdfs", "area": "brands", "what": "Canary Wharf Group maps and guides (PDF) supplied by the owner", "by": "hand (the owner downloaded them from canarywharf.com/maps/; the session copied them to danbri/londat)", "date": "2026-10-06", "method": "The owner downloaded four PDFs from https://canarywharf.com/maps/ (the site answers scripts with a bot challenge) and gave them to the session, which saved them unchanged in danbri/londat third_party/cwg/maps/ with a README (rights, status) and manifest.json (size, SHA-256, pages, dates, what each shows).", "rules": ["Files are kept unchanged; no page or image is copied into this repository.", "Only facts are taken from them (a shop's mall, level and grid square; where a lift or toilet is), each with the file and page.", "The store guide's text is vector outlines: names are read by eye or OCR, never guessed."], "used": [{"source": "cwg-maps"}]},
+    {
+      "id": "cwg-maps-pdfs",
+      "area": "brands",
+      "what": "Canary Wharf Group maps and guides (PDF) supplied by the owner",
+      "by": "hand (the owner downloaded them from canarywharf.com/maps/; the session copied them to danbri/londat)",
+      "date": "2026-10-06",
+      "method": "The owner downloaded four PDFs from https://canarywharf.com/maps/ (the site answers scripts with a bot challenge) and gave them to the session, which saved them unchanged in danbri/londat third_party/cwg/maps/ with a README (rights, status) and manifest.json (size, SHA-256, pages, dates, what each shows).",
+      "rules": [
+        "Files are kept unchanged; no page or image is copied into this repository.",
+        "Only facts are taken from them (a shop's mall, level and grid square; where a lift or toilet is), each with the file and page.",
+        "The store guide's text is vector outlines: names are read by eye or OCR, never guessed."
+      ],
+      "used": [
+        {
+          "source": "cwg-maps"
+        }
+      ]
+    },
     {
       "id": "sourced-levels",
       "area": "underground",
@@ -9178,6 +10091,10 @@
     {
       "tool": "tools/test/kgx-ids.test.mjs",
       "what": "The self-test of tools/kgx-ids.mjs under node --test: the code-table examples (old name -> ID), idempotence of mapLegacy, old vocabulary terms to https://kgx.foaf.tv/ (vocab#, pipeline#, idioms#), unchanged new terms and external IRIs, the error cases (an old kind with no code, an empty rest, two names for one ID), osmKeyOf and cwgPath."
+    },
+    {
+      "tool": "tools/test/tide-harmonics.test.mjs",
+      "what": "Tests (node --test) of docklands/data/sky/tide-harmonics.json and the prediction in docklands/tide.js (the Three.js port's tide): the constituents, the held-out error against the EA readings of 3-4 Oct 2026, the page code agreeing with the tool's check values."
     }
   ],
   "header_mismatches_resolved": {

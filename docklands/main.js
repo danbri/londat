@@ -22,6 +22,7 @@ const WEBGL = '../cwplans/docklands/', DATA = WEBGL + 'data/';   // the WebGL pa
 const loadJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
 const say = t => { hud.textContent = t; };
 let need = true;
+const londonDate = t => new Date(t).toLocaleDateString('en-CA', { timeZone: 'Europe/London' });   // YYYY-MM-DD on the London wall clock (the UTC date was the day before from 00:00 to 01:00 BST)
 function draw() { need = true; }   // the render loop draws a frame when asked (and while the camera moves)
 
 // ---------- renderer: WebGPU, else WebGL 2
@@ -74,12 +75,12 @@ rebuildBuildings();
 const sky = new Sky3(scene);
 const focus = new THREE.Vector3();
 let clock = qs.get('t') ? fromLondon(qs.get('t')) : Date.now(); if (!isFinite(clock)) clock = Date.now();
-if (qs.has('night') && !qs.get('t')) clock = fromLondon(new Date().toISOString().slice(0, 10) + 'T22:00');
+if (qs.has('night') && !qs.get('t')) clock = fromLondon(londonDate(Date.now()) + 'T22:00');
 let NIGHT = false;
 function setClock(t) {
   clock = t; const s = sky.setTime(t, focus); NIGHT = s.night;
   U.night.value = THREE.MathUtils.clamp((-s.sun.alt - 2) / 6, 0, 1);
-  scene.background = s.day < 0.02 ? new THREE.Color(0x07080c) : null;
+  // scene.background (dark by night, lit by the city under cloud) is set by sky.setTime and sky.setWeather (sky3.js)
   bmat.roughness = NIGHT ? 0.5 : 0.82;
   syncClockUi(); syncPost(); draw();
 }
@@ -128,8 +129,8 @@ function camState() {
 }
 function setView(k) {
   const v = VIEWS[k]; if (!v) return; setCam(v);
-  if (v.night && !qs.get('t')) setClock(fromLondon(new Date(clock).toISOString().slice(0, 10) + 'T21:30'));
-  if (v.night === false && NIGHT && !qs.get('t')) setClock(fromLondon(new Date(clock).toISOString().slice(0, 10) + 'T14:00'));
+  if (v.night && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T21:30'));
+  if (v.night === false && NIGHT && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T14:00'));
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === k)));
 }
 
@@ -263,7 +264,7 @@ $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,stations,skyline,registry,search,routes,nightlights,ships').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,registry,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 const ui = {
   host: () => $('layersExtra'),
@@ -283,7 +284,10 @@ async function loadLayers() {
     let mod; try { mod = (await import(`./layers/${id}.js`)).default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
     try { const on = flag(id, mod.on !== false), L = (await mod.init(ctx, on)) || {}; LAYERS[id] = { mod, api: L, on };   // api kept as returned: its getters stay live
       if (L.object) { L.object.visible = on; scene.add(L.object); }
-      if (mod.label && !L.ownUi) ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; });
+      // the falling sheet (reveal.js): when the visitor ticks a layer on; at page load only with ?reveal=load (start time)
+      const sheet = () => { if (L.object && mod.reveal !== false) import('./reveal.js').then(R => R.reveal(ctx, { object: L.object, label: mod.label || id, draw2d: mod.draw2d, alive: () => LAYERS[id].on })).catch(e => console.warn('reveal', id, e)); };
+      if (on && qs.get('reveal') === 'load') sheet();
+      if (mod.label && !L.ownUi) ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; if (v) sheet(); });
     } catch (e) { console.warn('layer', id, e); }
   }
   STATS.layers = Object.keys(LAYERS); draw();
@@ -318,7 +322,7 @@ renderer.setAnimationLoop(() => {
 setShadows(flag('shadows', GPU));
 const H = parseHash(location.hash), c = (H.c || '').split(',').map(Number), at = /^#at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);
 if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) clock = t; }
-setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(new Date().toISOString().slice(0, 10) + 'T22:00') : clock);
+setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(londonDate(Date.now()) + 'T22:00') : clock);
 if (c.length >= 6 && c.every(isFinite)) setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5] });
 else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw: .6, pitch: .6 });
 else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');

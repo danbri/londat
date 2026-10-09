@@ -16,7 +16,7 @@
 // Skills: docklands-3d-page ("Ships (AIS)", "Three.js port"), cwplans-river-and-water ("AIS: Open Waters"), cwplans-londat-cache.
 import { WU, MAXW, setWakes } from '../water.js';
 import * as D from '../ships-data.js';
-import { vec3 } from 'three/tsl';
+import { vec3, float } from 'three/tsl';
 
 const KN = 0.514444, CAP_S = 180, BLEND = 2000, NOW_TOL = 5 * 60e3, HIST_MAX = 24 * 3600e3, CAP = 256;
 const deg = Math.PI / 180, wrap = a => { a %= 2 * Math.PI; return a < -Math.PI ? a + 2 * Math.PI : a > Math.PI ? a - 2 * Math.PI : a; };
@@ -58,7 +58,10 @@ export default {
     const group = new THREE.Group(); group.name = 'ships';
     const inst = (geo, mat, cap, shadow = true) => { const m = new THREE.InstancedMesh(geo, mat, cap); m.frustumCulled = false; m.castShadow = shadow; m.receiveShadow = true;
       const c = new THREE.Color(1, 1, 1); for (let i = 0; i < cap; i++) m.setColorAt(i, c); m.count = 1; m.visible = false; group.add(m); return m; };
-    const hulls = inst(hullGeometry(), solid(), CAP * 2), supers = inst(unitBox(), solid(), CAP), masts = inst(unitBox(), solid(), CAP), plates = inst(unitBox(), new THREE.MeshBasicNodeMaterial(), CAP, false);   // the type plate unlit, a marker by day and night (the WebGL page draws its ships at full brightness)
+    // the plate is unlit: by night it dims to 15 % (at full brightness a plate on a ship moored near a photo view's eye filled the frame, 2026-10-09);
+    // the instance colour multiplies this colour (NodeMaterial applies instanceColor after colorNode)
+    const plateMat = new THREE.MeshBasicNodeMaterial(); plateMat.colorNode = vec3(1).mul(float(1).sub(ctx.U.night.mul(0.85)));
+    const hulls = inst(hullGeometry(), solid(), CAP * 2), supers = inst(unitBox(), solid(), CAP), masts = inst(unitBox(), solid(), CAP), plates = inst(unitBox(), plateMat, CAP, false);   // the type plate unlit, a marker by day and night (the WebGL page draws its ships at full brightness)
     const arrowMat = solid(); arrowMat.side = THREE.DoubleSide; const arrows = inst(arrowGeometry(), arrowMat, CAP, false);
     const lamp = c => { const m = new THREE.MeshBasicNodeMaterial(); m.colorNode = vec3(...c).mul(9); return inst(new THREE.OctahedronGeometry(.5, 0), m, CAP * 3, false); };
     const lampW = lamp([1, .95, .85]), lampR = lamp([1, .08, .05]), lampG = lamp([.1, 1, .35]);
