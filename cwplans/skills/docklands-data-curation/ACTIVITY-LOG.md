@@ -1983,3 +1983,20 @@ structure with the owner. The port's parity work should not copy the WebGL page'
 - Each part committed alone and tested from its own worktree before the push; the subagents' unfinished work went to the
   feature branch only. Owner's open items: the menu rework; water depth for Greenland and South Dock (no bed level: 10 m
   default); the mirror's cost on a phone GPU is not measured.
+
+## 2026-10-09: owner's water brief for the Three.js port (in progress)
+
+Owner, 2026-10-09: "Very impressive and clearly viable. Continue towards feature parity. Default to all trees, moving
+water. Water of docks behind locks has surfaces moved by wind speed and direction. Water of thames has wind moved by flow
+from inland to sea primarily (moves occasional garbage, sticks, leaves). But also some surface effects and waves from
+boats proportional to their size and acceleration, and we'll need an efficient clever hack to combine wind and
+potentially multiple waves. Thames in this area rises and falls many metres per tides with spring vs neap having big
+impact. We should show this and distinguish beachy rock/mud foreshores vs walled edges, including appearance eg
+reflection of waves."
+- Done (744ed14c, 0e9a93b9): all trees and moving water by default (`?trees=near`, `?animate=0`); the load test sets
+  animate=0 unless --animate (a software WebGPU frame made the screenshot time out); a shared contract in
+  docklands/water.js: WU.tideLevel, tideRate, windSpeed, windDir, and boat wake slots (wakeA, wakeB, setWakes, MAXW 16).
+- In progress (three subagents): the tide (own harmonic prediction from EA readings, level along the river, the ground
+  to the bed, foreshore mesh: walls vs mud and shingle, wetness); the surface (wind on the docks with fetch, the river's
+  flow map from the tide rate and the centreline, floating debris, analytic Kelvin wakes summed in the shader, wave
+  reflection at walls); ships (AIS as in the WebGL page, dead reckoning, navigation lights, feeding the wakes).
