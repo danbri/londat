@@ -7,7 +7,8 @@
 // cut away). The route: a bright beam over the network (3.2 m wide, 2 m above the walkway), unlit so it shows by night,
 // drawn depth-tested and again faint on top of everything (the WebGL page draws it on top only); like the WebGL page
 // it ignores the cut. A small panel opens with the route: ends, distance, minutes, levels, steps, step-free, clear.
-// Test hook: __docklands3.layers.routes.api (route(a, b, opts), routeVertices, vertexAt, openPress, clear, last).
+// Go > "Show the walking network" (index.html buildWalk, #showWalk; ?walk=1): every link but streets as coloured beams.
+// Test hook: __docklands3.layers.routes.api (route(a, b, opts), routeVertices, vertexAt, openPress, clear, last, setWalk, walk).
 // Skill: docklands-3d-page, "Three.js port" and "Interface" (press and hold); network: cwplans/docklands/README.md,
 // "Walking network and routes".
 import { Mesh } from '../build.js';
@@ -255,6 +256,41 @@ export default {
       if (Array.isArray(a)) { const v = vertexNear(a[0], a[1], a[2]); return v < 0 ? null : vertexEnd(v); }
       return a && a.v != null ? a : null;
     }
+    // ---------- "Show the walking network" (index.html buildWalk and the showWalk checkbox): every link but streets as a
+    // beam 0.6 m above its points (lifts 2.5 m square, footways 1 m wide, others 1.6 m; 0.5 m high), coloured by kind
+    // (index.html KCOL), lifts out of service now (TfL live feed) red and 4 m; heights from vY (station floors while the
+    // station models layer is shown, else ground + level x storey). Unlit, so it shows by night; cut away above U.cut like
+    // the model. Rebuilt when the storey height, the station models or the lift faults change. ?walk=1 shows it at load.
+    const KCOL = { street: [.42, .45, .48], footway: [.75, .78, .80], indoor: [1, .37, .64], steps: [1, .6, .2], escalator: [1, .85, .2], lift: [.9, .9, .92], platform: [1, .54, .24], ramp: [.7, .5, 1] };
+    const { Fn, If, Discard, attribute, positionWorld, sRGBTransferEOTF } = await import('three/tsl');
+    const walkMat = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide, toneMapped: false });
+    walkMat.colorNode = Fn(() => { If(positionWorld.y.greaterThan(U.cut), () => { Discard(); }); return sRGBTransferEOTF(attribute('color', 'vec3')); })();
+    let walkOn = ctx.flag('walk', false), walkMesh = null, walkKey = '', walkBusy = false;
+    const walkNote = ctx.ui.note('Walking network: tick to load it (OpenStreetMap, ODbL; TfL step-free topology).', { tab: 'go' });
+    function buildWalk() {
+      const st = storey(), key = `${walkOn}|${st}|${stationsOn()}|${liftFaults ? liftFaults.size : -1}`; if (key === walkKey || !NET) return; walkKey = key;
+      if (walkMesh) { group.remove(walkMesh); walkMesh.geometry.dispose(); walkMesh = null; }
+      if (!walkOn) { draw(); return; }
+      const M = new Mesh(), E = NET.D.edges, K = NET.D.meta.kinds; let broken = 0;
+      for (let i = 0; i < E.length; i += 3) { const a = E[i], b = E[i + 1], k = K[E[i + 2]]; if (k === 'street') continue;
+        const bad = k === 'lift' && liftFaults && liftFaults.has(NET.liftOf.get(i / 3)), c = bad ? [1, .15, .15] : KCOL[k]; if (bad) broken++;
+        const w = k === 'lift' ? (bad ? 4 : 2.5) : k === 'footway' ? 1 : 1.6; beam(M, [vX(a), vY(a, st) + .6, vZ(a)], [vX(b) + (k === 'lift' ? .01 : 0), vY(b, st) + .6, vZ(b)], w, k === 'lift' ? w : .5, c); }
+      walkMesh = new THREE.Mesh(M.geometry(), walkMat); walkMesh.name = 'routes:walk'; walkMesh.renderOrder = 19; group.add(walkMesh);
+      const m = NET.D.meta;
+      walkNote.textContent = `Walking network (OSM): ${m.counts.vertices.toLocaleString('en-GB')} points, ${m.counts.by_kind.steps} stair, ${m.counts.by_kind.escalator} escalator and ${m.counts.by_kind.lift} lift links on levels ${m.counts.levels.join(', ')}; ${m.islands.count} unconnected parts (largest ${m.islands.largest.toLocaleString('en-GB')} points). Colours: grey footways, pink indoor, orange stairs and platforms, yellow escalators, white lifts, violet ramps, red lifts out of service now (TfL${liftFaults && liftAt ? '' : ', not loaded'}: ${broken}). Streets are not drawn.`;
+      draw();
+    }
+    async function setWalk(v) {
+      walkOn = v; if (walkCb) walkCb.checked = v; if (!v) { buildWalk(); return; }
+      if (walkBusy) return; walkBusy = true; walkNote.textContent = 'Loading the walking network…';
+      try { await loadNet(); await loadLiftFaults(); } catch (e) { walkNote.textContent = 'The walking network did not load: ' + e.message; walkOn = false; if (walkCb) walkCb.checked = false; walkBusy = false; return; }
+      walkBusy = false; walkKey = ''; buildWalk();
+    }
+    const walkCb = ctx.ui.toggle('Show the walking network', walkOn, setWalk, { tab: 'go' });
+    walkNote.parentNode.insertBefore(walkCb.parentNode, walkNote);
+    ctx.onFrame(() => { if (walkOn && NET && !walkBusy) buildWalk(); });   // station models shown or hidden, storey changed
+    if (walkOn) setWalk(true);
+
     const summary = L => L && (L.r ? { metres: Math.round(L.metres), secs: Math.round(L.secs), minutes: L.minutes, steps: L.steps, levels: L.levels, path: L.r.path.length, from: L.from.label, to: L.to.label, stepFree: L.stepFree, triangles: meshA ? meshA.geometry.index.count / 3 : 0 } : { none: true });
     return {
       object: group, ownUi: true,
@@ -262,6 +298,7 @@ export default {
       async routeVertices(a, b, sf = false, faults = null) { await loadNet(); const r = route(a, b, sf, faults); return r && { secs: r.secs, path: r.path, steps: describe(r) }; },
       loadNet, vertexAt: (x, y) => NET ? vertexAt(x, y) : -1, vertexEnd: v => vertexEnd(v), openPress, setEnd, clear,
       get last() { return summary(last); }, get NET() { return NET; }, get stationFloors() { return stationsOn(); },
+      setWalk, get walk() { return walkMesh ? { on: true, triangles: walkMesh.geometry.index.count / 3 } : { on: walkOn, triangles: 0 }; },
       setVisible(v) { group.visible = v; draw(); },
     };
   },

@@ -59,6 +59,10 @@ label.row select{flex:1}
 .ends{display:grid;grid-template-columns:auto 1fr;gap:6px 8px;align-items:center}
 .ends input{min-height:40px;padding:0 10px;border-radius:8px;border:1px solid #33404a;background:#1b2229;color:var(--fg);font:16px system-ui,sans-serif;width:100%}
 .small{font-size:12px;color:var(--mut)}
+.warn{color:#ffb35c}
+#paneAbout details{margin:8px 0}#paneAbout summary{cursor:pointer;min-height:36px;display:flex;align-items:center;font-weight:600;color:var(--fg)}
+.tw{overflow-x:auto}.tw table{border-collapse:collapse;font-size:11px}.tw th,.tw td{padding:2px 6px 2px 0;text-align:left;vertical-align:top;border-top:1px solid var(--line)}.tw td.n{text-align:right;white-space:nowrap}
+.lab.camLab{pointer-events:auto;border:0;background:#1f5f9a;color:#fff;cursor:pointer;font:600 11px system-ui,sans-serif;min-height:24px}
 a{color:var(--acc)}
 #credits ul{margin:4px 0 8px;padding-left:18px}#credits li{margin:3px 0}
 #card{position:fixed;right:10px;bottom:calc(36px + var(--safe));width:min(380px,calc(100vw - 20px));max-height:45vh;overflow:auto;background:var(--panel);border-radius:10px;padding:10px 14px;z-index:6}
@@ -159,6 +163,19 @@ a{color:var(--acc)}
       <p class="small">Experimental port of the 3D page to three.js r186. <a href="../cwplans/docklands/">The WebGL page</a> · <a href="../cwplans/atlas/">atlas</a> · <a href="../cwplans/kg/">knowledge graph</a> · <a href="https://github.com/danbri/londat/blob/main/docklands/README.md">notes and menu map</a> · <a href="#credits" data-credits>credits</a></p>
       <h3>How to use it</h3>
       <p class="small">One finger: turn and tilt. Two fingers: move, zoom, twist. Tap a building or a marker: its record. Press and hold: route from or to that point. Drag the time wheels at the top: the upper one sets the time of day, the lower one the day of the year; "Now" returns to the time now.</p>
+      <p class="small">Ground, building heights and open track are measured (EA LiDAR 1 m). The depth gauge (Layers &gt; Below ground &gt; Depth gauge, or Views &gt; Underground) is at the right edge: drag it down to remove everything higher than that level, so you can look into the ground. Basement depths and indoor levels use OSM and Wikidata storey counts × the storey height setting. Tunnel levels are modelled between known levels: portals and open cuts the LiDAR can see, and published station levels (with sources).</p>
+      <p class="small">Pixel art (Look &gt; Style): drag to move, pinch or wheel to zoom, twist two fingers to turn. The arrows at the top right turn the view by a quarter.</p>
+      <h3>Your location</h3>
+      <p class="small">The round button at the bottom right shows where you are, as in a phone's map app (also Go &gt; My location). Tap it once to centre the view on you (the browser asks first), again to turn the view with your phone's compass, again to stop turning; drag the map and it stops following. The eye button that then shows puts the view at your eye height, and you look round by turning the phone. Hold the button to turn location off. <b>Your position and heading stay on this device</b>: the page sends them nowhere, stores them nowhere and does not put them in the address.</p>
+      <details id="liveBox"><summary>Live data</summary>
+        <p class="small">Nothing is fetched until you press the button. By default the tide, weather, lines and storm overflows come from the hourly <a href="https://github.com/danbri/londat/tree/main/cwplans/cache">londat cache</a> (one file, no request to the publishers; each line gives its fetch time) and traffic camera positions from the last snapshot; air quality always comes from the London Air Quality Network. Tick "Live" to ask each publisher's open API directly (no key); a theme older than an hour in the cache is also asked directly. The full catalogue of checked sources is at <a href="../cwplans/feeds/">feeds</a>. The river in the model follows the tide prediction (Time &gt; Tide).</p>
+        <div class="btnrow"><button type="button" id="liveGo">Load live data</button></div>
+        <label class="row"><input type="checkbox" id="liveTide" disabled> Tidal Thames at the Tower Pier level (the river follows the EA readings, clock set to now)</label>
+        <label class="row"><input type="checkbox" id="liveCams" checked> Traffic cameras (positions from the last snapshot; a tap asks TfL for the still)</label>
+        <label class="row" title="Off: the hourly londat cache (no third-party request except air quality). On: ask each source now."><input type="checkbox" id="liveDirect"> Live: ask the sources directly</label>
+        <div id="liveOut" class="small" aria-live="polite"></div>
+      </details>
+      <details id="ugBox"><summary>Canary Wharf below ground (text)</summary><div id="ugText" class="small tw"></div></details>
       <h3>Settings: renderer <span id="backend">?</span></h3>
       <label class="row"><input type="checkbox" id="shadows"> Sun shadows (cascaded)</label>
       <label class="row"><input type="checkbox" id="bloom"> Bloom by night</label>
@@ -190,6 +207,8 @@ a{color:var(--acc)}
         <li>Birds and foxes (simulated): weights from <a href="https://nbnatlas.org/">NBN Atlas</a> records (OGL, CC BY, CC0; data partners BTO/JNCC/RSPB, Birdex, iRecord, Mammal Society and others) and <a href="https://www.gbif.org/">GBIF.org</a> (iNaturalist CC0 and CC BY observations, naturgucker, TIPU). Not used: eBird, CC BY-NC records, GiGL.</li></ul>
       <h3>Sky and weather</h3><ul class="small">
         <li>Sun, moon and planets: <a href="https://github.com/cosinekitty/astronomy">Astronomy Engine</a> (Don Cross, MIT); stars: <a href="https://cdsarc.cds.unistra.fr/viz-bin/cat/V/50">Yale Bright Star Catalogue 5th ed.</a> (Hoffleit &amp; Warren 1991, public domain)</li>
+        <li>Constellation lines: <a href="https://github.com/ofrohn/d3-celestial">d3-celestial</a> (Olaf Frohn, BSD-3-Clause); star names: <a href="https://www.iau.org/public/themes/naming_stars/">IAU Working Group on Star Names</a> (CC BY); Messier objects: <a href="https://heasarc.gsfc.nasa.gov/W3Browse/all/messier.html">NASA HEASARC</a> (public domain)</li>
+        <li>Satellites: <a href="https://celestrak.org/">CelesTrak</a> GP data, <a href="https://github.com/shashwatak/satellite-js">satellite.js</a> (MIT); cloud mask: contains modified EUMETSAT Meteosat data 2026 (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); London City runway thresholds: © OpenStreetMap contributors (ODbL)</li>
         <li>Weather and wind: <a href="https://open-meteo.com/">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), from the londat hourly cache or, when you tick it, from the Open-Meteo API</li></ul>
       <h3>Transport, river and live data</h3><ul class="small">
         <li>River buses, piers, hire bike docks, lift outages, step-free routes: Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]</li>
@@ -198,6 +217,7 @@ a{color:var(--acc)}
         <li>Aircraft, simulated: UK AIP (NATS) facts for London City and route H4; CAA monthly totals; London City runway thresholds from OpenStreetMap (ODbL).</li>
         <li>Recorded aircraft (by default): the adsb.lol daily history (<a href="https://github.com/adsblol/globe_history_2026">adsblol/globe_history_2026</a>), © adsb.lol contributors, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>; the last 7 days within 25 nm, in the <a href="https://github.com/danbri/londat/tree/adsb-cache">adsb-cache</a> branch; operator callsign and type only, no registration</li>
         <li>Live aircraft (only after you tap "Live aircraft"): <a href="https://adsb.lol/">adsb.lol</a>, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>, asked by your browser; nothing stored</li>
+        <li>Live data box (About): line status and traffic cameras, Powered by TfL Open Data; air quality: London Air Quality Network (Environmental Research Group, Imperial College London); storm overflows: Thames Water (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); tide gauges: Environment Agency (OGL v3.0); weather: Open-Meteo (CC BY 4.0)</li>
         <li>Cranes: Source: UK AIS (NATS), facts only; helicopter route H4 and restricted area EGR159: Source: UK AIP, NATS, facts only</li></ul>
       <h3>London Datastore and planning</h3><ul class="small">
         <li>Conservation areas, designated open space, safeguarded wharves (GLA Planning Constraints Map) and the Cultural Infrastructure Map 2023: contains public sector information licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a> (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data.</li>
@@ -220,5 +240,6 @@ a{color:var(--acc)}
 <script src="../cwplans/docklands/roofs-layer.js"></script>
 <script src="../cwplans/docklands/look-layer.js"></script>
 <script type="module" src="main.js"></script>
+<script type="module" src="about-extra.js"></script>
 </body>
 </html>
