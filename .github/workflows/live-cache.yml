@@ -15,22 +15,24 @@ name: live-cache
 on:
   schedule:
     - cron: '*/5 * * * *'
-  # GitHub had not started the 5-minute schedule 2.5 hours after this file reached main (2026-10-09), while the hourly
-  # cache-live workflow runs on time; so each completed cache-live run also starts this one, and a run started that way
-  # fetches every 5 minutes for 55 minutes (the next hourly start cancels the old run: concurrency below)
+  # GitHub skips most scheduled runs on this repository (2026-10-09: cache-live, due hourly, ran at 02:09, 09:02, 16:11
+  # and 20:53 UTC; the */5 schedule never started). So one run fetches every 5 minutes for about 5 h 36 min, then starts
+  # the next run itself (workflow_dispatch). Any start (schedule, cache-live chain, by hand) cancels the old run and runs
+  # the same loop, so the loop never ends on a short run.
   workflow_run:
     workflows: [cache-live]
     types: [completed]
   workflow_dispatch: {}
 permissions:
   contents: write
+  actions: write   # to start the next run itself (workflow_dispatch from the workflow token is allowed)
 concurrency:
   group: live-cache
   cancel-in-progress: true
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 58
+    timeout-minutes: 355
     steps:
       - name: Check out main (the tool)
         uses: actions/checkout@v4
@@ -41,8 +43,12 @@ jobs:
           node-version: '22'
       - name: Fetch aircraft, ships and METAR; force-push the one-commit branch live-cache
         run: |
-          n=1; if [ "${{ github.event_name }}" = "workflow_run" ]; then n=11; fi
+          n=64   # about 5 h 36 min at about 315 s a round (sleep 290 s + the fetch); the job limit is 6 h
           for i in $(seq 1 $n); do
             node cwplans/tools/fetch-live-cache.mjs --out "$RUNNER_TEMP/live-cache-$i" --restore --push || echo "run $i failed"
             if [ "$i" -lt "$n" ]; then sleep 290; fi
           done
+      - name: Start the next run (a loop that does not depend on GitHub's scheduler)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run live-cache.yml --ref main --repo "${{ github.repository }}"
