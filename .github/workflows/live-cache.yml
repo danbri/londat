@@ -15,6 +15,12 @@ name: live-cache
 on:
   schedule:
     - cron: '*/5 * * * *'
+  # GitHub had not started the 5-minute schedule 2.5 hours after this file reached main (2026-10-09), while the hourly
+  # cache-live workflow runs on time; so each completed cache-live run also starts this one, and a run started that way
+  # fetches every 5 minutes for 55 minutes (the next hourly start cancels the old run: concurrency below)
+  workflow_run:
+    workflows: [cache-live]
+    types: [completed]
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -24,7 +30,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 58
     steps:
       - name: Check out main (the tool)
         uses: actions/checkout@v4
@@ -34,4 +40,9 @@ jobs:
         with:
           node-version: '22'
       - name: Fetch aircraft, ships and METAR; force-push the one-commit branch live-cache
-        run: node cwplans/tools/fetch-live-cache.mjs --out "$RUNNER_TEMP/live-cache" --restore --push
+        run: |
+          n=1; if [ "${{ github.event_name }}" = "workflow_run" ]; then n=11; fi
+          for i in $(seq 1 $n); do
+            node cwplans/tools/fetch-live-cache.mjs --out "$RUNNER_TEMP/live-cache-$i" --restore --push || echo "run $i failed"
+            if [ "$i" -lt "$n" ]; then sleep 290; fi
+          done
