@@ -98,9 +98,9 @@ export default {
     group.add(gangMesh);
 
     // ---------- berthed vessels (OSM outlines): HMS Belfast at true size, the others by type
-    const vmat = vesselMaterial(ctx.U.night), vessels = [];
+    const vmat = vesselMaterial(ctx.U.night), bmat = vesselMaterial(ctx.U.night, { flood: 0.22 }), vessels = [];   // bmat: HMS Belfast, floodlit by night
     for (const v of J.vessels) {
-      const isB = v.kind === 'cruiser', G = isB ? belfast(187, 21) : berthed(v.kind, v.L, v.B), m = new THREE.Mesh(G, vmat);
+      const isB = v.kind === 'cruiser', G = isB ? belfast(187, 21) : berthed(v.kind, v.L, v.B), m = new THREE.Mesh(G, isB ? bmat : vmat);
       m.castShadow = m.receiveShadow = true; m.userData.vessel = v; m.rotation.y = -v.heading; m.position.set(v.x, 0, v.z); group.add(m);
       vessels.push({ v, m, ph: Math.random() * 6, amp: isB ? .02 : .06 });
     }

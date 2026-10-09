@@ -81,7 +81,9 @@ export function vesselMaterial(night, o = {}) {
     return mix(b, L(PAL.bDBG), step(.85, r));
   });
   m.colorNode = mix(col, camoCol(), camo);
-  m.emissiveNode = vec3(1, .8, .55).mul(glow).mul(night).mul(o.glowGain ?? 1.4);   // windows and lamps: warm light by night, whatever their day colour
+  // windows and lamps: warm light by night, whatever their day colour; o.flood: the whole hull lit by floodlights by night (a museum ship: HMS Belfast)
+  const surf = mix(col, camoCol(), camo);
+  m.emissiveNode = vec3(1, .8, .55).mul(glow).mul(night).mul(o.glowGain ?? 1.4).add(surf.mul(night).mul(o.flood ?? 0));
   return m;
 }
 
@@ -89,6 +91,12 @@ export function vesselMaterial(night, o = {}) {
 export function belfast(L = 187, B = 21) {
   const g = new GB(), Z = t => -L / 2 + t * L, cam = { camo: 1 };
   const FC = 7.9, QD = 5.4;   // forecastle and quarterdeck heights above the waterline (m, approximate)
+  const half = t => t < .34 ? Math.pow(Math.sin(Math.min(1, t / .34) * Math.PI / 2), .85) * .97 + .03 : t < .74 ? 1 : 1 - (t - .74) / .26 * .42;
+  // scuttles (portholes): two rows along each side below the weather deck, every 3.6 m, about half lit by night (the
+  // OSM outline drawn as a building showed lit windows over the whole hull, and the model without them went dark, 2026-10-09)
+  let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  for (let z = -L / 2 + 14; z < L / 2 - 10; z += 3.6) { const t = (z + L / 2) / L, deck = t < .12 ? FC + (.12 - t) / .12 * 2.6 : t < .64 ? FC : QD, x = half(t) * B / 2 + .06;
+    for (const y of [deck - 1.7, deck - 3.6]) if (y > 1.2) for (const sgn of [-1, 1]) { const lit = rnd() < .55; g.box(sgn * x, y, z, .12, .5, .5, lit ? PAL.lamp : PAL.glass, { glow: lit ? 1.1 : 0 }); } }
   g.hull({ L, B, draft: 6, col: PAL.b507a, camo: 1, deck: PAL.bDeck, keel: .3, n: 40,
     free: t => t < .12 ? FC + (.12 - t) / .12 * 2.6 : t < .64 ? FC : QD,
     half: t => t < .34 ? Math.pow(Math.sin(Math.min(1, t / .34) * Math.PI / 2), .85) * .97 + .03 : t < .74 ? 1 : 1 - (t - .74) / .26 * .42 });
