@@ -13,7 +13,7 @@
 //   - ponds, lakes, fountains and the rest: 2 m (a stated default).
 // Skill: docklands-3d-page, "Three.js port" (Water).
 import * as THREE from 'three/webgpu';
-import { uniform } from 'three/tsl';
+import { uniform, uniformArray } from 'three/tsl';
 import { A, dec } from './build.js';
 
 export const DEPTH = { cell: 10, dock: 10, pond: 2, creekMax: 4, creekSlope: 8, soundR: 30, scale: 25.5 };
@@ -22,7 +22,22 @@ export const WU = {
   ripple: uniform(1),            // strength of the ripple normals
   skyZenith: uniform(new THREE.Color(0.09, 0.22, 0.58)),   // linear: the sky colour by fresnel when there is no mirror (by day; U.night darkens it)
   skyHorizon: uniform(new THREE.Color(0.42, 0.60, 0.86)),
+  // shared contract (2026-10-09) between the tide layer (writes), the surface material (reads) and the ships layer (writes):
+  tideLevel: uniform(2.8),       // m OD: the Thames surface now (layers/tide.js; the tidal polygons follow it)
+  tideRate: uniform(0),          // m an hour, + rising (flood: the river runs upstream, west), - falling (ebb: downstream, east)
+  windSpeed: uniform(4),         // m/s at 10 m (weather data; layers/tide.js or a weather layer writes it)
+  windDir: uniform(240),         // degrees FROM which the wind blows (meteorological), grid north = -z
 };
+// boat wakes: up to MAXW boats, written by the ships layer through setWakes(); read by the water material (an analytic
+// Kelvin wake per boat, summed into the ripple normals). Each boat is two vec4: [x, z, heading rad (0 = grid north, -z;
+// clockwise), speed m/s] and [length m, acceleration m/s2, 0, 0]; unused slots have speed 0.
+export const MAXW = 16;
+export const wakeA = uniformArray(Array.from({ length: MAXW }, () => new THREE.Vector4()), 'vec4');
+export const wakeB = uniformArray(Array.from({ length: MAXW }, () => new THREE.Vector4()), 'vec4');
+export function setWakes(list) {
+  for (let k = 0; k < MAXW; k++) { const b = list[k], a = wakeA.array[k], c = wakeB.array[k];
+    if (b) { a.set(b.x, b.z, b.heading, b.speed); c.set(b.len || 20, b.accel || 0, 0, 0); } else { a.set(0, 0, 0, 0); c.set(0, 0, 0, 0); } }
+}
 
 const area = (f, n) => { let s = 0; for (let k = 0, j = n - 1; k < n; j = k++) s += (f[2 * j] - f[2 * k]) * (f[2 * j + 1] + f[2 * k + 1]) / 2; return Math.abs(s); };
 const DOCK_NAME = /Dock|Basin|Entrance|Cut\b|Cutting|Lock|Passage|Quay/i, POND_NAME = /Pond|Lake|Fountain|Square/i;

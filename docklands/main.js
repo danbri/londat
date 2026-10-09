@@ -246,6 +246,7 @@ async function setGround(k) {
 }
 
 // ---------- UI
+$('animate').checked = flag('animate', true);   // moving water by default (owner, 2026-10-09); ?animate=0 draws only on a change
 document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
 $('menu').onclick = () => { const d = $('drawer'); d.hidden = !d.hidden; };
 $('shadows').onchange = e => setShadows(e.target.checked);

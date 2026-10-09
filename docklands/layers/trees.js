@@ -47,7 +47,7 @@ export default {
       Object.assign(stats, { all, instances: n, triangles: 2 * n * 12 });
       ctx.draw();
     }
-    setAll(ctx.qs.get('trees') === 'all');
+    setAll(ctx.qs.get('trees') !== 'near');   // all trees by default (owner, 2026-10-09: "Default to all trees"); ?trees=near: within 900 m
     stats.buildMs = Math.round(performance.now() - t0 - tLoad);
     ctx.ui.toggle(`All trees in the model box (${N.toLocaleString('en-GB')}, not only the ${nNear.toLocaleString('en-GB')} within 900 m of the estate)`, stats.all, setAll);
     ctx.ui.note('Trees: GLA, Forest Research, OS, planning.data (OGL v3.0); OpenStreetMap (ODbL)');
