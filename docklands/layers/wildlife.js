@@ -65,6 +65,9 @@ export default {
     // maybe 10000x or whatever - just lots, maybe a slider") and "Size" (x1 to x20, to see them from a high view). The
     // radius round the camera follows its height above the ground (R_MIN to R_MAX), so a high view also gets animals.
     let ABUND = Math.min(10000, Math.max(1, +(ctx.qs.get('wildlifex') || 1) || 1)), SIZE = ctx.qs.get('wildlife') === 'big' ? 4 : Math.min(20, Math.max(1, +(ctx.qs.get('wildlifesize') || 1) || 1)), R_SIM = R_MIN, R_DRAW = R_MIN;
+    // debug (owner, 2026-10-09: "Foxes should allow many more with debug sliders. I found none"): Foxes x1 to x50 (?foxes=), and
+    // Highlight (the animals glow in their own colours, ?wildlifehi=1) to find them in the dark
+    let FOXX = Math.min(50, Math.max(1, +(ctx.qs.get('foxes') || 1) || 1)); const hiU = uniform(ctx.qs.get('wildlifehi') === '1' ? 1 : 0);
     const SP = D.species.filter(s => SPEC[s.id]), SPI = Object.fromEntries(SP.map((s, i) => [s.id, i]));
     const HC = D.habitats.classes, HI = Object.fromEntries(HC.map((h, i) => [h, i]));
 
@@ -147,7 +150,7 @@ export default {
         list.push(mk(s, 'perch', HI.none, q.x, q.y, q.z, r)); }
       // foxes: rare, at dusk and at night (now and then by day), near woods and parks
       const gr = area[HI.wood] + area[HI.park] * .6 + area[HI.garden] * .5 + area[HI.none] * .05, pf = (PH === 'day' ? .04 : .45) * gr;   // raised 2026-10-09 (owner: "I can't see any foxes in the woods"; London has about 18 foxes per km2)
-      for (let fk = 0, fn = ABUND === 1 ? 1 : Math.min(40, Math.ceil(pf * ABUND)); fk < fn; fk++) if (SPI.fox != null && foxes < MAX_FOX * ABUND && foxes < CAP_F && r() < (ABUND === 1 ? pf : Math.min(1, pf * ABUND / fn))) { const h = area[HI.wood] > .1 ? HI.wood : area[HI.park] > .1 ? HI.park : area[HI.garden] > .1 ? HI.garden : HI.none, p = pointIn(ci, cj, h, r); if (p) { list.push(mk(SP[SPI.fox], 'trot', h, p[0], landY(p[0], p[1]), p[1], r)); foxes++; } }
+      const FA = ABUND * FOXX; for (let fk = 0, fn = FA === 1 ? 1 : Math.min(40, Math.ceil(pf * FA)); fk < fn; fk++) if (SPI.fox != null && foxes < MAX_FOX * FA && foxes < CAP_F && r() < (FA === 1 ? pf : Math.min(1, pf * FA / fn))) { const h = area[HI.wood] > .1 ? HI.wood : area[HI.park] > .1 ? HI.park : area[HI.garden] > .1 ? HI.garden : HI.none, p = pointIn(ci, cj, h, r); if (p) { list.push(mk(SP[SPI.fox], 'trot', h, p[0], landY(p[0], p[1]), p[1], r)); foxes++; } }
       return list;
     }
     function mk(s, st, h, x, y, z, r) {
@@ -358,6 +361,7 @@ export default {
         return vec3(s.x.mul(c).sub(s.z.mul(n)), s.y, s.x.mul(n).add(s.z.mul(c))).add(iP.xyz);
       })();
       m.colorNode = varying(vec4(palette.element(int(iB.w.mul(4).add(part))), 1));
+      m.emissiveNode = m.colorNode.xyz.mul(hiU.mul(2.5));   // Highlight (debug)
       const mesh = new THREE.Mesh(geo, m); mesh.frustumCulled = false; mesh.castShadow = false; mesh.receiveShadow = true; geo.instanceCount = 0;
       return { mesh, aP, aA, aB, cap };
     }
@@ -423,12 +427,15 @@ export default {
     const aL = n => `More animals: x${n.toLocaleString('en-GB')} (not real numbers)`, sL = n => `Size: x${n} (to see them from far)`;
     ctx.ui.slider(aL(ABUND), 0, STEPS.length - 1, 1, Math.max(0, STEPS.findIndex(v => v >= ABUND)), (v, t) => { ABUND = STEPS[Math.round(v)]; t.textContent = aL(ABUND); repopulate(); });
     ctx.ui.slider(sL(SIZE), 1, 20, 1, SIZE, (v, t) => { SIZE = v; t.textContent = sL(SIZE); ctx.draw(); });
+    const fL = n => `Foxes: x${n} (debug)`;
+    ctx.ui.slider(fL(FOXX), 1, 50, 1, FOXX, (v, t) => { FOXX = v; t.textContent = fL(FOXX); repopulate(); });
+    ctx.ui.toggle('Highlight the animals (debug: they glow)', hiU.value > 0, v => { hiU.value = v ? 1 : 0; ctx.draw(); });
     const ecoOnly = SP.filter(s => /^ecology/.test(s.basis)).map(s => s.name), habEco = SP.filter(s => /habitat from ecology/.test(s.basis)).map(s => s.name);
     const note = ctx.ui.note('');
     function status() {
       const byS = {}; for (const a of drawn) byS[a.s.name] = (byS[a.s.name] || 0) + 1;
       const top = Object.entries(byS).sort((x, y) => y[1] - x[1]).slice(0, 6).map(([k, v]) => `${v} ${k.toLowerCase()}`).join(', ');
-      note.innerHTML = esc(`${drawn.length} animals within ${Math.round(R_DRAW)} m of the camera${ABUND > 1 ? ` (x${ABUND.toLocaleString('en-GB')} the simulated numbers)` : ''}${top ? ` (${top})` : ''}; ${PH || ''}, ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][MON ?? 0]}. ` +
+      note.innerHTML = esc(`${drawn.length} animals (${nF} foxes) within ${Math.round(R_DRAW)} m of the camera${ABUND > 1 ? ` (x${ABUND.toLocaleString('en-GB')} the simulated numbers)` : ''}${top ? ` (${top})` : ''}; ${PH || ''}, ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][MON ?? 0]}. ` +
         `Simulated: species, numbers and places are weighted by ${(D.totals.nbn + D.totals.gbif).toLocaleString('en-GB')} open records (${D.totals.located.toLocaleString('en-GB')} located to 100 m) and general ecology; positions are not observations. ` +
         `${habEco.length ? `Habitat from general ecology only (too few located records): ${habEco.join(', ')}. ` : ''}${ecoOnly.length ? `General ecology only: ${ecoOnly.join(', ')}. ` : ''}Real sizes: come close (under 150 m) to see them${SIZE > 1 ? ` (drawn ${SIZE} times larger than life)` : ''}. Tap one for its card. `) +
         'Sources: <a href="https://nbnatlas.org/" target="_blank" rel="noopener">NBN Atlas</a> (OGL, CC BY, CC0 records) and <a href="https://www.gbif.org/" target="_blank" rel="noopener">GBIF.org</a> (CC0, CC BY); habitats from © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> and OS Open Greenspace (OGL).';
