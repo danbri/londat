@@ -225,6 +225,7 @@ export default {
     const PART = {}; for (const k of Object.keys(NEED)) PART[k] = { k, group: null, hits: [], polys: [], n: {}, lines: [] };
     let clockG = null, clockHits = [], lastMin = -1, lastDay = '';
     function buildPart(k) {
+      if (!RV.river || NEED[k].some(f => !RV.data[f])) return;   // a part switched on before its files arrived (all parts start on): setPart builds it when they have
       const p = PART[k], M = { S: new RMesh(), G: new RMesh(), F: new RMesh(), tips: [] }, t = T(), hits = [], polys = [], n = {}, L = p.lines = [];
       labels.clear(l => l.part === k);
       const lab = (name, x, y, z, pri, cd) => { const l = labels.add(name, x, y, z, pri, cd, () => on[k] && root.visible); l.part = k; };
@@ -288,7 +289,7 @@ export default {
     // the page clock: boats and locks once a minute of page clock; a new day rebuilds the notices and the banner
     ctx.onFrame(() => {
       const t = T(), m = Math.floor(t / 60e3), day = dayOf(t); if (m === lastMin) return; lastMin = m;
-      if (day !== lastDay) { lastDay = day; if (RV.data.barrier) banner(); if (on.rpla) buildPart('rpla'); }
+      if (day !== lastDay) { lastDay = day; if (RV.data.barrier) banner(); if (on.rpla && RV.data.pla) buildPart('rpla'); }
       if ((on.rbus || on.rlocks) && RV.river) rebuildClock();
     });
 
