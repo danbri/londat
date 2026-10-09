@@ -63,7 +63,9 @@ await page.screenshot({ path: `${OUT}/photo-leave-1-${VIEW}.png`, timeout: 18000
   let low = await above();
   await p2.mouse.move(195, 717); await p2.mouse.down(); for (let i = 1; i <= 20; i++) { await p2.mouse.move(195, 717 - i * 30); low = Math.min(low, await above()); } await p2.mouse.up();
   for (let i = 0; i < 6; i++) { await p2.waitForTimeout(500); low = Math.min(low, await above()); }
-  check(low > 1.5, `drag up from 85 % height after ?view=${VIEW}&t=2026-10-09T22:00: lowest eye ${low} m above the ground (limit 1.5)`);
+  // limit: the ground wall of main.js navigation is nav.js's 1 m (before 2026-10-09 evening the orbit lift held the eye at 1.6 m and
+  // this limit was 1.5); the page has no layers/under.js here, so a push cannot pass Below ground: the eye must stay above
+  check(low > 0.99, `drag up from 85 % height after ?view=${VIEW}&t=2026-10-09T22:00: lowest eye ${low} m above the ground (limit 0.99: the 1 m wall)`);
   await p2.screenshot({ path: `${OUT}/photo-leave-2-${VIEW}-dragup.png`, timeout: 180000 }); await p2.close(); }
 check(!errors.length, `no page or console errors${errors.length ? ': ' + errors.slice(0, 4).join(' | ') : ''}`);
 await browser.close();

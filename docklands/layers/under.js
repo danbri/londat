@@ -275,7 +275,7 @@ export default {
     tunnels.visible = tTun.checked; under.visible = tUnd.checked;
 
     return {
-      object: group, ownUi: true, stats, setCut, showGauge, cutLevel: () => CUT,   // main.js spreads this object: no getters
+      object: group, ownUi: true, stats, setCut, showGauge, cutLevel: () => CUT, gaugeOn: () => !gauge.hidden,   // main.js spreads this object: no getters
       setVisible(v) { group.visible = v; draw(); },
     };
   },

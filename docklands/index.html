@@ -17,6 +17,21 @@ button,label,select,#credit,#attribI{touch-action:manipulation}
 .btn{position:fixed;top:calc(10px + var(--top));width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;z-index:5}
 #menu{left:10px}
 #nightBtn{left:62px;font-size:18px}
+/* the round map buttons after Labels (layers/search.js, 114 px): Below ground (main.js syncDig) and Drone (drone.js), as the
+   WebGL page's Menu buttons of those names; hidden until their layer has loaded */
+#digBtn{left:166px}#droneRound{left:218px}
+#digBtn[hidden],#droneRound[hidden]{display:none}
+#digBtn svg,#droneRound svg{width:24px;height:24px;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#digBtn[aria-pressed=true],#droneRound[aria-pressed=true]{background:#2a6fd6;color:#fff}
+body #hud{left:270px!important;max-width:calc(100vw - 280px)}
+@media (max-width:560px){body #hud{left:62px!important;top:calc(132px + var(--top));max-width:calc(100vw - 72px)}}
+/* a phone: the style select (top right) leaves no room after Labels: Below ground and Drone go down the left edge, under the time wheels */
+@media (max-width:480px){#digBtn{left:10px;top:calc(132px + var(--top))}#droneRound{left:10px;top:calc(184px + var(--top))}}
+/* the ground limit's cue (main.js navigation, nav.js): a ring that fills while a push lasts and snaps when the eye passes */
+#navCue{position:fixed;z-index:3;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;pointer-events:none;opacity:0;background:conic-gradient(#4da3ffcc calc(var(--p,0)*1turn),#4da3ff22 0);-webkit-mask:radial-gradient(circle,transparent 33px,#000 34px);mask:radial-gradient(circle,transparent 33px,#000 34px)}
+#navCue.on{opacity:1}#navCue.snap{animation:navSnap .45s ease-out forwards}@keyframes navSnap{0%{opacity:1;transform:scale(1)}40%{transform:scale(1.25)}100%{opacity:0;transform:scale(1.6)}}
+#navCueT{position:fixed;z-index:3;left:50%;top:calc(50% + 50px);transform:translateX(-50%);pointer-events:none;font:600 13px/1.2 system-ui,sans-serif;color:#e8eaec;background:#1b2128e6;border-radius:8px;padding:4px 8px;opacity:0;transition:opacity .3s}
+#navCueT.on{opacity:1}@media (prefers-reduced-motion: reduce){#navCue.snap{animation:none;opacity:0}}
 #hud{position:fixed;left:116px;top:calc(18px + var(--top));padding:4px 10px;border-radius:6px;background:var(--panel);color:var(--mut);font-size:12px;z-index:4;transition:opacity 1.5s;pointer-events:none}
 #hud.fade{opacity:0}
 /* the drawer (menu.js): header, tabs, one pane at a time; closes by its cross, the dimmed map, Escape, a swipe left.
@@ -98,7 +113,10 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 <div id="labels"></div>
 <button id="menu" class="btn" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="drawer">&#9776;</button>
 <button id="nightBtn" class="btn" aria-label="Day or night" title="Day or night">&#9790;</button>
+<button type="button" id="digBtn" class="btn" hidden aria-pressed="false" aria-label="Below ground: the depth gauge" title="Below ground: the depth gauge (drag it down to cut away)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h20"/><path d="M5 13h14M8 17h8" opacity=".6"/><path d="M12 3v9m-3-3 3 3 3-3"/></svg></button>
+<button type="button" id="droneRound" class="btn" hidden aria-pressed="false" aria-label="Drone" title="Drone: copter, plane, boat, tube, walk, under"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/><path d="M8 8l2.5 2.5M16 8l-2.5 2.5M8 16l2.5-2.5M16 16l-2.5-2.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></button>
 <div id="hud">Loading the model data...</div>
+<div id="navCue"></div><div id="navCueT" role="status" aria-live="polite"></div>
 <div id="scrim" hidden></div>
 <aside id="drawer" hidden aria-label="Menu">
   <div id="dHead"><b>Docklands 3D</b><button type="button" class="ib" id="drawerX" aria-label="Close the menu">&times;</button></div>
@@ -169,7 +187,7 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
       <h3>Docklands: London Bridge to Cody Dock, above and below ground</h3>
       <p class="small">Experimental port of the 3D page to three.js r186. <a href="../cwplans/docklands/">The WebGL page</a> · <a href="../cwplans/atlas/">atlas</a> · <a href="../cwplans/kg/">knowledge graph</a> · <a href="https://github.com/danbri/londat/blob/main/docklands/README.md">notes and menu map</a> · <a href="#credits" data-credits>credits</a></p>
       <h3>How to use it</h3>
-      <p class="small">One finger: turn and tilt. Two fingers: move, zoom, twist. Tap a building or a marker: its record. Press and hold: route from or to that point. Drag the time wheels at the top: the upper one sets the time of day, the lower one the day of the year; "Now" returns to the time now.</p>
+      <p class="small">One finger: turn and tilt. Two fingers: move, zoom, twist (the point between the fingers stays under them). Mouse: drag to turn, right or Shift drag to move, wheel to zoom to the pointer. A flick goes on a little; a touch stops it. The view stops 1 m above the ground or water: push on down for a moment and it passes Below ground (a click and a ring), looking up from 1.5 m under the street; push up to come back. The round buttons at the top: Below ground (the depth gauge) and Drone (its vehicles show at the top right). Tap a building or a marker: its record. Press and hold: route from or to that point. Drag the time wheels at the top: the upper one sets the time of day, the lower one the day of the year; "Now" returns to the time now.</p>
       <p class="small">Ground, building heights and open track are measured (EA LiDAR 1 m). The depth gauge (Layers &gt; Below ground &gt; Depth gauge, or Views &gt; Underground) is at the right edge: drag it down to remove everything higher than that level, so you can look into the ground. Basement depths and indoor levels use OSM and Wikidata storey counts × the storey height setting. Tunnel levels are modelled between known levels: portals and open cuts the LiDAR can see, and published station levels (with sources).</p>
       <p class="small">Pixel art (Look &gt; Style): drag to move, pinch or wheel to zoom, twist two fingers to turn. The arrows at the top right turn the view by a quarter.</p>
       <h3>Your location</h3>

@@ -1924,6 +1924,68 @@ Include a looping carousel at top for time of day, time of year."
 - Phones: with every layer on, the page draws about 2.8 M triangles; the owner saw no trees after a reload on a device
   (2026-10-09, not yet diagnosed: memory is the first suspect).
 
+## Three.js port: navigation (2026-10-09, evening)
+
+Owner, 2026-10-09, iPhone, after the day's releases: "Orbit controls increasingly hard to use for fine grained
+navigation. Drone modes have vanished as has snap to go upside down." `docklands/main.js` "navigation" now does what the
+WebGL page's index.html gestures and `nav.js` do; three.js OrbitControls stays only as the holder of `camera` and
+`controls.target` (other modules read them and `controls.enabled`), with `enableRotate`, `enableZoom`, `enablePan` and
+`enableDamping` false and `maxPolarAngle` pi - 0.05 (the limits are the code's own). README "Navigation" lists the rules.
+
+- **Why it was hard** (measured, `docklands/test/nav-feel.mjs`, synthetic events in the page, 1280 x 800, `?layers=`):
+  the pointer-ray zoom of the afternoon moved eye and target together, so the orbit distance stayed (700 m after
+  wheeling down to an eye 9.4 m over Mudchute). OrbitControls pans by the distance to the orbit target and turns about it:
+  there a 40 px drag moved the ground under the pointer 604 px (0.305 m a pixel; grab would be 40 px) and the eye 2.04 m
+  for each pixel of turn; a pinch did nothing to the distance (0.2 %) and the point between the fingers drifted 55 px.
+  OrbitControls' damping (0.12 a frame: a lag of 0.13 s at 60 frames a second, 3.9 s at 2) went on 0.11 rad after a press.
+- **After**, same places: turn 0.006 rad a pixel (OrbitControls 2 pi / height: 0.0079 at 800 px, 0.0074 at 844 px);
+  pan by grab: the point under the pointer moves 40.8, 40.2, 39.7 and 37.8 px for a 40 px drag at eyes 10 m (placed),
+  94 m (wheeled), 1500 m (placed) and 300 m (wheeled) (16 and 18 px where a building nearer than the ground was under the
+  pointer: then the building is what is grabbed); eye movement per pixel of turn 0.057 m at 10 m (was 2.04); a wheel notch
+  (dy 100) 9.5 % of the distance to the point under the pointer (2.2 m at 10 m, 7.6 to 17.9 m at 100 m, 248 m at 1500 m;
+  OrbitControls 5 %), drift of that point 0 px; a pinch 100 -> 200 px takes 47 to 57 % of the distance (23 % with a building under the fingers) with 0.6 to 4.3 px
+  drift; no motion after a press (0 rad). The orbit radius goes down to 10 m (the zoom is a homothety about the point
+  under the pointer, eye and target both; the target moves on along the line of sight below 10 m).
+- **Momentum, wall, pass**: nav.js's numbers unchanged (TAU 0.35 s, end 3.2 s, caps; W 1 m, zone max(6 m, 2 %), PUSH_MS
+  600 with 3 moves, PUSH_PX 480, cool 900 ms, vibrate 15 ms, the ring). Differences: the ground of the wall is bilinear on
+  the DTM (build.js `groundAt` and the WebGL page's are the nearest 20 m cell: steps of metres at cell edges); after the
+  pass down the view turns up to -0.2 rad about the eye (nav.js stops the pitch where the eye reaches -1.5 m, often near
+  level; the owner calls the pass "snap to go upside down"; at -0.5 the screen showed only sky through the cut); the guard interpolates `ty` with tilt and zoom (the zoom is a
+  homothety and moves the target); with a finger down a push is one gesture however far apart the moves come.
+- **Measured** (`docklands/test/nav-check.mjs`, WebGL 2 in software): a slow drag up stops at clearance 1.00 m, pitch
+  0.0109; pushing on passes (gauge open, cut 9 m OD, clearance -1.50 m, pitch -0.200); a drag down from
+  below passes back (gauge closed, cut off, clearance 1.50 m); six wheel notches in from a low eye: 3.77 m, no pass; a
+  pinch 80 -> 200 px: orbit 400 -> 160 m, the point between the fingers 0.6 px off; a fast drag (mouse or touch) flings
+  1.75 rad (the 5 rad/s cap x TAU) and a press or touch during a fling stops it dead; the touch pass at 390 x 844 the same.
+  Drone (`nav-check.mjs`, both sizes): each of the six vehicles starts from its bar button, moves under autopilot (4 s:
+  copter 39 to 42 m, plane 173, boat 15, tube 10, walk 5, under 25), the camera sits at the drone, the orbit is off,
+  tube, walk and under cut the model (-11, 2, 9 m OD); the cross gives the orbit back.
+  `photo-leave.mjs` (390 x 844, WebGL 2): field 70 deg, 45.8 deg after a drag, 15 wheel steps to 8.1 m from a tree, a
+  drag up after `?view=rotherhithe` night: lowest eye 1.7 m (its limit is now 0.99 m: the wall is nav.js's 1 m; it was 1.5
+  m for the old 1.6 m lift), no errors.
+- **Faults met**: (1) OrbitControls.update's lift (the eye 1.6 m over the ground after any change) ate every push: the
+  guard saw no move towards the wall. Updates from the navigation code (`NS.own`) skip the lift; other movers keep it.
+  (2) The release velocity of the moves before a pass flung the eye 46 m under the street: a pass clears the samples and
+  the rest of the gesture adds none. (3) In software Chromium delivers one pointermove a frame (0.5 to 5 s apart) and
+  rAF does not fire while a frame renders: nav.js's 350 ms push window never filled and a 0.7 s wait saw no momentum; test
+  with synthetic events in the page (`nav-feel.mjs`) or wait for the frames (4 s). (4) `pkill -f`/`pgrep -f` with a pattern
+  that is also in your own command line kills your own shell (exit 144): kill by PID.
+- **The drone and the round buttons**: the WebGL page has no round Drone button: Drone and Below ground are buttons in
+  its Menu (views group; drone.js line ~649 puts Drone after `#digBtn` there) and the vehicle is a select in the drone bar.
+  The port now has round buttons at the top left after Labels: `#digBtn` (Below ground: the gauge, `main.js syncDig`) and
+  `#droneRound` (drone.js); under 480 px they go down the left edge at 132 and 184 px (the style select at the top right
+  left no room); the bar `#drBar` has a row of six vehicle buttons, Auto and the cross, at 60 px from the top
+  (the time wheels, `#locBtns` and the test note hide while the drone flies; before, the bar was at 132 px under the wheels
+  and the only way in was Menu > Go > Move > Drone). Menu > Go keeps the Drone button.
+- **Test state on 2026-10-09 23:40** (after a container restart): `nav-check.mjs` all pass on WebGL 2 (nav and drone) and
+  WebGPU (drone); `photo-leave.mjs` passes; `load.mjs` passes on WebGL 2 (`view=cw&weather=0`, both sizes) and on WebGPU at
+  1280 x 800; WebGPU at 390 x 844 was "not ready" in 180 s (the known slow full page in software). `menu-check.mjs` could
+  not run: in this container every full-page frame took about 7 s in software and its first `page.click('#menu')` timed
+  out at 30 s, on the changed page and on an unchanged copy alike (the same failure: not this change). Re-run it on a
+  quiet container.
+- **Only a real phone can confirm**: the feel at 60 to 120 frames a second; whether 0.006 rad a pixel is fine enough on
+  an iPhone; the click (no `navigator.vibrate` on iOS: the ring only).
+
 ## Night windows by use and hour (Three.js port, 2026-10-09)
 
 Owner, 2026-10-09: "the binary division of night lighting into warm-white grids of tiny square windows (residential) vs cold

@@ -52,9 +52,13 @@ const CSS = `#drone{position:fixed;inset:0;z-index:3;display:none;touch-action:n
 body.drone #drone{display:block}
 #drHud{position:absolute;left:8px;bottom:calc(var(--safe,0px) + 30px);font:600 11px/1.35 system-ui,sans-serif;color:#e8eaec;background:#0d1013b3;border-radius:7px;padding:3px 7px;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 60px);overflow:hidden;text-overflow:ellipsis}
 #drHud i{font-style:normal;opacity:.7}
-#drBar{position:absolute;right:8px;top:calc(env(safe-area-inset-top,0px) + 60px);display:flex;gap:6px;align-items:center}
-#drBar button,#drBar select{height:34px;border-radius:17px;border:1px solid #59616a99;background:#15191dcc;color:#e8eaec;font:600 12px system-ui,sans-serif;padding:0 11px;touch-action:manipulation;width:auto}
+#drBar{position:absolute;right:8px;top:calc(env(safe-area-inset-top,0px) + 60px);display:flex;flex-direction:column;gap:6px;align-items:flex-end;max-width:calc(100vw - 16px)}
+#drBar .row{display:flex;gap:5px;align-items:center;max-width:100%;overflow-x:auto;scrollbar-width:none}
+#drBar button{flex:none;height:34px;border-radius:17px;border:1px solid #59616a99;background:#15191dcc;color:#e8eaec;font:600 12px system-ui,sans-serif;padding:0 10px;touch-action:manipulation;width:auto;cursor:pointer}
 #drBar button[aria-pressed=true]{background:#2a6fd6cc;border-color:#4da3ff}
+#drModes button[aria-pressed=true]{background:#1f8f8acc;border-color:#2cc3b5}
+body.drone #wheels,body.drone #locBtns,body.drone #testNote{display:none!important}
+body.drone.wheels #drBar{top:calc(env(safe-area-inset-top,0px) + 60px)}
 #drLever{position:absolute;right:10px;top:34%;width:40px;height:170px;border-radius:20px;background:#15191d99;border:1px solid #59616a88;touch-action:none}
 #drone.gauge #drLever{right:110px}
 #drLever b{position:absolute;left:4px;width:30px;height:30px;border-radius:50%;background:#e8eaecdd;top:calc(50% - 15px)}
@@ -551,7 +555,7 @@ export default {
       return true;
     }
     function stop(byOther) {
-      if (!S.on) return; S.on = false; document.body.classList.remove('drone'); stick(null);
+      if (!S.on) return; S.on = false; document.body.classList.remove('drone'); stick(null); $('droneRound')?.setAttribute('aria-pressed', 'false');
       const h = S.h, p = S.p, sv = S.saved && S.saved.controls;
       if (sv) Object.assign(controls, sv); controls.enabled = true;
       if (!byOther) {   // back to the orbit: looking at a point 150 m ahead from 350 m behind it
@@ -575,7 +579,7 @@ export default {
     const css = document.createElement('style'); css.textContent = CSS; document.head.appendChild(css);
     const ui = document.createElement('div'); ui.id = 'drone'; ui.setAttribute('aria-label', 'Drone controls');
     ui.innerHTML = `<div id="drStick"><b></b></div><div id="drHud" role="status" aria-live="off"></div><div id="drHint" role="status" aria-live="polite"></div>
-<div id="drBar"><select id="drVeh" aria-label="Vehicle">${MODES.map(m => `<option value="${m}">${VEH[m].k} ${VEH[m].name}</option>`).join('')}</select><button type="button" id="drAuto" aria-pressed="true" title="Autopilot (P)">Auto</button><button type="button" id="drExit" aria-label="Leave the drone (Esc)">✕</button></div>
+<div id="drBar"><div class="row" id="drModes" role="group" aria-label="Vehicle">${MODES.map(m => `<button type="button" data-mode="${m}" aria-pressed="false" title="${VEH[m].name} (key ${VEH[m].k})">${VEH[m].name}</button>`).join('')}</div><div class="row"><button type="button" id="drAuto" aria-pressed="true" title="Autopilot (P)">Auto</button><button type="button" id="drExit" aria-label="Leave the drone (Esc)" title="Leave the drone (Esc)">✕</button></div></div>
 <div id="drLever" role="slider" aria-label="Up and down" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" tabindex="-1"><b></b><span>↑↓</span></div>
 <button type="button" id="drBoost" aria-label="Boost: ten times the speed for 2 s (Shift)">Boost</button>`;
     document.body.appendChild(ui);
@@ -596,12 +600,13 @@ export default {
       ui.classList.toggle('gauge', cutOn());
     }
     function syncUi() {
-      $('drVeh').value = S.mode; $('drAuto').setAttribute('aria-pressed', String(S.auto));
+      for (const b of document.querySelectorAll('#drModes [data-mode]')) b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)); $('drAuto').setAttribute('aria-pressed', String(S.auto));
+      const rb = $('droneRound'); if (rb) rb.setAttribute('aria-pressed', String(S.on));
       const lv = VEH[S.mode].lever; lever.querySelector('span').textContent = lv === 'lift' ? '↑↓' : 'speed'; lever.setAttribute('aria-label', lv === 'lift' ? 'Up and down' : 'Speed');
       leverDraw();
     }
     function leverDraw() { const lv = VEH[S.mode].lever, v = lv === 'lift' ? S.lever : S.set * 2 - 1; knob.style.top = `calc(${(1 - (v + 1) / 2) * 100}% - ${15 + v * -11}px)`; lever.setAttribute('aria-valuenow', v.toFixed(2)); }
-    $('drVeh').onchange = e => { start(e.target.value); e.target.blur(); };
+    $('drModes').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b) { start(b.dataset.mode); b.blur(); } });
     $('drAuto').onclick = () => { S.auto = !S.auto; if (S.auto) S.inT = -1e9; syncUi(); say(S.auto ? 'Autopilot on' : 'Autopilot off: the vehicle holds where it is when you let go'); };
     $('drExit').onclick = () => stop(false);
     const boostTap = () => { S.bMax = reduced() ? 4 : 10; S.bUntil = S.t + BOOST_T; };
@@ -651,7 +656,7 @@ export default {
       if (S.mode === 'walk') { S.dest = V.walk.nearest(x, null, z); S.path = null; S.target = null; }
       say((name ? name + ': ' : '') + (S.mode === 'tube' ? 'the train stops nearest to it' : 'autopilot on its way'));
     }
-    const typing = e => e.target instanceof Element && e.target.closest('input,select,textarea') && e.target.id !== 'drVeh';
+    const typing = e => e.target instanceof Element && e.target.closest('input,select,textarea') && !e.target.closest('#drBar');
     addEventListener('keydown', e => {
       if (!S.on || typing(e) || e.ctrlKey || e.metaKey || e.altKey) return; const k = e.key.toLowerCase();
       if (k === 'escape') { stop(false); e.preventDefault(); return; }
@@ -675,8 +680,12 @@ export default {
     // the menu button: in the views group
     { const views = document.getElementById('goMove') || document.querySelector('#drawer .views'), b = document.createElement('button'); b.type = 'button'; b.id = 'droneBtn'; b.textContent = 'Drone';
       b.title = 'Fly a first-person drone: copter, plane, boat, tube, walk, under';
-      b.onclick = () => { if (S.on) stop(false); else { start(S.mode && S.mode !== 'under' ? S.mode : 'copter'); if (innerWidth < 900 && $('drawer')) $('drawer').hidden = true; } };
-      if (views) views.appendChild(b); }
+      const toggle = () => { if (S.on) stop(false); else { start(S.mode && S.mode !== 'under' ? S.mode : 'copter'); if (innerWidth < 900 && $('drawer') && !$('drawer').hidden) $('drawerX')?.click(); } };
+      b.onclick = toggle;
+      if (views) views.appendChild(b);
+      // the round Drone button on the map (index.html #droneRound, next to Below ground): the same switch; while the drone
+      // flies its vehicles (Copter, Plane, Boat, Tube, Walk, Under), Auto and the cross are at the top right (#drBar)
+      const rb = $('droneRound'); if (rb) { rb.hidden = false; rb.onclick = toggle; } }
 
     // share: dr=mode,x,y,z,heading,look pitch
     const r1 = x => Math.round(x * 10) / 10, r3 = x => Math.round(x * 1e3) / 1e3;

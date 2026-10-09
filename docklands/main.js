@@ -46,7 +46,7 @@ $('backend').textContent = BACKEND;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45.8, innerWidth / innerHeight, 2, 30000);
 const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: 0.12, screenSpacePanning: false, minDistance: 10, maxDistance: 16000, maxPolarAngle: Math.PI / 2 - 0.02, zoomToCursor: true });
+Object.assign(controls, { enableDamping: false, screenSpacePanning: false, minDistance: 10, maxDistance: 16000, maxPolarAngle: Math.PI - 0.05, zoomToCursor: true });   // its own input is off: main.js "navigation" moves the camera
 controls.listenToKeyEvents(window);
 // vertical exaggeration (Look > Model settings, ?vz=1 to 5; index.html vz: gl_Position = m * (x, y * vz, z)): the scene stays
 // in model metres (the TSL graphs read positionWorld) and the camera's world matrix takes a y scale of 1 / VZ, so the view
@@ -175,7 +175,7 @@ function setCam(c) {
   const ty = HFOV && VZ !== 1 ? ((c.ty || 0) + off) * VZ - off : (c.ty || 0) * VZ; controls.target.set(c.tx, ty, c.tz);
   camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, ty + off, c.tz + c.dist * Math.cos(c.yaw) * ce);
   // a photo view looks up or level: let the orbit go below the horizontal for it
-  controls.maxPolarAngle = c.pitch < 0.05 ? Math.PI - 0.05 : Math.PI / 2 - 0.02; controls.minDistance = 10;   // 10 m everywhere (the WebGL page: 80): close to a tree or a door; the near plane follows the eye's height
+  controls.maxPolarAngle = Math.PI - 0.05; controls.minDistance = 10;   // the pitch limits and the ground limit are main.js "navigation" (navGuard); 10 m everywhere (the WebGL page: 80): close to a tree or a door; the near plane follows the eye's height
   resize(); controls.update(); draw();
 }
 function camState() {
@@ -416,7 +416,7 @@ function leavePhoto() {
   if (!HFOV && !ROLL) return;
   const f0 = camera.fov, t0 = performance.now(); HFOV = null; FOVY = null; ROLL = 0; camera.up.set(0, 1, 0);
   const step = () => { const k = Math.min(1, (performance.now() - t0) / 600), e = k * k * (3 - 2 * k); camera.fov = f0 + (45.8 - f0) * e; camera.updateProjectionMatrix(); draw(); if (k < 1) requestAnimationFrame(step); };
-  requestAnimationFrame(step); controls.maxPolarAngle = Math.PI / 2 - 0.02;   // the photo view's limit (pi - 0.05) let a drag up take the eye under the water and the ground (white flashes on the horizon, 2026-10-09)
+  requestAnimationFrame(step);   // (the photo view's old orbit limit, pi - 0.05, let a drag up take the eye under the water: white flashes on the horizon, 2026-10-09; now navGuard keeps the eye 1 m over it)
   controls.target.copy(centreGround(3000, Math.min(400, camera.position.distanceTo(controls.target)))); controls.update(); writeHash();
 }
 // the ground (or water) point under the screen centre within maxS m of the eye, else the point at s0 m along the centre
@@ -427,35 +427,273 @@ function centreGround(maxS, s0) {
   if (!hit) hit = o.clone().addScaledVector(d, s0);
   hit.y *= vzNow(); return hit;
 }
-// zoom in towards the pointer (wheel, or the centre of a pinch): eye and target move together along the pointer ray, so
-// the view does not turn and the point under the pointer stays under it, up to 10 m from the ground, water or sky
-// point under the pointer. three.js r186 OrbitControls (zoomToCursor) stops at minDistance from the orbit target and, near
-// the horizontal, turns the camera to that target: after a photo view (target 1.2 km out, eye 2 to 7 m above the water)
-// the visitor could not get near anything off the centre line. Zoom out stays as three.js does it.
-{ const ou = controls.update.bind(controls), dir = new THREE.Vector3();
-  const roll = r => { if (ROLL && controls.enabled) { camera.rotateZ(ROLL * Math.PI / 180); camera.updateMatrixWorld(); } return r; };   // OrbitControls.update turns the camera to its target with no roll: put the photo's roll back at once, so labels and picking between frames see it
+// ---------- navigation: the WebGL page's gestures (index.html gMove) and nav.js (momentum, the ground limit, the pass
+// below ground), on the orbit state s = { tx, tz, ty (model m), yaw, pitch, ld = ln dist }. OrbitControls stays as the
+// holder of camera and target (other modules read controls.target, controls.enabled) but its own input is off: its pan
+// and rotate went with the distance to the orbit target (1.5 km out after a pointer-ray zoom left the eye 10 m over the
+// ground: 1.5 m of pan a pixel), its damping is by frame (a 0.13 s lag at 60 frames a second, 3.9 s at 2) and a touch did
+// not stop it. Numbers before and after, the tests: skill docklands-3d-page, "Three.js port: navigation".
+// One finger or the left button: turn and tilt (0.006 rad a pixel). Right button, Shift or Ctrl drag: move, the ground
+// under the pointer stays under it. Two fingers: move, pinch (about the point between the fingers), twist. Wheel: zoom
+// in about the point under the pointer (exp(-0.001 dy): 9.5 % of the distance a notch), out about the orbit target.
+// Pixel art (index.html): drag moves, right or Shift drag turns and tilts, two fingers up or down tilt (0.003 rad a pixel).
+const NV = { ROT: .006, TILT2: .003, WHEEL: .001, TAU: .35, T_END: 3.2, PMAX: 1.5695, DMIN: 10, DMAX: 16000, W: 1, PMIN_UNDER: -1.35, PUSH_MS: 600, PUSH_PX: 480, STOP: 10, UNDER_EYE: 1.5, LOOK_UP: -.2 };
+const NS = { moving: false, v: null, t0: 0, t: 0, last: null, manual: false, samples: [], flings: 0, ptrs: new Map(), g: null, lift: null, hold: false, holdW: 0, push: null, cool: 0, passes: 0, pushes: 0, lastPass: null, vibrated: null, wheelT: -1e9, range: null, P: null };
+Object.assign(controls, { enableRotate: false, enableZoom: false, enablePan: false, enableDamping: false, maxPolarAngle: Math.PI - 0.05 });
+const clampN = THREE.MathUtils.clamp;
+const angDiff = (a, b) => { let d = (a - b) % (2 * Math.PI); if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; return d; };
+const reducedMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+const underApi = () => LAYERS.under?.api;
+const isPix = () => globalThis.__docklandsStyles?.mode === 'pixel';
+const navUnder = () => { const u = underApi(); return !!u && (!!(u.gaugeOn && u.gaugeOn()) || u.cutLevel() < 250); };   // nav.js isUnder: the gauge open or a cut set
+const pitchMin = () => isPix() ? .2 : navUnder() ? NV.PMIN_UNDER : -.6;
+const navOff = () => !controls.enabled || !!ctx.xrFrame;   // the drone or a headset owns the camera
+const followMode = () => /^(centred|heading|eye)$/.test(LAYERS.locate?.api?.state?.mode || '');
+// the ground for the limit: bilinear on the 20 m DTM (build.js groundAt is the nearest cell: steps of metres at cell edges)
+function groundB(x, z) {
+  const T = A.terrain, fx = clampN((x - T.x0) / T.cell, 0, T.nx - 1.001), fz = clampN((z - T.z0) / T.cell, 0, T.nz - 1.001), i = Math.floor(fx), j = Math.floor(fz), u = fx - i, v = fz - j, h = (a, b) => T.dm[b * T.nx + a] / 10;
+  return (h(i, j) * (1 - u) + h(i + 1, j) * u) * (1 - v) + (h(i, j + 1) * (1 - u) + h(i + 1, j + 1) * u) * v;
+}
+const nvo = new THREE.Vector3(), eyeNow = () => { camera.updateMatrixWorld(); return new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld); };
+function navGet() { const v = vzNow(), d = nvo.copy(camera.position).sub(controls.target), dist = Math.max(1e-6, d.length()); return { tx: controls.target.x, tz: controls.target.z, ty: controls.target.y / v, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(clampN(d.y / dist, -1, 1)), ld: Math.log(dist) }; }
+function navPut(s) {
+  const v = vzNow(), d = Math.exp(s.ld), ce = Math.cos(s.pitch);
+  controls.target.set(s.tx, s.ty * v, s.tz); camera.position.set(s.tx + d * Math.sin(s.yaw) * ce, s.ty * v + d * Math.sin(s.pitch), s.tz + d * Math.cos(s.yaw) * ce);
+  NS.own = true; try { controls.update(); } finally { NS.own = false; } draw();   // own: the update's lift leaves it to navGuard (else the lift ate every push)
+}
+const eyeOf = s => { const d = Math.exp(s.ld), cp = Math.cos(s.pitch); return [s.tx + d * Math.sin(s.yaw) * cp, s.ty + d * Math.sin(s.pitch) / vzNow(), s.tz + d * Math.cos(s.yaw) * cp]; };
+const clr = s => { const e = eyeOf(s); return e[1] - groundB(e[0], e[2]); };
+
+// ---------- momentum (nav.js): the release velocity from the last 80 ms of moves, s0 + v TAU (1 - e^(-t/TAU)) by time
+function navStop() { NS.moving = false; NS.v = null; }
+function fling(v, t) {
+  if (reducedMotion() || navOff() || followMode()) return false;
+  if (!isFinite(t) || Math.abs(t - performance.now()) > 1000) t = performance.now();   // an event time on another clock
+  NS.v = { ...v }; NS.t0 = NS.t = t; NS.last = navGet(); NS.moving = true; NS.flings++; return true;
+}
+function navTick(now) {
+  if (!NS.moving) return;
+  const l = NS.last, c = navGet();
+  if (Math.abs(c.tx - l.tx) > 1e-3 || Math.abs(c.tz - l.tz) > 1e-3 || Math.abs(angDiff(c.yaw, l.yaw)) > 1e-6 || Math.abs(c.pitch - l.pitch) > 1e-6 || Math.abs(c.ld - l.ld) > 1e-6 || Math.abs(c.ty - l.ty) > 1e-3) return navStop();   // something else moved the camera
+  if (followMode() || navOff() || document.hidden) return navStop();
+  const te = Math.min(now, NS.t0 + NV.T_END * 1000), dt = Math.max(0, (te - NS.t) / 1000); NS.t = te;
+  if (dt > 0) {
+    const e = Math.exp(-dt / NV.TAU), k = NV.TAU * (1 - e), v = NS.v;
+    const s = { ...c, tx: c.tx + v.tx * k, tz: c.tz + v.tz * k, yaw: c.yaw + v.yaw * k, pitch: c.pitch + v.pitch * k, ld: c.ld + v.ld * k };
+    const pm = pitchMin(); if (s.pitch < pm || s.pitch > NV.PMAX) { s.pitch = clampN(s.pitch, pm, NV.PMAX); v.pitch = 0; }
+    if (s.ld < Math.log(NV.DMIN) || s.ld > Math.log(NV.DMAX)) { s.ld = clampN(s.ld, Math.log(NV.DMIN), Math.log(NV.DMAX)); v.ld = 0; }
+    navPut(s); const g = navGuard(c, false); if (g.r < 1) { v.pitch *= g.r; v.ld *= g.r; } if (g.blocked) { v.pitch = 0; v.ld = 0; }
+    for (const key of ['tx', 'tz', 'yaw', 'pitch', 'ld']) v[key] *= e;
+    NS.last = navGet();
+  }
+  if (te >= NS.t0 + NV.T_END * 1000) navStop();
+}
+const sample = t => { if (NS.hold) return; NS.samples.push({ t, ...navGet() }); if (NS.samples.length > 40) NS.samples.shift(); };
+function release(tUp) {
+  const sm = NS.samples; NS.samples = [];
+  if (sm.length < 2 || navOff() || followMode()) return;
+  const last = sm[sm.length - 1]; if (tUp - last.t > 60) return;   // the finger stopped before it lifted: no momentum
+  let a = sm.find(s => s.t >= last.t - 80); if (a === last) a = sm[sm.length - 2];
+  const dt = (last.t - a.t) / 1000; if (dt < .008 || dt > .25) return;
+  const d = Math.exp(last.ld), v = { tx: (last.tx - a.tx) / dt, tz: (last.tz - a.tz) / dt, yaw: angDiff(last.yaw, a.yaw) / dt, pitch: (last.pitch - a.pitch) / dt, ld: (last.ld - a.ld) / dt };
+  const ps = Math.hypot(v.tx, v.tz) / d;   // slow parts get none (a careful placement stays put); fast ones are capped
+  if (ps < .25) { v.tx = v.tz = 0; } else if (ps > 3) { v.tx *= 3 / ps; v.tz *= 3 / ps; }
+  if (Math.abs(v.yaw) < .3) v.yaw = 0; else v.yaw = clampN(v.yaw, -5, 5);
+  if (Math.abs(v.pitch) < .3) v.pitch = 0; else v.pitch = clampN(v.pitch, -2, 2);
+  if (Math.abs(v.ld) < .4) v.ld = 0; else v.ld = clampN(v.ld, -3, 3);
+  if (v.tx || v.tz || v.yaw || v.pitch || v.ld) fling(v, tUp);
+}
+
+// ---------- the ground limit (nav.js guard): the eye stays NV.W (1 m) above the ground or water under it; towards it every
+// tilt and zoom slows over max(6 m, 2 % of the distance) and stops at 1 m. A push that goes on (0.6 s and 3 blocked
+// moves, or 480 px of finger travel) clicks (vibrate 15 ms, the ring) and passes Below ground (layers/under.js: the cut at
+// street level, the gauge) with the eye 1.5 m under the surface looking up; below ground the same push brings it back up.
+function navGuard(s0, user, dpx = 0, t = performance.now()) {
+  const res = { blocked: false, r: 1 }; if (navOff() || isPix() || HFOV) return res;
+  const s1 = navGet(), under = navUnder(), c0 = clr(s0);
+  let sg; if (!under) sg = 1; else if (c0 < 0) sg = -1; else return res;   // Below ground with the eye above the surface: free
+  const a0 = sg * c0, a1 = sg * clr(s1), Z = Math.max(6, Math.exp(s0.ld) * .02);
+  if (a1 >= a0 - 1e-9 || (a0 >= NV.W + Z && a1 >= NV.W)) { if (user) NS.push = null; return res; }   // not towards the surface, or still far from it
+  const r = Math.max(.06, Math.min(1, (a0 - NV.W) / Z));
+  let s = { ...s1, pitch: s0.pitch, ld: s0.ld, ty: s0.ty };   // the sideways part (pan, turn) keeps going unless it alone runs into rising ground
+  if (sg * clr(s) < Math.min(NV.W, a0)) s = { ...s, tx: s0.tx, tz: s0.tz, yaw: s0.yaw };
+  const at = k => ({ ...s, pitch: s0.pitch + (s1.pitch - s0.pitch) * k, ld: s0.ld + (s1.ld - s0.ld) * k, ty: s0.ty + (s1.ty - s0.ty) * k });
+  let k = r;
+  if (sg * clr(at(k)) < NV.W) { if (sg * clr(at(0)) < NV.W) k = 0; else { let lo = 0, hi = k; for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; if (sg * clr(at(m)) >= NV.W) lo = m; else hi = m; } k = lo; } }
+  navPut(at(k)); res.r = k; res.blocked = a1 < NV.W; res.sg = sg;
+  if (user && res.blocked) navPush(sg, dpx, t);
+  return res;
+}
+function navPush(sg, dpx, t) {
+  if (t < NS.cool || !underApi()) return;   // no pass without layers/under.js (a ?layers= test page): the wall only
+  // a push is one gesture: with a finger or button down the push goes on however far apart the moves are (pointer events come
+  // once a frame: 0.5 to 5 s apart in software rendering); a wheel push ends after 350 ms with no notch (nav.js)
+  const P = NS.push; if (!P || (!NS.ptrs.size && t - P.last > 350) || P.sg !== sg) NS.push = { t0: t, last: t, px: 0, n: 0, sg }; else P.last = t;
+  NS.push.px += dpx; NS.push.n++; NS.pushes++;
+  cue(sg, Math.min(1, Math.max((t - NS.push.t0) / NV.PUSH_MS, NS.push.px / NV.PUSH_PX)));
+  if ((t - NS.push.t0 >= NV.PUSH_MS && NS.push.n >= 3) || NS.push.px >= NV.PUSH_PX) navPass(sg, t);
+}
+function navPlace(c, lim) {   // the eye at clearance c by turning the pitch towards lim; if the pitch cannot reach it, move the target
+  const s = navGet(), f = p => clr({ ...s, pitch: p }) - c, f0 = f(s.pitch), fl = f(lim);
+  if (Math.sign(f0) === Math.sign(fl)) { s.pitch = lim; s.ty -= fl; } else { let lo = s.pitch, hi = lim; for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if (Math.sign(f(m)) === Math.sign(f0)) lo = m; else hi = m; } s.pitch = hi; }
+  navPut(s);
+}
+function navPass(sg, t = performance.now()) {
+  const u = underApi(); if (!u) return false;
+  NS.push = null; NS.cool = t + 900; NS.hold = true; NS.samples = []; navStop();   // no fling from the moves before the pass   // hold: the rest of this gesture does not tilt or zoom on
+  if (sg > 0) {   // down: Below ground on, the model cut at street level unless a level is set
+    const e = eyeOf(navGet()), g = groundB(e[0], e[2]);
+    if (u.cutLevel() >= 250) u.setCut(clampN(Math.round(g) - 1, -40, 60));
+    u.showGauge(true); navPlace(-NV.UNDER_EYE, NV.PMIN_UNDER);
+    // nav.js stops the pitch where the eye reaches -1.5 m (often near level); here the view then turns up to NV.LOOK_UP
+    // (-0.2 rad) about the eye (the target goes up in front): the owner's "snap to go upside down". Steeper (-0.5) showed
+    // only sky through the cut; at -0.2 the tunnels and basements below the horizon show too
+    { const s = navGet(); if (s.pitch > NV.LOOK_UP) { const v = vzNow(), d = Math.exp(s.ld), E = eyeOf(s); s.pitch = NV.LOOK_UP; s.tx = E[0] - d * Math.sin(s.yaw) * Math.cos(s.pitch); s.tz = E[2] - d * Math.cos(s.yaw) * Math.cos(s.pitch); s.ty = E[1] - d * Math.sin(s.pitch) / v; navPut(s); } }
+  } else { u.showGauge(false); navPlace(NV.UNDER_EYE, NV.PMAX); }   // up: the gauge closes and takes the cut away
+  NS.passes++; NS.lastPass = sg > 0 ? 'under' : 'above';
+  let buzz = false; try { buzz = !!(navigator.vibrate && navigator.vibrate(15)); } catch { /* not allowed */ }
+  NS.vibrated = buzz; cue(sg, 1, true); syncDig();
+  dispatchEvent(new CustomEvent('docklands-nav-pass', { detail: { to: NS.lastPass, vibrated: buzz } }));
+  return true;
+}
+// the visual click (iOS has no navigator.vibrate): a ring that fills while the push lasts and snaps when the eye passes
+let cueTimer = 0, cueTT = 0;
+function cue(sg, p, snap) {
+  const el = $('navCue'), tx = $('navCueT'); if (!el) return;
+  clearTimeout(cueTimer); el.style.setProperty('--p', p.toFixed(3)); el.classList.remove('snap');
+  if (snap) { void el.offsetWidth; el.classList.add('snap'); el.classList.remove('on'); clearTimeout(cueTT);
+    tx.textContent = sg > 0 ? 'Below ground. Push up to come back.' : 'Above ground'; tx.classList.add('on'); cueTT = setTimeout(() => tx.classList.remove('on'), 2200); return; }
+  el.classList.add('on'); cueTimer = setTimeout(() => el.classList.remove('on'), 400);
+}
+
+// ---------- picking for the gestures: the point under a pixel. The ground by a march along the ray (cheap: every move);
+// with buildings: the first building or detailed model on the ray (Raycaster: once a gesture or a wheel step)
+const nray = new THREE.Raycaster(), nndc = new THREE.Vector2();
+function pixRay(x, y) { camera.updateMatrixWorld(); const r = renderer.domElement.getBoundingClientRect(); nndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1); nray.setFromCamera(nndc, camera); return nray.ray; }   // model metres (matrixWorld holds 1 / vz)
+function groundRange(o, d, maxS = 6000, under = 0) { for (let s = .5; s <= maxS; s += s < 50 ? .5 : s < 400 ? 2 : 6) { const x = o.x + d.x * s, z = o.z + d.z * s; if (o.y + d.y * s <= groundB(x, z) - under) return s; } return null; }
+function pointUnder(x, y, buildingsToo = true, under = 3) {   // { p: model point, range } or null; the zoom stop uses the ground 3 m under the surface (a kerb ahead of a low eye does not stop it)
+  const R = pixRay(x, y); let s = groundRange(R.origin, R.direction, 6000, under);
+  if (buildingsToo) { zr.ray.copy(R); zr.near = 0; zr.far = s ?? 6000; const bh = zr.intersectObjects([...buildings.children, ...models.children], true).find(h => U.cut.value >= 250 || h.point.y <= U.cut.value); if (bh) s = bh.distance; }
+  return s == null ? null : { p: R.origin.clone().addScaledVector(R.direction, s), range: s, dir: R.direction.clone() };
+}
+// the orbit target to the ground under the screen centre when that is nearer than the target (the view does not change:
+// the target moves along the line of sight), so a turn pivots on what is in the middle of the screen
+function repivot() {
+  if (isPix() || HFOV) return; const s = navGet(), d = Math.exp(s.ld); camera.updateMatrixWorld();
+  const o = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld), dir = new THREE.Vector3(0, 0, -1).transformDirection(camera.matrixWorld);
+  const r = groundRange(o, dir, d * .98); if (r == null) return;
+  const k = Math.max(NV.DMIN, r) * ((dir.clone().multiply(new THREE.Vector3(1, vzNow(), 1))).length());   // the same point in the orbit's (exaggerated) space
+  if (k >= d) return; nvo.copy(controls.target).sub(camera.position).setLength(k); controls.target.copy(camera.position).add(nvo); controls.update();
+}
+// zoom about a model point P by f (the eye and the target both: P stays under the pointer); in by at most to NV.STOP of P
+function zoomAbout(P, f, range) {
+  const v = vzNow(), Pe = new THREE.Vector3(P.x, P.y * v, P.z);
+  if (f < 1) { if (range <= NV.STOP) return; f = Math.max(f, NV.STOP / range); }
+  const t1 = controls.target.clone().sub(Pe).multiplyScalar(f).add(Pe), e1 = camera.position.clone().sub(Pe).multiplyScalar(f).add(Pe);
+  let d = e1.distanceTo(t1); if (d > NV.DMAX) return;
+  if (d < NV.DMIN) t1.sub(e1).setLength(NV.DMIN).add(e1);   // the orbit radius stays 10 m or more: the target moves on along the line of sight
+  controls.target.copy(t1); camera.position.copy(e1); NS.own = true; try { controls.update(); } finally { NS.own = false; }
+}
+const zoomTarget = (s, f) => { s.ld = clampN(s.ld + Math.log(f), Math.log(NV.DMIN), Math.log(NV.DMAX)); };
+function panPx(dx, dy) {   // the ground under the gesture's start point stays under the finger (index.html pan, with the range to that point)
+  const s = navGet(), H = renderer.domElement.clientHeight || innerHeight;
+  let k = Math.exp(s.ld) * .0012, kd = 1;
+  if (isPix()) k = Math.exp(s.ld) * .84 / H;   // styles.js: the orthographic half height is 0.42 x the orbit distance
+  else if (NS.range) { k = NS.range.range * 2 * Math.tan(camera.fov * Math.PI / 360) / H; kd = 1 / Math.max(.3, NS.range.dep); }   // dep: sine of the ray's angle below the horizontal (ground foreshortening)
+  const c = Math.cos(s.yaw), sn = Math.sin(s.yaw); s.tx -= (c * dx + sn * dy * kd) * k; s.tz -= (-sn * dx + c * dy * kd) * k; navPut(s);
+}
+function rangeAt(x, y) {   // for panPx: the distance to the ground or building under (x, y) and the ray's depression
+  const h = pointUnder(x, y, true, 0); if (!h) return null; const dep = Math.max(0, -h.dir.y);
+  return { range: Math.min(h.range, Math.exp(navGet().ld) * 3), dep };
+}
+const mid = () => { const v = [...NS.ptrs.values()]; return [(v[0].x + v[1].x) / 2, (v[0].y + v[1].y) / 2, Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y), Math.atan2(v[1].y - v[0].y, v[1].x - v[0].x)]; };
+function gestureStart() {   // the first finger or button down, or a wheel after a pause: leave a named view and a photo lens
+  navStop(); NS.hold = false; NS.samples = []; NS.push = null;
+  controls.dispatchEvent({ type: 'start' }); repivot();
+}
+function afterMove(s0, dpx, t) {
+  if (NS.hold) { navPut({ ...navGet(), pitch: s0.pitch, ld: s0.ld, ty: s0.ty }); return; }   // after a pass, this gesture does not tilt or zoom on
+  navGuard(s0, true, dpx, t);
+}
+{ const cv = renderer.domElement;
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  addEventListener('pointerdown', () => navStop(), true);   // any touch stops the momentum (nav.js)
+  addEventListener('wheel', () => navStop(), { capture: true, passive: true });
+  addEventListener('keydown', e => { if (e.key === 'Escape') navStop(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) navStop(); });
+  cv.addEventListener('pointerdown', e => {
+    if (navOff() || NS.ptrs.has(e.pointerId)) return;
+    if (!NS.ptrs.size) gestureStart();
+    NS.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, alt: e.button === 2 || e.shiftKey || e.ctrlKey });
+    try { cv.setPointerCapture(e.pointerId); } catch { /* a forwarded event of a pointer that is gone */ }
+    if (NS.ptrs.size === 1 && !isPix()) NS.range = rangeAt(e.clientX, e.clientY);
+    if (NS.ptrs.size === 2) { NS.g = mid(); NS.P = isPix() ? null : pointUnder(NS.g[0], NS.g[1]); NS.range = NS.P ? { range: Math.min(NS.P.range, Math.exp(navGet().ld) * 3), dep: Math.max(0, -NS.P.dir.y) } : null; }
+  });
+  cv.addEventListener('pointermove', e => {
+    const p = NS.ptrs.get(e.pointerId); if (!p || navOff()) return;
+    const s0 = navGet(), dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; if (!dx && !dy) return;
+    if (NS.ptrs.size === 2 && NS.g) {
+      const m = mid(), g = NS.g, f = g[2] / Math.max(1, m[2]);
+      if (isPix()) { const s = navGet(); zoomTarget(s, f); navPut(s); } else if (NS.P) zoomAbout(NS.P.p, f, NS.P.p.distanceTo(eyeNow())); else { const s = navGet(); zoomTarget(s, f); navPut(s); }
+      const s = navGet(); s.yaw += angDiff(m[3], g[3]);   // twist: the scene turns with the fingers
+      if (isPix()) { s.pitch = clampN(s.pitch + (m[1] - g[1]) * NV.TILT2, .2, NV.PMAX); navPut(s); } else { navPut(s); panPx(m[0] - g[0], m[1] - g[1]); }
+      NS.g = m;
+    } else if (NS.ptrs.size === 1) {
+      if (p.alt !== isPix()) panPx(dx, dy);
+      else { const s = navGet(); s.yaw -= dx * NV.ROT; s.pitch = clampN(s.pitch + dy * NV.ROT, pitchMin(), NV.PMAX); navPut(s); }
+    } else return;
+    afterMove(s0, Math.hypot(dx, dy), e.timeStamp); sample(e.timeStamp);
+  });
+  const end = e => { if (!NS.ptrs.delete(e.pointerId)) return; NS.g = null;
+    if (NS.ptrs.size) { const q = [...NS.ptrs.values()]; if (NS.ptrs.size === 1) NS.range = rangeAt(q[0].x, q[0].y); if (e.type === 'pointerup') { NS.lift = { sm: NS.samples, t: e.timeStamp }; NS.samples = []; } return; }   // one finger of a pinch lifted: keep its motion for a moment
+    if (e.type !== 'pointerup') { NS.samples = []; NS.hold = false; return; }
+    if (NS.samples.length < 2 && NS.lift && e.timeStamp - NS.lift.t < 80) { NS.samples = NS.lift.sm; NS.lift = null; release(NS.samples.length ? Math.min(e.timeStamp, NS.samples[NS.samples.length - 1].t + 16) : e.timeStamp); }   // both fingers lifted together
+    else { NS.lift = null; release(e.timeStamp); }
+    NS.hold = false; };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('wheel', e => {
+    e.preventDefault(); if (navOff()) return;
+    const t = e.timeStamp, dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 800 : 1); if (!dy) return;
+    if (t - NS.wheelT > 400 && !NS.ptrs.size) gestureStart(); NS.wheelT = t;
+    const s0 = navGet();
+    if (NS.hold && !NS.ptrs.size) { if (t - NS.holdW < 400) { NS.holdW = t; return; } NS.hold = false; }   // after a pass, the wheel rests until it pauses
+    const f = Math.exp(dy * NV.WHEEL);
+    if (f < 1 && !isPix()) { const h = pointUnder(e.clientX, e.clientY); if (h) zoomAbout(h.p, f, h.range); else { const s = navGet(); zoomTarget(s, f); navPut(s); } }
+    else { const s = navGet(); zoomTarget(s, f); navPut(s); }
+    navGuard(s0, true, Math.min(120, Math.abs(dy)) * .6, t); if (NS.hold) NS.holdW = t;
+  }, { passive: false });
+  // keys: arrows move the view (40 px a press), + and - zoom (as one wheel notch at the centre of the screen)
+  addEventListener('keydown', e => {
+    if (navOff() || e.ctrlKey || e.metaKey || e.altKey || (e.target instanceof Element && e.target.closest('input,select,textarea,[role=slider]'))) return;
+    const k = { ArrowLeft: [40, 0], ArrowRight: [-40, 0], ArrowUp: [0, 40], ArrowDown: [0, -40] }[e.key];
+    if (k) { e.preventDefault(); gestureStart(); const s0 = navGet(); NS.range = rangeAt(innerWidth / 2, innerHeight / 2); panPx(k[0], k[1]); navGuard(s0, false); return; }
+    if (e.key === '+' || e.key === '=' || e.key === '-') { gestureStart(); const s0 = navGet(), s = navGet(); zoomTarget(s, Math.exp((e.key === '-' ? 100 : -100) * NV.WHEEL)); navPut(s); navGuard(s0, false); }
+  });
+}
+// the round Below ground button (index.html #digBtn; the WebGL page's Menu button of that name): the depth gauge on or off
+let digKey = '';
+function syncDig() { const b = $('digBtn'), u = underApi(); if (!b) return; const h = !u || isPix() || navOff(), on = !!u && navUnder(), k = h + ',' + on; if (k === digKey) return; digKey = k; b.hidden = h; b.setAttribute('aria-pressed', String(on)); }
+$('digBtn')?.addEventListener('click', () => { const u = underApi(); if (!u) return; const on = navUnder(); u.showGauge(!on); if (on) { const s = navGet(); if (clr(s) < NV.W) { navPlace(NV.UNDER_EYE, NV.PMAX); } } syncDig(); });
+// OrbitControls.update turns the camera to its target with no roll: put the photo's roll back at once, so labels and
+// picking between frames see it. An update never leaves the eye under the ground or the water outside Below ground
+// (the flash fault of 2026-10-09: an orbit after a photo view took the eye under the water)
+{ const ou = controls.update.bind(controls);
+  const roll = r => { if (ROLL && controls.enabled) { camera.rotateZ(ROLL * Math.PI / 180); camera.updateMatrixWorld(); } return r; };
   controls.update = function (dt) {
-    const sc = this._scale; if (!(this.zoomToCursor && this._performCursorZoom && sc < 1 && this.enabled)) { const r = ou(dt), p = camera.position, lift = HFOV ? 0 : (groundAt(p.x, p.z) + 1.6) * vzNow() - p.y;
-      if (r && lift > 0) { p.y += lift; camera.lookAt(this.target); camera.updateMatrixWorld(); }   // an orbit never takes the eye under the ground (or under the water: the ground there is 1.5 m below it)
-      return roll(r); }
-    dir.copy(this._dollyDirection); this._performCursorZoom = false; this._scale = 1; ou(dt);   // rotation and pan as usual, no zoom
-    const v = vzNow(), p = camera.position, m = new THREE.Vector3(dir.x, dir.y / v, dir.z), ml = m.length(); m.divideScalar(ml);   // the pointer ray in model metres
-    // the stop point: where the ray is 3 m under the ground (a bank or a kerb a little above a low eye does not stop it)
-    let hit = 400; for (let s = 2; s <= 5000; s += s < 100 ? 1 : 5) { const x = p.x + m.x * s, z = p.z + m.z * s; if (p.y / v + m.y * s <= groundAt(x, z) - 3) { hit = s; break; } }
-    // and the first building or detailed model on the ray (the ground test alone let the zoom fly into towers; 2026-10-09)
-    zr.ray.origin.set(p.x, p.y / v, p.z); zr.ray.direction.copy(m); zr.far = hit; zr.near = 0;
-    const bh = zr.intersectObjects([...buildings.children, ...models.children], true).find(h => U.cut.value >= 250 || h.point.y <= U.cut.value); if (bh) hit = Math.min(hit, bh.distance);
-    const k = 1 / ml;   // exaggerated length per model metre along this ray
-    const step = Math.max(0, Math.min(hit * (1 - sc), hit - 10)) * k;
-    if (step > 1e-4) { p.addScaledVector(dir, step); this.target.addScaledVector(dir, step);
-      const lift = (groundAt(p.x, p.z) + 1.6) * v - p.y; if (lift > 0) { p.y += lift; this.target.y += lift; }   // the eye walks over a bank, 1.6 m above the ground
-      camera.updateMatrixWorld(); draw(); writeHash(); }
-    return roll(step > 1e-4);
+    const r = ou(dt), p = camera.position, lift = HFOV || !this.enabled || NS.own || navUnder() ? 0 : (groundB(p.x, p.z) + NV.W) * vzNow() - p.y;
+    if (r && lift > 1e-6) { p.y += lift; camera.lookAt(this.target); camera.updateMatrixWorld(); }
+    return roll(r);
   }; }
+// Below ground closed another way (the gauge's cross, a view) with the eye still under the surface: put it 1.5 m above
+let wasUnder = false;
+function navUnderEdge() {
+  const u = navUnder(); syncDig(); if (u !== wasUnder) { wasUnder = u; if (!u && controls.enabled && !HFOV && !isPix() && clr(navGet()) < 0) navPlace(NV.UNDER_EYE, NV.PMAX); }
+}
 let frames = 0, fpsT = performance.now(), fps = 0;
 renderer.setAnimationLoop((time, xrFrame) => {
   sky.setVz(vzNow());   // the sky dome, stars and moon undo the view's y scale (1 in a headset session)
   if (ctx.xrFrame) { ctx.xrFrame(time, xrFrame, frameHooks); return; }   // layers/xr.js: a headset session (renderer.xr) or its one-eye preview draws the frame
+  navTick(performance.now()); navUnderEdge();
   if (controls.update()) need = true;
   if (!need && !$('animate').checked) return; need = false;
   const d = camera.position.distanceTo(controls.target);
@@ -509,4 +747,5 @@ setTimeout(() => $('hud').classList.add('fade'), 4000);
 menu.creditsStart();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; } };
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; },
+  nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };

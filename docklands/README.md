@@ -44,6 +44,8 @@ improvements."
 | `test/load.mjs` | headless load test: two sizes, WebGL 2 or `--webgpu` in software (`node docklands/test/load.mjs` from the repository root) |
 | `test/views-compare.mjs` | photo views against the WebGL page: landmark pixels with each page's own camera at 1280 x 800 and 390 x 844 (`--fresh` from `?view=`, `--hash` the share hash round trips, `--vz 3` the eye height; on a portrait screen the WebGL pixels are scaled about the centre for the 70 deg cap) |
 | `test/photo-leave.mjs` | leaving a photo view on a phone (390 x 844): the 70 deg cap, the lens back to 45.8 deg after a drag, then a zoom to within 30 m of a tree |
+| `test/nav-check.mjs` | navigation and the drone (2026-10-09): the ground wall and the pass Below ground and back by a slow drag (mouse and touch), wheel notches at the wall, momentum and its stop by a press or a touch, a pinch about the point between the fingers, the round Below ground and Drone buttons, the drone's mode bar and all six vehicles at 390 x 844 and 1280 x 800 (`--only nav|drone`, `--webgpu`) |
+| `test/nav-feel.mjs` | navigation feel in numbers at eye heights of 10, 100 and 1500 m (turn and pan per pixel, zoom per notch and pinch, drift of the point under the pointer, motion after a press); run it on two servers to compare versions |
 | `test/vz-check.mjs`, `test/vz-moves.mjs`, `test/mirror-cost.mjs` | vertical exaggeration and reflections: screenshots of the port and the WebGL page at the same view; numeric checks of the camera movers at `vz=3`; the mirror's frame cost |
 
 ## URL
@@ -76,6 +78,32 @@ the woods] and the world is more fisheye"; `test/photo-leave.mjs`):
   stays 1.6 m above the ground. Zoom out is three.js's. `minDistance` is 10 m (the WebGL page: 80 m). A wheel over a label
   button (traffic cameras) goes to the map.
 - Test at 390 x 844: field 70 deg, 45.8 deg after one drag, target 235 m out, then 15 wheel steps to 28.8 m from a tree.
+
+Navigation (2026-10-09 evening; owner on an iPhone: "Orbit controls increasingly hard to use for fine grained navigation.
+Drone modes have vanished as has snap to go upside down."). `main.js` "navigation" replaces the input of three.js
+OrbitControls (it stays as the holder of camera and target) with the WebGL page's gestures and its `nav.js`:
+- One finger or the left button: turn and tilt, 0.006 rad a pixel (OrbitControls: 2 pi / screen height, 0.0074 to 0.0079).
+  Right button, Shift or Ctrl drag, and two fingers: move; the ground or building under the finger stays under it (the
+  distance to that point x 2 tan(fov / 2) / screen height a pixel). Two fingers also pinch about the point between them and
+  twist. Wheel: in about the point under the pointer, exp(-0.001 dy) of the distance a notch (9.5 % for one mouse notch),
+  never nearer than 10 m to the first building, model or ground 3 m under the surface on the ray; out about the orbit target.
+  Arrows move 40 px, + and - zoom. A gesture starts by moving the orbit target to the ground under the screen centre when
+  that is nearer (the view does not change), so a turn pivots on what is in the middle of the screen.
+- Momentum after a drag, pinch or twist (nav.js): the release velocity of the last 80 ms, s0 + v TAU (1 - e^(-t/TAU)),
+  TAU 0.35 s, ended 3.2 s after the release; no momentum after a still finger (60 ms) or for slow parts; any press,
+  touch, wheel, Escape, hidden tab, `prefers-reduced-motion`, the drone, a headset, the locate follow modes or another
+  mover stops it. OrbitControls' damping (0.12 a frame) went on after a press (0.11 rad in 1.5 s, measured).
+- Ground limit and pass (nav.js): the eye stays 1 m above the ground or water under it (bilinear on the 20 m DTM); tilt
+  and zoom slow down over max(6 m, 2 % of the distance) and stop at 1 m. A push on for 0.6 s (3 blocked moves) or 480 px
+  of blocked travel clicks (`navigator.vibrate(15)`, the ring, "Below ground. Push up to come back.") and passes: Below
+  ground on (layers/under.js `setCut` at street level - 1 m, `showGauge`), the eye 1.5 m under the surface, the view
+  turned up to -0.5 rad about the eye. Below ground the wall is 1 m under the surface and the same push brings the eye
+  1.5 m above it and closes the gauge. Outside a pass no update leaves the eye under the ground or the water (the flash
+  fault of 2026-10-09). Not in pixel art, a photo view (until the first gesture) or the drone.
+- Round buttons at the top left after Labels: Below ground (`#digBtn`: the depth gauge on or off, as the WebGL page's
+  Menu button) and Drone (`#droneRound`). While the drone flies its vehicles (Copter, Plane, Boat, Tube, Walk, Under),
+  Auto and the cross are at the top right (`#drBar`, the time wheels hide while it flies); Menu > Go > Move > Drone stays.
+- Numbers, before and after, at eye heights of 10, 100 and 1500 m: skill docklands-3d-page, "Three.js port: navigation".
 
 Examples:
 https://danbri.github.io/londat/docklands/?view=rotherhithe&t=2026-10-03T22:30 ,
@@ -122,7 +150,8 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | framework | reveal sheet | yes | `reveal.js`: a frosted sheet with the layer drawn on it falls when a layer is ticked on; `?reveal=0` |
 | 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art with the photo facade tiles, the measured facade colours (snapped to the palette), box trees and the 441 animated actors of the WebGL page (people, cyclists, traffic, river boats, gulls, swimmers); Vector CRT "Colour overlay" (`?crt=overlay`); the style note under Look > Style |
 | 5 styles | splats | yes | `layers/splats.js`, `splat-worker.js`: own TSL renderer (Spark 2.3.1 and gaussian-splats-3d 0.4.7, both MIT, need WebGL), off by default, `?splats=with|only`, `?splatset=`; music switches to "only" in the map style; a full page with splats takes 24 to 39 s a frame in software |
-| 6 other | Drone, plotter SVG, music | yes | `drone.js`, `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
+| 2 interface | navigation: momentum, ground limit, pass Below ground | yes | `main.js` "navigation" (2026-10-09): the WebGL page's gestures and nav.js (see "Navigation" above); `test/nav-check.mjs`, `test/nav-feel.mjs`. The WebGL page's share-hash restore is in main.js already; nav.js's `u=` (gauge) and the layer keys of the hash are not ported |
+| 6 other | Drone, plotter SVG, music | yes | `drone.js` (round Drone button on the map and a mode bar of six buttons since 2026-10-09; the WebGL page has the Drone button in its Menu only and a select for the vehicle), `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
 | 6 other | WebXR | yes | `xr.js`, `layers/xr.js`: table 1:1500 with relief 2.5x (Relief button), street 1:1, the four panels, rays, grab and pinch, passthrough, the one-eye preview (`?xr=preview&go`); bar row 3 as xr-layer.js: Drone (Off, Copter, Plane, Boat, Tube, Walk, Under; stepped from the headset frame), Ride (your eye at the drone's, 1:1) or Watch (a cyan marker over the table), View (the page's named views; a photo view puts you at its eye), Wind (the wind layer and arrows); Photo (the left eye as a PNG, offered after Exit); on the WebGL 2 backend (three.js r186 WebXR on WebGPU needs an XR-compatible adapter at start and XRGPUBinding): from WebGPU it reloads with `?webgl&xr=1`; `test/xr-check.mjs` 26 steps with the mock (32 with `--webgpu`; all pass on 2026-10-09); not yet tried on a real headset |
 
 ## Menu map (2026-10-09)
