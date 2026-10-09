@@ -45,15 +45,17 @@ export default {
     globalThis.DocklandsPlotCtx = PC;
     if (!globalThis.DocklandsPlot) await loadScript(ctx.WEBGL + 'plotter-svg.js');
     const P = globalThis.DocklandsPlot; P.init(PC);
+    document.querySelectorAll('#plotRow').forEach(r => r.remove());   // plotter-svg.js puts its own row after #shareOut (twice: at load and at init); the port's row is in Share > More
     // its share link: plotter-svg.js asks DocklandsNav.shareUrl(); the port's view link instead
     if (!globalThis.DocklandsNav) globalThis.DocklandsNav = { shareUrl: () => ({ url: location.origin + location.pathname + location.search.replace(/[?&]animate=0/, '') + (globalThis.__docklands3?.shareHash?.() || '') }) };
     const make0 = P.make, make = opts => { syncSwitches(); return make0(opts); };
     P.make = make;   // the test hook (DocklandsPlot.make) syncs the switches too
 
-    ui.section('Plotter');
+    // in Views > Share > More (owner, 2026-10-09: "a low profile feature ... submenus under Share for url copy vs export vs print")
+    const host = document.getElementById('plotHost') || ui.host();
     const row = document.createElement('label'); row.className = 'row';
     row.innerHTML = '<button type="button" id="plotBtn" style="flex:none;border:1px solid #33404a;background:#1b2229;color:inherit;border-radius:6px;padding:5px 9px;cursor:pointer">Plotter SVG of this view</button><select id="plotPaper" aria-label="Paper size" style="width:auto"><option>A4</option><option selected>A3</option><option value="A2">A2 (larger than an A3 plotter)</option></select>';
-    ui.host().appendChild(row);
+    host.appendChild(row);
     $('plotBtn').onclick = () => {
       const paper = $('plotPaper').value || 'A3'; toast('Drawing the plot…');
       setTimeout(() => { try { const r = make({ paper }), url = URL.createObjectURL(new Blob([r.svg], { type: 'image/svg+xml' })), a = document.createElement('a');
@@ -61,7 +63,7 @@ export default {
         toast(`Plotter SVG saved (${paper}, ${Object.values(r.stats).reduce((x, y) => x + y, 0).toLocaleString()} lines, ${(r.svg.length / 1024).toFixed(0)} kB).`);
       } catch (e) { toast('Plot failed: ' + e.message); console.warn('plot', e); } }, 30);
     };
-    ui.note('Lines only, hidden lines removed, one numbered pen layer per kind of line (Inkscape layers "1 Buildings and credit" to "7 Underground"), for the iDraw 2.0 or AxiDraw extension. The orientation follows the screen.');
+    const pn = document.createElement('p'); pn.className = 'small'; pn.textContent = 'Plotter SVG: lines only, hidden lines removed, one numbered pen layer per kind of line (Inkscape layers "1 Buildings and credit" to "7 Underground"), for the iDraw 2.0 or AxiDraw extension. The orientation follows the screen.'; host.appendChild(pn);
     return { ownUi: true, make, toast };
   },
 };

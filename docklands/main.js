@@ -147,6 +147,13 @@ const VIEWS = {
   cw: { tx: 50, ty: 0, tz: 40, yaw: .7, pitch: .5, dist: 1500 },
   under: { tx: 40, ty: -10, tz: 20, yaw: .75, pitch: .42, dist: 750 },
   plan: { tx: -1400, ty: 0, tz: 800, yaw: 0, pitch: 1.55, dist: 9500 },
+  // more places (owner, 2026-10-09: "under Places add a few other interesting camera positions"); BNG to model frame
+  towerbridge: { tx: -3900, ty: 0, tz: 40, yaw: 2.2, pitch: .42, dist: 700 },      // Tower Bridge, E 533650 N 180260
+  limehouse: { tx: -1150, ty: 0, tz: -600, yaw: 1.3, pitch: .55, dist: 650 },      // Limehouse Basin, E 536400 N 180900
+  canadawater: { tx: -2250, ty: 0, tz: 700, yaw: -.6, pitch: .5, dist: 800 },      // Canada Water and Surrey Docks, E 535300 N 179600
+  mudchute: { tx: 750, ty: 0, tz: 1600, yaw: .2, pitch: .45, dist: 700 },         // Mudchute Park and Farm, E 538300 N 178700
+  greenwich: { tx: 750, ty: 0, tz: 2600, yaw: 3.0, pitch: .4, dist: 900 },         // Cutty Sark and the Old Royal Naval College, E 538300 N 177700
+  o2: { tx: 1750, ty: 0, tz: 0, yaw: -.9, pitch: .45, dist: 1100 },                // the O2 and Blackwall, E 539300 N 180300
   rotherhithe: eyeView([-896, 6.9, 1150], 43.3, -1, 42),
   greenland: eyeView([-825, 5.3, 1160], 39.7, 3.5, 44),
   pier: eyeView([-740, 6, 140], 83.6, 11, 69),
@@ -396,6 +403,7 @@ renderer.setAnimationLoop((time, xrFrame) => {
   placeLabels();
   for (const f of frameHooks) f();
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0;
+  if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
   $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
 });

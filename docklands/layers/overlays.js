@@ -67,7 +67,7 @@ export default {
     const onGround = h => (x, z) => groundAt(x, z) + h;
 
     // ---------- the builders: each fills { S, G, F, tips } and the part's hits and polys
-    const B = {};
+    const B = {}; let FRAMES = ctx.qs.get('worksframes') === '1';
     B.bikes = (d, M, p) => {
       for (const it of d.items) { const [x, z] = geo(it.position.lon, it.position.lat); if (!inBox(x, z)) continue; const v = it.values, g = groundAt(x, z), u = .6, docks = Math.max(1, v.docks || 0), sb = v.standard_bikes ?? v.bikes, eb = v.e_bikes || 0;
         let y = g; const seg = (m, col) => { if (m > 0) { stick(M.S, x, z, y, y + m * u, 5, col); y += m * u; } };
@@ -161,6 +161,8 @@ export default {
         `<div class="small">Planning: ${pl.join(', ')}${s.planning_count > 6 ? ` and ${s.planning_count - 6} more` : ''}</div>${s.description ? `<div class="small">“${esc(s.description)}”</div>` : ''}<div class="small">Footprint: ${esc(s.footprint.from)}.</div>` +
         `<div class="small" style="margin-top:6px">Index built ${esc(String(m.built || '').slice(0, 10))}. Source: Planning London Datahub (GLA and the London boroughs), facts and links only. Index: <a href="https://github.com/danbri/londat/blob/main/cwplans/registry/sources/construction/README.md" target="_blank" rel="noopener">registry/sources/construction</a>.</div>`);
     }
+    // the approved-height frames of sites on site: off by default (owner, 2026-10-09: "boxy orange bounding shapes surrounding
+    // larger buildings or near to them, distractingly"); Data overlays > "Approved heights as frames" or ?worksframes=1
     B.works = (d, M, p) => {
       stats.works = { frames: 0, cranes: 0, built: 0 };
       for (const s of d.sites) { const col = WCOL[s.status]; if (!col) continue;
@@ -169,9 +171,9 @@ export default {
         ribbon(M.F, ring, s.status === 'on_site' ? 3 : 2, col, onGround(.7), true, inBox); p.n++;
         const g = groundAt(c[0], c[1]), area = Math.abs(ring.reduce((a, q, i) => { const r = ring[(i + 1) % ring.length]; return a + q[0] * r[1] - r[0] * q[1]; }, 0) / 2), top = worksTop(s, g);
         let ty = g + 14;
-        if (s.status === 'on_site' && top) { ty = top.y;
+        if (s.status === 'on_site' && top) { ty = top.y; if (FRAMES)
           if (area <= 6000) worksFrame(M.S, ring, top.y, col); else { stick(M.S, c[0], c[1], g, top.y, 1.5, col); beam(M.S, [c[0] - 8, top.y, c[1]], [c[0] + 8, top.y, c[1]], 1.5, 1.5, col); }
-          stats.works.frames++; }
+          if (FRAMES) stats.works.frames++; }
         if (s.current && s.current.top_m_od > g + 3 && earcut) { const sc = /core/.test(s.current.what || '') ? .45 : 1, rr = ring.map(([x, z]) => [c[0] + (x - c[0]) * sc, c[1] + (z - c[1]) * sc]);
           prismRing(M.F, rr, g, s.current.top_m_od, [.66, .64, .6], earcut); stats.works.built++; ty = Math.max(ty, s.current.top_m_od); }
         for (const cr of s.cranes || []) { const [x, z] = geo(cr.lon, cr.lat), gg = groundAt(x, z), t = cr.top_m_od; if (!t || t <= gg + 2 || !inBox(x, z)) continue; crane(M, x, z, gg, t); stats.works.cranes++; if (cr.lit) M.tips.push([x, t + .6, z]); }
@@ -226,6 +228,7 @@ export default {
     const boxes = {};
     for (const p of Object.values(P)) { const l = document.createElement('label'); l.className = 'row'; l.style.margin = '2px 0'; const i = document.createElement('input'); i.type = 'checkbox'; i.onchange = () => setPart(p.k, i.checked); l.append(i, ' ' + p.label); box.appendChild(l); boxes[p.k] = i; }
     const syncUi = () => { for (const p of Object.values(P)) boxes[p.k].checked = p.on; };
+    ctx.ui.toggle('Construction sites: approved heights as orange frames', FRAMES, async v => { FRAMES = v; if (P.works && P.works.on) { await setPart('works', false, true); await setPart('works', true, true); } });
     ctx.ui.note('Dated snapshots, not live (Powered by TfL Open Data; UK AIS (NATS) facts; GLA, OGL v3.0: the GLA cannot warrant the quality or accuracy of the data; Planning London Datahub). Tap a marker or inside an outline for its record.');
     const prevTab = ctx.ui.tab ? ctx.ui.tab('look') : null;   // colour by goes to Menu > Look (menu.js)
     const row = document.createElement('label'); row.className = 'row'; row.textContent = 'Colour buildings by ';

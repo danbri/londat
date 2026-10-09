@@ -80,6 +80,19 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
   openPane(pane); open(false);
   drawer.addEventListener('click', e => { const p = e.target.closest('p.small'); if (p && !e.target.closest('a') && (p.classList.contains('clamp') || p.dataset.clamp)) { p.dataset.clamp = '1'; p.classList.toggle('clamp'); } });
 
+  // ---------- Views > Share > More: copy the link, print (the plotter SVG row is added there by plotter.js)
+  { const link = () => location.origin + location.pathname + location.search + (globalThis.__docklands3?.shareHash?.() || location.hash);
+    const cp = $('shareCopy'), pr = $('sharePrint');
+    if (cp) cp.onclick = async () => { let ok = false; try { await navigator.clipboard.writeText(link()); ok = true; } catch {} const o = $('shareOut'); if (o) { o.hidden = false; o.textContent = link(); } cp.textContent = ok ? 'Link copied' : 'Copy the link below'; setTimeout(() => { cp.textContent = 'Copy the link'; }, 2500); };
+    // print: the canvas is copied into an image right after a frame is drawn (a WebGL or WebGPU canvas prints blank
+    // otherwise), then the page prints that image with the share link under it
+    if (pr) pr.onclick = () => { open(false); globalThis.__d3snap = url => {
+      if (!url) { print(); return; }
+      const w = document.createElement('div'); w.id = 'printShot'; w.innerHTML = `<img src="${url}" alt="Docklands 3D view" style="width:100%"><p class="small" style="word-break:break-all">${link().replace(/[<>&"]/g, '')}</p>`;
+      const st = document.createElement('style'); st.textContent = '@media print{body>*:not(#printShot){display:none!important}#printShot{display:block!important}}#printShot{display:none}';
+      document.body.append(st, w); setTimeout(() => { print(); setTimeout(() => { w.remove(); st.remove(); }, 1000); }, 200); };
+      globalThis.__docklands3?.draw?.(); }; }
+
   // ---------- credits: the corner line folds to (i) after 5 s or at the first touch or wheel on the map
   function openCredits() { openPane('paneAbout'); requestAnimationFrame(() => $('credits').scrollIntoView({ block: 'start' })); }
   { const line = $('credit'), btn = $('attribI'); let t = 0;

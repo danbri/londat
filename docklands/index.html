@@ -79,6 +79,9 @@ a{color:var(--acc)}
 @media (min-width:900px){#scrim{display:none!important}}
 /* the bottom-left notes (#blNotes: layers/planes.js, layers/wind.js; inline position) move right of the open drawer on a wide screen */
 @media (min-width:900px){body.drawerOpen #blNotes{left:calc(var(--dwv,var(--dw)) + 8px)!important;max-width:min(640px,calc(100vw - var(--dwv,var(--dw)) - 78px))!important}}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-user-select:text;user-select:text}
+#shareMore{margin:6px 0 2px}#shareMore summary{cursor:pointer;color:var(--mut)}
 </style>
 <!-- three.js r186 (0.186.1), vendored in londat third_party/three (MIT): addons import 'three', 'three/webgpu' and 'three/tsl' -->
 <script type="importmap">
@@ -106,9 +109,13 @@ a{color:var(--acc)}
     <div class="pane on" id="paneViews" role="tabpanel" aria-label="Views">
       <div class="row"><button type="button" id="shareBtn" title="A link that opens this view, time and building">Share this view</button></div>
       <div id="shareOut" class="small" hidden style="user-select:text;-webkit-user-select:text;word-break:break-all;margin:4px 2px 0;opacity:.85"></div>
+      <details id="shareMore"><summary class="small">More: copy link, plotter SVG, print</summary>
+        <div class="row"><button type="button" id="shareCopy">Copy the link</button><button type="button" id="sharePrint">Print this view</button></div>
+        <div id="plotHost"></div>
+      </details>
       <h3>Places</h3>
       <div class="views chips" role="group" aria-label="Places">
-        <button type="button" data-view="cw" aria-pressed="false">Canary Wharf</button><button type="button" data-view="area" aria-pressed="false">Whole area</button><button type="button" data-view="under" aria-pressed="false">Underground</button><button type="button" data-view="plan" aria-pressed="false">Plan</button>
+        <button type="button" data-view="cw" aria-pressed="false">Canary Wharf</button><button type="button" data-view="area" aria-pressed="false">Whole area</button><button type="button" data-view="under" aria-pressed="false">Underground</button><button type="button" data-view="plan" aria-pressed="false">Plan</button><button type="button" data-view="towerbridge" aria-pressed="false">Tower Bridge</button><button type="button" data-view="limehouse" aria-pressed="false">Limehouse Basin</button><button type="button" data-view="canadawater" aria-pressed="false">Canada Water</button><button type="button" data-view="mudchute" aria-pressed="false">Mudchute</button><button type="button" data-view="greenwich" aria-pressed="false">Greenwich</button><button type="button" data-view="o2" aria-pressed="false">The O2</button>
       </div>
       <h3>Photo views</h3>
       <div class="chips" role="group" aria-label="Photo views">

@@ -21,7 +21,7 @@
 import { Fn, If, attribute, positionGeometry, instancedDynamicBufferAttribute, uniformArray, uniform, varying, time, vec3, vec4, float, int, sin, cos, sign, min, max } from 'three/tsl';
 import { WU } from '../water.js';
 
-const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 4, TAU = Math.PI * 2;
+const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 16, TAU = Math.PI * 2;
 // animals per hectare of each habitat class in daylight at the peak of the season (stated defaults, general ecology for
 // inner London; the species mix within a class comes from the data file)
 const DENS = { none: 0.9, river: 0.8, dock: 3.2, pond: 6, park: 2.5, wood: 1.0, garden: 0.6 };
@@ -146,7 +146,7 @@ export default {
       for (let k = 0; k < roofN; k++) { const q = roofSpot(ci, cj, r); if (!q) break; const s = r() < .55 ? SP[SPI.feralpigeon] : SP[SPI[r() < .6 ? 'herringgull' : 'lbbgull']]; if (!s || season(s, MON) < r() * .8) continue;
         list.push(mk(s, 'perch', HI.none, q.x, q.y, q.z, r)); }
       // foxes: rare, at dusk and at night (now and then by day), near woods and parks
-      const gr = area[HI.wood] + area[HI.park] * .6 + area[HI.garden] * .5 + area[HI.none] * .05, pf = (PH === 'day' ? .015 : .14) * gr;
+      const gr = area[HI.wood] + area[HI.park] * .6 + area[HI.garden] * .5 + area[HI.none] * .05, pf = (PH === 'day' ? .04 : .45) * gr;   // raised 2026-10-09 (owner: "I can't see any foxes in the woods"; London has about 18 foxes per km2)
       for (let fk = 0, fn = ABUND === 1 ? 1 : Math.min(40, Math.ceil(pf * ABUND)); fk < fn; fk++) if (SPI.fox != null && foxes < MAX_FOX * ABUND && foxes < CAP_F && r() < (ABUND === 1 ? pf : Math.min(1, pf * ABUND / fn))) { const h = area[HI.wood] > .1 ? HI.wood : area[HI.park] > .1 ? HI.park : area[HI.garden] > .1 ? HI.garden : HI.none, p = pointIn(ci, cj, h, r); if (p) { list.push(mk(SP[SPI.fox], 'trot', h, p[0], landY(p[0], p[1]), p[1], r)); foxes++; } }
       return list;
     }
