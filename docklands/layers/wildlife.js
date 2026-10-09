@@ -7,7 +7,7 @@
 // areas of trees.json). The animals are simulated: their positions are not observations.
 // Population: the ground is cut into 200 m cells; each cell within 800 m of the camera gets its animals from a seeded
 // random draw (the same animals each visit): animals per hectare of each habitat class (DENS) x the species weights of
-// the file x the species' season (records by month) x the time of day (sun altitude: roosting at night; foxes from dusk).
+// the file x the species' season (its share of all records by month: the recording effort taken out) x the time of day (sun altitude: roosting at night; foxes from dusk).
 // Behaviours: waterfowl paddle and turn at the water's edge, divers (grebe, cormorant, tufted duck, coot) dive and come up
 // elsewhere, birds take off and fly low to other water, gulls circle and land on water and roofs, pigeon flocks walk on
 // open ground, take off together (boids: a flock centre and each bird steering to its slot) and land on roof edges, foxes
@@ -107,7 +107,14 @@ export default {
 
     // ---------- species weights by habitat, season and time of day
     const month = () => new Date(ctx.clock).getUTCMonth();
-    const season = (s, m) => { const d = s.season ? .3 + .7 * s.season[m] : 1, p = SEASON_PRIOR[s.id] ? SEASON_PRIOR[s.id][m] : 1; return Math.sqrt(d * p); };
+    // the season of a species: its records by month DIVIDED BY all records of that month (the recording effort: surveys and
+    // apps peak in April to June, so raw counts put almost every species' peak in May), smoothed over three months, peak 1;
+    // the file's raw s.season where a species has no months. Reporting rate, not abundance; see docklands/AUDIT.md, item 4.
+    const EFF = new Array(12).fill(0); for (const s of D.species) if (s.months) s.months.forEach((v, i) => { EFF[i] += v; });
+    for (const s of SP) { const n = s.months ? s.months.reduce((a, b) => a + b, 0) : 0; if (n < 24 || EFF.some(e => !e)) { s.seasonEff = s.season; continue; }
+      const r = s.months.map((v, i) => v / EFF[i]), sm = r.map((v, i) => (r[(i + 11) % 12] + 2 * v + r[(i + 1) % 12]) / 4), mx = Math.max(...sm);
+      s.seasonEff = sm.map(v => +(v / mx).toFixed(2)); }
+    const season = (s, m) => { const d = s.seasonEff ? .3 + .7 * s.seasonEff[m] : 1, p = SEASON_PRIOR[s.id] ? SEASON_PRIOR[s.id][m] : 1; return Math.sqrt(d * p); };
     const sunAlt = () => (ctx.sky && ctx.sky.state ? ctx.sky.state.sun.alt : 30);
     const phaseOf = alt => alt > 3 ? 'day' : alt > -8 ? 'dusk' : 'night';
     function speciesFor(h, r, ph, m) {   // a species for habitat class h, or null
@@ -383,7 +390,7 @@ export default {
       const s = a.s, P = a.P, hab = { none: 'streets, squares and roofs', river: 'the tidal Thames (and its creeks)', dock: 'a dock', pond: 'a pond or lake', park: 'a park or grass', wood: 'a wood', garden: 'a garden or churchyard' }[HC[a.h]] || HC[a.h];
       const lic = Object.entries(D.byLicence).map(([k, v]) => `${k.replace(/^gbif:http:\/\/creativecommons.org\/(licenses|publicdomain)\//, 'gbif:CC ').replace(/\/legalcode$/, '')} ${v}`).join(', ');
       const hrec = Object.entries(s.habitat).filter(([, v]) => v).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${k} ${v}`).join(', ');
-      const se = s.season ? `peak in ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][s.season.indexOf(1)]}; this month ${pct(season(s, MON))}% of the peak in the simulation` : 'no season from the records';
+      const se = s.seasonEff ? `records peak in ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][s.seasonEff.indexOf(1)]} (share of all records of the month); this month ${pct(season(s, MON))}% of the peak in the simulation` : 'no season from the records';
       ctx.showCard(`<h2>${esc(s.name)}</h2><p class="small"><i>${esc(s.sci)}</i> · simulated animal</p>` +
         `<table><tr><td>Doing</td><td>${esc(DOING[a.st] || a.st)}</td></tr><tr><td>Habitat</td><td>${esc(hab)}</td></tr>` +
         `<tr><td>Size</td><td>${P.b === 'fox' ? 'about 1 m nose to tail tip' : `${P.L} m long, wingspan ${P.W} m`}</td></tr>` +

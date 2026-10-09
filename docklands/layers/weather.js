@@ -111,7 +111,7 @@ export default {
       else h = `${ctx.esc(hhmm(ctx.clock))}: cloud ${f0(w.cover)}%${w.low != null ? ` (low ${f0(w.low)}, mid ${f0(w.mid)}, high ${f0(w.high)})` : ''}, visibility ${w.vis != null ? (w.vis / 1000).toFixed(0) + ' km' : 'not given'}, ${w.precip ? w.precip.toFixed(1) + ' mm/h ' + (w.snow ? 'snow' : 'rain') : 'dry'}${w.temp != null ? `, ${w.temp.toFixed(1)} °C` : ''}${w.rh != null ? `, humidity ${f0(w.rh)}%` : ''}. Source: ${ctx.esc(w.src)}.`;
       if (note.innerHTML !== h) note.innerHTML = h;
     }
-    stats.weather = { get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; } };
+    stats.weather = { get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; }, get error() { return W ? null : src.err; } };
     ctx.weather = { evaluate, get now() { return W; } };
     ctx.onFrame(() => { if (lastT !== ctx.clock) evaluate(); stepRain(); });
     await evaluate();

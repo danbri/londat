@@ -147,7 +147,7 @@ async function readAt(s) {
   await page.evaluate(s => { const D = __docklands3; D.setClock(D.fromLondon(s)); }, s); await settle();
   return page.evaluate(() => { const D = __docklands3, st = D.sky.state, L = D.sky.sun.position.clone().sub(D.sky.sun.target.position).normalize();
     return { utc: D.ctx.clock, sun: st.sun, moon: st.moon, frac: st.moonPhase, limb: st.moonLimb, night: st.night, light: [L.x, L.y, L.z], moonDisc: D.sky.moonDisc.visible,
-      tide: D.STATS.tide && D.STATS.tide.now, wind: D.STATS.surface && D.STATS.surface.wind, weather: D.STATS.weather && D.STATS.weather.now }; });
+      tide: D.STATS.tide && D.STATS.tide.now, wind: D.STATS.surface && D.STATS.surface.wind, weather: D.STATS.weather && D.STATS.weather.now, weatherErr: D.STATS.weather && D.STATS.weather.error, meteo: D.STATS.weather && D.STATS.weather.meteo }; });
 }
 
 const rows = [], fails = [], warns = [];
@@ -173,7 +173,7 @@ for (const c of CASES) {
   else if (/^default/.test(w.source)) warn(`${k} wind`, `${w.speed} m/s from ${w.dir}°`, `the port's default: ${w.source}${W.era5 ? `; ERA5 ${W.era5.speed.toFixed(1)} m/s from ${Math.round(W.era5.dir)}°` : ''}`);
   else for (const [rk, R] of Object.entries(W)) { check(`${k} wind speed vs ${rk}`, w.speed - R.speed, rk === 'snap' ? 0.15 : TOL.windSpeed, ' m/s', w.source); if (R.speed > 2 && w.speed > 2) check(`${k} wind dir vs ${rk}`, dAng(w.dir, R.dir), rk === 'snap' ? 3 : TOL.windDir, '°'); }
   const we = P.weather;
-  if (!we) { if (W.era5 || W.snap) warn(`${k} weather`, 'none (fair sky drawn)', `${W.snap ? `snapshot cloud ${Math.round(W.snap.cloud)}%` : ''}${W.era5 ? ` ERA5 cloud ${Math.round(W.era5.cloud)}%, low ${Math.round(W.era5.low)}%` : ''}: no weather data at the page without Open-Meteo ticked`); else info(`${k} weather`, 'none', 'no data'); }
+  if (!we) { if (W.era5 || W.snap) warn(`${k} weather`, 'none (fair sky drawn)', `${W.snap ? `snapshot cloud ${Math.round(W.snap.cloud)}%` : ''}${W.era5 ? ` ERA5 cloud ${Math.round(W.era5.cloud)}%, low ${Math.round(W.era5.low)}%` : ''}: no weather data at the page: ${P.meteo ? 'Open-Meteo is on' + (P.weatherErr ? ' (' + P.weatherErr + ')' : '') : 'Open-Meteo is off (?weather=0)'}`); else info(`${k} weather`, 'none', 'no data'); }
   else for (const [rk, R] of Object.entries(W)) { if (rk === 'snap') check(`${k} cloud vs snap`, we.cover - R.cloud, 1, '%', we.source); else { const e = we.cover - R.cloud; (Math.abs(e) <= TOL.cloud ? info : warn)(`${k} cloud vs era5`, (e >= 0 ? '+' : '') + e.toFixed(0) + '%', `two models: the page shows ${we.source}`); } }
 }
 
