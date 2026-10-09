@@ -199,7 +199,7 @@ let hashTimer = 0;
 const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => { history.replaceState(null, '', location.pathname + location.search + shareHash()); const q = new URLSearchParams(location.search); for (const k of ['webgl', 'shadows', 'bloom', 'look', 'ground', 'roads', 'towers', 'roofs']) q.delete(k); $('glLink').href = WEBGL + (q.size ? '?' + q : '') + shareHash(); }, 400); };
 
 // ---------- picking and the record card
-const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), zr = new THREE.Raycaster();   // zr: the zoom stop (controls.update)
 let SEL = -1, KEYS = null, keysLoading = null;
 const keys = () => keysLoading || (keysLoading = loadJSON(DATA + 'building-keys.json').then(J => { if (J.model && J.model.fp !== MFP) { console.warn('building-keys.json is for another area.js'); return null; } J.ids = J.ids.split(','); return (KEYS = J); }).catch(e => { console.warn(e); return null; }));
 const selMat = new THREE.MeshBasicNodeMaterial({ color: 0xffd34d, transparent: true, opacity: 0.35, depthTest: true, side: THREE.DoubleSide }), sel = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), selMat);
@@ -430,6 +430,9 @@ function centreGround(maxS, s0) {
     const v = vzNow(), p = camera.position, m = new THREE.Vector3(dir.x, dir.y / v, dir.z), ml = m.length(); m.divideScalar(ml);   // the pointer ray in model metres
     // the stop point: where the ray is 3 m under the ground (a bank or a kerb a little above a low eye does not stop it)
     let hit = 400; for (let s = 2; s <= 5000; s += s < 100 ? 1 : 5) { const x = p.x + m.x * s, z = p.z + m.z * s; if (p.y / v + m.y * s <= groundAt(x, z) - 3) { hit = s; break; } }
+    // and the first building or detailed model on the ray (the ground test alone let the zoom fly into towers; 2026-10-09)
+    zr.ray.origin.set(p.x, p.y / v, p.z); zr.ray.direction.copy(m); zr.far = hit; zr.near = 0;
+    const bh = zr.intersectObjects([...buildings.children, ...models.children], true).find(h => U.cut.value >= 250 || h.point.y <= U.cut.value); if (bh) hit = Math.min(hit, bh.distance);
     const k = 1 / ml;   // exaggerated length per model metre along this ray
     const step = Math.max(0, Math.min(hit * (1 - sc), hit - 10)) * k;
     if (step > 1e-4) { p.addScaledVector(dir, step); this.target.addScaledVector(dir, step);
