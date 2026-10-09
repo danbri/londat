@@ -817,6 +817,10 @@ function render() {
   const ce = Math.cos(cam.pitch); let T = [cam.tx, cam.ty * VZ, cam.tz], eye = [T[0] + cam.dist * Math.sin(cam.yaw) * ce, T[1] + cam.dist * Math.sin(cam.pitch), T[2] + cam.dist * Math.cos(cam.yaw) * ce];
   // free camera (drone flights, setEye): eye and target in model metres, vertical field of view in radians
   if (cam.eye) { eye = [cam.eye[0], cam.eye[1] * VZ, cam.eye[2]]; T = [cam.target[0], cam.target[1] * VZ, cam.target[2]]; }
+  // a photo view (a lens) with vertical exaggeration: the eye stays at its true height above the water (scaled with the
+  // model), the line of sight keeps its pitch; before, ty * VZ took the eye down with the target, under the water
+  // (owner, 2026-10-09: "Fix webgl ref page"; the Three.js port does the same since f7c3f5c9)
+  else if (cam.hfov && VZ !== 1) { const up = cam.dist * Math.sin(cam.pitch), ey = (cam.ty + up) * VZ; T[1] = ey - up; eye[1] = ey; }
   if (PIX.on) { const D = 6000, cp = Math.cos(cam.pitch); eye = [T[0] + D * Math.sin(cam.yaw) * cp, T[1] + D * Math.sin(cam.pitch), T[2] + D * Math.cos(cam.yaw) * cp]; }
   const fovY = cam.hfov ? 2 * Math.atan(Math.tan(cam.hfov / 2) / (w / h)) : cam.fov || .8;   // a view with a lens keeps its horizontal field on any screen
   CAM = { eye, target: T, fovY, aspect: w / h, w, h };
