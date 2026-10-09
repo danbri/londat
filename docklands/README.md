@@ -88,7 +88,7 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 4 live | overlays, river, locate, KML, building keys | yes | `overlay-kit.js` (shared builders, materials, taps, labels) and `layers/overlays.js` (bike docks, lift outages, cranes, H4 and EGR159, GLA outlines and venues, works in progress; `?ov=bikes,works`), `layers/river.js` (river buses, locks, PLA notices, swim water, moorings, ships; `?river=`), `layers/locate.js`, `layers/kml.js` (`?kml=`; screen-space lines with Line2NodeMaterial; the WebGL page's kml.js reused), `layers/keys.js` (OSM card with parts, kg, Wikidata); files load only when ticked. Not ported: the selected building in the KML export, the Tower Bridge note, Sky panel rows |
 | framework | reveal sheet | yes | `reveal.js`: a frosted sheet with the layer drawn on it falls when a layer is ticked on; `?reveal=0` |
 | 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art has no photo facades or animated actors |
-| 5 styles | splats | no | in progress (own or vendored renderer: licence check) |
+| 5 styles | splats | yes | `layers/splats.js`, `splat-worker.js`: own TSL renderer (Spark 2.3.1 and gaussian-splats-3d 0.4.7, both MIT, need WebGL), off by default, `?splats=with|only`, `?splatset=`; music switches to "only" in the map style; a full page with splats takes 24 to 39 s a frame in software |
 | 6 other | Drone, plotter SVG, music | yes | `drone.js`, `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
 | 6 other | WebXR | no | in progress; the WebGL page's headset layer stays in use until then |
 

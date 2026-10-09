@@ -92,6 +92,10 @@ export default {
     // a source: a track index, 'mic', or (tests) an AudioNode to analyse, e.g. an OscillatorNode
     async function start(v = sel.value) {
       audioCtx(); VIZ.hold = false;
+      // as the WebGL page: in the map style the splat towers follow the bands, so music switches splats to "only" (pixel art moves the buildings
+      // instead); after audioCtx(), so the phone rule (context made in the tap, before any await) holds
+      { const SP = globalThis.__docklands3 && __docklands3.layers && __docklands3.layers.splats && __docklands3.layers.splats.api, st = new URLSearchParams(location.search).get('style');
+        if (SP && SP.setMode && SP.mode !== 'only' && st !== 'pixel') SP.setMode('only'); }
       if (v === 'mic') { stopSources(); if (AUD.el) AUD.el.pause(); mini('loading', 'Microphone'); AUD.mic = await navigator.mediaDevices.getUserMedia({ audio: true }); AUD.src = AUD.ctx.createMediaStreamSource(AUD.mic); AUD.src.connect(AUD.an); AUD.an.disconnect(); note.textContent = 'Listening to the microphone (nothing is recorded or sent).'; }
       else if (v && typeof v === 'object' && v.connect) { stopSources(); if (AUD.el) AUD.el.pause(); AUD.src = v; v.connect(AUD.an); AUD.an.disconnect(); mini('loading', 'Test tone'); }
       else { const t = AUD.list && AUD.list[+v]; if (!t) throw new Error('no track list'); AUD.an.disconnect(); AUD.an.connect(AUD.ctx.destination); playEl(t.url, t.title, `“${esc(t.title)}” by ${esc(t.artist)}, ${esc(t.licence)}, <a href="${esc(t.page)}" target="_blank" rel="noopener">${esc(t.source)}</a>.`); }
