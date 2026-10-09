@@ -300,7 +300,7 @@ export default {
     const bannerEl = ctx.ui.note(''); bannerEl.hidden = true;
     ctx.ui.note('Dated snapshots (4 October 2026). Boats where the TfL timetable puts them at the page clock (live only after a tap on a pier or boat). Locks: green inside the tide window and staffed hours, amber window only, grey outside or not known, red a CRT closure. Tap one for its record. Powered by TfL Open Data; PLA; Canal &amp; River Trust; EA (OGL v3.0); © OpenStreetMap contributors (ODbL); Wikidata (CC0).');
 
-    for (const k of (ctx.qs.get('river') || '').split(',').filter(k => NEED[k])) setPart(k, true, true);
+    for (const k of (ctx.qs.has('river') ? ctx.qs.get('river') : Object.keys(NEED).join(',')).split(',').filter(k => NEED[k])) setPart(k, true, true);   // all on by default (owner, 2026-10-09); ?river= or ?river=a,b for fewer
     const api = { object: root, ownUi: true, setPart, liveBoats, rebuildClock, lockState, tides, scheduledBoats, busIndex, barrierInfo, RV, on,
       setVisible(v) { root.visible = v; draw(); },
       get state() { return { on: { ...on }, parts: Object.fromEntries(Object.values(PART).map(p => [p.k, { n: p.n, hits: p.hits.length, polys: p.polys.length, tris: p.tris }])), clock: { ...RV.clockN, hits: clockHits.length }, labels: labels.n, live: !!RV.live }; } };

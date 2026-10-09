@@ -6,35 +6,72 @@
 <title>Docklands 3D (Three.js, experimental)</title>
 <meta name="description" content="Experimental port of the Docklands 3D page to three.js r186: WebGPU where the browser has it, else WebGL 2; TSL node materials.">
 <style>
-:root{--bg:#0f1215;--fg:#e8ecef;--mut:#9aa4ad;--acc:#2cc3b5;--panel:rgba(16,20,24,.92);--safe:env(safe-area-inset-bottom,0px)}
+:root{--bg:#0f1215;--fg:#e8ecef;--mut:#9aa4ad;--acc:#2cc3b5;--line:#2c353d;--panel:rgba(16,20,24,.92);--safe:env(safe-area-inset-bottom,0px);--top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+button,label,select,#credit,#attribI{touch-action:manipulation}
 #view{position:fixed;inset:0;touch-action:none}
 #view canvas{display:block;width:100%;height:100%}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .lab{position:absolute;left:0;top:0;padding:1px 6px;border-radius:4px;background:rgba(10,14,18,.66);color:#f3f5f7;font-size:12px;white-space:nowrap;will-change:transform}
-.btn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;z-index:5}
+.btn{position:fixed;top:calc(10px + var(--top));width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;z-index:5}
 #menu{left:10px}
 #nightBtn{left:62px;font-size:18px}
-#hud{position:fixed;left:116px;top:calc(18px + env(safe-area-inset-top,0px));padding:4px 10px;border-radius:6px;background:var(--panel);color:var(--mut);font-size:12px;z-index:4;transition:opacity 1.5s}
+#hud{position:fixed;left:116px;top:calc(18px + var(--top));padding:4px 10px;border-radius:6px;background:var(--panel);color:var(--mut);font-size:12px;z-index:4;transition:opacity 1.5s;pointer-events:none}
 #hud.fade{opacity:0}
-#drawer{position:fixed;left:10px;top:calc(62px + env(safe-area-inset-top,0px));bottom:calc(40px + var(--safe));width:min(340px,calc(100vw - 20px));overflow:auto;background:var(--panel);border-radius:10px;padding:12px 14px;z-index:6}
-#drawer h3{margin:14px 0 6px;font-size:13px;color:var(--mut);font-weight:600}
-#drawer h3:first-child{margin-top:0}
-.views{display:flex;flex-wrap:wrap;gap:6px}
-.views button{border:1px solid #33404a;background:#1b2229;color:var(--fg);border-radius:6px;padding:5px 9px;cursor:pointer}
-.views button[aria-pressed=true]{border-color:var(--acc);color:var(--acc)}
-label.row{display:flex;align-items:center;gap:8px;margin:5px 0}
+/* the drawer (menu.js): header, tabs, one pane at a time; closes by its cross, the dimmed map, Escape, a swipe left */
+#scrim{position:fixed;inset:0;background:#0006;z-index:7}
+#scrim[hidden]{display:none}
+#drawer{position:fixed;left:0;top:0;bottom:0;width:min(88vw,400px);background:#101418;border-right:1px solid var(--line);z-index:8;display:flex;flex-direction:column;box-shadow:4px 0 18px #0009;padding-top:var(--top);touch-action:pan-y}
+#drawer[hidden]{display:none}
+#drawer.drag{transition:none}
+#dHead{flex:none;display:flex;align-items:center;gap:8px;padding:8px 8px 4px 14px}
+#dHead b{flex:1;font-size:15px}
+.ib{width:40px;height:40px;border:0;border-radius:50%;background:none;color:var(--fg);font-size:24px;line-height:1;cursor:pointer}
+#dtabs{flex:none;display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#dtabs button{flex:1;min-width:0;border:0;background:none;color:var(--mut);font:600 13px system-ui,sans-serif;padding:11px 0;cursor:pointer}
+#dtabs button[aria-selected=true]{color:var(--fg);background:#1d2329;box-shadow:inset 0 -2px 0 var(--acc)}
+#drawerBody{flex:1;overflow:auto;padding:4px 14px calc(16px + var(--safe));overscroll-behavior:contain}
+.pane{display:none}.pane.on{display:block}
+.pane h3{margin:14px 0 6px;font-size:13px;color:var(--mut);font-weight:600}
+.pane > h3:first-child,.ext > h3:first-child{margin-top:8px}
+.grp{border-top:1px solid var(--line);margin-top:10px;padding-top:2px}
+.grp:first-child{border-top:0;margin-top:0}
+.grp .gt{margin:10px 0 2px;font-size:14px;color:var(--fg);font-weight:700}
+.grp .gb h3{margin:10px 0 2px;font-size:12px}
+:where(#drawerBody) button{min-height:36px;border:1px solid #33404a;background:#1b2229;color:var(--fg);border-radius:8px;padding:5px 12px;font:13px system-ui,sans-serif;cursor:pointer}
+/* a layer's long note shows two lines; a tap shows all of it (menu.js) */
+.gb p.small.clamp,.ext p.small.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button,.btnrow button{min-height:40px;border:1px solid #33404a;background:#1b2229;color:var(--fg);border-radius:20px;padding:6px 12px;font:13px system-ui,sans-serif;cursor:pointer}
+.chips button[aria-pressed=true]{border-color:var(--acc);color:var(--acc)}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.btnrow button{border-radius:8px}
+.btnrow button[disabled]{opacity:.45;cursor:default}
+label.row{display:flex;align-items:center;gap:8px;margin:2px 0;min-height:38px}
+label.row input[type=checkbox]{width:20px;height:20px;flex:none;accent-color:var(--acc)}
 select,input[type=range]{width:100%}
-select{background:#1b2229;color:var(--fg);border:1px solid #33404a;border-radius:6px;padding:4px}
+input[type=range]{min-height:32px;accent-color:var(--acc)}
+select{background:#1b2229;color:var(--fg);border:1px solid #33404a;border-radius:6px;padding:6px;min-height:38px;font:inherit}
+label.row select{flex:1}
+.ext select,.gb select{width:auto;max-width:100%;flex:1 1 auto;min-width:0}
+.ends{display:grid;grid-template-columns:auto 1fr;gap:6px 8px;align-items:center}
+.ends input{min-height:40px;padding:0 10px;border-radius:8px;border:1px solid #33404a;background:#1b2229;color:var(--fg);font:16px system-ui,sans-serif;width:100%}
 .small{font-size:12px;color:var(--mut)}
 a{color:var(--acc)}
+#credits ul{margin:4px 0 8px;padding-left:18px}#credits li{margin:3px 0}
 #card{position:fixed;right:10px;bottom:calc(36px + var(--safe));width:min(380px,calc(100vw - 20px));max-height:45vh;overflow:auto;background:var(--panel);border-radius:10px;padding:10px 14px;z-index:6}
 #card h2{margin:0 26px 6px 0;font-size:16px}
 #card p{margin:4px 0}
 #cardX{position:absolute;right:8px;top:6px;border:0;background:none;color:var(--fg);font-size:20px;cursor:pointer}
-#credit{position:fixed;right:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
+/* the corner credit: OSM line, folded to an (i) button after 5 s or the first touch on the map (OSMF attribution guidelines) */
+#credit{position:fixed;right:8px;bottom:calc(6px + var(--safe));font-size:11px;color:#e8eaec;background:#0d1013d9;padding:2px 8px;border-radius:5px;z-index:4;transition:opacity .4s}
+#credit a{color:#e8eaec}
+#credit.off{opacity:0;pointer-events:none}
+#attribI{position:fixed;right:8px;bottom:calc(4px + var(--safe));width:26px;height:26px;padding:0;border-radius:50%;border:1px solid #59616a99;font:italic 600 14px/1 Georgia,serif;background:#15191dcc;color:#c9ced6;z-index:4;cursor:pointer}
+#attribI[hidden]{display:none}
 #stat{position:fixed;left:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
+@media (min-width:900px){#scrim{display:none!important}}
 </style>
 <!-- three.js r186 (0.186.1), vendored in londat third_party/three (MIT): addons import 'three', 'three/webgpu' and 'three/tsl' -->
 <script type="importmap">
@@ -49,36 +86,130 @@ a{color:var(--acc)}
 <body>
 <div id="view"></div>
 <div id="labels"></div>
-<button id="menu" class="btn" aria-label="Menu" title="Menu">&#9776;</button>
+<button id="menu" class="btn" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="drawer">&#9776;</button>
 <button id="nightBtn" class="btn" aria-label="Day or night" title="Day or night">&#9790;</button>
 <div id="hud">Loading the model data...</div>
-<div id="drawer" hidden>
-  <h3>Views</h3>
-  <div class="views">
-    <button data-view="area">Whole area</button><button data-view="cw">Canary Wharf</button><button data-view="plan">Plan</button>
-    <button data-view="rotherhithe">Rotherhithe (night)</button><button data-view="greenland">Greenland Pier</button><button data-view="pier">Pier</button>
-    <button data-view="greenlandday">Greenland (day)</button><button data-view="plane">From a plane</button>
+<div id="scrim" hidden></div>
+<aside id="drawer" hidden aria-label="Menu">
+  <div id="dHead"><b>Docklands 3D</b><button type="button" class="ib" id="drawerX" aria-label="Close the menu">&times;</button></div>
+  <nav id="dtabs" role="tablist" aria-label="Menu sections">
+    <button type="button" role="tab" data-pane="paneViews" aria-selected="true">Views</button><button type="button" role="tab" data-pane="paneLook" aria-selected="false">Look</button><button type="button" role="tab" data-pane="paneLayers" aria-selected="false">Layers</button><button type="button" role="tab" data-pane="paneGo" aria-selected="false">Go</button><button type="button" role="tab" data-pane="paneTime" aria-selected="false">Time</button><button type="button" role="tab" data-pane="paneAbout" aria-selected="false">About</button>
+  </nav>
+  <div id="drawerBody">
+    <div class="pane on" id="paneViews" role="tabpanel" aria-label="Views">
+      <div class="row"><button type="button" id="shareBtn" title="A link that opens this view, time and building">Share this view</button></div>
+      <div id="shareOut" class="small" hidden style="user-select:text;-webkit-user-select:text;word-break:break-all;margin:4px 2px 0;opacity:.85"></div>
+      <h3>Places</h3>
+      <div class="views chips" role="group" aria-label="Places">
+        <button type="button" data-view="cw" aria-pressed="false">Canary Wharf</button><button type="button" data-view="area" aria-pressed="false">Whole area</button><button type="button" data-view="under" aria-pressed="false">Underground</button><button type="button" data-view="plan" aria-pressed="false">Plan</button>
+      </div>
+      <h3>Photo views</h3>
+      <div class="chips" role="group" aria-label="Photo views">
+        <button type="button" data-view="rotherhithe" aria-pressed="false">Rotherhithe, night</button><button type="button" data-view="greenland" aria-pressed="false">Greenland Pier, night</button><button type="button" data-view="pier" aria-pressed="false">Canary Wharf Pier, night</button><button type="button" data-view="greenlandday" aria-pressed="false">Greenland, day</button><button type="button" data-view="plane" aria-pressed="false">From a plane</button>
+      </div>
+      <p class="small">A photo view puts the camera where a photo was taken. On a phone the menu closes so the view shows.</p>
+      <p class="small"><a id="glLink" href="../cwplans/docklands/">This view in the WebGL page</a></p>
+    </div>
+    <div class="pane" id="paneLook" role="tabpanel" aria-label="Look">
+      <label class="row">Style <select id="styleProxy" aria-label="Drawing style"><option value="map">Map</option></select></label>
+      <label class="row"><input type="checkbox" id="look"> Realistic buildings</label>
+      <label class="row"><input type="checkbox" id="facades"> Photo facades</label>
+      <label class="row">Ground <select id="ground"><option value="none">Plain</option><option value="rgb2008">Aerial photo 2008</option><option value="night2012">Night photo 2012</option><option value="intensity2020">LiDAR intensity 2020</option></select></label>
+      <div class="ext" id="ext-look"></div>
+    </div>
+    <div class="pane" id="paneLayers" role="tabpanel" aria-label="Layers">
+      <div class="grp" data-g="city"><div class="gt">City</div><div class="gb">
+        <label class="row"><input type="checkbox" id="showLabels" checked> Place names</label>
+        <label class="row"><input type="checkbox" id="showRoads"> Roads</label>
+      </div></div>
+      <div class="grp" data-g="below"><div class="gt">Below ground</div><div class="gb"></div></div>
+      <div class="grp" data-g="water"><div class="gt">Water and river</div><div class="gb"></div></div>
+      <div class="grp" data-g="live"><div class="gt">Live</div><div class="gb"></div></div>
+      <div class="grp" data-g="sim"><div class="gt">Simulated</div><div class="gb"><p class="small">Made up from published procedures, timetables and open records. Not live.</p></div></div>
+      <div class="grp" data-g="overlays"><div class="gt">Data overlays</div><div class="gb"></div></div>
+      <div class="grp" data-g="kml"><div class="gt">My KML</div><div class="gb"></div></div>
+    </div>
+    <div class="pane" id="paneGo" role="tabpanel" aria-label="Go">
+      <h3>Find</h3>
+      <div class="btnrow"><button type="button" id="goSearch">Search buildings and places</button></div>
+      <h3>Route on foot, above and below ground</h3>
+      <div class="ends"><label for="rFrom">From</label><input id="rFrom" type="text" list="rPlaces" placeholder="shop, platform, exit…" autocomplete="off"><label for="rTo">To</label><input id="rTo" type="text" list="rPlaces" placeholder="shop, platform, exit…" autocomplete="off"></div>
+      <datalist id="rPlaces"></datalist>
+      <label class="row"><input type="checkbox" id="rStepFree"> Step-free (lifts and ramps only)</label>
+      <div class="btnrow"><button type="button" id="rGo">Find route</button><button type="button" id="rSwap" aria-label="Swap start and end">Swap ⇅</button><button type="button" id="rClear">Clear</button></div>
+      <p class="small" id="rOut">Or press and hold on the model: "Route from here" and "Route to here".</p>
+      <h3>Move</h3>
+      <div class="btnrow" id="goMove"><button type="button" id="goLocate">My location</button><button type="button" id="goXr">Headset (WebXR)</button></div>
+      <div class="ext" id="ext-go"></div>
+    </div>
+    <div class="pane" id="paneTime" role="tabpanel" aria-label="Time and weather">
+      <h3>Clock</h3>
+      <div id="clock" class="small"></div>
+      <input id="hour" type="range" min="0" max="23.99" step="0.05" aria-label="Hour of the day (London)">
+      <div class="btnrow"><button type="button" id="tNow">Now</button><button type="button" id="tNight">Day or night</button></div>
+      <label class="row"><input type="checkbox" id="wheelsChk" checked> Time wheels at the top</label>
+      <p class="small" id="skyNote"></p>
+      <div class="ext" id="ext-time"></div>
+    </div>
+    <div class="pane" id="paneAbout" role="tabpanel" aria-label="About">
+      <h3>Docklands: London Bridge to Cody Dock, above and below ground</h3>
+      <p class="small">Experimental port of the 3D page to three.js r186. <a href="../cwplans/docklands/">The WebGL page</a> · <a href="../cwplans/atlas/">atlas</a> · <a href="../cwplans/kg/">knowledge graph</a> · <a href="https://github.com/danbri/londat/blob/main/docklands/README.md">notes and menu map</a> · <a href="#credits" data-credits>credits</a></p>
+      <h3>How to use it</h3>
+      <p class="small">One finger: turn and tilt. Two fingers: move, zoom, twist. Tap a building or a marker: its record. Press and hold: route from or to that point. Drag the time wheels at the top: the upper one sets the time of day, the lower one the day of the year; "Now" returns to the time now.</p>
+      <h3>Settings: renderer <span id="backend">?</span></h3>
+      <label class="row"><input type="checkbox" id="shadows"> Sun shadows (cascaded)</label>
+      <label class="row"><input type="checkbox" id="bloom"> Bloom by night</label>
+      <label class="row"><input type="checkbox" id="animate" checked> Draw every frame (moving water)</label>
+      <p class="small">WebGPU where the browser has it, else WebGL 2 (<a href="?webgl">force WebGL 2</a>). Shadows and bloom are on by default on WebGPU only.</p>
+      <div class="ext" id="ext-about"></div>
+      <section id="credits" aria-labelledby="creditsH">
+      <h3 id="creditsH">Credits and data licences</h3>
+      <p class="small">Every committed data file with its sources and licence: <a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">data register</a>. A layer's own note repeats its credit next to its controls.</p>
+      <h3>Map data</h3><ul class="small">
+        <li>Streets, buildings, rail, stations, walkways, indoor levels, piers, construction areas, runway thresholds, the walking network: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a></li>
+        <li>Names, heights, floors, vessels and buildings: <a href="https://www.wikidata.org/">Wikidata</a>, CC0</li>
+        <li>Grid conversion: <a href="https://www.ordnancesurvey.co.uk/business-government/tools-support/os-net/for-developers">OSTN15</a>, © Ordnance Survey (free to use)</li></ul>
+      <h3>Ground, heights, river and tide</h3><ul class="small">
+        <li>Environment Agency LiDAR DTM and DSM 1 m, and the survey tiles 1999 to 2022 (skyline by year): © Environment Agency copyright and/or database right, <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a></li>
+        <li>Aerial photography 2008, night photography 2012, LiDAR intensity 2020: © Environment Agency copyright and/or database right, <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a></li>
+        <li>Flood walls: Environment Agency Spatial Flood Defences, <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a></li>
+        <li>Riverbed and water depth: contains public sector information licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a>, from the UK Hydrographic Office (INSPIRE bathymetry, PLA survey 2013 to 2017; not for navigation); North Dock bed: Canal &amp; River Trust</li>
+        <li>Tide: our harmonic prediction from Environment Agency gauge readings (Tower Pier, Charlton, Silvertown). This uses Environment Agency flood and river level data from the real-time data API (Beta), <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a>. Not for navigation.</li>
+        <li>Hills of London: EU-DEM v1.1 (Copernicus data, modified; through OpenTopoData), 250 m. Not endorsed by the European Union.</li></ul>
+      <h3>Buildings, occupants and registers</h3><ul class="small">
+        <li>Building records, colour by and night use: GLA London Building Stock Model 2; ONS Postcode Directory (contains OS data © Crown copyright and database right 2026; contains Royal Mail data © Royal Mail copyright and database right 2026; source: Office for National Statistics); OS Open UPRN; HM Land Registry; Historic England; FSA food hygiene ratings; Companies House: all <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a></li>
+        <li>Canary Wharf Group directory: facts only (names, units), from Internet Archive copies; crown lighting: facts from Canary Wharf Group press pages and other published pages, in our own words</li>
+        <li>Facade photos: open photos on Flickr and Wikimedia Commons, each under its own licence (CC BY 2.0, CC BY 4.0 or Public Domain Mark)</li>
+        <li>Detailed models (Pacific Tavern, Redriff Road): made from a contributed photo (CC0), with heights from Environment Agency LiDAR (OGL v3.0) and the outline from © OpenStreetMap contributors (ODbL)</li>
+        <li>Station models (Canary Wharf, Canada Water): positions from OpenStreetMap (ODbL); the TfL axonometric sheets were used for topology and counts only</li></ul>
+      <h3>Trees and wildlife</h3><ul class="small">
+        <li>Trees: GLA London Public Realm Trees (GLA, GiGL); Forest Research Trees Outside Woodland (© Forestry Commission copyright and/or database right 2025); OS Open Greenspace (contains OS data © Crown copyright and database right 2026); planning.data.gov.uk Tree Preservation Orders: all <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a>; OSM leaf tags (ODbL)</li>
+        <li>Birds and foxes (simulated): weights from <a href="https://nbnatlas.org/">NBN Atlas</a> records (OGL, CC BY, CC0; data partners BTO/JNCC/RSPB, Birdex, iRecord, Mammal Society and others) and <a href="https://www.gbif.org/">GBIF.org</a> (iNaturalist CC0 and CC BY observations, naturgucker, TIPU). Not used: eBird, CC BY-NC records, GiGL.</li></ul>
+      <h3>Sky and weather</h3><ul class="small">
+        <li>Sun, moon and planets: <a href="https://github.com/cosinekitty/astronomy">Astronomy Engine</a> (Don Cross, MIT); stars: <a href="https://cdsarc.cds.unistra.fr/viz-bin/cat/V/50">Yale Bright Star Catalogue 5th ed.</a> (Hoffleit &amp; Warren 1991, public domain)</li>
+        <li>Weather and wind: <a href="https://open-meteo.com/">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), from the londat hourly cache or, when you tick it, from the Open-Meteo API</li></ul>
+      <h3>Transport, river and live data</h3><ul class="small">
+        <li>River buses, piers, hire bike docks, lift outages, step-free routes: Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016 and Geomni UK Map data © and database rights [2019]</li>
+        <li>River: Port of London Authority notices, Canal &amp; River Trust locks, Environment Agency water quality (OGL v3.0), the Thames Barrier (GOV.UK, OGL v3.0)</li>
+        <li>Ships: <a href="https://openwaters.io/ais/">Open Waters AIS</a> (AISHub, aisstream.io), accepted for scoping, licence under review; small private craft as counts only. Not for navigation.</li>
+        <li>Aircraft, simulated: UK AIP (NATS) facts for London City and route H4; CAA monthly totals; London City runway thresholds from OpenStreetMap (ODbL).</li>
+        <li>Live aircraft (only after you tap "Live aircraft"): <a href="https://adsb.lol/">adsb.lol</a>, <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>, asked by your browser; nothing stored</li>
+        <li>Cranes: Source: UK AIS (NATS), facts only; helicopter route H4 and restricted area EGR159: Source: UK AIP, NATS, facts only</li></ul>
+      <h3>London Datastore and planning</h3><ul class="small">
+        <li>Conservation areas, designated open space, safeguarded wharves (GLA Planning Constraints Map) and the Cultural Infrastructure Map 2023: contains public sector information licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">OGL v3.0</a> (Greater London Authority). The GLA cannot warrant the quality or accuracy of the data.</li>
+        <li>Works in progress: Planning London Datahub (GLA and the London boroughs, with the London Development Database), facts and links only; DfT Street Manager (OGL v3.0)</li></ul>
+      <h3>Music, splats and software</h3><ul class="small">
+        <li>Music: Kevin MacLeod (<a href="https://incompetech.com/">incompetech.com</a>), <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>, streamed from Wikimedia Commons</li>
+        <li>Gaussian splats: made in this project from the model (OpenStreetMap ODbL; EA LiDAR and the 2008 aerial photography, OGL v3.0); trained with OpenSplat</li>
+        <li><a href="https://threejs.org/">three.js</a> r186 (MIT); <a href="https://github.com/cosinekitty/astronomy">Astronomy Engine</a> (MIT); <a href="https://github.com/mapbox/earcut">earcut</a> (ISC)</li></ul>
+      </section>
+    </div>
   </div>
-  <h3>Clock</h3>
-  <div id="clock" class="small"></div>
-  <input id="hour" type="range" min="0" max="23.99" step="0.05" aria-label="Hour of the day (London)">
-  <h3>Layers</h3>
-  <label class="row"><input type="checkbox" id="showLabels" checked> Place names</label>
-  <label class="row"><input type="checkbox" id="showRoads"> Roads</label>
-  <label class="row"><input type="checkbox" id="look"> Realistic buildings (materials.json)</label>
-  <div id="layersExtra"></div>
-  <label class="row">Ground <select id="ground"><option value="none">plain</option><option value="rgb2008">aerial 2008</option><option value="night2012">night 2012</option><option value="intensity2020">LiDAR intensity 2020</option></select></label>
-  <h3>Renderer: <span id="backend">?</span></h3>
-  <label class="row"><input type="checkbox" id="shadows"> Sun shadows (cascaded)</label>
-  <label class="row"><input type="checkbox" id="bloom"> Bloom by night</label>
-  <label class="row"><input type="checkbox" id="animate" checked> Draw every frame (moving water)</label>
-  <p class="small">Experimental port of the 3D page to three.js r186. WebGPU where the browser has it, else WebGL 2 (<a href="?webgl">force WebGL 2</a>). Shadows and bloom are on by default on WebGPU only.
-  Not yet ported: tunnels, below ground, stations, ships, river and tide, splats, styles, routes, search, KML, Drone, WebXR. <a id="glLink" href="../cwplans/docklands/">Open this view in the WebGL page</a>.</p>
-  <p class="small">Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL); Environment Agency LiDAR and aerial images (Open Government Licence v3.0); Yale Bright Star Catalogue. Full list: <a href="https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md">README</a>.</p>
-</div>
+</aside>
 <div id="card" hidden><button id="cardX" aria-label="Close">&times;</button><div id="cardBody"></div></div>
 <div id="stat"><span id="fps"></span></div>
-<div id="credit">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a></div>
+<div id="credit">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> · <a href="#credits" data-credits>credits</a></div>
+<button type="button" id="attribI" hidden aria-label="Credits and data licences (© OpenStreetMap contributors and others)" title="Credits and data licences">i</button>
 <script src="../cwplans/docklands/vendor/earcut.min.js"></script>
 <script src="../cwplans/docklands/data/area.js"></script>
 <script src="../cwplans/docklands/vendor/astronomy.browser.min.js"></script>

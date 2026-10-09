@@ -4,7 +4,7 @@
 //     ?wind=speed,dir (tests); data/sky/weather-2026-10-03.json (Open-Meteo best match, hourly, 3 and 4 October 2026, CC BY
 //     4.0; the WebGL page's photo-time file); the londat hourly cache (cache/latest.json theme weather, Open-Meteo, the
 //     latest hour only, when the clock is within 90 minutes of it; with gusts); ?wind=meteo asks the Open-Meteo API for the
-//     clock's day (the browser asks api.open-meteo.com; off by default, as the WebGL page's Wind layer); else a stated
+//     clock's day (the browser asks api.open-meteo.com; on by default since 2026-10-09, ?weather=0 switches it off); else a stated
 //     default, 4 m/s from 240 degrees (the prevailing south-west wind). The source is in a small note on screen.
 //   SU.gust (cat's-paw contrast) = gust / speed - 1 (0.15 to 1; 0.5 when the source has no gusts). On a new direction the
 //   fetch texture is remade (water.js setFetch, about 10 to 30 ms).
@@ -73,7 +73,7 @@ export default {
     document.body.appendChild(note);
     ctx.ui.section('Water surface');
     const menuNote = ctx.ui.note('');
-    let meteoOn = qw === 'meteo' || ctx.qs.get('weather') === 'meteo';   // one request switch for wind and weather (?weather=meteo); still none before the visitor asks
+    let meteoOn = qw === 'meteo' || (!fixed && !/^(0|off|no)$/i.test(ctx.qs.get('weather') || ''));   // on by default (owner, 2026-10-09: "all wind/weather"); ?weather=0 is the one switch for wind and weather
     ctx.ui.toggle('Wind from Open-Meteo for the clock time (asks api.open-meteo.com)', meteoOn, v => { meteoOn = v; evaluate(); });
     const curNow = () => qc != null && isFinite(qc) ? qc : Math.max(-1.8, Math.min(1.8, -0.75 * WU.tideRate.value + 0.08));
     function showNote() {

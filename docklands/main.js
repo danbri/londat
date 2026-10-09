@@ -14,6 +14,9 @@ import { CSMShadowNode } from 'three/addons/csm/CSMShadowNode.js';
 import { A, MFP, dec, buildBuildings, terrainGeometry, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
 import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
 import { Sky3, fromLondon } from './sky3.js';
+import { makeUi, initMenu } from './menu.js';
+import { initCarousel } from './carousel.js';
+import { predict } from './tide.js';
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -58,12 +61,12 @@ roads.visible = flag('roads', true);
 for (const m of [water.material, greens.material, lineMat]) { m.polygonOffset = true; m.polygonOffsetFactor = -1; m.polygonOffsetUnits = -4; }
 
 const bmat = buildingMaterial(), buildings = new THREE.Group(); scene.add(buildings);
-let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null, FACADE = null;   // FACADE(i): the photo facade slot of model building i, or null
+let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null, FACADE = null, FACADES_ON = true;   // FACADE(i): the photo facade slot of model building i, or null; Menu > Look > Photo facades
 const skip = new Set();
 function rebuildBuildings() {
   for (const m of buildings.children) m.geometry.dispose(); buildings.clear();
   const t0 = performance.now();
-  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADE, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
+  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
   draw();
@@ -77,12 +80,19 @@ const focus = new THREE.Vector3();
 let clock = qs.get('t') ? fromLondon(qs.get('t')) : Date.now(); if (!isFinite(clock)) clock = Date.now();
 if (qs.has('night') && !qs.get('t')) clock = fromLondon(londonDate(Date.now()) + 'T22:00');
 let NIGHT = false;
+const clockHooks = [];   // carousel.js: redraw the wheels when the clock changes
+let TSHARE = null;   // the London wall-clock time the visitor chose (wheels, slider, day or night): in the share hash as t=
+const londonStr = t => `${londonDate(t)}T${new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t))}`;
+function setClockUser(t, live = false) {   // a clock the visitor set: it replaces ?t= (so views may change day and night again) and goes in the hash
+  if (qs.has('t')) { qs.delete('t'); const q = new URLSearchParams(location.search); q.delete('t'); history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + location.hash); }
+  TSHARE = live ? null : londonStr(t); setClock(t); writeHash();
+}
 function setClock(t) {
   clock = t; const s = sky.setTime(t, focus); NIGHT = s.night;
   U.night.value = THREE.MathUtils.clamp((-s.sun.alt - 2) / 6, 0, 1);
   // scene.background (dark by night, lit by the city under cloud) is set by sky.setTime and sky.setWeather (sky3.js)
   bmat.roughness = NIGHT ? 0.5 : 0.82;
-  syncClockUi(); syncPost(); draw();
+  syncClockUi(); syncPost(); for (const f of clockHooks) f(t); draw();
 }
 
 // ---------- shadows (cascaded, WebGPU by default) and bloom (by night, WebGPU by default)
@@ -138,7 +148,7 @@ function setView(k) {
 const parseHash = h => { const m = {}; for (const part of String(h || '').replace(/^#/, '').split('&')) { const i = part.indexOf('='); if (i > 0) try { m[part.slice(0, i)] = decodeURIComponent(part.slice(i + 1)); } catch { /* bad escape */ } } return m; };
 function shareHash() {
   const c = camState(), r = (x, k = 1) => Math.round(x * k) / k;
-  return `#v=1&c=${[r(c.tx), r(c.tz), r(c.ty), r(c.dist), r(c.yaw, 1000), r(c.pitch, 1000)].join(',')}${NIGHT ? '&n=1' : ''}${qs.get('t') ? '&t=' + encodeURIComponent(qs.get('t')) : ''}${SEL >= 0 && KEYS ? '&id=osm:' + KEYS.ids[SEL] : ''}`;
+  return `#v=1&c=${[r(c.tx), r(c.tz), r(c.ty), r(c.dist), r(c.yaw, 1000), r(c.pitch, 1000)].join(',')}${NIGHT ? '&n=1' : ''}${TSHARE || qs.get('t') ? '&t=' + encodeURIComponent(TSHARE || qs.get('t')) : ''}${SEL >= 0 && KEYS ? '&id=osm:' + KEYS.ids[SEL] : ''}`;
 }
 let hashTimer = 0;
 const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => { history.replaceState(null, '', location.pathname + location.search + shareHash()); const q = new URLSearchParams(location.search); for (const k of ['webgl', 'shadows', 'bloom', 'look', 'ground', 'roads', 'towers', 'roofs']) q.delete(k); $('glLink').href = WEBGL + (q.size ? '?' + q : '') + shareHash(); }, 400); };
@@ -229,12 +239,12 @@ async function loadModels() {
   if (skip.size) rebuildBuildings();
 }
 
-// ---------- optional data: towers, roof shapes, realistic look, ground images
+// ---------- optional data: towers, roof shapes, realistic look (on by default since 2026-10-09; ?look=0 for flat), ground images
 async function loadOptional() {
   const jobs = [], towersP = loadJSON(DATA + 'towers.json');
   if (flag('towers', true)) jobs.push(towersP.then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); }).catch(e => console.warn('towers', e)));
   if (flag('roofs', true) && globalThis.DocklandsRoofs) jobs.push(loadJSON(DATA + 'roofs.json').then(T => { ROOFS = DocklandsRoofs.decode(T, MFP); }).catch(e => console.warn('roofs', e)));
-  if (/^(real|realistic|1)$/i.test(qs.get('look') || '') && globalThis.DocklandsLook) jobs.push(loadJSON(DATA + 'materials.json').then(J => { const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } }).catch(e => console.warn('materials', e)));
+  if (!/^(0|off|flat|no)$/i.test(qs.get('look') || '') && globalThis.DocklandsLook) jobs.push(loadJSON(DATA + 'materials.json').then(J => { const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } }).catch(e => console.warn('materials', e)));
   // photo facades (index.html facSlot; ?facades=0 off): data/tex/facades.json gives a slot and the tile size in metres by registry id
   // (the tower's model buildings, towers.json) or by OSM key (mi, while model_fp matches this area.js); facades.jpg is the atlas
   if (flag('facades', true)) jobs.push(Promise.all([loadJSON(DATA + 'tex/facades.json'), towersP.catch(() => null), texLoader.loadAsync(DATA + 'tex/facades.jpg')]).then(([F, T, tex]) => {
@@ -258,30 +268,42 @@ async function setGround(k) {
 // ---------- UI
 $('animate').checked = flag('animate', true);   // moving water by default (owner, 2026-10-09); ?animate=0 draws only on a change
 document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
-$('menu').onclick = () => { const d = $('drawer'); d.hidden = !d.hidden; };
 $('shadows').onchange = e => setShadows(e.target.checked);
 $('bloom').onchange = e => { BLOOM = e.target.checked; syncPost(); draw(); };
 $('showLabels').onchange = () => draw();
+// Share this view (Menu > Views; the WebGL page's nav.js share()): the page URL with the share hash; the system share
+// sheet on a touch screen, else the clipboard; the link also shows under the button to copy by hand
+$('shareBtn').onclick = async () => {
+  const url = location.origin + location.pathname + location.search + shareHash(), out = $('shareOut');
+  history.replaceState(null, '', url); out.hidden = false; out.textContent = url;
+  if (navigator.share && matchMedia('(pointer: coarse)').matches) { try { await navigator.share({ title: document.title, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  let copied = false; try { await navigator.clipboard.writeText(url); copied = true; } catch {}
+  $('shareBtn').textContent = copied ? 'Link copied' : 'Share this view'; setTimeout(() => { $('shareBtn').textContent = 'Share this view'; }, 2500);
+};
 $('showRoads').checked = roads.visible; $('showRoads').onchange = e => { roads.visible = e.target.checked; draw(); };
 $('ground').onchange = e => setGround(e.target.value);
+$('facades').onchange = e => { FACADES_ON = e.target.checked; rebuildBuildings(); };
 $('look').onchange = async e => { if (e.target.checked && !LOOK) { const J = await loadJSON(DATA + 'materials.json'); const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } } else if (!e.target.checked) LOOK = null; rebuildBuildings(); };
 const hourOf = t => { const p = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t)); return p; };
 function syncClockUi() { const s = sky.state; $('clock').textContent = `${new Date(clock).toLocaleDateString('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric' })} ${hourOf(clock)} London · sun ${s ? s.sun.alt.toFixed(1) : '?'}°`; const [hh, mm] = hourOf(clock).split(':').map(Number); $('hour').value = hh + mm / 60; }
-$('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClock(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
-$('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }); setClock(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
+$('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClockUser(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
+$('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }); setClockUser(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
+$('tNight').onclick = () => $('nightBtn').click();
+const clockNow = () => setClockUser(Date.now(), true);
+$('tNow').onclick = clockNow;
 
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
 const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,drone,plotter,music,splats,overlays,river,kml,locate,xr').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
-const ui = {
-  host: () => $('layersExtra'),
-  section(title) { const h = document.createElement('h3'); h.textContent = title; ui.host().appendChild(h); return h; },
-  toggle(label, on, cb) { const l = document.createElement('label'); l.className = 'row'; const i = document.createElement('input'); i.type = 'checkbox'; i.checked = !!on; i.onchange = () => { cb(i.checked); draw(); }; l.append(i, ' ' + label); ui.host().appendChild(l); return i; },
-  slider(label, min, max, step, value, cb) { const l = document.createElement('label'); l.className = 'row'; l.style.flexWrap = 'wrap'; const t = document.createElement('span'); t.textContent = label; t.style.width = '100%'; const i = document.createElement('input'); i.type = 'range'; Object.assign(i, { min, max, step, value }); i.oninput = () => { cb(+i.value, t); draw(); }; l.append(t, i); ui.host().appendChild(l); return { input: i, label: t }; },
-  note(html) { const p = document.createElement('p'); p.className = 'small'; p.innerHTML = html; ui.host().appendChild(p); return p; },
-};
+// where each layer's controls go in the menu (menu.js; the Menu map in README.md): a pane ('look', 'go', 'time', 'about')
+// or a group of the Layers pane ('layers/city' ...). A module may say { menu: '...' } itself; the default is 'layers/city'.
+const MENU_PLACE = { trees: 'layers/city', ring: 'layers/city', skyline: 'layers/city', nightlights: 'layers/city', registry: 'layers/city', keys: 'layers/city',
+  floors: 'layers/below', under: 'layers/below', stations: 'layers/below', walls: 'layers/water', riverbed: 'layers/water', river: 'layers/water', piers: 'layers/water',
+  ships: 'layers/live', planes: 'layers/sim', wildlife: 'layers/sim', overlays: 'layers/overlays', kml: 'layers/kml',
+  water: 'look', splats: 'look', music: 'look', tide: 'time', wind: 'time', weather: 'time', plotter: 'about', routes: 'go', search: 'go', drone: 'go', locate: 'go', xr: 'go' };
+const ui = makeUi(draw);
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
@@ -291,15 +313,18 @@ const ctx = {
 async function loadLayers() {
   for (const id of LAYER_IDS) {
     let mod; try { mod = (await import(`./layers/${id}.js`)).default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
+    ui.tab(mod.menu || MENU_PLACE[id] || 'layers/city');
+    const mark = document.createComment(id); ui.host().appendChild(mark);   // the layer's own on/off goes first, above its controls
     try { const on = flag(id, mod.on !== false), L = (await mod.init(ctx, on)) || {}; LAYERS[id] = { mod, api: L, on };   // api kept as returned: its getters stay live
       if (L.object) { L.object.visible = on; scene.add(L.object); }
       // the falling sheet (reveal.js): when the visitor ticks a layer on; at page load only with ?reveal=load (start time)
       const sheet = () => { if (L.object && mod.reveal !== false) import('./reveal.js').then(R => R.reveal(ctx, { object: L.object, label: mod.label || id, draw2d: mod.draw2d, alive: () => LAYERS[id].on })).catch(e => console.warn('reveal', id, e)); };
       if (on && qs.get('reveal') === 'load') sheet();
-      if (mod.label && !L.ownUi) ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; if (v) sheet(); });
+      if (mod.label && !L.ownUi) { const i = ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; if (v) sheet(); }); if (mark.parentNode) mark.replaceWith(i.parentNode); }
     } catch (e) { console.warn('layer', id, e); }
+    mark.remove();
   }
-  STATS.layers = Object.keys(LAYERS); draw();
+  STATS.layers = Object.keys(LAYERS); menu.finish(); draw();
 }
 
 // ---------- render loop: on demand (a frame while the camera moves or a clock changes), always while the water moves
@@ -333,22 +358,28 @@ renderer.setAnimationLoop((time, xrFrame) => {
 export const styleHook = { pipe, scenePass, ray, syncPost, setCam, camState, setClock, setShadows, ctx };
 import('./styles.js').then(m => m.init(styleHook)).catch(e => console.warn('styles', e));
 
+// ---------- the menu (menu.js) and the time wheels (carousel.js)
+const menu = initMenu({ setView, layers: () => LAYERS });
+
 // ---------- start
 setShadows(flag('shadows', GPU));
 const H = parseHash(location.hash), c = (H.c || '').split(',').map(Number), at = /^#at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);
-if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) clock = t; }
+if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) clock = t; if (H.t && isFinite(t)) TSHARE = H.t; }
 setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(londonDate(Date.now()) + 'T22:00') : clock);
 if (c.length >= 6 && c.every(isFinite)) setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5] });
 else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw: .6, pitch: .6 });
 else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');
 setGround(qs.get('ground') || 'none');
+const wheels = initCarousel({ clock: () => clock, setClock: t => setClockUser(t), now: clockNow, fromLondon, A, flag, predict, tide: () => LAYERS.tide?.api?.harmonics || null });
+clockHooks.push(() => wheels.draw());
 say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
 sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
-await loadOptional(); await loadModels();
+await loadOptional(); $('facades').checked = FACADES_ON = flag('facades', true); $('facades').disabled = !FACADE; await loadModels();
 await loadLayers();
 if (H.id && /^osm:[wr]\d+$/.test(H.id)) { const K = await keys(); const i = K ? K.ids.indexOf(H.id.slice(4)) : -1; if (i >= 0) selectModel(i); }
 say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
 setTimeout(() => $('hud').classList.add('fade'), 4000);
+menu.creditsStart();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, fromLondon, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap };
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap };

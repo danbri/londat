@@ -54,7 +54,7 @@ export default {
         return (src.meteo[day] = { rows: rowsOf(J.hourly, s => s * 1000), name: age > 85 ? 'Open-Meteo archive (ERA5 reanalysis, no visibility)' : age > 0 ? 'Open-Meteo forecast API, past hours' : 'Open-Meteo forecast' });
       } catch (e) { console.warn('weather: Open-Meteo', e); return { why: 'Open-Meteo did not answer: ' + e.message }; }
     }
-    let meteoOn = qs.get('weather') === 'meteo', W = null, lastT = null, busy = false, again = false, visible = on;
+    let meteoOn = !/^(0|off|no)$/i.test(qs.get('weather') || ''), W = null, lastT = null, busy = false, again = false, visible = on;
 
     // ---------- rain and snow: streaks in a box round the camera
     const NMAX = 6000, BOX = 60, HGT = 80, pos = new Float32Array(NMAX * 6), seed = new Float32Array(NMAX * 3);

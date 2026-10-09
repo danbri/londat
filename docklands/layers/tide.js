@@ -278,6 +278,6 @@ export default {
     globalThis.__tide3 = { model, levelsAt, update, info: () => info, fore, U, edges: FS.edges };
     const show = v => { visible = v; fore.visible = v; tm.geometry = v ? tg1 : tg0; last = NaN; draw(); };
     show(on);
-    return { object: fore, setVisible: show };
+    return { object: fore, setVisible: show, harmonics: Hc };   // harmonics: the time wheels' daily tide range (carousel.js)
   },
 };

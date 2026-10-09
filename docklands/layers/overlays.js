@@ -213,13 +213,15 @@ export default {
     for (const p of Object.values(P)) { const l = document.createElement('label'); l.className = 'row'; l.style.margin = '2px 0'; const i = document.createElement('input'); i.type = 'checkbox'; i.onchange = () => setPart(p.k, i.checked); l.append(i, ' ' + p.label); box.appendChild(l); boxes[p.k] = i; }
     const syncUi = () => { for (const p of Object.values(P)) boxes[p.k].checked = p.on; };
     ctx.ui.note('Dated snapshots, not live (Powered by TfL Open Data; UK AIS (NATS) facts; GLA, OGL v3.0: the GLA cannot warrant the quality or accuracy of the data; Planning London Datahub). Tap a marker or inside an outline for its record.');
+    const prevTab = ctx.ui.tab ? ctx.ui.tab('look') : null;   // colour by goes to Menu > Look (menu.js)
     const row = document.createElement('label'); row.className = 'row'; row.textContent = 'Colour buildings by ';
     const sel = document.createElement('select'); sel.innerHTML = '<option value="source">height source</option>' + Object.entries(MODES).map(([k, m]) => `<option value="${k}">${esc(m[2].replace(/ \d.*$/, ''))}</option>`).join('');
     sel.onchange = () => setColour(sel.value); row.appendChild(sel); ctx.ui.host().appendChild(row);
     const key = ctx.ui.note('');
+    if (prevTab) ctx.ui.tab(prevTab);
 
-    // ---------- start: ?ov=a,b and ?colour=
-    for (const k of (ctx.qs.get('ov') || '').split(',').filter(k => P[k])) setPart(k, true, true);
+    // ---------- start: every part (or ?ov=a,b) and ?colour=
+    for (const k of (ctx.qs.has('ov') ? ctx.qs.get('ov') : Object.keys(P).join(',')).split(',').filter(k => P[k])) setPart(k, true, true);   // all on by default (owner, 2026-10-09); ?ov= or ?ov=a,b for fewer
     if (MODES[ctx.qs.get('colour')]) setColour(ctx.qs.get('colour'));
 
     const api = { object: root, ownUi: true, setPart, setColour, parts: P, data, stats,

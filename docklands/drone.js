@@ -670,7 +670,7 @@ export default {
     document.addEventListener('click', e => { if (S.on && e.target.closest && e.target.closest('[data-view]')) stop(true); }, true);
 
     // the menu button: in the views group
-    { const views = document.querySelector('#drawer .views'), b = document.createElement('button'); b.type = 'button'; b.id = 'droneBtn'; b.textContent = 'Drone';
+    { const views = document.getElementById('goMove') || document.querySelector('#drawer .views'), b = document.createElement('button'); b.type = 'button'; b.id = 'droneBtn'; b.textContent = 'Drone';
       b.title = 'Fly a first-person drone: copter, plane, boat, tube, walk, under';
       b.onclick = () => { if (S.on) stop(false); else { start(S.mode && S.mode !== 'under' ? S.mode : 'copter'); if (innerWidth < 900 && $('drawer')) $('drawer').hidden = true; } };
       if (views) views.appendChild(b); }
