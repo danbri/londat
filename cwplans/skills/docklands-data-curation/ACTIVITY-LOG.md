@@ -2105,3 +2105,19 @@ official data."
   locate, zoom; mirror on by default; cloud deck noise moving downwind (96cfe48a). The README parity table has no
   "partial" or "WebGL only" rows left.
 
+
+## 2026-10-09 (late): Three.js port, owner's iPhone round
+
+- Live data: live-cache branch (aircraft, ships, METAR) by fetch-live-cache.mjs (63d0e3cb); GitHub skips most scheduled
+  runs here (cache-live ran 02:09, 09:02, 16:11, 20:53 UTC; the */5 schedule never started), so live-cache.yml is now a
+  self-restarting loop: 64 fetches 5 minutes apart, then `gh workflow run` (c56c222c). It needs one manual start.
+- UI: Labels button, search at the top of the menu, sliding translucent menu (68ebb832); construction frames off by
+  default, Share > More (copy, print, plotter), no text selection, six more places (8aa349f8); wildlife abundance, size,
+  fox and highlight sliders (cafc8bce, b442e7de); night window patterns by use and hour (f589cef3).
+- Photo views: hash keeps lens, roll and view; 70 deg cap on portrait; leaving the lens; the cause of the horizon flashes
+  (an orbit under ground after a photo view) (f7c3f5c9); zoom stops before buildings (a2ada234); touches from labels
+  reach the map (ed1299f8); WebGL page photo eye under vz fixed (30f96949).
+- Navigation as nav.js: own gestures, momentum, the ground wall and the pass below ground; round Drone and Below ground
+  buttons with the vehicle bar (6c0e0343). Owner on iPhone: "Looks ok on iphone".
+- Open: menu-check not re-run on a quiet container after 6c0e0343; tide surge only within 4 weeks (EA API); the share
+  hash has no u= (Below ground) yet; on a phone the two left round buttons lie over labels.
