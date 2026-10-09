@@ -1875,6 +1875,30 @@ Include a looping carousel at top for time of day, time of year."
   aircraft or one layer with `--query 'layers=...'`. Open-Meteo answers 429 after many test runs from one container.
 - Open: at 1280 px the open drawer covers the left part of the wheels; the aircraft status note does not fold.
 
+## Three.js port: parity checks and audit lessons (2026-10-09)
+
+- Audit with evidence of the owner's goal items: https://github.com/danbri/londat/blob/main/docklands/AUDIT.md (tests
+  `docklands/test/history-check.mjs`, `roofs-compare.mjs`, `piers-check.mjs`, `wildlife-check.mjs`, `trees-season.mjs`,
+  `reveal-frames.mjs`; captures in `docklands/test/audit/`).
+- Before you port a "partial" row of the README parity table, read `git log` for the file: the row can be older than the
+  code (below ground, pixel art and WebXR were ported in ea16292f and 3976bbba while the table still said partial).
+- Look > Model (`layers/model.js`): Buildings solid, see-through, hidden (`?bmode=`), Detailed models and Roof shapes
+  (`?models=0`, `?roofshapes=0`), Satellite 2026 ground (`?ground=s2`), Key to colours. `main.js` calls
+  `setGround(qs ground)` at start, so `s2` is skipped there and set by the layer. `buildOpts.skip` is one object that
+  several layers replace: wrap the earlier value, never assign a plain Set.
+- Recorded and live aircraft: the reported position is the aircraft, not its wheels. Lift the model only to keep the
+  wheels above the ground, and lift trail points by the same rule (they were 2.75 to 5.1 m apart before 10a94413).
+  `&planecam=<n>` follows recorded aircraft (`?t=2026-10-08T18:00&layers=planes&planecam=3&planecamd=70`).
+- A camera moved in an onFrame hook must move before the labels are projected, with `camera.updateMatrixWorld()`.
+- The open drawer sets `body.drawerOpen`; `--dw` is its width. At 900 px and wider the wheels and the bottom-left notes
+  (`#blNotes`, ordered by CSS `order`) move right of it. At 390 px the wheels fill 60 to 124 px from the top: a fixed
+  control at the right starts below 130 px.
+- Wind and weather share one Open-Meteo request a day (`docklands/meteo.js`). The Open-Meteo daily limit is shared by all
+  sessions in a cloud container (HTTP 429): test the data path with a Playwright route that answers api.open-meteo.com.
+- Wildlife seasons: record counts by month measure recording effort; divide by all records of that month first.
+- EA archive CSV rows are not in time order: sort before finding high water. Use EGLC METARs (Iowa Environmental
+  Mesonet) as the truth for wind and low cloud, not ERA5 against Open-Meteo.
+
 ## Water over the LiDAR ground (2026-10-08)
 
 The LiDAR ground under the river and the docks is the survey's water surface (Thames median 2.8 m OD = the water level).

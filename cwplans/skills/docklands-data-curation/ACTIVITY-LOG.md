@@ -2072,3 +2072,18 @@ official data."
 - Open: the workflow has not run on GitHub yet (first run 13:41 UTC); the trail line looks apart from the model in
   close-ups; the drawer covers the left of the wheels at 1280 px.
 
+## 2026-10-09: Three.js port, parity gaps, UI faults, audit
+
+- Parity (40399daa): Look > Model (buildings solid, see-through, hidden; detailed models; roof shapes; Satellite 2026;
+  key to colours), Vector CRT colour overlay, style notes. Below ground, pixel art and WebXR were already ported.
+- Audit (0dfbc8c9): docklands/AUDIT.md. Sun and moon within 0.02 deg; tide rms 0.25 m on 7 EA archive days, high water
+  13 to 16 min out on average, no surge; wind 0.8 m/s below EGLC METARs, 14 deg; roofs 22,654 prisms on both pages; 8 of
+  8 TfL piers; 21 wildlife species (NBN Atlas, GBIF), foxes only on wood and park cells; trees: species for 59 % of
+  81,875, green share 7 / 44 / 94 / 48 % in Jan / Apr / Jul / Oct; reveal sheet lands at 1.1 s, gone at 2.9 s.
+  Wildlife season corrected for recording effort.
+- UI (10a94413): aircraft model on its reported position (trail joins it); wheels right of the open drawer; notes stack.
+- One Open-Meteo request for wind and weather (b25701d3).
+- Open: tide surge (no live EA reading); Blackwall Pier water class "land" (centre-point test) but floating; no
+  STATS.trees hook; WebGL only: Windows switch, glow by occupancy, heritage and crime, vertical exaggeration, walking
+  network, sky lists, cut-view dark backdrop.
+
