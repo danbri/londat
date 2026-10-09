@@ -59,6 +59,10 @@ planning and prototyping phase."
 - OpenStreetMap (ODbL, share-alike) is allowed for now (owner, 2026-10-03: "ODbL is ok for now, and will be thoroughly
   reviewed as part of the planning and prototyping activities later. Keep track of our use of this data carefully.").
   No other share-alike source without the owner's agreement.
+- adsb.lol live aircraft (ODbL 1.0, share-alike) are allowed in the Three.js port (owner decision, 2026-10-09: "adsb.lol
+  (ODbL) (Recommended)": "Free live API, open data under ODbL, like OSM. Fetched in the browser only after a tap, shown
+  with the ODbL credit, recorded in the data register as 'review', nothing committed. Simulated traffic stays as the
+  fallback."). Register source `adsb-lol`; details in the `docklands-sky` skill, "Live aircraft in the Three.js port".
 - Website crawls are allowed for scoping (owner, 2026-10-03: "Website crawls - direct and via IA or CommonCrawl etc are
   fair use for our scoping purposes."). This covers pages fetched directly, from the Internet Archive or from Common
   Crawl, and data extracted from them. Record each crawl in the data register with its method and date. Re-check these

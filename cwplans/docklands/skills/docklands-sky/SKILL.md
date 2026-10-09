@@ -4,8 +4,8 @@ description: >-
   The sky, the page clock, the weather and the tide on the Docklands 3D page (cwplans/docklands/sky.js, Menu > Sky,
   ?t=2026-10-03T22:30 or ?t=photo): astronomy-engine sun, moon (phase, bright limb), planets, rise/set, twilight;
   Bright Star Catalogue stars and the London star limit; constellation lines; the Milky Way band; CelesTrak satellites
-  and the next ISS pass; IAU star names and Messier objects; Open-Meteo clouds placed by the EUMETSAT cloud mask; why
-  no live aircraft (ADS-B terms); London City Airport approach paths; EA tide readings by chainage along the Thames,
+  and the next ISS pass; IAU star names and Messier objects; Open-Meteo clouds placed by the EUMETSAT cloud mask; live
+  aircraft (adsb.lol, port only); London City Airport approach paths; EA tide readings by chainage along the Thames,
   faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, about ±4 min); the
   fetch tool and snapshots (tools/fetch-sky.mjs, docklands/data/sky/). Reach for it before you change sky.js or its
   hooks in index.html, add a sky object or source, refresh the snapshots, solve a photo's time from the sun or moon,
@@ -146,9 +146,11 @@ now and then (`UND_ERR_CONNECT_TIMEOUT` while curl works): the tool retries thre
   Derived Products and all hourly Level 1 data in "Core" (CC BY 4.0, Article 5; redistribution, Article 6; attribution
   string, Article 6.3); sub-hourly Level 1 (the 15 or 10 minute infrared images) is "Recommended" (licensed): use the
   mask, or hourly images only. NASA GIBS has no night geostationary layer over Europe. Parallax and cloud height: not handled.
-- **Aircraft**: none, by licence (OpenSky: written agreement for any live product; adsb.fi: personal non-commercial;
-  ADS-B Exchange: commercial; adsb.lol: ODbL; airplanes.live: terms behind a bot challenge). The `cwplans-live-state`
-  skill came to the same answer for helicopters. Stub: "London City Airport approach paths" (`approaches()`): OSM
+- **Aircraft**: the WebGL page has no live aircraft. The licence survey (OpenSky: written agreement for any live product;
+  adsb.fi: personal non-commercial; ADS-B Exchange: commercial; adsb.lol: ODbL; airplanes.live: terms behind a bot
+  challenge) left only adsb.lol, which is share-alike. Owner decision 2026-10-09: the Three.js port uses adsb.lol on
+  request (section "Live aircraft in the Three.js port" below). The `cwplans-live-state` skill came to the same survey
+  answer for helicopters. Stub: "London City Airport approach paths" (`approaches()`): OSM
   thresholds, 5.5 degree glide path, 15 m crossing height, 12 km, a dot per km.
 
 Lessons: an EA gauge can go bad for hours near low water while its neighbours stay smooth: compare gauges, not one series
@@ -220,8 +222,80 @@ the darker pixels) and the moon disc in a 4-degree view aimed at the computed mo
   snapshot's cloud 37% above ERA5 at 22:30 on 3 Oct: two models). Open-Meteo answered HTTP 429 to the browser once that
   day (a shared address): the weather layer then says "did not answer" and draws a fair sky.
 
+## Live aircraft in the Three.js port (adsb.lol, 2026-10-09)
+
+Owner decision, 2026-10-09 (answer to "Which ADS-B source may the port use?"): "adsb.lol (ODbL) (Recommended)": "Free
+live API, open data under ODbL, like OSM. Fetched in the browser only after a tap, shown with the ODbL credit, recorded in
+the data register as 'review', nothing committed. Simulated traffic stays as the fallback." Code: `docklands/planes-live.js`
+(request, back-off, tracks, type table, heights, privacy rule) and `docklands/layers/planes.js` (drawing, card, credit,
+menu). Register: source `adsb-lol` in `cwplans/data-register.json` (with "review"). The WebGL page has none.
+
+- **API** (read 2026-10-09 from https://api.adsb.lol/docs and its OpenAPI document `/api/openapi.json`, version 0.0.2):
+  `GET /v2/point/{lat}/{lon}/{radius}` (same as `/v2/lat/{lat}/lon/{lon}/dist/{radius}`; radius in nm, up to 250), also
+  `/v2/closest`, `/v2/hex`, `/v2/callsign`, `/v2/reg`, `/v2/type`, `/v2/sqk`, `/v2/mil`, `/v2/ladd`, `/v2/pia`. Answer:
+  `{ac: [...], msg, now (ms), total, ctime, ptime}`, readsb fields (hex, flight, r, t, category, alt_baro (ft or
+  "ground"), alt_geom, gs, track, track_rate, roll, baro_rate, geom_rate, squawk, nav_qnh, lat, lon, seen_pos, mlat,
+  dbFlags ...). The page asks `/v2/point/51.505/-0.02/25` (the model box and the London City approaches): 67 to 79
+  aircraft, 38 kB, in the morning of 9 Oct 2026. No API key. Terms in the OpenAPI text: "You can use the API for free. In
+  the future, you will require an API key which you can get by feeding to adsb.lol. If you want to use the API for
+  production purposes, please contact me". The source (github.com/adsblol/api, `app.py`): "Rate limits are dynamic based
+  on the environment load. If you get 4xx errors, you are doing something wrong." No numbers are published.
+- **Licence**: OpenAPI `info.license`: "Open Data Commons Open Database License (ODbL) v1.0",
+  https://opendatacommons.org/licenses/odbl/1-0/ ; text: "The license for the API as well as all data ADSB.lol makes public
+  is ODbL. This is the same license OpenStreetMap uses." https://www.adsb.lol/docs/open-data/api/ : "API License: ODbL
+  1.0". No attribution string is given; the page uses "Aircraft: © adsb.lol contributors, ODbL" with links to adsb.lol and
+  the licence (corner credit while live aircraft show, the menu note, every card). Feeders give their data as CC0
+  (https://www.adsb.lol/privacy-license/).
+- **CORS: the fault.** `api.adsb.lol` sends no `Access-Control-Allow-Origin` header (checked 2026-10-09 with curl and
+  several `Origin` values: none; OPTIONS answers 405; the FastAPI source has no CORS middleware, only one OPTIONS handler
+  for `/0/planespotters_net/hex/{hex}`). Chromium through the container proxy: "blocked by CORS policy: No
+  'Access-Control-Allow-Origin' header is present". The proxy passes the header for other hosts (api.github.com). So a
+  browser on https://danbri.github.io/ cannot read the answer: on the live site the box shows "adsb.lol did not answer:
+  ... no CORS header", backs off and the simulation stays. Ways out (owner to decide): adsb.lol adds CORS (ask them:
+  info at adsb.lol, or the API repository); or a small relay that adds the header (a Cloudflare Worker or similar);
+  `?adsb=<base URL>` points the page at a relay with the same `/v2/point` path (https or this site only). Not done: a
+  public CORS proxy (a third party would see every request).
+- **When it asks**: only after the visitor ticks "Live aircraft (adsb.lol, ODbL)" (Layers > Simulated); nothing before
+  (the test counts the requests: 0 before the tap). Then every 8 s while the layer is on, the tab is visible and the page
+  clock is within 5 minutes of the real time; paused otherwise. Errors: 15 s, doubled to 120 s; HTTP 429: 60 s at least;
+  10 s timeout. With no good answer for 60 s, or another clock, the simulation shows (labelled "simulated").
+- **Position**: `geo(lon, lat)` (`A.meta.geo`, the quadratic fit of `build-docklands.mjs` `fitGeo()` over
+  0.095 W-0.015 E, 51.474-51.522 N) used outside its fit box. Error against PROJ ETRS89 -> OSGB36 with OSTN15
+  (EPSG:4258 -> 27700, `uk_os_OSTN15_NTv2_OSGBtoETRS.tif`): 0.01 m at the centre, 0.47 m at 10 km, 1.2 m at 20 km, 2.5 m
+  at 30 km, 5.8 m at 46 km (25 nm), worst of 16 bearings. Check, London City threshold 27 (AIP 51°30'17.58"N
+  0°03'57.59"E): page (5933.24, -161.92), PROJ (5933.21, -161.97); threshold 09: (4425.17, -195.93) and (4425.16,
+  -195.97). The OSM runway way ends (`lcy-approach.json`) are 70 m and 100 m inside the AIP thresholds along the runway
+  (osm 27 (5862.7, -164.1), osm 09 (4525.0, -193.7)): the way ends are not the thresholds.
+- **Height** (m OD): `alt_geom` is GNSS height above the WGS84 ellipsoid (readsb), so OD = alt_geom x 0.3048 - N, N from
+  a quadratic fit to OSGM15 (PROJ `uk_os_OSGM15_GB.tif`, EPSG:4937 -> EPSG:7405, 14 x 14 grid over the 25 nm circle, max
+  error 0.10 m): 45.41 m at 51.505 N 0.02 W, 45.32 m at London City, 45.0 to 46.0 m over the circle. About 35 % of the
+  aircraft send no alt_geom: then pressure altitude + a QNH correction = the median of (GNSS height OD - pressure
+  altitude) of the aircraft below 10,000 ft in the same answer (51 ft from 25 aircraft on 9 Oct, about QNH 1015), else
+  (median nav_qnh - 1013.25) x 27.7 ft/hPa. Some aircraft may report GNSS height above mean sea level, not the ellipsoid:
+  then they are drawn 45 m low (not detected). "ground" -> the model ground, or 6 m outside the model.
+- **Between polls**: dead reckoning from the report time (receipt - seen_pos) with gs, track and track_rate (a constant
+  turn, capped at 0.1 rad/s) and the vertical rate, for at most 20 s; a new report blends in over 1.5 s (no blend for a
+  jump over 2 km); an aircraft with no report for 60 s goes. Trails: one point per report, the last 2 minutes, one
+  LineSegments (orange, 0.8).
+- **Models by `t`** (ICAO type designator): E-jets, A220, ATR 42/72, Dash 8, A320 family, 737, 757, 767, 787, A330, A350,
+  777, A340, 747, A380, business jets, turboprops, light aircraft and helicopters (EC35, EC45, A169, A139, AS65, A109,
+  S92, H47, R44 ...) to the models of `planes-models.js` with the type's size; unknown `t` by ADS-B category (A1 light,
+  A2 small, A3 large, A4 B757, A5 heavy, A7 rotorcraft); category C (ground vehicles, obstacles) and type TWR are not
+  drawn. The card names the real type and the model drawn.
+- **Privacy rule**: callsign, registration and squawk are shown only for a flight under an operator's ICAO callsign
+  (three letters and a digit, e.g. BAW26E) that is not on LADD or PIA (dbFlags bits 8 and 4) and has an ICAO address (no
+  "~"). Others (private aircraft flying under their registration, which leads to the owner in the CAA G-INFO register;
+  LADD or PIA; no callsign) are shown by type only. The owner/operator field is never shown. 9 Oct sample: a LADD
+  aircraft (dbFlags 8) and a Cessna 152 under its registration were both type only.
+- **Tests** (2026-10-09, WebGL 2 and WebGPU in software): `node docklands/test/load.mjs --query 'view=cw&layers=planes'`
+  (no errors); a Playwright run that ticks the box with `api.adsb.lol` answered by recorded answers (Playwright
+  `page.route`, CORS header added, `now` set to the time of the request): 72 aircraft drawn, 58 with trails after three
+  polls at 8 s, both cards, the credit, then the clock set 3 h back: polling paused and the simulation back. The same run
+  against the real API: the CORS error, the note, the back-off and the simulation, no page errors.
+
 ## Not done
 
-Cloud heights and small clouds (the mask has neither); live aircraft (licence); tide predictions for future times (no
+Cloud heights and small clouds (the mask has neither); live aircraft on the WebGL page (licence; the Three.js port has
+them on request from adsb.lol, but adsb.lol sends no CORS header, see above); tide predictions for future times (no
 open source); the moonlight strength is drawn, not calibrated against a moonlit photo; One Canada Square's 0.9 degree
 misfit in the photo fit is explained only as "not the model" (docklands/README.md, second pass).

@@ -1,7 +1,10 @@
-// Layer "planes" of the Three.js port (docklands/): SIMULATED aircraft on published procedures. There are no live
-// aircraft positions (every ADS-B source is non-commercial, restricted or ODbL: skills docklands-sky "Aircraft" and
-// cwplans-live-state "Helicopters"), so the traffic here is made up from the procedures and an hourly pattern, and every
-// card, label and note says "simulated". Owner, 2026-10-09: "add realistic planes with suitable models and trajectory info".
+// Layer "planes" of the Three.js port (docklands/): aircraft. By default SIMULATED aircraft on published procedures
+// (every card, label and note says "simulated"). Owner, 2026-10-09: "add realistic planes with suitable models and
+// trajectory info". LIVE aircraft from adsb.lol (ODbL 1.0) after the visitor taps "Live aircraft" (owner decision
+// 2026-10-09: "adsb.lol (ODbL) (Recommended)": fetched in the browser only after a tap, shown with the ODbL credit,
+// nothing committed, simulated traffic stays as the fallback): polled every 8 s while the layer is on, the tab is visible
+// and the page clock is now (within 5 minutes of the real time); with no answer, or another clock, the simulation shows.
+// The request, the tracks between polls, the type table, the heights and the privacy rule: ../planes-live.js.
 // 1. London City (EGLC) runway 09/27, 2.2 km east of the model box: arrivals on a 5.5 degree glide path from 2000 ft
 //    (gear down, flare, touchdown in the touchdown zone, landing roll), departures (take-off roll, straight ahead to
 //    1000 ft above the aerodrome, then a climbing turn north or south to the 3000 ft SID stop altitude). Runway by the
@@ -24,6 +27,7 @@
 import { WU } from '../water.js';
 import * as P from '../planes-data.js';
 import { aircraftParts } from '../planes-models.js';
+import { ADSB, feedUrl, startFeed, createTracks, identified } from '../planes-live.js';
 import { vec3 } from 'three/tsl';
 
 const { FT, KT } = P, deg = Math.PI / 180, G0 = 9.81;
@@ -209,27 +213,29 @@ export default {
     function frame() {
       lastFrameAt = performance.now(); if (reqAt) { const r0 = reqAt; reqAt = 0; requestAnimationFrame(() => requestAnimationFrame(() => { lag = performance.now() - r0; lastFrameAt = performance.now(); })); }
       if (!visible) return;
-      const T = simT(), now = performance.now(), list = TEST ? TESTSET.map(F => ({ ...F, tau: F.tau + (RUN ? (now - tStart) / 1000 : 0) })) : traffic(T);
+      const T = simT(), now = performance.now(), liveNow = showingLive(), LS = liveNow ? tracks.states(Date.now()) : [];
+      const list = liveNow ? LS.map(({ k, r, S }) => ({ key: 'L' + k.hex, T: r.M, live: r, track: k, S })) : TEST ? TESTSET.map(F => ({ ...F, tau: F.tau + (RUN ? (now - tStart) / 1000 : 0) })) : traffic(T);
       const night = ctx.U.night.value > 0.02, cam = ctx.camera.position, keep = new Set(); drawn = [];
       for (const F of list) {
         if (F.Pr && F.tau > F.Pr.dur) continue;
-        const S = stateOf(F), o = get(F.key, F.T); keep.add(F.key);
+        const S = F.live ? F.S : stateOf(F), o = get(F.key, F.T); keep.add(F.key);
         const lift = -o.Pt.ground;   // the path is the height of the wheels
         o.g.position.set(S.x, S.y + lift, S.z); o.g.rotation.set(S.pitch, -S.h, -S.bank, 'YXZ'); o.gear.visible = S.gear;
         const sec = now / 1000, dist = Math.hypot(cam.x - S.x, cam.y - S.y, cam.z - S.z), sz = clamp(dist * 0.006, 0.6, 80);
         for (const [r, ax, w] of o.rotors) r.rotation[ax] = (sec * w) % (2 * Math.PI);
         for (const d of o.props) d.visible = true;
-        const landOn = F.T.kind === 'heli' ? S.y < 250 : (S.gear || (F.Pr && F.Pr.kind === 'dep' && S.y < F.Pr.floor + 760));
+        const landOn = F.live ? S.landOn : F.T.kind === 'heli' ? S.y < 250 : (S.gear || (F.Pr && F.Pr.kind === 'dep' && S.y < F.Pr.floor + 760));
         for (const m of o.lamps) {
           const k = m.userData.kind; let on = night, s = sz;
           if (k === 'beacon' || k === 'beacon2') on = night && (sec + (k === 'beacon2' ? 0.5 : 0)) % 1 < 0.12;
-          else if (k === 'strobe') { const p = (sec + hash(F.key.length, F.key.charCodeAt(1) || 0)) % 1.3; on = !S.ground || F.Pr?.kind === 'dep' ? (p < 0.05 || (p > 0.14 && p < 0.19)) && (night || dist < 4000) : false; s = sz * 1.4; }
+          else if (k === 'strobe') { const p = (sec + hash(F.key.length, F.key.charCodeAt(1) || 0)) % 1.3; on = !S.ground || F.Pr?.kind === 'dep' || (F.live && S.v > 30) ? (p < 0.05 || (p > 0.14 && p < 0.19)) && (night || dist < 4000) : false; s = sz * 1.4; }
           else if (k === 'land') { on = landOn; s = sz * (night ? 1.6 : 1.1); }
           m.visible = on; if (on) m.scale.setScalar(s);
         }
         drawn.push({ F, S, o });
       }
       for (const k of [...live.keys()]) if (!keep.has(k)) release(k);
+      drawTrails(liveNow ? drawn : []); credit.hidden = !liveNow || !visible;
       placeLabels(); status();
       if (TEST && !camDone && qs.has('planecam')) { const d = drawn[+qs.get('planecam')] || drawn[0]; if (d) { camDone = true; const D = +(qs.get('planecamd') || 160), yaw = +(qs.get('planecamyaw') || 0.9), pt = +(qs.get('planecampitch') || 0.12);
         ctx.controls.target.set(d.S.x, d.S.y + 3, d.S.z); ctx.controls.minDistance = 10; ctx.camera.position.set(d.S.x + D * Math.sin(yaw) * Math.cos(pt), d.S.y + 3 + D * Math.sin(pt), d.S.z + D * Math.cos(yaw) * Math.cos(pt)); ctx.controls.update(); ctx.draw(); } }
@@ -250,12 +256,15 @@ export default {
 
     // ---------- labels (aircraft within 9 km), tappable, all marked "SIM"
     const host = document.getElementById('labels'), LBL = new Map();
-    if (!document.getElementById('planesCss')) { const st = document.createElement('style'); st.id = 'planesCss'; st.textContent = '.lab.plane{border:1px dashed #9fd3ff;color:#dff1ff;pointer-events:auto;cursor:pointer;font:inherit;font-size:11px}'; document.head.appendChild(st); }
+    if (!document.getElementById('planesCss')) { const st = document.createElement('style'); st.id = 'planesCss'; st.textContent = '.lab.plane{border:1px dashed #9fd3ff;color:#dff1ff;pointer-events:auto;cursor:pointer;font:inherit;font-size:11px}.lab.plane.live{border:1px solid #ffd36b;color:#fff3d6}' +
+        '#adsbCredit{position:fixed;left:8px;bottom:calc(30px + var(--safe, 0px));font-size:11px;color:#e8eaec;background:#0d1013d9;padding:2px 8px;border-radius:5px;z-index:4}#adsbCredit a{color:#e8eaec}#adsbCredit[hidden]{display:none}'; document.head.appendChild(st); }
     function placeLabels() {
       const W = innerWidth, H = innerHeight, keep = new Set(), cam = ctx.camera.position;
       for (const d of drawn) { const { F, S } = d; if (Math.hypot(cam.x - S.x, cam.y - S.y, cam.z - S.z) > 9000 || !host) continue; keep.add(F.key);
         let el = LBL.get(F.key); if (!el || el.dataset.code !== F.T.code) { if (el) el.remove(); el = document.createElement('button'); el.type = 'button'; el.className = 'lab plane'; el.dataset.code = F.T.code; el.onclick = () => card(F.key); host.appendChild(el); LBL.set(F.key, el); }
-        const ft = S.y / FT, txt = `SIM ${F.T.code} ${ft < 1000 ? Math.round(ft / 10) * 10 : Math.round(ft / 100) * 100} ft`; if (el.textContent !== txt) el.textContent = txt;
+        const ft = S.y / FT, alt = S.ground ? 'ground' : `${ft < 1000 ? Math.round(ft / 10) * 10 : (Math.round(ft / 100) * 100).toLocaleString('en-GB')} ft`;
+        const txt = F.live ? `${identified(F.live.ac) ? F.live.ac.flight.trim() : (F.live.ac.t || F.T.code)} ${alt}` : `SIM ${F.T.code} ${alt}`; if (el.textContent !== txt) el.textContent = txt;
+        if (el.classList.contains('live') !== !!F.live) el.classList.toggle('live', !!F.live);
         v3.set(S.x, S.y + (F.T.H || 5) * 0.7, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H;
         if (vis) el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,calc(-100% - 10px))`; if (el.hidden === vis) el.hidden = !vis; }
       for (const [k, el] of LBL) if (!keep.has(k)) { el.remove(); LBL.delete(k); }
@@ -264,6 +273,7 @@ export default {
     // ---------- record card
     function card(key) {
       const d = drawn.find(q => q.F.key === key); if (!d) return; const { F, S } = d, rows = [], add = (k, v) => { if (v != null && v !== '') rows.push(`<tr><td>${k}</td><td>${esc(v)}</td></tr>`); };
+      if (F.live) return liveCard(F, S, rows, add);
       const Pr = F.Pr, src = Pr ? P.SOURCES[Pr.src] : P.SOURCES.lhr, trueHdg = (((S.h - conv) / deg) % 360 + 360) % 360;
       add('Status', 'SIMULATED: not a real flight');
       add('Type', `${F.T.type} (${F.T.code}), airline-neutral livery`);
@@ -278,6 +288,23 @@ export default {
       ctx.showCard(`<h2>Simulated ${esc(F.T.code)}</h2><p class="small">Simulated traffic on a published procedure: there are no live aircraft positions on this page (ADS-B licences).</p><table>${rows.join('')}</table>` +
         `<p class="small">Procedure source: ${esc(src)}. ${Pr && Pr.src === 'lcy' ? `Runway in use from the page's wind (${Math.round(wind().d)}° at ${wind().s.toFixed(1)} m/s). ` : ''}Movements: ${esc(P.SOURCES.rate)}. Not for navigation.</p>`);
     }
+    // a live aircraft: what adsb.lol reported (privacy rule: identified() in ../planes-live.js)
+    function liveCard(F, S, rows, add) {
+      const r = F.live, a = r.ac, id = identified(a), fmt = n => Math.round(n).toLocaleString('en-GB');
+      const when = new Date(r.server), age = Math.max(0, (Date.now() - r.tp) / 1000);
+      if (id) { add('Callsign', a.flight.trim()); add('Registration', a.r); }
+      add('Type', `${a.t || 'not stated'}${a.desc ? ' (' + a.desc + ')' : ''}; drawn as ${F.T.type}${a.category ? ', category ' + a.category : ''}`);
+      add('Altitude', r.ground ? 'on the ground' : `${typeof a.alt_baro === 'number' ? fmt(a.alt_baro) + ' ft pressure altitude' : ''}${typeof a.alt_geom === 'number' ? (typeof a.alt_baro === 'number' ? ', ' : '') + fmt(a.alt_geom) + ' ft GNSS' : ''}; drawn at ${fmt(S.y / FT)} ft = ${S.y.toFixed(0)} m OD`);
+      add('Height used', r.alt.src);
+      add('Ground speed', a.gs != null ? `${Math.round(a.gs)} kt` : null);
+      const vr = a.geom_rate ?? a.baro_rate; add('Vertical rate', vr == null || r.ground ? null : Math.abs(vr) < 100 ? 'level' : `${vr > 0 ? 'climbing' : 'descending'} ${fmt(Math.abs(vr))} ft/min`);
+      if (id) add('Squawk', a.squawk);
+      add('Track', r.trkTrue != null ? `${Math.round(r.trkTrue)}° true` : null);
+      add('Report', `${when.toLocaleTimeString('en-GB', { timeZone: 'Europe/London' })} London (${age.toFixed(0)} s ago${Array.isArray(a.mlat) && a.mlat.includes('lat') ? ', position by multilateration' : ''}); drawn by dead reckoning for at most ${ADSB.reckonMax} s`);
+      ctx.showCard(`<h2>${esc(id ? a.flight.trim() : (a.t || 'Aircraft'))} <span class="small">live</span></h2>` +
+        (id ? '' : '<p class="small">Shown by type only (privacy rule: no operator callsign, or a blocked or privacy address).</p>') +
+        `<table>${rows.join('')}</table><p class="small">Source: <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a>, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a> (© adsb.lol contributors), fetched by your browser from api.adsb.lol; nothing is stored. Received from volunteer ADS-B receivers: positions can be late, wrong or missing. Not for navigation.</p>`);
+    }
     ctx.addPick(ray => {
       if (!visible) return null; let best = null; const o = ray.ray.origin, dv = ray.ray.direction;
       for (const { F, S } of drawn) { const t = (S.x - o.x) * dv.x + (S.y - o.y) * dv.y + (S.z - o.z) * dv.z; if (t <= 0) continue;
@@ -287,18 +314,58 @@ export default {
     });
 
     // ---------- menu
-    ctx.ui.section('Aircraft (simulated)');
+    ctx.ui.section('Aircraft');
     let visible = on;
-    const setVisible = v => { visible = v; group.visible = v; if (!v) { for (const k of [...live.keys()]) release(k); for (const el of LBL.values()) el.hidden = true; } ctx.draw(); };
-    ctx.ui.toggle(TEST ? 'Aircraft (simulated, test scene)' : 'Aircraft (simulated)', on, setVisible);
+    const setVisible = v => { visible = v; group.visible = v; if (!v) { for (const k of [...live.keys()]) release(k); for (const el of LBL.values()) el.hidden = true; credit.hidden = true; } ctx.draw(); };
+    ctx.ui.toggle(TEST ? 'Aircraft (simulated, test scene)' : 'Aircraft (simulated), live on request', on, setVisible);
+
+    // ---------- live aircraft (adsb.lol, ODbL): only after the visitor ticks the box; nothing is asked before
+    const tracks = createTracks({ geo, conv, groundAt: (x, z) => { const g = ctx.groundAt && x > E.x0 && x < E.x1 && z > E.z0 && z < E.z1 ? ctx.groundAt(x, z) : NaN; return isFinite(g) ? g : 6; } });
+    const LIVE = { want: false, feed: null, url: feedUrl(qs) };
+    const clockNow = () => Math.abs(simT() - Date.now()) < 5 * 60e3;
+    const mayAsk = () => LIVE.want && visible && document.visibilityState === 'visible' && clockNow();
+    const showingLive = () => !TEST && LIVE.want && LIVE.feed && clockNow() && Date.now() - LIVE.feed.lastOk < ADSB.stale;
+    const liveBox = ctx.ui.toggle('Live aircraft (adsb.lol, ODbL): asks adsb.lol from your browser', false, v => {
+      LIVE.want = v;
+      if (v) { if (!LIVE.feed) LIVE.feed = startFeed({ url: LIVE.url, run: mayAsk, onData: (j, at) => { tracks.ingest(j, at); ctx.draw(); }, onChange: () => status() }); LIVE.feed.now(); }
+      else { if (LIVE.feed) LIVE.feed.stop(); LIVE.feed = null; tracks.clear(); }
+      status(); ctx.draw();
+    });
+    liveBox.dataset.planesLive = '1';
+    const credit = document.createElement('div'); credit.id = 'adsbCredit'; credit.hidden = true;
+    credit.innerHTML = `Aircraft: © <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a> contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL</a>`;
+    document.body.appendChild(credit);
+
+    // ---------- trails of the live aircraft (last 2 minutes): thin lines, one draw call
+    const TRAILMAX = 24000, trailPos = new Float32Array(TRAILMAX * 6), trailGeo = new THREE.BufferGeometry();
+    trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3).setUsage(THREE.DynamicDrawUsage)); trailGeo.setDrawRange(0, 0);
+    const trailMat = new THREE.LineBasicNodeMaterial({ color: 0xff9a3c, transparent: true, opacity: 0.8, depthWrite: false });
+    const trailLines = new THREE.LineSegments(trailGeo, trailMat); trailLines.frustumCulled = false; trailLines.name = 'live aircraft trails'; group.add(trailLines);
+    function drawTrails(list) {
+      let n = 0; const put = (a, b) => { if (n >= TRAILMAX) return; trailPos.set(a, n * 6); trailPos.set(b, n * 6 + 3); n++; };
+      for (const { F, S } of list) { if (!F.track) continue; const P = F.track.trail.map(p => [p[1], p[2], p[3]]); P.push([S.x, S.y, S.z]);
+        for (let i = 1; i < P.length; i++) put(P[i - 1], P[i]); }
+      trailGeo.setDrawRange(0, n * 2); if (n) { trailGeo.attributes.position.needsUpdate = true; trailGeo.computeBoundingSphere(); }
+      trailLines.visible = n > 0;
+    }
+
     const note = document.createElement('p'); note.className = 'small'; ctx.ui.host().appendChild(note);
     let lastNote = '';
+    const hms = t => new Date(t).toLocaleTimeString('en-GB', { timeZone: 'Europe/London' });
     function status() {
-      const n = { lcy: 0, lhr: 0, h4: 0 }; for (const { F } of drawn) F.line ? n.lhr++ : F.Pr.kind === 'heli' ? n.h4++ : n.lcy++;
-      const open = lcyOpen(simT()), w = wind();
-      const s = `SIMULATED traffic, not live: ${n.lcy} London City, ${n.lhr} Heathrow, ${n.h4} H4 helicopter${n.h4 === 1 ? '' : 's'} now. London City ${open ? `open, runway ${runway()} in use (wind ${Math.round(w.d)}° ${w.s.toFixed(1)} m/s)` : 'closed (AD 2.3 hours: Mon-Fri 06:30-22:00, Sat 06:30-12:30, Sun 12:30-22:00)'}; Heathrow ${lhrMode()} operations. `;
-      if (s !== lastNote) { lastNote = s; note.innerHTML = esc(s) + 'Procedures: UK AIP (Crown copyright / NATS, facts only); movements scaled to CAA airport data; hourly pattern, fleet mix and vectors assumed. No live aircraft: every ADS-B source is non-commercial, restricted or ODbL. Tap an aircraft for its card.'; }
-      ctx.stats.planes = { lcy: n.lcy, lhr: n.lhr, h4: n.h4, runway: runway(), lhr_mode: lhrMode(), lcy_open: open, test: TEST ? MODE : null };
+      const n = { lcy: 0, lhr: 0, h4: 0, live: 0 }; for (const { F } of drawn) F.live ? n.live++ : F.line ? n.lhr++ : F.Pr.kind === 'heli' ? n.h4++ : n.lcy++;
+      const open = lcyOpen(simT()), w = wind(), fd = LIVE.feed, liveNow = showingLive();
+      const creditHtml = `Aircraft: © <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a> contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a>. `;
+      let liveMsg = '';
+      if (LIVE.want && !clockNow()) liveMsg = 'Live aircraft paused: the page clock is not now (set the clock to now). ';
+      else if (LIVE.want && fd && !liveNow) liveMsg = fd.lastError ? `Live aircraft: adsb.lol did not answer: ${fd.lastError}; next try in ${Math.max(1, Math.round((fd.nextAt - Date.now()) / 1000))} s. ` : 'Live aircraft: waiting for adsb.lol. ';
+      const s = liveNow
+        ? `LIVE: ${n.live} aircraft from adsb.lol within ${ADSB.nm} nm (answer at ${hms(fd.lastOk)} London, asked every ${ADSB.every / 1000} s while this box is ticked, the tab is visible and the clock is now). `
+        : `${liveMsg}SIMULATED traffic, not live: ${n.lcy} London City, ${n.lhr} Heathrow, ${n.h4} H4 helicopter${n.h4 === 1 ? '' : 's'} now. London City ${open ? `open, runway ${runway()} in use (wind ${Math.round(w.d)}° ${w.s.toFixed(1)} m/s)` : 'closed (AD 2.3 hours: Mon-Fri 06:30-22:00, Sat 06:30-12:30, Sun 12:30-22:00)'}; Heathrow ${lhrMode()} operations. `;
+      const key = s + (fd ? fd.state : '');
+      if (key !== lastNote) { lastNote = key; note.innerHTML = esc(s) + (liveNow ? creditHtml + 'Positions between answers by dead reckoning; heights in m OD (geoid OSGM15); callsigns only for operator flights (privacy rule). ' : 'Procedures: UK AIP (Crown copyright / NATS, facts only); movements scaled to CAA airport data; hourly pattern, fleet mix and vectors assumed. ') +
+        (liveNow ? '' : `Live aircraft come from adsb.lol (© adsb.lol contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a>) only after you tick the box. `) + 'The browser asks api.adsb.lol directly and nothing is stored. Tap an aircraft for its card.'; }
+      ctx.stats.planes = { lcy: n.lcy, lhr: n.lhr, h4: n.h4, live: liveNow ? n.live : null, live_state: fd ? fd.state : 'off', runway: runway(), lhr_mode: lhrMode(), lcy_open: open, test: TEST ? MODE : null };
     }
 
     ctx.onFrame(frame);
@@ -307,12 +374,14 @@ export default {
     // so that the page is idle most of the time
     let reqAt = 0, lag = 0;
     setInterval(() => { const anim = document.getElementById('animate'), now = performance.now();
-      if (reqAt || !visible || (anim && anim.checked) || !drawn.length || (TEST && !RUN) || now - lastFrameAt < Math.max(3000, 4 * lag)) return;
+      if (reqAt || !visible || (anim && anim.checked) || !drawn.length || (TEST && !RUN) || now - lastFrameAt < Math.max(showingLive() ? 1000 : 3000, 4 * lag)) return;
       reqAt = now; ctx.draw(); }, 500);
     group.visible = on;
     return {
       object: group, setVisible, ownUi: true, PROC, traffic, stateOf,
-      get flights() { return drawn.map(({ F, S }) => ({ key: F.key, code: F.T.code, proc: F.Pr ? F.Pr.name : 'lhr-' + F.line.mode, phase: S.phase, x: S.x, y: S.y, z: S.z, alt_ft: Math.round(S.y / FT), kt: Math.round(S.v / KT), gear: S.gear })); },
+      get flights() { return drawn.map(({ F, S }) => ({ key: F.key, code: F.T.code, proc: F.live ? 'live' : F.Pr ? F.Pr.name : 'lhr-' + F.line.mode, phase: S.phase, x: S.x, y: S.y, z: S.z, alt_ft: Math.round(S.y / FT), kt: Math.round(S.v / KT), gear: S.gear, t: F.live ? F.live.ac.t : undefined, trail: F.track ? F.track.trail.length : undefined })); },
+      get live() { const f = LIVE.feed; return { want: LIVE.want, showing: !!showingLive(), url: LIVE.url, state: f ? f.state : 'off', polls: f ? f.polls : 0, errors: f ? f.errors : 0, lastError: f ? f.lastError : null, tracks: tracks.T.size, corr: tracks.corr }; },
+      geo,
       screenOf(key) { const d = drawn.find(q => q.F.key === key); if (!d) return null; v3.set(d.S.x, d.S.y, d.S.z).project(ctx.camera); return { x: (v3.x + 1) / 2 * innerWidth, y: (1 - v3.y) / 2 * innerHeight, z: v3.z }; },
       card,
     };
