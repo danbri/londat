@@ -55,6 +55,12 @@ for (const f of reg.files) {
   if (f.osm?.use !== 'none' && !f.sources.includes('osm') && f.osm?.use !== 'notes') problems.push(`${f.path}: uses OSM but "osm" is not in its sources`);
   if (f.sources.includes('osm') && f.osm?.use === 'none') problems.push(`${f.path}: lists "osm" as a source but osm.use is none`);
 }
+// data kept on another branch of this repository (not on main): each names known sources and a producing tool that exists
+for (const b of reg.branches || []) {
+  for (const k of b.sources || []) if (!reg.sources[k]) problems.push(`branch ${b.branch}: unknown source "${k}"`);
+  const tool = /tools\/[\w-]+\.(mjs|py|sh)/.exec(b.produced_by || ''); if (!tool || !existsSync(join(CW, tool[0]))) problems.push(`branch ${b.branch}: produced_by names no tool of cwplans/tools`);
+  if (!b.review) problems.push(`branch ${b.branch}: no review note`);
+}
 // OSM use in the owner's other repository (danbri/glitchcan-minigam, not this project): checked when a checkout of it is
 // next to this one (or at GLITCHCAN_DIR)
 const GLITCHCAN = process.env.GLITCHCAN_DIR || join(CW, '..', '..', 'glitchcan-minigam');
@@ -151,6 +157,13 @@ if (process.argv.includes('--write')) {
     '## Marked for review',
     '',
     ...reviews.map(f => `- \`${f.path}\`: ${f.review}`),
+    ...(reg.branches || []).map(b => `- branch \`${b.branch}\`: ${b.review}`),
+    '',
+    '## Data on other branches (not on main)',
+    '',
+    '| branch | where | files | what | sources (licence) | produced by |',
+    '|---|---|---|---|---|---|',
+    ...(reg.branches || []).map(b => `| \`${b.branch}\` | ${esc(b.location)} | ${esc(b.paths.join(', '))} | ${esc(b.what)} | ${esc(b.sources.map(lic).join('; '))} | ${esc(b.produced_by)} |`),
     '',
     '## All registered files',
     '',

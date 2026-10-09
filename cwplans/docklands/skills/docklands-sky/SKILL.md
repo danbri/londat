@@ -5,8 +5,8 @@ description: >-
   ?t=2026-10-03T22:30 or ?t=photo): astronomy-engine sun, moon (phase, bright limb), planets, rise/set, twilight;
   Bright Star Catalogue stars and the London star limit; constellation lines; the Milky Way band; CelesTrak satellites
   and the next ISS pass; IAU star names and Messier objects; Open-Meteo clouds placed by the EUMETSAT cloud mask; live
-  aircraft (adsb.lol, port only); London City Airport approach paths; EA tide readings by chainage along the Thames,
-  faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, about ±4 min); the
+  and recorded aircraft (adsb.lol, port); London City Airport approach paths; EA tide readings by chainage along the Thames,
+  faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, ±4 min); the
   fetch tool and snapshots (tools/fetch-sky.mjs, docklands/data/sky/). Reach for it before you change sky.js or its
   hooks in index.html, add a sky object or source, refresh the snapshots, solve a photo's time from the sun or moon,
   or explain what the sky, a star, a satellite or the river level shows. Licences and credits are here.
@@ -258,7 +258,7 @@ menu). Register: source `adsb-lol` in `cwplans/data-register.json` (with "review
 - **When it asks**: only after the visitor ticks "Live aircraft (adsb.lol, ODbL)" (Layers > Simulated); nothing before
   (the test counts the requests: 0 before the tap). Then every 8 s while the layer is on, the tab is visible and the page
   clock is within 5 minutes of the real time; paused otherwise. Errors: 15 s, doubled to 120 s; HTTP 429: 60 s at least;
-  10 s timeout. With no good answer for 60 s, or another clock, the simulation shows (labelled "simulated").
+  10 s timeout. With no good answer for 60 s, or another clock, the recorded aircraft of the 7-day cache show (section below), else the simulation (labelled "simulated").
 - **Position**: `geo(lon, lat)` (`A.meta.geo`, the quadratic fit of `build-docklands.mjs` `fitGeo()` over
   0.095 W-0.015 E, 51.474-51.522 N) used outside its fit box. Error against PROJ ETRS89 -> OSGB36 with OSTN15
   (EPSG:4258 -> 27700, `uk_os_OSTN15_NTv2_OSGBtoETRS.tif`): 0.01 m at the centre, 0.47 m at 10 km, 1.2 m at 20 km, 2.5 m
@@ -292,6 +292,72 @@ menu). Register: source `adsb-lol` in `cwplans/data-register.json` (with "review
   `page.route`, CORS header added, `now` set to the time of the request): 72 aircraft drawn, 58 with trails after three
   polls at 8 s, both cards, the credit, then the clock set 3 h back: polling paused and the simulation back. The same run
   against the real API: the CORS error, the note, the back-off and the simulation, no page errors.
+
+### Recorded aircraft: the 7-day cache (2026-10-09)
+
+Owner, 2026-10-09, asked "How should the page reach adsb.lol?": "Eventually find or build a proxy. For today build a cache
+of last 7 days for our areas, and show equivalent data for the matching time and day of week." That answer approves a
+committed cache (the earlier decision said "nothing committed"); CLAUDE.md, "Data policy", records both.
+
+- **Source**: the adsb.lol daily history, GitHub releases of `adsblol/globe_history_<year>` (one release per pod and UTC
+  day; we use `v<YYYY.MM.DD>-planes-readsb-prod-0`; there are also `-staging-0` and `-mlatonly-0`). Assets: one tar split
+  into 2,000,000,000-byte parts `.tar.aa`, `.tar.ab`, `.tar.ac` (2026-10-08: 4.19 GB). Contents: `heatmap/NN.bin.ttf` (48
+  half-hour heatmaps, about 1 GB), `acas/`, `README.txt`, `LICENSE-ODbL.txt`, `LICENSE-cc0.txt` and about 84,000
+  `traces/<last 2 hex>/trace_full_<hex>.json` (gzip inside, despite the name; 3.15 GB). Release README: "This database is
+  made available under the Open Database License"; feeders waive their rights under CC0. The release of day D is uploaded
+  early on D+1 (2026-10-08 files dated 03:24 UTC on 2026-10-09). A trace: `{icao, r, t, dbFlags, desc, ownOp, year,
+  timestamp (UTC midnight), trace: [[dt s, lat, lon, alt_baro ft | "ground" | null, gs kt, track, flags, vertical rate,
+  details {flight, category, alt_geom, squawk, nav_qnh ...} | null, source, alt_geom, geom_rate, ias, roll], ...]}`; flags
+  bit 1 = new leg, bit 3 = the altitude column is geometric. Chosen over polling `/v2/point` from an Action because the
+  traces are the full tracks at their native rate (one point a second to a few seconds at low level) and need no
+  schedule every few minutes. The api.github.com listing of the releases is blocked in this container (proxy policy), but
+  `git ls-remote --tags` and the `releases/download/` URLs work.
+- **Tool**: `cwplans/tools/fetch-adsb-cache.mjs` streams the parts (minimal tar reader, nothing on disk), gunzips each
+  trace, skips it unless the text has ",51.", parses it, keeps the points within 25 nm of 51.505 N 0.02 W, and splits legs
+  (new-leg flag, a gap over 10 min, a callsign change). Height: alt_geom (ft above the WGS84 ellipsoid) when present, else
+  alt_baro + the hour's median (alt_geom - alt_baro) of the area's aircraft below 10,000 ft (`corr_ft`, 400 ft at 17 UTC
+  on 2026-10-08: about 150 ft geoid plus high QNH); "ground" kept as a flag. Thinning: at most one point a second, one a
+  minute above 15,000 ft. One run per day: about 3.5 to 4 min (CPU: gunzip and JSON.parse of about 84,000 traces; the
+  download itself runs at about 95 MB/s here). FAULT met: with the parse slower than the download, the throttled
+  connection was cut after a few minutes ("terminated"); the tool now asks the part again from the byte it reached
+  (HTTP Range, 206) and goes on.
+- **Privacy**: `identified()` of `planes-live.js` applied in the tool: a callsign only for an operator ICAO callsign
+  without LADD/PIA and with an ICAO address; every other leg gets an anonymous key (`x<n>`, per day) and keeps only
+  type and category: no ICAO address for those (it leads to the registration), and no registration, owner or squawk for
+  any leg.
+- **Store**: orphan branch `adsb-cache` of danbri/londat, one commit, force-pushed by each run (git history does not
+  grow): `index.json` (days held, counts, licence), `README.md` (ODbL notice), `adsb/<date>/day.json`,
+  `adsb/<date>/<HH>.json.gz` (UTC hour: legs overlapping the hour with 2 min before for trails and one point after;
+  `{v, date, hour, t0, corr_ft, cols, legs: [{k, c?, ty, cat, p}]}`, `p` = delta-coded integers [t s from t0, lat 1e-5,
+  lon 1e-5, alt / 25 ft, q (0 GNSS, 1 pressure + corr_ft, 2 ground), gs kt, track deg]). Sizes (backfill of 2026-10-09, days 2026-10-02 to 2026-10-08): 2,041 to 2,384 aircraft in the area a day, 6,690 to 7,832 legs (1,480 to 2,085 by type only), 820,000 to 965,000 points, 4.8 to 5.7 MB a day in 24 hour files (22 kB at 03 UTC to 418 kB at 14 UTC), 35.7 MB for 7 days. The page reads
+  https://raw.githubusercontent.com/danbri/londat/adsb-cache/ (Access-Control-Allow-Origin: *, cached about 5 min); the
+  Pages site is not used (no deploy needed, nothing towards its 1 GB). The commit is built without touching main's
+  working tree or index: `GIT_INDEX_FILE=<tmp> git --work-tree <out> add -A`, `git write-tree`, `git commit-tree`, `git
+  push -f origin <commit>:refs/heads/adsb-cache`; with an unchanged tree nothing is pushed.
+- **Workflow**: `.github/workflows/adsb-cache.yml`, 05:41 and 13:41 UTC daily and on request; `--restore` first copies
+  the branch (`git fetch --depth=1 origin adsb-cache`, `git archive FETCH_HEAD`), so only the new day is fetched; the
+  default GITHUB_TOKEN (contents: write) pushes. Local run (backfill of 2026-10-09):
+  `NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-adsb-cache.mjs --out /tmp/adsb-cache --push`.
+- **Page** (`planes-live.js` `createRecorded`, `layers/planes.js`): with the Aircraft layer on (it is on by default) and
+  "Recorded aircraft" ticked (default; `?adsbrec=0` off), the page reads `index.json`, then the hour file that the clock
+  maps to. Choice: index and hour files are read when the layer is on, without a tap, because they come from GitHub
+  (the host that already serves `cache/latest.json`), never from adsb.lol; the live API stays behind its tick. Mapping:
+  the clock's own London date when it is held, else the newest held day with the same London weekday, at the same London
+  time (the DST offsets of both dates allowed for); a clock before or after the held week maps by whole weeks. Drawing:
+  straight lines in time between the recorded points (no draw across a gap over 11 min), heading from the track, bank
+  from the turn rate, height in m OD (alt x 0.3048 - geoid OSGM15), trails of the last 2 min, labels `REC <callsign or
+  type> <ft>`, cards "recorded". Order: live (ticked, clock now, answering) > recorded > simulated (cache unreadable, no
+  matching day, an hour file failed, or unticked); while a file loads nothing is drawn. Corner label: "Recorded Thu
+  2026-10-08 08:30 London, same weekday and time · Aircraft: © adsb.lol contributors, ODbL" (no "same weekday" when the
+  date itself is held); the menu note says RECORDED, the day used and the page clock. `?adsbcache=<base>` reads another
+  copy (https or this site). Test hook: `__docklands3.layers.planes.api.recorded` and `ctx.stats.planes.rec*`.
+- **Tests** (2026-10-09, Playwright, own server, `layers=planes`): `t=2026-10-08T18:00` on WebGL 2 against the real
+  branch on raw.githubusercontent.com: index and `2026-10-08/17.json.gz` read (both with `Access-Control-Allow-Origin: *`),
+  72 aircraft, exact day, 55 of 69 moved within about 10 s (the rest on the ground at Heathrow), credit and note right, no
+  page errors. `t=2026-10-09T10:00 --webgpu` (WebGPU backend): Friday 2026-10-02 10:00 "same weekday and time", 103
+  aircraft, 80 of 101 moved. Close-ups on both backends: the model, the REC label and the trail; the card. With
+  `planes=0`: no request to the cache. `docklands/test/load.mjs --query 'view=cw&layers=planes'`: ok at both sizes.
+  The tool: backfill of 7 days (about 4 min a day), `--push` twice (the second: "already holds this tree").
 
 ## Not done
 

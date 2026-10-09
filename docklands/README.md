@@ -86,7 +86,7 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 4 live | tide and foreshore | yes | `tide.js`, `layers/tide.js`: own harmonic prediction from EA readings (held-out rms about 0.2 m), the river at the tide level, the ground to the UKHO bed, walls vs mud and shingle |
 | 4 live | water surface: wind, current, debris, wakes | yes | `layers/wind.js`, `debris.js`, `water.js`, `materials.js`: fetch-limited wind waves, a flow map from the tide rate, Kelvin wakes summed in the shader, reflection at walls; `?wind=`, `?current=`, `?wakes=test` |
 | 4 live | piers, berths, berthed vessels | yes | `layers/piers.js`, `piers-models.js`: 275 piers and pontoons on the tide, HMS Belfast, 5 other vessels, simulated Clipper, ferry and tour boat calls |
-| 4 live | aircraft (simulated) | yes | `layers/planes.js`: London City procedures and hours, Heathrow streams, H4 helicopters; no live ADS-B (licences) |
+| 4 live | aircraft (recorded, live, simulated) | yes | `layers/planes.js`, `planes-live.js`: by default RECORDED tracks from the 7-day adsb.lol history cache (ODbL; branch `adsb-cache`, `cwplans/tools/fetch-adsb-cache.mjs`, daily workflow `adsb-cache.yml`) for the clock's date, or the held day with the same weekday, at the same London time; live adsb.lol on request (blocked in browsers: no CORS header; `?adsb=<relay>`); SIMULATED London City procedures and hours, Heathrow streams and H4 helicopters as the fallback; `?adsbcache=<base>`, `?adsbrec=0` |
 | 4 live | wildlife (simulated from records) | yes | `layers/wildlife.js`: 20 birds and the fox, weighted by NBN Atlas and GBIF records (CC0, CC-BY, OGL) |
 | 4 live | overlays, river, locate, KML, building keys | yes | `overlay-kit.js` (shared builders, materials, taps, labels) and `layers/overlays.js` (bike docks, lift outages, cranes, H4 and EGR159, GLA outlines and venues, works in progress; `?ov=bikes,works`), `layers/river.js` (river buses, locks, PLA notices, swim water, moorings, ships; `?river=`), `layers/locate.js`, `layers/kml.js` (`?kml=`; screen-space lines with Line2NodeMaterial; the WebGL page's kml.js reused), `layers/keys.js` (OSM card with parts, kg, Wikidata); files load only when ticked. Not ported: the selected building in the KML export, the Tower Bridge note, Sky panel rows |
 | framework | reveal sheet | yes | `reveal.js`: a frosted sheet with the layer drawn on it falls when a layer is ticked on; `?reveal=0` |
@@ -116,7 +116,7 @@ goes into the share hash as `t=` (and replaces `?t=`). Test: `node docklands/tes
 click path at 390 and 1280 px, the four ways to close, the wheels).
 
 Defaults (owner, 2026-10-09): Realistic buildings, Open-Meteo wind and weather (`?weather=0` off), every Data overlays
-part (`?ov=` for none) and every River part (`?river=` for none) are on; My KML feeds stay off. Floors (see-through) and
+part except Helicopter route H4 (`?ov=` for none) and every River part (`?river=` for none) are on; My KML feeds stay off. Floors (see-through) and
 Gaussian splats stay off: Floors turns the realistic buildings to glass, and splats take 24 to 39 s a frame in software.
 
 "WebGL only" rows are controls of the WebGL page (https://danbri.github.io/londat/cwplans/docklands/) that the port does
@@ -162,7 +162,8 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | River (river buses, locks, notices, swim water, moorings) | Layers > Water and river > River |
 | Piers and berthed vessels | Layers > Water and river |
 | Ships (AIS), live | Layers > Live |
-| Aircraft (simulated), Birds and foxes (simulated) | Layers > Simulated |
+| Aircraft (recorded or simulated), Birds and foxes (simulated) | Layers > Simulated |
+| Recorded aircraft (adsb.lol history, port only) | Layers > Simulated > Aircraft > Recorded aircraft |
 | Live aircraft (adsb.lol, port only) | Layers > Simulated > Aircraft > Live aircraft |
 | Night lights (aviation, riverside lamps) | Layers > City |
 | My KML | Layers > My KML |

@@ -1,0 +1,37 @@
+# Rolling 7-day cache of recorded aircraft for the Docklands 3D page (layer Aircraft of docklands/): each day, the new
+# adsb.lol history release (adsblol/globe_history_<year>, ODbL 1.0, about 4.2 GB a day, streamed, nothing kept) is cut
+# to 25 nm round 51.505 N 0.02 W by cwplans/tools/fetch-adsb-cache.mjs, and the orphan branch adsb-cache is replaced by
+# one commit that holds only the last 7 days (about 6 MB a day). Nothing is committed to main.
+# Owner, 2026-10-09: "For today build a cache of last 7 days for our areas, and show equivalent data for the matching
+# time and day of week." Skill: docklands-sky, "Live aircraft in the Three.js port". Register: data-register.json
+# "branches" (adsb-cache), source adsb-lol.
+# The release of day D is uploaded early on D+1 (about 03:30 UTC on 2026-10-09 for 2026-10-08); the second run catches
+# a late upload. A day that is already held is not fetched again.
+name: adsb-cache
+on:
+  schedule:
+    - cron: '41 5 * * *'
+    - cron: '41 13 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: adsb-cache
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out main (the tool)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch the missing days, prune, and force-push the one-commit branch adsb-cache
+        run: |
+          git config user.name 'londat adsb cache bot'
+          git config user.email 'londat-cache@users.noreply.github.com'
+          node cwplans/tools/fetch-adsb-cache.mjs --out "$RUNNER_TEMP/adsb-cache" --restore --push

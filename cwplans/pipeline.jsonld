@@ -9870,6 +9870,44 @@
    "cwp:judgement": "Which sources are cached (the live ones the pages show or ask for) and which are not: LAQN air quality (no open licence found), police.uk crime (monthly; the page asks on demand), JamCam images (TfL serves them), helicopter structure (static). Recorded in the skill cwplans-londat-cache."
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolfetchadsbcache",
+   "@type": "prov:Activity",
+   "rdfs:label": "fetch-adsb-cache",
+   "dct:description": "Streams the tar parts of each missing UTC day of the last 7 (a minimal tar reader; no file is written), gunzips each trace_full_<hex>.json, skips a trace with no latitude 51.x, parses it, and keeps the points within 25 nm of 51.505 N 0.02 W. Splits them into legs (the readsb new-leg flag, a gap of more than 10 minutes in the area, a change of callsign). Height: GNSS (alt_geom, ft above the WGS84 ellipsoid) when sent, else pressure altitude plus the hour's median (GNSS - pressure) of the area's aircraft below 10,000 ft; on the ground: flag. Writes one gzip JSON per UTC hour with the legs that overlap it (2 minutes before for trails, one point after), delta-coded integer columns [t s, lat and lon 1e-5 deg, alt 25 ft, height source, ground speed kt, track deg], a day.json with counts, index.json and a README with the ODbL notice; removes days older than 7. --push builds the orphan commit of the folder with a temporary index (GIT_INDEX_FILE, git write-tree, git commit-tree) and force-pushes it to refs/heads/adsb-cache, so the branch always has one commit.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcadsblol",
+     "dcat:accessURL": "https://github.com/adsblol/globe_history_<year>/releases/download/v<YYYY.MM.DD>-planes-readsb-prod-0/v<YYYY.MM.DD>-planes-readsb-prod-0.tar.aa (.ab, .ac, ...)",
+     "dct:description": "one streamed download of each 2 GB part per new day (about 4.2 GB a day, nothing kept on disk); a HEAD request first to see whether the day's release exists"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localbranchadsbcacheofdanbrilondatwithrestorethedaysalreadyheldbygitarchive"
+    }
+   ],
+   "prov:generated": [
+    {
+     "cwp:pathPattern": "branch adsb-cache: index.json, README.md, adsb/<YYYY-MM-DD>/day.json and adsb/<YYYY-MM-DD>/<HH>.json.gz (data-register.json 'branches')"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/fetch-adsb-cache.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-adsb-cache.mjs --out <dir> [--restore] [--push] [--days 7] [--date YYYY-MM-DD]",
+   "cwp:kind": "fetch",
+   "cwp:rule": [
+    "Privacy rule of docklands/planes-live.js identified(): a callsign is kept only for an operator ICAO callsign (three letters and a digit) without the LADD or PIA flag (dbFlags 8, 4) and with an ICAO address (no '~'); every other leg gets an anonymous key (x<n>) and keeps only its type and category. No registration, owner (ownOp), squawk or ICAO address of an unidentified aircraft is written.",
+    "Thinning: at most one point a second; above 15,000 ft at most one a minute (the 3D page shows high traffic as context only).",
+    "Not on main: the cache is on the orphan branch adsb-cache with one commit, so git history does not grow each day; the main working tree and index are never touched.",
+    "Licence: ODbL 1.0 (owner approval 2026-10-09 for the committed cache); the branch README and every page view carry 'Aircraft: © adsb.lol contributors, ODbL'.",
+    "Politeness: one download at a time, User-Agent naming this repository; a day whose release is not yet published is skipped and fetched by the next run."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "sky",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolbuildzonegpkg",
    "@type": "prov:Activity",
    "rdfs:label": "build-zone-gpkg",
@@ -25867,8 +25905,8 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "adsb.lol live aircraft API (api.adsb.lol /v2/point/51.505/-0.02/25: ADS-B and MLAT positions within 25 nm, readsb fields), fetched in the browser by the Three.js port's Aircraft layer (docklands/layers/planes.js, docklands/planes-live.js) only after the visitor ticks 'Live aircraft'; nothing committed",
-   "dct:license": "ODbL 1.0 (share-alike): OpenAPI info.license 'Open Data Commons Open Database License (ODbL) v1.0'; 'The license for the API as well as all data ADSB.lol makes public is ODbL'. API free to use, no key yet ('In the future, you will require an API key'); rate limits 'dynamic', not published",
+   "dct:title": "adsb.lol aircraft: the live API (api.adsb.lol /v2/point/51.505/-0.02/25: ADS-B and MLAT positions within 25 nm, readsb fields), fetched in the browser by the Three.js port's Aircraft layer (docklands/layers/planes.js, docklands/planes-live.js) only after the visitor ticks 'Live aircraft'; and the daily history (GitHub releases of adsblol/globe_history_<year>, tag v<YYYY.MM.DD>-planes-readsb-prod-0: readsb trace_full files of every aircraft, about 4.2 GB a day), from which cwplans/tools/fetch-adsb-cache.mjs keeps a 7-day extract on the branch adsb-cache",
+   "dct:license": "ODbL 1.0 (share-alike): OpenAPI info.license 'Open Data Commons Open Database License (ODbL) v1.0'; 'The license for the API as well as all data ADSB.lol makes public is ODbL'; each history release README: 'This database is made available under the Open Database License' (feeders waive their rights under CC0). API free to use, no key yet ('In the future, you will require an API key'); rate limits 'dynamic', not published",
    "dcat:landingPage": "https://api.adsb.lol/docs",
    "cwp:attribution": "Aircraft: © adsb.lol contributors, ODbL (https://adsb.lol, https://opendatacommons.org/licenses/odbl/1-0/)"
   },

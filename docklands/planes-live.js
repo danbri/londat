@@ -214,3 +214,111 @@ export function createTracks({ geo, conv, groundAt }) {
   }
   return { T, ingest, states, prune, get corr() { return corr; }, get lastAnswer() { return lastAnswer; }, clear() { T.clear(); } };
 }
+
+// ---------- RECORDED aircraft: the rolling 7-day cache of adsb.lol history (branch adsb-cache of danbri/londat, built
+// daily by cwplans/tools/fetch-adsb-cache.mjs). Owner, 2026-10-09: "For today build a cache of last 7 days for our
+// areas, and show equivalent data for the matching time and day of week." The page clock is mapped to the held day with
+// the same London weekday (the clock's own date when it is held) at the same London time of day, and the recorded tracks
+// are played between their points (straight lines in time; one point a second at most, one a minute above 15,000 ft).
+// Files: index.json, adsb/<date>/<HH>.json.gz (UTC hour; delta-coded columns, see the branch README). Read from
+// raw.githubusercontent.com (Access-Control-Allow-Origin: *), never from adsb.lol. URL: ?adsbcache=<base> (https or a
+// path on this site) reads another copy.
+export const REC = { base: 'https://raw.githubusercontent.com/danbri/londat/adsb-cache/', trail: 120, maxGap: 660 };
+export function recBase(qs) {
+  const q = qs && qs.get('adsbcache');
+  if (q) { try { const u = new URL(q, location.href); if (u.protocol === 'https:' || u.origin === location.origin) return u.href.replace(/\/?$/, '/'); } catch { /* keep the default */ } }
+  return REC.base;
+}
+async function getMaybeGz(url) {
+  const r = await fetch(url, { credentials: 'omit', referrerPolicy: 'no-referrer' });
+  if (!r.ok) throw new Error(`HTTP ${r.status} for ${url.replace(/^.*\/(adsb\/)?/, '$1')}`);
+  const b = new Uint8Array(await r.arrayBuffer());
+  const txt = b[0] === 0x1f && b[1] === 0x8b ? await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text() : new TextDecoder().decode(b);
+  return JSON.parse(txt);
+}
+const LDN = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'shortOffset', weekday: 'short' });
+export function londonParts(t) {
+  const p = Object.fromEntries(LDN.formatToParts(new Date(t)).map(x => [x.type, x.value])), m = /GMT([+-]\d+)?(?::(\d+))?/.exec(p.timeZoneName || '');
+  const off = m && m[1] ? (+m[1]) * 60 + (m[2] ? Math.sign(+m[1]) * +m[2] : 0) : 0;
+  return { date: `${p.year}-${p.month}-${p.day}`, hm: `${p.hour}:${p.minute}`, wd: p.weekday, off };
+}
+const isoUTC = t => new Date(t).toISOString().slice(0, 10);
+
+export function createRecorded({ geo, conv, groundAt, base }) {
+  const R = { state: 'idle', error: null, index: null, held: new Set(), files: new Map(), pick: null, base, legs: 0 };
+  const deg = Math.PI / 180;
+  let indexP = null;
+  function loadIndex() {
+    if (indexP) return indexP;
+    R.state = 'loading';
+    indexP = getMaybeGz(base + 'index.json').then(j => { R.index = j; R.held = new Set((j.days || []).map(d => d.date)); R.state = R.held.size ? 'ready' : 'empty'; })
+      .catch(e => { R.state = 'error'; R.error = `${e.name === 'TypeError' ? 'the request failed' : e.message}`; });
+    return indexP;
+  }
+  // the recorded instant for page time T (ms): the clock's own date when it is held, else the most recent held day with
+  // the same London weekday, at the same London time of day (the DST offsets of both dates are allowed for)
+  function choose(T) {
+    if (!R.held.size) return null;
+    const L = londonParts(T), d0 = Date.parse(L.date + 'T00:00:00Z');
+    const cands = [...R.held].map(d => ({ d, n: Math.round((Date.parse(d + 'T00:00:00Z') - d0) / 86400e3) })).filter(c => c.n % 7 === 0)
+      .sort((a, b) => (a.n === 0 ? -1 : b.n === 0 ? 1 : b.d.localeCompare(a.d)));
+    for (const c of cands) {
+      const t1 = T + c.n * 86400e3, t = t1 + (L.off - londonParts(t1).off) * 60e3;
+      if (R.held.has(isoUTC(t))) return { t, shift: t - T, exact: c.n === 0, date: c.d };
+    }
+    return null;
+  }
+  // one UTC hour file -> legs with columns in page coordinates
+  function decode(j) {
+    const t0 = j.t0 * 1000, out = [];
+    for (const L of j.legs) {
+      const p = L.p, n = p.length / 7, t = new Float64Array(n), x = new Float64Array(n), y = new Float64Array(n), z = new Float64Array(n), gs = new Float32Array(n), trk = new Float32Array(n), q = new Uint8Array(n), alt = new Float32Array(n), lat = new Float64Array(n), lon = new Float64Array(n);
+      const c = [0, 0, 0, 0, 0, 0, 0];
+      for (let i = 0; i < n; i++) {
+        for (let k = 0; k < 7; k++) c[k] += p[i * 7 + k];
+        t[i] = t0 + c[0] * 1000; lat[i] = c[1] / 1e5; lon[i] = c[2] / 1e5; alt[i] = c[3] * 25; q[i] = c[4]; gs[i] = c[5]; trk[i] = c[6];
+        const [xx, zz] = geo(lon[i], lat[i]); x[i] = xx; z[i] = zz;
+        const g = groundAt(xx, zz); y[i] = q[i] === 2 ? g : Math.max(g, alt[i] * FT - geoidN(lon[i], lat[i]));
+      }
+      out.push({ k: L.k, c: L.c, ty: L.ty, cat: L.cat, M: modelFor({ t: L.ty, category: L.cat }), t, x, y, z, gs, trk, q, alt, lat, lon, n, hour: j.hour, date: j.date, corr: j.corr_ft });
+    }
+    return out;
+  }
+  function file(t) {
+    const key = `${isoUTC(t)}/${String(new Date(t).getUTCHours()).padStart(2, '0')}`;
+    let f = R.files.get(key);
+    if (!f) {
+      if (!R.held.has(isoUTC(t))) return { state: 'missing', key };
+      f = { state: 'loading', key, legs: null }; R.files.set(key, f);
+      getMaybeGz(`${base}adsb/${key}.json.gz`).then(j => { f.legs = decode(j); f.state = 'ready'; R.onLoad && R.onLoad(); })
+        .catch(e => { f.state = 'error'; f.error = e.message; R.onLoad && R.onLoad(); });
+      if (R.files.size > 6) for (const [k, v] of R.files) { if (R.files.size <= 6) break; if (v !== f && v.state !== 'loading') R.files.delete(k); }
+    }
+    return f;
+  }
+  // the drawn state of every recorded aircraft at page time T (ms), or null while the hour file loads
+  function states(T) {
+    const pk = choose(T); R.pick = pk; if (!pk) return null;
+    const t = pk.t, f = file(t);
+    if (f.state !== 'ready') return null;   // loading (the page shows nothing yet) or failed (the page simulates)
+    if ((t / 1000) % 3600 > 3420) file(t + 300e3);   // the next hour, 3 minutes ahead
+    const out = [];
+    for (const L of f.legs) {
+      if (!L.M || t < L.t[0] || t > L.t[L.n - 1]) continue;
+      let lo = 0, hi = L.n - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (L.t[m] <= t) lo = m; else hi = m; }
+      if (L.t[hi] - L.t[lo] > REC.maxGap * 1000) continue;
+      const f1 = L.t[hi] > L.t[lo] ? (t - L.t[lo]) / (L.t[hi] - L.t[lo]) : 0, mix = (a) => a[lo] + (a[hi] - a[lo]) * f1;
+      const x = mix(L.x), y = mix(L.y), zz = mix(L.z);
+      let dT = ((L.trk[hi] - L.trk[lo] + 540) % 360) - 180; const trk = L.trk[lo] + dT * f1;
+      const dt = Math.max(1, (L.t[hi] - L.t[lo]) / 1000), vs = (L.y[hi] - L.y[lo]) / dt, rate = dT * deg / dt;
+      const ground = L.q[lo] === 2 && L.q[hi] === 2, v = mix(L.gs) * KT;
+      const h = trk * deg + conv, pitch = ground ? 0 : Math.atan2(vs, Math.max(v, 20)) + (L.M.kind === 'heli' ? -3 * deg : 3 * deg);
+      const bank = ground ? 0 : Math.max(-0.6, Math.min(0.6, Math.atan(v * rate / 9.81)));
+      const trail = []; for (let i = lo; i >= 0 && t - L.t[i] < REC.trail * 1000; i--) trail.unshift([L.t[i], L.x[i], L.y[i], L.z[i]]);
+      out.push({ L, i: lo, f: f1, trail, trkTrue: (trk + 360) % 360, S: { x, y, z: zz, h, pitch, bank, v, vs, ground,
+        gear: L.M.kind === 'heli' || ground || (y < 900 && vs < -1) || y < 200, landOn: ground ? v > 20 * KT : y < 760 } });
+    }
+    return out;
+  }
+  return Object.assign(R, { loadIndex, choose, states, file });
+}
