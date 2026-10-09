@@ -2044,3 +2044,14 @@ official data."
   1 m, inside 8 Canada Square's plant tier.
 - Tests on the release state (exported index, splats and WebXR left out): load test WebGL 2 6/6, WebGPU 6/6 (cw with the
   Realistic look, Rotherhithe night, Line drawing); register check passes. Splats and WebXR are still in progress.
+
+## 2026-10-09: Three.js port, splats and WebXR
+
+- Splats (20db3ea0): own TSL renderer and sort worker; Spark 2.3.1 and gaussian-splats-3d 0.4.7 (MIT) need WebGL.
+  Music switches splats to "only" (map style); night dim in sRGB. A full page with splats takes 24 to 39 s a frame in
+  software, over the load test's 180 s screenshot limit; tested with few layers on both backends.
+- WebXR: the headset mode on the WebGL 2 backend (reload with ?webgl&xr=1 from WebGPU); xr-check 23 steps pass with the
+  mock; load test passes. Not yet tried on the owner's Quest 3.
+- Parity: every group of the WebGL page now has a port (docklands/README.md). Partial: under (no station cut-outs),
+  WebXR (no Ride, Drone, Photo, Wind), styles (pixel art without photo facades or actors). Not ported: the drawer tabs
+  (waiting for the owner's menu rework).

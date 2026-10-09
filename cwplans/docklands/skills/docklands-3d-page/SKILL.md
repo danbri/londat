@@ -1835,6 +1835,14 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   lost activities (integrate shared files once, at the end). Cost: trees with species crowns cost 5.4 M triangles a frame
   before LOD (0.8 to 0.9 M after). The full page in software WebGPU takes 70 to 120 s to a screenshot; under a load
   average of 25 to 50 it never got there: test when the container is quiet.
+- **Third wave (2026-10-09).** Facades and the Realistic look in buildingMaterial (all derivatives taken at the top of
+  the graph: WGSL allows derivatives only in uniform control flow), `crown.js`, `styles.js` (an `rtt()` graph cannot hold
+  `If`, `.and()`, `.or()` in r186: use float masks), overlays (`overlay-kit.js`, `layers/overlays.js`, `river.js`,
+  `kml.js`, `locate.js`, `keys.js`), `drone.js`, `plotter.js` (loads the WebGL page's plotter-svg.js), `music.js`, splats
+  (own TSL renderer: no splat library works with WebGPURenderer r186), WebXR (`xr.js`: WebGL 2 backend in a session; the
+  model stays in metres and the eye camera hangs under a rig with matrix W^-1, because the TSL materials read
+  positionWorld; r186 Camera.updateMatrixWorld drops scale from the view matrix, so the preview camera is outside the
+  scene with its matrices set by hand). Check: `node docklands/test/xr-check.mjs` (23 steps, WebXR mock).
 - **Test.** `node docklands/test/load.mjs` (WebGL 2 in SwiftShader) and `--webgpu` (WebGPU on Dawn's
   SwiftShader adapter: `--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader --enable-features=Vulkan
   --use-vulkan=swiftshader`). Server on the repository root at port 8188. It fails on a page error, a console error or

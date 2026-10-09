@@ -90,7 +90,7 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art has no photo facades or animated actors |
 | 5 styles | splats | yes | `layers/splats.js`, `splat-worker.js`: own TSL renderer (Spark 2.3.1 and gaussian-splats-3d 0.4.7, both MIT, need WebGL), off by default, `?splats=with|only`, `?splatset=`; music switches to "only" in the map style; a full page with splats takes 24 to 39 s a frame in software |
 | 6 other | Drone, plotter SVG, music | yes | `drone.js`, `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
-| 6 other | WebXR | no | in progress; the WebGL page's headset layer stays in use until then |
+| 6 other | WebXR | partial | `xr.js`, `layers/xr.js`: table 1:1500 with relief 2.5x (Relief button), street 1:1, the four panels, rays, grab and pinch, passthrough, the one-eye preview (`?xr=preview&go`); on the WebGL 2 backend (three.js r186 WebXR on WebGPU needs an XR-compatible adapter at start and XRGPUBinding): from WebGPU it reloads with `?webgl&xr=1`; no Ride, Drone, Photo, Wind; `test/xr-check.mjs` 23 steps with the mock; not yet tried on a real headset |
 
 ## Water (2026-10-08)
 
