@@ -263,7 +263,7 @@ $('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,stations,skyline,registry,search,routes,nightlights').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,stations,skyline,registry,search,routes,nightlights,ships').split(',').filter(Boolean);
 const LAYERS = {}, frameHooks = [];
 const ui = {
   host: () => $('layersExtra'),

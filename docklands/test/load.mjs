@@ -30,7 +30,7 @@ for (const [w, h, dpr] of [[1280, 800, 1], [390, 844, 2]]) for (const q of QUERI
   await page.waitForTimeout(4000);
   const info = ok ? await page.evaluate(() => ({ backend: __docklands3.backend, stats: __docklands3.STATS, night: __docklands3.night, cam: __docklands3.camState(), hash: __docklands3.shareHash() })) : null;
   const file = `${OUT}/${q.replace(/[^a-z0-9]+/gi, '-')}-${w}x${h}@${dpr}${WEBGPU ? '-webgpu' : ''}.png`;
-  await page.screenshot({ path: file });
+  await page.screenshot({ path: file, timeout: 180000 });   // a busy container: a software WebGPU frame can take tens of seconds
   const bad = !ok || errors.length; if (bad) failed++;
   console.log(`${bad ? 'FAIL' : 'ok  '} ${q} ${w}x${h}@${dpr} ${((Date.now() - t0) / 1000).toFixed(1)} s ${info ? info.backend + ' ' + JSON.stringify(info.stats) + ' night=' + info.night : 'not ready'} -> ${file}`);
   for (const e of errors.slice(0, 8)) console.log('     ' + e.slice(0, 400));
