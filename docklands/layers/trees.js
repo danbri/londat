@@ -171,9 +171,11 @@ export default {
     const twigs = makeMesh('twigs', G.twigs, Math.min(nDec, NEAR_MAX), 'WM', { cal: 'cal', aut: 'aut', bloom: 'bloom', bark: 'bark' }, false);
     twigs.mat.flatShading = false; twigs.mat.side = THREE.DoubleSide; twigs.mat.roughness = .95;
     { const nd = twigs.nodes;
-      twigs.mat.positionNode = Fn(() => {   // hidden behind a full, closed crown
+      twigs.mat.positionNode = Fn(() => {   // only once most leaves are gone: the twig quads are full size, the crown in leaf-fall
+        // shrinks to 60 to 100 %, so twigs shown earlier stuck out of a green crown (owner, 2026-10-09: "a big green tree with
+        // weird twigs sticking out freakishly")
         const { dens } = season(nd.cal, nd.bloom);
-        return select(dens.greaterThan(.97).and(nd.aut.w.lessThan(.1)), vec3(0, -1e4, 0), positionLocal);
+        return select(dens.greaterThan(.55), vec3(0, -1e4, 0), positionLocal);
       })();
       // a branch pattern on each quad: a stem, eight branches, and a haze of fine twigs inside the crown outline
       const SEG = [[.5, 0, .5, .97, .05], [.5, .1, .1, .55, .03], [.5, .18, .9, .6, .03], [.5, .32, .18, .8, .026], [.5, .4, .84, .84, .026],

@@ -21,7 +21,7 @@
 import { Fn, If, attribute, positionGeometry, instancedDynamicBufferAttribute, uniformArray, uniform, varying, time, vec3, vec4, float, int, sin, cos, sign, min, max } from 'three/tsl';
 import { WU } from '../water.js';
 
-const CELL = 200, R_SIM = 800, R_DRAW = 800, CAP_B = 2048, CAP_F = 16, MAX_FOX = 4, TAU = Math.PI * 2;
+const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 4, TAU = Math.PI * 2;
 // animals per hectare of each habitat class in daylight at the peak of the season (stated defaults, general ecology for
 // inner London; the species mix within a class comes from the data file)
 const DENS = { none: 0.9, river: 0.8, dock: 3.2, pond: 6, park: 2.5, wood: 1.0, garden: 0.6 };
@@ -61,7 +61,10 @@ export default {
   async init(ctx, on) {
     const { THREE, A, esc } = ctx, t0 = performance.now();
     const D = await ctx.loadJSON(ctx.DATA + 'wildlife.json');
-    const BIG = ctx.qs.get('wildlife') === 'big';
+    // Menu > Layers > Wildlife: "More animals" (x1 to x10,000; owner, 2026-10-09: "create a checkbox for 1000x wildlife ...
+    // maybe 10000x or whatever - just lots, maybe a slider") and "Size" (x1 to x20, to see them from a high view). The
+    // radius round the camera follows its height above the ground (R_MIN to R_MAX), so a high view also gets animals.
+    let ABUND = Math.min(10000, Math.max(1, +(ctx.qs.get('wildlifex') || 1) || 1)), SIZE = ctx.qs.get('wildlife') === 'big' ? 4 : Math.min(20, Math.max(1, +(ctx.qs.get('wildlifesize') || 1) || 1)), R_SIM = R_MIN, R_DRAW = R_MIN;
     const SP = D.species.filter(s => SPEC[s.id]), SPI = Object.fromEntries(SP.map((s, i) => [s.id, i]));
     const HC = D.habitats.classes, HI = Object.fromEntries(HC.map((h, i) => [h, i]));
 
@@ -134,17 +137,17 @@ export default {
       const area = new Array(HC.length).fill(0); for (let k = 0; k < 100; k++) { const c = cls((ci + (k % 10 + .5) / 10) * CELL, (cj + (Math.floor(k / 10) + .5) / 10) * CELL); if (c >= 0) area[c] += CELL * CELL / 100 / 1e4; }
       const act = PH === 'day' ? 1 : PH === 'dusk' ? .8 : .55;
       for (let h = 0; h < HC.length; h++) { if (area[h] < .02) continue;
-        let n = area[h] * DENS[HC[h]] * act;
+        let n = area[h] * DENS[HC[h]] * act * ABUND;
         while (n > 0) { const s = speciesFor(h, r, PH, MON); if (!s) break; const P = SPEC[s.id], g = P.fl[0] + Math.floor(r() * (P.fl[1] - P.fl[0] + 1)), k = Math.min(g, Math.max(1, Math.round(n)));
           if (r() < Math.min(1, n / g) || n >= g) { const p = pointIn(ci, cj, h, r); if (p) addGroup(list, s, h, p, k, r, ci, cj); }
           n -= g; } }
       // roof perches: gulls and pigeons on roof edges (more at night: the pigeons roost there)
-      const roofN = Math.round((area[HI.none] || 0) * (PH === 'night' ? .9 : .5) * (r() + .5));
+      const roofN = Math.min(400, Math.round((area[HI.none] || 0) * (PH === 'night' ? .9 : .5) * (r() + .5) * ABUND));
       for (let k = 0; k < roofN; k++) { const q = roofSpot(ci, cj, r); if (!q) break; const s = r() < .55 ? SP[SPI.feralpigeon] : SP[SPI[r() < .6 ? 'herringgull' : 'lbbgull']]; if (!s || season(s, MON) < r() * .8) continue;
         list.push(mk(s, 'perch', HI.none, q.x, q.y, q.z, r)); }
       // foxes: rare, at dusk and at night (now and then by day), near woods and parks
       const gr = area[HI.wood] + area[HI.park] * .6 + area[HI.garden] * .5 + area[HI.none] * .05, pf = (PH === 'day' ? .015 : .14) * gr;
-      if (SPI.fox != null && foxes < MAX_FOX && r() < pf) { const h = area[HI.wood] > .1 ? HI.wood : area[HI.park] > .1 ? HI.park : area[HI.garden] > .1 ? HI.garden : HI.none, p = pointIn(ci, cj, h, r); if (p) { list.push(mk(SP[SPI.fox], 'trot', h, p[0], landY(p[0], p[1]), p[1], r)); foxes++; } }
+      for (let fk = 0, fn = ABUND === 1 ? 1 : Math.min(40, Math.ceil(pf * ABUND)); fk < fn; fk++) if (SPI.fox != null && foxes < MAX_FOX * ABUND && foxes < CAP_F && r() < (ABUND === 1 ? pf : Math.min(1, pf * ABUND / fn))) { const h = area[HI.wood] > .1 ? HI.wood : area[HI.park] > .1 ? HI.park : area[HI.garden] > .1 ? HI.garden : HI.none, p = pointIn(ci, cj, h, r); if (p) { list.push(mk(SP[SPI.fox], 'trot', h, p[0], landY(p[0], p[1]), p[1], r)); foxes++; } }
       return list;
     }
     function mk(s, st, h, x, y, z, r) {
@@ -175,9 +178,10 @@ export default {
     let lastCellsT = 0;
     function updateCells(now) {
       const cam = ctx.camera.position, above = cam.y - landY(cam.x, cam.z), alt = sunAlt(), ph = phaseOf(alt), m = month();
+      R_SIM = R_DRAW = Math.min(R_MAX, Math.max(R_MIN, above * 1.6));
       if (ph !== PH || m !== MON) { PH = ph; MON = m; CELLS.clear(); foxes = 0; }   // a new time of day or month: a new population
       const want = new Set();
-      if (above < R_DRAW) { const ci0 = Math.floor((cam.x - R_SIM) / CELL), ci1 = Math.floor((cam.x + R_SIM) / CELL), cj0 = Math.floor((cam.z - R_SIM) / CELL), cj1 = Math.floor((cam.z + R_SIM) / CELL);
+      if (above < R_MAX) { const ci0 = Math.floor((cam.x - R_SIM) / CELL), ci1 = Math.floor((cam.x + R_SIM) / CELL), cj0 = Math.floor((cam.z - R_SIM) / CELL), cj1 = Math.floor((cam.z + R_SIM) / CELL);
         for (let i = ci0; i <= ci1; i++) for (let j = cj0; j <= cj1; j++) { const dx = Math.max(0, Math.abs((i + .5) * CELL - cam.x) - CELL / 2), dz = Math.max(0, Math.abs((j + .5) * CELL - cam.z) - CELL / 2); if (dx * dx + dz * dz < R_SIM * R_SIM) want.add(ck(i, j)); } }
       let changed = false;
       for (const k of [...CELLS.keys()]) if (!want.has(k)) { const c = CELLS.get(k); if (now - c.seen > 4000) { foxes -= c.list.filter(a => a.P.b === 'fox').length; CELLS.delete(k); changed = true; } } else CELLS.get(k).seen = now;
@@ -189,7 +193,10 @@ export default {
     let PENDING = 0, QUEUE = [], filling = false;
     function fill() {
       const tS = performance.now(); let made = 0;
-      while (QUEUE.length && performance.now() - tS < 3) { const [k, ci, cj] = QUEUE.shift(); if (!CELLS.has(k)) { CELLS.set(k, { list: spawnCell(ci, cj), seen: performance.now() }); made++; } }
+      let pop = 0; for (const c of CELLS.values()) pop += c.list.length;
+      // the nearest cells come first; once the population reaches the draw cap, farther cells stay empty (with "More
+      // animals" at x1000 a 3 km radius made 319,068 animals and 88 ms of simulation a frame)
+      while (QUEUE.length && performance.now() - tS < 3) { const [k, ci, cj] = QUEUE.shift(); if (!CELLS.has(k)) { const list = pop < CAP_B ? spawnCell(ci, cj) : []; pop += list.length; CELLS.set(k, { list, seen: performance.now() }); made++; } }
       cellMax = Math.max(cellMax, performance.now() - tS); PENDING = QUEUE.length;
       if (made) { animals = [...CELLS.values()].flatMap(c => c.list); ctx.draw(); }
       if (QUEUE.length) setTimeout(fill, 16); else filling = false;
@@ -365,7 +372,7 @@ export default {
       if (now - lastCellsT > 500) { lastCellsT = now; const tc = performance.now(); updateCells(now); cellMs = performance.now() - tc; } else cellMs = 0;
       const tU = performance.now();
       update(dt, now);
-      const cam = ctx.camera.position, cut = cutU.value, scale = BIG ? 4 : 1; drawn = []; nB = 0; nF = 0;
+      const cam = ctx.camera.position, cut = cutU.value, scale = SIZE; drawn = []; nB = 0; nF = 0;
       for (const a of animals) {
         if (a.hide) continue; const dx = a.x - cam.x, dy = a.y - cam.y, dz = a.z - cam.z; if (dx * dx + dy * dy + dz * dz > R_DRAW * R_DRAW) continue; if (cut < 250 && a.y > cut) continue;
         const fox = a.P.b === 'fox', M = fox ? MF : MB, i = fox ? nF : nB; if (i >= M.cap) continue;
@@ -400,7 +407,7 @@ export default {
         `<p class="small">The animal and its position are simulated, not observed. Weights from open records: NBN Atlas (OGL, CC BY, CC0 records; data partners: BTO/JNCC/RSPB, Birdex, iRecord, Mammal Society and others) and GBIF.org (iNaturalist CC0 and CC BY observations, naturgucker, TIPU), blended with general ecology. Not used: eBird, CC BY-NC records, GiGL. Records by licence: ${esc(lic)}. Built ${esc(D.built)} by <a href="https://github.com/danbri/londat/blob/main/cwplans/tools/fetch-wildlife.mjs" target="_blank" rel="noopener">fetch-wildlife.mjs</a>.</p>`);
     }
     ctx.addPick(ray => {
-      if (!visible) return null; let best = null; const o = ray.ray.origin, d = ray.ray.direction, sc = BIG ? 4 : 1;
+      if (!visible) return null; let best = null; const o = ray.ray.origin, d = ray.ray.direction, sc = SIZE;
       for (const a of drawn) { const L = (a.P.L || 1) * sc, cy = a.y + L * .15, t = (a.x - o.x) * d.x + (cy - o.y) * d.y + (a.z - o.z) * d.z; if (t <= 0) continue;
         const px = o.x + d.x * t - a.x, py = o.y + d.y * t - cy, pz = o.z + d.z * t - a.z, r = Math.max(L * .8, t * .01);
         if (px * px + py * py + pz * pz < r * r && (!best || t < best.distance)) best = { distance: t - r, open: () => card(a) }; }
@@ -411,14 +418,19 @@ export default {
     ctx.ui.section('Wildlife (simulated)');
     const setVisible = v => { visible = v; group.visible = v; if (!v) { MB.mesh.geometry.instanceCount = MF.mesh.geometry.instanceCount = 0; } ctx.draw(); };
     ctx.ui.toggle('Birds and foxes (simulated from open records)', on, setVisible);
+    const STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
+    const repopulate = () => { CELLS.clear(); animals = []; foxes = 0; lastCellsT = 0; ctx.draw(); };
+    const aL = n => `More animals: x${n.toLocaleString('en-GB')} (not real numbers)`, sL = n => `Size: x${n} (to see them from far)`;
+    ctx.ui.slider(aL(ABUND), 0, STEPS.length - 1, 1, Math.max(0, STEPS.findIndex(v => v >= ABUND)), (v, t) => { ABUND = STEPS[Math.round(v)]; t.textContent = aL(ABUND); repopulate(); });
+    ctx.ui.slider(sL(SIZE), 1, 20, 1, SIZE, (v, t) => { SIZE = v; t.textContent = sL(SIZE); ctx.draw(); });
     const ecoOnly = SP.filter(s => /^ecology/.test(s.basis)).map(s => s.name), habEco = SP.filter(s => /habitat from ecology/.test(s.basis)).map(s => s.name);
     const note = ctx.ui.note('');
     function status() {
       const byS = {}; for (const a of drawn) byS[a.s.name] = (byS[a.s.name] || 0) + 1;
       const top = Object.entries(byS).sort((x, y) => y[1] - x[1]).slice(0, 6).map(([k, v]) => `${v} ${k.toLowerCase()}`).join(', ');
-      note.innerHTML = esc(`${drawn.length} animals within ${R_DRAW} m of the camera${top ? ` (${top})` : ''}; ${PH || ''}, ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][MON ?? 0]}. ` +
+      note.innerHTML = esc(`${drawn.length} animals within ${Math.round(R_DRAW)} m of the camera${ABUND > 1 ? ` (x${ABUND.toLocaleString('en-GB')} the simulated numbers)` : ''}${top ? ` (${top})` : ''}; ${PH || ''}, ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][MON ?? 0]}. ` +
         `Simulated: species, numbers and places are weighted by ${(D.totals.nbn + D.totals.gbif).toLocaleString('en-GB')} open records (${D.totals.located.toLocaleString('en-GB')} located to 100 m) and general ecology; positions are not observations. ` +
-        `${habEco.length ? `Habitat from general ecology only (too few located records): ${habEco.join(', ')}. ` : ''}${ecoOnly.length ? `General ecology only: ${ecoOnly.join(', ')}. ` : ''}Real sizes: come close (under 150 m) to see them${BIG ? ' (drawn 4 times larger: ?wildlife=big)' : ''}. Tap one for its card. `) +
+        `${habEco.length ? `Habitat from general ecology only (too few located records): ${habEco.join(', ')}. ` : ''}${ecoOnly.length ? `General ecology only: ${ecoOnly.join(', ')}. ` : ''}Real sizes: come close (under 150 m) to see them${SIZE > 1 ? ` (drawn ${SIZE} times larger than life)` : ''}. Tap one for its card. `) +
         'Sources: <a href="https://nbnatlas.org/" target="_blank" rel="noopener">NBN Atlas</a> (OGL, CC BY, CC0 records) and <a href="https://www.gbif.org/" target="_blank" rel="noopener">GBIF.org</a> (CC0, CC BY); habitats from © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> and OS Open Greenspace (OGL).';
       ctx.stats.wildlife = { animals: animals.length, drawn: drawn.length, birds: nB, foxes: nF, cells: CELLS.size, phase: PH, month: MON, updateMs: +msAvg.toFixed(3), ...(() => { const v = [...SAMP].filter(x => x === x).sort((a, b) => a - b); return v.length ? { frameMsMedian: +v[v.length >> 1].toFixed(3), frameMsP95: +v[Math.floor(v.length * .95)].toFixed(3), frameMsMax: +v.at(-1).toFixed(3), samples: v.length } : {}; })(), simMs: +simAvg.toFixed(3), cellMsMax: +cellMax.toFixed(2), pending: PENDING, loadMs: Math.round(loadMs) };
     }
