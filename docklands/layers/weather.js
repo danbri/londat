@@ -17,6 +17,7 @@
 import * as THREE from 'three/webgpu';
 import { WU } from '../water.js';
 import { fromLondon } from '../sky3.js';
+import { forecastDay } from '../meteo.js';
 
 const D2R = Math.PI / 180;
 const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
@@ -50,7 +51,8 @@ export default {
       if (age < -15) return (src.meteo[day] = { why: 'Open-Meteo forecasts reach 16 days ahead' });
       const end = new Date(t + 864e5).toISOString().slice(0, 10), q = `latitude=51.505&longitude=-0.02&start_date=${day}&end_date=${end}&timeformat=unixtime&timezone=GMT`;
       const url = age > 85 ? `https://archive-api.open-meteo.com/v1/archive?${q}&hourly=${VARS.replace('visibility,', '')}` : `https://api.open-meteo.com/v1/forecast?${q}&hourly=${VARS}`;
-      try { const r = await fetch(url), J = await r.json(); if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status);
+      try { let J; if (age <= 85) J = await forecastDay(day);   // shared with the wind layer (../meteo.js)
+        else { const r = await fetch(url); J = await r.json(); if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status); }
         return (src.meteo[day] = { rows: rowsOf(J.hourly, s => s * 1000), name: age > 85 ? 'Open-Meteo archive (ERA5 reanalysis, no visibility)' : age > 0 ? 'Open-Meteo forecast API, past hours' : 'Open-Meteo forecast' });
       } catch (e) { console.warn('weather: Open-Meteo', e); return { why: 'Open-Meteo did not answer: ' + e.message }; }
     }

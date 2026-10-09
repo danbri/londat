@@ -19,6 +19,7 @@
 import { WU, SU, setFetch, setRiver, surfaceData, setWakes } from '../water.js';
 import { riverLine, makeDebris } from '../debris.js';
 import { fromLondon } from '../sky3.js';
+import { forecastDay } from '../meteo.js';
 
 const D2R = Math.PI / 180;
 const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
@@ -45,8 +46,9 @@ export default {
     async function getMeteo(t) {
       const day = new Date(t).toISOString().slice(0, 10), old = Date.now() - t > 85 * 864e5, host = old ? 'historical-forecast-api.open-meteo.com' : 'api.open-meteo.com';
       if (src.meteo && src.meteo.day === day) return src.meteo;
-      try { const r = await fetch(`https://${host}/v1/forecast?latitude=51.505&longitude=-0.02&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=ms&timeformat=unixtime&timezone=GMT&start_date=${day}&end_date=${new Date(t + 864e5).toISOString().slice(0, 10)}`);
-        const J = await r.json(); if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status);
+      try { let J; if (!old) J = await forecastDay(day);   // shared with the weather layer (../meteo.js)
+        else { const r = await fetch(`https://${host}/v1/forecast?latitude=51.505&longitude=-0.02&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=ms&timeformat=unixtime&timezone=GMT&start_date=${day}&end_date=${new Date(t + 864e5).toISOString().slice(0, 10)}`);
+          J = await r.json(); if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status); }
         src.meteo = { day, rows: J.hourly.time.map((s, i) => [s * 1000, J.hourly.wind_speed_10m[i], J.hourly.wind_direction_10m[i], J.hourly.wind_gusts_10m[i]]).filter(r => r[1] != null && r[2] != null) }; src.meteoErr = null;
       } catch (e) { src.meteoErr = e.message; console.warn('wind: Open-Meteo', e); }
       return src.meteo;
