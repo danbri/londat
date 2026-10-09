@@ -2055,3 +2055,20 @@ official data."
 - Parity: every group of the WebGL page now has a port (docklands/README.md). Partial: under (no station cut-outs),
   WebXR (no Ride, Drone, Photo, Wind), styles (pixel art without photo facades or actors). Not ported: the drawer tabs
   (waiting for the owner's menu rework).
+
+## 2026-10-09: Three.js port, menu, recorded aircraft, defaults
+
+- Menu rework (53d6211a): six tabs, every old control placed (README Menu map, 63 rows, `docklands/test/menu-check.mjs`
+  passes at 390 and 1280 px), the time wheels at the top, full credits, Share this view restored. Defaults on: Realistic
+  buildings, Open-Meteo wind and weather, all Data overlays and River parts; KML feeds off; helicopter route off
+  (b2398b10). River fix for parts that start on (0cc05117).
+- Recorded aircraft (b4685592): adsb.lol live API has no CORS header, so the owner chose a 7-day cache. Orphan branch
+  `adsb-cache` (https://github.com/danbri/londat/tree/adsb-cache), 2026-10-02 to 2026-10-08, 2,041 to 2,384 aircraft a
+  day, 35.7 MB; `cwplans/tools/fetch-adsb-cache.mjs` streams the adsb.lol daily history (4.2 GB a day, resumes with HTTP
+  Range); workflow `adsb-cache.yml` at 05:41 and 13:41 UTC. The page plays the clock's day, else the same weekday and
+  London time. Register: source `adsb-lol`, `branches` entry.
+- Tests: load WebGL 2 and WebGPU pass; WebGPU with every layer on at 390 px is over the 180 s limit in software, so the
+  aircraft were tested with `layers=water,tide,planes`. Register check and `npm test` (33) pass.
+- Open: the workflow has not run on GitHub yet (first run 13:41 UTC); the trail line looks apart from the model in
+  close-ups; the drawer covers the left of the wheels at 1280 px.
+

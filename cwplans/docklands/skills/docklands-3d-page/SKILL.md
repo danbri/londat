@@ -1852,6 +1852,29 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   a frame submitted in 15 to 24 ms (WebGL 2) and 47 to 102 ms (WebGPU with shadows and bloom). Software numbers only;
   not yet measured on a phone GPU.
 
+## Three.js port: menu, time wheels and defaults (2026-10-09)
+
+Owner, 2026-10-09: "Ensure all functionality we had in original menus is available but through more intuitive structure.
+Include a looping carousel at top for time of day, time of year."
+- `docklands/menu.js`: the drawer has six tabs (Views, Look, Layers, Go, Time, About). `ctx.ui` methods take an optional
+  `{tab}`; `ui.tab(place)` switches the place and returns the previous one. `MENU_PLACE` in `main.js` gives each layer
+  its place; a module can override it with `menu:`. Layers groups: City, Below ground, Water and river, Live, Simulated,
+  Data overlays, My KML. The drawer closes by its cross, Escape, a tap on the map and a swipe left.
+- `docklands/carousel.js`: the two wheels at the top (time of day, day of year), both wrap; sun, night shading, moon
+  phases, the daily tide range with S and N marks. A clock set by the visitor goes into the share hash as `t=`.
+- Menu > Views > Share this view (as nav.js in the WebGL page): the share sheet on a touch screen, else the clipboard.
+- The Menu map in https://github.com/danbri/londat/blob/main/docklands/README.md lists every old control and its new
+  place ("WebGL only" where the port has none). Check: `node docklands/test/menu-check.mjs --base <server>`.
+- Defaults (owner, 2026-10-09: "Default to realistic buildings and all wind/weather", "all checkbox datasets on by
+  default (except kml feeds)", "Uncheck helicopter route default"): Realistic buildings (`?look=0` off), Open-Meteo wind
+  and weather (`?weather=0` off), every Data overlays part except the helicopter route (`?ov=`), every River part
+  (`?river=`). Floors and splats stay off.
+- Faults met: all River parts on at load meant the day-change rebuild read `RV.data.pla` before it loaded (WebGPU page
+  error "reading 'items'"); `buildPart` now returns until a part's files are in. With every layer on, a page takes
+  longer than the load test's 180 s at 390 px on software WebGPU, and the menu check takes about 25 minutes: test the
+  aircraft or one layer with `--query 'layers=...'`. Open-Meteo answers 429 after many test runs from one container.
+- Open: at 1280 px the open drawer covers the left part of the wheels; the aircraft status note does not fold.
+
 ## Water over the LiDAR ground (2026-10-08)
 
 The LiDAR ground under the river and the docks is the survey's water surface (Thames median 2.8 m OD = the water level).
