@@ -1,0 +1,37 @@
+# Near-live data for the Docklands 3D page (docklands/), every 5 minutes: cwplans/tools/fetch-live-cache.mjs asks
+#   - adsb.lol /v2/point/51.505/-0.02/25 (aircraft, ODbL 1.0): rolling buffer of the last 60 minutes -> aircraft.json
+#   - Open Waters AIS /v1/vessels (ships; licence filter and the small-craft rule of fetch-ais.mjs): last 2 hours -> ships.json
+#   - aviationweather.gov METAR EGLC (London City Airport, NOAA public domain): last 24 hours -> metar.json
+# and force-pushes them as the only commit of the orphan branch live-cache (git history does not grow; nothing on main).
+# The page reads https://raw.githubusercontent.com/danbri/londat/live-cache/<file> (Access-Control-Allow-Origin: *);
+# api.adsb.lol and aviationweather.gov send no CORS header, so the browser cannot ask them itself.
+# Owner, 2026-10-09: "Couldn't we crontab it for every 5 mins? And default to live for the rest?", "We want the webapp to
+# always have fresh air and boat data plus recent history", "Basically we want all the data we can".
+# NOTE: GitHub may delay or skip schedules this frequent when Actions is under load (and disables schedules in a
+# repository with no activity for 60 days); the page treats a file older than 20 minutes as not live.
+# Skills: docklands-sky ("Live aircraft in the Three.js port", "METAR"), cwplans-river-and-water ("AIS: Open Waters").
+# Register: data-register.json "branches" (live-cache), sources adsb-lol, openwaters-ais, awc-metar.
+name: live-cache
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: live-cache
+  cancel-in-progress: true
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check out main (the tool)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch aircraft, ships and METAR; force-push the one-commit branch live-cache
+        run: node cwplans/tools/fetch-live-cache.mjs --out "$RUNNER_TEMP/live-cache" --restore --push

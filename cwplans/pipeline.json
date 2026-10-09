@@ -9195,6 +9195,48 @@
       "note": "skill docklands-sky, 'Live aircraft in the Three.js port'; workflow .github/workflows/adsb-cache.yml (daily)"
     },
     {
+      "id": "fetch-live-cache",
+      "area": "sky",
+      "tool": "tools/fetch-live-cache.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live-cache.mjs --out <dir> [--restore] [--push] [--only aircraft|ships|metar]",
+      "kind": "fetch",
+      "network": true,
+      "used": [
+        {
+          "source": "adsb-lol",
+          "endpoint": "https://api.adsb.lol/v2/point/51.505/-0.02/25",
+          "request": "one GET a run (every 5 minutes), User-Agent naming this repository; 3 tries on 429, 5xx and timeouts"
+        },
+        {
+          "source": "openwaters-ais",
+          "endpoint": "https://ais.openwaters.io/v1/vessels?bbox=51.474,-0.095,51.528,0.085",
+          "request": "one GET a run, anonymous tier"
+        },
+        {
+          "source": "awc-metar",
+          "endpoint": "https://aviationweather.gov/api/data/metar?ids=EGLC&format=json&hours=24",
+          "request": "one GET a run"
+        },
+        {
+          "local": "branch live-cache of danbri/londat (with --restore: the previous aircraft.json, ships.json and metar.json, by git fetch --depth=1 and git show)"
+        }
+      ],
+      "generated": [
+        {
+          "local": "branch live-cache: README.md, aircraft.json, ships.json, metar.json (data-register.json 'branches')"
+        }
+      ],
+      "method": "Asks the three sources once each and adds the answers to rolling buffers. Aircraft: each report [t = answer time - seen_pos, lat, lon, altitude above the WGS84 ellipsoid (alt_geom, else alt_baro + the answer's median (alt_geom - alt_baro) below 10,000 ft), height source, ground speed, track, vertical rate, turn rate], the last 60 minutes. Ships: the newest position of each kept vessel added when it moved or 30 minutes passed; positions of the last 2 hours, the newest kept at any age while Open Waters lists the vessel. METAR: the reports of the last 24 hours with visibility in metres from the report text. A source that fails keeps its previous file. --push builds the orphan commit with a temporary index (GIT_INDEX_FILE, git write-tree, git commit-tree) and force-pushes refs/heads/live-cache, so the branch always has one commit.",
+      "rules": [
+        "Aircraft privacy rule of docklands/planes-live.js identified(): callsign and ICAO address (the key) only for an operator ICAO callsign without LADD/PIA and with an ICAO address; every other aircraft gets an anonymous key x<n>, joined to its earlier anonymous reports only by type and a dead-reckoned position (tolerance 1.5 km + 30 % of the distance flown, nearest first, within 20 minutes), never by address; no registration, owner or squawk.",
+        "Ships: the licence filter of fetch-ais.mjs (CC0, NLOD, CC BY kept; AISHub and aisstream.io kept for scoping, owner 2026-10-04; others dropped and counted) and its small-craft rule (ITU 36/37, class B without a commercial type, class and type not heard: counted in snaps[].private_not_listed, never listed).",
+        "Ground vehicles and obstacles (ADS-B category C, type TWR/GND/SERV) and reports with seen_pos over 60 s are not kept.",
+        "Not on main: one commit on the orphan branch live-cache, so git history does not grow; the main working tree and index are never touched.",
+        "Licences: ODbL 1.0 (adsb.lol), per event (Open Waters AIS), public domain (NOAA AWC METAR); the branch README carries the notices."
+      ],
+      "note": "skills docklands-sky ('Live aircraft in the Three.js port', 'METAR (London City Airport)') and cwplans-river-and-water ('AIS: Open Waters'); workflow .github/workflows/live-cache.yml (every 5 minutes)"
+    },
+    {
       "id": "build-zone-gpkg",
       "area": "feeds",
       "tool": "tools/build-zone-gpkg.mjs",

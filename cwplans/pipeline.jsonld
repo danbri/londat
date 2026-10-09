@@ -9908,6 +9908,54 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolfetchlivecache",
+   "@type": "prov:Activity",
+   "rdfs:label": "fetch-live-cache",
+   "dct:description": "Asks the three sources once each and adds the answers to rolling buffers. Aircraft: each report [t = answer time - seen_pos, lat, lon, altitude above the WGS84 ellipsoid (alt_geom, else alt_baro + the answer's median (alt_geom - alt_baro) below 10,000 ft), height source, ground speed, track, vertical rate, turn rate], the last 60 minutes. Ships: the newest position of each kept vessel added when it moved or 30 minutes passed; positions of the last 2 hours, the newest kept at any age while Open Waters lists the vessel. METAR: the reports of the last 24 hours with visibility in metres from the report text. A source that fails keeps its previous file. --push builds the orphan commit with a temporary index (GIT_INDEX_FILE, git write-tree, git commit-tree) and force-pushes refs/heads/live-cache, so the branch always has one commit.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcadsblol",
+     "dcat:accessURL": "https://api.adsb.lol/v2/point/51.505/-0.02/25",
+     "dct:description": "one GET a run (every 5 minutes), User-Agent naming this repository; 3 tries on 429, 5xx and timeouts"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcopenwatersais",
+     "dcat:accessURL": "https://ais.openwaters.io/v1/vessels?bbox=51.474,-0.095,51.528,0.085",
+     "dct:description": "one GET a run, anonymous tier"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcawcmetar",
+     "dcat:accessURL": "https://aviationweather.gov/api/data/metar?ids=EGLC&format=json&hours=24",
+     "dct:description": "one GET a run"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localbranchlivecacheofdanbrilondatwithrestorethepreviousaircraftjsonshipsjsonandmetarjsonbygitfetchdepth1andgitshow"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://kgx.foaf.tv/id/localbranchlivecachereadmemdaircraftjsonshipsjsonmetarjsondataregisterjsonbranches"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/fetch-live-cache.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fetch-live-cache.mjs --out <dir> [--restore] [--push] [--only aircraft|ships|metar]",
+   "cwp:kind": "fetch",
+   "cwp:rule": [
+    "Aircraft privacy rule of docklands/planes-live.js identified(): callsign and ICAO address (the key) only for an operator ICAO callsign without LADD/PIA and with an ICAO address; every other aircraft gets an anonymous key x<n>, joined to its earlier anonymous reports only by type and a dead-reckoned position (tolerance 1.5 km + 30 % of the distance flown, nearest first, within 20 minutes), never by address; no registration, owner or squawk.",
+    "Ships: the licence filter of fetch-ais.mjs (CC0, NLOD, CC BY kept; AISHub and aisstream.io kept for scoping, owner 2026-10-04; others dropped and counted) and its small-craft rule (ITU 36/37, class B without a commercial type, class and type not heard: counted in snaps[].private_not_listed, never listed).",
+    "Ground vehicles and obstacles (ADS-B category C, type TWR/GND/SERV) and reports with seen_pos over 60 s are not kept.",
+    "Not on main: one commit on the orphan branch live-cache, so git history does not grow; the main working tree and index are never touched.",
+    "Licences: ODbL 1.0 (adsb.lol), per event (Open Waters AIS), public domain (NOAA AWC METAR); the branch README carries the notices."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "sky",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolbuildzonegpkg",
    "@type": "prov:Activity",
    "rdfs:label": "build-zone-gpkg",
@@ -25872,7 +25920,7 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "Open Waters AIS (Open Water Software, LLC): live AIS re-served from several upstream sources, anonymous tier, ais.openwaters.io /v1/vessels, /v1/stations, /v1/stream (SSE)",
+   "dct:title": "Open Waters AIS (Open Water Software, LLC): live AIS re-served from several upstream sources, anonymous tier, ais.openwaters.io /v1/vessels, /v1/stations, /v1/stream (SSE); also /v1/vessels every 5 minutes server-side by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml), the positions of the last 2 hours kept on the branch live-cache (ships.json; the licence filter and small-craft rule of fetch-ais.mjs)",
    "dct:license": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are not kept (owner decision). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
    "dcat:landingPage": "https://openwaters.io/ais/",
    "cwp:attribution": "Open Waters AIS (https://openwaters.io/ais/)"
@@ -25905,10 +25953,21 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "adsb.lol aircraft: the live API (api.adsb.lol /v2/point/51.505/-0.02/25: ADS-B and MLAT positions within 25 nm, readsb fields), fetched in the browser by the Three.js port's Aircraft layer (docklands/layers/planes.js, docklands/planes-live.js) only after the visitor ticks 'Live aircraft'; and the daily history (GitHub releases of adsblol/globe_history_<year>, tag v<YYYY.MM.DD>-planes-readsb-prod-0: readsb trace_full files of every aircraft, about 4.2 GB a day), from which cwplans/tools/fetch-adsb-cache.mjs keeps a 7-day extract on the branch adsb-cache",
+   "dct:title": "adsb.lol aircraft: the live API (api.adsb.lol /v2/point/51.505/-0.02/25: ADS-B and MLAT positions within 25 nm, readsb fields), fetched in the browser by the Three.js port's Aircraft layer (docklands/layers/planes.js, docklands/planes-live.js) only after the visitor ticks 'Live aircraft'; and the daily history (GitHub releases of adsblol/globe_history_<year>, tag v<YYYY.MM.DD>-planes-readsb-prod-0: readsb trace_full files of every aircraft, about 4.2 GB a day), from which cwplans/tools/fetch-adsb-cache.mjs keeps a 7-day extract on the branch adsb-cache; and, every 5 minutes, one answer of /v2/point/51.505/-0.02/25 asked server-side by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml), the last 60 minutes kept on the branch live-cache (aircraft.json)",
    "dct:license": "ODbL 1.0 (share-alike): OpenAPI info.license 'Open Data Commons Open Database License (ODbL) v1.0'; 'The license for the API as well as all data ADSB.lol makes public is ODbL'; each history release README: 'This database is made available under the Open Database License' (feeders waive their rights under CC0). API free to use, no key yet ('In the future, you will require an API key'); rate limits 'dynamic', not published",
    "dcat:landingPage": "https://api.adsb.lol/docs",
    "cwp:attribution": "Aircraft: © adsb.lol contributors, ODbL (https://adsb.lol, https://opendatacommons.org/licenses/odbl/1-0/)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcawcmetar",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "London City Airport (EGLC) METAR reports, NOAA Aviation Weather Center data API (aviationweather.gov /api/data/metar?ids=EGLC&format=json&hours=24), asked every 5 minutes by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml); the last 24 hours kept on the branch live-cache (metar.json)",
+   "dct:license": "NOAA/NWS: 'The information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise' (https://www.weather.gov/disclaimer, read 2026-10-09). The reports are made by the UK Met Office for the aerodrome and exchanged through the WMO (essential data, WMO Resolution 40). API terms (https://aviationweather.gov/data/api/): 'keep requests limited in scope and frequency', at most 100 requests a minute; one request each 5 minutes is used",
+   "dcat:landingPage": "https://aviationweather.gov/data/api/",
+   "cwp:attribution": "METAR: NOAA Aviation Weather Center (aviationweather.gov), London City Airport (EGLC)"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcopenwatersvolunteercc0",

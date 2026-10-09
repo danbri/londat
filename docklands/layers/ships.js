@@ -11,21 +11,27 @@
 // (or the committed snapshot), at its reported positions; no snapshot within 24 hours: moving vessels hidden (the note says so).
 // Wakes: each frame the nearest MAXW moving vessels go to water.js setWakes(). AIS headings are true; the page frame is
 // the British National Grid, so they are turned by the grid convergence (about 1.5 degrees here).
+// Near now the browser's own Open Waters request (every 60 s) is the first source; the live-cache branch (ships.json, the
+// 5-minute job cwplans/tools/fetch-live-cache.mjs, positions of the last 2 hours) is the second (when the request fails or
+// is older; ?aislive=0 skips the browser request) and gives each moving vessel a trail of the last hour that fades with
+// age; a page clock inside its 2 hours uses its positions at that time. Owner, 2026-10-09: "We want the webapp to always
+// have fresh air and boat data plus recent history".
 // ?ships=0 starts with the layer off; ?ships=test: 4 synthetic vessels on the Thames between Canary Wharf Pier and
 // Greenland Pier (no fetch); ?ais=snapshot: the committed file only (no live, no cache; for comparing with the WebGL page).
 // Skills: docklands-3d-page ("Ships (AIS)", "Three.js port"), cwplans-river-and-water ("AIS: Open Waters"), cwplans-londat-cache.
 import { WU, MAXW, setWakes } from '../water.js';
 import * as D from '../ships-data.js';
-import { vec3, float } from 'three/tsl';
+import { vec3, float, attribute } from 'three/tsl';
 
 const KN = 0.514444, CAP_S = 180, BLEND = 2000, NOW_TOL = 5 * 60e3, HIST_MAX = 24 * 3600e3, CAP = 256;
+const LC_EVERY = 60e3, TRAIL_MS = 60 * 60e3, TRAIL_MAX = 8000;   // live-cache: read every 60 s; trails of the last hour
 const deg = Math.PI / 180, wrap = a => { a %= 2 * Math.PI; return a < -Math.PI ? a + 2 * Math.PI : a > Math.PI ? a - 2 * Math.PI : a; };
 const okDeg = (a, max) => a != null && isFinite(a) && a >= 0 && a < max ? a : null;   // AIS: heading 511 and course 360 = not available
 
 export default {
   id: 'ships', label: 'Ships (AIS)', on: true,
   async init(ctx, on) {
-    const { THREE, A, qs, esc } = ctx, TEST = qs.get('ships') === 'test', ONLY_SNAPSHOT = qs.get('ais') === 'snapshot';
+    const { THREE, A, qs, esc } = ctx, TEST = qs.get('ships') === 'test', ONLY_SNAPSHOT = qs.get('ais') === 'snapshot', AISLIVE = qs.get('aislive') !== '0';
     const G = A.meta.geo, geo = (lon, lat) => { const a = lon - G.lon0, b = lat - G.lat0, t = [1, a, b, a * b, a * a, b * b]; return [t.reduce((s, v, i) => s + v * G.x[i], 0), t.reduce((s, v, i) => s + v * G.z[i], 0)]; };
     const E = A.meta.extent, inBox = (x, z) => x >= E.x0 && x <= E.x1 && z >= E.z0 && z <= E.z1;
     const conv = (lon, lat) => { const [x0, z0] = geo(lon, lat), [x1, z1] = geo(lon, lat + 1e-3); return Math.atan2(x1 - x0, -(z1 - z0)); };   // grid bearing of true north
@@ -66,6 +72,31 @@ export default {
     const lamp = c => { const m = new THREE.MeshBasicNodeMaterial(); m.colorNode = vec3(...c).mul(9); return inst(new THREE.OctahedronGeometry(.5, 0), m, CAP * 3, false); };
     const lampW = lamp([1, .95, .85]), lampR = lamp([1, .08, .05]), lampG = lamp([.1, 1, .35]);
     const ALL = [hulls, supers, masts, plates, arrows, lampW, lampR, lampG];
+    // trails of moving vessels from the live-cache buffer (last hour): one LineSegments, colour by type, fading with age
+    const trailPos = new Float32Array(TRAIL_MAX * 6), trailCol = new Float32Array(TRAIL_MAX * 6), trailFade = new Float32Array(TRAIL_MAX * 2), trailGeo = new THREE.BufferGeometry();
+    trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3).setUsage(THREE.DynamicDrawUsage));
+    trailGeo.setAttribute('tcol', new THREE.BufferAttribute(trailCol, 3).setUsage(THREE.DynamicDrawUsage));
+    trailGeo.setAttribute('fade', new THREE.BufferAttribute(trailFade, 1).setUsage(THREE.DynamicDrawUsage)); trailGeo.setDrawRange(0, 0);
+    const trailMat = new THREE.LineBasicNodeMaterial({ transparent: true, depthWrite: false }); trailMat.colorNode = attribute('tcol', 'vec3'); trailMat.opacityNode = attribute('fade', 'float');
+    const trailLines = new THREE.LineSegments(trailGeo, trailMat); trailLines.frustumCulled = false; trailLines.name = 'ship trails'; trailLines.visible = false; group.add(trailLines);
+    let trailSegs = 0;
+    function drawTrails(ref) {
+      let n = 0; const T = SH.lc && SH.lc.tracks;
+      if (T) for (const S of drawn) {
+        if (S.test || !S.moving) continue; const P = T.get(S.v.mmsi); if (!P || P.length < 1) continue;
+        const pts = []; for (const p of P) if (p[0] <= ref && ref - p[0] < TRAIL_MS) { const [x, z] = geo(p[2], p[1]); pts.push([x, z, p[0]]); }
+        if (!pts.length) continue; pts.push([S.x, S.z, ref]);
+        const y = S.y + .6, c = S.col;
+        for (let i = 1; i < pts.length && n < TRAIL_MAX; i++) {
+          const a = pts[i - 1], b = pts[i]; if (Math.hypot(b[0] - a[0], b[1] - a[1]) > 3000) continue;   // a jump: no line
+          trailPos.set([a[0], y, a[1], b[0], y, b[1]], n * 6); trailCol.set([...c, ...c], n * 6);
+          trailFade[n * 2] = .85 * Math.max(0, 1 - (ref - a[2]) / TRAIL_MS); trailFade[n * 2 + 1] = .85 * Math.max(0, 1 - (ref - b[2]) / TRAIL_MS); n++;
+        }
+      }
+      const was = trailSegs; trailSegs = n; if (!was !== !n) status(); trailGeo.setDrawRange(0, n * 2); trailLines.visible = n > 0;
+      if (n) { for (const k of ['position', 'tcol', 'fade']) trailGeo.attributes[k].needsUpdate = true; trailGeo.computeBoundingSphere(); }
+      if (ctx.stats.ships) ctx.stats.ships.trails = n;
+    }
     const col = new THREE.Color(), dummy = new THREE.Object3D();
     const HULL = [.93, .94, .96], BARGE = [.38, .33, .3];
 
@@ -132,11 +163,22 @@ export default {
       try { const d = await D.loadSnapshot(ctx.loadJSON); SH.meta = d.meta; return d; } catch (e) { SH.lastError = 'snapshot: ' + e.message; status(); return null; }
     }
     async function fetchLive() {
-      clearTimeout(SH.timer); if (TEST || ONLY_SNAPSHOT || SH.busy || !visible || document.hidden || SH.mode !== 'now') return; SH.busy = true;
+      clearTimeout(SH.timer); if (TEST || ONLY_SNAPSHOT || !AISLIVE || SH.busy || !visible || document.hidden || SH.mode !== 'now') return; SH.busy = true;
       try { const d = await D.loadLive(); SH.attribution = d.attribution; if (SH.mode === 'now') setData(d.list, 'live', d.at); SH.err = 0; SH.wait = 60e3; SH.lastError = null; }
-      catch (e) { SH.err++; SH.wait = Math.min(16 * 60e3, 60e3 * 2 ** SH.err); SH.lastError = e.message; if (SH.from !== 'live' && !SH.triedCache) { SH.triedCache = true; nearestCache(Date.now()).then(r => { if (r && SH.mode === 'now' && SH.from !== 'live' && (!SH.at || Date.parse(r.at) > Date.parse(SH.at))) setData(r.list, 'cache', r.at, r); }); } status(); }
+      catch (e) { SH.err++; SH.wait = Math.min(16 * 60e3, 60e3 * 2 ** SH.err); SH.lastError = e.message; loadLC(true); if (SH.from !== 'live' && !SH.triedCache) { SH.triedCache = true; nearestCache(Date.now()).then(r => { if (r && SH.mode === 'now' && SH.from !== 'live' && (!SH.at || Date.parse(r.at) > Date.parse(SH.at))) setData(r.list, 'cache', r.at, r); }); } status(); }
       finally { SH.busy = false; schedule(); }
     }
+    // the live-cache branch: the second source near now, the trails, and the positions of the last 2 hours
+    async function loadLC(force) {
+      if (TEST || ONLY_SNAPSHOT || SH.lcBusy || (!force && Date.now() - (SH.lcTry || 0) < LC_EVERY)) return SH.lc;
+      SH.lcBusy = true; SH.lcTry = Date.now();
+      try { SH.lc = await D.loadLiveCache(); SH.lcError = null; } catch (e) { SH.lcError = e.message; }
+      finally { SH.lcBusy = false; }
+      const lc = SH.lc;
+      if (lc && SH.mode === 'now' && (SH.from !== 'live' || SH.err > 0) && (!SH.at || Date.parse(lc.at) > Date.parse(SH.at))) setData(lc.list, 'live-cache', lc.at, lc);
+      status(); ctx.draw(); return lc;
+    }
+    const lcCovers = T => SH.lc && T >= SH.lc.first - 5 * 60e3 && T <= Date.parse(SH.lc.at) + 10 * 60e3;
     function schedule() { clearTimeout(SH.timer); if (!TEST && !ONLY_SNAPSHOT && visible && !document.hidden && SH.mode === 'now') SH.timer = setTimeout(fetchLive, SH.wait); }
     // the cache run nearest time t, or null
     async function nearestCache(t) {
@@ -146,8 +188,10 @@ export default {
     let histJob = 0;
     async function loadHistory(T) {
       const job = ++histJob; SH.from = 'loading'; status();
-      const snap = SH.snapshot || (SH.snapshot = await loadSnapshot()), cache = ONLY_SNAPSHOT ? null : await nearestCache(T); if (job !== histJob) return;
-      const cands = [cache, snap && { list: snap.list, at: snap.at, from: 'snapshot' }].filter(Boolean);
+      const snap = SH.snapshot || (SH.snapshot = await loadSnapshot()), cache = ONLY_SNAPSHOT ? null : await nearestCache(T);
+      if (!ONLY_SNAPSHOT && Math.abs(T - Date.now()) < 3 * 3600e3) await loadLC(); if (job !== histJob) return;
+      const lcAt = lcCovers(T) ? D.liveCacheAt(SH.lc, Math.min(T, Date.parse(SH.lc.at))) : null;
+      const cands = [lcAt, cache, snap && { list: snap.list, at: snap.at, from: 'snapshot' }].filter(Boolean);
       if (!cands.length) { setData([], 'none', null); return; }
       const best = cands.reduce((a, b) => Math.abs(Date.parse(b.at) - T) < Math.abs(Date.parse(a.at) - T) ? b : a), gap = Date.parse(best.at) - T;
       SH.hist = { T, far: Math.abs(gap) > HIST_MAX };
@@ -199,7 +243,7 @@ export default {
       }
       const set = (m, n) => { n = Math.min(n, m.instanceMatrix.count); m.count = Math.max(1, n); m.visible = n > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
       set(hulls, c.hull); set(supers, c.sup); set(masts, c.mast); set(plates, c.plate); set(arrows, c.arrow); set(lampW, c.W); set(lampR, c.R); set(lampG, c.G);
-      placeLabels();
+      placeLabels(); drawTrails(ref);
       const wakes = drawn.filter(S => (S.test || S.moving) && (S.test ? S.spd : S.vnow ?? S.spd) > .3).map(S => ({ S, d: (S.x - cam.x) ** 2 + (S.z - cam.z) ** 2 })).sort((a, b) => a.d - b.d).slice(0, MAXW)
         .map(({ S }) => ({ x: S.x, z: S.z, heading: ((S.co % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI), speed: S.test ? S.spd : S.vnow ?? S.spd, len: S.L, accel: S.acc || 0 }));
       SH.wakes = wakes.length; if (ctx.stats.ships) ctx.stats.ships.wakes = wakes.length; setWakes(wakes);
@@ -228,7 +272,7 @@ export default {
       add('Status', v.nav_status != null ? D.NAV[v.nav_status] || `code ${v.nav_status}` : null); add('Destination', v.destination);
       add('Last heard', v.seen ? `${lt(v.seen)} (London time)` : null);
       add('MMSI', S.test ? null : v.mmsi); add('IMO', v.imo); add('Call sign', v.callsign); add('Flag', v.flag);
-      const scoping = v.source === 'aishub' || v.source === 'aisstream', what = { live: 'live', snapshot: 'snapshot', cache: 'hourly cache', test: 'synthetic test' }[SH.from] || SH.from;
+      const scoping = v.source === 'aishub' || v.source === 'aisstream', what = { live: 'live', 'live-cache': '5-minute cache (live-cache)', snapshot: 'snapshot', cache: 'hourly cache', test: 'synthetic test' }[SH.from] || SH.from;
       const when = SH.mode === 'history' ? `Positions as reported at ${esc(lt(SH.at))} (the snapshot nearest the page clock), not now.` : S.moving && !S.test ? 'Position now: dead-reckoned from the last report along the course at the reported speed, 3 minutes at most.' : '';
       ctx.showCard(`<h2>${esc(v.name || 'MMSI ' + v.mmsi)}</h2><p class="small">AIS · ${esc(what)}</p><table>${rows.join('')}</table>` +
         `<p class="small">Source: ${esc(v.attribution)} (event source: ${esc(v.source)}). ${scoping ? 'Shown for scoping; licence under review (AISHub / aisstream.io).' : ''} ` +
@@ -249,14 +293,15 @@ export default {
     function status() {
       const lt = iso => { try { return new Date(iso).toLocaleString('en-GB', { timeZone: 'Europe/London', dateStyle: 'medium', timeStyle: 'short' }); } catch { return iso || '?'; } }, n = SH.n;
       const what = SH.from === 'test' ? '4 synthetic test vessels (?ships=test), not AIS' : SH.from === 'loading' ? 'loading the snapshot nearest the page clock…'
-        : SH.from === 'live' ? `live from Open Waters AIS, ${lt(SH.at)}` : SH.from === 'cache' ? `hourly cache (londat) run of ${lt(SH.at)}` : SH.from === 'snapshot' ? `snapshot of ${lt(SH.at)} (committed file)` : 'no data';
+        : SH.from === 'live' ? `live from Open Waters AIS, ${lt(SH.at)}` : SH.from === 'live-cache' ? `live-cache (Open Waters AIS every 5 minutes) of ${lt(SH.at)}` : SH.from === 'cache' ? `hourly cache (londat) run of ${lt(SH.at)}` : SH.from === 'snapshot' ? `snapshot of ${lt(SH.at)} (committed file)` : 'no data';
       const priv = n.private || n.private_counted;
       let s = `${n.shown || 0} vessels and aids to navigation shown, ${what}${priv ? `; ${priv} small private craft not shown` : ''}${n.outside ? `; ${n.outside} outside the model` : ''}${n.nopos ? `; ${n.nopos} listed in that run with no position in the 8 runs before it` : ''}`;
       if (SH.mode === 'history' && SH.from !== 'loading') s += SH.hist && SH.hist.far ? `. No AIS snapshot within 24 hours of the page clock: moving vessels hidden, moored ones from the nearest (${((SH.gap || 0) / 3600e3).toFixed(0)} h away)` : `. The page clock is not now: positions as reported then (${((SH.gap || 0) / 60e3).toFixed(0)} min from the clock)`;
       else if (SH.mode === 'now' && SH.from !== 'test') s += '. Moving vessels are dead-reckoned from their last report, 3 minutes at most';
       if (SH.lastError && SH.err && SH.mode === 'now') s += `; live request failed (${SH.lastError}), next try in ${Math.round(SH.wait / 60e3)} min`;
+      if (SH.lc && trailSegs) s += `. Trails: the last hour of positions from the 5-minute live-cache (newest run ${lt(SH.lc.at)})`; else if (SH.lcError && SH.mode === 'now') s += `; the live-cache could not be read (${SH.lcError})`;
       note.innerHTML = esc(s + '. Tap a ship for its record. ') + 'Source: <a href="https://openwaters.io/ais/" target="_blank" rel="noopener">Open Waters AIS</a> (AISHub, aisstream.io: shown for scoping, licence under review). Not for navigation.';
-      ctx.stats.ships = { from: SH.from, at: SH.at, mode: SH.mode, ...SH.n, wakes: SH.wakes || 0, run: SH.run, gapMin: SH.gap != null ? Math.round(SH.gap / 60e3) : null };
+      ctx.stats.ships = { from: SH.from, at: SH.at, mode: SH.mode, ...SH.n, wakes: SH.wakes || 0, trails: trailSegs, lc: SH.lc ? SH.lc.at : SH.lcError ? 'error' : null, run: SH.run, gapMin: SH.gap != null ? Math.round(SH.gap / 60e3) : null };
     }
     const setVisible = v => { visible = v; group.visible = v; if (!v) { clearTimeout(SH.timer); setWakes([]); for (const el of LBL.values()) el.hidden = true; } else if (SH.mode === 'now') fetchLive(); ctx.draw(); };
     ctx.ui.toggle(TEST ? 'Ships (test vessels)' : 'Ships (AIS), live', on, setVisible);
@@ -269,7 +314,8 @@ export default {
     document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(SH.timer); else if (visible && SH.mode === 'now') fetchLive(); });
     // the page clock may move: check each second. The ships move with the animation loop (on by default); with ?animate=0
     // the page draws only on a change, and the ships take their new positions at the next frame.
-    setInterval(() => { if (!TEST) setMode(); }, 1000);
+    setInterval(() => { if (TEST) return; setMode(); if (visible && !document.hidden && (SH.mode === 'now' || (SH.lc && lcCovers(ctx.clock)))) loadLC(); }, 1000);
+    if (!TEST && !ONLY_SNAPSHOT) loadLC(true);
     group.visible = on;
     const api = { object: group, setVisible, ownUi: true, get SH() { return SH; }, get vessels() { return drawn.map(S => ({ mmsi: S.v.mmsi, name: S.v.name, x: S.x, y: S.y, z: S.z, h: S.h, L: S.L, moving: !!(S.test || S.moving), speed: S.test ? S.spd : S.vnow ?? S.spd })); },
       screenOf(mmsi) { const S = drawn.find(q => q.v.mmsi === mmsi); if (!S) return null; v3.set(S.x, S.y + S.H + 3, S.z).project(ctx.camera); return { x: (v3.x + 1) / 2 * innerWidth, y: (1 - v3.y) / 2 * innerHeight, z: v3.z }; },

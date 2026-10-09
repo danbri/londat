@@ -4,6 +4,8 @@
 //   - the committed snapshot ../cwplans/feeds/river/ais.json (cwplans/tools/fetch-ais.mjs), at once;
 //   - live: GET https://ais.openwaters.io/v1/vessels?bbox=... (anonymous, CORS *), by the layer every 60 s while the tab is
 //     visible and the layer is on (the WebGL page's rule);
+//   - the live-cache branch (ships.json: every 5 minutes, positions of the last 2 hours; loadLiveCache below): the second
+//     source near now (when the live request fails or is older) and the trails of moving vessels;
 //   - the londat cache (cwplans/cache/runs/<day>/live-*.json.gz, cwplans/tools/cache-londat.mjs): a run file holds the
 //     ais_vessels rows of every vessel listed in that run and the ais_positions rows that were new; a snapshot is
 //     rebuilt from the run nearest the page clock and the runs before it. Runs are listed through the GitHub contents API
@@ -113,4 +115,31 @@ export async function loadRun(run, runs) {
       sog: p[5], cog: p[6], heading: p[7], nav_status: p[8], seen: new Date(p[1] * 1000).toISOString(), source: p[9], attribution: ATTR[p[9]] || OW });
   }
   return { list, at, from: 'cache', run: run.day + '/' + run.name, n: { private_counted: fetchRow ? fetchRow[2] : null, nopos } };
+}
+
+// ---------- the live-cache branch (cwplans/tools/fetch-live-cache.mjs, every 5 minutes; owner, 2026-10-09: "We want the
+// webapp to always have fresh air and boat data plus recent history"): ships.json holds every vessel Open Waters listed
+// in the last run (the licence filter and the small-craft rule already applied by the tool) and its positions of the
+// last 2 hours. Read from raw.githubusercontent.com (Access-Control-Allow-Origin: *; the CDN keeps a file about 5 min).
+// Returns { list (newest position of each vessel, the record shape above), at (the run time), tracks: Map mmsi ->
+// [[t ms, lat, lon, sog kn, cog, heading, nav_status], ...] oldest first, from: 'live-cache', n: { private_counted } }.
+export const LIVECACHE = 'https://raw.githubusercontent.com/danbri/londat/live-cache/';
+export async function loadLiveCache(base = LIVECACHE) {
+  const r = await fetch(base + 'ships.json', { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout(15000) });
+  if (!r.ok) throw Object.assign(new Error('live-cache HTTP ' + r.status), { status: r.status });
+  const d = await r.json(), t0 = d.t0 * 1000, tracks = new Map(), list = [];
+  for (const v of d.vessels || []) {
+    const P = v.P.map(p => [t0 + p[0] * 1000, p[1] / 1e5, p[2] / 1e5, p[3] == null ? null : p[3] / 10, p[4], p[5], p[6]]);
+    tracks.set(v.mmsi, P); list.push(cacheRow(v, P.at(-1)));
+  }
+  const last = (d.snaps || []).at(-1), priv = last ? Object.values(last.private_not_listed || {}).reduce((s, x) => s + x, 0) : null;
+  return { list, at: new Date(d.now).toISOString(), tracks, from: 'live-cache', n: { private_counted: priv, nopos: 0 }, first: d.snaps && d.snaps.length ? d.snaps[0].t : d.now };
+}
+const cacheRow = (v, p) => ({ mmsi: v.mmsi, kind: v.kind, name: v.name, callsign: v.callsign, imo: v.imo, flag: v.flag, ship_type: v.ship_type, class: v.class, length: v.length, beam: v.beam,
+  destination: v.destination, lat: p[1], lon: p[2], sog: p[3], cog: p[4], heading: p[5], nav_status: p[6], seen: new Date(p[0]).toISOString(), source: v.source, attribution: v.attribution || OW });
+// the live-cache picture at time t (ms) inside its buffer: each vessel at its last position at or before t
+export function liveCacheAt(lc, t) {
+  const list = [];
+  for (const v of lc.list) { const P = lc.tracks.get(v.mmsi) || []; let p = null; for (const q of P) if (q[0] <= t) p = q; if (p) list.push({ ...v, lat: p[1], lon: p[2], sog: p[3], cog: p[4], heading: p[5], nav_status: p[6], seen: new Date(p[0]).toISOString() }); }
+  return { ...lc, list, at: new Date(t).toISOString() };
 }

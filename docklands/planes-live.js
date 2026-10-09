@@ -7,6 +7,7 @@
 // This module: the request and its back-off (startFeed), the record of each aircraft between polls (dead reckoning,
 // smoothing, the 2-minute trail), the ICAO type designator -> model table (modelFor), altitude to metres OD (geoid
 // offset from OSGM15), and the privacy rule (identified). Facts and measurements: skill docklands-sky, "Aircraft".
+// The near-live 5-minute cache (createNearLive) and the 7-day recorded cache (createRecorded) are at the end.
 // URL: ?adsb=<base URL> asks another server with the same /v2/point API (a relay; https or this site only).
 import { FT, KT } from './planes-data.js';
 
@@ -321,4 +322,89 @@ export function createRecorded({ geo, conv, groundAt, base }) {
     return out;
   }
   return Object.assign(R, { loadIndex, choose, states, file });
+}
+
+// ---------- NEAR-LIVE aircraft: the 5-minute cache (branch live-cache of danbri/londat, aircraft.json, built by
+// cwplans/tools/fetch-live-cache.mjs from the adsb.lol live API; workflow .github/workflows/live-cache.yml). Owner,
+// 2026-10-09: "Couldn't we crontab it for every 5 mins? And default to live for the rest?" The file holds the reports of
+// the last 60 minutes (one answer per run). The page shows them when the page clock is inside the buffer or up to
+// NL.reckon + NL.fade after the newest answer, and the file is less than NL.fresh old: between two reports of an aircraft
+// it moves in a straight line in time; after its last report it moves on by ground speed and track (turn rate for at most
+// NL.turn s, vertical rate for at most NL.climb s) for NL.reckon s, then its label fades for NL.fade s and it goes. Read from
+// raw.githubusercontent.com (Access-Control-Allow-Origin: *; its CDN keeps a file about 5 min, and a query string does
+// not change that: measured 2026-10-09), every NL.every ms while wanted. URL: ?livecache=<base> reads another copy.
+export const NL = { base: 'https://raw.githubusercontent.com/danbri/londat/live-cache/', every: 60000, fresh: 20 * 60e3,
+  reckon: 360, fade: 360, turn: 30, climb: 120, maxGap: 1260, trail: 1200 };
+export function liveCacheBase(qs) {
+  const q = qs && qs.get('livecache');
+  if (q) { try { const u = new URL(q, location.href); if (u.protocol === 'https:' || u.origin === location.origin) return u.href.replace(/\/?$/, '/'); } catch { /* keep the default */ } }
+  return NL.base;
+}
+export function createNearLive({ geo, conv, groundAt, base }) {
+  const R = { state: 'idle', error: null, data: null, legs: [], base, lastTry: 0, loads: 0 };
+  const deg = Math.PI / 180;
+  function decode(j) {
+    const t0 = j.t0 * 1000, out = [];
+    for (const L of j.ac) {
+      const n = L.P.length, t = new Float64Array(n), x = new Float64Array(n), y = new Float64Array(n), z = new Float64Array(n), gs = new Float32Array(n), trk = new Float32Array(n), q = new Uint8Array(n), alt = new Float32Array(n), vr = new Float32Array(n), tr = new Float32Array(n), lat = new Float64Array(n), lon = new Float64Array(n);
+      L.P.forEach((p, i) => {
+        t[i] = t0 + p[0] * 1000; lat[i] = p[1] / 1e5; lon[i] = p[2] / 1e5; alt[i] = p[3] * 25; q[i] = p[4]; gs[i] = p[5]; trk[i] = p[6]; vr[i] = p[7] || 0; tr[i] = (p[8] || 0) / 100;
+        const [xx, zz] = geo(lon[i], lat[i]); x[i] = xx; z[i] = zz;
+        const g = groundAt(xx, zz); y[i] = q[i] === 2 ? g : Math.max(g, alt[i] * FT - geoidN(lon[i], lat[i]));
+      });
+      out.push({ k: L.k, c: L.c, ty: L.ty, cat: L.cat, M: modelFor({ t: L.ty, category: L.cat }), t, x, y, z, gs, trk, q, alt, vr, tr, lat, lon, n, near: true });
+    }
+    return out;
+  }
+  // read the file (no-cache: the browser revalidates by ETag instead of keeping it max-age=300)
+  async function load() {
+    R.lastTry = Date.now(); if (R.state !== 'ready') R.state = 'loading';
+    try {
+      const r = await fetch(base + 'aircraft.json', { cache: 'no-cache', credentials: 'omit', referrerPolicy: 'no-referrer' });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json(); if (!j || !Array.isArray(j.ac)) throw new Error('no aircraft list');
+      if (!R.data || j.now !== R.data.now) { R.data = j; R.legs = decode(j); }
+      R.state = 'ready'; R.error = null; R.loads++;
+    } catch (e) { R.error = e.name === 'TypeError' ? 'the request failed' : e.message; if (!R.data) R.state = 'error'; }
+    R.onLoad && R.onLoad();
+  }
+  const maybeLoad = () => { if (Date.now() - R.lastTry >= NL.every && R.state !== 'loading') load(); };
+  const newest = () => R.data ? R.data.now : 0;
+  const fresh = () => !!R.data && Date.now() - R.data.now < NL.fresh;
+  // may the near-live picture stand for page time T (ms)?
+  const covers = T => fresh() && T >= R.data.snaps[0].t - 60e3 && T <= R.data.now + (NL.reckon + NL.fade) * 1000;
+  function states(T) {
+    if (!covers(T)) return null;
+    const out = [];
+    for (const L of R.legs) {
+      if (!L.M || T < L.t[0]) continue;
+      let S, i = L.n - 1, f1 = 0, alpha = 1, est = 0, trkTrue;
+      if (T <= L.t[L.n - 1]) {   // between two reports: straight in time
+        let lo = 0, hi = L.n - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (L.t[m] <= T) lo = m; else hi = m; }
+        if (L.t[hi] - L.t[lo] > NL.maxGap * 1000) continue;
+        f1 = L.t[hi] > L.t[lo] ? (T - L.t[lo]) / (L.t[hi] - L.t[lo]) : 0; i = lo;
+        const mix = a => a[lo] + (a[hi] - a[lo]) * f1, dT = ((L.trk[hi] - L.trk[lo] + 540) % 360) - 180, dt = Math.max(1, (L.t[hi] - L.t[lo]) / 1000);
+        const trk = L.trk[lo] + dT * f1, vs = (L.y[hi] - L.y[lo]) / dt, ground = L.q[lo] === 2 && L.q[hi] === 2, v = mix(L.gs) * KT;
+        S = { x: mix(L.x), y: mix(L.y), z: mix(L.z), h: trk * deg + conv, v, vs, ground, rate: dT * deg / dt }; trkTrue = trk;
+      } else {                   // after the last report: dead reckoning, then the fade
+        const dt = (T - L.t[i]) / 1000; if (dt > NL.reckon + NL.fade) continue;
+        est = dt; alpha = dt <= NL.reckon ? 1 : 1 - (dt - NL.reckon) / NL.fade;
+        const ground = L.q[i] === 2, v = L.gs[i] * KT, h0 = L.trk[i] * deg + conv, w = Math.max(-0.1, Math.min(0.1, L.tr[i] * deg)), tt = Math.min(dt, NL.turn);
+        let x = L.x[i], z = L.z[i], h = h0;
+        if (!(ground && v < 1)) {
+          if (Math.abs(w) > 1e-4) { h = h0 + w * tt; x += v / w * (Math.cos(h0) - Math.cos(h)); z -= v / w * (Math.sin(h) - Math.sin(h0)); }
+          x += Math.sin(h) * v * (dt - (Math.abs(w) > 1e-4 ? tt : 0)); z -= Math.cos(h) * v * (dt - (Math.abs(w) > 1e-4 ? tt : 0));
+        }
+        const vs = ground ? 0 : L.vr[i] * FT / 60, y = ground ? groundAt(x, z) : Math.min(13700, Math.max(groundAt(x, z), L.y[i] + vs * Math.min(dt, NL.climb)));
+        S = { x, y, z, h, v, vs, ground, rate: dt < NL.turn ? w : 0 }; trkTrue = ((h - conv) / deg + 720) % 360;
+      }
+      const pitch = S.ground ? 0 : Math.atan2(S.vs, Math.max(S.v, 20)) + (L.M.kind === 'heli' ? -3 * deg : 3 * deg);
+      const bank = S.ground ? 0 : Math.max(-0.6, Math.min(0.6, Math.atan(S.v * S.rate / 9.81)));
+      const trail = []; for (let k = i; k >= 0 && T - L.t[k] < NL.trail * 1000; k--) trail.unshift([L.t[k], L.x[k], L.y[k], L.z[k]]);
+      out.push({ L, i, f: f1, trail, trkTrue, est, alpha, S: { x: S.x, y: S.y, z: S.z, h: S.h, pitch, bank, v: S.v, vs: S.vs, ground: S.ground,
+        gear: L.M.kind === 'heli' || S.ground || (S.y < 900 && S.vs < -1) || S.y < 200, landOn: S.ground ? S.v > 20 * KT : S.y < 760 } });
+    }
+    return out;
+  }
+  return Object.assign(R, { load, maybeLoad, fresh, covers, states, newest });
 }

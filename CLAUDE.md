@@ -67,7 +67,13 @@ planning and prototyping phase."
   time and day of week."): the last 7 days of the adsb.lol history, 25 nm round the zone, on the orphan branch
   `adsb-cache` (one commit, not on main), by `cwplans/tools/fetch-adsb-cache.mjs` and `.github/workflows/adsb-cache.yml`.
   Register source `adsb-lol` and `branches` entry `adsb-cache`; details in the `docklands-sky` skill, "Live aircraft in
-  the Three.js port".
+  the Three.js port". Committed near-live snapshots are approved too (owner, 2026-10-09: "Couldn't we crontab it for
+  every 5 mins? And default to live for the rest?"; then "We want the webapp to always have fresh air and boat data plus
+  recent history" and "Basically we want all the data we can"): every 5 minutes `cwplans/tools/fetch-live-cache.mjs`
+  (`.github/workflows/live-cache.yml`) force-pushes the one-commit orphan branch `live-cache` with the adsb.lol answers of
+  the last hour (`aircraft.json`, same privacy rule), the Open Waters AIS vessels of the last 2 hours (`ships.json`, the
+  AIS rules below) and the London City Airport METAR of the last 24 hours (`metar.json`, NOAA Aviation Weather Center,
+  public domain; register source `awc-metar`). Branch entry `live-cache`. The page shows them by default near now.
 - Website crawls are allowed for scoping (owner, 2026-10-03: "Website crawls - direct and via IA or CommonCrawl etc are
   fair use for our scoping purposes."). This covers pages fetched directly, from the Internet Archive or from Common
   Crawl, and data extracted from them. Record each crawl in the data register with its method and date. Re-check these

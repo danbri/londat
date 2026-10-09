@@ -1,4 +1,8 @@
-// Layer "planes" of the Three.js port (docklands/): aircraft. By default RECORDED aircraft: the adsb.lol history of the
+// Layer "planes" of the Three.js port (docklands/): aircraft. Near now (the page clock within the last hour or a few
+// minutes ahead) by default NEAR-LIVE aircraft: the 5-minute cache of the adsb.lol live API (branch live-cache,
+// aircraft.json, cwplans/tools/fetch-live-cache.mjs; owner, 2026-10-09: "Couldn't we crontab it for every 5 mins? And
+// default to live for the rest?"), drawn between the reports of the last hour and moved on for a few minutes after the
+// last one, then faded; ?adsblive=0 off. For other times RECORDED aircraft: the adsb.lol history of the
 // last 7 days (ODbL 1.0; branch adsb-cache, cwplans/tools/fetch-adsb-cache.mjs) for the page clock's date when it is held,
 // else for the held day with the same weekday, at the same London time (owner, 2026-10-09: "For today build a cache of
 // last 7 days for our areas, and show equivalent data for the matching time and day of week."); index and hour files are
@@ -33,7 +37,7 @@
 import { WU } from '../water.js';
 import * as P from '../planes-data.js';
 import { aircraftParts } from '../planes-models.js';
-import { ADSB, feedUrl, startFeed, createTracks, identified, REC, recBase, createRecorded, londonParts } from '../planes-live.js';
+import { ADSB, feedUrl, startFeed, createTracks, identified, REC, recBase, createRecorded, londonParts, NL, liveCacheBase, createNearLive } from '../planes-live.js';
 import { vec3 } from 'three/tsl';
 
 const { FT, KT } = P, deg = Math.PI / 180, G0 = 9.81;
@@ -226,9 +230,13 @@ export default {
       lastFrameAt = performance.now(); if (reqAt) { const r0 = reqAt; reqAt = 0; requestAnimationFrame(() => requestAnimationFrame(() => { lag = performance.now() - r0; lastFrameAt = performance.now(); })); }
       if (!visible) return;
       const T = simT(), now = performance.now(), liveNow = showingLive(), LS = liveNow ? tracks.states(Date.now()) : [];
-      const RS = !liveNow && recWanted() ? rec.states(T) : null; recNow = !!RS;
+      const NS = !liveNow && nlWanted(T) ? nl.states(T) : null; nlNow = !!NS;
+      const nlWait = !liveNow && !NS && nlWanted(T) && !nl.data && (nl.state === 'loading' || nl.state === 'idle');   // the first read: draw nothing yet
+      const RS = !liveNow && !NS && !nlWait && recWanted() ? rec.states(T) : null; recNow = !!RS;
       const list = liveNow ? LS.map(({ k, r, S }) => ({ key: 'L' + k.hex, T: r.M, live: r, track: k, S }))
+        : NS ? NS.map(s => ({ key: 'N' + s.L.k, T: s.L.M, rec: s, near: true, track: { trail: s.trail }, S: s.S }))
         : RS ? RS.map(s => ({ key: 'R' + s.L.k, T: s.L.M, rec: s, track: { trail: s.trail }, S: s.S }))
+        : nlWait ? []
         : recWanted() && rec.state !== 'error' && (rec.state === 'loading' || rec.state === 'idle' || (rec.pick && rec.file(rec.pick.t).state === 'loading')) ? []
         : TEST ? TESTSET.map(F => ({ ...F, tau: F.tau + (RUN ? (now - tStart) / 1000 : 0) })) : traffic(T);
       const night = ctx.U.night.value > 0.02, cam = ctx.camera.position, keep = new Set(); drawn = [];
@@ -255,7 +263,7 @@ export default {
       }
       for (const k of [...live.keys()]) if (!keep.has(k)) release(k);
       if (qs.has('planecam')) planeCam();   // before the labels, which are placed with the camera of this frame
-      drawTrails(liveNow || recNow ? drawn : []); showCredit(liveNow, recNow);
+      drawTrails(liveNow || recNow || nlNow ? drawn : []); showCredit(liveNow, recNow, nlNow);
       placeLabels(); status();
     }
     // &planecam=<n>: the camera near aircraft n of the drawn list (test, recorded or live), then it follows that aircraft
@@ -302,8 +310,9 @@ export default {
       for (const d of drawn) { const { F, S } = d; if (Math.hypot(cam.x - S.x, cam.y - S.y, cam.z - S.z) > 9000 || !host) continue; keep.add(F.key);
         let el = LBL.get(F.key); if (!el || el.dataset.code !== F.T.code) { if (el) el.remove(); el = document.createElement('button'); el.type = 'button'; el.className = 'lab plane'; el.dataset.code = F.T.code; el.onclick = () => card(F.key); host.appendChild(el); LBL.set(F.key, el); }
         const ft = S.y / FT, alt = S.ground ? 'ground' : `${ft < 1000 ? Math.round(ft / 10) * 10 : (Math.round(ft / 100) * 100).toLocaleString('en-GB')} ft`;
-        const txt = F.live ? `${identified(F.live.ac) ? F.live.ac.flight.trim() : (F.live.ac.t || F.T.code)} ${alt}` : F.rec ? `REC ${F.rec.L.c || F.rec.L.ty || F.T.code} ${alt}` : `SIM ${F.T.code} ${alt}`; if (el.textContent !== txt) el.textContent = txt;
+        const txt = F.live ? `${identified(F.live.ac) ? F.live.ac.flight.trim() : (F.live.ac.t || F.T.code)} ${alt}` : F.near ? `${F.rec.L.c || F.rec.L.ty || F.T.code} ${alt}` : F.rec ? `REC ${F.rec.L.c || F.rec.L.ty || F.T.code} ${alt}` : `SIM ${F.T.code} ${alt}`; if (el.textContent !== txt) el.textContent = txt;
         if (el.classList.contains('live') !== !!(F.live || F.rec)) el.classList.toggle('live', !!(F.live || F.rec));
+        const op = F.near ? String(Math.max(0.15, F.rec.alpha).toFixed(2)) : ''; if (el.style.opacity !== op) el.style.opacity = op;   // near-live: fades after NL.reckon
         v3.set(S.x, S.y + (d.lift || 0) + (F.T.H || 5) * 0.7, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H;
         if (vis) el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,calc(-100% - 10px))`; if (el.hidden === vis) el.hidden = !vis; }
       for (const [k, el] of LBL) if (!keep.has(k)) { el.remove(); LBL.delete(k); }
@@ -313,6 +322,7 @@ export default {
     function card(key) {
       const d = drawn.find(q => q.F.key === key); if (!d) return; const { F, S } = d, rows = [], add = (k, v) => { if (v != null && v !== '') rows.push(`<tr><td>${k}</td><td>${esc(v)}</td></tr>`); };
       if (F.live) return liveCard(F, S, rows, add);
+      if (F.near) return nearCard(F, S, rows, add);
       if (F.rec) return recCard(F, S, rows, add);
       const Pr = F.Pr, src = Pr ? P.SOURCES[Pr.src] : P.SOURCES.lhr, trueHdg = (((S.h - conv) / deg) % 360 + 360) % 360;
       add('Status', 'SIMULATED: not a real flight');
@@ -345,6 +355,19 @@ export default {
         (id ? '' : '<p class="small">Shown by type only (privacy rule: no operator callsign, or a blocked or privacy address).</p>') +
         `<table>${rows.join('')}</table><p class="small">Source: <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a>, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a> (© adsb.lol contributors), fetched by your browser from api.adsb.lol; nothing is stored. Received from volunteer ADS-B receivers: positions can be late, wrong or missing. Not for navigation.</p>`);
     }
+    // a near-live aircraft: the 5-minute cache of the adsb.lol live API (privacy rule applied by the cache tool)
+    function nearCard(F, S, rows, add) {
+      const s = F.rec, L = s.L, fmt = n => Math.round(n).toLocaleString('en-GB'), i = s.i, rep = L.t[i];
+      const q = ['GNSS height', 'pressure altitude + the answer\'s QNH correction', 'on the ground'][L.q[i]];
+      add('Status', s.est ? `NEAR-LIVE, estimated: last report ${hms(rep)} London (${Math.round(s.est / 60)} min ago), moved on by ground speed, track and vertical rate for at most ${NL.reckon / 60} min${s.est > NL.reckon ? ', fading' : ''}` : `NEAR-LIVE: between the reports of ${hms(rep)} and ${hms(L.t[i + 1])} London`);
+      add('Type', L.ty ? `${L.ty}; model drawn: ${F.T.type}` : `not sent (category ${L.cat || 'not sent'}); model drawn: ${F.T.type}`);
+      if (L.c) add('Callsign', L.c); else add('Callsign', 'not shown (privacy rule: only operator flights not on LADD/PIA)');
+      add('Height', S.ground ? 'on the ground' : `${fmt(S.y)} m OD (${fmt(S.y / FT)} ft); last report ${fmt(L.alt[i])} ft above the WGS84 ellipsoid (${q})`);
+      add('Speed and track', `${fmt(L.gs[i])} kt over the ground, track ${Math.round(s.trkTrue)}° true${L.vr[i] ? `, ${L.vr[i] > 0 ? 'climbing' : 'descending'} ${fmt(Math.abs(L.vr[i]))} ft/min` : ''}`);
+      add('Reports in the cache', `${L.n} in the last hour (one per run of the 5-minute job); the file's newest answer ${hms(nl.newest())} London`);
+      ctx.showCard(`<h2>${esc(L.c || L.ty || 'Aircraft')} <span class="small">near-live</span></h2>` +
+        `<table>${rows.join('')}</table><p class="small">Source: <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a> live API, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a> (© adsb.lol contributors), asked every 5 minutes by a GitHub Actions job of danbri/londat (branch live-cache) and read from raw.githubusercontent.com. Received from volunteer ADS-B receivers: positions can be late, wrong or missing. Not for navigation.</p>`);
+    }
     // a recorded aircraft: what the adsb.lol history holds for this leg (privacy rule applied by the cache tool)
     function recCard(F, S, rows, add) {
       const s = F.rec, L = s.L, fmt = n => Math.round(n).toLocaleString('en-GB'), pk = rec.pick, i = s.i;
@@ -373,7 +396,7 @@ export default {
     ctx.ui.section('Aircraft');
     let visible = on;
     const setVisible = v => { visible = v; group.visible = v; if (!v) { for (const k of [...live.keys()]) release(k); for (const el of LBL.values()) el.hidden = true; credit.hidden = true; } ctx.draw(); };
-    ctx.ui.toggle(TEST ? 'Aircraft (simulated, test scene)' : 'Aircraft (recorded or simulated), live on request', on, setVisible);
+    ctx.ui.toggle(TEST ? 'Aircraft (simulated, test scene)' : 'Aircraft (near-live, recorded or simulated)', on, setVisible);
 
     // ---------- live aircraft (adsb.lol, ODbL): only after the visitor ticks the box; nothing is asked before
     const tracks = createTracks({ geo, conv, groundAt: groundY });
@@ -400,11 +423,20 @@ export default {
     const recWanted = () => { if (!recOn || TEST || !visible) return false; if (rec.state === 'idle') rec.loadIndex().then(() => { status(); ctx.draw(); }); return rec.state === 'ready' || rec.state === 'loading' || rec.state === 'idle'; };
     // "Recorded Fri 2026-10-02 18:00 (adsb.lol, ODbL), same weekday and time"
     const recLabel = pk => { if (!pk) return ''; const p = londonParts(pk.t); return `Recorded ${p.wd} ${p.date} ${p.hm} London (adsb.lol, ODbL)${pk.exact ? '' : ', same weekday and time'}`; };
-    function showCredit(liveNow, recNowArg) {
-      const txt = liveNow ? 'Live (adsb.lol)' : recNowArg ? recLabel(rec.pick).replace(' (adsb.lol, ODbL)', '').replace(' and time', '') : '';   // one line at 390 px
+    function showCredit(liveNow, recNowArg, nlNowArg) {
+      const txt = liveNow ? 'Live (adsb.lol)' : nlNowArg ? nlLabel() : recNowArg ? recLabel(rec.pick).replace(' (adsb.lol, ODbL)', '').replace(' and time', '') : '';   // one line at 390 px
       if (creditTxt.textContent !== txt) creditTxt.textContent = txt;
-      credit.hidden = !(liveNow || recNowArg) || !visible;
+      credit.hidden = !(liveNow || recNowArg || nlNowArg) || !visible;
     }
+    // ---------- near-live aircraft (the 5-minute cache of the adsb.lol live API, branch live-cache): read when the layer is
+    // on, the box is ticked (default; ?adsblive=0 off) and the page clock is within 70 minutes of now; again every 60 s
+    const nl = createNearLive({ geo, conv, groundAt: groundY, base: liveCacheBase(qs) });
+    nl.onLoad = () => { status(); ctx.draw(); };
+    let nlNow = false, nlOn = !TEST && qs.get('adsblive') !== '0';
+    const nlWanted = T => { if (!nlOn || TEST || !visible || Math.abs(T - Date.now()) > 70 * 60e3) return false; nl.maybeLoad(); return true; };
+    const nlLabel = () => { const age = Math.max(0, Math.round((Date.now() - nl.newest()) / 60e3)), T = simT();
+      return T < nl.newest() - 120e3 ? `Last hour (adsb.lol, ${londonParts(T).hm} London)` : `Live (adsb.lol, ${age} min ago)`; };
+    if (!TEST) ctx.ui.toggle('Near-live aircraft (adsb.lol every 5 minutes, the last hour)', nlOn, v => { nlOn = v; status(); ctx.draw(); }).dataset.planesNear = '1';
     if (!TEST) ctx.ui.toggle('Recorded aircraft (adsb.lol history of the last 7 days, same weekday and time)', recOn, v => { recOn = v; status(); ctx.draw(); }).dataset.planesRec = '1';
 
     // ---------- trails of the live aircraft (last 2 minutes): thin lines, one draw call
@@ -426,23 +458,27 @@ export default {
     let lastNote = '';
     const hms = t => new Date(t).toLocaleTimeString('en-GB', { timeZone: 'Europe/London' });
     function status() {
-      const n = { lcy: 0, lhr: 0, h4: 0, live: 0, rec: 0 }; for (const { F } of drawn) F.live ? n.live++ : F.rec ? n.rec++ : F.line ? n.lhr++ : F.Pr.kind === 'heli' ? n.h4++ : n.lcy++;
+      const n = { lcy: 0, lhr: 0, h4: 0, live: 0, rec: 0, near: 0 }; for (const { F } of drawn) F.live ? n.live++ : F.near ? n.near++ : F.rec ? n.rec++ : F.line ? n.lhr++ : F.Pr.kind === 'heli' ? n.h4++ : n.lcy++;
       const open = lcyOpen(simT()), w = wind(), fd = LIVE.feed, liveNow = showingLive();
       const creditHtml = `Aircraft: © <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a> contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a>. `;
       let liveMsg = '';
       if (LIVE.want && !clockNow()) liveMsg = 'Live aircraft paused: the page clock is not now (set the clock to now). ';
       else if (LIVE.want && fd && !liveNow) liveMsg = fd.lastError ? `Live aircraft: adsb.lol did not answer: ${fd.lastError}; next try in ${Math.max(1, Math.round((fd.nextAt - Date.now()) / 1000))} s. ` : 'Live aircraft: waiting for adsb.lol. ';
       const pk = rec.pick, recMsg = !recOn || TEST ? '' : rec.state === 'error' ? `Recorded aircraft: the cache could not be read (${rec.error}). ` : rec.state === 'ready' && !pk ? 'Recorded aircraft: the cache holds no day with the same weekday as the page clock. ' : rec.state !== 'ready' ? 'Recorded aircraft: loading the cache. ' : '';
-      const s = recNow && !liveNow
+      const nlMsg = !nlOn || TEST ? '' : nl.state === 'error' ? `Near-live aircraft: the 5-minute cache could not be read (${nl.error}). ` : nl.data && !nl.fresh() ? `Near-live aircraft: the 5-minute cache is ${Math.round((Date.now() - nl.newest()) / 60e3)} min old (the job may be late). ` : '';
+      const s = nlNow && !liveNow
+        ? `${liveMsg}NEAR-LIVE: ${n.near} aircraft within ${ADSB.nm} nm. ${nlLabel()}: the newest answer of adsb.lol at ${hms(nl.newest())} London, asked every 5 minutes by a GitHub Actions job (GitHub can run it late); after an aircraft's last report it is moved on by its speed, track and vertical rate for ${NL.reckon / 60} min, then fades. `
+        : recNow && !liveNow
         ? `${liveMsg}RECORDED, not live: ${n.rec} aircraft within ${ADSB.nm} nm. ${recLabel(pk)}; page clock ${(p => `${p.wd} ${p.date} ${p.hm}`)(londonParts(simT()))} London. `
         : liveNow
         ? `LIVE: ${n.live} aircraft from adsb.lol within ${ADSB.nm} nm (answer at ${hms(fd.lastOk)} London, asked every ${ADSB.every / 1000} s while this box is ticked, the tab is visible and the clock is now). `
-        : `${liveMsg}${recMsg}SIMULATED traffic, not live: ${n.lcy} London City, ${n.lhr} Heathrow, ${n.h4} H4 helicopter${n.h4 === 1 ? '' : 's'} now. London City ${open ? `open, runway ${runway()} in use (wind ${Math.round(w.d)}° ${w.s.toFixed(1)} m/s)` : 'closed (AD 2.3 hours: Mon-Fri 06:30-22:00, Sat 06:30-12:30, Sun 12:30-22:00)'}; Heathrow ${lhrMode()} operations. `;
-      const key = s + (fd ? fd.state : '') + rec.state;
+        : `${liveMsg}${nlMsg}${recMsg}SIMULATED traffic, not live: ${n.lcy} London City, ${n.lhr} Heathrow, ${n.h4} H4 helicopter${n.h4 === 1 ? '' : 's'} now. London City ${open ? `open, runway ${runway()} in use (wind ${Math.round(w.d)}° ${w.s.toFixed(1)} m/s)` : 'closed (AD 2.3 hours: Mon-Fri 06:30-22:00, Sat 06:30-12:30, Sun 12:30-22:00)'}; Heathrow ${lhrMode()} operations. `;
+      const key = s + (fd ? fd.state : '') + rec.state + nl.state;
       if (key !== lastNote) { lastNote = key; note.innerHTML = esc(s) + (liveNow ? creditHtml + 'Positions between answers by dead reckoning; heights in m OD (geoid OSGM15); callsigns only for operator flights (privacy rule). '
+        : nlNow ? creditHtml + `Reports of the last hour from the adsb.lol live API (branch live-cache of danbri/londat, read from raw.githubusercontent.com), drawn between the reports; heights in m OD (geoid OSGM15); callsigns only for operator flights (privacy rule). `
         : recNow ? creditHtml + `Recorded tracks from the adsb.lol daily history (7-day cache, branch adsb-cache of danbri/londat, read from raw.githubusercontent.com), drawn between the recorded points; heights in m OD (geoid OSGM15); callsigns only for operator flights (privacy rule). ` : 'Procedures: UK AIP (Crown copyright / NATS, facts only); movements scaled to CAA airport data; hourly pattern, fleet mix and vectors assumed. ') +
-        (liveNow || recNow ? '' : `Live aircraft come from adsb.lol (© adsb.lol contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a>) only after you tick the box. `) + (recNow && !liveNow ? '' : 'The browser asks api.adsb.lol directly and nothing is stored. ') + 'Tap an aircraft for its card.'; }
-      ctx.stats.planes = { lcy: n.lcy, lhr: n.lhr, h4: n.h4, live: liveNow ? n.live : null, live_state: fd ? fd.state : 'off', rec: recNow ? n.rec : null, rec_state: recOn ? rec.state : 'off', rec_day: pk ? pk.date : null, rec_exact: pk ? pk.exact : null, runway: runway(), lhr_mode: lhrMode(), lcy_open: open, test: TEST ? MODE : null };
+        (liveNow || recNow || nlNow ? '' : `Live aircraft come from adsb.lol (© adsb.lol contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL 1.0</a>) only after you tick the box. `) + ((recNow || nlNow) && !liveNow ? '' : 'The browser asks api.adsb.lol directly and nothing is stored. ') + 'Tap an aircraft for its card.'; }
+      ctx.stats.planes = { lcy: n.lcy, lhr: n.lhr, h4: n.h4, live: liveNow ? n.live : null, live_state: fd ? fd.state : 'off', near: nlNow ? n.near : null, near_state: nlOn ? nl.state : 'off', near_age_s: nl.data ? Math.round((Date.now() - nl.newest()) / 1000) : null, rec: recNow ? n.rec : null, rec_state: recOn ? rec.state : 'off', rec_day: pk ? pk.date : null, rec_exact: pk ? pk.exact : null, runway: runway(), lhr_mode: lhrMode(), lcy_open: open, test: TEST ? MODE : null };
     }
 
     ctx.onFrame(frame);
@@ -451,13 +487,14 @@ export default {
     // so that the page is idle most of the time
     let reqAt = 0, lag = 0;
     setInterval(() => { const anim = document.getElementById('animate'), now = performance.now();
-      if (reqAt || !visible || (anim && anim.checked) || !drawn.length || (TEST && !RUN) || now - lastFrameAt < Math.max(showingLive() || recNow ? 1000 : 3000, 4 * lag)) return;
+      if (reqAt || !visible || (anim && anim.checked) || !drawn.length || (TEST && !RUN) || now - lastFrameAt < Math.max(showingLive() || recNow || nlNow ? 1000 : 3000, 4 * lag)) return;
       reqAt = now; ctx.draw(); }, 500);
     group.visible = on;
     return {
       object: group, setVisible, ownUi: true, PROC, traffic, stateOf,
-      get flights() { return drawn.map(({ F, S }) => ({ key: F.key, code: F.T.code, proc: F.live ? 'live' : F.rec ? 'recorded' : F.Pr ? F.Pr.name : 'lhr-' + F.line.mode, phase: S.phase, x: S.x, y: S.y, z: S.z, alt_ft: Math.round(S.y / FT), kt: Math.round(S.v / KT), gear: S.gear, t: F.live ? F.live.ac.t : F.rec ? F.rec.L.ty : undefined, rec: F.rec ? F.rec.L.k : undefined, trail: F.track ? F.track.trail.length : undefined })); },
+      get flights() { return drawn.map(({ F, S }) => ({ key: F.key, code: F.T.code, proc: F.live ? 'live' : F.near ? 'near-live' : F.rec ? 'recorded' : F.Pr ? F.Pr.name : 'lhr-' + F.line.mode, phase: S.phase, x: S.x, y: S.y, z: S.z, alt_ft: Math.round(S.y / FT), kt: Math.round(S.v / KT), gear: S.gear, t: F.live ? F.live.ac.t : F.rec ? F.rec.L.ty : undefined, rec: F.rec ? F.rec.L.k : undefined, trail: F.track ? F.track.trail.length : undefined })); },
       get recorded() { return { on: recOn, state: rec.state, error: rec.error, base: rec.base, pick: rec.pick, label: recLabel(rec.pick), days: rec.index ? rec.index.days.map(d => d.date) : [], showing: recNow }; },
+      get nearLive() { return { on: nlOn, state: nl.state, error: nl.error, base: nl.base, loads: nl.loads, newest: nl.newest() || null, fresh: nl.fresh(), covers: nl.covers(simT()), showing: nlNow, label: nl.data ? nlLabel() : '', aircraft: nl.legs.length }; },
       get live() { const f = LIVE.feed; return { want: LIVE.want, showing: !!showingLive(), url: LIVE.url, state: f ? f.state : 'off', polls: f ? f.polls : 0, errors: f ? f.errors : 0, lastError: f ? f.lastError : null, tracks: tracks.T.size, corr: tracks.corr }; },
       geo,
       screenOf(key) { const d = drawn.find(q => q.F.key === key); if (!d) return null; v3.set(d.S.x, d.S.y, d.S.z).project(ctx.camera); return { x: (v3.x + 1) / 2 * innerWidth, y: (1 - v3.y) / 2 * innerHeight, z: v3.z }; },

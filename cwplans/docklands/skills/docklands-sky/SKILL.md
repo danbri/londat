@@ -2,14 +2,14 @@
 name: docklands-sky
 description: >-
   The sky, the page clock, the weather and the tide on the Docklands 3D page (cwplans/docklands/sky.js, Menu > Sky,
-  ?t=2026-10-03T22:30 or ?t=photo): astronomy-engine sun, moon (phase, bright limb), planets, rise/set, twilight;
-  Bright Star Catalogue stars and the London star limit; constellation lines; the Milky Way band; CelesTrak satellites
-  and the next ISS pass; IAU star names and Messier objects; Open-Meteo clouds placed by the EUMETSAT cloud mask; live
-  and recorded aircraft (adsb.lol, port); London City Airport approach paths; EA tide readings by chainage along the Thames,
-  faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, ±4 min); the
-  fetch tool and snapshots (tools/fetch-sky.mjs, docklands/data/sky/). Reach for it before you change sky.js or its
-  hooks in index.html, add a sky object or source, refresh the snapshots, solve a photo's time from the sun or moon,
-  or explain what the sky, a star, a satellite or the river level shows. Licences and credits are here.
+  ?t=photo) and the Three.js port: astronomy-engine sun, moon (phase, bright limb), planets, rise/set, twilight; stars;
+  constellation lines; the Milky Way; CelesTrak satellites and the ISS; IAU star names and Messier objects; Open-Meteo
+  clouds placed by the EUMETSAT cloud mask; aircraft (adsb.lol: near-live 5-minute live-cache branch, recorded 7-day
+  cache, live API); the London City METAR (wind, low cloud); London City approach paths; EA tide readings by chainage,
+  faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, ±4 min);
+  tools/fetch-sky.mjs and its snapshots. Reach for it before you change sky.js or its hooks, add a sky object or source,
+  refresh the snapshots, solve a photo's time from the sun or moon, or explain what the sky, a star, a satellite, an
+  aircraft or the river level shows. Licences and credits.
 ---
 
 # Docklands sky, time, weather and tide
@@ -294,7 +294,7 @@ menu). Register: source `adsb-lol` in `cwplans/data-register.json` (with "review
 - **When it asks**: only after the visitor ticks "Live aircraft (adsb.lol, ODbL)" (Layers > Simulated); nothing before
   (the test counts the requests: 0 before the tap). Then every 8 s while the layer is on, the tab is visible and the page
   clock is within 5 minutes of the real time; paused otherwise. Errors: 15 s, doubled to 120 s; HTTP 429: 60 s at least;
-  10 s timeout. With no good answer for 60 s, or another clock, the recorded aircraft of the 7-day cache show (section below), else the simulation (labelled "simulated").
+  10 s timeout. With no good answer for 60 s, or another clock, the near-live 5-minute cache shows (section "Near-live aircraft" below), then the recorded aircraft of the 7-day cache, else the simulation (labelled "simulated").
 - **Position**: `geo(lon, lat)` (`A.meta.geo`, the quadratic fit of `build-docklands.mjs` `fitGeo()` over
   0.095 W-0.015 E, 51.474-51.522 N) used outside its fit box. Error against PROJ ETRS89 -> OSGB36 with OSTN15
   (EPSG:4258 -> 27700, `uk_os_OSTN15_NTv2_OSGBtoETRS.tif`): 0.01 m at the centre, 0.47 m at 10 km, 1.2 m at 20 km, 2.5 m
@@ -394,6 +394,87 @@ committed cache (the earlier decision said "nothing committed"); CLAUDE.md, "Dat
   aircraft, 80 of 101 moved. Close-ups on both backends: the model, the REC label and the trail; the card. With
   `planes=0`: no request to the cache. `docklands/test/load.mjs --query 'view=cw&layers=planes'`: ok at both sizes.
   The tool: backfill of 7 days (about 4 min a day), `--push` twice (the second: "already holds this tree").
+
+### Near-live aircraft, ships and METAR: the 5-minute live-cache (2026-10-09)
+
+Owner, 2026-10-09, after running the adsb-cache workflow by hand: "Couldn't we crontab it for every 5 mins? And default to
+live for the rest?"; then "We want the webapp to always have fresh air and boat data plus recent history" and "Basically we
+want all the data we can". CLAUDE.md, "Data policy", records the approval.
+
+- **Tool**: `cwplans/tools/fetch-live-cache.mjs`, one run = one GET each of adsb.lol `/v2/point/51.505/-0.02/25`, Open Waters
+  `/v1/vessels?bbox=51.474,-0.095,51.528,0.085` and aviationweather.gov `/api/data/metar?ids=EGLC&format=json&hours=24`
+  (User-Agent `londat-live-cache/1 (https://github.com/danbri/londat; ...)`). Buffers: aircraft 60 min, ships 2 h (plus the
+  newest position of every vessel Open Waters still lists: moored ones up to 7 days), METAR 24 h. A failed source keeps its
+  previous file. `--restore` reads the branch (`git fetch --depth=1 origin live-cache`, `git show FETCH_HEAD:<file>`);
+  `--push` = temporary index, `write-tree`, `commit-tree`, `push -f` (as fetch-adsb-cache). `--from-adsb/--from-ais/
+  --from-metar FILE` for tests. Register: branch `live-cache`, sources `adsb-lol`, `openwaters-ais` (+ AISHub, aisstream,
+  volunteer CC0), `awc-metar`; pipeline.json activity `fetch-live-cache`.
+- **aircraft.json**: `{v, generated, now (ms, newest answer), t0 (s), snaps [{t, n, total, corr_ft}], next_anon, ac: [{k,
+  c?, ty, cat, P: [[t s from t0, lat 1e-5, lon 1e-5, alt / 25 ft above WGS84, q 0 GNSS 1 pressure+corr 2 ground, gs kt,
+  track, vertical rate fpm (64), turn rate 0.01 deg/s]]}]}`. Report time = answer `now` - `seen_pos`; `seen_pos` > 60 s,
+  category C and type TWR/GND/SERV dropped. Privacy: `identified()` as before; identified aircraft are keyed by ICAO
+  address; every other aircraft gets `x<n>` and is joined to its earlier anonymous reports only by type and dead-reckoned
+  position (1.5 km + 30 % of the distance flown, nearest first, within 20 min), never by address (a salted hash of the
+  address would need a secret: 24 bits are brute-forced at once). Measured 2026-10-09 18:06-18:29 UTC: 66 to 69 aircraft an
+  answer, 61 to 63 kept, 3 to 5 by type only; 12 kB after 3 answers, 20 kB after 5; about 50 kB expected for 12.
+- **ships.json**: `{now, t0, snaps [{t, features, kept, dropped_licence, private_not_listed, no_position}], vessels:
+  [{mmsi, kind, name, callsign, imo, flag, ship_type, class, length, beam, destination, source, licence, licence_class,
+  attribution, P: [[t s from t0 (AIS "seen"), lat 1e-5, lon 1e-5, sog 0.1 kn, cog, heading, nav_status]]}]}`; a position is
+  added when the vessel moved or 30 min passed. Measured: 105 features, 83 to 84 kept, 22 small private craft counted;
+  34 to 38 kB. FAULT met: the first version dropped every vessel whose last report was over 2 h old (38 of 83 left): Open
+  Waters lists moored vessels up to 7 days; now the newest position stays.
+- **metar.json**: `{station, obs: [{t s, report, type, raw, wdir (deg true or "VRB"), wspd_kt, wgst_kt, vis_m (from the
+  report text: 9999 and CAVOK = 10000; the API's visib is statute miles, "6+"), clouds [{cover, base_ft}], temp_c, dewp_c,
+  qnh_hpa, flt_cat}]}`; 48 reports a day (two an hour), 15 kB. Terms (https://aviationweather.gov/data/api/): "keep requests
+  limited in scope and frequency", 100 requests a minute; NWS: "public domain, unless specifically noted otherwise". The
+  reports come from the Met Office through the WMO: review before anything leaves the prototyping phase.
+- **CORS** (checked 2026-10-09 with `Origin: https://danbri.github.io`): api.adsb.lol none, aviationweather.gov none,
+  ais.openwaters.io `*`, raw.githubusercontent.com `*`. So the browser reads the branch, and Open Waters itself first.
+- **raw.githubusercontent.com caching, measured**: `cache-control: max-age=300`; after a push at 18:08:41 UTC the new file
+  was served at 18:13:40 (5 min); a query string (`?m=<minute>`, `?m=<seconds>`) gave the same cached copy (`x-cache: HIT`,
+  same ETag): the CDN ignores the query, so the page does not add one. It reads with `cache: 'no-cache'` (the browser
+  revalidates by ETag instead of keeping its own copy 5 min). So the page's data are 5 to 12 minutes old (5 min CDN, up to
+  5 min to the next run, plus any delay of the schedule).
+- **Workflow**: `.github/workflows/live-cache.yml`, cron `*/5 * * * *` and workflow_dispatch, contents: write, concurrency
+  `live-cache` with cancel-in-progress, 4 min timeout, Node 22, GITHUB_TOKEN only. GitHub may delay or skip 5-minute
+  schedules under load. The branch `adsb-live` (first plan) was never pushed.
+- **Page, aircraft** (`planes-live.js` `createNearLive`, `NL`; `layers/planes.js`): order: tapped live (browser API or
+  `?adsb=` relay) > near-live (default) > recorded day > simulation. Near-live stands when the file is under 20 min old
+  (`NL.fresh`) and the page clock is between the oldest answer (- 1 min) and the newest answer + 12 min (`NL.reckon` 6 min
+  + `NL.fade` 6 min); read when the layer is on and the clock is within 70 min of now, again every 60 s. Between two
+  reports of an aircraft: straight in time (no line across a gap over 21 min); after the last report: ground speed and
+  track (turn rate for at most 30 s, vertical rate for at most 120 s, `NL.climb`: without that cap a climbing A320 reached
+  the 45,000 ft clamp after 11 min) for 6 min, then the label fades over 6 min and the aircraft goes. Trails: the reports
+  of the last 20 min plus the drawn position. While the first read is pending nothing is drawn (no flash of the recorded
+  day). Corner label "Live (adsb.lol, 3 min ago) · Aircraft: © adsb.lol contributors, ODbL", or "Last hour (adsb.lol, 18:42
+  London)" for a clock more than 2 min before the newest answer. Labels `<callsign or type> <ft>` (no prefix), card
+  "near-live". `?adsblive=0` off (menu "Near-live aircraft"), `?adsbrec=0` recorded off, `?livecache=<base>` another copy.
+  Hooks: `layers.planes.api.nearLive`, `STATS.planes.near`, `near_state`, `near_age_s`; flights `proc: 'near-live'`. The
+  aircraft-on-reported-position rule (no wheel lift in the air, `liftOf`) is kept: near-live goes through the `F.rec` path.
+- **Tests** (2026-10-09, `node docklands/test/live-cache-check.mjs [--webgpu] [--only planes|ships|metar]`, own server,
+  `?layers=` limits the page): no `?t=`: "Live (adsb.lol, 2 min ago)", 61 aircraft, 61 trail segments (WebGL 2) and "6 min
+  ago", 61 (WebGPU); `t=` yesterday: "Recorded Thu 2026-10-08 18:29 London", 70 aircraft; `adsblive=0&adsbrec=0`: 6 to 7
+  simulated, no credit. No request to api.adsb.lol in any case. `load.mjs --query 'layers=planes,water,tide&weather=0'`:
+  ok on WebGL 2 and WebGPU at both sizes.
+- **Open**: the data are 5 to 12 min old, so near now most aircraft are dead-reckoned (straight lines; a landing aircraft
+  overshoots the runway until it fades); a relay with CORS would give seconds (the owner's "eventually find or build a
+  proxy"); the GitHub contents API is fresh but allows 60 requests an hour without sign-in (not used); fading is the
+  label only (the aircraft materials are shared, so the model does not fade).
+
+### METAR (London City Airport) on the wind and weather layers (2026-10-09)
+
+Owner, 2026-10-09: "Yes" (use the real airport observation for the wind). `layers/wind.js` `getMetar()` (shared with
+`layers/weather.js`) reads `metar.json` of the live-cache branch (again when 5 min old). Wind: the report nearest the clock
+within 45 min, after `?wind=` and before every Open-Meteo source: speed and gust in knots x 0.514444, direction true
+(METAR), then `GRID_CONV` to the grid as before; "VRB" takes the direction of the nearest report that has one. Note
+"London City Airport METAR 17:20 (NOAA AWC, public domain)". Weather: the same report sets low cover (bases below
+6,500 ft) and mid cover (6,500 to 20,000 ft) from FEW 1.5/8, SCT 3.5/8, BKN 6/8, OVC 8/8 (NSC/NCD/CLR/SKC/CAVOK: 0), total
+cover at least the largest layer, visibility (10 km or more: the Open-Meteo value when larger), RA/DZ/SN when Open-Meteo
+has no rain, temperature and humidity from the dew point; the source reads "... + London City Airport METAR 17:20 (cloud
+layers, visibility ...)". With no Open-Meteo hour the METAR alone gives the weather. `?metar=0` off; menu box "Wind from
+the London City Airport METAR". Test (live-cache-check `--only metar`): `t=` 10 min after a METAR: wind 7.2 m/s from 240
+(METAR 24014KT), low cover 44 % (SCT022 SCT034), visibility 10 km; `t=2026-09-20T12:00`: no METAR source. Not done: cloud
+types (CB, TCU) are not drawn; "///" layers from an AUTO station count by their cover only.
 
 ## Not done
 

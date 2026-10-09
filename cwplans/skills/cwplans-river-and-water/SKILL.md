@@ -211,6 +211,31 @@ zone would do it. The token is a secret: keep it in the environment settings, ne
 tap (CORS, no key), filter by `source`/`license` in the page, markers with a heading arrow, card with name, type, speed,
 destination, time and source, and the per-source attribution in Credits.
 
+**The 5-minute live-cache (2026-10-09).** Owner, 2026-10-09: "We want the webapp to always have fresh air and boat data plus
+recent history". `cwplans/tools/fetch-live-cache.mjs` (workflow `.github/workflows/live-cache.yml`, cron `*/5`) asks
+`/v1/vessels?bbox=51.474,-0.095,51.528,0.085` once a run (with adsb.lol aircraft and the London City METAR) and
+force-pushes the one-commit orphan branch `live-cache`; `ships.json` holds every vessel of the last answer and its
+positions of the last 2 hours (a position is added when the vessel moved or 30 minutes passed; the newest position of a
+vessel Open Waters still lists is kept at any age: moored vessels stay listed up to 7 days). The rules are the same as
+this tool's (copied in the tool, as `fetch-ais.mjs` runs on import): licence per event (snapshot features by source;
+CC0, NLOD, CC BY kept; AISHub and aisstream.io kept for scoping; anything else dropped and counted in
+`snaps[].dropped_licence`) and the small-craft rule (counted in `snaps[].private_not_listed`, never listed). Measured
+2026-10-09 18:06-18:29 UTC: 105 to 106 features (93 aishub, 9 aisstream, 2 udp), 83 to 84 kept, 22 sailing or pleasure
+craft counted, 0 dropped by licence; 34 to 38 kB. FAULT met: the first version cut every vessel whose last report was
+older than 2 hours (38 of 83 left). Register: branch `live-cache`, source `openwaters-ais`; format: the `docklands-sky`
+skill, "Near-live aircraft, ships and METAR".
+- **Page (Three.js port, `docklands/ships-data.js` `loadLiveCache`, `liveCacheAt`; `docklands/layers/ships.js`)**: near now
+  the browser's own `/v1/vessels` request every 60 s stays the first source; the live-cache (read every 60 s from
+  raw.githubusercontent.com, `Access-Control-Allow-Origin: *`, CDN about 5 min) is the second when that request fails or
+  is older (`?aislive=0` skips the browser request); a page clock inside the buffer uses the buffer's positions at that
+  time; older clocks use the hourly cache as before. Each moving vessel gets a trail of the last hour from the buffer
+  plus its drawn position, coloured by type, opacity 0.85 falling to 0 at one hour (one LineSegments, `opacityNode` from a
+  vertex attribute; no line across a jump over 3 km). Dead reckoning (3 minutes), the card and the small-craft rule are
+  unchanged. `STATS.ships.from` (`live`, `live-cache`, `cache`, `snapshot`), `.trails`, `.lc`.
+- **Tests** (`node docklands/test/live-cache-check.mjs --only ships`, 2026-10-09, WebGL 2): no `?t=`: from live, 60
+  vessels shown, 22 private not shown, 40 trail segments; `?aislive=0`: from live-cache, 65 shown, 42 segments; `?t=`
+  yesterday: from the hourly cache run 2026-10-08 16:33Z, 58 shown, no trails.
+
 ## AIS: the aiscatcher.org community network (checked 2026-10-04, owner's lead)
 
 Owner's lead: "There is at least one active station explicitly named 'M7AZV River Thames AIS'. The whole network is
