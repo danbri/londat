@@ -1,9 +1,10 @@
 // Materials of the Three.js port of the Docklands 3D page, in TSL (three.js Shading Language): one node graph compiles to
 // WGSL on the WebGPU backend and to GLSL ES 3.0 on the WebGL 2 backend. The building material is the facade program of
 // index.html (ffs): by day the photo facade tiles, the Realistic look's walls and the Map window grid; by night lit windows
-// by building use (offices in floor bands, homes warm in clusters), shopfronts, One Canada Square's halo in the colour of
-// the evening, Newfoundland's diagrid crown and a band at the top of other towers, as emissive light, so the bloom pass
-// picks them up. Skill: docklands-3d-page, "Three.js port".
+// by building use, height and hour (nightNew: offices by floors and zones, homes by flats in a spread of colour temperatures,
+// cores, lobbies; ?nightstyle=old: nightOld, the version of 2026-10-04), shopfronts, One Canada Square's halo in the colour
+// of the evening, Newfoundland's diagrid crown and a band at the top of other towers, as emissive light, so the bloom pass
+// picks them up. Skill: docklands-3d-page, "Three.js port" and "Night windows by use and hour".
 import * as THREE from 'three/webgpu';
 import { If, Discard, Fn, attribute, positionWorld, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF, normalize, pow, reflect, transformNormalToView, screenUV, uniformArray, int, log2, exp2, mod, dFdx, dFdy } from 'three/tsl';
 import { waterDepth, WU, DEPTH } from './water.js';
@@ -19,7 +20,47 @@ export const U = {
   groundTex: uniform(0),          // 1: the terrain shows the ground image
   cut: uniform(1e9),              // m OD: buildings and structures above it are cut away (the below-ground view; layers/under.js sets it)
   win: uniform(1),                // 0: no windows (Look > Model > Windows, ?windows=0; index.html showWindows, uniform win): no day window grid or Realistic walls, no lit windows or shopfronts by night; photo facades and crowns stay
+  nP: uniform(new THREE.Vector4(0.36, 0.30, 0.48, 0.45)),   // night windows by the clock (nightClock): lit share of home rooms, office floors, hotel rooms, shopfronts (defaults: a weekday at 22:00)
+  nQ: uniform(new THREE.Vector4(0.9, 0.07, 0, 0)),        // ground-floor factor of homes, TV share of lit rooms, lateness (0 evening, 1 small hours), 1 on a weekend day
 };
+
+// Night windows, version 2 (2026-10-09; ?nightstyle=old keeps the version of 2026-10-04: homes warm in clusters, offices
+// cool by floors). Patterns, sources and the measurements against the owner's photos: skill docklands-3d-page, "Night windows
+// by use and hour".
+export const NIGHT_STYLE = typeof location !== 'undefined' && new URLSearchParams(location.search).get('nightstyle') === 'old' ? 'old' : 'new';
+// lit share by London hour (0 to 23; linear between hours). Drawn values, set so that 23:56 on a Saturday matches the photos
+// of 3 October 2026 (homes about a quarter of the rooms); the shape follows UK time-use surveys (evening peak 19 to 22 h, the
+// fall after 23 h) and office occupancy (cleaners and late work to about 22 h); offices keep about a fifth of their floors lit all
+// night, as the photos show on a Saturday at midnight (lights left on, cleaning, sensors that never time out).
+const NT = {
+  home:  [.17, .11, .07, .05, .04, .06, .14, .26, .22, .12, .10, .10, .10, .10, .10, .11, .16, .27, .37, .43, .45, .42, .36, .26],
+  off:   [.22, .20, .20, .20, .20, .22, .30, .45, .70, .85, .86, .86, .86, .86, .86, .85, .82, .78, .66, .52, .42, .35, .30, .26],
+  hotel: [.30, .20, .12, .08, .07, .10, .22, .38, .30, .15, .12, .12, .12, .12, .15, .20, .28, .36, .44, .52, .55, .54, .48, .40],
+  shop:  [.22, .20, .20, .20, .20, .22, .30, .55, .85, .95, .95, .95, .95, .95, .95, .95, .95, .95, .93, .85, .72, .58, .45, .32],
+};
+const atHour = (T, x) => { x = ((x % 24) + 24) % 24; const i = Math.floor(x), f = x - i; return T[i] + (T[(i + 1) % 24] - T[i]) * f; };
+const LONDON = typeof Intl !== 'undefined' ? new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hourCycle: 'h23', weekday: 'short', hour: 'numeric', minute: 'numeric' }) : null;
+// the window shares at clock t (ms): [pHome, pOffice, pHotel, pShop], [ground-floor factor, TV share, lateness, weekend]
+export function nightClock(t) {
+  if (!LONDON || !isFinite(t)) return null;
+  const P = Object.fromEntries(LONDON.formatToParts(new Date(t)).map(p => [p.type, p.value])), hr = +P.hour + (+P.minute) / 60;
+  const dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(P.weekday), nightDow = hr < 5 ? (dow + 6) % 7 : dow;   // the small hours belong to the evening before
+  const lateNight = nightDow === 4 || nightDow === 5, weekend = dow >= 5;   // Friday and Saturday nights run later; Saturday and Sunday offices stay dark
+  let pH = atHour(NT.home, hr), pO = atHour(NT.off, hr), pT = atHour(NT.hotel, hr), pS = atHour(NT.shop, hr);
+  if (lateNight && (hr >= 21 || hr < 3)) pH = Math.min(0.6, pH * 1.15);
+  if (weekend && hr >= 6 && hr < 9) pH *= 0.6;
+  if (weekend) pO = Math.max(0.15, pO * 0.75); else if (dow === 4 && hr >= 17) pO *= 0.8;
+  if (dow === 6 && hr >= 17) pS *= 0.6;
+  const gf = hr >= 17 && hr < 22 ? 1.3 : hr >= 22 ? 0.9 : hr < 6 ? 0.4 : 1;
+  const tv = hr >= 19 || hr < 1 ? 0.07 : 0.03, late = hr >= 23 ? (hr - 23) * 0.5 : hr < 5 ? Math.min(1, 0.5 + hr * 0.25) : 0;
+  return [[pH, pO, pT, pS], [gf, tv, late, weekend ? 1 : 0]];
+}
+let nightClockAt = NaN;
+U.nP.onFrameUpdate(() => {   // the page clock (main.js, __docklands3.clock) once a minute of clock time
+  const c = globalThis.__docklands3 && globalThis.__docklands3.clock;
+  if (isFinite(c) && Math.floor(c / 60000) !== nightClockAt) { nightClockAt = Math.floor(c / 60000); const r = nightClock(c); if (r) { U.nP.value.set(...r[0]); U.nQ.value.set(...r[1]); } }
+  return U.nP.value;
+});
 
 const h = Fn(([q]) => fract(sin(dot(q, vec2(12.9898, 78.233))).mul(43758.5453)));
 const vn = Fn(([q]) => { const i = floor(q), f0 = fract(q), f = f0.mul(f0).mul(float(3).sub(f0.mul(2)));
@@ -112,6 +153,118 @@ function lookWall(K) {
   return mix(c, select(LST.greaterThan(4.5).and(LST.lessThan(5.5)), gl, gl.mul(lum.mul(0.5).add(0.75))), wm);
 }
 
+// version 1 (2026-10-04, ?nightstyle=old): offices cool white by whole floors, homes warm in clusters of three windows
+function nightOld(K) {
+  const { uw, gk, wy, BW, FH, GF, DW, sd, wall } = K;
+  const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
+  const gg = vec2(uw.div(BW), wy.sub(gk.z).sub(GF).div(FH)), cell = floor(gg), f = fract(gg), fl = cell.y;
+  const off = step(1.5, ty).mul(step(ty, 2.5));
+  const fw2 = DW.div(vec2(BW, FH)), fwm = max(fw2.x, fw2.y), f2 = smoothstep(0.5, 1.3, fw2);
+  let wm = mix(step(0.16, f.x).mul(step(f.x, 0.84)).mul(step(0.22, f.y)).mul(step(f.y, 0.82)), step(0.06, f.x).mul(step(f.x, 0.94)).mul(step(0.16, f.y)).mul(step(f.y, 0.82)), off);
+  wm = mix(wm, mix(0.6, 0.7, off), smoothstep(0.35, 0.9, fwm));
+  // offices: whole floors lit (36% of floors) in cool white, a few windows on the dark floors
+  const lf = step(h(vec2(fl, sd.mul(13))), 0.36), sg = h(vec2(floor(cell.x.div(9)), fl).add(sd.mul(5)));
+  const litO = lf.mul(step(0.22, sg)).add(float(1).sub(lf).mul(step(0.94, sg)));
+  const Lc = mix(vec3(0.74, 0.84, 1), vec3(0.95, 0.96, 0.92), h(vec2(fl, 2).add(sd)));
+  let LO = Lc.mul(h(vec2(floor(cell.x.div(9)), fl)).mul(0.25).add(0.6)).mul(litO);
+  LO = mix(LO, Lc.mul(0.725).mul(lf.mul(0.78).add(float(1).sub(lf).mul(0.06))), f2.x);
+  LO = mix(LO, vec3(0.195, 0.208, 0.222), f2.y);
+  // homes, hotels and the rest: warm, in clusters of flats
+  const fid = floor(cell.x.add(floor(h(vec2(fl, sd)).mul(3))).div(3));
+  const p = select(ty.greaterThan(2.5), float(0.45), select(ty.greaterThan(0.5), float(0.33), float(0.24))).mul(select(ht.lessThan(30), float(0.7), float(1)));
+  const pl = clamp(p.add(vn(vec2(cell.x.div(7), fl.div(3)).add(sd.mul(41))).sub(0.5).mul(1.1)), 0, 1);
+  const litH = step(h(vec2(fid, fl).add(sd.mul(31))), pl).mul(step(0.15, h(cell.add(sd.mul(7)))));
+  let LH = mix(vec3(1, 0.74, 0.46), vec3(1, 0.9, 0.66), h(vec2(fid, fl).add(3.1)));
+  LH = select(h(vec2(fid, fl).add(5.7)).lessThan(0.05), vec3(0.7, 0.8, 1), LH);
+  LH = mix(LH.mul(h(cell.add(1.7)).mul(0.5).add(0.7)).mul(litH), vec3(0.93, 0.78, 0.55).mul(p).mul(0.5), clamp(fwm, 0, 1));
+  const L = mix(LH, LO, off).mul(wm).mul(wall).mul(U.win);   // windows off: none lit (index.html nightCol: the win > .5 block)
+  // a Realistic shopfront: lit, most of them, warm
+  const ys = wy.sub(gk.z), gf = max(GF, 0.01), sq = vec2(uw.div(2.6), ys.div(gf)), sf = fract(sq);
+  const sm = mix(step(0.05, sf.x).mul(step(sf.x, 0.95)).mul(step(0.06, sf.y)).mul(step(sf.y, 0.74)), 0.6, smoothstep(0.35, 0.9, max(DW.x.div(2.6), DW.y.div(gf))));
+  const shop = step(0.01, GF).mul(step(ys, GF)).mul(wall).mul(sm).mul(step(0.3, h(vec2(sd, floor(sq.x.div(4)))))).mul(U.win);
+  return mix(L, vec3(1, 0.84, 0.6).mul(h(vec2(floor(sq.x.div(3)), sd)).mul(0.4).add(0.45)), shop);
+}
+
+// version 2 (2026-10-09): patterns by use (offices, homes, hotels, sheds, civic, no record), the building's own bay and storey,
+// the clock (U.nP, U.nQ: nightClock), the core, the lobby, plant floors, curtains, TVs and a spread of colour temperatures.
+// Branch-free (select, mix, step), so every derivative stays in uniform control flow.
+const c22 = vec3(1, 0.6, 0.3), c30 = vec3(1, 0.74, 0.46), c40 = vec3(1, 0.86, 0.68), c65 = vec3(0.92, 0.95, 1);
+const cct = t => mix(mix(mix(c22, c30, clamp(t.mul(3), 0, 1)), c40, clamp(t.mul(3).sub(1), 0, 1)), c65, clamp(t.mul(3).sub(2), 0, 1));   // t 0 to 1: about 2200, 3000, 4000, 6500 K (sRGB, equal brightness)
+const eqF = (a, v) => step(v - 0.5, a).mul(step(a, v + 0.5));
+function nightNew(K) {
+  const { uw, gk, wy, BW, FH, GF, DW, sd, LST, wall } = K;
+  const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
+  const isLook = step(-0.5, LST), unk = eqF(ty, 0);
+  // the use: offices (2, and One Canada Square 5; no record: a Realistic office, ribbon or curtain wall), hotel (3), shed and
+  // civic (no record, by the Realistic style), homes (1, Newfoundland 4, and the rest; no record and no style: fewer lit)
+  const isO = max(max(eqF(ty, 2), eqF(ty, 5)), unk.mul(step(2.5, LST)).mul(step(LST, 5.5)));
+  const isT = eqF(ty, 3), isS = unk.mul(eqF(LST, 6)), isC = unk.mul(eqF(LST, 7)), isU = unk.mul(float(1).sub(isLook));
+  const O = isO.greaterThan(0.5), T = isT.greaterThan(0.5);
+  // the grid: the Realistic style's bay and storey (as by day); else by use: offices 1.5 m by 4.0 m, hotels 3.6 by 3.15, homes 2.3 to 3.4 by 3.05
+  const hb = h(sd.mul(1.37).add(0.19)), hb2 = h(sd.mul(2.71).add(0.43));
+  const BWn = select(isLook.greaterThan(0.5), BW, select(O, float(1.5), select(T, float(3.6), hb.mul(1.1).add(2.3))));
+  const FHn = select(isLook.greaterThan(0.5), FH, select(O, float(4.0), select(T, float(3.15), float(3.05))));
+  const y = wy.sub(gk.z), gg = vec2(uw.div(BWn), y.sub(GF).div(FHn)), cell = floor(gg), f = fract(gg), fl = cell.y;
+  const fw2 = DW.div(vec2(BWn, FHn)), fwm = max(fw2.x, fw2.y), far = smoothstep(0.35, 0.9, fwm), f2 = smoothstep(0.5, 1.3, fw2), det = float(1).sub(smoothstep(0.08, 0.3, fwm));
+  // the window in its cell: the Realistic style's box; else offices floor-to-ceiling glass, homes a box of the building's own proportions
+  const ww = hb2.mul(0.35).add(0.45), wh = h(sd.mul(3.33).add(0.77)).mul(0.22).add(0.55);
+  const box0 = select(isLook.greaterThan(0.5), byStyle(LST, LOOK_WIN), select(O, vec4(0.04, 0.96, 0.1, 0.9), vec4(float(0.5).sub(ww.mul(0.5)), float(0.5).add(ww.mul(0.5)), float(0.2), wh.add(0.2))));
+  const box = select(O, box0, vec4(max(box0.x, 0.12), min(box0.y, 0.88), box0.z, box0.w));   // rooms: a pier between windows, so a lit flat is not one bar
+  const cov = box.y.sub(box.x).mul(box.w.sub(box.z));
+  const wm = mix(step(box.x, f.x).mul(step(f.x, box.y)).mul(step(box.z, f.y)).mul(step(f.y, box.w)), cov, far).mul(step(-0.5, fl));
+  const pO = U.nP.y;
+  // ---- offices: whole floors by the hour, in zones (occupancy sensors); dark plant floors; the top storey of a building over 45 m dark
+  const plantN = floor(h(sd.mul(5.9)).mul(10)).add(14);
+  const plant = min(step(100, ht).mul(step(plantN.sub(1.5), mod(fl, plantN))).add(step(45, ht).mul(step(top.sub(wy), FHn.mul(1.2)))), 1), live = float(1).sub(plant);
+  const lf = step(h(vec2(fl, sd.mul(13))), pO).mul(live);
+  const zl = floor(hb.mul(6)).add(6), zone = floor(cell.x.div(zl)), zh = h(vec2(zone, fl).add(sd.mul(5)));
+  const litO = lf.mul(step(0.18, zh)).add(float(1).sub(lf).mul(step(float(1).sub(pO.mul(0.12)), zh))).mul(live);
+  const Oc = cct(h(sd.mul(3.1).add(0.5)).mul(0.35).add(0.45).add(h(vec2(fl, 2).add(sd)).sub(0.5).mul(0.08)));   // 3700 to 5200 K by building, a little by floor
+  const blind = step(h(cell.add(sd.mul(2.2))), 0.12);   // a blind down: dimmer
+  const inner = mix(float(0.92), f.y.mul(0.35).add(0.72).add(step(0.78, f.y).mul(step(f.y, 0.87)).mul(step(fract(uw.div(0.6)), 0.3)).mul(0.6)), det);   // brighter to the ceiling; the rows of LED panels close up
+  const glow = vec3(0.6, 0.66, 0.72).mul(h(vec2(fl, sd.mul(3))).mul(0.05).add(0.035)).mul(live);   // a dark floor: emergency and security lights, the core through the glass
+  let LO = Oc.mul(zh.mul(0.25).add(0.7)).mul(inner).mul(mix(float(1), float(0.45), blind)).mul(litO).add(glow.mul(float(1).sub(litO)));
+  LO = mix(LO, Oc.mul(0.8).mul(lf.mul(0.82).add(float(1).sub(lf).mul(pO.mul(0.12)))).add(glow), f2.x);   // far: the mean along a floor (lit floors stay bands)
+  LO = mix(LO, Oc.mul(0.8).mul(pO.mul(0.8)).add(vec3(0.02, 0.022, 0.025)), f2.y);                           // then over floors
+  LO = mix(LO, cct(float(0.5)).mul(0.9), eqF(fl, 0).mul(step(20, ht)));                                        // the lobby
+  // ---- homes, hotels, sheds, civic: rooms lit by flat (2 to 4 windows), in patches, by the hour
+  const pBase = select(T, U.nP.z, U.nP.x).mul(select(isU.greaterThan(0.5), float(0.75), float(1))).mul(select(ht.lessThan(30), float(0.8), float(1)));
+  const pF = pBase.mul(mix(float(1), select(fl.lessThan(0.5), U.nQ.x, U.nQ.z.mul(0.4).add(1)), step(ht, 15)));   // houses: the ground floor in the evening, upper floors late
+  const p = select(isS.greaterThan(0.5), float(0.03), select(isC.greaterThan(0.5), pO.mul(0.15), pF));
+  const pl = clamp(p.mul(vn(vec2(cell.x.div(7), fl.div(3)).add(sd.mul(41))).mul(1.2).add(0.4)), 0, 0.95);   // patches: neighbours alike
+  const nF = select(T, float(1), floor(h(sd.mul(1.7)).mul(3)).add(2));
+  const fid = floor(cell.x.add(floor(h(sd.mul(2.3)).mul(nF))).div(nF));   // a flat; flats stack, so the same split on every floor
+  const flatLit = step(h(vec2(fid, fl).add(sd.mul(31))), pl), rh = h(cell.add(sd.mul(7)));
+  const litH = flatLit.mul(step(0.32, rh)).add(float(1).sub(flatLit).mul(step(float(1).sub(pl.mul(0.05)), rh)));   // most rooms of a lit flat; a hall or bathroom light elsewhere
+  // colour: one fixture type per flat, a little change room to room; about 58 % under 3000 K, 24 % to 4000 K, 18 % cooler (u^2); hotels warmer
+  const u = h(vec2(fid, fl).add(3.1)).mul(0.8).add(h(cell.add(5.3)).mul(0.2));
+  let HC = cct(pow(u, 2.0).mul(select(T, float(0.55), float(1))));
+  const cur = step(h(cell.add(8.9)), select(T, float(0.6), float(0.35)));   // curtains or blinds: a soft glow in the colour of the cloth
+  HC = mix(HC, HC.mul(mix(vec3(1, 0.88, 0.7), vec3(1, 0.74, 0.56), step(0.6, h(cell.add(4.4))))).mul(0.6), cur);
+  const tv = step(h(cell.add(2.7)), U.nQ.y).mul(float(1).sub(cur));   // a television: blue-white, flickering while the page animates
+  HC = mix(HC, vec3(0.5, 0.65, 1).mul(vn(vec2(time.mul(5), h(cell.add(6.1)).mul(97))).mul(0.6).add(0.4)).mul(0.7), tv);
+  const balc = step(h(sd.mul(5.1).add(0.3)), 0.4).mul(step(f.y, box.z.add(box.w.sub(box.z).mul(0.3)))).mul(det).mul(float(1).sub(isLook));   // a balustrade across the foot of the window
+  let LH = HC.mul(h(cell.add(1.7)).mul(0.45).add(0.55)).mul(mix(float(1), float(0.5), balc)).mul(litH);
+  // the core: a column of stair and corridor windows, two bays wide, lit on most floors of a block over 24 m (35 % of them; every hotel)
+  const hasCore = step(h(sd.mul(7.7).add(0.1)), select(T, float(1), float(0.35))).mul(step(24, ht)).mul(float(1).sub(isS)).mul(float(1).sub(isC));
+  const cm = floor(h(sd.mul(4.4)).mul(24).add(40).div(BWn));   // one column every 40 to 64 m of wall (about one a face)
+  const core = hasCore.mul(step(mod(cell.x.add(floor(h(sd.mul(6.6)).mul(cm))), cm), 1.5)).mul(step(0.12, h(vec2(fl, sd.mul(2.9)))));   // two bays wide; a few floors dark
+  const coreC = mix(vec3(0.82, 0.95, 0.86), vec3(1, 0.9, 0.75), step(0.5, h(sd.mul(8.8))));   // fluorescent green-white or LED warm white
+  LH = mix(LH, coreC.mul(h(vec2(fl, sd)).mul(0.15).add(0.4)), core);
+  // whole storeys lit: an amenity floor of a tower over 60 m (about 1 floor in 40, while homes are lit), the lobby of a block over 20 m (65 %; every hotel)
+  const amen = step(60, ht).mul(step(h(vec2(fl, sd.mul(17))), 0.025)).mul(step(0.15, p));
+  const lobby = eqF(fl, 0).mul(step(20, ht)).mul(step(h(sd.mul(9.2)), select(T, float(1), float(0.65))));
+  LH = mix(LH, cct(float(0.25)).mul(0.85), max(amen, lobby));
+  LH = mix(LH, cct(float(0.28)).mul(pl.mul(0.5)).add(coreC.mul(0.4).mul(hasCore).mul(2).div(cm)), far);   // far: the mean
+  let L = mix(LH, LO, isO).mul(wm).mul(wall).mul(U.win);
+  // a Realistic shopfront: lit by the hour (shops, cafes, display lights after closing), 2700 to 4000 K
+  const gf = max(GF, 0.01), sq = vec2(uw.div(2.6), y.div(gf)), sf = fract(sq);
+  const sm = mix(step(0.05, sf.x).mul(step(sf.x, 0.95)).mul(step(0.06, sf.y)).mul(step(sf.y, 0.74)), 0.6, smoothstep(0.35, 0.9, max(DW.x.div(2.6), DW.y.div(gf))));
+  const shop = step(0.01, GF).mul(step(y, GF)).mul(wall).mul(sm).mul(step(h(vec2(sd, floor(sq.x.div(4)))), U.nP.w.mul(0.85).add(0.05))).mul(U.win);
+  const sh = h(vec2(floor(sq.x.div(3)), sd));
+  return mix(L, cct(sh.mul(0.5).add(0.15)).mul(sh.mul(0.4).add(0.55)), shop);
+}
+
 export function buildingMaterial() {
   const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.82, metalness: 0.0, side: THREE.DoubleSide, flatShading: true });
   const graph = () => {
@@ -133,34 +286,9 @@ export function buildingMaterial() {
 
     // by night: windows, shopfronts, crowns and haze as emitted light (index.html nightCol); no branches
     m.emissiveNode = Fn(() => {
-      const { uw, gk, wy, BW, FH, GF, DW, sd, fac, tile, wall, dist, base } = facadeCommon();
+      const C = facadeCommon(), { uw, gk, wy, sd, fac, tile, wall, dist, base } = C;
       const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
-      const gg = vec2(uw.div(BW), wy.sub(gk.z).sub(GF).div(FH)), cell = floor(gg), f = fract(gg), fl = cell.y;
-      const off = step(1.5, ty).mul(step(ty, 2.5));
-      const fw2 = DW.div(vec2(BW, FH)), fwm = max(fw2.x, fw2.y), f2 = smoothstep(0.5, 1.3, fw2);
-      let wm = mix(step(0.16, f.x).mul(step(f.x, 0.84)).mul(step(0.22, f.y)).mul(step(f.y, 0.82)), step(0.06, f.x).mul(step(f.x, 0.94)).mul(step(0.16, f.y)).mul(step(f.y, 0.82)), off);
-      wm = mix(wm, mix(0.6, 0.7, off), smoothstep(0.35, 0.9, fwm));
-      // offices: whole floors lit (36% of floors) in cool white, a few windows on the dark floors
-      const lf = step(h(vec2(fl, sd.mul(13))), 0.36), sg = h(vec2(floor(cell.x.div(9)), fl).add(sd.mul(5)));
-      const litO = lf.mul(step(0.22, sg)).add(float(1).sub(lf).mul(step(0.94, sg)));
-      const Lc = mix(vec3(0.74, 0.84, 1), vec3(0.95, 0.96, 0.92), h(vec2(fl, 2).add(sd)));
-      let LO = Lc.mul(h(vec2(floor(cell.x.div(9)), fl)).mul(0.25).add(0.6)).mul(litO);
-      LO = mix(LO, Lc.mul(0.725).mul(lf.mul(0.78).add(float(1).sub(lf).mul(0.06))), f2.x);
-      LO = mix(LO, vec3(0.195, 0.208, 0.222), f2.y);
-      // homes, hotels and the rest: warm, in clusters of flats
-      const fid = floor(cell.x.add(floor(h(vec2(fl, sd)).mul(3))).div(3));
-      const p = select(ty.greaterThan(2.5), float(0.45), select(ty.greaterThan(0.5), float(0.33), float(0.24))).mul(select(ht.lessThan(30), float(0.7), float(1)));
-      const pl = clamp(p.add(vn(vec2(cell.x.div(7), fl.div(3)).add(sd.mul(41))).sub(0.5).mul(1.1)), 0, 1);
-      const litH = step(h(vec2(fid, fl).add(sd.mul(31))), pl).mul(step(0.15, h(cell.add(sd.mul(7)))));
-      let LH = mix(vec3(1, 0.74, 0.46), vec3(1, 0.9, 0.66), h(vec2(fid, fl).add(3.1)));
-      LH = select(h(vec2(fid, fl).add(5.7)).lessThan(0.05), vec3(0.7, 0.8, 1), LH);
-      LH = mix(LH.mul(h(cell.add(1.7)).mul(0.5).add(0.7)).mul(litH), vec3(0.93, 0.78, 0.55).mul(p).mul(0.5), clamp(fwm, 0, 1));
-      let L = mix(LH, LO, off).mul(wm).mul(wall).mul(U.win);   // windows off: none lit (index.html nightCol: the win > .5 block)
-      // a Realistic shopfront: lit, most of them, warm
-      const ys = wy.sub(gk.z), gf = max(GF, 0.01), sq = vec2(uw.div(2.6), ys.div(gf)), sf = fract(sq);
-      const sm = mix(step(0.05, sf.x).mul(step(sf.x, 0.95)).mul(step(0.06, sf.y)).mul(step(sf.y, 0.74)), 0.6, smoothstep(0.35, 0.9, max(DW.x.div(2.6), DW.y.div(gf))));
-      const shop = step(0.01, GF).mul(step(ys, GF)).mul(wall).mul(sm).mul(step(0.3, h(vec2(sd, floor(sq.x.div(4)))))).mul(U.win);
-      L = mix(L, vec3(1, 0.84, 0.6).mul(h(vec2(floor(sq.x.div(3)), sd)).mul(0.4).add(0.45)), shop);
+      let L = NIGHT_STYLE === 'old' ? nightOld(C) : nightNew(C);   // lit windows and shopfronts (windows off: none)
       // a photo facade: the tile, faintly, under the lit windows (nightCol: base x (0.045 + 0.02))
       if (FAC.tex) L = L.add(tile.mul(fac).mul(0.04));
       // tops: Newfoundland's diagrid crown (use 4), One Canada Square's halo (use 5), a soft band on other towers over 90 m

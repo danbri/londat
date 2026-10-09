@@ -1924,6 +1924,74 @@ Include a looping carousel at top for time of day, time of year."
 - Phones: with every layer on, the page draws about 2.8 M triangles; the owner saw no trees after a reload on a device
   (2026-10-09, not yet diagnosed: memory is the first suspect).
 
+## Night windows by use and hour (Three.js port, 2026-10-09)
+
+Owner, 2026-10-09: "the binary division of night lighting into warm-white grids of tiny square windows (residential) vs cold
+blue white light horizontal bar shaped windows… this feels artificial and weird. Investigate a more realistic set of simple
+patterns we could use." `docklands/materials.js` `nightNew` (default) replaces `nightOld` (the 2026-10-04 rule, kept with
+`?nightstyle=old`). The WebGL page is unchanged. No new vertex attribute: use from `gk.w` (night kind), facade type from the
+Realistic style code in `col.a`, height from `gk`, the clock from two uniforms.
+
+What the photos show (`cwplans/docklands/reference/night-2026-10-03/`, Saturday 3 Oct 2026, about 23:56 BST): residential
+towers dominate; lit rooms are irregular, mostly warm (the phone's white balance makes 2700 K read as yellow-white), with
+some neutral and cool LED rooms and a few blue TV rooms; dim amber rooms behind curtains; one block shows a 2-window column
+of green-white stair or corridor lights on every floor (the core); some towers have one or more whole floors lit (amenity
+floors); offices still have many floors lit at midnight on a Saturday, and close up their glass shows rows of ceiling
+panels; low-rise riverside blocks show few, separate warm windows; street and riverside lamps dominate at the ground.
+General knowledge used (not measured here): UK time-use surveys (evening peak 19 to 22 h, fewer lights after 23 h and in the
+small hours), office occupancy (cleaners and late work to about 22 h; floors left lit all night), hotels lit early evening
+with lit corridors and lobby, shops lit to closing and display lights after.
+
+| pattern | when (use code, style, height) | grid and window | lit rule | colour |
+|---|---|---|---|---|
+| office | use 2, One Canada Square (5); no record: Realistic office, ribbon, curtain | 1.5 m x 4.0 m, floor-to-ceiling glass (Realistic: its own bay and storey) | whole floors with p = U.nP.y, in zones of 6 to 11 bays (82 % of the zones of a lit floor); a few zones on dark floors; dark plant floor every 14 to 23 floors over 100 m, dark top storey over 45 m; lit lobby | 3700 to 5200 K by building, a little by floor; brighter to the ceiling, LED panel rows close up; 12 % of bays with a blind (x 0.45); dark floors a faint cool glow |
+| homes | use 1, Newfoundland (4); no record: house, flats, estate | 2.3 to 3.4 m x 3.05 m by building, window 45 to 80 % of the bay wide, 55 to 77 % high (Realistic: its own box); a pier of at least 12 % of the bay on each side | flats of 2 to 4 windows (the same split on every floor) lit with p = U.nP.x x patch noise (0.4 to 1.6); 68 % of the rooms of a lit flat; a few lone rooms | per flat t = u^2: about 58 % 2200 to 3000 K, 24 % to 4000 K, 18 % to 6500 K; 35 % curtains (x 0.6, cloth tint); TV rooms blue-white, flickering (U.nQ.y: 7 % from 19 to 01 h) |
+| core | homes and hotels over 24 m (35 % of blocks; every hotel) | a column two bays wide every 40 to 64 m of wall | 88 % of the floors | fluorescent green-white or LED warm white, dim |
+| whole storeys | towers over 60 m (about 1 floor in 40, while p > 0.15); the ground storey of a block over 20 m (65 %; every hotel) | the storey's windows | always | 2800 K |
+| hotel | use 3 | 3.6 m x 3.15 m, one room a window | p = U.nP.z, rooms independent, 60 % curtains | warmer (t x 0.55) |
+| low-rise | homes under 15 m | as homes | ground floor x U.nQ.x (1.3 at 17 to 22 h, 0.4 after midnight), upper floors x (1 + 0.4 x lateness) | as homes |
+| shed, civic | no record: Realistic shed (6), civic (7) | style box | 3 % (security); p_office x 0.15 | as homes |
+| shopfront | Realistic shopfront band | 2.6 m units | lit with p = 0.85 x U.nP.w + 0.05 by unit | 2700 to 4000 K, brighter |
+| no record, no style | use 0, Map look | as homes | p x 0.75 | as homes |
+
+The clock: `nightClock(t)` (materials.js) gives `U.nP` = lit share of home rooms, office floors, hotel rooms, shopfronts, and
+`U.nQ` = ground-floor factor, TV share, lateness, weekend, from a 24-value table per use (linear between hours, London time).
+Weekend days: offices x 0.75 (at least 0.15); Friday and Saturday nights: homes x 1.15 from 21 to 03 h; weekend mornings
+homes x 0.6; Sunday evening shops x 0.6. A uniform `onFrameUpdate` reads `__docklands3.clock` once a minute of clock time, so
+no other file changes; before the page hook exists the defaults are a weekday at 22:00. Values at Saturday 23:56: homes 0.20,
+offices 0.17. Far away (a window under a pixel) each pattern shows its mean light, offices first along a floor, so lit floors
+stay bands. All branch-free (`select`, `mix`, `step`): derivatives stay in uniform control flow (WGSL).
+
+Measured (`node docklands/test/night-windows.mjs --base <server>`; WebGL 2 in SwiftShader, 1400 x 1050, `t=2026-10-03T23:56`,
+`layers=registry,nightlights,water,trees` so that data overlays do not count as light; region: the skyline box, the same
+fractions of photo and render; lit = sRGB luma > 0.32, red aviation lights out; colour temperature by McCamy from the lit
+pixels that are not clipped):
+
+| view | frame | lit % | spots per Mpx (median px) | CCT p10 / p50 / p90 K | under 3000 K / over 5000 K |
+|---|---|---|---|---|---|
+| rotherhithe | photo | 5.13 | 2547 (10) | 3379 / 4434 / 6207 | 0.04 / 0.31 |
+| rotherhithe | old | 8.10 | 5843 (8) | 4284 / 5101 / 7815 | 0.02 / 0.55 |
+| rotherhithe | new | 6.19 | 3401 (8) | 2939 / 4816 / 6094 | 0.10 / 0.45 |
+| greenland | photo | 6.28 | 1779 (9) | 3048 / 4018 / 5181 | 0.09 / 0.14 |
+| greenland | old | 3.42 | 2284 (7) | 4296 / 5294 / 7450 | 0.04 / 0.60 |
+| greenland | new | 2.89 | 1570 (8) | 2920 / 5119 / 5964 | 0.10 / 0.55 |
+| pier | photo | 7.90 | 3155 (6) | 3274 / 4306 / 7163 | 0.03 / 0.40 |
+| pier | old | 8.30 | 2897 (19) | 4648 / 5324 / 7558 | 0.00 / 0.70 |
+| pier | new | 6.01 | 1513 (23) | 3337 / 5069 / 6433 | 0.07 / 0.55 |
+
+By the hour (rotherhithe, new): Wednesday 19:30 11.2 % lit (5786 spots per Mpx), Saturday 23:56 6.2 %, Thursday 03:00 4.0 %
+(mostly cores and office floors, so cooler: p50 5469 K). Read the numbers with care: the photo's auto white balance and the
+render's AgX tone mapping both pull bright pixels to neutral, so CCT compares appearance, not lamps; the greenland render
+has fewer buildings in the box than the photo (view fit), and the pier photo has haze lit by the city. The new pattern has
+fewer, larger-spaced spots, a spread of colour temperatures instead of two colours, and a cooler tail from cores and offices.
+A first try with saturated 2200 K colours and darker curtains read as pink-brown blotches on low-rise blocks; one core column
+of one bay every 9 to 16 bays read as dotted lines up every tower: both changed.
+
+Open: One Canada Square is now an office (it was lit as homes before) and reads darker than in the photo at Saturday midnight;
+the registry layer's `NIGHT_USE` (layers/registry.js) has no car park, school or warehouse code (they fall to offices or
+"no record"); balconies are only a darker strip at the foot of a window on the Map look; the CCT and lit-share numbers have no
+camera model; not yet seen on a phone GPU.
+
 ## Water over the LiDAR ground (2026-10-08)
 
 The LiDAR ground under the river and the docks is the survey's water surface (Thames median 2.8 m OD = the water level).
