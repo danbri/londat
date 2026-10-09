@@ -17,9 +17,10 @@
 // Test hook: __docklands3.layers['sky-extra'].api.state. Skill: docklands-sky (the WebGL page's sky) and docklands-3d-page,
 // "Three.js port".
 import * as THREE from 'three/webgpu';
-import { uniform, vec3, vec4, float, uv, smoothstep, length, instancedBufferAttribute, positionWorld, cameraPosition, normalize, asin, atan, exp, abs, clamp, mx_noise_float, step, texture, sRGBTransferEOTF } from 'three/tsl';
+import { uniform, vec2, vec3, vec4, float, uv, smoothstep, length, instancedBufferAttribute, positionWorld, cameraPosition, normalize, asin, atan, exp, abs, clamp, mx_noise_float, step, texture, sRGBTransferEOTF, floor, fract, mod, mix, dot } from 'three/tsl';
 import { A, dec } from '../build.js';
-import { dirOf } from '../sky3.js';
+import { dirOf, vzUndistort } from '../sky3.js';
+import { WU } from '../water.js';
 
 const AE = globalThis.Astronomy, D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const lon0 = A.meta.geo.lon0 + 0.07, lat0 = A.meta.geo.lat0 + 0.03;   // sky3.js observer
@@ -112,7 +113,7 @@ export default {
     const CAP = 512, pPos = new THREE.InstancedBufferAttribute(new Float32Array(CAP * 3), 3), pSize = new THREE.InstancedBufferAttribute(new Float32Array(CAP), 1), pCol = new THREE.InstancedBufferAttribute(new Float32Array(CAP * 3), 3);
     for (const a of [pPos, pSize, pCol]) a.setUsage(THREE.DynamicDrawUsage);
     const pMat = new THREE.PointsNodeMaterial({ sizeAttenuation: false, transparent: true, depthWrite: false, fog: false, blending: THREE.AdditiveBlending, toneMapped: false });
-    pMat.positionNode = instancedBufferAttribute(pPos); pMat.sizeNode = instancedBufferAttribute(pSize);
+    pMat.positionNode = instancedBufferAttribute(pPos).mul(vec3(1, sky.vzInv || float(1), 1)); pMat.sizeNode = instancedBufferAttribute(pSize);
     pMat.colorNode = vec4(instancedBufferAttribute(pCol).mul(sky.starGain || float(1)), float(1));
     pMat.opacityNode = smoothstep(0.5, 0.15, length(uv().sub(0.5)));
     const pts = new THREE.Sprite(pMat); pts.count = 1; pts.frustumCulled = false; pts.renderOrder = -1; pts.name = 'sky-extra:points'; root.add(pts);
@@ -149,6 +150,7 @@ export default {
       const n = mx_noise_float(vec3(l.mul(7), b.mul(9), 3)).mul(.35).add(mx_noise_float(vec3(l.mul(14), b.mul(18), 7)).mul(.18)).add(.5);
       bd = bd.mul(n.mul(.8).add(.6));
       mwMat.colorNode = sRGBTransferEOTF(vec3(.55, .6, .72).mul(bd).mul(mwK).mul(.12).mul(smoothstep(0, .12, d.y)).min(1)); }
+    if (sky.vzInv) vzUndistort(mwMat, sky.vzInv);   // vertical exaggeration: the band at its true altitude (sky3.js vzUndistort)
     const mw = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32), mwMat); mw.scale.setScalar(R_SKY + 300); mw.frustumCulled = false; mw.renderOrder = -3; mw.name = 'sky-extra:milkyway'; root.add(mw);
 
     // ---------- the cloud mask (sky.js clmFor, clmLoad): EUMETSAT Meteosat Cloud Mask through EUMETView (CC BY 4.0)
@@ -170,19 +172,43 @@ export default {
       im.onerror = () => { rec.err = 'did not load'; panel(); }; im.src = c.url; return rec;
     }
     // the deck: a plane at 1 km over the image's box (local scale at the observer: 111.32 cos(lat) km a degree east, 110.57
-    // north; grid convergence ignored, as on the WebGL page); cover = the low cloud of the weather layer raised where the
-    // mask sees cloud and lowered where it sees clear sky (mean kept), else the mask itself
+    // north; grid convergence ignored, as on the WebGL page); cover = the low cloud of the weather layer (0 without it, as
+    // the WebGL page) raised where the mask sees cloud and lowered where it sees clear sky (0.9 x mask - its mean)
+    // The texture of the deck is the WebGL page's low cloud layer (sky.js SKY_FS layer(d, 1.0, 1.7, cv.x, wd.xy)): 5 octaves of
+    // value noise (hs, vn, fbm: the same hash and constants) on a 1.7 km scale, thresholded at 1 - the local cover, tending to
+    // the cover itself towards the horizon (view elevation 0.12 to 0.015). Both move with the wind (2.2 x the 10 m wind,
+    // water.js WU.windSpeed and WU.windDir, as the WebGL page drift): the noise by the drift of the page clock's time of day
+    // (mod 400 km, as there), the mask by the drift since the image's time (sky.js cmk.zw). The WebGL page adds its drift to
+    // the noise coordinate, which moves its noise upwind; here the noise moves downwind with the mask.
     const blank = new THREE.DataTexture(new Uint8Array(4), 1, 1, THREE.RGBAFormat); blank.needsUpdate = true;
-    const clmK = { cov: uniform(0), mean: uniform(0), use: uniform(0), col: uniform(new THREE.Color(0, 0, 0)) }, clmTex = texture(blank);
+    const kx = 111320 * Math.cos(lat0 * D2R), kz = 110570, [ox, oz] = geoXZ(lon0, lat0), b0 = SNAP.box;
+    const x0 = ox + (b0[1] - lon0) * kx, x1 = ox + (b0[3] - lon0) * kx, zN = oz - (b0[2] - lat0) * kz, zS = oz - (b0[0] - lat0) * kz;
+    const clmK = { cov: uniform(0), mean: uniform(0), use: uniform(0), col: uniform(new THREE.Color(0, 0, 0)),
+      dr: uniform(new THREE.Vector2()), md: uniform(new THREE.Vector2()), ey: uniform(0) };   // noise drift (km), mask drift (m), the eye's height (m OD)
+    const hs = p => { const pm = mod(p, 289), q0 = fract(vec3(pm.x, pm.y, pm.x).mul(.1031)), q = q0.add(dot(q0, q0.yzx.add(33.33))); return fract(q.x.add(q.y).mul(q.z)); };
+    const vn = p => { const i = floor(p), f0 = fract(p), f = f0.mul(f0).mul(float(3).sub(f0.mul(2)));
+      return mix(mix(hs(i), hs(i.add(vec2(1, 0))), f.x), mix(hs(i.add(vec2(0, 1))), hs(i.add(1)), f.x), f.y); };
+    const fbm = p0 => { let s = null, p = p0, a = .5; for (let i = 0; i < 5; i++) { const v = vn(p).mul(a); s = s ? s.add(v) : v; p = p.mul(2.03).add(vec2(17.1, 9.2)); a *= .5; } return s.div(.97); };
+    const q = positionWorld.xz, muv = q.sub(clmK.md).sub(vec2(x0, zN)).div(vec2(x1 - x0, zS - zN));
+    const clmTex = texture(blank, muv), inBox = step(0, muv.x).mul(step(muv.x, 1)).mul(step(0, muv.y)).mul(step(muv.y, 1));
     const deckMat = new THREE.MeshBasicNodeMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: false, toneMapped: false });
-    { const m = clmTex.r, a = clamp(clmK.cov.add(m.sub(clmK.mean).mul(.9)), 0, 1).mul(clmK.use).add(m.mul(.85).mul(float(1).sub(clmK.use)));
-      deckMat.colorNode = clmK.col; deckMat.opacityNode = smoothstep(.15, .85, a).mul(.92); }
-    const deck = (() => { const kx = 111320 * Math.cos(lat0 * D2R), kz = 110570, [ox, oz] = geoXZ(lon0, lat0), b = SNAP.box;
-      const x0 = ox + (b[1] - lon0) * kx, x1 = ox + (b[3] - lon0) * kx, zN = oz - (b[2] - lat0) * kz, zS = oz - (b[0] - lat0) * kz;
+    { const m = mix(clmK.mean, clmTex.r, inBox), a = clamp(clmK.cov.add(m.sub(clmK.mean).mul(.9)), 0, 1);   // sky.js layer(): cover + 0.9 (mask - its mean); no weather: cover 0, as there
+      const f = fbm(q.div(1000).sub(clmK.dr).div(1.7)), th = float(1).sub(a), lo = smoothstep(th.sub(.13), th.add(.13), f.mul(1.08).sub(.04));
+      const H = float(1000).sub(clmK.ey), e = H.div(length(vec3(q.x.sub(cameraPosition.x), H, q.y.sub(cameraPosition.z))));   // the view's elevation as the unscaled view shows it
+      deckMat.colorNode = clmK.col; deckMat.opacityNode = mix(lo, a, smoothstep(.12, .015, e)).mul(.92).mul(step(clmK.ey, 1000)); }
+    const deck = (() => {
       const g = new THREE.PlaneGeometry(x1 - x0, zS - zN, 1, 1); g.rotateX(-Math.PI / 2); g.translate((x0 + x1) / 2, 1000, (zN + zS) / 2);
-      const uvA = g.attributes.uv; for (let i = 0; i < uvA.count; i++) uvA.setY(i, 1 - uvA.getY(i));   // image row 0 = north = the plane's far (-z) edge
       const m = new THREE.Mesh(g, deckMat); m.frustumCulled = false; m.renderOrder = 2; m.name = 'sky-extra:cloudmask'; m.visible = false; return m; })();
     scene.add(deck);   // fixed in the model, not round the eye
+    const D_KM = 2.2 * 3.6 / 3600;   // km/s per m/s of 10 m wind (the WebGL page: km/h x 2.2 / 3600)
+    function deckFrame(eye) {   // each frame while the deck shows: the drifts and, with vertical exaggeration, its height
+      const wr = WU.windDir.value * D2R, dx = -Math.sin(wr), dz = Math.cos(wr), ws = Math.max(0, WU.windSpeed.value) * D_KM, t = ctx.clock, dt = (t % 864e5) / 1000;
+      clmK.dr.value.set(dx * ws * dt % 400, dz * ws * dt % 400);
+      const ms = S.clm && S.clm.t != null ? (t - S.clm.t) / 1000 * ws * 1000 : 0; clmK.md.value.set(dx * ms, dz * ms);
+      // vertical exaggeration: the view scales y by vz; the WebGL page's layer is at 1 km in the unscaled view (sky.js layer(),
+      // eye height ck.z = eye / VZ), so the deck sits at ey + (1000 - ey) / vz
+      const vz = ctx.vzNow ? ctx.vzNow() : 1; clmK.ey.value = eye.y; deck.position.y = eye.y + (1000 - eye.y) / vz - 1000;
+    }
 
     // ---------- 3D lines on the model: London City approach paths, sun and moon azimuth lines
     const lineOf = (pts, color, opacity = 1) => { const g = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(...p)));
@@ -304,12 +330,17 @@ export default {
     }
 
     // ---------- the clock: everything that depends on the time
-    let lastT = null, satBusy = 0, issT = 0;
+    let lastT = null, satBusy = 0, issT = 0, celVz = 1;
+    function celMatrix() {   // EQJ -> model at R_SKY; with vertical exaggeration y / vz (the lines at their true altitude, as sky3.js vzUndistort)
+      const a = S.A; if (!a) return; celVz = ctx.vzNow ? ctx.vzNow() : 1;
+      cel.matrix.makeBasis(new THREE.Vector3(...a.C[0]), new THREE.Vector3(...a.C[1]), new THREE.Vector3(...a.C[2])).scale(new THREE.Vector3(R_SKY, R_SKY, R_SKY)).premultiply(new THREE.Matrix4().makeScale(1, 1 / celVz, 1));
+      cel.matrixWorldNeedsUpdate = true;
+    }
     function update(force) {
       const t = ctx.clock; if (!force && t === lastT) return; const changed = t !== lastT; lastT = t; S.t = t;
       S.A = compute(t); const a = S.A;
       if (changed) { S.days = dayTimes(t); buildAz(); refreshSats(t); }
-      cel.matrix.makeBasis(new THREE.Vector3(...a.C[0]), new THREE.Vector3(...a.C[1]), new THREE.Vector3(...a.C[2])).scale(new THREE.Vector3(R_SKY, R_SKY, R_SKY));
+      celMatrix();
       const g = a.GM; GMu.value.set(g[0][0], g[1][0], g[2][0], g[0][1], g[1][1], g[2][1], g[0][2], g[1][2], g[2][2]);
       const Nl = nelm(), cov = cover(), dayk = Math.max(0, Math.min(1, (a.sun.alt + 8) / 12)) ** 1.5;
       lineK.value = S.lines && Nl > 1.5 ? Math.min(1, (Nl - 1.5) / 2) * (S.dark ? .32 : .2) * (1 - .95 * cov) : 0; if (lines) lines.visible = lineK.value > 0.001;
@@ -373,7 +404,7 @@ export default {
         ['Names on the sky', !S.names ? 'off' : `${S.labelled.stars.length ? 'stars: ' + S.labelled.stars.map(esc).join(', ') : 'no named star bright enough and in view'}; ${S.labelled.messier.length ? 'Messier: ' + S.labelled.messier.map(m => 'M ' + m).join(', ') : 'no Messier object bright enough for this sky and in view'} (only what the star limit shows, not behind buildings)`],
         ['Satellites', S.satSet ? `${S.satPts.length} sunlit above the horizon now (${S.satSet.recs.length} bright satellites, ${esc(S.satSet.src)})` : S.fetch ? (S.satErr ? esc(S.satErr) : 'orbit data older than 10 days from that time') : 'tick "Fetch" for times more than 7 days from 4 October 2026'],
         ['Next ISS pass', iss ? `${dayL(iss.t0)} ${hm(iss.t0)}–${hm(iss.t1)}: from ${compass(iss.az0)} to ${compass(iss.az1)}, highest ${f1(iss.max)}° at ${hm(iss.tmax)} in the ${compass(iss.azmax)}` : iss === null ? 'none above 10° in a dark sky in the next 3 days' : S.satSet ? 'searching…' : '—'],
-        ['Cloud from the satellite', S.clm ? (S.clm.ready ? `EUMETSAT Meteosat cloud mask at ${hm(S.clm.t)} ${tz(S.clm.t)} (${esc(S.clm.src)}): ${Math.round(S.clm.mean * 100)}% cloud within 60 km; drawn as a cloud deck at 1 km${sky.wx ? ', its cover from the weather layer\'s low cloud, placed by the mask' : ' (no weather: the mask alone)'}` : S.clm.err ? 'cloud mask ' + esc(S.clm.err) : 'loading…') : S.fetch ? 'no cloud mask for that time (none before September 2020, none in the future)' : 'tick "Fetch" for the satellite cloud at times away from the photo evening (3 October 2026, 22:30 to 01:30 BST)'],
+        ['Cloud from the satellite', S.clm ? (S.clm.ready ? `EUMETSAT Meteosat cloud mask at ${hm(S.clm.t)} ${tz(S.clm.t)} (${esc(S.clm.src)}): ${Math.round(S.clm.mean * 100)}% cloud within 60 km; drawn as a cloud deck at 1 km, moving with the wind${sky.wx ? ', its cover from the weather layer\'s low cloud, placed by the mask' : ' (no weather: the mask about its mean, as the WebGL page)'}` : S.clm.err ? 'cloud mask ' + esc(S.clm.err) : 'loading…') : S.fetch ? 'no cloud mask for that time (none before September 2020, none in the future)' : 'tick "Fetch" for the satellite cloud at times away from the photo evening (3 October 2026, 22:30 to 01:30 BST)'],
       ];
       out.innerHTML = `<p>${dayL(S.t)} ${hm(S.t)} ${tz(S.t)} · observer at Canary Wharf (${lat0.toFixed(3)}° N, ${(-lon0).toFixed(3)}° W)</p><table>${rows.map(([p, q]) => `<tr><th>${esc(p)}</th><td>${q}</td></tr>`).join('')}</table>`;
     }
@@ -383,7 +414,9 @@ export default {
     ctx.onFrame(() => {
       if (!S.visible) return;
       update(false);
-      const c = camera.position; root.position.copy(c); cel.matrixWorldNeedsUpdate = true;   // cel is a child of root: its matrix has no translation
+      const c = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld); root.position.copy(c); cel.matrixWorldNeedsUpdate = true;   // round the eye in model metres (camera.position is in the exaggerated space with ?vz=); cel is a child of root: its matrix has no translation
+      if ((ctx.vzNow ? ctx.vzNow() : 1) !== celVz) celMatrix();
+      if (deck.visible) deckFrame(c);
       const h = hereOf(); azGroup.visible = S.azl && S.vp !== 'camera' && Math.hypot(c.x - h.x, c.z - h.z) >= 500;
       const k = `${c.x.toFixed(1)},${c.y.toFixed(1)},${c.z.toFixed(1)},${camera.quaternion.x.toFixed(4)},${camera.quaternion.y.toFixed(4)},${camera.fov},${innerWidth},${lastT},${NAMES ? 1 : 0}`;
       if (k !== camKey) { camKey = k; placeLabels(); }

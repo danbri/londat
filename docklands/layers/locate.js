@@ -63,8 +63,9 @@ export default {
     function setCam(c, eye) {
       if (eye) { D3().setCam({ ...c, fov: 1.05 }); eyeOn = true; return; }
       if (eyeOn) { eyeOn = false; D3().setCam(c); return; }   // leaves the eye's field of view
-      const ce = Math.cos(c.pitch); controls.target.set(c.tx, c.ty || 0, c.tz);
-      camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, (c.ty || 0) + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce); controls.update(); draw();
+      // c.ty in model metres (camState); the orbit is in the exaggerated space (main.js setVz: ty x vz, as main.js setCam)
+      const ce = Math.cos(c.pitch), ty = (c.ty || 0) * (ctx.vzNow ? ctx.vzNow() : 1); controls.target.set(c.tx, ty, c.tz);
+      camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce); controls.update(); draw();
     }
     const unpress = () => document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', 'false'));
 
@@ -197,7 +198,7 @@ export default {
           cone.setAttribute('d', `M${p[0].toFixed(1)} ${p[1].toFixed(1)}L${pt(a - s)}A${L} ${L} 0 0 1 ${pt(a + s)}Z`); const g = $('locBeam'); g.setAttribute('cx', p[0]); g.setAttribute('cy', p[1]); g.setAttribute('r', L); }
         else cone.setAttribute('d', ''); } else cone.setAttribute('d', '');
     });
-    const api = { ownUi: true, off, showEdge, get state() { return { steps: S.steps, mode: S.mode, fix: S.fix && { x: +S.fix.x.toFixed(1), z: +S.fix.z.toFixed(1), acc: +S.fix.acc.toFixed(1) }, heading: S.hv ? +wrap360(Math.atan2(S.hv[0], S.hv[1]) * R2D).toFixed(2) : null, hsrc: S.hsrc, pitch: +(S.pitch * R2D).toFixed(1), watching: S.watch != null, orient: S.orient, outside: S.outside, msg: msg.hidden ? '' : msg.textContent, err: S.lastErr, conv: S.conv }; } };
+    const api = { ownUi: true, off, showEdge, setCam, get state() { return { steps: S.steps, mode: S.mode, fix: S.fix && { x: +S.fix.x.toFixed(1), z: +S.fix.z.toFixed(1), acc: +S.fix.acc.toFixed(1) }, heading: S.hv ? +wrap360(Math.atan2(S.hv[0], S.hv[1]) * R2D).toFixed(2) : null, hsrc: S.hsrc, pitch: +(S.pitch * R2D).toFixed(1), watching: S.watch != null, orient: S.orient, outside: S.outside, msg: msg.hidden ? '' : msg.textContent, err: S.lastErr, conv: S.conv }; } };
     return api;
   },
 };

@@ -435,6 +435,9 @@ function ui() {
 
 export function init(hook) {
   H = hook; C = hook.ctx;
+  // vertical exaggeration (?vz=): the orthographic camera takes the same y scale in its world matrix as the orbit camera
+  // (main.js vzCamera; index.html pixel art uses the page's VIEW with y x vz as every other style)
+  if (C.vzCamera) C.vzCamera(PX.cam);
   // picking in pixel art: the ray of the orthographic camera that draws the view
   const set = THREE.Raycaster.prototype.setFromCamera;
   H.ray.setFromCamera = function (ndc, cam) { return set.call(this, ndc, MODE === 'pixel' ? PX.cam : cam); };

@@ -489,8 +489,11 @@ export default {
       const eye = [P(0), P(1), P(2)], h = pr.h + angDiff(S.h, pr.h) * a + S.ly, lp = clamp(pr.lp + (S.lp - pr.lp) * a + (S.mode === 'plane' ? S.gam : 0), -1.45, 1.45);
       const dir = [Math.sin(h) * Math.cos(lp), Math.sin(lp), Math.cos(h) * Math.cos(lp)];
       const port = innerHeight > innerWidth, F = VEH[S.mode].fov * (port ? 1.25 : 1);
-      camera.position.set(eye[0], eye[1], eye[2]); camera.up.set(0, 1, 0);
-      vT.set(eye[0] + dir[0] * 100, eye[1] + dir[1] * 100, eye[2] + dir[2] * 100); controls.target.copy(vT); camera.lookAt(vT);
+      // vertical exaggeration (main.js setVz): the camera and the orbit are in the exaggerated space (y x vz), as index.html
+      // render() puts a free camera's eye and target (cam.eye[1] x VZ); the drone itself flies in model metres
+      const vz = ctx.vzNow ? ctx.vzNow() : 1;
+      camera.position.set(eye[0], eye[1] * vz, eye[2]); camera.up.set(0, 1, 0);
+      vT.set(eye[0] + dir[0] * 100, (eye[1] + dir[1] * 100) * vz, eye[2] + dir[2] * 100); controls.target.copy(vT); camera.lookAt(vT);
       if (S.roll) camera.rotateZ(-S.roll * Math.PI / 180);
       let near = VEH[S.mode].near; if (S.mode === 'copter' && !S.under) near = clamp((S.p[1] - ground(S.p[0], S.p[2])) / 6, .5, 4);
       camera.fov = Math.min(100, F); camera.near = near; camera.far = S.mode === 'tube' || S.mode === 'walk' || S.under ? 6000 : 20000; camera.updateProjectionMatrix(); camera.updateMatrixWorld();

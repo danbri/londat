@@ -8,7 +8,7 @@
 // Skill: docklands-sky (the WebGL page's sky: much more there; "Three.js port clock" for the port).
 import * as THREE from 'three/webgpu';
 import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
-import { instancedBufferAttribute, uniform, vec3, vec4, float, uv, smoothstep, length, cameraPosition, positionGeometry, positionView, fog, exp, dot, sqrt, max, mix } from 'three/tsl';
+import { instancedBufferAttribute, uniform, vec3, vec4, float, uv, smoothstep, length, cameraPosition, positionGeometry, positionView, positionLocal, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, fog, exp, dot, sqrt, max, mix } from 'three/tsl';
 import { A } from './build.js';
 
 const AE = globalThis.Astronomy;
@@ -39,6 +39,16 @@ export const dirOf = (az, alt) => { const a = az * Math.PI / 180, e = alt * Math
 function horizon(body, t) { const d = new Date(t), q = AE.Equator(body, d, OBS, true, true), h = AE.Horizon(d, OBS, q.ra, q.dec, 'normal'), g = AE.Horizon(d, OBS, q.ra, q.dec);
   return { az: h.azimuth, alt: h.altitude, altGeo: g.altitude, dist: q.dist }; }
 const sstep = THREE.MathUtils.smoothstep, clamp01 = v => Math.max(0, Math.min(1, v));
+// vertical exaggeration (main.js setVz): the view matrix scales y by vz, so a dome round the eye would show the sun, the
+// horizon glow and the stars too high (a direction at altitude a at atan(vz tan a)). The WebGL page draws its sky with the
+// view's rotation only (sky.js draw: cr, cu, cf from VIEW), so the sky is never exaggerated. Here a mesh round the eye is
+// placed at its local position with y / vz (it appears where the unscaled view would show it) while its shading keeps
+// reading positionWorld from the unscaled local position: setupModelViewProjection is the hook that builds the clip
+// position (NodeMaterial; SkyMesh's own vertexNode takes modelViewProjection from it).
+export function vzUndistort(m, vzInv) {
+  m.setupModelViewProjection = () => cameraProjectionMatrix.mul(cameraViewMatrix).mul(modelWorldMatrix).mul(vec4(positionLocal.mul(vec3(1, vzInv, 1)), 1));
+  m.needsUpdate = true; return m;
+}
 const MOON_R = 14000, MOON_MIN = 0.3;   // the disc's distance (m, inside the far plane) and its least angular radius (degrees: about 5 px on a 800 px tall view)
 
 export class Sky3 {
@@ -48,6 +58,7 @@ export class Sky3 {
     this.sky = new SkyMesh(); this.sky.scale.setScalar(10000); this.sky.material.depthTest = false; this.sky.material.depthWrite = false; this.sky.renderOrder = -10; this.sky.frustumCulled = false;   // drawn first, behind everything, inside the far plane (20 km at least)
     this.sky.turbidity.value = 4; this.sky.rayleigh.value = 1.6; this.sky.mieCoefficient.value = 0.004; this.sky.mieDirectionalG.value = 0.8;
     if (this.sky.cloudCoverage) this.sky.cloudCoverage.value = 0.25;
+    vzUndistort(this.sky.material, this.vzInv);
     scene.add(this.sky);
     this.sun = new THREE.DirectionalLight(0xfff4e5, 3); this.sun.castShadow = false; scene.add(this.sun, this.sun.target);
     this.moon = new THREE.DirectionalLight(0x9fb4d8, 0); scene.add(this.moon, this.moon.target);
@@ -65,7 +76,7 @@ export class Sky3 {
   makeMoon() {
     const U = this.moonU = { c: uniform(new THREE.Vector3(0, 1e4, 0)), r: uniform(new THREE.Vector3(1, 0, 0)), u: uniform(new THREE.Vector3(0, 1, 0)), s: uniform(new THREE.Vector3(0, 0, 1)), gain: uniform(1), shine: uniform(0) };
     const m = new THREE.MeshBasicNodeMaterial({ transparent: true, depthWrite: false, depthTest: true, fog: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });   // added to the sky: brighter than the day sky behind it
-    m.positionNode = cameraPosition.add(U.c).add(U.r.mul(positionGeometry.x).add(U.u.mul(positionGeometry.y)).mul(vec3(1, this.vzInv, 1)));   // the view scales y by the exaggeration: the disc's own extent is scaled back
+    m.positionNode = cameraPosition.add(U.c.add(U.r.mul(positionGeometry.x)).add(U.u.mul(positionGeometry.y)).mul(vec3(1, this.vzInv, 1)));   // the view scales y by the exaggeration: the disc's place and extent are scaled back (the moon at its true altitude, round)
     const p = uv().mul(2).sub(1), r2 = dot(p, p), n = vec3(p.x, p.y, sqrt(max(float(0), float(1).sub(r2))));
     const lit = smoothstep(-0.04, 0.06, dot(n, U.s)), disc = smoothstep(1.0, 0.9, sqrt(r2));
     const lum = mix(U.shine, float(1), lit).mul(n.z.mul(0.25).add(0.75));   // a little limb darkening
@@ -81,7 +92,7 @@ export class Sky3 {
     this.starData.forEach((s, i) => { const m = s[3], bv = s[4], k = Math.pow(10, -0.4 * (m - 1)); size.array[i] = Math.max(1.2, Math.min(5, 2.2 + 1.5 * Math.sqrt(k)));
       const c = bv < 0 ? [0.75, 0.82, 1] : bv < 0.6 ? [1, 1, 1] : bv < 1.2 ? [1, 0.93, 0.8] : [1, 0.8, 0.62]; col.array.set(c.map(x => x * Math.min(1.4, 0.35 + k)), 3 * i); });
     const mat = new THREE.PointsNodeMaterial({ sizeAttenuation: false, transparent: true, depthWrite: false, fog: false });
-    mat.positionNode = instancedBufferAttribute(pos); mat.sizeNode = instancedBufferAttribute(size);
+    mat.positionNode = instancedBufferAttribute(pos).mul(vec3(1, this.vzInv, 1)); mat.sizeNode = instancedBufferAttribute(size);
     mat.colorNode = vec4(instancedBufferAttribute(col).mul(this.starGain), float(1));
     mat.opacityNode = smoothstep(0.5, 0.15, length(uv().sub(0.5)));   // a round, soft point (the sprite is a square)
     mat.blending = THREE.AdditiveBlending;

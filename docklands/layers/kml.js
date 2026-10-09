@@ -236,31 +236,35 @@ export default {
 
     // ---------- camera: the page's (target, yaw, pitch, dist); KML Camera / LookAt to it and back
     const camNow = () => { const c = D3().camState(); return c; };
+    // vertical exaggeration (main.js setVz): c.ty is in model metres; the orbit is in the exaggerated space (ty x vz), as
+    // main.js setCam and the WebGL page's T = (tx, ty x VZ, tz)
+    const VZ = () => ctx.vzNow ? ctx.vzNow() : 1;
     function applyCam(c) {   // as main.js setCam, without the resize (used every frame of a flight)
-      const ce = Math.cos(c.pitch); controls.target.set(c.tx, c.ty || 0, c.tz);
-      camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, (c.ty || 0) + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce); controls.update(); draw();
+      const ce = Math.cos(c.pitch), ty = (c.ty || 0) * VZ(); controls.target.set(c.tx, ty, c.tz);
+      camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce); controls.update(); draw();
     }
     function goView(v) {
       S.fly++; const [x, z] = geo(v.lon, v.lat);
       const alt = v.altitudeMode === 'absolute' ? v.alt : /^relativeTo/.test(v.altitudeMode) ? groundAt(x, z) + v.alt : groundAt(x, z) + (v.type === 'Camera' ? Math.max(1.6, v.alt || 0) : 0);
       let c;
       if (v.type === 'LookAt') c = { tx: x, ty: alt, tz: z, yaw: -v.heading * D2R, pitch: Math.max(.02, Math.min(1.5695, (90 - v.tilt) * D2R)), dist: Math.max(80, Math.min(16000, v.range || 1000)) };
-      else { const a = v.heading * D2R, p = (v.tilt - 90) * D2R, D = 1200; c = { tx: x + D * Math.sin(a) * Math.cos(p), ty: alt + D * Math.sin(p), tz: z - D * Math.cos(a) * Math.cos(p), yaw: -a, pitch: Math.max(-1.5695, Math.min(1.5695, -p)), dist: D }; }
+      else { const a = v.heading * D2R, p = (v.tilt - 90) * D2R, D = 1200; c = { tx: x + D * Math.sin(a) * Math.cos(p), ty: alt + D * Math.sin(p) / VZ(), tz: z - D * Math.cos(a) * Math.cos(p), yaw: -a, pitch: Math.max(-1.5695, Math.min(1.5695, -p)), dist: D }; }
       if (Number.isFinite(v.horizFov) && v.horizFov > 1 && v.horizFov < 170) c.hfov = v.horizFov * D2R; else if (v.type === 'Camera') c.hfov = 60 * D2R;
       D3().setCam(c);
     }
     function currentView() {   // the camera as drawn: eye in m OD, heading from north, tilt from straight down, horizontal field
-      const e = camera.position, t = controls.target, d = [t.x - e.x, t.y - e.y, t.z - e.z], [lon, lat] = lonLatOf(A, geo, e.x, e.z);
+      const v = VZ(), e = { x: camera.position.x, y: camera.position.y / v, z: camera.position.z }, t = controls.target, d = [t.x - e.x, t.y / v - e.y, t.z - e.z], [lon, lat] = lonLatOf(A, geo, e.x, e.z);   // model metres (kml-layer.js currentView: K.eye / VZ)
       const heading = ((Math.atan2(d[0], -d[2]) * R2D) % 360 + 360) % 360, tilt = 90 + Math.atan2(d[1], Math.hypot(d[0], d[2])) * R2D;
       return { type: 'Camera', lon, lat, alt: e.y, heading, tilt, roll: 0, altitudeMode: 'absolute', horizFov: 2 * Math.atan(Math.tan(camera.fov * D2R / 2) * camera.aspect) * R2D };
     }
     function fitCam(b, o = {}) {   // a camera that shows a box (x0, z0, x1, z1) inside the screen (pads: 16 px sides, 12 % top, 13 % bottom); pitch .95 on a tall screen, .72 on a wide one
       const W = innerWidth, H = innerHeight, asp = W / H, c0 = camNow(), yaw = o.yaw ?? c0.yaw, pitch = Math.max(asp < .8 ? .95 : .72, Math.min(1.25, c0.pitch));
       const pad = [16, Math.min(90, H * .12), 16, Math.min(100, H * .13)], pts = [];
-      for (const x of [b[0], b[2]]) for (const z of [b[1], b[3]]) pts.push(new THREE.Vector3(x, groundAt(x, z), z));
+      const v = VZ();   // the clone has no vz wrapper: shoot in the exaggerated space (kml-layer.js fitCam: T = (tx, ty x VZ, tz))
+      for (const x of [b[0], b[2]]) for (const z of [b[1], b[3]]) pts.push(new THREE.Vector3(x, groundAt(x, z) * v, z));
       const cam = camera.clone(); cam.aspect = asp; cam.updateProjectionMatrix();
       let tx = (b[0] + b[2]) / 2, tz = (b[1] + b[3]) / 2;
-      const shot = (d) => { const ty = groundAt(tx, tz), ce = Math.cos(pitch); cam.position.set(tx + d * Math.sin(yaw) * ce, ty + d * Math.sin(pitch), tz + d * Math.cos(yaw) * ce); cam.up.set(0, 1, 0); cam.lookAt(tx, ty, tz); cam.updateMatrixWorld();
+      const shot = (d) => { const ty = groundAt(tx, tz) * v, ce = Math.cos(pitch); cam.position.set(tx + d * Math.sin(yaw) * ce, ty + d * Math.sin(pitch), tz + d * Math.cos(yaw) * ce); cam.up.set(0, 1, 0); cam.lookAt(tx, ty, tz); cam.updateMatrixWorld();
         return pts.map(p => { const q = p.clone().project(cam); return q.z > 1 ? null : [(q.x + 1) / 2 * W, (1 - q.y) / 2 * H]; }); };
       const fits = d => shot(d).every(q => q && q[0] >= pad[0] && q[0] <= W - pad[2] && q[1] >= pad[1] && q[1] <= H - pad[3]);
       const lo0 = o.min || 150; let lo = lo0, hi = 40000; if (fits(lo)) hi = lo; else for (let k = 0; k < 24; k++) { const m = Math.sqrt(lo * hi); if (fits(m)) hi = m; else lo = m; }
@@ -401,7 +405,7 @@ export default {
     const m0 = /[?&]kml=([^&#]+)/.exec(location.search); if (m0) loadUrl(decodeURIComponent(m0[1].replace(/\+/g, ' ')));
 
     const api = { object: root, ownUi: true, open, openFiles, loadUrl, rebuild, exportView, currentView, goView, fitCam, frame, show, sources, KS,
-      setVisible(v) { rootOn = v; root.visible = v; draw(); }, get S() { return S; }, get state() { return { files: S.files.length, n: S.n, vis: S.vis, hits: S.hits.length, polys: S.polys.length }; } };
+      setVisible(v) { rootOn = v; root.visible = v; draw(); }, get S() { return S; }, goView, currentView, applyCam, get state() { return { files: S.files.length, n: S.n, vis: S.vis, hits: S.hits.length, polys: S.polys.length }; } };
     ctx.kml = api;
     return api;
   },

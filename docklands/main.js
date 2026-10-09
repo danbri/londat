@@ -53,13 +53,27 @@ controls.listenToKeyEvents(window);
 // matrix is V x diag(1, VZ, 1). The orbit (camera.position, controls.target) is in the exaggerated space, as the WebGL
 // page's T = (tx, ty x VZ, tz); everything that reads camera.matrixWorld (Raycaster.setFromCamera, Vector3.project, the
 // cameraPosition node, frustum culling) then works in model metres. r186 Camera.updateMatrixWorld and updateWorldMatrix
-// rebuild matrixWorldInverse without scale, so both are wrapped. Not in a headset session (layers/xr.js draws those).
+// rebuild matrixWorldInverse without scale, so both are wrapped. Not in a headset session (layers/xr.js draws those at
+// vz 1: vzNow()). Other cameras get the same wrapper with ctx.vzCamera (styles.js pixel art); the water mirror
+// (layers/water.js) mirrors the rigid camera in the exaggerated space and applies the scale to its virtual camera.
 let VZ = 1;
 const SINV = new THREE.Matrix4();
-const vzFix = () => { if (VZ !== 1 && !ctx?.xrFrame) { camera.matrixWorld.premultiply(SINV); camera.matrixWorldInverse.copy(camera.matrixWorld).invert(); } };
-{ const umw = camera.updateMatrixWorld, uwm = camera.updateWorldMatrix;
-  camera.updateMatrixWorld = function (force) { umw.call(this, force); vzFix(); };
-  camera.updateWorldMatrix = function (up, down) { uwm.call(this, up, down); vzFix(); }; }
+const vzNow = () => VZ === 1 || ctx.xrFrame ? 1 : VZ;   // the scale in use: 1 in a headset session (ctx exists once VZ is not 1)
+const vzCams = new WeakSet();
+function vzCamera(cam) {   // a camera whose world matrix takes the y scale 1 / vz (its position and orbit stay in the exaggerated space)
+  if (vzCams.has(cam)) return cam; vzCams.add(cam);   // (not userData: Object3D.clone copies it, never the wrapper)
+  let rigid = false;   // inside lookAt: Object3D.lookAt reads the eye from matrixWorld, which must then be the unscaled one
+  const fix = () => { if (!rigid && vzNow() !== 1) { cam.matrixWorld.premultiply(SINV); cam.matrixWorldInverse.copy(cam.matrixWorld).invert(); } };
+  const umw = cam.updateMatrixWorld, uwm = cam.updateWorldMatrix, la = cam.lookAt;
+  cam.updateMatrixWorld = function (force) { umw.call(this, force); fix(); };
+  cam.updateWorldMatrix = function (up, down) { uwm.call(this, up, down); fix(); };
+  cam.lookAt = function (...a) { if (vzNow() === 1) return la.apply(this, a); rigid = true; try { la.apply(this, a); } finally { rigid = false; } this.updateMatrixWorld(); };
+  return cam;
+}
+vzCamera(camera);
+// zoom to the cursor (OrbitControls zoomToCursor): the pointer ray in the exaggerated space (unproject gives model metres)
+{ const uzp = controls._updateZoomParameters;
+  if (uzp) controls._updateZoomParameters = function (x, y) { uzp.call(this, x, y); const v = vzNow(); if (v !== 1 && this.zoomToCursor) { const d = this._dollyDirection.set(this._mouse.x, this._mouse.y, 1).unproject(this.object); d.y *= v; d.sub(this.object.position).normalize(); } }; }
 function setVz(v) {
   v = THREE.MathUtils.clamp(+v || 1, 1, 5); if (v === VZ) return;
   const ty = controls.target.y; controls.target.y = ty / VZ * v; camera.position.y += controls.target.y - ty;   // the eye keeps its offset from the target (index.html T.y = ty x VZ)
@@ -336,7 +350,7 @@ const ui = makeUi(draw);
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
-  addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; },
+  addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
 };
 async function loadLayers() {
@@ -366,6 +380,7 @@ addEventListener('resize', resize);
 controls.addEventListener('change', () => { draw(); writeHash(); });
 let frames = 0, fpsT = performance.now(), fps = 0;
 renderer.setAnimationLoop((time, xrFrame) => {
+  sky.setVz(vzNow());   // the sky dome, stars and moon undo the view's y scale (1 in a headset session)
   if (ctx.xrFrame) { ctx.xrFrame(time, xrFrame, frameHooks); return; }   // layers/xr.js: a headset session (renderer.xr) or its one-eye preview draws the frame
   if (controls.update()) need = true;
   if (!need && !$('animate').checked) return; need = false;

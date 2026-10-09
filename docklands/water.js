@@ -95,11 +95,24 @@ export function waterDepth(refresh = false) {
   if (cached) { cached.tex.image.data.set(data); cached.tex.needsUpdate = true; }   // a refresh (under.js has loaded): same texture
   const tex = cached ? cached.tex : new THREE.DataTexture(data, nx, nz, THREE.RedFormat, THREE.UnsignedByteType);
   tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping; tex.generateMipmaps = false; tex.needsUpdate = true;
-  cached = { tex, under: !!globalThis.DOCKLANDS_UNDER, x0: E.x0, z0: E.z0, w: nx * c, h: nz * c, nx, nz, cell: c, kind,
+  cached = { tex, under: !!globalThis.DOCKLANDS_UNDER, x0: E.x0, z0: E.z0, w: nx * c, h: nz * c, nx, nz, cell: c, kind, level,   // level: each water cell's polygon level (m OD; NaN on land), for layers/water.js mirrorBody
     stats: { grid: `${nx} x ${nz} at ${c} m`, waterCells: cells, soundedCells: sounded, soundings: ns, polygons: polys, meanDepth: +(sumD / Math.max(1, cells)).toFixed(1), maxDepth: +maxD.toFixed(1), ms: Math.round(performance.now() - t0) } };
   return cached;
 }
 
+// the water body nearest to (x, z) for the mirror plane (layers/water.js): { tidal, level, d } from the depth map's cells
+// (kind 1 tidal, 2 dock; ponds are left out: a fountain beside the eye must not set the plane for the river), searched in
+// square rings of 10 m cells out to maxR m; null when there is none
+export function mirrorBody(x, z, maxR = 3000) {
+  const D = waterDepth(), c = D.cell, i0 = Math.floor((x - D.x0) / c), j0 = Math.floor((z - D.z0) / c), R = Math.ceil(maxR / c);
+  const at = (i, j) => { if (i < 0 || j < 0 || i >= D.nx || j >= D.nz) return 0; const k = D.kind[j * D.nx + i]; return k === 1 || k === 2 ? j * D.nx + i + 1 : 0; };
+  for (let r = 0; r <= R; r++) { let best = 0, bd = Infinity;
+    for (let a = -r; a <= r; a++) for (const [i, j] of r ? [[i0 + a, j0 - r], [i0 + a, j0 + r], [i0 - r, j0 + a], [i0 + r, j0 + a]] : [[i0, j0]]) {
+      const m = at(i, j); if (!m) continue; const d = (i - i0) ** 2 + (j - j0) ** 2; if (d < bd) { bd = d; best = m; } }
+    if (best) return { tidal: D.kind[best - 1] === 1, level: D.level[best - 1], d: Math.sqrt(bd) * c };
+  }
+  return null;
+}
 // the level of the one mirror plane: the area-weighted mean level of the river and dock polygons (2 to 5 m OD)
 export function mirrorLevel() {
   let s = 0, a = 0;

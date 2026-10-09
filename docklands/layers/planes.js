@@ -265,10 +265,12 @@ export default {
     function planeCam() {
       if (!camDone) { const d = drawn[+qs.get('planecam')] || drawn[0]; if (!d) return; camDone = true; camKey = d.F.key; camAt = d.o.g.position.clone();
         const D = +(qs.get('planecamd') || 160), yaw = +(qs.get('planecamyaw') || 0.9), pt = +(qs.get('planecampitch') || 0.12), c = camAt;
-        ctx.controls.target.copy(c); ctx.controls.minDistance = 10; ctx.camera.position.set(c.x + D * Math.sin(yaw) * Math.cos(pt), c.y + D * Math.sin(pt), c.z + D * Math.cos(yaw) * Math.cos(pt)); ctx.controls.update(); ctx.camera.updateMatrixWorld(); ctx.draw(); return; }
+        // vertical exaggeration (main.js setVz): the aircraft is in model metres, the orbit in the exaggerated space (y x vz)
+        const vz = ctx.vzNow ? ctx.vzNow() : 1, cy = c.y * vz;
+        ctx.controls.target.set(c.x, cy, c.z); ctx.controls.minDistance = 10; ctx.camera.position.set(c.x + D * Math.sin(yaw) * Math.cos(pt), cy + D * Math.sin(pt), c.z + D * Math.cos(yaw) * Math.cos(pt)); ctx.controls.update(); ctx.camera.updateMatrixWorld(); ctx.draw(); return; }
       const d = camKey && drawn.find(q => q.F.key === camKey); if (!d) return;
       const p = d.o.g.position; if (p.equals(camAt)) return;
-      v3.subVectors(p, camAt); ctx.camera.position.add(v3); ctx.controls.target.add(v3); camAt.copy(p); ctx.camera.updateMatrixWorld();
+      v3.subVectors(p, camAt); v3.y *= ctx.vzNow ? ctx.vzNow() : 1; ctx.camera.position.add(v3); ctx.controls.target.add(v3); camAt.copy(p); ctx.camera.updateMatrixWorld();
     }
 
     // ---------- the runway (it is outside the model box, so the landings have something to land on): strip, runway, marks
