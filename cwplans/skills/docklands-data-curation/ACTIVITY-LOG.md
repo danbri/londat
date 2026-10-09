@@ -2100,4 +2100,8 @@ official data."
 - adsb-cache workflow: active since 11:36 UTC, no run yet at 13:55 UTC; workflow_dispatch from this session: 403.
 - Open: wind speed 0.8 m/s below EGLC (not corrected); tide surge only within 4 weeks; vz not in pixel art, mirror,
   Drone, headset; cloud deck does not move with the wind.
+- Later: the owner's "no trees" was a test link with ?layers=planes (bee4c661 adds a note for such links); Traffic
+  cameras switch also in Layers > Live, menu-check 84/84 at both sizes (aedc00c3); vz in pixel art, mirror, Drone, KML,
+  locate, zoom; mirror on by default; cloud deck noise moving downwind (96cfe48a). The README parity table has no
+  "partial" or "WebGL only" rows left.
 

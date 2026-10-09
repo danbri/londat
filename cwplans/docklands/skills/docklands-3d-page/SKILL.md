@@ -1914,6 +1914,13 @@ Include a looping carousel at top for time of day, time of year."
   its own. Sky colours added in TSL with toneMapped false: wrap them in sRGBTransferEOTF.
 - onFrame hooks run before the render updates `camera.matrixWorldInverse`: call `camera.updateMatrixWorld()` before
   `project()`, or labels go wrong after a camera jump with `animate=0`. `?layers=` loads any layer id.
+- vz everywhere (96cfe48a): `Object3D.lookAt` reads the eye from `matrixWorld`, so make the matrix rigid during lookAt;
+  mark wrapped cameras with a WeakSet (a clone copies userData, not the wrappers); keep the sky undistorted with
+  `material.setupModelViewProjection` (not positionNode); mirror under a y scale: S·Rf_h = Rf_(vz·h)·S, wrap
+  `ReflectorBaseNode.updateBefore`. The mirror is on by default on both backends (the water body nearest the eye).
+- A link with `?layers=` loads only those layers. The owner opened a test link with `?layers=planes` and saw no trees;
+  the page now shows "Test view: only the layers ..." with a link to the full page. Never give the owner a link with
+  `?layers=` unless you say so.
 - Phones: with every layer on, the page draws about 2.8 M triangles; the owner saw no trees after a reload on a device
   (2026-10-09, not yet diagnosed: memory is the first suspect).
 
