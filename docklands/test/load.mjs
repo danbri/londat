@@ -9,7 +9,7 @@ import { chromium } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
-const BASE = arg('--base', 'http://127.0.0.1:8188'), OUT = arg('--out', 'docklands/test/out'), WEBGPU = process.argv.includes('--webgpu');
+const BASE = arg('--base', 'http://127.0.0.1:8188'), OUT = arg('--out', 'docklands/test/out'), WEBGPU = process.argv.includes('--webgpu'), ANIM = process.argv.includes('--animate');
 const QUERIES = (arg('--query', '') ? [arg('--query')] : ['view=cw', 'view=rotherhithe', 'view=area&ground=rgb2008']);
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
@@ -23,7 +23,9 @@ for (const [w, h, dpr] of [[1280, 800, 1], [390, 844, 2]]) for (const q of QUERI
   page.on('response', r => { if (r.status() >= 400 && !/favicon/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   const t0 = Date.now();
   const [qq, hh] = q.split('#');   // &webgl goes in the query, before a share hash
-  await page.goto(`${BASE}/docklands/?${qq}${WEBGPU ? '' : '&webgl'}${hh ? '#' + hh : ''}`);
+  // animate=0: since 2026-10-09 the page draws every frame (moving water); in software one WebGPU frame can take seconds and the
+  // screenshot waits for a free frame and times out. --animate keeps the moving water.
+  await page.goto(`${BASE}/docklands/?${qq}${WEBGPU ? '' : '&webgl'}${ANIM ? '' : '&animate=0'}${hh ? '#' + hh : ''}`);
   const ok = await page.waitForFunction(() => globalThis.__docklands3 && globalThis.__docklands3.ready, null, { timeout: 180000 }).then(() => true).catch(() => false);
   await page.waitForTimeout(4000);
   const info = ok ? await page.evaluate(() => ({ backend: __docklands3.backend, stats: __docklands3.STATS, night: __docklands3.night, cam: __docklands3.camState(), hash: __docklands3.shareHash() })) : null;
