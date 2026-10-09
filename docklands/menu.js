@@ -33,7 +33,8 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
   const drawer = $('drawer'), scrim = $('scrim'), tabs = [...document.querySelectorAll('#dtabs [data-pane]')];
   const wide = () => innerWidth >= 900;
   const isOpen = () => !drawer.hidden;
-  const sync = () => { const on = isOpen(); scrim.hidden = !on || wide(); $('menu').setAttribute('aria-expanded', String(on)); };
+  // body.drawerOpen: on a wide screen (map not dimmed) the time wheels (carousel.js) move to the right of the drawer
+  const sync = () => { const on = isOpen(); scrim.hidden = !on || wide(); $('menu').setAttribute('aria-expanded', String(on)); document.body.classList.toggle('drawerOpen', on); };
   new MutationObserver(sync).observe(drawer, { attributes: true, attributeFilter: ['hidden'] });
   addEventListener('resize', sync);
   function open(on) { drawer.hidden = !on; sync(); }

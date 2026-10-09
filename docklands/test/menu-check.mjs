@@ -4,13 +4,17 @@
 // (phone) and a swipe left, and drags each wheel (the clock changes; the strip wraps). Run from the repository root with
 // a server on the root:
 //   python3 -m http.server 8283 --bind 127.0.0.1 &
-//   node docklands/test/menu-check.mjs [--base http://127.0.0.1:8283] [--out dir] [--webgpu]
+//   node docklands/test/menu-check.mjs [--base http://127.0.0.1:8283] [--out dir] [--webgpu] [--query 'layers=planes,wind']
+// --query adds to the page URL (a layer subset is faster; Menu map items of layers not loaded are then reported missing).
+// Also: at 1280 px the open drawer leaves the time wheels whole and usable (they move right of it), and the bottom-left
+// notes (aircraft #adsbCredit, water #surfNote) do not overlap, stay clear of the right-hand buttons and, at 390 px, the
+// aircraft note folds to two lines.
 // Skill: docklands-3d-page, "Three.js port".
 import { chromium } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
-const BASE = arg('--base', 'http://127.0.0.1:8283'), OUT = arg('--out', 'docklands/test/out/menu'), WEBGPU = process.argv.includes('--webgpu');
+const BASE = arg('--base', 'http://127.0.0.1:8283'), OUT = arg('--out', 'docklands/test/out/menu'), WEBGPU = process.argv.includes('--webgpu'), QUERY = arg('--query', '');
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
@@ -34,7 +38,7 @@ for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
   const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: dpr, hasTouch: w < 900 }), errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
-  await page.goto(`${BASE}/docklands/?view=cw&t=2026-10-09T15:00${WEBGPU ? '' : '&webgl'}&animate=0`);
+  await page.goto(`${BASE}/docklands/?view=cw&t=2026-10-09T15:00${WEBGPU ? '' : '&webgl'}&animate=0${QUERY ? '&' + QUERY : ''}`);
   await page.waitForFunction(() => globalThis.__docklands3 && globalThis.__docklands3.ready, null, { timeout: 240000 });
   await page.waitForTimeout(3000);
   const tag = `${w}x${h}`;
@@ -61,6 +65,34 @@ for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
   }), MAP);
   for (const r of res) if (r) fail(`${tag} ${r}`);
   console.log(`${tag}: ${MAP.length} menu map items checked`);
+  // the open drawer and the time wheels: on a wide screen the wheels are whole, right of the drawer, and a drag still works
+  if (w >= 900) {
+    if (await page.locator('#drawer').isHidden()) await page.click('#menu');
+    const g = await page.evaluate(() => { const r = id => { const b = document.getElementById(id).getBoundingClientRect(); return { l: Math.round(b.left), r: Math.round(b.right), w: Math.round(b.width) }; }; return { d: r('drawer'), wh: r('wheels'), day: r('wDay') }; });
+    if (g.wh.l < g.d.r || g.wh.r > w || g.day.w < 200) fail(`${tag} drawer open: wheels ${g.wh.l}-${g.wh.r} px, drawer to ${g.d.r} px, day strip ${g.day.w} px wide`);
+    else console.log(`${tag}: drawer open (to ${g.d.r} px): wheels ${g.wh.l}-${g.wh.r} px, day strip ${g.day.w} px wide`);
+    const c0 = await page.evaluate(() => __docklands3.clock), b = await page.locator('#wDay').boundingBox(), y = b.y + b.height / 2, x = b.x + b.width / 2;
+    await page.mouse.move(x, y); await page.mouse.down(); for (let k = 1; k <= 8; k++) { await page.mouse.move(x - k * 15, y); await page.waitForTimeout(30); } await page.mouse.up(); await page.waitForTimeout(1500);
+    const c1 = await page.evaluate(() => __docklands3.clock);
+    if (c1 === c0 || (await page.locator('#drawer').isHidden())) fail(`${tag} drawer open: a drag on the day wheel ${c1 === c0 ? 'did not change the clock' : 'closed the drawer'}`); else console.log(`${tag}: drawer open: the day wheel drags (${Math.round((c1 - c0) / 60e3)} min)`);
+    await page.screenshot({ path: `${OUT}/${tag}-drawer-wheels.png`, timeout: 180000 });
+    await page.keyboard.press('Escape');
+  }
+  // the bottom-left notes: aircraft (when recorded or live aircraft show) and water surface
+  { await page.waitForFunction(() => { const e = document.getElementById('adsbCredit'); return !e || !e.hidden; }, null, { timeout: 90000 }).catch(() => {});
+    const n = await page.evaluate(() => { const box = id => { const e = document.getElementById(id); if (!e || e.hidden || !e.checkVisibility()) return null; const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom, h: b.height }; };
+      const a = box('adsbCredit'), s = box('surfNote'), l1 = document.querySelector('#adsbCredit .ln1'), l2 = document.querySelector('#adsbCredit .ln2');
+      return { a, s, l1: l1 && l1.getBoundingClientRect().top, l2: l2 && l2.getBoundingClientRect().top, l1h: l1 && l1.getBoundingClientRect().height, text: document.getElementById('adsbCredit')?.textContent };
+    });
+    const R = v => v && `${Math.round(v.l)},${Math.round(v.t)} to ${Math.round(v.r)},${Math.round(v.b)}`;
+    if (!n.a) console.log(`${tag}: no aircraft note shown (layer not loaded, or no recorded aircraft)`);
+    else {
+      if (n.a.r > w - 54) fail(`${tag} aircraft note reaches ${Math.round(n.a.r)} px (the right-hand buttons start at ${w - 54} px)`);
+      if (n.s && !(n.a.t >= n.s.b - 0.5 || n.s.t >= n.a.b - 0.5 || n.a.l >= n.s.r || n.s.l >= n.a.r)) fail(`${tag} aircraft note ${R(n.a)} overlaps the water note ${R(n.s)}`);
+      if (w < 600 && !(n.l2 > n.l1 && n.l1h < 20)) fail(`${tag} aircraft note does not fold to two lines (line tops ${n.l1}, ${n.l2}; first line ${n.l1h} px high)`);
+      console.log(`${tag}: aircraft note ${R(n.a)} (${Math.round(n.a.h)} px high), water note ${n.s ? R(n.s) : 'not shown'}: "${n.text}"`);
+    }
+    await page.screenshot({ path: `${OUT}/${tag}-notes.png`, timeout: 180000 }); }
   // close: Escape, the cross, the dimmed map (phone only), a swipe left of more than 70 px
   const closeBy = async (name, fn) => { if (await page.locator('#drawer').isHidden()) await page.click('#menu'); await fn(); await page.waitForTimeout(100); if (!(await page.locator('#drawer').isHidden())) fail(`${tag} close by ${name}`); else console.log(`${tag}: closes by ${name}`); };
   await closeBy('Escape', () => page.keyboard.press('Escape'));

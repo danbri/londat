@@ -6,7 +6,7 @@
 <title>Docklands 3D (Three.js, experimental)</title>
 <meta name="description" content="Experimental port of the Docklands 3D page to three.js r186: WebGPU where the browser has it, else WebGL 2; TSL node materials.">
 <style>
-:root{--bg:#0f1215;--fg:#e8ecef;--mut:#9aa4ad;--acc:#2cc3b5;--line:#2c353d;--panel:rgba(16,20,24,.92);--safe:env(safe-area-inset-bottom,0px);--top:env(safe-area-inset-top,0px)}
+:root{--dw:min(88vw,400px);--bg:#0f1215;--fg:#e8ecef;--mut:#9aa4ad;--acc:#2cc3b5;--line:#2c353d;--panel:rgba(16,20,24,.92);--safe:env(safe-area-inset-bottom,0px);--top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
 button,label,select,#credit,#attribI{touch-action:manipulation}
@@ -19,10 +19,11 @@ button,label,select,#credit,#attribI{touch-action:manipulation}
 #nightBtn{left:62px;font-size:18px}
 #hud{position:fixed;left:116px;top:calc(18px + var(--top));padding:4px 10px;border-radius:6px;background:var(--panel);color:var(--mut);font-size:12px;z-index:4;transition:opacity 1.5s;pointer-events:none}
 #hud.fade{opacity:0}
-/* the drawer (menu.js): header, tabs, one pane at a time; closes by its cross, the dimmed map, Escape, a swipe left */
+/* the drawer (menu.js): header, tabs, one pane at a time; closes by its cross, the dimmed map, Escape, a swipe left.
+   Width --dw; while it is open the body has the class drawerOpen (on a wide screen the time wheels move right of it) */
 #scrim{position:fixed;inset:0;background:#0006;z-index:7}
 #scrim[hidden]{display:none}
-#drawer{position:fixed;left:0;top:0;bottom:0;width:min(88vw,400px);background:#101418;border-right:1px solid var(--line);z-index:8;display:flex;flex-direction:column;box-shadow:4px 0 18px #0009;padding-top:var(--top);touch-action:pan-y}
+#drawer{position:fixed;left:0;top:0;bottom:0;width:var(--dw);background:#101418;border-right:1px solid var(--line);z-index:8;display:flex;flex-direction:column;box-shadow:4px 0 18px #0009;padding-top:var(--top);touch-action:pan-y}
 #drawer[hidden]{display:none}
 #drawer.drag{transition:none}
 #dHead{flex:none;display:flex;align-items:center;gap:8px;padding:8px 8px 4px 14px}
@@ -72,6 +73,8 @@ a{color:var(--acc)}
 #attribI[hidden]{display:none}
 #stat{position:fixed;left:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
 @media (min-width:900px){#scrim{display:none!important}}
+/* the bottom-left notes (#blNotes: layers/planes.js, layers/wind.js; inline position) move right of the open drawer on a wide screen */
+@media (min-width:900px){body.drawerOpen #blNotes{left:calc(var(--dw) + 8px)!important;max-width:min(640px,calc(100vw - var(--dw) - 78px))!important}}
 </style>
 <!-- three.js r186 (0.186.1), vendored in londat third_party/three (MIT): addons import 'three', 'three/webgpu' and 'three/tsl' -->
 <script type="importmap">

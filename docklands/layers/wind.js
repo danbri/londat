@@ -67,10 +67,13 @@ export default {
         setFetch(w.dir); showNote(); ctx.draw();
       } finally { busy = false; }
     }
-    // ---------- note on screen (bottom left, above the frame line) and in the menu
+    // ---------- note on screen (bottom left, above the frame line, in the stack #blNotes shared with the aircraft note of
+    // layers/planes.js, above it) and in the menu
     const note = document.createElement('div'); note.id = 'surfNote';
-    Object.assign(note.style, { position: 'fixed', left: '8px', bottom: 'calc(30px + env(safe-area-inset-bottom, 0px))', fontSize: '11px', color: 'var(--mut)', background: 'var(--panel)', padding: '2px 8px', borderRadius: '5px', zIndex: 4, maxWidth: 'calc(100vw - 16px)' });
-    document.body.appendChild(note);
+    Object.assign(note.style, { order: 1, fontSize: '11px', color: 'var(--mut)', background: 'var(--panel)', padding: '2px 8px', borderRadius: '5px', maxWidth: '100%' });
+    let stack = document.getElementById('blNotes');
+    if (!stack) { stack = document.createElement('div'); stack.id = 'blNotes'; stack.style.cssText = 'position:fixed;left:8px;bottom:calc(30px + env(safe-area-inset-bottom,0px));z-index:4;display:flex;flex-direction:column;align-items:flex-start;gap:3px;max-width:min(640px,calc(100vw - 70px));pointer-events:none'; document.body.appendChild(stack); }
+    stack.appendChild(note);
     ctx.ui.section('Water surface');
     const menuNote = ctx.ui.note('');
     let meteoOn = qw === 'meteo' || (!fixed && !/^(0|off|no)$/i.test(ctx.qs.get('weather') || ''));   // on by default (owner, 2026-10-09: "all wind/weather"); ?weather=0 is the one switch for wind and weather

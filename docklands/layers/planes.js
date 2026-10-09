@@ -27,7 +27,8 @@
 // URL: ?planes=0 starts with the layer off; ?planes=test: a fixed scene (runway 09 arrival on short final over the
 // Isle of Dogs / Leamouth, a runway 09 departure lifting off, a Heathrow arrival, an H4 helicopter), frozen unless
 // &planesrun=1; ?planes=test27: the same on runway 27 (the departure climbs west over the Royal Docks);
-// &planecam=<n> puts the camera near test aircraft n (distance &planecamd=, metres).
+// &planecam=<n> puts the camera near aircraft n (test, recorded or live) and follows it (distance &planecamd=, metres;
+// &planecamyaw=, &planecampitch=, radians), e.g. ?t=2026-10-08T18:00&layers=planes&planecam=3&planecamd=70&planecamyaw=0.
 // Skills: docklands-3d-page ("Three.js port"), docklands-sky ("Aircraft"), cwplans-live-state ("Helicopters").
 import { WU } from '../water.js';
 import * as P from '../planes-data.js';
@@ -208,6 +209,12 @@ export default {
       return { x: a.x, y: a.y, z: a.z, h, pitch, bank, v: a.v, vs: dy / 2, phase: PH[a.tag] || a.tag, gear, ground, along, tag: a.tag };
     }
 
+    // ground height (m OD) under a point: the model's terrain inside the box, 6 m outside it (London City, Heathrow)
+    const groundY = (x, z) => { const g = ctx.groundAt && x > E.x0 && x < E.x1 && z > E.z0 && z < E.z1 ? ctx.groundAt(x, z) : NaN; return isFinite(g) ? g : 6; };
+    // a recorded or live aircraft at a reported point: the lift (m) that keeps its wheels (Pt.ground below the centre) on
+    // or above the ground; 0 when it flies higher (no ground look-up above 300 m OD)
+    const liftOf = (x, y, z, Pt) => y > 300 ? 0 : Math.max(0, groundY(x, z) - Pt.ground - y);
+
     // ---------- clock: the page clock, running on in real time from when it was set (frozen in the test scene)
     let clockSeen = ctx.clock, p0 = performance.now();
     const simT = () => { if (ctx.clock !== clockSeen) { clockSeen = ctx.clock; p0 = performance.now(); } return clockSeen + (performance.now() - p0); };
@@ -228,7 +235,10 @@ export default {
       for (const F of list) {
         if (F.Pr && F.tau > F.Pr.dur) continue;
         const S = F.live || F.rec ? F.S : stateOf(F), o = get(F.key, F.T); keep.add(F.key);
-        const lift = -o.Pt.ground;   // the path is the height of the wheels
+        // simulated: the procedure path is the height of the wheels; recorded and live: the reported position is the
+        // aircraft itself (the trail ends there), so the model's centre is on it, lifted only where the wheels would be
+        // under the ground (on the ground and in the last metres before touchdown)
+        const lift = F.live || F.rec ? liftOf(S.x, S.y, S.z, o.Pt) : -o.Pt.ground;
         o.g.position.set(S.x, S.y + lift, S.z); o.g.rotation.set(S.pitch, -S.h, -S.bank, 'YXZ'); o.gear.visible = S.gear;
         const sec = now / 1000, dist = Math.hypot(cam.x - S.x, cam.y - S.y, cam.z - S.z), sz = clamp(dist * 0.006, 0.6, 80);
         for (const [r, ax, w] of o.rotors) r.rotation[ax] = (sec * w) % (2 * Math.PI);
@@ -241,13 +251,24 @@ export default {
           else if (k === 'land') { on = landOn; s = sz * (night ? 1.6 : 1.1); }
           m.visible = on; if (on) m.scale.setScalar(s);
         }
-        drawn.push({ F, S, o });
+        drawn.push({ F, S, o, lift });
       }
       for (const k of [...live.keys()]) if (!keep.has(k)) release(k);
+      if (qs.has('planecam')) planeCam();   // before the labels, which are placed with the camera of this frame
       drawTrails(liveNow || recNow ? drawn : []); showCredit(liveNow, recNow);
       placeLabels(); status();
-      if (TEST && !camDone && qs.has('planecam')) { const d = drawn[+qs.get('planecam')] || drawn[0]; if (d) { camDone = true; const D = +(qs.get('planecamd') || 160), yaw = +(qs.get('planecamyaw') || 0.9), pt = +(qs.get('planecampitch') || 0.12);
-        ctx.controls.target.set(d.S.x, d.S.y + 3, d.S.z); ctx.controls.minDistance = 10; ctx.camera.position.set(d.S.x + D * Math.sin(yaw) * Math.cos(pt), d.S.y + 3 + D * Math.sin(pt), d.S.z + D * Math.cos(yaw) * Math.cos(pt)); ctx.controls.update(); ctx.draw(); } }
+    }
+    // &planecam=<n>: the camera near aircraft n of the drawn list (test, recorded or live), then it follows that aircraft
+    // (camera and target move with it, so the view can still be turned); &planecamd= distance (m), &planecamyaw=,
+    // &planecampitch= (rad)
+    let camKey = null, camAt = null;
+    function planeCam() {
+      if (!camDone) { const d = drawn[+qs.get('planecam')] || drawn[0]; if (!d) return; camDone = true; camKey = d.F.key; camAt = d.o.g.position.clone();
+        const D = +(qs.get('planecamd') || 160), yaw = +(qs.get('planecamyaw') || 0.9), pt = +(qs.get('planecampitch') || 0.12), c = camAt;
+        ctx.controls.target.copy(c); ctx.controls.minDistance = 10; ctx.camera.position.set(c.x + D * Math.sin(yaw) * Math.cos(pt), c.y + D * Math.sin(pt), c.z + D * Math.cos(yaw) * Math.cos(pt)); ctx.controls.update(); ctx.camera.updateMatrixWorld(); ctx.draw(); return; }
+      const d = camKey && drawn.find(q => q.F.key === camKey); if (!d) return;
+      const p = d.o.g.position; if (p.equals(camAt)) return;
+      v3.subVectors(p, camAt); ctx.camera.position.add(v3); ctx.controls.target.add(v3); camAt.copy(p); ctx.camera.updateMatrixWorld();
     }
 
     // ---------- the runway (it is outside the model box, so the landings have something to land on): strip, runway, marks
@@ -263,10 +284,17 @@ export default {
       const runwayMesh = new THREE.Mesh(Gr, rm); runwayMesh.receiveShadow = true; runwayMesh.name = 'LCY runway'; group.add(runwayMesh);
     }
 
+    // the bottom-left stack of notes (made by this layer or by layers/wind.js, whichever loads first): above the frame
+    // line (#stat), clear of the round buttons on the right (#locBtns, #xrBtns: 54 px), wrapping on a narrow screen
+    const cornerStack = () => { let el = document.getElementById('blNotes'); if (!el) { el = document.createElement('div'); el.id = 'blNotes';
+      el.style.cssText = 'position:fixed;left:8px;bottom:calc(30px + env(safe-area-inset-bottom,0px));z-index:4;display:flex;flex-direction:column;align-items:flex-start;gap:3px;max-width:min(640px,calc(100vw - 70px));pointer-events:none'; document.body.appendChild(el); } return el; };
     // ---------- labels (aircraft within 9 km), tappable, all marked "SIM"
     const host = document.getElementById('labels'), LBL = new Map();
     if (!document.getElementById('planesCss')) { const st = document.createElement('style'); st.id = 'planesCss'; st.textContent = '.lab.plane{border:1px dashed #9fd3ff;color:#dff1ff;pointer-events:auto;cursor:pointer;font:inherit;font-size:11px}.lab.plane.live{border:1px solid #ffd36b;color:#fff3d6}' +
-        '#adsbCredit{position:fixed;left:8px;bottom:calc(30px + var(--safe, 0px));font-size:11px;color:#e8eaec;background:#0d1013d9;padding:2px 8px;border-radius:5px;z-index:4}#adsbCredit a{color:#e8eaec}#adsbCredit[hidden]{display:none}'; document.head.appendChild(st); }
+        // the aircraft note sits in the bottom-left stack (#blNotes, shared with the water note of layers/wind.js), lowest;
+        // on a narrow screen it folds to two lines: what is shown, then the credit
+        '#blNotes>*{pointer-events:auto}#adsbCredit{order:2;font-size:11px;line-height:1.35;color:#e8eaec;background:#0d1013d9;padding:2px 8px;border-radius:5px;overflow-wrap:anywhere}#adsbCredit a{color:#e8eaec}#adsbCredit[hidden]{display:none}' +
+        '#adsbCredit .ln1:not(:empty)::after{content:" · "}@media (max-width:600px){#adsbCredit .ln1,#adsbCredit .ln2{display:block}#adsbCredit .ln1:not(:empty)::after{content:none}}'; document.head.appendChild(st); }
     function placeLabels() {
       const W = innerWidth, H = innerHeight, keep = new Set(), cam = ctx.camera.position;
       for (const d of drawn) { const { F, S } = d; if (Math.hypot(cam.x - S.x, cam.y - S.y, cam.z - S.z) > 9000 || !host) continue; keep.add(F.key);
@@ -274,7 +302,7 @@ export default {
         const ft = S.y / FT, alt = S.ground ? 'ground' : `${ft < 1000 ? Math.round(ft / 10) * 10 : (Math.round(ft / 100) * 100).toLocaleString('en-GB')} ft`;
         const txt = F.live ? `${identified(F.live.ac) ? F.live.ac.flight.trim() : (F.live.ac.t || F.T.code)} ${alt}` : F.rec ? `REC ${F.rec.L.c || F.rec.L.ty || F.T.code} ${alt}` : `SIM ${F.T.code} ${alt}`; if (el.textContent !== txt) el.textContent = txt;
         if (el.classList.contains('live') !== !!(F.live || F.rec)) el.classList.toggle('live', !!(F.live || F.rec));
-        v3.set(S.x, S.y + (F.T.H || 5) * 0.7, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H;
+        v3.set(S.x, S.y + (d.lift || 0) + (F.T.H || 5) * 0.7, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H;
         if (vis) el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,calc(-100% - 10px))`; if (el.hidden === vis) el.hidden = !vis; }
       for (const [k, el] of LBL) if (!keep.has(k)) { el.remove(); LBL.delete(k); }
     }
@@ -346,7 +374,7 @@ export default {
     ctx.ui.toggle(TEST ? 'Aircraft (simulated, test scene)' : 'Aircraft (recorded or simulated), live on request', on, setVisible);
 
     // ---------- live aircraft (adsb.lol, ODbL): only after the visitor ticks the box; nothing is asked before
-    const tracks = createTracks({ geo, conv, groundAt: (x, z) => { const g = ctx.groundAt && x > E.x0 && x < E.x1 && z > E.z0 && z < E.z1 ? ctx.groundAt(x, z) : NaN; return isFinite(g) ? g : 6; } });
+    const tracks = createTracks({ geo, conv, groundAt: groundY });
     const LIVE = { want: false, feed: null, url: feedUrl(qs) };
     const clockNow = () => Math.abs(simT() - Date.now()) < 5 * 60e3;
     const mayAsk = () => LIVE.want && visible && document.visibilityState === 'visible' && clockNow();
@@ -359,19 +387,19 @@ export default {
     });
     liveBox.dataset.planesLive = '1';
     const credit = document.createElement('div'); credit.id = 'adsbCredit'; credit.hidden = true;
-    const creditTxt = document.createElement('span');
-    credit.append(creditTxt); credit.insertAdjacentHTML('beforeend', `Aircraft: © <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a> contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL</a>`);
-    document.body.appendChild(credit);
+    const creditTxt = document.createElement('span'); creditTxt.className = 'ln1';
+    credit.append(creditTxt); credit.insertAdjacentHTML('beforeend', `<span class="ln2">Aircraft: © <a href="${ADSB.site}" target="_blank" rel="noopener">adsb.lol</a> contributors, <a href="${ADSB.licence}" target="_blank" rel="noopener">ODbL</a></span>`);
+    cornerStack().appendChild(credit);
 
     // ---------- recorded aircraft (the 7-day adsb.lol cache): read when the layer is on and the box is ticked (default)
-    const rec = createRecorded({ geo, conv, groundAt: (x, z) => { const g = ctx.groundAt && x > E.x0 && x < E.x1 && z > E.z0 && z < E.z1 ? ctx.groundAt(x, z) : NaN; return isFinite(g) ? g : 6; }, base: recBase(qs) });
+    const rec = createRecorded({ geo, conv, groundAt: groundY, base: recBase(qs) });
     rec.onLoad = () => { status(); ctx.draw(); };
     let recNow = false, recOn = !TEST && qs.get('adsbrec') !== '0';
     const recWanted = () => { if (!recOn || TEST || !visible) return false; if (rec.state === 'idle') rec.loadIndex().then(() => { status(); ctx.draw(); }); return rec.state === 'ready' || rec.state === 'loading' || rec.state === 'idle'; };
     // "Recorded Fri 2026-10-02 18:00 (adsb.lol, ODbL), same weekday and time"
     const recLabel = pk => { if (!pk) return ''; const p = londonParts(pk.t); return `Recorded ${p.wd} ${p.date} ${p.hm} London (adsb.lol, ODbL)${pk.exact ? '' : ', same weekday and time'}`; };
     function showCredit(liveNow, recNowArg) {
-      const txt = liveNow ? 'Live (adsb.lol) · ' : recNowArg ? recLabel(rec.pick).replace(' (adsb.lol, ODbL)', '') + ' · ' : '';
+      const txt = liveNow ? 'Live (adsb.lol)' : recNowArg ? recLabel(rec.pick).replace(' (adsb.lol, ODbL)', '').replace(' and time', '') : '';   // one line at 390 px
       if (creditTxt.textContent !== txt) creditTxt.textContent = txt;
       credit.hidden = !(liveNow || recNowArg) || !visible;
     }
@@ -384,7 +412,9 @@ export default {
     const trailLines = new THREE.LineSegments(trailGeo, trailMat); trailLines.frustumCulled = false; trailLines.name = 'live aircraft trails'; group.add(trailLines);
     function drawTrails(list) {
       let n = 0; const put = (a, b) => { if (n >= TRAILMAX) return; trailPos.set(a, n * 6); trailPos.set(b, n * 6 + 3); n++; };
-      for (const { F, S } of list) { if (!F.track) continue; const P = F.track.trail.map(p => [p[1], p[2], p[3]]); P.push([S.x, S.y, S.z]);
+      // each point lifted as the model would be there (on the ground the trail runs at the height of the fuselage's centre);
+      // the last point is the model's own position, so the line meets the aircraft
+      for (const { F, o } of list) { if (!F.track) continue; const P = F.track.trail.map(p => [p[1], p[2] + liftOf(p[1], p[2], p[3], o.Pt), p[3]]); P.push(o.g.position.toArray());
         for (let i = 1; i < P.length; i++) put(P[i - 1], P[i]); }
       trailGeo.setDrawRange(0, n * 2); if (n) { trailGeo.attributes.position.needsUpdate = true; trailGeo.computeBoundingSphere(); }
       trailLines.visible = n > 0;
