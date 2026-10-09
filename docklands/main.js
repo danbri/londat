@@ -315,6 +315,16 @@ $('tNow').onclick = clockNow;
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
 const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,placenames,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,sky-extra,drone,plotter,music,splats,overlays,river,kml,locate,model,xr').split(',').filter(Boolean);
+// a test link (?layers=, &planecam=) limits the page: say so, with a link to the full page at the same view (owner,
+// 2026-10-09, opened a close-up link with ?layers=planes and saw no trees or data layers)
+if (qs.has('layers') || qs.has('planecam')) {
+  const q = new URLSearchParams(location.search); for (const k of [...q.keys()]) if (k === 'layers' || k.startsWith('planecam')) q.delete(k);
+  const hash0 = location.hash, n = document.createElement('div'); n.id = 'testNote';
+  n.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(132px + env(safe-area-inset-top, 0px));z-index:6;background:var(--panel);color:var(--fg, #eee);font-size:12px;padding:4px 10px;border-radius:6px;max-width:calc(100vw - 24px);text-align:center';
+  n.innerHTML = `Test view: ${qs.has('layers') ? 'only the layers ' + (qs.get('layers') || 'none').replace(/[<>&"]/g, '') : 'the camera follows an aircraft'}. <a id="testAll" href="#">Show the full page</a>`;
+  document.body.appendChild(n);
+  n.querySelector('#testAll').onclick = e => { e.preventDefault(); location.href = location.pathname + (q.size ? '?' + q : '') + (qs.has('planecam') ? hash0 : shareHash()); };   // the camera followed an aircraft: go back to the link's own view
+}
 const LAYERS = {}, frameHooks = [];
 // where each layer's controls go in the menu (menu.js; the Menu map in README.md): a pane ('look', 'go', 'time', 'about')
 // or a group of the Layers pane ('layers/city' ...). A module may say { menu: '...' } itself; the default is 'layers/city'.
