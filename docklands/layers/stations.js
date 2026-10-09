@@ -2,7 +2,8 @@
 // ../cwplans/docklands/data/stations.json (tools/build-station-mesh.mjs), as in the WebGL page's stations-layer.js:
 // platforms, escalators, stairs, lifts, entrances and tracks opaque; halls, canopies and the box see-through (no depth
 // write, drawn after the opaque scene). The page's own tunnels are not drawn here, so the "tunnel" parts are left out as
-// on the WebGL page. Tap a part for its card. ?stations=0 starts with the layer off.
+// on the WebGL page. Tap a part for its card. ?stations=0 starts with the layer off. While shown, the layer gives
+// layers/under.js its cut-outs (ctx.stationCut: inside, outside, levelY; stations-layer.js) and asks it to rebuild.
 // Skills: docklands-3d-page, "Three.js port" and "Station models"; blender-station-models, section 8.
 import { attribute, sRGBTransferEOTF } from 'three/tsl';
 const STYLE = {   // stations-layer.js STYLE: colour and opacity by element class (--plat #ff8a3d, --jub #c9ced6)
@@ -60,11 +61,37 @@ export default {
       return { distance: hit.distance, open: () => card(doc.objects[oi]) };
     });
 
-    const setVisible = v => { group.visible = v; ctx.draw(); };
+    // cut-outs (stations-layer.js inside, outside, hideKey): while this layer is shown, layers/under.js leaves out the OSM
+    // indoor floors and points inside each station rectangle (doc.hide) and cuts the tunnels at its faces; the model's own
+    // floors stand there at their measured levels (doc.levels)
+    const local = (h, x, z) => { const dx = x - h.cx, dz = z - h.cz; return [dx * h.ux + dz * h.uz, -dx * h.uz + dz * h.ux]; };
+    const inside = (x, z) => doc.hide.some(h => { const [s, t] = local(h, x, z); return Math.abs(s) < h.hl && Math.abs(t) < h.hw; });
+    function outside(ax, az, bx, bz) {   // parts [t0, t1] of the segment a-b outside every rectangle (Liang-Barsky in each box's frame)
+      const cut = [];
+      for (const h of doc.hide) {
+        const [sa, ta] = local(h, ax, az), [sb, tb] = local(h, bx, bz); let t0 = 0, t1 = 1, ok = true;
+        for (const [p, q] of [[-(sb - sa), sa + h.hl], [sb - sa, h.hl - sa], [-(tb - ta), ta + h.hw], [tb - ta, h.hw - ta]]) {
+          if (p === 0) { if (q < 0) { ok = false; break; } continue; }
+          const r = q / p; if (p < 0) t0 = Math.max(t0, r); else t1 = Math.min(t1, r);
+        }
+        if (ok && t0 < t1) cut.push([t0, t1]);
+      }
+      cut.sort((a, b) => a[0] - b[0]); const out = []; let s = 0;
+      for (const [a, b] of cut) { if (a > s) out.push([s, a]); s = Math.max(s, b); }
+      if (s < 1) out.push([s, 1]); return out;
+    }
+    function levelY(x, z, lv, g) {   // OSM level -> m OD inside a station box (the model's floors; stations-layer.js levelY), else null
+      const h = doc.hide.find(h => { const [s, t] = local(h, x, z); return Math.abs(s) < h.hl && Math.abs(t) < h.hw; }), T = h && doc.levels[h.station]; if (!T) return null;
+      const at = k => k === 0 ? g : T[k] ? T[k].m_od : null, lo = Math.floor(lv), hi = Math.ceil(lv), a = at(lo), b = at(hi);
+      return a == null || b == null ? null : lo === hi ? a : a + (b - a) * (lv - lo);
+    }
+    ctx.stationCut = { inside, outside, levelY, on: () => group.visible, boxes: doc.hide.length };
+    const setVisible = v => { group.visible = v; ctx.under?.rebuild(); ctx.draw(); };
+    group.visible = !!on; ctx.under?.rebuild();   // the layer's start state (main.js sets it again after init): cut the boxes out of what under.js has built
     ctx.ui.toggle('Station models', on, setVisible);
     ctx.ui.note(`Canary Wharf and Canada Water: ${doc.objects.length} parts, ${tris.toLocaleString()} triangles drawn (${doc.meta.triangles.toLocaleString()} in the file; tunnels left out). ` +
       `Mostly below the ground. Tap a part for its source and how sure it is. ${esc(doc.meta.attribution)}; ` +
       `<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>.`);
-    return { object: group, setVisible, ownUi: true, stats: { parts: doc.objects.length, triangles: tris, meshes: group.children.length } };
+    return { object: group, setVisible, ownUi: true, stats: { parts: doc.objects.length, triangles: tris, meshes: group.children.length, cutOuts: doc.hide.length } };
   },
 };
