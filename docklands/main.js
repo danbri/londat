@@ -46,7 +46,7 @@ $('backend').textContent = BACKEND;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45.8, innerWidth / innerHeight, 2, 30000);
 const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: 0.12, screenSpacePanning: false, minDistance: 80, maxDistance: 16000, maxPolarAngle: Math.PI / 2 - 0.02, zoomToCursor: true });
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.12, screenSpacePanning: false, minDistance: 10, maxDistance: 16000, maxPolarAngle: Math.PI / 2 - 0.02, zoomToCursor: true });
 controls.listenToKeyEvents(window);
 // vertical exaggeration (Look > Model settings, ?vz=1 to 5; index.html vz: gl_Position = m * (x, y * vz, z)): the scene stays
 // in model metres (the TSL graphs read positionWorld) and the camera's world matrix takes a y scale of 1 / VZ, so the view
@@ -76,7 +76,8 @@ vzCamera(camera);
   if (uzp) controls._updateZoomParameters = function (x, y) { uzp.call(this, x, y); const v = vzNow(); if (v !== 1 && this.zoomToCursor) { const d = this._dollyDirection.set(this._mouse.x, this._mouse.y, 1).unproject(this.object); d.y *= v; d.sub(this.object.position).normalize(); } }; }
 function setVz(v) {
   v = THREE.MathUtils.clamp(+v || 1, 1, 5); if (v === VZ) return;
-  const ty = controls.target.y; controls.target.y = ty / VZ * v; camera.position.y += controls.target.y - ty;   // the eye keeps its offset from the target (index.html T.y = ty x VZ)
+  if (HFOV) { const off = camera.position.y - controls.target.y; camera.position.y = camera.position.y / VZ * v; controls.target.y = camera.position.y - off; }   // a photo lens: the eye keeps its true height above the water, the view its tilt (index.html scales T.y and puts the eye under the water)
+  else { const ty = controls.target.y; controls.target.y = ty / VZ * v; camera.position.y += controls.target.y - ty; }   // the eye keeps its offset from the target (index.html T.y = ty x VZ)
   VZ = v; SINV.makeScale(1, 1 / v, 1); sky.setVz(v); camera.updateMatrixWorld(); draw(); writeHash();
 }
 const eyeM = new THREE.Vector3();   // the eye in model metres
@@ -164,21 +165,25 @@ function eyeView(E, az, lp, hfov, D = 1200) {   // index.html eyeView: a photo's
   const a = az * Math.PI / 180, p = lp * Math.PI / 180;
   return { tx: E[0] + D * Math.sin(a) * Math.cos(p), ty: E[1] + D * Math.sin(p), tz: E[2] - D * Math.cos(a) * Math.cos(p), yaw: -a, pitch: -p, dist: D, hfov: hfov * Math.PI / 180, night: true };
 }
-let HFOV = null, ROLL = 0;
+let HFOV = null, FOVY = null, ROLL = 0, VIEWNAME = null;   // the lens: horizontal field (a photo view), else vertical field (radians); roll (degrees); the view button
+// c.hfov, c.fov, c.roll set the lens; without them, c.lens (from camState) keeps it (styles.js, xr.js, kml.js, locate.js restore a camState)
 function setCam(c) {
-  const ce = Math.cos(c.pitch), ty = (c.ty || 0) * VZ; controls.target.set(c.tx, ty, c.tz);   // ty in model metres; the orbit is in the exaggerated space
-  camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce);
-  HFOV = c.hfov || null; ROLL = c.roll || 0; camera.fov = c.fov ? c.fov * 180 / Math.PI : 45.8;
+  const L = ('hfov' in c || 'fov' in c || 'roll' in c) ? c : (c.lens || c);
+  HFOV = L.hfov || null; FOVY = HFOV ? null : L.fov || null; ROLL = L.roll || 0; camera.fov = FOVY ? FOVY * 180 / Math.PI : 45.8;
+  const ce = Math.cos(c.pitch), off = c.dist * Math.sin(c.pitch);
+  // ty in model metres; the orbit is in the exaggerated space. A photo lens keeps the eye (ty + off) at its true height under ?vz
+  const ty = HFOV && VZ !== 1 ? ((c.ty || 0) + off) * VZ - off : (c.ty || 0) * VZ; controls.target.set(c.tx, ty, c.tz);
+  camera.position.set(c.tx + c.dist * Math.sin(c.yaw) * ce, ty + off, c.tz + c.dist * Math.cos(c.yaw) * ce);
   // a photo view looks up or level: let the orbit go below the horizontal for it
-  controls.maxPolarAngle = c.pitch < 0.05 ? Math.PI - 0.05 : Math.PI / 2 - 0.02; controls.minDistance = Math.min(80, c.dist);
+  controls.maxPolarAngle = c.pitch < 0.05 ? Math.PI - 0.05 : Math.PI / 2 - 0.02; controls.minDistance = 10;   // 10 m everywhere (the WebGL page: 80): close to a tree or a door; the near plane follows the eye's height
   resize(); controls.update(); draw();
 }
 function camState() {
   const d = camera.position.clone().sub(controls.target), dist = d.length();
-  return { tx: controls.target.x, ty: controls.target.y / VZ, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)) };
+  return { tx: controls.target.x, ty: HFOV ? camera.position.y / VZ - d.y : controls.target.y / VZ, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)), lens: { hfov: HFOV, fov: FOVY, roll: ROLL } };
 }
 function setView(k) {
-  const v = VIEWS[k]; if (!v) return; setCam(v);
+  const v = VIEWS[k]; if (!v) return; setCam(v); VIEWNAME = k;
   if (v.night && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T21:30'));
   if (v.night === false && NIGHT && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T14:00'));
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === k)));
@@ -187,8 +192,8 @@ function setView(k) {
 // ---------- share hash (the WebGL page's #v=1&c=…, nav.js): open the same view on either page
 const parseHash = h => { const m = {}; for (const part of String(h || '').replace(/^#/, '').split('&')) { const i = part.indexOf('='); if (i > 0) try { m[part.slice(0, i)] = decodeURIComponent(part.slice(i + 1)); } catch { /* bad escape */ } } return m; };
 function shareHash() {
-  const c = camState(), r = (x, k = 1) => Math.round(x * k) / k;
-  return `#v=1&c=${[r(c.tx), r(c.tz), r(c.ty), r(c.dist), r(c.yaw, 1000), r(c.pitch, 1000)].join(',')}${NIGHT ? '&n=1' : ''}${TSHARE || qs.get('t') ? '&t=' + encodeURIComponent(TSHARE || qs.get('t')) : ''}${SEL >= 0 && KEYS ? '&id=osm:' + KEYS.ids[SEL] : ''}`;
+  const c = camState(), r = (x, k = 1) => Math.round(x * k) / k;   // nav.js shareState: c= to 0.1 m and 1e-4 rad, f= the lens (h + horizontal field, or the vertical field), rl= roll, vw= the view
+  return `#v=1&c=${[r(c.tx, 10), r(c.tz, 10), r(c.ty, 10), r(c.dist), r(c.yaw, 1e4), r(c.pitch, 1e4)].join(',')}${HFOV ? '&f=h' + r(HFOV, 1e4) : FOVY ? '&f=' + r(FOVY, 1e4) : ''}${ROLL ? '&rl=' + r(ROLL, 1e4) : ''}${VIEWNAME ? '&vw=' + VIEWNAME : ''}${NIGHT ? '&n=1' : ''}${TSHARE || qs.get('t') ? '&t=' + encodeURIComponent(TSHARE || qs.get('t')) : ''}${SEL >= 0 && KEYS ? '&id=osm:' + KEYS.ids[SEL] : ''}`;
 }
 let hashTimer = 0;
 const writeHash = () => { clearTimeout(hashTimer); hashTimer = setTimeout(() => { history.replaceState(null, '', location.pathname + location.search + shareHash()); const q = new URLSearchParams(location.search); for (const k of ['webgl', 'shadows', 'bloom', 'look', 'ground', 'roads', 'towers', 'roofs']) q.delete(k); $('glLink').href = WEBGL + (q.size ? '?' + q : '') + shareHash(); }, 400); };
@@ -380,11 +385,58 @@ async function loadLayers() {
 // ---------- render loop: on demand (a frame while the camera moves or a clock changes), always while the water moves
 function resize() {
   const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h;
-  if (HFOV) camera.fov = 2 * Math.atan(Math.tan(HFOV / 2) / camera.aspect) * 180 / Math.PI;   // a photo view keeps its horizontal field on any screen
+  if (HFOV) camera.fov = photoFovY();
   camera.updateProjectionMatrix(); draw();
 }
 addEventListener('resize', resize);
 controls.addEventListener('change', () => { draw(); writeHash(); });
+controls.addEventListener('start', () => { VIEWNAME = null; document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', 'false')); leavePhoto(); });   // a drag leaves the named view (nav.js: no vw=)
+// a wheel over a label button (traffic cameras) zooms the map as over the canvas
+$('labels').addEventListener('wheel', e => { e.preventDefault(); renderer.domElement.dispatchEvent(new WheelEvent('wheel', e)); }, { passive: false });
+// a photo view keeps the photo's horizontal field, but on a portrait screen the vertical field is capped at PHOTO_VMAX
+// (390 x 844: Rotherhithe 79 deg, Greenland day 138 deg uncapped, a fisheye); the landscape frame is the WebGL page's
+const PHOTO_VMAX = 70;
+function photoFovY() { const f = 2 * Math.atan(Math.tan(HFOV / 2) / camera.aspect) * 180 / Math.PI; return camera.aspect < 1 ? Math.min(f, PHOTO_VMAX) : f; }
+// the visitor moves the camera after a photo view: the lens eases back to the normal 45.8 deg in 0.6 s, the roll goes,
+// and the orbit target moves to the ground (or water) under the screen centre, so a zoom goes towards what they see
+// (a photo view orbits a point 1.2 km along the line of sight, often in the air or across the river)
+function leavePhoto() {
+  if (!HFOV && !ROLL) return;
+  const f0 = camera.fov, t0 = performance.now(); HFOV = null; FOVY = null; ROLL = 0; camera.up.set(0, 1, 0);
+  const step = () => { const k = Math.min(1, (performance.now() - t0) / 600), e = k * k * (3 - 2 * k); camera.fov = f0 + (45.8 - f0) * e; camera.updateProjectionMatrix(); draw(); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step); controls.maxPolarAngle = Math.PI / 2 - 0.02;   // the photo view's limit (pi - 0.05) let a drag up take the eye under the water and the ground (white flashes on the horizon, 2026-10-09)
+  controls.target.copy(centreGround(3000, Math.min(400, camera.position.distanceTo(controls.target)))); controls.update(); writeHash();
+}
+// the ground (or water) point under the screen centre within maxS m of the eye, else the point at s0 m along the centre
+// ray; in the orbit's (exaggerated) space
+function centreGround(maxS, s0) {
+  camera.updateMatrixWorld(); const o = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld), d = new THREE.Vector3(0, 0, -1).transformDirection(camera.matrixWorld);   // matrixWorld holds the 1 / vz scale: model metres
+  let hit = null; for (let s = 2; s <= maxS; s += s < 100 ? 2 : 5) { const x = o.x + d.x * s, y = o.y + d.y * s, z = o.z + d.z * s; if (y <= groundAt(x, z)) { hit = new THREE.Vector3(x, groundAt(x, z), z); break; } }
+  if (!hit) hit = o.clone().addScaledVector(d, s0);
+  hit.y *= vzNow(); return hit;
+}
+// zoom in towards the pointer (wheel, or the centre of a pinch): eye and target move together along the pointer ray, so
+// the view does not turn and the point under the pointer stays under it, up to 10 m from the ground, water or sky
+// point under the pointer. three.js r186 OrbitControls (zoomToCursor) stops at minDistance from the orbit target and, near
+// the horizontal, turns the camera to that target: after a photo view (target 1.2 km out, eye 2 to 7 m above the water)
+// the visitor could not get near anything off the centre line. Zoom out stays as three.js does it.
+{ const ou = controls.update.bind(controls), dir = new THREE.Vector3();
+  const roll = r => { if (ROLL && controls.enabled) { camera.rotateZ(ROLL * Math.PI / 180); camera.updateMatrixWorld(); } return r; };   // OrbitControls.update turns the camera to its target with no roll: put the photo's roll back at once, so labels and picking between frames see it
+  controls.update = function (dt) {
+    const sc = this._scale; if (!(this.zoomToCursor && this._performCursorZoom && sc < 1 && this.enabled)) { const r = ou(dt), p = camera.position, lift = HFOV ? 0 : (groundAt(p.x, p.z) + 1.6) * vzNow() - p.y;
+      if (r && lift > 0) { p.y += lift; camera.lookAt(this.target); camera.updateMatrixWorld(); }   // an orbit never takes the eye under the ground (or under the water: the ground there is 1.5 m below it)
+      return roll(r); }
+    dir.copy(this._dollyDirection); this._performCursorZoom = false; this._scale = 1; ou(dt);   // rotation and pan as usual, no zoom
+    const v = vzNow(), p = camera.position, m = new THREE.Vector3(dir.x, dir.y / v, dir.z), ml = m.length(); m.divideScalar(ml);   // the pointer ray in model metres
+    // the stop point: where the ray is 3 m under the ground (a bank or a kerb a little above a low eye does not stop it)
+    let hit = 400; for (let s = 2; s <= 5000; s += s < 100 ? 1 : 5) { const x = p.x + m.x * s, z = p.z + m.z * s; if (p.y / v + m.y * s <= groundAt(x, z) - 3) { hit = s; break; } }
+    const k = 1 / ml;   // exaggerated length per model metre along this ray
+    const step = Math.max(0, Math.min(hit * (1 - sc), hit - 10)) * k;
+    if (step > 1e-4) { p.addScaledVector(dir, step); this.target.addScaledVector(dir, step);
+      const lift = (groundAt(p.x, p.z) + 1.6) * v - p.y; if (lift > 0) { p.y += lift; this.target.y += lift; }   // the eye walks over a bank, 1.6 m above the ground
+      camera.updateMatrixWorld(); draw(); writeHash(); }
+    return roll(step > 1e-4);
+  }; }
 let frames = 0, fpsT = performance.now(), fps = 0;
 renderer.setAnimationLoop((time, xrFrame) => {
   sky.setVz(vzNow());   // the sky dome, stars and moon undo the view's y scale (1 in a headset session)
@@ -393,7 +445,7 @@ renderer.setAnimationLoop((time, xrFrame) => {
   if (!need && !$('animate').checked) return; need = false;
   const d = camera.position.distanceTo(controls.target);
   const above = camera.position.y - groundAt(camera.position.x, camera.position.z) * VZ; camera.near = THREE.MathUtils.clamp(Math.min(d / 400, above / 2), 0.5, 40); camera.far = Math.max(d * 6 + 6000, 20000); camera.updateProjectionMatrix();
-  if (ROLL) { camera.up.set(0, 1, 0); camera.lookAt(controls.target); camera.rotateZ(-ROLL * Math.PI / 180); }
+  if (ROLL) { camera.up.set(0, 1, 0); camera.lookAt(controls.target); camera.rotateZ(ROLL * Math.PI / 180); }   // index.html rolledUp: up = cos(roll) u - sin(roll) r, a turn of +roll about the camera's z
   camera.updateMatrixWorld(); eyeM.setFromMatrixPosition(camera.matrixWorld);   // the eye in model metres (= camera.position while VZ is 1)
   focus.copy(controls.target); focus.y /= VZ; sky.sun.position.copy(sky.sky.sunPosition.value).multiplyScalar(4000).add(focus); sky.sun.target.position.copy(focus);
   if (sky.stars) sky.stars.position.copy(eyeM);
@@ -421,7 +473,11 @@ setShadows(flag('shadows', GPU));
 const H = parseHash(location.hash), c = (H.c || '').split(',').map(Number), at = /^#at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);
 if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) { clock = t; DRIVE = true; } if (H.t && isFinite(t)) TSHARE = H.t; }
 setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(londonDate(Date.now()) + 'T22:00') : clock);
-if (c.length >= 6 && c.every(isFinite)) setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5] });
+if (c.length >= 6 && c.every(isFinite)) {   // nav.js restore: f=h<horizontal field> or f=<vertical field> (radians), rl=<roll degrees>, vw=<view>
+  const f = H.f || '', hf = /^h[\d.]+$/.test(f) ? +f.slice(1) : NaN, vf = +f, rl = +H.rl, ok = x => x > .05 && x < 3.1;
+  setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5], hfov: ok(hf) ? hf : null, fov: !ok(hf) && f && ok(vf) ? vf : null, roll: isFinite(rl) && Math.abs(rl) < 90 ? rl : 0 });
+  if (H.vw in VIEWS) { VIEWNAME = H.vw; document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === H.vw))); }
+}
 else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw: .6, pitch: .6 });
 else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');
 if (qs.has('vz')) setVz(qs.get('vz'));   // vertical exaggeration (layers/model.js has the slider)
