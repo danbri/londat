@@ -1899,6 +1899,24 @@ Include a looping carousel at top for time of day, time of year."
 - EA archive CSV rows are not in time order: sort before finding high water. Use EGLC METARs (Iowa Environmental
   Mesonet) as the truth for wind and low cloud, not ERA5 against Open-Meteo.
 
+## Three.js port: second parity round (2026-10-09, afternoon)
+
+- Layers > Who is inside (`layers/overlays.js`): the 14 chips of the WebGL page (11 occupant glows from the atlas `cat`,
+  heritage, quality and live crime pins; `?glow=`, `?pins=`). The WebGL page's default orange buildings are not
+  occupants: they are the Map look's height source colour (OSM levels or newer than LiDAR), shown with `?look=0`.
+- Look > Windows (`U.win` in materials.js; put the gate in the branch condition so derivatives stay outside branches) and
+  vertical exaggeration (`?vz=`): a y scale in `camera.matrixWorld`, never in the scene, so CPU projection, rays,
+  positionWorld and cameraPosition stay in model metres. Wrap `Camera.updateMatrixWorld` and `updateWorldMatrix` (r186
+  drops scale from matrixWorldInverse). Not applied yet: pixel art, the water mirror, Drone and planecam, headset.
+- The cut view is dark (#0f1215) until the visitor sets the clock (main.js DRIVE), as the WebGL page.
+- Sky (`layers/sky-extra.js`, Time tab), names (`layers/placenames.js`), walking network (`?walk=1`), About and the Live
+  data box with traffic cameras (`about-extra.js`). A child of a group that follows the camera must have no translation of
+  its own. Sky colours added in TSL with toneMapped false: wrap them in sRGBTransferEOTF.
+- onFrame hooks run before the render updates `camera.matrixWorldInverse`: call `camera.updateMatrixWorld()` before
+  `project()`, or labels go wrong after a camera jump with `animate=0`. `?layers=` loads any layer id.
+- Phones: with every layer on, the page draws about 2.8 M triangles; the owner saw no trees after a reload on a device
+  (2026-10-09, not yet diagnosed: memory is the first suspect).
+
 ## Water over the LiDAR ground (2026-10-08)
 
 The LiDAR ground under the river and the docks is the survey's water surface (Thames median 2.8 m OD = the water level).

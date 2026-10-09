@@ -22,6 +22,7 @@ const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw
 
 // the Menu map: [tab, selector or text of the control]; a text is matched inside the pane (label, heading or button)
 const MAP = [
+  ['Go', 'text=Show the walking network'], ['Time', 'text=Constellation lines'], ['Time', 'text=Star names and Messier objects (those the sky shows)'], ['Time', 'text=Sky as from a dark site'], ['Time', 'text=London City Airport approach paths'], ['Time', 'text=Sun and moon lines on the map'], ['Time', '#skxVp'], ['About', '#liveBox'], ['About', '#liveDirect'], ['About', '#liveCams'], ['About', '#ugBox'], ['Layers', 'text=Station, district and dock names'],
   ['Views', '[data-view=cw]'], ['Views', '[data-view=area]'], ['Views', '[data-view=under]'], ['Views', '[data-view=plan]'],
   ['Views', '[data-view=rotherhithe]'], ['Views', '[data-view=greenland]'], ['Views', '[data-view=pier]'], ['Views', '[data-view=greenlandday]'], ['Views', '[data-view=plane]'], ['Views', '#shareBtn'], ['Views', '#glLink'],
   ['Look', '#styleProxy'], ['Look', '#look'], ['Look', '#facades'], ['Look', '#ground'], ['Look', 'text=Colour buildings by'], ['Look', 'text=Water mirror (reflections)'], ['Look', 'text=Gaussian splats'], ['Look', 'text=Music'], ['Look', 'text=Windows'], ['Look', '#vz3'],

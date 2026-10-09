@@ -2087,3 +2087,17 @@ official data."
   STATS.trees hook; WebGL only: Windows switch, glow by occupancy, heritage and crime, vertical exaggeration, walking
   network, sky lists, cut-view dark backdrop.
 
+## 2026-10-09: Three.js port, second parity round
+
+- fe3fd566: sky (planets, satellites, ISS, constellations, star names, Messier, Milky Way, cloud mask, LCY paths), place
+  names (115), walking network, About and Live data box, traffic cameras on by default.
+- d6cd568d: Who is inside (14 chips), Windows, vertical exaggeration, dark cut backdrop; tide surge nowcast from EA
+  readings (EA API on by default, ?ea=0; 0-1 h rms 0.27 -> 0.13 m, high-water time 12 -> 8 min over 4 weeks); wind to
+  grid north; Blackwall Pier is a listed masonry pier, not a pontoon (build-piers.mjs, piers.json: floating 129 -> 128);
+  STATS.trees, trees-season 6/6 PASS; evergreens in the inferred species mixes (tree-species.json rebuilt).
+- Owner report: after a reload no trees and no optional layers on the device. Headless: 81,852 trees and all overlays
+  drawn, no page errors. Waiting for the device and backend.
+- adsb-cache workflow: active since 11:36 UTC, no run yet at 13:55 UTC; workflow_dispatch from this session: 403.
+- Open: wind speed 0.8 m/s below EGLC (not corrected); tide surge only within 4 weeks; vz not in pixel art, mirror,
+  Drone, headset; cloud deck does not move with the wind.
+
