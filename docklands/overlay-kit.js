@@ -75,7 +75,7 @@ export function glassMaterial() {   // see-through, no depth write, dimmed by ni
 }
 export function flatMaterial() {   // ground ribbons, lit like the ground (index.html OV.flat)
   const m = new THREE.MeshStandardNodeMaterial({ roughness: .95, metalness: 0, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -6 });
-  m.colorNode = rgb(); m.emissiveNode = rgb().mul(U.night.mul(.18)); return m;
+  m.colorNode = rgb(); m.emissiveNode = rgb().mul(U.night.mul(.05)); return m;   // 0.18 gave bright green bands (sRGB 54,109,66) at a night eye height of 7 m (2026-10-09)
 }
 export function tipMaterial() {   // the red lit tip of a crane (only by night)
   const m = new THREE.MeshBasicNodeMaterial(); m.colorNode = vec3(1, .1, .06).mul(float(1.5)); return m;
