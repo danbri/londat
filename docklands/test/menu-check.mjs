@@ -29,11 +29,11 @@ const MAP = [
   ['Layers', '#showLabels'], ['Layers', '#showRoads'], ['Layers', 'text=Trees'], ['Layers', 'text=Hills of London'], ['Layers', 'text=Skyline by year'], ['Layers', 'text=Night lights (aviation, riverside lamps)'], ['Layers', 'text=Crown halo colour by date'],
   ['Layers', 'text=Floors (see-through buildings)'], ['Layers', 'text=Below ground'], ['Layers', 'text=Tunnels (modelled levels)'], ['Layers', 'text=Depth gauge (right edge)'], ['Layers', 'text=Station models'],
   ['Layers', 'text=Flood walls (EA, to crest level)'], ['Layers', 'text=Riverbed (UKHO soundings)'], ['Layers', 'text=River'], ['Layers', 'text=Piers, pontoons and berthed vessels'],
-  ['Layers', 'text=Ships (AIS), live'], ['Layers', 'text=Aircraft (recorded'], ['Layers', 'text=Live aircraft (adsb.lol, ODbL)'], ['Layers', 'text=Birds and foxes (simulated from open records)'], ['Layers', 'text=Hire bike docks'], ['Layers', 'text=My KML'],
+  ['Layers', 'text=Ships (AIS), live'], ['Layers', 'text=Aircraft (near-live'], ['Layers', 'text=Live aircraft (adsb.lol, ODbL)'], ['Layers', 'text=Birds and foxes (simulated from open records)'], ['Layers', 'text=Hire bike docks'], ['Layers', 'text=My KML'],
   ['Layers', 'text=Banks and finance'], ['Layers', 'text=Charities'], ['Layers', 'text=Heritage records'], ['Layers', 'text=Quality issues'], ['Layers', 'text=Crime, latest month (live)'],
   ['Go', '#goSearch'], ['Go', '#rFrom'], ['Go', '#rTo'], ['Go', '#rStepFree'], ['Go', '#rGo'], ['Go', '#droneBtn'], ['Go', '#goLocate'], ['Go', '#goXr'],
   ['Time', '#hour'], ['Time', '#tNow'], ['Time', '#tNight'], ['Time', '#wheelsChk'], ['Time', '#skyNote'], ['Time', 'text=Tide'], ['Time', 'text=Weather (cloud, haze, rain) for the clock time'], ['Time', 'text=Wind from Open-Meteo for the clock time (asks api.open-meteo.com)'], ['Time', 'text=Floating debris (Thames)'],
-  ['About', '#shadows'], ['About', '#bloom'], ['About', '#animate'], ['About', '#backend'], ['About', 'text=Plotter'], ['About', '#creditsH'],
+  ['About', '#shadows'], ['About', '#bloom'], ['About', '#animate'], ['About', '#backend'], ['Views', '#plotBtn'], ['About', '#creditsH'],
 ];
 let failed = 0; const fail = m => { failed++; console.log('FAIL ' + m); };
 for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
@@ -109,7 +109,8 @@ for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
   if (w < 900) { await page.click('#menu'); await page.click('#dtabs >> text=Views'); await page.click('[data-view=area]'); await page.waitForTimeout(100); if (!(await page.locator('#drawer').isHidden())) fail(`${tag} a view button does not close the drawer`); else console.log(`${tag}: a view button closes the drawer`); }
   // the wheels: drag each; the clock changes; it wraps (day: same date, 23:xx -> 00:xx; year: Dec -> Jan, same year)
   const st = () => page.evaluate(() => ({ ...__docklands3.wheels.state, clock: __docklands3.clock, hash: location.hash }));
-  const drag = async (sel, dx) => { const b = await page.locator(sel).boundingBox(), y = b.y + b.height / 2, x = b.x + b.width / 2;
+  const drag = async (sel, dx) => { const b = await page.locator(sel).boundingBox({ timeout: 180000 }),   // a clock jump redraws the page in software for a long time
+    y = b.y + b.height / 2, x = b.x + b.width / 2;
     await page.mouse.move(x, y); await page.mouse.down(); for (let k = 1; k <= 10; k++) { await page.mouse.move(x + dx * k / 10, y); await page.waitForTimeout(30); } await page.waitForTimeout(150); await page.mouse.up(); await page.waitForTimeout(1500); };
   const s0 = await st(); await drag('#wDay', -Math.round(w / 4)); const s1 = await st();
   if (s1.clock === s0.clock || s1.date !== s0.date) fail(`${tag} day wheel: ${s0.time} -> ${s1.time} (${s0.date} -> ${s1.date})`); else console.log(`${tag}: day wheel ${s0.date} ${s0.time} -> ${s1.date} ${s1.time}; hash t: ${/t=([^&]*)/.exec(s1.hash)?.[1]}`);
