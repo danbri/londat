@@ -2035,7 +2035,10 @@ on a phone it was the unlabelled icon under the time wheels, beside Drone.
   one stall); the most march time in one frame 2.9 to 4.3 ms while the camera moved (1,680 to 1,743 marches in a run).
   Grid against the exact ray (own building = the footprint that holds the anchor): 77 of 80 and 80 of 83 labels agree in
   the test view; the 3 others are building names at the edge of a neighbouring tower (25 Bank
-  Street, 25 and 1 Cabot Square): 4 m cells. Test runs 4 to 6: 22 of 22 checks pass, no page errors. At 390 x 844 the full page
+  Street, 25 and 1 Cabot Square): 4 m cells. Test runs 4 to 6: 22 of 22 checks pass, no page errors. Also on 2026-10-10 after the change: menu-check.mjs "all passed" (86 Menu map items at each size; it needed
+  `page.setDefaultTimeout(180000)`: a Playwright click on `#wHide` timed out at 30 s while a software frame drew),
+  nav-check.mjs --only nav 12 of 12 (run alone; the pinch drifted 6.8 px > 6 when a second test ran beside it), the drone
+  part 22 of 22, load.mjs 4 of 4 with `weather=0` (Open-Meteo answered HTTP 429 without it). At 390 x 844 the full page
   shows 31 labels at view=cw with 27 of 56 tested labels hidden by occlusion. Not measured on a phone.
 - **Faults met.** (1) Playwright's `page.click` waits for a free frame; with the full page each software frame takes
   seconds and a click on a menu tab timed out at 30 s: click by `element.click()` in one `evaluate`. (2) `ctx.newPage()`
