@@ -576,6 +576,9 @@ function buildTerrain(rgb) {   // rgb: per-vertex colours, 'tex' (shading only, 
 }
 buildTerrain(null);
 const groundAt = (x, z) => { const T = A.terrain, i = Math.max(0, Math.min(T.nx - 1, Math.round((x - T.x0) / T.cell))), j = Math.max(0, Math.min(T.nz - 1, Math.round((z - T.z0) / T.cell))); return T.dm[j * T.nx + i] / 10; };
+// the height of the terrain mesh itself (buildTerrain's triangles, without the water sink): for greens and trees
+const surfaceAt = (x, z) => { const T = A.terrain, u = Math.max(0, Math.min(T.nx - 1.000001, (x - T.x0) / T.cell)), w = Math.max(0, Math.min(T.nz - 1.000001, (z - T.z0) / T.cell)), i = Math.floor(u), j = Math.floor(w), fx = u - i, fz = w - j, a = j * T.nx + i,
+  h00 = T.dm[a] / 10, h10 = T.dm[a + 1] / 10, h01 = T.dm[a + T.nx] / 10, h11 = T.dm[a + T.nx + 1] / 10; return fx + fz <= 1 ? h00 + fx * (h10 - h00) + fz * (h01 - h00) : h11 + (1 - fx) * (h01 - h11) + (1 - fz) * (h10 - h11); };
 let PHOTO = false, PIXSTYLE = null;   // PIXSTYLE: colours of the pixel-art style while it is on
 function buildWater() { if (L.water) L.water.free(); const M = new Mesh(); for (const w of A.water) if (!w.tidal) flat(M, w, w.level + (PIXSTYLE ? 1.2 : .1), C.water); L.water = M.upload(); }
 buildWater();
@@ -591,8 +594,7 @@ buildTidal();
 // Before 2026-10-10 each polygon was flat at the ground under its first vertex: Greenwich Park hung 32 m in the air (owner's
 // photo of the Three.js port, which had the same code). Same method as docklands/build.js greensGeometry.
 function buildGreens() { if (L.greens) L.greens.free(); const M = new Mesh(), T = A.terrain;
-  const sAt = (x, z) => { const u = Math.max(0, Math.min(T.nx - 1.000001, (x - T.x0) / T.cell)), w = Math.max(0, Math.min(T.nz - 1.000001, (z - T.z0) / T.cell)), i = Math.floor(u), j = Math.floor(w), fx = u - i, fz = w - j, a = j * T.nx + i,
-    h00 = T.dm[a] / 10, h10 = T.dm[a + 1] / 10, h01 = T.dm[a + T.nx] / 10, h11 = T.dm[a + T.nx + 1] / 10; return fx + fz <= 1 ? h00 + fx * (h10 - h00) + fz * (h01 - h00) : h11 + (1 - fx) * (h01 - h11) + (1 - fz) * (h10 - h11); };
+  const sAt = surfaceAt;
   const ccw = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) > 0 ? [a, b, c] : [a, c, b];
   const clip = (P, ax, az, bx, bz) => { const out = [], side = p => (bx - ax) * (p[1] - az) - (bz - az) * (p[0] - ax);
     for (let k = 0; k < P.length; k++) { const p = P[k], q = P[(k + 1) % P.length], sp = side(p), sq = side(q); if (sp >= 0) out.push(p); if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])]); } }
@@ -1573,7 +1575,7 @@ function buildTreesLit() {
   if (L.treesLit) { L.treesLit.free(); L.treesLit = null; } if (!TREES || !NIGHT.lamps) return; const near = new Map(), M = new Mesh(); let n = 0;
   for (const [x, z] of NIGHT.lamps) { const k = Math.floor(x / 20) + ',' + Math.floor(z / 20); if (!near.has(k)) near.set(k, []); near.get(k).push([x, z]); }
   TREES.trees.forEach(([x, z, h0, c0]) => { if (h0 > 35) return; let hit = false; for (let a = -1; a <= 1 && !hit; a++) for (let b = -1; b <= 1 && !hit; b++) for (const q of near.get((Math.floor(x / 20) + a) + ',' + (Math.floor(z / 20) + b)) || []) if (Math.hypot(q[0] - x, q[1] - z) < 10) { hit = true; break; }
-    if (!hit) return; const h = h0 || 9, c = Math.max(3, Math.min(16, c0 || h * .55)), g = groundAt(x, z); obox(M, x, g + h * .35 - .05, z, c * 1.04, c * 1.04, h * .65 + .1, 1, 0, [.40, .52, .16]); n++; });
+    if (!hit) return; const h = h0 || 9, c = Math.max(3, Math.min(16, c0 || h * .55)), g = surfaceAt(x, z); obox(M, x, g + h * .35 - .05, z, c * 1.04, c * 1.04, h * .65 + .1, 1, 0, [.40, .52, .16]); n++; });
   L.treesLit = n ? M.upload() : null;
 }
 function drawLights(buf, refl, P) {
@@ -2048,7 +2050,7 @@ let TREES = null;
 const loadTrees = () => TREES ? Promise.resolve(TREES) : loadJSON('data/trees.json').then(t => { TREES = t; $('attribTrees').textContent = ' · trees: GLA, Forest Research, OS, planning.data (OGL)'; return t; });
 function buildTreesN() {   // normal style: a trunk and a box crown per tree within 900 m of the estate
   if (L.treesN) L.treesN.free(); const F = A.meta.focus, B = [F.x0 - 900, F.x1 + 900, F.z0 - 900, F.z1 + 900], M = new Mesh(), TR = [.36, .30, .24], G1 = [.28, .46, .25], G2 = [.36, .52, .28]; let n = 0;
-  TREES.trees.forEach(([x, z, h0, c0], k) => { if (x < B[0] || x > B[1] || z < B[2] || z > B[3] || h0 > 35) return; const h = h0 || 9, c = Math.max(3, Math.min(16, c0 || h * .55)), g = groundAt(x, z);
+  TREES.trees.forEach(([x, z, h0, c0], k) => { if (x < B[0] || x > B[1] || z < B[2] || z > B[3] || h0 > 35) return; const h = h0 || 9, c = Math.max(3, Math.min(16, c0 || h * .55)), g = surfaceAt(x, z);
     obox(M, x, g, z, .8, .8, h * .4, 1, 0, TR); obox(M, x, g + h * .35, z, c, c, h * .65, 1, 0, k % 3 ? G1 : G2); n++; });
   L.treesN = M.upload(); return n; }
 $('showTrees').onchange = () => { if (!$('showTrees').checked) { draw(); return; } toast('Loading the trees…');
@@ -2069,10 +2071,10 @@ function buildTrees() {
   const M = new Mesh(), PAL = PIXSTYLE; let n = 0; seed = 11;
   if (TREES) {   // the real trees (data/trees.json): position, height and crown where the source gives them
     for (const [x, z, h0, c0] of TREES.trees) { if (!inB(x, z) || !free(x, z) || h0 > 35) continue;   // over 35 m: probably a crane or a structure the LiDAR took for a tree
-      const h = h0 || 9, c = Math.max(3, Math.min(16, c0 || h * .55)), g = groundAt(x, z);
+      const h = h0 || 9, c = Math.max(3, Math.min(16, c0 || h * .55)), g = surfaceAt(x, z);
       obox(M, x, g, z, 1.2, 1.2, h * .45, 1, 0, PAL.trunk); obox(M, x, g + h * .35, z, c, c, h * .5, 1, 0, rnd() < .5 ? PAL.leaf : PAL.leaf2); obox(M, x + c * .12, g + h * .8, z - c * .12, c * .55, c * .55, h * .2, 1, 0, PAL.leafHi); n++; }
     L.trees = M.upload(); return n; }
-  const tree = (x, z) => { const g = groundAt(x, z), k = .8 + rnd() * .6; obox(M, x, g, z, 1.2, 1.2, 4 * k, 1, 0, PAL.trunk);
+  const tree = (x, z) => { const g = surfaceAt(x, z), k = .8 + rnd() * .6; obox(M, x, g, z, 1.2, 1.2, 4 * k, 1, 0, PAL.trunk);
     obox(M, x, g + 3 * k, z, 7 * k, 7 * k, 5 * k, 1, 0, rnd() < .5 ? PAL.leaf : PAL.leaf2); obox(M, x + 1, g + 7.5 * k, z - 1, 4 * k, 4 * k, 2.5 * k, 1, 0, PAL.leafHi); n++; };
   for (const l of A.lines) if (!l.tunnel && (l.k === 'foot' || (l.k === 'road' && l.c >= 2))) {
     const q = dec(l.q, 3), pts = []; for (let i = 0; i < q.length; i += 3) pts.push([q[i], q[i + 1]]); const pl = polyline(pts);

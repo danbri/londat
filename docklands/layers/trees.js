@@ -22,7 +22,7 @@
 import { Fn, If, Discard, positionWorld, positionGeometry, positionLocal, vec2, vec3, vec4, float, uniform, instancedBufferAttribute, smoothstep,
   mix, max, abs, sin, cos, time, uv, mx_noise_float, clamp, length, dot, select } from 'three/tsl';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { A, groundAt } from '../build.js';
+import { A, surfaceAt } from '../build.js';
 import { WU } from '../water.js';
 import { PROFILES, PROFILE, SHAPES, B64, profileOf, hash01 } from '../tree-species.js';
 
@@ -89,7 +89,7 @@ export default {
     rows.forEach((r, i) => {
       const P = PROFILES[r.prof], [x, z, h0, c0] = r.t, j = hash01(D.ids[r.k] || String(r.k));
       const h = h0 || DEFAULT_H[SHAPES[P.shape]] * (.85 + .3 * j), c = Math.max(1.5, Math.min(20, c0 || h * P.cw * (.85 + .3 * hash01('c' + r.k))));
-      const g = groundAt(x, z), base = h * P.cb, dj = (j - .5) * 10, tone = .9 + .2 * hash01('t' + r.k);   // +-5 days a tree
+      const g = surfaceAt(x, z), base = h * P.cb, dj = (j - .5) * 10, tone = .9 + .2 * hash01('t' + r.k);   // +-5 days a tree
       SH[i] = P.shape; EV[i] = P.ever; X[i] = x; Z[i] = z;
       put(ST.CM, i, c, h - base, c, x, g + base, z); ST.mid.set([x, g + base + .45 * (h - base), z, h - base], 4 * i);
       const d = Math.max(.25, Math.min(1.2, h * .045));

@@ -2078,7 +2078,8 @@ Owner, 2026-10-10, iPhone photo of Greenwich Park: "Greenwich has a grasslike pl
   `surfaceAt` + 0.45 (it used the slab height, so animals would have stood in the air).
 - The WebGL page (`cwplans/docklands/index.html` `buildGreens`) got the same method the same day, with each piece shaded
   by its slope (its terrain uses the same diagonal); headless load at 390 and 1280 px: no page errors, 456,885 indices.
-- Open: trees use `groundAt` (the nearest 20 m cell), not `surfaceAt`.
+- Trees stand on `surfaceAt` too (port `layers/trees.js`; WebGL page: the normal, pixel-art and tree-box builders), not
+  on `groundAt` (the nearest 20 m cell, steps of metres on slopes). `groundAt` stays for the other users.
 
 ## Night windows by use and hour (Three.js port, 2026-10-09)
 
