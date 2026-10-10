@@ -2076,7 +2076,9 @@ Owner, 2026-10-10, iPhone photo of Greenwich Park: "Greenwich has a grasslike pl
   triangle 0.29 to 0.51 m; 341,203 vertices (390,013 when every triangle is clipped). `load.mjs` ok at both sizes on
   `view=greenwich`; `wildlife-check.mjs` passes: `layers/wildlife.js` now takes the green top per 10 m cell from
   `surfaceAt` + 0.45 (it used the slab height, so animals would have stood in the air).
-- Open: the WebGL page has the same fault; trees use `groundAt` (the nearest 20 m cell), not `surfaceAt`.
+- The WebGL page (`cwplans/docklands/index.html` `buildGreens`) got the same method the same day, with each piece shaded
+  by its slope (its terrain uses the same diagonal); headless load at 390 and 1280 px: no page errors, 456,885 indices.
+- Open: trees use `groundAt` (the nearest 20 m cell), not `surfaceAt`.
 
 ## Night windows by use and hour (Three.js port, 2026-10-09)
 
