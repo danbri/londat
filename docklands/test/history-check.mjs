@@ -9,12 +9,14 @@
 //   cache runs cwplans/cache/runs/, the Open-Meteo forecast API past hours, the Open-Meteo archive ERA5) vs the METARs of
 //   London City Airport (EGLC, 2 km east of Canary Wharf) from the Iowa Environmental Mesonet ASOS archive. Wind speed and
 //   direction errors, cloud class agreement, rain agreement.
+// - tide history: cwplans/docklands/data/sky/tide-history.json against the readings fetched here on their own, and the
+//   page's level from it on the held-out days.
 // Node only (no browser; the page's interpolation is checked by clock-check.mjs). Raw answers are cached in
 // docklands/test/out/history-cache/ (git-ignored). Run from the repository root:
 //   NODE_USE_ENV_PROXY=1 node docklands/test/history-check.mjs [--json docklands/test/out/audit/history.json]
 // Results and their reading: docklands/AUDIT.md, item 1. Skill: docklands-sky, "Three.js port clock".
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { predict, extremes, extremesNear, nowcast, mergeReadings, SURGE } from '../tide.js';
+import { predict, extremes, extremesNear, nowcast, mergeReadings, historyReadings, SURGE } from '../tide.js';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const CACHE = 'docklands/test/out/history-cache'; mkdirSync(CACHE, { recursive: true });
@@ -134,6 +136,26 @@ function nowcastSet(name, sets) {   // sets: [{ id, R (cleaned, sorted), cuts }]
   OUT.nowcast = { params: { ...SURGE }, api4weeks: nowcastSet('EA API last 4 weeks (in the fit period)', apiSets), heldOut: nowcastSet('held-out EA archive days', dSets),
     winter: nowcastSet('held-out winter days (14 Nov, 9 Jan, 27 Feb)', dSets.filter((s, i) => /^(2025-11-14|2026-01-09|2026-02-27)/.test(new Date(s.cuts[0]).toISOString()))) }; }
 
+// ======================= 1c. archive history: cwplans/docklands/data/sky/tide-history.json (build-tide-history.mjs, the EA
+// daily archive files, whole cm) against the readings fetched here on their own (the held-out archive days above, the API's
+// last 4 weeks): same-time differences; and the page's level on the held-out days from the history alone (every other
+// reading left out, tide.js nowcast at the left-out times) against the prediction alone at the same times.
+if (existsSync('cwplans/docklands/data/sky/tide-history.json')) {
+  const HS = JSON.parse(readFileSync('cwplans/docklands/data/sky/tide-history.json', 'utf8')), hist = {}, cmp = { heldOut: [], api4weeks: [] }, pageE = [], predE = [];
+  for (const id of Object.keys(ST)) hist[id] = new Map(historyReadings(HS, id));
+  const diff = (D, into) => { for (const [id, r] of Object.entries(D)) for (const [t, v] of r) if (hist[id] && hist[id].has(t)) into.push(hist[id].get(t) - v); };
+  for (const D of Object.values(days)) diff(D, cmp.heldOut); for (const D of Object.values(api)) diff(D, cmp.api4weeks);
+  for (const [d, D] of Object.entries(days)) for (const [id, r] of Object.entries(clean(D))) { const S = H.stations[id]; if (!S) continue;
+    const a = Date.parse(d + 'T00:00Z') - 864e5, b = a + 3 * 864e5, HR = historyReadings(HS, id).filter(([t]) => t >= a && t < b);
+    const keep = mergeReadings(S, HR.filter(([t]) => Math.round(t / 9e5) % 2 === 0));
+    for (const [t, v] of r) if (Math.round(t / 9e5) % 2 === 1) { pageE.push(nowcast(S, keep, t).v - v); predE.push(predict(S, t) - v); } }
+  const st = e => e.length ? { n: e.length, rms: Math.round(rms(e) * 1000) / 1000, maxAbs: Math.round(Math.max(...e.map(Math.abs)) * 1000) / 1000 } : null;
+  OUT.tideHistory = { file: { from: HS.days.from, to: HS.days.to, archive_missing: HS.days.archive_missing, raw_sha256: HS.raw_sha256,
+      gauges: Object.fromEntries(Object.entries(HS.stations).map(([id, s]) => [id, { readings: s.readings, share: s.share, longest_gap_h: s.longest_gap_h, days_without_readings: s.days_without_readings.length }])) },
+    vsIndependent: { heldOut: st(cmp.heldOut), api4weeks: st(cmp.api4weeks) },
+    heldOutPage: { note: 'the page level from the history with every other reading left out, at the left-out times (m)', page: st(pageE), prediction: st(predE) } };
+}
+
 // ======================= 2. wind and cloud vs EGLC METAR
 const WDAYS = ['2025-12-21', '2026-03-15', '2026-06-21', '2026-08-28', '2026-09-12', '2026-09-20', '2026-09-29', '2026-10-03', '2026-10-04', '2026-10-06', '2026-10-08'];
 const cover = c => ({ NCD: 0, NSC: 0, CLR: 0, SKC: 0, CAVOK: 0, VV: 100, FEW: 19, SCT: 44, BKN: 75, OVC: 100 })[c];
@@ -205,6 +227,7 @@ console.log('TIDE, held-out EA archive days', heldOut.join(' '));
 for (const [d, o] of Object.entries(OUT.tideHeldOut)) for (const [id, x] of Object.entries(o)) console.log(`  ${d} ${ST[id].padEnd(10)} range ${x.range.toFixed(1)} m  rms ${x.rms.toFixed(2)}  bias ${x.bias.toFixed(2)}  max ${x.max.toFixed(2)}  HW ${x.hw ? `${x.hw.n}x ${x.hw.timeMaeMin} min (worst ${x.hw.timeMaxMin}) ${x.hw.heightMae} m` : '-'}  LW ${x.lw ? `${x.lw.n}x ${x.lw.timeMaeMin} min ${x.lw.heightMae} m` : '-'}  (n ${x.n}, dropped ${x.dropped})`);
 console.log('TIDE summary', JSON.stringify(OUT.tideSummary, null, 1));
 console.log('NOWCAST (readings up to T0, then prediction + fading residual) [prediction, page]'); for (const k of ['api4weeks', 'heldOut', 'winter']) console.log(' ', k, JSON.stringify(OUT.nowcast[k]));
+if (OUT.tideHistory) console.log('TIDE HISTORY (EA archive file)', JSON.stringify(OUT.tideHistory, null, 1));
 console.log('WIND / CLOUD vs EGLC METAR'); for (const [k, v] of Object.entries(compare)) { console.log(' ', k); for (const x of v) console.log('   ', JSON.stringify(x)); }
 console.log('WIND summary', JSON.stringify(OUT.windSummary, null, 1)); if (Object.keys(SRC).length) console.log('source errors', SRC);
 const J = arg('--json'); if (J) { mkdirSync(J.replace(/\/[^/]*$/, ''), { recursive: true }); writeFileSync(J, JSON.stringify(OUT, null, 1)); }

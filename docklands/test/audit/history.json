@@ -2823,5 +2823,87 @@
    "cloudLowClassAgree": null
   }
  },
- "sourceErrors": {}
+ "sourceErrors": {},
+ "tideHistory": {
+  "file": {
+   "from": "2025-10-04",
+   "to": "2026-10-09",
+   "archive_missing": [
+    "2025-10-04",
+    "2025-10-05",
+    "2025-10-06",
+    "2025-10-09",
+    "2025-10-10",
+    "2025-10-11",
+    "2025-10-12",
+    "2025-10-13",
+    "2025-10-14",
+    "2025-10-15",
+    "2025-10-16",
+    "2025-10-17",
+    "2025-10-18",
+    "2025-10-19",
+    "2025-10-20",
+    "2025-10-21",
+    "2025-10-22",
+    "2025-10-23",
+    "2025-10-24",
+    "2025-10-25",
+    "2025-10-26",
+    "2025-10-27",
+    "2025-10-28",
+    "2026-07-25",
+    "2026-08-16",
+    "2026-08-20",
+    "2026-10-09"
+   ],
+   "raw_sha256": "ed97f2f2a51e1f6b98cc55af7ec1a1082519f2b5d8dc97147709f2664f9e59d2",
+   "gauges": {
+    "0007": {
+     "readings": 31228,
+     "share": 0.8768,
+     "longest_gap_h": 480,
+     "days_without_readings": 43
+    },
+    "0003": {
+     "readings": 29171,
+     "share": 0.819,
+     "longest_gap_h": 480,
+     "days_without_readings": 61
+    },
+    "0001": {
+     "readings": 32961,
+     "share": 0.9255,
+     "longest_gap_h": 480,
+     "days_without_readings": 27
+    }
+   }
+  },
+  "vsIndependent": {
+   "heldOut": {
+    "n": 1765,
+    "rms": 0.003,
+    "maxAbs": 0.005
+   },
+   "api4weeks": {
+    "n": 7748,
+    "rms": 0.003,
+    "maxAbs": 0.005
+   }
+  },
+  "heldOutPage": {
+   "note": "the page level from the history with every other reading left out, at the left-out times (m)",
+   "page": {
+    "n": 881,
+    "rms": 0.033,
+    "maxAbs": 0.29
+   },
+   "prediction": {
+    "n": 881,
+    "rms": 0.258,
+    "maxAbs": 0.779
+   }
+  },
+  "measured": "2026-10-10"
+ }
 }

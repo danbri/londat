@@ -2121,3 +2121,22 @@ official data."
   buttons with the vehicle bar (6c0e0343). Owner on iPhone: "Looks ok on iphone".
 - Open: menu-check not re-run on a quiet container after 6c0e0343; tide surge only within 4 weeks (EA API); the share
   hash has no u= (Below ground) yet; on a phone the two left round buttons lie over labels.
+
+## 2026-10-10: Three.js port, a year of measured tide (EA archive)
+
+- Owner decision: docklands/AUDIT.md sections 1 and 2 accepted ("Accepted", in reply to "Accept or reject sections 1 and
+  2 of docklands/AUDIT.md"; relayed by the coordinating session). Both sections and the summary table now say
+  "Accepted by the owner, 2026-10-10."
+- New tool cwplans/tools/build-tide-history.mjs (shared archive code: cwplans/tools/ea-tide-archive.mjs, also used by
+  fit-tide-harmonics.mjs) streamed 317 EA daily archive files (about 60 MB each, 18 min) and wrote
+  cwplans/docklands/data/sky/tide-history.json (446 KB, OGL v3.0; register entry; pipeline.json activity
+  build-tide-history): 2025-10-04 to 2026-10-09, 27 days with no archive file (mostly 2025-10-09 to 10-28); readings
+  Tower Pier 87.7 %, Charlton 81.9 %, Silvertown 92.5 %.
+- Page: layers/tide.js loads it when the clock is 26 to 400 days back (off with ?ea=0); the tide note says "EA archive
+  readings". tide-source-check 18/18 ok (page = file to 0.0000 m on 11 Apr 2026); history-check: page rms 0.033 m
+  between readings against 0.258 m for the prediction on the 7 held-out days; file against independent readings rms
+  0.003 m.
+- fit-tide-harmonics.mjs reads only Tuesday archive days now (--archive-weekday), so the new cache does not change the
+  fit; input SHA-256 unchanged.
+- Open: tide-history.json is not refreshed by a workflow; a gauge out of service shows the prediction there; no surge
+  forecast. Skill: docklands-sky, "Tide history".

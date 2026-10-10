@@ -15,8 +15,8 @@ the history results are kept in https://github.com/danbri/londat/tree/main/dockl
 
 | item | verdict | key numbers |
 |---|---|---|
-| 1 time vs historical data | PARTIAL | sun and moon within 0.02°; tide: EA readings where they cover the clock, else prediction + a fading measured residual (rms 0.27 → 0.13 m in the first hour, high water height 0.31 → 0.22 m on held-out days); prediction alone 0.25 m rms on held-out days; wind −0.8 m/s bias and +10° direction bias in the data against London City Airport METARs (grid north fixed); low cloud class agrees 70 % of hours |
-| 2 roof shapes ported | PASS | 22,654 roof prisms in each page, same shapes for each of the 8 kinds; screenshots match |
+| 1 time vs historical data | PARTIAL (accepted by the owner, 2026-10-10) | sun and moon within 0.02°; tide: EA readings for any clock time in the last year (EA API 4 weeks, EA daily archive file before: 344 of 371 days, page = archive values to 0.000 m, rms 0.033 m between readings against 0.258 m for the prediction), else prediction + a fading measured residual (rms 0.27 → 0.13 m in the first hour, high water height 0.31 → 0.22 m on held-out days); prediction alone 0.25 m rms on held-out days; wind −0.8 m/s bias and +10° direction bias in the data against London City Airport METARs (grid north fixed); low cloud class agrees 70 % of hours |
+| 2 roof shapes ported | PASS (accepted by the owner, 2026-10-10) | 22,654 roof prisms in each page, same shapes for each of the 8 kinds; screenshots match |
 | 3 piers, berths, boats | PASS | 8 of 8 TfL river-bus piers in the box; 275 piers and pontoons; HMS Belfast and 5 other vessels; the Woolwich Ferry is 3.2 km outside the box; Blackwall Pier is now a fixed masonry pier (Grade II), not a pontoon |
 | 4 birds and foxes from data | PASS (after a fix) | 21 species, 9,974 open records (NBN Atlas 8,405, GBIF 1,569); 34 of 34 foxes seen were on wood or park cells |
 | 5 trees: species and seasons | PASS | taxon from the source for 75.0 % of 81,852 trees (species 59.1 %); STATS.trees: in January evergreens 1.0 in leaf, deciduous 0.0; bloom peaks day 101 (cherry) to 125 (hawthorn); autumn colour half-way from day 261 (horse chestnut) to 303 (oak); green share of tree pixels 7 % (Jan), 44 % (Apr), 94 % (Jul), 48 % (Oct) |
@@ -26,9 +26,14 @@ Faults that this audit fixed are in "Faults fixed". Faults that stay open are in
 
 ## 1. Time scrubber vs historical data: sun, moon, tide, wind, weather
 
+Accepted by the owner, 2026-10-10.
+
 **Verdict: PARTIAL.** The sun and the moon are correct. The tide now shows the EA readings where they cover the clock
-time, and near the readings the prediction plus a fading measured residual (the surge). Older than 4 weeks, it is the
-harmonic prediction without surge. Wind and cloud follow Open-Meteo, which agrees reasonably with airport observations;
+time, and near the readings the prediction plus a fading measured residual (the surge). Since 2026-10-10 this applies
+to the whole last year: older than the EA API's 4 weeks, the page reads the EA daily archive readings
+(https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/tide-history.json). The harmonic prediction
+without surge stays only for the 27 days that the EA archive does not have, for a gauge that is out of service, and for
+times older than a year. Wind and cloud follow Open-Meteo, which agrees reasonably with airport observations;
 the wind is now turned from true north to the model grid. The Open-Meteo wind is 0.8 to 1.3 m/s below the airport
 anemometer, and no correction is applied. When Open-Meteo refuses requests (HTTP 429), the page shows a stated default
 wind and no weather.
@@ -54,7 +59,15 @@ wind and no weather.
     4 weeks (leads to 48 h); 06, 09 and 12 UTC on the 7 held-out days (leads to the end of the day). High and low waters
     in the 12 h after T0: the page's rule (`extremesNear`). In range: every other reading left out and interpolated.
   - https://github.com/danbri/londat/blob/main/docklands/test/tide-source-check.mjs opens the page and reads the source
-    of the level at 6 clock times, with the EA API on (the default) and with `?ea=0`.
+    of the level at 9 clock times, with the EA API on (the default) and with `?ea=0`. Three of the times are about 6
+    months back (11 Apr 2026, 7 minutes after a 15-minute reading): the note must say "EA archive readings" and the
+    level of each gauge must equal the archive values, interpolated.
+  - **Archive history (added 2026-10-10):** https://github.com/danbri/londat/blob/main/cwplans/tools/build-tide-history.mjs
+    streams every EA daily archive file of the last 371 days (`readings-YYYY-MM-DD.csv`, all stations, about 60 MB each,
+    OGL v3.0), keeps the three gauges and writes integer centimetres on a 15-minute grid. history-check.mjs, section
+    "tide history", compares the file with readings that it fetched on its own (the 7 held-out archive days and the EA
+    API's last 4 weeks), and gives the page's level on the held-out days from the file with every other reading left
+    out (`nowcast` at the left-out times).
 - **Wind and cloud.** history-check.mjs takes METARs of London City Airport (EGLC, about 2 km east of Canary Wharf) from
   the Iowa Environmental Mesonet ASOS archive. These are observations that the page does not use. The script compares
   them with each source that the page uses for a clock time:
@@ -106,6 +119,23 @@ wind and no weather.
   - The tide note says the source: "EA readings", "prediction − 0.13 m measured residual, from an EA reading 2.5 h
     before, fading", or "prediction, no surge".
   - Full results: https://github.com/danbri/londat/blob/main/docklands/test/audit/history.json (`nowcast`).
+- **Tide history file (2026-10-10):** 446 KB, 2025-10-04 to 2026-10-09 (371 days), input SHA-256 ed97f2f2a51e1f6b….
+  - The EA archive has no file for 27 days: 2025-10-04 to 10-06, 2025-10-09 to 10-28, 2026-07-25, 08-16, 08-20, and
+    2026-10-09 (not yet published on 10 Oct). 2025-10-07 and 10-08 exist.
+  - Readings: Tower Pier 31,228 (87.7 %, 43 days without), Charlton 29,171 (81.9 %, 61 days without: also 3 to 15 Jan,
+    15 to 21 Jun, 21 Aug to 2 Sep 2026), Silvertown 32,961 (92.5 %, 27 days without). Longest gap 480 h (the October
+    2025 hole).
+  - Against independent readings at the same times: held-out days 1,765 readings, rms 0.003 m, max 0.005 m (the
+    rounding to cm); EA API 4 weeks 7,748 readings, rms 0.003 m, max 0.005 m.
+  - The page's level on the 7 held-out days, from the file only, every other reading left out: rms 0.033 m, max 0.29 m
+    (881 times); the prediction at the same times: rms 0.258 m, max 0.78 m.
+  - tide-source-check.mjs (2026-10-10, WebGL 2): 18 of 18 rows ok, no page errors. 11 Apr 2026 03:07Z, 11:07Z, 19:07Z:
+    "EA archive readings", page level = archive value at all three gauges (difference 0.0000 m); the residual against
+    the prediction there was +0.46, −1.01 and −0.67 m. 9 Jan 2026 15:00Z: "EA archive readings at Tower Pier,
+    Silvertown; Charlton: no reading, prediction". With `?ea=0` all four show "prediction, no surge (EA readings off)".
+  - load.mjs `?t=2026-04-11T12:07&layers=tide`: both sizes ok, no page errors, `STATS.tide.history` loaded
+    (2025-10-04 to 2026-10-09), source "EA archive readings".
+  - Full results: https://github.com/danbri/londat/blob/main/docklands/test/audit/history.json (`tideHistory`).
 - **Wind and cloud against the EGLC METARs** (264 hours for ERA5, 168 for the forecast API, 46 for the snapshot):
 
   | source the page uses | days | speed bias | speed MAE | direction MAE | low-cloud class agrees |
@@ -144,6 +174,9 @@ Live deep links:
 - Spring tide, high water 14:43, from Greenland Pier:
   https://danbri.github.io/londat/docklands/?view=greenland&t=2026-10-11T14:43
 - Low water 08:55 the same day: https://danbri.github.io/londat/docklands/?view=greenland&t=2026-10-11T08:55
+- Six months back, EA archive readings (Menu > Tide says "EA archive readings"):
+  https://danbri.github.io/londat/docklands/?view=greenland&t=2026-04-11T12:07
+- A winter day with a surge, EA archive readings: https://danbri.github.io/londat/docklands/?view=greenland&t=2026-02-27T12:00
 - The photo evening, 3 Oct 22:30 (snapshot wind and cloud):
   https://danbri.github.io/londat/docklands/?view=rotherhithe&t=2026-10-03T22:30
 
@@ -164,13 +197,19 @@ Live deep links:
 - **Fixed: grid north.** `layers/wind.js` now turns the data's true direction to the model grid (−1.55°).
 - **Fixed in part: no surge in the tide.** The page uses the EA readings (the fit file's last 7 days, the 3-4 Oct
   snapshot, the hourly cache's last 24 h, and the EA API for the clock's day and the days either side, back 4 weeks) and
-  carries the measured residual from the nearest reading, fading over about 8 h. Open: before 4 weeks back (for
-  example the winter days in this table) the page has no readings and shows the prediction without surge; the EA daily
-  archive is a 59 MB file of the whole country for each day. No surge forecast ahead of the readings.
+  carries the measured residual from the nearest reading, fading over about 8 h. **Fixed 2026-10-10:** before 4 weeks
+  back the page reads the EA daily archive readings of the last year (tide-history.json, loaded only for such a clock
+  time; `?ea=0` switches it off too). Open: the 27 days that the archive does not have, and a gauge out of service (for
+  example Charlton, 3 to 15 Jan 2026), show the prediction at that gauge (with the residual of its own readings within
+  48 h); the residual of a neighbouring gauge is not used. The file is built once: it is not refreshed by a workflow
+  (run `cwplans/tools/build-tide-history.mjs` again; cached days are not fetched again). No surge forecast ahead of the
+  readings.
 - **Decision for the owner:** the EA API request is on by default, as the weather is (owner, 2026-10-09: "all
   wind/weather"); `?ea=0` or the box in Menu > Tide switches it off. The WebGL page asks only after a tap.
 
 ## 2. Roof model approximation ported
+
+Accepted by the owner, 2026-10-10.
 
 **Verdict: PASS.**
 
@@ -557,6 +596,12 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
 - https://github.com/danbri/londat/blob/main/docklands/tide.js and
   https://github.com/danbri/londat/blob/main/docklands/layers/tide.js : the measured level and the surge (`nowcast`,
   `mergeReadings`, `extremesNear`, `SURGE`); readings from the hourly cache and the EA API; the tide note gives the source.
+- https://github.com/danbri/londat/blob/main/cwplans/tools/build-tide-history.mjs (new, with the shared
+  https://github.com/danbri/londat/blob/main/cwplans/tools/ea-tide-archive.mjs ),
+  https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/tide-history.json (new),
+  https://github.com/danbri/londat/blob/main/docklands/tide.js (`historyReadings`, `historyCovers`) and
+  https://github.com/danbri/londat/blob/main/docklands/layers/tide.js : EA archive readings for the last year
+  (2026-10-10); the tide note says "EA archive readings", and names a gauge with no reading.
 - https://github.com/danbri/londat/blob/main/docklands/layers/wind.js : true north to grid north (−1.55°).
 - https://github.com/danbri/londat/blob/main/cwplans/tools/build-piers.mjs and
   https://github.com/danbri/londat/blob/main/cwplans/docklands/data/piers.json : Blackwall Pier is a fixed pier.
@@ -567,7 +612,8 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
 ## New tests
 
 - https://github.com/danbri/londat/blob/main/docklands/test/history-check.mjs (tide, tide nowcast and wind, no browser)
-- https://github.com/danbri/londat/blob/main/docklands/test/tide-source-check.mjs (the source of the page's tide level)
+- https://github.com/danbri/londat/blob/main/docklands/test/tide-source-check.mjs (the source of the page's tide level;
+  since 2026-10-10 also the EA archive readings about 6 months back, against the file's values)
 - https://github.com/danbri/londat/blob/main/docklands/test/roofs-compare.mjs
 - https://github.com/danbri/londat/blob/main/docklands/test/piers-check.mjs
 - https://github.com/danbri/londat/blob/main/docklands/test/wildlife-check.mjs
@@ -580,8 +626,9 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
    for each day; one request could serve both (needs `layers/wind.js`).
 2. Model wind is 0.76 to 1.26 m/s below the EGLC anemometer, and its direction is +5° to +10° (mean) from the METARs.
    Not corrected: no standard correction applies (section 1). Grid north is fixed.
-3. The tide has a surge only within about 8 h of EA readings, and the page reads them back 4 weeks. Older days show the
-   prediction without surge (in winter high water up to 0.7 m above it). No surge forecast.
+3. The tide has a surge only within about 8 h of EA readings. Since 2026-10-10 the page has readings for the whole last
+   year (EA API 4 weeks, then the EA daily archive file); days without an archive file (27 of 371) or with a gauge out
+   of service show the prediction there. tide-history.json is not refreshed automatically. No surge forecast.
 4. (Fixed: Blackwall Pier is a fixed pier.)
 5. The wildlife reporting rate is computed in the page. The tool could write it into the file. Land birds still show
    a spring peak, from breeding-season surveys.

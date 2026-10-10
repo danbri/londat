@@ -3707,7 +3707,7 @@
     {
       "id": "fit-tide-harmonics",
       "tool": "tools/fit-tide-harmonics.mjs",
-      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--no-fetch]",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--archive-weekday 2|all] [--no-fetch]",
       "kind": "derive",
       "network": true,
       "deterministic": false,
@@ -3738,7 +3738,7 @@
       ],
       "method": "Fits a mean and tidal harmonic constituents by least squares to the Environment Agency 15-minute tidal levels of the three gauges round the 3D model, so that the 3D pages can show the tide at any time (the EA publishes readings, not predictions; PLA and UKHO predictions are not open). Two stages: a fetch stage (network, cached) and a fit stage that reads only the cached files.",
       "rules": [
-        "Readings: the API readings (about four weeks) and one archive day in seven back to a year (no archive file for some days: skipped); one request at a time; three retries 3, 6 and 9 s apart on timeouts and 5xx; User-Agent glitchcan-cwplans/0.1; cached files are not fetched again.",
+        "Readings: the API readings (about four weeks) and one archive day in seven back to a year (no archive file for some days: skipped); since 2026-10-10 the fit reads only archive days of one weekday (--archive-weekday, default 2 = Tuesday, the days of the committed fit), because build-tide-history caches every day in the same folder and the held-out days of docklands/test/history-check.mjs (Fridays) must stay out of the fit; one request at a time; three retries 3, 6 and 9 s apart on timeouts and 5xx; User-Agent glitchcan-cwplans/0.1; cached files are not fetched again.",
         "Cleaning: a reading is dropped when its difference from the nearest other gauge departs more than 0.45 m from the median of that difference over 2 h either side (docklands/sky.js cleanGauges, fault F21); after a first fit, readings with a residual over 1.2 m are dropped (gauge faults and the largest surges).",
         "Constituents, in priority order M2, S2, N2, K1, O1, M4, MS4, MN4, M6, K2, P1, L2, NU2, MU2, 2N2, Q1, MK4, S4, 2MS6, 2MN6, M3, MK3, MO3, J1, OO1, M8, 3MS8, 2SM6, T2, MSf, Mf, Mm, Ssa, Sa; one is kept only when its speed differs from every kept one by at least 360 degrees over the span of the readings (Rayleigh criterion 1).",
         "Arguments: mean longitudes of the Moon, Sun, lunar perigee, node and solar perigee (Meeus), tau = 15 deg/h x UT + h - s; nodal factors f and u by the formulas of Pugh (1987, table 4.3); compound tides from their parts; L2 takes the M2 factors (a simplification). Phases are lags on these arguments, not Admiralty phases. The code is docklands/tide.js, which the 3D page uses too.",
@@ -3746,6 +3746,39 @@
         "Output also holds the cleaned readings of the last 7 days (15-minute slots, null where none), so the page shows a measured level where it has one, and check values (predictions every 6 h on 10 October 2026) that the page compares with its own prediction."
       ],
       "judgement": "The choice of constituents, the cleaning thresholds and the one-day-in-seven archive sampling are stated defaults (this activity's rules); the foreshore profiles drawn from the prediction are defaults in docklands/layers/tide.js."
+    },
+    {
+      "id": "build-tide-history",
+      "tool": "tools/build-tide-history.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-tide-history.mjs [--days 371] [--end YYYY-MM-DD] [--no-fetch]",
+      "kind": "derive",
+      "network": true,
+      "deterministic": false,
+      "after": [],
+      "area": "sky",
+      "faults": [],
+      "used": [
+        {
+          "source": "ea-flood-monitoring",
+          "endpoint": "https://environment.data.gov.uk/flood-monitoring/archive/readings-{YYYY-MM-DD}.csv",
+          "request": "every daily archive file (all stations, about 60 MB) from --end (default yesterday, UTC) back --days days, newest first, streamed; only the lines of the three tidal-level measures (0007, 0003, 0001 -level-tidal_level-i-15_min-mAOD) are kept (code shared with fit-tide-harmonics: tools/ea-tide-archive.mjs)"
+        },
+        {
+          "local": "data/raw/river/tide/archive-{date}.csv (the cached lines, shared with fit-tide-harmonics; their SHA-256 is written into the output)"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/sky/tide-history.json"
+        }
+      ],
+      "method": "Collects the measured Environment Agency 15-minute tidal levels of the three gauges round the 3D model for every day of the last year, so that the Three.js port shows measured levels, not the harmonic prediction, for clock times older than the flood-monitoring API keeps. Two stages: a fetch stage (network, cached) and a build stage that reads only the cached files.",
+      "rules": [
+        "One request at a time; the whole stream is retried on a failure (4 tries, 2, 4, 8 s apart), and each GET is retried on timeouts and 5xx (3, 6, 9 s); User-Agent glitchcan-cwplans/0.1; a day is cached only when its stream is complete; cached days are not fetched again; a day with no archive file (HTTP 404) is cached as empty and listed in days.archive_missing.",
+        "Encoding: per gauge one array on a 15-minute grid from the first day 00:00 UTC; the value is round(m AOD x 100); null where the archive has no reading; readings off the 15-minute grid are counted and dropped.",
+        "No cleaning: the page drops a reading more than 1.5 m from its prediction (docklands/tide.js mergeReadings, SURGE.BAD), as for every other source of readings."
+      ],
+      "judgement": "None beyond the encoding (whole centimetres: the gauges report mm; the page interpolates between 15-minute readings, rms 0.03 to 0.04 m over 30 minutes)."
     },
     {
       "id": "fetch-sky",

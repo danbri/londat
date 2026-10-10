@@ -3,7 +3,7 @@
 // EA publishes readings only; PLA and UKHO predictions are not open). Method and rules: pipeline.json activity
 // "fit-tide-harmonics"; the reasons, the fit quality and the faults: skill docklands-sky, "Tide prediction".
 //
-//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--no-fetch]
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--archive-weekday 2|all] [--no-fetch]
 //
 // Two stages. 1, fetch (network, one request at a time): the flood-monitoring API readings (it keeps about four weeks)
 // and, for a longer span, one EA daily archive file (readings-YYYY-MM-DD.csv, all stations, about 60 MB, streamed and
@@ -14,26 +14,22 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
-import { TOOLS, UA } from './lib.mjs';
+import { TOOLS } from './lib.mjs';
+import { RAWD, STATIONS, API, getRetry, fetchArchive as fetchArchiveDay } from './ea-tide-archive.mjs';
 import { CONSTITUENTS, argsAt, predict, extremes } from '../../docklands/tide.js';
 
-const RAWD = join(TOOLS, '..', 'data', 'raw', 'river', 'tide'), OUT = join(TOOLS, '..', 'docklands', 'data', 'sky', 'tide-harmonics.json');
+const OUT = join(TOOLS, '..', 'docklands', 'data', 'sky', 'tide-harmonics.json');
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const ARCH_DAYS = +arg('--archive-days', 371), ARCH_STEP = +arg('--archive-step', 7), FETCH = !process.argv.includes('--no-fetch');
-const STATIONS = { '0007': 'Tower Pier', '0003': 'Charlton', '0001': 'Silvertown' };
-const MEASURE = id => `http://environment.data.gov.uk/flood-monitoring/id/measures/${id}-level-tidal_level-i-15_min-mAOD`;
-const API = 'https://environment.data.gov.uk/flood-monitoring';
+// the fit reads only archive days of one weekday (default 2, Tuesday: the days of the committed fit, k mod 7 = 3 before
+// 2026-10-09), so that days cached by build-tide-history.mjs (every day) and the held-out days of history-check.mjs stay
+// out of the fit; --archive-weekday all reads every cached day
+const WEEKDAY = arg('--archive-weekday', '2');
 const day = t => new Date(t).toISOString().slice(0, 10);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-mkdirSync(RAWD, { recursive: true });
+const onWeekday = d => WEEKDAY === 'all' || new Date(d + 'T00:00Z').getUTCDay() === +WEEKDAY;
 
 // ---------- 1. fetch
-async function getRetry(u, stream = false) {
-  for (let k = 0; ; k++) {
-    try { const r = await fetch(u, { headers: { 'User-Agent': UA } }); if (r.status === 404) return null; if (!r.ok) throw new Error(`${r.status} ${u}`); return stream ? r : Buffer.from(await r.arrayBuffer()); }
-    catch (e) { if (k >= 3 || /^4\d\d /.test(e.message)) throw e; await sleep(3000 * (k + 1)); }
-  }
-}
 async function fetchApi() {
   const today = day(Date.now()), f = join(RAWD, `api-${today}.json`);
   if (existsSync(f)) return; const out = { fetched: new Date().toISOString(), stations: {} };
@@ -46,21 +42,15 @@ async function fetchApi() {
   }
   writeFileSync(f, JSON.stringify(out));
 }
-// one archive day: stream the CSV, keep the lines of the three measures
-async function fetchArchive(d) {
-  const f = join(RAWD, `archive-${d}.csv`); if (existsSync(f)) return;
-  const r = await getRetry(`${API}/archive/readings-${d}.csv`, true); if (!r) { writeFileSync(f, ''); console.log(`archive ${d}: none`); return; }
-  const keep = Object.keys(STATIONS).map(MEASURE), dec = new TextDecoder(); let buf = '', lines = [];
-  for await (const chunk of r.body) { buf += dec.decode(chunk, { stream: true }); let i; while ((i = buf.indexOf('\n')) >= 0) { const L = buf.slice(0, i); buf = buf.slice(i + 1); if (keep.some(m => L.includes(m + ','))) lines.push(L.trim()); } }
-  writeFileSync(f, lines.join('\n') + '\n'); console.log(`archive ${d}: ${lines.length} lines`);
-}
+// one archive day (ea-tide-archive.mjs: streamed, filtered to the three measures, cached)
+async function fetchArchive(d) { const n = await fetchArchiveDay(d); if (n !== 'cached') console.log(`archive ${d}: ${n === 'none' ? 'none' : n + ' lines'}`); }
 if (FETCH) {
   await fetchApi();
-  for (let k = 10; k <= ARCH_DAYS; k += ARCH_STEP) await fetchArchive(day(Date.now() - k * 864e5));
+  for (let k = 10, n = 0; k <= ARCH_DAYS; k++) { const d = day(Date.now() - k * 864e5); if (WEEKDAY === 'all' ? (k - 10) % ARCH_STEP === 0 : onWeekday(d) && n++ % Math.max(1, ARCH_STEP / 7) === 0) await fetchArchive(d); }
 }
 
 // ---------- 2. fit (from the cached files only)
-const files = readdirSync(RAWD).filter(f => /^(api|archive)-\d{4}-\d\d-\d\d\.(json|csv)$/.test(f)).sort();
+const files = readdirSync(RAWD).filter(f => /^(api|archive)-\d{4}-\d\d-\d\d\.(json|csv)$/.test(f) && (f.startsWith('api-') || onWeekday(f.slice(8, 18)))).sort();
 const apiFile = files.filter(f => f.startsWith('api-')).pop(); if (!apiFile) throw new Error('no API readings cached: run without --no-fetch');
 const hash = createHash('sha256'), R = {}, meta = {};
 for (const id of Object.keys(STATIONS)) R[id] = new Map();

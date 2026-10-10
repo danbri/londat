@@ -128,6 +128,24 @@ export function mergeReadings(S, ...lists) {
   return [...m.entries()].sort((a, b) => a[0] - b[0]);
 }
 
+// the measured history (cwplans/docklands/data/sky/tide-history.json, cwplans/tools/build-tide-history.mjs: EA daily archive
+// files, OGL v3.0): per gauge an array of integer cm on a 15-minute grid from `start`, null for none. As readings [[t, v m]].
+export function historyReadings(Hst, id) {
+  const s = Hst && Hst.stations[id]; if (!s) return [];
+  const t0 = Date.parse(Hst.start), st = Hst.step_min * 60e3, out = [];
+  s.v.forEach((x, i) => { if (x != null) out.push([t0 + i * st, x / 100]); });
+  return out;
+}
+// true when the history has readings either side of t at this gauge, no more than SURGE.GAP apart (the level is then from it)
+export function historyCovers(Hst, id, t) {
+  const s = Hst && Hst.stations[id]; if (!s) return false;
+  const st = Hst.step_min * 60e3, x = (t - Date.parse(Hst.start)) / st, a = Math.floor(x), b = Math.ceil(x);
+  if (a < 0 || b >= s.v.length) return false;
+  if (s.v[a] != null && s.v[b] != null) return true;
+  const g = Math.round(SURGE.GAP / st); for (let i = Math.max(0, b - g); i <= a; i++) if (s.v[i] != null) for (let j = b; j <= Math.min(s.v.length - 1, i + g); j++) if (s.v[j] != null) return true;
+  return false;
+}
+
 // the tide along the river: chainage (m) along a centreline [[x, z], ...] (sky.js chainage: the nearest vertex; beyond
 // the ends, minus or plus the distance) and the stations' positions in the same frame
 export function chainage(P) {

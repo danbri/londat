@@ -211,9 +211,50 @@ below it. `docklands/tide.js nowcast(S, readings, t)` gives the level of one gau
   fading" or "prediction, no surge". `STATS.tide.now`: `source`, `residualCentre`, `fromReadingH`, `eaError`.
 - Check: `node docklands/test/tide-source-check.mjs --base http://127.0.0.1:<port>` (source kinds at 3 h ago, 2 and 6 h
   ahead, 10 days ago, 9 Jan, 3 Oct; with and without `?ea=0`).
-- Open: the page does not fetch days older than 4 weeks (the EA daily archive CSV is the whole country, 59 MB for
-  9 Jan 2026), so a past winter day shows the prediction without surge; no surge forecast (the EA / Met Office storm
-  tide forecast is not open).
+- Open: no surge forecast (the EA / Met Office storm tide forecast is not open). Days older than 4 weeks: see "Tide
+  history" (fixed 2026-10-10).
+
+### Tide history (Three.js port, 2026-10-10)
+
+Measured levels for any clock time in the last year, not only the EA API's 4 weeks.
+- Tool: `cwplans/tools/build-tide-history.mjs [--days 371] [--end YYYY-MM-DD] [--no-fetch]` (pipeline.json activity
+  build-tide-history; register entry). For each day, newest first, one request at a time, it streams the EA daily
+  archive file `https://environment.data.gov.uk/flood-monitoring/archive/readings-YYYY-MM-DD.csv` (every station in
+  England, about 60 MB) and keeps the lines of `<id>-level-tidal_level-i-15_min-mAOD` for 0007, 0003, 0001. The fetch,
+  filter and reader are in `cwplans/tools/ea-tide-archive.mjs`, shared with fit-tide-harmonics.mjs (one copy). Cache:
+  `cwplans/data/raw/river/tide/archive-YYYY-MM-DD.csv` (gitignored; written only when the stream is complete, via a
+  `.part` file; an empty file = HTTP 404). Measured 2026-10-10: 317 files, 18 minutes, about 17 MB/s, no failures.
+- Output `cwplans/docklands/data/sky/tide-history.json` (446 KB): `start` (first day 00:00Z), `step_min` 15, per gauge
+  `v` = integer cm of m AOD or null, plus `readings`, `share`, `longest_gap_h`, `days_without_readings`; `days`
+  (`from`, `to`, `archive_missing`), `url_pattern`, `licence` OGL v3.0, the attribution ("Contains Environment Agency
+  data ..."), `raw_sha256` (over "date\n" + the cached lines, oldest first), `made`. Not cleaned: the page drops a
+  reading more than 1.5 m from the prediction, as for every source.
+- Page: `layers/tide.js` loads the file only when the clock is more than 26 days and less than 400 days back and the EA
+  readings are on (`?ea=0` and the Menu > Tide box switch it off: its source key starts with "ea"). `tide.js
+  historyReadings` decodes it; it is one more source for `mergeReadings` / `nowcast`, so gaps get the fading residual
+  as elsewhere. Note: "EA archive readings" when every gauge has archive readings round t and t is older than 27 days
+  (`historyCovers`); "EA archive readings at Tower Pier, Silvertown; Charlton: no reading, prediction" when a gauge has
+  none; inside the API window the note stays "EA readings" even where the file also covers the time.
+  `STATS.tide.history` gives `from`, `to`, `loaded`; `STATS.tide.now.archive`.
+- Checks: `node docklands/test/tide-source-check.mjs` (three times on the day 182 days back: the note and the levels
+  equal the file, interpolated, to 0.006 m; measured 0.0000 m); `history-check.mjs` section "tide history" (file
+  against independently fetched readings: rms 0.003 m, max 0.005 m = the cm rounding; page level from the file with
+  every other reading left out: rms 0.033 m against 0.258 m for the prediction, 7 held-out days).
+- Faults found:
+  - The EA archive has no file for 2025-10-09 to 2025-10-28 (and 10-04 to 10-06, 2026-07-25, 08-16, 08-20); the file of
+    a day appears the day after (2026-10-09 was missing on 10 Oct). The fit tool's cache had empty files for 2025-10-14
+    and 10-21 already.
+  - Gauges go out for days: Charlton 3 to 15 Jan, 15 to 21 Jun, 21 Aug to 2 Sep 2026; Tower Pier 30 Dec to 7 Jan and 10 to
+    16 Jul 2026. A day file can lack single hours (11 Apr 2026 00:15 to 01:15 at all three). The page then shows the
+    prediction at that gauge (not the neighbour's residual: open).
+  - The residual on archive days reaches about 1 m (11 Apr 2026 11:07Z, −1.01 m at the centre, near low water: timing),
+    so the archive matters most near high and low water.
+  - Every day in the shared cache would have entered the harmonic fit on its next run, the held-out days of
+    history-check.mjs included. fit-tide-harmonics.mjs now reads only archive days of one weekday (`--archive-weekday`,
+    default 2 = Tuesday, the days of the committed fit; `all` for every day); its input SHA-256 is unchanged
+    (7fdf0ebc…).
+- Open: the file is not refreshed by a workflow; run the tool again (cached days are not fetched; it takes a few
+  minutes for the new days). Days older than the file show the prediction.
 
 ## Three.js port clock (2026-10-09)
 
