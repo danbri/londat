@@ -10078,6 +10078,10 @@
   ],
   "libraries": [
     {
+      "tool": "tools/ea-tide-archive.mjs",
+      "provides": "EA tide archive: the three tide gauges round the 3D model (0007 Tower Pier, 0003 Charlton, 0001 Silvertown), the cached, retried, streamed fetch of one EA daily archive file (readings-YYYY-MM-DD.csv, all stations, about 60 MB, OGL v3.0) filtered to their 15-minute tidal level measures, and the reader of the cached lines (data/raw/river/tide/). Used by fit-tide-harmonics and build-tide-history."
+    },
+    {
       "tool": "tools/lidar-roofs.py",
       "provides": "Roof fits (numpy, tifffile): the EA LiDAR DSM and DTM tile zips as one mosaic; per low model building the 1 m cells inside its outline (0.75 m inset) minus the model ground, and flat, gable (ridge along the long or the short side, ridge offset searched) and hipped fits in the outline's minimum-area rectangle, with their errors. Used by build-roofs."
     },
