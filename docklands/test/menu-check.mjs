@@ -40,7 +40,7 @@ for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
   const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: dpr, hasTouch: w < 900 }), errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
-  await page.goto(`${BASE}/docklands/?view=cw&t=2026-10-09T15:00${WEBGPU ? '' : '&webgl'}&animate=0${QUERY ? '&' + QUERY : ''}`);
+  await page.goto(`${BASE}/docklands/?view=cw&t=2026-10-09T15:00${WEBGPU ? '' : '&webgl'}&animate=0&planes=0&ships=0&wildlife=0&weather=0${QUERY ? '&' + QUERY : ''}`);   // moving layers start off (they still build their menu rows): near-live aircraft redraw every frame, seconds a frame in software
   await page.waitForFunction(() => globalThis.__docklands3 && globalThis.__docklands3.ready, null, { timeout: 240000 });
   await page.waitForTimeout(3000);
   const tag = `${w}x${h}`;
