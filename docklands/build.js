@@ -151,7 +151,39 @@ export function waterGeometry() {
   for (const w of A.water) { const n0 = M.n; flat(M, w, w.level + .1, C.water); for (let i = n0; i < M.n; i++) { tidal.push(w.tidal ? 1 : 0); tbase.push(w.level + .1); } }
   const G = M.geometry(); G.setAttribute('tidal', new THREE.Float32BufferAttribute(tidal, 1)); G.setAttribute('tbase', new THREE.Float32BufferAttribute(tbase, 1)); return G;
 }
-export function greensGeometry() { const M = new Mesh(); for (const g of A.greens) { const f = dec(g.p); flat(M, g, groundAt(f[0], f[1]) + .4, C.green); } return M.geometry(); }
+// the height of the terrain mesh (terrainGeometry's triangles, without the water sink) at x, z: exact on its surface
+export const surfaceAt = (x, z) => { const T = A.terrain, u = Math.max(0, Math.min(T.nx - 1.000001, (x - T.x0) / T.cell)), w = Math.max(0, Math.min(T.nz - 1.000001, (z - T.z0) / T.cell)),
+  i = Math.floor(u), j = Math.floor(w), fx = u - i, fz = w - j, a = j * T.nx + i, h00 = T.dm[a] / 10, h10 = T.dm[a + 1] / 10, h01 = T.dm[a + T.nx] / 10, h11 = T.dm[a + T.nx + 1] / 10;
+  return fx + fz <= 1 ? h00 + fx * (h10 - h00) + fz * (h01 - h00) : h11 + (1 - fx) * (h01 - h11) + (1 - fz) * (h10 - h11); };
+// the green areas, 0.4 m over the terrain: each polygon triangle is cut on the terrain mesh's triangles (two a 20 m cell,
+// diagonal from (i+1, j) to (i, j+1)), so every piece lies on one terrain plane. Before 2026-10-10 each polygon was flat at
+// the ground under its first vertex: Greenwich Park (on a hill) hung in the air through the treetops (owner's photo).
+export function greensGeometry() {
+  const T = A.terrain, M = new Mesh(), clip = (P, ax, az, bx, bz) => { const out = [], side = (p) => (bx - ax) * (p[1] - az) - (bz - az) * (p[0] - ax);
+    for (let k = 0; k < P.length; k++) { const p = P[k], q = P[(k + 1) % P.length], sp = side(p), sq = side(q); if (sp >= 0) out.push(p); if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])]); } }
+    return out; },
+    ccw = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) > 0 ? [a, b, c] : [a, c, b],
+    // a triangle is kept whole when the terrain under it is within 0.1 m of the plane through its corners (at the grid
+    // points inside it and every 2 m along its sides): the 0.4 m lift then still clears the ground
+    planar = t => { const h = t.map(p => surfaceAt(p[0], p[1])), d = (t[1][0] - t[0][0]) * (t[2][1] - t[0][1]) - (t[2][0] - t[0][0]) * (t[1][1] - t[0][1]); if (Math.abs(d) < 1e-6) return true;
+      const pl = (x, z) => { const a = ((x - t[0][0]) * (t[2][1] - t[0][1]) - (t[2][0] - t[0][0]) * (z - t[0][1])) / d, b = ((t[1][0] - t[0][0]) * (z - t[0][1]) - (x - t[0][0]) * (t[1][1] - t[0][1])) / d; return [a, b, h[0] + a * (h[1] - h[0]) + b * (h[2] - h[0])]; };
+      for (let e = 0; e < 3; e++) { const p = t[e], q = t[(e + 1) % 3], n = Math.ceil(Math.hypot(q[0] - p[0], q[1] - p[1]) / 2); for (let s = 1; s < n; s++) { const x = p[0] + (q[0] - p[0]) * s / n, z = p[1] + (q[1] - p[1]) * s / n; if (Math.abs(pl(x, z)[2] - surfaceAt(x, z)) > .1) return false; } }
+      const xs = t.map(p => p[0]), zs = t.map(p => p[1]);
+      for (let j = Math.ceil((Math.min(...zs) - T.z0) / T.cell); j <= Math.floor((Math.max(...zs) - T.z0) / T.cell); j++) for (let i = Math.ceil((Math.min(...xs) - T.x0) / T.cell); i <= Math.floor((Math.max(...xs) - T.x0) / T.cell); i++) {
+        const x = T.x0 + i * T.cell, z = T.z0 + j * T.cell, [a, b, y] = pl(x, z); if (a < 0 || b < 0 || a + b > 1) continue; if (Math.abs(y - surfaceAt(x, z)) > .1) return false; }
+      return true; };
+  for (const g of A.greens) { const f = dec(g.p), holes = g.holes || [], tris = earcut(f, holes.length ? holes : undefined, 2);
+    for (let k = 0; k < tris.length; k += 3) { const t = [tris[k], tris[k + 1], tris[k + 2]].map(n => [f[2 * n], f[2 * n + 1]]);
+      if (planar(t)) { const base = M.n; for (const p of ccw(...t)) M.v(p[0], surfaceAt(p[0], p[1]) + .4, p[1], C.green); M.tri(base, base + 2, base + 1); continue; }
+      const i0 = Math.max(0, Math.floor((Math.min(t[0][0], t[1][0], t[2][0]) - T.x0) / T.cell)), i1 = Math.min(T.nx - 2, Math.floor((Math.max(t[0][0], t[1][0], t[2][0]) - T.x0) / T.cell)),
+        j0 = Math.max(0, Math.floor((Math.min(t[0][1], t[1][1], t[2][1]) - T.z0) / T.cell)), j1 = Math.min(T.nz - 2, Math.floor((Math.max(t[0][1], t[1][1], t[2][1]) - T.z0) / T.cell));
+      for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) { const x0 = T.x0 + i * T.cell, z0 = T.z0 + j * T.cell, x1 = x0 + T.cell, z1 = z0 + T.cell;
+        for (const G of [ccw([x0, z0], [x1, z0], [x0, z1]), ccw([x1, z0], [x1, z1], [x0, z1])]) {
+          let P = ccw(...t); for (let e = 0; e < 3 && P.length >= 3; e++) P = clip(P, G[e][0], G[e][1], G[(e + 1) % 3][0], G[(e + 1) % 3][1]);
+          if (P.length < 3) continue; const base = M.n; for (const p of P) M.v(p[0], surfaceAt(p[0], p[1]) + .4, p[1], C.green);
+          for (let q = 1; q + 1 < P.length; q++) M.tri(base, base + q + 1, base + q); } } } }
+  return M.geometry();
+}
 function beam(M, a, b, w, h, col) {
   const dx = b[0] - a[0], dz = b[2] - a[2], l = Math.hypot(dx, dz) || 1, ox = -dz / l * w / 2, oz = dx / l * w / 2, H = h / 2;
   const P = (q, sx, sy) => [q[0] + ox * sx, q[1] + H * sy, q[2] + oz * sx];

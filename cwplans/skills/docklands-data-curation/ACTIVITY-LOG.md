@@ -2160,3 +2160,10 @@ official data."
   "Limehouse Tnl Aspen Way" behind One Canada Square has no label).
 - Open: not measured on a phone; thin buildings (under 4 m), trees, cranes and station models do not occlude. Skill:
   docklands-3d-page, "Three.js port: less clutter, labels switch, label occlusion (2026-10-10)".
+
+## 2026-10-10: parks on the terrain (Three.js port)
+
+- Owner's photo: a green plane in the air over Greenwich Park. `docklands/build.js greensGeometry` now follows the terrain
+  mesh (`surfaceAt`, clipping to the terrain triangles where the ground is not flat); `layers/wildlife.js` uses the same
+  heights. Worst polygon: 36.7 m of relief, the old slab 32.1 m in the air. Now 0.29 to 0.51 m over the terrain.
+  Checks: `greens-check.mjs`, `load.mjs` (both sizes), `wildlife-check.mjs`. Open: the same fault on the WebGL page.

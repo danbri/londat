@@ -2061,6 +2061,23 @@ on a phone it was the unlabelled icon under the time wheels, beside Drone.
   Way" behind One Canada Square: no label; "ASPEN WAY - UPPER BANK STREET": label); labels off
   https://danbri.github.io/londat/docklands/?labels=0 .
 
+## Three.js port: parks on the terrain (2026-10-10)
+
+Owner, 2026-10-10, iPhone photo of Greenwich Park: "Greenwich has a grasslike plane in midair intersecting treetops :(".
+- **Cause**: `build.js greensGeometry` drew each `A.greens` polygon flat at `groundAt(first vertex) + 0.4 m` (copied from
+  the WebGL page, `cwplans/docklands/index.html` ~line 590, which still has the fault). The worst polygon (Greenwich Park,
+  `?view=greenwich`) has 36.7 m of relief: the slab hung 32.1 m over its lowest ground and was 4.6 m under its highest.
+- **Fix**: `surfaceAt(x, z)` (exported) is the height of the terrain mesh itself: the two triangles a 20 m cell,
+  diagonal (i+1, j) to (i, j+1), from `T.dm` (no water sink). Each earcut triangle of a green is kept whole when the
+  terrain under it is within 0.1 m of the plane through its corners (grid points inside, and every 2 m along its sides;
+  checking only the side middles left points 0.9 m under the ground); else it is clipped (Sutherland-Hodgman) to each
+  terrain triangle it covers, so every piece lies on one terrain plane. Vertices at `surfaceAt + 0.4`.
+- **Measured** (`docklands/test/greens-check.mjs`): largest vertex error 0.00006 m; lift at 4 random points in every
+  triangle 0.29 to 0.51 m; 341,203 vertices (390,013 when every triangle is clipped). `load.mjs` ok at both sizes on
+  `view=greenwich`; `wildlife-check.mjs` passes: `layers/wildlife.js` now takes the green top per 10 m cell from
+  `surfaceAt` + 0.45 (it used the slab height, so animals would have stood in the air).
+- Open: the WebGL page has the same fault; trees use `groundAt` (the nearest 20 m cell), not `surfaceAt`.
+
 ## Night windows by use and hour (Three.js port, 2026-10-09)
 
 Owner, 2026-10-09: "the binary division of night lighting into warm-white grids of tiny square windows (residential) vs cold

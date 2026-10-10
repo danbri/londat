@@ -20,6 +20,7 @@
 // Skill: docklands-3d-page, "Three.js port".
 import { Fn, If, attribute, positionGeometry, instancedDynamicBufferAttribute, uniformArray, uniform, varying, time, vec3, vec4, float, int, sin, cos, sign, min, max } from 'three/tsl';
 import { WU } from '../water.js';
+import { surfaceAt } from '../build.js';
 
 const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 16, TAU = Math.PI * 2;
 // animals per hectare of each habitat class in daylight at the peak of the season (stated defaults, general ecology for
@@ -82,14 +83,14 @@ export default {
     const polyAt = (x, z) => { let hit = null; for (const P of WATER) if (x >= P.x0 && x <= P.x1 && z >= P.z0 && z <= P.z1 && inRings(P.f, P.st, x, z)) hit = P; return hit; };
     const waterY = a => a.tidal ? Math.max(WU.tideLevel.value, ctx.groundAt(a.x, a.z) + .05) : a.lvl;
 
-    // ---------- the flat green slabs of the page (build.js greensGeometry: each A.greens polygon flat at the ground under its
-    // first vertex + 0.4 m): their top on the 10 m raster grid, so that birds and foxes stand on the slab, not under it
+    // ---------- the green areas of the page (build.js greensGeometry: each A.greens polygon 0.4 m over the terrain mesh,
+    // surfaceAt): their top on the 10 m raster grid, so that birds and foxes stand on the green, not under it
     const GT = new Float32Array(H.nx * H.nz).fill(-1e9);
-    for (const g of A.greens) { const f = ctx.dec(g.p), top = ctx.groundAt(f[0], f[1]) + .45, st = [0, ...(g.holes || []), f.length / 2], rows = new Map();
+    for (const g of A.greens) { const f = ctx.dec(g.p), st = [0, ...(g.holes || []), f.length / 2], rows = new Map();
       for (let r = 0; r < st.length - 1; r++) for (let i = st[r]; i < st[r + 1]; i++) { const j = i + 1 < st[r + 1] ? i + 1 : st[r], x0 = f[2 * i], z0 = f[2 * i + 1], x1 = f[2 * j], z1 = f[2 * j + 1];
         const ja = Math.max(0, Math.ceil((Math.min(z0, z1) - H.z0) / H.cell - .5)), jb = Math.min(H.nz - 1, Math.floor((Math.max(z0, z1) - H.z0) / H.cell - .5));
         for (let jj = ja; jj <= jb; jj++) { const zc = H.z0 + (jj + .5) * H.cell; if ((z0 > zc) === (z1 > zc)) continue; if (!rows.has(jj)) rows.set(jj, []); rows.get(jj).push(x0 + (zc - z0) / (z1 - z0) * (x1 - x0)); } }
-      for (const [jj, xs] of rows) { xs.sort((a, b) => a - b); for (let q = 0; q + 1 < xs.length; q += 2) for (let ii = Math.max(0, Math.ceil((xs[q] - H.x0) / H.cell - .5)); ii <= Math.min(H.nx - 1, Math.floor((xs[q + 1] - H.x0) / H.cell - .5)); ii++) { const m = jj * H.nx + ii; if (top > GT[m]) GT[m] = top; } } }
+      for (const [jj, xs] of rows) { xs.sort((a, b) => a - b); for (let q = 0; q + 1 < xs.length; q += 2) for (let ii = Math.max(0, Math.ceil((xs[q] - H.x0) / H.cell - .5)); ii <= Math.min(H.nx - 1, Math.floor((xs[q + 1] - H.x0) / H.cell - .5)); ii++) { const m = jj * H.nx + ii, top = surfaceAt(H.x0 + (ii + .5) * H.cell, H.z0 + (jj + .5) * H.cell) + .45; if (top > GT[m]) GT[m] = top; } } }
     const landY = (x, z) => { const i = Math.floor((x - H.x0) / H.cell), j = Math.floor((z - H.z0) / H.cell), g = ctx.groundAt(x, z); return i < 0 || j < 0 || i >= H.nx || j >= H.nz ? g : Math.max(g, GT[j * H.nx + i]); };
 
     // ---------- buildings by 200 m cell (first vertex; decoded when a cell needs them): roof edges, and "not inside a building"
