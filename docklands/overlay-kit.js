@@ -120,7 +120,7 @@ export function makeLabels(ctx) {
     const on = !document.getElementById('showLabels') || document.getElementById('showLabels').checked;
     for (const l of L.slice().sort((a, b) => b.pri - a.pri || cam.distanceToSquared(a.v) - cam.distanceToSquared(b.v))) {
       v.copy(l.v).project(ctx.camera); const x = (v.x + 1) / 2 * W, y = (1 - v.y) / 2 * H, w = l.el.offsetWidth || 80, r = [x - w / 2, y - 22, x + w / 2, y];
-      const vis = on && l.shown() && v.z < 1 && x > 0 && x < W && y > 50 && y < H - 30 && !used.some(o => r[0] < o[2] && r[2] > o[0] && r[1] < o[3] && r[3] > o[1]);
+      const vis = on && l.shown() && v.z < 1 && x > 0 && x < W && y > 50 && y < H - 30 && !used.some(o => r[0] < o[2] && r[2] > o[0] && r[1] < o[3] && r[3] > o[1]) && !ctx.occluded?.(l.el, l.v.x, l.v.y, l.v.z);   // a building or the ground in front (occlude.js)
       if (vis) { used.push(r); l.el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; }
       if (l.el.hidden === vis) l.el.hidden = !vis;
     }

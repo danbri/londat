@@ -40,6 +40,8 @@ improvements."
 | `carousel.js` | the time wheels at the top (time of day, day of the year) |
 | `sky3.js` | sun and moon (Astronomy Engine), `SkyMesh`, stars (instanced sprites), the light rig |
 | `about-extra.js` | Menu > About: the Live data box (londat cache or the sources' APIs, traffic camera markers) and the below-ground text |
+| `occlude.js` | label occlusion (2026-10-10): a 4 m height grid (DTM, building roofs, detailed models) and a 2 m march from each label's anchor to the eye; a label with a building or the ground in front hides (`ctx.occluded`) |
+| `test/labels-check.mjs` | 2026-10-10: no Drone, Below ground or Night button on the map, their menu entries, no overlaps at 390 and 1280 px; the Labels switch (labels, notes and credits off and back, kept after a reload, credits in About); occlusion of a traffic camera behind One Canada Square, against an exact three.js ray cast, and its cost |
 | `test/menu-check.mjs` | headless check of the Menu map (every row by its click path), the four ways to close the drawer, and the time wheels |
 | `test/load.mjs` | headless load test: two sizes, WebGL 2 or `--webgpu` in software (`node docklands/test/load.mjs` from the repository root) |
 | `test/views-compare.mjs` | photo views against the WebGL page: landmark pixels with each page's own camera at 1280 x 800 and 390 x 844 (`--fresh` from `?view=`, `--hash` the share hash round trips, `--vz 3` the eye height; on a portrait screen the WebGL pixels are scaled about the centre for the 70 deg cap) |
@@ -100,9 +102,16 @@ OrbitControls (it stays as the holder of camera and target) with the WebGL page'
   turned up to -0.5 rad about the eye. Below ground the wall is 1 m under the surface and the same push brings the eye
   1.5 m above it and closes the gauge. Outside a pass no update leaves the eye under the ground or the water (the flash
   fault of 2026-10-09). Not in pixel art, a photo view (until the first gesture) or the drone.
-- Round buttons at the top left after Labels: Below ground (`#digBtn`: the depth gauge on or off, as the WebGL page's
-  Menu button) and Drone (`#droneRound`). While the drone flies its vehicles (Copter, Plane, Boat, Tube, Walk, Under),
-  Auto and the cross are at the top right (`#drBar`, the time wheels hide while it flies); Menu > Go > Move > Drone stays.
+- Buttons on the map, top left: Menu and Labels only (2026-10-10, owner: "too much clutter"). Drone (`#droneBtn`) and
+  Below ground (`#digBtn`: the depth gauge on or off, as the WebGL page's Menu button) are in Menu > Go > Move, Night
+  (`#nightBtn`) in Menu > Look; each shows its state (`aria-pressed`). The round Drone button (`#droneRound`, 2026-10-09)
+  is gone. While the drone flies its vehicles (Copter, Plane, Boat, Tube, Walk, Under), Auto and the cross are at the top
+  right (`#drBar`, the time wheels hide while it flies).
+- Labels (the round button after Menu, or Layers > City > "Labels, notes and credits on the map"; `?labels=0|1`, kept on
+  the device): off hides every label on the map (places, stations, docks, aircraft, ships, piers, traffic cameras,
+  overlays, KML names, below-ground sources, route ends) and the notes and credits on the map (wind and water note,
+  aircraft note and credit, the corner credit and (i), the frame line, the status line). The credits and licences stay in
+  Menu > About. A label hides while a building or the ground is between the eye and its anchor (`occlude.js`).
 - Numbers, before and after, at eye heights of 10, 100 and 1500 m: skill docklands-3d-page, "Three.js port: navigation".
 
 Examples:
@@ -151,7 +160,7 @@ what is missing); "no" = not started. Layers are modules in `layers/` (`export d
 | 5 styles | pixel art, Line drawing, Vector CRT | yes | `styles.js`, `?style=pixel|lines|vectrex`; pixel art with the photo facade tiles, the measured facade colours (snapped to the palette), box trees and the 441 animated actors of the WebGL page (people, cyclists, traffic, river boats, gulls, swimmers); Vector CRT "Colour overlay" (`?crt=overlay`); the style note under Look > Style |
 | 5 styles | splats | yes | `layers/splats.js`, `splat-worker.js`: own TSL renderer (Spark 2.3.1 and gaussian-splats-3d 0.4.7, both MIT, need WebGL), off by default, `?splats=with|only`, `?splatset=`; music switches to "only" in the map style; a full page with splats takes 24 to 39 s a frame in software |
 | 2 interface | navigation: momentum, ground limit, pass Below ground | yes | `main.js` "navigation" (2026-10-09): the WebGL page's gestures and nav.js (see "Navigation" above); `test/nav-check.mjs`, `test/nav-feel.mjs`. The WebGL page's share-hash restore is in main.js already; nav.js's `u=` (gauge) and the layer keys of the hash are not ported |
-| 6 other | Drone, plotter SVG, music | yes | `drone.js` (round Drone button on the map and a mode bar of six buttons since 2026-10-09; the WebGL page has the Drone button in its Menu only and a select for the vehicle), `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
+| 6 other | Drone, plotter SVG, music | yes | `drone.js` (a mode bar of six buttons since 2026-10-09; the round Drone button on the map of 2026-10-09 went into Menu > Go > Move on 2026-10-10; the WebGL page has the Drone button in its Menu only and a select for the vehicle), `plotter.js` (the WebGL page's plotter-svg.js, A4/A3/A2), `music.js` (24 bands, phone audio rules) |
 | 6 other | WebXR | yes | `xr.js`, `layers/xr.js`: table 1:1500 with relief 2.5x (Relief button), street 1:1, the four panels, rays, grab and pinch, passthrough, the one-eye preview (`?xr=preview&go`); bar row 3 as xr-layer.js: Drone (Off, Copter, Plane, Boat, Tube, Walk, Under; stepped from the headset frame), Ride (your eye at the drone's, 1:1) or Watch (a cyan marker over the table), View (the page's named views; a photo view puts you at its eye), Wind (the wind layer and arrows); Photo (the left eye as a PNG, offered after Exit); on the WebGL 2 backend (three.js r186 WebXR on WebGPU needs an XR-compatible adapter at start and XRGPUBinding): from WebGPU it reloads with `?webgl&xr=1`; `test/xr-check.mjs` 26 steps with the mock (32 with `--webgpu`; all pass on 2026-10-09); not yet tried on a real headset |
 
 ## Menu map (2026-10-09)
@@ -165,7 +174,7 @@ last used opens next time (browser storage). Layer modules put controls through 
 switches for a few controls and returns the previous place (`layers/overlays.js` puts "Colour buildings by" in Look). A
 layer's own on/off switch comes first in its block. Groups with nothing in them are hidden.
 
-The **time wheels** (`carousel.js`) are two looping strips under the round buttons: the time of day (24 h, wraps from 23:59
+The **time wheels** (`carousel.js`) are two looping strips under the Menu and Labels buttons: the time of day (24 h, wraps from 23:59
 to 00:00 on the same date; night, twilight and day shading and sunrise and sunset from Astronomy Engine; snaps to 15
 minutes, 5 on a wide screen) and the day of the year (wraps from 31 December to 1 January of the same year; months, moon
 phases, the daily tide range from the tide layer's harmonic prediction with S spring and N neap marks). Drag or flick
@@ -187,9 +196,10 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | views: Night from Rotherhithe, Greenland Pier, Canary Wharf Pier; Greenland day; From a plane (port) | Views > Photo views |
 | "Open this view in the WebGL page" (port) | Views > This view in the WebGL page |
 | Share this view (nav.js) | Views > Share this view (system share sheet on a touch screen, else the clipboard; the link shows under the button) |
-| Below ground button (depth gauge) | Layers > Below ground > Depth gauge; Views > Underground opens it too |
+| Below ground button (depth gauge) | Go > Move > Below ground (`#digBtn`, since 2026-10-10; was a round button on the map); Layers > Below ground > Depth gauge; Views > Underground opens it too |
+| Drone | Go > Move > Drone (`#droneBtn`, first in the row; the round Drone button on the map went on 2026-10-10) |
 | Layers > Style (Map, pixel art, line drawing, vector CRT) | Look > Style (same as the selector at the top right) |
-| Night | Time > Day or night (and the moon button at the top left) |
+| Night | Look > Night (`#nightBtn`, shows the state; the moon button at the top left until 2026-10-10); Time > Day or night |
 | Realistic buildings | Look > Realistic buildings (on by default since 2026-10-09; `?look=0`) |
 | Crown halo colour by date | Layers > City > Night lights > Crown halo colour by date |
 | Colour overlay (vector CRT), style notes | Look > Style ("Colour overlay" shows in Vector CRT, `?crt=overlay`; the style's note under it) |
@@ -198,7 +208,7 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Buildings: solid, see-through, hidden | Look > Buildings (`?bmode=solid|ghost|off`; `layers/model.js`); Layers > Below ground > Floors also makes them see-through |
 | Colour by (height source, height, occupants, homes, companies, below ground, quality) | Look > Colour buildings by |
 | Show: Windows, Detailed models, Roof shapes | Look > Detailed models (glTF), Roof shapes, Windows (`?models=0`, `?roofshapes=0`, `?windows=0`; `layers/model.js`) |
-| Show: Labels | Layers > City > Place names; station (bold orange), district (italic) and dock names: Layers > City > Station, district and dock names (`layers/placenames.js`) |
+| Show: Labels | the Labels button on the map, or Layers > City > Labels, notes and credits on the map (off: no label, note or credit on the map; 2026-10-10); station (bold orange), district (italic) and dock names: Layers > City > Station, district and dock names (`layers/placenames.js`) |
 | Show: Roads | Layers > City > Roads |
 | Show: Underground | Layers > Below ground > Below ground (tunnels, basements, gauge, storey and tunnel settings) |
 | Show: Floors | Layers > Below ground > Floors |

@@ -16,7 +16,7 @@ export default {
 
     // ---------- the button and the box (built here; index.html is not changed)
     const css = document.createElement('style');
-    css.textContent = `#labelsBtn{left:114px;font-size:19px}#findBtn{display:none}#hud{left:168px!important}
+    css.textContent = `#labelsBtn{left:62px;font-size:19px}#findBtn{display:none}
 #findBox{flex:none;padding:2px 10px 8px;position:relative}
 #findBox input{width:100%;height:44px;padding:0 12px;border-radius:10px;border:1px solid #33404a;background:var(--panel);color:var(--fg);font:16px system-ui,sans-serif}
 #findBox input:focus{outline:2px solid var(--acc);outline-offset:0}
@@ -31,7 +31,7 @@ export default {
     // the round button at the top left is now Labels on or off (owner, 2026-10-09: "an easy way to toggle labels by single
     // click icon. It can replace the search option on frontpage, with a search box appearing at top of slide out
     // hamburger'd side menus instead"); #findBtn stays as a hidden button that opens the menu at the search box
-    const lb = document.createElement('button'); lb.id = 'labelsBtn'; lb.className = 'btn'; lb.type = 'button'; lb.title = 'Labels on or off'; lb.setAttribute('aria-label', 'Labels');
+    const lb = document.createElement('button'); lb.id = 'labelsBtn'; lb.className = 'btn'; lb.type = 'button'; lb.title = 'Labels on or off (names, aircraft, ships, cameras, notes and credits on the map)'; lb.setAttribute('aria-label', 'Labels');
     lb.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:middle"><path d="M3 12V4h8l10 10-8 8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="7.5" cy="8.5" r="1.6" fill="currentColor"/><path class="x" d="M3 21L21 3" stroke="currentColor" stroke-width="2.2"/></svg>';
     const showL = document.getElementById('showLabels'), syncL = () => lb.setAttribute('aria-pressed', String(!showL || showL.checked));
     lb.onclick = () => { if (!showL) return; showL.checked = !showL.checked; showL.dispatchEvent(new Event('change')); syncL(); };
@@ -41,7 +41,7 @@ export default {
     const qIn = document.createElement('input'); qIn.type = 'search'; qIn.placeholder = 'Building, place, station, platform'; qIn.setAttribute('aria-label', 'Search buildings and places'); qIn.autocomplete = 'off'; qIn.enterKeyHint = 'search';
     const qRes = document.createElement('ul'); qRes.id = 'findRes'; qRes.setAttribute('aria-label', 'Results');
     box.hidden = false; box.append(qIn, qRes);
-    const night = document.getElementById('nightBtn'); (night || document.body.firstChild).after(lb); lb.after(btn);
+    (document.getElementById('menu') || document.body.firstChild).after(lb); lb.after(btn);   // next to Menu (Day or night went into Menu > Look on 2026-10-10)
     const dHead = document.getElementById('dHead'); if (dHead) dHead.after(box); else btn.after(box);   // the search box: the top of the menu
 
     // ---------- camera flight: a smooth (smoothstep) tween of the orbit target and the camera, same yaw and pitch

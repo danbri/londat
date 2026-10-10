@@ -17,6 +17,7 @@ import { Sky3, fromLondon } from './sky3.js';
 import { makeUi, initMenu } from './menu.js';
 import { initCarousel } from './carousel.js';
 import { predict } from './tide.js';
+import { makeOccluder } from './occlude.js';
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -81,6 +82,7 @@ function setVz(v) {
   VZ = v; SINV.makeScale(1, 1 / v, 1); sky.setVz(v); camera.updateMatrixWorld(); draw(); writeHash();
 }
 const eyeM = new THREE.Vector3();   // the eye in model metres
+let OCC = null;   // label occlusion (occlude.js): made before the layers, its grid rebuilt after each rebuildBuildings
 
 // ---------- static layers
 say('Building the model...');
@@ -102,6 +104,7 @@ function rebuildBuildings() {
   for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
+  if (OCC) OCC.dirty();
   draw();
 }
 const STATS = {}, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null)
@@ -122,7 +125,7 @@ function setClockUser(t, live = false) {   // a clock the visitor set: it replac
   TSHARE = live ? null : londonStr(t); if (!live) DRIVE = true; setClock(t); writeHash();
 }
 function setClock(t) {
-  clock = t; const s = sky.setTime(t, focus); NIGHT = s.night;
+  clock = t; const s = sky.setTime(t, focus); NIGHT = s.night; $('nightBtn')?.setAttribute('aria-pressed', String(NIGHT));
   U.night.value = THREE.MathUtils.clamp((-s.sun.alt - 2) / 6, 0, 1);
   // scene.background (dark by night, lit by the city under cloud) is set by sky.setTime and sky.setWeather (sky3.js)
   bmat.roughness = NIGHT ? 0.5 : 0.82;
@@ -259,12 +262,13 @@ $('cardX').onclick = () => selectModel(-1);
 const labels = A.places.filter(p => p.name).map(p => { const el = document.createElement('div'); el.className = 'lab'; el.textContent = p.name; $('labels').appendChild(el); return { p, el, v: new THREE.Vector3(p.x, (p.g ?? groundAt(p.x, p.z)) + (p.h || 20), p.z) }; });
 const tmp = new THREE.Vector3();
 function placeLabels() {
+  syncLabelsUi();   // styles.js sets the box without a change event
   const W = innerWidth, H = innerHeight, used = new Set(), cam = eyeM, on = $('showLabels').checked && U.cut.value >= 250;   // no place names while the model is cut away (the below-ground view)
   const order = labels.map(l => [l, l.v.distanceToSquared(cam)]).sort((a, b) => a[1] - b[1]);
   let shown = 0;
   for (const [l, d2] of order) {
     tmp.copy(l.v).project(camera); const x = (tmp.x + 1) / 2 * W, y = (1 - tmp.y) / 2 * H, cell = Math.floor(x / 150) + ',' + Math.floor(y / 30);
-    const vis = on && tmp.z < 1 && x > 0 && x < W && y > 40 && y < H && d2 < 6000 * 6000 && !used.has(cell) && shown < 36;
+    const vis = on && tmp.z < 1 && x > 0 && x < W && y > 40 && y < H && d2 < 6000 * 6000 && !used.has(cell) && shown < 36 && !OCC.test(l.el, l.v.x, l.v.y, l.v.z);   // hidden behind a building or the ground
     if (vis) { used.add(cell); shown++; l.el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; }
     if (l.el.hidden === vis) l.el.hidden = !vis;
   }
@@ -315,7 +319,15 @@ $('animate').checked = flag('animate', true);   // moving water by default (owne
 document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
 $('shadows').onchange = e => setShadows(e.target.checked);
 $('bloom').onchange = e => { BLOOM = e.target.checked; syncPost(); draw(); };
-$('showLabels').onchange = () => draw();
+// the labels switch (Layers > City > Labels, the round Labels button of layers/search.js): off hides every label on the map
+// and the notes and credits on screen (index.html body.noLabels; the credits stay in Menu > About). Owner, 2026-10-10:
+// "label toggle should hide plane labels, cam labels. Also wind and other metadataand credits hidden when labels off".
+// Kept on this device (localStorage d3.labels); ?labels=0|1 wins.
+{ const chk = $('showLabels'); let saved = null; try { saved = localStorage.getItem('d3.labels'); } catch { /* no storage */ }
+  chk.checked = qs.has('labels') ? flag('labels', true) : saved !== '0';
+  chk.onchange = () => { try { localStorage.setItem('d3.labels', chk.checked ? '1' : '0'); } catch { /* no storage */ } syncLabelsUi(); draw(); };
+  syncLabelsUi(); }
+function syncLabelsUi() { const off = !$('showLabels').checked; if (document.body.classList.contains('noLabels') !== off) document.body.classList.toggle('noLabels', off); }
 // Share this view (Menu > Views; the WebGL page's nav.js share()): the page URL with the share hash; the system share
 // sheet on a touch screen, else the clipboard; the link also shows under the button to copy by hand
 $('shareBtn').onclick = async () => {
@@ -359,11 +371,14 @@ const MENU_PLACE = { trees: 'layers/city', ring: 'layers/city', skyline: 'layers
   ships: 'layers/live', planes: 'layers/sim', wildlife: 'layers/sim', overlays: 'layers/overlays', kml: 'layers/kml',
   water: 'look', splats: 'look', music: 'look', tide: 'time', wind: 'time', weather: 'time', plotter: 'about', routes: 'go', search: 'go', drone: 'go', locate: 'go', xr: 'go' };
 const ui = makeUi(draw);
+OCC = makeOccluder({ A, groundB, buildings, models, U, eye: eyeM, ghost: () => bmat.transparent, draw }); OCC.dirty();
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
   addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
+  // a label hidden by a building or the ground between the eye and its anchor (model metres); key: the label's element
+  occluded: (key, x, y, z) => OCC.test(key, x, y, z), occVersion: () => OCC.version,
 };
 async function loadLayers() {
   for (const id of LAYER_IDS) {
@@ -670,10 +685,11 @@ function afterMove(s0, dpx, t) {
     if (e.key === '+' || e.key === '=' || e.key === '-') { gestureStart(); const s0 = navGet(), s = navGet(); zoomTarget(s, Math.exp((e.key === '-' ? 100 : -100) * NV.WHEEL)); navPut(s); navGuard(s0, false); }
   });
 }
-// the round Below ground button (index.html #digBtn; the WebGL page's Menu button of that name): the depth gauge on or off
+// the Below ground button (index.html #digBtn in Menu > Go > Move, as the WebGL page's Menu button of that name): the depth gauge on or off
 let digKey = '';
 function syncDig() { const b = $('digBtn'), u = underApi(); if (!b) return; const h = !u || isPix() || navOff(), on = !!u && navUnder(), k = h + ',' + on; if (k === digKey) return; digKey = k; b.hidden = h; b.setAttribute('aria-pressed', String(on)); }
-$('digBtn')?.addEventListener('click', () => { const u = underApi(); if (!u) return; const on = navUnder(); u.showGauge(!on); if (on) { const s = navGet(); if (clr(s) < NV.W) { navPlace(NV.UNDER_EYE, NV.PMAX); } } syncDig(); });
+$('digBtn')?.addEventListener('click', () => { const u = underApi(); if (!u) return; const on = navUnder(); u.showGauge(!on); if (on) { const s = navGet(); if (clr(s) < NV.W) { navPlace(NV.UNDER_EYE, NV.PMAX); } } syncDig();
+  if (innerWidth < 900 && !$('drawer').hidden) $('drawerX')?.click(); });   // Menu > Go > Move since 2026-10-10: on a phone the menu closes so the gauge shows
 // OrbitControls.update turns the camera to its target with no roll: put the photo's roll back at once, so labels and
 // picking between frames see it. An update never leaves the eye under the ground or the water outside Below ground
 // (the flash fault of 2026-10-09: an orbit after a photo view took the eye under the water)
@@ -705,8 +721,9 @@ renderer.setAnimationLoop((time, xrFrame) => {
   sky.sky.position.copy(eyeM);
   // the cut-away view: a dark backdrop until the visitor sets the clock (index.html, sky.js DocklandsSky.day = S.drive && sun > -6)
   sky.setCutDark(U.cut.value < 250 && !DRIVE);
-  placeLabels();
+  OCC.begin(); placeLabels();
   for (const f of frameHooks) f();
+  OCC.end();
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0;
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
@@ -747,5 +764,5 @@ setTimeout(() => $('hud').classList.add('fade'), 4000);
 menu.creditsStart();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; },
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };

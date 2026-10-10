@@ -41,8 +41,8 @@ function camsOn() { const c = $('liveCams'); return !c || c.checked; }
 function hookCams() {
   const D = globalThis.__docklands3; if (camHook || !D || !D.ctx) return; camHook = true;
   const { THREE, camera, groundAt } = D.ctx, v = new THREE.Vector3();
-  D.ctx.onFrame(() => { const on = camsOn(), W = innerWidth, H = innerHeight; let n = 0; const used = []; camera.updateMatrixWorld();   // no two markers overlap; none over the time wheels (top 130 px)
-    for (const c of cams) { let vis = false; if (on && n < 40) { v.set(c.x, groundAt(c.x, c.z) + 3, c.z).project(camera); const x = (v.x + 1) / 2 * W, y = (1 - v.y) / 2 * H; vis = v.z < 1 && x > 0 && x < W && y > 130 && y < H && !used.some(q => Math.abs(q[0] - x) < 40 && Math.abs(q[1] - y) < 26) && camera.position.distanceTo(v.set(c.x, 0, c.z)) < 9000; if (vis) { n++; used.push([x, y]); c.el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; } }
+  D.ctx.onFrame(() => { const on = camsOn(), W = innerWidth, H = innerHeight; let n = 0; const used = []; camera.updateMatrixWorld();   // no two markers overlap; none over the time wheels (top 130 px); none behind a building or the ground (occlude.js; owner, 2026-10-10: "Cam label ignores depth / buildings in front")
+    for (const c of cams) { let vis = false; if (on && n < 40) { v.set(c.x, groundAt(c.x, c.z) + 3, c.z).project(camera); const x = (v.x + 1) / 2 * W, y = (1 - v.y) / 2 * H; vis = v.z < 1 && x > 0 && x < W && y > 130 && y < H && !used.some(q => Math.abs(q[0] - x) < 40 && Math.abs(q[1] - y) < 26) && camera.position.distanceTo(v.set(c.x, 0, c.z)) < 9000 && !D.ctx.occluded?.(c.el, c.x, groundAt(c.x, c.z) + 3, c.z); if (vis) { n++; used.push([x, y]); c.el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; } }
       if (c.el.hidden === vis) c.el.hidden = !vis; } });
 }
 

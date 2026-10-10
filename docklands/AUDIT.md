@@ -1,4 +1,4 @@
-# Audit of the Three.js port: time, roofs, piers, wildlife, trees, reveal sheet (2026-10-09)
+# Audit of the Three.js port: time, roofs, piers, wildlife, trees, reveal sheet (2026-10-09), navigation and labels (2026-10-10)
 
 This audit checks six items of the owner's goal list for the Three.js port
 (https://danbri.github.io/londat/docklands/) against recorded evidence. The WebGL page that it ports is
@@ -21,6 +21,7 @@ the history results are kept in https://github.com/danbri/londat/tree/main/dockl
 | 4 birds and foxes from data | PASS (after a fix) | 21 species, 9,974 open records (NBN Atlas 8,405, GBIF 1,569); 34 of 34 foxes seen were on wood or park cells |
 | 5 trees: species and seasons | PASS | taxon from the source for 75.0 % of 81,852 trees (species 59.1 %); STATS.trees: in January evergreens 1.0 in leaf, deciduous 0.0; bloom peaks day 101 (cherry) to 125 (hawthorn); autumn colour half-way from day 261 (horse chestnut) to 303 (oak); green share of tree pixels 7 % (Jan), 44 % (Apr), 94 % (Jul), 48 % (Oct) |
 | 6 reveal sheet | PASS | falls from 951 m, lands at 1.2 s, squash and stretch from −3.0 % to +1.9 %, bounce, dissolve, done by 2.9 s; the same on WebGL 2 and WebGPU |
+| 7 navigation; less clutter, labels switch, label occlusion (2026-10-09 and 10-10) | PASS (navigation confirmed by the owner on an iPhone, 2026-10-10: "Nav is good") | Menu and Labels only on the map; Night, Drone, Below ground in the menu; labels off: 0 labels, no notes or credits on the map; a TfL camera behind One Canada Square hidden; grid and exact ray agree for 80 of 83 labels; one march 6 to 24 µs |
 
 Faults that this audit fixed are in "Faults fixed". Faults that stay open are in "Faults left open".
 
@@ -585,6 +586,55 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
   large as the view, so the fall is hard to see. A small part, or a closer view, shows the motion better. This is a
   matter of design, not a fault in the code.
 
+## 7. Navigation, less clutter, the labels switch and label occlusion
+
+### Navigation release (2026-10-09, commit 6c0e0343)
+
+The port got the WebGL page's gestures and nav.js: turn, grab pan, zoom to the point under the pointer, momentum, the
+ground wall and the pass below ground, the drone vehicles. Method and numbers: skill docklands-3d-page, "Three.js port:
+navigation (2026-10-09, evening)"; tests `docklands/test/nav-check.mjs`, `nav-feel.mjs`, `photo-leave.mjs`.
+**Confirmed by the owner on an iPhone, 2026-10-10: "Nav is good"** (with "but too much clutter", below). Before that,
+on 2026-10-09: "Looks ok on iphone".
+
+### Less clutter, labels switch, occlusion (2026-10-10)
+
+Owner, 2026-10-10, iPhone: "Nav is good but too much clutter / Cam label ignores depth / buildings in front / Drone and
+icon and day/night toggle belong in bamburger menu, and label toggle should hide plane labels, cam labels. Also wind and
+other metadataand credits hidden when labels off".
+
+- On the map, top left: Menu and Labels only. Night is in Menu > Look (`#nightBtn`); Drone (`#droneBtn`) and Below
+  ground (`#digBtn`, the "icon") are in Menu > Go > Move. Each shows its state (`aria-pressed`). The round Drone button
+  is removed.
+- Labels off hides every label on the map (places, stations, docks, aircraft, ships, piers, traffic cameras, overlays,
+  KML names, below-ground sources, route ends) and the notes and credits on the map (wind and water note, aircraft note
+  and adsb.lol credit, corner credit and (i), frame line, status line). The credits stay in Menu > About with the
+  "© OpenStreetMap contributors" link. The choice is kept on the device; `?labels=0|1`.
+- A label hides while a building or the ground is between the eye and its anchor (`docklands/occlude.js`: a 4 m height
+  grid and a 2 m march; method in the skill section "Three.js port: less clutter, labels switch, label occlusion").
+
+### Evidence
+
+`node docklands/test/labels-check.mjs` (WebGL 2 in software, 2026-10-10, run 4): 22 of 22 checks pass, no page errors.
+
+- 390 x 844 and 1280 x 800: the round buttons on the map are `menu, labelsBtn`; no overlap between Menu, Labels, the
+  style select, the wheels, the location button, the notes, the frame line and the credit.
+- Night: false -> true (pressed true) -> false; Below ground: gauge on (pressed true; the menu closes on the phone), then
+  off; Drone: on (pressed true), the cross: off, orbit back.
+- Labels off: 0 labels, notes and credits hidden; About keeps the OSM link and the adsb.lol credit; kept after a reload
+  (1280); on again: 55 labels at 1280 (36 places, 4 below-ground sources, 2 overlays, 13 cameras).
+- Occlusion, view https://danbri.github.io/londat/docklands/#v=1&c=-35,-10,100,698,0.2569,0.4446 (eye 400 m over the
+  river south of Canary Wharf): the TfL camera "Limehouse Tnl Aspen Way" is hidden (the exact three.js ray hits One
+  Canada Square at -27, 164, 20); "ASPEN WAY - UPPER BANK STREET" shows (exact ray: no hit). Grid against the exact ray:
+  80 of 83 labels agree (77 of 80 in an earlier run); the 3 others are building names at the edge of a neighbouring tower (4 m cells).
+- Cost (software, 4 cores): one march 5.6 to 10.8 µs (24 µs with a second test running); one exact three.js ray 15 to
+  17 ms; grid 2,625,000 cells: ground 0.7 to 1.3 s and 309,853 roof triangles 0.4 to 3.4 s, in 8 ms slices; at most 2.9
+  to 4.3 ms of marches in one frame.
+
+### Faults
+
+- At 390 px the corner credit line (its first 5 s) lay over the frame line; fixed (`#stat` hides while the line shows).
+- Occlusion is not measured on a phone. A building under 4 m wide, trees, cranes and station models do not occlude.
+
 ## Faults fixed (files)
 
 - https://github.com/danbri/londat/blob/main/docklands/layers/wildlife.js : the season is the species' share of all
@@ -619,6 +669,8 @@ https://danbri.github.io/londat/docklands/?ov=&view=area
 - https://github.com/danbri/londat/blob/main/docklands/test/wildlife-check.mjs
 - https://github.com/danbri/londat/blob/main/docklands/test/trees-season.mjs
 - https://github.com/danbri/londat/blob/main/docklands/test/reveal-frames.mjs
+- https://github.com/danbri/londat/blob/main/docklands/test/labels-check.mjs (2026-10-10: buttons in the menu, the
+  labels switch, label occlusion and its cost)
 
 ## Faults left open
 

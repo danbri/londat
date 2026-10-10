@@ -313,7 +313,7 @@ export default {
         const txt = F.live ? `${identified(F.live.ac) ? F.live.ac.flight.trim() : (F.live.ac.t || F.T.code)} ${alt}` : F.near ? `${F.rec.L.c || F.rec.L.ty || F.T.code} ${alt}` : F.rec ? `REC ${F.rec.L.c || F.rec.L.ty || F.T.code} ${alt}` : `SIM ${F.T.code} ${alt}`; if (el.textContent !== txt) el.textContent = txt;
         if (el.classList.contains('live') !== !!(F.live || F.rec)) el.classList.toggle('live', !!(F.live || F.rec));
         const op = F.near ? String(Math.max(0.15, F.rec.alpha).toFixed(2)) : ''; if (el.style.opacity !== op) el.style.opacity = op;   // near-live: fades after NL.reckon
-        v3.set(S.x, S.y + (d.lift || 0) + (F.T.H || 5) * 0.7, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H;
+        const ay = S.y + (d.lift || 0) + (F.T.H || 5) * 0.7; v3.set(S.x, ay, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H && !ctx.occluded?.(el, S.x, ay, S.z);   // a tower or the ground in front (occlude.js)
         if (vis) el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,calc(-100% - 10px))`; if (el.hidden === vis) el.hidden = !vis; }
       for (const [k, el] of LBL) if (!keep.has(k)) { el.remove(); LBL.delete(k); }
     }

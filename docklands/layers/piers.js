@@ -202,7 +202,7 @@ export default {
     function placeLabels() {
       const W = innerWidth, H = innerHeight, cam = ctx.camera.position, on2 = visible && ctx.U.cut.value >= 250;
       for (const l of LBL) { v3.copy(l.v).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, d = l.v.distanceTo(cam);
-        const vis = on2 && v3.z < 1 && x > 0 && x < W && y > 40 && y < H && d < l.far;
+        const vis = on2 && v3.z < 1 && x > 0 && x < W && y > 40 && y < H && d < l.far && !ctx.occluded?.(l.el, l.v.x, l.v.y, l.v.z);   // a building or the ground in front (occlude.js)
         if (vis) l.el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; if (l.el.hidden === vis) l.el.hidden = !vis; }
     }
 

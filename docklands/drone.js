@@ -555,7 +555,7 @@ export default {
       return true;
     }
     function stop(byOther) {
-      if (!S.on) return; S.on = false; document.body.classList.remove('drone'); stick(null); $('droneRound')?.setAttribute('aria-pressed', 'false');
+      if (!S.on) return; S.on = false; document.body.classList.remove('drone'); stick(null); $('droneBtn')?.setAttribute('aria-pressed', 'false');
       const h = S.h, p = S.p, sv = S.saved && S.saved.controls;
       if (sv) Object.assign(controls, sv); controls.enabled = true;
       if (!byOther) {   // back to the orbit: looking at a point 150 m ahead from 350 m behind it
@@ -601,7 +601,7 @@ export default {
     }
     function syncUi() {
       for (const b of document.querySelectorAll('#drModes [data-mode]')) b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)); $('drAuto').setAttribute('aria-pressed', String(S.auto));
-      const rb = $('droneRound'); if (rb) rb.setAttribute('aria-pressed', String(S.on));
+      const rb = $('droneBtn'); if (rb) rb.setAttribute('aria-pressed', String(S.on));
       const lv = VEH[S.mode].lever; lever.querySelector('span').textContent = lv === 'lift' ? '↑↓' : 'speed'; lever.setAttribute('aria-label', lv === 'lift' ? 'Up and down' : 'Speed');
       leverDraw();
     }
@@ -678,14 +678,13 @@ export default {
     document.addEventListener('click', e => { if (S.on && e.target.closest && e.target.closest('[data-view]')) stop(true); }, true);
 
     // the menu button: in the views group
-    { const views = document.getElementById('goMove') || document.querySelector('#drawer .views'), b = document.createElement('button'); b.type = 'button'; b.id = 'droneBtn'; b.textContent = 'Drone';
+    { const views = document.getElementById('goMove') || document.querySelector('#drawer .views'), b = document.createElement('button'); b.type = 'button'; b.id = 'droneBtn'; b.textContent = 'Drone'; b.setAttribute('aria-pressed', 'false');
       b.title = 'Fly a first-person drone: copter, plane, boat, tube, walk, under';
       const toggle = () => { if (S.on) stop(false); else { start(S.mode && S.mode !== 'under' ? S.mode : 'copter'); if (innerWidth < 900 && $('drawer') && !$('drawer').hidden) $('drawerX')?.click(); } };
       b.onclick = toggle;
-      if (views) views.appendChild(b);
-      // the round Drone button on the map (index.html #droneRound, next to Below ground): the same switch; while the drone
-      // flies its vehicles (Copter, Plane, Boat, Tube, Walk, Under), Auto and the cross are at the top right (#drBar)
-      const rb = $('droneRound'); if (rb) { rb.hidden = false; rb.onclick = toggle; } }
+      // Menu > Go > Move, first (the round Drone button on the map went into the menu on 2026-10-10: "too much clutter");
+      // while the drone flies its vehicles (Copter, Plane, Boat, Tube, Walk, Under), Auto and the cross are at the top right (#drBar)
+      if (views) views.prepend(b); }
 
     // share: dr=mode,x,y,z,heading,look pitch
     const r1 = x => Math.round(x * 10) / 10, r3 = x => Math.round(x * 1e3) / 1e3;

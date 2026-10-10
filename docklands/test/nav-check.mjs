@@ -1,6 +1,7 @@
 // Navigation checks of the Three.js port (main.js "navigation", the port of the WebGL page's nav.js): the ground limit and
 // the pass Below ground and back (a slow drag), momentum and its stop by a touch or a press, a pinch about the point
-// between the fingers, the round Below ground and Drone buttons, every drone vehicle (state, camera, controls, mode bar).
+// between the fingers, the Below ground and Drone buttons (Menu > Go > Move since 2026-10-10), every drone vehicle (state,
+// camera, controls, mode bar).
 // Mouse at 1280 x 800, touch (CDP) at 390 x 844. Uses ?layers=under,drone,routes (the layers these need) for speed.
 // Run from the repository root with a server on the root:
 //   python3 -m http.server 8188 --bind 127.0.0.1 &
@@ -37,7 +38,7 @@ if (ONLY !== 'drone') {
   // ---------- the ground limit and the pass, mouse 1280 x 800
   const page = await open(1280, 800, false), cdp = await page.context().newCDPSession(page);
   let s = await nav(page);
-  check(s.digHidden === false, `round Below ground button shown (hidden=${s.digHidden}, pressed=${s.dig})`);
+  check(s.digHidden === false, `Below ground button (Menu > Go > Move) available (hidden=${s.digHidden}, pressed=${s.dig})`);
   // a low view over Canary Wharf: eye about 40 m up, looking down 0.35 rad
   await place(page, { tx: 50, tz: 40, yaw: .7, pitch: .35, dist: 120 }); await page.waitForTimeout(300);
   // a slow drag up (the eye goes down): 15 px a step, 60 ms apart (CDP events with time stamps)
@@ -73,10 +74,12 @@ if (ONLY !== 'drone') {
   const mf = await nav(page);
   await page.mouse.move(640, 400); await page.mouse.down(); const m2 = await nav(page); await page.waitForTimeout(800); const m3 = await nav(page); await page.mouse.up();
   check(mf.moving && !m2.moving && Math.abs(m3.yaw - m2.yaw) < 1e-6, `a second fling (moving ${mf.moving}), then a press stops it: moving ${m2.moving}, yaw change after the press ${Math.abs(m3.yaw - m2.yaw).toExponential(1)} rad`);
-  // the round Below ground button: on (gauge open), off (gauge closed, cut off)
-  await page.click('#digBtn'); s = await nav(page); const on = s.gauge && s.dig === 'true';
-  await page.click('#digBtn'); s = await nav(page);
-  check(on && !s.gauge && s.dig === 'false', `round Below ground button: on ${on}, then off (gauge ${s.gauge}, pressed ${s.dig})`);
+  // the Below ground button (Menu > Go > Move): on (gauge open), off (gauge closed, cut off)
+  const goTab = async p => { if (await p.locator('#drawer').isHidden()) await p.click('#menu'); await p.click('#dtabs >> text=Go'); };
+  await goTab(page); await page.click('#digBtn'); s = await nav(page); const on = s.gauge && s.dig === 'true';
+  await goTab(page); await page.click('#digBtn'); s = await nav(page);
+  check(on && !s.gauge && s.dig === 'false', `Menu > Go > Below ground: on ${on}, then off (gauge ${s.gauge}, pressed ${s.dig})`);
+  if (!(await page.locator('#drawer').isHidden())) await page.click('#drawerX');
   await page.close();
 
   // ---------- touch 390 x 844: pinch about the point between the fingers, momentum stopped by a touch
@@ -109,12 +112,13 @@ if (ONLY !== 'drone') {
 }
 
 if (ONLY !== 'nav') {
-  // ---------- the drone: the round button, the mode bar, every vehicle (both sizes)
+  // ---------- the drone: Menu > Go > Move > Drone, the mode bar, every vehicle (both sizes)
   for (const [w, h, touchDev] of [[390, 844, true], [1280, 800, false]]) {
     const page = await open(w, h, touchDev);
-    const rb = await page.evaluate(() => { const b = document.getElementById('droneRound'), r = b.getBoundingClientRect(), e = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return { hidden: b.hidden, top: e === b || b.contains(e), rect: [r.x, r.y, r.width, r.height].map(Math.round) }; });
-    check(!rb.hidden && rb.top, `${w}x${h}: round Drone button shown and on top at ${rb.rect}`);
-    await page.click('#droneRound'); await page.waitForTimeout(800);
+    const rb = await page.evaluate(() => ({ round: !!document.getElementById('droneRound'), first: document.querySelector('#goMove > button')?.id }));
+    check(!rb.round && rb.first === 'droneBtn', `${w}x${h}: no round Drone button on the map; Menu > Go > Move starts with ${rb.first}`);
+    await page.click('#menu'); await page.click('#dtabs >> text=Go'); await page.click('#droneBtn'); await page.waitForTimeout(800);
+    if (w >= 900 && !(await page.locator('#drawer').isHidden())) await page.click('#drawerX');   // a phone closes it by itself
     const bar = await page.evaluate(() => [...document.querySelectorAll('#drModes [data-mode], #drAuto, #drExit')].map(b => { const r = b.getBoundingClientRect(), e = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return { id: b.dataset.mode || b.id, vis: r.width > 0 && r.right <= innerWidth + 1 && r.left >= -1, top: e === b, y: Math.round(r.y), pressed: b.getAttribute('aria-pressed') }; }));
     check(bar.length === 8 && bar.every(b => b.vis && b.top), `${w}x${h}: mode bar ${bar.map(b => b.id + (b.vis && b.top ? '' : '(hidden)')).join(' ')} at y ${[...new Set(bar.map(b => b.y))].join(', ')}`);
     await page.screenshot({ path: `${OUT}/drone-bar-${w}-${tag}.png`, timeout: 180000 });
@@ -123,15 +127,15 @@ if (ONLY !== 'nav') {
       if (mode === 'boat' && !r0.ok) { console.log('     boat did not start at greenland: ' + r0.st.msg); }
       await page.click(`#drModes [data-mode="${mode}"]`).catch(() => {});   // the mode bar's button (same vehicle: a restart in place)
       const r = await page.evaluate(async () => { const D = __docklands3, Dr = DocklandsDrone; Dr.manual(true); const a = Dr.state; const b = Dr.step(4, 30); const c = D.camera; c.updateMatrixWorld(); const e = new D.THREE.Vector3().setFromMatrixPosition(c.matrixWorld);
-        return { mode: b.mode, moved: Math.hypot(b.p[0] - a.p[0], b.p[2] - a.p[2], b.p[1] - a.p[1]), eye: e.toArray(), p: b.p, ctrl: D.controls.enabled, pressed: document.querySelector(`#drModes [data-mode="${b.mode}"]`)?.getAttribute('aria-pressed'), hud: document.getElementById('drHud').textContent, under: b.under, cut: b.cut ?? D.layers.under.api.cutLevel(), round: document.getElementById('droneRound').getAttribute('aria-pressed') }; });
+        return { mode: b.mode, moved: Math.hypot(b.p[0] - a.p[0], b.p[2] - a.p[2], b.p[1] - a.p[1]), eye: e.toArray(), p: b.p, ctrl: D.controls.enabled, pressed: document.querySelector(`#drModes [data-mode="${b.mode}"]`)?.getAttribute('aria-pressed'), hud: document.getElementById('drHud').textContent, under: b.under, cut: b.cut ?? D.layers.under.api.cutLevel(), round: document.getElementById('droneBtn').getAttribute('aria-pressed') }; });
       const camOk = Math.hypot(r.eye[0] - r.p[0], r.eye[1] - r.p[1], r.eye[2] - r.p[2]) < 0.5;
       check((r.mode === mode || (mode === 'copter' && r.mode === 'under')) && r.moved > 1 && camOk && !r.ctrl && r.pressed === 'true' && r.round === 'true', `${w}x${h} ${mode}: mode ${r.mode}, moved ${r.moved.toFixed(1)} m in 4 s (autopilot), camera at the drone ${camOk}, orbit off ${!r.ctrl}, bar button pressed ${r.pressed}, cut ${r.cut}; HUD "${r.hud}"`);
       if (w === 390) await page.screenshot({ path: `${OUT}/drone-${mode}-390-${tag}.png`, timeout: 180000 });
     }
     await page.evaluate(() => DocklandsDrone.manual(false));
     await page.click('#drExit'); await page.waitForTimeout(600);
-    const e = await page.evaluate(() => ({ on: DocklandsDrone.on, ctrl: __docklands3.controls.enabled, round: document.getElementById('droneRound').getAttribute('aria-pressed'), body: document.body.classList.contains('drone') }));
-    check(!e.on && e.ctrl && e.round === 'false' && !e.body, `${w}x${h}: the cross leaves the drone (orbit back ${e.ctrl}, round button ${e.round})`);
+    const e = await page.evaluate(() => ({ on: DocklandsDrone.on, ctrl: __docklands3.controls.enabled, round: document.getElementById('droneBtn').getAttribute('aria-pressed'), body: document.body.classList.contains('drone') }));
+    check(!e.on && e.ctrl && e.round === 'false' && !e.body, `${w}x${h}: the cross leaves the drone (orbit back ${e.ctrl}, menu Drone button pressed ${e.round})`);
     // the Menu > Go entry is still there
     const mb = await page.evaluate(() => !!document.querySelector('#goMove #droneBtn'));
     check(mb, `${w}x${h}: Menu > Go > Move still has the Drone button`);

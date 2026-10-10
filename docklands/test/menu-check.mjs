@@ -25,19 +25,20 @@ const MAP = [
   ['Go', 'text=Show the walking network'], ['Time', 'text=Constellation lines'], ['Time', 'text=Star names and Messier objects (those the sky shows)'], ['Time', 'text=Sky as from a dark site'], ['Time', 'text=London City Airport approach paths'], ['Time', 'text=Sun and moon lines on the map'], ['Time', '#skxVp'], ['About', '#liveBox'], ['About', '#liveDirect'], ['About', '#liveCams'], ['Layers', '#camsLayer'], ['About', '#ugBox'], ['Layers', 'text=Station, district and dock names'],
   ['Views', '[data-view=cw]'], ['Views', '[data-view=area]'], ['Views', '[data-view=under]'], ['Views', '[data-view=plan]'],
   ['Views', '[data-view=rotherhithe]'], ['Views', '[data-view=greenland]'], ['Views', '[data-view=pier]'], ['Views', '[data-view=greenlandday]'], ['Views', '[data-view=plane]'], ['Views', '#shareBtn'], ['Views', '#glLink'],
-  ['Look', '#styleProxy'], ['Look', '#look'], ['Look', '#facades'], ['Look', '#ground'], ['Look', 'text=Colour buildings by'], ['Look', 'text=Water mirror (reflections)'], ['Look', 'text=Gaussian splats'], ['Look', 'text=Music'], ['Look', 'text=Windows'], ['Look', '#vz3'],
+  ['Look', '#styleProxy'], ['Look', '#nightBtn'], ['Look', '#look'], ['Look', '#facades'], ['Look', '#ground'], ['Look', 'text=Colour buildings by'], ['Look', 'text=Water mirror (reflections)'], ['Look', 'text=Gaussian splats'], ['Look', 'text=Music'], ['Look', 'text=Windows'], ['Look', '#vz3'],
   ['Layers', '#showLabels'], ['Layers', '#showRoads'], ['Layers', 'text=Trees'], ['Layers', 'text=Hills of London'], ['Layers', 'text=Skyline by year'], ['Layers', 'text=Night lights (aviation, riverside lamps)'], ['Layers', 'text=Crown halo colour by date'],
   ['Layers', 'text=Floors (see-through buildings)'], ['Layers', 'text=Below ground'], ['Layers', 'text=Tunnels (modelled levels)'], ['Layers', 'text=Depth gauge (right edge)'], ['Layers', 'text=Station models'],
   ['Layers', 'text=Flood walls (EA, to crest level)'], ['Layers', 'text=Riverbed (UKHO soundings)'], ['Layers', 'text=River'], ['Layers', 'text=Piers, pontoons and berthed vessels'],
   ['Layers', 'text=Ships (AIS), live'], ['Layers', 'text=Aircraft (near-live'], ['Layers', 'text=Live aircraft (adsb.lol, ODbL)'], ['Layers', 'text=Birds and foxes (simulated from open records)'], ['Layers', 'text=Hire bike docks'], ['Layers', 'text=My KML'],
   ['Layers', 'text=Banks and finance'], ['Layers', 'text=Charities'], ['Layers', 'text=Heritage records'], ['Layers', 'text=Quality issues'], ['Layers', 'text=Crime, latest month (live)'],
-  ['Go', '#goSearch'], ['Go', '#rFrom'], ['Go', '#rTo'], ['Go', '#rStepFree'], ['Go', '#rGo'], ['Go', '#droneBtn'], ['Go', '#goLocate'], ['Go', '#goXr'],
+  ['Go', '#goSearch'], ['Go', '#rFrom'], ['Go', '#rTo'], ['Go', '#rStepFree'], ['Go', '#rGo'], ['Go', '#droneBtn'], ['Go', '#digBtn'], ['Go', '#goLocate'], ['Go', '#goXr'],
   ['Time', '#hour'], ['Time', '#tNow'], ['Time', '#tNight'], ['Time', '#wheelsChk'], ['Time', '#skyNote'], ['Time', 'text=Tide'], ['Time', 'text=Weather (cloud, haze, rain) for the clock time'], ['Time', 'text=Wind from Open-Meteo for the clock time (asks api.open-meteo.com)'], ['Time', 'text=Floating debris (Thames)'],
   ['About', '#shadows'], ['About', '#bloom'], ['About', '#animate'], ['About', '#backend'], ['Views', '#plotBtn'], ['About', '#creditsH'],
 ];
 let failed = 0; const fail = m => { failed++; console.log('FAIL ' + m); };
 for (const [w, h, dpr] of [[390, 844, 2], [1280, 800, 1]]) {
   const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: dpr, hasTouch: w < 900 }), errors = [];
+  page.setDefaultTimeout(180000);   // a Playwright click waits for a free frame: seconds each in software, more during a camera flight
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
   await page.goto(`${BASE}/docklands/?view=cw&t=2026-10-09T15:00${WEBGPU ? '' : '&webgl'}&animate=0&planes=0&ships=0&wildlife=0&weather=0${QUERY ? '&' + QUERY : ''}`);   // moving layers start off (they still build their menu rows): near-live aircraft redraw every frame, seconds a frame in software

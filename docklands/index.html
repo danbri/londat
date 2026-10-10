@@ -16,17 +16,17 @@ button,label,select,#credit,#attribI{touch-action:manipulation}
 .lab{position:absolute;left:0;top:0;padding:1px 6px;border-radius:4px;background:rgba(10,14,18,.66);color:#f3f5f7;font-size:12px;white-space:nowrap;will-change:transform}
 .btn{position:fixed;top:calc(10px + var(--top));width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;z-index:5}
 #menu{left:10px}
-#nightBtn{left:62px;font-size:18px}
-/* the round map buttons after Labels (layers/search.js, 114 px): Below ground (main.js syncDig) and Drone (drone.js), as the
-   WebGL page's Menu buttons of those names; hidden until their layer has loaded */
-#digBtn{left:166px}#droneRound{left:218px}
-#digBtn[hidden],#droneRound[hidden]{display:none}
-#digBtn svg,#droneRound svg{width:24px;height:24px;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-#digBtn[aria-pressed=true],#droneRound[aria-pressed=true]{background:#2a6fd6;color:#fff}
-body #hud{left:270px!important;max-width:calc(100vw - 280px)}
-@media (max-width:560px){body #hud{left:62px!important;top:calc(132px + var(--top));max-width:calc(100vw - 72px)}}
-/* a phone: the style select (top right) leaves no room after Labels: Below ground and Drone go down the left edge, under the time wheels */
-@media (max-width:480px){#digBtn{left:10px;top:calc(132px + var(--top))}#droneRound{left:10px;top:calc(184px + var(--top))}}
+/* on the map, top left: Menu and Labels (layers/search.js, 62 px) only. Day or night (Menu > Look), Below ground and Drone
+   (Menu > Go > Move) moved into the menu on 2026-10-10 (owner: "too much clutter"); their state shows as aria-pressed */
+#nightBtn[hidden],#digBtn[hidden]{display:none}
+#digBtn svg{width:20px;height:20px;vertical-align:-4px;margin-right:4px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#nightBtn[aria-pressed=true],#digBtn[aria-pressed=true],#droneBtn[aria-pressed=true]{background:#2a6fd6;border-color:#2a6fd6;color:#fff}
+body #hud{left:114px!important;max-width:calc(100vw - 124px)}
+@media (max-width:560px){body #hud{left:10px!important;top:calc(132px + var(--top));max-width:calc(100vw - 20px)}}
+/* labels off (Labels button, Layers > City > Labels; main.js syncLabelsUi): no label, note or credit on the map. The
+   credits and licences stay in Menu > About (#credits, with the © OpenStreetMap contributors link) */
+body.noLabels #labels{visibility:hidden!important}
+body.noLabels #blNotes,body.noLabels #credit,body.noLabels #attribI,body.noLabels #stat,body.noLabels #hud{display:none!important}
 /* the ground limit's cue (main.js navigation, nav.js): a ring that fills while a push lasts and snaps when the eye passes */
 #navCue{position:fixed;z-index:3;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;pointer-events:none;opacity:0;background:conic-gradient(#4da3ffcc calc(var(--p,0)*1turn),#4da3ff22 0);-webkit-mask:radial-gradient(circle,transparent 33px,#000 34px);mask:radial-gradient(circle,transparent 33px,#000 34px)}
 #navCue.on{opacity:1}#navCue.snap{animation:navSnap .45s ease-out forwards}@keyframes navSnap{0%{opacity:1;transform:scale(1)}40%{transform:scale(1.25)}100%{opacity:0;transform:scale(1.6)}}
@@ -88,6 +88,8 @@ a{color:var(--acc)}
 #credit{position:fixed;right:8px;bottom:calc(6px + var(--safe));font-size:11px;color:#e8eaec;background:#0d1013d9;padding:2px 8px;border-radius:5px;z-index:4;transition:opacity .4s}
 #credit a{color:#e8eaec}
 #credit.off{opacity:0;pointer-events:none}
+/* a phone: the frame line (#stat) gives way to the credit line while that shows (its first 5 s; they overlapped at 390 px) */
+@media (max-width:600px){body:has(#credit:not(.off)) #stat{visibility:hidden}}
 #attribI{position:fixed;right:8px;bottom:calc(4px + var(--safe));width:26px;height:26px;padding:0;border-radius:50%;border:1px solid #59616a99;font:italic 600 14px/1 Georgia,serif;background:#15191dcc;color:#c9ced6;z-index:4;cursor:pointer}
 #attribI[hidden]{display:none}
 #stat{position:fixed;left:8px;bottom:calc(6px + var(--safe));font-size:11px;color:var(--mut);background:var(--panel);padding:2px 8px;border-radius:5px;z-index:4}
@@ -112,9 +114,6 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 <div id="view"></div>
 <div id="labels"></div>
 <button id="menu" class="btn" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="drawer">&#9776;</button>
-<button id="nightBtn" class="btn" aria-label="Day or night" title="Day or night">&#9790;</button>
-<button type="button" id="digBtn" class="btn" hidden aria-pressed="false" aria-label="Below ground: the depth gauge" title="Below ground: the depth gauge (drag it down to cut away)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h20"/><path d="M5 13h14M8 17h8" opacity=".6"/><path d="M12 3v9m-3-3 3 3 3-3"/></svg></button>
-<button type="button" id="droneRound" class="btn" hidden aria-pressed="false" aria-label="Drone" title="Drone: copter, plane, boat, tube, walk, under"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/><path d="M8 8l2.5 2.5M16 8l-2.5 2.5M8 16l2.5-2.5M16 16l-2.5-2.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></button>
 <div id="hud">Loading the model data...</div>
 <div id="navCue"></div><div id="navCueT" role="status" aria-live="polite"></div>
 <div id="scrim" hidden></div>
@@ -144,6 +143,7 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
     </div>
     <div class="pane" id="paneLook" role="tabpanel" aria-label="Look">
       <label class="row">Style <select id="styleProxy" aria-label="Drawing style"><option value="map">Map</option></select></label>
+      <div class="btnrow"><button type="button" id="nightBtn" aria-pressed="false" title="Day or night: the clock goes to 22:00 or 13:00 London time on the same day">&#9790; Night</button></div>
       <label class="row"><input type="checkbox" id="look"> Realistic buildings</label>
       <label class="row"><input type="checkbox" id="facades"> Photo facades</label>
       <label class="row">Ground <select id="ground"><option value="none">Plain</option><option value="rgb2008">Aerial photo 2008</option><option value="night2012">Night photo 2012</option><option value="intensity2020">LiDAR intensity 2020</option></select></label>
@@ -151,7 +151,7 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
     </div>
     <div class="pane" id="paneLayers" role="tabpanel" aria-label="Layers">
       <div class="grp" data-g="city"><div class="gt">City</div><div class="gb">
-        <label class="row"><input type="checkbox" id="showLabels" checked> Place names</label>
+        <label class="row"><input type="checkbox" id="showLabels" checked> Labels, notes and credits on the map</label>
         <label class="row"><input type="checkbox" id="showRoads"> Roads</label>
       </div></div>
       <div class="grp" data-g="below"><div class="gt">Below ground</div><div class="gb"></div></div>
@@ -171,7 +171,7 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
       <div class="btnrow"><button type="button" id="rGo">Find route</button><button type="button" id="rSwap" aria-label="Swap start and end">Swap ⇅</button><button type="button" id="rClear">Clear</button></div>
       <p class="small" id="rOut">Or press and hold on the model: "Route from here" and "Route to here".</p>
       <h3>Move</h3>
-      <div class="btnrow" id="goMove"><button type="button" id="goLocate">My location</button><button type="button" id="goXr">Headset (WebXR)</button></div>
+      <div class="btnrow" id="goMove"><button type="button" id="digBtn" hidden aria-pressed="false" title="Below ground: the depth gauge at the right edge (drag it down to cut away)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9h20"/><path d="M5 13h14M8 17h8" opacity=".6"/><path d="M12 3v9m-3-3 3 3 3-3"/></svg>Below ground</button><button type="button" id="goLocate">My location</button><button type="button" id="goXr">Headset (WebXR)</button></div>
       <div class="ext" id="ext-go"></div>
     </div>
     <div class="pane" id="paneTime" role="tabpanel" aria-label="Time and weather">
@@ -187,7 +187,7 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
       <h3>Docklands: London Bridge to Cody Dock, above and below ground</h3>
       <p class="small">Experimental port of the 3D page to three.js r186. <a href="../cwplans/docklands/">The WebGL page</a> · <a href="../cwplans/atlas/">atlas</a> · <a href="../cwplans/kg/">knowledge graph</a> · <a href="https://github.com/danbri/londat/blob/main/docklands/README.md">notes and menu map</a> · <a href="#credits" data-credits>credits</a></p>
       <h3>How to use it</h3>
-      <p class="small">One finger: turn and tilt. Two fingers: move, zoom, twist (the point between the fingers stays under them). Mouse: drag to turn, right or Shift drag to move, wheel to zoom to the pointer. A flick goes on a little; a touch stops it. The view stops 1 m above the ground or water: push on down for a moment and it passes Below ground (a click and a ring), looking up from 1.5 m under the street; push up to come back. The round buttons at the top: Below ground (the depth gauge) and Drone (its vehicles show at the top right). Tap a building or a marker: its record. Press and hold: route from or to that point. Drag the time wheels at the top: the upper one sets the time of day, the lower one the day of the year; "Now" returns to the time now.</p>
+      <p class="small">One finger: turn and tilt. Two fingers: move, zoom, twist (the point between the fingers stays under them). Mouse: drag to turn, right or Shift drag to move, wheel to zoom to the pointer. A flick goes on a little; a touch stops it. The view stops 1 m above the ground or water: push on down for a moment and it passes Below ground (a click and a ring), looking up from 1.5 m under the street; push up to come back. The round button after the menu turns labels on and off (names, aircraft, ships, cameras, and the notes and credits on the map; the credits stay here in About). Below ground (the depth gauge) and Drone (its vehicles show at the top right) are in Go &gt; Move; Night is in Look. A label hides when a building or the ground is between you and it. Tap a building or a marker: its record. Press and hold: route from or to that point. Drag the time wheels at the top: the upper one sets the time of day, the lower one the day of the year; "Now" returns to the time now.</p>
       <p class="small">Ground, building heights and open track are measured (EA LiDAR 1 m). The depth gauge (Layers &gt; Below ground &gt; Depth gauge, or Views &gt; Underground) is at the right edge: drag it down to remove everything higher than that level, so you can look into the ground. Basement depths and indoor levels use OSM and Wikidata storey counts × the storey height setting. Tunnel levels are modelled between known levels: portals and open cuts the LiDAR can see, and published station levels (with sources).</p>
       <p class="small">Pixel art (Look &gt; Style): drag to move, pinch or wheel to zoom, twist two fingers to turn. The arrows at the top right turn the view by a quarter.</p>
       <h3>Your location</h3>

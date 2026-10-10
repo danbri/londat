@@ -34,15 +34,15 @@ export default {
     const tv = new THREE.Vector3();
     function place() {
       const show = visible && document.getElementById('showLabels')?.checked !== false && U.cut.value >= 250, W = innerWidth, H = innerHeight;
-      const k = `${show}|${camera.position.toArray().map(v => v.toFixed(1))}|${camera.quaternion.toArray().map(v => v.toFixed(4))}|${camera.fov}|${W}x${H}`; if (k === key) return; key = k;
+      const k = `${show}|${ctx.occVersion?.() ?? 0}|${camera.position.toArray().map(v => v.toFixed(1))}|${camera.quaternion.toArray().map(v => v.toFixed(4))}|${camera.fov}|${W}x${H}`; if (k === key) return; key = k;
       const placed = []; shown = 0;
       if (show) for (const e of document.querySelectorAll('#labels .lab:not([hidden])')) { const r = e.getBoundingClientRect(); if (r.width) placed.push([r.left, r.top, r.right, r.bottom]); }
       camera.updateMatrixWorld();
-      for (const l of L) {
+      for (const l of L) {   // a label with a building or the ground in front is hidden (ctx.occluded, occlude.js)
         let vis = false;
         if (show && shown < 60 && l.v.distanceToSquared(camera.position) < 9000 * 9000) { tv.copy(l.v).project(camera);
           if (tv.z < 1) { const sx = (tv.x + 1) / 2 * W, sy = (1 - tv.y) / 2 * H, bw = l.name.length * 6.2 + 12, r = [sx - bw / 2, sy - 18, sx + bw / 2, sy];
-            if (r[0] >= 2 && r[2] <= W - 2 && sy >= 40 && sy <= H && !placed.some(q => r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1])) { placed.push(r); vis = true; shown++; l.el.style.transform = `translate(${(sx - bw / 2) | 0}px,${(sy - 18) | 0}px)`; } } }
+            if (r[0] >= 2 && r[2] <= W - 2 && sy >= 40 && sy <= H && !placed.some(q => r[0] < q[2] && r[2] > q[0] && r[1] < q[3] && r[3] > q[1]) && !ctx.occluded?.(l.el, l.v.x, l.v.y, l.v.z)) { placed.push(r); vis = true; shown++; l.el.style.transform = `translate(${(sx - bw / 2) | 0}px,${(sy - 18) | 0}px)`; } } }
         if (l.el.hidden === vis) l.el.hidden = !vis;
       }
     }

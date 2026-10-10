@@ -1970,7 +1970,7 @@ WebGL page's index.html gestures and `nav.js` do; three.js OrbitControls stays o
   rAF does not fire while a frame renders: nav.js's 350 ms push window never filled and a 0.7 s wait saw no momentum; test
   with synthetic events in the page (`nav-feel.mjs`) or wait for the frames (4 s). (4) `pkill -f`/`pgrep -f` with a pattern
   that is also in your own command line kills your own shell (exit 144): kill by PID.
-- **The drone and the round buttons**: the WebGL page has no round Drone button: Drone and Below ground are buttons in
+- **The drone and the round buttons** (superseded on 2026-10-10: both went into Menu > Go > Move; see "less clutter" below): the WebGL page has no round Drone button: Drone and Below ground are buttons in
   its Menu (views group; drone.js line ~649 puts Drone after `#digBtn` there) and the vehicle is a select in the drone bar.
   The port now has round buttons at the top left after Labels: `#digBtn` (Below ground: the gauge, `main.js syncDig`) and
   `#droneRound` (drone.js); under 480 px they go down the left edge at 132 and 184 px (the style select at the top right
@@ -1985,6 +1985,78 @@ WebGL page's index.html gestures and `nav.js` do; three.js OrbitControls stays o
   quiet container.
 - **Only a real phone can confirm**: the feel at 60 to 120 frames a second; whether 0.006 rad a pixel is fine enough on
   an iPhone; the click (no `navigator.vibrate` on iOS: the ring only).
+
+## Three.js port: less clutter, labels switch, label occlusion (2026-10-10)
+
+Owner, 2026-10-10, iPhone, after the navigation release (6c0e0343): "Nav is good but too much clutter / Cam label ignores
+depth / buildings in front / Drone and icon and day/night toggle belong in bamburger menu, and label toggle should hide
+plane labels, cam labels. Also wind and other metadataand credits hidden when labels off". "Nav is good" is the owner's
+confirmation of the navigation section above on a real phone. "Icon" was read as the Below ground button (`#digBtn`):
+on a phone it was the unlabelled icon under the time wheels, beside Drone.
+
+- **What moved.** On the map, top left, only Menu and Labels (`#labelsBtn`, layers/search.js, now at 62 px; `#hud` at
+  114 px, under the wheels at 10 px on a phone). Night (`#nightBtn`, "☾ Night") is in Menu > Look; Drone (`#droneBtn`,
+  drone.js, first in the row) and Below ground (`#digBtn`, labelled, with its icon) are in Menu > Go > Move. The round
+  `#droneRound` is deleted; `#nightBtn` and `#digBtn` keep their ids, so main.js (`syncDig`, the night handler), styles.js
+  (hides Night outside the Map style), xr.js (`nightBtn.click()`) and Time > Day or night work unchanged. Each shows its
+  state with `aria-pressed` (Night: `NIGHT` set in `setClock`; Drone: `syncUi`/`stop`). Below ground and Drone close the
+  menu on a screen under 900 px (the gauge and the vehicle bar must show); Night does not. Entry points that stay: `?night`,
+  `n=1` in the share hash, `?drone=`, `#dr=`, `?view=under`, `?cut=`, the drone keys while it flies, Menu > Time > Day or night.
+- **Labels switch.** `#showLabels` (Layers > City, now "Labels, notes and credits on the map") drives `body.noLabels`
+  (main.js `syncLabelsUi`, also called each frame because styles.js sets the box with no change event). index.html:
+  `body.noLabels #labels{visibility:hidden!important}` (every label of every layer lives in `#labels`: places, `.pnl`,
+  `.lab.plane`, `.lab.ais`, `.lab.pier`, `.camLab`, `.ovLab`, `.lab.src`, `.rtEnd`; `visibility` with `!important`
+  because styles.js and xr.js set `#labels.style.visibility` inline, and a hidden button takes no taps) and
+  `display:none!important` for `#blNotes` (wind and water note, aircraft note and adsb.lol credit), `#credit`, `#attribI`,
+  `#stat`, `#hud`. KML names on the canvas already followed the box. Not hidden: the drone bar and HUD, the route panel,
+  toasts, `#testNote` (it warns of a `?layers=` link). The credits stay in Menu > About (`#credits`: the
+  `<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>` link that
+  `check-data-register.mjs` looks for, adsb.lol, Open Waters, Open-Meteo, TfL). Kept on the device (`localStorage`
+  `d3.labels`); `?labels=0|1` wins. Before this, the box was not kept at all.
+- **Occlusion** (`docklands/occlude.js`, `ctx.occluded(el, x, y, z)`, `ctx.occVersion()`; test hook
+  `__docklands3.occ()`). Chosen over a depth readback (async, different on WebGPU and WebGL 2, a GPU stall on phones) and
+  over three.js `Raycaster` on the tiles (no BVH: 16 to 17 ms a ray here, 1.1 M triangles in 80 tiles). A height grid of
+  4 m cells over the model box (1875 x 1400 = 2,625,000 cells, Int16 decimetres, two arrays: 10.5 MB): the bilinear DTM at
+  each centre, raised to the highest vertex of every roof-like triangle (|normal y| >= 0.25: 309,853 of the tiles'
+  triangles) whose xz projection covers the centre (a triangle that covers no centre stamps its centroid's cell); the
+  detailed models too (their matrixWorld). Built in 8 ms slices (`setTimeout`), again after each `rebuildBuildings`
+  (skyline year, models, roofs). A ray marches from the anchor to the eye in 2 m steps and stops above the highest cell or
+  6 m short of the eye; a cell 0.5 m or more above the ray hides the label; the solid cells the march starts in are the
+  label's own structure and never hide it (area.js places sit 20 m up, inside their tower). Buildings hidden or
+  see-through (`bmode`, Floors): ground only. The cut (`U.cut`) clips every cell. Results are cached per element and
+  recomputed when the eye moves 0.5 m, the anchor 2 m, or the cut or building mode changes; at most 160 marches a frame
+  (an answer older than 10 frames is recomputed anyway); `draw()` is asked while some wait. Applied to: place names
+  (main.js), placenames.js, cameras (about-extra.js, anchor ground + 3 m), aircraft, ships, piers, overlay labels
+  (overlay-kit.js). Not to the below-ground source labels (under.js: they are meant to be seen through the cut) or the
+  route ends. placenames.js only re-places on a change of its key: the key now holds `ctx.occVersion()`.
+- **Measured** (`docklands/test/labels-check.mjs`, WebGL 2 in software, 4-core container, 2026-10-10): one march 5.6 to
+  10.8 µs (300 to 320 steps; 24 µs with a second headless test running); one exact three.js ray 15 to 17 ms (about 2,000
+  times more); the grid: ground 0.66 to 1.27 s, roofs 0.38 to 1.08 s (3.4 s under the second test; in 8 ms slices, not
+  one stall); the most march time in one frame 2.9 to 4.3 ms while the camera moved (1,680 to 1,743 marches in a run).
+  Grid against the exact ray (own building = the footprint that holds the anchor): 77 of 80 and 80 of 83 labels agree in
+  the test view; the 3 others are building names at the edge of a neighbouring tower (25 Bank
+  Street, 25 and 1 Cabot Square): 4 m cells. Test runs 4 to 6: 22 of 22 checks pass, no page errors. At 390 x 844 the full page
+  shows 31 labels at view=cw with 27 of 56 tested labels hidden by occlusion. Not measured on a phone.
+- **Faults met.** (1) Playwright's `page.click` waits for a free frame; with the full page each software frame takes
+  seconds and a click on a menu tab timed out at 30 s: click by `element.click()` in one `evaluate`. (2) `ctx.newPage()`
+  of a shared context ignores `viewport`: the "390 px" run was 1280 x 720; make a context per size. (3) At 390 px the
+  corner credit line (its first 5 s) lay over the frame line `#stat`; index.html now hides `#stat` while
+  `#credit:not(.off)` on a screen of 600 px or less. (4) A first version limited the own-structure skip to 40 m: tall
+  place labels (One Canada Square, 25 Bank Street, anchored 20 m up inside the tower) were hidden from 400 m up. (5)
+  `pkill -f labels-check` and `ps | grep [l]abels-check | xargs kill` killed the agent's own shell (exit 144) because the
+  pattern was in its command line: list with `pgrep -af "node docklands/test"` first and kill by PID.
+  (6) A trailing `// comment` put inside a one-line block (`if (...) { // ... placed.push(r); ... } } }`) swallowed the
+  rest of the line; `node --check` passed (the braces still balanced further down) but placenames.js drew no names and
+  its menu row was missing (menu-check: "Station, district and dock names: not found"). Put a comment on its own line
+  or at the true end of a line, and look at the diff. (7) The labels switch on again: the place names come back only on
+  the next frame (5 to 10 s in software with the full page); a fixed 4 s wait saw only the camera labels (they are never
+  hidden one by one): wait for the frame.
+- **Open.** A thin building (under 4 m) or a gap between towers narrower than a cell can be wrong; trees, cranes and
+  the station models do not occlude; the grid is per page load, about 10 MB; a phone must confirm the feel.
+- Deep links: the occlusion test view
+  https://danbri.github.io/londat/docklands/#v=1&c=-35,-10,100,698,0.2569,0.4446 (the TfL camera "Limehouse Tnl Aspen
+  Way" behind One Canada Square: no label; "ASPEN WAY - UPPER BANK STREET": label); labels off
+  https://danbri.github.io/londat/docklands/?labels=0 .
 
 ## Night windows by use and hour (Three.js port, 2026-10-09)
 

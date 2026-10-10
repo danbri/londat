@@ -2140,3 +2140,23 @@ official data."
   fit; input SHA-256 unchanged.
 - Open: tide-history.json is not refreshed by a workflow; a gauge out of service shows the prediction there; no surge
   forecast. Skill: docklands-sky, "Tide history".
+
+## 2026-10-10: Three.js port, less clutter, labels switch, label occlusion
+
+- Owner, iPhone: "Nav is good but too much clutter / Cam label ignores depth / buildings in front / Drone and icon and
+  day/night toggle belong in bamburger menu, and label toggle should hide plane labels, cam labels. Also wind and other
+  metadataand credits hidden when labels off". "Nav is good" is recorded as the owner's confirmation of the navigation
+  release (6c0e0343) in docklands/AUDIT.md section 7.
+- Map buttons: Menu and Labels only. Night in Menu > Look; Drone and Below ground (the "icon") in Menu > Go > Move, with
+  aria-pressed. The round Drone button is removed.
+- Labels off (button, Layers > City, ?labels=0|1, kept in localStorage): no label of any layer, no wind/water note, no
+  aircraft note or credit, no corner credit, frame line or status line on the map. Credits stay in Menu > About with the
+  © OpenStreetMap contributors link (npm run check passes: 734 files registered).
+- Occlusion: docklands/occlude.js, a 4 m height grid (DTM and roof triangles, 2,625,000 cells, 10.5 MB) and a 2 m march
+  from each label's anchor to the eye; place names, cameras, aircraft, ships, piers, overlay labels. One march 6 to 24 µs
+  against 15 to 17 ms for an exact three.js ray; at most about 3 ms a frame (160 marches a frame at most).
+- Test: docklands/test/labels-check.mjs 22/22 (390 x 844 and 1280 x 800, WebGL 2 in software); grid against exact ray 80
+  of 83 labels. Deep link: https://danbri.github.io/londat/docklands/#v=1&c=-35,-10,100,698,0.2569,0.4446 (the TfL camera
+  "Limehouse Tnl Aspen Way" behind One Canada Square has no label).
+- Open: not measured on a phone; thin buildings (under 4 m), trees, cranes and station models do not occlude. Skill:
+  docklands-3d-page, "Three.js port: less clutter, labels switch, label occlusion (2026-10-10)".

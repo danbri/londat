@@ -256,7 +256,7 @@ export default {
       const W = innerWidth, H = innerHeight, keep = new Set();
       for (const S of drawn) { if (!(S.v.name && (S.v.length || 0) >= 60) || !host) continue; keep.add(S.v.mmsi);
         let el = LBL.get(S.v.mmsi); if (!el) { el = document.createElement('button'); el.type = 'button'; el.className = 'lab ais'; el.textContent = S.v.name; el.onclick = () => card(S); host.appendChild(el); LBL.set(S.v.mmsi, el); }
-        v3.set(S.x, S.y + S.H + 22, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H;
+        v3.set(S.x, S.y + S.H + 22, S.z).project(ctx.camera); const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, vis = visible && v3.z < 1 && x > 0 && x < W && y > 40 && y < H && !ctx.occluded?.(el, S.x, S.y + S.H + 22, S.z);   // a building or the ground in front (occlude.js)
         if (vis) el.style.transform = `translate(${x | 0}px,${y | 0}px) translate(-50%,-100%)`; if (el.hidden === vis) el.hidden = !vis; }
       for (const [k, el] of LBL) if (!keep.has(k)) { el.remove(); LBL.delete(k); }
     }
