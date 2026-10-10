@@ -52,7 +52,7 @@ for (const [w, h, touch] of [[390, 844, true], [1280, 800, false]]) {
   // ---------- (a) the buttons
   const a = await page.evaluate(() => {
     const inDrawer = id => !!document.getElementById(id)?.closest('#drawer');
-    const fixed = ['menu', 'labelsBtn', 'styleBox', 'wheels', 'locBtns', 'blNotes', 'stat', 'credit', 'attribI', 'xrBtns'].map(id => document.getElementById(id)).filter(e => e && e.checkVisibility({ opacityProperty: true }) && !e.classList.contains('off') && e.getBoundingClientRect().width > 0);   // #credit.off: folding into (i) (0.4 s)
+    const fixed = ['menu', 'labelsBtn', 'styleBox', 'wheels', 'locBtns', 'blNotes', 'stat', 'credit', 'attribI', 'xrBtns'].map(id => document.getElementById(id)).filter(e => e && e.checkVisibility({ opacityProperty: true, visibilityProperty: true }) && !e.classList.contains('off') && e.getBoundingClientRect().width > 0);   // #credit.off: folding into (i) (0.4 s)
     const R = fixed.map(e => { const r = e.getBoundingClientRect(); return { id: e.id, r: [r.left, r.top, r.right, r.bottom].map(Math.round) }; });
     const over = []; for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const p = R[i].r, q = R[j].r; if (R[i].id + R[j].id === 'creditattribI') continue;   // the credit line folds into (i) in its place (menu.js)
       if (p[0] < q[2] && p[2] > q[0] && p[1] < q[3] && p[3] > q[1]) over.push(R[i].id + '/' + R[j].id); }
@@ -103,7 +103,7 @@ for (const [w, h, touch] of [[390, 844, true], [1280, 800, false]]) {
   }
   await click(page, '#labelsBtn'); await frames(page, 2000);
   // a software frame of the full page takes 5 to 10 s: wait for the frame that places the labels again
-  await page.waitForFunction(n => document.querySelectorAll('#labels > :not([hidden])').length > n, on0.by.camLab || 0, { timeout: 120000 }).catch(() => {});
+  await page.waitForFunction(() => document.querySelectorAll('#labels > :not([hidden]):not(.camLab)').length > 0, null, { timeout: 120000 }).catch(() => {});   // camera labels are never hidden one by one
   const on1 = await shown(page);
   check(on1.n > 0 && (on1.hud.credit || on1.hud.attribI) && on1.hud.stat, `${tag}: labels on again: ${on1.n} labels shown ${JSON.stringify(on1.by)}; notes and credits ${JSON.stringify(on1.hud)}`);
 
