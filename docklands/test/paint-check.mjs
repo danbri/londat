@@ -12,15 +12,22 @@
 //   python3 -m http.server 8188 --bind 127.0.0.1 &
 //   node docklands/test/paint-check.mjs [--base http://127.0.0.1:8188] [--out dir] [--webgpu] [--cost [--bare]]
 //        [--size 1288x966@2] [--query 'view=greenlanddock&t=2026-10-11T12:45']
+//        [--styles old-styles.js] (serve another styles.js, to calibrate the speckle limits on an older pass)
 // Skill: docklands-3d-page, "Three.js port: Painted style (2026-10-11)".
 import { chromium } from '@playwright/test';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = arg('--base', 'http://127.0.0.1:8188'), OUT = arg('--out', 'docklands/test/out'), WEBGPU = process.argv.includes('--webgpu');
+// confetti limits: mean chroma added in grey blocks, and the % of grey blocks given over 20 of chroma (invented colour).
+// Calibrated 2026-10-11 at 390 x 844 @3 (skill section): the first pass gave 1.7 % (high view) to 6.5 % (night), the second 0.0 to 0.4 %
+const SPECK = { chroma: 6, invented: 0.8 };
 const COST = process.argv.includes('--cost'), BARE = process.argv.includes('--bare');
 const [, W, H, DPR] = (arg('--size', '1288x966@2').match(/(\d+)x(\d+)@([\d.]+)/) || []).map(Number);
-const QUERIES = arg('--query', '') ? [arg('--query')] : ['view=greenlanddock&t=2026-10-11T12:45', 'view=cw', 'view=rotherhithe'];
+// the owner's cases (2026-10-11): high over dense blocks (confetti), low under a tree row (low-poly crowns), the photo view,
+// Canary Wharf and Rotherhithe at night; weather=0 so the haze is the same in every run
+const QUERIES = arg('--query', '') ? [arg('--query')] : ['view=greenlanddock&t=2026-10-11T12:45&weather=0', 't=2026-10-11T15:57&weather=0#v=1&c=0,500,0,3500,0.3,1.3',
+  't=2026-10-11T15:57&weather=0#v=1&c=-1530,1150,6,30,-0.9,0.05', 'view=cw&weather=0', 'view=rotherhithe&weather=0'];
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
@@ -31,7 +38,9 @@ for (const q of QUERIES) {
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() !== 'error') return; (/Failed to load resource|net::|timed? ?out|fetch/i.test(m.text()) ? net : errors).push(m.text()); });
   const t0 = Date.now();
-  await page.goto(`${BASE}/docklands/?${q}&style=paint${WEBGPU ? '' : '&webgl'}&animate=0`, { waitUntil: 'domcontentloaded', timeout: 240000 });
+  if (arg('--styles', '')) await page.route(/docklands\/styles\.js/, r => r.fulfill({ contentType: 'text/javascript', body: readFileSync(arg('--styles'), 'utf8') }));   // calibration: an older styles.js
+  const [qq, hh] = q.split('#');   // a share hash (#v=1&c=...) goes after the query
+  await page.goto(`${BASE}/docklands/?${qq}&style=paint${WEBGPU ? '' : '&webgl'}&animate=0${hh ? '#' + hh : ''}`, { waitUntil: 'domcontentloaded', timeout: 240000 });
   const ok = await page.waitForFunction(() => globalThis.__docklands3 && __docklands3.ready && globalThis.__docklandsStyles && __docklandsStyles.mode === 'paint', null, { timeout: 300000 }).then(() => true).catch(() => false);
   if (!ok) { failed++; console.log(`FAIL ${q} not ready`, errors.slice(0, 5)); await page.close(); continue; }
   await page.waitForTimeout(6000);
@@ -42,11 +51,13 @@ for (const q of QUERIES) {
   const paintUrl = await grab(); await page.waitForTimeout(500);
   await page.evaluate(() => __docklandsStyles.setStyle('map')); await page.waitForTimeout(4000);
   const mapUrl = await grab();
+  await page.evaluate(() => __docklandsStyles.setStyle('paint')); await page.waitForTimeout(4000);
+  const paint2Url = await grab();   // a second paint frame: what moved between the frames is left out of the speckle measure
   const tag = `${q.replace(/[^a-z0-9]+/gi, '-')}-${W}x${H}@${DPR}${WEBGPU ? '-webgpu' : ''}`;
   for (const [n, u] of [['paint', paintUrl], ['map', mapUrl]]) if (u) writeFileSync(`${OUT}/paint-check-${tag}-${n}.png`, Buffer.from(u.split(',')[1], 'base64'));
   let res = { note: 'no frame' };
   if (paintUrl && mapUrl) {
-    const P = await pixels(paintUrl), M = await pixels(mapUrl), n = P.w * P.h;
+    const P = await pixels(paintUrl), M = await pixels(mapUrl), P2 = paint2Url ? await pixels(paint2Url) : null, n = P.w * P.h;
     let diff = 0; for (let i = 0; i < n; i++) for (let c = 0; c < 3; c++) diff += Math.abs(P.d[4 * i + c] - M.d[4 * i + c]);
     diff /= n * 3;
     const lum = (D, i) => 0.2126 * D[4 * i] + 0.7152 * D[4 * i + 1] + 0.0722 * D[4 * i + 2];
@@ -54,7 +65,24 @@ for (const q of QUERIES) {
     let nb = 0, sp = 0, sm = 0;
     for (let y = 0; y + 8 <= P.h; y += 8) for (let x = 0; x + 8 <= P.w; x += 8) { const a = sd(M.d, x, y); if (a < 2) { nb++; sm += a; sp += sd(P.d, x, y); } }
     res = { diff: +diff.toFixed(2), flatBlocks: nb, flatSdMap: +(sm / Math.max(1, nb)).toFixed(2), flatSdPaint: +(sp / Math.max(1, nb)).toFixed(2) };
-    res.pass = diff > 3 && nb > 50 && res.flatSdPaint > 1.5 && res.flatSdPaint > 1.4 * res.flatSdMap;
+    // speckle ("confetti", owner 2026-10-11): in the 8 x 8 blocks that are grey in the map (mean chroma max-min of RGB under
+    // 24 of 255): the mean chroma the paint adds, the share of blocks given over 20 of chroma (fails), and for information
+    // the spread of chroma inside a block and the mean absolute Laplacian of luma (high-frequency energy), paint and map
+    const chr = (D, i) => Math.max(D[4 * i], D[4 * i + 1], D[4 * i + 2]) - Math.min(D[4 * i], D[4 * i + 1], D[4 * i + 2]);
+    const blk = (D, x0, y0) => { let s = 0, s2 = 0, lap = 0, ls = 0; for (let y = y0; y < y0 + 8; y++) for (let x = x0; x < x0 + 8; x++) { const i = y * P.w + x, c = chr(D, i); s += c; s2 += c * c; ls += lum(D, i);
+      if (x > 0 && y > 0 && x < P.w - 1 && y < P.h - 1) lap += Math.abs(4 * lum(D, i) - lum(D, i - 1) - lum(D, i + 1) - lum(D, i - P.w) - lum(D, i + P.w)); }
+      const m = s / 64; return { m, sd: Math.sqrt(Math.max(0, s2 / 64 - m * m)), lap: lap / 64, l: ls / 64 }; };
+    let ng = 0, cm = 0, cp = 0, sdm = 0, sdp = 0, lm = 0, lp = 0, inv = 0;
+    // blocks that changed between the two paint frames (clouds and aircraft move) are left out
+    for (let y = 8; y + 16 <= P.h; y += 8) for (let x = 8; x + 16 <= P.w; x += 8) {
+      const a = blk(M.d, x, y); if (a.m >= 24) continue;
+      const b = blk(P.d, x, y); if (P2 && Math.abs(blk(P2.d, x, y).l - b.l) > 4) continue;
+      ng++; if (b.m - a.m > 20) inv++;
+      cm += a.m; cp += b.m; sdm += a.sd; sdp += b.sd; lm += a.lap; lp += b.lap; }
+    const k = 1 / Math.max(1, ng);
+    res.grey = { blocks: ng, chromaMap: +(cm * k).toFixed(1), chromaPaint: +(cp * k).toFixed(1), spreadMap: +(sdm * k).toFixed(1), spreadPaint: +(sdp * k).toFixed(1), lapMap: +(lm * k).toFixed(1), lapPaint: +(lp * k).toFixed(1), inventedPct: +(100 * inv * k).toFixed(2) };
+    res.confetti = ng > 50 && (res.grey.chromaPaint - res.grey.chromaMap > SPECK.chroma || res.grey.inventedPct > SPECK.invented);
+    res.pass = diff > 3 && nb > 50 && res.flatSdPaint > 1.5 && res.flatSdPaint > 1.4 * res.flatSdMap && !res.confetti;
   }
   if (COST) {   // the time of one frame: pipe.render() then a 1-pixel readPixels, which waits for the GPU; median of 7
     if (BARE) await page.evaluate(() => { for (const o of __docklands3.scene.children) o.visible = false; });   // --bare: an empty scene, so the time is the output pass

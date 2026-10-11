@@ -9,6 +9,8 @@
 // Data and licences: skill cwplans-river-and-water; page side: skill docklands-3d-page, "River layer", "Three.js port".
 import { RMesh, beam, stick, ribbon, geoOf, inBoxOf, bboxOf, londonTime, buildGroup, disposeGroup, addTaps, makeLabels, toast, revealPart } from '../overlay-kit.js';
 import { WU } from '../water.js';
+import { MFP } from '../build.js';
+import { mooredBoats } from '../moored-boats.js';
 
 const FILES = { bus: 'river-bus.json', locks: 'locks.json', crt: 'crt-notices.json', pla: 'pla-notices.json', barrier: 'thames-barrier.json', eden: 'eden-dock.json', royal: 'royal-docks.json', osm: 'osm-river.json', moor: 'pla-moorings.json', wd: 'wikidata-vessels.json', levels: 'levels.json' };
 const NEED = { rbus: ['bus'], rlocks: ['locks', 'levels', 'crt'], rpla: ['pla'], rswim: ['eden', 'royal'], rmoor: ['osm', 'moor'], rships: ['wd', 'osm'] };
@@ -42,6 +44,22 @@ export default {
     const badge = (M, x, z, y0, h, plate, col, stem = [.92, .93, .95]) => { stick(M, x, z, y0, y0 + h, 1.2, stem); stick(M, x, z, y0 + h, y0 + h + plate, plate, col); };
     const onWater = h => (x, z) => Math.max(groundAt(x, z), wl()) + h;
     const labels = makeLabels(ctx);
+    // ---------- generic boats at known moorings (moored-boats.js; part rmoor): the building boxes of the OSM houseboat
+    // outlines are hidden while the part is on (buildBuildings opts.skip, chained to the earlier layers' skip; with no
+    // earlier skip the detailed glTF models are added here, as layers/piers.js does, because the option replaces main.js's)
+    const MB = { on: false, hide: new Set(), asked: false, api: null, busy: null, base: new Set() };
+    const prevSkip = ctx.buildOpts.skip;
+    if (!prevSkip) loadJSON(ctx.DATA + 'building-models.json').then(BM => { if (BM) for (const m of Object.values(BM.models)) if (m.model_fp === MFP && m.mi) for (const i of m.mi) MB.base.add(i); }).catch(() => {});
+    ctx.buildOpts.skip = { has: i => { MB.asked = true; return (MB.on && MB.hide.has(i)) || MB.base.has(i) || !!(prevSkip && prevSkip.has(i)); }, get size() { return (prevSkip ? prevSkip.size : 0) + MB.base.size + (MB.on ? MB.hide.size : 0); } };
+    // rebuild the buildings unless another layer or main.js has rebuilt them since the hide set changed (one rebuild, not two)
+    const skipChanged = now => { MB.asked = false; if (now) { ctx.rebuildBuildings(); return; } setTimeout(() => { if (!MB.asked) ctx.rebuildBuildings(); }, 1500); };
+    async function mooredOn(v) {
+      if (!v) { if (MB.api) MB.api.setVisible(false); if (MB.on) { MB.on = false; skipChanged(true); } return; }
+      if (!MB.api) { MB.busy ||= (async () => { const piers = await loadJSON(ctx.DATA + 'piers.json');
+        const api = await mooredBoats(ctx, { osm: RV.data.osm, piers }); root.add(api.group); MB.api = api; MB.hide = api.hide; })(); await MB.busy; }
+      if (!on.rmoor) return;
+      MB.api.setVisible(true); if (!MB.on && MB.hide.size) { MB.on = true; skipChanged(false); } else MB.on = true; draw();
+    }
 
     // ---------- Thames centreline and pier paths (data/river.json: every 20 m, third value = distance to the bank)
     function nearestCl(x, z) { const cl = RV.river.thames; let b = 0, e = 1e18; for (let i = 0; i < cl.length; i++) { const d = (cl[i][0] - x) ** 2 + (cl[i][1] - z) ** 2; if (d < e) { e = d; b = i; } } return b; }
@@ -247,9 +265,10 @@ export default {
           badge(M.S, x, z, g, 14, 7, worst); hits.push({ x, y: g + 17, z, card: royalCard }); n.swim++; lab('Royal Docks water tests →', x, g + 21, z, 3, royalCard); } }
       if (k === 'rmoor') { n.moor = 0; n.house = 0; n.visit = 0;
         if (RV.data.osm) for (const it of RV.data.osm.items) { if (it.kind !== 'mooring' && it.kind !== 'houseboat') continue; const [x, z] = geo(it.position.lon, it.position.lat); if (!inBox(x, z)) continue; const g = Math.max(groundAt(x, z), wl());
-          if (it.kind === 'mooring') { stick(M.S, x, z, g, g + 6, 1.4, [.55, .75, .95]); n.moor++; }
-          else { beam(M.S, [x - 8, g + 1.5, z], [x + 8, g + 1.5, z], 4.5, 3, [.55, .38, .25]); beam(M.S, [x - 5, g + 4, z], [x + 5, g + 4, z], 3.5, 2, [.85, .8, .7]); n.house++; }
-          L.push({ pts: [[x, z]], col: [.55, .75, .95], r: 3 }); hits.push({ x, y: g + 4, z, card: () => osmCard(it) }); }
+          if (it.kind === 'mooring') { n.moor++;   // a pontoon of a mooring (man_made=pier) shows its generic boats; other moorings: a small buoy (was a 6 m blue post)
+            if (it.values.man_made !== 'pier') stick(M.S, x, z, g - .3, g + .9, .9, [.93, .78, .2]); hits.push({ x, y: g + 1, z, card: () => osmCard(it) }); }
+          else n.house++;   // a houseboat: a generic boat on its OSM outline (moored-boats.js), tapped there
+          L.push({ pts: [[x, z]], col: [.55, .75, .95], r: 3 }); }
         if (RV.data.moor) for (const it of RV.data.moor.items) { const [x, z] = geo(it.position.lon, it.position.lat); if (!inBox(x, z)) continue; const g = Math.max(groundAt(x, z), wl());
           badge(M.S, x, z, g, 12, 5, [.2, .8, .75]); n.visit++; L.push({ pts: [[x, z]], col: [.2, .8, .75], r: 5 }); hits.push({ x, y: g + 15, z, card: () => visitCard(it) }); } }
       if (k === 'rships') { n.ships = 0; const qs = new Set();
@@ -273,11 +292,11 @@ export default {
     }
     async function setPart(k, v, quiet) {
       on[k] = v; boxes[k].checked = v;
-      if (!v) { if (PART[k].group) PART[k].group.visible = false; if (k === 'rbus' || k === 'rlocks') rebuildClock(); draw(); return; }
+      if (!v) { if (PART[k].group) PART[k].group.visible = false; if (k === 'rbus' || k === 'rlocks') rebuildClock(); if (k === 'rmoor') mooredOn(false); draw(); return; }
       try { await Promise.all([...NEED[k].map(loadFile), loadRiver(), loadFile('barrier').then(banner)]); }
       catch (e) { toast(`${esc(NAMES[k])}: a file did not load (${esc(e.message)}).`); on[k] = false; boxes[k].checked = false; return; }
       if (!on[k]) return;
-      buildPart(k); if (k === 'rbus' || k === 'rlocks') rebuildClock();
+      buildPart(k); if (k === 'rbus' || k === 'rlocks') rebuildClock(); if (k === 'rmoor') mooredOn(true).catch(e => console.warn('moored boats', e));
       if (quiet) { PART[k].group.visible = true; draw(); return; }
       PART[k].group.visible = false; revealPart(ctx, PART[k].group, NAMES[k], draw2dOf(PART[k].lines), () => on[k]); draw();
     }
@@ -299,12 +318,13 @@ export default {
     const boxes = {};
     for (const k of Object.keys(NEED)) { const l = document.createElement('label'); l.className = 'row'; l.style.margin = '2px 0'; const i = document.createElement('input'); i.type = 'checkbox'; i.onchange = () => setPart(k, i.checked); l.append(i, ' ' + NAMES[k]); wrap.appendChild(l); boxes[k] = i; }
     const bannerEl = ctx.ui.note(''); bannerEl.hidden = true;
-    ctx.ui.note('Dated snapshots (4 October 2026). Boats where the TfL timetable puts them at the page clock (live only after a tap on a pier or boat). Locks: green inside the tide window and staffed hours, amber window only, grey outside or not known, red a CRT closure. Tap one for its record. Powered by TfL Open Data; PLA; Canal &amp; River Trust; EA (OGL v3.0); © OpenStreetMap contributors (ODbL); Wikidata (CC0).');
+    ctx.ui.note('Dated snapshots (4 October 2026). Boats where the TfL timetable puts them at the page clock (live only after a tap on a pier or boat). Locks: green inside the tide window and staffed hours, amber window only, grey outside or not known, red a CRT closure. Moorings and houseboats: GENERIC boats (not real vessels) on the OSM houseboat outlines and alongside the pontoons of moorings, typical types and sizes by the class of mooring. Tap one for its record. Powered by TfL Open Data; PLA; Canal &amp; River Trust; EA (OGL v3.0); © OpenStreetMap contributors (ODbL); Wikidata (CC0).');
 
     for (const k of (ctx.qs.has('river') ? ctx.qs.get('river') : 'rmoor,rships').split(',').filter(k => NEED[k])) setPart(k, true, true);   // moorings and vessels (things on the water) by default (owner, 2026-10-11: "too many boring data overlays by default"; before: all, 2026-10-09); ?river=a,b to choose
     const api = { object: root, ownUi: true, setPart, liveBoats, rebuildClock, lockState, tides, scheduledBoats, busIndex, barrierInfo, RV, on,
-      setVisible(v) { root.visible = v; draw(); },
-      get state() { return { on: { ...on }, parts: Object.fromEntries(Object.values(PART).map(p => [p.k, { n: p.n, hits: p.hits.length, polys: p.polys.length, tris: p.tris }])), clock: { ...RV.clockN, hits: clockHits.length }, labels: labels.n, live: !!RV.live }; } };
+      setVisible(v) { root.visible = v; if (on.rmoor) mooredOn(v).catch(e => console.warn('moored boats', e)); draw(); },
+      get state() { return { on: { ...on }, parts: Object.fromEntries(Object.values(PART).map(p => [p.k, { n: p.n, hits: p.hits.length, polys: p.polys.length, tris: p.tris }])), clock: { ...RV.clockN, hits: clockHits.length }, labels: labels.n, live: !!RV.live, moored: MB.api ? { ...MB.api.stats, on: MB.on, places: MB.api.places.map(p => ({ id: p.id, name: p.name, cls: p.cls, n: p.n })) } : null }; },
+      get moored() { return MB.api; } };
     ctx.river = api;
     return api;
   },

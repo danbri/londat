@@ -330,22 +330,29 @@ function lineFrame() {
   }
 }
 
-// ---------- painted (?style=paint, ?paint=<dab size in CSS px>): a screen-space pass over the normal scene pass, so it
-// paints meshes, the species trees, the water mirror, the splats and any later Gaussian splat data the same way.
-//  1. A half-resolution copy (rtt, RGBA16F): rgb the scene colour (2 x 2 mean by the bilinear fetch), a 100 / view depth.
-//  2. Per pixel: brush dabs on a jittered grid of screen cells, three cell sizes by depth (near to far: size, size x 1.34,
-//     size x 1.8 CSS px; the level boundary dithered by value noise), the 3 x 3 cells round the pixel: centre, priority,
-//     value and hue jitter from a hash of the cell; elliptical Gaussian footprint (aspect 2.5) along the stroke direction
-//     (the tangent of the luma gradient at the pixel, else near horizontal); the colour of the copy at the dab centre.
-//     Order-independent blend: weight = footprint x depth gate x exp(8 x priority), so the high-priority dab is on top
-//     with a soft edge. A dab does not cross a depth step (ratio of 1/z at its centre and the pixel under 0.55 to 0.75).
-//     Where no dab covers, the underpainting: a 5-tap mean of the copy at one cell.
-//  3. Saturation lift, canvas grain; AgX and sRGB after it (outputColorTransform stays on, as in the map).
-// Cost: 9 dab fetches + 5 for the gradient and underpainting + 1 depth; no loops.
-const PT = { pass: null, out: null, outNight: null, res: uniform(new THREE.Vector2(1, 1)), dpr: uniform(1), near: uniform(1), far: uniform(20000),
-  size: uniform(6), far2: uniform(1.8), aspect: uniform(2.5), radius: uniform(0.72), jitter: uniform(0.85), vjit: uniform(0.3), hjit: uniform(0.45),
-  bristle: uniform(0.15), grain: uniform(0.045), sat: uniform(1.22), gate: uniform(0.6), sharp: uniform(6), turn: uniform(0.5) };
+// ---------- painted (?style=paint, ?paint=<dab size in CSS px>, ?paintfid=<0..1>): a screen-space pass over the normal
+// scene pass, so it paints meshes, the species trees, the water mirror, the splats and any later Gaussian splat data alike.
+//  1. A half-resolution copy with mipmaps (rtt, RGBA16F): rgb the scene colour (2 x 2 mean by the bilinear fetch), a
+//     100 / view depth. A dab takes its colour from the mip level that matches its size (a low-pass, not a point sample:
+//     a point sample of fine far detail gave "confetti", owner 2026-10-11).
+//  2. Per pixel: brush dabs on a jittered grid of screen cells, the 3 x 3 cells round the pixel. The cell size has five
+//     levels (-1 to 3, x far2 ^ (level / 2)): larger far away, larger on near flat surfaces (so low-poly facets break up),
+//     smaller on strong colour edges; the level boundary is dithered by value noise. Each cell: a hashed centre, priority,
+//     value and hue jitter (scaled down on grey and on busy areas: no invented colour), an elliptical Gaussian footprint
+//     (aspect 2.5) along the stroke direction (the tangent of the low-passed luma gradient, else near horizontal).
+//     Order-independent blend: weight = depth gate x exp(8 x priority - sharp x e). A dab does not cross a depth step.
+//     Where no dab covers: the underpainting (the low-passed taps on the pixel's own surface).
+//  3. Fidelity: on strong edges a share (fid, 0.35) of the full-resolution scene, so outlines and window rows stay legible.
+//  4. Saturation lift on coloured areas only, canvas grain; AgX and sRGB after it (outputColorTransform on, as the map).
+//  The grid moves with the camera's yaw and pitch (focal length in px), so a turn does not slide the colours under the dabs.
+// Cost a pixel: 9 dab fetches, 4 gradient taps, 2 detail taps, 1 full-resolution colour, 1 depth; no loops.
+const PT = { pass: null, out: null, outNight: null, res: uniform(new THREE.Vector2(1, 1)), dpr: uniform(1), near: uniform(1), far: uniform(20000), off: uniform(new THREE.Vector2(0, 0)),
+  size: uniform(6), far2: uniform(1.8), aspect: uniform(2.5), radius: uniform(0.72), jitter: uniform(0.85), vjit: uniform(0.3), hjit: uniform(0.3),
+  bristle: uniform(0.1), grain: uniform(0.035), sat: uniform(1.18), gate: uniform(0.6), sharp: uniform(6), turn: uniform(0.5),
+  lp: uniform(0.4), fid: uniform(0.35), big: uniform(1.6), edgeK: uniform(1.4), farK: uniform(1.2), busyK: uniform(0.8), keep: uniform(0.5), anchor: [0, 0] };   // the grid anchor (yaw, pitch); off: see paintFrame
+const OVL = 8, OVERLAY_LAYERS = ['overlays', 'river', 'routes', 'kml', 'locate', 'keys', 'planes'];   // the data layers: on THREE layer 8 too
 const lum3 = c => dot(c, vec3(0.2126, 0.7152, 0.0722));
+const chroma = c => { const mx = max(max(c.x, c.y), c.z), mn = min(min(c.x, c.y), c.z); return mx.sub(mn).div(max(mx, 0.02)); };
 const hash4 = p => {   // Hoskins hash44 of a 2D cell (and a level seed): four values in [0, 1)
   const q = fract(vec4(p.x, p.y, p.x, p.y).mul(vec4(0.1031, 0.1030, 0.0973, 0.1099)));
   const r = q.add(dot(q, q.wzxy.add(33.33)));
@@ -359,54 +366,89 @@ const vnoise = p => {   // value noise in [0, 1)
 function paintOutput() {
   const S = H.scenePass, scol = S.getTextureNode('output'), D = S.getTextureNode('depth');
   const viewZ = uv => perspectiveDepthToViewZ(D.sample(uv).x, PT.near, PT.far).negate();
-  // 1. the copy: no If / and / or inside an rtt (r186)
-  PT.pass = rtt(vec4(scol.sample(screenUV).rgb, float(100).div(max(viewZ(screenUV), 0.05))), null, null, { resolutionScale: 0.5 });
-  const A = PT.pass, res = PT.res, at = p => A.sample(p.div(res));
-  const pp = screenUV.mul(res), z0 = viewZ(screenUV), iz0 = float(100).div(max(z0, 0.05));
-  // the level: 0 near, 1, 2 far (and sky), dithered
-  const f = clamp(log2(max(z0, 1)).sub(Math.log2(40)).div(Math.log2(1500 / 40)), 0, 1);
-  const lvl = clamp(floor(f.mul(2).add(vnoise(pp.div(PT.dpr.mul(22))))), 0, 2);
-  const cell = PT.size.mul(PT.dpr).mul(exp2(lvl.mul(0.5).mul(log2(PT.far2))));   // size x far2 ^ (lvl / 2)
-  // stroke direction: the tangent of the luma gradient over one cell, else near horizontal; underpainting from the same taps
-  const ox = vec2(cell, 0), oy = vec2(0, cell);
-  const t0 = at(pp), tr = at(pp.add(ox)), tl = at(pp.sub(ox)), tu = at(pp.add(oy)), td = at(pp.sub(oy));
-  const c0 = t0.rgb, cr = tr.rgb, cl = tl.rgb, cu = tu.rgb, cd = td.rgb;
-  const same = t => clamp(min(t.a, iz0).div(max(max(t.a, iz0), 1e-6)).sub(PT.gate).mul(5), 0, 1);   // the depth gate of the dabs
-  const gx = lum3(cr).sub(lum3(cl)), gy = lum3(cu).sub(lum3(cd)), l0 = lum3(c0);
-  const gm = sqrt(gx.mul(gx).add(gy.mul(gy))), tw = clamp(gm.div(l0.add(0.04)).sub(0.08).mul(4), 0, 1);
+  // 1. the copy with mipmaps: no If / and / or inside an rtt (r186)
+  // the data layers (OVERLAY_LAYERS: overlays, river, routes, KML, locate, keys, aircraft) are data, not scenery: a pass of
+  // them alone (half resolution, no background, clear alpha 0) gives a mask; they stay crisp on top of the paint and give
+  // no colour to the dabs. Visible where the main frame shows the overlay's own colour (not hidden by a nearer building).
+  PT.ovPass = pass(C.scene, C.camera, { samples: 0 }); const OL = new THREE.Layers(); OL.set(OVL); PT.ovPass.setLayers(OL); PT.ovPass.setResolutionScale(0.5);
+  const ub = PT.ovPass.updateBefore.bind(PT.ovPass);
+  PT.ovPass.updateBefore = frame => { const r = frame.renderer, sc = C.scene, bg = sc.background, a = r.getClearAlpha(); sc.background = null; r.setClearAlpha(0);
+    try { return ub(frame); } finally { sc.background = bg; r.setClearAlpha(a); } };
+  const OV = PT.ovPass.getTextureNode();
+  const ovMask = (uv, main) => { const o = OV.sample(uv), u = o.rgb.div(max(o.a, 1e-3));
+    return clamp(o.a.sub(0.3).mul(2.5), 0, 1).mul(float(1).sub(clamp(main.sub(u).length().div(u.length().add(0.05)).sub(0.08).mul(6), 0, 1))); };
+  const sc0 = scol.sample(screenUV).rgb;
+  PT.pass = rtt(vec4(sc0, float(100).div(max(viewZ(screenUV), 0.05)).mul(float(1).sub(ovMask(screenUV, sc0).mul(2)))), null, null,
+    { resolutionScale: 0.5, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter, magFilter: THREE.LinearFilter });
+  const A = PT.pass, res = PT.res, at = (p, l) => A.sample(p.div(res)).level(l);
+  const pp = screenUV.mul(res), z0 = viewZ(screenUV), iz0 = float(100).div(max(z0, 0.05)), lg2dpr = log2(max(PT.dpr, 1));
+  // alpha: 100 / z, negative where a data layer covers the copy (the dabs skip it)
+  const same = t => clamp(min(abs(t.a), iz0).div(max(max(abs(t.a), iz0), 1e-6)).sub(PT.gate).mul(5), 0, 1);   // the depth gate of the dabs
+  // the gradient over half a base cell, from mip 1 (a low-pass at about 4 device px): stroke direction and edge strength
+  const base = PT.size.mul(PT.dpr), ox = vec2(base.mul(0.5), 0), oy = vec2(0, base.mul(0.5));
+  const tr = at(pp.add(ox), 1), tl = at(pp.sub(ox), 1), tu = at(pp.add(oy), 1), td = at(pp.sub(oy), 1);
+  const m1 = at(pp, lg2dpr), m4 = at(pp, lg2dpr.add(3));   // about 1 and 8 CSS px
+  const gx = lum3(tr.rgb).sub(lum3(tl.rgb)), gy = lum3(tu.rgb).sub(lum3(td.rgb)), l1 = lum3(m1.rgb);
+  const gm = sqrt(gx.mul(gx).add(gy.mul(gy))), rel = gm.div(l1.add(0.04));
+  const tw = clamp(rel.sub(0.08).mul(4), 0, 1), edge = clamp(rel.sub(0.06).mul(4), 0, 1).mul(same(m1));
+  const detail = clamp(abs(l1.sub(lum3(m4.rgb))).div(lum3(m4.rgb).add(0.04)).mul(4), 0, 1);   // busy (1) or flat (0) at about 8 CSS px
   const tg = vec2(gy.negate(), gx).div(max(gm, 1e-6)), tgA = select(tg.x.lessThan(0), tg.negate(), tg);   // x >= 0, so it blends with the horizontal
-  // the underpainting: a mean of the five taps on the pixel's own surface (no sky haze round a building), the copy at the pixel else
+  // the level: far (2 f), near and flat (+ big), strong edge (- edgeK); dithered; anchored to the camera's turn
+  const q0 = pp.add(PT.off);
+  const f = clamp(log2(max(z0, 1)).sub(Math.log2(40)).div(Math.log2(1500 / 40)), 0, 1), near = float(1).sub(clamp(z0.sub(15).div(100), 0, 1));
+  const lvlF = f.mul(PT.farK).add(near.mul(float(1).sub(detail)).mul(PT.big)).sub(edge.mul(PT.edgeK)).sub(detail.mul(PT.busyK)).add(vnoise(q0.div(PT.dpr.mul(22))));
+  const lvl = clamp(floor(lvlF), -1, 3);
+  const cell = base.mul(exp2(lvl.mul(0.5).mul(log2(PT.far2))));   // size x far2 ^ (lvl / 2)
+  const lod = log2(max(cell.mul(0.5).mul(PT.lp), 1));             // the mip level for a dab of this cell (copy texels)
+  // the underpainting: the low-passed taps on the pixel's own surface
   const wr = same(tr), wl = same(tl), wu = same(tu), wd = same(td);
-  const under = c0.mul(2).add(cr.mul(wr)).add(cl.mul(wl)).add(cu.mul(wu)).add(cd.mul(wd)).div(wr.add(wl).add(wu).add(wd).add(2));
-  const g = pp.div(cell), ci = floor(g), seed = lvl.mul(97.31);
+  const under = m1.rgb.mul(2).add(tr.rgb.mul(wr)).add(tl.rgb.mul(wl)).add(tu.rgb.mul(wu)).add(td.rgb.mul(wd)).div(wr.add(wl).add(wu).add(wd).add(2));
+  const calm = float(1).sub(detail.mul(0.6));   // busy areas: less jitter
+  const g = q0.div(cell), ci = floor(g), seed = lvl.mul(97.31);
   const ra = sqrt(PT.aspect), axA = cell.mul(PT.radius).mul(ra), axB = cell.mul(PT.radius).div(ra);
-  let sumC = vec3(0), sumW = float(0), minE = float(99);
+  let sumC = vec3(0), sumC0 = vec3(0), sumW = float(0), minE = float(99);
   for (const oy2 of [-1, 0, 1]) for (const ox2 of [-1, 0, 1]) {
     const id = ci.add(vec2(ox2, oy2)), h = hash4(id.add(seed)), k = fract(h.mul(7.13).add(h.yzwx.mul(3.71)));   // one hash a dab; k: four more values from it
-    const ctr = id.add(0.5).add(h.xy.sub(0.5).mul(PT.jitter)).mul(cell);
-    const s = at(ctr), col0 = s.rgb, izc = s.a;
-    const base = vec2(1, k.x.sub(0.5).mul(0.7)).normalize(), dir = mix(base, tgA, tw).add(vec2(base.y.negate(), base.x).mul(k.y.sub(0.5).mul(PT.turn))).normalize();
-    const q = pp.sub(ctr), u = dot(q, dir).div(axA), v = dot(q, vec2(dir.y.negate(), dir.x)).div(axB);
-    const e = u.mul(u).add(v.mul(v));
-    const gate = same(s);
+    const ctrQ = id.add(0.5).add(h.xy.sub(0.5).mul(PT.jitter)).mul(cell), ctr = ctrQ.sub(PT.off);
+    const s = at(ctr, lod), col0 = s.rgb;
+    const b0 = vec2(1, k.x.sub(0.5).mul(0.7)).normalize(), dir = mix(b0, tgA, tw).add(vec2(b0.y.negate(), b0.x).mul(k.y.sub(0.5).mul(PT.turn))).normalize();
+    const q = q0.sub(ctrQ), u = dot(q, dir).div(axA), v = dot(q, vec2(dir.y.negate(), dir.x)).div(axB);
+    const e = u.mul(u).add(v.mul(v)), gate = same(s).mul(step(0, s.a));
     const w = exp(h.z.mul(8).sub(e.mul(PT.sharp))).mul(gate);   // footprint x priority in one exp
-    // broken colour: value and warm-cool jitter per dab, a bristle streak across it, a little less paint at the end of the stroke
-    const lc = lum3(col0);
-    const col = col0.mul(float(1).add(h.w.sub(0.5).mul(PT.vjit)).add(sin(v.mul(4.2).add(k.z.mul(6.28))).mul(PT.bristle)).sub(u.mul(0.04)))
-      .add(vec3(0.55, 0.05, -0.6).mul(k.w.sub(0.5).mul(PT.hjit).mul(lc))).add(vec3(-0.25, 0.4, -0.25).mul(k.z.sub(0.5).mul(PT.hjit).mul(lc)));
-    sumC = sumC.add(max(col, vec3(0)).mul(w)); sumW = sumW.add(w); minE = min(minE, e.add(float(1).sub(gate).mul(10)));
+    // broken colour: value jitter (less on busy areas), warm-cool and green-magenta jitter only where the colour has chroma
+    const lc = lum3(col0), cc = clamp(chroma(col0).sub(0.06).mul(4), 0, 1), hj = PT.hjit.mul(cc).mul(calm).mul(lc);
+    const vk = cc.mul(0.65).add(0.35).mul(calm);   // grey (fog, concrete): a third of the value jitter, so faint forms stay
+    const col = col0.mul(float(1).add(h.w.sub(0.5).mul(PT.vjit).add(sin(v.mul(4.2).add(k.z.mul(6.28))).mul(PT.bristle)).mul(vk)).sub(u.mul(0.04)))
+      .add(vec3(0.55, 0.05, -0.6).mul(k.w.sub(0.5).mul(hj))).add(vec3(-0.25, 0.4, -0.25).mul(k.z.sub(0.5).mul(hj)));
+    sumC = sumC.add(max(col, vec3(0)).mul(w)); sumC0 = sumC0.add(col0.mul(w)); sumW = sumW.add(w); minE = min(minE, e.add(float(1).sub(gate).mul(10)));
   }
-  const painted = mix(under, sumC.div(max(sumW, 1e-8)), clamp(float(3.5).sub(minE.mul(PT.sharp)).div(1.9), 0, 1));   // footprint exp(-sharp e) 0.03 to 0.2 of the nearest gated dab
-  const L = lum3(painted), sat = vec3(L).add(painted.sub(L).mul(PT.sat));
-  // canvas: a fine weave and a grain at one CSS px
+  const cover = clamp(float(3.5).sub(minE.mul(PT.sharp)).div(1.9), 0, 1);
+  const dabs0 = mix(under, sumC.div(max(sumW, 1e-8)), cover), plain = mix(under, sumC0.div(max(sumW, 1e-8)), cover);
+  // value kept: the dabs' luma (before the jitter) moves to the source's luma at about 1 CSS px (mip) by `keep`, so the value
+  // pattern (forms, outlines, light and shade) stays and only colour and texture are painterly (owner, 2026-10-11: "too lossy")
+  const sc1 = scol.sample(screenUV).rgb, Ls = lum3(m1.rgb), Lp = lum3(plain);
+  const dabs = dabs0.mul(mix(float(1), clamp(Ls.add(0.002).div(Lp.add(0.002)), 0.25, 4), PT.keep.mul(same(m1)).mul(float(1).sub(near.mul(float(1).sub(detail)).mul(0.5)))));   // near flat surfaces: half, so the strokes break up the facets   // footprint exp(-sharp e) 0.03 to 0.2 of the nearest gated dab
+  // fidelity on strong edges: a share of the full-resolution scene
+  const painted0 = mix(dabs, sc1, edge.mul(PT.fid));
+  // saturation lift on coloured areas only (grey stays grey), canvas weave and grain at one CSS px
+  const painted = painted0, L = lum3(painted), sk = float(1).add(PT.sat.sub(1).mul(clamp(chroma(painted).sub(0.08).mul(5), 0, 1)));
+  const sat = vec3(L).add(painted.sub(L).mul(sk));
   const cp = pp.div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
-  const out = max(sat, vec3(0)).mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain)));
+  const out0 = max(sat, vec3(0)).mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain)));
+  const out = mix(out0, sc1, ovMask(screenUV, sc1));   // the data layers crisp on top
   PT.out = vec4(out, 1);
   PT.outNight = vec4(out.add(bloom(A, 0.9, 0.45, 0.6).rgb), 1);   // lit windows: the map's bloom, of the half-resolution copy
 }
+const _pv = new THREE.Vector3(), _ps = new THREE.Vector2();
 function paintFrame() {
   const cam = C.camera; PT.near.value = cam.near; PT.far.value = cam.far;
-  const s = C.renderer.getDrawingBufferSize(new THREE.Vector2()); PT.res.value.set(s.x, s.y); PT.dpr.value = C.renderer.getPixelRatio();
+  const s = C.renderer.getDrawingBufferSize(_ps); PT.res.value.set(s.x, s.y); PT.dpr.value = C.renderer.getPixelRatio();
+  // the grid anchor: the camera's yaw and pitch times the focal length in device px
+  cam.getWorldDirection(_pv); const fpx = s.y / 2 / Math.tan(cam.fov * Math.PI / 360);
+  const yaw = Math.atan2(_pv.x, _pv.z), pitch = Math.asin(Math.max(-1, Math.min(1, _pv.y)));
+  PT.off.value.set(PT.anchor[0] * yaw * fpx, PT.anchor[1] * pitch * fpx);
+  const LY = globalThis.__docklands3 && __docklands3.layers;   // the data layers' objects (some are made later): on layer OVL as well
+  if (LY) for (const id of OVERLAY_LAYERS) { const o = LY[id] && LY[id].api && LY[id].api.object; if (o) o.traverse(x => x.layers.enable(OVL)); }
   const bl = $('bloom'); OUT = (bl ? bl.checked : true) && C.U && C.U.night && C.U.night.value > 0.01 ? PT.outNight : PT.out;
 }
 
@@ -529,6 +571,7 @@ export function init(hook) {
   ui(); C.onFrame(frame);
   const q = new URLSearchParams(location.search); let want = q.get('style') || (q.has('pixel') ? 'pixel' : q.has('lines') ? 'lines' : q.has('vectrex') ? 'vectrex' : 'map');
   const pz = parseFloat(q.get('paint')); if (pz > 0) { PT.size.value = Math.min(40, Math.max(1, pz)); if (!q.get('style')) want = 'paint'; }   // ?paint=<near dab cell, CSS px>
+  const pf = parseFloat(q.get('paintfid')); if (pf >= 0) PT.fid.value = Math.min(1, pf);   // ?paintfid=<0..1>: the share of the scene on strong edges
   const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT };
   globalThis.__docklandsStyles = api;
   return setStyle(want).then(() => api);

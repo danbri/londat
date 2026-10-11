@@ -1763,8 +1763,9 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   degrees), so the lit windows feed the bloom. The halo of One Canada Square is index.html `CROWN.NEUTRAL`; the campaign
   colours by date are not ported.
 - **Water.** The LiDAR ground over the river is the survey's water surface and hid the water polygons in the first
-  build. `terrainGeometry()` sinks the ground inside each water polygon (eroded by one 20 m cell) to 1.5 m below the
-  water's level.
+  build. `terrainGeometry()` sinks the ground inside each water polygon to 1.5 m below the water's level and, since
+  2026-10-11, cuts the terrain triangles along the outlines with a quay wall ("Three.js port: dock edges follow the
+  outlines (2026-10-11)"; before, the edge cells stayed as a 20 m bank: fault F54).
 - **Sky.** `SkyMesh` (TSL) is scaled to 10 km, drawn first with no depth test (the camera's far plane is 20 km at
   least); stars are a `Sprite` with `PointsNodeMaterial` and instanced position and size (WebGPU draws points 1 px only).
 - **Near plane.** For a photo view the eye is a few metres above the water: near = min(dist / 400, height above the
@@ -2290,3 +2291,154 @@ Faults met and lessons:
 Open: the dabs are fixed to the screen, so when the view moves the colours slide under them (the "shower door" effect).
 Strokes fixed to the world (dab centres from world positions, or from splat centres when 3DGS data is used) would remove
 it. Not measured on a phone GPU. Labels and the HTML overlays are not painted.
+
+## Three.js port: boats and moored barges (2026-10-11)
+
+Owner, 2026-10-11: "Also the rendered boats, can we make them more realistic? And add generic barge outline shaped boats
+where we know residential moorings are positioned?" Reference: the owner's CC0 photo of Greenland Dock
+(`data/images/contrib/greenlanddock/`, `?view=greenlanddock&t=2026-10-11T12:45`): houseboats, narrowboats and Dutch
+barges with masts at the east end of the dock.
+
+Where the port draws vessels (2026-10-11):
+- AIS vessels: `layers/ships.js` (data `ships-data.js`; snapshot, live, live-cache, hourly cache). Now one model per type.
+- Boats alongside piers (simulated Clipper, ferry, tour boat) and berthed historic vessels (HMS Belfast and 5 others):
+  `layers/piers.js`, `piers-models.js` (unchanged; its `clipper()` and `tourBoat()` are reused for AIS vessels).
+- River buses of River > "River buses and piers" (`rbus`, off by default): `layers/river.js` `rebuildClock`, still
+  beams and a plate (not changed: not in this task). Historic ships (`rships`): badges only (the models are in piers.js).
+- `?wakes=test` (`layers/wind.js`): wakes only, no hulls.
+- NEW: generic boats at known moorings, `moored-boats.js`, drawn by `layers/river.js` part "Moorings and houseboats"
+  (`rmoor`, on by default).
+
+**Models** (`docklands/boats-models.js`). Local frame as piers-models.js (x starboard, y up from the waterline, z aft, bow
+at -L/2). `BB extends GB` adds a lofted hull: stations with deck height `free(t)` (sheer: higher at the bow) and half-beam
+`half(t)`; per station five points (deck edge x `flare`, boot top, waterline, bilge, keel); a raked stem (`rakeBow`, m)
+and stern; bands: topsides (painted or not), boot top, antifouling; the deck follows the sheer; stem and transom are fans.
+`strip()` for bulwarks, rubbing strakes, fendering and coach lines along the deck edge; `windows()`, `band()`, `plate()`
+(leeboards). 18 models: narrowboat (321 triangles), widebeam (321), Dutch barge (488) and with mast (520), converted
+Thames lighter (318), floating home (126), sailing yacht (414), motor cruiser (378), Thames sailing barge (528), tug
+(586), launch or work boat (388), cargo ship or coaster (550), tanker (602), dredger (512), barge (292), cruise ship
+(540), and the piers-models catamaran (708) and passenger boat (642). Attributes: position, normal, color (linear), `gp`
+= (glow, paint) packed from GB's glow and camo (WebGPU allows 8 vertex buffers: position, normal, color, gp, the instance
+matrix, `tint`, `tint2`). `boatMaterial(U)`: paint 1 takes the instanced attribute `tint`, paint 2 `tint2` (TSL
+`attribute()` reads an `InstancedBufferAttribute` from the geometry on both backends: WebGL sets the divisor, WebGPU the
+instance step mode); windows glow warm by `U.night`; fragments above `U.cut` are discarded. One InstancedMesh per model:
+the per-instance scale is beam / B0, length / L0 and a milder height factor, so one model serves a 12 m and a 26 m tug.
+Colours: seeded palettes (`PAINT`: canal-boat colours with a contrasting coach line, dark barge hulls with varnished or
+white wheelhouses, cladding colours of lighters and floating homes, white yachts with blue or green sail covers, tug
+superstructures white, red, cream or orange over black or navy hulls; launches by service: police and PLA navy, rescue
+navy and orange, pilot black). Liveries are generic: no names, no logos.
+
+**AIS vessels** (`layers/ships.js`). `aisModel(v)`: "S.B" or "SAILING BARGE" in the name: Thames sailing barge; ITU 52,
+31, 32: tug; 33: dredger (under 30 m: launch); 40-49: catamaran when 20 m or more and beam/length 0.18 or more or
+"CLIPPER" in the name, else launch; 60-69: 100 m or more cruise ship, "CLIPPER" or beam/length 0.3 or more (under 45 m)
+catamaran, 15 m or more passenger boat, else launch; 70-79: cargo ship when 45 m or more and slender, else barge; 80-89:
+tanker; 50-59 and 30: launch; unknown: by size. No AIS size: `TYPICAL` per model (tug 20 x 7 m, launch 13 x 4.2, ...). The
+small-craft rule is unchanged (ships-data.js drops them before drawing). The type plate is now drawn only beyond 150 m
+(size 0 to 5 m from 150 m to 980 m): a marker far away, no floating box beside a hull close up. Masthead light at the
+model's masthead. Vessels bob (heave and a little roll; half as much under way). A vessel whose hull holds the camera is
+hidden (scale 0). `api.vessels` gives `model` and `W`.
+
+**Generic boats at known moorings** (`docklands/moored-boats.js`): NOT real vessels; the card says "Generic boat at a known
+mooring, not a real vessel", the model, the size, the rule and the OSM source (way id, tags, licence, extract date). No new
+data file: everything is derived at load time from files already in the register (`cwplans/feeds/river/osm-river.json`,
+`cwplans/docklands/data/piers.json`, `area.js`), all OSM (ODbL).
+1. Houseboat outlines: each OSM `building=houseboat` item (51 in the box) is matched to the model building whose footprint
+   centroid is within 6 m (low and small footprints only); the model is fitted to the footprint's minimum-area rectangle
+   (length, beam, heading; bow either way by hash); type by beam (8 m and short: floating home; 6.8 m: lighter; 4.6 m:
+   Dutch barge, or a lighter on tidal water; 2.8 m: widebeam; less: narrowboat). The 51 footprint buildings are hidden
+   while the part is on: `ctx.buildOpts.skip` is wrapped (chained to piers.js's wrapper; with no earlier wrapper the glTF
+   model buildings from building-models.json are added, as piers.js does, because the option replaces main.js's set).
+   The rebuild: if no other rebuild consulted the skip set within 1.5 s of the change, river.js calls
+   `ctx.rebuildBuildings()` itself (one rebuild instead of two at load).
+2. Pontoons of moorings: piers.json piers whose OSM `mooring` is set and not "no", or whose name says Moorings or Marina;
+   their pontoons, decks and walks (finger jetties), or the minimum-area rectangle of a fixed jetty outline. Class:
+   canal (the water polygon's width 2 x area / perimeter under 30 m), tidal (Thames), residential (`mooring=private` or
+   residential, a name with Moorings, a marina with access=no), else marina. Mix by class (MIX in the file): canal 62 %
+   narrowboats, 33 % widebeams; residential Dutch barges, widebeams, lighters, floating homes; tidal lighters, Dutch barges
+   (some with masts), a sailing barge; marina 45 % yachts, 25 % motor cruisers, some barges. Sizes: narrowboat 15 to 21 x
+   2.1 m, widebeam 15 to 20 x 3 to 4, Dutch barge 18 to 30 x 4 to 5, lighter 22 to 30 x 5.5 to 7, floating home 14 to 22 x
+   6 to 8, yacht 8 to 13 m, cruiser 8 to 14 m, sailing barge 25 to 29 x 6. Along each pontoon side from one end: a type
+   by hash, an empty berth by hash (10 to 20 %), the boat 0.35 m off the pontoon, centre on the pontoon (it may overhang
+   the end), gaps 0.6 to 2.6 m; rafted two or three abreast (tidal 40 %, residential 15 %, canal 12 %). A boat is kept
+   only if 9 points of its outline are on water and it overlaps (SAT, 0.25 m margin) no pontoon, deck, walk, gangway,
+   berthed vessel, fixed pier outline or other boat; else a smaller fallback type, else skip 3 m. Fixed pier outlines named
+   for the moorings are not obstacles (Garden Barge Square, OSM way 824820103, covers the Downings Roads moorings: with it
+   as an obstacle only 3 boats fitted there).
+- Every choice is a hash of the OSM id, pontoon index, side and slot (FNV-1a): the same place shows the same boats.
+- Level: dock polygons at their level; tidal at max(`WU.tideLevel`, ground + 0.3 m) (houseboats sit on the mud at low
+  water). Bob: 2.5 cm in docks, 5 cm on the Thames, plus wind. Hidden: a boat that holds the camera; a boat under an AIS
+  vessel (checked each second against `__docklands3.layers.ships.api.vessels`, as piers.js does; `stats.ais_hidden`).
+- Tap: a ray against each boat's box (keel to cabin roof) through `ctx.addPick`. The OSM mooring nodes that are pontoons
+  (`man_made=pier`) no longer get the 6 m blue post (their boats show them); other moorings get a small yellow buoy.
+
+## Three.js port: dock edges follow the outlines (2026-10-11)
+
+Owner, 2026-10-11 (live port, from above over Surrey Docks): "why does greenland dock not have straight sides?". Fault F54
+in the curation skill.
+- **Cause.** `build.js` `waterSink` sank the 20 m LiDAR grid only at grid points more than one cell inside a non-tidal
+  water polygon ("the edge cells stay: the bank"). The ground at quay height (about 5.0 m OD at Greenland Dock; water
+  3.3 m) covered the water for up to 20 m along each wall, and the visible edge was the saw-tooth of the 20 m triangles.
+  From the quay (`?view=greenlanddock&t=2026-10-11T12:45`) the near water was a grey slab. The tidal water (every grid
+  point inside sinks to the bed) had the same saw-tooth when the tide layer is off: the cells that cross the outline
+  slope from the bank to the bed. With the tide layer on (the default), `layers/tide.js` replaces those squares with its
+  5 m foreshore lattice snapped to the edges, so the Thames was near the outline already.
+- **Rule now** (`build.js`):
+  - `terrainModel()` (computed once, memoised): the water polygon of each grid point (even-odd scanlines; overlaps in
+    `multi`), the sunk heights (non-tidal: min(LiDAR, level - 1.5 m), at EVERY point inside, no erosion; tidal: the bed,
+    as before), the outline edges by the 20 m squares they cross (`bySq`: Liang-Barsky against each square of the edge's
+    box: the spatial index), and the land heights `LH`.
+  - `LH` (the "no dip" rule): the LiDAR, except at the corners of the squares an outline crosses: a corner in the water
+    (its LiDAR is the water surface) and a land corner of a non-tidal water with LiDAR under level + 0.3 m (a water
+    return) take the HIGHEST LiDAR of the land points (outside all water) round it, 3 x 3, else 5 x 5, that are at least
+    level + 0.3 m, kept within level + 0.3 m to level + 3 m; with none, level + 0.5 m. Land corners of tidal water keep
+    their LiDAR (natural foreshore can be low). Stated defaults, not surveyed.
+  - `terrainGeometry()`: the grid points stay the first nx x nz vertices (tide.js reads them by index; land points at
+    `LH`, water points at the sunk height). Each square an outline crosses: each of its two triangles (diagonal (i+1, j)
+    to (i, j+1), as before) is split, edge by edge, along the line of every outline edge that passes through a piece
+    (convex pieces only; extended lines past an edge's end only add cuts). Each final piece lies wholly on one side; it
+    is classed by the parity of the outline edges of each polygon crossed on the straight way from its centre to the
+    corner of the square farthest from the outline (a known side from the scanlines; a vertex on the ray counts on one
+    side only, as the scanline rule). Land pieces lie on the plane through the corners' `LH`; water pieces on the plane
+    through that water's heights at the corners (non-tidal: level - 1.5 m, or the grid value at a corner inside; tidal:
+    the bed at each corner, `bedAt`). Along each outline edge's part in a triangle, a vertical quay wall (two triangles,
+    front face towards the lower side; the terrain material is one-sided) joins the two sides; skipped on the model
+    box's sides and where both sides are the same class or within 2 cm. Shared vertices: an open-addressing hash on
+    (x, z) in mm plus y (a string-keyed Map was the slowest part).
+  - The wall is coloured by the terrain material (`materials.js` `terrainMaterial`): wall vertices have `uv.y` = 2 at the
+    top and 2 + height at the foot; uv.y >= 1.5 gives dock wall stone, weathered granite and concrete `#87827a`, turning
+    to a dark green-grey `#525447` from 1.3 to 1.9 m below the top (the weed line at the water). With a ground image the
+    image is mixed out there. Pixel art and Line drawing replace the terrain material and draw the wall flat.
+  - `terrainIndexWithout(G, drop)` (exported): the index without the squares where `drop(i, j)`, a cut square giving its
+    pieces and walls (`G.userData.cut`: square index -> triangles). `layers/tide.js` now calls it for its terrain index
+    (before, it rebuilt the plain grid index and would have dropped the cut docks). Its `terrain_squares_replaced` stat
+    now counts the squares.
+  - `surfaceAt` is now the plane through `LH` (the land part of the mesh): trees, greens and wildlife stand on the raised
+    quay corners; over water it is the LiDAR water surface (or the quay height next to an outline). `groundAt` and the
+    navigation ground (main.js `groundB`, bilinear LiDAR) are unchanged: the eye still stays above the water surface.
+  - Normals: `normalsOf` on the arrays (same result as `computeVertexNormals`, max difference 0, 4 x faster); the bounding
+    sphere is set from the box (computeBoundingSphere cost about 90 ms cold).
+- **Measured** (2026-10-11, the whole box): 4,905 squares cut (2,328 docks only, 2,524 tidal only, 53 both), 23,530
+  pieces, 13,618 wall faces, 90.2 km of wall; 210,000 -> 264,625 triangles (+26 %), 105,656 -> 191,091 vertices. Build
+  time of `terrainGeometry` (container shared and loaded, load average 15 to 20; cold, as the page calls it once): Node
+  CPU 125 to 270 ms before, 400 to 500 ms after (terrainModel about 80 to 100 ms of it); in the page, `G.userData.stats.ms`
+  315 ms (model 97 ms) on the first quiet-ish run, 0.8 to 1.9 s under heavy load (before: 0.16 to 0.2 s in the same
+  runs). Warm: 32 -> about 100 ms. Not measured on a phone. If it is too slow there: the tidal squares (half of the
+  work) are replaced by the foreshore while the tide layer is on, so they could be cut lazily (when the tide layer is
+  off) or in a worker.
+- **Consumers checked**: tide.js (index through `terrainIndexWithout`; its `land()` reads the grid heights, now `LH`);
+  greens (`greensGeometry` uses `surfaceAt`: still exact on the land pieces, which lie on the `LH` planes); trees and
+  wildlife (`surfaceAt`); riverbed and under.js (no change: the cut-away shows the faint terrain, walls included);
+  ring.js (the box border is never cut: its edge vertices are unchanged unless a raised corner is on the border); the
+  water mirror (a plane at the water level: no change); occlude.js (buildings only); the flood `walls` layer (EA tidal
+  defences, 0.8 m slabs to crest level; the quay walls are not those and are not drawn by it).
+- **Test**: `node docklands/test/dock-edges-check.mjs [--base http://127.0.0.1:8196] [--layers water,walls] [--tide 0]`:
+  vertical rays against the terrain mesh (and the foreshore with the tide layer on) 0.5 m each side of the outline every
+  2 m: Greenland Dock (A.water[65], 1,135 points) and 2 km of the Thames (the tidal polygon with the most vertices). With
+  `?layers=water,walls` (no tide layer): 100 % within 0.5 m on both. With the full page (tide on), the Thames water side
+  is the foreshore and is checked only as "not above the land". Screenshots: the photo view at 1288 x 966 @2, and over
+  Surrey Docks from 600 m and 160 m. `photo-tones.mjs`: water_near now starts at the quay wall (see the activity log).
+- **WebGL page** (`cwplans/docklands/index.html`, `waterMask()` / terrainSink): still the old rule (sunk one cell
+  inside, the edge cells a 20 m bank). To port: the same terrain cut in its terrain builder (its terrain is a grid with
+  the same diagonal; the cut squares need their own vertices and an index range), the wall colour in its terrain shader
+  (it bakes colour into the vertex: give the wall vertices the stone colour), `LH` for its green and tree heights, and
+  its tide sink (terrainSink) applied to the tidal pieces.

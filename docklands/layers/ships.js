@@ -1,8 +1,12 @@
 // Layer "ships" of the Three.js port (docklands/): vessels from AIS, as the WebGL page's ships-layer.js (Layers > River >
 // Ships (AIS), on by default): the same sources, private-craft rule, card and refresh (the data part: ../ships-data.js).
-// Drawing: low-poly hulls sized by AIS length and beam, a superstructure, a mast and a plate coloured by type (passenger
-// orange, high-speed cyan, tug yellow, cargo green, tanker red, aids to navigation violet), an arrow ahead of the bow when
-// under way, labels for ships of 60 m or more; at night navigation lights (masthead and stern white, port red, starboard
+// Drawing (2026-10-11, owner: "can we make them more realistic?"): one low-poly model per vessel type (../boats-models.js:
+// tug, launch or work boat, river-bus catamaran, passenger boat, cruise ship, cargo ship, tanker, dredger, barge, Thames
+// sailing barge), chosen from the AIS ship type, length, beam (and "S.B" or "CLIPPER" in the name), scaled to the AIS
+// length and beam (typical sizes for the type when AIS gives none), paint colours by a hash of the MMSI; one InstancedMesh
+// per type. A small plate coloured by type (passenger orange, high-speed cyan, tug yellow, cargo green, tanker red, aids
+// to navigation violet) floats over the masthead beyond 150 m only (a marker at a distance), an arrow ahead of the bow when
+// under way, labels for ships of 60 m or more; a vessel that holds the camera is hidden; at night navigation lights (masthead and stern white, port red, starboard
 // green, each in its sector; one all-round white when moored or at anchor) as emissive points that the bloom picks up.
 // Hulls float at the water: tidal polygons at WU.tideLevel (water.js shared contract), docks at their polygon level.
 // Motion: each moving vessel is dead-reckoned from its last report along its course at its speed (and the change of speed
@@ -22,6 +26,7 @@
 import { WU, MAXW, setWakes } from '../water.js';
 import * as D from '../ships-data.js';
 import { vec3, float, attribute } from 'three/tsl';
+import { models, boatMaterial, boatMesh, aisModel, TYPICAL, paintOf, lin } from '../boats-models.js';
 
 const KN = 0.514444, CAP_S = 180, BLEND = 2000, NOW_TOL = 5 * 60e3, HIST_MAX = 24 * 3600e3, CAP = 256;
 const LC_EVERY = 60e3, TRAIL_MS = 60 * 60e3, TRAIL_MAX = 8000;   // live-cache: read every 60 s; trails of the last hour
@@ -47,13 +52,6 @@ export default {
       const P = S.poly; return P ? (P.w.tidal ? WU.tideLevel.value : P.w.level) : Math.max(ctx.groundAt(S.x, S.z), WU.tideLevel.value); };
 
     // ---------- geometry: unit hull (bow at z -0.5, beam 1, keel -0.35 to deck 1), boxes, arrow, light points
-    function hullGeometry() {
-      const top = [[-.5, .5], [.5, .5], [.5, -.12], [.32, -.36], [0, -.5], [-.32, -.36], [-.5, -.12]], bot = top.map(([x, z]) => [x * .72, z * .9]), p = [];
-      const v = (a, y) => p.push(a[0], y, a[1]), n = top.length;
-      for (let i = 0; i < n; i++) { const j = (i + 1) % n; v(top[i], 1); v(bot[i], -.35); v(top[j], 1); v(top[j], 1); v(bot[i], -.35); v(bot[j], -.35); }
-      for (let i = 0; i < n; i++) { const j = (i + 1) % n; p.push(0, 1, 0); v(top[j], 1); v(top[i], 1); }   // deck
-      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); g.computeVertexNormals(); return g;
-    }
     function arrowGeometry() {
       const P = [[-.08, 0], [.08, 0], [.08, -.7], [.25, -.7], [0, -1], [-.25, -.7], [-.08, -.7]], T = [0, 1, 2, 0, 2, 6, 3, 4, 5], p = [];
       for (const k of T) p.push(P[k][0], 0, P[k][1]);
@@ -67,11 +65,14 @@ export default {
     // the plate is unlit: by night it dims to 15 % (at full brightness a plate on a ship moored near a photo view's eye filled the frame, 2026-10-09);
     // the instance colour multiplies this colour (NodeMaterial applies instanceColor after colorNode)
     const plateMat = new THREE.MeshBasicNodeMaterial(); plateMat.colorNode = vec3(1).mul(float(1).sub(ctx.U.night.mul(0.85)));
-    const hulls = inst(hullGeometry(), solid(), CAP * 2), supers = inst(unitBox(), solid(), CAP), masts = inst(unitBox(), solid(), CAP), plates = inst(unitBox(), plateMat, CAP, false);   // the type plate unlit, a marker by day and night (the WebGL page draws its ships at full brightness)
+    const masts = inst(unitBox(), solid(), CAP), plates = inst(unitBox(), plateMat, CAP, false);   // aids to navigation: a mast; the type plate unlit, a marker by day and night (the WebGL page draws its ships at full brightness)
+    // the vessel models: one InstancedMesh per type (boats-models.js), the shared material (paint by instance, windows lit by night, U.cut)
+    const MOD = models(), bmat = boatMaterial(ctx.U), MESH = {};
+    for (const k of ['tug', 'launch', 'cat', 'tour', 'cruise', 'cargo', 'tanker', 'dredger', 'barge', 'sbarge']) { MESH[k] = boatMesh(MOD[k], bmat, CAP); group.add(MESH[k]); }
     const arrowMat = solid(); arrowMat.side = THREE.DoubleSide; const arrows = inst(arrowGeometry(), arrowMat, CAP, false);
     const lamp = c => { const m = new THREE.MeshBasicNodeMaterial(); m.colorNode = vec3(...c).mul(9); return inst(new THREE.OctahedronGeometry(.5, 0), m, CAP * 3, false); };
     const lampW = lamp([1, .95, .85]), lampR = lamp([1, .08, .05]), lampG = lamp([.1, 1, .35]);
-    const ALL = [hulls, supers, masts, plates, arrows, lampW, lampR, lampG];
+    const ALL = [...Object.values(MESH), masts, plates, arrows, lampW, lampR, lampG];
     // trails of moving vessels from the live-cache buffer (last hour): one LineSegments, colour by type, fading with age
     const trailPos = new Float32Array(TRAIL_MAX * 6), trailCol = new Float32Array(TRAIL_MAX * 6), trailFade = new Float32Array(TRAIL_MAX * 2), trailGeo = new THREE.BufferGeometry();
     trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3).setUsage(THREE.DynamicDrawUsage));
@@ -98,7 +99,11 @@ export default {
       if (ctx.stats.ships) ctx.stats.ships.trails = n;
     }
     const col = new THREE.Color(), dummy = new THREE.Object3D();
-    const HULL = [.93, .94, .96], BARGE = [.38, .33, .3];
+    // paint colours of a vessel: by model and a hash of the MMSI; work boats by their service (ITU type)
+    const SERVICE = { 55: ['#1d2b45', '#eceeed'], 51: ['#1d2b45', '#e06a1c'], 50: ['#1b1d1f', '#eceeed'], 53: ['#1d2b45', '#eceeed'], 58: ['#eceeed', '#9e2f28'] };
+    const paint = (key, v) => SERVICE[v.ship_type] && key === 'launch' ? SERVICE[v.ship_type].map(lin) : paintOf(key, v.mmsi);
+    const sizeOf = (key, v) => { const T = TYPICAL[key] || [15, 4.5], L = v.length > 0 ? Math.max(v.length, 5) : T[0]; return [L, v.beam > 0 ? Math.max(v.beam, 1.8) : v.length > 0 ? L * T[1] / T[0] : T[1]]; };
+    const dress = S => { const k = S.model = aisModel(S.v), M = MOD[k]; [S.L, S.W] = sizeOf(k, S.v); S.sy = Math.max(.7, Math.min(1.4, Math.sqrt(S.L / M.L0))); S.H = M.deck * S.sy; S.top = M.top[0] * S.sy; S.topZ = M.top[1] * S.L / M.L0; S.paint = paint(k, S.v); S.ph = (S.v.mmsi % 1000) / 159; return S; };
 
     // ---------- state
     const SH = { from: TEST ? 'test' : 'none', at: null, n: { shown: 0, private: 0, outside: 0, moving: 0 }, err: 0, wait: 60e3, timer: 0, busy: false, lastError: null, mode: 'now', hist: null, attribution: {} };
@@ -114,10 +119,10 @@ export default {
       for (const v of keep) {
         const [x, z] = geo(v.lon, v.lat); if (!inBox(x, z)) { SH.n.outside++; continue; }
         const c = conv(v.lon, v.lat), hdg = okDeg(v.heading, 360), cog = okDeg(v.cog, 360), spd = (v.sog || 0) * KN, t0 = v.seen ? Date.parse(v.seen) : Date.parse(at);
-        const old = ST.get(v.mmsi), L = Math.max(v.length || 20, 8), W = Math.max(v.beam || L / 5, 3);
+        const old = ST.get(v.mmsi);
         let acc = 0; if (old && old.t0 !== t0) { const dt = (t0 - old.t0) / 1000; if (dt > 1 && dt < 900) acc = Math.max(-1.5, Math.min(1.5, (spd - old.spd) / dt)); } else if (old) acc = old.acc;
-        const S = { v, x0: x, z0: z, t0, spd, acc, moving: v.kind !== 'aton' && !D.still(v), hd: ((hdg ?? cog ?? 0) * deg) + c, co: ((cog ?? hdg ?? 0) * deg) + c,
-          L, W, H: Math.min(1.2 + L / 30, 6), col: D.colOf(v), x, z, h: 0, y: 0, cur: 0, poly: null, px: 0, pz: 0 };
+        const S = dress({ v, x0: x, z0: z, t0, spd, acc, moving: v.kind !== 'aton' && !D.still(v), hd: ((hdg ?? cog ?? 0) * deg) + c, co: ((cog ?? hdg ?? 0) * deg) + c,
+          col: D.colOf(v), x, z, h: 0, y: 0, cur: 0, poly: null, px: 0, pz: 0 });
         if (old && old.cur && Math.hypot(old.x - x, old.z - z) < 600) S.blend = { x: old.x, z: old.z, h: old.h, t: performance.now() };
         ST.set(v.mmsi, S); seen.add(v.mmsi); SH.n.shown++; if (S.moving) SH.n.moving++;
       }
@@ -149,7 +154,7 @@ export default {
     function startTest() {
       PATH = testPath(); const T0 = performance.now();
       for (const t of TESTS) { const v = { mmsi: t.mmsi, kind: 'vessel', name: t.name, ship_type: t.ship_type, class: 'A', length: t.length, beam: t.beam, nav_status: 0, sog: t.v / KN, source: 'synthetic', attribution: 'synthetic test vessel (?ships=test), not AIS' };
-        ST.set(t.mmsi, { v, test: t, L: t.length, W: t.beam, H: Math.min(1.2 + t.length / 30, 6), col: D.colOf(v), moving: true, x: 0, z: 0, h: 0, y: 0, cur: 1, spd: t.v, acc: 0, co: 0, poly: null, px: 0, pz: 0, T0 }); }
+        ST.set(t.mmsi, dress({ v, test: t, col: D.colOf(v), moving: true, x: 0, z: 0, h: 0, y: 0, cur: 1, spd: t.v, acc: 0, co: 0, poly: null, px: 0, pz: 0, T0 })); }
       SH.n = { shown: TESTS.length, private: 0, outside: 0, moving: TESTS.length }; SH.at = new Date().toISOString(); status();
     }
     function stepTest(S, now) {
@@ -205,12 +210,14 @@ export default {
 
     // ---------- each frame: positions, instances, lights, labels, wakes
     const v3 = new THREE.Vector3();
-    const put = (mesh, i, x, y, z, h, sx, sy, sz, c) => { if (i >= mesh.instanceMatrix.count) return; dummy.position.set(x, y, z); dummy.rotation.set(0, -h, 0); dummy.scale.set(sx, sy, sz); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix); if (c) mesh.setColorAt(i, col.setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace)); };
+    const put = (mesh, i, x, y, z, h, sx, sy, sz, c, rx = 0, rz = 0) => { if (i >= mesh.instanceMatrix.count) return; dummy.position.set(x, y, z); dummy.rotation.set(rx, -h, rz, 'YXZ'); dummy.scale.set(sx, sy, sz); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix); if (c) mesh.setColorAt(i, col.setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace)); };
+    const putBoat = (S, key, x, y, z, h, L, W, sy, p, k, rx, rz) => { const m = MESH[key], i = k[key] = (k[key] || 0) + 1, j = i - 1, M = MOD[key]; if (j >= m.instanceMatrix.count) return;
+      put(m, j, x, y, z, h, W / M.B0, sy, L / M.L0, null, rx, rz); const a = m.geometry.attributes; a.tint.setXYZ(j, ...p[0]); a.tint2.setXYZ(j, ...p[1]); };
     const loc = (S, lx, lz) => [S.x + lx * Math.cos(S.h) - lz * Math.sin(S.h), S.z + lx * Math.sin(S.h) + lz * Math.cos(S.h)];   // local (x starboard, z aft) to grid
     function frame() {
       if (!visible) return;
       const now = performance.now(), ref = refTime(), cam = ctx.camera.position, night = ctx.U.night.value > .02;
-      const c = { hull: 0, sup: 0, mast: 0, plate: 0, arrow: 0, W: 0, R: 0, G: 0 }; drawn = [];
+      const c = { mast: 0, plate: 0, arrow: 0, W: 0, R: 0, G: 0 }, kb = {}, t = now / 1000, amp = .03 + Math.min(12, WU.windSpeed ? WU.windSpeed.value : 3) * .006; drawn = [];
       for (const S of ST.values()) {
         if (S.test) stepTest(S, now);
         else {
@@ -221,20 +228,23 @@ export default {
         }
         const y = levelOf(S) + .1, v = S.v; S.y = y; drawn.push(S);
         if (v.kind === 'aton') { put(masts, c.mast++, S.x, y, S.z, 0, 1.5, 10, 1.5, [.9, .9, .95]); put(plates, c.plate++, S.x, y + 10, S.z, 0, 3, 3, 3, S.col); continue; }
-        const { L, W, H } = S, mh = Math.max(5, Math.min(14, L * .35));
-        put(hulls, c.hull++, S.x, y, S.z, S.h, W, H, L, HULL);
-        const [sx, sz] = loc(S, 0, L * .08); put(supers, c.sup++, sx, y + H, sz, S.h, W * .7, Math.min(2.5 + L / 40, 6), L * .35, S.col);
-        const [mx, mz] = loc(S, 0, -L * .05), my = y + H + Math.min(2.5 + L / 40, 6);
-        put(masts, c.mast++, mx, my, mz, S.h, .4, mh, .4, S.col); put(plates, c.plate++, mx, my + mh, mz, S.h, 5, 4, 5, S.col);
-        if (S.test && S.test.tow) { const p = along(S.d - (L / 2 + S.test.tow.gap + S.test.tow.L / 2)); put(hulls, c.hull++, p.x, levelOf({ x: p.x, z: p.z, px: 0, pz: 0 }) + .1, p.z, p.h, S.test.tow.W, 1.6, S.test.tow.L, BARGE); }
+        const { L, W, H } = S;
+        // the camera inside the hull (a photo view from a pontoon or a moored ship): the vessel is hidden
+        const ch = Math.cos(S.h), sh = Math.sin(S.h), dx = cam.x - S.x, dz = cam.z - S.z, lx = dx * ch + dz * sh, lz = -dx * sh + dz * ch, holds = Math.abs(lx) < W / 2 + 2 && Math.abs(lz) < L / 2 + 2 && cam.y < y + S.top + 3;
+        const a = (S.test || S.moving) ? amp * .5 : amp, bob = Math.sin(t * 1.1 + S.ph) * a, k = holds ? 0 : 1;
+        putBoat(S, S.model, S.x, y - .1 + bob, S.z, S.h, L * k, W * k, S.sy * k, S.paint, kb, Math.sin(t * .7 + S.ph) * a * .015, Math.sin(t * .9 + S.ph) * a * .05);
+        const [mx, mz] = loc(S, 0, S.topZ), my = y + H;
+        const dist = Math.hypot(cam.x - S.x, cam.y - y, cam.z - S.z), ps = dist < 150 ? 0 : Math.min(5, (dist - 150) * .006);   // the type plate: a marker at a distance only
+        if (ps > 0) put(plates, c.plate++, mx, y + S.top + 1 + ps, mz, S.h, ps, ps * .8, ps, S.col);
+        if (S.test && S.test.tow) { const p = along(S.d - (L / 2 + S.test.tow.gap + S.test.tow.L / 2)), M = MOD.barge; putBoat(S, 'barge', p.x, levelOf({ x: p.x, z: p.z, px: 0, pz: 0 }), p.z, p.h, S.test.tow.L, S.test.tow.W, Math.sqrt(S.test.tow.L / M.L0), paintOf('barge', 'tow'), kb); }
         const moving = S.test || S.moving;
         if (moving) { const spd = S.test ? S.spd : S.vnow ?? S.spd, s = Math.min(10 + spd / KN * 3, 60), [ax, az] = loc(S, 0, -L / 2); put(arrows, c.arrow++, ax, y + 1.5, az, S.h, 20, 1, s, S.col); }
         if (night) {   // lights: each in its sector, as seen from the camera; size grows with distance so they stay a few pixels
           const dist = Math.hypot(cam.x - S.x, cam.y - y, cam.z - S.z), sz = Math.max(.6, Math.min(12, dist * .004));
           const rel = wrap(Math.atan2(cam.x - S.x, -(cam.z - S.z)) - S.h), a = Math.abs(rel), side = 112.5 * deg;
-          if (!moving) put(lampW, c.W++, mx, my + mh + 4.5, mz, 0, sz, sz, sz);   // all-round white (moored, at anchor)
+          if (!moving) put(lampW, c.W++, mx, y + S.top + .3, mz, 0, sz, sz, sz);   // all-round white (moored, at anchor)
           else {
-            if (a <= side) put(lampW, c.W++, mx, my + mh + 4.5, mz, 0, sz, sz, sz);   // masthead
+            if (a <= side) put(lampW, c.W++, mx, y + S.top + .3, mz, 0, sz, sz, sz);   // masthead
             if (a >= side) { const [p, q] = loc(S, 0, L * .5); put(lampW, c.W++, p, y + H + .8, q, 0, sz, sz, sz); }   // stern
             if (rel <= 0 && rel >= -side) { const [p, q] = loc(S, -W * .5, -L * .1); put(lampR, c.R++, p, y + H + 1, q, 0, sz, sz, sz); }   // port
             if (rel >= 0 && rel <= side) { const [p, q] = loc(S, W * .5, -L * .1); put(lampG, c.G++, p, y + H + 1, q, 0, sz, sz, sz); }   // starboard
@@ -242,7 +252,8 @@ export default {
         }
       }
       const set = (m, n) => { n = Math.min(n, m.instanceMatrix.count); m.count = Math.max(1, n); m.visible = n > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
-      set(hulls, c.hull); set(supers, c.sup); set(masts, c.mast); set(plates, c.plate); set(arrows, c.arrow); set(lampW, c.W); set(lampR, c.R); set(lampG, c.G);
+      for (const [key, m] of Object.entries(MESH)) { set(m, kb[key] || 0); if (kb[key]) { m.geometry.attributes.tint.needsUpdate = true; m.geometry.attributes.tint2.needsUpdate = true; } }
+      set(masts, c.mast); set(plates, c.plate); set(arrows, c.arrow); set(lampW, c.W); set(lampR, c.R); set(lampG, c.G);
       placeLabels(); drawTrails(ref);
       const wakes = drawn.filter(S => (S.test || S.moving) && (S.test ? S.spd : S.vnow ?? S.spd) > .3).map(S => ({ S, d: (S.x - cam.x) ** 2 + (S.z - cam.z) ** 2 })).sort((a, b) => a.d - b.d).slice(0, MAXW)
         .map(({ S }) => ({ x: S.x, z: S.z, heading: ((S.co % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI), speed: S.test ? S.spd : S.vnow ?? S.spd, len: S.L, accel: S.acc || 0 }));
@@ -317,7 +328,7 @@ export default {
     setInterval(() => { if (TEST) return; setMode(); if (visible && !document.hidden && (SH.mode === 'now' || (SH.lc && lcCovers(ctx.clock)))) loadLC(); }, 1000);
     if (!TEST && !ONLY_SNAPSHOT) loadLC(true);
     group.visible = on;
-    const api = { object: group, setVisible, ownUi: true, get SH() { return SH; }, get vessels() { return drawn.map(S => ({ mmsi: S.v.mmsi, name: S.v.name, x: S.x, y: S.y, z: S.z, h: S.h, L: S.L, moving: !!(S.test || S.moving), speed: S.test ? S.spd : S.vnow ?? S.spd })); },
+    const api = { object: group, setVisible, ownUi: true, get SH() { return SH; }, get vessels() { return drawn.map(S => ({ mmsi: S.v.mmsi, name: S.v.name, model: S.model, x: S.x, y: S.y, z: S.z, h: S.h, L: S.L, W: S.W, moving: !!(S.test || S.moving), speed: S.test ? S.spd : S.vnow ?? S.spd })); },
       screenOf(mmsi) { const S = drawn.find(q => q.v.mmsi === mmsi); if (!S) return null; v3.set(S.x, S.y + S.H + 3, S.z).project(ctx.camera); return { x: (v3.x + 1) / 2 * innerWidth, y: (1 - v3.y) / 2 * innerHeight, z: v3.z }; },
       isPrivate: D.isPrivate, fetchLive, get meshes() { return ALL; } };
     return api;
