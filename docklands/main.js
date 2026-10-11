@@ -109,7 +109,8 @@ function rebuildBuildings() {
   if (OCC) OCC.dirty();
   draw();
 }
-const STATS = {}, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null)
+const STATS = { terrain: terrain.geometry.userData.stats }, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null);
+// STATS.terrain: build.js terrainGeometry's counts (squares cut along the water outlines, pieces, quay walls, triangles, ms)
 rebuildBuildings();
 
 // ---------- sky and light

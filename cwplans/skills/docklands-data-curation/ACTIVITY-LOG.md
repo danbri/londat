@@ -2271,3 +2271,24 @@ official data."
 - Sarajevo 3D Warehouse survey (114 models within 2 km of City Hall, not open): docs/regions/sarajevo-3dwarehouse.md.
 - To-do list for simple models from public imagery and open data: https://github.com/danbri/londat/issues/10
 - OKRs in GitHub issues: #2 (tracking), #3 to #8 (objectives).
+
+## 2026-10-11 (evening): dock edges follow the water outlines (F54, Three.js port)
+
+- Owner: "why does greenland dock not have straight sides?" and "The dock border / data fixes sound difficult to
+  generalise". One generic rule for every outline (no place-specific numbers in code): `docklands/build.js`
+  `terrainModel` / `terrainGeometry` cut the 20 m terrain triangles along the water outlines; land pieces on the LiDAR,
+  raised at the cut corners where the LiDAR is a water return; water pieces at the sunk height (docks level - 1.5 m,
+  tidal the bed); a vertical quay wall in dock stone `#87827a` with a dark weed line (`materials.js`). `layers/tide.js`
+  takes its terrain index from `terrainIndexWithout`. `__docklands3.STATS.terrain` gives the counts and times. Continued
+  from the stopped agent's work on branch `wip/agents-2026-10-11` (its dock-edge files only), checked and measured.
+- Measured: 210,000 -> 264,625 terrain triangles, 105,656 -> 191,091 vertices; build cold 110 to 141 ms -> about 360 ms
+  median (300 to 630 ms, shared container, load 15 to 23). Not measured on a phone.
+- Tests: `docklands/test/dock-edges-check.mjs` with `?layers=water,walls`: Greenland Dock and 2 km of Thames 100 %;
+  full page (tide on), no page errors: Greenland Dock 0.993 (entrance lock: tide-layer foreshore), Thames 0.924 (55
+  points over pre-existing foreshore holes counted apart). greens-check.mjs ok (vertex error
+  0.00006 m); load.mjs `view=greenlanddock` ok at both sizes; photo-tones.mjs water_near -0.078 luma (was +0.089: the
+  grey slab is gone; the render's near water is now darker and bluer than the photo's).
+- Open: the `?view=greenlanddock` eye is 5 m inside the OSM outline (the frame's foot is water, the photo's is quay):
+  re-solve; tide-layer foreshore holes at the Thames edge near the Greenland and South Dock entrances (also before);
+  the WebGL page keeps the old rule; build time on phones. Skill: docklands-3d-page, "Three.js port: dock edges follow
+  the outlines (2026-10-11)"; F54 updated.

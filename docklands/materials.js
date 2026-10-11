@@ -321,7 +321,11 @@ export function terrainMaterial() {
   m.userData.map = null;
   m.setGround = tex => {
     m.userData.map = tex; const g = vec3(0.38, 0.41, 0.4);
-    m.colorNode = tex ? lin(texture(tex, uv()).rgb.mul(1.15)) : lin(g);
+    // quay walls (build.js terrainGeometry: uv.y >= 2 along a water outline): dock wall stone, weathered granite and
+    // concrete, #87827a, turning dark green-grey (#525447) from 1.3 to 1.9 m below the top (uv.y - 2: metres below the
+    // top of the wall; the docks stand about 1.6 m under their quays): the weed line at the water
+    const wy = uv().y.sub(2), wall = mix(vec3(0.53, 0.51, 0.48), vec3(0.32, 0.33, 0.28), smoothstep(1.3, 1.9, wy));
+    m.colorNode = mix(tex ? lin(texture(tex, uv()).rgb.mul(1.15)) : lin(g), lin(wall), step(1.5, uv().y));
     m.needsUpdate = true;
   };
   m.setGround(null);
