@@ -101,6 +101,10 @@ planning and prototyping phase."
   expressed and logged in terms of FP-friendly operations on named graphs that (a) are the operations of tools/tasks from
   skills, upon static unchanging input named graphs"). Each step is a named operation of a skill's tool over inputs fixed
   by content hash, giving new graph versions, logged as an activity. How: the `cwplans-dataflow` skill.
+- Spanish Catastro (Dirección General del Catastro INSPIRE buildings, parcels, addresses) is allowed for the León region
+  on its own licence terms (owner, 2026-10-11: "Catastro - yes"): reuse only of data we have transformed (for example
+  LoD1 blocks or heights we compute); never commit or publish the original files (keep them in an ignored raw folder).
+  Register the source with licence class "review" and the transformation in the data register.
 - Contributed photos: do not describe or tag people; report recognisable faces and readable number plates to the owner
   (the `docklands-data-curation` skill, "Contributed photos").
 - The exception ends when the project leaves the prototyping phase; the owner says when.

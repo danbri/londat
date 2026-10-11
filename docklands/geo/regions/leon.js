@@ -18,9 +18,9 @@ export default {
       about: 'IGN / CNIG: PNOA LiDAR point clouds, MDT (terrain) and MDS models, PNOA orthophotos (Centro de Descargas)',
       licence: 'CC BY 4.0 (Orden FOM/2807/2015; credit "© Instituto Geográfico Nacional"; PNOA: "PNOA cedido por © Instituto Geográfico Nacional")',
       licenceClass: 'open', crs: { horizontal: 'ETRS89 / UTM 30N (EPSG:25830)', vertical: 'orthometric (Alicante datum), geoid EGM08-REDNAP' }, fallback: 'world-base' },
-    { id: 'es-catastro', status: 'review', area: 'Spain (not the Basque Country, not Navarre)',
+    { id: 'es-catastro', status: 'approved-transformed-only', area: 'Spain (not the Basque Country, not Navarre)',
       about: 'Dirección General del Catastro INSPIRE buildings (BU), parcels (CP), addresses (AD)',
       licence: 'own licence (v1.0, July 2016): reuse, also commercial, only of data that the user has transformed; the original data may not be redistributed',
-      licenceClass: 'review', fallback: 'world-base (OSM buildings)' },
+      licenceClass: 'review', approved: 'owner, 2026-10-11: "Catastro - yes" (publish only geometry and attributes we have transformed; never the original files)', fallback: 'world-base (OSM buildings)' },
   ],
 };
