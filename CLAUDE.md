@@ -43,6 +43,12 @@ working (the owner's words)".
   is my only way to see progress."): push each working change to `main` when its checks pass; the Pages workflow
   deploys it in a few minutes. Then confirm that the live file matches the commit.
 
+## Objectives and key results
+Q4 2026 OKRs (set 2026-10-11 at the owner's request): https://github.com/danbri/londat/blob/main/OKRS.md . Six objectives
+(data alive in the 3D view, measured realism, fast on the owner's iPhone, fresh live data, open traced data, a base that
+scales). Score them at each checkpoint (2026-10-25, 2026-11-22, end of quarter) with evidence, in its table and the
+activity log.
+
 ## Data policy (the cwplans exception)
 The owner's normal data-ethics rules are in danbri/glitchcan-minigam `CLAUDE.md` ("Data ethics"). This project has an
 exception, for the scoping, planning and prototyping phase only. Owner instruction, October 2026: "This is a special

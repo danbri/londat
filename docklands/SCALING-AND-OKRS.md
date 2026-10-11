@@ -79,6 +79,9 @@ Totals: about 25 to 35 agent-days to cover London; about 45 to 65 agent-days to 
 
 ## 3. Goals review ("OKRs")
 
+Superseded by the OKRs set the same day: https://github.com/danbri/londat/blob/main/OKRS.md . This section stays as the
+first scoring of the owner's goals.
+
 No OKRs were ever written: there are no objectives or key results in the repository, the skills or the five earlier
 session records. The only formal goal is the `/goal` of the session "Docklands ThreeJS port" (feature parity; planes;
 piers and boats; time scrubber against history; roof port; birds and foxes; tree species and seasons; the falling data
