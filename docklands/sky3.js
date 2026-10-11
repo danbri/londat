@@ -141,10 +141,10 @@ export class Sky3 {
     const B = this.base; if (!B) return; const { S, M, ph, day, up } = B, w = this.wx;
     const low = w ? clamp01(w.low ?? w.cover) : 0, mid = w ? clamp01(w.mid ?? 0) : 0, high = w ? clamp01(w.high ?? 0) : 0, cover = w ? clamp01(w.cover ?? Math.max(low, mid, high)) : 0;
     // direct sun through the cloud layers (stated factors, not measured: thick low cloud passes about 15%, mid 30%, high 70%)
-    const tr = (1 - 0.85 * low) * (1 - 0.7 * mid) * (1 - 0.3 * high);
+    const clear = !!(w && w.clear), tr = clear ? 1 : (1 - 0.85 * low) * (1 - 0.7 * mid) * (1 - 0.3 * high);   // clear air (layers/weather.js): the light as under a fair sky
     this.sun.intensity = 3.2 * up * tr; this.sun.color.setHSL(0.08, 0.6 * (0.4 + 0.6 * tr), 0.55 + 0.4 * sstep(S.alt, 0, 25));
     this.moon.intensity = M.alt > 0 ? 0.25 * ph * (1 - day) * (1 - 0.85 * cover) : 0;
-    this.fill.intensity = (0.18 + 1.0 * day) * (1 - 0.25 * cover); this.fill.color.setHSL(0.6, 0.5 * (1 - 0.7 * cover), 0.45 + 0.3 * day);
+    const gc = clear ? 0 : cover; this.fill.intensity = (0.18 + 1.0 * day) * (1 - 0.25 * gc); this.fill.color.setHSL(0.6, 0.5 * (1 - 0.7 * gc), 0.45 + 0.3 * day);
     this.sky.visible = day > 0.02 && !this.cutDark; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
     if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? cover : 0.25; this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
     const vis = w && w.visibility != null ? w.visibility : null;

@@ -330,7 +330,7 @@ export default {
     const qList = k => (ctx.qs.get(k) || '').split(',').filter(Boolean);
 
     // ---------- start: every part (or ?ov=a,b) and ?colour=
-    for (const k of (ctx.qs.has('ov') ? ctx.qs.get('ov') : Object.keys(P).filter(k => k !== 'heli').join(',')).split(',').filter(k => P[k])) setPart(k, true, true);   // all on by default except the helicopter route (owner, 2026-10-09); ?ov= or ?ov=a,b to choose
+    for (const k of (ctx.qs.has('ov') ? ctx.qs.get('ov') : 'cranes').split(',').filter(k => P[k])) setPart(k, true, true);   // only the cranes (real objects) by default (owner, 2026-10-11: "we have too many boring data overlays by default"; before: all but the helicopter route, 2026-10-09); ?ov=a,b to choose
     if (MODES[ctx.qs.get('colour')]) setColour(ctx.qs.get('colour'));
     if (qList('glow').length) setGlow(qList('glow'));
     if (qList('pins').length) setPins(qList('pins'));

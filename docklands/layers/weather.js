@@ -83,6 +83,11 @@ export default {
     }
     const metarOn = qs.get('metar') !== '0';
     let meteoOn = !/^(0|off|no)$/i.test(qs.get('weather') || ''), W = null, lastT = null, busy = false, again = false, visible = on;
+    // clear air (owner, 2026-10-11: "grey from medium height obscures the city - i was thinking for a way to ask for weather/fog/grey
+    // suppression"): no haze, and the cloud does not dim or grey the light; the clouds are still drawn and rain still falls.
+    // ?clear=1|0, kept in localStorage
+    const store = { get: () => { try { return localStorage.getItem('dl3clear'); } catch { return null; } }, set: v => { try { localStorage.setItem('dl3clear', v ? '1' : '0'); } catch { /* private mode */ } } };
+    let clear = qs.has('clear') ? /^(1|on|yes|)$/i.test(qs.get('clear')) : store.get() === '1';
 
     // ---------- rain and snow: streaks in a box round the camera
     const NMAX = 6000, BOX = 60, HGT = 80, pos = new Float32Array(NMAX * 6), seed = new Float32Array(NMAX * 3);
@@ -123,13 +128,14 @@ export default {
     function apply() {
       if (!visible || !W) { sky.setWeather(null); return; }
       const p = v => v == null ? null : v / 100;
-      sky.setWeather({ cover: p(W.cover), low: W.low == null ? p(W.cover) : p(W.low), mid: p(W.mid), high: p(W.high), visibility: W.vis, precip: W.precip });
+      sky.setWeather({ cover: p(W.cover), low: W.low == null ? p(W.cover) : p(W.low), mid: p(W.mid), high: p(W.high), visibility: clear ? null : W.vis, precip: W.precip, clear });
     }
     // ---------- menu
     ui.section('Weather');
     const note = ui.note('');
     ui.toggle('Weather (cloud, haze, rain) for the clock time', on, v => { visible = v; apply(); showNote(); });
     ui.toggle('Weather from Open-Meteo for other times (asks open-meteo.com)', meteoOn, v => { meteoOn = v; evaluate(); });
+    ui.toggle('Clear air: no haze or grey light (the clouds stay)', clear, v => { clear = v; store.set(v); apply(); showNote(); draw(); });
     const cred = ui.note('<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>). Cloud dimming, haze and rain amounts are drawn with stated factors, not measured.');
     cred.style.opacity = '0.75';
     const f0 = v => v == null ? '?' : Math.round(v);
@@ -138,6 +144,7 @@ export default {
       if (!visible) h = 'Weather is off: a fair sky is drawn.';
       else if (!w) h = `No weather for ${hhmm(ctx.clock)}${src.err ? ' (' + ctx.esc(src.err) + ')' : ''}: a fair sky is drawn (light cloud, no haze, no rain). Tick "Weather from Open-Meteo" for other times.`;
       else h = `${ctx.esc(hhmm(ctx.clock))}: cloud ${f0(w.cover)}%${w.low != null ? ` (low ${f0(w.low)}, mid ${f0(w.mid)}, high ${f0(w.high)})` : ''}, visibility ${w.vis != null ? (w.vis / 1000).toFixed(0) + ' km' : 'not given'}, ${w.precip ? w.precip.toFixed(1) + ' mm/h ' + (w.snow ? 'snow' : 'rain') : 'dry'}${w.temp != null ? `, ${w.temp.toFixed(1)} °C` : ''}${w.rh != null ? `, humidity ${f0(w.rh)}%` : ''}. Source: ${ctx.esc(w.src)}.`;
+      if (visible && w && clear) h += ' Clear air is on: no haze, light not dimmed by the cloud.';
       if (note.innerHTML !== h) note.innerHTML = h;
     }
     stats.weather = { get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src, metar: W.metar || null }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; }, get error() { return W ? null : src.err; } };
