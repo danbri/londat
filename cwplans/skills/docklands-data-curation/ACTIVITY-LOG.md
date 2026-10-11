@@ -2205,3 +2205,14 @@ official data."
   is mission Critical. As is sphericalish planet model cf google earth. And some maps and data worldwide. It is ok to be
   challenged by getting super rich dense data everywhere but we should architect for scaling this." O1 any locale, O2
   planet model and worldwide data, O3 universal access are mission-critical; five architecture rules for new work.
+
+## 2026-10-11 (evening): realistic boats and generic boats at moorings (Three.js port)
+
+- Owner: "Also the rendered boats, can we make them more realistic? And add generic barge outline shaped boats where we
+  know residential moorings are positioned?" Continued the stopped agent's work (branch `wip/agents-2026-10-11`): 18
+  low-poly vessel models (`docklands/boats-models.js`), AIS vessels by type (`docklands/layers/ships.js`), and generic
+  boats at moorings, now placed by a new tool `cwplans/tools/build-moorings.mjs` (activity `build-moorings`) from one
+  Overpass request into `cwplans/docklands/data/moorings.json` (register entry; OSM extract `overpass-2026-10-11-moorings`;
+  the raw answer is git-ignored because houseboat tags hold contacts): 346 GENERIC boats at 149 places. The rule reads
+  tags and shapes only (O1: any locale). `describe()` on the river and ships layer APIs (O3). Test
+  `docklands/test/boats-check.mjs`. Details: skill docklands-3d-page, "Three.js port: boats and moored barges (2026-10-11)".

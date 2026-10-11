@@ -2290,3 +2290,80 @@ Faults met and lessons:
 Open: the dabs are fixed to the screen, so when the view moves the colours slide under them (the "shower door" effect).
 Strokes fixed to the world (dab centres from world positions, or from splat centres when 3DGS data is used) would remove
 it. Not measured on a phone GPU. Labels and the HTML overlays are not painted.
+
+## Three.js port: boats and moored barges (2026-10-11)
+
+Owner, 2026-10-11: "Also the rendered boats, can we make them more realistic? And add generic barge outline shaped boats
+where we know residential moorings are positioned?" Reference: the owner's CC0 photo of Greenland Dock
+(`data/images/contrib/greenlanddock/`, `?view=greenlanddock&t=2026-10-11T12:45`): boats with masts at the far east end.
+A first agent was stopped mid-way (branch `wip/agents-2026-10-11`); its models and the AIS part were kept, its runtime
+placement was moved into a tool so that the rule is generic and its output is open data with a register entry.
+
+Where the port draws vessels: AIS vessels `layers/ships.js` (one model per type, below); boats alongside piers
+(simulated Clipper, ferry, tour boat) and berthed historic vessels `layers/piers.js`, `piers-models.js` (unchanged; its
+`clipper()` (navy hulls, white superstructure) and `tourBoat()` are reused for AIS vessels); river buses of River >
+"River buses and piers" (`rbus`, off by default): still beams and a plate; generic boats at known moorings:
+`moored-boats.js`, drawn by `layers/river.js` part "Moorings and houseboats" (`rmoor`, on by default).
+
+**Models** (`docklands/boats-models.js`). Local frame as piers-models.js (x starboard, y up from the waterline, z aft, bow
+at -L/2). `BB extends GB` adds a lofted hull: stations with deck height `free(t)` (sheer: higher at the bow) and half-beam
+`half(t)`; per station five points (deck edge x `flare`, boot top, waterline, bilge, keel); a raked stem and stern
+(`rakeBow`, `rakeStern`, m); bands: topsides (painted or not), dark boot top, antifouling; the deck follows the sheer; stem
+and transom are fans. `strip()` (bulwarks, rubbing strakes, fendering, coach lines), `windows()`, `band()`, `plate()`
+(leeboards). Triangles: narrowboat 321, widebeam 321, Dutch barge 488 (520 with mast), converted Thames lighter 318,
+floating home 126, sailing yacht 414, motor cruiser 378, Thames sailing barge 528, tug 586, launch or work boat 388, cargo
+550, tanker 602, dredger 512, dumb barge 292, cruise ship 540, Clipper catamaran 708, passenger boat 642. Attributes:
+position, normal, color, `gp` = (glow, paint) (WebGPU allows 8 vertex buffers). `boatMaterial(U)`: paint 1 takes the
+instanced attribute `tint`, paint 2 `tint2`; windows glow by `U.night`; fragments above `U.cut` are discarded; vz works
+through the camera (see "vz everywhere"). One InstancedMesh per model; the instance scale is beam / B0, length / L0 and a
+milder height factor. Colours: seeded palettes (`PAINT`); liveries generic: no names, no logos.
+
+**AIS vessels** (`layers/ships.js`). `aisModel(v)`: "S.B" or "SAILING BARGE" in the name: Thames sailing barge; ITU 52,
+31, 32: tug; 33: dredger (under 30 m: launch); 40-49: catamaran when 20 m or more and beam/length 0.18 or more or
+"CLIPPER" in the name, else launch; 60-69: 100 m or more cruise ship, "CLIPPER" or beam/length 0.3 or more (under 45 m)
+catamaran, 15 m or more passenger boat, else launch; 70-79: cargo ship when 45 m or more and slender, else barge; 80-89:
+tanker; 50-59 and 30: launch (police, PLA and pilot launches painted by their ITU service type); unknown: by size. Size
+from AIS length and beam; none: `TYPICAL` per model. The small-craft rule is unchanged (`ships-data.js` drops ITU 36, 37
+and class B non-commercial before drawing: counts only). The type plate shows only beyond 150 m (a marker far away).
+Vessels bob; a vessel that holds the camera is hidden. `api.vessels` gives `model` and `W`; `api.describe()` a short
+text (counts by model, the largest named vessels, the source, the private-craft count).
+
+**Generic boats at known moorings.** NOT real vessels.
+- Data: `cwplans/tools/build-moorings.mjs` (activity `build-moorings`) -> `cwplans/docklands/data/moorings.json`
+  (register entry, OSM ODbL, extract `overpass-2026-10-11-moorings`). One Overpass request (maps.mail.ru mirror) for
+  `mooring=*`, `houseboat=*`, `building=houseboat`, `seamark:type=mooring`, `leisure=marina` with geometry; the raw
+  answer stays in `cwplans/data/raw/moorings/` (git-ignored: houseboat tags hold phone numbers and e-mails). The rule reads
+  only tags, shapes and the water polygons of area.js, never place names, so it works for any box (`fetch --bbox`).
+- Places: (1) houseboat outline: one boat on its minimum-area rectangle, type by beam, its model buildings hidden
+  (`hide`, checked against build.js `MFP`); (2) pontoons of moorings (piers.json, OSM mooring not "no", a name with
+  Moorings or Marina, or inside a marina or mooring area; passenger piers left out): both long sides of each pontoon,
+  deck, walk; (3) mooring ways: along the water side(s); (4) marina or mooring areas with no pontoon: their quay edges;
+  (5) mooring nodes: the nearest water edge within 30 m; (6) seamark buoys: one dumb barge (dolphins, chains and
+  historic moorings skipped). Class (canal by water width under 30 m, residential, tidal residential, marina, mixed,
+  tier) sets the mix and sizes (tool header and `meta.rules`). Fill: type by hash, empty berths, gaps, rafting two or
+  three abreast on tidal residential moorings; kept only on water and clear of pontoons, piers, berthed vessels and other
+  boats. FNV-1a seeds of OSM id, part, side, slot: the same place always shows the same boats.
+- Data of 2026-10-11: 193 OSM elements, 346 boats at 149 places (houseboat 51, pontoon 280, quay 14, buoy 1; marina 216,
+  canal 55, tidal 39, residential 25, mixed 10, tier 1; 145 yachts, 60 widebeams, 54 cruisers, 43 narrowboats, 26 + 4
+  Dutch barges, 10 lighters, 2 floating homes, 1 sailing barge, 1 dumb barge); 51 model buildings hidden. Within 120 m:
+  Hermitage Moorings 20 boats, Downings Roads 19, Greenland Dock east end 10 (yachts and cruisers: the photo's masts).
+- Page (`moored-boats.js`): one InstancedMesh per type (10 draw calls); level: dock = the place's level, tidal =
+  max(`WU.tideLevel`, ground + 0.3 m); bob 2.5 cm in docks, 5 cm tidal, plus wind; hidden: a boat that holds the camera,
+  a boat under a live AIS vessel (checked each second), boats beyond 3 km (LOD: the drawn boats are packed to the front of
+  each mesh and `mesh.count` set, so hidden boats cost nothing). Tap: a ray against each drawn boat's box; the card says
+  "Generic boats at a known mooring, not real vessels", the type, size, class, OSM id and tags, the containing marina, the
+  licence and data date; a houseboat card shows no name or address. `river.api.describe()` and `moored.describe()`: a
+  short text for screen readers and LLMs. `river.api.state.moored`: counts, `drawn`, `drawnTris`.
+- Cost (headless, WebGL 2 SwiftShader, `?layers=ships,river,water,piers&ais=snapshot&view=greenlanddock`): moored
+  boats 132,525 triangles in all, 126,775 drawn (328 boats within 3 km); AIS 48 vessels; 19 boat draw calls in all.
+  Full page (every default layer, same view, one plain render): 2,980,158 triangles and 37 draw calls in all, so the
+  boats (about 152,000 with the AIS vessels) are about 5 % of a frame.
+- Test: `node docklands/test/boats-check.mjs --base http://127.0.0.1:8203 --out <dir> [--full | --full-only]` (counts,
+  card, describe, named places, screenshots: the photo view, Greenland Dock east end, South Dock marina, Hermitage,
+  Downings Roads, Limehouse Basin, Blackwall Basin day and night, Limehouse Cut, the river and AIS close-ups,
+  `?ships=test`). Passed 2026-10-11, no page errors (one 404: favicon; a warning "occlusion grid ReferenceError:
+  clampN" comes from main.js on HEAD, not from this work).
+- Open: the 20 m terrain still covers the water near dock walls (fault F54; the dock-edges work on branch
+  `wip/agents-2026-10-11`), so boats near a wall sit partly under grey ground; real berth occupancy is not known (CRT and
+  marina lists are not open data); boats do not swing with the tide on buoys; no LOD model below the full model; not
+  measured on a phone GPU.

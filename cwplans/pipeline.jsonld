@@ -4138,6 +4138,53 @@
    "cwp:judgement": "The tour-boat facts (piers, frequencies, first and last departures by season) and the stated defaults (Thames River Sightseeing frequency, the synthetic pontoon, the heights) are hand-entered in the tool, with the page and date in docklands/data/piers.json meta.tours."
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildmoorings",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-moorings",
+   "dct:description": "Generic boats at known moorings for the Three.js port (layer river, part Moorings and houseboats). One Overpass request (fetch) for the OSM mooring features of the box (mooring=*, houseboat=*, building=houseboat, seamark:type=mooring, leisure=marina; tags and geometry), cached raw and not committed; then, offline, one generic rule from tags and shapes places typical boats: one per houseboat outline (fitted to its minimum-area rectangle), along both sides of the pontoons of moorings (piers.json), along mooring lines and the quay edges of marinas and mooring areas with no pontoon, and one dumb barge per mooring buoy; class by tags and water (canal, residential, tidal residential, marina, mixed, tier) sets the mix of types; every choice is a seeded hash of the OSM id, part, side and slot. NOT real vessels.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm",
+     "dcat:accessURL": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+     "dct:description": "one POST (fetch only): the mooring features of the box, out tags geom"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawmooringsoverpassmooringsjsongz"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/piers.json"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/moorings.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-moorings.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-moorings.mjs [fetch [--bbox w,s,e,n]]",
+   "cwp:kind": "derive",
+   "cwp:rule": [
+    "Rules: meta.rules of docklands/data/moorings.json and the tool header (classes, mixes, sizes, empty berths, rafting, the overlap and on-water tests).",
+    "Kept: OSM ids, a few tags, names of moorings and marinas; never the names, addresses or contacts of houseboats.",
+    "Deterministic from the cached Overpass answer and the inputs (no random numbers; FNV-1a seeds)."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildpiers"
+    }
+   ],
+   "cwp:area": "water",
+   "cwp:fault": [],
+   "cwp:judgement": "The mixes of types per class, the size ranges and the empty and rafted shares are typical values chosen by hand (stated in the tool and the output), not measured."
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolfittideharmonics",
    "@type": "prov:Activity",
    "rdfs:label": "fit-tide-harmonics",
@@ -21813,6 +21860,24 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildpiers"
    },
    "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/moorings.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "GENERIC boats at known moorings for the Three.js port (layer river, part Moorings and houseboats): the mooring places in the model box (OSM houseboat outlines, pontoons of moorings, mooring lines, quay edges of marinas, mooring buoys) with their class (canal, residential, tidal residential, marina, mixed, tier) and the generic boats (position, heading, length, beam, a model type) placed along them by one rule from OSM tags and geometry; the model buildings of the houseboat outlines to hide. Not real vessels: types and sizes are typical values chosen by a seeded hash.",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildmoorings"
+   },
+   "cwp:osmUse": "derived",
+   "cwp:review": "OSM ODbL derived database: review with the other OSM uses before the prototyping phase ends."
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/wildlife.json",

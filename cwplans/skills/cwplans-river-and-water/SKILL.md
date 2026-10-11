@@ -97,6 +97,15 @@ when another working copy rewrote the file; append, never replace, and check `gi
 - **OSM.** `osmium extract -b` the zone envelope, `tags-filter` (moorings, marinas, slipways, piers, docks, lock gates,
   locks, ferry terminals, houseboats, ships, wrecks, movable bridges, seamarks), `export -f geojsonseq`. osmium exports
   some closed ways twice: dedupe by type/id (785 rows became 632). Houseboat names are boat names, not people.
+- **Moorings for generic boats (2026-10-11).** `tools/build-moorings.mjs` (activity `build-moorings`) asks Overpass
+  once for the mooring features of the box (`mooring=*`, `houseboat=*`, `building=houseboat`, `seamark:type=mooring`,
+  `leisure=marina`; tags and geometry; maps.mail.ru mirror, overpass-api.de refused the connection), keeps the raw
+  answer uncommitted (`data/raw/moorings/`: houseboat tags hold phone numbers and e-mails), and writes
+  `docklands/data/moorings.json`: places (houseboat outlines, pontoons of moorings from `piers.json`, mooring lines,
+  marina quays, buoys) with a class, and GENERIC boats placed by one rule from tags and shapes (no place names in the
+  rule). Kept: ids, a few tags, mooring and marina names; never a houseboat's name, address or contact. Not real
+  vessels: the AIS rule (small private craft as counts only) is not touched. 2026-10-11 data: 193 OSM elements, 346
+  boats at 149 places. Page side: skill docklands-3d-page, "Three.js port: boats and moored barges (2026-10-11)".
 - **Wikidata vessels.** One QLever query: P31 subclass of watercraft (Q1229765) with P625 in the envelope. P625 can be a
   former berth: say so where shown.
 

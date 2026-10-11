@@ -3705,6 +3705,46 @@
       ]
     },
     {
+      "id": "build-moorings",
+      "tool": "tools/build-moorings.mjs",
+      "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-moorings.mjs [fetch [--bbox w,s,e,n]]",
+      "kind": "derive",
+      "network": true,
+      "deterministic": true,
+      "after": [
+        "build-piers"
+      ],
+      "area": "water",
+      "method": "Generic boats at known moorings for the Three.js port (layer river, part Moorings and houseboats). One Overpass request (fetch) for the OSM mooring features of the box (mooring=*, houseboat=*, building=houseboat, seamark:type=mooring, leisure=marina; tags and geometry), cached raw and not committed; then, offline, one generic rule from tags and shapes places typical boats: one per houseboat outline (fitted to its minimum-area rectangle), along both sides of the pontoons of moorings (piers.json), along mooring lines and the quay edges of marinas and mooring areas with no pontoon, and one dumb barge per mooring buoy; class by tags and water (canal, residential, tidal residential, marina, mixed, tier) sets the mix of types; every choice is a seeded hash of the OSM id, part, side and slot. NOT real vessels.",
+      "rules": [
+        "Rules: meta.rules of docklands/data/moorings.json and the tool header (classes, mixes, sizes, empty berths, rafting, the overlap and on-water tests).",
+        "Kept: OSM ids, a few tags, names of moorings and marinas; never the names, addresses or contacts of houseboats.",
+        "Deterministic from the cached Overpass answer and the inputs (no random numbers; FNV-1a seeds)."
+      ],
+      "judgement": "The mixes of types per class, the size ranges and the empty and rafted shares are typical values chosen by hand (stated in the tool and the output), not measured.",
+      "used": [
+        {
+          "source": "osm",
+          "endpoint": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+          "request": "one POST (fetch only): the mooring features of the box, out tags geom"
+        },
+        {
+          "local": "data/raw/moorings/overpass-moorings.json.gz"
+        },
+        {
+          "file": "docklands/data/area.js"
+        },
+        {
+          "file": "docklands/data/piers.json"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/moorings.json"
+        }
+      ]
+    },
+    {
       "id": "fit-tide-harmonics",
       "tool": "tools/fit-tide-harmonics.mjs",
       "command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/fit-tide-harmonics.mjs [--archive-days 371] [--archive-step 7] [--archive-weekday 2|all] [--no-fetch]",
