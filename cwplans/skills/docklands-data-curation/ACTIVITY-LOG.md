@@ -2250,3 +2250,14 @@ official data."
 - Found: the first occlusion grid build fails at load (`clampN` used before its declaration in main.js; rebuilt later).
 - Open: VoiceOver / TalkBack by hand, the time wheels (canvas) for non-visual use, a 2D map (KR3.2), WebMCP in a real
   host, events. Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".
+
+## 2026-10-11 (evening): realistic boats and generic boats at moorings (Three.js port)
+
+- Owner: "Also the rendered boats, can we make them more realistic? And add generic barge outline shaped boats where we
+  know residential moorings are positioned?" Continued the stopped agent's work (branch `wip/agents-2026-10-11`): 18
+  low-poly vessel models (`docklands/boats-models.js`), AIS vessels by type (`docklands/layers/ships.js`), and generic
+  boats at moorings, now placed by a new tool `cwplans/tools/build-moorings.mjs` (activity `build-moorings`) from one
+  Overpass request into `cwplans/docklands/data/moorings.json` (register entry; OSM extract `overpass-2026-10-11-moorings`;
+  the raw answer is git-ignored because houseboat tags hold contacts): 346 GENERIC boats at 149 places. The rule reads
+  tags and shapes only (O1: any locale). `describe()` on the river and ships layer APIs (O3). Test
+  `docklands/test/boats-check.mjs`. Details: skill docklands-3d-page, "Three.js port: boats and moored barges (2026-10-11)".
