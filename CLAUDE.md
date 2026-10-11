@@ -44,9 +44,12 @@ working (the owner's words)".
   deploys it in a few minutes. Then confirm that the live file matches the commit.
 
 ## Objectives and key results
-Q4 2026 OKRs (set 2026-10-11 at the owner's request): https://github.com/danbri/londat/blob/main/OKRS.md . Six objectives
-(data alive in the 3D view, measured realism, fast on the owner's iPhone, fresh live data, open traced data, a base that
-scales). Score them at each checkpoint (2026-10-25, 2026-11-22, end of quarter) with evidence, in its table and the
+Q4 2026 OKRs (set 2026-10-11 at the owner's request): https://github.com/danbri/londat/blob/main/OKRS.md . Mission-critical
+(owner, 2026-10-11): O1 any locale worldwide, O2 a spherical planet model with maps and data worldwide, O3 universal
+access (low-end devices, non-visual use, LLM / MCP / WebMCP access; "My iphone is essentially top of range"). Then O4
+measured realism, O5 fresh live data, O6 open traced data. Its "Architecture rules" apply to all new work: no new
+locale constants (BNG, ODN, London time) in the core; every feature has a 3D view, a text description and a machine
+interface. Score at each checkpoint (2026-10-25, 2026-11-22, end of quarter) with evidence, in its table and the
 activity log.
 
 ## Data policy (the cwplans exception)

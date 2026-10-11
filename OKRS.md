@@ -1,96 +1,110 @@
 # Objectives and key results: cwplans / londat, Q4 2026
 
-Set on 2026-10-11 at the owner's request ("we didn't set okrs. Please review docs and transcripts to set some.").
-Drawn from the owner's words in `CLAUDE.md`, the curation skill ("Ways of working (the owner's words)"), the activity log
-(https://github.com/danbri/londat/blob/main/cwplans/skills/docklands-data-curation/ACTIVITY-LOG.md), the Three.js port
-goal list (session "Docklands ThreeJS port", 2026-10-09) and the session of 2026-10-11. The owner can change any line.
+Set on 2026-10-11 at the owner's request ("we didn't set okrs. Please review docs and transcripts to set some."), then
+revised the same day with the owner's essentials:
+
+> "My iphone is essentially top of range. We need to offer much more universal access including growing towards
+> nonvisual access including scripting accessibility for blind, llms, mcp, webmcp. Growing the codebase to work for any
+> locale worldwide is mission Critical. As is sphericalish planet model cf google earth. And some maps and data
+> worldwide. It is ok to be challenged by getting super rich dense data everywhere but we should architect for scaling
+> this." (owner, 2026-10-11)
+
+Other sources: `CLAUDE.md`, the curation skill ("Ways of working (the owner's words)"), the activity log
+(https://github.com/danbri/londat/blob/main/cwplans/skills/docklands-data-curation/ACTIVITY-LOG.md), the Three.js port goal
+list (2026-10-09) and the scaling assessment
+(https://github.com/danbri/londat/blob/main/docklands/SCALING-AND-OKRS.md). The owner can change any line.
 
 - **Period:** 2026-10-11 to 2026-12-31.
-- **Checkpoints:** 2026-10-25 (two weeks), 2026-11-22, and the end-of-quarter score.
-- **Scores:** 0.0 to 1.0 for each key result. An objective's score is the mean of its key results. Aim for about 0.7:
-  a 1.0 everywhere means the targets were too easy.
-- **Rule for evidence:** every score points to a test output, a commit, a register count or the owner's own words. A
-  key result that only the owner can judge says so.
-- **Where it shows:** the review at each checkpoint goes into this file (the table at the end) and into the activity log.
+- **Checkpoints:** 2026-10-25, 2026-11-22, and the end-of-quarter score.
+- **Scores:** 0.0 to 1.0 for each key result. An objective's score is the mean of its key results. Aim for about 0.7.
+- **Evidence:** every score points to a test output, a commit, a count or the owner's own words.
+- **Priority:** O1, O2 and O3 are mission-critical (the owner's words). When work competes, they come first. O4 to O6
+  continue, but they must not add new locale-specific code to the core (see O1).
 
-## O1. The data comes alive in the 3D view
+## Architecture rules that follow from O1 and O2 (apply to all new work from 2026-10-11)
 
-Owner: "We also need our data to be fully available through, and bring to life, the 3D view." and "the ui does no
-justice to the amazing materials you collected" (2026-10-03); "Basically we want all the data we can" (2026-10-09).
+1. The core frame is the planet: WGS84 positions, ECEF for the globe, and a local east-north-up frame for each tile or
+   region near the camera (a floating origin). British National Grid, ODN heights, OSTN15 and the One Canada Square
+   origin become one locale adapter (UK), not the core.
+2. Data comes in layers of detail: a worldwide base everywhere (coarse terrain, coastlines, boundaries, OSM-derived
+   buildings and roads where they exist), and richer local layers where open data allows (UK LiDAR, borough registers,
+   the Docklands detail). The same tile tree holds both; a place gets better as data is added, with no new code.
+3. Sources come through adapters with a licence each (the data register gets a country or region column). An adapter
+   names its area, its licence class and its fallbacks.
+4. Every feature has three outputs: the 3D view, a text description (for screen readers and LLMs), and a machine
+   interface (JS API, WebMCP tool, MCP tool). A feature is not done until it has all three.
+5. Every visible text is in a message catalogue; dates, times, units and number formats follow the visitor's locale
+   (Intl), and the page clock follows the time zone of the place shown, not London.
 
-| key result | baseline 2026-10-11 | target |
+## O1. Any locale worldwide (mission-critical)
+
+| key result | baseline 2026-10-11 | target 2026-12-31 |
 |---|---|---|
-| KR1.1 Registered data files that a page shows (`shown_on` in `cwplans/data-register.json`) | 116 of 734 | 400, with a generic browser for the London Datastore and portal extracts in the 3D port |
-| KR1.2 Data overlays that the owner does not call "boring": each default-on layer is scenery or answers a question at a glance | 2026-10-11: only cranes, moorings and ships are on by default | owner agrees with the default set on the phone |
-| KR1.3 Each owner request answered with a deep link to the live page that shows the result | practice since 2026-10-05, not counted | 100 % of checkpoint reviews, counted in the activity log |
+| KR1.1 Locale constants outside the UK adapter: BNG, OSTN15, ODN, the origin E 537,550 N 180,300, "Europe/London", UK-only sources | 21 tools import the box from `cwplans/tools/fetch-docklands.mjs`; 13 files hold 537550 / 180300; the port clock is London-only (`sky3.js fromLondon`); every tool is BNG | 0 in the core; a check script fails a push that adds one |
+| KR1.2 Places outside the UK built by the same pipeline from worldwide open data (OSM / Overture buildings, Copernicus GLO-30 or ETOPO terrain, OSM water and coastlines) and shown in the port with the clock, sun and sky of the place | 0 | 3 places on 3 continents, one with a non-Latin script and one in the southern hemisphere |
+| KR1.3 Languages of the user interface (message catalogue, Intl for dates, times and units) | English only, text in the code | English plus 2, one of them right-to-left |
+| KR1.4 Source adapters with a licence class per area in the data register | UK only, not marked as an adapter | UK adapter written down; a worldwide adapter; 1 more country adapter with its own open data |
 
-## O2. Realism that is measured, not guessed
+## O2. A planet model, with maps and data worldwide (mission-critical)
+
+| key result | baseline 2026-10-11 | target 2026-12-31 |
+|---|---|---|
+| KR2.1 A spherical (WGS84 ellipsoid) globe in the port, with continuous zoom from orbit to street level, a floating origin and depth precision that holds at both ends | flat BNG model of 42 km² and a coarse terrain ring; no globe | globe live; street level within 1 cm of the flat model in the Docklands; horizon and curvature correct |
+| KR2.2 Worldwide base layers (coastlines, land and water, boundaries from Natural Earth, terrain from ETOPO 2022 or Copernicus GLO-90, place names), served as open tiles | none in the port (the atlas has none either) | all five worldwide; licences in the register |
+| KR2.3 One tile format for all 3D content, ready for dense data (3D Tiles 1.1 with glTF, or another chosen by the owner) | box data as whole-area JSON (33 MB) | format chosen; the Docklands box and its 80 building tiles served through it; one more London area added as tiles |
+| KR2.4 Places that get richer with no code change: a measure of detail per tile (buildings with heights, trees, water, live sources) shown on a world map in the dashboard | not measured | the measure exists and is shown; rises in at least 10 tiles during the quarter |
+| KR2.5 Tile hosting that can grow past GitHub Pages | Pages: 456 of 950 MB used | owner decision taken; tiles served from the chosen host |
+
+## O3. Universal access: any device, non-visual, and machine access (mission-critical)
+
+| key result | baseline 2026-10-11 | target 2026-12-31 |
+|---|---|---|
+| KR3.1 Low-end devices: a reference device class (for example a 2021 mid-range Android phone with 4 GB, and an older iPhone) runs the default view at 24 frames a second or more, with quality tiers chosen by measured speed | only the owner's top-range iPhone; about 2.8 M triangles with every layer on; no tiers | tiers live; at most 1.5 M triangles by default; measured on 2 low-end devices |
+| KR3.2 No 3D needed: a 2D map and a text view work without WebGL and WebGPU | the page needs WebGL 2 or WebGPU | both work; same deep links |
+| KR3.3 Non-visual use: a text description of what is in view (places, buildings, water, live things, time and weather), updated when the view changes; screen reader and keyboard use of search, places, layers, cards and the clock | none; menus not audited | VoiceOver and TalkBack can do the 5 main tasks (find a place, hear what is there, change the time, turn layers on, read a card); axe-core: 0 serious issues; one test with a blind user, if the owner can arrange it |
+| KR3.4 Machine access: a documented page API and WebMCP tools in the page (go to a place, describe the view, query features at a point, set the time, list and set layers, share a link); the same tools in the MCP server; an `llms.txt` for the site and its data | `__docklands3` (a test hook, not an API); the `docklands-view` MCP server (camera solve, render, landmarks; local only) | API documented and versioned; WebMCP tools where the browser has them; MCP server with the same tools; `llms.txt` live |
+| KR3.5 Sound as an option (sonification of height, water and live things; spoken descriptions with the browser's speech) | none | one sound mode that a screen reader user can switch on |
+
+## O4. Realism that is measured, not guessed
 
 Owner: "the buildings without custom models are painfully flat and samey ... ultimately to get more realism"; the
-calibration photo of 2026-10-11 ("can be used to calibrate our lighting, nature, water, trees, and birds data"); "nudge
-from low poly style towards a more realistic / impressionistically painterly ... style that will adapt gracefully as 3DGS
-data becomes more broadly available".
+calibration photo of 2026-10-11; "nudge ... towards a more realistic / impressionistically painterly ... style that
+will adapt gracefully as 3DGS data becomes more broadly available".
 
 | key result | baseline 2026-10-11 | target |
 |---|---|---|
-| KR2.1 Reference photos with a test of tones (`docklands/test/photo-tones.mjs` style), every region within 0.08 luma | 1 photo (clear day); sky top -0.007, shaded trees +0.21, near water +0.09 | 3 photos (clear day, overcast, night), all regions within 0.08 |
-| KR2.2 Photo views with a solved camera, rms under 15 px | 6 (rotherhithe, greenland, pier, greenlandday, plane, greenlanddock) | 10, of which 2 outside Canary Wharf |
-| KR2.3 Faults that show in a photo view closed by a rule (not a patch) | F54 open (water under the quays) | F54 closed in the port; tree height on the quays measured against LiDAR |
-| KR2.4 Painted style accepted by the owner on the phone | "promising but too lossy" | owner accepts it, or names what is left |
-| KR2.5 One splat or 3DGS source shown in the same scene and style | splat layer exists (24 to 39 s a frame in software) | one open 3DGS capture of a zone place loaded and styled |
+| KR4.1 Reference photos with a test of tones (`docklands/test/photo-tones.mjs`), every region within 0.08 luma | 1 photo (clear day); sky top -0.007, shaded trees +0.21, near water +0.09 | 3 photos (clear day, overcast, night), all regions within 0.08 |
+| KR4.2 Faults seen in photo views closed by a rule that runs anywhere (not a patch) | F54 open (water under the quays) | F54 closed; tree height checked against LiDAR as a rule |
+| KR4.3 Painted style accepted by the owner | "promising but too lossy" | accepted, or the owner names what is left |
+| KR4.4 One open 3DGS capture of a place shown in the same scene and style, through the tile format of KR2.3 | splat layer exists (24 to 39 s a frame in software) | one capture, streamed as tiles |
 
-## O3. Fast and stable on the owner's iPhone
+## O5. Fresh live data with recent history
 
-Owner: "shipping immediately to live site is fine and urgent ... live site is my only way to see progress" (2026-10-03).
-Phones failed with every layer on (about 2.8 M triangles); "no trees after a reload" on a device (2026-10-09).
-
-| key result | baseline 2026-10-11 | target |
-|---|---|---|
-| KR3.1 Frame time measured on the owner's phone in 3 views (cw, greenlanddock, area) | never measured on a phone GPU | measured each checkpoint; median under 33 ms (30 frames a second) |
-| KR3.2 Triangles a frame with the default layers | about 2.8 M (full page) | at most 1.5 M |
-| KR3.3 Faults seen only on the phone | "no trees after reload": not diagnosed | found, fixed, a test for it |
-| KR3.4 Time to the first frame on a phone on 4G | not measured | measured; under 8 s |
-
-## O4. Fresh live data with recent history
-
-Owner: "We want the webapp to always have fresh air and boat data plus recent history" (2026-10-09); "Couldn't we
-crontab it for every 5 mins? And default to live for the rest?" (2026-10-09).
+Owner: "We want the webapp to always have fresh air and boat data plus recent history" (2026-10-09). Worldwide
+sources (aircraft and ships are worldwide already) must be built so that they can serve any place (O1).
 
 | key result | baseline 2026-10-11 | target |
 |---|---|---|
-| KR4.1 Hourly cache runs in each 24 hours (`cwplans/cache/`, GitHub skips scheduled runs) | 5 in the 28 hours to 08:53 UTC | at least 20 in every 24 hours for 4 weeks |
-| KR4.2 Gaps in the 5-minute live-cache branch (aircraft, ships, METAR) | fresh on 2026-10-11 17:13 UTC; gap history not measured | gaps over 15 minutes under 5 % of the time, shown on the dashboard |
-| KR4.3 Time scrubber against history (docklands/AUDIT.md item 1) | PARTIAL (accepted): 27 days without EA archive, wind 0.8 to 1.3 m/s low | PASS: wind bias corrected against the London City METARs, tide gaps filled or stated on the page |
+| KR5.1 Hourly cache runs in each 24 hours | 5 in the 28 hours to 08:53 UTC | at least 20 in every 24 hours for 4 weeks |
+| KR5.2 Gaps over 15 minutes in the 5-minute live feed (aircraft, ships, METAR), shown on the dashboard | fresh at 17:13 UTC; gaps not measured | under 5 % of the time |
+| KR5.3 Live layers that work for any place (by position, not by a fixed zone) | aircraft and ships for a 25 nm circle round the Docklands only | aircraft, ships and weather for any place in view |
+| KR5.4 Time scrubber against history (AUDIT item 1) | PARTIAL (accepted) | PASS |
 
-## O5. Open, traced data, ready to leave the prototyping phase
+## O6. Open, traced data, ready to leave the prototyping phase
 
 Owner: "record ALL our data methods in skills or other concrete committed artifacts" (2026-10-03); "don't waste good
-info by burying it in our chatlogs" (2026-10-06); the cwplans data exception holds "while in the scoping, planning and
-prototyping phase" only; "Flag it somewhere for review as we scale" (AIS, 2026-10-04); the dataflow rule (2026-10-06).
+info by burying it in our chatlogs" (2026-10-06); the data exception holds only "while in the scoping, planning and
+prototyping phase"; "Flag it somewhere for review as we scale" (2026-10-04); the dataflow rule (2026-10-06).
 
 | key result | baseline 2026-10-11 | target |
 |---|---|---|
-| KR5.1 `npm run check` passes on every push (every data file registered, OSM credit on every page) | passes: 734 files | passes on 100 % of pushes |
-| KR5.2 Register items marked "review", each with a written decision path (keep, replace, drop when the phase ends) | 74 marked, no decision paths | 74 with a path; the owner decides the 5 largest (AIS, adsb.lol, crawls, OSM in the port, personal and address data) |
-| KR5.3 Open faults in the register (curation skill) | 14 open, 2 partly | at most 8 open; each other one fixed by a rule |
-| KR5.4 Every session ends with an activity-log entry and its lessons in a skill | done most days | 100 %, checked at each checkpoint |
-
-## O6. A base that scales beyond the box
-
-Owner: "Yes, do our whole area and be mindful of possible future expansion"; "eventually we will clean up and separate
-data vs code so this current tool can be localised and extended" (2026-10-05); "assess amount of work to extend the map
-to cover more or all of greater London ... a skeleton of global coverage ... a 3D globe?" (2026-10-09). Options and
-numbers: https://github.com/danbri/londat/blob/main/docklands/SCALING-AND-OKRS.md .
-
-| key result | baseline 2026-10-11 | target |
-|---|---|---|
-| KR6.1 Owner decisions on scaling recorded (option A, tile format, tile host, first ring, WebGL page) | none taken | all five recorded in the scaling file |
-| KR6.2 The model origin and box in one config file only (option A) | 21 tools import the box; 13 files hold 537550 / 180300 | 0 outside the config; every data tool takes `--area` |
-| KR6.3 Tiles outside the box built by the same pipeline and shown in the port | 0 | 1 BNG 1 km tile by the first checkpoint after the decisions; 25 km² by the end of the quarter |
-| KR6.4 Generic rules versus hand work: share of model features made by rules that run anywhere | not measured | measured and listed in the scaling file |
+| KR6.1 `npm run check` passes on every push | passes: 734 files | 100 % of pushes, worldwide sources included |
+| KR6.2 Register items marked "review", each with a written path for the end of the prototyping phase | 74 marked, no paths | 74 with a path; the owner decides the 5 largest |
+| KR6.3 Open faults in the register | 14 open, 2 partly | at most 8 open; the rest fixed by rules |
+| KR6.4 Every session ends with an activity-log entry and its lessons in a skill | most days | 100 % at each checkpoint |
 
 ## Reviews
 
 | date | O1 | O2 | O3 | O4 | O5 | O6 | notes |
 |---|---|---|---|---|---|---|---|
-| 2026-10-11 (baseline, scored from the evidence before these OKRs) | 0.3 | 0.3 | 0.1 | 0.4 | 0.5 | 0.0 | first scores; see docklands/SCALING-AND-OKRS.md section 3 for the earlier goal scores |
+| 2026-10-11 (baseline) | 0.0 | 0.05 | 0.1 | 0.3 | 0.4 | 0.5 | O2: only the assessment and the coarse London terrain ring; O3: the MCP server and the test hook exist, but no non-visual or low-end support |

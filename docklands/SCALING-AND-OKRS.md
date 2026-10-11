@@ -77,6 +77,15 @@ Totals: about 25 to 35 agent-days to cover London; about 45 to 65 agent-days to 
 - First ring: as above, or another area.
 - The WebGL page (`cwplans/docklands/`): freeze it at the box (recommended), or keep parity.
 
+**Owner's direction, 2026-10-11 (later the same day):** "Growing the codebase to work for any locale worldwide is
+mission Critical. As is sphericalish planet model cf google earth. And some maps and data worldwide. It is ok to be
+challenged by getting super rich dense data everywhere but we should architect for scaling this." This settles the
+direction: a planet model (options D and E) and a locale-free core, not a London-only flat model. Option A becomes "one
+locale adapter" (UK) behind a WGS84 / ECEF core with local east-north-up frames; option C's tiles become 3D Tiles placed on
+the globe. The OKRs (https://github.com/danbri/londat/blob/main/OKRS.md) O1 and O2 hold the targets and the architecture
+rules. Still open: the tile host, the globe renderer path (3d-tiles-renderer in the port, recommended), the three
+places outside the UK, and the WebGL page.
+
 ## 3. Goals review ("OKRs")
 
 Superseded by the OKRs set the same day: https://github.com/danbri/londat/blob/main/OKRS.md . This section stays as the

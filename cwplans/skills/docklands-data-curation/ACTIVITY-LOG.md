@@ -2199,3 +2199,9 @@ official data."
   now, 3D Tiles 1.1 per BNG 1 km square for option C, tiles off Pages. No OKRs existed; the review scores the owner's
   goals as O1 to O7 and proposes O-A to O-D. Decisions needed from the owner are listed in section 2.
 - Hourly cache: 5 runs in the 28 hours to 2026-10-11 08:53 UTC (scheduled runs skipped); live-cache branch fresh.
+- OKRs set (https://github.com/danbri/londat/blob/main/OKRS.md), then revised with the owner's essentials: "My iphone is
+  essentially top of range. We need to offer much more universal access including growing towards nonvisual access
+  including scripting accessibility for blind, llms, mcp, webmcp. Growing the codebase to work for any locale worldwide
+  is mission Critical. As is sphericalish planet model cf google earth. And some maps and data worldwide. It is ok to be
+  challenged by getting super rich dense data everywhere but we should architect for scaling this." O1 any locale, O2
+  planet model and worldwide data, O3 universal access are mission-critical; five architecture rules for new work.
