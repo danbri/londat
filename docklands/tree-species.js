@@ -18,7 +18,7 @@ const [BROAD, CONICAL, COLUMNAR, WEEPING, SMALL, BIRCH] = SHAPES.keys();
 const D = { shape: BROAD, ever: 0, leaf: [.30, .45, .20], aut: [.72, .58, .22], bark: [.36, .32, .27], pat: 0, out: 105, col: 285, bare: 322, bloom: null, cw: .6, cb: .3, airy: 0 };
 const P = (id, label, o) => ({ id, label, ...D, ...o });
 export const PROFILES = [
-  P('plane', 'London plane', { leaf: [.32, .47, .21], aut: [.64, .52, .26], bark: [.62, .60, .47], pat: 1, out: 112, col: 292, bare: 338, cw: .65 }),
+  P('plane', 'London plane', { leaf: [.32, .47, .21], aut: [.64, .52, .26], bark: [.62, .60, .47], pat: 1, out: 112, col: 280, bare: 338, cw: .65 }),
   P('oak', 'Oak', { leaf: [.27, .40, .17], aut: [.52, .37, .16], bark: [.33, .29, .24], out: 113, col: 300, bare: 345, cw: .75 }),
   P('oak-evergreen', 'Evergreen oak', { ever: 1, leaf: [.19, .28, .15], bark: [.25, .23, .21], cw: .8 }),
   P('lime', 'Lime', { leaf: [.36, .52, .22], aut: [.80, .70, .26], bark: [.38, .35, .30], out: 100, col: 280, bare: 318, cw: .55 }),

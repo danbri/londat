@@ -56,7 +56,11 @@ export class Sky3 {
     this.scene = scene; this.t = Date.now(); this.wx = null; this.base = null; this.cutDark = false;
     this.vzInv = uniform(1);   // 1 / the vertical exaggeration (main.js setVz): keeps the moon disc round
     this.sky = new SkyMesh(); this.sky.scale.setScalar(10000); this.sky.material.depthTest = false; this.sky.material.depthWrite = false; this.sky.renderOrder = -10; this.sky.frustumCulled = false;   // drawn first, behind everything, inside the far plane (20 km at least)
-    this.sky.turbidity.value = 4; this.sky.rayleigh.value = 1.6; this.sky.mieCoefficient.value = 0.004; this.sky.mieDirectionalG.value = 0.8;
+    // calibrated on the owner's photo of Greenland Dock, 2026-10-11 12:45 BST (clear blue sky, sun 31 deg up; data/images/contrib/greenlanddock/):
+    // turbidity 4, rayleigh 1.6 and the SkyMesh output as it is gave luma 0.82 at 28 deg above the horizon against 0.58 in
+    // the photo; turbidity 2, rayleigh 1.0 and a gain of 0.46 give about 0.58 (the photo converted from Display P3 to sRGB) (docklands/test/photo-tones.mjs)
+    this.sky.turbidity.value = 2; this.sky.rayleigh.value = 1.0; this.sky.mieCoefficient.value = 0.004; this.sky.mieDirectionalG.value = 0.8;
+    this.skyGain = uniform(0.46); { const c = this.sky.material.colorNode; this.sky.material.colorNode = vec4(c.xyz.mul(this.skyGain), 1); }
     if (this.sky.cloudCoverage) this.sky.cloudCoverage.value = 0.25;
     vzUndistort(this.sky.material, this.vzInv);
     scene.add(this.sky);
@@ -144,7 +148,7 @@ export class Sky3 {
     this.sky.visible = day > 0.02 && !this.cutDark; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
     if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? cover : 0.25; this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
     const vis = w && w.visibility != null ? w.visibility : null;
-    this.sky.turbidity.value = vis ? 2 + 8 * clamp01(1 - vis / 40000) : 4;
+    this.sky.turbidity.value = vis ? 2 + 8 * clamp01(1 - vis / 40000) : 2;
     // the moon disc: above the horizon (its lower edge), dimmer by day, hidden by cloud
     this.moonDisc.visible = M.alt > -0.6;
     this.moonU.gain.value = (1 - 0.45 * day) * (1 - 0.9 * cover); this.moonU.shine.value = 0.025 * (1 - day);

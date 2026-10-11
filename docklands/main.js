@@ -163,6 +163,9 @@ const VIEWS = {
   pier: eyeView([-740, 6, 140], 83.6, 11, 69),
   greenlandday: { ...eyeView([-830, 4.5, 1158], 51.9, 6.45, 99.9), night: false },
   plane: { ...eyeView([211, 802, -845], 223.84, -13.56, 56.9), roll: 9.18, night: false },
+  // the owner's CC0 photo of 2026-10-11 12:45 BST from the west end wall of Greenland Dock (data/images/contrib/greenlanddock/);
+  // solved with tools/view-mcp (focal fixed at 1785 px, the iPhone main lens): rms 13.5 px over 12 observations
+  greenlanddock: { ...eyeView([-1679.2, 6.5, 1234.1], 85.65, -0.61, 71.6), roll: -1.59, night: false },
 };
 function eyeView(E, az, lp, hfov, D = 1200) {   // index.html eyeView: a photo's camera, orbiting a point 1.2 km along the line of sight
   const a = az * Math.PI / 180, p = lp * Math.PI / 180;

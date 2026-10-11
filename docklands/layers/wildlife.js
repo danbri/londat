@@ -25,7 +25,9 @@ import { surfaceAt } from '../build.js';
 const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 16, TAU = Math.PI * 2;
 // animals per hectare of each habitat class in daylight at the peak of the season (stated defaults, general ecology for
 // inner London; the species mix within a class comes from the data file)
-const DENS = { none: 0.9, river: 0.8, dock: 3.2, pond: 6, park: 2.5, wood: 1.0, garden: 0.6 };
+// dock: 3.2 until 2026-10-11; the owner's photo of Greenland Dock (11 Oct 12:45) shows 18 birds on the water of the west
+// basin (about 3.4 ha: 12 gulls, 6 coots or ducks) where the simulation had 4 (3 gulls, 1 pigeon): one count, so 7, not 18 / 4 x 3.2
+const DENS = { none: 0.9, river: 0.8, dock: 7, pond: 6, park: 2.5, wood: 1.0, garden: 0.6 };
 // per species: length m, wingspan m, neck (fraction of length), neck angle (rad, standing/swimming), flap Hz, group
 // behaviour, flock size [min, max], colours sRGB [body, head and neck, wing, bill]
 const SPEC = {

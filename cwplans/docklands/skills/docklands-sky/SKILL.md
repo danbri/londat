@@ -517,6 +517,25 @@ the London City Airport METAR". Test (live-cache-check `--only metar`): `t=` 10 
 (METAR 24014KT), low cover 44 % (SCT022 SCT034), visibility 10 km; `t=2026-09-20T12:00`: no METAR source. Not done: cloud
 types (CB, TCU) are not drawn; "///" layers from an AUTO station count by their cover only.
 
+## Sky calibration in the Three.js port (2026-10-11)
+
+Against the owner's clear-sky photo of Greenland Dock (12:45 BST, sun 31.4 deg up; `data/images/contrib/greenlanddock/`;
+test `docklands/test/photo-tones.mjs`). `sky3.js` had turbidity 4, rayleigh 1.6 and the SkyMesh output as it is; under
+AgX tone mapping that drew a pale sky: luma 0.82 at 25 to 28 deg up (photo 0.58), 0.87 in the middle (0.72), and the
+water mirror and the hemisphere fill took the same pale colour. Now: turbidity 2 (also with no visibility from the
+weather), rayleigh 1.0, and the SkyMesh colour times `sky3.skyGain` (uniform, 0.46).
+
+- Measured (one page, sky parameters changed in place, `?layers=trees`): rayleigh up makes the sky lighter and whiter
+  under AgX, not bluer (1.6 -> 2.5 -> 3.5: luma 0.82, 0.88, 0.91); exposure 0.8 only greys it; the gain is what darkens
+  it and keeps the blue. Gain 0.4 gave sky luma 0.59, 0.68, 0.79 (top, middle, low) for the photo's 0.58, 0.72, 0.86.
+- The same gain is right for the aircraft photo (evening, `?view=plane`): its top third was 0.85 against 0.65 in the
+  photo (photo-view-reconstruction skill). Not measured again there.
+- Not changed: the sun (3.2) and the hemisphere fill (1.18 by day). Changing them (0.55 to 1.18 fill, 3.2 to 4.5 sun)
+  moved the region medians by under 0.03: the regions were water, trees seen from their shaded side and the
+  ground cell at the quay. The photo's contrast (sunlit paving 0.56, shaded trees 0.13) is higher than the render's
+  (0.42, 0.36); the next step is a shaded-side test on buildings, not on these regions.
+- The WebGL page (`cwplans/docklands/sky.js`) has its own sky and is not changed.
+
 ## Not done
 
 Cloud heights and small clouds (the mask has neither); live aircraft on the WebGL page (licence; the Three.js port has

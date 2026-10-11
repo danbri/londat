@@ -235,7 +235,7 @@ function frame(g, pn, title, sub_) {
 function clip(g, s, w) { s = String(s ?? ''); if (g.measureText(s).width <= w) return s; let a = 0, b = s.length; while (a < b) { const m = (a + b + 1) >> 1; if (g.measureText(s.slice(0, m) + '…').width <= w) a = m; else b = m - 1; } return s.slice(0, a) + '…'; }
 const P = {};
 // the page's named views (main.js VIEWS); eye: a photo view (an eye point), which puts you at street level there
-const VIEWS = [['cw', 'Canary Wharf'], ['rotherhithe', 'Rotherhithe night', true], ['greenland', 'Greenland', true], ['pier', 'Pier', true], ['greenlandday', 'Greenland day', true], ['plane', 'Plane', true], ['area', 'Area']];
+const VIEWS = [['cw', 'Canary Wharf'], ['rotherhithe', 'Rotherhithe night', true], ['greenland', 'Greenland', true], ['pier', 'Pier', true], ['greenlandday', 'Greenland day', true], ['plane', 'Plane', true], ['greenlanddock', 'Greenland Dock', true], ['area', 'Area']];
 const lookOn = () => !!($('look') && $('look').checked);
 function makePanels() {
   P.places = new Panel('places', .62, .9, [-62, 1.2, -.1, 0], (g, pn) => {

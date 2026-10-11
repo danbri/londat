@@ -125,6 +125,26 @@ owner's words and date, in its README.
 - Details per photo: londat `data/images/contrib/cwdock/photos.json` and the hub skill `docklands-data-curation`,
   "Contributed photos".
 
+## Greenland Dock by day (2026-10-11): a calibration photo
+
+The owner's CC0 photo `data/images/contrib/greenlanddock/2026-10-11-gd-01-greenland-dock-east.jpg` (12:45 BST, iPhone,
+2576 x 1932, Display P3), given "to calibrate our lighting, nature, water, trees, and birds data". Camera and
+measurements: https://github.com/danbri/londat/blob/main/data/images/contrib/greenlanddock/README.md . Port view
+`?view=greenlanddock` (Menu > Views > "Greenland Dock, day"; roll -1.59 deg); only the Three.js port has it.
+
+- **Few points from the ground.** Only one tower top (Pan Peninsula, cwb-0801) was sure; the others were under the near
+  tree. Seven waterline pixels on the dock outline and the corner of the projecting quay (top and waterline) gave the
+  rest. With the focal length free the fit went to 1413 px (85 deg, sigma 307 px) and put the eye in the water: fix the
+  focal length from the phone lens when the frame has few points (iPhone main lens: 24 mm equivalent, f = 24 / 43.27 x the
+  image diagonal in pixels = 1785 px at 2576 x 1932; check against the photo when a known pair of towers is in view).
+- **Read the dock's axis.** The left bank vanished 15 deg left of the frame centre: heading = the dock axis (71 deg) +
+  15 deg. The first guess (heading 70, the axis) was wrong by 15 deg; the overlay showed it at once.
+- **Tones.** `docklands/test/photo-tones.mjs` measures named regions of the photo and of the port's render at the photo
+  time (median sRGB; Chromium converts the photo's P3). Before the calibration the sky at 25 to 28 deg up was luma 0.82
+  against 0.58 in the photo; after (docklands-sky, "Sky calibration") about 0.56.
+- **What the model lacks here:** the near 20 m of water under the quay is ground (F54 in the curation skill); the big
+  plane tree at the left is not in the tree data at that place; the boats at the east end are not drawn.
+
 ## Ground versus air
 
 Ground (a pier, a promenade): the eye is known to a few metres from where the photo was taken and its height from the
