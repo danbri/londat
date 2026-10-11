@@ -132,6 +132,10 @@ export default {
       const sway = WU.windSpeed.mul(.003).mul(nd.mid.w).mul(sin(time.mul(float(1.1).add(nd.leaf.w.mul(.6))).add(nd.leaf.w.mul(6.283))).mul(.5).add(.75)).mul(p.y.mul(p.y));
       const w = windTo(); return vec3(q.x.add(w.x.mul(sway)), q.y, q.z.add(w.y.mul(sway)));
     };
+    // the crown shades itself from the sky: occlusion of the indirect light (the hemisphere fill; the sun is direct) from 0.3
+    // at the crown base to 0.75 at the top, none on a bare tree. Owner's photo of Greenland Dock (2026-10-11, 12:45): the
+    // planes seen from their shaded side were luma 0.13, the render 0.36 with no occlusion (docklands/test/photo-tones.mjs)
+    const crownAO = (nd, p) => { const { dens } = season(nd.cal, nd.bloom); return mix(float(1), mix(float(.3), float(.75), smoothstep(.05, .95, p.y)), smoothstep(.1, .6, dens)); };
     const crownAttrs = { mid: 'mid', leaf: 'leaf', aut: 'aut', cal: 'cal', bloom: 'bloom' };
     const crowns = SHAPES.map((name, s) => {
       const cap = Math.min(NEAR_MAX, SH.reduce((n, v) => n + (v === s), 0)); if (!cap) return null;
@@ -149,6 +153,7 @@ export default {
         If(n.greaterThan(dens.mul(nd.aut.w.mul(.45).oneMinus()).mul(1.15)), () => { Discard(); });   // leaf-fall and airy crowns: holes
         return vec4(c.mul(n.mul(.25).add(.85)), 1);
       })();
+      R.mat.aoNode = crownAO(nd, positionGeometry);
       return R;
     });
 
@@ -215,6 +220,7 @@ export default {
         If(n.greaterThan(max(dens, .45).mul(1.15)), () => { Discard(); });
         return vec4(mix(vec3(.06, .05, .04), c, smoothstep(0, .5, dens)).mul(n.mul(.25).add(.85)), 1);   // bare: a dark twig tone (linear)
       })();
+      far.mat.aoNode = crownAO(nd, positionGeometry);
     }
 
     // ---- level of detail: re-select when the camera has moved RESELECT_M
