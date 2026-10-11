@@ -49,7 +49,9 @@ function withMetar(w, m) {
   const o = w ? { ...w } : { cover: 0, low: null, mid: null, high: null, vis: null, precip: 0, code: 0, temp: null, rh: null };
   if (lo != null) o.low = lo; if (mi != null) o.mid = mi;
   const top = Math.max(lo || 0, mi || 0); o.cover = w ? Math.max(o.cover || 0, top) : top;
-  if (m.vis_m != null) o.vis = m.vis_m >= 10000 ? Math.max(10000, w && w.vis || 0) : m.vis_m;
+  // 9999 means "10 km or more", not 10 km: take the forecast value when there is one (at least 10 km), else a stated 30 km
+  // (a clear day; owner, 2026-10-11: "grey from medium height obscures the city"; exactly 10 km greyed the city at 1.5 km by 44 %)
+  if (m.vis_m != null) o.vis = m.vis_m >= 10000 ? (w && w.vis ? Math.max(10000, w.vis) : 30000) : m.vis_m;
   const wx = /(?:^|\s)([-+]?)(?:VC)?(?:SH|TS|FZ)?(RA|DZ|SN)/.exec(m.raw.replace(/\sRE\w+/g, ''));
   if (wx && !(o.precip > 0)) { o.precip = { RA: 1, DZ: 0.3, SN: 1 }[wx[2]] * (wx[1] === '-' ? 0.4 : wx[1] === '+' ? 3 : 1); o.code = wx[2] === 'SN' ? 73 : wx[2] === 'DZ' ? 53 : 63; }
   if (m.temp_c != null) o.temp = m.temp_c;
