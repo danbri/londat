@@ -1763,8 +1763,9 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   degrees), so the lit windows feed the bloom. The halo of One Canada Square is index.html `CROWN.NEUTRAL`; the campaign
   colours by date are not ported.
 - **Water.** The LiDAR ground over the river is the survey's water surface and hid the water polygons in the first
-  build. `terrainGeometry()` sinks the ground inside each water polygon (eroded by one 20 m cell) to 1.5 m below the
-  water's level.
+  build. `terrainGeometry()` sinks the ground inside each water polygon to 1.5 m below the water's level and, since
+  2026-10-11, cuts the terrain triangles along the outlines with a quay wall ("Three.js port: dock edges follow the
+  outlines (2026-10-11)"; before, the edge cells stayed as a 20 m bank: fault F54).
 - **Sky.** `SkyMesh` (TSL) is scaled to 10 km, drawn first with no depth test (the camera's far plane is 20 km at
   least); stars are a `Sprite` with `PointsNodeMaterial` and instanced position and size (WebGPU draws points 1 px only).
 - **Near plane.** For a photo view the eye is a few metres above the water: near = min(dist / 400, height above the
@@ -2290,3 +2291,85 @@ Faults met and lessons:
 Open: the dabs are fixed to the screen, so when the view moves the colours slide under them (the "shower door" effect).
 Strokes fixed to the world (dab centres from world positions, or from splat centres when 3DGS data is used) would remove
 it. Not measured on a phone GPU. Labels and the HTML overlays are not painted.
+
+## Three.js port: dock edges follow the outlines (2026-10-11)
+
+Owner, 2026-10-11 (live port, from above over Surrey Docks): "why does greenland dock not have straight sides?", and "The
+dock border / data fixes sound difficult to generalise". Fault F54 in the curation skill. One generic rule for every
+water outline on the terrain grid; no place-specific number in the code (only the tests name places).
+- **Cause.** `build.js` `waterSink` sank the 20 m LiDAR grid only at grid points more than one cell inside a non-tidal
+  water polygon ("the edge cells stay: the bank"). The ground at quay height (about 5.0 m OD at Greenland Dock; water
+  3.3 m) covered the water for up to 20 m along each wall, and the visible edge was the saw-tooth of the 20 m triangles.
+  From the quay (`?view=greenlanddock&t=2026-10-11T12:45`) the near water was a grey slab. The tidal water (every grid
+  point inside sinks to the bed) had the same saw-tooth when the tide layer is off. With the tide layer on (the default),
+  `layers/tide.js` replaces the squares at the tidal water with its 5 m foreshore lattice snapped to the edges.
+- **Rule now** (`build.js`):
+  - `terrainModel()` (computed once, memoised): the water polygon of each grid point (even-odd scanlines; overlaps in
+    `multi`), the sunk heights (non-tidal: min(LiDAR, level - 1.5 m) at EVERY point inside, no erosion; tidal: the bed,
+    as before), the outline edges by the 20 m squares they cross (`bySq`: Liang-Barsky against each square of the edge's
+    box), and the land heights `LH`.
+  - `LH` (the "no dip" rule, against LiDAR water-surface returns): the LiDAR, except at the corners of the squares an
+    outline crosses: a corner in the water (its LiDAR is the water surface) and a land corner of a non-tidal water with
+    LiDAR under level + 0.3 m take the HIGHEST LiDAR of the land points round it (3 x 3, else 5 x 5) that are at least
+    level + 0.3 m, kept within level + 0.3 m to level + 3 m; with none, level + 0.5 m. Land corners of tidal water keep
+    their LiDAR (a natural foreshore can be low). Stated defaults, not surveyed.
+  - `terrainGeometry()`: the grid points stay the first nx x nz vertices (tide.js reads them by index; land points at
+    `LH`, water points at the sunk height). In each square an outline crosses, each of its two triangles (diagonal
+    (i+1, j) to (i, j+1), as before) is split along the line of every outline edge that passes through a piece (convex
+    pieces only). Each final piece is wholly on one side; it is classed by the parity of the outline edges crossed on the
+    straight way from its centre to the square corner farthest from the outline (a known side from the scanlines). Land
+    pieces lie on the plane through the corners' `LH`; water pieces on the plane through that water's heights at the
+    corners. Along each outline edge's part in a triangle, a vertical quay wall (two triangles, front face towards the
+    lower side; the terrain material is one-sided) joins the two sides; skipped on the model box's sides and where both
+    sides are the same class or within 2 cm. Shared vertices: an open-addressing hash on (x, z) in mm plus y.
+  - Wall colour (`materials.js` `terrainMaterial`): wall vertices have `uv.y` = 2 at the top and 2 + depth at the foot;
+    uv.y >= 1.5 gives dock wall stone (weathered granite and concrete) `#87827a`, turning to a dark green-grey `#525447`
+    from 1.3 to 1.9 m below the top (the weed line at the water). A ground image is mixed out there. Pixel art and Line
+    drawing replace the terrain material and draw the wall flat.
+  - `terrainIndexWithout(G, drop)` (exported): the index without the squares where `drop(i, j)`; a cut square gives its
+    pieces and walls (`G.userData.cut`: square index -> triangles). `layers/tide.js` calls it for its terrain index
+    (before, it rebuilt the plain grid index and would have dropped the cut docks).
+  - Machine interface: `G.userData.stats` = `__docklands3.STATS.terrain` (squares cut, pieces, wall faces, wall metres,
+    vertices, triangles, model / cut / index-and-normals / total ms). Text: this section and F54.
+- **Where the code still assumes one global grid** (OKR architecture rules: rules per tile): `terrainModel` reads the one
+  `A.terrain` grid and all of `A.water`, and memoises one result; `bySq`, `LH`, `G.userData.cut` and `terrainIndexWithout`
+  use square indexes of that grid. The rule itself is local (a square needs only the outline edges that cross it and
+  the LiDAR 5 x 5 round its corners), so per tile: give `terrainModel` a tile (its grid, the water polygons clipped to the
+  tile plus a 2-cell margin) and key the memo by tile; the walls and pieces on a tile border are cut by the same edges
+  on both sides, so they meet.
+- **Measured** (2026-10-11, the whole box, WebGL 2 in SwiftShader, container shared, load average 15 to 23): 4,905
+  squares cut (2,328 docks only, 2,524 tidal only, 53 both), 23,530 pieces, 13,618 wall faces, 90.2 km of wall;
+  210,000 -> 264,625 triangles (+26 %), 105,656 -> 191,091 vertices. `terrainGeometry` cold (a fresh module, as the
+  page calls it once): 110 to 141 ms before (3 runs), 300 to 630 ms after (13 runs, median about 360 ms; model 33 to 140,
+  cut 120 to 200, index and normals 50 to 110 ms; 1.2 s in one full-page run under load). Tried: not cutting the squares
+  that only tidal outlines cross while the tide layer is on (its foreshore replaces them): 239,622 triangles, but no
+  measurable time saved (cold code dominates), so dropped for simplicity. Not measured on a phone; if it is too slow
+  there, a worker or a precomputed cut per tile are the next steps.
+- **Consumers checked**: tide.js (index through `terrainIndexWithout`; its `land()` reads the grid heights, now `LH`
+  at land points); greens (`greensGeometry` uses `surfaceAt`, now the plane through `LH`; greens-check.mjs: largest
+  vertex error 0.00006 m, lift 0.30 to 0.50 m, 340,239 vertices, no page errors); trees and wildlife (`surfaceAt`);
+  `groundAt`, the navigation ground (main.js `groundB`, bilinear LiDAR), drone.js, ring.js, kml.js and occlude.js read
+  `T.dm` (the LiDAR: over a dock the water surface), unchanged: the eye and labels still stop at the water surface;
+  riverbed (drawn only in the cut-away; unchanged); the water mirror (one plane at the mean level: the walls reflect,
+  nothing else changes); piers and the EA flood `walls` layer (own geometry on the LiDAR; the quay walls are not those).
+- **Test**: `node docklands/test/dock-edges-check.mjs [--base http://127.0.0.1:8202] [--layers water,walls] [--tide 0]`:
+  vertical rays against the terrain mesh (and the foreshore with the tide layer on) 0.5 m each side of the outline every
+  2 m, Greenland Dock (`A.water[65]`, 1,135 points) and 2 km of the Thames (the tidal polygon with the most vertices,
+  949 points): the water side at the sunk height, the land side at `surfaceAt` and (docks) at least level + 0.2 m. With
+  `?layers=water,walls` (no tide layer): 100 % on both. Full page (tide on): Greenland Dock 0.993 (the misses are the
+  last metres at the entrance lock, where the tide layer's foreshore replaces the dock squares: see the open items); the
+  Thames is the foreshore and is checked only as "ground, not under the water side"; points with no ground on the land
+  side are counted apart as `foreshore_holes` (holes of the tide layer's lattice: the same points have no terrain and no
+  foreshore with the code before this change, checked by serving the old build.js, materials.js and tide.js). Full page
+  2026-10-11: Thames 0.924 of 894 points, 55 holes apart; the other misses are water-side gaps of the same lattice. Screenshots: the photo view at 1288 x 966 @2, and over Surrey Docks from 600 m
+  and 160 m: straight sides, a stone wall face at the projecting quay.
+- **Open**: (1) the photo view's eye (`main.js` `greenlanddock`, x -1679.2, z 1234.1) is 5.3 m inside the OSM outline
+  of Greenland Dock (the west end wall crosses z 1234.1 at x -1684.5), so with the fix the frame's foot is water where
+  the photo shows the quay and its bollards; the solve or the OSM outline is off by about 5 m or more (moving the eye
+  7.3 m west, 2 m behind the outline, shows only a corner of quay at the bottom left: the west wall runs NNE-SSW in OSM,
+  so the line of sight leaves it at once). Re-solve the view with the quay edge in the foot of the photo as a point. (2) `layers/tide.js` foreshore: holes (no ground, no
+  foreshore) at some squares of the Thames edge, e.g. x -883 z 225, x -903 z 911, x -928 z 73 (also on the code before
+  this change), and land heights over the dock water at the Greenland entrance lock. (3) Build time on phones. (4) The WebGL
+  page (`cwplans/docklands/index.html`, `waterMask()` / terrainSink) keeps the old rule; to port: the same cut in its
+  terrain builder (same diagonal; the cut squares need their own vertices and index ranges), the stone colour baked into
+  the wall vertices, `LH` for its greens and trees, and its tide sink applied to the tidal pieces.

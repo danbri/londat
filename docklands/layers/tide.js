@@ -19,7 +19,7 @@
 // the model centre). Profiles and slopes are stated defaults, not surveyed. Skill: docklands-sky, "Tide prediction".
 import * as THREE from 'three/webgpu';
 import { Fn, attribute, positionLocal, positionWorld, vec2, vec3, vec4, float, mix, clamp, smoothstep, step, exp, floor, fract, sin, dot, texture, uniform, sRGBTransferEOTF, abs } from 'three/tsl';
-import { A, dec } from '../build.js';
+import { A, dec, terrainIndexWithout } from '../build.js';
 import { WU } from '../water.js';
 import { TideModel, predict, extremes, extremesNear, nowcast, mergeReadings, historyReadings, historyCovers, tideU, tideOffset } from '../tide.js';
 
@@ -78,7 +78,7 @@ function buildForeshore(model, terrain) {
   for (let k = 0; k < N; k++) if (inT[k]) { const gi = k % G.nx, gj = Math.floor(k / G.nx), i = I0 + Math.floor(gi / R20), j = J0 + Math.floor(gj / R20);
     for (const [a, b] of [[0, 0], [-1, 0], [0, -1], [-1, -1]]) { if (a && gi % R20) continue; if (b && gj % R20) continue; const ii = i + a, jj = j + b; if (ii >= 0 && jj >= 0 && ii < T.nx - 1 && jj < T.nz - 1) sq5[jj * (T.nx - 1) + ii] = 1; } }
   const sq = (i, j) => sq5[j * (T.nx - 1) + i] || TT[j * T.nx + i] || TT[j * T.nx + i + 1] || TT[(j + 1) * T.nx + i] || TT[(j + 1) * T.nx + i + 1];
-  const tidx = []; for (let j = 0; j < T.nz - 1; j++) for (let i = 0; i < T.nx - 1; i++) { if (sq(i, j)) continue; const a = j * T.nx + i; tidx.push(a, a + T.nx, a + 1, a + 1, a + T.nx, a + T.nx + 1); }
+  const tidx = terrainIndexWithout(terrain, sq);   // build.js: the other squares, with the dock squares cut along their outlines
   // the terrain's height at (x, z): bilinear over the final heights, but the LiDAR (unsunk) at tidal grid points
   const th = (i, j) => { const k = j * T.nx + i; return TT[k] ? T.dm[k] / 10 : TP[3 * k + 1]; };
   const land = (x, z) => { const fx = (x - T.x0) / T.cell, fz = (z - T.z0) / T.cell, i = Math.min(T.nx - 2, Math.max(0, Math.floor(fx))), j = Math.min(T.nz - 2, Math.max(0, Math.floor(fz))), u = fx - i, v = fz - j;
@@ -162,7 +162,7 @@ function buildForeshore(model, terrain) {
   Gm.setIndex(new THREE.Uint32BufferAttribute([...g0, ...g1], 1)); Gm.addGroup(0, g0.length, 0); Gm.addGroup(g0.length, g1.length, 1);
   Gm.computeVertexNormals(); Gm.computeBoundingSphere();
   const r = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, Math.round(v)]));
-  return { geometry: Gm, terrainIndex: tidx, edges, stats: { edge_m: r(len), defence_types_m: r(byType), points: pos.length / 3, snapped, triangles_land: g0.length / 3, triangles_foreshore: g1.length / 3, terrain_squares_replaced: (T.nx - 1) * (T.nz - 1) - tidx.length / 6, wall_faces_m: Math.round(wallLen), hmin: +HMIN.toFixed(2), ms: Math.round(performance.now() - t0) } };
+  return { geometry: Gm, terrainIndex: tidx, edges, stats: { edge_m: r(len), defence_types_m: r(byType), points: pos.length / 3, snapped, triangles_land: g0.length / 3, triangles_foreshore: g1.length / 3, terrain_squares_replaced: sq5.reduce((s, v, q) => s + (sq(q % (T.nx - 1), Math.floor(q / (T.nx - 1))) ? 1 : 0), 0), wall_faces_m: Math.round(wallLen), hmin: +HMIN.toFixed(2), ms: Math.round(performance.now() - t0) } };
 }
 
 // ---------- the foreshore material (TSL): substrate by attribute fk (0 mud, 1 shingle, 2 rock, 3 wall); wetness from the
