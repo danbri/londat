@@ -14,6 +14,7 @@ import { CSMShadowNode } from 'three/addons/csm/CSMShadowNode.js';
 import { A, MFP, dec, buildBuildings, terrainGeometry, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
 import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
 import { Sky3, fromLondon } from './sky3.js';
+import { TZ } from './geo/current.js';   // O1: the page clock in the region's time zone (London for the Docklands)
 import { makeUi, initMenu } from './menu.js';
 import { initCarousel } from './carousel.js';
 import { predict } from './tide.js';
@@ -26,7 +27,7 @@ const WEBGL = '../cwplans/docklands/', DATA = WEBGL + 'data/';   // the WebGL pa
 const loadJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
 const say = t => { hud.textContent = t; };
 let need = true;
-const londonDate = t => new Date(t).toLocaleDateString('en-CA', { timeZone: 'Europe/London' });   // YYYY-MM-DD on the London wall clock (the UTC date was the day before from 00:00 to 01:00 BST)
+const londonDate = t => new Date(t).toLocaleDateString('en-CA', { timeZone: TZ });   // YYYY-MM-DD on the London wall clock (the UTC date was the day before from 00:00 to 01:00 BST)
 function draw() { need = true; }   // the render loop draws a frame when asked (and while the camera moves)
 
 // ---------- renderer: WebGPU, else WebGL 2
@@ -119,7 +120,7 @@ let NIGHT = false;
 const clockHooks = [];   // carousel.js: redraw the wheels when the clock changes
 let TSHARE = null;   // the London wall-clock time the visitor chose (wheels, slider, day or night): in the share hash as t=
 let DRIVE = !!qs.get('t');   // the visitor (or ?t=, a hash t=) set the clock: the WebGL page's sky.js S.drive (never reset; "Now" does not set it)
-const londonStr = t => `${londonDate(t)}T${new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t))}`;
+const londonStr = t => `${londonDate(t)}T${new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t))}`;
 function setClockUser(t, live = false) {   // a clock the visitor set: it replaces ?t= (so views may change day and night again) and goes in the hash
   if (qs.has('t')) { qs.delete('t'); const q = new URLSearchParams(location.search); q.delete('t'); history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + location.hash); }
   TSHARE = live ? null : londonStr(t); if (!live) DRIVE = true; setClock(t); writeHash();
@@ -344,10 +345,10 @@ $('showRoads').checked = roads.visible; $('showRoads').onchange = e => { roads.v
 $('ground').onchange = e => setGround(e.target.value);
 $('facades').onchange = e => { FACADES_ON = e.target.checked; rebuildBuildings(); };
 $('look').onchange = async e => { if (e.target.checked && !LOOK) { const J = await loadJSON(DATA + 'materials.json'); const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } } else if (!e.target.checked) LOOK = null; rebuildBuildings(); };
-const hourOf = t => { const p = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t)); return p; };
-function syncClockUi() { const s = sky.state; $('clock').textContent = `${new Date(clock).toLocaleDateString('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric' })} ${hourOf(clock)} London · sun ${s ? s.sun.alt.toFixed(1) : '?'}°`; const [hh, mm] = hourOf(clock).split(':').map(Number); $('hour').value = hh + mm / 60; }
-$('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClockUser(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
-$('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: 'Europe/London' }); setClockUser(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
+const hourOf = t => { const p = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t)); return p; };
+function syncClockUi() { const s = sky.state; $('clock').textContent = `${new Date(clock).toLocaleDateString('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' })} ${hourOf(clock)} London · sun ${s ? s.sun.alt.toFixed(1) : '?'}°`; const [hh, mm] = hourOf(clock).split(':').map(Number); $('hour').value = hh + mm / 60; }
+$('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: TZ }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClockUser(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
+$('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: TZ }); setClockUser(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
 $('tNight').onclick = () => $('nightBtn').click();
 const clockNow = () => setClockUser(Date.now(), true);
 $('tNow').onclick = clockNow;

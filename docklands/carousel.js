@@ -7,7 +7,8 @@
 // Each strip is a canvas drawn only when the clock or the size changes. Skill: docklands-3d-page, "Three.js port".
 const AE = globalThis.Astronomy;
 const DAY = 864e5, MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+import { TZ } from './geo/current.js';   // O1: the wheels show the region's wall clock (London for the Docklands)
+const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 export function londonParts(t) { const p = {}; for (const x of fmt.formatToParts(new Date(t))) p[x.type] = x.value; return { Y: +p.year, M: +p.month, D: +p.day, min: +p.hour * 60 + +p.minute }; }
 const pad = n => String(n).padStart(2, '0');
 const hhmm = m => `${pad(Math.floor(m / 60) % 24)}:${pad(Math.floor(m % 60))}`;
