@@ -2292,3 +2292,12 @@ official data."
   re-solve; tide-layer foreshore holes at the Thames edge near the Greenland and South Dock entrances (also before);
   the WebGL page keeps the old rule; build time on phones. Skill: docklands-3d-page, "Three.js port: dock edges follow
   the outlines (2026-10-11)"; F54 updated.
+
+## 2026-10-11 (night): wind in 3D (Three.js port)
+
+- Owner asked for subtle, evocative wind markers that vary with height and turn along the streets. Continued the
+  stopped agent's work (branch `wip/agents-2026-10-11`): `docklands/layers/windfield.js` (streamlines, the street model,
+  the height profile), `meteo.js` (wind by height in the one shared Open-Meteo request; the place from the area file,
+  no literal), `test/windfield-check.mjs`. Added: lines over water from the water level (they were under the water),
+  fades for the ground view, tiers (lite 40 %), `describe()`. Skill: docklands-3d-page, "Three.js port: wind in 3D
+  (2026-10-11)". Street level is a model, stated in the menu.

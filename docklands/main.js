@@ -334,7 +334,7 @@ $('tNow').onclick = clockNow;
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,placenames,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,sky-extra,drone,plotter,music,splats,overlays,river,kml,locate,model,xr').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,placenames,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,windfield,sky-extra,drone,plotter,music,splats,overlays,river,kml,locate,model,xr').split(',').filter(Boolean);
 // a test link (?layers=, &planecam=) limits the page: say so, with a link to the full page at the same view (owner,
 // 2026-10-09, opened a close-up link with ?layers=planes and saw no trees or data layers)
 if (qs.has('layers') || qs.has('planecam')) {
@@ -351,7 +351,7 @@ const LAYERS = {}, frameHooks = [];
 const MENU_PLACE = { trees: 'layers/city', ring: 'layers/city', skyline: 'layers/city', nightlights: 'layers/city', registry: 'layers/city', keys: 'layers/city',
   floors: 'layers/below', under: 'layers/below', stations: 'layers/below', walls: 'layers/water', riverbed: 'layers/water', river: 'layers/water', piers: 'layers/water',
   ships: 'layers/live', planes: 'layers/sim', wildlife: 'layers/sim', overlays: 'layers/overlays', kml: 'layers/kml',
-  water: 'look', splats: 'look', music: 'look', tide: 'time', wind: 'time', weather: 'time', plotter: 'about', routes: 'go', search: 'go', drone: 'go', locate: 'go', xr: 'go' };
+  water: 'look', splats: 'look', music: 'look', tide: 'time', wind: 'time', weather: 'time', windfield: 'time', plotter: 'about', routes: 'go', search: 'go', drone: 'go', locate: 'go', xr: 'go' };
 const ui = makeUi(draw);
 OCC = makeOccluder({ A, groundB, buildings, models, U, eye: eyeM, ghost: () => bmat.transparent, draw }); OCC.dirty();
 const ctx = {
