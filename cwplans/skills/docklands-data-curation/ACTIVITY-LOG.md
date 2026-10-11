@@ -2301,3 +2301,17 @@ official data."
   no literal), `test/windfield-check.mjs`. Added: lines over water from the water level (they were under the water),
   fades for the ground view, tiers (lite 40 %), `describe()`. Skill: docklands-3d-page, "Three.js port: wind in 3D
   (2026-10-11)". Street level is a model, stated in the menu.
+
+## 2026-10-11 (evening): Painted style, second round (Three.js port)
+
+Owner feedback on the live Painted style (iPhone screenshots): too lossy; low-poly trees show close up; far away it is
+speckled noise; from high up a grey wash; overlays on the river painted as coloured blobs. Took the unfinished changes of
+the stopped agent (branch `wip/agents-2026-10-11`: docklands/styles.js, docklands/test/paint-check.mjs), judged them
+(mip low-pass, chroma-scaled jitter, value keep, edge fidelity, overlay mask: sound; the colour-match overlay mask failed
+on translucent overlays; the grid anchor was off and is removed) and finished them: dab colour from the mip level of the
+dab footprint, no colour invented on grey, luma kept, larger near strokes that may cover a farther surface (brushed
+outlines), edge fidelity `?paintfid=`, data layers and railway lines crisp by a depth-tested layer-8 pass, the dab pass at
+2 samples a CSS px at most and `?paint=lite` (0.75), `setPaintTier()`, `describe()`, the Look > Style note. paint-check.mjs
+now fails on confetti (grey blocks given colour; chroma error of 8 x 8 block means after a saturation scale) and on
+overlays that are not crisp; calibrated against the first-round pass. Details and numbers: the `docklands-3d-page` skill,
+"Three.js port: Painted style, second round (2026-10-11)". Not pushed (worktree branch only).

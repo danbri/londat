@@ -2257,7 +2257,8 @@ px; also `?paint=<size>`, 1 to 40), `far2` (1.8, the far cell / near cell), `asp
 (0.85, centre jitter in cells), `vjit` (0.3), `hjit` (0.45), `bristle` (0.15), `turn` (0.5 rad), `sharp` (6, the edge of
 a dab), `gate` (0.6), `sat` (1.22), `grain` (0.045). The long axis must stay under about 1.1 cells (radius x
 sqrt(aspect)): a dab whose centre is two cells away is not in the 3 x 3 search, and a longer dab is cut off by a straight
-edge. With radius 0.72 and aspect 2.5 it is 1.14 cells; the Gaussian is 0.002 there, so no cut shows.
+edge. With radius 0.72 and aspect 2.5 it is 1.14 cells; the Gaussian is 0.002 there, so no cut shows. (Values of the
+first round. The second round changed the pass and some values: see "Three.js port: Painted style, second round".)
 
 Measured (headless, WebGL 2 in SwiftShader, 2026-10-11; `node docklands/test/paint-check.mjs`):
 - Checks (`paint-check.mjs`: mean absolute RGB difference from the map at the same camera; mean standard deviation of
@@ -2597,3 +2598,91 @@ Measured (headless WebGL 2 in SwiftShader, a container shared with other agents,
 Open: the draw cost on a real low-end GPU; lines at street level are hard to see from eye height (could add a little
 contrast on bright backgrounds); `describe()` is English only (no message catalogue yet); a WebMCP / MCP tool; the
 street model is not validated against measurements (e.g. wind-tunnel or CFD studies of Canary Wharf).
+
+## Three.js port: Painted style, second round (2026-10-11)
+
+Owner, 2026-10-11 (iPhone screenshots of the live site): "The painterly look is promising but too lossy, and suffers dual
+problems: close up we reveal underlying low poly models eg trees. At a distance it degrades to speckled noise. But with
+work it could be kind of impressionistic and 'splat-ready'." Then: "Still too lossy but it does cover up some of the
+artificiality eg tower bridge is textured as if a generic London block but the painty style obscures all that." From high
+up the frame was a grey wash, and data overlays on the river were painted into big coloured dabs.
+
+Causes found:
+- **Confetti far away.** A dab took the colour of one copy texel at its centre. Far away one texel is a roof, a window or
+  a tree, so neighbouring dabs got unrelated colours, and the hue jitter and the saturation lift then pushed grey towards
+  colour. Fix: the copy has mipmaps and a dab samples the level of its own footprint (`lod = log2(cell x 0.5 x lp)`, lp
+  0.4): the dab gets the mean colour of the area it covers. The hue jitter is scaled by the dab colour's chroma
+  (`chroma()`, max-min over max), the value jitter is a third on grey, the saturation lift is applied only where the
+  colour has chroma, and a chroma cap limits the dab to `cmul` (1.5) x the source pixel's chroma + `cadd` (0.1) (not where
+  a near dab spills), so grey stays grey.
+- **Grey wash and loss of form.** The dabs averaged the value pattern away. Fix: "value kept": the dab's luma is scaled
+  towards the source luma at 1 CSS px by `keep` (0.7; half on near flat surfaces; ratio clamped 0.03 to 12). Light and
+  shade, window rows and outlines stay; colour and texture are painterly. The ratio is taken against the unjittered dab
+  colour, so the stroke texture stays. Trap: the copy is half resolution, so its texel is already 2 device px; the mip
+  level of 1 CSS px is log2(dpr) - 1, not log2(dpr) (the first code took 2 CSS px and was soft at mid distance).
+- **Night.** With keep 0.7 the low-passed warm colour of lit windows spread over the dark walls between them: at `view=cw`
+  8 to 11 % of the grey blocks got strong colour (paint-check failed on it) and the windows became soft blobs. Now at night
+  (`C.U.night`) keep is `keepN` (0.8), the source is the device pixel of the scene (not the mip), and the ratio may reach 50:
+  windows stay points of light, walls stay dark, the style is lighter at night. (keepN 0.95 made the frame almost the map:
+  difference 1.8 at rotherhithe.)
+- **Low-poly near objects.** The depth gate kept every dab inside its own surface, so the polygon outline of a near crown
+  stayed crisp, and the near cells were small. Fix: six levels (-1 to 4); near flat surfaces go up by `big` (3) levels
+  (cells to about 19 CSS px), strong edges go down by `edgeK` (1.4) except near, busy areas by `busyK` (0.8). "Spill": a
+  dab whose centre is nearer than the pixel and under 80 m away (full under 20 m) may cover it, so the strokes, not the
+  polygons, make the outline of a near tree or wall. Value keep and edge fidelity are off where a dab spills.
+- **Mid distance.** On strong edges a share `fid` (0.5, `?paintfid=0..1`) of the full-resolution scene is mixed in (not near):
+  tower outlines, bridges, window rows and the river edge stay readable.
+- **Data painted as scenery.** Fix: the data layers (`OVERLAY_LAYERS`: overlays, river, routes, kml, locate, keys,
+  planes, walls (EA flood walls, orange), ships (AIS, plates coloured by type), piers, and the railway lines
+  `C.meshes.rail`) are also put on THREE layer 8 (every 30th frame, as layers make objects late). A pass of layer 8 alone
+  (full resolution: at half resolution thin lines broke up; no background, clear alpha 0) gives their alpha and depth.
+  Where the alpha is over 0.15 and the overlay is not behind the main frame's depth (x 1.02 + 0.5 m), or wrote no depth
+  (depth 1), the output is the full-resolution scene pixel (crisp), and the copy's alpha is negative there so no dab
+  takes its colour. The first try compared colours (main frame against the overlay's own colour); translucent overlays
+  failed it (only 435 pixels, diff 20.7 of 255). Reflections of the data layers in the water mirror are painted with the
+  water (they are not in the overlay pass). `__docklandsStyles.paint.showMask = true` shows the mask.
+
+Structure now: overlay pass (layer 8, full resolution) and copy (half resolution, mipmaps) -> dab pass (`PT.dab`, an rtt at `PT.scale`: 2 samples a CSS px at most, so
+1 x at dpr 1 and 2, 2/3 at dpr 3; `?paint=lite`: 0.75 samples a CSS px) -> output at full resolution (dabs, edge fidelity,
+canvas grain, overlays). The dab pass writes the edge strength in alpha. `setResolutionScale` on an auto-sized rtt
+works at run time (r186 `RTTNode`). Machine interface: `__docklandsStyles.paint` (the uniforms), `.paintTier`,
+`.setPaintTier('lite'|'full')`, `.describe()` (the text of the style note). Text: the Look > Style note says what the style
+does (architecture rule 4 of OKRS.md).
+
+Shimmer: not measured. The low-passed dab colour changes smoothly when the scene slides under a dab, so the flicker of the
+point-sampled colour is gone; the colours still slide under the screen-fixed dabs. The earlier agent's grid anchor (grid
+moved by yaw and pitch times the focal length) was set to 0 and is removed: in an orbit the target stays still on the
+screen while the background moves, so a yaw anchor makes the target slide instead.
+
+paint-check.mjs (2026-10-11, second round): per query the frames paint, map, map without the data layers, map again,
+paint again. Pixels or blocks that changed between the two map frames or the two paint frames (cloud drift, aircraft) are
+left out. A frame of the style's own mask (`showMask`) limits the overlay check to the pixels the style draws crisp; the
+share of changed pixels under the mask is printed (`masked`). Fails on: page errors; no difference or no texture (first
+round; at night difference over 1.5 and texture over max(0.25, 2 x map), as the frame is near black); confetti: grey blocks given colour (SPECK.chroma
+6, SPECK.invented 0.8 %) or the chroma error of the 8 x 8 block means against the map after a least-squares scale k for
+the saturation lift over 7 (SPECK.blockChroma); overlays not crisp. Calibration on the high view (`c=0,500,0,3500,0.3,1.3`,
+390 x 844 @2): first-round pass (served with `--styles old-styles.js`): invented 1.38 %, block chroma error 9.8;
+this pass: 0.0 % and 3.8. The chroma Laplacian over the frame (chromaHF) is printed but does not fail: the map's own fine
+detail dominates it (old 0.68, new 0.58 of the map's).
+
+Measured (headless, WebGL 2 in SwiftShader, 2026-10-11, 390 x 844 @2, `node docklands/test/paint-check.mjs`, one run of
+all six queries; no page errors): greenlanddock diff 6.0, block chroma error 3.5, invented 0.09 %; high view diff 4.7,
+3.5, 0 %, overlays 14,940 px with diff 0.01 (sharpness 34 of the map's 41); tree row 4.3, 4.0, 0 %; Tower Bridge 3.8,
+3.2, 0 %, overlays 18,224 px, diff 0.11; `view=cw` (night) 4.7, 5.5, 0.02 %, texture 1.17 against the map's 0.39 (this
+run printed FAIL under a first night rule of 4 x map; the rule is now 2 x map); `view=rotherhithe` (night) 2.0, 1.7,
+0.03 %. Before the night fix `view=cw` gave 8 to 11 % invented and block error 11 to 13.
+
+Cost (`--cost --bare`: the output passes alone, median of 3 rounds of 7 frames, the same container and hour):
+- 390 x 844 @3 (1170 x 2532, an iPhone): map 29 ms, Painted 68 ms, `?paint=lite` 56 ms; the first-round Painted
+  (`--styles` of the old styles.js) 240 ms. So the paint passes cost about 39 ms (lite 27 ms) against 206 ms before, mostly
+  because the dab pass now runs at 2/3 (lite 1/4) of the device pixels at dpr 3.
+- 1000 x 640 @1: map 18 ms, Painted 31 ms, lite 26 ms.
+- Lite does not reduce the fixed cost: the full-resolution output pass, the copy and its mipmaps, the overlay pass (half
+  resolution in lite). SwiftShader runs on the CPU: these numbers compare the styles; they are not a phone's frame rate.
+  Not measured on a phone.
+
+Open: shimmer not measured (screen-fixed dabs still slide); the night style is close to the map (keepN 0.8); a data
+layer whose objects are scenery-like (piers, ships) is now drawn crisp, not painted, as the owner asked for data; the
+constellation lines (layer sky-extra) are painted (not in OVERLAY_LAYERS); reflections of the data layers in the water
+are painted; with weather the cloud deck moves between frames, so the checks use `weather=0`.
+Screenshots of this round (not committed): the scratchpad `paint2/final/` of session 55dc707c.

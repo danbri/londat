@@ -330,22 +330,36 @@ function lineFrame() {
   }
 }
 
-// ---------- painted (?style=paint, ?paint=<dab size in CSS px>): a screen-space pass over the normal scene pass, so it
-// paints meshes, the species trees, the water mirror, the splats and any later Gaussian splat data the same way.
-//  1. A half-resolution copy (rtt, RGBA16F): rgb the scene colour (2 x 2 mean by the bilinear fetch), a 100 / view depth.
-//  2. Per pixel: brush dabs on a jittered grid of screen cells, three cell sizes by depth (near to far: size, size x 1.34,
-//     size x 1.8 CSS px; the level boundary dithered by value noise), the 3 x 3 cells round the pixel: centre, priority,
-//     value and hue jitter from a hash of the cell; elliptical Gaussian footprint (aspect 2.5) along the stroke direction
-//     (the tangent of the luma gradient at the pixel, else near horizontal); the colour of the copy at the dab centre.
-//     Order-independent blend: weight = footprint x depth gate x exp(8 x priority), so the high-priority dab is on top
-//     with a soft edge. A dab does not cross a depth step (ratio of 1/z at its centre and the pixel under 0.55 to 0.75).
-//     Where no dab covers, the underpainting: a 5-tap mean of the copy at one cell.
-//  3. Saturation lift, canvas grain; AgX and sRGB after it (outputColorTransform stays on, as in the map).
-// Cost: 9 dab fetches + 5 for the gradient and underpainting + 1 depth; no loops.
-const PT = { pass: null, out: null, outNight: null, res: uniform(new THREE.Vector2(1, 1)), dpr: uniform(1), near: uniform(1), far: uniform(20000),
-  size: uniform(6), far2: uniform(1.8), aspect: uniform(2.5), radius: uniform(0.72), jitter: uniform(0.85), vjit: uniform(0.3), hjit: uniform(0.45),
-  bristle: uniform(0.15), grain: uniform(0.045), sat: uniform(1.22), gate: uniform(0.6), sharp: uniform(6), turn: uniform(0.5) };
+// ---------- painted (?style=paint, ?paint=<dab size in CSS px> or ?paint=lite, ?paintfid=<0..1>): a screen-space pass over
+// the normal scene pass, so it paints meshes, the species trees, the water mirror, the splats and any later Gaussian splat
+// data alike. Owner, 2026-10-11: "too lossy" (low-poly trees close up, "speckled noise" far away, overlays painted as blobs).
+//  1. The copy (rtt, half resolution, RGBA16F, mipmaps): rgb the scene colour, a 100 / view depth (negative where a data
+//     layer shows). A dab takes its colour from the mip level of its own size: a low-pass, not a point sample, so far detail
+//     gives its mean colour, not "confetti".
+//  2. The dabs (rtt `PT.dab`, at `PT.scale` of the drawing buffer: 2 samples a CSS px at most, 0.75 in ?paint=lite; the dabs
+//     are 4 to 20 CSS px, so this loses nothing that shows): a jittered grid of screen cells, the 3 x 3 cells round the
+//     pixel. Cell size: six levels (-1 to 4, x far2 ^ (level / 2)): larger far away, larger on near flat surfaces (big),
+//     smaller on strong edges (edgeK) and busy areas (busyK); the boundary dithered by value noise. Each cell: a hashed
+//     centre, priority, value and hue jitter (scaled by the dab colour's chroma: no colour invented on grey), an elliptical
+//     Gaussian (aspect 2.5) along the tangent of the low-passed luma gradient, else near horizontal. Order-independent
+//     blend: weight = depth gate x exp(8 x priority - sharp x e). A dab does not cross a depth step, except that a dab of a
+//     near surface (centre under about 80 m) may cover a farther one (spill): the strokes, not the polygons, make the
+//     outline of a near tree or wall. Where no dab covers: the underpainting (low-passed taps on the pixel's own surface).
+//     Value kept: the dab's luma moves towards the source luma at 1 CSS px by `keep` (forms, light and shade stay); at
+//     night by keepN towards the device pixel (lit windows stay points, no warm haze over dark walls). Chroma cap: at most
+//     cmul x the source's chroma + cadd (no colour invented on grey). Saturation lift only where the colour has chroma. Alpha: the edge strength, none near (there the strokes make the edge).
+//  3. The output (full resolution): the dabs, a share `fid` of the full-resolution scene on strong edges (outlines, window
+//     rows, bridges, the river edge), canvas grain, then the data layers crisp on top (a full-resolution pass of
+//     OVERLAY_LAYERS alone gives their mask, depth-tested against the main frame). AgX and sRGB after it (outputColorTransform on, as the map).
+// Cost a dab-pass sample: 9 dab fetches, 4 gradient taps, 2 detail taps, 2 depth; output: 3 fetches and the mask.
+const PT = { pass: null, dab: null, ovPass: null, out: null, outNight: null, outMask: null, showMask: false, lite: false, scale: 1, tick: 0,
+  res: uniform(new THREE.Vector2(1, 1)), dpr: uniform(1), near: uniform(1), far: uniform(20000),
+  size: uniform(6), far2: uniform(1.8), aspect: uniform(2.5), radius: uniform(0.72), jitter: uniform(0.85), vjit: uniform(0.3), hjit: uniform(0.3),
+  bristle: uniform(0.12), grain: uniform(0.035), sat: uniform(1.18), gate: uniform(0.6), sharp: uniform(6), turn: uniform(0.5),
+  lp: uniform(0.4), fid: uniform(0.5), big: uniform(3), edgeK: uniform(1.4), farK: uniform(1.2), busyK: uniform(0.8), keep: uniform(0.7), keepN: uniform(0.8), cmul: uniform(1.5), cadd: uniform(0.1), spill: uniform(1) };
+const OVL = 8, OVERLAY_LAYERS = ['overlays', 'river', 'routes', 'kml', 'locate', 'keys', 'planes', 'walls', 'ships', 'piers'];   // the data layers: on THREE layer 8 too
 const lum3 = c => dot(c, vec3(0.2126, 0.7152, 0.0722));
+const chroma = c => { const mx = max(max(c.x, c.y), c.z), mn = min(min(c.x, c.y), c.z); return mx.sub(mn).div(max(mx, 0.02)); };
 const hash4 = p => {   // Hoskins hash44 of a 2D cell (and a level seed): four values in [0, 1)
   const q = fract(vec4(p.x, p.y, p.x, p.y).mul(vec4(0.1031, 0.1030, 0.0973, 0.1099)));
   const r = q.add(dot(q, q.wzxy.add(33.33)));
@@ -359,55 +373,103 @@ const vnoise = p => {   // value noise in [0, 1)
 function paintOutput() {
   const S = H.scenePass, scol = S.getTextureNode('output'), D = S.getTextureNode('depth');
   const viewZ = uv => perspectiveDepthToViewZ(D.sample(uv).x, PT.near, PT.far).negate();
-  // 1. the copy: no If / and / or inside an rtt (r186)
-  PT.pass = rtt(vec4(scol.sample(screenUV).rgb, float(100).div(max(viewZ(screenUV), 0.05))), null, null, { resolutionScale: 0.5 });
-  const A = PT.pass, res = PT.res, at = p => A.sample(p.div(res));
-  const pp = screenUV.mul(res), z0 = viewZ(screenUV), iz0 = float(100).div(max(z0, 0.05));
-  // the level: 0 near, 1, 2 far (and sky), dithered
-  const f = clamp(log2(max(z0, 1)).sub(Math.log2(40)).div(Math.log2(1500 / 40)), 0, 1);
-  const lvl = clamp(floor(f.mul(2).add(vnoise(pp.div(PT.dpr.mul(22))))), 0, 2);
-  const cell = PT.size.mul(PT.dpr).mul(exp2(lvl.mul(0.5).mul(log2(PT.far2))));   // size x far2 ^ (lvl / 2)
-  // stroke direction: the tangent of the luma gradient over one cell, else near horizontal; underpainting from the same taps
-  const ox = vec2(cell, 0), oy = vec2(0, cell);
-  const t0 = at(pp), tr = at(pp.add(ox)), tl = at(pp.sub(ox)), tu = at(pp.add(oy)), td = at(pp.sub(oy));
-  const c0 = t0.rgb, cr = tr.rgb, cl = tl.rgb, cu = tu.rgb, cd = td.rgb;
-  const same = t => clamp(min(t.a, iz0).div(max(max(t.a, iz0), 1e-6)).sub(PT.gate).mul(5), 0, 1);   // the depth gate of the dabs
-  const gx = lum3(cr).sub(lum3(cl)), gy = lum3(cu).sub(lum3(cd)), l0 = lum3(c0);
-  const gm = sqrt(gx.mul(gx).add(gy.mul(gy))), tw = clamp(gm.div(l0.add(0.04)).sub(0.08).mul(4), 0, 1);
+  // the data layers (OVERLAY_LAYERS: overlays, river, routes, KML, locate, keys, aircraft, flood walls, AIS ships, piers: colours that carry data) are data, not scenery: a pass of
+  // them alone (full resolution, no background, clear alpha 0) gives a mask. An overlay pixel counts where the main frame
+  // is not nearer than the overlay (a nearer building hides it). No If / and / or inside an rtt (r186).
+  PT.ovPass = pass(C.scene, C.camera, { samples: 0 }); const OL = new THREE.Layers(); OL.set(OVL); PT.ovPass.setLayers(OL);   // full resolution: thin lines stay whole
+  const ub = PT.ovPass.updateBefore.bind(PT.ovPass);
+  PT.ovPass.updateBefore = frame => { const r = frame.renderer, sc = C.scene, bg = sc.background, a = r.getClearAlpha(); sc.background = null; r.setClearAlpha(0);
+    try { return ub(frame); } finally { sc.background = bg; r.setClearAlpha(a); } };
+  const OV = PT.ovPass.getTextureNode(), o4 = uv => OV.sample(uv), OVD = PT.ovPass.getTextureNode('depth');
+  // visible where the overlay's own depth is not behind the main frame's (a nearer building hides it); translucent overlays too
+  // (an overlay that writes no depth, depth 1, counts as visible)
+  const ovMask = uv => { const od = OVD.sample(uv).x, zo = perspectiveDepthToViewZ(od, PT.near, PT.far).negate();
+    return clamp(o4(uv).a.sub(0.15).mul(4), 0, 1).mul(max(step(zo, viewZ(uv).mul(1.02).add(0.5)), step(0.99999, od))); };
+  // 1. the copy
+  const sc0 = scol.sample(screenUV).rgb;
+  PT.pass = rtt(vec4(sc0, float(100).div(max(viewZ(screenUV), 0.05)).mul(float(1).sub(ovMask(screenUV).mul(2)))), null, null,
+    { resolutionScale: 0.5, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter, magFilter: THREE.LinearFilter });
+  const A = PT.pass, res = PT.res, at = (p, l) => A.sample(p.div(res)).level(l);
+  // 2. the dabs; pp in device px of the full frame, whatever the dab pass's own resolution
+  const pp = screenUV.mul(res), z0 = viewZ(screenUV), iz0 = float(100).div(max(z0, 0.05)), lg2dpr = max(log2(max(PT.dpr, 1)).sub(1), 0);   // the copy's mip level of 1 CSS px (a copy texel is 2 device px)
+  const same = t => clamp(min(abs(t.a), iz0).div(max(max(abs(t.a), iz0), 1e-6)).sub(PT.gate).mul(5), 0, 1);   // the depth gate
+  // spill: a dab whose centre is nearer than the pixel and under about 80 m away may cover it (full under 20 m)
+  const spillOf = t => step(iz0, t.a).mul(clamp(float(80).sub(float(100).div(max(t.a, 1e-3))).div(60), 0, 1)).mul(PT.spill);
+  // the gradient over half a base cell, from mip 1 (a low-pass at about 4 device px): stroke direction and edge strength
+  const base = PT.size.mul(PT.dpr), ox = vec2(base.mul(0.5), 0), oy = vec2(0, base.mul(0.5));
+  const tr = at(pp.add(ox), 1), tl = at(pp.sub(ox), 1), tu = at(pp.add(oy), 1), td = at(pp.sub(oy), 1);
+  const m1 = at(pp, lg2dpr), m4 = at(pp, lg2dpr.add(3));   // about 1 and 8 CSS px
+  const gx = lum3(tr.rgb).sub(lum3(tl.rgb)), gy = lum3(tu.rgb).sub(lum3(td.rgb)), l1 = lum3(m1.rgb);
+  const gm = sqrt(gx.mul(gx).add(gy.mul(gy))), rel = gm.div(l1.add(0.04));
+  const tw = clamp(rel.sub(0.08).mul(4), 0, 1), edge = clamp(rel.sub(0.06).mul(4), 0, 1).mul(same(m1));
+  const detail = clamp(abs(l1.sub(lum3(m4.rgb))).div(lum3(m4.rgb).add(0.04)).mul(4), 0, 1);   // busy (1) or flat (0) at about 8 CSS px
   const tg = vec2(gy.negate(), gx).div(max(gm, 1e-6)), tgA = select(tg.x.lessThan(0), tg.negate(), tg);   // x >= 0, so it blends with the horizontal
-  // the underpainting: a mean of the five taps on the pixel's own surface (no sky haze round a building), the copy at the pixel else
+  // the level: far (farK), near and flat (+ big), strong edge (- edgeK), busy (- busyK); dithered
+  const f = clamp(log2(max(z0, 1)).sub(Math.log2(40)).div(Math.log2(1500 / 40)), 0, 1), near = float(1).sub(clamp(z0.sub(15).div(120), 0, 1));
+  const nflat = near.mul(float(1).sub(detail));
+  const lvlF = f.mul(PT.farK).add(nflat.mul(PT.big)).sub(edge.mul(PT.edgeK).mul(float(1).sub(near.mul(0.6)))).sub(detail.mul(PT.busyK)).add(vnoise(pp.div(PT.dpr.mul(22))));
+  const lvl = clamp(floor(lvlF), -1, 4);
+  const cell = base.mul(exp2(lvl.mul(0.5).mul(log2(PT.far2))));   // size x far2 ^ (lvl / 2)
+  const lod = log2(max(cell.mul(0.5).mul(PT.lp), 1));             // the mip level for a dab of this cell (copy texels)
   const wr = same(tr), wl = same(tl), wu = same(tu), wd = same(td);
-  const under = c0.mul(2).add(cr.mul(wr)).add(cl.mul(wl)).add(cu.mul(wu)).add(cd.mul(wd)).div(wr.add(wl).add(wu).add(wd).add(2));
-  const g = pp.div(cell), ci = floor(g), seed = lvl.mul(97.31);
+  const under = m1.rgb.mul(2).add(tr.rgb.mul(wr)).add(tl.rgb.mul(wl)).add(tu.rgb.mul(wu)).add(td.rgb.mul(wd)).div(wr.add(wl).add(wu).add(wd).add(2));
+  const calm = float(1).sub(detail.mul(0.6));   // busy areas: less jitter
+  const ci = floor(pp.div(cell)), seed = lvl.mul(97.31);
   const ra = sqrt(PT.aspect), axA = cell.mul(PT.radius).mul(ra), axB = cell.mul(PT.radius).div(ra);
-  let sumC = vec3(0), sumW = float(0), minE = float(99);
+  let sumC = vec3(0), sumC0 = vec3(0), sumW = float(0), sumS = float(0), minE = float(99);
   for (const oy2 of [-1, 0, 1]) for (const ox2 of [-1, 0, 1]) {
     const id = ci.add(vec2(ox2, oy2)), h = hash4(id.add(seed)), k = fract(h.mul(7.13).add(h.yzwx.mul(3.71)));   // one hash a dab; k: four more values from it
     const ctr = id.add(0.5).add(h.xy.sub(0.5).mul(PT.jitter)).mul(cell);
-    const s = at(ctr), col0 = s.rgb, izc = s.a;
-    const base = vec2(1, k.x.sub(0.5).mul(0.7)).normalize(), dir = mix(base, tgA, tw).add(vec2(base.y.negate(), base.x).mul(k.y.sub(0.5).mul(PT.turn))).normalize();
+    const s = at(ctr, lod), col0 = s.rgb;
+    const b0 = vec2(1, k.x.sub(0.5).mul(0.7)).normalize(), dir = mix(b0, tgA, tw).add(vec2(b0.y.negate(), b0.x).mul(k.y.sub(0.5).mul(PT.turn))).normalize();
     const q = pp.sub(ctr), u = dot(q, dir).div(axA), v = dot(q, vec2(dir.y.negate(), dir.x)).div(axB);
-    const e = u.mul(u).add(v.mul(v));
-    const gate = same(s);
-    const w = exp(h.z.mul(8).sub(e.mul(PT.sharp))).mul(gate);   // footprint x priority in one exp
-    // broken colour: value and warm-cool jitter per dab, a bristle streak across it, a little less paint at the end of the stroke
-    const lc = lum3(col0);
-    const col = col0.mul(float(1).add(h.w.sub(0.5).mul(PT.vjit)).add(sin(v.mul(4.2).add(k.z.mul(6.28))).mul(PT.bristle)).sub(u.mul(0.04)))
-      .add(vec3(0.55, 0.05, -0.6).mul(k.w.sub(0.5).mul(PT.hjit).mul(lc))).add(vec3(-0.25, 0.4, -0.25).mul(k.z.sub(0.5).mul(PT.hjit).mul(lc)));
-    sumC = sumC.add(max(col, vec3(0)).mul(w)); sumW = sumW.add(w); minE = min(minE, e.add(float(1).sub(gate).mul(10)));
+    const g0 = same(s).mul(step(0, s.a)), sp = spillOf(s), gate = max(g0, sp);
+    const e = u.mul(u).add(v.mul(v)), w = exp(h.z.mul(8).sub(e.mul(PT.sharp))).mul(gate);   // footprint x priority in one exp
+    // broken colour: value jitter (less on busy areas and on grey), warm-cool and green-magenta jitter only where the colour has chroma
+    const lc = lum3(col0), cc = clamp(chroma(col0).sub(0.06).mul(4), 0, 1), hj = PT.hjit.mul(cc).mul(calm).mul(lc);
+    const vk = cc.mul(0.65).add(0.35).mul(calm);
+    const col = col0.mul(float(1).add(h.w.sub(0.5).mul(PT.vjit).add(sin(v.mul(4.2).add(k.z.mul(6.28))).mul(PT.bristle)).mul(vk)).sub(u.mul(0.04)))
+      .add(vec3(0.55, 0.05, -0.6).mul(k.w.sub(0.5).mul(hj))).add(vec3(-0.25, 0.4, -0.25).mul(k.z.sub(0.5).mul(hj)));
+    sumC = sumC.add(max(col, vec3(0)).mul(w)); sumC0 = sumC0.add(col0.mul(w)); sumW = sumW.add(w); sumS = sumS.add(w.mul(float(1).sub(g0)));
+    minE = min(minE, e.add(float(1).sub(gate).mul(10)));
   }
-  const painted = mix(under, sumC.div(max(sumW, 1e-8)), clamp(float(3.5).sub(minE.mul(PT.sharp)).div(1.9), 0, 1));   // footprint exp(-sharp e) 0.03 to 0.2 of the nearest gated dab
-  const L = lum3(painted), sat = vec3(L).add(painted.sub(L).mul(PT.sat));
-  // canvas: a fine weave and a grain at one CSS px
-  const cp = pp.div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
-  const out = max(sat, vec3(0)).mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain)));
+  const cover = clamp(float(3.5).sub(minE.mul(PT.sharp)).div(1.9), 0, 1), iw = float(1).div(max(sumW, 1e-8));
+  const dabs0 = mix(under, sumC.mul(iw), cover), plain = mix(under, sumC0.mul(iw), cover), spilt = sumS.mul(iw).mul(cover);
+  // value kept: towards the source luma at about 1 CSS px; half on near flat surfaces (the strokes break up the facets), none
+  // where a near dab spills over a farther surface (that is the painted outline)
+  // at night the source luma of the device pixel (lit windows are 1 to 2 px points), by day of 1 CSS px
+  const src = mix(m1.rgb, scol.sample(screenUV).rgb, C.U.night), Ls = lum3(src), Lp = lum3(plain);
+  // at night (U.night) keepN: the lit windows stay points of light, not dabs that spread warm light over dark walls
+  const kp = mix(PT.keep, PT.keepN, C.U.night).mul(same(m1)).mul(float(1).sub(nflat.mul(0.5))).mul(float(1).sub(spilt));
+  const dabs = dabs0.mul(mix(float(1), clamp(Ls.add(0.002).div(Lp.add(0.002)), 0.03, mix(12, 50, C.U.night)), kp));
+  // chroma cap: a dab over a grey or dark-grey pixel (fog, concrete, a dark wall between lit windows) keeps at most a little
+  // more chroma than the source has there (chroma relative to the max channel), so no colour is invented on grey
+  const cs = chroma(src), cdab = chroma(dabs), Ld = lum3(dabs);
+  const capped = vec3(Ld).add(dabs.sub(Ld).mul(mix(min(float(1), cs.mul(PT.cmul).add(PT.cadd).div(max(cdab, 1e-3))), float(1), spilt)));   // not where a near dab spills (its own colour)
+  const L = lum3(capped), sk = float(1).add(PT.sat.sub(1).mul(clamp(chroma(capped).sub(0.08).mul(5), 0, 1)));   // no lift on grey
+  PT.dab = rtt(vec4(max(vec3(L).add(capped.sub(L).mul(sk)), vec3(0)), edge.mul(float(1).sub(spilt)).mul(float(1).sub(near))), null, null, { resolutionScale: 1 });
+  // 3. the output at full resolution
+  const P = PT.dab.sample(screenUV), sc1 = scol.sample(screenUV).rgb;
+  const painted = mix(P.rgb, sc1, P.a.mul(PT.fid));   // fidelity on strong edges: a share of the full-resolution scene
+  const cp = screenUV.mul(res).div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
+  const out0 = painted.mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain)));
+  const out = mix(out0, sc1, ovMask(screenUV));   // the data layers crisp on top
   PT.out = vec4(out, 1);
+  PT.outMask = vec4(vec3(ovMask(screenUV)), 1);   // test view: the data-layer mask (paint.showMask = true; paint-check.mjs)
   PT.outNight = vec4(out.add(bloom(A, 0.9, 0.45, 0.6).rgb), 1);   // lit windows: the map's bloom, of the half-resolution copy
 }
 function paintFrame() {
   const cam = C.camera; PT.near.value = cam.near; PT.far.value = cam.far;
-  const s = C.renderer.getDrawingBufferSize(new THREE.Vector2()); PT.res.value.set(s.x, s.y); PT.dpr.value = C.renderer.getPixelRatio();
-  const bl = $('bloom'); OUT = (bl ? bl.checked : true) && C.U && C.U.night && C.U.night.value > 0.01 ? PT.outNight : PT.out;
+  const s = C.renderer.getDrawingBufferSize(new THREE.Vector2()), dpr = C.renderer.getPixelRatio(); PT.res.value.set(s.x, s.y); PT.dpr.value = dpr;
+  // the dab pass: 2 samples a CSS px at most (1 in lite); the output stays at full resolution
+  const sc = Math.min(1, (PT.lite ? 0.75 : 2) / Math.max(dpr, 1)); if (sc !== PT.scale && PT.dab) { PT.dab.setResolutionScale(sc); PT.scale = sc; }
+  const os = PT.lite ? 0.5 : 1; if (PT.ovPass && PT.ovPass.getResolutionScale && PT.ovPass.getResolutionScale() !== os) PT.ovPass.setResolutionScale(os);   // lite: the data-layer mask at half resolution
+  const LY = globalThis.__docklands3 && __docklands3.layers;   // the data layers' objects (some are made later): on layer OVL as well, every 30th frame
+  if (LY && PT.tick++ % 30 === 0) {   // and the railway lines of the map (a coloured data line, not scenery)
+    for (const id of OVERLAY_LAYERS) { const o = LY[id] && LY[id].api && LY[id].api.object; if (o) o.traverse(x => x.layers.enable(OVL)); }
+    if (C.meshes && C.meshes.rail) C.meshes.rail.layers.enable(OVL);
+  }
+  const bl = $('bloom'); OUT = PT.showMask ? PT.outMask : (bl ? bl.checked : true) && C.U && C.U.night && C.U.night.value > 0.01 ? PT.outNight : PT.out;
 }
 
 // ---------- material swaps: the style's material on each model mesh; the meshes' own materials come back on leaving
@@ -488,7 +550,7 @@ function frame() {
 
 // the style notes under Look > Style (index.html #pixNote, line-styles.js NOTE), as true for this port
 const NOTE = {
-  paint: 'Painted: the normal view repainted as brush dabs on the screen, with broken colour and a canvas grain. Dabs are larger far away, so far detail dissolves. A dab does not cross a large step in depth, so the skyline stays clean. It paints buildings, trees, water, splats and the sky the same way. The dabs are fixed to the screen, so when the view moves the colours slide under them. ?paint=7 gives larger dabs.',
+  paint: 'Painted: the normal view repainted as brush strokes with broken colour and a canvas grain, an impressionist look that will suit Gaussian splat data. Each stroke takes the mean colour of the area it covers, so far detail becomes calm colour, not speckle, and grey stays grey. Light and shade are kept. Strokes are small on strong edges (tower outlines, bridges, window rows, the river edge) and large on near flat surfaces; near trees and walls get a brushed outline. Map overlays, routes, aircraft and other data are drawn sharp on top, not painted. The strokes are fixed to the screen, so when the view moves the colours slide under them. ?paint=7 gives larger strokes, ?paint=lite a cheaper version for slow phones, ?paintfid=0 to 1 how much sharp detail shows on edges.',
   pixel: 'Pixel art: an isometric view in a 33-colour palette with stylised trees, people, cyclists, buses, cabs, now and then a police car, ambulance or fire engine, gulls, river traffic (Thames Clipper catamarans, tourist boats, tugs towing waste barges, aggregate barges, speedboats) and swimmers in Eden Dock. Photo facades and the measured facade colours are kept. The arrows at the top right turn the view by a quarter. Night is off in this style. The animals and traffic are illustrative, not live data.',
   lines: 'Line drawing: the plotter drawing in real time. Building edges with hidden lines removed, and water, parks, roads and railways in the plotter\'s pen colours. A building smaller than 5 px on the screen draws no edges. Night, overlays and splats are off in this style. About > Plotter makes the file for a pen plotter.',
   vectrex: 'Vector CRT, after the Vectrex console (1982), which drew each line with the electron beam: bright phosphor lines on black, a glow, a short afterglow when the view moves and a slight flicker. There are no scanlines, because a vector screen has none. "Colour overlay" tints each kind of line, as the Vectrex\'s plastic overlays coloured its screen. The screen redraws all the time in this style, which uses more battery.' };
@@ -528,8 +590,13 @@ export function init(hook) {
   H.ray.setFromCamera = function (ndc, cam) { return set.call(this, ndc, MODE === 'pixel' ? PX.cam : cam); };
   ui(); C.onFrame(frame);
   const q = new URLSearchParams(location.search); let want = q.get('style') || (q.has('pixel') ? 'pixel' : q.has('lines') ? 'lines' : q.has('vectrex') ? 'vectrex' : 'map');
-  const pz = parseFloat(q.get('paint')); if (pz > 0) { PT.size.value = Math.min(40, Math.max(1, pz)); if (!q.get('style')) want = 'paint'; }   // ?paint=<near dab cell, CSS px>
-  const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT };
+  const pq = q.get('paint'), pz = parseFloat(pq);   // ?paint=<near dab cell, CSS px> or ?paint=lite (the cheaper tier)
+  if (pq === 'lite') PT.lite = true; else if (pz > 0) PT.size.value = Math.min(40, Math.max(1, pz));
+  if ((pq === 'lite' || pz > 0) && !q.get('style')) want = 'paint';
+  const pf = parseFloat(q.get('paintfid')); if (pf >= 0) PT.fid.value = Math.min(1, pf);   // ?paintfid=<0..1>: the share of the scene on strong edges
+  const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT,
+    get paintTier() { return PT.lite ? 'lite' : 'full'; }, setPaintTier(t) { PT.lite = t === 'lite'; C.draw(); return this.paintTier; },   // ?paint=lite
+    describe() { return NOTE[MODE] || 'Map: the normal view.'; } };
   globalThis.__docklandsStyles = api;
   return setStyle(want).then(() => api);
 }
