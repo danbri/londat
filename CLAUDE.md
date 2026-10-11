@@ -44,7 +44,8 @@ working (the owner's words)".
   deploys it in a few minutes. Then confirm that the live file matches the commit.
 
 ## Objectives and key results
-Q4 2026 OKRs (set 2026-10-11 at the owner's request): https://github.com/danbri/londat/blob/main/OKRS.md . Mission-critical
+Q4 2026 OKRs (set 2026-10-11 at the owner's request): https://github.com/danbri/londat/blob/main/OKRS.md , tracked in GitHub
+issue https://github.com/danbri/londat/issues/2 (one sub-issue per objective, #3 to #8). Mission-critical
 (owner, 2026-10-11): O1 any locale worldwide, O2 a spherical planet model with maps and data worldwide, O3 universal
 access (low-end devices, non-visual use, LLM / MCP / WebMCP access; "My iphone is essentially top of range"). Then O4
 measured realism, O5 fresh live data, O6 open traced data. Its "Architecture rules" apply to all new work: no new

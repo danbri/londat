@@ -14,6 +14,7 @@ Other sources: `CLAUDE.md`, the curation skill ("Ways of working (the owner's wo
 list (2026-10-09) and the scaling assessment
 (https://github.com/danbri/londat/blob/main/docklands/SCALING-AND-OKRS.md). The owner can change any line.
 
+- **GitHub issues:** tracking issue https://github.com/danbri/londat/issues/2 ; O1 https://github.com/danbri/londat/issues/6 , O2 https://github.com/danbri/londat/issues/7 , O3 https://github.com/danbri/londat/issues/8 , O4 https://github.com/danbri/londat/issues/3 , O5 https://github.com/danbri/londat/issues/4 , O6 https://github.com/danbri/londat/issues/5 . Tick a key result in its issue when it reaches its target; comment the score at each checkpoint.
 - **Period:** 2026-10-11 to 2026-12-31.
 - **Checkpoints:** 2026-10-25, 2026-11-22, and the end-of-quarter score.
 - **Scores:** 0.0 to 1.0 for each key result. An objective's score is the mean of its key results. Aim for about 0.7.
