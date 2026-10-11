@@ -20,7 +20,7 @@
 // Wind: the crowns sway in the vertex stage, in proportion to WU.windSpeed towards WU.windDir (water.js), while frames run.
 // Skill: docklands-3d-page, "Three.js port" (Trees).
 import { Fn, If, Discard, positionWorld, positionGeometry, positionLocal, vec2, vec3, vec4, float, uniform, instancedBufferAttribute, smoothstep,
-  mix, max, abs, sin, cos, time, uv, mx_noise_float, clamp, length, dot, select } from 'three/tsl';
+  mix, max, abs, sin, cos, time, uv, mx_noise_float, mx_noise_vec3, clamp, length, dot, select, normalize, cameraPosition, cameraViewMatrix } from 'three/tsl';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { A, surfaceAt } from '../build.js';
 import { WU } from '../water.js';
@@ -135,6 +135,13 @@ export default {
     // the crown shades itself from the sky: occlusion of the indirect light (the hemisphere fill; the sun is direct) from 0.3
     // at the crown base to 0.75 at the top, none on a bare tree. Owner's photo of Greenland Dock (2026-10-11, 12:45): the
     // planes seen from their shaded side were luma 0.13, the render 0.36 with no occlusion (docklands/test/photo-tones.mjs)
+    // round crowns (owner, 2026-10-11, on the Painted style: "close up we reveal underlying low poly models eg trees"): the light
+    // comes from the direction from the crown centre (a sphere round mid.xyz, a little up) with leaf clumps of about 2 m
+    // from 3D noise, not from the polyhedron's flat faces; the facets and their edges go. World space: the trees group has no
+    // transform, and positionWorld is after the sway
+    const crownN = nd => normalize(positionWorld.sub(nd.mid.xyz).add(vec3(0, nd.mid.w.mul(.12), 0)));
+    const crownNormalView = nd => { const w = normalize(crownN(nd).add(mx_noise_vec3(positionWorld.mul(.45).add(nd.leaf.w.mul(9))).mul(.55)));
+      return normalize(cameraViewMatrix.mul(vec4(w, 0)).xyz); };
     const crownAO = (nd, p) => { const { dens } = season(nd.cal, nd.bloom); return mix(float(1), mix(float(.3), float(.75), smoothstep(.05, .95, p.y)), smoothstep(.1, .6, dens)); };
     const crownAttrs = { mid: 'mid', leaf: 'leaf', aut: 'aut', cal: 'cal', bloom: 'bloom' };
     const crowns = SHAPES.map((name, s) => {
@@ -151,8 +158,14 @@ export default {
         const p = positionGeometry, { c, dens } = crownColour(nd, p);
         const n = mx_noise_float(p.mul(vec3(4.2, 3.6, 4.2)).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
         If(n.greaterThan(dens.mul(nd.aut.w.mul(.45).oneMinus()).mul(1.15)), () => { Discard(); });   // leaf-fall and airy crowns: holes
-        return vec4(c.mul(n.mul(.25).add(.85)), 1);
+        // a ragged leafy outline in place of the polygon's edge: where the round crown turns away from the eye, holes by 3D noise
+        // in metres (clumps of about 1.5 m) eat the rim; the inside of the crown stays whole
+        const e = float(1).sub(abs(dot(normalize(positionWorld.sub(nd.mid.xyz)), normalize(cameraPosition.sub(positionWorld)))));
+        If(e.greaterThan(mx_noise_float(positionWorld.mul(.9).add(nd.leaf.w.mul(17))).mul(.28).add(mx_noise_float(positionWorld.mul(2.6)).mul(.14)).add(.5)), () => { Discard(); });
+        const clump = mx_noise_float(positionWorld.mul(.55).add(nd.leaf.w.mul(5))).mul(.5).add(.5);
+        return vec4(c.mul(n.mul(.25).add(.85)).mul(clump.mul(.6).add(.7)), 1);
       })();
+      R.mat.normalNode = crownNormalView(nd);
       R.mat.aoNode = crownAO(nd, positionGeometry);
       return R;
     });
@@ -221,6 +234,7 @@ export default {
         return vec4(mix(vec3(.06, .05, .04), c, smoothstep(0, .5, dens)).mul(n.mul(.25).add(.85)), 1);   // bare: a dark twig tone (linear)
       })();
       far.mat.aoNode = crownAO(nd, positionGeometry);
+      far.mat.normalNode = crownNormalView(nd);
     }
 
     // ---- level of detail: re-select when the camera has moved RESELECT_M
