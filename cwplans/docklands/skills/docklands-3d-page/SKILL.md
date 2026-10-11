@@ -2290,3 +2290,63 @@ Faults met and lessons:
 Open: the dabs are fixed to the screen, so when the view moves the colours slide under them (the "shower door" effect).
 Strokes fixed to the world (dab centres from world positions, or from splat centres when 3DGS data is used) would remove
 it. Not measured on a phone GPU. Labels and the HTML overlays are not painted.
+
+## Three.js port: wind in 3D (2026-10-11)
+
+Owner, 2026-10-11: "making wind markers visible in a more cool way would be nice. Something subtle and evocative. Do we
+have wind vectors that differ at different altitudes? Or could we automatically guess different wind direction for
+street level somehow? Very approximately, so wind is more 3D?" Layer `docklands/layers/windfield.js`, Menu > Time
+"Wind in 3D (streamlines)", `?windfield=0|1|lite|full`. On by default. The header of the file has every rule and number.
+
+- **Wind by height (data).** `meteo.js` asks Open-Meteo once a day for all layers; the request now also has 80, 120 and
+  180 m and the pressure levels 1000, 975, 950, 925, 900 and 850 hPa with their geopotential heights. An HTTP 400 (a
+  variable the API does not know) asks again without them, so the wind and weather layers keep their data. Missing or
+  null variables are left out level by level. Levels are used as a shape (speed ratio and turn from 10 m), applied to the
+  10 m wind of `layers/wind.js` (METAR first), so a METAR at 10 m keeps its value.
+- **The place asked for** (OKR architecture rule 1): `METEO_PLACE` in `meteo.js` is the model origin from the area
+  file's geo fit (Newton inverse), rounded to 0.001 degrees: no latitude or longitude literal. `layers/wind.js` and
+  `layers/weather.js` use the same `METEO_Q` for their archive hosts. (`about-extra.js` and `sky3.js` still hold
+  literals or offsets: open.)
+- **Stated fallback** (no profile: 429, timeout, `?weather=0`, `?windprofile=est`, days over 85 back or 15 ahead): speed
+  x (z / 10 m)^0.3 (city power law, held above 500 m) and +15 degrees veer (clockwise) from 10 m to 500 m. Below 10 m
+  the same power law in both cases. The note in the menu says which one is used.
+- **Street level is a MODEL, not a measurement.** A 25 m grid made once (about 300 x 224 cells): building footprints at
+  5 m (plan share lambda, mean height H, and a roof raster that keeps lines out of buildings); the street axis per cell
+  from a structure tensor (doubled angles) of OSM road and footway lines (weight 4) and building edges (0.6 x
+  min(1, h / 12 m)); coherence; canyon width 25 m x (1 - lambda); aspect H / W. The 10 m wind turns to the nearer axis
+  direction by coherence^0.7 x smoothstep(0.25, 1.5, aspect) x 0.9 and slows by density (0.9 to 0.3) and by the angle to
+  the axis. Water, cells with lambda < 0.04 or H < 4 m: the free wind. Blend to the profile from 0.6 H to 1.5 H. Over
+  water the height is from the water level (`waterDepth().level`), not the sunk bed: before this fix the lines over the
+  docks were under the water.
+- **Drawing (TSL only).** 2,400 particles round the camera (a disc ahead of the eye, radius 2.5 x eye height + 150 m,
+  250 to 2,000 m), advected on the CPU at 12 steps a second, trails of 18 steps in a ring buffer of quads, one draw call.
+  Vertex stage: lines 1 to 2.2 CSS px with a 1 px soft edge, head grows and tail shrinks with the step fraction; pale
+  blue (slow) to white (fast), alpha 0.55 by day; at night x 0.5 and a faint warm tint; `U.cut` discards; vz comes from
+  the camera view matrix. Fades: near the eye (3 to 12 m), the region edge, the distance from the eye (0.7 to 1.5 R) and
+  steep lines more than 15 m over the eye (from the ground they read as rain). A low eye (< 40 m) gets 75 % of the
+  particles at 1.5 to 13.5 m (to 35 m in canyons) and 25 % in the roof band, none higher. Time runs 1.5 to 8 x faster
+  from high up (stated in the note).
+- **Tiers (OKR O3).** Indices are particle-major, so a tier is a draw range: lite = 40 % (`?windfield=lite`, a device with
+  4 cores or fewer or 2 GB or less, or the layer's own CPU time over 2 ms a frame, median of 120 animated frames).
+- **Text and machine interface.** `api.describe()` (also `STATS.windfield.describe` and a line in the menu, refreshed
+  every 3 s, not aria-live): e.g. "Wind at street level about 3 m/s from the west-south-west, turning along the streets
+  and slowed between the buildings; at 150 m, 8 m/s from 248 degrees. Street level is a model ...". JS API on
+  `__docklands3.layers.windfield.api`: `describe`, `sample(x, y, z)`, `cell(x, z)`, `profile(heights)`, `setTier`,
+  `warm`, `bench`, `stats`. No WebMCP tool yet.
+
+Measured (headless WebGL 2 in SwiftShader, a container shared with other agents, 2026-10-11;
+`node docklands/test/windfield-check.mjs [--shots | --shots-only --views a,b]`, Open-Meteo mocked by a Playwright route):
+- North Colonnade (x -150, z -62; axis 98 degrees, coherence 0.72, lambda 0.75, H 46 m, aspect 5.8): wind 5 m/s from
+  238.5 grid turns to 270 (39.6 -> 8 degrees off the axis), 1.37 m/s at 5 m against 4.06 m/s over Middle Dock; at
+  150 m 8.5 m/s (profile). Estimate: 11.3 m/s at 150 m, 16.2 at 500 m (ratio 3.2: the power law is strong; it is only
+  the fallback).
+- Cost: one advection step of 2,400 particles 0.18 to 1.2 ms (median about 0.45 ms; lite 0.2 to 0.35 ms); the layer's CPU time
+  a frame, median 0.9 to 1.0 ms (street) and 2.2 to 2.8 ms (300 m up, two runs; the adaptive tier would go to lite). 43,200 quads full, 17,280
+  lite. The draw cost could not be measured here: frames read back took 5 to 7 s each under the shared load, with no
+  clear difference on / off. Not measured on a phone.
+- Screens: from the ground the lines are very subtle (thin, near eye level, mostly against the far shore and facades);
+  from 300 m they read as a soft flow over the roofs; at night faint.
+
+Open: the draw cost on a real low-end GPU; lines at street level are hard to see from eye height (could add a little
+contrast on bright backgrounds); `describe()` is English only (no message catalogue yet); a WebMCP / MCP tool; the
+street model is not validated against measurements (e.g. wind-tunnel or CFD studies of Canary Wharf).

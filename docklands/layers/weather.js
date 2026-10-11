@@ -24,7 +24,7 @@
 import * as THREE from 'three/webgpu';
 import { WU } from '../water.js';
 import { fromLondon } from '../sky3.js';
-import { forecastDay } from '../meteo.js';
+import { forecastDay, METEO_Q } from '../meteo.js';
 import { getMetar, metarNear, hm } from './wind.js';
 
 const D2R = Math.PI / 180;
@@ -74,7 +74,7 @@ export default {
     async function getMeteo(t) {
       const day = new Date(t).toISOString().slice(0, 10), age = (Date.now() - t) / 864e5; if (src.meteo[day]) return src.meteo[day];
       if (age < -15) return (src.meteo[day] = { why: 'Open-Meteo forecasts reach 16 days ahead' });
-      const end = new Date(t + 864e5).toISOString().slice(0, 10), q = `latitude=51.505&longitude=-0.02&start_date=${day}&end_date=${end}&timeformat=unixtime&timezone=GMT`;
+      const end = new Date(t + 864e5).toISOString().slice(0, 10), q = `${METEO_Q}&start_date=${day}&end_date=${end}&timeformat=unixtime&timezone=GMT`;
       const url = age > 85 ? `https://archive-api.open-meteo.com/v1/archive?${q}&hourly=${VARS.replace('visibility,', '')}` : `https://api.open-meteo.com/v1/forecast?${q}&hourly=${VARS}`;
       try { let J; if (age <= 85) J = await forecastDay(day);   // shared with the wind layer (../meteo.js)
         else { const r = await fetch(url); J = await r.json(); if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status); }

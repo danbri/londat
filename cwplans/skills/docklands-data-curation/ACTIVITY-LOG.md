@@ -2205,3 +2205,12 @@ official data."
   is mission Critical. As is sphericalish planet model cf google earth. And some maps and data worldwide. It is ok to be
   challenged by getting super rich dense data everywhere but we should architect for scaling this." O1 any locale, O2
   planet model and worldwide data, O3 universal access are mission-critical; five architecture rules for new work.
+
+## 2026-10-11 (night): wind in 3D (Three.js port)
+
+- Owner asked for subtle, evocative wind markers that vary with height and turn along the streets. Continued the
+  stopped agent's work (branch `wip/agents-2026-10-11`): `docklands/layers/windfield.js` (streamlines, the street model,
+  the height profile), `meteo.js` (wind by height in the one shared Open-Meteo request; the place from the area file,
+  no literal), `test/windfield-check.mjs`. Added: lines over water from the water level (they were under the water),
+  fades for the ground view, tiers (lite 40 %), `describe()`. Skill: docklands-3d-page, "Three.js port: wind in 3D
+  (2026-10-11)". Street level is a model, stated in the menu.
