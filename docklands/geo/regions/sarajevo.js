@@ -19,6 +19,8 @@ export default {
       licence: 'per source (OSM ODbL; Overture CDLA-Permissive-2.0 / ODbL by theme; Copernicus DEM free licence; Natural Earth public domain)', licenceClass: 'open', fallback: 'none (this is the fallback)' },
     { id: 'ba-fgu', status: 'unknown', area: 'Bosnia and Herzegovina',
       about: 'National LiDAR (EU IPA II 2019 project: DSM and DTM, due about the end of 2025) and the FGU / RGURS geoportals: no published open licence found on 2026-10-11',
-      licence: 'unknown', licenceClass: 'none', fallback: 'world-base' },
+      licence: 'unknown (a catalogue entry for the FGU geoportal says "No License Provided")', licenceClass: 'waived-prototype',
+      waiver: 'owner, 2026-10-11: "Waive this, put it against my name to pursue license while in prototype phase." Usable during the prototyping phase; the owner (danbri) pursues a licence; re-check before the phase ends (issue #9)',
+      fallback: 'world-base' },
   ],
 };

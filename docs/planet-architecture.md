@@ -162,7 +162,7 @@ EGM2008.
 
 | region | origin | time zone | locales | national adapter (later) | licence, as checked 2026-10-11 |
 |---|---|---|---|---|---|
-| `sarajevo` | Vijećnica (City Hall), OSM way 23723663, 43.85917 N 18.43335 E | Europe/Sarajevo | bs, hr, sr-Latn, **sr-Cyrl** (the non-Latin script case) | `ba-fgu`: the national LiDAR (EU IPA II 2019 project: DSM and DTM, due about the end of 2025; Federal Geodetic Administration FGU, RGURS of Republika Srpska, Brčko District) and the FGU geoportal | **unknown**: no published open licence found; a catalogue entry for the FGU geoportal says "No License Provided". Until a licence is found: worldwide base only (OSM, Copernicus DEM, Natural Earth) |
+| `sarajevo` | Vijećnica (City Hall), OSM way 23723663, 43.85917 N 18.43335 E | Europe/Sarajevo | bs, hr, sr-Latn, **sr-Cyrl** (the non-Latin script case) | `ba-fgu`: the national LiDAR (EU IPA II 2019 project: DSM and DTM, due about the end of 2025; Federal Geodetic Administration FGU, RGURS of Republika Srpska, Brčko District) and the FGU geoportal | **unknown**: no published open licence found; a catalogue entry for the FGU geoportal says "No License Provided". **Waived for the prototyping phase** (owner, 2026-10-11: "Waive this, put it against my name to pursue license while in prototype phase."): FGU / RGURS data may be fetched and used now; the owner pursues a licence (https://github.com/danbri/londat/issues/9); register it as "review"; re-check before the phase ends |
 | `leon` | Plaza Mayor, OSM way 46344511, 42.59732 N 5.56654 W | Europe/Madrid | es-ES | `es-ign`: IGN / CNIG PNOA LiDAR, MDT and MDS models, PNOA orthophotos (Centro de Descargas; ETRS89 / UTM 30N, heights on the EGM08-REDNAP geoid) | **CC BY 4.0** (Orden FOM/2807/2015; credit "© Instituto Geográfico Nacional", for PNOA "PNOA cedido por © Instituto Geográfico Nacional"). Data made with other bodies can have other terms: check each product's page before use |
 | | | | | `es-catastro`: Dirección General del Catastro INSPIRE buildings (BU), parcels (CP), addresses (AD) | **review, not open in our sense**: own licence (v1.0, July 2016; read from its PDF): public and commercial use only of data the user has transformed; "no se autoriza la difusión ... de la información original". So we may publish derived geometry (for example heights or LoD1 blocks we compute), never the original files. **Owner decision, 2026-10-11: "Catastro - yes"** on these terms (publish only data we have transformed; keep the original files out of the repository and out of Pages). Not for the Basque Country or Navarre (own cadastres) |
 | `leiden` | Annie's, Hoogstraat 1A, OSM node 2917023856, 52.15948 N 4.49123 E | Europe/Amsterdam | nl-NL | `nl-pdok`: AHN LiDAR DTM and DSM 0.5 m; BAG buildings and addresses (Kadaster); 3DBAG (LoD 1.2 to 2.2 buildings from BAG and AHN; RD New EPSG:28992, NAP heights) | **AHN: CC0 1.0** (data.overheid.nl entries for the DTM and DSM); **BAG: CC0 1.0 / public domain** (Kadaster entries; Kadaster may charge private parties for some extract deliveries); **3DBAG: CC BY 4.0** (3D geoinformation group, TU Delft, and 3DGI; credit and link required) |
@@ -272,3 +272,10 @@ Where each category goes:
 Limits of the count: it matches text, so a few lines are false hits (a URL constant named `ORIGIN` in
 `cwplans/feeds/check-events.mjs`; `E0` / `N0` as names of other boxes) and a constant written in a new form would be
 missed. It is a ratchet, not a proof; code review still applies.
+
+## To do: simple models from public imagery and open data
+
+Owner, 2026-10-11: "Also note todos for creating simple models based on public imagery etc." The list (heights from
+national LiDAR, open footprints and heights, shadows in open orthophotos, solved photos, facts from the Sarajevo 3D
+Warehouse models; parametric models by OSM tags; roof and facade colour from open imagery; single landmarks; splats) is
+tracked in https://github.com/danbri/londat/issues/10 .

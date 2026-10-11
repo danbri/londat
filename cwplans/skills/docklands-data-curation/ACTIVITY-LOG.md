@@ -2261,3 +2261,13 @@ official data."
   the raw answer is git-ignored because houseboat tags hold contacts): 346 GENERIC boats at 149 places. The rule reads
   tags and shapes only (O1: any locale). `describe()` on the river and ships layer APIs (O3). Test
   `docklands/test/boats-check.mjs`. Details: skill docklands-3d-page, "Three.js port: boats and moored barges (2026-10-11)".
+
+## 2026-10-11 (late): owner decisions for the regions outside the UK
+
+- Places for KR1.2: Sarajevo City Hall, León Plaza Mayor, Annie's in Leiden (region configs in `docklands/geo/regions/`).
+- Catastro (Spain): "Catastro - yes": transformed data only (CLAUDE.md).
+- Bosnia and Herzegovina (FGU, RGURS, national LiDAR): "Waive this, put it against my name to pursue license while in
+  prototype phase." Waived for the prototype; the owner pursues the licence: https://github.com/danbri/londat/issues/9
+- Sarajevo 3D Warehouse survey (114 models within 2 km of City Hall, not open): docs/regions/sarajevo-3dwarehouse.md.
+- To-do list for simple models from public imagery and open data: https://github.com/danbri/londat/issues/10
+- OKRs in GitHub issues: #2 (tracking), #3 to #8 (objectives).

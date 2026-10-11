@@ -105,6 +105,10 @@ planning and prototyping phase."
   on its own licence terms (owner, 2026-10-11: "Catastro - yes"): reuse only of data we have transformed (for example
   LoD1 blocks or heights we compute); never commit or publish the original files (keep them in an ignored raw folder).
   Register the source with licence class "review" and the transformation in the data register.
+- Bosnia and Herzegovina national geodata (FGU geoportal, RGURS, the national LiDAR) is allowed for the Sarajevo region
+  during the prototyping phase although no licence is published (owner, 2026-10-11: "Waive this, put it against my name
+  to pursue license while in prototype phase."). The owner pursues the licence (issue
+  https://github.com/danbri/londat/issues/9). Register each file as "review" with this waiver; re-check before the phase ends.
 - Contributed photos: do not describe or tag people; report recognisable faces and readable number plates to the owner
   (the `docklands-data-curation` skill, "Contributed photos").
 - The exception ends when the project leaves the prototyping phase; the owner says when.
