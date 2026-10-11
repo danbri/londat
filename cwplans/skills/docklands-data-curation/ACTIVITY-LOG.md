@@ -2167,3 +2167,26 @@ official data."
   mesh (`surfaceAt`, clipping to the terrain triangles where the ground is not flat); `layers/wildlife.js` uses the same
   heights. Worst polygon: 36.7 m of relief, the old slab 32.1 m in the air. Now 0.29 to 0.51 m over the terrain.
   Checks: `greens-check.mjs`, `load.mjs` (both sizes), `wildlife-check.mjs`. The WebGL page got the same fix (`buildGreens`). Trees on both pages now stand on the same surface (`surfaceAt`).
+
+## 2026-10-11: Greenland Dock calibration photo, sky and trees, the Painted style (Three.js port)
+
+- Owner's CC0 photo of Greenland Dock, 12:45 BST, iPhone: `data/images/contrib/greenlanddock/` (README: camera,
+  tones, bird count). Two people at the left edge may be recognisable at full size: reported to the owner, not tagged.
+- View `?view=greenlanddock` (Menu > Views > "Greenland Dock, day"): eye (-1679.2, 6.5, 1234.1) on the west end wall,
+  heading 85.65, pitch -0.61, roll -1.59, field 71.6 deg; rms 13.5 px over 12 observations, focal fixed at 1785 px.
+  https://danbri.github.io/londat/docklands/?view=greenlanddock&t=2026-10-11T12:45
+- Sky (`sky3.js`): turbidity 2, rayleigh 1.0, SkyMesh colour x 0.46. Top sky band luma 0.574 against the photo's 0.581
+  (was 0.82). Plane autumn colour from day 280 (was 292): the photo's planes are yellow-olive (hue 47 to 58 deg).
+  Wildlife dock density 7 per ha (was 3.2): photo 18 birds on the west basin, simulation 4 before, 8 after.
+  Crowns: occlusion of the sky fill (0.3 to 0.75); shaded tree row luma 0.360 -> 0.339 (photo 0.129). Most of that gap
+  is tree size: the photo puts the quay planes about 19 m tall, trees.json gives a median of 13.5 to 15 m there.
+- New fault F54: from a quay the near 20 m of dock water is ground (`waterSink` keeps the edge cells).
+- Painted style `?style=paint` (subagent): a screen-space pass of jittered elliptical dabs over the rendered frame,
+  dab size by depth, a depth-aware underpainting, broken colour, saturation 1.22, canvas grain; 15 texture fetches a
+  pixel; works on any input, so splats and later 3DGS data get the same look. Test `docklands/test/paint-check.mjs`.
+  Paint pass about 115 to 130 ms at 1000 x 640 in software against 18 to 21 ms for the map; not measured on a phone.
+  Skill: docklands-3d-page, "Three.js port: Painted style (2026-10-11)".
+- Commits: d0fa659 (view, sky, species, wildlife, photo, test), 7e9855d (crown occlusion), and the Painted style.
+- Open: F54; tree heights on the Greenland Dock quays; the dabs are fixed to the screen (they slide when the view
+  moves; strokes fixed to the world or to splat centres would fix it); the WebGL page's sky is not calibrated; the boats
+  at the dock's east end are not drawn.

@@ -1,4 +1,4 @@
-// Drawing styles of the Three.js port (?style=map|pixel|lines|vectrex), ported from the WebGL page
+// Drawing styles of the Three.js port (?style=map|paint|pixel|lines|vectrex), ported from the WebGL page
 // (https://danbri.github.io/londat/cwplans/docklands/ : ?pixel in index.html, ?lines and ?vectrex in line-styles.js).
 // main.js gives the hook `styleHook` (the RenderPipeline, the pick ray, the camera functions, ctx); a style sets its own
 // pipe.outputNode and draws with its own pass. Everything is TSL, so one graph serves WebGPU and WebGL 2.
@@ -16,12 +16,12 @@
 import * as THREE from 'three/webgpu';
 import { Fn, If, Loop, Discard, pass, uniform, uniformArray, attribute, float, vec2, vec3, vec4, floor, fract, mod, step, mix, min, max, abs,
   dot, select, sqrt, clamp, screenUV, screenCoordinate, positionWorld, positionView, normalFlat, cameraWorldMatrix, sRGBTransferEOTF,
-  sRGBTransferOETF, perspectiveDepthToViewZ, texture, int, log2, exp2 } from 'three/tsl';
+  sRGBTransferOETF, perspectiveDepthToViewZ, texture, int, log2, exp2, exp, sin, rtt } from 'three/tsl';
 import { FAC } from './materials.js';
 import { afterImage } from 'three/addons/tsl/display/AfterImageNode.js';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 
-const STYLES = ['map', 'pixel', 'lines', 'vectrex'], NAMES = { map: 'Map', pixel: 'Pixel art', lines: 'Line drawing', vectrex: 'Vector CRT' };
+const STYLES = ['map', 'paint', 'pixel', 'lines', 'vectrex'], NAMES = { map: 'Map', paint: 'Painted', pixel: 'Pixel art', lines: 'Line drawing', vectrex: 'Vector CRT' };
 const LAYER = 7;   // the model's meshes are also on this layer: the line pass draws only them (no sky, trees, ships, overlays)
 const hexc = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
 const lin = c => sRGBTransferEOTF(c);
@@ -330,6 +330,86 @@ function lineFrame() {
   }
 }
 
+// ---------- painted (?style=paint, ?paint=<dab size in CSS px>): a screen-space pass over the normal scene pass, so it
+// paints meshes, the species trees, the water mirror, the splats and any later Gaussian splat data the same way.
+//  1. A half-resolution copy (rtt, RGBA16F): rgb the scene colour (2 x 2 mean by the bilinear fetch), a 100 / view depth.
+//  2. Per pixel: brush dabs on a jittered grid of screen cells, three cell sizes by depth (near to far: size, size x 1.34,
+//     size x 1.8 CSS px; the level boundary dithered by value noise), the 3 x 3 cells round the pixel: centre, priority,
+//     value and hue jitter from a hash of the cell; elliptical Gaussian footprint (aspect 2.5) along the stroke direction
+//     (the tangent of the luma gradient at the pixel, else near horizontal); the colour of the copy at the dab centre.
+//     Order-independent blend: weight = footprint x depth gate x exp(8 x priority), so the high-priority dab is on top
+//     with a soft edge. A dab does not cross a depth step (ratio of 1/z at its centre and the pixel under 0.55 to 0.75).
+//     Where no dab covers, the underpainting: a 5-tap mean of the copy at one cell.
+//  3. Saturation lift, canvas grain; AgX and sRGB after it (outputColorTransform stays on, as in the map).
+// Cost: 9 dab fetches + 5 for the gradient and underpainting + 1 depth; no loops.
+const PT = { pass: null, out: null, outNight: null, res: uniform(new THREE.Vector2(1, 1)), dpr: uniform(1), near: uniform(1), far: uniform(20000),
+  size: uniform(6), far2: uniform(1.8), aspect: uniform(2.5), radius: uniform(0.72), jitter: uniform(0.85), vjit: uniform(0.3), hjit: uniform(0.45),
+  bristle: uniform(0.15), grain: uniform(0.045), sat: uniform(1.22), gate: uniform(0.6), sharp: uniform(6), turn: uniform(0.5) };
+const lum3 = c => dot(c, vec3(0.2126, 0.7152, 0.0722));
+const hash4 = p => {   // Hoskins hash44 of a 2D cell (and a level seed): four values in [0, 1)
+  const q = fract(vec4(p.x, p.y, p.x, p.y).mul(vec4(0.1031, 0.1030, 0.0973, 0.1099)));
+  const r = q.add(dot(q, q.wzxy.add(33.33)));
+  return fract(r.xxyz.add(r.yzzw).mul(r.zywx));
+};
+const vnoise = p => {   // value noise in [0, 1)
+  const i = floor(p), f = fract(p), u = f.mul(f).mul(float(3).sub(f.mul(2)));
+  const a = hash4(i).x, b = hash4(i.add(vec2(1, 0))).x, c = hash4(i.add(vec2(0, 1))).x, d = hash4(i.add(vec2(1, 1))).x;
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+};
+function paintOutput() {
+  const S = H.scenePass, scol = S.getTextureNode('output'), D = S.getTextureNode('depth');
+  const viewZ = uv => perspectiveDepthToViewZ(D.sample(uv).x, PT.near, PT.far).negate();
+  // 1. the copy: no If / and / or inside an rtt (r186)
+  PT.pass = rtt(vec4(scol.sample(screenUV).rgb, float(100).div(max(viewZ(screenUV), 0.05))), null, null, { resolutionScale: 0.5 });
+  const A = PT.pass, res = PT.res, at = p => A.sample(p.div(res));
+  const pp = screenUV.mul(res), z0 = viewZ(screenUV), iz0 = float(100).div(max(z0, 0.05));
+  // the level: 0 near, 1, 2 far (and sky), dithered
+  const f = clamp(log2(max(z0, 1)).sub(Math.log2(40)).div(Math.log2(1500 / 40)), 0, 1);
+  const lvl = clamp(floor(f.mul(2).add(vnoise(pp.div(PT.dpr.mul(22))))), 0, 2);
+  const cell = PT.size.mul(PT.dpr).mul(exp2(lvl.mul(0.5).mul(log2(PT.far2))));   // size x far2 ^ (lvl / 2)
+  // stroke direction: the tangent of the luma gradient over one cell, else near horizontal; underpainting from the same taps
+  const ox = vec2(cell, 0), oy = vec2(0, cell);
+  const t0 = at(pp), tr = at(pp.add(ox)), tl = at(pp.sub(ox)), tu = at(pp.add(oy)), td = at(pp.sub(oy));
+  const c0 = t0.rgb, cr = tr.rgb, cl = tl.rgb, cu = tu.rgb, cd = td.rgb;
+  const same = t => clamp(min(t.a, iz0).div(max(max(t.a, iz0), 1e-6)).sub(PT.gate).mul(5), 0, 1);   // the depth gate of the dabs
+  const gx = lum3(cr).sub(lum3(cl)), gy = lum3(cu).sub(lum3(cd)), l0 = lum3(c0);
+  const gm = sqrt(gx.mul(gx).add(gy.mul(gy))), tw = clamp(gm.div(l0.add(0.04)).sub(0.08).mul(4), 0, 1);
+  const tg = vec2(gy.negate(), gx).div(max(gm, 1e-6)), tgA = select(tg.x.lessThan(0), tg.negate(), tg);   // x >= 0, so it blends with the horizontal
+  // the underpainting: a mean of the five taps on the pixel's own surface (no sky haze round a building), the copy at the pixel else
+  const wr = same(tr), wl = same(tl), wu = same(tu), wd = same(td);
+  const under = c0.mul(2).add(cr.mul(wr)).add(cl.mul(wl)).add(cu.mul(wu)).add(cd.mul(wd)).div(wr.add(wl).add(wu).add(wd).add(2));
+  const g = pp.div(cell), ci = floor(g), seed = lvl.mul(97.31);
+  const ra = sqrt(PT.aspect), axA = cell.mul(PT.radius).mul(ra), axB = cell.mul(PT.radius).div(ra);
+  let sumC = vec3(0), sumW = float(0), minE = float(99);
+  for (const oy2 of [-1, 0, 1]) for (const ox2 of [-1, 0, 1]) {
+    const id = ci.add(vec2(ox2, oy2)), h = hash4(id.add(seed)), k = fract(h.mul(7.13).add(h.yzwx.mul(3.71)));   // one hash a dab; k: four more values from it
+    const ctr = id.add(0.5).add(h.xy.sub(0.5).mul(PT.jitter)).mul(cell);
+    const s = at(ctr), col0 = s.rgb, izc = s.a;
+    const base = vec2(1, k.x.sub(0.5).mul(0.7)).normalize(), dir = mix(base, tgA, tw).add(vec2(base.y.negate(), base.x).mul(k.y.sub(0.5).mul(PT.turn))).normalize();
+    const q = pp.sub(ctr), u = dot(q, dir).div(axA), v = dot(q, vec2(dir.y.negate(), dir.x)).div(axB);
+    const e = u.mul(u).add(v.mul(v));
+    const gate = same(s);
+    const w = exp(h.z.mul(8).sub(e.mul(PT.sharp))).mul(gate);   // footprint x priority in one exp
+    // broken colour: value and warm-cool jitter per dab, a bristle streak across it, a little less paint at the end of the stroke
+    const lc = lum3(col0);
+    const col = col0.mul(float(1).add(h.w.sub(0.5).mul(PT.vjit)).add(sin(v.mul(4.2).add(k.z.mul(6.28))).mul(PT.bristle)).sub(u.mul(0.04)))
+      .add(vec3(0.55, 0.05, -0.6).mul(k.w.sub(0.5).mul(PT.hjit).mul(lc))).add(vec3(-0.25, 0.4, -0.25).mul(k.z.sub(0.5).mul(PT.hjit).mul(lc)));
+    sumC = sumC.add(max(col, vec3(0)).mul(w)); sumW = sumW.add(w); minE = min(minE, e.add(float(1).sub(gate).mul(10)));
+  }
+  const painted = mix(under, sumC.div(max(sumW, 1e-8)), clamp(float(3.5).sub(minE.mul(PT.sharp)).div(1.9), 0, 1));   // footprint exp(-sharp e) 0.03 to 0.2 of the nearest gated dab
+  const L = lum3(painted), sat = vec3(L).add(painted.sub(L).mul(PT.sat));
+  // canvas: a fine weave and a grain at one CSS px
+  const cp = pp.div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
+  const out = max(sat, vec3(0)).mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain)));
+  PT.out = vec4(out, 1);
+  PT.outNight = vec4(out.add(bloom(A, 0.9, 0.45, 0.6).rgb), 1);   // lit windows: the map's bloom, of the half-resolution copy
+}
+function paintFrame() {
+  const cam = C.camera; PT.near.value = cam.near; PT.far.value = cam.far;
+  const s = C.renderer.getDrawingBufferSize(new THREE.Vector2()); PT.res.value.set(s.x, s.y); PT.dpr.value = C.renderer.getPixelRatio();
+  const bl = $('bloom'); OUT = (bl ? bl.checked : true) && C.U && C.U.night && C.U.night.value > 0.01 ? PT.outNight : PT.out;
+}
+
 // ---------- material swaps: the style's material on each model mesh; the meshes' own materials come back on leaving
 function swapAll(of) {
   const M = C.meshes;
@@ -379,13 +459,16 @@ async function setStyle(mode) {
       LN.crt = vec4(glow.rgb.mul(LN.flick).add(bloom(glow.getTextureNode(), 0.5, 0.1, 0).rgb.mul(LN.flick.mul(0.8))), 1);
     }
     LN.last = 0; OUT = mode === 'lines' ? LN.paper : LN.crt;
+  } else if (mode === 'paint') {
+    if (!PT.out) paintOutput();
+    paintFrame();
   } else OUT = null;
   if (!OUT) { H.pipe.outputColorTransform = true; H.syncPost(); }
   sync(); C.draw();
 }
 function sync() {   // the control, the body classes (label look), the URL
   const sel = $('styleSel'); if (sel) sel.value = MODE;
-  $('isoBtns').hidden = MODE !== 'pixel'; $('nightBtn').hidden = MODE !== 'map';
+  $('isoBtns').hidden = MODE !== 'pixel'; $('nightBtn').hidden = MODE !== 'map' && MODE !== 'paint';
   $('labels').style.visibility = MODE === 'pixel' ? 'hidden' : '';   // no names in pixel art (the WebGL page), and the layers' labels follow the orbit camera
   document.body.classList.toggle('lstyle-lines', MODE === 'lines'); document.body.classList.toggle('lstyle-crt', MODE === 'vectrex');
   const nt = $('styleNote'); if (nt) { nt.hidden = !NOTE[MODE]; nt.textContent = NOTE[MODE] || ''; }   // index.html pixNote, line-styles.js NOTE
@@ -398,12 +481,14 @@ const $ = id => document.getElementById(id);
 // ---------- every frame: the style's camera, materials and output node (main.js syncPost() sets the map's output on a clock change)
 function frame() {
   if (MODE === 'map') return;
-  if (MODE === 'pixel') pixFrame(); else lineFrame();
-  const P = H.pipe; if (P.outputNode !== OUT || P.outputColorTransform) { P.outputNode = OUT; P.outputColorTransform = false; P.needsUpdate = true; }
+  if (MODE === 'pixel') pixFrame(); else if (MODE === 'paint') paintFrame(); else lineFrame();
+  const P = H.pipe, ct = MODE === 'paint';   // paint is linear HDR: AgX and sRGB after it, as in the map
+  if (P.outputNode !== OUT || P.outputColorTransform !== ct) { P.outputNode = OUT; P.outputColorTransform = ct; P.needsUpdate = true; }
 }
 
 // the style notes under Look > Style (index.html #pixNote, line-styles.js NOTE), as true for this port
 const NOTE = {
+  paint: 'Painted: the normal view repainted as brush dabs on the screen, with broken colour and a canvas grain. Dabs are larger far away, so far detail dissolves. A dab does not cross a large step in depth, so the skyline stays clean. It paints buildings, trees, water, splats and the sky the same way. The dabs are fixed to the screen, so when the view moves the colours slide under them. ?paint=7 gives larger dabs.',
   pixel: 'Pixel art: an isometric view in a 33-colour palette with stylised trees, people, cyclists, buses, cabs, now and then a police car, ambulance or fire engine, gulls, river traffic (Thames Clipper catamarans, tourist boats, tugs towing waste barges, aggregate barges, speedboats) and swimmers in Eden Dock. Photo facades and the measured facade colours are kept. The arrows at the top right turn the view by a quarter. Night is off in this style. The animals and traffic are illustrative, not live data.',
   lines: 'Line drawing: the plotter drawing in real time. Building edges with hidden lines removed, and water, parks, roads and railways in the plotter\'s pen colours. A building smaller than 5 px on the screen draws no edges. Night, overlays and splats are off in this style. About > Plotter makes the file for a pen plotter.',
   vectrex: 'Vector CRT, after the Vectrex console (1982), which drew each line with the electron beam: bright phosphor lines on black, a glow, a short afterglow when the view moves and a slight flicker. There are no scanlines, because a vector screen has none. "Colour overlay" tints each kind of line, as the Vectrex\'s plastic overlays coloured its screen. The screen redraws all the time in this style, which uses more battery.' };
@@ -442,8 +527,9 @@ export function init(hook) {
   const set = THREE.Raycaster.prototype.setFromCamera;
   H.ray.setFromCamera = function (ndc, cam) { return set.call(this, ndc, MODE === 'pixel' ? PX.cam : cam); };
   ui(); C.onFrame(frame);
-  const q = new URLSearchParams(location.search), want = q.get('style') || (q.has('pixel') ? 'pixel' : q.has('lines') ? 'lines' : q.has('vectrex') ? 'vectrex' : 'map');
-  const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; } };
+  const q = new URLSearchParams(location.search); let want = q.get('style') || (q.has('pixel') ? 'pixel' : q.has('lines') ? 'lines' : q.has('vectrex') ? 'vectrex' : 'map');
+  const pz = parseFloat(q.get('paint')); if (pz > 0) { PT.size.value = Math.min(40, Math.max(1, pz)); if (!q.get('style')) want = 'paint'; }   // ?paint=<near dab cell, CSS px>
+  const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT };
   globalThis.__docklandsStyles = api;
   return setStyle(want).then(() => api);
 }

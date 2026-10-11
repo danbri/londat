@@ -2212,3 +2212,81 @@ Window light is drawn, not known; the window grid is 1.8 m x 3.6 m everywhere in
 (the model lights every 100 m roof); the LiDAR foreshore at Greenland Pier is one tide state; reflections are of point
 lights and columns, not a mirror image of the facades; a level is a floor index, not a measured height; the splat order
 is sorted for the still model, so strong music stretch shows small sorting errors. Not yet measured on a phone GPU.
+
+## Three.js port: Painted style (2026-10-11)
+
+Owner, 2026-10-11: "Can we nudge from low poly style towards a more realistic / impressionistically painterly
+(pointillist, splat-like, impressionist, particle system art style that will adapt gracefully as 3DGS data becomes more
+broadly available)." Reference: the owner's CC0 photo of Greenland Dock at 12:45 BST (deep blue sky, sunlit plane trees,
+a dark-blue dock with sky reflections).
+
+What it is: `?style=paint` (Look > Style and the selector at the top right: "Painted"), in `docklands/styles.js`
+(`PT`, `paintOutput()`, `paintFrame()`). It is a screen-space pass over the normal scene pass (`styleHook.scenePass`),
+so it paints the buildings, the species trees, the water mirror, the splat layer and the sky in the same way. Gaussian
+splat data added later goes through the same pass with no change. The style changes no material and no camera.
+
+- **Copy.** An `rtt()` at half resolution (RGBA16F): rgb is the scene colour (the bilinear fetch at the half-resolution
+  texel centre gives the mean of 2 x 2 pixels); alpha is 100 / view depth (m). Store 1 / z, not z: the bilinear fetch
+  then mixes the depths of a silhouette into a value that fails the depth gate on both sides.
+- **Dabs.** A jittered grid of screen cells. Each pixel looks at the 3 x 3 cells round it. The cell size has three levels
+  by the depth at the pixel: `size`, `size` x 1.34, `size` x 1.8 CSS px (x the device pixel ratio), from 40 m to 1,500 m
+  (log scale); the sky takes the largest. The level boundary is dithered by value noise at 22 CSS px. Each cell has a hash
+  (Hoskins hash44 of the cell and the level; four more values are made from it with one `fract`): centre jitter,
+  priority, value jitter, warm-cool and green-magenta jitter, stroke turn, bristle phase. The dab is an elliptical Gaussian, exp(-sharp x e), axes `radius` x cell x sqrt(aspect)
+  and `radius` x cell / sqrt(aspect). Its colour is the copy at the dab centre.
+- **Direction.** The tangent of the luma gradient at the pixel (central differences over one cell), mixed with a near
+  horizontal stroke (hashed +-20 degrees) where the relative gradient is small (sky, water, plain walls), then turned by
+  a hashed +-`turn`/2.
+- **Blend.** Order-independent: weight = depth gate x exp(8 x priority - sharp x e) (one `exp` a dab); colour = sum(w c) / sum(w). The dab
+  with the highest priority is on top, with a soft edge. No sorting and no loop: the 9 dabs are unrolled in JavaScript.
+- **Depth gate.** clamp((min(iz) / max(iz) - `gate`) x 5, 0, 1) between the pixel and the dab centre. A dab does not
+  cross a step in depth of more than about 1.4 : 1, so the skyline does not smear into the sky.
+- **Underpainting.** Where the nearest gated dab has a footprint under 0.03 (full paint at 0.2) (thin masts, small far buildings round which every dab centre
+  falls on the sky): the mean of the 5 copy taps that are on the pixel's own surface (same gate).
+- **Finish.** Saturation x `sat` (in linear light), a canvas weave and a 1 CSS px grain (x `grain`), then AgX and sRGB:
+  the style keeps `outputColorTransform` on, as the map does (the other styles turn it off). No grey is mixed in.
+- **Night.** The lit windows become dabs of light where a dab centre falls on them. With Look > Bloom on and `U.night`
+  over 0.01 the output adds `bloom()` of the half-resolution copy (the map's settings 0.9, 0.45, 0.6). The Night button
+  shows in this style.
+- **Cost.** Per pixel: 9 fetches for the dabs, 5 for the gradient and the underpainting, 1 for the depth; once per frame
+  the half-resolution copy (2 fetches a texel).
+
+Tuning: `__docklandsStyles.paint` holds the uniforms (set `.value`, then `__docklands3.draw()`): `size` (6, near cell in CSS
+px; also `?paint=<size>`, 1 to 40), `far2` (1.8, the far cell / near cell), `aspect` (2.5), `radius` (0.72), `jitter`
+(0.85, centre jitter in cells), `vjit` (0.3), `hjit` (0.45), `bristle` (0.15), `turn` (0.5 rad), `sharp` (6, the edge of
+a dab), `gate` (0.6), `sat` (1.22), `grain` (0.045). The long axis must stay under about 1.1 cells (radius x
+sqrt(aspect)): a dab whose centre is two cells away is not in the 3 x 3 search, and a longer dab is cut off by a straight
+edge. With radius 0.72 and aspect 2.5 it is 1.14 cells; the Gaussian is 0.002 there, so no cut shows.
+
+Measured (headless, WebGL 2 in SwiftShader, 2026-10-11; `node docklands/test/paint-check.mjs`):
+- Checks (`paint-check.mjs`: mean absolute RGB difference from the map at the same camera; mean standard deviation of
+  luma in the 8 x 8 px blocks that are flat in the map, map then Painted): all pass, no page or console errors (only
+  network failures: a 404 and timeouts that the map has too).
+  `view=greenlanddock&t=2026-10-11T12:45` 1288 x 966 @2: difference 11.9 to 13.5, flat blocks 0.21 to 0.24 -> 2.99 to 3.04;
+  390 x 844 @2: 5.9, 0.24 -> 2.97; 1000 x 640 @1 WebGPU (Dawn SwiftShader): 11.2, 0.44 -> 3.73;
+  `view=cw` 1288 x 966 @2: 7.5, 0.44 -> 3.54; `view=rotherhithe` (night) 1288 x 966 @2: 12.9, 0.13 -> 3.57.
+- Cost of the output pass alone (`--cost --bare`: the scene hidden, pipe.render() and a 1-pixel readPixels, median of 3
+  rounds of 7 frames): 1000 x 640 @1 WebGL 2: map 18 to 21 ms, Painted 134 to 152 ms, so the paint pass is about
+  115 to 130 ms, or 0.2 ms per 1,000 pixels in SwiftShader; 2576 x 1932 (1288 x 966 @2), night with bloom: map 122 ms,
+  Painted 1,033 ms. WebGPU (Dawn SwiftShader) 1000 x 640: map 97 ms, Painted 235 ms. Folding the two `exp` and the
+  two hashes of a dab into one each took 7 % off (144 -> 134 ms), so the texture fetches are probably most of the cost.
+  SwiftShader runs on the CPU, so these numbers only compare the styles. Not measured on a phone.
+- With the whole scene drawn the same method gave map 16 ms and Painted 18 ms at 1000 x 640, and 131 to 142 ms for
+  both at 2576 x 1932: less than the bare pass alone. The 390 x 844, cw and rotherhithe checks ran before the `exp`
+  fold; the last code ran the greenlanddock checks at 1000 x 640 on WebGL 2 and WebGPU. Those numbers are not consistent; do not use them (cause not
+  found: the full-scene frame may not wait in readPixels in the same way).
+
+Faults met and lessons:
+- The first try (cell 5 px, radius 0.62, sharp 3, value jitter 0.16, hue jitter 0.1) read as a soft "oil paint" filter,
+  not as dabs. Visible dabs need a sharper Gaussian (6) and stronger broken colour (0.3, 0.45).
+- The first underpainting (5-tap mean) mixed the sky into the far buildings: a white haze round the skyline. The taps
+  are now gated by depth like the dabs.
+- Several style tests in parallel in this container make the frame times useless (one frame took 7 to 35 s at
+  2576 x 1932 with the page drawing all the time). Time single frames with a 1-pixel `readPixels` (it waits for the GPU)
+  and run the cost test alone.
+- In the weather-loaded run the cirrus showed; in later runs of the same view the cloud deck had not loaded. Compare the
+  map and the painted frame from the same page (paint-check.mjs does), not two page loads.
+
+Open: the dabs are fixed to the screen, so when the view moves the colours slide under them (the "shower door" effect).
+Strokes fixed to the world (dab centres from world positions, or from splat centres when 3DGS data is used) would remove
+it. Not measured on a phone GPU. Labels and the HTML overlays are not painted.
