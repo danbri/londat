@@ -2190,3 +2190,12 @@ official data."
 - Open: F54; tree heights on the Greenland Dock quays; the dabs are fixed to the screen (they slide when the view
   moves; strokes fixed to the world or to splat centres would fix it); the WebGL page's sky is not calibrated; the boats
   at the dock's east end are not drawn.
+
+## 2026-10-11 (evening): scaling and goals review
+
+- Owner asked where scaling to Greater London and a globe stands, and for an OKR review. Written up in
+  https://github.com/danbri/londat/blob/main/docklands/SCALING-AND-OKRS.md : the 2026-10-09 assessment (options A to H,
+  25 to 35 agent-days for London, 45 to 65 to a globe) was never decided; recommendation: option A (one area config)
+  now, 3D Tiles 1.1 per BNG 1 km square for option C, tiles off Pages. No OKRs existed; the review scores the owner's
+  goals as O1 to O7 and proposes O-A to O-D. Decisions needed from the owner are listed in section 2.
+- Hourly cache: 5 runs in the 28 hours to 2026-10-11 08:53 UTC (scheduled runs skipped); live-cache branch fresh.
