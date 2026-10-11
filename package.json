@@ -7,12 +7,14 @@
     "node": ">=22.5"
   },
   "scripts": {
-    "check": "node cwplans/tools/check-data-register.mjs",
+    "check": "node cwplans/tools/check-data-register.mjs && node tools/check-locale.mjs",
     "check:write": "node cwplans/tools/check-data-register.mjs --write",
     "check:factoidal": "node cwplans/tools/check-factoidal.mjs",
-    "test": "node --test cwplans/tools/test/*.test.mjs",
+    "test": "node --test cwplans/tools/test/*.test.mjs docklands/geo/test/*.test.mjs",
     "test:view-mcp": "node tools/view-mcp/test.mjs",
-    "skills:check": "node tools/check-skills.mjs"
+    "skills:check": "node tools/check-skills.mjs",
+    "check:locale": "node tools/check-locale.mjs",
+    "check:locale:baseline": "node tools/check-locale.mjs --baseline"
   },
   "dependencies": {
     "earcut": "^3.2.4",

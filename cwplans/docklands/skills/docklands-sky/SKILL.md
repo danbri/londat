@@ -256,6 +256,19 @@ Measured levels for any clock time in the last year, not only the EA API's 4 wee
 - Open: the file is not refreshed by a workflow; run the tool again (cached days are not fetched; it takes a few
   minutes for the new days). Days older than the file show the prediction.
 
+## Port clock in the region's time zone (OKR O1, 2026-10-11)
+
+The port's clock no longer names London. `docklands/geo/clock.js` (`fromWall(s, tz)`, `wallParts`, `wallString`,
+`wallDate`, `wallDayOfYear`, `clockFor(tz)`) works for any IANA zone through `Intl` only; `docklands/geo/current.js`
+gives `REGION` and `TZ` (from `docklands/geo/regions/docklands.js`: 'Europe/London'). `sky3.js fromLondon` is now
+`fromWall(s, TZ)` (name kept for the page and the tests; `fromLocal(s, tz)` is new); `carousel.js` and six lines of
+`main.js` (`londonDate`, `londonStr`, `hourOf`, `syncClockUi`, the hour slider, the night button) format with `TZ`.
+Rule for a repeated hour: the first instant; a skipped hour: moved on by the gap (for London exactly the old
+`fromLondon`: compared on 43,000+ inputs, 2000 to 2030, in `docklands/geo/test/clock.test.mjs`; Tokyo, Sydney, Kolkata
+and others tested there too). `clock-check.mjs` after the change: 166 rows, 0 failed (2026-10-11). Still London-only:
+labels ("London time") and the `Intl` calls in the layers (count: `tools/check-locale.mjs`, category `timezone`).
+Design: https://github.com/danbri/londat/blob/main/docs/planet-architecture.md
+
 ## Three.js port clock (2026-10-09)
 
 The port (`docklands/`) has its own clock: `main.js setClock(t)` (Menu > Clock, `?t=`, share hash `t=`) calls

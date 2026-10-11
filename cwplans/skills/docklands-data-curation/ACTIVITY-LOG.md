@@ -2205,3 +2205,32 @@ official data."
   is mission Critical. As is sphericalish planet model cf google earth. And some maps and data worldwide. It is ok to be
   challenged by getting super rich dense data everywhere but we should architect for scaling this." O1 any locale, O2
   planet model and worldwide data, O3 universal access are mission-critical; five architecture rules for new work.
+
+## 2026-10-11 (night): O1 / O2 start: locale inventory, geo core, region clock, planet design
+
+- Subagent on a worktree branch (not pushed). OKR O1 (https://github.com/danbri/londat/issues/6) and O2
+  (https://github.com/danbri/londat/issues/7).
+- KR1.1 baseline, exact: `tools/check-locale.mjs` counts lines of code (comments removed) by category. Main at c6cc8ab:
+  bng 168, ostn15 41, odn 142, origin 99, box 56, timezone 133, zone_latlon 116, uk_sources 368, ui_en_gb 92 (1,215 lines,
+  171 files). In `npm run check`: it fails when a category goes up against `docs/locale-baseline.json`. List:
+  `docs/locale-inventory.md` (generated).
+- Geo core `docklands/geo/` (browser and node, no dependencies): WGS84 <-> ECEF <-> ENU at any origin, normal, radii,
+  curvature drop (0.078 m at 1 km, 7.84 m at 10 km, 125.5 m at 40 km); `region()`; the Docklands region config with the
+  UK adapter `uk-os` (BNG, OSTN15, ODN through the OSGM15 fit, the model frame).
+- The BNG model frame as a fixed transform of the region's ENU: scale 0.9998363, rotation 1.5506 degrees; horizontal
+  error against the area.js fit over the box 0.086 m max, 0.028 m rms (3,721 points); vertical: the curvature drop is
+  left out (up to 3.08 m at the far corner). Not good enough for KR2.1's 1 cm: use the exact path or per-tile ENU.
+- Port clock in the region's time zone (sky3.js, carousel.js, 6 lines of main.js): same answers as before for London;
+  clock-check 166 rows, 0 failed. Timezone count 133 -> 129.
+- Design note `docs/planet-architecture.md`: frames, 3D Tiles 1.1 with a WGS84 geodetic quadtree (implicit tiling;
+  not S2: 3d-tiles-renderer has no S2 bounding volume), BNG 1 km squares as UK cells, adapters, hosting, 3d-tiles-renderer
+  0.5.3 and WebGPURenderer (core should work; GLSL plugins will not), step plan (KR1.2 10 to 16 days, KR2.1 10 to 16 more).
+- The owner's KR1.2 places (2026-10-11) as region configs: Sarajevo (Vijećnica, Europe/Sarajevo, bs / hr / sr-Latn /
+  sr-Cyrl), León (Plaza Mayor, Europe/Madrid, es-ES), Leiden (Annie's, Europe/Amsterdam, nl-NL); tests: ENU round trips
+  and the wall clock in each zone. Licences checked: NL AHN CC0, BAG CC0 / public domain, 3DBAG CC BY 4.0; ES IGN / CNIG
+  (PNOA LiDAR, MDT) CC BY 4.0; ES Catastro own licence (only transformed data may be published: owner review); BA: no
+  open licence found (worldwide base only).
+- Open: other branches that add lat/lon literals or 'Europe/London' (meteo.js, windfield.js) will fail `npm run check`
+  after the merge; move them to `REGION.services` / `TZ` or re-baseline on purpose. KR1.2 says "3 continents, one in
+  the southern hemisphere"; the three chosen places are all in Europe: the owner to change the KR or add places.
+
