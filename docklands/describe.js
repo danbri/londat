@@ -146,7 +146,7 @@ export function describeView(I, cam, o = {}) {
 }
 function dayPart(a) { return a > 6 ? 'daylight' : a > 0 ? 'low sun' : a > -6 ? 'twilight' : a > -12 ? 'dusk or dawn' : 'night'; }
 export function timeOf(t, tz) {
-  const d = new Date(t), f = new Intl.DateTimeFormat('en-GB', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const d = new Date(t), f = new Intl.DateTimeFormat('en', { timeZone: tz, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
   return { iso: d.toISOString(), local: f.format(d), time_zone: tz };
 }
 export function nearestPlace(I, x, z, kinds) {

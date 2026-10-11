@@ -34,7 +34,7 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { TOOLS, RAW, UA } from './lib.mjs';
-import { BOX_WGS84 } from './fetch-docklands.mjs';
+import { REGIONS } from '../../docklands/geo/regions/index.js';
 
 const CW = join(TOOLS, '..'), OUT = join(CW, 'docklands/data/moorings.json'), CACHE = join(RAW, 'moorings', 'overpass-moorings.json.gz');
 const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
@@ -43,7 +43,9 @@ const sha = p => createHash('sha256').update(readFileSync(p)).digest('hex').slic
 
 // ---------- fetch (one Overpass request for the box; tags and geometry)
 if (process.argv[2] === 'fetch') {
-  const [W, S, E, N] = (arg('--bbox') || BOX_WGS84.join(',')).split(',').map(Number), b = `(${S},${W},${N},${E})`;
+  // the area: --bbox W,S,E,N, else the bbox of --region (docklands/geo/regions/; default docklands), so the rule runs for any region
+  const R = REGIONS[arg('--region', 'docklands')]; if (!R && !arg('--bbox')) throw new Error('unknown --region; known: ' + Object.keys(REGIONS).join(', '));
+  const [W, S, E, N] = (arg('--bbox') || R.bbox.join(',')).split(',').map(Number), b = `(${S},${W},${N},${E})`;
   const q = `[out:json][timeout:180];(nwr["mooring"]${b};nwr["houseboat"]${b};nwr["building"="houseboat"]${b};nwr["seamark:type"="mooring"]${b};nwr["leisure"="marina"]${b};);out tags geom;`;
   let d = null, from = null;
   for (let round = 0; round < 3 && !d; round++) for (const u of OVERPASS) {

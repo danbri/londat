@@ -436,7 +436,7 @@ function centreGround(maxS, s0) {
 const NV = { ROT: .006, TILT2: .003, WHEEL: .001, TAU: .35, T_END: 3.2, PMAX: 1.5695, DMIN: 10, DMAX: 16000, W: 1, PMIN_UNDER: -1.35, PUSH_MS: 600, PUSH_PX: 480, STOP: 10, UNDER_EYE: 1.5, LOOK_UP: -.2 };
 const NS = { moving: false, v: null, t0: 0, t: 0, last: null, manual: false, samples: [], flings: 0, ptrs: new Map(), g: null, lift: null, hold: false, holdW: 0, push: null, cool: 0, passes: 0, pushes: 0, lastPass: null, vibrated: null, wheelT: -1e9, range: null, P: null };
 Object.assign(controls, { enableRotate: false, enableZoom: false, enablePan: false, enableDamping: false, maxPolarAngle: Math.PI - 0.05 });
-const clampN = THREE.MathUtils.clamp;
+function clampN(v, a, b) { return Math.max(a, Math.min(b, v)); }   // a declaration (hoisted): OCC.dirty() at load reads groundB before this line runs
 const angDiff = (a, b) => { let d = (a - b) % (2 * Math.PI); if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; return d; };
 const reducedMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 const underApi = () => LAYERS.under?.api;
