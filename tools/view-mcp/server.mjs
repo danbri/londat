@@ -11,6 +11,7 @@ import path from 'node:path';
 import { geo, lonlat, landmarks, landmarkById, project, groundPoint, groundAt, solveCamera, sunAt, timeFromSun, camAxes, hfov } from './view-lib.mjs';
 import { drawOverlay } from './overlay.mjs';
 import { renderView, compare, closeBrowser } from './render.mjs';
+import { describeNode, featuresNode, findNode, timeNode, viewNode, pageCall, closePage } from './page-api.mjs';
 
 const log = (...a) => process.stderr.write(`[view-mcp] ${a.join(' ')}\n`);
 const json = v => ({ content: [{ type: 'text', text: JSON.stringify(v, null, 1) }] });
@@ -64,6 +65,25 @@ const TOOLS = [
   { name: 'geo', description: 'Convert lon/lat (WGS84) to model metres [x, z] (with the ground height), or model metres to lon/lat.',
     inputSchema: { type: 'object', properties: { lonlat: { type: 'array', items: { type: 'number' } }, xz: { type: 'array', items: { type: 'number' } } } },
     run: async a => { if (a.lonlat) { const [x, z] = geo(a.lonlat[0], a.lonlat[1]); return json({ x: +x.toFixed(1), z: +z.toFixed(1), ground_m_od: +groundAt(x, z).toFixed(1) }); } if (a.xz) { const [lon, lat] = lonlat(...a.xz); return json({ lon: +lon.toFixed(6), lat: +lat.toFixed(6) }); } throw new Error('give lonlat or xz'); } },
+  // the page API of the Three.js port (docklands/api.js) in Node, from the data alone, and in the page itself (page_call).
+  // WGS84 lon/lat, metres, degrees from true north; the same words as the page (docklands/describe.js). Skill: docklands-3d-page.
+  { name: 'goto', description: 'The camera, description and live-page link for a place name, a named view (cw, greenwich, greenlanddock ...) or a WGS84 point (lon, lat, range_m, heading_deg true, pitch_deg down). Computed in Node; open the returned link to see it. page_call go_to moves a headless page instead.',
+    inputSchema: { type: 'object', properties: { place: { type: 'string' }, view: { type: 'string' }, lon: { type: 'number' }, lat: { type: 'number' }, range_m: { type: 'number' }, heading_deg: { type: 'number' }, pitch_deg: { type: 'number' }, time: { type: 'string' } } },
+    run: async a => { const d = describeNode(a); return json({ found: d.found, eye: d.eye, target: d.target, heading_deg: d.heading_deg, pitch_deg: d.pitch_deg, range_m: d.range_m, link: d.share, text: d.text }); } },
+  { name: 'describe_view', description: 'What is in view (a paragraph and lists: tallest buildings, named places, water, parks with distance and direction; time, sun) for a view id, a place, a WGS84 point or a share hash (#v=1&c=...), at a time (ISO; no offset = London wall clock). Computed in Node from the data (no occlusion, live things or weather: use page_call for those).',
+    inputSchema: { type: 'object', properties: { view: { type: 'string' }, place: { type: 'string' }, lon: { type: 'number' }, lat: { type: 'number' }, range_m: { type: 'number' }, heading_deg: { type: 'number' }, pitch_deg: { type: 'number' }, share_hash: { type: 'string' }, time: { type: 'string' }, width: { type: 'number' }, height: { type: 'number' }, maxItems: { type: 'number' } } },
+    run: async a => json(describeNode(a)) },
+  { name: 'features_at', description: 'What is at a WGS84 point: the building (name, OSM id, height, registry record with occupant and company counts), water, park, ground height and the nearest named places.',
+    inputSchema: { type: 'object', properties: { lon: { type: 'number' }, lat: { type: 'number' } }, required: ['lon', 'lat'] }, run: async a => json(featuresNode(a)) },
+  { name: 'find_places', description: 'Search the named places, water and buildings of the model by name; WGS84 positions.',
+    inputSchema: { type: 'object', properties: { query: { type: 'string' }, limit: { type: 'number' } }, required: ['query'] }, run: async a => json(findNode(a)) },
+  { name: 'set_time', description: 'The time (ISO; no offset = the wall clock of the place), the sun at the view, and the live-page link with that time, for a view, place or point.',
+    inputSchema: { type: 'object', properties: { time: { type: 'string' }, view: { type: 'string' }, place: { type: 'string' }, lon: { type: 'number' }, lat: { type: 'number' } }, required: ['time'] }, run: async a => json(timeNode(a)) },
+  { name: 'get_view', description: 'The view in WGS84 terms (eye and target lon, lat, height; true heading; pitch; field; range) for a view id, place, point or share hash.',
+    inputSchema: { type: 'object', properties: { view: { type: 'string' }, place: { type: 'string' }, share_hash: { type: 'string' }, lon: { type: 'number' }, lat: { type: 'number' } } }, run: async a => json(viewNode(a)) },
+  { name: 'page_call', description: 'Drive the Three.js port itself, headless (software WebGL 2; the first call loads the page: 30 s to 2 min): call one tool of window.docklands (go_to, get_view, describe_view, features_at, set_time, list_layers, set_layer, find_places, list_views, share_link) with its args. The page stays open between calls with the same base and query, so go_to then describe_view work in order. base: site root (default this checkout; or https://danbri.github.io/londat). query: the page query (default view=cw with a few layers). screenshot: a PNG path.',
+    inputSchema: { type: 'object', properties: { tool: { type: 'string' }, args: { type: 'object' }, base: { type: 'string' }, query: { type: 'string' }, reset: { type: 'boolean' }, screenshot: { type: 'string' } } },
+    run: async a => json(await pageCall(a)) },
 ];
 
 // ── MCP over stdio: newline-delimited JSON-RPC 2.0 (the pattern of tools/game-mcp/server.mjs in danbri/glitchcan-minigam) ─────────────
@@ -73,8 +93,8 @@ async function handle(msg) {
   const { id, method, params } = msg;
   if (id === undefined || id === null) return;
   try {
-    if (method === 'initialize') return send({ jsonrpc: '2.0', id, result: { protocolVersion: VERSIONS.includes(params?.protocolVersion) ? params.protocolVersion : VERSIONS[0], capabilities: { tools: {} }, serverInfo: { name: 'docklands-view', version: '1.0.0' },
-      instructions: 'Reconstruct a photo of the Docklands zone on the 3D page: list_landmarks, a rough camera, overlay to check it, ground_point to name things, solve_camera with points, shorelines and the horizon, render_view and compare. Method: the photo-view-reconstruction skill.' } });
+    if (method === 'initialize') return send({ jsonrpc: '2.0', id, result: { protocolVersion: VERSIONS.includes(params?.protocolVersion) ? params.protocolVersion : VERSIONS[0], capabilities: { tools: {} }, serverInfo: { name: 'docklands-view', version: '1.1.0' },
+      instructions: 'Reconstruct a photo of the Docklands zone on the 3D page: list_landmarks, a rough camera, overlay to check it, ground_point to name things, solve_camera with points, shorelines and the horizon, render_view and compare. Method: the photo-view-reconstruction skill. The page API of the Three.js port (WGS84, metres, true north): goto, describe_view, features_at, find_places, set_time, get_view (in Node, fast) and page_call (the page itself, headless).' } });
     if (method === 'ping') return send({ jsonrpc: '2.0', id, result: {} });
     if (method === 'tools/list') return send({ jsonrpc: '2.0', id, result: { tools: TOOLS.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })) } });
     if (method === 'tools/call') {
@@ -96,7 +116,7 @@ process.stdin.on('data', chunk => {
     handle(msg);
   }
 });
-const quit = async () => { await closeBrowser(); process.exit(0); };
+const quit = async () => { await closeBrowser(); await closePage(); process.exit(0); };
 process.stdin.on('end', quit);
 process.on('SIGTERM', quit);
 log('ready');

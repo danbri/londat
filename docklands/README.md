@@ -296,3 +296,72 @@ place labels, the share hash.
 Not yet ported: tunnels and below ground, station models, ships and AIS, river and tide, splats, pixel art, line
 styles, photo facades, the night light sprites (aviation lights, lamps) and their reflection sprites, routes, search, KML, Drone,
 plotter, wind, music, WebXR, the One Canada Square crown campaign colours.
+
+## Page API, WebMCP and non-visual access (2026-10-11)
+
+OKR O3 (mission-critical; https://github.com/danbri/londat/issues/8). Owner, 2026-10-11: "We need to offer much more
+universal access including growing towards nonvisual access including scripting accessibility for blind, llms, mcp,
+webmcp." Every feature has three outputs (OKRS.md, architecture rule 4): the 3D view, a text description, a machine
+interface. For machines and agents the summary is https://danbri.github.io/londat/llms.txt .
+
+### Page API
+
+`window.docklands` (`api.js`), version `1.0.0` (`docklands.version`; `describeVersion` for the text). Ready when
+`docklands.ready` resolves (event `docklands-api-ready`). The interface is locale-free: WGS84 longitude and latitude in
+degrees, metres, degrees clockwise from true north, ISO 8601 times. Heights are above the local datum
+(`docklands.locale.heightDatum`: ODN in the UK adapter). The model frame (British National Grid offsets), the datum and
+the time zone stay in `adapters/uk.js`.
+
+| call | returns |
+|---|---|
+| `goTo(target)`; target: a place name, a view id (`listViews()`), or `{ lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg? }` | the new view (as `getView`) and `found` (name, kind); an error outside the model box |
+| `getView()` | `eye` and `target` (lon, lat, height_m, above_ground_m / ground_m), `heading_deg` (true), `heading_name`, `pitch_deg` (negative = down), `range_m`, `fov_deg` (vertical, horizontal), `time` (iso, local, time_zone), `sun`, `night`, `view`, `share` |
+| `describeView({ maxItems })` | `text` (a short paragraph) and `in_view`: `buildings` (the tallest, with name, height_m, OSM id), `places`, `water`, `parks`, each with distance_m, bearing_deg, direction, side (ahead, ahead left, left ...); `over`, `time`, `sun` (altitude, azimuth, day part), `weather`, `live` (aircraft and ships in the frame), `share` |
+| `featuresAt(lon, lat)`, `featuresAt()` (the centre of the view) | `building` (model_index, name, osm, osm_url, height_m, base_m, top_m, levels, type, address, wikidata, `registry`: id, use, occupants, companies, homes, owners, occupant_names, atlas link), `water` (name, level, tidal), `park`, `ground_m`, `nearest` places, `text` |
+| `setTime(iso or "now")` | time, night, sun; a time without Z or an offset is the wall clock of the place |
+| `listLayers()`, `setLayer(id, on)` | ids, labels, on/off (layer modules and the settings labels, roads, shadows, bloom) |
+| `findPlaces(query, limit)`, `listViews()`, `shareLink()` | names with kinds and WGS84 positions; view ids and labels; the share URL |
+| `tools`, `callTool(name, args)` | the same functions as tools with JSON schemas (WebMCP and the MCP server's `page_call` use them) |
+| `describing` (get/set), `speak(text)`, `spoken`, `openTextView()`, `webmcp` | the spoken-view switch, the live region, its last 20 texts, the text view, what WebMCP registered |
+
+Deep links without the model frame: `?ll=<lat>,<lon>[,<range m>]` and `?place=<name>` (after `?view=` and the share hash).
+
+### WebMCP
+
+Feature-detected: `document.modelContext.registerTool(tool, { signal })` (the W3C Web Machine Learning CG explainer,
+https://github.com/webmachinelearning/webmcp, read 2026-10-11), else `navigator.modelContext` with `registerTool` or
+`provideContext({ tools })` (earlier drafts, the MCP-B polyfill). Nothing happens without it. Tools: `go_to`,
+`get_view`, `describe_view`, `features_at`, `set_time`, `list_layers`, `set_layer`, `find_places`, `list_views`,
+`share_link`, each with an `inputSchema`, `annotations.readOnlyHint`, and an `execute` that answers
+`{ content: [{ type: 'text', text: JSON }], structuredContent }` (or `isError`).
+
+### Non-visual use
+
+- Menu > Views > Access: "Describe the view (screen reader)" (kept on the device; `?describe=1`): a polite ARIA live
+  region (`#a11yLive`) speaks the description 1.5 s after the camera or the clock stops changing; "Describe now"; "Text
+  view". A record card that opens is spoken too while the switch is on. No screen reader can be detected by a page, so
+  the switch is off by default.
+- Keys: Menu is the first Tab stop, then Labels, then the map (`role="application"`, with its keys in its label); with
+  the map focused the arrow keys move, + and - zoom (main.js), V speaks the view, T opens the text view. In the menu
+  the tabs are a tablist (arrow keys, Home, End); the Menu button puts the focus on the selected tab and closing the menu
+  puts it back on Menu; Escape closes.
+- Text view (`textview.js`; `?text=1`, Menu > Views > Access, key T): a plain HTML section with the description, the
+  buildings, places, water and parks in view with links, a place search, the views and every place by kind. A link moves
+  the 3D view and the text is refreshed. Without WebGPU and WebGL 2 (main.js cannot start a renderer: event
+  `docklands-no3d`) it opens by itself and works from the data alone, with links that keep `text=1`.
+- Landmarks for screen readers: `main#view`, the labels region, the drawer (`aside`), the record (`#card` region), the
+  footer with the credits.
+
+### Machine access outside the browser
+
+The `docklands-view` MCP server (`tools/view-mcp/server.mjs`) has `goto`, `describe_view`, `features_at`,
+`find_places`, `set_time`, `get_view` (from the data, in Node, with the page's own `describe.js`) and `page_call` (the
+page itself, headless, one page kept open: `page_call {tool: "go_to", args: {place: "Greenland Dock"}}` then
+`page_call {tool: "describe_view"}`).
+
+### Tests
+
+`node docklands/test/api-check.mjs` (page API, WebMCP with a mock host, live region, keys, text view, and the text view
+with WebGL disabled), `node docklands/test/axe-check.mjs` (axe-core on each menu tab), `node
+tools/view-mcp/test-page-api.mjs [--page]`. Results: skill docklands-3d-page, "Three.js port: page API, WebMCP and
+non-visual access (2026-10-11)".

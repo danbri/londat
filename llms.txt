@@ -1,0 +1,57 @@
+# londat: Docklands 3D, atlas and open data (cwplans)
+
+> Open data and web pages about London's Docklands (Canary Wharf, the Isle of Dogs, Rotherhithe, Greenwich, London Bridge to Cody Dock): a 3D model of every building with measured heights, the river, docks and tide, live aircraft and ships, a building registry with occupants, a knowledge graph, and the tools and skills that build them. A prototype by Dan Brickley (danbri), in its scoping and prototyping phase. Site: https://danbri.github.io/londat/ . Source: https://github.com/danbri/londat .
+
+All positions in the page API and the MCP tools are WGS84 longitude and latitude in degrees, heights and distances in metres, directions in degrees clockwise from true north, times in ISO 8601. Heights are above the local datum (in the UK: ODN, about mean sea level). Only the Docklands model box is modelled now: west -0.0950, south 51.4738, east 0.0151, north 51.5223.
+
+## Pages
+
+- [Docklands 3D, Three.js port](https://danbri.github.io/londat/docklands/): the 3D page (WebGPU, else WebGL 2). Text view without 3D: https://danbri.github.io/londat/docklands/?text=1 . Notes and menu map: https://github.com/danbri/londat/blob/main/docklands/README.md
+- [Docklands 3D, WebGL page](https://danbri.github.io/londat/cwplans/docklands/): the first 3D page (WebGL 1); the same share links.
+- [Atlas](https://danbri.github.io/londat/cwplans/atlas/): 2D map of the building registry, postcodes, heritage, river data.
+- [Knowledge graph search](https://danbri.github.io/londat/cwplans/kg/): buildings, occupants and organisations as RDF, searchable in the browser.
+- [Feeds and what's on](https://danbri.github.io/londat/cwplans/feeds/): checked open feeds, permits, works and events in the zone.
+- [Dashboard](https://danbri.github.io/londat/dashboard/): data age, cache runs, deploys, quality.
+
+## Deep links to the 3D page
+
+- A named view: `?view=cw` (Canary Wharf), `area`, `under`, `plan`, `towerbridge`, `limehouse`, `canadawater`, `mudchute`, `greenwich`, `o2`, and photo views `rotherhithe`, `greenland`, `pier`, `greenlandday`, `plane`, `greenlanddock`. Example: https://danbri.github.io/londat/docklands/?view=greenwich
+- A WGS84 point: `?ll=<lat>,<lon>[,<range metres>]`. Example: https://danbri.github.io/londat/docklands/?ll=51.4944,-0.0402,800
+- A place by name: `?place=<name>`. Example: https://danbri.github.io/londat/docklands/?place=Greenland%20Dock
+- A time: `?t=2026-10-11T21:30` (wall-clock time of the place) or a share link's `t=`.
+- The share link of any view (Menu > Views > Share this view, or `shareLink()`): `#v=1&c=...` holds the camera, `&t=` the time, `&id=osm:w123` the selected building.
+- Text view: add `&text=1`. Spoken descriptions for screen readers: add `&describe=1`.
+
+## Page API (window.docklands, version 1.0.0)
+
+In the 3D page, after it loads (`window.docklands.ready` resolves; event `docklands-api-ready`). Every method returns plain JSON (some as a Promise).
+
+- `goTo(target)`: a place name, a view id, or `{ lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg? }`. Returns the new view.
+- `getView()`: eye and target (lon, lat, height_m), heading_deg (true), pitch_deg, fov_deg, range_m, time (iso, local, time_zone), sun, share link.
+- `describeView({ maxItems? })`: `text` (a short paragraph) and `in_view` (buildings, places, water, parks with distance_m, bearing_deg, direction, side), time, sun, weather, live counts (aircraft, ships), share.
+- `featuresAt(lon, lat)` or `featuresAt()` (the centre of the view): building (name, OpenStreetMap id, height, registry record and occupant names where known), water, park, ground height, nearest places, `text`.
+- `setTime(iso | "now")`, `listLayers()`, `setLayer(id, on)`, `findPlaces(query, limit)`, `listViews()`, `shareLink()`.
+- `tools` and `callTool(name, args)`: the same functions as tools with JSON schemas.
+- Reference: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api
+
+## WebMCP tools
+
+Where the browser offers WebMCP (`document.modelContext.registerTool`, or `navigator.modelContext` in earlier drafts and polyfills; https://github.com/webmachinelearning/webmcp), the page registers: `go_to`, `get_view`, `describe_view`, `features_at`, `set_time`, `list_layers`, `set_layer`, `find_places`, `list_views`, `share_link`. Each answers with JSON text content. `window.docklands.webmcp` says what was registered.
+
+## MCP server (local)
+
+`docklands-view` in https://github.com/danbri/londat/blob/main/.mcp.json (`node tools/view-mcp/server.mjs`, stdio): `goto`, `describe_view`, `features_at`, `find_places`, `set_time`, `get_view` (from the data, fast), `page_call` (drives the page above headless with any page API tool), and the photo-reconstruction tools (`list_landmarks`, `project`, `ground_point`, `solve_camera`, `overlay`, `render_view`, `compare`, `sun_at`, `time_from_sun`, `geo`).
+
+## Data and licences
+
+- [Data register](https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md): every committed data file with its sources, licence and use of OpenStreetMap. Machine-readable: https://github.com/danbri/londat/blob/main/cwplans/data-register.json
+- Map data © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright). Heights and ground: Environment Agency LiDAR, OGL v3.0. Names and facts: Wikidata, CC0. Aircraft: adsb.lol, ODbL 1.0. Ships: Open Waters AIS (licence under review). Weather: Open-Meteo, CC BY 4.0. Others in the register.
+- Licence notes for the repository: https://github.com/danbri/londat/blob/main/LICENSE-DATA.md
+- Methods and rebuild order: https://github.com/danbri/londat/blob/main/cwplans/METHODS.md
+- Objectives (O3: universal access, non-visual and machine access): https://github.com/danbri/londat/blob/main/OKRS.md
+
+## Optional
+
+- [Knowledge graph data](https://github.com/danbri/londat/tree/main/kgx): RDF graph versions; IRIs under https://kgx.foaf.tv/id/
+- [Building registry](https://github.com/danbri/londat/blob/main/cwplans/registry/buildings.json): buildings with cwb- ids, occupants, owners, postcodes.
+- [3D model data](https://github.com/danbri/londat/tree/main/cwplans/docklands/data): area.js (buildings, terrain, water, places), building-keys.json (OSM id of every model building).

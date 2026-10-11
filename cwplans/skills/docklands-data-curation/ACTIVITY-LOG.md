@@ -2234,3 +2234,19 @@ official data."
   after the merge; move them to `REGION.services` / `TZ` or re-baseline on purpose. KR1.2 says "3 continents, one in
   the southern hemisphere"; the three chosen places are all in Europe: the owner to change the KR or add places.
 
+## 2026-10-11 (evening): O3 started: page API, WebMCP, non-visual access (subagent, branch worktree-agent-aaff2439919c4f23d)
+
+- Three.js port: `window.docklands` page API 1.0.0 (`docklands/api.js`; goTo, getView, setTime, listLayers, setLayer,
+  featuresAt, describeView, findPlaces, listViews, shareLink, tools/callTool), WGS84 and true north in the interface,
+  the model frame in a UK locale adapter (`docklands/adapters/uk.js`); descriptions in `docklands/describe.js` (pure,
+  shared by page, text view and MCP); WebMCP registration (document.modelContext / navigator.modelContext, feature-detected);
+  live region with the "Describe the view (screen reader)" switch (`?describe=1`); keys V and T; tablist keys and focus in
+  the drawer; landmarks; text view (`docklands/textview.js`, `?text=1`, works with WebGL disabled); deep links `?ll=` and
+  `?place=`; `llms.txt` at the repository root; MCP tools goto, describe_view, features_at, find_places, set_time,
+  get_view, page_call (`tools/view-mcp/page-api.mjs`).
+- Tests: `docklands/test/api-check.mjs` all 29 pass; `tools/view-mcp/test-page-api.mjs --page` all pass; axe-core 4.10.3
+  (devDependency, MPL-2.0; `docklands/test/axe-check.mjs`): 0 critical and 0 serious before and after; the moderate
+  `region` rule went from 43 nodes to 4.
+- Found: the first occlusion grid build fails at load (`clampN` used before its declaration in main.js; rebuilt later).
+- Open: VoiceOver / TalkBack by hand, the time wheels (canvas) for non-visual use, a 2D map (KR3.2), WebMCP in a real
+  host, events. Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".

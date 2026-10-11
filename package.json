@@ -26,6 +26,7 @@
     "@mapbox/vector-tile": "^2.0.5",
     "@napi-rs/canvas": "^1.0.10",
     "@playwright/test": "1.56.1",
+    "axe-core": "^4.10.3",
     "exceljs": "^4.4.0",
     "osm-pbf-parser": "^2.3.0",
     "pbf": "^4.0.2",

@@ -78,6 +78,18 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
   // a view button closes the drawer on a phone, so the view shows
   drawer.addEventListener('click', e => { if (e.target.closest('[data-view]') && !wide()) open(false); });
   openPane(pane); open(false);
+  // keyboard and screen readers (2026-10-11, OKR KR3.3): the tabs as an ARIA tablist (arrow keys, Home, End; only the
+  // selected tab in the Tab order; each tab controls its panel); the Menu button moves the focus into the drawer and
+  // closing it gives the focus back to the button
+  tabs.forEach(t => { t.id = t.id || 'tab-' + t.dataset.pane; t.setAttribute('aria-controls', t.dataset.pane); const p = $(t.dataset.pane); if (p) { p.removeAttribute('aria-label'); p.setAttribute('aria-labelledby', t.id); } });
+  const roving = () => tabs.forEach(t => { t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1; });
+  new MutationObserver(roving).observe($('dtabs'), { attributes: true, subtree: true, attributeFilter: ['aria-selected'] }); roving();
+  $('dtabs').addEventListener('keydown', e => { const i = tabs.indexOf(document.activeElement); if (i < 0) return;
+    const j = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key]; if (j == null) return; e.preventDefault(); e.stopPropagation();
+    const t = tabs[(j + tabs.length) % tabs.length]; t.click(); t.focus(); });
+  $('menu').addEventListener('click', () => { if (isOpen()) setTimeout(() => (tabs.find(t => t.getAttribute('aria-selected') === 'true') || tabs[0]).focus()); });
+  let focusIn = false; document.addEventListener('focusin', e => { focusIn = drawer.contains(e.target); });
+  new MutationObserver(() => { if (!isOpen() && (focusIn || drawer.contains(document.activeElement))) { focusIn = false; $('menu').focus(); } }).observe(drawer, { attributes: true, attributeFilter: ['hidden'] });
   drawer.addEventListener('click', e => { const p = e.target.closest('p.small'); if (p && !e.target.closest('a') && (p.classList.contains('clamp') || p.dataset.clamp)) { p.dataset.clamp = '1'; p.classList.toggle('clamp'); } });
 
   // ---------- Views > Share > More: copy the link, print (the plotter SVG row is added there by plotter.js)
