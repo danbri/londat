@@ -18,6 +18,7 @@ import { makeUi, initMenu } from './menu.js';
 import { initCarousel } from './carousel.js';
 import { predict } from './tide.js';
 import { makeOccluder } from './occlude.js';
+import { VIEWS } from './views.js';
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -40,7 +41,7 @@ renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
 $('view').appendChild(renderer.domElement);
-try { await renderer.init(); } catch (e) { say('This browser has neither WebGPU nor WebGL 2: ' + e.message); throw e; }
+try { await renderer.init(); } catch (e) { say('This browser has neither WebGPU nor WebGL 2: ' + e.message + '. The text view works without them.'); dispatchEvent(new CustomEvent('docklands-no3d', { detail: { error: String(e && e.message || e) } })); await new Promise(() => {}); }   // textview.js opens the text view (no page error)
 const GPU = !!renderer.backend.isWebGPUBackend, BACKEND = GPU ? 'WebGPU' : 'WebGL 2';
 $('backend').textContent = BACKEND;
 
@@ -146,31 +147,7 @@ let BLOOM = flag('bloom', GPU);
 function syncPost() { pipe.outputNode = BLOOM && U.night.value > 0.01 ? scol.add(bloomNode) : scol; pipe.needsUpdate = true; $('bloom').checked = BLOOM; }
 
 // ---------- camera: the WebGL page's (target, yaw, pitch, dist), eye = target + dist (sin yaw cos pitch, sin pitch, cos yaw cos pitch)
-const VIEWS = {
-  area: { tx: -1400, ty: 0, tz: 800, yaw: .35, pitch: .62, dist: 8200 },
-  cw: { tx: 50, ty: 0, tz: 40, yaw: .7, pitch: .5, dist: 1500 },
-  under: { tx: 40, ty: -10, tz: 20, yaw: .75, pitch: .42, dist: 750 },
-  plan: { tx: -1400, ty: 0, tz: 800, yaw: 0, pitch: 1.55, dist: 9500 },
-  // more places (owner, 2026-10-09: "under Places add a few other interesting camera positions"); BNG to model frame
-  towerbridge: { tx: -3900, ty: 0, tz: 40, yaw: 2.2, pitch: .42, dist: 700 },      // Tower Bridge, E 533650 N 180260
-  limehouse: { tx: -1150, ty: 0, tz: -600, yaw: 1.3, pitch: .55, dist: 650 },      // Limehouse Basin, E 536400 N 180900
-  canadawater: { tx: -2250, ty: 0, tz: 700, yaw: -.6, pitch: .5, dist: 800 },      // Canada Water and Surrey Docks, E 535300 N 179600
-  mudchute: { tx: 750, ty: 0, tz: 1600, yaw: .2, pitch: .45, dist: 700 },         // Mudchute Park and Farm, E 538300 N 178700
-  greenwich: { tx: 750, ty: 0, tz: 2600, yaw: 3.0, pitch: .4, dist: 900 },         // Cutty Sark and the Old Royal Naval College, E 538300 N 177700
-  o2: { tx: 1750, ty: 0, tz: 0, yaw: -.9, pitch: .45, dist: 1100 },                // the O2 and Blackwall, E 539300 N 180300
-  rotherhithe: eyeView([-896, 6.9, 1150], 43.3, -1, 42),
-  greenland: eyeView([-825, 5.3, 1160], 39.7, 3.5, 44),
-  pier: eyeView([-740, 6, 140], 83.6, 11, 69),
-  greenlandday: { ...eyeView([-830, 4.5, 1158], 51.9, 6.45, 99.9), night: false },
-  plane: { ...eyeView([211, 802, -845], 223.84, -13.56, 56.9), roll: 9.18, night: false },
-  // the owner's CC0 photo of 2026-10-11 12:45 BST from the west end wall of Greenland Dock (data/images/contrib/greenlanddock/);
-  // solved with tools/view-mcp (focal fixed at 1785 px, the iPhone main lens): rms 13.5 px over 12 observations
-  greenlanddock: { ...eyeView([-1679.2, 6.5, 1234.1], 85.65, -0.61, 71.6), roll: -1.59, night: false },
-};
-function eyeView(E, az, lp, hfov, D = 1200) {   // index.html eyeView: a photo's camera, orbiting a point 1.2 km along the line of sight
-  const a = az * Math.PI / 180, p = lp * Math.PI / 180;
-  return { tx: E[0] + D * Math.sin(a) * Math.cos(p), ty: E[1] + D * Math.sin(p), tz: E[2] - D * Math.cos(a) * Math.cos(p), yaw: -a, pitch: -p, dist: D, hfov: hfov * Math.PI / 180, night: true };
-}
+// the named views: views.js (VIEWS, eyeView)
 let HFOV = null, FOVY = null, ROLL = 0, VIEWNAME = null;   // the lens: horizontal field (a photo view), else vertical field (radians); roll (degrees); the view button
 // c.hfov, c.fov, c.roll set the lens; without them, c.lens (from camState) keeps it (styles.js, xr.js, kml.js, locate.js restore a camState)
 function setCam(c) {
@@ -393,7 +370,7 @@ async function loadLayers() {
       // the falling sheet (reveal.js): when the visitor ticks a layer on; at page load only with ?reveal=load (start time)
       const sheet = () => { if (L.object && mod.reveal !== false) import('./reveal.js').then(R => R.reveal(ctx, { object: L.object, label: mod.label || id, draw2d: mod.draw2d, alive: () => LAYERS[id].on })).catch(e => console.warn('reveal', id, e)); };
       if (on && qs.get('reveal') === 'load') sheet();
-      if (mod.label && !L.ownUi) { const i = ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; if (v) sheet(); }); if (mark.parentNode) mark.replaceWith(i.parentNode); }
+      if (mod.label && !L.ownUi) { const i = ui.toggle(mod.label, on, v => { LAYERS[id].on = v; if (L.setVisible) L.setVisible(v); else if (L.object) L.object.visible = v; if (v) sheet(); }); LAYERS[id].input = i; if (mark.parentNode) mark.replaceWith(i.parentNode); }
     } catch (e) { console.warn('layer', id, e); }
     mark.remove();
   }
@@ -767,5 +744,8 @@ setTimeout(() => $('hud').classList.add('fade'), 4000);
 menu.creditsStart();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; },
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };
+
+// the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
+import('./api.js').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));

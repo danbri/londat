@@ -111,10 +111,10 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 </script>
 </head>
 <body>
-<div id="view"></div>
-<div id="labels"></div>
 <button id="menu" class="btn" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="drawer">&#9776;</button>
-<div id="hud">Loading the model data...</div>
+<main id="view" aria-label="3D view of the Docklands"></main>
+<div id="labels" role="region" aria-label="Labels on the map"></div>
+<div id="hud" role="status">Loading the model data...</div>
 <div id="navCue"></div><div id="navCueT" role="status" aria-live="polite"></div>
 <div id="scrim" hidden></div>
 <aside id="drawer" hidden aria-label="Menu">
@@ -255,10 +255,11 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
     </div>
   </div>
 </aside>
-<div id="card" hidden><button id="cardX" aria-label="Close">&times;</button><div id="cardBody"></div></div>
-<div id="stat"><span id="fps"></span></div>
+<div id="card" hidden role="region" aria-label="Record"><button id="cardX" aria-label="Close the record">&times;</button><div id="cardBody"></div></div>
+<footer id="foot" style="display:contents"><div id="stat"><span id="fps"></span></div>
 <div id="credit">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> · <a href="#credits" data-credits>credits</a></div>
 <button type="button" id="attribI" hidden aria-label="Credits and data licences (© OpenStreetMap contributors and others)" title="Credits and data licences">i</button>
+</footer>
 <script src="../cwplans/docklands/vendor/earcut.min.js"></script>
 <script src="../cwplans/docklands/data/area.js"></script>
 <script src="../cwplans/docklands/vendor/astronomy.browser.min.js"></script>
@@ -266,5 +267,6 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 <script src="../cwplans/docklands/look-layer.js"></script>
 <script type="module" src="main.js"></script>
 <script type="module" src="about-extra.js"></script>
+<script type="module" src="textview.js"></script>
 </body>
 </html>

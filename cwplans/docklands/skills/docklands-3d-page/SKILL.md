@@ -2290,3 +2290,90 @@ Faults met and lessons:
 Open: the dabs are fixed to the screen, so when the view moves the colours slide under them (the "shower door" effect).
 Strokes fixed to the world (dab centres from world positions, or from splat centres when 3DGS data is used) would remove
 it. Not measured on a phone GPU. Labels and the HTML overlays are not painted.
+
+## Three.js port: page API, WebMCP and non-visual access (2026-10-11)
+
+OKR O3 (mission-critical, https://github.com/danbri/londat/issues/8). Owner, 2026-10-11: "We need to offer much more
+universal access including growing towards nonvisual access including scripting accessibility for blind, llms, mcp,
+webmcp." Reference for callers: https://github.com/danbri/londat/blob/main/docklands/README.md "Page API, WebMCP and
+non-visual access" and https://danbri.github.io/londat/llms.txt (repository root `llms.txt`, published by Pages).
+
+- **Files.** `docklands/describe.js` (pure: no DOM, no three.js; `makeIndex`, `describeView`, `featuresAt`,
+  `findPlaces`, `viewGeo`, `parseTime`, `zonedToUtc`): the one source of every description, used by the page API, the
+  text view and the MCP server, so all three say the same. `docklands/adapters/uk.js`: the locale (model frame from the
+  data's own WGS84 fit `A.meta.geo`, inverse by Newton steps, 0.03 m; the datum ODN; `Europe/London`; the name of
+  unnamed tidal water, "River Thames": area.js has no name for the Thames polygons). New locale facts go in an adapter,
+  never in describe.js or api.js (OKRS.md architecture rules 1 and 3). `docklands/views.js`: the named views, moved out
+  of main.js so the text view and Node read them without three.js. `docklands/api.js`: `window.docklands` (version
+  1.0.0), WebMCP, the live region, the keys V and T, Menu > Views > Access, `?ll=` and `?place=`. `docklands/textview.js`:
+  the text view. main.js changes: `import { VIEWS } from './views.js'`, the hook has `VIEWS`, `keys`, `LAYER_IDS`,
+  `viewName`; `LAYERS[id].input` (the layer's checkbox, for `setLayer`); a renderer that cannot start fires
+  `docklands-no3d` and waits forever (no page error); the last line imports api.js.
+- **Interface rule.** WGS84 lon/lat in degrees, metres, degrees clockwise from TRUE north, ISO 8601. True heading: the
+  bearing from the eye to a point 100 m along the horizontal view direction, both through the adapter (grid north is
+  about 1.5 degrees off true north here; `goTo` converts a true heading back with the convergence at the point). Pitch:
+  negative = looking down. A time without Z or an offset is the wall clock of the place (`zonedToUtc` with Intl, any
+  time zone).
+- **describeView.** The camera is read from `camera.matrixWorld` (model metres, so `?vz` does not distort it). In the
+  frame (projection by the camera's own field and aspect, roll ignored) and within max(6 km, 25 x eye height, at most
+  14 km): area.js places and under.js stations (anchor ground + 10 m), named water (one entry a name, up to 60 outline
+  points each; the nearest point in the frame gives the distance), parks (places whose Wikidata class says park, garden,
+  woodland ...), and the tallest model buildings (25 m or more, top in the frame; parts of one building once by name).
+  Names: atlas record (registry), else OSM name or house name (building-keys.json), else an area.js place inside the
+  footprint, else the address. In the page, places and building tops behind buildings are left out with the label
+  occluder (`OCC.test` with one persistent key object per place or building; the march skips the building's own cells).
+  In Node and in the text view without 3D there is no occlusion: say so (the MCP answer has a `note`).
+- **featuresAt.** A 100 m bucket grid of building bounding boxes (built on the first call: about 150 ms in Node), then
+  point-in-polygon with holes; the tallest part at the point wins. At the screen centre: the first building on the
+  centre ray (three.js Raycaster) or the ground by a march on the bilinear DTM (`nav.groundB`), and `pickAt` for the
+  building. Occupant names come from `../cwplans/registry/buildings.json` (2.7 MB, loaded on the first registry hit).
+- **WebMCP.** Read the explainer before changing it (https://github.com/webmachinelearning/webmcp): on 2026-10-11 it is
+  `document.modelContext.registerTool({ name, description, inputSchema, execute }, { signal })` (abort the signal to
+  unregister); earlier drafts and the MCP-B polyfill have `navigator.modelContext` with `registerTool` or
+  `provideContext({ tools })`. api.js tries all three, records what it did in `docklands.webmcp`, and never throws. The
+  test installs a mock host with `page.addInitScript` before the page loads (`docklands/test/api-check.mjs` MOCK).
+- **Live region.** `#a11yLive` (polite, atomic, visually hidden): cleared, then set 60 ms later, so the same text is
+  spoken again. A 250 ms poll of `camState` and the clock minute; 1.5 s without change = settled (event
+  `docklands-view-settled`); spoken only with the switch on (`?describe=1`, Menu > Views > Access, `localStorage`
+  `d3.describe`). A page cannot detect a screen reader, so the switch is off by default.
+- **Keys and focus.** `#menu` is now first in the body (Tab order: Menu, Labels, the map, the labels). The canvas has
+  `tabindex=0`, `role=application` (keys pass through in a screen reader's browse mode) and a label with its keys. menu.js:
+  tabs are a tablist with roving tabindex, arrow keys, Home, End, `aria-controls`, and each panel `aria-labelledby` its
+  tab; the Menu button moves the focus to the selected tab (in a `setTimeout`, not `requestAnimationFrame`: in software
+  rendering a frame takes seconds and rAF did not run before the test looked); closing puts the focus back on Menu
+  (`focusin` tracks whether the focus was inside: a hidden element can lose the focus before the observer runs).
+- **Text view.** Works with no renderer: area.js and astronomy-engine are classic scripts that load before any module,
+  so textview.js describes the camera of the link (`?ll=`, the share hash, `?view=`, else Canary Wharf) with the sun
+  from astronomy-engine. Links are `?ll=lat,lon,range` (+ `&text=1` without 3D); with the 3D page a link calls `goTo`
+  and the text is redrawn. 500 to 600 place links (every named place by kind).
+- **MCP server.** `tools/view-mcp/page-api.mjs`: Node tools from the data (`goto`, `describe_view`, `features_at`,
+  `find_places`, `set_time`, `get_view`; links to https://danbri.github.io/londat/docklands/ with the share hash) and
+  `page_call` (one headless page kept open per base and query; any tool of `docklands.tools` by name). Node's ICU writes
+  "Sunday, 11 October" where Chromium writes "Sunday 11 October": do not compare the time strings across them.
+
+**Measured (2026-10-11, WebGL 2 in SwiftShader, 4-core container).** `node docklands/test/api-check.mjs`: all 29 checks
+pass (view=cw 26, view=greenlanddock 2 with describeView naming Greenland Dock, no WebGL 4 checks with
+`--disable-webgl --disable-webgl2 --disable-3d-apis`: the text view opens in 1.1 s, 526 to 529 place links). The page API
+is ready 29 to 63 s after load with `layers=placenames,registry,keys,search,ships,planes,under` (81.8 s for greenlanddock
+while another test ran). describeView in Node: 164 ms the first time (index), the page about the same. At view=cw it
+names One Canada Square (235 m, 1.4 km ahead), Landmark Pinnacle, Newfoundland, Hampton Tower, South Dock, the River
+Thames, Millwall Inner Dock; featuresAt(-0.01952, 51.504938) gives One Canada Square, way/432777466, cwb-0413, 80
+occupants. Keyboard: 3 arrow presses and 2 "+" moved the target 139.7 m and the range 800 -> 655 m; the live region spoke
+after the move settled. `node tools/view-mcp/test-page-api.mjs`: all pass. axe-core 4.10.3 (`docklands/test/axe-check.mjs`,
+drawer open on each of the six tabs, a few layers): BEFORE (HEAD c6cc8ab) 0 critical, 0 serious, 1 moderate (`region`,
+43 nodes: the canvas, labels, HUD, card, credits outside landmarks); AFTER 0 critical, 0 serious, 1 moderate (`region`, 4
+nodes made by other modules: `#wheels` carousel.js, `#styleSel` styles.js, `#blNotes`, `#testNote`). axe does not test
+focus order, live regions or what a screen reader says: those need VoiceOver and TalkBack on a phone (KR3.3).
+
+**Found, not fixed (not this change):** at page load `OCC.dirty()` runs before `const clampN` in main.js and the first
+occlusion grid build fails with "Cannot access 'clampN' before initialization" (a console warning); the grid is built
+again after the next `rebuildBuildings`, so occlusion works later. Move `clampN` (or the OCC creation) when main.js is
+next changed.
+
+**Open (against KR3.2 to KR3.4).** KR3.2: the text view works without WebGL; no 2D map yet. KR3.3: not yet tried with
+VoiceOver or TalkBack; the 5 main tasks need a check by hand (find a place: search box and text view; hear what is
+there: V, featuresAt card; change the time: the slider and wheels have labels but the wheels are canvas; layers: the
+checkboxes; read a card: spoken with the switch); the time wheels (`#wheels`, canvas) need a text alternative and keys
+beyond the arrow keys; labels and the tab order of the many label buttons; i18n of the descriptions (KR1.3). KR3.4:
+WebMCP is untested in a real browser host (only the mock); the API has no events for selection or layer changes; the
+MCP `page_call` loads the port in software (30 s to 2 min).
