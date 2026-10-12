@@ -2336,6 +2336,7 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 ## 2026-10-12: owner verdict on the Painted style
 
 - Owner, on the iPhone: "Painted is a bit janky and not v striking visually. Acceptable for now." KR4.3 recorded as
-  accepted for now (0.5), not done (https://github.com/danbri/londat/issues/3). Next round when the owner asks: marks
-  fixed to the world or to splat centres (the jank is colour sliding under screen-fixed marks), a shimmer measure,
-  stronger stroke character tuned against reference paintings.
+  accepted for now (0.5), not done (https://github.com/danbri/londat/issues/3). Owner, same day: "By janky i meant the
+  usual sense of laggy and jerky": a frame-rate problem on the iPhone (software: Painted 68 ms a frame against 29 ms for
+  the map at 390 x 844 @3). Next round when the owner asks: lower resolution while the view moves, the tier chosen by
+  measured frame time, fewer fetches, a frame-time readout on the phone; then stronger stroke character.
