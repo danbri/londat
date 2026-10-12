@@ -88,6 +88,20 @@ export const SHOPS = {
       const stores = [...h.matchAll(/class="retailavailability-store"([\s\S]*?)(?=class="retailavailability-store"|$)/g)].map(m => ({ store: (m[1].match(/\/uk\/(boss-store-[a-z0-9-]+)\//) || [])[1] || null, text: strip(m[1]).slice(0, 200) }));
       return { canary_wharf: stores.find(s => /cabot-place/.test(s.store || '')) || null, stores: stores.slice(0, 5), not_found: /could not find/i.test(h), source: u };
     } },
+  intimissimi: {
+    name: 'Intimissimi', canaryWharf: 'IGJ4', answer: 'per shop and size: none, low or high (shops without the item are left out)',
+    args: { pid: 'style code, e.g. CLD28B (product URL)', color: 'colour code, e.g. 019', size: 'up to 3 sizes joined by _, e.g. S_M_L' },
+    async check(a, ctx) { need(a, 'pid', 'color', 'size');
+      const p = new URLSearchParams({ lat: CW.lat, lon: CW.lon, rad: 0, pid: a.pid, color: a.color, size: a.size, filterBopis: 'false', currentHour: new Date().getUTCHours() });
+      const u = `https://www.intimissimi.com/on/demandware.store/Sites-intimissimi-uk-Site/en_GB/FindInStore-GetStoresWithProductAvailability?${p}`;
+      const j = await (await politeFetch(u, {}, ctx)).json();
+      // each record: { availabilities: { S: 'high', ... }, store: { ...details }, labels }; the id field name of the
+      // nested store is not fixed in what we saw, so the 4-character store code is the fallback
+      const idOf = st => st.ID || st.id || st.storeId || st.storeID || (JSON.stringify(st).match(/"([0-9A-Z]{4})"/) || [])[1] || null;
+      const stores = (j.stores || []).map(x => { const st = typeof x.store === 'object' && x.store ? x.store : x;
+        return { store: idOf(st), name: st.name || st.storeName || null, distance: st.distance ?? null, sizes: x.availabilities || null }; });
+      return { canary_wharf: stores.find(x => x.store === 'IGJ4' || /canary wharf/i.test(x.name || '')) || null, stores: stores.slice(0, 9), source: u };
+    } },
   accessorize: {
     name: 'Accessorize', canaryWharf: '1163', answer: 'products the Canary Wharf shop holds for a search term (no counts per product)',
     args: { query: 'search text, e.g. "bag"' },

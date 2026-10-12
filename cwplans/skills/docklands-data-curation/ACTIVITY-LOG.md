@@ -2446,3 +2446,6 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   50 per host, no bot-wall handling, call log in ignored `data/raw/stock-mcp/`). Live test: 8 shops answered with the
   Canary Wharf branch (skill `cwplans-stock-check`, "The MCP server"). Boss, Hotel Chocolat, Intimissimi not yet in the
   live test or the server.
+- Sets F and G: Intimissimi positive (IGJ4 first, high for S/M/L), added to `cwplans-stock` (10 shops; live call
+  matched). Watches of Switzerland still no positive answer; The White Company storefront search route found
+  (`/uk/search/async/search?text=`), SKU and EAN tests still to run.

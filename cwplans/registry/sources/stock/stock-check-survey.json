@@ -1130,7 +1130,28 @@
     ],
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
-    "sku_lookup_detail": "unknown"
+    "sku_lookup_detail": "unknown",
+    "storefront_search": {
+     "request": "GET https://www.thewhitecompany.com/uk/search/async/search?text=<q>&countryIsoCode=GB&currencyIsoCode=GBP",
+     "note": "?q= gives 500; without the country parameters the site sends a US exit to /us/",
+     "facets": [
+      "Product Type",
+      "Price (slider)",
+      "Fragrance Scent",
+      "Colour",
+      "Fragrance Family",
+      "Stock Availability (excludeStockInStore)"
+     ],
+     "page_size": 48,
+     "sorts": [
+      "our_favourites",
+      "price_asc",
+      "price_desc",
+      "Newness",
+      "BestsellerUK"
+     ],
+     "sku_and_ean_tests": "not run (budget used by the two URL faults)"
+    }
    },
    "searchaction": {
     "stored_2026_10_06": null
@@ -1205,6 +1226,76 @@
     "verdict_change": null,
     "notes": "The OCC products/search endpoint is broken on this deployment for every fields value tried (FULL: 'Incorrect field:url' in the survey; DEFAULT, BASIC, pagination-only: HttpMessageConversionError; explicit product list: 'Incorrect field:code'). The site's own search therefore uses another route: the storefront JSON (/uk/<cat>/c/<code>/search? for categories; the search page /uk/search?q= is disallowed by robots and was not used). No facets or paging seen in this pass; the survey's category JSON facets stand. Stock route unchanged: /products/{variantCode}/stock?fields=DEFAULT, store jubilee-place. robots_ignored false: robots.txt allows /TWCcommercewebservices. 5 requests, 7 s or more apart; Akamai did not challenge plain fetch.",
     "checked_at": "2026-10-12T21:21:45Z"
+   },
+   "set_fg": {
+    "approved_set": "F",
+    "robots_ignored": true,
+    "requests_made": 3,
+    "tests": [
+     {
+      "purpose": "headless page load of the brief's search URL /uk/search?q=<text> with country params",
+      "request": {
+       "method": "GET",
+       "host": "www.thewhitecompany.com",
+       "path_pattern": "/uk/search",
+       "params": "q=diffuser&countryIsoCode=GB&currencyIsoCode=GBP"
+      },
+      "result": "HTTP 500 'Sorry, the page you requested could not be found'; the site rewrote the URL to /uk/search?q=diffuser& (country params dropped). q is not the search parameter on this site.",
+      "canary_wharf_in_answer": false,
+      "store_id": null,
+      "answer_kind": "error page",
+      "needs_session": null,
+      "plain_fetch_ok": null
+     },
+     {
+      "purpose": "headless page load /uk/search?text=<text> (the parameter the site's own search links use, e.g. /uk/search?text=Diffuser in the header)",
+      "request": {
+       "method": "GET",
+       "host": "www.thewhitecompany.com",
+       "path_pattern": "/uk/search",
+       "params": "text=diffuser"
+      },
+      "result": "302 geo redirect to /us/?text=diffuser&countryIsoCode=US&currencyIsoCode=USD&clear=true ('not currently able to ship orders to the United States'). The container IP is treated as US for this URL.",
+      "canary_wharf_in_answer": false,
+      "store_id": null,
+      "answer_kind": "geo redirect",
+      "needs_session": null,
+      "plain_fetch_ok": null
+     },
+     {
+      "purpose": "headless page load /uk/search?text=<text> with the site's country switch; capture the results XHR (text query)",
+      "request": {
+       "method": "GET",
+       "host": "www.thewhitecompany.com",
+       "path_pattern": "/uk/search?text=<q>&countryIsoCode=GB&currencyIsoCode=GBP ; results XHR: GET /uk/search/async/search?text=<q>",
+       "params": "text (page and XHR); XHR fired by the page with no other params on first load; companion XHRs /uk/header/currentCountry/gb, /uk/api/common/universalVariable.json?url=/uk/search (holds CSRFToken; value not recorded), /uk/twccmsservice/page/?url=/uk/search"
+      },
+      "result": "200. 'Search results for: \"diffuser\"', 55 Items. XHR JSON keys: results[], sorts[5]{code,name,selected,query{url}}, pagination{pageSize 48,currentPage 0,sort null,numberOfPages 2,totalNumberOfResults 55}, facets[6]{code,name,priority,category,multiSelect,visible,topValues,values}, freeTextSearch, redirectUrl, currentQuery, breadcrumbs, responseId. results[] items: code ('A09653 - Peony Diffuser' style: base code + name), name, url, stock{stockLevelStatus, stockLevel, stockThreshold, nextDeliveryTime, notifyMe, overSelling...}, price{value, formattedValue, wasPrice...}, averageRating, categories, variantOptions, baseCode. Target rank: every top-5 result is a diffuser (exact topical match; no single target product). Sort default our_favourites.",
+      "canary_wharf_in_answer": false,
+      "store_id": null,
+      "answer_kind": "search list (results, facets, sorts, pagination)",
+      "needs_session": null,
+      "plain_fetch_ok": null
+     }
+    ],
+    "facets": [
+     "Product Type (f_type-sm, 8 values)",
+     "Price (priceSlider, 2)",
+     "Fragrance Scent (f_fragrance-sm, 39)",
+     "Colour (v_facet_colour-sm, 3)",
+     "Fragrance Family (f_fragrance_families-sm, 10)",
+     "Stock Availability (excludeStockInStore, 2)"
+    ],
+    "sorts": [
+     "our_favourites (Our Favourites)",
+     "price_asc",
+     "price_desc",
+     "Newness",
+     "BestsellerUK (Bestselling)"
+    ],
+    "page_size": 48,
+    "notes": "The storefront search JSON is GET https://www.thewhitecompany.com/uk/search/async/search?text=<q> (SAP Commerce storefront, not OCC; the OCC products/search route is broken, see set_cd). Two of the 3 requests were spent on faults in the brief's URL: ?q= gives HTTP 500 (the site uses ?text=), and /uk/search?text= without the country params geo-redirects to /us/. So the SKU / variant-code query (CLDDSNNA) and the EAN query (13-digit ean of CLDDSNNA, already known from the survey's OCC JSON, no new OCC read needed) were NOT run: budget spent. Next pass (2 requests): GET /uk/search/async/search?text=CLDDSNNA and ?text=<ean>, by plain fetch first (sends no cookies; may geo-redirect, then add countryIsoCode=GB&currencyIsoCode=GBP or use a headless context that loaded the UK page). Facet 'Stock Availability' code excludeStockInStore suggests an in-store stock filter (2 values) on search, not per-store. Plain fetch and session need of the async route not tested. Akamai sensor POSTs seen, no challenge. robots_ignored true: robots.txt disallows *?q= style search pages. No bodies or token values kept.",
+    "checked_at": "2026-10-12T22:12:45Z"
    }
   },
   {
@@ -4231,6 +4322,61 @@
     "verdict_change": "per-store stock check by store id: GET /occ/v2/WatchesOfSwitzerland_UK/products/{code}/stock/466 gives the Canary Wharf showroom's stockLevel and status directly (plain fetch, no session); storestock gives only the nearest store (578 Omega boutique for the Canary Wharf lat/long). Exact Fredhopper id route not confirmed.",
     "notes": "Canary Wharf ids: 466 (Watches of Switzerland showroom), 578 (Omega boutique, nearest to 51.5054,-0.0235). 579 not tested. storestock returns one store regardless of recordsToReturn. Watches with no stock gave quantity 0 / outOfStock everywhere tested; a positive answer is still to be seen. 8 requests (over the 2 to 4 aim: two control requests added to validate the store id), all 7 s or more apart. No bodies kept.",
     "checked_at": "2026-10-12T21:21:45Z"
+   },
+   "set_fg": {
+    "approved_set": "G",
+    "robots_ignored": true,
+    "requests_made": 3,
+    "tests": [
+     {
+      "purpose": "choose a current model: Tudor brand listing",
+      "request": {
+       "method": "GET",
+       "host": "www.watches-of-switzerland.co.uk",
+       "path_pattern": "/c/Brands/Tudor",
+       "params": []
+      },
+      "result": "HTTP 200; 4 product links in the server HTML: 17771100 Black Bay Chrono, 17771126 Black Bay Ceramic, 17771116 Black Bay 58 39mm black, 17771109 1926 Luna 39mm",
+      "canary_wharf_in_answer": false,
+      "store_id": null,
+      "answer_kind": "listing",
+      "needs_session": false,
+      "plain_fetch_ok": true
+     },
+     {
+      "purpose": "stock at the Canary Wharf showroom",
+      "request": {
+       "method": "GET",
+       "host": "www.watches-of-switzerland.co.uk",
+       "path_pattern": "/occ/v2/WatchesOfSwitzerland_UK/products/{code}/stock/{storeName}",
+       "params": "code=17771116 (Tudor Black Bay 58), storeName=466, fields=FULL, lang=en, curr=GBP"
+      },
+      "result": "HTTP 200 {isValueRounded false, stockLevel 0, stockLevelStatus outOfStock}",
+      "canary_wharf_in_answer": true,
+      "store_id": "466",
+      "answer_kind": "numeric stockLevel + status",
+      "needs_session": false,
+      "plain_fetch_ok": true
+     },
+     {
+      "purpose": "stock at group store 579 (same point as 466), once",
+      "request": {
+       "method": "GET",
+       "host": "www.watches-of-switzerland.co.uk",
+       "path_pattern": "/occ/v2/WatchesOfSwitzerland_UK/products/{code}/stock/{storeName}",
+       "params": "code=17771109 (Tudor 1926 Luna), storeName=579, fields=FULL, lang=en, curr=GBP"
+      },
+      "result": "HTTP 200 {isValueRounded false, stockLevel 0, stockLevelStatus outOfStock}. 579 is a valid store id (an unknown id gives 400 'doesn't exist', set D).",
+      "canary_wharf_in_answer": true,
+      "store_id": "579",
+      "answer_kind": "numeric stockLevel + status",
+      "needs_session": false,
+      "plain_fetch_ok": true
+     }
+    ],
+    "facets": [],
+    "notes": "No positive answer yet: all 4 per-store reads so far (sets D and G, 4 different watches, stores 466 and 579) gave 0 / outOfStock. Tudor was a poor choice (allocation-limited brand). Either showroom stock is not exposed through this route (always 0 for showroom-only stock, online warehouse separate) or the chosen models were truly absent. Next pass: one read of /stock/466 for a high-volume item (e.g. a TAG Heuer Formula 1 or Longines Conquest in the Click & Collect facet), and compare with storestock latitude/longitude for the same code. 3 requests, 7 s or more apart, plain fetch, no session; no bodies kept.",
+    "checked_at": "2026-10-12T22:14:45Z"
    }
   },
   {
@@ -7995,7 +8141,7 @@
      }
     },
     "response_shape": "JSON {action, stores:[{ID, name, address1, postalCode, latitude, longitude, phone, distance, storeHours[], isBopisEnabled, isBopisStore, notBopisProducts[], bopisProductsImages[], pickUpTimeLabel...}]}. Per-store pickup capability; per-product availability expected from GetStoresWithProductAvailability (boolean-style, 'available for pickup today/tomorrow').",
-    "canary_wharf_store_id": "IGJ4 (LONDON CANARY WHARF, Unit 6 Canada Place, E14 5AH; first result, 0.4 mi; store page https://www.intimissimi.com/uk/united_kingdom/londra_1_canada_square/IGJ4.html). In this search it showed isBopisStore=false.",
+    "canary_wharf_store_id": "IGJ4 (LONDON CANARY WHARF; first of 9 stores for CLD28B colour 019, sizes S/M/L all high, 2026-10-12)",
     "needs_session": false,
     "headless_ok": true,
     "endpoint_product": {
@@ -8280,6 +8426,79 @@
     "verdict_change": "per-store, per-size availability level (none/low/high) by plain GET, no session: FindInStore-GetStoresWithProductAvailability?lat&lon&rad=0&pid=<style>&color=<code>&size=<s>[_<s>_<s>]&filterBopis=&currentHour=; the answer lists only the nearest stores that hold the item (3, widening 15 then 30), so a missing IGJ4 means no stock at Canary Wharf for that variant, not a negative row",
     "notes": "Plain Node fetch with X-Requested-With and Accept JSON works; no cookies or CSRF. pid is the style code (not a variant id); colour and size are separate params; up to 3 sizes in one call. Lat/long come from Woosmap localities (public widget key in the page; value not recorded). IGJ4 (Canary Wharf, Canada Place) did not appear for PCU12A colour 5227 in sizes S, M, L, even with filterBopis=false: either no stock there or the store is left out of this service; a test with an item known to be stocked at Canary Wharf is needed to prove IGJ4 appears. Requests: 5 plain (sitemap, product page, JS file, one plain availability call; count includes the headless page session as 1) plus the headless page's own asset and Woosmap calls; Crawl-delay 5 kept (6 s or more).",
     "checked_at": "2026-10-12T21:25:00Z"
+   },
+   "set_fg": {
+    "approved_set": "G",
+    "robots_ignored": true,
+    "requests_made": 3,
+    "tests": [
+     {
+      "purpose": "choose likely-stocked items: women's bestsellers listing",
+      "request": {
+       "method": "GET",
+       "host": "www.intimissimi.com",
+       "path_pattern": "/uk/women/bestsellers/",
+       "params": []
+      },
+      "result": "HTTP 200; 28 tiles (data-pid '<STYLE>_color_<code>'); chose SPD11F colour 019 (ultralight cotton thong, black) and CLD28B colour 019 (ultralight cashmere boat-neck top, black; 7 colours in the list)",
+      "canary_wharf_in_answer": false,
+      "store_id": null,
+      "answer_kind": "listing",
+      "needs_session": false,
+      "plain_fetch_ok": true
+     },
+     {
+      "purpose": "availability near Canary Wharf, core brief item",
+      "request": {
+       "method": "GET",
+       "host": "www.intimissimi.com",
+       "path_pattern": "/on/demandware.store/Sites-intimissimi-uk-Site/en_GB/FindInStore-GetStoresWithProductAvailability",
+       "params": [
+        "lat=51.5054",
+        "lon=-0.0235",
+        "rad=0",
+        "pid=SPD11F",
+        "color=019",
+        "size=S_M_L",
+        "filterBopis=false",
+        "currentHour=23"
+       ]
+      },
+      "result": "HTTP 200 JSON, error false, stores [] (0 stores even at step 30), distances []. Item not held in any London shop (or not in this service).",
+      "canary_wharf_in_answer": false,
+      "store_id": "IGJ4 (absent)",
+      "answer_kind": "per-store per-size level (none/low/high)",
+      "needs_session": false,
+      "plain_fetch_ok": true
+     },
+     {
+      "purpose": "availability near Canary Wharf, bestseller top",
+      "request": {
+       "method": "GET",
+       "host": "www.intimissimi.com",
+       "path_pattern": "/on/demandware.store/Sites-intimissimi-uk-Site/en_GB/FindInStore-GetStoresWithProductAvailability",
+       "params": [
+        "lat=51.5054",
+        "lon=-0.0235",
+        "rad=0",
+        "pid=CLD28B",
+        "color=019",
+        "size=S_M_L",
+        "filterBopis=false",
+        "currentHour=23"
+       ]
+      },
+      "result": "HTTP 200 JSON, currentStep 15, 9 stores. FIRST: IGJ4 'LONDON CANARY WHARF', 0.2 mi, availabilities {S: high, M: high, L: high}, isBopisStore false. Others: IY90 Westfield Stratford 2.6 mi (all high), ICW9 Covent Garden (L low), IV57 Oxford St 112/114, IEF8 Oxford Circus, II31 Oxford St 368/370, 8BLF King's Road (S none, M/L low), IEZ8 Kensington High St, 8BTS Westfield White City. POSITIVE answer naming the Canary Wharf shop.",
+      "canary_wharf_in_answer": true,
+      "store_id": "IGJ4",
+      "answer_kind": "per-store per-size level (none/low/high)",
+      "needs_session": false,
+      "plain_fetch_ok": true
+     }
+    ],
+    "facets": [],
+    "notes": "Proved: IGJ4 appears with 'high' when it holds the item. The value 'none' appears as an explicit per-size value for a listed store (8BLF S none), so a listed store may still lack a size; an item held nowhere gives stores []. A store that holds none of the asked sizes is probably left out (IGJ4 absent for PCU12A in set D). Oxford Street store IDs here (IV57, IEF8, II31) differ from those in set D (IFZ2, IEF9, IEU7) for the same names: IDs may differ by product range or service; key on IGJ4 for Canary Wharf, check names. isDispoActive false in this answer. Plain Node fetch with X-Requested-With, no cookies, no CSRF. Requests 6 s or more apart (Crawl-delay 5).",
+    "checked_at": "2026-10-12T22:14:02Z"
    }
   },
   {
@@ -11148,5 +11367,10 @@
   "date": "2026-10-12",
   "approval": "owner, 2026-10-12: \"C and D\"",
   "brands": 5
+ },
+ "approved_pass_fg": {
+  "date": "2026-10-12",
+  "approval": "owner, 2026-10-12: \"Approve f, g, mcp\"",
+  "requests": 9
  }
 }

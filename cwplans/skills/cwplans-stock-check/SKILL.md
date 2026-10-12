@@ -188,12 +188,13 @@ Owner: "Approve f, g, mcp". `tools/stock-mcp/` (`server.mjs` JSON-RPC over stdio
 adapter per shop, `policy.mjs` the fetch rules, `test.mjs`), registered in `.mcp.json` as `cwplans-stock`.
 - Tools: `list_stock_shops` (shop, Canary Wharf store id, answer kind, id arguments) and `stock_check` (`shop` plus that
   shop's own product id: `variant_code`, `sku`, `product_code`, `product_id`, `pid`/`color`/`size`, `skus`, `query`).
-- Shops (9): The White Company (`variant_code`; count, `jubilee-place`), Crockett & Jones (`sku` "<product>/<fit>/<size>";
+- Shops (10): The White Company (`variant_code`; count, `jubilee-place`), Crockett & Jones (`sku` "<product>/<fit>/<size>";
   quantity, 316), Robert Dyas (`sku`, `qty`; in stock yes/no and collection time, `rd_6088`), Søstrene Grene (`sku`;
   3 levels, 8039; header and cookie `culture: en-GB`), Watches of Switzerland (`product_code`; level and status, 466),
   Space NK (`product_id`; yes/no), Hobbs (`pid`, `color`, `size` codes from the find-in-store form; count, 377), Boss
   (`pid`, `skus` [[EAN, size]]; sizes per shop), Accessorize (`query`; products the Canary Wharf shop holds, 1163).
-  Hotel Chocolat (SLAS guest token through `/mobify/`) and Intimissimi are not in it yet.
+  Intimissimi (`pid` style, `color`, `size` up to 3 joined by `_`; none/low/high per shop and size, IGJ4; each record
+  nests the store details in `store`). Hotel Chocolat (SLAS guest token through `/mobify/`) is not in it yet.
 - `policy.mjs` on every request: robots.txt read per host; a disallowed path (Space NK `/on/`, Boss, Accessorize
   search) is fetched only when the call carries `owner_approval` (the owner's words and date), which is logged; 6 s or
   more per host (`STOCK_MCP_GAP_MS`); 50 requests per host per process at most; a 401/403/429/503 ends the call (no
@@ -206,6 +207,13 @@ adapter per shop, `policy.mjs` the fetch rules, `test.mjs`), registered in `.mcp
   UK200019905 not available; Hobbs dress UK 12 1 in stock; Accessorize "classic tote bag" 1 product. Boss not run (needs
   [EAN, size] pairs from a product page).
 - Fault met: the first Hobbs parse took the store name from inside the label tag (the regex starts in the tag).
+- Sets F and G (same approval, 9 requests): Intimissimi CLD28B colour 019, S/M/L: IGJ4 "LONDON CANARY WHARF" first of 9
+  shops, high for all three sizes (a listed shop can still give "none" for a size). The live MCP call gave the same.
+  Watches of Switzerland: `/stock/466` and `/stock/579` (a valid id) gave 0 for two Tudor models; no positive answer
+  seen yet in 4 reads (try a high-volume model). The White Company storefront search: `GET /uk/search/async/search?text=<q>`
+  with `countryIsoCode=GB&currencyIsoCode=GBP` ( `?q=` gives 500; without the country parameters a US exit goes to
+  `/us/`); "diffuser" 55 results, 48 per page, 5 sorts, 6 facets incl. Stock Availability `excludeStockInStore`; the SKU
+  and EAN tests did not run (budget used by the two URL faults).
 
 ## Rules for a caller
 

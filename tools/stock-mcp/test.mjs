@@ -20,7 +20,7 @@ ok(init.result?.serverInfo?.name === 'cwplans-stock', 'initialize');
 const tl = await call('tools/list', {});
 ok(tl.result?.tools?.map(t => t.name).join() === 'list_stock_shops,stock_check', 'tools/list', tl.result?.tools?.map(t => t.name).join());
 const ls = await tool('list_stock_shops', {}); const shops = JSON.parse(ls.body);
-ok(shops.length >= 9 && shops.every(s => s.canary_wharf_store && s.arguments), 'list_stock_shops', `${shops.length} shops`);
+ok(shops.length >= 10 && shops.every(s => s.canary_wharf_store && s.arguments), 'list_stock_shops', `${shops.length} shops`);
 const miss = await tool('stock_check', { shop: 'hobbs' });
 ok(miss.error && /pid/.test(miss.body), 'missing argument refused before any request', miss.body);
 const bad = await tool('stock_check', { shop: 'nope' });
@@ -37,6 +37,7 @@ const CASES = {
   'space-nk': { product_id: 'UK200019905' },
   hobbs: { pid: '0226-5770-9045L00', color: '1880', size: '004' },
   accessorize: { query: 'classic tote bag' },
+  intimissimi: { pid: 'CLD28B', color: '019', size: 'S_M_L' },
   ...(process.env.BOSS_SKUS ? { boss: { pid: process.env.BOSS_PID, skus: JSON.parse(process.env.BOSS_SKUS) } } : {}),
 };
 if (live) for (const [shop, a] of Object.entries(CASES)) {
