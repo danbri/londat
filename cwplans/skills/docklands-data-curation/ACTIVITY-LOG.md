@@ -2356,3 +2356,35 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - paint-check.mjs: look checks at `paint=full`, a motion check, still and moving cost through `__docklands3.frameNow()`.
   Skill: docklands-3d-page, "Three.js port: Painted style, snappier (2026-10-12)". Open: numbers from the owner's phone.
   Worktree branch only, not pushed.
+
+## 2026-10-12: stock checks in Canary Wharf shops
+
+- Owner: "find all shops in canary wharf whose websites might have 'is this product in stock' tools. Examine their
+  sites, summarize findings ... Use node for now". Shop list from the kgx store in Node (`kgx-query.mjs`: Store types,
+  361 rows) and its input `cwg-directory-typed.json`: 77 product shops. Four survey agents, robots.txt obeyed, one
+  stock-check search per brand with E14 5AB, no challenge bypassed.
+- Result: 11 per-store checks answer headless (The White Company, Crockett & Jones, Robert Dyas, Søstrene Grene and
+  Watches of Switzerland with open JSON or form calls and Canary Wharf ids; Space NK and Hotel Chocolat only through
+  paths that robots.txt disallows), 14 blocked or session-bound, 8 click & collect only, 22 online only, 6 no online
+  shop, 16 unknown (bot walls). File `registry/sources/stock/stock-check-survey.json`; new skill
+  `cwplans-stock-check`; new tool `tools/probe-stock-check.mjs` (faults met and fixed: robots wildcard, HTML robots.txt,
+  captcha false positives).
+- Deviations, recorded in the file: one disallowed `/search/` request (Hobbs, by mistake), a few repeat calls.
+- A survey note said The White Company's robots.txt disallows Anthropic-AI; it gives `Allow: /` (checked again).
+- MCP: GitHub Pages cannot host a remote MCP server, and shop endpoints send no CORS headers; routes in the skill.
+- Open (owner): first caller for the five open endpoints (a local MCP tool?); ask Space NK, Hotel Chocolat, Boss and
+  the blocked brands for access?
+
+## 2026-10-12: stock checks, second pass (lookup and search)
+
+- Owner: "Go back and look to see which require exact matches vs being search interfaces, which allow gtin exact
+  matching or templates/regex, and other functionality such as categories, filters, facets etc." Four agents, 44 shops;
+  a search ran only where robots.txt allows it (18 shops), at most 3 per brand; no key values or bodies kept.
+- Result (`lookup` per entry in `registry/sources/stock/stock-check-survey.json`, skill `cwplans-stock-check`, "Lookup
+  and search"): every stock call is an exact lookup on the shop's own id, never a GTIN; GTIN search works at 5 shops,
+  SKU lookup at 16; no wildcard or regex anywhere; 25 catalogues enumerable (sitemaps, products.json); 12 searches with
+  structured facets, some with in-stock or click & collect facets but none per shop; 16 Shopify shops have UCP/MCP
+  catalogue tools that need a published agent profile.
+- Deviation: 3 searches on The White Company OCC API path (robots.txt disallows only the search page); all answered 400.
+- Open (owner): Malin+Goetz GraphQL SKU lookup (allowed path) yes or no; publish a UCP agent profile for the Shopify
+  shops; build a local product index (name, brand, GTIN, shop id) from sitemaps at low rate, then one stock call per need.
