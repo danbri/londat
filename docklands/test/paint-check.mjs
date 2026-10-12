@@ -10,16 +10,24 @@
 //    the block means against the map (SPECK.blockChroma); the Laplacian numbers (chromaHF, lap) are information only,
 //  - the data layers crisp: in the pixels that the data layers (and the railway lines) change in the map frame, the paint
 //    frame differs from the map by under max(6, 0.6 x the frame's difference) and keeps 60 % of the map's sharpness,
-//  - (with --cost) the frame cost: the median of 7 frames (pipe.render() and a 1-pixel readPixels that waits for the GPU),
-//    three rounds of map, paint and paint lite (?paint=lite); the median of the rounds. --bare hides the scene first: the time is then the output
-//    passes alone (the paint pass against the map's tone mapping only).
+//  - the motion tier (first query; --no-motion skips it): with ?animate=0 the camera turns every frame for 1.5 s, then stops.
+//    Fails unless the frames drawn while it turns are of the moving tier, a full-detail frame is drawn 150 to 700 ms after
+//    the last camera change (or 250 ms + 2 moving frame times, in slow software rendering), and at most 3 frames follow it
+//    in the next second (the page stops drawing while still). The scene is hidden while it runs (the tier logic does not
+//    depend on it, and a full frame takes seconds in software at dpr 2).
+//    Prints the moving frame times (perf.js: requestAnimationFrame intervals, median and 95th percentile).
+//  - (with --cost) the frame cost: the median of 7 frames (one frame of the page's loop, __docklands3.frameNow(), with its
+//    style hooks, or pipe.render() on an older page, and a 1-pixel readPixels that waits for the GPU), still and with the
+//    camera turned before each frame (moving), three rounds of map, paint full, paint lite and paint auto; the median of the
+//    rounds. --bare hides the scene first: the time is then the output passes alone (the paint pass against the map's tone
+//    mapping only). The look checks use ?paint=full (the auto tier would change the look in software rendering).
 // Software rendering (SwiftShader): the cost numbers compare the styles; they are not a phone's frame rate.
 // Run from the repository root with a server on the root:
 //   python3 -m http.server 8188 --bind 127.0.0.1 &
 //   node docklands/test/paint-check.mjs [--base http://127.0.0.1:8188] [--out dir] [--webgpu] [--cost [--bare]]
 //        [--size 1288x966@2] [--query 'view=greenlanddock&t=2026-10-11T12:45']
-//        [--styles old-styles.js] (serve another styles.js, to calibrate the speckle limits on an older pass)
-// Skill: docklands-3d-page, "Three.js port: Painted style (2026-10-11)".
+//        [--styles old-styles.js] (serve another styles.js, to calibrate the speckle limits on an older pass) [--no-motion]
+// Skill: docklands-3d-page, "Three.js port: Painted style (2026-10-11)" and "Painted style, snappier (2026-10-12)".
 import { chromium } from '@playwright/test';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 
@@ -29,7 +37,7 @@ const BASE = arg('--base', 'http://127.0.0.1:8188'), OUT = arg('--out', 'docklan
 // and the chroma error of the 8 x 8 block means against the map (blockChroma). Calibrated 2026-10-11 at 390 x 844 @2 on the
 // high view (skill section): the first pass (before the low-pass) 1.38 % and 9.7, this one 0.01 % and 4.2
 const SPECK = { chroma: 6, invented: 0.8, blockChroma: 7 };
-const COST = process.argv.includes('--cost'), BARE = process.argv.includes('--bare');
+const COST = process.argv.includes('--cost'), BARE = process.argv.includes('--bare'); let MOTION = !process.argv.includes('--no-motion');
 const [, W, H, DPR] = (arg('--size', '1288x966@2').match(/(\d+)x(\d+)@([\d.]+)/) || []).map(Number);
 // the owner's cases (2026-10-11): high over dense blocks (confetti), low under a tree row (low-poly crowns), the photo view,
 // Canary Wharf and Rotherhithe at night; weather=0 so the haze is the same in every run
@@ -47,7 +55,7 @@ for (const q of QUERIES) {
   const t0 = Date.now();
   if (arg('--styles', '')) await page.route(/docklands\/styles\.js/, r => r.fulfill({ contentType: 'text/javascript', body: readFileSync(arg('--styles'), 'utf8') }));   // calibration: an older styles.js
   const [qq, hh] = q.split('#');   // a share hash (#v=1&c=...) goes after the query
-  await page.goto(`${BASE}/docklands/?${qq}&style=paint${WEBGPU ? '' : '&webgl'}&animate=0${hh ? '#' + hh : ''}`, { waitUntil: 'domcontentloaded', timeout: 240000 });
+  await page.goto(`${BASE}/docklands/?${qq}&style=paint&paint=full${WEBGPU ? '' : '&webgl'}&animate=0${hh ? '#' + hh : ''}`, { waitUntil: 'domcontentloaded', timeout: 240000 });
   const ok = await page.waitForFunction(() => globalThis.__docklands3 && __docklands3.ready && globalThis.__docklandsStyles && __docklandsStyles.mode === 'paint', null, { timeout: 300000 }).then(() => true).catch(() => false);
   if (!ok) { failed++; console.log(`FAIL ${q} not ready`, errors.slice(0, 5)); await page.close(); continue; }
   await page.waitForTimeout(6000);
@@ -143,18 +151,48 @@ for (const q of QUERIES) {
     res.pass = (night ? diff > 1.5 && res.flatSdPaint > Math.max(0.25, 2 * res.flatSdMap) : diff > 3 && res.flatSdPaint > 1.5 && res.flatSdPaint > 1.4 * res.flatSdMap)
       && nb > 50 && !res.confetti && res.overlayCrisp !== false;
   }
+  if (MOTION && res.pass !== undefined) {   // the motion tier: moving frames cheaper, then one full-detail frame, then no more
+    MOTION = false;
+    const m = await page.evaluate(async () => {
+      // the scene hidden while it runs (a full frame takes seconds in software at dpr 2): the tier logic does not depend on it
+      const D = __docklands3, S = __docklandsStyles, hid = D.scene.children.filter(o => o.visible); for (const o of hid) o.visible = false;
+      S.setPaintTier('full'); D.draw(); await new Promise(r => setTimeout(r, 1500));
+      const s0 = D.camState(); let yaw = s0.yaw; const t0 = performance.now(), tiers = [];
+      await new Promise(done => { const f = () => { if (performance.now() - t0 > 1500) { done(); return; } yaw += 0.004; D.setCam({ ...D.camState(), yaw }); tiers.push(S.paintMoving); requestAnimationFrame(f); }; requestAnimationFrame(f); });
+      const mv = D.perf.stats({ moving: true }), last = D.perf.lastMove;
+      let fr = [], full = null;
+      for (let k = 0; k < 40 && !full; k++) { await new Promise(r => setTimeout(r, 250)); fr = D.perf.frames().filter(x => x.t > last - 50); full = fr.find(x => !/moving/.test(x.tier)); }
+      await new Promise(r => setTimeout(r, 1000)); const fr2 = D.perf.frames();
+      for (const o of hid) o.visible = true; D.draw();
+      // the first frame drawn after the settle time: its start may be later than 700 ms when the frame before it was slow
+      const prevEnd = full ? Math.max(...fr.filter(x => x.t < full.t).map(x => x.t + x.ms), last) : null;
+      return { movingFrames: mv.samples, movingMs: mv.frame_ms, movingTiers: tiers.filter(Boolean).length + '/' + tiers.length,
+        fullAfterMs: full ? Math.round(full.t - last) : null, waitedOnSlowFrame: full ? Math.round(prevEnd - last) : null,
+        framesAfterFull: full ? fr2.filter(x => x.t > full.t).length : null, tier: S.paintTier };
+    });
+    res.motion = m;
+    const ok = m.fullAfterMs != null && m.fullAfterMs >= 150 && m.fullAfterMs <= Math.max(700, m.waitedOnSlowFrame + 100, 250 + 2 * (m.movingMs.median || 0)) && m.framesAfterFull <= 3 && /^[1-9]/.test(m.movingTiers);
+    res.motionOk = ok; res.pass = res.pass && ok;
+  }
   if (COST) {   // the time of one frame: pipe.render() then a 1-pixel readPixels, which waits for the GPU; median of 7
     if (BARE) await page.evaluate(() => { for (const o of __docklands3.scene.children) o.visible = false; });   // --bare: an empty scene, so the time is the output pass
-    const run = style => page.evaluate(async style => {
-      const S = await import('/docklands/main.js'), P = S.styleHook.pipe, R = __docklands3.renderer, gl = R.backend.gl;
-      await __docklandsStyles.setStyle(style === 'lite' ? 'paint' : style); if (__docklandsStyles.setPaintTier) __docklandsStyles.setPaintTier(style === 'lite' ? 'lite' : 'full'); __docklands3.draw(); await new Promise(r => setTimeout(r, 3000));   // the first frames compile the shaders
+    const run = (style, moving) => page.evaluate(async ([style, moving]) => {
+      const S = await import('/docklands/main.js'), P = S.styleHook.pipe, D = __docklands3, R = D.renderer, gl = R.backend.gl, St = __docklandsStyles;
+      await St.setStyle(style === 'map' ? 'map' : 'paint'); if (St.setPaintTier) St.setPaintTier(style === 'map' || style === 'paint' ? 'full' : style); D.draw();
+      await new Promise(r => setTimeout(r, style === 'auto' ? 4000 : 2500));   // the first frames compile the shaders
+      const one = () => { if (moving) D.setCam({ ...D.camState(), yaw: D.camState().yaw + 0.004 }); if (D.frameNow) D.frameNow(); else P.render(); };
+      if (style === 'auto') for (let i = 0; i < 24; i++) { one(); if (gl) gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4)); }   // let the auto tier settle
+      if (!moving) await new Promise(r => setTimeout(r, 300));   // still: after the settle time
       const px = new Uint8Array(4), t = [];
-      for (let i = 0; i < 9; i++) { const t0 = performance.now(); P.render(); if (gl) gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); else await R.backend.device.queue.onSubmittedWorkDone(); t.push(performance.now() - t0); }
-      t.splice(0, 2); t.sort((a, b) => a - b); return +t[3].toFixed(0);
-    }, style);
-    const m = [], p = [], l = []; for (let r = 0; r < 3; r++) { m.push(await run('map')); p.push(await run('paint')); l.push(await run('lite')); }
+      for (let i = 0; i < 9; i++) { const t0 = performance.now(); one(); if (gl) gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); else await R.backend.device.queue.onSubmittedWorkDone(); t.push(performance.now() - t0); }
+      t.splice(0, 2); t.sort((a, b) => a - b); return [+t[3].toFixed(0), St.paintTier || null];
+    }, [style, moving]);
     const med = a => [...a].sort((x, y) => x - y)[1];
-    res.msPerFrame = { map: m, paint: p, lite: l, medianMap: med(m), medianPaint: med(p), medianLite: med(l) };
+    res.msPerFrame = {};
+    for (const st of ['map', 'paint', 'lite', 'auto']) for (const mv of [false, true]) {
+      const a = [], tiers = new Set(); for (let r = 0; r < 3; r++) { const [ms, tier] = await run(st, mv); a.push(ms); tiers.add(tier); }
+      res.msPerFrame[st + (mv ? 'Moving' : 'Still')] = { median: med(a), rounds: a, tier: [...tiers].join('/') };
+    }
   }
   const backend = await page.evaluate(() => __docklands3.backend);
   const bad = errors.length || !res.pass; if (bad) failed++;

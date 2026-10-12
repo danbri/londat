@@ -218,6 +218,11 @@ export function init(H) {
     tools: TOOLS.map(({ name, description, inputSchema, readOnly }) => ({ name, description, inputSchema, readOnly })), callTool,
     webmcp, speak, get describing() { return describeOn; }, set describing(v) { const c = $('describeChk'); if (c) { c.checked = !!v; c.onchange(); } else describeOn = !!v; },
     spoken, openTextView: openText, ready: extras.then(() => true),
+    // frame times (perf.js, all styles; OKR KR3.1): median and 95th percentile over the last 2 s, frames a second, the style
+    // and its tier (Painted: full, lite or low, auto or fixed, moving or still, the auto tier's last steps), and a sentence
+    perf() { const P = H.perf; if (!P) return null; const s = P.stats(), St = globalThis.__docklandsStyles;
+      if (St && St.mode === 'paint') s.paint = { tier: St.paintTier, mode: St.paintMode, moving: St.paintMoving, steps: St.paint.log.slice(-5) };
+      return s; },
     help: 'Docklands 3D page API: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api',
   };
   globalThis.docklands = api;

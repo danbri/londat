@@ -2340,3 +2340,19 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   usual sense of laggy and jerky": a frame-rate problem on the iPhone (software: Painted 68 ms a frame against 29 ms for
   the map at 390 x 844 @3). Next round when the owner asks: lower resolution while the view moves, the tier chosen by
   measured frame time, fewer fetches, a frame-time readout on the phone; then stronger stroke character.
+
+## 2026-10-12: Painted style snappier; frame-time readout for every style (Three.js port)
+
+- Owner: "Make it snappier" (Painted, "laggy and jerky" on the iPhone). New `docklands/perf.js`: frame times
+  (requestAnimationFrame interval of continuous frames, median and 95th percentile over 2 s), camera motion from the
+  camera matrices (every mover), the readout `?fps=1` / Menu > About > Settings "Frame times on the map", a screen-reader
+  sentence, `docklands.perf()` and `__docklands3.perf`. Painted: a motion tier (a second, low-density dab pass while the
+  camera moves, no edge fidelity; one full-detail frame 200 ms after it stops), a still view redrawn at most every 100 ms,
+  tiers full / lite / low with `?paint=auto` (default) stepping by the median frame time (25 ms down, 18 ms up, with
+  hysteresis), the data-layer pass skipped while no data layer shows, fewer full-resolution fetches in the output.
+- Found: the page caps dpr at 2 (the iPhone draws 780 x 1688 at 390 x 844); in SwiftShader each render pass has a fixed
+  cost of about 12 ms, so the resolution tiers show little there (numbers in the skill); a run-time resize of an rtt left
+  the output sampling the old texture (black dabs) until the bindings were rebuilt (45 to 60 ms).
+- paint-check.mjs: look checks at `paint=full`, a motion check, still and moving cost through `__docklands3.frameNow()`.
+  Skill: docklands-3d-page, "Three.js port: Painted style, snappier (2026-10-12)". Open: numbers from the owner's phone.
+  Worktree branch only, not pushed.

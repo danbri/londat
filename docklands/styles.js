@@ -330,13 +330,13 @@ function lineFrame() {
   }
 }
 
-// ---------- painted (?style=paint, ?paint=<dab size in CSS px> or ?paint=lite, ?paintfid=<0..1>): a screen-space pass over
+// ---------- painted (?style=paint, ?paint=<dab size in CSS px> or ?paint=full|lite|low|auto, ?paintfid=<0..1>): a screen-space pass over
 // the normal scene pass, so it paints meshes, the species trees, the water mirror, the splats and any later Gaussian splat
 // data alike. Owner, 2026-10-11: "too lossy" (low-poly trees close up, "speckled noise" far away, overlays painted as blobs).
 //  1. The copy (rtt, half resolution, RGBA16F, mipmaps): rgb the scene colour, a 100 / view depth (negative where a data
 //     layer shows). A dab takes its colour from the mip level of its own size: a low-pass, not a point sample, so far detail
 //     gives its mean colour, not "confetti".
-//  2. The dabs (rtt `PT.dab`, at `PT.scale` of the drawing buffer: 2 samples a CSS px at most, 0.75 in ?paint=lite; the dabs
+//  2. The dabs (rtt `PT.dab`, at `PT.scale` of the drawing buffer: PTIERS, 2 samples a CSS px at most, less while moving; the dabs
 //     are 4 to 20 CSS px, so this loses nothing that shows): a jittered grid of screen cells, the 3 x 3 cells round the
 //     pixel. Cell size: six levels (-1 to 4, x far2 ^ (level / 2)): larger far away, larger on near flat surfaces (big),
 //     smaller on strong edges (edgeK) and busy areas (busyK); the boundary dithered by value noise. Each cell: a hashed
@@ -352,11 +352,21 @@ function lineFrame() {
 //     rows, bridges, the river edge), canvas grain, then the data layers crisp on top (a full-resolution pass of
 //     OVERLAY_LAYERS alone gives their mask, depth-tested against the main frame). AgX and sRGB after it (outputColorTransform on, as the map).
 // Cost a dab-pass sample: 9 dab fetches, 4 gradient taps, 2 detail taps, 2 depth; output: 3 fetches and the mask.
-const PT = { pass: null, dab: null, ovPass: null, out: null, outNight: null, outMask: null, showMask: false, lite: false, scale: 1, tick: 0,
+// Tiers (2026-10-12, owner: "Painted is a bit janky" ... "Make it snappier"): the dab pass in samples a CSS px while still and
+// while the camera moves, and the scale of the data-layer mask pass. ?paint=full|lite|low fixes one; ?paint=auto (the
+// default) starts at full and steps down when the median frame time over 2 s is over slowMs (25 ms), up when under fastMs
+// (18 ms) after 3 s; a step up that is slow again within 5 s blocks that tier for 15 s, then 30 s ... (hysteresis).
+// While the camera moves (perf.js: any change of the camera matrices, so gestures, momentum, the wheel, fly-to, the drone
+// and setCam alike) the dab pass runs at the `move` density and is upscaled by the output pass, so the strokes keep their
+// shape and soften; 200 ms after the last change one full-detail frame is drawn (a page that draws on demand then stops),
+// and a still view is redrawn at most every `hold` ms (100) unless something asks for a frame.
+const PTIERS = [{ name: 'full', still: 2, move: 0.75, ov: 1 }, { name: 'lite', still: 0.75, move: 0.5, ov: 0.5 }, { name: 'low', still: 0.5, move: 0.35, ov: 0.5 }];
+const PT = { pass: null, dab: null, ovPass: null, out: null, outNight: null, outMask: null, showMask: false, scale: 1, tick: 0,
+  mode: 'auto', level: 0, moving: false, hold: 100, slowMs: 25, fastMs: 18, tierSince: 0, autoAt: 0, upAt: -1e9, blockMs: 7500, block: [0, 0, 0], log: [], ovAny: true, ovClean: false, ovSkipped: 0,
   res: uniform(new THREE.Vector2(1, 1)), dpr: uniform(1), near: uniform(1), far: uniform(20000),
   size: uniform(6), far2: uniform(1.8), aspect: uniform(2.5), radius: uniform(0.72), jitter: uniform(0.85), vjit: uniform(0.3), hjit: uniform(0.3),
   bristle: uniform(0.12), grain: uniform(0.035), sat: uniform(1.18), gate: uniform(0.6), sharp: uniform(6), turn: uniform(0.5),
-  lp: uniform(0.4), fid: uniform(0.5), big: uniform(3), edgeK: uniform(1.4), farK: uniform(1.2), busyK: uniform(0.8), keep: uniform(0.7), keepN: uniform(0.8), cmul: uniform(1.5), cadd: uniform(0.1), spill: uniform(1) };
+  lp: uniform(0.4), fid: uniform(0.5), fidOn: uniform(1), mvU: uniform(0), scaleKey: '', dabM: null, big: uniform(3), edgeK: uniform(1.4), farK: uniform(1.2), busyK: uniform(0.8), keep: uniform(0.7), keepN: uniform(0.8), cmul: uniform(1.5), cadd: uniform(0.1), spill: uniform(1) };
 const OVL = 8, OVERLAY_LAYERS = ['overlays', 'river', 'routes', 'kml', 'locate', 'keys', 'planes', 'walls', 'ships', 'piers'];   // the data layers: on THREE layer 8 too
 const lum3 = c => dot(c, vec3(0.2126, 0.7152, 0.0722));
 const chroma = c => { const mx = max(max(c.x, c.y), c.z), mn = min(min(c.x, c.y), c.z); return mx.sub(mn).div(max(mx, 0.02)); };
@@ -378,7 +388,9 @@ function paintOutput() {
   // is not nearer than the overlay (a nearer building hides it). No If / and / or inside an rtt (r186).
   PT.ovPass = pass(C.scene, C.camera, { samples: 0 }); const OL = new THREE.Layers(); OL.set(OVL); PT.ovPass.setLayers(OL);   // full resolution: thin lines stay whole
   const ub = PT.ovPass.updateBefore.bind(PT.ovPass);
-  PT.ovPass.updateBefore = frame => { const r = frame.renderer, sc = C.scene, bg = sc.background, a = r.getClearAlpha(); sc.background = null; r.setClearAlpha(0);
+  // no data layer visible: the pass is drawn once (cleared, alpha 0) and then skipped until one shows (PT.ovAny, paintFrame)
+  PT.ovPass.updateBefore = frame => { if (!PT.ovAny && PT.ovClean) { PT.ovSkipped++; return; } PT.ovClean = !PT.ovAny;
+    const r = frame.renderer, sc = C.scene, bg = sc.background, a = r.getClearAlpha(); sc.background = null; r.setClearAlpha(0);
     try { return ub(frame); } finally { sc.background = bg; r.setClearAlpha(a); } };
   const OV = PT.ovPass.getTextureNode(), o4 = uv => OV.sample(uv), OVD = PT.ovPass.getTextureNode('depth');
   // visible where the overlay's own depth is not behind the main frame's (a nearer building hides it); translucent overlays too
@@ -447,28 +459,70 @@ function paintOutput() {
   const cs = chroma(src), cdab = chroma(dabs), Ld = lum3(dabs);
   const capped = vec3(Ld).add(dabs.sub(Ld).mul(mix(min(float(1), cs.mul(PT.cmul).add(PT.cadd).div(max(cdab, 1e-3))), float(1), spilt)));   // not where a near dab spills (its own colour)
   const L = lum3(capped), sk = float(1).add(PT.sat.sub(1).mul(clamp(chroma(capped).sub(0.08).mul(5), 0, 1)));   // no lift on grey
-  PT.dab = rtt(vec4(max(vec3(L).add(capped.sub(L).mul(sk)), vec3(0)), edge.mul(float(1).sub(spilt)).mul(float(1).sub(near))), null, null, { resolutionScale: 1 });
+  // two dab passes of the same graph: PT.dab at the still density and PT.dabM at the moving density (PTIERS). Only the one in use
+  // renders (autoUpdate, paintFrame); the output samples both and takes one (PT.mvU). So a gesture's start and end change no
+  // size and rebuild nothing: resizing one rtt at each change cost 45 to 60 ms a change in software rendering, and without a
+  // rebuild of the output's bindings the output sampled the old texture (black or stale dabs)
+  const dabNode = vec4(max(vec3(L).add(capped.sub(L).mul(sk)), vec3(0)), edge.mul(float(1).sub(spilt)).mul(float(1).sub(near)));
+  PT.dab = rtt(dabNode, null, null, { resolutionScale: 1 }); PT.dabM = rtt(dabNode, null, null, { resolutionScale: 0.5 });
   // 3. the output at full resolution
-  const P = PT.dab.sample(screenUV), sc1 = scol.sample(screenUV).rgb;
-  const painted = mix(P.rgb, sc1, P.a.mul(PT.fid));   // fidelity on strong edges: a share of the full-resolution scene
-  const cp = screenUV.mul(res).div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
-  const out0 = painted.mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain)));
-  const out = mix(out0, sc1, ovMask(screenUV));   // the data layers crisp on top
+  // Fewer full-resolution fetches (2026-10-12): the scene pixel only where the edge fidelity uses it (P.a over 0, and not
+  // while the camera moves: PT.fidOn), the overlay depth and the main depth only where the data-layer pass has alpha
+  // (coherent branches: whole blocks of pixels skip them).
+  // (Tried 2026-10-12 and dropped: the dabs computed in the output pass itself where the dab pass is at full resolution,
+  // one pass less. In SwiftShader that frame took 500 to 690 ms against 40 to 72 ms for two passes.)
+  const outOf = Fn(() => {
+    const P = mix(PT.dab.sample(screenUV), PT.dabM.sample(screenUV), PT.mvU), col = vec3(P.rgb).toVar();
+    If(P.a.mul(PT.fidOn).greaterThan(0.002), () => { col.assign(mix(P.rgb, scol.sample(screenUV).rgb, P.a.mul(PT.fid))); });   // fidelity on strong edges: a share of the full-resolution scene
+    const cp = screenUV.mul(res).div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
+    const out = col.mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain))).toVar();
+    If(o4(screenUV).a.greaterThan(0.15), () => { out.assign(mix(out, scol.sample(screenUV).rgb, ovMask(screenUV))); });   // the data layers crisp on top
+    return out;
+  });
+  const out = outOf();
   PT.out = vec4(out, 1);
   PT.outMask = vec4(vec3(ovMask(screenUV)), 1);   // test view: the data-layer mask (paint.showMask = true; paint-check.mjs)
   PT.outNight = vec4(out.add(bloom(A, 0.9, 0.45, 0.6).rgb), 1);   // lit windows: the map's bloom, of the half-resolution copy
 }
+function setLevel(l, why, ms) {
+  l = Math.max(0, Math.min(PTIERS.length - 1, l)); if (l === PT.level) return;
+  PT.level = l; PT.tierSince = performance.now();
+  PT.log.push({ t: Math.round(PT.tierSince), tier: PTIERS[l].name, why, median_ms: ms }); if (PT.log.length > 20) PT.log.shift();
+  C.draw();
+}
+// ?paint=auto: the median frame time (perf.js, continuous frames since the last tier change, last 2 s) every 0.5 s
+function autoTier(P) {
+  const now = performance.now(); if (now - PT.autoAt < 500) return; PT.autoAt = now;
+  const s = P.stats({ since: PT.tierSince }); if (s.samples < 10) return;
+  const m = s.frame_ms.median;
+  if (m > PT.slowMs && PT.level < PTIERS.length - 1) {
+    if (now - PT.upAt < 5000) { PT.blockMs = Math.min(120000, PT.blockMs * 2); PT.block[PT.level] = now + PT.blockMs; }   // the step up failed: not again for a while
+    setLevel(PT.level + 1, 'slow', m);
+  } else if (m < PT.fastMs && PT.level > 0 && now - PT.tierSince > 3000 && now > PT.block[PT.level - 1]) { PT.upAt = now; setLevel(PT.level - 1, 'fast', m); }
+}
 function paintFrame() {
   const cam = C.camera; PT.near.value = cam.near; PT.far.value = cam.far;
   const s = C.renderer.getDrawingBufferSize(new THREE.Vector2()), dpr = C.renderer.getPixelRatio(); PT.res.value.set(s.x, s.y); PT.dpr.value = dpr;
-  // the dab pass: 2 samples a CSS px at most (1 in lite); the output stays at full resolution
-  const sc = Math.min(1, (PT.lite ? 0.75 : 2) / Math.max(dpr, 1)); if (sc !== PT.scale && PT.dab) { PT.dab.setResolutionScale(sc); PT.scale = sc; }
-  const os = PT.lite ? 0.5 : 1; if (PT.ovPass && PT.ovPass.getResolutionScale && PT.ovPass.getResolutionScale() !== os) PT.ovPass.setResolutionScale(os);   // lite: the data-layer mask at half resolution
+  // the tier (PTIERS) and, while the camera moves, its cheaper dab density; the output stays at full resolution
+  const P = C.perf, mv = !!(P && P.moving);
+  if (PT.mode === 'auto' && P) autoTier(P);
+  const T = PTIERS[PT.level]; PT.moving = mv; PT.fidOn.value = mv ? 0 : 1;   // no edge fidelity while moving (one full-resolution fetch less)
+  const scS = Math.min(1, T.still / Math.max(dpr, 1)), scM = Math.min(1, T.move / Math.max(dpr, 1)), key = scS + '/' + scM;
+  if (PT.dab && key !== PT.scaleKey) {   // a tier or dpr change (rare): new sizes, and the output's bindings rebuilt for the new textures
+    PT.dab.setResolutionScale(scS); PT.dabM.setResolutionScale(scM); PT.scaleKey = key; H.pipe.needsUpdate = true; }
+  PT.scale = mv ? scM : scS; PT.mvU.value = mv ? 1 : 0;
+  if (PT.dab) { PT.dab.autoUpdate = !mv; PT.dabM.autoUpdate = mv; }   // only the dab pass in use renders
+  const os = T.ov; if (PT.ovPass && PT.ovPass.getResolutionScale && PT.ovPass.getResolutionScale() !== os) PT.ovPass.setResolutionScale(os);   // lite, low: the data-layer mask at half resolution
+  if (P) { P.style = 'paint'; P.tier = T.name + (mv ? ' (moving)' : ''); P.wantSettle = true; P.holdMs = PT.hold; }
   const LY = globalThis.__docklands3 && __docklands3.layers;   // the data layers' objects (some are made later): on layer OVL as well, every 30th frame
   if (LY && PT.tick++ % 30 === 0) {   // and the railway lines of the map (a coloured data line, not scenery)
     for (const id of OVERLAY_LAYERS) { const o = LY[id] && LY[id].api && LY[id].api.object; if (o) o.traverse(x => x.layers.enable(OVL)); }
     if (C.meshes && C.meshes.rail) C.meshes.rail.layers.enable(OVL);
   }
+  // any data layer to mask? (the top object of each; the pass is skipped while none shows)
+  let any = !!(C.meshes && C.meshes.rail && C.meshes.rail.visible);
+  if (LY) for (const id of OVERLAY_LAYERS) { const o = LY[id] && LY[id].api && LY[id].api.object; if (o && o.visible && o.parent) any = true; }
+  PT.ovAny = any;
   const bl = $('bloom'); OUT = PT.showMask ? PT.outMask : (bl ? bl.checked : true) && C.U && C.U.night && C.U.night.value > 0.01 ? PT.outNight : PT.out;
 }
 
@@ -542,6 +596,7 @@ const $ = id => document.getElementById(id);
 
 // ---------- every frame: the style's camera, materials and output node (main.js syncPost() sets the map's output on a clock change)
 function frame() {
+  const PF = C.perf; if (PF && MODE !== 'paint') { PF.style = MODE; PF.tier = MODE === 'map' ? 'full' : '-'; PF.holdMs = 0; PF.wantSettle = false; }
   if (MODE === 'map') return;
   if (MODE === 'pixel') pixFrame(); else if (MODE === 'paint') paintFrame(); else lineFrame();
   const P = H.pipe, ct = MODE === 'paint';   // paint is linear HDR: AgX and sRGB after it, as in the map
@@ -550,7 +605,7 @@ function frame() {
 
 // the style notes under Look > Style (index.html #pixNote, line-styles.js NOTE), as true for this port
 const NOTE = {
-  paint: 'Painted: the normal view repainted as brush strokes with broken colour and a canvas grain, an impressionist look that will suit Gaussian splat data. Each stroke takes the mean colour of the area it covers, so far detail becomes calm colour, not speckle, and grey stays grey. Light and shade are kept. Strokes are small on strong edges (tower outlines, bridges, window rows, the river edge) and large on near flat surfaces; near trees and walls get a brushed outline. Map overlays, routes, aircraft and other data are drawn sharp on top, not painted. The strokes are fixed to the screen, so when the view moves the colours slide under them. ?paint=7 gives larger strokes, ?paint=lite a cheaper version for slow phones, ?paintfid=0 to 1 how much sharp detail shows on edges.',
+  paint: 'Painted: the normal view repainted as brush strokes with broken colour and a canvas grain, an impressionist look that will suit Gaussian splat data. Each stroke takes the mean colour of the area it covers, so far detail becomes calm colour, not speckle, and grey stays grey. Light and shade are kept. Strokes are small on strong edges (tower outlines, bridges, window rows, the river edge) and large on near flat surfaces; near trees and walls get a brushed outline. Map overlays, routes, aircraft and other data are drawn sharp on top, not painted. The strokes are fixed to the screen, so when the view moves the colours slide under them. While the view moves the strokes are drawn at a lower resolution, and they sharpen a fifth of a second after it stops. On a slow device the style steps down by itself to a cheaper tier and back up when it can (?paint=auto, the default; ?paint=full, lite or low fixes one; Menu > About > Frame times shows the tier). ?paint=7 gives larger strokes, ?paintfid=0 to 1 how much sharp detail shows on edges.',
   pixel: 'Pixel art: an isometric view in a 33-colour palette with stylised trees, people, cyclists, buses, cabs, now and then a police car, ambulance or fire engine, gulls, river traffic (Thames Clipper catamarans, tourist boats, tugs towing waste barges, aggregate barges, speedboats) and swimmers in Eden Dock. Photo facades and the measured facade colours are kept. The arrows at the top right turn the view by a quarter. Night is off in this style. The animals and traffic are illustrative, not live data.',
   lines: 'Line drawing: the plotter drawing in real time. Building edges with hidden lines removed, and water, parks, roads and railways in the plotter\'s pen colours. A building smaller than 5 px on the screen draws no edges. Night, overlays and splats are off in this style. About > Plotter makes the file for a pen plotter.',
   vectrex: 'Vector CRT, after the Vectrex console (1982), which drew each line with the electron beam: bright phosphor lines on black, a glow, a short afterglow when the view moves and a slight flicker. There are no scanlines, because a vector screen has none. "Colour overlay" tints each kind of line, as the Vectrex\'s plastic overlays coloured its screen. The screen redraws all the time in this style, which uses more battery.' };
@@ -590,12 +645,15 @@ export function init(hook) {
   H.ray.setFromCamera = function (ndc, cam) { return set.call(this, ndc, MODE === 'pixel' ? PX.cam : cam); };
   ui(); C.onFrame(frame);
   const q = new URLSearchParams(location.search); let want = q.get('style') || (q.has('pixel') ? 'pixel' : q.has('lines') ? 'lines' : q.has('vectrex') ? 'vectrex' : 'map');
-  const pq = q.get('paint'), pz = parseFloat(pq);   // ?paint=<near dab cell, CSS px> or ?paint=lite (the cheaper tier)
-  if (pq === 'lite') PT.lite = true; else if (pz > 0) PT.size.value = Math.min(40, Math.max(1, pz));
-  if ((pq === 'lite' || pz > 0) && !q.get('style')) want = 'paint';
+  const pq = q.get('paint'), pz = parseFloat(pq);   // ?paint=<near dab cell, CSS px> or ?paint=full|lite|low|auto (the tier; auto by default)
+  const tierOf = n => PTIERS.findIndex(t => t.name === n);
+  if (tierOf(pq) >= 0) { PT.mode = pq; PT.level = tierOf(pq); } else if (pz > 0) PT.size.value = Math.min(40, Math.max(1, pz));
+  if ((tierOf(pq) >= 0 || pq === 'auto' || pz > 0) && !q.get('style')) want = 'paint';
   const pf = parseFloat(q.get('paintfid')); if (pf >= 0) PT.fid.value = Math.min(1, pf);   // ?paintfid=<0..1>: the share of the scene on strong edges
   const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT,
-    get paintTier() { return PT.lite ? 'lite' : 'full'; }, setPaintTier(t) { PT.lite = t === 'lite'; C.draw(); return this.paintTier; },   // ?paint=lite
+    // the tier now (full, lite, low), its mode (auto or fixed), moving or not, and the auto tier's steps (?paint=full|lite|low|auto)
+    get paintTier() { return PTIERS[PT.level].name; }, get paintMode() { return PT.mode; }, get paintMoving() { return PT.moving; }, paintTiers: PTIERS,
+    setPaintTier(t) { const i = PTIERS.findIndex(x => x.name === t); if (t === 'auto') { PT.mode = 'auto'; PT.tierSince = performance.now(); } else if (i >= 0) { PT.mode = t; PT.level = i; } C.draw(); return this.paintTier; },
     describe() { return NOTE[MODE] || 'Map: the normal view.'; } };
   globalThis.__docklandsStyles = api;
   return setStyle(want).then(() => api);

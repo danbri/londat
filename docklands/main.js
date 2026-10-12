@@ -20,6 +20,7 @@ import { initCarousel } from './carousel.js';
 import { predict } from './tide.js';
 import { makeOccluder } from './occlude.js';
 import { VIEWS } from './views.js';
+import { makePerf } from './perf.js';
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -48,6 +49,7 @@ $('backend').textContent = BACKEND;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45.8, innerWidth / innerHeight, 2, 30000);
+const PERF = makePerf({ camera, backend: BACKEND, draw, qs });   // frame times, camera motion, the readout (?fps=1): perf.js
 const controls = new OrbitControls(camera, renderer.domElement);
 Object.assign(controls, { enableDamping: false, screenSpacePanning: false, minDistance: 10, maxDistance: 16000, maxPolarAngle: Math.PI - 0.05, zoomToCursor: true });   // its own input is off: main.js "navigation" moves the camera
 controls.listenToKeyEvents(window);
@@ -357,7 +359,7 @@ OCC = makeOccluder({ A, groundB, buildings, models, U, eye: eyeM, ghost: () => b
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
-  addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
+  perf: PERF, addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
   // a label hidden by a building or the ground between the eye and its anchor (model metres); key: the label's element
   occluded: (key, x, y, z) => OCC.test(key, x, y, z), occVersion: () => OCC.version,
@@ -688,16 +690,18 @@ function navUnderEdge() {
   const u = navUnder(); syncDig(); if (u !== wasUnder) { wasUnder = u; if (!u && controls.enabled && !HFOV && !isPix() && clr(navGet()) < 0) navPlace(NV.UNDER_EYE, NV.PMAX); }
 }
 let frames = 0, fpsT = performance.now(), fps = 0;
-renderer.setAnimationLoop((time, xrFrame) => {
+function loop(time, xrFrame) {
   sky.setVz(vzNow());   // the sky dome, stars and moon undo the view's y scale (1 in a headset session)
   if (ctx.xrFrame) { ctx.xrFrame(time, xrFrame, frameHooks); return; }   // layers/xr.js: a headset session (renderer.xr) or its one-eye preview draws the frame
+  PERF.raf(time);
   navTick(performance.now()); navUnderEdge();
   if (controls.update()) need = true;
-  if (!need && !$('animate').checked) return; need = false;
+  if (!need && !$('animate').checked) return; const asked = need; need = false;
   const d = camera.position.distanceTo(controls.target);
   const above = camera.position.y - groundAt(camera.position.x, camera.position.z) * VZ; camera.near = THREE.MathUtils.clamp(Math.min(d / 400, above / 2), 0.5, 40); camera.far = Math.max(d * 6 + 6000, 20000); camera.updateProjectionMatrix();
   if (ROLL) { camera.up.set(0, 1, 0); camera.lookAt(controls.target); camera.rotateZ(ROLL * Math.PI / 180); }   // index.html rolledUp: up = cos(roll) u - sin(roll) r, a turn of +roll about the camera's z
   camera.updateMatrixWorld(); eyeM.setFromMatrixPosition(camera.matrixWorld);   // the eye in model metres (= camera.position while VZ is 1)
+  const tn = performance.now(); if (!PERF.camera(tn) && !asked && PERF.hold(tn)) return;   // a style may redraw a still view less often (Painted: perf.js holdMs)
   focus.copy(controls.target); focus.y /= VZ; sky.sun.position.copy(sky.sky.sunPosition.value).multiplyScalar(4000).add(focus); sky.sun.target.position.copy(focus);
   if (sky.stars) sky.stars.position.copy(eyeM);
   sky.sky.position.copy(eyeM);
@@ -706,11 +710,12 @@ renderer.setAnimationLoop((time, xrFrame) => {
   OCC.begin(); placeLabels();
   for (const f of frameHooks) f();
   OCC.end();
-  const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0;
+  const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
   $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
-});
+}
+renderer.setAnimationLoop(loop);
 
 // ---------- drawing styles (styles.js, ?style=map|pixel|lines|vectrex): the hook gives a style the pipeline (it sets
 // pipe.outputNode in an onFrame hook), the pick ray (pixel art casts it from its orthographic camera) and the camera functions
@@ -746,7 +751,8 @@ setTimeout(() => $('hud').classList.add('fade'), 4000);
 menu.creditsStart();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
+  occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };
 
 // the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
