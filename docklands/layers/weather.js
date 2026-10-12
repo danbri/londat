@@ -17,7 +17,10 @@
 // is at least the largest layer; its visibility is used (9999 = "10 km or more": the Open-Meteo value when that is larger,
 // else 10 km); rain, drizzle and snow in the report give a rate when Open-Meteo has none (RA 1, DZ 0.3, SN 1 mm/h,
 // - light, + heavy x 0.4 or x 3); temperature and humidity from its temperature and dew point. With no Open-Meteo hour the
-// METAR alone gives the weather. ?metar=0: not used.
+// METAR alone gives the weather. Older than the live-cache's 24 hours (or when the branch does not answer) the same is done
+// with the archive data/sky/metar-history.json (Iowa Environmental Mesonet, public domain; the last year; getMetarHistory of
+// ./wind.js), so a past clock time has measured low cloud, visibility, rain and fog also when Open-Meteo answers HTTP 429.
+// ?metar=0: neither is used.
 // Not done: wet ground (the ground material is another file's), cloud placed by the satellite cloud mask (the WebGL page
 // has it for 3 October), cloud at night (SkyMesh is not drawn by night; only the background and the stars show it).
 // Skill: docklands-sky, "Three.js port clock".
@@ -25,7 +28,7 @@ import * as THREE from 'three/webgpu';
 import { WU } from '../water.js';
 import { fromLondon } from '../sky3.js';
 import { forecastDay, METEO_Q } from '../meteo.js';
-import { getMetar, metarNear, hm } from './wind.js';
+import { getMetar, metarNear, hm, getMetarHistory, HIST_URL } from './wind.js';
 
 const D2R = Math.PI / 180;
 const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
@@ -56,7 +59,7 @@ function withMetar(w, m) {
   if (wx && !(o.precip > 0)) { o.precip = { RA: 1, DZ: 0.3, SN: 1 }[wx[2]] * (wx[1] === '-' ? 0.4 : wx[1] === '+' ? 3 : 1); o.code = wx[2] === 'SN' ? 73 : wx[2] === 'DZ' ? 53 : 63; }
   if (m.temp_c != null) o.temp = m.temp_c;
   if (m.temp_c != null && m.dewp_c != null) { const es = T => Math.exp(17.625 * T / (243.04 + T)); o.rh = 100 * es(m.dewp_c) / es(m.temp_c); }
-  o.metar = m.raw; o.src = (w ? w.src + ' + ' : '') + `London City Airport METAR ${hm(m.t)} (cloud layers, visibility; NOAA AWC, public domain)`;
+  o.metar = m.raw; o.src = (w ? w.src + ' + ' : '') + (m.archive ? `London City METAR (archive) ${hm(m.t)} (cloud layers, visibility, weather; Iowa Environmental Mesonet, public domain)` : `London City Airport METAR ${hm(m.t)} (cloud layers, visibility; NOAA AWC, public domain)`);
   return o;
 }
 function interp(rows, t) {
@@ -84,7 +87,7 @@ export default {
       } catch (e) { console.warn('weather: Open-Meteo', e); return { why: 'Open-Meteo did not answer: ' + e.message }; }
     }
     const metarOn = qs.get('metar') !== '0';
-    let meteoOn = !/^(0|off|no)$/i.test(qs.get('weather') || ''), W = null, lastT = null, busy = false, again = false, visible = on;
+    let meteoOn = !/^(0|off|no)$/i.test(qs.get('weather') || ''), evalAt = null, W = null, lastT = null, busy = false, again = false, visible = on;
     // clear air (owner, 2026-10-11: "grey from medium height obscures the city - i was thinking for a way to ask for weather/fog/grey
     // suppression"): no haze, and the cloud does not dim or grey the light; the clouds are still drawn and rain still falls.
     // ?clear=1|0, kept in localStorage
@@ -115,15 +118,18 @@ export default {
     async function evaluate() {
       if (busy) { again = true; return; } busy = true; const t = ctx.clock; lastT = t;
       try {
-        let w = null, why = '';
+        let w = null, why = '', usedMetar = false;
         if (t >= SNAP.from - 36e5 && t <= SNAP.to + 36e5) { const v = interp(await getSnap(), t); if (v) w = { ...v, src: 'Open-Meteo best match, hourly (data/sky/weather-2026-10-03.json)' }; }
         if (!w) { const c = await getCache(), ct = c && Date.parse(c.time);
           if (c && Math.abs(t - ct) <= 90 * 6e4 && c.current.cloud_pct != null) w = { cover: c.current.cloud_pct, low: null, mid: null, high: null, vis: null, precip: c.current.precip_mm ?? 0, code: c.current.weather_code, temp: c.current.temp_c, rh: c.current.humidity_pct, src: `londat hourly cache, Open-Meteo at ${hhmm(ct)} (total cloud only)` }; }
         if (!w && meteoOn) { const M = await getMeteo(t), v = M && M.rows && interp(M.rows, t); if (v) w = { ...v, src: M.name }; else why = M && M.why || 'no Open-Meteo hour for that time'; }
-        if (metarOn && Math.abs(t - Date.now()) < 26 * 3600e3) { const m = metarNear(await getMetar(qs.get('livecache')), t); if (m) w = withMetar(w, m); }
+        if (metarOn && Math.abs(t - Date.now()) < 26 * 3600e3) { const m = metarNear(await getMetar(qs.get('livecache')), t); if (m) { w = withMetar(w, m); usedMetar = true; } }
+        // the archive (data/sky/metar-history.json, the last year): the report nearest the clock within 45 minutes, also when
+        // Open-Meteo did not answer (HTTP 429): then the METAR alone gives the cloud layers, visibility, rain and temperature
+        if (metarOn && !usedMetar && t < Date.now() + 36e5 && Date.now() - t < 400 * 864e5) { const H = await getMetarHistory(DATA + HIST_URL), m = metarNear(H.obs, t); if (m) w = withMetar(w, m); }
         if (w) { const code = w.code ?? 0, pr = w.precip || 0, wet = pr >= 0.05 || RAIN.has(code) || SNOW.has(code);
           w.snow = SNOW.has(code); w.drops = wet ? Math.round(Math.min(NMAX, 600 + 1800 * Math.max(pr, 0.2))) : 0; }
-        W = w ? { ...w, why } : null; if (!W) src.err = why || null;
+        W = w ? { ...w, why } : null; if (!W) src.err = why || null; evalAt = t;
         apply(); showNote(); draw();
       } finally { busy = false; if (again) { again = false; evaluate(); } }
     }
@@ -149,7 +155,7 @@ export default {
       if (visible && w && clear) h += ' Clear air is on: no haze, light not dimmed by the cloud.';
       if (note.innerHTML !== h) note.innerHTML = h;
     }
-    stats.weather = { get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src, metar: W.metar || null }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; }, get error() { return W ? null : src.err; } };
+    stats.weather = { get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src, metar: W.metar || null }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; }, get error() { return W ? null : src.err; }, get at() { return evalAt; } };
     ctx.weather = { evaluate, get now() { return W; } };
     ctx.onFrame(() => { if (lastT !== ctx.clock) evaluate(); stepRain(); });
     evaluate();   // not awaited: a slow source (METAR, Open-Meteo) must not hold up the layers that load after this one

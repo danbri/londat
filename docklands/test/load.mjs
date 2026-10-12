@@ -20,7 +20,10 @@ for (const [w, h, dpr] of [[1280, 800, 1], [390, 844, 2]]) for (const q of QUERI
   const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: dpr }), errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
-  page.on('response', r => { if (r.status() >= 400 && !/favicon/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
+  // an HTTP 429 (rate limit) from Open-Meteo is the outside service's answer, not a page fault: the page states it and uses the
+  // METAR archive (docklands-sky skill, "METAR history"); it is printed as a note, not counted as a failure
+  const notes = [];
+  page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) notes.push('note: ' + r.status() + ' ' + r.url()); else if (r.status() >= 400 && !/favicon/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   const t0 = Date.now();
   const [qq, hh] = q.split('#');   // &webgl goes in the query, before a share hash
   // animate=0: since 2026-10-09 the page draws every frame (moving water); in software one WebGPU frame can take seconds and the
@@ -34,6 +37,7 @@ for (const [w, h, dpr] of [[1280, 800, 1], [390, 844, 2]]) for (const q of QUERI
   const bad = !ok || errors.length; if (bad) failed++;
   console.log(`${bad ? 'FAIL' : 'ok  '} ${q} ${w}x${h}@${dpr} ${((Date.now() - t0) / 1000).toFixed(1)} s ${info ? info.backend + ' ' + JSON.stringify(info.stats) + ' night=' + info.night : 'not ready'} -> ${file}`);
   for (const e of errors.slice(0, 8)) console.log('     ' + e.slice(0, 400));
+  for (const e of notes.slice(0, 4)) console.log('     ' + e.slice(0, 400));
   await page.close();
 }
 await browser.close();

@@ -6,6 +6,9 @@
 //     (metar.json of the live-cache branch, the last 24 hours, from the NOAA Aviation Weather Center data API, public domain;
 //     cwplans/tools/fetch-live-cache.mjs every 5 minutes; 10-minute mean wind at 10 m, direction true, knots; VRB: the
 //     direction of the nearest report that has one; owner, 2026-10-09: "Yes" to the real airport observation);
+//     older than that (or when the branch does not answer), the METAR archive data/sky/metar-history.json (the last year, a
+//     report each 30 minutes, Iowa Environmental Mesonet, public domain; cwplans/tools/build-metar-history.mjs), by vector
+//     between two reports at most 60 minutes apart, else the nearest within 45 minutes; note "London City METAR (archive)";
 //     data/sky/weather-2026-10-03.json (Open-Meteo best match, hourly, 3 and 4 October 2026, CC BY
 //     4.0; the WebGL page's photo-time file); the londat hourly cache (cache/latest.json theme weather, Open-Meteo, the
 //     latest hour only, when the clock is within 90 minutes of it; with gusts); ?wind=meteo asks the Open-Meteo API for the
@@ -29,6 +32,7 @@ import { forecastDay, METEO_Q } from '../meteo.js';
 const D2R = Math.PI / 180;
 const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
 const CACHE = local ? ['../cwplans/cache/latest.json'] : ['https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json', '../cwplans/cache/latest.json'];
+export const HIST_URL = 'sky/metar-history.json';
 const FILE = { from: fromLondon('2026-10-03T00:00'), to: fromLondon('2026-10-04T23:00'), url: 'sky/weather-2026-10-03.json' };
 // ---------- METAR of London City Airport (EGLC), shared with layers/weather.js: metar.json of the live-cache branch (the
 // last 24 hours; aviationweather.gov sends no CORS header, so the 5-minute job copies it). Read again when 5 minutes old.
@@ -40,6 +44,51 @@ export function getMetar(base) {
     metarP = fetch(url, { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(J => (J.obs || []).map(o => ({ ...o, t: o.t * 1000 }))).catch(e => { console.warn('METAR', e); return []; }); }
   return metarP;
+}
+// ---------- METAR history of London City Airport: data/sky/metar-history.json (cwplans/tools/build-metar-history.mjs, the
+// Iowa Environmental Mesonet ASOS/METAR archive, public domain; the last year to the build day, a report each 30 minutes).
+// For clock times that the live-cache branch does not cover (older than 24 hours, or when the branch does not answer).
+// Decoded to the objects of metar.json (t ms, wdir degrees true or "VRB", wspd_kt, wgst_kt, vis_m, clouds [{cover,
+// base_ft}], temp_c, dewp_c) plus raw = the report rebuilt from the columns (main body: wind, visibility, weather, cloud,
+// temperature) and archive: true. Loaded once, only when asked. Skill: docklands-sky, "METAR history".
+let histP = null;
+export function getMetarHistory(url) {
+  if (!histP) histP = fetch(url, { credentials: 'omit' }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(J => {
+    const t0 = Date.parse(J.t0), step = J.step_min * 6e4, obs = [], p2 = n => String(n).padStart(2, '0'), p3 = n => String(n).padStart(3, '0');
+    const tmp = v => v == null ? '//' : (v < 0 ? 'M' : '') + p2(Math.abs(v));
+    const clouds = J.cloud_dict.map(s => s.split(' ').map(g => /^(FEW|SCT|BKN|OVC|VV)(\d{3})/.exec(g)).filter(Boolean).map(m => ({ cover: m[1], base_ft: +m[2] * 100 })));
+    const add = (t, wd, ws, wg, vis, wx, cl, T, Td) => {
+      if (ws == null && vis == null && !cl) return; const d = new Date(t), wdir = wd == null ? null : wd < 0 ? 'VRB' : wd;
+      const raw = [J.station, p2(d.getUTCDate()) + p2(d.getUTCHours()) + p2(d.getUTCMinutes()) + 'Z',
+        ws == null ? '/////KT' : (wdir === 'VRB' ? 'VRB' : wdir == null ? '///' : p3(wdir)) + p2(ws) + (wg ? 'G' + p2(wg) : '') + 'KT',
+        vis == null ? '////' : vis >= 10000 ? '9999' : String(vis).padStart(4, '0'), wx, typeof cl === 'number' ? J.cloud_dict[cl] : cl, tmp(T) + '/' + tmp(Td)].filter(Boolean).join(' ');
+      obs.push({ t, wdir, wspd_kt: ws, wgst_kt: wg || null, vis_m: vis, clouds: typeof cl === 'number' ? clouds[cl] : [], temp_c: T, dewp_c: Td, raw, archive: true });
+    };
+    for (let k = 0; k < J.n; k++) add(t0 + k * step, J.wd[k] == null || J.wd[k] < 0 ? J.wd[k] : J.wd[k] * 10, J.ws[k], J.wg[k], J.vis[k] == null ? null : J.vis[k] * 100, J.wx_dict[J.wx[k]] || '', J.cl[k], J.T[k], J.Td[k]);
+    for (const o of J.off_grid || []) add(Date.parse(o.t), o.wd, o.ws, o.wg, o.vis, o.wx, o.cl, o.T, o.Td);
+    obs.sort((a, b) => a.t - b.t);
+    return { obs, from: obs.length ? obs[0].t : 0, to: obs.length ? obs.at(-1).t : 0, made: J.made, attribution: J.attribution };
+  }).catch(e => { console.warn('METAR history', e); return { obs: [], from: 0, to: 0 }; });
+  return histP;
+}
+// the surface wind at t from a sorted list of reports: between two reports at most 60 minutes apart, by vector (speed
+// linear, direction of the vector sum; a VRB report takes the direction of the nearest report that has one); else the
+// report nearest t within 45 minutes; null when none. { speed m/s, dir deg true, gust m/s | null, a, b, f }
+export function metarWindAt(obs, t, gap = 60 * 6e4, tol = 45 * 6e4) {
+  let lo = 0, hi = obs.length; while (lo < hi) { const m = (lo + hi) >> 1; if (obs[m].t <= t) lo = m + 1; else hi = m; }
+  const ok = o => o && typeof o.wspd_kt === 'number', a = ok(obs[lo - 1]) ? obs[lo - 1] : null, b = ok(obs[lo]) ? obs[lo] : null;
+  const dirOf = (o, i) => { if (typeof o.wdir === 'number') return o.wdir; for (let d = 1; d < 12; d++) for (const j of [i - d, i + d]) { const q = obs[j]; if (q && typeof q.wdir === 'number') return q.wdir; } return 240; };
+  const kn = 0.514444;
+  if (a && b && b.t - a.t <= gap && t >= a.t) {
+    const f = (t - a.t) / (b.t - a.t), da = dirOf(a, lo - 1) * Math.PI / 180, db = dirOf(b, lo) * Math.PI / 180, sa = a.wspd_kt * kn, sb = b.wspd_kt * kn;
+    // direction: the vector sum, but a calm end (0 kt) does not turn it; speed: linear
+    const x = (sa || 1e-6) * Math.sin(da) * (1 - f) + (sb || 1e-6) * Math.sin(db) * f, y = (sa || 1e-6) * Math.cos(da) * (1 - f) + (sb || 1e-6) * Math.cos(db) * f;
+    const near = f < 0.5 ? a : b;
+    return { speed: sa + (sb - sa) * f, dir: (Math.atan2(x, y) * 180 / Math.PI + 360) % 360, gust: near.wgst_kt != null ? near.wgst_kt * kn : null, a, b, f, vrb: typeof a.wdir !== 'number' || typeof b.wdir !== 'number' };
+  }
+  const near = [a, b].filter(o => o && Math.abs(o.t - t) <= tol).sort((p, q) => Math.abs(p.t - t) - Math.abs(q.t - t))[0];
+  if (!near) return null; const i = obs.indexOf(near);
+  return { speed: near.wspd_kt * kn, dir: dirOf(near, i), gust: near.wgst_kt != null ? near.wgst_kt * kn : null, a: near, b: null, f: 0, vrb: typeof near.wdir !== 'number' };
 }
 // the report nearest t within tol (ms), or null
 export const metarNear = (obs, t, tol = 45 * 60e3) => { let best = null; for (const o of obs) if (Math.abs(o.t - t) <= tol && (!best || Math.abs(o.t - t) < Math.abs(best.t - t))) best = o; return best; };
@@ -82,12 +131,17 @@ export default {
           if (m && typeof m.wspd_kt === 'number') { const vrb = typeof m.wdir !== 'number', ref = vrb ? obs.filter(o => typeof o.wdir === 'number').sort((a, b) => Math.abs(a.t - m.t) - Math.abs(b.t - m.t))[0] : m;
             w = { speed: m.wspd_kt * 0.514444, dir: ref ? ref.wdir : 240, gust: m.wgst_kt != null ? m.wgst_kt * 0.514444 : null, metar: m.raw,
               src: `London City Airport METAR ${hm(m.t)}${vrb ? ' (variable; direction of ' + (ref ? hm(ref.t) : 'the default') + ')' : ''} (NOAA AWC, public domain)` }; } }
+        // the archive (older than the live-cache's 24 hours, or the branch did not answer): interpolated between reports
+        if (!w && metarOn && t < Date.now() + 36e5 && Date.now() - t < 400 * 864e5) { const H = await getMetarHistory(DATA + HIST_URL);
+          if (t >= H.from - 45 * 6e4 && t <= H.to + 45 * 6e4) { const v = metarWindAt(H.obs, t);
+            if (v) w = { speed: v.speed, dir: v.dir, gust: v.gust, metar: v.a.raw + (v.b ? ' | ' + v.b.raw : ''), archive: true,
+              src: `London City METAR (archive) ${v.b && v.f > 0 ? hm(v.a.t) + '\u2013' + hm(v.b.t) + ', interpolated' : hm(v.a.t)}${v.vrb ? ' (variable: direction of the nearest report that has one)' : ''} (Iowa Environmental Mesonet, public domain)` }; } }
         if (!w && t >= FILE.from - 36e5 && t <= FILE.to + 36e5) { const v = interp(await getFile(), t); if (v) w = { ...v, src: 'Open-Meteo best match, hourly (data/sky/weather-2026-10-03.json, CC BY 4.0)' }; }
         if (!w) { const c = await getCache(), wt = c && Date.parse(c.time);
           if (c && Math.abs(t - wt) <= 90 * 6e4 && c.current.wind_kmh != null) w = { speed: c.current.wind_kmh / 3.6, dir: c.current.wind_dir, gust: c.current.gust_kmh != null ? c.current.gust_kmh / 3.6 : null, src: `londat hourly cache, Open-Meteo at ${hhmm(wt)} (CC BY 4.0)` }; }
         if (!w && meteoOn) { const M = await getMeteo(t), v = M && interp(M.rows, t); if (v) w = { ...v, src: 'Open-Meteo forecast API, hourly (CC BY 4.0)' }; }
         if (!w) w = { speed: 4, dir: 240, gust: null, src: `default, no wind data for ${hhmm(t)}${meteoOn && src.meteoErr ? ' (Open-Meteo: ' + src.meteoErr + ')' : ''}` };
-        W = w; WU.windSpeed.value = w.speed; WU.windDir.value = (w.dir + GRID_CONV + 360) % 360;   // true -> grid (model -z)
+        w.at = t; W = w; WU.windSpeed.value = w.speed; WU.windDir.value = (w.dir + GRID_CONV + 360) % 360;   // true -> grid (model -z)
         SU.gust.value = w.gust != null && w.speed > 0.5 ? Math.max(0.15, Math.min(1, w.gust / w.speed - 1)) : 0.5;
         setFetch(w.dir); showNote(); ctx.draw();
       } finally { busy = false; }
@@ -104,7 +158,7 @@ export default {
     let meteoOn = qw === 'meteo' || (!fixed && !/^(0|off|no)$/i.test(ctx.qs.get('weather') || ''));   // on by default (owner, 2026-10-09: "all wind/weather"); ?weather=0 is the one switch for wind and weather
     ctx.ui.toggle('Wind from Open-Meteo for the clock time (asks api.open-meteo.com)', meteoOn, v => { meteoOn = v; evaluate(); });
     let metarOn = !fixed && qs.get('metar') !== '0';   // ?metar=0: no METAR
-    ctx.ui.toggle('Wind from the London City Airport METAR within 45 minutes of the clock', metarOn, v => { metarOn = v; evaluate(); });
+    ctx.ui.toggle('Wind from the London City Airport METAR (live: last 24 hours; archive: the last year)', metarOn, v => { metarOn = v; evaluate(); });
     const curNow = () => qc != null && isFinite(qc) ? qc : Math.max(-1.8, Math.min(1.8, -0.75 * WU.tideRate.value + 0.08));
     function showNote() {
       if (!W) return; const c = SU.current.value, dir = c > 0.12 ? 'ebb, downstream' : c < -0.02 ? 'flood, upstream' : 'slack';
@@ -126,7 +180,7 @@ export default {
         { name: 'tug', c0: gp + 60, u: 0, dirn: -1, speed: 4, len: 25, accel: 0 },
       ].map(b => ({ ...b, c: b.c0 }));
     }
-    stats.surface = { get wind() { return W && { speed: +W.speed.toFixed(1), dir: Math.round(W.dir), gridDir: +WU.windDir.value.toFixed(1), gridConv: +GRID_CONV.toFixed(2), gust: W.gust && +W.gust.toFixed(1), source: W.src, metar: W.metar || null }; }, get current() { return +SU.current.value.toFixed(2); },
+    stats.surface = { get wind() { return W && { speed: +W.speed.toFixed(1), dir: Math.round(W.dir), gridDir: +WU.windDir.value.toFixed(1), gridConv: +GRID_CONV.toFixed(2), gust: W.gust && +W.gust.toFixed(1), source: W.src, metar: W.metar || null, archive: !!W.archive, at: W.at }; }, get current() { return +SU.current.value.toFixed(2); },
       debris: debris ? debris.count : 0, wakes: test ? 'test' : 'ships layer', data: S.stats };
     // ---------- each frame
     let tPrev = performance.now();

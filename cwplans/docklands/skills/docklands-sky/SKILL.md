@@ -530,6 +530,61 @@ the London City Airport METAR". Test (live-cache-check `--only metar`): `t=` 10 
 (METAR 24014KT), low cover 44 % (SCT022 SCT034), visibility 10 km; `t=2026-09-20T12:00`: no METAR source. Not done: cloud
 types (CB, TCU) are not drawn; "///" layers from an AUTO station count by their cover only.
 
+### METAR history: measured wind and weather for past times (Three.js port, 2026-10-12)
+
+Why: for past clock times the port used Open-Meteo, whose 10 m wind is 0.8 to 1.3 m/s below the London City anemometer
+(docklands/AUDIT.md section 1), and an HTTP 429 from Open-Meteo gave a default wind (4 m/s from 240) and no weather.
+Now the airport's own reports cover the last year, as the EA archive does for the tide ("Tide history").
+- **Licence finding (2026-10-12).** IEM disclaimer (https://mesonet.agron.iastate.edu/disclaimer.php): "The materials found
+  on this website are in the public domain and may be used freely by anyone for any lawful purpose. Attributing the Iowa
+  Environmental Mesonet of Iowa State University would be appreciated." asos.py help: IP rate limit, 1 s per-IP throttle
+  (since 2026-04-21: "Just make an hourly request for all stations and be done with it in one shot"), at most 1,000
+  station-years a request (HTTP 422), 429 / 503 under load; robots.txt Crawl-delay 120. The reports themselves are UK Met
+  Office reports exchanged through the WMO, the same as `awc-metar`: register source `iem-asos-metar`, "review" before the
+  prototyping phase ends. Attribution string in the file and the register.
+- **Tool** `cwplans/tools/build-metar-history.mjs [--days 375] [--end YYYY-MM-DD] [--no-fetch]` (pipeline.json activity
+  build-metar-history): ONE GET of `asos.py?station=EGLC&data=metar&sts=..&ets=..&report_type=3&report_type=4` (3 s,
+  1.4 MB CSV `station,valid,metar`), cached in `cwplans/data/raw/sky/metar-EGLC-<from>-<to>.csv` (gitignored), then a
+  build from the cache only. The decoder reads the report text itself (main body; stops at RMK, NOSIG, BECMG, TEMPO),
+  not IEM's decoded columns, so VRB, calm, CAVOK, NCD/NSC, `//////CB`, VV and RE groups are kept as reported.
+- **File** `cwplans/docklands/data/sky/metar-history.json` (462 KB, 74 KB gzip; 17,987 reports, 2025-10-02 00:20Z to
+  2026-10-11 23:50Z): columns on a 30-minute grid from `t0` (EGLC reports at hh:20 and hh:50; a slot without a report is
+  null in every column; a report off the grid would go to `off_grid`): `wd` tens of degrees true (-1 VRB), `ws` kt, `wg`
+  gust kt (0 none), `vis` hundreds of m (100 = 10 km or more), `wx` and `cl` indices into `wx_dict` (62 strings) and
+  `cloud_dict` (3,158), `cloud_ceil` / `cloud_cov` per dictionary entry, `T`, `Td`. Plus `url`, `licence_text`,
+  `attribution`, `raw_sha256`, `gaps_over_60_min`, `decode_faults`. Size history: the first build with a `dt` column,
+  QNH, per-report ceiling and cover and degrees was 745 KB; the grid, tens of degrees and per-entry cloud facts gave 462 KB.
+- **Page.** `layers/wind.js` `getMetarHistory(DATA + 'sky/metar-history.json')` (loaded once, only when the clock is in the
+  last 400 days and the live-cache has no report near it; rebuilds each report as a metar.json object with `archive: true`
+  and a `raw` rebuilt from the columns, station name from the file) and `metarWindAt(obs, t)`: between two reports at most
+  60 min apart by vector (speed linear; direction of the vector sum, a calm end does not turn it; VRB takes the direction
+  of the nearest report that has one), else the nearest within 45 min. Order of the wind sources: `?wind=` > live METAR
+  (24 h) > METAR archive > the 3-4 Oct snapshot > the hourly cache > Open-Meteo > default. Note "London City METAR
+  (archive) 13:20–13:50, interpolated (Iowa Environmental Mesonet, public domain)" (London times; one time when the clock
+  is on a report). `layers/weather.js`: when the live METAR gave nothing, the archive report nearest the clock within
+  45 min goes through the same `withMetar` (low and mid cover, visibility, RA/DZ/SN, fog through the visibility,
+  temperature, humidity) over the Open-Meteo hour, or alone when Open-Meteo refused. `?metar=0` (and the menu box) turns
+  off both the live METAR and the archive. The wind-in-3D layer (windfield.js) scales its height profile to this 10 m wind.
+  Hooks: `STATS.surface.wind` `source`, `metar` (the two rebuilt reports), `archive`, `at` (the clock time evaluated);
+  `STATS.weather.at`. The note sits in `#blNotes`, which labels-off hides.
+- **Checks.** `NODE_USE_ENV_PROXY=1 node docklands/test/metar-history-check.mjs --base http://127.0.0.1:8252` (one IEM
+  request for IEM's decoded fields of 3 days, cached 24 h): file vs IEM 144 reports, 0 differ; page wind = METAR at 9
+  report times and 3 interpolated times (largest 0.04 m/s, 0.5°), note and weather source, labels off, `?metar=0`, and
+  Open-Meteo routed to HTTP 429 (Playwright `page.route`): 35 rows, 0 failed (2026-10-12). clock-check.mjs compares the
+  page with the file (0.5 m/s, 10°) where the source is the archive, and the snapshot rows are wide then (two sources).
+  Wait for `STATS.surface.wind.at === ctx.clock` and `STATS.weather.at`: a check that waits for "no change for 2 s" read
+  the previous clock's answer while an Open-Meteo request was pending (met on the first run).
+- **Faults met.** (1) IEM writes a corrected report as `COR EGLC ddhhmmZ ...` (COR before the station): the first decoder
+  read 4 reports' station and time as unknown groups. (2) 7 reports of 7 Feb 2026 have `//// //` (no visibility, no
+  weather). (3) 3 gaps over 60 min (longest 180 min, 21 Nov 2025). (4) At the photo time (3 Oct 2026 23:50 BST) the airport
+  reported BKN045, the Open-Meteo snapshot 15 % cloud: the page now dims the moon there (gain 1 - 0.9 x 0.75); that is the
+  measurement, not a fault, but photo views of that night look darker than before. (5) This container's address had
+  Open-Meteo's daily limit (HTTP 429) most of 2026-10-12; load.mjs now prints an Open-Meteo 429 as a note.
+- **Open.** No workflow refreshes the file: after the build day, times older than the live-cache's 24 h fall back to
+  Open-Meteo until the tool runs again (one request, a few seconds). One point (the airport, about 6 km east of Greenland
+  Dock) for the whole model. High cloud and cloud types (CB, TCU) are not drawn from it. Days before 2 Oct 2025 use
+  Open-Meteo (the tool can fetch more: `--days`).
+
 ## Sky calibration in the Three.js port (2026-10-11)
 
 Against the owner's clear-sky photo of Greenland Dock (12:45 BST, sun 31.4 deg up; `data/images/contrib/greenlanddock/`;

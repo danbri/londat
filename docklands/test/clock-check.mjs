@@ -130,6 +130,14 @@ async function meteoArchive() {
     return o; };
 }
 
+// ---------- the METAR archive file (cwplans/docklands/data/sky/metar-history.json): the wind at t by vector between the two
+// reports round t when they are at most 60 minutes apart (VRB: the other report's direction), else null
+const MH = JSON.parse(readFileSync(SKY + 'metar-history.json', 'utf8')), MT0 = Date.parse(MH.t0), MST = MH.step_min * 6e4;
+function metarRef(t) { const k = Math.floor((t - MT0) / MST), f = (t - MT0 - k * MST) / MST, A = MH.ws[k], B = MH.ws[k + 1]; if (A == null || B == null) return null;
+  const d = j => MH.wd[j] >= 0 ? MH.wd[j] * 10 : MH.wd[j + (j === k ? 1 : -1)] * 10 || 0, sa = A * 0.514444, sb = B * 0.514444;
+  const x = (sa || 1e-6) * Math.sin(d(k) * D2R) * (1 - f) + (sb || 1e-6) * Math.sin(d(k + 1) * D2R) * f, y = (sa || 1e-6) * Math.cos(d(k) * D2R) * (1 - f) + (sb || 1e-6) * Math.cos(d(k + 1) * D2R) * f;
+  return { speed: sa + (sb - sa) * f, dir: norm(Math.atan2(x, y) * R2D) }; }
+
 // ---------- the page
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
@@ -145,6 +153,9 @@ const settle = (n = 3) => page.evaluate(async n => { const D = __docklands3; if 
   const n0 = D.__frames, t0 = performance.now(); while (D.__frames < n0 + n && performance.now() - t0 < 60000) { D.draw(); await new Promise(r => setTimeout(r, 150)); } }, n);
 async function readAt(s) {
   await page.evaluate(s => { const D = __docklands3; D.setClock(D.fromLondon(s)); }, s); await settle();
+  // the wind and weather layers answer asynchronously (Open-Meteo, the METAR archive): wait until both have evaluated this clock
+  await page.evaluate(async () => { const D = __docklands3; for (let k = 0; k < 240; k++) { const w = D.STATS.surface && D.STATS.surface.wind, we = D.STATS.weather;
+    if ((!w || w.at === D.ctx.clock) && (!we || we.at === D.ctx.clock)) break; D.draw(); await new Promise(r => setTimeout(r, 250)); } });
   return page.evaluate(() => { const D = __docklands3, st = D.sky.state, L = D.sky.sun.position.clone().sub(D.sky.sun.target.position).normalize();
     return { utc: D.ctx.clock, sun: st.sun, moon: st.moon, frac: st.moonPhase, limb: st.moonLimb, night: st.night, light: [L.x, L.y, L.z], moonDisc: D.sky.moonDisc.visible,
       tide: D.STATS.tide && D.STATS.tide.now, wind: D.STATS.surface && D.STATS.surface.wind, weather: D.STATS.weather && D.STATS.weather.now, weatherErr: D.STATS.weather && D.STATS.weather.error, meteo: D.STATS.weather && D.STATS.weather.meteo }; });
@@ -171,10 +182,15 @@ for (const c of CASES) {
   const W = wx(t), w = P.wind;
   if (!w) warn(`${k} wind`, 'no wind hook');
   else if (/^default/.test(w.source)) warn(`${k} wind`, `${w.speed} m/s from ${w.dir}°`, `the port's default: ${w.source}${W.era5 ? `; ERA5 ${W.era5.speed.toFixed(1)} m/s from ${Math.round(W.era5.dir)}°` : ''}`);
-  else for (const [rk, R] of Object.entries(W)) { check(`${k} wind speed vs ${rk}`, w.speed - R.speed, rk === 'snap' ? 0.15 : TOL.windSpeed, ' m/s', w.source); if (R.speed > 2 && w.speed > 2) check(`${k} wind dir vs ${rk}`, dAng(w.dir, R.dir), rk === 'snap' ? 3 : TOL.windDir, '°'); }
+  else {
+    // the METAR archive (since 2026-10-12 the page's wind for past times): the page against the file's reports, by vector
+    // between the two reports round t (speed 0.5 m/s, direction 10 degrees); the model rows are then two sources (wide)
+    const mt = /METAR \(archive\)/.test(w.source), M2 = mt && metarRef(t);
+    if (mt) { if (M2) { check(`${k} wind speed vs METAR archive`, w.speed - M2.speed, 0.5, ' m/s', w.source); if (M2.speed > 1) check(`${k} wind dir vs METAR archive`, dAng(w.dir, M2.dir), 10, '°'); } else warn(`${k} wind`, 'METAR source, no file report round t'); }
+    for (const [rk, R] of Object.entries(W)) { const tight = rk === 'snap' && !/METAR/.test(w.source); check(`${k} wind speed vs ${rk}`, w.speed - R.speed, tight ? 0.15 : TOL.windSpeed, ' m/s', w.source); if (R.speed > 2 && w.speed > 2) check(`${k} wind dir vs ${rk}`, dAng(w.dir, R.dir), tight ? 3 : TOL.windDir, '°'); } }
   const we = P.weather;
   if (!we) { if (W.era5 || W.snap) warn(`${k} weather`, 'none (fair sky drawn)', `${W.snap ? `snapshot cloud ${Math.round(W.snap.cloud)}%` : ''}${W.era5 ? ` ERA5 cloud ${Math.round(W.era5.cloud)}%, low ${Math.round(W.era5.low)}%` : ''}: no weather data at the page: ${P.meteo ? 'Open-Meteo is on' + (P.weatherErr ? ' (' + P.weatherErr + ')' : '') : 'Open-Meteo is off (?weather=0)'}`); else info(`${k} weather`, 'none', 'no data'); }
-  else for (const [rk, R] of Object.entries(W)) { if (rk === 'snap') check(`${k} cloud vs snap`, we.cover - R.cloud, 1, '%', we.source); else { const e = we.cover - R.cloud; (Math.abs(e) <= TOL.cloud ? info : warn)(`${k} cloud vs era5`, (e >= 0 ? '+' : '') + e.toFixed(0) + '%', `two models: the page shows ${we.source}`); } }
+  else for (const [rk, R] of Object.entries(W)) { if (rk === 'snap' && !/METAR/.test(we.source)) check(`${k} cloud vs snap`, we.cover - R.cloud, 1, '%', we.source); else { const e = we.cover - R.cloud; (Math.abs(e) <= TOL.cloud ? info : warn)(`${k} cloud vs ${rk}`, (e >= 0 ? '+' : '') + e.toFixed(0) + '%', `two sources: the page shows ${we.source}`); } }
 }
 
 // 3. night begins at civil dusk (sun -6°): the page's flag against the reference, 3 October 2026, to the minute

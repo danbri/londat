@@ -4232,6 +4232,43 @@
    "cwp:judgement": "The choice of constituents, the cleaning thresholds and the one-day-in-seven archive sampling are stated defaults (this activity's rules); the foreshore profiles drawn from the prediction are defaults in docklands/layers/tide.js."
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildmetarhistory",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-metar-history",
+   "dct:description": "Collects the measured London City Airport METAR reports of the last year so that the Three.js port shows the airport's surface wind and its cloud layers, visibility, rain and fog for past clock times, not the Open-Meteo model (whose 10 m wind is 0.8 to 1.3 m/s below the anemometer) or a default when Open-Meteo refuses requests (HTTP 429). Two stages: a fetch stage (network, one request, cached) and a build stage that reads only the cached file.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srciemasosmetar",
+     "dcat:accessURL": "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?station=EGLC&data=metar&sts={from}Z&ets={to}Z&tz=Etc/UTC&format=onlycomma&report_type=3&report_type=4",
+     "dct:description": "one GET for the whole period (--days, default 375, up to --end, default today 00:00 UTC); the answer (station, valid time UTC, report text) is cached"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawskymetareglcfromtocsvthecachedanswergitignoreditssha256iswrittenintotheoutput"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/metar-history.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-metar-history.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/build-metar-history.mjs [--days 375] [--end YYYY-MM-DD] [--no-fetch]",
+   "cwp:kind": "derive",
+   "cwp:rule": [
+    "One request; retried 2, 4, 8 and 16 s apart; User-Agent glitchcan-cwplans/0.1 (IEM throttles to one request a second per address and asks for few large requests).",
+    "Decode from the report text, main body only: the groups after NOSIG, BECMG, TEMPO and RMK are not read; COR before the station name is accepted; wind dddff(Ggg)KT and VRBffKT (direction -1), calm 00000KT, missing wind /////KT; the first 4-digit group is the prevailing visibility (9999 and CAVOK = 10 km or more); runway visual range and directional minimum visibility are skipped; weather groups (intensity, VC, descriptor, phenomena; RE recent weather kept as reported); cloud groups FEW/SCT/BKN/OVC with base, CB/TCU, VV, ////// and NSC/NCD/CLR/SKC/CAVOK; temperature and dew point (M = minus). A report that appears again at the same time (a correction) replaces the earlier.",
+    "Encoding: one value per 30-minute slot from the first report (EGLC reports at hh:20 and hh:50; a report off the grid goes to off_grid); direction in tens of degrees (METAR reports to 10 degrees); visibility in hundreds of metres; weather and cloud strings as indices into dictionaries; per cloud entry the lowest BKN/OVC/VV base and the largest cover; null where the report has no value."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": false,
+   "cwp:after": [],
+   "cwp:area": "sky",
+   "cwp:fault": [],
+   "cwp:judgement": "None beyond the encoding (visibility rounded to 100 m: the page uses it for haze only)."
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolbuildtidehistory",
    "@type": "prov:Activity",
    "rdfs:label": "build-tide-history",
@@ -15336,6 +15373,23 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/metar-history.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "London City Airport (EGLC) METAR reports of the last year (375 days to the build day), decoded to integer columns on a 30-minute grid: wind direction (tens of degrees true, VRB), speed and gust (kt), visibility (hundreds of m), weather groups and cloud groups (indices into dictionaries, with the lowest BKN/OVC/VV base and the largest cover per cloud entry), temperature and dew point; with the source URL, the licence text, the input SHA-256, the gaps over 60 minutes and the decode faults. The Three.js port shows its wind (by vector between reports) and its cloud layers, visibility, rain and fog for clock times older than the live-cache branch keeps (24 hours)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srciemasosmetar"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildmetarhistory"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/tide-history.json",
    "@type": [
     "prov:Entity",
@@ -26087,6 +26141,17 @@
    "dct:license": "NOAA/NWS: 'The information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise' (https://www.weather.gov/disclaimer, read 2026-10-09). The reports are made by the UK Met Office for the aerodrome and exchanged through the WMO (essential data, WMO Resolution 40). API terms (https://aviationweather.gov/data/api/): 'keep requests limited in scope and frequency', at most 100 requests a minute; one request each 5 minutes is used",
    "dcat:landingPage": "https://aviationweather.gov/data/api/",
    "cwp:attribution": "METAR: NOAA Aviation Weather Center (aviationweather.gov), London City Airport (EGLC)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srciemasosmetar",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "London City Airport (EGLC) METAR reports of the last year from the Iowa Environmental Mesonet ASOS/METAR archive (Iowa State University), cgi-bin/request/asos.py?station=EGLC&data=metar (routine and special reports), one request for the whole period by cwplans/tools/build-metar-history.mjs",
+   "dct:license": "public domain: IEM disclaimer (https://mesonet.agron.iastate.edu/disclaimer.php, read 2026-10-12): 'The materials found on this website are in the public domain and may be used freely by anyone for any lawful purpose. Attributing the Iowa Environmental Mesonet of Iowa State University would be appreciated.' Service terms (asos.py help, read 2026-10-12): an IP-based rate limit, a 1 second per-IP throttle, at most 1,000 station-years a request; robots.txt Crawl-delay 120 (one request is made). The reports are made by the UK Met Office for the aerodrome and exchanged through the WMO (essential data, WMO Resolution 40), as for awc-metar",
+   "dcat:landingPage": "https://mesonet.agron.iastate.edu/request/download.phtml",
+   "cwp:attribution": "METAR London City Airport (EGLC): Iowa Environmental Mesonet, Iowa State University (ASOS/METAR archive)"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcopenwatersvolunteercc0",

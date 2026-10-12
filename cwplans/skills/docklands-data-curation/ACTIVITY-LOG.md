@@ -2316,3 +2316,18 @@ now fails on confetti (grey blocks given colour; chroma error of 8 x 8 block mea
 overlays that are not crisp; calibrated against the first-round pass. Details and numbers: the `docklands-3d-page` skill,
 "Three.js port: Painted style, second round (2026-10-11)". Not pushed (worktree branch only).
 - 2026-10-12: the owner confirmed the park and tree fix on an iPhone ("Greenwich : passes"). AUDIT.md section 8.
+
+## 2026-10-12: METAR history: measured wind and weather for past times (Three.js port)
+
+- AUDIT.md section 1 was PARTIAL partly because past wind came from Open-Meteo (0.8 to 1.3 m/s below the London City
+  anemometer) and because an Open-Meteo HTTP 429 gave a default wind and no weather. Licence checked first: the Iowa
+  Environmental Mesonet disclaimer puts its materials in the public domain (attribution appreciated); the reports are
+  Met Office reports, as for `awc-metar`; new register source `iem-asos-metar` (review).
+- New tool `cwplans/tools/build-metar-history.mjs` (activity build-metar-history; one request; cache
+  `cwplans/data/raw/sky/`, now gitignored) wrote `cwplans/docklands/data/sky/metar-history.json` (462 KB, 17,987 EGLC
+  reports, 2025-10-02 to 2026-10-11, input SHA-256 e140cdbff8c7b45b…). `docklands/layers/wind.js` and `weather.js` use it
+  for times older than the live-cache's 24 hours (wind by vector between reports; cloud layers, visibility, rain, fog);
+  note "London City METAR (archive)"; `?metar=0` turns it off.
+- Checks: new `docklands/test/metar-history-check.mjs` 35 rows, 0 failed (file = IEM's decoded fields, 144 reports; page =
+  METAR to 0.04 m/s, 0.5°; HTTP 429 simulated: METAR, not the default); clock-check 169 rows, 0 failed; load.mjs ok (an
+  Open-Meteo 429 is now a note). Skill: docklands-sky, "METAR history". Open: no workflow refreshes the file.

@@ -15,7 +15,7 @@ the history results are kept in https://github.com/danbri/londat/tree/main/dockl
 
 | item | verdict | key numbers |
 |---|---|---|
-| 1 time vs historical data | PARTIAL (accepted by the owner, 2026-10-10) | sun and moon within 0.02°; tide: EA readings for any clock time in the last year (EA API 4 weeks, EA daily archive file before: 344 of 371 days, page = archive values to 0.000 m, rms 0.033 m between readings against 0.258 m for the prediction), else prediction + a fading measured residual (rms 0.27 → 0.13 m in the first hour, high water height 0.31 → 0.22 m on held-out days); prediction alone 0.25 m rms on held-out days; wind −0.8 m/s bias and +10° direction bias in the data against London City Airport METARs (grid north fixed); low cloud class agrees 70 % of hours |
+| 1 time vs historical data | PARTIAL (accepted by the owner, 2026-10-10) | sun and moon within 0.02°; tide: EA readings for any clock time in the last year (EA API 4 weeks, EA daily archive file before: 344 of 371 days, page = archive values to 0.000 m, rms 0.033 m between readings against 0.258 m for the prediction), else prediction + a fading measured residual (rms 0.27 → 0.13 m in the first hour, high water height 0.31 → 0.22 m on held-out days); prediction alone 0.25 m rms on held-out days; wind and basic weather for past times: the London City Airport METAR archive since 2026-10-12 (page = METAR to 0.04 m/s and 0.5°, 17,987 reports, 2 Oct 2025 to 11 Oct 2026; also when Open-Meteo answers HTTP 429); before that Open-Meteo, −0.8 to −1.3 m/s against the METARs |
 | 2 roof shapes ported | PASS (accepted by the owner, 2026-10-10) | 22,654 roof prisms in each page, same shapes for each of the 8 kinds; screenshots match |
 | 3 piers, berths, boats | PASS | 8 of 8 TfL river-bus piers in the box; 275 piers and pontoons; HMS Belfast and 5 other vessels; the Woolwich Ferry is 3.2 km outside the box; Blackwall Pier is now a fixed masonry pier (Grade II), not a pontoon |
 | 4 birds and foxes from data | PASS (after a fix) | 21 species, 9,974 open records (NBN Atlas 8,405, GBIF 1,569); 34 of 34 foxes seen were on wood or park cells |
@@ -34,10 +34,17 @@ time, and near the readings the prediction plus a fading measured residual (the 
 to the whole last year: older than the EA API's 4 weeks, the page reads the EA daily archive readings
 (https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/tide-history.json). The harmonic prediction
 without surge stays only for the 27 days that the EA archive does not have, for a gauge that is out of service, and for
-times older than a year. Wind and cloud follow Open-Meteo, which agrees reasonably with airport observations;
-the wind is now turned from true north to the model grid. The Open-Meteo wind is 0.8 to 1.3 m/s below the airport
-anemometer, and no correction is applied. When Open-Meteo refuses requests (HTTP 429), the page shows a stated default
-wind and no weather.
+times older than a year. **Since 2026-10-12 the wind and the basic weather for past times are measured:** for every
+clock time of the last year (2 Oct 2025 to the build day) the page shows the London City Airport METAR (the airport's
+anemometer, cloud layers, visibility, rain, drizzle, snow, fog), from the Iowa Environmental Mesonet archive (public
+domain; https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/metar-history.json). The wind on the page
+equals the METAR wind (to 0.04 m/s and 0.5° on 3 test days and at 11 clock-check times). The note says "London City METAR
+(archive)". When Open-Meteo refuses requests (HTTP 429), the page still shows the METAR wind and weather, not the default.
+Before this, wind and cloud for past times came from Open-Meteo, whose wind is 0.8 to 1.3 m/s below the airport
+anemometer, and HTTP 429 gave a default wind and no weather. What stays PARTIAL: the tide gaps (27 days with no EA archive
+file, gauges out of service), the cloud above the reports (high cloud and the total cover come from the Open-Meteo model,
+or are not known when it refuses), one observation point for the whole model (the airport is about 6 km east of
+Greenland Dock), and the files are built by hand (no workflow refreshes them).
 
 ### Method
 
@@ -168,6 +175,27 @@ wind and no weather.
   The forecast API answered again later for 7 of the 8 days that history-check.mjs asked for. A visitor's browser has
   its own address and its own limit.
 
+- **METAR history (2026-10-12).** https://github.com/danbri/londat/blob/main/cwplans/tools/build-metar-history.mjs makes
+  https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/metar-history.json from one request to the Iowa
+  Environmental Mesonet ASOS archive (public domain; licence finding in the docklands-sky skill, "METAR history").
+  - File: 462 KB (74 KB gzip), 17,987 reports, 2025-10-02 00:20Z to 2026-10-11 23:50Z, a report each 30 minutes; 13 empty
+    slots (3 gaps over 60 minutes: 2025-11-21 10:50Z 180 min, 2026-04-20 22:50Z 120 min, 2026-06-17 23:50Z 90 min);
+    7 reports without visibility (sensor out, 7 Feb 2026); 0 unknown groups; input SHA-256 e140cdbff8c7b45b….
+  - The file against IEM's own decoded fields (drct, sknt, gust, vsby, skyc1, skyl1) on 21 Dec 2025, 11 Apr and 28 Aug
+    2026: 144 reports, 0 differ. Against the NOAA AWC decode in the live-cache metar.json: 31 reports in both, 0 differ.
+  - https://github.com/danbri/londat/blob/main/docklands/test/metar-history-check.mjs (WebGL 2): 35 rows, 0 failed. At
+    06:20, 12:50 and 18:20 UTC on the 3 days the page's wind equals the METAR (largest difference 0.04 m/s, 0°); at 12:35
+    (between two reports) it equals the vector interpolation; the note on screen and the weather source name "London City
+    METAR (archive)"; with labels off the note is hidden. `?metar=0`: the old sources (Open-Meteo or the default). Open-Meteo
+    routed to HTTP 429: METAR wind (5.1, 6.7, 5.7 m/s, the METAR values) and weather from the METAR alone; with `?metar=0`
+    as well: the default 4 m/s from 240° and no weather (the old behaviour).
+  - clock-check.mjs (offline, 2026-10-12): 169 rows, 0 failed, 1 warning (3 Oct 23:56: the airport reported BKN045, the
+    Open-Meteo snapshot had 15 % cloud). The wind at all 11 past clock times is the METAR archive, within 0.04 m/s and 0.5°
+    of the file.
+  - load.mjs `?t=2026-04-11T12:00`: both sizes ok, no page errors; wind 8.1 m/s from 250° (METARs 25017KT and 25013KT,
+    interpolated), weather from the METAR alone because archive-api.open-meteo.com answered HTTP 429 (load.mjs now prints
+    an Open-Meteo 429 as a note, not a failure).
+
 Live deep links:
 - The tide now, with the EA readings and the fading residual (Menu > Tide gives the source):
   https://danbri.github.io/londat/docklands/?view=greenland
@@ -178,8 +206,12 @@ Live deep links:
 - Six months back, EA archive readings (Menu > Tide says "EA archive readings"):
   https://danbri.github.io/londat/docklands/?view=greenland&t=2026-04-11T12:07
 - A winter day with a surge, EA archive readings: https://danbri.github.io/londat/docklands/?view=greenland&t=2026-02-27T12:00
-- The photo evening, 3 Oct 22:30 (snapshot wind and cloud):
+- The photo evening, 3 Oct 22:30 (METAR archive wind, snapshot cloud with the METAR layers):
   https://danbri.github.io/londat/docklands/?view=rotherhithe&t=2026-10-03T22:30
+- Six months back, airport wind and weather (the note at the bottom left says "London City METAR (archive)"):
+  https://danbri.github.io/londat/docklands/?t=2026-04-11T12:00
+- A wet winter evening (METAR 18:20Z: rain, visibility 4.7 km, overcast): https://danbri.github.io/londat/docklands/?t=2025-12-21T18:20
+- The old behaviour (no METAR): https://danbri.github.io/londat/docklands/?t=2026-04-11T12:00&metar=0
 
 ### Faults
 
@@ -190,11 +222,16 @@ Live deep links:
 - **Open: shared request limit.** One Open-Meteo request limit serves the wind layer and the weather layer, and each
   layer makes its own request for each day. One request could serve both layers. That change needs `layers/wind.js`,
   which this audit could only read.
-- **Open: wind speed is low (no correction applied).** The model wind is 0.76 m/s (forecast API, 192 hours) to
-  1.26 m/s (ERA5, 264 hours) below the airport anemometer; the snapshot 0.50 m/s. No documented, standard correction
-  applies: both are 10 m winds, and the difference is the model grid cell's rougher (urban) surface against an open
-  airport mast on the dock. An empirical factor from 11 days would be a tuned value, not a standard. The numbers are
-  reported, not applied.
+- **Fixed 2026-10-12 for the last year: wind speed is low.** The model wind is 0.76 m/s (forecast API, 192 hours) to
+  1.26 m/s (ERA5, 264 hours) below the airport anemometer; the snapshot 0.50 m/s. No correction factor is applied:
+  instead, for clock times in the METAR file (2 Oct 2025 to the build day) and in the live-cache (last 24 hours), the
+  page shows the measured airport wind. Open-Meteo stays for times outside both, and for the wind by height (the
+  wind-in-3D layer scales its profile to the METAR 10 m wind).
+- **Fixed 2026-10-12: default wind and no weather on HTTP 429.** For times in the METAR file the wind and the weather
+  (cloud layers below 20,000 ft, visibility, rain, drizzle, snow, fog, temperature) come from the METAR without
+  Open-Meteo. Open: high cloud and the total cover of a METAR-only hour are the reported layers only; times after the
+  file's build day and before the live-cache's 24 hours fall back to Open-Meteo until the file is built again
+  (`cwplans/tools/build-metar-history.mjs`, one request; no workflow yet).
 - **Fixed: grid north.** `layers/wind.js` now turns the data's true direction to the model grid (−1.55°).
 - **Fixed in part: no surge in the tide.** The page uses the EA readings (the fit file's last 7 days, the 3-4 Oct
   snapshot, the hourly cache's last 24 h, and the EA API for the clock's day and the days either side, back 4 weeks) and
