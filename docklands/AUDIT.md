@@ -686,3 +686,14 @@ other metadataand credits hidden when labels off".
    a spring peak, from breeding-season surveys.
 6. (Fixed: `STATS.trees`.) The 20,460 trees with an inferred species stay all deciduous until
    `cwplans/tools/build-tree-species.mjs` runs with the new mixes. Leaf calendars are typical dates, not this year's.
+
+## 8. Parks and trees on the terrain (2026-10-10)
+
+**Verdict: PASS, confirmed by the owner on an iPhone, 2026-10-12 ("Greenwich : passes").**
+
+The owner's photo of 2026-10-10 showed a green plane in the air over Greenwich Park. Each park polygon was flat at the
+ground under its first vertex (Greenwich Park: 36.7 m of relief, up to 32.1 m in the air). Fixes: the parks follow the
+terrain mesh on both pages (a1f4e25f Three.js port, cea1400c WebGL page; 0.29 to 0.51 m over the ground in
+`docklands/test/greens-check.mjs`), and the trees stand on the same surface (e80f1661). Details: skill docklands-3d-page,
+"Three.js port: parks on the terrain (2026-10-10)".
+

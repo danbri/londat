@@ -2315,3 +2315,4 @@ outlines), edge fidelity `?paintfid=`, data layers and railway lines crisp by a 
 now fails on confetti (grey blocks given colour; chroma error of 8 x 8 block means after a saturation scale) and on
 overlays that are not crisp; calibrated against the first-round pass. Details and numbers: the `docklands-3d-page` skill,
 "Three.js port: Painted style, second round (2026-10-11)". Not pushed (worktree branch only).
+- 2026-10-12: the owner confirmed the park and tree fix on an iPhone ("Greenwich : passes"). AUDIT.md section 8.
