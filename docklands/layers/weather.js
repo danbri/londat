@@ -92,7 +92,9 @@ export default {
     // suppression"): no haze, and the cloud does not dim or grey the light; the clouds are still drawn and rain still falls.
     // ?clear=1|0, kept in localStorage
     const store = { get: () => { try { return localStorage.getItem('dl3clear'); } catch { return null; } }, set: v => { try { localStorage.setItem('dl3clear', v ? '1' : '0'); } catch { /* private mode */ } } };
-    let clear = qs.has('clear') ? /^(1|on|yes|)$/i.test(qs.get('clear')) : store.get() === '1';
+    // on by default since 2026-10-12 (owner: "Default to Clear air no haze, make this a toggle in main style Menu"): off only by
+    // ?clear=0 or a stored choice of off
+    let clear = qs.has('clear') ? /^(1|on|yes|)$/i.test(qs.get('clear')) : store.get() !== '0';
 
     // ---------- rain and snow: streaks in a box round the camera
     const NMAX = 6000, BOX = 60, HGT = 80, pos = new Float32Array(NMAX * 6), seed = new Float32Array(NMAX * 3);
@@ -143,7 +145,7 @@ export default {
     const note = ui.note('');
     ui.toggle('Weather (cloud, haze, rain) for the clock time', on, v => { visible = v; apply(); showNote(); });
     ui.toggle('Weather from Open-Meteo for other times (asks open-meteo.com)', meteoOn, v => { meteoOn = v; evaluate(); });
-    ui.toggle('Clear air: no haze or grey light (the clouds stay)', clear, v => { clear = v; store.set(v); apply(); showNote(); draw(); });
+    ui.toggle('Clear air: no haze or grey light (the clouds stay)', clear, v => { clear = v; store.set(v); apply(); showNote(); draw(); }, { tab: 'look' });   // Menu > Look, under Style
     const cred = ui.note('<a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>). Cloud dimming, haze and rain amounts are drawn with stated factors, not measured.');
     cred.style.opacity = '0.75';
     const f0 = v => v == null ? '?' : Math.round(v);

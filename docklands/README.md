@@ -188,8 +188,9 @@ click path at 390 and 1280 px, the four ways to close, the wheels).
 
 Defaults (owner, 2026-10-09): Realistic buildings, Open-Meteo wind and weather (`?weather=0` off); My KML feeds stay off.
 Since 2026-10-11 (owner: "we have too many boring data overlays by default") only the Cranes of Data overlays (`?ov=a,b` to
-choose) and the Moorings and Ships of River (`?river=a,b`) are on. Clear air (Layers > Weather, `?clear=1`, kept in the
-browser): no haze, and the cloud does not dim or grey the light. Floors (see-through) and
+choose) and the Moorings and Ships of River (`?river=a,b`) are on. Clear air (Menu > Look, under Style; on by default since
+2026-10-12; `?clear=0` for the measured haze; the choice is kept in the browser): no haze, and the cloud does not dim or grey
+the light. Floors (see-through) and
 Gaussian splats stay off: Floors turns the realistic buildings to glass, and splats take 24 to 39 s a frame in software.
 
 "WebGL only" rows are controls of the WebGL page (https://danbri.github.io/londat/cwplans/docklands/) that the port does
