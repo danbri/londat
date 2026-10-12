@@ -71,6 +71,7 @@ Data: https://github.com/danbri/londat/tree/main/kgx (README). Graph, store and 
 | operation | version | skill | inputs → outputs |
 |---|---|---|---|
 | `lift-cited-facts`, `lift-registry-buildings`, `lift-registry-occupants`, `lift-cwg-directory`, `lift-web-canonical`, `lift-coref`, `lift-mallmap`, `lift-store-guide` | 3 | cwplans-kgx | source files → `facts`, `buildings`, `occupants`, `cwg`, `web`, `coref-<rule>`, `mallmap`, `storeguide` |
+| `lift-site-search` | 4 | cwplans-kgx | `search/probe.json` + `stock-check-survey.json` → `web-search` (SearchAction templates; version 4 since a prose value naming two templates is split, 2026-10-12) |
 | `lift-pipeline-provenance` | 3 | cwplans-kgx | `pipeline.jsonld` and every file it names that is present → `pipeline` (blank nodes skolemized; each file tied to its SHA-256 by `cwk:contentAtBuild`) |
 | `partition-by-subject-key` | 4 | cwplans-dataflow | one version → parts `<name>.pNN` of about 3,000 triples, subjects in Shardborough zone-key order |
 | `describe-graph-versions` | 3 | cwplans-dataflow | all versions and parts → `meta` (graph names with their name as `rdfs:label`) |

@@ -2409,3 +2409,32 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - SearchAction: 0 in the kgx store; 23 of 77 in the stored harvest; 14 of 26 home pages declare one, all real product
   searches; 6 changed since 2026-10-06.
 - File `registry/sources/stock/stock-check-survey.json` (`approved_pass`, `searchaction`), skill `cwplans-stock-check`.
+
+## 2026-10-12: SearchAction lifted into the knowledge graph
+
+- Owner: "'0 SearchAction nodes. The web layer does not lift them.' Update so it does". New operation
+  `lift-site-search` (version 4) in `build-kgx.mjs`, graph `web-search`: the stored probe of 2026-10-06 (111 sites) and
+  the live checks of 2026-10-12 → 116 s:SearchAction on 114 s:WebSite (s:target s:EntryPoint s:urlTemplate,
+  s:query-input, cwk:seenOn / cwk:notSeenOn, cwk:productSearch, s:about the CWG shop). New ID code `site-search` → `ss`.
+  Query `kgx/queries/site-search.rq`. Build run twice: second run `new: 0`, same generation. Skills cwplans-kgx,
+  cwplans-dataflow, cwplans-stock-check; kgx/README.md.
+- Store scope: `roofs` and `materials` set `store: false` in `kgx/external-heads.json` (a full build would have packed
+  them and taken the store from 19.6 MB to 33 MB); `building-models` and `london-terrain` packed. Generation
+  `gen-e2b182ceb96b87cf`. The locale check matched "ostn" inside `hostname`: the lift uses `URL.host`.
+
+## 2026-10-12: stock tools, set E (Accessorize store facet)
+
+- Owner: "AporoveB, E". Set E run (2 plain-fetch requests, robots.txt ignored by approval): the Accessorize search
+  facet `prefn1=storeAvailability&prefv1=1163` filters results to the Canary Wharf shop ("bag": 176 products, 40 per
+  page; "classic tote bag": 1 with the filter, 2 without). "B" not run: set B ran earlier the same day; asked the owner
+  whether C or D was meant.
+
+## 2026-10-12: stock tools, sets C and D
+
+- Owner: "C and D". Hobbs stock check gives counts per shop, Canary Wharf store 377 (test dress UK 12: 1 in stock).
+  Watches of Switzerland: by-store route `/products/{code}/stock/466` gives level and status for the Canary Wharf
+  showroom (storestock gives only the nearest one store). Intimissimi product call found (per shop and size: none /
+  low / high); IGJ4 not in the one answer seen. Malin+Goetz `/graphql` answered 500; The White Company OCC search
+  answers 400 for every field set. Over-budget requests recorded in `deviations`.
+- Per-store stock checks with Canary Wharf in the answer: The White Company, Crockett & Jones, Hotel Chocolat, Watches
+  of Switzerland and Hobbs (counts); Robert Dyas, Søstrene Grene, Space NK (yes/no or level); Boss (sizes).

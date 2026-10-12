@@ -4,7 +4,7 @@
 // The in-memory parse of about 100k quads takes several minutes.
 //   node cwplans/tools/check-kgx-store.mjs [--write]   (--write: the result in londat kgx/checks/store-vs-memory.json)
 // Skill: cwplans-kgx ("Checks").
-import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'fs';
 import { gunzipSync } from 'zlib';
 import { createHash } from 'crypto';
 import { join } from 'path';
@@ -20,7 +20,9 @@ const cur = new Set(Object.values(heads)), read = v => gunzipSync(readFileSync(j
 // version record, which names the first head a part was cut from when a later head has a part with the same content
 const acts = readFileSync(join(K, 'log', 'activities.jsonl'), 'utf8').split('\n').filter(Boolean).map(JSON.parse);
 const byIri = new Map(vers.map(v => [v.iri, v])), partsOf = new Map();
-for (const a of acts) if (a.operation === 'partition-by-subject-key' && cur.has(a.inputs[0]) && (partsOf.get(a.inputs[0])?.version ?? -1) < a.operation_version) partsOf.set(a.inputs[0], { version: a.operation_version, outputs: a.outputs });
+// a head marked { store: false } in external-heads.json is not packed, even when an earlier build partitioned it
+const ehF = join(K, 'external-heads.json'), offStore = new Set(existsSync(ehF) ? Object.values(JSON.parse(readFileSync(ehF, 'utf8'))).filter(e => typeof e === 'object' && e.store === false).map(e => e.iri) : []);
+for (const a of acts) if (a.operation === 'partition-by-subject-key' && cur.has(a.inputs[0]) && !offStore.has(a.inputs[0]) && (partsOf.get(a.inputs[0])?.version ?? -1) < a.operation_version) partsOf.set(a.inputs[0], { version: a.operation_version, outputs: a.outputs });
 const members = [...[...partsOf.values()].flatMap(p => p.outputs.map(o => byIri.get(o))), ...vers.filter(v => v.iri === heads.meta || v.iri === heads.log)].sort((a, b) => a.iri.localeCompare(b.iri));
 // the store holds the parts of the heads that have parts (a head kept out of the store, such as model-building-keys, has none)
 const stored = Object.values(heads).filter(iri => iri === heads.meta || iri === heads.log || partsOf.has(iri));

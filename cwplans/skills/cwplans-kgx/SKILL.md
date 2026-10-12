@@ -110,6 +110,26 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   `facade-atlas`, `model-building-keys` (every model building's OSM key; not in the store), `meta`
   (`void:Dataset` per version and part; heads as `id:graph<name> cwk:current <version>`, with the name as
   `rdfs:label`), `log` (the activities).
+- `web-search` (2026-10-12, owner: "'0 SearchAction nodes. The web layer does not lift them.' Update so it does"): the
+  canonical web layer (`web`, from `canonical.nq.gz`) keeps branch, hours and organisation cards only, so SearchAction
+  templates had no place in the graph. Operation `lift-site-search` (version 4, its own) reads the stored probe
+  (`third_party/cwplans-structured-data/search/probe.json`, 111 sites, 2026-10-06) and the live home-page checks in
+  `cwplans/registry/sources/stock/stock-check-survey.json` (2026-10-12). Shape: `<site origin/> a s:WebSite ; s:url ;
+  s:potentialAction id:ss<host><sha12>`; the action `a s:SearchAction ; s:target id:ss…target ; s:query-input "required
+  name=<placeholder>"`; the target `a s:EntryPoint ; s:urlTemplate`; on the action `cwk:seenOn` / `cwk:notSeenOn`
+  (xsd:date), `cwk:declaredOn`, `cwk:searchProbeClass`, `cwk:platform`, `cwk:productSearch` (boolean, live checks
+  only), `rdfs:comment`; `s:about` the CWG shop entity when the host is a surveyed shop. New ID code `site-search` →
+  `ss` (`kgx-ids.mjs`). A live value naming several templates in prose is split into its URL templates (Läderach). First
+  build: 1,439 triples, 116 actions on 114 sites, 15 marked product searches; 2 templates not seen live (Crockett & Jones US
+  host, Flying Tiger `/en-gb`). Query: `kgx/queries/site-search.rq` (three GRAPH blocks, one per subject).
+- Check fix (2026-10-12): `check-kgx-store.mjs` took the parts of every head an earlier build had partitioned, so after
+  `roofs` and `materials` became `store: false` it refused ("not packed from the current versions"). It now leaves out
+  the heads that `external-heads.json` marks `store: false`, as the build does.
+- Store scope (2026-10-12): other sessions had named `building-models`, `london-terrain`, `roofs` and `materials` in
+  `external-heads.json` without repacking the store. A full build packs every head not marked `store: false`, which
+  took the store from 19.6 MB to 33 MB. `roofs` (113,266 triples) and `materials` (40,958) are now `store: false`, the
+  same reason as `model-building-keys` (geometry, little for a query on the page to gain); `building-models` (35) and
+  `london-terrain` (14) are in the store. Generation `gen-e2b182ceb96b87cf`: 5,467 artifacts, 19.6 MB.
   Counts: `kgx/README.md`.
 - Joins across sources go through `s:sameAs` to the CWG entity IRI (`https://canarywharf.com/<kind>/<slug>/#entity`),
   OSM element URLs and Wikidata items. Mall units join by exact name only, for now.
@@ -183,7 +203,8 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   Several minutes (the in-memory parse; not timed). Results: 2026-10-06 (gen-f330e7f03b06d9d9) 17 of 17 the same;
   2026-10-07 09:35 UTC (gen-94788565be0fae62, 110,920 quads) 17 of 17 the same; 2026-10-07 15:20 UTC
   (gen-5ad6ded8fc45e17f, 115,130 quads, the first build with the IDs) 17 of 17 the same, 9 min 16 s; 2026-10-07 17:00 UTC
-  (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s
+  (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s; 2026-10-12 21:14 UTC (gen-e2b182ceb96b87cf, 122,170 quads, with `web-search` and the new query
+  `site-search.rq`) 18 of 18 the same
   (`checks/store-vs-memory.json`). It finds the parts of a head as the outputs of the head's partition activity: the
   `partOf` of a version record names the first head that a part was cut from, and a later head can have a part with
   the same content (seen 2026-10-07: geometry-only parts of `buildings` and `mallmap` did not change with the
@@ -218,7 +239,7 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 - `sw.js`: engine files and `shardborough/gen-*/` files cache first (a generation never changes); CURRENT, the
   manifest and the page network first. The page tells the service worker which generation to keep.
 - Views (`VIEWS` in the page, the same queries as `queries/*.rq`): graphs and versions, lineage (the log), open now,
-  mall units, step-free, toilets and facilities, hours CWG against mall map, tallest, cited facts, sameAs, occupants.
+  mall units, step-free, toilets and facilities, hours CWG against mall map, tallest, cited facts, sameAs, occupants, site search entry points (`#search`, 2026-10-12: 125 rows, about 6 s from a cold local load, 59 blocks, 1.33 MB; shops first by `ORDER BY DESC(BOUND(?shop))`).
 - IDs on the page (2026-10-07): the prefix `id:` (added to every query, shown in the cells); an IRI under
   `https://kgx.foaf.tv/` (an ID or a vocabulary term: `cwk:`, `cwp:`, `i:`) opens in the page only, with no outside
   link (nothing is hosted at kgx.foaf.tv yet); any other http(s) IRI also gets ↗. A hash names an ID short: `#e=id:cwb0413`

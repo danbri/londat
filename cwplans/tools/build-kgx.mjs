@@ -129,6 +129,50 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
     return { web: { quads: g.quads, about: { title: 'Canonical schema.org layer from the web harvest (branch cards, weekly hours, organisation cards), all pages merged', licence: "the publishers' own markup; crawl rule of 2026-10-03, scoping only" } } };
   })); }
 
+// site search (2026-10-12): the schema.org SearchAction templates that sites publish. The canonical layer above keeps
+// branch, hours and organisation cards only, so this lift reads the SearchAction records directly: the stored probe of
+// 2026-10-06 (one record per site that publishes one) and the live home-page checks of 2026-10-12 in the stock survey.
+// Version 4 (its own; the other lifts are at 3): a live value naming several templates in prose is split into them.
+{ const prF = join(TP, 'search', 'probe.json'), svF = join(CW, 'registry', 'sources', 'stock', 'stock-check-survey.json');
+  if (existsSync(prF) && existsSync(svF)) Object.assign(versions, await flow.run({ ...LIFT('lift-site-search', 'stored SearchAction probe (2026-10-06) + live home-page checks of the stock survey (2026-10-12) -> s:WebSite with s:potentialAction s:SearchAction (s:target s:EntryPoint with s:urlTemplate, s:query-input), the dates each template was seen or not seen, the probe class, whether it is a product search, and s:about the CWG shop entity'), version: 4 }, [file(prF), file(svF)], null, async () => {
+    const g = G(), probe = JSON.parse(readFileSync(prF, 'utf8')), survey = JSON.parse(readFileSync(svF, 'utf8'));
+    const host = u => { try { return new URL(u.replace(/[{}]/g, '')).host.replace(/^www\./, ''); } catch { return null; } };
+    const site = u => { try { const x = new URL(u.replace(/[{}]/g, '')); return x.origin + '/'; } catch { return null; } };
+    const action = (tpl, { seen, notSeen, declaredOn, cls, platform, product, about, notes }) => {
+      const ws = site(tpl), h = host(tpl); if (!ws || !h) return;
+      const k = sha(tpl), a = kid('site-search', h, k), t = kid('site-search', h, k, 'target'), v = (tpl.match(/\{([^}]+)\}/) || [])[1];
+      g.add(ws, TYPE, iri('s', 'WebSite')); g.add(ws, iri('s', 'url'), ws); g.add(ws, iri('s', 'potentialAction'), a);
+      g.add(a, TYPE, iri('s', 'SearchAction')); g.add(a, iri('s', 'target'), t);
+      g.add(t, TYPE, iri('s', 'EntryPoint')); g.lit(t, iri('s', 'urlTemplate'), tpl);
+      if (v) g.lit(a, iri('s', 'query-input'), `required name=${v}`);
+      for (const d of [].concat(seen || [])) g.lit(a, iri('cwk', 'seenOn'), d, 'date');
+      for (const d of [].concat(notSeen || [])) g.lit(a, iri('cwk', 'notSeenOn'), d, 'date');
+      for (const d of [].concat(declaredOn || [])) g.lit(a, iri('cwk', 'declaredOn'), d);
+      g.lit(a, iri('cwk', 'searchProbeClass'), cls); g.lit(a, iri('cwk', 'platform'), platform);
+      if (product != null) g.lit(a, iri('cwk', 'productSearch'), String(!!product), 'boolean');
+      g.lit(a, iri('rdfs', 'comment'), notes);
+      if (about) g.add(ws, iri('s', 'about'), about);
+    };
+    // the survey's shops by host: the CWG entity, the live check
+    const shops = new Map();
+    for (const e of survey.entries) { const h = host(/^https?:/.test(e.site || '') ? e.site : 'https://' + (e.site || '')); if (h) shops.set(h, e); }
+    const pDate = (probe.meta?.generated || '').slice(0, 10), lDate = survey.approved_pass?.date || '2026-10-12';
+    const liveOf = e => e?.searchaction && 'present' in e.searchaction ? e.searchaction : null;
+    for (const r of probe.sites) { if (!r.template) continue;
+      const e = shops.get(host(r.template)) || shops.get(String(r.site).replace(/^www\./, '')), live = liveOf(e);
+      const same = live && live.live_2026_10_12 === r.template;
+      action(r.template, { seen: [pDate, ...(same ? [lDate] : [])], notSeen: live && !same ? [lDate] : [], declaredOn: r.declared_on,
+        cls: r.class, platform: r.platform, product: same ? live.is_product_search : null, about: e?.cwg?.kgx });
+    }
+    // a live value can name several templates in prose ("<url> (UK block) and <url> (...)"): one action per URL template
+    for (const e of survey.entries) { const live = liveOf(e); if (!live?.present || !live.live_2026_10_12) continue;
+      for (const tpl of String(live.live_2026_10_12).match(/https?:\/\/[^\s()]*\{[^}\s]+\}[^\s()]*/g) || []) {
+      if (probe.sites.some(r => r.template === tpl)) continue;
+      action(tpl, { seen: [lDate], declaredOn: live.declared_on ? [].concat(live.declared_on).map(String) : [], product: live.is_product_search, about: e.cwg?.kgx, notes: live.notes }); }
+    }
+    return { 'web-search': { quads: g.quads, about: { title: 'Site search entry points: schema.org SearchAction templates that sites publish, with the dates seen and whether each is a product search (stored probe 2026-10-06, live checks 2026-10-12)', licence: "the publishers' own markup; crawl rule of 2026-10-03 and the owner's approval of 2026-10-12, scoping only" } } };
+  })); }
+
 { const sF = file(join(TP, 'coref', 'sameas.nq.gz')), dF = file(join(TP, 'coref', 'descriptions.json'));
   Object.assign(versions, await flow.run(LIFT('lift-coref', 'owl:sameAs links (one graph per key rule) + description names and pages -> one graph per key rule'), [sF, dF], null, async () => {
     const ds = await parse(gunzipSync(readFileSync(join(TP, 'coref', 'sameas.nq.gz'))).toString(), { format: 'nquads' });

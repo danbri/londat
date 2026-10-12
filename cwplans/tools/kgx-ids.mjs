@@ -32,7 +32,7 @@ export const an = s => String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLow
 // things, old base https://danbri.github.io/londat/kgx/id/<kind>/<rest>
 export const ID_CODES = { building: '', facility: 'lmf', unit: 'lmu', storeguide: 'sg', fact: 'fact', thing: 'thing', mall: 'mall',
   area: 'area', 'imagery-source': 'imagery', coverage: 'cov', oam: 'oam', photo: 'photo', 'facade-patch': 'patch',
-  'facade-tile': 'tile', 'facade-atlas': 'atlas', model: 'model' };
+  'facade-tile': 'tile', 'facade-atlas': 'atlas', model: 'model', 'site-search': 'ss' };
 // provenance and store, old base https://danbri.github.io/londat/kgx/<kind>/<rest> (vocab# is the cwk: vocabulary)
 export const KG_CODES = { graph: 'graph', activity: 'act', artifact: '', operation: 'op', genid: 'genid', store: 'store' };
 // names minted outside kgx and lifted into it: [old prefix, kind, code]
