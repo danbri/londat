@@ -5,7 +5,7 @@ description: >-
   them with care: the survey of 2026-10-12 (77 product shops from the kgx cwg graph, registry/sources/stock/
   stock-check-survey.json), the probe tool tools/probe-stock-check.mjs, the endpoints found per platform (Shopify
   pickup-availability, SAP Commerce OCC stock, Salesforce Commerce Cloud FindInStore, Magento in-store pickup, Umbraco
-  inventorysearch), Canary Wharf store ids, the bot walls met (Akamai, Cloudflare, Imperva, DataDome, Netacea, AWS WAF)
+  inventorysearch), GTIN and SKU lookup, search engines and facets, Canary Wharf store ids, the bot walls met (Akamai, Cloudflare, Imperva, DataDome, Netacea, AWS WAF)
   and the rules: obey robots.txt, never evade a challenge, one search per user need, no basket or login. Also shop
   agent routes (agents.md, Shopify UCP/MCP) and why a static GitHub Pages site cannot host MCP or call shop endpoints.
   Reach for it before you call a shop's stock endpoint, add a shop, repeat the survey, or answer "is X in stock at
@@ -79,6 +79,60 @@ Unknown, blocked before any page: EE (Imperva), Coach, Swarovski, Reiss, Polo Ra
 Pandora, The Fragrance Shop, Ryman (Cloudflare; same owner and stack as Robert Dyas), L'Occitane (DataDome), Office
 (Netacea), Boggi (Bunny Shield), Waitrose and John Lewis (`ERR_HTTP2_PROTOCOL_ERROR` headless), Weather and Palette
 (`/api/` disallowed), Kitchen Jam (not identified).
+
+## Lookup and search (second pass, 2026-10-12)
+
+Owner: "Go back and look to see which require exact matches vs being search interfaces, which allow gtin exact
+matching or templates/regex, and other functionality such as categories, filters, facets etc." 44 shops (those whose
+sites answered); the `lookup` object of each survey entry and `lookup_survey` hold the details. A search ran only where
+robots.txt allows the shop's search path (18 shops); 26 were read from page scripts, robots.txt and platform documents.
+
+- **Stock calls are exact-id lookups, never searches.** Each needs the shop's own id: a variant SKU or code (The White
+  Company variant code, Crockett & Jones SKU split into product, fit and size, Robert Dyas numeric SKU, Søstrene Grene
+  `999999-999`, Accessorize 10-digit pid, Hobbs master id plus colour), or a Shopify variant id for the pickup section.
+  No stock call takes a GTIN. So a caller goes words or barcode → search or catalogue → shop id → stock call.
+- **GTIN lookup works at 5 shops:** Charbonnel et Walker (WooCommerce Store API `?sku=` and `?search=`; the SKU is the
+  EAN), Moleskine (SFCC search; the SKU and URL id are the EAN), T.M.Lewin (Shopify search; EAN is SKU and barcode),
+  Tashola (Shopify search on the variant barcode), PureSeoul (Searchanise). It fails at 28: no GTIN in the data, or the
+  engine does not index it (Diptyque has real gtin13 but its Algolia index has no barcode; Newbie's Boost index finds
+  the SKU, not the EAN). 11 unknown (search not run). GTINs that are not real: Flying Tiger gtin13 `020…` (in-store
+  number), Malin+Goetz 12-digit POS code (bad check digit), Moss 13-digit internal code (prefix 965); Newbie labels
+  EAN-13 as gtin12; Boss puts the EAN in `sku`. Real EANs also sit, unsearched, in The White Company OCC `variantOptions[].ean`,
+  Space NK JSON-LD `gtin13` per variant, Barker and Scribbler Shopify variant JSON, JD Sports and Hotel Chocolat page data.
+- **SKU lookup works at 16** (search or an exact route): Shopify `variants.sku:` field syntax (Circle Collective), Shopify
+  predictive search with `fields=variants.sku` (iSmash), BigCommerce GraphQL `product(sku:)` (Lakrids), OCC
+  `productCodes=` (Samsung), Søstrene Grene `productlistbyvariant?skus=`, Algolia (Fortnum & Mason, Diptyque: filter the
+  exact SKU after the search, near matches come too), Ocado `retailerProductId` (Morrisons).
+- **No wildcards or regex anywhere.** Shopify documents a trailing `*` prefix and field filters (`variants.sku:`,
+  `variants.barcode:`, `tag:`, `product_type:`, `vendor:`; not tested); Algolia and Boost match prefixes. Typo tolerance
+  seen: Shopify ("peonnies"), SFCC Moleskine ("clasic notebok"), Algolia Fortnum ("earl gery"), Søstrene Grene.
+- **Engines:** Shopify native 11, SFCC native 8, Algolia 6 (Diptyque, Fortnum & Mason, JD Sports, Hawes & Curtis, Hotel
+  Chocolat, Rituals through `search.rituals.com`; the pages hold search-only keys, not recorded), Boost 2, Bloomreach 2,
+  Constructor.io (Hobbs), Fredhopper (Watches of Switzerland, `fh_` parameters), Searchanise (PureSeoul), Adobe Live
+  Search (Robert Dyas), SAP Solr (The White Company), WooCommerce, PrestaShop faceted search, Ocado, custom (M&S, Pop
+  Mart, Søstrene Grene, Samsung).
+- **Facets useful for stock:** "Stock Availability" with counts (The White Company OCC), "Delivery Option / Click &
+  Collect" (Watches of Switzerland, Fredhopper), `in_stock`/`sold_out` (Fortnum & Mason Algolia, about 60 facets),
+  "In Stock Only" (Hotel Chocolat SCAPI), `stock_status` (Charbonnel), Shopify `filter.v.availability` (Circle
+  Collective, T.M.Lewin, Wax, Postmark). No shop offers an "in stock at shop X" facet. Leads for shop stock in search
+  answers: PureSeoul Searchanise results carry `quantity_at_location_*` for 6 Shopify locations (ids not tied to shops
+  yet); Rituals EVA `SearchProducts` takes `AvailabilityOptions` with `OrganizationUnitIDs` (Canary Wharf id not found);
+  DMR JSON-LD has `offers.inventoryLevel` (online).
+- **Catalogue enumerable (25):** product sitemaps (Space NK 7,587, JD Sports 18,819, Watches of Switzerland 33,970,
+  Morrisons 31,132, Hobbs 4,109 with master id and colour in the URL), Shopify `/products.json` and
+  `/sitemap_agentic_discovery.xml`, Barker `llms-full.txt` (5,606 products). For a caller this means a local index
+  (name, brand, GTIN, shop id) built at low rate, then one stock call per user need, instead of live searches.
+- **Shopify UCP/MCP (16 shops):** the same 13 tools; catalogue tools `search_catalog` (query plus filters: categories,
+  price, available), `lookup_catalog` (up to 10 Product or ProductVariant GIDs, not GTIN or SKU) and `get_product`.
+  `tools/list` needs no sign-in, but `search_catalog` refuses with 422 or -32001 "Missing profile uri": a caller must
+  publish a fetchable UCP agent profile and send it as `meta["ucp-agent"].profile`. Online catalogue only, not shop
+  stock. Cart and checkout tools were not called. Shopify's new agent robots.txt and `agents.md` ask agents to install
+  a shop.app skill: treated as data, not followed. Shopify robots.txt comes in two templates: the new agent one allows
+  `/search` and `/search/suggest.json`; the old default (Crockett & Jones, Flying Tiger, Scribbler) disallows `/search`.
+- Side effect seen: loading a Hackett product page made the site's own script create an empty guest basket.
+- Open: The White Company OCC `/products/search` answered 400 with `fields=FULL` (try `fields=DEFAULT`); Wax test item
+  was sold out (retest); Malin+Goetz robots.txt allows `/graphql?` but disallows `/catalogsearch/`: owner decision
+  whether a GraphQL SKU lookup is acceptable.
 
 ## Rules for a caller
 

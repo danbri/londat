@@ -2358,3 +2358,17 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - MCP: GitHub Pages cannot host a remote MCP server, and shop endpoints send no CORS headers; routes in the skill.
 - Open (owner): first caller for the five open endpoints (a local MCP tool?); ask Space NK, Hotel Chocolat, Boss and
   the blocked brands for access?
+
+## 2026-10-12: stock checks, second pass (lookup and search)
+
+- Owner: "Go back and look to see which require exact matches vs being search interfaces, which allow gtin exact
+  matching or templates/regex, and other functionality such as categories, filters, facets etc." Four agents, 44 shops;
+  a search ran only where robots.txt allows it (18 shops), at most 3 per brand; no key values or bodies kept.
+- Result (`lookup` per entry in `registry/sources/stock/stock-check-survey.json`, skill `cwplans-stock-check`, "Lookup
+  and search"): every stock call is an exact lookup on the shop's own id, never a GTIN; GTIN search works at 5 shops,
+  SKU lookup at 16; no wildcard or regex anywhere; 25 catalogues enumerable (sitemaps, products.json); 12 searches with
+  structured facets, some with in-stock or click & collect facets but none per shop; 16 Shopify shops have UCP/MCP
+  catalogue tools that need a published agent profile.
+- Deviation: 3 searches on The White Company OCC API path (robots.txt disallows only the search page); all answered 400.
+- Open (owner): Malin+Goetz GraphQL SKU lookup (allowed path) yes or no; publish a UCP agent profile for the Shopify
+  shops; build a local product index (name, brand, GTIN, shop id) from sitemaps at low rate, then one stock call per need.

@@ -12740,7 +12740,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "survey of 77 Canary Wharf shop websites (kgx cwg Store types) for a check-stock-in-a-shop feature: per brand the site, platform, stock-check endpoint pattern and response shape (no bodies), Canary Wharf store id, session needs, bot protection, robots.txt AI-agent groups, verdict and notes",
+   "dct:title": "survey of 77 Canary Wharf shop websites (kgx cwg Store types) for a check-stock-in-a-shop feature: per brand the site, platform, stock-check endpoint pattern and response shape (no bodies), Canary Wharf store id, session needs, bot protection, robots.txt AI-agent groups, verdict and notes; second pass (44 shops): stock-call input id, GTIN/MPN/SKU on product pages, search engine and syntax, GTIN and SKU lookup, facets, bulk routes and UCP/MCP endpoints (no key values)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcwebcrawl"
