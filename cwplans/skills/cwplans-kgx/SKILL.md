@@ -203,7 +203,8 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   Several minutes (the in-memory parse; not timed). Results: 2026-10-06 (gen-f330e7f03b06d9d9) 17 of 17 the same;
   2026-10-07 09:35 UTC (gen-94788565be0fae62, 110,920 quads) 17 of 17 the same; 2026-10-07 15:20 UTC
   (gen-5ad6ded8fc45e17f, 115,130 quads, the first build with the IDs) 17 of 17 the same, 9 min 16 s; 2026-10-07 17:00 UTC
-  (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s
+  (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s; 2026-10-12 21:14 UTC (gen-e2b182ceb96b87cf, 122,170 quads, with `web-search` and the new query
+  `site-search.rq`) 18 of 18 the same
   (`checks/store-vs-memory.json`). It finds the parts of a head as the outputs of the head's partition activity: the
   `partOf` of a version record names the first head that a part was cut from, and a later head can have a part with
   the same content (seen 2026-10-07: geometry-only parts of `buildings` and `mallmap` did not change with the
