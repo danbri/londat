@@ -2452,3 +2452,12 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Locale check: commit 74057cc went out failing (`ui_en_gb`, `uk_sources` in the shop code; a pipe hid the exit code).
   Fixed: place and locale in `tools/stock-mcp/data/region.json`, shop adapters in `tools/stock-mcp/adapters/canary-wharf.mjs`
   (an adapter location for `tools/check-locale.mjs`, as `docklands/adapters/`); baseline not changed.
+
+## 2026-10-12: stock system (find, check, cache), sets H to K
+
+- Owner: "Next steps - go ahead" and "Our goal is not just the data but a system for getting the data as needed".
+  `cwplans-stock` 0.2: `find_product` and `check_product` for all 11 shops (Hotel Chocolat added: guest token, SCAPI),
+  cache (lookups a day, stock 5 minutes), observation log, cookie-jar redirects, headless browser on demand (Boss).
+  Live test from user words: 10 of 11 answered with the Canary Wharf branch; Intimissimi to retest by day. Set H: The
+  White Company search finds variant codes, not EANs. Set I: Watches of Switzerland still 0 at 466. Set J: Boss works
+  in headless Chromium only. Set K: Hotel Chocolat works with plain fetch (2 requests a check).

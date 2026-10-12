@@ -1,5 +1,6 @@
 // Test of the stock-mcp server, driven the way an MCP client drives it (JSON-RPC over stdio).
 //   node tools/stock-mcp/test.mjs                 protocol only: initialize, tools/list, list_stock_shops, argument errors; no network
+//   node tools/stock-mcp/test.mjs --find --approval="..." [--shops=a,b]   one check_product per shop from user words
 //   node tools/stock-mcp/test.mjs --live --approval="<owner's words, date>" [--shops=a,b]
 //                                                 one stock call per shop (product ids from the surveys of 2026-10-12)
 import { spawn } from 'node:child_process';
@@ -46,4 +47,13 @@ if (live) for (const [shop, a] of Object.entries(CASES)) {
   let j = null; try { j = JSON.parse(r.body); } catch {}
   ok(!r.error && j?.canary_wharf, `stock_check ${shop}`, r.error ? r.body : JSON.stringify(j.canary_wharf).slice(0, 220));
 }
+// --find: one check_product (find_product, then stock_check) per shop that has a lookup, from words a user would type
+const FIND = { 'crockett-jones': { query: 'alex', size: '9' }, 'robert-dyas': { query: 'aa batteries' }, 'sostrene-grene': { query: 'scrunchies' },
+  intimissimi: { query: 'cotton briefs' }, accessorize: { query: 'tote' }, 'hotel-chocolat': { query: 'penguin' },
+  'the-white-company': { query: 'diffuser' }, 'watches-of-switzerland': { query: 'tag heuer formula 1' }, boss: { query: 'polo shirt', size: 'M' },
+  hobbs: { query: 'velvet dress', size: 'UK 12' }, 'space-nk': { query: 'lip2cheek' } };
+if (args.includes('--find')) { if (!approval) { console.error('--find makes requests: give --approval'); process.exit(2); }
+  for (const [shop, a] of Object.entries(FIND)) { if (only && !only.includes(shop)) continue;
+    const r = await tool('check_product', { shop, ...a, owner_approval: approval, fresh: true }); let j = null; try { j = JSON.parse(r.body); } catch {}
+    ok(!r.error && j?.used, `check_product ${shop} "${a.query}"`, r.error ? r.body.slice(0, 300) : `${j.used.name} ${JSON.stringify(j.used.args)} -> ${JSON.stringify(j.answer?.canary_wharf).slice(0, 200)}`); } }
 srv.stdin.end(); console.log(fail ? `${fail} failed` : 'all passed'); process.exit(fail ? 1 : 0);

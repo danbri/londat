@@ -220,6 +220,46 @@ adapter per shop, `policy.mjs` the fetch rules, `test.mjs`), registered in `.mcp
   `/us/`); "diffuser" 55 results, 48 per page, 5 sorts, 6 facets incl. Stock Availability `excludeStockInStore`; the SKU
   and EAN tests did not run (budget used by the two URL faults).
 
+## The system: find, check, cache (stock-mcp 0.2, 2026-10-12)
+
+Owner: "Next steps - go ahead" and "Our goal is not just the data but a system for getting the data as needed". So the
+server gets data on demand and keeps what it learns; there is no bulk product index.
+- Tools: `list_stock_shops` (now with `find_product` and `find_by` per shop), `find_product` (words, SKU or EAN as
+  the shop's own search accepts → candidates, each with the exact `stock_check` arguments, and `sizes[]` / shades with
+  their own arguments), `stock_check`, `check_product` (find, then check the first candidate or the one whose size
+  matches `size`; 2 to 4 requests).
+- Cache and log (`tools/stock-mcp/cache.mjs`, files in ignored `data/raw/stock-mcp/`): lookups a day, stock answers
+  5 minutes (`fresh: true` skips it); every fetched answer appended to `observations.jsonl` (the start of a history of
+  what was in stock when, made only from real requests).
+- Shops (11) and their lookup routes: The White Company (storefront search `/uk/search/async/search?text=` through a
+  cookie jar: the first answer is a 302 that sets the market cookies; then OCC product JSON for sizes and colours; EANs
+  not indexed); Crockett & Jones (Shopify `search/suggest.json`, then `/products/{handle}.js` for size SKUs); Robert Dyas
+  (Magento GraphQL `products(search:)` or `filter:{sku:{eq}}`, header `store: robertdyas_uk_main_en_gb`); Søstrene Grene
+  (`/umbraco/api/search/batchedsearch`, header `culture`); Watches of Switzerland (OCC `products/search?fields=PLP`;
+  new, pre-owned and ex-display mixed); Space NK (search HTML: master `MUK…`, shades `UK2000…`); Hobbs (search HTML
+  `data-tracking` group_id + swatch colour code, then the product page size capsules → size codes); Boss (headless
+  Chromium: Akamai answers 403 to plain fetch with the project user agent and serves the browser; search tiles, product
+  page JSON-LD `hasVariant[]` → [EAN, size], then the stock call from inside the page); Intimissimi (search HTML tiles
+  `data-pid` STYLE_color_CODE, then Product-Variation JSON for sizes; it answers 500 for some products: the next tile is
+  tried); Accessorize (one search: each tile's `data-available-stores` says whether 1163 holds it); Hotel Chocolat
+  (SLAS guest token from the private proxy `POST /mobify/slas/private/.../oauth2/token`, form `grant_type=client_credentials&
+  channel_id=HotelChocolat&dnt=true`, no client id, 1,800 s; SCAPI product search; stock = product with
+  `inventoryIds=inventory_store_305,inventory_store_160`, units `ats`).
+- Policy additions (`policy.mjs`): `fetchWithJar` (redirects by hand with cookies, each hop a request under the rules)
+  and a headless browser on demand (`browserPage`, `browserGoto`, `browserFetchText`: robots.txt / `owner_approval`, the
+  gap per host, the log, stop on any challenge title or 401/403/429/503; the browser keeps its HeadlessChrome agent).
+- Live test of 2026-10-12 (`node tools/stock-mcp/test.mjs --find --approval="..."`, user words): Crockett & Jones
+  "alex" UK 9 → 1 at 316; Robert Dyas "aa batteries" → first hit out of stock at rd_6088; Søstrene Grene "scrunchies" →
+  in stock at 8039; Accessorize "tote" → 30 products held at 1163; Hotel Chocolat "penguin" → 0 at 305 and 160; The White
+  Company "diffuser" → Peony Diffuser, level 1, "outOfStock" at jubilee-place (the shop's own status); Watches of
+  Switzerland "tag heuer formula 1" → 0 at 466 (no positive answer seen there in 8 reads); Space NK "lip2cheek" → not
+  available; Hobbs "velvet dress" UK 12 → 2 in stock at 377; Boss merino polo (6 sizes) → Cabot Place West has S to XXL.
+  Intimissimi "cotton briefs" after midnight London time: Canary Wharf not listed; the service also answered
+  `isDispoActive: false` that night: retest by day (`currentHour` is now the region's local hour from `region.json`).
+- Faults met: Product-Variation 500 (Intimissimi); size capsule attributes in either order (Hobbs); Boss tile links
+  outside the `data-pid` element; Boss answer text needs a DOM parse (the store class is now
+  `retailavailability-store font--copy4`).
+
 ## Rules for a caller
 
 - One call per concrete user need (a person asks "is X in stock at Canary Wharf?"); no polling, no catalogue sweeps,
