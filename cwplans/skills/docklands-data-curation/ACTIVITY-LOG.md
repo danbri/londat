@@ -2421,3 +2421,10 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Store scope: `roofs` and `materials` set `store: false` in `kgx/external-heads.json` (a full build would have packed
   them and taken the store from 19.6 MB to 33 MB); `building-models` and `london-terrain` packed. Generation
   `gen-e2b182ceb96b87cf`. The locale check matched "ostn" inside `hostname`: the lift uses `URL.host`.
+
+## 2026-10-12: stock tools, set E (Accessorize store facet)
+
+- Owner: "AporoveB, E". Set E run (2 plain-fetch requests, robots.txt ignored by approval): the Accessorize search
+  facet `prefn1=storeAvailability&prefv1=1163` filters results to the Canary Wharf shop ("bag": 176 products, 40 per
+  page; "classic tote bag": 1 with the filter, 2 without). "B" not run: set B ran earlier the same day; asked the owner
+  whether C or D was meant.

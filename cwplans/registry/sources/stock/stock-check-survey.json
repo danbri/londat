@@ -11,7 +11,8 @@
   "robert-dyas: 7 page loads (a shared script ran once by mistake)",
   "the-post-office-chancellor-passage: the branch-finder call ran twice (the first was malformed)",
   "the-white-company-jubilee-place (second pass): 3 searches on the OCC API path although robots.txt disallows the search page (*?q=); the API path is not disallowed; all 3 answered 400",
-  "tm-lewin, wax-london, postmark, charbonnel-et-walker (second pass): 9 to 11 requests, above the brief's \"about 8\" (UCP discovery reads); searches stayed at 3 or fewer"
+  "tm-lewin, wax-london, postmark, charbonnel-et-walker (second pass): 9 to 11 requests, above the brief's \"about 8\" (UCP discovery reads); searches stayed at 3 or fewer",
+  "accessorize-canarywharf (set E, owner-approved): 2 plain-fetch searches with the store facet; robots.txt ignored by approval"
  ],
  "counts": {
   "per-store stock check (works headless)": 12,
@@ -8431,6 +8432,34 @@
     "blocked": null,
     "notes": "No GTIN on the site. The search result page carries a per-store facet 'Available For Store' with counts, so 'which of these products are in the Canary Wharf shop' is one GET: /uk/search?q={q}&prefn1=storeAvailability&prefv1=1163 (not run). Store id from Stores-FindStores?lat=&long=&radius=15 (postalCode=E14 5AB with radius 5 gave 0 stores).",
     "checked_at": "2026-10-12"
+   },
+   "set_e": {
+    "approval": "owner, 2026-10-12: \"AporoveB, E\" (set E: one search with the Canary Wharf store facet)",
+    "robots_ignored": true,
+    "requests_made": 2,
+    "checked_at": "2026-10-12",
+    "request": {
+     "method": "GET",
+     "host": "www.accessorize.com",
+     "path_pattern": "/uk/search?q={text}&prefn1=storeAvailability&prefv1={store id}",
+     "store_id_canary_wharf": "1163"
+    },
+    "results": [
+     {
+      "query": "classic tote bag",
+      "filtered_count": 1,
+      "unfiltered_count_2026_10_12": 2,
+      "pid": "39007603"
+     },
+     {
+      "query": "bag",
+      "filtered_count": 176,
+      "page_size": 40,
+      "paging": "sz/start parameters (SFCC)"
+     }
+    ],
+    "response_shape": "server-rendered HTML (SFRA Search-Show); product tiles carry data-pid (style+colour or variant id); the facet value for the store shows the same count; plain Node fetch, no session or cookie, 0.7 to 1.0 s",
+    "meaning": "the facet filters search results to products the Canary Wharf shop holds (by the site's own store availability data): one request lists what that shop has for a query; per-product stock level is not given (ProductStock-GetData gives it for the session store only)"
    }
   },
   {

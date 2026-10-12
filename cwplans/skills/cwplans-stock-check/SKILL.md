@@ -155,7 +155,10 @@ only, no bot wall passed. Per entry: `approved_pass` (searches, facets, set A re
   its home page calls a Fredhopper `fh_location=…|secondid<{p<code>}>` form, a possible exact route, not tested),
   Samsung (search API `sribsrch.ecom.samsung.com/estoresearch-api/v1/scom/search` answered 403 headless).
 - **Per-shop facets:** Accessorize search has a hidden facet "Available For Store" (`prefn1=storeAvailability&prefv1=1163`,
-  1163 = Canary Wharf) with counts per store: one request can list what the Canary Wharf shop holds (found, not run).
+  1163 = Canary Wharf) with counts per store. Set E (owner, 2026-10-12: "AporoveB, E"; 2 plain-fetch requests): the
+  filter works. "classic tote bag" gives 1 product with the filter (2 without); "bag" gives 176 products at the Canary
+  Wharf shop, 40 per page (SFCC `sz`/`start`). No session, 0.7 to 1.0 s, server-rendered HTML with `data-pid` per tile.
+  So one request lists what that shop holds for a query, with no stock level per product.
   JD Sports Algolia has `availability` and `inStock_Stores`, but they count all shops together. Hotel Chocolat Algolia has
   `in_stock` and "In Stock Only" (online).
 - **Engine notes:** Rituals page `?q=` drops the term (whole catalogue); the Algolia request the page makes works
