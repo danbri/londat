@@ -245,6 +245,11 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 
 ## Open
 
+- OKR KR2.6 (https://github.com/danbri/londat/blob/main/OKRS.md , issue https://github.com/danbri/londat/issues/7): queries stay
+  fast at 10 times today's quads (start under 2 s, views under 2 s, one entity under 3 s). Baseline: the measurements of
+  2026-10-07 above. After each Factoidal release: `node cwplans/tools/check-factoidal.mjs`, then measure the store table
+  and the page again, and comment the numbers on issue #7.
+
 - IDs (2026-10-07): nothing is served at https://kgx.foaf.tv/ yet (the owner's domain). When it is, an ID could
   redirect to the page (`https://danbri.github.io/londat/cwplans/kg/#e=id:<local>`); the vocabulary terms
   (`/vocab#`, `/pipeline#`, `/idioms#`) could get a page of their terms (owner: "No dereferencing needed yet").
