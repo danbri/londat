@@ -184,7 +184,7 @@ only, no bot wall passed. Per entry: `approved_pass` (searches, facets, set A re
 
 ## The MCP server `cwplans-stock` (2026-10-12)
 
-Owner: "Approve f, g, mcp". `tools/stock-mcp/` (`server.mjs` JSON-RPC over stdio like `docklands-view`, `shops.mjs` one
+Owner: "Approve f, g, mcp". `tools/stock-mcp/` (`server.mjs` JSON-RPC over stdio like `docklands-view`, `adapters/canary-wharf.mjs` one
 adapter per shop, `policy.mjs` the fetch rules, `test.mjs`), registered in `.mcp.json` as `cwplans-stock`.
 - Tools: `list_stock_shops` (shop, Canary Wharf store id, answer kind, id arguments) and `stock_check` (`shop` plus that
   shop's own product id: `variant_code`, `sku`, `product_code`, `product_id`, `pid`/`color`/`size`, `skus`, `query`).
@@ -207,6 +207,11 @@ adapter per shop, `policy.mjs` the fetch rules, `test.mjs`), registered in `.mcp
   UK200019905 not available; Hobbs dress UK 12 1 in stock; Accessorize "classic tote bag" 1 product. Boss not run (needs
   [EAN, size] pairs from a product page).
 - Fault met: the first Hobbs parse took the store name from inside the label tag (the regex starts in the tag).
+- Place rule (OKRS.md, `tools/check-locale.mjs`): the place (position, postcode, country) and the market locale are in
+  `tools/stock-mcp/data/region.json`; the shop hosts and store ids are in the region adapter
+  `tools/stock-mcp/adapters/canary-wharf.mjs` (`STOCK_MCP_ADAPTER`, `STOCK_MCP_REGION` name others). The check counts
+  nothing in `tools/stock-mcp/adapters/`, like `docklands/adapters/`. A first commit (74057cc) went out with the locale
+  check failing (a pipe hid the exit code); this layout fixes it.
 - Sets F and G (same approval, 9 requests): Intimissimi CLD28B colour 019, S/M/L: IGJ4 "LONDON CANARY WHARF" first of 9
   shops, high for all three sizes (a listed shop can still give "none" for a size). The live MCP call gave the same.
   Watches of Switzerland: `/stock/466` and `/stock/579` (a valid id) gave 0 for two Tudor models; no positive answer

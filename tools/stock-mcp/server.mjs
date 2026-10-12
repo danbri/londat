@@ -6,8 +6,9 @@
 //   node tools/stock-mcp/test.mjs [--live]   (protocol test; --live makes one stock call per shop: owner approval needed)
 //
 // Fetch rules (robots.txt, owner approval, 6 s per host, logging, no bot-wall handling): policy.mjs.
-// Shops, ids and answers: shops.mjs. Skill: cwplans-stock-check (cwplans/skills/cwplans-stock-check/SKILL.md).
-import { SHOPS } from './shops.mjs';
+// Shops, ids and answers: adapters/canary-wharf.mjs (the place: data/region.json). Skill: cwplans-stock-check (cwplans/skills/cwplans-stock-check/SKILL.md).
+// the region's shop adapters (one file per region in adapters/; STOCK_MCP_ADAPTER names another)
+const { SHOPS } = await import(process.env.STOCK_MCP_ADAPTER || './adapters/canary-wharf.mjs');
 
 const log = (...a) => process.stderr.write(`[stock-mcp] ${a.join(' ')}\n`);
 const json = v => ({ content: [{ type: 'text', text: JSON.stringify(v, null, 1) }] });

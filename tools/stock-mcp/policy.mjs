@@ -49,7 +49,7 @@ export async function politeFetch(u, init = {}, ctx = {}) {
   count.set(host, n);
   const wait = (lastAt.get(host) || 0) + GAP_MS - Date.now(); if (wait > 0) await sleep(wait);
   lastAt.set(host, Date.now());
-  const r = await fetch(u, { ...init, headers: { 'user-agent': UA, 'accept-language': 'en-GB', ...(init.headers || {}) }, signal: AbortSignal.timeout(30000) });
+  const r = await fetch(u, { ...init, headers: { 'user-agent': UA, ...(init.headers || {}) }, signal: AbortSignal.timeout(30000) });
   log({ shop: ctx.shop, method: init.method || 'GET', url: u, status: r.status, robots: rb.allowed ? 'allowed' : rb.rule, owner_approval: ctx.owner_approval || undefined });
   if ([401, 403, 429, 503].includes(r.status)) throw new Error(`${host} answered ${r.status} (bot wall or refusal): not retried, not bypassed`);
   if (!r.ok) throw new Error(`${host} answered ${r.status}`);

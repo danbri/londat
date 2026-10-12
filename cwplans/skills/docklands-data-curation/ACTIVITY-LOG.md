@@ -2449,3 +2449,6 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Sets F and G: Intimissimi positive (IGJ4 first, high for S/M/L), added to `cwplans-stock` (10 shops; live call
   matched). Watches of Switzerland still no positive answer; The White Company storefront search route found
   (`/uk/search/async/search?text=`), SKU and EAN tests still to run.
+- Locale check: commit 74057cc went out failing (`ui_en_gb`, `uk_sources` in the shop code; a pipe hid the exit code).
+  Fixed: place and locale in `tools/stock-mcp/data/region.json`, shop adapters in `tools/stock-mcp/adapters/canary-wharf.mjs`
+  (an adapter location for `tools/check-locale.mjs`, as `docklands/adapters/`); baseline not changed.

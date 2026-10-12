@@ -1,0 +1,6 @@
+{
+ "about": "The place the cwplans-stock server checks shops for, and the shops' market. Data, not code (OKRS.md architecture rule: no locale constants in the core; tools/check-locale.mjs). Another region gets another file and its own store ids in an adapters/<region>.mjs file.",
+ "region": "canary-wharf",
+ "place": { "name": "Canary Wharf", "lat": 51.5054, "lon": -0.0235, "postcode": "E14 5AB", "country": "GB" },
+ "locale": "en-GB"
+}

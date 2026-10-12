@@ -12,7 +12,7 @@
 // "/*", "*" or "#" in Python and YAML) that matches the category's pattern. A line can count in more than one category.
 // Scope: tracked .js .mjs .cjs .html .py .sh .yml files, except third_party/, node_modules/, any data/ or vendor/
 // folder, and the places where locale constants belong: the region configs and adapters (docklands/geo/regions/,
-// docklands/geo/adapters/, docklands/adapters/), the tests (any test/ folder and test-*.mjs: tests may name places), this
+// docklands/geo/adapters/, docklands/adapters/, tools/stock-mcp/adapters/: shop adapters of a region), the tests (any test/ folder and test-*.mjs: tests may name places), this
 // script and docs/.
 // Design: https://github.com/danbri/londat/blob/main/docs/planet-architecture.md ; list: docs/locale-inventory.md .
 import { execFileSync } from 'node:child_process';
@@ -44,7 +44,7 @@ export const CATEGORIES = {
 };
 
 const EXT = /\.(m?js|cjs|html|py|sh|ya?ml)$/;
-const SKIP = [/^third_party\//, /(^|\/)node_modules\//, /(^|\/)data\//, /(^|\/)vendor\//, /^docklands\/geo\/(regions|adapters|test)\//, /^docklands\/adapters\//, /(^|\/)test\//, /(^|\/)test-[^/]*\.mjs$/, /^tools\/check-locale\.mjs$/, /^docs\//];
+const SKIP = [/^third_party\//, /(^|\/)node_modules\//, /(^|\/)data\//, /(^|\/)vendor\//, /^docklands\/geo\/(regions|adapters|test)\//, /^docklands\/adapters\//, /^tools\/stock-mcp\/adapters\//, /(^|\/)test\//, /(^|\/)test-[^/]*\.mjs$/, /^tools\/check-locale\.mjs$/, /^docs\//];
 const inScope = f => EXT.test(f) && !SKIP.some(r => r.test(f));
 
 function trackedFiles() {

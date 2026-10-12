@@ -1,11 +1,15 @@
-// Shop adapters for the stock-mcp server: one stock check per call, for the Canary Wharf branch, through the calls the
+// Shop adapters of the region canary-wharf for the stock-mcp server (a source adapter with its area: OKRS.md KR1.4;
+// tools/check-locale.mjs counts nothing in tools/stock-mcp/adapters/): one stock check per call, for the Canary Wharf branch, through the calls the
 // shops' own pages make (survey: cwplans/registry/sources/stock/stock-check-survey.json; skill cwplans-stock-check).
 // Each adapter takes the shop's own product id (never a GTIN unless the shop's call takes one) and returns
 // { canary_wharf: { store, answer }, stores: [...], source } with no page text beyond store names, counts and flags.
 // The place (Canary Wharf: store ids, lat/long, postcode) is data here, per shop, not a constant of the core.
-import { politeFetch } from './policy.mjs';
+import { politeFetch } from '../policy.mjs';
 
-const CW = { lat: 51.5054, lon: -0.0235, postcode: 'E14 5AB' };       // Canary Wharf, the zone's centre for shop searches
+import { readFileSync } from 'node:fs';
+// the place and the shops' market come from a region data file (STOCK_MCP_REGION, default data/region.json)
+const REGION = JSON.parse(readFileSync(process.env.STOCK_MCP_REGION || new URL('../data/region.json', import.meta.url), 'utf8'));
+const CW = REGION.place, LOCALE = REGION.locale;
 const strip = s => String(s || '').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#39;|&rsquo;/g, "'").replace(/\s+/g, ' ').trim();
 const need = (a, ...k) => { for (const x of k) if (a[x] == null || a[x] === '') throw new Error(`argument "${x}" is needed for this shop`); };
 
@@ -44,11 +48,11 @@ export const SHOPS = {
     async check(a, ctx) { need(a, 'sku');
       const u = `https://sostrenegrene.com/umbraco/api/store/inventorysearch?sku=${encodeURIComponent(a.sku)}&address=${encodeURIComponent(CW.postcode)}&usegeocodingfeaturetoggle=false`;
       // the market comes from the culture: without it the Danish shop answers
-      const j = await (await politeFetch(u, { headers: { culture: 'en-GB', cookie: 'culture=en-GB' } }, ctx)).json();
+      const j = await (await politeFetch(u, { headers: { culture: LOCALE, cookie: `culture=${LOCALE}` } }, ctx)).json();
       const lv = { 1: 'out of stock', 2: 'few in stock', 3: 'in stock' };
       const stores = (j.stores || []).map(s => { const inv = (s.inventory || [])[0] || {}; return { store: String(s.id), name: s.name, state: inv.state, level: lv[inv.state] || inv.description || null, distance: s.distance }; });
       const cw = stores.find(s => s.store === '8039') || null;
-      return { canary_wharf: cw, stores: stores.slice(0, 6), market_check: cw ? 'en-GB' : 'Canary Wharf (8039) not in the answer: check the market (Danish answer?)', source: u };
+      return { canary_wharf: cw, stores: stores.slice(0, 6), market_check: cw ? LOCALE : 'Canary Wharf (8039) not in the answer: check the market (Danish answer?)', source: u };
     } },
   'watches-of-switzerland': {
     name: 'Watches of Switzerland', canaryWharf: '466', answer: 'stockLevel and status (inStock, lowStock, outOfStock) for the showroom',
@@ -71,7 +75,7 @@ export const SHOPS = {
     name: 'Hobbs', canaryWharf: '377', answer: 'count per shop ("N in stock" or "Out of Stock")',
     args: { pid: 'master product id, e.g. 0226-5770-9045L00', color: 'colour code from the product page find-in-store form, e.g. 1880', size: 'size code from that form (UK 12 = 004), not the UK size' },
     async check(a, ctx) { need(a, 'pid', 'color');
-      const p = new URLSearchParams({ pid: a.pid, lat: CW.lat, long: CW.lon, [`dwvar_${a.pid}_color`]: a.color, dwfrm_address_country: 'GB', postalCode: CW.postcode });
+      const p = new URLSearchParams({ pid: a.pid, lat: CW.lat, long: CW.lon, [`dwvar_${a.pid}_color`]: a.color, dwfrm_address_country: CW.country, postalCode: CW.postcode });
       if (a.size) p.set(`dwvar_${a.pid}_size`, a.size);
       const u = `https://www.hobbs.com/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?${p}`;
       const h = await (await politeFetch(u, {}, ctx)).text();
@@ -107,7 +111,7 @@ export const SHOPS = {
     args: { query: 'search text, e.g. "bag"' },
     async check(a, ctx) { need(a, 'query');
       const u = `https://www.accessorize.com/uk/search?q=${encodeURIComponent(a.query)}&prefn1=storeAvailability&prefv1=1163`;
-      const h = await (await politeFetch(u, { headers: { 'accept-language': 'en-GB' } }, ctx)).text();
+      const h = await (await politeFetch(u, { headers: { 'accept-language': LOCALE } }, ctx)).text();
       const pids = [...new Set([...h.matchAll(/data-pid="([0-9A-Za-z_-]+)"/g)].map(m => m[1]))];
       return { canary_wharf: { store: '1163', products: Number((h.match(/(\d[\d,]*)\s*(?:products|Products)/) || [])[1]?.replace(/,/g, '')) || pids.length, first_page_pids: pids.slice(0, 40) }, source: u };
     } },
