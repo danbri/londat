@@ -44,8 +44,8 @@ call these programmatically in service of concrete user needs. Use node for now"
 
 | verdict | brands |
 |---|---:|
-| per-store stock check, works headless | 11 |
-| per-store stock check, blocked or needs a browser session | 14 |
+| per-store stock check, works headless | 12 (11 before the approved pass: Boss moved up) |
+| per-store stock check, blocked or needs a browser session | 13 |
 | click & collect only, no per-store visibility | 8 |
 | online availability only | 22 |
 | no online shop | 6 |
@@ -64,8 +64,9 @@ Per-store checks that answered, best first:
 | Hobbs | GET `/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?pid&lat&long&dwvar_{pid}_color&postalCode` (SFCC) | HTML table | not seen (the one-size item gave an empty table) | none |
 | Intimissimi | GET `Stores-FindStores?lat&long&radius=1` works; the product call `FindInStore-GetStoresWithProductAvailability` needs a size | store list with pickup flags | IGJ4 (Unit 6 Canada Place) | none; robots.txt Crawl-delay 5 |
 | Circle Collective | Shopify pickup-availability, as Flowers & Plants | pickup shops | not a pickup shop (Dalston, Lewisham only) | none |
-| Space NK | GET `/on/demandware.store/Sites-spacenkgb-Site/en_GB/FindInStore-GetStores?productID&postcode&storesCount=5` (read from the page) | JSON `isAvailable` per shop | not run | robots.txt disallows `/on/`: do not call directly |
-| Hotel Chocolat | Salesforce PWA Kit "Find In Store" through `/mobify/proxy/api/...` (inferred) | | not run | robots.txt disallows `/mobify/`: do not call directly |
+| Space NK | GET `/on/demandware.store/Sites-spacenkgb-Site/en_GB/FindInStore-GetStores?productID&postcode&storesCount=5` | JSON `isAvailable` true/false per shop, courier flags, no count | "Canary Wharf" (the id is the name; E14 4QT), first | none (plain fetch); robots.txt disallows `/on/`: owner approval needed per set |
+| Hotel Chocolat | Loqate geocode → SCAPI `shopper-stores/v1/.../store-search` (lat/long, 20 mi) → `shopper-products/v1/.../products/{id}?inventoryIds=` (through `/mobify/proxy/api/`) | unit count per shop (`ats`/`stockLevel`) | 305 (Jubilee Place), 160 (Canada Place) | SLAS guest token (no login); robots.txt disallows `/mobify/`: owner approval needed per set |
+| Boss | GET `/on/demandware.store/Sites-UK-Site/en_GB/Retail-DoRetailAvailabilitySearch?skus=[[EAN,size],...]&pid&lat&lon` | HTML fragment, nearest 13 shops, sizes in stock yes/no | Unit 5 Cabot Place West (store-page slug, no number), first | none (plain fetch); robots.txt disallows `/*DoRetailAvailabilitySearch`: owner approval needed per set |
 
 Blocked or session-bound per-store checks: Marks & Spencer (GraphQL `GetStores` at `experience.marksandspencer.app`,
 level per shop, needs an anonymous bearer token and Akamai; Canary Wharf 3722 is a Simply Food shop), Accessorize (SFCC
@@ -133,6 +134,45 @@ robots.txt allows the shop's search path (18 shops); 26 were read from page scri
 - Open: The White Company OCC `/products/search` answered 400 with `fields=FULL` (try `fields=DEFAULT`); Wax test item
   was sold out (retest); Malin+Goetz robots.txt allows `/graphql?` but disallows `/catalogsearch/`: owner decision
   whether a GraphQL SKU lookup is acceptable.
+
+## Approved pass: sets A and B, and SearchAction (2026-10-12)
+
+Owner: "Approve A and B initially" and "Also add check of KG or embedded structured data for Schema SearchAction
+data". Run under the owner's robots.txt rule (above): 26 shops, 2 to 9 requests each, robots.txt ignored for these sets
+only, no bot wall passed. Per entry: `approved_pass` (searches, facets, set A result) and `searchaction`.
+
+- **Set A, all three work.** Space NK (open GET, yes/no per shop, Canary Wharf first), Hotel Chocolat (unit counts per
+  shop through a SLAS guest token; Canary Wharf ids 305 and 160; test item 2 and 1 units), Boss (open GET with
+  `[EAN,size]` pairs, sizes in stock per shop, Canary Wharf first). Table above.
+- **Set B, GTIN in the shop's own search:** found at Lakrids (BigCommerce `search.php`), Barker (Shopify `/search`,
+  barcode and SKU exact), Boss (EAN redirects to the product). Not found at Space NK, Hotel Chocolat (EAN on the
+  page, search gives 0: map EAN → product id from the product data), JD Sports (EAN 0, PLU found), Flying Tiger (its
+  `020…` code is not a GTIN). So GTIN lookup by site search now works at 8 of 44 shops; elsewhere a caller keeps its
+  own EAN → shop-id table from product pages.
+- **Set B, SKU or style code:** exact at most shops; several redirect straight to the product page (M&S part number,
+  product code and 8-digit "upc"; Charles Tyrwhitt style+colour `?singleRes=true`; Hackett; Boss; Läderach). Not found:
+  Hobbs master id (loose matches), Moss (0), Watches of Switzerland 8-digit code (0; the item may be out of the index;
+  its home page calls a Fredhopper `fh_location=…|secondid<{p<code>}>` form, a possible exact route, not tested),
+  Samsung (search API `sribsrch.ecom.samsung.com/estoresearch-api/v1/scom/search` answered 403 headless).
+- **Per-shop facets:** Accessorize search has a hidden facet "Available For Store" (`prefn1=storeAvailability&prefv1=1163`,
+  1163 = Canary Wharf) with counts per store: one request can list what the Canary Wharf shop holds (found, not run).
+  JD Sports Algolia has `availability` and `inStock_Stores`, but they count all shops together. Hotel Chocolat Algolia has
+  `in_stock` and "In Stock Only" (online).
+- **Engine notes:** Rituals page `?q=` drops the term (whole catalogue); the Algolia request the page makes works
+  (`search.rituals.com`, index `prd_products_b2cweb_gb`). Nicolas (PrestaShop) answers JSON to `Accept: application/json`.
+  Hawes & Curtis searches through a first-party POST `/api/Site/AjaxProductsFromCategories` (Algolia behind it). Pop Mart
+  search is POST `/rpc/search/public_search`; its `?keyword=` does nothing, `?q=` works. Hobbs results are SFCC native
+  (sz=60), not Constructor.io.
+- **SearchAction.** The kgx store has none (the web canonical layer does not lift them). The stored harvest
+  (`third_party/cwplans-structured-data/search/probe.json`, 2026-10-06) has a template for 23 of the 77 shops
+  (`searchaction.stored_2026_10_06` per entry). Live check of 26 home pages: 14 declare one, and all 14 are real
+  product searches; no WordPress `?s=`, no `utm_*` on these (Boggi's stored template has `utm_*`). Changes since the
+  harvest: Crockett & Jones (the stored template was the US host, from the geo redirect), Flying Tiger (market path
+  dropped), Accessorize (new), Boss (inside `Organization.mainEntityOfPage`), Läderach (two blocks; the root one opens the
+  Swiss store in CHF: use the `/uk-en/` one), Hawes & Curtis (declared on Organization). A SearchAction template is a
+  usable, published search entry point for a caller; most product shops (SFCC, Shopify themes) write one.
+- Caller traps seen: a headless browser from the US exit is sent to US stores by script (Barker, Crockett & Jones);
+  plain fetch stays on the UK store. Space NK's widget click timed out behind the cookie banner; the GET works.
 
 ## Rules for a caller
 

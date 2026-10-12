@@ -2397,3 +2397,15 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Recorded in CLAUDE.md (data policy), the `cwplans-stock-check` skill ("robots.txt and approval") and
   `probe-stock-check.mjs` (`--ignore-robots` works only with `--approved="..."`, kept in the output). The approval
   covers robots.txt only, not bot walls, logins, baskets or forms. No fetch ran under the new rule yet.
+
+## 2026-10-12: stock tools, approved sets A and B, SearchAction
+
+- Owner: "Approve A and B initially" and "Also add check of KG or embedded structured data for Schema SearchAction
+  data". 26 shops, robots.txt ignored for these sets only (owner rule of 2026-10-12), 2 to 9 requests per brand.
+- Set A: Space NK, Hotel Chocolat and Boss stock checks all work with Canary Wharf in the answer (Space NK yes/no,
+  Hotel Chocolat unit counts with a guest token, Boss sizes per shop). Per-store checks that work headless: 12 of 77.
+- Set B: GTIN by site search now at 8 of 44 shops (Lakrids, Barker, Boss added); exact SKU at most. Accessorize has a
+  per-store search facet (`storeAvailability`, Canary Wharf 1163), found, not run.
+- SearchAction: 0 in the kgx store; 23 of 77 in the stored harvest; 14 of 26 home pages declare one, all real product
+  searches; 6 changed since 2026-10-06.
+- File `registry/sources/stock/stock-check-survey.json` (`approved_pass`, `searchaction`), skill `cwplans-stock-check`.

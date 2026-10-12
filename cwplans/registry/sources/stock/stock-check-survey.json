@@ -14,10 +14,10 @@
   "tm-lewin, wax-london, postmark, charbonnel-et-walker (second pass): 9 to 11 requests, above the brief's \"about 8\" (UCP discovery reads); searches stayed at 3 or fewer"
  ],
  "counts": {
-  "per-store stock check (works headless)": 11,
+  "per-store stock check (works headless)": 12,
   "online availability only": 22,
   "unknown": 16,
-  "per-store stock check (blocked/needs browser session)": 14,
+  "per-store stock check (blocked/needs browser session)": 13,
   "no online shop": 6,
   "click & collect only, no per-store visibility": 8
  },
@@ -147,8 +147,8 @@
      ]
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt (old Shopify default) disallows /search, so no search was run, also not via MCP. No barcodes in the catalogue, so a barcode cannot lead to the product; route: user words -> sitemap/collection or MCP search_catalog (needs agent profile) -> handle -> .js variant sku -> stock POST. US exit IP is geo-redirected to us.crockettandjones.com by script; plain fetch gets the UK HTML. UCP/MCP search_catalog answered JSON-RPC error -32001 \"UCP discovery failed / invalid_profile_url: Missing profile uri\" when called without meta[\"ucp-agent\"].profile: a caller must host a UCP agent profile (a URL the shop fetches) before it can search. tools/list works without it. Online catalogue only, no shop stock. Page also embeds Shopify Storefront MCP config (endpoint /api/mcp, tool search_shop_policies_and_faqs).",
     "evidence_urls": [
      "https://www.crockettandjones.com/robots.txt",
@@ -160,6 +160,89 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://us.crockettandjones.com/search?q={search_term_string}",
+    "live_2026_10_12": "https://www.crockettandjones.com/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "JSON-LD WebSite on the UK home page (plain fetch); headless load lands on the US home, which declares https://us.crockettandjones.com/search?q={search_term_string}",
+    "notes": "Stored value (US host) came from the geo redirect of a US exit IP; the UK page declares its own host. Both templates find the SKU. No GTIN in the catalogue (Shopify barcode null), so no GTIN test."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 4,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "variant SKU product part <6 digits><letter>-<model> (20499A-J01L3)",
+      "request": {
+       "method": "GET",
+       "host": "www.crockettandjones.com",
+       "path_pattern": "/search",
+       "params": "q=<sku>"
+      },
+      "engine": "Shopify storefront search, server-rendered (plain Node fetch; headless Chromium is sent to us.crockettandjones.com by script)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "sku",
+      "query_shape": "same SKU through the stored SearchAction template (US site)",
+      "request": {
+       "method": "GET",
+       "host": "us.crockettandjones.com",
+       "path_pattern": "/search",
+       "params": "q=<sku>"
+      },
+      "engine": "Shopify storefront search with Boost-style filter UI rendered in page (no services.mybcapps.com call seen)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Collection",
+     "Style",
+     "UK SIZE",
+     "Colour",
+     "Material",
+     "Sole",
+     "Last",
+     "Fitting"
+    ],
+    "availability_facet": null,
+    "store_facet": false,
+    "sort": [
+     "Best Match",
+     "Best Selling",
+     "Alphabetically, A-Z",
+     "Alphabetically, Z-A",
+     "Price, low to high",
+     "Price, high to low",
+     "Date, new to old",
+     "Date, old to new"
+    ],
+    "page_size": null,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.crockettandjones.com/search?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "JSON-LD WebSite on the UK home page (plain fetch); headless load lands on the US home, which declares https://us.crockettandjones.com/search?q={search_term_string}",
+     "matches_stored": false,
+     "is_product_search": true,
+     "notes": "Stored value (US host) came from the geo redirect of a US exit IP; the UK page declares its own host. Both templates find the SKU. No GTIN in the catalogue (Shopify barcode null), so no GTIN test."
+    },
+    "blocked": null,
+    "notes": "No GTIN: skipped. SKU search exact, 1 result on both UK (plain fetch) and US (headless) sites. Facets and sort read from the US search page DOM (facet names; counts not read). requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -326,6 +409,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "no"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://flowersandplantsco.com/search?q={search_term_string}"
    }
   },
   {
@@ -384,6 +470,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/tesco-express/",
     "kgx": "https://canarywharf.com/shop/tesco-express/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -440,6 +529,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/ryman-stationery/",
     "kgx": "https://canarywharf.com/shop/ryman-stationery/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -593,6 +685,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -724,7 +819,7 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "unknown",
+    "gtin_lookup": "yes",
     "sku_lookup": "yes",
     "notes": "robots.txt disallows /search.php for all agents (and names AI crawlers with Crawl-delay 10), so no search was run. Small catalogue (126 products): enumerate the sitemap and read JSON-LD gtin13 per page, then match a barcode locally. Real EAN-13 per product. No shop stock.",
     "evidence_urls": [
@@ -735,6 +830,85 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "yes (exact, GraphQL product(sku:), used by the page)"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page JSON-LD has WebPage, WebSite, OnlineStore, ContactPoint; WebSite has no potentialAction",
+    "notes": "Stored harvest also null. The real search template is /search.php?search_query={q} and it matches GTIN and SKU exactly."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 4,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "EAN-13 from JSON-LD gtin13 of Dark Truffle 265g (5710858…)",
+      "request": {
+       "method": "GET",
+       "host": "lakridsbybulow.co.uk",
+       "path_pattern": "/search.php",
+       "params": [
+        "search_query"
+       ]
+      },
+      "engine": "BigCommerce native (Stencil search.php, server-rendered)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "sku",
+      "query_shape": "6-digit SKU from JSON-LD sku (500735)",
+      "request": {
+       "method": "GET",
+       "host": "lakridsbybulow.co.uk",
+       "path_pattern": "/search.php",
+       "params": [
+        "search_query"
+       ]
+      },
+      "engine": "BigCommerce native (Stencil search.php, server-rendered)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     }
+    ],
+    "gtin_lookup": "yes",
+    "sku_lookup": "yes",
+    "facets": [],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Featured Items",
+     "Newest Items",
+     "Popular Products",
+     "A to Z",
+     "Z to A",
+     "By Review",
+     "Price: Ascending",
+     "Price: Descending",
+     "Relevance"
+    ],
+    "page_size": "unknown (1 result; no limit selector)",
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page JSON-LD has WebPage, WebSite, OnlineStore, ContactPoint; WebSite has no potentialAction",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Stored harvest also null. The real search template is /search.php?search_query={q} and it matches GTIN and SKU exactly."
+    },
+    "blocked": null,
+    "notes": "Result page shows '1 result for <q>' and '1 products and 0 content pages'; no facet panel on the search page. The search page also fires a BigCommerce storefront GraphQL POST (page-side product data) whose answer contained the product. No shop stock (online only).",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -786,6 +960,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/boggi-milano/",
     "kgx": "https://canarywharf.com/shop/boggi-milano/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.boggi.com/default/search?q={search_term_string}&utm_source=googleSitelinkSearchBox&utm_medium=organic"
    }
   },
   {
@@ -950,6 +1127,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -1083,8 +1263,8 @@
      "tools": []
     },
     "verdict": "search with facets (structured)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "wildcard_or_regex": "no",
     "notes": "robots.txt disallows \"*/search\", \"/*search?q=\", \"/*productId=\" and colon facet URLs, so no search was run. Route for a caller: listing pages (allowed) give facets and per-variant skuId; the stock call (GraphQL GetStores, survey) takes the skuId and needs an anonymous bearer token. Food products (the Canary Wharf shop is Simply Food) are not sold online in the same way; their identifiers were not checked. Akamai did not block the headless loads today. Requests: robots, sitemap index, 2 sitemaps, 1 product page, 3 listing loads (one 404).",
     "evidence_urls": [
@@ -1097,6 +1277,107 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.marksandspencer.com/search?searchTerm={search_term_string}&intid=normal&langId=-24&storeId=10151&catalogId=10051&searchType=normal",
+    "live_2026_10_12": "https://www.marksandspencer.com/search?searchTerm={search_term_string}&intid=normal&langId=-24&storeId=10151&catalogId=10051&searchType=normal",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page, JSON-LD WebSite.potentialAction (EntryPoint urlTemplate)",
+    "notes": "Template carries old WebSphere Commerce params (langId, storeId, catalogId) and intid tracking; they are ignored and the search still works. Exact code matches redirect (307) to the product page, so no result list or facets come back; facets/sort/page size are from the listing pages of the first pass."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "blocked": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 4,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "product part number \"P\" + 8 digits (P22284725, JSON-LD Product.sku)",
+      "request": {
+       "method": "GET",
+       "host": "www.marksandspencer.com",
+       "path_pattern": "/search",
+       "params": "searchTerm=<q>&intid=normal&langId=-24&storeId=10151&catalogId=10051&searchType=normal (SearchAction template)"
+      },
+      "engine": "M&S own search (Next.js, federated GraphQL)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "307 redirect straight to the product page /p/clp22284725"
+     },
+     {
+      "kind": "sku",
+      "query_shape": "product code / stroke id, letter+6 digits+letter (T144761V, shown on page as \"Product code\")",
+      "request": {
+       "method": "GET",
+       "host": "www.marksandspencer.com",
+       "path_pattern": "/search",
+       "params": "searchTerm=<q> + template params"
+      },
+      "engine": "same",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "307 redirect to the product page"
+     },
+     {
+      "kind": "name",
+      "query_shape": "M&S 8-digit \"upc\" item code from page data (04420491; internal code, not a GS1 GTIN), used in place of a GTIN",
+      "request": {
+       "method": "GET",
+       "host": "www.marksandspencer.com",
+       "path_pattern": "/search",
+       "params": "searchTerm=<q> + template params"
+      },
+      "engine": "same",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "307 redirect to the product page; kind set to \"name\" because it is not a GTIN search"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Brand",
+     "Colour",
+     "Style",
+     "Size",
+     "Sleeve Length",
+     "Fit",
+     "Material",
+     "Occasions",
+     "Pattern",
+     "Collar",
+     "Price (range)"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Relevance",
+     "New Arrivals",
+     "Best Selling",
+     "Price Low-High",
+     "Price High-Low",
+     "Ratings"
+    ],
+    "page_size": 48,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.marksandspencer.com/search?searchTerm={search_term_string}&intid=normal&langId=-24&storeId=10151&catalogId=10051&searchType=normal",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page, JSON-LD WebSite.potentialAction (EntryPoint urlTemplate)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Template carries old WebSphere Commerce params (langId, storeId, catalogId) and intid tracking; they are ignored and the search still works. Exact code matches redirect (307) to the product page, so no result list or facets come back; facets/sort/page size are from the listing pages of the first pass."
+    },
+    "notes": "No GS1 GTIN on the site (JSON-LD has none; page data has an 8-digit M&S \"upc\"). Search box says \"Search product, code or brand\": part number, product code and upc all go straight to the product. The 11-digit skuId (input of the GetStores stock call) was not in the server HTML of the product page. Akamai did not block the 4 headless loads."
    }
   },
   {
@@ -1151,6 +1432,9 @@
     "mall": "One Canada Square",
     "cwg_url": "https://canarywharf.com/shop/ee/",
     "kgx": "https://canarywharf.com/shop/ee/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -1209,6 +1493,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/zara/",
     "kgx": "https://canarywharf.com/shop/zara/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -1388,8 +1675,8 @@
      ]
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "yes",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /search for all agents, so no site search was run; use products.json, llms-full.txt or the UCP search_catalog tool (the MCP endpoint path is not disallowed) instead. EANs exist per variant in Shopify JSON (check digit valid), so a GTIN can be matched client-side after enumerating products.json /products/<handle>.js. No JSON-LD.",
     "evidence_urls": [
      "https://www.barkershoes.com/robots.txt",
@@ -1403,6 +1690,95 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page: no JSON-LD and no microdata potentialAction",
+    "notes": "stored value null; same now. The real product search is /search?q= (Shopify)."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 5,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "EAN-13 (5051247xxxxxx, variants[].barcode of /products/<handle>.js)",
+      "request": {
+       "method": "GET",
+       "host": "www.barkershoes.com",
+       "path_pattern": "/search?q={gtin}",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Shopify native search",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "headless: page title 'Search: 1 result found for \"<gtin>\" | Barker Shoes UK', then the page's geo script sent the US-IP browser to us.barkershoes.com home; the UK HTML answer is server-rendered"
+     },
+     {
+      "kind": "sku",
+      "query_shape": "9-digit variant sku (6-digit style + size code)",
+      "request": {
+       "method": "GET",
+       "host": "www.barkershoes.com",
+       "path_pattern": "/search?q={sku}",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Shopify native search",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "plain Node/curl fetch, server-rendered HTML; result links to the product (style), not the variant"
+     },
+     {
+      "kind": "name",
+      "query_shape": "style name word ('malvern')",
+      "request": {
+       "method": "GET",
+       "host": "www.barkershoes.com",
+       "path_pattern": "/search?q={name}",
+       "params": [
+        "q",
+        "page"
+       ]
+      },
+      "engine": "Shopify native search",
+      "results": 222,
+      "target_rank": null,
+      "exact": false,
+      "note": "many Malvern colourways and lasts; 12 pages"
+     }
+    ],
+    "gtin_lookup": "yes",
+    "sku_lookup": "yes",
+    "facets": [],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [],
+    "page_size": "about 20 (222 results over 12 pages)",
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page: no JSON-LD and no microdata potentialAction",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "stored value null; same now. The real product search is /search?q= (Shopify)."
+    },
+    "blocked": null,
+    "notes": "Shopify search matches variants.barcode and variants.sku exactly (one result each). No filters or sort in the search page HTML. Headless browser on the proxy IP is geo-redirected to the US store by a page script; plain fetch keeps the UK store. The whole catalogue is also in /products.json.",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -1556,6 +1932,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "yes (the sku is the EAN-13: ?sku= and ?search= both found it)",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://charbonnel.co.uk/?s={search_term_string}"
    }
   },
   {
@@ -1611,6 +1990,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/coach/",
     "kgx": "https://canarywharf.com/shop/coach/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -1662,6 +2044,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/currys/",
     "kgx": "https://canarywharf.com/shop/currys/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -1715,6 +2100,9 @@
     "mall": "South Colonnade",
     "cwg_url": "https://canarywharf.com/shop/english-tailoring/",
     "kgx": "https://canarywharf.com/shop/english-tailoring/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -1845,8 +2233,8 @@
      ]
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /search, /*/search, *?q=*, filter. and sort params: no search run. Barcode on the product is an in-store 020 number = \"0200\" + article sku + check, so a scanned shelf label may map back to the sku by arithmetic. No shop stock. UCP/MCP search_catalog answered JSON-RPC error -32001 \"UCP discovery failed / invalid_profile_url: Missing profile uri\" when called without meta[\"ucp-agent\"].profile: a caller must host a UCP agent profile (a URL the shop fetches) before it can search. tools/list works without it. Online catalogue only, no shop stock.",
     "evidence_urls": [
      "https://flyingtiger.com/robots.txt",
@@ -1857,6 +2245,97 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://flyingtiger.com/en-gb/search?q={query}",
+    "live_2026_10_12": "https://flyingtiger.com/search?q={query}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "JSON-LD WebSite on /en-gb home",
+    "notes": "Stored template had /en-gb/search; live one drops the market path, so its results link to /products/ (another market catalogue). The GTIN through the live template gave one wrong product."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 5,
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "gtin13 from product JSON-LD (0200030763016, GS1 020 in-store prefix)",
+      "request": {
+       "method": "GET",
+       "host": "core.dxpapi.com",
+       "path_pattern": "/api/v1/core/ (called by page /search?q=, live SearchAction template, no /en-gb)",
+       "params": "q, rows=48, start=0, sort, request_type=search, search_type=keyword, fl (shopify_prod_id, quantityAvailable, availableForSale, skuid, handle, tags, pid ...), facet.range=sale_price, account_id, domain_key, url, ref_url"
+      },
+      "engine": "Bloomreach Discovery",
+      "results": 1,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "sku",
+      "query_shape": "7-digit article number (3076301)",
+      "request": {
+       "method": "GET",
+       "host": "core.dxpapi.com",
+       "path_pattern": "/api/v1/core/ (called by page /en-gb/search?q=, stored template)",
+       "params": "same as above"
+      },
+      "engine": "Bloomreach Discovery",
+      "results": 2,
+      "target_rank": 2,
+      "exact": false
+     },
+     {
+      "kind": "gtin",
+      "query_shape": "same gtin13 on /en-gb/search",
+      "request": {
+       "method": "GET",
+       "host": "core.dxpapi.com",
+       "path_pattern": "/api/v1/core/",
+       "params": "same as above"
+      },
+      "engine": "Bloomreach Discovery",
+      "results": 2,
+      "target_rank": null,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
+    "facets": [
+     "price",
+     "category",
+     "sizes",
+     "colours",
+     "sale_price (range)"
+    ],
+    "availability_facet": "none as a facet; result fields quantityAvailable and availableForSale requested (fl)",
+    "store_facet": false,
+    "sort": [
+     "Recommended",
+     "Bestsellers",
+     "Price (low - high)",
+     "Price (high - low)",
+     "Newly Released"
+    ],
+    "page_size": 48,
+    "searchaction": {
+     "present": true,
+     "target": "https://flyingtiger.com/search?q={query}",
+     "query_input": "required name=query",
+     "declared_on": "JSON-LD WebSite on /en-gb home",
+     "matches_stored": false,
+     "is_product_search": true,
+     "notes": "Stored template had /en-gb/search; live one drops the market path, so its results link to /products/ (another market catalogue). The GTIN through the live template gave one wrong product."
+    },
+    "blocked": null,
+    "notes": "GTIN not indexed: both GTIN searches return unrelated near matches (fuzzy numeric match), target absent. SKU search returns the target at rank 2 of 2 (another product first), so not an exact lookup. Facets from Bloomreach facet_counts.facets; counts present in JSON. requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -1975,8 +2454,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "wildcard_or_regex": "no",
     "notes": "robots.txt disallows /catalogsearch/ and every URL with a query string except ?p=, ?page= and /graphql?. The brief forbids a search where the search path is disallowed, so GraphQL search was not run either, though robots.txt allows it; ask the owner if GraphQL sku lookups are acceptable. A sort by \"Manufact. SKU\" shows that a manufacturer code exists. The headless page mentioned \"algolia\" and Nosto (recommendations), but the server HTML has no Algolia config: Magento native search is the engine. Small catalogue (150 products): enumerate from the sitemap.",
     "evidence_urls": [
@@ -1988,6 +2467,81 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.malinandgoetz.co.uk/catalogsearch/result/?q={search_term_string}",
+    "live_2026_10_12": "https://www.malinandgoetz.co.uk/catalogsearch/result/?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "JSON-LD WebSite on the home page and on every page (also on the product page)",
+    "notes": "Template filled with the SKU gives the one exact product; filled with a name gives 17 near matches, target first. No GTIN on the site, so no GTIN test (skipped). Standard Magento template, no tracking parameters, same country site."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 6,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "12-digit Lightspeed SKU from JSON-LD sku / itemprop=sku of Cannabis Candle (2100000000xx)",
+      "request": {
+       "method": "GET",
+       "host": "www.malinandgoetz.co.uk",
+       "path_pattern": "/catalogsearch/result/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Magento 2 native catalog search (server-rendered result page)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name, 2 words ('cannabis candle')",
+      "request": {
+       "method": "GET",
+       "host": "www.malinandgoetz.co.uk",
+       "path_pattern": "/catalogsearch/result/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Magento 2 native catalog search",
+      "results": 17,
+      "target_rank": 1,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Name",
+     "Type",
+     "Manufact. SKU",
+     "Size",
+     "Relevance"
+    ],
+    "page_size": "12 by default on search (options 12, 48, 72, All); toolbar 'Items 1-12 of 17'",
+    "searchaction": {
+     "present": true,
+     "target": "https://www.malinandgoetz.co.uk/catalogsearch/result/?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "JSON-LD WebSite on the home page and on every page (also on the product page)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Template filled with the SKU gives the one exact product; filled with a name gives 17 near matches, target first. No GTIN on the site, so no GTIN test (skipped). Standard Magento template, no tracking parameters, same country site."
+    },
+    "blocked": null,
+    "notes": "No GTIN anywhere (JSON-LD has sku only), so the GTIN search was skipped. GraphQL route not used (not approved). Search result page has no layered navigation (no facets); the page logs the term through /catalogsearch/searchTermsLog/save/. The SKU search first run counted 9 'tiles' by a loose selector; a second load with a precise selector gave '1 Item' (so 6 page loads in all). No shop stock (online only). JSON-LD types the organisation as PawnShop (a markup fault on the site).",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -2120,6 +2674,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -2175,6 +2732,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/pandora/",
     "kgx": "https://canarywharf.com/shop/pandora/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -2299,8 +2859,8 @@
      "tools": []
     },
     "verdict": "exact id lookup only",
-    "gtin_lookup": "no",
-    "sku_lookup": "yes",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
     "notes": "www robots.txt disallows /*/search/ and /*/ai-search/ for * and AI agents; searchapi.samsung.com robots.txt answered 500 (Akamai) and esapi 502, so no search. A user's words must first be turned into a model code (from the buy page JSON-LD or the sitemap). No EAN in markup. Online stock only.",
     "evidence_urls": [
      "https://www.samsung.com/robots.txt",
@@ -2311,6 +2871,76 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes (model code, OCC productCodes)"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page has JSON-LD WebSite (name, alternateName, url) with no potentialAction",
+    "notes": "Stored value null, same today. The real search URL is /uk/search/?searchvalue=<q> (302 to /uk/aisearch/)."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "blocked": {
+     "vendor": "unknown (403 text/html from the search API; Akamai fronts samsung.com, mPulse seen)",
+     "where": "POST sribsrch.ecom.samsung.com/estoresearch-api/v1/scom/search"
+    },
+    "checked_at": "2026-10-12",
+    "requests_made": 3,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "model code SM-xxxxxxxxxxx (SM-S931BZKDEUB)",
+      "request": {
+       "method": "POST",
+       "host": "sribsrch.ecom.samsung.com",
+       "path_pattern": "/estoresearch-api/v1/scom/search",
+       "params": "form: clientCode=b2c, storeID=uk, countryCode=uk, startIndex, requestCount=15, keyword, siteCd=uk, version=v2, inVokeAISummary=false (page /uk/search/?searchvalue= redirects 302 to /uk/aisearch/?searchvalue=)"
+      },
+      "engine": "Samsung estoresearch API (AI search page)",
+      "results": null,
+      "target_rank": null,
+      "exact": null,
+      "note": "API answered 403 text/html; page then shows \"No results\" and recommendations"
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name (Galaxy S26)",
+      "request": {
+       "method": "POST",
+       "host": "sribsrch.ecom.samsung.com",
+       "path_pattern": "/estoresearch-api/v1/scom/search",
+       "params": "same, keyword=<q>"
+      },
+      "engine": "same",
+      "results": null,
+      "target_rank": null,
+      "exact": null,
+      "note": "403 again for a plain name: the API refuses the headless browser, so \"no results\" is not a real answer"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
+    "facets": [],
+    "availability_facet": null,
+    "store_facet": null,
+    "sort": [],
+    "page_size": 15,
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page has JSON-LD WebSite (name, alternateName, url) with no potentialAction",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Stored value null, same today. The real search URL is /uk/search/?searchvalue=<q> (302 to /uk/aisearch/)."
+    },
+    "notes": "No GTIN on the site, so no GTIN search. Search API host changed from searchapi.samsung.com/v6 (first pass) to sribsrch.ecom.samsung.com estoresearch-api. Both calls were refused (403); recorded and stopped, no retry with other headers. Third search not made."
    }
   },
   {
@@ -2443,8 +3073,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows */search?q=*, /on/ and prefn/srule/sz params, so no search and no stock call. The JSON-LD gives a clean barcode -> variant id map on each product page, so barcode lookup is possible offline once the product URL is known (sitemap URL ends with the UK id).",
     "evidence_urls": [
      "https://www.spacenk.com/robots.txt",
@@ -2455,7 +3085,119 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
-   }
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.spacenk.com/uk/search?q={search_term_string}",
+    "live_2026_10_12": "https://www.spacenk.com/uk/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page JSON-LD WebSite (/uk/ redirects to /uk/home)",
+    "notes": "real product search; finds by SKU, not by GTIN; no utm parameters; same country site"
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "A",
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 7,
+    "set_a": {
+     "endpoint": {
+      "method": "GET",
+      "host": "www.spacenk.com",
+      "path_pattern": "/on/demandware.store/Sites-spacenkgb-Site/en_GB/FindInStore-GetStores",
+      "params": {
+       "storesCount": "5",
+       "productID": "variant id UK2000xxxxx (JSON-LD hasVariant[].sku)",
+       "postcode": "E14 5AB"
+      }
+     },
+     "response_shape": "JSON {action, queryString, locale, error (false), term (the postcode), storesTemplate (HTML), stores:[{ID, name, address1, address2, city, postalCode, latitude, longitude, phone, countryCode, storeHours (HTML), storeHoursArray, isAvailable, isStuartAvailable, isExpressAvailable}]}, 5 nearest stores, nearest first",
+     "canary_wharf_store_id": "Canary Wharf (store ID is the name string; Cabot Place, E14 4QT; first in the list for E14 5AB)",
+     "answer_kind": "yes/no per store (isAvailable) plus same-day courier flags (Stuart, Express); no quantity or level",
+     "needs_session": false,
+     "headless_ok": "not shown: the probe could not click 'Find in store' on the product page (timeout, probably the cookie banner); the survey of 2026-10-12 saw the call made by the page",
+     "plain_fetch_ok": true,
+     "result": "worked with plain fetch, with and without the page cookies. Lip2Cheek UK200019905: isAvailable false at all 5 (Canary Wharf, Spitalfields, Broadgate, Blackheath, Cheapside). Beauty Advent Calendar UK200063764 (no cookies): isAvailable true at all 5, Stuart and Express false."
+    },
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "EAN-13 (JSON-LD gtin13 of the variant, 816...)",
+      "request": {
+       "method": "GET",
+       "host": "www.spacenk.com",
+       "path_pattern": "/uk/search?q={gtin} (the SearchAction template)",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Salesforce Commerce Cloud native search (SFRA Search-Show)",
+      "results": 0,
+      "target_rank": null,
+      "exact": false,
+      "note": "page says \"sorry, we couldn't find results for your search\""
+     },
+     {
+      "kind": "sku",
+      "query_shape": "variant id UK + 9 digits (JSON-LD sku = mpn)",
+      "request": {
+       "method": "GET",
+       "host": "www.spacenk.com",
+       "path_pattern": "/uk/search?q={sku} (the SearchAction template)",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Salesforce Commerce Cloud native search (SFRA Search-Show)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "'1 Results'; the tile is the master MUK200019905 with its shade variants"
+     }
+    ],
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
+    "facets": [
+     "brand",
+     "category",
+     "department",
+     "subcategory",
+     "FORMAT",
+     "COMPFIN (finish)",
+     "COMPBEN (benefit)",
+     "COVERAGE",
+     "shadeFamily (lip colour)",
+     "KEYINGREDIENTS",
+     "bvWholeRating (review stars)",
+     "price",
+     "product type"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Best_sellers_7days",
+     "New_In_with_category_position",
+     "most-popular",
+     "price-high-to-low",
+     "price-low-to-high",
+     "Brand"
+    ],
+    "page_size": "36 (survey); sz parameter",
+    "searchaction": {
+     "present": true,
+     "target": "https://www.spacenk.com/uk/search?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page JSON-LD WebSite (/uk/ redirects to /uk/home)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "real product search; finds by SKU, not by GTIN; no utm parameters; same country site"
+    },
+    "blocked": null,
+    "notes": "Per-store stock is open: plain GET, JSON, no token or cookie needed, Canary Wharf store comes first for E14 5AB. Search finds the variant id but not the EAN; map EAN to id from the product page JSON-LD.",
+    "checked_at": "2026-10-12"
+   },
+   "verdict_before_2026_10_12_approval": "per-store stock check (works headless)"
   },
   {
    "slug": "tian-tian-market",
@@ -2511,6 +3253,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/tian-tian-market/",
     "kgx": "https://canarywharf.com/shop/tian-tian-market/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -2566,6 +3311,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/waterstones-cabot-place/",
     "kgx": "https://canarywharf.com/shop/waterstones-cabot-place/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -2619,6 +3367,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/boots-the-chemist-canada-place/",
     "kgx": "https://canarywharf.com/shop/boots-the-chemist-canada-place/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -2680,6 +3431,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/cards-galore-cabot-place/",
     "kgx": "https://canarywharf.com/shop/cards-galore-cabot-place/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.cardsgalore.co.uk/search?q={search_term_string}"
    }
   },
   {
@@ -2735,6 +3489,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/news-on-the-wharf-jubilee-place/",
     "kgx": "https://canarywharf.com/shop/news-on-the-wharf-jubilee-place/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://newsonthewharf.co.uk/?s={search_term_string}"
    }
   },
   {
@@ -2798,6 +3555,9 @@
     "mall": "Chancellor Passage",
     "cwg_url": "https://canarywharf.com/shop/the-post-office-chancellor-passage/",
     "kgx": "https://canarywharf.com/shop/the-post-office-chancellor-passage/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.postoffice.co.uk/search-results?query={search_term_string}"
    }
   },
   {
@@ -2956,6 +3716,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -3106,8 +3869,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
     "notes": "robots.txt disallows /search and /*q=, so no search was run; category pages (allowed) gave the Fredhopper facets with counts. Best route from user words to stock: match brand + model reference (MPN) against the product sitemap slugs, take the /p/{code}, then call storestock (exact code). No EAN anywhere.",
     "evidence_urls": [
      "https://www.watches-of-switzerland.co.uk/robots.txt",
@@ -3120,6 +3883,107 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "no JSON-LD or microdata on the rendered home page",
+    "notes": "Page search URL is /search?q=<term>; /search?text= is ignored (OCC receives query=undefined)."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 5,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "8-digit SAP product code (17631061), typed in the search box",
+      "request": {
+       "method": "GET",
+       "host": "www.watches-of-switzerland.co.uk",
+       "path_pattern": "/occ/v2/WatchesOfSwitzerland_UK/products/search",
+       "params": "fields=PLP, query=<q>, pageSize=48 (SUGGESTIONS context: pageSize=4), sessionId, lang=en, curr=GBP"
+      },
+      "engine": "SAP Commerce OCC (Spartacus) over Fredhopper",
+      "results": 0,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "sku",
+      "query_shape": "manufacturer reference / MPN style code (Q1548420)",
+      "request": {
+       "method": "GET",
+       "host": "www.watches-of-switzerland.co.uk",
+       "path_pattern": "/occ/v2/WatchesOfSwitzerland_UK/products/search (page /search?q=)",
+       "params": "query=<q>, pageSize=48"
+      },
+      "engine": "SAP Commerce OCC over Fredhopper",
+      "results": 74,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "name",
+      "query_shape": "brand + model name (Jaeger-LeCoultre Master Control Date)",
+      "request": {
+       "method": "GET",
+       "host": "www.watches-of-switzerland.co.uk",
+       "path_pattern": "/occ/v2/WatchesOfSwitzerland_UK/products/search",
+       "params": "query=<q>, pageSize=48"
+      },
+      "engine": "SAP Commerce OCC over Fredhopper",
+      "results": 13,
+      "target_rank": null,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
+    "facets": [
+     "Brand",
+     "Promotion",
+     "Brand Collections",
+     "New Arrivals",
+     "Price",
+     "Recipient",
+     "Dial Colour",
+     "Diameter",
+     "Water Resistant",
+     "Movement",
+     "Strap Material",
+     "Case Material",
+     "Watch Markers",
+     "Delivery Option"
+    ],
+    "availability_facet": "Delivery Option (with counts)",
+    "store_facet": false,
+    "sort": [
+     "Recommended",
+     "Name (ascending)",
+     "Name (descending)",
+     "Price (low to high)",
+     "Price (high to low)",
+     "Latest Additions"
+    ],
+    "page_size": 48,
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "no JSON-LD or microdata on the rendered home page",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Page search URL is /search?q=<term>; /search?text= is ignored (OCC receives query=undefined)."
+    },
+    "blocked": null,
+    "notes": "No GTIN (no ean field). Product code and MPN searches do not find the target; even the name search does not, so the target may be out of the search index (its /p/ page and OCC record existed earlier today). The home page itself calls OCC search with query fh_location=//catalog01/en_GB|secondid<{p<code>,...}> (Fredhopper id filter), a possible exact-code route, not tested. requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -3251,8 +4115,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
     "notes": "robots.txt disallows /search/ and the refinement and sort parameters, so neither the site search nor the Constructor API was called. The product URL itself carries master id and colour, so a caller can go from a sitemap URL straight to Product-StockCheck. No GTIN anywhere.",
     "evidence_urls": [
      "https://www.hobbs.com/robots.txt",
@@ -3262,6 +4126,83 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.hobbs.com/search/?q={q}",
+    "live_2026_10_12": "https://www.hobbs.com/search/?q={q}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "JSON-LD WebSite on the home page (not on the product page)",
+    "notes": "Template gives a real product search (name query: target first of 15). Filled with the master id it gives 18 loose matches (belts, shirts, dresses: the code is split into tokens like '0226'); the target is not in the first 12 of the 18 and is probably absent. No GTIN on the site (skipped)."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 5,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "SFCC master id / JSON-LD sku and mpn, dashed ('0226-1B73-100900', Jackie Bracelet)",
+      "request": {
+       "method": "GET",
+       "host": "www.hobbs.com",
+       "path_pattern": "/search/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "SFCC native search, server-rendered grid (result links carry #q=&sz=60&start=0&pid=&pos=); no Constructor.io call seen on the result page",
+      "results": 18,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name, 2 words ('jackie bracelet')",
+      "request": {
+       "method": "GET",
+       "host": "www.hobbs.com",
+       "path_pattern": "/search/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "SFCC native search, server-rendered",
+      "results": 15,
+      "target_rank": 1,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
+    "facets": [
+     "filter panel present (#filters-container anchor in the page); facet names not read by the probe"
+    ],
+    "availability_facet": "unknown",
+    "store_facet": "unknown",
+    "sort": [
+     "Relevant",
+     "Price low to high",
+     "Price high to low",
+     "New In",
+     "Ratings high to low"
+    ],
+    "page_size": 60,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.hobbs.com/search/?q={q}",
+     "query_input": "required name=q",
+     "declared_on": "JSON-LD WebSite on the home page (not on the product page)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Template gives a real product search (name query: target first of 15). Filled with the master id it gives 18 loose matches (belts, shirts, dresses: the code is split into tokens like '0226'); the target is not in the first 12 of the 18 and is probably absent. No GTIN on the site (skipped)."
+    },
+    "blocked": null,
+    "notes": "No GTIN anywhere. The style code does not find its own product: SKU lookup no. Go from the product URL (sitemap) to Product-StockCheck instead. The SKU search was loaded twice (second load to list all result links), so 5 page loads in all. The home and product pages call a CloudFront 'search/live/.json?access_token=…&pdp_id=' endpoint: a social/UGC gallery feed, not product search.",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -3298,7 +4239,7 @@
     "Click & Collect / ship-to-store with appointment slots (COShipToStore-FindStores, ShipToStore-GetAvailableTimeSlots; FAQ https://www.hugoboss.com/uk/faq-help/#clickcollect)",
     "EstimatedDeliveryDate-GetEstimatedDeliveryDatesStage?ean=<EAN> call on the product page (EAN visible)"
    ],
-   "verdict": "per-store stock check (blocked/needs browser session)",
+   "verdict": "per-store stock check (works headless)",
    "notes": "The per-store feature exists but robots.txt disallows it explicitly: 'Disallow: /*retailavailability', '/*DoRetailAvailabilitySearch', '/*Product-GetAvailability', '/*ShipToStore-', '/*COShipToStore-'. So it was not tried, and a compliant automated caller must not call it without Hugo Boss's permission. Product page itself loads headless without challenge. Product URLs come from https://www.hugoboss.com/uk/sitemap_0.xml.",
    "evidence_urls": [
     "https://www.hugoboss.com/robots.txt",
@@ -3387,8 +4328,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "yes",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /*search? (except search?cgid=), /*retailavailability, ShipToStore: no search, no stock call. Akamai on curl; Node fetch got 200.",
     "evidence_urls": [
      "https://www.hugoboss.com/robots.txt",
@@ -3398,7 +4339,111 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
-   }
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": "https://www.hugoboss.com/uk/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page, JSON-LD Organization.mainEntityOfPage (WebSite).potentialAction, not a top-level WebSite",
+    "notes": "Stored value null, probably because the WebSite is nested inside Organization. GTIN and style number both redirect to the product."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "A",
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": {
+     "endpoint": "GET https://www.hugoboss.com/on/demandware.store/Sites-UK-Site/en_GB/Retail-DoRetailAvailabilitySearch?skus=<JSON [[EAN,size],...]>&pid=<hbeuNNNNNNNN_CCC>&lat=<lat>&lon=<lon> (the page first loads the overlay GET /uk/retailavailability?pid=<pid>&format=sidebar and turns the typed postcode into lat/lon with Google Places Autocomplete + GetPlace)",
+     "response_shape": "HTML fragment: div.retailavailability__results > div.retailavailability-store per store {city (distance mi), sizes text (\"product available in a different size\" + list of sizes in stock), store page link /uk/boss-store-<slug>/, phone, address, \"Reserve via WhatsApp\"}; nearest first, 13 stores for London. No-stock answer: a short \"We are sorry, we could not find...\" block with recommendations.",
+     "canary_wharf_store_id": "no numeric id in the answer; store page slug boss-store-unit-5-cabot-place-west-london (Unit 5, Cabot Place West, E14 4QS), first result at 0.08 mi",
+     "answer_kind": "yes/no per size per store (list of sizes in stock); no counts",
+     "needs_session": false,
+     "headless_ok": true,
+     "plain_fetch_ok": true,
+     "result": "Merino polo hbeu50565503_001 (6 sizes): Canary Wharf store has S, M, L, XL, XXL. Fragrance hbeu58103572_999 (EAN 3616302968244, headless via the page with lat 51.50494 lon -0.01952): \"not found\" (no store result)."
+    },
+    "blocked": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 9,
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "EAN-13 (3616302968244, = variant sku in JSON-LD)",
+      "request": {
+       "method": "GET",
+       "host": "www.hugoboss.com",
+       "path_pattern": "/uk/search",
+       "params": "q=<q> (SearchAction template)"
+      },
+      "engine": "Salesforce Commerce Cloud native search (Search-Show)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "302 to the product page /uk/<slug>/3616302968244.html"
+     },
+     {
+      "kind": "sku",
+      "query_shape": "style number, 8 digits (58103572, shown as \"STYLE ... - 58103572\")",
+      "request": {
+       "method": "GET",
+       "host": "www.hugoboss.com",
+       "path_pattern": "/uk/search",
+       "params": "q=<q>"
+      },
+      "engine": "same",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "302 to the product page /uk/<slug>/hbeu58103572_999.html"
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name words (alive intense)",
+      "request": {
+       "method": "GET",
+       "host": "www.hugoboss.com",
+       "path_pattern": "/uk/search",
+       "params": "q=<q>"
+      },
+      "engine": "same",
+      "results": 4,
+      "target_rank": 3,
+      "exact": false,
+      "note": "result list: 2 Alive Absolu Parfum Intense, then the target 80ml, then 30ml"
+     }
+    ],
+    "gtin_lookup": "yes",
+    "sku_lookup": "yes",
+    "facets": [
+     "Gender (prefn1=genderID: Women, Men|Unisex)",
+     "Brand (prefn1=brand: BOSS)",
+     "Price (from/to select)",
+     "Season (Fall-Winter 26 (3), Fall-Winter 25 (1))",
+     "Contents (30 ml (2), 50 ml (1), 80 ml (1))"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Most Popular (srule=sort_by_most_popular)",
+     "Newest (sorting_new-products)",
+     "Price low-high (sorting_price-low-to-high)",
+     "Price high-low (sorting_price-high-to-low)"
+    ],
+    "page_size": 36,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.hugoboss.com/uk/search?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page, JSON-LD Organization.mainEntityOfPage (WebSite).potentialAction, not a top-level WebSite",
+     "matches_stored": false,
+     "is_product_search": true,
+     "notes": "Stored value null, probably because the WebSite is nested inside Organization. GTIN and style number both redirect to the product."
+    },
+    "notes": "Akamai Bot Manager sensor posts seen (randomised /ze_... path) but no challenge in 6 headless loads and 3 plain Node fetches. Stock call takes EANs + lat/lon, no cookie or token; per-size yes/no. Clicking the \"Find in store\" text failed (consent layer), a DOM click on .js-find-in-store button opened the overlay. Robots.txt disallows /*retailavailability and /*search?; ignored under the owner approval."
+   },
+   "verdict_before_2026_10_12_approval": "per-store stock check (blocked/needs browser session)"
   },
   {
    "slug": "hackett",
@@ -3516,8 +4561,8 @@
      "tools": []
     },
     "verdict": "search with facets (structured)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "wildcard_or_regex": "no",
     "notes": "robots.txt disallows \"//search\", \"/*?q=\", \"/*&q=\", refine/prefn/sort parameters and /on/demandware.store; it does not list /mobify/. No search was run. Listing pages show facets with counts (BRANDS, COMPOSITION, SIZE, COLOUR); the captured product-search call used a select that dropped the refinements, so facet JSON was read from the page, not the API. Loading a product page made the site itself create an empty guest basket and wish list through SCAPI (page script, not our action).",
     "evidence_urls": [
@@ -3530,6 +4575,113 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page JSON-LD has WebSite {url, name} and Organization, but no potentialAction",
+    "notes": "stored value null; same now. The working product search is /uk/en_gb/search?q={q}."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 4,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "colour-level product id (HM + 7 digits + colour code, JSON-LD sku/productID)",
+      "request": {
+       "method": "GET",
+       "host": "www.hackett.com",
+       "path_pattern": "/uk/en_gb/search?q={sku}",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Salesforce Commerce Cloud (PWA Kit, SCAPI); exact product id resolved by the search page",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "the search page goes straight to the product page /pd/polka-dot-braces-HM011722.html?color=5DJ (search redirect); no product-search call seen"
+     },
+     {
+      "kind": "name",
+      "query_shape": "full product name ('polka dot braces')",
+      "request": {
+       "method": "GET",
+       "host": "www.hackett.com",
+       "path_pattern": "/uk/en_gb/search?q={name}",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Salesforce Commerce Cloud (PWA Kit, SCAPI)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "also redirected straight to the product page"
+     },
+     {
+      "kind": "name",
+      "query_shape": "one word ('braces'), to read facets and sort",
+      "request": {
+       "method": "GET",
+       "host": "www.hackett.com",
+       "path_pattern": "/mobify/proxy/api/search/shopper-search/v1/organizations/{org}/product-search (called by /uk/en_gb/search?q=)",
+       "params": [
+        "siteId=HKT-UK",
+        "q",
+        "sort=best-matches",
+        "currency",
+        "locale",
+        "expand",
+        "select",
+        "limit=40",
+        "offset",
+        "c_priceCheck",
+        "Bearer SLAS guest token"
+       ]
+      },
+      "engine": "SCAPI Shopper Search",
+      "results": 7,
+      "target_rank": 1,
+      "exact": false,
+      "note": "'(7 Results)'; the target product is first"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Brands",
+     "Category",
+     "Product type",
+     "Composition",
+     "Size",
+     "Colour"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "best-matches (default); other options behind 'Sort by' not read"
+    ],
+    "page_size": 40,
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page JSON-LD has WebSite {url, name} and Organization, but no potentialAction",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "stored value null; same now. The working product search is /uk/en_gb/search?q={q}."
+    },
+    "blocked": null,
+    "notes": "No GTIN anywhere on the site, so no GTIN search. The site search jumps to the product page for an exact product id or exact name. The page's own scripts make a SLAS guest token and an empty guest basket and wish list on load (not our action).",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -3653,8 +4805,8 @@
      "tools": []
     },
     "verdict": "exact id lookup only",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows */search, ?q= and */demandware.store/, so no search was run. Route for a caller: match words against the GB sitemap slugs (each ends with the 7-digit sku), then EVA SearchProducts with Filters custom_id gives product_id and AvailabilityResult. Per-shop stock would need the Canary Wharf shop's EVA OrganizationUnitID (not found). No GTIN: tradecode is the 7-digit article number.",
     "evidence_urls": [
      "https://www.rituals.com/robots.txt",
@@ -3665,6 +4817,59 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home JSON-LD has Organization only",
+    "notes": ""
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 5,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "7-digit article number (1123756)",
+      "request": {
+       "method": "POST",
+       "host": "search.rituals.com (first-party Algolia proxy)",
+       "path_pattern": "/1/indexes/*/queries",
+       "params": "x-algolia-agent, x-algolia-application-id, x-algolia-api-key (URL); body requests[{indexName: prd_products_b2cweb_gb, query, facets [displayPrice.default], filters, page, clickAnalytics, facetingAfterDistinct}]"
+      },
+      "engine": "Algolia (via search.rituals.com proxy)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "displayPrice.default"
+    ],
+    "availability_facet": null,
+    "store_facet": false,
+    "sort": [],
+    "page_size": 16,
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home JSON-LD has Organization only",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": ""
+    },
+    "blocked": null,
+    "notes": "No GTIN. The page URL /en-gb/search?q=<term> drops the term (redirects to /en-gb/search, Algolia query empty: 748 hits = whole GB catalogue); the search box exists only in a header overlay that two headless attempts did not open. The SKU test replayed the page's own Algolia request with only the query field changed in flight (key kept in browser memory, not recorded): 1 hit, the target. No name search. requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -3782,8 +4987,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /uk/search, refinements, srule and /on/demandware.store/Sites-CTShirts-*, so nothing beyond page and sitemap was read. No GTIN; sku is style+colour, sizes not in markup. No shop stock.",
     "evidence_urls": [
      "https://www.charlestyrwhitt.com/robots.txt",
@@ -3793,6 +4998,83 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page JSON-LD has Organization, PostalAddress, ContactPoint, Person, VideoObject; no WebSite block",
+    "notes": "Stored harvest also null. The working template is /uk/search?q={q}."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 4,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "style+colour code from JSON-LD sku (10 chars, 'CSM0030STN')",
+      "request": {
+       "method": "GET",
+       "host": "www.charlestyrwhitt.com",
+       "path_pattern": "/uk/search",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "SFCC native search (server-rendered)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "sku",
+      "query_shape": "style code only, colour suffix dropped (7 chars, 'CSM0030')",
+      "request": {
+       "method": "GET",
+       "host": "www.charlestyrwhitt.com",
+       "path_pattern": "/uk/search",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "SFCC native search (server-rendered)",
+      "results": 2,
+      "target_rank": null,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Product Type",
+     "Colour (also as path refinements /uk/search/<colour>?q=)"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Recommended",
+     "Top Rated",
+     "Price High To Low",
+     "Price Low To High"
+    ],
+    "page_size": "unknown (2 results, 1 page; no size selector)",
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page JSON-LD has Organization, PostalAddress, ContactPoint, Person, VideoObject; no WebSite block",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Stored harvest also null. The working template is /uk/search?q={q}."
+    },
+    "blocked": null,
+    "notes": "Exact SKU search redirects straight to the product page (final URL <product>.html?singleRes=true&q=<sku>): one-hit redirect, so 'results 1' means the redirect. The bare style code 'CSM0030' gave 2 other colourways (leaf print sage, mocha) but not the stripe stone target: the style code is shared across different prints, and the search does not prefix-match the full code. No GTIN on the site. No shop stock.",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -3849,6 +5131,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/holland-barrett-jubilee-place/",
     "kgx": "https://canarywharf.com/shop/holland-barrett-jubilee-place/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -3982,8 +5267,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows */search/*, *?q=*, *search=*, sort/price params and */stock/*: no search run. Facet list read from algoliaConfig in the page. Stock source \"onestock\" (OneStock OMS) per variant, online only on the page.",
     "evidence_urls": [
      "https://www.jdsports.co.uk/robots.txt",
@@ -3993,6 +5278,116 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.jdsports.co.uk/search/{search_term_string}/",
+    "live_2026_10_12": "https://www.jdsports.co.uk/search/{search_term_string}/",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page, JSON-LD WebSite.potentialAction",
+    "notes": "Path-style template; the page renders client-side from Algolia. Works for the JD product code, not for EAN."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "blocked": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 4,
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "EAN-13 (0198967892445, variant ean in page data, UPC-A as EAN-13)",
+      "request": {
+       "method": "POST",
+       "host": "<appId>-dsn.algolia.net (page /search/<q>/ calls it)",
+       "path_pattern": "/1/compositions/<compositionId>___jd_prod_products_en/run",
+       "params": "params {query, facets[37], hitsPerPage 72, maxValuesPerFacet 200, page, ruleContexts [\"web\",\"default-sort-by\"], clickAnalytics, enableABTest, userToken}"
+      },
+      "engine": "Algolia (Composition API)",
+      "results": 0,
+      "target_rank": null,
+      "exact": false,
+      "note": "\"We couldn't find any results\"; ean is not a searchable attribute"
+     },
+     {
+      "kind": "sku",
+      "query_shape": "JD product code (PLU) 8 digits (19770317, = objectID)",
+      "request": {
+       "method": "POST",
+       "host": "<appId>-dsn.algolia.net",
+       "path_pattern": "/1/compositions/<compositionId>___jd_prod_products_en/run",
+       "params": "same, query=<q>"
+      },
+      "engine": "Algolia (Composition API)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "result page /search/19770317/ with 1 product (Nike P-6000)"
+     }
+    ],
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
+    "facets": [
+     "age",
+     "availability",
+     "bagType",
+     "basketballTeam",
+     "brand",
+     "campaign",
+     "capStyle",
+     "category",
+     "categoryPageId",
+     "club",
+     "collection",
+     "colour",
+     "edit",
+     "exclusive",
+     "footballLeague",
+     "footballTeam",
+     "gender",
+     "hierarchicalCategories.lvl0",
+     "inStock_Hem",
+     "inStock_KW",
+     "inStock_PP",
+     "inStock_Stores",
+     "mlbTeam",
+     "multipackUnderwear",
+     "nation",
+     "nflTeam",
+     "onSale",
+     "partnerExclusiveNike",
+     "price",
+     "productType",
+     "rugbyTeam",
+     "size",
+     "sockType",
+     "sport",
+     "style",
+     "trend",
+     "underwearType"
+    ],
+    "availability_facet": true,
+    "store_facet": "chain-level only: inStock_Stores (true/false over all shops) and hit field StockLevelBand_Stores (band, e.g. 3); no per-shop facet",
+    "sort": [
+     "Relevance (default, ruleContexts default-sort-by)",
+     "Latest",
+     "Name A-Z / Z-A",
+     "Price low-high / high-low (replica indices)"
+    ],
+    "page_size": 72,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.jdsports.co.uk/search/{search_term_string}/",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page, JSON-LD WebSite.potentialAction",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Path-style template; the page renders client-side from Algolia. Works for the JD product code, not for EAN."
+    },
+    "notes": "Hits carry stock fields inStock, inStock_Stores, inStock_PP, inStock_KW, inStock_Hem, inStock_Heerlen, inStock_ROI, StockLevelBand_* (warehouse / channel bands), sizes and sizeCoverage. Algolia key used only by the page in its own requests; not read or stored. No bot wall in 4 headless loads. Third search not made."
    }
   },
   {
@@ -4127,8 +5522,8 @@
      "tools": []
     },
     "verdict": "search with facets (structured)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
     "wildcard_or_regex": "no",
     "notes": "robots.txt disallows /uk/search, /search, /mobify/ and refine/prefn/pmin parameters, so no search was run (neither Algolia nor SCAPI). SCAPI refinements on a listing page (made by the page) show 19 facets with counts, including allergens; the UI has an \"In Stock Only\" toggle (online stock). The EAN sits in the page product data, not in JSON-LD. Store stock: inferred SCAPI route under /mobify/ (disallowed; survey).",
     "evidence_urls": [
@@ -4141,7 +5536,117 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
-   }
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.hotelchocolat.com/uk/search?q={search_term_string}",
+    "live_2026_10_12": "https://www.hotelchocolat.com/uk/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page JSON-LD (Organization + WebSite with potentialAction)",
+    "notes": "real product search (the page runs Algolia with the query); finds the product id, not the EAN; no utm parameters; same country site"
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "A",
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 9,
+    "set_a": {
+     "endpoint": {
+      "method": "GET",
+      "host": "www.hotelchocolat.com",
+      "path_pattern": "1) /mobify/proxy/loqate/Capture/Interactive/Find|Retrieve and /mobify/proxy/loqate/Geocoding/International/Geocode (address to lat/long, the page's Loqate key); 2) /mobify/proxy/api/store/shopper-stores/v1/organizations/{org}/store-search; 3) /mobify/proxy/api/product/shopper-products/v1/organizations/{org}/products/{productId}?inventoryIds=inventory_store_<id>,... (5 per call)",
+      "params": {
+       "store-search": "latitude, longitude, distanceUnit=mi, maxDistance=20, siteId=HotelChocolat, locale=en-GB, limit=200",
+       "products": "inventoryIds (comma list, page sends 5 per call), currency=GBP, locale, siteId",
+       "auth": "Authorization: Bearer SLAS guest token (POST /mobify/slas/private/shopper/auth/v1/organizations/{org}/oauth2/token, form grant_type=client_credentials, channel_id, dnt)"
+      }
+     },
+     "response_shape": "store-search: {limit, data:[{id, name, address1, address2, city, postalCode, latitude, longitude, distance, distanceUnit, phone, storeHours (JSON in a string), c_inventoryListId, c_clickAndCollect, c_cafe, c_velvetiserCafe, c_isIceCream, c_boutique, c_concession, ...}]}; product: the full SCAPI product plus inventories:[{id, ats, stockLevel, orderable, backorderable, preorderable}]",
+     "canary_wharf_store_id": "305 'Jubilee Place - Canary Wharf' (E14 5NY, inventory_store_305, 0.17 mi) and 160 'London - Canary Wharf' (16-19 Canada Place, E14 5EQ, inventory_store_160, 0.17 mi); first two of 39 stores within 20 mi",
+     "answer_kind": "count per store (ats = stockLevel units) plus orderable true/false",
+     "needs_session": "guest token only (SLAS client_credentials through the site's /mobify/slas/private proxy); no login, no cookie",
+     "headless_ok": true,
+     "plain_fetch_ok": true,
+     "result": "worked. Caramel Penguin Selector 120410 at E14 5AB: Jubilee Place ats 2, Canada Place ats 1; 33 of 39 nearby stores ats > 0, 6 not orderable. Plain Node fetch (guest token, then products/120410?inventoryIds=...) gave the same numbers. Headless: the 'Find In Store' button ([data-testid=find-in-store-link]) opens a dialog with input 'Enter postcode, street or address' (Loqate address suggestions); the cookie banner was left untouched."
+    },
+    "searches": [
+     {
+      "kind": "gtin",
+      "query_shape": "EAN-13 (5056..., field 'ean' in the SCAPI product data; not in JSON-LD)",
+      "request": {
+       "method": "POST",
+       "host": "<appid>-dsn.algolia.net (called by /uk/search?q={gtin}, the SearchAction template)",
+       "path_pattern": "/1/indexes/production_web_hotelchocolat_demandware_net__HotelChocolat__products__en_GB/query",
+       "params": [
+        "query",
+        "page",
+        "hitsPerPage=36",
+        "facets",
+        "facetFilters",
+        "ruleContexts",
+        "clickAnalytics",
+        "enablePersonalization"
+       ]
+      },
+      "engine": "Algolia (SFCC cartridge index)",
+      "results": 0,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "sku",
+      "query_shape": "6-digit product id (JSON-LD sku)",
+      "request": {
+       "method": "POST",
+       "host": "<appid>-dsn.algolia.net (called by /uk/search?q={sku})",
+       "path_pattern": "/1/indexes/production_web_hotelchocolat_demandware_net__HotelChocolat__products__en_GB/query",
+       "params": [
+        "query",
+        "page",
+        "hitsPerPage=36",
+        "facets",
+        "facetFilters",
+        "ruleContexts"
+       ]
+      },
+      "engine": "Algolia (SFCC cartridge index)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     }
+    ],
+    "gtin_lookup": "no",
+    "sku_lookup": "yes",
+    "facets": [
+     "Algolia: in_stock, price.GBP, productType, categories.id, categories.name, chocolateTypes, isAlcoholFree, isSuitableVegan, primary_category_id, __primary_category.0/.1",
+     "SCAPI refinements on the same page: c_productType, c_chocolateTypes, price, c_measureCocoaPercentage, c_isSuitableVegetarian, c_isSuitableVegan, c_isAlcoholFree, c_hamperProductType, c_isSale, 8 allergen flags (c_containsTreeNuts ... c_containsSulphites), c_isContainsArtificialColours, c_isContainsArtificialFlavours",
+     "UI: 'In Stock Only' toggle"
+    ],
+    "availability_facet": "yes: in_stock (online stock), 'In Stock Only' toggle",
+    "store_facet": false,
+    "sort": [
+     "Recommended",
+     "price-high",
+     "price-low",
+     "review"
+    ],
+    "page_size": 36,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.hotelchocolat.com/uk/search?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page JSON-LD (Organization + WebSite with potentialAction)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "real product search (the page runs Algolia with the query); finds the product id, not the EAN; no utm parameters; same country site"
+    },
+    "blocked": null,
+    "notes": "Per-store stock with unit counts for both Canary Wharf shops, by plain fetch with a guest token. Search by EAN gives 0; map EAN to product id from SCAPI product data or the sitemap. The Loqate key and the Algolia key are in the page; not recorded.",
+    "checked_at": "2026-10-12"
+   },
+   "verdict_before_2026_10_12_approval": "per-store stock check (works headless)"
   },
   {
    "slug": "next",
@@ -4195,6 +5700,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/next/",
     "kgx": "https://canarywharf.com/shop/next/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4325,8 +5833,8 @@
      "tools": []
     },
     "verdict": "search with facets (structured)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /en/recherche, controller=search and search_query, so no search was run. Browse by category with the faceted filters instead (wines: 204 products, 9 facets). Ordering (?order=) and page size (?n=) are disallowed for crawlers, so page through with the default order only. No GTIN on the page.",
     "evidence_urls": [
      "https://nicolas.co.uk/robots.txt",
@@ -4337,6 +5845,76 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://nicolas.co.uk/en/recherche?search_query={search_term_string}",
+    "live_2026_10_12": "https://nicolas.co.uk/en/recherche?search_query={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "JSON-LD WebSite on /en/ home (headless; a plain fetch of the home answered 200 with an empty body)",
+    "notes": "Legacy search_query parameter still works."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 4,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "6-digit reference = PrestaShop id_product (272785), via SearchAction template",
+      "request": {
+       "method": "GET",
+       "host": "nicolas.co.uk",
+       "path_pattern": "/en/recherche",
+       "params": "search_query=<q> (Accept: application/json gives the PrestaShop JSON listing)"
+      },
+      "engine": "PrestaShop native search",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "name",
+      "query_shape": "producer name (malard)",
+      "request": {
+       "method": "GET",
+       "host": "nicolas.co.uk",
+       "path_pattern": "/en/recherche",
+       "params": "search_query=<q>"
+      },
+      "engine": "PrestaShop native search",
+      "results": 3,
+      "target_rank": 1,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Name, A to Z (product.name.asc)",
+     "Name, Z to A (product.name.desc)",
+     "Price, low to high (product.price.asc)",
+     "Price, high to low (product.price.desc)"
+    ],
+    "page_size": "12 (theme default; 3 shown for 3 results)",
+    "searchaction": {
+     "present": true,
+     "target": "https://nicolas.co.uk/en/recherche?search_query={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "JSON-LD WebSite on /en/ home (headless; a plain fetch of the home answered 200 with an empty body)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Legacy search_query parameter still works."
+    },
+    "blocked": null,
+    "notes": "No GTIN. The search JSON (keys products, sort_orders, pagination, rendered_facets ...) returned no facet blocks for search results. Exact on the reference. requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -4390,6 +5968,9 @@
     "mall": "Canada Square",
     "cwg_url": "https://canarywharf.com/shop/waitrose-partners/",
     "kgx": "https://canarywharf.com/shop/waitrose-partners/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4445,6 +6026,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/monica-vinader/",
     "kgx": "https://canarywharf.com/shop/monica-vinader/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4496,6 +6080,9 @@
     "mall": "One Canada Square",
     "cwg_url": "https://canarywharf.com/shop/ee-jewellery/",
     "kgx": "https://canarywharf.com/shop/ee-jewellery/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4632,6 +6219,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "yes (search for the EAN returned the product; EAN is also the URL id)",
     "sku_lookup_detail": "yes (sku = EAN)"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.moleskine.com/en-gb/search//?q={query}"
    }
   },
   {
@@ -4685,6 +6275,9 @@
     "mall": "Canada Square",
     "cwg_url": "https://canarywharf.com/shop/john-lewis-partners/",
     "kgx": "https://canarywharf.com/shop/john-lewis-partners/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4745,6 +6338,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/l-k-bennett/",
     "kgx": "https://canarywharf.com/shop/l-k-bennett/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4862,6 +6458,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/swarovski/",
     "kgx": "https://canarywharf.com/shop/swarovski/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -4987,8 +6586,8 @@
      "tools": []
     },
     "verdict": "exact id lookup only",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /catalogsearch/, brand=, colour=, sort and limit params: no search. The open stock endpoint takes the SKU exactly; get the SKU from the product page (URL from sitemap or breadcrumb). Facet names inferred from robots.txt params and Live Search config, not seen as JSON. Category listing is server-rendered (headless load made only Adobe recommendations calls).",
     "evidence_urls": [
      "https://www.robertdyas.co.uk/robots.txt",
@@ -4998,6 +6597,84 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page JSON-LD has Organization only; no WebSite block",
+    "notes": "Stored harvest also null. Working template: /catalogsearch/result/?q={q}."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 4,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "6-digit Magento SKU / 'Product code' from JSON-LD sku and itemprop=sku (251735, Duracell Optimum AA 4-pack)",
+      "request": {
+       "method": "GET",
+       "host": "www.robertdyas.co.uk",
+       "path_pattern": "/catalogsearch/result/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Magento 2 catalog search, server-rendered result page (no Live Search or Bloomreach XHR seen on the result page)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "sku",
+      "query_shape": "manufacturer 'Model' number shown on the product page (7 digits, 5019316)",
+      "request": {
+       "method": "GET",
+       "host": "www.robertdyas.co.uk",
+       "path_pattern": "/catalogsearch/result/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Magento 2 catalog search, server-rendered",
+      "results": 5,
+      "target_rank": null,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "layered navigation present (Magento) but facet names not isolated by the probe; earlier robots.txt reading gives brand, colour, price/sale_price, bv_rating"
+    ],
+    "availability_facet": "unknown",
+    "store_facet": "unknown",
+    "sort": [
+     "Most Popular",
+     "Name A-Z",
+     "Name Z-A",
+     "Rating high-low",
+     "Price high-low",
+     "Price low-high"
+    ],
+    "page_size": "24 by default (options 24, 48, 72)",
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page JSON-LD has Organization only; no WebSite block",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Stored harvest also null. Working template: /catalogsearch/result/?q={q}."
+    },
+    "blocked": null,
+    "notes": "No GTIN/EAN in the product page JSON-LD (Product has sku only; the page also shows 'Model' = manufacturer number), so GTIN search skipped. SKU search gives the one exact product. The model number is not indexed: 5 unrelated items (log storage, fire guards), target absent. Bazaarvoice review calls on the product page filter by the same SKU. New Relic on the page reports webdriverDetected=true, but no challenge was served. Join route stays: SKU from the product page, then the open get-inventory-availability call (store rd_6088).",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -5051,6 +6728,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/cos/",
     "kgx": "https://canarywharf.com/shop/cos/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -5183,8 +6863,8 @@
      ]
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "unknown",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "wildcard_or_regex": "no",
     "notes": "robots.txt (older Shopify template) disallows /search, so no site search was run; Shopify native search would search variants.sku and variants.barcode by default (docs). The allowed routes are products.json, sitemaps and the UCP MCP endpoint (needs an agent profile). Cards and gifts carry supplier UPC/EAN barcodes in variant JSON but not in JSON-LD. Collection filters are tag facets (recipient, occasion). Searches run: 0. tools/list answered without auth (13 tools). tools/call search_catalog refused with 422 \"UCP discovery failed: invalid_profile_url ... Missing profile uri\": every call needs meta[\"ucp-agent\"].profile, a fetchable UCP agent profile URI. We have none, so no catalogue call was made through MCP. A caller must publish an agent profile first.",
     "evidence_urls": [
@@ -5199,6 +6879,82 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.scribbler.com/search?q={search_term_string}",
+    "live_2026_10_12": "https://www.scribbler.com/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page, JSON-LD WebSite.potentialAction (Shopify theme)",
+    "notes": "Shopify theme default template. Headless page showed USD prices ($5.37): the proxy exit is not in the UK, so Shopify Markets picked another currency."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "blocked": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 7,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "product code letters+digits (HM1060; Product.sku)",
+      "request": {
+       "method": "GET",
+       "host": "www.scribbler.com",
+       "path_pattern": "/search",
+       "params": "q=<q> (SearchAction template)"
+      },
+      "engine": "Shopify native search (server-rendered theme page)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "title \"1 result found for HM1060\""
+     },
+     {
+      "kind": "sku",
+      "query_shape": "variant SKU (HM1060LARGE)",
+      "request": {
+       "method": "GET",
+       "host": "www.scribbler.com",
+       "path_pattern": "/search",
+       "params": "q=<q>"
+      },
+      "engine": "same",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "variant SKU finds the product too"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "type tabs: All / Cards / Gifts",
+     "Who's it for? (filter.p.tag)",
+     "What's the Occasion? (filter.p.tag)",
+     "Style & Humour (filter.p.tag)"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "Relevance",
+     "Price, low to high",
+     "Price, high to low"
+    ],
+    "page_size": null,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.scribbler.com/search?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page, JSON-LD WebSite.potentialAction (Shopify theme)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Shopify theme default template. Headless page showed USD prices ($5.37): the proxy exit is not in the UK, so Shopify Markets picked another currency."
+    },
+    "notes": "No GTIN found: 0 barcodes in the 250 newest products (products.json, 435 variants) and in 2 card products (.js). GTIN search skipped. Shopify search matches product and variant SKU."
    }
   },
   {
@@ -5252,6 +7008,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/russell-bromley/",
     "kgx": "https://canarywharf.com/shop/russell-bromley/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -5307,6 +7066,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/reiss-jubilee-place/",
     "kgx": "https://canarywharf.com/shop/reiss-jubilee-place/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -5420,8 +7182,8 @@
      "tools": []
     },
     "verdict": "exact id lookup only",
-    "gtin_lookup": "no",
-    "sku_lookup": "no",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "Next.js app over a JSON RPC API; every product id is a UUID and there is no GTIN, sku code or JSON-LD. robots.txt disallows /search? so no search was run. storePick/storePickConfig/public_getByArea {area:'GB'} answered empty: no shop pick-up in the UK. From user words a caller must browse collections (home page lists) or use the site search in a browser; then spu UUID -> getStock gives online stock only.",
     "evidence_urls": [
      "https://www.popmart.com/robots.txt",
@@ -5432,6 +7194,81 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "no"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page: no JSON-LD and no microdata",
+    "notes": "stored value null; same now. Working search URL: https://www.popmart.com/gb/search?q={q}."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 4,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "spu UUID (the last URL segment; the shop has no human-readable sku)",
+      "request": {
+       "method": "POST",
+       "host": "prod-uk-online-api.popmart.com (called by www.popmart.com/gb/search?q={q})",
+       "path_pattern": "/rpc/search/public_search",
+       "params": [
+        "json body {json:{q, page, pageSize:20, isIncludePopNow:true}}"
+       ]
+      },
+      "engine": "custom JSON RPC search (hits carry _rankingScore, synonyms fields; probably Meilisearch behind the RPC)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "first try used ?keyword= (the parameter recorded in the survey): the page showed 'Searching...' and made no search call; the page's own box uses ?q="
+     },
+     {
+      "kind": "name",
+      "query_shape": "series name ('Chaka Candlelit Wander')",
+      "request": {
+       "method": "POST",
+       "host": "prod-uk-online-api.popmart.com",
+       "path_pattern": "/rpc/search/public_search",
+       "params": [
+        "json body {json:{q, page, pageSize, isIncludePopNow}}"
+       ]
+      },
+      "engine": "custom JSON RPC search",
+      "results": 6,
+      "target_rank": 1,
+      "exact": true,
+      "note": "typed in the page's search box; the other 5 hits are other CHAKA series"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Category (about 45 product types, e.g. Plush, Pendant Blind Box, MEGA 400%)",
+     "IP Category (characters, e.g. THE MONSTERS, SKULLPANDA, HIRONO)",
+     "POP NOW"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [],
+    "page_size": 20,
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page: no JSON-LD and no microdata",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "stored value null; same now. Working search URL: https://www.popmart.com/gb/search?q={q}."
+    },
+    "blocked": null,
+    "notes": "No GTIN and no sku code on the site, so no GTIN search. Answer JSON {items[], page, total, pageSize, isEmptySearch}; items carry id, name, price, categoryName, ipName, collectionNames, areaSkuPrices, warehouse, searchTags. No facets or counts in the answer; the filter lists are page UI. Cloudflare passive check (cdn-cgi challenge-platform jsd) and a device-fingerprint script ran; no challenge was shown.",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -5486,6 +7323,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/loccitane/",
     "kgx": "https://canarywharf.com/shop/loccitane/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -5604,8 +7444,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /search?q=* and /site/search?q=*, so neither the site search nor Algolia was called (Algolia would answer structured facets). No JSON-LD and no GTIN. No shop stock.",
     "evidence_urls": [
      "https://www.hawesandcurtis.co.uk/robots.txt",
@@ -5616,6 +7456,73 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.hawesandcurtis.co.uk/search?q={search_term_string}",
+    "live_2026_10_12": "https://www.hawesandcurtis.co.uk/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "JSON-LD potentialAction on Organization (not WebSite)",
+    "notes": "Declared on Organization, which consumers that expect WebSite may ignore."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 4,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "style-colour SKU (BFDFI015-H51)",
+      "request": {
+       "method": "POST",
+       "host": "www.hawesandcurtis.co.uk",
+       "path_pattern": "/api/Site/AjaxProductsFromCategories (page /search?q=)",
+       "params": "JSON body PageNumber, ViewAll, CategoryAttributes[], Query, AttraqtSessionId, SearchParams"
+      },
+      "engine": "Algolia index Products_UK behind a first-party API (answer Source=Algolia, FredhopperRID field present)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     },
+     {
+      "kind": "name",
+      "query_shape": "colour + pattern + fit words (cream blue floral slim shirt)",
+      "request": {
+       "method": "POST",
+       "host": "www.hawesandcurtis.co.uk",
+       "path_pattern": "/api/Site/AjaxProductsFromCategories",
+       "params": "same"
+      },
+      "engine": "same",
+      "results": 2,
+      "target_rank": 2,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "12 groups in FacetedNavigationGroup (fields Label, Items[].Name, NumProducts, IsAvailable, IsSizeAttribute); names not read"
+    ],
+    "availability_facet": "unknown",
+    "store_facet": false,
+    "sort": [],
+    "page_size": null,
+    "searchaction": {
+     "present": true,
+     "target": "https://www.hawesandcurtis.co.uk/search?q={search_term_string}",
+     "query_input": "required name=search_term_string",
+     "declared_on": "JSON-LD potentialAction on Organization (not WebSite)",
+     "matches_stored": true,
+     "is_product_search": true,
+     "notes": "Declared on Organization, which consumers that expect WebSite may ignore."
+    },
+    "blocked": null,
+    "notes": "No GTIN. Answer keys: AlgoliaSearchIndex, Products, FacetedNavigationGroup, Page, TotalProduct, FredhopperRID, Source, Cached, CacheKey, ABTest. The page sends the query still URL-encoded (%20) and still matches. No direct Algolia call from the browser on the search page. requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -5670,6 +7577,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/the-fragrance-shop/",
     "kgx": "https://canarywharf.com/shop/the-fragrance-shop/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -5724,6 +7634,9 @@
     "mall": "Jubilee Place",
     "cwg_url": "https://canarywharf.com/shop/weather-and-palette/",
     "kgx": "https://canarywharf.com/shop/weather-and-palette/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -5857,8 +7770,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt: Crawl-delay 5, disallows */Search-ShowAjax* and */?q=*: no search run. No EAN on the page; style code in the URL (-AI0092.html) is the join key.",
     "evidence_urls": [
      "https://www.intimissimi.com/robots.txt",
@@ -5869,6 +7782,77 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page has no JSON-LD at all (no types found) and no microdata SearchAction",
+    "notes": "Stored harvest also null. Working template: /uk/search/?q={q} (/uk/search?q= redirects there)."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 4,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "style code from JSON-LD sku / 'Item code' (6 chars, 'AI0092', Silk Sleep Mask)",
+      "request": {
+       "method": "GET",
+       "host": "www.intimissimi.com",
+       "path_pattern": "/uk/search/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "SFCC native search (server-rendered grid)",
+      "results": 2,
+      "target_rank": "present (1 or 2 of 2; menu promo tiles above the grid prevent an exact rank)",
+      "exact": true
+     },
+     {
+      "kind": "sku",
+      "query_shape": "style + colour code from page data-pid / variation (10 chars, 'AI0092198K')",
+      "request": {
+       "method": "GET",
+       "host": "www.intimissimi.com",
+       "path_pattern": "/uk/search/",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "SFCC native search",
+      "results": 0,
+      "target_rank": null,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "size (value 'ONE SIZE' seen in the filter drawer, with 'View 2 results' and 'Reset' buttons)"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [],
+    "page_size": "unknown (2 results; earlier pass read sort top-sellers/price/new-arrivals on category pages)",
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page has no JSON-LD at all (no types found) and no microdata SearchAction",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Stored harvest also null. Working template: /uk/search/?q={q} (/uk/search?q= redirects there)."
+    },
+    "blocked": null,
+    "notes": "No GTIN/EAN in JSON-LD or in the Product-Variation JSON (fields: id, availability {orderable, lowStockItems}, quantities, variationAttributes; no ean/upc/gtin key). Style code finds the product; the colour-suffixed variant code gives a no-results page with recommendations. So index holds style codes only. 'Check in-store pickup availability' block is on the product page (set A not approved for this brand).",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -6007,6 +7991,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://sostrenegrene.com/en-gb/search?term={search_term_string}"
    }
   },
   {
@@ -6127,8 +8114,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows */catalogsearch/, so no search was run (the Mirasvit autocomplete path is not listed but is the same search, so not called either). The UK sitemap lists 119 product URLs whose slug starts with the 8-digit sku, so a caller can match name words against the slugs and read the sku directly. No GTIN.",
     "evidence_urls": [
      "https://laderach.com/robots.txt",
@@ -6139,6 +8126,92 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": "https://laderach.com/uk-en/catalogsearch/result/index/?q={search_term_string} (UK block) and https://laderach.com/catalogsearch/result/?q={search_term_string} (Magento SEO block)",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page /uk-en/, two JSON-LD WebSite blocks with potentialAction",
+    "notes": "Stored value null. The root template points to the Swiss (de-CH, CHF) store, not the UK store; the /uk-en/ template is the right one. SKU search is exact on both."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "blocked": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 4,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "8-digit SKU (10073828; Product.sku and URL key prefix)",
+      "request": {
+       "method": "GET",
+       "host": "laderach.com",
+       "path_pattern": "/uk-en/catalogsearch/result/index/",
+       "params": "q=<q> (UK SearchAction template)"
+      },
+      "engine": "Magento 2 catalog search (Hyvä theme)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "Dark Praline Selection 12pcs, GBP"
+     },
+     {
+      "kind": "sku",
+      "query_shape": "same SKU via the second (root) SearchAction template",
+      "request": {
+       "method": "GET",
+       "host": "laderach.com",
+       "path_pattern": "/catalogsearch/result/",
+       "params": "q=<q>"
+      },
+      "engine": "same",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "root template lands on the Swiss German store (CHF, \"Suchergebnisse\"): wrong country for the UK shop"
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name words (praline selection)",
+      "request": {
+       "method": "GET",
+       "host": "laderach.com",
+       "path_pattern": "/uk-en/catalogsearch/result/index/",
+       "params": "q=<q>"
+      },
+      "engine": "same",
+      "results": 22,
+      "target_rank": 14,
+      "exact": false,
+      "note": "target Dark Praline Selection 12pcs at place 14 of 22"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Price ranges (GBP 0-29 (8), 30-59 (9), 60-89 (3), 90-119 (0), 120+ (1))"
+    ],
+    "availability_facet": false,
+    "store_facet": false,
+    "sort": [
+     "relevance (default; product_list_order, no sort control shown on the search page)"
+    ],
+    "page_size": null,
+    "searchaction": {
+     "present": true,
+     "target": "https://laderach.com/uk-en/catalogsearch/result/index/?q={search_term_string} (UK block) and https://laderach.com/catalogsearch/result/?q={search_term_string} (Magento SEO block)",
+     "query_input": "required name=search_term_string",
+     "declared_on": "home page /uk-en/, two JSON-LD WebSite blocks with potentialAction",
+     "matches_stored": false,
+     "is_product_search": true,
+     "notes": "Stored value null. The root template points to the Swiss (de-CH, CHF) store, not the UK store; the /uk-en/ template is the right one. SKU search is exact on both."
+    },
+    "notes": "No GTIN on the site. Search answers server-side HTML; Cloudflare RUM only, no challenge. Facets: price only."
    }
   },
   {
@@ -6262,8 +8335,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows /*search, refinements, sort and paging parameters: no search run. From a sitemap URL to a pid: the page JSON-LD sku. Stock call answers only the session store (geo-IP).",
     "evidence_urls": [
      "https://www.accessorize.com/robots.txt",
@@ -6273,6 +8346,91 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": "https://www.accessorize.com/uk/search?q={search_term_string}",
+    "present": true,
+    "is_product_search": true,
+    "declared_on": "home page JSON-LD WebSite (/uk/ redirects to /uk)",
+    "notes": "stored value (2026-10-06) was null; it is present now. Real product search; finds the variant pid; no utm parameters; same country site"
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 5,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "10-digit variant pid (JSON-LD sku = mpn)",
+      "request": {
+       "method": "GET",
+       "host": "www.accessorize.com",
+       "path_pattern": "/uk/search?q={sku} (the SearchAction template)",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "Salesforce Commerce Cloud native search (SFRA Search-Show)",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true,
+      "note": "'1 products'; the tile is the style+colour product 39007603 (Classic Tote Bag); plain fetch, server-rendered HTML"
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name ('classic tote bag')",
+      "request": {
+       "method": "GET",
+       "host": "www.accessorize.com",
+       "path_pattern": "/uk/search?q={name}",
+       "params": [
+        "q",
+        "prefn1/prefv1",
+        "srule",
+        "sz"
+       ]
+      },
+      "engine": "Salesforce Commerce Cloud native search (SFRA Search-Show)",
+      "results": 2,
+      "target_rank": 2,
+      "exact": false,
+      "note": "'2 Products'; the target is second, after another tote"
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Colour (refinementColor)",
+     "Size",
+     "Fabric",
+     "Product Type (productTypeCode)",
+     "Price",
+     "Available For Store (storeAvailability; hidden accordion; values are numeric store ids with product counts, 119 stores for this query)"
+    ],
+    "availability_facet": "yes, per store: storeAvailability",
+    "store_facet": "yes: prefn1=storeAvailability&prefv1=<store id>; Canary Wharf = 1163 ('ACCESSORIZE CANARY WHARF', E14 5AX, from Stores-FindStores by lat/long); for 'classic tote bag' store 1163 shows (1)",
+    "sort": [
+     "whatsnew (What's new?)",
+     "price-low-to-high",
+     "price-high-to-low"
+    ],
+    "page_size": "sz parameter (not read for 2 results)",
+    "searchaction": {
+     "present": true,
+     "target": "https://www.accessorize.com/uk/search?q={search_term_string}",
+     "query_input": "required name=search_term_string (also a non-standard \"query\": \"required\")",
+     "declared_on": "home page JSON-LD WebSite (/uk/ redirects to /uk)",
+     "matches_stored": false,
+     "is_product_search": true,
+     "notes": "stored value (2026-10-06) was null; it is present now. Real product search; finds the variant pid; no utm parameters; same country site"
+    },
+    "blocked": null,
+    "notes": "No GTIN on the site. The search result page carries a per-store facet 'Available For Store' with counts, so 'which of these products are in the Canary Wharf shop' is one GET: /uk/search?q={q}&prefn1=storeAvailability&prefv1=1163 (not run). Store id from Stores-FindStores?lat=&long=&radius=15 (postalCode=E14 5AB with radius 5 gave 0 stores).",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -6324,6 +8482,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/office-shoes/",
     "kgx": "https://canarywharf.com/shop/office-shoes/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://www.office.co.uk/view/search?search={search_term_string}"
    }
   },
   {
@@ -6462,6 +8623,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://theflowerclubldn.co.uk/search?q={search_term_string}"
    }
   },
   {
@@ -6516,6 +8680,9 @@
     "mall": "Cabot Place",
     "cwg_url": "https://canarywharf.com/shop/polo-ralph-lauren/",
     "kgx": "https://canarywharf.com/shop/polo-ralph-lauren/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -6670,6 +8837,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -6833,6 +9003,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -6987,6 +9160,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "unknown",
     "sku_lookup_detail": "yes (predictive search found DMK003)"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -7144,6 +9320,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "yes",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -7298,6 +9477,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "yes",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -7455,6 +9637,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://newbiestore.com/search?q={search_term_string}"
    }
   },
   {
@@ -7587,8 +9772,8 @@
      "tools": []
     },
     "verdict": "search free text only",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
     "notes": "robots.txt disallows */search?* and all facet parameters: no search run. Facet names come from robots.txt. No GTIN. Click & Collect store choice only in checkout.",
     "evidence_urls": [
      "https://www.dunelondon.com/robots.txt",
@@ -7598,6 +9783,69 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home JSON-LD has WebPage only",
+    "notes": ""
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "set_a": null,
+    "checked_at": "2026-10-12",
+    "requests_made": 2,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "16-digit SFCC product id (0019500110109887)",
+      "request": {
+       "method": "GET",
+       "host": "www.dunelondon.com",
+       "path_pattern": "/search",
+       "params": "q=<id> (suggestions: /on/demandware.store/Sites-DuneUK-Site/en_GB/SearchServices-GetSuggestions?q=&isMobile=&isTablet=)"
+      },
+      "engine": "Salesforce Commerce Cloud native search, server-rendered",
+      "results": 1,
+      "target_rank": 1,
+      "exact": true
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "yes",
+    "facets": [
+     "Gender",
+     "Size",
+     "Colour",
+     "Product Type",
+     "Price",
+     "Brand"
+    ],
+    "availability_facet": null,
+    "store_facet": false,
+    "sort": [
+     "Most Popular",
+     "Newest Arrivals",
+     "Price Low to High",
+     "Price High to Low"
+    ],
+    "page_size": null,
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home JSON-LD has WebPage only",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": ""
+    },
+    "blocked": null,
+    "notes": "No GTIN. \"WE HAVE FOUND 1 RESULT\" for the id; the target is the one product. Facets and sort from the page DOM (HTML, not JSON). requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
    }
   },
   {
@@ -7747,6 +9995,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "no"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -7906,6 +10157,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": "https://dmr.co.uk/search?q={query}"
    }
   },
   {
@@ -8072,6 +10326,9 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "yes",
     "sku_lookup_detail": "yes"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -8184,8 +10441,8 @@
      "tools": []
     },
     "verdict": "catalogue enumerable (feed/products.json/sitemap)",
-    "gtin_lookup": "no",
-    "sku_lookup": "unknown",
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
     "notes": "robots.txt disallows /*?q=* and filter parameters: no search run. Per-size offers in JSON-LD give online stock per size. The 13-digit variant codes pass the EAN check but are internal (style + size), not GS1 barcodes.",
     "evidence_urls": [
      "https://www.moss.co.uk/robots.txt",
@@ -8195,6 +10452,93 @@
     "checked_at": "2026-10-12",
     "gtin_lookup_detail": "no",
     "sku_lookup_detail": "unknown"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null,
+    "live_2026_10_12": null,
+    "present": false,
+    "is_product_search": null,
+    "declared_on": "home page JSON-LD has WebSite, SiteNavigationElement, Organization; WebSite has no potentialAction",
+    "notes": "Stored harvest also null. The site search at /search?q={q} is a product search for words only."
+   },
+   "approved_pass": {
+    "approved_sets": [
+     "B"
+    ],
+    "robots_ignored": true,
+    "requests_made": 5,
+    "set_a": null,
+    "searches": [
+     {
+      "kind": "sku",
+      "query_shape": "9-digit style code from JSON-LD ProductGroup sku / URL tail (965205301)",
+      "request": {
+       "method": "GET",
+       "host": "www.moss.co.uk",
+       "path_pattern": "/search",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "site search, server-rendered ('br-search' markup; no search XHR from the page, only the Bloomreach Engagement webxp bundle)",
+      "results": 0,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "sku",
+      "query_shape": "13-digit variant sku from JSON-LD hasVariant (EAN-shaped internal code: style + size + check digit)",
+      "request": {
+       "method": "GET",
+       "host": "www.moss.co.uk",
+       "path_pattern": "/search",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "same",
+      "results": 0,
+      "target_rank": null,
+      "exact": false
+     },
+     {
+      "kind": "name",
+      "query_shape": "product name, 6 words ('slim fit white easy care shirt')",
+      "request": {
+       "method": "GET",
+       "host": "www.moss.co.uk",
+       "path_pattern": "/search",
+       "params": [
+        "q"
+       ]
+      },
+      "engine": "same (loose OR-style match)",
+      "results": 498,
+      "target_rank": null,
+      "exact": false
+     }
+    ],
+    "gtin_lookup": "n.a.",
+    "sku_lookup": "no",
+    "facets": [
+     "none read by the probe on the search page"
+    ],
+    "availability_facet": "unknown",
+    "store_facet": "unknown",
+    "sort": [],
+    "page_size": "58 shown on the first page ('Showing 58 of 498 items')",
+    "searchaction": {
+     "present": false,
+     "target": null,
+     "query_input": null,
+     "declared_on": "home page JSON-LD has WebSite, SiteNavigationElement, Organization; WebSite has no potentialAction",
+     "matches_stored": true,
+     "is_product_search": null,
+     "notes": "Stored harvest also null. The site search at /search?q={q} is a product search for words only."
+    },
+    "blocked": null,
+    "notes": "No GTIN (the 13-digit variant codes are internal, prefix 965 not GS1), so no GTIN search. Neither the style code nor the variant code is indexed: 'Showing 0 items'. A name search matches loosely (498 items) and the target was not among the first 58. Route for joins stays the sitemap (style code in the URL tail) and the product page JSON-LD.",
+    "checked_at": "2026-10-12"
    }
   },
   {
@@ -8244,6 +10588,9 @@
     "mall": null,
     "cwg_url": "https://canarywharf.com/shop/kitchen-jam/",
     "kgx": "https://canarywharf.com/shop/kitchen-jam/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   },
   {
@@ -8297,6 +10644,9 @@
     "mall": "Canada Place",
     "cwg_url": "https://canarywharf.com/shop/mango/",
     "kgx": "https://canarywharf.com/shop/mango/#entity"
+   },
+   "searchaction": {
+    "stored_2026_10_06": null
    }
   }
  ],
@@ -8312,17 +10662,31 @@
     "search free text only": 2
    },
    "gtin_lookup": {
-    "no": 28,
-    "unknown": 11,
-    "yes": 5
+    "n.a.": 19,
+    "no": 15,
+    "yes": 8,
+    "unknown": 2
    },
    "sku_lookup": {
-    "unknown": 25,
-    "no": 3,
-    "yes": 16
+    "yes": 36,
+    "no": 6,
+    "unknown": 2
    },
    "agent_endpoint": 16,
    "search_run": 18
   }
+ },
+ "approved_pass": {
+  "date": "2026-10-12",
+  "approval": "owner, 2026-10-12: \"Approve A and B initially\" (set A: stock checks of Space NK, Hotel Chocolat, Boss; set B: GTIN and SKU lookup in the site search of the 26 shops where robots.txt had stopped it); \"Also add check of KG or embedded structured data for Schema SearchAction data\"",
+  "rule": "robots.txt ignored for these sets only (owner rule of 2026-10-12, CLAUDE.md); 2 to 9 requests per brand, 5 s or more apart per host; no bot wall passed, no login, basket or form except the shops' own find-in-store postcode or location boxes",
+  "brands": 26
+ },
+ "searchaction_summary": {
+  "kg": "0 SearchAction nodes in the kgx store (2026-10-12; the web canonical layer does not lift them)",
+  "stored_harvest": 23,
+  "checked_live": 26,
+  "live_present": 14,
+  "live_product_search": 14
  }
 }
