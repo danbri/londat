@@ -4,6 +4,7 @@
 // --postcode drive one stock-check widget (one postcode, one search), the same rule as the store-finder exception.
 //   NODE_USE_ENV_PROXY=1 node cwplans/tools/probe-stock-check.mjs <url> [--wait=6000] [--click="Check stock"]
 //     [--postcode=pc] [--input=css] [--submit="Search"] [--locale=xx-YY] [--all-requests] [--out=file.json]
+//     [--ignore-robots --approved="<owner's request or approval, date>"]
 // The place comes from the caller (postcode, --locale for the shop's market); the tool holds none.
 // Chromium needs the proxy CA in its NSS store (skill cwplans-web-harvest, "Chromium behind the agent proxy").
 // Skill: cwplans-stock-check.
@@ -42,7 +43,11 @@ async function robots(u) {
 }
 
 const out = { url, at: new Date().toISOString(), robots: await robots(url), requests: [], phrases: [], actions: [] };
-if (!out.robots.allowed) { out.skipped = out.robots.unread ? 'robots.txt unreadable' : 'robots.txt'; console.log(JSON.stringify(out, null, 1)); process.exit(0); }
+// --ignore-robots only with the owner's approval for this set of fetches (skill cwplans-stock-check, "robots.txt and
+// approval"); the robots result is still read and kept, and the approval text goes into the output
+if (flag('ignore-robots') && !opt('approved')) { console.error('--ignore-robots needs --approved="<owner request or approval, date>"'); process.exit(2); }
+if (flag('ignore-robots')) out.robotsIgnored = { approved: opt('approved') };
+if (!out.robots.allowed && !out.robotsIgnored) { out.skipped = out.robots.unread ? 'robots.txt unreadable' : 'robots.txt'; console.log(JSON.stringify(out, null, 1)); process.exit(0); }
 const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
 const browser = await chromium.launch({ headless: true, executablePath: CHROME,
   args: ['--no-sandbox', ...(proxy ? [`--proxy-server=${proxy}`] : [])] });

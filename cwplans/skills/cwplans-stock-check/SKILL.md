@@ -6,7 +6,7 @@ description: >-
   stock-check-survey.json), the probe tool tools/probe-stock-check.mjs, the endpoints found per platform (Shopify
   pickup-availability, SAP Commerce OCC stock, Salesforce Commerce Cloud FindInStore, Magento in-store pickup, Umbraco
   inventorysearch), GTIN and SKU lookup, search engines and facets, Canary Wharf store ids, the bot walls met (Akamai, Cloudflare, Imperva, DataDome, Netacea, AWS WAF)
-  and the rules: obey robots.txt, never evade a challenge, one search per user need, no basket or login. Also shop
+  and the rules: robots.txt unless the owner approved that set of fetches, never evade a challenge, one search per user need, no basket or login. Also shop
   agent routes (agents.md, Shopify UCP/MCP) and why a static GitHub Pages site cannot host MCP or call shop endpoints.
   Reach for it before you call a shop's stock endpoint, add a shop, repeat the survey, or answer "is X in stock at
   Canary Wharf?".
@@ -138,8 +138,14 @@ robots.txt allows the shop's search path (18 shops); 26 were read from page scri
 
 - One call per concrete user need (a person asks "is X in stock at Canary Wharf?"); no polling, no catalogue sweeps,
   no pre-fetching. Cache an answer for minutes, not days: the sites say stock is "a guide only".
-- robots.txt decides. A path that robots.txt disallows (Space NK `/on/`, Hotel Chocolat `/mobify/`, Boss, Zara, COS,
-  JD Sports `*/stock/*`, SoCloz) is not called directly; at most the shop's own page is shown to the user.
+- **robots.txt and approval (owner, 2026-10-12, dev and eval phase):** "These tools will be user-assisting browser functionality and not unconstrained web crawling. For this dev and eval phase you can ignore robots.txt so long as EVERY set of fetches to a site is explicitly requested by me or approved.  If multiple files pulled they are in batches of max 50 and requests are staggered."
+  So: (1) every set of fetches to a shop site needs the owner's explicit request or approval in the conversation, named
+  by site and purpose, before it runs; with that approval robots.txt may be ignored, and the run records that it was
+  (probe: `--ignore-robots --approved="<owner's words, date>"`). (2) Without that approval, robots.txt still decides:
+  a disallowed path (Space NK `/on/`, Hotel Chocolat `/mobify/`, Boss, Zara, COS, JD Sports `*/stock/*`, SoCloz) is not
+  called. (3) Several files: batches of 50 or fewer, requests staggered (5 s or more apart per host in this project).
+  (4) The approval covers robots.txt only. It does not cover bot walls (next rule), logins, baskets or other forms.
+  The surveys of 2026-10-12 (first and second pass) ran before this rule and obeyed robots.txt.
 - Never evade a bot wall: no user-agent change, stealth plugin, captcha solving or residential proxy. A blocked brand
   stays blocked; ask the brand, or show the user the brand's page.
 - No login, basket, reservation or checkout. "Reserve in store" and "Reserve & Collect" are forms: never submitted.

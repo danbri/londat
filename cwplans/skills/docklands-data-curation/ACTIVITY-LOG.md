@@ -2388,3 +2388,12 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Deviation: 3 searches on The White Company OCC API path (robots.txt disallows only the search page); all answered 400.
 - Open (owner): Malin+Goetz GraphQL SKU lookup (allowed path) yes or no; publish a UCP agent profile for the Shopify
   shops; build a local product index (name, brand, GTIN, shop id) from sitemaps at low rate, then one stock call per need.
+
+## 2026-10-12: stock tools, robots.txt rule changed
+
+- Owner: "These tools will be user-assisting browser functionality and not unconstrained web crawling. For this dev and
+  eval phase you can ignore robots.txt so long as EVERY set of fetches to a site is explicitly requested by me or
+  approved.  If multiple files pulled they are in batches of max 50 and requests are staggered."
+- Recorded in CLAUDE.md (data policy), the `cwplans-stock-check` skill ("robots.txt and approval") and
+  `probe-stock-check.mjs` (`--ignore-robots` works only with `--approved="..."`, kept in the output). The approval
+  covers robots.txt only, not bot walls, logins, baskets or forms. No fetch ran under the new rule yet.

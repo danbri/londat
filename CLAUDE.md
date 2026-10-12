@@ -88,6 +88,9 @@ planning and prototyping phase."
   fair use for our scoping purposes."). This covers pages fetched directly, from the Internet Archive or from Common
   Crawl, and data extracted from them. Record each crawl in the data register with its method and date. Re-check these
   before anything leaves the prototyping phase.
+- Shop stock-check and lookup tools (the `cwplans-stock-check` skill) are user-assisting browser functions, not
+  crawls. robots.txt may be ignored in the dev and eval phase when the owner has requested or approved that set of
+  fetches (owner, 2026-10-12: "These tools will be user-assisting browser functionality and not unconstrained web crawling. For this dev and eval phase you can ignore robots.txt so long as EVERY set of fetches to a site is explicitly requested by me or approved.  If multiple files pulled they are in batches of max 50 and requests are staggered."). Batches of 50 or fewer, staggered. Never evade a bot wall.
 - AIS from AISHub and aisstream.io (via Open Waters AIS) is accepted for scoping (owner, 2026-10-04: "Accept AISHub (and
   perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale. Add to live by default
   now."). Review before scaling or any commercial use. Small private craft stay as counts only. The data register marks
