@@ -18,7 +18,7 @@ let fail = 0; const ok = (c, msg, extra = '') => { console.log(`${c ? 'ok  ' : '
 const init = await call('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '0' } });
 ok(init.result?.serverInfo?.name === 'cwplans-stock', 'initialize');
 const tl = await call('tools/list', {});
-ok(tl.result?.tools?.map(t => t.name).join() === 'list_stock_shops,stock_check', 'tools/list', tl.result?.tools?.map(t => t.name).join());
+ok(tl.result?.tools?.map(t => t.name).join() === 'list_stock_shops,find_product,stock_check,check_product', 'tools/list', tl.result?.tools?.map(t => t.name).join());
 const ls = await tool('list_stock_shops', {}); const shops = JSON.parse(ls.body);
 ok(shops.length >= 10 && shops.every(s => s.canary_wharf_store && s.arguments), 'list_stock_shops', `${shops.length} shops`);
 const miss = await tool('stock_check', { shop: 'hobbs' });
