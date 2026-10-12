@@ -2686,3 +2686,80 @@ layer whose objects are scenery-like (piers, ships) is now drawn crisp, not pain
 constellation lines (layer sky-extra) are painted (not in OVERLAY_LAYERS); reflections of the data layers in the water
 are painted; with weather the cloud deck moves between frames, so the checks use `weather=0`.
 Screenshots of this round (not committed): the scratchpad `paint2/final/` of session 55dc707c.
+
+## Three.js port: Painted style, snappier (2026-10-12)
+
+Owner, 2026-10-12, on the iPhone: "Painted is a bit janky and not v striking visually. Acceptable for now." then "By janky
+i meant the usual sense of laggy and jerky." then "Make it snappier". Code: `docklands/perf.js` (new), `styles.js` (paint
+section), `main.js` (the loop), `api.js` (`perf()`), `index.html` (the switch); test `docklands/test/paint-check.mjs`.
+
+What changed:
+- **Frame times for every style** (`perf.js`, OKR KR3.1). main.js calls `PERF.raf()` each loop callback, `PERF.camera()`
+  before drawing and `PERF.drawn()` after `pipe.render()`. A frame time is the interval between two drawn frames of
+  consecutive callbacks (a skipped callback breaks the chain, so a page that draws on demand reports only its continuous
+  runs; `samples` 0 then). GPU timer queries are not everywhere, so this is the requestAnimationFrame interval. Readout:
+  `?fps=1` or Menu > About > Settings "Frame times on the map" (stored, `d3.fps`): top left under the time wheels
+  (`#perfBox`; at the bottom left it was under the wind and aircraft notes), "41 ms 24 fps p95 63 ms / paint · full",
+  refreshed twice a second; hidden with the labels off unless `?fps=1` is in the URL (`body.perfAsked`). Text: `#perfSr`
+  (visually hidden, not a live region) and `docklands.perf().text`. Machine: `docklands.perf()`, `__docklands3.perf`
+  (`stats({ since, moving })`, `frames()`, `lastMove`).
+- **Motion from the camera, not from NS.** `PERF.camera()` compares `camera.matrixWorld` and `projectionMatrix` with the
+  last drawn frame (1e-7 relative), so gestures, momentum, the wheel, fly-to, the drone, `setCam`, a resize and the near
+  plane all count. `moving` = a change in the last `settleMs` (200 ms). With `wantSettle` (Painted) each change re-arms a
+  timer that calls `draw()` at 220 ms: a page that draws on demand (`?animate=0`) gets one full-detail frame and stops.
+- **Motion tier.** `PTIERS` (styles.js): full 2 / 0.75, lite 0.75 / 0.5, low 0.5 / 0.35 samples a CSS px, still / moving;
+  the overlay mask at 1, 0.5, 0.5. Two dab rtts of the same graph: `PT.dab` (still density) and `PT.dabM` (moving
+  density); only the one in use renders (`autoUpdate`), the output takes one by a uniform (`PT.mvU`). While moving the edge
+  fidelity is off (`PT.fidOn`: the full-resolution scene fetch is skipped by a branch). The strokes are the same cells in
+  device pixels at both densities, so the change at rest is a sharpening, not a pop (frames: still, moving, after, in the
+  scratchpad `snappy/vis/` of session 55dc707c). Trap: the first try resized one rtt at each start and end of a move
+  (`setResolutionScale`): the output kept sampling the old texture (black or stale dabs in the moving frame), and with
+  `pipe.needsUpdate` to rebuild the bindings each change cost 45 to 60 ms in software. A tier change (rare) still does
+  that, once.
+- **Hold.** In Painted a still view is redrawn at most every `PT.hold` (100) ms (`perf.hold()`; a `draw()` request still
+  draws at once). With "Draw every frame" on (the default) the page drew the full painted frame without pause; now the
+  water and aircraft move at 10 frames a second in this style while still, and the GPU is free for the next gesture.
+- **Auto tier** (`?paint=auto`, the default; `?paint=full|lite|low` fixes one; `setPaintTier('auto'|...)`). Every 0.5 s,
+  from 10 or more frame times since the last change: median over 25 ms -> one step down; under 18 ms for 3 s -> one step
+  up (60 Hz gives 16.7 ms, so 18 not 14); a step up that is slow again within 5 s blocks that tier for 15 s, then 30, 60,
+  120 s. Steps in `__docklandsStyles.paint.log` and `docklands.perf().paint.steps`.
+- **Cheaper passes.** The data-layer pass is skipped while no data layer object is visible (drawn once, cleared, then
+  skipped; but the railway lines and several overlay layers are on by default, so it runs on the default page). In the
+  output, the overlay depth and the main depth are fetched only where the overlay pass has alpha, and the scene pixel
+  only where the edge fidelity uses it (`If` in a `Fn` is fine in the output node; not inside an rtt).
+
+Measured (headless SwiftShader, WebGL 2, view=greenlanddock 12:45, `weather=0`; one frame of the page's loop
+`__docklands3.frameNow()` plus a 1-pixel `readPixels`, median of 9; moving = `setCam` with a 0.003 rad turn before each
+frame; the old code served with `frameNow` added; scratchpad `snappy/` of session 55dc707c):
+- 390 x 844 @3 (the page caps dpr at 2: 780 x 1688, so on the owner's iPhone the full tier's dab pass runs at full
+  resolution; the second round's note "2/3 at dpr 3" did not apply): before: map 30 still / 34 moving, Painted 75 / 73,
+  lite 68 / 68 ms. After: map 38 / 38, full 76 / 72, lite 54 / 63, low 73 / 58, auto (went to low) 64 / 62 ms.
+- 1280 x 800 @1: before: map 44 / 37, Painted 49 / 58, lite 73 / 54. After: map 29 / 30, full 49 / 48, lite 52 / 57, low
+  45 / 43, auto (low) 52 / 50 ms.
+- The noise between runs is 10 to 15 ms, so in software the motion tier and the tiers show little. Cause, measured with
+  the output node swapped (`pipe.render()` alone, the scene hidden): each render pass has a fixed cost of about 12 ms in
+  SwiftShader whatever its size (a 0.1-scale rtt cost as much as a full one), the dab pass at 1, 0.375 or 0.175 scale cost
+  the same, and the mip chain of the copy cost nothing measurable. Painted has 3 passes more than the map (overlay mask,
+  copy, dabs), so in software it stays about 25 to 40 ms over the map. A phone GPU pays per pixel instead: the moving dab
+  pass has 14 % of the pixels of the still one at dpr 2 (full tier), 31 % at dpr 1. Not measured on a phone: ask the owner
+  for `?style=paint&fps=1` numbers.
+- Tried and dropped: the dabs computed inside the output pass where the dab pass is at full resolution (one pass less):
+  500 to 690 ms a frame in SwiftShader against 40 to 72 ms for two passes (the big shader with branches).
+- Headless trap: after the page yields to the event loop, the next frame with a `readPixels` took 9 to 14 s (every time,
+  map too): the compositor's present in SwiftShader. requestAnimationFrame intervals in this container are therefore
+  useless (3 to 12 s); time frames in one synchronous loop of `frameNow()` without yielding.
+
+paint-check.mjs (2026-10-12): the look checks use `&paint=full`; a motion check on the first query (scene hidden while it
+runs: `animate=0`, the camera turned every frame for 1.5 s, then fails unless the moving tier was drawn, a full-detail
+frame came 150 to 700 ms after the last change (or 250 ms + 2 moving frame times in slow software) and at most 3 frames
+followed in the next second); `--cost` now times map, paint, lite and auto, still and moving, through `frameNow()`.
+Run of 2026-10-12 (390 x 844 @2, all six queries): all pass, no page errors. greenlanddock diff 6.9, block chroma error
+5.5, invented 0 %, overlays 1,526 px diff 0.95; high view 5.2, 3.6, 0 %, overlays 15,036 px diff 0.04; tree row 4.2, 3.8,
+0.03 %; Tower Bridge 4.0, 3.2, 0 %, overlays 18,698 px diff 0.19; view=cw 4.5, 2.9, 0 %; rotherhithe (night) 2.3, 1.8,
+0.02 %. Motion: 6 of 7 frames in the moving tier, the full frame 663 ms after the last change (frames take about 300 ms
+there), no frame after it. With `--cost` at 390 x 844 @3 (full scene): map 41 / 46, paint full 76 / 72, lite 74 / 75,
+auto (low) 84 / 74 ms still / moving. `docklands/test/api-check.mjs`: all passed.
+
+Open: no phone numbers yet; the stroke character ("not v striking") is unchanged; the shower-door slide of screen-fixed
+dabs is unchanged; in software the per-pass cost dominates, so a real cut there needs fewer passes (e.g. the copy and the
+mask in one multiple-render-target pass).
