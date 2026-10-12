@@ -247,6 +247,46 @@
     },
     "blocked": null,
     "notes": "No GTIN: skipped. SKU search exact, 1 result on both UK (plain fetch) and US (headless) sites. Facets and sort read from the US search page DOM (facet names; counts not read). requests_made counts page loads and plain fetches made by me; sub-requests the page itself made (search API calls, assets) are not counted."
+   },
+   "mcp_lookup": {
+    "mcp_shop": "crockett-jones",
+    "approved_set": "hk1 (owner 2026-10-12 \"Next steps - go ahead\" (hk brief, group B hk1); robots.txt ignored for this set only; >= 6.5 s per host; plain Node fetch with the stock-mcp user agent)",
+    "requests_made": 3,
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.crockettandjones.com/search/suggest.json?q={q}&resources[type]=product&resources[limit]=10",
+     "headers": "none",
+     "cookies": "none (sets cart_currency, _shopify_*)",
+     "plain_fetch": true,
+     "robots": "/search disallowed in the UK robots.txt (approval needed); plain fetch stays on the UK store (a browser from the US exit is redirected to us.)"
+    },
+    "result_fields": {
+     "list": "resources.results.products[]",
+     "name": "title",
+     "handle": "handle",
+     "url": "url (/products/<handle>?_pos=..; strip the query)",
+     "product_id": "id (Shopify product id)",
+     "online_available": "available",
+     "price": "price",
+     "variant_ids": "variants[] is EMPTY in suggest answers: second request needed",
+     "sizes": "not in the hit",
+     "ean": "none (Shopify barcode null)"
+    },
+    "second_request": {
+     "method": "GET",
+     "url": "https://www.crockettandjones.com/products/{handle}.js",
+     "fields": {
+      "options": "options[] (one option \"UK SIZE\", values 6..12 in halves)",
+      "variants": "variants[] {id, sku \"<product>/<fit>/<size*10>\", option1 (UK size), title, available (online), barcode null}"
+     },
+     "ms": 545
+    },
+    "to_stock_check": {
+     "sku": "variants[].sku from /products/{handle}.js, e.g. 25119A-B02L1/E/060 (adapter splits into product, fit, size)"
+    },
+    "extra": null,
+    "notes": "Two requests per find_product: suggest (name or SKU product part) then /products/{handle}.js for the size SKUs. A full SKU can skip search: its product part finds the handle in one suggest call. The fit letter (E, F, G) is in the SKU; this product has one fit only.",
+    "checked_at": "2026-10-12T23:17:30Z"
    }
   },
   {
@@ -1296,6 +1336,64 @@
     "page_size": 48,
     "notes": "The storefront search JSON is GET https://www.thewhitecompany.com/uk/search/async/search?text=<q> (SAP Commerce storefront, not OCC; the OCC products/search route is broken, see set_cd). Two of the 3 requests were spent on faults in the brief's URL: ?q= gives HTTP 500 (the site uses ?text=), and /uk/search?text= without the country params geo-redirects to /us/. So the SKU / variant-code query (CLDDSNNA) and the EAN query (13-digit ean of CLDDSNNA, already known from the survey's OCC JSON, no new OCC read needed) were NOT run: budget spent. Next pass (2 requests): GET /uk/search/async/search?text=CLDDSNNA and ?text=<ean>, by plain fetch first (sends no cookies; may geo-redirect, then add countryIsoCode=GB&currencyIsoCode=GBP or use a headless context that loaded the UK page). Facet 'Stock Availability' code excludeStockInStore suggests an in-store stock filter (2 values) on search, not per-store. Plain fetch and session need of the async route not tested. Akamai sensor POSTs seen, no challenge. robots_ignored true: robots.txt disallows *?q= style search pages. No bodies or token values kept.",
     "checked_at": "2026-10-12T22:12:45Z"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "the-white-company",
+    "approved_set": "H; owner, 2026-10-12: \"Next steps - go ahead\" (brief sets H, I, J; robots.txt ignored for these sets only)",
+    "requests_made": {
+     "calls": 5,
+     "http_hops": 8,
+     "detail": "1 OCC product; 1 search followed to /us/ (geo, ~3 hops, wasted); 1 manual-redirect probe (302, cookie names read); 1 search with cookie carry (2 hops: 302 + 200); 1 EAN search (1 hop, cookies sent)"
+    },
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.thewhitecompany.com/uk/search/async/search?text={q}&countryIsoCode=GB&currencyIsoCode=GBP",
+     "headers": {
+      "accept": "application/json"
+     },
+     "cookies": "first answer is 302 to the same path without the country params and sets JSESSIONID, LOCATION (twice; keep the last), ROUTE, bm_sz; send them on the redirect hop, else a US exit is sent on to /us/ (HTML). Node fetch with redirect:follow drops the cookies: follow redirects by hand with a cookie jar. Which cookie is enough was not tested (LOCATION is the country one). Later calls with the jar answer 200 in one hop.",
+     "plain_node_fetch": true,
+     "browser_needed": false,
+     "response": "application/json"
+    },
+    "result_fields": {
+     "list": "results[]",
+     "total": "pagination.totalNumberOfResults (pageSize 48, currentPage, numberOfPages)",
+     "name": "results[].name",
+     "product_url": "results[].url (e.g. /Fragrance-Diffuser-Tray/p/CLDDS?swatch=No+Colour; prefix https://www.thewhitecompany.com/uk)",
+     "product_id": "results[].baseProductCode (base code, e.g. CLDDS); results[].code is \"<BASE> - <name>\" (not an id); results[].baseCode null",
+     "variant_ids": "results[].singleSizeSku (variant code, set for one-size products, e.g. CLDDSNNA); results[].variantsSecondId[] = \"v_uko_bs_<variant code lowercase>\" (upper-case it after the prefix for the code); results[].variantOptions null in search",
+     "colour_size": "not in search: OCC product swatches[].variantOptions[].size",
+     "ean": "not in search results; OCC product swatches[].variantOptions[].ean",
+     "online_availability": "results[].stock.stockLevelStatus.code (inStock etc.; stockLevel null)",
+     "other": "freeTextSearch, redirectUrl (null here), facets[] (incl. Stock Availability excludeStockInStore), sorts[5]"
+    },
+    "second_request": {
+     "method": "GET",
+     "url": "https://www.thewhitecompany.com/TWCcommercewebservices/v2/twc-uk/products/{baseCode}?fields=FULL",
+     "headers": {
+      "accept": "application/json"
+     },
+     "plain_node_fetch": true,
+     "cookies": "none",
+     "fields": {
+      "variant_code": "swatches[].variantOptions[].code",
+      "ean": "swatches[].variantOptions[].ean",
+      "size": "swatches[].variantOptions[].size",
+      "colour": "swatches[].name / swatches[].code",
+      "online_stock": "swatches[].variantOptions[].stock {stockLevel, stockLevelStatus}",
+      "find_in_store_flag": "isFindStockInStoreEnabled"
+     },
+     "when": "only for multi-size or multi-colour products, or EAN -> code (search does not find EANs)"
+    },
+    "to_stock_check": {
+     "variant_code": "search results[].singleSizeSku, or from variantsSecondId (strip \"v_uko_bs_\", upper-case), or OCC swatches[].variantOptions[].code for the chosen size/colour"
+    },
+    "extra": {
+     "set_H": "Variant-code search: exact, 1 result, ids in singleSizeSku and variantsSecondId. EAN search: 0 results (EAN not indexed). So EAN -> variant code needs a local table from OCC product JSON."
+    },
+    "notes": "Search answers JSON with no session beyond the geo cookies. Search works by variant code, not EAN. robots.txt disallows the /uk/search page style; ignored under set H. Akamai cookies (bm_sz, _abck) set, no challenge.",
+    "checked_at": "2026-10-12T23:20Z"
    }
   },
   {
@@ -3440,7 +3538,50 @@
     "notes": "Per-store stock is open: plain GET, JSON, no token or cookie needed, Canary Wharf store comes first for E14 5AB. Search finds the variant id but not the EAN; map EAN to id from the product page JSON-LD.",
     "checked_at": "2026-10-12"
    },
-   "verdict_before_2026_10_12_approval": "per-store stock check (works headless)"
+   "verdict_before_2026_10_12_approval": "per-store stock check (works headless)",
+   "mcp_lookup": {
+    "mcp_shop": "space-nk",
+    "approved_set": "brief Group A (Space NK search route); owner, 2026-10-12: \"Next steps - go ahead\" (brief sets H, I, J; robots.txt ignored for these sets only)",
+    "requests_made": {
+     "calls": 1,
+     "detail": "search (plain Node fetch)"
+    },
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.spacenk.com/uk/search?q={q}",
+     "headers": {
+      "accept": "text/html",
+      "accept-language": "en-GB"
+     },
+     "cookies": "none",
+     "plain_node_fetch": true,
+     "browser_needed": false,
+     "response": "HTML (SFCC Search-Show), 718 kB"
+    },
+    "result_fields": {
+     "total": "\"<n> Results\" text",
+     "tile": "div.product[data-pid=\"MUK<id>\"] (master)",
+     "variant_ids": "button.swatch-container[data-pid=\"UK2000xxxxx\"] with aria-label \"Select <SHADE>\"; data-href Tile-Show?pid=<variant>&dwvar_<master>_color=<variant>",
+     "default_variant": "button.quickbuy[data-pid] (Quick Buy)",
+     "product_url": "a[href=\"/uk/<cat path>/<slug>-MUK<id>.html\"]",
+     "ean": "not in search; product page JSON-LD hasVariant[].gtin13 (EAN search gives 0)",
+     "online_availability": "not clear in tile (only a back-in-stock marker class seen)"
+    },
+    "second_request": {
+     "method": "GET",
+     "url": "https://www.spacenk.com/uk/{path}/{slug}-MUK{id}.html",
+     "fields": {
+      "json_ld": "ProductGroup productGroupID MUK<id>; hasVariant[] {sku = mpn = UK2000xxxxx, gtin13, name/colour}"
+     },
+     "when": "for EAN -> variant, or products without swatches (not tested this pass)"
+    },
+    "to_stock_check": {
+     "product_id": "swatch data-pid (UK2000...) for the shade; one-shade products: quickbuy data-pid"
+    },
+    "extra": {},
+    "notes": "One request gives master and shade variant ids. robots.txt disallows search; ignored under this approval.",
+    "checked_at": "2026-10-12T23:20Z"
+   }
   },
   {
    "slug": "tian-tian-market",
@@ -4377,6 +4518,48 @@
     "facets": [],
     "notes": "No positive answer yet: all 4 per-store reads so far (sets D and G, 4 different watches, stores 466 and 579) gave 0 / outOfStock. Tudor was a poor choice (allocation-limited brand). Either showroom stock is not exposed through this route (always 0 for showroom-only stock, online warehouse separate) or the chosen models were truly absent. Next pass: one read of /stock/466 for a high-volume item (e.g. a TAG Heuer Formula 1 or Longines Conquest in the Click & Collect facet), and compare with storestock latitude/longitude for the same code. 3 requests, 7 s or more apart, plain fetch, no session; no bodies kept.",
     "checked_at": "2026-10-12T22:14:45Z"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "watches-of-switzerland",
+    "approved_set": "I; owner, 2026-10-12: \"Next steps - go ahead\" (brief sets H, I, J; robots.txt ignored for these sets only)",
+    "requests_made": {
+     "calls": 4,
+     "detail": "1 OCC search; 3 OCC stock reads at 466"
+    },
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.watches-of-switzerland.co.uk/occ/v2/WatchesOfSwitzerland_UK/products/search?fields=PLP&query={q}&currentPage=0&pageSize=48&lang=en&curr=GBP",
+     "headers": {
+      "accept": "application/json"
+     },
+     "cookies": "none needed (ROUTE set)",
+     "plain_node_fetch": true,
+     "browser_needed": false,
+     "response": "application/json"
+    },
+    "result_fields": {
+     "list": "products[]",
+     "total": "pagination.totalResults (totalPages, pageSize 48)",
+     "name": "products[].name; brand products[].manufacturer",
+     "product_url": "products[].url (/<Brand-Model-...-<MPN>>/p/<code>; prefix host)",
+     "product_id": "products[].code (8 digits) = stock_check product_code; products[].secondId = \"p\"+code",
+     "variant_ids": "none (one code per watch)",
+     "mpn": "last slug segment of products[].url before /p/ (e.g. WAZ1010.BA0842); not a field in PLP",
+     "ean": "none on this site",
+     "online_availability": "not in PLP (no stock field); facet \"Delivery Option\" has counts",
+     "price": "products[].price.value, formattedValue",
+     "other": "facets[] (Brand incl. Pre-Owned / Ex-Display, Brand Collections, Price, Dial Colour, Diameter, ...), sorts[] codes (namesort_en_gb, pricevalue_watchesofswitzerland_uk_gbp, ...); results mix new, Pre-Owned and Ex-Display (filter by facet Category or manufacturer prefix)"
+    },
+    "second_request": null,
+    "to_stock_check": {
+     "product_code": "products[].code",
+     "store": "466 (default)"
+    },
+    "extra": {
+     "set_I": "GET /occ/v2/WatchesOfSwitzerland_UK/products/{code}/stock/466 for 17381197, 17381141, 17382192 (core TAG Heuer Formula 1, £1,750-1,950): all {stockLevel 0, stockLevelStatus outOfStock, isValueRounded false}, 774-1344 ms. With the 4 earlier Tudor reads: 7 reads, no positive answer yet. Either Canary Wharf holds none of these or the per-store route always answers 0; unproven. Next test: a code shown as Click & Collect available (Delivery Option facet) or the storestock route for a known-held item."
+    },
+    "notes": "Search is free text over Fredhopper; 8-digit code and MPN queries were loose in set B (code 0 results, MPN 74). Name queries work. No browser needed.",
+    "checked_at": "2026-10-12T23:20Z"
    }
   },
   {
@@ -4681,6 +4864,59 @@
     "verdict_change": "per-store stock check with exact unit counts, plain fetch, no session: Product-StockCheck?pid=<master>&lat&long&dwvar_<master>_color&dwvar_<master>_size; Canary Wharf (Unit 20 Canada Place, E14 5AH) is store 377",
     "notes": "Plain Node fetch with X-Requested-With only; no cookies, no CSRF, no challenge. The size must be given (the earlier one-size item gave an empty table). Size codes are internal (UK 12 = 004); read them from the product page's stock-check select, not from the UK size. Answer shows the 5 nearest stores with counts (1, 2 ...) or 'Out of Stock'. Product URL from the sitemap gives master id and colour name; colour code comes from the page. Store page /stores/details/?storeID=377.",
     "checked_at": "2026-10-12T21:25:00Z"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "hobbs",
+    "approved_set": "brief Group A (Hobbs search route); owner, 2026-10-12: \"Next steps - go ahead\" (brief sets H, I, J; robots.txt ignored for these sets only)",
+    "requests_made": {
+     "calls": 3,
+     "detail": "search, product page, Product-StockCheck (all plain Node fetch)"
+    },
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.hobbs.com/search/?q={q}&sz=60",
+     "headers": {
+      "accept": "text/html",
+      "accept-language": "en-GB"
+     },
+     "cookies": "none needed (site sets dwsid, sid, GlobalE_Data, Constructorio ids, ...)",
+     "plain_node_fetch": true,
+     "browser_needed": false,
+     "response": "HTML (SFCC native, server-rendered; 854 kB for 51 results)"
+    },
+    "result_fields": {
+     "total": "data-total attribute / \"<n> results\" text",
+     "tile": "div.product[data-pid] > div.product-tile[data-tracking]",
+     "colour_pid": "data-pid / data-product-id = \"<master>-<COLOUR NAME>\" (e.g. 0226-5617-9094L00-NEUTRAL)",
+     "tracking_json": "data-tracking (HTML-escaped JSON): item.id (colour pid), item.group_id (master id, e.g. 0226-5617-9094L00 = stock_check pid), item.name, item.price, item.url, item.stock (online count)",
+     "colour_code": "swatch a[href] query dwvar_<colour pid>_color=<code> (e.g. 976); also data-add-to-bag-url (read only, never called)",
+     "product_url": "a[href=\"/product/<slug>/<colour pid>.html?...\"]",
+     "sizes": "not in search",
+     "ean": "none on the site"
+    },
+    "second_request": {
+     "method": "GET",
+     "url": "https://www.hobbs.com/product/{slug}/{colour pid}.html?dwvar_{colour pid}_color={code}",
+     "plain_node_fetch": true,
+     "ms": 1216,
+     "fields": {
+      "stock_form": "form action \"/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?pid=<master>\"; select[name=\"dwvar_<master>_color\"] option values (colour codes); select[name=\"dwvar_<master>_fitType\"] (Petite, Regular); select[name=\"dwvar_<master>_size\"] option values (size codes)",
+      "size_labels": "li.size-capsules__list_item[data-value=<UK size>] data-action URL holds dwvar_<colour pid>_size=<code>: 034=6, 035=8, 002=10, 004=12, 006=14, 008=16, 010=18, 012=20 (dresses)",
+      "online_low_stock": "li class low-stock-indicator",
+      "json_ld": "Product sku = mpn = master, productID = colour pid"
+     }
+    },
+    "to_stock_check": {
+     "pid": "tracking item.group_id (master) or JSON-LD sku",
+     "color": "dwvar_..._color in the tile link",
+     "size": "size code from the product page (UK label -> code via size-capsules data-value)",
+     "fitType": "optional; the call worked without it"
+    },
+    "extra": {
+     "stock_check_confirmed": "pid = master works (as the page form); colour-pid did not need testing"
+    },
+    "notes": "Search finds by name; master id search is loose (set B). Sizes need the product page. Size codes differ by size range: read them per product.",
+    "checked_at": "2026-10-12T23:20Z"
    }
   },
   {
@@ -4921,7 +5157,58 @@
     },
     "notes": "Akamai Bot Manager sensor posts seen (randomised /ze_... path) but no challenge in 6 headless loads and 3 plain Node fetches. Stock call takes EANs + lat/lon, no cookie or token; per-size yes/no. Clicking the \"Find in store\" text failed (consent layer), a DOM click on .js-find-in-store button opened the overlay. Robots.txt disallows /*retailavailability and /*search?; ignored under the owner approval."
    },
-   "verdict_before_2026_10_12_approval": "per-store stock check (blocked/needs browser session)"
+   "verdict_before_2026_10_12_approval": "per-store stock check (blocked/needs browser session)",
+   "mcp_lookup": {
+    "mcp_shop": "boss",
+    "approved_set": "J; owner, 2026-10-12: \"Next steps - go ahead\" (brief sets H, I, J; robots.txt ignored for these sets only)",
+    "requests_made": {
+     "calls": 7,
+     "detail": "plain fetch (project UA) 3x: search, product page, DoRetailAvailabilitySearch, all 403 Akamai \"Access Denied\" (no retry, no UA change); headless Chromium 4 page-level: search page, product page, product page + in-page GET of the stock call. The pages own XHRs (Cart-GetSerializedCart, Wishlist, Product-HitTile, delivery dates) not counted."
+    },
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.hugoboss.com/uk/search?q={q}",
+     "headers": {
+      "accept": "text/html",
+      "accept-language": "en-GB"
+     },
+     "cookies": "set by the page (Akamai); none named as needed",
+     "plain_node_fetch": false,
+     "browser_needed": "yes: plain Node fetch with the project user agent gets 403 Access Denied (Akamai) on search, product page and stock call; headless Chromium (en-GB) gets 200 with no challenge",
+     "response": "HTML (SFCC Search-Show); an exact EAN or a unique style+colour 302s to the product page (set B); a style number with several colours gives a list"
+    },
+    "result_fields": {
+     "tile": "article.product-tile-plp (js-product-tile)",
+     "product_id": "data-pid = \"hbeu<style8>_<colour3>\" (e.g. hbeu50565503_001) = stock_check pid",
+     "product_url": "a[href=\"/uk/<slug>/<pid>.html\"]",
+     "name_style_ean": "data-as-product JSON (HTML-escaped): item_id (hbeu<style>), item_name, item_cd_sku (one EAN, default size), item_category*, price",
+     "sizes_online": "data-fitfinder-sizes=\"S=1|M=1|L=1|XL=0|...\" (1 = online available) and data-size per size; no EAN per size in the tile",
+     "variant_group": "data-variationgroupid",
+     "colour_tiles": "one tile per colour pid; Product-HitTile?pid=<pid>&renderTemplate=product_tile_plp is fetched by the page per tile"
+    },
+    "second_request": {
+     "method": "GET (browser)",
+     "url": "https://www.hugoboss.com/uk/{slug}/{pid}.html",
+     "fields": {
+      "json_ld": "script[type=\"application/ld+json\"] ProductGroup: productGroupID \"<pid>_en-GB\", mpn = pid, variesBy size; hasVariant[] {sku = EAN-13, size, color, mpn = pid, offers.availability}",
+      "trap": "hasVariant[0] is an aggregate entry with size as an array and the EAN of the first size: skip entries whose size is an array"
+     },
+     "ms": "headless 4.7 s to DOMContentLoaded+3 s"
+    },
+    "to_stock_check": {
+     "pid": "tile data-pid or JSON-LD mpn",
+     "skus": "JSON-LD hasVariant[] where size is a string: [[sku (EAN), size], ...]"
+    },
+    "extra": {
+     "set_J": "Retail-DoRetailAvailabilitySearch?skus=<those 6 pairs>&pid=hbeu50565503_001&lat=51.5054&lon=-0.0235, as a same-origin fetch from the product page (header x-requested-with XMLHttpRequest): 200, 1998 ms, 17 stores; first boss-store-unit-5-cabot-place-west-london \"London (0.08 mi)\", sizes S, M, L, XL, XXL (XXXL not there). Same call by plain Node fetch with the project UA: 403.",
+     "adapter_faults": [
+      "canary-wharf.mjs boss: plain fetch with the project UA now gets 403 (Akamai) - the adapter cannot work without a browser context; do not change the UA",
+      "the store regex class=\"retailavailability-store\" no longer matches: the block is now class=\"retailavailability-store font--copy4\"; split on that, slug from a[href^=\"/uk/boss-store-\"], distance in .retailavailability-store__city, sizes = text after span.retailavailability-store__sizes-text inside .retailavailability-store__sizes"
+     ]
+    },
+    "notes": "Search, product page and stock call need a browser context from this container (US exit). No challenge page seen headless. No basket or form touched; the page itself calls Cart-GetSerializedCart (read).",
+    "checked_at": "2026-10-12T23:20Z"
+   }
   },
   {
    "slug": "hackett",
@@ -5889,7 +6176,7 @@
      }
     },
     "response_shape": "SCAPI JSON (standard): stores[] with id, name, address, inventoryId, distance; product inventories[] with id, orderable, ats (available-to-sell quantity), stockLevel. Not verified here.",
-    "canary_wharf_store_id": null,
+    "canary_wharf_store_id": "305 (Jubilee Place), 160 (Canada Place): inventory_store_305, inventory_store_160",
     "needs_session": true,
     "headless_ok": true
    },
@@ -6124,7 +6411,119 @@
     "notes": "Per-store stock with unit counts for both Canary Wharf shops, by plain fetch with a guest token. Search by EAN gives 0; map EAN to product id from SCAPI product data or the sitemap. The Loqate key and the Algolia key are in the page; not recorded.",
     "checked_at": "2026-10-12"
    },
-   "verdict_before_2026_10_12_approval": "per-store stock check (works headless)"
+   "verdict_before_2026_10_12_approval": "per-store stock check (works headless)",
+   "mcp_lookup": {
+    "mcp_shop": "hotel-chocolat",
+    "approved_set": "K (owner 2026-10-12 \"Next steps - go ahead\" (hk brief, group B hk1); robots.txt ignored for this set only; >= 6.5 s per host; plain Node fetch with the stock-mcp user agent)",
+    "requests_made": 7,
+    "search_request": {
+     "primary": {
+      "method": "GET",
+      "url": "https://www.hotelchocolat.com/mobify/proxy/api/search/shopper-search/v1/organizations/f_ecom_aazp_prd/product-search?siteId=HotelChocolat&locale=en-GB&currency=GBP&q={q}&limit={n}",
+      "headers": {
+       "authorization": "Bearer <SLAS guest access_token> (see extra.token)",
+       "accept": "application/json"
+      },
+      "cookies": "none",
+      "plain_fetch": true,
+      "robots": "Disallow: /mobify/ (approval needed per set)"
+     },
+     "alternative_algolia": {
+      "method": "POST",
+      "url": "https://<appid>-dsn.algolia.net/1/indexes/production_web_hotelchocolat_demandware_net__HotelChocolat__products__en_GB/query",
+      "body": "{query, hitsPerPage:36, page, facets, facetFilters}",
+      "credentials": "application id and search-only key present in the page config (__CONFIG__.app.productSearchService.algolia); not recorded; not run in this pass",
+      "sort_indexes": [
+       "price_GBP_desc",
+       "price_GBP_asc",
+       "bazaarvoiceAverageRating_desc"
+      ],
+      "hit_fields_from_survey": "ID, productSKU, parentID, in_stock"
+     }
+    },
+    "result_fields": {
+     "total": "total",
+     "list": "hits[]",
+     "name": "hits[].productName",
+     "product_id": "hits[].productId (master ids end \"m\", e.g. 112285m; variants are 6 digits)",
+     "represented_variant": "hits[].representedProduct.id (the 6-digit id stock needs)",
+     "type": "hits[].productType {master|variant: true}",
+     "orderable_online": "hits[].orderable",
+     "price": "hits[].price",
+     "variant_ids": "hits[].variants is empty in this answer; use representedProduct.id or representedProducts[].id",
+     "url": "not in the hit: build /uk/p/<slug>/<id>.html, or products/{id} slugUrl",
+     "ean": "not in the hit"
+    },
+    "second_request": {
+     "when": "only to get EAN or check a master",
+     "method": "GET",
+     "url": "https://www.hotelchocolat.com/mobify/proxy/api/product/shopper-products/v1/organizations/f_ecom_aazp_prd/products/{id}?siteId=HotelChocolat&locale=en-GB&currency=GBP[&inventoryIds=...]",
+     "fields": {
+      "ean": "ean (13 digits)",
+      "master": "master.masterId",
+      "variants": "variants[].productId",
+      "sku": "c_productSKU",
+      "url": "slugUrl",
+      "check_store_enabled": "c_isCheckStoreStockEnabled",
+      "click_collect": "c_isClickAndCollectEligible"
+     },
+     "note": "this is the same call as stock_check, so with inventoryIds it answers the stock question in the same request"
+    },
+    "to_stock_check": {
+     "product_id": "hits[].representedProduct.id (6-digit variant); a master id NNNNNNm redirects to its variant on the site",
+     "inventory_ids": "inventory_store_305,inventory_store_160 (store-search data[].c_inventoryListId; fixed for Canary Wharf, can be stored in the adapter)",
+     "token": "SLAS guest token (POST, see extra)"
+    },
+    "extra": {
+     "set": "K",
+     "token": {
+      "method": "POST",
+      "url": "https://www.hotelchocolat.com/mobify/slas/private/shopper/auth/v1/organizations/f_ecom_aazp_prd/oauth2/token",
+      "content_type": "application/x-www-form-urlencoded",
+      "form": "grant_type=client_credentials&channel_id=HotelChocolat&dnt=true",
+      "channel_id_source": "__CONFIG__.app.commerceAPI.parameters.siteId in the page script#mobify-data (also app.defaultSite)",
+      "client_id": "not sent: the Managed Runtime \"private\" SLAS proxy adds the client credentials server-side (config clientId present, not needed)",
+      "answer_keys": "access_token, id_token, refresh_token, expires_in (1800 s), refresh_token_expires_in, token_type BEARER, usid, customer_id, enc_user_id, idp_access_token, idp_refresh_token, dnt",
+      "set_cookies": [
+       "dwsid",
+       "dwanonymous_*"
+      ],
+      "needs_browser": false,
+      "cookies_needed": "none"
+     },
+     "store_search": {
+      "method": "GET",
+      "url": "https://www.hotelchocolat.com/mobify/proxy/api/store/shopper-stores/v1/organizations/f_ecom_aazp_prd/store-search?siteId=HotelChocolat&latitude=51.5054&longitude=-0.0235&distanceUnit=mi&maxDistance=20&locale=en-GB&limit=10",
+      "result": "total 39; first ids 305, 160, 233, 189, 171",
+      "canary_wharf": [
+       {
+        "id": "305",
+        "name": "Jubilee Place - Canary Wharf",
+        "inventory_id": "inventory_store_305",
+        "distance_mi": 0.28,
+        "click_and_collect": true
+       },
+       {
+        "id": "160",
+        "name": "London - Canary Wharf",
+        "inventory_id": "inventory_store_160",
+        "distance_mi": 0.31,
+        "click_and_collect": true
+       }
+      ],
+      "inventory_field": "data[].c_inventoryListId"
+     },
+     "product_inventory": {
+      "url": ".../shopper-products/v1/organizations/f_ecom_aazp_prd/products/120410?siteId=HotelChocolat&locale=en-GB&currency=GBP&inventoryIds=inventory_store_305,inventory_store_160",
+      "fields": "inventories[] {id, ats, stockLevel, orderable, backorderable, preorderable}; inventory (online)",
+      "result": "305 ats 2 orderable; 160 ats 1 orderable"
+     },
+     "ean_search": "q=<13-digit ean> on SCAPI product-search gives 220 loose hits, target not first: not exact. Keep an EAN -> id table from products/{id}.ean, as the survey said for Algolia.",
+     "pwa_config_names": "commerceAPI.proxyPath /mobify/proxy/api, shortCode, siteId HotelChocolat, organizationId f_ecom_aazp_prd, clientId (present); productSearchService.algolia {applicationId, searchApiKey (present), indexName, fallback salesforce}"
+    },
+    "notes": "Whole guest flow works with plain Node fetch, no browser, no cookies: 4 requests (token, store search once, product with inventoryIds, search). The 6-digit id URL /uk/p/<slug>/120410.html answers 301 to /120410m.html?pid=120410. Store ids and inventory ids can be fixed in the adapter, so a live check is token + products/{id}?inventoryIds (2 requests). Token lives 30 min: reuse it within a process. robots.txt disallows /mobify/: every live use needs owner approval under the current rule.",
+    "checked_at": "2026-10-12T23:17:30Z"
+   }
   },
   {
    "slug": "next",
@@ -7153,6 +7552,41 @@
     "blocked": null,
     "notes": "No GTIN/EAN in the product page JSON-LD (Product has sku only; the page also shows 'Model' = manufacturer number), so GTIN search skipped. SKU search gives the one exact product. The model number is not indexed: 5 unrelated items (log storage, fire guards), target absent. Bazaarvoice review calls on the product page filter by the same SKU. New Relic on the page reports webdriverDetected=true, but no challenge was served. Join route stays: SKU from the product page, then the open get-inventory-availability call (store rd_6088).",
     "checked_at": "2026-10-12"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "robert-dyas",
+    "approved_set": "hk1 (owner 2026-10-12 \"Next steps - go ahead\" (hk brief, group B hk1); robots.txt ignored for this set only; >= 6.5 s per host; plain Node fetch with the stock-mcp user agent)",
+    "requests_made": 3,
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.robertdyas.co.uk/graphql?query={products(search:\"{q}\",pageSize:10){total_count items{__typename sku name url_key url_suffix stock_status uid}}} (URL-encoded)",
+     "headers": {
+      "store": "robertdyas_uk_main_en_gb",
+      "accept": "application/json"
+     },
+     "cookies": "none (sets PHPSESSID, __cf_bm)",
+     "plain_fetch": true,
+     "exact_sku": "{products(filter:{sku:{eq:\"{sku}\"}}){total_count items{sku name url_key stock_status}}}"
+    },
+    "result_fields": {
+     "total": "data.products.total_count",
+     "list": "data.products.items[]",
+     "name": "name (HTML entities, e.g. &amp;)",
+     "sku": "sku (6-digit, the stock_check id)",
+     "url": "https://www.robertdyas.co.uk/{url_key}{url_suffix} (suffix empty)",
+     "type": "__typename (SimpleProduct seen)",
+     "online_stock": "stock_status IN_STOCK|OUT_OF_STOCK",
+     "variants": "n.a. (simple products); for a ConfigurableProduct ask variants{product{sku}}",
+     "ean": "not exposed"
+    },
+    "second_request": null,
+    "to_stock_check": {
+     "sku": "data.products.items[].sku",
+     "qty": "from the user (default 1)"
+    },
+    "extra": null,
+    "notes": "Magento GraphQL GET answers anonymously through Cloudflare without a challenge; one request gives the SKUs. Not tried: the REST /V1/products search (needs an integration token on standard Magento) and Adobe Live Search. robots.txt fetched once by curl (no /graphql rule printed).",
+    "checked_at": "2026-10-12T23:17:30Z"
    }
   },
   {
@@ -8499,6 +8933,58 @@
     "facets": [],
     "notes": "Proved: IGJ4 appears with 'high' when it holds the item. The value 'none' appears as an explicit per-size value for a listed store (8BLF S none), so a listed store may still lack a size; an item held nowhere gives stores []. A store that holds none of the asked sizes is probably left out (IGJ4 absent for PCU12A in set D). Oxford Street store IDs here (IV57, IEF8, II31) differ from those in set D (IFZ2, IEF9, IEU7) for the same names: IDs may differ by product range or service; key on IGJ4 for Canary Wharf, check names. isDispoActive false in this answer. Plain Node fetch with X-Requested-With, no cookies, no CSRF. Requests 6 s or more apart (Crawl-delay 5).",
     "checked_at": "2026-10-12T22:14:02Z"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "intimissimi",
+    "approved_set": "hk1 (owner 2026-10-12 \"Next steps - go ahead\" (hk brief, group B hk1); robots.txt ignored for this set only; >= 6.5 s per host; plain Node fetch with the stock-mcp user agent)",
+    "requests_made": 3,
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.intimissimi.com/uk/search/?q={q}",
+     "headers": {
+      "accept-language": "en-GB"
+     },
+     "cookies": "none needed (sets dwsid, sid, dwanonymous_*, cq*)",
+     "plain_fetch": true,
+     "format": "server-rendered HTML, about 860 kB, 24 tiles a page"
+    },
+    "result_fields": {
+     "count": "regex \"(\\d+) results\" (142 here)",
+     "tile": "div.cc-prodTile[data-pid]",
+     "pid": "data-pid \"<STYLE>_color_<CODE>\" (e.g. SI70V2_color_019)",
+     "style": "analytics div data-item_id (SI70V2)",
+     "colour_code": "data-item_variant (019); colour name data-item_color",
+     "name": "data-item_name or h2 in the tile",
+     "url": "a href /uk/product/<slug>-<STYLE>.html?dwvar_<STYLE>_Z_COL_INTD=<code>",
+     "online": "data-item_availability, link[itemprop=availability]",
+     "sizes": "not in the tile: second request",
+     "other_colours": "ul.cc-prodTile-colors li[aria-label] (names only)"
+    },
+    "second_request": {
+     "method": "GET",
+     "url": "https://www.intimissimi.com/on/demandware.store/Sites-intimissimi-uk-Site/en_GB/Product-Variation?pid={STYLE}&dwvar_{STYLE}_Z_COL_INTD={code}&quantity=1",
+     "headers": {
+      "accept": "application/json",
+      "x-requested-with": "XMLHttpRequest"
+     },
+     "fields": {
+      "colours": "product.variationAttributes[attributeId=color] (id Z_COL_INTD).values[] {id, displayValue, selectable, selected}",
+      "sizes": "product.variationAttributes[attributeId=size] (id Z_TAGLIE_0004 here; differs by product type).values[] {id \"2\", displayValue \"S\", selectable}",
+      "online": "product.availability {messages, orderable, lowStockItems}",
+      "id": "product.id (STYLE_color_CODE), productType variationGroup"
+     },
+     "ms": 849
+    },
+    "to_stock_check": {
+     "pid": "style = data-item_id (or data-pid before \"_color_\")",
+     "color": "data-item_variant (or data-pid after \"_color_\")",
+     "size": "size values[].displayValue (S, M, L, up to 3 joined by _); the stock call earlier worked with displayValue for CLD28B"
+    },
+    "extra": {
+     "stock_call_check": "FindInStore-GetStoresWithProductAvailability pid=SI70V2 color=019 size=S_M_L at 23:14 UTC (currentHour=23): error false, stores [], isDispoActive false, availableSteps [15,30]. Probably the night (stores shut) or the service is off; the adapter sends getUTCHours, the page likely sends the local hour. Retry by day before judging."
+    },
+    "notes": "Two requests: search HTML for style and colour, then Product-Variation JSON for sizes. Variant code with colour suffix is not in the search index (survey). Search-ShowAjax is robots-disallowed; the plain /uk/search/ page was used.",
+    "checked_at": "2026-10-12T23:17:30Z"
    }
   },
   {
@@ -8640,6 +9126,41 @@
    },
    "searchaction": {
     "stored_2026_10_06": "https://sostrenegrene.com/en-gb/search?term={search_term_string}"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "sostrene-grene",
+    "approved_set": "hk1 (owner 2026-10-12 \"Next steps - go ahead\" (hk brief, group B hk1); robots.txt ignored for this set only; >= 6.5 s per host; plain Node fetch with the stock-mcp user agent)",
+    "requests_made": 2,
+    "search_request": {
+     "method": "GET",
+     "url": "https://sostrenegrene.com/umbraco/api/search/batchedsearch?term={q}&pageSize=5&searchType=0",
+     "headers": {
+      "culture": "en-GB",
+      "accept": "application/json"
+     },
+     "cookies": "culture=en-GB sent (sets ARRAffinity*)",
+     "plain_fetch": true
+    },
+    "result_fields": {
+     "counts": "hitsProduct, hitsContent, total, hasMorePages, nextSkipProducts",
+     "list": "searchResultItems[] (type 1 = product, type 0 = content page without variants)",
+     "name": "name, subtitle",
+     "product_id": "id (8 hex)",
+     "url": "directUrl (/en-gb/products/...-p-<id>)",
+     "variant_ids": "variants[].sku (\"999999-999\"); mostRelevantVariant",
+     "colour": "variants[].variantName, variants[].color.codes[] (hex)",
+     "online_stock": "variants[].inventory.inStock (count), variants[].availability.status",
+     "stores_summary": "variants[].inventory.inStores {status, description \"In stock in N stores\"} (N empty in this answer)",
+     "price": "variants[].pricing.unit.amount / formatted",
+     "ean": "none"
+    },
+    "second_request": null,
+    "to_stock_check": {
+     "sku": "searchResultItems[type=1].variants[].sku (or mostRelevantVariant)"
+    },
+    "extra": null,
+    "notes": "One request gives variant SKUs. The culture header is required (else Danish market). Exact SKU list route also exists: /umbraco/api/catalog/productlistbyvariant?skus= (not called).",
+    "checked_at": "2026-10-12T23:17:30Z"
    }
   },
   {
@@ -9105,6 +9626,43 @@
     ],
     "response_shape": "server-rendered HTML (SFRA Search-Show); product tiles carry data-pid (style+colour or variant id); the facet value for the store shows the same count; plain Node fetch, no session or cookie, 0.7 to 1.0 s",
     "meaning": "the facet filters search results to products the Canary Wharf shop holds (by the site's own store availability data): one request lists what that shop has for a query; per-product stock level is not given (ProductStock-GetData gives it for the session store only)"
+   },
+   "mcp_lookup": {
+    "mcp_shop": "accessorize",
+    "approved_set": "hk1 (owner 2026-10-12 \"Next steps - go ahead\" (hk brief, group B hk1); robots.txt ignored for this set only; >= 6.5 s per host; plain Node fetch with the stock-mcp user agent)",
+    "requests_made": 2,
+    "search_request": {
+     "method": "GET",
+     "url": "https://www.accessorize.com/uk/search?q={q}[&prefn1=storeAvailability&prefv1=1163]",
+     "headers": {
+      "accept-language": "en-GB"
+     },
+     "cookies": "none needed",
+     "plain_fetch": true,
+     "format": "server-rendered HTML, 1.1 to 1.3 MB, 40 tiles a page (sz/start)",
+     "robots": "/search disallowed (approval needed)"
+    },
+    "result_fields": {
+     "count": "regex \"(\\d+) Products\"",
+     "pid": "button[data-pid] (8-digit style+colour, or 10/11-digit for some lines; appears twice per tile)",
+     "name": "span.b-tile__title / a title",
+     "url": "data-product-url (/uk/<slug>-<pid>.html)",
+     "stores_holding": "div.b-delivery__wrapper[data-available-stores] = HTML-escaped JSON array of store ids holding the item, per tile",
+     "online": "data-home-delivery-available, data-standard-cc-available",
+     "variant_selected": "data-variant-selected",
+     "ean": "none on the site"
+    },
+    "second_request": null,
+    "to_stock_check": {
+     "query": "the user words (the current adapter)",
+     "per_product_answer": "better: from any search (no facet) read each tile data-available-stores and test for \"1163\"; this gives yes/no per product for the Canary Wharf shop in the same request",
+     "variant_pid": "10-digit variant pid (ProductStock-GetData) not needed for this route"
+    },
+    "extra": {
+     "facet_enough": "Yes. The facet search lists only products held at 1163; and every tile (with or without the facet) carries data-available-stores, so find_product and stock_check are the same request. No counts per store, yes/no only."
+    },
+    "notes": "One request answers both \"which products match\" and \"is it at Canary Wharf\". Store list is per style+colour, not per size.",
+    "checked_at": "2026-10-12T23:17:30Z"
    }
   },
   {
@@ -11372,5 +11930,11 @@
   "date": "2026-10-12",
   "approval": "owner, 2026-10-12: \"Approve f, g, mcp\"",
   "requests": 9
+ },
+ "approved_pass_hk": {
+  "date": "2026-10-12",
+  "approval": "owner, 2026-10-12: \"Next steps - go ahead\"",
+  "sets": "H (TWC search), I (WoS positive attempt), J (Boss skus), K (Hotel Chocolat guest flow) and the search shapes for the MCP find_product tool",
+  "mcp": "tools/stock-mcp (cwplans-stock 0.2)"
  }
 }
