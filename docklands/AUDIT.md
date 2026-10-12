@@ -44,7 +44,7 @@ Before this, wind and cloud for past times came from Open-Meteo, whose wind is 0
 anemometer, and HTTP 429 gave a default wind and no weather. What stays PARTIAL: the tide gaps (27 days with no EA archive
 file, gauges out of service), the cloud above the reports (high cloud and the total cover come from the Open-Meteo model,
 or are not known when it refuses), one observation point for the whole model (the airport is about 6 km east of
-Greenland Dock), and the files are built by hand (no workflow refreshes them).
+Greenland Dock). Since 2026-10-12 the daily workflow `.github/workflows/sky-history.yml` (06:41 UTC, since 2026-10-12) rebuilds both files each day.
 
 ### Method
 
@@ -231,7 +231,7 @@ Live deep links:
   (cloud layers below 20,000 ft, visibility, rain, drizzle, snow, fog, temperature) come from the METAR without
   Open-Meteo. Open: high cloud and the total cover of a METAR-only hour are the reported layers only; times after the
   file's build day and before the live-cache's 24 hours fall back to Open-Meteo until the file is built again
-  (`cwplans/tools/build-metar-history.mjs`, one request; no workflow yet).
+  (`cwplans/tools/build-metar-history.mjs`, one request); since 2026-10-12 the daily workflow `.github/workflows/sky-history.yml` (06:41 UTC, since 2026-10-12) builds it each day.
 - **Fixed: grid north.** `layers/wind.js` now turns the data's true direction to the model grid (−1.55°).
 - **Fixed in part: no surge in the tide.** The page uses the EA readings (the fit file's last 7 days, the 3-4 Oct
   snapshot, the hourly cache's last 24 h, and the EA API for the clock's day and the days either side, back 4 weeks) and
@@ -239,8 +239,9 @@ Live deep links:
   back the page reads the EA daily archive readings of the last year (tide-history.json, loaded only for such a clock
   time; `?ea=0` switches it off too). Open: the 27 days that the archive does not have, and a gauge out of service (for
   example Charlton, 3 to 15 Jan 2026), show the prediction at that gauge (with the residual of its own readings within
-  48 h); the residual of a neighbouring gauge is not used. The file is built once: it is not refreshed by a workflow
-  (run `cwplans/tools/build-tide-history.mjs` again; cached days are not fetched again). No surge forecast ahead of the
+  48 h); the residual of a neighbouring gauge is not used. Since 2026-10-12 the daily workflow `.github/workflows/sky-history.yml` (06:41 UTC, since 2026-10-12)
+  rebuilds it each day (the archive lines are kept in an Actions cache; a day the EA had not yet published is asked again
+  for 10 days). No surge forecast ahead of the
   readings.
 - **Decision for the owner:** the EA API request is on by default, as the weather is (owner, 2026-10-09: "all
   wind/weather"); `?ea=0` or the box in Menu > Tide switches it off. The WebGL page asks only after a tap.
@@ -717,7 +718,7 @@ other metadataand credits hidden when labels off".
    Not corrected: no standard correction applies (section 1). Grid north is fixed.
 3. The tide has a surge only within about 8 h of EA readings. Since 2026-10-10 the page has readings for the whole last
    year (EA API 4 weeks, then the EA daily archive file); days without an archive file (27 of 371) or with a gauge out
-   of service show the prediction there. tide-history.json is not refreshed automatically. No surge forecast.
+   of service show the prediction there. tide-history.json is rebuilt each day by sky-history.yml. No surge forecast.
 4. (Fixed: Blackwall Pier is a fixed pier.)
 5. The wildlife reporting rate is computed in the page. The tool could write it into the file. Land birds still show
    a spring peak, from breeding-season surveys.

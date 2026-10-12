@@ -5,7 +5,7 @@
 // (Iowa State University; "The materials found on this website are in the public domain"). Method: pipeline.json activity
 // "build-metar-history"; the reasons, the licence finding and the faults: skill docklands-sky, "METAR history".
 //
-//   NODE_USE_ENV_PROXY=1 node cwplans/tools/build-metar-history.mjs [--days 375] [--end YYYY-MM-DD] [--no-fetch]
+//   NODE_USE_ENV_PROXY=1 node cwplans/tools/build-metar-history.mjs [--region docklands | --station ICAO] [--days 375] [--end YYYY-MM-DD] [--no-fetch]
 //
 // Two stages. 1, fetch (network): ONE request to asos.py for the whole period (IEM asks for few large requests and
 // throttles to one a second per address), the repository's User-Agent, retries 2, 4, 8, 16 s; the answer is cached in
@@ -16,9 +16,15 @@ import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 import { TOOLS, UA } from './lib.mjs';
+import { REGIONS } from '../../docklands/geo/regions/index.js';
 
-const STATION = 'EGLC';
-const OUT = join(TOOLS, '..', 'docklands', 'data', 'sky', 'metar-history.json');
+const arg0 = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
+// the station: services.metar of --region (docklands/geo/regions/; default docklands), or --station
+const REGION = arg0('--region', 'docklands'), RG = REGIONS[REGION];
+if (!RG && !arg0('--station')) throw new Error('unknown --region; known: ' + Object.keys(REGIONS).join(', '));
+const STATION = arg0('--station', RG && RG.services && RG.services.metar);
+if (!STATION) throw new Error(`region ${REGION} has no services.metar; give --station`);
+const OUT = join(TOOLS, '..', 'docklands', 'data', 'sky', REGION === 'docklands' ? 'metar-history.json' : `metar-history-${REGION}.json`);
 const RAW = join(TOOLS, '..', 'data', 'raw', 'sky');
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const DAYS = +arg('--days', 375), FETCH = !process.argv.includes('--no-fetch');
@@ -99,7 +105,7 @@ const out = {
   source: 'Iowa Environmental Mesonet (Iowa State University), ASOS/METAR archive, cgi-bin/request/asos.py (data=metar, routine and special reports)',
   url: URL_, licence: 'public domain',
   licence_text: 'IEM disclaimer (https://mesonet.agron.iastate.edu/disclaimer.php, read 2026-10-12): "The materials found on this website are in the public domain and may be used freely by anyone for any lawful purpose. Attributing the Iowa Environmental Mesonet of Iowa State University would be appreciated." The reports are made by the UK Met Office for the aerodrome and exchanged through the WMO (essential data, WMO Resolution 40); review with source awc-metar before anything leaves the prototyping phase.',
-  attribution: 'METAR London City Airport (EGLC): Iowa Environmental Mesonet, Iowa State University (ASOS/METAR archive)',
+  attribution: `METAR ${STATION}: Iowa Environmental Mesonet, Iowa State University (ASOS/METAR archive)`,
   produced_by: 'cwplans/tools/build-metar-history.mjs', made: new Date().toISOString(), raw_sha256: rawSha,
   raw_sha256_note: `SHA-256 of the cached asos.py answer (data/raw/sky/${CACHE.split('/').pop()})`,
   period: { from: new Date(START).toISOString(), to: new Date(END).toISOString(), days: DAYS, first: new Date(obs[0].t).toISOString(), last: new Date(obs.at(-1).t).toISOString() },

@@ -1,0 +1,52 @@
+# Daily refresh of the measured history files of the Three.js port (docklands/): the Thames levels of the last year from
+# the Environment Agency daily archive (cwplans/tools/build-tide-history.mjs -> cwplans/docklands/data/sky/tide-history.json,
+# OGL v3.0) and the London City Airport METAR of the last year from the Iowa Environmental Mesonet (build-metar-history.mjs
+# -> metar-history.json, public domain). Before this workflow both files ended on the day they were built and older clock
+# times fell back to the prediction / Open-Meteo after a few weeks (docklands/AUDIT.md section 1).
+# The tide tool keeps the filtered archive lines in cwplans/data/raw/river/tide/ (about 12 MB, gitignored): actions/cache
+# keeps them between runs, so a run fetches only the days it does not have (yesterday, and recent days the EA had not yet
+# published); the first run streams all 371 day files (about 60 MB each). The METAR tool makes one request a run.
+# Skill: docklands-sky, "Tide history" and "METAR history". Register sources: ea-tide-archive, iem-asos-metar.
+name: sky-history
+on:
+  schedule:
+    - cron: '41 6 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: sky-history
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install the libraries the tools import (package.json "dependencies")
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Restore the cached archive lines
+        uses: actions/cache@v4
+        with:
+          path: cwplans/data/raw/river/tide
+          key: tide-archive-${{ github.run_id }}
+          restore-keys: tide-archive-
+      - name: Build tide-history.json (fetches only the days not in the cache)
+        run: node cwplans/tools/build-tide-history.mjs
+      - name: Build metar-history.json (one request)
+        run: node cwplans/tools/build-metar-history.mjs
+      - name: Commit
+        run: |
+          git config user.name 'londat cache bot'
+          git config user.email 'londat-cache@users.noreply.github.com'
+          git add cwplans/docklands/data/sky/tide-history.json cwplans/docklands/data/sky/metar-history.json
+          if git diff --cached --quiet; then echo 'nothing new'; exit 0; fi
+          git commit -q -m "sky history: tide and METAR to $(date -u -d yesterday +%Y-%m-%d)"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep 10; done
+          exit 1

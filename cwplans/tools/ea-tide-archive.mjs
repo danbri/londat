@@ -3,7 +3,7 @@
 // OGL v3.0), streamed and filtered to the three 15-minute tidal level measures, and the reader of the cached lines.
 // Cache: data/raw/river/tide/archive-YYYY-MM-DD.csv (gitignored); an empty file means "the EA has no file for that day".
 // Skill: docklands-sky, "Tide prediction" and "Tide history".
-import { readFileSync, writeFileSync, mkdirSync, existsSync, renameSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, renameSync, statSync } from 'fs';
 import { join } from 'path';
 import { TOOLS, UA } from './lib.mjs';
 
@@ -26,7 +26,9 @@ export async function getRetry(u, stream = false, tries = 4) {
 // one archive day: stream the CSV, keep the lines of the three measures; not fetched again when cached. The whole stream is
 // retried when it breaks (the file is written only when complete). Returns 'cached', 'none' or the number of lines kept.
 export async function fetchArchive(d, tries = 4) {
-  const f = archiveFile(d); if (existsSync(f)) return 'cached';
+  // an empty file is a day the archive did not have (HTTP 404); the EA publishes a day's file a day or more late, so a day
+  // less than 10 days old is asked again (the daily workflow sky-history.yml would otherwise freeze yesterday as a gap)
+  const f = archiveFile(d); if (existsSync(f) && (statSync(f).size > 0 || Date.now() - Date.parse(d + 'T00:00Z') > 10 * 864e5)) return 'cached';
   const keep = Object.keys(STATIONS).map(m => MEASURE(m) + ',');
   for (let k = 0; ; k++) {
     try {

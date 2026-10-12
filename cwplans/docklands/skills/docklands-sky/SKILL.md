@@ -253,8 +253,10 @@ Measured levels for any clock time in the last year, not only the EA API's 4 wee
     history-check.mjs included. fit-tide-harmonics.mjs now reads only archive days of one weekday (`--archive-weekday`,
     default 2 = Tuesday, the days of the committed fit; `all` for every day); its input SHA-256 is unchanged
     (7fdf0ebc…).
-- Open: the file is not refreshed by a workflow; run the tool again (cached days are not fetched; it takes a few
-  minutes for the new days). Days older than the file show the prediction.
+- Refreshed each day by the daily workflow `.github/workflows/sky-history.yml` (06:41 UTC, since 2026-10-12): actions/cache keeps `cwplans/data/raw/river/tide/` (about 12 MB), so a run fetches
+  only new days; the first run streams all 371 files. Fault fixed then: a day the EA had not yet published (HTTP 404) was
+  cached as an empty file and never asked again (9 Oct 2026 stayed a gap); `ea-tide-archive.mjs fetchArchive` now asks
+  again for an empty day less than 10 days old. Days older than the file show the prediction.
 
 ## Port clock in the region's time zone (OKR O1, 2026-10-11)
 
@@ -580,8 +582,7 @@ Now the airport's own reports cover the last year, as the EA archive does for th
   reported BKN045, the Open-Meteo snapshot 15 % cloud: the page now dims the moon there (gain 1 - 0.9 x 0.75); that is the
   measurement, not a fault, but photo views of that night look darker than before. (5) This container's address had
   Open-Meteo's daily limit (HTTP 429) most of 2026-10-12; load.mjs now prints an Open-Meteo 429 as a note.
-- **Open.** No workflow refreshes the file: after the build day, times older than the live-cache's 24 h fall back to
-  Open-Meteo until the tool runs again (one request, a few seconds). One point (the airport, about 6 km east of Greenland
+- **Refreshed each day** by the daily workflow `.github/workflows/sky-history.yml` (06:41 UTC, since 2026-10-12) (one request a run). One point (the airport, about 6 km east of Greenland
   Dock) for the whole model. High cloud and cloud types (CB, TCU) are not drawn from it. Days before 2 Oct 2025 use
   Open-Meteo (the tool can fetch more: `--days`).
 

@@ -2331,3 +2331,4 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Checks: new `docklands/test/metar-history-check.mjs` 35 rows, 0 failed (file = IEM's decoded fields, 144 reports; page =
   METAR to 0.04 m/s, 0.5°; HTTP 429 simulated: METAR, not the default); clock-check 169 rows, 0 failed; load.mjs ok (an
   Open-Meteo 429 is now a note). Skill: docklands-sky, "METAR history". Open: no workflow refreshes the file.
+- 2026-10-12: `.github/workflows/sky-history.yml` rebuilds tide-history.json and metar-history.json each day (06:41 UTC); `ea-tide-archive.mjs` asks again for a day less than 10 days old that the EA had not yet published (9 Oct 2026 recovered).
