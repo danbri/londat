@@ -177,7 +177,8 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).
-- `tools/view-mcp/`: the `docklands-view` MCP server (`.mcp.json`). `tools/check-skills.mjs`: the skills index check.
+- `tools/view-mcp/`: the `docklands-view` MCP server (`.mcp.json`). `tools/stock-mcp/`: the `cwplans-stock` MCP server (stock at
+  Canary Wharf shops, one call per user need; skill `cwplans-stock-check`). `tools/check-skills.mjs`: the skills index check.
 - Pages read data through `cwplans/data-base.js` (same site; only `cache/` comes from raw.githubusercontent.com, which is
   new each hour). Tools find paths through `cwplans/tools/londat.mjs`.
 

@@ -5,6 +5,15 @@
       "args": [
         "tools/view-mcp/server.mjs"
       ]
+    },
+    "cwplans-stock": {
+      "command": "node",
+      "args": [
+        "tools/stock-mcp/server.mjs"
+      ],
+      "env": {
+        "NODE_USE_ENV_PROXY": "1"
+      }
     }
   }
 }

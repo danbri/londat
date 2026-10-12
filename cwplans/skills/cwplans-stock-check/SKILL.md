@@ -182,6 +182,31 @@ only, no bot wall passed. Per entry: `approved_pass` (searches, facets, set A re
 - Caller traps seen: a headless browser from the US exit is sent to US stores by script (Barker, Crockett & Jones);
   plain fetch stays on the UK store. Space NK's widget click timed out behind the cookie banner; the GET works.
 
+## The MCP server `cwplans-stock` (2026-10-12)
+
+Owner: "Approve f, g, mcp". `tools/stock-mcp/` (`server.mjs` JSON-RPC over stdio like `docklands-view`, `shops.mjs` one
+adapter per shop, `policy.mjs` the fetch rules, `test.mjs`), registered in `.mcp.json` as `cwplans-stock`.
+- Tools: `list_stock_shops` (shop, Canary Wharf store id, answer kind, id arguments) and `stock_check` (`shop` plus that
+  shop's own product id: `variant_code`, `sku`, `product_code`, `product_id`, `pid`/`color`/`size`, `skus`, `query`).
+- Shops (9): The White Company (`variant_code`; count, `jubilee-place`), Crockett & Jones (`sku` "<product>/<fit>/<size>";
+  quantity, 316), Robert Dyas (`sku`, `qty`; in stock yes/no and collection time, `rd_6088`), Søstrene Grene (`sku`;
+  3 levels, 8039; header and cookie `culture: en-GB`), Watches of Switzerland (`product_code`; level and status, 466),
+  Space NK (`product_id`; yes/no), Hobbs (`pid`, `color`, `size` codes from the find-in-store form; count, 377), Boss
+  (`pid`, `skus` [[EAN, size]]; sizes per shop), Accessorize (`query`; products the Canary Wharf shop holds, 1163).
+  Hotel Chocolat (SLAS guest token through `/mobify/`) and Intimissimi are not in it yet.
+- `policy.mjs` on every request: robots.txt read per host; a disallowed path (Space NK `/on/`, Boss, Accessorize
+  search) is fetched only when the call carries `owner_approval` (the owner's words and date), which is logged; 6 s or
+  more per host (`STOCK_MCP_GAP_MS`); 50 requests per host per process at most; a 401/403/429/503 ends the call (no
+  retry, no bypass); the user agent names the project; every request logged to `data/raw/stock-mcp/calls.jsonl`
+  (ignored by git). No basket, login or form code.
+- Test: `node tools/stock-mcp/test.mjs` (protocol, no network: 5 checks pass); `--live --approval="..."` makes one
+  call per shop. Live run of 2026-10-12 (approval "Approve f, g, mcp"), 8 shops, all with the Canary Wharf branch in the
+  answer: The White Company CLDDSNNA 8 in stock; Crockett & Jones 20499A-J01L3/E/060 0; Robert Dyas 251735 in stock,
+  collect tomorrow; Søstrene Grene 521893-002 out of stock; Watches of Switzerland 17631061 out of stock; Space NK
+  UK200019905 not available; Hobbs dress UK 12 1 in stock; Accessorize "classic tote bag" 1 product. Boss not run (needs
+  [EAN, size] pairs from a product page).
+- Fault met: the first Hobbs parse took the store name from inside the label tag (the regex starts in the tag).
+
 ## Rules for a caller
 
 - One call per concrete user need (a person asks "is X in stock at Canary Wharf?"); no polling, no catalogue sweeps,

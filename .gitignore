@@ -4,3 +4,6 @@ __pycache__/
 _site/
 .claude/worktrees/
 docklands/test/out/
+
+# stock-mcp call log (local only; tools/stock-mcp/policy.mjs)
+data/raw/stock-mcp/

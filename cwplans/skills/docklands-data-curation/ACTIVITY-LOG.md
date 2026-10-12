@@ -2438,3 +2438,11 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   answers 400 for every field set. Over-budget requests recorded in `deviations`.
 - Per-store stock checks with Canary Wharf in the answer: The White Company, Crockett & Jones, Hotel Chocolat, Watches
   of Switzerland and Hobbs (counts); Robert Dyas, Søstrene Grene, Space NK (yes/no or level); Boss (sizes).
+
+## 2026-10-12: stock MCP server
+
+- Owner: "Approve f, g, mcp". New MCP server `cwplans-stock` (`tools/stock-mcp/`, `.mcp.json`): `list_stock_shops`,
+  `stock_check` for 9 Canary Wharf shops; fetch rules in `policy.mjs` (robots.txt unless `owner_approval`, 6 s per host,
+  50 per host, no bot-wall handling, call log in ignored `data/raw/stock-mcp/`). Live test: 8 shops answered with the
+  Canary Wharf branch (skill `cwplans-stock-check`, "The MCP server"). Boss, Hotel Chocolat, Intimissimi not yet in the
+  live test or the server.
