@@ -2155,6 +2155,42 @@
    "cwp:judgement": "Store-page URLs that OSM does not give were found by hand on the brand locators: registry/sources/brands/tools/storelocator-manual.json (manual activity storelocator-manual)."
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolprobestockcheck",
+   "@type": "prov:Activity",
+   "rdfs:label": "probe-stock-check",
+   "dct:description": "Survey of 77 Canary Wharf product shops for a check-stock-in-a-shop feature: the probe loads one page, lists fetch/XHR requests, finds stock phrases and flags bot challenges; the survey agents then ran one stock-check search with E14 5AB and described the answering request by shape.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory-typed.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwebcrawl",
+     "dcat:accessURL": "shop home and product pages, robots.txt, and one stock-check or store-finder search per brand",
+     "dct:description": "robots.txt obeyed; about 6 page loads or fewer per brand; 5 s or more between requests to one host; headless Chromium with its own user agent; no challenge bypassed"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/stock/stock-check-survey.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/probe-stock-check.mjs"
+   },
+   "cwp:command": "NODE_USE_ENV_PROXY=1 node cwplans/tools/probe-stock-check.mjs <url> [--postcode=\"E14 5AB\"]",
+   "cwp:kind": "fetch",
+   "cwp:rule": [
+    "robots.txt decides; an HTML answer to robots.txt counts as unreadable and the site is skipped.",
+    "No login, basket, reservation or other form; one postcode search per brand.",
+    "No response body is kept: endpoint pattern, parameters and response shape only."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "brands",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolreadmetables",
    "@type": "prov:Activity",
    "rdfs:label": "readme-tables",
@@ -12697,6 +12733,27 @@
     "@id": "https://kgx.foaf.tv/id/toolstorelocator"
    },
    "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/stock/stock-check-survey.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "survey of 77 Canary Wharf shop websites (kgx cwg Store types) for a check-stock-in-a-shop feature: per brand the site, platform, stock-check endpoint pattern and response shape (no bodies), Canary Wharf store id, session needs, bot protection, robots.txt AI-agent groups, verdict and notes",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwebcrawl"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolprobestockcheck"
+   },
+   "cwp:osmUse": "none",
+   "cwp:review": "facts read from shop websites with no open licence: scoping only"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory.json",

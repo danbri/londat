@@ -2340,3 +2340,21 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   usual sense of laggy and jerky": a frame-rate problem on the iPhone (software: Painted 68 ms a frame against 29 ms for
   the map at 390 x 844 @3). Next round when the owner asks: lower resolution while the view moves, the tier chosen by
   measured frame time, fewer fetches, a frame-time readout on the phone; then stronger stroke character.
+
+## 2026-10-12: stock checks in Canary Wharf shops
+
+- Owner: "find all shops in canary wharf whose websites might have 'is this product in stock' tools. Examine their
+  sites, summarize findings ... Use node for now". Shop list from the kgx store in Node (`kgx-query.mjs`: Store types,
+  361 rows) and its input `cwg-directory-typed.json`: 77 product shops. Four survey agents, robots.txt obeyed, one
+  stock-check search per brand with E14 5AB, no challenge bypassed.
+- Result: 11 per-store checks answer headless (The White Company, Crockett & Jones, Robert Dyas, Søstrene Grene and
+  Watches of Switzerland with open JSON or form calls and Canary Wharf ids; Space NK and Hotel Chocolat only through
+  paths that robots.txt disallows), 14 blocked or session-bound, 8 click & collect only, 22 online only, 6 no online
+  shop, 16 unknown (bot walls). File `registry/sources/stock/stock-check-survey.json`; new skill
+  `cwplans-stock-check`; new tool `tools/probe-stock-check.mjs` (faults met and fixed: robots wildcard, HTML robots.txt,
+  captcha false positives).
+- Deviations, recorded in the file: one disallowed `/search/` request (Hobbs, by mistake), a few repeat calls.
+- A survey note said The White Company's robots.txt disallows Anthropic-AI; it gives `Allow: /` (checked again).
+- MCP: GitHub Pages cannot host a remote MCP server, and shop endpoints send no CORS headers; routes in the skill.
+- Open (owner): first caller for the five open endpoints (a local MCP tool?); ask Space NK, Hotel Chocolat, Boss and
+  the blocked brands for access?

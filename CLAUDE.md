@@ -151,6 +151,7 @@ with a YAML parser. On 2026-10-07 all 18 descriptions here were 1,024 characters
 | `cwplans-river-and-water` | `cwplans/skills/` | river, docks, locks, water quality, boats, AIS |
 | `cwplans-feed-discovery` | `cwplans/skills/` | London RSS, Atom and iCal feeds at scale |
 | `cwplans-crown-lighting` | `cwplans/skills/` | the coloured lighting at the tops of the towers |
+| `cwplans-stock-check` | `cwplans/skills/` | shop stock-check tools (which Canary Wharf shops say what is in stock, endpoints, rules), the probe tool |
 
 Skills for other work (FINK, Lucid, splats, `container-improver` for installing tools in a cloud container) are in
 danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/master/.claude/skills

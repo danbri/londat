@@ -1,0 +1,4632 @@
+{
+ "source": "survey of the shop websites of the Canary Wharf Group directory shops (kgx graph cwg, Store types) for a check-stock-in-a-shop feature",
+ "generated": "2026-10-12",
+ "tool": "cwplans/tools/probe-stock-check.mjs (headless Chromium, one page per call) and short Playwright and curl scripts of the survey agents (not kept)",
+ "method": "77 product shops of 120 retail entries (services, clinics, duplicates removed). Per brand: robots.txt obeyed, about 6 page loads or fewer, 5 s or more between requests to a host, one stock-check or store-finder search with E14 5AB, no login, basket or other form, no bot challenge bypassed, user agent not changed. Responses are described by shape only; no response body is kept. The robots.txt AI-agent groups were read again on 2026-10-12 (one request per host).",
+ "skill": "cwplans-stock-check",
+ "deviations": [
+  "hobbs: one request to /search/?q=E14+5AB (robots.txt disallows /search) by mistake; not repeated",
+  "hobbs, sostrene-grene, watches-of-switzerland: one cookie-less repeat of the same stock call with curl, to test whether a session is needed",
+  "intimissimi: the same store search ran three times in a browser",
+  "robert-dyas: 7 page loads (a shared script ran once by mistake)",
+  "the-post-office-chancellor-passage: the branch-finder call ran twice (the first was malformed)"
+ ],
+ "counts": {
+  "per-store stock check (works headless)": 11,
+  "online availability only": 22,
+  "unknown": 16,
+  "per-store stock check (blocked/needs browser session)": 14,
+  "no online shop": 6,
+  "click & collect only, no per-store visibility": 8
+ },
+ "entries": [
+  {
+   "slug": "crockett-jones",
+   "brand": "Crockett & Jones",
+   "site": "https://www.crockettandjones.com/",
+   "platform": "Shopify (crockett-and-jones-uk.myshopify.com; separate US store us.crockettandjones.com) behind Cloudflare",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Find in Store (popup note: 'Stock data is current within the last hour'; when out online: 'Out of Stock Online - Find in Store')",
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": "POST",
+     "url_pattern": "https://cj-app-152ce4da90df.herokuapp.com/stockcheck/",
+     "params": "form-urlencoded: product=<SKU part before first '/', e.g. 20499A-J01L3>, fit=<width letter, e.g. E>, size=<size code, e.g. 060>; values come from variant SKU '<product>/<fit>/<size>' (products.json variants[].sku)"
+    },
+    "response_shape": "JSON array, one item per shop: {stockLevel:{Store, StoreNum, Product, MtrxCode1 (fit), MtrxCode2 (size), Quantity, InTransit, Discrepancy, RequestStatus}}; 10 shops returned. Page maps Quantity <1 'Out of Stock', <3 'Low Stock', >=3 'In Stock'. Shop names/addresses/lat-lng come from a JSON list embedded in the product page (span.js-stores-data).",
+    "canary_wharf_store_id": "316",
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (main site only; Heroku stock API has none)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/<handle>.js with variants[].available (online)",
+    "schema.org Offer availability InStock in product HTML (online)",
+    "Embedded shop list JSON with store ids 310-319, lat/lng, phone"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Best case: a plain POST (no cookies, no token) returns exact quantity per shop for one SKU/fit/size. Not a postcode search: it returns all shops. Our US egress geo-redirects the browser to us.crockettandjones.com (Cozy Country Redirect app); curl of www. gives the UK store HTML. Heroku app has no robots.txt (404). Tested once 2026-10-12: store 316 (Canary Wharf, Cabot Place) Quantity 0 for 20499A-J01L3 E 060. Unofficial endpoint: keep to one call per real user request.",
+   "evidence_urls": [
+    "https://www.crockettandjones.com/products/alex-black-calf-suede",
+    "https://www.crockettandjones.com/cdn/shop/t/119/assets/bundle.js",
+    "https://cj-app-152ce4da90df.herokuapp.com/stockcheck/",
+    "https://www.crockettandjones.com/pages/canary-wharf"
+   ],
+   "checked_at": "2026-10-12T14:55:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "crockett-jones",
+    "name": "Crockett & Jones",
+    "types": [
+     "ShoeStore"
+    ],
+    "categories": [
+     "Shoes & Footwear"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/crockett-jones/",
+    "kgx": "https://canarywharf.com/shop/crockett-jones/#entity"
+   }
+  },
+  {
+   "slug": "flowers-plants-co",
+   "brand": "Flowers & Plants Co.",
+   "site": "https://flowersandplantsco.com/",
+   "platform": "Shopify (store flowersmith-1547.myshopify.com); also exposes UCP/MCP agent endpoint",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Click & Collect available ... Usually ready in 24 hours / Check availability at other stores",
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://flowersandplantsco.com/variants/{variantId}/?section_id=pickup-availability",
+     "params": {
+      "section_id": "pickup-availability"
+     }
+    },
+    "response_shape": "HTML fragment (Shopify pickup-availability section): one entry per location with name, 'Click & Collect available, usually ready in 24 hours' or unavailable, address, phone. No quantity. Store list is fixed (no postcode input).",
+    "canary_wharf_store_id": "locations named 'Flowers & Plants - Canada Place' (Unit 53 Canada Place, E14 5AH), 'Flowers & Plants - Canary Wharf' (same address) and 'Flowers & Plants - Jubilee Place' (E14 5NY); no numeric id in the fragment",
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Shopify edge (no challenge seen; probe 'challenge' flag was a false positive from page text)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/{handle}.js expose variants[].available (online)",
+    "UCP discovery /.well-known/ucp and MCP endpoint POST /api/ucp/mcp (search_catalog etc.) per /agents.md",
+    "Shopify pickup-availability fragment is plain GET, works with curl"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Best case in group: plain GET per variant, no cookies, lists the two Canary Wharf shops (Canada Place, Jubilee Place) plus studio and Moyses Stevens partner shops. Values are per-location pickup availability (Shopify inventory at location > 0), not quantity; florist stock is made to order so it mostly reads 'available'. robots.txt allows /variants and /products; disallows /cart, /checkout, /recommendations. robots.txt/agents.md: 'Checkouts are for humans' and asks agents to use UCP/MCP for catalog; ToS https://www.shopify.com/legal/terms.",
+   "evidence_urls": [
+    "https://flowersandplantsco.com/robots.txt",
+    "https://flowersandplantsco.com/agents.md",
+    "https://flowersandplantsco.com/products/stocks-and-peonies",
+    "https://flowersandplantsco.com/variants/44161345356086/?section_id=pickup-availability"
+   ],
+   "checked_at": "2026-10-12T14:57:20Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://flowersandplantsco.com/agents.md",
+     "# UCP discovery: https://flowersandplantsco.com/.well-known/ucp",
+     "# UCP/MCP endpoint: https://flowersandplantsco.com/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "flowers-plants-co",
+    "name": "Flowers & Plants Co.",
+    "types": [
+     "Florist"
+    ],
+    "categories": [
+     "Flowers & Plants"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/flowers-plants-co/",
+    "kgx": "https://canarywharf.com/shop/flowers-plants-co/#entity"
+   }
+  },
+  {
+   "slug": "tesco-express",
+   "brand": "Tesco Express",
+   "site": "https://www.tesco.com/groceries/",
+   "platform": "custom (Tesco micro-frontends, Akamai CDN)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": {
+     "method": null,
+     "url_pattern": null,
+     "params": null
+    },
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai Bot Manager",
+    "challenged": true
+   },
+   "other_signals": [
+    "Online grocery availability is tied to a delivery/collection slot store chosen after sign-in, not a public per-store stock view",
+    "Whoosh rapid delivery is served from local Express stores but needs an account and address"
+   ],
+   "verdict": "online availability only",
+   "notes": "Headless Chromium got HTTP 403 'Access Denied' (Akamai edgesuite reference) on a groceries product page; plain curl got 403 even on robots.txt (node fetch got robots 200, product path allowed). No public in-store stock checker on tesco.com; Express stores do not offer click & collect (larger stores do). Internet Archive was unreachable through the proxy at check time. A future caller should not scrape: blocked. Consider only the store locator for hours.",
+   "evidence_urls": [
+    "https://www.tesco.com/groceries/en-GB/products/254656543",
+    "https://www.tesco.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T14:58:23+00:00",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "tesco-express",
+    "name": "Tesco Express",
+    "types": [
+     "GroceryStore"
+    ],
+    "categories": [
+     "Groceries"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/tesco-express/",
+    "kgx": "https://canarywharf.com/shop/tesco-express/#entity"
+   }
+  },
+  {
+   "slug": "ryman-stationery",
+   "brand": "Ryman Stationery",
+   "site": "https://www.ryman.co.uk/",
+   "platform": "Magento (robots.txt lists Magento paths: /catalog/product/view/, /onestepcheckout/, /ajaxbasket/, ___store=)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (managed challenge 'Just a moment...', HTTP 403)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Sitemap declared at https://www.ryman.co.uk/media/sitemap/ryman_sitemap.xml but it is also behind the Cloudflare challenge for curl",
+    "Ryman store reply on Trustpilot: products available in store can be collected on the date of purchase (implies a per-store availability check inside the collection flow, not verified)",
+    "Ryman Zoom local fast delivery from stores (news report)"
+   ],
+   "verdict": "unknown",
+   "notes": "Every request (homepage headless, sitemap via curl) got a Cloudflare challenge; not bypassed. Internet Archive was not reachable from this container (connection reset). Click & Collect is confirmed by third-party sources only. A future caller would need a real browser session that passes Cloudflare; treat as blocked. robots.txt disallows /ajaxcalls/ and /ajaxbasket/, which are the likely Magento endpoints for any store-stock widget. Same owner (TPRG) as Robert Dyas, whose identical Magento stack has a working per-store API (see robert-dyas.json); Ryman probably has the same feature, but the Magento REST path /rest/V1/inventory/in-store-pickup/pickup-locations was also Cloudflare-challenged (403 Just a moment...).",
+   "evidence_urls": [
+    "https://www.ryman.co.uk/robots.txt",
+    "https://ch.trustpilot.com/review/www.ryman.co.uk",
+    "https://www.expressandstar.com/news/ryman-relocates-sutton-coldfield-store-to-gracechurch-shopping-centre-9233736"
+   ],
+   "checked_at": "2026-10-12T14:58:43Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "ryman-stationery",
+    "name": "Ryman Stationery",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/ryman-stationery/",
+    "kgx": "https://canarywharf.com/shop/ryman-stationery/#entity"
+   }
+  },
+  {
+   "slug": "ismash",
+   "brand": "iSmash",
+   "site": "https://www.ismash.com/",
+   "platform": "Shopify (ismashuk.myshopify.com) behind Cloudflare",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (CDN, no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json, /collections/refurbished/products.json and /products/<handle>.js with variants[].available (online; refurbished devices)",
+    "schema.org Offer availability InStock on product page (online)",
+    "Repair-part products are in products.json but their pages redirect to the home page (hidden, internal)",
+    "Branch page /pages/ismash-canary-wharf-store-phone-repairs and online repair booking /pages/book-appointment"
+   ],
+   "verdict": "online availability only",
+   "notes": "Mainly a repair service (book a repair at a branch); sells refurbished phones online. No find-in-store, no Shopify pickup-availability block on product pages. Shopify JSON endpoints are allowed by robots.txt (only /cart, /checkout, /orders, /account disallowed).",
+   "evidence_urls": [
+    "https://www.ismash.com/products/refurbishedmv-iphone13",
+    "https://www.ismash.com/collections/refurbished/products.json",
+    "https://www.ismash.com/pages/ismash-canary-wharf-store-phone-repairs"
+   ],
+   "checked_at": "2026-10-12T15:02:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "ismash",
+    "name": "iSmash",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/ismash/",
+    "kgx": "https://canarywharf.com/shop/ismash/#entity"
+   }
+  },
+  {
+   "slug": "lakrids-by-bulow",
+   "brand": "Lakrids by Bülow",
+   "site": "https://lakridsbybulow.co.uk/",
+   "platform": "BigCommerce (Stencil; storefront GraphQL at /graphql)",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "BigCommerce 'nobot' beacon only; no challenge",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Offer availability https://schema.org/InStock on product pages (online stock)",
+    "BigCommerce storefront GraphQL POST /graphql (token embedded in page) returns product/variant data incl. inventory flags (online only)",
+    "sitemap /xmlsitemap.php?type=products"
+   ],
+   "verdict": "online availability only",
+   "notes": "No click & collect, no store picker, no in-store phrases on product page. Online stock only via JSON-LD. robots.txt disallows /search.php, /remote.php, /cart.php, /checkout and names several AI crawlers separately (rules for * apply to a normal browser).",
+   "evidence_urls": [
+    "https://lakridsbybulow.co.uk/robots.txt",
+    "https://lakridsbybulow.co.uk/liquorice-with-chocolate/dark-truffle-265g"
+   ],
+   "checked_at": "2026-10-12T14:58:22Z",
+   "robots_ai": {
+    "groups": [
+     {
+      "ua": [
+       "ChatGPT-User",
+       "Claude-Web",
+       "ClaudeBot",
+       "GPTBot",
+       "anthropic-ai"
+      ],
+      "rules": [
+       "disallow: /account.php",
+       "disallow: /cart.php",
+       "disallow: /checkout.php",
+       "disallow: /checkout",
+       "disallow: /admin/",
+       "disallow: /*?_bc_fsnf=1*"
+      ]
+     }
+    ],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "lakrids-by-bulow",
+    "name": "Lakrids by Bulow in Cabot Place",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Confectionery"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/lakrids-by-bulow/",
+    "kgx": "https://canarywharf.com/shop/lakrids-by-bulow/#entity"
+   }
+  },
+  {
+   "slug": "boggi-milano",
+   "brand": "Boggi Milano",
+   "site": "https://www.boggi.com/en_GB/",
+   "platform": "likely Salesforce Commerce Cloud (locale path /en_GB/, not confirmed: page not reachable)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "tried": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Bunny Shield (bunny.net proof-of-work challenge)",
+    "challenged": true
+   },
+   "other_signals": [],
+   "verdict": "unknown",
+   "notes": "Every request (robots.txt by curl and node, and the homepage in headless Chromium) answered 403 with the Bunny Shield 'Establishing a secure connection' page; the headless browser looped through /.bunny-shield/verify-pow three times and never reached the site. Not pursued further (no evasion). Internet Archive unreachable through the proxy at check time. Whether product pages carry a 'find in store' feature is unknown; re-check from a normal browser by hand.",
+   "evidence_urls": [
+    "https://www.boggi.com/robots.txt",
+    "https://www.boggi.com/en_GB/default-homepage"
+   ],
+   "checked_at": "2026-10-12T14:58:56Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 403,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "boggi-milano",
+    "name": "Boggi Milano",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/boggi-milano/",
+    "kgx": "https://canarywharf.com/shop/boggi-milano/#entity"
+   }
+  },
+  {
+   "slug": "the-white-company-jubilee-place",
+   "brand": "The White Company",
+   "site": "https://www.thewhitecompany.com/uk/",
+   "platform": "SAP Commerce Cloud (Hybris) OCC API /TWCcommercewebservices/v2/twc-uk/ with a Vue front end; Amplience CMS",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "FIND STOCK IN STORE (modal 'Find Stock in Store', range select, 'Only see stores with stock')",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.thewhitecompany.com/TWCcommercewebservices/v2/twc-uk/products/{variantCode}/stock?fields=DEFAULT",
+     "params": {
+      "variantCode": "variant SKU, e.g. CLDDSNNA for product CLDDS (from /products/{code}?fields=FULL or the page data)",
+      "fields": "DEFAULT"
+     }
+    },
+    "response_shape": "JSON {stores:[{name, displayName, address, geoPoint{latitude,longitude}, openingHours, stockInfo{stockLevel:int, stockLevelStatus:'inStock'|'lowStock'|'outOfStock', isValueRounded}}]}; all 69 UK stores in one answer, the postcode is geocoded client-side (Google Maps) only to sort by distance. Exact unit counts per store.",
+    "canary_wharf_store_id": "jubilee-place (displayName 'Canary Wharf - London', 51.503,-0.019); test product had stockLevel 8",
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Akamai Bot Manager (sensor_data POSTs) + Akamai mPulse",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Product with offers availability https://schema.org/InStock (online)",
+    "OCC /products/{code}?fields=FULL has stock{stockLevel,stockLevelStatus} and isFindStockInStoreEnabled flag",
+    "/products/fsis?productCodes= endpoint also called by the modal",
+    "Sitemaps: /uk/sitemap_Product.xml, /uk/sitemap_Store.xml (store page https://www.thewhitecompany.com/uk/our-stores/jubilee-place)"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Best case of the group: one plain GET (worked even with curl, no cookies) returns exact stock for every UK store; filter by store name 'jubilee-place'. Need the variant code, not the base product code. The site geo-redirects non-UK IPs to /us/: append ?countryIsoCode=GB&currencyIsoCode=GBP to a page URL (the site's own country switch). robots.txt allows /TWCcommercewebservices and, under '# Explicitly allow AI crawlers', gives 'Allow: /' to GPTBot, ChatGPT-User, Google-Extended, GeminiBot and Anthropic-AI (checked again 2026-10-12; the first survey note said Disallow, which was wrong). Stock levels are 'a guide only' (site text). Akamai is present: keep to very low volume.",
+   "evidence_urls": [
+    "https://www.thewhitecompany.com/uk/Fragrance-Diffuser-Tray/p/CLDDS",
+    "https://www.thewhitecompany.com/TWCcommercewebservices/v2/twc-uk/products/CLDDSNNA/stock?fields=DEFAULT",
+    "https://www.thewhitecompany.com/robots.txt",
+    "https://www.thewhitecompany.com/uk/our-stores/jubilee-place"
+   ],
+   "checked_at": "2026-10-12T15:03:22Z",
+   "robots_ai": {
+    "groups": [
+     {
+      "ua": [
+       "GPTBot"
+      ],
+      "rules": [
+       "allow: /"
+      ]
+     },
+     {
+      "ua": [
+       "ChatGPT-User"
+      ],
+      "rules": [
+       "allow: /"
+      ]
+     },
+     {
+      "ua": [
+       "Anthropic-AI"
+      ],
+      "rules": [
+       "allow: /"
+      ]
+     }
+    ],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "the-white-company-jubilee-place",
+    "name": "The White Company",
+    "types": [
+     "HomeGoodsStore"
+    ],
+    "categories": [
+     "Home & Furniture"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/the-white-company-jubilee-place/",
+    "kgx": "https://canarywharf.com/shop/the-white-company-jubilee-place/#entity"
+   }
+  },
+  {
+   "slug": "marks-spencer-simply-food",
+   "brand": "Marks & Spencer (Canary Wharf Simply Food, Jubilee Place)",
+   "site": "https://www.marksandspencer.com/",
+   "platform": "custom headless (Next.js front end, GraphQL 'experience' API at experience.marksandspencer.app; legacy IBM WebSphere Commerce paths in robots.txt) behind Akamai",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Find in store (product page; dialog 'Enter postcode, town or city*'; results show 'Low Stock' etc.)",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "POST",
+     "url_pattern": "https://experience.marksandspencer.app/v1/graphql",
+     "params": "GraphQL operationName GetStores, variables {businessUnit:'CNH', countryCode:'GB', limit:150, query:'E14 5AB', radius:25, sku:'<11-digit sku id, e.g. 61222871004>'}; each location has stock(input:{productId:$sku, businessUnit}) -> stock.levelIndicator. Product-level GetProductStock(productId, locationId) gives units[].quantity per sku for one location. Header Authorization: Bearer <anonymous JWT> from POST www.marksandspencer.com/api/auth/callback/identityanonymoustoken (NextAuth, csrfToken)."
+    },
+    "response_shape": "JSON (GraphQL). data.location.location.getLocationsByQueryFilters.locations[]: {id, name, address, coordinates, distanceInMeters, openingHours, facilities, departments, stock:{stock:{levelIndicator:'O'|'L'|... }}}. Seen: 104 'O' (out), 10 'L' (low) for a women's T-shirt size 12. Large answer (>300 KB for 150 shops).",
+    "canary_wharf_store_id": "3722 (CANARY WHARF SIMPLY FOOD, Jubilee Place, 45 Bank Street, E14 5NY; first result, 268 m; levelIndicator 'O' for clothing, as expected for a food store)",
+    "needs_session": true,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Akamai Bot Manager (_abck, bm_sz cookies; plain curl to experience.marksandspencer.app/robots.txt answered 'Access Denied')",
+    "challenged": false
+   },
+   "other_signals": [
+    "api.marksandspencer.com/commerce/price/v2?partnumber=<P-id> with a public MSAuth apikey in page JS (price)",
+    "Location data with opening hours, departments and facilities per shop in the same GraphQL answer",
+    "Click & Collect (next day) for online orders",
+    "Food: no per-store food stock on the site (Simply Food shops sell food; online food is via Ocado / M&S food-to-order)"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Works in headless Chromium through the normal page (select size, Find in store, postcode). A direct client needs the anonymous bearer token and passes Akamai only from a real browser session; do not try to replay outside the browser. The Canary Wharf branch is a Simply Food shop, so the clothing check is of little use there; useful for M&S clothing/home in larger shops nearby. Level codes only (no quantities) in the per-store list; GetProductStock returns quantities per location id.",
+   "evidence_urls": [
+    "https://www.marksandspencer.com/round-neck-fitted-t-shirt/p/clp22157995",
+    "https://www.marksandspencer.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:10:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "marks-spencer-simply-food",
+    "name": "M&S Simply Food Shops And Services",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Confectionery"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/marks-spencer-simply-food/",
+    "kgx": "https://canarywharf.com/shop/marks-spencer-simply-food/#entity"
+   }
+  },
+  {
+   "slug": "ee",
+   "brand": "EE",
+   "site": "https://ee.co.uk/ (shop under https://ee.co.uk/shop/...; legacy https://shop.ee.co.uk/)",
+   "platform": "custom (BT Group), behind Imperva CDN/WAF",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Imperva (Incapsula): x-cdn: Imperva, visid_incap/incap_ses cookies; shop.ee.co.uk body 'BLOCKED' with _Incapsula_Resource",
+    "challenged": true
+   },
+   "other_signals": [
+    "ee.co.uk homepage (200) links product pages at /shop/mobile/...-details; robots.txt only disallows /orders* and /help/comms*"
+   ],
+   "verdict": "unknown",
+   "notes": "Product pages answer 403 to headless Chromium and to curl (Imperva). Not bypassed. The homepage loads but carries no stock or collect wording. Whether the shop offers in-store collection with a per-store stock view could not be confirmed (check by hand in a normal browser). Internet Archive CDX timed out through the proxy. A future caller needs a real browser session; Imperva will block low-volume automation too.",
+   "evidence_urls": [
+    "https://ee.co.uk/robots.txt",
+    "https://ee.co.uk/shop/mobile/upgrade-df-pay-monthly-phones-gallery/iphone-18-pro-details",
+    "https://shop.ee.co.uk/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:01:20Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "ee",
+    "name": "EE - Canary Wharf | Discover New Tech and Services",
+    "types": [
+     "ElectronicsStore"
+    ],
+    "categories": [
+     "Electronics & Phones"
+    ],
+    "mall": "One Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/ee/",
+    "kgx": "https://canarywharf.com/shop/ee/#entity"
+   }
+  },
+  {
+   "slug": "zara",
+   "brand": "Zara",
+   "site": "https://www.zara.com/uk/",
+   "platform": "custom (Inditex; itxrest API, Akamai CDN)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "In-store availability (product page; label not seen here, from the Inditex app/site pattern)",
+    "tried": false,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.zara.com/itxrest/<v>/.../availability (path family named in robots.txt; exact form not observed)",
+     "params": null
+    },
+    "needs_session": null,
+    "headless_ok": false,
+    "postcode": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai Bot Manager",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt disallows the availability API for all agents: 'Disallow: /itxrest/*/availability' and '/itxrest/*/sizing-info'",
+    "Sitemap index at https://www.zara.com/sitemaps/sitemap-index.xml.gz"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Headless Chromium got 403 'Access Denied' (Akamai) on https://www.zara.com/uk/; curl got 403 on robots.txt, node fetch got 200. Even if reachable, robots.txt explicitly disallows the /itxrest/*/availability family, so an automated stock caller would break the site's robots rules. Treat as not callable; link users to the Zara app's in-store stock instead.",
+   "evidence_urls": [
+    "https://www.zara.com/robots.txt",
+    "https://www.zara.com/uk/"
+   ],
+   "checked_at": "2026-10-12T14:59:26Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "zara",
+    "name": "Zara Canary Wharf - Fashion for Women, Men & Children",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/zara/",
+    "kgx": "https://canarywharf.com/shop/zara/#entity"
+   }
+  },
+  {
+   "slug": "barker-shoes",
+   "brand": "Barker Shoes",
+   "site": "https://www.barkershoes.com/",
+   "platform": "Shopify (powered-by: Shopify header; Cloudflare edge as part of Shopify); custom older theme",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Shopify/Cloudflare edge (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products/<handle>.js and .json and /products.json give per-variant 'available' (online stock, all sizes)",
+    "Product page size options marked 'Out of Stock' server-side",
+    "JSON-LD with https://schema.org/InStock (online)",
+    "Shopify pickup-availability section (/variants/<id>/?section_id=pickup-availability) answers 404: local pickup is not enabled",
+    "'Find A Stockist' and 'Our Stores' store locator pages only"
+   ],
+   "verdict": "online availability only",
+   "notes": "No click & collect or store stock widget seen on the product page. Online per-size availability is cheap to read through Shopify JSON (/products/<handle>.js), but it is warehouse stock, not the Cabot Place shop. Non-UK IPs are redirected by script to us.barkershoes.com; curl of the UK page is not redirected.",
+   "evidence_urls": [
+    "https://www.barkershoes.com/products/michigan-black-waxy-calf",
+    "https://www.barkershoes.com/products/michigan-black-waxy-calf.js",
+    "https://www.barkershoes.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:04:50Z",
+   "robots_ai": {
+    "groups": [
+     {
+      "ua": [
+       "GPTBot"
+      ],
+      "rules": [
+       "allow: /products/",
+       "allow: /collections/",
+       "allow: /pages/",
+       "allow: /blogs/",
+       "allow: /apps/a/llms.txt"
+      ]
+     },
+     {
+      "ua": [
+       "ChatGPT-User"
+      ],
+      "rules": [
+       "allow: /products/",
+       "allow: /collections/",
+       "allow: /pages/",
+       "allow: /blogs/",
+       "allow: /apps/a/llms.txt"
+      ]
+     },
+     {
+      "ua": [
+       "anthropic-ai"
+      ],
+      "rules": [
+       "allow: /products/",
+       "allow: /collections/",
+       "allow: /pages/",
+       "allow: /blogs/",
+       "allow: /apps/a/llms.txt"
+      ]
+     },
+     {
+      "ua": [
+       "Claude-Web"
+      ],
+      "rules": [
+       "allow: /products/",
+       "allow: /collections/",
+       "allow: /pages/",
+       "allow: /blogs/",
+       "allow: /apps/a/llms.txt"
+      ]
+     }
+    ],
+    "agent_notes": [
+     "# Note: llms.txt is discovered via Allow rules below, not via Sitemap directive",
+     "Allow: /apps/a/llms.txt",
+     "Allow: /apps/a/llms.txt",
+     "Allow: /apps/a/llms.txt"
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "barker-shoes",
+    "name": "Barker Shoes",
+    "types": [
+     "ShoeStore"
+    ],
+    "categories": [
+     "Shoes & Footwear"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/barker-shoes/",
+    "kgx": "https://canarywharf.com/shop/barker-shoes/#entity"
+   }
+  },
+  {
+   "slug": "charbonnel-et-walker",
+   "brand": "Charbonnel et Walker",
+   "site": "https://charbonnel.co.uk/",
+   "platform": "WordPress + WooCommerce (Stripe, PayPal) behind Cloudflare",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (CDN, no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "WooCommerce Store API GET https://charbonnel.co.uk/wp-json/wc/store/v1/products?per_page=N returns is_in_stock, low_stock_remaining per product (online stock), no auth",
+    "schema.org Offer availability InStock on product pages (online)"
+   ],
+   "verdict": "online availability only",
+   "notes": "No find-in-store or shop-stock UI on product pages. robots.txt allows all but wp-admin, WooCommerce upload folders and add-to-cart URLs. The public WooCommerce Store API is the cheapest online-stock signal (one JSON request, no page render).",
+   "evidence_urls": [
+    "https://charbonnel.co.uk/product/sticky-toffee-pudding-truffles",
+    "https://charbonnel.co.uk/wp-json/wc/store/v1/products?per_page=2"
+   ],
+   "checked_at": "2026-10-12T15:13:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "charbonnel-et-walker",
+    "name": "Charbonnel et Walker",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Confectionery"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/charbonnel-et-walker/",
+    "kgx": "https://canarywharf.com/shop/charbonnel-et-walker/#entity"
+   }
+  },
+  {
+   "slug": "coach",
+   "brand": "Coach",
+   "site": "https://uk.coach.com/",
+   "platform": "Salesforce Commerce Cloud (Demandware; robots.txt disallows /on/demandware.store*) with a headless front end; store pages under /stores/ (locator)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": "store page probably https://uk.coach.com/stores/gb-lnd/london/promenade-level (Cabot Place promenade level; not confirmed, page 403)",
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Akamai (server: AkamaiGHost, 'Access Denied' 403 to headless Chromium and to curl on product and store pages)",
+    "challenged": true
+   },
+   "other_signals": [
+    "sitemaps readable: /sitemap_0-product.xml (product URLs like /products/{slug}/{style}.html), /stores/sitemap.xml lists 5 London stores"
+   ],
+   "verdict": "unknown",
+   "notes": "Product and store pages blocked by Akamai with a plain 403 (no challenge to solve); not bypassed. Could not see whether a 'Pick up in store' / store-availability feature exists on UK product pages. SFCC sites often expose Stores-InventorySearch style controllers, but /on/demandware.store* is disallowed in robots.txt. Needs manual check in a normal browser.",
+   "evidence_urls": [
+    "https://uk.coach.com/robots.txt",
+    "https://uk.coach.com/sitemap_0-product.xml",
+    "https://uk.coach.com/stores/sitemap.xml",
+    "https://uk.coach.com/products/tabby-chain-crossbody-bag-19/CBF14.html"
+   ],
+   "checked_at": "2026-10-12T15:02:51Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "coach",
+    "name": "Coach - Luxury Accessories in Canary Wharf",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Bags & Luggage"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/coach/",
+    "kgx": "https://canarywharf.com/shop/coach/#entity"
+   }
+  },
+  {
+   "slug": "currys",
+   "brand": "Currys",
+   "site": "https://www.currys.co.uk/",
+   "platform": "Salesforce Commerce Cloud (known from public URL patterns; not confirmed here, page blocked)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Order & Collect / check stock at a nearby store (from public knowledge; not seen in this run)",
+    "tried": false,
+    "headless_ok": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare",
+    "challenged": true
+   },
+   "other_signals": [],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Cloudflare 'Sorry, you have been blocked' (403) on robots.txt (node fetch) and on the homepage in headless Chromium, before any product page. Currys is known to show per-store collection availability (Order & Collect, often 'in 1 hour') after a postcode, but this run could not see the request. Internet Archive unreachable through the proxy. A future caller would need the owner to agree a route (affiliate feed via Awin, or a partnership); do not scrape.",
+   "evidence_urls": [
+    "https://www.currys.co.uk/robots.txt",
+    "https://www.currys.co.uk/"
+   ],
+   "checked_at": "2026-10-12T14:59:53Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 403,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "currys",
+    "name": "Currys - Best Gadgets at Canary Wharf",
+    "types": [
+     "ElectronicsStore"
+    ],
+    "categories": [
+     "Electronics & Phones"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/currys/",
+    "kgx": "https://canarywharf.com/shop/currys/#entity"
+   }
+  },
+  {
+   "slug": "english-tailoring",
+   "brand": "English Tailoring",
+   "site": "https://english-tailoring.com/",
+   "platform": "WordPress 7.1 (WPBakery, Slider Revolution); no e-commerce plugin",
+   "sells_online": false,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Brochure site for bespoke tailoring with an 'Appointment' link; no products, no shop, no cart links"
+   ],
+   "verdict": "no online shop",
+   "notes": "Independent bespoke/made-to-measure tailor in Canary Wharf; nothing to check (made to order). http://www.english-tailoring.com/ redirects to https://english-tailoring.com/. Homepage fetched once with curl.",
+   "evidence_urls": [
+    "https://english-tailoring.com/",
+    "https://english-tailoring.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:05:29Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "english-tailoring",
+    "name": "English Tailoring",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "South Colonnade",
+    "cwg_url": "https://canarywharf.com/shop/english-tailoring/",
+    "kgx": "https://canarywharf.com/shop/english-tailoring/#entity"
+   }
+  },
+  {
+   "slug": "flying-tiger-copenhagen",
+   "brand": "Flying Tiger Copenhagen",
+   "site": "https://flyingtiger.com/en-gb",
+   "platform": "Shopify (ftc-row.myshopify.com, Shopify Markets per locale) behind Cloudflare; Bloomreach Discovery search",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (CDN, no challenge; probe flag was a false positive on a geolocation modal)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /en-gb/products.json and /en-gb/products/<handle>.js with variants[].available (online, GB market)",
+    "schema.org Offer availability (OutOfStock seen on a Christmas item) on product page",
+    "Bloomreach widget call pathways.dxpapi.com/api/v2/widgets/item/... requests fields quantityAvailable, availableForSale (online)",
+    "Shopify Universal Commerce Protocol manifest at https://flyingtiger.com/.well-known/ucp (MCP endpoint https://ftc-row.myshopify.com/api/ucp/mcp; shopping/checkout capabilities, online catalogue only)",
+    "Contact form has a topic 'Product Availability in Stores' (manual, by email)"
+   ],
+   "verdict": "online availability only",
+   "notes": "No find-in-store widget; in-store availability only through the customer-service contact form. The UCP/MCP manifest is a sanctioned machine interface for the online catalogue and is worth a look for O3 (LLM/MCP access). Our US egress may affect market detection; use the /en-gb/ path.",
+   "evidence_urls": [
+    "https://flyingtiger.com/en-gb/products/christmas-houses-candle-holder-19-cm-3076301",
+    "https://flyingtiger.com/.well-known/ucp",
+    "https://flyingtiger.com/en-gb/products.json?limit=3"
+   ],
+   "checked_at": "2026-10-12T15:17:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "flying-tiger-copenhagen",
+    "name": "Flying Tiger Copenhagen",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Crossrail Place",
+    "cwg_url": "https://canarywharf.com/shop/flying-tiger-copenhagen/",
+    "kgx": "https://canarywharf.com/shop/flying-tiger-copenhagen/#entity"
+   }
+  },
+  {
+   "slug": "malin-goetz",
+   "brand": "Malin+Goetz",
+   "site": "https://www.malinandgoetz.co.uk/",
+   "platform": "Magento 2 (theme MalinGoetz/NewUX2023; /graphql allowed in robots.txt), behind Cloudflare",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (CDN, no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "schema.org Offer availability on product pages: JSON-LD InStock plus microdata (one configurable parent shows OutOfStock while variants InStock - read child offers)",
+    "Magento GraphQL GET /graphql? allowed by robots.txt (products{ stock_status } is standard, online only)",
+    "sitemap https://www.malinandgoetz.co.uk/media/sitemap_uk.xml"
+   ],
+   "verdict": "online availability only",
+   "notes": "No store pickup, store picker or in-store availability on product pages. Online stock via JSON-LD or Magento GraphQL stock_status. robots.txt disallows most query URLs (/*?) except /graphql?, ?p=, ?page=.",
+   "evidence_urls": [
+    "https://www.malinandgoetz.co.uk/robots.txt",
+    "https://www.malinandgoetz.co.uk/moisturizing-shampoo"
+   ],
+   "checked_at": "2026-10-12T15:03:39Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "malin-goetz",
+    "name": "Malin+Goetz",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/malin-goetz/",
+    "kgx": "https://canarywharf.com/shop/malin-goetz/#entity"
+   }
+  },
+  {
+   "slug": "morrisons-daily",
+   "brand": "Morrisons Daily",
+   "site": "https://groceries.morrisons.com/ (the listed https://www.morrisons-daily.co.uk/ did not connect: proxy CONNECT 502, domain appears dead); stores: https://my.morrisons.com/storefinder/",
+   "platform": "Ocado Smart Platform (regionId, /api/webproductpagews/, /api/ecomdeliverydestinations/)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "tried": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "AWS WAF (awswaf.com SDK, mp_verify/telemetry)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Product pages carry schema.org Product/Offer JSON-LD with availability https://schema.org/InStock (online, region-level, not per store)",
+    "Online stock is per delivery region (regionId=<uuid> on API calls), not per Daily convenience store",
+    "robots.txt disallows /api/ and /events/, so the JSON APIs the page calls must not be called directly"
+   ],
+   "verdict": "online availability only",
+   "notes": "Product page loaded headless (200) with no challenge. Morrisons Daily convenience shops have no online stock view; the online shop is a home-delivery catalogue by region. A careful caller may read the JSON-LD availability on product pages (allowed by robots) but it says nothing about the Wood Wharf shop. Morrisons Daily stock may also appear on Deliveroo/Uber Eats store menus (not checked).",
+   "evidence_urls": [
+    "https://groceries.morrisons.com/robots.txt",
+    "https://groceries.morrisons.com/products/humza-20-piece-frozen-vegetable-spring-rolls-650g/112925489",
+    "https://groceries.morrisons.com/sitemaps/sitemap_index.xml"
+   ],
+   "checked_at": "2026-10-12T15:01:03Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "morrisons-daily",
+    "name": "Morrisons Daily",
+    "types": [
+     "GroceryStore"
+    ],
+    "categories": [
+     "Groceries"
+    ],
+    "mall": "Wood Wharf",
+    "cwg_url": "https://canarywharf.com/shop/morrisons-daily/",
+    "kgx": "https://canarywharf.com/shop/morrisons-daily/#entity"
+   }
+  },
+  {
+   "slug": "pandora",
+   "brand": "Pandora",
+   "site": "https://uk.pandora.net/en/",
+   "platform": "Salesforce Commerce Cloud (Demandware) per public knowledge; not visible (blocked)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (block page 'Attention Required!', HTTP 403, even for robots.txt via curl)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Third-party voucher site: Click & Collect free, ready at the chosen Pandora concept store within about two hours (unverified)",
+    "Click & Collect to a chosen store implies a per-store availability check inside the checkout flow (not observed)"
+   ],
+   "verdict": "unknown",
+   "notes": "Blocked by Cloudflare for both curl (robots.txt answered 403) and headless Chromium (homepage 403); not bypassed. Internet Archive not reachable from this container. A future caller would need a normal browser session; Pandora runs its own concept store in Canada Place, so a store-collection availability check probably exists but was not seen.",
+   "evidence_urls": [
+    "https://uk.pandora.net/robots.txt",
+    "https://sw18.sheerluxe.com/vouchers/pandora.net",
+    "https://thelincolnite.co.uk/2020/12/pandora-to-reopen-lincoln-store"
+   ],
+   "checked_at": "2026-10-12T15:06:18Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 403,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "pandora",
+    "name": "Pandora",
+    "types": [
+     "JewelryStore"
+    ],
+    "categories": [
+     "Jewellery & Watches"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/pandora/",
+    "kgx": "https://canarywharf.com/shop/pandora/#entity"
+   }
+  },
+  {
+   "slug": "samsung",
+   "brand": "Samsung (Samsung Experience Store, Canada Place)",
+   "site": "https://www.samsung.com/uk/",
+   "platform": "Adobe Experience Manager front end + SAP Commerce (Hybris) OCC API 'tokocommercewebservices' at api.shop.samsung.com; Akamai CDN",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai (CDN; no challenge seen)",
+    "challenged": false
+   },
+   "other_signals": [
+    "GET https://api.shop.samsung.com/tokocommercewebservices/v2/uk/products?productCodes=<SM-codes,comma-separated> returns per product stock {stockLevelStatus:'inStock'|..., stockLevel:<int>, isValueRounded}; plain JSON, no cookies, allowed by robots.txt (online warehouse stock)",
+    "/v2/uk/products/<code>/offers?fields=SIMPLE_INFO (price/offers)",
+    "Buy page shows 'Out of stock' per colour (online)"
+   ],
+   "verdict": "online availability only",
+   "notes": "No find-in-store / store stock on the UK buy pages (checked Galaxy S25). The SAP Commerce OCC product call is a cheap, clean online-stock signal with integer stockLevel. api.shop.samsung.com robots.txt disallows only cart, checkout, my-account, multistore. www robots.txt disallows /us/api/ and /uk/wdc/*.",
+   "evidence_urls": [
+    "https://www.samsung.com/uk/smartphones/galaxy-s25/buy/",
+    "https://api.shop.samsung.com/tokocommercewebservices/v2/uk/products?productCodes=SM-S931BLGGEUB"
+   ],
+   "checked_at": "2026-10-12T15:20:00Z",
+   "robots_ai": {
+    "groups": [
+     {
+      "ua": [
+       "GPTBot",
+       "ChatGPT-User"
+      ],
+      "rules": [
+       "disallow: ",
+       "disallow: /*/business/search/",
+       "disallow: /*/parking",
+       "disallow: /*/parking/",
+       "disallow: /*/search/",
+       "disallow: /*/ai-search/"
+      ]
+     }
+    ],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "samsung",
+    "name": "Samsung",
+    "types": [
+     "ElectronicsStore"
+    ],
+    "categories": [
+     "Electronics & Phones"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/samsung/",
+    "kgx": "https://canarywharf.com/shop/samsung/#entity"
+   }
+  },
+  {
+   "slug": "space-nk",
+   "brand": "Space NK",
+   "site": "https://www.spacenk.com/uk/",
+   "platform": "Salesforce Commerce Cloud (Demandware, site Sites-spacenkgb-Site, SFRA-style controllers)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "FIND IN STORE (modal 'Find in store', input 'Enter postcode')",
+    "tried": false,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.spacenk.com/on/demandware.store/Sites-spacenkgb-Site/en_GB/FindInStore-GetStores?storesCount=5&productID={pid e.g. UK200019905}&postcode={postcode}",
+     "params": {
+      "storesCount": "5",
+      "productID": "product id from page (UK2000xxxxx)",
+      "postcode": "user postcode"
+     }
+    },
+    "response_shape": "JSON (from findInStore.js): {error?, stores:[{ID,name,latitude,longitude,isAvailable,isStuartAvailable,isExpressAvailable}], storesTemplate:<HTML>}. Per-store boolean availability plus same-day courier flags (Stuart/Express); no quantity.",
+    "canary_wharf_store_id": null,
+    "needs_session": "probably not (plain GET form, no CSRF field in the form); SFCC sets dwsid cookies on page load",
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "none challenging; Forter fraud script and an obfuscated telemetry beacon load on the page",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Offer availability schema.org/InStock and a datalayer 'availability':'IN_STOCK' on product pages (online)",
+    "product sitemap https://www.spacenk.com/sitemap_0-product.xml"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Product page loads headless with no challenge and shows FIND IN STORE; endpoint and fields read from the page HTML and its findInStore.js. NOT submitted: robots.txt has 'Disallow: /on/' and the endpoint is /on/demandware.store/...; a future caller should ask Space NK for permission or confine itself to a user-driven browser session. Canary Wharf store id not learnt (search not run).",
+   "evidence_urls": [
+    "https://www.spacenk.com/robots.txt",
+    "https://www.spacenk.com/uk/lip2cheek-UK200019905.html",
+    "https://www.spacenk.com/on/demandware.static/Sites-spacenkgb-Site/-/en_GB/v1791781722191/js/findInStore.js"
+   ],
+   "checked_at": "2026-10-12T15:05:12Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "space-nk",
+    "name": "Space NK",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/space-nk/",
+    "kgx": "https://canarywharf.com/shop/space-nk/#entity"
+   }
+  },
+  {
+   "slug": "tian-tian-market",
+   "brand": "Tian Tian Market",
+   "site": "https://www.tiantian.london/",
+   "platform": "Wix",
+   "sells_online": false,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "tried": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Sitemap lists only pages, events and blog posts; no product or store sitemap",
+    "Homepage JSON-LD is WebSite only; no Product/Offer markup"
+   ],
+   "verdict": "no online shop",
+   "notes": "Wix brochure site (offers, find us, rewards, recipes). No product catalogue, basket or stock data. A 'Collect Point' page exists but has no shop links. Products may be sold through delivery apps (not checked). robots.txt allows all except *?lightbox=.",
+   "evidence_urls": [
+    "https://www.tiantian.london/robots.txt",
+    "https://www.tiantian.london/pages-sitemap.xml",
+    "https://www.tiantian.london/",
+    "https://www.tiantian.london/collect-point"
+   ],
+   "checked_at": "2026-10-12T15:02:15Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "tian-tian-market",
+    "name": "Tian Tian Market",
+    "types": [
+     "GroceryStore"
+    ],
+    "categories": [
+     "Groceries"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/tian-tian-market/",
+    "kgx": "https://canarywharf.com/shop/tian-tian-market/#entity"
+   }
+  },
+  {
+   "slug": "waterstones-cabot-place",
+   "brand": "Waterstones",
+   "site": "https://www.waterstones.com/",
+   "platform": "custom (not visible: blocked)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": true,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Reserve & Collect (button on the product page when the book is in stock in at least one shop; secondhand report, not seen)",
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (managed challenge, cf-mitigated: challenge; captcha page even for robots.txt)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Reserve & Collect is a per-shop stock-backed feature, so a per-shop availability lookup exists behind it",
+    "Waterstones app also shows shop stock (Trustpilot reports)"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Every request was challenged by Cloudflare (robots.txt via curl: 403 captcha page; homepage headless: 'Just a moment...'). Not bypassed; Internet Archive unreachable from this container. The feature label comes from a forum quote of Waterstones' Reserve & Collect page. Shops choose their own stock, so per-shop answers matter. A future caller needs a real browser session that passes Cloudflare, or an agreement with Waterstones.",
+   "evidence_urls": [
+    "https://www.waterstones.com/robots.txt",
+    "https://mail.sffchronicles.com/threads/540897/latest",
+    "https://ch.trustpilot.com/review/www.waterstones.com?page=6"
+   ],
+   "checked_at": "2026-10-12T15:07:08Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 403,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "waterstones-cabot-place",
+    "name": "Waterstones",
+    "types": [
+     "BookStore"
+    ],
+    "categories": [
+     "News & Books"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/waterstones-cabot-place/",
+    "kgx": "https://canarywharf.com/shop/waterstones-cabot-place/#entity"
+   }
+  },
+  {
+   "slug": "boots-the-chemist-canada-place",
+   "brand": "Boots (Canada Place, Canary Wharf)",
+   "site": "https://www.boots.com/",
+   "platform": "unknown from this survey (robots.txt still lists IBM WebSphere Commerce paths /webapp/wcs/stores/servlet/*); Imperva (Incapsula)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Imperva / Incapsula (403 to curl and headless Chromium on the home page; _Incapsula_Resource challenge script)",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt readable: User-agent * disallows /webapp/wcs/stores/servlet/*",
+    "Unverified (prior knowledge, not checked today): boots.com has offered Click & Collect and a store stock / 'check availability in store' feature for some products; the store locator lists the Canary Wharf branches"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Blocked by Imperva on the first page; stopped (no evasion). Feature existence is not verified today; the verdict is provisional. Internet Archive was rate-limited (429) during this survey; next step is to read an archived product page (https://web.archive.org/web/2026/https://www.boots.com/<product>-<id>) for the stock-check UI and its endpoint names. Any direct client would also face Imperva.",
+   "evidence_urls": [
+    "https://www.boots.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T16:27:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "boots-the-chemist-canada-place",
+    "name": "Boots The Chemist Canada Place",
+    "types": [
+     "GroceryStore"
+    ],
+    "categories": [
+     "Groceries"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/boots-the-chemist-canada-place/",
+    "kgx": "https://canarywharf.com/shop/boots-the-chemist-canada-place/#entity"
+   }
+  },
+  {
+   "slug": "cards-galore-cabot-place",
+   "brand": "Cards Galore",
+   "site": "https://www.cardsgalore.co.uk/",
+   "platform": "Shopify (brochure site; no products published)",
+   "sells_online": false,
+   "click_and_collect": "balloon bouquets only ('Arrange an easy click and collect order of balloon bouquets from one of our many stores'); no product catalogue online",
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Shopify edge (no challenge; probe flag was a false positive)",
+    "challenged": false
+   },
+   "other_signals": [
+    "/products.json and /collections/all/products.json return an empty list; sitemap has no product sitemap",
+    "store list at https://www.cardsgalore.co.uk/pages/our-stores",
+    "Shopify UCP endpoints advertised in robots.txt but catalogue empty"
+   ],
+   "verdict": "no online shop",
+   "notes": "Site is a store directory plus a balloon-bouquet click & collect offer; no per-product stock signal of any kind.",
+   "evidence_urls": [
+    "https://www.cardsgalore.co.uk/robots.txt",
+    "https://www.cardsgalore.co.uk/",
+    "https://www.cardsgalore.co.uk/products.json?limit=3"
+   ],
+   "checked_at": "2026-10-12T15:07:05Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://www.cardsgalore.co.uk/agents.md",
+     "# UCP discovery: https://www.cardsgalore.co.uk/.well-known/ucp",
+     "# UCP/MCP endpoint: https://www.cardsgalore.co.uk/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "cards-galore-cabot-place",
+    "name": "Cards Galore Cabot Place",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/cards-galore-cabot-place/",
+    "kgx": "https://canarywharf.com/shop/cards-galore-cabot-place/#entity"
+   }
+  },
+  {
+   "slug": "news-on-the-wharf-jubilee-place",
+   "brand": "News On The Wharf",
+   "site": "https://newsonthewharf.co.uk/",
+   "platform": "WordPress (Yoast SEO)",
+   "sells_online": false,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "tried": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Sitemaps hold posts, pages and categories only; no product sitemap (no WooCommerce)",
+    "Store pages per branch, e.g. https://newsonthewharf.co.uk/our-stores/news-on-the-wharf-jubilee-place/",
+    "Parcel services pages (Collect+, Evri/My Hermes, UPS): parcel drop-off and pick-up, not product stock"
+   ],
+   "verdict": "no online shop",
+   "notes": "Brochure WordPress site for four Canary Wharf newsagent branches. No catalogue or stock data. Only robots rules: /?s= and /search/ disallowed. Checked from robots.txt and sitemaps only (no page load needed).",
+   "evidence_urls": [
+    "https://www.newsonthewharf.co.uk/robots.txt",
+    "https://newsonthewharf.co.uk/page-sitemap.xml"
+   ],
+   "checked_at": "2026-10-12T15:02:47Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "news-on-the-wharf-jubilee-place",
+    "name": "News On The Wharf Jubilee Place",
+    "types": [
+     "BookStore"
+    ],
+    "categories": [
+     "News & Books"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/news-on-the-wharf-jubilee-place/",
+    "kgx": "https://canarywharf.com/shop/news-on-the-wharf-jubilee-place/#entity"
+   }
+  },
+  {
+   "slug": "the-post-office-chancellor-passage",
+   "brand": "Post Office",
+   "site": "https://www.postoffice.co.uk/",
+   "platform": "Magnolia CMS (/.resources/, /.rest/ paths) with jQuery front end; Akamai edge",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": "Branch Finder (services per branch, not product stock)",
+    "tried": true,
+    "postcode": "E14 5AB (as lat/lng 51.5045,-0.0195)",
+    "endpoint": {
+     "method": "POST",
+     "url_pattern": "https://www.postoffice.co.uk/.rest/branch-finder/ep/V2/branchByLatLng",
+     "params": {
+      "body": "JSON {searchString:'<lat>|<lng>', productFilter:[<productID>...]} (productFilter must be an array; a string gives HTTP 400)"
+     }
+    },
+    "response_shape": "JSON {responseBody:{branchList:[10 x {locationBusinessId, name, branchType (MAIN/LPM/SPSO/DRCO), tradingStatus, address{...,latitude,longitude}, coreHours, products:[[{productID, textInSearch e.g. 'Foreign currency','Travel Money Card','Western Union'}]], closestBranches, siteMapURL}]}}. Services offered per branch, no quantities.",
+    "canary_wharf_store_id": "1160028 'Canary Wharf', 6 South Colonnade E14 4PZ (the branch next to Chancellor Passage); also 142002X Churchill Place",
+    "needs_session": false,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Akamai (headless Chromium got 'Access Denied' 403 on /branch-finder; plain curl got 200)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Branch page per branch: https://www.postoffice.co.uk/branch-finder/1160028/canary-wharf",
+    "Travel money ordered online for collection in a chosen branch (click & collect); branches with 'Foreign currency' service sell some currencies on demand, but no per-branch currency stock is published",
+    "Sitemap index https://www.postoffice.co.uk/sitemap/sitemapindex.xml"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Post Office sells services, not shelf products. The useful machine signal is the branch-finder JSON: which services (foreign currency, Western Union, ID checks, Drop & Collect) each branch offers, with hours and trading status. It answered a plain JSON POST without cookies; headless Chromium was blocked by Akamai on the HTML page, so a future caller should use the JSON call at low volume rather than the page. Two API calls made (the first was malformed).",
+   "evidence_urls": [
+    "https://www.postoffice.co.uk/robots.txt",
+    "https://www.postoffice.co.uk/branch-finder",
+    "https://www.postoffice.co.uk/.resources/component-module/webresources/js/bf.min.js?v=101226",
+    "https://www.postoffice.co.uk/branch-finder/1160028/canary-wharf"
+   ],
+   "checked_at": "2026-10-12T15:09:18Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "the-post-office-chancellor-passage",
+    "name": "Post Office Chancellor Passage",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "Chancellor Passage",
+    "cwg_url": "https://canarywharf.com/shop/the-post-office-chancellor-passage/",
+    "kgx": "https://canarywharf.com/shop/the-post-office-chancellor-passage/#entity"
+   }
+  },
+  {
+   "slug": "circle-collective",
+   "brand": "Circle Collective",
+   "site": "https://www.circlecollective.store/ (shop; charity site https://circlecollective.org/ is WordPress)",
+   "platform": "Shopify (Dawn-style theme, native local pickup)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Pickup available at <shop> / 'Pickup currently unavailable at Circle Collective Dalston' + 'Check availability at other stores' (Shopify pickup-availability drawer)",
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.circlecollective.store/variants/<variant_id>/?section_id=pickup-availability",
+     "params": "variant_id from /products/<handle>.js or /products.json variants[].id; no postcode, lists every pickup-enabled location"
+    },
+    "response_shape": "HTML fragment (Shopify section): per location name, address, phone, 'Pickup available, usually ready in 24 hours' or unavailable. Yes/no only, no quantity.",
+    "canary_wharf_store_id": null,
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/<handle>.js with variants[].available (online)",
+    "robots.txt points agents to https://www.circlecollective.store/agents.md and UCP discovery https://www.circlecollective.store/.well-known/ucp (MCP endpoint /api/ucp/mcp: search_catalog etc.)"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Per-shop pickup availability works with plain GET (no cookies), but only two locations are pickup-enabled (Dalston E8, Lewisham SE13); the Canary Wharf (Jubilee Place) shop is not listed, so no Canary Wharf visibility today. Vintage/one-off stock. Shopify's agents.md asks agents to prefer the UCP/MCP interface over scraping.",
+   "evidence_urls": [
+    "https://www.circlecollective.store/products/fila-micro-tape-t-shirt-nicolas-fila-navy",
+    "https://www.circlecollective.store/variants/62681605472643/?section_id=pickup-availability",
+    "https://www.circlecollective.store/agents.md",
+    "https://www.circlecollective.store/.well-known/ucp"
+   ],
+   "checked_at": "2026-10-12T15:27:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://www.circlecollective.store/agents.md",
+     "# UCP discovery: https://www.circlecollective.store/.well-known/ucp",
+     "# UCP/MCP endpoint: https://www.circlecollective.store/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "circle-collective",
+    "name": "Circle Collective",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/circle-collective/",
+    "kgx": "https://canarywharf.com/shop/circle-collective/#entity"
+   }
+  },
+  {
+   "slug": "watches-of-switzerland",
+   "brand": "Watches of Switzerland",
+   "site": "https://www.watches-of-switzerland.co.uk/",
+   "platform": "SAP Commerce Cloud (Hybris) with Composable Storefront/Spartacus; OCC REST API at /occ/v2/WatchesOfSwitzerland_UK/; Akamai mPulse",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": true,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "CHECK STOCK AVAILABILITY LOCALLY (then 'Change showroom', per-store 'Out of Stock' / in stock)",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.watches-of-switzerland.co.uk/occ/v2/WatchesOfSwitzerland_UK/products/{productCode}/storestock?locationQuery={postcode}&fields=FULL&recordsToReturn=5&lang=en&curr=GBP",
+     "params": {
+      "productCode": "numeric code from /p/{code} URL",
+      "locationQuery": "postcode or town",
+      "recordsToReturn": "5",
+      "sessionId": "optional uuid sent by the page"
+     }
+    },
+    "response_shape": "JSON {locationQuery, productStocks:[{pos:{name (store id), displayName, address, geoPoint, formattedDistance, openingHours, isClickAndCollectEnabled, isReserveAndCollectEnabled}, stockInfo:{quantity, sku}}]}. Per-store numeric quantity.",
+    "canary_wharf_store_id": "466 (lat 51.504717, -0.017967, from store sitemap; 578 and 579 are group stores at the same point) - NOT returned for E14 5AB",
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Akamai (mPulse beacon; no challenge on product page or OCC API)",
+    "challenged": false
+   },
+   "other_signals": [
+    "store sitemap https://www.watches-of-switzerland.co.uk/sitemap/store-en-gbp.xml gives store ids with lat/long",
+    "product sitemap /sitemap/product-en-gbp.xml",
+    "Woosmap localities autocomplete used by the page for the location box",
+    "OCC product endpoints (standard SAP) likely give online stock"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Search with E14 5AB returned only 1 store, MW (Mappin & Webb) Regent Street, store 403, '0.96 Miles', quantity 0: the server geocoding of 'E14 5AB' appears to fall back to central London, so the Canary Wharf showroom was not listed. A caller should try town 'Canary Wharf' or lat/long params (standard OCC storestock accepts latitude/longitude) - not tried here (one search rule). A plain curl of the same URL (no cookies, no session) answered 200 with the same JSON, so no token or CSRF is needed. Product page 'click' on the button timed out in headless but filling the postcode box triggered the call. robots.txt allows /occ/ (disallows /cart, /search, /checkout, /*q=).",
+   "evidence_urls": [
+    "https://www.watches-of-switzerland.co.uk/robots.txt",
+    "https://www.watches-of-switzerland.co.uk/Longines-DolceVita-20mm-Ladies-Watch-L52550716/p/17350670",
+    "https://www.watches-of-switzerland.co.uk/occ/v2/WatchesOfSwitzerland_UK/products/17350670/storestock?locationQuery=E14%205AB&fields=FULL&recordsToReturn=5&lang=en&curr=GBP",
+    "https://www.watches-of-switzerland.co.uk/sitemap/store-en-gbp.xml"
+   ],
+   "checked_at": "2026-10-12T15:10:02Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "watches-of-switzerland",
+    "name": "Watches of Switzerland",
+    "types": [
+     "JewelryStore"
+    ],
+    "categories": [
+     "Jewellery & Watches"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/watches-of-switzerland/",
+    "kgx": "https://canarywharf.com/shop/watches-of-switzerland/#entity"
+   }
+  },
+  {
+   "slug": "hobbs",
+   "brand": "Hobbs",
+   "site": "https://www.hobbs.com/",
+   "platform": "Salesforce Commerce Cloud (Sites-HB-UK-Site; Global-e for cross-border)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "FIND IN STORE (product page button; dialog field 'Enter town or postcode*')",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.hobbs.com/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?pid=<master id>&lat=<lat>&long=<lon>&dwvar_<master id>_color=<colour code>[&dwvar_<master id>_size=<size>]&dwfrm_address_country=GB&postalCode=<postcode>",
+     "params": {
+      "pid": "master product id, e.g. 0226-1B73-100900",
+      "lat/long": "geocoded by the page from the postcode (51.5049, -0.0195 for E14 5AB)",
+      "dwvar_*_color": "colour code, e.g. 2968",
+      "postalCode": "E14 5AB"
+     }
+    },
+    "response_shape": "HTML fragment: div.product-detail__stock-check__result__table (a table of nearby stores is expected). For the one product tried (a 1SIZE gold bracelet) the table was empty, so per-store fields (yes/no or levels) were not seen.",
+    "canary_wharf_store_id": null,
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Product page text shows online status 'IN STOCK' next to ADD TO BAG",
+    "SFCC demandware.store controllers are public (Reviews-GetReviews, Product-StockCheck)"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Product page and stock-check worked headless with no challenge. The FIND IN STORE button is covered by a Global-e country pop-up (egress geo-IP not UK), so a normal click failed; a DOM click event opened the dialog. One cookie-less curl GET of Product-StockCheck also answered 200 (same empty table), so no session/CSRF seems needed, but lat/long must be supplied. Caution: in a first probe the postcode went into the site search box by mistake (one request to /search/?q=E14+5AB, a path robots.txt disallows); not repeated. Next step for a caller: try a clothing item with sizes to see the store table and the Canary Wharf (Canada Place) store id. robots.txt does not disallow /on/demandware.store/.",
+   "evidence_urls": [
+    "https://www.hobbs.com/robots.txt",
+    "https://www.hobbs.com/product/jackie-bracelet/0226-1B73-100900-GOLD.html",
+    "https://www.hobbs.com/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?pid=0226-1B73-100900&lat=51.5049373&long=-0.0195232&dwvar_0226-1B73-100900_color=2968&dwfrm_address_country=GB&postalCode=E14+5AB"
+   ],
+   "checked_at": "2026-10-12T15:07:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "hobbs",
+    "name": "HOBBS at Canada Place",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Clothing"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/hobbs/",
+    "kgx": "https://canarywharf.com/shop/hobbs/#entity"
+   }
+  },
+  {
+   "slug": "boss",
+   "brand": "BOSS (Hugo Boss)",
+   "site": "https://www.hugoboss.com/uk/home",
+   "platform": "Salesforce Commerce Cloud (Demandware: /on/demandware.store/Sites-UK-Site/en_GB/...)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "FIND IN STORE (button, widget retailAvailabilityLink, opens /uk/retailavailability?pid=<pid> overlay; placeholder 'Location or postcode')",
+    "tried": false,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET (overlay) then search",
+     "url_pattern": "https://www.hugoboss.com/uk/retailavailability?pid={productId}_{colour} ; search action matches /*DoRetailAvailabilitySearch",
+     "params": {
+      "pid": "e.g. hbeu58103572_999"
+     }
+    },
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai Bot Manager (sensor_data POSTs; curl got Akamai 'Access Denied' 403 on robots.txt, headless Chromium and Node fetch got 200)",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD ProductGroup with offers availability https://schema.org/InStock (online)",
+    "Click & Collect / ship-to-store with appointment slots (COShipToStore-FindStores, ShipToStore-GetAvailableTimeSlots; FAQ https://www.hugoboss.com/uk/faq-help/#clickcollect)",
+    "EstimatedDeliveryDate-GetEstimatedDeliveryDatesStage?ean=<EAN> call on the product page (EAN visible)"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "The per-store feature exists but robots.txt disallows it explicitly: 'Disallow: /*retailavailability', '/*DoRetailAvailabilitySearch', '/*Product-GetAvailability', '/*ShipToStore-', '/*COShipToStore-'. So it was not tried, and a compliant automated caller must not call it without Hugo Boss's permission. Product page itself loads headless without challenge. Product URLs come from https://www.hugoboss.com/uk/sitemap_0.xml.",
+   "evidence_urls": [
+    "https://www.hugoboss.com/robots.txt",
+    "https://www.hugoboss.com/uk/boss-alive-intense-eau-de-parfum-80ml/hbeu58103572.html",
+    "https://www.hugoboss.com/uk/faq-help/#clickcollect"
+   ],
+   "checked_at": "2026-10-12T15:11:03Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "boss",
+    "name": "The Choice is Yours: Boss Spring/Summer 2024",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/boss/",
+    "kgx": "https://canarywharf.com/shop/boss/#entity"
+   }
+  },
+  {
+   "slug": "hackett",
+   "brand": "Hackett London",
+   "site": "https://www.hackett.com/uk/en_gb/ (the given /gb/home link redirects)",
+   "platform": "Salesforce Commerce Cloud, Composable Storefront (PWA Kit / Managed Runtime, '/mobify/proxy/api/...' SCAPI, org f_ecom_blrq_prd, siteId HKT-UK); Cloudflare + CloudFront",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "SCAPI Shopper Products GET /mobify/proxy/api/product/shopper-products/v1/organizations/f_ecom_blrq_prd/products/<id>?expand=availability,...&siteId=HKT-UK returns inventory {ats, orderable, stockLevel} (online), needs a SLAS guest bearer token (POST /mobify/slas/private/shopper/auth/v1/organizations/f_ecom_blrq_prd/oauth2/token)",
+    "Click & Collect is ship-to-store ('FREE Click & Collect in store delivery in 4-5 working days'), not shop stock"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "No find-in-store on product pages. robots.txt disallows /on/demandware.store* (classic SFCC controllers) but not /mobify/; the page itself creates a guest basket on load, so even a read-only headless visit leaves a session basket. Online inventory via SCAPI needs a SLAS guest token: keep to the page.",
+   "evidence_urls": [
+    "https://www.hackett.com/uk/en_gb/pd/savile-row-formal-oxford-shirt-HM308232551.html",
+    "https://www.hackett.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:32:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "hackett",
+    "name": "Hackett",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/hackett/",
+    "kgx": "https://canarywharf.com/shop/hackett/#entity"
+   }
+  },
+  {
+   "slug": "rituals",
+   "brand": "Rituals",
+   "site": "https://www.rituals.com/en-gb/",
+   "platform": "New Black EVA unified commerce (API host ecom-api.euw.rituals.prod.eva-online.cloud, POST /message/<ServiceName>) with a React headless front end",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Or check in-store availability -> panel 'Check instore availability', 'Your address' (Google Places autocomplete), checkbox 'Only show stores with stock'",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "POST",
+     "url_pattern": "https://ecom-api.euw.rituals.prod.eva-online.cloud/message/{EvaService} (store-stock service not observed); address via POST https://places.googleapis.com/v1/places:autocomplete",
+     "params": {
+      "places input": "E14 5AB -> 'Canada Square, London E14 5AB, UK'"
+     }
+    },
+    "response_shape": "not reached: the address resolved, but no store list rendered and no EVA store-availability call was seen in headless Chromium (3 attempts on one product, which was 'temporarily sold out online')",
+    "canary_wharf_store_id": null,
+    "needs_session": "likely (EVA calls carry an app token from GetApplicationConfiguration)",
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "none seen",
+    "challenged": false
+   },
+   "other_signals": [
+    "EVA POST /message/SearchProducts on page load (IncludedFields list; may include stock fields; not inspected)",
+    "per-locale sitemap https://www.rituals.com/en-gb/sitemap-en-gb.xml",
+    "Store finder 'Find a store' in header"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Feature exists on product pages; not blocked by a bot vendor, but the headless run did not complete the store list (likely needs a click on the autocomplete suggestion element or a geolocation step; a country-redirect modal also overlays because the proxy exits outside the UK). Next try: a different, online-in-stock product, click the suggestion item, and capture the EVA service name (New Black EVA has stock-by-organization-unit services). robots.txt allows /en-gb/ product pages; API host has no robots.txt (404).",
+   "evidence_urls": [
+    "https://www.rituals.com/robots.txt",
+    "https://www.rituals.com/en-gb/amsterdam-collection-candle-400g-1123756.html"
+   ],
+   "checked_at": "2026-10-12T15:14:37Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "rituals",
+    "name": "Rituals...",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/rituals/",
+    "kgx": "https://canarywharf.com/shop/rituals/#entity"
+   }
+  },
+  {
+   "slug": "charles-tyrwhitt",
+   "brand": "Charles Tyrwhitt",
+   "site": "https://www.charlestyrwhitt.com/uk/ (www.ctshirts.co.uk / ctshirts.com redirect here)",
+   "platform": "Salesforce Commerce Cloud (Sites-CTShirts-UK-Site)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Product JSON-LD Offer has availability (value 'OutOfStock' on the page tried; plain word, not a schema.org URL); online only",
+    "robots.txt disallows /on/demandware.store/Sites-CTShirts-* for all agents, so any SFCC controller (stock, store) is off limits",
+    "Store pages offer 'BOOK AN IN STORE APPOINTMENT', not stock"
+   ],
+   "verdict": "online availability only",
+   "notes": "Product page loaded headless (200), no challenge, no find-in-store or check-stock control and no stock phrases. Even if a hidden store-stock controller exists, robots.txt forbids demandware.store paths. Click & collect not seen on the product page (unknown).",
+   "evidence_urls": [
+    "https://www.charlestyrwhitt.com/robots.txt",
+    "https://www.charlestyrwhitt.com/uk/short-sleeve-cotton-linen-stripe-shirt---stone/CSM0030STN.html"
+   ],
+   "checked_at": "2026-10-12T15:08:17Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "charles-tyrwhitt",
+    "name": "Charles Tyrwhitt",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/charles-tyrwhitt/",
+    "kgx": "https://canarywharf.com/shop/charles-tyrwhitt/#entity"
+   }
+  },
+  {
+   "slug": "holland-barrett-jubilee-place",
+   "brand": "Holland & Barrett",
+   "site": "https://www.hollandandbarrett.com/",
+   "platform": "custom headless storefront (React islands, API gateway /v1/apigw/...); AWS WAF in front",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Check store availability (button, aria-label 'open a modal window containing Check store availability', sub-line 'FREE click & collect in H&B Stores')",
+    "tried": true,
+    "postcode": "E14 5AB (not reached)",
+    "endpoint": null,
+    "response_shape": "Not observed. Page strings show per-store results: 'in stock', '# availability', 'Out of stock for store delivery', 'Stock information for this store is currently unavailable', 'Order online, {price} collection {date}', 'Try another store for earlier collection' (so per-store stock level plus collection date).",
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "AWS WAF Bot Control (silent token challenge via *.edge.sdk.awswaf.com mp_verify/telemetry); no visible block",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Product with offers availability https://schema.org/InStock (online)",
+    "Page data references API ops pdp_product_availability_1_0_0 and pdp_extended_availability_1_0_0 through /v1/apigw/",
+    "Product sitemap https://seo-sitemaps.assets.hollandandbarrett.com/hollandandbarrett.com/sitemaps/sitemap-products-en-1.xml",
+    "Some items are store-only ('This item is not available to purchase online. Please visit the store')"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "The product page loads headless (200, no challenge), the button is visible, but a click (normal and forced, after cookie consent, in 4 tries) opened no modal and sent no request: the widget probably needs the AWS WAF token or a hydration step that failed in headless Chromium; not investigated further (6 page loads used). A future caller should try a headed browser, or look for the stock op in the apigw calls of a real session. robots.txt disallows /v1/widget* and /basket/ but not /v1/apigw/.",
+   "evidence_urls": [
+    "https://www.hollandandbarrett.com/shop/product/holland-barrett-cod-liver-oil-capsules-1000mg-6100004321",
+    "https://www.hollandandbarrett.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:16:18Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "holland-barrett-jubilee-place",
+    "name": "Holland & Barrett Jubilee Place",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/holland-barrett-jubilee-place/",
+    "kgx": "https://canarywharf.com/shop/holland-barrett-jubilee-place/#entity"
+   }
+  },
+  {
+   "slug": "jd-sports",
+   "brand": "JD Sports",
+   "site": "https://www.jdsports.co.uk/",
+   "platform": "custom headless (Next.js front end, own GraphQL at /graphql/, Amplience CMS); Fastly CDN; legacy WebSphere Commerce paths in robots.txt",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "none seen (Fastly CDN)",
+    "challenged": false
+   },
+   "other_signals": [
+    "schema.org Offer availability InStock in product page JSON-LD (online)",
+    "GraphQL cart query has a withStock flag (cart only; not used: no basket)",
+    "Store locator data at /_next/data/<build>/en-gb/store-locator.json"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Product page offers Click & Collect but no store-stock checker (buttons seen: 'FIND A STORE', 'Store Locator', 'Click & Collect'). robots.txt disallows */stock/* (the old size/stock endpoints) and webapp/wcs/stores/servlet: a future caller must not call those paths.",
+   "evidence_urls": [
+    "https://www.jdsports.co.uk/product/white-nike-air-force-1-07-womens/19764662/",
+    "https://www.jdsports.co.uk/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:37:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "jd-sports",
+    "name": "JD Sports",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/jd-sports/",
+    "kgx": "https://canarywharf.com/shop/jd-sports/#entity"
+   }
+  },
+  {
+   "slug": "hotel-chocolat",
+   "brand": "Hotel Chocolat",
+   "site": "https://www.hotelchocolat.com/uk/",
+   "platform": "Salesforce Commerce Cloud, Composable Storefront / PWA Kit (Managed Runtime; SCAPI via /mobify/proxy/api/, org f_ecom_aazp_prd, site HotelChocolat); Amplience CMS",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Find In Store (product page; also 'Click & Collect - Order online and pick up from one of our store of your choice')",
+    "tried": false,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "inferred, not observed: https://www.hotelchocolat.com/mobify/proxy/api/store/shopper-stores/v1/organizations/f_ecom_aazp_prd/store-search?siteId=HotelChocolat&postalCode={postcode}&countryCode=GB ... then shopper-products ...products/{id}?inventoryIds={storeInventoryIds}&expand=availability",
+     "params": {
+      "auth": "Bearer SLAS guest token from POST /mobify/slas/private/shopper/auth/v1/organizations/f_ecom_aazp_prd/oauth2/token (grant_type=client_credentials)"
+     }
+    },
+    "response_shape": "SCAPI JSON (standard): stores[] with id, name, address, inventoryId, distance; product inventories[] with id, orderable, ats (available-to-sell quantity), stockLevel. Not verified here.",
+    "canary_wharf_store_id": null,
+    "needs_session": true,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "none seen (Managed Runtime CDN)",
+    "challenged": false
+   },
+   "other_signals": [
+    "SCAPI shopper-products ...products/{id}?expand=availability (online: inventory.orderable, ats) fetched on page load",
+    "page text 'In stock' (online)",
+    "product sitemap https://www.hotelchocolat.com/uk/sitemap_0-product.xml"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Product page loads headless, shows 'Find In Store' and online 'In stock'. Search NOT run: robots.txt has 'Disallow: /mobify/' and every API call (including the store and inventory ones) goes through /mobify/proxy/. A guest SLAS token is issued anonymously, so a browser-driven check would work, but direct calls conflict with robots.txt; ask Hotel Chocolat. Endpoint pattern above is the standard SCAPI one, not observed.",
+   "evidence_urls": [
+    "https://www.hotelchocolat.com/robots.txt",
+    "https://www.hotelchocolat.com/uk/p/caramel-penguin-selector/120410.html"
+   ],
+   "checked_at": "2026-10-12T15:15:40Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "hotel-chocolat",
+    "name": "Hotel Chocolat",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Confectionery"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/hotel-chocolat/",
+    "kgx": "https://canarywharf.com/shop/hotel-chocolat/#entity"
+   }
+  },
+  {
+   "slug": "next",
+   "brand": "Next",
+   "site": "https://www.next.co.uk/",
+   "platform": "custom (Next plc in-house platform, Akamai CDN)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "'Check store stock' / find in store on product pages (from public knowledge; not seen in this run)",
+    "tried": false,
+    "headless_ok": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai (403 error page with Reference ID)",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt disallows */api/ for all agents, so the JSON stock API used by the page is off limits",
+    "robots.txt disallows */shop/*availability-* filtered listings"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Headless Chromium got 403 on the homepage; curl got the Next 'Oops, something went wrong' 403 page on robots.txt (node fetch got 200). Next does offer next-day click & collect to stores and a store stock check in its site and app, but the data comes through */api/ paths that robots.txt forbids. Not callable; link users to the product page instead.",
+   "evidence_urls": [
+    "https://www.next.co.uk/robots.txt",
+    "https://www.next.co.uk/"
+   ],
+   "checked_at": "2026-10-12T15:09:05Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "next",
+    "name": "Next",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Clothing"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/next/",
+    "kgx": "https://canarywharf.com/shop/next/#entity"
+   }
+  },
+  {
+   "slug": "nicolas-wine-spirits-specialist",
+   "brand": "Nicolas",
+   "site": "https://nicolas.co.uk/en/",
+   "platform": "PrestaShop (robots.txt generated by PrestaShop; /en/panier cart)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": "WHERE TO BUY (button on product page linking to /shops list; no stock per shop)",
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Product with offers availability https://schema.org/InStock (online); PrestaShop class 'product-available-for-order'",
+    "Shop page https://nicolas.co.uk/en/shop/6-canary-wharf (Focus Unit R.P. 480, 1 Canada Square, E14 5AX; hours; services incl. free local delivery, chilled wines)",
+    "PrestaShop stores list at /en/magasins"
+   ],
+   "verdict": "online availability only",
+   "notes": "Small PrestaShop site, no bot protection seen, product pages have add-to-cart and schema.org availability for the online shop only. 'WHERE TO BUY' just lists shops. No click & collect or per-shop stock seen. http://www.nicolas.co.uk redirects to https://nicolas.co.uk/en/. Low traffic site: keep any calls very rare.",
+   "evidence_urls": [
+    "https://nicolas.co.uk/en/alcohol-free/500053-lyre-s-american-malt-bour-70cl.html",
+    "https://nicolas.co.uk/en/shop/6-canary-wharf",
+    "https://www.nicolas.co.uk/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:17:56Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "nicolas-wine-spirits-specialist",
+    "name": "Nicolas Wine & Spirits Specialist",
+    "types": [
+     "GroceryStore"
+    ],
+    "categories": [
+     "Groceries"
+    ],
+    "mall": "One Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/nicolas-wine-spirits-specialist/",
+    "kgx": "https://canarywharf.com/shop/nicolas-wine-spirits-specialist/#entity"
+   }
+  },
+  {
+   "slug": "waitrose-partners",
+   "brand": "Waitrose & Partners (Canary Wharf, Canada Place)",
+   "site": "https://www.waitrose.com/",
+   "platform": "custom (John Lewis Partnership 'WR Fusion' / ecom React app; legacy WebSphere /shop/ paths in robots.txt); Akamai suspected",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "unknown (probably Akamai): headless Chromium got net::ERR_HTTP2_PROTOCOL_ERROR on every page, curl timed out; only Node fetch of robots.txt answered",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt (Crawl-delay: 1; disallows *search?*, *?fulfilment*, /api/token-client-prod/v1/auth*, trolley, checkout, slot booking) and sitemap https://www.waitrose.com/sitemapIndex.xml",
+    "Unverified (prior knowledge, not checked today): online grocery range and availability depend on the delivery/collection branch chosen at slot booking, which needs an account; no public per-branch shelf stock"
+   ],
+   "verdict": "unknown",
+   "notes": "Blocked at connection level for headless Chromium (no page loaded), so the product page could not be checked; not retried. Grocery click & collect needs an account and a slot, outside our rules. Treat as no usable per-store check unless the owner wants a manual review in a real browser.",
+   "evidence_urls": [
+    "https://www.waitrose.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:41:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "waitrose-partners",
+    "name": "Waitrose & Partners Shops And Services",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/waitrose-partners/",
+    "kgx": "https://canarywharf.com/shop/waitrose-partners/#entity"
+   }
+  },
+  {
+   "slug": "monica-vinader",
+   "brand": "Monica Vinader",
+   "site": "https://www.monicavinader.com/gb/",
+   "platform": "custom (robots.txt paths like */store_checkout/*, */product-info/*, ?ajax=1 suggest an in-house PHP platform); behind Cloudflare",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (managed challenge 'Just a moment...', 403 to headless Chromium and to curl, also on sitemap-master.xml)",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt allows / and lists sitemap https://www.monicavinader.com/sitemap-master.xml (challenge-protected)",
+    "robots.txt disallows */product-info/* and /*?ajax=1 - likely the product data/AJAX endpoints"
+   ],
+   "verdict": "unknown",
+   "notes": "Every page tried (homepage /gb/, sitemap) returned a Cloudflare challenge; not solved or bypassed. Internet Archive was unreachable through the proxy at the time. Check by hand in a normal browser whether product pages offer click & collect or store availability.",
+   "evidence_urls": [
+    "https://www.monicavinader.com/robots.txt",
+    "https://www.monicavinader.com/gb/",
+    "https://www.monicavinader.com/sitemap-master.xml"
+   ],
+   "checked_at": "2026-10-12T15:16:51Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "monica-vinader",
+    "name": "Monica Vinader",
+    "types": [
+     "JewelryStore"
+    ],
+    "categories": [
+     "Jewellery & Watches"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/monica-vinader/",
+    "kgx": "https://canarywharf.com/shop/monica-vinader/#entity"
+   }
+  },
+  {
+   "slug": "ee-jewellery",
+   "brand": "e&e Jewellery",
+   "site": null,
+   "platform": null,
+   "sells_online": false,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "tried": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": null
+   },
+   "other_signals": [
+    "Companies House lists E&E CANARY WHARF LTD (15266815), SIC 47770 retail sale of watches and jewellery, likely the operator (not confirmed)"
+   ],
+   "verdict": "no online shop",
+   "notes": "No website in the Canary Wharf Group directory record (Mall Level -1, One Canada Square, E14 5AX) and none found by web search. Independent kiosk/shop; no online stock data.",
+   "evidence_urls": [
+    "https://canarywharf.com/shop/ee-jewellery/",
+    "https://find-and-update.company-information.service.gov.uk/company/15266815"
+   ],
+   "checked_at": "2026-10-12T15:09:57Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": null,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "ee-jewellery",
+    "name": "e&e Jewellery",
+    "types": [
+     "Store"
+    ],
+    "categories": [],
+    "mall": "One Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/ee-jewellery/",
+    "kgx": "https://canarywharf.com/shop/ee-jewellery/#entity"
+   }
+  },
+  {
+   "slug": "moleskine",
+   "brand": "Moleskine",
+   "site": "https://www.moleskine.com/en-gb/",
+   "platform": "Salesforce Commerce Cloud (Demandware, Sites-Moleskine_EU-Site); Cloudflare + Akamai edge",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare/Akamai edge (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Product with offers availability http://schema.org/InStock (online)",
+    "Moleskine Store Locator page (shops only, no stock)",
+    "UK product URLs in https://www.moleskine.com/en-gb/sitemap_0.xml; robots.txt disallows URLs containing 'Master' (product master pages)"
+   ],
+   "verdict": "online availability only",
+   "notes": "Product page loaded headless with no challenge; no find-in-store, click & collect or store availability widget in the page or its markup. The Cabot Place shop is a Moleskine store but stock per shop is not exposed. Online availability only via JSON-LD.",
+   "evidence_urls": [
+    "https://www.moleskine.com/en-gb/shop/notebooks/the-original-notebook/classic-notebook-black-8051272892703.html",
+    "https://www.moleskine.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:18:57Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "moleskine",
+    "name": "Moleskine",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/moleskine/",
+    "kgx": "https://canarywharf.com/shop/moleskine/#entity"
+   }
+  },
+  {
+   "slug": "john-lewis-partners",
+   "brand": "John Lewis & Partners (Canary Wharf, Canada Square)",
+   "site": "https://www.johnlewis.com/",
+   "platform": "custom (John Lewis Partnership; Endeca-style '/_/N-' browse URLs, product URLs /<slug>/p<id>); Akamai suspected",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "unknown (probably Akamai, same pattern as waitrose.com): headless Chromium got net::ERR_HTTP2_PROTOCOL_ERROR on the home page; Node fetch of robots.txt worked, sitemap fetch failed",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt (dated 2025-07-25) allows product pages; disallows /menu, /content-renderer/, deep facet URLs, sign-in, create-account; sitemap https://www.johnlewis.com/siteindex.xml",
+    "Click & Collect to John Lewis shops and Waitrose branches (public service, known; not verified today)"
+   ],
+   "verdict": "unknown",
+   "notes": "No page could be loaded headless, so whether product pages show shop stock was not verified. Internet Archive was rate-limited (HTTP 429) during this survey; a later check of an archived product page (https://web.archive.org/web/2026/https://www.johnlewis.com/<slug>/p<id>) could settle the UI question. Do not retry with altered browser fingerprints.",
+   "evidence_urls": [
+    "https://www.johnlewis.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:45:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "john-lewis-partners",
+    "name": "John Lewis & Partners",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/john-lewis-partners/",
+    "kgx": "https://canarywharf.com/shop/john-lewis-partners/#entity"
+   }
+  },
+  {
+   "slug": "l-k-bennett",
+   "brand": "L.K.Bennett",
+   "site": "https://lkbennett.com/ (www.lkbennett.com redirects)",
+   "platform": "Shopify (holding page; UCP/MCP endpoints advertised)",
+   "sells_online": false,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Shopify edge (no challenge; probe flag was a false positive from inline captcha script)",
+    "challenged": false
+   },
+   "other_signals": [
+    "/products.json returns an empty list; sitemap has no product sitemap",
+    "homepage: 'L.K.Bennett steps into an exciting new chapter' / 'FULL WEBSITE & NEW COLLECTION COMING SOON!'"
+   ],
+   "verdict": "no online shop",
+   "notes": "As of 2026-10-12 the brand site is a Shopify holding page with no products (brand relaunch after administration). Re-check later: once products are published, Shopify /products/{handle}.js 'available' and the pickup-availability section (/variants/{id}/?section_id=pickup-availability) may apply. Also confirm the Jubilee Place shop still trades.",
+   "evidence_urls": [
+    "https://lkbennett.com/robots.txt",
+    "https://lkbennett.com/",
+    "https://lkbennett.com/products.json?limit=2"
+   ],
+   "checked_at": "2026-10-12T15:18:01Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://lkbennett.com/agents.md",
+     "# UCP discovery: https://lkbennett.com/.well-known/ucp",
+     "# UCP/MCP endpoint: https://lkbennett.com/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "l-k-bennett",
+    "name": "LK Bennett",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Womenswear"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/l-k-bennett/",
+    "kgx": "https://canarywharf.com/shop/l-k-bennett/#entity"
+   }
+  },
+  {
+   "slug": "swarovski",
+   "brand": "Swarovski",
+   "site": "https://www.swarovski.com/en_GB-GB/",
+   "platform": "SAP Commerce Cloud (Hybris) per public reports (locale path en_GB-GB); not confirmed here",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "tried": false,
+    "headless_ok": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai",
+    "challenged": true
+   },
+   "other_signals": [],
+   "verdict": "unknown",
+   "notes": "Headless Chromium got 403 'Access Denied' (Akamai edgesuite reference) on the UK homepage; curl also 403 on robots.txt (node fetch got robots 200 earlier in the tool). Swarovski has offered 'Check availability in store' / click & reserve in some markets, but this could not be seen. Internet Archive unreachable through the proxy. Not callable without a browser session; do not pursue by automation.",
+   "evidence_urls": [
+    "https://www.swarovski.com/robots.txt",
+    "https://www.swarovski.com/en_GB-GB/"
+   ],
+   "checked_at": "2026-10-12T15:12:31Z",
+   "robots_ai": {
+    "groups": [
+     {
+      "ua": [
+       "GPTBot"
+      ],
+      "rules": [
+       "disallow: /*/login/*",
+       "disallow: /*/my-account*",
+       "disallow: /*/cart/*",
+       "disallow: /*/cart",
+       "disallow: /*/search/*",
+       "disallow: /*/giftcard/check*"
+      ]
+     },
+     {
+      "ua": [
+       "ChatGPT-User"
+      ],
+      "rules": [
+       "disallow: /*/login/*",
+       "disallow: /*/my-account*",
+       "disallow: /*/cart/*",
+       "disallow: /*/cart",
+       "disallow: /*/search/*",
+       "disallow: /*/giftcard/check*"
+      ]
+     },
+     {
+      "ua": [
+       "ClaudeBot"
+      ],
+      "rules": [
+       "disallow: /*/login/*",
+       "disallow: /*/my-account*",
+       "disallow: /*/cart/*",
+       "disallow: /*/cart",
+       "disallow: /*/search/*",
+       "disallow: /*/giftcard/check*"
+      ]
+     },
+     {
+      "ua": [
+       "Claude-SearchBot"
+      ],
+      "rules": [
+       "disallow: /*/login/*",
+       "disallow: /*/my-account*",
+       "disallow: /*/cart/*",
+       "disallow: /*/cart",
+       "disallow: /*/search/*",
+       "disallow: /*/giftcard/check*"
+      ]
+     },
+     {
+      "ua": [
+       "Perplexity-User"
+      ],
+      "rules": [
+       "disallow: /*/login/*",
+       "disallow: /*/my-account*",
+       "disallow: /*/cart/*",
+       "disallow: /*/cart",
+       "disallow: /*/search/*",
+       "disallow: /*/giftcard/check*"
+      ]
+     }
+    ],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "swarovski",
+    "name": "Swarovski",
+    "types": [
+     "JewelryStore"
+    ],
+    "categories": [
+     "Jewellery & Watches"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/swarovski/",
+    "kgx": "https://canarywharf.com/shop/swarovski/#entity"
+   }
+  },
+  {
+   "slug": "robert-dyas",
+   "brand": "Robert Dyas",
+   "site": "https://www.robertdyas.co.uk/",
+   "platform": "Adobe Commerce / Magento 2 (theme Astound/tprg-robertdyas) with Walmart Commerce Technologies BOPIS modules (Walmart_Bopis*, wct-fulfillment) and Magento Inventory In-Store Pickup; Cloudflare edge",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Collect in 15 Minutes > 'Select your store' (modal with location search and 'show in-stock only locations' checkbox); banner 'Free CLICK & COLLECT in 15 Minutes*'",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "POST",
+     "url_pattern": "https://www.robertdyas.co.uk/rest/robertdyas_uk_main_en_gb/V1/wct-fulfillment/location/get-inventory-availability",
+     "params": {
+      "body": "JSON {request:{items:[{sku:'<sku>',qty:'1'}], locations:['<pickup_location_code>',...], extension_attributes:{skip_locations_stock:false}}}",
+      "store lookup": "GET https://www.robertdyas.co.uk/rest/robertdyas_uk_main_en_gb/V1/inventory/in-store-pickup/pickup-locations?searchRequest[area][searchTerm]=E14 5AB:GB&searchRequest[area][radius]=5&searchRequest[scopeCode]=robertdyas_uk&searchRequest[pageSize]=5 (standard Magento API)"
+     }
+    },
+    "response_shape": "JSON {source_list:[{source_code, in_stock_items:[{sku,name,qty(echo of requested qty),ship_to_store}], ship_to_store_items, out_of_stock_items, status{label 'In-Stock', code 'in_stock'|..., out_of_stock_qty}, extension_attributes{estimated_delivery_date_label 'in 15 Minutes'}}], extension_attributes{is_store_pick_up_delivery_available, estimated_delivery_date[], ...}}. Per-store yes/no (can it satisfy qty N), plus collection time; no real stock count.",
+    "canary_wharf_store_id": "rd_6088 'Canary Wharf', 16-19 Canada Square E14 5EQ (51.505,-0.019); test SKU 251735 In-Stock, collect in 15 minutes",
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (JS detection 'challenge-platform' script runs; no visible challenge for headless or curl)",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Product availability http://schema.org/InStock (online)",
+    "Some products are 'Online Exclusive' (is_store_pick_up_delivery_available:false)",
+    "SKU is in the product page and in the get-inventory-availability call it makes on load",
+    "Sitemaps https://www.robertdyas.co.uk/sitemap.xml -> /media/sitemap_00N.xml"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Two plain JSON calls without cookies answer the question for the Canary Wharf shop: pickup-locations (find rd_6088) then get-inventory-availability (status per store). The UI modal did not open in my headless script (the 'Select your store' link was not clickable), but the endpoints work from curl. qty in the answer echoes the requested qty; ask with qty N to test 'at least N'. robots.txt allows /rest/ (disallows /ajaxcalls/, /ajaxbasket/, /checkout*). Same owner (TPRG) and same Magento stack as Ryman. Keep volume very low.",
+   "evidence_urls": [
+    "https://www.robertdyas.co.uk/duracell-optimum-aa-batteries-4-pack",
+    "https://www.robertdyas.co.uk/robots.txt",
+    "https://www.robertdyas.co.uk/rest/robertdyas_uk_main_en_gb/V1/inventory/in-store-pickup/pickup-locations?searchRequest[area][searchTerm]=E14%205AB:GB&searchRequest[area][radius]=5&searchRequest[scopeCode]=robertdyas_uk&searchRequest[pageSize]=5"
+   ],
+   "checked_at": "2026-10-12T15:27:39Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "robert-dyas",
+    "name": "Robert Dyas",
+    "types": [
+     "HomeGoodsStore"
+    ],
+    "categories": [
+     "Home & Furniture"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/robert-dyas/",
+    "kgx": "https://canarywharf.com/shop/robert-dyas/#entity"
+   }
+  },
+  {
+   "slug": "cos",
+   "brand": "COS (H&M Group)",
+   "site": "https://www.cos.com/en-gb/ (cosstores.com redirects)",
+   "platform": "custom H&M Group headless (Next.js: robots.txt lists /_next/data/, /api/, /proxy/); Akamai",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Akamai (AkamaiGHost 'Access Denied' 403 to curl and to headless Chromium on a category page)",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt (fetched with Node) disallows /api/, /proxy/, /_next/data/, */cart*, */search*, *auth*: any stock API under /api/ is off-limits to direct calls",
+    "Unverified (prior knowledge): H&M Group brand sites have offered a 'Find in store' size-availability check on product pages"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Blocked by Akamai for headless Chromium; the feature could not be confirmed today. Even if confirmed, robots.txt disallows /api/, so only a real user-driven page view would be acceptable. Internet Archive copy of a COS product page is the next thing to read (archive was rate-limited, 429, during this survey). Verdict is provisional.",
+   "evidence_urls": [
+    "https://www.cos.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:48:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "cos",
+    "name": "Discover Modern Fashion | COS at Canary Wharf",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/cos/",
+    "kgx": "https://canarywharf.com/shop/cos/#entity"
+   }
+  },
+  {
+   "slug": "scribbler",
+   "brand": "Scribbler",
+   "site": "https://www.scribbler.com/",
+   "platform": "Shopify (shop id 60506702031) with custom app proxy /apps/scribblerApi/",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Shopify edge (no challenge; probe flag false positive)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/{handle}.js expose variants[].available (online)",
+    "JSON-LD Offer availability schema.org/InStock on product pages",
+    "no pickup-availability section on product page"
+   ],
+   "verdict": "online availability only",
+   "notes": "Only in-store mentions are the loyalty scheme ('Redeem in-store or online'). Shopify POS may hold per-shop stock but the theme does not expose pickup availability. robots.txt disallows /search, /cart, /policies/.",
+   "evidence_urls": [
+    "https://www.scribbler.com/robots.txt",
+    "https://www.scribbler.com/products/holo-festive-cheer-dual-pack",
+    "https://www.scribbler.com/products.json?limit=2"
+   ],
+   "checked_at": "2026-10-12T15:19:10Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "scribbler",
+    "name": "Scribbler",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "One Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/scribbler/",
+    "kgx": "https://canarywharf.com/shop/scribbler/#entity"
+   }
+  },
+  {
+   "slug": "russell-bromley",
+   "brand": "Russell & Bromley",
+   "site": "https://www.next.co.uk/shop/brand-russellbromley-0 (https://www.russellandbromley.co.uk/ and its robots.txt now 301 to this Next brand page, utm_source=rb_redirect)",
+   "platform": "Next plc platform (brand acquired by Next; Akamai CDN)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "tried": false,
+    "headless_ok": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai (Next 403 error page with Reference ID)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Own domain retired: every path redirects to next.co.uk; see the Next finding (robots.txt disallows */api/)"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Online sales now through next.co.uk, which blocks headless and plain clients (403). Whether Next's store stock check covers Russell & Bromley's own shops (e.g. Canada Place) or only Next stores is unknown; likely Next stores only. Treat as not callable.",
+   "evidence_urls": [
+    "https://www.russellandbromley.co.uk/robots.txt",
+    "https://www.next.co.uk/shop/brand-russellbromley-0?utm_source=rb_redirect"
+   ],
+   "checked_at": "2026-10-12T15:12:59Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "russell-bromley",
+    "name": "Come Together: Russell & Bromley’s Spring 24 Collection",
+    "types": [
+     "ShoeStore"
+    ],
+    "categories": [
+     "Shoes & Footwear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/russell-bromley/",
+    "kgx": "https://canarywharf.com/shop/russell-bromley/#entity"
+   }
+  },
+  {
+   "slug": "reiss-jubilee-place",
+   "brand": "Reiss",
+   "site": "https://www.reiss.com/",
+   "platform": "Next plc Total Platform (Reiss is Next-owned; /style/sv<id>/<id> product URLs as on next.co.uk); Akamai edge",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai ('Access Denied' 403 for headless Chromium and for curl on product pages; robots.txt and sitemaps served to curl)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Sitemaps: https://www.reiss.com/sitemap-index.xml incl. reiss-GB-EN-Products.xml.gz and reiss-GB-EN-Store.xml.gz (store pages)",
+    "2022 trade report: new platform with store fulfilment technology; click & collect points grew from 50 to 600 (Next stores and partners)"
+   ],
+   "verdict": "unknown",
+   "notes": "Product pages blocked by Akamai for both headless Chromium and curl; not bypassed. Internet Archive unreachable from this container. Because Reiss runs on the Next Total Platform, its stock behaviour probably matches next.co.uk (see the next.json finding from the other survey group). Click & collect confirmed only by a 2022 trade article.",
+   "evidence_urls": [
+    "https://www.reiss.com/robots.txt",
+    "https://www.reiss.com/sitemap-index.xml",
+    "https://www.theretailbulletin.com/fashion/reiss-launches-new-website-to-improve-customers-shopping-experience-16-02-2022/"
+   ],
+   "checked_at": "2026-10-12T15:29:39Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "reiss-jubilee-place",
+    "name": "Reiss Jubilee Place",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/reiss-jubilee-place/",
+    "kgx": "https://canarywharf.com/shop/reiss-jubilee-place/#entity"
+   }
+  },
+  {
+   "slug": "pop-mart",
+   "brand": "Pop Mart",
+   "site": "https://www.popmart.com/gb",
+   "platform": "custom (Next.js front end; RPC JSON API at prod-uk-online-api.popmart.com/rpc/...)",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "POST https://prod-uk-online-api.popmart.com/rpc/ec/spu/getStock returns {stock:{<skuId>: <quantity>}} for the product's SKUs (online warehouse quantity; seen 2 and 1)",
+    "POST .../rpc/ec/spu/public_FindOne {id:<spu uuid>} returns product data",
+    "POST .../rpc/storePick/storePickConfig/public_getByArea {area:'GB'} returns null: the platform has a store-pickup module, switched off for GB today",
+    "Product page buttons only 'STORE MAP', 'STORE RETURNS'"
+   ],
+   "verdict": "online availability only",
+   "notes": "No find-in-store for GB. Watch the storePick config: if it becomes non-null for GB, a store pickup / store stock feature may appear. API calls carry headers x-area: GB, x-device-type: web-pc, x-request-id; body {spuId, skuIds[], type: normal}; an x-fingerprint header (browser fingerprint hash) is sent. Popular drops sell out fast; low volume only.",
+   "evidence_urls": [
+    "https://www.popmart.com/gb/products/hirono-mist-walker-series-felt-ornament/b3667afc-5eb4-4dc6-b730-ef4ead9216a9",
+    "https://www.popmart.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:52:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "pop-mart",
+    "name": "Pop Mart",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "Canada Square",
+    "cwg_url": "https://canarywharf.com/shop/pop-mart/",
+    "kgx": "https://canarywharf.com/shop/pop-mart/#entity"
+   }
+  },
+  {
+   "slug": "loccitane",
+   "brand": "L'Occitane en Provence",
+   "site": "https://uk.loccitane.com/ (www.loccitane.co.uk did not answer)",
+   "platform": "Salesforce Commerce Cloud (Demandware, Sites-OCC_GB-Site); Cloudflare CDN",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "DataDome (homepage redirects to DDUser-Challenge then geo.captcha-delivery.com captcha)",
+    "challenged": true
+   },
+   "other_signals": [
+    "sitemap_index.xml redirects into /on/demandware.store/... SiteMap-Google, which robots.txt disallows (/on/demandware.store*)",
+    "SFCC store/inventory controllers would also sit under the disallowed /on/demandware.store*"
+   ],
+   "verdict": "unknown",
+   "notes": "Headless Chromium got a DataDome captcha on the first page; not solved. Could not see product pages. Any SFCC stock controller path is disallowed by robots.txt anyway. Check by hand in a normal browser.",
+   "evidence_urls": [
+    "https://uk.loccitane.com/robots.txt",
+    "https://uk.loccitane.com/"
+   ],
+   "checked_at": "2026-10-12T15:20:40Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "loccitane",
+    "name": "L'Occitane",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/loccitane/",
+    "kgx": "https://canarywharf.com/shop/loccitane/#entity"
+   }
+  },
+  {
+   "slug": "hawes-curtis",
+   "brand": "Hawes & Curtis",
+   "site": "https://www.hawesandcurtis.co.uk/",
+   "platform": "custom .NET single-page app (/api/Site/*, /api/WebService/*, webStoreId=1), Algolia search, Global-e",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "tried": false,
+    "ui_label": null,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Product page calls POST /api/WebService/GetProductSizeInformation?sku=<SKU> (size data, online stock likely) - robots.txt does not disallow /api/, but it is an internal API",
+    "No JSON-LD in server HTML (client-rendered)",
+    "Store list at https://www.hawesandcurtis.co.uk/stores"
+   ],
+   "verdict": "online availability only",
+   "notes": "Product page loaded headless (200), no challenge, no find-in-store / check-stock label and no stock phrases; only a link to the store list. Per-size online availability comes from internal JSON APIs; nothing per shop.",
+   "evidence_urls": [
+    "https://www.hawesandcurtis.co.uk/robots.txt",
+    "https://www.hawesandcurtis.co.uk/cream-and-blue-floral-slim-shirt-mid-collar-bfdfi015-h51"
+   ],
+   "checked_at": "2026-10-12T15:14:27Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "hawes-curtis",
+    "name": "Hawes & Curtis",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/hawes-curtis/",
+    "kgx": "https://canarywharf.com/shop/hawes-curtis/#entity"
+   }
+  },
+  {
+   "slug": "the-fragrance-shop",
+   "brand": "The Fragrance Shop",
+   "site": "https://www.thefragranceshop.co.uk/",
+   "platform": null,
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (managed challenge 'Just a moment...', 403, even for robots.txt via curl and Node fetch)",
+    "challenged": true
+   },
+   "other_signals": [
+    "Shopping-centre listings: free Click & Collect from about 200 stores (order online, collect from nearest store)"
+   ],
+   "verdict": "unknown",
+   "notes": "Every request (robots.txt with curl and Node fetch, homepage headless) was challenged by Cloudflare; not bypassed. robots.txt could not be read, so no automated access should be assumed allowed. Internet Archive unreachable from this container. Click & Collect confirmed only by third-party mall listings; a per-store stock view was not seen.",
+   "evidence_urls": [
+    "https://www.thefragranceshop.co.uk/robots.txt",
+    "https://www.thebeaconeastbourne.com/shops/the-fragrance-shop/",
+    "https://gswarrington.com/stores/the-fragrance-shop/"
+   ],
+   "checked_at": "2026-10-12T15:30:36Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 403,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "the-fragrance-shop",
+    "name": "The Fragrance Shop",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/the-fragrance-shop/",
+    "kgx": "https://canarywharf.com/shop/the-fragrance-shop/#entity"
+   }
+  },
+  {
+   "slug": "weather-and-palette",
+   "brand": "Weather and Palette (skincare studio, Jubilee Place)",
+   "site": "https://app.weatherandpalette.com/ (www.weatherandpalette.com redirects there; comments in the page say the root domain is moving from Wix)",
+   "platform": "custom single-page app with its own JSON API (/api/...); catalogue item ids look like Square catalog object ids; Cloudflare",
+   "sells_online": null,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (CDN, no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "schema.org LocalBusiness / HealthAndBeautyBusiness JSON-LD on the home page (single Canary Wharf studio)",
+    "The page itself loads GET /api/products (retail skincare products, Square-style item ids) and /api/services (treatments); robots.txt disallows /api/, so not to be called directly; stock fields not inspected"
+   ],
+   "verdict": "unknown",
+   "notes": "Independent single-site skincare studio (treatments, consultations, retail products). No shop UI or stock wording found on the home page; it is the Canary Wharf shop itself, so any product list it shows is effectively that shop's range. If the owner wants this, ask the business: they appear to run Square POS, whose inventory could only be shared by them. Note: /api/ui-settings exposes staff/test e-mail addresses; nothing recorded here.",
+   "evidence_urls": [
+    "https://app.weatherandpalette.com/",
+    "https://app.weatherandpalette.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:56:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "weather-and-palette",
+    "name": "Weather and Palette",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/weather-and-palette/",
+    "kgx": "https://canarywharf.com/shop/weather-and-palette/#entity"
+   }
+  },
+  {
+   "slug": "intimissimi",
+   "brand": "Intimissimi",
+   "site": "https://www.intimissimi.com/uk/",
+   "platform": "Salesforce Commerce Cloud (Demandware, Sites-intimissimi-uk-Site, SiteGenesis/SFRA-style controllers); Woosmap for place search; Forter",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Check in-store pickup availability from 3 hours for this item - 'Find the nearest store' (input 'Town or postcode'); footer link 'Product availability in store'",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "observed: https://www.intimissimi.com/on/demandware.store/Sites-intimissimi-uk-Site/en_GB/Stores-FindStores?showMap=true&radius=1&lat={lat}&long={lng}&intFilter=true&iuoFilter=true ; product-specific (from PDP data-url, not observed): /on/demandware.store/Sites-intimissimi-uk-Site/en_GB/FindInStore-GetStoresWithProductAvailability",
+     "params": {
+      "lat/long": "from Woosmap localities details for the postcode (51.504938,-0.019496 for E14 5AB)",
+      "radius": "1",
+      "intFilter/iuoFilter": "brand filters (women/men)",
+      "product": "pid/variant expected for GetStoresWithProductAvailability"
+     }
+    },
+    "response_shape": "JSON {action, stores:[{ID, name, address1, postalCode, latitude, longitude, phone, distance, storeHours[], isBopisEnabled, isBopisStore, notBopisProducts[], bopisProductsImages[], pickUpTimeLabel...}]}. Per-store pickup capability; per-product availability expected from GetStoresWithProductAvailability (boolean-style, 'available for pickup today/tomorrow').",
+    "canary_wharf_store_id": "IGJ4 (LONDON CANARY WHARF, Unit 6 Canada Place, E14 5AH; first result, 0.4 mi; store page https://www.intimissimi.com/uk/united_kingdom/londra_1_canada_square/IGJ4.html). In this search it showed isBopisStore=false.",
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "none challenging (Forter fraud script present)",
+    "challenged": false
+   },
+   "other_signals": [
+    "SFCC Product-Variation?pid=...&dwvar_... JSON (online availability per variant) fetched on page load",
+    "UK product sitemap https://www.intimissimi.com/uk/sitemap_0-product.xml and store sitemap /uk/sitemap-intimissimi-uk_stores_0.xml (store ids like IGJ4)"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Store search ran headless with no challenge and returned the Canary Wharf store first (X-Requested-With header only; no CSRF). The product-specific call GetStoresWithProductAvailability needs a size/variant chosen; the headless run could not select the size (hidden radio), so per-product per-store availability was not observed - a future caller should select the variant then click 'Find the nearest store'. robots.txt: Crawl-delay 5; disallows */Store-Show?sid*, */Search-ShowAjax*, cart/checkout; /on/demandware.store controllers used here are not disallowed. Old /gb/ path answers 410; use /uk/.",
+   "evidence_urls": [
+    "https://www.intimissimi.com/robots.txt",
+    "https://www.intimissimi.com/uk/product/silk_sleep_mask-AI0092.html",
+    "https://www.intimissimi.com/uk/sitemap-intimissimi-uk_stores_0.xml"
+   ],
+   "checked_at": "2026-10-12T15:26:32Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "intimissimi",
+    "name": "Intimissimi - Canary Wharf Intimissimi brings effortless luxury to the modern woman’s wardrobe.",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Lingerie"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/intimissimi/",
+    "kgx": "https://canarywharf.com/shop/intimissimi/#entity"
+   }
+  },
+  {
+   "slug": "sostrene-grene",
+   "brand": "Søstrene Grene",
+   "site": "https://sostrenegrene.com/en-gb",
+   "platform": "Umbraco CMS with custom commerce API (/umbraco/api/*)",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "'In stock in N stores' link on product page; panel 'Stock status in store', field 'Search by postal code', switch 'SHOW ONLY STORES WITH THE ITEM IN STOCK'",
+    "tried": true,
+    "postcode": "E14 5AB",
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://sostrenegrene.com/umbraco/api/store/inventorysearch?sku=<variant sku>&address=<postcode or city>&usegeocodingfeaturetoggle=false",
+     "params": {
+      "sku": "variant id, e.g. 521893-002 (from the product page / variantId)",
+      "address": "E14 5AB",
+      "usegeocodingfeaturetoggle": "false"
+     }
+    },
+    "response_shape": "JSON {labels, status, stores:[{id, name, street, postalCode, city, distance, openingHours{current, weekly[]}, inventory:[{sku, state, description}]}]}; state 1 = Out of stock, 2 = Few in stock, 3 = In stock (per store, three levels, no quantity). With E14 5AB the first store returned was 'Canary Wharf, London', Unit 52-54 Jubilee Place, E14 5NY.",
+    "canary_wharf_store_id": "8039",
+    "needs_session": true,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Product page text 'In stock in 10 stores' (count of UK stores with stock) and 'FEW IN STOCK' badges on product tiles",
+    "Store opening hours (weekly and open-now) come in the same JSON"
+   ],
+   "verdict": "per-store stock check (works headless)",
+   "notes": "Best result of this group. One headless product-page load plus one postcode search gave the full per-store list with three stock levels and the Canary Wharf store first. A single cookie-less curl of the same URL answered 200 but in the Danish market (52 Danish stores, Danish labels, status 2), so the market comes from a cookie/culture set by visiting /en-gb: a caller should load the en-gb product page once in a browser context (or carry its market cookie) and then call inventorysearch. No CSRF seen. robots.txt allows / (only *share=twitter disallowed). The page fires a decoy analytics beacon (edge.sostrenegrene.com ... tid=G-DECOY12345&en=canary_probe), which looks like bot telemetry: keep volume very low. Ticket stock is 'Subject to sold-out items. Prices may vary between our online shop and our physical stores.'",
+   "evidence_urls": [
+    "https://sostrenegrene.com/robots.txt",
+    "https://sostrenegrene.com/en-gb/products/accessories/mini-scrunchies-p-ed2f1b1b",
+    "https://sostrenegrene.com/umbraco/api/store/inventorysearch?sku=521893-002&address=E14%205AB&usegeocodingfeaturetoggle=false"
+   ],
+   "checked_at": "2026-10-12T15:16:59Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "sostrene-grene",
+    "name": "Søstrene Grene",
+    "types": [
+     "HomeGoodsStore"
+    ],
+    "categories": [
+     "Home & Furniture"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/sostrene-grene/",
+    "kgx": "https://canarywharf.com/shop/sostrene-grene/#entity"
+   }
+  },
+  {
+   "slug": "laderach",
+   "brand": "Läderach",
+   "site": "https://laderach.com/uk-en/",
+   "platform": "Magento 2 with Hyvä theme; Cloudflare edge",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": "'Contact store for availability' (static text on the product page next to 'Find your nearest store' / Storefinder)",
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "JSON-LD Product with offers availability http://schema.org/InStock, priceCurrency GBP, shippingDetails (online)",
+    "Sitemaps per store view listed in https://laderach.com/robots.txt (e.g. /media/sitemap/sitemap_eu_en.xml; look for a UK one)",
+    "Storefinder page lists shops; no per-shop stock"
+   ],
+   "verdict": "online availability only",
+   "notes": "The UK product page tells users to contact the shop for in-store availability, so there is no machine stock check per shop. Online stock via JSON-LD only. Pages load headless without challenge. Fresh chocolate counter items in shops are not online at all.",
+   "evidence_urls": [
+    "https://laderach.com/uk-en/10109632-milk-tablet-36",
+    "https://laderach.com/uk-en/tafeln",
+    "https://laderach.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:31:38Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "laderach",
+    "name": "Laderach",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Confectionery"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/laderach/",
+    "kgx": "https://canarywharf.com/shop/laderach/#entity"
+   }
+  },
+  {
+   "slug": "accessorize-canarywharf",
+   "brand": "Accessorize",
+   "site": "https://www.accessorize.com/uk/ (uk.accessorize.com redirects)",
+   "platform": "Salesforce Commerce Cloud SFRA (Sites-accessorize-uk-Site), Global-e; Cloudflare",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "'YOUR EXPRESS CLICK & COLLECT STORE: <store>' / 'STANDARD CLICK & COLLECT' on the product page (no separate find-in-store button)",
+    "tried": true,
+    "postcode": "E14 5AB (store finder only)",
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://www.accessorize.com/on/demandware.store/Sites-accessorize-uk-Site/en_GB/ProductStock-GetData?pid=<variant pid>&cacheperiod=0&ajax=true",
+     "params": "pid = 10-digit variant id; the store is the session's preferred / nearest store (Stores-GetNearestStore?ajax=true, geo-IP; ours resolved to Westfield White City)"
+    },
+    "response_shape": "JSON: product.availability {ATS (online units), isLowStock, isOutOfStock}, productStock {availableInStore, isAvailableInStore, storeName, storeAvailability, clickCollectAvailability: 'Express'|'Standard', inventoryValue, availableInPrimaryInventory, ...}. One store per call, yes/no plus Express/Standard; online ATS is a quantity.",
+    "canary_wharf_store_id": null,
+    "needs_session": true,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Online ATS quantity in ProductStock-GetData (plain JSON, cookies optional)",
+    "SFRA store finder Stores-FindStores?postalCode=E14%205AB&radius=5 answered with an empty list (probably needs lat/long or another radius unit)",
+    "robots.txt disallows /*Product-Show, /*Page-Include, cart, checkout, search, but not ProductStock-GetData or Stores-*"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Express Click & Collect means the chosen shop has the item; the page shows it for one preferred store tied to the session (set by geo-IP, and presumably changeable in the delivery options). We could not find the store-change control on the product page in 4 loads, so Canary Wharf (Canada Place) was not checked and its store id is unknown. Next step: find the store-selection call (likely a Stores-* SetPreferred controller) in a real browser session, then ProductStock-GetData gives Canary Wharf yes/no per variant.",
+   "evidence_urls": [
+    "https://www.accessorize.com/uk/classic-tote-bag-black-39007603.html",
+    "https://www.accessorize.com/on/demandware.store/Sites-accessorize-uk-Site/en_GB/ProductStock-GetData?pid=3900760300&cacheperiod=0&ajax=true",
+    "https://www.accessorize.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T16:05:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "accessorize-canarywharf",
+    "name": "Accessorize",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/accessorize-canarywharf/",
+    "kgx": "https://canarywharf.com/shop/accessorize-canarywharf/#entity"
+   }
+  },
+  {
+   "slug": "office-shoes",
+   "brand": "OFFICE",
+   "site": "https://www.office.co.uk/",
+   "platform": "SAP Commerce (Hybris) accelerator likely (asset paths media.office.co.uk/_ui/responsive/site-office/); Amplience media",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Netacea (assets.ntcacdn.net 'Mitigations' + Google reCAPTCHA); 403 captcha page even for /robots.txt, to curl, Node fetch and headless Chromium",
+    "challenged": true
+   },
+   "other_signals": [],
+   "verdict": "unknown",
+   "notes": "Every request (robots.txt, homepage) got the Netacea reCAPTCHA page; not solved. robots.txt itself could not be read, so no page was fetched beyond the first. Caution for the caller: probe-stock-check.mjs reported robots status 200/allowed because the captcha page came back with a body it parsed as empty rules - treat this as 'robots unknown'. Check by hand in a normal browser.",
+   "evidence_urls": [
+    "https://www.office.co.uk/robots.txt",
+    "https://www.office.co.uk/"
+   ],
+   "checked_at": "2026-10-12T15:27:09Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 403,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "office-shoes",
+    "name": "Office",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/office-shoes/",
+    "kgx": "https://canarywharf.com/shop/office-shoes/#entity"
+   }
+  },
+  {
+   "slug": "the-flower-club",
+   "brand": "The Flower Club LDN",
+   "site": "https://theflowerclubldn.co.uk/",
+   "platform": "Shopify (shop_id 91506737530)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "needs_session": true,
+    "headless_ok": true,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (Shopify edge) managed challenge for plain curl",
+    "challenged": true
+   },
+   "other_signals": [
+    "Shopify /products.json (read from the page context after one headless load) gives per-variant 'available' true/false; also /products/<handle>.js",
+    "Single-shop florist in Canary Wharf (Harbord Square), so online availability is in effect the shop's availability; products include bouquets and workshops",
+    "Shopify pickup availability section (?section_id=pickup-availability) may exist if local pickup is enabled - not checked"
+   ],
+   "verdict": "online availability only",
+   "notes": "Plain curl got a Cloudflare 'Verifying your connection' managed challenge, even for robots.txt; headless Chromium loaded the homepage (200) without a visible challenge, and same-origin fetch of /products.json?limit=5 answered 200 with 'available' flags. robots.txt (via node fetch) allows /. A careful caller should use a browser context, read one product's .js on demand, and keep to single requests.",
+   "evidence_urls": [
+    "https://theflowerclubldn.co.uk/robots.txt",
+    "https://theflowerclubldn.co.uk/",
+    "https://theflowerclubldn.co.uk/products.json?limit=5"
+   ],
+   "checked_at": "2026-10-12T15:17:55Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://theflowerclubldn.co.uk/agents.md",
+     "# UCP discovery: https://theflowerclubldn.co.uk/.well-known/ucp",
+     "# UCP/MCP endpoint: https://theflowerclubldn.co.uk/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "the-flower-club",
+    "name": "The Flower Club",
+    "types": [
+     "Florist"
+    ],
+    "categories": [
+     "Flowers & Plants"
+    ],
+    "mall": "Harbord Square",
+    "cwg_url": "https://canarywharf.com/shop/the-flower-club/",
+    "kgx": "https://canarywharf.com/shop/the-flower-club/#entity"
+   }
+  },
+  {
+   "slug": "polo-ralph-lauren",
+   "brand": "Polo Ralph Lauren",
+   "site": "https://www.ralphlauren.co.uk/",
+   "platform": "Salesforce Commerce Cloud (Demandware pipeline names in robots.txt: Product-Show, Cart-MiniCart, CQRecomm-Start, Adyen-*)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Akamai ('Access Denied' 403 for headless Chromium on a category page and for Node fetch on the sitemap index; robots.txt was served)",
+    "challenged": true
+   },
+   "other_signals": [
+    "robots.txt disallows */Product-Show, */Product-Variation, */Product-AlsoAvailable, */Product-PDPOMSEDDLookup and /*?*pid= (the SFCC endpoints that carry variant availability)",
+    "John Lewis also sells Polo Ralph Lauren with its own Click & Collect (not the Cabot Place shop)"
+   ],
+   "verdict": "unknown",
+   "notes": "Blocked by Akamai; not bypassed. Internet Archive unreachable from this container. Even if a find-in-store feature exists, robots.txt forbids the SFCC product/variation endpoints, so a compliant automated caller has little room. Sitemap: https://www.ralphlauren.co.uk/index (403 to Node fetch).",
+   "evidence_urls": [
+    "https://www.ralphlauren.co.uk/robots.txt",
+    "https://www.ralphlauren.co.uk/en/men/clothing/polo-shirts/10204"
+   ],
+   "checked_at": "2026-10-12T15:32:38Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "polo-ralph-lauren",
+    "name": "Polo Ralph Lauren",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/polo-ralph-lauren/",
+    "kgx": "https://canarywharf.com/shop/polo-ralph-lauren/#entity"
+   }
+  },
+  {
+   "slug": "diptyque",
+   "brand": "Diptyque",
+   "site": "https://uk.diptyqueparis.com/en-uk/ (www.diptyqueparis.com/en_uk/ redirects)",
+   "platform": "Shopify (Cloudflare); store stock / reservation by SoCloz (api.socloz.com/v4/js/popup.js); store locator https://stores.diptyqueparis.com/en_uk",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": true,
+   "stock_check": {
+    "exists": true,
+    "ui_label": "Reserve in-store (button.socloz on product page; product tag 'Reserve in store')",
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": null,
+     "url_pattern": "SoCloz popup served from https://api.socloz.com/v4/... (exact stock call not captured)",
+     "params": null
+    },
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "cloudflare (no challenge); fifth page load answered HTTP 503 'Something went wrong' (stopped there)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /en-uk/products.json and /products/<handle>.js with variants[].available (online)",
+    "schema.org Offer availability InStock on product page (online)",
+    "Product tags include 'Low Stock' and 'Reserve in store'",
+    "robots.txt points agents to https://uk.diptyqueparis.com/agents.md and UCP/MCP https://uk.diptyqueparis.com/api/ucp/mcp (online catalogue)"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "The SoCloz 'Reserve in-store' popup is the boutique-availability tool, but the button did not open headless (click timed out twice; it may wait for the SoCloz script or a size choice), then the site returned 503; not retried. IMPORTANT: https://api.socloz.com/robots.txt is 'Disallow: /', so a direct client of the SoCloz API is not allowed; only a user-driven page view could use it. Canary Wharf (Cabot Place) boutique id unknown. Reservation itself needs name/e-mail: out of scope.",
+   "evidence_urls": [
+    "https://uk.diptyqueparis.com/en-uk/products/eau-de-parfum-exceptional-format-fleur-de-peau-largeedpfl",
+    "https://api.socloz.com/robots.txt",
+    "https://stores.diptyqueparis.com/en_uk",
+    "https://uk.diptyqueparis.com/agents.md"
+   ],
+   "checked_at": "2026-10-12T16:12:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://uk.diptyqueparis.com/agents.md",
+     "# UCP discovery: https://uk.diptyqueparis.com/.well-known/ucp",
+     "# UCP/MCP endpoint: https://uk.diptyqueparis.com/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "diptyque",
+    "name": "Diptyque",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/diptyque/",
+    "kgx": "https://canarywharf.com/shop/diptyque/#entity"
+   }
+  },
+  {
+   "slug": "fortnum-mason",
+   "brand": "Fortnum & Mason",
+   "site": "https://www.fortnumandmason.com/",
+   "platform": "Magento 2 / Adobe Commerce with PWA Studio front end (GraphQL GET /graphql), Algolia search (index prod_fm_en_gb_products), Cloudflare CDN",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (RUM only, no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Magento GraphQL GET /graphql?query=getProductDetailForProductPage... (standard Magento products{stock_status} gives online stock; robots.txt does not disallow /graphql)",
+    "Algolia public search key in page (product index; may carry in_stock flag)",
+    "product sitemap https://www.fortnumandmason.com/media/sitemap.xml",
+    "no JSON-LD in server HTML (client-rendered)"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Product page (headless OK) shows no store availability or store picker; 'Click and Collect' appears only as a footer help link, so collection is chosen at checkout and was not examined (no basket/checkout). Online stock via Magento GraphQL stock_status. robots.txt disallows /checkout/, /catalog/, /customer/, /review/.",
+   "evidence_urls": [
+    "https://www.fortnumandmason.com/robots.txt",
+    "https://www.fortnumandmason.com/royal-blend-50-tea-bag-tin"
+   ],
+   "checked_at": "2026-10-12T15:28:53Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "fortnum-mason",
+    "name": "Fortnum & Mason",
+    "types": [
+     "Store"
+    ],
+    "categories": [],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/fortnum-mason/",
+    "kgx": "https://canarywharf.com/shop/fortnum-mason/#entity"
+   }
+  },
+  {
+   "slug": "postmark",
+   "brand": "Postmark",
+   "site": "https://postmarkonline.co.uk/ (www.postmarkonline.co.uk redirects)",
+   "platform": "Shopify (shop_id 26423492696)",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://postmarkonline.co.uk/variants/<variant id>/?section_id=surface-pick-up",
+     "params": {
+      "section_id": "surface-pick-up (Shopify local pickup availability section)"
+     }
+    },
+    "response_shape": "HTML Shopify section with two <template>s (surface-pick-up-embed, surface-pick-up-items); both empty for the product tried, so local pickup is not enabled (or not for this item)",
+    "canary_wharf_store_id": null,
+    "needs_session": true,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Cloudflare (Shopify edge) managed challenge for plain curl",
+    "challenged": true
+   },
+   "other_signals": [
+    "Shopify /products.json (same-origin, after a headless load) gives per-variant 'available' true/false (online)",
+    "The theme requests the Shopify pickup-availability section on each product page; if Postmark ever enables local pickup at its shops, this section would list each shop with 'Pickup available / usually ready in' per variant"
+   ],
+   "verdict": "online availability only",
+   "notes": "curl got the Cloudflare 'Verifying your connection' managed challenge (robots.txt too); headless Chromium loaded pages (200) and robots.txt (node fetch) allows /. Product page shows no stock phrases or find-in-store control. Keep watching the surface-pick-up section: it is the standard Shopify per-location signal and costs one small request.",
+   "evidence_urls": [
+    "https://postmarkonline.co.uk/robots.txt",
+    "https://postmarkonline.co.uk/products/glick-curling-ribbon-pack-gold",
+    "https://postmarkonline.co.uk/variants/58593043841405/?section_id=surface-pick-up",
+    "https://postmarkonline.co.uk/products.json?limit=5"
+   ],
+   "checked_at": "2026-10-12T15:19:48Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://postmarkonline.co.uk/agents.md",
+     "# UCP discovery: https://postmarkonline.co.uk/.well-known/ucp",
+     "# UCP/MCP endpoint: https://postmarkonline.co.uk/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "postmark",
+    "name": "Postmark",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Cards & Stationery"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/postmark/",
+    "kgx": "https://canarywharf.com/shop/postmark/#entity"
+   }
+  },
+  {
+   "slug": "tm-lewin",
+   "brand": "T.M.Lewin",
+   "site": "https://tmlewin.co.uk/",
+   "platform": "Shopify (store tmlewinuk.myshopify.com, Dawn-based theme; www.tmlewin.co.uk redirects to tmlewin.co.uk)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": "Theme has Shopify 'pickup availability' block (pickup-availability-preview, 'Couldn't load pickup availability'), but it rendered empty",
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://tmlewin.co.uk/variants/{variantId}/?section_id=pickup-availability",
+     "params": {
+      "variantId": "from /products/<handle>.js"
+     }
+    },
+    "response_shape": "Empty section <div id=\"shopify-section-pickup-availability\"></div> (from a US IP, also with &country=GB). When Shopify local pickup is on, this section lists each pickup location with 'Pickup available / usually ready in ...' per variant.",
+    "canary_wharf_store_id": null,
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/<handle>.js give per-variant 'available' (online stock)",
+    "JSON-LD ProductGroup/Product with offers availability InStock (online)",
+    "Delivery table on product page: 'Click & Collect (Bow Lane, Canary Wharf & Liverpool Street) 2-4 working days, Free' (shipped to the shop, not from shop stock)"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Click & Collect to the Canary Wharf shop takes 2-4 working days, so it is fulfilled from the warehouse. The Shopify pickup-availability section exists in the theme but returned empty; the store geolocates the visitor to the US market (cart.json?country=US), so a UK visitor may see local pickup if it is enabled for the GB market: re-test from a UK IP before ruling it out. Online stock is cheap to read via Shopify JSON. No bot challenge.",
+   "evidence_urls": [
+    "https://tmlewin.co.uk/products/classic-stretch-white-t-shirt",
+    "https://tmlewin.co.uk/products/classic-stretch-white-t-shirt.js",
+    "https://tmlewin.co.uk/variants/56231441990017/?section_id=pickup-availability",
+    "https://tmlewin.co.uk/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:34:33Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://tmlewin.co.uk/agents.md",
+     "# UCP discovery: https://tmlewin.co.uk/.well-known/ucp",
+     "# UCP/MCP endpoint: https://tmlewin.co.uk/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "tm-lewin",
+    "name": "TM Lewin",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/tm-lewin/",
+    "kgx": "https://canarywharf.com/shop/tm-lewin/#entity"
+   }
+  },
+  {
+   "slug": "tashola",
+   "brand": "Tashola",
+   "site": "https://www.tashola.com/ (probable; match to the Jubilee Place shop not confirmed. tashola.co.uk also answers, robots.txt with llms.txt policy, not examined)",
+   "platform": "Shopify (custom 'Tashola Shopify Theme')",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "none seen (Shopify; hCaptcha on its contact forms only)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/<handle>.js with variants[].available (online; jewellery, SKUs like TS-ER-00146-S00)",
+    "robots.txt advertises agents.md and UCP/MCP endpoint https://www.tashola.com/api/ucp/mcp",
+    "Has a /pages/showroom page; no address text found in it by curl (JS-rendered)"
+   ],
+   "verdict": "online availability only",
+   "notes": "No website in the CWG directory data (registry: Jubilee Place, Level -1, E14 5NY). Web search found nothing; tashola.com was found by guessing the domain, so treat the match as unconfirmed until the showroom/contact page or the shop front confirms Canary Wharf. No pickup-availability or find-in-store on the product page.",
+   "evidence_urls": [
+    "https://www.tashola.com/",
+    "https://www.tashola.com/products/classic-silver-hoop-earrings-65mm-ts-er-00146-s00",
+    "https://www.tashola.com/pages/showroom",
+    "https://tashola.co.uk/robots.txt"
+   ],
+   "checked_at": "2026-10-12T16:18:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://www.tashola.com/agents.md",
+     "# UCP discovery: https://www.tashola.com/.well-known/ucp",
+     "# UCP/MCP endpoint: https://www.tashola.com/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "tashola",
+    "name": "Tashola",
+    "types": [
+     "JewelryStore"
+    ],
+    "categories": [
+     "Jewellery & Watches"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/tashola/",
+    "kgx": "https://canarywharf.com/shop/tashola/#entity"
+   }
+  },
+  {
+   "slug": "newbie",
+   "brand": "Newbie (KappAhl group)",
+   "site": "https://newbiestore.com/ (en-gb path redirects to the base locale)",
+   "platform": "Shopify (kappahl-newbie.myshopify.com); Nosto; back-in-stock app /apps/bis/",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "Shopify edge (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/{handle}.js expose variants[].available (online; many variants show false)",
+    "/apps/bis/stock.json?variant_nos=... returns only {subscribable} flags (back-in-stock alerts), no quantity",
+    "Shopify pickup-availability section answers 404 for a variant (theme does not include it)"
+   ],
+   "verdict": "online availability only",
+   "notes": "No store pickup, store picker or in-store text on the product page. Online availability via Shopify product JSON. robots.txt (Shopify standard plus UCP comments) allows /products and /apps; disallows /cart, /checkout, /recommendations/products.",
+   "evidence_urls": [
+    "https://newbiestore.com/robots.txt",
+    "https://newbiestore.com/products/830513",
+    "https://newbiestore.com/products.json?limit=2"
+   ],
+   "checked_at": "2026-10-12T15:30:07Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://newbiestore.com/agents.md",
+     "# UCP discovery: https://newbiestore.com/.well-known/ucp",
+     "# UCP/MCP endpoint: https://newbiestore.com/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "newbie",
+    "name": "Newbie",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Clothing"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/newbie/",
+    "kgx": "https://canarywharf.com/shop/newbie/#entity"
+   }
+  },
+  {
+   "slug": "dune-london",
+   "brand": "Dune London",
+   "site": "https://www.dunelondon.com/",
+   "platform": "Salesforce Commerce Cloud (Sites-DuneUK-Site; Global-e)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Product JSON-LD Offer availability 'InStock' (plain word; online)",
+    "Product page HTML mentions 'Click and Collect' (delivery option text, no per-store stock shown before checkout)",
+    "robots.txt disallows /Product-Variation* and */search?*"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Product page loaded headless (200), no challenge; no find-in-store / check-stock control (only control matching 'collect' was a 'Flexi Sole Collection' link). Click and Collect is offered as a delivery method; store choice happens in checkout, which is out of scope. sitemap_index.xml answered 500 at check time.",
+   "evidence_urls": [
+    "https://www.dunelondon.com/robots.txt",
+    "https://www.dunelondon.com/dorry-textured-shoulder-bag-berry-0019500110109887.html"
+   ],
+   "checked_at": "2026-10-12T15:21:46Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "dune-london",
+    "name": "Dune London",
+    "types": [
+     "ShoeStore"
+    ],
+    "categories": [
+     "Shoes & Footwear"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/dune-london/",
+    "kgx": "https://canarywharf.com/shop/dune-london/#entity"
+   }
+  },
+  {
+   "slug": "wax-london",
+   "brand": "Wax London",
+   "site": "https://waxlondon.com/",
+   "platform": "Shopify",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/<handle>.js give per-variant 'available' (online stock)",
+    "JSON-LD Product offers availability (InStock/OutOfStock; online)",
+    "Shopify pickup-availability section answers 404 (local pickup not enabled)",
+    "'Stores' page lists shops only"
+   ],
+   "verdict": "online availability only",
+   "notes": "No click & collect or store stock feature in the server HTML or the headless render. Online per-size stock via Shopify JSON is easy and unprotected, but it is not the Cabot Place shop's stock. Note the JSON-LD on the tested page said OutOfStock for the default variant while products.json had some sizes available: read variants, not the page-level offer.",
+   "evidence_urls": [
+    "https://waxlondon.com/products/ranwell-zip-funnel-fluffy-wool-blend-charcoal",
+    "https://waxlondon.com/products/ranwell-zip-funnel-fluffy-wool-blend-charcoal.js",
+    "https://waxlondon.com/robots.txt"
+   ],
+   "checked_at": "2026-10-12T15:35:32Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://waxlondon.com/agents.md",
+     "# UCP discovery: https://waxlondon.com/.well-known/ucp",
+     "# UCP/MCP endpoint: https://waxlondon.com/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "wax-london",
+    "name": "Wax London",
+    "types": [
+     "Store"
+    ],
+    "categories": [
+     "Accessories"
+    ],
+    "mall": "Cabot Place",
+    "cwg_url": "https://canarywharf.com/shop/wax-london/",
+    "kgx": "https://canarywharf.com/shop/wax-london/#entity"
+   }
+  },
+  {
+   "slug": "david-m-robinson",
+   "brand": "David M Robinson (DMR)",
+   "site": "https://dmr.co.uk/ (davidmrobinson.co.uk redirects); Canary Wharf showroom page https://dmr.co.uk/pages/canary-wharf-showroom",
+   "platform": "Shopify",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": "none for stock; 'Book an appointment / View this piece in our showrooms' (appointment booking) and a generic 'see it in a showroom' banner",
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": "none seen (Shopify)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/<handle>.js with variants[].available (online; watches and jewellery incl. Rolex/Patek/TAG)",
+    "schema.org Offer availability InStock on product page; page text 'In Stock' (online)",
+    "robots.txt advertises agents.md and UCP/MCP endpoint https://dmr.co.uk/api/ucp/mcp",
+    "Click & Collect mentioned in site navigation (policy page; no Shopify pickup-availability block on product pages)"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Luxury jeweller with showrooms (Canary Wharf, 32-33 Jubilee Place; Liverpool etc.). Product pages invite an appointment to view a piece, without showing which showroom holds it. Shopify JSON endpoints and UCP/MCP are the sanctioned machine routes for online availability.",
+   "evidence_urls": [
+    "https://dmr.co.uk/products/tag-heuer-carrera-chronograph-sport-cdb2111-fc8378",
+    "https://dmr.co.uk/robots.txt",
+    "https://dmr.co.uk/pages/canary-wharf-showroom"
+   ],
+   "checked_at": "2026-10-12T16:22:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://dmr.co.uk/agents.md",
+     "# UCP discovery: https://dmr.co.uk/.well-known/ucp",
+     "# UCP/MCP endpoint: https://dmr.co.uk/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "david-m-robinson",
+    "name": "David M Robinson",
+    "types": [
+     "JewelryStore"
+    ],
+    "categories": [
+     "Jewellery & Watches"
+    ],
+    "mall": "Jubilee Place",
+    "cwg_url": "https://canarywharf.com/shop/david-m-robinson/",
+    "kgx": "https://canarywharf.com/shop/david-m-robinson/#entity"
+   }
+  },
+  {
+   "slug": "pureseoul",
+   "brand": "PureSeoul",
+   "site": "https://pureseoul.co.uk/",
+   "platform": "Shopify (pureseoul.myshopify.com); Judge.me, LoyaltyLion, Searchanise",
+   "sells_online": true,
+   "click_and_collect": false,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": true,
+    "postcode": null,
+    "endpoint": {
+     "method": "GET",
+     "url_pattern": "https://pureseoul.co.uk/variants/{variantId}/?section_id=store-availability",
+     "params": {
+      "section_id": "store-availability"
+     }
+    },
+    "response_shape": "HTML section; returned an empty wrapper div (no pickup locations enabled at present)",
+    "canary_wharf_store_id": null,
+    "needs_session": false,
+    "headless_ok": true
+   },
+   "bot_protection": {
+    "vendor": "Shopify edge (no challenge)",
+    "challenged": false
+   },
+   "other_signals": [
+    "Shopify /products.json and /products/{handle}.js expose variants[].available (online)",
+    "theme requests the store-availability section on every product page: if PureSeoul enables Shopify local pickup, per-shop availability will appear there with no code change"
+   ],
+   "verdict": "online availability only",
+   "notes": "The theme has the Shopify store-availability hook but the section is empty, so no shop (including Canada Place) is set up for pickup. Re-check the same URL later; it is a cheap, plain GET. robots.txt: Shopify standard with UCP/MCP comments ('Checkouts are for humans').",
+   "evidence_urls": [
+    "https://pureseoul.co.uk/robots.txt",
+    "https://pureseoul.co.uk/products/body-blemish-care-duo",
+    "https://pureseoul.co.uk/variants/64833075413369/?section_id=store-availability"
+   ],
+   "checked_at": "2026-10-12T15:31:01Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [
+     "# Agent instructions: https://pureseoul.co.uk/agents.md",
+     "# UCP discovery: https://pureseoul.co.uk/.well-known/ucp",
+     "# UCP/MCP endpoint: https://pureseoul.co.uk/api/ucp/mcp",
+     "# Agents should use UCP/MCP for catalog, cart, and checkout. Payment requires buyer approval."
+    ],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "pureseoul",
+    "name": "PureSeoul",
+    "types": [
+     "HealthAndBeautyBusiness"
+    ],
+    "categories": [
+     "Health & Beauty"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/pureseoul/",
+    "kgx": "https://canarywharf.com/shop/pureseoul/#entity"
+   }
+  },
+  {
+   "slug": "moss",
+   "brand": "Moss",
+   "site": "https://www.moss.co.uk/",
+   "platform": "custom .NET storefront (/basket/api/getcurrent, /api/wishlist; Frasers Group style platform, not confirmed)",
+   "sells_online": true,
+   "click_and_collect": true,
+   "reserve_in_store": false,
+   "stock_check": {
+    "exists": false,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": false
+   },
+   "other_signals": [
+    "Product page JSON-LD has one Offer per size with availability (schema.org InStock / OutOfStock), i.e. per-size online stock",
+    "Page text: 'Free Click & Collect on orders over £35' and 'Easy online or in-store returns/exchanges'"
+   ],
+   "verdict": "click & collect only, no per-store visibility",
+   "notes": "Product page loaded headless (200), no challenge; no find-in-store or check-stock control in rendered text or server HTML. Click & Collect store choice is in checkout (out of scope). For a careful caller the per-size JSON-LD offers are the useful signal (online only). robots.txt allows product pages; disallows /*?q=*, /basket*, /checkout*.",
+   "evidence_urls": [
+    "https://www.moss.co.uk/robots.txt",
+    "https://www.moss.co.uk/moss-london-slim-fit-white-single-cuff-easy-care-shirt-965205301"
+   ],
+   "checked_at": "2026-10-12T15:22:55Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 200,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "moss",
+    "name": "Moss - Quality Clothing",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Menswear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/moss/",
+    "kgx": "https://canarywharf.com/shop/moss/#entity"
+   }
+  },
+  {
+   "slug": "kitchen-jam",
+   "brand": "Kitchen Jam (unidentified)",
+   "site": null,
+   "platform": null,
+   "sells_online": null,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": null
+   },
+   "bot_protection": {
+    "vendor": null,
+    "challenged": null
+   },
+   "other_signals": [],
+   "verdict": "unknown",
+   "notes": "Only a slug in the Canary Wharf Group sitemap (https://canarywharf.com/shop/kitchen-jam/, lastmod 2026-02-20); the registry has no title, category, mall or website because the CWG page was bot-challenged twice when harvested (cwplans/registry/sources/brands/cwg-directory.json). A web search found no shop of this name in Canary Wharf. Probably a new or pop-up tenant (maybe food or kitchenware); identify it first from the CWG page or an Internet Archive copy, then survey.",
+   "evidence_urls": [
+    "https://canarywharf.com/shop/kitchen-jam/",
+    "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory.json"
+   ],
+   "checked_at": "2026-10-12T15:35:58Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": null,
+    "robots_unreadable": false
+   },
+   "cwg": {
+    "slug": "kitchen-jam",
+    "name": "kitchen-jam",
+    "types": [
+     "Store"
+    ],
+    "categories": [],
+    "mall": null,
+    "cwg_url": "https://canarywharf.com/shop/kitchen-jam/",
+    "kgx": "https://canarywharf.com/shop/kitchen-jam/#entity"
+   }
+  },
+  {
+   "slug": "mango",
+   "brand": "Mango",
+   "site": "https://shop.mango.com/gb/en",
+   "platform": "custom (Mango's own front end on Vercel)",
+   "sells_online": true,
+   "click_and_collect": null,
+   "reserve_in_store": null,
+   "stock_check": {
+    "exists": null,
+    "ui_label": null,
+    "tried": false,
+    "postcode": null,
+    "endpoint": null,
+    "response_shape": null,
+    "canary_wharf_store_id": null,
+    "needs_session": null,
+    "headless_ok": false
+   },
+   "bot_protection": {
+    "vendor": "Vercel Security Checkpoint (bot challenge on robots.txt to curl; headless Chromium got HTTP 429 'Failed to verify your browser, Code 21')",
+    "challenged": true
+   },
+   "other_signals": [
+    "Unverified (prior knowledge, not checked today): Mango product pages have offered an in-store availability check by size, and Mango sells online with home delivery and store collection"
+   ],
+   "verdict": "per-store stock check (blocked/needs browser session)",
+   "notes": "Blocked by Vercel bot protection before any page or robots.txt could be read; stopped (no evasion). Even robots.txt is behind the challenge, so a compliant automated caller cannot currently confirm its rules. The verdict is provisional and rests on prior knowledge; read an Internet Archive copy of a product page (archive was rate-limited, 429, during this survey) before relying on it.",
+   "evidence_urls": [
+    "https://shop.mango.com/robots.txt",
+    "https://shop.mango.com/gb/en"
+   ],
+   "checked_at": "2026-10-12T16:25:00Z",
+   "robots_ai": {
+    "groups": [],
+    "agent_notes": [],
+    "robots_status": 429,
+    "robots_unreadable": true
+   },
+   "cwg": {
+    "slug": "mango",
+    "name": "Mango at Canary Wharf: Fashion for Urban Women",
+    "types": [
+     "ClothingStore"
+    ],
+    "categories": [
+     "Womenswear"
+    ],
+    "mall": "Canada Place",
+    "cwg_url": "https://canarywharf.com/shop/mango/",
+    "kgx": "https://canarywharf.com/shop/mango/#entity"
+   }
+  }
+ ]
+}
