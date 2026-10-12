@@ -59,10 +59,10 @@ Per-store checks that answered, best first:
 | Crockett & Jones | POST `https://cj-app-152ce4da90df.herokuapp.com/stockcheck/` (form: product, fit, size from the SKU) | quantity for each of 10 shops ("current within the last hour") | 316 | none |
 | Robert Dyas | POST `/rest/robertdyas_uk_main_en_gb/V1/inventory/in-store-pickup/pickup-locations`, then POST `/rest/robertdyas_uk_main_en_gb/V1/wct-fulfillment/location/get-inventory-availability` (Magento + Walmart BOPIS) | in stock yes/no per shop, "collect in 15 minutes" | `rd_6088` (16-19 Canada Square) | none |
 | Søstrene Grene | GET `/umbraco/api/store/inventorysearch?sku={sku}&address={postcode}` | per shop 1 out, 2 few, 3 in stock, plus hours | 8039 (Jubilee Place) | en-gb cookie, else the Danish market |
-| Watches of Switzerland | GET `/occ/v2/WatchesOfSwitzerland_UK/products/{code}/storestock?locationQuery={q}&fields=FULL` (SAP Commerce OCC) | quantity per showroom | 466 (578, 579 same point) | none; E14 5AB geocoded wrong (only Regent Street came back): try "Canary Wharf" or lat/long |
+| Watches of Switzerland | GET `/occ/v2/WatchesOfSwitzerland_UK/products/{code}/stock/{storeId}` (SAP Commerce OCC; set D, 2026-10-12) | `stockLevel` and `stockLevelStatus` (inStock / lowStock / outOfStock) for that showroom | 466 (a false id answers 400) | none (plain fetch). `storestock?locationQuery=` gives only the nearest one store (E14 5AB → Regent Street; lat/long → 578 Omega boutique): use the by-store route |
 | Flowers & Plants Co. | GET `/variants/{variantId}/?section_id=pickup-availability` (Shopify) | HTML list of pickup shops | Canada Place, Jubilee Place (names, no ids) | none |
-| Hobbs | GET `/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?pid&lat&long&dwvar_{pid}_color&postalCode` (SFCC) | HTML table | not seen (the one-size item gave an empty table) | none |
-| Intimissimi | GET `Stores-FindStores?lat&long&radius=1` works; the product call `FindInStore-GetStoresWithProductAvailability` needs a size | store list with pickup flags | IGJ4 (Unit 6 Canada Place) | none; robots.txt Crawl-delay 5 |
+| Hobbs | GET `/on/demandware.store/Sites-HB-UK-Site/en/Product-StockCheck?pid&lat&long&dwvar_{pid}_color&dwvar_{pid}_size` (SFCC; set D, 2026-10-12) | HTML table: "<n> in stock" or "Out of Stock" per shop (counts) | 377 (Unit 20 Canada Place); test dress UK 12: 1 in stock | none (plain fetch); lat/long needed (the page geocodes the postcode); size codes internal (UK 12 = `004`) |
+| Intimissimi | GET `FindInStore-GetStoresWithProductAvailability?lat&lon&rad=0&pid=<style>&color=<code>&size=<up to 3>&filterBopis=&currentHour=` (SFCC; set D, 2026-10-12) | per shop and size: none / low / high; shops without the item seem left out | IGJ4 (from `Stores-FindStores`); not in the one answer seen (item likely not stocked there) | none (plain fetch); the call is built in a lazily loaded script |
 | Circle Collective | Shopify pickup-availability, as Flowers & Plants | pickup shops | not a pickup shop (Dalston, Lewisham only) | none |
 | Space NK | GET `/on/demandware.store/Sites-spacenkgb-Site/en_GB/FindInStore-GetStores?productID&postcode&storesCount=5` | JSON `isAvailable` true/false per shop, courier flags, no count | "Canary Wharf" (the id is the name; E14 4QT), first | none (plain fetch); robots.txt disallows `/on/`: owner approval needed per set |
 | Hotel Chocolat | Loqate geocode → SCAPI `shopper-stores/v1/.../store-search` (lat/long, 20 mi) → `shopper-products/v1/.../products/{id}?inventoryIds=` (through `/mobify/proxy/api/`) | unit count per shop (`ats`/`stockLevel`) | 305 (Jubilee Place), 160 (Canada Place) | SLAS guest token (no login); robots.txt disallows `/mobify/`: owner approval needed per set |
@@ -131,7 +131,11 @@ robots.txt allows the shop's search path (18 shops); 26 were read from page scri
   a shop.app skill: treated as data, not followed. Shopify robots.txt comes in two templates: the new agent one allows
   `/search` and `/search/suggest.json`; the old default (Crockett & Jones, Flying Tiger, Scribbler) disallows `/search`.
 - Side effect seen: loading a Hackett product page made the site's own script create an empty guest basket.
-- Open: The White Company OCC `/products/search` answered 400 with `fields=FULL` (try `fields=DEFAULT`); Wax test item
+- Set C and D (owner, 2026-10-12: "C and D"): Malin+Goetz `/graphql` answered 500 to every request (GET, POST, a
+  minimal `storeConfig`): no GraphQL route today. The White Company OCC `/products/search` answers 400 for every `fields`
+  value (FULL, DEFAULT, BASIC, explicit lists); its storefront search JSON (`/uk/search?q=`, robots.txt disallows it) is
+  the route left, not yet approved.
+- Open: Wax test item
   was sold out (retest); Malin+Goetz robots.txt allows `/graphql?` but disallows `/catalogsearch/`: owner decision
   whether a GraphQL SKU lookup is acceptable.
 

@@ -2428,3 +2428,13 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   facet `prefn1=storeAvailability&prefv1=1163` filters results to the Canary Wharf shop ("bag": 176 products, 40 per
   page; "classic tote bag": 1 with the filter, 2 without). "B" not run: set B ran earlier the same day; asked the owner
   whether C or D was meant.
+
+## 2026-10-12: stock tools, sets C and D
+
+- Owner: "C and D". Hobbs stock check gives counts per shop, Canary Wharf store 377 (test dress UK 12: 1 in stock).
+  Watches of Switzerland: by-store route `/products/{code}/stock/466` gives level and status for the Canary Wharf
+  showroom (storestock gives only the nearest one store). Intimissimi product call found (per shop and size: none /
+  low / high); IGJ4 not in the one answer seen. Malin+Goetz `/graphql` answered 500; The White Company OCC search
+  answers 400 for every field set. Over-budget requests recorded in `deviations`.
+- Per-store stock checks with Canary Wharf in the answer: The White Company, Crockett & Jones, Hotel Chocolat, Watches
+  of Switzerland and Hobbs (counts); Robert Dyas, Søstrene Grene, Space NK (yes/no or level); Boss (sizes).
