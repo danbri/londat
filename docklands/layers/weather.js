@@ -104,7 +104,11 @@ export default {
     const rain = new T3.LineSegments(rg, rmat); rain.frustumCulled = false; rain.name = 'rain'; rain.visible = false; scene.add(rain);
     let fall = 0, tPrev = performance.now();
     function stepRain() {
-      const n = W && visible ? W.drops : 0; rain.visible = n > 0; if (!n) return;
+      // no rain in pixel art: its view is orthographic from 6 km, so the 60 m box round the perspective camera showed as a
+      // cloud of specks at the centre of the screen (owner, 2026-10-12, iPhone: "in isometric view there is a frizzy white
+      // particle cloud in middle")
+      const iso = globalThis.__docklandsStyles && __docklandsStyles.mode === 'pixel';
+      const n = W && visible && !iso ? W.drops : 0; rain.visible = n > 0; if (!n) return;
       const now = performance.now(), dt = Math.min(0.1, (now - tPrev) / 1000); tPrev = now; fall += dt;
       const snow = W.snow, v = snow ? 1.2 : 7.5, len = snow ? 0.12 : 1.3, ws = WU.windSpeed.value, wd = (WU.windDir.value + 180) * D2R;   // wind blows towards dir + 180
       const wx = Math.sin(wd) * ws, wz = -Math.cos(wd) * ws, sx = wx / v, sz = wz / v;

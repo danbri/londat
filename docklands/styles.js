@@ -120,8 +120,10 @@ function pixFrame() {   // the orthographic camera along the orbit camera's line
   const fw = Math.max(1, Math.floor(W * dpr * scale)), fh = Math.max(1, Math.floor(Hh * dpr * scale));
   PX.size.value.set(fw, fh); PX.pxm.value = d * 0.84 / fh; PX.edge.value = d * 0.84 / fh > 1.5 ? 9 : 0.2;   // no outlines when zoomed out: small buildings would become speckle
   C.sky.sky.visible = false; if (C.sky.stars) C.sky.stars.visible = false; C.scene.background = PX.bg;
-  if (FAC.tex && !PX.mats.building.userData.facades) PX.mats.building = pixBuildingMaterial();   // the photo facade atlas came after the first visit
-  pixMeasured(); swapAll(PX.mats);
+  // PX.mats is made after two awaited loads (the palette, the facade colours): a frame can come in between (a page error
+  // "Cannot read properties of null (reading 'building')" on 2026-10-12): draw nothing new until it exists
+  if (PX.mats) { if (FAC.tex && !PX.mats.building.userData.facades) PX.mats.building = pixBuildingMaterial();   // the photo facade atlas came after the first visit
+    pixMeasured(); swapAll(PX.mats); }
   if (PX.ents && PX.actors) {   // the figures move on every frame (index.html pixTick)
     const now = performance.now(), dt = Math.min(0.1, (now - (PX.last || now)) / 1000); PX.last = now;
     stepActors(dt, now / 1000); C.draw();
