@@ -2332,3 +2332,10 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   METAR to 0.04 m/s, 0.5°; HTTP 429 simulated: METAR, not the default); clock-check 169 rows, 0 failed; load.mjs ok (an
   Open-Meteo 429 is now a note). Skill: docklands-sky, "METAR history". Open: no workflow refreshes the file.
 - 2026-10-12: `.github/workflows/sky-history.yml` rebuilds tide-history.json and metar-history.json each day (06:41 UTC); `ea-tide-archive.mjs` asks again for a day less than 10 days old that the EA had not yet published (9 Oct 2026 recovered).
+
+## 2026-10-12: owner verdict on the Painted style
+
+- Owner, on the iPhone: "Painted is a bit janky and not v striking visually. Acceptable for now." KR4.3 recorded as
+  accepted for now (0.5), not done (https://github.com/danbri/londat/issues/3). Next round when the owner asks: marks
+  fixed to the world or to splat centres (the jank is colour sliding under screen-fixed marks), a shimmer measure,
+  stronger stroke character tuned against reference paintings.
