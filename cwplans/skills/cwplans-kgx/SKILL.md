@@ -122,6 +122,9 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   `ss` (`kgx-ids.mjs`). A live value naming several templates in prose is split into its URL templates (Läderach). First
   build: 1,439 triples, 116 actions on 114 sites, 15 marked product searches; 2 templates not seen live (Crockett & Jones US
   host, Flying Tiger `/en-gb`). Query: `kgx/queries/site-search.rq` (three GRAPH blocks, one per subject).
+- Check fix (2026-10-12): `check-kgx-store.mjs` took the parts of every head an earlier build had partitioned, so after
+  `roofs` and `materials` became `store: false` it refused ("not packed from the current versions"). It now leaves out
+  the heads that `external-heads.json` marks `store: false`, as the build does.
 - Store scope (2026-10-12): other sessions had named `building-models`, `london-terrain`, `roofs` and `materials` in
   `external-heads.json` without repacking the store. A full build packs every head not marked `store: false`, which
   took the store from 19.6 MB to 33 MB. `roofs` (113,266 triples) and `materials` (40,958) are now `store: false`, the
@@ -235,7 +238,7 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 - `sw.js`: engine files and `shardborough/gen-*/` files cache first (a generation never changes); CURRENT, the
   manifest and the page network first. The page tells the service worker which generation to keep.
 - Views (`VIEWS` in the page, the same queries as `queries/*.rq`): graphs and versions, lineage (the log), open now,
-  mall units, step-free, toilets and facilities, hours CWG against mall map, tallest, cited facts, sameAs, occupants.
+  mall units, step-free, toilets and facilities, hours CWG against mall map, tallest, cited facts, sameAs, occupants, site search entry points (`#search`, 2026-10-12: 125 rows, about 6 s from a cold local load, 59 blocks, 1.33 MB; shops first by `ORDER BY DESC(BOUND(?shop))`).
 - IDs on the page (2026-10-07): the prefix `id:` (added to every query, shown in the cells); an IRI under
   `https://kgx.foaf.tv/` (an ID or a vocabulary term: `cwk:`, `cwp:`, `i:`) opens in the page only, with no outside
   link (nothing is hosted at kgx.foaf.tv yet); any other http(s) IRI also gets ↗. A hash names an ID short: `#e=id:cwb0413`
