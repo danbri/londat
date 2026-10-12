@@ -110,6 +110,23 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   `facade-atlas`, `model-building-keys` (every model building's OSM key; not in the store), `meta`
   (`void:Dataset` per version and part; heads as `id:graph<name> cwk:current <version>`, with the name as
   `rdfs:label`), `log` (the activities).
+- `web-search` (2026-10-12, owner: "'0 SearchAction nodes. The web layer does not lift them.' Update so it does"): the
+  canonical web layer (`web`, from `canonical.nq.gz`) keeps branch, hours and organisation cards only, so SearchAction
+  templates had no place in the graph. Operation `lift-site-search` (version 4, its own) reads the stored probe
+  (`third_party/cwplans-structured-data/search/probe.json`, 111 sites, 2026-10-06) and the live home-page checks in
+  `cwplans/registry/sources/stock/stock-check-survey.json` (2026-10-12). Shape: `<site origin/> a s:WebSite ; s:url ;
+  s:potentialAction id:ss<host><sha12>`; the action `a s:SearchAction ; s:target id:ss…target ; s:query-input "required
+  name=<placeholder>"`; the target `a s:EntryPoint ; s:urlTemplate`; on the action `cwk:seenOn` / `cwk:notSeenOn`
+  (xsd:date), `cwk:declaredOn`, `cwk:searchProbeClass`, `cwk:platform`, `cwk:productSearch` (boolean, live checks
+  only), `rdfs:comment`; `s:about` the CWG shop entity when the host is a surveyed shop. New ID code `site-search` →
+  `ss` (`kgx-ids.mjs`). A live value naming several templates in prose is split into its URL templates (Läderach). First
+  build: 1,439 triples, 116 actions on 114 sites, 15 marked product searches; 2 templates not seen live (Crockett & Jones US
+  host, Flying Tiger `/en-gb`). Query: `kgx/queries/site-search.rq` (three GRAPH blocks, one per subject).
+- Store scope (2026-10-12): other sessions had named `building-models`, `london-terrain`, `roofs` and `materials` in
+  `external-heads.json` without repacking the store. A full build packs every head not marked `store: false`, which
+  took the store from 19.6 MB to 33 MB. `roofs` (113,266 triples) and `materials` (40,958) are now `store: false`, the
+  same reason as `model-building-keys` (geometry, little for a query on the page to gain); `building-models` (35) and
+  `london-terrain` (14) are in the store. Generation `gen-e2b182ceb96b87cf`: 5,467 artifacts, 19.6 MB.
   Counts: `kgx/README.md`.
 - Joins across sources go through `s:sameAs` to the CWG entity IRI (`https://canarywharf.com/<kind>/<slug>/#entity`),
   OSM element URLs and Wikidata items. Mall units join by exact name only, for now.

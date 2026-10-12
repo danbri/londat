@@ -163,7 +163,8 @@ only, no bot wall passed. Per entry: `approved_pass` (searches, facets, set A re
   Hawes & Curtis searches through a first-party POST `/api/Site/AjaxProductsFromCategories` (Algolia behind it). Pop Mart
   search is POST `/rpc/search/public_search`; its `?keyword=` does nothing, `?q=` works. Hobbs results are SFCC native
   (sz=60), not Constructor.io.
-- **SearchAction.** The kgx store has none (the web canonical layer does not lift them). The stored harvest
+- **SearchAction.** Since 2026-10-12 the kgx graph `web-search` holds them (operation `lift-site-search`, skill
+  `cwplans-kgx`; query `kgx/queries/site-search.rq`); before that the kgx store had none. The stored harvest
   (`third_party/cwplans-structured-data/search/probe.json`, 2026-10-06) has a template for 23 of the 77 shops
   (`searchaction.stored_2026_10_06` per entry). Live check of 26 home pages: 14 declare one, and all 14 are real
   product searches; no WordPress `?s=`, no `utm_*` on these (Boggi's stored template has `utm_*`). Changes since the

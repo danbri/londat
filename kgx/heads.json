@@ -5,6 +5,7 @@
   "occupants": "https://kgx.foaf.tv/id/graphoccupantscf7964a848de52c1",
   "cwg": "https://kgx.foaf.tv/id/graphcwgcbe8c4402efe9006",
   "web": "https://kgx.foaf.tv/id/graphweb67e1f54d70c4f914",
+  "web-search": "https://kgx.foaf.tv/id/graphwebsearch85092b03aa734c09",
   "coref-iri": "https://kgx.foaf.tv/id/graphcorefiribbd621e64a93f6a5",
   "coref-postcode-name": "https://kgx.foaf.tv/id/graphcorefpostcodename7c84f59548876943",
   "coref-telephone": "https://kgx.foaf.tv/id/graphcoreftelephonec1603c7838179b45",
@@ -12,7 +13,7 @@
   "coref-site-name": "https://kgx.foaf.tv/id/graphcorefsitenamed0f4b64d58023481",
   "mallmap": "https://kgx.foaf.tv/id/graphmallmapa43de479b61de2ff",
   "storeguide": "https://kgx.foaf.tv/id/graphstoreguidefc01b8a99ccaf563",
-  "pipeline": "https://kgx.foaf.tv/id/graphpipelinebde32b77d7264d16",
+  "pipeline": "https://kgx.foaf.tv/id/graphpipeline3199d52ba89fe4d8",
   "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
   "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
   "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
@@ -22,7 +23,13 @@
   "facade-patches-cwdock": "https://kgx.foaf.tv/id/graphfacadepatchescwdockca4578da2711a4e3",
   "photos-cwdock": "https://kgx.foaf.tv/id/graphphotoscwdock04d844938d0212e0",
   "facade-tiles-cwdock": "https://kgx.foaf.tv/id/graphfacadetilescwdock135d1e694cc185ff",
-  "meta": "https://kgx.foaf.tv/id/graphmeta8ed9295112dff826",
-  "log": "https://kgx.foaf.tv/id/graphlog94c91af46e5ae020"
+  "facade-patches-cwredriff": "https://kgx.foaf.tv/id/graphfacadepatchescwredriff01ba4719c80b6fe9",
+  "photos-cwredriff": "https://kgx.foaf.tv/id/graphphotoscwredriffd80b22e8dd216ddf",
+  "building-models": "https://kgx.foaf.tv/id/graphbuildingmodels37aef402548b5b61",
+  "london-terrain": "https://kgx.foaf.tv/id/graphlondonterrain07050461c18a8c40",
+  "roofs": "https://kgx.foaf.tv/id/graphroofsb6a65e444fa5affb",
+  "materials": "https://kgx.foaf.tv/id/graphmaterialsca718efee790144e",
+  "meta": "https://kgx.foaf.tv/id/graphmetac7a449690a264247",
+  "log": "https://kgx.foaf.tv/id/graphlogb8189ce72255c9cc"
  }
 }

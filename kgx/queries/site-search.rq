@@ -1,0 +1,11 @@
+# Site search entry points: the schema.org SearchAction templates that sites publish (graph web-search, lift-site-search),
+# with the shop they are about, the dates seen, and whether the template is a product search. One GRAPH block per subject.
+PREFIX s: <https://schema.org/>
+PREFIX cwk: <https://kgx.foaf.tv/vocab#>
+SELECT ?site ?shop ?template ?queryInput ?productSearch ?probeClass ?seen ?notSeen WHERE {
+  GRAPH ?g1 { ?site s:potentialAction ?a . OPTIONAL { ?site s:about ?shop } }
+  GRAPH ?g2 { ?a a s:SearchAction ; s:target ?t . OPTIONAL { ?a s:query-input ?queryInput } OPTIONAL { ?a cwk:productSearch ?productSearch }
+              OPTIONAL { ?a cwk:searchProbeClass ?probeClass } OPTIONAL { ?a cwk:seenOn ?seen } OPTIONAL { ?a cwk:notSeenOn ?notSeen } }
+  GRAPH ?g3 { ?t s:urlTemplate ?template }
+}
+ORDER BY ?site ?seen

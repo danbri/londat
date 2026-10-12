@@ -2409,3 +2409,15 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - SearchAction: 0 in the kgx store; 23 of 77 in the stored harvest; 14 of 26 home pages declare one, all real product
   searches; 6 changed since 2026-10-06.
 - File `registry/sources/stock/stock-check-survey.json` (`approved_pass`, `searchaction`), skill `cwplans-stock-check`.
+
+## 2026-10-12: SearchAction lifted into the knowledge graph
+
+- Owner: "'0 SearchAction nodes. The web layer does not lift them.' Update so it does". New operation
+  `lift-site-search` (version 4) in `build-kgx.mjs`, graph `web-search`: the stored probe of 2026-10-06 (111 sites) and
+  the live checks of 2026-10-12 → 116 s:SearchAction on 114 s:WebSite (s:target s:EntryPoint s:urlTemplate,
+  s:query-input, cwk:seenOn / cwk:notSeenOn, cwk:productSearch, s:about the CWG shop). New ID code `site-search` → `ss`.
+  Query `kgx/queries/site-search.rq`. Build run twice: second run `new: 0`, same generation. Skills cwplans-kgx,
+  cwplans-dataflow, cwplans-stock-check; kgx/README.md.
+- Store scope: `roofs` and `materials` set `store: false` in `kgx/external-heads.json` (a full build would have packed
+  them and taken the store from 19.6 MB to 33 MB); `building-models` and `london-terrain` packed. Generation
+  `gen-e2b182ceb96b87cf`. The locale check matched "ostn" inside `hostname`: the lift uses `URL.host`.

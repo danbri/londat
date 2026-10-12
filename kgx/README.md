@@ -61,6 +61,7 @@ build of 2026-10-07; the build maps old terms the same way.
 | `occupants` | 10,092 | occupants of the buildings: role, level, mall, opening hours, links to OSM, the CWG directory, brands |
 | `cwg` | 20,637 | the Canary Wharf Group directory: schema.org types, malls, levels, page dates, weekly opening hours per day |
 | `web` | 6,682 | the canonical schema.org layer of the web harvest (branch cards, hours, organisation cards) |
+| `web-search` | 1,439 | site search entry points: schema.org `WebSite` → `potentialAction` `SearchAction` → `target` `EntryPoint` `urlTemplate`, `query-input`, dates seen (`cwk:seenOn`, `cwk:notSeenOn`), probe class, `cwk:productSearch`, `s:about` the CWG shop (stored probe 2026-10-06 and live checks 2026-10-12; query `queries/site-search.rq`) |
 | `coref-<rule>` | 4,417 | owl:sameAs links between web descriptions, one graph per key rule (5 rules) |
 | `mallmap` | 19,250 | Living Map data behind map.canarywharf.com: units (name, class, mall, floor, hours, outline) and facilities (lifts, escalators, ramps, stairs, entrances, toilets) |
 | `storeguide` | 5,732 | the CWG store guide of 20 July 2026 (OCR): names, sections, grid squares, links to CWG entities |
