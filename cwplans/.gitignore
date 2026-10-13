@@ -67,3 +67,6 @@ data/raw/moorings/
 
 # METAR archive answers (tools/build-metar-history.mjs)
 data/raw/sky/
+
+# UK skeleton downloads (tools/build-uk-skeleton.mjs; OS OpenData, NaPTAN, ONS, Wikidata answers)
+data/raw/uk-skeleton/

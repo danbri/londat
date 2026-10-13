@@ -155,6 +155,7 @@ with a YAML parser. On 2026-10-07 all 18 descriptions here were 1,024 characters
 | `cwplans-feed-discovery` | `cwplans/skills/` | London RSS, Atom and iCal feeds at scale |
 | `cwplans-crown-lighting` | `cwplans/skills/` | the coloured lighting at the tops of the towers |
 | `cwplans-stock-check` | `cwplans/skills/` | shop stock-check tools (which Canary Wharf shops say what is in stock, endpoints, rules), the probe tool |
+| `cwplans-uk-skeleton` | `cwplans/skills/` | the UK skeleton (KR2.7): national layers, gazetteer and place cards in `cwplans/docklands/data/uk/`, the reader `docklands/geo/skeleton.js` |
 
 Skills for other work (FINK, Lucid, splats, `container-improver` for installing tools in a cloud container) are in
 danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/master/.claude/skills

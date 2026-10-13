@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":10000,"features":[{"id":"v0.0","properties":{"name":"Mill Burn","kind":"river","lengthKm":1},"geometry":{"type":"LineString","d":[-10146,607114,-26,9,0,-11,-23,-14,-47,-7,-25,4]}},{"id":"v1.0","properties":{"name":"Green Burn","kind":"tidal river","lengthKm":1},"geometry":{"type":"LineString","d":[-9406,606099,50,24,21,2,82,-13]}}]}

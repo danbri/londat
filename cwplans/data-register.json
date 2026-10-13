@@ -545,7 +545,70 @@
     "kml-tfl-gis-hub": {"name": "Transport for London GIS Open Data Hub feature layers (Cycle Routes, River Piers, River Services with stops)", "licence": "Open Government Licence v3.0 (the licence of each ArcGIS item)", "url": "https://gis-tfl.opendata.arcgis.com/", "attribution": "Contains Transport for London data licensed under the Open Government Licence v3.0. Powered by TfL Open Data."},
     "kml-sustrans-ncn": {"name": "National Cycle Network (Public), Walk Wheel Cycle Trust (formerly Sustrans), ArcGIS feature layer", "licence": "Open Government Licence v3.0 (item licence); contains OS data (Crown copyright 2018) and OpenStreetMap contributions (ODbL)", "url": "https://data-sustrans-uk.opendata.arcgis.com/datasets/Sustrans-UK::national-cycle-network-public-1/about", "note": "OSM content inside an OGL layer: the copy is marked osm derived"},
     "kml-crt-locks": {"name": "Canal & River Trust locks (Canal_And_River_Trust_Locks_View, ArcGIS feature layer)", "licence": "Open Government Licence (item licence)", "url": "https://data-canalrivertrust.opendata.arcgis.com/"},
-    "lds-2jx1l": {"name": "London Datastore: Create your own mapping templates (Excel add-in): ward-map-kml.kml", "licence": "Open Government Licence v2", "url": "https://data.london.gov.uk/dataset/create-your-own-mapping-templates-excel-add-in-2jx1l"}
+    "lds-2jx1l": {"name": "London Datastore: Create your own mapping templates (Excel add-in): ward-map-kml.kml", "licence": "Open Government Licence v2", "url": "https://data.london.gov.uk/dataset/create-your-own-mapping-templates-excel-add-in-2jx1l"},
+    "ons-geography-uk": {
+      "name": "ONS Open Geography Portal, UK boundaries: countries, counties and unitary authorities, local authority districts (December 2024, BUC and BGC), regions of England (December 2024, BGC), national parks of GB (December 2022, BGC), LAD22 to LAD23 lookup (ArcGIS feature services, BNG)",
+      "licence": "OGL v3.0",
+      "url": "https://geoportal.statistics.gov.uk/",
+      "attribution": "Source: Office for National Statistics licensed under the Open Government Licence v3.0. Contains OS data © Crown copyright and database right 2024",
+      "note": "fetched 2026-10-12 by tools/build-uk-skeleton.mjs; the Northern Ireland boundaries in these UK files are published by ONS under the same terms"
+    },
+    "os-open-zoomstack": {
+      "name": "OS Open Zoomstack, GB GeoPackage (2026-04): roads_national, roads_regional, rail, surfacewater",
+      "licence": "OGL v3.0",
+      "url": "https://www.ordnancesurvey.co.uk/products/os-open-zoomstack",
+      "attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0)",
+      "note": "4.3 GB zip, 12.6 GB GeoPackage, in the ignored raw folder only; fetched 2026-10-12"
+    },
+    "os-open-names-gb": {
+      "name": "OS Open Names, GB CSV (2026-07 release)",
+      "licence": "OGL v3.0",
+      "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+      "attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0); postcodes: contains Royal Mail data © Royal Mail copyright and database right 2026",
+      "note": "fetched 2026-10-12 by tools/build-uk-skeleton.mjs"
+    },
+    "os-open-rivers-gb": {
+      "name": "OS Open Rivers, GB GeoPackage (2026-04)",
+      "licence": "OGL v3.0",
+      "url": "https://www.ordnancesurvey.co.uk/products/os-open-rivers",
+      "attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0)"
+    },
+    "os-built-up-areas": {
+      "name": "OS Open Built Up Areas, GB GeoPackage (2026-07)",
+      "licence": "OGL v3.0",
+      "url": "https://www.ordnancesurvey.co.uk/products/os-open-built-up-areas",
+      "attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0)"
+    },
+    "naptan-gb": {
+      "name": "NaPTAN access nodes (DfT), all of Great Britain (CSV): active rail (RLY) and metro / tram (MET) station areas",
+      "licence": "OGL v3.0",
+      "url": "https://beta-naptan.dft.gov.uk/",
+      "attribution": "Contains public sector information licensed under the Open Government Licence v3.0"
+    },
+    "nomis-census2021-ts001-ltla": {
+      "name": "Census 2021 TS001 usual residents, lower-tier local authorities of England and Wales (Nomis bulk zip census2021-ts001.zip)",
+      "licence": "OGL v3.0",
+      "url": "https://www.nomisweb.co.uk/sources/census_2021_bulk",
+      "attribution": "Source: Office for National Statistics, Census 2021, licensed under the Open Government Licence v3.0"
+    },
+    "ne-aonb": {
+      "name": "Areas of Outstanding Natural Beauty (England), Natural England (ArcGIS feature service)",
+      "licence": "OGL v3.0",
+      "url": "https://naturalengland-defra.opendata.arcgis.com/",
+      "attribution": "© Natural England copyright. Contains Ordnance Survey data © Crown copyright and database right"
+    },
+    "nrw-aonb": {
+      "name": "Areas of Outstanding Natural Beauty (Wales), Natural Resources Wales (ArcGIS feature service, \"open data under OGL\")",
+      "licence": "OGL v3.0",
+      "url": "https://datamap.gov.wales/",
+      "attribution": "Contains Natural Resources Wales information © Natural Resources Wales and database right. Contains Ordnance Survey data"
+    },
+    "scotgov-nsa": {
+      "name": "National Scenic Areas, Scottish Government (maps.data.gov.scot ArcGIS map service)",
+      "licence": "OGL v3.0",
+      "url": "https://www.spatialdata.gov.scot/",
+      "attribution": "© Scottish Government, contains Ordnance Survey data © Crown copyright and database right"
+    }
   },
   "files": [
     {"path": "live-cache.js", "what": "code, not data: CwLive, the reader of the londat cache (cache/latest.json) for the live panels of the atlas and the 3D page: cache first, the publisher's API when Live is ticked or the cached theme is over an hour old", "sources": ["own"], "osm": {"use": "none"}, "produced_by": "hand-written", "shown_on": ["atlas/index.html", "docklands/index.html"]},
@@ -1284,7 +1347,119 @@
     { "path":"feeds/portals/nomis/README.md","what":"the Nomis Census 2021 bulk walk: robots.txt, tables, harvested OA rows","sources":["own","op-nomis-bulk"],"osm":{"use":"none"},"produced_by":"hand-written from the triage files and the harvest metas" },
     { "path":"feeds/portals/onsgeo/README.md","what":"the ONS Open Geography Portal walk: catalogue counts, rules, harvested boundaries, centroids and lookup","sources":["own","op-onsgeo-catalogue"],"osm":{"use":"none"},"produced_by":"hand-written from the triage files and the harvest metas" },
     { "path":"feeds/portals/boroughs/README.md","what":"the zone borough portals: what each borough publishes, licences, states, harvested City and Lewisham layers","sources":["own","op-boroughs-catalogue"],"osm":{"use":"none"},"produced_by":"hand-written from the triage files and the harvest metas" },
-    { "path":"feeds/portals/national/README.md","what":"the national sources of the brief: licence and robots checks, states, harvested DfT, police.uk and DESNZ extracts","sources":["own","op-national-list"],"osm":{"use":"none"},"produced_by":"hand-written from the triage files and the harvest metas" }
+    { "path":"feeds/portals/national/README.md","what":"the national sources of the brief: licence and robots checks, states, harvested DfT, police.uk and DESNZ extracts","sources":["own","op-national-list"],"osm":{"use":"none"},"produced_by":"hand-written from the triage files and the harvest metas" },
+    {
+      "path": "docklands/data/uk/manifest.json",
+      "what": "UK skeleton manifest (KR2.7): layers, levels, quadtree cells, files with bbox and feature counts, gazetteer and card files, sources, licences, fetch dates, credits, the reader contract",
+      "sources": [
+        "ons-geography-uk",
+        "os-open-zoomstack",
+        "os-open-names-gb",
+        "os-open-rivers-gb",
+        "os-built-up-areas",
+        "naptan-gb",
+        "nomis-census2021-ts001-ltla",
+        "ne-aonb",
+        "nrw-aonb",
+        "scotgov-nsa",
+        "wikidata",
+        "os-ostn15"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-uk-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port, through docklands/geo/skeleton.js; the globe of KR2.7, in progress)"
+      ]
+    },
+    {
+      "path": "docklands/data/uk/log.json",
+      "what": "Dataflow log of the UK skeleton: the operations, the fetches (URL, date, bytes, SHA-256) and one activity per run (inputs and outputs by SHA-256)",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-uk-skeleton.mjs"
+    },
+    {
+      "path": "docklands/data/uk/README.md",
+      "what": "UK skeleton: the loader contract (manifest, file format skeleton-1, cells, levels, the reader docklands/geo/skeleton.js), layers, sources, accuracy",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "hand-written"
+    },
+    {
+      "path": "docklands/data/uk/layers/*/*/*.json",
+      "what": "UK skeleton vector layers, one file per layer, level (3 national, 6 regional, 8 city) and geodetic quadtree cell, WGS84, format skeleton-1: countries, regions, counties, districts (with census 2021 population), coast and boundary lines (ONS); motorways and A roads, railways, lakes (OS Open Zoomstack); rivers (OS Open Rivers); built-up areas (OS); stations (NaPTAN); national parks (ONS), national landscapes and scenic areas (Natural England, NRW, Scottish Government); place labels (OS Open Names, Wikidata)",
+      "sources": [
+        "ons-geography-uk",
+        "os-open-zoomstack",
+        "os-open-names-gb",
+        "os-open-rivers-gb",
+        "os-built-up-areas",
+        "naptan-gb",
+        "nomis-census2021-ts001-ltla",
+        "ne-aonb",
+        "nrw-aonb",
+        "scotgov-nsa",
+        "wikidata",
+        "os-ostn15"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-uk-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port, through docklands/geo/skeleton.js; the globe of KR2.7, in progress)"
+      ]
+    },
+    {
+      "path": "docklands/data/uk/gazetteer/*.json",
+      "what": "UK gazetteer for search, one file per two-letter name key: OS Open Names settlements and named places (not streets), postcode districts, river names, ONS area names, landscape names, Wikidata settlements of Northern Ireland; WGS84 points, kind, district, Wikidata QID and population",
+      "sources": [
+        "os-open-names-gb",
+        "os-open-rivers-gb",
+        "ons-geography-uk",
+        "ne-aonb",
+        "nrw-aonb",
+        "scotgov-nsa",
+        "wikidata",
+        "os-ostn15"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-uk-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port, through docklands/geo/skeleton.js; the globe of KR2.7, in progress)"
+      ]
+    },
+    {
+      "path": "docklands/data/uk/cards/*.json",
+      "what": "UK place cards: Wikidata facts for UK cities, settlements of 5,000 people or more and Northern Ireland settlements (population with its date, area, elevation, inception, administrative parent), links only (Wikidata, English Wikipedia title, Commons file page, official website), each fact with source and retrieval date; the ONS district that holds the point",
+      "sources": [
+        "wikidata",
+        "ons-geography-uk"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-uk-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port, through docklands/geo/skeleton.js; the globe of KR2.7, in progress)"
+      ]
+    }
   ],
   "branches": [
     {"branch": "adsb-cache", "location": "https://github.com/danbri/londat/tree/adsb-cache (orphan branch, one commit, force-pushed by each run; the page reads it from https://raw.githubusercontent.com/danbri/londat/adsb-cache/)", "paths": ["index.json", "README.md", "adsb/<YYYY-MM-DD>/day.json", "adsb/<YYYY-MM-DD>/<HH>.json.gz"], "what": "Recorded aircraft tracks of the last 7 UTC days within 25 nm of 51.505 N 0.02 W (the 3D model box, the London City and Heathrow approaches), from the adsb.lol daily history: one gzip JSON file per UTC hour, legs with delta-coded points [t, lat, lon, altitude above the WGS84 ellipsoid, height source, ground speed, track], at most one point a second (one a minute above 15,000 ft); about 6 MB a day. Callsign only for operator ICAO callsigns without LADD/PIA flags; every other leg has an anonymous key and its type only; no ICAO address for those, and no registration, owner or squawk for any", "sources": ["adsb-lol"], "osm": {"use": "none"}, "produced_by": "tools/fetch-adsb-cache.mjs (workflow .github/workflows/adsb-cache.yml, daily; first backfill run by hand on 2026-10-09)", "shown_on": ["docklands/ (the Three.js port, layer Aircraft)"], "review": "ODbL (share-alike) data committed to a branch (owner, 2026-10-09: \"For today build a cache of last 7 days for our areas, and show equivalent data for the matching time and day of week.\"). Review with the OSM (ODbL) use before anything leaves the prototyping phase; the owner's longer-term plan for live data is a proxy (\"Eventually find or build a proxy.\")"},
