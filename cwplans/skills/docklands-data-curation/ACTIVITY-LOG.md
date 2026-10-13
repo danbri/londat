@@ -2530,3 +2530,14 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - globe-check passed (WebGL 2, 1280 x 800 @1 and 390 x 844 @2). `npm test` 61/61. `npm run check` OK.
 - Open, for the owner: one-finger gesture rule (model: turn; globe: move); no momentum on the globe.
 
+
+## 2026-10-13: owner review of the globe controls; next work (low credits until Sunday)
+- Owner: "Drag pinch twist all great". The fixes in bc467450 are accepted.
+- Owner: "No momentum-inertia" on the globe. This is open: add a fling to the globe drag, as the model has (main.js NS.samples / afterMove).
+- Owner fault, P1: a deep link to a place other than Canary Wharf (`?ll=`, `?view=globe`, search) first builds and draws
+  the full Canary Wharf model slowly and with jank, then jumps to the target. The target view draws much faster. This
+  has occurred since the page could start elsewhere. Probable cause: main.js loads and draws the default model view
+  before api.js applies `?ll=` (api.js line ~256, after init). Fix: read `?ll=` / `?view=globe` before the first model
+  build. When the start is on the globe, do not build the model (or build it lazily at the hand-over).
+- Owner: "we need attention on perf" (O3, KR on the phone). Start with the fault above, then the frame time with `?fps=1`.
+- State left: main is green and live (globe-check, globe-controls, npm test 61/61, npm run check OK). No branch or work is open.
