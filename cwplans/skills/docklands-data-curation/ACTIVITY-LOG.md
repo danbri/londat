@@ -2514,3 +2514,7 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   triangles.
 - Open: terrain detail under 100 km (tile pyramid), land cover, wide lines, label occlusion by mountains, momentum on the
   globe, the MCP server's Node tools, phone checks; Leiden (KR1.2) next.
+- Merged to main 2026-10-13 as 1f177656 (fast-forward); globe-check passed again on main (WebGL 2, 390 x 844 @2), `npm test` 61/61,
+  `npm run check` OK; live files `docklands/globe/globe.js` and `cwplans/docklands/data/world/layers.json` match the commit.
+  Live: https://danbri.github.io/londat/docklands/?view=globe . Note for headless probes: on `?view=globe` wait for
+  `__docklands3.globe.ready`, not `__docklands3.ready` (the model loads only at hand-over).
