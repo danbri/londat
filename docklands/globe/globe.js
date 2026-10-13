@@ -313,11 +313,28 @@ export async function createGlobe(H) {
   G.stopFlight = () => { flight = null; };
   G.isFlying = () => !!flight;
 
+  // ---------- the Kármán line (100 km): a green aurora flash over the whole view and a short vibration as the eye crosses
+  // it, either way (owner, 2026-10-13). Over in 250 ms, so the view never rests green. Each crossing resets a 10 s
+  // recharge: strength = time since the last crossing / 10 s (a recrossing at 1 s gives 0.1, at 9 s gives 0.9).
+  let kAlt = NaN, kLast = -Infinity, kEl = null;
+  function karman(h, now) {
+    const prev = kAlt; kAlt = h; if (!isFinite(prev) || (prev < 1e5) === (h < 1e5)) return;
+    const s = clamp((now - kLast) / 10000, 0, 1); kLast = now; G.karman = { strength: s, up: h >= 1e5, at: now };
+    if (s < 0.02 || reduced()) return;
+    if (!kEl) { kEl = document.createElement('div'); kEl.id = 'karmanFlash'; kEl.setAttribute('aria-hidden', 'true');
+      kEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:3;opacity:0;mix-blend-mode:screen;background:radial-gradient(120% 60% at 30% 0%,#3dff9a 0%,transparent 60%),radial-gradient(90% 50% at 75% 10%,#1fd6a0 0%,transparent 55%),linear-gradient(180deg,#2bff8f88 0%,#0a5 40%,transparent 85%)';
+      document.body.appendChild(kEl); }
+    kEl.animate([{ opacity: 0 }, { opacity: 0.75 * s, offset: 0.25 }, { opacity: 0 }], { duration: 250, easing: 'ease-out' });
+    try { navigator.vibrate?.(Math.round(10 + 30 * s)); } catch { /* no vibration */ }
+    H.say?.(`${h >= 1e5 ? 'Above' : 'Below'} the Kármán line (100 km)`);
+  }
+
   // ---------- per frame: tick (flights and hand-overs, both modes); frame (globe mode: draw); background (model mode)
   let wantOut = false;
   G.wantOut = () => { if (!MF || H.blocked()) return; if (!G.ready) { H.say?.('Loading the world...'); G.ensure().then(() => { wantOut = true; H.draw(); }).catch(() => {}); return; } wantOut = true; H.draw(); };
   G.tick = function (now) {
     if (flight) stepFlight(now);
+    if (fl) { if (G.mode !== 'globe' || flight || ptrs.size) fl = null; else stepFling(now); }
     if (G.mode === 'model' && now - lastWhere > 400) { lastWhere = now; if (MF) readout(); }
     if (G.mode === 'model' && MF && !flight) {
       if (wantOut && G.ready) { wantOut = false; const o = modelOrbit(); o.range = Math.max(o.range, HANDOVER.out) * 1.12; enterGlobe(o); }
@@ -332,6 +349,7 @@ export async function createGlobe(H) {
     if (!(asked || moved || G.dirty || flight)) return null;
     G.dirty = false; G.lastEye = c.eye; G.lastF = c.f;
     const ms = drawGlobe(c.eye, c.f, c.u, null);
+    karman(F.eyeGeo.h, now);
     updateCells(now);
     if (now - lastLab > 90 || !moved) { lastLab = now; labels.update({ project, eye: c.eye, zoom: viewZoom(), W: innerWidth, H: innerHeight, visible: labelsOn(), filter: lb => !lb.off }); }
     if (now - lastWhere > 250) { lastWhere = now; readout(); }
@@ -380,9 +398,23 @@ export async function createGlobe(H) {
       if (Math.abs(dl) + Math.abs(db) < 1e-9) break;
     }
   }
-  function dragTo(x, y) { if (!grab || !grab.g) return; anchor(grab.g.P, x, y); touched(); }
+  function dragTo(x, y) { if (!grab || !grab.g) return; anchor(grab.g.P, x, y); touched();
+    const t = performance.now(); fsamp.push({ t, lon: orbit.lon, lat: orbit.lat }); while (fsamp.length && t - fsamp[0].t > 120) fsamp.shift(); }
+  // momentum after a fling (owner, 2026-10-13): the drag's speed over its last 120 ms, slowing with a 400 ms time constant
+  let fsamp = [], fl = null;
+  function release() {
+    const n = fsamp.length, now = performance.now(); if (n < 2 || now - fsamp[n - 1].t > 60) { fsamp = []; return; }
+    const a = fsamp[0], b = fsamp[n - 1], dt = Math.max(8, b.t - a.t), vl = (((b.lon - a.lon + 540) % 360) - 180) / dt, vb = (b.lat - a.lat) / dt;
+    fsamp = []; if (Math.hypot(vl, vb) * 1000 > 1e-6 * orbit.range / 1000) { fl = { vl, vb, t: now }; H.draw(); }
+  }
+  function stepFling(now) {
+    const dt = Math.min(50, now - fl.t); fl.t = now; const k = Math.exp(-dt / 400);
+    orbit.lon = wrapLon(orbit.lon + fl.vl * dt); orbit.lat = clamp(orbit.lat + fl.vb * dt, -89.9, 89.9); guard(orbit);
+    fl.vl *= k; fl.vb *= k; G.dirty = true; H.draw();
+    if (Math.hypot(fl.vl, fl.vb) * 111320 * 16 < 0.3 * orbit.range / 1000) fl = null;   // under about 0.3 px a frame
+  }
   cv.addEventListener('pointerdown', e => {
-    if (G.mode !== 'globe') return; flight = null;
+    if (G.mode !== 'globe') return; flight = null; fl = null; fsamp = [];
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, alt: e.button === 2 || e.shiftKey || e.ctrlKey, x0: e.clientX, y0: e.clientY });
     try { cv.setPointerCapture(e.pointerId); } catch { /* gone */ }
     if (ptrs.size === 1) grab = { g: pick(e.clientX, e.clientY) }; else if (ptrs.size === 2) { const q = [...ptrs.values()]; two = { d: Math.hypot(q[0].x - q[1].x, q[0].y - q[1].y), a: Math.atan2(q[1].y - q[0].y, q[1].x - q[0].x), m: [(q[0].x + q[1].x) / 2, (q[0].y + q[1].y) / 2] }; grab = { g: pick(two.m[0], two.m[1]) }; }
@@ -402,7 +434,7 @@ export async function createGlobe(H) {
       two = { d, a, m }; guard(orbit); touched();
     }
   });
-  const end = e => { if (!ptrs.delete(e.pointerId)) return; two = null; if (ptrs.size === 1) { const q = [...ptrs.values()][0]; grab = { g: pick(q.x, q.y) }; } else grab = null; lastNav = performance.now(); };
+  const end = e => { if (!ptrs.delete(e.pointerId)) return; if (!ptrs.size && !two && e.type === 'pointerup') release(); else fsamp = []; two = null; if (ptrs.size === 1) { const q = [...ptrs.values()][0]; grab = { g: pick(q.x, q.y) }; } else grab = null; lastNav = performance.now(); };
   cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
   function zoomAt(f, x, y) {   // in and out about the point under (x, y): it stays under the pointer
     const g = x != null ? pick(x, y) : null;

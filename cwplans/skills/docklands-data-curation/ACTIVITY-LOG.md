@@ -2541,3 +2541,16 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   build. When the start is on the globe, do not build the model (or build it lazily at the hand-over).
 - Owner: "we need attention on perf" (O3, KR on the phone). Start with the fault above, then the frame time with `?fps=1`.
 - State left: main is green and live (globe-check, globe-controls, npm test 61/61, npm run check OK). No branch or work is open.
+
+## 2026-10-13: fling momentum, Kármán line flash, away start, boot screen
+- Globe fling: the drag speed over the last 120 ms continues after release and slows with a 400 ms time constant
+  (globe.js `release`, `stepFling`). Headless: a drag of 120 px glides 6.6 degrees more at 2,000 km.
+- Kármán line (100 km): when the eye crosses it either way, a green aurora flash covers the view (opacity at most 0.75,
+  250 ms), with `navigator.vibrate` (iOS Safari has no vibrate API) and a spoken note. Strength = time since the last
+  crossing / 10 s, and each crossing resets the timer. Headless: the first crossing gives 1.0, a recrossing after 0.8 s
+  gives 0.08. State: `__docklands3.globe.karman`.
+- Away start (`?ll=`, `?view=globe`, `?place=`): main.js now starts the globe and the API first, and loads the model's
+  optional data (`heavy()`) behind them. `__docklands3.ready` is now a getter that is true after `heavy()`.
+- Boot screen `#boot` (index.html) stays until the start view is drawn (20 s at most for an away start).
+- Tests passed: globe-controls, globe-check 390 x 844, npm test 61/61, check OK.
+- Open: performance (O3); boot time in software is 43 s away and 71 s at cw (not a phone figure).

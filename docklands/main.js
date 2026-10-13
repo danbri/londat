@@ -752,15 +752,24 @@ const wheels = initCarousel({ clock: () => clock, setClock: t => setClockUser(t)
 clockHooks.push(() => wheels.draw());
 say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
 sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
-await loadOptional(); $('facades').checked = FACADES_ON = flag('facades', true); $('facades').disabled = !FACADE; await loadModels();
-await loadLayers();
-if (H.id && /^osm:[wr]\d+$/.test(H.id)) { const K = await keys(); const i = K ? K.ids.indexOf(H.id.slice(4)) : -1; if (i >= 0) selectModel(i); }
-say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
-setTimeout(() => $('hud').classList.add('fade'), 4000);
-menu.creditsStart();
+// a start away from the model (?ll=, ?view=globe, ?place=): the globe and the API come first and the model's optional
+// data loads behind them (owner, 2026-10-13: the page drew a slow Canary Wharf first, then hopped to the target)
+const START_AWAY = qs.has('ll') || qs.get('view') === 'globe' || qs.has('place');
+let READY = false;
+async function heavy() {
+  await loadOptional(); $('facades').checked = FACADES_ON = flag('facades', true); $('facades').disabled = !FACADE; await loadModels();
+  await loadLayers();
+  if (H.id && /^osm:[wr]\d+$/.test(H.id)) { const K = await keys(); const i = K ? K.ids.indexOf(H.id.slice(4)) : -1; if (i >= 0) selectModel(i); }
+  say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
+  setTimeout(() => $('hud').classList.add('fade'), 4000);
+  menu.creditsStart();
+  READY = true; if (!START_AWAY) bootDone();
+}
+function bootDone() { const b = $('boot'); if (b && !b.hidden) { b.classList.add('done'); setTimeout(() => { b.hidden = true; }, 400); } }
+if (!START_AWAY) await heavy();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, get ready() { return READY; }, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
   occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };
 
@@ -778,3 +787,9 @@ if (flag('globe', true)) {
 
 // the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
 import('./api.js').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));
+if (START_AWAY) {
+  // the boot screen stays until the start view is drawn (the globe takes the view, or the model is ready), 20 s at most
+  const t0 = performance.now(), wait = () => { if ((GLOBE && GLOBE.mode === 'globe' && GLOBE.ready && !GLOBE.isFlying()) || READY || performance.now() - t0 > 20000) bootDone(); else requestAnimationFrame(wait); };
+  requestAnimationFrame(wait);
+  setTimeout(() => heavy().catch(e => console.warn('model data', e)), 0);
+}
