@@ -76,7 +76,8 @@ export function terrainMaterial(tex, geoidTex, U) {
   const spec = pow(max(dot(reflect(sun.negate(), upG), view), 0), 60).mul(0.5).mul(water).mul(day);
   let c = base.mul(amb.add(diff.mul(1.15).mul(day))).add(vec3(1, 0.95, 0.85).mul(spec));
   c = c.add(vec3(0.004, 0.007, 0.018).mul(float(1).sub(day)));   // the night side: a little blue
-  const rim = pow(float(1).sub(max(dot(upG, view), 0)), 5).mul(U.haze).mul(day.mul(0.85).add(0.15));
+  // haze by view angle (the limb from orbit) and by distance (thin near the ground: a low view is not washed out)
+  const rim = pow(float(1).sub(max(dot(upG, view), 0)), 5).mul(U.haze).mul(day.mul(0.85).add(0.15)).mul(smoothstep(15000, 400000, length(positionWorld)));
   c = mix(c, vec3(0.32, 0.52, 0.95).mul(day.mul(0.9).add(0.1)), rim.clamp(0, 0.85));
   m.colorNode = vec4(c, 1);
   m.depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar);

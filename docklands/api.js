@@ -51,7 +51,7 @@ export function init(H) {
       if (vk && o.lon == null) { H.setView(vk); await settle(); return { ...getView(), found: { name: VIEW_LABELS[vk] || vk, kind: 'view' } }; }
       await extras; found = findCore(I, s, 1)[0];
       // not in the model: the world (countries, regions, seas, cities; region configs; later the UK skeleton) on the globe
-      if (!found && GL()) { await GL().gazetteer(); const w = GL().search(s, 1)[0];
+      if (!found && GL()) { await GL().gazetteer(); const w = (await GL().searchAll(s, 3))[0];
         if (w) { await new Promise(ok => GL().flyToEntry(w, { ms: o.animate ? undefined : 0, done: ok })); await settle(); return { ...getView(), found: { name: w.name, kind: w.kind, country: w.country || undefined, lon: w.lon, lat: w.lat } }; } }
       if (!found) throw new Error(`No place called "${s}". Try findPlaces("${s.slice(0, 3)}") or listViews().`);
       t = { lon: found.lon, lat: found.lat, range_m: o.range_m ?? (found.kind === 'building' ? 600 : found.kind === 'water' ? 1200 : 900), heading_deg: o.heading_deg, pitch_deg: o.pitch_deg };
@@ -133,12 +133,16 @@ export function init(H) {
     const live = { aircraft: L.planes && L.planes.on ? L.planes.api.flights : null, ships: L.ships && L.ships.on ? L.ships.api.vessels : null };
     const weather = W ? { cloud_pct: W.cover != null ? Math.round(W.cover <= 1 && W.cover > 0 ? W.cover * 100 : W.cover) : null, visibility_m: W.vis ?? null, precipitation_mm: W.precip ?? null, temperature_c: Wn && Wn.temp != null ? Math.round(Wn.temp * 10) / 10 : null, source: W.source || null } : null;
     const occ = H.occ && H.occ();
-    return describeCore(I, camOf(), { time: H.clock, sun: sunNow(), weather, live, share: shareLink(), view: H.viewName || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance,
+    const dsc = describeCore(I, camOf(), { time: H.clock, sun: sunNow(), weather, live, share: shareLink(), view: H.viewName || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance,
       occluded: occ ? (k, x, y, z) => occ.test(k, x, y, z) : null });
+    // the wider place (a skeleton set's district, county, country) at the target, when the globe has one
+    if (GL() && dsc.target) { try { const m = await GL().whereMore(dsc.target.lon, dsc.target.lat); if (m && (m.district || m.country)) { dsc.context = m;
+      dsc.text += ` Area: ${[...new Set([m.district, m.county, m.region, m.country].filter(Boolean))].join(', ')} (${m.source}).`; } } catch (e) { console.warn('api: context', e); } }
+    return dsc;
   }
   async function findPlaces(q, limit = 10) {
     await extras; const out = findCore(I, q, limit).map(({ name, kind, lon, lat, id }) => ({ name, kind, lon, lat, id }));
-    if (GL() && out.length < limit) { await GL().gazetteer(); for (const w of GL().search(q, limit - out.length)) out.push({ name: w.name, kind: w.kind, lon: w.lon, lat: w.lat, id: w.id, country: w.country || undefined, local_name: w.local_name }); }
+    if (GL() && out.length < limit) { await GL().gazetteer(); for (const w of await GL().searchAll(q, limit - out.length)) out.push({ name: w.name, kind: w.kind, lon: w.lon, lat: w.lat, id: w.id, country: w.country || undefined, region: w.region || undefined, local_name: w.local_name }); }
     return out; }
 
   // ---------- the tools (one list: window.docklands.tools, WebMCP, and the MCP server's page_call)

@@ -105,6 +105,10 @@
     {
       "id": "skeleton",
       "title": "National and world skeleton (UK)"
+    },
+    {
+      "id": "world",
+      "title": "World skeleton for the globe (KR2.2, KR2.7)"
     }
   ],
   "activities": [
@@ -9798,6 +9802,88 @@
       ],
       "network": true,
       "deterministic": true
+    },
+    {
+      "id": "build-world-skeleton",
+      "tool": "tools/build-world-skeleton.mjs",
+      "command": "node cwplans/tools/build-world-skeleton.mjs fetch && node cwplans/tools/build-world-skeleton.mjs build",
+      "kind": "derive",
+      "used": [
+        {
+          "source": "natural-earth",
+          "endpoint": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/",
+          "request": "ne_50m_coastline, ne_50m_land, ne_50m_admin_0_countries, ne_50m_admin_0_boundary_lines_land, ne_10m_admin_1_states_provinces, ne_10m_admin_1_states_provinces_lines, ne_50m_rivers_lake_centerlines, ne_50m_lakes, ne_10m_populated_places, ne_50m_geography_marine_polys (.geojson)"
+        },
+        {
+          "source": "etopo-2022",
+          "endpoint": "https://www.ngdc.noaa.gov/thredds/dodsC/global/ETOPO2022/60s/60s_surface_elev_netcdf/ETOPO_2022_v1_60s_N90W180_surface.nc.dods",
+          "request": "z[r0:1:r1][0:1:21599] in 20 bands of 540 rows (about 933 MB in all), binary DODS"
+        },
+        {
+          "source": "egm96",
+          "endpoint": "https://cdn.proj.org/us_nga_egm96_15.tif",
+          "request": "the whole grid (GeoTIFF, 2.7 MB)"
+        },
+        {
+          "local": "data/raw/world-skeleton/etopo2022-60s-mean-4096x2048.f32"
+        }
+      ],
+      "generated": [
+        {
+          "file": "docklands/data/world/coast.json"
+        },
+        {
+          "file": "docklands/data/world/countries.json"
+        },
+        {
+          "file": "docklands/data/world/boundaries.json"
+        },
+        {
+          "file": "docklands/data/world/admin1.json"
+        },
+        {
+          "file": "docklands/data/world/admin1-lines.json"
+        },
+        {
+          "file": "docklands/data/world/rivers.json"
+        },
+        {
+          "file": "docklands/data/world/lakes.json"
+        },
+        {
+          "file": "docklands/data/world/marine.json"
+        },
+        {
+          "file": "docklands/data/world/places.json"
+        },
+        {
+          "file": "docklands/data/world/terrain-4096x2048.png"
+        },
+        {
+          "file": "docklands/data/world/geoid-egm96-1deg.png"
+        },
+        {
+          "file": "docklands/data/world/layers.json"
+        },
+        {
+          "file": "docklands/data/world/names-*.json"
+        }
+      ],
+      "method": "Downloads Natural Earth 5.1.2, ETOPO 2022 60\" and EGM96; averages ETOPO into a 4096 x 2048 grid; rasterises Natural Earth land and lakes; writes the terrain texture, a 1-degree geoid, and the Natural Earth layers simplified and quantised (format wsk1) with a manifest in the globe layer contract, for the globe of the Three.js port.",
+      "rules": [
+        "ETOPO: every 60\" value (not the fill value -99999) goes to the output pixel that holds its cell centre; the pixel is the mean (box mean); rows are placed by their own latitude (the OPeNDAP lat map runs south to north).",
+        "Height code (R, 8 bits): 128 + round(127 sqrt(h / 8848)) for h >= 0, 127 - round(127 sqrt(-h / 11000)) below; about 0.6 m steps near sea level, 35 m at 500 m, 140 m at 8 km. The globe draws water (G < 0.5, or a lake) at sea level and land at its height, plus the geoid N.",
+        "Land (G) and lakes (B): Natural Earth 1:50m land and lakes filled even-odd with antialiasing at 4096 x 2048 (@napi-rs/canvas); value = covered fraction x 255.",
+        "Geoid: EGM96 15' grid sampled at whole degrees (every 4th value; lon -180..180, lat 90..-90), rounded to 1 m, stored as N + 128.",
+        "Vectors: Douglas-Peucker in degrees (coast 0.005, countries 0.01, admin-1 polygons 0.03, admin-1 lines 0.02, boundaries 0.005, rivers 0.005, lakes 0.005, marine 0.02), then rounded to 0.001 degree and delta-coded; rings under 4 points dropped; repeated points dropped.",
+        "Names: Natural Earth NAME_xx / name_xx fields in 26 languages; countries carry all in countries.json; other layers get one names-<lang>.json per language with only the names that differ from the default, keyed by the index of the feature in the written file. Natural Earth -99 and empty values are left out.",
+        "No locale constant in the tool: it knows no place."
+      ],
+      "network": true,
+      "deterministic": true,
+      "after": [],
+      "area": "world",
+      "judgement": "ETOPO 2022 60\" box means (not GEBCO, Copernicus GLO-90 or the 15\" ETOPO) to keep the global texture at 3.5 MB; Natural Earth 1:50m for most layers and 1:10m for admin-1 and places (the 1:50m admin-1 covers few countries); finer terrain needs a tile pyramid (docs/planet-architecture.md step 5)."
     }
   ],
   "manual_activities": [

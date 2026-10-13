@@ -46,7 +46,8 @@ if (ONLY.includes('1') || ONLY.includes('2')) {
       o.find = await d.findPlaces('greenland', 5);
       o.views = d.listViews().length;
       o.goName = await d.goTo('Mudchute Park and Farm'); o.goPt = await d.goTo({ lon: -0.0402, lat: 51.4944, range_m: 800, heading_deg: 90, pitch_deg: 30 });
-      try { await d.goTo({ lon: 2.35, lat: 48.85 }); o.outside = 'no error'; } catch (e) { o.outside = e.message; }
+      // outside the model the globe takes the view (2026-10-13; before, an error), then a view id brings the model back
+      try { const g = await d.goTo({ lon: 2.35, lat: 48.85, alt_m: 1500000 }); o.outside = g.mode + ' ' + g.target.lat.toFixed(2); await d.goTo({ view: 'cw' }); o.back = __docklands3.globe ? __docklands3.globe.mode : 'model'; } catch (e) { o.outside = e.message; }
       o.time = d.setTime('2026-10-11T22:00'); o.night = __docklands3.night;
       o.layers = d.listLayers(); o.roadsOff = d.setLayer('roads', false); o.roadsBox = document.getElementById('showRoads').checked; o.pnOff = d.setLayer('placenames', false); o.pnOn = d.setLayer('placenames', true);
       try { d.setLayer('nosuch', true); o.badLayer = 'no error'; } catch (e) { o.badLayer = e.message; }
@@ -64,7 +65,7 @@ if (ONLY.includes('1') || ONLY.includes('2')) {
     ok(r.views >= 16, 'listViews', r.views);
     ok(r.goName.found && r.goName.found.name === 'Mudchute Park and Farm' && Math.abs(r.goName.target.lat - 51.491) < 0.01, 'goTo(place name)', JSON.stringify(r.goName.target));
     ok(Math.abs(r.goPt.target.lat - 51.4944) < 1e-3 && Math.abs(r.goPt.target.lon + 0.0402) < 1e-3 && Math.abs(r.goPt.heading_deg - 90) < 1 && Math.abs(r.goPt.pitch_deg + 30) < 1 && Math.abs(r.goPt.range_m - 800) < 2, 'goTo({lon, lat, range, true heading, pitch})', JSON.stringify({ t: r.goPt.target, h: r.goPt.heading_deg, p: r.goPt.pitch_deg, r: r.goPt.range_m }));
-    ok(/outside the model/.test(r.outside), 'goTo outside the model says so', r.outside);
+    ok(/^globe 48\.85/.test(r.outside) && r.back === 'model', 'goTo outside the model: the globe, then view cw: the model', r.outside + ' -> ' + r.back);
     ok(/22:00/.test(r.time.time.local) && r.night === true, 'setTime(wall-clock time of the place)', r.time.time.local);
     ok(r.layers.some(l => l.id === 'placenames') && r.roadsOff.on === false && r.roadsBox === false && r.pnOff.on === false && r.pnOn.on === true, 'listLayers / setLayer', r.layers.map(l => l.id + ':' + l.on).join(' '));
     ok(/No layer/.test(r.badLayer), 'setLayer(unknown) says so', r.badLayer);

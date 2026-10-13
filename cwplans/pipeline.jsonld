@@ -10594,6 +10594,93 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-world-skeleton",
+   "dct:description": "Downloads Natural Earth 5.1.2, ETOPO 2022 60\" and EGM96; averages ETOPO into a 4096 x 2048 grid; rasterises Natural Earth land and lakes; writes the terrain texture, a 1-degree geoid, and the Natural Earth layers simplified and quantised (format wsk1) with a manifest in the globe layer contract, for the globe of the Three.js port.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth",
+     "dcat:accessURL": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/",
+     "dct:description": "ne_50m_coastline, ne_50m_land, ne_50m_admin_0_countries, ne_50m_admin_0_boundary_lines_land, ne_10m_admin_1_states_provinces, ne_10m_admin_1_states_provinces_lines, ne_50m_rivers_lake_centerlines, ne_50m_lakes, ne_10m_populated_places, ne_50m_geography_marine_polys (.geojson)"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcetopo2022",
+     "dcat:accessURL": "https://www.ngdc.noaa.gov/thredds/dodsC/global/ETOPO2022/60s/60s_surface_elev_netcdf/ETOPO_2022_v1_60s_N90W180_surface.nc.dods",
+     "dct:description": "z[r0:1:r1][0:1:21599] in 20 bands of 540 rows (about 933 MB in all), binary DODS"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcegm96",
+     "dcat:accessURL": "https://cdn.proj.org/us_nga_egm96_15.tif",
+     "dct:description": "the whole grid (GeoTIFF, 2.7 MB)"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawworldskeletonetopo202260smean4096x2048f32"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/coast.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/countries.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/boundaries.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/admin1.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/admin1-lines.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/rivers.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/lakes.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/marine.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/places.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/terrain-4096x2048.png"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/geoid-egm96-1deg.png"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/layers.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/names-*.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-world-skeleton.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-world-skeleton.mjs fetch && node cwplans/tools/build-world-skeleton.mjs build",
+   "cwp:kind": "derive",
+   "cwp:rule": [
+    "ETOPO: every 60\" value (not the fill value -99999) goes to the output pixel that holds its cell centre; the pixel is the mean (box mean); rows are placed by their own latitude (the OPeNDAP lat map runs south to north).",
+    "Height code (R, 8 bits): 128 + round(127 sqrt(h / 8848)) for h >= 0, 127 - round(127 sqrt(-h / 11000)) below; about 0.6 m steps near sea level, 35 m at 500 m, 140 m at 8 km. The globe draws water (G < 0.5, or a lake) at sea level and land at its height, plus the geoid N.",
+    "Land (G) and lakes (B): Natural Earth 1:50m land and lakes filled even-odd with antialiasing at 4096 x 2048 (@napi-rs/canvas); value = covered fraction x 255.",
+    "Geoid: EGM96 15' grid sampled at whole degrees (every 4th value; lon -180..180, lat 90..-90), rounded to 1 m, stored as N + 128.",
+    "Vectors: Douglas-Peucker in degrees (coast 0.005, countries 0.01, admin-1 polygons 0.03, admin-1 lines 0.02, boundaries 0.005, rivers 0.005, lakes 0.005, marine 0.02), then rounded to 0.001 degree and delta-coded; rings under 4 points dropped; repeated points dropped.",
+    "Names: Natural Earth NAME_xx / name_xx fields in 26 languages; countries carry all in countries.json; other layers get one names-<lang>.json per language with only the names that differ from the default, keyed by the index of the feature in the written file. Natural Earth -99 and empty values are left out.",
+    "No locale constant in the tool: it knows no place."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "world",
+   "cwp:fault": [],
+   "cwp:judgement": "ETOPO 2022 60\" box means (not GEBCO, Copernicus GLO-90 or the 15\" ETOPO) to keep the global texture at 3.5 MB; Natural Earth 1:50m for most layers and 1:10m for admin-1 and places (the 1:50m admin-1 covers few countries); finer terrain needs a tile pyramid (docs/planet-architecture.md step 5)."
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolcwgmapspdfs",
    "@type": "prov:Activity",
    "rdfs:label": "Canary Wharf Group maps and guides (PDF) supplied by the owner",
@@ -25735,6 +25822,268 @@
     "@id": "https://kgx.foaf.tv/id/toolukskeleton"
    },
    "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/coast.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "World coastlines (Natural Earth 1:50m), Douglas-Peucker 0.005 degree, quantised to 0.001 degree, format wsk1 (delta-coded integers); the globe draws them",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/countries.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Countries (Natural Earth 1:50m admin-0, 242): polygons 0.01 degree for \"which country\", label points, label zoom range, population estimate, continent, ISO codes, Wikidata id, names in 26 languages; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/boundaries.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Land borders between countries (Natural Earth 1:50m admin-0 boundary lines), 0.005 degree; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/admin1.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "First-level regions (Natural Earth 1:10m admin-1 states and provinces, 4,596): polygons 0.03 degree for \"which region\", label points, ISO 3166-2, type, area, Wikidata id; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/admin1-lines.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Lines between first-level regions (Natural Earth 1:10m), 0.02 degree; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/rivers.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Rivers and lake centrelines (Natural Earth 1:50m) with names and scale rank, 0.005 degree; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/lakes.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Lakes (Natural Earth 1:50m) with names and Wikidata ids, 0.005 degree; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/marine.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Seas, oceans, bays and gulfs (Natural Earth 1:50m marine areas) with names, for \"which sea\" and labels, 0.02 degree; wsk1",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/places.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Populated places (Natural Earth 1:10m, 7,342): name, ASCII name, country, admin-1, largest population estimate, label zoom and rank, capital flag, Wikidata id, time zone; wsk1 points",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/names-*.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Names in one language each (26 Natural Earth languages: ar bn de el en es fa fr he hi hu id it ja ko nl pl pt ru sv tr uk ur vi zh zht) for admin-1 regions, places, seas, lakes and rivers where they differ from the default name; the page loads only the visitor's language",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/terrain-4096x2048.png",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Global terrain and land/sea texture, 4096 x 2048 (5.27 arc-minutes, about 9.8 km at the equator): R = ETOPO 2022 60\" heights as box means, sqrt-coded (0..8848 m above, 0..11000 m below sea level); G = land fraction and B = lake fraction from Natural Earth 1:50m land and lakes (antialiased raster)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcetopo2022"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/geoid-egm96-1deg.png",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "EGM96 geoid height N at whole degrees, 361 x 181, grey = N + 128 m: the globe draws heights above the geoid (ETOPO) at ellipsoidal height h = H + N",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcegm96"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/layers.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Manifest of the world skeleton in the globe's layer contract (docklands/globe/world.js header): layers, styles, labels, gazetteer, lookups, terrain encoding, names files, sources, credit",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaturalearth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcetopo2022"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcegm96"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildworldskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcnaturalearth",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Natural Earth 5.1.2 (vector: coastline, land, countries, boundary lines, admin-1 states and provinces and their lines, rivers and lake centrelines, lakes, marine areas, populated places), GeoJSON from github.com/nvkelso/natural-earth-vector tag v5.1.2",
+   "dct:license": "public domain",
+   "dcat:landingPage": "https://www.naturalearthdata.com/about/terms-of-use/",
+   "cwp:attribution": "Made with Natural Earth."
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcetopo2022",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "ETOPO 2022 v1, 60 arc-second global relief (surface elevation, EGM2008 heights), NOAA NCEI, read by OPeNDAP from the NCEI THREDDS server",
+   "dct:license": "public domain (US Government work; NOAA NCEI)",
+   "dcat:landingPage": "https://www.ncei.noaa.gov/products/etopo-global-relief-model",
+   "cwp:attribution": "NOAA National Centers for Environmental Information. 2022: ETOPO 2022 15 Arc-Second Global Relief Model. doi:10.25921/fd45-gt74"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcegm96",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "EGM96 geoid, 15 arc-minute grid (NGA), PROJ data file us_nga_egm96_15.tif from cdn.proj.org",
+   "dct:license": "public domain (US Government work; NGA)",
+   "dcat:landingPage": "https://cdn.proj.org/us_nga_egm96_15.tif"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcosm",

@@ -27,7 +27,8 @@ async function open(w, h, dpr, q) {
   page.setDefaultTimeout(240000);
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
-  page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
+  // (the history layer asks for today's cache folder, which is missing until the first hourly run of the day: not a globe fault)
+  page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   // the live and weather services are answered empty here (no third-party request from a test): the globe does not use them
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   await page.goto(`${BASE}/docklands/?${q}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0`);
@@ -43,11 +44,11 @@ async function shot(page, name) {
   const file = `${OUT}/${name}${WEBGPU ? '-webgpu' : ''}.png`; const buf = await page.screenshot({ path: file, timeout: 240000 });
   return { file, buf };
 }
-async function lumaStats(buf) {   // mean luma in the middle third and in the four corners (0..1)
+async function lumaStats(buf) {   // mean luma in the middle third and at the left and right edges at 20 % height (outside a whole globe; 0..1)
   const img = await loadImage(buf), cv = createCanvas(img.width, img.height), c = cv.getContext('2d'); c.drawImage(img, 0, 0);
   const mean = (x, y, w, h) => { const d = c.getImageData(x, y, w, h).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]; return s / (d.length / 4) / 255; };
   const W = img.width, H = img.height, k = Math.round(Math.min(W, H) * 0.06);
-  return { centre: mean(W / 3, H / 3, W / 3, H / 3), corners: (mean(0, H - k, k, k) + mean(W - k, H - k, k, k)) / 2 };
+  return { centre: mean(W / 3, H / 3, W / 3, H / 3), corners: (mean(0, Math.round(H * 0.2), k, k) + mean(W - k, Math.round(H * 0.2), k, k)) / 2 };
 }
 // frame cost: redraw for `ms` with the camera still (the globe redraws on dirty), then the page's frame-time stats (perf.js)
 async function cost(page, ms = 4000) {
@@ -55,7 +56,7 @@ async function cost(page, ms = 4000) {
     const G = __docklands3.globe, t0 = performance.now(); const sub = [];
     await new Promise(ok => { const f = () => { G.dirty = true; __docklands3.draw(); if (G.stats.frame) sub.push(G.stats.frame.ms); if (performance.now() - t0 < ms) requestAnimationFrame(f); else ok(); }; f(); });
     const p = docklands.perf ? docklands.perf() : null, fr = G.mode === 'globe' ? G.stats.frame : null; sub.sort((a, b) => a - b);
-    return { mode: G.mode, patches: fr && fr.patches, triangles: fr && fr.triangles, calls: fr && fr.calls, submit_ms_median: sub.length ? sub[Math.floor(sub.length / 2)] : null, frame_ms_median: p && p.median_ms, frame_ms_p95: p && p.p95_ms, fps: p && p.fps, frames: sub.length };
+    return { mode: G.mode, patches: fr && fr.patches, triangles: fr && fr.triangles, calls: fr && fr.calls, submit_ms_median: sub.length ? sub[Math.floor(sub.length / 2)] : null, frame_ms_median: p && p.frame_ms.median, frame_ms_p95: p && p.frame_ms.p95, fps: p && p.fps.median, frames: sub.length };
   }, ms);
 }
 const view = page => page.evaluate(() => docklands.getView());
@@ -66,7 +67,7 @@ for (const [w, h, dpr] of SIZES) {
   // ---------- 1. the default page still opens on the Docklands model
   if (w === SIZES[0][0]) {
     const { ctx, page, errors } = await open(w, h, dpr, `layers=&t=${T}`);
-    await globeReady(page).catch(() => {});
+    await page.waitForFunction(() => window.__docklands3?.globe && window.docklands, null, { timeout: 240000 }).catch(() => {});   // (the world data load on the first need)
     const r = await page.evaluate(() => ({ mode: __docklands3.globe?.mode, view: __docklands3.viewName, hasGlobe: !!__docklands3.globe }));
     check(r.hasGlobe && r.mode === 'model' && r.view === 'cw', `${tag} default page opens on the Docklands model`, JSON.stringify(r));
     check(!errors.length, `${tag} no page errors (default page)`, errors.slice(0, 3).join(' | '));
@@ -82,7 +83,7 @@ for (const [w, h, dpr] of SIZES) {
   let d = await page.evaluate(() => docklands.describeView());
   check(d.mode === 'globe' && /Ocean|Sea|United Kingdom|France|Spain|Ireland|Norway/.test(d.text), `${tag} describeView at orbit names an ocean or a country`, d.text.slice(0, 260));
   const gv = await view(page);
-  check(gv.mode === 'globe' && gv.eye.height_m > 1e7 && Math.abs(gv.target.lat - 51.5) < 0.1, `${tag} getView at globe scale`, `eye ${gv.eye.height_m} m, target ${gv.target.lat},${gv.target.lon}`);
+  check(gv.mode === 'globe' && gv.eye.height_m > 1.2e7 && Math.abs(gv.target.lat - 51.5) < 0.1, `${tag} getView at globe scale`, `eye ${gv.eye.height_m} m, target ${gv.target.lat},${gv.target.lon}`);
   const costs = {}; costs.orbit = await cost(page);
   // ---------- 3. Europe, the UK, London (screenshots), frame costs at 1,000 km, 100 km and 10 km (Sarajevo: outside the model)
   for (const [name, t] of [['europe', { lon: 10, lat: 50, alt_m: 3.2e6 }], ['uk', { lon: -2.5, lat: 54.3, alt_m: 1.1e6 }], ['london', { lon: -0.03, lat: 51.5, alt_m: 60000 }]]) {
@@ -104,6 +105,18 @@ for (const [w, h, dpr] of SIZES) {
     check(f.length > 0 && dk < 25 && re.test(dd.text), `${tag} search and fly to ${q}`, `first hit ${f[0]?.name} (${f[0]?.kind}); arrived ${dk.toFixed(1)} km from it; ${dd.text.split('. ').slice(0, 2).join('. ')}`);
     if (w === SIZES[0][0]) await shot(page, `place-${q.normalize('NFD').replace(/[^\w]/g, '')}-${tag}`);
   }
+  // ---------- 4b. the UK skeleton (docklands/geo/skeleton.js through globe/skeleton-layers.js): search near the view, the
+  // readout and describeView inside the UK, its layers drawn
+  if (w === SIZES[0][0]) {
+    await page.evaluate(() => docklands.goTo({ lon: -3.9, lat: 52.9, alt_m: 2.5e5 }));
+    for (let i = 0; i < 4; i++) await frame(page);
+    await page.waitForTimeout(2500); await frame(page);
+    const uk = await page.evaluate(async () => ({ snowdon: (await docklands.findPlaces('Snowdon', 3))[0], leeds: (await docklands.findPlaces('Leeds', 6)).map(r => r.kind + ':' + r.name), where: document.getElementById('whereAmI').textContent,
+      d: (await docklands.describeView()).text, cells: __docklands3.globe.stats.frame }));
+    check(/Wyddfa|Snowdon/.test(uk.snowdon?.local_name || uk.snowdon?.name || '') && Math.abs(uk.snowdon.lat - 53.07) < 0.1, 'UK skeleton: "Snowdon" near the view finds Yr Wyddfa', JSON.stringify(uk.snowdon));
+    check(/Gwynedd|Conwy|Wales/.test(uk.where) && /In detail/.test(uk.d), 'UK skeleton: the readout and describeView name the district and country', `${uk.where} | ${uk.d.split('In detail')[1]}`);
+    await shot(page, `uk-wales-${tag}`);
+  }
   // ---------- 5. flight from orbit to Canary Wharf (Home): the model at the end, where ?view=cw puts the camera
   await page.evaluate(() => docklands.goTo({ lon: 0, lat: 50, alt_m: 1.2e7 }));
   const fl = await page.evaluate(() => new Promise(ok => { const G = __docklands3.globe, modes = []; let last = null; const t0 = performance.now();
@@ -120,12 +133,14 @@ for (const [w, h, dpr] of SIZES) {
   const hand = await page.evaluate(async () => {
     const G = __docklands3.globe, D = __docklands3, cv = D.renderer.domElement, eyeG = () => { const c = G.orbitCam(G.orbit()); return c.eye; };
     let before = null, after = null;
-    for (let i = 0; i < 40 && G.mode === 'globe'; i++) { before = eyeG(); cv.dispatchEvent(new WheelEvent('wheel', { deltaY: -120, clientX: innerWidth / 2, clientY: innerHeight / 2, bubbles: true, cancelable: true })); D.frameNow(); }
+    // before: the globe eye after the last wheel step (the orbit the hand-over converts), then the frame that hands over
+    let range = null;
+    for (let i = 0; i < 40 && G.mode === 'globe'; i++) { cv.dispatchEvent(new WheelEvent('wheel', { deltaY: -120, clientX: innerWidth / 2, clientY: innerHeight / 2, bubbles: true, cancelable: true })); before = eyeG(); range = G.orbit().range; D.frameNow(); }
     if (G.mode !== 'model') return { mode: G.mode };
     // the model eye in ECEF through the same region transform, against the globe eye just before
     const c = D.camState(), cp = Math.cos(c.pitch), E = [c.tx + c.dist * Math.sin(c.yaw) * cp, c.ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * cp];
-    after = G.modelToEcef(E); const g1 = eyeG();
-    return { mode: G.mode, step_m: Math.hypot(after[0] - before[0], after[1] - before[1], after[2] - before[2]), lastGlobeStepRange: G.orbit().range, sameEye_m: Math.hypot(after[0] - g1[0], after[1] - g1[1], after[2] - g1[2]) };
+    after = G.modelToEcef(E);
+    return { mode: G.mode, handover_range_m: Math.round(range), sameEye_m: Math.hypot(after[0] - before[0], after[1] - before[1], after[2] - before[2]) };
   });
   check(hand.mode === 'model' && hand.sameEye_m < 0.05, `${tag} wheel in over the box: the model takes the view with no jump`, JSON.stringify(hand));
   // ---------- 8. deep link ?ll= (Tokyo, 20 km up) in a fresh page
@@ -142,7 +157,7 @@ for (const [w, h, dpr] of SIZES) {
 // ---------- the full page at the Docklands (slow in software): --full
 if (FULL) {
   const [w, h, dpr] = SIZES[0], { ctx, page, errors } = await open(w, h, dpr, `view=cw&t=${T}`);
-  await globeReady(page); await page.waitForTimeout(8000);
+  await page.waitForFunction(() => window.__docklands3?.globe && window.docklands, null, { timeout: 300000 }); await page.waitForTimeout(8000);
   const s = await shot(page, `docklands-cw-full-${w}x${h}@${dpr}`);
   check(!errors.length, 'full page at the Docklands: no page errors', errors.slice(0, 3).join(' | ') + ' -> ' + s.file);
   await ctx.close();

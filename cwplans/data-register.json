@@ -51,6 +51,23 @@
     }
   },
   "sources": {
+    "natural-earth": {
+      "name": "Natural Earth 5.1.2 (vector: coastline, land, countries, boundary lines, admin-1 states and provinces and their lines, rivers and lake centrelines, lakes, marine areas, populated places), GeoJSON from github.com/nvkelso/natural-earth-vector tag v5.1.2",
+      "licence": "public domain",
+      "url": "https://www.naturalearthdata.com/about/terms-of-use/",
+      "attribution": "Made with Natural Earth."
+    },
+    "etopo-2022": {
+      "name": "ETOPO 2022 v1, 60 arc-second global relief (surface elevation, EGM2008 heights), NOAA NCEI, read by OPeNDAP from the NCEI THREDDS server",
+      "licence": "public domain (US Government work; NOAA NCEI)",
+      "url": "https://www.ncei.noaa.gov/products/etopo-global-relief-model",
+      "attribution": "NOAA National Centers for Environmental Information. 2022: ETOPO 2022 15 Arc-Second Global Relief Model. doi:10.25921/fd45-gt74"
+    },
+    "egm96": {
+      "name": "EGM96 geoid, 15 arc-minute grid (NGA), PROJ data file us_nga_egm96_15.tif from cdn.proj.org",
+      "licence": "public domain (US Government work; NGA)",
+      "url": "https://cdn.proj.org/us_nga_egm96_15.tif"
+    },
     "osm": { "name": "OpenStreetMap", "licence": "ODbL 1.0", "attribution": "© OpenStreetMap contributors", "url": "https://www.openstreetmap.org/copyright" },
     "nsi": { "name": "OSM name-suggestion-index 8.0.20260918", "licence": "BSD-3-Clause", "url": "https://github.com/osmlab/name-suggestion-index", "note": "a separate project from the OSM database; its brand list is not ODbL data" },
     "wikidata": { "name": "Wikidata (SPARQL; QLever for the registry)", "licence": "CC0 1.0", "url": "https://www.wikidata.org/" },
@@ -1458,6 +1475,203 @@
       "fetched": "2026-10-12",
       "shown_on": [
         "docklands/ (the Three.js port, through docklands/geo/skeleton.js; the globe of KR2.7, in progress)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/coast.json",
+      "what": "World coastlines (Natural Earth 1:50m), Douglas-Peucker 0.005 degree, quantised to 0.001 degree, format wsk1 (delta-coded integers); the globe draws them",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/countries.json",
+      "what": "Countries (Natural Earth 1:50m admin-0, 242): polygons 0.01 degree for \"which country\", label points, label zoom range, population estimate, continent, ISO codes, Wikidata id, names in 26 languages; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/boundaries.json",
+      "what": "Land borders between countries (Natural Earth 1:50m admin-0 boundary lines), 0.005 degree; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/admin1.json",
+      "what": "First-level regions (Natural Earth 1:10m admin-1 states and provinces, 4,596): polygons 0.03 degree for \"which region\", label points, ISO 3166-2, type, area, Wikidata id; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/admin1-lines.json",
+      "what": "Lines between first-level regions (Natural Earth 1:10m), 0.02 degree; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/rivers.json",
+      "what": "Rivers and lake centrelines (Natural Earth 1:50m) with names and scale rank, 0.005 degree; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/lakes.json",
+      "what": "Lakes (Natural Earth 1:50m) with names and Wikidata ids, 0.005 degree; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/marine.json",
+      "what": "Seas, oceans, bays and gulfs (Natural Earth 1:50m marine areas) with names, for \"which sea\" and labels, 0.02 degree; wsk1",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/places.json",
+      "what": "Populated places (Natural Earth 1:10m, 7,342): name, ASCII name, country, admin-1, largest population estimate, label zoom and rank, capital flag, Wikidata id, time zone; wsk1 points",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/names-*.json",
+      "what": "Names in one language each (26 Natural Earth languages: ar bn de el en es fa fr he hi hu id it ja ko nl pl pt ru sv tr uk ur vi zh zht) for admin-1 regions, places, seas, lakes and rivers where they differ from the default name; the page loads only the visitor's language",
+      "sources": [
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/terrain-4096x2048.png",
+      "what": "Global terrain and land/sea texture, 4096 x 2048 (5.27 arc-minutes, about 9.8 km at the equator): R = ETOPO 2022 60\" heights as box means, sqrt-coded (0..8848 m above, 0..11000 m below sea level); G = land fraction and B = lake fraction from Natural Earth 1:50m land and lakes (antialiased raster)",
+      "sources": [
+        "etopo-2022",
+        "natural-earth"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/geoid-egm96-1deg.png",
+      "what": "EGM96 geoid height N at whole degrees, 361 x 181, grey = N + 128 m: the globe draws heights above the geoid (ETOPO) at ellipsoidal height h = H + N",
+      "sources": [
+        "egm96"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "fetched": "2026-10-12",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world/layers.json",
+      "what": "Manifest of the world skeleton in the globe's layer contract (docklands/globe/world.js header): layers, styles, labels, gazetteer, lookups, terrain encoding, names files, sources, credit",
+      "sources": [
+        "natural-earth",
+        "etopo-2022",
+        "egm96"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-skeleton.mjs",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js)"
       ]
     }
   ],

@@ -40,6 +40,12 @@ improvements."
 | `carousel.js` | the time wheels at the top (time of day, day of the year) |
 | `sky3.js` | sun and moon (Astronomy Engine), `SkyMesh`, stars (instanced sprites), the light rig |
 | `about-extra.js` | Menu > About: the Live data box (londat cache or the sources' APIs, traffic camera markers) and the below-ground text |
+| `globe/globe.js` | the globe (2026-10-13; OKR KR2.1 first step, KR2.2, KR2.7): a floating frame at the eye (east, up, south; every mesh's matrix R (C - O) in doubles each frame), logarithmic depth per material, the orbit navigation (drag the ground, right or Shift drag to turn and tilt, pinch, wheel to the pointer), flights on great circles, the hand-over to and from the model (exact through the region transform), the globe as the model's background above 3 km, labels, the "where am I" readout, Home, North and World, `docklands-globe-mode` events |
+| `globe/terrain.js` | the globe surface: a geodetic quadtree of patches (2 roots of 180 degrees, 33 x 33 vertices and skirts, level 8 at most), heights, land, lakes and the EGM96 geoid from two textures in TSL; relief shading, sun, water glint, haze |
+| `globe/vectors.js`, `globe/labels.js` | lines on the globe (chunks of 45 degrees, densified to 0.25 degree, depth pulled 0.4 % towards the eye); HTML labels by zoom range, horizon and declutter |
+| `globe/world.js` | pure (Node too): the layer contract, wsk1 and GeoJSON decoding, point in polygon (country, region, sea, lake), the gazetteer search, the nearest places, names in the visitor's language, the globe view in words |
+| `globe/skeleton-layers.js` | a skeleton-1 set (the UK skeleton, `geo/skeleton.js`) on the globe: layers streamed by view cell and level, its gazetteer in the search (near the view), place cards, its "where am I" in the readout and the descriptions |
+| `test/globe-check.mjs` | 2026-10-13: the globe headless (no page errors; orbit renders; describeView at orbit; Europe, UK, London labels; search and fly to Sarajevo, León, Leiden, Tokyo; the UK skeleton; the flight to Canary Wharf ends at `?view=cw`; the hand-overs both ways; `?ll=`; frame costs at orbit, 1,000, 100 and 10 km). `docklands/geo/test/world.test.mjs` in `npm test` |
 | `occlude.js` | label occlusion (2026-10-10): a 4 m height grid (DTM, building roofs, detailed models) and a 2 m march from each label's anchor to the eye; a label with a building or the ground in front hides (`ctx.occluded`) |
 | `test/labels-check.mjs` | 2026-10-10: no Drone, Below ground or Night button on the map, their menu entries, no overlaps at 390 and 1280 px; the Labels switch (labels, notes and credits off and back, kept after a reload, credits in About); occlusion of a traffic camera behind One Canada Square, against an exact three.js ray cast, and its cost |
 | `test/menu-check.mjs` | headless check of the Menu map (every row by its click path), the four ways to close the drawer, and the time wheels |
@@ -114,7 +120,15 @@ OrbitControls (it stays as the holder of camera and target) with the WebGL page'
   Menu > About. A label hides while a building or the ground is between the eye and its anchor (`occlude.js`).
 - Numbers, before and after, at eye heights of 10, 100 and 1500 m: skill docklands-3d-page, "Three.js port: navigation".
 
+- Globe (2026-10-13): `?view=globe` opens on the planet over the region; `?ll=<lat>,<lon>[,<alt m>]` (the eye's height above
+  the point; outside the model, or above 36 km, the globe shows it) and `&ht=<heading>,<tilt>` (degrees; tilt from straight
+  down); `?globe=0` leaves the globe out (the model's old 16 km zoom limit); `?gx=` vertical exaggeration of the globe's
+  terrain (1 to 50); `?lang=` the language of the globe's names (else the browser's); `?g.<layer>=0|1` a world layer off
+  or on. Zooming out past 40 km from the model hands over to the globe; zooming in under 36 km over the model hands back.
+
 Examples:
+https://danbri.github.io/londat/docklands/?view=globe ,
+https://danbri.github.io/londat/docklands/?ll=43.859,18.433,4000&ht=0,40 (Sarajevo),
 https://danbri.github.io/londat/docklands/?view=rotherhithe&t=2026-10-03T22:30 ,
 https://danbri.github.io/londat/docklands/?view=cw&t=2026-10-08T13:00&ground=rgb2008 ,
 https://danbri.github.io/londat/docklands/?view=greenlandday&webgl .
@@ -263,6 +277,9 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Renderer: shadows, bloom, draw every frame, backend (port); frame times on the map (port, 2026-10-12, `?fps=1`) | About > Settings |
 | Plotter (SVG for a pen plotter) | About > Plotter |
 | Credits and data licences; the OSM corner credit folds to (i) after 5 s or the first touch | About > Credits; the (i) button and "credits" in the corner open it |
+| Globe: World, Home (Docklands), North up (port only, 2026-10-13) | Go > Globe; on the globe also the round buttons at the right (⌂, N, ◯) |
+| Globe layers: graticules, coastlines, borders, regions, rivers, lakes, the UK skeleton layers, place names (port only) | Layers > World (globe) |
+| Search countries, regions, seas, cities, UK places (port only) | the search box at the top of the menu (world results after the model's) |
 
 ## Water (2026-10-08)
 
@@ -317,8 +334,10 @@ the time zone stay in `adapters/uk.js`.
 
 | call | returns |
 |---|---|
-| `goTo(target)`; target: a place name, a view id (`listViews()`), or `{ lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg? }` | the new view (as `getView`) and `found` (name, kind); an error outside the model box |
+| `goTo(target)`; target: a place name (the model's, then the world's: "Tokyo", "France", "Snowdon"), a view id (`listViews()`), or `{ lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg?, tilt_deg? }` anywhere on Earth | the new view (as `getView`) and `found` (name, kind); outside the model box or above 36 km the globe takes the view |
+| `getView()` on the globe | `mode: 'globe'`, `eye` (lon, lat, height_m above the ellipsoid, above_sea_level_m, above_ground_m), `target`, `range_m`, `heading_deg`, `tilt_deg`, `pitch_deg`, `fov_deg`, `zoom` (web-map), `time`, `share` (`?ll=…&ht=…`) |
 | `getView()` | `eye` and `target` (lon, lat, height_m, above_ground_m / ground_m), `heading_deg` (true), `heading_name`, `pitch_deg` (negative = down), `range_m`, `fov_deg` (vertical, horizontal), `time` (iso, local, time_zone), `sun`, `night`, `view`, `share` |
+| `describeView()` on the globe | `text`, `centre` (country, region, sea, lake; `more` from a skeleton set: district, county, national park, nearest place), `below`, `countries_in_view`, `water_in_view`, `places_in_view`, `nearest`, heading and tilt. In the model inside the UK the text ends with the area (district, county, country) |
 | `describeView({ maxItems })` | `text` (a short paragraph) and `in_view`: `buildings` (the tallest, with name, height_m, OSM id), `places`, `water`, `parks`, each with distance_m, bearing_deg, direction, side (ahead, ahead left, left ...); `over`, `time`, `sun` (altitude, azimuth, day part), `weather`, `live` (aircraft and ships in the frame), `share` |
 | `featuresAt(lon, lat)`, `featuresAt()` (the centre of the view) | `building` (model_index, name, osm, osm_url, height_m, base_m, top_m, levels, type, address, wikidata, `registry`: id, use, occupants, companies, homes, owners, occupant_names, atlas link), `water` (name, level, tidal), `park`, `ground_m`, `nearest` places, `text` |
 | `setTime(iso or "now")` | time, night, sun; a time without Z or an offset is the wall clock of the place |
@@ -328,7 +347,7 @@ the time zone stay in `adapters/uk.js`.
 | `describing` (get/set), `speak(text)`, `spoken`, `openTextView()`, `webmcp` | the spoken-view switch, the live region, its last 20 texts, the text view, what WebMCP registered |
 | `perf()` (2026-10-12, `perf.js`, all styles) | `frame_ms` and `fps` (median and 95th percentile of the requestAnimationFrame interval of continuous frames over the last 2 s; `samples` 0 when the page only draws on a change), `drawn_per_s`, `submit_ms` (CPU), `style`, `tier`, `moving`, `text` (a sentence for a screen reader or an agent); in Painted also `paint`: tier, mode (auto or fixed), moving, the auto tier's last steps |
 
-Deep links without the model frame: `?ll=<lat>,<lon>[,<range m>]` and `?place=<name>` (after `?view=` and the share hash).
+Deep links without the model frame: `?ll=<lat>,<lon>[,<alt m>]` (since 2026-10-13 the third number is the eye's height above the point, not the range; `&ht=heading,tilt` on the globe) and `?place=<name>` (after `?view=` and the share hash).
 
 ### WebMCP
 

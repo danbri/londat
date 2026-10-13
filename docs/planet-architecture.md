@@ -16,6 +16,7 @@ This note is the design. It does not build the globe. What exists now:
 | UK adapter (BNG, OSTN15, ODN, the model frame) | https://github.com/danbri/londat/blob/main/docklands/geo/adapters/uk-os.js | the model frame and heights; the tools still call `lib.mjs bngProjector` |
 | locale check (KR1.1) | https://github.com/danbri/londat/blob/main/tools/check-locale.mjs , list: https://github.com/danbri/londat/blob/main/docs/locale-inventory.md | in `npm run check` |
 | tests | https://github.com/danbri/londat/tree/main/docklands/geo/test | in `npm test` |
+| the globe in the port (2026-10-13): own quadtree of ellipsoid patches in TSL, floating frame at the eye, logarithmic depth per material, hand-over to and from the model, world skeleton (Natural Earth, ETOPO 2022, EGM96), the UK skeleton drawn by view cell | https://github.com/danbri/londat/tree/main/docklands/globe , data https://github.com/danbri/londat/tree/main/cwplans/docklands/data/world | first step of KR2.1; KR2.2 and KR2.7; skill docklands-3d-page, "Three.js port: globe and world skeleton (2026-10-13)" |
 
 ## 1. Frames
 
@@ -229,7 +230,7 @@ To **KR1.2** (three places outside the UK by the same pipeline) and **KR2.1** (g
 
 | step | what | effort | KR |
 |---|---|---|---|
-| 1 | Spike: 3d-tiles-renderer core under WebGPURenderer r186 (a public sample tileset, then one of ours): errors, frame time, memory; record in the skill | 1 to 2 | KR2.1 |
+| 1 | Spike: 3d-tiles-renderer core under WebGPURenderer r186 (a public sample tileset, then one of ours): errors, frame time, memory; record in the skill. **Done 2026-10-13**: a 4-tile 3D Tiles 1.1 set of ours draws on both backends with no errors once an import-map shim gives the plugin bundle `WebGLRenderer`; the globe surface uses our own quadtree (no terrain tiles yet, GLSL-only plugins, no floating origin); 3d-tiles-renderer stays the plan for content tiles | 1 to 2 | KR2.1 |
 | 2 | Region from the URL (`?region=`), `geo/current.js` chooses it; sky3 observer from the region origin; text and units from Intl with the region locale | 1 | KR1.2, KR1.3 |
 | 3 | Tools take `--region` (one config instead of `fetch-docklands.mjs` BOX_BNG / ORIGIN; 21 importers); the UK adapter wraps `bngProjector` | 3 to 5 | KR1.1 |
 | 4 | Tile writer: one geodetic level-14 (or BNG 1 km) cell to glTF in its ENU, with `transform`, meshopt, metadata; `tileset.json` with implicit tiling | 3 to 4 | KR2.3 |

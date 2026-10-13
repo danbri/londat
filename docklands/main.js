@@ -171,7 +171,7 @@ function camState() {
   return { tx: controls.target.x, ty: HFOV ? camera.position.y / VZ - d.y : controls.target.y / VZ, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)), lens: { hfov: HFOV, fov: FOVY, roll: ROLL } };
 }
 function setView(k) {
-  const v = VIEWS[k]; if (!v) return; setCam(v); VIEWNAME = k;
+  const v = VIEWS[k]; if (!v) return; if (GLOBE && GLOBE.mode === 'globe') GLOBE.leave(); setCam(v); VIEWNAME = k;   // a named view is the model's: leave the globe
   if (v.night && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T21:30'));
   if (v.night === false && NIGHT && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T14:00'));
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === k)));

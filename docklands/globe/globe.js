@@ -32,6 +32,8 @@ import { makeLabels } from './labels.js';
 
 // the manifests of layer sets in the globe's contract (world.js header). The UK skeleton adds its manifest here.
 export const MANIFESTS = ['../cwplans/docklands/data/world/layers.json'];
+// skeleton sets (format skeleton-1, docklands/geo/skeleton.js), drawn through skeleton-layers.js
+export const SKELETONS = ['../cwplans/docklands/data/uk/'];
 export const HANDOVER = { range: 36000, out: 40000, marginM: 1000, leaveM: 3000, bg: 3000 };
 const A_ = WGS84.a, MAXR = 4.2e7, MINALT = 25;
 const v3 = (a = 0, b = 0, c = 0) => new THREE.Vector3(a, b, c);
@@ -101,7 +103,9 @@ export async function createGlobe(H) {
     for (let k = 0; k < 3 && sampler; k++) { const g = ecefToGeodetic(...addS(o, d, t)); h = sampler.ell(g.lon, g.lat); const t2 = hitEllipsoid(o, d, h); if (t2 == null) break; t = t2; }
     const P = addS(o, d, t), g = ecefToGeodetic(...P); return { P, t, lon: g.lon, lat: g.lat, h: g.h };
   }
-  const pick = (x, y) => { const r = rayAt(x, y); return groundHit(r.o, r.d); };
+  // (the camera brought up to date with the orbit first: an API call or a gesture can come before the next frame)
+  const syncCam = () => { if (G.mode === 'globe') { const c = orbitCam(orbit); setCamera(c.eye, c.f, c.u); } };
+  const pick = (x, y) => { syncCam(); const r = rayAt(x, y); return groundHit(r.o, r.d); };
 
   // ---------- the orbit (globe navigation state): target lon, lat, h (on the ground), range (m), heading (rad, true, of the
   // view direction), tilt (rad from straight down)
@@ -170,7 +174,9 @@ export async function createGlobe(H) {
   world.addGazetteer(Object.values(REGIONS).map(r => ({ name: r.name, names: [r.id, r.name.split(',').pop()], kind: r.id === REGION.id ? 'model' : 'region-config', prio: r.id === REGION.id ? 0 : 0.5, lon: r.origin.lon, lat: r.origin.lat, rank: 1e9, id: 'region:' + r.id,
     view: r.id === REGION.id ? 'cw' : null, alt_m: r.id === REGION.id ? null : 2500, facts: [{ label: 'Project place', value: `region config ${r.id} (time zone ${r.timeZone}, locale ${r.locale})`, source: 'docklands/geo/regions/' + r.id + '.js' }] })));
   let gazP = null;
-  G.gazetteer = () => gazP || (gazP = manifestsP.then(() => world.loadAll(l => !!l.gazetteer || !!l.lookup || l.nearest)).then(() => true));
+  let skP = null;
+  G.skeletons = () => skP || (skP = import('./skeleton-layers.js').then(m => Promise.all(SKELETONS.map(b => m.addSkeleton(G, new URL(b, location.href).href).catch(e => { console.warn('globe: skeleton', b, e); return null; })))));
+  G.gazetteer = () => gazP || (gazP = Promise.all([manifestsP.then(() => world.loadAll(l => !!l.gazetteer || !!l.lookup || l.nearest)), G.skeletons()]).then(() => true));
 
   async function loadImage(url) { const tl = new THREE.TextureLoader(); const t = await tl.loadAsync(url); return t; }
   function pixels(img, w, h) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(img, 0, 0, w, h); return { w, h, d: c.getImageData(0, 0, w, h).data }; }
@@ -288,7 +294,9 @@ export async function createGlobe(H) {
     H.draw();
   }
   function slerpLL(a, b, t) {
-    const p = geodeticToEcef(a.lon, a.lat, 0), q = geodeticToEcef(b.lon, b.lat, 0), u = nrm(p), v = nrm(q), om = Math.acos(clamp(dot3(u, v), -1, 1));
+    // on the ellipsoid normals (geodetic up vectors), so the latitude that comes back is geodetic (a slerp of ECEF positions
+    // gives geocentric latitude: 0.19 degree south at London, the first version's fault)
+    const u = enuBasis(a.lon, a.lat).up, v = enuBasis(b.lon, b.lat).up, om = Math.acos(clamp(dot3(u, v), -1, 1));
     if (om < 1e-9) return { lon: b.lon, lat: b.lat };
     const s0 = Math.sin((1 - t) * om) / Math.sin(om), s1 = Math.sin(t * om) / Math.sin(om), w = [u[0] * s0 + v[0] * s1, u[1] * s0 + v[1] * s1, u[2] * s0 + v[2] * s1];
     return { lon: Math.atan2(w[1], w[0]) * R2D, lat: Math.atan2(w[2], Math.hypot(w[0], w[1])) * R2D };
@@ -299,7 +307,7 @@ export async function createGlobe(H) {
     const ll = slerpLL(o0, o1, e), lr0 = Math.log(o0.range), lr1 = Math.log(o1.range), bump = Math.max(0, Math.log(F0.peak) - Math.max(lr0, lr1));
     let dh = o1.heading - o0.heading; dh = ((dh + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
     const o = { lon: ll.lon, lat: ll.lat, h: 0, range: Math.exp(lr0 + (lr1 - lr0) * e + bump * 4 * e * (1 - e)), heading: o0.heading + dh * e, tilt: o0.tilt + (o1.tilt - o0.tilt) * e };
-    if (t >= 1) { flight = null; if (F0.view && H.VIEWS[F0.view] && canModel(o1)) { if (G.mode !== 'model') setMode('model'); H.setView(F0.view); } else applyOrbit({ ...o1 }); if (F0.card) showCard(F0.card); if (F0.done) F0.done(); return; }
+    if (t >= 1) { flight = null; if (F0.view && H.VIEWS[F0.view] && canModel(o1)) { if (G.mode !== 'model') setMode('model'); H.setView(F0.view); } else applyOrbit({ ...o1 }); if (F0.card) showEntry(F0.card); if (F0.done) F0.done(); return; }
     applyOrbit(o);
   }
   G.stopFlight = () => { flight = null; };
@@ -403,7 +411,7 @@ export async function createGlobe(H) {
   // ---------- taps: a label opens its card; the ground opens "what is here"
   G.tap = function (x, y) {
     if (!G.ready) return; const lab = labels.at(x, y);
-    if (lab) { const r = lab.ref; showCard(r.entry ? world.entry(r.entry) : world.entry({ L: r.L, i: r.i, kind: r.L.gazetteer?.kind || r.L.id, lon: 0, lat: 0, ...posOf(r.L, r.i) })); return; }
+    if (lab) { const r = lab.ref; showEntry(r.entry ? (r.entry.L || r.entry.texts ? world.entry(r.entry) : r.entry) : world.entry({ L: r.L, i: r.i, kind: r.L.gazetteer?.kind || r.L.id, lon: 0, lat: 0, ...posOf(r.L, r.i) })); return; }
     const g = pick(x, y); if (!g) return; showCard(featuresAt(g.lon, g.lat));
   };
   const posOf = (L, i) => { const f = L.features[i], p = f.properties, s = L.gazetteer || L.labels || {}; const xy = s.at ? [p[s.at[0]], p[s.at[1]]] : f.geometry.type === 'Point' ? f.geometry.coordinates : labelPoint(f.geometry); return xy ? { lon: xy[0], lat: xy[1] } : {}; };
@@ -414,6 +422,9 @@ export async function createGlobe(H) {
     H.showCard(`<h2>${esc(e.name || 'Here')}</h2>${e.local_name ? `<p class="small">${esc(e.local_name)}</p>` : ''}<p class="small">${sub2}${e.lon != null ? ` · ${fmtLatLon(e.lat, e.lon, 3)}` : ''}</p>${facts ? `<div class="tw"><table>${facts}</table></div>` : ''}${e.text ? `<p class="small">${esc(e.text)}</p>` : ''}<p class="small">Map data: Natural Earth (public domain); terrain: ETOPO 2022 (NOAA, public domain).</p>`);
   }
   G.showCard = showCard;
+  // a card, then the extra facts (a place card of a skeleton set) when they come
+  async function showEntry(e) { showCard(e); if (e && e.more) { const f = await e.more().catch(() => null); if (f && f.length) showCard({ ...e, facts: [...(e.facts || []).filter(x => x.label !== 'Kind'), ...f], more: null }); } }
+  G.showEntry = showEntry;
 
   // ---------- what is at a point; the view in words; the view as numbers
   function featuresAt(lon, lat) {
@@ -443,7 +454,10 @@ export async function createGlobe(H) {
     for (let j = 1; j <= 5; j++) for (let i = 1; i <= 7; i++) { const g = pick(innerWidth * i / 8, innerHeight * j / 6); if (g) samples.push(g); }
     const inView = (lon, lat) => { const P = geodeticToEcef(lon, lat, 0), up = enuBasis(lon, lat).up; if (dot3(sub(c.eye, P), up) < 0) return false; return !!project(P); };
     const sun = G.subsolar ? { altitude_deg: r1(90 - surfaceDistance(ctr ? ctr.lon : e.lon, ctr ? ctr.lat : e.lat, G.subsolar.lon, G.subsolar.lat) / 111195) } : null;
+    const more = ctr ? await G.whereMore(ctr.lon, ctr.lat) : {};
     const d = world.describe({ eye: { lon: r6(e.lon), lat: r6(e.lat), alt_m: Math.round(e.h) }, centre: ctr ? { lon: r6(ctr.lon), lat: r6(ctr.lat) } : null, heading_deg: ((orbit.heading * R2D) % 360 + 360) % 360, tilt_deg: orbit.tilt * R2D, samples, inView, sun, maxItems: o.maxItems || 8, time: o.time || null });
+    if (Object.keys(more).length) { d.centre.more = more; const parts = [more.builtUp, more.district, more.county !== more.district ? more.county : null, more.region, more.country].filter(Boolean);
+      if (parts.length) d.text += ` In detail (${more.source}): ${[...new Set(parts)].join(', ')}${more.nationalPark ? '; in ' + more.nationalPark : ''}${more.nearest ? `; the nearest place is ${more.nearest.name}, ${fmtDist(more.nearest.dist_m)} away` : ''}.`; }
     return d;
   };
   function drawGlobeIfNeeded() { if (G.mode === 'globe' && !G.lastEye) { const c = orbitCam(orbit); setCamera(c.eye, c.f, c.u); } }
@@ -475,12 +489,15 @@ export async function createGlobe(H) {
   };
   G.flyToEntry = (e, opt = {}) => {
     if (e.view && H.VIEWS[e.view]) return G.home(opt);
-    const big = e.kind === 'country' ? 2.6e6 : e.kind === 'region' ? 9e5 : e.kind === 'sea' ? 3e6 : e.kind === 'lake' || e.kind === 'river' ? 6e5 : e.kind === 'region-config' ? 4000 : 6e4;
+    const big = e.kind === 'country' ? 2.6e6 : e.kind === 'region' ? 9e5 : e.kind === 'sea' ? 3e6 : e.kind === 'lake' || e.kind === 'river' ? 6e5 : e.kind === 'region-config' ? 25000 : 6e4;
     flyTo({ lon: e.lon, lat: e.lat, range: e.alt_m || big, heading: 0, tilt: e.kind === 'place' || e.kind === 'region-config' ? 40 * D2R : 0 }, { card: e, ...opt });
   };
   // Home: the Docklands view of the page (VIEWS.cw), reached by a flight that ends in the model exactly where ?view=cw puts it
   G.home = (opt = {}) => { const v = H.VIEWS.cw, o = modelCamToOrbit({ tx: v.tx, ty: v.ty || 0, tz: v.tz, dist: v.dist, yaw: v.yaw, pitch: v.pitch }); flyTo(o, { view: 'cw', ...opt }); };
-  G.world = (opt = {}) => { const o = G.mode === 'globe' ? orbit : modelOrbit(); flyTo({ lon: o.lon, lat: o.lat, range: 1.25e7, heading: 0, tilt: 0 }, opt); };
+  // the whole globe in view: on a portrait phone the horizontal field decides (390 x 844: about 27,000 km out)
+  const worldRange = () => { const hf = 2 * Math.atan(Math.tan(camera.fov * D2R / 2) * Math.min(1, camera.aspect)); return Math.max(1.25e7, A_ / Math.sin(hf / 2) * 1.08 - A_); };
+  G.worldRange = worldRange;
+  G.world = (opt = {}) => { const o = G.mode === 'globe' ? orbit : modelOrbit(); flyTo({ lon: o.lon, lat: o.lat, range: worldRange(), heading: 0, tilt: 0 }, opt); };
   G.northUp = () => { const o = G.mode === 'globe' ? orbit : modelOrbit(); flyTo({ ...o, heading: 0, tilt: 0 }, { ms: reduced() ? 0 : 700 }); };
 
   // ---------- the "where am I" readout (all modes): the centre of the view, the eye height, country or sea, the nearest place
@@ -491,7 +508,11 @@ export async function createGlobe(H) {
     else { const c = H.camState(), cp = Math.cos(c.pitch), E = [c.tx + c.dist * Math.sin(c.yaw) * cp, c.ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * cp], g = ecefToGeodetic(...modelToEcef([c.tx, c.ty, c.tz])); lon = g.lon; lat = g.lat; alt = E[1]; }
     let where = '', near = '';
     if (world.lookups.size) { const w = world.where(lon, lat); where = w.country ? (w.admin1 && G.mode === 'globe' && orbit.range < 3e6 ? w.admin1.name + ', ' : '') + w.country.name : w.lake ? w.lake.name : w.sea ? w.sea.name : '';
-      const n = world.nearestPlaces(lon, lat, 1, { maxKm: 400 })[0]; if (n) near = `near ${n.name} ${fmtDist(n.dist_m)}`; }
+      const n = world.nearestPlaces(lon, lat, 1, { maxKm: 400 })[0]; if (n) near = `near ${n.name} ${fmtDist(n.dist_m)}`;
+      // a skeleton set's finer answer (district, county, country; the nearest place of its gazetteer) where it has one
+      const m = searchProviders.length && !(G.mode === 'globe' && orbit.range > 1.5e6) ? G.whereCached(lon, lat) : null;   // (from far out: the country is enough)
+      if (m && (m.district || m.county || m.country)) { where = [m.builtUp && m.builtUp !== m.district ? m.builtUp : null, m.district, m.county !== m.district ? m.county : null, m.country].filter(Boolean).join(', ');
+        if (m.nearest && (!n || m.nearest.dist_m < n.dist_m)) near = `near ${m.nearest.name} ${fmtDist(m.nearest.dist_m)}`; } }
     const txt = [fmtLatLon(lat, lon, alt < 2e4 ? 4 : 2), `eye ${fmtDist(Math.max(0, alt))} up`, where, near].filter(Boolean).join(' · ');
     if (el.textContent !== txt) el.textContent = txt;
   }
@@ -508,6 +529,8 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
 .glab.place::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#fff;margin-right:4px;vertical-align:1px;box-shadow:0 0 2px #000}
 .glab.model{color:#7ff3e6;font-weight:700;background:rgba(10,14,18,.55)}
 #whereAmI{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(30px + var(--safe));max-width:min(92vw,720px);z-index:4;pointer-events:none;font:12px/1.3 system-ui,sans-serif;color:#e8eaec;background:#0d1013c0;padding:3px 10px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:600px){#whereAmI{bottom:calc(58px + var(--safe));font-size:11px}}
+@media (min-width:900px){#whereAmI{left:auto;right:44px;transform:none;bottom:calc(6px + var(--safe));max-width:min(46vw,620px)}}   /* clear of the notes at the bottom left */
 #globeBtns{position:fixed;right:10px;top:calc(140px + var(--top));display:flex;flex-direction:column;gap:8px;z-index:5}
 #globeBtns[hidden]{display:none}
 #globeBtns button{width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font:600 16px system-ui,sans-serif;cursor:pointer}
@@ -568,7 +591,9 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
             const feats = (fs && fs.features) || fs || [];
             if (L.kind !== 'points') { cell.meshes = buildLines(feats.flatMap(f => linesOf(f.geometry)), G.heightAt, L.mat, L.style?.lift || 0); for (const m of cell.meshes) { m.visible = false; scene.add(m); } }
             if (L.labels || L.kind === 'points') for (const f of feats) { const p = f.properties || {}, xy = f.geometry?.type === 'Point' ? f.geometry.coordinates : labelPoint(f.geometry), text = p[(L.labels && L.labels.text) || 'name']; if (!xy || !text) continue;
-              cell.labels.push(labels.add({ id: L.id + k + text, text, cls: (L.labels && L.labels.class) || 'extra', P: geodeticToEcef(xy[0], xy[1], G.heightAt(xy[0], xy[1]) + 30), up: enuBasis(xy[0], xy[1]).up, minZ: (L.labels && L.labels.minZoom) ?? null, rank: +p[(L.labels && L.labels.rank) || 'rank'] || 5, pop: +p.pop || 0, ref: { entry: { name: text, kind: L.id, lon: xy[0], lat: xy[1], facts: [] } } })); }
+              const lb = L.labels || {}, fn = (v, d) => typeof v === 'function' ? v(p) : v ?? d;
+              cell.labels.push(labels.add({ id: L.id + k + text, text, cls: lb.class || 'extra', P: geodeticToEcef(xy[0], xy[1], G.heightAt(xy[0], xy[1]) + 30), up: enuBasis(xy[0], xy[1]).up, minZ: fn(lb.minZoom, null), rank: typeof lb.rank === 'function' ? lb.rank(p) : +p[lb.rank || 'rank'] || 5, pop: +p.pop || 0,
+                ref: { entry: { name: text, kind: p.kind || L.id, lon: xy[0], lat: xy[1], facts: [], ...(L.entry ? L.entry(f) : {}) } } })); }
             G.dirty = true; H.draw();
           }).catch(e => console.warn('globe: cell layer', L.id, k, e));
         }
@@ -580,13 +605,22 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   const searchProviders = [], whereProviders = [];
   G.addSearchProvider = fn => searchProviders.push(fn);   // async (q, limit) -> [{ name, kind, lon, lat, country?, facts? }]
   G.addWhereProvider = fn => whereProviders.push(fn);     // async (lon, lat) -> { ...facts } (in featuresAt and describe as "more")
-  G.searchAll = async (q, n = 10) => { const out = world.search(q, n); for (const f of searchProviders) { try { out.push(...(await f(q, n)) || []); } catch (e) { console.warn('globe: search provider', e); } } return out.slice(0, n * 2); };
+  // the world's gazetteer and the providers' (near the centre of the view), merged by match quality (exact, start, word)
+  G.searchAll = async (q, n = 10) => { const out = world.search(q, n), near = viewCentre();
+    for (const f of searchProviders) { try { out.push(...((await f(q, n, near)) || [])); } catch (e) { console.warn('globe: search provider', e); } }
+    return out.map((r, i) => [r, i]).sort((a, b) => (b[0].score || 0) - (a[0].score || 0) || a[1] - b[1]).map(x => x[0]).slice(0, n); };
+  G.hasProviders = () => searchProviders.length > 0;
+  function viewCentre() { if (G.mode === 'globe' || !MF) return [orbit.lon, orbit.lat]; const c = H.camState(), g = ecefToGeodetic(...modelToEcef([c.tx, c.ty, c.tz])); return [g.lon, g.lat]; }
+  // the providers' answer for a point, cached by 0.001 degree (the readout asks often)
+  let whereKey = '', whereVal = null, whereP = null;
+  G.whereCached = (lon, lat) => { const k = lon.toFixed(3) + ',' + lat.toFixed(3); if (k !== whereKey && !whereP) { whereKey = k; whereP = G.whereMore(lon, lat).then(v => { whereVal = v; whereP = null; G.dirty = true; }).catch(() => { whereP = null; }); } return whereVal; };
   G.whereMore = async (lon, lat) => { const out = {}; for (const f of whereProviders) { try { Object.assign(out, await f(lon, lat)); } catch (e) { console.warn('globe: where provider', e); } } return out; };
 
   // ---------- start: ?view=globe opens on the planet (over the region); every other link starts in the model as before
-  if (qs.get('view') === 'globe') G.ensure().then(() => enterGlobe({ lon: REGION.origin.lon, lat: REGION.origin.lat, range: 1.25e7, heading: 0, tilt: 0 })).catch(() => {});
+  if (qs.get('view') === 'globe') G.ensure().then(() => enterGlobe({ lon: REGION.origin.lon, lat: REGION.origin.lat, range: worldRange(), heading: 0, tilt: 0 })).catch(() => {});
   G.enterGlobe = o => G.ensure().then(() => enterGlobe(o));
   G.enterModel = () => enterModel(orbit);
+  G.leave = () => { flight = null; setMode('model'); };   // the caller sets the model camera (main.js setView)
   G.modelToEcef = modelToEcef; G.ecefToModel = ecefToModel;
   G.inBox = inBox; G.modelOrbit = modelOrbit; G.orbitCam = orbitCam; G.world_ = world; G.layers = layers; G.labels = () => labels; G.sampler = () => sampler; G.frameState = F; G.pick = pick; G.project = project;
   G.lang = lang;

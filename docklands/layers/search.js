@@ -102,13 +102,19 @@ export default {
       // then the world (globe/globe.js: countries, regions, seas, lakes, rivers, cities, the project's places): a result flies there
       const G = D3()?.globe, res = out.slice(0, G ? 9 : 14);
       if (G) { if (!G.gazReady) G.gazetteer().then(() => { G.gazReady = true; if (qIn.value) runSearch(); }).catch(() => {});
-        else for (const w of G.search(q, 14 - res.length)) res.push({ t: w.name, k: [w.kind === 'region-config' ? 'project place' : w.kind === 'model' ? '3D model' : w.kind, w.country].filter(Boolean).join(', '), go: () => G.flyToEntry(w) }); }
+        else for (const w of G.search(q, 14 - res.length)) res.push(worldItem(G, w)); }
+      res.nModel = Math.min(out.length, G ? 9 : 14);
       return res;
     }
-    let last = [];
+    const worldItem = (G, w) => ({ t: w.name, k: [w.kind === 'region-config' ? 'project place' : w.kind === 'model' ? '3D model' : w.kind, w.region, w.country].filter(Boolean).join(', '), go: () => G.flyToEntry(w) });
+    let last = [], asked = 0;
+    function render() { qRes.innerHTML = '';
+      for (const it of last) { const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.innerHTML = `${esc(it.t)}<span class="k">${esc(it.k)}</span>`; b.onclick = () => pick(it); li.appendChild(b); qRes.appendChild(li); } }
     function runSearch() {
-      last = searchItems(qIn.value); qRes.innerHTML = '';
-      for (const it of last) { const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.innerHTML = `${esc(it.t)}<span class="k">${esc(it.k)}</span>`; b.onclick = () => pick(it); li.appendChild(b); qRes.appendChild(li); }
+      last = searchItems(qIn.value); render();
+      // the world's providers (a skeleton set's gazetteer, near the view) answer later: the world part is replaced then
+      const G = D3()?.globe, q = qIn.value, id = ++asked;
+      if (G && G.gazReady && G.hasProviders() && q.trim().length >= 2) G.searchAll(q.trim(), 14 - last.nModel).then(list => { if (id !== asked || qIn.value !== q) return; last = [...last.slice(0, last.nModel), ...list.map(w => worldItem(G, w))]; last.nModel = 0; render(); }).catch(() => {});
     }
     const drawerEl = () => document.getElementById('drawer');
     function pick(it) { qRes.innerHTML = ''; qIn.blur(); if (innerWidth < 900) document.getElementById('drawerX')?.click(); it.go(); }

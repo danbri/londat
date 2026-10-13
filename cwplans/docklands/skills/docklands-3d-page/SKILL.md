@@ -1,14 +1,14 @@
 ---
 name: docklands-3d-page
 description: >-
-  Work on the Docklands 3D page, cwplans/docklands/index.html and its scripts (WebGL 1, 15 shader programs):
+  Work on the Docklands 3D page, cwplans/docklands/index.html and its scripts (WebGL 1):
   vertex formats (the alpha byte is not opacity; g carries building use and roof top), picking by model index, the
   drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (docklands/, WebGPU/WebGL 2); and the
-  headless test recipe (two sizes x two pixel ratios). Sky, clock, weather and
-  tide: skill docklands-sky. Reach for it before you edit the page or its scripts, add a layer or a style, change a
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (docklands/, WebGPU/WebGL 2) and its globe (?view=globe); and the
+  headless test recipe (two sizes x two pixel ratios). Sky, clock, weather,
+  tide: skill docklands-sky. Reach for it before you edit the page or scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
 ---
 
@@ -2763,3 +2763,107 @@ auto (low) 84 / 74 ms still / moving. `docklands/test/api-check.mjs`: all passed
 Open: no phone numbers yet; the stroke character ("not v striking") is unchanged; the shower-door slide of screen-fixed
 dabs is unchanged; in software the per-pass cost dominates, so a real cut there needs fewer passes (e.g. the copy and the
 mask in one multiple-render-target pass).
+
+## Three.js port: globe and world skeleton (2026-10-13)
+
+OKR O2 (mission-critical; KR2.1 first step, KR2.2, KR2.7; https://github.com/danbri/londat/issues/7). Owner, 2026-10-12:
+"skeletal coverage of world geography including planet-shaped world; also skeleton of uk with more open data vector and
+factoid content. Then leiden after we can fly around uk and world without getting totally lost." Earlier: "sphericalish
+planet model cf google earth". Design: https://github.com/danbri/londat/blob/main/docs/planet-architecture.md .
+Live: https://danbri.github.io/londat/docklands/?view=globe (the default page still opens on the Docklands).
+
+- **Renderer path: our own quadtree, not 3d-tiles-renderer (step 1 of the design note, done on 2026-10-13).** Spike:
+  3d-tiles-renderer 0.5.3 (Apache-2.0) core, `TilesRenderer` + `ReorientationPlugin`, a 4-tile 3D Tiles 1.1 set with glTF
+  content in ENU frames, under three.js r186 `WebGPURenderer`: it loads and draws on both backends (WebGPU on Dawn's
+  SwiftShader and WebGL 2), 4 of 4 tiles, no errors, 1 to 5 ms a frame after the first. One fault: its plugin bundle
+  imports `WebGLRenderer` from 'three', which three.webgpu.js does not export (a module error at import); an import-map
+  scope that maps 'three' to a shim (`export * from three.webgpu.js; export { WebGLRenderer } from three.module.js`, both
+  share three.core.js) fixes it. Chosen anyway for the globe surface: our own patches, because (1) no terrain tiles exist
+  yet (the tile writer is step 4) and one global texture is enough for a skeleton, (2) its terrain, fade and overlay
+  plugins patch GLSL and do not run on WebGPU, (3) it keeps the whole set in one ECEF group (or one fixed reoriented
+  origin), and the globe needs a floating origin. 3d-tiles-renderer stays the plan for content tiles (KR2.3): the spike
+  shows the core works under r186 with the shim.
+- **Files.** `docklands/globe/globe.js` (frames, camera, navigation, flights, hand-over, background, labels, readout, UI,
+  API), `globe/terrain.js` (quadtree and TSL material), `globe/vectors.js` (lines), `globe/labels.js`, `globe/world.js`
+  (pure: contract, decoding, lookups, search, describe; Node and `npm test` use it), `globe/skeleton-layers.js` (a
+  skeleton-1 set such as the UK skeleton on the globe). main.js: `GLOBE` hooks in the loop (`tick`, `frame` in globe mode,
+  `background` before `pipe.render()`), `NV.DMAX` raised to 40 km, the zoom-out hook in `zoomTarget` / `zoomAbout`, `tap`
+  in globe mode, Share in globe mode; api.js: goTo, getView, describeView, findPlaces and featuresAt at globe scale,
+  `?ll=lat,lon,alt&ht=heading,tilt`; search.js: world results after the model's (providers async, near the view).
+- **Frames and precision.** The globe scene's world frame floats: origin = the eye (ECEF, doubles), axes = east, up,
+  south at the eye. Every mesh (a terrain patch, a line chunk, the atmosphere) holds float32 offsets from its own centre C
+  (ECEF) and gets `matrixWorld = R (C - O)` each frame, computed in JS doubles (`matrixAutoUpdate` and
+  `matrixWorldAutoUpdate` false); the camera sits at (0, 0, 0) with a rotation only. So the GPU never sees 6,378 km
+  numbers. Depth: `material.depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar)` on every globe
+  material (the renderer's own depth mode is unchanged, so the model's materials are untouched); near = 0.3 x the eye's
+  height above the ground, far = the horizon distance + 3,000 km.
+- **The model on the globe.** The model stays flat in its frame (curvature left out: up to 3.1 m at 6.3 km, as before).
+  It is placed by the region (`geo/current.js` REGION: the ENU frame at the Docklands origin) and the adapter that has a
+  `modelFrame` (geo/adapters/uk-os.js `modelFrame`, loaded by the module path in the region config, so globe.js names no
+  country). Model camera <-> orbit: eye and target through `ENU.enuToEcef(MF.toEnu(p))`; the orbit made from them gives the
+  same eye exactly (`orbitFrom`), and back the model target is the ground on the view ray (eye kept). Measured: the flight
+  Home ends at `?view=cw` with eye and target 0.000 m off; the wheel hand-over in keeps the eye to under 0.05 m.
+- **Modes and hand-over.** "model": the existing scene and navigation; above 3 km eye height the globe is drawn into a
+  `RenderTarget` (half float) and set as `scene.backgroundNode = texture(rt.texture, screenUV)` (the sky dome, stars and
+  moon disc hidden), so the world goes on past the model's ground and its 37 km haze ring. "globe": globe.js draws and
+  moves the camera; `controls.enabled` is false (main.js navigation rests; `blocked()` tells the globe's own state from the
+  drone's or a headset's). Globe -> model: orbit range under 36 km with the target over the model box (1 km margin) and no
+  finger down; model -> globe: a zoom out past 40 km (`NV.DMAX`; main.js `zoomTarget`, `zoomAbout` call `GLOBE.wantOut()`)
+  or the target 3 km outside the box. A flight crosses modes frame by frame (`applyOrbit`).
+- **Surface.** Patches of a geodetic quadtree (2 roots of 180 degrees, then 4 children; 33 x 33 vertices plus skirts;
+  positions on the ellipsoid in doubles, offsets in float32, an `up` and a `geo` (lon, lat) attribute). The vertex stage
+  samples the terrain texture (`texture().level(0)`) and the geoid and moves the vertex along `up`: h = water ? 0 :
+  height, + N. Split while the vertex spacing on screen is over 12 px, to level 8 at most (0.7 degree patches, vertices 2.4
+  km apart; the data are 9.8 km a pixel); culled by the frustum and by the horizon (+0.06 rad for mountains). Colour:
+  land by height and latitude (green, olive, brown, grey, snow; a dry band at 12 to 36 degrees: no land-cover data, a stated
+  simplification), sea by depth, lakes; relief from four texture samples (x5, x1.75 under water); sun from Astronomy
+  Engine (the subsolar point of the page clock: `Equator('Sun')` and `SiderealTime`); a glint on water; a blue rim by
+  view angle. Atmosphere: a back-faced shell 100 km up, glow by how close the view ray passes the earth, lit by the sun.
+- **Data** (`cwplans/tools/build-world-skeleton.mjs fetch|build`; register entries and the `build-world-skeleton`
+  activity; `cwplans/docklands/data/world/`, 16 MB): terrain 4096 x 2048 PNG (3.5 MB: R height code, G land fraction, B
+  lake fraction) from ETOPO 2022 60" box means (public domain, read by OPeNDAP in 20 bands, about 933 MB) and Natural Earth
+  land and lakes; EGM96 1-degree geoid PNG (21 kB; NGA, public domain); Natural Earth 5.1.2 (public domain): coastline
+  50m, countries 50m (names in 26 languages, label points, population, Wikidata), boundaries 50m, admin-1 10m (polygons
+  and lines), rivers 50m, lakes 50m, marine areas 50m, populated places 10m (7,342), and `names-<lang>.json` per language
+  (only the visitor's is loaded). Format wsk1: integers in 1/1000 degree, delta-coded per line or ring.
+- **Layer contract** (world.js header; for the UK skeleton and later sets). A manifest (JSON) lists layers `{ id, label,
+  kind: lines | polygons | points, url | data (GeoJSON or wsk1), style { color, opacity, minAlt, maxAlt }, labels { text,
+  names, at, minZoom, maxZoom, rank, class }, gazetteer { kind, text, names, at, rank }, lookup (country | admin1 | sea |
+  lake | any word), nearest }`; `globe.js MANIFESTS` lists them. In code: `globe.addLayer(spec with features)`,
+  `addGazetteer(items)`, `addCellLayer({ id, label, kind, style, labels, levels: [[maxEyeAltM, level]], query(bbox,
+  level) -> GeoJSON features })` (streamed by view cell of the same geodetic quadtree), `addSearchProvider(async (q, n,
+  near))`, `addWhereProvider(async (lon, lat))`. `SKELETONS` lists skeleton-1 sets; `skeleton-layers.js` turns one into
+  cell layers (levels 3 / 6 / 8 by eye height 800 km / 120 km), search near the view, cards, and the readout.
+- **Not getting lost.** Search: the search box (top of the menu) and `findPlaces` / `goTo(name)`: the model first, then the
+  world gazetteer (countries in all their languages and ISO codes, admin-1, seas, lakes, rivers, places by population;
+  the region configs first: "León" finds Casco Histórico, León; "Leiden" finds Leiden centre), then the UK skeleton
+  (`near` = the centre of the view: from Wales "Snowdon" is Yr Wyddfa). Flights: target on the great circle of the
+  geodetic normals, range up and down in log space (peak about the distance), 1.2 to 5.5 s, none with reduced motion.
+  Readout `#whereAmI` (bottom centre, hidden with the labels): lat, lon, eye height, region and country (the UK
+  skeleton's district, county, country inside the UK), nearest place. Buttons in globe mode (right, under the wheels):
+  Home (the flight to `?view=cw`), North (shows the heading; north up and straight down), World. Menu > Go > Globe: World,
+  Home, North up. Menu > Layers > World (globe): one switch a layer and "Place names on the globe". Labels: Natural Earth
+  zoom ranges against the view's web-map zoom, horizon, declutter by box, at most 70. Names in the browser's language
+  (`navigator.languages` -> one of the 26; `?lang=`), else the data's default name; the local name as the title.
+- **Measured (2026-10-13, headless, software).** globe-check all passed on WebGL 2 and WebGPU (SwiftShader), 1280 x 800 @1 and 390 x 844 @2. Triangles and
+  patches (draw calls) at orbit, 1,000 km, 100 km, 10 km: 1280 x 800: 113k (38; 101), 131k (45; 190), 55k (15; 157),
+  31k (6; 148); 390 x 844: 47k (12; 75), 65k (19; 164), 39k (9; 151), 26k (4; 146). CPU time to submit a frame 1.5 to 5
+  ms; frame interval in software 0.4 to 0.8 s on WebGL 2 and 0.5 to 1.5 s on WebGPU (SwiftShader, not a phone). World data
+  load 1.0 to 1.3 s. Flight orbit -> Canary Wharf ends at `?view=cw` with eye and target 0.000 m off; wheel hand-over in
+  at 30.3 km range with the eye 0 m off; wheel out hands over after 9 (1280) or 17 (390) notches. Search and fly:
+  Sarajevo, León, Leiden (the region configs), Tokyo (Natural Earth); "Snowdon" from Wales finds Yr Wyddfa (UK
+  skeleton).
+  Test: `node docklands/test/globe-check.mjs [--webgpu] [--sizes ...] [--full]` (server on the worktree root, port 8211;
+  screenshots in `docklands/test/out/globe/`).
+- **Faults met.** (1) `layerList()` spread `{ key, ...L }`: a manifest field called `key` overwrote it ("no layer a3"):
+  the field is now `idProp`. (2) The names tables were keyed by the index before features without geometry were dropped
+  ("North Sea" became the Barents Sea in German): keyed after the drop now (test in world.test.mjs). (3) A slerp of ECEF
+  positions gives geocentric latitude: the zoom to the pointer moved the target 0.19 degree south at London each step; the
+  slerp is on the ellipsoid normals now. (4) A pick before the next frame used the last frame's camera: `pick` brings the
+  camera up to date first. (5) Level 11 at a tilted 22 km view drew 539 patches and 1.4 M triangles: level 8 and 12 px.
+  (6) The test's default-page step waited for the world data, which load only on the first need.
+- **Open.** Terrain is 9.8 km a pixel: a tile pyramid (or quantized-mesh through 3d-tiles-renderer) for detail under 100
+  km; no land cover (deserts and forests by latitude and height only); lines are one device pixel (WebGPU has no wide
+  lines); globe labels are not occluded by mountains; no momentum on the globe; the MCP server's Node tools
+  (`tools/view-mcp/page-api.mjs`) do not use world.js yet; the world data and the UK skeleton draw the coast twice (Natural
+  Earth 50m and ONS) inside the UK; a real phone must confirm the gestures and the cost; Leiden (KR1.2) comes next.

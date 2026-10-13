@@ -2481,3 +2481,36 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   metre apart, gov.scot 403 to Node fetch, an "OSTN15" in prose failed the locale check.
 - Open: Northern Ireland has no OS layers (OSNI terms unclear) and only Wikidata settlements in the gazetteer;
   Scotland and NI census; terrain left to the world DEM; cards not yet in kgx.
+
+## 2026-10-13: globe and world skeleton in the Three.js port (KR2.1 first step, KR2.2, KR2.7)
+
+- Owner, 2026-10-12: "skeletal coverage of world geography including planet-shaped world ... Then leiden after we can fly
+  around uk and world without getting totally lost." Built by a subagent on a worktree branch; the UK skeleton (another
+  subagent, merged to main as 1e9e00f5) merged in and drawn on the globe.
+- Step 1 of docs/planet-architecture.md done: 3d-tiles-renderer 0.5.3 core draws a 4-tile 3D Tiles 1.1 set under three.js
+  r186 WebGPURenderer on both backends, with an import-map shim for its `WebGLRenderer` import. The globe surface is our own
+  quadtree of ellipsoid patches in TSL (no terrain tiles yet; its terrain and overlay plugins are GLSL; no floating
+  origin there). Recorded in the docklands-3d-page skill.
+- New: `docklands/globe/` (globe.js, terrain.js, vectors.js, labels.js, world.js, skeleton-layers.js), tool
+  `cwplans/tools/build-world-skeleton.mjs` (activity `build-world-skeleton`, area `world`), data
+  `cwplans/docklands/data/world/` (16 MB: ETOPO 2022 60" box means and Natural Earth land/lakes in a 4096 x 2048 PNG,
+  3.5 MB; EGM96 1-degree geoid; Natural Earth 5.1.2 coastline, countries with 26 languages, borders, admin-1, rivers,
+  lakes, seas, 7,342 places; all public domain; register sources natural-earth, etopo-2022, egm96), tests
+  `docklands/test/globe-check.mjs` and `docklands/geo/test/world.test.mjs` (in `npm test`).
+- Page: zoom out past 40 km and the globe takes the view; zoom in under 36 km over the box and the model takes it back;
+  `?view=globe`; `?ll=lat,lon,alt&ht=heading,tilt` (the third number is now the eye height); search for any country,
+  region, sea, city and UK place; Home, North, World; "where am I" readout; Menu > Go > Globe; Menu > Layers > World.
+  API: goTo, getView, describeView, findPlaces, featuresAt at globe scale; WebMCP tool names unchanged.
+- Measured (headless, software): globe-check all passed on WebGL 2 and WebGPU (SwiftShader), 1280 x 800 @1 and 390 x 844 @2. Triangles and
+  patches (draw calls) at orbit, 1,000 km, 100 km, 10 km: 1280 x 800: 113k (38; 101), 131k (45; 190), 55k (15; 157),
+  31k (6; 148); 390 x 844: 47k (12; 75), 65k (19; 164), 39k (9; 151), 26k (4; 146). CPU time to submit a frame 1.5 to 5
+  ms; frame interval in software 0.4 to 0.8 s on WebGL 2 and 0.5 to 1.5 s on WebGPU (SwiftShader, not a phone). World data
+  load 1.0 to 1.3 s. Flight orbit -> Canary Wharf ends at `?view=cw` with eye and target 0.000 m off; wheel hand-over in
+  at 30.3 km range with the eye 0 m off; wheel out hands over after 9 (1280) or 17 (390) notches. Search and fly:
+  Sarajevo, León, Leiden (the region configs), Tokyo (Natural Earth); "Snowdon" from Wales finds Yr Wyddfa (UK
+  skeleton).
+- Faults met (skill): a `key` field clash, names keyed before dropped features, geocentric latitude from a slerp of ECEF
+  positions (0.19 degree south at London per zoom step), a pick with the last frame's camera, level 11 drawing 1.4 M
+  triangles.
+- Open: terrain detail under 100 km (tile pyramid), land cover, wide lines, label occlusion by mountains, momentum on the
+  globe, the MCP server's Node tools, phone checks; Leiden (KR1.2) next.
