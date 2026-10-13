@@ -12,6 +12,7 @@
 // the region's shop adapters (one file per region in adapters/; STOCK_MCP_ADAPTER names another)
 const { SHOPS } = await import(process.env.STOCK_MCP_ADAPTER || './adapters/canary-wharf.mjs');
 import * as cache from './cache.mjs';
+import { closeBrowser } from './policy.mjs';
 
 const log = (...a) => process.stderr.write(`[stock-mcp] ${a.join(' ')}\n`);
 const json = v => ({ content: [{ type: 'text', text: JSON.stringify(v, null, 1) }] });
@@ -92,5 +93,7 @@ process.stdin.on('data', chunk => {
     handle(msg);
   }
 });
-process.stdin.on('end', () => process.exit(0));
+const quit = async () => { await closeBrowser(); process.exit(0); };
+process.stdin.on('end', quit);
+process.on('SIGTERM', quit);
 log('ready');

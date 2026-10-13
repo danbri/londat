@@ -2452,3 +2452,32 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Locale check: commit 74057cc went out failing (`ui_en_gb`, `uk_sources` in the shop code; a pipe hid the exit code).
   Fixed: place and locale in `tools/stock-mcp/data/region.json`, shop adapters in `tools/stock-mcp/adapters/canary-wharf.mjs`
   (an adapter location for `tools/check-locale.mjs`, as `docklands/adapters/`); baseline not changed.
+
+## 2026-10-12: stock system (find, check, cache), sets H to K
+
+- Owner: "Next steps - go ahead" and "Our goal is not just the data but a system for getting the data as needed".
+  `cwplans-stock` 0.2: `find_product` and `check_product` for all 11 shops (Hotel Chocolat added: guest token, SCAPI),
+  cache (lookups a day, stock 5 minutes), observation log, cookie-jar redirects, headless browser on demand (Boss).
+  Live test from user words: 10 of 11 answered with the Canary Wharf branch; Intimissimi to retest by day. Set H: The
+  White Company search finds variant codes, not EANs. Set I: Watches of Switzerland still 0 at 466. Set J: Boss works
+  in headless Chromium only. Set K: Hotel Chocolat works with plain fetch (2 requests a check).
+
+## 2026-10-12: UK skeleton (KR2.7, data only)
+
+- Owner: "also skeleton of uk with more open data vector and factoid content. Then leiden after we can fly around uk
+  and world without getting totally lost." Built by a subagent on a worktree branch, data only (the globe renderer is
+  another agent's work in `docklands/`).
+- New: region `uk` with adapter `uk-skeleton` (`docklands/geo/regions/uk.js`: every host, product, field, the CRS and
+  the projector), tool `cwplans/tools/build-uk-skeleton.mjs` (fetch, then 8 dataflow operations logged in
+  `cwplans/docklands/data/uk/log.json`), reader `docklands/geo/skeleton.js` (features by bbox and level, search, card,
+  whereAmI, describe), test `docklands/geo/test/skeleton.test.mjs`, skill `cwplans-uk-skeleton`.
+- Data `cwplans/docklands/data/uk/`: 14 layers at quadtree levels 3 / 6 / 8 (ONS boundaries with coast and boundary
+  lines and census 2021 population; Zoomstack motorways, A roads, rail, lakes; Open Rivers; Built Up Areas; NaPTAN
+  stations; national parks, National Landscapes, National Scenic Areas; place labels), gazetteer 156,535 entries (433
+  files), 3,018 Wikidata cards; 37.5 MB in 1,530 files (budget 40 MB). All OGL v3.0 or CC0; no OSM.
+- Measured: reprojection OSTN15 round trip 0.000 m (4,107 NaPTAN points); NaPTAN's own lon/lat are Helmert-made (1.4 m
+  median from OSTN15). Second build run: 8 of 8 operations unchanged.
+- Traps (skill): QLever rank FILTER (279 of 40,792 rows), Open Rivers Thames in 23 components, Zoomstack rail ends a
+  metre apart, gov.scot 403 to Node fetch, an "OSTN15" in prose failed the locale check.
+- Open: Northern Ireland has no OS layers (OSNI terms unclear) and only Wikidata settlements in the gazetteer;
+  Scotland and NI census; terrain left to the world DEM; cards not yet in kgx.

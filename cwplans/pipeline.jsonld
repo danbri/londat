@@ -10501,6 +10501,99 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolukskeleton",
+   "@type": "prov:Activity",
+   "rdfs:label": "uk-skeleton",
+   "dct:description": "Fetches the sources named by the region adapter uk-skeleton (docklands/geo/regions/uk.js) into data/raw/uk-skeleton/ with a fetch log (URL, date, bytes, SHA-256), then runs eight named operations over those files (dataflow, skill cwplans-dataflow: activity id = sha256 of operation, version, input hashes and parameters; skipped when log.json holds it with its outputs unchanged): uk-boundaries (ONS polygons in BNG cut into arcs at junctions, each arc simplified once by Douglas-Peucker so that neighbours share one edge; coast lines = arcs of one country, boundary lines = arcs of two areas; census 2021 usual residents joined to districts through the LAD22 to LAD23 lookup), uk-protected-areas, uk-zoomstack (roads by class and number, railways, surface water; pieces merged end to end on a 2 m grid, the straightest continuation at junctions), uk-rivers (Open Rivers links grouped by name and node), uk-built-up, uk-stations (NaPTAN RLY and MET), uk-gazetteer (OS Open Names kinds chosen, postcode districts as the mean of their postcodes, river and area names, Wikidata settlements of Northern Ireland; Wikidata matched to OS names by the DBpedia link, then by name within 8 km; place cards; place labels), uk-manifest. Each vertex goes from BNG to WGS84 through OSTN15 (proj4 with the OS NTv2 grid) after simplification; files are cut by the worldwide geodetic quadtree (levels 3, 6, 8; polygons whole in the cell of their bbox centre, lines clipped at cell edges, points in their cell) and written in the format skeleton-1 (integer, delta-coded coordinates).",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsgeographyuk",
+     "dcat:accessURL": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services",
+     "dct:description": "6 boundary layers and the LAD22 to LAD23 lookup, by object id in batches of 20, outSR 27700"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenzoomstack",
+     "dcat:accessURL": "https://api.os.uk/downloads/v1/products/OpenZoomstack/downloads?area=GB&format=GeoPackage&redirect"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopennamesgb",
+     "dcat:accessURL": "https://api.os.uk/downloads/v1/products/OpenNames/downloads?area=GB&format=CSV&redirect"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenriversgb",
+     "dcat:accessURL": "https://api.os.uk/downloads/v1/products/OpenRivers/downloads?area=GB&format=GeoPackage&redirect"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosbuiltupareas",
+     "dcat:accessURL": "https://api.os.uk/downloads/v1/products/BuiltUpAreas/downloads?area=GB&format=GeoPackage&redirect"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaptangb",
+     "dcat:accessURL": "https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=csv"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnomiscensus2021ts001ltla",
+     "dcat:accessURL": "https://www.nomisweb.co.uk/output/census/2021/census2021-ts001.zip"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcneaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnrwaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcscotgovnsa"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwikidata",
+     "dcat:accessURL": "https://qlever.dev/api/wikidata",
+     "dct:description": "UK settlements with a population, cities, Northern Ireland settlements, then 10 property queries by VALUES"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosostn15"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawukskeleton"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/manifest.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/layers/*/*/*.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/gazetteer/*.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/cards/*.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-uk-skeleton.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-uk-skeleton.mjs [fetch|build] [--refetch] [--force] [--region=uk]",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "Open sources only: OGL v3.0 (OS OpenData, ONS, DfT, Natural England, NRW, Scottish Government) and CC0 (Wikidata); no OSM; the licence of each source in the manifest and the register.",
+    "No UK constant in the tool: hosts, products, fields, the CRS and the projector come from the region adapter (tools/check-locale.mjs).",
+    "Douglas-Peucker tolerances in metres (BNG, before reprojection) at levels 3 / 6 / 8: boundaries 800 / 150 / 60; roads 500 / 150 / 50; rail - / 150 / 50; rivers - / 150 / 40; lakes - / 150 / 50; built-up areas - / 150 / 60; national parks and landscapes 800 / 150 / 30. Road and rail lines shorter than twice the tolerance dropped; rings below a minimum area dropped.",
+    "Coordinates rounded to 3 decimals at level 3 and 4 at levels 6 and 8 (about 11 m north-south, 7 m east-west).",
+    "Cards: Wikidata items with a non-deprecated population of 5,000 or more, cities (P31/P279* Q515), Northern Ireland settlements; the preferred-rank population, else the latest dated; each fact carries src and retrieved; Wikipedia, Commons and websites as links only.",
+    "Size budget: the whole skeleton under 40 MB (test docklands/geo/test/skeleton.test.mjs); raw downloads stay in the ignored raw folder.",
+    "Bump an operation version when its body or a shared helper changes: the memo key does not see the code."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "skeleton",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolcwgmapspdfs",
    "@type": "prov:Activity",
    "rdfs:label": "Canary Wharf Group maps and guides (PDF) supplied by the owner",
@@ -25455,6 +25548,195 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/manifest.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "UK skeleton manifest (KR2.7): layers, levels, quadtree cells, files with bbox and feature counts, gazetteer and card files, sources, licences, fetch dates, credits, the reader contract",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsgeographyuk"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenzoomstack"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopennamesgb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenriversgb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosbuiltupareas"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaptangb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnomiscensus2021ts001ltla"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcneaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnrwaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcscotgovnsa"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwikidata"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosostn15"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolukskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Dataflow log of the UK skeleton: the operations, the fetches (URL, date, bytes, SHA-256) and one activity per run (inputs and outputs by SHA-256)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolukskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/README.md",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "UK skeleton: the loader contract (manifest, file format skeleton-1, cells, levels, the reader docklands/geo/skeleton.js), layers, sources, accuracy",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/layers/*/*/*.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "UK skeleton vector layers, one file per layer, level (3 national, 6 regional, 8 city) and geodetic quadtree cell, WGS84, format skeleton-1: countries, regions, counties, districts (with census 2021 population), coast and boundary lines (ONS); motorways and A roads, railways, lakes (OS Open Zoomstack); rivers (OS Open Rivers); built-up areas (OS); stations (NaPTAN); national parks (ONS), national landscapes and scenic areas (Natural England, NRW, Scottish Government); place labels (OS Open Names, Wikidata)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsgeographyuk"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenzoomstack"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopennamesgb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenriversgb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosbuiltupareas"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnaptangb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnomiscensus2021ts001ltla"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcneaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnrwaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcscotgovnsa"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwikidata"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosostn15"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolukskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/gazetteer/*.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "UK gazetteer for search, one file per two-letter name key: OS Open Names settlements and named places (not streets), postcode districts, river names, ONS area names, landscape names, Wikidata settlements of Northern Ireland; WGS84 points, kind, district, Wikidata QID and population",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopennamesgb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosopenriversgb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsgeographyuk"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcneaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcnrwaonb"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcscotgovnsa"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwikidata"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosostn15"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolukskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/uk/cards/*.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "UK place cards: Wikidata facts for UK cities, settlements of 5,000 people or more and Northern Ireland settlements (population with its date, area, elevation, inception, administrative parent), links only (Wikidata, English Wikipedia title, Commons file page, official website), each fact with source and retrieval date; the ONS district that holds the point",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcwikidata"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsgeographyuk"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolukskeleton"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/srcosm",
    "@type": [
     "prov:Entity",
@@ -30792,6 +31074,116 @@
    "dct:title": "London Datastore: Create your own mapping templates (Excel add-in): ward-map-kml.kml",
    "dct:license": "Open Government Licence v2",
    "dcat:landingPage": "https://data.london.gov.uk/dataset/create-your-own-mapping-templates-excel-add-in-2jx1l"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srconsgeographyuk",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "ONS Open Geography Portal, UK boundaries: countries, counties and unitary authorities, local authority districts (December 2024, BUC and BGC), regions of England (December 2024, BGC), national parks of GB (December 2022, BGC), LAD22 to LAD23 lookup (ArcGIS feature services, BNG)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://geoportal.statistics.gov.uk/",
+   "cwp:attribution": "Source: Office for National Statistics licensed under the Open Government Licence v3.0. Contains OS data © Crown copyright and database right 2024"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcosopenzoomstack",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "OS Open Zoomstack, GB GeoPackage (2026-04): roads_national, roads_regional, rail, surfacewater",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://www.ordnancesurvey.co.uk/products/os-open-zoomstack",
+   "cwp:attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcosopennamesgb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "OS Open Names, GB CSV (2026-07 release)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+   "cwp:attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0); postcodes: contains Royal Mail data © Royal Mail copyright and database right 2026"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcosopenriversgb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "OS Open Rivers, GB GeoPackage (2026-04)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://www.ordnancesurvey.co.uk/products/os-open-rivers",
+   "cwp:attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcosbuiltupareas",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "OS Open Built Up Areas, GB GeoPackage (2026-07)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://www.ordnancesurvey.co.uk/products/os-open-built-up-areas",
+   "cwp:attribution": "Contains OS data © Crown copyright and database right 2026 (OS OpenData, Open Government Licence v3.0)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcnaptangb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "NaPTAN access nodes (DfT), all of Great Britain (CSV): active rail (RLY) and metro / tram (MET) station areas",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://beta-naptan.dft.gov.uk/",
+   "cwp:attribution": "Contains public sector information licensed under the Open Government Licence v3.0"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcnomiscensus2021ts001ltla",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Census 2021 TS001 usual residents, lower-tier local authorities of England and Wales (Nomis bulk zip census2021-ts001.zip)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://www.nomisweb.co.uk/sources/census_2021_bulk",
+   "cwp:attribution": "Source: Office for National Statistics, Census 2021, licensed under the Open Government Licence v3.0"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcneaonb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Areas of Outstanding Natural Beauty (England), Natural England (ArcGIS feature service)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://naturalengland-defra.opendata.arcgis.com/",
+   "cwp:attribution": "© Natural England copyright. Contains Ordnance Survey data © Crown copyright and database right"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcnrwaonb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Areas of Outstanding Natural Beauty (Wales), Natural Resources Wales (ArcGIS feature service, \"open data under OGL\")",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://datamap.gov.wales/",
+   "cwp:attribution": "Contains Natural Resources Wales information © Natural Resources Wales and database right. Contains Ordnance Survey data"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcscotgovnsa",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "National Scenic Areas, Scottish Government (maps.data.gov.scot ArcGIS map service)",
+   "dct:license": "OGL v3.0",
+   "dcat:landingPage": "https://www.spatialdata.gov.scot/",
+   "cwp:attribution": "© Scottish Government, contains Ordnance Survey data © Crown copyright and database right"
   }
  ]
 }
