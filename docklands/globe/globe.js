@@ -287,6 +287,7 @@ export async function createGlobe(H) {
     if (!G.ready) { G.ensure().then(() => flyTo(o1, opt)).catch(() => {}); return; }
     const o0 = G.mode === 'globe' ? { ...orbit } : modelOrbit();
     o1 = { ...o0, heading: 0, tilt: 0, ...o1 }; if (sampler) o1.h = sampler.ell(o1.lon, o1.lat);
+    if (!o1.view && !opt.view && !inBox(o1.lon, o1.lat, HANDOVER.marginM)) o1.range = Math.max(o1.range, 60000 / Math.max(0.1, Math.cos(o1.tilt)));   // the 60 km floor away from the model (G.goTo)
     const dist = surfaceDistance(o0.lon, o0.lat, o1.lon, o1.lat), peak = Math.min(MAXR * 0.5, Math.max(o0.range, o1.range, dist * 1.1));
     const ms = opt.ms ?? (reduced() || opt.instant ? 0 : clamp(1200 + 900 * Math.log10(1 + dist / 20000), 1200, 5500));
     flight = { o0, o1, peak, t0: performance.now(), ms, view: opt.view || null, done: opt.done || null, card: opt.card || null };
@@ -316,15 +317,17 @@ export async function createGlobe(H) {
   // ---------- the Kármán line (100 km): a green aurora flash over the whole view and a short vibration as the eye crosses
   // it, either way (owner, 2026-10-13). Over in 250 ms, so the view never rests green. Each crossing resets a 10 s
   // recharge: strength = time since the last crossing / 10 s (a recrossing at 1 s gives 0.1, at 9 s gives 0.9).
-  let kAlt = NaN, kLast = -Infinity, kEl = null;
+  // A crossing more than 1,000 km from the last one counts as fresh (full strength), as if 10 s had passed.
+  let kAlt = NaN, kLast = -Infinity, kEl = null, kAt = null;
   function karman(h, now) {
     const prev = kAlt; kAlt = h; if (!isFinite(prev) || (prev < 1e5) === (h < 1e5)) return;
-    const s = clamp((now - kLast) / 10000, 0, 1); kLast = now; G.karman = { strength: s, up: h >= 1e5, at: now };
+    const here = { lon: F.eyeGeo.lon, lat: F.eyeGeo.lat }, far = !kAt || surfaceDistance(kAt.lon, kAt.lat, here.lon, here.lat) > 1e6; kAt = here;
+    const s = far ? 1 : clamp((now - kLast) / 10000, 0, 1); kLast = now; G.karman = { strength: s, up: h >= 1e5, at: now };
     if (s < 0.02 || reduced()) return;
     if (!kEl) { kEl = document.createElement('div'); kEl.id = 'karmanFlash'; kEl.setAttribute('aria-hidden', 'true');
-      kEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:3;opacity:0;mix-blend-mode:screen;background:radial-gradient(120% 60% at 30% 0%,#3dff9a 0%,transparent 60%),radial-gradient(90% 50% at 75% 10%,#1fd6a0 0%,transparent 55%),linear-gradient(180deg,#2bff8f88 0%,#0a5 40%,transparent 85%)';
+      kEl.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:3;opacity:0;background:radial-gradient(130% 70% at 30% 0%,#7dffb8 0%,#2bff8fcc 35%,transparent 75%),radial-gradient(100% 60% at 75% 15%,#3fffd0 0%,#00d48add 40%,transparent 80%),linear-gradient(180deg,#5cff9e 0%,#00c86ecc 50%,#00a05a88 100%)';
       document.body.appendChild(kEl); }
-    kEl.animate([{ opacity: 0 }, { opacity: 0.75 * s, offset: 0.25 }, { opacity: 0 }], { duration: 250, easing: 'ease-out' });
+    kEl.animate([{ opacity: 0 }, { opacity: 0.95 * Math.sqrt(s), offset: 0.2 }, { opacity: 0 }], { duration: 250, easing: 'ease-out' });
     try { navigator.vibrate?.(Math.round(10 + 30 * s)); } catch { /* no vibration */ }
     H.say?.(`${h >= 1e5 ? 'Above' : 'Below'} the Kármán line (100 km)`);
   }
@@ -526,7 +529,10 @@ export async function createGlobe(H) {
     await G.ensure();
     const tilt = t.tilt_deg != null ? +t.tilt_deg * D2R : t.pitch_deg != null ? (90 - clamp(+t.pitch_deg, 1, 90)) * D2R : 0;
     const range = +(t.range_m ?? ((t.alt_m ?? t.alt ?? 1.5e6) / Math.max(0.1, Math.cos(tilt))));
-    const o = { lon: +t.lon, lat: +t.lat, h: 0, range, heading: (+t.heading_deg || 0) * D2R, tilt };
+    // outside the model box the globe has only coarse world data (terrain 9.8 km a pixel): an eye under 60 km sees one
+    // flat colour (owner, 2026-10-13: the Sarajevo link opened on "pure beige"), so the eye goes no lower than 60 km there
+    const minR = inBox(+t.lon, +t.lat, HANDOVER.marginM) ? 0 : 60000 / Math.max(0.1, Math.cos(tilt));
+    const o = { lon: +t.lon, lat: +t.lat, h: 0, range: Math.max(range, minR), heading: (+t.heading_deg || 0) * D2R, tilt };
     if (!isFinite(o.lon) || !isFinite(o.lat) || Math.abs(o.lat) > 90) throw new Error('goTo needs lon and lat in WGS84 degrees');
     await new Promise(ok => flyTo(o, { ms: opt.animate ? undefined : 0, view: t.view || null, done: ok, card: opt.card || null }));
     return G.getView();

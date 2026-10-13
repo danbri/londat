@@ -147,9 +147,9 @@ for (const [w, h, dpr] of SIZES) {
   check(!errors.length, `${tag} no page errors (globe page)`, errors.slice(0, 4).join(' | '));
   await ctx.close();
   if (w === SIZES[0][0]) {
-    const o = await open(w, h, dpr, `ll=35.68,139.76,20000&layers=&t=${T}`); await globeReady(o.page); await onGlobe(o.page);
+    const o = await open(w, h, dpr, `ll=35.68,139.76,80000&layers=&t=${T}`); await globeReady(o.page); await onGlobe(o.page);
     const v = await view(o.page);
-    check(v.mode === 'globe' && Math.abs(v.target.lat - 35.68) < 0.01 && Math.abs(v.eye.above_ground_m - 20000) < 3000, `${tag} deep link ?ll=35.68,139.76,20000`, JSON.stringify(v.eye));
+    check(v.mode === 'globe' && Math.abs(v.target.lat - 35.68) < 0.01 && Math.abs(v.eye.above_ground_m - 80000) < 3000, `${tag} deep link ?ll=35.68,139.76,80000 (heights under 60 km away from the model rise to 60 km)`, JSON.stringify(v.eye));
     check(!o.errors.length, `${tag} no page errors (?ll= page)`, o.errors.slice(0, 3).join(' | '));
     await o.ctx.close();
   }

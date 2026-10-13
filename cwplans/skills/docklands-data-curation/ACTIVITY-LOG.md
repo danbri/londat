@@ -2554,3 +2554,11 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Boot screen `#boot` (index.html) stays until the start view is drawn (20 s at most for an away start).
 - Tests passed: globe-controls, globe-check 390 x 844, npm test 61/61, check OK.
 - Open: performance (O3); boot time in software is 43 s away and 71 s at cw (not a phone figure).
+
+## 2026-10-13: 60 km floor away from the model; stronger Kármán flash
+- Owner: the Sarajevo link (`?ll=43.859,18.433,4000`) opened on "pure beige". The cause: an eye at 4 km over world data
+  of 9.8 km a pixel. Fix: outside the model box, flights, searches and `?ll=` stop at 60 km eye height at the lowest
+  (globe.js `flyTo`, `G.goTo`). Remove this floor when terrain tiles exist (KR2.2).
+- Kármán flash: brighter green layers, peak opacity 0.95 x sqrt(strength). A crossing more than 1,000 km from the last
+  crossing has full strength (owner: "reset the counter as if 10s had passed if we move to another distant part of globe").
+- globe-check: the deep-link test now uses 80 km. Tests passed: globe-check 390 x 844, globe-controls, npm test, check.
