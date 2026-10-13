@@ -2562,3 +2562,17 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
 - Kármán flash: brighter green layers, peak opacity 0.95 x sqrt(strength). A crossing more than 1,000 km from the last
   crossing has full strength (owner: "reset the counter as if 10s had passed if we move to another distant part of globe").
 - globe-check: the deep-link test now uses 80 km. Tests passed: globe-check 390 x 844, globe-controls, npm test, check.
+
+## 2026-10-13: owner reports; phone as a window (first step)
+- Owner: "The 80km Sarajevo link showed docklands even if i waited ages". The live page loaded headless (390 x 844, WebGL 2)
+  at 18:15 UTC: it shows the globe over Sarajevo, 81 km up, at night (dark), within 20 s. Not reproduced. Possible causes:
+  the phone kept an old copy of main.js or globe.js (Pages caches for 10 min), or the globe failed to start on WebGPU on
+  iOS (then `?ll` falls back to the model). Next: test on the iPhone with a cache reload, and add an on-screen message when
+  the globe fails to start.
+- Owner: the Night view shows a "crisscross of lights - maybe plane routes so lhr?". Not examined. Next: identify the layer
+  (approach paths, aircraft trails, or the globe's UK roads at night) from a screenshot.
+- Look-through mode (locate layer, eye button) now uses the phone as a window: vertical field = the angle the screen fills
+  at 30 cm (about 25 degrees on an iPhone in portrait), plus the screen's roll from the motion sensor. `?arfov=camera`
+  gives the old 60 degrees, and `?arfov=<degrees>` sets it by hand. Not tested on a device. Next: front-camera face
+  tracking (eye distance and offset) for a true window, for example MediaPipe Face Landmarker (Apache-2.0), with
+  permission and no frames kept.

@@ -109,6 +109,15 @@ export default {
       setCam({ tx: cx, tz: cz, ty: groundAt(cx, cz), yaw: -b, pitch: .3, dist: 900 }); unpress();
       if (S.mode !== 'off') setMode('located');
     }
+    // ---------- the phone as a window (owner, 2026-10-13: "imagine iphone etc as a window on the world behind the phone"):
+    // the vertical field is the angle the screen fills at the eye, about 30 cm away (a phone: about 0.0156 cm a CSS px).
+    // ?arfov=<degrees> sets it by hand; ?arfov=camera gives 60 degrees (the old look-through field). Face tracking with
+    // the front camera to measure the eye's distance and offset is not done yet (skill docklands-3d-page, "Locate").
+    const AR = new URLSearchParams(location.search).get('arfov');
+    function windowFov() {
+      if (AR === 'camera') return 60 * D2R; if (AR && isFinite(+AR)) return Math.max(10, Math.min(120, +AR)) * D2R;
+      const hcm = innerHeight * 0.0156; return 2 * Math.atan(hcm / 2 / 30);
+    }
     // ---------- compass
     const iosAsk = () => typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
     const screenAngle = () => (screen.orientation && typeof screen.orientation.angle === 'number' ? screen.orientation.angle : +(window.orientation || 0)) || 0;
@@ -122,7 +131,9 @@ export default {
         const hE = c0[0] * Math.sin(th) + c1[0] * Math.cos(th) - c2[0], hN = c0[1] * Math.sin(th) + c1[1] * Math.cos(th) - c2[1];
         if (Math.hypot(hE, hN) > 1e-3) hTrue = Math.atan2(hE, hN) * R2D;
       }
-      if (e.beta != null) { const p = Math.asin(Math.max(-1, Math.min(1, -Math.cos(be) * Math.cos(ga)))); S.pitch += (p - S.pitch) * .25; }
+      if (e.beta != null) { const p = Math.asin(Math.max(-1, Math.min(1, -Math.cos(be) * Math.cos(ga)))); S.pitch += (p - S.pitch) * .25;
+        // roll of the screen about the view axis (phone held up, portrait): -gamma, eased; 0 when the phone lies flat
+        const r = Math.abs(e.beta) > 35 ? Math.max(-60, Math.min(60, -(e.gamma || 0))) : 0; S.roll = (S.roll || 0) + (r - (S.roll || 0)) * .25; }
       if (hTrue == null) return;
       S.compassT = performance.now(); S.events++;
       addHeading(wrap360(hTrue + (S.conv ?? trueToGrid(S.fix ? S.fix.lon : -.02, S.fix ? S.fix.lat : 51.5))), 'compass');
@@ -149,7 +160,7 @@ export default {
       const gy = groundAt(f.x, f.z);
       if (m === 'eye') {
         const yaw = S.hv ? Math.atan2(S.hv[0], S.hv[1]) : (S.eyeYaw ?? -c.yaw), pitch = Math.max(-1.1, Math.min(1.1, S.pitch)), ey = gy + 1.6, cp = Math.cos(pitch), D = 100;
-        const want = { tx: f.x + D * Math.sin(yaw) * cp, ty: ey + D * Math.sin(pitch), tz: f.z - D * Math.cos(yaw) * cp, yaw: -yaw, pitch: -pitch, dist: D };
+        const want = { tx: f.x + D * Math.sin(yaw) * cp, ty: ey + D * Math.sin(pitch), tz: f.z - D * Math.cos(yaw) * cp, yaw: -yaw, pitch: -pitch, dist: D, fov: windowFov(), roll: S.roll || 0, hfov: null };
         if (!eyeOn || Math.hypot(want.tx - c.tx, want.tz - c.tz) > .02 || Math.abs(want.ty - c.ty) > .02) setCam(want, true);
       } else {
         const dx = f.x - c.tx, dz = f.z - c.tz, d = Math.hypot(dx, dz), kk = d > 2000 || d < .3 ? 1 : k, n = { ...c };
