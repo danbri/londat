@@ -2867,3 +2867,28 @@ Live: https://danbri.github.io/londat/docklands/?view=globe (the default page st
   lines); globe labels are not occluded by mountains; no momentum on the globe; the MCP server's Node tools
   (`tools/view-mcp/page-api.mjs`) do not use world.js yet; the world data and the UK skeleton draw the coast twice (Natural
   Earth 50m and ONS) inside the UK; a real phone must confirm the gestures and the cost; Leiden (KR1.2) comes next.
+
+### Globe controls (2026-10-13)
+
+The owner, 2026-10-13: "the controls are very jumpy and counter intuitive, please verify that their logic is correct
+including scaling and direction". Test: `node docklands/test/globe-controls.mjs` (synthetic pointer and wheel events sent
+with no frame between them, as a phone sends 2 to 4 touch moves a frame). Before the fix it gave these faults:
+- Drag overshoot: `dragTo` cast its ray from the camera of the last drawn frame. Each move between frames counted the
+  earlier moves again, so the map ran ahead of the finger. 40 moves in one frame put the grabbed point off the screen.
+  Fix: `anchor(P, x, y)` brings the camera up to date (`syncCam`) before each ray, and repeats 4 times. A change of target
+  longitude is a turn about the polar axis, so longitude is exact after one step. Error now 0.0 px.
+- Wheel and pinch did not stay on the pointer: zoom-in moved the target by a slerp of (1 - f), and zoom-out did not
+  move it. Error was 7 to 11 px in and 125 to 132 px out a burst of 5 notches. The pinch error was 205 px. Fix: pick the
+  point, change the range, then `anchor`. Error now 0.0 px in and out, with tilt 0 and 45.
+- Twist was reversed: `heading += da`. A twist of 23 degrees clockwise turned the view 23 degrees the wrong way. The map
+  must turn with the fingers, as in the model (`s.yaw += da`, and heading = -yaw). Fix: `heading -= da`.
+- The turn drag was reversed against the model. The model's turn drag (one finger, or the left button) is
+  `yaw -= dx * 0.006`, so heading += dx. The globe's turn drag (right button or Shift) was `heading -= dx * 0.005`. Fix:
+  `heading += dx * 0.006`, and tilt at the same 0.006 rad a pixel.
+- A drag that began in the model died at the hand-over (the globe did not know the pointer). Fix: the globe takes over
+  a pressed pointer that it does not know.
+- Wheel: one event is limited to 250 px (x 1.45). A trackpad flick can send 1,000 px.
+
+Open: the two modes use different one-finger gestures. The model turns and tilts with one finger, and moves with a
+right or Shift drag or with two fingers. The globe moves with one finger (Google Earth) and turns with a right or Shift
+drag. The owner must choose one rule. The globe has no momentum after a fling; the model has.

@@ -366,12 +366,21 @@ export async function createGlobe(H) {
   // to the pointer; double click zooms in there; keys: arrows move, + and - zoom, N north up
   const cv = renderer.domElement, ptrs = new Map(); let grab = null, two = null, lastNav = 0;
   const touched = () => { lastNav = performance.now(); flight = null; G.dirty = true; H.draw(); };
-  function dragTo(x, y) {   // move the orbit so that the grabbed point comes under (x, y)
-    if (!grab || !grab.g) return; const r = rayAt(x, y), R0 = len(grab.g.P);
-    let t = null; { const b = 2 * dot3(r.o, r.d), c = dot3(r.o, r.o) - R0 * R0, D = b * b - 4 * c; if (D >= 0) { const t1 = (-b - Math.sqrt(D)) / 2; if (t1 > 0) t = t1; } }
-    if (t == null) return; const g = ecefToGeodetic(...addS(r.o, r.d, t)), g0 = ecefToGeodetic(...grab.g.P);
-    orbit.lon = wrapLon(orbit.lon + (g0.lon - g.lon)); orbit.lat = clamp(orbit.lat + (g0.lat - g.lat), -89.9, 89.9); guard(orbit); touched();
+  // move the orbit target (heading, tilt and range kept) so that the ground point P comes under the screen point (x, y).
+  // The camera is brought up to date before each ray (a phone sends 2 to 4 moves a frame; a ray from the last drawn
+  // frame's camera counts the same move again and throws the map off screen). A change of target longitude is a turn
+  // about the polar axis, so the longitude error goes to 0 in one step; latitude needs 2 or 3.
+  function anchor(P, x, y) {
+    const R0 = len(P), g0 = ecefToGeodetic(...P);
+    for (let k = 0; k < 4; k++) {
+      syncCam(); const r = rayAt(x, y), b = 2 * dot3(r.o, r.d), c = dot3(r.o, r.o) - R0 * R0, D = b * b - 4 * c;
+      if (D < 0) return; const t = (-b - Math.sqrt(D)) / 2; if (t <= 0) return;
+      const g = ecefToGeodetic(...addS(r.o, r.d, t)), dl = ((g0.lon - g.lon + 540) % 360) - 180, db = g0.lat - g.lat;
+      orbit.lon = wrapLon(orbit.lon + dl); orbit.lat = clamp(orbit.lat + db, -89.9, 89.9); guard(orbit);
+      if (Math.abs(dl) + Math.abs(db) < 1e-9) break;
+    }
   }
+  function dragTo(x, y) { if (!grab || !grab.g) return; anchor(grab.g.P, x, y); touched(); }
   cv.addEventListener('pointerdown', e => {
     if (G.mode !== 'globe') return; flight = null;
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, alt: e.button === 2 || e.shiftKey || e.ctrlKey, x0: e.clientX, y0: e.clientY });
@@ -380,24 +389,27 @@ export async function createGlobe(H) {
     touched();
   });
   cv.addEventListener('pointermove', e => {
-    const p = ptrs.get(e.pointerId); if (!p || G.mode !== 'globe') return;
+    let p = ptrs.get(e.pointerId); if (G.mode !== 'globe') return;
+    // a drag that began in the model and crossed the hand-over: the globe takes the same finger on (no dead gesture)
+    if (!p) { if (!e.buttons || ptrs.size) return; p = { x: e.clientX, y: e.clientY, alt: (e.buttons & 2) > 0 || e.shiftKey || e.ctrlKey, x0: e.clientX, y0: e.clientY }; ptrs.set(e.pointerId, p); grab = { g: pick(e.clientX, e.clientY) }; return; }
     const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; if (!dx && !dy) return;
-    if (ptrs.size === 1) { if (p.alt) { orbit.heading -= dx * 0.005; orbit.tilt = clamp(orbit.tilt - dy * 0.005, 0, maxTilt(orbit.range)); guard(orbit); touched(); } else dragTo(e.clientX, e.clientY); }
+    if (ptrs.size === 1) { if (p.alt) { orbit.heading += dx * 0.006; orbit.tilt = clamp(orbit.tilt - dy * 0.006, 0, maxTilt(orbit.range)); guard(orbit); touched(); } else dragTo(e.clientX, e.clientY); }
     else if (ptrs.size === 2 && two) {
       const q = [...ptrs.values()], d = Math.hypot(q[0].x - q[1].x, q[0].y - q[1].y), a = Math.atan2(q[1].y - q[0].y, q[1].x - q[0].x), m = [(q[0].x + q[1].x) / 2, (q[0].y + q[1].y) / 2];
       const dmy = m[1] - two.m[1], same = Math.sign(q[0].y - q[0].y0) === Math.sign(q[1].y - q[1].y0) && Math.abs(d - two.d) < 4;
       if (same && Math.abs(dmy) > Math.abs(m[0] - two.m[0])) { orbit.tilt = clamp(orbit.tilt - dmy * 0.004, 0, maxTilt(orbit.range)); }
-      else { orbit.range *= two.d / Math.max(1, d); let da = a - two.a; da = ((da + 3 * Math.PI) % (2 * Math.PI)) - Math.PI; orbit.heading += da; guard(orbit); dragTo(m[0], m[1]); }
+      else { orbit.range *= two.d / Math.max(1, d); let da = a - two.a; da = ((da + 3 * Math.PI) % (2 * Math.PI)) - Math.PI; orbit.heading -= da; guard(orbit); dragTo(m[0], m[1]); }   // the map turns with the fingers (as the model)
       two = { d, a, m }; guard(orbit); touched();
     }
   });
   const end = e => { if (!ptrs.delete(e.pointerId)) return; two = null; if (ptrs.size === 1) { const q = [...ptrs.values()][0]; grab = { g: pick(q.x, q.y) }; } else grab = null; lastNav = performance.now(); };
   cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
-  function zoomAt(f, x, y) {
-    if (f < 1 && x != null) { const g = pick(x, y); if (g) { const k = 1 - f, ll = slerpLL(orbit, g, k); orbit.lon = ll.lon; orbit.lat = ll.lat; } }
-    orbit.range *= f; guard(orbit); touched();
+  function zoomAt(f, x, y) {   // in and out about the point under (x, y): it stays under the pointer
+    const g = x != null ? pick(x, y) : null;
+    orbit.range *= f; guard(orbit); if (g) anchor(g.P, x, y); touched();
   }
-  cv.addEventListener('wheel', e => { if (G.mode !== 'globe') return; e.preventDefault(); const dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 800 : 1); zoomAt(Math.exp(dy * 0.0015), e.clientX, e.clientY); }, { passive: false });
+  // the wheel: one notch (100 px) = x 1.16; a trackpad flick can send 1,000 px in one event: limited to x 1.45
+  cv.addEventListener('wheel', e => { if (G.mode !== 'globe') return; e.preventDefault(); const dy = clamp(e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 800 : 1), -250, 250); zoomAt(Math.exp(dy * 0.0015), e.clientX, e.clientY); }, { passive: false });
   cv.addEventListener('dblclick', e => { if (G.mode === 'globe') zoomAt(0.45, e.clientX, e.clientY); });
   addEventListener('keydown', e => {
     if (G.mode !== 'globe' || e.ctrlKey || e.metaKey || e.altKey || (e.target instanceof Element && e.target.closest('input,select,textarea,[role=slider]'))) return;

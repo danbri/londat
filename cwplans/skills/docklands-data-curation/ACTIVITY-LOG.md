@@ -2518,3 +2518,15 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   `npm run check` OK; live files `docklands/globe/globe.js` and `cwplans/docklands/data/world/layers.json` match the commit.
   Live: https://danbri.github.io/londat/docklands/?view=globe . Note for headless probes: on `?view=globe` wait for
   `__docklands3.globe.ready`, not `__docklands3.ready` (the model loads only at hand-over).
+
+## 2026-10-13: globe controls checked and fixed (owner: "controls are very jumpy and counter intuitive")
+- New test `docklands/test/globe-controls.mjs`. Before the fix it found these faults:
+  - A drag overshot: the ray came from a stale camera, and the point went off the screen after 40 moves in one frame.
+  - Wheel zoom-out did not stay on the pointer (125 to 132 px off), and zoom-in was 7 to 11 px off.
+  - A pinch was 205 px off.
+  - The twist and the turn drag went the opposite way to the model.
+- After the fix all are 0.0 px, and the directions agree with the model. Details: the docklands-3d-page skill, "Globe
+  controls".
+- globe-check passed (WebGL 2, 1280 x 800 @1 and 390 x 844 @2). `npm test` 61/61. `npm run check` OK.
+- Open, for the owner: one-finger gesture rule (model: turn; globe: move); no momentum on the globe.
+
