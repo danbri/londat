@@ -7,3 +7,6 @@ docklands/test/out/
 
 # stock-mcp call log (local only; tools/stock-mcp/policy.mjs)
 data/raw/stock-mcp/
+
+# world skeleton downloads (cwplans/tools/build-world-skeleton.mjs fetch): Natural Earth, ETOPO 2022 mean grid, EGM96
+data/raw/world-skeleton/

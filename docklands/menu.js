@@ -9,7 +9,7 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch { return 
 // ---------- ctx.ui: a control goes to the current place ('look', 'go', 'time', 'about', 'layers/<group>'); loadLayers
 // sets the place of each layer before its init. ui.tab(place) switches (returns the previous place); every method also
 // takes an optional last argument { tab: place } for one control.
-export const GROUPS = ['city', 'below', 'water', 'live', 'sim', 'overlays', 'kml'];
+export const GROUPS = ['city', 'below', 'water', 'live', 'sim', 'overlays', 'kml', 'world'];   // world: the globe's layers (globe/globe.js)
 export function makeUi(draw) {
   let place = 'layers/city';
   const hostOf = p => { const [pane, g] = String(p || '').split('/');

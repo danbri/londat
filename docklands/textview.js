@@ -2,7 +2,7 @@
 // with links, for screen readers, keyboards, text browsers in effect, and devices with neither WebGPU nor WebGL 2 (OKR
 // KR3.2 first step, KR3.3). Opens with ?text=1, Menu > Views > Access > Text view, the key T, and by itself when main.js
 // cannot start a renderer (event docklands-no3d). Without the 3D page it works from the data alone: area.js (a classic
-// script of index.html), describe.js and the camera of the link (?ll=lat,lon[,range], ?view=, the share hash #v=1&c=).
+// script of index.html), describe.js and the camera of the link (?ll=lat,lon[,alt], ?view=, the share hash #v=1&c=).
 // With the 3D page it asks window.docklands (api.js), so the live counts and the page clock are included, and a link
 // moves the 3D view (goTo) and refreshes the description. Skill: docklands-3d-page, "page API, WebMCP and non-visual access".
 import { makeIndex, describeView, findPlaces, distText, parseTime } from './describe.js';
@@ -25,7 +25,7 @@ const CSS = `#textView{position:fixed;inset:0;z-index:30;overflow:auto;backgroun
 function linkCamera() {
   const ad = index().adapter, asp = innerWidth / Math.max(1, innerHeight), h = {}; for (const p of location.hash.replace(/^#/, '').split('&')) { const i = p.indexOf('='); if (i > 0) try { h[p.slice(0, i)] = decodeURIComponent(p.slice(i + 1)); } catch { /* bad escape */ } }
   let c = null; const ll = (qs.get('ll') || '').split(',').map(Number), hc = (h.c || '').split(',').map(Number);
-  if (ll.length >= 2 && ll.slice(0, 2).every(isFinite)) { const [x, z] = ad.fromLonLat(ll[1], ll[0]); c = { tx: x, tz: z, ty: index().ground(x, z), dist: ll[2] || 900, yaw: 0.7, pitch: 0.5 }; }
+  if (ll.length >= 2 && ll.slice(0, 2).every(isFinite)) { const [x, z] = ad.fromLonLat(ll[1], ll[0]); c = { tx: x, tz: z, ty: index().ground(x, z), dist: ll[2] ? ll[2] / Math.sin(0.5) : 900, yaw: 0.7, pitch: 0.5 }; }   // ll[2]: the eye's height above the point (m)
   else if (hc.length >= 6 && hc.every(isFinite)) c = { tx: hc[0], tz: hc[1], ty: hc[2], dist: hc[3], yaw: hc[4], pitch: hc[5], hfov: /^h[\d.]+$/.test(h.f || '') ? +h.f.slice(1) : null };
   else c = VIEWS[qs.get('view')] || VIEWS[h.vw] || VIEWS.cw;
   const ce = Math.cos(c.pitch), eye = [c.tx + c.dist * Math.sin(c.yaw) * ce, (c.ty || 0) + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * ce];

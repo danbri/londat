@@ -87,6 +87,7 @@ function setVz(v) {
 }
 const eyeM = new THREE.Vector3();   // the eye in model metres
 let OCC = null;   // label occlusion (occlude.js): made before the layers, its grid rebuilt after each rebuildBuildings
+let GLOBE = null;   // the globe (globe/globe.js; ?globe=0 leaves it out): made after the layers
 
 // ---------- static layers
 say('Building the model...');
@@ -202,6 +203,7 @@ function pickAt(x, y) { aim(x, y); const h = pickHit(); return h ? h.i : -1; }
 // a tap: the nearest of the building under the ray and what the layers' pick hooks find (ctx.addPick(ray => null | { distance, open() }))
 const pickHooks = [];
 function tap(x, y) {
+  if (GLOBE && GLOBE.mode === 'globe') { GLOBE.tap(x, y); return; }   // the globe's labels and ground (globe/globe.js)
   aim(x, y); const b = pickHit(); let best = b ? { distance: b.d, open: () => selectModel(b.i) } : null;
   for (const f of pickHooks) { let r = null; try { r = f(ray); } catch (e) { console.warn('pick', e); } if (r && (!best || r.distance < best.distance)) best = r; }
   if (!best) { selectModel(-1); return; }
@@ -315,7 +317,7 @@ function syncLabelsUi() { const off = !$('showLabels').checked; if (document.bod
 // Share this view (Menu > Views; the WebGL page's nav.js share()): the page URL with the share hash; the system share
 // sheet on a touch screen, else the clipboard; the link also shows under the button to copy by hand
 $('shareBtn').onclick = async () => {
-  const url = location.origin + location.pathname + location.search + shareHash(), out = $('shareOut');
+  const url = GLOBE && GLOBE.mode === 'globe' ? GLOBE.shareLink() : location.origin + location.pathname + location.search + shareHash(), out = $('shareOut');   // on the globe: ?ll=lat,lon,alt&ht=heading,tilt
   history.replaceState(null, '', url); out.hidden = false; out.textContent = url;
   if (navigator.share && matchMedia('(pointer: coarse)').matches) { try { await navigator.share({ title: document.title, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   let copied = false; try { await navigator.clipboard.writeText(url); copied = true; } catch {}
@@ -589,11 +591,11 @@ function zoomAbout(P, f, range) {
   const v = vzNow(), Pe = new THREE.Vector3(P.x, P.y * v, P.z);
   if (f < 1) { if (range <= NV.STOP) return; f = Math.max(f, NV.STOP / range); }
   const t1 = controls.target.clone().sub(Pe).multiplyScalar(f).add(Pe), e1 = camera.position.clone().sub(Pe).multiplyScalar(f).add(Pe);
-  let d = e1.distanceTo(t1); if (d > NV.DMAX) return;
+  let d = e1.distanceTo(t1); if (d > NV.DMAX) { if (f > 1) GLOBE?.wantOut(); return; }
   if (d < NV.DMIN) t1.sub(e1).setLength(NV.DMIN).add(e1);   // the orbit radius stays 10 m or more: the target moves on along the line of sight
   controls.target.copy(t1); camera.position.copy(e1); NS.own = true; try { controls.update(); } finally { NS.own = false; }
 }
-const zoomTarget = (s, f) => { s.ld = clampN(s.ld + Math.log(f), Math.log(NV.DMIN), Math.log(NV.DMAX)); };
+const zoomTarget = (s, f) => { if (f > 1 && s.ld + Math.log(f) > Math.log(NV.DMAX) + 1e-6) GLOBE?.wantOut(); s.ld = clampN(s.ld + Math.log(f), Math.log(NV.DMIN), Math.log(NV.DMAX)); };   // past the limit: the globe takes the view (globe/globe.js)
 function panPx(dx, dy) {   // the ground under the gesture's start point stays under the finger (index.html pan, with the range to that point)
   const s = navGet(), H = renderer.domElement.clientHeight || innerHeight;
   let k = Math.exp(s.ld) * .0012, kd = 1;
@@ -694,6 +696,12 @@ function loop(time, xrFrame) {
   sky.setVz(vzNow());   // the sky dome, stars and moon undo the view's y scale (1 in a headset session)
   if (ctx.xrFrame) { ctx.xrFrame(time, xrFrame, frameHooks); return; }   // layers/xr.js: a headset session (renderer.xr) or its one-eye preview draws the frame
   PERF.raf(time);
+  // the globe (globe/globe.js): flights and hand-overs; in globe mode it draws the frame and the model loop rests
+  if (GLOBE) { GLOBE.tick(performance.now());
+    if (GLOBE.mode === 'globe') { const asked = need; need = false; const ms = GLOBE.frame(performance.now(), asked);
+      if (ms != null) { PERF.drawn(time, ms, performance.now()); frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
+        const gs = GLOBE.stats.frame; $('fps').textContent = `${BACKEND} · globe · ${ms.toFixed(1)} ms to submit a frame · ${gs ? gs.patches + ' patches, ' + gs.triangles.toLocaleString() + ' triangles' : ''}`; }
+      return; } }
   navTick(performance.now()); navUnderEdge();
   if (controls.update()) need = true;
   if (!need && !$('animate').checked) return; const asked = need; need = false;
@@ -710,6 +718,7 @@ function loop(time, xrFrame) {
   OCC.begin(); placeLabels();
   for (const f of frameHooks) f();
   OCC.end();
+  if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
@@ -754,6 +763,18 @@ menu.creditsStart();
 globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, ready: true, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
   occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };
+
+// the globe and the world skeleton (globe/globe.js; skill docklands-3d-page, "globe and world skeleton"): zoom out past the
+// model (NV.DMAX, raised to the hand-over range) and the planet takes the view; ?view=globe opens on it; ?globe=0 leaves it out
+if (flag('globe', true)) {
+  try {
+    const gm = await import('./globe/globe.js');
+    GLOBE = await gm.createGlobe({ renderer, camera, controls, qs, scene, sky, setCam, camState, setView, VIEWS, draw, navPut, groundB, clock: () => clock, ui, webgpu: GPU, say,
+      showCard: html => { $('card').hidden = false; $('cardBody').innerHTML = html; }, blocked: () => isPix() || !!ctx.xrFrame || (!controls.enabled && GLOBE?.mode !== 'globe') });
+    NV.DMAX = gm.HANDOVER.out; controls.maxDistance = gm.HANDOVER.out * 1.1;
+    globalThis.__docklands3.globe = GLOBE; ctx.globe = GLOBE;
+  } catch (e) { console.warn('globe', e); }
+}
 
 // the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
 import('./api.js').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));

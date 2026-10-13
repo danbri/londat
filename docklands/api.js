@@ -30,9 +30,11 @@ export function init(H) {
     const dist = camera.position.distanceTo(controls.target), t = e.clone().addScaledVector(d, dist);
     return { eye: [e.x, e.y, e.z], target: [t.x, t.y, t.z], fovY: camera.fov * D, aspect: camera.aspect, yaw: H.camState().yaw };
   }
-  const shareLink = () => location.origin + location.pathname + location.search + H.shareHash();
+  const GL = () => H.globe || null, onGlobe = () => !!(H.globe && H.globe.mode === 'globe');   // the globe (globe/globe.js), when the page has it
+  const shareLink = () => onGlobe() ? H.globe.shareLink() : location.origin + location.pathname + location.search + H.shareHash();
   const sunNow = () => { const s = H.sky.state && H.sky.state.sun; return s ? { alt: s.alt, az: s.az, altGeo: s.altGeo } : null; };
   function getView() {
+    if (onGlobe()) return { api_version: API_VERSION, ...H.globe.getView(), time: timeOf(H.clock, TZ), view: 'globe', share: shareLink() };
     const G = viewGeo(I, camOf()); delete G.frame; delete G.elon; delete G.elat; const s = sunNow();
     return { api_version: API_VERSION, ...G, time: timeOf(H.clock, TZ), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, share: shareLink() };
   }
@@ -48,18 +50,25 @@ export function init(H) {
       const s = t.trim(), sl = s.toLowerCase(), vk = Object.keys(H.VIEWS).find(k => k === sl || (VIEW_LABELS[k] || '').toLowerCase() === sl);
       if (vk && o.lon == null) { H.setView(vk); await settle(); return { ...getView(), found: { name: VIEW_LABELS[vk] || vk, kind: 'view' } }; }
       await extras; found = findCore(I, s, 1)[0];
+      // not in the model: the world (countries, regions, seas, cities; region configs; later the UK skeleton) on the globe
+      if (!found && GL()) { await GL().gazetteer(); const w = GL().search(s, 1)[0];
+        if (w) { await new Promise(ok => GL().flyToEntry(w, { ms: o.animate ? undefined : 0, done: ok })); await settle(); return { ...getView(), found: { name: w.name, kind: w.kind, country: w.country || undefined, lon: w.lon, lat: w.lat } }; } }
       if (!found) throw new Error(`No place called "${s}". Try findPlaces("${s.slice(0, 3)}") or listViews().`);
       t = { lon: found.lon, lat: found.lat, range_m: o.range_m ?? (found.kind === 'building' ? 600 : found.kind === 'water' ? 1200 : 900), heading_deg: o.heading_deg, pitch_deg: o.pitch_deg };
     }
     const lon = +t.lon, lat = +t.lat; if (!isFinite(lon) || !isFinite(lat)) throw new Error('goTo needs a place name, a view id, or { lon, lat } in WGS84 degrees');
     const [x, z] = adapter.fromLonLat(lon, lat);
+    // anywhere else on earth, or high above the model (over 36 km): the globe
+    const high = +(t.alt_m ?? t.alt ?? 0) > 36000 || +(t.range_m ?? t.range ?? 0) > 36000;
+    if (GL() && (!adapter.inBox(x, z, 500) || high)) { await GL().goTo(t, { animate: !!o.animate }); await settle(); return { ...getView(), found: found ? { name: found.name, kind: found.kind } : undefined }; }
     if (!adapter.inBox(x, z, 500)) throw new Error(`(${lat}, ${lon}) is outside the model area (west ${adapter.bbox[0].toFixed(4)}, south ${adapter.bbox[1].toFixed(4)}, east ${adapter.bbox[2].toFixed(4)}, north ${adapter.bbox[3].toFixed(4)}). Other places are not modelled yet (OKR O1).`);
     const s0 = H.camState(), pitch = t.pitch_deg != null ? clamp(+t.pitch_deg, 2, 89.5) * D : clamp(s0.pitch, 0.2, 1.3);
-    const range = clamp(+(t.range_m ?? t.range ?? (t.alt_m ?? t.alt) / Math.sin(Math.max(0.1, pitch))) || clamp(s0.dist, 250, 2000), 10, 16000);
+    const range = clamp(+(t.range_m ?? t.range ?? (t.alt_m ?? t.alt) / Math.sin(Math.max(0.1, pitch))) || clamp(s0.dist, 250, 2000), 10, H.nav.NV.DMAX);
     let yaw = s0.yaw;
     if (t.heading_deg != null) {   // true heading of the view direction; the model's grid north differs from true north by the convergence
       const [l2, b2] = adapter.toLonLat(x, z - 100), conv = ((bearing(lon, lat, l2, b2) + 540) % 360) - 180; yaw = -((+t.heading_deg - conv) * D);
     }
+    if (onGlobe()) { GL().stopFlight(); GL().enterModel(); }   // (the model view below)
     H.setCam({ tx: x, ty: I.ground(x, z), tz: z, dist: range, yaw, pitch, hfov: null, fov: null, roll: 0 });
     document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', 'false'));
     if (found && found.mi != null) H.selectModel(found.mi);
@@ -103,6 +112,9 @@ export function init(H) {
     if (s == null) return null; const p = o.clone().addScaledVector(d, s); return { x: p.x, z: p.z, range: s, building: H.pickAt(innerWidth / 2, innerHeight / 2) };
   }
   async function featuresAt(lon, lat) {
+    if (GL() && (onGlobe() && lon == null || lon != null && !adapter.inBox(...adapter.fromLonLat(+lon, +lat), 0))) {   // outside the model: the world's answer
+      if (lon == null) { const g = GL().pick(innerWidth / 2, innerHeight / 2); if (!g) return { text: 'Only sky or space at the centre of the view.', sky: true }; lon = g.lon; lat = g.lat; }
+      const r = await GL().featuresAt(+lon, +lat); r.text = [r.name, r.region, r.country].filter((v, i, a) => v && a.indexOf(v) === i).join(', ') + (r.nearest[0] ? `; nearest place ${r.nearest[0].name}, ${Math.round(r.nearest[0].dist_m / 1000)} km ${r.nearest[0].direction}` : ''); return r; }
     await extras; let x, z, bi = -1, range = null;
     if (lon == null || lat == null) { const c = centrePoint(); if (!c) return { text: 'Only sky at the centre of the view.', sky: true }; ({ x, z, range } = c); bi = c.building; }
     else { if (!isFinite(+lon) || !isFinite(+lat)) throw new Error('featuresAt needs lon and lat in WGS84 degrees, or no arguments for the centre of the view'); [x, z] = adapter.fromLonLat(+lon, +lat); }
@@ -115,6 +127,7 @@ export function init(H) {
 
   // ---------- what is in view
   async function describeView(o = {}) {
+    if (onGlobe()) { const d = await GL().describe({ maxItems: o.maxItems || 8, time: timeOf(H.clock, TZ).local + ' (' + TZ + ')' }); return { ...d, api_version: API_VERSION, share: shareLink() }; }
     await extras;
     const L = H.layers, W = ctx.stats.weather && ctx.stats.weather.now, Wn = ctx.weather && ctx.weather.now;
     const live = { aircraft: L.planes && L.planes.on ? L.planes.api.flights : null, ships: L.ships && L.ships.on ? L.ships.api.vessels : null };
@@ -123,16 +136,19 @@ export function init(H) {
     return describeCore(I, camOf(), { time: H.clock, sun: sunNow(), weather, live, share: shareLink(), view: H.viewName || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance,
       occluded: occ ? (k, x, y, z) => occ.test(k, x, y, z) : null });
   }
-  async function findPlaces(q, limit = 10) { await extras; return findCore(I, q, limit).map(({ name, kind, lon, lat, id }) => ({ name, kind, lon, lat, id })); }
+  async function findPlaces(q, limit = 10) {
+    await extras; const out = findCore(I, q, limit).map(({ name, kind, lon, lat, id }) => ({ name, kind, lon, lat, id }));
+    if (GL() && out.length < limit) { await GL().gazetteer(); for (const w of GL().search(q, limit - out.length)) out.push({ name: w.name, kind: w.kind, lon: w.lon, lat: w.lat, id: w.id, country: w.country || undefined, local_name: w.local_name }); }
+    return out; }
 
   // ---------- the tools (one list: window.docklands.tools, WebMCP, and the MCP server's page_call)
   const P = (type, description, extra = {}) => ({ type, description, ...extra });
   const TOOLS = [
-    { name: 'go_to', description: 'Move the 3D view to a place (a name such as "Greenland Dock" or "One Canada Square"), a named view (list_views), or a WGS84 point. Returns the new view.', readOnly: false,
-      inputSchema: { type: 'object', properties: { place: P('string', 'A place or building name, or a view id'), view: P('string', 'A named view id', { enum: Object.keys(H.VIEWS) }), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), range_m: P('number', 'Distance from the eye to the point, metres'), alt_m: P('number', 'Eye height above the point, metres (used when range_m is absent)'), heading_deg: P('number', 'View direction, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle, degrees (2 to 89.5)') } },
+    { name: 'go_to', description: 'Move the 3D view to a place (a name such as "Greenland Dock", "One Canada Square", "Tokyo" or "France"), a named view (list_views), or a WGS84 point anywhere on Earth (outside the Docklands model or above 36 km the globe shows it). Returns the new view.', readOnly: false,
+      inputSchema: { type: 'object', properties: { place: P('string', 'A place or building name, or a view id'), view: P('string', 'A named view id', { enum: Object.keys(H.VIEWS) }), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), range_m: P('number', 'Distance from the eye to the point, metres'), alt_m: P('number', 'Eye height above the point, metres (used when range_m is absent); up to 40,000 km on the globe'), heading_deg: P('number', 'View direction, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle, degrees (2 to 89.5)') } },
       run: a => a.view ? goTo({ view: a.view }) : a.place ? goTo(a.place, a) : goTo(a) },
     { name: 'get_view', description: 'The current view: eye and target (lon, lat, height in metres), true heading, pitch, field of view, range, page time and time zone, sun, and the share link.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => getView() },
-    { name: 'describe_view', description: 'Describe what is in view: a short paragraph (text) and structured lists of the tallest buildings, named places, water and parks with distance and direction, the time of day, sun, weather, aircraft and ships in view, and the share link.', readOnly: true,
+    { name: 'describe_view', description: 'Describe what is in view: a short paragraph (text) and structured lists of the tallest buildings, named places, water and parks with distance and direction, the time of day, sun, weather, aircraft and ships in view, and the share link. On the globe: the country, region, sea and nearest places at the centre, the countries, water and large places in view.', readOnly: true,
       inputSchema: { type: 'object', properties: { maxItems: P('number', 'Places named in the paragraph (default 8)') } }, run: a => describeView(a) },
     { name: 'features_at', description: 'What is at a WGS84 point (or at the centre of the view when lon and lat are absent): the building (name, OpenStreetMap id, height, registry record and occupants where known), water, park, ground height and the nearest named places.', readOnly: true,
       inputSchema: { type: 'object', properties: { lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees') } }, run: a => featuresAt(a.lon, a.lat) },
@@ -141,7 +157,7 @@ export function init(H) {
     { name: 'list_layers', description: 'The layers and display settings with their ids and on/off state.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => listLayers() },
     { name: 'set_layer', description: 'Turn a layer or display setting on or off (ids from list_layers).', readOnly: false,
       inputSchema: { type: 'object', properties: { id: P('string', 'Layer id'), on: P('boolean', 'true for on') }, required: ['id', 'on'] }, run: a => setLayer(a.id, a.on) },
-    { name: 'find_places', description: 'Search the named places, water and buildings of the model by name; returns names, kinds and WGS84 positions.', readOnly: true,
+    { name: 'find_places', description: 'Search the named places, water and buildings of the model, then the world (countries, regions, seas, lakes, rivers, cities) by name; returns names, kinds and WGS84 positions.', readOnly: true,
       inputSchema: { type: 'object', properties: { query: P('string', 'Two or more letters'), limit: P('number', 'At most this many (default 10)') }, required: ['query'] }, run: a => findPlaces(a.query, a.limit || 10) },
     { name: 'list_views', description: 'The named views (Canary Wharf, Greenwich, the photo views ...) with their ids for go_to.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => listViews() },
     { name: 'share_link', description: 'A link that opens this page at the current view, time and selected building.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => ({ url: shareLink() }) },
@@ -230,7 +246,10 @@ export function init(H) {
 
   // ---------- locale-free deep links: ?ll=lat,lon[,range_m] and ?place=<name> (after the share hash and ?view= of main.js)
   const ll = (qs.get('ll') || '').split(',').map(Number);
-  if (ll.length >= 2 && ll.slice(0, 2).every(isFinite)) goTo({ lat: ll[0], lon: ll[1], range_m: ll[2] || undefined }).catch(e => console.warn('api: ?ll=', e.message));
+  // ?ll=lat,lon[,alt]: alt is the eye's height above the point in metres (the globe above 36 km or outside the model);
+  // &ht=heading,tilt (degrees; tilt from straight down) on the globe
+  const ht = (qs.get('ht') || '').split(',').map(Number);
+  if (ll.length >= 2 && ll.slice(0, 2).every(isFinite)) goTo({ lat: ll[0], lon: ll[1], alt_m: ll[2] || undefined, heading_deg: isFinite(ht[0]) ? ht[0] : undefined, tilt_deg: isFinite(ht[1]) && ht.length > 1 ? ht[1] : undefined }).catch(e => console.warn('api: ?ll=', e.message));
   else if (qs.get('place')) goTo(qs.get('place')).catch(e => console.warn('api: ?place=', e.message));
   return api;
 }

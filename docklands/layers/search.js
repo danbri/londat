@@ -4,6 +4,7 @@
 // and basins, published levels), and every routable place of the walking network (../cwplans/docklands/data/indoor.js,
 // loaded when the box gets focus); prefix matches first; at most 14; Enter takes the first. A result flies the camera
 // there (600 ms) and opens its card; a place below ground also cuts the model away above its level (under.js setCut).
+// World results (the globe's gazetteer, globe/world.js) follow the model's, at most 14 in all.
 // Skill: docklands-3d-page, "Interface" and "Three.js port".
 const loadScript = src => new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error(src + ' did not load')); document.head.appendChild(s); });
 const OSM = /^(node|way|relation)\/\d+$/;
@@ -38,7 +39,7 @@ export default {
     showL?.addEventListener('change', syncL); syncL();
     const btn = document.createElement('button'); btn.id = 'findBtn'; btn.type = 'button'; btn.hidden = true; btn.setAttribute('aria-label', 'Search');
     const box = document.createElement('div'); box.id = 'findBox'; box.hidden = true; box.setAttribute('role', 'search');
-    const qIn = document.createElement('input'); qIn.type = 'search'; qIn.placeholder = 'Building, place, station, platform'; qIn.setAttribute('aria-label', 'Search buildings and places'); qIn.autocomplete = 'off'; qIn.enterKeyHint = 'search';
+    const qIn = document.createElement('input'); qIn.type = 'search'; qIn.placeholder = 'Building, place, station, country, city'; qIn.setAttribute('aria-label', 'Search buildings and places'); qIn.autocomplete = 'off'; qIn.enterKeyHint = 'search';
     const qRes = document.createElement('ul'); qRes.id = 'findRes'; qRes.setAttribute('aria-label', 'Results');
     box.hidden = false; box.append(qIn, qRes);
     (document.getElementById('menu') || document.body.firstChild).after(lb); lb.after(btn);   // next to Menu (Day or night went into Menu > Look on 2026-10-10)
@@ -97,7 +98,12 @@ export default {
       if (AT) AT.buildings.forEach((b, k) => { if ((has(b.n) || b.id === q) && b.mi && b.mi.length) out.push({ t: b.n || b.id, k: 'building', go: () => { flyTo(b.x, b.z, Math.max(350, Math.min(camDist(), 900))); D3()?.selectModel(b.mi[0]); } }); });
       for (const l of labels) if (has(l.name)) out.push({ t: l.name, k: l.k, go: () => showLabel(l) });
       if (NET) for (const p of NET.P) if (has(p.name)) out.push({ t: p.name, k: `${p.kind}, level ${p.lv}`, go: () => showPlace(p) });
-      out.sort((a, b) => (a.t.toLowerCase().startsWith(q) ? 0 : 1) - (b.t.toLowerCase().startsWith(q) ? 0 : 1)); return out.slice(0, 14);
+      out.sort((a, b) => (a.t.toLowerCase().startsWith(q) ? 0 : 1) - (b.t.toLowerCase().startsWith(q) ? 0 : 1));
+      // then the world (globe/globe.js: countries, regions, seas, lakes, rivers, cities, the project's places): a result flies there
+      const G = D3()?.globe, res = out.slice(0, G ? 9 : 14);
+      if (G) { if (!G.gazReady) G.gazetteer().then(() => { G.gazReady = true; if (qIn.value) runSearch(); }).catch(() => {});
+        else for (const w of G.search(q, 14 - res.length)) res.push({ t: w.name, k: [w.kind === 'region-config' ? 'project place' : w.kind === 'model' ? '3D model' : w.kind, w.country].filter(Boolean).join(', '), go: () => G.flyToEntry(w) }); }
+      return res;
     }
     let last = [];
     function runSearch() {
