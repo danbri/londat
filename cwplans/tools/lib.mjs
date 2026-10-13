@@ -60,7 +60,8 @@ export async function bngProjector() {
   await proj4.nadgrid('ostn15', await fromArrayBuffer(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength))).ready;
   proj4.defs('BNG', '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs +nadgrids=ostn15');
   const p = proj4('EPSG:4326', 'BNG');
-  return (lon, lat) => p.forward([lon, lat]);
+  // forward (lon, lat) -> [E, N]; .inverse(E, N) -> [lon, lat] through the same grid (build-uk-skeleton.mjs)
+  return Object.assign((lon, lat) => p.forward([lon, lat]), { inverse: (e, n) => p.inverse([e, n]) });
 }
 
 // ---- 1 m rasters as a mosaic of tiles. at(E, N) in BNG metres; null outside every tile.

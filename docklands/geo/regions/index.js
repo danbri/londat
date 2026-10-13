@@ -3,5 +3,6 @@ import docklands from './docklands.js';
 import sarajevo from './sarajevo.js';
 import leon from './leon.js';
 import leiden from './leiden.js';
-export const REGIONS = Object.freeze({ docklands, sarajevo, leon, leiden });
+import uk from './uk.js';
+export const REGIONS = Object.freeze({ docklands, sarajevo, leon, leiden, uk });
 export default REGIONS;
