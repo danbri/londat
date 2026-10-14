@@ -2585,3 +2585,4 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   the planes layer: orange lines with white dots (the aircraft). The near-live trails held the whole hour of reports, so
   long straight lines crossed the sky. Fix: draw only the last 4 km of each trail (planes.js TRAILLEN), opacity 0.8 ->
   0.5. Headless `?view=area`: 11 aircraft, 15 trail segments, no page errors.
+  `?trails=long` restores the full-hour trails (owner liked them as an option).

@@ -440,7 +440,8 @@ export default {
     if (!TEST) ctx.ui.toggle('Recorded aircraft (adsb.lol history of the last 7 days, same weekday and time)', recOn, v => { recOn = v; status(); ctx.draw(); }).dataset.planesRec = '1';
 
     // ---------- trails of the live aircraft (last 2 minutes): thin lines, one draw call
-    const TRAILMAX = 24000, TRAILLEN = 4000, trailPos = new Float32Array(TRAILMAX * 6), trailGeo = new THREE.BufferGeometry();
+    const TRAILMAX = 24000, TRAILLEN = new URLSearchParams(location.search).get('trails') === 'long' ? Infinity : 4000,   // ?trails=long: the whole hour (owner, 2026-10-14: "I quite liked the long trails, at least as an option")
+      trailPos = new Float32Array(TRAILMAX * 6), trailGeo = new THREE.BufferGeometry();
     trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3).setUsage(THREE.DynamicDrawUsage)); trailGeo.setDrawRange(0, 0);
     const trailMat = new THREE.LineBasicNodeMaterial({ color: 0xff9a3c, transparent: true, opacity: 0.5, depthWrite: false });
     const trailLines = new THREE.LineSegments(trailGeo, trailMat); trailLines.frustumCulled = false; trailLines.name = 'live aircraft trails'; group.add(trailLines);
