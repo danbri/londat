@@ -373,8 +373,12 @@ export default {
 
     // ---------- each frame: simulate, then fill the instance buffers with the animals within R_DRAW of the camera
     const SAMP = new Float32Array(120).fill(NaN); let visible = on, last = performance.now(), drawn = [], msAvg = 0, simAvg = 0, cellMs = 0, cellMax = 0, frames = 0, nB = 0, nF = 0;
+    // high above the ground the animals are under a pixel: hidden and not simulated (owner, 2026-10-14: "Birds and foxes and
+    // wind shouldn't be animating when we are kilometers above London")
+    const HIGH = 1200;
     function frame() {
       if (!visible) return;
+      if ((ctx.eyeAbove || 0) > HIGH) { MB.mesh.visible = MF.mesh.visible = false; last = performance.now(); return; }
       const now = performance.now(), dt = Math.min(.25, (now - last) / 1000); last = now; const tA = performance.now();
       if (now - lastCellsT > 500) { lastCellsT = now; const tc = performance.now(); updateCells(now); cellMs = performance.now() - tc; } else cellMs = 0;
       const tU = performance.now();

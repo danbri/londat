@@ -715,6 +715,7 @@ function loop(time, xrFrame) {
   sky.sky.position.copy(eyeM);
   // the cut-away view: a dark backdrop until the visitor sets the clock (index.html, sky.js DocklandsSky.day = S.drive && sun > -6)
   sky.setCutDark(U.cut.value < 250 && !DRIVE);
+  ctx.eyeAbove = above / VZ;   // eye height above the ground (m): layers rest when it is high (wildlife, wind)
   OCC.begin(); placeLabels();
   for (const f of frameHooks) f();
   OCC.end();

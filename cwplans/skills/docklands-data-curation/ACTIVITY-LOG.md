@@ -2602,3 +2602,14 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   (`?view=cw`, then out to 3,000 km): 68 meshes, 4,395,570 vertices freed; back at `?view=cw` the model draws correctly,
   no page errors. State: `__docklands3.globe.freed`. `?free=0` turns it off. CPU memory is not reduced; next: drop the
   CPU copies too and rebuild from area.js on return, or load the model in tiles.
+- 2026-10-14: wildlife and wind rest when the eye is high (owner: "Birds and foxes and wind shouldn't be animating when we
+  are kilometers above London"). main.js sets `ctx.eyeAbove` (eye height above the ground, m) each frame. Wildlife:
+  hidden and not simulated above 1,200 m; wind streamlines: above 3,000 m. Headless (greenlanddock, then 11 km up, then
+  back): the animal meshes hide and show again, no page errors.
+- Level of detail plan (owner: "make appropriate use of threejs lod support for everything"; not done yet):
+  `THREE.LOD` switches whole objects by distance, so it fits separate objects (detailed building models, station boxes,
+  boats, aircraft models, trees as instanced groups by cell), not the merged building mesh. Steps: (1) aircraft and boat
+  models: LOD with a box or a point at distance; (2) the detailed building models (`loadModels`): LOD with the plain
+  extruded block at distance; (3) trees: per-cell instanced meshes with fewer crown triangles far away; (4) the merged
+  buildings and terrain: cut into 1 km tiles, each a LOD (full, simplified roofs, a box), which is also the step towards
+  3D Tiles (docs/planet-architecture.md). Free CPU copies when the globe holds the view (after (4), per tile).

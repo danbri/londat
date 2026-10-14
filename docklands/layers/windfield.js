@@ -374,6 +374,8 @@ export default {
     const vpv = new THREE.Vector2();
     ctx.onFrame(() => {
       if (!visible) return;
+      if ((ctx.eyeAbove || 0) > 3000) { if (mesh.visible) mesh.visible = false; tPrev = performance.now(); return; }   // high up: no wind markers, no simulation
+      if (!mesh.visible) { mesh.visible = true; warm(); }
       const t0 = performance.now(), dtR = Math.min(0.25, (t0 - tPrev) / 1000); tPrev = t0;
       if (profT == null || Math.abs(ctx.clock - profT) > 5 * 6e4) evalProfile();
       renderer.getDrawingBufferSize(vpv); uVp.value.copy(vpv); uDpr.value = renderer.getPixelRatio();
