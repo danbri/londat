@@ -61,7 +61,7 @@ export default {
     const cam = () => D3().camState();
     let eyeOn = false;
     function setCam(c, eye) {
-      if (eye) { D3().setCam({ ...c, fov: 1.05 }); eyeOn = true; return; }
+      if (eye) { D3().setCam({ ...c, fov: c.fov ?? 1.05 }); eyeOn = true; return; }
       if (eyeOn) { eyeOn = false; D3().setCam(c); return; }   // leaves the eye's field of view
       // c.ty in model metres (camState); the orbit is in the exaggerated space (main.js setVz: ty x vz, as main.js setCam)
       const ce = Math.cos(c.pitch), ty = (c.ty || 0) * (ctx.vzNow ? ctx.vzNow() : 1); controls.target.set(c.tx, ty, c.tz);
@@ -191,6 +191,26 @@ export default {
       if (!S.fix) return; if (!inside(S.fix.x, S.fix.z)) return outsideMsg();
       S.set = null; S.eyeYaw = -cam().yaw; askOrient(); setMode('eye'); noCompassCheck();
     };
+    // ---------- ?ar: open straight into the window view (owner, 2026-10-14: "Give me url for ar mode"). iOS asks for motion
+    // access only inside a tap, so a "Start" panel comes first. ?ar=1 uses the GPS position inside the model area, else
+    // Canary Wharf (Cabot Square); ?ar=lat,lon stands at that point (inside the model area) with no GPS.
+    const arQ = new URLSearchParams(location.search).get('ar');
+    if (arQ != null) {
+      const ll = arQ.split(',').map(Number), stand = (lon, lat, why) => { const [x, z] = geo(lon, lat); S.fix = { x, z, acc: 5, t: Date.now(), lat, lon }; S.conv = trueToGrid(lon, lat); S.virtual = true; S.set = null; S.eyeYaw = -cam().yaw; setMode('eye'); svg.style.display = ''; if (why) say(why); draw(); loop(); };
+      const CW = [-0.02163, 51.50523];   // Cabot Square, Canary Wharf
+      const go = () => {
+        panel.remove(); askOrient(); noCompassCheck();
+        if (ll.length === 2 && ll.every(isFinite)) { const [x, z] = geo(ll[1], ll[0]); return inside(x, z) ? stand(ll[1], ll[0]) : stand(...CW, 'That point is outside the model area: standing in Canary Wharf.'); }
+        if (!navigator.geolocation || !window.isSecureContext) return stand(...CW, 'No location: standing in Canary Wharf.');
+        navigator.geolocation.getCurrentPosition(p => { const c = p.coords, [x, z] = geo(c.longitude, c.latitude);
+          if (inside(x, z)) { onPos(p); startWatch(); S.set = null; S.eyeYaw = -cam().yaw; setMode('eye'); } else stand(...CW, 'You are outside the model area: standing in Canary Wharf. Turn the phone to look round.'); },
+          () => stand(...CW, 'No location: standing in Canary Wharf.'), { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+      };
+      const panel = document.createElement('div');
+      panel.style.cssText = 'position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:#0b0e12d0';
+      panel.innerHTML = '<div style="max-width:320px;padding:20px;text-align:center;color:#dfe5ea;font:15px/1.4 system-ui,sans-serif"><p>Hold the phone up like a window. The view turns with the phone.</p><button type="button" style="font-size:18px;padding:12px 22px;border-radius:24px;border:0;background:#2e9d6c;color:#fff">Start the window view</button><p style="font-size:12px;opacity:.75">The page asks for motion and location. Nothing is sent or stored.</p></div>';
+      panel.querySelector('button').onclick = go; document.body.appendChild(panel);
+    }
     function off() { stopWatch(); stopOrient(); S.fix = null; S.hv = null; S.set = null; if (S.mode === 'eye') orbitAt({ x: controls.target.x, z: controls.target.z }); setMode('off'); say(''); svg.style.display = 'none'; draw(); }
     document.addEventListener('visibilitychange', () => { if (S.mode === 'off') return; if (document.hidden) { stopWatch(); S.wasOrient = S.orient; stopOrient(); } else { startWatch(); if (S.wasOrient) startOrient(); } });
 

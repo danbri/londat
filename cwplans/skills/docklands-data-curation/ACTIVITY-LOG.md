@@ -2576,3 +2576,8 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   gives the old 60 degrees, and `?arfov=<degrees>` sets it by hand. Not tested on a device. Next: front-camera face
   tracking (eye distance and offset) for a true window, for example MediaPipe Face Landmarker (Apache-2.0), with
   permission and no frames kept.
+- 2026-10-14: `?ar` opens the window view straight away (owner: "Give me url for ar mode"). A "Start the window view"
+  panel gets the tap that iOS needs for motion access. `?ar=1`: the GPS position inside the model area, else Cabot
+  Square. `?ar=lat,lon`: stand at that point with no GPS. Fault fixed: the eye mode always forced a field of 60 degrees
+  (`fov: 1.05`), so the window field of 91d82d93 did nothing. Headless (390 x 844): `?ar=51.5052,-0.0216` gives the eye
+  1.6 m above the ground and a vertical field of 24.8 degrees. No page errors. Not tested on a phone.
