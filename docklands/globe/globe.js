@@ -150,15 +150,25 @@ export async function createGlobe(H) {
   const canModel = o => !!MF && o.range < HANDOVER.range && inBox(o.lon, o.lat, HANDOVER.marginM) && !H.blocked();
 
   // ---------- modes
-  const ui = {};
+  const ui = {}; let freeT = 0;
   function setMode(m) {
     if (G.mode === m) return; G.mode = m; const on = m === 'globe';
+    clearTimeout(freeT); if (on) freeT = setTimeout(freeModel, 3000); else if (H.scene) H.scene.traverse(x => { if (x.geometry?.userData?.freed) x.geometry.userData.freed = false; });
     document.body.classList.toggle('globeMode', on);
     controls.enabled = !on; if (ui.btns) ui.btns.hidden = !on;
     if (!on) { if (labels) labels.update({ visible: false, project, eye: F.O, zoom: 0, W: innerWidth, H: innerHeight }); }
     dispatchEvent(new CustomEvent('docklands-globe-mode', { detail: { mode: m } }));
     syncUrl(true);
     G.dirty = true; H.draw();
+  }
+  // memory: 3 s after the globe takes the view, the model scene's large meshes give back their GPU buffers (the CPU copies
+  // stay; three.js uploads them again when the model is drawn next). Owner, 2026-10-14: "As we move out can we reduce
+  // level of detail in memory for Canary Wharf?" (an iPhone tab restarted after Home, probably from memory). ?free=0 off.
+  function freeModel() {
+    if (G.mode !== 'globe' || qs.get('free') === '0' || !H.scene) return; let n = 0, v = 0;
+    H.scene.traverse(o => { const g = o.isMesh || o.isLine || o.isPoints ? o.geometry : null; const c = g?.attributes?.position?.count || 0;
+      if (c > 20000 && !g.userData.freed) { g.dispose(); g.userData.freed = true; n++; v += c; } });
+    G.freed = { meshes: n, vertices: v, at: Date.now() };
   }
   function enterGlobe(o) { orbit = guard({ ...o }); setMode('globe'); }
   function enterModel(o) { orbitToModel(o, true); setMode('model'); }

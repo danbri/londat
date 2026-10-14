@@ -2596,3 +2596,9 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   terrain ring, sky) is replaced in one frame by the globe scene. The world vector layers (Natural Earth) are loaded whole;
   the UK skeleton loads by cells. Next: cross-fade over about 0.5 s (draw both, blend), or keep the model terrain on the
   globe up to 80 km.
+- 2026-10-14: memory on the globe (owner: "As we move out can we reduce level of detail in memory for Canary Wharf?").
+  3 s after the globe takes the view, the model scene's meshes over 20,000 vertices free their GPU buffers
+  (`geometry.dispose()`; the CPU copies stay, and three.js uploads them again when the model is next drawn). Headless
+  (`?view=cw`, then out to 3,000 km): 68 meshes, 4,395,570 vertices freed; back at `?view=cw` the model draws correctly,
+  no page errors. State: `__docklands3.globe.freed`. `?free=0` turns it off. CPU memory is not reduced; next: drop the
+  CPU copies too and rebuild from area.js on return, or load the model in tiles.
