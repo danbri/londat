@@ -369,7 +369,7 @@ export async function createGlobe(H) {
     for (const o of [H.sky.sky, H.sky.stars, H.sky.moonDisc]) if (o) o.visible = false;   // (the sky's own updates may show them again)
     const fw = new THREE.Vector3(0, 0, -1).transformDirection(camera.matrixWorld), E = modelToEcef([e.x, e.y, e.z]), P = modelToEcef([e.x + fw.x * 1000, e.y + fw.y * 1000, e.z + fw.z * 1000]);
     const f = nrm(sub(P, E)), upE = ecefNormalAt(ecefToGeodetic(...E)), u = nrm(sub(upE, f.map(v => v * dot3(upE, f))));
-    const sz = renderer.getDrawingBufferSize(new THREE.Vector2()); if (rt.width !== sz.x || rt.height !== sz.y) rt.setSize(sz.x, sz.y);
+    const sz = renderer.getDrawingBufferSize(new THREE.Vector2()); const bw = Math.max(4, Math.round(sz.x / 2)), bh = Math.max(4, Math.round(sz.y / 2)); if (rt.width !== bw || rt.height !== bh) rt.setSize(bw, bh);   // half size: the globe behind the model is far and soft; a full HalfFloat target at DPR 3 costs about 40 MB on a phone (owner, 2026-10-14: the tab restarted after Home)
     orbit = orbitFrom(E, addS(E, f, 1000));   // (for the readout)
     drawGlobe(E, f, u, rt);
     const now = performance.now(); if (now - lastWhere > 250) { lastWhere = now; readout(); }

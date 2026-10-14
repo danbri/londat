@@ -2586,3 +2586,13 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   long straight lines crossed the sky. Fix: draw only the last 4 km of each trail (planes.js TRAILLEN), opacity 0.8 ->
   0.5. Headless `?view=area`: 11 aircraft, 15 trail segments, no page errors.
   `?trails=long` restores the full-hour trails (owner liked them as an option).
+- 2026-10-14, owner: Home (the house button) from orbit "started to zoom in then said it was starting 3D mode ... almost
+  like the rendering crashed and rebooted". The "Starting the 3D view" text is shown only when the page loads, so iOS
+  probably killed and reloaded the tab, most likely because it used too much memory when the model took the view
+  (model + globe scene + globe background render target). Step taken: the globe background target is now half size
+  (about 40 MB less at DPR 3). Not proven on a phone. Next: measure memory on the iPhone (Safari Web Inspector), free the
+  globe patches and the render target while in the model, and load the model's optional data only when the flight ends.
+- Owner: the zoom-out change to the globe at 40 km is "overly abrupt". Cause: at the hand-over the model scene (buildings,
+  terrain ring, sky) is replaced in one frame by the globe scene. The world vector layers (Natural Earth) are loaded whole;
+  the UK skeleton loads by cells. Next: cross-fade over about 0.5 s (draw both, blend), or keep the model terrain on the
+  globe up to 80 km.
