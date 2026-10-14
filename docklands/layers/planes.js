@@ -440,16 +440,18 @@ export default {
     if (!TEST) ctx.ui.toggle('Recorded aircraft (adsb.lol history of the last 7 days, same weekday and time)', recOn, v => { recOn = v; status(); ctx.draw(); }).dataset.planesRec = '1';
 
     // ---------- trails of the live aircraft (last 2 minutes): thin lines, one draw call
-    const TRAILMAX = 24000, trailPos = new Float32Array(TRAILMAX * 6), trailGeo = new THREE.BufferGeometry();
+    const TRAILMAX = 24000, TRAILLEN = 4000, trailPos = new Float32Array(TRAILMAX * 6), trailGeo = new THREE.BufferGeometry();
     trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3).setUsage(THREE.DynamicDrawUsage)); trailGeo.setDrawRange(0, 0);
-    const trailMat = new THREE.LineBasicNodeMaterial({ color: 0xff9a3c, transparent: true, opacity: 0.8, depthWrite: false });
+    const trailMat = new THREE.LineBasicNodeMaterial({ color: 0xff9a3c, transparent: true, opacity: 0.5, depthWrite: false });
     const trailLines = new THREE.LineSegments(trailGeo, trailMat); trailLines.frustumCulled = false; trailLines.name = 'live aircraft trails'; group.add(trailLines);
     function drawTrails(list) {
       let n = 0; const put = (a, b) => { if (n >= TRAILMAX) return; trailPos.set(a, n * 6); trailPos.set(b, n * 6 + 3); n++; };
       // each point lifted as the model would be there (on the ground the trail runs at the height of the fuselage's centre);
       // the last point is the model's own position, so the line meets the aircraft
       for (const { F, o } of list) { if (!F.track) continue; const P = F.track.trail.map(p => [p[1], p[2] + liftOf(p[1], p[2], p[3], o.Pt), p[3]]); P.push(o.g.position.toArray());
-        for (let i = 1; i < P.length; i++) put(P[i - 1], P[i]); }
+        // only the last TRAILLEN m of the path (owner, 2026-10-14: a "crisscross" of hour-long trails filled the sky at night)
+        let L = 0; for (let i = P.length - 1; i > 0 && L < TRAILLEN; i--) { const a0 = P[i - 1], a1 = P[i], d = Math.hypot(a1[0] - a0[0], a1[1] - a0[1], a1[2] - a0[2]);
+          if (L + d > TRAILLEN) { const k = (TRAILLEN - L) / d; put([a1[0] + (a0[0] - a1[0]) * k, a1[1] + (a0[1] - a1[1]) * k, a1[2] + (a0[2] - a1[2]) * k], a1); L = TRAILLEN; } else { put(a0, a1); L += d; } } }
       trailGeo.setDrawRange(0, n * 2); if (n) { trailGeo.attributes.position.needsUpdate = true; trailGeo.computeBoundingSphere(); }
       trailLines.visible = n > 0;
     }

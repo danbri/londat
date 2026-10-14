@@ -2581,3 +2581,7 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   Square. `?ar=lat,lon`: stand at that point with no GPS. Fault fixed: the eye mode always forced a field of 60 degrees
   (`fov: 1.05`), so the window field of 91d82d93 did nothing. Headless (390 x 844): `?ar=51.5052,-0.0216` gives the eye
   1.6 m above the ground and a vertical field of 24.8 degrees. No page errors. Not tested on a phone.
+- 2026-10-14: the night "crisscross" (owner screenshots, day and night views from high up) was the aircraft trails of
+  the planes layer: orange lines with white dots (the aircraft). The near-live trails held the whole hour of reports, so
+  long straight lines crossed the sky. Fix: draw only the last 4 km of each trail (planes.js TRAILLEN), opacity 0.8 ->
+  0.5. Headless `?view=area`: 11 aircraft, 15 trail segments, no page errors.
