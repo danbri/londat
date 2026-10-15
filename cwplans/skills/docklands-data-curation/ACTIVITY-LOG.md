@@ -2613,3 +2613,10 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   extruded block at distance; (3) trees: per-cell instanced meshes with fewer crown triangles far away; (4) the merged
   buildings and terrain: cut into 1 km tiles, each a LOD (full, simplified roofs, a box), which is also the step towards
   3D Tiles (docs/planet-architecture.md). Free CPU copies when the globe holds the view (after (4), per tile).
+- 2026-10-15, owner: `?ar=1` "very tippy unstable and complains no compass even if it has accurate direction".
+  Causes: (1) the roll used -gamma; held upright, gamma measures a turn about the vertical, so each turn of the phone
+  tipped the view. Fix: roll = asin(height of the screen's horizontal axis) = asin(-cos(beta) sin(gamma)) in portrait
+  (no gimbal fault), eased 0.2. (2) The "No compass" check ran 2.5 s after the tap, while iOS still showed its
+  permission question. Fix: 4 s, not while the permission is open, and the message is cleared by the first compass
+  reading. Headless with simulated events: upright with gamma 30 gives roll 0; beta 60, gamma 30 gives roll -14 (the
+  calculated value); pitch follows; no message; no page errors.

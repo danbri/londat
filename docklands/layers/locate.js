@@ -132,10 +132,13 @@ export default {
         if (Math.hypot(hE, hN) > 1e-3) hTrue = Math.atan2(hE, hN) * R2D;
       }
       if (e.beta != null) { const p = Math.asin(Math.max(-1, Math.min(1, -Math.cos(be) * Math.cos(ga)))); S.pitch += (p - S.pitch) * .25;
-        // roll of the screen about the view axis (phone held up, portrait): -gamma, eased; 0 when the phone lies flat
-        const r = Math.abs(e.beta) > 35 ? Math.max(-60, Math.min(60, -(e.gamma || 0))) : 0; S.roll = (S.roll || 0) + (r - (S.roll || 0)) * .25; }
+        // roll of the screen about the view axis: the height (world z) of the device's x axis, -cos(beta) sin(gamma), which
+        // has no gimbal fault. The first version used -gamma: held upright, gamma measures a turn about the vertical, so
+        // every turn of the phone tipped the view (owner, 2026-10-15: "very tippy unstable"). Screen turned: the other axis.
+        const xz = -Math.cos(be) * Math.sin(ga), yz = Math.sin(be), th0 = screenAngle() * D2R, sz = xz * Math.cos(th0) + yz * Math.sin(th0);
+        const r = Math.asin(Math.max(-1, Math.min(1, sz))) * R2D; S.roll = (S.roll || 0) + (r - (S.roll || 0)) * .2; }
       if (hTrue == null) return;
-      S.compassT = performance.now(); S.events++;
+      S.compassT = performance.now(); S.events++; if (S.noCompassSaid) { S.noCompassSaid = false; say(''); }
       addHeading(wrap360(hTrue + (S.conv ?? trueToGrid(S.fix ? S.fix.lon : -.02, S.fix ? S.fix.lat : 51.5))), 'compass');
     }
     function onAny(e) { if (typeof e.webkitCompassHeading === 'number' || (e.absolute && !('ondeviceorientationabsolute' in window))) onOrient(e); else if (e.beta != null && performance.now() - S.compassT >= 500) { const be = e.beta * D2R, ga = (e.gamma || 0) * D2R; S.pitch += (Math.asin(Math.max(-1, Math.min(1, -Math.cos(be) * Math.cos(ga)))) - S.pitch) * .25; } }
@@ -145,7 +148,7 @@ export default {
       if (iosAsk()) DeviceOrientationEvent.requestPermission().then(r => { if (r === 'granted') startOrient(); else say('Compass access was refused, so the view cannot turn with you. To allow it, close this tab, open the page again and allow "Motion &amp; Orientation Access".'); }).catch(() => say('The compass is not available in this browser.'));
       else startOrient();
     }
-    const noCompassCheck = () => setTimeout(() => { if ((S.mode === 'heading' || S.mode === 'eye') && !S.hv) say(S.mode === 'eye' ? 'No compass found on this device, so the view cannot follow the phone.' : 'No compass found: the view turns with your direction of travel when you move.'); }, 2500);
+    const noCompassCheck = () => setTimeout(() => { if ((S.mode === 'heading' || S.mode === 'eye') && !S.hv && !(iosAsk() && !S.orient)) (S.noCompassSaid = true, say(S.mode === 'eye' ? 'No compass found on this device, so the view cannot follow the phone.' : 'No compass found: the view turns with your direction of travel when you move.')); }, 4000);   // (not while iOS still shows its permission question; cleared by the first compass reading)
 
     // ---------- following: eased by time (a slow GPU settles as fast); another mover (a drag, a view button, a search) -> located
     function centreOn(first) { const c = cam(); if (first) setCam({ ...c, dist: c.dist > 700 ? 600 : c.dist, pitch: c.pitch < .25 ? .55 : c.pitch }); unpress(); }
