@@ -1,0 +1,108 @@
+{
+ "v": 1,
+ "generated": "2026-10-17T09:44:00.739Z",
+ "tool": "cwplans/tools/fetch-adsb-cache.mjs (danbri/londat)",
+ "source": "adsb.lol daily history, GitHub releases adsblol/globe_history_<year>, tag v<YYYY.MM.DD>-planes-readsb-prod-0 (readsb trace_full files)",
+ "licence": "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/1-0/); feeder data CC0. Attribution: Aircraft: © adsb.lol contributors, ODbL",
+ "area": {
+  "lat": 51.505,
+  "lon": -0.02,
+  "radius_nm": 25
+ },
+ "thinning": "points at most 1 a second; above 15000 ft at most 1 a minute",
+ "privacy": "callsign only for operator ICAO callsigns without LADD/PIA flags and with an ICAO address; every other leg has an anonymous key and its type only; no registration, owner or squawk is kept",
+ "path": "adsb/<date>/<HH>.json.gz (UTC hour; legs overlapping the hour, with 2 minutes before for trails)",
+ "days": [
+  {
+   "date": "2026-10-10",
+   "weekday": "Sat",
+   "legs": 6783,
+   "aircraft_legs_identified": 5056,
+   "legs_type_only": 1727,
+   "aircraft_in_area": 2089,
+   "traces_read": 67471,
+   "points": 834753,
+   "bytes": 4915030,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.10-planes-readsb-prod-0",
+   "built": "2026-10-11T11:38:46.380Z"
+  },
+  {
+   "date": "2026-10-11",
+   "weekday": "Sun",
+   "legs": 7628,
+   "aircraft_legs_identified": 5558,
+   "legs_type_only": 2070,
+   "aircraft_in_area": 2403,
+   "traces_read": 60175,
+   "points": 930794,
+   "bytes": 5510749,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.11-planes-readsb-prod-0",
+   "built": "2026-10-12T13:33:31.588Z"
+  },
+  {
+   "date": "2026-10-12",
+   "weekday": "Mon",
+   "legs": 7013,
+   "aircraft_legs_identified": 5437,
+   "legs_type_only": 1576,
+   "aircraft_in_area": 2095,
+   "traces_read": 69323,
+   "points": 824443,
+   "bytes": 4703068,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.12-planes-readsb-prod-0",
+   "built": "2026-10-13T12:59:59.740Z"
+  },
+  {
+   "date": "2026-10-13",
+   "weekday": "Tue",
+   "legs": 6886,
+   "aircraft_legs_identified": 5233,
+   "legs_type_only": 1653,
+   "aircraft_in_area": 2131,
+   "traces_read": 73224,
+   "points": 847843,
+   "bytes": 4974613,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.13-planes-readsb-prod-0",
+   "built": "2026-10-14T10:40:06.846Z"
+  },
+  {
+   "date": "2026-10-14",
+   "weekday": "Wed",
+   "legs": 7318,
+   "aircraft_legs_identified": 5256,
+   "legs_type_only": 2062,
+   "aircraft_in_area": 2268,
+   "traces_read": 77584,
+   "points": 914123,
+   "bytes": 5355493,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.14-planes-readsb-prod-0",
+   "built": "2026-10-15T10:21:23.380Z"
+  },
+  {
+   "date": "2026-10-15",
+   "weekday": "Thu",
+   "legs": 7421,
+   "aircraft_legs_identified": 5510,
+   "legs_type_only": 1911,
+   "aircraft_in_area": 2220,
+   "traces_read": 78855,
+   "points": 904620,
+   "bytes": 5272536,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.15-planes-readsb-prod-0",
+   "built": "2026-10-16T10:09:38.158Z"
+  },
+  {
+   "date": "2026-10-16",
+   "weekday": "Fri",
+   "legs": 7439,
+   "aircraft_legs_identified": 5607,
+   "legs_type_only": 1832,
+   "aircraft_in_area": 2273,
+   "traces_read": 72305,
+   "points": 927948,
+   "bytes": 5381261,
+   "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.16-planes-readsb-prod-0",
+   "built": "2026-10-17T09:44:00.739Z"
+  }
+ ]
+}
