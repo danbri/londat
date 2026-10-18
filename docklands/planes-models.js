@@ -143,4 +143,11 @@ function helicopter(T) {
 }
 
 const CACHE = new Map();
-export function aircraftParts(T) { if (!CACHE.has(T.code)) CACHE.set(T.code, T.kind === 'heli' ? helicopter(T) : airplane(T)); return CACHE.get(T.code); }
+export function aircraftParts(T) { if (!CACHE.has(T.code)) { const P = T.kind === 'heli' ? helicopter(T) : airplane(T); P.far = standIn(T); P.size = Math.max(T.L || 0, T.S || 0, T.R || 0, 10); CACHE.set(T.code, P); } return CACHE.get(T.code); }
+// the stand-in at a distance (layers/planes.js, THREE.LOD; skill docklands-3d-page, "level of detail"): the same outline in
+// boxes, 36 to 60 triangles (the full model: 1,500 to 4,000 and up to 10 meshes), same frame and colours
+function standIn(T) {
+  if (T.kind === 'heli') { const { L, R } = T; return mergeGeometries([box(0, 0, -L * 0.18, 2.1, 2, 4.6, WHITE), box(0, 0.35, L * 0.2, 0.45, 0.45, L * 0.5, WHITE), box(0, 1.9, -L * 0.17, R * 0.7, 0.05, 0.4, DARK), box(0, 1.9, -L * 0.17, 0.4, 0.05, R * 0.7, DARK)]); }
+  const { L, S, H, D } = T, prop = T.kind === 'turboprop', cr = prop ? 0.105 * L : 0.17 * L, zr = -L / 2 + (prop ? 0.4 : 0.36) * L, yw = prop ? D * 0.47 : -D * 0.3;
+  return mergeGeometries([box(0, 0, 0, D, D, L, WHITE), box(0, yw, zr + cr / 2, S, 0.25 * D, cr, WING), box(0, D * 0.5 + (H - D) * 0.3, L * 0.38, 0.3, (H - D) * 0.6, 0.12 * L, FIN), box(0, prop ? H * 0.55 : 0, L * 0.4, 0.33 * S, 0.12 * D, 0.1 * L, WING)]);
+}

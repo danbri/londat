@@ -176,14 +176,20 @@ export default {
     const LM = { red: lampMat([1, 0.05, 0.03]), green: lampMat([0.1, 1, 0.3]), white: lampMat([1, 0.97, 0.9]), strobe: lampMat([1, 1, 1], 16), land: lampMat([1, 0.95, 0.82], 14), beacon: lampMat([1, 0.08, 0.04], 11) };
     const lampGeo = new THREE.OctahedronGeometry(0.5, 1);
     const pool = new Map(), live = new Map();
+    // level of detail (main.js ctx.lod): a THREE.LOD holds the full model (body, gear, propeller discs, rotors) near and
+    // the box stand-in (planes-models.js standIn: one mesh, 36 to 60 triangles) once the aircraft covers fewer than
+    // ctx.lod.px CSS pixels; the lights stay outside it (a beacon or a strobe shows from any distance)
+    const LODN = { near: 0, far: 0 };
     function make(T) {
-      const Pt = aircraftParts(T), g = new THREE.Group(), body = new THREE.Mesh(Pt.body, bodyMat), gear = new THREE.Mesh(Pt.gear, bodyMat);
-      body.castShadow = gear.castShadow = true; g.add(body, gear);
-      const o = { T, g, gear, rotors: [], props: [], lamps: [], Pt };
-      for (const p of Pt.props) { const d = new THREE.Mesh(new THREE.CircleGeometry(p.R, 20), discMat); d.position.set(p.x, p.y, p.z); g.add(d); o.props.push(d); }
-      if (Pt.rotor) { const r = new THREE.Mesh(Pt.rotor.geo, bodyMat); r.position.set(...Pt.rotor.at); r.castShadow = true; g.add(r); o.rotors.push([r, 'y', 6.5 * 2 * Math.PI]);
-        const tr = new THREE.Mesh(Pt.trotor.geo, bodyMat); tr.position.set(...Pt.trotor.at); g.add(tr); o.rotors.push([tr, 'x', 30 * 2 * Math.PI]);
-        const disc = new THREE.Mesh(new THREE.CircleGeometry(T.R / 2, 24).rotateX(-Math.PI / 2), discMat); disc.position.set(...Pt.rotor.at); disc.position.y += 0.05; g.add(disc); }
+      const Pt = aircraftParts(T), g = new THREE.Group(), det = new THREE.Group(), body = new THREE.Mesh(Pt.body, bodyMat), gear = new THREE.Mesh(Pt.gear, bodyMat);
+      body.castShadow = gear.castShadow = true; det.add(body, gear);
+      const lod = new THREE.LOD(); lod.autoUpdate = false; lod.addLevel(det, 0); g.add(lod);
+      if (ctx.lod && ctx.lod.on) { const far = new THREE.Mesh(Pt.far, bodyMat); far.name = 'stand-in'; lod.addLevel(far, ctx.lod.dist(Pt.size)); }
+      const o = { T, g, gear, lod, rotors: [], props: [], lamps: [], Pt };
+      for (const p of Pt.props) { const d = new THREE.Mesh(new THREE.CircleGeometry(p.R, 20), discMat); d.position.set(p.x, p.y, p.z); det.add(d); o.props.push(d); }
+      if (Pt.rotor) { const r = new THREE.Mesh(Pt.rotor.geo, bodyMat); r.position.set(...Pt.rotor.at); r.castShadow = true; det.add(r); o.rotors.push([r, 'y', 6.5 * 2 * Math.PI]);
+        const tr = new THREE.Mesh(Pt.trotor.geo, bodyMat); tr.position.set(...Pt.trotor.at); det.add(tr); o.rotors.push([tr, 'x', 30 * 2 * Math.PI]);
+        const disc = new THREE.Mesh(new THREE.CircleGeometry(T.R / 2, 24).rotateX(-Math.PI / 2), discMat); disc.position.set(...Pt.rotor.at); disc.position.y += 0.05; det.add(disc); }
       const lamp = (pos, mat, kind) => { const m = new THREE.Mesh(lampGeo, mat); m.position.set(...pos); m.userData.kind = kind; g.add(m); o.lamps.push(m); return m; };
       const Lp = Pt.lights; lamp(Lp.navR, LM.red, 'nav'); lamp(Lp.navG, LM.green, 'nav'); lamp(Lp.tail, LM.white, 'nav');
       lamp(Lp.beaconTop, LM.beacon, 'beacon'); lamp(Lp.beaconBot, LM.beacon, 'beacon2'); lamp(Lp.strobeL, LM.strobe, 'strobe'); lamp(Lp.strobeR, LM.strobe, 'strobe');
@@ -239,7 +245,7 @@ export default {
         : nlWait ? []
         : recWanted() && rec.state !== 'error' && (rec.state === 'loading' || rec.state === 'idle' || (rec.pick && rec.file(rec.pick.t).state === 'loading')) ? []
         : TEST ? TESTSET.map(F => ({ ...F, tau: F.tau + (RUN ? (now - tStart) / 1000 : 0) })) : traffic(T);
-      const night = ctx.U.night.value > 0.02, cam = ctx.camera.position, keep = new Set(); drawn = [];
+      const night = ctx.U.night.value > 0.02, cam = ctx.camera.position, keep = new Set(); drawn = []; LODN.near = LODN.far = 0;
       for (const F of list) {
         if (F.Pr && F.tau > F.Pr.dur) continue;
         const S = F.live || F.rec ? F.S : stateOf(F), o = get(F.key, F.T); keep.add(F.key);
@@ -248,6 +254,8 @@ export default {
         // under the ground (on the ground and in the last metres before touchdown)
         const lift = F.live || F.rec ? liftOf(S.x, S.y, S.z, o.Pt) : -o.Pt.ground;
         o.g.position.set(S.x, S.y + lift, S.z); o.g.rotation.set(S.pitch, -S.h, -S.bank, 'YXZ'); o.gear.visible = S.gear;
+        if (o.lod.levels[1]) { o.lod.levels[1].distance = ctx.lod.dist(o.Pt.size); o.g.updateMatrixWorld(); o.lod.update(ctx.camera); }
+        if (o.lod.getCurrentLevel() > 0) LODN.far++; else LODN.near++;
         const sec = now / 1000, dist = Math.hypot(cam.x - S.x, cam.y - S.y, cam.z - S.z), sz = clamp(dist * 0.006, 0.6, 80);
         for (const [r, ax, w] of o.rotors) r.rotation[ax] = (sec * w) % (2 * Math.PI);
         for (const d of o.props) d.visible = true;
@@ -262,6 +270,7 @@ export default {
         drawn.push({ F, S, o, lift });
       }
       for (const k of [...live.keys()]) if (!keep.has(k)) release(k);
+      (ctx.stats.lod ||= {}).planes = { full: LODN.near, standIn: LODN.far };
       if (qs.has('planecam')) planeCam();   // before the labels, which are placed with the camera of this frame
       drawTrails(liveNow || recNow || nlNow ? drawn : []); showCredit(liveNow, recNow, nlNow);
       placeLabels(); status();

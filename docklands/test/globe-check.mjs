@@ -60,6 +60,10 @@ async function cost(page, ms = 4000) {
   }, ms);
 }
 const view = page => page.evaluate(() => docklands.getView());
+async function lumaGrid(buf) {   // the screen as a 64 x 64 grid of mean luma (0..1)
+  const img = await loadImage(buf), cv = createCanvas(64, 64), c = cv.getContext('2d'); c.drawImage(img, 0, 0, 64, 64);
+  const d = c.getImageData(0, 0, 64, 64).data, out = new Float32Array(64 * 64); for (let i = 0; i < out.length; i++) out[i] = (0.2126 * d[4 * i] + 0.7152 * d[4 * i + 1] + 0.0722 * d[4 * i + 2]) / 255; return out;
+}
 
 for (const [w, h, dpr] of SIZES) {
   const tag = `${w}x${h}@${dpr}`;
@@ -125,9 +129,21 @@ for (const [w, h, dpr] of SIZES) {
     const a = e(c), b = e(v); return { mode: __docklands3.globe.mode, eye_m: Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]), target_m: Math.hypot(c.tx - v.tx, c.tz - v.tz), url: location.href }; });
   check(home.mode === 'model' && home.eye_m < 3 && home.target_m < 3, `${tag} flight from orbit to Canary Wharf ends in the model at ?view=cw`, `modes ${fl.modes.join(' -> ')}, ${fl.ms} ms; eye ${home.eye_m.toFixed(3)} m and target ${home.target_m.toFixed(3)} m from ?view=cw`);
   if (w === SIZES[0][0]) await shot(page, `docklands-cw-layersnone-${tag}`);
-  // ---------- 6. wheel zoom out of the model: the globe takes the view
-  let n = 0; for (; n < 60; n++) { await page.mouse.move(w / 2, h / 2); await page.mouse.wheel(0, 400); await page.waitForTimeout(120); if (await page.evaluate(() => __docklands3.globe.mode) === 'globe') break; }
-  check(n < 60, `${tag} wheel out of the model hands over to the globe`, `after ${n + 1} wheel steps; ${JSON.stringify((await view(page)).eye)}`);
+  // ---------- 5b. the globe rests while the model holds the view near the ground (globe.js restGlobe, 8 s): its buffers,
+  // textures and background target are given back; the wheel-out below must then draw the globe again (uploaded anew)
+  const rest = await page.evaluate(() => new Promise(ok => { const G = __docklands3.globe, t0 = performance.now(); const f = () => { __docklands3.draw(); if (G.rested || performance.now() - t0 > 30000) ok({ rested: G.rested, rests: G.rests || 0, ms: Math.round(performance.now() - t0) }); else requestAnimationFrame(f); }; f(); }));
+  check(!!rest.rested && rest.rested.meshes > 0, `${tag} the globe rests in the model near the ground`, JSON.stringify(rest));
+  // ---------- 6. wheel zoom out of the model: the globe takes the view, the eye kept (the model zooms to its limit first)
+  // (in the page, a frame after each notch, as section 7: a notch sent after the hand-over would zoom the globe itself)
+  const outEye = await page.evaluate(() => { const D = __docklands3, G = D.globe, cv = D.renderer.domElement; let eyeM = null, n = 0;
+    const eyeOf = () => { const c = D.camState(), cp = Math.cos(c.pitch); return G.modelToEcef([c.tx + c.dist * Math.sin(c.yaw) * cp, c.ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * cp]); };
+    for (; n < 60 && G.mode === 'model'; n++) { cv.dispatchEvent(new WheelEvent('wheel', { deltaY: 400, clientX: innerWidth / 2, clientY: innerHeight / 2, bubbles: true, cancelable: true })); eyeM = eyeOf(); D.frameNow(); }
+    const e = G.orbitCam(G.orbit()).eye; return { n, mode: G.mode, jump_m: G.mode === 'globe' && eyeM ? Math.hypot(e[0] - eyeM[0], e[1] - eyeM[1], e[2] - eyeM[2]) : null, range_m: Math.round(G.orbit().range) }; });
+  const n = outEye.n - 1;
+  check(outEye.mode === 'globe', `${tag} wheel out of the model hands over to the globe`, `after ${n + 1} wheel steps; ${JSON.stringify((await view(page)).eye)}`);
+  check(outEye.jump_m != null && outEye.jump_m < 1, `${tag} wheel out: the globe takes the model's last eye (no jump)`, JSON.stringify(outEye));
+  s = await shot(page, `after-rest-out-${tag}`); L = await lumaStats(s.buf);
+  check(L.centre > 0.05, `${tag} after the rest, the globe draws again (buffers and textures uploaded anew)`, `centre luma ${L.centre.toFixed(3)} -> ${s.file}`);
   // ---------- 7. hand-over in: the globe 45 km over the box, wheel in at the centre: the model takes the view, eye continuous
   await page.evaluate(() => docklands.goTo({ lon: -0.0195, lat: 51.5049, alt_m: 45000, tilt_deg: 30 }));
   const hand = await page.evaluate(async () => {
@@ -137,12 +153,33 @@ for (const [w, h, dpr] of SIZES) {
     let range = null;
     for (let i = 0; i < 40 && G.mode === 'globe'; i++) { cv.dispatchEvent(new WheelEvent('wheel', { deltaY: -120, clientX: innerWidth / 2, clientY: innerHeight / 2, bubbles: true, cancelable: true })); before = eyeG(); range = G.orbit().range; D.frameNow(); }
     if (G.mode !== 'model') return { mode: G.mode };
+    if (G.fade && G.fade.anim) G.fade.anim.pause();   // the cross-fade, held at its start (section 7b steps through it)
     // the model eye in ECEF through the same region transform, against the globe eye just before
     const c = D.camState(), cp = Math.cos(c.pitch), E = [c.tx + c.dist * Math.sin(c.yaw) * cp, c.ty + c.dist * Math.sin(c.pitch), c.tz + c.dist * Math.cos(c.yaw) * cp];
     after = G.modelToEcef(E);
     return { mode: G.mode, handover_range_m: Math.round(range), sameEye_m: Math.hypot(after[0] - before[0], after[1] - before[1], after[2] - before[2]) };
   });
   check(hand.mode === 'model' && hand.sameEye_m < 0.05, `${tag} wheel in over the box: the model takes the view with no jump`, JSON.stringify(hand));
+  // ---------- 7b. the cross-fade (globe.js crossFade): the screen through the fade in 5 steps. Without it the whole change
+  // (mean absolute luma difference per pixel between the last globe frame and the model) came in one frame; with it no step
+  // may carry more than 45 % of it. First the model's freed buffers come back (globe.js stepReup), the fade held.
+  const fade = await page.evaluate(() => __docklands3.globe.fade ? { from: __docklands3.globe.fade.from, ms: __docklands3.globe.fade.ms, held: !!__docklands3.globe.fade.anim } : null);
+  if (!fade || !fade.held) check(false, `${tag} hand-over cross-fade`, 'no fade: ' + JSON.stringify(fade));
+  else {
+    const reupInfo = await page.evaluate(() => new Promise(ok => { const G = __docklands3.globe, t0 = performance.now(); const f = () => { __docklands3.draw(); if (!G.reup || G.reup.done || performance.now() - t0 > 30000) ok(G.reup); else requestAnimationFrame(f); }; f(); }));
+    const steps = [];
+    for (const k of [0, 0.25, 0.5, 0.75, 1]) { await page.evaluate(k => { const a = __docklands3.globe.fade.anim; a.currentTime = k * __docklands3.globe.fade.ms * 0.999; }, k);
+      const b = await page.screenshot(); steps.push(await lumaGrid(b)); if (k === 0.5 && w === SIZES[0][0]) writeFileSync(`${OUT}/fade-mid-${tag}${WEBGPU ? '-webgpu' : ''}.png`, b); }
+    await page.evaluate(() => __docklands3.globe.fade.anim?.finish());
+    const mad = (a, b) => { let t = 0; for (let i = 0; i < a.length; i++) t += Math.abs(a[i] - b[i]); return t / a.length; };
+    const total = mad(steps[0], steps[4]), st = steps.slice(1).map((x, i) => mad(steps[i], x)), worst = Math.max(...st);
+    check(worst <= 0.45 * total + 0.01, `${tag} hand-over cross-fade: no single step carries the whole change`, `from ${fade.from}, ${fade.ms} ms; mean |luma change| first to last ${total.toFixed(3)}, steps ${st.map(x => x.toFixed(3)).join(', ')}; re-upload ${JSON.stringify(reupInfo)}`);
+  }
+  // with prefers-reduced-motion there is no fade (the switch is at once)
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const rm = await page.evaluate(async () => { const G = __docklands3.globe, before = G.fade; G.world({ ms: 0 }); await new Promise(ok => requestAnimationFrame(() => requestAnimationFrame(ok))); return { mode: G.mode, newFade: G.fade !== before }; });
+  check(rm.mode === 'globe' && !rm.newFade, `${tag} reduced motion: the hand-over has no fade`, JSON.stringify(rm));
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   // ---------- 8. deep link ?ll= (Tokyo, 20 km up) in a fresh page
   check(!errors.length, `${tag} no page errors (globe page)`, errors.slice(0, 4).join(' | '));
   await ctx.close();

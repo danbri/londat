@@ -13,7 +13,7 @@
 // Skill: docklands-3d-page, "Three.js port: boats and moored barges (2026-10-11)"; cwplans-river-and-water (moorings).
 import { WU } from './water.js';
 import { MFP } from './build.js';
-import { models, boatMaterial, boatMesh, paintOf, hash01 } from './boats-models.js';
+import { models, boatMaterial, boatMesh, paintOf, hash01, farMesh } from './boats-models.js';
 
 const CLASS = { canal: 'canal moorings', resid: 'residential moorings in a dock', tidal: 'residential moorings on the tidal river', marina: 'marina', mixed: 'moorings', tier: 'a mooring buoy' };
 const KIND = { houseboat: 'a houseboat outline', pontoon: 'a pontoon of a mooring', quay: 'a mooring along a quay', buoy: 'a mooring buoy' };
@@ -40,6 +40,8 @@ export async function mooredBoats(ctx, J) {
       b.sx = b.B / m.B0; b.sz = b.L / m.L0; b.sy = Math.max(.85, Math.min(1.2, Math.sqrt(b.L / m.L0))); b.H = m.deck * b.sy; });
     t1.needsUpdate = t2.needsUpdate = true; mesh.count = list.length; mesh.visible = true;
   }
+  // the stand-ins (boats-models.js farMesh, one InstancedMesh per model, made on first need): boats that cover fewer than ctx.lod.px pixels
+  const far = {}, farOf = key => far[key] || (far[key] = (() => { const m = farMesh(M[key], mat, byKey[key].length); group.add(m); return { m, t: [m.geometry.getAttribute('tint'), m.geometry.getAttribute('tint2')] }; })());
   const dummy = new THREE.Object3D(); dummy.rotation.order = 'YXZ';
   const levelOf = b => b.level != null ? b.level : Math.max(WU.tideLevel.value, ctx.groundAt(b.x, b.z) + .3);
   let visible = true, aisAt = 0, aisHidden = 0, held = 0;
@@ -59,6 +61,7 @@ export async function mooredBoats(ctx, J) {
     if (!visible || !group.visible || (group.parent && !group.parent.visible)) return;
     if (performance.now() - aisAt > 1000) { aisAt = performance.now(); aisCheck(); }
     const t = performance.now() / 1000, wind = Math.min(14, WU.windSpeed ? WU.windSpeed.value : 3), cp = ctx.camera.position, n = {}; held = 0; drawnN = 0;
+    const lodK = ctx.lod && ctx.lod.on ? ctx.lod.dist(1) : Infinity, nfk = {}; let nf = 0;   // (a boat of length L: its stand-in beyond L x lodK m)
     for (const b of boats) {
       b.drawn = false; if (!b.mesh) continue;
       const y0 = levelOf(b); b.y = y0;
@@ -68,10 +71,13 @@ export async function mooredBoats(ctx, J) {
       if (b.ais) continue;
       const amp = (b.tidal ? .05 : .025) + wind * (b.tidal ? .008 : .004), j = n[b.key] = (n[b.key] || 0) + 1, i = j - 1;
       dummy.position.set(b.x, y0 + Math.sin(t * 1.1 + b.ph) * amp, b.z); dummy.rotation.set(Math.sin(t * .7 + b.ph) * amp * .02, -b.h, Math.sin(t * .9 + b.ph) * amp * .06);
-      dummy.scale.set(b.sx, b.sy, b.sz); dummy.updateMatrix(); b.mesh.setMatrixAt(i, dummy.matrix);
-      const [t1, t2] = tints[b.key]; t1.setXYZ(i, ...b.c1); t2.setXYZ(i, ...b.c2); b.drawn = true; drawnN++;
+      dummy.scale.set(b.sx, b.sy, b.sz); dummy.updateMatrix(); b.drawn = true; b.far = false; drawnN++;
+      if (dx * dx + dz * dz + (cp.y - y0) ** 2 > (b.L * lodK) ** 2) { n[b.key]--; b.far = true; const F = farOf(b.key), q = nfk[b.key] = (nfk[b.key] || 0) + 1; F.m.setMatrixAt(q - 1, dummy.matrix); F.t[0].setXYZ(q - 1, ...b.c1); F.t[1].setXYZ(q - 1, ...b.c2); nf++; continue; }
+      b.mesh.setMatrixAt(i, dummy.matrix); const [t1, t2] = tints[b.key]; t1.setXYZ(i, ...b.c1); t2.setXYZ(i, ...b.c2);
     }
     for (const [key, m] of Object.entries(meshes)) { const k = n[key] || 0; m.count = Math.max(1, k); m.visible = k > 0; m.instanceMatrix.needsUpdate = true; if (k) { tints[key][0].needsUpdate = tints[key][1].needsUpdate = true; } }
+    for (const [key, F] of Object.entries(far)) { const k = nfk[key] || 0; F.m.count = Math.max(1, k); F.m.visible = k > 0; if (k) F.m.instanceMatrix.needsUpdate = F.t[0].needsUpdate = F.t[1].needsUpdate = true; }
+    (ctx.stats.lod ||= {}).mooredBoats = { full: drawnN - nf, standIn: nf };
   }
   ctx.onFrame(frame); frame();
 
@@ -103,7 +109,7 @@ export async function mooredBoats(ctx, J) {
   const byType = Object.fromEntries(Object.entries(byKey).map(([k, l]) => [k, l.length]));
   const stats = { boats: boats.length, places: places.length, outlines: boats.filter(b => b.outline).length, byType, byClass: count(boats, b => b.P.cls), byKind: count(boats, b => b.P.kind),
     tris: boats.reduce((s, b) => s + (M[b.key] ? M[b.key].tris : 0), 0), drawCalls: Object.keys(meshes).length, hidden_buildings: hide.size, get ais_hidden() { return aisHidden; }, get camera_held() { return held; }, get drawn() { return drawnN; },
-    get drawnTris() { return boats.reduce((s, b) => s + (b.drawn ? M[b.key].tris : 0), 0); } };
+    get drawnTris() { return boats.reduce((s, b) => s + (b.drawn ? (b.far ? far[b.key].m.geometry.getAttribute('position').count / 3 : M[b.key].tris) : 0), 0); } };
   // a short text description (screen readers, LLMs, WebMCP): what is drawn, how many, where, and what it is not
   function describe(maxPlaces = 6) {
     if (!visible) return 'Generic boats at known moorings: off.';

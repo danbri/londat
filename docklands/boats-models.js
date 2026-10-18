@@ -115,6 +115,26 @@ export function boatMesh(model, mat, cap) {
   m.userData.model = model; return m;
 }
 
+// ---------- level of detail (skill docklands-3d-page, "level of detail"): a boat that covers fewer than ctx.lod.px CSS pixels
+// is drawn by its model's stand-in (an InstancedMesh per model, made on first need) instead of the model: a hull block
+// with a pointed bow in the boat's first paint, a light cabin block to the main deck top, and the mast where the model
+// has one (yachts, sailing barges: the mast is what shows from afar): 24 to 36 triangles (the models: 300 to 3,000), in
+// the model's own frame, so the boat's instance transform serves both.
+const FARG = new WeakMap();
+export function farGeometry(model) {
+  let G = FARG.get(model); if (G) return G;
+  const bb = model.geo.boundingBox || (model.geo.computeBoundingBox(), model.geo.boundingBox), y0 = Math.max(bb.min.y, -1), top = Math.max(model.deck || 1, y0 + .5), h = top - y0;
+  const x0 = bb.min.x, x1 = bb.max.x, z0 = bb.min.z, z1 = bb.max.z, sx = x1 - x0, sz = z1 - z0, cx = (x0 + x1) / 2, yh = y0 + h * .5, g = new BB();
+  const o = [[x0, z1], [x1, z1], [x1, z0 + sz * .25], [cx, z0], [x0, z0 + sz * .25]], hull = [.5, .5, .5];   // the bow at -z
+  for (let i = 0; i < o.length; i++) { const [a0, b0] = o[i], [a1, b1] = o[(i + 1) % o.length]; g.quad([a0, y0, b0], [a1, y0, b1], [a1, yh, b1], [a0, yh, b0], hull, 0, 1); }
+  const P = k => [o[k][0], yh, o[k][1]]; g.tri(P(0), P(1), P(2), BP.deck); g.tri(P(0), P(2), P(4), BP.deck); g.tri(P(4), P(2), P(3), BP.deck);
+  g.box(cx, (yh + top) / 2, (z0 + z1) / 2 + sz * .12, sx * .62, top - yh, sz * .55, BP.offwhite);
+  if (model.top && model.top[0] > top + 1.5) g.box(cx, (top + model.top[0]) / 2, model.top[1], .18, model.top[0] - top, .18, BP.offwhite);
+  G = g.geometry(); FARG.set(model, G); return G;
+}
+// the stand-in InstancedMesh of a model (cap instances), with the tint attributes of boatMesh
+export function farMesh(model, mat, cap) { const m = boatMesh({ key: model.key + ' (stand-in)', geo: farGeometry(model) }, mat, cap); m.castShadow = false; m.name = 'boat ' + model.key + ' stand-in'; return m; }
+
 // ---------- the models. Each: { key, name, geo, L0, B0, deck (m: top of the main superstructure), top: [y, z] masthead }
 const hz = (t, L) => -L / 2 + t * L;
 // narrowboat (canal boat, 15 to 21 m x 2.1 m) and widebeam (15 to 20 m x 3 to 4 m): black hull, painted cabin with a
