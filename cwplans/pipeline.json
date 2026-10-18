@@ -9914,6 +9914,11 @@
     {
      "source": "es-catastro-inspire-bu",
      "endpoint": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip"
+    },
+    {
+     "source": "copernicus-glo30",
+     "endpoint": "https://copernicus-dem-30m.s3.amazonaws.com/",
+     "request": "the COG of the 1 x 1 degree cell of the place, a window of the area plus 0.002 degree"
     }
    ],
    "generated": [
@@ -9931,6 +9936,18 @@
     },
     {
      "file": "docklands/data/places/leon/log.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/tileset.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/tiles/*.glb"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/features.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/log.json"
     }
    ],
    "method": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > default 9 m, 3 m for small kinds), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + height; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView).",

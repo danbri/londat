@@ -23,6 +23,28 @@
    "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published)",
    "buildings": 4044,
    "built": "2026-10-18T12:04:49.339Z"
+  },
+  {
+   "id": "sarajevo",
+   "name": "Stari Grad, Sarajevo",
+   "label": "Vijećnica, Stari Grad, Sarajevo",
+   "area": [
+    18.4185791015625,
+    43.8519287109375,
+    18.446044921875,
+    43.868408203125
+   ],
+   "centre": [
+    18.43335,
+    43.85917
+   ],
+   "timeZone": "Europe/Sarajevo",
+   "locale": "bs",
+   "tileset": "sarajevo/tileset.json",
+   "features": "sarajevo/features.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
+   "buildings": 7424,
+   "built": "2026-10-18T12:06:33.203Z"
   }
  ]
 }

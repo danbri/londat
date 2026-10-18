@@ -2949,6 +2949,16 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
   source), the nearest named building, local time in the place's zone (`Intl` with the region `timeZone` and `locale`).
   `describeView` adds `places: [{ buildings_in_view, nearest_named, tallest_named, local_time }]` and one sentence.
   `getView` on the globe adds `place_time`. A tap on a building opens its card (OSM link, height and source, credit).
+- **Sarajevo** (2026-10-18, second place, same tool and module): `--region sarajevo`, DEM adapter `world-base` with a
+  `dem` block of kind `copernicus-glo30` (the 1 x 1 degree COG on the AWS open data registry, read by range requests with
+  geotiff.js `fromUrl` through the proxy: one window of 114 x 75 pixels; a surface model, EGM2008). One OSM request (57,298
+  elements). Names: `names` Latin keys, `alt_names: ['name:sr', 'name:sr-Cyrl']`: the second name is kept beside the first
+  when it differs (12 buildings, 296 of 333 streets, 31 points), shown as "Bijela tabija (Бијела табија)" in search, cards
+  and descriptions; the place's own words include "Вијећница". Vijećnica is an outline with 16 parts (20 to 29 m from OSM
+  `height`); before place-select-osm version 2 the parts had no name. 15 tiles, 7,424 buildings, 5.50 MB + 0.93 MB.
+  Heights: 95 % at the 9 m default (no national source yet; the owner's waiver, issue #9, allows FGU / RGURS data).
+  The world terrain (ETOPO box mean) is 805 m at Vijećnica, the real ground 558 m: the place sat in a 247 m pit walled by
+  the curtain; hence the terrain ring (next item).
 - **Measured** (headless, SwiftShader, WebGL 2): León deep link at 390 x 844 @2: tiles loaded 21 s after page load,
   177,652 triangles in the frame (122,333 of the place), 187 draw calls; 1280 x 800 @1: 238,302 triangles, 211 calls.
 - **Open.** Flat roofs; one ground texture resolution (1.2 m a pixel); the world outside the area is still the coarse

@@ -2641,3 +2641,8 @@ then Sarajevo". No Leiden data was made or committed.
   20 of 20; `npm test` 61 of 61; `npm run check` OK. Deep link:
   https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55
 - Lessons in the skill docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
+- Sarajevo the same day (second commit): `--region sarajevo`, Copernicus GLO-30 terrain (COG window by range requests),
+  OSM buildings (95 % at the 9 m default: F55), names in Latin with the Cyrillic beside them where OSM has `name:sr`;
+  15 tiles, 7,424 buildings, 5.50 MB + 0.93 MB; place-check all passed at both sizes; `3d-tiles-validator` 0 errors.
+  Deep link https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,1500&ht=0,55 ; `goTo("Vijećnica")` flies there.
+  The coarse world terrain is 247 m above the real ground at Vijećnica (805 against 558 m).
