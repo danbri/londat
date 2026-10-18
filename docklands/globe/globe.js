@@ -18,7 +18,8 @@
 // range, heading, tilt). Hand-over: globe -> model when the orbit range is under HANDOVER.range (36 km) and the target is
 // over the model box (1 km margin); model -> globe when a zoom out passes the model's limit (NV.DMAX, set to
 // HANDOVER.out, 40 km) or the target leaves the box by more than 3 km. Each hand-over converts the camera exactly (eye
-// and view direction through the region transform), so the picture does not jump; only the content changes.
+// and view direction through the region transform), so the picture does not jump; only the content changes, and that
+// change cross-fades over 500 ms (crossFade).
 // Skill: docklands-3d-page, "Three.js port: globe and world skeleton (2026-10-13)". Data: cwplans/docklands/data/world/.
 import * as THREE from 'three/webgpu';
 import { uniform, texture, screenUV, vec3, vec4, float, normalize, dot, max, smoothstep, pow, length, positionWorld, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth } from 'three/tsl';
@@ -151,9 +152,9 @@ export async function createGlobe(H) {
 
   // ---------- modes
   const ui = {}; let freeT = 0;
-  function setMode(m) {
-    if (G.mode === m) return; G.mode = m; const on = m === 'globe';
-    clearTimeout(freeT); if (on) freeT = setTimeout(freeModel, 3000); else if (H.scene) H.scene.traverse(x => { if (x.geometry?.userData?.freed) x.geometry.userData.freed = false; });
+  function setMode(m, o) {   // o: the orbit of the hand-over (the camera of the cross-fade's last globe frame)
+    if (G.mode === m) return; crossFade(G.mode, o); G.mode = m; const on = m === 'globe';
+    clearTimeout(freeT); if (on) freeT = setTimeout(freeModel, 3000); else reupStart();
     document.body.classList.toggle('globeMode', on);
     controls.enabled = !on; if (ui.btns) ui.btns.hidden = !on;
     if (!on) { if (labels) labels.update({ visible: false, project, eye: F.O, zoom: 0, W: innerWidth, H: innerHeight }); }
@@ -170,10 +171,73 @@ export async function createGlobe(H) {
       if (c > 20000 && !g.userData.freed) { g.dispose(); g.userData.freed = true; n++; v += c; } });
     G.freed = { meshes: n, vertices: v, at: Date.now() };
   }
-  function enterGlobe(o) { orbit = guard({ ...o }); setMode('globe'); }
-  function enterModel(o) { orbitToModel(o, true); setMode('model'); }
+  function enterGlobe(o) { orbit = guard(onGround({ ...o })); setMode('globe'); }
+  // the eye and the view ray kept, the target moved along the ray onto the globe's ground (guard puts the target at the
+  // globe's ground height, 9.8 km cells: from the model's ground that moved the eye 34 m at the zoom-out hand-over)
+  function onGround(o) {
+    if (!sampler) return o; const c = orbitCam(o), E = c.eye, d = c.f, f = s => { const g = ecefToGeodetic(...addS(E, d, s)); return g.h - sampler.ell(g.lon, g.lat); };
+    let lo = o.range * 0.5, hi = o.range * 2; if (!(f(lo) > 0 && f(hi) < 0)) return o;
+    for (let k = 0; k < 50; k++) { const m = (lo + hi) / 2; if (f(m) > 0) lo = m; else hi = m; }
+    return orbitFrom(E, addS(E, d, (lo + hi) / 2));
+  }
+  function enterModel(o) { orbitToModel(o, true); setMode('model', o); }
   // apply an orbit in whichever mode suits it (flights)
-  function applyOrbit(o) { o = guard(o); if (canModel(o)) { const first = G.mode !== 'model'; if (first) setMode('model'); orbitToModel(o, first); orbit = o; } else { orbit = o; if (G.mode !== 'globe') setMode('globe'); } G.dirty = true; }
+  function applyOrbit(o) { o = guard(o); if (canModel(o)) { const first = G.mode !== 'model'; if (first) setMode('model', o); orbitToModel(o, first); orbit = o; } else { orbit = o; if (G.mode !== 'globe') setMode('globe'); } G.dirty = true; }
+
+  // ---------- the hand-over cross-fade (owner, 2026-10-14: "zooming out there is an overly abrupt switch to planetary
+  // geography - can we make that smoother?"). At each hand-over the old mode draws its last frame once more (the same
+  // camera: the hand-over converts it exactly), a 2D canvas over the 3D canvas takes a copy (CSS pixels, at most 1.3 MB
+  // on a phone; freed after), and it fades out over the new mode in FADE_MS. The copy is taken in the same task as the
+  // draw (a WebGL or WebGPU canvas keeps its picture until the task ends). None with prefers-reduced-motion, during the
+  // boot screen or with ?fade=0. State for tests: G.fade { from, at, ms, anim }.
+  const FADE_MS = 500; let fadeCv = null;
+  function crossFade(from, o) {
+    const boot = $('boot'); if (reduced() || qs.get('fade') === '0' || !G.ready || !MF || (boot && !boot.hidden && !boot.classList.contains('done'))) return;
+    try {
+      if (from === 'globe') { const c = orbitCam(o || orbit); drawGlobe(c.eye, c.f, c.u, null); }
+      else if (!H.renderModel || !H.renderModel()) return;   // (no model frame drawn yet)
+      const src = renderer.domElement, w = Math.max(2, Math.round(innerWidth)), h = Math.max(2, Math.round(innerHeight));
+      if (!fadeCv) { fadeCv = document.createElement('canvas'); fadeCv.id = 'handoverFade'; fadeCv.setAttribute('aria-hidden', 'true'); fadeCv.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0'; src.parentNode.insertBefore(fadeCv, src.nextSibling); }
+      if (G.fade && G.fade.anim) G.fade.anim.cancel();
+      fadeCv.width = w; fadeCv.height = h; fadeCv.getContext('2d').drawImage(src, 0, 0, w, h);
+      const anim = fadeCv.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_MS, easing: 'ease-in-out' });
+      anim.onfinish = () => { if (G.fade && G.fade.anim === anim) { fadeCv.width = fadeCv.height = 1; G.fade.anim = null; } };   // (the copy's memory back)
+      G.fade = { from, at: performance.now(), ms: FADE_MS, anim };
+    } catch (e) { console.warn('globe: cross-fade', e); }
+  }
+
+  // ---------- memory at the return to the model (owner, 2026-10-14: Home from orbit "started to zoom in then said it was
+  // starting 3D mode ... almost like the rendering crashed and rebooted": iOS ended the tab). freeModel gave back the
+  // model's large buffers; they used to come back all in the first model frame (153 MB more GPU memory in one frame,
+  // measured at 390 x 844 @2, docklands/test/lod-memory.mjs). Now: the first model frame draws none of them, then every
+  // second frame brings back REUP vertices (hidden meanwhile by layers.mask = 0, so nothing else changes their state), and
+  // on a frame that uploads the globe behind the model is not drawn again (its target keeps the last picture).
+  const REUP = 600000; let reup = [], reupN = 0;
+  function reupStart() {
+    reup = []; reupN = 0; if (!H.scene) return;
+    H.scene.traverse(x => { if (x.geometry?.userData?.freed) { if (x.userData.reupMask == null) x.userData.reupMask = x.layers.mask; x.layers.mask = 0; reup.push(x); } });
+    G.reup = reup.length ? { meshes: reup.length, frames: 0, done: false } : null;
+  }
+  function stepReup() {   // -> the vertices brought back in this frame
+    if (!reup.length) return 0; reupN++; G.reup.frames = reupN; if (reupN % 2) return 0;   // frames 1, 3, 5: the globe behind; 2, 4, 6: uploads
+    let v = 0; while (reup.length && v < REUP) { const x = reup.shift(), g = x.geometry; x.layers.mask = x.userData.reupMask ?? 1; delete x.userData.reupMask; if (g) { g.userData.freed = false; v += g.attributes.position?.count || 0; } }
+    if (!reup.length) G.reup.done = true; H.draw(); return v;
+  }
+
+  // the globe rests while the model holds the view near the ground (no globe behind it) for REST_MS: the patches not drawn
+  // in the last frame are dropped, the other globe buffers, its terrain and geoid textures (about 45 MB with mipmaps) and
+  // the background target are given back, and the label elements are removed. The CPU copies stay: three.js uploads them
+  // again at the next globe draw. ?free=0 turns this and freeModel off. State: G.rested, G.rests.
+  const REST_MS = 8000; let lowSince = 0;
+  function restGlobe() {
+    if (qs.get('free') === '0' || !G.ready || G.rested) return; let n = 0, v = 0, dropped = 0;
+    for (const nd of terrain.cache.values()) if (nd.mesh && nd.used < terrain.frame) { scene.remove(nd.mesh); nd.mesh.geometry.dispose(); nd.mesh = null; dropped++; }
+    scene.traverse(x => { const g = x.isMesh || x.isLine || x.isPoints ? x.geometry : null; if (g) { g.dispose(); n++; v += g.attributes.position?.count || 0; } });
+    for (const t of G.textures || []) t.dispose();
+    if (rt) { if (bgOn) setBg(false); rt.dispose(); rt = null; G.bgNode = null; }
+    if (labels) for (const c of labels.candidates) if (c.el) { c.el.remove(); c.el = null; }
+    G.rested = { meshes: n, vertices: v, patchesDropped: dropped, at: Date.now() }; G.rests = (G.rests || 0) + 1;
+  }
 
   // ---------- data: manifests at once (small); textures, layers and labels on the first need (ensure)
   const fetchJson = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
@@ -198,7 +262,7 @@ export async function createGlobe(H) {
     tex.wrapS = THREE.RepeatWrapping; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = true; tex.anisotropy = 4;
     gtex.minFilter = gtex.magFilter = THREE.LinearFilter; gtex.generateMipmaps = false;
     U.W = M.terrain.width; U.H = M.terrain.height;
-    sampler = makeSampler(pixels(tex.image, 2048, 1024), pixels(gtex.image, 361, 181));
+    sampler = makeSampler(pixels(tex.image, 2048, 1024), pixels(gtex.image, 361, 181)); G.textures = [tex, gtex];
     terrain = new Terrain(scene, terrainMaterial(tex, gtex, U), U);
     atmo = atmosphere(); scene.add(atmo);
     labels = makeLabels(ui.labels);
@@ -267,7 +331,7 @@ export async function createGlobe(H) {
   // ---------- draw the globe scene for a camera (eye, f, u in ECEF); target null = the screen (else a render target)
   let lastLab = 0, lastWhere = 0;
   function drawGlobe(eye, f, u, target = null) {
-    setCamera(eye, f, u);
+    G.rested = null; setCamera(eye, f, u);
     fm.multiplyMatrices(gcam.projectionMatrix, gcam.matrixWorldInverse); frustum.setFromProjectionMatrix(fm, gcam.coordinateSystem);
     const s = sunEcef(); U.sun.value.set(...dirToF(s));
     // terrain patches
@@ -351,10 +415,12 @@ export async function createGlobe(H) {
     if (fl) { if (G.mode !== 'globe' || flight || ptrs.size) fl = null; else stepFling(now); }
     if (G.mode === 'model' && now - lastWhere > 400) { lastWhere = now; if (MF) readout(); }
     if (G.mode === 'model' && MF && !flight) {
-      if (wantOut && G.ready) { wantOut = false; const o = modelOrbit(); o.range = Math.max(o.range, HANDOVER.out) * 1.12; enterGlobe(o); }
+      // (the eye is kept: the range stays as it is, at least 3 % over the hand-over in, so the globe does not hand back)
+      if (wantOut && G.ready) { wantOut = false; const o = modelOrbit(); o.range = Math.max(o.range, HANDOVER.range * 1.03); enterGlobe(o); }
       else if (G.ready && !H.blocked()) { const c = H.camState(), ll = ecefToGeodetic(...modelToEcef([c.tx, c.ty, c.tz])); if (!inBox(ll.lon, ll.lat, HANDOVER.leaveM)) enterGlobe(modelOrbit()); }
     }
     if (G.mode === 'globe' && !flight && canModel(orbit) && !ptrs.size) enterModel(orbit);
+    if (G.mode === 'model' && G.ready && !bgOn && !G.rested) { if (!lowSince) lowSince = now; else if (now - lowSince > REST_MS) restGlobe(); } else lowSince = 0;
   };
   G.frame = function (now, asked) {
     if (G.mode !== 'globe') return null;
@@ -372,22 +438,25 @@ export async function createGlobe(H) {
     return ms;
   };
   // model mode: the globe as the model scene's background when the eye is high (the sky dome is hidden then)
+  let rtDrawn = false;
   G.background = function () {
     if (G.mode !== 'model' || !G.ready || !MF) { if (bgOn) setBg(false); return; }
+    const up = stepReup();
     camera.updateMatrixWorld(); const e = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld), high = e.y > HANDOVER.bg && !H.blocked();
     if (!high) { if (bgOn) setBg(false); return; }
     if (!bgOn) setBg(true);
     for (const o of [H.sky.sky, H.sky.stars, H.sky.moonDisc]) if (o) o.visible = false;   // (the sky's own updates may show them again)
     const fw = new THREE.Vector3(0, 0, -1).transformDirection(camera.matrixWorld), E = modelToEcef([e.x, e.y, e.z]), P = modelToEcef([e.x + fw.x * 1000, e.y + fw.y * 1000, e.z + fw.z * 1000]);
     const f = nrm(sub(P, E)), upE = ecefNormalAt(ecefToGeodetic(...E)), u = nrm(sub(upE, f.map(v => v * dot3(upE, f))));
-    const sz = renderer.getDrawingBufferSize(new THREE.Vector2()); const bw = Math.max(4, Math.round(sz.x / 2)), bh = Math.max(4, Math.round(sz.y / 2)); if (rt.width !== bw || rt.height !== bh) rt.setSize(bw, bh);   // half size: the globe behind the model is far and soft; a full HalfFloat target at DPR 3 costs about 40 MB on a phone (owner, 2026-10-14: the tab restarted after Home)
+    const sz = renderer.getDrawingBufferSize(new THREE.Vector2()); const bw = Math.max(4, Math.round(sz.x / 2)), bh = Math.max(4, Math.round(sz.y / 2)); if (rt.width !== bw || rt.height !== bh) { rt.setSize(bw, bh); rtDrawn = false; }   // half size: the globe behind the model is far and soft; a full HalfFloat target at DPR 3 costs about 40 MB on a phone (owner, 2026-10-14: the tab restarted after Home)
     orbit = orbitFrom(E, addS(E, f, 1000));   // (for the readout)
-    drawGlobe(E, f, u, rt);
+    if (up && rtDrawn) return;   // a frame that uploads model buffers: the globe target keeps its last picture
+    drawGlobe(E, f, u, rt); rtDrawn = true;
     const now = performance.now(); if (now - lastWhere > 250) { lastWhere = now; readout(); }
   };
   function setBg(on) {
     bgOn = on; const sc = H.scene;
-    if (on && !rt) { rt = new THREE.RenderTarget(4, 4, { type: THREE.HalfFloatType }); G.bgNode = texture(rt.texture, H.webgpu ? screenUV : screenUV.flipY()); }
+    if (on && !rt) { rt = new THREE.RenderTarget(4, 4, { type: THREE.HalfFloatType }); G.bgNode = texture(rt.texture, H.webgpu ? screenUV : screenUV.flipY()); rtDrawn = false; }
     sc.backgroundNode = on ? G.bgNode : null;
     for (const o of [H.sky.sky, H.sky.stars, H.sky.moonDisc]) if (o) { if (on) { o.userData.globeWas = o.visible; o.visible = false; } else o.visible = o.userData.globeWas ?? true; }
     H.draw();

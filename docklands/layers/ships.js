@@ -26,7 +26,7 @@
 import { WU, MAXW, setWakes } from '../water.js';
 import * as D from '../ships-data.js';
 import { vec3, float, attribute } from 'three/tsl';
-import { models, boatMaterial, boatMesh, aisModel, TYPICAL, paintOf, lin } from '../boats-models.js';
+import { models, boatMaterial, boatMesh, aisModel, TYPICAL, paintOf, lin, farMesh } from '../boats-models.js';
 
 const KN = 0.514444, CAP_S = 180, BLEND = 2000, NOW_TOL = 5 * 60e3, HIST_MAX = 24 * 3600e3, CAP = 256;
 const LC_EVERY = 60e3, TRAIL_MS = 60 * 60e3, TRAIL_MAX = 8000;   // live-cache: read every 60 s; trails of the last hour
@@ -72,7 +72,9 @@ export default {
     const arrowMat = solid(); arrowMat.side = THREE.DoubleSide; const arrows = inst(arrowGeometry(), arrowMat, CAP, false);
     const lamp = c => { const m = new THREE.MeshBasicNodeMaterial(); m.colorNode = vec3(...c).mul(9); return inst(new THREE.OctahedronGeometry(.5, 0), m, CAP * 3, false); };
     const lampW = lamp([1, .95, .85]), lampR = lamp([1, .08, .05]), lampG = lamp([.1, 1, .35]);
-    const ALL = [...Object.values(MESH), masts, plates, arrows, lampW, lampR, lampG];
+    // level of detail: a vessel that covers fewer than ctx.lod.px pixels is drawn as its model's stand-in (boats-models.js farMesh)
+    const FAR = {}; for (const k of Object.keys(MESH)) { FAR[k] = farMesh(MOD[k], bmat, CAP); group.add(FAR[k]); } let lodK = Infinity;
+    const ALL = [...Object.values(MESH), ...Object.values(FAR), masts, plates, arrows, lampW, lampR, lampG];
     // trails of moving vessels from the live-cache buffer (last hour): one LineSegments, colour by type, fading with age
     const trailPos = new Float32Array(TRAIL_MAX * 6), trailCol = new Float32Array(TRAIL_MAX * 6), trailFade = new Float32Array(TRAIL_MAX * 2), trailGeo = new THREE.BufferGeometry();
     trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3).setUsage(THREE.DynamicDrawUsage));
@@ -211,12 +213,14 @@ export default {
     // ---------- each frame: positions, instances, lights, labels, wakes
     const v3 = new THREE.Vector3();
     const put = (mesh, i, x, y, z, h, sx, sy, sz, c, rx = 0, rz = 0) => { if (i >= mesh.instanceMatrix.count) return; dummy.position.set(x, y, z); dummy.rotation.set(rx, -h, rz, 'YXZ'); dummy.scale.set(sx, sy, sz); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix); if (c) mesh.setColorAt(i, col.setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace)); };
-    const putBoat = (S, key, x, y, z, h, L, W, sy, p, k, rx, rz) => { const m = MESH[key], i = k[key] = (k[key] || 0) + 1, j = i - 1, M = MOD[key]; if (j >= m.instanceMatrix.count) return;
+    const putBoat = (S, key, x, y, z, h, L, W, sy, p, k, rx, rz) => { const M = MOD[key], cp = ctx.camera.position;
+      const far = L > 0 && (cp.x - x) ** 2 + (cp.y - y) ** 2 + (cp.z - z) ** 2 > (L * lodK) ** 2, kk = far ? key + ' far' : key, m = far ? FAR[key] : MESH[key], i = k[kk] = (k[kk] || 0) + 1, j = i - 1; if (j >= m.instanceMatrix.count) return;
       put(m, j, x, y, z, h, W / M.B0, sy, L / M.L0, null, rx, rz); const a = m.geometry.attributes; a.tint.setXYZ(j, ...p[0]); a.tint2.setXYZ(j, ...p[1]); };
     const loc = (S, lx, lz) => [S.x + lx * Math.cos(S.h) - lz * Math.sin(S.h), S.z + lx * Math.sin(S.h) + lz * Math.cos(S.h)];   // local (x starboard, z aft) to grid
     function frame() {
       if (!visible) return;
       const now = performance.now(), ref = refTime(), cam = ctx.camera.position, night = ctx.U.night.value > .02;
+      lodK = ctx.lod && ctx.lod.on ? ctx.lod.dist(1) : Infinity;
       const c = { mast: 0, plate: 0, arrow: 0, W: 0, R: 0, G: 0 }, kb = {}, t = now / 1000, amp = .03 + Math.min(12, WU.windSpeed ? WU.windSpeed.value : 3) * .006; drawn = [];
       for (const S of ST.values()) {
         if (S.test) stepTest(S, now);
@@ -253,6 +257,8 @@ export default {
       }
       const set = (m, n) => { n = Math.min(n, m.instanceMatrix.count); m.count = Math.max(1, n); m.visible = n > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
       for (const [key, m] of Object.entries(MESH)) { set(m, kb[key] || 0); if (kb[key]) { m.geometry.attributes.tint.needsUpdate = true; m.geometry.attributes.tint2.needsUpdate = true; } }
+      for (const [key, m] of Object.entries(FAR)) { const n = kb[key + ' far'] || 0; set(m, n); if (n) { m.geometry.attributes.tint.needsUpdate = true; m.geometry.attributes.tint2.needsUpdate = true; } }
+      (ctx.stats.lod ||= {}).ships = { full: Object.entries(kb).reduce((s, [k, v]) => s + (/ far$/.test(k) ? 0 : v), 0), standIn: Object.entries(kb).reduce((s, [k, v]) => s + (/ far$/.test(k) ? v : 0), 0) };
       set(masts, c.mast); set(plates, c.plate); set(arrows, c.arrow); set(lampW, c.W); set(lampR, c.R); set(lampG, c.G);
       placeLabels(); drawTrails(ref);
       const wakes = drawn.filter(S => (S.test || S.moving) && (S.test ? S.spd : S.vnow ?? S.spd) > .3).map(S => ({ S, d: (S.x - cam.x) ** 2 + (S.z - cam.z) ** 2 })).sort((a, b) => a.d - b.d).slice(0, MAXW)

@@ -85,7 +85,8 @@ const nightKind = (use, top) => use * 1000 + Math.max(0, Math.min(999, top));
 
 // all buildings into tiles of TILE metres (frustum culling and faster picking); opts: { towers, roofs, look, skip (Set of
 // model indexes drawn by a detailed model), heightOf(b, i) (a height in place of b.h, e.g. a skyline year; <= 0: not drawn),
-// colourOf(b, i) (a colour [r, g, b] in place of the data colour, or null), facadeOf(i) (a photo facade slot, or null) }
+// colourOf(b, i) (a colour [r, g, b] in place of the data colour, or null), facadeOf(i) (a photo facade slot, or null),
+// only (Set of model indexes: build just these; main.js loadModels: the plain block a detailed model shows at a distance) }
 export const TILE = 800;
 export function buildBuildings(opts = {}) {
   const tiles = new Map(), tileOf = (x, z) => { const k = Math.floor(x / TILE) + ',' + Math.floor(z / TILE); if (!tiles.has(k)) tiles.set(k, new MeshF()); return tiles.get(k); };
@@ -96,13 +97,13 @@ export function buildBuildings(opts = {}) {
   // none while a layer colours or re-heights the buildings (skyline years)
   const facOf = i => opts.facadeOf && !opts.heightOf && !opts.colourOf ? opts.facadeOf(i) : null;
   A.buildings.forEach((b, i) => {
-    const h = hOf(b, i); if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || !(h > 0)) return;
+    const h = hOf(b, i); if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || (opts.only && !opts.only.has(i)) || !(h > 0)) return;
     const M = tileOf(b.p[0] / 10, b.p[1] / 10), rf = !opts.heightOf && RF && RF.get(i), n0 = M.n, sl = facOf(i), mat = sl != null ? -1 - sl : null, c = sl != null ? [.9, .9, .9] : colourOf(b, i);
     M.model = i; M.kind = nightKind(opts.useOf ? opts.useOf(i) : 0, b.b + (rf ? rf.ridge : h));
     if (rf && R) { const t0 = M.idx.length; R.prism(M, b, rf, c, alOf(mat), helpers); flip(M, t0); } else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, mat);
     if (LK && sl == null) LK.paint(M, n0, i, !!rf);
   });
-  for (const t of opts.towers || []) { const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring, M = tileOf(r0[0][0], r0[0][1]), n0 = M.n, sl = facOf(mi);
+  for (const t of opts.towers || []) { if (opts.only && !opts.only.has(t.model_buildings[0])) continue; const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring, M = tileOf(r0[0][0], r0[0][1]), n0 = M.n, sl = facOf(mi);
     M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : opts.useOf ? opts.useOf(mi) : 0, towerTop(t)); towerF(M, t, sl != null ? [.9, .9, .9] : colourOf(b, mi), sl != null ? -1 - sl : null); if (LK && sl == null) LK.paint(M, n0, mi, false); }
   return [...tiles.values()].filter(M => M.n).map(toGeometry);
 }

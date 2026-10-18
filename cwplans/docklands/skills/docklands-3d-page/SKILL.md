@@ -6,10 +6,10 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (docklands/, WebGPU/WebGL 2) and its globe (?view=globe) with places as 3D Tiles; and the
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG; building keys; the Three.js port (docklands/, WebGPU/WebGL 2) and its globe (?view=globe) with 3D Tiles places, LOD, hand-over fade; and the
   headless test recipe. Sky, clock, weather,
   tide: skill docklands-sky. Reach for it before you edit the page or scripts, add a layer or a style, change a
-  shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
+  shader, judge a render or plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
 ---
 
 # The Docklands 3D page
@@ -2891,7 +2891,8 @@ with no frame between them, as a phone sends 2 to 4 touch moves a frame). Before
 
 Open: the two modes use different one-finger gestures. The model turns and tilts with one finger, and moves with a
 right or Shift drag or with two fingers. The globe moves with one finger (Google Earth) and turns with a right or Shift
-drag. The owner must choose one rule. The globe has no momentum after a fling; the model has.
+drag. The owner must choose one rule. Fling momentum on the globe: since 2026-10-13 (`release`, `stepFling`); test (4b) in
+globe-controls.mjs (a 120 px fling at 2,000 km glides 6.6 degrees on, then stops).
 
 ## Three.js port: places as 3D Tiles (2026-10-18)
 
@@ -2971,3 +2972,63 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
   terrain; no national building heights for Sarajevo yet (owner's waiver allows FGU / RGURS); no implicit tiling or LOD levels yet
   (one level: fine for 2 km); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
   text only); 3d-tiles-renderer can read these sets but is not used.
+
+## Three.js port: level of detail and the hand-over (2026-10-18)
+
+Owner, 2026-10-14: "pls make sure we make appropriate use of threejs lod support for everything"; "zooming out there is an
+overly abrupt switch to planetary geography - can we make that smoother?"; Home from orbit on the iPhone "started to zoom
+in then said it was starting 3D mode ... almost like the rendering crashed and rebooted". Steps 1 and 2 of the LOD plan
+(activity log, 2026-10-14) are done; steps 3 (trees by cell) and 4 (the merged buildings and terrain in 1 km tiles) are not.
+
+- **One rule for every layer** (main.js `LOD`, `ctx.lod`): an object whose size (m) would cover fewer than `LOD.px` (32) CSS
+  pixels shows its cheap stand-in. `ctx.lod.dist(size, px)` is that distance for the window height and lens now (so it
+  follows a resize or a photo lens). `?lod=0` turns all of it off, for a before/after on the same code.
+- **THREE.LOD for separate objects**, always with `autoUpdate = false` and `lod.update(camera)` from our own frame code:
+  the renderer's automatic update also runs in the shadow pass with the light's camera and can leave the wrong level
+  visible. In r186 `lod.levels` is read-only (assigning it throws "Cannot assign to read only property 'levels'"): splice
+  it. After removing a level set `levels[0].object.visible = true` (an update with one level does nothing, and the near
+  level may have been left hidden). `getCurrentLevel()` gives the level for stats.
+  - Aircraft (layers/planes.js): the body, gear, propeller discs and rotors in level 0; `planes-models.js standIn(T)` (boxes:
+    fuselage, wing, fin, tailplane; 36 to 60 triangles against 1,500 to 4,000 in up to 10 meshes) in level 1, size =
+    max(length, span). The lamps stay outside the LOD: a beacon or strobe shows at any distance.
+  - Detailed building models (main.js `loadModels`): each glTF is a LOD; level 1 (80 px) is the plain block of its model
+    buildings, made by `buildBuildings({ only })` with the tiles' look (rebuilt in `rebuildBuildings`). Pass `skip: null`:
+    `buildOpts.skip` (layers/model.js) holds exactly those buildings, so the block came out empty.
+  - Berthed vessels (layers/piers.js): HMS Belfast and the others; level 1 = two grey blocks. Taps still test the full
+    model mesh (`s.m`); position and rotation are on `s.lod`.
+- **Instanced swap for the boats** (moored-boats.js, layers/ships.js): THREE.LOD does not work per instance. Each boat whose
+  length covers fewer than 32 px goes into its model's stand-in InstancedMesh (`boats-models.js farMesh(model)`, made on
+  first need) instead of the model's mesh, with the same instance matrix and paint: a hull block with a pointed bow, a cabin
+  block, and the mast where the model has one. A first version shared one unit block for all models (fewer draw calls), but
+  the marina yachts lost their masts at Limehouse (`?view=limehouse`): the mast is what shows from afar. Keep it per model.
+- **The hand-over cross-fade** (globe.js `crossFade`): at each mode change the old mode draws its last frame once more
+  (same camera: the hand-over converts it exactly; the model through `H.renderModel()` = `pipe.render()`), a 2D canvas over
+  the 3D canvas copies it in the same task (a WebGL or WebGPU canvas keeps its picture until the task ends), and it fades
+  out in 500 ms (`ease-in-out`). Size: CSS pixels (1.3 MB at 390 x 844), shrunk to 1 x 1 when the fade ends. None with
+  prefers-reduced-motion, during the boot screen, or `?fade=0`. Zoom out keeps the eye: the model first zooms to its limit
+  (zoomTarget clamps; zoomAbout now scales to exactly `NV.DMAX`), and the globe takes that orbit (the old `x 1.12` jump is
+  gone; the range is raised only to 1.03 x 36 km so it does not hand back at once).
+- **Memory at the return to the model**: `freeModel` (3 s on the globe) gives back 68 meshes, 4.4 M vertices. They used to
+  come back all in the first model frame: +153 MB of GPU memory in one frame at 390 x 844 @2 (`renderer.info.memory`).
+  Now `reupStart` hides them (`layers.mask = 0`, the old mask kept in `userData.reupMask`, so layer code that sets
+  `visible` is not disturbed), and `stepReup` (called from `G.background`) brings back 600,000 vertices every second model
+  frame; on an upload frame the globe background target is not redrawn (it keeps its last picture). Measured at 390 x 844
+  @2 (software WebGL 2, `lod-memory.mjs`), model at cw, out to the world, 4.5 s on the globe, Home: largest rise of GPU
+  memory in one frame 113 to 153 MB before, 33.9 MB after; peak during the return 303 to 342 MB before, 230 MB after
+  (262 MB until all is back); settled 303 MB before (the globe stayed resident), 245 MB after the globe rested.
+- **The globe rests** (`restGlobe`): after 8 s in the model with no globe behind it (eye under 3 km), patches not drawn in
+  the last frame are dropped, every globe geometry is disposed (CPU copies stay), the terrain and geoid textures (about 45
+  MB with mipmaps) and the background target are disposed, and the label elements are removed. The next globe draw uploads
+  them again (tested: globe-check "after the rest, the globe draws again"). `?free=0` turns this and `freeModel` off.
+- **Measuring**: `renderer.info.render` is reset once per animation frame of the loop, not per `render()` call, so a
+  synchronous `frameNow()` outside the loop draws only the output quad (1 call, 1 triangle: the scene pass thinks it ran
+  this frame). main.js writes `STATS.frame` (draw calls, triangles of the whole frame) after `pipe.render()`; read it after a
+  real frame. r186 `renderer.info.memory` has byte sizes (`total`, `attributesSize`, `texturesSize`). Tool:
+  `node docklands/test/lod-memory.mjs [--sizes 390x844@2,1280x800@1] [--query '&lod=0'] [--no-handover]`.
+- **Measured LOD effect** (same code, `?lod=0` against the default, 390 x 844 @2, one frame, software): `?view=cw` ships
+  27,258 -> 2,853 triangles, moored boats 108,190 -> 9,337, detailed model 2,080 -> 69, frame 5.41 M -> 5.15 M triangles,
+  162 draw calls both; `?view=area` aircraft 56,586 triangles in 156 objects -> 4,516 in 103, frame 6.17 M -> 6.12 M, draw
+  calls 257 -> 212 (1280 x 800: 340 -> 295). The frame is mostly the merged buildings, terrain and trees: steps 3 and 4.
+- **Not done**: pixel ratio during flights (a change of pixel ratio reallocates the canvas and every screen-size target,
+  itself a peak); the JS heap (480 to 960 MB in Chromium at cw and area) is the larger memory and is not reduced here;
+  trees and the merged buildings (LOD steps 3 and 4).

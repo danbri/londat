@@ -99,10 +99,16 @@ export default {
 
     // ---------- berthed vessels (OSM outlines): HMS Belfast at true size, the others by type
     const vmat = vesselMaterial(ctx.U.night), bmat = vesselMaterial(ctx.U.night, { flood: 0.22 }), vessels = [];   // bmat: HMS Belfast, floodlit by night
+    // level of detail (main.js ctx.lod): each vessel is a THREE.LOD, its model near, two grey blocks (hull and superstructure,
+    // 24 triangles) once it covers fewer than ctx.lod.px pixels; taps still test the full model (s.m)
+    const farOf = G => { G.computeBoundingBox(); const b = G.boundingBox, g = new GB(), cx = (b.min.x + b.max.x) / 2, cz = (b.min.z + b.max.z) / 2, sx = b.max.x - b.min.x, sz = b.max.z - b.min.z, y0 = Math.max(b.min.y, -1), yd = Math.min(b.max.y, y0 + Math.max(2, sx * .5));
+      const h = yd - y0; g.box(cx, y0 + h * .225, cz, sx, h * .45, sz, PAL.steelDark); g.box(cx, y0 + h * .725, cz + sz * .05, sx * .7, h * .55, sz * .55, PAL.grey); return g.geometry(); };
     for (const v of J.vessels) {
       const isB = v.kind === 'cruiser', G = isB ? belfast(187, 21) : berthed(v.kind, v.L, v.B), m = new THREE.Mesh(G, isB ? bmat : vmat);
-      m.castShadow = m.receiveShadow = true; m.userData.vessel = v; m.rotation.y = -v.heading; m.position.set(v.x, 0, v.z); group.add(m);
-      vessels.push({ v, m, ph: Math.random() * 6, amp: isB ? .02 : .06 });
+      m.castShadow = m.receiveShadow = true; m.userData.vessel = v;
+      const lod = new THREE.LOD(); lod.autoUpdate = false; lod.addLevel(m, 0); lod.rotation.y = -v.heading; lod.position.set(v.x, 0, v.z); group.add(lod);
+      if (ctx.lod && ctx.lod.on) { const f = new THREE.Mesh(farOf(G), isB ? bmat : vmat); f.name = 'stand-in'; lod.addLevel(f, ctx.lod.dist(isB ? 187 : v.L || 30)); }
+      vessels.push({ v, m, lod, size: isB ? 187 : v.L || 30, ph: Math.random() * 6, amp: isB ? .02 : .06 });
     }
     // the model buildings of those outlines are hidden while the layer is on (buildBuildings opts.skip; main.js's own skip
     // set, the detailed glTF models, is rebuilt here from building-models.json because the option replaces it)
@@ -184,8 +190,11 @@ export default {
       const t = performance.now() / 1000, amp = .04 + Math.min(12, WU.windSpeed.value) * .01;
       // a vessel or boat that holds the camera (a photo view taken from a pier, e.g. ?view=greenlandday) is hidden: the lens is not inside a hull
       const cp = ctx.camera.position, near = (x, z, r, y) => cp.y < y + 25 && Math.hypot(cp.x - x, cp.z - z) < r;
-      for (const s of vessels) { s.m.visible = !near(s.v.x, s.v.z, (s.v.len || 30) * .6 + 2, s.v.water === 'dock' ? s.v.level : T); }
-      for (const s of vessels) { const w = s.v.water === 'dock' ? s.v.level : T; s.m.position.y = w + Math.sin(t * .9 + s.ph) * s.amp; s.m.rotation.set(Math.sin(t * .5 + s.ph) * s.amp * .02, -s.v.heading, Math.sin(t * .7 + s.ph) * s.amp * .05, 'YXZ'); }
+      for (const s of vessels) { s.lod.visible = !near(s.v.x, s.v.z, (s.v.len || 30) * .6 + 2, s.v.water === 'dock' ? s.v.level : T); }
+      let nf = 0;
+      for (const s of vessels) { const w = s.v.water === 'dock' ? s.v.level : T; s.lod.position.y = w + Math.sin(t * .9 + s.ph) * s.amp; s.lod.rotation.set(Math.sin(t * .5 + s.ph) * s.amp * .02, -s.v.heading, Math.sin(t * .7 + s.ph) * s.amp * .05, 'YXZ');
+        if (s.lod.levels[1]) { s.lod.levels[1].distance = ctx.lod.dist(s.size); s.lod.updateMatrixWorld(); s.lod.update(ctx.camera); if (s.lod.getCurrentLevel() > 0) nf++; } }
+      (ctx.stats.lod ||= {}).berthed = { full: vessels.length - nf, standIn: nf };
       for (const b of boats) { if (!b.mesh) continue; const sc = near(b.x, b.z, 24, lev(b.P)) ? 0 : 1; put(b.mesh, b.idx, b.x, lev(b.P) + Math.sin(t * 1.3 + b.ph) * amp, b.z, -b.h, sc, sc, sc, Math.sin(t * .8 + b.ph) * amp * .01, Math.sin(t * 1.1 + b.ph) * amp * .03); }
       for (const m of Object.values(boatMeshes)) { m.instanceMatrix.needsUpdate = true; if (m.count) m.computeBoundingSphere(); }
       placeLabels();
@@ -226,7 +235,7 @@ export default {
         `Boats alongside are SIMULATED from the TfL timetable (1.5 min before to 1 min after a call) or the operator's frequency (10 min before a departure), not positions; live vessels are in Ships (AIS). Pontoon and gangway cut from the OSM shape by tools/build-piers.mjs.</p>`);
     }
     function vesselCard(s) {
-      const v = s.v, F = v.facts, y = s.m.position.y;
+      const v = s.v, F = v.facts, y = s.lod.position.y;
       const body = F ? `<p>${esc(F.summary)}</p><table>${row('Length', `${F.length_m} m`)}${row('Beam', `${F.beam_m} m (${esc(F.beam_note)})`)}${row('Draught', `${F.draught_m} m`)}${row('Displacement', `${F.displacement_t.toLocaleString()} t`)}${row('Main guns', esc(F.armament))}${row('Paint', esc(F.paint))}${row('Here', `bow heading ${(v.heading * 180 / Math.PI).toFixed(0)}° (grid), waterline at ${y.toFixed(2)} m OD (the tide now)`)}</table>` +
         `<p class="small">Sources: ${F.sources.map(q => `<a href="${esc(q.url)}" target="_blank" rel="noopener">${esc(q.title)}</a>`).join('; ')}. ${OSMC}. Model: low-poly, true length and beam; turrets, superstructure, funnels and tripod masts after published drawings in outline only; turrets shown trained fore and aft.</p>`
         : `<table>${row('Type', esc(v.wd && v.wd.description || v.kind))}${row('Size (OSM outline)', `${v.L.toFixed(0)} x ${v.B.toFixed(0)} m`)}${row('Built', v.osm && v.osm.start_date ? esc(v.osm.start_date) : null)}${row('Water', v.water === 'dock' ? `dock, ${v.level} m OD` : 'tidal: floats at the tide in this model')}</table>` +
@@ -270,7 +279,7 @@ export default {
     ctx.onFrame(frame); group.visible = on; computeBoats(); placeFloating();
     setInterval(() => { tick++; if (visible) computeBoats(); }, 15000);
     let lastClock = ctx.clock; setInterval(() => { if (Math.abs(ctx.clock - lastClock) > 30e3) { lastClock = ctx.clock; if (visible) computeBoats(); } }, 1000);
-    return { object: group, setVisible, ownUi: true, get boats() { return boats.map(b => ({ type: b.type, pier: b.P.tfl ? b.P.tfl.name : b.P.name, x: b.x, z: b.z, h: b.h })); }, get vessels() { return vessels.map(s => ({ name: s.v.name, kind: s.v.kind, x: s.v.x, z: s.v.z, y: s.m.position.y })); },
+    return { object: group, setVisible, ownUi: true, get boats() { return boats.map(b => ({ type: b.type, pier: b.P.tfl ? b.P.tfl.name : b.P.name, x: b.x, z: b.z, h: b.h })); }, get vessels() { return vessels.map(s => ({ name: s.v.name, kind: s.v.kind, x: s.v.x, z: s.v.z, y: s.lod.position.y })); },
       piers: J.piers, computeBoats, pierCard: name => { const P = J.piers.find(q => q.name === name || q.tfl?.name === name); if (P) pierCard(P); }, vesselCard: name => { const s = vessels.find(q => q.v.name === name); if (s) vesselCard(s); } };
   },
 };

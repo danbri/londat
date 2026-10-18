@@ -61,6 +61,18 @@ const pn = await page.evaluate(() => { const { G, pe, off } = __gc, c = [600, 30
   for (let i = 0; i < 20; i++) { d += 4; pe('pointermove', 1, c[0] - d, c[1]); pe('pointermove', 2, c[0] + d, c[1]); }
   G.pick(...c); const e = off(g.P, ...c); pe('pointerup', 1, c[0] - d, c[1]); pe('pointerup', 2, c[0] + d, c[1]); return { e, k: G.orbit().range / r0 }; });
 report('pinch out x3 off centre: point between the fingers moved (px)', pn.e, 4, `range x ${pn.k.toFixed(2)} (expect 0.33)`);
+// (4b) fling (owner, 2026-10-13: "No momentum-inertia"; globe.js release / stepFling): a quick drag, released while moving,
+// glides on in the same direction and stops by itself
+await page.evaluate(() => window.docklands.goTo({ lat: 48, lon: 10, alt_m: 2000000, heading_deg: 0, tilt_deg: 0 }));
+await page.waitForTimeout(300);
+const fl = await page.evaluate(async () => { const { G, pe } = __gc, wait = ms => new Promise(ok => setTimeout(ok, ms)); let x = 450; const y = 350;
+  pe('pointerdown', 1, x, y); for (let i = 0; i < 8; i++) { x -= 15; pe('pointermove', 1, x, y); await wait(12); }
+  const lon0 = G.orbit().lon; pe('pointerup', 1, x, y); const lonUp = G.orbit().lon;
+  const t0 = performance.now(); while (performance.now() - t0 < 4000) { __docklands3.draw(); await new Promise(ok => requestAnimationFrame(ok)); }
+  const lon1 = G.orbit().lon; await wait(600); const lon2 = G.orbit().lon;
+  return { dragged: lonUp - lon0, glide: lon1 - lonUp, after: lon2 - lon1, dragLon: lon0 }; });
+console.log(`     fling: glide ${fl.glide.toFixed(2)} deg after release, then ${fl.after.toFixed(4)} deg (stopped)`);
+if (!(fl.glide > 0.3 && Math.abs(fl.after) < 0.01)) { bad++; console.log('FAIL the fling on the globe does not glide on (east, for a drag to the left) and stop', JSON.stringify(fl)); } else console.log('ok   a fling on the globe glides on in the drag direction and stops');
 // (5) the turn gesture to the right (globe: Shift drag; model: plain drag): the heading must change the same way
 const gl = await page.evaluate(() => { const { G, pe } = __gc, h0 = G.orbit().heading; pe('pointerdown', 1, 400, 300, { shift: true }); for (let i = 1; i <= 10; i++) pe('pointermove', 1, 400 + i * 5, 300, { shift: true }); pe('pointerup', 1, 450, 300); return G.orbit().heading - h0; });
 await page.evaluate(() => window.docklands.goTo({ view: 'cw' }));

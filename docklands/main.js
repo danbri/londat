@@ -100,6 +100,18 @@ roads.visible = flag('roads', true);
 // keep the flat layers above the ground in the depth buffer (the WebGL page offsets them by 0.1 to 0.4 m)
 for (const m of [water.material, greens.material, lineMat]) { m.polygonOffset = true; m.polygonOffsetFactor = -1; m.polygonOffsetUnits = -4; }
 
+// ---------- level of detail (owner, 2026-10-14: "pls make sure we make appropriate use of threejs lod support for
+// everything"). One rule for every layer: an object whose size (m) would cover fewer than LOD.px CSS pixels on the screen
+// shows its cheap stand-in (THREE.LOD for separate objects: detailed building models, aircraft; an instanced swap for the
+// boats). LOD.dist(size) is that distance for the current window and lens. The LOD objects are updated with the main camera
+// in the loop (autoUpdate off: the shadow pass would otherwise choose levels by the light's camera). ?lod=0 turns it off
+// (measurements before and after: docklands/test/lod-memory.mjs). Skill: docklands-3d-page, "level of detail".
+const LOD = { on: flag('lod', true), px: 32, list: [],
+  k: () => innerHeight / (2 * Math.tan(camera.fov * Math.PI / 360)),   // CSS px a metre covers at 1 m
+  dist(size, px = LOD.px) { return LOD.on ? size * LOD.k() / px : Infinity; },
+  add(lod) { lod.autoUpdate = false; LOD.list.push(lod); return lod; },
+  update() { for (const l of LOD.list) { if (l.userData.size && l.levels[1]) l.levels[1].distance = LOD.dist(l.userData.size, l.userData.px); if (l.parent) l.update(camera); } } };
+
 const bmat = buildingMaterial(), buildings = new THREE.Group(); scene.add(buildings);
 let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null, FACADE = null, FACADES_ON = true;   // FACADE(i): the photo facade slot of model building i, or null; Menu > Look > Photo facades
 const skip = new Set();
@@ -108,6 +120,7 @@ function rebuildBuildings() {
   const t0 = performance.now();
   for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
+  for (const l of LOD.list) if (l.userData.mi) farBlock(l);   // the detailed models' far blocks take the new look too
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
   if (OCC) OCC.dirty();
   draw();
@@ -260,15 +273,27 @@ function placeLabels() {
   }
 }
 
-// ---------- detailed building models: the glTF binary files beside their descriptions (tools/build-building-models.mjs)
+// ---------- detailed building models: the glTF binary files beside their descriptions (tools/build-building-models.mjs);
+// each is a THREE.LOD: the glTF near, its buildings' plain blocks (as the building tiles draw them) once it covers fewer
+// than 80 px. The blocks follow the look of the tiles (made again in rebuildBuildings).
 const models = new THREE.Group(); scene.add(models);
+function farBlock(lod) {
+  const old = lod.userData.far; if (old) { lod.remove(old); old.traverse(o => o.geometry && o.geometry.dispose()); const k = lod.levels.findIndex(l => l.object === old); if (k >= 0) lod.levels.splice(k, 1); if (lod.levels[0]) lod.levels[0].object.visible = true; lod.userData.far = null; }
+  if (!LOD.on) return;
+  const g = new THREE.Group(); g.name = 'far block'; g.position.set(-lod.position.x, -lod.position.y, -lod.position.z);   // the blocks are in model metres
+  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts, skip: null, only: new Set(lod.userData.mi) })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; g.add(m); }
+  if (!g.children.length) return;
+  lod.addLevel(g, LOD.dist(lod.userData.size, lod.userData.px)); lod.userData.far = g;
+}
 async function loadModels() {
   const J = await loadJSON(DATA + 'building-models.json').catch(() => null); if (!J) return;
   BMOD = Object.values(J.models).filter(m => m.model_fp === MFP && m.mi && m.mi.length);
   const gl = new GLTFLoader();
   for (const m of BMOD) {
     const url = WEBGL + 'models/' + m.source.glb.split('/').pop();
-    try { const g = await gl.loadAsync(url); g.scene.position.set(...m.t); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); g.scene.userData.model = m.mi[0]; models.add(g.scene); for (const i of m.mi) skip.add(i); }
+    try { const g = await gl.loadAsync(url); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } });
+      const lod = LOD.add(new THREE.LOD()); lod.position.set(...m.t); lod.name = 'model ' + m.name; Object.assign(lod.userData, { model: m.mi[0], mi: m.mi, size: new THREE.Box3().setFromObject(g.scene).getSize(new THREE.Vector3()).length(), px: 80 });
+      lod.addLevel(g.scene, 0); models.add(lod); farBlock(lod); for (const i of m.mi) skip.add(i); }
     catch (e) { console.warn('model', url, e); }
   }
   if (skip.size) rebuildBuildings();
@@ -361,7 +386,7 @@ OCC = makeOccluder({ A, groundB, buildings, models, U, eye: eyeM, ghost: () => b
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
   materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
-  perf: PERF, addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
+  perf: PERF, lod: LOD, addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
   // a label hidden by a building or the ground between the eye and its anchor (model metres); key: the label's element
   occluded: (key, x, y, z) => OCC.test(key, x, y, z), occVersion: () => OCC.version,
@@ -591,7 +616,7 @@ function zoomAbout(P, f, range) {
   const v = vzNow(), Pe = new THREE.Vector3(P.x, P.y * v, P.z);
   if (f < 1) { if (range <= NV.STOP) return; f = Math.max(f, NV.STOP / range); }
   const t1 = controls.target.clone().sub(Pe).multiplyScalar(f).add(Pe), e1 = camera.position.clone().sub(Pe).multiplyScalar(f).add(Pe);
-  let d = e1.distanceTo(t1); if (d > NV.DMAX) { if (f > 1) GLOBE?.wantOut(); return; }
+  let d = e1.distanceTo(t1); if (d > NV.DMAX) { if (f > 1) { GLOBE?.wantOut(); const f2 = NV.DMAX / Math.max(1, camera.position.distanceTo(controls.target)) * .9999; if (f2 > 1.0001) zoomAbout(P, f2, range); } return; }   // out to the limit first: the globe then takes the same eye
   if (d < NV.DMIN) t1.sub(e1).setLength(NV.DMIN).add(e1);   // the orbit radius stays 10 m or more: the target moves on along the line of sight
   controls.target.copy(t1); camera.position.copy(e1); NS.own = true; try { controls.update(); } finally { NS.own = false; }
 }
@@ -691,7 +716,7 @@ let wasUnder = false;
 function navUnderEdge() {
   const u = navUnder(); syncDig(); if (u !== wasUnder) { wasUnder = u; if (!u && controls.enabled && !HFOV && !isPix() && clr(navGet()) < 0) navPlace(NV.UNDER_EYE, NV.PMAX); }
 }
-let frames = 0, fpsT = performance.now(), fps = 0;
+let frames = 0, fpsT = performance.now(), fps = 0, modelFrames = 0;
 function loop(time, xrFrame) {
   sky.setVz(vzNow());   // the sky dome, stars and moon undo the view's y scale (1 in a headset session)
   if (ctx.xrFrame) { ctx.xrFrame(time, xrFrame, frameHooks); return; }   // layers/xr.js: a headset session (renderer.xr) or its one-eye preview draws the frame
@@ -716,11 +741,13 @@ function loop(time, xrFrame) {
   // the cut-away view: a dark backdrop until the visitor sets the clock (index.html, sky.js DocklandsSky.day = S.drive && sun > -6)
   sky.setCutDark(U.cut.value < 250 && !DRIVE);
   ctx.eyeAbove = above / VZ;   // eye height above the ground (m): layers rest when it is high (wildlife, wind)
+  LOD.update();   // the detailed building models (the layers update their own in their frame hooks)
   OCC.begin(); placeLabels();
   for (const f of frameHooks) f();
   OCC.end();
   if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
+  { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles) }; } modelFrames++;   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
   $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
@@ -780,6 +807,7 @@ if (flag('globe', true)) {
   try {
     const gm = await import('./globe/globe.js');
     GLOBE = await gm.createGlobe({ renderer, camera, controls, qs, scene, sky, setCam, camState, setView, VIEWS, draw, navPut, groundB, clock: () => clock, ui, webgpu: GPU, say,
+      renderModel: () => { if (!modelFrames) return false; pipe.render(); return true; },   // the model's last frame once more (the hand-over cross-fade copies it)
       showCard: html => { $('card').hidden = false; $('cardBody').innerHTML = html; }, blocked: () => isPix() || !!ctx.xrFrame || (!controls.enabled && GLOBE?.mode !== 'globe') });
     NV.DMAX = gm.HANDOVER.out; controls.maxDistance = gm.HANDOVER.out * 1.1;
     globalThis.__docklands3.globe = GLOBE; ctx.globe = GLOBE;

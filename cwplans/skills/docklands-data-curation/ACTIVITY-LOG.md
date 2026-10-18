@@ -2649,3 +2649,20 @@ then Sarajevo". No Leiden data was made or committed.
 - Third commit: a terrain ring (8 km, 97 x 97, MDT25 for León, GLO-30 for Sarajevo) in features.json, drawn by
   places.js between the tiles and the world terrain, its outer part blended into the world height; the hole and the
   curtain move to the ring's edge. Sarajevo no longer sits in a pit.
+## 2026-10-18: level of detail, hand-over cross-fade, memory at Home (Three.js port; subagent)
+- Owner reports of 2026-10-14: abrupt switch to the globe on zoom out; Home from orbit restarted the iPhone tab; "make
+  appropriate use of threejs lod support for everything". Skill: docklands-3d-page, "Three.js port: level of detail and
+  the hand-over (2026-10-18)".
+- Cross-fade: at each hand-over the old mode's last frame is copied to a 2D canvas over the 3D canvas and fades out in
+  500 ms (none with reduced motion, `?fade=0`). Zoom out keeps the eye exactly (was a x 1.12 range jump and a 34 m step).
+- Memory: the model's freed buffers come back 600,000 vertices every second frame (was all in one frame); the globe
+  rests after 8 s near the ground (buffers, textures, background target, labels freed). 390 x 844 @2, Home after a
+  globe stay: largest one-frame rise 113 to 153 MB -> 33.9 MB; peak 303 to 342 MB -> 230 MB; settled 303 -> 245 MB.
+- LOD steps 1 and 2 done: aircraft and berthed vessels (THREE.LOD), detailed building models (LOD with the plain block),
+  moored and AIS boats (instanced swap to per-model stand-ins with masts). `?lod=0` off. At ?view=area: aircraft 56,586 ->
+  4,516 triangles, draw calls 257 -> 212; at ?view=cw: boats 135,448 -> 12,190 triangles.
+- Tests: globe-check (390 x 844 @2, 1280 x 800 @1) all passed, with new checks (rest, zoom-out eye, cross-fade steps,
+  reduced motion); globe-controls all passed, with a new fling check; npm test 61/61; npm run check OK. New tool
+  docklands/test/lod-memory.mjs.
+- Open: LOD steps 3 (trees) and 4 (merged buildings and terrain in 1 km tiles); the JS heap (480 to 960 MB in Chromium)
+  is now the larger memory; a real iPhone must confirm the Home case.
