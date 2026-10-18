@@ -2646,3 +2646,6 @@ then Sarajevo". No Leiden data was made or committed.
   15 tiles, 7,424 buildings, 5.50 MB + 0.93 MB; place-check all passed at both sizes; `3d-tiles-validator` 0 errors.
   Deep link https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,1500&ht=0,55 ; `goTo("Vijećnica")` flies there.
   The coarse world terrain is 247 m above the real ground at Vijećnica (805 against 558 m).
+- Third commit: a terrain ring (8 km, 97 x 97, MDT25 for León, GLO-30 for Sarajevo) in features.json, drawn by
+  places.js between the tiles and the world terrain, its outer part blended into the world height; the hole and the
+  curtain move to the ring's edge. Sarajevo no longer sits in a pit.

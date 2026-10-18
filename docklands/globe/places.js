@@ -4,7 +4,8 @@
 // globe's own patches (globe.js `place()`), so the GPU sees only small numbers. A place loads when the eye is within
 // LOAD_M of its centre and is freed beyond FREE_M. While it is loaded: the globe's coarse terrain is cut away over its
 // area (terrain.js `U.hole`), the globe's ground sampler answers from the place's DEM grid (so the eye guard, picks and the
-// orbit target sit on the place's ground), and the place answers search, "what is here" and the view description.
+// orbit target sit on the place's ground), a ring of coarser terrain (about 8 km) joins it to the world terrain, and the
+// place answers search, "what is here" and the view description.
 // Text and machine interface: findPlaces / goTo (search provider), featuresAt and the readout (where provider),
 // describeView (G.placesDescribe), a tap on a building (G.placeTap: its card). Data: cwplans/docklands/data/places/.
 // Why not 3d-tiles-renderer: it keeps a tile set in one ECEF group (or one fixed reoriented origin) and its fade and
@@ -13,7 +14,7 @@
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
 import * as THREE from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, normalLocal, cameraWorldMatrix, modelWorldMatrix } from 'three/tsl';
+import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, select, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, normalLocal, cameraWorldMatrix, modelWorldMatrix } from 'three/tsl';
 import { geodeticToEcef, enuBasis, surfaceDistance, D2R } from '../geo/ellipsoid.js';
 import { fold, fmtDist, compass, bearingDeg } from './world.js';
 
@@ -60,7 +61,7 @@ export async function attachPlaces(G, H, { scene, U }) {
       const tsUrl = new URL(p.tileset, base), [ts, fj] = await Promise.all([fetch(tsUrl).then(r => r.json()), fetch(new URL(p.features, base)).then(r => r.json())]);
       p.feats = indexFeatures(fj);
       // the ground grid of the place (DEM datum) for the globe's sampler
-      p.ground = fj.ground; p.geoid = fj.geoid_m;
+      p.ground = fj.ground; p.geoid = fj.geoid_m; p.ring = fj.ring || null;
       const kids = ts.root.children || [];
       await Promise.all(kids.map(async k => {
         const g = await loader.loadAsync(new URL(k.content.uri, tsUrl).href);
@@ -74,13 +75,13 @@ export async function attachPlaces(G, H, { scene, U }) {
           scene.add(mesh); p.tiles.push({ mesh, tris: (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3 }); });
       }));
       if (p.state !== 'loading') return free(p);   // freed while loading
-      p.state = 'loaded'; patchSampler(); p.tiles.push(curtain(p)); G.dirty = true; H.draw();
+      p.state = 'loaded'; patchSampler(); if (p.ring) p.tiles.push(ringMesh(p)); p.tiles.push(curtain(p)); G.dirty = true; H.draw();
       dispatchEvent(new CustomEvent('docklands-place-loaded', { detail: { id: p.id, tiles: p.tiles.length } }));
     } catch (e) { console.warn('places: load', p.id, e); p.state = 'failed'; }
   }
   function free(p) {
     for (const t of p.tiles) { scene.remove(t.mesh); t.mesh.geometry.dispose(); if (t.mesh.material !== BMAT) { t.mesh.material.dispose(); } }
-    p.tiles = []; p.state = null; G.dirty = true;
+    p.tiles = []; p.state = null; p.ringHo = null; G.dirty = true;
   }
   function indexFeatures(fj) {
     const pick = (fields, row) => Object.fromEntries(fields.map((f, i) => [f, row[i]]));
@@ -93,29 +94,57 @@ export async function attachPlaces(G, H, { scene, U }) {
   let patched = false;
   function patchSampler() {
     const S = G.sampler && G.sampler(); if (!S || patched) return; patched = true; const h0 = S.h; S.h0 = h0;
-    S.h = (lon, lat) => { for (const p of P) if (p.state === 'loaded' && p.ground && inArea(p, lon, lat)) return groundAt(p, lon, lat); return h0(lon, lat); };
+    S.h = (lon, lat) => { for (const p of P) if (p.state === 'loaded' && p.ground) { if (inArea(p, lon, lat)) return groundAt(p, lon, lat); if (p.ringHo && inRect(p.ring.area, lon, lat)) return gridAt(p.ringHo, p.ring.grid, p.ring.area, lon, lat); } return h0(lon, lat); };
   }
-  function groundAt(p, lon, lat) {
-    const n = p.ground.grid, a = p.area, fx = (lon - a[0]) / (a[2] - a[0]) * (n - 1), fy = (a[3] - lat) / (a[3] - a[1]) * (n - 1);
-    const i = Math.max(0, Math.min(n - 2, Math.floor(fx))), j = Math.max(0, Math.min(n - 2, Math.floor(fy))), u = Math.min(1, Math.max(0, fx - i)), v = Math.min(1, Math.max(0, fy - j)), h = p.ground.h, at = (x, y) => h[y * n + x];
+  const inRect = (a, lon, lat) => lon >= a[0] && lon <= a[2] && lat >= a[1] && lat <= a[3];
+  const groundAt = (p, lon, lat) => gridAt(p.ground.h, p.ground.grid, p.area, lon, lat);
+  function gridAt(h, n, a, lon, lat) {
+    const fx = (lon - a[0]) / (a[2] - a[0]) * (n - 1), fy = (a[3] - lat) / (a[3] - a[1]) * (n - 1);
+    const i = Math.max(0, Math.min(n - 2, Math.floor(fx))), j = Math.max(0, Math.min(n - 2, Math.floor(fy))), u = Math.min(1, Math.max(0, fx - i)), v = Math.min(1, Math.max(0, fy - j)), at = (x, y) => h[y * n + x];
     return (at(i, j) * (1 - u) + at(i + 1, j) * u) * (1 - v) + (at(i, j + 1) * (1 - u) + at(i + 1, j + 1) * u) * v;
   }
   // the curtain: a wall round the place's area from the lower to the higher of its ground and the globe's coarse terrain,
   // so that no gap shows the sky where the world terrain (10 km box means) is above or below the place's own DEM
   const CURTAIN = vec3(0.36, 0.34, 0.27);
   function curtain(p) {
-    const S = G.sampler(), hG = (lon, lat) => (S.h0 || S.h)(lon, lat) * (U.exag?.value || 1) + S.geoid(lon, lat), hP = (lon, lat) => groundAt(p, lon, lat) + p.geoid;
-    const [w, s2, e, n] = p.area, ring = [], k = 48;
+    // (round the ring when the place has one: there the ring has already been blended into the world terrain)
+    const S = G.sampler(), hG = (lon, lat) => (S.h0 || S.h)(lon, lat) * (U.exag?.value || 1) + S.geoid(lon, lat);
+    const hP = p.ringHo ? (lon, lat) => gridAt(p.ringHo, p.ring.grid, p.ring.area, lon, lat) + S.geoid(lon, lat) : (lon, lat) => groundAt(p, lon, lat) + p.geoid;
+    const [w, s2, e, n] = p.ringHo ? p.ring.area : p.area, ring = [], k = 48;
     for (let i = 0; i < k; i++) ring.push([w + (e - w) * i / k, s2]); for (let i = 0; i < k; i++) ring.push([e, s2 + (n - s2) * i / k]);
     for (let i = 0; i < k; i++) ring.push([e - (e - w) * i / k, n]); for (let i = 0; i < k; i++) ring.push([w, n - (n - s2) * i / k]);
     const pos = [], nrm = [], idx = [], C = p.C;
-    ring.forEach(([lon, lat], i) => { const a = hG(lon, lat), b2 = hP(lon, lat), lo = Math.min(a, b2) - 30, hi = Math.max(a, b2) + (a > b2 ? 4 : -0.3), u = enuBasis(lon, lat).up;
+    ring.forEach(([lon, lat], i) => { const a = hG(lon, lat), b2 = hP(lon, lat), lo = Math.min(a, b2) - 30, hi = Math.max(a, b2) + (p.ringHo ? 25 : a > b2 ? 4 + 0.1 * (a - b2) : -0.3), u = enuBasis(lon, lat).up;
       for (const h of [lo, hi]) { const q = geodeticToEcef(lon, lat, h); pos.push(q[0] - C[0], q[1] - C[1], q[2] - C[2]); nrm.push(...u); }
       const j = (i + 1) % ring.length; idx.push(2 * i, 2 * j, 2 * i + 1, 2 * i + 1, 2 * j, 2 * j + 1); });
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3)); g.setIndex(idx);
     const m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide }); m.colorNode = vec4(CURTAIN.mul(light(upF)), 1); m.depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar);
     const mesh = new THREE.Mesh(g, m); mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.userData = { C, B: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], ground: true, curtain: true, place: p.id };
     scene.add(mesh); return { mesh, tris: idx.length / 3 };
+  }
+  // the ring: the place's wider terrain grid (features.json ring, about 8 km square, coarser DEM), coloured as the globe's
+  // land, its outer part blended into the world terrain (smoothstep over the outer 40 %), drawn round the place's tiles
+  // (fragments inside the place's area discarded): a valley or hill goes on past the place's edge
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  function ringMesh(p) {
+    const R = p.ring, S = G.sampler(), ex = U.exag?.value || 1, n = R.grid, [w, s2, e, nn] = R.area, lc = (w + e) / 2, bc = (s2 + nn) / 2, hw = (e - w) / 2, hh = (nn - s2) / 2, C = p.C;
+    const Ho = new Float32Array(n * n), pos = new Float32Array(n * n * 3), col = new Float32Array(n * n * 3), geo = new Float32Array(n * n * 2), ell = new Float64Array(n * n);
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+      const k = j * n + i, lon = w + (e - w) * i / (n - 1), lat = nn - (nn - s2) * j / (n - 1), N = S.geoid(lon, lat), d = Math.max(Math.abs(lon - lc) / hw, Math.abs(lat - bc) / hh);
+      const hd = R.h[k], hw0 = S.h0 ? S.h0(lon, lat) * ex : hd, t = smooth(0.6, 0.97, d), ho = hd + (hw0 - hd) * t;
+      Ho[k] = ho; ell[k] = ho + N; const q = geodeticToEcef(lon, lat, ho + N); pos.set([q[0] - C[0], q[1] - C[1], q[2] - C[2]], 3 * k); geo.set([lon, lat], 2 * k);
+      // the globe's land colours by height (terrain.js): green to olive (150 to 900 m) to brown (900 to 2,200 m)
+      const a1 = smooth(150, 900, ho), a2 = smooth(900, 2200, ho); let c = [0.16 + (0.33 - 0.16) * a1, 0.27 + (0.33 - 0.27) * a1, 0.10 + (0.17 - 0.10) * a1]; c = [c[0] + (0.38 - c[0]) * a2, c[1] + (0.30 - c[1]) * a2, c[2] + (0.20 - c[2]) * a2]; col.set(c, 3 * k);
+    }
+    const idx = []; for (let j = 0; j < n - 1; j++) for (let i = 0; i < n - 1; i++) { const a = j * n + i, b = a + 1, c = a + n, d = c + 1; idx.push(a, c, b, b, c, d); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('col', new THREE.BufferAttribute(col, 3)); g.setAttribute('geo', new THREE.BufferAttribute(geo, 2)); g.setIndex(idx); g.computeVertexNormals();
+    const m = new THREE.MeshBasicNodeMaterial(), nW = normalize(modelWorldMatrix.mul(vec4(normalLocal, 0)).xyz), sd = dot(upF, U.sun), day = smoothstep(-0.12, 0.12, sd);
+    m.colorNode = vec4(attribute('col', 'vec3').mul(mix(float(0.025), float(0.16), day).add(max(dot(nW, U.sun), 0).mul(1.15).mul(day))), 1);
+    const pa = p.area, gq = attribute('geo', 'vec2'), inPlace = gq.x.greaterThan(pa[0]).and(gq.x.lessThan(pa[2])).and(gq.y.greaterThan(pa[1])).and(gq.y.lessThan(pa[3]));
+    m.opacityNode = select(inPlace, float(0), float(1)); m.alphaTest = 0.5;
+    m.depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar);
+    const mesh = new THREE.Mesh(g, m); mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.userData = { C, B: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], ground: true, ring: true, place: p.id };
+    p.ringHo = Ho; scene.add(mesh); return { mesh, tris: idx.length / 3 };
   }
   G.placeGround = (lon, lat) => { for (const p of P) if (p.state === 'loaded' && inArea(p, lon, lat)) return groundAt(p, lon, lat); return null; };
 
@@ -131,7 +160,7 @@ export async function attachPlaces(G, H, { scene, U }) {
         const r = (i, j) => R[i][0] * B[j][0] + R[i][1] * B[j][1] + R[i][2] * B[j][2], tr = i => R[i][0] * o[0] + R[i][1] * o[1] + R[i][2] * o[2];
         m.matrixWorld.set(r(0, 0), r(0, 1), r(0, 2), tr(0), r(1, 0), r(1, 1), r(1, 2), tr(1), r(2, 0), r(2, 1), r(2, 2), tr(2), 0, 0, 0, 1); m.visible = true; }
     }
-    if (U.hole) { if (hole) U.hole.value.set(hole.area[0], hole.area[1], hole.area[2], hole.area[3]); else U.hole.value.set(0, 0, -1, -1); }
+    if (U.hole) { const a = hole && (hole.ringHo ? hole.ring.area : hole.area); if (hole) U.hole.value.set(a[0], a[1], a[2], a[3]); else U.hole.value.set(0, 0, -1, -1); }
     if (hole) { const u = enuBasis(hole.centre[0], hole.centre[1]).up; upF.value.set(R[0][0] * u[0] + R[0][1] * u[1] + R[0][2] * u[2], R[1][0] * u[0] + R[1][1] * u[1] + R[1][2] * u[2], R[2][0] * u[0] + R[2][1] * u[1] + R[2][2] * u[2]); }
   };
 

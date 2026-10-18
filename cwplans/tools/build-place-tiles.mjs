@@ -15,7 +15,8 @@
 // Copernicus GLO-30 COG tiles (worldwide fallback), INSPIRE BU building parts (GML, number of floors).
 // Raw downloads: cwplans/data/raw/places/<id>/ (ignored by git; fetch-log.json: URL, date, bytes, SHA-256).
 // Output: cwplans/docklands/data/places/<id>/ (tileset.json, tiles/<level>-<x>-<y>.glb, features.json, log.json) and
-// cwplans/docklands/data/places/index.json (the places the globe knows). Reader: docklands/globe/places.js.
+// cwplans/docklands/data/places/index.json (the places the globe knows). Reader: docklands/globe/places.js. features.json
+// also holds a coarser terrain grid of an 8 km ring round the place (place.ring_m), which the globe joins to the world.
 //
 // Dataflow (skill cwplans-dataflow): three named operations over input files fixed by SHA-256 and parameters:
 // place-select-osm, place-heights, place-tiles. Activity id = sha256(JSON [op, version, input hashes, params])[0:16];
@@ -96,29 +97,37 @@ async function fetchOsm() {
 // DEM: by the adapter's kind, into one common raw grid (row 0 = north, heights in metres of the adapter's datum)
 const demAd = REG.adapters.find(a => a.id === PL.dem && a.dem) || REG.adapters.find(a => a.dem);
 if (!demAd) throw new Error(`region ${RID}: no adapter with a dem block`);
-async function fetchDem() {
-  const f = join(RAWD, 'dem.json.gz'); if (existsSync(f) && !flag('--refetch')) return;
-  const D = demAd.dem, m = 0.002, b = [AREA[0] - m, AREA[1] - m, AREA[2] + m, AREA[3] + m];
-  let img, url;
+// the ring: a wider square (place.ring_m, default 8 km) of coarser terrain round the place, drawn by the globe between the
+// place's tiles and the 10 km world terrain (globe/places.js), so a valley or a hill is not cut off at the place's edge
+const RING_M = PL.ring_m ?? 8000, RING = [O.lon - RING_M / 2 / mLon, O.lat - RING_M / 2 / mLat, O.lon + RING_M / 2 / mLon, O.lat + RING_M / 2 / mLat];
+// one DEM grid for a box b (row 0 = north): WCS 2.0 GeoTIFF in geographic degrees, or a window of a Copernicus GLO-30 COG
+async function demGrid(b, coverage, tifOut) {
+  const D = demAd.dem;
   if (D.kind === 'wcs20') {
-    url = `${D.url}?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=${D.coverage}&SUBSET=${D.lat}(${b[1]},${b[3]})&SUBSET=${D.lon}(${b[0]},${b[2]})&FORMAT=${encodeURIComponent(D.format)}`;
-    const buf = await get(url); writeFileSync(join(RAWD, 'dem.tif'), buf);
-    img = await (await fromArrayBuffer(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength))).getImage();
-  } else if (D.kind === 'copernicus-glo30') {
-    // one COG per 1 x 1 degree cell; read the window by range requests
+    const url = `${D.url}?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=${coverage}&SUBSET=${D.lat}(${b[1]},${b[3]})&SUBSET=${D.lon}(${b[0]},${b[2]})&FORMAT=${encodeURIComponent(D.format)}`;
+    const buf = await get(url); if (tifOut) writeFileSync(tifOut, buf);
+    const img = await (await fromArrayBuffer(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength))).getImage();
+    const [w0, s0, e0, n0] = img.getBoundingBox(), r = await img.readRasters(), nd = img.getGDALNoData();
+    return { url, grid: { w: w0, s: s0, e: e0, n: n0, nx: img.getWidth(), ny: img.getHeight(), h: Array.from(r[0], v => v === nd ? null : Math.round(v * 10) / 10), datum: D.datum, source: D.source, coverage } };
+  }
+  if (D.kind === 'copernicus-glo30') {
+    // one COG per 1 x 1 degree cell (the cell of the origin; a box that crosses its edge is clipped to it): range requests
     const la = Math.floor(O.lat), lo = Math.floor(O.lon), ns = (la < 0 ? 'S' : 'N') + String(Math.abs(la)).padStart(2, '0'), ew = (lo < 0 ? 'W' : 'E') + String(Math.abs(lo)).padStart(3, '0');
-    const name = `Copernicus_DSM_COG_10_${ns}_00_${ew}_00_DEM`; url = `${D.url}${name}/${name}.tif`;
-    const tif = await fromUrl(url); img = await tif.getImage();
-    const [w0, s0, e0, n0] = img.getBoundingBox(), W = img.getWidth(), H = img.getHeight();
-    const win = [Math.floor((b[0] - w0) / (e0 - w0) * W), Math.floor((n0 - b[3]) / (n0 - s0) * H), Math.ceil((b[2] - w0) / (e0 - w0) * W), Math.ceil((n0 - b[1]) / (n0 - s0) * H)];
+    const name = `Copernicus_DSM_COG_10_${ns}_00_${ew}_00_DEM`, url = `${D.url}${name}/${name}.tif`;
+    const img = await (await fromUrl(url)).getImage();
+    const [w0, s0, e0, n0] = img.getBoundingBox(), W = img.getWidth(), H = img.getHeight(), cl = (v, a) => Math.max(0, Math.min(a, v));
+    const win = [cl(Math.floor((b[0] - w0) / (e0 - w0) * W), W), cl(Math.floor((n0 - b[3]) / (n0 - s0) * H), H), cl(Math.ceil((b[2] - w0) / (e0 - w0) * W), W), cl(Math.ceil((n0 - b[1]) / (n0 - s0) * H), H)];
     const r = await img.readRasters({ window: win }), px = (e0 - w0) / W, py = (n0 - s0) / H;
-    const grid = { w: w0 + win[0] * px, n: n0 - win[1] * py, e: w0 + win[2] * px, s: n0 - win[3] * py, nx: win[2] - win[0], ny: win[3] - win[1], h: Array.from(r[0], v => Math.round(v * 10) / 10), datum: D.datum, source: D.source };
-    jz(f, grid); record('dem', f, url, { window: win, licence: D.credit }); return;
-  } else throw new Error(`dem kind ${D.kind}?`);
-  const [w0, s0, e0, n0] = img.getBoundingBox(), r = await img.readRasters(), nd = img.getGDALNoData();
-  const grid = { w: w0, s: s0, e: e0, n: n0, nx: img.getWidth(), ny: img.getHeight(), h: Array.from(r[0], v => v === nd ? null : Math.round(v * 10) / 10), datum: D.datum, source: D.source };
-  jz(f, grid); record('dem', f, url, { licence: D.credit });
-  console.log(`dem: ${grid.nx} x ${grid.ny} (${D.source})`);
+    return { url, window: win, grid: { w: w0 + win[0] * px, n: n0 - win[1] * py, e: w0 + win[2] * px, s: n0 - win[3] * py, nx: win[2] - win[0], ny: win[3] - win[1], h: Array.from(r[0], v => Math.round(v * 10) / 10), datum: D.datum, source: D.source } };
+  }
+  throw new Error(`dem kind ${D.kind}?`);
+}
+async function fetchDem() {
+  const D = demAd.dem, m = 0.002, f = join(RAWD, 'dem.json.gz'), fr = join(RAWD, 'dem-ring.json.gz');
+  if (!existsSync(f) || flag('--refetch')) { const g = await demGrid([AREA[0] - m, AREA[1] - m, AREA[2] + m, AREA[3] + m], D.coverage, join(RAWD, 'dem.tif'));
+    jz(f, g.grid); record('dem', f, g.url, { ...(g.window ? { window: g.window } : {}), licence: D.credit }); console.log(`dem: ${g.grid.nx} x ${g.grid.ny} (${D.source})`); }
+  if (RING_M && (!existsSync(fr) || flag('--refetch'))) { const g = await demGrid([RING[0] - m, RING[1] - m, RING[2] + m, RING[3] + m], D.ringCoverage || D.coverage, null);
+    jz(fr, g.grid); record('dem-ring', fr, g.url, { ...(g.window ? { window: g.window } : {}), licence: D.credit }); console.log(`dem ring: ${g.grid.nx} x ${g.grid.ny}`); }
 }
 
 // national building heights (adapters with a buildingHeights block): kept raw (never committed), as parts with floors
@@ -160,7 +169,7 @@ async function run(op, inputs, params, body) {
 const OPS = {
   select: { id: 'place-select-osm', version: 2, skill: 'docklands-3d-page' },
   heights: { id: 'place-heights', version: 1, skill: 'docklands-data-curation' },
-  tiles: { id: 'place-tiles', version: 2, skill: 'docklands-3d-page' },
+  tiles: { id: 'place-tiles', version: 3, skill: 'docklands-3d-page' },
 };
 
 // ---------- geometry helpers (lon/lat rings; local metres by a flat approximation for areas and tests)
@@ -321,7 +330,7 @@ const WALL = [214, 203, 182], ROOF = [168, 120, 96], ROOF_FLAT = [150, 146, 140]
 const GROUND = '#b8b09e', FILL = { water: '#4f86ab', green: '#8fae6f', paved: '#d9d2c2' };
 
 // ---------- operation 3: tiles (pure: selected OSM, heights, DEM, geoid -> glb per cell, tileset.json, features.json)
-async function buildTiles(sel, HT, dem, geoidAt, P) {
+async function buildTiles(sel, HT, dem, geoidAt, P, ringDem) {
   const demAt = demSampler(dem), Ng = geoidAt(O.lon, O.lat);
   const ell = (lon, lat) => demAt(lon, lat) + Ng;   // ellipsoidal ground height (DEM datum taken as EGM96 orthometric: stated)
   rmSync(join(OUT, 'tiles'), { recursive: true, force: true }); mkdirSync(join(OUT, 'tiles'), { recursive: true });
@@ -401,8 +410,12 @@ async function buildTiles(sel, HT, dem, geoidAt, P) {
   const areasN = sel.areas.filter(a => a.name).map(a => { const c = centroid(a.rings[0]); return [a.name, a.kind, r7(c[0]), r7(c[1]), a.alt || null]; });
   // the ground as a coarse grid (for the globe's ground height and the eye guard): 33 x 33 over the area, metres of the DEM datum
   const GN = 32, ground = []; for (let j = 0; j <= GN; j++) for (let i = 0; i <= GN; i++) ground.push(Math.round(demAt(AREA[0] + (AREA[2] - AREA[0]) * i / GN, AREA[3] - (AREA[3] - AREA[1]) * j / GN) * 10) / 10);
+  // the ring: a 97 x 97 grid over the ring square (DEM datum; the globe blends its outer part into the world terrain)
+  let ring = null; if (ringDem && P.ring_m) { const rAt = demSampler(ringDem), n = P.ring_grid, h = [];
+    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) h.push(Math.round(rAt(RING[0] + (RING[2] - RING[0]) * i / (n - 1), RING[3] - (RING[3] - RING[1]) * j / (n - 1)) * 10) / 10);
+    ring = { area: RING.map(v => r7(v)), grid: n, h, datum: ringDem.datum, source: ringDem.source + (ringDem.coverage ? ' ' + ringDem.coverage : '') }; }
   const fj = { format: 'place-features-1', place: RID, name: REG.name, label: PL.label || REG.name, search: PL.search || [], timeZone: REG.timeZone, locale: REG.locale, origin: REG.origin, area: AREA, level: L, geoid_m: Math.round(Ng * 100) / 100,
-    ground: { grid: GN + 1, h: ground, datum: demAd.dem.datum + '; add geoid_m (EGM96) for WGS84 ellipsoidal heights' }, credit,
+    ground: { grid: GN + 1, h: ground, datum: demAd.dem.datum + '; add geoid_m (EGM96) for WGS84 ellipsoidal heights' }, ring, credit,
     buildings_fields: ['osm_id', 'name', 'address', 'kind', 'lon', 'lat', 'height_m', 'height_source', 'levels', 'tile', 'ground_m', 'wikidata', 'name_alt', 'parent'], buildings: B,
     streets_fields: ['name', 'kind', 'lon', 'lat', 'name_alt'], areas_fields: ['name', 'kind', 'lon', 'lat', 'name_alt'], streets: [...streets.values()].sort((a, b) => a[0].localeCompare(b[0])),
     areas: areasN, points_fields: ['osm_id', 'name', 'kind', 'lon', 'lat', 'address', 'name_alt'], points: sel.points.map(p => [p.id, p.name, p.kind, p.lon, p.lat, p.addr, p.alt || null]), tiles: tileStats };
@@ -423,8 +436,9 @@ async function build() {
   const a2 = await run(OPS.heights, [fileIn(fSel, 'selected'), ...natFiles.map(f => fileIn(f, 'national-heights'))], HP, async p => {
     const nat = natFiles.flatMap(f => rz(f).parts), r = heightsOf(rz(fSel), nat, p); jz(fH, r); console.log('  height sources and faults:', JSON.stringify(r.faults)); return [fH]; });
   const TP = { grid: 32, tex: 512, jpeg: 82, skirt_m: 300, version_label: `${RID}-1` };
-  const a3 = await run(OPS.tiles, [fileIn(fSel, 'selected'), fileIn(fH, 'heights'), fileIn(fDem, 'dem'), fileIn(fGeoid, 'geoid')], TP, async p => {
-    const geo = await geoidSampler(fGeoid); return buildTiles(rz(fSel), rz(fH).heights, rz(fDem), geo, p); });
+  const fRing = join(RAWD, 'dem-ring.json.gz'), ringIn = RING_M && existsSync(fRing) ? [fileIn(fRing, 'dem-ring')] : [];
+  const a3 = await run(OPS.tiles, [fileIn(fSel, 'selected'), fileIn(fH, 'heights'), fileIn(fDem, 'dem'), fileIn(fGeoid, 'geoid'), ...ringIn], { ...TP, ring_m: ringIn.length ? RING_M : 0, ring_grid: 97 }, async p => {
+    const geo = await geoidSampler(fGeoid); return buildTiles(rz(fSel), rz(fH).heights, rz(fDem), geo, p, ringIn.length ? rz(fRing) : null); });
   // the committed log: fetch records (no local paths of raw files beyond their names), the three activities, the fault counts
   const HZ = rz(fH);
   blog.about = `Build log of the place ${RID} (${REG.name}) by cwplans/tools/build-place-tiles.mjs: what was fetched (URL, date, SHA-256) and each dataflow activity with its input and output hashes. Raw files stay in cwplans/data/raw/places/${RID}/ (not committed).`;

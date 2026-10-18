@@ -10684,7 +10684,7 @@
    "@id": "https://kgx.foaf.tv/id/toolplacetiles",
    "@type": "prov:Activity",
    "rdfs:label": "place-tiles",
-   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > default 9 m, 3 m for small kinds), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + height; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView).",
+   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > default 9 m, 3 m for small kinds), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + height; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage).",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm",
@@ -26194,7 +26194,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+   "dct:title": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -26307,7 +26307,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Stari Grad, Sarajevo place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+   "dct:title": "Stari Grad, Sarajevo place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -31831,7 +31831,7 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "MDT05: digital terrain model of Spain, 5 m grid (Instituto Geográfico Nacional, CNIG), read through the INSPIRE WCS 2.0 of the IDEE (coverage Elevacion4258_5, ETRS89 geographic, integer metres on REDNAP)",
+   "dct:title": "MDT05 and MDT25: digital terrain models of Spain, 5 m and 25 m grids (Instituto Geográfico Nacional, CNIG), read through the INSPIRE WCS 2.0 of the IDEE (coverages Elevacion4258_5 for the place, Elevacion4258_25 for its 8 km terrain ring; ETRS89 geographic, integer metres on REDNAP)",
    "dct:license": "CC BY 4.0 (Orden FOM/2807/2015; IGN / CNIG licence conditions)",
    "dcat:landingPage": "https://servicios.idee.es/wcs-inspire/mdt",
    "cwp:attribution": "MDT05 © Instituto Geográfico Nacional"

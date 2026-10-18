@@ -3245,11 +3245,11 @@
       "attribution": "© Scottish Government, contains Ordnance Survey data © Crown copyright and database right"
     },
     "ign-mdt05": {
-      "name": "MDT05: digital terrain model of Spain, 5 m grid (Instituto Geográfico Nacional, CNIG), read through the INSPIRE WCS 2.0 of the IDEE (coverage Elevacion4258_5, ETRS89 geographic, integer metres on REDNAP)",
+      "name": "MDT05 and MDT25: digital terrain models of Spain, 5 m and 25 m grids (Instituto Geográfico Nacional, CNIG), read through the INSPIRE WCS 2.0 of the IDEE (coverages Elevacion4258_5 for the place, Elevacion4258_25 for its 8 km terrain ring; ETRS89 geographic, integer metres on REDNAP)",
       "licence": "CC BY 4.0 (Orden FOM/2807/2015; IGN / CNIG licence conditions)",
       "attribution": "MDT05 © Instituto Geográfico Nacional",
       "url": "https://servicios.idee.es/wcs-inspire/mdt",
-      "note": "Used for the place León (region config leon, adapter es-ign): the terrain of the tiles and the ground under each building. The GeoTIFF stays in cwplans/data/raw/places/leon/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile and a 33 x 33 grid in features.json, resampled from it."
+      "note": "Used for the place León (region config leon, adapter es-ign): the terrain of the tiles and the ground under each building. The GeoTIFF stays in cwplans/data/raw/places/leon/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km ring (from MDT25), resampled from it."
     },
     "es-catastro-inspire-bu": {
       "name": "Dirección General del Catastro, INSPIRE Buildings (BU) of the municipality of León (ATOM download A.ES.SDGC.BU.24900.zip): building parts with numberOfFloorsAboveGround",
@@ -3263,7 +3263,7 @@
       "licence": "Copernicus DEM licence (ESA / European Union, GLO-30 public instance): free of charge, worldwide, for any purpose, including redistribution of derived products, with the attribution",
       "attribution": "Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
       "url": "https://registry.opendata.aws/copernicus-dem/",
-      "note": "Used for the place Sarajevo (region config sarajevo, adapter world-base): the terrain of the tiles and the ground under each building. A surface model: in built-up cells the roofs and trees raise it a few metres. The raw window stays in cwplans/data/raw/places/sarajevo/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile and a 33 x 33 grid in features.json, resampled from it. The full licence text names an 'all rights reserved' notice in the credit line; re-check before the prototyping phase ends."
+      "note": "Used for the place Sarajevo (region config sarajevo, adapter world-base): the terrain of the tiles and the ground under each building. A surface model: in built-up cells the roofs and trees raise it a few metres. The raw window stays in cwplans/data/raw/places/sarajevo/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km terrain ring, resampled from it. The full licence text names an 'all rights reserved' notice in the credit line; re-check before the prototyping phase ends."
     }
   },
   "files": [
@@ -13582,7 +13582,7 @@
     },
     {
       "path": "docklands/data/places/leon/features.json",
-      "what": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+      "what": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
       "sources": [
         "osm",
         "ign-mdt05",
@@ -13675,7 +13675,7 @@
     },
     {
       "path": "docklands/data/places/sarajevo/features.json",
-      "what": "Stari Grad, Sarajevo place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+      "what": "Stari Grad, Sarajevo place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
       "sources": [
         "osm",
         "copernicus-glo30",

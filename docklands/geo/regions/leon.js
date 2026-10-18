@@ -25,7 +25,7 @@ export default {
       licence: 'CC BY 4.0 (Orden FOM/2807/2015; credit "© Instituto Geográfico Nacional"; PNOA: "PNOA cedido por © Instituto Geográfico Nacional")',
       licenceClass: 'open', crs: { horizontal: 'ETRS89 / UTM 30N (EPSG:25830)', vertical: 'orthometric (Alicante datum), geoid EGM08-REDNAP' }, fallback: 'world-base',
       // MDT05 (5 m terrain model, 1 m steps in this coverage) through the INSPIRE WCS 2.0 of the IDEE, in ETRS89 geographic
-      dem: { kind: 'wcs20', source: 'ign-mdt05', url: 'https://servicios.idee.es/wcs-inspire/mdt', coverage: 'Elevacion4258_5', lat: 'Lat', lon: 'Long', format: 'image/tiff', res_m: 5,
+      dem: { kind: 'wcs20', source: 'ign-mdt05', url: 'https://servicios.idee.es/wcs-inspire/mdt', coverage: 'Elevacion4258_5', ringCoverage: 'Elevacion4258_25', lat: 'Lat', lon: 'Long', format: 'image/tiff', res_m: 5,
         datum: 'orthometric, REDNAP (geoid EGM08-REDNAP); ETRS89 taken as WGS84', credit: 'MDT05 © Instituto Geográfico Nacional (CC BY 4.0)' } },
     { id: 'es-catastro', status: 'approved-transformed-only', area: 'Spain (not the Basque Country, not Navarre)',
       about: 'Dirección General del Catastro INSPIRE buildings (BU), parcels (CP), addresses (AD)',

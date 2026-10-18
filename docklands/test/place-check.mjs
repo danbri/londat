@@ -46,7 +46,7 @@ for (const [w, h, dpr] of SIZES) {
     return { view: docklands.getView(), frame: G.stats.frame, places: G.placesStats(), hole: G.U.hole.value.toArray(), worldH: S.h0 ? Math.round(S.h0(c[0], c[1])) : null, placeH: Math.round(S.h(c[0], c[1])) }; });
   console.log(`     ground at the centre: world terrain (ETOPO box mean) ${st.worldH} m, the place's DEM ${st.placeH} m above sea level`);
   const pl = st.places.find(p => p.id === PLACE);
-  check(pl && pl.tiles === FJ.tiles.length * 2 - FJ.tiles.filter(t => !t.buildings).length + 1, 'all tiles loaded', `${pl?.tiles} meshes (and the curtain) for ${FJ.tiles.length} tiles, ${loadS.toFixed(1)} s from page load`);
+  check(pl && pl.tiles === FJ.tiles.length * 2 - FJ.tiles.filter(t => !t.buildings).length + 1 + (FJ.ring ? 1 : 0), 'all tiles loaded', `${pl?.tiles} meshes (with the curtain and the ring) for ${FJ.tiles.length} tiles, ${loadS.toFixed(1)} s from page load`);
   check(st.frame && st.frame.triangles > 0 && pl.triangles > 0, 'triangles drawn', `frame ${st.frame?.triangles?.toLocaleString('en')} triangles (place meshes ${pl?.triangles?.toLocaleString('en')}), ${st.frame?.calls} draw calls`);
   check(st.view.eye.above_ground_m < 3000, 'eye near the ground (no 60 km floor over a place)', `eye ${st.view.eye.above_ground_m} m above ground, range ${st.view.range_m} m, tilt ${st.view.tilt_deg}`);
   check(Math.abs(st.view.target.lat - +C.ll.split(',')[0]) < 0.002 && Math.abs(st.view.target.lon - +C.ll.split(',')[1]) < 0.002, 'target at the link', JSON.stringify(st.view.target));

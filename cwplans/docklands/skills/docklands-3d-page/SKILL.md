@@ -2943,6 +2943,12 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
   a loaded place (the eye guard, picks, orbit target and readout sit on the real ground; the original is kept as `h0`);
   (3) a curtain: a wall round the area from the lower to the higher of the two grounds (+4 m), so no sky shows through the
   gap. Without (3) a blue line (the scene background seen under the higher world terrain) ran along the far edge.
+  (4) **The terrain ring** (place-tiles version 3): features.json holds a 97 x 97 grid of an 8 km square round the place
+  (`place.ring_m`; DEM adapter `ringCoverage`, León MDT25, Sarajevo the same GLO-30 COG); places.js draws it as a mesh
+  coloured like the globe's land (same height ramp and light), its fragments inside the place's area discarded, its outer
+  40 % blended (smoothstep) into the world terrain's height (`S.h0`); the hole and the curtain move to the ring's edge
+  (curtain top +25 m there). Sarajevo before: the city in a 247 m pit; after: the valley, the Miljacka and Trebević's
+  slopes go on past the tiles. Remaining: a thin strip of sky near the horizon beyond the ring's far edge.
 - **Text and machine interface.** Search provider: the place's own words (`place.search`, kind place), named buildings and
   addresses, named points, streets, squares, water. "Plaza Mayor" -> the place; `goTo("Plaza Mayor")` from orbit ends 1.2 km
   above it. Where provider (featuresAt, readout): the place label, the building at the point (OSM id, name, height and its
@@ -2958,10 +2964,10 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
   `height`); before place-select-osm version 2 the parts had no name. 15 tiles, 7,424 buildings, 5.50 MB + 0.93 MB.
   Heights: 95 % at the 9 m default (no national source yet; the owner's waiver, issue #9, allows FGU / RGURS data).
   The world terrain (ETOPO box mean) is 805 m at Vijećnica, the real ground 558 m: the place sat in a 247 m pit walled by
-  the curtain; hence the terrain ring (next item).
+  the curtain; the fix is the terrain ring ("Meeting the coarse world", item 4).
 - **Measured** (headless, SwiftShader, WebGL 2): León deep link at 390 x 844 @2: tiles loaded 21 s after page load,
   177,652 triangles in the frame (122,333 of the place), 187 draw calls; 1280 x 800 @1: 238,302 triangles, 211 calls.
-- **Open.** Flat roofs; one ground texture resolution (1.2 m a pixel); the world outside the area is still the coarse
-  beige terrain (a ring of medium detail, e.g. GLO-90 tiles, would soften the edge); no implicit tiling or LOD levels yet
+- **Open.** Flat roofs; one ground texture resolution (1.2 m a pixel); beyond the 8 km ring the world is the coarse
+  terrain; no national building heights for Sarajevo yet (owner's waiver allows FGU / RGURS); no implicit tiling or LOD levels yet
   (one level: fine for 2 km); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
   text only); 3d-tiles-renderer can read these sets but is not used.
