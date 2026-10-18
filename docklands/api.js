@@ -34,7 +34,8 @@ export function init(H) {
   const shareLink = () => onGlobe() ? H.globe.shareLink() : location.origin + location.pathname + location.search + H.shareHash();
   const sunNow = () => { const s = H.sky.state && H.sky.state.sun; return s ? { alt: s.alt, az: s.az, altGeo: s.altGeo } : null; };
   function getView() {
-    if (onGlobe()) return { api_version: API_VERSION, ...H.globe.getView(), time: timeOf(H.clock, TZ), view: 'globe', share: shareLink() };
+    if (onGlobe()) { const v = H.globe.getView(), pt = H.globe.placeTime?.(v.target.lon, v.target.lat);   // over a place (globe/places.js): its own clock too
+      return { api_version: API_VERSION, ...v, time: timeOf(H.clock, TZ), ...(pt ? { place_time: pt } : {}), view: 'globe', share: shareLink() }; }
     const G = viewGeo(I, camOf()); delete G.frame; delete G.elon; delete G.elat; const s = sunNow();
     return { api_version: API_VERSION, ...G, time: timeOf(H.clock, TZ), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, share: shareLink() };
   }
@@ -114,7 +115,7 @@ export function init(H) {
   async function featuresAt(lon, lat) {
     if (GL() && (onGlobe() && lon == null || lon != null && !adapter.inBox(...adapter.fromLonLat(+lon, +lat), 0))) {   // outside the model: the world's answer
       if (lon == null) { const g = GL().pick(innerWidth / 2, innerHeight / 2); if (!g) return { text: 'Only sky or space at the centre of the view.', sky: true }; lon = g.lon; lat = g.lat; }
-      const r = await GL().featuresAt(+lon, +lat); r.text = [r.name, r.region, r.country].filter((v, i, a) => v && a.indexOf(v) === i).join(', ') + (r.nearest[0] ? `; nearest place ${r.nearest[0].name}, ${Math.round(r.nearest[0].dist_m / 1000)} km ${r.nearest[0].direction}` : ''); return r; }
+      const r = await GL().featuresAt(+lon, +lat); r.text = [r.name, r.region, r.country].filter((v, i, a) => v && a.indexOf(v) === i).join(', ') + (r.nearest[0] ? `; nearest place ${r.nearest[0].name}, ${Math.round(r.nearest[0].dist_m / 1000)} km ${r.nearest[0].direction}` : '') + (r.more && r.more.text ? ' ' + r.more.text : ''); return r; }
     await extras; let x, z, bi = -1, range = null;
     if (lon == null || lat == null) { const c = centrePoint(); if (!c) return { text: 'Only sky at the centre of the view.', sky: true }; ({ x, z, range } = c); bi = c.building; }
     else { if (!isFinite(+lon) || !isFinite(+lat)) throw new Error('featuresAt needs lon and lat in WGS84 degrees, or no arguments for the centre of the view'); [x, z] = adapter.fromLonLat(+lon, +lat); }

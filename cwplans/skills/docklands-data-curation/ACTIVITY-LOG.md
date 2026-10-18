@@ -2620,3 +2620,32 @@ overlays that are not crisp; calibrated against the first-round pass. Details an
   permission question. Fix: 4 s, not while the permission is open, and the message is cleared by the first compass
   reading. Headless with simulated events: upright with gamma 30 gives roll 0; beta 60, gamma 30 gives roll -14 (the
   calculated value); pitch follows; no message; no page errors.
+
+## 2026-10-18: León on the globe as 3D Tiles (KR1.2 with KR2.3; subagent)
+
+Coordinator's task: Leiden first; changed the same day by the owner's order: "hold off on Leiden. Do León (Spain) first,
+then Sarajevo". No Leiden data was made or committed.
+- New tool `cwplans/tools/build-place-tiles.mjs --region <id>` (region config `place` block; no locale constant):
+  OSM API `map.json` (Overpass mirrors were down: reset, 500, 504), IGN MDT05 through the IDEE WCS (CC BY 4.0), Catastro
+  INSPIRE building parts (owner 2026-10-11 "Catastro - yes": used only to compute heights; zip and parts in the ignored raw
+  folder). Three dataflow operations logged with input and output SHA-256 in `cwplans/docklands/data/places/leon/log.json`.
+- Output: 15 tiles (level-15 quadtree cells, 2.25 x 1.83 km round Plaza Mayor), 5.21 MB of glb + 0.59 MB features.json;
+  4,044 buildings, 122,333 triangles. `3d-tiles-validator`: 0 errors, 0 warnings.
+- Heights (new fault class F55, counted not patched): OSM height 105, OSM levels 1,452, Catastro floors 2,454, default 177,
+  small default 25; levels and Catastro differ by 2+ floors for 61.
+- Globe: `docklands/globe/places.js` (load within 30 km, free beyond 45 km; floating-origin matrices; hole in the world
+  terrain; the place's DEM in the globe's sampler; a curtain wall where the 10 km world terrain and the real ground differ;
+  search, featuresAt, describeView, tap card, local time in Europe/Madrid). Small hooks in globe.js, terrain.js
+  (`U.hole`), api.js (featuresAt text, `place_time`).
+- Tests: `docklands/test/place-check.mjs` (new) all passed at 390 x 844 @2 and 1280 x 800 @1; globe-check 390 x 844 @2
+  20 of 20; `npm test` 61 of 61; `npm run check` OK. Deep link:
+  https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55
+- Lessons in the skill docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
+- Sarajevo the same day (second commit): `--region sarajevo`, Copernicus GLO-30 terrain (COG window by range requests),
+  OSM buildings (95 % at the 9 m default: F55), names in Latin with the Cyrillic beside them where OSM has `name:sr`;
+  15 tiles, 7,424 buildings, 5.50 MB + 0.93 MB; place-check all passed at both sizes; `3d-tiles-validator` 0 errors.
+  Deep link https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,1500&ht=0,55 ; `goTo("Vijećnica")` flies there.
+  The coarse world terrain is 247 m above the real ground at Vijećnica (805 against 558 m).
+- Third commit: a terrain ring (8 km, 97 x 97, MDT25 for León, GLO-30 for Sarajevo) in features.json, drawn by
+  places.js between the tiles and the world terrain, its outer part blended into the world height; the hole and the
+  curtain move to the ring's edge. Sarajevo no longer sits in a pit.

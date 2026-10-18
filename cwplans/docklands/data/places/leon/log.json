@@ -1,0 +1,715 @@
+{
+ "about": "Build log of the place leon (Casco Histórico, León) by cwplans/tools/build-place-tiles.mjs: what was fetched (URL, date, SHA-256) and each dataflow activity with its input and output hashes. Raw files stay in cwplans/data/raw/places/leon/ (not committed).",
+ "fetches": {
+  "osm": {
+   "url": [
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.583008,-5.567322,42.596741",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.567322,42.583008,-5.553589,42.596741",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.596741,-5.567322,42.610474",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.567322,42.596741,-5.553589,42.610474"
+   ],
+   "fetched": "2026-10-18T11:40:03.016Z",
+   "bytes": 1551644,
+   "sha256": "51df2c3470679d6b1b903d381ec82dadbe3f6401fca289f63f99974d4ae9301b",
+   "file": "data/raw/places/leon/osm.json.gz",
+   "requests": 4,
+   "elements": 69869,
+   "latest_element_timestamp": "2026-10-17T06:56:39Z",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors"
+  },
+  "dem": {
+   "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_5&SUBSET=Lat(42.5810078125,42.6124736328125)&SUBSET=Long(-5.5830546875,-5.5515888671875)&FORMAT=image%2Ftiff",
+   "fetched": "2026-10-18T11:40:04.448Z",
+   "bytes": 73089,
+   "sha256": "1af4d5470473783b2d3006a3e5cadefba6d1372442c727039d4c481dd71cf118",
+   "file": "data/raw/places/leon/dem.json.gz",
+   "licence": "MDT05 © Instituto Geográfico Nacional (CC BY 4.0)"
+  },
+  "heights-es-catastro": {
+   "url": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip",
+   "fetched": "2026-10-18T11:40:14.630Z",
+   "bytes": 910717,
+   "sha256": "489fa9fb12a47ad42c77d801b11f6b5f2f25dccd25868fdea1c8b2bd9fd05356",
+   "file": "data/raw/places/leon/heights-es-catastro.json.gz",
+   "member": "A.ES.SDGC.BU.24900.buildingpart.gml",
+   "parts": 19041,
+   "zip_sha256": "f619a9aef78c1ff74e58ddf99227ead83c0fa35ced11c9915abfb40bc96fa668",
+   "note": "the original zip and the parts stay in the raw folder (licence: transformed data only)"
+  },
+  "dem-ring": {
+   "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.55914513068171,42.63549486931829)&SUBSET=Long(-5.617352720794726,-5.515727279205274)&FORMAT=image%2Ftiff",
+   "fetched": "2026-10-18T12:10:05.356Z",
+   "bytes": 73764,
+   "sha256": "537c5fb9a9b7fca92e3088806d4eb92fa4e19a80d9c4ec9ca49124e602ee6579",
+   "file": "data/raw/places/leon/dem-ring.json.gz",
+   "licence": "MDT05 © Instituto Geográfico Nacional (CC BY 4.0)"
+  }
+ },
+ "activities": [
+  {
+   "activity": "80770d869efeeadc",
+   "operation": "place-select-osm",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "osm",
+     "path": "data/raw/places/leon/osm.json.gz",
+     "sha256": "51df2c3470679d6b1b903d381ec82dadbe3f6401fca289f63f99974d4ae9301b"
+    }
+   ],
+   "params": {
+    "area": [
+     -5.5810546875,
+     42.5885009765625,
+     -5.5535888671875,
+     42.60498046875
+    ],
+    "level": 15,
+    "names": [
+     "name",
+     "name:es"
+    ],
+    "alt_names": []
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "e6b0d2f410b8b9f492a35a6630a5f67561360f593e9b13bbdb3c8dca7fdd35e0",
+     "bytes": 588863
+    }
+   ],
+   "ms": 731,
+   "at": "2026-10-18T11:42:06.731Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "cdbe0ca0363e7a8e",
+   "operation": "place-heights",
+   "version": 1,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "e6b0d2f410b8b9f492a35a6630a5f67561360f593e9b13bbdb3c8dca7fdd35e0"
+    },
+    {
+     "label": "national-heights",
+     "path": "data/raw/places/leon/heights-es-catastro.json.gz",
+     "sha256": "489fa9fb12a47ad42c77d801b11f6b5f2f25dccd25868fdea1c8b2bd9fd05356"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "rule": "osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > default (small kinds 3 m)"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "f22d3de23baf3d26a3da58be248bf97fdb6ae40f04060eb8ad8213b291f01201",
+     "bytes": 19490
+    }
+   ],
+   "ms": 192,
+   "at": "2026-10-18T11:42:06.925Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "718f89afe3b6e189",
+   "operation": "place-tiles",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "e6b0d2f410b8b9f492a35a6630a5f67561360f593e9b13bbdb3c8dca7fdd35e0"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "f22d3de23baf3d26a3da58be248bf97fdb6ae40f04060eb8ad8213b291f01201"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/leon/dem.json.gz",
+     "sha256": "1af4d5470473783b2d3006a3e5cadefba6d1372442c727039d4c481dd71cf118"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 40,
+    "version_label": "leon-1"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24137.glb",
+     "sha256": "3241431bd5646a70960eec608ed22fbeca3c809db859ac36c41de85dbe2bd295",
+     "bytes": 95320
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24138.glb",
+     "sha256": "737d7c9a8860d932ccdb6214dbb1a61faeecd705f20e085f91a1ffc11bd9e74b",
+     "bytes": 289256
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24139.glb",
+     "sha256": "32af20c7924570a1d83dc9f1506277970998d5c467fd3e39dc532f2fe663d2c6",
+     "bytes": 362328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24137.glb",
+     "sha256": "d1087f7401776adc99b48aff929503d81c37548b597adc988873e6a593a5f1ca",
+     "bytes": 326016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24138.glb",
+     "sha256": "9b0aa6e7bbd631fb775cf4ebd773c478f402dff67802f5372a5a8dbd31acb208",
+     "bytes": 417136
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24139.glb",
+     "sha256": "f0c12b1e5697e8c7f264515d58b6d88e05221fd72b8f01df40c2c0ae4f5cbae0",
+     "bytes": 472872
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24137.glb",
+     "sha256": "26946cad18ae11c58ff38809b34aa578b74194fb102c4747326f806cac8ea479",
+     "bytes": 283320
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24138.glb",
+     "sha256": "cb297ac563a0d311d87e33e9b2e8107fc96626b604793a7cd3674890335dc042",
+     "bytes": 791752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24139.glb",
+     "sha256": "e52e0a2b3c26b477fc44eda702b2faac25d35782222d811ff5fe30a387b0c286",
+     "bytes": 506496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24137.glb",
+     "sha256": "c7b7c2fec0f064b6a33b274ffc8ac3513cefebe350111fad9e144b793c89afb2",
+     "bytes": 342528
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24138.glb",
+     "sha256": "16545a77a78c578ef7a6da977a646c9844d1de6a1402b4e034964ba35d6bd664",
+     "bytes": 783780
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24139.glb",
+     "sha256": "13289a12e95a9dfeee0f0f94f047f1e5fe771ca770bbdeb3e699eab8c18d9c9e",
+     "bytes": 201260
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24137.glb",
+     "sha256": "83cf744f70d3d6fe9eb732e5824e5c6c314fa6af88c3aa286623b42ca270ea35",
+     "bytes": 117892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24138.glb",
+     "sha256": "c6769674c7d0e353bc25d01c370637bb7ff8348ffec8ba8ea6e44b32ceb3be4b",
+     "bytes": 101380
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24139.glb",
+     "sha256": "03d99ac67ec9a5508c6e9f15be6745e0241ae28377544740b3ed49ad8898ed2f",
+     "bytes": 123148
+    },
+    {
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "8f500715233fb1c5892caf80a2a694b91a6cc45fc7a2635f40bc6efd41110fed",
+     "bytes": 9492
+    },
+    {
+     "path": "docklands/data/places/leon/features.json",
+     "sha256": "bcceac0dabbc8796c69b97c5b31f748e3a3b64daef7003654685fd22ca71b38e",
+     "bytes": 568790
+    }
+   ],
+   "ms": 889,
+   "at": "2026-10-18T11:42:07.815Z"
+  },
+  {
+   "activity": "ac8c6f7153fb938c",
+   "operation": "place-tiles",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "e6b0d2f410b8b9f492a35a6630a5f67561360f593e9b13bbdb3c8dca7fdd35e0"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "f22d3de23baf3d26a3da58be248bf97fdb6ae40f04060eb8ad8213b291f01201"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/leon/dem.json.gz",
+     "sha256": "1af4d5470473783b2d3006a3e5cadefba6d1372442c727039d4c481dd71cf118"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 300,
+    "version_label": "leon-1"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24137.glb",
+     "sha256": "5c5d390c37f4f2c69ce2cde6af753621ecb107529b0e0ad0e0007607c8e0ead4",
+     "bytes": 95320
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24138.glb",
+     "sha256": "503a064ca5be7e361407aa0332118fd4efb23213346a6d74857a063c52b0f8f3",
+     "bytes": 289256
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24139.glb",
+     "sha256": "641c2ccb033ea2a2f9a049c4db2f41e552c77a5ea436237100f0b72f591053d0",
+     "bytes": 362328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24137.glb",
+     "sha256": "0a7599efdc7844366b655702f394c032c208def3305c416b64541deb9c04ed8b",
+     "bytes": 326016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24138.glb",
+     "sha256": "9b0aa6e7bbd631fb775cf4ebd773c478f402dff67802f5372a5a8dbd31acb208",
+     "bytes": 417136
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24139.glb",
+     "sha256": "0542b2cbe8c1b6729812945ec09f71b6308bd7a7936c14e238e95af78d72dc34",
+     "bytes": 472872
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24137.glb",
+     "sha256": "732f6abf4b1a23f286a871c19c715c5e9e8025ead36b4b9cc45459eb96514191",
+     "bytes": 283324
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24138.glb",
+     "sha256": "cb297ac563a0d311d87e33e9b2e8107fc96626b604793a7cd3674890335dc042",
+     "bytes": 791752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24139.glb",
+     "sha256": "a45bd2dd934f46874c027e56bd41f9c24bd7c9ad48c2cda797f0747bd131f794",
+     "bytes": 506496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24137.glb",
+     "sha256": "a4bd05883870c0d7324f807e60ea0bede5c29c1d3fa273c5176203351eae18bb",
+     "bytes": 342528
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24138.glb",
+     "sha256": "16545a77a78c578ef7a6da977a646c9844d1de6a1402b4e034964ba35d6bd664",
+     "bytes": 783780
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24139.glb",
+     "sha256": "b7a22cd7e3e85f0277191b6d1163e85d6490f35189570ed5acc4624bee46fb3e",
+     "bytes": 201264
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24137.glb",
+     "sha256": "d9f10f1d69d7e07ae16ec15028f5ffe8eeb8566989985ea7e957c94dbc078dd6",
+     "bytes": 117892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24138.glb",
+     "sha256": "a9b882edc36688ac1fa8cea577c368145b2005f862d4d3e0d47a284dfbc2eff3",
+     "bytes": 101384
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24139.glb",
+     "sha256": "e2b6c80d6e02b9637c9e1bef7bb40fdd3183b20ec68bae57d45b6c43ae17101f",
+     "bytes": 123148
+    },
+    {
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "e1341b6e23b370eb8d24e10ee52ec8fb92c538f8266924dc15960fc958580643",
+     "bytes": 9492
+    },
+    {
+     "path": "docklands/data/places/leon/features.json",
+     "sha256": "0ddc233aa17129fe9fceedb933afcad4b513798ee4d1a802210622468dc273be",
+     "bytes": 568790
+    }
+   ],
+   "ms": 952,
+   "at": "2026-10-18T11:45:53.946Z"
+  },
+  {
+   "activity": "ea6147599cd29779",
+   "operation": "place-select-osm",
+   "version": 2,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "osm",
+     "path": "data/raw/places/leon/osm.json.gz",
+     "sha256": "51df2c3470679d6b1b903d381ec82dadbe3f6401fca289f63f99974d4ae9301b"
+    }
+   ],
+   "params": {
+    "area": [
+     -5.5810546875,
+     42.5885009765625,
+     -5.5535888671875,
+     42.60498046875
+    ],
+    "level": 15,
+    "names": [
+     "name",
+     "name:es"
+    ],
+    "alt_names": []
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "5ade1ab5a05fc731654cbf56963d49e0806ddd5f650ee5283a0ae95d178521bd",
+     "bytes": 590138
+    }
+   ],
+   "ms": 575,
+   "at": "2026-10-18T12:04:48.311Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "78c451121c60bd93",
+   "operation": "place-heights",
+   "version": 1,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "5ade1ab5a05fc731654cbf56963d49e0806ddd5f650ee5283a0ae95d178521bd"
+    },
+    {
+     "label": "national-heights",
+     "path": "data/raw/places/leon/heights-es-catastro.json.gz",
+     "sha256": "489fa9fb12a47ad42c77d801b11f6b5f2f25dccd25868fdea1c8b2bd9fd05356"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "rule": "osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > default (small kinds 3 m)"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "f22d3de23baf3d26a3da58be248bf97fdb6ae40f04060eb8ad8213b291f01201",
+     "bytes": 19490
+    }
+   ],
+   "ms": 197,
+   "at": "2026-10-18T12:04:48.511Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "e7411290282f9f1e",
+   "operation": "place-tiles",
+   "version": 2,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "5ade1ab5a05fc731654cbf56963d49e0806ddd5f650ee5283a0ae95d178521bd"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "f22d3de23baf3d26a3da58be248bf97fdb6ae40f04060eb8ad8213b291f01201"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/leon/dem.json.gz",
+     "sha256": "1af4d5470473783b2d3006a3e5cadefba6d1372442c727039d4c481dd71cf118"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 300,
+    "version_label": "leon-1"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24137.glb",
+     "sha256": "5c5d390c37f4f2c69ce2cde6af753621ecb107529b0e0ad0e0007607c8e0ead4",
+     "bytes": 95320
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24138.glb",
+     "sha256": "503a064ca5be7e361407aa0332118fd4efb23213346a6d74857a063c52b0f8f3",
+     "bytes": 289256
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24139.glb",
+     "sha256": "641c2ccb033ea2a2f9a049c4db2f41e552c77a5ea436237100f0b72f591053d0",
+     "bytes": 362328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24137.glb",
+     "sha256": "0a7599efdc7844366b655702f394c032c208def3305c416b64541deb9c04ed8b",
+     "bytes": 326016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24138.glb",
+     "sha256": "9b0aa6e7bbd631fb775cf4ebd773c478f402dff67802f5372a5a8dbd31acb208",
+     "bytes": 417136
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24139.glb",
+     "sha256": "0542b2cbe8c1b6729812945ec09f71b6308bd7a7936c14e238e95af78d72dc34",
+     "bytes": 472872
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24137.glb",
+     "sha256": "732f6abf4b1a23f286a871c19c715c5e9e8025ead36b4b9cc45459eb96514191",
+     "bytes": 283324
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24138.glb",
+     "sha256": "cb297ac563a0d311d87e33e9b2e8107fc96626b604793a7cd3674890335dc042",
+     "bytes": 791752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24139.glb",
+     "sha256": "a45bd2dd934f46874c027e56bd41f9c24bd7c9ad48c2cda797f0747bd131f794",
+     "bytes": 506496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24137.glb",
+     "sha256": "a4bd05883870c0d7324f807e60ea0bede5c29c1d3fa273c5176203351eae18bb",
+     "bytes": 342528
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24138.glb",
+     "sha256": "16545a77a78c578ef7a6da977a646c9844d1de6a1402b4e034964ba35d6bd664",
+     "bytes": 783780
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24139.glb",
+     "sha256": "b7a22cd7e3e85f0277191b6d1163e85d6490f35189570ed5acc4624bee46fb3e",
+     "bytes": 201264
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24137.glb",
+     "sha256": "d9f10f1d69d7e07ae16ec15028f5ffe8eeb8566989985ea7e957c94dbc078dd6",
+     "bytes": 117892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24138.glb",
+     "sha256": "a9b882edc36688ac1fa8cea577c368145b2005f862d4d3e0d47a284dfbc2eff3",
+     "bytes": 101384
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24139.glb",
+     "sha256": "e2b6c80d6e02b9637c9e1bef7bb40fdd3183b20ec68bae57d45b6c43ae17101f",
+     "bytes": 123148
+    },
+    {
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "e1341b6e23b370eb8d24e10ee52ec8fb92c538f8266924dc15960fc958580643",
+     "bytes": 9492
+    },
+    {
+     "path": "docklands/data/places/leon/features.json",
+     "sha256": "b01b5155d41f070502eb376707ef3a0a4f2f5536e514870cb01528e621d4d8ef",
+     "bytes": 594626
+    }
+   ],
+   "ms": 827,
+   "at": "2026-10-18T12:04:49.339Z"
+  },
+  {
+   "activity": "95f16e6e019ab1ff",
+   "operation": "place-tiles",
+   "version": 3,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "5ade1ab5a05fc731654cbf56963d49e0806ddd5f650ee5283a0ae95d178521bd"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "f22d3de23baf3d26a3da58be248bf97fdb6ae40f04060eb8ad8213b291f01201"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/leon/dem.json.gz",
+     "sha256": "1af4d5470473783b2d3006a3e5cadefba6d1372442c727039d4c481dd71cf118"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    },
+    {
+     "label": "dem-ring",
+     "path": "data/raw/places/leon/dem-ring.json.gz",
+     "sha256": "537c5fb9a9b7fca92e3088806d4eb92fa4e19a80d9c4ec9ca49124e602ee6579"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 300,
+    "version_label": "leon-1",
+    "ring_m": 8000,
+    "ring_grid": 97
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24137.glb",
+     "sha256": "5c5d390c37f4f2c69ce2cde6af753621ecb107529b0e0ad0e0007607c8e0ead4",
+     "bytes": 95320
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24138.glb",
+     "sha256": "503a064ca5be7e361407aa0332118fd4efb23213346a6d74857a063c52b0f8f3",
+     "bytes": 289256
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24139.glb",
+     "sha256": "641c2ccb033ea2a2f9a049c4db2f41e552c77a5ea436237100f0b72f591053d0",
+     "bytes": 362328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24137.glb",
+     "sha256": "0a7599efdc7844366b655702f394c032c208def3305c416b64541deb9c04ed8b",
+     "bytes": 326016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24138.glb",
+     "sha256": "9b0aa6e7bbd631fb775cf4ebd773c478f402dff67802f5372a5a8dbd31acb208",
+     "bytes": 417136
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24139.glb",
+     "sha256": "0542b2cbe8c1b6729812945ec09f71b6308bd7a7936c14e238e95af78d72dc34",
+     "bytes": 472872
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24137.glb",
+     "sha256": "732f6abf4b1a23f286a871c19c715c5e9e8025ead36b4b9cc45459eb96514191",
+     "bytes": 283324
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24138.glb",
+     "sha256": "cb297ac563a0d311d87e33e9b2e8107fc96626b604793a7cd3674890335dc042",
+     "bytes": 791752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24139.glb",
+     "sha256": "a45bd2dd934f46874c027e56bd41f9c24bd7c9ad48c2cda797f0747bd131f794",
+     "bytes": 506496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24137.glb",
+     "sha256": "a4bd05883870c0d7324f807e60ea0bede5c29c1d3fa273c5176203351eae18bb",
+     "bytes": 342528
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24138.glb",
+     "sha256": "16545a77a78c578ef7a6da977a646c9844d1de6a1402b4e034964ba35d6bd664",
+     "bytes": 783780
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24139.glb",
+     "sha256": "b7a22cd7e3e85f0277191b6d1163e85d6490f35189570ed5acc4624bee46fb3e",
+     "bytes": 201264
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24137.glb",
+     "sha256": "d9f10f1d69d7e07ae16ec15028f5ffe8eeb8566989985ea7e957c94dbc078dd6",
+     "bytes": 117892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24138.glb",
+     "sha256": "a9b882edc36688ac1fa8cea577c368145b2005f862d4d3e0d47a284dfbc2eff3",
+     "bytes": 101384
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24139.glb",
+     "sha256": "e2b6c80d6e02b9637c9e1bef7bb40fdd3183b20ec68bae57d45b6c43ae17101f",
+     "bytes": 123148
+    },
+    {
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "e1341b6e23b370eb8d24e10ee52ec8fb92c538f8266924dc15960fc958580643",
+     "bytes": 9492
+    },
+    {
+     "path": "docklands/data/places/leon/features.json",
+     "sha256": "ff816cb9d8e0b34254a79554bd492903d3a01a3ced81e09222832ef4c6e8d2f9",
+     "bytes": 643838
+    }
+   ],
+   "ms": 915,
+   "at": "2026-10-18T12:10:06.280Z"
+  }
+ ],
+ "height_sources": {
+  "osm-height": 105,
+  "osm-levels": 1452,
+  "national": 2454,
+  "default": 177,
+  "default-small": 25,
+  "levels-vs-national-2plus": 61,
+  "national-zero-floors": 0
+ },
+ "fault": "F55 (curation skill fault register): buildings with no height in OSM; counted, not patched per record"
+}

@@ -280,6 +280,7 @@ export async function createGlobe(H) {
     for (const L of layers) { const vis = L.on && alt >= (L.style.minAlt || 0) && alt <= (L.style.maxAlt || Infinity); for (const m of L.meshes) { m.visible = vis; if (vis) place(m); } }
     for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) if (m.visible) place(m);
     place(atmo); atmo.visible = alt > 2000;
+    if (G.onFrame) G.onFrame(eye);   // places as 3D Tiles (globe/places.js): load, free, place the tiles, cut the hole
     // background: black space, sky blue near the ground by day
     const dayK = clamp((dot3(ecefNormalAt(F.eyeGeo), s) + 0.1) / 0.3, 0, 1), skyK = clamp(1 - Math.log10(Math.max(1, alt / 1000)) / 1.9, 0, 1) * dayK;
     scene.background.setRGB(0.18 * skyK, 0.36 * skyK, 0.72 * skyK);
@@ -297,7 +298,7 @@ export async function createGlobe(H) {
     if (!G.ready) { G.ensure().then(() => flyTo(o1, opt)).catch(() => {}); return; }
     const o0 = G.mode === 'globe' ? { ...orbit } : modelOrbit();
     o1 = { ...o0, heading: 0, tilt: 0, ...o1 }; if (sampler) o1.h = sampler.ell(o1.lon, o1.lat);
-    if (!o1.view && !opt.view && !inBox(o1.lon, o1.lat, HANDOVER.marginM)) o1.range = Math.max(o1.range, 60000 / Math.max(0.1, Math.cos(o1.tilt)));   // the 60 km floor away from the model (G.goTo)
+    if (!o1.view && !opt.view && !inBox(o1.lon, o1.lat, HANDOVER.marginM) && !G.detailAt?.(o1.lon, o1.lat)) o1.range = Math.max(o1.range, 60000 / Math.max(0.1, Math.cos(o1.tilt)));   // the 60 km floor away from the model (G.goTo)
     const dist = surfaceDistance(o0.lon, o0.lat, o1.lon, o1.lat), peak = Math.min(MAXR * 0.5, Math.max(o0.range, o1.range, dist * 1.1));
     const ms = opt.ms ?? (reduced() || opt.instant ? 0 : clamp(1200 + 900 * Math.log10(1 + dist / 20000), 1200, 5500));
     flight = { o0, o1, peak, t0: performance.now(), ms, view: opt.view || null, done: opt.done || null, card: opt.card || null };
@@ -468,6 +469,7 @@ export async function createGlobe(H) {
   // ---------- taps: a label opens its card; the ground opens "what is here"
   G.tap = function (x, y) {
     if (!G.ready) return; const lab = labels.at(x, y);
+    if (!lab && G.placeTap) { syncCam(); if (G.placeTap(x, y, gcam)) return; }   // a building of a place (globe/places.js)
     if (lab) { const r = lab.ref; showEntry(r.entry ? (r.entry.L || r.entry.texts ? world.entry(r.entry) : r.entry) : world.entry({ L: r.L, i: r.i, kind: r.L.gazetteer?.kind || r.L.id, lon: 0, lat: 0, ...posOf(r.L, r.i) })); return; }
     const g = pick(x, y); if (!g) return; showCard(featuresAt(g.lon, g.lat));
   };
@@ -515,6 +517,8 @@ export async function createGlobe(H) {
     const d = world.describe({ eye: { lon: r6(e.lon), lat: r6(e.lat), alt_m: Math.round(e.h) }, centre: ctr ? { lon: r6(ctr.lon), lat: r6(ctr.lat) } : null, heading_deg: ((orbit.heading * R2D) % 360 + 360) % 360, tilt_deg: orbit.tilt * R2D, samples, inView, sun, maxItems: o.maxItems || 8, time: o.time || null });
     if (Object.keys(more).length) { d.centre.more = more; const parts = [more.builtUp, more.district, more.county !== more.district ? more.county : null, more.region, more.country].filter(Boolean);
       if (parts.length) d.text += ` In detail (${more.source}): ${[...new Set(parts)].join(', ')}${more.nationalPark ? '; in ' + more.nationalPark : ''}${more.nearest ? `; the nearest place is ${more.nearest.name}, ${fmtDist(more.nearest.dist_m)} away` : ''}.`; }
+    const pl = G.placesDescribe ? G.placesDescribe(ctr ? { lon: ctr.lon, lat: ctr.lat } : null) : [];   // places as 3D Tiles (globe/places.js)
+    if (pl.length) { d.places = pl; d.text += ' ' + pl.map(x => x.text).join(' '); }
     return d;
   };
   function drawGlobeIfNeeded() { if (G.mode === 'globe' && !G.lastEye) { const c = orbitCam(orbit); setCamera(c.eye, c.f, c.u); } }
@@ -536,12 +540,13 @@ export async function createGlobe(H) {
   // goTo({ lon, lat, alt_m | range_m, heading_deg, tilt_deg | pitch_deg, animate }): anywhere on earth; in the model box and
   // below the hand-over the model takes the view
   G.goTo = async function (t, opt = {}) {
-    await G.ensure();
+    await G.ensure(); await G.placesReady;
     const tilt = t.tilt_deg != null ? +t.tilt_deg * D2R : t.pitch_deg != null ? (90 - clamp(+t.pitch_deg, 1, 90)) * D2R : 0;
     const range = +(t.range_m ?? ((t.alt_m ?? t.alt ?? 1.5e6) / Math.max(0.1, Math.cos(tilt))));
     // outside the model box the globe has only coarse world data (terrain 9.8 km a pixel): an eye under 60 km sees one
     // flat colour (owner, 2026-10-13: the Sarajevo link opened on "pure beige"), so the eye goes no lower than 60 km there
-    const minR = inBox(+t.lon, +t.lat, HANDOVER.marginM) ? 0 : 60000 / Math.max(0.1, Math.cos(tilt));
+    // (over a place built as 3D Tiles, globe/places.js, a 300 m floor instead)
+    const minR = inBox(+t.lon, +t.lat, HANDOVER.marginM) ? 0 : (G.detailAt?.(+t.lon, +t.lat) ? 300 : 60000) / Math.max(0.1, Math.cos(tilt));
     const o = { lon: +t.lon, lat: +t.lat, h: 0, range: Math.max(range, minR), heading: (+t.heading_deg || 0) * D2R, tilt };
     if (!isFinite(o.lon) || !isFinite(o.lat) || Math.abs(o.lat) > 90) throw new Error('goTo needs lon and lat in WGS84 degrees');
     await new Promise(ok => flyTo(o, { ms: opt.animate ? undefined : 0, view: t.view || null, done: ok, card: opt.card || null }));
@@ -684,5 +689,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   G.modelToEcef = modelToEcef; G.ecefToModel = ecefToModel;
   G.inBox = inBox; G.modelOrbit = modelOrbit; G.orbitCam = orbitCam; G.world_ = world; G.layers = layers; G.labels = () => labels; G.sampler = () => sampler; G.frameState = F; G.pick = pick; G.project = project;
   G.lang = lang;
+  // places built as 3D Tiles (cwplans/tools/build-place-tiles.mjs; globe/places.js): loaded near the eye
+  G.U = U; G.placesReady = import('./places.js').then(m => m.attachPlaces(G, H, { scene, U })).catch(e => { console.warn('globe: places', e); return []; });
   return G;
 }

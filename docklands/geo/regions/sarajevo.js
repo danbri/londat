@@ -13,10 +13,17 @@ export default {
   locale: 'bs',
   locales: ['bs', 'hr', 'sr-Latn', 'sr-Cyrl'],
   heightDatum: 'ellipsoid',
+  // the 3D place on the globe (cwplans/tools/build-place-tiles.mjs; skill docklands-3d-page, "Three.js port: places as 3D
+  // Tiles"): names in Latin (name, name:bs) and, where OSM has them, in Cyrillic (name:sr, name:sr-Cyrl) beside them
+  place: { size_m: 2000, level: 15, dem: 'world-base', heights: [], names: ['name', 'name:bs', 'name:sr-Latn', 'name:hr'], alt_names: ['name:sr', 'name:sr-Cyrl'],
+    label: 'Vijećnica, Stari Grad, Sarajevo', search: ['Vijećnica', 'Вијећница', 'Stari Grad', 'Baščaršija', 'Sarajevo'] },
   services: { weatherPoint: { lon: 18.43335, lat: 43.85917 }, aircraft: { lon: 18.43335, lat: 43.85917, nm: 25 }, metar: 'LQSA' },
   adapters: [
     { id: 'world-base', area: 'worldwide', about: 'OSM / Overture buildings, Copernicus DEM, Natural Earth (docs/planet-architecture.md, "National open data")',
-      licence: 'per source (OSM ODbL; Overture CDLA-Permissive-2.0 / ODbL by theme; Copernicus DEM free licence; Natural Earth public domain)', licenceClass: 'open', fallback: 'none (this is the fallback)' },
+      licence: 'per source (OSM ODbL; Overture CDLA-Permissive-2.0 / ODbL by theme; Copernicus DEM free licence; Natural Earth public domain)', licenceClass: 'open', fallback: 'none (this is the fallback)',
+      // Copernicus DEM GLO-30 (a surface model: roofs and trees are in it), 1 x 1 degree COGs on the AWS open data registry
+      dem: { kind: 'copernicus-glo30', source: 'copernicus-glo30', url: 'https://copernicus-dem-30m.s3.amazonaws.com/', res_m: 30, datum: 'EGM2008 orthometric (a surface model, DSM)',
+        credit: 'Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA' } },
     { id: 'ba-fgu', status: 'unknown', area: 'Bosnia and Herzegovina',
       about: 'National LiDAR (EU IPA II 2019 project: DSM and DTM, due about the end of 2025) and the FGU / RGURS geoportals: no published open licence found on 2026-10-11',
       licence: 'unknown (a catalogue entry for the FGU geoportal says "No License Provided")', licenceClass: 'waived-prototype',
