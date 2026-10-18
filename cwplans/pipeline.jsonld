@@ -10681,6 +10681,74 @@
    "cwp:judgement": "ETOPO 2022 60\" box means (not GEBCO, Copernicus GLO-90 or the 15\" ETOPO) to keep the global texture at 3.5 MB; Natural Earth 1:50m for most layers and 1:10m for admin-1 and places (the 1:50m admin-1 covers few countries); finer terrain needs a tile pyramid (docs/planet-architecture.md step 5)."
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolplacetiles",
+   "@type": "prov:Activity",
+   "rdfs:label": "place-tiles",
+   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > default 9 m, 3 m for small kinds), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + height; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView).",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm",
+     "dcat:accessURL": "https://api.openstreetmap.org/api/0.6/map.json",
+     "dct:description": "the place area (whole level-15 cells round the region origin), one request, split in four on too many nodes"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcegm96"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/world/geoid-egm96-1deg.png"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localdatarawplaces"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcignmdt05",
+     "dcat:accessURL": "https://servicios.idee.es/wcs-inspire/mdt",
+     "dct:description": "GetCoverage Elevacion4258_5, the León area plus 0.002 degree"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu",
+     "dcat:accessURL": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/index.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/tileset.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/tiles/*.glb"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/features.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/log.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-place-tiles.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-place-tiles.mjs [fetch|build] --region <id> [--refetch] [--force]",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "Open sources only, with the licence of each in the register; OSM (ODbL) is allowed for now and credited on the page and in each glb (asset.copyright).",
+    "National data with licence class review (the Catastro) only as transformed values (heights), never the original files; raw files stay in the ignored raw folder.",
+    "No locale constant in the tool: services, CRS and names come from the region config (tools/check-locale.mjs).",
+    "Buildings with no height are counted per class (F55), not patched one by one.",
+    "Size budget: a place under 10 MB.",
+    "Bump an operation version when its body changes: the memo key does not see the code."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "buildings",
+   "cwp:fault": [
+    "F55"
+   ]
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolcwgmapspdfs",
    "@type": "prov:Activity",
    "rdfs:label": "Canary Wharf Group maps and guides (PDF) supplied by the owner",
@@ -26054,6 +26122,123 @@
    "cwp:osmUse": "none"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/index.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset and features paths, credit, building count); read by docklands/globe/places.js",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/tileset.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Casco Histórico, León (region leon): 3D Tiles 1.1 tileset, 15 tiles of the geodetic quadtree at level 15 (cells of 180/2^15 degrees), each with its ENU -> ECEF transform and region bounding volume",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcignmdt05"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/tiles/*.glb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Casco Histórico, León tiles (glTF 2.0 binary, one per level-15 cell): ground heightfield (ign-mdt05, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + height (flat roofs), vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcignmdt05"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "derived",
+   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/features.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcignmdt05"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "derived",
+   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\":105,\"osm-levels\":1452,\"national\":2454,\"default\":177,\"default-small\":25,\"levels-vs-national-2plus\":61,\"national-zero-floors\":0}",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/srcnaturalearth",
    "@type": [
     "prov:Entity",
@@ -31533,6 +31718,28 @@
    "dct:license": "OGL v3.0",
    "dcat:landingPage": "https://www.spatialdata.gov.scot/",
    "cwp:attribution": "© Scottish Government, contains Ordnance Survey data © Crown copyright and database right"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcignmdt05",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "MDT05: digital terrain model of Spain, 5 m grid (Instituto Geográfico Nacional, CNIG), read through the INSPIRE WCS 2.0 of the IDEE (coverage Elevacion4258_5, ETRS89 geographic, integer metres on REDNAP)",
+   "dct:license": "CC BY 4.0 (Orden FOM/2807/2015; IGN / CNIG licence conditions)",
+   "dcat:landingPage": "https://servicios.idee.es/wcs-inspire/mdt",
+   "cwp:attribution": "MDT05 © Instituto Geográfico Nacional"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Dirección General del Catastro, INSPIRE Buildings (BU) of the municipality of León (ATOM download A.ES.SDGC.BU.24900.zip): building parts with numberOfFloorsAboveGround",
+   "dct:license": "Catastro licence v1.0 (July 2016): reuse, also commercial, of data that the user has transformed; the original data may not be redistributed",
+   "dcat:landingPage": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip",
+   "cwp:attribution": "Dirección General del Catastro (heights computed from its data)"
   }
  ]
 }

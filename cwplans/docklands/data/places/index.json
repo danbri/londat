@@ -1,0 +1,28 @@
+{
+ "format": "places-index-1",
+ "about": "Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js",
+ "places": [
+  {
+   "id": "leon",
+   "name": "Casco Histórico, León",
+   "label": "Plaza Mayor, León",
+   "area": [
+    -5.5810546875,
+    42.5885009765625,
+    -5.5535888671875,
+    42.60498046875
+   ],
+   "centre": [
+    -5.56654,
+    42.59732
+   ],
+   "timeZone": "Europe/Madrid",
+   "locale": "es-ES",
+   "tileset": "leon/tileset.json",
+   "features": "leon/features.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published)",
+   "buildings": 4044,
+   "built": "2026-10-18T12:04:49.339Z"
+  }
+ ]
+}

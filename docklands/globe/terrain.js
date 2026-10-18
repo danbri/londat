@@ -81,6 +81,10 @@ export function terrainMaterial(tex, geoidTex, U) {
   c = mix(c, vec3(0.32, 0.52, 0.95).mul(day.mul(0.9).add(0.1)), rim.clamp(0, 0.85));
   m.colorNode = vec4(c, 1);
   m.depthNode = viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar);
+  // a hole (lon w, lat s, lon e, lat n) where a place's own tiles draw the ground (globe/places.js); empty: w > e
+  U.hole ||= uniform(new THREE.Vector4(0, 0, -1, -1));
+  const inHole = geo.x.greaterThan(U.hole.x).and(geo.x.lessThan(U.hole.z)).and(geo.y.greaterThan(U.hole.y)).and(geo.y.lessThan(U.hole.w));
+  m.opacityNode = select(inHole, float(0), float(1)); m.alphaTest = 0.5;
   return m;
 }
 

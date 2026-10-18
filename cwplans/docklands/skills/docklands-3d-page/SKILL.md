@@ -6,8 +6,8 @@ description: >-
   drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
   (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (docklands/, WebGPU/WebGL 2) and its globe (?view=globe); and the
-  headless test recipe (two sizes x two pixel ratios). Sky, clock, weather,
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG (iDraw A3); building keys; the Three.js port (docklands/, WebGPU/WebGL 2) and its globe (?view=globe) with places as 3D Tiles; and the
+  headless test recipe. Sky, clock, weather,
   tide: skill docklands-sky. Reach for it before you edit the page or scripts, add a layer or a style, change a
   shader, judge a render or a plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
 ---
@@ -2892,3 +2892,66 @@ with no frame between them, as a phone sends 2 to 4 touch moves a frame). Before
 Open: the two modes use different one-finger gestures. The model turns and tilts with one finger, and moves with a
 right or Shift drag or with two fingers. The globe moves with one finger (Google Earth) and turns with a right or Shift
 drag. The owner must choose one rule. The globe has no momentum after a fling; the model has.
+
+## Three.js port: places as 3D Tiles (2026-10-18)
+
+OKR KR1.2 (places outside the UK by the same pipeline) with KR2.3 (one tile format: 3D Tiles 1.1 + glTF). Owner's order
+(2026-10-18, through the coordinator): León first, then Sarajevo; Leiden waits. Tool
+`cwplans/tools/build-place-tiles.mjs --region <id>`; reader `docklands/globe/places.js`; data
+`cwplans/docklands/data/places/<id>/`; test `docklands/test/place-check.mjs`. Live (after the merge):
+https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (León).
+
+- **Region config, not constants.** A region config gets a `place` block (`size_m`, `level`, `dem`: the adapter whose
+  `dem` block gives terrain, `heights`: adapters with a `buildingHeights` block, `names` / `alt_names`: OSM name keys,
+  `label`, `search`). The DEM and national-height blocks hold the service URL, CRS (a proj4 string) and credit. The tool
+  has generic handlers only: OSM API 0.6 `map.json`, WCS 2.0 GetCoverage, Copernicus GLO-30 COG windows, INSPIRE BU
+  building parts. `tools/check-locale.mjs` counts nothing new.
+- **Fetch.** Overpass was down on 2026-10-18 (overpass-api.de reset the TLS connection; kumi and private.coffee
+  answered 500; maps.mail.ru 504). The OSM API `/api/0.6/map.json` answered at once; it refuses more than 50,000 nodes
+  with 400, so the tool cuts the box in four on 400 (León: 4 requests, 1 s apart, 69,869 elements). IGN MDT05 through the
+  IDEE WCS (`Elevacion4258_5`, ETRS89 degrees, so no projection) is Int16: 1 m steps. The Catastro ATOM zip of the
+  municipality (5 MB; 78 MB of building-part GML) is parsed by regex per `gml:featureMember` and reprojected by proj4;
+  zip and parts stay in `cwplans/data/raw/places/<id>/` (git-ignored: licence, transformed data only).
+- **Dataflow.** Three operations in `log.json` (activity id = sha256 of op, version, input hashes, params):
+  `place-select-osm`, `place-heights`, `place-tiles`; intermediates in the raw `work/` folder, named by hash in the log.
+  A re-run with the same inputs prints "in the log" and writes nothing. A building outline that holds parts is not drawn, so its parts take its name, address and Wikidata id and name it as `parent` (place-select-osm version 2: before, Sarajevo's Vijećnica, drawn as 16 parts, had no name in the text interface).
+- **Heights** (fault class F55, counted not patched): OSM `height` > `building:levels` x 3 m > national floors x 3 m
+  (area-weighted median of the national parts whose centroid is in the OSM outline) > 9 m (3 m for garage, shed, kiosk
+  ...). León: 105 / 1,452 / 2,454 / 177 / 25; levels and Catastro differ by 2 or more floors for 61. Outlines that hold
+  `building:part`s are not drawn (Simple 3D Buildings). Flat roofs; `roof:levels` and `roof:shape` not used yet.
+- **Tiles.** Cells of the geodetic quadtree at level 15 (180/2^15 degrees: 610 m north-south, 450 m east-west at 42.6 N)
+  whose centre is inside the square (León: 5 x 3 = 15 tiles, about 2.25 x 1.83 km). Each glb is in the ENU frame of its
+  cell centre at the DEM height + EGM96 geoid (the globe's own geoid grid, `data/world/geoid-egm96-1deg.png`), glTF y-up
+  (`[e, u, -n]`), so the tile `transform` is `enuFrame().matrix()`. Ground: 33 x 33 heightfield, normals, 300 m skirts on
+  the place's outer edges, a 512 px JPEG texture drawn with @napi-rs/canvas from OSM water, green, squares, streets
+  (cased), rail and footprints (the canvas clips each feature to the cell). Buildings: walls from the lowest DEM point of
+  the outline (minus 0.5 m) to the mean ground + height, earcut roofs, COLOR_0 (OSM `building:colour` / `roof:colour` or
+  defaults), `_FEATURE_ID_0` = row of `features.json` (EXT_mesh_features), no NORMAL (glTF clients compute flat normals;
+  saved 25 %). The official `3d-tiles-validator` (which runs the glTF validator on each tile): 0 errors, 0 warnings (15
+  infos: EXT_mesh_features not checked by it). Sizes León: tiles 5.21 MB, features.json 0.59 MB, 122,333 triangles,
+  4,044 buildings. First try with PNG textures, normals and every cell touching the square: 25 tiles, 11.3 MB.
+- **Reader (places.js), not 3d-tiles-renderer.** GLTFLoader per tile, our TSL materials (vertex colour or the texture, sun
+  `U.sun`, `normalFlat` for buildings, logarithmic `depthNode` like every globe material). Each tile's `matrixWorld` =
+  R_frame x (ENU->ECEF rotation x y-up->z-up) with translation R_frame (C - O), computed in doubles each frame
+  (`G.onFrame` in `drawGlobe`). Load within 30 km of the place centre, free (dispose) beyond 45 km. Hooks in globe.js are
+  small: `G.onFrame`, `G.detailAt` (no 60 km floor over a place: 300 m), `G.placesReady` awaited by `G.goTo`,
+  `G.placesDescribe` in `describe`, `G.placeTap` in `tap`, `G.U`.
+- **Meeting the coarse world.** The world terrain is ETOPO box means at 9.8 km, drawn with vertices 2.4 km apart, so it
+  is metres to hundreds of metres off a city's real ground (León centre: see place-check's "ground at the centre" line).
+  Three fixes: (1) `terrain.js` takes `U.hole` (lon w, s, e, n): fragments of the world terrain inside it are discarded
+  (opacity 0 + alphaTest); (2) the globe's ground sampler (`G.sampler().h`) answers from the place's 33 x 33 DEM grid inside
+  a loaded place (the eye guard, picks, orbit target and readout sit on the real ground; the original is kept as `h0`);
+  (3) a curtain: a wall round the area from the lower to the higher of the two grounds (+4 m), so no sky shows through the
+  gap. Without (3) a blue line (the scene background seen under the higher world terrain) ran along the far edge.
+- **Text and machine interface.** Search provider: the place's own words (`place.search`, kind place), named buildings and
+  addresses, named points, streets, squares, water. "Plaza Mayor" -> the place; `goTo("Plaza Mayor")` from orbit ends 1.2 km
+  above it. Where provider (featuresAt, readout): the place label, the building at the point (OSM id, name, height and its
+  source), the nearest named building, local time in the place's zone (`Intl` with the region `timeZone` and `locale`).
+  `describeView` adds `places: [{ buildings_in_view, nearest_named, tallest_named, local_time }]` and one sentence.
+  `getView` on the globe adds `place_time`. A tap on a building opens its card (OSM link, height and source, credit).
+- **Measured** (headless, SwiftShader, WebGL 2): León deep link at 390 x 844 @2: tiles loaded 21 s after page load,
+  177,652 triangles in the frame (122,333 of the place), 187 draw calls; 1280 x 800 @1: 238,302 triangles, 211 calls.
+- **Open.** Flat roofs; one ground texture resolution (1.2 m a pixel); the world outside the area is still the coarse
+  beige terrain (a ring of medium detail, e.g. GLO-90 tiles, would soften the edge); no implicit tiling or LOD levels yet
+  (one level: fine for 2 km); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
+  text only); 3d-tiles-renderer can read these sets but is not used.

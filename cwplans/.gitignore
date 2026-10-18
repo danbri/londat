@@ -70,3 +70,6 @@ data/raw/sky/
 
 # UK skeleton downloads (tools/build-uk-skeleton.mjs; OS OpenData, NaPTAN, ONS, Wikidata answers)
 data/raw/uk-skeleton/
+
+# places on the globe (tools/build-place-tiles.mjs): OSM, DEM and national building data (Catastro: never committed)
+data/raw/places/
