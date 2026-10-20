@@ -1805,7 +1805,8 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
   Authority Maintained Trees" is the same kind of data, older): 54,836 of 55,060 GLA trees have a taxon. Drawing: one
   InstancedMesh per shape class (broad 36 triangles, conical 21, columnar 48, weeping 70, small 20, birch 40), one for
   trunks (5-sided, 10), one for twigs (3 crossed quads, 6, alpha-tested branch pattern; deciduous only), one for the far
-  form (10 triangles): 9 draw calls. **Level of detail** (coordinator, 2026-10-09: the first version cost about 5.4 M
+  form (10 triangles): 9 draw calls (10 with the specks since 2026-10-20). **Level of detail** (replaced on 2026-10-20 by
+  cells of 500 m and the screen-size rule: section "Three.js port: trees by cell, JS heap"; the first rule was this) (coordinator, 2026-10-09: the first version cost about 5.4 M
   triangles a frame; budget 1.5 M for phones and the Quest 3): full trees within 380 m (3D) of the camera, at most the
   9,000 nearest; beyond, the far form to 6.5 km, no trunk, no shadow; re-selected when the camera has moved 25 m. The
   near meshes get the near trees copied into preallocated buffers (mesh.count, update ranges); the far mesh holds every
@@ -3030,5 +3031,85 @@ in then said it was starting 3D mode ... almost like the rendering crashed and r
   162 draw calls both; `?view=area` aircraft 56,586 triangles in 156 objects -> 4,516 in 103, frame 6.17 M -> 6.12 M, draw
   calls 257 -> 212 (1280 x 800: 340 -> 295). The frame is mostly the merged buildings, terrain and trees: steps 3 and 4.
 - **Not done**: pixel ratio during flights (a change of pixel ratio reallocates the canvas and every screen-size target,
-  itself a peak); the JS heap (480 to 960 MB in Chromium at cw and area) is the larger memory and is not reduced here;
-  trees and the merged buildings (LOD steps 3 and 4).
+  itself a peak); the merged buildings (LOD step 4). The trees (step 3) and the JS heap: next section.
+
+## Three.js port: trees by cell, JS heap (2026-10-20)
+
+Owner, 2026-10-14: "make sure we make appropriate use of threejs lod support for everything"; "we need attention on perf"
+(OKR O3: the iPhone; a tab restart after Home was probably memory). LOD step 3 (trees) and the JS heap.
+
+- **Trees by cell** (`layers/trees.js`): the 81,852 trees are kept in cells of 500 m (192 cells), each cell a contiguous
+  block of the store (trees within 900 m of the estate first, for `?trees=near`). Each frame every cell gets a level from
+  the distance of the camera to its box (nearest point, 3D) and the frustum, by the `ctx.lod` rule (size on screen):
+  hidden (out of the view, or its 90th-percentile tree under `PX_HIDE` 2 px), specks (under `PX_FAR` 8 px: a 2-triangle
+  disc turned to the camera, coloured by the crown's season and lit as a sphere), far forms (the 10-triangle antiprism) or
+  near (its tallest tree covers `LOD.px` 32 px). In a near cell each tree is full (crown with crownAO, round crown normals
+  and holes in the rim; trunk; twigs; shadow) while its height covers 32 px (a 10 m tree: 312 m on a 390 x 844 phone,
+  296 m at 1280 x 800; the old fixed radius was 380 m), at most the 9,000 nearest; the others are far forms.
+  A near cell keeps a margin of 80 m (its shadows), stays near to 1.15 x its distance and while in the widened frustum
+  (hysteresis: no copy at each small move or turn on its edge). `?lod=0`: no culling, every cell near (the old behaviour).
+- **Not one InstancedMesh per cell.** 192 cells x 9 meshes (6 crown shapes, trunks, twigs, far) would be up to 1,700 draw
+  calls plus shadow passes. The cells are the unit of choice; the drawing stays in shared instanced meshes: 10 draw calls
+  (the old 9 and the specks). Far forms of whole cells and specks are copied cell by cell into their buffers only when a
+  cell needs a better form than it has (into near, out of near, specks to far, hidden to shown) or when more than half of
+  what is copied is no longer wanted; the copy takes the cells of a frustum widened 1.5 x (projection elements 0 and 5
+  divided), so a turn rarely copies. The near cells' trees are re-selected after 25 m of movement (2 to 14 ms in
+  headless Chromium); a full copy is 6 to 14 ms (92 ms the first time at `?view=area`, cold code). STATS.trees: `cells`
+  (near, far, specks, hidden), `near`, `far`, `specks`, `refills`, `refillMs`, `reselectMs`, `drawn`.
+- **Far forms and specks are Meshes over an InstancedBufferGeometry**, their per-instance data geometry attributes read
+  by name (`attribute('fmid')` ...), and the vertex stage places the instance itself (no instance matrix: fmid = crown
+  centre and height, fc = crown spread; 21 floats an instance, 8 vertex buffers with position and normal, the WebGPU
+  limit). A buffer grows (x 1.25) by a new geometry with the same material: an `instancedBufferAttribute(attr)` node
+  binds one attribute object, so an InstancedMesh's buffers cannot be replaced without new nodes. The near meshes keep
+  fixed capacities (InstancedMesh, as before).
+- **The store** is one compact record a tree (x, z, ground, height, spread, seed, tones, day offset, bark seed: 10
+  Float32 + 6 bytes = 46 bytes); the matrices and attributes of each form are written from it on a copy, and the parsed
+  trees.json is dropped after the build. The old store (4 matrices and 7 vec4 a tree, 30 MB), the far mesh's own copy
+  (11.8 MB) and the row objects (3.2 MB) are gone: the trees' module context held 44.9 MB, now 5 MB. The leaf and bark
+  tones use linear(c) x f^2.2 for sRGB-to-linear of (c x f) (f 0.9 to 1.1; under 1 % from THREE.Color's curve).
+- **Measured** (`lod-memory.mjs`, 390 x 844 @2, software WebGL 2, old code against new at the same commit, one frame):
+
+  | view | trees triangles | frame triangles | JS heap after GC | GPU total |
+  |---|---|---|---|---|
+  | `?view=cw` | 818,520 -> 56,372 | 5.14 M -> 3.64 M | 483 -> 277 MB | 230 -> 186 MB |
+  | `?view=area` | 818,520 -> 51,014 | 6.12 M -> 4.58 M | 649 -> 280 MB | 254 -> 210 MB |
+  | `?view=greenlanddock` | 880,499 -> 82,744 | 5.38 M -> 3.79 M | 490 -> 266 MB | 234 -> 190 MB |
+
+  The trees' own draw calls go 9 -> 10; the frame's draw calls vary with the aircraft the page has loaded (planes:
+  1 to 172 objects between runs), not with the trees. Owner's case (cw, out to the world, 4.5 s on the globe, Home):
+  GPU peak 230 -> 181 MB, JS heap peak 565 -> 357 MB; settled after the globe rested 245 -> 199 MB GPU, 548 -> 341 MB heap.
+- **What holds the JS heap** (`docklands/test/heap-holders.mjs --snapshot [--chains]`: CDP HeapProfiler, a heap
+  snapshot summed by constructor, the closure contexts by variable, the typed-array backing stores by the name that
+  holds them, the retainer chains of the largest). In Chromium `performance.memory.usedJSHeapSize` counts ArrayBuffer
+  backing stores: at cw 384 of 488 MB were typed arrays, 232 MB of them the scene's CPU copies of geometry (buildings 114,
+  roads 32, greens 13, rail 12, under 11, tide 10, terrain 9, trees 8, windfield 8). Measure after a full collection
+  (`HeapProfiler.collectGarbage`): before it the same page read 481 to 946 MB (garbage of the builds).
+- **CPU copies given up** (`docklands/cpu-copies.js`, `?cpufree=0` keeps them): three.js keeps every attribute's array
+  to upload it again after a dispose. Arrays that no code reads on the CPU are given up at once and kept in a form they
+  are made again from exactly: building `normal` (computeVertexNormals from position and index, as toGeometry did) and
+  `gk` (runs: constant per building); greens, rail and roads `normal` and `color` (runs). An attribute keeps its object
+  and its count (pipelines and draws read those); only `.array` becomes an empty array of the same type. The arrays come
+  back when three.js makes their GPU buffer: `renderer.backend.createAttribute` and `updateAttribute` are wrapped (after
+  globe.js `freeModel` the re-upload in `stepReup` needs nothing else; a new material that reads an attribute the first
+  did not gets it too: the building normals are read only by the shadow pass's normal bias, so WebGPU with shadows
+  uploads them, WebGL 2 without shadows never does). After each drawn frame `CPU.tick()` gives up again what came back.
+  "Uploaded" is `renderer._attributes.get(attr).version !== undefined`. Both are three.js r186 internals: check them after
+  an upgrade (`node docklands/test/cpu-copies-check.mjs`). Kept: position, index (picking, the occluder, the zoom stop),
+  `userData.bi`, `uw`, `col` (they vary per vertex) and every layer's own geometry. STATS.cpu: geometries, released,
+  restored, freedMB (given up now). At cw (390 x 844 @2) the scene's CPU copies went 232 -> 138 MB: buildings 114 -> 56,
+  roads 32 -> 14, greens 13 -> 6, rail 12 -> 5, trees 8 -> 4 (plus the trees' store, 45 -> 5 MB).
+- **One building build at boot, not six**: layers (registry, piers, river, model, overlays) and loadOptional / loadModels
+  each asked for `rebuildBuildings()` while the page booted: 6 builds of about 2 s (headless) at cw, each leaving its
+  JS arrays as garbage. `requestRebuild()` (also `ctx.rebuildBuildings`) now only marks the wish until `loadLayers()` is
+  done, then builds once: 2 builds (the first plain one, then the full one). After the boot a rebuild is immediate again.
+- **Checks**: `node docklands/test/cpu-copies-check.mjs` (copies given up, the same picture and the same tapped building
+  with and without, after the globe the arrays made again and given up again, the same picture after the return; trees:
+  near cells, full trees in a turn round, none from high up). Lessons: an empty geometry upload throws in the trees'
+  upload before the first grow (a view with no near and no far cells: `?view=area`); per-attribute release, not "all
+  uploaded" (the building normals are never uploaded in WebGL 2). globe-controls' fling check (time-based: 4 s of
+  frames) failed once on a machine at load 12 and passed on the rerun: rerun before blaming a change.
+- **Not done**: the positions and indexes of roads, rail and greens (no CPU reader, but no source to make them again
+  without a rebuild); `userData.bi` (runs would do, but picking and styles.js index it per vertex); building `uw` and `col`;
+  the layers' own copies (under 11 MB, tide 10, windfield 8); the occluder's two Int16 grids (10 MB); area.js kept twice
+  (the parsed object, 7 MB, and the script source V8 keeps, 10.6 MB); LOD step 4; a measurement on the iPhone (Safari Web
+  Inspector, Timelines > Memory) and the WebGPU path with shadows (normals restored, then given up) on a real GPU.
