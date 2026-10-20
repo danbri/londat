@@ -50,24 +50,24 @@
       "fetched_by": "tools/fetch-raw.mjs osm"
     },
     "osm-api-place-leon": {
-      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.583008,-5.567322,42.596741 ; https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.567322,42.583008,-5.553589,42.596741 ; https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.596741,-5.567322,42.610474 ; https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.567322,42.596741,-5.553589,42.610474",
-      "osm_data_as_of": "2026-10-18T11:40:03.016Z (time of the API call; newest element 2026-10-17T06:56:39Z)",
-      "fetched": "2026-10-18",
-      "sha256_prefix": "51df2c3470679d6b",
-      "size_bytes": 1551644,
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.588501,-5.553589,42.604980",
+      "osm_data_as_of": "2026-10-20T19:45:56.378Z (time of the API call; newest element 2026-10-19T16:28:48Z)",
+      "fetched": "2026-10-20",
+      "sha256_prefix": "4d39aa32bef896a6",
+      "size_bytes": 1180095,
       "committed": false,
       "local_path": "data/raw/places/leon/osm.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
-      "fetched_by": "tools/build-place-tiles.mjs fetch --region leon (OSM API 0.6 map.json, split in four on too many nodes: 4 requests, 1 s apart)"
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region leon --refetch (OSM API 0.6 map.json; split in four only on 400 too many nodes: 1 request(s)); the SHA-256 of each answer as fetched is in places/leon/provenance/log.json"
     },
     "osm-api-place-sarajevo": {
       "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.418579,43.851929,18.446045,43.868408",
-      "osm_data_as_of": "2026-10-18T11:53:49.169Z (time of the API call; newest element 2026-10-17T21:06:13Z)",
-      "fetched": "2026-10-18",
+      "osm_data_as_of": "2026-10-20T19:46:17.154Z (time of the API call; newest element 2026-10-17T21:06:13Z)",
+      "fetched": "2026-10-20",
       "sha256_prefix": "1d096b36b00dfec8",
       "size_bytes": 1180109,
       "committed": false,
       "local_path": "data/raw/places/sarajevo/osm.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
-      "fetched_by": "tools/build-place-tiles.mjs fetch --region sarajevo (OSM API 0.6 map.json, split in four on too many nodes: 1 requests, 1 s apart)"
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region sarajevo --refetch (OSM API 0.6 map.json; split in four only on 400 too many nodes: 1 request(s)); the SHA-256 of each answer as fetched is in places/sarajevo/provenance/log.json"
     }
   },
   "sources": {
@@ -92,7 +92,9 @@
       "name": "OpenStreetMap",
       "licence": "ODbL 1.0",
       "attribution": "© OpenStreetMap contributors",
-      "url": "https://www.openstreetmap.org/copyright"
+      "url": "https://www.openstreetmap.org/copyright",
+      "publisher": "OpenStreetMap Foundation and contributors",
+      "licence_url": "https://opendatacommons.org/licenses/odbl/1-0/"
     },
     "nsi": {
       "name": "OSM name-suggestion-index 8.0.20260918",
@@ -3249,21 +3251,36 @@
       "licence": "CC BY 4.0 (Orden FOM/2807/2015; IGN / CNIG licence conditions)",
       "attribution": "MDT05 © Instituto Geográfico Nacional",
       "url": "https://servicios.idee.es/wcs-inspire/mdt",
-      "note": "Used for the place León (region config leon, adapter es-ign): the terrain of the tiles and the ground under each building. The GeoTIFF stays in cwplans/data/raw/places/leon/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km ring (from MDT25), resampled from it."
+      "note": "Used for the place León (region config leon, adapter es-ign): the terrain of the tiles and the ground under each building. The GeoTIFF stays in cwplans/data/raw/places/leon/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km ring (from MDT25), resampled from it.",
+      "publisher": "Instituto Geográfico Nacional (IGN) / Centro Nacional de Información Geográfica (CNIG), Spain",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/"
     },
     "es-catastro-inspire-bu": {
       "name": "Dirección General del Catastro, INSPIRE Buildings (BU) of the municipality of León (ATOM download A.ES.SDGC.BU.24900.zip): building parts with numberOfFloorsAboveGround",
       "licence": "Catastro licence v1.0 (July 2016): reuse, also commercial, of data that the user has transformed; the original data may not be redistributed",
       "attribution": "Dirección General del Catastro (heights computed from its data)",
       "url": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip",
-      "review": "Owner, 2026-10-11: \"Catastro - yes\", for the León region only as transformed data (CLAUDE.md, data policy). Used only to compute heights: an OSM building with no height or building:levels takes the area-weighted median floors of the Catastro building parts whose centroid lies inside it, times 3 m. No Catastro geometry, id or attribute is committed or published; the zip and the parsed parts stay in cwplans/data/raw/places/leon/ (git-ignored). Re-check before the project leaves the prototyping phase."
+      "review": "Owner, 2026-10-11: \"Catastro - yes\", for the León region only as transformed data (CLAUDE.md, data policy). Used only to compute heights: an OSM building with no height or building:levels takes the area-weighted median floors of the Catastro building parts whose centroid lies inside it, times 3 m. No Catastro geometry, id or attribute is committed or published; the zip and the parsed parts stay in cwplans/data/raw/places/leon/ (git-ignored). Re-check before the project leaves the prototyping phase.",
+      "publisher": "Dirección General del Catastro (Ministerio de Hacienda), Spain",
+      "licence_url": "https://www.catastro.hacienda.gob.es/webinspire/documentos/Licencia.pdf"
     },
     "copernicus-glo30": {
       "name": "Copernicus DEM GLO-30 (a 30 m digital surface model, EGM2008 heights), 1 x 1 degree Cloud Optimized GeoTIFFs on the AWS Registry of Open Data (bucket copernicus-dem-30m), read by HTTP range requests (a window round the place)",
       "licence": "Copernicus DEM licence (ESA / European Union, GLO-30 public instance): free of charge, worldwide, for any purpose, including redistribution of derived products, with the attribution",
       "attribution": "Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
       "url": "https://registry.opendata.aws/copernicus-dem/",
-      "note": "Used for the place Sarajevo (region config sarajevo, adapter world-base): the terrain of the tiles and the ground under each building. A surface model: in built-up cells the roofs and trees raise it a few metres. The raw window stays in cwplans/data/raw/places/sarajevo/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km terrain ring, resampled from it. The full licence text names an 'all rights reserved' notice in the credit line; re-check before the prototyping phase ends."
+      "note": "Used for the place Sarajevo (region config sarajevo, adapter world-base): the terrain of the tiles and the ground under each building. A surface model: in built-up cells the roofs and trees raise it a few metres. The raw window stays in cwplans/data/raw/places/sarajevo/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km terrain ring, resampled from it. The full licence text names an 'all rights reserved' notice in the credit line; re-check before the prototyping phase ends.",
+      "publisher": "European Space Agency (ESA) and the European Union (Copernicus); DLR e.V. and Airbus Defence and Space GmbH (TanDEM-X)",
+      "licence_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM"
+    },
+    "ghsl-built-h": {
+      "name": "GHS-BUILT-H R2023A: average net building height (ANBH), epoch 2018, 3 arc-second grid (EPSG:4326), 10 x 10 degree tiles (Global Human Settlement Layer)",
+      "publisher": "European Commission, Joint Research Centre (JRC)",
+      "licence": "CC BY 4.0 (Commission reuse policy, Decision 2011/833/EU; copyright.txt in the GHS_BUILT_H_GLOBE_R2023A folder: \"(c) European Union, 1995-2026\")",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (Pesaresi M., Politis P. (2023): GHS-BUILT-H R2023A - GHS building height, derived from AW3D30, SRTM30, and Sentinel2 composite (2018). European Commission, Joint Research Centre, doi:10.2905/85005901-3A49-48DD-9D19-6261354F56FE)",
+      "url": "https://human-settlement.emergency.copernicus.eu/download.php?ds=builtH",
+      "note": "Used for the places on the globe (adapter docklands/geo/adapters/world-ghsl.js, kind ghsl-raster): an OSM building with no height, no building:levels and no national floors takes the ANBH of the 3 arc-second cell under its centroid (a cell average, not a measure of the building). The 72 MB tile zip stays in cwplans/data/raw/places/<id>/ (git-ignored); the crop over each place is committed in cwplans/docklands/data/places/<id>/sources/ghsl-built-h.json (cropped and rounded to 0.1 m: a change, stated). Checked 2026-10-20: open download, no log-in."
     }
   },
   "files": [
@@ -13546,6 +13563,7 @@
       "sources": [
         "osm",
         "ign-mdt05",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13554,18 +13572,19 @@
         "what": "bounding volumes only (heights of OSM buildings)"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/leon/tiles/*.glb",
-      "what": "Casco Histórico, León tiles (glTF 2.0 binary, one per level-15 cell): ground heightfield (ign-mdt05, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + height (flat roofs), vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features)",
+      "what": "Casco Histórico, León tiles (glTF 2.0 binary, one per level-15 cell): ground heightfield (ign-mdt05, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + eaves height, with sloped roofs (gabled, hipped, pyramidal, skillion, dome) from OSM roof:shape or the region roof rule, else flat, vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features); roofs: OSM roof:shape {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, region roof rule {\"hipped\": 2635}, flat 1538",
       "sources": [
         "osm",
         "ign-mdt05",
         "es-catastro-inspire-bu",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13573,20 +13592,21 @@
         "extract": "osm-api-place-leon",
         "what": "building and building:part outlines, water, green and paved areas, streets and rail as drawn geometry"
       },
-      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published",
+      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0)",
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/leon/features.json",
-      "what": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+      "what": "Casco Histórico, León place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, roof shape and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
       "sources": [
         "osm",
         "ign-mdt05",
         "es-catastro-inspire-bu",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13594,18 +13614,21 @@
         "extract": "osm-api-place-leon",
         "what": "OSM ids, names, addresses, kinds, centroids and height tags of buildings; names and positions of streets, areas and points"
       },
-      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published",
+      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0)",
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
-      "path": "docklands/data/places/leon/log.json",
-      "what": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\":105,\"osm-levels\":1452,\"national\":2454,\"default\":177,\"default-small\":25,\"levels-vs-national-2plus\":61,\"national-zero-floors\":0}",
+      "path": "docklands/data/places/leon/provenance/log.json",
+      "what": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 105, \"osm-levels\": 1452, \"national\": 2454, \"default-small\": 25, \"ghsl\": 177, \"default\": 0, \"levels-vs-national-2plus\": 61, \"national-zero-floors\": 0}; roofs: OSM roof:shape {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, region roof rule {\"hipped\": 2635}, flat 1538",
       "sources": [
         "osm",
+        "ign-mdt05",
+        "ghsl-built-h",
+        "es-catastro-inspire-bu",
         "own"
       ],
       "osm": {
@@ -13613,14 +13636,29 @@
         "what": "counts of OSM buildings by height source; element counts"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/leon/sources/ghsl-built-h.json",
+      "what": "GHS-BUILT-H R2023A average net building height over Casco Histórico, León (a crop of one 10 x 10 degree tile, 41 x 28 cells of 3 arc-seconds, values rounded to 0.1 m; format place-raster-1): the committed input of the operation place-heights",
+      "sources": [
+        "ghsl-built-h"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/index.json",
-      "what": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset and features paths, credit, building count); read by docklands/globe/places.js",
+      "what": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, README and provenance paths, credit, building count); read by docklands/globe/places.js",
       "sources": [
         "osm",
         "own"
@@ -13630,9 +13668,47 @@
         "what": "the number of OSM buildings of each place"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/README.md",
+      "what": "Generated README of the places folder: the layout (tileset, tiles, features, sources, provenance), the places with live links, sizes and their READMEs (tools/build-place-tiles.mjs readme)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "the number of OSM buildings of each place"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places"
+      ]
+    },
+    {
+      "path": "docklands/data/places/*/README.md",
+      "what": "Generated README of each place (from provenance/log.json and this register): each source (name, publisher, URL, licence with link, exact credit, fetch date, request, SHA-256 as fetched and as stored, committed or not), each dataflow operation (version, inputs and outputs by SHA-256), what is derived from what, height-source and roof counts (F55), what is not committed and why, review status (Catastro, FGU waiver issue #9)",
+      "sources": [
+        "osm",
+        "ign-mdt05",
+        "copernicus-glo30",
+        "es-catastro-inspire-bu",
+        "ghsl-built-h",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of OSM buildings by height source and roof"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places"
       ]
     },
     {
@@ -13641,6 +13717,7 @@
       "sources": [
         "osm",
         "copernicus-glo30",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13649,17 +13726,18 @@
         "what": "bounding volumes only (heights of OSM buildings)"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/sarajevo/tiles/*.glb",
-      "what": "Stari Grad, Sarajevo tiles (glTF 2.0 binary, one per level-15 cell): ground heightfield (copernicus-glo30, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + height (flat roofs), vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features)",
+      "what": "Stari Grad, Sarajevo tiles (glTF 2.0 binary, one per level-15 cell): ground heightfield (copernicus-glo30, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + eaves height, with sloped roofs (gabled, hipped, pyramidal, skillion, dome) from OSM roof:shape or the region roof rule, else flat, vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features); roofs: OSM roof:shape {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, region roof rule {\"hipped\": 6817}, flat 478",
       "sources": [
         "osm",
         "copernicus-glo30",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13668,17 +13746,19 @@
         "what": "building and building:part outlines, water, green and paved areas, streets and rail as drawn geometry"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
-      ]
+      ],
+      "note": "height_source \"ghsl\" (7,096 of 7,432 buildings and parts) = the GHS-BUILT-H R2023A average net building height of the 3 arc-second cell under the centroid (a cell average, CC BY 4.0); no Bosnia and Herzegovina national data used (FGU services need a log-in, a written request and a fee; owner waiver, issue https://github.com/danbri/londat/issues/9)"
     },
     {
       "path": "docklands/data/places/sarajevo/features.json",
-      "what": "Stari Grad, Sarajevo place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
+      "what": "Stari Grad, Sarajevo place index (format place-features-1): every building drawn (OSM id, name, other-script name, address, kind, centroid, height and its source, roof shape and its source, levels, tile, ground height), named streets, areas and points, a 33 x 33 ground grid, a 97 x 97 terrain grid of an 8 km ring round the place (the globe joins it to the world terrain), per-tile counts; the text and machine interface of the place (search, featuresAt, describeView)",
       "sources": [
         "osm",
         "copernicus-glo30",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13687,16 +13767,19 @@
         "what": "OSM ids, names, addresses, kinds, centroids and height tags of buildings; names and positions of streets, areas and points"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
-      ]
+      ],
+      "note": "height_source \"ghsl\" (7,096 of 7,432 buildings and parts) = the GHS-BUILT-H R2023A average net building height of the 3 arc-second cell under the centroid (a cell average, CC BY 4.0); no Bosnia and Herzegovina national data used (FGU services need a log-in, a written request and a fee; owner waiver, issue https://github.com/danbri/londat/issues/9)"
     },
     {
-      "path": "docklands/data/places/sarajevo/log.json",
-      "what": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\":141,\"osm-levels\":176,\"national\":0,\"default\":7096,\"default-small\":19,\"levels-vs-national-2plus\":0,\"national-zero-floors\":0}",
+      "path": "docklands/data/places/sarajevo/provenance/log.json",
+      "what": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 141, \"osm-levels\": 176, \"national\": 0, \"default-small\": 19, \"ghsl\": 7096, \"default\": 0, \"levels-vs-national-2plus\": 0, \"national-zero-floors\": 0}; roofs: OSM roof:shape {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, region roof rule {\"hipped\": 6817}, flat 478",
       "sources": [
         "osm",
+        "copernicus-glo30",
+        "ghsl-built-h",
         "own"
       ],
       "osm": {
@@ -13704,7 +13787,22 @@
         "what": "counts of OSM buildings by height source; element counts"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-18",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
+      "what": "GHS-BUILT-H R2023A average net building height over Stari Grad, Sarajevo (a crop of one 10 x 10 degree tile, 41 x 28 cells of 3 arc-seconds, values rounded to 0.1 m; format place-raster-1): the committed input of the operation place-heights",
+      "sources": [
+        "ghsl-built-h"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]

@@ -2919,7 +2919,8 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
 - **Heights** (fault class F55, counted not patched): OSM `height` > `building:levels` x 3 m > national floors x 3 m
   (area-weighted median of the national parts whose centroid is in the OSM outline) > 9 m (3 m for garage, shed, kiosk
   ...). León: 105 / 1,452 / 2,454 / 177 / 25; levels and Catastro differ by 2 or more floors for 61. Outlines that hold
-  `building:part`s are not drawn (Simple 3D Buildings). Flat roofs; `roof:levels` and `roof:shape` not used yet.
+  `building:part`s are not drawn (Simple 3D Buildings). Since 2026-10-20 (place-heights v2): a raster step before the
+  default (GHSL, below) and sloped roofs.
 - **Tiles.** Cells of the geodetic quadtree at level 15 (180/2^15 degrees: 610 m north-south, 450 m east-west at 42.6 N)
   whose centre is inside the square (León: 5 x 3 = 15 tiles, about 2.25 x 1.83 km). Each glb is in the ENU frame of its
   cell centre at the DEM height + EGM96 geoid (the globe's own geoid grid, `data/world/geoid-egm96-1deg.png`), glTF y-up
@@ -2963,13 +2964,48 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
   when it differs (12 buildings, 296 of 333 streets, 31 points), shown as "Bijela tabija (Бијела табија)" in search, cards
   and descriptions; the place's own words include "Вијећница". Vijećnica is an outline with 16 parts (20 to 29 m from OSM
   `height`); before place-select-osm version 2 the parts had no name. 15 tiles, 7,424 buildings, 5.50 MB + 0.93 MB.
-  Heights: 95 % at the 9 m default (no national source yet; the owner's waiver, issue #9, allows FGU / RGURS data).
+  Heights: 95 % at the 9 m default (no national source yet; the owner's waiver, issue #9, allows FGU / RGURS data);
+  since 2026-10-20 the GHSL cell estimate instead (below).
   The world terrain (ETOPO box mean) is 805 m at Vijećnica, the real ground 558 m: the place sat in a 247 m pit walled by
   the curtain; the fix is the terrain ring ("Meeting the coarse world", item 4).
 - **Measured** (headless, SwiftShader, WebGL 2): León deep link at 390 x 844 @2: tiles loaded 21 s after page load,
   177,652 triangles in the frame (122,333 of the place), 187 draw calls; 1280 x 800 @1: 238,302 triangles, 211 calls.
-- **Open.** Flat roofs; one ground texture resolution (1.2 m a pixel); beyond the 8 km ring the world is the coarse
-  terrain; no national building heights for Sarajevo yet (owner's waiver allows FGU / RGURS); no implicit tiling or LOD levels yet
+- **Provenance layout, GHSL heights and roofs (2026-10-20).** Owner: "Data - is fine for now, bring it in with subdirs
+  and readmes and provenance clear." Each place folder: `tileset.json`, `tiles/`, `features.json`, `sources/` (small
+  committed extracts that are operation inputs, open licence only: the GHSL crop), `provenance/log.json` (moved from the
+  place root; the tool moves an old one on its first run) and a generated `README.md`; `places/README.md` lists them.
+  `build-place-tiles.mjs readme --region <id>` (also at the end of each build) writes every README from log.json and the
+  data register (sources need `publisher` and `licence_url` there): files with SHA-256, each source (licence, exact
+  credit, request, SHA-256 as fetched and as stored, committed or not), each operation, derivation, height and roof
+  counts, review status. Never edit a README by hand. Fetch records now hold `as_fetched` (the SHA-256 of each answer:
+  OSM map.json, the WCS GeoTIFF, the zips); a COG read by range requests has no single file, so its window is recorded.
+  - **Sarajevo heights, national data not reached.** katastar.ba (FGU) lists WMS / WFS / WCS (5 m DEM, cadastral
+    buildings "Zgrada" for Stari Grad and Centar) behind a log-in, and its terms ask for a written request and a fee;
+    geoportal.fgu.com.ba and gispp.zavodzpr-sa.ba refused the connection through the proxy. GlobalBuildingAtlas (per
+    building heights, Europe too) is CC BY-NC 4.0 and its mediaTUM page is behind a bot wall: not used. Google Open
+    Buildings 2.5D does not cover Europe; Microsoft and Overture buildings are ODbL: ask first. Used: GHSL
+    GHS-BUILT-H R2023A ANBH (CC BY 4.0, JRC; adapter `docklands/geo/adapters/world-ghsl.js`, kind `ghsl-raster`): an OSM
+    building with no height, levels or national floors takes the 3 arc-second cell value under its centroid (min 3 m).
+    The 4326 tiles are 10 x 10 degrees on a grid offset by 9.5 pixels (west -180.0079167, north 89.0995833), R and C from
+    1; the tile zip (43 to 72 MB) stays raw, the 41 x 28 crop (6 kB) is committed. Sarajevo: default 9 m 7,096 -> 0;
+    GHSL 7,096 (3 to 18.2 m, median 10.4, 102 values). It is a cell AVERAGE (towers too low, sheds too high): F55 stays
+    open; national LiDAR or cadastre floors would replace it in the adapter list. León: the last 177 defaults take GHSL.
+  - **Roofs.** OSM `roof:shape` is rare (Sarajevo 141 of 7,500 outlines, León 59 of 4,211), so a region `roof_rule`
+    (shape, pitch, kinds, `min_rect` = area / oriented-box area, `max_area_m2`, `max_wall_m`) gives the old towns pitched
+    roofs, counted apart as "rule" (features.json `roof`: "hipped (rule)"). Geometry: the minimum-area oriented box (hull
+    edges), the roof as the minimum of planes in its frame (gabled 2, hipped 4 with equal pitch, pyramidal 4, skillion 1),
+    the outline refined where the LOWEST plane changes (only there: refining at every plane crossing doubled the tiles),
+    walls up to the roof surface (so gable ends close), each plane clipped to where it is lowest (Sutherland-Hodgman with
+    half-planes, then earcut), domes as six rings scaled to the box centre. Sources whose height is the top (OSM
+    `height`, GHSL) keep it and lose the roof from the walls; levels, national floors and defaults get the roof on top.
+    Outlines with holes stay flat. Sizes: walls share one bottom and one top vertex per outline point (no normals are
+    stored, flat normals in the reader): 9.3 -> 6.25 MB for León before the refinement fix, 4.62 MB after; drop degenerate
+    triangles (the validator lists them as infos). Counts: Sarajevo OSM gabled 38, hipped 4, pyramidal 24, skillion 44,
+    dome 27, rule hipped 6,817, flat 478; León OSM gabled 19, hipped 2, pyramidal 5, skillion 14, rule hipped 2,635, flat
+    1,538 (irregular 1,234: the perimeter blocks). Validator 0 errors, 0 warnings, 45 infos (EXT_mesh_features only).
+    Sizes: León 4.62 + 0.69 MB, Sarajevo 5.79 + 1.09 MB.
+- **Open.** Roofs of L-shaped and irregular outlines (a straight skeleton); roof:direction for skillions; one ground texture resolution (1.2 m a pixel); beyond the 8 km ring the world is the coarse
+  terrain; no national building heights for Sarajevo yet (FGU needs a log-in and a request; owner's waiver, issue #9); no implicit tiling or LOD levels yet
   (one level: fine for 2 km); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
   text only); 3d-tiles-renderer can read these sets but is not used.
 

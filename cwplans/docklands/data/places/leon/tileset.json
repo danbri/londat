@@ -6,7 +6,7 @@
   "extras": {
    "place": "leon",
    "name": "Casco Histórico, León",
-   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published)"
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)"
   }
  },
  "geometricError": 2000,
@@ -155,9 +155,9 @@
      -0.071492932,
      0.676763516,
      0,
-     4681220.670397854,
-     -456755.357427831,
-     4294778.542892134,
+     4681220.523853676,
+     -456755.343129244,
+     4294778.407539431,
      1
     ],
     "content": {
@@ -207,7 +207,7 @@
       -0.0972160324322525,
       0.7435971869275646,
       583,
-      948
+      947
      ]
     },
     "geometricError": 0,
@@ -330,9 +330,9 @@
      -0.071410092,
      0.676904669,
      0,
-     4680449.962140212,
-     -456227.157661281,
-     4295684.226550637,
+     4680449.742360639,
+     -456227.136238253,
+     4295684.023479236,
      1
     ],
     "content": {
@@ -381,7 +381,7 @@
       0.7434054393290789,
       -0.09702428483376681,
       0.7435013131283217,
-      576,
+      575,
       920
      ]
     },
@@ -417,7 +417,7 @@
       -0.09702428483376681,
       0.7435971869275646,
       580,
-      918
+      921
      ]
     },
     "geometricError": 0,
@@ -487,7 +487,7 @@
       -0.09692841103452396,
       0.7435013131283217,
       576,
-      902
+      908
      ]
     },
     "geometricError": 0,

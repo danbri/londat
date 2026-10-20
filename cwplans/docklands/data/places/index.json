@@ -20,9 +20,11 @@
    "locale": "es-ES",
    "tileset": "leon/tileset.json",
    "features": "leon/features.json",
-   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published)",
-   "buildings": 4044,
-   "built": "2026-10-18T12:10:06.280Z"
+   "readme": "leon/README.md",
+   "provenance": "leon/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "buildings": 4045,
+   "built": "2026-10-20T19:51:02.221Z"
   },
   {
    "id": "sarajevo",
@@ -42,9 +44,11 @@
    "locale": "bs",
    "tileset": "sarajevo/tileset.json",
    "features": "sarajevo/features.json",
-   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
-   "buildings": 7424,
-   "built": "2026-10-18T12:10:09.158Z"
+   "readme": "sarajevo/README.md",
+   "provenance": "sarajevo/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "buildings": 7422,
+   "built": "2026-10-20T19:50:59.328Z"
   }
  ]
 }

@@ -2666,3 +2666,31 @@ then Sarajevo". No Leiden data was made or committed.
   docklands/test/lod-memory.mjs.
 - Open: LOD steps 3 (trees) and 4 (merged buildings and terrain in 1 km tiles); the JS heap (480 to 960 MB in Chromium)
   is now the larger memory; a real iPhone must confirm the Home case.
+
+## 2026-10-20: place data with provenance, GHSL heights, roofs (León, Sarajevo; subagent)
+- Owner, 2026-10-20: "Data - is fine for now, bring it in with subdirs and readmes and provenance clear." Then "Keep
+  building".
+- Layout: each place folder has `tileset.json`, `tiles/`, `features.json`, `sources/` (committed GHSL crop, CC BY 4.0),
+  `provenance/log.json` (moved from the place root) and a generated `README.md`; `places/README.md` lists the places.
+  New command `node cwplans/tools/build-place-tiles.mjs readme --region <id>` (also at the end of each build) writes them
+  from log.json and the data register: SHA-256 of each file, each source (publisher, licence with link, exact credit,
+  request, SHA-256 as fetched and as stored, committed or not), each operation with inputs and outputs, derivation,
+  height and roof counts, review status (Catastro; FGU waiver, issue https://github.com/danbri/londat/issues/9).
+- Fetch again on 2026-10-20 (raw folder was empty in this worktree): León OSM 52,239 elements in 1 request (was 4),
+  same 4,213 buildings and parts; Sarajevo OSM unchanged (same SHA-256). Catastro zip and parts stay raw, not committed.
+- Sarajevo heights: national data not reached. katastar.ba (FGU) services need a log-in, a written request and a fee;
+  geoportal.fgu.com.ba and gispp.zavodzpr-sa.ba refused the connection. GlobalBuildingAtlas is CC BY-NC 4.0 (not used);
+  Google Open Buildings 2.5D has no Europe; Microsoft and Overture are ODbL (not used, ask). Used GHSL GHS-BUILT-H R2023A
+  (CC BY 4.0) as a raster step before the default (F55): Sarajevo default 9 m 7,096 -> 0, GHSL 7,096 (3 to 18.2 m,
+  median 10.4, 102 values); OSM height 141 and levels 176 unchanged. León: default 177 -> GHSL 177.
+- Roofs: OSM roof:shape (gabled, hipped, pyramidal, skillion, dome and aliases), then a region `roof_rule` (hipped, near-
+  rectangular outlines of listed kinds, area <= 1,500 m2, walls <= 24 m), else flat. Sarajevo: OSM gabled 38, hipped 4,
+  pyramidal 24, skillion 44, dome 27; rule hipped 6,817; flat 478. León: OSM gabled 19, hipped 2, pyramidal 5, skillion
+  14; rule hipped 2,635; flat 1,538.
+- Operations: place-select-osm v3, place-heights v2, place-tiles v4. Sizes: León tiles 4.62 MB + features 0.69 MB (5.36 MB
+  in all), Sarajevo 5.79 + 1.09 MB (6.92 MB). `3d-tiles-validator` 0.6.0: 0 errors, 0 warnings for both.
+- Tests: place-check León and Sarajevo at 390 x 844 @2 all passed; globe-check 390 x 844 @2 all passed; npm test 61/61;
+  npm run check OK. Views: https://danbri.github.io/londat/docklands/?ll=43.8597,18.4312,450&ht=200,68 (Baščaršija),
+  https://danbri.github.io/londat/docklands/?ll=42.5994,-5.5672,450&ht=200,68 (León cathedral area).
+- Open: FGU log-in and licence (issue #9) for real heights; roofs of irregular outlines (straight skeleton); licence
+  questions for Microsoft / Overture heights (ODbL) and GlobalBuildingAtlas (non-commercial).

@@ -6,7 +6,7 @@
   "extras": {
    "place": "sarajevo",
    "name": "Stari Grad, Sarajevo",
-   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA"
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)"
   }
  },
  "geometricError": 2000,
@@ -18,7 +18,7 @@
     0.32194421785749894,
     0.7656481607534207,
     280,
-    832
+    826
    ]
   },
   "geometricError": 400,
@@ -207,7 +207,7 @@
       0.3216565964597704,
       0.7656481607534207,
       316,
-      699
+      701
      ]
     },
     "geometricError": 0,
@@ -242,7 +242,7 @@
       0.32175247025901327,
       0.765456413154935,
       292,
-      703
+      705
      ]
     },
     "geometricError": 0,
@@ -312,7 +312,7 @@
       0.32175247025901327,
       0.7656481607534207,
       311,
-      711
+      712
      ]
     },
     "geometricError": 0,
@@ -347,7 +347,7 @@
       0.3218483440582561,
       0.765456413154935,
       304,
-      751
+      753
      ]
     },
     "geometricError": 0,
@@ -382,7 +382,7 @@
       0.3218483440582561,
       0.7655522869541778,
       293,
-      711
+      720
      ]
     },
     "geometricError": 0,
@@ -417,7 +417,7 @@
       0.3218483440582561,
       0.7656481607534207,
       346,
-      798
+      802
      ]
     },
     "geometricError": 0,
@@ -452,7 +452,7 @@
       0.32194421785749894,
       0.765456413154935,
       299,
-      822
+      825
      ]
     },
     "geometricError": 0,
@@ -487,7 +487,7 @@
       0.32194421785749894,
       0.7655522869541778,
       298,
-      774
+      783
      ]
     },
     "geometricError": 0,
@@ -522,7 +522,7 @@
       0.32194421785749894,
       0.7656481607534207,
       392,
-      836
+      838
      ]
     },
     "geometricError": 0,

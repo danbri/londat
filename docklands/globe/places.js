@@ -226,7 +226,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     if (!b) return null;
     const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const osm = `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}`;
-    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Address', b.address], ['Name (other script)', b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
+    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
     H.showCard(`<h2>${esc(b.name || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div><p class="small">${esc(p.credit).replace('© OpenStreetMap contributors', '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>')}</p>`);
     return b;
   };
