@@ -111,3 +111,40 @@ prototyping phase"; "Flag it somewhere for review as we scale" (2026-10-04); the
 | date | O1 | O2 | O3 | O4 | O5 | O6 | notes |
 |---|---|---|---|---|---|---|---|
 | 2026-10-11 (baseline) | 0.0 | 0.05 | 0.1 | 0.3 | 0.4 | 0.5 | O2: only the assessment and the coarse London terrain ring; O3: the MCP server and the test hook exist, but no non-visual or low-end support |
+| 2026-10-20 (draft for the 2026-10-25 checkpoint) | 0.28 | 0.34 | 0.36 | 0.25 | 0.28 | 0.50 | per key result below; O4 and O5 are lower than the baseline guess because they are now scored key result by key result |
+
+### Checkpoint 1, draft scores (2026-10-20; final on 2026-10-25)
+
+Evidence is on main unless stated. "Headless" means Chromium with software WebGL 2 in the cloud container, not a phone.
+
+| key result | score | evidence |
+|---|---|---|
+| KR1.1 locale constants | 0.2 | `tools/check-locale.mjs` runs in `npm run check` and fails a push that adds a constant; 1,188 lines remain (baseline about 1,186); none removed yet |
+| KR1.2 places outside the UK | 0.4 | León and Sarajevo built by one tool (`build-place-tiles.mjs`), live on the globe with search, cards and local time in the text; Leiden on hold (owner, 2026-10-18); the page clock and sky still run on London time |
+| KR1.3 languages | 0.1 | country names on the globe in 26 languages (`?lang=`); the interface is English only |
+| KR1.4 source adapters | 0.4 | UK adapter; worldwide sources (Natural Earth, ETOPO, Copernicus GLO-30, OSM); Spain (IGN, Catastro) and Bosnia (waiver) adapters in the region configs |
+| KR2.1 globe | 0.8 | live; orbit to street level; hand-over 0.000 m off with a 0.5 s fade; not measured on a phone |
+| KR2.2 worldwide base layers | 0.5 | Natural Earth and ETOPO 2022 in the register; not yet served as tiles; terrain about 9.8 km a pixel |
+| KR2.3 one tile format | 0.4 | 3D Tiles 1.1 with glTF for the places (validator: 0 errors); the Docklands model is not tiled |
+| KR2.4 detail measure per tile | 0.0 | not started |
+| KR2.5 tile hosting | 0.0 | no decision |
+| KR2.6 knowledge-graph speed | 0.0 | not started |
+| KR2.7 skeletal world and UK | 0.7 | world and UK skeleton, search, "where am I", Home/North/World; owner: "Drag pinch twist all great" |
+| KR3.1 low-end devices | 0.2 | LOD steps 1 and 2, model and globe memory freed (largest one-frame rise 113 to 153 MB, now 34 MB, headless); no reference device measured |
+| KR3.2 no 3D needed | 0.3 | text view (`?text=1`) exists; not verified without WebGL; no 2D map |
+| KR3.3 non-visual use | 0.5 | `describeView` and `?describe=1` name places, buildings and local time; not tested with VoiceOver or TalkBack |
+| KR3.4 machine access | 0.7 | page API 1.0.0, 10 WebMCP tools, `llms.txt`, the docklands-view MCP server |
+| KR3.5 sound | 0.1 | spoken cards only |
+| KR4.1 reference photos | 0.3 | one photo (Greenland Dock, clear day); top sky band within 0.08 luma |
+| KR4.2 faults closed by rules | 0.5 | F54 closed in the port (terrain cut at water outlines); F55 (default heights) counted, not patched |
+| KR4.3 Painted style | 0.2 | owner: "a bit janky and not v striking" / "Acceptable for now" |
+| KR4.4 one 3DGS capture | 0.0 | not started |
+| KR5.1 hourly cache runs | 0.1 | 7 runs on 2026-10-18 and 5 on 2026-10-19 (target 20 a day); the self-restarting loop waits for the owner's decision (the session's safety check refused the workflow change) |
+| KR5.2 gaps in the 5-minute feed | 0.5 | the live-cache loop runs; gaps not yet measured on the dashboard |
+| KR5.3 live layers for any place | 0.0 | aircraft and ships for the Docklands circle only |
+| KR5.4 time scrubber | 0.5 | PARTIAL (accepted) |
+| KR6.1 check on every push | 0.9 | `npm run check` passes: 765 files registered |
+| KR6.2 "review" items with exit paths | 0.1 | 78 items marked "review"; no written exit paths yet |
+| KR6.3 open faults | 0.2 | not recounted against the target of 8 open |
+| KR6.4 log and lessons each session | 0.8 | activity-log entries and skill sections for each change since 2026-10-11 |
+
