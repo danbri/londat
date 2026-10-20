@@ -2708,3 +2708,20 @@ then Sarajevo". No Leiden data was made or committed.
   field: not used, not committed; question for the owner.
 - Checks: 3d-tiles-validator 0 errors, 0 warnings (both); npm run check OK; npm test 61/61; place-check León and
   Sarajevo 390 x 844 @2 all passed; globe-check 390 x 844 @2 all passed. Sizes: León 5.7 MB, Sarajevo 6.7 MB on disk.
+
+## 2026-10-20 (evening): hosting study, range reads, one-file archive prototype (subagent)
+
+- Owner, 2026-10-20: "we need to work on scaling. Perhaps gh pages is not last word in site architecture but consider
+  our options, eg http range reqs?". Study: https://github.com/danbri/londat/blob/main/docs/hosting-options.md (KR2.5).
+- Measured (read requests only; no upload, no account): Range, CORS, cache, compression, redirects and TTFB of GitHub
+  Pages, raw.githubusercontent.com, release assets, jsDelivr, Hugging Face, an R2 bucket, Source Cooperative and Zenodo
+  (`cwplans/tools/probe-range-host.sh`); browser checks in Chromium. Pages: Range yes, cross-origin no (preflight 405).
+  Chromium sends `Accept-Encoding: identity` with Range; its HTTP cache serialises parallel range reads of one URL.
+- Prototype: `cwplans/tools/pack-range-archive.mjs` (deterministic ZIP, Morton order), `docklands/geo/range-archive.js`
+  (reader), `cwplans/tools/range-server.mjs` (Range server), flag `?archive=` in `docklands/globe/skeleton-layers.js`.
+  UK skeleton 1,530 files 37.8 MB -> one ZIP 9.3 MB (not committed); scenario requests 124 -> 43, bytes +19 %, time
+  about equal; the page with the flag finds Leeds from the archive with no page errors. Tests: `npm test` (4 new),
+  `node docklands/test/archive-check.mjs`.
+- Pages site 535.5 MB in 9,142 files; deflated 257.9 MB (`cwplans/tools/pages-size.mjs`).
+- Open for the owner: tile host (Hugging Face recommended for now; R2 later), account and token, a data domain, the
+  licence of hosted data (ODbL, "review" sources), packing `cwplans/feeds/` now, a Safari range check on the iPhone.

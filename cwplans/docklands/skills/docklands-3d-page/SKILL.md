@@ -3084,3 +3084,38 @@ in then said it was starting 3D mode ... almost like the rendering crashed and r
 - **Not done**: pixel ratio during flights (a change of pixel ratio reallocates the canvas and every screen-size target,
   itself a peak); the JS heap (480 to 960 MB in Chromium at cw and area) is the larger memory and is not reduced here;
   trees and the merged buildings (LOD steps 3 and 4).
+
+## Hosting: range reads and one-file archives (2026-10-20)
+
+Study for KR2.5 (owner, 2026-10-20: "we need to work on scaling ... consider our options, eg http range reqs?"):
+https://github.com/danbri/londat/blob/main/docs/hosting-options.md . Files: reader `docklands/geo/range-archive.js`,
+packer `cwplans/tools/pack-range-archive.mjs`, server `cwplans/tools/range-server.mjs`, host probe
+`cwplans/tools/probe-range-host.sh`, site size `cwplans/tools/pages-size.mjs`, flag `?archive=1|<url>` in
+`docklands/globe/skeleton-layers.js` (off by default), tests `cwplans/tools/test/range-archive.test.mjs` and
+`docklands/test/archive-check.mjs [--live]`.
+
+Lessons:
+- **Pages honours Range** (206, suffix ranges too) but sends no `Access-Control-Expose-Headers` and answers the CORS
+  preflight with 405. Same-origin range reads work; another origin cannot read `Content-Range` or send a suffix range.
+  raw.githubusercontent.com: preflight 403, no exposed headers. jsDelivr: preflight without Allow-Headers (suffix range
+  fails). Release assets: no CORS at all. Hugging Face `resolve/`, R2 (with a CORS rule), Source Cooperative and the
+  Zenodo API answer the preflight for Range.
+- **Host gzip and Range.** Pages compresses JSON, glb and `application/octet-stream` (every unknown extension: `.3tz`,
+  `.pmtiles`, kgx `.ibk5`). Chromium sends `Accept-Encoding: identity` with a `Range`, so the browser gets file offsets;
+  curl with gzip gets offsets into the gzip stream. jsDelivr's cache can even answer a no-compression client with brotli
+  offsets. An archive carries its own compression (per-entry deflate) and uses a `.zip` name. Safari: not yet measured.
+- **Chromium cache lock.** Parallel range reads of one URL with the HTTP cache on run one at a time (London step 0.8 to
+  0.95 s against 0.24 to 0.4 s with 40 ms per answer). Use `fetch(..., { cache: 'no-store' })` for range reads (the
+  reader's default) and cache in the page if needed.
+- **python3 -m http.server has no Range.** Use `node cwplans/tools/range-server.mjs [--gzip] [--delay ms] [--tls c,k]`.
+  Localhost has no round trip: measure with `--delay 40` (close to the live Pages run) and with HTTP/2 (`--tls`; the
+  check makes a self-signed certificate in `docklands/test/out/archive/`, and Chromium needs `--ignore-certificate-errors`).
+- **An archive is not a speed fix on HTTP/2.** UK skeleton scenario: requests 124 -> 43, bytes +9 to +19 %, time about
+  equal (HTTP/2 files 1.1 s, archive 1.6 s; HTTP/1.1 files 1.6 s, archive 1.3 s; live Pages files 1.0 to 1.5 s). The
+  gains are file count, size on the host (37.8 MB -> 9.3 MB) and billed requests. Sequential awaits in `skeleton.js`
+  (`whereAmI`: 8 layers one after another) cost a round trip each in both layouts.
+- **Order the entries.** Morton order of `x-y` cells inside a folder keeps a view's cells close, so one merged range
+  covers them. Put the manifest last (`--last manifest.json`): the opening suffix read brings it with the central
+  directory, so opening costs one request.
+- **Do not commit archives of data that is in the repository already.** Build them in `docklands/test/out/archive/`
+  (ignored) or in the upload step of a future host workflow, with a data-register entry for the hosted copy.

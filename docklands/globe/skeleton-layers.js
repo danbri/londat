@@ -25,7 +25,23 @@ const STYLE = {
 const PLACE_Z = { city: 4.5, town: 7, village: 9.5, suburb: 10, settlement: 10.5 }, PLACE_R = { city: 0, town: 1, village: 3, suburb: 3, settlement: 4 };
 const KIND_ALT = { city: 40000, town: 15000, village: 6000, suburb: 5000, 'postcode district': 8000, 'hill or mountain': 9000, 'hills or mountain range': 60000, river: 30000, island: 30000 };
 
+// ?archive=1 (a test flag, off by default): read the set from one ZIP next to its folder (`<base>.zip`, e.g. data/uk.zip),
+// or ?archive=<url> from that archive, by HTTP range requests (docklands/geo/range-archive.js; packer
+// cwplans/tools/pack-range-archive.mjs; study docs/hosting-options.md). If the archive cannot be opened, the files are read.
+async function archiveReader(base) {
+  const q = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('archive') : null;
+  if (!q || q === '0') return null;
+  const url = q === '1' ? base.replace(/\/+$/, '') + '.zip' : new URL(q, location.href).href;
+  try {
+    const { openRangeArchive, archiveFetchJson } = await import('../geo/range-archive.js');
+    const ar = await openRangeArchive(url);
+    (globalThis.__rangeArchives || (globalThis.__rangeArchives = [])).push(ar);   // stats for tests (docklands/test/archive-check.mjs)
+    return archiveFetchJson(ar, base);
+  } catch (e) { console.warn('skeleton: archive not read, reading files', url, e.message); return null; }
+}
+
 export async function addSkeleton(G, base, { fetchJson } = {}) {
+  if (!fetchJson) fetchJson = await archiveReader(base);
   const sk = await openSkeleton(base, fetchJson ? { fetchJson } : {}), M = sk.manifest, [bw, bs, be, bn] = M.bbox || [-180, -90, 180, 90];
   const inside = (lon, lat) => lon >= bw && lon <= be && lat >= bs && lat <= bn;
   const credit = typeof M.credits === 'string' ? M.credits : (M.credits && M.credits.text) || '';
