@@ -3,7 +3,8 @@
 // Origin: Plaza Mayor, OSM way 46344511 (Nominatim, OSM, ODbL; checked 2026-10-11). h: approximate ellipsoidal height
 // (ground about 838 m above sea level plus a geoid height of about 52 m; stated, +-10 m): replace at step 5.
 import ghsl from '../adapters/world-ghsl.js';
-import { overture, msBuildings } from '../adapters/world-buildings.js';
+import { overture, overtureIgnFloors, msBuildings } from '../adapters/world-buildings.js';
+import { worldcover, overtureOuter } from '../adapters/world-surround.js';
 
 export default {
   id: 'leon',
@@ -21,7 +22,12 @@ export default {
   // roof_rule: a building with no OSM roof:shape gets this roof when its kind is listed, its footprint is near a rectangle
   // (area / oriented box area >= min_rect), its area is at most max_area_m2 and its walls at most max_wall_m (the old
   // town's tiled roofs; counted as "rule" in the log, never as OSM)
-  place: { size_m: 2000, level: 15, dem: 'es-ign', heights: ['es-catastro', 'world-overture', 'world-ms-buildings', 'world-ghsl'], names: ['name', 'name:es'], label: 'Plaza Mayor, León',
+  // city: the built-up city round the core (León with San Andrés del Rabanedo, Trobajo, Armunia, Puente Castro), drawn as
+  // blocks; surround: terrain, land cover, roads, rail, water and place names to about 35 km (place-lod; the skill section
+  // "places, city and surroundings by level of detail"). 'overture-ign-floors' in heights is the switch of the IGN floors.
+  place: { size_m: 2000, level: 15, dem: 'es-ign', heights: ['es-catastro', 'overture-ign-floors', 'world-overture', 'world-ms-buildings', 'world-ghsl'], names: ['name', 'name:es'], label: 'Plaza Mayor, León',
+    city: { bbox: [-5.634, 42.564, -5.536, 42.636] },
+    surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer' },
     search: ['Plaza Mayor', 'Casco Histórico', 'León'],
     roof_rule: { shape: 'hipped', pitch_deg: 28, kinds: ['yes', 'house', 'residential', 'apartments', 'detached', 'semidetached_house', 'terrace', 'school', 'retail', 'commercial', 'office', 'public', 'civic', 'hotel', 'church', 'chapel', 'convent', 'monastery', 'garage'], min_rect: 0.8, max_area_m2: 1500, max_wall_m: 24 } },
   services: { weatherPoint: { lon: -5.56654, lat: 42.59732 }, aircraft: { lon: -5.56654, lat: 42.59732, nm: 25 }, metar: 'LELN' },
@@ -32,7 +38,7 @@ export default {
       licence: 'CC BY 4.0 (Orden FOM/2807/2015; credit "© Instituto Geográfico Nacional"; PNOA: "PNOA cedido por © Instituto Geográfico Nacional")',
       licenceClass: 'open', crs: { horizontal: 'ETRS89 / UTM 30N (EPSG:25830)', vertical: 'orthometric (Alicante datum), geoid EGM08-REDNAP' }, fallback: 'world-base',
       // MDT05 (5 m terrain model, 1 m steps in this coverage) through the INSPIRE WCS 2.0 of the IDEE, in ETRS89 geographic
-      dem: { kind: 'wcs20', source: 'ign-mdt05', url: 'https://servicios.idee.es/wcs-inspire/mdt', coverage: 'Elevacion4258_5', ringCoverage: 'Elevacion4258_25', lat: 'Lat', lon: 'Long', format: 'image/tiff', res_m: 5,
+      dem: { kind: 'wcs20', source: 'ign-mdt05', url: 'https://servicios.idee.es/wcs-inspire/mdt', coverage: 'Elevacion4258_5', ringCoverage: 'Elevacion4258_25', surroundCoverage: 'Elevacion4258_25', lat: 'Lat', lon: 'Long', format: 'image/tiff', res_m: 5,
         datum: 'orthometric, REDNAP (geoid EGM08-REDNAP); ETRS89 taken as WGS84', credit: 'MDT05 © Instituto Geográfico Nacional (CC BY 4.0)' } },
     { id: 'es-catastro', status: 'approved-transformed-only', area: 'Spain (not the Basque Country, not Navarre)',
       about: 'Dirección General del Catastro INSPIRE buildings (BU), parcels (CP), addresses (AD)',
@@ -43,6 +49,6 @@ export default {
       buildingHeights: { kind: 'inspire-bu-parts', source: 'es-catastro-inspire-bu', url: 'https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip',
         member: /buildingpart\.gml$/.source, proj4: '+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs', storey_m: 3,
         credit: 'Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published)' } },
-    overture, msBuildings, ghsl,
+    overture, overtureIgnFloors, msBuildings, ghsl, worldcover, overtureOuter,
   ],
 };

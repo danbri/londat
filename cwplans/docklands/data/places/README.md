@@ -22,7 +22,7 @@ Raw downloads (OSM answers, DEM GeoTIFFs, national and GHSL zips) stay in `cwpla
 
 | place | live view | buildings | size | README |
 |---|---|---|---|---|
-| Casco Histórico, León | https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 | 4045 | 5.88 MB | [leon/README.md](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/README.md) |
-| Stari Grad, Sarajevo | https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,1500&ht=0,55 | 7422 | 6.93 MB | [sarajevo/README.md](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/README.md) |
+| Casco Histórico, León | https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 | 4045 | 20.89 MB | [leon/README.md](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/README.md) |
+| Stari Grad, Sarajevo | https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,1500&ht=0,55 | 7422 | 22.78 MB | [sarajevo/README.md](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/README.md) |
 
 Data register entries: [DATA-REGISTER.md](https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md) (search "docklands/data/places").

@@ -759,6 +759,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   G.inBox = inBox; G.modelOrbit = modelOrbit; G.orbitCam = orbitCam; G.world_ = world; G.layers = layers; G.labels = () => labels; G.sampler = () => sampler; G.frameState = F; G.pick = pick; G.project = project;
   G.lang = lang;
   // places built as 3D Tiles (cwplans/tools/build-place-tiles.mjs; globe/places.js): loaded near the eye
+  G.cull = { inFrustum, K: () => innerHeight / (2 * Math.tan(gcam.fov * D2R / 2)), renderer, camera: gcam };   // places.js: frustum and screen-space error of its tiles
   G.U = U; G.placesReady = import('./places.js').then(m => m.attachPlaces(G, H, { scene, U })).catch(e => { console.warn('globe: places', e); return []; });
   return G;
 }

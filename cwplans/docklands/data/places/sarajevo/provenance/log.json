@@ -3,27 +3,27 @@
  "fetches": {
   "osm": {
    "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.418579,43.851929,18.446045,43.868408",
-   "fetched": "2026-10-20T19:46:17.154Z",
-   "bytes": 1180109,
-   "sha256": "1d096b36b00dfec82f58e546e414b370b3d8816557d11cffca8440fc6077dad1",
+   "fetched": "2026-10-20T21:28:31.868Z",
+   "bytes": 1181585,
+   "sha256": "bb1bf6498aa4d041e0dcf50b19cbe77d17a14e5d8d2420151f6d61da882d5c62",
    "file": "data/raw/places/sarajevo/osm.json.gz",
    "source": "osm",
    "requests": 1,
    "as_fetched": [
     {
      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.418579,43.851929,18.446045,43.868408",
-     "bytes": 11098236,
-     "sha256": "e0b2a41ce1a959e2a119251c205ecaee5e95169914b1133dfeb11efc86683f2a"
+     "bytes": 11112084,
+     "sha256": "7db91f2da660aadb1320ccc282055abed8ca5eb95b818c1ff3af764bf8662df6"
     }
    ],
-   "elements": 57298,
-   "latest_element_timestamp": "2026-10-17T21:06:13Z",
+   "elements": 57374,
+   "latest_element_timestamp": "2026-10-20T20:57:33Z",
    "licence": "ODbL 1.0, © OpenStreetMap contributors",
    "stored_as": "the elements of all answers merged by type and id, gzip JSON (sha256 above); the answers as fetched: as_fetched"
   },
   "dem": {
    "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E018_00_DEM/Copernicus_DSM_COG_10_N43_00_E018_00_DEM.tif",
-   "fetched": "2026-10-20T19:46:18.620Z",
+   "fetched": "2026-10-20T21:28:33.866Z",
    "bytes": 16132,
    "sha256": "6892b55c6151ff4749a2ae3f2217fa82ba5e38755de7f0110d475662b5ae6331",
    "file": "data/raw/places/sarajevo/dem.json.gz",
@@ -39,29 +39,11 @@
    },
    "licence": "Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA"
   },
-  "dem-ring": {
-   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E018_00_DEM/Copernicus_DSM_COG_10_N43_00_E018_00_DEM.tif",
-   "fetched": "2026-10-20T19:46:19.279Z",
-   "bytes": 205789,
-   "sha256": "62d3d961298d31821543efb4af943aa540f86c05eb68e52eb909ed80c4e753c9",
-   "file": "data/raw/places/sarajevo/dem-ring.json.gz",
-   "source": "copernicus-glo30",
-   "window": [
-    1373,
-    369,
-    1747,
-    645
-   ],
-   "as_fetched": {
-    "note": "HTTP range requests of a Cloud Optimized GeoTIFF: no single file as fetched; the window (pixel columns and rows) and the stored grid (sha256) fix the input"
-   },
-   "licence": "Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA"
-  },
   "heights-world-ghsl": {
    "url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_H_GLOBE_R2023A/GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss/V1-0/tiles/GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss_V1_0_R5_C20.zip",
-   "fetched": "2026-10-20T19:46:27.606Z",
-   "bytes": 5821,
-   "sha256": "a424300f3b9b5f21aaa6635fb28c934e1095be28954ca47f477566e51d8266c6",
+   "fetched": "2026-10-20T21:33:07.218Z",
+   "bytes": 63231,
+   "sha256": "3987bb6a3a3017176383bc51b452e6246ce4e63f2388cc6a7e09d0eac414f7d2",
    "file": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
    "source": "ghsl-built-h",
    "member": "GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss_V1_0_R5_C20.tif",
@@ -71,15 +53,215 @@
     "member_sha256": "575ed618caf2844065e9c3cccdb1efa8698acafd273b4705b5a5635862cdd22d"
    },
    "window": [
-    10108,
-    6273,
-    10149,
-    6301
+    9947,
+    6265,
+    10166,
+    6346
    ],
-   "cells": 1148,
+   "cells": 17739,
    "committed": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
    "licence": "CC BY 4.0 (Commission Decision 2011/833/EU; copyright.txt: \"(c) European Union, 1995-2026\")",
    "note": "the tile zip stays in the raw folder; the committed crop is the input of place-heights"
+  },
+  "dem-surround": {
+   "url": [
+    "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E017_00_DEM/Copernicus_DSM_COG_10_N43_00_E017_00_DEM.tif",
+    "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E018_00_DEM/Copernicus_DSM_COG_10_N43_00_E018_00_DEM.tif",
+    "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E017_00_DEM/Copernicus_DSM_COG_10_N44_00_E017_00_DEM.tif",
+    "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E018_00_DEM/Copernicus_DSM_COG_10_N44_00_E018_00_DEM.tif"
+   ],
+   "fetched": "2026-10-20T21:33:16.563Z",
+   "bytes": 42896700,
+   "sha256": "0aad6eb881eca70e7f829b53ed421072e06fce85a92852cf6e3c3c8e193aed2b",
+   "file": "data/raw/places/sarajevo/dem-surround.bin.gz",
+   "source": "copernicus-glo30",
+   "windows": [
+    {
+     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E017_00_DEM/Copernicus_DSM_COG_10_N43_00_E017_00_DEM.tif",
+     "image": 0,
+     "window": [
+      3309,
+      0,
+      3600,
+      2132
+     ]
+    },
+    {
+     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E018_00_DEM/Copernicus_DSM_COG_10_N43_00_E018_00_DEM.tif",
+     "image": 0,
+     "window": [
+      0,
+      0,
+      3580,
+      2132
+     ]
+    },
+    {
+     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E017_00_DEM/Copernicus_DSM_COG_10_N44_00_E017_00_DEM.tif",
+     "image": 0,
+     "window": [
+      3309,
+      2494,
+      3600,
+      3600
+     ]
+    },
+    {
+     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E018_00_DEM/Copernicus_DSM_COG_10_N44_00_E018_00_DEM.tif",
+     "image": 0,
+     "window": [
+      0,
+      2494,
+      3580,
+      3600
+     ]
+    }
+   ],
+   "as_fetched": {
+    "note": "HTTP range requests of Cloud Optimized GeoTIFFs: no single file as fetched; the windows and the stored grid (sha256) fix the input"
+   },
+   "licence": "Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA"
+  },
+  "landcover": {
+   "url": [
+    "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E015_Map.tif",
+    "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E018_Map.tif"
+   ],
+   "fetched": "2026-10-20T21:33:21.679Z",
+   "bytes": 1692856,
+   "sha256": "3d3a0362b0461bc77a0ed848c04f9edf7f1155fbec7e0954302dcdb958706a63",
+   "file": "data/raw/places/sarajevo/landcover.bin.gz",
+   "source": "esa-worldcover",
+   "windows": [
+    {
+     "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E015_Map.tif",
+     "image": 1,
+     "window": [
+      17518,
+      4157,
+      18000,
+      9553
+     ]
+    },
+    {
+     "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E018_Map.tif",
+     "image": 1,
+     "window": [
+      0,
+      4157,
+      5968,
+      9553
+     ]
+    }
+   ],
+   "as_fetched": {
+    "note": "HTTP range requests of Cloud Optimized GeoTIFFs (overview 1, about 20 m): no single file as fetched; the windows and the stored grid (sha256) fix the input"
+   },
+   "licence": "CC BY 4.0"
+  },
+  "heights-ms-city": {
+   "url": [
+    "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=BosniaandHerzegovina/quadkey=120233030/part-00095-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz"
+   ],
+   "fetched": "2026-10-20T21:33:28.015Z",
+   "bytes": 107,
+   "sha256": "556aa71aaef2f186c7df50eb5781f645adb72eaeaa66af761cce814b92951a05",
+   "file": "data/raw/places/sarajevo/ms-city.json.gz",
+   "source": "ms-buildings",
+   "as_fetched": [
+    {
+     "url": "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=BosniaandHerzegovina/quadkey=120233030/part-00095-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz",
+     "bytes": 13064069,
+     "sha256": "da922b1b3bb8c35c09613430d1bdcfde6f78eca4c392fcdad0903a8c139bcc18"
+    }
+   ],
+   "kept": 0,
+   "licence": "ODbL 1.0",
+   "note": "footprints with a height over the core and city box; raw (input of place-city-heights)"
+  },
+  "overture-roads": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=transportation/type=segment/ (bbox 17.929688,43.417969,18.984375,44.296875; files part-00082-9b3be286-4575-5137-8394-8d7cca24ff82-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:34:16.659Z",
+   "bytes": 7758195,
+   "sha256": "3c4b4b35f1060a4b63bfa959d3551ba40993eba6ffa2a1cdf4f36313820f1b0f",
+   "file": "data/raw/places/sarajevo/overture-roads-2026-09-23.1.json",
+   "source": "overture-transportation",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: (subtype = 'road' AND class IN ('motorway','trunk','primary','secondary','tertiary')) OR subtype = 'rail'",
+   "records": 6443,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-streets": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=transportation/type=segment/ (bbox 18.285000,43.815000,18.460000,43.875000; files part-00082-9b3be286-4575-5137-8394-8d7cca24ff82-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:34:57.023Z",
+   "bytes": 6481974,
+   "sha256": "c47e5746c584926f27f162c138d1fe32cdc9f9c35498fcff51b567d3d7b0408c",
+   "file": "data/raw/places/sarajevo/overture-streets-2026-09-23.1.json",
+   "source": "overture-transportation",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: subtype = 'road' AND class IN ('residential','unclassified','living_street','pedestrian','service')",
+   "records": 10135,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-water": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=base/type=water/ (bbox 17.929688,43.417969,18.984375,44.296875; files part-00112-c335d8d5-a2e1-5913-b3bc-a0e74760d461-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:35:25.827Z",
+   "bytes": 4070207,
+   "sha256": "bfcd38a9cdd0802dc17d8f9480a54cdbd14ab08c87e0a36ba2dec60cbd58ddd7",
+   "file": "data/raw/places/sarajevo/overture-water-2026-09-23.1.json",
+   "source": "overture-base",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: none",
+   "records": 2561,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-places": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=divisions/type=division/ (bbox 17.929688,43.417969,18.984375,44.296875; files part-00000-8b67a992-99db-52a1-aeb0-1b049a9a125c-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:35:30.008Z",
+   "bytes": 1782358,
+   "sha256": "65ed05f34036f076ddec64c5f9dadd91c6577150a9f25044befff68d10eac9ed",
+   "file": "data/raw/places/sarajevo/overture-places-2026-09-23.1.json",
+   "source": "overture-divisions",
+   "request": "DuckDB read_parquet over HTTPS of the 1 files of the release, filter on bbox and: subtype IN ('locality','localadmin','borough','macrohood','neighborhood','microhood')",
+   "records": 2644,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-peaks": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=base/type=land/ (bbox 17.929688,43.417969,18.984375,44.296875; files part-00070-119ba068-0382-50ba-8ab9-3a83190b16a2-c000.zstd.parquet part-00071-8d14dcd7-5c7f-5e3d-aa09-2a5e2abf12fe-c000.zstd.parquet part-00078-baee11d8-bc76-55d9-a0eb-91e4be50863c-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:36:04.875Z",
+   "bytes": 429994,
+   "sha256": "b5d24813873c19e57dc1e2bc55ee93702435937095ea79b495a5c39c3d829c38",
+   "file": "data/raw/places/sarajevo/overture-peaks-2026-09-23.1.json",
+   "source": "overture-base",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: class IN ('peak','volcano','saddle') AND names.primary IS NOT NULL",
+   "records": 790,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-buildings": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox 18.285000,43.815000,18.460000,43.875000; files part-00210-af36c72f-afd3-5d39-9c99-9033f1ca68be-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:38:32.050Z",
+   "bytes": 39606362,
+   "sha256": "83150c477288b9a4c67678cebe60c5f486b32e2f78f922eed8e5eed70e489424",
+   "file": "data/raw/places/sarajevo/overture-buildings-2026-09-23.1.json",
+   "source": "overture-buildings",
+   "request": "DuckDB read_parquet over HTTPS of the 512 files of the release, filter on bbox and: is_underground IS NOT TRUE",
+   "records": 57681,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
   },
   "heights-world-overture": {
    "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox 18.415579,43.848929,18.449045,43.871408; files part-00210-af36c72f-afd3-5d39-9c99-9033f1ca68be-c000.zstd.parquet)",
@@ -920,6 +1102,2530 @@
    ],
    "ms": 1631,
    "at": "2026-10-20T20:35:17.124Z"
+  },
+  {
+   "activity": "7f339881496f7215",
+   "operation": "place-select-osm",
+   "version": 3,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "osm",
+     "path": "data/raw/places/sarajevo/osm.json.gz",
+     "sha256": "bb1bf6498aa4d041e0dcf50b19cbe77d17a14e5d8d2420151f6d61da882d5c62"
+    }
+   ],
+   "params": {
+    "area": [
+     18.4185791015625,
+     43.8519287109375,
+     18.446044921875,
+     43.868408203125
+    ],
+    "level": 15,
+    "names": [
+     "name",
+     "name:bs",
+     "name:sr-Latn",
+     "name:hr"
+    ],
+    "alt_names": [
+     "name:sr",
+     "name:sr-Cyrl"
+    ]
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/sarajevo/work/select.json.gz",
+     "sha256": "2962e69bf84d5a4d184c3fd4c92d8b4713406c0a64308cd365b2f70f6631e790",
+     "bytes": 536049
+    }
+   ],
+   "ms": 419,
+   "at": "2026-10-20T22:01:36.962Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "28d20ae5a41756a0",
+   "operation": "place-heights",
+   "version": 4,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/sarajevo/work/select.json.gz",
+     "sha256": "2962e69bf84d5a4d184c3fd4c92d8b4713406c0a64308cd365b2f70f6631e790"
+    },
+    {
+     "label": "raster-heights",
+     "path": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
+     "sha256": "3987bb6a3a3017176383bc51b452e6246ce4e63f2388cc6a7e09d0eac414f7d2"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/sarajevo/sources/overture-buildings.json",
+     "sha256": "c450560583e01a32ffc4d440106780ad8e0c48e43c9053748ada4e017f0e7ecf"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/sarajevo/sources/ms-buildings.json",
+     "sha256": "3a82da833d83aabe7f400e0bbe28ab3a0186177d10f506c871b8f7bfc0af3f1d"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "raster_min_m": 3,
+    "rasters": [
+     "ghsl"
+    ],
+    "footprints": [
+     {
+      "label": "overture",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": true
+     },
+     {
+      "label": "ms",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": true
+     }
+    ],
+    "roof_rule": {
+     "shape": "hipped",
+     "pitch_deg": 32,
+     "kinds": [
+      "yes",
+      "house",
+      "residential",
+      "apartments",
+      "detached",
+      "semidetached_house",
+      "terrace",
+      "school",
+      "retail",
+      "commercial",
+      "office",
+      "public",
+      "civic",
+      "hotel",
+      "church",
+      "chapel",
+      "mosque",
+      "garage"
+     ],
+     "min_rect": 0.8,
+     "max_area_m2": 1500,
+     "max_wall_m": 24
+    },
+    "pitch_deg": 30,
+    "max_roof_m": 8,
+    "rule": "height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > Overture height > Overture num_floors x storey (non-OSM records with an open licence) > Microsoft height (footprint match: a centroid inside the other outline, area ratio >= min_area_ratio) > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > Overture roof_shape > roof_rule > flat"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/sarajevo/work/heights.json.gz",
+     "sha256": "6d0dc9cffd8049a474e4a0691ba9a47e12ec1f08eea6f9f5d672a544dbe870f7",
+     "bytes": 56871
+    }
+   ],
+   "ms": 144,
+   "at": "2026-10-20T22:01:37.108Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "184c5bb008d4b6cf",
+   "operation": "place-tiles",
+   "version": 5,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/sarajevo/work/select.json.gz",
+     "sha256": "2962e69bf84d5a4d184c3fd4c92d8b4713406c0a64308cd365b2f70f6631e790"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/sarajevo/work/heights.json.gz",
+     "sha256": "6d0dc9cffd8049a474e4a0691ba9a47e12ec1f08eea6f9f5d672a544dbe870f7"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/sarajevo/dem.json.gz",
+     "sha256": "6892b55c6151ff4749a2ae3f2217fa82ba5e38755de7f0110d475662b5ae6331"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 300,
+    "version_label": "sarajevo-1",
+    "ring_m": 0,
+    "ring_grid": 97
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24367.glb",
+     "sha256": "d56b92b8f120c7bd9d87ea2d99ee194e377f86209bb291fe010b1389c4927702",
+     "bytes": 292852
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24368.glb",
+     "sha256": "93d2968f7acd8ef941a0d15d1237a14c34ecd03aa1b91161a7e0ba742caab677",
+     "bytes": 462660
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24369.glb",
+     "sha256": "1fa607d00af913d7ca199c9ad252ed2cf7009a3643f0235fcd65852be068aae3",
+     "bytes": 423132
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24367.glb",
+     "sha256": "05dea6cc6763d2c783659552017d4a1680de922f32351c5552cf9432f6097888",
+     "bytes": 318268
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24368.glb",
+     "sha256": "0008c6c305891f10c94ff71451eedb6bb5696f2ad9655d911722422e6d7565c2",
+     "bytes": 587404
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24369.glb",
+     "sha256": "257c7c191f9b6d143c123b520e57bd821e9970fce434f9a5c3963512cdae0a9d",
+     "bytes": 418516
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24367.glb",
+     "sha256": "3650a33b37a28ffd94e1cb0bf004f18b27dfce6531549c52755c801ae9c36c8d",
+     "bytes": 397072
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24368.glb",
+     "sha256": "bca99e703364e3f3f4f2289c1459c63410b6080c3a826c7130981ce6b2402c67",
+     "bytes": 551320
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24369.glb",
+     "sha256": "034cc32e3e87c3cd4f15a968b9c81a049af88c2e27f4d94df82a8407a9afa19e",
+     "bytes": 512244
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24367.glb",
+     "sha256": "26bb023449bcca9486044c8954871e1131dfa45f4d64f401f992da4322c7d399",
+     "bytes": 407524
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24368.glb",
+     "sha256": "4090d67d9270668fbd72e065804896cb2be03219580419863dc68bf872cd5bb3",
+     "bytes": 312096
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24369.glb",
+     "sha256": "36c5eaaa347c78d973ba04cccb171d28d26dc2d50d492ac457aa4308f305e107",
+     "bytes": 373760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24367.glb",
+     "sha256": "a410af8b8b064e0de6f41944558de0b879e123eb071d780b1e3e5969b1958b23",
+     "bytes": 151200
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24368.glb",
+     "sha256": "d346d6c57eabef3842cb509d0ac6ad49107e735d3698d0e6a0a7af34203336af",
+     "bytes": 366392
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24369.glb",
+     "sha256": "6fd3974172b51dd1b5e44edd904ab788136ce9409dfa0fc650a9c094b0824000",
+     "bytes": 216364
+    },
+    {
+     "path": "data/raw/places/sarajevo/work/core-tileset.json",
+     "sha256": "83ab5d59bcc1f3d49273ac119b5a6818530ccafb74dc5f8fe0658314aa2ae7ec",
+     "bytes": 9484
+    },
+    {
+     "path": "docklands/data/places/sarajevo/features.json",
+     "sha256": "239e263d6fc60d8b16f82f5b6ce1145d4000174e1cfee984d91900728768b1ff",
+     "bytes": 1038113
+    }
+   ],
+   "ms": 1455,
+   "at": "2026-10-20T22:01:38.564Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "ddd63db8f83313df",
+   "operation": "place-select-outer",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "overture-roads",
+     "path": "data/raw/places/sarajevo/overture-roads-2026-09-23.1.json",
+     "sha256": "3c4b4b35f1060a4b63bfa959d3551ba40993eba6ffa2a1cdf4f36313820f1b0f"
+    },
+    {
+     "label": "overture-streets",
+     "path": "data/raw/places/sarajevo/overture-streets-2026-09-23.1.json",
+     "sha256": "c47e5746c584926f27f162c138d1fe32cdc9f9c35498fcff51b567d3d7b0408c"
+    },
+    {
+     "label": "overture-water",
+     "path": "data/raw/places/sarajevo/overture-water-2026-09-23.1.json",
+     "sha256": "bfcd38a9cdd0802dc17d8f9480a54cdbd14ab08c87e0a36ba2dec60cbd58ddd7"
+    },
+    {
+     "label": "overture-places",
+     "path": "data/raw/places/sarajevo/overture-places-2026-09-23.1.json",
+     "sha256": "65ed05f34036f076ddec64c5f9dadd91c6577150a9f25044befff68d10eac9ed"
+    },
+    {
+     "label": "overture-peaks",
+     "path": "data/raw/places/sarajevo/overture-peaks-2026-09-23.1.json",
+     "sha256": "b5d24813873c19e57dc1e2bc55ee93702435937095ea79b495a5c39c3d829c38"
+    },
+    {
+     "label": "overture-buildings",
+     "path": "data/raw/places/sarajevo/overture-buildings-2026-09-23.1.json",
+     "sha256": "83150c477288b9a4c67678cebe60c5f486b32e2f78f922eed8e5eed70e489424"
+    }
+   ],
+   "params": {
+    "licences": [
+     "ODbL-1.0",
+     "CDLA-Permissive-2.0",
+     "CDLA-Permissive-1.0",
+     "CC-BY-4.0",
+     "CC0-1.0"
+    ],
+    "ignDataset": null,
+    "geometrySources": [
+     "OpenStreetMap"
+    ],
+    "altKeys": [
+     "sr",
+     "sr-Cyrl",
+     "sr-Cyrl"
+    ]
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/sarajevo/work/outer.json.gz",
+     "sha256": "b6bb90acee2605116f66c3e40a61723d4dab64a7d77528f861803650e785182a",
+     "bytes": 6357922
+    }
+   ],
+   "ms": 2225,
+   "at": "2026-10-20T22:01:40.876Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "158945ac5d1e4ae7",
+   "operation": "place-city-heights",
+   "version": 1,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "outer",
+     "path": "data/raw/places/sarajevo/work/outer.json.gz",
+     "sha256": "b6bb90acee2605116f66c3e40a61723d4dab64a7d77528f861803650e785182a"
+    },
+    {
+     "label": "raster-heights",
+     "path": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
+     "sha256": "3987bb6a3a3017176383bc51b452e6246ce4e63f2388cc6a7e09d0eac414f7d2"
+    },
+    {
+     "label": "ms-city",
+     "path": "data/raw/places/sarajevo/ms-city.json.gz",
+     "sha256": "556aa71aaef2f186c7df50eb5781f645adb72eaeaa66af761cce814b92951a05"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "raster_min_m": 3,
+    "roof_rule": null,
+    "pitch_deg": 30,
+    "max_roof_m": 8,
+    "rule": "as place-heights, over the city buildings (Overture records whose geometry is from OpenStreetMap; their OSM height and floors first); no roofs (blocks)"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/sarajevo/work/city-heights.json.gz",
+     "sha256": "15e7894b7df6d816f8d9d4d040f8acdcf0bd1b8a1abc01b554f3d2a0c3cfd6fd",
+     "bytes": 1168851
+    }
+   ],
+   "ms": 412,
+   "at": "2026-10-20T22:01:41.858Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "eb7c798b990914d4",
+   "operation": "place-lod",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "outer",
+     "path": "data/raw/places/sarajevo/work/outer.json.gz",
+     "sha256": "b6bb90acee2605116f66c3e40a61723d4dab64a7d77528f861803650e785182a"
+    },
+    {
+     "label": "city-heights",
+     "path": "data/raw/places/sarajevo/work/city-heights.json.gz",
+     "sha256": "15e7894b7df6d816f8d9d4d040f8acdcf0bd1b8a1abc01b554f3d2a0c3cfd6fd"
+    },
+    {
+     "label": "dem-surround",
+     "path": "data/raw/places/sarajevo/dem-surround.bin.gz",
+     "sha256": "0aad6eb881eca70e7f829b53ed421072e06fce85a92852cf6e3c3c8e193aed2b"
+    },
+    {
+     "label": "landcover",
+     "path": "data/raw/places/sarajevo/landcover.bin.gz",
+     "sha256": "3d3a0362b0461bc77a0ed848c04f9edf7f1155fbec7e0954302dcdb958706a63"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    },
+    {
+     "label": "core-tileset",
+     "path": "data/raw/places/sarajevo/work/core-tileset.json",
+     "sha256": "83ab5d59bcc1f3d49273ac119b5a6818530ccafb74dc5f8fe0658314aa2ae7ec"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "grids": {
+     "10": 16,
+     "11": 20,
+     "12": 24,
+     "13": 28
+    },
+    "tex": 256,
+    "jpeg": 70,
+    "block_level": 13,
+    "min_area_m2": 40,
+    "big_area_m2": 600,
+    "big_height_m": 18,
+    "simplify_m": 2.5,
+    "box_fill": 0.85,
+    "outline_min_m2": 300,
+    "blend_m": 8000,
+    "box_m": 10000,
+    "sse_note": "geometricError of a refined cell = max(2 x terrain vertex spacing, the building error of its level)",
+    "ext": [
+     17.9296875,
+     43.4179688,
+     18.984375,
+     44.296875
+    ],
+    "top": 10,
+    "refine": [
+     [
+      30000,
+      11
+     ],
+     [
+      16000,
+      12
+     ],
+     [
+      9000,
+      13
+     ]
+    ],
+    "city": [
+     18.285,
+     43.815,
+     18.46,
+     43.875
+    ],
+    "version_label": "sarajevo-2",
+    "colours": {
+     "water": "#4f86ab",
+     "footprint": "#8d877d",
+     "block": "#d6cbb6"
+    },
+    "roads": {
+     "motorway": {
+      "width_m": 26,
+      "min_px": 1.8,
+      "colour": "#d9825f",
+      "casing": "#7e5a46",
+      "min_level": 0
+     },
+     "trunk": {
+      "width_m": 20,
+      "min_px": 1.6,
+      "colour": "#e3a165",
+      "casing": "#7e5f46",
+      "min_level": 0
+     },
+     "primary": {
+      "width_m": 16,
+      "min_px": 1.4,
+      "colour": "#ecc77e",
+      "casing": "#86704f",
+      "min_level": 0
+     },
+     "secondary": {
+      "width_m": 13,
+      "min_px": 1.1,
+      "colour": "#f2dea0",
+      "min_level": 0
+     },
+     "tertiary": {
+      "width_m": 10,
+      "min_px": 0.8,
+      "colour": "#f4efe2",
+      "min_level": 11
+     },
+     "streets": {
+      "width_m": 7,
+      "min_px": 0.6,
+      "colour": "#f7f4ec",
+      "min_level": 13
+     },
+     "rail": {
+      "width_m": 5,
+      "min_px": 1,
+      "colour": "#5f5a55",
+      "min_level": 0
+     }
+    },
+    "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0); Land cover © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium (CC BY 4.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1126-759.glb",
+     "sha256": "75da1e67767d41f9d96c08dcdb09e6e0f586207274615f58c21a9bbae3054306",
+     "bytes": 22680
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1126-760.glb",
+     "sha256": "ef726ac0cb1b2e408c68c30cffcee834f30a216265e5ecf68f348d4d1f9a39e6",
+     "bytes": 23388
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2252-1520.glb",
+     "sha256": "6fd12d43d90cc986cce5296127c131a256d9e2eb09b1d74f1c314c479914ec80",
+     "bytes": 25512
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2253-1520.glb",
+     "sha256": "fb5c6247ef2d2f4f601f63604fdb8fbc7f3fc9dc0c39d53eddb53b99308cf056",
+     "bytes": 26692
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2252-1521.glb",
+     "sha256": "be82ad20b5e62ee51e9e22a45aaeebceea26dc4a1d2126762188d35fa39aaa61",
+     "bytes": 26528
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2253-1521.glb",
+     "sha256": "c3f5c811ae9118269bc61cff214fb2af41085947f60a30e7e30ba632f12de56f",
+     "bytes": 23188
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1126-761.glb",
+     "sha256": "bea85236c813534d4a0f6a05dc208c2d9e0ef1e5372b54f16d00606e710fb6e0",
+     "bytes": 20588
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2252-1522.glb",
+     "sha256": "017d02dab91630d33aa662fe55587995cf557ef5c8e99b6a144857f9aeed008b",
+     "bytes": 18540
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2253-1522.glb",
+     "sha256": "3df7d41d0a4885a01983202293afb6957d1a000e6df80bdcbbef2d85442283f0",
+     "bytes": 22436
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2252-1523.glb",
+     "sha256": "2ea90d80d6383d412521ddac44d0c12d35a21975c85f8cd03be62b0d1bd4ee4a",
+     "bytes": 23308
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2253-1523.glb",
+     "sha256": "4c68475b2347e7d21a2ee9307fee1fc8ac94f7fc4cb991a715e56323f6ed6425",
+     "bytes": 25228
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1126-762.glb",
+     "sha256": "fd8463b8406696ef1f95a8051770c9bd6bebd6ba4f39bb921e1c94bb4c4b8e6c",
+     "bytes": 22860
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2252-1524.glb",
+     "sha256": "763f2b8afd7b9ee9d66e0b75182a0684b2fe6a6cde9e80c998757f345871532a",
+     "bytes": 22612
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2253-1524.glb",
+     "sha256": "8c5336f3a3f197c36f91dd7e4b91b40a377ad59073d95840f6ffa62d3ff4b120",
+     "bytes": 28784
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2252-1525.glb",
+     "sha256": "6aba89982e0c9251283fa05245caf1057395e4e8a9400ac08815072d1e0f6c1a",
+     "bytes": 25468
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2253-1525.glb",
+     "sha256": "df527caf03a05d4ff23ac075decacd3664599b2958755d4df369ac09e0f05edc",
+     "bytes": 23536
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1126-763.glb",
+     "sha256": "4fe2e9cc4d3dc011cb473622ad6517bb0796635913398b63c34de52ababa3242",
+     "bytes": 25512
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1127-759.glb",
+     "sha256": "ca6d7b7a9ed508c9a78b69491c18de348ebeaf1f169688e1ed2664ff2dfdfd9f",
+     "bytes": 22884
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1127-760.glb",
+     "sha256": "7271bfb205da482451a193c11b23348707fbdeac531805cda54bc17f5971924f",
+     "bytes": 20584
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2254-1520.glb",
+     "sha256": "edf4acdbaf36e15a7ba9db60b8f5ffe7ebd127e274f045b27e2752bba048de5f",
+     "bytes": 23124
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2255-1520.glb",
+     "sha256": "8ff6d2b7fd8f41ef37a4e2e99e7743b37a6cb27932cb4615e8d3a1f20ae1f200",
+     "bytes": 25944
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2254-1521.glb",
+     "sha256": "0ff346aea85e4a6a752d438cd1c625b6c9911569d9a0143689fa8b1d0486f7f5",
+     "bytes": 20192
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2255-1521.glb",
+     "sha256": "993b02cec05ebd5b999fd0753ae0d83c2b4cfd1911bef90523ca13f76677a7e0",
+     "bytes": 19528
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3042.glb",
+     "sha256": "a1dfc88ac1e72763869da8fc63a528e1699a6db45ac9834d307984c80084673a",
+     "bytes": 21908
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3042.glb",
+     "sha256": "1bafc5f9fb0a7bca7347e7d1e916b82860eda1ba9d74c760a6edce3d1c01c74c",
+     "bytes": 24148
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3043.glb",
+     "sha256": "0f50099f3158e827b3268dc47199042320427a3e64170e734f8f77681faec2df",
+     "bytes": 22696
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3043.glb",
+     "sha256": "292847a7a7bc0eaf5a55591bec833a9397e721a6e5caed424cd5735cb54a9d32",
+     "bytes": 22136
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1127-761.glb",
+     "sha256": "d7a788d0352654930c98d305100fedfbc16947646739970d3e3bed3b95f55b4d",
+     "bytes": 25164
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2254-1522.glb",
+     "sha256": "e35cc19687f4bc2dc2b2590561f8f7bbdc6362b3468bb7299aa9e20d00358894",
+     "bytes": 27044
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2255-1522.glb",
+     "sha256": "5dc385e4c89a1d82b308c453989973135646a4d3ef2fc952e8a02a8ffe633410",
+     "bytes": 24024
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3044.glb",
+     "sha256": "02e016d43dc0d5ece721e28b1938a91b4d0c9c45c82299943abc7d658ff306d6",
+     "bytes": 24084
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3044.glb",
+     "sha256": "79aec51197471c58951e8078deb504bc1f88df80c76411c70d2c943758b565a3",
+     "bytes": 20980
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3045.glb",
+     "sha256": "8b246ecf22ad52d71a0b21700304a44dc997ba97df6aa54ed629b1de43cd932f",
+     "bytes": 32372
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3045.glb",
+     "sha256": "0113e98acb391cd101178737ef7be932a98d63f46fc6d9fcddb5b2f2719921fc",
+     "bytes": 30012
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2254-1523.glb",
+     "sha256": "6539af0bf8ae3274a95bad3caf8d5e94c0b45d8e17709fc26a879a9a722a3fce",
+     "bytes": 27796
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2255-1523.glb",
+     "sha256": "a7b18321d62e84a72fa49424dc9b1f13c96c0c9c0da9240f99dc2a1c270b4593",
+     "bytes": 28628
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3046.glb",
+     "sha256": "3de37af2e7234c20c0a782681536a5c39d0a7dab510b281a7c89291cbc7e22ca",
+     "bytes": 32524
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3046.glb",
+     "sha256": "82de20b9d25ad1239c778c10a81cea97e86d90718a974487ab1a2424c3ccb793",
+     "bytes": 31684
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3047.glb",
+     "sha256": "dbc307d2eabbe432745ea470347089160ed76292d6e668d8cc3e02756b012819",
+     "bytes": 29956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3047.glb",
+     "sha256": "7814aedf9116b2e04c510e0d7a65e60f3983633598234bc7d3375aef2f82ee43",
+     "bytes": 30228
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1127-762.glb",
+     "sha256": "df3d333fa8f14e0316aab8562ffb5da64f0aac9cbb0978e2710278d12b9641e0",
+     "bytes": 27572
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2254-1524.glb",
+     "sha256": "336f6dd553149b4bae545f57235a642a8d97f1b55f3eab4a3e9c31f615408bb2",
+     "bytes": 29732
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2255-1524.glb",
+     "sha256": "bb40ea2b4906c9a7a3ea9622fefd33f7596bd2f1cd1ff14b66574bd8bf1ed37f",
+     "bytes": 31580
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3048.glb",
+     "sha256": "3ed62d847af0ba58b08f74db25a7c1fd23654400c5ed8c845b2c4b3420251e35",
+     "bytes": 32144
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3048.glb",
+     "sha256": "c1f58815556f939866793d675be667db90cbc6e4779b4b31a61fc18b0ad728c4",
+     "bytes": 35388
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4510-3049.glb",
+     "sha256": "4d6ce1085ff9ae58fe01fa87d3ee2c4b389ce5394ccf98fa9ae0c1e5635c7aea",
+     "bytes": 35072
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4511-3049.glb",
+     "sha256": "2ae6130b53fc726c78ca2a716fee8fa2618056c15faadf0a52270460401485f2",
+     "bytes": 34900
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2254-1525.glb",
+     "sha256": "428572d2679bcc81b32c3cc6172421e3d76693646c797a4a482cb1c309e90843",
+     "bytes": 30072
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2255-1525.glb",
+     "sha256": "b6b125d7bedf62244008e6d34df9957119fa2e2fee0540f1fe90be7cdef703cc",
+     "bytes": 26264
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1127-763.glb",
+     "sha256": "3620b33174bb1bb2186969f9e9897950f321c81b90035178d7d3fa9f0228bd89",
+     "bytes": 21340
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1128-759.glb",
+     "sha256": "8b25f0f4593351b8fd46241a2208975614ac69a3e342e6e54572eee105199275",
+     "bytes": 23352
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1518.glb",
+     "sha256": "6cc9348aeaa6289cbf4d8aa56bb36ff8fce56171a68e59c5255617221689f031",
+     "bytes": 27000
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1518.glb",
+     "sha256": "9facf8f50732787c53fd2d8183f76d3742323a592f8c6e66440e3ce70ecae743",
+     "bytes": 25204
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1519.glb",
+     "sha256": "6d35b6ee552f8d8684c74ee2016abb18b8572827e77afaaa8e6e68a976dcac59",
+     "bytes": 24620
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1519.glb",
+     "sha256": "183b6b4ef3307da39bb8687df2b06efab6b4ba146e15aec5c9546d37b26939b0",
+     "bytes": 23500
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1128-760.glb",
+     "sha256": "a7f1f3d8aa06ed1b856073b0116ca4f7583faea188717038390dfecce2b9e375",
+     "bytes": 22736
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1520.glb",
+     "sha256": "dd281279ec5c32f02b39afa0be1f73be5ea6fbf0a2874610f5bcdde0c9401c73",
+     "bytes": 23236
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1520.glb",
+     "sha256": "ec0b25f72e6ad5a7455a717f2c006457b4019307b5897b9b477257438b8bfff6",
+     "bytes": 24808
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1521.glb",
+     "sha256": "12a95d07213a5042d55101599bbe7b7958829d1cfe0bcd9b6d20274c41a9af55",
+     "bytes": 24672
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3042.glb",
+     "sha256": "c54d7f755c5c0e254954a08afa42857f18fb616937c0ca686ef947e58c7d4c8e",
+     "bytes": 27340
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3042.glb",
+     "sha256": "70295276bd87acece9bbec636059c06c60379c839ff515801f059896ef782df9",
+     "bytes": 29496
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3043.glb",
+     "sha256": "fb825d3d3b986aa6201d3a57af780fd7bda7a617938f9197400ba5d2e925e5c8",
+     "bytes": 23416
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3043.glb",
+     "sha256": "23345bf4b3f3a3d84a2ef19866656ce12c6d004391815bc950d1d3e1ce68d358",
+     "bytes": 26360
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1521.glb",
+     "sha256": "18984ff86cc7216b2e02f2eb95dfe78f4248c012e6900febd899f17eea15c017",
+     "bytes": 22756
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3042.glb",
+     "sha256": "f0b83b794ab7856441cfc4f0253a44175d07d720aa882d7c8fc0cc1c421244c9",
+     "bytes": 24320
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3042.glb",
+     "sha256": "37aa587029c89a3cef2632b7bef26f01bc6bd43d534c5be740a5ee8583f2bb44",
+     "bytes": 24956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3043.glb",
+     "sha256": "dfa6d4c1b71077bcce3503da086e15054ceaeb03e549b64f1ea153bba5ab9e73",
+     "bytes": 28820
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3043.glb",
+     "sha256": "ebd8c491ec0ea6d5298862b1b078ff5eb0e61dadfe017abe667860a27e9fb507",
+     "bytes": 23392
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1128-761.glb",
+     "sha256": "72e3359d48a18bdfcd5f0959473d96cb720870a20e34df82ac4b38206efe31c7",
+     "bytes": 26956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1522.glb",
+     "sha256": "b71903b523d5d9511c030c74d1831999ed7e8356681c8081aaa5f902ab5490ea",
+     "bytes": 28548
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3044.glb",
+     "sha256": "6d6903f0a0d73f2b30c1d3bf7f4b60bbdd25bc121b2e8e84188ac027940b335c",
+     "bytes": 25096
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3044.glb",
+     "sha256": "8f10bf1ca1a009ca3c44f376a939958186ee99adaff03d7031d823a5af327bd7",
+     "bytes": 30760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6088.glb",
+     "sha256": "2c9498d7d6db7c8f4627b9f8f2cd6b87385fe5c0d56fae271de797264a86de98",
+     "bytes": 27344
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6088.glb",
+     "sha256": "6450c881033c6a5712c4fd4b537f0244d82b0d88aca572552d941c2a4ec84387",
+     "bytes": 31432
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6089.glb",
+     "sha256": "266a4bb11685b25e91197635aa6098472fceeec1e5d20aa3e916413055c9a479",
+     "bytes": 34680
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6089.glb",
+     "sha256": "5e98bd88e6e60fe7a11906ba07b11d95f40214123f21a80c47108a7f1e2f719a",
+     "bytes": 36656
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3045.glb",
+     "sha256": "aaaa7d42f94e202f37c326092e5835938ef5318ff1390ea9bb9c22f145fda864",
+     "bytes": 35416
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9024-6090.glb",
+     "sha256": "18cf7872aa697973d8ae21e6c20b47e9612b47740654b055333c99e2b7aa7a42",
+     "bytes": 37712
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18048-12180.glb",
+     "sha256": "50255e857e335fdce2f394e0a60db5c58129315aeb3f6f520174f25bb02bea76",
+     "bytes": 37748
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12180.glb",
+     "sha256": "6fcff0f546554f93122beadad397b8c6b8f01b4991fc76ab8b73fe6169541b90",
+     "bytes": 40624
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18048-12181.glb",
+     "sha256": "6cbc4799b4b36d5bf89c22f65c9995ffbaa2daec7ed18fdbe61ac2a649d9f39b",
+     "bytes": 47188
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12181.glb",
+     "sha256": "e17cc0a348e86e2d44f11977b5b32ede8d5627a243f5e9e2f5ccb6493aeb3518",
+     "bytes": 75788
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9025-6090.glb",
+     "sha256": "0af1e15d4bbf65a5270d95edefd148c0133c214f06d9f865652a1cb37e1adad0",
+     "bytes": 45784
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12180.glb",
+     "sha256": "cc1d7dfc71649841e9a0e93a527590d8983a4d2f15c9175f901da0959380fafe",
+     "bytes": 57956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12180.glb",
+     "sha256": "1530dab84219016f87a01112b538c9f3b4ba936da4320bd613d0af40806cfb04",
+     "bytes": 67276
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12181.glb",
+     "sha256": "f42a87c6988591c0d0a8b5928edcb4030fe52d432d8df331956c413c9d8f98e6",
+     "bytes": 68912
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12181.glb",
+     "sha256": "ba8cc56ead95ce33dbbb6a6c2ace756efc7ea25456decdd0ef0d5e297fdf1f04",
+     "bytes": 69624
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9024-6091.glb",
+     "sha256": "3f65942622e15a7186e5f44d713784ac648aa6ed3deee9cb58f32d74b6767312",
+     "bytes": 42964
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18048-12182.glb",
+     "sha256": "bc7caca3afad8e906f3e6d12877d172cc62c4f796fbf6e78ed0012298abbf7ae",
+     "bytes": 53272
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12182.glb",
+     "sha256": "e41304ae4df0e71daf88cd58f2507a7b675a778618f53c4f052fc849f2fd6330",
+     "bytes": 73328
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18048-12183.glb",
+     "sha256": "a66dac426ff3819e3fadb9e0de20c711a6ea5ed604a03329ee36a128f359a7dc",
+     "bytes": 51764
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12183.glb",
+     "sha256": "79ecd12ea971f14e429c6664dfb150bf281d9afc612e5ff0b18346196b667146",
+     "bytes": 70188
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9025-6091.glb",
+     "sha256": "3a9890aaab44da71c8c7f031f42413c7ce685692ad39dbeb85a1ba21fa561339",
+     "bytes": 49292
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12182.glb",
+     "sha256": "4dbb382d0cbc601cc97821f15e8ef3a72bf459a1e456e6716537d202c5d95ad4",
+     "bytes": 70136
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12182.glb",
+     "sha256": "a90606770a49a359f99b30bd9e3e311a56d8a4b6ac6ca59670a6bf07794c8c66",
+     "bytes": 83424
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12183.glb",
+     "sha256": "85168dca12b74f2b6f9798a01d760584eba3cbfbb48ae78f21960a03231d2104",
+     "bytes": 58912
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12183.glb",
+     "sha256": "3b31e2cf60593d6ff0c1961805511eae5c68dcffbe4558f9c50221b60a1ec459",
+     "bytes": 56036
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3045.glb",
+     "sha256": "f7f724fceb412e6f349e0c01e7c127f82b074e67f835388c0f9ef3090ffdb488",
+     "bytes": 36404
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6090.glb",
+     "sha256": "b7ccb0573e578252e9180e8a5448967ab4431f97096ac40b6722841c0b933b24",
+     "bytes": 45528
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12180.glb",
+     "sha256": "a2926c8f9301a43218009d47e8733b6f34dea01cea1df4561c19230c2f45debb",
+     "bytes": 67224
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12180.glb",
+     "sha256": "14ad5fb26bb2526154ded0be5b46cb1219ba0b64c45266d8ed87ea89c3ffa9a2",
+     "bytes": 49736
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12181.glb",
+     "sha256": "3db25722783dd43a493d571cb5adb4812a5d91cfe0bd2b346f3cea3cd68f8ba9",
+     "bytes": 77864
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12181.glb",
+     "sha256": "edf4ed0243ad8f4d7c95cdfda699eb85d04860e656eec1ccc68fac990762c704",
+     "bytes": 92408
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6090.glb",
+     "sha256": "8dc08319dcdd97c58b4c634acca16950f7e9d2e8720dd2d563634caf18ebedfb",
+     "bytes": 51788
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12180.glb",
+     "sha256": "c9bd2c7114f75a91ab3061b2a0be09fb7528887595113fd99d7cc246ec701c61",
+     "bytes": 65760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12180.glb",
+     "sha256": "a660b2afdc48f92b2f7d432aadeaf5f483684207df2dbd21f06d80ee8545d1d9",
+     "bytes": 63600
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12181.glb",
+     "sha256": "b70b472b735ade7c7163e873e9396cd4d36ac4e733ffa746167a38b8c30bfde7",
+     "bytes": 74108
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12181.glb",
+     "sha256": "1fbff10b9b3fd708d6bec6dc9d946167875bcd5f5028beb6b7986f3177299349",
+     "bytes": 63892
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6091.glb",
+     "sha256": "697e78cd30d5b69b63f7596748797ea0f27f44b285b7262e726dc07f944b3402",
+     "bytes": 56460
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12182.glb",
+     "sha256": "309262ef9bc2f1ac28479bf2c58defaafa26921540719863a3e0306626d295c9",
+     "bytes": 83424
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12182.glb",
+     "sha256": "683c7c7bef20d8f1e6980881e5ead90053b917db08207e24d947b25ea2017150",
+     "bytes": 90556
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12183.glb",
+     "sha256": "49105a6bf2c7076d951204f9e400f0c4d743695d64ae5647070efe01d74ba59b",
+     "bytes": 72844
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12183.glb",
+     "sha256": "0199e459ae71b23b0de719316b1fb29f08ab8d5d1fad916265fa055a261f1e48",
+     "bytes": 77276
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6091.glb",
+     "sha256": "5a4fae8d386ca4118161736689e25512896dc293296beaa1447b50b513cbce72",
+     "bytes": 51032
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12182.glb",
+     "sha256": "9379e1b9200f4e7fccfef4f03af75971bd8d10bdb8995b608e114d38033388ad",
+     "bytes": 82992
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12182.glb",
+     "sha256": "732beb6fb19bd3f1a29cfb17fc503b6fddbbd7e254d622503a04850fb0bebabb",
+     "bytes": 96336
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12183.glb",
+     "sha256": "a7e5d96b5d549adf24437c8811ac2285d59767cf149f8e64fdd9c64fea19ff25",
+     "bytes": 89100
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12183.glb",
+     "sha256": "1ddd7b0f67fa5defb89fafcb946bdfdfc47f159a3228c053e9486995e87ec56e",
+     "bytes": 85020
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1522.glb",
+     "sha256": "ca10374507c6777d9638710a39f14b656a1f6b3000e5fc6d4cc2c0665715a8b2",
+     "bytes": 28188
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3044.glb",
+     "sha256": "65fb9120ede6de09cbfd3830048ff5d0f304410e4bbf81a3a2ef86c621340f6e",
+     "bytes": 29036
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6088.glb",
+     "sha256": "e92f60d523a6b787f2d38ec45431001d87a092cea7cada07765679748bb1cc30",
+     "bytes": 27000
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6088.glb",
+     "sha256": "2189ed95a4dd6622c31345a2fe8aa97e1384b7d5a01f6bbbc107286e29d5d554",
+     "bytes": 28012
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6089.glb",
+     "sha256": "c4b63c9055b6532c8343b544b6405debc0616f47329de0eafa15cadaaa7afa72",
+     "bytes": 35596
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6089.glb",
+     "sha256": "0dbf94d273c347462616deaa6636ac8d00ad568b8a0a5fa552c14f84b575a6bf",
+     "bytes": 32200
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3044.glb",
+     "sha256": "6e1a87bf4e5117044d89f5a2af14bb53b2b9a8d04842a8a7a34c752d16de06b7",
+     "bytes": 28512
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6088.glb",
+     "sha256": "c47ae9bf460d888e3daa946206c7eef86afb157623d0ca2b60204f13e73337ca",
+     "bytes": 28292
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6088.glb",
+     "sha256": "d58fb9f563bedc02b2a307d273bc8f97374fda01d1e9a63188f6be9bea586d3d",
+     "bytes": 30780
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6089.glb",
+     "sha256": "fd469abf91972ec777dc8e33ebd90da4a50d95a382314ce893afea0e09a1ecce",
+     "bytes": 32312
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6089.glb",
+     "sha256": "bd1e4f291d1c8ed988da7ff00ac56fe176ba7346ae9e346ae3724188a99b1ad6",
+     "bytes": 29380
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3045.glb",
+     "sha256": "a012cea9b418787c11e9482c7dc3bbd5f47796d7e132c26f072f718bedae647c",
+     "bytes": 34652
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6090.glb",
+     "sha256": "8c2db3e3965f5960cf8564d4b12fe2cb3a9943a2ae950cfc80ff5f677fc9b24a",
+     "bytes": 41348
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12180.glb",
+     "sha256": "560883a9768ca1f17a410716d84f500f5cd9e7933eebeed67c52a6c3cfa1542c",
+     "bytes": 63016
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12180.glb",
+     "sha256": "7944c3dd005102711306d9203a8298dedffb10229947a3ec49adccadf677b4ae",
+     "bytes": 47032
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12181.glb",
+     "sha256": "bffb163d2c127a7fed25c9ee00d979b4bbfdace3ac64d5b1c2d799c4b631fe0f",
+     "bytes": 58500
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12181.glb",
+     "sha256": "2486615331cdcc3d79081aeec988df0e6bb435d86449c510675c605bec47e9be",
+     "bytes": 50804
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6090.glb",
+     "sha256": "598dec9fb7f8fc0c7c5f13e545c5c366a82653f69c8b7d35d7cd947a2339af0f",
+     "bytes": 32784
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12180.glb",
+     "sha256": "aaa7a280ce01c39af93052c2f3317a422bc0388a6d698270d9cc6dddd02e6447",
+     "bytes": 36792
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12180.glb",
+     "sha256": "25ac9bc113a2bd16fe92776a01a20c916ea02df1fb8f1f138af0ac4afbcf8192",
+     "bytes": 38124
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12181.glb",
+     "sha256": "12debf254412e0693a48266b5100ed4d75930dcc644e56b0b67dfce838d23066",
+     "bytes": 38968
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12181.glb",
+     "sha256": "efa70ab207dc85e73cb27e4c657bc401112abba1d81814e5c666778b0273fbcc",
+     "bytes": 44408
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6091.glb",
+     "sha256": "915655f0b8e8639f047f7327e0c4e3e50984a5fdaca7751ee33e9265574485f7",
+     "bytes": 55368
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12182.glb",
+     "sha256": "d68b090d4c79cf52e274c7f1145eac7327d38716ae23738f3e2cd9b30d8351e7",
+     "bytes": 101164
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12182.glb",
+     "sha256": "68a80c47598e9894cfd436639996f79ed392197b38dcfd7935456f9177c1cacb",
+     "bytes": 85940
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12183.glb",
+     "sha256": "14ff6766853b927c1dd2cbf9b8c415dd88abf17347259c7edb0d74fedc38a909",
+     "bytes": 77124
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12183.glb",
+     "sha256": "5208618706f0f9f001053409a4cac7d0b0dd759df9d4e5708848e24470b01e3f",
+     "bytes": 70256
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6091.glb",
+     "sha256": "4487a0eecd97374cad6399fded6397161abe0775809a08e1c84288aa433a2c79",
+     "bytes": 50440
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12182.glb",
+     "sha256": "7e286881640a11f0e0efbc4e8f85279f76192537d56372d7d074d23b6eeb63b0",
+     "bytes": 63864
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12182.glb",
+     "sha256": "df21d24ac03c35e08b0be79a0005803a4ba7417083ca51b14c59f2ecf057cd85",
+     "bytes": 50376
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12183.glb",
+     "sha256": "e0f1af979d1cd9faf8e9c7536887d953d3e4e62f460adc532cfe28ef7fe859d3",
+     "bytes": 79264
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12183.glb",
+     "sha256": "5d8040cb0c20eebc5187b8e8bf7d85a1f41afeb6516b838f4300a136a60c3438",
+     "bytes": 102604
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3045.glb",
+     "sha256": "1dbedb07dae34bbeffb96ce50aa0e05561d41fb002f4551cd687c9bb57309bbe",
+     "bytes": 29808
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6090.glb",
+     "sha256": "d30fc563b6448edc94e787d7bfad24fdddd370a34c8ef30d742accff12639c7d",
+     "bytes": 31920
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12180.glb",
+     "sha256": "48a70b86bcad9781b286bd7c84cd9398d94f0431e694873cd7163a1444d5c6b2",
+     "bytes": 42776
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12180.glb",
+     "sha256": "b883c839fe83f5f9084babaa7528c4e26fd70f03801cca2aaa997ee2f1f517b1",
+     "bytes": 35140
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12181.glb",
+     "sha256": "63ec3f2e6a7f33ea2f0094d531abaf21268e5b25d72786c88b2ac33ca8874acf",
+     "bytes": 37636
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12181.glb",
+     "sha256": "8490d6b7210fbda0025599b4e2fb9057a81516fc27b970807b5e22dc12488aef",
+     "bytes": 35488
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6090.glb",
+     "sha256": "30071d991a126ecdc777122f9e4c000245a6602963293cb1ddec80928e311006",
+     "bytes": 29780
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12180.glb",
+     "sha256": "080dfb7a7ad66194eed7ec7ac76213d547e5fd68f9ab3752956117adb5af3df5",
+     "bytes": 35876
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12180.glb",
+     "sha256": "82502c6dc583fc3a1d7e3ff918c28ccbed076dcaef6cff9691a626ebb89caeb4",
+     "bytes": 34640
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12181.glb",
+     "sha256": "12225ddf38ce44a041342320b0961a7230f6f3a6ba3046d8d43027a537279e81",
+     "bytes": 33376
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12181.glb",
+     "sha256": "703a610c14b5f68756b0e3011631fc733dd97e0e5d38511088b13f693b948556",
+     "bytes": 33308
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6091.glb",
+     "sha256": "2a060fdbe915293ca9d9321f9a367289f152efb016e7cfb9bf9d2a3c868718bb",
+     "bytes": 41856
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12182.glb",
+     "sha256": "e179cb2c6b68adda30d7440c5417235cfe89b186c27067d20a3574f2cf82684c",
+     "bytes": 42200
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12182.glb",
+     "sha256": "6d3d2cd1fbd02587d2b196234d2c68adc37f272c8e55727b377f640fe0b274ca",
+     "bytes": 39996
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12183.glb",
+     "sha256": "4a859f4fbbadc0b79cb3d6dbdb2e5155f8e9972a223d467ef01098e6b242eff9",
+     "bytes": 102220
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24366.glb",
+     "sha256": "b02ec6b8304136efa643f250198749d6f9cb920b9d30f2731271271d9e58b323",
+     "bytes": 59200
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24366.glb",
+     "sha256": "50cc915e22ac25169fab8772df2a7b3e7de47aa3b4bca2fa37913ae9aedbe4c5",
+     "bytes": 47396
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24367.glb",
+     "sha256": "be970b4ae965d49d30f410ccf2c9eaddf936dae48abc1209854e98e8429d8cc0",
+     "bytes": 59020
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12183.glb",
+     "sha256": "e05b8a6a5219d07ce0febda2d51b7bcfd8fda88de0d4acb6a60c52e4e6b44032",
+     "bytes": 125352
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24366.glb",
+     "sha256": "9a25637337154988d190d7b9725c6f45303876929e4363c6bbc5283af112a1f9",
+     "bytes": 61644
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24366.glb",
+     "sha256": "1d544a21cc3c7629324adbe0b51409c8bb92f90dbc2bc6e2db32345a355f536b",
+     "bytes": 63024
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6091.glb",
+     "sha256": "40de07e3a3964efc613f1d0ed7958c1cd7ebdec48b5d6cd7a31932e9ede57bd9",
+     "bytes": 36632
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12182.glb",
+     "sha256": "fc867ef1e0178540dd51dfbd50968a40e073a42fc1a997447a070af3ee2a172c",
+     "bytes": 36712
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12182.glb",
+     "sha256": "1b1a9aa9f10afa82b5afdd716813fad72923103924983963b93b2832f4faa42b",
+     "bytes": 35904
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12183.glb",
+     "sha256": "918a0b5e7db2cd7c57008fcf1ae5c32f6fda015390ca8d469ea35e199112e3d1",
+     "bytes": 83484
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24366.glb",
+     "sha256": "b1710b6e37930e11460b2898a3221a0a047d465eb65191b22a2f4d8f052aaec8",
+     "bytes": 45536
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24366.glb",
+     "sha256": "3139651772bb901d7a048e415cf6ad3f56d853ecbbf6cb5266f53ce53da54c9c",
+     "bytes": 45284
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12183.glb",
+     "sha256": "7eaaf82e713cbec6e64403c9d24b33b352675dcbd9c563fcc591366221c5f62a",
+     "bytes": 53080
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1523.glb",
+     "sha256": "f7263285a1d6a222590993a609a4dcbb5f6d814bb651ac8b5312aa15beb49aa6",
+     "bytes": 30540
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3046.glb",
+     "sha256": "27075bb80b5b14da233b09228ec8389c2a6e9c9aa35181d38ca58e812b9a3cd7",
+     "bytes": 35892
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9024-6092.glb",
+     "sha256": "fb005d40b99d4d60d4221ffb1f411ec3dacfd2b47d9bb5b23d227b22679d3a60",
+     "bytes": 37808
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18048-12184.glb",
+     "sha256": "b747b3286003213d09eaab4b8e0c5020655c274ae704f17ea65511eb0c909e5e",
+     "bytes": 33440
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12184.glb",
+     "sha256": "1f92ad3f2b65d896cbcecd8834fc947e5201ce29a423b29153d37d759c844311",
+     "bytes": 48032
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18048-12185.glb",
+     "sha256": "baa0981091fe8259bca271497cc010851aa506927861ac4a22e4a2829cdfe375",
+     "bytes": 45156
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12185.glb",
+     "sha256": "a6852bb5f5a6dfebf15739ba673662edb9776fdc884475f3324ea9ae035d79c9",
+     "bytes": 41484
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9025-6092.glb",
+     "sha256": "ba0477f55c7606fd34e7f2ab05f090842a0c3bcec51ad860a1bc214c909587b8",
+     "bytes": 43732
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12184.glb",
+     "sha256": "cad8037d7957902076fbea577aa03fa34bfa9cba822b3085721f0ec0553cfbfb",
+     "bytes": 46000
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12184.glb",
+     "sha256": "5e75627a3fbdc75970dcc215dc22f57c8d2147fb20355f955e45fa00147f6d64",
+     "bytes": 83248
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12185.glb",
+     "sha256": "ce0e9b5ef31b76acdb2c2d1f496031b180504c8dc3a9ff3dc82777c960172dac",
+     "bytes": 50112
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12185.glb",
+     "sha256": "d1f7988471426e22104d0314096fdab68f30e85455105b4f818e1a6ca5a16f05",
+     "bytes": 67192
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9024-6093.glb",
+     "sha256": "4e5abc77813f17736dada88c6a842984f5745e3cb3a440d289825c6507507675",
+     "bytes": 34932
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9025-6093.glb",
+     "sha256": "1681063a6a4a6cd68f21b4f58ea54fd4bb51e97d649cd9859367f9df40ab5d3c",
+     "bytes": 36900
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3046.glb",
+     "sha256": "2849badceb2a0018c8bf537c08f2b9449cacc6a6bcd7a9c4de4b6473bebb5e94",
+     "bytes": 34996
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6092.glb",
+     "sha256": "72546a2af2a59c2b12d5982664b7185a80353f692829aa10f0df64259d9b35e0",
+     "bytes": 38784
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12184.glb",
+     "sha256": "6da6825c6e1b40ad71301f807489dbd492b98ac7ae280365fb20121032b47663",
+     "bytes": 83332
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12184.glb",
+     "sha256": "152ca709968c68d071a95bbd8ae6038cb71a641d2560ec0832c5f42aa8a20b02",
+     "bytes": 68324
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12185.glb",
+     "sha256": "8c317961c7d67e97d726bb6f0def9737f905cf78b5e785ecf0fd8d99b7787b9d",
+     "bytes": 47088
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12185.glb",
+     "sha256": "6dd644cd5ce7303f51384122c1ea33b2f220ffb4eb9dce7f749f7b306bb03ff0",
+     "bytes": 36276
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6092.glb",
+     "sha256": "530a98230a96c8bacc97fb21afcb62afb6df4261f999b09cc1fc936454bd8197",
+     "bytes": 38596
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12184.glb",
+     "sha256": "7dfafeaf3b6c44c49d4fb5e4c74af37afb91e82cc777d5742a36e81710b99c67",
+     "bytes": 84680
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12184.glb",
+     "sha256": "3362cc921443dc09c08bd6d4ab8236e09322a238e7e0cb658c9d4853c3abba96",
+     "bytes": 93572
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12185.glb",
+     "sha256": "0c35253e81a111e7892e19fe82daaeefe122396ac05922acf04c40d60ce4cd10",
+     "bytes": 35320
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12185.glb",
+     "sha256": "580f0507dd39928ccdf70abdfe661ce889b7e9c9829202421ac678200c2b8d9b",
+     "bytes": 37216
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6093.glb",
+     "sha256": "bca44630796483233e440c4428aa2f2ecf4504087f79b97d1bc8a3d7ca0433ae",
+     "bytes": 35576
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6093.glb",
+     "sha256": "4552aa363472fd0a7de9167d66cedd5efc646aa403b4caa8208947a153fe5d11",
+     "bytes": 35996
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3047.glb",
+     "sha256": "66101dcdfe1960a5120d02945409e9000ac920bf829bfdcb476be8e7f05ca435",
+     "bytes": 33100
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3047.glb",
+     "sha256": "d6bafbe1483c5200e9cfc784ba2377705aeb1763350c7987e5018c31e2c498c1",
+     "bytes": 28820
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6094.glb",
+     "sha256": "4e8cbadcf45e76b1e88a7ae81f82d750b4437b0305c8d4ae5b1f86e0cabf76a2",
+     "bytes": 34080
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6094.glb",
+     "sha256": "c838041389b5245b350564b07dd31ecf88cff9ff5ed9c219a2526253ee1939f6",
+     "bytes": 32400
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9026-6095.glb",
+     "sha256": "ab0838ef5d114783f2f4ade5de2aeaf451febe9485d59f3b429a050856fd99c0",
+     "bytes": 30456
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9027-6095.glb",
+     "sha256": "1e17ce18a6691cbda1cdfcfa3061cedcd657c8f7f002a660515134f33b26e82d",
+     "bytes": 25304
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1523.glb",
+     "sha256": "ca3a515496b6bb9b3e95213e15b99d9913128349b6306a7c98de332d8b423da7",
+     "bytes": 29344
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3046.glb",
+     "sha256": "acde548b81bc1a46f0d3282aa12f8e2e8fa07066386a9c1f9debaa641800551a",
+     "bytes": 36948
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6092.glb",
+     "sha256": "cd9e8b451f028c371e9712cade6463710ad6859fd06a3193e96af3524cd7e9bd",
+     "bytes": 40764
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12184.glb",
+     "sha256": "ba811e497e7d68ede6fb774497618697589b77624dcbc782173aad9ea986210f",
+     "bytes": 68176
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12184.glb",
+     "sha256": "4b6b9093faa48810bd8881e1f13f7a0cb0df23dd4750bc7ce9c8355dafc9ffe4",
+     "bytes": 96752
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12185.glb",
+     "sha256": "827eba2a0f0b7d3625e757e34aecdf1a8f1ca1e7b8e6c1dd2a31bb48edce8225",
+     "bytes": 42696
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12185.glb",
+     "sha256": "a1ab153c5c87174f5e8018cefd05129d286b5d4e6cd689fe5e693cebe944caae",
+     "bytes": 44348
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6092.glb",
+     "sha256": "4d103f54b78afc0824b9c47fe22d490929694bbb9f2bb4df2f36564ea503bf20",
+     "bytes": 47492
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12184.glb",
+     "sha256": "f6887b39fa77f84240eadc166a0e12817fd5688b606384bd416dc6554d134045",
+     "bytes": 89640
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12184.glb",
+     "sha256": "11db4e4fa78eecd8e5c2d37590b63ac71f2e856efd998a93850d71bf823d829f",
+     "bytes": 103416
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12185.glb",
+     "sha256": "9671a4b989397af1a3ea98eb5386cee0b8db13e6513af5da6247b6e88ec0182d",
+     "bytes": 64884
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12185.glb",
+     "sha256": "89f0d90adc9469f334e93097bdb88da12aee194257fe79e0fd1d7725a73a5ea7",
+     "bytes": 58156
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6093.glb",
+     "sha256": "205a3bbb706a13d7e781136007b064d014e9bd0ee75ebfb9012ad4bafc896be8",
+     "bytes": 38808
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6093.glb",
+     "sha256": "9d1a0744b274e3f5bf532db1da13b72330765b4a9fdf3133838dd63cc3c0d067",
+     "bytes": 36544
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3046.glb",
+     "sha256": "59d92fe5d9bddc3622847ac0c2a19dfa95c7215b5d50723b85edadc31821a96e",
+     "bytes": 34956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6092.glb",
+     "sha256": "fa2888244443227f0e0c44351b0e27d0145e10adbf082604c3c3de581d5665fa",
+     "bytes": 50044
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12184.glb",
+     "sha256": "c811ec54914138632640ec32848246b501d55972550b556ae4cc09803e657a6a",
+     "bytes": 141968
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24368.glb",
+     "sha256": "196a05603d3430f19ed3025b6450d6a93fbc78a7aed64a2fe44f6d43c087cf20",
+     "bytes": 62964
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24369.glb",
+     "sha256": "ee5d8fa499ed6f4914b2a5684a28fced93bfb60670c2c4187cc509b59339ae1e",
+     "bytes": 64736
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12184.glb",
+     "sha256": "dc71bd337c95cb8956158b9f05b699b7494919003fb294451d5c9cc8ccad2104",
+     "bytes": 160568
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12185.glb",
+     "sha256": "49dffddb1b11a5d47856bd8a30e8e691bc6e1233a72a11e39356ec2f038c21a6",
+     "bytes": 82868
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12185.glb",
+     "sha256": "0452ebed2b656d2073fd664fae6286289c46ce5a238c3b9b5085cde83af9b89d",
+     "bytes": 84840
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6092.glb",
+     "sha256": "7c0a50cb8169cdbe72c753800d7e3b6e577b5e6686466c5d0df092c1afb5be44",
+     "bytes": 44064
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12184.glb",
+     "sha256": "43ee46909a034a5f2e54c6286c5f5c15969a8449b32c67b319e5505a9bb925ea",
+     "bytes": 112280
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12184.glb",
+     "sha256": "406fdf6fc652a0b7e48175e1b3efc47f47fd9c9f6ef446cffecc2502fdeaff26",
+     "bytes": 57872
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12185.glb",
+     "sha256": "cfb66a6e20bdfa29106f12c5954024fc2eae3201bcdb71eb59825e652c992eea",
+     "bytes": 64676
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12185.glb",
+     "sha256": "97cbffd4929274f42bf19ef157cf21d701e4dce8f66b24518c4635054408d07e",
+     "bytes": 58128
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6093.glb",
+     "sha256": "811a542aeb48aa36aaf5ffa2f85cb8ac41fa7ef1a067284804134de411084bfb",
+     "bytes": 33896
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6093.glb",
+     "sha256": "ec97eb9f71e6fac4e7d2a1e6654b61ef9c09877100e8de89093ba0a7a60b01b1",
+     "bytes": 32384
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3047.glb",
+     "sha256": "2a372de0aee30072d580a2d80d967e2031c29c45939e74c3f010e079f69eecbb",
+     "bytes": 28048
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6094.glb",
+     "sha256": "2860a366f4fb209002579ce9941e4500018ee21b10d4b92bdc0e173c27c37ce5",
+     "bytes": 30248
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6094.glb",
+     "sha256": "a776dd512a05a18fc52c5af6f5a7c0e884678132fb9418ffbf0fed13732b5fb5",
+     "bytes": 34548
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9028-6095.glb",
+     "sha256": "8604bd383c81ad0e84a1406e5347fa5a64adafbd2f3dbcef43ac322a4274b043",
+     "bytes": 28040
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9029-6095.glb",
+     "sha256": "eb21d32a5554e77ff9a3ad9d61790e5d58d41c87d8b6c612fb877b9fe80ba0bd",
+     "bytes": 26860
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3047.glb",
+     "sha256": "dfdbaedefea05da3f464a6820c7a8b065d01f698b29f495b3304e8dcc87d8cf2",
+     "bytes": 28824
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6094.glb",
+     "sha256": "c98558b2a230d9c11673143757f7a0d1e4eb16cba33fc095849325bee240f5d1",
+     "bytes": 30696
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6094.glb",
+     "sha256": "a7e661897ec2a140d3fd85128a677af148d909f5fb284b8d41f8ce733ad240d5",
+     "bytes": 30928
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9030-6095.glb",
+     "sha256": "edcbdc59ff0057b84e4da0f313be22df12c9ee20a783844ecf42418e97495716",
+     "bytes": 28272
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9031-6095.glb",
+     "sha256": "d1f5843fda6bc1f455898260fe36bd2deb1151586a9a6c9ccf0b6e67c5d76b97",
+     "bytes": 30324
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1128-762.glb",
+     "sha256": "8ecc6168f6dc7a94737fc7f9defa7899972a000c8c4044b6a04d9e15fd0c1a1e",
+     "bytes": 22892
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1524.glb",
+     "sha256": "a742ce648548fee36cace9eb2e8e45c0a1a3d3651cd1bc90daae619cef98aa1a",
+     "bytes": 23996
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3048.glb",
+     "sha256": "14fc75ceddf660ebc02b50b7770c43cc1c45b9b19cd8e52ebe12297b5a2ab304",
+     "bytes": 27384
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3048.glb",
+     "sha256": "fc5f04f2af03d7cdfb4432f4c9e6957cd96e4c227c0d62ede5f4ba1f8bc9b7fb",
+     "bytes": 25776
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4512-3049.glb",
+     "sha256": "346444ad268914911b4245369b3bb24a51fd7a4f39bf2012b546b548767483ca",
+     "bytes": 27620
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4513-3049.glb",
+     "sha256": "408c90d6d83616300cf0d48c0e0d715553845f89101cb3c52d3178fc9f2f8c28",
+     "bytes": 25308
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1524.glb",
+     "sha256": "4bae916074fbbc78ee34dc9e1f488c2becf037063b26768ede2b79fe3e2e26c2",
+     "bytes": 22884
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3048.glb",
+     "sha256": "a4da155dd23e5b29c963097901c1319aae87f97e447b3c6b2879c795f9108cac",
+     "bytes": 26092
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3048.glb",
+     "sha256": "404fe3d248fd597be6a49b56eb59372d2e3ab9682a6219c99367408a5ea2b845",
+     "bytes": 24536
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4514-3049.glb",
+     "sha256": "37ac8323c2f69c44e41f9d255b8e8b513322d7c45f106d2062297e417ca2519f",
+     "bytes": 26432
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4515-3049.glb",
+     "sha256": "7e499cf9a5cb8d3875084b052544f5c0c575188e3d64e100adde36a5ddf3dac5",
+     "bytes": 24192
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1525.glb",
+     "sha256": "de4521a2d47325eb26053b1663570789a65f048b4bd622c6e65373ec9d24a6b6",
+     "bytes": 25048
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1525.glb",
+     "sha256": "a9442c68ae3f6ffc5ae0661d1ec06db69dcabfc7f9e2531b4c29a4a729b69d23",
+     "bytes": 24104
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1128-763.glb",
+     "sha256": "dbe322e0ba9290f18ee031259fbd6ce2b1ae09e1dccf912f276ea50ba703e2ec",
+     "bytes": 19760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1526.glb",
+     "sha256": "11a08d7ae4e351655c112694cdd505aff6bc32600109ff345f836414ef02efb4",
+     "bytes": 24572
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1526.glb",
+     "sha256": "900716946fecf450562ed0680b7d039fa34767a9e164efd8798567a4f95fe353",
+     "bytes": 20248
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2256-1527.glb",
+     "sha256": "6b17517549b87bd01cbbe16da21eb4a6691f352128407d93f64216b1872ab5c8",
+     "bytes": 18272
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2257-1527.glb",
+     "sha256": "d06493dbe63d81e57021f8e4001a5d8f53efc42932f54bef6d2edcade9b4d808",
+     "bytes": 22972
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1129-759.glb",
+     "sha256": "abb23d726cd07f1e650098e6ee94c5b65c4ade4d387b7cc77b8d0ce931a04ab2",
+     "bytes": 22616
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1518.glb",
+     "sha256": "deffeb319f59a36a2d866b291131300ae3148118c654ae6a396b5a18454f8649",
+     "bytes": 23232
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1518.glb",
+     "sha256": "577f6485798ff2c40dd196b7f146011f635f6888853639124e65d59bc36af243",
+     "bytes": 21792
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1519.glb",
+     "sha256": "3ca851e62f4647bf666d96159fd7e8f9cf1d722510b30e29a0d6de4e526388d4",
+     "bytes": 25864
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1519.glb",
+     "sha256": "2478ee0da29a74d2906acdd25d64089495390b64bfb60cc4d28d96ea872ce595",
+     "bytes": 24600
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1129-760.glb",
+     "sha256": "b260068276d3786d44a3c74f802edb69313319c296bd653eb24641d517c444be",
+     "bytes": 20496
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1520.glb",
+     "sha256": "a5781864c7835aa9dfb8f9dc9288936ae926fe8fd0d628d952bbc7243b94c66e",
+     "bytes": 20520
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1520.glb",
+     "sha256": "5aa21c9504736c0780534b12bf1064c15896ed45dc5f001c292beebebdeee088",
+     "bytes": 22224
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1521.glb",
+     "sha256": "a0416744193f5873eb52d757c529f0080187e4c4f9ddc2f38ad462e909c4bac6",
+     "bytes": 22528
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3042.glb",
+     "sha256": "e5c759a3321201c671a934b96c6d70779d6859694c4060c283ae1766dc75845e",
+     "bytes": 28768
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3042.glb",
+     "sha256": "6172a311b80a895e4fc69b6de1274e27945b15fbd6c55294628170cced7f1ee6",
+     "bytes": 29456
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3043.glb",
+     "sha256": "aaaf91b1b7bf737af6e35785ff2f7dec8cc873ea17c58e5e40d746e2ac3916e4",
+     "bytes": 21712
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3043.glb",
+     "sha256": "f2524045a780989a33db30492f62da08e7c391f18ec00719a56636cc09118004",
+     "bytes": 21936
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1521.glb",
+     "sha256": "e1a112172be946bb9dc5280555f9918b22717126ff96bed24f4b81d89093312b",
+     "bytes": 22572
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3042.glb",
+     "sha256": "8f4ad5f2076a262ff87896e567553016ffecf8bd80a488d79dc2e6caafa8db29",
+     "bytes": 26528
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3042.glb",
+     "sha256": "73edd37ddc0d1b50bf9a57685eb5f3ca394628a03a94c4e6b3f78462dbcd9e84",
+     "bytes": 23148
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3043.glb",
+     "sha256": "ced077ce89bf573877336f46b222f7f9dc97312d9a73846aa2c70e5febc0faeb",
+     "bytes": 25436
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3043.glb",
+     "sha256": "54f23fbcf2313da0408c959574f4559c5afdf06f1d30ea9a1d9ae1509724368e",
+     "bytes": 24936
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1129-761.glb",
+     "sha256": "9d8be13701238cba69a9bb84f012f9239fd81bdb03f89a436785fe93fd8d61ae",
+     "bytes": 24872
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1522.glb",
+     "sha256": "fcf06508c9aa474737804c774ca88a100c41fa90a5b7d119fcde401c6a9b82cc",
+     "bytes": 25004
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3044.glb",
+     "sha256": "024e104b666a4923a2eda038c3f1c2b1d0adc4ef4d45ee902f4d6528cdecd67e",
+     "bytes": 26464
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6088.glb",
+     "sha256": "8e4450b65b1dcf35860fe9fb0cafbcd2c9c53098da0d6c519334f4c2b63b172a",
+     "bytes": 27212
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6088.glb",
+     "sha256": "3130bd35616d477e0ed73e9eb50fda98cb94bcc9d8519fc27108d75ade02d97e",
+     "bytes": 28028
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6089.glb",
+     "sha256": "38451747a2c11ab3db74fb45692327884a8fdd676e06296afbba9a78e5eea9f7",
+     "bytes": 29452
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6089.glb",
+     "sha256": "554a7e64d5efc1783e4aac12c8b4ae3c15deb103be6f8cdb0b4bdb0051a3c884",
+     "bytes": 28696
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3044.glb",
+     "sha256": "4137e8aa52cb59feab2da408b00723af319a1e59e29d269f5e20ee8e397dd4c4",
+     "bytes": 25344
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6088.glb",
+     "sha256": "55b67bfee33b0ce5b86e8d63188bd7b9adfe81d8bf8804685ae724c60217a4a9",
+     "bytes": 26064
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6088.glb",
+     "sha256": "ce82c7f18f67b013d1a92710293fb532a4b6cdd25576040ea7084db7dca3cd08",
+     "bytes": 27012
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6089.glb",
+     "sha256": "a5078c5d60aad16491c2be4916e5839ceb4288b9e798cae4a5adbae048fee7cf",
+     "bytes": 29956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6089.glb",
+     "sha256": "097fa946c9bd020704257dc3fc3451266f12595423e4d3600356f90381eb4aaf",
+     "bytes": 28124
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3045.glb",
+     "sha256": "5ba44370e35d6f1df420509669099afda9aa592444eb3794e43f1ed686d14e2e",
+     "bytes": 27836
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6090.glb",
+     "sha256": "4266e721342bb2224c3a930cbdb9c2e07bb9846442599ac99df10ce23f41b7c7",
+     "bytes": 30564
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18064-12180.glb",
+     "sha256": "4f272afe1d37b9ab9b90f581fc24f7687d43db5018ed6310ad02edc410217e42",
+     "bytes": 32296
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18065-12180.glb",
+     "sha256": "43ba8a2997938bba5e3e7e757cff92100691ccbeba8cc5b0b37cb6754560c815",
+     "bytes": 32900
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18064-12181.glb",
+     "sha256": "c4d6364cf00151e68493da5bff1f4cdf4eb63da495e2aa07b7c736a7153319f8",
+     "bytes": 32128
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18065-12181.glb",
+     "sha256": "3bfb179dac6e203e2d77b2615b71f5939a50a2e26199fa216f1e37347982f2da",
+     "bytes": 34728
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6090.glb",
+     "sha256": "44173a7b99eee0714a83a779894a06384fc30f65dce75ed2e67b929ee5da08c2",
+     "bytes": 28196
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6091.glb",
+     "sha256": "0940b116f9413b63ba8cfd958950b36c7930534c334d420f8eca3ecc2e16456a",
+     "bytes": 29124
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18064-12182.glb",
+     "sha256": "c35f71d32573e807b94ed11234d48cc58569c90a6e378d564f02cecdf49a3d5a",
+     "bytes": 31880
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18065-12182.glb",
+     "sha256": "d10ad14136a1e50215f1157110da2a017bbd4888a529a9c9b478e4c29283469d",
+     "bytes": 31880
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18064-12183.glb",
+     "sha256": "81f7f42aa8a2f902993c6a451632c9c0becc35c8c9ae3789fd8c5232b0386d9e",
+     "bytes": 36360
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18065-12183.glb",
+     "sha256": "8fe9df25bf721704d84db4e02b3a127cbe6c2a0209a42bf1a1195ec6479eab57",
+     "bytes": 31592
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6091.glb",
+     "sha256": "17b429b7383b14566250a8d120cb90de2793959ea918ab3a64b4bc1f924a0f8f",
+     "bytes": 32164
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3045.glb",
+     "sha256": "29c9a1e15cd79d35c9c657f0321edf4e18897a6e65b59c6ac06b1ff91f005347",
+     "bytes": 27932
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6090.glb",
+     "sha256": "11c52d5a6950bbb73104bf17d28d211ae5b8798109c6997482937f4e8aedb50b",
+     "bytes": 27108
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6090.glb",
+     "sha256": "3907ce059680fc79f4e451d4adf484d7d01dfed95d88fc6c5ba585ab1b5ffffb",
+     "bytes": 30012
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6091.glb",
+     "sha256": "44c9679eaf4bcae92a09b9bc60e0815120aed6558fd0005f66f8852e6abfa1dc",
+     "bytes": 31760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6091.glb",
+     "sha256": "1c52c5a4f4946a97e0bcb82376de5305ce631aa911fe49aadc7b592fa6ad6f32",
+     "bytes": 30320
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1522.glb",
+     "sha256": "50d481918cc52bab1422d793107415434dabd254e7c5c7a038e3ff173ddcbb88",
+     "bytes": 26484
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3044.glb",
+     "sha256": "8688ba377997fac059f6133753ebd3d8f71e5030d3c61add3bbb04058c7ecc29",
+     "bytes": 28732
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3044.glb",
+     "sha256": "c6d495bb6e07ffe6583b006d3943284c2c2f981fb84c135d122a60a88b475ed3",
+     "bytes": 25012
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3045.glb",
+     "sha256": "373ea5ab0b6030f055dec0c685258c2ffbddcec161473c328a9c4c74b0600c0f",
+     "bytes": 32912
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9036-6090.glb",
+     "sha256": "c5350399b4e45c0f6f4fb6d461b16f02a4466b01609f107bb4205a693674b824",
+     "bytes": 34212
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9037-6090.glb",
+     "sha256": "debb2f952ca31ce719d7fb356c11b7fd59fdb1762c479e6c25fa24509f90804d",
+     "bytes": 33576
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9036-6091.glb",
+     "sha256": "92675265a19630ef11bdaff520a007b9ecdca43d37072d1656df3857495d01ff",
+     "bytes": 32652
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9037-6091.glb",
+     "sha256": "c72a762ea90c33f42ba52fde8147e139f3ab5366b7c338f60ff89f6bafc0263d",
+     "bytes": 32772
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3045.glb",
+     "sha256": "664f0cba5566a2f9bceaa27377ed3b247de55c39fd0f88bdf93eea9f417fdd38",
+     "bytes": 29180
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1523.glb",
+     "sha256": "1b282a7fead127fb27186fa7fc0fd0ec0925e30ec7afcbd1d212a795825813b6",
+     "bytes": 27548
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3046.glb",
+     "sha256": "8373c5ba460e5e2e0f2661f2ad251e5cd4e61de26e1abe95e39691008efd67fe",
+     "bytes": 32752
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6092.glb",
+     "sha256": "32cba75deb22ccdb8b68b534c210066da01aabc7d5db580923d0328620e238cb",
+     "bytes": 32916
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18064-12184.glb",
+     "sha256": "45a06c77f4238af3b55e9f45ba4fd5fe6e0f44dcf90401cc018392eb62cc21aa",
+     "bytes": 36472
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18065-12184.glb",
+     "sha256": "2f1dc09087e706134a5d6547edc76726969128ef50d9997044112c01c6fd24ef",
+     "bytes": 33144
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18064-12185.glb",
+     "sha256": "f3fd4588b72face94ff83d0eb581912869a0270c218683e9394a0314964d7418",
+     "bytes": 39492
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/14-18065-12185.glb",
+     "sha256": "0922a4e2561191b245d35ff7951f02f9f4772622e410e71b352d81a36848efdf",
+     "bytes": 34380
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6092.glb",
+     "sha256": "f00dedc35b8d3084a9a3d33212efaf04e4d3c13182ff0d06c3e2f8c9ec590374",
+     "bytes": 34456
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6093.glb",
+     "sha256": "9efabdb8f47fa25abe45a360b52bb7909891870f6d4f7ce382cfe7da26785392",
+     "bytes": 33760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6093.glb",
+     "sha256": "2a739eabf2568401971fa919dc81adee80d4c5e3b4f65749c18c2c4799c7f551",
+     "bytes": 31580
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3046.glb",
+     "sha256": "cf9c704f77e46c1a776d6afd6bafe3be1721d35323ed43380cf14a99c52cbb86",
+     "bytes": 30152
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6092.glb",
+     "sha256": "f81f8c2ad839b4b87b5ed5fb37f55599e8a6438d1365cb187f61f1a29e5ca886",
+     "bytes": 32732
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6092.glb",
+     "sha256": "bbdf5b9e526c6254a6fca583c8d3bcdc9865e4697d40af2ada70eaceaee90ccf",
+     "bytes": 30136
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6093.glb",
+     "sha256": "f10d16e1fe215e3b7947ef7fe29ab44a0b44ea1f4bac7b78be162fbcad545c1f",
+     "bytes": 29704
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6093.glb",
+     "sha256": "9f5bf20cacd4b6acecfe87c183780b0de3f9159c9fc87198bfa7054ad3da33eb",
+     "bytes": 31740
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3047.glb",
+     "sha256": "f82f092069fa6a762d3daf503ced0c6bde57c5727740a1c0bb5183eb5cfb9ff3",
+     "bytes": 28004
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6094.glb",
+     "sha256": "2065b996e7ded42eb67882c57c761081c270c64c330149e2ef3d6380fe817aa4",
+     "bytes": 30676
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6094.glb",
+     "sha256": "3c2f15aeb393bc65ff1bbefd9a079173b1be6a0b5f83e48b5816c3a11ac5bc8b",
+     "bytes": 33360
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9032-6095.glb",
+     "sha256": "7041a251abf119b423f384d2f8e5b8e6fa8979a6645b4487b147b8d53662cea3",
+     "bytes": 28380
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9033-6095.glb",
+     "sha256": "5e4f49299746fded298b70c20977d4ddbdf1ae3a4e8d7ff6080b5f133372be26",
+     "bytes": 25812
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3047.glb",
+     "sha256": "eac67deb0383993858d8a0f83c70e70c7386f8f6bb51249e634ba35373d62442",
+     "bytes": 27668
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6094.glb",
+     "sha256": "9d1f5e88de248aa3751ef2f7041107abfa2f5f1fe649fde4cffca8d84bf423b4",
+     "bytes": 33064
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6094.glb",
+     "sha256": "5f93d8e9ba80201c94fd67966a4e4d195a8dad4f84fff89e87a5425e3ae56f8c",
+     "bytes": 28468
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9034-6095.glb",
+     "sha256": "4502505654efd002c2493a56bb1e56c7024976ab98ef551461ad8e65fe071ce5",
+     "bytes": 27900
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9035-6095.glb",
+     "sha256": "a96b6f833ec81376e21fd8e7506f454a987d0ae60d08f436227a930e0db9d9d6",
+     "bytes": 27884
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1523.glb",
+     "sha256": "4fcdbecb8f09f44cbeb41b2b37f38e8a80d08332227b5d135cf6a3adca7b5c35",
+     "bytes": 25164
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3046.glb",
+     "sha256": "6e90c35a36eb707d683eb4101f8f7e1d58f5304c7e56bee2c0b311bb53bf297b",
+     "bytes": 31620
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9036-6092.glb",
+     "sha256": "3f2fed80410c8adc65df4112d9234a671dc06ad5ae529fcb2659361b2e703c37",
+     "bytes": 31684
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9037-6092.glb",
+     "sha256": "6782ea08050b72f1184a8867e25b80a4d1f78becffd8eef5299a1e569a954696",
+     "bytes": 32744
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9036-6093.glb",
+     "sha256": "a47f4fee7ef2b3fe584832a70f20ff0c9025b15a83acab2efbb632db08d2362a",
+     "bytes": 34060
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/13-9037-6093.glb",
+     "sha256": "6dff93f2f5fde6b18e149dfe0b184c1b977f2f27e4e9453b0616041a8583f99d",
+     "bytes": 30976
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3046.glb",
+     "sha256": "a03691ebeb85759aa0629c035f1a536ad2b09f16ae26fd5fdbd3183ba56b505c",
+     "bytes": 31892
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3047.glb",
+     "sha256": "f0c6e0c7d1cc91486f86847d61353327ff642d89b4a5e1cbde76fb3f2cdb75c0",
+     "bytes": 21944
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3047.glb",
+     "sha256": "6bdac5a11357dcabf79c74581f8e151117812f409e0d188f80e2f996c0d32c99",
+     "bytes": 25592
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1129-762.glb",
+     "sha256": "9bb38a00eb94708e847b261c3ccf03912d85febd3baf6af36b2b5274a02b63a8",
+     "bytes": 21920
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1524.glb",
+     "sha256": "494b48d5fcc2caa42e3bb76661bd7a1a74e33968301a55d5504c6b95b41b6221",
+     "bytes": 21908
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3048.glb",
+     "sha256": "54c71caa33e2c653af883a0d46d7d8d47093e7e32ec77298046f00e4014daf83",
+     "bytes": 24096
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3048.glb",
+     "sha256": "d99824a7ba6104f37e33860fd92a0ef7e55f78be9233f4729cff2af6cc120c1a",
+     "bytes": 22276
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4516-3049.glb",
+     "sha256": "9e245d4ad46a1affe3f79ef86338ab3983c3f6f42408c4b0a90b1e7b4287480d",
+     "bytes": 25708
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4517-3049.glb",
+     "sha256": "de7c4b08be87c2e5101d4a77cbc3ffa0098bc34c7975bb22788165a4de264ab9",
+     "bytes": 26192
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1524.glb",
+     "sha256": "32a98f667f9fad165fb9bb946ad80ff900ba0d5a7a724e91db0acf0723defa81",
+     "bytes": 21824
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3048.glb",
+     "sha256": "065d15da622cfcaccbd8fd44ef79c7478b7027f9ba3f2a324e97f9e1b15b6590",
+     "bytes": 24016
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3048.glb",
+     "sha256": "aa8b6e64ad9112ef4c0e5500e6477936c9277e4ecd3226cab833a93dff876177",
+     "bytes": 25152
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4518-3049.glb",
+     "sha256": "df3fc45b2d357a1bc3d62768960c60820deb629e4326bdcbb1d6bbb0bcafd507",
+     "bytes": 23804
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/12-4519-3049.glb",
+     "sha256": "141473bd8c4aff0c5e4a1361b46681801556a4b972b0182809121948f1db7705",
+     "bytes": 24608
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1525.glb",
+     "sha256": "f3807c05e15124b5fdf17cf49c2d8484fa6a94c5bd0b44cd10c5102d37c51ce2",
+     "bytes": 24396
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1525.glb",
+     "sha256": "a51e09d4092561aa1d845a88719826ea90c0b9c624b0c50999645fd1bf3a42d9",
+     "bytes": 24808
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1129-763.glb",
+     "sha256": "e266b8a32e20d02aae071e34af8d437834ad1dae76e3ba895c0f4624c6d76369",
+     "bytes": 19248
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1526.glb",
+     "sha256": "02f220f4d4cef01b8bb9279327ec272a3c31658785aea79b65728227b38ef937",
+     "bytes": 23488
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1526.glb",
+     "sha256": "f27911738104a36906ab1740711793a71b4ede9093753f41e448a1e3db268bf9",
+     "bytes": 23668
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2258-1527.glb",
+     "sha256": "23b12366afb2018d572a3e20a2a4e70d432fc7e9cce86e508d1327746d823d47",
+     "bytes": 19552
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2259-1527.glb",
+     "sha256": "27081801ca9d233939df49ffca852f595d88bf978385c8881019cd082815f4c0",
+     "bytes": 19168
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1130-759.glb",
+     "sha256": "dd5d4ab42193ff94dd909a38397980c80cc4fc74a86beff5e514f931bfbc0a0b",
+     "bytes": 22664
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1130-760.glb",
+     "sha256": "8323235624ac176e58f2eb4d10c1c59408891a8525a07a3b4c28cf7509bd527d",
+     "bytes": 22100
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2260-1520.glb",
+     "sha256": "a4c621102e07e69bb3a892c2e9fbe1f34b83706130b0db500ae8e4e4d199114e",
+     "bytes": 24308
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2261-1520.glb",
+     "sha256": "c5df4fd7e4b6e5b3bb151899b196b5ac44faeb9f613d679a093ff6107223b3d3",
+     "bytes": 23388
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2260-1521.glb",
+     "sha256": "789fffcfb160ad79b4b672d85456ce5d924968306ccbf6472bc202f29c8bb103",
+     "bytes": 22276
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2261-1521.glb",
+     "sha256": "e153d91fbfbb25740d825867584f66b9197d57a0282a4c2c4c2bc81635e4eb6c",
+     "bytes": 24556
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1130-761.glb",
+     "sha256": "fc59e3a32ffa8c7bdd44e780c3fe14979ada2bf825289500cf49fa581fa206eb",
+     "bytes": 21660
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2260-1522.glb",
+     "sha256": "6e763dbb72e233ce7f67c7a70e216e3357a882ced87f6fa1d16af5ca0961dd05",
+     "bytes": 23192
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2261-1522.glb",
+     "sha256": "41ba977f4e4bbe3ffbd9de851614bf472886a6ea751b03e69e86a87159eac1e4",
+     "bytes": 25780
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2260-1523.glb",
+     "sha256": "074559de7867e12c71822f2f4387746e7538c5bafe0748176ab87ea7389d90c4",
+     "bytes": 19956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2261-1523.glb",
+     "sha256": "68df58b2aa0494462dfc9c28e419e4b31c9ec41f6de8324ba6bc489028019584",
+     "bytes": 24076
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1130-762.glb",
+     "sha256": "544f4a05ed149bb9f23967639e509d61e64c0120e45ffbc58a86b743e26e2e45",
+     "bytes": 22980
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2260-1524.glb",
+     "sha256": "318f0b8eb1897da96c07ba0816d7f6b384e42e9538fa9a35f994b912b3ee6dbf",
+     "bytes": 23956
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2261-1524.glb",
+     "sha256": "cff81236c56dca4cb9d60329c08032935a77592e8fdb9a729070d933213b59e3",
+     "bytes": 24620
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2260-1525.glb",
+     "sha256": "198b5bf2b9639772075107391306b51e22bbc7c4fc18d427910fcb2b272d3e63",
+     "bytes": 25356
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/11-2261-1525.glb",
+     "sha256": "cc232a6a6f8e1014d81872ddedc8a41dfd8463692fabfeed514c6e44ce1fc239",
+     "bytes": 23112
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1130-763.glb",
+     "sha256": "381ebb3b87806b1bd95fdc1dc5a85557582e9c40645728d1ab2e24f9a7cdbe25",
+     "bytes": 20708
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1131-759.glb",
+     "sha256": "6e3a2bd1473a2057726645eda8bfd27821cca9f969d0fdf14c10ab4bea8730f8",
+     "bytes": 20416
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1131-760.glb",
+     "sha256": "50e12153978a145c12799795da2b55c9ee4416953f243a1e7c9139c583f53621",
+     "bytes": 23400
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1131-761.glb",
+     "sha256": "5cf123a568cf761cf79ebdf32b44ed73dcf2a66e0f7ff3129d3e94dbd5bf059e",
+     "bytes": 25120
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1131-762.glb",
+     "sha256": "52fb78bcc7da614bb3f92f26387a1b0bf603b5780ba4fbfc6c675b46fabe75d3",
+     "bytes": 21740
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/10-1131-763.glb",
+     "sha256": "a61d91bd6944fe8e2bfd5a3f0a8690e1547200280806d57fa233853d5dbbe3f2",
+     "bytes": 24132
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tileset.json",
+     "sha256": "fdb31f609647ce9ad4a6572b700d03551f12d992d98bd4d26ca20d799c14f2e3",
+     "bytes": 184235
+    },
+    {
+     "path": "docklands/data/places/sarajevo/surround.json",
+     "sha256": "8d1a6e8b89f2e0a9eb9d4b4dd5c44c09ae84a5e2f62e6f6833e7934926ecc1a5",
+     "bytes": 341004
+    }
+   ],
+   "ms": 12825,
+   "at": "2026-10-20T22:01:54.843Z"
   }
  ],
  "height_sources": {
@@ -967,6 +3673,79 @@
    "rows": 0,
    "matched": 0,
    "matched_osm_had_height": 0
+  }
+ },
+ "validation": {},
+ "city_height_sources": {
+  "osm-height": 32,
+  "osm-levels": 2370,
+  "national": 0,
+  "overture-height": 0,
+  "overture-floors": 0,
+  "ms": 0,
+  "default-small": 200,
+  "ghsl": 46106,
+  "default": 28,
+  "levels-vs-national-2plus": 0,
+  "national-zero-floors": 0
+ },
+ "city_footprint_matches": {
+  "overture": {
+   "rows": 0,
+   "matched": 0,
+   "matched_osm_had_height": 0
+  },
+  "ms": {
+   "rows": 0,
+   "matched": 0,
+   "matched_osm_had_height": 0
+  }
+ },
+ "city_validation": {},
+ "outer_counts": {
+  "roads": 16192,
+  "rails": 375,
+  "segments_tunnel_skipped": 9,
+  "water_lines": 1897,
+  "water_areas": 373,
+  "places": 2644,
+  "peaks": 790,
+  "buildings_osm": 48736,
+  "buildings not drawn (geometry from Microsoft ML Buildings)": 8945
+ },
+ "tiers": {
+  "surroundings": {
+   "tiles": 267,
+   "bytes": 7305616,
+   "triangles": 348416,
+   "blocks": 0,
+   "levels": {
+    "10": 30,
+    "11": 76,
+    "12": 80,
+    "13": 74,
+    "14": 7
+   }
+  },
+  "city": {
+   "tiles": 132,
+   "bytes": 7925084,
+   "triangles": 829704,
+   "blocks": 51776,
+   "levels": {
+    "13": 22,
+    "14": 101,
+    "15": 9
+   }
+  },
+  "core": {
+   "tiles": 15,
+   "bytes": 0,
+   "triangles": 0,
+   "blocks": 0,
+   "levels": {
+    "15": 15
+   }
   }
  }
 }

@@ -3020,9 +3020,9 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
     the crop of usable records in `sources/` (León 125 kB + 382 kB; Sarajevo two empty crops kept as evidence).
   - Result: León 7 buildings from Overture (Microsoft heights through Overture), 6 from Microsoft, 2 small kinds now
     measured; GHSL 177 -> 166. Sarajevo: no change (no non-OSM heights exist in either source there); GHSL stays.
-- **Open.** Roofs of L-shaped and irregular outlines (a straight skeleton); roof:direction for skillions; one ground texture resolution (1.2 m a pixel); beyond the 8 km ring the world is the coarse
-  terrain; no national building heights for Sarajevo yet (FGU needs a log-in and a request; owner's waiver, issue #9); no implicit tiling or LOD levels yet
-  (one level: fine for 2 km); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
+- **Open.** Roofs of L-shaped and irregular outlines (a straight skeleton); roof:direction for skillions; one ground texture resolution (1.2 m a pixel); beyond the extent (about 100 x 90 km) the world is the coarse
+  terrain; no national building heights for Sarajevo yet (FGU needs a log-in and a request; owner's waiver, issue #9); since 2026-10-20 the city and the surroundings by level of detail (next section;
+  no implicit tiling yet); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
   text only); 3d-tiles-renderer can read these sets but is not used.
 
 ## Three.js port: level of detail and the hand-over (2026-10-18)

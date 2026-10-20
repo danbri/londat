@@ -3,7 +3,7 @@
  "fetches": {
   "osm": {
    "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.588501,-5.553589,42.604980",
-   "fetched": "2026-10-20T19:45:56.378Z",
+   "fetched": "2026-10-20T21:28:12.297Z",
    "bytes": 1180095,
    "sha256": "4d39aa32bef896a6e1e1334d179b35f239602623cb18a6c114c179c257bc714b",
    "file": "data/raw/places/leon/osm.json.gz",
@@ -12,8 +12,8 @@
    "as_fetched": [
     {
      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.588501,-5.553589,42.604980",
-     "bytes": 11422116,
-     "sha256": "81dc697ca1cbada58c72c2a071eaddaac4ab5fc35ce434f121c7200bf84c3a54"
+     "bytes": 11422119,
+     "sha256": "264837084a5ad8fc969e73213af86a7d0a1b0cda06b2e4159764ac49b0a5eda9"
     }
    ],
    "elements": 52239,
@@ -23,7 +23,7 @@
   },
   "dem": {
    "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_5&SUBSET=Lat(42.5865009765625,42.60698046875)&SUBSET=Long(-5.5830546875,-5.5515888671875)&FORMAT=image%2Ftiff",
-   "fetched": "2026-10-20T19:45:57.756Z",
+   "fetched": "2026-10-20T21:28:13.515Z",
    "bytes": 44763,
    "sha256": "89cc9700fb4da1537dc6286151dd15f5fc685aad2b071afd5e22bf3274d8ef99",
    "file": "data/raw/places/leon/dem.json.gz",
@@ -35,29 +35,15 @@
    },
    "licence": "MDT05 © Instituto Geográfico Nacional (CC BY 4.0)"
   },
-  "dem-ring": {
-   "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.55914513068171,42.63549486931829)&SUBSET=Long(-5.617352720794726,-5.515727279205274)&FORMAT=image%2Ftiff",
-   "fetched": "2026-10-20T19:45:57.976Z",
-   "bytes": 73764,
-   "sha256": "537c5fb9a9b7fca92e3088806d4eb92fa4e19a80d9c4ec9ca49124e602ee6579",
-   "file": "data/raw/places/leon/dem-ring.json.gz",
-   "source": "ign-mdt05",
-   "as_fetched": {
-    "bytes": 306500,
-    "sha256": "d4ff6c452ec4fe01181ae60b596b91e59cbee8ce21bb3446b4953109916a1abd",
-    "format": "image/tiff"
-   },
-   "licence": "MDT05 © Instituto Geográfico Nacional (CC BY 4.0)"
-  },
   "heights-es-catastro": {
    "url": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip",
-   "fetched": "2026-10-20T19:46:09.652Z",
-   "bytes": 746365,
-   "sha256": "3bfb8ce12a198b137ed7d842db937ad77d85e8c851dbc5180f130e2cf3ef21e8",
+   "fetched": "2026-10-20T21:33:00.158Z",
+   "bytes": 1440628,
+   "sha256": "c699fd9a951d9c623db9ca1e68a0742a4b34a88af25955138c53121760f7d815",
    "file": "data/raw/places/leon/heights-es-catastro.json.gz",
    "source": "es-catastro-inspire-bu",
    "member": "A.ES.SDGC.BU.24900.buildingpart.gml",
-   "parts": 15505,
+   "parts": 30498,
    "zip_sha256": "f619a9aef78c1ff74e58ddf99227ead83c0fa35ced11c9915abfb40bc96fa668",
    "as_fetched": {
     "bytes": 5182338,
@@ -68,9 +54,9 @@
   },
   "heights-world-ghsl": {
    "url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_H_GLOBE_R2023A/GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss/V1-0/tiles/GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss_V1_0_R5_C18.zip",
-   "fetched": "2026-10-20T19:46:02.443Z",
-   "bytes": 5953,
-   "sha256": "75d1d8fbdc5101f7d5770416e0e6d17776d50d26d785ea38c41eb72a7a2ccfc3",
+   "fetched": "2026-10-20T21:32:53.394Z",
+   "bytes": 41447,
+   "sha256": "7f2eb430720417d7c97009084ce2be128d2ebbd2ae58a7acc30ca7981bd5b8e1",
    "file": "docklands/data/places/leon/sources/ghsl-built-h.json",
    "source": "ghsl-built-h",
    "member": "GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss_V1_0_R5_C18.tif",
@@ -80,15 +66,228 @@
     "member_sha256": "c25ea0ea2abd901a2eca2b8e1755e1ce184c62dca74f242c12bc18bc93daf654"
    },
    "window": [
-    5308,
-    7789,
-    5349,
-    7817
+    5245,
+    7752,
+    5370,
+    7847
    ],
-   "cells": 1148,
+   "cells": 11875,
    "committed": "docklands/data/places/leon/sources/ghsl-built-h.json",
    "licence": "CC BY 4.0 (Commission Decision 2011/833/EU; copyright.txt: \"(c) European Union, 1995-2026\")",
    "note": "the tile zip stays in the raw folder; the committed crop is the input of place-heights"
+  },
+  "dem-surround": {
+   "url": [
+    "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.1775,42.626953125)&SUBSET=Long(-6.16234375,-5.804114583333333)&FORMAT=image%2Ftiff",
+    "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.626953125,43.07640625)&SUBSET=Long(-6.16234375,-5.804114583333333)&FORMAT=image%2Ftiff",
+    "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.1775,42.626953125)&SUBSET=Long(-5.804114583333333,-5.445885416666667)&FORMAT=image%2Ftiff",
+    "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.626953125,43.07640625)&SUBSET=Long(-5.804114583333333,-5.445885416666667)&FORMAT=image%2Ftiff",
+    "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.1775,42.626953125)&SUBSET=Long(-5.445885416666667,-5.08765625)&FORMAT=image%2Ftiff",
+    "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.626953125,43.07640625)&SUBSET=Long(-5.445885416666667,-5.08765625)&FORMAT=image%2Ftiff"
+   ],
+   "fetched": "2026-10-20T21:39:39.811Z",
+   "bytes": 14034222,
+   "sha256": "4358e2dc983d5beb5eb5f047f9cf97512776d8fbe501d1baa8b7d0d05008791e",
+   "file": "data/raw/places/leon/dem-surround.bin.gz",
+   "source": "ign-mdt05",
+   "as_fetched": [
+    {
+     "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.1775,42.626953125)&SUBSET=Long(-6.16234375,-5.804114583333333)&FORMAT=image%2Ftiff",
+     "bytes": 6352502,
+     "sha256": "356df4262cd1a7ca5d60ab5021ae00234afb81124ec5751ca774f228a91ad875",
+     "format": "image/tiff"
+    },
+    {
+     "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.626953125,43.07640625)&SUBSET=Long(-6.16234375,-5.804114583333333)&FORMAT=image%2Ftiff",
+     "bytes": 6352502,
+     "sha256": "20b350817c74a9470ba50c9c0b6570ec9102238c9af50b73ecf9c55c550d0f04",
+     "format": "image/tiff"
+    },
+    {
+     "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.1775,42.626953125)&SUBSET=Long(-5.804114583333333,-5.445885416666667)&FORMAT=image%2Ftiff",
+     "bytes": 6352502,
+     "sha256": "683a5615b64c18894e802bdf775ff03a8665c3f5a145608419eb27494e8ac1d5",
+     "format": "image/tiff"
+    },
+    {
+     "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.626953125,43.07640625)&SUBSET=Long(-5.804114583333333,-5.445885416666667)&FORMAT=image%2Ftiff",
+     "bytes": 6352502,
+     "sha256": "51a8aa6f0d02523454a1f9e9ec68621c617fb1f006fae5f157c37324faaec822",
+     "format": "image/tiff"
+    },
+    {
+     "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.1775,42.626953125)&SUBSET=Long(-5.445885416666667,-5.08765625)&FORMAT=image%2Ftiff",
+     "bytes": 6352502,
+     "sha256": "2b2192f7655bea692931af2edb3ddabaf0c5eccb3f9e3c31b1c949d10b56c24a",
+     "format": "image/tiff"
+    },
+    {
+     "url": "https://servicios.idee.es/wcs-inspire/mdt?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&COVERAGEID=Elevacion4258_25&SUBSET=Lat(42.626953125,43.07640625)&SUBSET=Long(-5.445885416666667,-5.08765625)&FORMAT=image%2Ftiff",
+     "bytes": 6352502,
+     "sha256": "d06e6cbf5be1b33553d883849082828b3f99c2dd78f91f08ca145e74289a7bf4",
+     "format": "image/tiff"
+    }
+   ],
+   "licence": "MDT05 © Instituto Geográfico Nacional (CC BY 4.0)"
+  },
+  "landcover": {
+   "url": [
+    "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42W009_Map.tif",
+    "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42W006_Map.tif"
+   ],
+   "fetched": "2026-10-20T21:39:47.175Z",
+   "bytes": 2989705,
+   "sha256": "69a7e773c89f2523e92508c17c9a5b862c2ecc8ffebadd47975ee228f5b7da0a",
+   "file": "data/raw/places/leon/landcover.bin.gz",
+   "source": "esa-worldcover",
+   "windows": [
+    {
+     "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42W009_Map.tif",
+     "image": 1,
+     "window": [
+      17025,
+      11540,
+      18000,
+      16936
+     ]
+    },
+    {
+     "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42W006_Map.tif",
+     "image": 1,
+     "window": [
+      0,
+      11540,
+      5476,
+      16936
+     ]
+    }
+   ],
+   "as_fetched": {
+    "note": "HTTP range requests of Cloud Optimized GeoTIFFs (overview 1, about 20 m): no single file as fetched; the windows and the stored grid (sha256) fix the input"
+   },
+   "licence": "CC BY 4.0"
+  },
+  "heights-ms-city": {
+   "url": [
+    "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=Spain/quadkey=031332311/part-00044-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz",
+    "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=Spain/quadkey=031333200/part-00087-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz"
+   ],
+   "fetched": "2026-10-20T21:39:54.173Z",
+   "bytes": 416871,
+   "sha256": "f7f06e5360b55ce2ad85e27b4e4b74d810a2c38d58c6d05a01b0a60a418967a6",
+   "file": "data/raw/places/leon/ms-city.json.gz",
+   "source": "ms-buildings",
+   "as_fetched": [
+    {
+     "url": "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=Spain/quadkey=031332311/part-00044-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz",
+     "bytes": 4363072,
+     "sha256": "9b63d434f84fb907a5c5e89b8e1be4bdb15bf841bfbd3d746e0efbed7e77f47b"
+    },
+    {
+     "url": "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=Spain/quadkey=031333200/part-00087-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz",
+     "bytes": 5874656,
+     "sha256": "ec34331324686e4ec7c3f87a7b200848725adf0c37e2906dc108dd94ca1c7645"
+    }
+   ],
+   "kept": 5713,
+   "licence": "ODbL 1.0",
+   "note": "footprints with a height over the core and city box; raw (input of place-city-heights)"
+  },
+  "overture-roads": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=transportation/type=segment/ (bbox -6.152344,42.187500,-5.097656,43.066406; files part-00041-33e4d235-464b-507f-b386-0aa705e16d56-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:40:41.698Z",
+   "bytes": 11816633,
+   "sha256": "edb2e2436486e6f7e9b53c36e4b26a512e6e4ca9a2d0067e0a97ae78afdad1e0",
+   "file": "data/raw/places/leon/overture-roads-2026-09-23.1.json",
+   "source": "overture-transportation",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: (subtype = 'road' AND class IN ('motorway','trunk','primary','secondary','tertiary')) OR subtype = 'rail'",
+   "records": 13521,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-streets": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=transportation/type=segment/ (bbox -5.634000,42.564000,-5.536000,42.636000; files part-00041-33e4d235-464b-507f-b386-0aa705e16d56-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:41:24.462Z",
+   "bytes": 3188448,
+   "sha256": "9c2e4cdb7e4fece433e9b7bb1208a2daec15765889b15a8838609a6a46aeadf6",
+   "file": "data/raw/places/leon/overture-streets-2026-09-23.1.json",
+   "source": "overture-transportation",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: subtype = 'road' AND class IN ('residential','unclassified','living_street','pedestrian','service')",
+   "records": 5431,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-water": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=base/type=water/ (bbox -6.152344,42.187500,-5.097656,43.066406; files part-00072-fcdefcac-110b-50c2-a012-2f8eb30d662a-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:41:55.859Z",
+   "bytes": 6607499,
+   "sha256": "55d4c3d84b288a2701b579922f47b3065c0a048e47035a655d8379fe2a8e53ae",
+   "file": "data/raw/places/leon/overture-water-2026-09-23.1.json",
+   "source": "overture-base",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: none",
+   "records": 6913,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-places": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=divisions/type=division/ (bbox -6.152344,42.187500,-5.097656,43.066406; files part-00000-8b67a992-99db-52a1-aeb0-1b049a9a125c-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:42:02.018Z",
+   "bytes": 740780,
+   "sha256": "194252174ea49269f9fc4cf04b5c62c8e78a3262c1be35f6a869d148d8a252ec",
+   "file": "data/raw/places/leon/overture-places-2026-09-23.1.json",
+   "source": "overture-divisions",
+   "request": "DuckDB read_parquet over HTTPS of the 1 files of the release, filter on bbox and: subtype IN ('locality','localadmin','borough','macrohood','neighborhood','microhood')",
+   "records": 1115,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-peaks": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=base/type=land/ (bbox -6.152344,42.187500,-5.097656,43.066406; files part-00034-d8554093-7a19-5a0d-ab0a-d74d7eff6292-c000.zstd.parquet part-00036-b257ef7b-566a-572d-95e2-d887838e0e64-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:42:38.116Z",
+   "bytes": 436838,
+   "sha256": "dc56bbad136742a65426c7447a06b9623596e3a4b43aa313cbf62abc58246eca",
+   "file": "data/raw/places/leon/overture-peaks-2026-09-23.1.json",
+   "source": "overture-base",
+   "request": "DuckDB read_parquet over HTTPS of the 128 files of the release, filter on bbox and: class IN ('peak','volcano','saddle') AND names.primary IS NOT NULL",
+   "records": 849,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "overture-buildings": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox -5.634000,42.564000,-5.536000,42.636000; files part-00115-e2edec8c-c8d8-5b57-ab5a-e7aa714b6e6a-c000.zstd.parquet part-00117-aa29aaa7-de27-5bd7-a734-20716d499fad-c000.zstd.parquet)",
+   "fetched": "2026-10-20T21:44:58.744Z",
+   "bytes": 19719542,
+   "sha256": "631b282c20b59ccd3715540a5c99783f6b82070d2dd351077e8bbb0e2a4a90a9",
+   "file": "data/raw/places/leon/overture-buildings-2026-09-23.1.json",
+   "source": "overture-buildings",
+   "request": "DuckDB read_parquet over HTTPS of the 512 files of the release, filter on bbox and: is_underground IS NOT TRUE",
+   "records": 23968,
+   "licence": "ODbL 1.0 (OpenStreetMap-derived records; the record sources list names each source and licence)",
+   "as_fetched": {
+    "note": "the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder); sha256 above"
+   }
+  },
+  "heights-overture-ign-floors": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox -5.634,42.564,-5.536,42.636)",
+   "fetched": "2026-10-20T21:45:58.722Z",
+   "bytes": 1141941,
+   "sha256": "900bc99e5eee849c458d720e60a3c9016f5094df81d43f83ece5bcd9abad17f2",
+   "file": "docklands/data/places/leon/sources/overture-ign-floors.json",
+   "source": "overture-ign-floors",
+   "request": "the city buildings answer of world-overture-outer (query \"buildings\"), rows whose num_floors source dataset is Instituto Geográfico Nacional (España)",
+   "kept": 9782,
+   "committed": "docklands/data/places/leon/sources/overture-ign-floors.json",
+   "licence": "not stated (the Overture sources entry has an empty licence field); IGN data are generally CC BY 4.0, not confirmed for these records"
   },
   "heights-world-overture": {
    "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox -5.584055,42.585501,-5.550589,42.607980; files part-00115-e2edec8c-c8d8-5b57-ab5a-e7aa714b6e6a-c000.zstd.parquet part-00117-aa29aaa7-de27-5bd7-a734-20716d499fad-c000.zstd.parquet)",
@@ -788,44 +987,6 @@
    "at": "2026-10-18T12:10:06.280Z"
   },
   {
-   "activity": "e962afe845bcf1aa",
-   "operation": "place-select-osm",
-   "version": 3,
-   "skill": "docklands-3d-page",
-   "tool": "tools/build-place-tiles.mjs",
-   "inputs": [
-    {
-     "label": "osm",
-     "path": "data/raw/places/leon/osm.json.gz",
-     "sha256": "4d39aa32bef896a6e1e1334d179b35f239602623cb18a6c114c179c257bc714b"
-    }
-   ],
-   "params": {
-    "area": [
-     -5.5810546875,
-     42.5885009765625,
-     -5.5535888671875,
-     42.60498046875
-    ],
-    "level": 15,
-    "names": [
-     "name",
-     "name:es"
-    ],
-    "alt_names": []
-   },
-   "outputs": [
-    {
-     "path": "data/raw/places/leon/work/select.json.gz",
-     "sha256": "0a76f49922b94bb361f703e271dd27698e8258cc1e6d1173a9b6750dd6d045ed",
-     "bytes": 492770
-    }
-   ],
-   "ms": 671,
-   "at": "2026-10-20T19:51:00.316Z",
-   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
-  },
-  {
    "activity": "c4355e4990707d10",
    "operation": "place-heights",
    "version": 2,
@@ -1260,12 +1421,2456 @@
    ],
    "ms": 1352,
    "at": "2026-10-20T20:35:10.509Z"
+  },
+  {
+   "activity": "e962afe845bcf1aa",
+   "operation": "place-select-osm",
+   "version": 3,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "osm",
+     "path": "data/raw/places/leon/osm.json.gz",
+     "sha256": "4d39aa32bef896a6e1e1334d179b35f239602623cb18a6c114c179c257bc714b"
+    }
+   ],
+   "params": {
+    "area": [
+     -5.5810546875,
+     42.5885009765625,
+     -5.5535888671875,
+     42.60498046875
+    ],
+    "level": 15,
+    "names": [
+     "name",
+     "name:es"
+    ],
+    "alt_names": []
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "0a76f49922b94bb361f703e271dd27698e8258cc1e6d1173a9b6750dd6d045ed",
+     "bytes": 492770
+    }
+   ],
+   "ms": 435,
+   "at": "2026-10-20T22:01:20.733Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "c50c1fe53a076d04",
+   "operation": "place-heights",
+   "version": 4,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "0a76f49922b94bb361f703e271dd27698e8258cc1e6d1173a9b6750dd6d045ed"
+    },
+    {
+     "label": "national-heights",
+     "path": "data/raw/places/leon/heights-es-catastro.json.gz",
+     "sha256": "c699fd9a951d9c623db9ca1e68a0742a4b34a88af25955138c53121760f7d815"
+    },
+    {
+     "label": "raster-heights",
+     "path": "docklands/data/places/leon/sources/ghsl-built-h.json",
+     "sha256": "7f2eb430720417d7c97009084ce2be128d2ebbd2ae58a7acc30ca7981bd5b8e1"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/leon/sources/overture-ign-floors.json",
+     "sha256": "900bc99e5eee849c458d720e60a3c9016f5094df81d43f83ece5bcd9abad17f2"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/leon/sources/overture-buildings.json",
+     "sha256": "6c54fd6ada0151b2df8f6442829b8c179bffb0d96431c6fb14d3c83853c1d9ac"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/leon/sources/ms-buildings.json",
+     "sha256": "dfb309575480da4aa6f490ca17ba60c67bb7d2643776e38a1c04d7e134afb5b6"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "raster_min_m": 3,
+    "rasters": [
+     "ghsl"
+    ],
+    "footprints": [
+     {
+      "label": "overture-ign-floors",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": false
+     },
+     {
+      "label": "overture",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": true
+     },
+     {
+      "label": "ms",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": true
+     }
+    ],
+    "roof_rule": {
+     "shape": "hipped",
+     "pitch_deg": 28,
+     "kinds": [
+      "yes",
+      "house",
+      "residential",
+      "apartments",
+      "detached",
+      "semidetached_house",
+      "terrace",
+      "school",
+      "retail",
+      "commercial",
+      "office",
+      "public",
+      "civic",
+      "hotel",
+      "church",
+      "chapel",
+      "convent",
+      "monastery",
+      "garage"
+     ],
+     "min_rect": 0.8,
+     "max_area_m2": 1500,
+     "max_wall_m": 24
+    },
+    "pitch_deg": 30,
+    "max_roof_m": 8,
+    "rule": "height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > Overture height > Overture num_floors x storey (non-OSM records with an open licence) > Microsoft height (footprint match: a centroid inside the other outline, area ratio >= min_area_ratio) > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > Overture roof_shape > roof_rule > flat"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "22d4b339584c36f5f0c42541b44c2eebe439337b48008a31a5b3e8e3d9df56a9",
+     "bytes": 30128
+    }
+   ],
+   "ms": 597,
+   "at": "2026-10-20T22:01:21.335Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "41762528f30c5e3b",
+   "operation": "place-tiles",
+   "version": 5,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/leon/work/select.json.gz",
+     "sha256": "0a76f49922b94bb361f703e271dd27698e8258cc1e6d1173a9b6750dd6d045ed"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/leon/work/heights.json.gz",
+     "sha256": "22d4b339584c36f5f0c42541b44c2eebe439337b48008a31a5b3e8e3d9df56a9"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/leon/dem.json.gz",
+     "sha256": "89cc9700fb4da1537dc6286151dd15f5fc685aad2b071afd5e22bf3274d8ef99"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 300,
+    "version_label": "leon-1",
+    "ring_m": 0,
+    "ring_grid": 97
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24137.glb",
+     "sha256": "b391a14a25bc3c79a6b980476fc6b9ae78414c798801b4e3963b906d07bc9ab8",
+     "bytes": 92160
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24138.glb",
+     "sha256": "804979a039c90be9f5657fd6c3f68b3bcb0b7546782f000a8f4a3af2a0fa6d0a",
+     "bytes": 253892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24139.glb",
+     "sha256": "4773fb5da0d59fcec9ead02511e89c2ab0df1f052efe3125f255fa43bb3a35b4",
+     "bytes": 317036
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24137.glb",
+     "sha256": "8d74d1d702bb9ec3faccdbb1d81f502488fc85a1a9f8b0985c010f114d3bee45",
+     "bytes": 285884
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24138.glb",
+     "sha256": "f62b45f234be92124e4df90ab0450710af4ac8d7727b685c226805e4dbd20028",
+     "bytes": 360856
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24139.glb",
+     "sha256": "435e5a0304e6556a04426522325319f4b3aa37aac2ce6a11ab3586dc9a850002",
+     "bytes": 388252
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24137.glb",
+     "sha256": "367663bc215c1c451c7ae17dbfe4042e1d36edd664a98eac2441682271680008",
+     "bytes": 250592
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24138.glb",
+     "sha256": "a6e7de5296e4eb12f28728fa8634cfe21204707b0d207be088a0e1b15e8781f7",
+     "bytes": 656332
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24139.glb",
+     "sha256": "bd423cca7fe93a0e9ea9aca3b612b66738f48add9cd4cfe49d7bd14fb1910194",
+     "bytes": 426752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24137.glb",
+     "sha256": "41d6e45aaa69234b289aed65a96ecdb336a31d675b020e15b1c5950e46d5ce2d",
+     "bytes": 318720
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24138.glb",
+     "sha256": "1f9b239cd1188bd9c9206944cabd344ba03e0864d7a7f89d475c9f08c974102d",
+     "bytes": 773380
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24139.glb",
+     "sha256": "3f5ef987166437e5400d3396490c67bf4919a62c909bef0929aef02ab64962df",
+     "bytes": 181056
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24137.glb",
+     "sha256": "5e41f61d7384997915fb1f51bc62fa00b6e6f4dd326aad2453c68ef3ca8b8c85",
+     "bytes": 106072
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24138.glb",
+     "sha256": "bd327dbee6157882006a3e4d4672e7f72e2db4f45a0b4a07944bc75c96c480de",
+     "bytes": 98408
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24139.glb",
+     "sha256": "93bbeeefe96fc7eb4fbae6991a7a815f8ab7be28302020b795b758479bcb9e6f",
+     "bytes": 114868
+    },
+    {
+     "path": "data/raw/places/leon/work/core-tileset.json",
+     "sha256": "45ec19415dbee60cfb0692b31f8bcd1243c93643a8626bd8f73be33b8f488911",
+     "bytes": 10017
+    },
+    {
+     "path": "docklands/data/places/leon/features.json",
+     "sha256": "020bb6cb543bfb091d9750e4c7149edaf8ef8484018eac0e729efba42e2b1197",
+     "bytes": 642194
+    }
+   ],
+   "ms": 2219,
+   "at": "2026-10-20T22:01:23.555Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "c2fedbcca73c5a25",
+   "operation": "place-select-outer",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "overture-roads",
+     "path": "data/raw/places/leon/overture-roads-2026-09-23.1.json",
+     "sha256": "edb2e2436486e6f7e9b53c36e4b26a512e6e4ca9a2d0067e0a97ae78afdad1e0"
+    },
+    {
+     "label": "overture-streets",
+     "path": "data/raw/places/leon/overture-streets-2026-09-23.1.json",
+     "sha256": "9c2e4cdb7e4fece433e9b7bb1208a2daec15765889b15a8838609a6a46aeadf6"
+    },
+    {
+     "label": "overture-water",
+     "path": "data/raw/places/leon/overture-water-2026-09-23.1.json",
+     "sha256": "55d4c3d84b288a2701b579922f47b3065c0a048e47035a655d8379fe2a8e53ae"
+    },
+    {
+     "label": "overture-places",
+     "path": "data/raw/places/leon/overture-places-2026-09-23.1.json",
+     "sha256": "194252174ea49269f9fc4cf04b5c62c8e78a3262c1be35f6a869d148d8a252ec"
+    },
+    {
+     "label": "overture-peaks",
+     "path": "data/raw/places/leon/overture-peaks-2026-09-23.1.json",
+     "sha256": "dc56bbad136742a65426c7447a06b9623596e3a4b43aa313cbf62abc58246eca"
+    },
+    {
+     "label": "overture-buildings",
+     "path": "data/raw/places/leon/overture-buildings-2026-09-23.1.json",
+     "sha256": "631b282c20b59ccd3715540a5c99783f6b82070d2dd351077e8bbb0e2a4a90a9"
+    }
+   ],
+   "params": {
+    "licences": [
+     "ODbL-1.0",
+     "CDLA-Permissive-2.0",
+     "CDLA-Permissive-1.0",
+     "CC-BY-4.0",
+     "CC0-1.0"
+    ],
+    "ignDataset": "Instituto Geográfico Nacional (España)",
+    "geometrySources": [
+     "OpenStreetMap"
+    ],
+    "altKeys": [
+     "sr-Cyrl"
+    ]
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/outer.json.gz",
+     "sha256": "a1c09b4cf360cfa51b138ad4794b438acf6c4560172152b5087c7e0a29278b85",
+     "bytes": 4750157
+    }
+   ],
+   "ms": 1482,
+   "at": "2026-10-20T22:01:25.138Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "8e18f4e73219349e",
+   "operation": "place-city-heights",
+   "version": 1,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "outer",
+     "path": "data/raw/places/leon/work/outer.json.gz",
+     "sha256": "a1c09b4cf360cfa51b138ad4794b438acf6c4560172152b5087c7e0a29278b85"
+    },
+    {
+     "label": "national-heights",
+     "path": "data/raw/places/leon/heights-es-catastro.json.gz",
+     "sha256": "c699fd9a951d9c623db9ca1e68a0742a4b34a88af25955138c53121760f7d815"
+    },
+    {
+     "label": "raster-heights",
+     "path": "docklands/data/places/leon/sources/ghsl-built-h.json",
+     "sha256": "7f2eb430720417d7c97009084ce2be128d2ebbd2ae58a7acc30ca7981bd5b8e1"
+    },
+    {
+     "label": "overture-ign-floors",
+     "path": "docklands/data/places/leon/sources/overture-ign-floors.json",
+     "sha256": "900bc99e5eee849c458d720e60a3c9016f5094df81d43f83ece5bcd9abad17f2"
+    },
+    {
+     "label": "ms-city",
+     "path": "data/raw/places/leon/ms-city.json.gz",
+     "sha256": "f7f06e5360b55ce2ad85e27b4e4b74d810a2c38d58c6d05a01b0a60a418967a6"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "raster_min_m": 3,
+    "roof_rule": null,
+    "pitch_deg": 30,
+    "max_roof_m": 8,
+    "rule": "as place-heights, over the city buildings (Overture records whose geometry is from OpenStreetMap; their OSM height and floors first); no roofs (blocks)"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/leon/work/city-heights.json.gz",
+     "sha256": "b6dc7d8da0cf1c013cb5a8bc7236d7bcb97ca50dd4b4c927481ad5bef0068a6c",
+     "bytes": 273512
+    }
+   ],
+   "ms": 933,
+   "at": "2026-10-20T22:01:26.457Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "c4c894c9f7cd3cb6",
+   "operation": "place-lod",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "outer",
+     "path": "data/raw/places/leon/work/outer.json.gz",
+     "sha256": "a1c09b4cf360cfa51b138ad4794b438acf6c4560172152b5087c7e0a29278b85"
+    },
+    {
+     "label": "city-heights",
+     "path": "data/raw/places/leon/work/city-heights.json.gz",
+     "sha256": "b6dc7d8da0cf1c013cb5a8bc7236d7bcb97ca50dd4b4c927481ad5bef0068a6c"
+    },
+    {
+     "label": "dem-surround",
+     "path": "data/raw/places/leon/dem-surround.bin.gz",
+     "sha256": "4358e2dc983d5beb5eb5f047f9cf97512776d8fbe501d1baa8b7d0d05008791e"
+    },
+    {
+     "label": "landcover",
+     "path": "data/raw/places/leon/landcover.bin.gz",
+     "sha256": "69a7e773c89f2523e92508c17c9a5b862c2ecc8ffebadd47975ee228f5b7da0a"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    },
+    {
+     "label": "core-tileset",
+     "path": "data/raw/places/leon/work/core-tileset.json",
+     "sha256": "45ec19415dbee60cfb0692b31f8bcd1243c93643a8626bd8f73be33b8f488911"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "grids": {
+     "10": 16,
+     "11": 20,
+     "12": 24,
+     "13": 28
+    },
+    "tex": 256,
+    "jpeg": 70,
+    "block_level": 13,
+    "min_area_m2": 40,
+    "big_area_m2": 600,
+    "big_height_m": 18,
+    "simplify_m": 2.5,
+    "box_fill": 0.85,
+    "outline_min_m2": 300,
+    "blend_m": 8000,
+    "box_m": 10000,
+    "sse_note": "geometricError of a refined cell = max(2 x terrain vertex spacing, the building error of its level)",
+    "ext": [
+     -6.1523437,
+     42.1875,
+     -5.0976562,
+     43.0664063
+    ],
+    "top": 10,
+    "refine": [
+     [
+      30000,
+      11
+     ],
+     [
+      16000,
+      12
+     ],
+     [
+      9000,
+      13
+     ]
+    ],
+    "city": [
+     -5.634,
+     42.564,
+     -5.536,
+     42.636
+    ],
+    "version_label": "leon-2",
+    "colours": {
+     "water": "#4f86ab",
+     "footprint": "#8d877d",
+     "block": "#d6cbb6"
+    },
+    "roads": {
+     "motorway": {
+      "width_m": 26,
+      "min_px": 1.8,
+      "colour": "#d9825f",
+      "casing": "#7e5a46",
+      "min_level": 0
+     },
+     "trunk": {
+      "width_m": 20,
+      "min_px": 1.6,
+      "colour": "#e3a165",
+      "casing": "#7e5f46",
+      "min_level": 0
+     },
+     "primary": {
+      "width_m": 16,
+      "min_px": 1.4,
+      "colour": "#ecc77e",
+      "casing": "#86704f",
+      "min_level": 0
+     },
+     "secondary": {
+      "width_m": 13,
+      "min_px": 1.1,
+      "colour": "#f2dea0",
+      "min_level": 0
+     },
+     "tertiary": {
+      "width_m": 10,
+      "min_px": 0.8,
+      "colour": "#f4efe2",
+      "min_level": 11
+     },
+     "streets": {
+      "width_m": 7,
+      "min_px": 0.6,
+      "colour": "#f7f4ec",
+      "min_level": 13
+     },
+     "rail": {
+      "width_m": 5,
+      "min_px": 1,
+      "colour": "#5f5a55",
+      "min_level": 0
+     }
+    },
+    "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0); Land cover © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published); Number of floors of some buildings from the Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tiles/10-989-752.glb",
+     "sha256": "befea1f23e92df87e725916dcbfad69d7c9a151b2e502907b837d3e05fb11d3b",
+     "bytes": 26796
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-989-753.glb",
+     "sha256": "e4718b518a1f3779828c73afbe58da62a20ba4f3e14be7174a8163df4be47449",
+     "bytes": 27156
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-989-754.glb",
+     "sha256": "b7525f40a531be9c70c81dbda745919cfab656a6b7263752ee67ce10c5c1df3b",
+     "bytes": 26572
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-989-755.glb",
+     "sha256": "aca3f3068e4e2fe109173140446f036459e3e16b1d9cbda4378c6d57114b1a9d",
+     "bytes": 26248
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-989-756.glb",
+     "sha256": "8093ce53c91817bd5a498f5064f3dd2af7fb0f0944ef4d8c1ad7d65181b0ddc5",
+     "bytes": 22228
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-990-752.glb",
+     "sha256": "5956a42d818b43106896f47581c79a07d7d66e08fc5c59136632b86e510368e6",
+     "bytes": 26044
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-990-753.glb",
+     "sha256": "66ad03582a20688ddee276293d690727eaa89827561326ca6cca3afee76b650c",
+     "bytes": 25452
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1980-1506.glb",
+     "sha256": "e705e6cfb53fa05c0e6b1893e9234ba1c754ca16a38fdf5abd7453672cadb7dc",
+     "bytes": 27588
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1981-1506.glb",
+     "sha256": "3e85651da85e7811cfa4c0ce4291a58fc055f02bc428f54e4af9db9787743ff6",
+     "bytes": 24764
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1980-1507.glb",
+     "sha256": "a23cd86dc2e80d3a2e894988d8006285c60936031621728461a9ae01a5f3ac6b",
+     "bytes": 29016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1981-1507.glb",
+     "sha256": "416ce5fe4932aaf161c44935108331ddf41259036982b02ae3a838d0ba54884d",
+     "bytes": 27412
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-990-754.glb",
+     "sha256": "488e91b2a17b36e95bd74357977ed9a2e57249fef35348d81b82b14bd8da2a66",
+     "bytes": 26896
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1980-1508.glb",
+     "sha256": "e26dc0e2ed4e8641aac84ca0b3a768d95fef5e202cf823a853fad04d88c0c331",
+     "bytes": 28036
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1981-1508.glb",
+     "sha256": "1d54a26c10de868f3111bfb7d9c96eab68940ae6016eaadd48187f3117e358c3",
+     "bytes": 29788
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1980-1509.glb",
+     "sha256": "2b75787ef3f37dedeb6fec511e341c44c2bb1c66300b204f2cb859ced8dce14e",
+     "bytes": 27352
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1981-1509.glb",
+     "sha256": "df0ce3321808d2f36bf6e2641586b0ac11f707af42edb084bf8cbe0ecc0540da",
+     "bytes": 30772
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-990-755.glb",
+     "sha256": "b9e46047d1b5c424ab65773fd408cfc74db4fcce9c70fb6c15c1451a503e3885",
+     "bytes": 26768
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1980-1510.glb",
+     "sha256": "6ba1961c64b3595480a0128f79794d280138a3bc21b8cb652af266ae9bf9027c",
+     "bytes": 28208
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1981-1510.glb",
+     "sha256": "9d779f890e26fdf40fd0b0c49cbb3a8a43f81a30b41acf43d0c4b87f53d106be",
+     "bytes": 28824
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1980-1511.glb",
+     "sha256": "0adf25b1d5c1e5e5e0591ac0bcd3ffcf4079c1edaf22f1bb4130d62ae365644d",
+     "bytes": 29984
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1981-1511.glb",
+     "sha256": "5c5addf39cba90928f37dda0b3154d7a48fe80f2e687e47812f4d177bef7c1d5",
+     "bytes": 29108
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-990-756.glb",
+     "sha256": "f6247c3df68d78526ce5a2ba5c8a548a5355f34e06a405216fb2f97b85dde83b",
+     "bytes": 22460
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-991-752.glb",
+     "sha256": "9753e2e4938d629170a7891c4c05d08cacb72085c541c24446b04a0219d2ff0c",
+     "bytes": 18628
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1504.glb",
+     "sha256": "56009ae7fbf8daa312fc2766f50a384dfbbdb9da48e7991f8188ba33fcb1f2ed",
+     "bytes": 21016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1504.glb",
+     "sha256": "54526de3bc96d0594541db5af35141446139515f349ac8e53e9354b94a2f76eb",
+     "bytes": 20236
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1505.glb",
+     "sha256": "fc012f5a2f06894afd0fffe0b1cfba5305cd2ea6df89b395d216c69cdb6a59be",
+     "bytes": 21552
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1505.glb",
+     "sha256": "97e4ee96742d484d4428886bacd0e4a6ed511e3d6c051752839e08be036867f0",
+     "bytes": 19796
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-991-753.glb",
+     "sha256": "287cc1f118b7f50ef68c9686b9822ee92c654d6f821762cdfb03632e0b1be680",
+     "bytes": 22156
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1506.glb",
+     "sha256": "1ff9eba7cc386cc24f0837007dedac6439d65b831171071c4626ad3bafab33a4",
+     "bytes": 22456
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1506.glb",
+     "sha256": "8a13b513d1508be2a9bf4d7e6b06c30a20c8394e4bcd0192cb8b314e93502aa6",
+     "bytes": 23388
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1507.glb",
+     "sha256": "41c6263f76ffa53c1fc5bf4cd38f8453b5331f8e1ab4cb8669e58e96a3f73ba3",
+     "bytes": 23444
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3964-3014.glb",
+     "sha256": "8cf57e4f2406bccbdccfa3db6868c43f3e28d18a5043d88c9bf73ee56a98417b",
+     "bytes": 24176
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3965-3014.glb",
+     "sha256": "7b8eb20ba913fcb3080471b6385c973861a3b13ff3e5a0b3dfc722ba78518809",
+     "bytes": 24364
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3964-3015.glb",
+     "sha256": "88adcef13072a04178551660efc1c9b4f080245b7cfb0069ec9ae56b5eccfff5",
+     "bytes": 27444
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3965-3015.glb",
+     "sha256": "9decafa0f06f3484b4f4bfdeb08e576ff277c68f3eb46194073c753238eac257",
+     "bytes": 27396
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1507.glb",
+     "sha256": "6a7f34e22deb1a016e555f8027f8e7e5b1bc3e44f33cb0388b56e576f91fd8ea",
+     "bytes": 26484
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3014.glb",
+     "sha256": "cee1f247175dc5688e16bdf4966322c83f16e7db8d46a0740c5c5cf54872d830",
+     "bytes": 28728
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3014.glb",
+     "sha256": "3e13f431223846b08f8b8d6290c536197d632208466c02d324dc2b161eab01b9",
+     "bytes": 30936
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3015.glb",
+     "sha256": "205d3e438f4f7fdfb507972ab454598931e722c32f28bd1f035be8b7b6faca2e",
+     "bytes": 28888
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3015.glb",
+     "sha256": "1afe525b49d9cde92bad87bcf3a27cd9da27e78a89dcac560d74d28b884d49b0",
+     "bytes": 28196
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6030.glb",
+     "sha256": "99f92ee53fbbf918327ebc01d410319d513f68b97c17b18a61af261630c64178",
+     "bytes": 30468
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6030.glb",
+     "sha256": "10b27b47c2502384ec74b65af9492e2b89b4113914049437560aa135c63acf5f",
+     "bytes": 31456
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6031.glb",
+     "sha256": "f2ed71e43e455560e8a61ecb2e68b7288ce7700c5147c4cfd6463a171f83799c",
+     "bytes": 29948
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6031.glb",
+     "sha256": "07a22340fe226315f714caf0629cbde66c8f0fab5c566f88b6d49bf83719858c",
+     "bytes": 29040
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-991-754.glb",
+     "sha256": "a93425b6137bf6e8d0e5590178e6fb3f73ded200dda483af940721e32fbb8b2d",
+     "bytes": 25660
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1508.glb",
+     "sha256": "f79b4302bc90bf9e9ddf4e86a18d786602dbdacb73610a7dd0c2876f62efce83",
+     "bytes": 28116
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3964-3016.glb",
+     "sha256": "3ee7767826e5ea2645f602ef2b77eec88b36961c0ab26069dc90ea40d2a12da2",
+     "bytes": 29012
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3965-3016.glb",
+     "sha256": "885524515ad720775c734d7477c0158c167bcf0803e520d1ffa794af9c2f708a",
+     "bytes": 29404
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3964-3017.glb",
+     "sha256": "21647b3617bc4b43667953c5cd17f354cfeaca1f8482a4ef39728708323e7a56",
+     "bytes": 34068
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3965-3017.glb",
+     "sha256": "0f085fe88b645388bd0607ace9ad226f6acc1b180b1a121098d21f9ec7768fce",
+     "bytes": 31508
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1508.glb",
+     "sha256": "f926236ab2e3786bf498beb961141c71d59e4ac0b2464d3a0252c5ad0f282bcb",
+     "bytes": 28444
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3016.glb",
+     "sha256": "cadc7ff8b80e2a8e56c028cbb8d0a13fff54ea7093e8f5ed82f7b55519ab8fa9",
+     "bytes": 31472
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7932-6032.glb",
+     "sha256": "e02b9128a2d1b5283354c2ce38f919dfd91d9e2882e580d5be1468f539aa4afa",
+     "bytes": 33056
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7933-6032.glb",
+     "sha256": "b96eb765109948a17ff45d29371ddbc5812c765f026254edd989d0985a010a25",
+     "bytes": 33620
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7932-6033.glb",
+     "sha256": "5aa2c390a891ac999c980874ac475b3369c1b79c55b8e4d26a94112c97fc920b",
+     "bytes": 32604
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7933-6033.glb",
+     "sha256": "3c1a0c480c688ed15a2181bea0fdf2a270e819256e956a25aa5ba009a3d7fdcb",
+     "bytes": 32096
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3016.glb",
+     "sha256": "dab1ce3a77bfcca48c3931f47e606c6be82a6db878470909fd9ce3abe6b6782a",
+     "bytes": 30388
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6032.glb",
+     "sha256": "1e9eaac579d3a01a5bd7946ef8bd40084aedb2ce54ce021778304e8843a7323f",
+     "bytes": 30752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6032.glb",
+     "sha256": "4438f2f8c6c65b826b604fe7c62e867d56932b03f64eaecfaf58fb1707c23aec",
+     "bytes": 32536
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6033.glb",
+     "sha256": "7010a0f75767e6fb847c1441271efa552d1d887df41a13a535abbe9747776aaf",
+     "bytes": 33400
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6033.glb",
+     "sha256": "b4d6a7c7957a9d1516c81ab3034170089d41d48d860abf87a7e7809d4b37c1aa",
+     "bytes": 31944
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12066.glb",
+     "sha256": "25799bf0049c137e35669448ee912753ff78dd3a74ee079611cf2201db09b2d3",
+     "bytes": 33644
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12066.glb",
+     "sha256": "7f265bc151e769a38d69ad16c6830e8ffed57f47f6c9f23d80c3560d9ad1b44e",
+     "bytes": 34868
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12067.glb",
+     "sha256": "af3d66cd4258ef4372204624b6e763154c484e2e6817da031d488fcc0e12eb66",
+     "bytes": 36376
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12067.glb",
+     "sha256": "7aef59bef20b14c2f7ed6c29bc454f0dde07b3cca2d1f7feb1b48483af562934",
+     "bytes": 34608
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3017.glb",
+     "sha256": "6a4ae9756ef58657614201667fb79a15a87ccb21eab4654b02f307adc49ac5c8",
+     "bytes": 33228
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7932-6034.glb",
+     "sha256": "c445c00719dee414651eb9dd55d6e3b8ff7bf4f709873e00c7e67ae704b79743",
+     "bytes": 33080
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7933-6034.glb",
+     "sha256": "09dbba97406251e5e3c38fcefb2b61941baba8f5902a8bdb61e3be9fdfe87dc8",
+     "bytes": 32800
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7932-6035.glb",
+     "sha256": "1889a003e0283fe867e94b24c3d2651cce75f50ab57dfc97f69df1d1a5c667b6",
+     "bytes": 36028
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7933-6035.glb",
+     "sha256": "ede3f668d2584108be23f725f107bb5dbbfb2d332043eb6407c56429b83c1915",
+     "bytes": 34956
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3017.glb",
+     "sha256": "600e38eb8181b000bb6623ffaf624de87e24ec93ecf0a7859ed0f67f8a5c5dcc",
+     "bytes": 29328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6034.glb",
+     "sha256": "dffa30f73ab3b810bb4a76eb81ede280f55e1c3acd84259ded9ca5efeffddb21",
+     "bytes": 28388
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6034.glb",
+     "sha256": "63ffa1a922d07ad5da2abe0c9ffa21466e04f4eb424c8d8c99ea6b7b1c2df893",
+     "bytes": 32628
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12068.glb",
+     "sha256": "db3e73c608b43345ced496c05163e2a453ffbe9595944edb517d63453e4ff201",
+     "bytes": 33424
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12068.glb",
+     "sha256": "a35d10cc35a9a1d4f51a50c848e8d06389757e2974eff8c07b2f1736d105f40f",
+     "bytes": 41092
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12069.glb",
+     "sha256": "d14cd396d5f961779d671855876ae138d67b69f37e8c810e11cdcb428c7984c3",
+     "bytes": 33152
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12069.glb",
+     "sha256": "3f95efa49ca8e58c450ed6b81783bef605e5dc0fe8699a940d538bcbc40649a0",
+     "bytes": 33432
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6035.glb",
+     "sha256": "3a821c3f0996b64e36da40cf464e108a27327ca26c5c6f39e346b8af89a4000a",
+     "bytes": 33440
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6035.glb",
+     "sha256": "99f7cce824f6f73f8344b5fd98b3536f2fe72488b5e8368947328eec88d37e42",
+     "bytes": 34340
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12070.glb",
+     "sha256": "ff7a3717f786b1927413b0e8035177bcf9cdb9c9727ba48ab66ba922f615806c",
+     "bytes": 35148
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12070.glb",
+     "sha256": "d1f9e13f135f885f558d5089a17433ff7011cdbdc0616b0ca0aed91d67260371",
+     "bytes": 37804
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12071.glb",
+     "sha256": "33f3e4b207b024b95f326de435fa58530e2335ebe8678bfea8ccb5e8feef82d9",
+     "bytes": 34652
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12071.glb",
+     "sha256": "a96ebadfcb8dab46127e49fbda2dfe983f2d1efa408e36f126b2f3d528850f46",
+     "bytes": 35640
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1509.glb",
+     "sha256": "0a5183ae270c4047741b244652fad96840cfed2c6fc5d05c781fe399fc51e723",
+     "bytes": 26160
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3964-3018.glb",
+     "sha256": "7c71b90e95407306c8d114b4fffb9ac7c1fa10738794424531887cc59d8428ff",
+     "bytes": 30092
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3965-3018.glb",
+     "sha256": "a841c60bd4a25bb99781b64ab939cc94360ffaa432bf6994f14809651933b333",
+     "bytes": 26960
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3964-3019.glb",
+     "sha256": "5541f53144c0bc5bc178fdba31bdae216d2c7c38f4bb5d31f7a58fab4ac5e4aa",
+     "bytes": 30148
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3965-3019.glb",
+     "sha256": "37d9d5b37b6620d8c3fd9c64ec8c9b134df2a566254c9f6a105f63c1af4d939e",
+     "bytes": 28684
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1509.glb",
+     "sha256": "116c0cc05b7d04004cdd754ef84a06fde30e1ee6723b4a238605b790c59d6b55",
+     "bytes": 28796
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3018.glb",
+     "sha256": "aab9f3e83922863062b2f1b45e66505726f26b7b3708572ba3458dbf61025e3c",
+     "bytes": 30160
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3018.glb",
+     "sha256": "d7dd8f00aae3e83c1373961285153cc26b49b89773dd3eb303868190f8b7e074",
+     "bytes": 31144
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6036.glb",
+     "sha256": "a852bed9707f7354df8285ebe32dcd15f640124584c56124cdd5fbda05f6cbe5",
+     "bytes": 32472
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6036.glb",
+     "sha256": "2284560f737670055c1dde9d6fe78b5cce921d4be154640a0a98f867116c38f0",
+     "bytes": 31264
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12072.glb",
+     "sha256": "64446c977f42bc5457a85a1fce37217ac89f5d96fdd0409a54e4be2f1efbd78c",
+     "bytes": 33468
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12072.glb",
+     "sha256": "a5fa95300e24ebd66ddef9131e0012a938e7d13349537441421a477d6724daa6",
+     "bytes": 34628
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15870-12073.glb",
+     "sha256": "f22ec94f24eb0dea20888928599c9cffa95fa369de7535f73df7454f79c0d2da",
+     "bytes": 32368
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15871-12073.glb",
+     "sha256": "20c21bf3e1ca81523ddb849fedf2f559f6102db9b2688ea7d7ee827af20ba461",
+     "bytes": 35272
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7934-6037.glb",
+     "sha256": "1c02deee039fe9a948e1023adcd3d90bd107c2a8856d2ff18538ba443f56fbd6",
+     "bytes": 33120
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7935-6037.glb",
+     "sha256": "8e21ca29ffbbb7a8977a791d857b3b2e715f409dc276ba47d66298ba214dbe89",
+     "bytes": 34244
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3019.glb",
+     "sha256": "835a8f68141341f2ae625cb383a7647c763146fb76523fd3d752b6c77d856b1d",
+     "bytes": 32184
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3019.glb",
+     "sha256": "741d4a11c0732212cd80cdc605fa00f3096c8d163cbffb59af9a9251c8cff3b1",
+     "bytes": 32820
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-991-755.glb",
+     "sha256": "a8f80777df8498bbd80a476dcd81ff5b2ec1a001b359a397090b9c869ecb2207",
+     "bytes": 26392
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1510.glb",
+     "sha256": "1895be25bd96ea2df11683b1849e05a14f9b7c4c2aacd2de94be8748fef2f3c4",
+     "bytes": 28236
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1510.glb",
+     "sha256": "85968d3fcd05bb10296ea98e4fbe8061dc5cb84b5ffa1c551bd5817d744c8203",
+     "bytes": 27312
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3020.glb",
+     "sha256": "364fcd7242e933e316b131a8c3f6312e6dc810c6d5b835d61fdcccc90013f581",
+     "bytes": 30188
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3020.glb",
+     "sha256": "67bc67213369aac8a530010dc726a587b8673445ffb6138a14bd1aaed3a6e925",
+     "bytes": 32708
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3966-3021.glb",
+     "sha256": "b27c253d363d6338555f404bd5c7de3ce5e93a1e295369294fc41804a60c14f0",
+     "bytes": 26756
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3967-3021.glb",
+     "sha256": "5a5bdebc555f8737177ab30a12f5196377967fa5755aef8ffaa608150fee8c28",
+     "bytes": 30812
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1982-1511.glb",
+     "sha256": "beb505b9964797bf80f2dc8af4c27a57b71931f96733ce605c4bca4e4d9babd5",
+     "bytes": 28692
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1983-1511.glb",
+     "sha256": "f88c0c385b6fda00cca448e8ccf85f50b4933759aa4b6bbed407092010a329f1",
+     "bytes": 29116
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-991-756.glb",
+     "sha256": "ccc95c9ce50625f415b71f74727faffe099ad3cc603628360aaebbbc4294a082",
+     "bytes": 25260
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-992-752.glb",
+     "sha256": "34bfb55bd239a4292e70a0c44b283381428c0c94a6eef2a5f08de924bed98f9d",
+     "bytes": 23172
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1504.glb",
+     "sha256": "38bbcf7b572c2fdac80ebbb5dbd1caefd8f5c8d971d424f638fadb9fe12e655f",
+     "bytes": 24548
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1504.glb",
+     "sha256": "c5701059d8b085d68253ea1779a2eb788dd6fb0cf1054c9ff25bb061a87e58a8",
+     "bytes": 21920
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1505.glb",
+     "sha256": "098b7f646455eda61bd237b9e4bd67d6a0916b200e45a0d486c9c586c2838edc",
+     "bytes": 26932
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1505.glb",
+     "sha256": "57483a3f28c385c6b3843b828ac8368cc513c44fceb813fee818661007d7d26c",
+     "bytes": 24388
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-992-753.glb",
+     "sha256": "fcc25170b98eb079d16469ac76c6eadd59d34e95744542e18ca50ff49b8f419d",
+     "bytes": 24992
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1506.glb",
+     "sha256": "9dd46efc074a54acf1fc8f2286ab29c3e046a2f89bbc3ead88c668eee871b689",
+     "bytes": 27400
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1506.glb",
+     "sha256": "db7f794c1e39f3d607a1dd7700861953fcd6cebba543be76f716f2751e504128",
+     "bytes": 22948
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1507.glb",
+     "sha256": "8545106d2b18fb2bed066196ab3fb88a85cb22d38abff86e156b06b93ba3e9fc",
+     "bytes": 28336
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3014.glb",
+     "sha256": "c8ab87648883b92c2c7576e7eb470e5007e63cd8fc44e27dce94ab22e67eec4a",
+     "bytes": 30176
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3014.glb",
+     "sha256": "6bb7df37ea8d5565587e49eb4d5b5f5a0ffb25bfb9f210a4f38ff116d3ddee4f",
+     "bytes": 29716
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3015.glb",
+     "sha256": "76649fd687b1026d70b285c508b98bac3fbc555b63298b1f628198d429be1df4",
+     "bytes": 31480
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6030.glb",
+     "sha256": "4fcd8db722334e375490c29c04d33eb451bf7710e7a2cd089df9241b3095d5cf",
+     "bytes": 32424
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6030.glb",
+     "sha256": "f0de8296acce451e9058cd48297fd740efc5f016838a07664c94f89d359d77e0",
+     "bytes": 33012
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6031.glb",
+     "sha256": "295100093328d107da7118fd8d3bda093b8d7654d3ece072b63f63bf36fa84df",
+     "bytes": 32704
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6031.glb",
+     "sha256": "f803aa5e3c6b855b59ad6d206f1aeb45870d6ff94ef93f19c186bdfcae9df508",
+     "bytes": 34608
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3015.glb",
+     "sha256": "8aa7f2de6e137ce1eef0d526f4dd957c07584eace9ac46e5ed7a174243400b58",
+     "bytes": 32004
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6030.glb",
+     "sha256": "be329b05b0c636c0789f6d56ea982696003574f8fec8f12c599eb25e00f7fa6b",
+     "bytes": 31224
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6030.glb",
+     "sha256": "9f23a888254f7e52d73742173e97e1409c52158c56c5b9b50333a058c0a3cb07",
+     "bytes": 33912
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6031.glb",
+     "sha256": "2ced47d7f14bbda2a79ab77f3e7b9fbedbf628a2a8e2388ebd8f2f396dbc8b3d",
+     "bytes": 33752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6031.glb",
+     "sha256": "4fff13c715b54567ded12462b0498a98fd66ee4943c1729668f8a63d42cd7a53",
+     "bytes": 35496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1507.glb",
+     "sha256": "3430ba3ada00387790ed90bdf4a9829b81f9975e1267e62fc747eb32101daf0d",
+     "bytes": 27708
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3014.glb",
+     "sha256": "089d3b9662237696fcbaa70d1c0827fe57e2e05be478fca11769f243a180375c",
+     "bytes": 33456
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3014.glb",
+     "sha256": "6ecaed5508ee55bdbec8a4c410b3e256df3b85a1db2cfde01d89c04653a7b330",
+     "bytes": 28468
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3015.glb",
+     "sha256": "7cf23c8a45d0794e03c4da12005e601edb07e8b93273f6d9a846059c8e5ac5ef",
+     "bytes": 27200
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6030.glb",
+     "sha256": "499e809df611a36d1d260de5ae7d90833c7221bdb720155e6cdeb4be44b83d58",
+     "bytes": 31512
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6030.glb",
+     "sha256": "1592fcc3345920f1360f674239eccc7b6f9be299f2c93e80fa1fab52987ddbf0",
+     "bytes": 27624
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6031.glb",
+     "sha256": "a2e1e27511d9fb5588f42c01386b60e9b01785406b9b21c079be72f45214f37e",
+     "bytes": 29784
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6031.glb",
+     "sha256": "a500d18eda135a042862fc42c9b6fa34635c730a5a86d4ce7c7b3857b07adf8e",
+     "bytes": 29372
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3015.glb",
+     "sha256": "73e36736616c606895822f28e9d53b9076f1f773b4f145137b9d65841f9ce4ca",
+     "bytes": 29448
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6030.glb",
+     "sha256": "7939953668d6a69ed0e13d17279dcdb48d2f010b1642794f55d9693aba2713c5",
+     "bytes": 30772
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6030.glb",
+     "sha256": "13aa2a8dd8c43fd6c1b0cc312119cc6df9b4a118f946475a4a58611490ab5a7f",
+     "bytes": 31992
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6031.glb",
+     "sha256": "00b0f616bb129aeaec6cca9257a4d7b6c5b9a9ae964d8dd6a4012ffeb5f86d77",
+     "bytes": 30016
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6031.glb",
+     "sha256": "dba333dcb89d4a60e88164ad293f52991c4947617210fa2d92235cdab814855c",
+     "bytes": 31416
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-992-754.glb",
+     "sha256": "855fda0ce87142f95d2eade4541b76309addf2ea377c3075045e28a231be52d4",
+     "bytes": 27840
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1508.glb",
+     "sha256": "08dd699136c64c4264871dcf2a1944230dee917b624e45334caac4bae1a3dda0",
+     "bytes": 31532
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3016.glb",
+     "sha256": "9ee9d33fabf0510b57a8af5567f14032537f4153e3d9aa1fa9f88576c58dad46",
+     "bytes": 31556
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6032.glb",
+     "sha256": "17fb3fe06a4ec8b2290533d3145ff402270f0f7805b16d379484609cb4052a95",
+     "bytes": 32152
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6032.glb",
+     "sha256": "91241353d697fe82e45f7ffc15ba144659a079bb54c15625f13e6d1bbb256ef3",
+     "bytes": 33360
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6033.glb",
+     "sha256": "39e9192fdd84c05c96997e9e31e2928aa04e3ec9e97ea9442beece49063715ae",
+     "bytes": 33044
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12066.glb",
+     "sha256": "2da1b3e910b176bf282ecf2b0456cf53c273491a45c66fca39001e00d04c0db3",
+     "bytes": 32112
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12066.glb",
+     "sha256": "43902f90ebe83db684621c70f67757c47242394fadcc0129a65db96a2e3a0f99",
+     "bytes": 34404
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12067.glb",
+     "sha256": "cba49d286a1fb641d6cac985211c6abb3f5314ce6043b0b488c89b88b49c8a1d",
+     "bytes": 36120
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12067.glb",
+     "sha256": "2ef7ba88379187149aaf0f356b08eaa70722cfb6927476135d26038b6bd7b2a6",
+     "bytes": 38116
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6033.glb",
+     "sha256": "e4d06e6c88bce8682170b59ffff6ebd9bb10f06cd24b55ebcf7fd63e6e43b882",
+     "bytes": 42552
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12066.glb",
+     "sha256": "6f2faf4648de55a663314cbec909b4363857f857aef9dd8b7fde5d61e7f04ae6",
+     "bytes": 38060
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12066.glb",
+     "sha256": "2c585a9278332f397f5139ce18606f5aa12cf60499a19b5dad8a84d08a5d0a96",
+     "bytes": 48100
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12067.glb",
+     "sha256": "85a9a1dd2881db00297e80f7ae7be332d0b3e7080efb9064740fd5f95a15186b",
+     "bytes": 43008
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12067.glb",
+     "sha256": "884842d5a015ae3f1d6d76c77150c1fa86a957bf2843d835db558861d06eb166",
+     "bytes": 60312
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3016.glb",
+     "sha256": "7ea539a96ed49bee081ebcc52692842e47416cd4168fee8c29272edcfeca09dd",
+     "bytes": 34456
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6032.glb",
+     "sha256": "7e5dd1bb08182abc9dc5cf08554014d5176df1ac6a0c24345d4c39f9b10e4023",
+     "bytes": 36960
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6032.glb",
+     "sha256": "db5159c81411583e15c82f1ec5da6dcdd0236ea30ef080be099633e0a10a0e7d",
+     "bytes": 34856
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6033.glb",
+     "sha256": "e491df20bb68169e21a9a558fe395463dd311885d7bd5fead11b1fc8c9b59d44",
+     "bytes": 42216
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12066.glb",
+     "sha256": "4c4d2b5f05d64047777f355b98e538ee4ecea75c0c309429afb70ff8ecf3ee63",
+     "bytes": 43264
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12066.glb",
+     "sha256": "b0f6b9862e919764173a00e35ffa01b1496c8b857673d051c2b9c6bee422f296",
+     "bytes": 42032
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12067.glb",
+     "sha256": "281153853ee2baa5b32b0cac96e8402b8e70e31bb0d9a3065f7f1e3edcc26ce2",
+     "bytes": 44152
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12067.glb",
+     "sha256": "e6029f5bcb5cbde102fbacaffc1d888007115790792ced2fcd6cb70d535f9c2d",
+     "bytes": 49004
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6033.glb",
+     "sha256": "8aa161388e1254df48da60f7a402bdce1e191d5cfa701930a1faaac7b853f50a",
+     "bytes": 37404
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12066.glb",
+     "sha256": "cde9c2c8acccc2f82e82a8e037776ce2165943fd6552cba74de63390a7f851fe",
+     "bytes": 37772
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12066.glb",
+     "sha256": "aeeffaa07c58461c8f2d7b39b1c4cb1620aca261fbeac6cc6281f31df90c0fd1",
+     "bytes": 33576
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12067.glb",
+     "sha256": "bae797b533ee2638afb4fee6bb5878f8223f1c9f7716984a6677da0ec1f14cfa",
+     "bytes": 60524
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12067.glb",
+     "sha256": "1807ceb6e470783dae2903f4fd9554bef24eadad13eae2865841fe1035706740",
+     "bytes": 41284
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3017.glb",
+     "sha256": "ac511df8d8dd7a47f38a3eba07b0c7c60705b43323dcc5db190656b395c31239",
+     "bytes": 35880
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6034.glb",
+     "sha256": "039b369f700b2b5406b2fd00dbd47ce553ef6caaeb56a125c3d08c23238164a6",
+     "bytes": 43816
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12068.glb",
+     "sha256": "1ba394f0d125ec7cb670220cc8989968a3543bf28b32324e5f1ea5f943e9d279",
+     "bytes": 47228
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12068.glb",
+     "sha256": "90a1e56f7d68eb7ff74862e91406755aec0f8a45d2a6f569ddd8856bc0f6640b",
+     "bytes": 48612
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12069.glb",
+     "sha256": "84fcdf3fcf9ccf6133910ccad42e2eebe71067a88e23af252df897fdfbd1c427",
+     "bytes": 39468
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12069.glb",
+     "sha256": "3ecc48792ac21fd1f83a309bb42b0b50911174db0b376d7f538d23fe6f3374d6",
+     "bytes": 55276
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6034.glb",
+     "sha256": "a1e5cab5dd881025e486ec3b8eabc6f2764c45b51a38c7cb9be14018a0f2573a",
+     "bytes": 60332
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12068.glb",
+     "sha256": "f5baab78d0c4d5d7f2ad81050d488c95526007ec2517c986cdd78a10f8026d6a",
+     "bytes": 46768
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12068.glb",
+     "sha256": "44f68c25e499e8e0ade96cf709e1533cdbd54a5f271db769006ee71cbcbbc286",
+     "bytes": 68084
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12069.glb",
+     "sha256": "a7b23563700483138efaf3781f6c802f5c9af9d187639886429e68d9ca9fc710",
+     "bytes": 106228
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12069.glb",
+     "sha256": "1ffe276da0d73d267d3c50f99bf76711379e85584a8f182b2d485900f2adf318",
+     "bytes": 113984
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6035.glb",
+     "sha256": "3bafa6df1bd22b61de40ee27b83766c9e4618589db3d2c79d7b8c8f88ccc0401",
+     "bytes": 43420
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12070.glb",
+     "sha256": "12a45fafcf99b16f53e51eca0f0ce2919acee9b1bcd3b9808ae105d3871e8a32",
+     "bytes": 53980
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12070.glb",
+     "sha256": "b1eb3c78683ec5beb22556a0ef53573321745510d9d6a8d796daae3e4c309b9a",
+     "bytes": 52784
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12071.glb",
+     "sha256": "454126d2365a2106d5f651817e19423d041eed71a10305986b72dcce4cc84432",
+     "bytes": 48052
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12071.glb",
+     "sha256": "18d9679952d85a278e133dda3156981af1b252a2f7f85027048b2516d0a03327",
+     "bytes": 42612
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6035.glb",
+     "sha256": "1a4ef1d5aafe3b7f667c24ee8464f36d5ddf63f897a624303cf9f223c4632075",
+     "bytes": 47428
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12070.glb",
+     "sha256": "5a69cf644a40e93f5c9d34513bf2a38b6ac5a75b2b268a571524d5e813315785",
+     "bytes": 71216
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12070.glb",
+     "sha256": "a3cc35786f45e0e96d9e9b4ffacb3f6b331adf6fc2e4813f73c7b5ea2dcebb67",
+     "bytes": 74804
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12071.glb",
+     "sha256": "d8ae64cd12fb9b2d9da42cd3b6bc5b630c5465a59b211cd59a82aaaf66b313d1",
+     "bytes": 55844
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12071.glb",
+     "sha256": "6d178246737464b8351c9997017f6f9c7f26ceabcd19202661931265bffaed82",
+     "bytes": 46744
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3017.glb",
+     "sha256": "182aa902bc8275a1f6cbae4a42cd141ff0b8012da437114b933dca53d86d0edd",
+     "bytes": 34616
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6034.glb",
+     "sha256": "02d61a74a13272074b1b7690f916abd7f84311f56b3dd08ffadc5bc8f3e7486d",
+     "bytes": 97056
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12068.glb",
+     "sha256": "31cdf7520be50c2868a46e63449fc062e1e67221bbb965cf919766f8e3837cd0",
+     "bytes": 74364
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31752-24136.glb",
+     "sha256": "24e4a38c27723b55394849c45d162217109418dd91375c7b46a7f5ff1d7b4a9c",
+     "bytes": 40612
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31753-24136.glb",
+     "sha256": "7d33655d53ac44c68de8223ad765be622f1e44066f36ee5fc65571502f3d2a82",
+     "bytes": 47924
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12068.glb",
+     "sha256": "d3f4d6ff0163c94b00d35ff90e2972fb549867e566a98347893d3ce66e0d9e44",
+     "bytes": 116132
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31754-24136.glb",
+     "sha256": "92cf57ce56f31866049e28917e9982896c8772bf6765ee26ca38e92cb17f5c2f",
+     "bytes": 60260
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31755-24136.glb",
+     "sha256": "70e2ba670a2302e15e1d807eaad70ac738dad18105263f0aa4575f8aedb86436",
+     "bytes": 47920
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12069.glb",
+     "sha256": "e0745e382a47cc0de9419ff8f364fc2c3ef5bf51e3f3a6c50cd2f1ef36f66c1d",
+     "bytes": 144648
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12069.glb",
+     "sha256": "a512c196e98cef18944bd76960783fa9f70b32bbe50bde139a9f886982386390",
+     "bytes": 179400
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6034.glb",
+     "sha256": "388c9d5c667cdf7b75f2d835fc2eceb5d0e9af51944f0fbfac1c052de079646a",
+     "bytes": 40944
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12068.glb",
+     "sha256": "44e72c7cec9b6328fb8b2e81f09aa471fe1839615914c474aa2b7de55d5b4654",
+     "bytes": 56104
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31756-24136.glb",
+     "sha256": "8a02774ecfecf971c8dfb7091a01c2e83501bc31b0d7366ed8545963b85b230f",
+     "bytes": 45136
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31757-24136.glb",
+     "sha256": "7f6f23bce9ebb430cec7be9b587a63051a01f913dfff5035d259dce8333eb12d",
+     "bytes": 40324
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31757-24137.glb",
+     "sha256": "ca349e7560ce295f5b280eb5115932dae0d4ca2959869b277ffd9c14dacc469b",
+     "bytes": 38068
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12068.glb",
+     "sha256": "d8ca831e332c9b39e5677f75bcfcef7b49990b2b6fa79c28dfb153b2d67b51c6",
+     "bytes": 33372
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12069.glb",
+     "sha256": "92df18f434e5c7db5036bce9b0e2986dbe8bb36c8ce34be5d9ba057fdf4891bb",
+     "bytes": 55092
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31757-24138.glb",
+     "sha256": "b249150fa25e9888369061d9187b216ff70aac8d26361a5e632c78eaa7c0d61c",
+     "bytes": 38172
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/15-31757-24139.glb",
+     "sha256": "c9ccf753037ee41d250aa45480a3e66126b9fa08d53b310e7028dad46a09605e",
+     "bytes": 42744
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12069.glb",
+     "sha256": "7d377ebc2133d29024f89ee85cdbce90f0cedd73be17f2aa5396a9969c645af9",
+     "bytes": 40612
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6035.glb",
+     "sha256": "d233f7d409acd265b8821c29f917d9c70d856113148298e0429a3bd79d1c5787",
+     "bytes": 48808
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12070.glb",
+     "sha256": "8b072accaecde6a8afc1be724b30314aba425e4bca323c437b87a36f49d246c7",
+     "bytes": 67960
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12070.glb",
+     "sha256": "dbb6490bcd8c68f1b37a26279c97cbda1fcbe50e053e5131a4dd7356befa8bdf",
+     "bytes": 64360
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12071.glb",
+     "sha256": "05f39c102c680195dda3c46aa9e72d8e74c1c4cbc8c5a55bf9dccd4b17271d99",
+     "bytes": 48444
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12071.glb",
+     "sha256": "ff48ee8dd42bbe2870f77a2be136d81660f09d21db890f908912d3cec2146b77",
+     "bytes": 54448
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6035.glb",
+     "sha256": "9af46e8e5517537539b6662b148b41248a52d2f9b7fd59f2213487c7dc89946f",
+     "bytes": 43968
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12070.glb",
+     "sha256": "b598ed44c8f8de5eb9b2ff929dba7ee04a73dad9daf391d619434cbed84574ba",
+     "bytes": 68592
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12070.glb",
+     "sha256": "175e72c118074b82fbd4425884f585a4b58c27cf6d31cbf7b393f8adeaf63ebe",
+     "bytes": 58920
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12071.glb",
+     "sha256": "e8b84f8bb65da9a1b534e8b84d8461191b9bc1648d9cf2b640d5464e99a195fb",
+     "bytes": 49356
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12071.glb",
+     "sha256": "3c1aa61036ef48d6d3b7c09228a1e190f26063db4dacca9a68b7ec034e0ad8ff",
+     "bytes": 43672
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1508.glb",
+     "sha256": "d881c959e147edd724aedbde8a2a5ac043ce919a293b6c0a3b5be8c51a966e35",
+     "bytes": 28108
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3016.glb",
+     "sha256": "1c88158b431605f078b5efbaf29ddf9cc0fc12ba36a6bd9f247c8e96de4f9465",
+     "bytes": 28008
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6032.glb",
+     "sha256": "318a7239f35009bb13a38fade4af70b4848e9867c2d2b092a83ed22fda10b450",
+     "bytes": 28036
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6032.glb",
+     "sha256": "d93b748da905f9813f004f515a3a49d963dea45a4e4f462cf9fcf3409a9dedde",
+     "bytes": 28316
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6033.glb",
+     "sha256": "4b17b3ee8b87dc5bcf52a387095531d7625b6d88dd59ce3a9942c479137b0dce",
+     "bytes": 33188
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12066.glb",
+     "sha256": "83cb2f227ce49d4468e35586c60c570117eb67f070deb40e1332b0aba69fdcbe",
+     "bytes": 33336
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12066.glb",
+     "sha256": "0f593aea0014aff2e4c07145f6a9c5c708c0f26dd8a591705d010313eb6ea10f",
+     "bytes": 34500
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12067.glb",
+     "sha256": "13f34115388acd57adede227bbac7738b0e5df6f4cec2b9f45fa7707755a648d",
+     "bytes": 36508
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12067.glb",
+     "sha256": "aaa3b1d489133b1612ff2d27cf682c2f874cbb3054f4d6fc9cd3fb0a2ee9a1b1",
+     "bytes": 35100
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6033.glb",
+     "sha256": "37e9755ebe1bcb3765a35945e2ae7af4d18017736092851411a396eb39fdc5d2",
+     "bytes": 32532
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3016.glb",
+     "sha256": "a8d1a56b8d76ffd960c4d4c80fa0976bd08d45fdf8e62dca3efff9751f858148",
+     "bytes": 31012
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6032.glb",
+     "sha256": "9a21fcb598e0c10a8188190d0bfe01f32bcad23d9aa821c4ca0be0c61d4f95e3",
+     "bytes": 31208
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6032.glb",
+     "sha256": "61b8bcbb2e25821d891aa5a0b31768ed9bd569af2aad66ad6a5cd781fb0ccf2f",
+     "bytes": 34980
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6033.glb",
+     "sha256": "71ebdbb5caa7be1c0bada3e9d47a8ce6b57e380ddc7c3e7cfa141cf2d09e1b0a",
+     "bytes": 31260
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6033.glb",
+     "sha256": "81a7b924294f829a132b02d7fa5a9fe162a83b560b9c95dd8df307ca439e67b9",
+     "bytes": 32680
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3017.glb",
+     "sha256": "3e43d84d138258935bca2d26ef090db2b71c1dd86782da52284b8c7bdd6cdf71",
+     "bytes": 31056
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6034.glb",
+     "sha256": "e02c6c35583e15056301394766008ad66825588caa15464f063e98b4f9681047",
+     "bytes": 33844
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12068.glb",
+     "sha256": "fc615e3ff12b9b894a9d9fd1cd55608821cc0b8368bc3bc79c4c4ca061767548",
+     "bytes": 35908
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12068.glb",
+     "sha256": "c671405bdd286598e0d33e10d9f427bcb363623cedd5af5194004c82a2b331aa",
+     "bytes": 34960
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12069.glb",
+     "sha256": "ee5d9700ad5941fcdb59396e802468c13dbcd374211d85c6f6e3c0b473740b7e",
+     "bytes": 36820
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12069.glb",
+     "sha256": "5c9e387a7c9327aad384d760fff131a43df1f6676e9a2ac41496232e713018a5",
+     "bytes": 34640
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6034.glb",
+     "sha256": "540a316664a187a0477844d43d51ce0e71b48ca8ef4ff38d110e3275d0da81f7",
+     "bytes": 30800
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6035.glb",
+     "sha256": "11ea5c8dffca9e3bc2ec04050f73076d19679db507596fd55cd27408fc76900b",
+     "bytes": 35496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12070.glb",
+     "sha256": "5e06af8eb09edb6524639eead695e7035287ed9c829d3ed6c3270a4f461435ec",
+     "bytes": 39776
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12070.glb",
+     "sha256": "229b6eb5aa47db7e45320eecdc10a09923ee46c06290d8f8c82b8de089ef9a97",
+     "bytes": 34524
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12071.glb",
+     "sha256": "a39563e074d4e420c47315dc988159f15f9f174d1ee15e33f39f6af5a09a4171",
+     "bytes": 40456
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12071.glb",
+     "sha256": "18509c8f9a21149d897088e52a971b8a73df89f39500b4c273d0d7bc436196d7",
+     "bytes": 34544
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6035.glb",
+     "sha256": "661d862d7f3f80aa617f766e636e124f11520ba649ffb1880c8d7bba0cdaf2d9",
+     "bytes": 31436
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3017.glb",
+     "sha256": "978e233c56d7a3401107285e90b520cf6b7286c48c63a4cacfa1887764c8acc7",
+     "bytes": 30752
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6034.glb",
+     "sha256": "6843c227d733fb6d073b170246e1d96efd44bf05182f3ffaba807f06e0f3d40b",
+     "bytes": 31852
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6034.glb",
+     "sha256": "e85b0c2b81a6ebe57c9c504ab58b027f81c78f2031e0d2dd125414fbaf3ba970",
+     "bytes": 32220
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6035.glb",
+     "sha256": "5c2af2d8aa989f53bf47450c329030c4824c685f73f845a1cd3c8addd34069cb",
+     "bytes": 32652
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6035.glb",
+     "sha256": "4e92408dff0959af9ed91a8a8b1fbca14f0d2bb47e5d08854733ff2f4d391607",
+     "bytes": 31592
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1509.glb",
+     "sha256": "1e7ba7d733eb29135b379cd6a5a96919e6bfc7d44cb9f331baa3fedf7400bf21",
+     "bytes": 30676
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3018.glb",
+     "sha256": "42605ac093711587dc9acb1f9ada8cf3e1fda4c7c05a49aa307b4975ad1c4c8b",
+     "bytes": 35328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6036.glb",
+     "sha256": "be3eb2ce5382fc06493e2cfc1e1f40d0f40226a778325a804e1688456735c411",
+     "bytes": 39780
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12072.glb",
+     "sha256": "a3b2b530f902931e272d359b72de462d574afdbb2590d43bb122492365d10620",
+     "bytes": 39328
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12072.glb",
+     "sha256": "f905ef1679c0cd573da02cd6afc9f6c0b1abca864e1c782f3da70250e61f9175",
+     "bytes": 40720
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15872-12073.glb",
+     "sha256": "22f129863b747842738bfa4cc4f6589325dce6880354ac5806c3941cf5f2a5ff",
+     "bytes": 39700
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15873-12073.glb",
+     "sha256": "f16b4e2139c7a91a42d94ffa0f692500a5ab7cd6848033ed124813c86bdaccf2",
+     "bytes": 39176
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6036.glb",
+     "sha256": "78aa5886cd67e4ffec9b4dd153bdb97c28b38c1c35822c1d3697a85fc28f513a",
+     "bytes": 37708
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12072.glb",
+     "sha256": "0356771b09c4f196bef506e6162c66b0d2fd74cfa1f42227294d52d302bc890a",
+     "bytes": 44748
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12072.glb",
+     "sha256": "f2c8d0182cf7af2b95c5851822bf4b1d8a8043dc6d13351ece6934c3d7165661",
+     "bytes": 43244
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15874-12073.glb",
+     "sha256": "6f386aaf87a396b5facaea7d4c1d51e480408fbc015037f5036759bfc8d93344",
+     "bytes": 37852
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15875-12073.glb",
+     "sha256": "4bc636083075dd886a2ba1bed5bbf3f29a303ccc2dddefcc39b86c38a58662f5",
+     "bytes": 36160
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6037.glb",
+     "sha256": "a7f30d45f419299437256a838fb96ff4c8f89a885662996a6c5a5eba31f0653e",
+     "bytes": 37476
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6037.glb",
+     "sha256": "e4e539969231bf3b3c0b4667e8844fe69e4309fd9abd84595e3d2df867372994",
+     "bytes": 34148
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3018.glb",
+     "sha256": "8276b82d1e2d7dbd30267ff240d73b1f796e69222fa1504fea9445e6752de79f",
+     "bytes": 33364
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6036.glb",
+     "sha256": "0d76c77e633b65efb2ca7a4fa906f48298081d1262278e15261c94abd51b35a9",
+     "bytes": 36656
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12072.glb",
+     "sha256": "cb06a8a88977e76e413d0467b8fe1b2a487008c6457d2557da9ae141c6639663",
+     "bytes": 35820
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12072.glb",
+     "sha256": "6b97d40dadd83a309c125f280e57e737474cd489eaed059c1f7b9c136a3edd8d",
+     "bytes": 57028
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15876-12073.glb",
+     "sha256": "2e069e07297556cf0982e41d953540e15ccd1437534a22af347b55c70c2aa3f5",
+     "bytes": 34704
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15877-12073.glb",
+     "sha256": "37f24ef5420c623b2115bf1a0356e4247e017ed669334c45aa098950f61c025b",
+     "bytes": 34856
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6036.glb",
+     "sha256": "4cfda84a8d704852b566baf7a100f927a9fe6efe24f73cdaf6a477e6aaad82af",
+     "bytes": 38536
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12072.glb",
+     "sha256": "b0bdda4d4141fe65115e84249d1b49cce7363daa759cda56caa39c576bf44fea",
+     "bytes": 42216
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12072.glb",
+     "sha256": "d43fa4067d3e67ba802d2c91b9e532b35bc70dcf719df4f3dbb94b35a032b4d0",
+     "bytes": 44984
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15878-12073.glb",
+     "sha256": "8ed5639d830ac440e8de779053be3547297b7db4ae8b701b13f6affd9f8da5d5",
+     "bytes": 37580
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15879-12073.glb",
+     "sha256": "fad0fed6ac6e71bf72e280b23cf1defcdb6b313c1211172fa5123a0a2dfa09a9",
+     "bytes": 37732
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6037.glb",
+     "sha256": "e8fa24bf2814fbade5d8799e0563333c7d17df545aa3586426be8e62a685473f",
+     "bytes": 33716
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6037.glb",
+     "sha256": "326fc3fb0c7dbd8202cb03b6ad4088068a5d4d039202ebfc14df37724fe71d43",
+     "bytes": 35380
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3019.glb",
+     "sha256": "6367c63df68296cf366fec7944e2a6eb327ee919ba219e90eea45cb214281adc",
+     "bytes": 34084
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6038.glb",
+     "sha256": "7e47c1fe116a9e273a9638c51ca0f4d64ad96cfc344f6ec7d03182f818128e99",
+     "bytes": 35556
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6038.glb",
+     "sha256": "e14dbb00d50637ae559be3bba095ba1f22886b36ee0d3dd8a56fa604c819936b",
+     "bytes": 35788
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7936-6039.glb",
+     "sha256": "00112b6f8f013d54348254f8629802ba0d3ea45de29a9841e98ed97517e8e4f1",
+     "bytes": 34024
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7937-6039.glb",
+     "sha256": "dbe388a7253ebe50749ad2a3aeb14f0498ac0dd651343d6f5787826bb47e2b31",
+     "bytes": 34696
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3019.glb",
+     "sha256": "43259b88b304745c1019b800929f952438cebf840e2bd1ddb6a880d42c79ce61",
+     "bytes": 31380
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6038.glb",
+     "sha256": "f49599f6726a7a1846e6c5d6c2ff7ff621c185c09fad98955abb8e2fd71f9998",
+     "bytes": 34132
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6038.glb",
+     "sha256": "75d357ff1d51a78123adeb542f8cc116f2bdefd7648cb3266f519801035e9f70",
+     "bytes": 32496
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7938-6039.glb",
+     "sha256": "2dcc251a31bdf235b21a6dfb921787d81e5c80af032626f6223567781aaa996e",
+     "bytes": 31664
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7939-6039.glb",
+     "sha256": "3ca1f3a8f467a6816a9d538e71be083d7e457b2483ae9d8fdcb491df6959df0e",
+     "bytes": 32792
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1509.glb",
+     "sha256": "01e90e2fdc35e5f7174761c83cd82695ef7f91578eb2ec6658ac4c5999af618a",
+     "bytes": 30204
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3018.glb",
+     "sha256": "1d4cb5bfbdcf8ebe9edc05eff662202f5f1832a396465d0da496e2db63f6f1f3",
+     "bytes": 34372
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6036.glb",
+     "sha256": "2056551da6204b1379f5aa171e705cd75303abc601b807ccc0b8e5d1b37af2a4",
+     "bytes": 35724
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12072.glb",
+     "sha256": "c04cee2985565750d6d081bc78bcff704366575c0423ee520bced3f9414b6762",
+     "bytes": 38644
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12072.glb",
+     "sha256": "d7781dcc5146d20e3026116ed5b403e245cc1d491dfef30f96c7a8e950b75f70",
+     "bytes": 37068
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15880-12073.glb",
+     "sha256": "c5a41f76712ab20a5dd268ab93f62e703b4ae6742012747bcc335223c7c85e37",
+     "bytes": 36344
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/14-15881-12073.glb",
+     "sha256": "cef9bc00951d253888b6ba67456d11d106262c501949769eb75022be57af554e",
+     "bytes": 37336
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6036.glb",
+     "sha256": "1e99a0d637f121d6538bc7d867752d3e8859d1e6fd789c56a5ed08db8e649528",
+     "bytes": 35544
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6037.glb",
+     "sha256": "c9579db125591a5f82604d19a7c0875cff5e0e9b581aefaf79a1b6992c7ddbbd",
+     "bytes": 35392
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6037.glb",
+     "sha256": "8dff4d6fc1d5d816e82e3d6a82650d528b53d953a7d9b20e811e4a0ab3c1f63a",
+     "bytes": 34976
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3018.glb",
+     "sha256": "604678efcdcd3875d53384e5c20b600de855151cb6f8afbf664a45ce15431061",
+     "bytes": 32800
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6036.glb",
+     "sha256": "f92d099d79c8f84891dd254e43705d7d799e07950bae5d13c99e9ddadf5bf488",
+     "bytes": 34044
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6036.glb",
+     "sha256": "1d7010ae57426141484a09ef6db5562e59d2492bf11e26ca88e7e3088fe29194",
+     "bytes": 31672
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7942-6037.glb",
+     "sha256": "1d79a0007ff653b8db7d78af1e9457f2f51b45172c54a0eb5bb0b00e11e8ab1a",
+     "bytes": 35148
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7943-6037.glb",
+     "sha256": "581095e88901bfae93174ebd8beca7c00ef2b5097f605b1452b1b9e0b29cd033",
+     "bytes": 34440
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3019.glb",
+     "sha256": "85958f74263a0137579ec53c5f174456f15af97ab9d5003d753b0f25861fbefe",
+     "bytes": 33212
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6038.glb",
+     "sha256": "125671a76e4e38458d60025ea7f99fd980b89ff24f8f5fa653dd2d100dabdfc4",
+     "bytes": 35608
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6038.glb",
+     "sha256": "84668135ec8f35d6ff7bfd519265f0082b6f333cc53f8b0f7fbcba5a0aa5dd08",
+     "bytes": 32144
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7940-6039.glb",
+     "sha256": "88f465f233fc6f1a11bb49dc7c5a5effaaa28f8ed911ac1a7ba87ab7218763dc",
+     "bytes": 35936
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/13-7941-6039.glb",
+     "sha256": "812e1ee6cd29ea1a0416fa101a4f83106e1146a55e4c0d3e5de94ff26fbbec0a",
+     "bytes": 32820
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3019.glb",
+     "sha256": "9ae4efe6405956af8bd4ffe7ecba2d2507ca44905f7df02cbd12b9820e9ae445",
+     "bytes": 31680
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-992-755.glb",
+     "sha256": "c810911fbc9a41bf594f500dd39c79e62e41a8bb48f4cd6b7f4739abfd92b6c2",
+     "bytes": 24612
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1510.glb",
+     "sha256": "e3a92cfa5ed780183a17da5fed8e6cfc37a0bbfed1fe8453641a63cef39a33d9",
+     "bytes": 25480
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3020.glb",
+     "sha256": "b43e1f21861e17b43fa056f3badc27791d1eda2771742b9699687ea608cb5e51",
+     "bytes": 28840
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3020.glb",
+     "sha256": "4fecd9caf0a430bde376f851f503e67d97bbc2b0af50c4fbb5fddc6bc3fd1f1b",
+     "bytes": 30148
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3968-3021.glb",
+     "sha256": "b4d9731e58bcf1d02b70af5f001ed8b8b91cbd79e164c8ca7ba19f78255841aa",
+     "bytes": 26484
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3969-3021.glb",
+     "sha256": "ca40fb9c0bffae4a0e981e5abf9f7f4dcfefb0181d7ffc9ee1f98bfed2b23831",
+     "bytes": 25976
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1510.glb",
+     "sha256": "a386ab7ab4eeac3d450ace992db69c3fb17a44cbcdf9d3974d786b55ecd603f0",
+     "bytes": 24436
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3020.glb",
+     "sha256": "cb63507428f0fb7d9f3cf0234e61dd444ad856bb6d3431dc154814949a5216b7",
+     "bytes": 33100
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3020.glb",
+     "sha256": "361d6a1a563ba613b9641476a2481216a76d4cfe30744275f5addc06dcb2bae0",
+     "bytes": 24808
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3970-3021.glb",
+     "sha256": "8e9e102a3d9dcb32ed44f6e7a4c37606ccef0ac3ad990bede36ba58609cc4eb9",
+     "bytes": 29332
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3971-3021.glb",
+     "sha256": "0f6ecf23431c3239fa980aa8a8b677bb775e7230b86f9a432a145942a4af7b6f",
+     "bytes": 21564
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1984-1511.glb",
+     "sha256": "dbf1d1533c4d30ff36a5be27d8d8ab585ceea55114d1a438f293e9b8c8cce2cf",
+     "bytes": 28892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1985-1511.glb",
+     "sha256": "a65a18e03d167a9eedad9e147adf52dcdc6de7272541af16ed0d4d9a42951f49",
+     "bytes": 28276
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-992-756.glb",
+     "sha256": "e46512edb343732db1b1f933fdb5f1b3f673bad1b3c235c9e5f7d851fe5476f9",
+     "bytes": 24668
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-993-752.glb",
+     "sha256": "273616e0fd4cfda9bb550f495ac1255c3ecad6c0edb1112596439a19f95e74c4",
+     "bytes": 19344
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1504.glb",
+     "sha256": "30003548a640b13ca4830594508a73bcba3e7e4aef71e27e5e5dff8ac69ab17b",
+     "bytes": 22604
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1504.glb",
+     "sha256": "7055e37097795a6589e41704151975973df44ce1d53714503c9015ec3f50fbba",
+     "bytes": 22224
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1505.glb",
+     "sha256": "0dd35e105ba89b1bc95228131b67d57121605a4a6fdfe20c711d2c65993fa601",
+     "bytes": 20200
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1505.glb",
+     "sha256": "e4e8f175afaaa187b141b365e78bcbd54b3eddf564c6ee380e7f7a4478b0f7f9",
+     "bytes": 21308
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-993-753.glb",
+     "sha256": "a775e60ce6b2f6a68a80cbb569342ab4f6277f6cba1415ad78a7afa7eede65cc",
+     "bytes": 22668
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1506.glb",
+     "sha256": "36c38d1904fe5b84427c32163800ba5da8bd9cdc3ae62f990d74f645e5ac6ab8",
+     "bytes": 20236
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1506.glb",
+     "sha256": "0e4dd05f2557561b5798375b9e2de00d05875d04b3aebd4434d9fd8cb23515ce",
+     "bytes": 23072
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1507.glb",
+     "sha256": "72c7d5d0a7d439e763b7741304a9e7d69ad8c2baa4805abd807a6a25faeee0d2",
+     "bytes": 27124
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3972-3014.glb",
+     "sha256": "ec1510980d71186ce68edb2c629c1ec80173060cd5ff655b685386bc97d52f67",
+     "bytes": 26592
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3973-3014.glb",
+     "sha256": "afedb12198cd07296285a4d8d0a70f26c5c592d8ef084a4008ba36d84a509d4f",
+     "bytes": 28532
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3972-3015.glb",
+     "sha256": "fa6d219279a816dd559f4fec61374e58e93384d5fb3f48d85b627b2892cb9056",
+     "bytes": 30212
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3973-3015.glb",
+     "sha256": "ca8934bb664c49def2430bf7aa2834bdf7f2bfb83553baf7756ae8e67c11492c",
+     "bytes": 30712
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1507.glb",
+     "sha256": "a634f40c422c18b686d34d82c2ac04cae6ce29394af3ece25b114e9104469b30",
+     "bytes": 26240
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-993-754.glb",
+     "sha256": "ec8b7c41ccd6e34739f062a216df77d2cc8f5cd5bb55ce094a8e2555e713da2f",
+     "bytes": 26868
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1508.glb",
+     "sha256": "592162b89a42ab49df0341dd35b5a6a8e8b9fff511bfb7c6c1beb182909167fb",
+     "bytes": 29148
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3972-3016.glb",
+     "sha256": "a45e78fc4f6610ea62475007693470163ad42818b7c34e1eeb499f3a88d291e0",
+     "bytes": 31244
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3973-3016.glb",
+     "sha256": "1239a5660aede5d053839585dc578e89e47c8f46935cb4a14e2dc2ade31b3f3f",
+     "bytes": 28892
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3972-3017.glb",
+     "sha256": "c8c2a02b1d8fbde40166ba24ddf8536633490ab354ca368a98d9a1103be9a7e6",
+     "bytes": 31644
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3973-3017.glb",
+     "sha256": "c562c4706d69d091652bbb61a48302c12a39324a56b0d69b39694c54a329967e",
+     "bytes": 32164
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1508.glb",
+     "sha256": "dcbe0e86d5ee0dc0054902adab8c0b0b2d1fe450bad5cfa287b274706afc6721",
+     "bytes": 29268
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1509.glb",
+     "sha256": "7aeebb34089168bd701ea7283811f3539a5d92adfc3b8f37f111670103b889e6",
+     "bytes": 31652
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3972-3018.glb",
+     "sha256": "a978afa93ebc1a013925829e7b588ccc0c5a4d1eadbe1862bc7095efe99e34f2",
+     "bytes": 33112
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3973-3018.glb",
+     "sha256": "dabddeb1c96c6dc886781d45c7dd9666b45e14449be118e8b64c47d8076291aa",
+     "bytes": 33928
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3972-3019.glb",
+     "sha256": "ca3edbe740750b0e975e9f20fa38af38ffaad62ef72af5081f6fa5224249a31a",
+     "bytes": 34472
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/12-3973-3019.glb",
+     "sha256": "02469fe20888a2d3eee988a559ed0724de05b9dd5659a7eba814c1e37b39ab3a",
+     "bytes": 34820
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1509.glb",
+     "sha256": "0a05df5876d5774fe173ee21f96983d6095ddfd37ec039f3a4ec16c66fe265e7",
+     "bytes": 26060
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-993-755.glb",
+     "sha256": "565203e79822f293b240b0ab7476ef66cac94d200c447ef3ff0bfe98b84f559f",
+     "bytes": 24492
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1510.glb",
+     "sha256": "5fbd55922deb36d8fc14d37709fc348671683b446ac7ed97e911f4167ecbdfcc",
+     "bytes": 24960
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1510.glb",
+     "sha256": "a2ca6e767596435bea7e11abfedf85b1e5a3734e4a2d5a49e65b98a4026c3a90",
+     "bytes": 24556
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1986-1511.glb",
+     "sha256": "4f822c65f98e85d439cf1bb34ea1a81992ecc726d81148a2c4faa78aa256c650",
+     "bytes": 27600
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1987-1511.glb",
+     "sha256": "23d7953e70741300856e80e932162022177e90b6acb829ab7a8229ee7fd6c2b7",
+     "bytes": 30028
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-993-756.glb",
+     "sha256": "547fbea7b369bae593aea602df41608c6758feebb30dfc9a5384112d8608eb3c",
+     "bytes": 25416
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-994-752.glb",
+     "sha256": "3bc62b0d837256169dcda49a6346449ec098eb1356e06a561da556451b5cf900",
+     "bytes": 19760
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-994-753.glb",
+     "sha256": "f3197a044b9f463d62f089cb238ad31892821d26bf456b3275f4b90822b50377",
+     "bytes": 22672
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1988-1506.glb",
+     "sha256": "bb4715a99ae9261e5d71f388fe092a983db3526a03f64cf379e4cffacf65ff16",
+     "bytes": 22368
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1989-1506.glb",
+     "sha256": "32dd528d245898e496448e0f33a6f96cb04672725e6dac23490f45d268fe30ee",
+     "bytes": 25664
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1988-1507.glb",
+     "sha256": "32d9610cd0d774b9b10b1ff5624d7a32ad860bfe144e3126a3a086d1bb0f0eb8",
+     "bytes": 22276
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1989-1507.glb",
+     "sha256": "ba67bc5ac4ca5456a101a981f16c2fa7070a52a18cd28b36e86674cb3f930acf",
+     "bytes": 26284
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-994-754.glb",
+     "sha256": "2d29955030969ec68276f0c32c3cf985a20e7df29c95478d691de837932a37c6",
+     "bytes": 27420
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1988-1508.glb",
+     "sha256": "b5c9022f5f093ea62d3826d47b9beb23b970743d3e8bb8140e0e8c5010a38461",
+     "bytes": 28832
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1989-1508.glb",
+     "sha256": "0e0a01720b1c30aa20a61fe470e32bcfaf4dee6d5cdd16ed450d45a37d1b8d75",
+     "bytes": 29832
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1988-1509.glb",
+     "sha256": "162d2cc20092ded47c0b489908305e5f08a2ef09350c6b2004cce9546bab805e",
+     "bytes": 29512
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1989-1509.glb",
+     "sha256": "bf1e70b854ee82507acb429c8fa6d71c0d8115e43221f77991ec955f6e7c216c",
+     "bytes": 28692
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-994-755.glb",
+     "sha256": "d55012e6570ccd239105f18ac8deda2cb31684cc9bf4f72a1988c45eb50170db",
+     "bytes": 25580
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1988-1510.glb",
+     "sha256": "63bc3bbc0724bec68a830eeb209e811e7103a0308ed1d9c15cde67ca1f01e43a",
+     "bytes": 26648
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1989-1510.glb",
+     "sha256": "067fe446da26ac87b87a4b390ccd5d9f1c95eddc9adb1dcffd21ab0ba6d491da",
+     "bytes": 25024
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1988-1511.glb",
+     "sha256": "0be6ced0c8480092bbd26299ad1b385890640f1d4976507380449beee87962d6",
+     "bytes": 29232
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/11-1989-1511.glb",
+     "sha256": "9e98c40c21f99463fa681f2361caa7f34a5d0d0d97b143248e736704cb0b3539",
+     "bytes": 29368
+    },
+    {
+     "path": "docklands/data/places/leon/tiles/10-994-756.glb",
+     "sha256": "db1a040e89e3ab27f30ff1d90c5e6e77c2996eccc7cec8497bc4fa91b8d1d95a",
+     "bytes": 26316
+    },
+    {
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "e31070fd87bd36f63da0de20c9c397e557782efc7cc75f2abc827f77af643018",
+     "bytes": 176774
+    },
+    {
+     "path": "docklands/data/places/leon/surround.json",
+     "sha256": "3f6af97708131d38112ce18c739e13db72f587f3157418cc94f273abf5906c95",
+     "bytes": 280006
+    }
+   ],
+   "ms": 9647,
+   "at": "2026-10-20T22:01:36.228Z"
   }
  ],
  "height_sources": {
   "osm-height": 105,
   "osm-levels": 1452,
   "national": 2454,
+  "overture-ign-floors": 0,
   "overture-height": 7,
   "overture-floors": 0,
   "ms": 6,
@@ -1297,6 +3902,11 @@
   "rule-kind-flat": 88
  },
  "footprint_matches": {
+  "overture-ign-floors": {
+   "rows": 9782,
+   "matched": 1,
+   "matched_osm_had_height": 0
+  },
   "overture": {
    "rows": 335,
    "matched": 151,
@@ -1306,6 +3916,166 @@
    "rows": 1073,
    "matched": 260,
    "matched_osm_had_height": 49
+  }
+ },
+ "validation": {
+  "overture-ign-floors": {
+   "national": {
+    "n": 4490,
+    "same": 4037,
+    "within1": 4395,
+    "max_abs": 9,
+    "hist": {
+     "0": 4037,
+     "1": 234,
+     "2": 24,
+     "3": 16,
+     "-1": 124,
+     ">3": 23,
+     "-2": 18,
+     "-3": 10,
+     "<-3": 4
+    },
+    "agree_pct": 89.9,
+    "within1_pct": 97.9,
+    "mean_diff": 0.05,
+    "mean_abs": 0.15
+   },
+   "osm-levels": {
+    "n": 1,
+    "same": 0,
+    "within1": 0,
+    "max_abs": 5,
+    "hist": {
+     "<-3": 1
+    },
+    "agree_pct": 0,
+    "within1_pct": 0,
+    "mean_diff": -5,
+    "mean_abs": 5
+   },
+   "records": 9782,
+   "used_as_height": 0
+  }
+ },
+ "city_height_sources": {
+  "osm-height": 14,
+  "osm-levels": 1176,
+  "national": 5050,
+  "overture-ign-floors": 0,
+  "overture-height": 913,
+  "overture-floors": 0,
+  "ms": 208,
+  "default-small": 163,
+  "ghsl": 3674,
+  "default": 3,
+  "levels-vs-national-2plus": 61,
+  "national-zero-floors": 0
+ },
+ "city_footprint_matches": {
+  "overture-ign-floors": {
+   "rows": 9782,
+   "matched": 0,
+   "matched_osm_had_height": 0
+  },
+  "overture": {
+   "rows": 2992,
+   "matched": 1762,
+   "matched_osm_had_height": 59
+  },
+  "ms": {
+   "rows": 5713,
+   "matched": 2190,
+   "matched_osm_had_height": 94
+  }
+ },
+ "city_validation": {
+  "overture-ign-floors": {
+   "national": {
+    "n": 4490,
+    "same": 4037,
+    "within1": 4395,
+    "max_abs": 9,
+    "hist": {
+     "0": 4037,
+     "1": 234,
+     "2": 24,
+     "3": 16,
+     "-1": 124,
+     ">3": 23,
+     "-2": 18,
+     "-3": 10,
+     "<-3": 4
+    },
+    "agree_pct": 89.9,
+    "within1_pct": 97.9,
+    "mean_diff": 0.05,
+    "mean_abs": 0.15
+   },
+   "osm-levels": {
+    "n": 1,
+    "same": 0,
+    "within1": 0,
+    "max_abs": 5,
+    "hist": {
+     "<-3": 1
+    },
+    "agree_pct": 0,
+    "within1_pct": 0,
+    "mean_diff": -5,
+    "mean_abs": 5
+   },
+   "records": 9782,
+   "used_as_height": 0
+  }
+ },
+ "outer_counts": {
+  "roads": 18577,
+  "rails": 360,
+  "segments_not_osm_skipped": 12,
+  "segments_tunnel_skipped": 3,
+  "water_areas": 1517,
+  "water_lines": 5084,
+  "places": 1115,
+  "peaks": 849,
+  "buildings_osm": 11201,
+  "buildings not drawn (geometry from Instituto Geográfico Nacional (España))": 10858,
+  "ign_floors": 9782,
+  "buildings not drawn (geometry from Microsoft ML Buildings)": 1909
+ },
+ "tiers": {
+  "surroundings": {
+   "tiles": 289,
+   "bytes": 8701576,
+   "triangles": 409088,
+   "blocks": 0,
+   "levels": {
+    "10": 30,
+    "11": 72,
+    "12": 72,
+    "13": 80,
+    "14": 35
+   }
+  },
+  "city": {
+   "tiles": 90,
+   "bytes": 4629876,
+   "triangles": 361194,
+   "blocks": 13795,
+   "levels": {
+    "13": 20,
+    "14": 61,
+    "15": 9
+   }
+  },
+  "core": {
+   "tiles": 15,
+   "bytes": 0,
+   "triangles": 0,
+   "blocks": 0,
+   "levels": {
+    "15": 15
+   }
   }
  }
 }

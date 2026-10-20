@@ -18,6 +18,23 @@ export const overture = {
     credit: 'Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record)',
   },
 };
+// The number of floors of Overture records whose own num_floors source is one named dataset with an EMPTY licence field
+// (León: "Instituto Geográfico Nacional (España)", 1,009 buildings of the core), kept apart from world-overture so it
+// can be removed: owner, 2026-10-20: "use the data but keep it distinct and easy to remove if requested. Use for
+// validation at least". The switch: this adapter's id in the region's `place.heights` (remove it, delete
+// sources/overture-ign-floors.json, rebuild). Its height class is "overture-ign-floors", after the national floors.
+export const overtureIgnFloors = {
+  id: 'overture-ign-floors', area: 'Spain', status: 'in use behind the region switch (place.heights); also a validation set (F55)',
+  about: 'num_floors of Overture buildings records whose num_floors source is "Instituto Geográfico Nacional (España)" (Overture gives no licence for them)',
+  licence: 'not stated (the Overture sources entry has an empty licence field); IGN data are generally CC BY 4.0, not confirmed for these records',
+  licenceClass: 'review', approved: 'owner, 2026-10-20: "use the data but keep it distinct and easy to remove if requested. Use for validation at least"',
+  fallback: 'world-overture (heights and floors with an open licence)',
+  buildingHeights: {
+    kind: 'overture-dataset-floors', source: 'overture-ign-floors', label: 'overture-ign-floors', from: 'world-overture',
+    dataset: 'Instituto Geográfico Nacional (España)', min_area_ratio: 0.5, storey_m: 3,
+    credit: 'Number of floors of some buildings from the Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review)',
+  },
+};
 export const msBuildings = {
   id: 'world-ms-buildings', area: 'worldwide', status: 'in use (heights where given)',
   about: 'Microsoft Global ML Building Footprints (release of 2026-02-03): one gzip GeoJSON-lines file per zoom-9 quadkey; height in metres (-1 = none)',
