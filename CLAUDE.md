@@ -112,6 +112,11 @@ planning and prototyping phase."
   during the prototyping phase although no licence is published (owner, 2026-10-11: "Waive this, put it against my name
   to pursue license while in prototype phase."). The owner pursues the licence (issue
   https://github.com/danbri/londat/issues/9). Register each file as "review" with this waiver; re-check before the phase ends.
+- Place data for the globe (León, Sarajevo; `cwplans/docklands/data/places/`): the owner accepted the sources on 2026-10-20
+  ("Data - is fine for now, bring it in with subdirs and readmes and provenance clear"): Copernicus DEM GLO-30 (its credit
+  ends "all rights reserved"), IGN MDT (CC BY 4.0), OSM (ODbL), Catastro as transformed heights only (the Catastro rule
+  above still holds: no original files committed). Each place has a README with each source, licence, extract date and
+  hash, and the operations that made each file.
 - Contributed photos: do not describe or tag people; report recognisable faces and readable number plates to the owner
   (the `docklands-data-curation` skill, "Contributed photos").
 - The exception ends when the project leaves the prototyping phase; the owner says when.
