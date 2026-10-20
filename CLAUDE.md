@@ -69,6 +69,8 @@ planning and prototyping phase."
 - OpenStreetMap (ODbL, share-alike) is allowed for now (owner, 2026-10-03: "ODbL is ok for now, and will be thoroughly
   reviewed as part of the planning and prototyping activities later. Keep track of our use of this data carefully.").
   No other share-alike source without the owner's agreement.
+  Microsoft building footprints and heights and Overture Maps buildings (ODbL) are allowed for building heights in the
+  places (owner, 2026-10-20: "Use ms/overture"); register them as share-alike next to OSM and keep their credit.
 - adsb.lol aircraft (ODbL 1.0, share-alike) are allowed in the Three.js port (owner decision, 2026-10-09: "adsb.lol
   (ODbL) (Recommended)": "Free live API, open data under ODbL, like OSM. Fetched in the browser only after a tap, shown
   with the ODbL credit, recorded in the data register as 'review', nothing committed. Simulated traffic stays as the
