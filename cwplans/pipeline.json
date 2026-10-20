@@ -10571,6 +10571,22 @@
   {
    "tool": "tools/fetch-overture-buildings.py",
    "provides": "Overture Maps buildings in a bounding box (duckdb Python package, httpfs and spatial extensions): lists the release files from the public bucket, reads them over HTTPS with a filter on the bbox columns, writes id, height, num_floors, roof shape, the sources list and the outer ring. Used by place-tiles (fetch, adapter world-overture)."
+  },
+  {
+   "tool": "tools/pack-range-archive.mjs",
+   "provides": "Packs a folder of data files (for example the UK skeleton cells) into one deterministic ZIP in Morton cell order, for reading by HTTP range requests (docklands/geo/range-archive.js). Study: docs/hosting-options.md."
+  },
+  {
+   "tool": "tools/range-server.mjs",
+   "provides": "A small Node static server with Range, gzip, an answer delay and HTTP/2, for range-read tests of archives (docklands/test/archive-check.mjs)."
+  },
+  {
+   "tool": "tools/probe-range-host.sh",
+   "provides": "Probes a host with curl: Range answers (206, suffix ranges), CORS headers and preflight, cache headers, compression and time to first byte. Read requests only. Study: docs/hosting-options.md."
+  },
+  {
+   "tool": "tools/pages-size.mjs",
+   "provides": "Measures the size and file count of the GitHub Pages site as the Pages workflow stages it, and the size if deflated."
   }
  ],
  "tests": [
@@ -10609,6 +10625,10 @@
   {
    "tool": "tools/test/tide-harmonics.test.mjs",
    "what": "Tests (node --test) of docklands/data/sky/tide-harmonics.json and the prediction in docklands/tide.js (the Three.js port's tide): the constituents, the held-out error against the EA readings of 3-4 Oct 2026, the page code agreeing with the tool's check values."
+  },
+  {
+   "tool": "tools/test/range-archive.test.mjs",
+   "what": "Tests (node --test) of the range archive packer and reader: ZIP layout, Morton order, central directory, range reads of single entries and merged reads."
   }
  ],
  "header_mismatches_resolved": {
