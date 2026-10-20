@@ -28,13 +28,14 @@ import { REGION } from '../geo/current.js';
 import { REGIONS } from '../geo/regions/index.js';
 import { makeWorld, pickLang, fmtDist, fmtLatLon, compass, linesOf, labelPoint, bearingDeg } from './world.js';
 import { Terrain, terrainMaterial, makeSampler } from './terrain.js';
-import { buildLines, lineMaterial, graticule } from './vectors.js';
+import { buildLines, lineMaterial, graticule, rebuildLines } from './vectors.js';
 import { makeLabels } from './labels.js';
 
 // the manifests of layer sets in the globe's contract (world.js header). The UK skeleton adds its manifest here.
 export const MANIFESTS = ['../cwplans/docklands/data/world/layers.json'];
 // skeleton sets (format skeleton-1, docklands/geo/skeleton.js), drawn through skeleton-layers.js
-export const SKELETONS = ['../cwplans/docklands/data/uk/'];
+// (the world detail set first: a finer set's "where" answer, merged after it, wins; cwplans/tools/build-detail-skeleton.mjs)
+export const SKELETONS = ['../cwplans/docklands/data/world-detail/', '../cwplans/docklands/data/uk/', '../cwplans/docklands/data/es-nw/', '../cwplans/docklands/data/ba/'];
 export const HANDOVER = { range: 36000, out: 40000, marginM: 1000, leaveM: 3000, bg: 3000 };
 const A_ = WGS84.a, MAXR = 4.2e7, MINALT = 25;
 const v3 = (a = 0, b = 0, c = 0) => new THREE.Vector3(a, b, c);
@@ -234,6 +235,7 @@ export async function createGlobe(H) {
     for (const nd of terrain.cache.values()) if (nd.mesh && nd.used < terrain.frame) { scene.remove(nd.mesh); nd.mesh.geometry.dispose(); nd.mesh = null; dropped++; }
     scene.traverse(x => { const g = x.isMesh || x.isLine || x.isPoints ? x.geometry : null; if (g) { g.dispose(); n++; v += g.attributes.position?.count || 0; } });
     for (const t of G.textures || []) t.dispose();
+    if (G.baseRest) G.baseRest();   // the base imagery tiles (globe/base-tiles.js)
     if (rt) { if (bgOn) setBg(false); rt.dispose(); rt = null; G.bgNode = null; }
     if (labels) for (const c of labels.candidates) if (c.el) { c.el.remove(); c.el = null; }
     G.rested = { meshes: n, vertices: v, patchesDropped: dropped, at: Date.now() }; G.rests = (G.rests || 0) + 1;
@@ -264,6 +266,8 @@ export async function createGlobe(H) {
     U.W = M.terrain.width; U.H = M.terrain.height;
     sampler = makeSampler(pixels(tex.image, 2048, 1024), pixels(gtex.image, 361, 181)); G.textures = [tex, gtex];
     terrain = new Terrain(scene, terrainMaterial(tex, gtex, U), U);
+    // the world base tiles (imagery, and heights round the testbeds), loaded by view as the patches ask (globe/base-tiles.js)
+    if (qs.get('base') !== '0') G.baseP = import('./base-tiles.js').then(m => m.attachBase(G, { terrain, sampler, U, tex, gtex, terrainMaterial })).catch(e => { console.warn('globe: base tiles', e); return null; });
     atmo = atmosphere(); scene.add(atmo);
     labels = makeLabels(ui.labels);
     await G.gazetteer();
@@ -362,7 +366,7 @@ export async function createGlobe(H) {
     if (!G.ready) { G.ensure().then(() => flyTo(o1, opt)).catch(() => {}); return; }
     const o0 = G.mode === 'globe' ? { ...orbit } : modelOrbit();
     o1 = { ...o0, heading: 0, tilt: 0, ...o1 }; if (sampler) o1.h = sampler.ell(o1.lon, o1.lat);
-    if (!o1.view && !opt.view && !inBox(o1.lon, o1.lat, HANDOVER.marginM) && !G.detailAt?.(o1.lon, o1.lat)) o1.range = Math.max(o1.range, 60000 / Math.max(0.1, Math.cos(o1.tilt)));   // the 60 km floor away from the model (G.goTo)
+    if (!o1.view && !opt.view && !inBox(o1.lon, o1.lat, HANDOVER.marginM) && !G.detailAt?.(o1.lon, o1.lat)) o1.range = Math.max(o1.range, floorAt(o1.lon, o1.lat) / Math.max(0.1, Math.cos(o1.tilt)));   // the floor away from the model (G.goTo)
     const dist = surfaceDistance(o0.lon, o0.lat, o1.lon, o1.lat), peak = Math.min(MAXR * 0.5, Math.max(o0.range, o1.range, dist * 1.1));
     const ms = opt.ms ?? (reduced() || opt.instant ? 0 : clamp(1200 + 900 * Math.log10(1 + dist / 20000), 1200, 5500));
     flight = { o0, o1, peak, t0: performance.now(), ms, view: opt.view || null, done: opt.done || null, card: opt.card || null };
@@ -547,9 +551,11 @@ export async function createGlobe(H) {
   function showCard(e) {
     if (!e) return; const facts = (e.facts || []).map(f => `<tr><td>${esc(f.label)}</td><td>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.value)}</a>` : esc(f.value)}</td><td class="small">${esc(f.source || '')}</td></tr>`).join('');
     const sub2 = [e.kind, e.region, e.country].filter(Boolean).map(esc).join(' · ');
-    H.showCard(`<h2>${esc(e.name || 'Here')}</h2>${e.local_name ? `<p class="small">${esc(e.local_name)}</p>` : ''}<p class="small">${sub2}${e.lon != null ? ` · ${fmtLatLon(e.lat, e.lon, 3)}` : ''}</p>${facts ? `<div class="tw"><table>${facts}</table></div>` : ''}${e.text ? `<p class="small">${esc(e.text)}</p>` : ''}<p class="small">Map data: Natural Earth (public domain); terrain: ETOPO 2022 (NOAA, public domain).</p>`);
+    H.showCard(`<h2>${esc(e.name || 'Here')}</h2>${e.local_name ? `<p class="small">${esc(e.local_name)}</p>` : ''}<p class="small">${sub2}${e.lon != null ? ` · ${fmtLatLon(e.lat, e.lon, 3)}` : ''}</p>${facts ? `<div class="tw"><table>${facts}</table></div>` : ''}${e.text ? `<p class="small">${esc(e.text)}</p>` : ''}<p class="small">${CREDIT}</p>`);
   }
   G.showCard = showCard;
+  // (the world base and the detail sets: imagery CC BY 4.0, GeoNames CC BY 4.0, OpenStreetMap ODbL; cwplans/data-register.json)
+  const CREDIT = 'Map data: Natural Earth (public domain); GeoNames (CC BY 4.0); <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> (ODbL, regional roads, rivers and places). Imagery: Sentinel-2 cloudless 2016 by EOX IT Services GmbH (CC BY 4.0, contains modified Copernicus Sentinel data 2016). Terrain: ETOPO 2022 (NOAA, public domain); Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA.';
   // a card, then the extra facts (a place card of a skeleton set) when they come
   async function showEntry(e) { showCard(e); if (e && e.more) { const f = await e.more().catch(() => null); if (f && f.length) showCard({ ...e, facts: [...(e.facts || []).filter(x => x.label !== 'Kind'), ...f], more: null }); } }
   G.showEntry = showEntry;
@@ -563,7 +569,7 @@ export async function createGlobe(H) {
     if (w.admin1) facts.push({ label: 'Region', value: w.admin1.name, source: 'Natural Earth' });
     if (w.sea) facts.push({ label: w.sea.near ? 'Nearest sea' : 'Sea', value: w.sea.name, source: 'Natural Earth' });
     if (w.lake) facts.push({ label: 'Lake', value: w.lake.name, source: 'Natural Earth' });
-    if (h != null) facts.push({ label: h >= 0 ? 'Height above sea level (about)' : 'Depth (about)', value: `${Math.abs(h).toLocaleString('en')} m`, source: 'ETOPO 2022 (box mean of about 10 km)' });
+    if (h != null) facts.push({ label: h >= 0 ? 'Height above sea level (about)' : 'Depth (about)', value: `${Math.abs(h).toLocaleString('en')} m`, source: sampler && sampler.demH && sampler.demH(lon, lat) != null ? 'Copernicus DEM GLO-90 (world base tile, box mean)' : 'ETOPO 2022 (box mean of about 10 km)' });
     for (const p of near) facts.push({ label: 'Near', value: `${p.name}${p.country ? ' (' + p.country + ')' : ''}, ${fmtDist(p.dist_m)} ${p.direction}`, source: 'Natural Earth' });
     return { name, kind: 'point', lon, lat, country: w.country?.name || null, region: w.admin1?.name || null, sea: w.sea?.name || null, lake: w.lake?.name || null, height_m: h, nearest: near, facts };
   }
@@ -605,6 +611,9 @@ export async function createGlobe(H) {
       if (ch) history.replaceState(null, '', location.pathname + (q.size ? '?' + q.toString().replace(/%2C/g, ',') : '') + location.hash); } }
   G.orbit = () => ({ ...orbit });
 
+  // the lowest eye away from the model and the places: 60 km over the world texture only; lower where the base has finer
+  // imagery and heights (level 11: about 19 m a pixel; level 9 and 10; level 7 and 8)
+  const floorAt = (lon, lat) => { const L = G.baseDetailAt ? G.baseDetailAt(lon, lat) : 0; return L >= 11 ? 2000 : L >= 9 ? 8000 : L >= 7 ? 25000 : 60000; };
   // ---------- going places
   // goTo({ lon, lat, alt_m | range_m, heading_deg, tilt_deg | pitch_deg, animate }): anywhere on earth; in the model box and
   // below the hand-over the model takes the view
@@ -615,7 +624,8 @@ export async function createGlobe(H) {
     // outside the model box the globe has only coarse world data (terrain 9.8 km a pixel): an eye under 60 km sees one
     // flat colour (owner, 2026-10-13: the Sarajevo link opened on "pure beige"), so the eye goes no lower than 60 km there
     // (over a place built as 3D Tiles, globe/places.js, a 300 m floor instead)
-    const minR = inBox(+t.lon, +t.lat, HANDOVER.marginM) ? 0 : (G.detailAt?.(+t.lon, +t.lat) ? 300 : 60000) / Math.max(0.1, Math.cos(tilt));
+    // (round the testbeds the base tiles are finer, globe/base-tiles.js: a lower floor there, floorAt)
+    const minR = inBox(+t.lon, +t.lat, HANDOVER.marginM) ? 0 : (G.detailAt?.(+t.lon, +t.lat) ? 300 : floorAt(+t.lon, +t.lat)) / Math.max(0.1, Math.cos(tilt));
     const o = { lon: +t.lon, lat: +t.lat, h: 0, range: Math.max(range, minR), heading: (+t.heading_deg || 0) * D2R, tilt };
     if (!isFinite(o.lon) || !isFinite(o.lat) || Math.abs(o.lat) > 90) throw new Error('goTo needs lon and lat in WGS84 degrees');
     await new Promise(ok => flyTo(o, { ms: opt.animate ? undefined : 0, view: t.view || null, done: ok, card: opt.card || null }));
@@ -679,14 +689,14 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   const goHost = $('ext-go');
   if (goHost) { const h = document.createElement('h3'); h.textContent = 'Globe'; const row = document.createElement('div'); row.className = 'btnrow'; row.id = 'globeGo';
     row.innerHTML = '<button type="button" id="goWorld">World</button><button type="button" id="goHome">Home (Docklands)</button><button type="button" id="goNorth">North up</button>';
-    const note = document.createElement('p'); note.className = 'small'; note.innerHTML = 'Zoom out past the model, or tap World, to see the whole planet. On the globe: drag to move, two fingers or the wheel to zoom, right or Shift drag to turn and tilt. Search (top of this menu) finds any country, region, sea or city. Map data: Natural Earth (public domain); terrain: ETOPO 2022 (NOAA, public domain).';
+    const note = document.createElement('p'); note.className = 'small'; note.innerHTML = 'Zoom out past the model, or tap World, to see the whole planet. On the globe: drag to move, two fingers or the wheel to zoom, right or Shift drag to turn and tilt. Search (top of this menu) finds any country, region, sea or city. Map data: Natural Earth (public domain), GeoNames (CC BY 4.0), © OpenStreetMap contributors (ODbL); imagery: Sentinel-2 cloudless 2016 by EOX (CC BY 4.0); terrain: ETOPO 2022 (NOAA, public domain), Copernicus DEM GLO-90.';
     goHost.prepend(h, row, note);
     const closeMenu = () => { if (innerWidth < 900 && !$('drawer').hidden) $('drawerX')?.click(); };
     row.querySelector('#goWorld').onclick = () => { closeMenu(); G.world(); }; row.querySelector('#goHome').onclick = () => { closeMenu(); G.home(); }; row.querySelector('#goNorth').onclick = () => { closeMenu(); G.northUp(); }; }
   const uiDone = new Set();
   function layerUi(more) {
     if (!H.ui) return; const prev = H.ui.tab('layers/world');
-    if (!more) H.ui.note('The world on the globe (shown when you zoom out past the model). Natural Earth 5.1.2 and ETOPO 2022, public domain.');
+    if (!more) H.ui.note('The world on the globe (shown when you zoom out past the model). Natural Earth 5.1.2 and ETOPO 2022, public domain; imagery Sentinel-2 cloudless 2016 by EOX (CC BY 4.0); terrain near the testbeds Copernicus DEM GLO-90; GeoNames (CC BY 4.0); regional roads, rivers and places © OpenStreetMap contributors (ODbL).');
     for (const L of [...layers, ...cellLayers]) { if (uiDone.has(L) || !L.label) continue; uiDone.add(L); H.ui.toggle(L.label, L.on, v => { L.on = v; G.dirty = true; H.draw(); }); }
     if (!more) { H.ui.toggle('Place names on the globe', true, v => { G.labelsShown = v; G.dirty = true; H.draw(); }); G.labelsShown = true; }
     H.ui.tab(prev);
@@ -736,6 +746,16 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
       if (L.cells.size > 300) for (const [k, c] of [...L.cells].sort((a, b) => a[1].used - b[1].used).slice(0, L.cells.size - 250)) { if (want.has(k)) continue; for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); } labels.clear(x => c.labels.includes(x)); L.cells.delete(k); }
     }
   }
+  // new ground heights (base height tiles loaded over area a = [w, s, e, n]): the line chunks over it again on the new
+  // ground, when the eye is low enough to see the difference (globe/base-tiles.js calls this, at most every 1.2 s)
+  G.onBaseDem = a => {
+    if (!G.ready || F.eyeGeo.h > 1.2e6) return; let n = 0, v = 0; const t0 = performance.now();
+    const meets = b => b && b[0] <= a[2] && b[2] >= a[0] && b[1] <= a[3] && b[3] >= a[1];
+    const re = m => { if (!meets(m.userData.bbox)) return; const k = rebuildLines(m, G.heightAt, a); if (k) { n++; v += k; } };
+    for (const L of layers) for (const m of L.meshes) re(m);
+    for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) re(m);
+    G.stats.relines = { chunks: n, vertices: v, ms: Math.round(performance.now() - t0) }; if (n) { G.dirty = true; H.draw(); }
+  };
   const searchProviders = [], whereProviders = [];
   G.addSearchProvider = fn => searchProviders.push(fn);   // async (q, limit) -> [{ name, kind, lon, lat, country?, facts? }]
   G.addWhereProvider = fn => whereProviders.push(fn);     // async (lon, lat) -> { ...facts } (in featuresAt and describe as "more")

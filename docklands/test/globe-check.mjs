@@ -56,7 +56,10 @@ async function cost(page, ms = 4000) {
     const G = __docklands3.globe, t0 = performance.now(); const sub = [];
     await new Promise(ok => { const f = () => { G.dirty = true; __docklands3.draw(); if (G.stats.frame) sub.push(G.stats.frame.ms); if (performance.now() - t0 < ms) requestAnimationFrame(f); else ok(); }; f(); });
     const p = docklands.perf ? docklands.perf() : null, fr = G.mode === 'globe' ? G.stats.frame : null; sub.sort((a, b) => a - b);
-    return { mode: G.mode, patches: fr && fr.patches, triangles: fr && fr.triangles, calls: fr && fr.calls, submit_ms_median: sub.length ? sub[Math.floor(sub.length / 2)] : null, frame_ms_median: p && p.frame_ms.median, frame_ms_p95: p && p.frame_ms.p95, fps: p && p.fps.median, frames: sub.length };
+    // memory: three.js counts of GPU geometries and textures, the JS heap (Chromium), the base tiles held (globe/base-tiles.js)
+    const mi = __docklands3.renderer.info.memory || {}, heap = performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null, bt = G.baseStats ? G.baseStats() : null;
+    return { mode: G.mode, patches: fr && fr.patches, triangles: fr && fr.triangles, calls: fr && fr.calls, submit_ms_median: sub.length ? sub[Math.floor(sub.length / 2)] : null, frame_ms_median: p && p.frame_ms.median, frame_ms_p95: p && p.frame_ms.p95, fps: p && p.fps.median, frames: sub.length,
+      geometries: mi.geometries, textures: mi.textures, heap_mb: heap, ...(bt ? { base: bt } : {}) };
   }, ms);
 }
 const view = page => page.evaluate(() => docklands.getView());

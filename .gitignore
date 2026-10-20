@@ -10,3 +10,7 @@ data/raw/stock-mcp/
 
 # world skeleton downloads (cwplans/tools/build-world-skeleton.mjs fetch): Natural Earth, ETOPO 2022 mean grid, EGM96
 data/raw/world-skeleton/
+
+# world base tiles and detail skeleton downloads (cwplans/tools/build-world-base.mjs, build-detail-skeleton.mjs fetch)
+data/raw/world-base/
+data/raw/detail-skeleton/
