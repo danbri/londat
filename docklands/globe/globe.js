@@ -345,8 +345,10 @@ export async function createGlobe(H) {
     for (const nd of sel) { const m = terrain.mesh(nd); if (!m.parent) scene.add(m); place(m); m.visible = true; }
     // lines by eye altitude
     const alt = F.eyeGeo.h;
-    for (const L of layers) { const vis = L.on && alt >= (L.style.minAlt || 0) && alt <= (L.style.maxAlt || Infinity); for (const m of L.meshes) { m.visible = vis; if (vis) place(m); } }
-    for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) if (m.visible) place(m);
+    // (line chunks outside the view frustum are not drawn: fewer draw calls; a chunk's radius is in geometry.userData.r)
+    const seen = m => { const r = m.geometry.userData.r; return !r || inFrustum(m.userData.C, r); };
+    for (const L of layers) { const vis = L.on && alt >= (L.style.minAlt || 0) && alt <= (L.style.maxAlt || Infinity); for (const m of L.meshes) { m.visible = vis && seen(m); if (m.visible) place(m); } }
+    for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) { if (m.userData.on === undefined) m.userData.on = m.visible; if (m.userData.on) { m.visible = seen(m); if (m.visible) place(m); } else m.visible = false; }
     place(atmo); atmo.visible = alt > 2000;
     if (G.onFrame) G.onFrame(eye);   // places as 3D Tiles (globe/places.js): load, free, place the tiles, cut the hole
     // background: black space, sky blue near the ground by day
@@ -742,7 +744,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
           }).catch(e => console.warn('globe: cell layer', L.id, k, e));
         }
       }
-      for (const [k, c] of L.cells) { const on = want.has(k); for (const m of c.meshes) m.visible = on; for (const lb of c.labels) lb.off = !on; if (on) c.used = now; }
+      for (const [k, c] of L.cells) { const on = want.has(k); for (const m of c.meshes) { m.userData.on = on; m.visible = on; } for (const lb of c.labels) lb.off = !on; if (on) c.used = now; }
       if (L.cells.size > 300) for (const [k, c] of [...L.cells].sort((a, b) => a[1].used - b[1].used).slice(0, L.cells.size - 250)) { if (want.has(k)) continue; for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); } labels.clear(x => c.labels.includes(x)); L.cells.delete(k); }
     }
   }

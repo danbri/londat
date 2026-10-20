@@ -52,6 +52,16 @@ async function run(w, h, dpr, nobase) {
       check(g.dem != null && Math.abs(g.dem - g.h) < 1, `${tag} ${id}: the ground sampler answers from the base heights`, JSON.stringify(g));
     }
   }
+  // steady-state frame costs over Sarajevo (as globe-check) after the tiles have loaded: CPU submit time of render(),
+  // triangles, draw calls, GPU objects, JS heap, the base's textures
+  for (const [k, alt] of [['orbit', 1.2e7], ['1000km', 1e6], ['100km', 1e5], ['10km', 1e4]]) {
+    await page.evaluate(a => docklands.goTo({ lon: 18.43, lat: 43.86, alt_m: a }), alt); await settle(3000);
+    const c = await page.evaluate(async () => { const G = __docklands3.globe, sub = [], t0 = performance.now();
+      while (performance.now() - t0 < 5000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => r())); if (G.stats.frame) sub.push(G.stats.frame.ms); }
+      sub.sort((a, b) => a - b); const fr = G.stats.frame, mi = __docklands3.renderer.info.memory;
+      return { submit_ms_median: sub[Math.floor(sub.length / 2)], frames: sub.length, patches: fr.patches, triangles: fr.triangles, calls: fr.calls, geometries: mi.geometries, textures: mi.textures, heap_mb: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null, base_gpu_mb: G.baseStats ? G.baseStats().gpu_mb : 0 }; });
+    console.log(`   ${tag} steady ${k.padEnd(6)} ${JSON.stringify(c)}`);
+  }
   // a far flight: textures stay bounded (tiles not drawn are freed)
   await page.evaluate(() => docklands.goTo({ lon: 139.7, lat: 35.7, alt_m: 2e6 })); await settle();
   const fin = await page.evaluate(() => ({ base: __docklands3.globe.baseStats ? __docklands3.globe.baseStats() : null, textures: __docklands3.renderer.info.memory.textures }));

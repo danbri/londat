@@ -61,6 +61,8 @@ function chunkGeometry(parts, C, heightAt, lift) {
   const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(new Float32Array(P), 3)); G.setIndex(n > 65535 ? new THREE.BufferAttribute(new Uint32Array(I), 1) : new THREE.BufferAttribute(new Uint16Array(I), 1));
   G.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1e9);
   G.userData.ll = new Float32Array(LL);   // lon, lat of each vertex (rebuildLines)
+  let r2 = 0; for (let i = 0; i < P.length; i += 3) r2 = Math.max(r2, P[i] * P[i] + P[i + 1] * P[i + 1] + P[i + 2] * P[i + 2]);
+  G.userData.r = Math.sqrt(r2) + 2000;   // the chunk's bounding radius about C (frustum culling in globe.js)
   return G;
 }
 // new ground heights over area a = [w, s, e, n] (the world base's height tiles came in, globe/base-tiles.js): the
