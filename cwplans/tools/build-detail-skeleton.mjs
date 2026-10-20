@@ -26,7 +26,8 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, rmSync, c
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { cellOf, cellSize, fold, gazKey, pointInGeometry } from '../../docklands/geo/skeleton.js';
+import { cellOf, cellSize, fold, gazKey, pointInGeometry, distanceM } from '../../docklands/geo/skeleton.js';
+import REGIONS from '../../docklands/geo/regions/index.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
@@ -46,6 +47,10 @@ export const REGION_SETS = {
 // the finer sets that already draw roads, railways and rivers (the world set leaves these areas to them)
 const FINER = [{ admin0: ['GBR'] }, ...Object.values(REGION_SETS).map(s => s.cover)];
 const Q = 10000;
+// the world set's dense layers (all main roads, railways, urban areas) only within NEAR_KM of a testbed (the region
+// configs named by --near); elsewhere the major roads of level 3. Size: worldwide they were 16 MB of the 26 MB.
+const NEAR_KM = +arg('--near-km', 3000), NEAR = arg('--near', 'docklands,leon,sarajevo').split(',').map(id => REGIONS[id].origin);
+const near = p => NEAR.some(o => distanceM([o.lon, o.lat], p) <= NEAR_KM * 1000);
 
 async function download(url, file) {
   if (existsSync(file)) return;
@@ -90,6 +95,23 @@ function cutLine(pts, level) {
   if (cur && cur.length > 1) (out[curK] ||= []).push(cur);
   return out;
 }
+// join lines that meet end to end and share a key (fewer pieces: Natural Earth and OSM cut roads at every junction)
+function mergeLines(items, keyOf) {
+  const groups = new Map(); for (const it of items) { const k = keyOf(it); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(it); }
+  const out = [], pk = p => p[0].toFixed(6) + ',' + p[1].toFixed(6);
+  for (const [, g] of groups) {
+    const ends = new Map(), used = new Set(), add = (p, i) => { const k = pk(p); if (!ends.has(k)) ends.set(k, []); ends.get(k).push(i); };
+    g.forEach((it, i) => { add(it.l[0], i); add(it.l.at(-1), i); });
+    const next = (p, self) => { const c = (ends.get(pk(p)) || []).filter(j => j !== self && !used.has(j)); return c.length === 1 && (ends.get(pk(p)) || []).length === 2 ? c[0] : -1; };
+    for (let i = 0; i < g.length; i++) {
+      if (used.has(i)) continue; used.add(i); let line = g[i].l.slice();
+      for (let j = next(line.at(-1), i); j >= 0; j = next(line.at(-1), j)) { used.add(j); const m = g[j].l; line = pk(m[0]) === pk(line.at(-1)) ? line.concat(m.slice(1)) : line.concat(m.slice(0, -1).reverse()); }
+      for (let j = next(line[0], i); j >= 0; j = next(line[0], j)) { used.add(j); const m = g[j].l; line = pk(m.at(-1)) === pk(line[0]) ? m.slice(0, -1).concat(line) : m.slice(1).reverse().concat(line); }
+      out.push({ ...g[i], l: line });
+    }
+  }
+  return out;
+}
 const bboxOf = pts => { let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity; for (const [x, y] of pts) { if (x < w) w = x; if (x > e) e = x; if (y < s) s = y; if (y > n) n = y; } return [w, s, e, n]; };
 const r4 = v => Math.round(v * Q) / Q;
 const encLine = (pts, q = Q) => { const d = []; let px = 0, py = 0, first = true; for (const [lon, lat] of pts) { const x = Math.round(lon * q), y = Math.round(lat * q); if (!first && x === px && y === py) continue; d.push(first ? x : x - px, first ? y : y - py); px = x; py = y; first = false; } return d; };
@@ -105,12 +127,12 @@ function writeLayers(out, layers) {
     for (const lv of L.levels) {
       const files = {}, q = lv.q || Q, enc = p => encLine(p, q);
       for (const f of lv.features) {
-        if (f.point) { const [x, y] = cellOf(lv.level, ...f.point); (files[x + '-' + y] ||= []).push({ id: f.id, properties: f.properties, geometry: { type: 'Point', d: [Math.round(f.point[0] * q), Math.round(f.point[1] * q)] }, bb: [...f.point, ...f.point] }); }
+        if (f.point) { const [x, y] = cellOf(lv.level, ...f.point); (files[x + '-' + y] ||= []).push({ properties: f.properties, geometry: { type: 'Point', d: [Math.round(f.point[0] * q), Math.round(f.point[1] * q)] }, bb: [...f.point, ...f.point] }); }
         else if (f.poly) { const b = bboxOf(f.poly[0]), [x, y] = cellOf(lv.level, (b[0] + b[2]) / 2, (b[1] + b[3]) / 2); const rings = f.poly.map(enc).filter(r => r.length >= 6); if (!rings.length) continue;
-          (files[x + '-' + y] ||= []).push({ id: f.id, properties: f.properties, bbox: b.map(r4), geometry: { type: 'Polygon', d: rings }, bb: b }); }
+          (files[x + '-' + y] ||= []).push({ properties: f.properties, bbox: b.map(r4), geometry: { type: 'Polygon', d: rings }, bb: b }); }
         else if (f.line) { const pieces = cutLine(f.line, lv.clip ?? lv.level); let n = 0;
           for (const [, ps] of Object.entries(pieces)) for (const p of ps) { const b = bboxOf(p), [x, y] = cellOf(lv.level, (b[0] + b[2]) / 2, (b[1] + b[3]) / 2), d = enc(p); if (d.length < 4) continue;
-            (files[x + '-' + y] ||= []).push({ id: `${f.id}.${n++}`, properties: f.properties, geometry: { type: 'LineString', d }, bb: b }); } }
+            (files[x + '-' + y] ||= []).push({ properties: f.properties, geometry: { type: 'LineString', d }, bb: b }); n++; } }
       }
       lv.files = Object.entries(files).sort().map(([cell, feats]) => {
         const path = `layers/${L.id}/${lv.level}/${cell}.json`, bb = feats.reduce((a, f) => [Math.min(a[0], f.bb[0]), Math.min(a[1], f.bb[1]), Math.max(a[2], f.bb[2]), Math.max(a[3], f.bb[3])], [Infinity, Infinity, -Infinity, -Infinity]);
@@ -153,7 +175,8 @@ async function buildWorld() {
   const finer = coverTest(FINER), mid = l => l[Math.floor(l.length / 2)];
   // roads: level 3 the major ones (scalerank <= 5), level 5 all (Natural Earth roads are the main roads of each country)
   const roads = ne('ne_10m_roads').filter(f => !/Ferry/i.test(f.properties.featurecla + ' ' + f.properties.type)).flatMap((f, i) => linesOfGeom(f.geometry).map((l, j) => ({ id: `r${i}-${j}`, l, p: f.properties })))
-    .filter(r => !finer(...mid(r.l))).map(r => ({ ...r, props: { kind: r.p.expressway === 1 ? 'motorway' : r.p.type === 'Major Highway' ? 'trunk' : 'primary', ref: r.p.name || undefined, r: r.p.scalerank } }));
+    .filter(r => !finer(...mid(r.l))).map(r => ({ ...r, props: { kind: r.p.expressway === 1 ? 'motorway' : r.p.type === 'Major Highway' ? 'trunk' : 'primary' } }));
+  const roadsM = mergeLines(roads, r => r.props.kind + (r.p.scalerank <= 5 ? 'a' : 'b'));
   const rail = ne('ne_10m_railroads').flatMap((f, i) => linesOfGeom(f.geometry).map((l, j) => ({ id: `t${i}-${j}`, l, p: f.properties }))).filter(r => !finer(...mid(r.l)));
   const rivFeat = [...ne('ne_10m_rivers_lake_centerlines').map(f => [f, 'w']), ...ne('ne_10m_rivers_europe').map(f => [f, 'e'])];
   const rivers = rivFeat.flatMap(([f, src], i) => linesOfGeom(f.geometry).map((l, j) => ({ id: `${src}${i}-${j}`, l, p: f.properties }))).filter(r => !finer(...mid(r.l)));
@@ -161,18 +184,18 @@ async function buildWorld() {
   const urban = ne('ne_10m_urban_areas').flatMap((f, i) => polysOfGeom(f.geometry).map((p, j) => ({ id: `u${i}-${j}`, p: f.properties, poly: p })));
   const L = (l, tol) => dp(l, tol);
   const layers = [
-    { id: 'roads', title: 'Main roads (Natural Earth 1:10m)', geometry: 'LineString', properties: { kind: 'motorway, trunk or primary (from the Natural Earth type)', ref: 'road name or number', r: 'Natural Earth scale rank' },
-      describe: '[{ref}, ]a main road ({kind}).', sources: ['natural-earth'],
-      levels: [{ level: 3, clip: 6, q: 500, note: 'scale rank 5 or less, 0.02 degree tolerance, 0.002 degree grid', features: roads.filter(r => r.p.scalerank <= 5).map(r => ({ id: r.id, properties: { kind: r.props.kind }, line: L(r.l, 0.02) })) },
-               { level: 5, clip: 8, q: 1000, note: 'all, 0.005 degree tolerance, 0.001 degree grid', features: roads.map(r => ({ id: r.id, properties: { kind: r.props.kind, ref: r.props.ref }, line: L(r.l, 0.005) })) }] },
-    { id: 'rail', title: 'Railways (Natural Earth 1:10m)', geometry: 'LineString', properties: { r: 'Natural Earth scale rank' }, describe: 'A railway.', sources: ['natural-earth'],
-      levels: [{ level: 5, clip: 8, q: 1000, note: 'all, 0.005 degree tolerance, 0.001 degree grid', features: rail.map(r => ({ id: r.id, properties: {}, line: L(r.l, 0.005) })) }] },
+    { id: 'roads', title: 'Main roads (Natural Earth 1:10m)', geometry: 'LineString', properties: { kind: 'motorway, trunk or primary (from the Natural Earth type and expressway flag)' },
+      describe: 'A main road ({kind}).', sources: ['natural-earth'],
+      levels: [{ level: 3, clip: 6, q: 500, note: 'scale rank 5 or less, 0.02 degree tolerance, 0.002 degree grid', features: roadsM.filter(r => r.p.scalerank <= 5).map(r => ({ id: r.id, properties: { kind: r.props.kind }, line: L(r.l, 0.02) })) },
+               { level: 5, clip: 8, q: 1000, note: `all within ${NEAR_KM} km of a testbed, 0.005 degree tolerance, 0.001 degree grid`, features: roadsM.filter(r => near(mid(r.l))).map(r => ({ id: r.id, properties: { kind: r.props.kind }, line: L(r.l, 0.005) })) }] },
+    { id: 'rail', title: 'Railways (Natural Earth 1:10m)', geometry: 'LineString', properties: {}, describe: 'A railway.', sources: ['natural-earth'],
+      levels: [{ level: 5, clip: 8, q: 1000, note: `within ${NEAR_KM} km of a testbed, 0.005 degree tolerance, 0.001 degree grid`, features: mergeLines(rail, () => 'rail').filter(r => near(mid(r.l))).map(r => ({ id: r.id, properties: {}, line: L(r.l, 0.005) })) }] },
     { id: 'rivers', title: 'Rivers (Natural Earth 1:10m and its European supplement)', geometry: 'LineString', properties: { name: 'name', r: 'scale rank' }, describe: '{name}[, a river].', sources: ['natural-earth'],
-      levels: [{ level: 5, clip: 8, q: 1000, note: 'all, 0.003 degree tolerance, 0.001 degree grid', features: rivers.map(r => ({ id: r.id, properties: { name: r.p.name || undefined }, line: L(r.l, 0.003) })) }] },
+      levels: [{ level: 5, clip: 8, q: 1000, note: 'all, 0.003 degree tolerance, 0.001 degree grid', features: mergeLines(rivers, r => r.p.name || '').map(r => ({ id: r.id, properties: { name: r.p.name || undefined }, line: L(r.l, 0.003) })) }] },
     { id: 'lakes', title: 'Lakes (Natural Earth 1:10m and its European supplement)', geometry: 'Polygon', properties: { name: 'name' }, describe: '[{name}, ]a lake.', sources: ['natural-earth'],
       levels: [{ level: 5, q: 1000, note: 'all, 0.003 degree tolerance, 0.001 degree grid', features: lakes.map(k => ({ id: k.id, properties: { name: k.p.name || undefined }, poly: k.poly.map(r => L(r, 0.003)).filter(r => r.length >= 4) })).filter(k => k.poly.length) }] },
     { id: 'built-up', title: 'Urban areas (Natural Earth 1:10m)', geometry: 'Polygon', properties: { km2: 'area in km²' }, describe: 'An urban area[ of {km2} km²].', sources: ['natural-earth'],
-      levels: [{ level: 5, q: 1000, note: 'all, 0.004 degree tolerance, 0.001 degree grid', features: urban.map(k => ({ id: k.id, properties: { km2: Math.round(k.p.area_sqkm) || undefined }, poly: k.poly.map(r => L(r, 0.004)).filter(r => r.length >= 4) })).filter(k => k.poly.length) }] },
+      levels: [{ level: 5, q: 1000, note: `within ${NEAR_KM} km of a testbed, 0.004 degree tolerance, 0.001 degree grid`, features: urban.filter(k => near(mid(k.poly[0]))).map(k => ({ id: k.id, properties: { km2: Math.round(k.p.area_sqkm) || undefined }, poly: k.poly.map(r => L(r, 0.004)).filter(r => r.length >= 4) })).filter(k => k.poly.length) }] },
   ];
   // places: GeoNames cities15000 (tab-separated in a zip)
   const { default: yauzl } = await import('yauzl');
@@ -216,7 +239,7 @@ async function buildRegion() {
         let kind = null;
         if (ROAD[t.highway]) kind = 'road'; else if (t.railway === 'rail' && !t.service && t.usage !== 'industrial' && t.usage !== 'military') kind = 'rail'; else if (t.waterway === 'river') kind = 'river';
         if (!kind || ways.has(it.id)) continue;
-        ways.set(it.id, { kind, refs: it.refs, tags: kind === 'road' ? { kind: t.highway, ref: t.ref || undefined, name: t.name || undefined } : kind === 'river' ? { name: t.name || undefined } : { name: t.name || undefined, usage: t.usage || undefined } });
+        ways.set(it.id, { kind, refs: it.refs, tags: kind === 'road' ? { kind: t.highway, ref: t.ref || undefined } : kind === 'river' ? { name: t.name || undefined } : { name: t.name || undefined, usage: t.usage || undefined } });
         for (const r of it.refs) need.add(r);
       } } });
   }
@@ -224,16 +247,17 @@ async function buildRegion() {
   for (const f of files) { console.log('pass 2', f); await readPbf(f, items => { for (const it of items) if (it.type === 'node' && need.has(it.id)) coords.set(it.id, [it.lon, it.lat]); }); }
   const lines = { road: [], rail: [], river: [] };
   for (const [id, w] of ways) { const pts = w.refs.map(r => coords.get(r)).filter(Boolean); if (pts.length >= 2) lines[w.kind].push({ id: 'w' + id, l: pts, props: w.tags }); }
+  for (const k of Object.keys(lines)) { const n0 = lines[k].length; lines[k] = mergeLines(lines[k], r => JSON.stringify(r.props)); console.log(`${k}: ${n0} ways -> ${lines[k].length} lines`); }
   // rivers by name: the total length decides the regional level (40 km or more)
   const rlen = new Map(); for (const r of lines.river) if (r.props.name) rlen.set(r.props.name, (rlen.get(r.props.name) || 0) + lineLenKm(r.l));
   const big = r => r.props.name && rlen.get(r.props.name) >= 40;
   const pl = [...places.values()].sort((a, b) => (b.properties.pop || 0) - (a.properties.pop || 0));
   const L = (l, tol) => dp(l, tol);
   const layers = [
-    { id: 'roads', title: 'Motorways, trunk and primary roads (OpenStreetMap)', geometry: 'LineString', properties: { kind: 'motorway, trunk or primary (OSM highway)', ref: 'road number', name: 'road name' }, describe: '[{ref}, ]a {kind} road[ ({name})].', sources: ['osm'],
+    { id: 'roads', title: 'Motorways, trunk and primary roads (OpenStreetMap)', geometry: 'LineString', properties: { kind: 'motorway, trunk or primary (OSM highway)', ref: 'road number' }, describe: '[{ref}, ]a {kind} road.', sources: ['osm'],
       levels: [{ level: 3, note: 'motorways and trunk roads, 0.005 degree tolerance', features: lines.road.filter(r => r.props.kind !== 'primary').map(r => ({ id: r.id, properties: r.props, line: L(r.l, 0.005) })) },
                { level: 6, note: 'all three kinds, 0.001 degree tolerance', features: lines.road.map(r => ({ id: r.id, properties: r.props, line: L(r.l, 0.001) })) },
-               { level: 8, note: 'all three kinds, 0.0002 degree tolerance', features: lines.road.map(r => ({ id: r.id, properties: r.props, line: L(r.l, 0.0002) })) }] },
+               { level: 8, note: 'all three kinds, 0.0004 degree tolerance', features: lines.road.map(r => ({ id: r.id, properties: r.props, line: L(r.l, 0.0004) })) }] },
     { id: 'rail', title: 'Railways (OpenStreetMap railway=rail, no sidings or yards)', geometry: 'LineString', properties: { name: 'line name', usage: 'main or branch' }, describe: 'A railway[ ({name})].', sources: ['osm'],
       levels: [{ level: 6, note: '0.001 degree tolerance', features: lines.rail.map(r => ({ id: r.id, properties: r.props, line: L(r.l, 0.001) })) },
                { level: 8, note: '0.0002 degree tolerance', features: lines.rail.map(r => ({ id: r.id, properties: r.props, line: L(r.l, 0.0002) })) }] },

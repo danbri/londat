@@ -30,22 +30,23 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
   const has = (A, L, x, y) => !!(A[L] && A[L].has(x + ',' + y));
   const bounds = (L, x, y) => { const s = 180 / 2 ** L; return [-180 + x * s, 90 - (y + 1) * s, -180 + (x + 1) * s, 90 - y * s]; };
   const tileUrl = (t, L, x, y) => new URL(t.replace('{z}', L).replace('{x}', x).replace('{y}', y), base).href;
-  const img = new Map(), dem = new Map(), queue = new Map(); let active = 0, frame = 0, bytes = 0;
+  const img = new Map(), dem = new Map(), queue = new Map(), inflight = new Set(); let active = 0, frame = 0;
+  const tileMB = M.imagery.px * M.imagery.px * 4 * 4 / 3 / 1048576;   // one imagery texture with its mipmaps
   const st = { imgLoaded: 0, demLoaded: 0, imgFreed: 0, requests: 0, dropped: 0, failed: 0 };
 
   // ---------- requests: coarse levels first; a request goes only while some drawn patch still wants it
   function want(kind, L, x, y) {
     const k = kind + L + '/' + x + '/' + y, M2 = kind === 'i' ? img : dem;
     if (M2.has(k)) { M2.get(k).used = frame; return M2.get(k); }
-    const q = queue.get(k); if (q) { q.used = frame; return null; }
+    const q = queue.get(k); if (q) { q.used = frame; return null; } if (inflight.has(k)) return null;
     if (kind === 'i' && img.size >= CAP && !freeable()) return null;   // every texture held is in use: draw an ancestor
     queue.set(k, { k, kind, L, x, y, used: frame }); pump(); return null;
   }
   function pump() {
     while (active < REQ && queue.size) {
       let best = null; for (const q of queue.values()) { if (frame - q.used > 30) { queue.delete(q.k); st.dropped++; continue; } if (!best || q.L < best.L) best = q; }
-      if (!best) return; queue.delete(best.k); active++; st.requests++;
-      (best.kind === 'i' ? loadImg(best) : loadDem(best)).catch(e => { st.failed++; console.warn('base: tile', best.k, e.message); }).finally(() => { active--; pump(); });
+      if (!best) return; queue.delete(best.k); inflight.add(best.k); active++; st.requests++;
+      (best.kind === 'i' ? loadImg(best) : loadDem(best)).catch(e => { st.failed++; console.warn('base: tile', best.k, e.message); }).finally(() => { inflight.delete(best.k); active--; pump(); });
     }
   }
   const loader = new THREE.TextureLoader();
@@ -54,7 +55,7 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
     t.flipY = false; t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter; t.anisotropy = 4;
     t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.needsUpdate = true;
     const [w, s, e, n] = bounds(q.L, q.x, q.y), mat = terrainMaterial(tex, gtex, U, { tex: t, box: uniform(new THREE.Vector4(w, s, e, n)) });
-    img.set(q.k, { k: q.k, L: q.L, x: q.x, y: q.y, tex: t, mat, used: frame }); st.imgLoaded++; bytes += M.imagery.px * M.imagery.px * 4 * 4 / 3;
+    img.set(q.k, { k: q.k, L: q.L, x: q.x, y: q.y, tex: t, mat, used: frame }); st.imgLoaded++;
     G.dirty = true;
   }
   let demArea = null, demT = 0;
@@ -110,12 +111,12 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
   const freeable = () => { for (const t of img.values()) if (t.used < frame - 1 && t.L > 1) return true; return false; };
   function freeSome() {
     const old = [...img.values()].filter(t => t.used < frame - 1 && t.L > 1).sort((a, b) => a.used - b.used || b.L - a.L);
-    for (const t of old.slice(0, img.size - Math.floor(CAP * 0.75))) { t.tex.dispose(); t.mat.dispose(); img.delete(t.k); st.imgFreed++; bytes -= M.imagery.px * M.imagery.px * 4 * 4 / 3;
+    for (const t of old.slice(0, img.size - Math.floor(CAP * 0.75))) { t.tex.dispose(); t.mat.dispose(); img.delete(t.k); st.imgFreed++;
       // patches still holding the material take the world one until their next frame picks a loaded tile
       for (const nd of terrain.cache.values()) if (nd.mesh && nd.mesh.material === t.mat) nd.mesh.material = terrain.mat; }
   }
-  G.baseRest = () => { for (const t of img.values()) { t.tex.dispose(); t.mat.dispose(); } img.clear(); bytes = 0; for (const nd of terrain.cache.values()) if (nd.mesh) nd.mesh.material = terrain.mat; };
-  G.baseStats = () => ({ imagery: img.size, heights: dem.size, queued: queue.size, active, gpu_mb: Math.round(bytes / 1048576), ...st });
+  G.baseRest = () => { for (const t of img.values()) { t.tex.dispose(); t.mat.dispose(); } img.clear(); for (const nd of terrain.cache.values()) if (nd.mesh) nd.mesh.material = terrain.mat; };
+  G.baseStats = () => ({ imagery: img.size, heights: dem.size, queued: queue.size, active, gpu_mb: Math.round(img.size * tileMB), ...st });
   // how fine the base is at a point: the deepest imagery level that exists there (0 to 11)
   G.baseDetailAt = (lon, lat) => { for (let L = maxImg; L > 3; L--) { const s = 180 / 2 ** L; if (has(IA, L, Math.floor((lon + 180) / s), Math.floor((90 - lat) / s))) return L; } return 0; };
   G.baseCredit = M.credit;
