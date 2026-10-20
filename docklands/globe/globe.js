@@ -60,7 +60,7 @@ export async function createGlobe(H) {
   const inBox = (lon, lat, m = 0) => { const dl = m / 111320 / Math.cos(lat * D2R), db = m / 110574; return lon >= bw - dl && lon <= be + dl && lat >= bs - db && lat <= bn + db; };
 
   // ---------- the scene, camera, uniforms
-  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000); G.scene = scene;   // (G.scene: tests count its buffers, docklands/test/heap-holders.mjs)
   const gcam = new THREE.PerspectiveCamera(camera.fov, camera.aspect, 1, 1e8); gcam.matrixAutoUpdate = false;
   const U = { exag: uniform(clamp(+(qs.get('gx') || 1), 1, 50)), relief: uniform(5), haze: uniform(0.9), sun: uniform(v3(1, 0, 0)), W: 4096, H: 2048 };
   const exag = U.exag.value;
@@ -220,7 +220,7 @@ export async function createGlobe(H) {
   }
   function stepReup() {   // -> the vertices brought back in this frame
     if (!reup.length) return 0; reupN++; G.reup.frames = reupN; if (reupN % 2) return 0;   // frames 1, 3, 5: the globe behind; 2, 4, 6: uploads
-    let v = 0; while (reup.length && v < REUP) { const x = reup.shift(), g = x.geometry; x.layers.mask = x.userData.reupMask ?? 1; delete x.userData.reupMask; if (g) { g.userData.freed = false; v += g.attributes.position?.count || 0; } }
+    let v = 0; while (reup.length && v < REUP) { const x = reup.shift(), g = x.geometry; x.layers.mask = x.userData.reupMask ?? 1; delete x.userData.reupMask; if (g) { g.userData.freed = false; v += g.attributes.position?.count || 0; } }   // (arrays given up by main.js cpu-copies.js come back as three.js makes the buffers)
     if (!reup.length) G.reup.done = true; H.draw(); return v;
   }
 

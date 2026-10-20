@@ -2708,3 +2708,44 @@ then Sarajevo". No Leiden data was made or committed.
   field: not used, not committed; question for the owner.
 - Checks: 3d-tiles-validator 0 errors, 0 warnings (both); npm run check OK; npm test 61/61; place-check León and
   Sarajevo 390 x 844 @2 all passed; globe-check 390 x 844 @2 all passed. Sizes: León 5.7 MB, Sarajevo 6.7 MB on disk.
+
+## 2026-10-20 (evening): hosting study, range reads, one-file archive prototype (subagent)
+
+- Owner, 2026-10-20: "we need to work on scaling. Perhaps gh pages is not last word in site architecture but consider
+  our options, eg http range reqs?". Study: https://github.com/danbri/londat/blob/main/docs/hosting-options.md (KR2.5).
+- Measured (read requests only; no upload, no account): Range, CORS, cache, compression, redirects and TTFB of GitHub
+  Pages, raw.githubusercontent.com, release assets, jsDelivr, Hugging Face, an R2 bucket, Source Cooperative and Zenodo
+  (`cwplans/tools/probe-range-host.sh`); browser checks in Chromium. Pages: Range yes, cross-origin no (preflight 405).
+  Chromium sends `Accept-Encoding: identity` with Range; its HTTP cache serialises parallel range reads of one URL.
+- Prototype: `cwplans/tools/pack-range-archive.mjs` (deterministic ZIP, Morton order), `docklands/geo/range-archive.js`
+  (reader), `cwplans/tools/range-server.mjs` (Range server), flag `?archive=` in `docklands/globe/skeleton-layers.js`.
+  UK skeleton 1,530 files 37.8 MB -> one ZIP 9.3 MB (not committed); scenario requests 124 -> 43, bytes +19 %, time
+  about equal; the page with the flag finds Leeds from the archive with no page errors. Tests: `npm test` (4 new),
+  `node docklands/test/archive-check.mjs`.
+- Pages site 535.5 MB in 9,142 files; deflated 257.9 MB (`cwplans/tools/pages-size.mjs`).
+- Open for the owner: tile host (Hugging Face recommended for now; R2 later), account and token, a data domain, the
+  licence of hosted data (ODbL, "review" sources), packing `cwplans/feeds/` now, a Safari range check on the iPhone.
+## 2026-10-20: trees by cell (LOD step 3), JS heap halved (Three.js port; subagent)
+- Owner, 2026-10-14: "make appropriate use of threejs lod support for everything"; "we need attention on perf" (O3).
+  Skill: docklands-3d-page, "Three.js port: trees by cell, JS heap (2026-10-20)".
+- Trees (`docklands/layers/trees.js`): 192 cells of 500 m; each frame a level per cell by the `ctx.lod` screen-size rule
+  and the frustum (hidden, specks: a new 2-triangle disc, far forms, near: full trees within 32 px of height); shared
+  instanced buffers filled cell by cell only when a cell needs a better form (10 draw calls). The tree store is a compact
+  record a tree; trees.json is dropped after the build (trees' memory 45 MB -> 5 MB).
+- CPU copies (`docklands/cpu-copies.js`): building normals and per-building values, line and green normals and colours
+  are given up once uploaded and made again exactly when three.js makes the buffer again (the backend's createAttribute
+  is wrapped; globe.js freeModel / stepReup need nothing more). Building builds at boot 6 -> 2.
+- Measured (390 x 844 @2, headless, old against new): trees triangles 818,520 -> 56,372 (cw), 818,520 -> 51,014 (area),
+  880,499 -> 82,744 (greenlanddock); frame 5.14 M -> 3.64 M, 6.12 M -> 4.58 M, 5.38 M -> 3.79 M triangles; JS heap after
+  a full GC 483 -> 277, 649 -> 280, 490 -> 266 MB; GPU total 230 -> 186, 254 -> 210, 234 -> 190 MB. Home after the globe:
+  GPU peak 230 -> 181 MB, JS heap peak 565 -> 357 MB.
+- New tools: `docklands/test/heap-holders.mjs` (heap snapshot by constructor, contexts, array holders, retainer chains),
+  `docklands/test/cpu-copies-check.mjs`; `lod-memory.mjs` reports the trees and the heap after a full GC.
+- Scene CPU copies at cw 232 -> 138 MB (buildings 114 -> 56, roads 32 -> 14).
+- Tests: cpu-copies-check all passed; globe-check 390 x 844 @2 and 1280 x 800 @1 all passed; globe-controls all passed
+  (the fling check failed once under machine load 12, passed on the rerun); paint-check: the first 3 of 6 queries passed
+  (greenlanddock, 3.5 km out, street level; about 21 min each in software, the rest stopped); headless loads of cw,
+  rotherhithe, area, greenlanddock, globe and the pixel style at both sizes, no page errors; npm test 61/61; npm run
+  check OK. Not pushed (subagent branch).
+- Open: LOD step 4; roads/rail/greens positions, building `bi`, `uw`, `col`, the layers' own copies (under, tide,
+  windfield); the iPhone measure and the WebGPU shadow path on a real GPU.
