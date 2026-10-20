@@ -10,3 +10,6 @@ data/raw/stock-mcp/
 
 # world skeleton downloads (cwplans/tools/build-world-skeleton.mjs fetch): Natural Earth, ETOPO 2022 mean grid, EGM96
 data/raw/world-skeleton/
+
+# the hash manifest of the 3D page service worker (docklands/sw.js): made by the Pages workflow on the staged site
+docklands/sw-manifest.json

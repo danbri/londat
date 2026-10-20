@@ -15,8 +15,14 @@
   const here = (document.currentScript && document.currentScript.src) ? new URL('.', document.currentScript.src).href : PAGES;
   const DATA_BASE = here;
   const FRESH = /^cache\//;   // new each hour on raw.githubusercontent.com; the Pages copy is as old as the last deploy
-  const hosted = path => FRESH.test(path);   // true for a path read from raw.githubusercontent.com
-  const url = path => (FRESH.test(path) ? RAW : DATA_BASE) + path;
+  // The bulk extracts are not on the Pages site since 2026-10-20 (.github/workflows/pages.yml leaves out the dataset
+  // folders of feeds/london-datastore/ and feeds/portals/: 180 MB in 392 files that no page reads at start; the atlas links them and
+  // maps one on a tap): read them from raw.githubusercontent.com. The four Datastore layers that the 3D pages draw stay
+  // on Pages; keep this list equal to the one in pages.yml (cwplans/tools/test/pages-site.test.mjs checks it).
+  const REPO_ONLY = /^feeds\/(london-datastore|portals)\/[^/]+\//;
+  const ON_PAGES = /^feeds\/london-datastore\/(conservation-areas|designated-open-space|safeguarded-wharves|cultural-infrastructure)\//;
+  const hosted = path => FRESH.test(path) || (REPO_ONLY.test(path) && !ON_PAGES.test(path));   // true for a path read from raw.githubusercontent.com
+  const url = path => (hosted(path) ? RAW : DATA_BASE) + path;
   async function json(path) {
     const u = url(path), r = await fetch(u);
     if (!r.ok) throw new Error(`${path}: HTTP ${r.status}`);

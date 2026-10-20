@@ -79,3 +79,30 @@ test('UK skeleton read through the archive gives the same answers as the files',
     } finally { await srv.close(); }
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('a host that answers a range with gzip offsets or a wrong Content-Range: the reader refuses it, fetchJson reads the files', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'rarch-gz-')), src = join(dir, 'set');
+  try {
+    const files = {}; for (let x = 0; x < 4; x++) files[`l/${x}-0.json`] = JSON.stringify({ x, pad: Array.from({ length: 4000 }, (_, i) => ((i * 2654435761 + x * 97) >>> 7).toString(36).slice(-1)).join('') });
+    files['manifest.json'] = JSON.stringify({ id: 'g' });
+    for (const [p, d] of Object.entries(files)) { mkdirSync(join(src, p, '..'), { recursive: true }); writeFileSync(join(src, p), d); }
+    writeFileSync(join(dir, 'set.zip'), packFolder(src, { last: 'manifest.json' }).zip);
+    const srv = await startRangeServer({ root: dir, port: 0 });
+    const edit = (f206) => async (u, o = {}) => { const r = await fetch(u, o); if (r.status !== 206) return r; const h = new Headers(r.headers); f206(h, o); return new Response(await r.arrayBuffer(), { status: 206, headers: h }); };
+    try {
+      // like GitHub Pages for a client that accepts gzip: the 206 says Content-Encoding: gzip
+      await assert.rejects(openRangeArchive(srv.url + '/set.zip', { tail: 256, fetch: edit(h => h.set('content-encoding', 'gzip')) }), /not the asked range/);
+      // a Content-Range that does not start where asked (a cache that sends another slice), after a good opening read
+      const shift = edit((h, o) => { if (!(o.headers?.Range || '').startsWith('bytes=-')) h.set('content-range', h.get('content-range').replace(/^bytes (\d+)-(\d+)/, (_, a, b) => `bytes ${+a + 1}-${+b + 1}`)); });
+      const bad = await openRangeArchive(srv.url + '/set.zip', { tail: 1024, fetch: shift });
+      const ROOT = srv.url + '/set/', seen = [];
+      const fj = archiveFetchJson(bad, ROOT, { fallback: async u => { seen.push(u); return JSON.parse(files[u.slice(ROOT.length)]); } });
+      assert.deepEqual(await fj(ROOT + 'l/1-0.json'), JSON.parse(files['l/1-0.json']));
+      assert.equal(bad.broken, true); assert.equal(seen.length, 1, 'read from the file after the bad range');
+      await fj(ROOT + 'l/3-0.json'); assert.equal(seen.length, 2, 'later reads go to the files');
+      // the same archive through an honest host still reads
+      const ok = await openRangeArchive(srv.url + '/set.zip', { tail: 256 });
+      assert.equal(await ok.text('l/2-0.json'), files['l/2-0.json']);
+    } finally { await srv.close(); }
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
