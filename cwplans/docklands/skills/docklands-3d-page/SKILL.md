@@ -3004,6 +3004,22 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
     dome 27, rule hipped 6,817, flat 478; León OSM gabled 19, hipped 2, pyramidal 5, skillion 14, rule hipped 2,635, flat
     1,538 (irregular 1,234: the perimeter blocks). Validator 0 errors, 0 warnings, 45 infos (EXT_mesh_features only).
     Sizes: León 4.62 + 0.69 MB, Sarajevo 5.79 + 1.09 MB.
+- **Overture and Microsoft footprints (2026-10-20, place-heights v3).** Owner: "Use ms/overture" (ODbL, share-alike,
+  registered next to OSM). Order: OSM height > OSM levels > national floors > Overture height > Overture num_floors x 3 m
+  > Microsoft height > small kinds 3 m > GHSL > default. Adapters in `docklands/geo/adapters/world-buildings.js`.
+  - Overture: DuckDB (Python package; env `CWPLANS_DUCKDB_PYTHON`) via `cwplans/tools/fetch-overture-buildings.py`. The
+    `s3://` glob answered 403 through the agent proxy; list the bucket with the XML listing (`?list-type=2&prefix=`) and
+    give DuckDB the HTTPS URLs. A bbox filter reads 512 footers and 1 or 2 files' row groups (about 2 minutes).
+  - Each Overture record has `sources`: one entry per property (`/properties/height`, ...) plus the base entry
+    (property ""). Take the value's source from its own entry, else the base. Values from OpenStreetMap are dropped (our
+    OSM extract comes first). Licence per value: only ODbL / CDLA-Permissive / CC BY / CC0. León has 1,009 num_floors
+    from "Instituto Geográfico Nacional (España)" with an EMPTY licence field: not used, not committed (ask the owner).
+  - Microsoft: `dataset-links.csv`, the zoom-9 quadkey(s) of the area corners, gzip GeoJSON lines, height -1 = none.
+    Bosnia and Herzegovina quadkey 120233030: 164,318 footprints, none with a height; León 031333200: 18,919 of 57,779.
+  - Match: the centroid of one outline inside the other, smaller area >= 0.5 of the larger, best ratio wins. Commit only
+    the crop of usable records in `sources/` (León 125 kB + 382 kB; Sarajevo two empty crops kept as evidence).
+  - Result: León 7 buildings from Overture (Microsoft heights through Overture), 6 from Microsoft, 2 small kinds now
+    measured; GHSL 177 -> 166. Sarajevo: no change (no non-OSM heights exist in either source there); GHSL stays.
 - **Open.** Roofs of L-shaped and irregular outlines (a straight skeleton); roof:direction for skillions; one ground texture resolution (1.2 m a pixel); beyond the 8 km ring the world is the coarse
   terrain; no national building heights for Sarajevo yet (FGU needs a log-in and a request; owner's waiver, issue #9); no implicit tiling or LOD levels yet
   (one level: fine for 2 km); the page clock and the time wheels stay on the Docklands zone (the place's time is given in

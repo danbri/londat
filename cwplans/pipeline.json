@@ -9924,6 +9924,16 @@
      "source": "ghsl-built-h",
      "endpoint": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_H_GLOBE_R2023A/GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss/V1-0/tiles/",
      "request": "the 10 x 10 degree tile zip of the place origin (R{r}_C{c}); a crop over the area plus 0.003 degree is committed as places/<id>/sources/ghsl-built-h.json"
+    },
+    {
+     "source": "overture-buildings",
+     "endpoint": "https://overturemaps-us-west-2.s3.amazonaws.com/release/2026-09-23.1/theme=buildings/type=building/",
+     "request": "cwplans/tools/fetch-overture-buildings.py: DuckDB read_parquet over HTTPS of the release files, filter on the bbox columns (area plus 0.003 degree)"
+    },
+    {
+     "source": "ms-buildings",
+     "endpoint": "https://minedbuildings.z5.web.core.windows.net/global-buildings/dataset-links.csv",
+     "request": "the gzip GeoJSON-lines file of each zoom-9 quadkey over the area"
     }
    ],
    "generated": [
@@ -9965,9 +9975,21 @@
     },
     {
      "file": "docklands/data/places/sarajevo/provenance/log.json"
+    },
+    {
+     "file": "docklands/data/places/leon/sources/overture-buildings.json"
+    },
+    {
+     "file": "docklands/data/places/leon/sources/ms-buildings.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/sources/overture-buildings.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/sources/ms-buildings.json"
     }
    ],
-   "method": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command.",
+   "method": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > Overture height > Overture num_floors x 3 m (records whose own source is not OSM and whose source licence is open) > Microsoft ML height (footprint match: a centroid inside the other outline, smaller area >= 0.5 of the larger; place-heights version 3) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape, then Overture roof_shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command.",
    "rules": [
     "Open sources only, with the licence of each in the register; OSM (ODbL) is allowed for now and credited on the page and in each glb (asset.copyright).",
     "National data with licence class review (the Catastro) only as transformed values (heights), never the original files; raw files stay in the ignored raw folder.",
@@ -10545,6 +10567,10 @@
   {
    "tool": "tools/portals/index.mjs",
    "provides": "walk-portals.mjs index: feeds/portals/index.json, counts per portal and harvested file sizes."
+  },
+  {
+   "tool": "tools/fetch-overture-buildings.py",
+   "provides": "Overture Maps buildings in a bounding box (duckdb Python package, httpfs and spatial extensions): lists the release files from the public bucket, reads them over HTTPS with a filter on the bbox columns, writes id, height, num_floors, roof shape, the sources list and the outer ring. Used by place-tiles (fetch, adapter world-overture)."
   }
  ],
  "tests": [

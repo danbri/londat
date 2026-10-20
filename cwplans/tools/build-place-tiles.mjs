@@ -142,6 +142,56 @@ async function fetchDem() {
 //     sources/<source>.json (CC BY 4.0, cropped only), the 10 x 10 degree tile zip stays raw
 const hAds = (PL.heights || []).map(id => REG.adapters.find(a => a.id === id && a.buildingHeights)).filter(Boolean);
 const natAds = hAds.filter(a => a.buildingHeights.kind === 'inspire-bu-parts'), rasAds = hAds.filter(a => a.buildingHeights.kind === 'ghsl-raster');
+//   overture-buildings, ms-buildings: footprints with heights, floors or roofs (ODbL, share-alike); the raw answer stays in the
+//     raw folder, the crop of the footprints that carry a usable value is committed in sources/<source>.json
+const fpAds = hAds.filter(a => ['overture-buildings', 'ms-buildings'].includes(a.buildingHeights.kind));
+const fpFile = a => join(SRC, `${a.buildingHeights.source}.json`);
+const inArea = (ring, m = 0.003) => ring.some(([lon, lat]) => lon > AREA[0] - m && lon < AREA[2] + m && lat > AREA[1] - m && lat < AREA[3] + m);
+// Overture: run the DuckDB helper (python with the duckdb package: env CWPLANS_DUCKDB_PYTHON, default python3), then keep the
+// rows with a value whose own source (the sources entry for that property, else the record's base entry) is not OSM
+async function fetchOverture(a) {
+  const B = a.buildingHeights, f = fpFile(a), raw = join(RAWD, `overture-${B.release}.json`); if (existsSync(f) && !flag('--refetch')) return;
+  const m = 0.003, bb = [AREA[0] - m, AREA[1] - m, AREA[2] + m, AREA[3] + m].map(v => v.toFixed(6));
+  if (!existsSync(raw) || flag('--refetch')) execFileSync(process.env[B.python] || 'python3', ['-I', join(CW, '..', B.script), B.release, ...bb, raw], { stdio: 'inherit' });
+  const R = JSON.parse(readFileSync(raw, 'utf8')), srcOf = (r, prop) => { const x = r.sources.find(q => q.property === '/properties/' + prop) || r.sources.find(q => !q.property) || r.sources[0]; return x ? [x.dataset, x.license] : [null, null]; };
+  const rows = [], cnt = { records: R.rows.length, by_geometry_source: {}, values_from_osm_skipped: 0, values_licence_not_open_skipped: {} };
+  for (const r of R.rows) { const g = srcOf(r, ''); cnt.by_geometry_source[g[0]] = (cnt.by_geometry_source[g[0]] || 0) + 1;
+    const o = { id: r.id, ring: r.ring }; let any = false;
+    for (const [k, prop] of [['height', 'height'], ['floors', 'num_floors'], ['roof', 'roof_shape']]) { const v = r[prop]; if (v == null) continue; const sv = srcOf(r, prop);
+      if (sv[0] === 'OpenStreetMap') { cnt.values_from_osm_skipped++; continue; }
+      // a value whose source licence is not in the adapter's list (also an empty licence) is neither used nor committed
+      if (!B.licences.includes(sv[1])) { const kk = `${prop} from ${sv[0]} (licence "${sv[1] || ''}")`; cnt.values_licence_not_open_skipped[kk] = (cnt.values_licence_not_open_skipped[kk] || 0) + 1; continue; }
+      o[k] = v; o[k + '_src'] = sv; any = true; }
+    if (o.roof && r.roof_height != null) o.roof_h = r.roof_height;
+    if (any) rows.push(o); }
+  const crop = { format: 'place-footprints-1', source: B.source, about: a.about, licence: a.licence, credit: B.credit, release: R.release, bbox: R.bbox, files_read: R.files_read, counts: cnt,
+    note: 'only the records with a height, number of floors or roof shape whose own source is not OpenStreetMap and whose source licence is in the adapter list (counts: what was left out); ring = outer ring (lon, lat; 1e-7)', rows };
+  writeFileSync(f, JSON.stringify(crop) + '\n');
+  const rb = readFileSync(raw);
+  record('heights-' + a.id, f, `s3://overturemaps-us-west-2/release/${R.release}/theme=buildings/type=building/ (bbox ${bb.join(',')}; files ${R.files_read.join(' ')})`,
+    { source: B.source, request: `DuckDB read_parquet over HTTPS of the ${R.files_listed} files of the release, filter on bbox.xmin/xmax/ymin/ymax; ${R.files_read.length} file(s) held rows`,
+      as_fetched: { bytes: rb.length, sha256: sha(rb), note: 'the query answer as written by cwplans/tools/fetch-overture-buildings.py (raw folder)' }, records: R.rows.length, kept: rows.length, committed: rel(f), licence: a.licence });
+  console.log(`heights ${a.id}: ${R.rows.length} records, ${rows.length} with a non-OSM value`);
+}
+// Microsoft: the dataset links table, the zoom-9 quadkeys over the area, each quadkey's gzip GeoJSON lines; keep height > 0
+const quadkey = (lon, lat, z) => { const sn = Math.sin(lat * D2R), x = Math.floor((lon + 180) / 360 * 2 ** z), y = Math.floor((0.5 - Math.log((1 + sn) / (1 - sn)) / (4 * Math.PI)) * 2 ** z);
+  let q = ''; for (let i = z; i > 0; i--) { const mk = 1 << (i - 1); q += ((x & mk) ? 1 : 0) + ((y & mk) ? 2 : 0); } return q; };
+async function fetchMs(a) {
+  const B = a.buildingHeights, f = fpFile(a); if (existsSync(f) && !flag('--refetch')) return;
+  const lf = join(RAWD, 'ms-dataset-links.csv'); if (!existsSync(lf) || flag('--refetch')) writeFileSync(lf, await get(B.links));
+  const qks = [...new Set([[AREA[0], AREA[1]], [AREA[2], AREA[1]], [AREA[0], AREA[3]], [AREA[2], AREA[3]]].map(([lo, la]) => quadkey(lo, la, B.zoom)))];
+  const links = readFileSync(lf, 'utf8').split('\n').map(l => l.split(',')).filter(c => qks.includes(c[1]));
+  const rows = [], got = []; let n = 0, inBox = 0;
+  for (const [loc, qk, url] of links) { const zf = join(RAWD, `ms-${loc}-${qk}.csv.gz`); if (!existsSync(zf) || flag('--refetch')) { writeFileSync(zf, await get(url)); await pause(1000); }
+    const zb = readFileSync(zf); got.push({ url, bytes: zb.length, sha256: sha(zb) });
+    for (const line of gunzipSync(zb).toString('utf8').split('\n')) { if (!line.trim()) continue; n++; const ft = JSON.parse(line), ring = (ft.geometry.type === 'Polygon' ? ft.geometry.coordinates : ft.geometry.coordinates[0])[0].map(([x, y]) => [r7(x), r7(y)]);
+      if (!inArea(ring)) continue; inBox++; const h = ft.properties.height; if (h != null && h > 0) rows.push({ ring, height: Math.round(h * 100) / 100, confidence: ft.properties.confidence }); } }
+  const crop = { format: 'place-footprints-1', source: B.source, about: a.about, licence: a.licence, credit: B.credit, quadkeys: qks, links: links.map(c => c[2]), counts: { features_read: n, in_area: inBox, with_height: rows.length },
+    note: 'only the footprints in the area (plus 0.003 degree) with a height > 0; ring = outer ring (lon, lat; 1e-7)', rows };
+  writeFileSync(f, JSON.stringify(crop) + '\n');
+  record('heights-' + a.id, f, links.map(c => c[2]), { source: B.source, request: `dataset-links.csv rows of quadkey(s) ${qks.join(', ')} (zoom ${B.zoom})`, as_fetched: got, in_area: inBox, kept: rows.length, committed: rel(f), licence: a.licence });
+  console.log(`heights ${a.id}: ${inBox} footprints in the area, ${rows.length} with a height (quadkeys ${qks.join(', ')})`);
+}
 const rasFile = a => join(SRC, `${a.buildingHeights.source}.json`);
 async function fetchRaster(a) {
   const B = a.buildingHeights, f = rasFile(a); if (existsSync(f) && !flag('--refetch')) return;
@@ -163,6 +213,7 @@ async function fetchRaster(a) {
 }
 async function fetchHeights() {
   for (const a of rasAds) await fetchRaster(a);
+  for (const a of fpAds) await (a.buildingHeights.kind === 'overture-buildings' ? fetchOverture(a) : fetchMs(a));
   for (const a of natAds) {
     const B = a.buildingHeights, f = join(RAWD, `heights-${a.id}.json.gz`); if (existsSync(f) && !flag('--refetch')) continue;
     const zip = join(RAWD, `${a.id}.zip`); writeFileSync(zip, await get(B.url));
@@ -197,7 +248,7 @@ async function run(op, inputs, params, body) {
 }
 const OPS = {
   select: { id: 'place-select-osm', version: 3, skill: 'docklands-3d-page' },     // 3: roof:shape, roof:height, roof:angle, roof:orientation kept
-  heights: { id: 'place-heights', version: 2, skill: 'docklands-data-curation' },  // 2: raster heights (GHSL), roofs (OSM roof:shape, then the region's roof rule)
+  heights: { id: 'place-heights', version: 3, skill: 'docklands-data-curation' },  // 2: raster heights (GHSL), roofs (OSM roof:shape, then the region's roof rule); 3: Overture and Microsoft footprints
   tiles: { id: 'place-tiles', version: 4, skill: 'docklands-3d-page' },            // 4: sloped roofs (gabled, hipped, pyramidal, skillion, dome)
 };
 
@@ -319,7 +370,18 @@ function rasterSampler(G) {
   const dx = (G.e - G.w) / G.nx, dy = (G.n - G.s) / G.ny;
   return (lon, lat) => { const i = Math.floor((lon - G.w) / dx), j = Math.floor((G.n - lat) / dy); if (i < 0 || j < 0 || i >= G.nx || j >= G.ny) return null; const v = G.h[j * G.nx + i]; return v > 0 ? v : null; };
 }
-function heightsOf(sel, nat, rasters, P) {
+// footprint sources (Overture, Microsoft): an index of their rows by centroid cell, and the match of an OSM outline: the
+// centroid of one inside the other, the smaller area at least min_area_ratio of the larger; the best ratio wins
+function footprintIndex(src) {
+  const grid = new Map(), gk = (lon, lat) => Math.floor(lon / 0.0005) + ',' + Math.floor(lat / 0.0005);
+  for (const r of src.rows) { const ring = open(r.ring); if (ring.length < 3) continue; r.c = centroid(ring); r.a = Math.abs(ringArea(ring)); r.rings = [r.ring]; const k = gk(...r.c); (grid.get(k) || grid.set(k, []).get(k)).push(r); }
+  return rings => { const r0 = rings[0], c = centroid(open(r0)), a = Math.abs(ringArea(open(r0))); let w0 = Infinity, s0 = Infinity, e0 = -Infinity, n0 = -Infinity; for (const [x, y] of r0) { w0 = Math.min(w0, x); e0 = Math.max(e0, x); s0 = Math.min(s0, y); n0 = Math.max(n0, y); }
+    let best = null;
+    for (let i = Math.floor(w0 / 0.0005) - 1; i <= Math.floor(e0 / 0.0005) + 1; i++) for (let j = Math.floor(s0 / 0.0005) - 1; j <= Math.floor(n0 / 0.0005) + 1; j++) for (const q of grid.get(i + ',' + j) || []) {
+      if (!(inPoly(q.c, rings) || inRing(c, q.ring))) continue; const ratio = Math.min(a, q.a) / Math.max(a, q.a); if (ratio < src.min_area_ratio) continue; if (!best || ratio > best.ratio) best = { q, ratio }; }
+    return best ? best.q : null; };
+}
+function heightsOf(sel, nat, rasters, P, fps = []) {
   // national parts: a coarse grid of their centroids, then each OSM polygon takes the area-weighted median of the floors
   // of the parts whose centroid lies inside it
   const grid = new Map(), gk = (lon, lat) => Math.floor(lon / 0.0005) + ',' + Math.floor(lat / 0.0005);
@@ -327,15 +389,22 @@ function heightsOf(sel, nat, rasters, P) {
   const natFloors = rings => { const r = rings[0]; let w0 = Infinity, s0 = Infinity, e0 = -Infinity, n0 = -Infinity; for (const [x, y] of r) { w0 = Math.min(w0, x); e0 = Math.max(e0, x); s0 = Math.min(s0, y); n0 = Math.max(n0, y); }
     const got = []; for (let i = Math.floor(w0 / 0.0005); i <= Math.floor(e0 / 0.0005); i++) for (let j = Math.floor(s0 / 0.0005); j <= Math.floor(n0 / 0.0005); j++) for (const p of grid.get(i + ',' + j) || []) if (inPoly(p.c, rings)) got.push(p);
     if (!got.length) return null; got.sort((a, b) => a.floors - b.floors); const tot = got.reduce((s, p) => s + p.a, 0); let acc = 0; for (const p of got) { acc += p.a; if (acc >= tot / 2) return { floors: p.floors, parts: got.length }; } return null; };
-  const ras = rasters.map(g => ({ label: g.label, at: rasterSampler(g) }));
-  const H = {}, F = { 'osm-height': 0, 'osm-levels': 0, national: 0, 'default-small': 0, ...Object.fromEntries(ras.map(r => [r.label, 0])), default: 0, 'levels-vs-national-2plus': 0, 'national-zero-floors': 0 };
-  const R = { osm: {}, rule: {}, flat: 0, 'osm-flat-tag': 0, 'osm-unknown-shape': 0, 'with-holes-flat': 0, 'rule-irregular-flat': 0, 'rule-large-flat': 0, 'rule-tall-flat': 0, 'rule-kind-flat': 0 };
-  const RR = P.roof_rule, top = new Set(['osm-height', ...ras.map(r => r.label)]);
-  for (const b of sel.buildings) {
+  const ras = rasters.map(g => ({ label: g.label, at: rasterSampler(g) })), fx = fps.map(f => ({ ...f, match: footprintIndex(f) }));
+  const fpKeys = fx.flatMap(f => f.label === 'overture' ? ['overture-height', 'overture-floors'] : [f.label]);
+  const H = {}, F = { 'osm-height': 0, 'osm-levels': 0, national: 0, ...Object.fromEntries(fpKeys.map(k => [k, 0])), 'default-small': 0, ...Object.fromEntries(ras.map(r => [r.label, 0])), default: 0, 'levels-vs-national-2plus': 0, 'national-zero-floors': 0 };
+  const M = Object.fromEntries(fx.map(f => [f.label, { rows: f.rows.length, matched: 0, matched_osm_had_height: 0 }]));
+  const R = { osm: {}, ...Object.fromEntries(fx.filter(f => f.label === 'overture').map(f => [f.label, {}])), rule: {}, flat: 0, 'osm-flat-tag': 0, 'osm-unknown-shape': 0, 'with-holes-flat': 0, 'rule-irregular-flat': 0, 'rule-large-flat': 0, 'rule-tall-flat': 0, 'rule-kind-flat': 0 };
+  const RR = P.roof_rule, top = new Set(['osm-height', 'overture-height', ...fx.filter(f => f.top).map(f => f.label), ...ras.map(r => r.label)]);
+  for (let b of sel.buildings) {
     let h = null, src = null; const nf = nat.length ? natFloors(b.rings) : null;
+    const fm = {}; for (const f of fx) { const q = f.match(b.rings); if (q) { fm[f.label] = q; M[f.label].matched++; if (b.height > 0 || b.levels > 0) M[f.label].matched_osm_had_height++; } }
+    const ov = fm.overture, ms = fm.ms;
     if (b.height != null && b.height > 0) { h = b.height; src = 'osm-height'; }
     else if (b.levels != null && b.levels > 0) { h = b.levels * P.storey_m; src = 'osm-levels'; }
     else if (nf && nf.floors > 0) { h = nf.floors * P.national_storey_m; src = 'national'; }
+    else if (ov && ov.height > 0) { h = ov.height; src = 'overture-height'; }
+    else if (ov && ov.floors > 0) { h = ov.floors * P.storey_m; src = 'overture-floors'; }
+    else if (ms && ms.height > 0) { h = ms.height; src = 'ms'; }
     else if (SMALL.has(b.kind)) { h = P.default_small_m; src = 'default-small'; }
     else { for (const r of ras) { const v = r.at(...b.c); if (v != null) { h = Math.max(P.raster_min_m, v); src = r.label; break; } }
       if (h == null) { h = P.default_m; src = 'default'; if (nf && nf.floors === 0) F['national-zero-floors']++; } }
@@ -344,10 +413,11 @@ function heightsOf(sel, nat, rasters, P) {
     // the roof
     let shape = null, rsrc = null;
     if (b.roof_shape) { shape = ROOF_CLASS[b.roof_shape] || null; if (!shape) R['osm-unknown-shape']++; else if (shape === 'flat') { R['osm-flat-tag']++; shape = null; } else rsrc = 'osm'; }
+    else if (ov?.roof && ROOF_CLASS[ov.roof] && ROOF_CLASS[ov.roof] !== 'flat') { shape = ROOF_CLASS[ov.roof]; rsrc = 'overture'; if (ov.roof_h != null && b.roof_height == null) b = { ...b, roof_height: ov.roof_h }; }
     let B = null; const xy = toXY(open(b.rings[0]), b.c);
-    if (shape || (RR && !b.roof_shape)) B = obb(xy);
+    if (shape || RR) B = obb(xy);
     const wall0 = h;   // the eaves before the roof (for a top source a little high: the rule's test is coarse)
-    if (!shape && RR && !b.roof_shape) {
+    if (!shape && RR && !b.roof_shape && !(ov?.roof && ROOF_CLASS[ov.roof] === 'flat')) {
       const area = Math.abs(ringArea(open(b.rings[0]))), rect = B && B.area > 0 ? area / (4 * B.hl * B.hw) : 0;
       if (!RR.kinds.includes(b.kind)) R['rule-kind-flat']++;
       else if (rect < RR.min_rect) R['rule-irregular-flat']++;
@@ -372,7 +442,7 @@ function heightsOf(sel, nat, rasters, P) {
     H[b.id] = { h: Math.round(h * 10) / 10, wall: Math.round(wall * 10) / 10, base: Math.round(base * 10) / 10, src, nat_floors: nf ? nf.floors : null,
       ...(shape ? { roof: shape, roof_src: rsrc, roof_h: roofH, ...(b.roof_orientation === 'across' ? { across: true } : {}) } : {}) };
   }
-  return { heights: H, faults: F, roofs: R };
+  return { heights: H, faults: F, roofs: R, matches: M };
 }
 
 // ---------- DEM sampling and the geoid (EGM96, the same 1-degree grid as the globe: data/world/geoid-egm96-1deg.png)
@@ -436,7 +506,9 @@ async function buildTiles(sel, HT, dem, geoidAt, P, ringDem) {
   const ell = (lon, lat) => demAt(lon, lat) + Ng;   // ellipsoidal ground height (DEM datum taken as EGM96 orthometric: stated)
   rmSync(join(OUT, 'tiles'), { recursive: true, force: true }); mkdirSync(join(OUT, 'tiles'), { recursive: true });
   const outFiles = [], children = [], feats = [], tileStats = [];
-  const credit = [`© OpenStreetMap contributors (ODbL 1.0)`, demAd.dem.credit, ...hAds.filter(a => a.buildingHeights.kind !== 'ghsl-raster' || existsSync(rasFile(a))).map(a => a.buildingHeights.credit)].join('; ');
+  const used = new Set(Object.values(HT).map(x => x.src));
+  const usedAd = a => { const k = a.buildingHeights.kind; return k === 'ghsl-raster' ? used.has(a.buildingHeights.label) : k === 'overture-buildings' ? used.has('overture-height') || used.has('overture-floors') || Object.values(HT).some(x => x.roof_src === 'overture') : k === 'ms-buildings' ? used.has('ms') : true; };
+  const credit = [`© OpenStreetMap contributors (ODbL 1.0)`, demAd.dem.credit, ...hAds.filter(usedAd).map(a => a.buildingHeights.credit)].join('; ');
   // features (buildings drawn), ids are their index
   const drawn = sel.buildings.filter(b => !(b.has_parts && !b.part));
   const bIndex = new Map(); drawn.forEach((b, i) => bIndex.set(b.id, i));
@@ -646,6 +718,7 @@ function writeReadmes() {
     const rv = [];
     for (const a of R.adapters) { if (a.licenceClass === 'review') rv.push(`- ${a.id}: licence class "review". ${a.approved || ''}`); if (a.waiver) rv.push(`- ${a.id}: ${a.waiver}. Status: ${a.status}. ${[R.place.dem, ...(R.place.heights || [])].includes(a.id) ? 'Used in this build.' : 'No data of this source is in this build.'} Issue https://github.com/danbri/londat/issues/9`); }
     rv.push('- OSM (ODbL 1.0, share-alike): allowed for the prototyping phase (owner, 2026-10-03); to be reviewed with the rest of the OSM use.');
+    for (const a of R.adapters) if (a.licenceClass === 'share-alike' && (R.place.heights || []).includes(a.id)) rv.push(`- ${a.id}: licence class "share-alike" (${a.licence}); allowed by the owner on 2026-10-20 ("Use ms/overture"), registered next to OSM. Values whose own source licence is not open (for example an empty licence field) are neither used nor committed: see the counts in sources/.`);
     if (R.adapters.find(a => a.dem?.source === 'copernicus-glo30' && a.id === R.place.dem)) rv.push('- Copernicus DEM GLO-30: its full credit ends "all rights reserved" (CLAUDE.md); accepted by the owner on 2026-10-20 ("Data - is fine for now"); re-check before the prototyping phase ends.');
     L.push(...rv, '');
     writeFileSync(join(dir, 'README.md'), L.join('\n'));
@@ -673,13 +746,16 @@ async function build() {
   const fSel = join(WORK, 'select.json.gz');
   const a1 = await run(OPS.select, [fileIn(fOsm, 'osm')], P, async p => { const sel = selectOsm(rz(fOsm), p.names, p.alt_names); jz(fSel, sel); console.log(`  ${sel.buildings.length} buildings and parts, ${sel.areas.length} areas, ${sel.lines.length} lines, ${sel.points.length} named points`); return [fSel]; });
   const natFiles = natAds.map(a => join(RAWD, `heights-${a.id}.json.gz`)).filter(existsSync), rasFiles = rasAds.map(a => [a, rasFile(a)]).filter(([, f]) => existsSync(f));
+  const fpFiles = fpAds.map(a => [a, fpFile(a)]).filter(([, f]) => existsSync(f));
   const HP = { storey_m: 3, national_storey_m: natAds[0]?.buildingHeights.storey_m ?? 3, default_m: PL.default_height_m ?? 9, default_small_m: 3, raster_min_m: 3, rasters: rasFiles.map(([a]) => a.buildingHeights.label),
+    footprints: fpFiles.map(([a]) => ({ label: a.buildingHeights.label, min_area_ratio: a.buildingHeights.min_area_ratio, top_includes_roof: !!a.buildingHeights.top_includes_roof })),
     roof_rule: PL.roof_rule || null, pitch_deg: 30, max_roof_m: 8,
-    rule: 'height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > roof_rule > flat' };
+    rule: 'height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > Overture height > Overture num_floors x storey (non-OSM records with an open licence) > Microsoft height (footprint match: a centroid inside the other outline, area ratio >= min_area_ratio) > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > Overture roof_shape > roof_rule > flat' };
   const fH = join(WORK, 'heights.json.gz');
-  const a2 = await run(OPS.heights, [fileIn(fSel, 'selected'), ...natFiles.map(f => fileIn(f, 'national-heights')), ...rasFiles.map(([, f]) => fileIn(f, 'raster-heights'))], HP, async p => {
+  const a2 = await run(OPS.heights, [fileIn(fSel, 'selected'), ...natFiles.map(f => fileIn(f, 'national-heights')), ...rasFiles.map(([, f]) => fileIn(f, 'raster-heights')), ...fpFiles.map(([, f]) => fileIn(f, 'footprint-heights'))], HP, async p => {
     const nat = natFiles.flatMap(f => rz(f).parts), ras = rasFiles.map(([a, f]) => ({ ...JSON.parse(readFileSync(f, 'utf8')), label: a.buildingHeights.label }));
-    const r = heightsOf(rz(fSel), nat, ras, p); jz(fH, r); console.log('  height sources and faults:', JSON.stringify(r.faults)); console.log('  roofs:', JSON.stringify(r.roofs)); return [fH]; });
+    const fps = fpFiles.map(([a, f]) => ({ label: a.buildingHeights.label, top: !!a.buildingHeights.top_includes_roof, min_area_ratio: a.buildingHeights.min_area_ratio, rows: JSON.parse(readFileSync(f, 'utf8')).rows }));
+    const r = heightsOf(rz(fSel), nat, ras, p, fps); jz(fH, r); console.log('  footprint matches:', JSON.stringify(r.matches)); console.log('  height sources and faults:', JSON.stringify(r.faults)); console.log('  roofs:', JSON.stringify(r.roofs)); return [fH]; });
   const TP = { grid: 32, tex: 512, jpeg: 82, skirt_m: 300, version_label: `${RID}-1` };
   const fRing = join(RAWD, 'dem-ring.json.gz'), ringIn = RING_M && existsSync(fRing) ? [fileIn(fRing, 'dem-ring')] : [];
   const a3 = await run(OPS.tiles, [fileIn(fSel, 'selected'), fileIn(fH, 'heights'), fileIn(fDem, 'dem'), fileIn(fGeoid, 'geoid'), ...ringIn], { ...TP, ring_m: ringIn.length ? RING_M : 0, ring_grid: 97 }, async p => {
@@ -687,7 +763,7 @@ async function build() {
   // the committed log: fetch records (no local paths of raw files beyond their names), the three activities, the fault counts
   const HZ = rz(fH);
   blog.about = `Build log of the place ${RID} (${REG.name}) by cwplans/tools/build-place-tiles.mjs: what was fetched (URL, date, SHA-256) and each dataflow activity with its input and output hashes. Raw files stay in cwplans/data/raw/places/${RID}/ (not committed).`;
-  blog.fetches = flog; blog.height_sources = HZ.faults; blog.roofs = HZ.roofs; blog.fault = 'F55 (curation skill fault register): buildings with no height in OSM; counted, not patched per record';
+  blog.fetches = flog; blog.height_sources = HZ.faults; blog.roofs = HZ.roofs; blog.footprint_matches = HZ.matches || null; blog.fault = 'F55 (curation skill fault register): buildings with no height in OSM; counted, not patched per record';
   writeFileSync(BLOG, JSON.stringify(blog, null, 1));
   // the index of places (one entry per place built)
   const IX = join(OUTROOT, 'index.json'), ix = existsSync(IX) ? JSON.parse(readFileSync(IX, 'utf8')) : { format: 'places-index-1', about: 'Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js', places: [] };

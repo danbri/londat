@@ -2694,3 +2694,17 @@ then Sarajevo". No Leiden data was made or committed.
   https://danbri.github.io/londat/docklands/?ll=42.5994,-5.5672,450&ht=200,68 (León cathedral area).
 - Open: FGU log-in and licence (issue #9) for real heights; roofs of irregular outlines (straight skeleton); licence
   questions for Microsoft / Overture heights (ODbL) and GlobalBuildingAtlas (non-commercial).
+
+## 2026-10-20 (later): Overture and Microsoft building heights for the places (subagent)
+- Owner, 2026-10-20: "Use ms/overture" (CLAUDE.md af5102e6). Branch reset to origin/main (the first commit 9e48104b is in
+  main as aeed417e).
+- New: `cwplans/tools/fetch-overture-buildings.py` (DuckDB over HTTPS, release 2026-09-23.1, bbox filter), adapters
+  `docklands/geo/adapters/world-buildings.js` (world-overture, world-ms-buildings), place-heights version 3 (footprint
+  match: centroid in the other outline, area ratio >= 0.5). Crops committed in `places/<id>/sources/`.
+- Coverage (buildings and parts): León OSM height 105, OSM levels 1,452, Catastro 2,454 (unchanged), Overture height 7,
+  Microsoft 6, small 25 -> 23, GHSL 177 -> 166. Sarajevo: Overture 0, Microsoft 0, GHSL 7,096 (unchanged): Microsoft
+  has no height in quadkey 120233030 and Overture's 782 non-OSM records there are Microsoft footprints without heights.
+- Licence: Overture values from Instituto Geográfico Nacional (España) (1,009 num_floors in León) have an empty licence
+  field: not used, not committed; question for the owner.
+- Checks: 3d-tiles-validator 0 errors, 0 warnings (both); npm run check OK; npm test 61/61; place-check León and
+  Sarajevo 390 x 844 @2 all passed; globe-check 390 x 844 @2 all passed. Sizes: León 5.7 MB, Sarajevo 6.7 MB on disk.

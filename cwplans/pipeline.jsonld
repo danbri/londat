@@ -10684,7 +10684,7 @@
    "@id": "https://kgx.foaf.tv/id/toolplacetiles",
    "@type": "prov:Activity",
    "rdfs:label": "place-tiles",
-   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command.",
+   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > Overture height > Overture num_floors x 3 m (records whose own source is not OSM and whose source licence is open) > Microsoft ML height (footprint match: a centroid inside the other outline, smaller area >= 0.5 of the larger; place-heights version 3) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape, then Overture roof_shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command.",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm",
@@ -10718,6 +10718,16 @@
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth",
      "dcat:accessURL": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_H_GLOBE_R2023A/GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_4326_3ss/V1-0/tiles/",
      "dct:description": "the 10 x 10 degree tile zip of the place origin (R{r}_C{c}); a crop over the area plus 0.003 degree is committed as places/<id>/sources/ghsl-built-h.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings",
+     "dcat:accessURL": "https://overturemaps-us-west-2.s3.amazonaws.com/release/2026-09-23.1/theme=buildings/type=building/",
+     "dct:description": "cwplans/tools/fetch-overture-buildings.py: DuckDB read_parquet over HTTPS of the release files, filter on the bbox columns (area plus 0.003 degree)"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings",
+     "dcat:accessURL": "https://minedbuildings.z5.web.core.windows.net/global-buildings/dataset-links.csv",
+     "dct:description": "the gzip GeoJSON-lines file of each zoom-9 quadkey over the area"
     }
    ],
    "prov:generated": [
@@ -10759,6 +10769,18 @@
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/overture-buildings.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/ms-buildings.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/overture-buildings.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/ms-buildings.json"
     }
    ],
    "cwp:tool": {
@@ -26173,6 +26195,12 @@
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
     },
     {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
      "@id": "https://kgx.foaf.tv/id/srcown"
     }
    ],
@@ -26202,6 +26230,12 @@
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
     },
     {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
      "@id": "https://kgx.foaf.tv/id/srcown"
     }
    ],
@@ -26209,7 +26243,7 @@
     "@id": "https://kgx.foaf.tv/id/toolplacetiles"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0)"
+   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/features.json",
@@ -26232,6 +26266,12 @@
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
     },
     {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
      "@id": "https://kgx.foaf.tv/id/srcown"
     }
    ],
@@ -26239,7 +26279,7 @@
     "@id": "https://kgx.foaf.tv/id/toolplacetiles"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0)"
+   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/log.json",
@@ -26247,7 +26287,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 105, \"osm-levels\": 1452, \"national\": 2454, \"default-small\": 25, \"ghsl\": 177, \"default\": 0, \"levels-vs-national-2plus\": 61, \"national-zero-floors\": 0}; roofs: OSM roof:shape {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, region roof rule {\"hipped\": 2635}, flat 1538",
+   "dct:title": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 105, \"osm-levels\": 1452, \"national\": 2454, \"overture-height\": 7, \"overture-floors\": 0, \"ms\": 6, \"default-small\": 23, \"ghsl\": 166, \"default\": 0, \"levels-vs-national-2plus\": 61, \"national-zero-floors\": 0}; footprint matches: {\"overture\": {\"rows\": 335, \"matched\": 151, \"matched_osm_had_height\": 25}, \"ms\": {\"rows\": 1073, \"matched\": 260, \"matched_osm_had_height\": 49}}; roofs: OSM {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, rule {\"hipped\": 2635}, flat 1538",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -26260,6 +26300,12 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -26280,6 +26326,40 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/overture-buildings.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Overture Maps buildings (release 2026-09-23.1) over Casco Histórico, León: the 335 records with a height, number of floors or roof shape from a non-OSM source with an open licence (outer ring, value, its dataset and licence) and the counts of what was left out; the committed input of place-heights",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/ms-buildings.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Microsoft Global ML Building Footprints over Casco Histórico, León: the 1073 footprints with a height (outer ring, height, confidence); the committed input of place-heights",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     }
    ],
    "prov:wasGeneratedBy": {
@@ -26349,6 +26429,12 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -26443,7 +26529,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 141, \"osm-levels\": 176, \"national\": 0, \"default-small\": 19, \"ghsl\": 7096, \"default\": 0, \"levels-vs-national-2plus\": 0, \"national-zero-floors\": 0}; roofs: OSM roof:shape {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, region roof rule {\"hipped\": 6817}, flat 478",
+   "dct:title": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 141, \"osm-levels\": 176, \"national\": 0, \"overture-height\": 0, \"overture-floors\": 0, \"ms\": 0, \"default-small\": 19, \"ghsl\": 7096, \"default\": 0, \"levels-vs-national-2plus\": 0, \"national-zero-floors\": 0}; footprint matches: {\"overture\": {\"rows\": 0, \"matched\": 0, \"matched_osm_had_height\": 0}, \"ms\": {\"rows\": 0, \"matched\": 0, \"matched_osm_had_height\": 0}}; roofs: OSM {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, rule {\"hipped\": 6817}, flat 478",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -26453,6 +26539,12 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -26473,6 +26565,40 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/overture-buildings.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Overture Maps buildings (release 2026-09-23.1) over Stari Grad, Sarajevo: the 0 records with a height, number of floors or roof shape from a non-OSM source with an open licence (outer ring, value, its dataset and licence) and the counts of what was left out; the committed input of place-heights",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/ms-buildings.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Microsoft Global ML Building Footprints over Stari Grad, Sarajevo: the 0 footprints with a height (outer ring, height, confidence); the committed input of place-heights",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     }
    ],
    "prov:wasGeneratedBy": {
@@ -32004,6 +32130,28 @@
    "dct:license": "CC BY 4.0 (Commission reuse policy, Decision 2011/833/EU; copyright.txt in the GHS_BUILT_H_GLOBE_R2023A folder: \"(c) European Union, 1995-2026\")",
    "dcat:landingPage": "https://human-settlement.emergency.copernicus.eu/download.php?ds=builtH",
    "cwp:attribution": "GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (Pesaresi M., Politis P. (2023): GHS-BUILT-H R2023A - GHS building height, derived from AW3D30, SRTM30, and Sentinel2 composite (2018). European Commission, Joint Research Centre, doi:10.2905/85005901-3A49-48DD-9D19-6261354F56FE)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcoverturebuildings",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Overture Maps Foundation, buildings theme, release 2026-09-23.1 (GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB",
+   "dct:license": "ODbL 1.0 (buildings theme); per record and property the sources list names the original dataset and its licence",
+   "dcat:landingPage": "https://docs.overturemaps.org/attribution/",
+   "cwp:attribution": "© Overture Maps Foundation; © OpenStreetMap contributors; © Microsoft (and the other sources named per record)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcmsbuildings",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Microsoft Global ML Building Footprints, release 2026-02-03 (gzip GeoJSON lines per zoom-9 quadkey, dataset-links.csv); height in metres where estimated",
+   "dct:license": "ODbL 1.0",
+   "dcat:landingPage": "https://github.com/microsoft/GlobalMLBuildingFootprints",
+   "cwp:attribution": "© Microsoft (Global ML Building Footprints, ODbL 1.0)"
   }
  ]
 }

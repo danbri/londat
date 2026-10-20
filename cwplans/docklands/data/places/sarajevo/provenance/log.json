@@ -80,6 +80,46 @@
    "committed": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
    "licence": "CC BY 4.0 (Commission Decision 2011/833/EU; copyright.txt: \"(c) European Union, 1995-2026\")",
    "note": "the tile zip stays in the raw folder; the committed crop is the input of place-heights"
+  },
+  "heights-world-overture": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox 18.415579,43.848929,18.449045,43.871408; files part-00210-af36c72f-afd3-5d39-9c99-9033f1ca68be-c000.zstd.parquet)",
+   "fetched": "2026-10-20T20:34:26.374Z",
+   "bytes": 1017,
+   "sha256": "c450560583e01a32ffc4d440106780ad8e0c48e43c9053748ada4e017f0e7ecf",
+   "file": "docklands/data/places/sarajevo/sources/overture-buildings.json",
+   "source": "overture-buildings",
+   "request": "DuckDB read_parquet over HTTPS of the 512 files of the release, filter on bbox.xmin/xmax/ymin/ymax; 1 file(s) held rows",
+   "as_fetched": {
+    "bytes": 6774894,
+    "sha256": "df1f1d36d00b88795929186a35cb6c730ae70148042827753f94e7c6de8683b0",
+    "note": "the query answer as written by cwplans/tools/fetch-overture-buildings.py (raw folder)"
+   },
+   "records": 11321,
+   "kept": 0,
+   "committed": "docklands/data/places/sarajevo/sources/overture-buildings.json",
+   "licence": "ODbL 1.0 (buildings theme; per record: the licence of each source in its sources list)"
+  },
+  "heights-world-ms-buildings": {
+   "url": [
+    "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=BosniaandHerzegovina/quadkey=120233030/part-00095-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz"
+   ],
+   "fetched": "2026-10-20T20:32:02.479Z",
+   "bytes": 764,
+   "sha256": "3a82da833d83aabe7f400e0bbe28ab3a0186177d10f506c871b8f7bfc0af3f1d",
+   "file": "docklands/data/places/sarajevo/sources/ms-buildings.json",
+   "source": "ms-buildings",
+   "request": "dataset-links.csv rows of quadkey(s) 120233030 (zoom 9)",
+   "as_fetched": [
+    {
+     "url": "https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=BosniaandHerzegovina/quadkey=120233030/part-00095-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz",
+     "bytes": 13064069,
+     "sha256": "da922b1b3bb8c35c09613430d1bdcfde6f78eca4c392fcdad0903a8c139bcc18"
+    }
+   ],
+   "in_area": 7897,
+   "kept": 0,
+   "committed": "docklands/data/places/sarajevo/sources/ms-buildings.json",
+   "licence": "ODbL 1.0"
   }
  },
  "activities": [
@@ -657,12 +697,238 @@
    ],
    "ms": 2098,
    "at": "2026-10-20T19:50:59.328Z"
+  },
+  {
+   "activity": "701b44289d5b4ee2",
+   "operation": "place-heights",
+   "version": 3,
+   "skill": "docklands-data-curation",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/sarajevo/work/select.json.gz",
+     "sha256": "8d7a1103dc9e5f0e5d4b866a2a2fabc22577f1063bab59a1143617224ae4571a"
+    },
+    {
+     "label": "raster-heights",
+     "path": "docklands/data/places/sarajevo/sources/ghsl-built-h.json",
+     "sha256": "a424300f3b9b5f21aaa6635fb28c934e1095be28954ca47f477566e51d8266c6"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/sarajevo/sources/overture-buildings.json",
+     "sha256": "c450560583e01a32ffc4d440106780ad8e0c48e43c9053748ada4e017f0e7ecf"
+    },
+    {
+     "label": "footprint-heights",
+     "path": "docklands/data/places/sarajevo/sources/ms-buildings.json",
+     "sha256": "3a82da833d83aabe7f400e0bbe28ab3a0186177d10f506c871b8f7bfc0af3f1d"
+    }
+   ],
+   "params": {
+    "storey_m": 3,
+    "national_storey_m": 3,
+    "default_m": 9,
+    "default_small_m": 3,
+    "raster_min_m": 3,
+    "rasters": [
+     "ghsl"
+    ],
+    "footprints": [
+     {
+      "label": "overture",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": true
+     },
+     {
+      "label": "ms",
+      "min_area_ratio": 0.5,
+      "top_includes_roof": true
+     }
+    ],
+    "roof_rule": {
+     "shape": "hipped",
+     "pitch_deg": 32,
+     "kinds": [
+      "yes",
+      "house",
+      "residential",
+      "apartments",
+      "detached",
+      "semidetached_house",
+      "terrace",
+      "school",
+      "retail",
+      "commercial",
+      "office",
+      "public",
+      "civic",
+      "hotel",
+      "church",
+      "chapel",
+      "mosque",
+      "garage"
+     ],
+     "min_rect": 0.8,
+     "max_area_m2": 1500,
+     "max_wall_m": 24
+    },
+    "pitch_deg": 30,
+    "max_roof_m": 8,
+    "rule": "height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > Overture height > Overture num_floors x storey (non-OSM records with an open licence) > Microsoft height (footprint match: a centroid inside the other outline, area ratio >= min_area_ratio) > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > Overture roof_shape > roof_rule > flat"
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/sarajevo/work/heights.json.gz",
+     "sha256": "cb56a4d852a4eb0778b09a0b3b8b081311df527fa33f0fc2f7ef0bcf02c53e99",
+     "bytes": 56860
+    }
+   ],
+   "ms": 227,
+   "at": "2026-10-20T20:35:15.491Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "2d6aa7d55b7d377e",
+   "operation": "place-tiles",
+   "version": 4,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "selected",
+     "path": "data/raw/places/sarajevo/work/select.json.gz",
+     "sha256": "8d7a1103dc9e5f0e5d4b866a2a2fabc22577f1063bab59a1143617224ae4571a"
+    },
+    {
+     "label": "heights",
+     "path": "data/raw/places/sarajevo/work/heights.json.gz",
+     "sha256": "cb56a4d852a4eb0778b09a0b3b8b081311df527fa33f0fc2f7ef0bcf02c53e99"
+    },
+    {
+     "label": "dem",
+     "path": "data/raw/places/sarajevo/dem.json.gz",
+     "sha256": "6892b55c6151ff4749a2ae3f2217fa82ba5e38755de7f0110d475662b5ae6331"
+    },
+    {
+     "label": "geoid",
+     "path": "docklands/data/world/geoid-egm96-1deg.png",
+     "sha256": "4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca"
+    },
+    {
+     "label": "dem-ring",
+     "path": "data/raw/places/sarajevo/dem-ring.json.gz",
+     "sha256": "62d3d961298d31821543efb4af943aa540f86c05eb68e52eb909ed80c4e753c9"
+    }
+   ],
+   "params": {
+    "grid": 32,
+    "tex": 512,
+    "jpeg": 82,
+    "skirt_m": 300,
+    "version_label": "sarajevo-1",
+    "ring_m": 8000,
+    "ring_grid": 97
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24367.glb",
+     "sha256": "d56b92b8f120c7bd9d87ea2d99ee194e377f86209bb291fe010b1389c4927702",
+     "bytes": 292852
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24368.glb",
+     "sha256": "93d2968f7acd8ef941a0d15d1237a14c34ecd03aa1b91161a7e0ba742caab677",
+     "bytes": 462660
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24369.glb",
+     "sha256": "1fa607d00af913d7ca199c9ad252ed2cf7009a3643f0235fcd65852be068aae3",
+     "bytes": 423132
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24367.glb",
+     "sha256": "05dea6cc6763d2c783659552017d4a1680de922f32351c5552cf9432f6097888",
+     "bytes": 318268
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24368.glb",
+     "sha256": "0008c6c305891f10c94ff71451eedb6bb5696f2ad9655d911722422e6d7565c2",
+     "bytes": 587404
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24369.glb",
+     "sha256": "257c7c191f9b6d143c123b520e57bd821e9970fce434f9a5c3963512cdae0a9d",
+     "bytes": 418516
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24367.glb",
+     "sha256": "3650a33b37a28ffd94e1cb0bf004f18b27dfce6531549c52755c801ae9c36c8d",
+     "bytes": 397072
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24368.glb",
+     "sha256": "6b245152876e54efcea41ba1fc86b0bb624182be9a614ce553265d6480def8ef",
+     "bytes": 551320
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24369.glb",
+     "sha256": "034cc32e3e87c3cd4f15a968b9c81a049af88c2e27f4d94df82a8407a9afa19e",
+     "bytes": 512244
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24367.glb",
+     "sha256": "26bb023449bcca9486044c8954871e1131dfa45f4d64f401f992da4322c7d399",
+     "bytes": 407524
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24368.glb",
+     "sha256": "4090d67d9270668fbd72e065804896cb2be03219580419863dc68bf872cd5bb3",
+     "bytes": 312096
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24369.glb",
+     "sha256": "9b6ffd5ae7a96373415154674e11679c70cfada5b6b372ed23a7d2634e9f84bb",
+     "bytes": 373760
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24367.glb",
+     "sha256": "a410af8b8b064e0de6f41944558de0b879e123eb071d780b1e3e5969b1958b23",
+     "bytes": 151200
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24368.glb",
+     "sha256": "d346d6c57eabef3842cb509d0ac6ad49107e735d3698d0e6a0a7af34203336af",
+     "bytes": 366392
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24369.glb",
+     "sha256": "6fd3974172b51dd1b5e44edd904ab788136ce9409dfa0fc650a9c094b0824000",
+     "bytes": 216364
+    },
+    {
+     "path": "docklands/data/places/sarajevo/tileset.json",
+     "sha256": "83ab5d59bcc1f3d49273ac119b5a6818530ccafb74dc5f8fe0658314aa2ae7ec",
+     "bytes": 9484
+    },
+    {
+     "path": "docklands/data/places/sarajevo/features.json",
+     "sha256": "5c93211c783cfee9f1ab9e355b859f9fda143da7243bb4d2ea1d9193408eec3e",
+     "bytes": 1094529
+    }
+   ],
+   "ms": 1631,
+   "at": "2026-10-20T20:35:17.124Z"
   }
  ],
  "height_sources": {
   "osm-height": 141,
   "osm-levels": 176,
   "national": 0,
+  "overture-height": 0,
+  "overture-floors": 0,
+  "ms": 0,
   "default-small": 19,
   "ghsl": 7096,
   "default": 0,
@@ -678,6 +944,7 @@
    "skillion": 44,
    "dome": 27
   },
+  "overture": {},
   "rule": {
    "hipped": 6817
   },
@@ -689,5 +956,17 @@
   "rule-large-flat": 8,
   "rule-tall-flat": 8,
   "rule-kind-flat": 46
+ },
+ "footprint_matches": {
+  "overture": {
+   "rows": 0,
+   "matched": 0,
+   "matched_osm_had_height": 0
+  },
+  "ms": {
+   "rows": 0,
+   "matched": 0,
+   "matched_osm_had_height": 0
+  }
  }
 }

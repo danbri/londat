@@ -4,7 +4,7 @@ Made by [cwplans/tools/build-place-tiles.mjs](https://github.com/danbri/londat/b
 This README is generated from `provenance/log.json` and [cwplans/data-register.json](https://github.com/danbri/londat/blob/main/cwplans/data-register.json) by `node cwplans/tools/build-place-tiles.mjs readme --region sarajevo` (also at the end of each build). Do not edit it by hand.
 
 - Live view: https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,1500&ht=0,55
-- Area (WGS84 degrees, west, south, east, north): 18.4185791015625, 43.8519287109375, 18.446044921875, 43.868408203125; 7422 buildings; built 2026-10-20T19:50:59.328Z
+- Area (WGS84 degrees, west, south, east, north): 18.4185791015625, 43.8519287109375, 18.446044921875, 43.868408203125; 7422 buildings; built 2026-10-20T20:35:17.124Z
 - Credit shown on the page: © OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)
 - Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)"; fault F55 in the docklands-data-curation skill
 
@@ -30,9 +30,11 @@ This README is generated from `provenance/log.json` and [cwplans/data-register.j
 | [tileset.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/tileset.json) | 3D Tiles 1.1 tileset: one child per quadtree cell, ENU -> ECEF transform, region bounding volume | 9484 | `83ab5d59bcc1f3d49273ac119b5a6818530ccafb74dc5f8fe0658314aa2ae7ec` |
 | [features.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/features.json) | the text and machine interface: buildings (height and its source, roof), streets, areas, points, ground and ring grids | 1094529 | `5c93211c783cfee9f1ab9e355b859f9fda143da7243bb4d2ea1d9193408eec3e` |
 | [sources/ghsl-built-h.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/ghsl-built-h.json) | committed source extract (input of an operation; see Sources) | 5821 | `a424300f3b9b5f21aaa6635fb28c934e1095be28954ca47f477566e51d8266c6` |
-| [provenance/log.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/log.json) | fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts | 22791 | `8dce3058dd93fd0a74c0e83278da768de9c6b1ba93603af334bcfb02e407ec5c` |
+| [sources/ms-buildings.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/ms-buildings.json) | committed source extract (input of an operation; see Sources) | 764 | `3a82da833d83aabe7f400e0bbe28ab3a0186177d10f506c871b8f7bfc0af3f1d` |
+| [sources/overture-buildings.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/sources/overture-buildings.json) | committed source extract (input of an operation; see Sources) | 1017 | `c450560583e01a32ffc4d440106780ad8e0c48e43c9053748ada4e017f0e7ecf` |
+| [provenance/log.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/log.json) | fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts | 32476 | `6788c5c07686d048c15d6ff8794ec851ee3c01acf70e0f2b2fac251d4bb140a4` |
 
-Total 6.92 MB (README.md not counted).
+Total 6.93 MB (README.md not counted).
 
 ## Sources
 
@@ -84,6 +86,30 @@ Total 6.92 MB (README.md not counted).
 - As fetched: 72015015 bytes, SHA-256 `d15991999af8ba2d7cea36ad25b9d83bb02dd33066cd75b44e3b3619480e0b31`; member SHA-256 `575ed618caf2844065e9c3cccdb1efa8698acafd273b4705b5a5635862cdd22d`
 - Stored for the build: `docklands/data/places/sarajevo/sources/ghsl-built-h.json`, 5821 bytes, SHA-256 `a424300f3b9b5f21aaa6635fb28c934e1095be28954ca47f477566e51d8266c6` — committed (`sources/ghsl-built-h.json`)
 
+### heights-world-overture: Overture Maps Foundation, buildings theme, release 2026-09-23.1 (GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB
+
+- Register source: `overture-buildings` ([DATA-REGISTER.md](https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md))
+- Publisher: Overture Maps Foundation (records from OpenStreetMap, Microsoft ML Buildings, Instituto Geográfico Nacional (España), Esri Community Maps and others, named per record in its sources list)
+- Landing page: https://docs.overturemaps.org/attribution/
+- Licence: ODbL 1.0 (buildings theme); per record and property the sources list names the original dataset and its licence (https://opendatacommons.org/licenses/odbl/1-0/)
+- Credit (exact text): "© Overture Maps Foundation; © OpenStreetMap contributors; © Microsoft (and the other sources named per record)"
+- Fetched: 2026-10-20T20:34:26.374Z
+- Request: `s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox 18.415579,43.848929,18.449045,43.871408; files part-00210-af36c72f-afd3-5d39-9c99-9033f1ca68be-c000.zstd.parquet)`
+- As fetched: 6774894 bytes, SHA-256 `df1f1d36d00b88795929186a35cb6c730ae70148042827753f94e7c6de8683b0`
+- Stored for the build: `docklands/data/places/sarajevo/sources/overture-buildings.json`, 1017 bytes, SHA-256 `c450560583e01a32ffc4d440106780ad8e0c48e43c9053748ada4e017f0e7ecf` — committed (`sources/overture-buildings.json`)
+
+### heights-world-ms-buildings: Microsoft Global ML Building Footprints, release 2026-02-03 (gzip GeoJSON lines per zoom-9 quadkey, dataset-links.csv); height in metres where estimated
+
+- Register source: `ms-buildings` ([DATA-REGISTER.md](https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md))
+- Publisher: Microsoft (Bing Maps)
+- Landing page: https://github.com/microsoft/GlobalMLBuildingFootprints
+- Licence: ODbL 1.0 (https://opendatacommons.org/licenses/odbl/1-0/)
+- Credit (exact text): "© Microsoft (Global ML Building Footprints, ODbL 1.0)"
+- Fetched: 2026-10-20T20:32:02.479Z
+- Requests: `https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=BosniaandHerzegovina/quadkey=120233030/part-00095-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz`
+- As fetched: 13064069 bytes, SHA-256 `da922b1b3bb8c35c09613430d1bdcfde6f78eca4c392fcdad0903a8c139bcc18` (https://minedbuildings.z5.web.core.windows.net/global-buildings/2026-02-03/global-buildings.geojsonl/RegionName=BosniaandHerzegovina/quadkey=120233030/part-00095-4feead82-d499-422b-94cb-c036c212127a.c000.csv.gz)
+- Stored for the build: `docklands/data/places/sarajevo/sources/ms-buildings.json`, 764 bytes, SHA-256 `3a82da833d83aabe7f400e0bbe28ab3a0186177d10f506c871b8f7bfc0af3f1d` — committed (`sources/ms-buildings.json`)
+
 ## Operations (dataflow, skill cwplans-dataflow)
 
 Each activity: id = sha256 of [operation, version, input hashes, parameters], first 16 hex. Inputs and outputs by SHA-256; a re-run with the same inputs writes nothing. Outputs under `data/raw/` are intermediate (not committed); their hashes fix the next step.
@@ -102,7 +128,7 @@ Outputs:
 
 Parameters: `{"area":[18.4185791015625,43.8519287109375,18.446044921875,43.868408203125],"level":15,"names":["name","name:bs","name:sr-Latn","name:hr"],"alt_names":["name:sr","name:sr-Cyrl"]}`
 
-### place-heights version 2 (activity `81ff68a81a4a3d6a`, 2026-10-20T19:50:57.229Z)
+### place-heights version 3 (activity `701b44289d5b4ee2`, 2026-10-20T20:35:15.491Z)
 
 Skill docklands-data-curation; tool tools/build-place-tiles.mjs.
 
@@ -110,21 +136,23 @@ Inputs:
 
 - selected: `data/raw/places/sarajevo/work/select.json.gz` SHA-256 `8d7a1103dc9e5f0e5d4b866a2a2fabc22577f1063bab59a1143617224ae4571a`
 - raster-heights: `docklands/data/places/sarajevo/sources/ghsl-built-h.json` SHA-256 `a424300f3b9b5f21aaa6635fb28c934e1095be28954ca47f477566e51d8266c6`
+- footprint-heights: `docklands/data/places/sarajevo/sources/overture-buildings.json` SHA-256 `c450560583e01a32ffc4d440106780ad8e0c48e43c9053748ada4e017f0e7ecf`
+- footprint-heights: `docklands/data/places/sarajevo/sources/ms-buildings.json` SHA-256 `3a82da833d83aabe7f400e0bbe28ab3a0186177d10f506c871b8f7bfc0af3f1d`
 
 Outputs:
 
-- `data/raw/places/sarajevo/work/heights.json.gz` SHA-256 `2f37463482464423c7ae0992fdef969901a48c1109916cab963c774c136bb93f` (56779 bytes)
+- `data/raw/places/sarajevo/work/heights.json.gz` SHA-256 `cb56a4d852a4eb0778b09a0b3b8b081311df527fa33f0fc2f7ef0bcf02c53e99` (56860 bytes)
 
-Parameters: `{"storey_m":3,"national_storey_m":3,"default_m":9,"default_small_m":3,"raster_min_m":3,"rasters":["ghsl"],"roof_rule":{"shape":"hipped","pitch_deg":32,"kinds":["yes","house","residential","apartments","detached","semidetached_house","terrace","school","retail","commercial","office","public","civic","hotel","church","chapel","mosque","garage"],"min_rect":0.8,"max_area_m2":1500,"max_wall_m":24},"pitch_deg":30,"max_roof_m":8,"rule":"height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > roof_rule > flat"}`
+Parameters: `{"storey_m":3,"national_storey_m":3,"default_m":9,"default_small_m":3,"raster_min_m":3,"rasters":["ghsl"],"footprints":[{"label":"overture","min_area_ratio":0.5,"top_includes_roof":true},{"label":"ms","min_area_ratio":0.5,"top_includes_roof":true}],"roof_rule":{"shape":"hipped","pitch_deg":32,"kinds":["yes","house","residential","apartments","detached","semidetached_house","terrace","school","retail","commercial","office","public","civic","hotel","church","chapel","mosque","garage"],"min_rect":0.8,"max_area_m2":1500,"max_wall_m":24},"pitch_deg":30,"max_roof_m":8,"rule":"height: osm height > osm building:levels x storey > national floors (area-weighted median of the parts whose centroid is inside) x storey > Overture height > Overture num_floors x storey (non-OSM records with an open licence) > Microsoft height (footprint match: a centroid inside the other outline, area ratio >= min_area_ratio) > small kinds 3 m > raster cell under the centroid (min raster_min_m) > default. roof: osm roof:shape > Overture roof_shape > roof_rule > flat"}`
 
-### place-tiles version 4 (activity `0fad5527b5076915`, 2026-10-20T19:50:59.328Z)
+### place-tiles version 4 (activity `2d6aa7d55b7d377e`, 2026-10-20T20:35:17.124Z)
 
 Skill docklands-3d-page; tool tools/build-place-tiles.mjs.
 
 Inputs:
 
 - selected: `data/raw/places/sarajevo/work/select.json.gz` SHA-256 `8d7a1103dc9e5f0e5d4b866a2a2fabc22577f1063bab59a1143617224ae4571a`
-- heights: `data/raw/places/sarajevo/work/heights.json.gz` SHA-256 `2f37463482464423c7ae0992fdef969901a48c1109916cab963c774c136bb93f`
+- heights: `data/raw/places/sarajevo/work/heights.json.gz` SHA-256 `cb56a4d852a4eb0778b09a0b3b8b081311df527fa33f0fc2f7ef0bcf02c53e99`
 - dem: `data/raw/places/sarajevo/dem.json.gz` SHA-256 `6892b55c6151ff4749a2ae3f2217fa82ba5e38755de7f0110d475662b5ae6331`
 - geoid: `docklands/data/world/geoid-egm96-1deg.png` SHA-256 `4e9eb4b3ac040dd6276ba74310a405fab7d5c9955c005c8f84a49103318c26ca`
 - dem-ring: `data/raw/places/sarajevo/dem-ring.json.gz` SHA-256 `62d3d961298d31821543efb4af943aa540f86c05eb68e52eb909ed80c4e753c9`
@@ -153,6 +181,9 @@ Parameters: `{"grid":32,"tex":512,"jpeg":82,"skirt_m":300,"version_label":"saraj
 | osm-height | 141 |
 | osm-levels | 176 |
 | national | 0 |
+| overture-height | 0 |
+| overture-floors | 0 |
+| ms | 0 |
 | default-small | 19 |
 | ghsl | 7096 |
 | default | 0 |
@@ -178,4 +209,6 @@ Raw downloads stay in `cwplans/data/raw/places/sarajevo/` (in cwplans/.gitignore
 
 - ba-fgu: owner, 2026-10-11: "Waive this, put it against my name to pursue license while in prototype phase." Usable during the prototyping phase; the owner (danbri) pursues a licence; re-check before the phase ends (issue #9). Status: not reached (2026-10-20): katastar.ba lists WMS / WFS / WCS services (5 m DEM, cadastral buildings "Zgrada" per municipality, Stari Grad and Centar among them) behind a log-in; use needs a written request and a fee (katastar.ba/koristenje); geoportal.fgu.com.ba and gispp.zavodzpr-sa.ba refused the connection. No data of this source is in this build. Issue https://github.com/danbri/londat/issues/9
 - OSM (ODbL 1.0, share-alike): allowed for the prototyping phase (owner, 2026-10-03); to be reviewed with the rest of the OSM use.
+- world-overture: licence class "share-alike" (ODbL 1.0 (buildings theme; per record: the licence of each source in its sources list)); allowed by the owner on 2026-10-20 ("Use ms/overture"), registered next to OSM. Values whose own source licence is not open (for example an empty licence field) are neither used nor committed: see the counts in sources/.
+- world-ms-buildings: licence class "share-alike" (ODbL 1.0); allowed by the owner on 2026-10-20 ("Use ms/overture"), registered next to OSM. Values whose own source licence is not open (for example an empty licence field) are neither used nor committed: see the counts in sources/.
 - Copernicus DEM GLO-30: its full credit ends "all rights reserved" (CLAUDE.md); accepted by the owner on 2026-10-20 ("Data - is fine for now"); re-check before the prototyping phase ends.

@@ -3281,6 +3281,26 @@
       "attribution": "GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (Pesaresi M., Politis P. (2023): GHS-BUILT-H R2023A - GHS building height, derived from AW3D30, SRTM30, and Sentinel2 composite (2018). European Commission, Joint Research Centre, doi:10.2905/85005901-3A49-48DD-9D19-6261354F56FE)",
       "url": "https://human-settlement.emergency.copernicus.eu/download.php?ds=builtH",
       "note": "Used for the places on the globe (adapter docklands/geo/adapters/world-ghsl.js, kind ghsl-raster): an OSM building with no height, no building:levels and no national floors takes the ANBH of the 3 arc-second cell under its centroid (a cell average, not a measure of the building). The 72 MB tile zip stays in cwplans/data/raw/places/<id>/ (git-ignored); the crop over each place is committed in cwplans/docklands/data/places/<id>/sources/ghsl-built-h.json (cropped and rounded to 0.1 m: a change, stated). Checked 2026-10-20: open download, no log-in."
+    },
+    "overture-buildings": {
+      "name": "Overture Maps Foundation, buildings theme, release 2026-09-23.1 (GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB",
+      "publisher": "Overture Maps Foundation (records from OpenStreetMap, Microsoft ML Buildings, Instituto Geográfico Nacional (España), Esri Community Maps and others, named per record in its sources list)",
+      "licence": "ODbL 1.0 (buildings theme); per record and property the sources list names the original dataset and its licence",
+      "licence_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "licence_class": "share-alike",
+      "attribution": "© Overture Maps Foundation; © OpenStreetMap contributors; © Microsoft (and the other sources named per record)",
+      "url": "https://docs.overturemaps.org/attribution/",
+      "note": "Allowed by the owner on 2026-10-20 (\"Use ms/overture\"; CLAUDE.md, data policy). Used for the places on the globe (adapter docklands/geo/adapters/world-buildings.js, world-overture): heights, num_floors and roof_shape of records whose own source (the sources entry for that property) is not OpenStreetMap and whose source licence is open (ODbL, CDLA-Permissive, CC BY, CC0). Values with an empty licence field (León: 1,009 num_floors from Instituto Geográfico Nacional (España)) are neither used nor committed. The query answer stays in cwplans/data/raw/places/<id>/; only the crop of usable records is committed in places/<id>/sources/overture-buildings.json."
+    },
+    "ms-buildings": {
+      "name": "Microsoft Global ML Building Footprints, release 2026-02-03 (gzip GeoJSON lines per zoom-9 quadkey, dataset-links.csv); height in metres where estimated",
+      "publisher": "Microsoft (Bing Maps)",
+      "licence": "ODbL 1.0",
+      "licence_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "licence_class": "share-alike",
+      "attribution": "© Microsoft (Global ML Building Footprints, ODbL 1.0)",
+      "url": "https://github.com/microsoft/GlobalMLBuildingFootprints",
+      "note": "Allowed by the owner on 2026-10-20 (\"Use ms/overture\"). Used for the places on the globe (adapter world-ms-buildings): the height of a footprint that matches an OSM outline with no OSM height or levels. The quadkey files stay in cwplans/data/raw/places/<id>/; only footprints in the area with a height > 0 are committed in places/<id>/sources/ms-buildings.json. Sarajevo quadkey 120233030: 164,318 footprints, none with a height; León quadkey 031333200: 18,919 of 57,779 with a height."
     }
   },
   "files": [
@@ -13564,6 +13584,8 @@
         "osm",
         "ign-mdt05",
         "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
         "own"
       ],
       "osm": {
@@ -13585,6 +13607,8 @@
         "ign-mdt05",
         "es-catastro-inspire-bu",
         "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
         "own"
       ],
       "osm": {
@@ -13592,7 +13616,7 @@
         "extract": "osm-api-place-leon",
         "what": "building and building:part outlines, water, green and paved areas, streets and rail as drawn geometry"
       },
-      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0)",
+      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")",
       "produced_by": "tools/build-place-tiles.mjs",
       "fetched": "2026-10-20",
       "shown_on": [
@@ -13607,6 +13631,8 @@
         "ign-mdt05",
         "es-catastro-inspire-bu",
         "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
         "own"
       ],
       "osm": {
@@ -13614,7 +13640,7 @@
         "extract": "osm-api-place-leon",
         "what": "OSM ids, names, addresses, kinds, centroids and height tags of buildings; names and positions of streets, areas and points"
       },
-      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0)",
+      "review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")",
       "produced_by": "tools/build-place-tiles.mjs",
       "fetched": "2026-10-20",
       "shown_on": [
@@ -13623,12 +13649,14 @@
     },
     {
       "path": "docklands/data/places/leon/provenance/log.json",
-      "what": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 105, \"osm-levels\": 1452, \"national\": 2454, \"default-small\": 25, \"ghsl\": 177, \"default\": 0, \"levels-vs-national-2plus\": 61, \"national-zero-floors\": 0}; roofs: OSM roof:shape {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, region roof rule {\"hipped\": 2635}, flat 1538",
+      "what": "Build log of the place Casco Histórico, León: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 105, \"osm-levels\": 1452, \"national\": 2454, \"overture-height\": 7, \"overture-floors\": 0, \"ms\": 6, \"default-small\": 23, \"ghsl\": 166, \"default\": 0, \"levels-vs-national-2plus\": 61, \"national-zero-floors\": 0}; footprint matches: {\"overture\": {\"rows\": 335, \"matched\": 151, \"matched_osm_had_height\": 25}, \"ms\": {\"rows\": 1073, \"matched\": 260, \"matched_osm_had_height\": 49}}; roofs: OSM {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, rule {\"hipped\": 2635}, flat 1538",
       "sources": [
         "osm",
         "ign-mdt05",
         "ghsl-built-h",
         "es-catastro-inspire-bu",
+        "overture-buildings",
+        "ms-buildings",
         "own"
       ],
       "osm": {
@@ -13650,6 +13678,38 @@
       "osm": {
         "use": "none"
       },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/leon/sources/overture-buildings.json",
+      "what": "Overture Maps buildings (release 2026-09-23.1) over Casco Histórico, León: the 335 records with a height, number of floors or roof shape from a non-OSM source with an open licence (outer ring, value, its dataset and licence) and the counts of what was left out; the committed input of place-heights",
+      "sources": [
+        "overture-buildings"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "licence_class": "share-alike",
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/leon/sources/ms-buildings.json",
+      "what": "Microsoft Global ML Building Footprints over Casco Histórico, León: the 1073 footprints with a height (outer ring, height, confidence); the committed input of place-heights",
+      "sources": [
+        "ms-buildings"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "licence_class": "share-alike",
       "produced_by": "tools/build-place-tiles.mjs",
       "fetched": "2026-10-20",
       "shown_on": [
@@ -13699,6 +13759,8 @@
         "copernicus-glo30",
         "es-catastro-inspire-bu",
         "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
         "own"
       ],
       "osm": {
@@ -13775,11 +13837,13 @@
     },
     {
       "path": "docklands/data/places/sarajevo/provenance/log.json",
-      "what": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 141, \"osm-levels\": 176, \"national\": 0, \"default-small\": 19, \"ghsl\": 7096, \"default\": 0, \"levels-vs-national-2plus\": 0, \"national-zero-floors\": 0}; roofs: OSM roof:shape {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, region roof rule {\"hipped\": 6817}, flat 478",
+      "what": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles with input and output hashes; height-source counts (fault F55): {\"osm-height\": 141, \"osm-levels\": 176, \"national\": 0, \"overture-height\": 0, \"overture-floors\": 0, \"ms\": 0, \"default-small\": 19, \"ghsl\": 7096, \"default\": 0, \"levels-vs-national-2plus\": 0, \"national-zero-floors\": 0}; footprint matches: {\"overture\": {\"rows\": 0, \"matched\": 0, \"matched_osm_had_height\": 0}, \"ms\": {\"rows\": 0, \"matched\": 0, \"matched_osm_had_height\": 0}}; roofs: OSM {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, rule {\"hipped\": 6817}, flat 478",
       "sources": [
         "osm",
         "copernicus-glo30",
         "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
         "own"
       ],
       "osm": {
@@ -13801,6 +13865,38 @@
       "osm": {
         "use": "none"
       },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/sources/overture-buildings.json",
+      "what": "Overture Maps buildings (release 2026-09-23.1) over Stari Grad, Sarajevo: the 0 records with a height, number of floors or roof shape from a non-OSM source with an open licence (outer ring, value, its dataset and licence) and the counts of what was left out; the committed input of place-heights",
+      "sources": [
+        "overture-buildings"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "licence_class": "share-alike",
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/sources/ms-buildings.json",
+      "what": "Microsoft Global ML Building Footprints over Stari Grad, Sarajevo: the 0 footprints with a height (outer ring, height, confidence); the committed input of place-heights",
+      "sources": [
+        "ms-buildings"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "licence_class": "share-alike",
       "produced_by": "tools/build-place-tiles.mjs",
       "fetched": "2026-10-20",
       "shown_on": [

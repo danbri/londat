@@ -22,9 +22,9 @@
    "features": "leon/features.json",
    "readme": "leon/README.md",
    "provenance": "leon/provenance/log.json",
-   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); MDT05 © Instituto Geográfico Nacional (CC BY 4.0); Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
    "buildings": 4045,
-   "built": "2026-10-20T19:51:02.221Z"
+   "built": "2026-10-20T20:35:10.509Z"
   },
   {
    "id": "sarajevo",
@@ -48,7 +48,7 @@
    "provenance": "sarajevo/provenance/log.json",
    "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
    "buildings": 7422,
-   "built": "2026-10-20T19:50:59.328Z"
+   "built": "2026-10-20T20:35:17.124Z"
   }
  ]
 }
