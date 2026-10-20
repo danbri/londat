@@ -1,0 +1,105 @@
+{
+ "about": "Dataflow log of tools/build-detail-skeleton.mjs (skill cwplans-dataflow): the operation, its fetched inputs (URL, date, bytes, SHA-256) and one activity per run (inputs and outputs by SHA-256).",
+ "operations": {
+  "detail-skeleton-world": {
+   "version": 1,
+   "tool": "tools/build-detail-skeleton.mjs",
+   "skill": "docklands-3d-page"
+  }
+ },
+ "fetches": {
+  "ne/ne_10m_roads.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_roads.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 50474096,
+   "sha256": "66a0c7b438e92fd124822cc5921cfa11042f48c294ade5e0f03f2c6640fd0248"
+  },
+  "ne/ne_10m_railroads.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_railroads.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 39598080,
+   "sha256": "a0962d7866060ae3e24df255f6d662389ac9ba7e0df40cf329c2281190b861e6"
+  },
+  "ne/ne_10m_rivers_lake_centerlines.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_rivers_lake_centerlines.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 7307743,
+   "sha256": "bb854a900ecbd3b408df46d5e16e3e0f974ba55993f9d8b5c26e855273c0905a"
+  },
+  "ne/ne_10m_rivers_europe.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_rivers_europe.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 2534505,
+   "sha256": "90712202ac46985812e90840df9acd5101599a9c649868d5bc55ee96c2fedd4c"
+  },
+  "ne/ne_10m_lakes.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_lakes.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 5043554,
+   "sha256": "2d036f53dedec578001c5c30c2959ee7d4eebc1306900fa4367c49929ec8f2d9"
+  },
+  "ne/ne_10m_lakes_europe.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_lakes_europe.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 1008063,
+   "sha256": "b4dd9e7a5edd0d07b54768b5404d1ebe77f80b9d579c85fff65f90cf50369769"
+  },
+  "ne/ne_10m_urban_areas.geojson": {
+   "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_urban_areas.geojson",
+   "fetched": "2026-10-20",
+   "bytes": 27943663,
+   "sha256": "5136ffd816a9b28c0f295e6797b4c03eaa421be80d78b90f542db4a932dd4497"
+  },
+  "geonames/cities15000.zip": {
+   "url": "https://download.geonames.org/export/dump/cities15000.zip",
+   "fetched": "2026-10-20",
+   "bytes": 3362238,
+   "sha256": "a839fd6af3d55e5d41d2e281d481b7c0887cc9f2bc536723708843ef01e70ea8"
+  }
+ },
+ "activities": [
+  {
+   "id": "acta6517011ad7c7952",
+   "operation": "detail-skeleton-world",
+   "version": 1,
+   "inputs": [
+    {
+     "name": "geonames/cities15000.zip",
+     "sha256": "a839fd6af3d55e5d41d2e281d481b7c0887cc9f2bc536723708843ef01e70ea8"
+    },
+    {
+     "name": "ne/ne_10m_lakes.geojson",
+     "sha256": "2d036f53dedec578001c5c30c2959ee7d4eebc1306900fa4367c49929ec8f2d9"
+    },
+    {
+     "name": "ne/ne_10m_lakes_europe.geojson",
+     "sha256": "b4dd9e7a5edd0d07b54768b5404d1ebe77f80b9d579c85fff65f90cf50369769"
+    },
+    {
+     "name": "ne/ne_10m_railroads.geojson",
+     "sha256": "a0962d7866060ae3e24df255f6d662389ac9ba7e0df40cf329c2281190b861e6"
+    },
+    {
+     "name": "ne/ne_10m_rivers_europe.geojson",
+     "sha256": "90712202ac46985812e90840df9acd5101599a9c649868d5bc55ee96c2fedd4c"
+    },
+    {
+     "name": "ne/ne_10m_rivers_lake_centerlines.geojson",
+     "sha256": "bb854a900ecbd3b408df46d5e16e3e0f974ba55993f9d8b5c26e855273c0905a"
+    },
+    {
+     "name": "ne/ne_10m_roads.geojson",
+     "sha256": "66a0c7b438e92fd124822cc5921cfa11042f48c294ade5e0f03f2c6640fd0248"
+    },
+    {
+     "name": "ne/ne_10m_urban_areas.geojson",
+     "sha256": "5136ffd816a9b28c0f295e6797b4c03eaa421be80d78b90f542db4a932dd4497"
+    }
+   ],
+   "outputs": 2295,
+   "outputs_sha256": "cbae050aeae2abb6e335bae1cfe821ba5a10177075e121ae9d00a5b8fd2a14a6",
+   "bytes": 17674717,
+   "at": "2026-10-20T23:19:15.550Z"
+  }
+ ]
+}

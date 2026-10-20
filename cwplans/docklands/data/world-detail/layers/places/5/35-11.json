@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Windhoek","kind":"city","pop":386219},"geometry":{"type":"Point","d":[17083,-22559]}},{"properties":{"name":"Rehoboth","kind":"town","pop":34185},"geometry":{"type":"Point","d":[17090,-23317]}},{"properties":{"name":"Keetmanshoop","kind":"town","pop":23049},"geometry":{"type":"Point","d":[18134,-26576]}}]}

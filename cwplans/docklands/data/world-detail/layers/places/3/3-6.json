@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Winnipeg","kind":"city","pop":749607},"geometry":{"type":"Point","d":[-97147,49884]}},{"properties":{"name":"Saskatoon","kind":"city","pop":266141},"geometry":{"type":"Point","d":[-106669,52132]}},{"properties":{"name":"Regina","kind":"city","pop":226404},"geometry":{"type":"Point","d":[-104618,50450]}}]}
