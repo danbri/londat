@@ -21,6 +21,7 @@ import { predict } from './tide.js';
 import { makeOccluder } from './occlude.js';
 import { VIEWS } from './views.js';
 import { makePerf } from './perf.js';
+import { makeCpuCopies } from './cpu-copies.js';
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -48,6 +49,9 @@ const GPU = !!renderer.backend.isWebGPUBackend, BACKEND = GPU ? 'WebGPU' : 'WebG
 $('backend').textContent = BACKEND;
 
 const scene = new THREE.Scene();
+// CPU copies of the static geometry given up once drawn (cpu-copies.js; ?cpufree=0 keeps them): normals and the per-building
+// and per-line values, made again exactly when three.js makes their GPU buffer again (after the globe: globe.js stepReup)
+const CPU = makeCpuCopies(renderer, { on: flag('cpufree', true) });
 const camera = new THREE.PerspectiveCamera(45.8, innerWidth / innerHeight, 2, 30000);
 const PERF = makePerf({ camera, backend: BACKEND, draw, qs });   // frame times, camera motion, the readout (?fps=1): perf.js
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -97,6 +101,7 @@ const water = new THREE.Mesh(waterGeometry(), waterMaterial()); water.receiveSha
 const greens = new THREE.Mesh(greensGeometry(), vertexColourMaterial({ cut: false })); greens.receiveShadow = true; scene.add(greens);
 const LN = linesGeometry(), lineMat = vertexColourMaterial(), rail = new THREE.Mesh(LN.rail, lineMat), roads = new THREE.Mesh(LN.road, lineMat); scene.add(rail, roads);
 roads.visible = flag('roads', true);
+for (const m of [greens, rail, roads]) CPU.watch(m.geometry, { normal: 'normal', color: 'runs' });   // (no code reads these on the CPU)
 // keep the flat layers above the ground in the depth buffer (the WebGL page offsets them by 0.1 to 0.4 m)
 for (const m of [water.material, greens.material, lineMat]) { m.polygonOffset = true; m.polygonOffsetFactor = -1; m.polygonOffsetUnits = -4; }
 
@@ -118,14 +123,19 @@ const skip = new Set();
 function rebuildBuildings() {
   for (const m of buildings.children) m.geometry.dispose(); buildings.clear();
   const t0 = performance.now();
-  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m); }
+  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
+    CPU.watch(G, { normal: 'normal', gk: 'runs' }); }   // picking and the occluder read position, index and userData.bi: kept
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   for (const l of LOD.list) if (l.userData.mi) farBlock(l);   // the detailed models' far blocks take the new look too
-  STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0) };
+  STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0), builds: (STATS.buildings?.builds || 0) + 1 };
   if (OCC) OCC.dirty();
   draw();
 }
-const STATS = { terrain: terrain.geometry.userData.stats }, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null);
+// while the page boots (heavy(): optional data, detailed models, the layers) the rebuilds asked for are done once at the
+// end: there were 6 at ?view=cw (2 s each in headless Chromium, each leaving its arrays as garbage), now 2
+let BOOTING = true, rebuildWanted = false;
+function requestRebuild() { if (BOOTING) { rebuildWanted = true; return; } rebuildBuildings(); }
+const STATS = { terrain: terrain.geometry.userData.stats, cpu: CPU.stats }, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null);
 // STATS.terrain: build.js terrainGeometry's counts (squares cut along the water outlines, pieces, quay walls, triangles, ms)
 rebuildBuildings();
 
@@ -296,7 +306,7 @@ async function loadModels() {
       lod.addLevel(g.scene, 0); models.add(lod); farBlock(lod); for (const i of m.mi) skip.add(i); }
     catch (e) { console.warn('model', url, e); }
   }
-  if (skip.size) rebuildBuildings();
+  if (skip.size) requestRebuild();
 }
 
 // ---------- optional data: towers, roof shapes, realistic look (on by default since 2026-10-09; ?look=0 for flat), ground images
@@ -314,7 +324,7 @@ async function loadOptional() {
       for (const i of mi) by.set(i, f.slot); }
     tex.colorSpace = THREE.SRGBColorSpace; bmat.setFacades(tex, slots); FACADE = i => by.has(i) ? by.get(i) : null; STATS.facades = { buildings: by.size, slots: slots.filter(Boolean).length };
   }).catch(e => console.warn('facades', e)));
-  await Promise.all(jobs); rebuildBuildings();
+  await Promise.all(jobs); requestRebuild();
   $('look').checked = !!LOOK;
 }
 const texLoader = new THREE.TextureLoader(), texCache = {};
@@ -385,7 +395,7 @@ const ui = makeUi(draw);
 OCC = makeOccluder({ A, groundB, buildings, models, U, eye: eyeM, ghost: () => bmat.transparent, draw }); OCC.dirty();
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
-  materials: { vertexColourMaterial }, buildOpts, stats: STATS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => rebuildBuildings(), onFrame: f => frameHooks.push(f),
+  materials: { vertexColourMaterial }, buildOpts, stats: STATS, cpu: CPU, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => requestRebuild(), onFrame: f => frameHooks.push(f),
   perf: PERF, lod: LOD, addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
   // a label hidden by a building or the ground between the eye and its anchor (model metres); key: the label's element
@@ -748,6 +758,7 @@ function loop(time, xrFrame) {
   if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
   { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles) }; } modelFrames++;   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
+  CPU.tick();   // the geometry drawn in this frame gives up its CPU copies (cpu-copies.js)
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
   $('fps').textContent = `${BACKEND} · ${ms.toFixed(1)} ms to submit a frame${$('animate').checked ? ` · ${fps.toFixed(0)} fps` : ''}`;
@@ -787,6 +798,7 @@ let READY = false;
 async function heavy() {
   await loadOptional(); $('facades').checked = FACADES_ON = flag('facades', true); $('facades').disabled = !FACADE; await loadModels();
   await loadLayers();
+  BOOTING = false; if (rebuildWanted) { rebuildWanted = false; rebuildBuildings(); }
   if (H.id && /^osm:[wr]\d+$/.test(H.id)) { const K = await keys(); const i = K ? K.ids.indexOf(H.id.slice(4)) : -1; if (i >= 0) selectModel(i); }
   say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
   setTimeout(() => $('hud').classList.add('fade'), 4000);
