@@ -65,7 +65,7 @@ try {
   const fromSw = same.filter(r => r.sw).length;
   check(!v2.errors.length, 'second visit: no page errors', v2.errors.slice(0, 2).join(' | '));
   check(fromSw >= same.length * 0.9 && fromSw > 20, 'second visit: the deployed files come from the worker', `${fromSw} of ${same.length} same-origin responses`);
-  const toServer = v2.hits.filter(p => !/^\/docklands\/$|sw-manifest\.json|sw\.js$/.test(p));
+  const toServer = v2.hits.filter(p => !/^\/docklands\/$|sw-manifest\.json|sw\.js$|^\/cwplans\/cache\//.test(p));   // cwplans/cache/: live (the history layer), never cached
   check(toServer.length <= 3, 'second visit: the server is asked only for the page, the manifest and files not in the manifest', `${v2.server} requests: ${v2.hits.slice(0, 8).join(', ')}`);
   check(toServer.some(p => p.endsWith(BAD)), 'a file whose hash does not match the manifest is fetched again (never cached)', toServer.join(', '));
   st = await swStats(v2.page);
@@ -88,8 +88,12 @@ try {
 
   // 5. the way off
   const v4 = await visit(Q.replace(/^/, 'sw=0&'), { wait: true });
-  await v4.page.waitForTimeout(1500);
-  const off = await v4.page.evaluate(async () => ({ regs: (await navigator.serviceWorker.getRegistrations()).map(r => r.scope), caches: (await caches.keys()).filter(k => k.startsWith('londat-docklands-')) }));
+  let off;   // unregistering is asynchronous: poll up to 15 s
+  for (let i = 0; i < 30; i++) {
+    off = await v4.page.evaluate(async () => ({ regs: (await navigator.serviceWorker.getRegistrations()).map(r => r.scope), caches: (await caches.keys()).filter(k => k.startsWith('londat-docklands-')) }));
+    if (!off.regs.some(s => s.endsWith('/docklands/')) && !off.caches.length) break;
+    await v4.page.waitForTimeout(500);
+  }
   check(!off.regs.some(s => s.endsWith('/docklands/')) && !off.caches.length, '?sw=0 unregisters the worker and deletes its caches', JSON.stringify(off));
   check(!v4.errors.length, '?sw=0: no page errors', v4.errors.slice(0, 2).join(' | '));
   await v4.page.close();

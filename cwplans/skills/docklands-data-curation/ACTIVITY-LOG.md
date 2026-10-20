@@ -2749,3 +2749,29 @@ then Sarajevo". No Leiden data was made or committed.
   check OK. Not pushed (subagent branch).
 - Open: LOD step 4; roads/rail/greens positions, building `bi`, `uw`, `col`, the layers' own copies (under, tide,
   windfield); the iPhone measure and the WebGPU shadow path on a real GPU.
+
+## 2026-10-20 (night): load speed on GitHub Pages: service worker, load hints, area loader, Pages size (subagent)
+
+Owner, 2026-10-20: "We aren't setting up non-GH hosting in the very immediate future so any GH based Range request
+optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1. Lessons: skill docklands-3d-page,
+"Load speed on Pages".
+- Service worker for the Three.js port (`docklands/sw.js`, scope docklands/): the page network first; every deployed file
+  served from the cache while its SHA-256 equals the hash manifest of the deploy (`docklands/sw-manifest.json`, made by
+  `cwplans/tools/build-sw-manifest.mjs` in pages.yml, not committed); bytes stored only when their hash matches; live data
+  (raw.githubusercontent.com, APIs, `cwplans/cache/`) and Range requests untouched; `?sw=0` turns it off. Test
+  `docklands/test/sw-check.mjs`.
+- Measured (local Pages-like server, 40 ms per answer, 390 x 844 @2, repeat visit after the 600 s max-age): requests to
+  the server cw 161 -> 8, globe 98 -> 3, León 130 -> 4; network-busy time cw 5.9 -> 1.8 s, globe 3.8 -> 1.1 s, León
+  6.0 -> 1.5 s. Live Pages today (no worker): cold cw 161 requests, 7.2 MB, network busy 9.7 s; repeat inside 10 min from
+  the HTTP cache. Wall times in software rendering vary 2 to 3 times on the shared container.
+- Load hints (`cwplans/tools/build-preload-hints.mjs`): modulepreload of main.js's static closure (28 modules), the layer,
+  globe and API modules at low priority (68), the model's first data for a model start; written again at deploy.
+- area.js read by fetch + JSON.parse in index.html (40 to 70 ms against 280 to 470 ms to compile the 5.5 MB literal).
+- Pages size 535.6 MB -> 355.4 MB: the bulk dataset folders of feeds/london-datastore/ and feeds/portals/ (392 files,
+  180.2 MB) stay in the repository; `cwplans/data-base.js` reads them from raw.githubusercontent.com. Test
+  `cwplans/tools/test/pages-site.test.mjs`.
+- Range archive stays behind `?archive=` (not faster on HTTP/2; the worker caches the files by hash); the reader now
+  refuses a range answer that is not the asked bytes and falls back to the files.
+- kg page worker (`cwplans/kg/sw.js`) deleted every cache of the origin at activation; now only its own (`cwplans-kg-`).
+- Open: proposals for main.js (load the layers in parallel, drop the boot screen at the first model frame); a measurement
+  on the owner's iPhone (Safari: service worker, range reads).

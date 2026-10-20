@@ -3200,3 +3200,62 @@ Owner, 2026-10-14: "make sure we make appropriate use of threejs lod support for
   the layers' own copies (under 11 MB, tide 10, windfield 8); the occluder's two Int16 grids (10 MB); area.js kept twice
   (the parsed object, 7 MB, and the script source V8 keeps, 10.6 MB); LOD step 4; a measurement on the iPhone (Safari Web
   Inspector, Timelines > Memory) and the WebGPU path with shadows (normals restored, then given up) on a real GPU.
+
+## Load speed on Pages: the service worker, load hints, the area loader, the Pages size (2026-10-20)
+
+Owner, 2026-10-20: "We aren't setting up non-GH hosting in the very immediate future so any GH based Range request
+optimisation, or other perf work, would still be worthwhile as a stopgap"; earlier: the page "feels sluggish and janky" on
+the iPhone; KR3.1. Files: worker `docklands/sw.js` (registered by an inline script in `docklands/index.html`), manifest
+tool `cwplans/tools/build-sw-manifest.mjs`, hints tool `cwplans/tools/build-preload-hints.mjs` (both run by
+`.github/workflows/pages.yml` on the staged site), measurement `docklands/test/perf-load.mjs`, check
+`docklands/test/sw-check.mjs`, tests `cwplans/tools/test/sw-manifest.test.mjs` and `pages-site.test.mjs`.
+
+- **Why a worker.** Pages sends `max-age=600`. After 10 minutes every file is revalidated (a 304 each), and the page reads
+  about 160 files in chains (module imports one level per round trip; `loadLayers` imports and initialises 34 layers one
+  after another). Measured locally (Pages-like server: gzip, ETag, 40 ms per answer, HTTP/1.1; 390 x 844 @2): repeat
+  visit after 10 minutes, `?view=cw` 161 requests and 5.9 s of network-busy time; with the worker 162 responses from the
+  worker, 8 server requests, 1.8 s (the rest is cache reads). `?view=globe` 98 -> 3 requests; León 130 -> 4.
+- **Rules** (header of sw.js): the page network first (navigation preload; a deploy shows at once: the owner checks each
+  push live); every deployed file by hash (manifest `docklands/sw-manifest.json` = path -> first 16 hex of SHA-256, made
+  at deploy, fetched at each navigation, a 304 when unchanged); a cached copy is served only when its stored hash is the
+  manifest's; a fetched copy is stored only when the SHA-256 of its bytes is the manifest's (never stale bytes under a new
+  hash: the HTTP cache can hold an old copy for 600 s after a deploy, so the worker fetches with `cache: 'no-cache'`);
+  asset requests wait for the navigation's manifest. Not touched: other origins (raw.githubusercontent.com live-cache and
+  cache branches, APIs), files not in the manifest (`cwplans/cache/`), Range requests, `no-store` / `reload` requests.
+- **First visit.** The page is not controlled until the worker activates (`clients.claim()`); the page then posts the URLs
+  it has read and the worker copies them with `cache: 'only-if-cached'` (from the HTTP cache, no network), checked by
+  hash. sw-check: 135 entries, 27.6 MB after one globe visit.
+- **Shared origin.** danbri.github.io holds other projects and the kg page's worker (`cwplans/kg/sw.js`). Cache names have
+  a prefix (`londat-docklands-v1`); activation deletes only that prefix. The kg worker deleted EVERY other cache on its
+  activation; fixed to its own prefix (`cwplans-kg-`). Never use `caches.keys()` without a prefix filter, and never use
+  `navigator.storage.estimate()` for a cap (it is the whole origin): the worker stores `x-sw-size` per entry and drops the
+  oldest beyond 300 MB.
+- **Way off.** `?sw=0`: the worker sees the navigation, stops serving (`OFF`), deletes its caches and unregisters; the page
+  script does the same. A page loaded with `?sw=0` is still controlled by the old worker until it unregisters, so the
+  worker itself must stop, or its asset handler fills the cache again (sw-check found this).
+- **Playwright routing turns the HTTP cache off** (`page.route` / `context.route`). A repeat-load measurement with a route
+  handler shows every file fetched again. Make other hosts fail with `--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE
+  127.0.0.1` instead. Requests made by a worker are not seen by `page.route` either.
+- **Load hints** (block between the "load hints" markers, written by the tool; the workflow writes it again at deploy so
+  it follows main.js): `modulepreload` for the 28 modules of main.js's static import closure (through the import map),
+  so the module graph downloads beside area.js instead of after it; at low priority the 68 modules of the layers, the
+  globe and the API (`loadLayers` then finds them in the module map); for a start in the model only, the data read before
+  the boot screen goes. A preload must match the later request: `as="fetch" crossorigin="anonymous"` for `fetch()` and
+  three.js FileLoader, `as="image" crossorigin` for TextureLoader. modulepreload must come after the import map.
+- **area.js by JSON.parse.** The 5.5 MB object literal took 280 to 470 ms to compile as a classic script in Chromium;
+  `JSON.parse` of the same text 40 to 70 ms (the V8 advice for large literals). index.html now fetches area.js (preloaded
+  at high priority), parses the part after `globalThis.DOCKLANDS_AREA = `, sets the global, then inserts main.js,
+  about-extra.js and textview.js (`async = false`, in order). A different file form falls back to running the script.
+  It also frees the script source V8 kept (10.6 MB, cpu-copies notes above).
+- **Pages size.** The dataset folders of `cwplans/feeds/london-datastore/` and `cwplans/feeds/portals/` (392 files,
+  180.2 MB) are no longer published: 535.6 MB -> 355.4 MB. `cwplans/data-base.js` sends their URLs to
+  raw.githubusercontent.com (the atlas links and maps them from there); the four Datastore layers the 3D pages draw stay
+  on Pages (one list in pages.yml and data-base.js, tested). The deploy itself was about 1 minute (upload 18 s) before.
+- **Range archive: not the default.** On HTTP/2 an archive is not faster (hosting study), adds 9 to 19 % bytes, and with
+  the worker every file of the folder layout is cached by hash on its own; an archive would need range slicing in the
+  worker. Kept behind `?archive=`. The reader now refuses a 206 that is not the asked range (Content-Encoding on a range,
+  a Content-Range that starts elsewhere or is longer than the body, or a body of the wrong length when Content-Range is
+  not exposed) and `archiveFetchJson` then reads the files for the rest of the session (`ar.broken`).
+- **Measuring here.** Wall times in SwiftShader on the shared 4-core container vary by 2 to 3 times between runs (load
+  average 13 from other sessions): `?view=cw` ready 119 to 173 s before, 46 to 115 s after. Use the network-busy time
+  (union of same-origin request intervals before ready, Resource Timing) and the request counts.
