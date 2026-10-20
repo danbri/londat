@@ -3,7 +3,8 @@
 // included), with the triangles each layer submits (planes, ships, river boats, detailed models); (2) GPU memory as three.js
 // counts it (renderer.info.memory: attributes, textures, total bytes) and the JS heap (performance.memory, Chromium only)
 // through the owner's iPhone case: the model at ?view=cw, out to the whole world, a globe stay, then Home back to the
-// model: the peak, the largest rise in one frame, and the frames after the hand-over.
+// model: the peak, the largest rise in one frame, and the frames after the hand-over. The per-view JS heap is measured
+// after a full garbage collection (CDP HeapProfiler.collectGarbage); typed arrays count in it (Chromium).
 //   python3 -m http.server 8317 --bind 127.0.0.1 &      (from the repository root)
 //   node docklands/test/lod-memory.mjs [--base http://127.0.0.1:8317] [--sizes 390x844@2] [--views cw,area] [--no-handover] [--query '&lod=0']
 // --query adds URL switches to every page (?lod=0: no level of detail, for a before/after on the same code).
@@ -33,11 +34,12 @@ const frameCost = page => page.evaluate(async () => {
   const D = __docklands3; D.STATS.frame = null; D.draw();
   for (let i = 0; i < 60 && !D.STATS.frame; i++) await new Promise(ok => requestAnimationFrame(ok));
   const r = { ...D.STATS.frame };   // main.js: the totals of the last drawn frame (renderer.info.render, reset at each frame of the loop)
-  const tri = o => { let t = 0; o.traverseVisible(m => { if (!m.isMesh || !m.geometry) return; const g = m.geometry, n = g.index ? g.index.count : g.attributes.position?.count || 0; t += n / 3 * (m.isInstancedMesh ? m.count : 1); }); return Math.round(t); };
+  const tri = o => { let t = 0; o.traverseVisible(m => { if (!m.isMesh || !m.geometry) return; const g = m.geometry, n = g.index ? g.index.count : g.attributes.position?.count || 0; t += n / 3 * (m.isInstancedMesh ? m.count : g.isInstancedBufferGeometry ? g.instanceCount : 1); }); return Math.round(t); };
   const calls = o => { let c = 0; o.traverseVisible(m => { if ((m.isMesh || m.isLine || m.isPoints) && m.geometry) c++; }); return c; };
-  r.layers = {}; for (const id of ['planes', 'ships', 'river', 'piers']) { const o = D.layers[id]?.api?.object; if (o) r.layers[id] = { triangles: tri(o), objects: calls(o) }; }
+  r.layers = {}; for (const id of ['trees', 'planes', 'ships', 'river', 'piers']) { const o = D.layers[id]?.api?.object; if (o) r.layers[id] = { triangles: tri(o), objects: calls(o) }; }
   r.layers.models = { triangles: tri(D.ctx.meshes.models), objects: calls(D.ctx.meshes.models) };
   r.lod = D.ctx.stats.lod || null; r.globe = D.globe.mode;
+  const T = D.STATS.trees; if (T) r.trees = { full: T.near, farForms: T.far, specks: T.specks, cells: T.cells, refills: T.refills, refillMs: T.refillMs, reselectMs: T.reselectMs };
   return r; });
 const memNow = page => page.evaluate(() => { const M = __docklands3.renderer.info.memory, pm = performance.memory; return { total_mb: +(M.total / 1048576).toFixed(1), attributes_mb: +(M.attributesSize / 1048576).toFixed(1), textures_mb: +(M.texturesSize / 1048576).toFixed(1), geometries: M.geometries, textures: M.textures, renderTargets: M.renderTargets, heap_mb: pm ? +(pm.usedJSHeapSize / 1048576).toFixed(1) : null }; });
 
@@ -46,7 +48,8 @@ for (const [w, h, dpr] of SIZES) {
   for (const v of VIEWS) {
     const { ctx, page, errors } = await open(w, h, dpr, `view=${v}`);
     const a = await frameCost(page), b = await frameCost(page);   // (the second: after the LOD objects chose their level in the first)
-    console.log(`${tag} ?view=${v}${EXTRA}: ${b.drawCalls} draw calls, ${b.triangles.toLocaleString('en')} triangles; layers ${JSON.stringify(b.layers)}${b.lod ? '; lod ' + JSON.stringify(b.lod) : ''}; memory ${JSON.stringify(await memNow(page))}`);
+    const cdp = await ctx.newCDPSession(page); await cdp.send('HeapProfiler.collectGarbage');   // the JS heap after a full collection (garbage left by the build counts otherwise)
+    console.log(`${tag} ?view=${v}${EXTRA}: ${b.drawCalls} draw calls, ${b.triangles.toLocaleString('en')} triangles; layers ${JSON.stringify(b.layers)}${b.lod ? '; lod ' + JSON.stringify(b.lod) : ''}${b.trees ? '; trees ' + JSON.stringify(b.trees) : ''}; memory ${JSON.stringify(await memNow(page))}`);
     if (errors.length) { failed++; console.log('FAIL page errors: ' + errors.slice(0, 3).join(' | ')); }
     void a; await ctx.close();
   }
