@@ -3063,3 +3063,26 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   http://127.0.0.1:8097/cwplans/kg/ (live: https://danbri.github.io/londat/cwplans/kg/) loads the new store
   (139,466 quads) with 0 page errors and 0 console errors; https://danbri.github.io/londat/cwplans/atlas/ ,
   `#business` and `#quality` (ID-6 shown) locally 0 page errors (one 404: favicon.ico). Not pushed.
+
+## 2026-10-21: LOD step 4, the model cells (KR3.1, KR2.3; subagent)
+- Coordinator's task: step 4 of the LOD plan (2026-10-14): the model's merged meshes by about 1 km cell, each with levels,
+  chosen per frame by the `ctx.lod` rule and the frustum; 3D Tiles only if no feature is lost. Done in the page:
+  `docklands/cells.js` (new). Not written as 3D Tiles: the runtime rebuild options (skyline years, Colour by, the hidden
+  buildings of piers, river and detailed models, Roofs and Realistic switches) would need a GPU feature table first; the
+  plan, the feature table and the effort: docs/planet-architecture.md section 3a.
+- Buildings: `TILE` 800 -> 1000 m (54 cells); levels full / simplified (flat roofs, no building under 8 m) / far (20 m
+  across or 30 m high, outlines simplified to 2.5 m, towers kept), built in the background, swapped on the cell's mesh;
+  taps and the label occluder use the full level (a proxy mesh a cell), so the model index under a tap is unchanged.
+  Lean levels (arrays given up once uploaded, made again by building the level: cpu-copies.js 'rebuild'); full levels
+  not drawn for 5 s give back their GPU buffers.
+- Terrain, greens, roads, rail: one mesh each, the index drawn made of the cells in view at their level (road and rail
+  sides only near; the terrain's flat 2 x 2 blocks as 40 m triangles within 0.5 m).
+- Measured (lod-memory.mjs, 390 x 844 @2, software WebGL 2, main and branch at the same time): frame triangles cw 3.64 M
+  -> 2.16 M, area 4.58 M -> 2.50 M, greenlanddock 3.79 M -> 2.24 M, from 8 km 4.95 M -> 2.78 M; draw calls 167 -> 157,
+  210 -> 179, 258 -> 253, 232 -> 216; GPU memory 185.6 -> 186.3, 210.4 -> 180.9, 189.5 -> 189.4, 234.1 -> 197.8 MB; JS
+  heap after GC 274 -> 277, 279 -> 295, 277 -> 276, 284 -> 309 MB. Hand-over (cw, world, Home): vertex and index buffers
+  peak 100.8 -> 88.6 MB, largest one-frame rise 33.9 -> 34.2 MB, JS heap peak 459 -> 404 MB; settled 198.0 -> 196.2 MB GPU,
+  352 -> 354 MB heap. Taps: 63 of 63 grid points name the same building as ?lod=0, from 8 km and at cw.
+- Tests: cells-check (new) all passed; CHECKS_LOG.
+- Open: the tileset (section 3a); the layers' own big meshes (foreshore, ring, under: not by cell); greens and a far
+  terrain level coarser; the sorted index copies (about 11 MB); a phone measurement.

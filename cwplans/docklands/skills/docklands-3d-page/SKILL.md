@@ -3464,7 +3464,12 @@ cells' builds). Plan for 3D Tiles: https://github.com/danbri/londat/blob/main/do
   | far, 8 km | 4.95 M -> 2.78 M | 232 -> 216 | 839k / 214k / 152k / 397k / 152k -> 336k / 118k / 134k / 50k / 33k | 234.1 -> 197.8 MB | 284 -> 309 MB |
 
   The time to submit a frame in software rendering under the other agents' load (3 to 12 s at cw and far, 9 to 22 ms
-  at area) says nothing about a phone; not used. Hand-over (cw, out to the world, 4.5 s, Home): HANDOVER_NUMBERS.
+  at area) says nothing about a phone; not used. Hand-over (cw, out to the world, 4.5 s, Home; both pages at the same
+  time): Home flight GPU peak 209.7 -> 211.1 MB, of it vertex and index buffers 100.8 -> 88.6 MB (the rest is the globe's
+  imagery, which varies with the flight's frames), largest rise in one frame 33.9 -> 34.2 MB, JS heap peak 458.7 -> 403.9
+  MB; settled (buffers back, globe rested, after GC) 198.0 -> 196.2 MB GPU, 352.3 -> 354.0 MB heap. Compare the
+  attributes column: in software rendering the faster model frames of the branch let the globe draw more frames and load
+  more imagery (one run: 155 MB of textures against 47 MB).
   cells-check (?lod=0 against the default, same code, layers trees, water, tide, walls, stations, ring): from 8 km the
   frame 6.78 M -> 2.30 M triangles, draw calls 188 -> 126.
 - **Not done.** The cells as a 3D Tiles 1.1 tileset (plan and the blockers: docs/planet-architecture.md 3a: runtime
