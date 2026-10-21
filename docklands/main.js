@@ -38,13 +38,17 @@ function draw() { need = true; }   // the render loop draws a frame when asked (
 // of the member and throws a TypeError, so every frame fails. Retry such a call without the member (it changes nothing).
 if (globalThis.GPUTexture) { const cv = GPUTexture.prototype.createView;
   GPUTexture.prototype.createView = function (d) { if (!d || d.swizzle !== 'rgba') return cv.call(this, d); try { return cv.call(this, d); } catch (e) { if (!(e instanceof TypeError)) throw e; const { swizzle, ...rest } = d; return cv.call(this, rest); } }; }
+// no renderer: the flag, then the event; textview.js and no3d.js show the text view, the 2D map and a page API from the
+// data alone (the flag covers a textview.js that runs after the event). This module then waits forever. (index.html does
+// not load this module at all for ?no3d=1 or a browser without WebGPU and WebGL 2.)
+const no3d = async why => { say(why); globalThis.__docklandsNo3d = { error: why }; dispatchEvent(new CustomEvent('docklands-no3d', { detail: { error: why } })); await new Promise(() => {}); };
 const renderer = new THREE.WebGPURenderer({ antialias: true, forceWebGL: flag('webgl', false), powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
 $('view').appendChild(renderer.domElement);
-try { await renderer.init(); } catch (e) { say('This browser has neither WebGPU nor WebGL 2: ' + e.message + '. The text view works without them.'); dispatchEvent(new CustomEvent('docklands-no3d', { detail: { error: String(e && e.message || e) } })); await new Promise(() => {}); }   // textview.js opens the text view (no page error)
+try { await renderer.init(); } catch (e) { await no3d('This browser could not start WebGPU or WebGL 2 (' + (e && e.message || e) + ').'); }   // (no page error)
 const GPU = !!renderer.backend.isWebGPUBackend, BACKEND = GPU ? 'WebGPU' : 'WebGL 2';
 $('backend').textContent = BACKEND;
 

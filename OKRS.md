@@ -131,7 +131,7 @@ Evidence is on main unless stated. "Headless" means Chromium with software WebGL
 | KR2.6 knowledge-graph speed | 0.0 | not started |
 | KR2.7 skeletal world and UK | 0.7 | world and UK skeleton, search, "where am I", Home/North/World; owner: "Drag pinch twist all great" |
 | KR3.1 low-end devices | 0.4 | LOD steps 1 to 3 (trees 818k to 56k triangles at cw), JS heap 483 to 277 MB at cw, globe and model memory freed (largest one-frame rise 113 to 153 MB, now 34 MB), service worker (repeat visit 161 to 8 requests at cw), parallel loading; all headless; no reference device measured |
-| KR3.2 no 3D needed | 0.3 | text view (`?text=1`) exists; not verified without WebGL; no 2D map |
+| KR3.2 no 3D needed | 0.7 | 2026-10-21: verified without WebGL and WebGPU (headless, 390x844@2): text view, 2D map (canvas 2D: water, parks, roads, rail, buildings, names, the field of view) and a data-only page API (`docklands.no3d`); deep links `?ll=`, `?view=`, `?place=` and the share hash, moves write the 3D share hash; fixed a boot fault (the text view never opened by itself when the renderer failed); `docklands/test/no3d-check.mjs` all passed, API ready 0.7 to 1.1 s; https://danbri.github.io/londat/docklands/?no3d=1&view=cw ; not tried on a real device without WebGL; no layers or record card without 3D |
 | KR3.3 non-visual use | 0.5 | `describeView` and `?describe=1` name places, buildings and local time; not tested with VoiceOver or TalkBack |
 | KR3.4 machine access | 0.7 | page API 1.0.0, 10 WebMCP tools, `llms.txt`, the docklands-view MCP server |
 | KR3.5 sound | 0.1 | spoken cards only |
@@ -139,8 +139,8 @@ Evidence is on main unless stated. "Headless" means Chromium with software WebGL
 | KR4.2 faults closed by rules | 0.5 | F54 closed in the port (terrain cut at water outlines); F55 (default heights) counted, not patched |
 | KR4.3 Painted style | 0.2 | owner: "a bit janky and not v striking" / "Acceptable for now" |
 | KR4.4 one 3DGS capture | 0.0 | not started |
-| KR5.1 hourly cache runs | 0.15 | 7 runs on 2026-10-18 and 5 on 2026-10-19 (target 20 a day); the self-restarting loop (5 runs a job, then it starts the next job) is on main since 2026-10-21 (98a93a5d); it starts with the next scheduled run that GitHub fires; not yet counted |
-| KR5.2 gaps in the 5-minute feed | 0.5 | the live-cache loop runs; gaps not yet measured on the dashboard |
+| KR5.1 hourly cache runs | 0.15 | runs per UTC day now on the dashboard (https://danbri.github.io/londat/dashboard/#kr51, from the run files): 0 of the 13 whole days 2026-10-08 to 2026-10-20 reached 20 (3 to 7 a day, mean 4.9; 5 on 2026-10-20); the self-restarting loop (5 runs a job, then it starts the next job) is on main since 2026-10-21 (98a93a5d) and starts with the next scheduled run that GitHub fires |
+| KR5.2 gaps in the 5-minute feed | 0.8 | measured on the dashboard (https://danbri.github.io/londat/dashboard/#kr52), 2026-10-21 03:35 UTC: files 2 to 3 min old; 0 % in gaps over 15 min (aircraft, last hour, 12 samples; ships, last 2 hours, 24 samples); METAR 48 reports in 24 h, none missing; last 7 days 0 % without a live-cache job running (86 job runs; an estimate: a job that runs but cannot fetch is not seen, and the files hold only 1 to 2 hours) |
 | KR5.3 live layers for any place | 0.0 | aircraft and ships for the Docklands circle only |
 | KR5.4 time scrubber | 0.5 | PARTIAL (accepted) |
 | KR6.1 check on every push | 0.9 | `npm run check` passes: 765 files registered |

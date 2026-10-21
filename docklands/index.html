@@ -339,7 +339,11 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 (function () {
   var AREA = '../cwplans/docklands/data/area.js', HEAD = 'globalThis.DOCKLANDS_AREA = ';
   var started = false;
-  function modules() { if (started) return; started = true; ['main.js', 'about-extra.js', 'textview.js'].forEach(function (m) { var s = document.createElement('script'); s.type = 'module'; s.src = m; s.async = false; document.body.appendChild(s); }); }
+  // no 3D possible (no WebGPU and no WebGL 2 in this browser) or asked (?no3d=1): only the text view, the 2D map and the
+  // data-only page API (textview.js, no3d.js; OKR KR3.2), without the 3D modules (three.js is not loaded)
+  var no3d = /[?&]no3d(=(1|true|on|yes))?(&|#|$)/i.test(location.search) ? '3D view off (?no3d=1).' : !navigator.gpu && !window.WebGL2RenderingContext ? 'This browser has neither WebGPU nor WebGL 2.' : '';
+  if (no3d) globalThis.__docklandsNo3d = { error: no3d };
+  function modules() { if (started) return; started = true; (no3d ? ['textview.js'] : ['main.js', 'about-extra.js', 'textview.js']).forEach(function (m) { var s = document.createElement('script'); s.type = 'module'; s.src = m; s.async = false; document.body.appendChild(s); }); }
   function asScript() { var s = document.createElement('script'); s.src = AREA; s.async = false; s.onload = s.onerror = modules; document.body.appendChild(s); }
   fetch(AREA).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
     var i = t.indexOf(HEAD), j = t.lastIndexOf('}');
