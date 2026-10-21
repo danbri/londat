@@ -26,7 +26,7 @@ async function open(w, h, dpr, q) {
   page.setDefaultTimeout(300000);
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
-  await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
+  await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather|environment\.data\.gov\.uk/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   const far = q === 'view=far';   // the whole model from 8 km, low (a far view)
   await page.goto(`${BASE}/docklands/?${far ? 'view=area' : q}&webgl&animate=0&weather=0&t=${T}${EXTRA}${far ? '#v=1&c=-1400,800,0,8000,1.2,0.3' : ''}`);
   await page.waitForFunction(() => window.__docklands3?.ready && window.__docklands3.globe && window.docklands, null, { timeout: 300000 });

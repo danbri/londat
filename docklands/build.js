@@ -331,33 +331,31 @@ export function terrainIndexWithout(G, drop) {
     const a = Math.floor(q / SX) * T.nx + q % SX; out[o++] = a; out[o++] = a + T.nx; out[o++] = a + 1; out[o++] = a + 1; out[o++] = a + T.nx; out[o++] = a + T.nx + 1; }
   return out;
 }
-// The terrain's levels of detail (LOD step 4, docklands/cells.js): from a terrain geometry's index as terrainIndexWithout
-// wrote it (squares in order; a cut square its pieces and walls, the others their two grid triangles; tide.js leaves out
-// the squares its foreshore replaces), the 2 x 2 blocks of present, uncut squares whose five inner grid points lie within
-// TERRAIN_TOL of the 40 m triangles through the block's corners (same diagonal as the grid triangles) get those two
-// triangles as their stand-in at the simplified and far levels (class LOD_COARSE) and their eight grid triangles drawn at
-// full detail only (LOD_NEAR). Every other triangle is drawn at all levels. The gap where a 40 m edge meets a 20 m edge is
-// at most TERRAIN_TOL high (a T-junction). -> { index (the source triangles, then the stand-ins), cls (one a triangle) },
-// or null when the index is not in that form.
+// The terrain's levels of detail (LOD step 4, docklands/cells.js): each triangle of a terrain geometry's index belongs to
+// the 20 m square under its centre (a cut square: its pieces and quay walls; the others: their two grid triangles; tide.js
+// leaves out the squares its foreshore replaces; any order). The 2 x 2 blocks of present, uncut squares whose five inner
+// grid points lie within TERRAIN_TOL of the 40 m triangles through the block's corners (the same diagonal as the grid
+// triangles) get those two triangles as their stand-in at the simplified and far levels (class LOD_COARSE), and their
+// eight grid triangles are drawn at full detail only (LOD_NEAR). Every other triangle is drawn at all levels. Where a
+// 40 m edge meets two 20 m edges the gap is at most TERRAIN_TOL high (a T-junction).
+// -> { index (the triangles given, then the stand-ins), cls (one a triangle), blocks }
 export const TERRAIN_TOL = 0.5;
 export function terrainLod(G) {
   const T = A.terrain, SX = T.nx - 1, SZ = T.nz - 1, NX = T.nx, cut = G.userData.cut, I = G.index && G.index.array, P = G.attributes.position.array; if (!I) return null;
-  const nsq = SX * SZ, start = new Int32Array(nsq).fill(-1), len = new Uint16Array(nsq), isCut = new Uint8Array(nsq); let o = 0;
-  for (let q = 0; q < nsq; q++) { const c = cut && cut.get(q);
-    if (c) { if (o + c.length <= I.length && I[o] === c[0] && I[o + c.length - 1] === c[c.length - 1]) { start[q] = o; len[q] = c.length; isCut[q] = 1; o += c.length; } continue; }
-    const a = Math.floor(q / SX) * NX + q % SX;
-    if (o + 6 <= I.length && I[o] === a && I[o + 1] === a + NX && I[o + 2] === a + 1 && I[o + 5] === a + NX + 1) { start[q] = o; len[q] = 6; o += 6; } }
-  if (o !== I.length) { console.warn('terrainLod: the terrain index is not in the expected form'); return null; }
+  const nsq = SX * SZ, n = I.length / 3, tq = new Int32Array(n), has = new Uint8Array(nsq);
+  for (let t = 0; t < n; t++) { const a = 3 * I[3 * t], b = 3 * I[3 * t + 1], c = 3 * I[3 * t + 2];
+    const i = Math.max(0, Math.min(SX - 1, Math.floor(((P[a] + P[b] + P[c]) / 3 - T.x0) / T.cell))), j = Math.max(0, Math.min(SZ - 1, Math.floor(((P[a + 2] + P[b + 2] + P[c + 2]) / 3 - T.z0) / T.cell)));
+    tq[t] = j * SX + i; has[j * SX + i] = 1; }
   const y = k => P[3 * k + 1], off = (k, a, b) => Math.abs(y(k) - (y(a) + y(b)) / 2) <= TERRAIN_TOL;
   const coarse = [], near = new Uint8Array(nsq);
   for (let j = 0; j + 1 < SZ; j += 2) for (let i = 0; i + 1 < SX; i += 2) {
-    const q = j * SX + i, qs = [q, q + 1, q + SX, q + SX + 1]; if (qs.some(s => start[s] < 0 || isCut[s])) continue;
+    const q = j * SX + i, qs = [q, q + 1, q + SX, q + SX + 1]; if (qs.some(s => !has[s] || (cut && cut.has(s)))) continue;
     const A0 = j * NX + i, A2 = A0 + 2, B0 = A0 + 2 * NX, B2 = B0 + 2;
     if (!(off(A0 + 1, A0, A2) && off(A0 + NX, A0, B0) && off(A0 + NX + 1, A2, B0) && off(A0 + NX + 2, A2, B2) && off(B0 + 1, B0, B2))) continue;
     for (const s of qs) near[s] = 1; coarse.push(A0, B0, A2, A2, B0, B2); }
   const index = new Uint32Array(I.length + coarse.length), cls = new Uint8Array(index.length / 3); index.set(I); index.set(coarse, I.length);
-  cls.fill(LOD_ALL); for (let q = 0; q < nsq; q++) if (near[q]) cls.fill(LOD_NEAR, start[q] / 3, (start[q] + len[q]) / 3);
-  cls.fill(LOD_COARSE, I.length / 3);
+  for (let t = 0; t < n; t++) cls[t] = near[tq[t]] ? LOD_NEAR : LOD_ALL;
+  cls.fill(LOD_COARSE, n);
   return { index, cls, blocks: coarse.length / 6 };
 }
 export function flat(M, o, y, col) { const f = dec(o.p), holes = o.holes || [], tris = earcut(f, holes.length ? holes : undefined, 2), base = M.n; for (let i = 0; i < f.length / 2; i++) M.v(f[2 * i], typeof y === 'function' ? y(f[2 * i], f[2 * i + 1]) : y, f[2 * i + 1], col); for (let k = 0; k < tris.length; k += 3) M.tri(base + tris[k], base + tris[k + 2], base + tris[k + 1]); }

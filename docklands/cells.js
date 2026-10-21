@@ -68,9 +68,18 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
     G.index.clearUpdateRanges(); if (o) G.index.addUpdateRange(0, o); G.index.needsUpdate = true; G.setDrawRange(0, o);
     C.tris = o / 3; C.composes++; C.ms = +(performance.now() - t0).toFixed(1);
   }
-  function addIndexed(name, mesh) { const k = { name, mesh }; kinds.push(k); prepare(k, mesh.geometry); }
-  function updateIndexed() {
-    for (const k of kinds) { const G = k.mesh.geometry, C = prepare(k, G); if (!C) continue; let changed = false;
+  // a prepared geometry that has left its mesh (tide.js: the whole terrain while the foreshore shows) for DROP_MS gets
+  // back a plain index of its own triangles (its cells and copies freed); it is prepared again if it comes back
+  function unprepare(G) { const C = PREP.get(G); PREP.delete(G); if (!C) return;
+    let n = 0; for (let c = 0; c < C.cells.length; c++) for (let code = 0; code < 3; code++) n += 3 * (C.st[c * 9 + code + 1] - C.st[c * 9 + code]);
+    const out = new Uint32Array(n); let o = 0;
+    for (let c = 0; c < C.cells.length; c++) for (let code = 0; code < 3; code++) { const s0 = 3 * C.st[c * 9 + code], e = 3 * C.st[c * 9 + code + 1]; out.set(C.sorted.subarray(s0, e), o); o += e - s0; }
+    G.setIndex(new THREE.BufferAttribute(out, 1)); G.setDrawRange(0, Infinity); delete G.userData.normalIndex; S.unprepared = (S.unprepared || 0) + 1; }
+  function addIndexed(name, mesh) { kinds.push({ name, mesh, seen: new Map() }); }   // prepared when first drawn (update)
+  function updateIndexed(now) {
+    for (const k of kinds) { const G = k.mesh.geometry, C = prepare(k, G); k.seen.set(G, now);
+      for (const [g, t] of k.seen) if (g !== G && now - t > DROP_MS) { unprepare(g); k.seen.delete(g); }
+      if (!C) continue; let changed = false;
       for (let c = 0; c < C.cells.length; c++) { const B = C.cells[c].box, cur = C.lv[c];
         const L = !LOD.on ? 0 : !F.intersectsBox(B) ? -1 : levelOf(B.distanceToPoint(eye), cur);
         if (L !== cur) { C.lv[c] = L; changed = true; } }
@@ -131,7 +140,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
 
   function update() {
     camera.updateMatrixWorld(); frustum();
-    updateIndexed(); updateTiles(performance.now());
+    const now = performance.now(); updateIndexed(now); updateTiles(now);
   }
   // every geometry of a building cell (styles.js colours them all when the pixel palette changes)
   const geometriesOf = m => [...new Set((m.userData.lods || [m.geometry]).filter(Boolean))];
