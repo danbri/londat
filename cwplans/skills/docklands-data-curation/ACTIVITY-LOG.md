@@ -3090,6 +3090,8 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   1.5 s turn in software at 1288 x 966 @2; an environment limit); load.mjs cw, rotherhithe, area, greenlanddock, pixel,
   ?vz=3, Night at both sizes: no page errors. The pixel style threw once ("setResolutionScale" of null: a frame while
   setStyle awaited the palette, made likelier by the cells' builds asking for frames): styles.js pixFrame now waits for
-  its pass.
+  its pass. After the rebase on origin/main (d2ddeb7c, with the place-aware clock): cells-check, cpu-copies-check,
+  globe-check, globe-controls, place-check León, paint-check greenlanddock and area (`--no-motion`), load.mjs of the
+  seven views all passed; npm test 99/99; npm run check OK. Not pushed (subagent branch).
 - Open: the tileset (section 3a); the layers' own big meshes (foreshore, ring, under: not by cell); greens and a far
   terrain level coarser; the sorted index copies (about 11 MB); a phone measurement.
