@@ -200,8 +200,10 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
 - Bulky data storage: https://github.com/danbri/docklandia (owner, 2026-10-22: "any bulky data you can put in TLD
   "./data/", and make subdirs by ISO/IETF country codes if needed"; the project may be renamed "Docklandia"). Layout
   `data/<iso-country>/<set>/`, `data/world/`; served by its own Pages at https://danbri.github.io/docklandia/ (same
-  origin as the londat site, so no CORS setup). Register each set in londat's data register. Push needs the Claude
-  GitHub App on that repository (not yet granted on 2026-10-22).
+  origin as the londat site, so no CORS setup). Register each set in londat's data register. The owner granted the Claude
+  GitHub App on that repository on 2026-10-22 (push works). The owner grants app access one repository at a time and
+  refuses "All repositories" (2026-10-22): for a new repository, ask the owner to add it at
+  https://github.com/apps/claude/installations/select_target .
 - Pages read data through `cwplans/data-base.js` (same site; only `cache/` comes from raw.githubusercontent.com, which is
   new each hour). Tools find paths through `cwplans/tools/londat.mjs`.
 
