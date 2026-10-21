@@ -3195,3 +3195,50 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   OSM has almost no minarets in Sarajevo (a mapping task, or the FGU cadastre under the waiver, issue #9); towers with
   no height; the owner may want the estimated class off or other size classes; at 8 km minarets are 2-pixel specks
   (true scale: the skyline reads from the old town and low views).
+## 2026-10-22: places look like the model (León, Sarajevo; subagent, branch, not pushed)
+- Owner: "why do Leon and Sarajevo look so different to London?" Cause: globe/places.js drew the places with plain
+  MeshBasic materials lit only by the globe's sun; the London model has the facade program, the light rig and sky of
+  sky3.js, trees, water, shadows and the styles. Now the places use the same parts, rendered live (rule 6; the tiles are
+  unchanged). New: docklands/globe/place-look.js, cwplans/tools/build-place-greens.mjs (operation place-greens),
+  places/<id>/greens/ (greens.json, log.json, README.md) and places/greens.json, docklands/test/place-look-check.mjs.
+  Changed: places.js, materials.js (placeBuildingMaterial; facadeCommon, nightNew, nightOld take their inputs;
+  nightClock(t, timeZone)), sky3.js (horizonAt, moonPhase, lightRig, makeSkyMesh shared with Sky3), water.js
+  (waveNoiseTex), layers/trees.js (exports; season with a day uniform), styles.js (paintGraph; globeRender: Painted on
+  the globe), globe.js (one line), regions/leon.js and sarajevo.js (place.look, place.greens). Skill docklands-3d-page,
+  "Three.js port: places look like the model (2026-10-22)".
+- Data: OSM API map.json of each core area (Overpass down again), place-greens: León 2,280 trees (936 mapped: 569
+  natural=tree, 367 along tree rows; 1,344 placed by rule in parks without mapped trees and woods), 38 water polygons
+  (the Bernesga, fountains); Sarajevo 8,274 trees (189 mapped, 8,085 by rule: the woods inside the area), 3 water
+  polygons (the Miljacka). Registered: osm-api-place-greens-leon / -sarajevo, 7 files, pipeline activity place-greens.
+- Performance traps found and fixed: (1) an InstancedMesh under the uniform-buffer limit puts its matrices in a uniform
+  buffer sized by the count, so every tile of city blocks or trees compiled its own program (second fly-in: 18 programs,
+  3 s of getProgramParameter in software): capacity over the limit (instCap), draw count = mesh.count; (2) the window
+  program behind an If on the night uniform still ran by day in SwiftShader (both sides of a branch): day and night
+  materials swapped by the place's night (A/B on one page: buildings' frame cost 1.56 -> 1.32 x the old material);
+  (3) the SkyMesh drawn first over the whole frame (as the model draws it) is a full-screen pass: the place sky is drawn
+  after the opaque meshes with the depth test; (4) water triangles split 4 ways (4^8 pieces of a long river triangle):
+  longest-edge bisection, and water and trees built in a queue within 8 ms a frame; (5) receiveShadow is part of a
+  program's key: the warm-up meshes carry the same flags.
+- Measured (place-perf, 390 x 844 @2, software WebGL 2, main then branch, León / Sarajevo): cold fly-in long tasks
+  1,055 / 1,169 -> 1,940 / 1,284 ms; second fly-in 1,795 / 1,778 -> 1,429 / 2,481 ms; still views, frame interval: 1.5 km
+  937 / 820 -> 1,637 / 1,564 ms, 6 km 962 / 1,057 -> 1,445 / 1,423 ms, 30 km 887 / 865 -> 939 / 919 ms; draw calls at
+  1.5 km 191 / 155 -> 207 / 167; JS heap +25 / +15 MB. Near views cost 1.5 to 1.9 x: the model's facade program and PBR
+  light per pixel (as London's buildings). Load on the shared machine (other agents' runs, load average up to 13 on 4
+  cores) moved single numbers 2x during the day; the table is from one quiet run, A/B on one page for the parts.
+- Tests (WebGL 2, SwiftShader unless said): place-look-check (new) all passed (León and Sarajevo: day, Map look, pixel
+  art, Painted, Night button, no page errors; London cw day and night; side-by-side images in docklands/test/out/
+  look-compare-day.png and -night.png); place-check León and Sarajevo, both sizes: all passed; globe-check 390 x 844 @2:
+  all passed; cells-check: all passed; load.mjs view=cw both sizes: no page errors; paint-check (model, after the paint
+  graph refactor): 3 of 6 views run, the look passed in all 3, greenlanddock's motion tier failed as on main (no frame in
+  the 1.5 s turn in software; known); WebGPU (SwiftShader): León with the place's shadows on, no page errors, shadows on
+  and off on one page: mean difference 5.0 levels, 72,456 pixels darker (look-leon-shadows-on.png / -off.png); Painted
+  on the globe (look-leon-paint.png). npm test 99/99, npm run check passed.
+- Remaining differences (screenshots): London by night has street lamps, aviation lights and lit ground (luma 0.085
+  against 0.03 in the places): the nightlights layer is London data; no stars or moon disc on the globe; no weather of the
+  place (cloud, haze; the readout still shows the London METAR); no water mirror; no photo facades or crowns; the Map look
+  is almost all amber (heights from floors); the city tier's 256 px ground textures beside the core's 512 px; water as
+  sheets 0.35 m over the DEM; trees by rule (Sarajevo's woods); no twig crowns or specks; Line drawing and Vector CRT
+  stay on the model.
+- Open: street lamps for places (OSM highway=street_lamp, or a rule by road class), the moon and stars on the globe, the
+  place's own weather, the day/night material split and the sky after opaques for the model too (London by day in
+  software), a phone measurement.

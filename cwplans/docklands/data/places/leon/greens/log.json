@@ -1,0 +1,466 @@
+{
+ "about": "Build log of the water and trees of Casco Histórico, León (tools/build-place-greens.mjs)",
+ "fetches": {
+  "osm": {
+   "url": [
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.588501,-5.553589,42.604980"
+   ],
+   "fetched": "2026-10-21T10:11:50.933Z",
+   "as_fetched": [
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-5.581055,42.588501,-5.553589,42.604980",
+     "bytes": 11422119,
+     "sha256": "d607774ce0b4ea59537dbf61d4d46aac2092946a8ab3483bd1368701f31e0d17"
+    }
+   ],
+   "elements": 52239,
+   "latest_element_timestamp": "2026-10-19T16:28:48Z",
+   "sha256": "4d39aa32bef896a6e1e1334d179b35f239602623cb18a6c114c179c257bc714b",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors"
+  },
+  "relations": {
+   "9423404": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/9423404/full.json",
+    "fetched": "2026-10-21T10:11:52.450Z",
+    "bytes": 6876,
+    "sha256_as_fetched": "662345b67e34fd480166f0f74163ae58c215e13e90ddb383aafae0bae7ce91bb"
+   },
+   "9466257": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/9466257/full.json",
+    "fetched": "2026-10-21T10:11:53.795Z",
+    "bytes": 51497,
+    "sha256_as_fetched": "34507068801fbfa765ea7113bbbb9b5166d26e4902621d85f06fba56a8421279"
+   },
+   "9466258": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/9466258/full.json",
+    "fetched": "2026-10-21T10:11:55.134Z",
+    "bytes": 3241,
+    "sha256_as_fetched": "e2578a31c51cf47cd4ef8fd1d8287acbb33c9f9a700729a2c79d559e21d14adb"
+   }
+  }
+ },
+ "activities": [
+  {
+   "activity": "09078786b65e72e1",
+   "operation": "place-greens",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-greens.mjs",
+   "inputs": [
+    {
+     "label": "OSM map.json of the area",
+     "path": "data/raw/places/leon/greens/osm-map.json.gz",
+     "sha256": "4d39aa32bef896a6e1e1334d179b35f239602623cb18a6c114c179c257bc714b"
+    },
+    {
+     "label": "OSM relation 9423404 (full)",
+     "path": "data/raw/places/leon/greens/relation-9423404.json.gz",
+     "sha256": "35118d26b1a73a32fff70d9ba8a2085424bda267c7ffbb8714d2598e50607790"
+    },
+    {
+     "label": "OSM relation 9466257 (full)",
+     "path": "data/raw/places/leon/greens/relation-9466257.json.gz",
+     "sha256": "aaa12f3c8677d04e3d548c3572924c391ca60af9a3588ef8df085fa7c6f75ccb"
+    },
+    {
+     "label": "OSM relation 9466258 (full)",
+     "path": "data/raw/places/leon/greens/relation-9466258.json.gz",
+     "sha256": "ba09b7fb1c87f2d72ded45a86b4cca464f54602e03a17b0e8b8df315972202fd"
+    }
+   ],
+   "params": {
+    "area": [
+     -5.5810546875,
+     42.5885009765625,
+     -5.5535888671875,
+     42.60498046875
+    ],
+    "row_m": 8,
+    "wood_m": 6.5,
+    "park_m": 15,
+    "water_side_m": 25,
+    "mix": {
+     "street": [
+      [
+       "plane",
+       35
+      ],
+      [
+       "locust",
+       15
+      ],
+      [
+       "lime",
+       10
+      ],
+      [
+       "maple",
+       10
+      ],
+      [
+       "broadleaf",
+       10
+      ],
+      [
+       "cherry-plum",
+       5
+      ],
+      [
+       "horse-chestnut",
+       5
+      ],
+      [
+       "ash",
+       5
+      ],
+      [
+       "conifer",
+       5
+      ]
+     ],
+     "park": [
+      [
+       "plane",
+       15
+      ],
+      [
+       "conifer",
+       15
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "pine",
+       10
+      ],
+      [
+       "lime",
+       10
+      ],
+      [
+       "maple",
+       10
+      ],
+      [
+       "oak",
+       10
+      ],
+      [
+       "cypress-columnar",
+       5
+      ],
+      [
+       "birch",
+       5
+      ],
+      [
+       "poplar",
+       5
+      ],
+      [
+       "ash",
+       5
+      ]
+     ],
+     "wood": [
+      [
+       "poplar",
+       30
+      ],
+      [
+       "pine",
+       25
+      ],
+      [
+       "oak",
+       20
+      ],
+      [
+       "ash",
+       15
+      ],
+      [
+       "willow",
+       10
+      ]
+     ],
+     "water": [
+      [
+       "poplar",
+       35
+      ],
+      [
+       "willow",
+       30
+      ],
+      [
+       "alder",
+       20
+      ],
+      [
+       "ash",
+       15
+      ]
+     ]
+    },
+    "about": "trees placed by rule: every wood_m in natural=wood / landuse=forest, every park_m in parks and gardens with no mapped tree inside, on a grid jittered by a stable hash; never inside a building or water"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/greens/greens.json",
+     "sha256": "eb2fd3ccdb3d5a6c8880162aeb6f21b3e2e51a675619c474a12c50930b5a12c2",
+     "bytes": 211305
+    }
+   ],
+   "counts": {
+    "water_polygons": 38,
+    "trees": 2849,
+    "osm_tree": 569,
+    "osm_tree_row": 367,
+    "rule_wood": 99,
+    "rule_park": 1814,
+    "skipped_blocked": 19,
+    "by_basis": {
+     "M": 2649,
+     "L": 53,
+     "S": 142,
+     "G": 5
+    },
+    "by_profile": {
+     "horse-chestnut": 384,
+     "plane": 438,
+     "ash": 159,
+     "broadleaf": 79,
+     "conifer": 324,
+     "pine": 255,
+     "cherry-plum": 20,
+     "poplar": 139,
+     "maple": 259,
+     "lime": 249,
+     "cypress-columnar": 106,
+     "oak": 249,
+     "alder": 7,
+     "willow": 21,
+     "locust": 50,
+     "birch": 110
+    },
+    "greens": 332
+   },
+   "ms": 693,
+   "at": "2026-10-21T10:11:55.828Z"
+  },
+  {
+   "activity": "120884c026414f03",
+   "operation": "place-greens",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-greens.mjs",
+   "inputs": [
+    {
+     "label": "OSM map.json of the area",
+     "path": "data/raw/places/leon/greens/osm-map.json.gz",
+     "sha256": "4d39aa32bef896a6e1e1334d179b35f239602623cb18a6c114c179c257bc714b"
+    },
+    {
+     "label": "OSM relation 9423404 (full)",
+     "path": "data/raw/places/leon/greens/relation-9423404.json.gz",
+     "sha256": "35118d26b1a73a32fff70d9ba8a2085424bda267c7ffbb8714d2598e50607790"
+    },
+    {
+     "label": "OSM relation 9466257 (full)",
+     "path": "data/raw/places/leon/greens/relation-9466257.json.gz",
+     "sha256": "aaa12f3c8677d04e3d548c3572924c391ca60af9a3588ef8df085fa7c6f75ccb"
+    },
+    {
+     "label": "OSM relation 9466258 (full)",
+     "path": "data/raw/places/leon/greens/relation-9466258.json.gz",
+     "sha256": "ba09b7fb1c87f2d72ded45a86b4cca464f54602e03a17b0e8b8df315972202fd"
+    }
+   ],
+   "params": {
+    "area": [
+     -5.5810546875,
+     42.5885009765625,
+     -5.5535888671875,
+     42.60498046875
+    ],
+    "row_m": 8,
+    "wood_m": 6.5,
+    "park_m": 15,
+    "water_side_m": 25,
+    "mix": {
+     "street": [
+      [
+       "plane",
+       35
+      ],
+      [
+       "locust",
+       15
+      ],
+      [
+       "lime",
+       10
+      ],
+      [
+       "maple",
+       10
+      ],
+      [
+       "broadleaf",
+       10
+      ],
+      [
+       "cherry-plum",
+       5
+      ],
+      [
+       "horse-chestnut",
+       5
+      ],
+      [
+       "ash",
+       5
+      ],
+      [
+       "conifer",
+       5
+      ]
+     ],
+     "park": [
+      [
+       "plane",
+       15
+      ],
+      [
+       "conifer",
+       15
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "pine",
+       10
+      ],
+      [
+       "lime",
+       10
+      ],
+      [
+       "maple",
+       10
+      ],
+      [
+       "oak",
+       10
+      ],
+      [
+       "cypress-columnar",
+       5
+      ],
+      [
+       "birch",
+       5
+      ],
+      [
+       "poplar",
+       5
+      ],
+      [
+       "ash",
+       5
+      ]
+     ],
+     "wood": [
+      [
+       "poplar",
+       30
+      ],
+      [
+       "pine",
+       25
+      ],
+      [
+       "oak",
+       20
+      ],
+      [
+       "ash",
+       15
+      ],
+      [
+       "willow",
+       10
+      ]
+     ],
+     "water": [
+      [
+       "poplar",
+       35
+      ],
+      [
+       "willow",
+       30
+      ],
+      [
+       "alder",
+       20
+      ],
+      [
+       "ash",
+       15
+      ]
+     ]
+    },
+    "about": "trees placed by rule: every wood_m in natural=wood / landuse=forest, every park_m in leisure=park and garden areas with no mapped tree inside (grass and meadow get none), on a grid jittered by a stable hash; never inside a building or water"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/greens/greens.json",
+     "sha256": "76e6023846c0fd0bc948a92cb82b6a8e0a9936ce0d5790f6dcc89582a01d4dbb",
+     "bytes": 175408
+    }
+   ],
+   "counts": {
+    "water_polygons": 38,
+    "trees": 2280,
+    "osm_tree": 569,
+    "osm_tree_row": 367,
+    "rule_wood": 99,
+    "rule_park": 1245,
+    "skipped_blocked": 18,
+    "by_basis": {
+     "M": 2080,
+     "L": 53,
+     "S": 142,
+     "G": 5
+    },
+    "by_profile": {
+     "horse-chestnut": 323,
+     "plane": 343,
+     "ash": 127,
+     "broadleaf": 79,
+     "conifer": 239,
+     "pine": 206,
+     "cherry-plum": 20,
+     "poplar": 111,
+     "maple": 204,
+     "lime": 195,
+     "cypress-columnar": 84,
+     "oak": 199,
+     "alder": 7,
+     "willow": 21,
+     "locust": 50,
+     "birch": 72
+    },
+    "greens": 332
+   },
+   "ms": 660,
+   "at": "2026-10-21T10:12:07.335Z"
+  }
+ ]
+}

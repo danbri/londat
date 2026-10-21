@@ -27,11 +27,11 @@ import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, select, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, normalLocal, cameraWorldMatrix, modelWorldMatrix } from 'three/tsl';
 import { geodeticToEcef, enuBasis, surfaceDistance, D2R } from '../geo/ellipsoid.js';
 import { fold, fmtDist, compass, bearingDeg } from './world.js';
+import { makeLook } from './place-look.js';
 
 export const PLACES_INDEX = '../cwplans/docklands/data/places/index.json';
 export const LOAD_M = 150000, FREE_M = 220000;
 const qs = new URLSearchParams(location.search);
-const INST_MIN = 1025;   // instanced blocks: capacity over the 64 kB uniform limit (1,025 x 64 bytes), see activate
 const MAX_SSE = +(qs.get('sse') || 24), MAX_FETCH = 8, MAX_ACTIVATE = 3, ACTIVATE_MS = 10, CACHE = 220, IDLE_MS = 15000;
 const len = p => Math.hypot(p[0], p[1], p[2]);
 const Y2Z = [1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1];   // glTF y-up -> 3D Tiles z-up (column-major)
@@ -115,7 +115,10 @@ export async function attachPlaces(G, H, { scene, U }) {
     m.colorNode = vec4(c.mul(light(nW)), 1); m.userData.tex = tn;
     return logDepth(m);
   }
-  const BMAT = buildingMat(null), SHARED = new Set([BMAT]), blockMats = new Map(), groundPool = [];
+  // the look of the Docklands model (place-look.js): its building material, light rig, sky, water, trees and ground (since
+  // 2026-10-22; the materials above stay for tiles without feature ids and for the warm-up of old caches)
+  const look = makeLook(G, H, { scene, U, upF, globeLight: light });
+  const BMAT = buildingMat(null), SHARED = new Set([BMAT, ...look.MATS]), blockMats = new Map(), groundPool = [];
   // (the block colour is a uniform, not a constant in the shader: one program for every colour)
   const blockMat = rgb => { const k = rgb.join(','); if (!blockMats.has(k)) { const m = buildingMat(uniform(new THREE.Vector3(...rgb))); blockMats.set(k, m); SHARED.add(m); } return blockMats.get(k); };
   // ---------- shader programs compiled before they are needed (KHR_parallel_shader_compile through compileAsync): the
@@ -132,12 +135,13 @@ export async function attachPlaces(G, H, { scene, U }) {
     const gP = new THREE.BufferGeometry(); gP.setAttribute('position', P3());
     const gC = new THREE.BufferGeometry(); gC.setAttribute('position', P3()); gC.setAttribute('normal', N3());
     const tex = new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1); tex.needsUpdate = true; tex.colorSpace = THREE.SRGBColorSpace;
-    const sc = new THREE.Scene(), gm = groundMat(tex), cm = curtainMat(), im = new THREE.InstancedMesh(gP, blockMat([0.66, 0.6, 0.5]), INST_MIN); im.count = 1; im.setMatrixAt(0, new THREE.Matrix4());
-    for (const m of [new THREE.Mesh(gG, gm), new THREE.Mesh(gC, cm), new THREE.Mesh(gB, BMAT), new THREE.Mesh(gP, blockMat([0.66, 0.6, 0.5])), im]) { m.frustumCulled = false; sc.add(m); }
-    const g = { dispose() { for (const x of [gG, gB, gP, gC]) x.dispose(); } };
+    const sc = new THREE.Scene(), gm = look.groundMat(tex), cm = curtainMat();
+    const wg = new THREE.Mesh(gG, gm); wg.receiveShadow = true;   // (as the ground tiles: receiveShadow is part of the program's key)
+    for (const m of [wg, new THREE.Mesh(gC, cm), ...look.warmMeshes()]) { m.frustumCulled = false; sc.add(m); }
     // the warm-up meshes are kept (never disposed): a program whose last user is disposed is deleted by three.js, and
-    // freeing a place freed every ground material, so the next visit compiled them all again (5 s long tasks)
-    warm.keep = sc; warmed = R.compileAsync(sc, cam).catch(e => console.warn('places: warm', e));
+    // freeing a place freed every ground material, so the next visit compiled them all again (5 s long tasks). The globe
+    // scene is the target scene: its lights (the place's sun, moon and sky fill, place-look.js) are part of each lit program
+    warm.keep = sc; warmed = R.compileAsync(sc, cam, scene).catch(e => console.warn('places: warm', e));
     return warmed;
   }
 
@@ -214,30 +218,34 @@ export async function attachPlaces(G, H, { scene, U }) {
         let map = null; if (q.bmp) { map = new THREE.Texture(q.bmp); map.flipY = false; map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 4; map.needsUpdate = true; }
         // ground materials are pooled, not disposed: a program whose last material is disposed is deleted by three.js,
         // so freeing a place made the next visit compile everything again (5 s long tasks in software rendering)
-        let gm = map && groundPool.pop(); if (gm) gm.userData.tex.value = map; else gm = groundMat(map);
+        let gm = map && groundPool.pop(); if (gm) gm.userData.tex.value = map; else gm = look.groundMat(map);
         mesh = new THREE.Mesh(g, gm); mesh.__map = map; kind = 'ground';
+        if (n.core) look.decorate(n, q, addDecor).catch(e => console.warn('places: water and trees', n.key, e));   // the place's water and trees on this tile's ground
       } else if (q.inst) {   // city blocks as instances of a unit box
-        // capacity at least INST_MIN: three.js puts a smaller instance matrix in a uniform array whose LENGTH is part of
-        // the shader, so each tile with another small count compiled a program of its own (London: 7 programs, 6 s of
-        // long tasks in a fly-in, 2026-10-21); above the uniform limit it is an instanced attribute: one program for all
-        const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), Math.max(k, INST_MIN)); mesh.count = k; kind = 'blocks';
+        const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), look.instCap(k)); mesh.count = k; kind = 'blocks';   // (capacity: place-look.js instCap)
         const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3();
         for (let i = 0; i < k; i++) { v.fromArray(q.inst.t, 3 * i); qt.fromArray(q.inst.r, 4 * i); sc.fromArray(q.inst.s, 3 * i); mesh.setMatrixAt(i, m4.compose(v, qt, sc)); }
-        mesh.computeBoundingSphere();
+        mesh.computeBoundingSphere(); mesh.material = look.blockInstAttrs(mesh, q, n.meta, n.p, n.key);
       } else if (q.col) {   // core buildings: vertex colours, feature ids
         g.setAttribute('color', new THREE.BufferAttribute(q.col.arr, q.col.n, true)); if (q.fid) g.setAttribute('_feature_id_0', new THREE.BufferAttribute(q.fid, 1));
-        mesh = new THREE.Mesh(g, BMAT); kind = 'buildings';
-      } else { mesh = new THREE.Mesh(g, blockMat(q.base.slice(0, 3))); kind = 'blocks'; }
+        mesh = new THREE.Mesh(g, q.fid ? look.buildingAttrs(g, q, n.p) : BMAT); kind = 'buildings';   // the model's facade program (place-look.js); a tile without feature ids keeps the plain material
+      } else { mesh = new THREE.Mesh(g, look.blockOutlineAttrs(g, q, n.meta, n.p, n.key)); kind = 'blocks'; }
       mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.visible = false;
+      mesh.castShadow = kind !== 'ground'; mesh.receiveShadow = true;   // (the place's sun casts shadows only while the model's shadows are on: place-look.js)
       mesh.userData = { place: n.p.id, tile: n.uri, ground: kind === 'ground', kind, node: n, map: mesh.material.colorNode && kind === 'ground' ? mapOf(mesh) : null };
       scene.add(mesh); n.meshes.push(mesh); n.tris += (q.idx ? q.idx.length : q.pos.length / 3) / 3 * (q.inst ? q.inst.t.length / 3 : 1);
     }
     n.prims = null; n.state = 'ready';
   }
   const mapOf = m => m.__map || null;
+  // a mesh of a core tile's decoration (water, trees: place-look.js decorate), placed and shown with the tile
+  function addDecor(n, mesh, kind, tris) {
+    mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.visible = false; mesh.castShadow = kind === 'trees-near'; mesh.receiveShadow = kind !== 'water';
+    mesh.userData = { place: n.p.id, tile: n.uri, kind, node: n }; scene.add(mesh); n.meshes.push(mesh); n.tris += tris; G.dirty = true; H.draw();
+  }
   function freeNode(n) {
     for (const m of n.meshes) { scene.remove(m); m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); if (m.userData.ground && m.material.userData.tex && groundPool.length < 400) groundPool.push(m.material); else if (!SHARED.has(m.material)) m.material.dispose(); if (m.userData.map) { m.userData.map.image?.close?.(); m.userData.map.dispose(); } }
-    n.meshes = []; n.tris = 0; if (n.state === 'decoded') { for (const q of n.prims || []) q.bmp?.close?.(); n.prims = null; }
+    n.meshes = []; n.tris = 0; n.trees = null; n.decorated = null; if (n.state === 'decoded') { for (const q of n.prims || []) q.bmp?.close?.(); n.prims = null; }
     n.state = null;
   }
 
@@ -381,8 +389,12 @@ export async function attachPlaces(G, H, { scene, U }) {
       if (live.length > CACHE) { live.sort((a, b) => a.used - b.used); for (const n of live.slice(0, live.length - CACHE)) if (now - n.used > IDLE_MS && !now2.has(n)) freeNode(n); } }
     if (U.hole) { const a = hole && hasGround(hole) && (hole.sur ? (hole.topReady ? hole.sur.ground.area : null) : hole.ringHo ? hole.ring.area : hole.area); if (a) U.hole.value.set(a[0], a[1], a[2], a[3]); else U.hole.value.set(0, 0, -1, -1); }
     if (hole) { const R = F.R, u = enuBasis(hole.centre[0], hole.centre[1]).up; upF.value.set(R[0][0] * u[0] + R[0][1] * u[1] + R[0][2] * u[2], R[1][0] * u[0] + R[1][1] * u[1] + R[1][2] * u[2], R[2][0] * u[0] + R[2][1] * u[1] + R[2][2] * u[2]); }
+    look.frame(hole, eye, drawn);   // the place's clock, lights, sky, style and the trees' level (place-look.js)
     if (want.length || ready.length) { G.dirty = true; requestAnimationFrame(() => H.draw()); } else if (inFlight) G.dirty = true;
   };
+  G.placesDebug = { oldBuilding: BMAT, oldBlock: blockMat, oldGround: groundMat };   // (tests: the materials before 2026-10-22, for A/B timing on the same page)
+  G.placeLook = () => look.describe();   // how the nearest place is drawn now (place-look.js): look, night, light, sky, trees, water
+  G.placeLookU = look;                   // (tests: docklands/test/place-look-check.mjs)
   // stats for tests and the page API: drawn tiles by tier and level, triangles drawn, loaded and pending tiles
   G.placesStats = () => P.map(p => { const st = { id: p.id, state: p.state, tiles: 0, triangles: 0, loaded: 0, drawn_by_level: {}, tiers: { core: 0, city: 0, surroundings: 0 }, settled: false, buildings: p.feats ? p.feats.B.length : null };
     for (const n of p.nodes) { if (n.state === 'ready') st.loaded++; }
@@ -471,7 +483,9 @@ export async function attachPlaces(G, H, { scene, U }) {
         r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, city_blocks_by_source: Object.fromEntries(Object.entries(byCls).map(([k, v]) => [p.sur.geometry_classes?.[k]?.label || k, v])), places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
       if (!hasGround(p)) { const by = {}; let k = 0; for (const nd of lastDrawn) if (nd.p === p && nd.meta) for (const L of [nd.meta.boxes, nd.meta.outlines]) for (const c of L.c) { k++; by[nd.meta.classes[c]] = (by[nd.meta.classes[c]] || 0) + 1; }
         r.blocks_drawn = k; r.blocks_by_source = by; r.named_buildings_in_view = n; }
+      const lk = look.state.place === p ? look.describe() : null; if (lk) r.look = lk;
       r.text = `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
+        + (lk ? ` Drawn as the model: ${lk.look}${lk.night > 0.5 ? ', night windows lit by the local hour' : lk.night > 0 ? ', dusk' : ', daylight'}${lk.trees_drawn.near + lk.trees_drawn.far ? `, ${(lk.trees_drawn.near + lk.trees_drawn.far).toLocaleString(p.locale)} trees drawn` : ''}${lk.water_named.length ? `, water: ${lk.water_named.join(', ')}` : ''}${lk.greens && lk.greens.placed_by_rule ? ` (trees in woods and parks without mapped trees are placed by a rule: ${lk.greens.placed_by_rule.toLocaleString(p.locale)} of ${lk.greens.trees.toLocaleString(p.locale)})` : ''}.` : '')
         + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
       res.push(r); }
     return res;

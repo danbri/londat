@@ -135,7 +135,14 @@ export const SU = {
 };
 const WALLR = { wall: 0.9, pier: 0.8, revetment: 0.35, natural: 0.08, dock: 0.9, pond: 0.4 };
 const DEF_KIND = { Wall: 'wall', 'Flood Gate': 'wall', 'Bridge Abutment': 'wall', Embankment: 'revetment', 'Engineered High Ground': 'revetment' };
-let surf = null;
+let surf = null, noiseOnly = null;
+// the wave-field texture alone (the places on the globe: globe/place-look.js), shared with surfaceData's when that exists
+export function waveNoiseTex() {
+  if (surf) return surf.noiseTex; if (noiseOnly) return noiseOnly;
+  const t = new THREE.DataTexture(noiseField(), 256, 256, THREE.RGBAFormat, THREE.UnsignedByteType);
+  t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; t.needsUpdate = true;
+  return (noiseOnly = t);
+}
 export function surfaceData() {
   if (surf) return surf;
   const t0 = performance.now(), D = waterDepth(), { nx, nz, cell: c, x0, z0 } = D, N = nx * nz, K = D.kind;
@@ -178,7 +185,7 @@ export function surfaceData() {
   const mk = (data, w, h, mip) => { const t = new THREE.DataTexture(data, w, h, THREE.RGBAFormat, THREE.UnsignedByteType);
     t.magFilter = THREE.LinearFilter; t.minFilter = mip ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; t.generateMipmaps = !!mip; t.wrapS = t.wrapT = mip ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping; if (mip) t.anisotropy = 4; t.needsUpdate = true; return t; };
   const wallMs = Math.round(performance.now() - t0), t1 = performance.now();
-  surf = { flow, wall, flowTex: mk(flow, nx, nz), wallTex: mk(wall, nx, nz), noiseTex: mk(noiseField(), 256, 256, true), fetchDir: null,
+  surf = { flow, wall, flowTex: mk(flow, nx, nz), wallTex: mk(wall, nx, nz), noiseTex: noiseOnly || mk(noiseField(), 256, 256, true), fetchDir: null,
     stats: { edgePieces: pieces, edgeMetres: Object.fromEntries(Object.entries(plen).map(([k, v]) => [k, Math.round(v)])), wallMs, noiseMs: Math.round(performance.now() - t1), flowMs: null, fetchMs: null, flowCells: 0 } };
   return surf;
 }

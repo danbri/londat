@@ -6,7 +6,7 @@
 // of the evening, Newfoundland's diagrid crown and a band at the top of other towers, as emissive light, so the bloom pass
 // picks them up. Skill: docklands-3d-page, "Three.js port" and "Night windows by use and hour".
 import * as THREE from 'three/webgpu';
-import { If, Discard, Fn, attribute, positionWorld, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF, normalize, pow, reflect, transformNormalToView, screenUV, uniformArray, int, log2, exp2, mod, dFdx, dFdy } from 'three/tsl';
+import { If, Discard, Fn, attribute, positionWorld, positionLocal, cameraPosition, uniform, float, vec2, vec3, vec4, floor, fract, sin, dot, step, smoothstep, mix, clamp, max, min, abs, length, fwidth, select, exp, texture, uv, time, sRGBTransferEOTF, normalize, pow, reflect, transformNormalToView, screenUV, uniformArray, int, log2, exp2, mod, dFdx, dFdy, cross } from 'three/tsl';
 import { waterDepth, WU, DEPTH } from './water.js';
 
 export const U = {
@@ -39,11 +39,12 @@ const NT = {
   shop:  [.22, .20, .20, .20, .20, .22, .30, .55, .85, .95, .95, .95, .95, .95, .95, .95, .95, .95, .93, .85, .72, .58, .45, .32],
 };
 const atHour = (T, x) => { x = ((x % 24) + 24) % 24; const i = Math.floor(x), f = x - i; return T[i] + (T[(i + 1) % 24] - T[i]) * f; };
-const LONDON = typeof Intl !== 'undefined' ? new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hourCycle: 'h23', weekday: 'short', hour: 'numeric', minute: 'numeric' }) : null;
-// the window shares at clock t (ms): [pHome, pOffice, pHotel, pShop], [ground-floor factor, TV share, lateness, weekend]
-export function nightClock(t) {
-  if (!LONDON || !isFinite(t)) return null;
-  const P = Object.fromEntries(LONDON.formatToParts(new Date(t)).map(p => [p.type, p.value])), hr = +P.hour + (+P.minute) / 60;
+// the wall clock of a time zone (the model's: Europe/London; a place on the globe: its own, globe/place-look.js)
+const FMT = new Map(), fmtOf = tz => FMT.get(tz) || (typeof Intl === 'undefined' ? null : FMT.set(tz, new Intl.DateTimeFormat('en-GB', { timeZone: tz, hourCycle: 'h23', weekday: 'short', hour: 'numeric', minute: 'numeric' })).get(tz));
+// the window shares at clock t (ms) in time zone tz: [pHome, pOffice, pHotel, pShop], [ground-floor factor, TV share, lateness, weekend]
+export function nightClock(t, tz = 'Europe/London') {
+  const F = fmtOf(tz); if (!F || !isFinite(t)) return null;
+  const P = Object.fromEntries(F.formatToParts(new Date(t)).map(p => [p.type, p.value])), hr = +P.hour + (+P.minute) / 60;
   const dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(P.weekday), nightDow = hr < 5 ? (dow + 6) % 7 : dow;   // the small hours belong to the evening before
   const lateNight = nightDow === 4 || nightDow === 5, weekend = dow >= 5;   // Friday and Saturday nights run later; Saturday and Sunday offices stay dark
   let pH = atHour(NT.home, hr), pO = atHour(NT.off, hr), pT = atHour(NT.hotel, hr), pS = atHour(NT.shop, hr);
@@ -86,10 +87,13 @@ const LOOK_WIN = [[.30, .70, .32, .80], [.20, .80, .30, .78], [.08, .92, .34, .8
 const byStyle = (st, T) => { const V = T[0].length === 4 ? vec4 : vec3; let n = V(...T[7]); for (let i = 6; i >= 0; i--) n = select(st.lessThan(i + .5), V(...T[i]), n); return n; };
 export const FAC = { slots: uniformArray(Array.from({ length: 32 }, () => new THREE.Vector4(10, 10, 0, 0)), 'vec4'), tex: null };   // photo facade tile sizes (w_m, h_m) by slot; the atlas texture
 
-// the per-fragment values of the facade program (fresh nodes for each function that calls it)
-function facadeCommon() {
-  const col = attribute('col', 'vec4'), uw = attribute('uw', 'float'), gk = attribute('gk', 'vec4');
-  const wy = positionWorld.y, base = col.rgb, a8 = col.a.mul(255), seed = floor(gk.xy);
+// the per-fragment values of the facade program (fresh nodes for each function that calls it). S: where the per-building
+// values come from: the model's vertex attributes (col, uw, gk; height = world y, m OD), or a place's (placeSource: the
+// along-wall metres and the wall flag from the face normal in the tile frame, the height from the tile's local y)
+const modelSource = () => ({ col: attribute('col', 'vec4'), uw: attribute('uw', 'float'), gk: attribute('gk', 'vec4'), wy: positionWorld.y, wall: null });
+function facadeCommon(S = modelSource()) {
+  const { col, uw, gk, wy } = S;
+  const base = col.rgb, a8 = col.a.mul(255), seed = floor(gk.xy);
   // lookSet: a Realistic building's bay, storey, shopfront height and style (1.8, 3.6, 0, -1 for every other vertex)
   const isLook = a8.greaterThan(131.5).and(a8.lessThan(195.5)), lk = floor(a8.sub(132).add(0.5)), st = floor(lk.div(8).add(0.001)), rr = lk.sub(st.mul(8)), sh = step(3.5, rr), cl = rr.sub(sh.mul(4));
   const SB = byStyle(st, LOOK_BAY), FHl = SB.y.add(SB.z.mul(cl));
@@ -105,7 +109,7 @@ function facadeCommon() {
     const tuv = vec2(stc.x.mul(256).add(e).add(q.x.mul(span)).div(2048), float(1).sub(stc.y.mul(256).add(e).add(float(1).sub(q.y).mul(span)).div(1024)));   // the atlas is uploaded with flipY: v = 1 - row / 1024
     tile = texture(FAC.tex, tuv).level(lod).rgb;   // linear (the texture is sRGB)
   }
-  return { uw, gk, wy, base, lum: dot(base, vec3(0.33)), sd: h(seed.mul(0.0137).add(0.31)), BW, FH, GF, LST, DW: fwidth(vec2(uw, wy)), fac, tile, wall: step(0, uw), dist: length(cameraPosition.sub(positionWorld)) };
+  return { uw, gk, wy, base, lum: dot(base, vec3(0.33)), sd: h(seed.mul(0.0137).add(0.31)), BW, FH, GF, LST, DW: fwidth(vec2(uw, wy)), fac, tile, wall: S.wall || step(0, uw), dist: length(cameraPosition.sub(positionWorld)) };
 }
 
 // lookWall: a Realistic wall by day (K: the variables of facadeCommon)
@@ -154,7 +158,7 @@ function lookWall(K) {
 }
 
 // version 1 (2026-10-04, ?nightstyle=old): offices cool white by whole floors, homes warm in clusters of three windows
-function nightOld(K) {
+function nightOld(K, V = U) {
   const { uw, gk, wy, BW, FH, GF, DW, sd, wall } = K;
   const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
   const gg = vec2(uw.div(BW), wy.sub(gk.z).sub(GF).div(FH)), cell = floor(gg), f = fract(gg), fl = cell.y;
@@ -177,11 +181,11 @@ function nightOld(K) {
   let LH = mix(vec3(1, 0.74, 0.46), vec3(1, 0.9, 0.66), h(vec2(fid, fl).add(3.1)));
   LH = select(h(vec2(fid, fl).add(5.7)).lessThan(0.05), vec3(0.7, 0.8, 1), LH);
   LH = mix(LH.mul(h(cell.add(1.7)).mul(0.5).add(0.7)).mul(litH), vec3(0.93, 0.78, 0.55).mul(p).mul(0.5), clamp(fwm, 0, 1));
-  const L = mix(LH, LO, off).mul(wm).mul(wall).mul(U.win);   // windows off: none lit (index.html nightCol: the win > .5 block)
+  const L = mix(LH, LO, off).mul(wm).mul(wall).mul(V.win);   // windows off: none lit (index.html nightCol: the win > .5 block)
   // a Realistic shopfront: lit, most of them, warm
   const ys = wy.sub(gk.z), gf = max(GF, 0.01), sq = vec2(uw.div(2.6), ys.div(gf)), sf = fract(sq);
   const sm = mix(step(0.05, sf.x).mul(step(sf.x, 0.95)).mul(step(0.06, sf.y)).mul(step(sf.y, 0.74)), 0.6, smoothstep(0.35, 0.9, max(DW.x.div(2.6), DW.y.div(gf))));
-  const shop = step(0.01, GF).mul(step(ys, GF)).mul(wall).mul(sm).mul(step(0.3, h(vec2(sd, floor(sq.x.div(4)))))).mul(U.win);
+  const shop = step(0.01, GF).mul(step(ys, GF)).mul(wall).mul(sm).mul(step(0.3, h(vec2(sd, floor(sq.x.div(4)))))).mul(V.win);
   return mix(L, vec3(1, 0.84, 0.6).mul(h(vec2(floor(sq.x.div(3)), sd)).mul(0.4).add(0.45)), shop);
 }
 
@@ -191,7 +195,7 @@ function nightOld(K) {
 const c22 = vec3(1, 0.6, 0.3), c30 = vec3(1, 0.74, 0.46), c40 = vec3(1, 0.86, 0.68), c65 = vec3(0.92, 0.95, 1);
 const cct = t => mix(mix(mix(c22, c30, clamp(t.mul(3), 0, 1)), c40, clamp(t.mul(3).sub(1), 0, 1)), c65, clamp(t.mul(3).sub(2), 0, 1));   // t 0 to 1: about 2200, 3000, 4000, 6500 K (sRGB, equal brightness)
 const eqF = (a, v) => step(v - 0.5, a).mul(step(a, v + 0.5));
-function nightNew(K) {
+function nightNew(K, V = U) {
   const { uw, gk, wy, BW, FH, GF, DW, sd, LST, wall } = K;
   const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
   const isLook = step(-0.5, LST), unk = eqF(ty, 0);
@@ -212,7 +216,7 @@ function nightNew(K) {
   const box = select(O, box0, vec4(max(box0.x, 0.12), min(box0.y, 0.88), box0.z, box0.w));   // rooms: a pier between windows, so a lit flat is not one bar
   const cov = box.y.sub(box.x).mul(box.w.sub(box.z));
   const wm = mix(step(box.x, f.x).mul(step(f.x, box.y)).mul(step(box.z, f.y)).mul(step(f.y, box.w)), cov, far).mul(step(-0.5, fl));
-  const pO = U.nP.y;
+  const pO = V.nP.y;
   // ---- offices: whole floors by the hour, in zones (occupancy sensors); dark plant floors; the top storey of a building over 45 m dark
   const plantN = floor(h(sd.mul(5.9)).mul(10)).add(14);
   const plant = min(step(100, ht).mul(step(plantN.sub(1.5), mod(fl, plantN))).add(step(45, ht).mul(step(top.sub(wy), FHn.mul(1.2)))), 1), live = float(1).sub(plant);
@@ -228,8 +232,8 @@ function nightNew(K) {
   LO = mix(LO, Oc.mul(0.8).mul(pO.mul(0.8)).add(vec3(0.02, 0.022, 0.025)), f2.y);                           // then over floors
   LO = mix(LO, cct(float(0.5)).mul(0.9), eqF(fl, 0).mul(step(20, ht)));                                        // the lobby
   // ---- homes, hotels, sheds, civic: rooms lit by flat (2 to 4 windows), in patches, by the hour
-  const pBase = select(T, U.nP.z, U.nP.x).mul(select(isU.greaterThan(0.5), float(0.75), float(1))).mul(select(ht.lessThan(30), float(0.8), float(1)));
-  const pF = pBase.mul(mix(float(1), select(fl.lessThan(0.5), U.nQ.x, U.nQ.z.mul(0.4).add(1)), step(ht, 15)));   // houses: the ground floor in the evening, upper floors late
+  const pBase = select(T, V.nP.z, V.nP.x).mul(select(isU.greaterThan(0.5), float(0.75), float(1))).mul(select(ht.lessThan(30), float(0.8), float(1)));
+  const pF = pBase.mul(mix(float(1), select(fl.lessThan(0.5), V.nQ.x, V.nQ.z.mul(0.4).add(1)), step(ht, 15)));   // houses: the ground floor in the evening, upper floors late
   const p = select(isS.greaterThan(0.5), float(0.03), select(isC.greaterThan(0.5), pO.mul(0.15), pF));
   const pl = clamp(p.mul(vn(vec2(cell.x.div(7), fl.div(3)).add(sd.mul(41))).mul(1.2).add(0.4)), 0, 0.95);   // patches: neighbours alike
   const nF = select(T, float(1), floor(h(sd.mul(1.7)).mul(3)).add(2));
@@ -241,7 +245,7 @@ function nightNew(K) {
   let HC = cct(pow(u, 2.0).mul(select(T, float(0.55), float(1))));
   const cur = step(h(cell.add(8.9)), select(T, float(0.6), float(0.35)));   // curtains or blinds: a soft glow in the colour of the cloth
   HC = mix(HC, HC.mul(mix(vec3(1, 0.88, 0.7), vec3(1, 0.74, 0.56), step(0.6, h(cell.add(4.4))))).mul(0.6), cur);
-  const tv = step(h(cell.add(2.7)), U.nQ.y).mul(float(1).sub(cur));   // a television: blue-white, flickering while the page animates
+  const tv = step(h(cell.add(2.7)), V.nQ.y).mul(float(1).sub(cur));   // a television: blue-white, flickering while the page animates
   HC = mix(HC, vec3(0.5, 0.65, 1).mul(vn(vec2(time.mul(5), h(cell.add(6.1)).mul(97))).mul(0.6).add(0.4)).mul(0.7), tv);
   const balc = step(h(sd.mul(5.1).add(0.3)), 0.4).mul(step(f.y, box.z.add(box.w.sub(box.z).mul(0.3)))).mul(det).mul(float(1).sub(isLook));   // a balustrade across the foot of the window
   let LH = HC.mul(h(cell.add(1.7)).mul(0.45).add(0.55)).mul(mix(float(1), float(0.5), balc)).mul(litH);
@@ -256,11 +260,11 @@ function nightNew(K) {
   const lobby = eqF(fl, 0).mul(step(20, ht)).mul(step(h(sd.mul(9.2)), select(T, float(1), float(0.65))));
   LH = mix(LH, cct(float(0.25)).mul(0.85), max(amen, lobby));
   LH = mix(LH, cct(float(0.28)).mul(pl.mul(0.5)).add(coreC.mul(0.4).mul(hasCore).mul(2).div(cm)), far);   // far: the mean
-  let L = mix(LH, LO, isO).mul(wm).mul(wall).mul(U.win);
+  let L = mix(LH, LO, isO).mul(wm).mul(wall).mul(V.win);
   // a Realistic shopfront: lit by the hour (shops, cafes, display lights after closing), 2700 to 4000 K
   const gf = max(GF, 0.01), sq = vec2(uw.div(2.6), y.div(gf)), sf = fract(sq);
   const sm = mix(step(0.05, sf.x).mul(step(sf.x, 0.95)).mul(step(0.06, sf.y)).mul(step(sf.y, 0.74)), 0.6, smoothstep(0.35, 0.9, max(DW.x.div(2.6), DW.y.div(gf))));
-  const shop = step(0.01, GF).mul(step(y, GF)).mul(wall).mul(sm).mul(step(h(vec2(sd, floor(sq.x.div(4)))), U.nP.w.mul(0.85).add(0.05))).mul(U.win);
+  const shop = step(0.01, GF).mul(step(y, GF)).mul(wall).mul(sm).mul(step(h(vec2(sd, floor(sq.x.div(4)))), V.nP.w.mul(0.85).add(0.05))).mul(V.win);
   const sh = h(vec2(floor(sq.x.div(3)), sd));
   return mix(L, cct(sh.mul(0.5).add(0.15)).mul(sh.mul(0.4).add(0.55)), shop);
 }
@@ -315,6 +319,61 @@ export function buildingMaterial() {
   return m;
 }
 
+// A place's buildings on the globe (globe/place-look.js; skill docklands-3d-page, "Three.js port: places look like the
+// model"): the same facade program (lookWall, the Map window grid, nightNew / nightOld) on a place's core tiles and city
+// blocks. Per vertex (or the nodes given in inst: { col, mcol, gk, rcol }, e.g. per-instance attributes of the city blocks): col (the Realistic colour and code, as the model: alpha 132 + style x 8
+// + shopfront x 4 + storey class), mcol (the Map look's colour, alpha 0), gk (centre x, centre z, base, 1000 x night use +
+// top; heights in the tile frame + OFF). The along-wall metres and the wall flag come from the face normal in the tile frame
+// (no uw attribute: the tiles share wall vertices between faces), the height from the tile's local y (+ OFF, so the
+// window rows count from the building's own base). V: the place's uniforms { night, nP, nQ, win, look (1 Realistic, 0
+// Map), pix (1: the pixel-art palette V.pal, a uniformArray of vec3 sRGB, flat and unlit by night), winGain }.
+export const PLACE_OFF = 400;
+export function placeBuildingMaterial(V, inst = null, night = true) {
+  const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.82, metalness: 0.0, side: THREE.DoubleSide, flatShading: true });
+  const src = () => {
+    const pl = positionLocal, nL = normalize(cross(dFdx(pl), dFdy(pl))), wall = float(1).sub(step(0.42, abs(nL.y)));
+    const t = normalize(vec2(nL.z.negate(), nL.x).add(vec2(1e-6, 0)));
+    const A = k => inst ? inst[k] : attribute(k, 'vec4'), real = V.look.greaterThan(0.5), c0 = select(real, A('col'), A('mcol'));
+    // city blocks: one record for the walls and the flat top, the top's colour apart (rcol)
+    const col = inst && inst.rcol ? vec4(select(wall.greaterThan(0.5).or(real.not()), c0.rgb, inst.rcol.rgb), c0.a) : c0;
+    return { col, uw: select(wall.greaterThan(0.5), dot(pl.xz, t), float(-1)), gk: A('gk'), wy: pl.y.add(PLACE_OFF), wall };
+  };
+  m.colorNode = Fn(() => {
+    const C = facadeCommon(src()), K = { ...C };
+    for (const k of ['lum', 'sd', 'BW', 'FH', 'GF', 'LST', 'DW', 'wall', 'dist']) K[k] = C[k].toVar();
+    const out = vec3(0).toVar();
+    If(K.LST.greaterThan(-0.5).and(K.wall.greaterThan(0.5)).and(V.win.greaterThan(0.5)), () => { out.assign(lin(lookWall(K))); })
+      .Else(() => {
+        const g = vec2(K.uw.div(1.8), K.wy.div(3.6)), cell = floor(g), f = fract(g);
+        const w = step(0.14, f.x).mul(step(f.x, 0.86)).mul(step(0.2, f.y)).mul(step(f.y, 0.84)).mul(clamp(float(1.4).sub(K.dist.div(900)), 0.15, 1));
+        const glass = mix(vec3(0.13, 0.18, 0.25), vec3(0.42, 0.52, 0.62), clamp(K.wy.sub(K.gk.z).div(300), 0, 1).add(h(cell).mul(0.12))).mul(K.lum.mul(0.7).add(0.55));
+        out.assign(lin(mix(K.base, glass, w.mul(0.8).mul(K.wall).mul(V.win))));
+      });
+    // pixel art (styles.js): the nearest colour of the 33-colour palette (data/pixel-palette.json, V.pal), flat, no windows
+    const pc = vec3(0.5).toVar(), bd = float(1e9).toVar();
+    If(V.pix.greaterThan(0.5), () => { Loop(V.pal.array.length, ({ i }) => { const q = V.pal.element(i), dd = dot(K.base.sub(q), K.base.sub(q)); If(dd.lessThan(bd), () => { bd.assign(dd); pc.assign(q); }); }); });
+    const px = lin(pc.mul(mix(float(0.86), float(1), K.wall)));
+    return vec4(mix(out, px, V.pix), 1);
+  })();
+  // by night only (night false: a day material without the window lights; globe/place-look.js swaps the two when the
+  // place's night begins or ends: an If on the night uniform still cost a quarter of the frame by day in software
+  // rendering, where both sides of a branch run); the branch on uniforms also stays (dusk, pixel art)
+  if (night) m.emissiveNode = Fn(() => {
+    const E = vec3(0).toVar();
+    If(V.night.greaterThan(0.001).and(V.pix.lessThan(0.5)), () => {
+      const C = facadeCommon(src()), { gk, wy, wall, dist } = C;
+      const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
+      let L = NIGHT_STYLE === 'old' ? nightOld(C, V) : nightNew(C, V);
+      const tb = top.sub(wy), band = step(90, ht).mul(step(tb, 3.5)).mul(step(0, tb)).mul(wall);
+      L = L.add(vec3(0.32, 0.3, 0.27).mul(smoothstep(3.5, 0.5, tb)).mul(band));
+      const hz = float(1).sub(exp(dist.div(-5200))).mul(0.6);
+      E.assign(lin(L.mul(V.winGain).add(vec3(U.haze).mul(hz).mul(0.6))).mul(V.night));
+    });
+    return E;
+  })();
+  return m;
+}
+
 // terrain: the ground colour, or a ground image (aerial 2008, night 2012, LiDAR intensity 2020) through its box
 export function terrainMaterial() {
   const m = new THREE.MeshStandardNodeMaterial({ roughness: 1, metalness: 0 });
@@ -352,7 +411,7 @@ export function terrainMaterial() {
 //     about a pixel faded out; a ring from the acceleration; propeller wash as foam behind the stern; and the same wake
 //     mirrored at a wall within 40 m.
 // About 18 texture reads a pixel. One graph for WebGPU and WebGL 2. Skill: docklands-3d-page, "Three.js port".
-import { Loop, cos, sqrt, log } from 'three/tsl';
+import { Loop, cos, sqrt, log } from 'three/tsl';   // (also used above: imports are hoisted)
 import { surfaceData, SU, MAXW, wakeA, wakeB } from './water.js';
 const wrap = q => q.sub(floor(q.div(256)).mul(256));   // the hash keeps its precision far from the origin and as time grows
 const vnw = Fn(([q]) => { const i = floor(q), f0 = fract(q), f = f0.mul(f0).mul(float(3).sub(f0.mul(2))), a = wrap(i), b = wrap(i.add(1));
@@ -361,14 +420,14 @@ const GRAV = 9.81;
 // one band of the wave field: the slope (world x, z) of the tiling texture at wavelength lam m, in a frame turned rot rad
 // from ax (unit: the direction the waves travel), moving along it at the deep-water phase speed (move = false: still);
 // ch 0 = the directional pair (RG), 1 = the isotropic pair (BA). The time offset is taken modulo one tile (no drift in precision).
-function band(NT, pp, ax, lam, { rot = 0, jit = 0, ch = 0, move = true } = {}) {
+export function band(NT, pp, ax, lam, { rot = 0, jit = 0, ch = 0, move = true } = {}) {
   const c = Math.cos(rot), s = Math.sin(rot), a = vec2(ax.x.mul(c).sub(ax.y.mul(s)), ax.x.mul(s).add(ax.y.mul(c))), b = vec2(a.y.negate(), a.x), tile = lam * 10;
   let q = vec2(dot(pp, a), dot(pp, b)).div(tile).add(vec2(jit, jit * 0.37));
   if (move) q = q.sub(vec2(fract(time.mul(Math.sqrt(GRAV * lam / (2 * Math.PI)) / tile)), 0));
   const t = texture(NT, q), g = (ch ? t.ba : t.rg).mul(6).sub(3);
   return a.mul(g.x).add(b.mul(g.y));
 }
-const BANDS = [[0.3, 0.5, 0.11], [0.8, -0.3, 0.53], [2.0, 0.2, 0.29], [5.0, -0.12, 0.71]];   // [wavelength m, turn rad, jitter]
+export const BANDS = [[0.3, 0.5, 0.11], [0.8, -0.3, 0.53], [2.0, 0.2, 0.29], [5.0, -0.12, 0.71]];   // [wavelength m, turn rad, jitter]
 // the Kelvin wake of one boat (slot a, b) at q: vec3(slope x, slope z, foam)
 function kelvin(q, a, b, fw) {
   const U = a.w, L = max(b.x, 2), dir = vec2(sin(a.z), cos(a.z).negate()), side = vec2(dir.y.negate(), dir.x);

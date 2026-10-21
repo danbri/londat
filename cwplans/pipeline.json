@@ -10306,6 +10306,58 @@
    "deterministic": true
   },
   {
+   "id": "place-greens",
+   "area": "buildings",
+   "tool": "tools/build-place-greens.mjs",
+   "command": "node cwplans/tools/build-place-greens.mjs [fetch|build] --region <id> [--refetch] [--force]",
+   "kind": "build",
+   "used": [
+    {
+     "source": "osm",
+     "endpoint": "https://api.openstreetmap.org/api/0.6/map.json",
+     "request": "the core area of the place (places/index.json area), split in four on too many nodes; then /api/0.6/relation/<id>/full.json for each water, wood or park multipolygon with a member way outside the area (at most 30, 1 s apart)"
+    },
+    {
+     "local": "data/raw/places/<id>/greens/"
+    },
+    {
+     "file": "docklands/data/places/index.json"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/places/greens.json"
+    },
+    {
+     "file": "docklands/data/places/leon/greens/greens.json"
+    },
+    {
+     "file": "docklands/data/places/leon/greens/log.json"
+    },
+    {
+     "file": "docklands/data/places/leon/greens/README.md"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/greens/greens.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/greens/log.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/greens/README.md"
+    }
+   ],
+   "method": "Water and trees of a place on the globe, for the globe to draw them as the Docklands model does (owner, 2026-10-22: \"why do Leon and Sarajevo look so different to London?\"). One dataflow operation place-greens (activity id = sha256 of operation, version, input hashes, parameters; greens/log.json): OSM closed ways and multipolygon relations (rings joined end to end) -> water polygons (natural=water, waterway=riverbank, landuse=reservoir / basin) clipped to the area by Sutherland-Hodgman; trees: natural=tree nodes, natural=tree_row ways (a tree every row_m), and trees placed on a hash-jittered grid in natural=wood / landuse=forest (wood_m) and in leisure=park / garden areas without a mapped tree (park_m), never inside a building or water; each tree gets a species profile of docklands/tree-species.js from its taxon (profileOf), its leaf type, else the region config mix (place.greens.mix) for its setting (street, park, wood, water side within 25 m), by a stable hash of its id. A README per place made from the log.",
+   "rules": [
+    "placed trees (rule-wood, rule-park) are counted apart and described as illustrative positions",
+    "grass and meadow get no placed trees",
+    "the species mixes are stated assumptions in the region config (place.greens.mix)"
+   ],
+   "faults": [],
+   "network": true,
+   "deterministic": true
+  },
+  {
    "id": "build-world-base",
    "tool": "tools/build-world-base.mjs",
    "command": "node cwplans/tools/build-world-base.mjs fetch && node cwplans/tools/build-world-base.mjs build",

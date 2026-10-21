@@ -11148,6 +11148,63 @@
    ]
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolplacegreens",
+   "@type": "prov:Activity",
+   "rdfs:label": "place-greens",
+   "dct:description": "Water and trees of a place on the globe, for the globe to draw them as the Docklands model does (owner, 2026-10-22: \"why do Leon and Sarajevo look so different to London?\"). One dataflow operation place-greens (activity id = sha256 of operation, version, input hashes, parameters; greens/log.json): OSM closed ways and multipolygon relations (rings joined end to end) -> water polygons (natural=water, waterway=riverbank, landuse=reservoir / basin) clipped to the area by Sutherland-Hodgman; trees: natural=tree nodes, natural=tree_row ways (a tree every row_m), and trees placed on a hash-jittered grid in natural=wood / landuse=forest (wood_m) and in leisure=park / garden areas without a mapped tree (park_m), never inside a building or water; each tree gets a species profile of docklands/tree-species.js from its taxon (profileOf), its leaf type, else the region config mix (place.greens.mix) for its setting (street, park, wood, water side within 25 m), by a stable hash of its id. A README per place made from the log.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm",
+     "dcat:accessURL": "https://api.openstreetmap.org/api/0.6/map.json",
+     "dct:description": "the core area of the place (places/index.json area), split in four on too many nodes; then /api/0.6/relation/<id>/full.json for each water, wood or park multipolygon with a member way outside the area (at most 30, 1 s apart)"
+    },
+    {
+     "cwp:pathPattern": "data/raw/places/<id>/greens/"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/index.json"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/greens.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/greens/greens.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/greens/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/greens/README.md"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/greens.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/README.md"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-place-greens.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-place-greens.mjs [fetch|build] --region <id> [--refetch] [--force]",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "placed trees (rule-wood, rule-park) are counted apart and described as illustrative positions",
+    "grass and meadow get no placed trees",
+    "the species mixes are stated assumptions in the region config (place.greens.mix)"
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [],
+   "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolbuildworldbase",
    "@type": "prov:Activity",
    "rdfs:label": "build-world-base",
@@ -28174,6 +28231,143 @@
    ],
    "prov:wasGeneratedBy": {
     "@id": "https://kgx.foaf.tv/id/toolplacelandmarks"
+   },
+   "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/greens/greens.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Casco Histórico, León: water and trees of the core of the place (format place-greens-1): 38 water polygons (OSM natural=water, waterway=riverbank, landuse=reservoir / basin; rings clipped to the area), 2280 trees (569 OSM natural=tree, 367 along OSM tree rows every 8 m, 99 placed by rule in woods every 6.5 m and 1245 in parks and gardens without mapped trees every 15 m: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix by setting), and the woods and parks; drawn by the globe as the model's water and trees",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/greens/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of the water and trees of Casco Histórico, León: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/greens/README.md",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Generated README of the water and trees of Casco Histórico, León: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/greens.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Stari Grad, Sarajevo: water and trees of the core of the place (format place-greens-1): 3 water polygons (OSM natural=water, waterway=riverbank, landuse=reservoir / basin; rings clipped to the area), 8274 trees (174 OSM natural=tree, 15 along OSM tree rows every 8 m, 7730 placed by rule in woods every 6.5 m and 355 in parks and gardens without mapped trees every 15 m: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix by setting), and the woods and parks; drawn by the globe as the model's water and trees",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of the water and trees of Stari Grad, Sarajevo: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/README.md",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Generated README of the water and trees of Stari Grad, Sarajevo: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/greens.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "The places that have a water and trees file (place id -> path of greens.json); read once by docklands/globe/place-look.js, so a place without one costs no request (tools/build-place-greens.mjs)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
    },
    "cwp:osmUse": "none"
   },
