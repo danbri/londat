@@ -111,7 +111,7 @@ prototyping phase"; "Flag it somewhere for review as we scale" (2026-10-04); the
 | date | O1 | O2 | O3 | O4 | O5 | O6 | notes |
 |---|---|---|---|---|---|---|---|
 | 2026-10-11 (baseline) | 0.0 | 0.05 | 0.1 | 0.3 | 0.4 | 0.5 | O2: only the assessment and the coarse London terrain ring; O3: the MCP server and the test hook exist, but no non-visual or low-end support |
-| 2026-10-21 (draft for the 2026-10-25 checkpoint) | 0.30 | 0.41 | 0.40 | 0.25 | 0.29 | 0.70 | per key result below; updated 2026-10-21 with the week's merged work; O6 0.50 -> 0.70 with the KR6.2 exit paths and the KR6.3 recount |
+| 2026-10-21 (draft for the 2026-10-25 checkpoint) | 0.30 | 0.41 | 0.48 | 0.25 | 0.36 | 0.70 | per key result below; updated 2026-10-21 with the week's merged work; O6 0.50 -> 0.70 with the KR6.2 exit paths and the KR6.3 recount |
 
 ### Checkpoint 1, draft scores (2026-10-20; final on 2026-10-25)
 
