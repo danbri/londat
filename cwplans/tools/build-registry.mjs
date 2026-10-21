@@ -15,6 +15,7 @@ import { CW_BOX } from './registry-osm.mjs';
 import { osmList, osmLevels } from './osm-values.mjs';
 import { CWG_MALLS, cwgFields, nameKeys } from '../registry/sources/brands/tools/cwg-fields.mjs';
 import { registryGeometry, mallHosts, normPc, normAddr, buildingKeys, STREET, placeIn, mPerDeg, fsaPositions, applyPlacement, postcodeInfo, postcodeLinks, PLACEMENT_OP } from './registry-placement.mjs';
+import { applyBranchMerge, BRANCH_OP } from './registry-branch-key.mjs';
 
 const OUT = join(TOOLS, '..', 'registry'), R = join(RAW, 'registry');
 mkdirSync(OUT, { recursive: true });
@@ -414,8 +415,13 @@ if (has('registers/gias.json')) {
 // branch occupants of a named mall go to the mall host outline; an FSA point at the postcode centre or shared by 3 or
 // more premises (or a branch at a centroid) is placed by a key, else listed under its postcode. Then the building
 // postcodes are recomputed from their evidence. The last join: the joins above used the point placements.
-const placement = applyPlacement({ recs, hostOf: MALL_HOST, tagsOf: new Map(osm.features.map(f => [`${f.type}/${f.id}`, f.tags || {}])), outlineOf, geom: { inside, distTo }, fsaPos: fsaPositions(fhrs.establishments, pcs), pcs, byPostcode });
+const osmTags = new Map(osm.features.map(f => [`${f.type}/${f.id}`, f.tags || {}]));
+const placement = applyPlacement({ recs, hostOf: MALL_HOST, tagsOf: osmTags, outlineOf, geom: { inside, distTo }, fsaPos: fsaPositions(fhrs.establishments, pcs), pcs, byPostcode });
 joins.placement = placement.stats;
+// The branch-key rule (F46, F20; registry-branch-key.mjs, operation merge-occupants-by-branch-key): the records of one
+// branch from different sources become one occupant (shared identifier, name in one building, name across buildings
+// within 250 m by the source order), with a confidence per merge and a review list. After the placement rule.
+const branchMerge = applyBranchMerge({ recs, tagsOf: osmTags, outlineTags: new Map([...outlineOf].map(([id, b]) => [id, b.f.tags])) });
 
 // In a residential building a registered office is often a flat: give the number of companies, not their names.
 for (const r of recs) if (r.companies && (r.homes || /^(apartments|residential|house|terrace|detached|semidetached_house)$/.test(r.building))) r.companies = { count: r.companies.length, note: 'residential building: company names are not listed here (see the Companies House link)' };
@@ -444,8 +450,9 @@ const summary = {
   occupants: out.reduce((n, r) => n + r.occupants.length, 0), osm_placed: osmPlaced, osm_not_in_a_building: osmLoose, fsa_placed: fsaPlaced, fsa_by_postcode_only: Object.values(byPostcode).flat().length,
   with_owner: out.filter(r => r.owners.length).length, joins: Object.fromEntries(Object.entries(joins).filter(([k]) => k !== 'inspire_attribution' && k !== 'placement')), attribution_inspire: joins.inspire_attribution || null,
   sources: { osm: osm.extracted, wikidata_qlever: wd.fetched, fsa: fhrs.fetched },
-  placement: { rule: `${PLACEMENT_OP.id} v${PLACEMENT_OP.version}`, applied_by: 'cwplans/tools/build-registry.mjs (its last join)', stats: placement.stats },
+  placement: { rule: `${PLACEMENT_OP.id} v${PLACEMENT_OP.version}`, applied_by: 'cwplans/tools/build-registry.mjs (its last join but one)', stats: placement.stats },
+  branch_merge: { rule: `${BRANCH_OP.id} v${BRANCH_OP.version}`, applied_by: 'cwplans/tools/build-registry.mjs (its last join)', stats: branchMerge.stats },
 };
 writeFileSync(idsFile, JSON.stringify(ids, null, 1));
-writeFileSync(join(OUT, 'buildings.json'), JSON.stringify({ summary, buildings: out, unplaced_by_postcode: byPostcode, cwg_unplaced: cwgOut.unplaced, cwg_ambiguous: cwgOut.ambiguous, registers_unplaced: regOut.unplaced, registers_uprn_rejected: regOut.uprn_rejected, placement_unplaced: placement.unplaced }));
+writeFileSync(join(OUT, 'buildings.json'), JSON.stringify({ summary, buildings: out, unplaced_by_postcode: byPostcode, cwg_unplaced: cwgOut.unplaced, cwg_ambiguous: cwgOut.ambiguous, registers_unplaced: regOut.unplaced, registers_uprn_rejected: regOut.uprn_rejected, placement_unplaced: placement.unplaced, branch_merge_review: branchMerge.review }));
 console.log(JSON.stringify(summary, null, 1));

@@ -14,14 +14,15 @@ import { CW, OUT, RAW, readJSON, inBox } from './lib.mjs';
 // nsi-matcher.mjs is imported below, after the --cwg-websites mode (it needs the local NSI install)
 import { osmList, unitLabel } from '../../../../tools/osm-values.mjs';
 
-// --cwg-websites: no rebuild. Copy the website of each CWG entry into the cwg_website that a branch with its cwg_url has
-// (the same assignment as the merge below), for a checkout without data/raw/registry/{osm,fsa}-branches.json. Used after
-// fetch-cwg.mjs --rederive (F49: decoded websites).
+// --cwg-websites: no rebuild. Copy the website of each CWG entry into the cwg_website of the branch with its cwg_url
+// (the same assignment as both CWG passes of the merge below), for a checkout without
+// data/raw/registry/{osm,fsa}-branches.json. Used after fetch-cwg.mjs --rederive (F49: decoded websites); since
+// 2026-10-21 it also fills a missing cwg_website (the by-name pass did not copy it: 4 branches).
 //   node cwplans/registry/sources/brands/tools/build-branches.mjs --cwg-websites
 if (process.argv.includes('--cwg-websites')) {
   const web = new Map(readJSON(join(OUT, 'cwg-directory.json')).directory.filter(c => c.website).map(c => [c.cwg_url, c.website]));
   const f = join(OUT, 'branches.json'), d = readJSON(f); let n = 0;
-  for (const b of d.branches) if (b.cwg_website && web.has(b.cwg_url) && b.cwg_website !== web.get(b.cwg_url)) { b.cwg_website = web.get(b.cwg_url); n++; }
+  for (const b of d.branches) if (web.has(b.cwg_url) && b.cwg_website !== web.get(b.cwg_url)) { b.cwg_website = web.get(b.cwg_url); n++; }
   writeFileSync(f, '{"meta":' + JSON.stringify(d.meta, null, 1) + ',\n"branches":[\n' + d.branches.map(o => JSON.stringify(o)).join(',\n') + '\n],\n"cwg_not_matched":[\n' + d.cwg_not_matched.map(o => JSON.stringify(o)).join(',\n') + '\n]}\n');
   console.log(`${n} branch cwg_website values changed`);
   process.exit(0);
@@ -215,6 +216,7 @@ for (const { c, b0 } of cwgByName) {
   b.sources.push('cwg'); b.cwg_url = c.cwg_url; b.cwg_archived = c.archived || null;
   if (cmall) { b.mall = cmall; b.mall_from = 'cwg'; } if (c.level) b.level_cwg = c.level;
   if (c.address_lines?.length) b.address_cwg = c.address_lines.join(', ');
+  if (c.website) b.cwg_website = c.website;   // as the first pass (until 2026-10-21 this pass left it out: 4 branches)
   if (!b.postcode && pc) b.postcode = pc;
   b.notes.push(`CWG entry '${c.title}' joined by name (not an NSI name)`);
 }

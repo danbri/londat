@@ -730,7 +730,7 @@ INIT.business = async () => {
   $('bizCards').innerHTML = '<p class="small">Loading occupants…</p>';
   const [reg, br] = await Promise.all([getReg(), load(P.branches)]);
   const occ = reg.buildings.flatMap(b => b.occupants.map(o => ({ ...o, b }))).concat(Object.values(reg.unplaced_by_postcode || {}).flat().map(o => ({ ...o, b: null })));
-  const fsa = occ.filter(o => o.source === 'fsa'), c = A.counts;
+  const fsa = occ.filter(o => /(^|\+)fsa(\+|$)/.test(o.source)), c = A.counts;   // an occupant made by the branch-key rule counts when one of its records is FSA
   $('bizCards').innerHTML = [
     ['Occupants', N(occ.length), 'placed in a building, or listed by postcode only'], ['Branches', N(c.branches), `of ${N(c.brands)} chain brands`],
     ['Food premises', N(fsa.length), 'in the FSA Tower Hamlets file'], ['Companies', N(c.companies), 'registered at Canary Wharf postcodes (Companies House)'],

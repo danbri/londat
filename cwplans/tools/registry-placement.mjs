@@ -111,10 +111,14 @@ export function fsaPositions(establishments, pcs) {
 // its OSM occupants and the postcode of its FSA occupants (the same sources build-registry.mjs adds as it places them)
 export function postcodeEvidence(r, outlineTags, tagsOf, skip = () => false) {
   const s = new Set([...osmList(outlineTags?.['addr:postcode']).map(normPc), ...(r.facts?.['postal code'] || []).map(normPc)]);
+  // an occupant made by the branch-key rule (registry-branch-key.mjs) brings the records merged into it
   for (const o of r.occupants) {
     if (skip(o)) continue;
-    if (o.source === 'osm' && o.osm) for (const pc of osmList(tagsOf.get(o.osm)?.['addr:postcode'])) s.add(normPc(pc));
-    if (o.source === 'fsa') s.add(normPc(o.postcode));
+    for (const x of [o, ...(o.merged_from || [])]) {
+      const src = x === o ? o.primary_source ?? o.source : x.source;
+      if (src === 'osm' && x.osm) for (const pc of osmList(tagsOf.get(x.osm)?.['addr:postcode'])) s.add(normPc(pc));
+      if (src === 'fsa') s.add(normPc(x.postcode));
+    }
   }
   s.delete(''); return s;
 }

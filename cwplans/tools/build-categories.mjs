@@ -81,7 +81,7 @@ const NEW = {
 for (const [cat, [osmKeys, fsaType, cwgLabels, wdRe, roleRe]] of Object.entries(NEW)) {
   // CWG "Healthcare" also lists a vet; CWG "Sport & Fitness" lists sportswear shops (not used). An OSM tag that states
   // another class outranks a CWG label.
-  const why = (o, t, w, c) => (cat === 'health' && t.amenity === 'veterinary') ? null : osmWhy(t, osmKeys) || (fsaType && fsaType.test(o.type || '') && o.source === 'fsa' ? `FSA ${o.type}` : null) || cwgWhy(c, cwgLabels) || wdWhy(w, wdRe) || (roleRe && roleRe.test(o.role) ? `role ${o.role}` : null);
+  const why = (o, t, w, c) => (cat === 'health' && t.amenity === 'veterinary') ? null : osmWhy(t, osmKeys) || (fsaType && fsaType.test(o.type || '') && /(^|\+)fsa(\+|$)/.test(o.source) ? `FSA ${o.type}` : null) || cwgWhy(c, cwgLabels) || wdWhy(w, wdRe) || (roleRe && roleRe.test(o.role) ? `role ${o.role}` : null);
   RULES.push([cat, (o, t, w, c) => !!why(o, t, w, c), why]);
 }
 // the CWG directory's own classes for the first five: its section (restaurant: catering; stay: leisure, as hotels are)

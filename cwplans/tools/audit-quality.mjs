@@ -17,6 +17,7 @@ import { gunzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { TOOLS } from './lib.mjs';
 import { osmLevelsUnread } from './osm-values.mjs';
+import { normName, recordsOf } from './registry-branch-key.mjs';
 
 const CW = join(TOOLS, '..');
 const json = p => JSON.parse(p.endsWith('.gz') ? gunzipSync(readFileSync(join(CW, p))) : readFileSync(join(CW, p), 'utf8'));
@@ -30,8 +31,8 @@ const CO = json('registry/companies-by-postcode.json').postcodes;
 const TODAY = new Date('2026-10-03');
 const BOX = REG.summary.box, inBox = (lon, lat) => lon >= BOX[0] && lon <= BOX[2] && lat >= BOX[1] && lat <= BOX[3];
 const dist = (la1, lo1, la2, lo2) => { const R = 6371008, r = Math.PI / 180, x = (lo2 - lo1) * r * Math.cos((la1 + la2) / 2 * r), y = (la2 - la1) * r; return Math.round(Math.hypot(x, y) * R); };
-const norm = s => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/\(\d+\)/g, ' ').replace(/&/g, ' and ')
-  .replace(/[^a-z0-9 ]/g, ' ').replace(/\b(the|ltd|limited|plc|uk|london|canary wharf|e14)\b/g, ' ').replace(/\s+/g, ' ').trim();
+// the ID-2 name normalisation; the branch-key rule (registry-branch-key.mjs) uses the same function
+const norm = normName;
 const PC_RE = /^[A-Z]{1,2}\d[A-Z\d]? \d[A-Z]{2}$/;
 const normPc = pc => String(pc || '').toUpperCase().replace(/\s+/g, '').replace(/^(.+)(\d[A-Z]{2})$/, '$1 $2');
 const pcs = new Map(PC.postcodes.map(p => [p.pc, p]));
@@ -74,6 +75,27 @@ const ex = (c, rows, n = 8) => { c.examples = rows.slice(0, n); };
     }
   }
   c.population = pop; c.breakdown = { 'different sources (not merged)': cross, 'same source (mapped twice)': same }; ex(c, rows, 10);
+  // the branch-key rule (F46, F20): what it merged and what it listed for review instead
+  const bm = REG.summary.branch_merge;
+  if (bm) c.stats = { branch_key_rule: bm.rule, merges: bm.stats.merges, records_absorbed: bm.stats.records_absorbed, by_confidence: bm.stats.by_confidence, review: bm.stats.review };
+}
+{
+  const c = { id: 'ID-6', cls: 'identity', dim: 'uniqueness', title: 'Same branch in two buildings, one source in each', sources: ['osm', 'fsa', 'cwg', 'registers', 'wikidata'],
+    method: 'Occupant names (lower case, letters and digits only) found in more than one building, one source per building, different sources, all the buildings within 250 m of each other (the F46 heuristic of 2026-10-21; occupants made by the branch-key rule count with all their sources).', rule: 'One branch key across sources (shared identifier, else the name with the placement order: OSM node with a level in a mall > CWG mall address > address key > OSM point > FSA point > register or Wikidata coordinate); a pair with two strong positions, more than 150 m apart or different identifiers of one kind goes to the review list (registry/buildings.json branch_merge_review), not into one occupant.' };
+  const add = check(c), key = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''), by = new Map(), rows = [];
+  const m = (a, b) => dist(a.lat, a.lon, b.lat, b.lon);
+  for (const b of REG.buildings) for (const o of b.occupants) { const k = key(o.name); if (k.length >= 3) by.set(k, [...(by.get(k) || []), { b, o }]); }
+  let pop = 0;
+  for (const [k, rs] of by) {
+    const bs = [...new Set(rs.map(r => r.b))]; if (bs.length < 2) continue; pop++;
+    const per = bs.map(b => rs.filter(r => r.b === b)); if (per.some(p => p.length !== 1)) continue;
+    const srcs = per.map(p => p[0].o.source); if (new Set(srcs).size < 2) continue;
+    const far = Math.max(...bs.flatMap(a => bs.map(b => m(a, b)))); if (far > 250) continue;
+    const inReview = (REG.branch_merge_review || []).some(r => r.records.some(x => key(x.name) === k) && new Set(r.records.map(x => x.building)).size > 1);
+    rows.push({ name: rs[0].o.name, buildings: bs.map(b => b.id).join(', '), sources: srcs.join(' | '), metres: far, review: inReview });
+    for (const b of bs) add({ ent: 'b', id: b.id, sev: inReview ? 'low' : 'medium', note: `"${rs[0].o.name}" also in ${bs.filter(x => x !== b).map(x => x.id).join(', ')} (${far} m; ${inReview ? 'on the review list' : 'not reviewed'})` });
+  }
+  c.population = pop; c.breakdown = { 'names in this class': rows.length, 'on the branch-key review list': rows.filter(r => r.review).length, 'not on the review list': rows.filter(r => !r.review).length }; ex(c, rows, 12);
 }
 {
   const c = { id: 'ID-3', cls: 'identity', dim: 'accuracy', title: 'Building named after an occupant or owner', sources: ['osm', 'wikidata'],
@@ -131,7 +153,8 @@ const ex = (c, rows, n = 8) => { c.examples = rows.slice(0, n); };
   // F7 rule in use (registry-placement.mjs): such a point never places an occupant in a building. Count the registry's
   // FSA occupants that sit in a building by one of these points (should be 0) and how the others are placed
   const flagged = new Set(rows.map(r => r.fhrs)), use = { 'in a building by this point': 0, 'in a building by a key (mall, street, name, postcode)': 0, 'listed under the postcode only': 0 };
-  for (const b of REG.buildings) for (const o of b.occupants) if (o.source === 'fsa' && flagged.has(o.fhrs_id)) use[o.placed_confidence ? 'in a building by a key (mall, street, name, postcode)' : 'in a building by this point']++;
+  // (an occupant made by the branch-key rule holds its FSA record in merged_from, or is that record: primary_source fsa)
+  for (const b of REG.buildings) for (const o0 of b.occupants) for (const o of recordsOf(o0)) if ((o === o0 ? o.primary_source ?? o.source : o.source) === 'fsa' && flagged.has(o.fhrs_id)) use[o.placed_confidence ? 'in a building by a key (mall, street, name, postcode)' : 'in a building by this point']++;
   for (const l of Object.values(REG.unplaced_by_postcode || {})) for (const o of l) if (flagged.has(o.fhrs_id)) use['listed under the postcode only']++;
   c.stats = { registry_use: use };
 }

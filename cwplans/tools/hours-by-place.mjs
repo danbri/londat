@@ -69,8 +69,11 @@ for (const b of buildings) for (const o of b.occupants || []) for (const [src, t
   other.push({ id: `${src}:${b.id}:${o.osm || o.name}`, name: o.name, source: src, building: b.id, building_name: b.name, lat: b.lat, lon: b.lon, postcode: (b.postcodes || [])[0] || null,
     cwg_slug: slug, mall: o.mall || null, kind: coarseOfRole(o.role), role: o.role, opening_hours: text, grid: g });
 }
-// occupants outside the CWG list: their own area by postcode sector
-for (const r of other) if (!r.cwg_slug && !(r.mall && MALLS.includes(r.mall))) recs.push({ ...r, area: r.mall ? areaOfMall(r.mall) : 'postcode sector ' + (sector(r.postcode) || 'unknown'), fine: r.kind });
+// occupants outside the CWG list: their mall's area when they have a mall (the placement rule of 2026-10-21 gives OSM
+// and FSA occupants their mall), else their own area by postcode sector. Every occupant without a CWG page counts: until
+// 2026-10-21 an occupant with a mall and no CWG page was left out (it is not in the CWG list, so it is not counted
+// twice), and the placement rule took 8 records out of the counts (419 -> 411)
+for (const r of other) if (!r.cwg_slug) recs.push({ ...r, area: r.mall ? areaOfMall(r.mall) : 'postcode sector ' + (sector(r.postcode) || 'unknown'), fine: r.kind });
 
 // 3. postcode -> mall from the whole CWG list (the parsed address of a web branch places it in a mall)
 const pcMall = {};

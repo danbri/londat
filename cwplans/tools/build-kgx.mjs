@@ -87,7 +87,11 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-buildings', 'registry
 
 // version 4 (2026-10-21): the placement of each occupant link too (cwk:placedBy key, cwk:placement precision,
 // cwk:placementConfidence, cwk:pointInPlace, cwk:placementFault; the F4/F7 rule of registry-placement.mjs)
-Object.assign(versions, await flow.run({ ...LIFT('lift-registry-occupants', 'registry/buildings.json occupants -> schema.org LocalBusiness/Store/FoodEstablishment: role, level, mall, hours, links to the building, OSM, CWG, brand, and the placement of the link (key, precision, confidence, point outline)'), version: 4 }, [regF], null, async () => {
+// version 5 (2026-10-21): an occupant made by the branch-key rule (registry-branch-key.mjs, F46/F20) keeps every source
+// record: cwk:branchKey, cwk:mergeConfidence, cwk:mergeRule, cwk:mergeEvidence, and one cwk:sourceRecord node per
+// merged record (source kind, name, role, the building it was placed in, its OSM, FSA and CWG pages as s:sameAs, its
+// register ids); the FSA page and second CWG pages of every occupant as s:sameAs
+Object.assign(versions, await flow.run({ ...LIFT('lift-registry-occupants', 'registry/buildings.json occupants -> schema.org LocalBusiness/Store/FoodEstablishment: role, level, mall, hours, links to the building, OSM, CWG, FSA, brand, the placement of the link (key, precision, confidence, point outline), and for a merged occupant its branch key, merge confidence and every source record'), version: 5 }, [regF], null, async () => {
   const g = G();
   for (const b of B()) (b.occupants || []).forEach((o, i) => {
     const s = bIri(b.id, 'occupant', `${slug(o.name)}-${sha(JSON.stringify([o.name, o.osm, o.source, i]))}`);
@@ -102,6 +106,24 @@ Object.assign(versions, await flow.run({ ...LIFT('lift-registry-occupants', 'reg
     g.lit(s, iri('cwk', 'odsCode'), o.ods_code); g.lit(s, iri('cwk', 'cqcLocationId'), o.cqc_location_id); g.lit(s, iri('s', 'servesCuisine'), o.cuisine);
     g.lit(s, iri('cwk', 'placedBy'), o.placed_by); g.lit(s, iri('cwk', 'placement'), o.placed); g.lit(s, iri('cwk', 'placementConfidence'), o.placed_confidence);
     g.lit(s, iri('cwk', 'placementFault'), o.placement_fault); if (o.point_in) g.add(s, iri('cwk', 'pointInPlace'), bIri(o.point_in));
+    const pages = x => [x.osm ? 'https://www.openstreetmap.org/' + x.osm : null, x.fhrs_id ? 'https://ratings.food.gov.uk/business/' + x.fhrs_id : null,
+      ...[x.cwg_url, ...(x.cwg_also || [])].filter(Boolean).map(u => u.replace(/\/?$/, '/') + '#entity')].filter(Boolean);
+    for (const u of pages(o)) g.add(s, iri('s', 'sameAs'), u);
+    if (o.merged_from?.length) {
+      g.lit(s, iri('cwk', 'branchKey'), o.branch_key); g.lit(s, iri('cwk', 'mergeConfidence'), o.merge_confidence); g.lit(s, iri('cwk', 'mergeRule'), o.merge_rule);
+      for (const e of o.merge_evidence || []) g.lit(s, iri('cwk', 'mergeEvidence'), e);
+      // the primary record: only the identifiers of its own source (the occupant also holds fields taken from the others)
+      const ps = o.primary_source || '', mine = (re, f) => re.test(ps) ? o[f] : null;
+      const primary = { source: ps, name: o.name, role: o.role, building: b.id, placed_by: o.placed_by, placed: o.placed, osm: mine(/^osm/, 'osm'), fhrs_id: mine(/^fsa/, 'fhrs_id'),
+        cwg_url: mine(/cwg/, 'cwg_url'), ods_code: mine(/^ods/, 'ods_code'), cqc_location_id: mine(/^cqc/, 'cqc_location_id'), wikidata: mine(/^wikidata/, 'wikidata') };
+      for (const [k, x] of [primary, ...o.merged_from].entries()) {
+        const r = bIri(b.id, 'occupant', `${slug(o.name)}-${sha(JSON.stringify([o.name, o.osm, o.source, i]))}`, 'record', k);
+        g.add(s, iri('cwk', 'sourceRecord'), r); g.add(r, TYPE, iri('cwk', 'SourceRecord')); g.lit(r, iri('cwk', 'sourceKind'), x.source); g.lit(r, iri('s', 'name'), x.name);
+        g.lit(r, iri('cwk', 'role'), x.role); if (x.building) g.add(r, iri('cwk', 'placedInBuilding'), bIri(x.building)); g.lit(r, iri('cwk', 'placedBy'), x.placed_by || x.placed);
+        for (const u of pages(x)) g.add(r, iri('s', 'sameAs'), u);
+        g.lit(r, iri('cwk', 'odsCode'), x.ods_code); g.lit(r, iri('cwk', 'cqcLocationId'), x.cqc_location_id); if (x.wikidata) g.add(r, iri('owl', 'sameAs'), NS.wd + x.wikidata);
+      }
+    }
   });
   return { occupants: { quads: g.quads, about: { title: 'Occupants of the registry buildings: shops, food and drink, services, offices, with role, level, opening hours and links', licence: 'joined from OSM (ODbL), FSA ratings (OGL), Canary Wharf Group directory (crawl rule, scoping), brand and register sources named per occupant in the registry', osm: true } } };
 }));
