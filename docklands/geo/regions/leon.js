@@ -4,7 +4,7 @@
 // (ground about 838 m above sea level plus a geoid height of about 52 m; stated, +-10 m): replace at step 5.
 import ghsl from '../adapters/world-ghsl.js';
 import { overture, overtureIgnFloors, msBuildings } from '../adapters/world-buildings.js';
-import { worldcover, overtureOuter } from '../adapters/world-surround.js';
+import { worldcover, overtureOuter, ignGeometry, msGeometry } from '../adapters/world-surround.js';
 
 export default {
   id: 'leon',
@@ -27,7 +27,9 @@ export default {
   // "places, city and surroundings by level of detail"). 'overture-ign-floors' in heights is the switch of the IGN floors.
   place: { size_m: 2000, level: 15, dem: 'es-ign', heights: ['es-catastro', 'overture-ign-floors', 'world-overture', 'world-ms-buildings', 'world-ghsl'], names: ['name', 'name:es'], label: 'Plaza Mayor, León',
     city: { bbox: [-5.634, 42.564, -5.536, 42.636] },
-    surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer' },
+    surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer',
+      // extra building geometry classes of the city ring, each removable by deleting its id here (then rebuild)
+      geometry: ['overture-ign-geometry', 'overture-ms-geometry'] },
     search: ['Plaza Mayor', 'Casco Histórico', 'León'],
     roof_rule: { shape: 'hipped', pitch_deg: 28, kinds: ['yes', 'house', 'residential', 'apartments', 'detached', 'semidetached_house', 'terrace', 'school', 'retail', 'commercial', 'office', 'public', 'civic', 'hotel', 'church', 'chapel', 'convent', 'monastery', 'garage'], min_rect: 0.8, max_area_m2: 1500, max_wall_m: 24 } },
   services: { weatherPoint: { lon: -5.56654, lat: 42.59732 }, aircraft: { lon: -5.56654, lat: 42.59732, nm: 25 }, metar: 'LELN' },
@@ -49,6 +51,6 @@ export default {
       buildingHeights: { kind: 'inspire-bu-parts', source: 'es-catastro-inspire-bu', url: 'https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip',
         member: /buildingpart\.gml$/.source, proj4: '+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs', storey_m: 3,
         credit: 'Heights computed from the number of floors of the Dirección General del Catastro INSPIRE building parts (transformed data; the original data are not published)' } },
-    overture, overtureIgnFloors, msBuildings, ghsl, worldcover, overtureOuter,
+    overture, overtureIgnFloors, msBuildings, ghsl, worldcover, overtureOuter, ignGeometry, msGeometry,
   ],
 };

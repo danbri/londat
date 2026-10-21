@@ -76,6 +76,7 @@ function parseGlb(ab) {
       out.push(prim); prev = prim;
     }
   }
+  out.extras = json.extras || null;
   return out;
 }
 
@@ -193,7 +194,7 @@ export async function attachPlaces(G, H, { scene, U }) {
       const prims = parseGlb(ab);
       for (const q of prims) if (q.img) q.bmp = await createImageBitmap(q.img).catch(() => null);
       if (n.state !== 'loading') { for (const q of prims) q.bmp?.close?.(); return; }
-      n.prims = prims; n.state = 'decoded'; ready.push(n);
+      n.prims = prims; n.meta = prims.extras?.blocks || null; n.state = 'decoded'; ready.push(n);
     } catch (e) { console.warn('places: tile', n.uri, e); n.state = 'failed'; }
     finally { inFlight--; G.dirty = true; H.draw(); }   // a frame to activate it (the page's loop rests when nothing moves)
   }
@@ -453,28 +454,41 @@ export async function attachPlaces(G, H, { scene, U }) {
       const r = { place: p.id, name: p.name, buildings_in_view: n, named_in_view: named.length, nearest_named: nn[0] ? { name: nameText(nn[0].b.name, nn[0].b.name_alt), osm_id: nn[0].b.osm_id, dist_m: Math.round(nn[0].d), height_m: nn[0].b.height_m } : null,
         tallest_named: tall ? { name: nameText(tall.name, tall.name_alt), height_m: tall.height_m } : null, local_time: t ? `${t} (${p.timeZone})` : null, credit: p.credit, tiles_drawn: st?.tiers };
       if (p.sur) { const T = new Map((p.sur.tiles || []).map(x => [x[0], x])), fi = k => p.sur.tiles_fields.indexOf(k), rivers = new Set(); let roadsM = 0, railM = 0, blocks = 0;
+        const byCls = {}; for (const nd of lastDrawn) if (nd.p === p && nd.meta) for (const L of [nd.meta.boxes, nd.meta.outlines]) for (const c of L.c) { const k = nd.meta.classes[c]; byCls[k] = (byCls[k] || 0) + 1; }
         for (const nd of lastDrawn) { if (nd.p !== p) continue; const x = T.get(nd.key); if (!x) continue; roadsM += x[fi('roads_m')]; railM += x[fi('rail_m')]; blocks += x[fi('blocks')]; for (const rv of x[fi('rivers')] || []) rivers.add(rv); }
         const places = []; for (const x of rowsOf(p.sur, 'labels')) { if (x.kind === 'peak' || x.kind === 'hamlet') continue; const s = G.project(geodeticToEcef(x.lon, x.lat, gridAt(p.sur.ground.h, p.sur.ground.grid, p.sur.ground.area, x.lon, x.lat) + p.geoid)); if (s && s[0] >= 0 && s[1] >= 0 && s[0] <= innerWidth && s[1] <= innerHeight) places.push(x); }
         places.sort((a, b) => (a.rank - b.rank) || ((b.population || 0) - (a.population || 0)));
         const rank = new Map((p.sur.rivers || []).map((x, i) => [x[0], i]));
-        r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
+        r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, city_blocks_by_source: Object.fromEntries(Object.entries(byCls).map(([k, v]) => [p.sur.geometry_classes?.[k]?.label || k, v])), places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
       r.text = `${p.label || p.name}: ${n.toLocaleString(p.locale)} buildings in view (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
-        + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
+        + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
       res.push(r); }
     return res;
   };
   // a tap on a building of the core: its card (OSM id, name, height and its source); null when the tap hits none
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
   G.placeTap = function (x, y, cam) {
-    const meshes = []; for (const n of lastDrawn) for (const m of n.meshes) if (m.userData.kind === 'buildings') meshes.push(m); if (!meshes.length) return null;
+    const meshes = []; for (const n of lastDrawn) for (const m of n.meshes) if (m.userData.kind === 'buildings' || m.userData.kind === 'blocks') meshes.push(m); if (!meshes.length) return null;
     ndc.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ndc, cam);
     const hit = ray.intersectObjects(meshes, false)[0]; if (!hit) return null;
-    const p = P.find(q => q.id === hit.object.userData.place), fa = hit.object.geometry.attributes._feature_id_0, b = fa && p.feats.byIndex.get(Math.round(fa.getX(hit.face.a)));
-    if (!b) return null;
+    const p = P.find(q => q.id === hit.object.userData.place);
     const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const creditHtml = () => `<p class="small">${esc(p.credit).replace('© OpenStreetMap contributors', '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>')}</p>`;
+    if (hit.object.userData.kind === 'blocks') {   // a city block: its geometry class (OSM, IGN, Microsoft), its height and the height's source
+      const M = hit.object.userData.node?.meta; if (!M) return null; let k = -1, L = null;
+      if (hit.object.isInstancedMesh) { L = M.boxes; k = hit.instanceId; } else { L = M.outlines; const f = hit.faceIndex; k = L.tri_end.findIndex(e => e > f); }
+      if (!L || k == null || k < 0 || k >= L.c.length) return null;
+      const cls = M.classes[L.c[k]], gc = p.sur?.geometry_classes?.[cls] || { label: cls };
+      const b = { kind: 'city block', geometry_class: cls, geometry_source: gc.label, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]] };
+      const rows = [['Kind', 'City block (simplified, flat top)'], ['Footprint from', gc.label], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
+      H.showCard(`<h2>City block</h2><p class="small">${esc(p.name)} · ${esc(gc.label)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
+      return b;
+    }
+    const fa = hit.object.geometry.attributes._feature_id_0, b = fa && p.feats.byIndex.get(Math.round(fa.getX(hit.face.a)));
+    if (!b) return null;
     const osm = `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}`;
     const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
-    H.showCard(`<h2>${esc(b.name || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div><p class="small">${esc(p.credit).replace('© OpenStreetMap contributors', '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>')}</p>`);
+    H.showCard(`<h2>${esc(b.name || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
     return b;
   };
   return P;

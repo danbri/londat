@@ -3372,6 +3372,27 @@
       "attribution": "© OpenStreetMap contributors, © Overture Maps Foundation",
       "url": "https://docs.overturemaps.org/attribution/",
       "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored)."
+    },
+    "overture-ign-geometry": {
+      "name": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Instituto Geográfico Nacional (España)\" (provider ign_es), over the León city box",
+      "publisher": "Instituto Geográfico Nacional (España), via the Overture Maps Foundation buildings theme",
+      "licence": "not stated: the Overture sources entry of these records has an empty licence field (IGN data are generally CC BY 4.0; not confirmed for these records)",
+      "licence_url": "https://docs.overturemaps.org/attribution/",
+      "licence_class": "review",
+      "attribution": "Some city buildings: Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review)",
+      "url": "https://docs.overturemaps.org/attribution/",
+      "review": "Owner, 2026-10-20: \"substantially more city\"; on the IGN data: \"use the data but keep it distinct and easy to remove if requested\". Drawn as blocks of the León city ring only where OSM has no building, as its own geometry class \"ign\" (adapter overture-ign-geometry, docklands/geo/adapters/world-surround.js). Remove: delete the id in place.surround.geometry of docklands/geo/regions/leon.js and rebuild. Ask IGN / Overture for the licence of these records.",
+      "note": "Read from the city buildings answer of the Overture query (raw, not committed); only the transformed blocks (oriented boxes or simplified outlines, flat tops) are in the tiles."
+    },
+    "overture-ms-geometry": {
+      "name": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Microsoft ML Buildings\", over the city boxes of León and Sarajevo",
+      "publisher": "Microsoft (Global ML Building Footprints), via the Overture Maps Foundation buildings theme",
+      "licence": "ODbL 1.0",
+      "licence_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "licence_class": "share-alike",
+      "attribution": "Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)",
+      "url": "https://docs.overturemaps.org/attribution/",
+      "note": "Owner, 2026-10-20: \"Use ms/overture\" (CLAUDE.md, data policy). Drawn as blocks of the city ring only where OSM has no building, as its own geometry class \"ms\" (adapter overture-ms-geometry). Remove: delete the id in place.surround.geometry of the region config and rebuild. Raw answer not committed."
     }
   },
   "files": [
@@ -13663,7 +13684,9 @@
         "ms-buildings",
         "es-catastro-inspire-bu",
         "overture-ign-floors",
-        "own"
+        "own",
+        "overture-ms-geometry",
+        "overture-ign-geometry"
       ],
       "osm": {
         "use": "derived",
@@ -13678,7 +13701,7 @@
     },
     {
       "path": "docklands/data/places/leon/tiles/*.glb",
-      "what": "Casco Histórico, León tiles (glTF 2.0 binary). Core, 15 level-15 cells: ground heightfield (ign-mdt05, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + eaves height, with sloped roofs (gabled, hipped, pyramidal, skillion, dome) from OSM roof:shape or the region roof rule, else flat, vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features); roofs: OSM roof:shape {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, region roof rule {\"hipped\": 2635}, flat 1538 City and surroundings (place-lod, surroundings: 289 tiles, 8.70 MB; city: 90 tiles, 4.63 MB): a terrain grid (16 to 32 cells by level, normals from the DEM, skirts; KHR_mesh_quantization int16 positions, int8 normals, uint16 texture coordinates; the grid as a triangle strip) of the surroundings DEM (its outer 8 km eased to a 10 km box mean) with a 256 px JPEG texture painted from ESA WorldCover land cover, Overture water, rivers, roads by class and railways (OSM-derived), and the city building footprints; in the city box, OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances of one unit box, else simplified outlines; flat tops; heights by the place-heights order)",
+      "what": "Casco Histórico, León tiles (glTF 2.0 binary). Core, 15 level-15 cells: ground heightfield (ign-mdt05, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + eaves height, with sloped roofs (gabled, hipped, pyramidal, skillion, dome) from OSM roof:shape or the region roof rule, else flat, vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features); roofs: OSM roof:shape {\"skillion\": 14, \"pyramidal\": 5, \"gabled\": 19, \"hipped\": 2}, region roof rule {\"hipped\": 2635}, flat 1538 City and surroundings (place-lod, surroundings: 289 tiles, 8.70 MB; city: 90 tiles, 4.63 MB): a terrain grid (16 to 32 cells by level, normals from the DEM, skirts; KHR_mesh_quantization int16 positions, int8 normals, uint16 texture coordinates; the grid as a triangle strip) of the surroundings DEM (its outer 8 km eased to a 10 km box mean) with a 256 px JPEG texture painted from ESA WorldCover land cover, Overture water, rivers, roads by class and railways (OSM-derived), and the city building footprints; in the city box, OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances of one unit box, else simplified outlines; flat tops; heights by the place-heights order); since 2026-10-21 the city blocks also from IGN España and Microsoft ML Buildings footprints (via Overture) where OSM has no building, each its own geometry class (switch in place.surround.geometry); glb extras.blocks: per block its class, height and height source (for the block card)",
       "sources": [
         "osm",
         "ign-mdt05",
@@ -13691,7 +13714,9 @@
         "ms-buildings",
         "es-catastro-inspire-bu",
         "overture-ign-floors",
-        "own"
+        "own",
+        "overture-ms-geometry",
+        "overture-ign-geometry"
       ],
       "osm": {
         "use": "derived",
@@ -13744,7 +13769,9 @@
         "ms-buildings",
         "es-catastro-inspire-bu",
         "overture-ign-floors",
-        "own"
+        "own",
+        "overture-ms-geometry",
+        "overture-ign-geometry"
       ],
       "osm": {
         "use": "counts",
@@ -13853,7 +13880,9 @@
         "overture-transportation",
         "overture-base",
         "overture-divisions",
-        "overture-ign-floors"
+        "overture-ign-floors",
+        "overture-ign-geometry",
+        "overture-ms-geometry"
       ],
       "osm": {
         "use": "counts",
@@ -13878,7 +13907,8 @@
         "ghsl-built-h",
         "overture-buildings",
         "ms-buildings",
-        "own"
+        "own",
+        "overture-ms-geometry"
       ],
       "osm": {
         "use": "derived",
@@ -13893,7 +13923,7 @@
     },
     {
       "path": "docklands/data/places/sarajevo/tiles/*.glb",
-      "what": "Stari Grad, Sarajevo tiles (glTF 2.0 binary). Core, 15 level-15 cells: ground heightfield (copernicus-glo30, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + eaves height, with sloped roofs (gabled, hipped, pyramidal, skillion, dome) from OSM roof:shape or the region roof rule, else flat, vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features); roofs: OSM roof:shape {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, region roof rule {\"hipped\": 6817}, flat 478 City and surroundings (place-lod, surroundings: 267 tiles, 7.31 MB; city: 132 tiles, 7.93 MB): a terrain grid (16 to 32 cells by level, normals from the DEM, skirts; KHR_mesh_quantization int16 positions, int8 normals, uint16 texture coordinates; the grid as a triangle strip) of the surroundings DEM (its outer 8 km eased to a 10 km box mean) with a 256 px JPEG texture painted from ESA WorldCover land cover, Overture water, rivers, roads by class and railways (OSM-derived), and the city building footprints; in the city box, OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances of one unit box, else simplified outlines; flat tops; heights by the place-heights order)",
+      "what": "Stari Grad, Sarajevo tiles (glTF 2.0 binary). Core, 15 level-15 cells: ground heightfield (copernicus-glo30, 32 x 32 cells, outer skirts) with a 512 px JPEG texture drawn from OSM water, green, squares, streets, rail and footprints; OSM buildings and building parts extruded from the lowest ground to mean ground + eaves height, with sloped roofs (gabled, hipped, pyramidal, skillion, dome) from OSM roof:shape or the region roof rule, else flat, vertex colours (OSM building:colour / roof:colour or defaults), _FEATURE_ID_0 = row of features.json (EXT_mesh_features); roofs: OSM roof:shape {\"pyramidal\": 24, \"gabled\": 38, \"hipped\": 4, \"skillion\": 44, \"dome\": 27}, region roof rule {\"hipped\": 6817}, flat 478 City and surroundings (place-lod, surroundings: 267 tiles, 7.31 MB; city: 132 tiles, 7.93 MB): a terrain grid (16 to 32 cells by level, normals from the DEM, skirts; KHR_mesh_quantization int16 positions, int8 normals, uint16 texture coordinates; the grid as a triangle strip) of the surroundings DEM (its outer 8 km eased to a 10 km box mean) with a 256 px JPEG texture painted from ESA WorldCover land cover, Overture water, rivers, roads by class and railways (OSM-derived), and the city building footprints; in the city box, OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances of one unit box, else simplified outlines; flat tops; heights by the place-heights order); since 2026-10-21 the city blocks also from Microsoft ML Buildings footprints (via Overture) where OSM has no building, each its own geometry class (switch in place.surround.geometry); glb extras.blocks: per block its class, height and height source (for the block card)",
       "sources": [
         "osm",
         "copernicus-glo30",
@@ -13904,7 +13934,8 @@
         "ghsl-built-h",
         "overture-buildings",
         "ms-buildings",
-        "own"
+        "own",
+        "overture-ms-geometry"
       ],
       "osm": {
         "use": "derived",
@@ -13952,7 +13983,8 @@
         "ghsl-built-h",
         "overture-buildings",
         "ms-buildings",
-        "own"
+        "own",
+        "overture-ms-geometry"
       ],
       "osm": {
         "use": "counts",
@@ -14013,7 +14045,7 @@
     },
     {
       "path": "docklands/data/places/leon/surround.json",
-      "what": "Casco Histórico, León: the text and machine interface of the city and the surroundings (format place-surround-1): the extent, a 129 x 129 ground grid (DEM datum) for the globe's ground sampler, 1708 place names (towns, villages, hamlets, peaks with heights; Cyrillic beside the Latin where Overture has it), 87 rivers and canals and 400 named roads with lengths, the tiers (tiles, bytes, triangles, blocks by level) and per-tile counts (blocks, road, rail and river metres, river names)",
+      "what": "Casco Histórico, León: the text and machine interface of the city and the surroundings (format place-surround-1): the extent, a 129 x 129 ground grid (DEM datum) for the globe's ground sampler, 1708 place names (towns, villages, hamlets, peaks with heights; Cyrillic beside the Latin where Overture has it), 87 rivers and canals and 400 named roads with lengths, the tiers (tiles, bytes, triangles, blocks by level) and per-tile counts (blocks, road, rail and river metres, river names); the geometry classes of the city blocks (label, register source, switch)",
       "sources": [
         "osm",
         "ign-mdt05",
@@ -14035,7 +14067,7 @@
     },
     {
       "path": "docklands/data/places/sarajevo/surround.json",
-      "what": "Stari Grad, Sarajevo: the text and machine interface of the city and the surroundings (format place-surround-1): the extent, a 129 x 129 ground grid (DEM datum) for the globe's ground sampler, 2506 place names (towns, villages, hamlets, peaks with heights; Cyrillic beside the Latin where Overture has it), 54 rivers and canals and 400 named roads with lengths, the tiers (tiles, bytes, triangles, blocks by level) and per-tile counts (blocks, road, rail and river metres, river names)",
+      "what": "Stari Grad, Sarajevo: the text and machine interface of the city and the surroundings (format place-surround-1): the extent, a 129 x 129 ground grid (DEM datum) for the globe's ground sampler, 2506 place names (towns, villages, hamlets, peaks with heights; Cyrillic beside the Latin where Overture has it), 54 rivers and canals and 400 named roads with lengths, the tiers (tiles, bytes, triangles, blocks by level) and per-tile counts (blocks, road, rail and river metres, river names); the geometry classes of the city blocks (label, register source, switch)",
       "sources": [
         "osm",
         "copernicus-glo30",

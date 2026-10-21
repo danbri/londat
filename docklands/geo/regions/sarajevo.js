@@ -6,7 +6,7 @@
 // Locales: bs (Bosnian, Latin), hr, sr-Latn and sr-Cyrl (Serbian in Cyrillic: the non-Latin script case of KR1.2 / KR1.3).
 import ghsl from '../adapters/world-ghsl.js';
 import { overture, msBuildings } from '../adapters/world-buildings.js';
-import { worldcover, overtureOuter } from '../adapters/world-surround.js';
+import { worldcover, overtureOuter, ignGeometry, msGeometry } from '../adapters/world-surround.js';
 
 export default {
   id: 'sarajevo',
@@ -26,7 +26,9 @@ export default {
     // city: the valley from Ilidža to Baščaršija, drawn as blocks; surround: terrain, land cover, roads, rail, water, place
     // names and peaks to about 35 km (place-lod)
     city: { bbox: [18.285, 43.815, 18.46, 43.875] },
-    surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer' }, search: ['Vijećnica', 'Вијећница', 'Stari Grad', 'Baščaršija', 'Sarajevo'],
+    surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer',
+      // extra building geometry classes of the city ring, each removable by deleting its id here (then rebuild)
+      geometry: ['overture-ms-geometry'] }, search: ['Vijećnica', 'Вијећница', 'Stari Grad', 'Baščaršija', 'Sarajevo'],
     roof_rule: { shape: 'hipped', pitch_deg: 32, kinds: ['yes', 'house', 'residential', 'apartments', 'detached', 'semidetached_house', 'terrace', 'school', 'retail', 'commercial', 'office', 'public', 'civic', 'hotel', 'church', 'chapel', 'mosque', 'garage'], min_rect: 0.8, max_area_m2: 1500, max_wall_m: 24 } },
   services: { weatherPoint: { lon: 18.43335, lat: 43.85917 }, aircraft: { lon: 18.43335, lat: 43.85917, nm: 25 }, metar: 'LQSA' },
   adapters: [
@@ -40,6 +42,6 @@ export default {
       licence: 'unknown (a catalogue entry for the FGU geoportal says "No License Provided")', licenceClass: 'waived-prototype',
       waiver: 'owner, 2026-10-11: "Waive this, put it against my name to pursue license while in prototype phase." Usable during the prototyping phase; the owner (danbri) pursues a licence; re-check before the phase ends (issue #9)',
       fallback: 'world-base' },
-    overture, msBuildings, ghsl, worldcover, overtureOuter,
+    overture, msBuildings, ghsl, worldcover, overtureOuter, msGeometry,
   ],
 };

@@ -3145,6 +3145,23 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,30000&ht=0,45 (S
   good: against the Catastro parts inside each record (area-weighted median), 4,490 records: same floors 89.9 %,
   within one floor 97.9 %, mean difference +0.05, mean absolute 0.15, max 9; against OSM building:levels only 1
   record overlaps. Their geometry could fill León's city (10,858 buildings) if the owner agrees.
+- **Extra geometry classes (2026-10-21).** Coordinator follow-up on the owner's "substantially more city", "Use
+  ms/overture" and, for IGN, "use the data but keep it distinct and easy to remove if requested": adapters
+  `overture-ign-geometry` (León) and `overture-ms-geometry` (both) in `docklands/geo/adapters/world-surround.js`, switched
+  on by their ids in `place.surround.geometry`; each a class of its own (`cls` ign / ms; register sources of the same
+  names; counts in log.json `city_geometry` and the README table "City buildings by geometry class"). OSM first: a
+  footprint is dropped when its centroid is inside an OSM outline, an OSM centroid is inside it, or a point pulled 20 %
+  toward its centre is inside the other (plain vertex tests dropped touching neighbours). Overture had already
+  conflated them: León dropped IGN 6 and Microsoft 2, Sarajevo Microsoft 1. Drawn buildings: León OSM 11,201 + IGN
+  10,852 + Microsoft 1,907 (23,960, was 11,201); Sarajevo OSM 48,736 + Microsoft 8,944 (57,680). Blocks in tiles (levels
+  13 to 15, buildings >= 40 m2): León 13,795 -> 23,575 (IGN 9,144, Microsoft 636), Sarajevo 51,776 -> 55,627 (Microsoft
+  3,851: most Microsoft footprints there are small). Heights by the same order: León IGN blocks take their own IGN
+  floors (4,927; the IGN-floors class now gives heights, through the record's own footprint) or the Catastro floors
+  (4,524); Microsoft blocks mostly GHSL. Sizes: León 20.9 -> 21.8 MB, Sarajevo 22.8 -> 23.5 MB. The block card (tap):
+  "City block", "Footprint from" the class label, height and its source, from glb `extras.blocks` (per block: class,
+  height in dm, height source; boxes in instance order, outlines with the end of their triangles; an InstancedMesh hit
+  gives `instanceId`, a merged mesh `faceIndex`). describeView counts the drawn blocks by source. place-check taps a
+  city block (León San Andrés, Sarajevo Novi Grad). The tap loop must try several points: label cards answer first.
 - **Traps.** Another agent's `http.server` held port 8190 and served its own worktree: the first baseline measured the
   wrong code. Check with `curl http://127.0.0.1:<port>/docklands/globe/places.js | head` and use your own port. The
   baseline of main was served from a `git archive origin/main docklands cwplans/docklands/data/places` copy with

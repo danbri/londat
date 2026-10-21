@@ -24,7 +24,10 @@ const polys = g => g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPol
 const altName = (r, keys) => { const c = r.names_common || {}; for (const k of keys) if (c[k] && c[k] !== r.names_primary) return c[k]; return null; };
 // the part of a segment that is a tunnel or a bridge: road_flags [{values, between}] (between null = the whole segment)
 const flagWhole = (fl, v) => (fl || []).some(f => (f.values || []).includes(v) && (!f.between || (f.between[0] <= 0.01 && f.between[1] >= 0.99)));
+const cen = r => { let x = 0, y = 0; const n = r.length - 1; for (let i = 0; i < n; i++) { x += r[i][0]; y += r[i][1]; } return [x / n, y / n]; };
+const inRing = (p, r) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const a = r[i], b = r[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
 export function selectOuter(raw, opt) {
+  const extra = [];
   const { licences, ignDataset, altKeys = [] } = opt, out = { roads: [], water_lines: [], water_areas: [], labels: [], buildings: [], fp_overture: [], ign: [], counts: {} };
   const C = out.counts, inc = (k, n = 1) => { C[k] = (C[k] || 0) + n; };
   for (const r of [...(raw.roads?.rows || []), ...(raw.streets?.rows || [])]) {
@@ -55,13 +58,15 @@ export function selectOuter(raw, opt) {
   for (const r of raw.buildings?.rows || []) {
     const P = polys(r.geometry); if (!P.length) continue; const rings = P[0].map(ring => ring.map(([x, y]) => [r7(x), r7(y)]));
     const gsrc = (r.sources.find(q => !q.property) || r.sources[0] || {}).dataset;
+    const xg = (opt.extraGeometry || []).find(g => g.dataset === gsrc);
     if ((opt.geometrySources || ['OpenStreetMap']).includes(gsrc)) {
-      const b = { id: r.id, src: gsrc, osm: (r.sources.find(q => !q.property) || {}).record_id || null, kind: r.class || 'yes', rings, part: false };
+      const b = { id: r.id, src: gsrc, cls: 'osm', osm: (r.sources.find(q => !q.property) || {}).record_id || null, kind: r.class || 'yes', rings, part: false };
       if (r.height != null && srcOf(r, 'height')[0] === 'OpenStreetMap') b.height = r.height;
       if (r.num_floors != null && srcOf(r, 'num_floors')[0] === 'OpenStreetMap') b.levels = r.num_floors;
       if (r.min_height != null) b.min_height = r.min_height;
       out.buildings.push(b); inc('buildings_osm');
-    } else inc(`buildings not drawn (geometry from ${gsrc})`);
+    } else if (xg) { extra.push({ id: r.id, src: gsrc, cls: xg.cls, kind: r.class || 'yes', rings, part: false }); }
+    else inc(`buildings not drawn (geometry from ${gsrc})`);
     // height sources from the record's own values (whatever its geometry source), as world-overture in the core
     const o = { id: r.id, ring: rings[0] }; let any = false;
     for (const [k, prop] of [['height', 'height'], ['floors', 'num_floors']]) { const v = r[prop]; if (v == null) continue; const sv = srcOf(r, prop);
@@ -70,6 +75,20 @@ export function selectOuter(raw, opt) {
       if (!licences.includes(sv[1])) { inc(`${prop} from ${sv[0]} (licence "${sv[1]}") skipped`); continue; }
       o[k] = v; any = true; }
     if (any) out.fp_overture.push(o);
+  }
+  // the extra geometry classes (region switch surround.geometry): drawn only where OSM has no building. A footprint is
+  // dropped when its centroid or any of its points is inside an OSM outline, or an OSM centroid is inside it (OSM first)
+  if (extra.length) {
+    const G = new Map(), gk = (x, y) => Math.floor(x / 0.0005) + ',' + Math.floor(y / 0.0005);
+    const sh = (p, c) => [p[0] + (c[0] - p[0]) * 0.2, p[1] + (c[1] - p[1]) * 0.2];   // a point pulled 20 % to the centre: touching neighbours are not overlaps
+    const bbox = r => { let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity; for (const [x, y] of r) { w = Math.min(w, x); e = Math.max(e, x); s = Math.min(s, y); n = Math.max(n, y); } return [w, s, e, n]; };
+    for (const b of out.buildings) { const r = b.rings[0], c = cen(r), bb = bbox(r); const o = { r, c, bb }; for (let i = Math.floor(bb[0] / 0.0005); i <= Math.floor(bb[2] / 0.0005); i++) for (let j = Math.floor(bb[1] / 0.0005); j <= Math.floor(bb[3] / 0.0005); j++) { const k = i + ',' + j; (G.get(k) || G.set(k, []).get(k)).push(o); } }
+    for (const x of extra) { const r = x.rings[0], c = cen(r), bb = bbox(r), seen = new Set(); let hit = false;
+      for (let i = Math.floor(bb[0] / 0.0005); i <= Math.floor(bb[2] / 0.0005) && !hit; i++) for (let j = Math.floor(bb[1] / 0.0005); j <= Math.floor(bb[3] / 0.0005) && !hit; j++) for (const o of G.get(i + ',' + j) || []) {
+        if (seen.has(o)) continue; seen.add(o); if (o.bb[0] > bb[2] || o.bb[2] < bb[0] || o.bb[1] > bb[3] || o.bb[3] < bb[1]) continue;
+        if (inRing(c, o.r) || inRing(o.c, r) || r.some(p => inRing(sh(p, c), o.r)) || o.r.some(p => inRing(sh(p, o.c), r))) { hit = true; break; } }
+      if (hit) { inc(`buildings ${x.cls} dropped (overlap an OSM building)`); continue; }
+      out.buildings.push(x); inc(`buildings_${x.cls}`); }
   }
   out.buildings.sort((a, b) => a.id.localeCompare(b.id));
   return out;
@@ -187,6 +206,10 @@ export async function outerTile(opt) {
   const jpg = await cv.encode('jpeg', P.jpeg);
   // city blocks: the buildings whose centroid is in this cell (level >= block_level; at the first block level only the
   // large or tall ones, as oriented boxes), simplified outlines, flat tops, base at the lowest ground of the outline
+  // block metadata (glb extras, for the card): geometry class, height (dm) and height source of each box (instance order)
+  // and each outline (with the end of its triangles)
+  const CL = ['osm', 'ign', 'ms'], HS = [], hsi = k => { let i = HS.indexOf(k); if (i < 0) { HS.push(k); i = HS.length - 1; } return i; };
+  const meta = { boxes: { c: [], h: [], s: [] }, outlines: { c: [], h: [], s: [], tri_end: [] } }, byCls = {};
   const bp = [], bi = [], inst = { t: [], r: [], s: [] }; let btop = -Infinity;
   if (cityB && l >= P.block_level) {
     const all = l > P.block_level;
@@ -197,7 +220,8 @@ export async function outerTile(opt) {
       if (bx && (!all || A < P.outline_min_m2 || A / Math.abs(area2(bx)) >= P.box_fill)) xy = bx; else xy = simplify(xy0, P.simplify_m);
       if (!xy || xy.length < 3) continue; if (area2(xy) < 0) xy = xy.slice().reverse();
       const ll = xy.map(([x, y]) => [b.c[0] + x / mLon, b.c[1] + y / mLat]), gs = ll.map(([lo, la]) => demAt(lo, la)), g0 = Math.min(...gs), gm = gs.reduce((a, c) => a + c, 0) / gs.length, geoN = geoidAt(b.c[0], b.c[1]);
-      const z0 = g0 - 1 + geoN, z1 = gm + H.h + geoN; btop = Math.max(btop, z1 - h0); stats.blocks++;
+      const z0 = g0 - 1 + geoN, z1 = gm + H.h + geoN; btop = Math.max(btop, z1 - h0); stats.blocks++; const ci = Math.max(0, CL.indexOf(b.cls || 'osm')); byCls[CL[ci]] = (byCls[CL[ci]] || 0) + 1;
+      const M = xy === bx ? meta.boxes : meta.outlines; M.c.push(ci); M.h.push(Math.round(H.h * 10)); M.s.push(hsi(H.src));
       if (xy === bx) {   // one instance of the unit box (EXT_mesh_gpu_instancing): centre of the base, turn about up, size
         const f = bx.frame, cl = [b.c[0] + (f.cx * f.c - f.cy * f.s) / mLon, b.c[1] + (f.cx * f.s + f.cy * f.c) / mLat], t = Y(F.toEnu(cl[0], cl[1], z0)), th = Math.atan2(f.s, f.c);
         inst.t.push(...t); inst.r.push(0, Math.sin(th / 2), 0, Math.cos(th / 2)); inst.s.push(Math.max(0.5, f.len), z1 - z0, Math.max(0.5, f.wid)); continue; }
@@ -205,22 +229,24 @@ export async function outerTile(opt) {
       for (const q of ll) bp.push(...Y(F.toEnu(q[0], q[1], z0))); for (const q of ll) bp.push(...Y(F.toEnu(q[0], q[1], z1)));
       for (let q = 0; q < m; q++) { const q1 = (q + 1) % m; bi.push(v0 + q, v0 + q1, v0 + m + q, v0 + m + q, v0 + q1, v0 + m + q1); }
       const tri = earcut(xy.flat()); for (let q = 0; q < tri.length; q += 3) bi.push(v0 + m + tri[q], v0 + m + tri[q + 1], v0 + m + tri[q + 2]);
+      meta.outlines.tri_end.push(bi.length / 3);
     }
   }
   const prims = [{ name: 'ground', pos, uv, nrm, idx, strip, jpg }]; if (bi.length) prims.push({ name: 'blocks', pos: bp, idx: bi, colour: P.colours.block });
-  const bytes = writeGlb(prims, P.credit, inst.t.length ? { ...inst, colour: P.colours.block } : null);
+  const extras = stats.blocks ? { blocks: { classes: CL, height_sources: HS, ...meta, note: 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)' } } : null;
+  const bytes = writeGlb(prims, P.credit, inst.t.length ? { ...inst, colour: P.colours.block } : null, extras);
   const top = Math.max(zmax, isFinite(btop) ? btop + h0 : -Infinity);
-  return { bytes, F, h0, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(zmin - skirt), Math.ceil(top + 2)], stats: { key: cell.key, level: l, bytes: bytes.length, triangles: 2 * G * G + (idx.length + bi.length) / 3 + inst.t.length / 3 * 10, blocks: stats.blocks, boxes: inst.t.length / 3, roads_m: Math.round(stats.roads_m), rail_m: Math.round(stats.rail_m), river_m: Math.round(stats.river_m), rivers: [...stats.rivers].sort(), roads: [...stats.roads].sort().slice(0, 12) } };
+  return { bytes, F, h0, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(zmin - skirt), Math.ceil(top + 2)], stats: { key: cell.key, level: l, bytes: bytes.length, triangles: 2 * G * G + (idx.length + bi.length) / 3 + inst.t.length / 3 * 10, blocks: stats.blocks, blocks_by_class: byCls, boxes: inst.t.length / 3, roads_m: Math.round(stats.roads_m), rail_m: Math.round(stats.rail_m), river_m: Math.round(stats.river_m), rivers: [...stats.rivers].sort(), roads: [...stats.roads].sort().slice(0, 12) } };
 }
 
 // ---------- glTF writer with KHR_mesh_quantization: one node (translation + scale dequantize int16 positions)
-export function writeGlb(prims, copyright, inst = null) {
+export function writeGlb(prims, copyright, inst = null, extras = null) {
   let mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
   for (const p of prims) for (let i = 0; i < p.pos.length; i++) { mn[i % 3] = Math.min(mn[i % 3], p.pos[i]); mx[i % 3] = Math.max(mx[i % 3], p.pos[i]); }
   // one uniform scale (so that normals keep their direction under the node's dequantization transform in any viewer)
   const t = mn.map((v, i) => (v + mx[i]) / 2), s1 = Math.max(1e-3, ...mn.map((v, i) => (mx[i] - v) / 2 / 32767)), sc = [s1, s1, s1];
   const json = { asset: { version: '2.0', generator: 'cwplans build-place-tiles.mjs (place-lod)', copyright }, extensionsUsed: ['KHR_mesh_quantization'], extensionsRequired: ['KHR_mesh_quantization'],
-    scene: 0, scenes: [{ nodes: [0] }], nodes: [{ mesh: 0, translation: t, scale: sc }], meshes: [{ primitives: [] }], materials: [], buffers: [], bufferViews: [], accessors: [] };
+    ...(extras ? { extras } : {}), scene: 0, scenes: [{ nodes: [0] }], nodes: [{ mesh: 0, translation: t, scale: sc }], meshes: [{ primitives: [] }], materials: [], buffers: [], bufferViews: [], accessors: [] };
   const chunks = []; let off = 0;
   const view = (buf, target, stride) => { const pad = (4 - (buf.length % 4)) % 4; json.bufferViews.push({ buffer: 0, byteOffset: off, byteLength: buf.length, ...(stride ? { byteStride: stride } : {}), ...(target ? { target } : {}) }); chunks.push(buf, Buffer.alloc(pad)); off += buf.length + pad; return json.bufferViews.length - 1; };
   for (const p of prims) {

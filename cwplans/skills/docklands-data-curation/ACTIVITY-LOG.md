@@ -2827,3 +2827,22 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   ll=43.85917,18.43335.
 - Open: owner decision on IGN / Microsoft geometry for the city; implicit tiling; meshopt; the Docklands model build
   during a place fly-in (main.js); performance on a real iPhone (software rendering cannot show GPU cost).
+
+## 2026-10-21: places: IGN and Microsoft footprints in the city ring, each its own class (subagent)
+- Coordinator follow-up after the merge of a38f725b, within the owner's decisions of 2026-10-20 ("substantially more city";
+  "Use ms/overture"; IGN: "use the data but keep it distinct and easy to remove if requested"). Branch reset to origin/main.
+- Classes: osm (always), ign (León, adapter `overture-ign-geometry`, licence class review), ms (both, `overture-ms-geometry`,
+  ODbL). Switch: the id in `place.surround.geometry` of docklands/geo/regions/<id>.js, then rebuild. OSM first: overlaps
+  dropped (León IGN 6, Microsoft 2; Sarajevo Microsoft 1).
+- Counts (buildings drawn in the city ring, before -> after): León 11,201 -> 23,960 (OSM 11,201, IGN 10,852, Microsoft
+  1,907); Sarajevo 48,736 -> 57,680 (OSM 48,736, Microsoft 8,944). Blocks in tiles: León 13,795 -> 23,575; Sarajevo
+  51,776 -> 55,627. Heights by class in each README and in the F55 row.
+- Sizes: León 21.8 MB (city 4.63 -> 5.60), Sarajevo 23.5 MB (city 7.93 -> 8.57). 3d-tiles-validator 0 errors, 0 warnings.
+- Block card names the footprint source and the height source (glb extras.blocks); describeView counts blocks by source.
+- Operations: place-select-outer v2, place-city-heights v2, place-lod v2. Register sources overture-ign-geometry,
+  overture-ms-geometry.
+- Tests: npm test 77/77, npm run check OK, place-check León and Sarajevo 390 x 844 @2 all passed (new: a city block card),
+  globe-check 390 x 844 @2 all passed.
+- City views: https://danbri.github.io/londat/docklands/?ll=42.6085,-5.6105,900&ht=0,45 (San Andrés del Rabanedo),
+  https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,8000&ht=0,50 (León city),
+  https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,8000&ht=0,50 (Sarajevo city).

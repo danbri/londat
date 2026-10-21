@@ -42,3 +42,23 @@ export const overtureOuter = {
     credit: 'Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0)',
   },
 };
+// Extra building geometry for the city ring (owner, 2026-10-20: "substantially more city"; "Use ms/overture"; on the IGN
+// data in León: "use the data but keep it distinct and easy to remove if requested"). Each is its own geometry class
+// (own register source, own switch: its id in the region's place.surround.geometry, own counts in the README, named on
+// the block card). Drawn only where OSM has no building (OSM first: a footprint that overlaps an OSM outline is dropped).
+export const ignGeometry = {
+  id: 'overture-ign-geometry', area: 'Spain', status: 'in use behind the region switch (place.surround.geometry)',
+  about: 'Building footprints of Overture buildings records whose geometry source is "Instituto Geográfico Nacional (España)" (licence field empty in Overture)',
+  licence: 'not stated (empty licence field in the Overture sources entry); kept apart, under review', licenceClass: 'review',
+  approved: 'owner, 2026-10-20: "use the data but keep it distinct and easy to remove if requested"; coordinator follow-up 2026-10-21: draw them in the city ring as their own class',
+  fallback: 'OSM buildings only (remove the id from place.surround.geometry)',
+  geometry: { cls: 'ign', dataset: 'Instituto Geográfico Nacional (España)', source: 'overture-ign-geometry', label: 'IGN España (via Overture)',
+    credit: 'Some city buildings: Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review)' },
+};
+export const msGeometry = {
+  id: 'overture-ms-geometry', area: 'worldwide', status: 'in use behind the region switch (place.surround.geometry)',
+  about: 'Building footprints of Overture buildings records whose geometry source is "Microsoft ML Buildings"',
+  licence: 'ODbL 1.0', licenceClass: 'share-alike', approved: 'owner, 2026-10-20: "Use ms/overture"', fallback: 'OSM buildings only (remove the id from place.surround.geometry)',
+  geometry: { cls: 'ms', dataset: 'Microsoft ML Buildings', source: 'overture-ms-geometry', label: 'Microsoft ML Buildings (via Overture)',
+    credit: 'Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)' },
+};
