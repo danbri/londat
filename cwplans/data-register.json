@@ -138,6 +138,16 @@
       "committed": false,
       "local_path": "data/raw/detail-skeleton/osm/cantabria-latest.osm.pbf (ignored by git; re-fetch with the tool)",
       "fetched_by": "tools/build-detail-skeleton.mjs fetch --set leon"
+    },
+    "overture-osm-london": {
+      "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox -0.52,51.28,0.34,51.7; files part-00124-5e200299-5dc8-5a43-bb1e-0a73aba3373f-c000.zstd.parquet part-00125-dd983f4b-21a7-5215-910c-4de2f4a24e2b-c000.zstd.parquet part-00126-8f48508e-8015-5699-a61b-0cb738bc4755-c000.zstd.parquet)",
+      "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot, 2026-09-06)",
+      "fetched": "2026-10-21",
+      "sha256_prefix": "bfe11fba0282c6b4",
+      "size_bytes": 1438278915,
+      "committed": false,
+      "local_path": "data/raw/places/london/overture-buildings-2026-09-23.1.ndjson (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region london (fetch-overture-theme.py, NDJSON mode: 2,026,838 rows ordered by id); the SHA-256 is in places/london/provenance/log.json"
     }
   },
   "sources": {
@@ -14530,6 +14540,120 @@
       "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/london/tileset.json",
+      "what": "Greater London (region london, place kind \"blocks\"): 3D Tiles 1.1 tileset, a quadtree of the cells with buildings from level 10 to level 14 (leaves), REPLACE refinement, geometricError by level (300, 150, 75, 35 m, leaves 0), each tile with its ENU frame as a transform relative to its parent and a region bounding volume; no ground (the globe's terrain and imagery stay)",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "ms-buildings",
+        "ghsl-built-h",
+        "copernicus-glo90",
+        "ons-boundaries",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "overture-osm-london",
+        "what": "bounding volumes only (heights of OSM buildings)"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/london/tiles/*.glb",
+      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "ms-buildings",
+        "ghsl-built-h",
+        "copernicus-glo90",
+        "ons-boundaries",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "overture-osm-london",
+        "what": "building outlines, names, kinds, heights and levels of the OSM-sourced records of the Overture buildings theme (release 2026-09-23.1) inside the GLA boundary, outside the Docklands model box"
+      },
+      "review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+      "review_exit": [
+        "osm-odbl"
+      ],
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/london/features.json",
+      "what": "Greater London text and machine interface: the named buildings drawn with their own id (OSM id, name, kind, position, height and its source, levels, leaf tile, ground of the globe), block counts by level; read by globe/places.js (search, featuresAt, describeView, the card)",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "ms-buildings",
+        "ghsl-built-h",
+        "copernicus-glo90",
+        "ons-boundaries",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "overture-osm-london",
+        "what": "names, OSM ids, kinds, levels of named buildings"
+      },
+      "review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+      "review_exit": [
+        "osm-odbl"
+      ],
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/london/provenance/log.json",
+      "what": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "ms-buildings",
+        "ghsl-built-h",
+        "copernicus-glo90",
+        "ons-boundaries",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of OSM buildings by height source and selection class"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/london"
+      ]
+    },
+    {
+      "path": "docklands/data/places/london/sources/ghsl-built-h.json.gz",
+      "what": "GHS-BUILT-H R2023A average net building height over the Greater London query box: a mosaic of the tiles R4_C18 and R4_C19 (the tile edge near 0.008 W), 1,041 x 513 cells of 3 arc-seconds, values to 0.1 m, gzip JSON (format place-raster-1); the input of place-city-heights",
+      "sources": [
+        "ghsl-built-h"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/london"
       ]
     }
   ],

@@ -51,7 +51,7 @@ export default {
       min_area_m2: 25, simplify_m: 2.5, box_fill: 0.85, outline_min_m2: 300,
       // named buildings of at least named_min_m2 or named_min_h_m: drawn at the leaf level with their own id (the card names
       // them; features.json holds them for search and the text interface)
-      named_min_m2: 400, named_min_h_m: 15,
+      named_min_m2: 1500, named_min_h_m: 20,
     },
   },
   services: { weatherPoint: { lon: -0.12776, lat: 51.50735 }, aircraft: { lon: -0.12776, lat: 51.50735, nm: 25 }, metar: 'EGLC' },

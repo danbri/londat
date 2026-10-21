@@ -10968,7 +10968,7 @@
    "@id": "https://kgx.foaf.tv/id/toolplacetiles",
    "@type": "prov:Activity",
    "rdfs:label": "place-tiles",
-   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > Overture height > Overture num_floors x 3 m (records whose own source is not OSM and whose source licence is open) > Microsoft ML height (footprint match: a centroid inside the other outline, smaller area >= 0.5 of the larger; place-heights version 3) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape, then Overture roof_shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command. Since 2026-10-20 (owner: \"Both sarajevo and leon ... need geographic features and at least basic roads for surrounding land and substantially more city\"; \"Both feel sluggish and janky\"), with a region surround block, three more operations: place-select-outer (Overture answers of release 2026-09-23.1 read with DuckDB by cwplans/tools/fetch-overture-theme.py: road and rail segments, water, localities, peaks over the extent, streets and buildings over the city box; geometry only from records whose source is OpenStreetMap; other building records give heights only; the IGN floors apart), place-city-heights (the place-heights order over the city buildings, no roofs) and place-lod (cwplans/tools/place-lod.mjs: a quadtree of whole level-10 cells over about 70 km round the origin, REPLACE refinement by distance (11 within 30 km, 12 within 16 km, 13 within 9 km), the city box to level 14 and the core cells to 15; each outer tile a 16 to 32 cell terrain grid of the surroundings DEM (IGN MDT25 in WCS parts, or Copernicus GLO-30 COG windows; the outer 8 km eased to a 10 km box mean), normals from the DEM, skirts, a 256 px JPEG texture from ESA WorldCover land cover, water, rivers, roads by class, rail and the city footprints, and in the city the OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances, else simplified outlines); KHR_mesh_quantization; geometricError = max(2 x vertex spacing, the building error of the level); tileset.json with transforms relative to the parent; surround.json with the place names, rivers, roads, a ground grid and the tiers). The IGN floors (adapter overture-ign-floors, behind the region switch) are a height class after the national floors and a validation set (F55). 2026-10-21 (place-select-outer v2, place-city-heights v2, place-lod v2): extra geometry classes for the city ring, IGN España (León) and Microsoft ML Buildings (both) via Overture, each its own class with its own switch (place.surround.geometry), drawn only where no OSM outline overlaps (centroid, points pulled 20 % to the centre, either way); heights by the same order; per-block class, height and height source in the glb extras for the block card; counts by class in log.json (city_geometry) and the README.",
+   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > Overture height > Overture num_floors x 3 m (records whose own source is not OSM and whose source licence is open) > Microsoft ML height (footprint match: a centroid inside the other outline, smaller area >= 0.5 of the larger; place-heights version 3) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape, then Overture roof_shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command. Since 2026-10-20 (owner: \"Both sarajevo and leon ... need geographic features and at least basic roads for surrounding land and substantially more city\"; \"Both feel sluggish and janky\"), with a region surround block, three more operations: place-select-outer (Overture answers of release 2026-09-23.1 read with DuckDB by cwplans/tools/fetch-overture-theme.py: road and rail segments, water, localities, peaks over the extent, streets and buildings over the city box; geometry only from records whose source is OpenStreetMap; other building records give heights only; the IGN floors apart), place-city-heights (the place-heights order over the city buildings, no roofs) and place-lod (cwplans/tools/place-lod.mjs: a quadtree of whole level-10 cells over about 70 km round the origin, REPLACE refinement by distance (11 within 30 km, 12 within 16 km, 13 within 9 km), the city box to level 14 and the core cells to 15; each outer tile a 16 to 32 cell terrain grid of the surroundings DEM (IGN MDT25 in WCS parts, or Copernicus GLO-30 COG windows; the outer 8 km eased to a 10 km box mean), normals from the DEM, skirts, a 256 px JPEG texture from ESA WorldCover land cover, water, rivers, roads by class, rail and the city footprints, and in the city the OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances, else simplified outlines); KHR_mesh_quantization; geometricError = max(2 x vertex spacing, the building error of the level); tileset.json with transforms relative to the parent; surround.json with the place names, rivers, roads, a ground grid and the tiers). The IGN floors (adapter overture-ign-floors, behind the region switch) are a height class after the national floors and a validation set (F55). 2026-10-21 (place-select-outer v2, place-city-heights v2, place-lod v2): extra geometry classes for the city ring, IGN España (León) and Microsoft ML Buildings (both) via Overture, each its own class with its own switch (place.surround.geometry), drawn only where no OSM outline overlaps (centroid, points pulled 20 % to the centre, either way); heights by the same order; per-block class, height and height source in the glb extras for the block card; counts by class in log.json (city_geometry) and the README. 2026-10-21 (place kind blocks, Greater London, region config london): no core and no ground; place-select-blocks (the Overture buildings of the boundary box as NDJSON; OSM geometry whose centroid is in the ONS region polygon of the UK skeleton and not in the Docklands model box, by the model rule), place-city-heights (the place-heights order with Microsoft ML heights through Overture as class ms, the GHSL mosaic of two tiles), place-blocks (cwplans/tools/place-blocks.mjs: a quadtree from level 10 to 14 of the cells with buildings; leaves every building of 25 m2 or more as an oriented box or a simplified outline, named buildings with their id; coarse levels tall or big buildings as boxes and the rest merged by square; bases on the globe world-base heights; features.json of the named buildings).",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm",
@@ -11109,6 +11109,21 @@
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/overture-ign-floors.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tileset.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tiles/*.glb"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/features.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/sources/ghsl-built-h.json.gz"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json"
     }
    ],
    "cwp:tool": {
@@ -27785,6 +27800,171 @@
     "@id": "https://kgx.foaf.tv/id/toolbuilddetailskeleton"
    },
    "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tileset.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Greater London (region london, place kind \"blocks\"): 3D Tiles 1.1 tileset, a quadtree of the cells with buildings from level 10 to level 14 (leaves), REPLACE refinement, geometricError by level (300, 150, 75, 35 m, leaves 0), each tile with its ENU frame as a transform relative to its parent and a region bounding volume; no ground (the globe's terrain and imagery stay)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicusglo90"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsboundaries"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tiles/*.glb",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicusglo90"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsboundaries"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "derived",
+   "cwp:review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+   "cwp:reviewExit": [
+    "osm-odbl"
+   ]
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/features.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Greater London text and machine interface: the named buildings drawn with their own id (OSM id, name, kind, position, height and its source, levels, leaf tile, ground of the globe), block counts by level; read by globe/places.js (search, featuresAt, describeView, the card)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicusglo90"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsboundaries"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "derived",
+   "cwp:review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+   "cwp:reviewExit": [
+    "osm-odbl"
+   ]
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicusglo90"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srconsboundaries"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/sources/ghsl-built-h.json.gz",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "GHS-BUILT-H R2023A average net building height over the Greater London query box: a mosaic of the tiles R4_C18 and R4_C19 (the tile edge near 0.008 W), 1,041 x 513 cells of 3 arc-seconds, values to 0.1 m, gzip JSON (format place-raster-1); the input of place-city-heights",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcnaturalearth",

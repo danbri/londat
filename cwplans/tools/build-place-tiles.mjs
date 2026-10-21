@@ -1121,7 +1121,7 @@ async function buildBlocks() {
       const f = join(OUT, 'tiles', n.key + '.glb'); writeFileSync(f, r.bytes); outFiles.push(f); stats.push(r.stats); if (++nT % 200 === 0) console.log(`  place-blocks: ${nT} / ${total} tiles`);
       const world = r.F.matrix(); let region = r.region; const kids = []; for (const k of n.kids) kids.push(await tile(k, world));
       for (const k of kids) region = [region[0], region[1], region[2], region[3], Math.min(region[4], k.boundingVolume.region[4]), Math.max(region[5], k.boundingVolume.region[5])];
-      const t = { boundingVolume: { region: region.map(v => +v.toPrecision(12)) }, geometricError: leaf ? 0 : p.levels[n.l].err_m, refine: 'REPLACE', transform: roundM(parentWorld ? mul4(inv4rigid(parentWorld), world) : world), content: { uri: `tiles/${n.key}.glb` } };
+      const t = { boundingVolume: { region: region.map(v => +v.toPrecision(12)) }, geometricError: leaf ? 0 : p.levels[n.l].err_m, refine: 'REPLACE', transform: roundM(parentWorld ? mul4(inv4rigid(parentWorld), world) : world).map((v, i) => i >= 12 ? v : +v.toPrecision(10)), content: { uri: `tiles/${n.key}.glb` } };   // rotation to 10 digits (under 1 mm at the Earth's radius)
       if (kids.length) t.children = kids; return t;
     }
     const children = []; for (const n of T.roots) children.push(await tile(n, null));
