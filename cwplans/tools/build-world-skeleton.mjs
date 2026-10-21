@@ -195,9 +195,9 @@ async function build() {
         labels: { text: 'name', at: ['lx', 'ly'], minZoom: 'minl', rank: 'lr', zoomAdd: 1, class: 'admin1' },
         gazetteer: { kind: 'region', text: ['name', 'iso'], at: ['lx', 'ly'], rank: 'area' } },
       { id: 'admin1-lines', label: 'Region borders', kind: 'lines', url: 'admin1-lines.json', style: { color: '#c9a86a', opacity: 0.55, maxAlt: 2500000 } },
-      { id: 'rivers', label: 'Rivers', kind: 'lines', url: 'rivers.json', namesTable: 'rivers', style: { color: '#7fc3ff', opacity: 0.8, maxAlt: 6000000 },
+      { id: 'rivers', label: 'Rivers', kind: 'lines', url: 'rivers.json', namesTable: 'rivers', style: { color: '#7fc3ff', opacity: 0.8, minAlt: 800000, maxAlt: 6000000 },   // (below 800 km: the 1:10m rivers of the world detail set, build-detail-skeleton.mjs)
         gazetteer: { kind: 'river', text: ['name'], rank: 'r', rankLowFirst: true } },
-      { id: 'lakes', label: 'Lakes', kind: 'polygons', url: 'lakes.json', lookup: 'lake', namesTable: 'lakes', style: { color: '#7fc3ff', opacity: 0.8, maxAlt: 8000000 },
+      { id: 'lakes', label: 'Lakes', kind: 'polygons', url: 'lakes.json', lookup: 'lake', namesTable: 'lakes', style: { color: '#7fc3ff', opacity: 0.8, minAlt: 600000, maxAlt: 8000000 },   // (below 600 km: the 1:10m lakes)
         gazetteer: { kind: 'lake', text: ['name'], rank: 'r', rankLowFirst: true } },
       { id: 'marine', label: 'Seas and oceans', kind: 'polygons', url: 'marine.json', draw: false, lookup: 'sea', namesTable: 'marine',
         labels: { text: 'name', minZoom: 'minl', rank: 'r', class: 'sea' },

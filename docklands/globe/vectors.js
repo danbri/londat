@@ -34,26 +34,46 @@ export function buildLines(lines, heightAt, material, lift = 0) {
   const meshes = [];
   for (const [k, parts] of cells) {
     const [ci, cj] = k.split(',').map(Number), C = geodeticToEcef(-180 + (ci + 0.5) * CELLDEG, -90 + (cj + 0.5) * CELLDEG, 0);
-    const P = [], I = []; let n = 0;
-    for (const part of parts) {
-      let prev = -1;
-      for (let i = 0; i < part.length; i++) {
-        const [lo, la] = part[i];
-        if (i > 0) {   // densify
-          const [lo0, la0] = part[i - 1], m = Math.ceil(Math.max(Math.abs(lo - lo0), Math.abs(la - la0)) / STEP);
-          for (let s = 1; s < m; s++) { const t = s / m, x = lo0 + (lo - lo0) * t, y = la0 + (la - la0) * t, p = geodeticToEcef(x, y, heightAt(x, y) + lift); P.push(p[0] - C[0], p[1] - C[1], p[2] - C[2]); I.push(prev, n); prev = n++; }
-        }
-        const p = geodeticToEcef(lo, la, heightAt(lo, la) + lift); P.push(p[0] - C[0], p[1] - C[1], p[2] - C[2]);
-        if (prev >= 0) I.push(prev, n); prev = n++;
-      }
-    }
-    if (!I.length) continue;
-    const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(new Float32Array(P), 3)); G.setIndex(n > 65535 ? new THREE.BufferAttribute(new Uint32Array(I), 1) : new THREE.BufferAttribute(new Uint16Array(I), 1));
-    G.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1e9);
-    const m = new THREE.LineSegments(G, material); m.frustumCulled = false; m.matrixAutoUpdate = false; m.matrixWorldAutoUpdate = false; m.userData.C = C; m.renderOrder = 2; m.userData.segments = I.length / 2;
+    const G = chunkGeometry(parts, C, heightAt, lift); if (!G) continue;
+    const m = new THREE.LineSegments(G, material); m.frustumCulled = false; m.matrixAutoUpdate = false; m.matrixWorldAutoUpdate = false; m.userData.C = C; m.renderOrder = 2; m.userData.segments = G.index.count / 2;
+    // (for a rebuild on new ground heights, rebuildLines: the parts and the bbox of the chunk)
+    m.userData.lift = lift; m.userData.bbox = partsBbox(parts);
     meshes.push(m);
   }
   return meshes;
+}
+const partsBbox = parts => { let w = 180, s = 90, e = -180, n = -90; for (const p of parts) for (const [x, y] of p) { if (x < w) w = x; if (x > e) e = x; if (y < s) s = y; if (y > n) n = y; } return [w, s, e, n]; };
+function chunkGeometry(parts, C, heightAt, lift) {
+  const P = [], I = [], LL = []; let n = 0;
+  for (const part of parts) {
+    let prev = -1;
+    for (let i = 0; i < part.length; i++) {
+      const [lo, la] = part[i];
+      if (i > 0) {   // densify
+        const [lo0, la0] = part[i - 1], m = Math.ceil(Math.max(Math.abs(lo - lo0), Math.abs(la - la0)) / STEP);
+        for (let s = 1; s < m; s++) { const t = s / m, x = lo0 + (lo - lo0) * t, y = la0 + (la - la0) * t, p = geodeticToEcef(x, y, heightAt(x, y) + lift); P.push(p[0] - C[0], p[1] - C[1], p[2] - C[2]); LL.push(x, y); I.push(prev, n); prev = n++; }
+      }
+      const p = geodeticToEcef(lo, la, heightAt(lo, la) + lift); P.push(p[0] - C[0], p[1] - C[1], p[2] - C[2]); LL.push(lo, la);
+      if (prev >= 0) I.push(prev, n); prev = n++;
+    }
+  }
+  if (!I.length) return null;
+  const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.BufferAttribute(new Float32Array(P), 3)); G.setIndex(n > 65535 ? new THREE.BufferAttribute(new Uint32Array(I), 1) : new THREE.BufferAttribute(new Uint16Array(I), 1));
+  G.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1e9);
+  G.userData.ll = new Float32Array(LL);   // lon, lat of each vertex (rebuildLines)
+  let r2 = 0; for (let i = 0; i < P.length; i += 3) r2 = Math.max(r2, P[i] * P[i] + P[i + 1] * P[i + 1] + P[i + 2] * P[i + 2]);
+  G.userData.r = Math.sqrt(r2) + 2000;   // the chunk's bounding radius about C (frustum culling in globe.js)
+  return G;
+}
+// new ground heights over area a = [w, s, e, n] (the world base's height tiles came in, globe/base-tiles.js): the
+// vertices of the chunk inside it go onto heightAt again; returns the number of vertices moved
+export function rebuildLines(mesh, heightAt, a) {
+  const u = mesh.userData, G = mesh.geometry, ll = G.userData.ll; if (!ll) return 0;
+  const pos = G.attributes.position, P = pos.array, C = u.C, lift = u.lift || 0; let n = 0;
+  for (let k = 0; k < ll.length / 2; k++) { const lo = ll[2 * k], la = ll[2 * k + 1]; if (lo < a[0] || lo > a[2] || la < a[1] || la > a[3]) continue;
+    const p = geodeticToEcef(lo, la, heightAt(lo, la) + lift); P[3 * k] = p[0] - C[0]; P[3 * k + 1] = p[1] - C[1]; P[3 * k + 2] = p[2] - C[2]; n++; }
+  if (n) pos.needsUpdate = true;
+  return n;
 }
 
 // a graticule every `step` degrees (meridians to +-89 degrees), as lines for buildLines

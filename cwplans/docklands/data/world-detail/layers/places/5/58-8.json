@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Hobart","kind":"city","pop":254930},"geometry":{"type":"Point","d":[147329,-42879]}},{"properties":{"name":"Launceston","kind":"town","pop":90953},"geometry":{"type":"Point","d":[147135,-41439]}},{"properties":{"name":"Devonport","kind":"town","pop":26150},"geometry":{"type":"Point","d":[146352,-41177]}}]}

@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Anchorage","kind":"city","pop":289600},"geometry":{"type":"Point","d":[-149900,61218]}},{"properties":{"name":"Eagle River","kind":"town","pop":24793},"geometry":{"type":"Point","d":[-149568,61321]}}]}

@@ -88,6 +88,56 @@
       "committed": false,
       "local_path": "data/raw/places/sarajevo/overture-*-2026-09-23.1.json (in cwplans/.gitignore; re-fetch with the tool)",
       "fetched_by": "tools/build-place-tiles.mjs fetch --region sarajevo (fetch-overture-theme.py, one DuckDB query per theme); the SHA-256 of each answer is in places/sarajevo/provenance/log.json"
+    },
+    "geofabrik-bosnia-herzegovina-2026-10-19": {
+      "url": "https://download.geofabrik.de/europe/bosnia-herzegovina-latest.osm.pbf",
+      "osm_data_as_of": "2026-10-19T20:21:11Z (osmosis_replication_timestamp in the PBF header)",
+      "fetched": "2026-10-20",
+      "sha256_prefix": "0b490057c352f1ec",
+      "size_bytes": 161967627,
+      "committed": false,
+      "local_path": "data/raw/detail-skeleton/osm/bosnia-herzegovina-latest.osm.pbf (ignored by git; re-fetch with the tool)",
+      "fetched_by": "tools/build-detail-skeleton.mjs fetch --set sarajevo"
+    },
+    "geofabrik-castilla-y-leon-2026-10-19": {
+      "url": "https://download.geofabrik.de/europe/spain/castilla-y-leon-latest.osm.pbf",
+      "osm_data_as_of": "2026-10-19T20:21:11Z (osmosis_replication_timestamp in the PBF header)",
+      "fetched": "2026-10-20",
+      "sha256_prefix": "f887bbb7333e677c",
+      "size_bytes": 178548161,
+      "committed": false,
+      "local_path": "data/raw/detail-skeleton/osm/castilla-y-leon-latest.osm.pbf (ignored by git; re-fetch with the tool)",
+      "fetched_by": "tools/build-detail-skeleton.mjs fetch --set leon"
+    },
+    "geofabrik-galicia-2026-10-19": {
+      "url": "https://download.geofabrik.de/europe/spain/galicia-latest.osm.pbf",
+      "osm_data_as_of": "2026-10-19T20:21:11Z (osmosis_replication_timestamp in the PBF header)",
+      "fetched": "2026-10-20",
+      "sha256_prefix": "79cbf6328e19fef8",
+      "size_bytes": 111834595,
+      "committed": false,
+      "local_path": "data/raw/detail-skeleton/osm/galicia-latest.osm.pbf (ignored by git; re-fetch with the tool)",
+      "fetched_by": "tools/build-detail-skeleton.mjs fetch --set leon"
+    },
+    "geofabrik-asturias-2026-10-19": {
+      "url": "https://download.geofabrik.de/europe/spain/asturias-latest.osm.pbf",
+      "osm_data_as_of": "2026-10-19T20:21:11Z (osmosis_replication_timestamp in the PBF header)",
+      "fetched": "2026-10-20",
+      "sha256_prefix": "6dca898ef082f669",
+      "size_bytes": 36583703,
+      "committed": false,
+      "local_path": "data/raw/detail-skeleton/osm/asturias-latest.osm.pbf (ignored by git; re-fetch with the tool)",
+      "fetched_by": "tools/build-detail-skeleton.mjs fetch --set leon"
+    },
+    "geofabrik-cantabria-2026-10-19": {
+      "url": "https://download.geofabrik.de/europe/spain/cantabria-latest.osm.pbf",
+      "osm_data_as_of": "2026-10-19T20:21:11Z (osmosis_replication_timestamp in the PBF header)",
+      "fetched": "2026-10-20",
+      "sha256_prefix": "1f3ece6423d60294",
+      "size_bytes": 35639670,
+      "committed": false,
+      "local_path": "data/raw/detail-skeleton/osm/cantabria-latest.osm.pbf (ignored by git; re-fetch with the tool)",
+      "fetched_by": "tools/build-detail-skeleton.mjs fetch --set leon"
     }
   },
   "sources": {
@@ -3372,6 +3422,36 @@
       "attribution": "© OpenStreetMap contributors, © Overture Maps Foundation",
       "url": "https://docs.overturemaps.org/attribution/",
       "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored)."
+    },
+    "eox-s2cloudless-2016": {
+      "name": "Sentinel-2 cloudless 2016 by EOX IT Services GmbH (layer s2cloudless of the EOX Maps WMTS, tile matrix set WGS84; the 2016 mosaic only)",
+      "publisher": "EOX IT Services GmbH",
+      "licence": "CC BY 4.0",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+      "licence_class": "open",
+      "attribution": "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2016)",
+      "url": "https://tiles.maps.eox.at/wmts/1.0.0/WMTSCapabilities.xml",
+      "note": "Only the 2016 layer (s2cloudless, s2cloudless_3857) is CC BY 4.0; the later years (s2cloudless-2017 to -2025) are CC BY-NC-SA 4.0 and must NOT be used. Read 2026-10-20 from the WMTS capabilities (layer abstract). 5,728 tiles of 256 px fetched (4 per output tile), staggered, 4 at a time; they stay in data/raw/world-base/eox/ (not committed)."
+    },
+    "copernicus-glo90": {
+      "name": "Copernicus DEM GLO-90 (a 90 m digital surface model, EGM2008 heights), 1 x 1 degree Cloud Optimized GeoTIFFs on the AWS Registry of Open Data (bucket copernicus-dem-90m), read by HTTP range requests (overview 2, about 360 m, for most cells; the full grid near the testbeds)",
+      "publisher": "European Space Agency (ESA) and the European Union (Copernicus); DLR e.V. and Airbus Defence and Space GmbH (TanDEM-X)",
+      "licence": "Copernicus DEM licence (GLO-90 public instance): free of charge, worldwide, for any purpose, including redistribution of derived products, with the attribution",
+      "licence_class": "open",
+      "attribution": "Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
+      "url": "https://registry.opendata.aws/copernicus-dem/",
+      "licence_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+      "note": "Same licence family as copernicus-glo30 (accepted by the owner for the places, 2026-10-20). Used for the world base height tiles round the testbeds (cwplans/tools/build-world-base.mjs): box means into 35 x 35 samples per quadtree tile, levels 7 to 12. A surface model: trees and roofs raise it a few metres. Raw reads stay in data/raw/world-base/glo90/ (not committed)."
+    },
+    "geonames": {
+      "name": "GeoNames cities15000 (populated places of 15,000 people or more and capitals), https://download.geonames.org/export/dump/cities15000.zip",
+      "publisher": "GeoNames (geonames.org)",
+      "licence": "CC BY 4.0",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+      "licence_class": "open",
+      "attribution": "Place names: GeoNames (geonames.org), CC BY 4.0",
+      "url": "https://www.geonames.org/",
+      "note": "Fetched 2026-10-20, 3362238 bytes, SHA-256 a839fd6af3d55e5d41d2e281d481b7c0887cc9f2bc536723708843ef01e70ea8. Rows of feature class PPL* (not PPLX sections, not PPLH historical)."
     },
     "overture-ign-geometry": {
       "name": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Instituto Geográfico Nacional (España)\" (provider ign_es), over the León city box",
@@ -14101,6 +14181,250 @@
       "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world-base/base.json",
+      "what": "World base tiles manifest (KR2.2): the geodetic quadtree (y from the north, as terrain.js), the imagery and height tiles present at each level (x, y pairs), formats, radii round the testbeds, credits, sizes",
+      "sources": [
+        "eox-s2cloudless-2016",
+        "copernicus-glo90",
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-base.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world-base/log.json",
+      "what": "Dataflow log of the world base tiles: operations imagery-tiles and dem-tiles, their inputs (count, bytes, SHA-256 of the input hashes), outputs and parameters",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-base.mjs"
+    },
+    {
+      "path": "docklands/data/world-base/img/*/*/*.webp",
+      "what": "World base imagery (KR2.2): one 512 px WebP (quality 70) per quadtree tile L/x/y (180 / 2^L degrees, y from the north), made of the 2 x 2 Sentinel-2 cloudless 2016 tiles of level L + 1; worldwide at levels 0 to 4 (2.4 km a pixel at level 4), round the testbeds (region configs docklands, leon, sarajevo) at levels 5 to 11 within 1,500 / 800 / 400 / 220 / 100 / 40 / 15 km (level 11: about 19 m a pixel); 1,432 tiles, 26.5 MB",
+      "sources": [
+        "eox-s2cloudless-2016"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-base.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world-base/dem/*/*/*.bin",
+      "what": "World base heights round the testbeds (KR2.2): Int16 metres above EGM2008, 35 x 35 samples per quadtree tile (the 33 x 33 vertices of a terrain patch and a border of one), box means of Copernicus DEM GLO-90 over one sample spacing; levels 7 to 12 within 300 / 170 / 80 / 35 / 15 / 7 km of each testbed; 0 over open sea; 448 tiles, 1.0 MB",
+      "sources": [
+        "copernicus-glo90"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-world-base.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world-detail/manifest.json",
+      "what": "World detail set: Natural Earth 1:10m main roads, railways, rivers (with the European supplement), lakes (with the European supplement), urban areas; GeoNames towns of 15,000 people or more: manifest in the skeleton-1 contract (layers, levels, quadtree cells, files with bbox and feature counts, gazetteer files, sources, credits)",
+      "sources": [
+        "natural-earth",
+        "geonames",
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set world",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world-detail/log.json",
+      "what": "World detail set: Natural Earth 1:10m main roads, railways, rivers (with the European supplement), lakes (with the European supplement), urban areas; GeoNames towns of 15,000 people or more: dataflow log (operation, fetched inputs by SHA-256, activity with the SHA-256 of its outputs)",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set world"
+    },
+    {
+      "path": "docklands/data/world-detail/layers/*/*/*.json",
+      "what": "World detail set: Natural Earth 1:10m main roads, railways, rivers (with the European supplement), lakes (with the European supplement), urban areas; GeoNames towns of 15,000 people or more: vector layers, one file per layer, level and geodetic quadtree cell (y from the south), WGS84, format skeleton-1",
+      "sources": [
+        "natural-earth",
+        "geonames"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set world",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/world-detail/gazetteer/*.json",
+      "what": "World detail set: Natural Earth 1:10m main roads, railways, rivers (with the European supplement), lakes (with the European supplement), urban areas; GeoNames towns of 15,000 people or more: gazetteer for search, filed by the first two letters of the folded name",
+      "sources": [
+        "natural-earth",
+        "geonames"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set world",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/es-nw/manifest.json",
+      "what": "Spain north-west regional set (Castilla y León, Galicia, Asturias, Cantabria): OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: manifest in the skeleton-1 contract (layers, levels, quadtree cells, files with bbox and feature counts, gazetteer files, sources, credits)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "geofabrik-castilla-y-leon-2026-10-19",
+        "what": "roads, railways and rivers merged end to end and simplified (Douglas-Peucker 0.005 / 0.001 / 0.0004 degree by level), place nodes with name, population and wikidata tags; also extracts geofabrik-galicia-2026-10-19, geofabrik-asturias-2026-10-19, geofabrik-cantabria-2026-10-19"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set leon",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/es-nw/log.json",
+      "what": "Spain north-west regional set (Castilla y León, Galicia, Asturias, Cantabria): OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: dataflow log (operation, fetched inputs by SHA-256, activity with the SHA-256 of its outputs)",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set leon"
+    },
+    {
+      "path": "docklands/data/es-nw/layers/*/*/*.json",
+      "what": "Spain north-west regional set (Castilla y León, Galicia, Asturias, Cantabria): OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: vector layers, one file per layer, level and geodetic quadtree cell (y from the south), WGS84, format skeleton-1",
+      "sources": [
+        "osm"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "geofabrik-castilla-y-leon-2026-10-19",
+        "what": "roads, railways and rivers merged end to end and simplified (Douglas-Peucker 0.005 / 0.001 / 0.0004 degree by level), place nodes with name, population and wikidata tags; also extracts geofabrik-galicia-2026-10-19, geofabrik-asturias-2026-10-19, geofabrik-cantabria-2026-10-19"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set leon",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/es-nw/gazetteer/*.json",
+      "what": "Spain north-west regional set (Castilla y León, Galicia, Asturias, Cantabria): OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: gazetteer for search, filed by the first two letters of the folded name",
+      "sources": [
+        "osm"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "geofabrik-castilla-y-leon-2026-10-19",
+        "what": "roads, railways and rivers merged end to end and simplified (Douglas-Peucker 0.005 / 0.001 / 0.0004 degree by level), place nodes with name, population and wikidata tags; also extracts geofabrik-galicia-2026-10-19, geofabrik-asturias-2026-10-19, geofabrik-cantabria-2026-10-19"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set leon",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/ba/manifest.json",
+      "what": "Bosnia and Herzegovina regional set: OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: manifest in the skeleton-1 contract (layers, levels, quadtree cells, files with bbox and feature counts, gazetteer files, sources, credits)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "geofabrik-bosnia-herzegovina-2026-10-19",
+        "what": "roads, railways and rivers merged end to end and simplified (Douglas-Peucker 0.005 / 0.001 / 0.0004 degree by level), place nodes with name, population and wikidata tags"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set sarajevo",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/ba/log.json",
+      "what": "Bosnia and Herzegovina regional set: OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: dataflow log (operation, fetched inputs by SHA-256, activity with the SHA-256 of its outputs)",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set sarajevo"
+    },
+    {
+      "path": "docklands/data/ba/layers/*/*/*.json",
+      "what": "Bosnia and Herzegovina regional set: OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: vector layers, one file per layer, level and geodetic quadtree cell (y from the south), WGS84, format skeleton-1",
+      "sources": [
+        "osm"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "geofabrik-bosnia-herzegovina-2026-10-19",
+        "what": "roads, railways and rivers merged end to end and simplified (Douglas-Peucker 0.005 / 0.001 / 0.0004 degree by level), place nodes with name, population and wikidata tags"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set sarajevo",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/ba/gazetteer/*.json",
+      "what": "Bosnia and Herzegovina regional set: OpenStreetMap motorways, trunk and primary roads, railways (railway=rail, no sidings), rivers (waterway=river), cities, towns and villages: gazetteer for search, filed by the first two letters of the folded name",
+      "sources": [
+        "osm"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "geofabrik-bosnia-herzegovina-2026-10-19",
+        "what": "roads, railways and rivers merged end to end and simplified (Douglas-Peucker 0.005 / 0.001 / 0.0004 degree by level), place nodes with name, population and wikidata tags"
+      },
+      "produced_by": "tools/build-detail-skeleton.mjs build --set sarajevo",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
       ]
     }
   ],

@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Tromsø","kind":"town","pop":41915},"geometry":{"type":"Point","d":[18955,69649]}},{"properties":{"name":"Tromsdalen","kind":"town","pop":18291},"geometry":{"type":"Point","d":[19017,69650]}},{"properties":{"name":"Kiruna","kind":"town","pop":17037},"geometry":{"type":"Point","d":[20225,67856]}}]}

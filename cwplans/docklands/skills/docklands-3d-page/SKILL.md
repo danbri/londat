@@ -3406,3 +3406,64 @@ tool `cwplans/tools/build-sw-manifest.mjs`, hints tool `cwplans/tools/build-prel
 - **Measuring here.** Wall times in SwiftShader on the shared 4-core container vary by 2 to 3 times between runs (load
   average 13 from other sessions): `?view=cw` ready 119 to 173 s before, 46 to 115 s after. Use the network-busy time
   (union of same-origin request intervals before ready, Resource Timing) and the request counts.
+
+## Three.js port: world base tiles and detail sets (2026-10-20)
+
+Owner, 2026-10-20: "pragmatic perf improvements, and improved worldwide coverage so that our detailed city testbeds are not
+lost in the void". KR2.2. Before: the globe drew one 4096 x 2048 terrain texture (ETOPO 2022 box means, 9.8 km a pixel,
+colours by height) and Natural Earth 1:50m lines; between orbit and a testbed the view was flat beige and green.
+
+- **Base tiles** (`cwplans/docklands/data/world-base/`, tool `cwplans/tools/build-world-base.mjs`, client
+  `docklands/globe/base-tiles.js`): the cells of the terrain quadtree itself (level L = 180 / 2^L degrees, y from the
+  NORTH as `terrain.js` and WMTS; the vector skeletons count y from the south). Imagery: Sentinel-2 cloudless **2016**
+  by EOX (CC BY 4.0; the later years are CC BY-NC-SA: never use them), from the EOX WMTS layer `s2cloudless` in its
+  `WGS84` matrix set, which is exactly our quadtree (level 0 = 2 x 1 tiles). Our 512 px tile L/x/y = the 2 x 2 EOX tiles
+  of level L + 1, WebP q70 (about 19 kB a tile). Worldwide to level 4 (2.4 km a pixel); round each testbed (region
+  configs docklands, leon, sarajevo) levels 5 to 11 within 1,500 / 800 / 400 / 220 / 100 / 40 / 15 km (level 11: 19 m a
+  pixel). 1,432 tiles, 26.5 MB. Heights: Copernicus GLO-90 box means, 35 x 35 Int16 per tile (the patch's 33 x 33
+  vertices plus a border of one, so gradients need no neighbour), levels 7 to 12 within 300 / 170 / 80 / 35 / 15 / 7 km;
+  448 tiles, 1.0 MB. GLO-90 COGs have 2 overviews in one 2048 px block: read overview 2 (360 m) by range for levels 7
+  to 10 (215 cells cost seconds, not 1 GB), the full grid only for levels 11 and 12 (5 cells). A cell with no file is open
+  sea (HEAD answers 403/404; geotiff.js `fromUrl` throws an AggregateError with no status, so ask HEAD first).
+- **How a patch uses them** (`terrain.js`): `Terrain.maxL` lets a cell split past MAXL (8) only where the base has a tile
+  one level down; `Terrain.mesh` calls `detail.patch(nd, mesh)` every frame the patch is drawn: the material of the
+  deepest LOADED imagery tile at or above its cell (asking for the deepest that exists), the 'dem' vertex attribute
+  (h, east and north gradient, flag) from the deepest loaded height tile (level >= 7), else the world texture as before.
+  One material per imagery tile; its box is a `uniform`, so every tile compiles to the same program (a constant box
+  would compile a pipeline per tile). Imagery is lit relative to flat ground (`diff / max(sd, 0.2)`, mixed 60 %): the
+  image already holds the sun of its day; relief is 1.6 on base heights (true slopes) against 5 on the 10 km texture.
+  The CPU sampler answers from the same tiles (`S.demH`), so lines, labels, the eye guard and the places' hand-over
+  (`places.js` captures `S.h` as `S.h0`, which still asks `S.demH`) sit on one ground.
+- **Memory** (`base-tiles.js`): a 512 px texture with mipmaps is 1.4 MB. CAP 56 textures; above 0.9 CAP the tiles not
+  drawn in the last frame go, oldest first (levels 0 and 1 stay). With CAP all in use a patch draws its loaded ancestor.
+  Requests: coarse levels first, 6 at once, dropped if no patch asked for 30 frames; an in-flight set stops a second load
+  of the same tile (a dequeued tile is neither in the queue nor loaded: without the set it loaded twice and leaked a
+  texture). Height tiles (2.4 kB) stay. `G.baseRest()` gives back all textures when the globe rests. `?base=0`: off.
+- **Lines on the new ground**: world line chunks are built once on the 10 km heights; when height tiles arrive
+  `base-tiles.js` calls `G.onBaseDem(area)` (debounced 1.2 s, only below 1,200 km eye height) and `vectors.js
+  rebuildLines` moves only the vertices inside the area (each chunk keeps lon, lat a vertex in `geometry.userData.ll`).
+  A whole-chunk rebuild took 713 ms at 1,000 km over León; per-vertex in the area: 2 to 100 ms.
+- **Detail sets** (`cwplans/tools/build-detail-skeleton.mjs`, format skeleton-1, drawn by `skeleton-layers.js` with no
+  change there): `data/world-detail/` (Natural Earth 1:10m roads, railways, rivers + European supplement, lakes, urban
+  areas; GeoNames cities15000, 31,784 places, with a gazetteer), `data/es-nw/` and `data/ba/` (OSM from Geofabrik:
+  motorway/trunk/primary, railway=rail, waterway=river, place=city/town/village). Listed in `globe.js SKELETONS`
+  world-detail FIRST: the "where" answers merge with Object.assign, so a finer set must come later. Traps:
+  - skeleton-layers' LEVELS are fixed (3 above 800 km, 6 to 120 km, 8 below) and a line piece is drawn by the view cell
+    holding the middle of its bbox: a piece longer than the view cell is lost when its middle is off screen. So the world
+    set has FILE levels 3 and 5 (few files) but cuts lines at level 6 and 8 cell edges (`clip`).
+  - The reader unpacks LineString, Polygon, MultiPolygon only: write one LineString a piece (no MultiLineString).
+  - Every set needs a gazetteer (`skeleton.js search` reads `M.gazetteer.kindRank` with no guard).
+  - Gazetteer keys can be non-ASCII (ł, đ, ə survive `fold`): file names are written as `u<hex>`, the manifest maps.
+  - Size: NE roads worldwide at level 5 were 12.7 MB; ids per piece, ref names and 1e4 quantisation cost most. Now:
+    lines merged end to end by key (99,733 -> fewer pieces), no ids (a piece lives in one file), q 1000, and the dense
+    layers (all roads, rail, urban areas) only within 3,000 km of a testbed (level-3 major roads worldwide). 16.9 MB.
+  - Roads, rail and rivers of the world set are left out inside the finer sets' covers (GBR; the NE admin-1 provinces
+    of Castilla y León, Galicia, Asturias, Cantabria; BIH), so no road is drawn twice.
+  - `layers.json`: the 1:50m rivers now have minAlt 800 km and the lakes 600 km (the 1:10m ones take over below).
+- **Floors**: `goTo` and `flyTo` kept the eye at 60 km away from the model and places; now `floorAt` by the base level
+  there: 2 km at level 11, 8 km at 9 to 10, 25 km at 7 to 8, else 60 km.
+- **Credit**: CC BY asks for it where the imagery is seen: a one-line `#globeCredit` at the bottom in globe mode (full
+  text in its title, the card and the menu notes). The phone's bottom left also holds the wind note: keep it one line.
+- **Tests**: `docklands/test/base-check.mjs` (flights to León and Sarajevo at 1,000, 200, 50 km: screenshots, labels,
+  tiles loaded, sampler on base heights, textures bounded after a flight to Tokyo; `--compare` adds `?base=0`).
+  `globe-check.mjs` costs now print `geometries`, `textures`, `heap_mb` and `base` (baseStats).

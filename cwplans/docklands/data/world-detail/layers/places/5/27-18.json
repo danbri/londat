@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Praia","kind":"city","pop":137868},"geometry":{"type":"Point","d":[-23512,14932]}},{"properties":{"name":"Espargos","kind":"town","pop":24500},"geometry":{"type":"Point","d":[-22945,16755]}},{"properties":{"name":"Assomada","kind":"town","pop":21297},"geometry":{"type":"Point","d":[-23683,15100]}}]}

@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Saskatoon","kind":"city","pop":266141},"geometry":{"type":"Point","d":[-106669,52132]}},{"properties":{"name":"Prince Albert","kind":"town","pop":35102},"geometry":{"type":"Point","d":[-105768,53200]}},{"properties":{"name":"Yorkton","kind":"town","pop":16343},"geometry":{"type":"Point","d":[-102468,51217]}}]}

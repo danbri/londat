@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Atyrau","kind":"city","pop":290700},"geometry":{"type":"Point","d":[51884,47105]}},{"properties":{"name":"Qulsary","kind":"town","pop":51216},"geometry":{"type":"Point","d":[54020,46953]}},{"properties":{"name":"Balykshi","kind":"town","pop":19260},"geometry":{"type":"Point","d":[51867,47067]}}]}

@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Tarawa","kind":"city","pop":40311},"geometry":{"type":"Point","d":[172977,1328]}},{"properties":{"name":"Majuro","kind":"city","pop":25400},"geometry":{"type":"Point","d":[171380,7090]}},{"properties":{"name":"Palikir","kind":"city","pop":6942},"geometry":{"type":"Point","d":[158161,6925]}}]}

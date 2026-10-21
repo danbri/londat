@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Tomsk","kind":"city","pop":574002},"geometry":{"type":"Point","d":[84982,56501]}},{"properties":{"name":"Seversk","kind":"city","pop":109844},"geometry":{"type":"Point","d":[84886,56601]}},{"properties":{"name":"Asino","kind":"town","pop":27070},"geometry":{"type":"Point","d":[86155,56999]}}]}

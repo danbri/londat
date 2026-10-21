@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Chita","kind":"city","pop":349005},"geometry":{"type":"Point","d":[113492,52043]}},{"properties":{"name":"Aginskoye","kind":"town","pop":17496},"geometry":{"type":"Point","d":[114542,51108]}},{"properties":{"name":"Nerchinsk","kind":"town","pop":15360},"geometry":{"type":"Point","d":[116587,51980]}}]}

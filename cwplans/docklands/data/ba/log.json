@@ -1,0 +1,75 @@
+{
+ "about": "Dataflow log of tools/build-detail-skeleton.mjs (skill cwplans-dataflow): the operation, its fetched inputs (URL, date, bytes, SHA-256) and one activity per run (inputs and outputs by SHA-256).",
+ "operations": {
+  "detail-skeleton-sarajevo": {
+   "version": 1,
+   "tool": "tools/build-detail-skeleton.mjs",
+   "skill": "docklands-3d-page"
+  }
+ },
+ "fetches": {
+  "osm/bosnia-herzegovina-latest.osm.pbf": {
+   "url": "https://download.geofabrik.de/europe/bosnia-herzegovina-latest.osm.pbf",
+   "fetched": "2026-10-20",
+   "bytes": 161967627,
+   "sha256": "0b490057c352f1ec4f0530fbccaf12001746a176e4140539f95b23b3df19a20f"
+  },
+  "osm/castilla-y-leon-latest.osm.pbf": {
+   "url": "https://download.geofabrik.de/europe/spain/castilla-y-leon-latest.osm.pbf",
+   "fetched": "2026-10-20",
+   "bytes": 178548161,
+   "sha256": "f887bbb7333e677c839afc59c03d26092ef4dc71bbfd34e1f2bbe90e407e9af2"
+  },
+  "osm/galicia-latest.osm.pbf": {
+   "url": "https://download.geofabrik.de/europe/spain/galicia-latest.osm.pbf",
+   "fetched": "2026-10-20",
+   "bytes": 111834595,
+   "sha256": "79cbf6328e19fef8661dc41f6fa8d8680ee45b67f37af16a34f7667fc25ca5b9"
+  },
+  "osm/asturias-latest.osm.pbf": {
+   "url": "https://download.geofabrik.de/europe/spain/asturias-latest.osm.pbf",
+   "fetched": "2026-10-20",
+   "bytes": 36583703,
+   "sha256": "6dca898ef082f669cf6759d16f62ac517def831870e2f20bf253f0be6f1cbfd7"
+  },
+  "osm/cantabria-latest.osm.pbf": {
+   "url": "https://download.geofabrik.de/europe/spain/cantabria-latest.osm.pbf",
+   "fetched": "2026-10-20",
+   "bytes": 35639670,
+   "sha256": "1f3ece6423d6029406d4fdabe79701e85a3fcd85b72cff4813ce23952d0a5a10"
+  }
+ },
+ "activities": [
+  {
+   "id": "act57f76a78e41149e8",
+   "operation": "detail-skeleton-sarajevo",
+   "version": 1,
+   "inputs": [
+    {
+     "name": "osm/asturias-latest.osm.pbf",
+     "sha256": "6dca898ef082f669cf6759d16f62ac517def831870e2f20bf253f0be6f1cbfd7"
+    },
+    {
+     "name": "osm/bosnia-herzegovina-latest.osm.pbf",
+     "sha256": "0b490057c352f1ec4f0530fbccaf12001746a176e4140539f95b23b3df19a20f"
+    },
+    {
+     "name": "osm/cantabria-latest.osm.pbf",
+     "sha256": "1f3ece6423d6029406d4fdabe79701e85a3fcd85b72cff4813ce23952d0a5a10"
+    },
+    {
+     "name": "osm/castilla-y-leon-latest.osm.pbf",
+     "sha256": "f887bbb7333e677c839afc59c03d26092ef4dc71bbfd34e1f2bbe90e407e9af2"
+    },
+    {
+     "name": "osm/galicia-latest.osm.pbf",
+     "sha256": "79cbf6328e19fef8661dc41f6fa8d8680ee45b67f37af16a34f7667fc25ca5b9"
+    }
+   ],
+   "outputs": 314,
+   "outputs_sha256": "45908885f014c137154ba88fd3609cbed7f8e23b01b9cf7d7bb1156b36ffe894",
+   "bytes": 1744962,
+   "at": "2026-10-20T23:20:15.306Z"
+  }
+ ]
+}

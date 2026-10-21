@@ -7,12 +7,16 @@
 // 1 m to 40,000 km. Level of detail: a patch splits while its vertex spacing on screen is above PX px (screen-space error),
 // down to MAXL (the data hold about 9.8 km a pixel: deeper levels would only cost triangles). Patches are culled by the frustum
 // and by the horizon. Skirts (a dropped edge) hide the cracks between levels.
+// Base tiles (globe/base-tiles.js, data cwplans/docklands/data/world-base/): where the world base has imagery or heights at
+// a deeper level (round the testbeds), a patch may split beyond MAXL (Terrain.maxL), takes a material that draws the
+// imagery tile of its cell (terrainMaterial with img) and heights from the 'dem' attribute (h, east and north gradient,
+// flag) instead of the world texture; the CPU sampler answers from the same tiles (S.demH).
 // Skill: docklands-3d-page, "Three.js port: globe and world skeleton (2026-10-13)".
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, vec2, vec3, vec4, float, normalize, dot, max, min, mix, smoothstep, pow, clamp, cross, length, select, positionLocal, positionWorld, positionView, modelWorldMatrix, cameraNear, cameraFar, viewZToLogarithmicDepth, reflect, abs } from 'three/tsl';
 import { geodeticToEcef, enuBasis, WGS84, D2R } from '../geo/ellipsoid.js';
 
-export const SEG = 32, MAXL = 8, PX = 12;   // level 8: 0.7 degree patches, vertices 2.4 km apart (the data: 9.8 km a pixel)
+export const SEG = 32, MAXL = 8, PX = 12;   // level 8: 0.7 degree patches, vertices 2.4 km apart (the data: 9.8 km a pixel); deeper only where base tiles exist
 const A_ = WGS84.a;
 
 // height code (R channel, 0..1) -> metres above the geoid: 128 + 127 sqrt(h / 8848) above sea level, 127 - 127 sqrt(-h / 11000) below
@@ -31,22 +35,26 @@ export function makeSampler(img, geo) {
     return (g(x0, y0) * (1 - u) + g(x0 + 1, y0) * u) * (1 - v) + (g(x0, y0 + 1) * (1 - u) + g(x0 + 1, y0 + 1) * u) * v; };
   const S = {
     raw: (lon, lat) => decodeHeight(bil(lon, lat, 0)), land: (lon, lat) => bil(lon, lat, 1), lake: (lon, lat) => bil(lon, lat, 2), geoid,
-    // what the globe draws: water (sea) at 0, land (and lakes) at their height
-    h(lon, lat) { const r = S.raw(lon, lat), L = S.land(lon, lat); return L * r + (1 - L) * Math.max(r, 0); },
+    // what the globe draws: water (sea) at 0, land (and lakes) at their height; the base tiles' heights where loaded (S.demH)
+    demH: null,
+    h(lon, lat) { const d = S.demH ? S.demH(lon, lat) : null; if (d != null) return d; const r = S.raw(lon, lat), L = S.land(lon, lat); return L * r + (1 - L) * Math.max(r, 0); },
     ell: (lon, lat) => S.h(lon, lat) + geoid(lon, lat),
     water: (lon, lat) => Math.max(1 - S.land(lon, lat), S.lake(lon, lat)) > 0.5,
   };
   return S;
 }
 
-// ---------- the material: displacement in the vertex stage, colour, relief shading, sun, water glint and haze in the fragment
-export function terrainMaterial(tex, geoidTex, U) {
+// ---------- the material: displacement in the vertex stage, colour, relief shading, sun, water glint and haze in the fragment.
+// img (optional): { tex, box: uniform vec4 (w, s, e, n) } an imagery tile of the base (globe/base-tiles.js): its colour
+// replaces the colours by height, shaded relative to flat ground (the image already holds the sun of its day). The box is a
+// uniform, so every tile's material compiles to the same program.
+export function terrainMaterial(tex, geoidTex, U, img = null) {
   const m = new THREE.MeshBasicNodeMaterial();
-  const up = attribute('up', 'vec3'), geo = attribute('geo', 'vec2'), skirt = attribute('skirt', 'float');
+  const up = attribute('up', 'vec3'), geo = attribute('geo', 'vec2'), skirt = attribute('skirt', 'float'), dem = attribute('dem', 'vec4');
   const uvOf = g => vec2(g.x.add(180).div(360), float(90).sub(g.y).div(180));
   const guv = g => vec2(g.x.add(180).div(361).add(0.5 / 361), float(90).sub(g.y).div(181).add(0.5 / 181));
   // vertex: height as drawn (sea at 0), plus the geoid, x the exaggeration; skirts drop by the patch's skirt depth
-  const tv = texture(tex, uvOf(geo)).level(0), hraw = decodeNode(tv.r), land = tv.g, hdraw = mix(hraw.max(0), hraw, land);
+  const tv = texture(tex, uvOf(geo)).level(0), hraw = decodeNode(tv.r), land = tv.g, hdraw = mix(mix(hraw.max(0), hraw, land), dem.x, dem.w);   // dem.w = 1: heights of a base tile
   const N = texture(geoidTex, guv(geo)).level(0).r.mul(255).sub(128);
   m.positionNode = positionLocal.add(up.mul(hdraw.mul(U.exag).add(N).sub(skirt)));   // skirt: metres to drop (0 except on the skirt rows)
   // fragment
@@ -55,9 +63,9 @@ export function terrainMaterial(tex, geoidTex, U) {
   const hE = decodeNode(texture(tex, uv.add(vec2(du, 0))).r), hW = decodeNode(texture(tex, uv.sub(vec2(du, 0))).r);
   const hN = decodeNode(texture(tex, uv.sub(vec2(0, dv))).r), hS = decodeNode(texture(tex, uv.add(vec2(0, dv))).r);
   const coslat = geo.y.mul(D2R).cos().max(0.02), mx = float(2 * du * 360 * D2R * A_).mul(coslat), my = float(2 * dv * 180 * D2R * A_);
-  const gx = hE.sub(hW).div(mx), gy = hN.sub(hS).div(my);
+  const gx = mix(hE.sub(hW).div(mx), dem.y, dem.w), gy = mix(hN.sub(hS).div(my), dem.z, dem.w);
   const upn = normalize(up), east = normalize(vec3(upn.y.negate(), upn.x, 0).add(vec3(1e-6, 0, 0))), north = cross(upn, east);
-  const relief = mix(U.relief, U.relief.mul(0.35), water);   // the sea floor shaded more softly
+  const relief = mix(mix(U.relief, U.relief.mul(0.35), water), float(1.6), dem.w);   // the sea floor shaded more softly; base heights (true slopes, not 10 km means) a little
   const nE = normalize(upn.sub(east.mul(gx).add(north.mul(gy)).mul(relief)));
   const toG = v => normalize(modelWorldMatrix.mul(vec4(v, 0)).xyz);
   const nG = toG(nE), upG = toG(upn), sun = U.sun, view = normalize(positionWorld.negate());
@@ -73,8 +81,13 @@ export function terrainMaterial(tex, geoidTex, U) {
   const base = mix(landC, waterC, water);
   const sd = dot(upG, sun), day = smoothstep(-0.12, 0.12, sd);
   const diff = max(dot(nG, sun), 0), amb = mix(float(0.025), float(0.16), day);
-  const spec = pow(max(dot(reflect(sun.negate(), upG), view), 0), 60).mul(0.5).mul(water).mul(day);
-  let c = base.mul(amb.add(diff.mul(1.15).mul(day))).add(vec3(1, 0.95, 0.85).mul(spec));
+  const spec = pow(max(dot(reflect(sun.negate(), upG), view), 0), 60).mul(img ? 0.18 : 0.5).mul(water).mul(day);
+  let c;
+  if (img) {   // the imagery tile: lit as flat ground at full sun, slopes by the relief normal relative to flat ground
+    const b = img.box, iuv = vec2(geo.x.sub(b.x).div(b.z.sub(b.x)), b.w.sub(geo.y).div(b.w.sub(b.y))), col = texture(img.tex, iuv).rgb;
+    const rel = diff.div(max(sd, 0.2)).clamp(0.35, 1.6), lit = smoothstep(-0.1, 0.35, sd);
+    c = col.mul(amb.mul(0.6).add(lit.mul(mix(float(1), rel, 0.6)))).add(vec3(1, 0.95, 0.85).mul(spec));
+  } else c = base.mul(amb.add(diff.mul(1.15).mul(day))).add(vec3(1, 0.95, 0.85).mul(spec));
   c = c.add(vec3(0.004, 0.007, 0.018).mul(float(1).sub(day)));   // the night side: a little blue
   // haze by view angle (the limb from orbit) and by distance (thin near the ground: a low view is not washed out)
   const rim = pow(float(1).sub(max(dot(upG, view), 0)), 5).mul(U.haze).mul(day.mul(0.85).add(0.15)).mul(smoothstep(15000, 400000, length(positionWorld)));
@@ -90,7 +103,7 @@ export function terrainMaterial(tex, geoidTex, U) {
 
 // ---------- one patch: lon w..e, lat s..n, SEG x SEG cells, skirts; positions are offsets from the centre (ECEF, h = 0)
 function patchGeometry(w, s, e, n, skirtDepth) {
-  const N1 = SEG + 1, nv = N1 * N1 + 4 * N1, P = new Float32Array(nv * 3), UP = new Float32Array(nv * 3), GEO = new Float32Array(nv * 2), SK = new Float32Array(nv), I = [];
+  const N1 = SEG + 1, nv = N1 * N1 + 4 * N1, P = new Float32Array(nv * 3), UP = new Float32Array(nv * 3), GEO = new Float32Array(nv * 2), SK = new Float32Array(nv), I = [];   // (vertex order: the grid row by row from the north-west, then the skirts: north, south, west, east edges)
   const cl = (w + e) / 2, cb = (s + n) / 2, C = geodeticToEcef(cl, cb, 0);
   let k = 0;
   const put = (lon, lat, sk) => { const p = geodeticToEcef(lon, lat, 0), u = enuBasis(lon, lat).up; P.set([p[0] - C[0], p[1] - C[1], p[2] - C[2]], 3 * k); UP.set(u, 3 * k); GEO[2 * k] = lon; GEO[2 * k + 1] = lat; SK[k] = sk; return k++; };
@@ -103,13 +116,16 @@ function patchGeometry(w, s, e, n, skirtDepth) {
     for (let q = 0; q < SEG; q++) { const a = top(q), b = top(q + 1), c = base + q, d = base + q + 1; I.push(a, c, b, b, c, d, a, b, c, b, d, c); } }
   const G = new THREE.BufferGeometry();
   G.setAttribute('position', new THREE.BufferAttribute(P, 3)); G.setAttribute('up', new THREE.BufferAttribute(UP, 3)); G.setAttribute('geo', new THREE.BufferAttribute(GEO, 2)); G.setAttribute('skirt', new THREE.BufferAttribute(SK, 1));
+  G.setAttribute('dem', new THREE.BufferAttribute(new Float32Array(nv * 4), 4));   // base heights: h, east and north gradient, flag (0: the world texture)
   G.setIndex(I); G.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1e9);   // culling is ours (frustumCulled false)
   return { G, C };
 }
 
 // ---------- the tree
 export class Terrain {
-  constructor(scene, material, U) { this.scene = scene; this.mat = material; this.U = U; this.cache = new Map(); this.frame = 0; this.stats = { patches: 0, triangles: 0, cached: 0, made: 0 }; }
+  constructor(scene, material, U) { this.scene = scene; this.mat = material; this.U = U; this.cache = new Map(); this.frame = 0; this.stats = { patches: 0, triangles: 0, cached: 0, made: 0 }; this.detail = null; }
+  // the deepest level a patch of this cell may split to: MAXL, or deeper where the base has tiles (base-tiles.js)
+  maxL(L, x, y) { return this.detail && L >= MAXL ? this.detail.maxL(L, x, y) : MAXL; }
   key(L, x, y) { return L + '/' + x + '/' + y; }
   bounds(L, x, y) { const dl = 180 / (1 << L); return [-180 + x * dl, 90 - (y + 1) * dl, -180 + (x + 1) * dl, 90 - y * dl]; }
   node(L, x, y) {
@@ -125,6 +141,7 @@ export class Terrain {
   mesh(nd) {
     if (!nd.mesh) { const { G } = patchGeometry(nd.w, nd.s, nd.e, nd.n, Math.min(20000, nd.spacing * 0.15 + 50)), m = new THREE.Mesh(G, this.mat);
       m.frustumCulled = false; m.matrixAutoUpdate = false; m.matrixWorldAutoUpdate = false; m.userData.C = nd.C; nd.mesh = m; this.stats.made++; }
+    if (this.detail) this.detail.patch(nd, nd.mesh, this.frame);   // the base tile's imagery and heights (each frame the patch is drawn)
     return nd.mesh;
   }
   // choose the patches for a camera: eye (ECEF), view: { toCam(C) -> [x, y, z] in the camera frame (camera looks down -z),
@@ -140,11 +157,12 @@ export class Terrain {
       if (L > 0 && ang - nd.r / A_ > hz) return;
       if (L > 0 && !V.inFrustum(nd.C, nd.r)) return;
       const dist = Math.max(1, Math.hypot(nd.C[0] - eye[0], nd.C[1] - eye[1], nd.C[2] - eye[2]) - nd.r), px = nd.spacing * V.K / dist;
-      if (L < MAXL && px > PX && !(L >= 1 && nd.n - nd.s < 0.02)) { const L2 = L + 1, x2 = x * 2, y2 = y * 2; visit(L2, x2, y2); visit(L2, x2 + 1, y2); visit(L2, x2, y2 + 1); visit(L2, x2 + 1, y2 + 1); return; }
+      if (L < this.maxL(L, x, y) && px > PX && !(L >= 1 && nd.n - nd.s < 0.02)) { const L2 = L + 1, x2 = x * 2, y2 = y * 2; visit(L2, x2, y2); visit(L2, x2 + 1, y2); visit(L2, x2, y2 + 1); visit(L2, x2 + 1, y2 + 1); return; }
       nd.used = this.frame; out.push(nd);
     };
     visit(0, 0, 0); visit(0, 1, 0);
     // keep at most 600 patches with meshes: free the least recently used
+    if (this.detail) this.detail.selected(out, this.frame);
     if (this.cache.size > 1400) { const old = [...this.cache.values()].filter(n => n.used < this.frame - 30).sort((a, b) => a.used - b.used);
       for (const n of old.slice(0, this.cache.size - 1000)) { if (n.mesh) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); } this.cache.delete(n.k); } }
     return out;

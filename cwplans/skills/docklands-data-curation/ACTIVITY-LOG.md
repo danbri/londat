@@ -2828,6 +2828,32 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
 - Open: owner decision on IGN / Microsoft geometry for the city; implicit tiling; meshopt; the Docklands model build
   during a place fly-in (main.js); performance on a real iPhone (software rendering cannot show GPU cost).
 
+## 2026-10-20: world base tiles and detail sets: the testbeds no longer in a void (KR2.2; subagent)
+- Owner, 2026-10-20: "pragmatic perf improvements, and improved worldwide coverage so that our detailed city testbeds are
+  not lost in the void". Skill: docklands-3d-page, "Three.js port: world base tiles and detail sets (2026-10-20)".
+- Surface colour: Sentinel-2 cloudless 2016 by EOX (CC BY 4.0; the later years are non-commercial and not used) as 512 px
+  WebP tiles in the terrain quadtree: worldwide to level 4 (2.4 km a pixel), to level 11 (19 m) round London, León and
+  Sarajevo; 1,432 tiles, 26.5 MB (`cwplans/docklands/data/world-base/img/`, tool `cwplans/tools/build-world-base.mjs`).
+- Terrain: Copernicus GLO-90 box means, 35 x 35 a tile, levels 7 to 12 (to 150 m between vertices) within 300 km to 7 km
+  of each testbed; 448 tiles, 1.0 MB. Patches split past level 8 only where tiles exist; the CPU sampler, the lines
+  (vertices moved in place when heights arrive) and the places' hand-over use the same heights.
+- Vectors: Natural Earth 1:10m roads, railways, rivers (+ Europe), lakes (+ Europe), urban areas and GeoNames cities15000
+  (CC BY 4.0, 31,784 places, searchable) in `world-detail/` (16.9 MB, skeleton-1); OSM (Geofabrik extracts of
+  2026-10-19T20:21Z, ODbL) motorway/trunk/primary roads, railways, rivers, towns and villages for Castilla y León,
+  Galicia, Asturias, Cantabria (`es-nw/`, 5.9 MB) and Bosnia and Herzegovina (`ba/`, 1.7 MB); tool
+  `cwplans/tools/build-detail-skeleton.mjs`. The 1:50m rivers and lakes hand over below 800 / 600 km.
+- Labels: at 50 km over León 14 names (Villaquilambre, La Robla, Mansilla de las Mulas ...) where there were 2; over
+  Sarajevo 14 (Ilidža, Pale, Vogošća ...).
+- Perf (390 x 844 @2, headless SwiftShader, Sarajevo, settled): line chunks outside the frustum are no longer drawn: draw
+  calls 1,000 km 173 -> 92, 100 km 276 -> 217, 10 km 179 -> 120 (with the new layers; before this work 164 / 151 / 178).
+  CPU submit 1.7 / 3.8 / 2.1 ms (base off: 1.6 / 1.9 / 1.7). GPU: base textures 56 to 63 MB (cap 56 tiles, freed by
+  view; after a flight to Tokyo 47 tiles held). JS heap +25 to 60 MB. Total added to the site 54.8 MB.
+- Tests: base-check (new) all passed; globe-check 390 x 844 @2 all passed; place-check leon and sarajevo all passed;
+  npm test 65/65; npm run check OK. Screenshots in docklands/test/out/base/ (not committed). Not pushed (subagent branch).
+- Open: GLO-90 heights only round the testbeds (elsewhere ETOPO 9.8 km); imagery past level 4 only round the testbeds;
+  no ESA WorldCover classes; OSM regional sets only for north-west Spain and Bosnia (the other countries in 300 km of the
+  testbeds have Natural Earth roads); the base as one range archive or on a tile host (docs/hosting-options.md);
+  a measure on a real iPhone.
 ## 2026-10-21: places: IGN and Microsoft footprints in the city ring, each its own class (subagent)
 - Coordinator follow-up after the merge of a38f725b, within the owner's decisions of 2026-10-20 ("substantially more city";
   "Use ms/overture"; IGN: "use the data but keep it distinct and easy to remove if requested"). Branch reset to origin/main.

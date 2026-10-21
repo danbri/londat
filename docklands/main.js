@@ -835,5 +835,18 @@ if (START_AWAY) {
   // the boot screen stays until the start view is drawn (the globe takes the view, or the model is ready), 20 s at most
   const t0 = performance.now(), wait = () => { if ((GLOBE && GLOBE.mode === 'globe' && GLOBE.ready && !GLOBE.isFlying()) || READY || performance.now() - t0 > 20000) bootDone(); else requestAnimationFrame(wait); };
   requestAnimationFrame(wait);
-  setTimeout(() => heavy().catch(e => console.warn('model data', e)), 0);
+  // the model's optional data and layers (heavy) wait until the view is still: on the globe they cost 2 to 5 s of
+  // main-thread work, which made a deep-link fly-in to a place jerky (places agent, 2026-10-21). They start when the
+  // globe has not moved for 1.5 s and no flight runs, at once when the model takes the view, and after 60 s at most.
+  let lastKey = '', stillT = performance.now(), started = false;
+  const startHeavy = () => { if (started) return; started = true; STATS.heavyDeferredMs = Math.round(performance.now() - t0); heavy().catch(e => console.warn('model data', e)); };
+  const idle = () => {
+    if (started) return; const now = performance.now();
+    if (!GLOBE || GLOBE.mode !== 'globe' || now - t0 > 60000) return startHeavy();
+    const o = GLOBE.ready ? GLOBE.orbit() : null, key = o ? [o.lon, o.lat, o.range, o.heading, o.tilt].map(v => v.toFixed(5)).join() : '';
+    if (key !== lastKey || GLOBE.isFlying() || !GLOBE.ready) { lastKey = key; stillT = now; }
+    if (now - stillT > 1500) return startHeavy();
+    setTimeout(idle, 250);
+  };
+  setTimeout(idle, 250);
 }
