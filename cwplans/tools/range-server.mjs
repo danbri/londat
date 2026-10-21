@@ -3,7 +3,7 @@
 // has no Range support). Hosting study: https://github.com/danbri/londat/blob/main/docs/hosting-options.md . Skill:
 // docklands-3d-page, "Hosting: range reads and one-file archives". Local use only: no directory listing, no writes.
 //
-//   node cwplans/tools/range-server.mjs [--root .] [--port 8215] [--gzip] [--delay 0] [--tls cert.pem,key.pem]
+//   node cwplans/tools/range-server.mjs [--root .] [--port 8215] [--gzip] [--delay 0] [--tls cert.pem,key.pem] [--max-age 600]
 //
 // - Range: one range per request (`bytes=a-b`, `bytes=a-`, `bytes=-n`); 206 with Content-Range; 416 when it cannot be
 //   met; a multi-range request gets the whole file (200), as GitHub Pages does not do multipart either.
@@ -11,7 +11,8 @@
 // - --delay ms: wait before each answer (a stand-in for the round trip to a far host; localhost has none).
 // - --tls cert,key: HTTPS with HTTP/2 (and HTTP/1.1 for old clients), as the real hosts serve.
 // - CORS: Access-Control-Allow-Origin *, Expose-Headers Content-Range, Content-Length, ETag, Accept-Ranges; OPTIONS answers
-//   the preflight for Range. Cache-Control: no-cache plus ETag (each test run starts cold in a new browser context).
+//   the preflight for Range. Cache-Control: no-cache plus ETag (each test run starts cold in a new browser context);
+//   --max-age 600 sends `max-age=600` as GitHub Pages does (measured 2026-10-20), for repeat-load tests (perf-load.mjs).
 // - /__stats gives { requests, bytes, paths: { path: { n, bytes } } }; /__reset sets them to zero. Not counted.
 import { createServer as createHttp } from 'node:http';
 import { createSecureServer } from 'node:http2';
@@ -21,7 +22,8 @@ import { gzipSync } from 'node:zlib';
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.css': 'text/css',
   '.md': 'text/markdown; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.glb': 'model/gltf-binary', '.zip': 'application/zip',
-  '.gz': 'application/gzip', '.wasm': 'application/wasm', '.txt': 'text/plain; charset=utf-8', '.csv': 'text/csv', '.xml': 'application/xml' };
+  '.gz': 'application/gzip', '.wasm': 'application/wasm', '.txt': 'text/plain; charset=utf-8', '.csv': 'text/csv', '.xml': 'application/xml',
+  '.webp': 'image/webp', '.ico': 'image/x-icon', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2', '.geojson': 'application/geo+json', '.kml': 'application/vnd.google-earth.kml+xml' };
 const GZIP_TYPES = /^(text\/|application\/(json|javascript|xml|octet-stream)|model\/gltf|image\/svg)/;   // what GitHub Pages compresses (measured 2026-10-20: json, glb, octet-stream)
 
 export function parseRange(h, size) {   // -> null (whole file), { start, end } or 'bad' (416)
@@ -33,7 +35,7 @@ export function parseRange(h, size) {   // -> null (whole file), { start, end } 
   return start > end || start >= size ? 'bad' : { start, end };
 }
 
-export function startRangeServer({ root = '.', port = 8215, host = '127.0.0.1', gzip = false, delay = 0, tls = null } = {}) {
+export function startRangeServer({ root = '.', port = 8215, host = '127.0.0.1', gzip = false, delay = 0, tls = null, maxAge = null } = {}) {
   const ROOT = resolve(root), stats = { requests: 0, bytes: 0, paths: {} }, gzCache = new Map();
   const count = (p, n) => { stats.requests++; stats.bytes += n; const s = stats.paths[p] || (stats.paths[p] = { n: 0, bytes: 0 }); s.n++; s.bytes += n; };
   async function handle(req, res) {
@@ -48,7 +50,7 @@ export function startRangeServer({ root = '.', port = 8215, host = '127.0.0.1', 
     if (!existsSync(file)) { count(path, 0); res.writeHead(404, cors); return res.end(); }
     const st = statSync(file), type = TYPES[extname(file).toLowerCase()] || 'application/octet-stream';
     const etag = `"${st.size.toString(16)}-${Math.floor(st.mtimeMs).toString(16)}"`;
-    const head = { 'content-type': type, 'accept-ranges': 'bytes', etag, 'cache-control': 'no-cache', vary: 'Accept-Encoding', ...cors };
+    const head = { 'content-type': type, 'accept-ranges': 'bytes', etag, 'cache-control': maxAge == null ? 'no-cache' : `max-age=${maxAge}`, vary: 'Accept-Encoding', ...cors };
     if (req.headers['if-none-match'] === etag) { count(path, 0); res.writeHead(304, head); return res.end(); }
     const range = parseRange(req.headers.range, st.size);
     if (range === 'bad') { count(path, 0); res.writeHead(416, { ...head, 'content-range': `bytes */${st.size}` }); return res.end(); }
@@ -69,6 +71,6 @@ export function startRangeServer({ root = '.', port = 8215, host = '127.0.0.1', 
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const a = process.argv, arg = (k, d) => { const i = a.indexOf(k); return i > 0 ? a[i + 1] : d; };
-  const s = await startRangeServer({ root: arg('--root', '.'), port: +arg('--port', 8215), gzip: a.includes('--gzip'), delay: +arg('--delay', 0), tls: arg('--tls', null)?.split(',') || null });
+  const s = await startRangeServer({ root: arg('--root', '.'), port: +arg('--port', 8215), gzip: a.includes('--gzip'), delay: +arg('--delay', 0), tls: arg('--tls', null)?.split(',') || null, maxAge: arg('--max-age', null) == null ? null : +arg('--max-age') });
   console.log(`range-server: ${s.url}/ (root ${resolve(arg('--root', '.'))})`);
 }

@@ -42,19 +42,31 @@ export async function openRangeArchive(url, { fetch: f = globalThis.fetch.bind(g
   }
   async function body(r) { const b = new Uint8Array(await r.arrayBuffer()); stats.bytes += b.byteLength; return b; }
   const total = r => { const m = /\/(\d+)\s*$/.exec(r.headers.get('content-range') || ''); return m ? +m[1] : null; };
+  // a 206 must be the bytes of the file: starting where asked, as long as its Content-Range says, and without a
+  // Content-Encoding (a host that cuts the range from its gzip stream answers offsets into the gzip bytes; GitHub Pages
+  // does that for a client that accepts gzip, measured 2026-10-20; Chromium sends Accept-Encoding: identity with a Range,
+  // Safari is not measured). Cross-origin hosts that do not expose Content-Range: the body must be as long as asked. The
+  // ZIP signatures (end record, local headers) and the inflate step catch what is left. A mismatch throws; the caller
+  // (archiveFetchJson, skeleton-layers.js) then reads the files.
+  const exact = (r, buf, start, end) => {
+    const cr = r.headers.get('content-range'), enc = r.headers.get('content-encoding'), m = cr && /^bytes (\d+)-(\d+)\/(\d+|\*)$/.exec(cr.trim());
+    const bad = (enc && enc !== 'identity') || (cr ? !m || +m[2] - +m[1] + 1 !== buf.byteLength || (start != null && +m[1] !== start) : (start != null && end != null && buf.byteLength !== end - start + 1));
+    if (bad) { stats.mismatch = (stats.mismatch || 0) + 1; throw new Error(`range-archive: the answer is not the asked range (Content-Range ${cr}, Content-Encoding ${enc}, ${buf.byteLength} bytes) for ${url}`); }
+  };
 
   // 1. the end of the file
   let size = null, tailStart = 0, tailBuf;
   try {
     const r = await get({ Range: `bytes=-${tail}` }); tailBuf = await body(r);
-    if (r.status === 206) { size = total(r); if (size == null) throw new Error('no Content-Range'); tailStart = size - tailBuf.byteLength; }
+    if (r.status === 206) { size = total(r); if (size == null) throw new Error('no Content-Range'); exact(r, tailBuf, null, null); tailStart = size - tailBuf.byteLength; }
     else { size = tailBuf.byteLength; tailStart = 0; }   // 200: the server sent the whole file
   } catch (e) {
+    if (stats.mismatch) throw e;   // the host does not give file offsets: no second try
     const h = await get({}, 'HEAD'); size = +h.headers.get('content-length');
     if (!(size > 0)) throw new Error('range-archive: no size for ' + url + ' (' + e.message + ')');
     tailStart = Math.max(0, size - tail);
     const r = await get({ Range: `bytes=${tailStart}-${size - 1}` }); tailBuf = await body(r);
-    if (r.status === 200) tailStart = 0;
+    if (r.status === 200) tailStart = 0; else exact(r, tailBuf, tailStart, size - 1);
   }
   const dvT = new DataView(tailBuf.buffer, tailBuf.byteOffset, tailBuf.byteLength);
   let eocd = -1;
@@ -66,7 +78,7 @@ export async function openRangeArchive(url, { fetch: f = globalThis.fetch.bind(g
   // 2. the central directory (in the tail, or one more range)
   let cd;
   if (cdOff >= tailStart) cd = tailBuf.subarray(cdOff - tailStart, cdOff - tailStart + cdSize);
-  else cd = await body(await get({ Range: `bytes=${cdOff}-${cdOff + cdSize - 1}` }));
+  else { const r = await get({ Range: `bytes=${cdOff}-${cdOff + cdSize - 1}` }); cd = await body(r); if (r.status === 206) exact(r, cd, cdOff, cdOff + cdSize - 1); else cd = cd.subarray(cdOff, cdOff + cdSize); }
   const dv = new DataView(cd.buffer, cd.byteOffset, cd.byteLength), dec = new TextDecoder();
   const entries = new Map();
   for (let p = 0, n = 0; n < count; n++) {
@@ -105,10 +117,10 @@ export async function openRangeArchive(url, { fetch: f = globalThis.fetch.bind(g
     await Promise.all(groups.map(async g => {
       try {
         const r = await get({ Range: `bytes=${g.a}-${g.b - 1}` }); let buf = await body(r), start = g.a;
-        if (r.status === 200) start = 0;   // whole file
+        if (r.status === 200) start = 0; else exact(r, buf, g.a, g.b - 1);   // 200: the whole file
         for (const job of g.jobs) {
           let s = slice(buf, start, job.e);
-          if (!s) { const e = job.e, rr = await get({ Range: `bytes=${e.offset}-${e.offset + 30 + e.nl + 65535 + e.csize}` }); s = slice(await body(rr), rr.status === 200 ? 0 : e.offset, e); }
+          if (!s) { const e = job.e, last = Math.min(size - 1, e.offset + 30 + e.nl + 65535 + e.csize), rr = await get({ Range: `bytes=${e.offset}-${last}` }), bb = await body(rr); if (rr.status === 206) exact(rr, bb, e.offset, last); s = slice(bb, rr.status === 200 ? 0 : e.offset, e); }
           if (s) job.ok(s); else job.fail(new Error('range-archive: short read for ' + job.e.name));
         }
       } catch (err) { for (const job of g.jobs) job.fail(err); }
@@ -142,6 +154,8 @@ export function archiveFetchJson(ar, root, { fallback = async u => { const r = a
   const base = root.endsWith('/') ? root : root + '/';
   return async u => {
     const s = String(u); const name = s.startsWith(base) ? decodeURIComponent(s.slice(base.length).split(/[?#]/)[0]) : null;
-    return name != null && ar.has(name) ? ar.json(name) : fallback(s);
+    if (name == null || ar.broken || !ar.has(name)) return fallback(s);
+    try { return await ar.json(name); }
+    catch (e) { ar.broken = true; console.warn('range-archive: reading the files from now on:', e.message); return fallback(s); }   // a bad range answer, a short read, a network error
   };
 }
