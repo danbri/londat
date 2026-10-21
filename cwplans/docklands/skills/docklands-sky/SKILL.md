@@ -7,7 +7,7 @@ description: >-
   clouds placed by the EUMETSAT cloud mask; aircraft (adsb.lol: near-live 5-minute live-cache branch, recorded 7-day
   cache, live API); the London City METAR (wind, low cloud); London City approach paths; EA tide readings by chainage,
   faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, ±4 min);
-  tools/fetch-sky.mjs and its snapshots. Reach for it before you change sky.js or its hooks, add a sky object or source,
+  tools/fetch-sky.mjs and its snapshots; the clock zone of the view (?tz=). Reach for it before you change sky.js or its hooks, add a sky object or source,
   refresh the snapshots, solve a photo's time from the sun or moon, or explain what the sky, a star, a satellite, an
   aircraft or the river level shows. Licences and credits.
 ---
@@ -258,6 +258,50 @@ Measured levels for any clock time in the last year, not only the EA API's 4 wee
   cached as an empty file and never asked again (9 Oct 2026 stayed a gap); `ea-tide-archive.mjs fetchArchive` now asks
   again for an empty day less than 10 days old. Days older than the file show the prediction.
 
+## Place-aware page clock (OKR KR1.2, 2026-10-21)
+
+The port's clock zone follows the view; the instant (UTC) never changes when the zone changes, only the wall clock shown
+and read. Files: `docklands/geo/zone.js` (pure, Node and browser), `docklands/clockzone.js` (the page's one `ZONE`
+object, DOM-free), wired in `main.js` (a 500 ms poll `ZONE.follow(zoneView())`, `ZONE.onChange(() => setClock(clock))`),
+`carousel.js` (`C.zone`), `api.js`, `globe/globe.js` (`G.zoneAt`). Tests: `docklands/geo/test/zone.test.mjs` (`npm test`;
+DST edges of Europe/London, Europe/Madrid, Europe/Sarajevo, labels, `?tz=`, the world towns, the controller) and
+`docklands/test/zone-check.mjs` (headless: wheels London at `?view=cw`, Madrid over León, the API, `?tz=`).
+
+- Order of `zoneAt(lon, lat)`: (1) a region config with a 3D `place` whose surroundings square (`place.surround.size_m`,
+  70 km) holds the point: exact; (2) a small region bbox (under 10,000 km²: the Docklands, Leiden): exact; (3) the
+  Natural Earth towns of the globe (`cwplans/docklands/data/world/places.json`, property `tz`, 6,159 of 7,342 towns;
+  public domain, already registered): the nearest town of the same country (country polygon `a3`), else the nearest
+  within 300 km; approximate when a town of the same country in another zone lies within 3 times the distance (at least
+  300 km), e.g. western Kansas; (4) a large region bbox (the UK skeleton): approximate (Dieppe is inside its bbox: the
+  towns step comes first for that reason); (5) the nautical zone `Etc/GMT∓n` of the longitude (15 degree bands; the legal
+  one at sea), approximate. The towns and countries load with `GLOBE.gazetteer()`, started 3 s after the globe takes the
+  view; until then steps 3 is skipped.
+- No timezone-boundary-builder: its polygons are ODbL (OSM-derived; allowed, but share-alike and 100+ MB raw) and the
+  Natural Earth towns already carry IANA zones; a coarse polygon set is the next step only if a border case matters.
+- Model: the zone of `geo/current.js REGION` (Europe/London). A named view (`setView`) calls `ZONE.follow({ mode:
+  'model' })` first, so its night/day times are London times.
+- `?t=` without an offset is read in the start view's zone (`ZONE.parse`; with Z or an offset as it is): `?tz=`, else
+  `?place=` matched to a region config by id, name, label or search words (`regionByName`), else `?ll=` (regions
+  only at first), else the model. After api.js has gone to `?ll=` / `?place=`, `__docklands3.refineZone()` loads the
+  towns and, if the zone came out different, reads `?t=` again in it (only then; later zone changes keep the instant).
+- `?tz=<IANA | UTC | UTC+2 | +02:00>` and `setTimeZone(zone)` (WebMCP `set_time_zone`) fix the zone; `"auto"` follows
+  the view again. `setTime(v, zone)` / `set_time {time, time_zone}` read one time in a named zone without fixing it.
+  `getTimeZone()` / `get_time_zone` and `getView().time`: time_zone, abbreviation, utc_offset, offset_min, wall_clock,
+  source (`region:leon`, `natural-earth`, `solar`, `tz-parameter`), approximate, method (a sentence), place, fixed.
+- Labels: `zoneLabel` = the short name in the zone's own locale (region config `locale`), then the visitor's; Intl gives
+  "BST" only with en-GB, "CEST" with es-ES / bs / de, "GMT+2" with en: an answer that is only an offset is replaced by
+  `UTC+n`; "GMT" is a name only at offset 0. The day wheel draws the label at its lower right ("~" when approximate);
+  its `aria-valuetext` says e.g. "12:00 CEST (UTC+2), sunrise 08:28, sunset 19:48".
+- Sun of the wheels (sunrise, sunset, night shading) and `NIGHT`: at the zone's place (`ZONE.observer()`: the region
+  origin of a place, else the centre of the view), not at Canary Wharf (`sky3.js sunAltAt`). In the model the sky and
+  NIGHT stay Sky3's (the Docklands observer).
+- Repeated hour: every path (page, `parseTime` of describe.js / textview.js, the API) uses `geo/clock.js fromWall`, the
+  first instant. Before 2026-10-21 describe.js `zonedToUtc` gave the second; found by zone-check (`set_time` 02:30
+  Sarajevo on 25 October gave 01:30Z, not 00:30Z).
+- London stays only where the data are London's: the weather and wind snapshot hours (`adapters/uk.js fromUkWall`), the
+  test hooks' `__docklands3.fromLondon` (`ukClock`, spread into the hook so `main.js` does not name London), the layers'
+  own London formats (planes, river, piers, sky-extra, crown: London data). Locale check: `timezone` 117 -> 98.
+
 ## Port clock in the region's time zone (OKR O1, 2026-10-11)
 
 The port's clock no longer names London. `docklands/geo/clock.js` (`fromWall(s, tz)`, `wallParts`, `wallString`,
@@ -269,6 +313,7 @@ Rule for a repeated hour: the first instant; a skipped hour: moved on by the gap
 `fromLondon`: compared on 43,000+ inputs, 2000 to 2030, in `docklands/geo/test/clock.test.mjs`; Tokyo, Sydney, Kolkata
 and others tested there too). `clock-check.mjs` after the change: 166 rows, 0 failed (2026-10-11). Still London-only:
 labels ("London time") and the `Intl` calls in the layers (count: `tools/check-locale.mjs`, category `timezone`).
+Superseded on 2026-10-21 by the place-aware clock above (`fromLondon` and `TZ` no longer used by the core).
 Design: https://github.com/danbri/londat/blob/main/docs/planet-architecture.md
 
 ## Three.js port clock (2026-10-09)
