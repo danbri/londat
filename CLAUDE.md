@@ -55,7 +55,7 @@ activity log.
 Architecture rule 6 (owner, 2026-10-22: "we should cache model and data but not visuals ... Let us NOT lose that
 casually"): tiles, archives and caches hold geometry, attributes and data; the picture is always rendered live (any
 angle, time of day, weather, style, boats, aircraft, birds). No baked lighting or time, no pre-rendered images in place
-of the model, and no capability dropped for speed without the owner's agreement.
+of the model, and no capability dropped for speed without the owner's agreement. Texture and imagery inputs (satellite tiles, facade photos) are data and may be cached.
 
 ## Data policy (the cwplans exception)
 The owner's normal data-ethics rules are in danbri/glitchcan-minigam `CLAUDE.md` ("Data ethics"). This project has an

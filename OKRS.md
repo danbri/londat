@@ -43,6 +43,10 @@ list (2026-10-09) and the scaling assessment
    aircraft, birds, wind). Do not bake light, shadow, sky or time into textures, do not use pre-rendered images or
    impostors in place of the model, and do not drop a capability for speed without the owner's agreement. Level of
    detail may simplify geometry far away; it must keep the same lighting and time behaviour.
+   Images that are inputs to the renderer (satellite imagery tiles, facade photos, land-cover and other texture data) are
+   data: they may be tiled and cached (the service worker caches them by hash); the renderer still lights them live.
+   Outputs (rendered frames, baked light or sky, impostor pictures of the model) are not cached in place of rendering
+   (owner, 2026-10-22: "it could cache bitmaps used as textures, or visual tiles for eg satellite imagery, no?").
 
 ## O1. Any locale worldwide (mission-critical)
 
