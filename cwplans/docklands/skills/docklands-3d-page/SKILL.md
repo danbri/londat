@@ -3689,7 +3689,12 @@ tool `cwplans/tools/build-sw-manifest.mjs`, hints tool `cwplans/tools/build-prel
   at deploy, fetched at each navigation, a 304 when unchanged); a cached copy is served only when its stored hash is the
   manifest's; a fetched copy is stored only when the SHA-256 of its bytes is the manifest's (never stale bytes under a new
   hash: the HTTP cache can hold an old copy for 600 s after a deploy, so the worker fetches with `cache: 'no-cache'`);
-  asset requests wait for the navigation's manifest. Not touched: other origins (raw.githubusercontent.com live-cache and
+  asset requests wait for the navigation's manifest. A fetched file whose bytes do not have the manifest's hash is
+  never passed on silently (2026-10-22, after the owner's "weird star patterns": rays of triangles to a few points from
+  far out, not reproduced headless; suspected a version mix, an old `build.js` with a new `main.js`, which the CDN can
+  give for a short time during a deploy): the worker asks once more under `?v=<hash>` (a new CDN cache key, ignored by
+  Pages), stores that copy if its hash is right, and gives the page the second copy (`stats.mismatched`,
+  `stats.refetched`). Not touched: other origins (raw.githubusercontent.com live-cache and
   cache branches, APIs), files not in the manifest (`cwplans/cache/`), Range requests, `no-store` / `reload` requests.
 - **First visit.** The page is not controlled until the worker activates (`clients.claim()`); the page then posts the URLs
   it has read and the worker copies them with `cache: 'only-if-cached'` (from the HTTP cache, no network), checked by

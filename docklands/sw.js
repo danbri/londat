@@ -35,7 +35,7 @@ const PAGE_KEY = new URL('./', self.location).href;   // the page, cached withou
 const MANIFEST_TIMEOUT = 8000;
 
 let M = null, known = false, pending = null, puts = 0, OFF = false;
-const stats = { hits: 0, fetched: 0, stored: 0, mismatched: 0, passed: 0, warmed: 0 };
+const stats = { hits: 0, fetched: 0, stored: 0, mismatched: 0, refetched: 0, passed: 0, warmed: 0 };
 
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
 async function cachedManifest() {
@@ -124,8 +124,20 @@ async function asset(event, req, path) {
   if (hit && hit.headers.get('x-sw-hash') === h) { stats.hits++; return hit; }
   stats.fetched++;
   const res = await fetch(new Request(req, { cache: 'no-cache' }));   // past a fresh but old HTTP-cache copy (max-age=600)
-  if (res.status === 200 && res.type === 'basic') event.waitUntil(store(req.url, res.clone(), h).catch(() => {}));
-  return res;
+  if (res.status !== 200 || res.type !== 'basic') return res;
+  // never hand the page a file of another release: during a deploy the CDN can answer the new manifest and an old copy
+  // of a module (an old build.js with a new main.js can draw rays of triangles to a few points). On a mismatch
+  // ask once more under a query of the hash (a new CDN cache key); keep whichever copy has the deployed hash
+  const again = (b, r) => { const headers = new Headers(r.headers); headers.delete('content-encoding'); headers.delete('content-length'); return new Response(b, { status: 200, statusText: r.statusText, headers }); };   // (the body is decoded)
+  const buf = await res.arrayBuffer();
+  if (await sha16(buf) === h) { event.waitUntil(store(req.url, again(buf.slice(0), res), h).catch(() => {})); return again(buf, res); }
+  stats.mismatched++;
+  const u = new URL(req.url); u.searchParams.set('v', h);
+  const r2 = await fetch(u.href, { cache: 'no-cache' }).catch(() => null);
+  if (!r2 || r2.status !== 200) return again(buf, res);
+  const b2 = await r2.arrayBuffer();
+  if (await sha16(b2) === h) { stats.refetched++; event.waitUntil(store(req.url, again(b2.slice(0), r2), h).catch(() => {})); }
+  return again(b2, r2);
 }
 
 self.addEventListener('install', () => self.skipWaiting());

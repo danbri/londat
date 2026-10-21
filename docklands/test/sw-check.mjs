@@ -5,7 +5,8 @@
 //   1. first visit: the worker installs and takes the page; the files the page read are copied into its cache (warm);
 //   2. second visit: the deployed files come from the worker (no request reaches the server for them), live data from
 //      other origins (raw.githubusercontent.com live-cache, the hourly cache) is fetched again and never cached;
-//   3. a file whose bytes do not match the manifest hash is not cached (a stale copy is never kept under a new hash);
+//   3. a file whose bytes do not match the manifest hash is not cached (a stale copy is never kept under a new hash) and is
+//      asked for once more under ?v=<hash>;
 //   4. a new manifest version: entries whose hash changed are dropped;
 //   5. ?sw=0 unregisters the worker and deletes its caches; the page loads without it.
 //   node docklands/test/sw-check.mjs [--query 'view=globe&layers=ships,planes'] [--keep-manifest]
@@ -43,7 +44,8 @@ async function visit(q, { wait = true } = {}) {
   const ms = Date.now() - t0;
   await page.waitForTimeout(2000);
   const hits = Object.entries(srv.stats.paths).filter(([k, v]) => v.n > (before.paths[k] || 0)).map(([k]) => k);
-  return { page, errors, resp, ms, server: srv.stats.requests - before.requests, hits };
+  const counts = Object.fromEntries(hits.map(k => [k, srv.stats.paths[k].n - (before.paths[k] || 0)]));
+  return { page, errors, resp, ms, server: srv.stats.requests - before.requests, hits, counts };
 }
 const swStats = page => page.evaluate(() => new Promise(ok => { const c = navigator.serviceWorker.controller; if (!c) return ok(null);
   navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.type === 'sw-stats') ok(e.data); }, { once: true }); c.postMessage({ type: 'stats' }); }));
@@ -66,8 +68,10 @@ try {
   check(!v2.errors.length, 'second visit: no page errors', v2.errors.slice(0, 2).join(' | '));
   check(fromSw >= same.length * 0.9 && fromSw > 20, 'second visit: the deployed files come from the worker', `${fromSw} of ${same.length} same-origin responses`);
   const toServer = v2.hits.filter(p => !/^\/docklands\/$|sw-manifest\.json|sw\.js$|^\/cwplans\/cache\//.test(p));   // cwplans/cache/: live (the history layer), never cached
-  check(toServer.length <= 3, 'second visit: the server is asked only for the page, the manifest and files not in the manifest', `${v2.server} requests: ${v2.hits.slice(0, 8).join(', ')}`);
+  check(toServer.length <= 4, 'second visit: the server is asked only for the page, the manifest and files not in the manifest', `${v2.server} requests: ${v2.hits.slice(0, 8).join(', ')}`);
   check(toServer.some(p => p.endsWith(BAD)), 'a file whose hash does not match the manifest is fetched again (never cached)', toServer.join(', '));
+  const badN = Object.entries(v2.counts).find(([k]) => k.endsWith(BAD))?.[1] || 0;
+  check(badN === 2, 'on a mismatch the worker asks once more under ?v=<hash> (a new CDN cache key; a version mix during a deploy)', `${badN} requests for ${BAD}`);
   st = await swStats(v2.page);
   check(st && !st.urls.some(u => u.endsWith(BAD)), 'the mismatched file is not in the cache', `mismatched ${st && st.mismatched}`);
   check(st && !st.urls.some(u => !u.startsWith(srv.url)), 'no other origin in the cache (live data, raw.githubusercontent.com)');
