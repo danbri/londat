@@ -12,8 +12,10 @@ import { makeIndex, describeView as describeCore, featuresAt as featuresCore, fi
 import { ukAdapter } from './adapters/uk.js';
 import { parseZone } from './geo/zone.js';
 import { VIEW_LABELS } from './views.js';
+import { latinOut, scrubText, getScriptPreference, setScriptPreference } from './geo/script.js';
 
-export const API_VERSION = '1.1.0';   // 1.1.0 (2026-10-21): the page clock's zone follows the view; getTimeZone, setTimeZone, setTime(v, zone)
+export const API_VERSION = '1.2.0';   // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
+// 1.1.0 (2026-10-21): the page clock's zone follows the view; getTimeZone, setTimeZone, setTime(v, zone)
 const D = Math.PI / 180, $ = id => document.getElementById(id);
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* no storage */ } } };
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -39,15 +41,17 @@ export function init(H) {
   const sunNow = () => { const s = H.sky.state && H.sky.state.sun; return s ? { alt: s.alt, az: s.az, altGeo: s.altGeo } : null; };
   function getView() {
     if (onGlobe()) { const v = H.globe.getView(), pt = H.globe.placeTime?.(v.target.lon, v.target.lat);   // over a place (globe/places.js): its own clock too
-      return { api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), view: 'globe', share: shareLink() }; }
+      return latinOut({ api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), view: 'globe', scripts: getScriptPreference(), share: shareLink() }); }
     const G = viewGeo(I, camOf()); delete G.frame; delete G.elon; delete G.elat; const s = sunNow();
-    return { api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, share: shareLink() };
+    return latinOut({ api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, scripts: getScriptPreference(), share: shareLink() });
   }
   const listViews = () => Object.keys(H.VIEWS).map(id => ({ id, label: VIEW_LABELS[id] || id }));
   const settle = () => new Promise(ok => requestAnimationFrame(() => ok()));
 
   // ---------- goTo: a named view, a place name, or a WGS84 point { lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg? }
-  async function goTo(t, o = {}) {
+  // (answers with names in Latin script only while that is preferred: geo/script.js latinOut)
+  const goTo = async (t, o = {}) => latinOut(await goTo0(t, o));
+  async function goTo0(t, o = {}) {
     let found = null;
     if (t && typeof t === 'object' && t.view) t = String(t.view);
     if (t && typeof t === 'object' && t.place) { o = { ...t, ...o }; t = String(t.place); }
@@ -125,20 +129,21 @@ export function init(H) {
   async function featuresAt(lon, lat) {
     if (GL() && (onGlobe() && lon == null || lon != null && !adapter.inBox(...adapter.fromLonLat(+lon, +lat), 0))) {   // outside the model: the world's answer
       if (lon == null) { const g = GL().pick(innerWidth / 2, innerHeight / 2); if (!g) return { text: 'Only sky or space at the centre of the view.', sky: true }; lon = g.lon; lat = g.lat; }
-      const r = await GL().featuresAt(+lon, +lat); r.text = [r.name, r.region, r.country].filter((v, i, a) => v && a.indexOf(v) === i).join(', ') + (r.nearest[0] ? `; nearest place ${r.nearest[0].name}, ${Math.round(r.nearest[0].dist_m / 1000)} km ${r.nearest[0].direction}` : '') + (r.more && r.more.text ? ' ' + r.more.text : ''); return r; }
+      const r = await GL().featuresAt(+lon, +lat); r.text = [r.name, r.region, r.country].filter((v, i, a) => v && a.indexOf(v) === i).join(', ') + (r.nearest[0] ? `; nearest place ${r.nearest[0].name}, ${Math.round(r.nearest[0].dist_m / 1000)} km ${r.nearest[0].direction}` : '') + (r.more && r.more.text ? ' ' + r.more.text : ''); return latinOut(r); }
     await extras; let x, z, bi = -1, range = null;
     if (lon == null || lat == null) { const c = centrePoint(); if (!c) return { text: 'Only sky at the centre of the view.', sky: true }; ({ x, z, range } = c); bi = c.building; }
     else { if (!isFinite(+lon) || !isFinite(+lat)) throw new Error('featuresAt needs lon and lat in WGS84 degrees, or no arguments for the centre of the view'); [x, z] = adapter.fromLonLat(+lon, +lat); }
     const r = featuresCore(I, x, z, { building: bi });
     if (range != null) r.range_m = Math.round(range);
+    r.scripts = getScriptPreference();
     const rg = r.building && r.building.registry;
     if (rg) { const b = (await reg()).get(rg.id); if (b) { rg.occupant_names = (b.occupants || []).map(o => o.name).filter(Boolean).slice(0, 30); rg.atlas = new URL(ctx.WEBGL.replace(/docklands\/$/, '') + 'atlas/#map/b/' + rg.id, location.href).href; } }
-    return r;
+    return latinOut(r);
   }
 
   // ---------- what is in view
   async function describeView(o = {}) {
-    if (onGlobe()) { const tn = timeNow(), d = await GL().describe({ maxItems: o.maxItems || 8, time: `${tn.local} ${tn.abbreviation === tn.utc_offset ? tn.utc_offset : tn.abbreviation + ', ' + tn.utc_offset} (${tn.time_zone}${tn.approximate ? ', approximate' : ''})` }); return { ...d, time: tn, api_version: API_VERSION, share: shareLink() }; }
+    if (onGlobe()) { const tn = timeNow(), d = await GL().describe({ maxItems: o.maxItems || 8, time: `${tn.local} ${tn.abbreviation === tn.utc_offset ? tn.utc_offset : tn.abbreviation + ', ' + tn.utc_offset} (${tn.time_zone}${tn.approximate ? ', approximate' : ''})` }); return latinOut({ ...d, time: tn, api_version: API_VERSION, scripts: getScriptPreference(), share: shareLink() }); }
     await extras;
     const L = H.layers, W = ctx.stats.weather && ctx.stats.weather.now, Wn = ctx.weather && ctx.weather.now;
     const live = { aircraft: L.planes && L.planes.on ? L.planes.api.flights : null, ships: L.ships && L.ships.on ? L.ships.api.vessels : null };
@@ -149,12 +154,13 @@ export function init(H) {
     // the wider place (a skeleton set's district, county, country) at the target, when the globe has one
     if (GL() && dsc.target) { try { const m = await GL().whereMore(dsc.target.lon, dsc.target.lat); if (m && (m.district || m.country)) { dsc.context = m;
       dsc.text += ` Area: ${[...new Set([m.district, m.county, m.region, m.country].filter(Boolean))].join(', ')} (${m.source}).`; } } catch (e) { console.warn('api: context', e); } }
-    return dsc;
+    dsc.scripts = getScriptPreference();
+    return latinOut(dsc);
   }
   async function findPlaces(q, limit = 10) {
     await extras; const out = findCore(I, q, limit).map(({ name, kind, lon, lat, id }) => ({ name, kind, lon, lat, id }));
     if (GL() && out.length < limit) { await GL().gazetteer(); for (const w of await GL().searchAll(q, limit - out.length)) out.push({ name: w.name, kind: w.kind, lon: w.lon, lat: w.lat, id: w.id, country: w.country || undefined, region: w.region || undefined, local_name: w.local_name }); }
-    return out; }
+    return latinOut(out).slice(0, limit); }
 
   // ---------- the tools (one list: window.docklands.tools, WebMCP, and the MCP server's page_call)
   const P = (type, description, extra = {}) => ({ type, description, ...extra });
@@ -178,9 +184,12 @@ export function init(H) {
     { name: 'find_places', description: 'Search the named places, water and buildings of the model, then the world (countries, regions, seas, lakes, rivers, cities) by name; returns names, kinds and WGS84 positions.', readOnly: true,
       inputSchema: { type: 'object', properties: { query: P('string', 'Two or more letters'), limit: P('number', 'At most this many (default 10)') }, required: ['query'] }, run: a => findPlaces(a.query, a.limit || 10) },
     { name: 'list_views', description: 'The named views (Canary Wharf, Greenwich, the photo views ...) with their ids for go_to.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => listViews() },
+    { name: 'get_script_preference', description: 'Which scripts names are shown in: "latin" (the default: names in Latin script only; a name in another script, such as Cyrillic, shows only where the data also has it in Latin script, else no name is shown; no transliteration) or "all".', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => ({ scripts: getScriptPreference() }) },
+    { name: 'set_script_preference', description: 'Show names in Latin script only ("latin", the default) or in every script ("all"). Applies to every label, card, search result and description at once, and is kept in this browser (Menu > Look > Names in Latin script only).', readOnly: false,
+      inputSchema: { type: 'object', properties: { scripts: P('string', 'latin or all', { enum: ['latin', 'all'] }) }, required: ['scripts'] }, run: a => ({ scripts: setScriptPreference(a.scripts) }) },
     { name: 'share_link', description: 'A link that opens this page at the current view, time and selected building.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => ({ url: shareLink() }) },
   ];
-  async function callTool(name, args) { const t = TOOLS.find(x => x.name === name); if (!t) throw new Error('unknown tool ' + name); return t.run(args || {}); }
+  async function callTool(name, args) { const t = TOOLS.find(x => x.name === name); if (!t) throw new Error('unknown tool ' + name); return latinOut(await t.run(args || {})); }
 
   // ---------- WebMCP (W3C Web Machine Learning CG explainer, https://github.com/webmachinelearning/webmcp): the explainer of
   // October 2026 has document.modelContext.registerTool(tool, { signal }); earlier drafts and the MCP-B polyfill have
@@ -190,7 +199,7 @@ export function init(H) {
     const mc = (typeof document !== 'undefined' && document.modelContext) || navigator.modelContext; if (!mc) return;
     webmcp.api = document.modelContext ? 'document.modelContext' : 'navigator.modelContext';
     const tools = TOOLS.map(t => ({ name: t.name, description: t.description + ' (Docklands 3D page API ' + API_VERSION + ')', inputSchema: t.inputSchema, annotations: { readOnlyHint: t.readOnly, title: t.name.replace(/_/g, ' ') },
-      execute: async input => { try { const r = await t.run(input || {}); return { content: [{ type: 'text', text: JSON.stringify(r) }], structuredContent: Array.isArray(r) ? { items: r } : r }; } catch (e) { return { content: [{ type: 'text', text: 'Error: ' + (e && e.message || e) }], isError: true }; } } }));
+      execute: async input => { try { const r = latinOut(await t.run(input || {})); return { content: [{ type: 'text', text: JSON.stringify(r) }], structuredContent: Array.isArray(r) ? { items: r } : r }; } catch (e) { return { content: [{ type: 'text', text: 'Error: ' + (e && e.message || e) }], isError: true }; } } }));
     webmcp.controller = typeof AbortController === 'function' ? new AbortController() : null;
     try {
       if (typeof mc.registerTool === 'function') for (const t of tools) { try { const r = mc.registerTool(t, webmcp.controller ? { signal: webmcp.controller.signal } : undefined); if (r && typeof r.catch === 'function') r.catch(e => webmcp.errors.push(t.name + ': ' + e)); webmcp.registered.push(t.name); } catch (e) { webmcp.errors.push(t.name + ': ' + e); } }
@@ -206,7 +215,7 @@ export function init(H) {
   document.head.appendChild(css);
   const live = document.createElement('div'); live.id = 'a11yLive'; live.className = 'srOnly'; live.setAttribute('role', 'status'); live.setAttribute('aria-live', 'polite'); live.setAttribute('aria-atomic', 'true'); document.body.appendChild(live);
   const spoken = []; let sayTimer = 0;
-  function speak(text) { clearTimeout(sayTimer); live.textContent = ''; sayTimer = setTimeout(() => { live.textContent = text; spoken.push({ t: Date.now(), text }); if (spoken.length > 20) spoken.shift(); }, 60); }
+  function speak(text) { text = scrubText(text); clearTimeout(sayTimer); live.textContent = ''; sayTimer = setTimeout(() => { live.textContent = text; spoken.push({ t: Date.now(), text }); if (spoken.length > 20) spoken.shift(); }, 60); }
   let describeOn = qs.has('describe') ? !/^(0|false|off|no)$/i.test(qs.get('describe')) : store.get('d3.describe') === '1';
   const SETTLE_MS = 1500; let sig = '', stableAt = 0, lastSaid = '';
   async function sayView(force) { try { const d = await describeView({ maxItems: 4 }); if (force || d.text !== lastSaid) { lastSaid = d.text; speak(d.text); } dispatchEvent(new CustomEvent('docklands-view-described', { detail: d })); } catch (e) { console.warn('api: describe', e); } }
@@ -248,7 +257,7 @@ export function init(H) {
   // ---------- the API object
   const api = {
     version: API_VERSION, describeVersion: DESCRIBE_VERSION, locale: { adapter: adapter.id, timeZone: adapter.timeZone, heightDatum: adapter.heightDatum, bbox: adapter.bbox },
-    goTo, getView, setTime, getTimeZone, setTimeZone, get timeZone() { return Z.tz; }, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
+    goTo, getView, setTime, getTimeZone, setTimeZone, get timeZone() { return Z.tz; }, getScriptPreference, setScriptPreference, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
     tools: TOOLS.map(({ name, description, inputSchema, readOnly }) => ({ name, description, inputSchema, readOnly })), callTool,
     webmcp, speak, get describing() { return describeOn; }, set describing(v) { const c = $('describeChk'); if (c) { c.checked = !!v; c.onchange(); } else describeOn = !!v; },
     spoken, openTextView: openText, ready: extras.then(() => true),

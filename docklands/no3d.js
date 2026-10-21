@@ -9,9 +9,10 @@
 // zoom, Enter says what is at the centre. Skill: docklands-3d-page, "No 3D: text view, 2D map and page API (KR3.2)".
 import { describeView as describeCore, featuresAt as featuresCore, findPlaces as findCore, viewGeo, timeOf, parseTime, bearing, decode, DESCRIBE_VERSION } from './describe.js';
 import { VIEWS, VIEW_LABELS } from './views.js';
+import { latinOut, latinPreferred, setLatinPreferred, isLatin, getScriptPreference, setScriptPreference } from './geo/script.js';   // names in Latin script only by default
 
 export const NO3D_VERSION = '1.0.0';
-const API_VERSION = '1.0.0';   // the same interface version as api.js (the 3D page API); a subset of its functions
+const API_VERSION = '1.2.0';   // the same interface version as api.js (the 3D page API); a subset of its functions
 const D = Math.PI / 180, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 export function initNo3d({ index, linkCamera, section, refresh }) {
@@ -42,12 +43,12 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
   function getView() {
     const { c, time } = state(), G = viewGeo(I, camOf(c)); delete G.frame; delete G.elon; delete G.elat;
     const [lon, lat] = ad.toLonLat(c.tx, c.tz), s = sunAt(time, lon, lat);
-    return { api_version: API_VERSION, mode: 'no3d', ...G, time: timeOf(time, TZ), sun: s ? { altitude_deg: r1(s.alt), azimuth_deg: r1(s.az) } : null, night: s ? s.alt < -6 : null,
-      view: new URLSearchParams(location.search).get('view') || null, share: location.href };
+    return latinOut({ api_version: API_VERSION, mode: 'no3d', ...G, time: timeOf(time, TZ), sun: s ? { altitude_deg: r1(s.alt), azimuth_deg: r1(s.az) } : null, night: s ? s.alt < -6 : null,
+      view: new URLSearchParams(location.search).get('view') || null, scripts: getScriptPreference(), share: location.href });
   }
   async function describeView(o = {}) {
     const { c, time } = state(), [lon, lat] = ad.toLonLat(c.tx, c.tz);
-    return { ...describeCore(I, camOf(c), { time, sun: sunAt(time, lon, lat), share: location.href, view: new URLSearchParams(location.search).get('view') || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance }), api_version: API_VERSION, mode: 'no3d' };
+    return latinOut({ scripts: getScriptPreference(), ...describeCore(I, camOf(c), { time, sun: sunAt(time, lon, lat), share: location.href, view: new URLSearchParams(location.search).get('view') || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance }), api_version: API_VERSION, mode: 'no3d' });
   }
   async function goTo(t, o = {}) {
     let found = null; const { c: c0 } = state();
@@ -78,9 +79,9 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
   async function featuresAt(lon, lat) {
     let x, z; if (lon == null || lat == null) { const { c } = state(); x = c.tx; z = c.tz; }
     else { if (!isFinite(+lon) || !isFinite(+lat)) throw new Error('featuresAt needs lon and lat in WGS84 degrees, or no arguments for the centre of the view'); [x, z] = ad.fromLonLat(+lon, +lat); }
-    return featuresCore(I, x, z, {});
+    return latinOut(featuresCore(I, x, z, {}));
   }
-  async function findPlaces(q, limit = 10) { return findCore(I, q, limit).map(({ name, kind, lon, lat, id }) => ({ name, kind, lon, lat, id })); }
+  async function findPlaces(q, limit = 10) { return latinOut(findCore(I, q, limit).map(({ name, kind, lon, lat, id }) => ({ name, kind, lon, lat, id }))); }
   const listViews = () => Object.keys(VIEWS).map(id => ({ id, label: VIEW_LABELS[id] || id }));
   const listLayers = () => [{ id: 'map2d', label: '2D map (water, parks, roads, rail, buildings, names)', on: !mapBox.hidden, kind: 'setting' }];
   function setLayer(id, on) { if (id !== 'map2d') throw new Error(`No layer "${id}" without the 3D view. listLayers() gives the ids.`); mapBox.hidden = on === false || /^(0|false|off|no)$/i.test(String(on)); if (!mapBox.hidden) draw(); return listLayers()[0]; }
@@ -97,14 +98,16 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
     { name: 'set_time', description: 'Set the page clock (sun, day or night). ISO 8601; a time without an offset is the wall-clock time of the place; "now".', readOnly: false, inputSchema: { type: 'object', properties: { time: P('string', 'e.g. 2026-10-11T21:30 or now') }, required: ['time'] }, run: a => setTime(a.time) },
     { name: 'find_places', description: 'Search the named places, water and buildings of the model by name.', readOnly: true, inputSchema: { type: 'object', properties: { query: P('string', 'Two or more letters'), limit: P('number', 'At most this many (default 10)') }, required: ['query'] }, run: a => findPlaces(a.query, a.limit || 10) },
     { name: 'list_views', description: 'The named views with their ids for go_to.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => listViews() },
+    { name: 'get_script_preference', description: 'Which scripts names are shown in: "latin" (the default: names in Latin script only, no transliteration; a name with no Latin form is not shown) or "all".', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => ({ scripts: getScriptPreference() }) },
+    { name: 'set_script_preference', description: 'Show names in Latin script only ("latin", the default) or in every script ("all"); kept in this browser.', readOnly: false, inputSchema: { type: 'object', properties: { scripts: P('string', 'latin or all', { enum: ['latin', 'all'] }) }, required: ['scripts'] }, run: a => ({ scripts: setScriptPreference(a.scripts) }) },
     { name: 'share_link', description: 'A link that opens this page at the current view and time (3D where the device has it).', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => ({ url: shareLink() }) },
   ];
-  async function callTool(name, args) { const t = TOOLS.find(x => x.name === name); if (!t) throw new Error('unknown tool ' + name); return t.run(args || {}); }
+  async function callTool(name, args) { const t = TOOLS.find(x => x.name === name); if (!t) throw new Error('unknown tool ' + name); return latinOut(await t.run(args || {})); }
   const webmcp = { api: null, registered: [], errors: [] };
   { const mc = document.modelContext || navigator.modelContext;   // WebMCP where the browser has it (as api.js)
     if (mc) { webmcp.api = document.modelContext ? 'document.modelContext' : 'navigator.modelContext';
       for (const t of TOOLS) { const tool = { name: t.name, description: t.description + ' (Docklands page API ' + API_VERSION + ', no 3D)', inputSchema: t.inputSchema, annotations: { readOnlyHint: t.readOnly },
-        execute: async input => { try { const r = await t.run(input || {}); return { content: [{ type: 'text', text: JSON.stringify(r) }], structuredContent: Array.isArray(r) ? { items: r } : r }; } catch (e) { return { content: [{ type: 'text', text: 'Error: ' + (e && e.message || e) }], isError: true }; } } };
+        execute: async input => { try { const r = latinOut(await t.run(input || {})); return { content: [{ type: 'text', text: JSON.stringify(r) }], structuredContent: Array.isArray(r) ? { items: r } : r }; } catch (e) { return { content: [{ type: 'text', text: 'Error: ' + (e && e.message || e) }], isError: true }; } } };
         try { if (typeof mc.registerTool === 'function') { mc.registerTool(tool); webmcp.registered.push(t.name); } } catch (e) { webmcp.errors.push(t.name + ': ' + e); } }
       if (!webmcp.registered.length && typeof mc.provideContext === 'function') try { mc.provideContext({ tools: TOOLS }); webmcp.registered = TOOLS.map(t => t.name); } catch (e) { webmcp.errors.push(String(e)); } } }
 
@@ -117,6 +120,7 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
   const mapBox = document.createElement('div'); mapBox.id = 'map2d';
   mapBox.innerHTML = `<canvas id="map2dCanvas" tabindex="0" role="img" aria-roledescription="2D map" aria-describedby="map2dHelp"></canvas>
 <div class="bar"><button type="button" data-z="-1" aria-label="Zoom in">+</button><button type="button" data-z="1" aria-label="Zoom out">−</button>
+<label class="note"><input type="checkbox" id="map2dLatin"> Names in Latin script only</label>
 <label for="map2dTime" class="note">Time</label><input id="map2dTime" type="datetime-local"><button type="button" id="map2dNow">Now</button></div>
 <p id="map2dHelp" class="note">2D map, north up: drag or use the arrow keys to move, + and − to zoom, Enter to hear what is at the centre. The triangle is the field of view of the text below.</p>
 <p id="map2dAt" class="note" aria-live="polite"></p>`;
@@ -171,7 +175,8 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
     // names: the ranks first, no overlap (a 1-px grid of boxes is too slow on a phone: a list of the boxes drawn)
     const boxes = [[0, H - 22, 250, H]], maxN = s > 0.5 ? 160 : s > 0.15 ? 90 : 40; let n = 0;
     g.font = '13px system-ui,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 3; g.strokeStyle = COL.halo;
-    for (const p of LBL) { if (n >= maxN) break; if (p.k === 'building' && s < 0.3) continue; const [x, y] = toScreen(p.x, p.z); if (x < 0 || y < 0 || x > W || y > H) continue;
+    const latin = latinPreferred();
+    for (const p of LBL) { if (n >= maxN) break; if (p.k === 'building' && s < 0.3) continue; if (latin && !isLatin(p.name)) continue; const [x, y] = toScreen(p.x, p.z); if (x < 0 || y < 0 || x > W || y > H) continue;
       const w = g.measureText(p.name).width + 6, b = [x - w / 2, y - 9, x + w / 2, y + 9]; if (b[0] < 2 || b[2] > W - 2 || b[1] < 2 || boxes.some(q => b[0] < q[2] && b[2] > q[0] && b[1] < q[3] && b[3] > q[1])) continue;
       boxes.push(b); n++; g.fillStyle = p.k === 'water' ? '#bfe0ff' : p.k === 'park' ? '#cdeccd' : COL.text; g.strokeText(p.name, x, y); g.fillText(p.name, x, y); }
     g.textAlign = 'left'; g.font = '11px system-ui,sans-serif'; g.fillStyle = COL.text; g.strokeText('N ↑   © OpenStreetMap contributors', 8, H - 10); g.fillText('N ↑   © OpenStreetMap contributors', 8, H - 10);
@@ -201,13 +206,16 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
   mapBox.querySelectorAll('[data-z]').forEach(b => b.addEventListener('click', () => zoom(b.dataset.z === '-1' ? 1.5 : 1 / 1.5)));
   timeIn.addEventListener('change', () => { if (timeIn.value) setTime(timeIn.value).catch(e => { at.textContent = e.message; }); });
   mapBox.querySelector('#map2dNow').addEventListener('click', () => setTime('now'));
+  // names in Latin script only (on by default; owner, 2026-10-22): the box, kept in this browser; a change draws the map and the text again
+  const latBox = mapBox.querySelector('#map2dLatin'); latBox.checked = latinPreferred(); latBox.addEventListener('change', () => setLatinPreferred(latBox.checked));
+  addEventListener('docklands-script-pref', () => { latBox.checked = latinPreferred(); draw(); });
   addEventListener('resize', () => { W = 0; draw(); });
   timing.paths = Math.round(performance.now() - T0);
   size(); fromState(); draw(); timing.draw = Math.round(performance.now() - T0);
 
   const api = { version: API_VERSION, no3d: true, mode: 'no3d', no3dVersion: NO3D_VERSION, describeVersion: DESCRIBE_VERSION, reason: (globalThis.__docklandsNo3d && globalThis.__docklandsNo3d.error) || null,
     locale: { adapter: ad.id, timeZone: TZ, heightDatum: ad.heightDatum, bbox: ad.bbox },
-    goTo, getView, setTime, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
+    goTo: async (t, o) => latinOut(await goTo(t, o)), getView, setTime, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink, getScriptPreference, setScriptPreference,
     tools: TOOLS.map(({ name, description, inputSchema, readOnly }) => ({ name, description, inputSchema, readOnly })), callTool, webmcp,
     openTextView: () => globalThis.__docklandsText && globalThis.__docklandsText.open(), ready: Promise.resolve(true), timing, map: { draw, state: () => ({ ...M, width: W, height: H }) },
     help: 'Docklands page API (no 3D: text view and 2D map): https://github.com/danbri/londat/blob/main/docklands/README.md#page-api' };

@@ -8,6 +8,7 @@
 import { makeIndex, describeView, findPlaces, distText, parseTime } from './describe.js';
 import { ukAdapter } from './adapters/uk.js';
 import { VIEWS, VIEW_LABELS } from './views.js';
+import { latinOut } from './geo/script.js';   // names in Latin script only while that is preferred (Menu > Look; ?scripts=)
 
 const qs = new URLSearchParams(location.search), D = Math.PI / 180;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -40,7 +41,7 @@ function sunAt(t, lon, lat) {   // astronomy-engine (loaded by index.html as a c
 async function current() {
   if (api() && !NO3D) return api().describeView();
   const { cam, time } = linkCamera(), ad = index().adapter, t = time ? parseTime(time, ad.timeZone) : Date.now(), [lon, lat] = ad.toLonLat(cam.target[0], cam.target[2]);
-  return describeView(index(), cam, { time: isFinite(t) ? t : Date.now(), sun: sunAt(isFinite(t) ? t : Date.now(), lon, lat), share: location.href, view: new URLSearchParams(location.search).get('view') || null });
+  return latinOut(describeView(index(), cam, { time: isFinite(t) ? t : Date.now(), sun: sunAt(isFinite(t) ? t : Date.now(), lon, lat), share: location.href, view: new URLSearchParams(location.search).get('view') || null }));
 }
 const href = (p, range) => `?ll=${p.lat.toFixed(6)},${p.lon.toFixed(6)}${range ? ',' + range : ''}${NO3D ? '&text=1' : ''}`;
 const placeLink = (p, range) => `<a href="${href(p, range)}" data-lat="${p.lat}" data-lon="${p.lon}" data-range="${range || ''}">${esc(p.name)}</a>`;
@@ -71,7 +72,7 @@ ${[...kinds].sort((a, b) => b[1].length - a[1].length).map(([k, L]) => `<details
 <p class="note">Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL); names and facts from Wikidata (CC0); ground and heights from Environment Agency LiDAR (OGL v3.0). Every source: <a href="https://github.com/danbri/londat/blob/main/cwplans/DATA-REGISTER.md">data register</a>.</p>`;
   const close = sec.querySelector('#tvClose'); if (close) close.onclick = closeTextView;
   const q = sec.querySelector('#tvFind'), res = sec.querySelector('#tvRes');
-  q.oninput = () => { const L = q.value.trim().length < 2 ? [] : findPlaces(ix, q.value, 12); res.innerHTML = L.map(p => `<li>${placeLink(p, p.kind === 'building' ? 600 : 900)} (${esc(p.kind)})</li>`).join(''); };
+  q.oninput = () => { const L = q.value.trim().length < 2 ? [] : latinOut(findPlaces(ix, q.value, 12)); res.innerHTML = L.map(p => `<li>${placeLink(p, p.kind === 'building' ? 600 : 900)} (${esc(p.kind)})</li>`).join(''); };
   sec.dataset.ready = '1'; return d;
 }
 // with the 3D page a link moves the view (goTo) and the description is refreshed in place
@@ -111,6 +112,7 @@ globalThis.__docklandsText.no3d = startNo3d;
 
 // start: ?text=1, or no renderer (the event, or the flag main.js set before this module ran)
 addEventListener('docklands-no3d', startNo3d);
+addEventListener('docklands-script-pref', () => { refreshTextView().catch(() => {}); });   // the script setting changed: the text again
 if (globalThis.__docklandsNo3d) startNo3d();
 else if (/^(1|true|on|yes)$/i.test(qs.get('text') || '')) {
   if (globalThis.docklands) openTextView();
