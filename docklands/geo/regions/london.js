@@ -31,7 +31,7 @@ export default {
     boundary: { skeleton: 'docklands/data/uk/', layer: 'regions', level: 6, code: 'E12000007' },
     exclude: ['docklands'],
     // views named in the README (deep links; ht = heading, tilt)
-    views: [{ name: 'The West End and the City from Holborn (3 km)', ll: '51.5175,-0.1180,3000', ht: '60,55' }, { name: 'Croydon (2 km)', ll: '51.3762,-0.0982,2000', ht: '0,55' }, { name: 'BT Tower (700 m)', ll: '51.5215,-0.1389,700', ht: '200,60' }],
+    views: [{ name: 'Holborn and the West End (3 km; the City east of it is in the model box)', ll: '51.5175,-0.1180,3000', ht: '250,55' }, { name: 'Croydon (2 km)', ll: '51.3762,-0.0982,2000', ht: '0,55' }, { name: 'BT Tower (700 m)', ll: '51.5215,-0.1389,700', ht: '200,60' }],
     heights: ['world-overture', 'world-ms-buildings', 'world-ghsl'],
     default_height_m: 7,
     blocks: {

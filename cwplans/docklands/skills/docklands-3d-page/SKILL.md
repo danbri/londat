@@ -3284,11 +3284,17 @@ https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
   | still 20 km (the whole city), tilt 45 | 1,427 ms, 4.6 ms, 162, 259,209 / 74,120 (levels 10, 11) | 1,460 ms, 8 ms, 167, 291,699 / 106,610 |
   | JS heap | 356 to 364 MB | 347 to 350 MB |
 
-  León on the same code (skill table above, 1.5 km / 30 km): 1,685 / 923 ms, 223 / 200 calls, 234,884 / 97,601 frame
-  triangles, heap 251 MB (that run was older code). London is in the same range of calls and triangles (the place
-  draws 74k to 196k triangles: boxes are 10 triangles an instance, one draw call a tile kind); the heap is about 100 MB
-  higher (tileset.json of 2,394 nodes, the named features, the UK skeleton's London layers). place-check London: the
-  deep link settles in 40 to 80 s of software rendering.
+  León in the same session (same code, 1.5 km / 30 km): 191 / 191 calls, 409,118 / 284,481 frame triangles (place
+  218,242 / 63,552), 2.2 / 3.0 s a frame, long tasks 2,073 ms cold and 1,055 ms on the second fly-in, heap 306 to 310
+  MB. So London draws fewer calls and as many triangles as León (boxes are 10 triangles an instance, one draw call a
+  tile kind); its heap is 40 to 60 MB higher (tileset.json of 2,394 nodes, the UK skeleton's London layers) and one
+  task of about 3 s remains in its second fly-in. place-check London: the deep link settles in 40 to 80 s of software
+  rendering. Before the INST_MIN fix (first column, in brackets) the London fly-in compiled 7 programs.
+- **Testing traps.** The globe is drawn behind the model only after it has been opened once (`G.ready`) and only with
+  the eye over 3 km (`HANDOVER.bg`): cells-check's 8 km view (`c=...,8000,1.2,0.3`) has the eye at 2.4 km, so London
+  shows only from its 12 km step after the globe round trip. A wait loop `while pgrep -f place-perf.mjs` matches its own
+  shell's command line and never ends (use a runner script); a background `http.server` stops at the 30-minute default
+  timeout and later tests read nothing: start it with the long timeout.
 - **Open.** Buildings in globe mode inside the model box; Microsoft footprints where OSM has none (571,817 in the box:
   one config line, owner); building parts; the merged far view still reads as a grid of squares; implicit tiling
   (tileset.json 0.97 MB, loaded at 150 km, also in the Docklands model's globe background); the UK (section 3b).

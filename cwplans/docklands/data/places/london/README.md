@@ -4,7 +4,7 @@ Made by [cwplans/tools/build-place-tiles.mjs](https://github.com/danbri/londat/b
 This README is generated from `provenance/log.json` and [cwplans/data-register.json](https://github.com/danbri/londat/blob/main/cwplans/data-register.json) by `node cwplans/tools/build-place-tiles.mjs readme --region london` (also at the end of each build). Do not edit it by hand.
 
 - The whole city (20 km out): https://danbri.github.io/londat/docklands/?ll=51.50735,-0.12776,20000&ht=0,45
-- The West End and the City from Holborn (3 km): https://danbri.github.io/londat/docklands/?ll=51.5175,-0.1180,3000&ht=60,55
+- Holborn and the West End (3 km; the City east of it is in the model box): https://danbri.github.io/londat/docklands/?ll=51.5175,-0.1180,3000&ht=250,55
 - Croydon (2 km): https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55
 - BT Tower (700 m): https://danbri.github.io/londat/docklands/?ll=51.5215,-0.1389,700&ht=200,60
 - A place of kind "blocks": no core and no ground of its own (the globe's terrain and imagery stay); buildings in the model box of docklands are left to that model
