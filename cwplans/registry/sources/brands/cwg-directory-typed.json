@@ -1,7 +1,7 @@
 {
  "source": "Canary Wharf Group directory pages as archived by the Internet Archive (crawl for scoping, owner rule of 2026-10-03), joined to registry/sources/brands/cwg-directory.json",
- "generated": "2026-10-06T13:12:34.142Z",
- "tool": "magpie/cwplans/tools/cwg-directory-typed.mjs",
+ "generated": "2026-10-21T02:59:50.219Z",
+ "tool": "cwplans/tools/cwg-directory-typed.mjs",
  "note": "schema_types come from the CWG kind and category by the table in the tool, not from the publisher: the pages type only the publisher (WebPage, WebSite, Organization). first_listed and last_edited are the pages' datePublished and dateModified.",
  "counts": {
   "entries": 374,
@@ -4618,7 +4618,7 @@
    "level": "Mall Level -1",
    "street": null,
    "postcode": "E14 4QS",
-   "website": "https://www.diptyqueparis.com/en_uk/?_mkpid=a_3606&#038;_mkpc=UKBBRA-Brand-Exact&#038;_mkpd=scdiptyquee&#038;wiz_campaign=355694539&#038;msclkid=ce16b9f9ef9a14914cabde711ce2752f&#038;utm_source=bing&#038;utm_medium=cpc&#038;utm_campaign=UKBBRA-Brand-Exact&#038;utm_term=diptyque&#038;utm_content=BrandExact",
+   "website": "https://www.diptyqueparis.com/en_uk/?_mkpid=a_3606&_mkpc=UKBBRA-Brand-Exact&_mkpd=scdiptyquee&wiz_campaign=355694539&msclkid=ce16b9f9ef9a14914cabde711ce2752f&utm_source=bing&utm_medium=cpc&utm_campaign=UKBBRA-Brand-Exact&utm_term=diptyque&utm_content=BrandExact",
    "registry_buildings": [
     "cwb-0411"
    ],

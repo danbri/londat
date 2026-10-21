@@ -128,6 +128,12 @@ const ex = (c, rows, n = 8) => { c.examples = rows.slice(0, n); };
     if (why.length) { rows.push({ fhrs: e.id, name: e.name, postcode: e.postcode, why: why.join('; ') }); add({ ent: 'fsa', id: String(e.id), sev: 'medium', note: `${e.name}: ${why.join('; ')}`, pc: normPc(e.postcode) }); }
   }
   c.population = withPos.length; c.breakdown = { 'at the postcode centre': centroid, 'shared point (3 or more)': piled, 'without any position': FSA.establishments.length - withPos.length }; ex(c, rows);
+  // F7 rule in use (registry-placement.mjs): such a point never places an occupant in a building. Count the registry's
+  // FSA occupants that sit in a building by one of these points (should be 0) and how the others are placed
+  const flagged = new Set(rows.map(r => r.fhrs)), use = { 'in a building by this point': 0, 'in a building by a key (mall, street, name, postcode)': 0, 'listed under the postcode only': 0 };
+  for (const b of REG.buildings) for (const o of b.occupants) if (o.source === 'fsa' && flagged.has(o.fhrs_id)) use[o.placed_confidence ? 'in a building by a key (mall, street, name, postcode)' : 'in a building by this point']++;
+  for (const l of Object.values(REG.unplaced_by_postcode || {})) for (const o of l) if (flagged.has(o.fhrs_id)) use['listed under the postcode only']++;
+  c.stats = { registry_use: use };
 }
 {
   const c = { id: 'SP-4', cls: 'position', dim: 'consistency', title: 'Same branch placed far apart by two sources', sources: ['osm', 'fsa'],
