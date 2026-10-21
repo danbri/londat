@@ -104,6 +104,10 @@ figcaption{color:var(--muted);font-size:.8rem;margin-top:.3rem}
 .tl .gl{fill:var(--muted);font-size:10px;text-anchor:middle;font-variant-numeric:tabular-nums}
 .nowline{stroke:var(--fg);stroke-width:1.5}
 .m-ok{fill:var(--good);stroke:var(--panel);stroke-width:2}
+/* KR5.1 bars and KR5.2 sample ticks: the number is written on each bar; the colour only repeats it */
+.b-ok{fill:var(--good)}.b-low{fill:var(--warn)}.b-part{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 2}
+.tl .target{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:6 3}
+.tl .tick{stroke:var(--good);stroke-width:1.5}
 .m-ring{fill:var(--panel)}
 .m-x{stroke:var(--bad);stroke-width:2.5;stroke-linecap:round;fill:none}
 .m-other{fill:var(--panel);stroke:var(--muted);stroke-width:2}
@@ -129,7 +133,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
       <button type="button" id="reload">Reload</button>
       <span id="checked" class="small" aria-live="polite">Checking…</span>
     </div>
-    <p id="apinote" class="small">GitHub API: without sign-in, GitHub allows 60 requests an hour for each internet address. This page makes about 5 for each check and keeps the answers in this tab for 5 minutes.</p>
+    <p id="apinote" class="small">GitHub API: without sign-in, GitHub allows 60 requests an hour for each internet address. This page makes about 7 for each check and keeps the answers in this tab for 5 to 15 minutes.</p>
   </header>
 
   <section id="summary" aria-labelledby="summary-h">
@@ -143,6 +147,12 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
     <div id="cache-body"><p class="small">Checking…</p></div>
   </section>
 
+  <section id="kr51" class="part" aria-labelledby="kr51-h">
+    <h2 id="kr51-h"><span>Cache runs per day (KR5.1)</span><span id="kr51-chip"></span></h2>
+    <p class="small">Key result <a href="https://github.com/danbri/londat/blob/main/OKRS.md">KR5.1</a>: at least 20 hourly cache runs in every 24 hours. One bar for each UTC day of the last 14 days, counted from the run files in <a href="https://github.com/danbri/londat/tree/main/cwplans/cache/runs">cwplans/cache/runs/</a> (one file for each run that committed). Today is a part day.</p>
+    <div id="kr51-body"><p class="small">Checking…</p></div>
+  </section>
+
   <section id="deploy" class="part" aria-labelledby="deploy-h">
     <h2 id="deploy-h"><span>Site deploys</span><span id="deploy-chip"></span></h2>
     <p class="small">The workflow <a href="https://github.com/danbri/londat/blob/main/.github/workflows/pages.yml">pages.yml</a> publishes the site after each push to main that changes more than <code>cwplans/cache/</code>.</p>
@@ -153,6 +163,12 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
     <h2 id="live-h"><span>Live data freshness</span><span id="live-chip"></span></h2>
     <p class="small">The pages read <code>cache/latest.json</code> before they ask a third-party service. A theme is stale when its newest fetch is more than 2 hours old.</p>
     <div id="live-body"><p class="small">Checking…</p></div>
+  </section>
+
+  <section id="kr52" class="part" aria-labelledby="kr52-h">
+    <h2 id="kr52-h"><span>5-minute live feed (KR5.2)</span><span id="kr52-chip"></span></h2>
+    <p class="small">Key result <a href="https://github.com/danbri/londat/blob/main/OKRS.md">KR5.2</a>: gaps of more than 15 minutes in the 5-minute live feed under 5 % of the time. The workflow <a href="https://github.com/danbri/londat/blob/main/.github/workflows/live-cache.yml">live-cache.yml</a> writes <code>aircraft.json</code> (the last hour), <code>ships.json</code> (the last 2 hours) and <code>metar.json</code> (the last 24 hours) to the branch <a href="https://github.com/danbri/londat/tree/live-cache">live-cache</a>. The gaps in those windows are measured from the sample times in the files; the gaps over 7 days are estimated from the times the job ran.</p>
+    <div id="kr52-body"><p class="small">Checking…</p></div>
   </section>
 
   <section id="kg" class="part" aria-labelledby="kg-h">
@@ -217,6 +233,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
 </main>
 
 <script src="../cwplans/data-base.js"></script>
+<script src="metrics.js"></script>
 <script>
 (() => {
   'use strict';
@@ -373,8 +390,10 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
   // ---------- the summary at the top
   const SECTIONS = [
     ['cache', 'Hourly cache runs', sectionCache],
+    ['kr51', 'Cache runs per day (KR5.1)', sectionRunsPerDay],
     ['deploy', 'Site deploys', sectionDeploy],
     ['live', 'Live data freshness', sectionLive],
+    ['kr52', '5-minute live feed (KR5.2)', sectionFeed],
     ['kg', 'Knowledge graph', sectionKg],
     ['register', 'Data register and quality', sectionRegister],
     ['redirect', 'Old site redirect', sectionRedirect],
@@ -605,6 +624,127 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
     plot._hide = hide;
   }
   document.addEventListener('click', e => { document.querySelectorAll('.plot').forEach(p => { if (p._hide && !p.contains(e.target)) p._hide(); }); });
+
+  // ---------- KR5.1: hourly cache runs per UTC day, 14 days (dashboard/metrics.js), target 20
+  const M = window.DashMetrics;
+  const fmtDay = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+  const dayName = d => fmtDay.format(new Date(d + 'T12:00:00Z'));
+  async function sectionRunsPerDay(el) {
+    const now = Date.now(), DAYS = 14, TARGET = 20, start = Date.parse(M.utcDay(now - (DAYS - 1) * DAY) + 'T00:00:00Z');
+    // one request: the tree of cwplans/cache/runs (the run files of the open month); kept 15 minutes
+    const tree = await gh('/git/trees/main:cwplans/cache/runs?recursive=1', d => (d.tree || []).filter(e => e.type === 'blob').map(e => ({ path: e.path })), 15 * MIN);
+    let times = M.runTimesFromTree(tree), from = 'the run files';
+    // a closed month's run files are replayed into live-YYYY-MM.sqlite and removed: count those days from the commits
+    const firstDay = tree.map(e => e.path.slice(0, 10)).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort()[0];
+    const monthStart = firstDay ? Date.parse(firstDay.slice(0, 8) + '01T00:00:00Z') : now;
+    if (monthStart > start) {
+      const since = new Date(start).toISOString(), until = new Date(monthStart).toISOString();
+      for (let page = 1; page <= 3; page++) {
+        const c = await gh(`/commits?sha=main&path=cwplans/cache/latest.json&since=${since}&until=${until}&per_page=100&page=${page}`, trimCommits, HOUR);
+        times = times.concat(M.runTimesFromCommits(c));
+        if (c.length < 100) break;
+      }
+      from = 'the run files and, for the closed month, the cache commits';
+    }
+    const r = M.runsPerDay(times, { now, days: DAYS, target: TARGET });
+    const last7 = r.days.filter(d => !d.partial).slice(-7), met7 = last7.filter(d => d.n >= TARGET).length;
+    const today = r.days[r.days.length - 1], yday = r.days[r.days.length - 2];
+    let state = 'ok', label = 'On target';
+    if (yday.n < TARGET / 2) { state = 'bad'; label = 'Below target'; }
+    else if (yday.n < TARGET || met7 < last7.length) { state = 'warn'; label = 'Below target'; }
+    const text = `Yesterday (UTC) ${plural(yday.n, 'run')}, target ${TARGET}; ${num(r.met)} of the last ${num(r.full)} whole days reached ${TARGET} (lowest ${num(r.min)}, mean ${r.mean}). Today so far ${plural(today.n, 'run')} in ${today.hours.toFixed(1)} h.`;
+    const tiles = h('div', { class: 'tiles' },
+      tile('Yesterday (UTC)', plural(yday.n, 'run'), `${dayName(yday.day)}; target ${TARGET}`),
+      tile('Today so far (UTC)', plural(today.n, 'run'), `in ${today.hours.toFixed(1)} h; at this rate ${Math.round(today.n / Math.max(0.5, today.hours) * 24)} a day`),
+      tile('Days on target', `${num(r.met)} of ${num(r.full)}`, `whole UTC days; the last 7: ${num(met7)} of ${num(last7.length)}`));
+    const plot = h('div', { class: 'plot' });
+    const fig = h('figure', {}, plot, h('figcaption', {}, `Runs on each UTC day, with the number on each bar; the dashed line is the target, ${TARGET}. The last bar is today, a part day (outlined). The table below has the same numbers.`));
+    const table = h('details', {}, h('summary', {}, `Table of runs per day (${num(DAYS)} days)`),
+      h('div', { class: 'scroll' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'UTC day'), h('th', { class: 'n' }, 'Runs'), h('th', {}, `Target ${TARGET}`))),
+        h('tbody', {}, [...r.days].reverse().map(d => h('tr', {}, h('td', { class: 'w' }, dayName(d.day)), h('td', { class: 'n' }, num(d.n)), h('td', {}, d.partial ? `part day (${d.hours.toFixed(1)} h)` : d.n >= TARGET ? 'met' : `not met (${TARGET - d.n} short)`)))))));
+    put(el, tiles, fig, table, h('p', { class: 'small' }, `Counted from ${from}: `, a(GH + '/tree/main/cwplans/cache/runs'), '. Each run of the loop in cache-live.yml commits one file; a run that changes nothing commits none.'));
+    let drawnW = 0;
+    const draw = () => { const w = Math.floor(plot.clientWidth); if (w && Math.abs(w - drawnW) > 2) { drawnW = w; barChart(plot, r, text); } };
+    draw();
+    if (window.ResizeObserver) new ResizeObserver(() => requestAnimationFrame(draw)).observe(plot); else window.addEventListener('resize', draw);
+    return { state, label, text };
+  }
+  function barChart(plot, r, text) {
+    const W = Math.max(260, Math.floor(plot.clientWidth)), H = 150, L = 26, R = 4, T = 16, B = 22, n = r.days.length;
+    const max = Math.max(24, ...r.days.map(d => d.n)), Y = v => T + (H - T - B) * (1 - v / max), bw = (W - L - R) / n;
+    const svg = s('svg', { class: 'tl', width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Hourly cache runs per UTC day, last 14 days. ' + text });
+    for (const v of [0, 10, 20]) svg.append(s('line', { class: 'grid', x1: L, x2: W - R, y1: Y(v), y2: Y(v) }), s('text', { class: 'lbl', x: L - 4, y: Y(v) + 4, 'text-anchor': 'end' }, String(v)));
+    r.days.forEach((d, i) => {
+      const x = L + i * bw + 2, w = Math.max(2, bw - 4), y = Y(d.n), on = d.n >= r.target;
+      svg.append(s('rect', { class: d.partial ? 'b-part' : on ? 'b-ok' : 'b-low', x, y, width: w, height: Math.max(0, Y(0) - y) }));
+      svg.append(s('text', { class: 'gl', x: x + w / 2, y: y - 3 }, String(d.n)));
+      if (bw >= 30 || (n - 1 - i) % 2 === 0) svg.append(s('text', { class: 'lbl', x: x + w / 2, y: H - 6, 'text-anchor': 'middle' }, d.day.slice(8)));
+    });
+    svg.append(s('line', { class: 'target', x1: L, x2: W - R, y1: Y(r.target), y2: Y(r.target) }));
+    put(plot, svg);
+  }
+
+  // ---------- KR5.2: the 5-minute live feed (branch live-cache): age of each file, gaps over 15 min in the files' windows,
+  // and over 7 days from the times the live-cache job ran (one API request)
+  const RAW_LIVE = 'https://raw.githubusercontent.com/danbri/londat/live-cache/';
+  const FEEDS = [['aircraft', 'Aircraft (adsb.lol)'], ['ships', 'Ships (Open Waters AIS)'], ['metar', 'METAR, London City']];
+  async function sectionFeed(el) {
+    const now = Date.now(), since = new Date(now - 8 * DAY).toISOString().slice(0, 10);
+    const runsP = gh(`/actions/workflows/live-cache.yml/runs?per_page=100&created=%3E%3D${since}`, trimRuns).catch(e => ({ error: e }));
+    const files = await Promise.allSettled(FEEDS.map(([k]) => getJSON(RAW_LIVE + k + '.json')));
+    const F = files.map((x, i) => x.status === 'fulfilled' ? M.feedFile(FEEDS[i][0], x.value, now) : { name: FEEDS[i][0], error: x.reason });
+    const runs = await runsP;
+    // per_page=100: when the 8 days hold more runs, the window starts at the oldest run listed
+    const jFrom = runs.error ? 0 : Math.max(now - 7 * DAY, runs.total > runs.runs.length && runs.runs.length ? Math.min(...runs.runs.map(r => Date.parse(r.created))) : 0);
+    const J = runs.error ? null : M.jobGaps(runs.runs, { from: jFrom, to: now });
+    const jDays = J ? Math.round((now - jFrom) / DAY * 10) / 10 : 0;
+    const [ac, sh, mt] = F, ok = F.filter(f => !f.error);
+    if (!ok.length) throw new Error('none of the three live-cache files loaded (' + (ac.error && ac.error.message) + ')');
+    const worst = [ac, sh].filter(f => !f.error).reduce((m, f) => Math.max(m, f.pct), 0);
+    const ageMax = Math.max(...ok.map(f => f.age));
+    let state = 'ok', label = 'Under 5 %';
+    if (ageMax > HOUR) { state = 'bad'; label = 'Stopped'; }
+    else if (worst >= 5 || (J && J.pct >= 5)) { state = 'warn'; label = 'Gaps over 5 %'; }
+    else if (ageMax > 15 * MIN) { state = 'warn'; label = 'Late'; }
+    const pctTxt = f => f.error ? 'did not load' : `${f.pct} % of the last ${f.window / HOUR} h in gaps over 15 min`;
+    const text = `Newest file ${dur(Math.min(...ok.map(f => f.age)))} old. Aircraft: ${pctTxt(ac)}; ships: ${pctTxt(sh)}` + (J ? `; last ${jDays} days (job run times): ${J.pct} %, ${plural(J.gaps.length, 'gap')}.` : '.');
+    const ft = (f, title) => f.error ? tile(title, 'not loaded', String(f.error.message || f.error))
+      : f.name === 'metar' ? tile(title, dur(f.age) + ' old', [`written ${when(f.generated)}; ${plural(f.samples, 'report')} in 24 h`, f.sourceGaps.length ? `; ${plural(f.sourceGaps.length, 'gap')} of over 45 min between reports` : '; no report missing'])
+      : tile(title, dur(f.age) + ' old', `${f.pct} % in gaps · ${plural(f.samples, 'sample')} in ${f.window / HOUR} h${f.median ? ', one every ' + dur(f.median) : ''}`);
+    const tiles = h('div', { class: 'tiles', style: '--cols:4' }, ft(ac, 'Aircraft'), ft(sh, 'Ships'), ft(mt, 'METAR'),
+      tile(`${J ? jDays : 7} days, from job runs`, J ? `${J.pct} %` : '–', J ? `in ${plural(J.gaps.length, 'gap')} over 15 min; ${plural(J.runs, 'job run')}` : `the GitHub API did not answer (${runs.error && runs.error.message})`));
+    // the last gaps, newest first: those in the files, then those between job runs
+    const all = [];
+    for (const f of [ac, sh]) if (!f.error) for (const g of f.gaps) all.push({ ...g, what: f.name + '.json' });
+    if (J) for (const g of J.gaps) all.push({ ...g, what: 'no live-cache job running' });
+    all.sort((x, y) => y.b - x.b);
+    const list = all.length ? h('ul', { class: 'list' }, all.slice(0, 10).map(g => h('li', {}, h('b', {}, dur(g.ms)), ` ${g.open ? 'since ' + when(g.a) + ', still open' : span(g.a, g.b)}`, h('span', { class: 'small' }, ` · ${g.what}${g.start ? ' (from the start of the window)' : ''}`))))
+      : h('p', { class: 'small' }, 'No gap of more than 15 minutes in the files or between the job runs of the last 7 days.');
+    const plot = h('div', { class: 'plot' });
+    put(el, tiles, h('figure', {}, plot, h('figcaption', {}, 'The last 2 hours (minutes before now): one tick for each sample in aircraft.json and ships.json; a bar marks more than 15 minutes without a sample. The list below gives the same gaps.')),
+      h('h3', {}, 'The last gaps'), list,
+      h('p', { class: 'small' }, 'Files: ', FEEDS.map(([k], i) => [i ? ' · ' : '', a(RAW_LIVE + k + '.json', k + '.json')]), ' · job runs: ', a(GH + '/actions/workflows/live-cache.yml')));
+    let drawnW = 0;
+    const draw = () => { const w = Math.floor(plot.clientWidth); if (w && Math.abs(w - drawnW) > 2) { drawnW = w; feedStrip(plot, [ac, sh], files, now, text); } };
+    draw();
+    if (window.ResizeObserver) new ResizeObserver(() => requestAnimationFrame(draw)).observe(plot); else window.addEventListener('resize', draw);
+    return { state, label, text };
+  }
+  function feedStrip(plot, F, files, now, text) {
+    const W = Math.max(260, Math.floor(plot.clientWidth)), L = 64, R = 6, ROW = 26, H = 2 * ROW + 22, from = now - 2 * HOUR;
+    const X = t => L + (W - L - R) * (t - from) / (now - from);
+    const svg = s('svg', { class: 'tl', width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Samples of the live feed in the last 2 hours. ' + text });
+    for (let k = 0; k <= 4; k++) { const t = from + k * 30 * MIN; svg.append(s('line', { class: 'grid', x1: X(t), x2: X(t), y1: 0, y2: 2 * ROW }), s('text', { class: 'lbl', x: X(t), y: H - 5, 'text-anchor': k === 0 ? 'start' : k === 4 ? 'end' : 'middle' }, k === 4 ? 'now' : `−${(4 - k) * 30}${W < 520 ? '' : ' min'}`)); }
+    F.forEach((f, i) => {
+      const y = ROW * i + ROW / 2 + 2;
+      svg.append(s('text', { class: 'day', x: 0, y: y + 4 }, f.name));
+      if (f.error) return;
+      svg.append(s('line', { class: 'track', x1: X(Math.max(from, now - f.window)), x2: X(now), y1: y, y2: y }));
+      for (const g of f.gaps) svg.append(s('rect', { class: 'gapbar', x: X(Math.max(from, g.a)), y: y - 3, width: Math.max(1, X(g.b) - X(Math.max(from, g.a))), height: 6, rx: 3 }));
+      for (const sn of (files[i].value && files[i].value.snaps) || []) if (sn.t >= from) svg.append(s('line', { class: 'tick', x1: X(sn.t), x2: X(sn.t), y1: y - 7, y2: y + 7 }));
+    });
+    put(plot, svg);
+  }
 
   // ---------- 2. site deploys
   async function sectionDeploy(el) {
@@ -874,7 +1014,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
     if (api.rl && api.rl.left != null) bits.push(`${api.rl.left} of ${api.rl.limit} requests left this hour for this internet address${api.rl.reset ? `, the count resets at ${fmtTime.format(api.rl.reset * 1000)}` : ''}`);
     if (api.limited) bits.push(api.limited);
     if (api.stale) bits.push(`some sections show older answers kept in this tab (${dur(api.stale)} old) because ${api.staleWhy}`);
-    $('apinote').textContent = `GitHub API: ${bits.join('; ') || 'no requests'}. Without sign-in GitHub allows 60 requests an hour for each internet address; this page makes about 5 for each check.`;
+    $('apinote').textContent = `GitHub API: ${bits.join('; ') || 'no requests'}. Without sign-in GitHub allows 60 requests an hour for each internet address; this page makes about 7 for each check.`;
   }
   function checkedNote() {
     if (lastChecked) $('checked').textContent = `Last checked ${fmtSec.format(lastChecked)} (${dur(Date.now() - lastChecked)} ago)`;
