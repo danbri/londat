@@ -40,6 +40,14 @@ export function cwgFields(lines) {
   return { mall, level, postcode, district, street, flags };
 }
 
+// An HTML attribute value as text: decode the character references (F49: the CWG page gives Diptyque's website as
+// "...?_mkpid=a_3606&#038;_mkpc=...", the HTML escape of "&"). Decimal (&#038;), hex (&#x26;) and the named
+// references an attribute holds (&amp; &quot; &apos; &lt; &gt; &nbsp;); an unknown name is left as it is. Applied to
+// every URL attribute read from the CWG pages (fetch-cwg.mjs), never to a value twice ("&amp;amp;" gives "&amp;").
+const NAMED = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ' };
+export const decodeAttr = s => s == null ? s : String(s).replace(/&(?:#(\d+)|#[xX]([0-9a-fA-F]+)|([a-zA-Z]+));/g, (m, d, h, n) =>
+  d ? String.fromCodePoint(+d) : h ? String.fromCodePoint(parseInt(h, 16)) : Object.hasOwn(NAMED, n) ? NAMED[n] : m);
+
 // Level number from a CWG level label ("Mall Level -1" -> -1, "Street Level 0" -> 0, "Mezzanine" -> null).
 export const cwgLevelNum = s => { const m = /(-|–)?\s*(\d+)/.exec(String(s || '')); return m ? (m[1] ? -1 : 1) * +m[2] : /street|ground/i.test(s || '') ? 0 : null; };
 

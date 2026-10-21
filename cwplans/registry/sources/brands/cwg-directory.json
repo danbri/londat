@@ -3530,7 +3530,7 @@
     "London",
     "E14 4QS"
    ],
-   "website": "https://www.diptyqueparis.com/en_uk/?_mkpid=a_3606&#038;_mkpc=UKBBRA-Brand-Exact&#038;_mkpd=scdiptyquee&#038;wiz_campaign=355694539&#038;msclkid=ce16b9f9ef9a14914cabde711ce2752f&#038;utm_source=bing&#038;utm_medium=cpc&#038;utm_campaign=UKBBRA-Brand-Exact&#038;utm_term=diptyque&#038;utm_content=BrandExact",
+   "website": "https://www.diptyqueparis.com/en_uk/?_mkpid=a_3606&_mkpc=UKBBRA-Brand-Exact&_mkpd=scdiptyquee&wiz_campaign=355694539&msclkid=ce16b9f9ef9a14914cabde711ce2752f&utm_source=bing&utm_medium=cpc&utm_campaign=UKBBRA-Brand-Exact&utm_term=diptyque&utm_content=BrandExact",
    "archived_on": "20251117",
    "mall": "Cabot Place",
    "level": "Mall Level -1",
@@ -8428,5 +8428,6 @@
    "archived": null,
    "challenge_captures": 2
   }
- ]
+ ],
+ "website_rule": "HTML character references in the website attribute decoded (cwg-fields.mjs decodeAttr, F49)"
 }

@@ -9,7 +9,21 @@
 import { writeFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { OUT, RAW, UA, sleep } from './lib.mjs';
-import { cwgFields } from './cwg-fields.mjs';
+import { cwgFields, decodeAttr } from './cwg-fields.mjs';
+
+// --rederive: no fetch. Apply the attribute decode (F49, cwg-fields.mjs decodeAttr) to the website of every entry of
+// the committed cwg-directory.json, for a checkout without the cached pages (data/raw/registry/cwg/ is not committed).
+// The same rule as parse() below, so a full run from the cached pages gives the same websites.
+//   node cwplans/registry/sources/brands/tools/fetch-cwg.mjs --rederive
+if (process.argv.includes('--rederive')) {
+  const f = join(OUT, 'cwg-directory.json'), d = JSON.parse(readFileSync(f, 'utf8'));
+  let changed = 0;
+  for (const r of d.directory) if (r.website) { const w = decodeAttr(r.website); if (w !== r.website) { r.website = w; changed++; } }
+  d.website_rule = 'HTML character references in the website attribute decoded (cwg-fields.mjs decodeAttr, F49)';
+  writeFileSync(f, JSON.stringify(d, null, 1));
+  console.log(`${changed} of ${d.directory.filter(r => r.website).length} websites changed by the decode`);
+  process.exit(0);
+}
 
 const DIR = join(RAW, 'cwg'), PAGES = join(DIR, 'pages');
 mkdirSync(PAGES, { recursive: true });
@@ -53,7 +67,8 @@ function parse(html) {
   const addr = (html.match(/<div class="entry-address">([\s\S]*?)<\/div>/) || html.match(/<div class="location">\s*<h6>[^<]*<\/h6>\s*<p>([\s\S]*?)<\/p>/) || [])[1];
   const lines = addr ? addr.split(/<br\s*\/?>/).map(dec).filter(Boolean) : [];
   const web = (html.match(/icon--globe-world-earth"><\/i>\s*<a\s+href="([^"]+)"/) || [])[1] || null;
-  return { title: title ? dec(title) : null, categories: cats, address_lines: lines, website: web };
+  // the href is an HTML attribute value: its character references are decoded (F49: "&#038;" in a query string)
+  return { title: title ? dec(title) : null, categories: cats, address_lines: lines, website: web ? decodeAttr(web) : null };
 }
 const out = [];
 let n = 0;
@@ -88,6 +103,7 @@ writeFileSync(join(OUT, 'cwg-directory.json'), JSON.stringify({
   generated: new Date().toISOString(), entries: out.length,
   by_kind: out.reduce((m, r) => (m[r.kind] = (m[r.kind] || 0) + 1, m), {}),
   with_page: out.filter(r => r.archived).length,
+  website_rule: 'HTML character references in the website attribute decoded (cwg-fields.mjs decodeAttr, F49)',
   directory: out,
 }, null, 1));
 console.log(`${out.length} entries, ${out.filter(r => r.archived).length} with an archived page`);

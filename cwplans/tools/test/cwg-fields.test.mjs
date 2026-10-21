@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cwgFields, cwgLevelNum, nameKeys } from '../../registry/sources/brands/tools/cwg-fields.mjs';
+import { cwgFields, cwgLevelNum, nameKeys, decodeAttr } from '../../registry/sources/brands/tools/cwg-fields.mjs';
 
 test('cwgFields: level lines only', () => {
   assert.equal(cwgFields(['Mall Level -1', 'Cabot Place', 'Canary Wharf', 'London', 'E14 4QS']).level, 'Mall Level -1');
@@ -55,4 +55,15 @@ test('nameKeys: punctuation, accents, "&", and branch suffixes that name a place
   // "London" is part of brand names ("Wax London"): not stripped
   assert.deepEqual(nameKeys('Wax London'), ['wax london']);
   assert.deepEqual(nameKeys(''), []);
+});
+
+test('decodeAttr: HTML character references in a URL attribute (F49)', () => {
+  assert.equal(decodeAttr('https://www.diptyqueparis.com/en_uk/?_mkpid=a_3606&#038;_mkpc=UKBBRA-Brand-Exact&#038;utm_term=diptyque'),
+    'https://www.diptyqueparis.com/en_uk/?_mkpid=a_3606&_mkpc=UKBBRA-Brand-Exact&utm_term=diptyque');
+  assert.equal(decodeAttr('a&amp;b&#x26;c&quot;d'), 'a&b&c"d');
+  // decoded once only; an unknown name and a bare ampersand stay
+  assert.equal(decodeAttr('a&amp;amp;b'), 'a&amp;b');
+  assert.equal(decodeAttr('a&foo;b & c'), 'a&foo;b & c');
+  assert.equal(decodeAttr('https://example.com/?a=1&b=2'), 'https://example.com/?a=1&b=2');
+  assert.equal(decodeAttr(null), null);
 });
