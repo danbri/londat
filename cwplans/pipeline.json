@@ -10003,6 +10003,136 @@
    ],
    "network": true,
    "deterministic": true
+  },
+  {
+   "id": "build-world-base",
+   "tool": "tools/build-world-base.mjs",
+   "command": "node cwplans/tools/build-world-base.mjs fetch && node cwplans/tools/build-world-base.mjs build",
+   "kind": "derive",
+   "used": [
+    {
+     "source": "eox-s2cloudless-2016",
+     "endpoint": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless/default/WGS84/{z}/{row}/{col}.jpg",
+     "request": "5,728 tiles of 256 px (the 2 x 2 tiles of level L + 1 under each output tile), 4 at a time, staggered"
+    },
+    {
+     "source": "copernicus-glo90",
+     "endpoint": "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif",
+     "request": "215 cells of 1 x 1 degree round the testbeds: overview 2 (about 360 m) by range requests; the full grid for 5 cells next to the testbeds"
+    },
+    {
+     "local": "data/raw/world-base/ (eox/, glo90/, fetch-log.json)"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/world-base/base.json"
+    },
+    {
+     "file": "docklands/data/world-base/log.json"
+    },
+    {
+     "file": "docklands/data/world-base/img/*/*/*.webp"
+    },
+    {
+     "file": "docklands/data/world-base/dem/*/*/*.bin"
+    }
+   ],
+   "method": "Chooses the tiles of the globe's geodetic quadtree (level L tiles of 180 / 2^L degrees, y from the north) worldwide to level 4 and, deeper, those whose nearest point is within a radius per level of a testbed (the origins of the region configs named by --regions). Imagery: the 2 x 2 Sentinel-2 cloudless 2016 tiles of level L + 1 drawn into one 512 px canvas and encoded as WebP. Heights: 35 x 35 samples per tile (the 33 x 33 vertices of a terrain patch and a border of one) as box means of Copernicus GLO-90 over one sample spacing (summed-area tables per 1-degree cell). Writes base.json with the tiles present per level and a dataflow log.",
+   "rules": [
+    "Only the 2016 EOX layer (CC BY 4.0); the later years are non-commercial and are never fetched.",
+    "Imagery radii (km) per level: 5: 1,500; 6: 800; 7: 400; 8: 220; 9: 100; 10: 40; 11: 15 (level 11: about 19 m a pixel). Heights: 7: 300; 8: 170; 9: 80; 10: 35; 11: 15; 12: 7.",
+    "Heights use overview 2 of the GLO-90 COG (about 360 m) for levels 7 to 10 and the full 90 m grid for levels 11 and 12; a cell with no GLO-90 file (open sea) counts as 0 m; a tile with no land is not written.",
+    "Heights are metres above EGM2008 (as ETOPO 2022 and the place tiles' DEMs), rounded to 1 m; the globe adds the EGM96 geoid as for the world texture.",
+    "Size budget: the whole set under 30 MB (2026-10-20: 27.6 MB)."
+   ],
+   "network": true,
+   "deterministic": true,
+   "after": [],
+   "area": "world",
+   "judgement": "One WebP per patch cell (not an atlas or array texture): a patch at level L draws exactly its own tile, a material per tile with the tile box as a uniform shares one program; 512 px to match a patch of about 384 CSS px on screen. GLO-90 box means rather than GLO-30: the patches go no finer than 150 m between vertices."
+  },
+  {
+   "id": "build-detail-skeleton",
+   "tool": "tools/build-detail-skeleton.mjs",
+   "command": "node cwplans/tools/build-detail-skeleton.mjs fetch --set world && node cwplans/tools/build-detail-skeleton.mjs build --set world (and --set leon, --set sarajevo)",
+   "kind": "derive",
+   "used": [
+    {
+     "source": "natural-earth",
+     "endpoint": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/",
+     "request": "ne_10m_roads, ne_10m_railroads, ne_10m_rivers_lake_centerlines, ne_10m_rivers_europe, ne_10m_lakes, ne_10m_lakes_europe, ne_10m_urban_areas (.geojson)"
+    },
+    {
+     "source": "geonames",
+     "endpoint": "https://download.geonames.org/export/dump/cities15000.zip",
+     "request": "the whole file"
+    },
+    {
+     "source": "osm",
+     "endpoint": "https://download.geofabrik.de/europe/",
+     "request": "bosnia-herzegovina, spain/castilla-y-leon, spain/galicia, spain/asturias, spain/cantabria (-latest.osm.pbf, 2026-10-19T20:21:11Z)"
+    },
+    {
+     "local": "docklands/data/world/countries.json and admin1.json (the covers of the finer sets)"
+    },
+    {
+     "local": "data/raw/detail-skeleton/"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/world-detail/manifest.json"
+    },
+    {
+     "file": "docklands/data/world-detail/log.json"
+    },
+    {
+     "file": "docklands/data/world-detail/layers/*/*/*.json"
+    },
+    {
+     "file": "docklands/data/world-detail/gazetteer/*.json"
+    },
+    {
+     "file": "docklands/data/es-nw/manifest.json"
+    },
+    {
+     "file": "docklands/data/es-nw/log.json"
+    },
+    {
+     "file": "docklands/data/es-nw/layers/*/*/*.json"
+    },
+    {
+     "file": "docklands/data/es-nw/gazetteer/*.json"
+    },
+    {
+     "file": "docklands/data/ba/manifest.json"
+    },
+    {
+     "file": "docklands/data/ba/log.json"
+    },
+    {
+     "file": "docklands/data/ba/layers/*/*/*.json"
+    },
+    {
+     "file": "docklands/data/ba/gazetteer/*.json"
+    }
+   ],
+   "method": "Writes vector sets in the UK skeleton's format (skeleton-1, read by docklands/geo/skeleton.js, drawn by docklands/globe/skeleton-layers.js). World: Natural Earth 1:10m roads (kind from type and the expressway flag), railways, rivers, lakes and urban areas, GeoNames cities15000; roads, railways and rivers dropped where a finer set draws them (the UK, Spain north-west, Bosnia and Herzegovina covers from the Natural Earth admin units); dense layers within 3,000 km of a testbed. Regional: two passes over the Geofabrik PBF extracts (ways, then their nodes) for highway motorway / trunk / primary, railway=rail without service or industrial / military usage, waterway=river, and place nodes city / town / village with a name. Lines are merged end to end by key, simplified, and cut at the edges of the cells of their clip level; a gazetteer by the first two letters of the folded name.",
+   "rules": [
+    "World file levels 3 and 5, lines cut at level 6 and 8 cell edges (so a line piece always lies in the view cell that the globe asks for); regional file levels 3, 6, 8 cut at their own level.",
+    "Quantisation: 0.001 degree (world level 5), 0.002 degree (world level 3), 0.0001 degree (regional); Douglas-Peucker 0.02 / 0.005 degree (world roads), 0.005 / 0.001 / 0.0004 degree (regional roads).",
+    "GeoNames: feature class PPL* except PPLX (sections) and PPLH (historical); city = 100,000 people or more or a capital, else town; level 3 holds 150,000 or more and capitals.",
+    "OSM regional rivers at level 6: named rivers of 40 km or more in total; gazetteer: places and named rivers of 10 km or more.",
+    "Size budget: world set under 18 MB, each regional set under 8 MB (2026-10-20: 16.9, 5.9 and 1.7 MB)."
+   ],
+   "network": true,
+   "deterministic": true,
+   "after": [
+    "build-world-skeleton"
+   ],
+   "area": "world",
+   "judgement": "Natural Earth 1:10m for the world (public domain) and OSM only for the regions round the testbeds (ODbL, allowed by the owner): a worldwide OSM road layer would be hundreds of MB. GeoNames cities15000 (CC BY 4.0) rather than cities5000 or OSM places worldwide, for size."
   }
  ],
  "manual_activities": [

@@ -151,7 +151,8 @@ function writeGazetteer(out, entries, la, kinds, kindRank, about) {
   for (const e of entries) for (const k of new Set([e[0], e[1]].filter(Boolean).map(n => gazKey(fold(n))))) (files[k] ||= []).push(e);
   const G = { about, key: 'the first two letters or digits of the folded name (docklands/geo/skeleton.js fold, gazKey); a name is also filed under its other-language form',
     fields: ['name', 'alt', 'kind', 'lon', 'lat', 'laIndex (into la: country or region; -1 none)', 'id', 'wd (Wikidata QID)', 'population'], kinds, kindRank, files: {} };
-  for (const [k, es] of Object.entries(files).sort()) { const path = `gazetteer/${k}.json`, s = JSON.stringify({ la, entries: es }); mkdirSync(dirname(join(out, path)), { recursive: true }); writeFileSync(join(out, path), s); written.push({ path, sha256: sha(s), bytes: s.length }); G.files[k] = { path, entries: es.length, bytes: s.length }; }
+  for (const [k, es] of Object.entries(files).sort()) { const path = `gazetteer/${[...k].map(c => /[a-z0-9_]/.test(c) ? c : 'u' + c.codePointAt(0).toString(16)).join('')}.json`,   // (ASCII file names: a key may hold ł, đ, ə)
+    s = JSON.stringify({ la, entries: es }); mkdirSync(dirname(join(out, path)), { recursive: true }); writeFileSync(join(out, path), s); written.push({ path, sha256: sha(s), bytes: s.length }); G.files[k] = { path, entries: es.length, bytes: s.length }; }
   return { G, written };
 }
 
