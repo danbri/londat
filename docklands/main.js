@@ -765,7 +765,7 @@ function loop(time, xrFrame) {
   OCC.end();
   if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
-  { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles) }; } modelFrames++;   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
+  { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles), ms: +ms.toFixed(2) }; } modelFrames++;   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
   CPU.tick();   // the geometry drawn in this frame gives up its CPU copies (cpu-copies.js)
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
