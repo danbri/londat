@@ -3242,3 +3242,11 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
 - Open: street lamps for places (OSM highway=street_lamp, or a rule by road class), the moon and stars on the globe, the
   place's own weather, the day/night material split and the sky after opaques for the model too (London by day in
   software), a phone measurement.
+
+## 2026-10-22: owner decisions on the places
+
+Owner, 2026-10-22, on the four open points: "1 keep 2 yes 3 can we pick a lite subset or slice somehow? Key landmarks,
+modest rssolution? 4. Keep for now". (1) Sarajevo's 122 estimated minarets stay on. (2) Microsoft ML footprints where OSM
+has none go into Greater London (571,817 in the box). (3) The UK: a lite set (landmarks and modest resolution), not all
+17.7 M buildings; built in https://github.com/danbri/docklandia . (4) Rule-placed trees in León and Sarajevo stay.
+Recorded in CLAUDE.md, "Data policy".

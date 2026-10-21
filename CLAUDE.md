@@ -125,6 +125,10 @@ planning and prototyping phase."
   hash, and the operations that made each file.
   IGN España building outlines and floors in León (through Overture, no licence field): the owner accepted them as they
   are on 2026-10-21 ("What we have is ok"); they stay a separate, removable class registered as "review".
+- Owner decisions of 2026-10-22 on the places: (1) Sarajevo's estimated minarets (a stated rule, their own class) stay on
+  ("keep"); (2) Microsoft footprints where OSM has none are used in Greater London too ("yes"); (3) the whole UK as a
+  lite set, not every building ("can we pick a lite subset or slice somehow? Key landmarks, modest resolution?");
+  (4) trees placed by rule in León and Sarajevo stay ("Keep for now").
 - The owner's contributed photos (night 2026-10-03, day 2026-10-04, plane, `data/images/contrib/`) are all CC0 1.0 (owner,
   2026-10-21: "the photos I contrib'd were cc0'd").
 - AIS from AISHub and aisstream.io: kept for scoping as decided on 2026-10-04; taken down on request (owner, 2026-10-21:
