@@ -27,28 +27,39 @@ export function makeCpuCopies(renderer, { on = true } = {}) {
   const add = bytes => { stats.freedMB = +(stats.freedMB + bytes / 1048576).toFixed(1); };
   // three.js makes (or refills) a GPU buffer from attribute.array: a given-up array comes back first
   const be = renderer.backend;
-  for (const fn of ['createAttribute', 'updateAttribute']) { const f = be[fn]; if (typeof f !== 'function') continue;
+  for (const fn of ['createAttribute', 'createIndexAttribute', 'updateAttribute']) { const f = be[fn]; if (typeof f !== 'function') continue;
     be[fn] = function (attribute, ...rest) { const o = owner.get(attribute); if (o && o.w.kept[o.k]) restoreOne(o.G, o.w, o.k); return f.call(this, attribute, ...rest); }; }
-  // watch(G, { name: 'normal' | 'runs' }): the named arrays are given up at once (a tile out of view may never be drawn);
-  // each comes back when three.js makes its buffer, and is given up again after the frame that drew it (tick)
-  function watch(G, spec) { if (!on || !G) return; const names = Object.keys(spec).filter(k => G.attributes[k]); if (!names.length) return;
-    const w = { spec, names, kept: {} }; watched.set(G, w); for (const k of names) { owner.set(G.attributes[k], { G, w, k }); release(G, w, k); } stats.geometries = watched.size;
+  const attrOf = (G, k) => k === 'index' ? G.index : G.attributes[k];
+  // watch(G, { name: 'normal' | 'runs' | 'rebuild' }, remake): 'normal' and 'runs' arrays are given up at once (a tile out of
+  // view may never be drawn); 'rebuild' arrays (any attribute, or 'index') once uploaded, and made again by remake() (a
+  // new geometry built the same way: cells.js, the simplified and far levels). Each comes back when three.js makes its
+  // buffer, and is given up again after the frame that drew it (tick)
+  function watch(G, spec, remake = null) { if (!on || !G) return; const names = Object.keys(spec).filter(k => attrOf(G, k)); if (!names.length) return;
+    const had = watched.get(G), w = had || { spec: {}, names: [], kept: {}, remake: null, fresh: null };   // a second call adds names (cells.js: the lean index of greens, roads, rail)
+    Object.assign(w.spec, spec); for (const k of names) if (!w.names.includes(k)) w.names.push(k); if (remake) w.remake = remake; watched.set(G, w);
+    for (const k of names) { owner.set(attrOf(G, k), { G, w, k }); if (spec[k] === 'rebuild') pending++; else release(G, w, k); } stats.geometries = watched.size;
+    if (had) return;
     // a geometry disposed for good is forgotten; one freed by globe.js freeModel (userData.freed, set after its dispose) is kept
     G.addEventListener('dispose', () => queueMicrotask(() => { if (!G.userData.freed) { watched.delete(G); stats.geometries = watched.size; } })); }
-  function release(G, w, k) { const a = G.attributes[k], arr = a.array; if (!arr.length) return;
+  function release(G, w, k) { const a = attrOf(G, k), arr = a.array; if (!arr.length) return;
     w.kept[k] = w.spec[k] === 'runs' ? { runs: runsOf(arr, a.itemSize), Ctor: arr.constructor } : { Ctor: arr.constructor };
     a.array = new arr.constructor(0); stats.released++; add(arr.byteLength); }
   let pending = 0;   // arrays back on the CPU (tick has work)
-  function restoreOne(G, w, k) { const a = G.attributes[k], kp = w.kept[k]; delete w.kept[k]; pending++;
+  function restoreOne(G, w, k) { const a = attrOf(G, k), kp = w.kept[k]; delete w.kept[k]; pending++;
+    if (w.spec[k] === 'rebuild') {   // from a geometry built again (kept until the next tick: the other arrays may follow)
+      const F = w.fresh || (w.fresh = w.remake ? w.remake() : null), src = F && attrOf(F, k), n = a.count * a.itemSize;
+      if (src && src.array.length === n) a.array = src.array; else { console.warn('cpu-copies: the geometry made again differs', k); a.array = new kp.Ctor(n); }
+      add(-a.array.byteLength); stats.restored++; stats.remade = (stats.remade || 0) + 1; return; }
     a.array = kp.runs ? fromRuns(kp.runs, a.itemSize, a.count, kp.Ctor) : new kp.Ctor(a.count * a.itemSize); add(-a.array.byteLength);
     if (w.spec[k] === 'normal' && k === 'normal') {   // (into the zeroed array: the builders' own call, the same result)
+      for (const q of ['position', 'index']) if (w.kept[q]) restoreOne(G, w, q);   // the normals are made from them
       const NI = G.userData.normalIndex, I0 = G.index; if (NI) G.index = NI;   // cells.js: the index drawn holds the cells in view only; normalIndex holds every triangle
       try { G.computeVertexNormals(); } finally { if (NI) G.index = I0; } }
     stats.restored++; }
-  // restore(G): every given-up array of G back now (tests; three.js itself needs none of this: the wrapped backend restores)
-  function restore(G) { const w = watched.get(G); if (!w) return false; const ks = Object.keys(w.kept); for (const k of ks) restoreOne(G, w, k); return ks.length > 0; }
+  // restore(G[, name]): every given-up array of G (or the one named) back now (tests; three.js itself needs none of this: the wrapped backend restores)
+  function restore(G, only) { const w = watched.get(G); if (!w) return false; const ks = Object.keys(w.kept).filter(k => !only || k === only); for (const k of ks) if (w.kept[k]) restoreOne(G, w, k); return ks.length > 0; }
   // after each drawn frame: the arrays that came back for an upload are given up again
-  function tick() { if (!on || !pending) return; pending = 0; for (const [G, w] of watched) { if (G.userData.freed) { if (w.names.some(k => !w.kept[k])) pending++; continue; }
-    for (const k of w.names) if (!w.kept[k]) { if (uploaded(G.attributes[k])) release(G, w, k); else pending++; } } }
+  function tick() { if (!on || !pending) return; pending = 0; for (const [G, w] of watched) { w.fresh = null; if (G.userData.freed) { if (w.names.some(k => !w.kept[k])) pending++; continue; }
+    for (const k of w.names) if (!w.kept[k]) { if (uploaded(attrOf(G, k))) release(G, w, k); else pending++; } } }
   return { watch, tick, restore, stats };
 }

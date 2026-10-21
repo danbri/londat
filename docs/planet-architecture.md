@@ -134,6 +134,33 @@ external tileset. The tree is geodetic; the content may come in national cells.
 - **Detail measure per tile** (KR2.4): buildings with a measured height, trees, water, live sources, splats; written in
   the tile's metadata and in a world index for the dashboard.
 
+### 3a. The Docklands model as 3D Tiles: the plan (2026-10-21, after LOD step 4)
+
+LOD step 4 cut the Docklands model into cells **in the page** (https://github.com/danbri/londat/blob/main/docklands/cells.js):
+54 building cells of 1 km (build.js `TILE`), each with three levels (full; flat roofs without buildings under 8 m;
+buildings of 20 m across or 30 m high with outlines simplified to 2.5 m), and the terrain, greens, roads and rail drawn by
+cell and level from one index each. It was not written as a 3D Tiles tileset yet, because the page would lose features:
+
+| feature | what it needs today | what a tile reader would need |
+|---|---|---|
+| tap names the building (cards, `id=osm:` links) | `userData.bi`: the model index of each vertex | `_FEATURE_ID_0` = model index (EXT_mesh_features), as the places do |
+| skyline years, Colour by, piers / river / detailed models hiding their buildings, Roofs and Realistic look switches | `rebuildBuildings()` from area.js with options (heightOf, colourOf, skip, roofs, look) | a feature table on the GPU: per model index a height scale, a colour and a hide bit, read in the vertex and colour graphs; roof and look variants as separate content |
+| facades, Night windows, Realistic look, pixel and line styles | vertex attributes `uw`, `col` (alpha byte = material code), `gk` (centre, base, night kind) | the same as glTF custom attributes `_UW`, `COLOR_0` (normalised u8 RGBA), `_GK` |
+| tide, foreshore and dock walls | the terrain's 20 m grid, its cut squares and an index without the foreshore squares (layers/tide.js) | the terrain stays an in-page mesh (or carries its grid and squares as metadata) |
+| label occluder, zoom stop, drone | CPU positions of the full buildings | keep the full level's positions on the CPU after parsing |
+| vertical exaggeration, cut-away, shadows | camera matrix, `U.cut` in the graphs, mesh flags | nothing new |
+
+Plan (about 3 to 4 agent-days, step 8 of the table below): (1) a GPU feature table (height scale, colour, hide) so that the
+runtime options need no rebuild; (2) `cwplans/tools/build-docklands-tiles.mjs`: runs build.js `buildBuildings({ level,
+tile })` in Node for each cell and level (roofs-layer.js and look-layer.js as globals), writes glb with the attributes above,
+`_FEATURE_ID_0`, KHR_mesh_quantization, in the region ENU frame (the page frame is a fixed transform of ENU, section 1); a
+`tileset.json` of the model box with the 54 cells, REPLACE refinement far -> simplified -> full, geometricError from the
+level rules (far: 30 m, the highest building left out; simplified: the highest roof ridge flattened, about 8 m; full: 0);
+data-register entries; 3d-tiles-validator 0 errors; (3) the reader: the places reader (globe/places.js) walk with the same
+screen-space error rule, putting the cells into `ctx.meshes.buildings` with `userData.full`, so that cells.js picking and
+the occluder keep working; terrain, greens, roads and rail as tiles later (the tide needs the terrain grid). Sizes:
+today's full level is 1.13 M triangles; the simplified and far levels add about 60 % and 15 %.
+
 ## 4. Adapters
 
 An adapter is a module plus a block in a region config. Contract:
@@ -237,7 +264,7 @@ To **KR1.2** (three places outside the UK by the same pipeline) and **KR2.1** (g
 | 5 | World-base builders: Natural Earth (2D, PMTiles), Copernicus GLO-90 terrain tiles for a region, OSM / Overture buildings for a region (extruded, default heights) | 4 to 6 | KR2.2, KR1.2 |
 | 6 | The three places the owner chose (Sarajevo, León, Leiden: region configs done) built by steps 4 to 5, with the Dutch adapter (AHN, 3DBAG) and the Spanish IGN adapter; clock, sun and sky of each place. Note: all three are in Europe and the north, so KR1.2's "3 continents, one in the southern hemisphere" needs the owner to change the KR or add places; Sarajevo in `sr-Cyrl` covers the non-Latin script | 3 to 5 | KR1.2 |
 | 7 | Globe in the port: ECEF scene, floating origin, reversed or log depth, `GlobeControls` from orbit to street, base tiles + the Docklands tiles; the flat page frame as the region ENU | 5 to 8 | KR2.1 |
-| 8 | Docklands content as tiles (80 building tiles, terrain, trees, water) and a 1 cm check: positions in tiles against the flat model (exact path), test in `npm test` | 3 to 4 | KR2.1, KR2.3 |
+| 8 | Docklands content as tiles (the 54 building cells of LOD step 4 with their three levels, terrain, trees, water) and a 1 cm check: positions in tiles against the flat model (exact path), test in `npm test`. **In-page cells done 2026-10-21** (cells.js); the tileset plan and what blocks it: section 3a | 3 to 4 | KR2.1, KR2.3 |
 | 9 | Hosting (owner's choice), upload, cache headers; register entries per tile set | 1 to 2 | KR2.5 |
 
 Totals: KR1.2 about 11 to 18 agent-days (steps 2 to 6); KR2.1 about 10 to 16 more (steps 1, 7, 8, 9); both about 24

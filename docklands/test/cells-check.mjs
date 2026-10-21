@@ -36,7 +36,7 @@ const picks = page => page.evaluate(([w, h]) => { const out = []; for (let j = 1
 // the card of One Canada Square: tap the middle of its tower on the screen
 const ocsCard = page => page.evaluate(async () => {
   const D = __docklands3, T3 = D.THREE, J = await (await fetch('../cwplans/docklands/data/towers.json')).json(), t = Object.values(J.buildings).find(b => b.name === 'One Canada Square');
-  const r = t.tiers[0].ring, x = r.reduce((s, p) => s + p[0], 0) / r.length, z = r.reduce((s, p) => s + p[1], 0) / r.length, v = new T3.Vector3(x, (t.tiers[0].y0 + t.tiers.at(-1).y1) / 2, z).project(D.camera);
+  const r = t.tiers[0].ring, x = r.reduce((s, p) => s + p[0], 0) / r.length, z = r.reduce((s, p) => s + p[1], 0) / r.length, v = new T3.Vector3(x, t.tiers.at(-1).y0 - 2, z).project(D.camera);   // just under the pyramid: above 25 Canada Square from the east
   const sx = (v.x + 1) / 2 * innerWidth, sy = (1 - v.y) / 2 * innerHeight; D.tap(sx, sy);
   for (let i = 0; i < 100 && /Loading the record/.test(document.querySelector('#cardBody')?.textContent || 'Loading the record'); i++) await new Promise(r => setTimeout(r, 100));
   return { model: D.pickAt(sx, sy), title: document.querySelector('#cardBody h2')?.textContent || '', mi: t.model_buildings[0] }; });

@@ -9,9 +9,11 @@
 //    level 0 / 1 / 2: full; flat roofs and no building under 8 m; buildings of 20 m or 30 m high, outlines simplified to
 //    2.5 m, towers kept), built in the background when first wanted (nearest first, a time slice at a time). A tap and the
 //    occluder always use the full geometry (`userData.full`: a ray hits it through a proxy mesh a cell, so the model index
-//    under the tap is exactly as before). A level not drawn for FREE_MS gives back its GPU buffers (dispose; its CPU
-//    copies stay, three.js uploads them again when it is drawn: as globe.js freeModel); a simplified or far geometry not
-//    drawn for DROP_MS is dropped (built again when wanted).
+//    under the tap is exactly as before). The simplified and far levels are lean: once uploaded they give up every CPU
+//    array but `userData.bi` (cpu-copies.js 'rebuild': three.js gets them back by building the level again, should it
+//    upload them again). Not drawn for FREE_MS, a simplified or far level is dropped (built again when wanted; also when
+//    globe.js freeModel disposes it: the full level stands in), and the full level gives back its GPU buffers (dispose;
+//    its CPU copies stay for taps, three.js uploads them again when it is drawn, as after freeModel).
 //  - Terrain, greens, roads and rail: one mesh each, as before (tide.js, under.js, styles.js, splats, the drone see the
 //    same objects). Their triangles are sorted by cell and level class (build.js LOD_*: road and rail sides at full detail
 //    only, 4 m roads and greens under 600 m2 not far, the terrain's 40 m stand-ins: build.js terrainLod), and the index
@@ -24,6 +26,7 @@ import { lodIn } from './build.js';
 export const CELL = 1000;
 export const LEVEL_SIZE = [60, 240];   // m: full detail while this covers LOD.px, simplified while the second does
 const HYST = 1.1, WIDE = 1.4, FREE_MS = 5000, DROP_MS = 60000, SLICE_MS = 8;
+const LEAN = { position: 'rebuild', uw: 'rebuild', col: 'rebuild', index: 'rebuild', normal: 'normal', gk: 'runs' };   // the simplified and far levels' arrays (cpu-copies.js)
 const NAMES = ['full', 'simplified', 'far'];
 
 export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep = {} }) {
@@ -59,12 +62,20 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
     if (!cls || !cls.some(v => v === 5)) G.userData.normalIndex = new THREE.BufferAttribute(sorted, 1);
     PREP.set(G, C); C.prepMs = Math.round(performance.now() - t0);
     compose(G, C, true);
+    // lean (greens, roads, rail: no CPU reader of the index drawn): the index array is given up once uploaded and made
+    // again from the cells when three.js or a new composition needs it (cpu-copies.js 'rebuild')
+    if (k.lean) CPU.watch(G, { index: 'rebuild' }, () => { const a = new Uint32Array(G.index.count); fill(a, C); return { index: { array: a } }; });
     return C;
   }
-  function compose(G, C, all) {
-    const t0 = performance.now(), out = G.index.array, { cells, st, sorted, lv } = C; let o = 0;
+  function fill(out, C, all) {   // the cells at their levels into out; -> the length used
+    const { cells, st, sorted, lv } = C; let o = 0;
     for (let c = 0; c < cells.length; c++) { const L = all ? 0 : lv[c]; if (L < 0) continue;
       for (let code = 0; code < 9; code++) { const s = 3 * st[c * 9 + code], e = 3 * st[c * 9 + code + 1]; if (e > s && lodIn(code, L)) { out.set(sorted.subarray(s, e), o); o += e - s; } } }
+    return o;
+  }
+  function compose(G, C, all) {
+    const t0 = performance.now(); if (!G.index.array.length) CPU.restore(G, 'index');   // (a lean index given up after its upload)
+    const o = fill(G.index.array, C, all);
     G.index.clearUpdateRanges(); if (o) G.index.addUpdateRange(0, o); G.index.needsUpdate = true; G.setDrawRange(0, o);
     C.tris = o / 3; C.composes++; C.ms = +(performance.now() - t0).toFixed(1);
   }
@@ -75,7 +86,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
     const out = new Uint32Array(n); let o = 0;
     for (let c = 0; c < C.cells.length; c++) for (let code = 0; code < 3; code++) { const s0 = 3 * C.st[c * 9 + code], e = 3 * C.st[c * 9 + code + 1]; out.set(C.sorted.subarray(s0, e), o); o += e - s0; }
     G.setIndex(new THREE.BufferAttribute(out, 1)); G.setDrawRange(0, Infinity); delete G.userData.normalIndex; S.unprepared = (S.unprepared || 0) + 1; }
-  function addIndexed(name, mesh) { kinds.push({ name, mesh, seen: new Map() }); }   // prepared when first drawn (update)
+  function addIndexed(name, mesh, lean = false) { kinds.push({ name, mesh, lean, seen: new Map() }); }   // prepared when first drawn (update)
   function updateIndexed(now) {
     for (const k of kinds) { const G = k.mesh.geometry, C = prepare(k, G); k.seen.set(G, now);
       for (const [g, t] of k.seen) if (g !== G && now - t > DROP_MS) { unprepare(g); k.seen.delete(g); }
@@ -102,7 +113,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
   }
   function dropTiles() {   // before a rebuild: every level of every cell
     gen++; want.clear();
-    for (const m of tiles) for (const G of new Set(m.userData.lods)) if (G) { G.userData.freed = false; G.dispose(); }
+    for (const m of tiles) for (const G of new Set(m.userData.lods)) if (G) { G.userData.mine = true; G.userData.freed = false; G.dispose(); }
     tiles.length = 0;
   }
   function swap(m, L) {
@@ -118,7 +129,13 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
         let best = null; for (const [key, w] of want) if (!best || w.d < best.d) best = w;
         want.delete(best.id); const U = best.m.userData; if (U.lods[best.L] !== undefined || !tiles.includes(best.m)) continue;
         const tb = performance.now(), G = buildTile(U.key, best.L); if (g !== gen) break;   // a rebuild came in between
-        if (G) CPU.watch(G, { normal: 'normal', gk: 'runs' });
+        if (G) { const key = U.key, L = best.L, m = best.m;
+          // lean: every array given up once uploaded (cpu-copies.js 'rebuild': made again by building the level again);
+          // a level only the page draws (taps and the occluder use the full level), so it is cheap to drop and build again
+          CPU.watch(G, LEAN, () => buildTile(key, L));
+          G.addEventListener('dispose', () => { if (G.userData.mine) return;   // disposed by another (globe.js freeModel): drop it, the full level stands in
+            queueMicrotask(() => { if (U.lods[L] === G) U.lods[L] = undefined; if (m.geometry === G) { m.geometry = U.full; U.level = 0; } S.dropped++;
+              G.userData.mine = true; G.userData.freed = false; G.dispose(); }); }); }   // (again, as ours: cpu-copies.js then forgets it)
         U.lods[best.L] = G || null; U.used[best.L] = performance.now(); S.builds++; S.buildMs = Math.round(S.buildMs + performance.now() - tb); draw();
       }
       S.pending = want.size;
@@ -131,11 +148,14 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
     for (const m of tiles) { const U = m.userData, d = U.box.distanceToPoint(eye), L = levelOf(d, U.level);
       if (L !== U.level) { if (U.lods[L] !== undefined) swap(m, L); else if (F.intersectsBox(U.box)) { want.set(U.key + '/' + L, { id: U.key + '/' + L, m, L, d }); pump(); } }
       n[U.level]++; U.used[U.level] = now;
-      // levels not drawn: GPU buffers back after FREE_MS, a simplified or far geometry dropped after DROP_MS
-      for (let k = 0; k < 3; k++) { const G = U.lods[k]; if (!G || G === m.geometry) continue;
-        if (k && now - U.used[k] > DROP_MS) { G.userData.freed = false; G.dispose(); U.lods[k] = undefined; S.dropped++; continue; }
-        if (!G.userData.freed && now - U.used[k] > FREE_MS) { G.dispose(); G.userData.freed = true; S.freed++; } } }
+      // levels not drawn for FREE_MS: a simplified or far geometry is dropped, the full one gives back its GPU buffers
+      for (let k = 0; k < 3; k++) { const G = U.lods[k]; if (!G || G === m.geometry || now - U.used[k] <= FREE_MS) continue;
+        if (k) { G.userData.mine = true; G.userData.freed = false; G.dispose(); U.lods[k] = undefined; S.dropped++; continue; }   // a simplified or far level: dropped
+        if (!G.userData.freed) { G.userData.mine = true; G.dispose(); G.userData.mine = false; G.userData.freed = true; S.freed++; } } }   // the full level: its GPU buffers (CPU copies kept for taps)
     S.tiles = { full: n[0], simplified: n[1], far: n[2] };
+    // triangles of the levels built, against the full level of the same cells (the levels' saving)
+    const tr = { simplified: [0, 0], far: [0, 0] }; for (const m of tiles) { const U = m.userData, f = U.full.index.count / 3; for (const [k, key] of [[1, 'simplified'], [2, 'far']]) { const G = U.lods[k]; if (G !== undefined) { tr[key][0] += f; tr[key][1] += G ? G.index.count / 3 : f; } } }
+    S.levelTriangles = tr;
   }
 
   function update() {
