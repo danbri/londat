@@ -119,6 +119,8 @@ planning and prototyping phase."
   ends "all rights reserved"), IGN MDT (CC BY 4.0), OSM (ODbL), Catastro as transformed heights only (the Catastro rule
   above still holds: no original files committed). Each place has a README with each source, licence, extract date and
   hash, and the operations that made each file.
+  IGN España building outlines and floors in León (through Overture, no licence field): the owner accepted them as they
+  are on 2026-10-21 ("What we have is ok"); they stay a separate, removable class registered as "review".
 - Contributed photos: do not describe or tag people; report recognisable faces and readable number plates to the owner
   (the `docklands-data-curation` skill, "Contributed photos").
 - The exception ends when the project leaves the prototyping phase; the owner says when.
