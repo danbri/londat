@@ -7,7 +7,7 @@
 //     1. a region with a 3D place whose surroundings square holds the point (León, Sarajevo ...): its timeZone, exact
 //     2. a small region whose bbox holds the point (the Docklands model box): its timeZone, exact
 //     3. the world (worldZones over the Natural Earth places): the nearest place of the same country (a3 from the country
-//        polygons), else the nearest place within 300 km; approximate when that country has more than one zone
+//        polygons), else the nearest place within 300 km; approximate when a town of another zone of that country is near
 //     4. a large region whose bbox holds the point (the UK skeleton): its timeZone, approximate (a bbox is not a border)
 //     5. the nautical zone of the longitude (15 degree bands, Etc/GMT-n): approximate; at sea this is the legal one
 // Skill: docklands-sky, "Place-aware page clock".
@@ -41,7 +41,7 @@ export function offsetText(t, tz) {
 export function zoneAbbr(t, tz, locales = []) {
   for (const l of [...locales, undefined]) {
     try { const v = new Intl.DateTimeFormat(l, { timeZone: tz, timeZoneName: 'short' }).formatToParts(new Date(t)).find(p => p.type === 'timeZoneName')?.value;
-      if (v && !/^(GMT|UTC)\s*([+-−]|$)/.test(v)) return v; } catch { /* bad locale */ }
+      if (v && (!/^(GMT|UTC)\s*([+-−]|$)/.test(v) || (v === 'GMT' && offsetMs(t, tz) === 0))) return v; } catch { /* bad locale */ }   // "GMT" is a name only at offset 0
   }
   return offsetText(t, tz);
 }
@@ -71,13 +71,13 @@ export function worldZones(points) {
   const grid = new Map(), byA3 = new Map(), key = (i, j) => i * 1000 + j, cell = (lon, lat) => [Math.floor((lon + 180) / 5), Math.floor((lat + 90) / 5)];
   for (const p of points) { if (!p.tz || !validZone(p.tz)) continue; const [i, j] = cell(p.lon, p.lat), k = key(i, j); if (!grid.has(k)) grid.set(k, []); grid.get(k).push(p);
     if (p.a3) { if (!byA3.has(p.a3)) byA3.set(p.a3, new Set()); byA3.get(p.a3).add(p.tz); } }
-  // the nearest point within maxKm (of country a3 when given), by rings of cells
-  function nearest(lon, lat, a3 = null, maxKm = 300) {
+  // the nearest point within maxKm (of country a3 when given; not in zone notTz when given), by rings of cells
+  function nearest(lon, lat, a3 = null, maxKm = 300, notTz = null) {
     const [ci, cj] = cell(lon, lat); let best = null, bd = maxKm;
     const rings = Math.ceil(maxKm / (5 * 111 * Math.max(0.15, Math.cos(Math.min(85, Math.abs(lat)) * D2R)))) + 1;
     for (let r = 0; r <= Math.min(rings, 36); r++) {
       for (let i = ci - r; i <= ci + r; i++) for (let j = cj - r; j <= cj + r; j++) { if (Math.max(Math.abs(i - ci), Math.abs(j - cj)) !== r || j < 0 || j > 35) continue;
-        for (const p of grid.get(key(((i % 72) + 72) % 72, j)) || []) { if (a3 && p.a3 !== a3) continue; const d = km(lon, lat, p.lon, p.lat); if (d < bd) { bd = d; best = p; } } }
+        for (const p of grid.get(key(((i % 72) + 72) % 72, j)) || []) { if ((a3 && p.a3 !== a3) || (notTz && p.tz === notTz)) continue; const d = km(lon, lat, p.lon, p.lat); if (d < bd) { bd = d; best = p; } } }
       if (best && (r + 1) * 5 * 111 * Math.max(0.15, Math.cos(Math.min(85, Math.abs(lat)) * D2R)) > bd + 600) break;   // later rings are farther than the best
     }
     return best ? { ...best, dist_km: Math.round(bd) } : null;
@@ -95,8 +95,10 @@ export function zoneAt(lon, lat, { regions = [], world = null, a3 = null } = {})
   if (small) return out(small.timeZone, 'region:' + small.id, false, `the region config of ${small.name}`, small);
   if (world) {
     const p = (a3 && world.nearest(lon, lat, a3, 2500)) || world.nearest(lon, lat, null, 300);
-    if (p) { const many = p.a3 ? world.zonesOf(p.a3).length > 1 : true;
-      return out(p.tz, 'natural-earth', many || !a3, `the time zone of the nearest town or city${a3 && p.a3 === a3 ? ' in the same country' : ''} (Natural Earth, ${p.dist_km} km away)${many ? '; the country has more than one zone' : ''}`); }
+    // approximate: no country under the point, or a town of the same country in another zone is not much farther (a
+    // zone border may lie between): within 3 times the distance, at least 300 km
+    if (p) { const other = p.a3 && world.zonesOf(p.a3).length > 1 ? world.nearest(lon, lat, p.a3, Math.max(300, 3 * p.dist_km), p.tz) : null;
+      return out(p.tz, 'natural-earth', !!other || !a3, `the time zone of the nearest town or city${a3 && p.a3 === a3 ? ' in the same country' : ''} (Natural Earth, ${p.dist_km} km away)${other ? `; ${other.tz} is used ${other.dist_km} km away` : ''}`); }
   }
   const big = R.filter(r => !r.place && boxKm2(r.bbox) > SMALL_KM2).find(r => inBox(r.bbox, lon, lat));
   if (big) return out(big.timeZone, 'region:' + big.id, true, `the region config of ${big.name} (its bounding box; borders not checked)`, big);

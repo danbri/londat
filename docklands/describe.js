@@ -5,6 +5,7 @@
 // aspect); outputs speak WGS84 longitude and latitude, metres, degrees from true north and ISO times. The locale (the
 // model frame, the height datum, the time zone, names the data lacks) comes from an adapter (adapters/uk.js).
 // Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".
+import { fromWall } from './geo/clock.js';
 export const DESCRIBE_VERSION = '1.0.0';
 const D = Math.PI / 180;
 
@@ -203,14 +204,10 @@ export function findPlaces(I, q, limit = 10) {
     .map(([p]) => { const [lon, lat] = I.adapter.toLonLat(p.x, p.z); return { ...p, lon: r6(lon), lat: r6(lat) }; });
 }
 
-// ---------- a local wall-clock time (YYYY-MM-DD[THH:MM[:SS]], no offset) in a time zone to UTC milliseconds (Intl only)
-export function zonedToUtc(s, tz) {
-  const m = /^(\d{4})-(\d\d)-(\d\d)(?:[T ](\d\d):(\d\d)(?::(\d\d))?)?$/.exec(String(s).trim()); if (!m) return NaN;
-  const want = Date.UTC(+m[1], m[2] - 1, +m[3], +(m[4] ?? 12), +(m[5] ?? 0), +(m[6] ?? 0));
-  const off = t => { const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
-    return Date.UTC(+p.year, p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - t; };
-  let t = want; for (let k = 0; k < 3; k++) t = want - off(t); return t;
-}
+// ---------- a local wall-clock time (YYYY-MM-DD[THH:MM[:SS]], no offset) in a time zone to UTC milliseconds: geo/clock.js
+// fromWall (one rule for the page, the API and the text view: a repeated hour gives the first instant, a skipped one moves
+// on by the gap; before 2026-10-21 this gave the second instant of a repeated hour)
+export const zonedToUtc = (s, tz) => fromWall(s, tz);
 // any time string: an ISO time with Z or an offset as it is; a wall-clock time without one in the place's time zone
 export function parseTime(v, tz) {
   if (typeof v === 'number') return v; const s = String(v || '').trim(); if (!s || /^now$/i.test(s)) return Date.now();
