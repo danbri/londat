@@ -30,6 +30,7 @@ import { fold, fmtDist, compass, bearingDeg } from './world.js';
 export const PLACES_INDEX = '../cwplans/docklands/data/places/index.json';
 export const LOAD_M = 150000, FREE_M = 220000;
 const qs = new URLSearchParams(location.search);
+const INST_MIN = 1025;   // instanced blocks: capacity over the 64 kB uniform limit (1,025 x 64 bytes), see activate
 const MAX_SSE = +(qs.get('sse') || 24), MAX_FETCH = 8, MAX_ACTIVATE = 3, ACTIVATE_MS = 10, CACHE = 220, IDLE_MS = 15000;
 const len = p => Math.hypot(p[0], p[1], p[2]);
 const Y2Z = [1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1];   // glTF y-up -> 3D Tiles z-up (column-major)
@@ -130,7 +131,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     const gP = new THREE.BufferGeometry(); gP.setAttribute('position', P3());
     const gC = new THREE.BufferGeometry(); gC.setAttribute('position', P3()); gC.setAttribute('normal', N3());
     const tex = new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1); tex.needsUpdate = true; tex.colorSpace = THREE.SRGBColorSpace;
-    const sc = new THREE.Scene(), gm = groundMat(tex), cm = curtainMat(), im = new THREE.InstancedMesh(gP, blockMat([0.66, 0.6, 0.5]), 1); im.setMatrixAt(0, new THREE.Matrix4());
+    const sc = new THREE.Scene(), gm = groundMat(tex), cm = curtainMat(), im = new THREE.InstancedMesh(gP, blockMat([0.66, 0.6, 0.5]), INST_MIN); im.count = 1; im.setMatrixAt(0, new THREE.Matrix4());
     for (const m of [new THREE.Mesh(gG, gm), new THREE.Mesh(gC, cm), new THREE.Mesh(gB, BMAT), new THREE.Mesh(gP, blockMat([0.66, 0.6, 0.5])), im]) { m.frustumCulled = false; sc.add(m); }
     const g = { dispose() { for (const x of [gG, gB, gP, gC]) x.dispose(); } };
     // the warm-up meshes are kept (never disposed): a program whose last user is disposed is deleted by three.js, and
@@ -215,7 +216,10 @@ export async function attachPlaces(G, H, { scene, U }) {
         let gm = map && groundPool.pop(); if (gm) gm.userData.tex.value = map; else gm = groundMat(map);
         mesh = new THREE.Mesh(g, gm); mesh.__map = map; kind = 'ground';
       } else if (q.inst) {   // city blocks as instances of a unit box
-        const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), k); kind = 'blocks';
+        // capacity at least INST_MIN: three.js puts a smaller instance matrix in a uniform array whose LENGTH is part of
+        // the shader, so each tile with another small count compiled a program of its own (London: 7 programs, 6 s of
+        // long tasks in a fly-in, 2026-10-21); above the uniform limit it is an instanced attribute: one program for all
+        const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), Math.max(k, INST_MIN)); mesh.count = k; kind = 'blocks';
         const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3();
         for (let i = 0; i < k; i++) { v.fromArray(q.inst.t, 3 * i); qt.fromArray(q.inst.r, 4 * i); sc.fromArray(q.inst.s, 3 * i); mesh.setMatrixAt(i, m4.compose(v, qt, sc)); }
         mesh.computeBoundingSphere();
