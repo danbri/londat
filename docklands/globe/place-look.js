@@ -433,7 +433,10 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const bi = new THREE.InstancedMesh(gi, BLOCK, instCap(1)); bi.count = 1; bi.setMatrixAt(0, new THREE.Matrix4());
     const mt = (geo, mat, A) => { const g = geo.clone(); for (const k of A) g.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4)); const m = new THREE.InstancedMesh(g, mat, instCap(1)); m.count = 1; m.setMatrixAt(0, new THREE.Matrix4()); return m; };
     const bi2 = new THREE.InstancedMesh(gi, BLOCK_DAY, instCap(1)); bi2.count = 1; bi2.setMatrixAt(0, new THREE.Matrix4());
-    return [new THREE.Mesh(gb, BMAT), new THREE.Mesh(gb, BMAT_DAY), new THREE.Mesh(go, BLOCK), new THREE.Mesh(go, BLOCK_DAY), new THREE.Mesh(gw, WMAT), bi, bi2, mt(TG.crowns.broad, CROWN, ['mid', 'leaf', 'aut', 'cal', 'bloom']), mt(TG.trunk, TRUNK, ['bark']), mt(TG.far, FAR, ['mid', 'leaf', 'aut', 'cal', 'bloom'])];
+    // (the shadow flags as the real meshes have them: receiveShadow is part of a program's key; places.js activate, addDecor)
+    const fl = (m, c, r) => { m.castShadow = c; m.receiveShadow = r; return m; };
+    return [fl(new THREE.Mesh(gb, BMAT), true, true), fl(new THREE.Mesh(gb, BMAT_DAY), true, true), fl(new THREE.Mesh(go, BLOCK), true, true), fl(new THREE.Mesh(go, BLOCK_DAY), true, true),
+      new THREE.Mesh(gw, WMAT), fl(bi, true, true), fl(bi2, true, true), fl(mt(TG.crowns.broad, CROWN, ['mid', 'leaf', 'aut', 'cal', 'bloom']), true, true), fl(mt(TG.trunk, TRUNK, ['bark']), true, true), fl(mt(TG.far, FAR, ['mid', 'leaf', 'aut', 'cal', 'bloom']), false, true)];
   }
   // the state for the text and machine interface (G.placeLook, describeView): what the place is drawn with now
   function describe() {

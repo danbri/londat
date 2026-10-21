@@ -132,7 +132,8 @@ export async function attachPlaces(G, H, { scene, U }) {
     const gC = new THREE.BufferGeometry(); gC.setAttribute('position', P3()); gC.setAttribute('normal', N3());
     const tex = new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1); tex.needsUpdate = true; tex.colorSpace = THREE.SRGBColorSpace;
     const sc = new THREE.Scene(), gm = look.groundMat(tex), cm = curtainMat();
-    for (const m of [new THREE.Mesh(gG, gm), new THREE.Mesh(gC, cm), ...look.warmMeshes()]) { m.frustumCulled = false; sc.add(m); }
+    const wg = new THREE.Mesh(gG, gm); wg.receiveShadow = true;   // (as the ground tiles: receiveShadow is part of the program's key)
+    for (const m of [wg, new THREE.Mesh(gC, cm), ...look.warmMeshes()]) { m.frustumCulled = false; sc.add(m); }
     // the warm-up meshes are kept (never disposed): a program whose last user is disposed is deleted by three.js, and
     // freeing a place freed every ground material, so the next visit compiled them all again (5 s long tasks). The globe
     // scene is the target scene: its lights (the place's sun, moon and sky fill, place-look.js) are part of each lit program
@@ -226,6 +227,7 @@ export async function attachPlaces(G, H, { scene, U }) {
         mesh = new THREE.Mesh(g, q.fid ? look.buildingAttrs(g, q, n.p) : BMAT); kind = 'buildings';   // the model's facade program (place-look.js); a tile without feature ids keeps the plain material
       } else { mesh = new THREE.Mesh(g, look.blockOutlineAttrs(g, q, n.meta, n.p, n.key)); kind = 'blocks'; }
       mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.visible = false;
+      mesh.castShadow = kind !== 'ground'; mesh.receiveShadow = true;   // (the place's sun casts shadows only while the model's shadows are on: place-look.js)
       mesh.userData = { place: n.p.id, tile: n.uri, ground: kind === 'ground', kind, node: n, map: mesh.material.colorNode && kind === 'ground' ? mapOf(mesh) : null };
       scene.add(mesh); n.meshes.push(mesh); n.tris += (q.idx ? q.idx.length : q.pos.length / 3) / 3 * (q.inst ? q.inst.t.length / 3 : 1);
     }
@@ -234,7 +236,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   const mapOf = m => m.__map || null;
   // a mesh of a core tile's decoration (water, trees: place-look.js decorate), placed and shown with the tile
   function addDecor(n, mesh, kind, tris) {
-    mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.visible = false;
+    mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.visible = false; mesh.castShadow = kind === 'trees-near'; mesh.receiveShadow = kind !== 'water';
     mesh.userData = { place: n.p.id, tile: n.uri, kind, node: n }; scene.add(mesh); n.meshes.push(mesh); n.tris += tris; G.dirty = true; H.draw();
   }
   function freeNode(n) {
