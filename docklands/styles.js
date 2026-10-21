@@ -60,7 +60,7 @@ function pixMeasured() {
   const AT = C.registry.AT, regOf = C.registry.regOf, m = new Map();
   for (let i = 0; i < regOf.length; i++) { const k = regOf[i]; if (k < 0) continue; const f = PX.facJ[AT.buildings[k].id]; if (f && f.glass_hex) m.set(i, f); }
   PX.measured = m; PX.cache = null; PX.stats.measured = m.size;
-  for (const o of C.meshes.buildings.children) pixAttributes(o.geometry, true);
+  for (const o of C.meshes.buildings.children) for (const G of C.cells ? C.cells.geometriesOf(o) : [o.geometry]) if (G === o.geometry || G.getAttribute('pcol')) pixAttributes(G, true);   // every level of a model cell (cells.js) that has the palette
 }
 function flatMaterial(hex, src) {   // a palette colour, shaded by the WebGL page's light
   const m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide }), c = vec3(...hexc(hex));

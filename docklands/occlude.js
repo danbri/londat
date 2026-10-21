@@ -29,7 +29,7 @@ export function makeOccluder({ A, groundB, buildings, models, U, eye, ghost, dra
     }
     const h = G0.slice(); let tris = 0; t0 = performance.now();
     const meshes = [];
-    for (const m of buildings.children) if (m.geometry) meshes.push([m.geometry, null]);
+    for (const m of buildings.children) { const G = m.userData.full || m.geometry; if (G) meshes.push([G, null]); }   // the full level of a model cell (cells.js), whatever level is drawn
     if (models && models.visible) { models.updateMatrixWorld(true); models.traverse(o => { if (o.isMesh && o.geometry) meshes.push([o.geometry, o.matrixWorld]); }); }
     for (const [G, M] of meshes) {
       const p = G.attributes.position, idx = G.index, n = idx ? idx.count : p.count, P = p.array, e = M && M.elements;

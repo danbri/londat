@@ -41,7 +41,9 @@ export function makeCpuCopies(renderer, { on = true } = {}) {
   let pending = 0;   // arrays back on the CPU (tick has work)
   function restoreOne(G, w, k) { const a = G.attributes[k], kp = w.kept[k]; delete w.kept[k]; pending++;
     a.array = kp.runs ? fromRuns(kp.runs, a.itemSize, a.count, kp.Ctor) : new kp.Ctor(a.count * a.itemSize); add(-a.array.byteLength);
-    if (w.spec[k] === 'normal' && k === 'normal') G.computeVertexNormals();   // (into the zeroed array: the builders' own call, the same result)
+    if (w.spec[k] === 'normal' && k === 'normal') {   // (into the zeroed array: the builders' own call, the same result)
+      const NI = G.userData.normalIndex, I0 = G.index; if (NI) G.index = NI;   // cells.js: the index drawn holds the cells in view only; normalIndex holds every triangle
+      try { G.computeVertexNormals(); } finally { if (NI) G.index = I0; } }
     stats.restored++; }
   // restore(G): every given-up array of G back now (tests; three.js itself needs none of this: the wrapped backend restores)
   function restore(G) { const w = watched.get(G); if (!w) return false; const ks = Object.keys(w.kept); for (const k of ks) restoreOne(G, w, k); return ks.length > 0; }

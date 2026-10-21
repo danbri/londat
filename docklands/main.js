@@ -11,7 +11,7 @@ import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSMShadowNode } from 'three/addons/csm/CSMShadowNode.js';
-import { A, MFP, dec, buildBuildings, terrainGeometry, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
+import { A, MFP, dec, buildBuildings, terrainGeometry, terrainLod, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
 import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
 import { Sky3, sunAltAt } from './sky3.js';
 import { makeClockZone } from './clockzone.js';   // KR1.2: the page clock in the time zone of the view (the model: its region)
@@ -23,6 +23,7 @@ import { makeOccluder } from './occlude.js';
 import { VIEWS } from './views.js';
 import { makePerf } from './perf.js';
 import { makeCpuCopies } from './cpu-copies.js';
+import { makeCells } from './cells.js';
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -125,11 +126,17 @@ const LOD = { on: flag('lod', true), px: 32, list: [],
 const bmat = buildingMaterial(), buildings = new THREE.Group(); scene.add(buildings);
 let TOWERS = null, ROOFS = null, LOOK = null, BMOD = null, FACADE = null, FACADES_ON = true;   // FACADE(i): the photo facade slot of model building i, or null; Menu > Look > Photo facades
 const skip = new Set();
+// the model cells (cells.js, LOD step 4): the building cells' simplified and far levels, and the index of the terrain,
+// greens, roads and rail by cell, level and view; chosen each frame by the LOD rule above
+const buildOpts = {};   // options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null); merged last
+const bOpts = () => ({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts });
+const CELLS = makeCells({ THREE, camera, eye: eyeM, LOD, CPU, draw, buildTile: (key, level) => buildBuildings({ ...bOpts(), level, tile: key })[0] || null, prep: { terrain: terrainLod } });
+for (const [k, m] of [['terrain', terrain], ['greens', greens], ['roads', roads], ['rail', rail]]) CELLS.addIndexed(k, m);
 function rebuildBuildings() {
-  for (const m of buildings.children) m.geometry.dispose(); buildings.clear();
+  CELLS.dropTiles(); buildings.clear();
   const t0 = performance.now();
-  for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
-    CPU.watch(G, { normal: 'normal', gk: 'runs' }); }   // picking and the occluder read position, index and userData.bi: kept
+  for (const G of buildBuildings(bOpts())) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
+    CPU.watch(G, { normal: 'normal', gk: 'runs' }); CELLS.addTile(m); }   // picking and the occluder read position, index and userData.bi: kept
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   for (const l of LOD.list) if (l.userData.mi) farBlock(l);   // the detailed models' far blocks take the new look too
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0), builds: (STATS.buildings?.builds || 0) + 1 };
@@ -140,7 +147,7 @@ function rebuildBuildings() {
 // end: there were 6 at ?view=cw (2 s each in headless Chromium, each leaving its arrays as garbage), now 2
 let BOOTING = true, rebuildWanted = false;
 function requestRebuild() { if (BOOTING) { rebuildWanted = true; return; } rebuildBuildings(); }
-const STATS = { terrain: terrain.geometry.userData.stats, cpu: CPU.stats }, buildOpts = {};   // buildOpts: options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null);
+const STATS = { terrain: terrain.geometry.userData.stats, cpu: CPU.stats, cells: CELLS.stats };   // STATS.cells: the model cells' levels (cells.js)
 // STATS.terrain: build.js terrainGeometry's counts (squares cut along the water outlines, pieces, quay walls, triangles, ms)
 rebuildBuildings();
 
@@ -401,7 +408,7 @@ const ui = makeUi(draw);
 OCC = makeOccluder({ A, groundB, buildings, models, U, eye: eyeM, ghost: () => bmat.transparent, draw }); OCC.dirty();
 const ctx = {
   THREE, scene, camera, renderer, controls, A, U, DATA, WEBGL, GPU, BACKEND, sky, qs, flag, ui, loadJSON, dec, groundAt, draw, esc,
-  materials: { vertexColourMaterial }, buildOpts, stats: STATS, cpu: CPU, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => requestRebuild(), onFrame: f => frameHooks.push(f),
+  materials: { vertexColourMaterial }, buildOpts, stats: STATS, cpu: CPU, cells: CELLS, meshes: { terrain, water, greens, rail, roads, buildings, models }, rebuildBuildings: () => requestRebuild(), onFrame: f => frameHooks.push(f),
   perf: PERF, lod: LOD, addPick: f => pickHooks.push(f), addCard: f => cardHooks.push(f), setBuildingMode, setVz, get vz() { return VZ; }, vzNow, vzCamera, SINV,
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
   // a label hidden by a building or the ground between the eye and its anchor (model metres); key: the label's element
@@ -760,6 +767,7 @@ function loop(time, xrFrame) {
   sky.setCutDark(U.cut.value < 250 && !DRIVE);
   ctx.eyeAbove = above / VZ;   // eye height above the ground (m): layers rest when it is high (wildlife, wind)
   LOD.update();   // the detailed building models (the layers update their own in their frame hooks)
+  CELLS.update();   // the model cells: building geometries and the index of the terrain, greens, roads and rail (before the styles' hooks)
   OCC.begin(); placeLabels();
   for (const f of frameHooks) f();
   OCC.end();

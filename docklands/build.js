@@ -25,19 +25,27 @@ export class MeshF {
   tri(a, b, c) { this.idx.push(a, b, c); }
 }
 // a plain mesh (terrain, water, lines): position + colour
+// k: the level-of-detail class of the next triangles (LOD_* below; cells.js draws a triangle at the levels its class names)
 export class Mesh {
-  constructor() { this.p = []; this.c = []; this.idx = []; this.n = 0; }
+  constructor() { this.p = []; this.c = []; this.idx = []; this.n = 0; this.k = LOD_ALL; this.cls = []; }
   v(x, y, z, c) { this.p.push(x, y, z); this.c.push(c[0], c[1], c[2]); return this.n++; }
-  tri(a, b, c) { this.idx.push(a, b, c); }
+  tri(a, b, c) { this.idx.push(a, b, c); this.cls.push(this.k); }
   quad(p0, p1, p2, p3, col) { const i = this.v(...p0, col), j = this.v(...p1, col), k = this.v(...p2, col), l = this.v(...p3, col); this.tri(i, j, k); this.tri(i, k, l); }
   geometry() {
     const G = new THREE.BufferGeometry();
     G.setAttribute('position', new THREE.Float32BufferAttribute(this.p, 3));
     G.setAttribute('color', new THREE.Float32BufferAttribute(this.c, 3));
     G.setIndex(this.n > 65535 ? new THREE.Uint32BufferAttribute(this.idx, 1) : new THREE.Uint16BufferAttribute(this.idx, 1));
-    G.computeVertexNormals(); G.computeBoundingSphere(); return G;
+    G.computeVertexNormals(); G.computeBoundingSphere();
+    if (this.cls.some(k => k !== LOD_ALL)) G.userData.cls = Uint8Array.from(this.cls);   // per triangle (cells.js)
+    return G;
   }
 }
+// Level-of-detail classes of a triangle (LOD step 4, docklands/cells.js): the levels it is drawn at, lo..hi of 0 (full),
+// 1 (simplified), 2 (far): code = lo x 3 + hi. LOD_ALL: always; LOD_NEAR: full only; LOD_NOT_FAR: full and simplified;
+// LOD_COARSE: a stand-in drawn at the simplified and far levels only (the terrain's 40 m triangles).
+export const LOD_NEAR = 0, LOD_NOT_FAR = 1, LOD_ALL = 2, LOD_COARSE = 5;
+export const lodIn = (code, L) => L >= ((code / 3) | 0) && L <= code % 3;
 // MeshF -> BufferGeometry: position, col (rgba bytes; the alpha byte is the material code, never opacity), uw (u), gk (g)
 export function toGeometry(M) {
   const n = M.n, pos = new Float32Array(n * 3), uw = new Float32Array(n), col = new Uint8Array(n * 4), f = M.f;
@@ -83,13 +91,33 @@ export function towerF(M, t, col, mat) {
 export const towerTop = t => Math.max(...t.tiers.filter((tr, k) => !(k === t.tiers.length - 1 && t.top && t.top.kind === 'pyramid' && t.top.apex)).map(tr => tr.y1));
 const nightKind = (use, top) => use * 1000 + Math.max(0, Math.min(999, top));
 
-// all buildings into tiles of TILE metres (frustum culling and faster picking); opts: { towers, roofs, look, skip (Set of
+// all buildings into tiles of TILE metres (frustum culling, faster picking, and the cells of the level of detail: cells.js);
+// opts: { towers, roofs, look, skip (Set of
 // model indexes drawn by a detailed model), heightOf(b, i) (a height in place of b.h, e.g. a skyline year; <= 0: not drawn),
 // colourOf(b, i) (a colour [r, g, b] in place of the data colour, or null), facadeOf(i) (a photo facade slot, or null),
-// only (Set of model indexes: build just these; main.js loadModels: the plain block a detailed model shows at a distance) }
-export const TILE = 800;
+// only (Set of model indexes: build just these; main.js loadModels: the plain block a detailed model shows at a distance),
+// level (0 full, the default; 1 simplified: flat roofs, no building under 8 m across and 12 m high; 2 far: buildings 20 m
+// across or 30 m high, the outer ring simplified to 2.5 m, no holes, no bottom; towers keep their tiers at every level),
+// tile (a tile key "i,j": build only that tile) }. Each geometry has userData.tile (its key) and userData.level.
+export const TILE = 1000;
+export const tileKey = (x, z) => Math.floor(x / TILE) + ',' + Math.floor(z / TILE);
+let SIZES = null;   // the largest of width and depth of each model building (m), for the levels
+const sizeOf = i => { if (!SIZES) { SIZES = new Float32Array(A.buildings.length); A.buildings.forEach((b, k) => { const f = dec(b.p); let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (let j = 0; j < f.length; j += 2) { x0 = Math.min(x0, f[j]); x1 = Math.max(x1, f[j]); z0 = Math.min(z0, f[j + 1]); z1 = Math.max(z1, f[j + 1]); } SIZES[k] = Math.max(x1 - x0, z1 - z0); }); } return SIZES[i]; };
+export const LEVEL_KEEP = [null, { size: 8, h: 12 }, { size: 20, h: 30 }];   // a building is drawn at a level when it is that wide or that high
+// Douglas-Peucker on a closed ring (flat x, z): at least 3 points kept
+function simplifyRing(f, tol) {
+  const n = f.length / 2; if (n <= 4) return f; const keep = new Uint8Array(n); keep[0] = 1;
+  let far = 0, fd = -1; for (let i = 1; i < n; i++) { const d = (f[2 * i] - f[0]) ** 2 + (f[2 * i + 1] - f[1]) ** 2; if (d > fd) { fd = d; far = i; } } keep[far] = 1;
+  const st = [[0, far], [far, n]];
+  while (st.length) { const [a, b] = st.pop(), bi = b % n, ax = f[2 * a], az = f[2 * a + 1], bx = f[2 * bi], bz = f[2 * bi + 1], ex = bx - ax, ez = bz - az, L = Math.hypot(ex, ez) || 1e-9; let m = -1, md = tol;
+    for (let i = a + 1; i < b; i++) { const d = Math.abs(ex * (f[2 * i + 1] - az) - ez * (f[2 * i] - ax)) / L; if (d > md) { md = d; m = i; } }
+    if (m >= 0) { keep[m] = 1; st.push([a, m], [m, b]); } }
+  const out = []; for (let i = 0; i < n; i++) if (keep[i]) out.push(f[2 * i], f[2 * i + 1]);
+  return out.length >= 6 ? out : f;
+}
 export function buildBuildings(opts = {}) {
-  const tiles = new Map(), tileOf = (x, z) => { const k = Math.floor(x / TILE) + ',' + Math.floor(z / TILE); if (!tiles.has(k)) tiles.set(k, new MeshF()); return tiles.get(k); };
+  const L = opts.level || 0, K = LEVEL_KEEP[L], only1 = opts.tile;
+  const tiles = new Map(), tileOf = (x, z) => { const k = tileKey(x, z); if (!tiles.has(k)) { const M = new MeshF(); M.key = k; tiles.set(k, M); } return tiles.get(k); };
   const towerOf = new Map(); for (const t of opts.towers || []) for (const mi of t.model_buildings) towerOf.set(mi, t);
   const RF = opts.roofs, LK = opts.look, R = globalThis.DocklandsRoofs, helpers = { dec, shade, earcut };
   const colourOf = (b, i) => (opts.colourOf && opts.colourOf(b, i)) || (LK ? [1, 1, 1] : (b.s === 1 || b.s === 4 ? C.bldlv : C.bld)), hOf = (b, i) => opts.heightOf ? opts.heightOf(b, i) : b.h;
@@ -98,14 +126,20 @@ export function buildBuildings(opts = {}) {
   const facOf = i => opts.facadeOf && !opts.heightOf && !opts.colourOf ? opts.facadeOf(i) : null;
   A.buildings.forEach((b, i) => {
     const h = hOf(b, i); if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || (opts.only && !opts.only.has(i)) || !(h > 0)) return;
-    const M = tileOf(b.p[0] / 10, b.p[1] / 10), rf = !opts.heightOf && RF && RF.get(i), n0 = M.n, sl = facOf(i), mat = sl != null ? -1 - sl : null, c = sl != null ? [.9, .9, .9] : colourOf(b, i);
+    if (only1 && tileKey(b.p[0] / 10, b.p[1] / 10) !== only1) return;
+    if (K && sizeOf(i) < K.size && h < K.h) return;   // too small for this level
+    const M = tileOf(b.p[0] / 10, b.p[1] / 10), rf = !L && !opts.heightOf && RF && RF.get(i), n0 = M.n, sl = facOf(i), mat = sl != null ? -1 - sl : null, c = sl != null ? [.9, .9, .9] : colourOf(b, i);
     M.model = i; M.kind = nightKind(opts.useOf ? opts.useOf(i) : 0, b.b + (rf ? rf.ridge : h));
-    if (rf && R) { const t0 = M.idx.length; R.prism(M, b, rf, c, alOf(mat), helpers); flip(M, t0); } else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, mat);
+    if (rf && R) { const t0 = M.idx.length; R.prism(M, b, rf, c, alOf(mat), helpers); flip(M, t0); }
+    else if (L === 2) { const f = dec(b.p), outer = b.holes && b.holes.length ? f.slice(0, 2 * b.holes[0]) : f, s = simplifyRing(outer, 2.5), ring = []; for (let k = 0; k < s.length; k += 2) ring.push([s[k], s[k + 1]]);
+      M.cur = [ring.reduce((a, p) => a + p[0], 0) / ring.length, ring.reduce((a, p) => a + p[1], 0) / ring.length, b.b]; M.hold = true;
+      prismF(M, encRings([ring]), b.b + (b.mh || 0), b.b + h, c, false, mat); M.hold = false; }
+    else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, mat);
     if (LK && sl == null) LK.paint(M, n0, i, !!rf);
   });
-  for (const t of opts.towers || []) { if (opts.only && !opts.only.has(t.model_buildings[0])) continue; const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring, M = tileOf(r0[0][0], r0[0][1]), n0 = M.n, sl = facOf(mi);
+  for (const t of opts.towers || []) { if (opts.only && !opts.only.has(t.model_buildings[0])) continue; const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring; if (only1 && tileKey(r0[0][0], r0[0][1]) !== only1) continue; const M = tileOf(r0[0][0], r0[0][1]), n0 = M.n, sl = facOf(mi);
     M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : opts.useOf ? opts.useOf(mi) : 0, towerTop(t)); towerF(M, t, sl != null ? [.9, .9, .9] : colourOf(b, mi), sl != null ? -1 - sl : null); if (LK && sl == null) LK.paint(M, n0, mi, false); }
-  return [...tiles.values()].filter(M => M.n).map(toGeometry);
+  return [...tiles.values()].filter(M => M.n).map(M => { const G = toGeometry(M); G.userData.tile = M.key; G.userData.level = L; return G; });
 }
 // roofs-layer.js winds its triangles clockwise from above (the WebGL page draws both sides): turn them for three.js
 function flip(M, t0) { const I = M.idx; for (let k = t0; k < I.length; k += 3) { const a = I[k + 1]; I[k + 1] = I[k + 2]; I[k + 2] = a; } }
@@ -297,6 +331,35 @@ export function terrainIndexWithout(G, drop) {
     const a = Math.floor(q / SX) * T.nx + q % SX; out[o++] = a; out[o++] = a + T.nx; out[o++] = a + 1; out[o++] = a + 1; out[o++] = a + T.nx; out[o++] = a + T.nx + 1; }
   return out;
 }
+// The terrain's levels of detail (LOD step 4, docklands/cells.js): from a terrain geometry's index as terrainIndexWithout
+// wrote it (squares in order; a cut square its pieces and walls, the others their two grid triangles; tide.js leaves out
+// the squares its foreshore replaces), the 2 x 2 blocks of present, uncut squares whose five inner grid points lie within
+// TERRAIN_TOL of the 40 m triangles through the block's corners (same diagonal as the grid triangles) get those two
+// triangles as their stand-in at the simplified and far levels (class LOD_COARSE) and their eight grid triangles drawn at
+// full detail only (LOD_NEAR). Every other triangle is drawn at all levels. The gap where a 40 m edge meets a 20 m edge is
+// at most TERRAIN_TOL high (a T-junction). -> { index (the source triangles, then the stand-ins), cls (one a triangle) },
+// or null when the index is not in that form.
+export const TERRAIN_TOL = 0.5;
+export function terrainLod(G) {
+  const T = A.terrain, SX = T.nx - 1, SZ = T.nz - 1, NX = T.nx, cut = G.userData.cut, I = G.index && G.index.array, P = G.attributes.position.array; if (!I) return null;
+  const nsq = SX * SZ, start = new Int32Array(nsq).fill(-1), len = new Uint16Array(nsq), isCut = new Uint8Array(nsq); let o = 0;
+  for (let q = 0; q < nsq; q++) { const c = cut && cut.get(q);
+    if (c) { if (o + c.length <= I.length && I[o] === c[0] && I[o + c.length - 1] === c[c.length - 1]) { start[q] = o; len[q] = c.length; isCut[q] = 1; o += c.length; } continue; }
+    const a = Math.floor(q / SX) * NX + q % SX;
+    if (o + 6 <= I.length && I[o] === a && I[o + 1] === a + NX && I[o + 2] === a + 1 && I[o + 5] === a + NX + 1) { start[q] = o; len[q] = 6; o += 6; } }
+  if (o !== I.length) { console.warn('terrainLod: the terrain index is not in the expected form'); return null; }
+  const y = k => P[3 * k + 1], off = (k, a, b) => Math.abs(y(k) - (y(a) + y(b)) / 2) <= TERRAIN_TOL;
+  const coarse = [], near = new Uint8Array(nsq);
+  for (let j = 0; j + 1 < SZ; j += 2) for (let i = 0; i + 1 < SX; i += 2) {
+    const q = j * SX + i, qs = [q, q + 1, q + SX, q + SX + 1]; if (qs.some(s => start[s] < 0 || isCut[s])) continue;
+    const A0 = j * NX + i, A2 = A0 + 2, B0 = A0 + 2 * NX, B2 = B0 + 2;
+    if (!(off(A0 + 1, A0, A2) && off(A0 + NX, A0, B0) && off(A0 + NX + 1, A2, B0) && off(A0 + NX + 2, A2, B2) && off(B0 + 1, B0, B2))) continue;
+    for (const s of qs) near[s] = 1; coarse.push(A0, B0, A2, A2, B0, B2); }
+  const index = new Uint32Array(I.length + coarse.length), cls = new Uint8Array(index.length / 3); index.set(I); index.set(coarse, I.length);
+  cls.fill(LOD_ALL); for (let q = 0; q < nsq; q++) if (near[q]) cls.fill(LOD_NEAR, start[q] / 3, (start[q] + len[q]) / 3);
+  cls.fill(LOD_COARSE, I.length / 3);
+  return { index, cls, blocks: coarse.length / 6 };
+}
 export function flat(M, o, y, col) { const f = dec(o.p), holes = o.holes || [], tris = earcut(f, holes.length ? holes : undefined, 2), base = M.n; for (let i = 0; i < f.length / 2; i++) M.v(f[2 * i], typeof y === 'function' ? y(f[2 * i], f[2 * i + 1]) : y, f[2 * i + 1], col); for (let k = 0; k < tris.length; k += 3) M.tri(base + tris[k], base + tris[k + 2], base + tris[k + 1]); }
 // the water polygons, each flat at its level + 0.1 m; attributes 'tidal' (1 for a tidal polygon) and 'tbase' (the height it
 // was built at): layers/tide.js moves the tidal ones to the tide's level on the GPU (docklands/tide.js tideOffset), no rebuild
@@ -314,6 +377,7 @@ export const surfaceAt = (x, z) => { const T = A.terrain, LH = terrainModel().LH
 // the green areas, 0.4 m over the terrain: each polygon triangle is cut on the terrain mesh's triangles (two a 20 m cell,
 // diagonal from (i+1, j) to (i, j+1)), so every piece lies on one terrain plane. Before 2026-10-10 each polygon was flat at
 // the ground under its first vertex: Greenwich Park (on a hill) hung in the air through the treetops (owner's photo).
+const GREEN_FAR_M2 = 600;
 export function greensGeometry() {
   const T = A.terrain, M = new Mesh(), clip = (P, ax, az, bx, bz) => { const out = [], side = (p) => (bx - ax) * (p[1] - az) - (bz - az) * (p[0] - ax);
     for (let k = 0; k < P.length; k++) { const p = P[k], q = P[(k + 1) % P.length], sp = side(p), sq = side(q); if (sp >= 0) out.push(p); if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])]); } }
@@ -329,6 +393,8 @@ export function greensGeometry() {
         const x = T.x0 + i * T.cell, z = T.z0 + j * T.cell, [a, b, y] = pl(x, z); if (a < 0 || b < 0 || a + b > 1) continue; if (Math.abs(y - surfaceAt(x, z)) > .1) return false; }
       return true; };
   for (const g of A.greens) { const f = dec(g.p), holes = g.holes || [], tris = earcut(f, holes.length ? holes : undefined, 2);
+    let ar = 0; for (let k = 0; k < tris.length; k += 3) { const a = 2 * tris[k], b = 2 * tris[k + 1], c = 2 * tris[k + 2]; ar += Math.abs((f[b] - f[a]) * (f[c + 1] - f[a + 1]) - (f[c] - f[a]) * (f[b + 1] - f[a + 1])) / 2; }
+    M.k = ar < GREEN_FAR_M2 ? LOD_NOT_FAR : LOD_ALL;   // (cells.js) a green under 600 m2 is not drawn at the far level
     for (let k = 0; k < tris.length; k += 3) { const t = [tris[k], tris[k + 1], tris[k + 2]].map(n => [f[2 * n], f[2 * n + 1]]);
       if (planar(t)) { const base = M.n; for (const p of ccw(...t)) M.v(p[0], surfaceAt(p[0], p[1]) + .4, p[1], C.green); M.tri(base, base + 2, base + 1); continue; }
       const i0 = Math.max(0, Math.floor((Math.min(t[0][0], t[1][0], t[2][0]) - T.x0) / T.cell)), i1 = Math.min(T.nx - 2, Math.floor((Math.max(t[0][0], t[1][0], t[2][0]) - T.x0) / T.cell)),
@@ -340,11 +406,11 @@ export function greensGeometry() {
           for (let q = 1; q + 1 < P.length; q++) M.tri(base, base + q + 1, base + q); } } } }
   return M.geometry();
 }
-function beam(M, a, b, w, h, col) {
+function beam(M, a, b, w, h, col, topK = LOD_ALL, sideK = LOD_NEAR) {   // the top first (at the levels topK names), then the sides (sideK)
   const dx = b[0] - a[0], dz = b[2] - a[2], l = Math.hypot(dx, dz) || 1, ox = -dz / l * w / 2, oz = dx / l * w / 2, H = h / 2;
   const P = (q, sx, sy) => [q[0] + ox * sx, q[1] + H * sy, q[2] + oz * sx];
   const a00 = P(a, -1, -1), a10 = P(a, 1, -1), a11 = P(a, 1, 1), a01 = P(a, -1, 1), b00 = P(b, -1, -1), b10 = P(b, 1, -1), b11 = P(b, 1, 1), b01 = P(b, -1, 1);
-  M.quad(a01, b01, b11, a11, col); M.quad(a00, a10, b10, b00, col); M.quad(a00, b00, b01, a01, col); M.quad(a10, a11, b11, b10, col);
+  M.k = topK; M.quad(a01, b01, b11, a11, col); M.k = sideK; M.quad(a00, a10, b10, b00, col); M.quad(a00, b00, b01, a01, col); M.quad(a10, a11, b11, b10, col); M.k = LOD_ALL;
 }
 export const lineColour = l => {
   const n = (l.name || '') + ' ' + l.k;
@@ -352,10 +418,12 @@ export const lineColour = l => {
   if (/Jubilee/i.test(n)) return C.jub; if (/Elizabeth|Crossrail/i.test(n)) return C.eliz; if (l.k === 'light_rail' || /Docklands Light/i.test(n)) return C.dlr;
   if (/East London|Overground/i.test(n)) return C.ell; return C.rail;
 };
+// levels (cells.js): the sides (0.4 m of road, 1.4 m of rail) only at full detail; the tops of the 4 m roads not at the far level
 export function linesGeometry() {   // open-air rail and roads as beams (index.html buildLines)
   const rail = new Mesh(), road = new Mesh();
   for (const l of A.lines) if (!l.tunnel) { const q = dec(l.q, 3), rd = l.k === 'road', w = rd ? [0, 10, 7, 4][l.c] : 3.5; if (rd && !w) continue;
-    for (let i = 3; i < q.length; i += 3) beam(rd ? road : rail, [q[i - 3], q[i - 1] + (rd ? .3 : .8), q[i - 2]], [q[i], q[i + 2] + (rd ? .3 : .8), q[i + 1]], w, rd ? .4 : 1.4, lineColour(l)); }
+    const topK = rd && w < 5 ? LOD_NOT_FAR : LOD_ALL;
+    for (let i = 3; i < q.length; i += 3) beam(rd ? road : rail, [q[i - 3], q[i - 1] + (rd ? .3 : .8), q[i - 2]], [q[i], q[i + 2] + (rd ? .3 : .8), q[i + 1]], w, rd ? .4 : 1.4, lineColour(l), topK, LOD_NEAR); }
   return { rail: rail.geometry(), road: road.geometry() };
 }
 // is the point (x, z) inside the outer ring of model building i
