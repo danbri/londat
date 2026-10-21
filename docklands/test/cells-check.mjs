@@ -48,6 +48,15 @@ check(C.tiles.simplified + C.tiles.far > 20 && C.tiles.far > 5, 'from 8 km the b
 check(['terrain', 'greens', 'roads', 'rail'].every(k => ks[k] && ks[k].far > 0) && ks.roads.triangles < b.cells.kinds.roads.triangles / 3 && ks.terrain.triangles < b.cells.kinds.terrain.triangles,
   'terrain, greens, roads and rail: far cells, fewer triangles than ?lod=0', ['terrain', 'greens', 'roads', 'rail'].map(k => `${k} ${b.cells.kinds[k].triangles} -> ${ks[k].triangles}`).join(', '));
 check(a.frame.triangles < 0.8 * b.frame.triangles, 'the frame from 8 km has fewer triangles than with ?lod=0', `${b.frame.triangles} -> ${a.frame.triangles}, draw calls ${b.frame.drawCalls} -> ${a.frame.drawCalls}`);
+// the hand-over with Greater London around the model (a place of kind blocks, globe/places.js): from 8 km the globe drawn
+// behind the model holds London's blocks; the model box itself has none of them (place-select-blocks leaves those
+// buildings to the model), so no building is drawn twice
+const lon = await A.page.evaluate(async () => { const D = __docklands3, G = D.globe, t0 = performance.now(); let st = null;
+  while (performance.now() - t0 < 180000) { D.STATS.frame = null; D.draw(); while (!D.STATS.frame) await new Promise(r => requestAnimationFrame(r)); st = G.placesStats?.().find(x => x.id === 'london'); if (st && st.settled && st.tiles > 0 && performance.now() - t0 > 3000) break; await new Promise(r => setTimeout(r, 200)); }
+  return { st, mode: G.mode, frame: D.STATS.frame }; });
+if (lon.st) { check(lon.mode === 'model' && lon.st.settled && lon.st.tiles > 0, 'from 8 km (model mode) the globe behind the model draws the London blocks', `${JSON.stringify(lon.st.drawn_by_level)} by level, ${lon.st.triangles} place triangles; frame ${lon.frame.triangles} triangles, ${lon.frame.drawCalls} calls`);
+  await A.page.screenshot({ path: 'docklands/test/out/cells-london-8km.png' }); console.log('     screenshot docklands/test/out/cells-london-8km.png'); }
+else console.log('     (no London place in places/index.json: hand-over check skipped)');
 const pa = await picks(A.page), pb = await picks(B.page), same = pa.filter((v, i) => v === pb[i]).length;
 check(same === pa.length && pa.some(v => v >= 0), 'from 8 km a tap names the same building at every grid point', `${same} of ${pa.length} the same, ${pa.filter(v => v >= 0).length} on buildings`);
 const ca = await ocsCard(A.page), cb = await ocsCard(B.page);

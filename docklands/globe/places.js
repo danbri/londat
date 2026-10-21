@@ -88,6 +88,9 @@ export async function attachPlaces(G, H, { scene, U }) {
   const inArea = (p, lon, lat, m = 0) => { const dl = m / 111320 / Math.cos(lat * D2R), db = m / 110574; return lon >= p.area[0] - dl && lon <= p.area[2] + dl && lat >= p.area[1] - db && lat <= p.area[3] + db; };
   const inRect = (a, lon, lat) => lon >= a[0] && lon <= a[2] && lat >= a[1] && lat <= a[3];
   const extOf = p => p.extent || p.area;
+  // a place of kind "blocks" (Greater London: cwplans/tools/place-blocks.mjs) has no ground of its own: no hole in the
+  // globe's terrain, no curtain, no ground sampler; its blocks stand on the globe's own heights
+  const hasGround = p => !!(p.ground || p.sur || p.ring);
   // the globe's floors (60 km away from data) do not apply over a place's tile set
   G.detailAt = (lon, lat) => P.some(p => p.extent ? inRect(p.extent, lon, lat) : inArea(p, lon, lat, 500));
 
@@ -287,7 +290,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     const mesh = new THREE.Mesh(g, m); mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.userData = { C, B: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], ground: true, ring: true, place: p.id };
     p.ringHo = Ho; scene.add(mesh); return { mesh, tris: idx.length / 3 };
   }
-  G.placeGround = (lon, lat) => { for (const p of P) if (p.state === 'loaded' && inArea(p, lon, lat)) return groundAt(p, lon, lat); return null; };
+  G.placeGround = (lon, lat) => { for (const p of P) if (p.state === 'loaded' && p.ground && inArea(p, lon, lat)) return groundAt(p, lon, lat); return null; };
 
   // ---------- the place's names (surround.json labels: towns, villages, peaks) on the globe's labels
   const LMIN = { city: 7.5, town: 9, village: 11.5, hamlet: 13, peak: 11.5 };
@@ -353,7 +356,7 @@ export async function attachPlaces(G, H, { scene, U }) {
       if (d < LOAD_M && !p.state) load(p); else if (d > FREE_M && p.state === 'loaded') { free(p); continue; }
       if (p.state !== 'loaded') continue;
       walkPlace(p, eye, K, now);
-      if (p.topReady && !p.curtain && G.sampler?.()) { p.curtain = curtain(p); p.extras.push(p.curtain); }
+      if (p.topReady && !p.curtain && hasGround(p) && G.sampler?.()) { p.curtain = curtain(p); p.extras.push(p.curtain); }
       if (d < best) { best = d; hole = p; }
       for (const t of p.extras) { placeExtra(t.mesh, F); t.mesh.visible = !t.mesh.userData.curtain || p.topReady || !p.sur; }
     }
@@ -371,7 +374,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     // free tiles unused for a while when over the cache size (never the top cells)
     if (frameNo % 30 === 0) { const live = []; for (const p of P) for (const n of p.nodes) if (n.state === 'ready' && n.depth > 1) live.push(n);
       if (live.length > CACHE) { live.sort((a, b) => a.used - b.used); for (const n of live.slice(0, live.length - CACHE)) if (now - n.used > IDLE_MS && !now2.has(n)) freeNode(n); } }
-    if (U.hole) { const a = hole && (hole.sur ? (hole.topReady ? hole.sur.ground.area : null) : hole.ringHo ? hole.ring.area : hole.area); if (a) U.hole.value.set(a[0], a[1], a[2], a[3]); else U.hole.value.set(0, 0, -1, -1); }
+    if (U.hole) { const a = hole && hasGround(hole) && (hole.sur ? (hole.topReady ? hole.sur.ground.area : null) : hole.ringHo ? hole.ring.area : hole.area); if (a) U.hole.value.set(a[0], a[1], a[2], a[3]); else U.hole.value.set(0, 0, -1, -1); }
     if (hole) { const R = F.R, u = enuBasis(hole.centre[0], hole.centre[1]).up; upF.value.set(R[0][0] * u[0] + R[0][1] * u[1] + R[0][2] * u[2], R[1][0] * u[0] + R[1][1] * u[1] + R[1][2] * u[2], R[2][0] * u[0] + R[2][1] * u[1] + R[2][2] * u[2]); }
     if (want.length || ready.length) { G.dirty = true; requestAnimationFrame(() => H.draw()); } else if (inFlight) G.dirty = true;
   };
@@ -437,7 +440,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     const F = await featsP(p).catch(() => null); if (!F) return {};
     const nb = nearest(F, lon, lat, false), nn = nearest(F, lon, lat, true);
     const bText = b => `${b.name ? nameText(b.name, b.name_alt) : b.address || b.kind + ' building'} (OSM ${b.osm_id}, ${b.height_m} m, height from ${b.height_source})`;
-    const out = { builtUp: p.label || p.name, country: w.country?.name || undefined, source: 'OpenStreetMap (ODbL) via build-place-tiles', place: p.id, local_time: t ? `${t} (${p.timeZone})` : undefined };
+    const out = { ...(hasGround(p) ? { builtUp: p.label || p.name, country: w.country?.name || undefined, source: 'OpenStreetMap (ODbL) via build-place-tiles' } : {}), place: p.id, local_time: t ? `${t} (${p.timeZone})` : undefined };
     if (nb && nb.d < 40) out.building = { osm_id: nb.b.osm_id, name: nb.b.name || null, name_alt: nb.b.name_alt || null, address: nb.b.address || null, kind: nb.b.kind, height_m: nb.b.height_m, height_source: nb.b.height_source, dist_m: Math.round(nb.d) };
     if (nn) out.nearestBuilding = { osm_id: nn.b.osm_id, name: nameText(nn.b.name, nn.b.name_alt), dist_m: Math.round(nn.d), direction: compass(bearingDeg(lon, lat, nn.b.lon, nn.b.lat)) };
     out.text = `In ${p.label || p.name} (3D buildings from OpenStreetMap).${out.building ? ' Building here: ' + bText(nb.b) + '.' : ''}${nn ? ` Nearest named building: ${nameText(nn.b.name, nn.b.name_alt)}, ${fmtDist(nn.d)} ${out.nearestBuilding.direction}.` : ''}${t ? ` Local time ${t} (${p.timeZone}).` : ''}`;
@@ -460,7 +463,9 @@ export async function attachPlaces(G, H, { scene, U }) {
         places.sort((a, b) => (a.rank - b.rank) || ((b.population || 0) - (a.population || 0)));
         const rank = new Map((p.sur.rivers || []).map((x, i) => [x[0], i]));
         r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, city_blocks_by_source: Object.fromEntries(Object.entries(byCls).map(([k, v]) => [p.sur.geometry_classes?.[k]?.label || k, v])), places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
-      r.text = `${p.label || p.name}: ${n.toLocaleString(p.locale)} buildings in view (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
+      if (!hasGround(p)) { const by = {}; let k = 0; for (const nd of lastDrawn) if (nd.p === p && nd.meta) for (const L of [nd.meta.boxes, nd.meta.outlines]) for (const c of L.c) { k++; by[nd.meta.classes[c]] = (by[nd.meta.classes[c]] || 0) + 1; }
+        r.blocks_drawn = k; r.blocks_by_source = by; r.named_buildings_in_view = n; }
+      r.text = `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
         + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
       res.push(r); }
     return res;

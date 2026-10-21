@@ -9,6 +9,9 @@
 # columns: comma-separated SQL expressions (each is written as JSON with to_json, so structs and lists keep their shape);
 # where: an extra SQL condition (e.g. "subtype IN ('road','rail')"). geometry (GeoJSON) and sources are always written.
 # Output: {release, theme, type, bbox, files_listed, files_read, rows: [{id, <columns>, sources, geometry}]}.
+# An output name ending in .ndjson streams instead (for areas of millions of rows, e.g. the buildings of Greater London:
+# one JSON array of 1.5 M rows is larger than a Node string can hold): one row a line, ordered by id (DuckDB sorts out
+# of core), and the header object (the keys above but rows) in <out>.meta.json.
 # Needs the duckdb Python package (pip install duckdb; httpfs and spatial are installed on first use).
 import json, sys, re, urllib.request, urllib.parse
 import duckdb
@@ -34,12 +37,21 @@ sel = ', '.join(f'to_json({x}) AS c{i}' for i, x in enumerate(cols))
 q = f"""SELECT id, {sel + ',' if sel else ''} to_json(sources) AS sources, ST_AsGeoJSON(geometry) AS g, filename
 FROM read_parquet({urls!r}, filename = true)
 WHERE bbox.xmin < {e} AND bbox.xmax > {w} AND bbox.ymin < {n} AND bbox.ymax > {s} AND ({where})"""
-rows, files = [], set()
+ndjson = out.endswith('.ndjson')
+if ndjson: q += ' ORDER BY id'
+rows, files, nrows = [], set(), 0
 def r7(v): return round(v, 7)
 def rnd(g):
     if isinstance(g, list): return [rnd(x) for x in g] if g and isinstance(g[0], list) else [r7(v) for v in g]
     return g
-for rec in c.sql(q).fetchall():
+def records():
+    r = c.execute(q)
+    while True:
+        part = r.fetchmany(20000)
+        if not part: return
+        yield from part
+fo = open(out, 'w') if ndjson else None
+for rec in records():
     files.add(rec[-1].rsplit('/', 1)[-1])
     o = {'id': rec[0]}
     for i, x in enumerate(cols):
@@ -47,7 +59,10 @@ for rec in c.sql(q).fetchall():
         v = rec[1 + i]; o[name] = json.loads(v) if v is not None else None
     o['sources'] = json.loads(rec[1 + len(cols)]) if rec[1 + len(cols)] else []
     geo = json.loads(rec[2 + len(cols)]); geo['coordinates'] = rnd(geo['coordinates']); o['geometry'] = geo
-    rows.append(o)
-rows.sort(key=lambda r: r['id'])
-json.dump({'release': rel, 'theme': theme, 'type': typ, 'bbox': [w, s, e, n], 'columns': cols, 'where': where, 'files_listed': len(urls), 'files_read': sorted(files), 'rows': rows}, open(out, 'w'))
-print(f'overture {rel} {theme}/{typ}: {len(rows)} rows from {len(files)} of {len(urls)} files')
+    nrows += 1
+    if ndjson: fo.write(json.dumps(o, separators=(',', ':')) + '\n')
+    else: rows.append(o)
+head = {'release': rel, 'theme': theme, 'type': typ, 'bbox': [w, s, e, n], 'columns': cols, 'where': where, 'files_listed': len(urls), 'files_read': sorted(files)}
+if ndjson: fo.close(); json.dump({**head, 'rows_count': nrows, 'rows_file': out.rsplit('/', 1)[-1], 'order': 'id'}, open(out + '.meta.json', 'w'))
+else: rows.sort(key=lambda r: r['id']); json.dump({**head, 'rows': rows}, open(out, 'w'))
+print(f'overture {rel} {theme}/{typ}: {nrows} rows from {len(files)} of {len(urls)} files')

@@ -27,11 +27,12 @@
 // outputs present and unchanged is not run again. Bodies read only their inputs: no clock, no network.
 // Faults of the height rule are counted per class (F55 in the curation skill's fault register), not patched per record.
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, createReadStream, createWriteStream } from 'node:fs';
+import { createInterface } from 'node:readline';
 import { createHash } from 'node:crypto';
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gzipSync, gunzipSync } from 'node:zlib';
+import { gzipSync, gunzipSync, createGzip, createGunzip } from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import proj4 from 'proj4';
 import earcut from 'earcut';
@@ -41,6 +42,8 @@ import REGIONS from '../../docklands/geo/regions/index.js';
 import { enuFrame, geodeticToEcef, D2R } from '../../docklands/geo/ellipsoid.js';
 import { selectOuter, lodTree, walk, outerTile, easedDem, mul4, inv4rigid, roundM, meet } from './place-lod.mjs';
 import { overture } from '../../docklands/geo/adapters/world-buildings.js';
+import { blockSelector, blockTree, blockTile, worldBaseGround } from './place-blocks.mjs';
+import { unpack } from '../../docklands/geo/skeleton.js';
 
 const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 const TOOL = 'tools/build-place-tiles.mjs';
@@ -50,6 +53,8 @@ const argOf = k => { const i = argv.findIndex(a => a === '--' + k || a.startsWit
 const RID = argOf('region'); if (!RID) { console.error('usage: build-place-tiles.mjs [fetch|build] --region <id>'); process.exit(2); }
 const REG = REGIONS[RID]; if (!REG) throw new Error(`no region config ${RID} (docklands/geo/regions/)`);
 const PL = REG.place; if (!PL) throw new Error(`region ${RID} has no place block`);
+// kind 'blocks' (Greater London): no core, no ground of its own; the buildings of a boundary as blocks by level of detail
+const BLOCKS = PL.kind === 'blocks', BK = BLOCKS ? PL.blocks : null;
 const cmd = ['fetch', 'build', 'readme'].find(c => argv.includes(c)) || 'all';
 const RAWD = join(CW, 'data', 'raw', 'places', RID), WORK = join(RAWD, 'work');
 const OUTROOT = join(CW, 'docklands', 'data', 'places'), OUT = join(OUTROOT, RID), PROV = join(OUT, 'provenance'), SRC = join(OUT, 'sources');
@@ -104,7 +109,7 @@ async function fetchOsm() {
 
 // DEM: by the adapter's kind, into one common raw grid (row 0 = north, heights in metres of the adapter's datum)
 const demAd = REG.adapters.find(a => a.id === PL.dem && a.dem) || REG.adapters.find(a => a.dem);
-if (!demAd) throw new Error(`region ${RID}: no adapter with a dem block`);
+if (!demAd && !BLOCKS) throw new Error(`region ${RID}: no adapter with a dem block`);
 // the ring: a wider square (place.ring_m, default 8 km) of coarser terrain round the place, drawn by the globe between the
 // place's tiles and the 10 km world terrain (globe/places.js), so a valley or a hill is not cut off at the place's edge
 const RING_M = PL.ring_m ?? 8000, RING = [O.lon - RING_M / 2 / mLon, O.lat - RING_M / 2 / mLat, O.lon + RING_M / 2 / mLon, O.lat + RING_M / 2 / mLat];
@@ -362,7 +367,9 @@ const OPS = {
   tiles: { id: 'place-tiles', version: 5, skill: 'docklands-3d-page' },            // 4: sloped roofs (gabled, hipped, pyramidal, skillion, dome); 5: with a surround block the tileset goes to place-lod
   outer: { id: 'place-select-outer', version: 2, skill: 'docklands-3d-page' },     // 2: the extra geometry classes (IGN, Microsoft) where OSM has none. Overture (OSM-sourced) roads, rail, water, names, peaks, city buildings
   cityHeights: { id: 'place-city-heights', version: 2, skill: 'docklands-data-curation' },   // 2: counts by geometry class. The place-heights rule over the city buildings
-  lod: { id: 'place-lod', version: 2, skill: 'docklands-3d-page' },                // 2: block metadata in glb extras (class, height, its source), counts by class. The tile tree: core leaves, city blocks, surroundings terrain
+  lod: { id: 'place-lod', version: 2, skill: 'docklands-3d-page' },
+  selBlocks: { id: 'place-select-blocks', version: 1, skill: 'docklands-3d-page' },   // 1: Overture buildings (OSM geometry) in a boundary, outside the model boxes; non-OSM height values by dataset
+  blocks: { id: 'place-blocks', version: 1, skill: 'docklands-3d-page' },            // 1: the block tree (merged boxes by square at the coarse levels; boxes, outlines and named buildings at the leaves)                // 2: block metadata in glb extras (class, height, its source), counts by class. The tile tree: core leaves, city blocks, surroundings terrain
 };
 
 // ---------- geometry helpers (lon/lat rings; local metres by a flat approximation for areas and tests)
@@ -779,27 +786,33 @@ function writeReadmes() {
   for (const p of ix.places) {
     const R = REGIONS[p.id], dir = join(OUTROOT, p.id), lf = join(dir, 'provenance', 'log.json'); if (!R || !existsSync(lf)) continue;
     const log = JSON.parse(readFileSync(lf, 'utf8')), last = op => log.activities.filter(a => a.operation === op).at(-1);
-    const L = [];
+    const L = [], BL = R.place.kind === 'blocks';
     L.push(`# ${R.name}: a place on the globe (3D Tiles 1.1)`, '',
       `Made by [cwplans/tools/build-place-tiles.mjs](${GH}tools/build-place-tiles.mjs) for the region config [docklands/geo/regions/${p.id}.js](https://github.com/danbri/londat/blob/main/docklands/geo/regions/${p.id}.js); drawn by the globe of the Three.js port ([docklands/globe/places.js](https://github.com/danbri/londat/blob/main/docklands/globe/places.js)).`,
       `This README is generated from \`provenance/log.json\` and [cwplans/data-register.json](${GH}data-register.json) by \`node cwplans/tools/build-place-tiles.mjs readme --region ${p.id}\` (also at the end of each build). Do not edit it by hand.`, '',
-      `- Live view: ${view(p)}`, ...(R.place.surround ? [`- The city (8 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},8000&ht=0,50`, `- The surroundings (30 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},30000&ht=0,45`] : []), `- Area (WGS84 degrees, west, south, east, north): ${p.area.join(', ')}; ${p.buildings} buildings; built ${p.built}`,
+      ...(BL ? [`- The whole city (20 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},20000&ht=0,45`, ...(R.place.views || []).map(v => `- ${v.name}: ${SITE}docklands/?ll=${v.ll}&ht=${v.ht || '0,55'}`),
+        `- A place of kind "blocks": no core and no ground of its own (the globe's terrain and imagery stay); buildings in the model box of ${(R.place.exclude || []).join(', ')} are left to that model`] : [`- Live view: ${view(p)}`]), ...(R.place.surround ? [`- The city (8 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},8000&ht=0,50`, `- The surroundings (30 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},30000&ht=0,45`] : []), `- Area (WGS84 degrees, west, south, east, north): ${p.area.join(', ')}; ${p.buildings} buildings; built ${p.built}`,
       `- Credit shown on the page: ${p.credit}`, `- Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)"; fault F55 in the docklands-data-curation skill`, '');
     // files
     L.push('## Files', '', '| path | what | bytes | SHA-256 |', '|---|---|---|---|');
     const what = f => f === 'tileset.json' ? (R.place.surround ? '3D Tiles 1.1 tileset: a quadtree with REPLACE refinement (surroundings, city, core), ENU transforms relative to the parent, region bounding volumes, geometric errors' : '3D Tiles 1.1 tileset: one child per quadtree cell, ENU -> ECEF transform, region bounding volume')
       : f === 'surround.json' ? 'the text and machine interface of the city and the surroundings: ground grid, place names and peaks, rivers, roads, tiers, per-tile counts'
       : f.startsWith('tiles/') ? (/^tiles\/15-/.test(f) && coreKeys.has(f.slice(6, -4)) ? 'glTF 2.0 core tile: ground heightfield with a JPEG texture, buildings with roofs, _FEATURE_ID_0 = row of features.json' : 'glTF 2.0 tile of the city or the surroundings: terrain grid with a JPEG texture (land cover, water, roads, rail), city blocks (KHR_mesh_quantization, EXT_mesh_gpu_instancing)')
-      : f === 'features.json' ? 'the text and machine interface: buildings (height and its source, roof), streets, areas, points, ground and ring grids'
+      : f === 'tiles/*.glb' ? 'glTF 2.0 block tiles (one per quadtree cell with buildings): oriented boxes as EXT_mesh_gpu_instancing instances of one unit box, simplified outlines, named buildings with _FEATURE_ID_0 (row of features.json), merged boxes by square at the coarse levels; KHR_mesh_quantization; glb extras.blocks for the block card. Bytes: the sum; SHA-256: of the list of file names and their SHA-256'
+      : f === 'features.json' ? (BL ? 'the text and machine interface: the named buildings drawn with their own id (name, height and its source, OSM id), the block counts by level' : 'the text and machine interface: buildings (height and its source, roof), streets, areas, points, ground and ring grids')
       : f === 'provenance/log.json' ? 'fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts'
       : f.startsWith('sources/') ? 'committed source extract (input of an operation; see Sources)' : '';
     const files = [];
     const coreKeys = new Set(), t = last('place-tiles'); if (t) for (const o of t.outputs) { const f = o.path.replace(`docklands/data/places/${p.id}/`, ''); if (f.startsWith('tiles/')) coreKeys.add(f.slice(6, -4)); if (!f.startsWith('data/raw')) files.push(f); }
     const lo = last('place-lod'); if (lo && R.place.surround) for (const o of lo.outputs) files.push(o.path.replace(`docklands/data/places/${p.id}/`, ''));
+    const bo = last('place-blocks'); if (bo && BL) { for (const o of bo.outputs) { const f = o.path.replace(`docklands/data/places/${p.id}/`, ''); if (!f.startsWith('tiles/')) files.push(f); } files.unshift('tiles/*.glb'); }
     if (existsSync(join(dir, 'sources'))) for (const f of readdirSync(join(dir, 'sources')).sort()) files.push('sources/' + f);
     files.push('provenance/log.json');
-    for (const f of files) { const fp = join(dir, f); if (!existsSync(fp)) continue; L.push(`| [${f}](${GH}docklands/data/places/${p.id}/${f}) | ${what(f)} | ${size(fp)} | \`${sha(readFileSync(fp))}\` |`); }
-    let tot = 0; for (const f of files) if (existsSync(join(dir, f))) tot += size(join(dir, f)); L.push('', `Total ${kb(tot)} (README.md not counted).`, '');
+    const tdir = join(dir, 'tiles'), tlist = f => f === 'tiles/*.glb' && existsSync(tdir) ? readdirSync(tdir).filter(x => x.endsWith('.glb')).sort() : null;
+    for (const f of files) { const tl = tlist(f);
+      if (tl) { L.push(`| [tiles/](${GH}docklands/data/places/${p.id}/tiles) (${tl.length} files) | ${what(f)} | ${tl.reduce((a, x) => a + size(join(tdir, x)), 0)} | \`${sha(tl.map(x => x + ' ' + sha(readFileSync(join(tdir, x)))).join('\n'))}\` |`); continue; }
+      const fp = join(dir, f); if (!existsSync(fp)) continue; L.push(`| [${f}](${GH}docklands/data/places/${p.id}/${f}) | ${what(f)} | ${size(fp)} | \`${sha(readFileSync(fp))}\` |`); }
+    let tot = 0; for (const f of files) { const tl = tlist(f); if (tl) tot += tl.reduce((a, x) => a + size(join(tdir, x)), 0); else if (existsSync(join(dir, f))) tot += size(join(dir, f)); } L.push('', `Total ${kb(tot)} (README.md not counted).`, '');
     // sources
     L.push('## Sources', '');
     for (const [key, rec] of Object.entries(log.fetches || {})) {
@@ -823,14 +836,19 @@ function writeReadmes() {
     }
     // operations
     L.push('## Operations (dataflow, skill cwplans-dataflow)', '', 'Each activity: id = sha256 of [operation, version, input hashes, parameters], first 16 hex. Inputs and outputs by SHA-256; a re-run with the same inputs writes nothing. Outputs under `data/raw/` are intermediate (not committed); their hashes fix the next step.', '');
-    for (const op of ['place-select-osm', 'place-heights', 'place-tiles', ...(R.place.surround ? ['place-select-outer', 'place-city-heights', 'place-lod'] : [])]) { const a = last(op); if (!a) continue;
+    for (const op of BL ? ['place-select-blocks', 'place-city-heights', 'place-blocks'] : ['place-select-osm', 'place-heights', 'place-tiles', ...(R.place.surround ? ['place-select-outer', 'place-city-heights', 'place-lod'] : [])]) { const a = last(op); if (!a) continue;
       L.push(`### ${a.operation} version ${a.version} (activity \`${a.activity}\`, ${a.at})`, '', `Skill ${a.skill}; tool ${a.tool}.`, '', 'Inputs:', '');
       for (const i of a.inputs) L.push(`- ${i.label}: \`${i.path}\` SHA-256 \`${i.sha256}\``);
       L.push('', 'Outputs:', ''); for (const o of a.outputs.slice(0, 4)) L.push(`- \`${o.path}\` SHA-256 \`${o.sha256}\` (${o.bytes} bytes)`);
       if (a.outputs.length > 4) L.push(`- and ${a.outputs.length - 4} more (the Files table above has each one)`);
       L.push('', `Parameters: \`${esc(JSON.stringify(a.params))}\``, ''); }
     // derivation
-    L.push('## What is derived from what', '',
+    if (BL) L.push('## What is derived from what', '',
+      '- `place-select-blocks`: the Overture buildings answer (NDJSON, raw) + the boundary polygon (a skeleton file) -> the buildings whose geometry is from OpenStreetMap, whose centroid is inside the boundary and not in an excluded model box (outline, area, name, kind, OSM height and levels), and the height values of the other records (open licence only) by dataset.',
+      '- `place-city-heights`: the selection + the footprint heights + the GHSL crop in `sources/` -> one height and its source per building (the place-heights order; fault F55 counts).',
+      '- `place-blocks`: the selection + the heights + the globe\'s world-base height tiles (`docklands/data/world-base/dem/`) + the EGM96 geoid grid -> `tiles/*.glb`, `tileset.json`, `features.json` (named buildings).',
+      '- `index.json` (one level up) and this README are made from these files.', '');
+    else L.push('## What is derived from what', '',
       '- `place-select-osm`: OSM elements -> buildings and parts (outlines, height, levels and roof tags, names), areas, lines, named points.',
       '- `place-heights`: the selection + national building parts (if any; raw only) + raster height crops in `sources/` -> one height, height source and roof per building (fault F55 counts).',
       '- `place-tiles`: the selection + heights + the DEM grid + the EGM96 geoid grid (`docklands/data/world/geoid-egm96-1deg.png`) + the DEM ring grid -> `tiles/*.glb`, `tileset.json`, `features.json`.',
@@ -845,7 +863,11 @@ function writeReadmes() {
       for (const k of [...new Set([...Object.keys(log.roofs.osm || {}), ...Object.keys(log.roofs.rule || {})])].sort()) L.push(`| ${k} | ${log.roofs.osm?.[k] || 0} | ${log.roofs.rule?.[k] || 0} |`);
       L.push(`| flat | ${log.roofs.flat} | |`, '', 'Why flat: ' + Object.entries(log.roofs).filter(([k, v]) => typeof v === 'number' && k !== 'flat').map(([k, v]) => `${k} ${v}`).join(', ') + '.'); }
     L.push('');
-    if (log.tiers) { L.push('## Tiers (level of detail)', '', '| tier | tiles | MB | triangles | blocks | tiles by level |', '|---|---|---|---|---|---|');
+    if (log.tiers && BL) { L.push('## Levels of detail', '', '| level | tiles | MB | triangles | boxes | outlines | named | merged boxes (buildings in them) |', '|---|---|---|---|---|---|---|---|');
+      for (const [k, v] of Object.entries(log.tiers)) L.push(`| ${k.replace('level ', '')} | ${v.tiles} | ${(v.bytes / 1e6).toFixed(2)} | ${v.triangles.toLocaleString('en')} | ${v.boxes.toLocaleString('en')} | ${v.outlines.toLocaleString('en')} | ${v.named} | ${v.merged.toLocaleString('en')} (${v.merged_buildings.toLocaleString('en')}) |`);
+      L.push('', `Loaded by screen-space error (docklands/globe/places.js): far views draw the coarse levels (tall and big buildings as their own boxes, the rest merged into one box per square), near views every building of the leaf cell. ${log.blocks ? `${log.blocks.buildings.toLocaleString('en')} buildings drawn at the leaf level, ${log.blocks.named.toLocaleString('en')} of them named with their own id.` : ''}`, '',
+        '## Selection', '', '| what | count |', '|---|---|', ...Object.entries(log.selection || {}).map(([k, v]) => `| ${esc(k)} | ${v.toLocaleString('en')} |`), ''); }
+    else if (log.tiers) { L.push('## Tiers (level of detail)', '', '| tier | tiles | MB | triangles | blocks | tiles by level |', '|---|---|---|---|---|---|');
       const coreB = files.filter(f => f.startsWith('tiles/') && coreKeys.has(f.slice(6, -4))).reduce((a, f) => a + (existsSync(join(dir, f)) ? size(join(dir, f)) : 0), 0);
       for (const [k, v] of Object.entries(log.tiers)) L.push(`| ${k} | ${v.tiles} | ${((k === 'core' ? coreB : v.bytes) / 1e6).toFixed(2)} | ${k === 'core' ? '' : v.triangles.toLocaleString('en')} | ${v.blocks || ''} | ${Object.entries(v.levels).map(([a, b]) => `${a}: ${b}`).join(', ')} |`);
       L.push('', 'Loaded by screen-space error (docklands/globe/places.js): far tiles coarse, near tiles fine; a tile out of view is not drawn; unused tiles are freed.', '');
@@ -869,7 +891,7 @@ function writeReadmes() {
     for (const a of R.adapters) { if (a.licenceClass === 'review') rv.push(`- ${a.id}: licence class "review". ${a.approved || ''}`); if (a.waiver) rv.push(`- ${a.id}: ${a.waiver}. Status: ${a.status}. ${[R.place.dem, ...(R.place.heights || [])].includes(a.id) ? 'Used in this build.' : 'No data of this source is in this build.'} Issue https://github.com/danbri/londat/issues/9`); }
     rv.push('- OSM (ODbL 1.0, share-alike): allowed for the prototyping phase (owner, 2026-10-03); to be reviewed with the rest of the OSM use.');
     for (const a of R.adapters) if (a.licenceClass === 'share-alike' && (R.place.heights || []).includes(a.id)) rv.push(`- ${a.id}: licence class "share-alike" (${a.licence}); allowed by the owner on 2026-10-20 ("Use ms/overture"), registered next to OSM. Values whose own source licence is not open (for example an empty licence field) are neither used nor committed: see the counts in sources/.`);
-    const ovo = R.adapters.find(a => a.outer && a.id === R.place.surround?.outer); if (ovo) rv.push(`- ${ovo.id}: licence class "share-alike" (${ovo.licence}): OpenStreetMap data as redistributed by Overture; only records whose source is OpenStreetMap are drawn (geometry_sources), counted in log.json outer_counts.`);
+    const ovo = R.adapters.find(a => a.outer && a.id === (R.place.surround?.outer || R.place.blocks?.outer)); if (ovo) rv.push(`- ${ovo.id}: licence class "share-alike" (${ovo.licence}): OpenStreetMap data as redistributed by Overture; only records whose source is OpenStreetMap are drawn (geometry_sources), counted in log.json outer_counts.`);
     if (R.adapters.find(a => a.dem?.source === 'copernicus-glo30' && a.id === R.place.dem)) rv.push('- Copernicus DEM GLO-30: its full credit ends "all rights reserved" (CLAUDE.md); accepted by the owner on 2026-10-20 ("Data - is fine for now"); re-check before the prototyping phase ends.');
     L.push(...rv, '');
     writeFileSync(join(dir, 'README.md'), L.join('\n'));
@@ -982,6 +1004,166 @@ async function buildOuter(fGeoid, natFiles, rasFiles) {
   return { at: a6.at, credit, cityHeights: CH, outerCounts: outer.counts, tiers: sj.tiers, cityBuildings: outer.buildings.length, geometryClasses: Object.fromEntries(['osm', ...geoAds.map(a => a.geometry.cls)].map(c => [c, { label: c === 'osm' ? 'OpenStreetMap (via Overture)' : geoAds.find(a => a.geometry.cls === c).geometry.label, source: c === 'osm' ? 'osm' : geoAds.find(a => a.geometry.cls === c).geometry.source, switch: c === 'osm' ? null : geoAds.find(a => a.geometry.cls === c).id, drawn: outer.buildings.filter(b => (b.cls || 'osm') === c).length, dropped_overlap_osm: outer.counts[`buildings ${c} dropped (overlap an OSM building)`] || 0, heights: CH.by_class?.[c] || {} }])) };
 }
 
+// ---------- a place of kind "blocks" (Greater London; region config place.kind 'blocks', place.blocks): no core and no
+// ground of its own. Fetch: the Overture buildings of the boundary box (NDJSON: about 2 million rows, more than one JSON
+// string can hold) and the GHSL tiles over it. Build: three operations, place-select-blocks (OSM geometry inside the
+// boundary, outside the model boxes of place.exclude; non-OSM height values by dataset), place-city-heights (the
+// place-heights order, no roofs) and place-blocks (cwplans/tools/place-blocks.mjs: the tree, the tiles, tileset.json,
+// features.json of the named buildings). Skill docklands-3d-page, "Three.js port: Greater London as blocks (2026-10-22)".
+async function shaFile(p) { const h = createHash('sha256'); for await (const c of createReadStream(p)) h.update(c); return h.digest('hex'); }
+const fileInBig = async (p, label) => ({ label, path: rel(p), sha256: await shaFile(p) });
+async function* ndjsonLines(p) { const src = p.endsWith('.gz') ? createReadStream(p).pipe(createGunzip()) : createReadStream(p); for await (const line of createInterface({ input: src, crlfDelay: Infinity })) if (line) yield line; }
+async function writeNdjsonGz(p, items) {
+  const gz = createGzip({ level: 6 }), ws = createWriteStream(p), done = new Promise((res, rej) => { ws.on('finish', res); ws.on('error', rej); }); gz.pipe(ws);
+  for (const it of items) if (!gz.write(JSON.stringify(it) + '\n')) await new Promise(r => gz.once('drain', r));
+  gz.end(); await done;
+}
+// the query box: the region bbox rounded out to 0.01 degree
+const QBOX = REG.bbox ? [Math.floor(REG.bbox[0] * 100) / 100, Math.floor(REG.bbox[1] * 100) / 100, Math.ceil(REG.bbox[2] * 100) / 100, Math.ceil(REG.bbox[3] * 100) / 100] : null;
+const ovB = () => REG.adapters.find(a => a.id === BK.outer && a.outer);
+const blocksRaw = () => join(RAWD, `overture-${BK.query}-${ovB().outer.release}.ndjson`);
+async function fetchBlocks() {
+  const ov = ovB(), Q = { ...ov.outer.queries[BK.query], ...(BK.columns ? { columns: BK.columns } : {}), ...(BK.where != null ? { where: BK.where } : {}) }, f = blocksRaw();
+  if (!existsSync(f) || flag('--refetch')) { const bb = QBOX.map(v => v.toFixed(2)); execFileSync(process.env[ov.outer.python] || 'python3', ['-I', join(CW, '..', ov.outer.script), ov.outer.release, Q.theme, Q.type, ...bb, f, Q.columns, Q.where], { stdio: 'inherit' }); }
+  if (!flog['overture-buildings'] || flag('--refetch')) { const M = JSON.parse(readFileSync(f + '.meta.json', 'utf8')), st = statSync(f);
+    flog['overture-buildings'] = { url: `s3://overturemaps-us-west-2/release/${M.release}/theme=${M.theme}/type=${M.type}/ (bbox ${M.bbox.join(',')}; files ${M.files_read.join(' ')})`, fetched: new Date(st.mtimeMs).toISOString(), bytes: st.size, sha256: await shaFile(f), file: rel(f),
+      source: 'overture-buildings', request: `DuckDB read_parquet over HTTPS of the ${M.files_listed} files of the release, filter on bbox and: ${M.where}; columns ${M.columns.join(', ')}; rows ordered by id, one JSON object a line (fetch-overture-theme.py, .ndjson)`,
+      records: M.rows_count, licence: ov.licence, as_fetched: { note: 'the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder, NDJSON); sha256 above' } }; saveFlog(); }
+  console.log(`overture buildings: ${flog['overture-buildings'].records} rows`);
+  for (const a of rasAds) await fetchGhslMosaic(a);
+}
+// GHSL over the query box: a mosaic of the 10 x 10 degree tiles it meets (Greater London: R4_C18 and R4_C19, the tile
+// edge near 0.008 W), cropped; committed gzip in sources/ (CC BY 4.0), the zips stay raw
+async function fetchGhslMosaic(a) {
+  const B = a.buildingHeights, f = join(SRC, `${B.source}.json.gz`); if (existsSync(f) && !flag('--refetch')) return;
+  const m = 0.003, b = [QBOX[0] - m, QBOX[1] - m, QBOX[2] + m, QBOX[3] + m], tiles = [];
+  for (let r = Math.floor((B.north - b[3]) / B.tile_deg) + 1; r <= Math.floor((B.north - b[1]) / B.tile_deg) + 1; r++) for (let c = Math.floor((b[0] - B.west) / B.tile_deg) + 1; c <= Math.floor((b[2] - B.west) / B.tile_deg) + 1; c++) tiles.push([r, c]);
+  let G = null; const got = [];
+  for (const [r, c] of tiles) {
+    const url = B.url.replace('{r}', r).replace('{c}', c), zip = join(RAWD, url.split('/').pop()); if (!existsSync(zip) || flag('--refetch')) { writeFileSync(zip, await get(url)); await pause(1000); }
+    const names = execFileSync('unzip', ['-Z1', zip], { encoding: 'utf8' }).split('\n').filter(Boolean), member = names.find(n => new RegExp(B.member).test(n));
+    const tif = execFileSync('unzip', ['-p', zip, member], { maxBuffer: 1 << 30 }), img = await (await fromArrayBuffer(tif.buffer.slice(tif.byteOffset, tif.byteOffset + tif.byteLength))).getImage();
+    const [w0, s0, e0, n0] = img.getBoundingBox(), W = img.getWidth(), H = img.getHeight(), px = (e0 - w0) / W, py = (n0 - s0) / H;
+    if (!G) { const w = w0 + Math.floor((b[0] - w0) / px) * px, n = n0 - Math.floor((n0 - b[3]) / py) * py, nx = Math.ceil((b[2] - w) / px), ny = Math.ceil((n - b[1]) / py); G = { w, n, e: w + nx * px, s: n - ny * py, nx, ny, px, py, h: new Array(nx * ny).fill(0) }; }
+    const cl = (v, k) => Math.max(0, Math.min(k, v)), win = [cl(Math.floor((G.w - w0) / px + 1e-6), W), cl(Math.floor((n0 - G.n) / py + 1e-6), H), cl(Math.ceil((G.e - w0) / px - 1e-6), W), cl(Math.ceil((n0 - G.s) / py - 1e-6), H)];
+    if (win[2] > win[0] && win[3] > win[1]) { const ras = (await img.readRasters({ window: win }))[0], ww = win[2] - win[0];
+      for (let j = 0; j < G.ny; j++) { const tj = Math.floor((n0 - (G.n - (j + 0.5) * G.py)) / py) - win[1]; if (tj < 0 || tj >= win[3] - win[1]) continue;
+        for (let i = 0; i < G.nx; i++) { const ti = Math.floor((G.w + (i + 0.5) * G.px - w0) / px) - win[0]; if (ti < 0 || ti >= ww) continue; G.h[j * G.nx + i] = Math.round(ras[tj * ww + ti] * 10) / 10; } } }
+    const zb = readFileSync(zip); got.push({ url, member, tile: `R${r}_C${c}`, window: win, bytes: zb.length, sha256: sha(zb), member_sha256: sha(tif) });
+  }
+  const grid = { format: 'place-raster-1', source: B.source, about: a.about, licence: a.licence, credit: B.credit, tiles: got.map(g => g.tile), urls: got.map(g => g.url),
+    note: 'a mosaic of the tiles above cropped to the query box (pixel windows in log.json), values rounded to 0.1 m; 0 = no built surface in the cell. Row 0 = north.',
+    w: r7(G.w), n: r7(G.n), e: r7(G.e), s: r7(G.s), nx: G.nx, ny: G.ny, h: G.h };
+  writeFileSync(f, gzipSync(JSON.stringify(grid) + '\n'));
+  record('heights-' + a.id, f, got.map(g => g.url), { source: B.source, as_fetched: got, cells: G.nx * G.ny, committed: rel(f), licence: a.licence, note: 'the tile zips stay in the raw folder; the committed crop (gzip JSON) is the input of place-city-heights' });
+  console.log(`heights ${a.id}: ${G.nx} x ${G.ny} cells from ${got.length} tile(s)`);
+}
+// the boundary polygon: a feature of a skeleton set (format skeleton-1) by its code
+function boundary() {
+  const Bd = PL.boundary, dir = join(CW, Bd.skeleton), M = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8')), L = M.layers.find(l => l.id === Bd.layer), lv = L.levels.find(l => l.level === Bd.level);
+  for (const fd of lv.files) { const file = join(dir, fd.path), fc = unpack(JSON.parse(readFileSync(file, 'utf8')));
+    const ft = fc.features.find(x => x.properties.code === Bd.code); if (!ft) continue;
+    const polysB = ft.geometry.type === 'Polygon' ? [ft.geometry.coordinates] : ft.geometry.coordinates;
+    const inside = (lon, lat) => polysB.some(p => inRing([lon, lat], p[0]) && !p.slice(1).some(h => inRing([lon, lat], h)));
+    let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity; for (const p of polysB) for (const [x, y] of p[0]) { w = Math.min(w, x); e = Math.max(e, x); s = Math.min(s, y); n = Math.max(n, y); }
+    return { file, inside, bbox: [w, s, e, n], name: ft.properties.name, points: polysB.reduce((k, p) => k + p[0].length, 0) }; }
+  throw new Error(`boundary ${Bd.code} not found in ${Bd.skeleton} ${Bd.layer} level ${Bd.level}`);
+}
+// the model boxes of place.exclude: a building whose centroid is at least inset_m inside one is drawn by that model
+async function exclusions() {
+  const list = [];
+  for (const id of PL.exclude || []) { const R2 = REGIONS[id], ad = R2 && R2.adapters.find(a => a.modelFrame && a.modelBox); if (!ad) throw new Error(`exclude ${id}: no adapter with modelFrame and modelBox`);
+    const mod = await import(join(CW, '..', ad.module)), MF = mod.modelFrame(ad.modelFrame), F0 = enuFrame(R2.origin), Bx = ad.modelBox, m = Bx.inset_m || 0;
+    list.push({ id, origin: R2.origin, modelFrame: ad.modelFrame, modelBox: Bx, fn: (lon, lat) => { const [e, n] = F0.toEnu(lon, lat, R2.origin.h), [x, , z] = MF.fromEnu([e, n, 0]); return x >= Bx.x0 + m && x <= Bx.x1 - m && z >= Bx.z0 + m && z <= Bx.z1 - m; } }); }
+  return { params: list.map(({ fn, ...o }) => o), fn: (lon, lat) => list.some(x => x.fn(lon, lat)) };
+}
+async function buildBlocks() {
+  const ov = ovB(), fQ = blocksRaw(), fGeoid = join(CW, 'docklands', 'data', 'world', 'geoid-egm96-1deg.png'); if (!existsSync(fQ)) throw new Error(`missing ${rel(fQ)}: run fetch first`);
+  const bnd = boundary(), ex = await exclusions();
+  // 1. place-select-blocks
+  const fSel = join(WORK, 'blocks-select.ndjson.gz'), fFp = join(WORK, 'blocks-footprints.json.gz');
+  const SP = { boundary: { ...PL.boundary, name: bnd.name, points: bnd.points }, exclude: ex.params, geometrySources: ov.outer.geometry_sources, licences: overture.buildingHeights.licences, heightLabels: BK.footprint_classes || {} };
+  await run(OPS.selBlocks, [await fileInBig(fQ, 'overture-buildings'), fileIn(bnd.file, 'boundary')], SP, async p => {
+    const S = blockSelector({ inBoundary: bnd.inside, excluded: ex.fn, geometrySources: p.geometrySources, licences: p.licences, heightLabels: p.heightLabels });
+    let k = 0; for await (const line of ndjsonLines(fQ)) { S.add(JSON.parse(line)); if (++k % 500000 === 0) console.log(`  place-select-blocks: ${k} rows`); }
+    const o = S.done(); await writeNdjsonGz(fSel, o.buildings); jz(fFp, { fp: o.fp, counts: o.counts }); console.log('  selection:', JSON.stringify(o.counts)); return [fSel, fFp]; });
+  const buildings = []; for await (const line of ndjsonLines(fSel)) buildings.push(JSON.parse(line));
+  const FP = rz(fFp);
+  // 2. place-city-heights: the place-heights order (no national source, no roofs)
+  const fH = join(WORK, 'blocks-heights.json.gz'), rasFiles = rasAds.map(a => [a, join(SRC, `${a.buildingHeights.source}.json.gz`)]).filter(([, f]) => existsSync(f));
+  const CP = { storey_m: 3, national_storey_m: 3, default_m: PL.default_height_m ?? 9, default_small_m: 3, raster_min_m: 3, roof_rule: null, pitch_deg: 30, max_roof_m: 8, footprints: Object.keys(FP.fp),
+    rule: 'as place-heights over the selected buildings: OSM height > OSM building:levels x storey > Overture height > Overture num_floors x storey (non-OSM records, open licence, not Microsoft) > Microsoft ML Buildings height (via Overture; footprint match: a centroid inside the other outline, area ratio >= 0.5) > small kinds 3 m > GHSL cell under the centroid (min 3 m) > default; no roofs (blocks)' };
+  await run(OPS.cityHeights, [fileIn(fSel, 'selected'), fileIn(fFp, 'footprint-heights'), ...rasFiles.map(([, f]) => fileIn(f, 'raster-heights'))], CP, async p => {
+    const ras = rasFiles.map(([a, f]) => ({ ...rz(f), label: a.buildingHeights.label }));
+    const fps = ['overture', ...Object.keys(FP.fp).filter(k => k !== 'overture')].filter(k => FP.fp[k]).map(k => ({ label: k, top: true, min_area_ratio: 0.5, rows: FP.fp[k] }));
+    const r = heightsOf({ buildings }, [], ras, p, fps); delete r.roofs;
+    jz(fH, r); console.log('  heights:', JSON.stringify(r.faults)); console.log('  footprint matches:', JSON.stringify(r.matches)); return [fH]; });
+  const HZ = rz(fH), HT = HZ.heights;
+  // 3. place-blocks: the tree, the tiles, tileset.json, features.json
+  const gdir = join(CW, BK.ground), GM = JSON.parse(readFileSync(join(gdir, 'base.json'), 'utf8'));
+  const gfiles = []; for (const [Ls, a] of Object.entries(GM.dem.tiles)) { const L = +Ls, cs = 180 / 2 ** L; for (let i = 0; i < a.length; i += 2) { const x = a[i], y = a[i + 1], b = [-180 + x * cs, 90 - (y + 1) * cs, -180 + (x + 1) * cs, 90 - y * cs]; if (meet(b, QBOX)) gfiles.push(join(gdir, GM.dem.url.replace('{z}', L).replace('{x}', x).replace('{y}', y))); } }
+  gfiles.sort(); const gIn = { label: 'world-base heights', path: rel(gdir) + `dem (${gfiles.length} tiles over the query box; sha256 of the list of path and sha256 of each)`, sha256: sha(gfiles.map(f => rel(f) + ' ' + sha(readFileSync(f))).join('\n')) };
+  const credit = ['© OpenStreetMap contributors (ODbL 1.0)', 'Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0)', ...hAds.map(a => a.buildingHeights.credit), 'Ground: ' + GM.dem.credit + ' (the globe\'s world-base heights)'].join('; ');
+  const TP = { top: BK.top_level, leaf: BK.leaf_level, levels: BK.levels, min_area_m2: BK.min_area_m2, simplify_m: BK.simplify_m, box_fill: BK.box_fill, outline_min_m2: BK.outline_min_m2, drop_m: BK.drop_m ?? 3,
+    named_min_m2: BK.named_min_m2, named_min_h_m: BK.named_min_h_m, colour: BK.colour || '#d6cbb6', version_label: `${RID}-1`, extent_box: QBOX,
+    classes: ['OpenStreetMap (via Overture)', 'merged OpenStreetMap buildings (one box per square: the summed footprint, the area-weighted mean height)'], credit };
+  const a3 = await run(OPS.blocks, [fileIn(fSel, 'selected'), fileIn(fH, 'heights'), gIn, fileIn(fGeoid, 'geoid')], TP, async p => {
+    const geoAt = await geoidSampler(fGeoid), G = worldBaseGround(GM, (L, x, y) => { const b = readFileSync(join(gdir, GM.dem.url.replace('{z}', L).replace('{x}', x).replace('{y}', y))); return new Int16Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); });
+    const B = buildings.filter(b => b.a >= p.min_area_m2 && HT[b.id] && HT[b.id].h > 0);
+    const named = new Map(), rows = [];
+    for (const b of B) if (b.name && (b.a >= p.named_min_m2 || HT[b.id].h >= p.named_min_h_m)) { named.set(b.id, rows.length); rows.push(b); }
+    const T = blockTree({ buildings: B, top: p.top, leaf: p.leaf });
+    rmSync(join(OUT, 'tiles'), { recursive: true, force: true }); mkdirSync(join(OUT, 'tiles'), { recursive: true });
+    const outFiles = [], stats = []; let nT = 0; const total = T.nodes.size;
+    async function tile(n, parentWorld) {
+      const leaf = n.l === p.leaf, LP = leaf ? { min_area_m2: p.min_area_m2, simplify_m: p.simplify_m, box_fill: p.box_fill, outline_min_m2: p.outline_min_m2, drop_m: p.drop_m } : { ...p.levels[n.l], min_area_m2: p.min_area_m2, drop_m: p.drop_m };
+      const r = blockTile({ cell: n, items: n.items.map(i => B[i]), HT, groundAt: G.at, geoidAt: geoAt, P: LP, leaf, named: leaf ? named : null, classes: p.classes, colour: p.colour, credit: p.credit });
+      const f = join(OUT, 'tiles', n.key + '.glb'); writeFileSync(f, r.bytes); outFiles.push(f); stats.push(r.stats); if (++nT % 200 === 0) console.log(`  place-blocks: ${nT} / ${total} tiles`);
+      const world = r.F.matrix(); let region = r.region; const kids = []; for (const k of n.kids) kids.push(await tile(k, world));
+      for (const k of kids) region = [region[0], region[1], region[2], region[3], Math.min(region[4], k.boundingVolume.region[4]), Math.max(region[5], k.boundingVolume.region[5])];
+      const t = { boundingVolume: { region: region.map(v => +v.toPrecision(12)) }, geometricError: leaf ? 0 : p.levels[n.l].err_m, refine: 'REPLACE', transform: roundM(parentWorld ? mul4(inv4rigid(parentWorld), world) : world), content: { uri: `tiles/${n.key}.glb` } };
+      if (kids.length) t.children = kids; return t;
+    }
+    const children = []; for (const n of T.roots) children.push(await tile(n, null));
+    let lo = Infinity, hi = -Infinity, ext = [Infinity, Infinity, -Infinity, -Infinity]; for (const c of children) { lo = Math.min(lo, c.boundingVolume.region[4]); hi = Math.max(hi, c.boundingVolume.region[5]); }
+    for (const n of T.roots) ext = [Math.min(ext[0], n.b[0]), Math.min(ext[1], n.b[1]), Math.max(ext[2], n.b[2]), Math.max(ext[3], n.b[3])];
+    const rootErr = p.levels[p.top].err_m * 2;
+    const tileset = { asset: { version: '1.1', generator: 'cwplans build-place-tiles.mjs (place-blocks)', tilesetVersion: p.version_label, extras: { place: RID, name: REG.name, kind: 'blocks', credit: p.credit, tiers: `blocks: merged boxes by square from level ${p.top}, every building from level ${p.leaf}; no ground (the globe's terrain)` } },
+      geometricError: rootErr * 2, root: { boundingVolume: { region: [ext[0] * D2R, ext[1] * D2R, ext[2] * D2R, ext[3] * D2R, lo, hi].map(v => +v.toPrecision(12)) }, geometricError: rootErr, refine: 'REPLACE', children } };
+    const tsf = join(OUT, 'tileset.json'); writeFileSync(tsf, JSON.stringify(tileset)); outFiles.push(tsf);
+    // features.json: the named buildings drawn with their own id (search, cards, featuresAt, describeView); no ground grid
+    const leafKey = b => { const cs = 180 / 2 ** p.leaf; return `${p.leaf}-${Math.floor((b.c[0] + 180) / cs)}-${Math.floor((b.c[1] + 90) / cs)}`; };
+    const Bf = rows.map(b => { const H = HT[b.id]; return [b.osm || b.id, b.name, null, b.kind, b.c[0], b.c[1], H.h, H.src, b.levels ?? null, leafKey(b), Math.round(G.at(b.c[0], b.c[1]) * 10) / 10, null, null, null, 'flat']; });
+    const tiers = {}; for (const s2 of stats) { const o = tiers['level ' + s2.level] ||= { tiles: 0, bytes: 0, triangles: 0, boxes: 0, outlines: 0, named: 0, merged: 0, merged_buildings: 0 }; o.tiles++; for (const k of ['bytes', 'triangles', 'boxes', 'outlines', 'named', 'merged', 'merged_buildings']) o[k] += s2[k] || 0; }
+    const fj = { format: 'place-features-1', kind: 'blocks', place: RID, name: REG.name, label: PL.label || REG.name, search: PL.search || [], timeZone: REG.timeZone, locale: REG.locale, origin: REG.origin, area: bnd.bbox, extent: ext.map(r7), level: p.leaf,
+      geoid_m: Math.round(geoAt(REG.origin.lon, REG.origin.lat) * 100) / 100, credit: p.credit,
+      note: 'a place of kind blocks: the buildings are drawn as blocks (tiles); this file lists the named buildings drawn with their own id (_FEATURE_ID_0 = row); ground_m = the globe\'s ground (world-base heights, metres above the geoid)',
+      buildings_fields: ['osm_id', 'name', 'address', 'kind', 'lon', 'lat', 'height_m', 'height_source', 'levels', 'tile', 'ground_m', 'wikidata', 'name_alt', 'parent', 'roof'], buildings: Bf,
+      streets_fields: ['name', 'kind', 'lon', 'lat', 'name_alt'], streets: [], areas_fields: ['name', 'kind', 'lon', 'lat', 'name_alt'], areas: [], points_fields: ['osm_id', 'name', 'kind', 'lon', 'lat', 'address', 'name_alt'], points: [], tiles: [],
+      blocks: { buildings: B.length, named: rows.length, tiers } };
+    const ff = join(OUT, 'features.json'); writeFileSync(ff, JSON.stringify(fj)); outFiles.push(ff);
+    console.log('  tiers:', JSON.stringify(tiers)); console.log(`  world-base height tiles read: ${G.used.size}`);
+    return outFiles; });
+  // the committed log, the index entry, the READMEs
+  const fj = JSON.parse(readFileSync(join(OUT, 'features.json'), 'utf8')), SEL = rz(fFp).counts;
+  blog.about = `Build log of the place ${RID} (${REG.name}, kind blocks) by cwplans/tools/build-place-tiles.mjs: what was fetched (URL, date, SHA-256) and each dataflow activity with its input and output hashes. Raw files stay in cwplans/data/raw/places/${RID}/ (not committed).`;
+  blog.fetches = flog; blog.selection = SEL; blog.height_sources = HZ.faults; blog.footprint_matches = HZ.matches; blog.tiers = fj.blocks.tiers; blog.blocks = { buildings: fj.blocks.buildings, named: fj.blocks.named };
+  for (const k of ['roofs', 'validation', 'city_height_sources', 'city_footprint_matches', 'city_validation', 'outer_counts', 'city_geometry']) delete blog[k];
+  blog.fault = 'F55 (curation skill fault register): buildings with no height in OSM; counted, not patched per record';
+  writeFileSync(BLOG, JSON.stringify(blog, null, 1));
+  const IX = join(OUTROOT, 'index.json'), ix = existsSync(IX) ? JSON.parse(readFileSync(IX, 'utf8')) : { format: 'places-index-1', about: 'Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js', places: [] };
+  // tileBase (region config place.tileBase): where the tile set is served when it is not beside index.json (a second
+  // repository's Pages, e.g. https://danbri.github.io/docklandia/data/gb/london/); places.js resolves it against index.json
+  const TB = PL.tileBase ? PL.tileBase.replace(/\/?$/, '/') : `${RID}/`;
+  const entry = { id: RID, name: REG.name, label: fj.label, kind: 'blocks', area: fj.area, centre: [REG.origin.lon, REG.origin.lat], timeZone: REG.timeZone, locale: REG.locale, tileset: `${TB}tileset.json`, features: `${RID}/features.json`, readme: `${RID}/README.md`, provenance: `${RID}/provenance/log.json`,
+    credit: fj.credit, buildings: fj.blocks.buildings, named: fj.blocks.named, built: a3.at, extent: fj.extent, exclude: PL.exclude || [] };
+  ix.places = ix.places.filter(q => q.id !== RID).concat(entry).sort((a, b) => a.id.localeCompare(b.id));
+  writeFileSync(IX, JSON.stringify(ix, null, 1));
+  let tot = 0; for (const f of readdirSync(join(OUT, 'tiles'))) tot += statSync(join(OUT, 'tiles', f)).size;
+  writeReadmes();
+  console.log(`done: ${readdirSync(join(OUT, 'tiles')).length} tiles, ${entry.buildings} buildings (${entry.named} named), tiles ${(tot / 1e6).toFixed(2)} MB, tileset.json ${(statSync(join(OUT, 'tileset.json')).size / 1e6).toFixed(2)} MB, features.json ${(statSync(join(OUT, 'features.json')).size / 1e6).toFixed(2)} MB`);
+}
+
 // ---------- the build: three operations (six with a surround block)
 async function build() {
   const fOsm = join(RAWD, 'osm.json.gz'), fDem = join(RAWD, 'dem.json.gz'), fGeoid = join(CW, 'docklands', 'data', 'world', 'geoid-egm96-1deg.png');
@@ -1021,6 +1203,6 @@ async function build() {
   console.log(`done: ${fj.tiles.length} tiles, ${entry.buildings} buildings, tiles ${(tot / 1e6).toFixed(2)} MB, features.json ${(readFileSync(join(OUT, 'features.json')).length / 1e6).toFixed(2)} MB`);
 }
 
-if (cmd === 'fetch' || cmd === 'all') { await fetchOsm(); await fetchDem(); await fetchHeights(); await fetchSurround(); }
-if (cmd === 'build' || cmd === 'all') await build();
+if (cmd === 'fetch' || cmd === 'all') { if (BLOCKS) await fetchBlocks(); else { await fetchOsm(); await fetchDem(); await fetchHeights(); await fetchSurround(); } }
+if (cmd === 'build' || cmd === 'all') await (BLOCKS ? buildBlocks() : build());
 if (cmd === 'readme') writeReadmes();
