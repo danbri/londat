@@ -1,6 +1,6 @@
 {
   "about": "Register of every committed data file in cwplans: where its data came from, under which licence, and how it uses OpenStreetMap (ODbL). Checked by tools/check-data-register.mjs, which also writes DATA-REGISTER.md. Add an entry before committing a new data file.",
-  "updated": "2026-10-21",
+  "updated": "2026-10-22",
   "policy": {
     "personal_org_address_data": "Restrictions suspended for this project during scoping, planning and prototyping (owner, October 2026; CLAUDE.md, Data ethics, exception).",
     "licence_limit": "Never fetch or commit proprietary, restricted-licence or virally licensed data.",
@@ -178,6 +178,25 @@
       "committed": false,
       "local_path": "data/raw/places/sarajevo/greens/osm-map.json.gz (and relation-<id>.json.gz: the full multipolygons that leave the area; in cwplans/.gitignore; re-fetch with the tool)",
       "fetched_by": "tools/build-place-greens.mjs fetch --region sarajevo (OSM API 0.6 map.json of the core area, then relation/<id>/full for 0 water, wood or park multipolygons that leave the area); the SHA-256 of each answer as fetched is in places/sarajevo/greens/log.json"
+    },
+    "overture-osm-uk-lite": {
+      "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (one bounding box per part of the UK lite set: the ONS regions of England but London, Wales, Scotland, Northern Ireland)",
+      "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot, 2026-09-06)",
+      "fetched": "2026-10-21",
+      "size_bytes": 11875859327,
+      "committed": false,
+      "local_path": "data/raw/places/uk-lite/overture-<part code>-2026-09-23.1.ndjson (in cwplans/.gitignore; deleted after each part was read, --clean-raw; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs build --region uk-lite --fetch-parts (fetch-overture-theme.py slim mode: centroid, area, the outline of landmark candidates only; 39,598,169 rows over 11 parts); the SHA-256 of each answer is in the provenance/log.json of the set (danbri/docklandia data/gb/uk-lite/)"
+    },
+    "qlever-osm-uk-landmark-tags": {
+      "url": "https://qlever.cs.uni-freiburg.de/api/osm-planet (SPARQL: buildings contained in the UK relation 62149 with wikidata, wikipedia or a notable building, historic, man_made or leisure value)",
+      "osm_data_as_of": "planet 2026-09-21 (osm2rdf index of the QLever OSM endpoint)",
+      "fetched": "2026-10-21",
+      "sha256_prefix": "c6592b8dc5bc6951",
+      "size_bytes": 6723437,
+      "committed": false,
+      "local_path": "data/raw/places/uk-lite/osm-landmark-tags.tsv (in cwplans/.gitignore)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (76,131 rows; ids, tags only, joined to the Overture records by OSM id)"
     }
   },
   "sources": {
@@ -14067,7 +14086,7 @@
     },
     {
       "path": "docklands/data/places/index.json",
-      "what": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js",
+      "what": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js; a place held in another repository (the UK lite set in danbri/docklandia) has tileBase, load_m, free_m, the boxes of its parts and absolute URLs",
       "sources": [
         "osm",
         "own"
@@ -15617,5 +15636,50 @@
         "what": "loads tile.openstreetmap.org raster tiles at run time; no OSM data committed"
       }
     ]
-  }
+  },
+  "external": [
+    {
+      "repo": "danbri/docklandia",
+      "path": "data/gb/uk-lite/",
+      "location": "https://github.com/danbri/docklandia/tree/main/data/gb/uk-lite (branch uk-lite until the owner merges it); served at https://danbri.github.io/docklandia/data/gb/uk-lite/ (same origin as the londat site)",
+      "paths": [
+        "tileset.json",
+        "tilesets/<level-8 cell>.json",
+        "tiles/<level>-<x>-<y>.glb",
+        "features.json",
+        "features/<part code>.json",
+        "names.json",
+        "README.md",
+        "provenance/log.json"
+      ],
+      "what": "The UK outside Greater London as a LITE building set (owner, 2026-10-22: \"can we pick a lite subset or slice somehow? Key landmarks, modest resolution?\"): 3D Tiles 1.1 + glTF, quadtree levels 7 to 11, REPLACE refinement, external tile sets from level 9. Two classes: 82,784 landmarks (OSM wikidata or wikipedia tag; notable kinds: cathedral, castle, palace, stadium, tower, lighthouse, windmill and others; named and 25 m or taller, or 3,000 m2 or more), each with its outline, id (_FEATURE_ID_0 = row of the features shards) and card; and the merged mass of every other OSM and Microsoft footprint as one box a square (200 m in towns, 400 m elsewhere at the leaves; 800 m to 6.4 km above). A building whose centroid is in Greater London (ONS E12000007) is left to the London place. Read by docklands/globe/places.js (index entry uk-lite, kind lite, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by part and class",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "ms-buildings",
+        "overture-ms-geometry",
+        "ghsl-built-h",
+        "copernicus-glo90",
+        "etopo-2022",
+        "ons-boundaries",
+        "natural-earth",
+        "egm96",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": [
+          "overture-osm-uk-lite",
+          "qlever-osm-uk-landmark-tags"
+        ],
+        "what": "landmark outlines, names, kinds, Wikidata and Wikipedia tags, heights and levels of OSM buildings (via Overture and QLever); the footprint areas and heights of the other OSM buildings summed into the mass"
+      },
+      "produced_by": "tools/build-place-tiles.mjs --region uk-lite (with tools/place-lite.mjs, tools/place-blocks.mjs, tools/fetch-overture-theme.py)",
+      "fetched": "2026-10-21",
+      "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; the UK as a lite set). Review with the OSM use before the prototyping phase ends",
+      "review_exit": [
+        "osm-odbl"
+      ]
+    }
+  ]
 }

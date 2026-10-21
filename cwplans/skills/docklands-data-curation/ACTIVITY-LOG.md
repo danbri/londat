@@ -3250,3 +3250,17 @@ modest rssolution? 4. Keep for now". (1) Sarajevo's 122 estimated minarets stay 
 has none go into Greater London (571,817 in the box). (3) The UK: a lite set (landmarks and modest resolution), not all
 17.7 M buildings; built in https://github.com/danbri/docklandia . (4) Rule-placed trees in León and Sarajevo stay.
 Recorded in CLAUDE.md, "Data policy".
+
+## 2026-10-22: the UK lite set (landmarks plus merged mass)
+
+Owner, 2026-10-22: "can we pick a lite subset or slice somehow? Key landmarks, modest resolution?" Built the UK outside
+Greater London as a place of kind "lite" (region config docklands/geo/regions/uk-lite.js, build-only; tool
+build-place-tiles.mjs --region uk-lite with place-lite.mjs; operations place-lite-select per part (11 activities) and
+place-lite-tiles). Data in https://github.com/danbri/docklandia data/gb/uk-lite/ on branch uk-lite (not pushed; the
+owner pushes after review). 82,784 landmarks, 22.7 M buildings in the mass, 146.4 MB. Register: new `external` section
+(check-data-register.mjs checks it; DATA-REGISTER.md "Data in other repositories"), OSM extracts overture-osm-uk-lite and
+qlever-osm-uk-landmark-tags. Reader: kind lite, tileBase, load_m, external tile sets, feature shards, ?placebase=.
+Tests: lite-check.mjs (new), place-lite.test.mjs (new). Fault F55 counts per part in the set's README. Details and
+traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)". Open: landmark heights (towers and
+spires), the mass reads as a grid from 20 km; merge order: docklandia before londat (else 404s for the index entry).
+

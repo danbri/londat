@@ -61,6 +61,17 @@ for (const b of reg.branches || []) {
   const tool = /tools\/[\w-]+\.(mjs|py|sh)/.exec(b.produced_by || ''); if (!tool || !existsSync(join(CW, tool[0]))) problems.push(`branch ${b.branch}: produced_by names no tool of cwplans/tools`);
   if (!b.review) problems.push(`branch ${b.branch}: no review note`);
 }
+// data held in another repository (bulky data: danbri/docklandia, its own Pages; owner, 2026-10-22): each names its
+// repository and path, known sources, a producing tool that exists here, an OSM use, and a review note
+for (const x of reg.external || []) {
+  const k = `external ${x.repo}:${x.path}`;
+  if (!/^[\w.-]+\/[\w.-]+$/.test(x.repo || '') || !x.path || !x.location || !(x.paths || []).length || !x.what) problems.push(`${k}: needs repo (owner/name), path, location, paths and what`);
+  for (const s of x.sources || []) if (!reg.sources[s]) problems.push(`${k}: unknown source "${s}"`);
+  if (!(x.osm?.use in reg.osm_use_values)) problems.push(`${k}: osm.use "${x.osm?.use}" is not one of ${Object.keys(reg.osm_use_values).join(', ')}`);
+  if (x.osm?.extract && ![].concat(x.osm.extract).every(e => reg.osm_extracts[e])) problems.push(`${k}: unknown OSM extract "${x.osm.extract}"`);
+  const tool = /tools\/[\w-]+\.(mjs|py|sh)/.exec(x.produced_by || ''); if (!tool || !existsSync(join(CW, tool[0]))) problems.push(`${k}: produced_by names no tool of cwplans/tools`);
+  if (!x.review) problems.push(`${k}: no review note`);
+}
 // OSM use in the owner's other repository (danbri/glitchcan-minigam, not this project): checked when a checkout of it is
 // next to this one (or at GLITCHCAN_DIR)
 const GLITCHCAN = process.env.GLITCHCAN_DIR || join(CW, '..', '..', 'glitchcan-minigam');
@@ -132,6 +143,7 @@ const exitsOf = x => [].concat(x.review_exit || []);
 const reviewItems = [
   ...reg.files.filter(f => f.review).map(f => ({ kind: 'file', key: f.path, x: f })),
   ...(reg.branches || []).map(b => ({ kind: 'branch', key: 'branch ' + b.branch, x: b })),
+  ...(reg.external || []).map(x => ({ kind: 'external', key: `external ${x.repo}:${x.path}`, x })),
   ...Object.entries(reg.sources).filter(([, s]) => s.review || s.licence_class === 'review').map(([k, s]) => ({ kind: 'source', key: 'source ' + k, x: s })),
 ];
 const noExit = reviewItems.filter(i => !exitsOf(i.x).length), pendingOk = new Set(EXIT.pending || []);
@@ -184,6 +196,7 @@ if (process.argv.includes('--write')) {
     '',
     ...reviews.map(f => `- \`${f.path}\` [${exitsOf(f).join(', ') || 'no exit path'}]: ${f.review}`),
     ...(reg.branches || []).map(b => `- branch \`${b.branch}\` [${exitsOf(b).join(', ') || 'no exit path'}]: ${b.review}`),
+    ...(reg.external || []).map(x => `- external \`${x.repo}:${x.path}\` [${exitsOf(x).join(', ') || 'no exit path'}]: ${x.review}`),
     ...reviewItems.filter(i => i.kind === 'source').map(i => `- ${i.key.replace('source ', 'source `')}\` [${exitsOf(i.x).join(', ') || 'no exit path'}]: ${i.x.review || 'licence class review'}`),
     '',
     '## Data on other branches (not on main)',
@@ -191,6 +204,14 @@ if (process.argv.includes('--write')) {
     '| branch | where | files | what | sources (licence) | produced by |',
     '|---|---|---|---|---|---|',
     ...(reg.branches || []).map(b => `| \`${b.branch}\` | ${esc(b.location)} | ${esc(b.paths.join(', '))} | ${esc(b.what)} | ${esc(b.sources.map(lic).join('; '))} | ${esc(b.produced_by)} |`),
+    '',
+    '## Data in other repositories (bulky data)',
+    '',
+    'Data sets too big for this repository\'s Pages site, held in another repository of the owner with its own Pages on the same origin (https://danbri.github.io). Each set has its own README with sources, licences, extract dates, SHA-256 and the operations; this register holds the entry.',
+    '',
+    '| repository: path | where | files | what | sources (licence) | OSM use | produced by |',
+    '|---|---|---|---|---|---|---|',
+    ...(reg.external || []).map(x => `| \`${x.repo}:${x.path}\` | ${esc(x.location)} | ${esc(x.paths.join(', '))} | ${esc(x.what)} | ${esc(x.sources.map(lic).join('; '))} | ${x.osm.use}${x.osm.extract ? ' (' + [].concat(x.osm.extract).join(', ') + ')' : ''}: ${esc(x.osm.what || '')} | ${esc(x.produced_by)} |`),
     '',
     '## All registered files',
     '',

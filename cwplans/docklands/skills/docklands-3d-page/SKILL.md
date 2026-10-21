@@ -3298,6 +3298,78 @@ https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
 - **Open.** Buildings in globe mode inside the model box; Microsoft footprints where OSM has none (571,817 in the box:
   one config line, owner); building parts; the merged far view still reads as a grid of squares; implicit tiling
   (tileset.json 0.97 MB, loaded at 150 km, also in the Docklands model's globe background); the UK (section 3b).
+## Three.js port: the UK lite set (2026-10-22)
+
+Owner, 2026-10-22, about buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest
+resolution?" Built: the UK outside Greater London as a place of kind "lite". Region config
+`docklands/geo/regions/uk-lite.js` (build-only: NOT in `regions/index.js`, because its box would make the whole UK one
+project region for the page's zone and gazetteer lookups; the tool imports `regions/<id>.js` when the index has no such
+id), tool `cwplans/tools/build-place-tiles.mjs --region uk-lite --out <docklandia>/data/gb/uk-lite` with
+`cwplans/tools/place-lite.mjs` and `place-blocks.mjs` (blockTile, lite options), fetch `fetch-overture-theme.py` slim mode,
+reader `docklands/globe/places.js`, tests `docklands/test/lite-check.mjs` and `cwplans/tools/test/place-lite.test.mjs`
+(`UK_LITE_DIR=<set folder>` adds the check of the built set). Data: https://github.com/danbri/docklandia
+`data/gb/uk-lite/` (its README: sources, hashes, the rule, sizes by part, level and class), served at
+https://danbri.github.io/docklandia/data/gb/uk-lite/ ; register: `external` entry in `cwplans/data-register.json`.
+
+- **Scope, no duplicates.** Parts = ONS BGC polygons of the UK skeleton (8 English regions but London, then Wales,
+  Scotland, Northern Ireland). A building belongs to the first part whose polygon holds its centroid; London's polygon
+  (E12000007) is tested first and excluded (London's own build uses the same polygon and centroid rule). Outside every
+  polygon (generalised coast; the England-Wales and England-Scotland edges of two ONS products): the nearest part within
+  250 m, never inside Natural Earth's Ireland. Counts per part in the README ("outside every UK polygon (left out)" is
+  mostly the Republic of Ireland in the Scotland and Northern Ireland boxes: 173,395 and 262,622).
+- **Fetch (slim).** One DuckDB query per part box (`fetch-overture-theme.py` 11th argument: a geometry condition; 12th: a
+  file of OSM ids as table `ids`): every record gets its centroid `c` and area `a` (m2, flat rule), sources cut to base,
+  height and num_floors; the outline only for named, tall (20 m), big (2,000 m2), notable-class records and the OSM ids of
+  the landmark tags. 39.6 M rows read over the 11 boxes (boxes overlap; SE and East also read London's 2.6 M), 0.4 to 2.2 GB a part, about 3 to 8 minutes each; with
+  `--clean-raw` each answer is deleted after its select activity (hash kept), so the disk holds one part. Without the id
+  list a third of the wikidata landmarks (unnamed listed buildings) had no outline.
+- **Landmark tags.** One SPARQL POST to the QLever OSM endpoint (https://qlever.cs.uni-freiburg.de/api/osm-planet; planet
+  2026-09-21; `osmrel:62149 ogc:sfContains ?w`): 76,131 rows in seconds. Overpass (overpass-api.de and mirrors) was not
+  reachable through the agent proxy (reset / timeouts) on 2026-10-21.
+- **Landmark rule (the README states it).** OSM outline and (1) wikidata or wikipedia, or (2) a notable kind (building
+  or Overture class cathedral, castle, palace, stadium, grandstand, tower, lighthouse, windmill; historic castle, palace,
+  fort, tower, monastery, abbey, city_gate; man_made tower, lighthouse, windmill, water_tower; leisure stadium), or (3) a
+  name and a MEASURED height >= 25 m (OSM, Microsoft, other Overture; not GHSL, not a default) or footprint >= 3,000 m2.
+  Result 82,784 landmarks: wikidata 63,193, wikipedia 151, named-big 15,148, named-tall 1,513, building kind 1,384, man_made 1,067, historic 292, leisure 36. Heights of
+  landmarks are weak: Durham Cathedral 18.7 m (Microsoft roof height; the tower is 66 m).
+- **Mass.** Heights in the place-heights order (OSM height > levels x 3 > Microsoft / open Overture > floors > small kinds
+  3 m > GHSL cell > 7 m); every non-landmark OSM or Microsoft building of 20 m2 or more summed into 200 m atoms of its
+  level-11 cell (the cell's own metric grid, as blockTile merges). Leaves (level 11): 200 m squares where the 400 m square
+  has a built share >= 8 %, else 400 m; coarse levels 10 to 7: 800, 1,600, 3,200, 6,400 m (mergeItems re-merges the
+  children's squares). Box side grows with the built share, full at 35 % (London: 50 %; 50 % left suburbs as a sparse
+  grid from 20 km). 22.7 M buildings in the mass (7.0 M of them Microsoft-only footprints).
+- **Ground.** London's blocks read the world-base height tiles; most of the UK has none, and `worldBaseGround` returned
+  0 there (blocks at sea level under hills). Now a fallback: the globe's world terrain texture
+  (`world/terrain-4096x2048.png`, decoded as terrain.js does), bases 8 m deep (the globe draws that 9.8 km texture with
+  2.4 km patches).
+- **Tiles.** Levels 7 to 11, REPLACE, geometricError 4,800 / 2,400 / 1,200 / 600 m, leaves 0. External tile sets: the
+  level-8 tiles have one child whose content is `tilesets/8-x-y.json` (levels 9 to 11; content URIs written `../tiles/`,
+  relative to that JSON). Root tileset.json 97 kB (7,054 tiles in all). Landmarks: outlines simplified at 1.5 m with
+  `_FEATURE_ID_0` at the leaves (glb `extras.blocks.named` lists the rows), oriented boxes with the row in
+  `extras.blocks.boxes.f` at coarse levels when tall or big (level 10: 40 m or 10,000 m2 ... level 7: 150 m or 150,000
+  m2); `extras.blocks.mass_buildings` per tile. Features in shards, one a part (`features/<code>.json`, rows ordered by
+  part then id), `names.json` for search (2.8 MB, read on the first search), `features.json` 6 kB.
+- **Sizes.** 146.4 MB in all (tiles 129.5 MB: landmarks 53.6 MB, mass 75.9 MB; tilesets 2.8 MB; shards 9.8 MB; names 2.8
+  MB; log 1.4 MB). By level: 7: 0.4, 8: 1.3, 9: 4.5, 10: 14.5, 11: 108.7 MB. By part (tile MB, landmarks): NE 4.9 (2.2),
+  NW 10.3 (4.9), Yorkshire 10.0 (4.7), E Midlands 9.3 (4.1), W Midlands 9.6 (4.6), East 13.4 (6.6), SE 16.2 (8.5), SW
+  16.9 (8.3), Wales 9.9 (3.2), Scotland 23.0 (5.7), NI 6.1 (0.9). Build: select 10 to 60 s a part, tiles 20 s.
+- **Reader.** Index entry `kind: 'lite'` with `tileBase` (absolute URLs), `load_m` 1,200 km / `free_m` 1,500 km (the UK
+  from 300 to 800 km; León at 1,450 km does not load it), `boxes` (part boxes: `inArea`, `detailAt`). `?placebase=<id>:<url>`
+  serves a set with a tileBase from another base (tests: a local copy). External tile sets: a node whose content is a
+  JSON is transparent; `fetchExt` grafts its children on first need (counted in inFlight). Shards: read for the parts
+  under drawn tiles of level >= 9, at a where query, or on a tap on a row not read yet (`rowCard`). describeView `lite`:
+  "a lite set, key landmarks plus merged building mass (not every building)", landmarks drawn (outlines, boxes), mass boxes
+  and the buildings they stand for. Card: "Landmark because ..." and a "Building mass" card for merged boxes.
+- **Traps.** A background command stops at the 30-minute default (the first full run was killed in the middle of a part:
+  rerun with a long timeout; a part answer without its fetch record is fetched again). `pkill -f <name>` and `pgrep -f`
+  match their own shell. `featsP` cached an index copy made by an earlier search, so the where provider read no shard rows:
+  it now returns `p.feats` when the place is loaded. Rows pushed twice by two index copies: deduped by row.
+- **Before the merge of londat:** push docklandia (branch uk-lite to main) first; until its Pages serve the set the
+  index entry gives 404s (globe-check "no page errors" fails on the live tileset and features URLs).
+- **Open.** Landmark heights (towers, spires: OSM building parts or a kind rule); the mass reads as a grid from 20 km; the
+  Republic of Ireland's buildings are not drawn; names.json for search is 2.8 MB; Isle of Man and the Channel Islands are
+  not UK and not in the set.
+
 ## Three.js port: places look like the model (2026-10-22)
 
 Owner, 2026-10-22: "why do Leon and Sarajevo look so different to London?" Cause: `globe/places.js` drew the places with

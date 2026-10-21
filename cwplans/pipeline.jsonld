@@ -27243,7 +27243,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js",
+   "dct:title": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js; a place held in another repository (the UK lite set in danbri/docklandia) has tileBase, load_m, free_m, the boxes of its parts and absolute URLs",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"

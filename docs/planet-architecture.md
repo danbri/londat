@@ -240,6 +240,24 @@ London's 1.1 M buildings on this container (selection 1 minute, heights 1 minute
 the UK, region by region. The reader loads a place within 150 km: near a region border 3 or 4 places load at once
 (tileset.json about 1 MB each: implicit tiling, section 2, would cut that).
 
+### 3c. The UK as a lite set (built 2026-10-22)
+
+Owner, 2026-10-22: "can we pick a lite subset or slice somehow? Key landmarks, modest resolution?" Built instead of the
+1.3 to 1.9 GB of section 3b: the UK outside Greater London as a place of kind "lite" (region config
+https://github.com/danbri/londat/blob/main/docklands/geo/regions/uk-lite.js , tool build-place-tiles.mjs with
+https://github.com/danbri/londat/blob/main/cwplans/tools/place-lite.mjs ), held in the bulky-data repository
+https://github.com/danbri/docklandia (`data/gb/uk-lite/`, served at https://danbri.github.io/docklandia/data/gb/uk-lite/ ).
+
+- Two classes: 82,784 landmarks (OSM wikidata or wikipedia tag; notable kinds; named and 25 m or taller by a measured
+  height, or 3,000 m2 or more), each with its outline, id and card; and the merged mass of 22.7 M other buildings (OSM and
+  7.0 M Microsoft-only footprints) as one box a square: 200 m in towns (built share of the 400 m square >= 8 %) and 400 m
+  elsewhere at level 11, 800 m to 6.4 km at levels 10 to 7.
+- No building twice: a building whose centroid is in London's ONS polygon is London's (the same polygon and rule as
+  London's build); every other building belongs to the first part (ONS regions and countries) that holds its centroid.
+- 146.4 MB in all (tiles 129.5 MB: landmarks 53.6, mass 75.9; level 11 108.7 MB), 7,054 tiles, a root tileset.json of
+  97 kB with external tile sets per level-8 cell, landmark rows in shards per part. The reader loads it within 1,200 km.
+  Details, sizes by part and the traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
+
 ## 4. Adapters
 
 An adapter is a module plus a block in a region config. Contract:
