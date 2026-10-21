@@ -3452,7 +3452,9 @@ cells' builds). Plan for 3D Tiles: https://github.com/danbri/londat/blob/main/do
   version replaced them and lost the given-up normals). (6) Builds compete with frames: in software rendering (seconds a
   frame) 30 levels waited after 6 s; `lod-memory.mjs` now waits for `STATS.cells.pending` 0. (7) WebGL 2 binds the index
   buffer at each draw (`setVertexState`), so a new index attribute is seen; keep one index attribute and its capacity
-  and write it in place.
+  and write it in place. (8) The builds ask for frames (`draw()`), so frames come at moments they did not before: the
+  pixel style drew a frame while `setStyle` still awaited its palette ("setResolutionScale" of null); `pixFrame` now
+  waits for its pass. Look for such awaits when a page error appears only with the cells.
 - **Measured** (`lod-memory.mjs`, 390 x 844 @2, software WebGL 2, main and this branch run at the same time, one frame;
   "far" = the whole model from 8 km to the east, share hash `c=-1400,800,0,8000,1.2,0.3`):
 

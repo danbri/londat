@@ -3083,6 +3083,13 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   heap after GC 274 -> 277, 279 -> 295, 277 -> 276, 284 -> 309 MB. Hand-over (cw, world, Home): vertex and index buffers
   peak 100.8 -> 88.6 MB, largest one-frame rise 33.9 -> 34.2 MB, JS heap peak 459 -> 404 MB; settled 198.0 -> 196.2 MB GPU,
   352 -> 354 MB heap. Taps: 63 of 63 grid points name the same building as ?lod=0, from 8 km and at cw.
-- Tests: cells-check (new) all passed; CHECKS_LOG.
+- Tests: cells-check (new) all passed; cpu-copies-check all passed (21 lean levels made again after the globe, same
+  picture and tap); globe-check 390 x 844 @2, place-check León 390 x 844 @2, npm test 77/77, npm run check: passed;
+  globe-controls passed on the rerun (the fling failed once at load 7, as noted in the skill); paint-check area passed;
+  paint-check greenlanddock: the look passed, the motion tier failed on main and on the branch alike (no frame in the
+  1.5 s turn in software at 1288 x 966 @2; an environment limit); load.mjs cw, rotherhithe, area, greenlanddock, pixel,
+  ?vz=3, Night at both sizes: no page errors. The pixel style threw once ("setResolutionScale" of null: a frame while
+  setStyle awaited the palette, made likelier by the cells' builds asking for frames): styles.js pixFrame now waits for
+  its pass.
 - Open: the tileset (section 3a); the layers' own big meshes (foreshore, ring, under: not by cell); greens and a far
   terrain level coarser; the sorted index copies (about 11 MB); a phone measurement.
