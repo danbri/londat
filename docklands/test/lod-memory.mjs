@@ -80,19 +80,20 @@ for (const [w, h, dpr] of SIZES) {
     const D = __docklands3, G = D.globe, I = D.renderer.info.memory, out = []; let last = I.total, mode = G.mode, tHand = null; const t0 = performance.now();
     G.home();
     const f = () => { const now = performance.now(), d = I.total - last; last = I.total; if (G.mode !== mode) { mode = G.mode; tHand = now; }
-      out.push({ t: Math.round(now - t0), mode: G.mode, total: I.total, rise: d, heap: performance.memory ? performance.memory.usedJSHeapSize : 0 });
+      out.push({ t: Math.round(now - t0), mode: G.mode, total: I.total, attr: I.attributesSize, rise: d, heap: performance.memory ? performance.memory.usedJSHeapSize : 0 });
       if (G.isFlying() || tHand == null || now - tHand < 5000) { D.draw(); requestAnimationFrame(f); } else ok({ out, hand: tHand && Math.round(tHand - t0) }); };
     requestAnimationFrame(f); }));
   const after = tr.out.filter(x => x.mode === 'model'), mb = x => +(x / 1048576).toFixed(1);
   const peak = Math.max(...tr.out.map(x => x.total)), rise = Math.max(...tr.out.map(x => x.rise)), heapPeak = Math.max(...tr.out.map(x => x.heap));
   console.log(`${tag} hand-over memory${EXTRA}: model at cw ${JSON.stringify(m0)}; on the globe after the stay ${JSON.stringify(m1)} (freed ${JSON.stringify(freed)})`);
   console.log(`${tag} Home flight: ${tr.out.length} frames, hand-over at ${tr.hand} ms; GPU total peak ${mb(peak)} MB, largest rise in one frame ${mb(rise)} MB, JS heap peak ${mb(heapPeak)} MB; model frames after the hand-over: ${after.length}`);
-  console.log('   per frame (t ms, mode, GPU total MB, rise MB): ' + tr.out.map(x => `${x.t}:${x.mode[0]}:${mb(x.total)}:${mb(x.rise)}`).join(' '));
+  console.log('   per frame (t ms, mode, GPU total MB, of it attributes MB, rise MB): ' + tr.out.map(x => `${x.t}:${x.mode[0]}:${mb(x.total)}:${mb(x.attr)}:${mb(x.rise)}`).join(' ')); console.log(`${tag} attributes peak ${mb(Math.max(...tr.out.map(x => x.attr)))} MB`);
   console.log(`${tag} back in the model, 5 s on: ${JSON.stringify(await memNow(page))}`);
   // then until the model's buffers are all back and the globe has rested (globe.js stepReup, restGlobe), 90 s at most
   const end = await page.evaluate(() => new Promise(ok => { const D = __docklands3, G = D.globe, t0 = performance.now(), I = D.renderer.info.memory; let peak = 0;
     const f = () => { D.draw(); peak = Math.max(peak, I.total); if (((!G.reup || G.reup.done) && G.rested) || performance.now() - t0 > 90000) ok({ ms: Math.round(performance.now() - t0), reup: G.reup, rested: G.rested, peak_mb: +(peak / 1048576).toFixed(1) }); else requestAnimationFrame(f); }; f(); }));
-  console.log(`${tag} model buffers back and the globe rested after ${end.ms} ms more (reup ${JSON.stringify(end.reup)}, rested ${JSON.stringify(end.rested)}, GPU peak meanwhile ${end.peak_mb} MB): ${JSON.stringify(await memNow(page))}`);
+  const cdp = await ctx.newCDPSession(page); await cdp.send('HeapProfiler.collectGarbage');   // (the settled JS heap after a full collection)
+  console.log(`${tag} model buffers back and the globe rested after ${end.ms} ms more (reup ${JSON.stringify(end.reup)}, rested ${JSON.stringify(end.rested)}, GPU peak meanwhile ${end.peak_mb} MB), after GC: ${JSON.stringify(await memNow(page))}`);
   if (errors.length) { failed++; console.log('FAIL page errors: ' + errors.slice(0, 3).join(' | ')); }
   await ctx.close();
 }

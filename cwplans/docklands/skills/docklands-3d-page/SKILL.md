@@ -3400,6 +3400,79 @@ Owner, 2026-10-14: "make sure we make appropriate use of threejs lod support for
   (the parsed object, 7 MB, and the script source V8 keeps, 10.6 MB); a measurement on the iPhone (Safari Web
   Inspector, Timelines > Memory) and the WebGPU path with shadows (normals restored, then given up) on a real GPU.
 
+## Three.js port: model cells, LOD step 4 (2026-10-21)
+
+Owner, 2026-10-14: "make sure we make appropriate use of threejs lod support for everything"; KR3.1 (low-end devices) and
+KR2.3 (tiles). Step 4 of the LOD plan (activity log, 2026-10-14): the model's merged meshes by cell and level. Files:
+`docklands/cells.js` (new), `build.js` (`TILE` 1000, `buildBuildings({ level, tile })`, `LOD_*` triangle classes,
+`terrainLod`), `main.js` (`CELLS`, `bOpts()`, `CELLS.update()` after `LOD.update()`), `cpu-copies.js` ('rebuild' kind,
+`index`, `normalIndex`), `occlude.js` (`userData.full`), `styles.js` (`pixMeasured` colours every level). Tests:
+`docklands/test/cells-check.mjs` (new), `lod-memory.mjs` (view `far`, the model meshes' share, submit time, waits for the
+cells' builds). Plan for 3D Tiles: https://github.com/danbri/londat/blob/main/docs/planet-architecture.md section 3a.
+
+- **Cells and levels.** Cells of 1 km in the page frame (54 hold buildings). Each frame (`CELLS.update()`) a cell gets a
+  level from the distance of the eye to its box by the `ctx.lod` rule: full while 60 m covers `LOD.px` (32 CSS px: 1.9 km
+  on a 390 x 844 phone), simplified while 240 m does (7.5 km), far beyond; a cell goes to a coarser level only 10 % past
+  its distance. `?lod=0`: all full, no culling (before/after on the same code). `STATS.cells`: tiles by level, builds,
+  pending, freed, dropped, `levelTriangles`, and per kind (terrain, greens, roads, rail) culled/full/simplified/far cells,
+  triangles, composes.
+- **Buildings: one mesh a cell, its geometry swapped.** Everything that reads `ctx.meshes.buildings.children` (picking,
+  the occluder, styles.js, splats, music, the globe hand-over, the XR pick) still sees one mesh a cell. Levels (build.js
+  `buildBuildings({ level, tile })`): 1 = flat roofs, no building under 8 m across and 12 m high; 2 = buildings 20 m
+  across or 30 m high, the outer ring Douglas-Peucker 2.5 m, no holes, no bottom; towers (towers.json tiers) at every
+  level. The simplified level keeps 51 % of the full level's triangles, the far level 24 % (`levelTriangles` at
+  `?view=area`). Facades, Night windows, the Realistic look and the styles work unchanged (same vertex layout). Levels
+  are built in the background when first wanted (nearest first, 8 ms slices, a cell in the frustum widened 1.4 x),
+  never while the globe holds the view; until then the cell keeps the level it has.
+- **Picking stays exact.** Each building mesh's `raycast` uses the full geometry through a proxy mesh a cell (parent =
+  the buildings group, no `userData.model`), so `hit.object.geometry.userData.bi[hit.face.a]` (main.js `pickHit`, xr.js,
+  api.js) names the same building as before at any level: cells-check, 63 of 63 grid taps from 8 km and at cw equal to
+  `?lod=0`; One Canada Square's card the same. The occluder also reads `userData.full`.
+- **Memory.** A simplified or far level is lean: once uploaded it gives up every CPU array but `userData.bi`
+  (cpu-copies.js kind 'rebuild': if three.js uploads it again, after globe.js freeModel, the arrays come from building
+  the level again). A level not drawn for 5 s: simplified and far are dropped; the full level gives back its GPU buffers
+  (its CPU copies stay for taps and the occluder). The first version kept the levels' arrays: JS heap +46 MB at
+  `?view=area` and +52 MB from 8 km; lean: +16 and +25 MB (the rest: the sorted index copies below, the levels' `bi`,
+  the terrain's two index arrays).
+- **Terrain, greens, roads, rail: one mesh each, the index by cell.** Their triangles are sorted once by cell and level
+  class (build.js `LOD_*` codes lo x 3 + hi: road and rail sides full only, 4 m roads and greens under 600 m2 not far,
+  the terrain's stand-ins simplified and far only); each frame the cells in the widened frustum, each at its level, are
+  copied into the index drawn (one draw call as before; written again only when a cell changes level or view, 0.1 to
+  5 ms; `addUpdateRange`, drawRange). The terrain stand-ins (build.js `terrainLod`): a 2 x 2 block of 20 m squares,
+  present and not cut by a water outline, whose five inner grid points lie within 0.5 m of the 40 m triangles (same
+  diagonal) is drawn as 2 triangles; T-junction gaps are at most 0.5 m. Greens, roads and rail are lean too (their index
+  array is made again from the cells when needed); the terrain's is kept (the drone and the layers read it).
+- **Traps.** (1) layers/tide.js makes a second terrain geometry that SHARES `userData` with the first: per-geometry
+  state in `userData` is seen by both (the first try thought the tide's geometry was prepared and drew it whole). Keep
+  such state in a WeakMap keyed by the geometry. (2) The terrain index is not in square order after preparing: tide's
+  `terrainIndexWithout` is fine (it reads the grid), but `terrainLod` classes triangles by the square under their centre,
+  not by position in the index. (3) A geometry that has left its mesh for 60 s gets back a plain index (`unprepare`). (4)
+  `computeVertexNormals` with the composed index zeroes the normals of cells out of view: cpu-copies.js uses
+  `userData.normalIndex` (every triangle). (5) A second `CPU.watch` of one geometry must merge the specs (the first
+  version replaced them and lost the given-up normals). (6) Builds compete with frames: in software rendering (seconds a
+  frame) 30 levels waited after 6 s; `lod-memory.mjs` now waits for `STATS.cells.pending` 0. (7) WebGL 2 binds the index
+  buffer at each draw (`setVertexState`), so a new index attribute is seen; keep one index attribute and its capacity
+  and write it in place.
+- **Measured** (`lod-memory.mjs`, 390 x 844 @2, software WebGL 2, main and this branch run at the same time, one frame;
+  "far" = the whole model from 8 km to the east, share hash `c=-1400,800,0,8000,1.2,0.3`):
+
+  | view | frame triangles | draw calls | buildings / terrain / greens / roads / rail drawn | GPU total | JS heap after GC |
+  |---|---|---|---|---|---|
+  | `?view=cw` | 3.64 M -> 2.16 M | 167 -> 157 | 166k / 214k / 152k / 397k / 152k -> 165k / 52k / 44k / 62k / 19k | 185.6 -> 186.3 MB | 274 -> 277 MB |
+  | `?view=area` | 4.58 M -> 2.50 M | 210 -> 179 | 698k / 214k / 152k / 397k / 152k -> 278k / 109k / 106k / 44k / 33k | 210.4 -> 180.9 MB | 279 -> 295 MB |
+  | `?view=greenlanddock` | 3.79 M -> 2.24 M | 258 -> 253 | 214k / ... -> 188k / 54k / 47k / 46k / 7k | 189.5 -> 189.4 MB | 277 -> 276 MB |
+  | far, 8 km | 4.95 M -> 2.78 M | 232 -> 216 | 839k / 214k / 152k / 397k / 152k -> 336k / 118k / 134k / 50k / 33k | 234.1 -> 197.8 MB | 284 -> 309 MB |
+
+  The time to submit a frame in software rendering under the other agents' load (3 to 12 s at cw and far, 9 to 22 ms
+  at area) says nothing about a phone; not used. Hand-over (cw, out to the world, 4.5 s, Home): HANDOVER_NUMBERS.
+  cells-check (?lod=0 against the default, same code, layers trees, water, tide, walls, stations, ring): from 8 km the
+  frame 6.78 M -> 2.30 M triangles, draw calls 188 -> 126.
+- **Not done.** The cells as a 3D Tiles 1.1 tileset (plan and the blockers: docs/planet-architecture.md 3a: runtime
+  rebuild options need a GPU feature table first); the layers' own big meshes (foreshore 199k triangles, ring 174k,
+  under 142k at cw: not cut by cell); greens at a coarser level (cut on the terrain's 20 m triangles: 134k from 8 km); a
+  coarser terrain level far away (80 m); trees and model cells share no cell grid yet (500 m and 1 km); the sorted index
+  copies (about 11 MB); a measurement on a phone GPU.
+
 ## Load speed on Pages: the service worker, load hints, the area loader, the Pages size (2026-10-20)
 
 Owner, 2026-10-20: "We aren't setting up non-GH hosting in the very immediate future so any GH based Range request
