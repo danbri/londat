@@ -2892,3 +2892,27 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   with the next scheduled run that GitHub fires: count runs per day on the dashboard to score KR5.1. OKR draft scores
   updated (O1 0.30, O2 0.41, O3 0.40, O4 0.25, O5 0.29, O6 0.50; final on 2026-10-25). Comments on issues #2 and #9.
   Still the owner's: the one-finger gesture rule; Leiden; FGU access (#9).
+
+## 2026-10-21: KR5.1 and KR5.2 on the dashboard; the Docklands page without 3D (KR3.2, KR3.3)
+- Dashboard https://danbri.github.io/londat/dashboard/ : section "Cache runs per day (KR5.1)" (runs per UTC day, 14 days,
+  target 20, from the tree of `cwplans/cache/runs/` in one API request; bar chart with the numbers, a table) and section
+  "5-minute live feed (KR5.2)" (age of aircraft.json, ships.json, metar.json on the branch live-cache; gaps over 15 min
+  inside their windows from the sample times; 7 days estimated from the live-cache job runs; the list of the last gaps).
+  Pure functions in `dashboard/metrics.js`, unit tests in `cwplans/tools/test/dashboard-metrics.test.mjs` (npm test),
+  headless check `dashboard/test/check.mjs --gh`. Numbers at 03:35 UTC: KR5.1 0 of 13 days on target (3 to 7 runs a day,
+  5 on 2026-10-20); KR5.2 0 % gaps (aircraft 12 samples in 1 h, ships 24 in 2 h, METAR 48 reports), 7 days 0 % in 86 job runs.
+- Found: without WebGL the page stayed on "Starting the 3D view..." for ever (main.js fired `docklands-no3d` before
+  textview.js listened; `?text=1` showed the text only under the `#boot` cover). Fixed with a flag
+  (`globalThis.__docklandsNo3d`) and the event; index.html does not load main.js for `?no3d=1` or a browser without
+  WebGPU and WebGL 2.
+- New `docklands/no3d.js`: a canvas 2D map (water, parks, roads, rail, buildings in 500 m squares, names, the field of
+  view; drag, pinch, wheel, keys) and a data-only `window.docklands` (`no3d: true`; goTo, getView, describeView,
+  featuresAt, findPlaces, setTime, listViews, tools, WebMCP). The address is the one state: moves write the 3D share
+  hash. Lesson: one Path2D of 41,803 outlines took 14 s to make; 500 m squares made on demand: first map in 80 to 140 ms.
+- Tests: `docklands/test/no3d-check.mjs` (390x844@2) all passed; `api-check.mjs --only 3` all passed (failed before the
+  fix); npm test 83/83 (6 new); npm run check OK. Links: https://danbri.github.io/londat/docklands/?no3d=1&view=cw ,
+  https://danbri.github.io/londat/docklands/?no3d=1&place=Greenland%20Dock
+- Skills: docklands-3d-page "No 3D: text view, 2D map and page API (KR3.2, 2026-10-21)"; cwplans-londat-cache "The
+  dashboard: KR5.1 and KR5.2 (2026-10-21)". OKRS.md draft rows KR3.2 (0.3 to 0.7), KR5.1 (0.15, now measured), KR5.2
+  (0.5 to 0.8). Open: the head's modulepreload hints still fetch three.js on the no-3D path; no layers or record card
+  without 3D; not tried on a real device without WebGL.

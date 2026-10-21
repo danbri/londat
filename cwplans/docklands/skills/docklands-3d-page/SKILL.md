@@ -2381,6 +2381,54 @@ beyond the arrow keys; labels and the tab order of the many label buttons; i18n 
 WebMCP is untested in a real browser host (only the mock); the API has no events for selection or layer changes; the
 MCP `page_call` loads the port in software (30 s to 2 min).
 
+## No 3D: text view, 2D map and page API (KR3.2, 2026-10-21)
+
+OKR KR3.2 ("a 2D map and a text view work without WebGL and WebGPU; same deep links") and KR3.3. Files:
+`docklands/no3d.js` (the 2D map and the data-only page API), `docklands/textview.js` (the text view; it loads no3d.js),
+small hooks in `docklands/main.js` and `docklands/index.html`. Test: `docklands/test/no3d-check.mjs` (11 checks + 5 at
+390x844@2; also `api-check.mjs --only 3`).
+
+- **The boot fault (found 2026-10-21).** Before, a browser with no renderer showed "Starting the 3D view..." for ever:
+  main.js dispatched `docklands-no3d` when `renderer.init()` failed, but index.html loads textview.js after main.js, and
+  the failure came before textview.js ran, so nobody heard the event (api-check part 3 failed for `?view=greenlanddock`;
+  the `?text=1` case passed only because it opens the text view on a 1.5 s timer, and even then the `#boot` cover,
+  z-index 50, hid it: a headless check of the DOM does not see a cover; take a screenshot). Now: main.js sets
+  `globalThis.__docklandsNo3d = { error }` and then fires the event; textview.js checks the flag when it runs and listens
+  for the event; `startNo3d()` hides `#boot` (`display: none`: the page CSS `#boot{display:flex}` beats `[hidden]`), opens
+  the text view, then imports no3d.js.
+- **Fast path.** index.html's area loader does not load main.js at all for `?no3d=1` or a browser with
+  `!navigator.gpu && !window.WebGL2RenderingContext` (no constructor: the browser has no WebGL 2; test `navigator.gpu`,
+  not `'gpu' in navigator`, so a stubbed getter counts). A browser that has the constructor but cannot make a context
+  (blocklisted GPU, `--disable-webgl`) goes through main.js and its failure. The static `<link rel=modulepreload>` hints in
+  the head still fetch three.js (2 requests, counted by the test, not failed): guard them if the no-3D path must be
+  lighter on a slow link.
+- **One state: the address.** Every move (goTo, a link in the text, the map's drag, keys or buttons, setTime) writes the
+  3D page's share hash `#v=1&c=tx,tz,ty,dist,yaw,pitch[&f=h<hfov>][&vw=<view>][&t=<wall clock>]` with
+  `history.replaceState` and removes `ll`, `view`, `place`, `t` from the query; textview.js `linkCamera()` reads the
+  address again each time (it parsed `location.search` once at load before). So the link of any no-3D view opens the same
+  view in 3D, and `?ll=`, `?view=`, `?place=` (no3d.js reads it) work as deep links in both. A named view keeps its photo
+  lens (`f=h`); a map move or a point drops it.
+- **Page API without 3D.** `window.docklands` with `no3d: true`, `mode: 'no3d'`, version 1.0.0 (api.js), `reason`, and
+  goTo, getView, describeView, featuresAt (no lon/lat = the target point), findPlaces, setTime, listViews, listLayers
+  (only `map2d`), setLayer('map2d'), shareLink, tools (8: no list_layers / set_layer), callTool, WebMCP registration,
+  `timing`, `keys` (a promise: true once building-keys.json and the registry index atlas.json are in, about 4.7 MB after
+  the first answer; then One Canada Square has its name, and findPlaces finds registry buildings). No globe: a point
+  outside the model box is an error that says so. No occlusion and no live counts in the description.
+- **The 2D map.** Canvas 2D, north up (model grid north, about 1.5° from true north), model metres to pixels by one
+  `setTransform`; Path2D objects in model metres made once: water one Path2D per polygon (`evenodd` for its islands;
+  all water in one path cancelled where polygons overlap), greens one path, roads by class (widths 2.2, 1.5, 0.9 px, the
+  smallest class only when zoomed in), rail dashed; buildings (outer rings only) when the scale is over 0.12 px/m.
+  **One Path2D of all 41,803 building outlines took 14 s to make in Chromium (the cost grows faster than the number of
+  subpaths; 1,460 greens took 26 ms)**: buildings are cut into 500 m squares by centroid, each square's Path2D made when
+  first in view; the first map at `?view=cw` is drawn 80 to 140 ms after no3d.js starts and the API is ready 0.7 to 1.1 s
+  after the page opens (headless, local server). Names: districts, water, stations, parks, crossings, places, then
+  buildings (zoomed in), no overlap, none cut by the edge, not over the credit line. The eye, the field of view of the
+  text view's camera and the target cross are drawn. Drag, two-finger pinch, wheel, arrow keys, + and −, the buttons; a
+  tap or Enter writes `featuresAt` text to a polite live region under the map; the time box and "Now" call setTime. The
+  canvas has `role=img` with an `aria-label` (width across, the nearest place) and `aria-describedby` help.
+- **Not yet.** No layers (ships, aircraft, live data) and no record card without 3D; the atlas page
+  (https://danbri.github.io/londat/cwplans/atlas/) remains the fuller 2D map, without the same deep links.
+
 ## Three.js port: boats and moored barges (2026-10-11)
 
 Owner, 2026-10-11: "Also the rendered boats, can we make them more realistic? And add generic barge outline shaped boats

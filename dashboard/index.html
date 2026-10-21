@@ -627,7 +627,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
 
   // ---------- KR5.1: hourly cache runs per UTC day, 14 days (dashboard/metrics.js), target 20
   const M = window.DashMetrics;
-  const fmtDay = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+  const fmtDay = new Intl.DateTimeFormat(undefined, { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
   const dayName = d => fmtDay.format(new Date(d + 'T12:00:00Z'));
   async function sectionRunsPerDay(el) {
     const now = Date.now(), DAYS = 14, TARGET = 20, start = Date.parse(M.utcDay(now - (DAYS - 1) * DAY) + 'T00:00:00Z');

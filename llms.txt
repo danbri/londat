@@ -21,6 +21,7 @@ All positions in the page API and the MCP tools are WGS84 longitude and latitude
 - A time: `?t=2026-10-11T21:30` (wall-clock time of the place) or a share link's `t=`.
 - The share link of any view (Menu > Views > Share this view, or `shareLink()`): `#v=1&c=...` holds the camera, `&t=` the time, `&id=osm:w123` the selected building.
 - Text view: add `&text=1`. Spoken descriptions for screen readers: add `&describe=1`.
+- Without 3D (no WebGL 2 and no WebGPU, or `?no3d=1`): the text view, a 2D map and `window.docklands` from the data alone (`docklands.no3d === true`; goTo, getView, describeView, featuresAt, findPlaces, setTime, listViews; no globe). Moves write the 3D share hash, so the same link opens in 3D. Example: https://danbri.github.io/londat/docklands/?no3d=1&view=cw
 
 ## Page API (window.docklands, version 1.0.0)
 

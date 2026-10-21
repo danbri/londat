@@ -10829,6 +10829,10 @@
    "what": "Tests (node --test) of what the Pages site leaves out: the staging loop of pages.yml removes the bulk dataset folders of feeds/london-datastore/ and feeds/portals/ and keeps the four Datastore layers the 3D pages draw; data-base.js sends the left-out paths to raw.githubusercontent.com; no page names a left-out folder directly."
   },
   {
+   "tool": "tools/test/dashboard-metrics.test.mjs",
+   "what": "Tests (node --test) of dashboard/metrics.js, the numbers of the londat dashboard for KR5.1 and KR5.2: run times from run file paths and cache commit messages, runs per UTC day over 14 days with the target 20, gaps over 15 minutes in sample times (inside the window, before the first sample, the open gap to now), the live-cache file ages and METAR report gaps, and gaps between live-cache job runs."
+  },
+  {
    "tool": "tools/test/place-lod.test.mjs",
    "what": "Tests (node --test) of tools/place-lod.mjs: the quadtree (four children or none, the core as level-15 leaves), the selection of Overture records (OSM geometry only, the IGN floors apart, tunnels out), the glTF writer (quantization, a strip and a list sharing positions, instances), relative transforms, the eased DEM."
   }

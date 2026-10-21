@@ -326,6 +326,11 @@ interface. For machines and agents the summary is https://danbri.github.io/londa
 
 ### Page API
 
+Without 3D (a browser with neither WebGPU nor WebGL 2, a renderer that fails, or `?no3d=1`) the page shows the text view
+and a 2D map (`no3d.js`, canvas 2D) and `window.docklands` is a data-only subset with `no3d: true`: goTo, getView,
+describeView, featuresAt, findPlaces, setTime, listViews, shareLink, tools (no layers, no globe). Every move writes the
+share hash `#v=1&c=...`, so the link opens the same view in 3D. Example: https://danbri.github.io/londat/docklands/?no3d=1&view=cw
+
 `window.docklands` (`api.js`), version `1.0.0` (`docklands.version`; `describeVersion` for the text). Ready when
 `docklands.ready` resolves (event `docklands-api-ready`). The interface is locale-free: WGS84 longitude and latitude in
 degrees, metres, degrees clockwise from true north, ISO 8601 times. Heights are above the local datum

@@ -21,7 +21,7 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
 
   // ---------- the state is the address
   function state() { const { c, time } = linkCamera(); const t = time ? parseTime(time, TZ) : NaN; return { c, time: isFinite(t) ? t : Date.now(), timeSet: !!time && isFinite(t) }; }
-  const wall = t => { const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
+  const wall = t => { const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
     return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`; };
   function write(c, t) {   // the share hash of the 3D page (index.html / main.js writeHash): c= and t= (London wall-clock time)
     const q = new URLSearchParams(location.search); for (const k of ['ll', 'view', 'place', 't', 'ht']) q.delete(k);

@@ -210,3 +210,30 @@ GitHub ran the hourly schedule only 5 to 7 times a day on this repository (KR5.1
 true`) and starts the same loop, so a start never doubles the runs. To stop the loop: disable the workflow in the
 Actions tab. Each finished job also restarts live-cache.yml through its `workflow_run` trigger (harmless: that loop
 restarts itself).
+
+## The dashboard: KR5.1 and KR5.2 (2026-10-21)
+
+https://danbri.github.io/londat/dashboard/ has two sections for the O5 key results; the numbers come from
+`dashboard/metrics.js` (pure functions; a classic script, `window.DashMetrics` in the page, `module.exports` in Node),
+unit-tested in `cwplans/tools/test/dashboard-metrics.test.mjs` (npm test). Headless check:
+`node dashboard/test/check.mjs --gh [--width 390 --height 844]` (API requests through the signed-in `gh` CLI: this
+container's address had used up the 60 unauthenticated requests; raw files through Node).
+
+- **KR5.1, runs per UTC day (14 days, target 20).** One GitHub API request: the tree
+  `GET /repos/danbri/londat/git/trees/main:cwplans/cache/runs?recursive=1` (the `main:<path>` form works; about 400 run
+  files; kept 15 min in sessionStorage). Each run that commits writes one file `runs/<day>/live-<day>THHMMZ.json.gz`, so a
+  file is a run. A closed month's run files are replayed into `live-YYYY-MM.sqlite` and deleted (first run of the next
+  month): for the days of the window before the first day of the open month the page reads the cache commits instead
+  (`/commits?path=cwplans/cache/latest.json&since&until`, up to 3 pages, message `cache: live state <ISO>Z`). Shows
+  yesterday, today so far, days on target, a bar chart (the number on each bar, dashed target line, today outlined) and a
+  14-row table. Measured 2026-10-21 03:35 UTC: 0 of 13 whole days reached 20 (3 to 7 a day, mean 4.9; 5 on 2026-10-20).
+- **KR5.2, gaps in the 5-minute feed.** The three files of the branch live-cache from raw.githubusercontent.com (no API
+  quota): `aircraft.json` `snaps[].t` (ms, one per successful adsb.lol answer, `keep_s` 3600), `ships.json` `snaps[].t`
+  (`keep_s` 7200), `metar.json` `obs[].t` (s, the reports of 24 h; the API answers 24 h each time, so a fetch gap does not
+  show there: only the file age, and gaps of over 45 min between reports, which are missing at the source). A gap is more
+  than 15 min with no sample inside the window [now − keep, now]; the time before the first sample and after the last
+  (to now: the open gap) counts. Over days the files hold nothing, so the 7-day figure is an estimate from the runs of
+  live-cache.yml (one API request, `per_page=100`; union of [run_started_at, updated_at or now]; a job that runs but
+  fails to fetch is not seen). Measured 2026-10-21 03:35 UTC: files 2 to 3 min old, aircraft 0 % (12 samples, one every
+  5 min), ships 0 % (24), METAR 48 reports, no gap; 7 days: 0 % in 86 job runs (the loop and its restarts overlap).
+- The dashboard now makes about 7 API requests a check (was 5).
