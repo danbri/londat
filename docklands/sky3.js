@@ -44,19 +44,44 @@ export function vzUndistort(m, vzInv) {
   m.setupModelViewProjection = () => cameraProjectionMatrix.mul(cameraViewMatrix).mul(modelWorldMatrix).mul(vec4(positionLocal.mul(vec3(1, vzInv, 1)), 1));
   m.needsUpdate = true; return m;
 }
+// the sun or the moon seen from any point (a place on the globe: globe/place-look.js): as horizon(), for an observer at lon, lat
+export function horizonAt(body, t, lon, lat) { if (!AE) return null; const o = new AE.Observer(lat, lon, 0), d = new Date(t), q = AE.Equator(body, d, o, true, true), h = AE.Horizon(d, o, q.ra, q.dec, 'normal'), g = AE.Horizon(d, o, q.ra, q.dec);
+  return { az: h.azimuth, alt: h.altitude, altGeo: g.altitude, dist: q.dist }; }
+export const moonPhase = t => AE ? AE.Illumination('Moon', new Date(t)).phase_fraction : 0.5;
+// the light rig from the sun and the moon (S, M: horizon records), the moon's lit fraction and the weather (or null): the
+// intensities and colours of the sun, the moon and the sky fill; one model for the Docklands model (Sky3.applyLight) and the
+// places on the globe (globe/place-look.js)
+export function lightRig(S, M, ph, w) {
+  const day = sstep(S.alt, -6, 4), up = sstep(S.alt, -2, 15);
+  const low = w ? clamp01(w.low ?? w.cover) : 0, mid = w ? clamp01(w.mid ?? 0) : 0, high = w ? clamp01(w.high ?? 0) : 0, cover = w ? clamp01(w.cover ?? Math.max(low, mid, high)) : 0;
+  // direct sun through the cloud layers (stated factors, not measured: thick low cloud passes about 15%, mid 30%, high 70%)
+  const clear = !!(w && w.clear), tr = clear ? 1 : (1 - 0.85 * low) * (1 - 0.7 * mid) * (1 - 0.3 * high);   // clear air (layers/weather.js): the light as under a fair sky
+  const gc = clear ? 0 : cover;
+  return { day, up, low, mid, high, cover, tr,
+    sun: { i: 3.2 * up * tr, hsl: [0.08, 0.6 * (0.4 + 0.6 * tr), 0.55 + 0.4 * sstep(S.alt, 0, 25)] },
+    moon: { i: M && M.alt > 0 ? 0.25 * ph * (1 - day) * (1 - 0.85 * cover) : 0 },
+    fill: { i: (0.18 + 1.0 * day) * (1 - 0.25 * gc), hsl: [0.6, 0.5 * (1 - 0.7 * gc), 0.45 + 0.3 * day] } };
+}
+// the day sky (SkyMesh, TSL atmosphere scattering) as the model draws it: calibrated on the owner's photo of Greenland Dock
+// (below); used by Sky3 and by the places on the globe
+export function makeSkyMesh() {
+  const sky = new SkyMesh(); sky.scale.setScalar(10000); sky.material.depthTest = false; sky.material.depthWrite = false; sky.renderOrder = -10; sky.frustumCulled = false;
+  sky.turbidity.value = 2; sky.rayleigh.value = 1.0; sky.mieCoefficient.value = 0.004; sky.mieDirectionalG.value = 0.8;
+  sky.userData.gain = uniform(0.46); { const c = sky.material.colorNode; sky.material.colorNode = vec4(c.xyz.mul(sky.userData.gain), 1); }
+  if (sky.cloudCoverage) sky.cloudCoverage.value = 0.25;
+  return sky;
+}
 const MOON_R = 14000, MOON_MIN = 0.3;   // the disc's distance (m, inside the far plane) and its least angular radius (degrees: about 5 px on a 800 px tall view)
 
 export class Sky3 {
   constructor(scene) {
     this.scene = scene; this.t = Date.now(); this.wx = null; this.base = null; this.cutDark = false;
     this.vzInv = uniform(1);   // 1 / the vertical exaggeration (main.js setVz): keeps the moon disc round
-    this.sky = new SkyMesh(); this.sky.scale.setScalar(10000); this.sky.material.depthTest = false; this.sky.material.depthWrite = false; this.sky.renderOrder = -10; this.sky.frustumCulled = false;   // drawn first, behind everything, inside the far plane (20 km at least)
+    this.sky = makeSkyMesh();   // drawn first, behind everything, inside the far plane (20 km at least)
     // calibrated on the owner's photo of Greenland Dock, 2026-10-11 12:45 BST (clear blue sky, sun 31 deg up; data/images/contrib/greenlanddock/):
     // turbidity 4, rayleigh 1.6 and the SkyMesh output as it is gave luma 0.82 at 28 deg above the horizon against 0.58 in
     // the photo; turbidity 2, rayleigh 1.0 and a gain of 0.46 give about 0.58 (the photo converted from Display P3 to sRGB) (docklands/test/photo-tones.mjs)
-    this.sky.turbidity.value = 2; this.sky.rayleigh.value = 1.0; this.sky.mieCoefficient.value = 0.004; this.sky.mieDirectionalG.value = 0.8;
-    this.skyGain = uniform(0.46); { const c = this.sky.material.colorNode; this.sky.material.colorNode = vec4(c.xyz.mul(this.skyGain), 1); }
-    if (this.sky.cloudCoverage) this.sky.cloudCoverage.value = 0.25;
+    this.skyGain = this.sky.userData.gain;
     vzUndistort(this.sky.material, this.vzInv);
     scene.add(this.sky);
     this.sun = new THREE.DirectionalLight(0xfff4e5, 3); this.sun.castShadow = false; scene.add(this.sun, this.sun.target);
@@ -133,13 +158,11 @@ export class Sky3 {
   // weather (layers/weather.js): { cover, low, mid, high (0 to 1), visibility (m) or null, precip (mm/h) } or null (none known)
   setWeather(w) { this.wx = w; this.applyLight(); }
   applyLight() {
-    const B = this.base; if (!B) return; const { S, M, ph, day, up } = B, w = this.wx;
-    const low = w ? clamp01(w.low ?? w.cover) : 0, mid = w ? clamp01(w.mid ?? 0) : 0, high = w ? clamp01(w.high ?? 0) : 0, cover = w ? clamp01(w.cover ?? Math.max(low, mid, high)) : 0;
-    // direct sun through the cloud layers (stated factors, not measured: thick low cloud passes about 15%, mid 30%, high 70%)
-    const clear = !!(w && w.clear), tr = clear ? 1 : (1 - 0.85 * low) * (1 - 0.7 * mid) * (1 - 0.3 * high);   // clear air (layers/weather.js): the light as under a fair sky
-    this.sun.intensity = 3.2 * up * tr; this.sun.color.setHSL(0.08, 0.6 * (0.4 + 0.6 * tr), 0.55 + 0.4 * sstep(S.alt, 0, 25));
-    this.moon.intensity = M.alt > 0 ? 0.25 * ph * (1 - day) * (1 - 0.85 * cover) : 0;
-    const gc = clear ? 0 : cover; this.fill.intensity = (0.18 + 1.0 * day) * (1 - 0.25 * gc); this.fill.color.setHSL(0.6, 0.5 * (1 - 0.7 * gc), 0.45 + 0.3 * day);
+    const B = this.base; if (!B) return; const { S, M, ph, day } = B, w = this.wx;
+    const L = lightRig(S, M, ph, w), { low, mid, high, cover, tr } = L;
+    this.sun.intensity = L.sun.i; this.sun.color.setHSL(...L.sun.hsl);
+    this.moon.intensity = L.moon.i;
+    this.fill.intensity = L.fill.i; this.fill.color.setHSL(...L.fill.hsl);
     this.sky.visible = day > 0.02 && !this.cutDark; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
     if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? cover : 0.25; this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
     const vis = w && w.visibility != null ? w.visibility : null;

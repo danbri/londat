@@ -29,6 +29,16 @@ export default {
     surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer',
       // extra building geometry classes of the city ring, each removable by deleting its id here (then rebuild)
       geometry: ['overture-ms-geometry'] }, search: ['Vijećnica', 'Вијећница', 'Stari Grad', 'Baščaršija', 'Sarajevo'],
+    // look and greens (globe/place-look.js, cwplans/tools/build-place-greens.mjs): stated assumptions, not data. look: wall
+    // and roof materials by facade style where OSM has no colour (rendered Austro-Hungarian blocks, white Ottoman houses,
+    // concrete estates; red clay roofs); greens.mix: species of a tree with no taxon by setting (lime and horse chestnut
+    // streets, beech and oak woods on the slopes, willow and poplar on the Miljacka)
+    look: { wall: { house: { renderWhite: 35, renderCream: 30, renderPastel: 15, renderOchre: 10, timber: 10 }, flats: { renderCream: 30, renderOchre: 20, renderWhite: 20, renderPastel: 15, stone: 15 },
+        estate: { concrete: 50, renderWhite: 25, brickBrown: 15, renderPastel: 10 }, office: { concrete: 35, stone: 25, glassS: 20, renderWhite: 20 }, civic: { stone: 45, renderOchre: 30, renderCream: 25 }, shed: { metal: 50, concrete: 30, brickBrown: 20 } },
+      roof_pitched: { clay: 85, ctile: 10, metal: 5 }, roof_flat: { gravel: 35, membrane: 35, felt: 30 } },
+    greens: { mix: { street: [['lime', 25], ['horse-chestnut', 15], ['plane', 15], ['maple', 15], ['birch', 8], ['ash', 7], ['cherry', 5], ['conifer', 5], ['pine', 5]],
+      park: [['lime', 20], ['horse-chestnut', 15], ['maple', 15], ['conifer', 10], ['pine', 10], ['oak', 10], ['birch', 10], ['plane', 10]],
+      wood: [['beech', 25], ['oak', 25], ['hornbeam', 15], ['pine', 15], ['conifer', 10], ['ash', 10]], water: [['willow', 40], ['alder', 25], ['poplar', 20], ['plane', 15]] } },
     roof_rule: { shape: 'hipped', pitch_deg: 32, kinds: ['yes', 'house', 'residential', 'apartments', 'detached', 'semidetached_house', 'terrace', 'school', 'retail', 'commercial', 'office', 'public', 'civic', 'hotel', 'church', 'chapel', 'mosque', 'garage'], min_rect: 0.8, max_area_m2: 1500, max_wall_m: 24 } },
   services: { weatherPoint: { lon: 18.43335, lat: 43.85917 }, aircraft: { lon: 18.43335, lat: 43.85917, nm: 25 }, metar: 'LQSA' },
   adapters: [

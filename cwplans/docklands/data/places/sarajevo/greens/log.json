@@ -1,0 +1,210 @@
+{
+ "about": "Build log of the water and trees of Stari Grad, Sarajevo (tools/build-place-greens.mjs)",
+ "fetches": {
+  "osm": {
+   "url": [
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.418579,43.851929,18.446045,43.868408"
+   ],
+   "fetched": "2026-10-21T10:12:13.718Z",
+   "as_fetched": [
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.418579,43.851929,18.446045,43.868408",
+     "bytes": 11112081,
+     "sha256": "97549c5a9c06a6911d92946e57eb0df5e14fafd88c1d9afb458f4e3b435d93f3"
+    }
+   ],
+   "elements": 57374,
+   "latest_element_timestamp": "2026-10-20T20:57:33Z",
+   "sha256": "bb1bf6498aa4d041e0dcf50b19cbe77d17a14e5d8d2420151f6d61da882d5c62",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors"
+  },
+  "relations": {}
+ },
+ "activities": [
+  {
+   "activity": "19b67fef06e0e65c",
+   "operation": "place-greens",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-greens.mjs",
+   "inputs": [
+    {
+     "label": "OSM map.json of the area",
+     "path": "data/raw/places/sarajevo/greens/osm-map.json.gz",
+     "sha256": "bb1bf6498aa4d041e0dcf50b19cbe77d17a14e5d8d2420151f6d61da882d5c62"
+    }
+   ],
+   "params": {
+    "area": [
+     18.4185791015625,
+     43.8519287109375,
+     18.446044921875,
+     43.868408203125
+    ],
+    "row_m": 8,
+    "wood_m": 6.5,
+    "park_m": 15,
+    "water_side_m": 25,
+    "mix": {
+     "street": [
+      [
+       "lime",
+       25
+      ],
+      [
+       "horse-chestnut",
+       15
+      ],
+      [
+       "plane",
+       15
+      ],
+      [
+       "maple",
+       15
+      ],
+      [
+       "birch",
+       8
+      ],
+      [
+       "ash",
+       7
+      ],
+      [
+       "cherry",
+       5
+      ],
+      [
+       "conifer",
+       5
+      ],
+      [
+       "pine",
+       5
+      ]
+     ],
+     "park": [
+      [
+       "lime",
+       20
+      ],
+      [
+       "horse-chestnut",
+       15
+      ],
+      [
+       "maple",
+       15
+      ],
+      [
+       "conifer",
+       10
+      ],
+      [
+       "pine",
+       10
+      ],
+      [
+       "oak",
+       10
+      ],
+      [
+       "birch",
+       10
+      ],
+      [
+       "plane",
+       10
+      ]
+     ],
+     "wood": [
+      [
+       "beech",
+       25
+      ],
+      [
+       "oak",
+       25
+      ],
+      [
+       "hornbeam",
+       15
+      ],
+      [
+       "pine",
+       15
+      ],
+      [
+       "conifer",
+       10
+      ],
+      [
+       "ash",
+       10
+      ]
+     ],
+     "water": [
+      [
+       "willow",
+       40
+      ],
+      [
+       "alder",
+       25
+      ],
+      [
+       "poplar",
+       20
+      ],
+      [
+       "plane",
+       15
+      ]
+     ]
+    },
+    "about": "trees placed by rule: every wood_m in natural=wood / landuse=forest, every park_m in leisure=park and garden areas with no mapped tree inside (grass and meadow get none), on a grid jittered by a stable hash; never inside a building or water"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/sarajevo/greens/greens.json",
+     "sha256": "2f7185a584e3d76d672bc6901c7f3853242dfffc705d82e547d0c003b63b3af4",
+     "bytes": 519891
+    }
+   ],
+   "counts": {
+    "water_polygons": 3,
+    "trees": 8274,
+    "osm_tree": 174,
+    "osm_tree_row": 15,
+    "rule_wood": 7730,
+    "rule_park": 355,
+    "skipped_blocked": 121,
+    "by_basis": {
+     "M": 8246,
+     "L": 28
+    },
+    "by_profile": {
+     "pine": 1194,
+     "lime": 98,
+     "conifer": 823,
+     "plane": 53,
+     "maple": 68,
+     "horse-chestnut": 76,
+     "willow": 9,
+     "alder": 10,
+     "cherry": 5,
+     "birch": 51,
+     "ash": 800,
+     "poplar": 2,
+     "hornbeam": 1197,
+     "beech": 1907,
+     "oak": 1981
+    },
+    "greens": 82
+   },
+   "ms": 744,
+   "at": "2026-10-21T10:12:14.891Z"
+  }
+ ]
+}

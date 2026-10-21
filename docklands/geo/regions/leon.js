@@ -31,6 +31,16 @@ export default {
       // extra building geometry classes of the city ring, each removable by deleting its id here (then rebuild)
       geometry: ['overture-ign-geometry', 'overture-ms-geometry'] },
     search: ['Plaza Mayor', 'Casco Histórico', 'León'],
+    // look and greens (globe/place-look.js, cwplans/tools/build-place-greens.mjs; skill docklands-3d-page, "places look like
+    // the model"): stated assumptions, not data. look: weights of generic wall and roof materials by facade style where OSM
+    // has no colour (the Realistic look of the model, materials of the old town and the 20th-century blocks); greens.mix:
+    // the species mix of a tree with no taxon by setting (street plane and false acacia, poplar groves on the Bernesga)
+    look: { wall: { house: { renderCream: 30, renderOchre: 20, renderWhite: 20, stone: 15, brickRed: 15 }, flats: { renderCream: 25, renderWhite: 20, brickRed: 20, brickBrown: 15, renderOchre: 10, concrete: 10 },
+        estate: { brickBrown: 30, brickRed: 25, concrete: 25, renderWhite: 20 }, office: { stone: 35, concrete: 30, renderWhite: 20, glassS: 15 }, civic: { stone: 55, renderCream: 25, brickRed: 20 }, shed: { metal: 50, concrete: 30, brickBrown: 20 } },
+      roof_pitched: { clay: 80, ctile: 12, slate: 8 }, roof_flat: { gravel: 40, membrane: 35, felt: 25 } },
+    greens: { mix: { street: [['plane', 35], ['locust', 15], ['lime', 10], ['maple', 10], ['broadleaf', 10], ['cherry-plum', 5], ['horse-chestnut', 5], ['ash', 5], ['conifer', 5]],
+      park: [['plane', 15], ['conifer', 15], ['horse-chestnut', 10], ['pine', 10], ['lime', 10], ['maple', 10], ['oak', 10], ['cypress-columnar', 5], ['birch', 5], ['poplar', 5], ['ash', 5]],
+      wood: [['poplar', 30], ['pine', 25], ['oak', 20], ['ash', 15], ['willow', 10]], water: [['poplar', 35], ['willow', 30], ['alder', 20], ['ash', 15]] } },
     roof_rule: { shape: 'hipped', pitch_deg: 28, kinds: ['yes', 'house', 'residential', 'apartments', 'detached', 'semidetached_house', 'terrace', 'school', 'retail', 'commercial', 'office', 'public', 'civic', 'hotel', 'church', 'chapel', 'convent', 'monastery', 'garage'], min_rect: 0.8, max_area_m2: 1500, max_wall_m: 24 } },
   services: { weatherPoint: { lon: -5.56654, lat: 42.59732 }, aircraft: { lon: -5.56654, lat: 42.59732, nm: 25 }, metar: 'LELN' },
   adapters: [

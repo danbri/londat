@@ -36,11 +36,11 @@ import { A, surfaceAt } from '../build.js';
 import { WU } from '../water.js';
 import { PROFILES, PROFILE, SHAPES, B64, profileOf, hash01 } from '../tree-species.js';
 
-const uDay = uniform(180);   // day of the year (1 = 1 January), fractional, London time
-const DEFAULT_H = { broad: 10, conical: 11, columnar: 12, weeping: 9, small: 6, birch: 9 };
+export const uDay = uniform(180);   // day of the year (1 = 1 January), fractional, London time
+export const DEFAULT_H = { broad: 10, conical: 11, columnar: 12, weeping: 9, small: 6, birch: 9 };
 
 // unit geometries: crowns in x, z -0.5..0.5, y 0..1
-function shapes(THREE) {
+export function shapes(THREE) {
   const lathe = (pts, seg) => new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), seg);
   const jitter = (g, k) => { const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), n = Math.sin(x * 12.9 + y * 78.2 + z * 37.7) * 43758.5; p.setXYZ(i, x * (1 + k * (n - Math.floor(n) - .5)), y, z * (1 + k * (Math.sin(n) * .5))); } return g; };
   const ico = THREE.IcosahedronGeometry, dod = THREE.DodecahedronGeometry;
@@ -65,13 +65,13 @@ function shapes(THREE) {
   const speck = new THREE.BufferGeometry(); speck.setAttribute('position', new THREE.Float32BufferAttribute([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, 1, 0], 3)); speck.setIndex([0, 1, 2, 0, 2, 3]);
   return { crowns: g, twigs, trunk, far, speck };
 }
-const CELL = 500, NEAR_MAX = 9000, RESELECT_M = 25, PX_FAR = 8, PX_HIDE = 2, WIDE = 1.5, MARGIN_NEAR = 80;
+export const CELL = 500, NEAR_MAX = 9000, RESELECT_M = 25, PX_FAR = 8, PX_HIDE = 2, WIDE = 1.5, MARGIN_NEAR = 80;
 const tris = g => (g.index ? g.index.count : g.attributes.position.count) / 3;
 
 // the leaf state of a tree on uDay: cal = (leaf-out day, autumn colour day, bare day, evergreen 1 | 0), bloom.w = bloom day | 0
-function season(cal, bloom) {
-  const grow = smoothstep(cal.x.sub(12), cal.x.add(20), uDay), fall = smoothstep(cal.y.add(12), cal.z, uDay);
-  const bl = select(bloom.w.greaterThan(0), smoothstep(4, 14, abs(uDay.sub(bloom.w))).oneMinus(), float(0));
+export function season(cal, bloom, day = uDay) {   // day: the day-of-year uniform (a place on the globe has its own: globe/place-look.js)
+  const grow = smoothstep(cal.x.sub(12), cal.x.add(20), day), fall = smoothstep(cal.y.add(12), cal.z, day);
+  const bl = select(bloom.w.greaterThan(0), smoothstep(4, 14, abs(day.sub(bloom.w))).oneMinus(), float(0));
   const dens = select(cal.w.greaterThan(.5), float(1), max(grow.mul(fall.oneMinus()), bl.mul(.9)));
   return { grow, dens, bl };
 }
