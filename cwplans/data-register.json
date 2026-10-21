@@ -138,6 +138,16 @@
       "committed": false,
       "local_path": "data/raw/detail-skeleton/osm/cantabria-latest.osm.pbf (ignored by git; re-fetch with the tool)",
       "fetched_by": "tools/build-detail-skeleton.mjs fetch --set leon"
+    },
+    "osm-api-landmarks-sarajevo": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (114 boxes of about 160 m to 700 m round the landmark candidates of the city box 18.285,43.815,18.46,43.875; each URL and the SHA-256 of each answer in places/sarajevo/landmarks/log.json)",
+      "osm_data_as_of": "2026-10-21T12:19:00.012Z (time of the API calls; newest element 2026-10-20T20:57:33Z)",
+      "fetched": "2026-10-21",
+      "sha256_prefix": "9cdc3fb0e9431549",
+      "size_bytes": 2393770,
+      "committed": false,
+      "local_path": "data/raw/places/sarajevo/landmarks/osm-landmarks.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-landmarks.mjs fetch --region sarajevo [--refetch] (OSM API 0.6 map.json, one box at a time, 1.1 s apart; Overpass refused on 2026-10-21)"
     }
   },
   "sources": {
@@ -3481,6 +3491,16 @@
       "attribution": "Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)",
       "url": "https://docs.overturemaps.org/attribution/",
       "note": "Owner, 2026-10-20: \"Use ms/overture\" (CLAUDE.md, data policy). Drawn as blocks of the city ring only where OSM has no building, as its own geometry class \"ms\" (adapter overture-ms-geometry). Remove: delete the id in place.surround.geometry of the region config and rebuild. Raw answer not committed."
+    },
+    "overture-places": {
+      "name": "Overture Maps Foundation, places theme (type place), release 2026-09-23.1, read by bounding box with DuckDB",
+      "publisher": "Overture Maps Foundation (records from Meta, Microsoft and others, named per record)",
+      "licence": "CDLA-Permissive-2.0",
+      "licence_url": "https://cdla.dev/permissive-2-0/",
+      "licence_class": "open",
+      "attribution": "© Overture Maps Foundation (CDLA-Permissive-2.0)",
+      "url": "https://docs.overturemaps.org/attribution/",
+      "note": "Used only by tools/build-place-landmarks.mjs to choose where to ask the OSM API (the positions of places of worship: muslim, christian and jewish places of worship, religious organisations); nothing from it is drawn, shown or committed (the answer stays in cwplans/data/raw/places/<id>/landmarks/)."
     }
   },
   "files": [
@@ -14530,6 +14550,121 @@
       "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/globe.js, globe/base-tiles.js, globe/skeleton-layers.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/landmarks/tileset.json",
+      "what": "Landmarks of Stari Grad, Sarajevo (minarets, domes, church and clock towers over the city box Ilidža to Baščaršija): 3D Tiles 1.1 tileset, one content tile per level-13 cell holding landmarks, each with its ENU frame as transform and a region volume; ADD refinement, geometricError 0 (all drawn with the place)",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osm-api-landmarks-sarajevo",
+        "what": "bounding volumes of the landmarks (heights of OSM-tagged minarets, domes and towers)"
+      },
+      "produced_by": "tools/build-place-landmarks.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/landmarks.js)"
+      ],
+      "note": "OSM has few minarets mapped in Sarajevo (2026-10-21: 4 of 126 mosques); the other mosques get an estimated minaret (class \"estimated\", counted, switchable: region config place.landmarks.estimate_minarets, page ?landmarks=mapped). Ground heights from the place tiles (Copernicus DEM GLO-30, a surface model)."
+    },
+    {
+      "path": "docklands/data/places/sarajevo/landmarks/tiles/*.glb",
+      "what": "Landmark tiles (glTF 2.0 binary, KHR_mesh_quantization, EXT_mesh_features): minarets (shaft, balcony, cone) from OSM minaret tags and building parts, and estimated minarets (a stated rule, primitive \"estimated\") for mosques with none mapped; domes on drums from OSM parts with roof:shape dome / onion; towers and spires from OSM parts and tower tags; COLOR_0, _RADIAL (horizontal offset from the object axis and its reference radius, cm: the reader keeps thin objects a few pixels wide), _FEATURE_ID_0 = row of landmarks.json; standing on the place tiles' drawn ground",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osm-api-landmarks-sarajevo",
+        "what": "geometry made from OSM tags: positions, outlines, height, min_height, roof:shape, roof:height, colours of minarets, domes and towers; the mosque outlines that place the estimated minarets"
+      },
+      "produced_by": "tools/build-place-landmarks.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/landmarks.js)"
+      ],
+      "note": "OSM has few minarets mapped in Sarajevo (2026-10-21: 4 of 126 mosques); the other mosques get an estimated minaret (class \"estimated\", counted, switchable: region config place.landmarks.estimate_minarets, page ?landmarks=mapped). Ground heights from the place tiles (Copernicus DEM GLO-30, a surface model)."
+    },
+    {
+      "path": "docklands/data/places/sarajevo/landmarks/landmarks.json",
+      "what": "Landmark table of Stari Grad, Sarajevo (format place-landmarks-1): every place of worship with an outline (OSM id, name, other-script name, kind, religion, centroid, footprint, Wikidata) and every landmark drawn (type, kind, of which building, height and its source, mapped or estimated and the rule, ground and top heights, radius, balcony and cone); the counts; hide_core: the core building parts replaced by landmarks; the text and machine interface (cards, describeView, search)",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osm-api-landmarks-sarajevo",
+        "what": "OSM ids, names, kinds, religions, centroids and height tags of places of worship, minarets, domes and towers"
+      },
+      "produced_by": "tools/build-place-landmarks.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/landmarks.js)"
+      ],
+      "note": "OSM has few minarets mapped in Sarajevo (2026-10-21: 4 of 126 mosques); the other mosques get an estimated minaret (class \"estimated\", counted, switchable: region config place.landmarks.estimate_minarets, page ?landmarks=mapped). Ground heights from the place tiles (Copernicus DEM GLO-30, a surface model)."
+    },
+    {
+      "path": "docklands/data/places/sarajevo/landmarks/log.json",
+      "what": "Build log of the Sarajevo landmarks: fetch records (Overture queries, each OSM API box URL with the SHA-256 of its answer) and the dataflow activities landmark-select and landmark-tiles with input and output hashes and the counts",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "overture-places",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "extract": "osm-api-landmarks-sarajevo",
+        "what": "counts and fetch records of OSM elements"
+      },
+      "produced_by": "tools/build-place-landmarks.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/landmarks.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/landmarks/README.md",
+      "what": "Generated README of the Sarajevo landmarks (from log.json): counts (mosques, mapped and estimated minarets, domes, towers), the rules (mapped, estimated, dome, tower, ground, rendering), sources with licences and requests, the operations with input hashes, files with SHA-256",
+      "sources": [
+        "osm",
+        "overture-buildings",
+        "overture-places",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "extract": "osm-api-landmarks-sarajevo",
+        "what": "counts of OSM-mapped landmarks"
+      },
+      "produced_by": "tools/build-place-landmarks.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/landmarks"
+      ]
+    },
+    {
+      "path": "docklands/data/places/landmarks.json",
+      "what": "Index of the landmark sets of the places (tileset, features and README paths per place); read by docklands/globe/landmarks.js",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "tools/build-place-landmarks.mjs",
+      "fetched": "2026-10-21",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/landmarks.js)"
       ]
     }
   ],
