@@ -2892,3 +2892,29 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   with the next scheduled run that GitHub fires: count runs per day on the dashboard to score KR5.1. OKR draft scores
   updated (O1 0.30, O2 0.41, O3 0.40, O4 0.25, O5 0.29, O6 0.50; final on 2026-10-25). Comments on issues #2 and #9.
   Still the owner's: the one-finger gesture rule; Leiden; FGU access (#9).
+
+## 2026-10-21: OKR O6: exit paths for the "review" items (KR6.2) and a recount of the fault register (KR6.3) (subagent)
+- KR6.2. Every item marked "review" now has a written exit path for the end of the prototyping phase: 88 items (78 files,
+  2 branches, 8 sources with a review note or licence class "review") in 14 groups by reason. Register:
+  `review_exit_paths.groups` (issue, owner decisions with date and words from CLAUDE.md, options "obtain licence /
+  replace / keep / remove" with the tool command, and what happens if the owner decides nothing) and `review_exit` on each
+  item (first group = main reason). No licence class or decision changed.
+  Table: https://github.com/danbri/londat/blob/main/docs/review-exit-paths.md (written by
+  `cwplans/tools/check-data-register.mjs --write`). The check prints the review items with and without a path and fails
+  on a new review item with no path (`review_exit_paths.pending` lists accepted exceptions; empty) or an unknown group.
+- Groups, by items: owner-photos 22, web-crawl 21, cwg-crawl 10, quotes 9, ais-scoping 7 (the 5 the owner decides),
+  no-licence-public 7, catastro-ign 5, adsb-odbl 3, attribution-kept 3, metar-origin 3, note-only 3, osm-odbl 3,
+  personal-data 2, tfl-sheets 2.
+- Found while grouping (not changed; for the owner): the plane photo README records CC0 ("Plane photo - yes cc0, record
+  me as owner", 2026-10-05) while its register note still says "ask the owner"; the licence text of source
+  `openwaters-ais` says AISHub and aisstream.io events are not kept, but `fetch-ais.mjs` and `fetch-live-cache.mjs` keep
+  them since the decision of 2026-10-04; the Bosnia waiver covers no committed file today.
+- KR6.3. Recount of the fault register against code and data (main 651aa469): 15 open before, 12 after. F9 closed as a
+  duplicate of F48 (rule in `tools/mall-plan-evidence.mjs`); F25 and F30 to "rule in use" (`tools/join-lds.mjs`: low
+  confidence for offset layers; 1,266 solar links flagged F30). F4 and F7 stay open with the existing part of the rule
+  named. Checked still open: F53 (42,244 `openstreetmap.org/undefined/` links in `kgx/current.nq.gz`), F49 (`&#038;`
+  still in `cwg-directory.json`), F47, F50, F51, F52. Audit re-run: same counts (TM-4 34 against 30 only because a local
+  raw file is missing; committed audit kept). Rules that close the rest, by value: the curation skill, "Recount of
+  2026-10-21"; rules 1 (mall and postcode-centre rule for all occupants: F4, F7), 3 (F53) and 4 (F49) reach 8 open.
+- OKRS.md draft: KR6.2 0.1 -> 0.7, KR6.3 0.2 -> 0.4, O6 0.50 -> 0.70.
+- Checks: `npm run check` and `npm test` passed. Not pushed (branch for review by the main session).

@@ -11560,7 +11560,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcachelondat"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+   "cwp:review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+   "cwp:reviewExit": [
+    "ais-scoping"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/cache/runs/*/live-*.json.gz",
@@ -11605,7 +11608,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcachelondat"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+   "cwp:review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+   "cwp:reviewExit": [
+    "ais-scoping"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/cache/latest.json",
@@ -11650,7 +11656,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcachelondat"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+   "cwp:review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+   "cwp:reviewExit": [
+    "ais-scoping"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/cache/zone-core.gpkg",
@@ -11761,7 +11770,11 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildzonegpkg"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "Some layers carry sources marked for review: registry/sources/construction/sites.json"
+   "cwp:review": "Some layers carry sources marked for review: registry/sources/construction/sites.json",
+   "cwp:reviewExit": [
+    "no-licence-public",
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/cache/zone-lds.gpkg",
@@ -12598,7 +12611,11 @@
     "@id": "https://kgx.foaf.tv/id/toolsourcedlevels"
    },
    "cwp:osmUse": "ids",
-   "cwp:review": "quotes include Wikipedia text (CC BY-SA); TfL FOI rail levels have no stated licence"
+   "cwp:review": "quotes include Wikipedia text (CC BY-SA); TfL FOI rail levels have no stated licence",
+   "cwp:reviewExit": [
+    "quotes",
+    "no-licence-public"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/docklands/ea-defences.json.gz",
@@ -12728,7 +12745,10 @@
     "@id": "https://kgx.foaf.tv/id/tooldocklandsfacts"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "169 quotes are Wikipedia text (CC BY-SA 4.0, share-alike), the rest short quotes from all-rights-reserved pages: before anything leaves the prototyping phase, decide whether to keep the quote text or only the value and URL"
+   "cwp:review": "169 quotes are Wikipedia text (CC BY-SA 4.0, share-alike), the rest short quotes from all-rights-reserved pages: before anything leaves the prototyping phase, decide whether to keep the quote text or only the value and URL",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/FACTS.md",
@@ -12749,7 +12769,10 @@
     "@id": "https://kgx.foaf.tv/id/tooldocklandsfacts"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "as docklands/facts.json"
+   "cwp:review": "as docklands/facts.json",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/postcodes/onspd-aug2026.json.gz",
@@ -13024,7 +13047,11 @@
     "@id": "https://kgx.foaf.tv/id/tooljoinwebfacts"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "occupants include CWG page links, mall names and levels from cwg-directory.json; 106 occupants come from the CWG directory alone, placed by street address, mall host outline or postcode with a confidence; cwg_unplaced lists the entries with no building and why. Business phone and email from OSM are kept under the cwplans exception (owner, 2026-10-03). Register links keep the key (UPRN, register point, mall, street address, name, postcode), its precision and a confidence; registers_unplaced and registers_uprn_rejected list what was not placed and why. Charity contact addresses are placed only by UPRN or a non-residential building (owner, 2026-10-03)"
+   "cwp:review": "occupants include CWG page links, mall names and levels from cwg-directory.json; 106 occupants come from the CWG directory alone, placed by street address, mall host outline or postcode with a confidence; cwg_unplaced lists the entries with no building and why. Business phone and email from OSM are kept under the cwplans exception (owner, 2026-10-03). Register links keep the key (UPRN, register point, mall, street address, name, postcode), its precision and a confidence; registers_unplaced and registers_uprn_rejected list what was not placed and why. Charity contact addresses are placed only by UPRN or a non-residential building (owner, 2026-10-03)",
+   "cwp:reviewExit": [
+    "cwg-crawl",
+    "personal-data"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/ids.json",
@@ -13199,7 +13226,10 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildbranches"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "includes CWG directory fields (see cwg-directory.json)"
+   "cwp:review": "includes CWG directory fields (see cwg-directory.json)",
+   "cwp:reviewExit": [
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/storelocator.json",
@@ -13243,7 +13273,10 @@
     "@id": "https://kgx.foaf.tv/id/toolprobestockcheck"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "facts read from shop websites with no open licence: scoping only"
+   "cwp:review": "facts read from shop websites with no open licence: scoping only",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory.json",
@@ -13261,7 +13294,10 @@
     "@id": "https://kgx.foaf.tv/id/toolfetchcwg"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "no open licence on canarywharf.com: re-check before anything leaves the prototyping phase"
+   "cwp:review": "no open licence on canarywharf.com: re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/tools/cwg-decisions.json",
@@ -13765,7 +13801,10 @@
     "@id": "https://kgx.foaf.tv/id/toolundergroundcatalogue"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/underground/stations-excluded.json",
@@ -13800,7 +13839,10 @@
     "@id": "https://kgx.foaf.tv/id/toolundergroundcatalogue"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/underground/planning-excluded.json",
@@ -13835,7 +13877,10 @@
     "@id": "https://kgx.foaf.tv/id/toolundergroundcatalogue"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/underground/estate-excluded.json",
@@ -13870,7 +13915,10 @@
     "@id": "https://kgx.foaf.tv/id/toolundergroundcatalogue"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+   "cwp:review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/underground/tunnels-excluded.json",
@@ -14393,7 +14441,11 @@
     "@id": "https://kgx.foaf.tv/id/toolcrownlightingjudgement"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "facts only from all-rights-reserved pages and CC BY-SA photos (URL, date, colour seen); colours of CC BY-SA photos are our judgement, not their content. Re-check before anything leaves the prototyping phase"
+   "cwp:review": "facts only from all-rights-reserved pages and CC BY-SA photos (URL, date, colour seen); colours of CC BY-SA photos are our judgement, not their content. Re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "quotes",
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/lighting/press-pages.json",
@@ -14448,7 +14500,10 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildfacadeatlas"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "derived from CC BY 2.0 / 4.0 photos: the attribution (author, licence, building) is in docklands/data/tex/facades.json and shown in About"
+   "cwp:review": "derived from CC BY 2.0 / 4.0 photos: the attribution (author, licence, building) is in docklands/data/tex/facades.json and shown in About",
+   "cwp:reviewExit": [
+    "attribution-kept"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/tex/facades-registry.json",
@@ -14489,7 +14544,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcomposefacadeatlas"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "registry tiles derived from CC BY 2.0 / 4.0 photos (attribution in facades.json, shown in About); contributed tiles CC0"
+   "cwp:review": "registry tiles derived from CC BY 2.0 / 4.0 photos (attribution in facades.json, shown in About); contributed tiles CC0",
+   "cwp:reviewExit": [
+    "attribution-kept"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/tex/facades.json",
@@ -14633,7 +14691,10 @@
     "@id": "https://kgx.foaf.tv/id/toolfetchregisters"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "contact address only; for small charities it can be a trustee's home (allowed under the cwplans exception; do not present it as the charity's premises)"
+   "cwp:review": "contact address only; for small charities it can be a trustee's home (allowed under the cwplans exception; do not present it as the charity's premises)",
+   "cwp:reviewExit": [
+    "personal-data"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/registers/ofsted-childcare.json",
@@ -14792,7 +14853,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcrawlsites"
    },
    "cwp:osmUse": "ids",
-   "cwp:review": "no open licence on the crawled sites: short fields only; re-check before anything leaves the prototyping phase"
+   "cwp:review": "no open licence on the crawled sites: short fields only; re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/web/discovered-feeds.json",
@@ -14873,7 +14937,10 @@
     "@id": "https://kgx.foaf.tv/id/toolrenderstructureddata"
    },
    "cwp:osmUse": "ids",
-   "cwp:review": "site owners' structured data, no open licence: kept for scoping only; re-check before anything leaves the prototyping phase"
+   "cwp:review": "site owners' structured data, no open licence: kept for scoping only; re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/index.json",
@@ -14945,7 +15012,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/idioms/idioms.json",
@@ -14960,7 +15030,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/idioms/rewrites",
@@ -14975,7 +15048,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/idioms/page-idioms.json",
@@ -14996,7 +15072,10 @@
     "@id": "https://kgx.foaf.tv/id/toolwebidioms"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/idioms/summary.json",
@@ -15017,7 +15096,10 @@
     "@id": "https://kgx.foaf.tv/id/toolwebidioms"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/idioms/canonical.nq.gz",
@@ -15038,7 +15120,10 @@
     "@id": "https://kgx.foaf.tv/id/toolwebidioms"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/coref/sameas.nq.gz",
@@ -15059,7 +15144,10 @@
     "@id": "https://kgx.foaf.tv/id/toolwebcoref"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/coref/descriptions.json",
@@ -15083,7 +15171,10 @@
     "@id": "https://kgx.foaf.tv/id/toolwebcoref"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/../third_party/cwplans-structured-data/coref/entities.json",
@@ -15107,7 +15198,10 @@
     "@id": "https://kgx.foaf.tv/id/toolwebcoref"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory-typed.json",
@@ -15131,7 +15225,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcwgdirectorytyped"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory-typed.nq",
@@ -15155,7 +15252,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcwgdirectorytyped"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/web-idioms.mjs",
@@ -15218,7 +15318,10 @@
     "@id": "https://kgx.foaf.tv/id/toolprobesitesearch"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-hours.json",
@@ -15239,7 +15342,10 @@
     "@id": "https://kgx.foaf.tv/id/toolcwghours"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/web/hours-by-place.json",
@@ -15266,7 +15372,11 @@
     "@id": "https://kgx.foaf.tv/id/toolhoursbyplace"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl",
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/mall-plan-evidence.json",
@@ -15290,7 +15400,10 @@
     "@id": "https://kgx.foaf.tv/id/toolmallplanevidence"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/probe-site-search.mjs",
@@ -15367,7 +15480,11 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "web-crawl",
+    "cwg-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/reports/hours-and-plans/index.html",
@@ -15391,7 +15508,11 @@
     }
    ],
    "cwp:osmUse": "derived",
-   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+   "cwp:review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "cwg-crawl",
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/reports/hours-and-plans/template.html",
@@ -15718,7 +15839,10 @@
     "@id": "https://kgx.foaf.tv/id/toolextractstructureddata"
    },
    "cwp:osmUse": "ids",
-   "cwp:review": "facts from the site owners' structured data, no open licence: scoping only"
+   "cwp:review": "facts from the site owners' structured data, no open licence: scoping only",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/web/structured-register-entries.json",
@@ -15866,7 +15990,10 @@
     "@id": "https://kgx.foaf.tv/id/toolfetchsky"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "CelesTrak states no licence; credited on the page"
+   "cwp:review": "CelesTrak states no licence; credited on the page",
+   "cwp:reviewExit": [
+    "no-licence-public"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/sky/weather-2026-10-03.json",
@@ -16084,7 +16211,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "Hershey font data: free for any use if the acknowledgement goes with the data (the Hershey Fonts were originally created by Dr. A. V. Hershey while working at the U. S. National Bureau of Standards; the format of the font data was originally created by James Hurt, Cognition, Inc.); the acknowledgement is in the file header. Not share-alike. The OFL-licensed EMS Hershey SVG fonts were not used."
+   "cwp:review": "Hershey font data: free for any use if the acknowledgement goes with the data (the Hershey Fonts were originally created by Dr. A. V. Hershey while working at the U. S. National Bureau of Standards; the format of the font data was originally created by James Hurt, Cognition, Inc.); the acknowledgement is in the file header. Not share-alike. The OFL-licensed EMS Hershey SVG fonts were not used.",
+   "cwp:reviewExit": [
+    "attribution-kept"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/line-styles.js",
@@ -16169,7 +16299,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/promenade-skyline-bollard.jpg",
@@ -16184,7 +16317,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/promenade-zoom-moon-blur.jpg",
@@ -16199,7 +16335,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/zoom-moon-towers.jpg",
@@ -16214,7 +16353,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/river-warehouses-skyline.jpg",
@@ -16229,7 +16371,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/clipper-canary-wharf-pier.jpg",
@@ -16244,7 +16389,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/README.md",
@@ -16259,7 +16407,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/towers.json",
@@ -16286,7 +16437,10 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildtowers"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "Planning documents listed under references are links only; nothing from them is copied."
+   "cwp:review": "Planning documents listed under references are links only; nothing from them is copied.",
+   "cwp:reviewExit": [
+    "note-only"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/trees.json",
@@ -16316,7 +16470,10 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildtrees"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "ethics (CLAUDE.md, Data ethics): only position, taxon, height, crown, source and record id are kept; the dropped fields of each source are listed in the file (sources[].dropped)."
+   "cwp:review": "ethics (CLAUDE.md, Data ethics): only position, taxon, height, crown, source and record id are kept; the dropped fields of each source are listed in the file (sources[].dropped).",
+   "cwp:reviewExit": [
+    "note-only"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/tree-species.json",
@@ -16346,7 +16503,10 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildtreespecies"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "inferred profiles are assumptions, not data (basis letters T, P, W, R, L); no fields beyond taxon and position are used."
+   "cwp:review": "inferred profiles are assumptions, not data (basis letters T, P, W, R, L); no fields beyond taxon and position are used.",
+   "cwp:reviewExit": [
+    "note-only"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/trees/osm-tree-leaf.json.gz",
@@ -16532,7 +16692,10 @@
     "@id": "https://kgx.foaf.tv/id/tooldiscoverfeeds"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "feed URLs and titles from directories and crawls: facts only; re-check terms before production"
+   "cwp:review": "feed URLs and titles from directories and crawls: facts only; re-check terms before production",
+   "cwp:reviewExit": [
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/discovery/london-feeds.opml",
@@ -16599,7 +16762,10 @@
     }
    ],
    "cwp:osmUse": "ids",
-   "cwp:review": "short quotes from copyright pages; facts marked search-snippet were not read on the page; re-check before production"
+   "cwp:review": "short quotes from copyright pages; facts marked search-snippet were not read on the page; re-check before production",
+   "cwp:reviewExit": [
+    "quotes"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/underground/AXONOMETRIC-USES.md",
@@ -16652,7 +16818,10 @@
     "@id": "https://kgx.foaf.tv/id/toolblenderstationmodels"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase"
+   "cwp:review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase",
+   "cwp:reviewExit": [
+    "tfl-sheets"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/london-terrain.json",
@@ -16983,7 +17152,10 @@
     "@id": "https://kgx.foaf.tv/id/toolstationmesh"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase"
+   "cwp:review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase",
+   "cwp:reviewExit": [
+    "tfl-sheets"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/underground/README.md",
@@ -22151,7 +22323,10 @@
     "@id": "https://kgx.foaf.tv/id/toolfetchlive"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "facts from a NATS publication with no open licence; no NOTAM text kept. Re-check before production"
+   "cwp:review": "facts from a NATS publication with no open licence; no NOTAM text kept. Re-check before production",
+   "cwp:reviewExit": [
+    "no-licence-public"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/live/helicopters.json",
@@ -22169,7 +22344,10 @@
     "@id": "https://kgx.foaf.tv/id/toolfetchlive"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "facts from the UK AIP (Crown copyright / NATS); issue 2024-03-21, newer issues not reachable from the container. Re-check before production"
+   "cwp:review": "facts from the UK AIP (Crown copyright / NATS); issue 2024-03-21, newer issues not reachable from the container. Re-check before production",
+   "cwp:reviewExit": [
+    "no-licence-public"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/live/README.md",
@@ -22202,7 +22380,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "quotes four sums from CAA CAP 1455 as facts (no reproduction of the file)"
+   "cwp:review": "quotes four sums from CAA CAP 1455 as facts (no reproduction of the file)",
+   "cwp:reviewExit": [
+    "no-licence-public"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/river/pla-notices.json",
@@ -22297,7 +22478,10 @@
     "@id": "https://kgx.foaf.tv/id/toolfetchais"
    },
    "cwp:osmUse": "none",
-   "cwp:review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+   "cwp:review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+   "cwp:reviewExit": [
+    "ais-scoping"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/feeds/river/levels.json",
@@ -22478,7 +22662,10 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildmoorings"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "OSM ODbL derived database: review with the other OSM uses before the prototyping phase ends."
+   "cwp:review": "OSM ODbL derived database: review with the other OSM uses before the prototyping phase ends.",
+   "cwp:reviewExit": [
+    "osm-odbl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/wildlife.json",
@@ -22613,7 +22800,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-one-canada-square-cranes-citi.jpg",
@@ -22631,7 +22821,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-tide-core-cranes.jpg",
@@ -22649,7 +22842,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-one-canada-square-core.jpg",
@@ -22667,7 +22863,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-newfoundland-landmark-pinnacle.jpg",
@@ -22685,7 +22884,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-red-frame-riverside-block.jpg",
@@ -22703,7 +22905,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-dark-tower-citi.jpg",
@@ -22721,7 +22926,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-towers-pitched-roof-blocks.jpg",
@@ -22739,7 +22947,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/README.md",
@@ -22757,7 +22968,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/points.json",
@@ -22775,7 +22989,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/evening-thames-from-plane.jpg",
@@ -22793,7 +23010,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/README.md",
@@ -22808,7 +23028,10 @@
     }
    ],
    "cwp:osmUse": "none",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/points.json",
@@ -22826,7 +23049,10 @@
     }
    ],
    "cwp:osmUse": "notes",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/solution.json",
@@ -22847,7 +23073,10 @@
     "@id": "https://kgx.foaf.tv/id/toolsolvephotoview"
    },
    "cwp:osmUse": "notes",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/compare-photo-render.jpg",
@@ -22871,7 +23100,10 @@
     "@id": "https://kgx.foaf.tv/id/toolsolvephotoview"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "owner-supplied photo; ask the owner whether CC0 applies; the render half carries the page's OSM attribution in the README"
+   "cwp:review": "owner-supplied photo; ask the owner whether CC0 applies; the render half carries the page's OSM attribution in the README",
+   "cwp:reviewExit": [
+    "owner-photos"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/construction/sites.json",
@@ -22919,7 +23151,11 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildconstructionindex"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "PLD terms not confirmed as OGL (metadata and links only, descriptions cut to 300 characters); NOTAM facts only; developer pages facts only. Re-check before anything leaves the prototyping phase"
+   "cwp:review": "PLD terms not confirmed as OGL (metadata and links only, descriptions cut to 300 characters); NOTAM facts only; developer pages facts only. Re-check before anything leaves the prototyping phase",
+   "cwp:reviewExit": [
+    "no-licence-public",
+    "web-crawl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/construction/facts.json",
@@ -26474,7 +26710,11 @@
     "@id": "https://kgx.foaf.tv/id/toolplacetiles"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")"
+   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")",
+   "cwp:reviewExit": [
+    "catastro-ign",
+    "osm-odbl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/features.json",
@@ -26510,7 +26750,11 @@
     "@id": "https://kgx.foaf.tv/id/toolplacetiles"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")"
+   "cwp:review": "height_source \"national\" (2,454 buildings) = computed from Dirección General del Catastro floors (transformed data; licence class review; owner approval 2026-10-11 \"Catastro - yes\"). No Catastro geometry, id or floor count is published. height_source \"ghsl\" (177) = GHS-BUILT-H cell average (CC BY 4.0). height_source \"overture-height\" (7) and \"ms\" (6) = Overture Maps / Microsoft ML heights (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\")",
+   "cwp:reviewExit": [
+    "catastro-ign",
+    "osm-odbl"
+   ]
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/log.json",

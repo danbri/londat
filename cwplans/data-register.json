@@ -1,6 +1,6 @@
 {
   "about": "Register of every committed data file in cwplans: where its data came from, under which licence, and how it uses OpenStreetMap (ODbL). Checked by tools/check-data-register.mjs, which also writes DATA-REGISTER.md. Add an entry before committing a new data file.",
-  "updated": "2026-10-09",
+  "updated": "2026-10-21",
   "policy": {
     "personal_org_address_data": "Restrictions suspended for this project during scoping, planning and prototyping (owner, October 2026; CLAUDE.md, Data ethics, exception).",
     "licence_limit": "Never fetch or commit proprietary, restricted-licence or virally licensed data.",
@@ -565,14 +565,16 @@
       "licence": "AISHub membership terms; Open Waters reports AISHub's written confirmation (2026-08-22) of no restrictions on use including commercial use and redistribution, 'revocable at will'. No published licence",
       "url": "https://www.aishub.net",
       "attribution": "Open Waters AIS (https://openwaters.io/ais/). AISHub (https://www.aishub.net)",
-      "review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+      "review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+      "review_exit": "ais-scoping"
     },
     "aisstream-via-openwaters": {
       "name": "aisstream.io AIS, re-served by Open Waters AIS (events with source aisstream)",
       "licence": "no published terms",
       "url": "https://aisstream.io",
       "attribution": "Open Waters AIS (https://openwaters.io/ais/). aisstream.io",
-      "review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+      "review": "Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+      "review_exit": "ais-scoping"
     },
     "adsb-lol": {
       "name": "adsb.lol aircraft: the live API (api.adsb.lol /v2/point/51.505/-0.02/25: ADS-B and MLAT positions within 25 nm, readsb fields), fetched in the browser by the Three.js port's Aircraft layer (docklands/layers/planes.js, docklands/planes-live.js) only after the visitor ticks 'Live aircraft'; and the daily history (GitHub releases of adsblol/globe_history_<year>, tag v<YYYY.MM.DD>-planes-readsb-prod-0: readsb trace_full files of every aircraft, about 4.2 GB a day), from which cwplans/tools/fetch-adsb-cache.mjs keeps a 7-day extract on the branch adsb-cache; and, every 5 minutes, one answer of /v2/point/51.505/-0.02/25 asked server-side by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml), the last 60 minutes kept on the branch live-cache (aircraft.json)",
@@ -581,7 +583,8 @@
       "attribution": "Aircraft: © adsb.lol contributors, ODbL (https://adsb.lol, https://opendatacommons.org/licenses/odbl/1-0/)",
       "note": "Live API: fetched in the browser on request, nothing stored. api.adsb.lol sends no CORS header (checked 2026-10-09), so a browser on danbri.github.io cannot read it until adsb.lol adds the header or a relay is set up (?adsb=). History: the 7-day extract (25 nm round 51.505 N 0.02 W) is committed on the orphan branch adsb-cache, not on main (see 'branches'); the page reads it from raw.githubusercontent.com. Near-live: the 5-minute job's buffer of the last 60 minutes is committed on the orphan branch live-cache (aircraft.json; see 'branches'); the page shows it by default near now. Details: skill docklands-sky, 'Live aircraft in the Three.js port'",
       "review": "Accepted for scoping (owner decisions, 2026-10-09: \"Couldn't we crontab it for every 5 mins? And default to live for the rest?\", which approves the committed near-live snapshots of the last hour on the branch live-cache; \"adsb.lol (ODbL) (Recommended)\": \"Free live API, open data under ODbL, like OSM. Fetched in the browser only after a tap, shown with the ODbL credit, recorded in the data register as 'review', nothing committed. Simulated traffic stays as the fallback.\"; then, asked how the page should reach adsb.lol: \"Eventually find or build a proxy. For today build a cache of last 7 days for our areas, and show equivalent data for the matching time and day of week.\", which approves the committed 7-day cache). Review with the OSM (ODbL) use before anything leaves the prototyping phase, and before any commercial or production use (the API terms ask production users to contact adsb.lol)",
-      "history_url": "https://github.com/adsblol/globe_history_2026/releases"
+      "history_url": "https://github.com/adsblol/globe_history_2026/releases",
+      "review_exit": "adsb-odbl"
     },
     "awc-metar": {
       "name": "London City Airport (EGLC) METAR reports, NOAA Aviation Weather Center data API (aviationweather.gov /api/data/metar?ids=EGLC&format=json&hours=24), asked every 5 minutes by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml); the last 24 hours kept on the branch live-cache (metar.json)",
@@ -589,7 +592,8 @@
       "url": "https://aviationweather.gov/data/api/",
       "attribution": "METAR: NOAA Aviation Weather Center (aviationweather.gov), London City Airport (EGLC)",
       "note": "No CORS header on aviationweather.gov (checked 2026-10-09 with Origin https://danbri.github.io), so the browser reads the copy on the live-cache branch. The Three.js port's wind layer uses the METAR wind within 45 minutes of the page clock, before Open-Meteo; the weather layer uses its cloud layers and visibility. Skill docklands-sky, 'METAR (London City Airport)'",
-      "review": "Owner, 2026-10-09: \"Yes\" (use the real airport observation for the wind) and \"Basically we want all the data we can\". Public domain in the US; the Met Office origin is an open question to review before anything leaves the prototyping phase"
+      "review": "Owner, 2026-10-09: \"Yes\" (use the real airport observation for the wind) and \"Basically we want all the data we can\". Public domain in the US; the Met Office origin is an open question to review before anything leaves the prototyping phase",
+      "review_exit": "metar-origin"
     },
     "iem-asos-metar": {
       "name": "London City Airport (EGLC) METAR reports of the last year from the Iowa Environmental Mesonet ASOS/METAR archive (Iowa State University), cgi-bin/request/asos.py?station=EGLC&data=metar (routine and special reports), one request for the whole period by cwplans/tools/build-metar-history.mjs",
@@ -597,7 +601,8 @@
       "url": "https://mesonet.agron.iastate.edu/request/download.phtml",
       "attribution": "METAR London City Airport (EGLC): Iowa Environmental Mesonet, Iowa State University (ASOS/METAR archive)",
       "note": "Same reports as awc-metar (NOAA AWC keeps only recent days; IEM keeps the archive). Checked 2026-10-12: the 31 reports in both the live-cache metar.json and the file decode to the same wind, gust, visibility and temperature. Skill docklands-sky, 'METAR history'",
-      "review": "Public domain as distributed by IEM; the Met Office origin is the same open question as for awc-metar: review before anything leaves the prototyping phase"
+      "review": "Public domain as distributed by IEM; the Met Office origin is the same open question as for awc-metar: review before anything leaves the prototyping phase",
+      "review_exit": "metar-origin"
     },
     "openwaters-volunteer-cc0": {
       "name": "Open Waters AIS volunteer receiving stations (single receptions, source station:/udp:/mmsi:)",
@@ -3332,7 +3337,8 @@
       "url": "https://www.catastro.hacienda.gob.es/INSPIRE/Buildings/24/24900-LEON/A.ES.SDGC.BU.24900.zip",
       "review": "Owner, 2026-10-11: \"Catastro - yes\", for the León region only as transformed data (CLAUDE.md, data policy). Used only to compute heights: an OSM building with no height or building:levels takes the area-weighted median floors of the Catastro building parts whose centroid lies inside it, times 3 m. No Catastro geometry, id or attribute is committed or published; the zip and the parsed parts stay in cwplans/data/raw/places/leon/ (git-ignored). Re-check before the project leaves the prototyping phase.",
       "publisher": "Dirección General del Catastro (Ministerio de Hacienda), Spain",
-      "licence_url": "https://www.catastro.hacienda.gob.es/webinspire/documentos/Licencia.pdf"
+      "licence_url": "https://www.catastro.hacienda.gob.es/webinspire/documentos/Licencia.pdf",
+      "review_exit": "catastro-ign"
     },
     "copernicus-glo30": {
       "name": "Copernicus DEM GLO-30 (a 30 m digital surface model, EGM2008 heights), 1 x 1 degree Cloud Optimized GeoTIFFs on the AWS Registry of Open Data (bucket copernicus-dem-30m), read by HTTP range requests (a window round the place)",
@@ -3381,7 +3387,8 @@
       "attribution": "Number of floors of some buildings from the Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review)",
       "url": "https://docs.overturemaps.org/attribution/",
       "review": "Owner, 2026-10-20: \"use the data but keep it distinct and easy to remove if requested. Use for validation at least\". Kept apart: adapter overture-ign-floors (docklands/geo/adapters/world-buildings.js), its own crop places/leon/sources/overture-ign-floors.json, its own height class \"overture-ign-floors\" after the national (Catastro) floors. Remove: delete the crop and the adapter id in place.heights of docklands/geo/regions/leon.js, then rebuild. Ask IGN / Overture for the licence of these records.",
-      "note": "These records are whole buildings whose geometry is from IGN (base source), not floors added to OSM buildings: they almost never overlap an OSM outline (1 of 9,782 matched), so as a height source they give 0 buildings; their value is the validation of F55 against the Catastro floors (curation skill, F55)."
+      "note": "These records are whole buildings whose geometry is from IGN (base source), not floors added to OSM buildings: they almost never overlap an OSM outline (1 of 9,782 matched), so as a height source they give 0 buildings; their value is the validation of F55 against the Catastro floors (curation skill, F55).",
+      "review_exit": "catastro-ign"
     },
     "esa-worldcover": {
       "name": "ESA WorldCover 10 m 2021 v200: land cover in 11 classes from Sentinel-1 and Sentinel-2 (3 x 3 degree Cloud Optimized GeoTIFFs on the AWS Registry of Open Data, bucket esa-worldcover), read by HTTP range requests at overview 1 (about 20 m)",
@@ -3462,7 +3469,8 @@
       "attribution": "Some city buildings: Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review)",
       "url": "https://docs.overturemaps.org/attribution/",
       "review": "Owner, 2026-10-20: \"substantially more city\"; on the IGN data: \"use the data but keep it distinct and easy to remove if requested\". Drawn as blocks of the León city ring only where OSM has no building, as its own geometry class \"ign\" (adapter overture-ign-geometry, docklands/geo/adapters/world-surround.js). Remove: delete the id in place.surround.geometry of docklands/geo/regions/leon.js and rebuild. Ask IGN / Overture for the licence of these records.",
-      "note": "Read from the city buildings answer of the Overture query (raw, not committed); only the transformed blocks (oriented boxes or simplified outlines, flat tops) are in the tiles."
+      "note": "Read from the city buildings answer of the Overture query (raw, not committed); only the transformed blocks (oriented boxes or simplified outlines, flat tops) are in the tiles.",
+      "review_exit": "catastro-ign"
     },
     "overture-ms-geometry": {
       "name": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Microsoft ML Buildings\", over the city boxes of León and Sarajevo",
@@ -3513,7 +3521,8 @@
       "fetched": "2026-10-04 onwards (append-only)",
       "shown_on": [],
       "review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
-      "may_be_empty": true
+      "may_be_empty": true,
+      "review_exit": "ais-scoping"
     },
     {
       "path": "cache/runs/*/live-*.json.gz",
@@ -3536,7 +3545,8 @@
       "produced_by": "tools/cache-londat.mjs",
       "fetched": "2026-10-04 onwards (append-only)",
       "shown_on": [],
-      "review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+      "review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+      "review_exit": "ais-scoping"
     },
     {
       "path": "cache/latest.json",
@@ -3562,7 +3572,8 @@
         "docklands/index.html",
         "atlas/index.html"
       ],
-      "review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver"
+      "review": "AIS rows from AISHub and aisstream.io: Accepted for scoping only (owner, 2026-10-04: \"Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale.\"). Review before scaling or any commercial use: AISHub permission is a private letter reported by Open Waters, 'revocable at will'; aisstream.io has no published terms; the Open Waters hosted service is free for personal use, commercial use needs its paid tier or our own receiver",
+      "review_exit": "ais-scoping"
     },
     {
       "path": "cache/zone-core.gpkg",
@@ -3609,7 +3620,11 @@
       "produced_by": "tools/build-zone-gpkg.mjs",
       "fetched": "2026-10-05 (built from the files as committed)",
       "shown_on": [],
-      "review": "Some layers carry sources marked for review: registry/sources/construction/sites.json"
+      "review": "Some layers carry sources marked for review: registry/sources/construction/sites.json",
+      "review_exit": [
+        "no-licence-public",
+        "web-crawl"
+      ]
     },
     {
       "path": "cache/zone-lds.gpkg",
@@ -4038,7 +4053,11 @@
         "what": "OSM node and way ids that place each station"
       },
       "produced_by": "hand-written",
-      "review": "quotes include Wikipedia text (CC BY-SA); TfL FOI rail levels have no stated licence"
+      "review": "quotes include Wikipedia text (CC BY-SA); TfL FOI rail levels have no stated licence",
+      "review_exit": [
+        "quotes",
+        "no-licence-public"
+      ]
     },
     {
       "path": "data/raw/docklands/ea-defences.json.gz",
@@ -4125,7 +4144,8 @@
       },
       "produced_by": "research agents, checked by hand",
       "crawl": "pages fetched directly, 2026-10-02; allowed for scoping under the crawl policy",
-      "review": "169 quotes are Wikipedia text (CC BY-SA 4.0, share-alike), the rest short quotes from all-rights-reserved pages: before anything leaves the prototyping phase, decide whether to keep the quote text or only the value and URL"
+      "review": "169 quotes are Wikipedia text (CC BY-SA 4.0, share-alike), the rest short quotes from all-rights-reserved pages: before anything leaves the prototyping phase, decide whether to keep the quote text or only the value and URL",
+      "review_exit": "quotes"
     },
     {
       "path": "docklands/FACTS.md",
@@ -4138,7 +4158,8 @@
         "use": "none"
       },
       "produced_by": "generated from facts.json",
-      "review": "as docklands/facts.json"
+      "review": "as docklands/facts.json",
+      "review_exit": "quotes"
     },
     {
       "path": "data/raw/postcodes/onspd-aug2026.json.gz",
@@ -4305,7 +4326,11 @@
       "shown_on": [
         "registry/index.html"
       ],
-      "review": "occupants include CWG page links, mall names and levels from cwg-directory.json; 106 occupants come from the CWG directory alone, placed by street address, mall host outline or postcode with a confidence; cwg_unplaced lists the entries with no building and why. Business phone and email from OSM are kept under the cwplans exception (owner, 2026-10-03). Register links keep the key (UPRN, register point, mall, street address, name, postcode), its precision and a confidence; registers_unplaced and registers_uprn_rejected list what was not placed and why. Charity contact addresses are placed only by UPRN or a non-residential building (owner, 2026-10-03)"
+      "review": "occupants include CWG page links, mall names and levels from cwg-directory.json; 106 occupants come from the CWG directory alone, placed by street address, mall host outline or postcode with a confidence; cwg_unplaced lists the entries with no building and why. Business phone and email from OSM are kept under the cwplans exception (owner, 2026-10-03). Register links keep the key (UPRN, register point, mall, street address, name, postcode), its precision and a confidence; registers_unplaced and registers_uprn_rejected list what was not placed and why. Charity contact addresses are placed only by UPRN or a non-residential building (owner, 2026-10-03)",
+      "review_exit": [
+        "cwg-crawl",
+        "personal-data"
+      ]
     },
     {
       "path": "registry/ids.json",
@@ -4416,7 +4441,8 @@
         "what": "OSM ids, names, brand tags, levels, positions, match rules"
       },
       "produced_by": "registry/sources/brands/tools/build-branches.mjs",
-      "review": "includes CWG directory fields (see cwg-directory.json)"
+      "review": "includes CWG directory fields (see cwg-directory.json)",
+      "review_exit": "cwg-crawl"
     },
     {
       "path": "registry/sources/brands/storelocator.json",
@@ -4445,7 +4471,8 @@
       },
       "produced_by": "tools/probe-stock-check.mjs and the survey agents' scripts (not kept); skill cwplans-stock-check",
       "crawl": "direct fetch and headless Chromium, 2026-10-12: first and second pass obeyed robots.txt; the approved pass ignored it for 26 owner-approved shops (sets A and B)",
-      "review": "facts read from shop websites with no open licence: scoping only"
+      "review": "facts read from shop websites with no open licence: scoping only",
+      "review_exit": "web-crawl"
     },
     {
       "path": "registry/sources/brands/cwg-directory.json",
@@ -4458,7 +4485,8 @@
       },
       "produced_by": "registry/sources/brands/tools/fetch-cwg.mjs",
       "crawl": "Internet Archive copies of canarywharf.com (sitemap of 2026-03-04, entry pages mostly November 2025), read 2026-10-03; allowed for scoping under the crawl policy",
-      "review": "no open licence on canarywharf.com: re-check before anything leaves the prototyping phase"
+      "review": "no open licence on canarywharf.com: re-check before anything leaves the prototyping phase",
+      "review_exit": "cwg-crawl"
     },
     {
       "path": "registry/sources/brands/tools/cwg-decisions.json",
@@ -4777,7 +4805,8 @@
       "shown_on": [
         "feeds/underground/README.md"
       ],
-      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+      "review_exit": "quotes"
     },
     {
       "path": "feeds/underground/stations-excluded.json",
@@ -4804,7 +4833,8 @@
       "shown_on": [
         "feeds/underground/README.md"
       ],
-      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+      "review_exit": "quotes"
     },
     {
       "path": "feeds/underground/planning-excluded.json",
@@ -4831,7 +4861,8 @@
       "shown_on": [
         "feeds/underground/README.md"
       ],
-      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+      "review_exit": "quotes"
     },
     {
       "path": "feeds/underground/estate-excluded.json",
@@ -4858,7 +4889,8 @@
       "shown_on": [
         "feeds/underground/README.md"
       ],
-      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production"
+      "review": "short quotes from copyright documents (CWG, TfL, Crossrail); re-check before production",
+      "review_exit": "quotes"
     },
     {
       "path": "feeds/underground/tunnels-excluded.json",
@@ -5236,7 +5268,11 @@
         "docklands/index.html"
       ],
       "crawl": "as registry/sources/lighting/README.md",
-      "review": "facts only from all-rights-reserved pages and CC BY-SA photos (URL, date, colour seen); colours of CC BY-SA photos are our judgement, not their content. Re-check before anything leaves the prototyping phase"
+      "review": "facts only from all-rights-reserved pages and CC BY-SA photos (URL, date, colour seen); colours of CC BY-SA photos are our judgement, not their content. Re-check before anything leaves the prototyping phase",
+      "review_exit": [
+        "quotes",
+        "web-crawl"
+      ]
     },
     {
       "path": "registry/sources/lighting/press-pages.json",
@@ -5277,7 +5313,8 @@
       "shown_on": [
         "docklands/index.html (through facades.jpg)"
       ],
-      "review": "derived from CC BY 2.0 / 4.0 photos: the attribution (author, licence, building) is in docklands/data/tex/facades.json and shown in About"
+      "review": "derived from CC BY 2.0 / 4.0 photos: the attribution (author, licence, building) is in docklands/data/tex/facades.json and shown in About",
+      "review_exit": "attribution-kept"
     },
     {
       "path": "docklands/data/tex/facades-registry.json",
@@ -5308,7 +5345,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "registry tiles derived from CC BY 2.0 / 4.0 photos (attribution in facades.json, shown in About); contributed tiles CC0"
+      "review": "registry tiles derived from CC BY 2.0 / 4.0 photos (attribution in facades.json, shown in About); contributed tiles CC0",
+      "review_exit": "attribution-kept"
     },
     {
       "path": "docklands/data/tex/facades.json",
@@ -5409,7 +5447,8 @@
       },
       "produced_by": "tools/fetch-registers.mjs",
       "shown_on": [],
-      "review": "contact address only; for small charities it can be a trustee's home (allowed under the cwplans exception; do not present it as the charity's premises)"
+      "review": "contact address only; for small charities it can be a trustee's home (allowed under the cwplans exception; do not present it as the charity's premises)",
+      "review_exit": "personal-data"
     },
     {
       "path": "registry/sources/registers/ofsted-childcare.json",
@@ -5510,7 +5549,8 @@
       },
       "produced_by": "tools/crawl-sites.mjs",
       "crawl": "direct fetch of brand and occupant sites, and Internet Archive copies of canarywharf.com (entry pages mostly November 2025), 2026-10-03; allowed for scoping under the crawl policy",
-      "review": "no open licence on the crawled sites: short fields only; re-check before anything leaves the prototyping phase"
+      "review": "no open licence on the crawled sites: short fields only; re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "registry/sources/web/discovered-feeds.json",
@@ -5565,7 +5605,8 @@
       },
       "produced_by": "tools/render-structured-data.mjs",
       "crawl": "headless render of entity pages, 2026-10-03; Internet Archive copies of canarywharf.com pages (mostly November 2025) read from the local cache",
-      "review": "site owners' structured data, no open licence: kept for scoping only; re-check before anything leaves the prototyping phase"
+      "review": "site owners' structured data, no open licence: kept for scoping only; re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/index.json",
@@ -5614,7 +5655,8 @@
         "use": "none"
       },
       "produced_by": "hand-written (2026-10-06)",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/idioms/idioms.json",
@@ -5626,7 +5668,8 @@
         "use": "none"
       },
       "produced_by": "hand-written (2026-10-06)",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/idioms/rewrites",
@@ -5638,7 +5681,8 @@
         "use": "none"
       },
       "produced_by": "hand-written (2026-10-06)",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/idioms/page-idioms.json",
@@ -5651,7 +5695,8 @@
         "use": "none"
       },
       "produced_by": "tools/web-idioms.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/idioms/summary.json",
@@ -5664,7 +5709,8 @@
         "use": "none"
       },
       "produced_by": "tools/web-idioms.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/idioms/canonical.nq.gz",
@@ -5677,7 +5723,8 @@
         "use": "none"
       },
       "produced_by": "tools/web-idioms.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/coref/sameas.nq.gz",
@@ -5690,7 +5737,8 @@
         "use": "none"
       },
       "produced_by": "tools/web-coref.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/coref/descriptions.json",
@@ -5704,7 +5752,8 @@
         "use": "none"
       },
       "produced_by": "tools/web-coref.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "../third_party/cwplans-structured-data/coref/entities.json",
@@ -5718,7 +5767,8 @@
         "use": "none"
       },
       "produced_by": "tools/web-coref.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "registry/sources/brands/cwg-directory-typed.json",
@@ -5732,7 +5782,8 @@
         "use": "none"
       },
       "produced_by": "tools/cwg-directory-typed.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "cwg-crawl"
     },
     {
       "path": "registry/sources/brands/cwg-directory-typed.nq",
@@ -5746,7 +5797,8 @@
         "use": "none"
       },
       "produced_by": "tools/cwg-directory-typed.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "cwg-crawl"
     },
     {
       "path": "tools/web-idioms.mjs",
@@ -5792,7 +5844,8 @@
         "use": "none"
       },
       "produced_by": "tools/probe-site-search.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "web-crawl"
     },
     {
       "path": "registry/sources/brands/cwg-hours.json",
@@ -5805,7 +5858,8 @@
         "use": "none"
       },
       "produced_by": "tools/cwg-hours.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "cwg-crawl"
     },
     {
       "path": "registry/sources/web/hours-by-place.json",
@@ -5822,7 +5876,11 @@
         "what": "opening_hours tags of registry occupants (as copied into registry/buildings.json), with their building position; ODbL"
       },
       "produced_by": "tools/hours-by-place.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": [
+        "cwg-crawl",
+        "web-crawl"
+      ]
     },
     {
       "path": "registry/sources/brands/mall-plan-evidence.json",
@@ -5838,7 +5896,8 @@
         "what": "OSM shop, amenity and office point positions, names, level, level:ref and addr:unit, and footway and indoor way geometry near the malls (from data/raw/registry/osm-cw.json.gz); ODbL, attribution in the file"
       },
       "produced_by": "tools/mall-plan-evidence.mjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": "cwg-crawl"
     },
     {
       "path": "tools/probe-site-search.mjs",
@@ -5896,7 +5955,11 @@
         "use": "none"
       },
       "produced_by": "hand-written (2026-10-06)",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": [
+        "web-crawl",
+        "cwg-crawl"
+      ]
     },
     {
       "path": "reports/hours-and-plans/index.html",
@@ -5913,7 +5976,11 @@
         "what": "OSM shop points and footway and indoor way geometry near the malls (from mall-plan-evidence.json), OSM opening_hours (from hours-by-place.json); © OpenStreetMap contributors link on the page"
       },
       "produced_by": "reports/hours-and-plans/build.cjs",
-      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase"
+      "review": "crawled for scoping (owner rule of 2026-10-03): re-check before anything leaves the prototyping phase",
+      "review_exit": [
+        "cwg-crawl",
+        "web-crawl"
+      ]
     },
     {
       "path": "reports/hours-and-plans/template.html",
@@ -6160,7 +6227,8 @@
       },
       "produced_by": "tools/extract-structured-data.mjs",
       "crawl": "as third_party/cwplans-structured-data/, 2026-10-03",
-      "review": "facts from the site owners' structured data, no open licence: scoping only"
+      "review": "facts from the site owners' structured data, no open licence: scoping only",
+      "review_exit": "web-crawl"
     },
     {
       "path": "registry/sources/web/structured-register-entries.json",
@@ -6290,7 +6358,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "CelesTrak states no licence; credited on the page"
+      "review": "CelesTrak states no licence; credited on the page",
+      "review_exit": "no-licence-public"
     },
     {
       "path": "docklands/data/sky/weather-2026-10-03.json",
@@ -6488,7 +6557,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "Hershey font data: free for any use if the acknowledgement goes with the data (the Hershey Fonts were originally created by Dr. A. V. Hershey while working at the U. S. National Bureau of Standards; the format of the font data was originally created by James Hurt, Cognition, Inc.); the acknowledgement is in the file header. Not share-alike. The OFL-licensed EMS Hershey SVG fonts were not used."
+      "review": "Hershey font data: free for any use if the acknowledgement goes with the data (the Hershey Fonts were originally created by Dr. A. V. Hershey while working at the U. S. National Bureau of Standards; the format of the font data was originally created by James Hurt, Cognition, Inc.); the acknowledgement is in the file header. Not share-alike. The OFL-licensed EMS Hershey SVG fonts were not used.",
+      "review_exit": "attribution-kept"
     },
     {
       "path": "docklands/line-styles.js",
@@ -6572,7 +6642,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/night-2026-10-03/promenade-skyline-bollard.jpg",
@@ -6585,7 +6656,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/night-2026-10-03/promenade-zoom-moon-blur.jpg",
@@ -6598,7 +6670,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/night-2026-10-03/zoom-moon-towers.jpg",
@@ -6611,7 +6684,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/night-2026-10-03/river-warehouses-skyline.jpg",
@@ -6624,7 +6698,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/night-2026-10-03/clipper-canary-wharf-pier.jpg",
@@ -6637,7 +6712,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/night-2026-10-03/README.md",
@@ -6650,7 +6726,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed"
+      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/data/towers.json",
@@ -6670,7 +6747,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "Planning documents listed under references are links only; nothing from them is copied."
+      "review": "Planning documents listed under references are links only; nothing from them is copied.",
+      "review_exit": "note-only"
     },
     {
       "path": "docklands/data/trees.json",
@@ -6691,7 +6769,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "ethics (CLAUDE.md, Data ethics): only position, taxon, height, crown, source and record id are kept; the dropped fields of each source are listed in the file (sources[].dropped)."
+      "review": "ethics (CLAUDE.md, Data ethics): only position, taxon, height, crown, source and record id are kept; the dropped fields of each source are listed in the file (sources[].dropped).",
+      "review_exit": "note-only"
     },
     {
       "path": "docklands/data/tree-species.json",
@@ -6712,7 +6791,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "inferred profiles are assumptions, not data (basis letters T, P, W, R, L); no fields beyond taxon and position are used."
+      "review": "inferred profiles are assumptions, not data (basis letters T, P, W, R, L); no fields beyond taxon and position are used.",
+      "review_exit": "note-only"
     },
     {
       "path": "data/raw/trees/osm-tree-leaf.json.gz",
@@ -6838,7 +6918,8 @@
       "produced_by": "tools/discover-feeds.mjs",
       "fetched": "2026-10-04",
       "crawl": "feeds fetched directly and pages read from Common Crawl, 2026-10-04; allowed for scoping under the crawl policy",
-      "review": "feed URLs and titles from directories and crawls: facts only; re-check terms before production"
+      "review": "feed URLs and titles from directories and crawls: facts only; re-check terms before production",
+      "review_exit": "web-crawl"
     },
     {
       "path": "feeds/discovery/london-feeds.opml",
@@ -6885,7 +6966,8 @@
       "shown_on": [
         "feeds/underground/AXONOMETRIC-USES.md"
       ],
-      "review": "short quotes from copyright pages; facts marked search-snippet were not read on the page; re-check before production"
+      "review": "short quotes from copyright pages; facts marked search-snippet were not read on the page; re-check before production",
+      "review_exit": "quotes"
     },
     {
       "path": "feeds/underground/AXONOMETRIC-USES.md",
@@ -6918,7 +7000,8 @@
         "what": "this index holds no OSM geometry; the models it points to contain OSM-derived geometry (ODbL), attributed in their README"
       },
       "produced_by": "tools/blender-stations/ (Blender via the blender-mcp MCP server), hand-written index, 2026-10-05",
-      "review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase"
+      "review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase",
+      "review_exit": "tfl-sheets"
     },
     {
       "path": "docklands/data/london-terrain.json",
@@ -7175,7 +7258,8 @@
       "shown_on": [
         "docklands/index.html"
       ],
-      "review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase"
+      "review": "TfL sheet basis is not an open licence: re-check before the models leave the prototyping phase",
+      "review_exit": "tfl-sheets"
     },
     {
       "path": "feeds/underground/README.md",
@@ -10699,7 +10783,8 @@
       "review": "facts from a NATS publication with no open licence; no NOTAM text kept. Re-check before production",
       "shown_on": [
         "docklands/index.html"
-      ]
+      ],
+      "review_exit": "no-licence-public"
     },
     {
       "path": "feeds/live/helicopters.json",
@@ -10715,7 +10800,8 @@
       "review": "facts from the UK AIP (Crown copyright / NATS); issue 2024-03-21, newer issues not reachable from the container. Re-check before production",
       "shown_on": [
         "docklands/index.html"
-      ]
+      ],
+      "review_exit": "no-licence-public"
     },
     {
       "path": "feeds/live/README.md",
@@ -10733,7 +10819,8 @@
         "use": "none"
       },
       "produced_by": "hand-written (live-state agent, 2026-10-04)",
-      "review": "quotes four sums from CAA CAP 1455 as facts (no reproduction of the file)"
+      "review": "quotes four sums from CAA CAP 1455 as facts (no reproduction of the file)",
+      "review_exit": "no-licence-public"
     },
     {
       "path": "feeds/river/pla-notices.json",
@@ -10815,7 +10902,8 @@
       "crawl": "fetched 2026-10-04 by tools/fetch-ais.mjs (snapshot, stations, SSE listen 600 s)",
       "shown_on": [
         "docklands/index.html"
-      ]
+      ],
+      "review_exit": "ais-scoping"
     },
     {
       "path": "feeds/river/levels.json",
@@ -10968,7 +11056,8 @@
         "../docklands/index.html (the Three.js port: layers/river.js, moored-boats.js)"
       ],
       "note": "The boats are generic (typical types, sizes and colours by the class of mooring); the tap card and describe() say so. No houseboat names, addresses, contacts or occupants are kept, though the cwplans exception would allow them.",
-      "review": "OSM ODbL derived database: review with the other OSM uses before the prototyping phase ends."
+      "review": "OSM ODbL derived database: review with the other OSM uses before the prototyping phase ends.",
+      "review_exit": "osm-odbl"
     },
     {
       "path": "docklands/data/wildlife.json",
@@ -11080,7 +11169,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-one-canada-square-cranes-citi.jpg",
@@ -11094,7 +11184,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-tide-core-cranes.jpg",
@@ -11108,7 +11199,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-one-canada-square-core.jpg",
@@ -11122,7 +11214,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-newfoundland-landmark-pinnacle.jpg",
@@ -11136,7 +11229,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-red-frame-riverside-block.jpg",
@@ -11150,7 +11244,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-dark-tower-citi.jpg",
@@ -11164,7 +11259,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-towers-pitched-roof-blocks.jpg",
@@ -11178,7 +11274,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/README.md",
@@ -11192,7 +11289,8 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/day-2026-10-04/points.json",
@@ -11206,7 +11304,8 @@
       },
       "produced_by": "read by eye from enlargements of the owner photo (2026-10-04)",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF"
+      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/plane-2026-10/evening-thames-from-plane.jpg",
@@ -11220,7 +11319,8 @@
       },
       "produced_by": "the owner (photo, shared 2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/plane-2026-10/README.md",
@@ -11233,7 +11333,8 @@
       },
       "produced_by": "hand-written (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/plane-2026-10/points.json",
@@ -11249,7 +11350,8 @@
       },
       "produced_by": "read by eye from 2x and 3x enlargements of the owner photo (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/plane-2026-10/solution.json",
@@ -11265,7 +11367,8 @@
       },
       "produced_by": "tools/view-mcp/solve.mjs (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)"
+      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
+      "review_exit": "owner-photos"
     },
     {
       "path": "docklands/reference/plane-2026-10/compare-photo-render.jpg",
@@ -11282,7 +11385,8 @@
       },
       "produced_by": "tools/view-mcp/render.mjs compare (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied photo; ask the owner whether CC0 applies; the render half carries the page's OSM attribution in the README"
+      "review": "owner-supplied photo; ask the owner whether CC0 applies; the render half carries the page's OSM attribution in the README",
+      "review_exit": "owner-photos"
     },
     {
       "path": "registry/sources/construction/sites.json",
@@ -11310,7 +11414,11 @@
         "docklands/index.html"
       ],
       "crawl": "as registry/sources/construction/facts.json",
-      "review": "PLD terms not confirmed as OGL (metadata and links only, descriptions cut to 300 characters); NOTAM facts only; developer pages facts only. Re-check before anything leaves the prototyping phase"
+      "review": "PLD terms not confirmed as OGL (metadata and links only, descriptions cut to 300 characters); NOTAM facts only; developer pages facts only. Re-check before anything leaves the prototyping phase",
+      "review_exit": [
+        "no-licence-public",
+        "web-crawl"
+      ]
     },
     {
       "path": "registry/sources/construction/facts.json",
@@ -13808,6 +13916,10 @@
       "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ],
+      "review_exit": [
+        "catastro-ign",
+        "osm-odbl"
       ]
     },
     {
@@ -13832,6 +13944,10 @@
       "fetched": "2026-10-20",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ],
+      "review_exit": [
+        "catastro-ign",
+        "osm-odbl"
       ]
     },
     {
@@ -14449,7 +14565,8 @@
       "shown_on": [
         "docklands/ (the Three.js port, layer Aircraft)"
       ],
-      "review": "ODbL (share-alike) data committed to a branch (owner, 2026-10-09: \"For today build a cache of last 7 days for our areas, and show equivalent data for the matching time and day of week.\"). Review with the OSM (ODbL) use before anything leaves the prototyping phase; the owner's longer-term plan for live data is a proxy (\"Eventually find or build a proxy.\")"
+      "review": "ODbL (share-alike) data committed to a branch (owner, 2026-10-09: \"For today build a cache of last 7 days for our areas, and show equivalent data for the matching time and day of week.\"). Review with the OSM (ODbL) use before anything leaves the prototyping phase; the owner's longer-term plan for live data is a proxy (\"Eventually find or build a proxy.\")",
+      "review_exit": "adsb-odbl"
     },
     {
       "branch": "live-cache",
@@ -14476,9 +14593,440 @@
       "shown_on": [
         "docklands/ (the Three.js port: layers Aircraft, Ships, Wind, Weather)"
       ],
-      "review": "ODbL (adsb.lol) and scoping-only AIS (AISHub, aisstream.io) data committed to a branch (owner, 2026-10-09: \"Couldn't we crontab it for every 5 mins? And default to live for the rest?\", \"We want the webapp to always have fresh air and boat data plus recent history\", \"Basically we want all the data we can\"). Review with the OSM (ODbL) and AIS reviews before anything leaves the prototyping phase. The branch adsb-live was never created (the work moved to live-cache before the first push)"
+      "review": "ODbL (adsb.lol) and scoping-only AIS (AISHub, aisstream.io) data committed to a branch (owner, 2026-10-09: \"Couldn't we crontab it for every 5 mins? And default to live for the rest?\", \"We want the webapp to always have fresh air and boat data plus recent history\", \"Basically we want all the data we can\"). Review with the OSM (ODbL) and AIS reviews before anything leaves the prototyping phase. The branch adsb-live was never created (the work moved to live-cache before the first push)",
+      "review_exit": [
+        "adsb-odbl",
+        "ais-scoping",
+        "metar-origin"
+      ]
     }
   ],
+  "review_exit_paths": {
+    "about": "Exit paths for the items marked \"review\" (OKR KR6.2): what the issue is, the owner decisions with their dates and words (CLAUDE.md), and the options at the end of the prototyping phase. Each file, branch or source with a \"review\" note (or licence_class \"review\") names one or more of these groups in its \"review_exit\" (the first is the main reason). A group does not change a licence class or a decision; the owner chooses an option. Readable view: docs/review-exit-paths.md (written by tools/check-data-register.mjs --write). Not an item: the Bosnia and Herzegovina waiver (owner, 2026-10-11, issue https://github.com/danbri/londat/issues/9) covers no committed file today (Sarajevo heights come from OSM and GHSL; FGU and RGURS were not reached).",
+    "groups": {
+      "ais-scoping": {
+        "title": "AIS from AISHub and aisstream.io (via Open Waters), accepted for scoping only",
+        "reason": "scoping-only permission",
+        "issue": "AISHub gives no published licence: Open Waters reports a private letter from AISHub (2026-08-22) that is \"revocable at will\". aisstream.io publishes no terms. The Open Waters hosted service is free for personal use only; commercial use needs its paid tier or our own receiver. Events with an open licence (CC0 volunteer receptions, NLOD, CC BY) are not part of this item. Note: the licence text of the source openwaters-ais still says that AISHub and aisstream.io events are not kept, but cwplans/tools/fetch-ais.mjs and fetch-live-cache.mjs keep them (class scoping-accepted-2026-10-04) since the owner decision of 2026-10-04; that text is older than the decision (not changed here: the owner confirms).",
+        "decisions": [
+          {
+            "date": "2026-10-04",
+            "words": "Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale. Add to live by default now.",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "obtain licence",
+            "what": "Ask AISHub and aisstream.io for written terms that allow publication; for commercial use, take the Open Waters paid tier."
+          },
+          {
+            "kind": "replace",
+            "what": "Our own AIS receiver near the river (its receptions are ours; as an AISHub member we also get the AISHub feed under membership terms), or only the open receptions (CC0, NLOD, CC BY) that Open Waters already gives."
+          },
+          {
+            "kind": "keep",
+            "what": "Not possible after the phase without one of the two above: the permission is for scoping only."
+          },
+          {
+            "kind": "remove",
+            "what": "Set keep: false for aishub-terms and aisstream-io-terms in the LICENCE table of cwplans/tools/fetch-ais.mjs and of cwplans/tools/fetch-live-cache.mjs; then rebuild: node cwplans/tools/fetch-ais.mjs --no-fetch. The next hourly cache run (cwplans/tools/cache-londat.mjs) and the next 5-minute live-cache push then hold no such events. Past hourly run files and closed monthly SQLite files keep them: a filter tool that drops rows with a \"review\" field (written by fetch-ais.mjs) is not written yet; history in git needs an owner decision."
+          }
+        ],
+        "if_no_decision": "remove (the permission is for scoping only)"
+      },
+      "adsb-odbl": {
+        "title": "adsb.lol aircraft (ODbL 1.0, share-alike) committed on the branches adsb-cache and live-cache",
+        "reason": "share-alike",
+        "issue": "ODbL is share-alike: a database derived from it that we publish must be offered under ODbL. The adsb.lol API terms ask production users to contact them. Same review as the OSM use.",
+        "decisions": [
+          {
+            "date": "2026-10-09",
+            "words": "adsb.lol (ODbL) (Recommended)",
+            "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-09",
+            "words": "Eventually find or build a proxy. For today build a cache of last 7 days for our areas, and show equivalent data for the matching time and day of week.",
+            "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-09",
+            "words": "Couldn't we crontab it for every 5 mins? And default to live for the rest?",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep under ODbL: the branch files stay offered under ODbL 1.0 with the credit (already in each branch README); contact adsb.lol before production use."
+          },
+          {
+            "kind": "replace",
+            "what": "The owner's longer-term plan: a proxy that reads the live API on request, so nothing is committed."
+          },
+          {
+            "kind": "remove",
+            "what": "Delete the branch adsb-cache (git push origin --delete adsb-cache) and disable .github/workflows/adsb-cache.yml; run cwplans/tools/fetch-live-cache.mjs with --only ships, then with --only metar (no aircraft). The page falls back to simulated traffic (owner decision of 2026-10-09)."
+          }
+        ],
+        "if_no_decision": "keep under ODbL with the credit, as for OSM (decided with the OSM review)"
+      },
+      "osm-odbl": {
+        "title": "OpenStreetMap (ODbL 1.0, share-alike) and ODbL building data (Overture, Microsoft)",
+        "reason": "share-alike",
+        "issue": "ODbL is share-alike: a derived database that we publish must be offered under ODbL, with the credit. Only moorings.json carries a review mark, but the review covers every file with osm.use other than \"none\" (see the OSM table of DATA-REGISTER.md) and the Overture and Microsoft building data of the places.",
+        "decisions": [
+          {
+            "date": "2026-10-03",
+            "words": "ODbL is ok for now, and will be thoroughly reviewed as part of the planning and prototyping activities later. Keep track of our use of this data carefully.",
+            "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-20",
+            "words": "Use ms/overture",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep under ODbL: offer each derived database under ODbL 1.0; the check already fails a page that shows OSM data without the \"© OpenStreetMap contributors\" link (cwplans/tools/check-data-register.mjs)."
+          },
+          {
+            "kind": "replace",
+            "what": "No open non-share-alike source has the same detail. Partial: OS Open Zoomstack and OS Open Map Local (OGL) for UK buildings and water; national cadastres outside the UK."
+          },
+          {
+            "kind": "remove",
+            "what": "moorings.json is OSM only: delete it and the mooring layer. Other files: rebuild without OSM is not possible today (OSM gives the buildings)."
+          }
+        ],
+        "if_no_decision": "keep under ODbL with the credit"
+      },
+      "catastro-ign": {
+        "title": "León: Catastro floors (transformed) and IGN España data via Overture with no stated licence",
+        "reason": "licence terms to confirm (transformed-only reuse; licence field empty)",
+        "issue": "The Catastro licence allows reuse of data that we have transformed and forbids redistribution of the original files: only computed heights are committed. The IGN España records in Overture (floors and footprints) have an empty licence field; IGN data are generally CC BY 4.0, not confirmed for these records.",
+        "decisions": [
+          {
+            "date": "2026-10-11",
+            "words": "Catastro - yes",
+            "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-20",
+            "words": "Data - is fine for now, bring it in with subdirs and readmes and provenance clear",
+            "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-20",
+            "words": "use the data but keep it distinct and easy to remove if requested. Use for validation at least",
+            "where": "register sources overture-ign-floors, overture-ign-geometry"
+          },
+          {
+            "date": "2026-10-21",
+            "words": "What we have is ok",
+            "where": "CLAUDE.md, data policy (IGN España outlines and floors in León: a separate, removable class registered as review)"
+          }
+        ],
+        "options": [
+          {
+            "kind": "obtain licence",
+            "what": "Ask IGN / CNIG (or Overture) to confirm CC BY 4.0 for the ign_es records; then change the licence class to open with the CC BY credit."
+          },
+          {
+            "kind": "keep",
+            "what": "Catastro: keep the computed heights with the credit \"Dirección General del Catastro\" (the licence allows transformed data); never commit the original files."
+          },
+          {
+            "kind": "replace",
+            "what": "IGN floors and footprints: OSM, Microsoft and GHSL heights already follow in the height order; the IGN data then serve only as validation, not committed."
+          },
+          {
+            "kind": "remove",
+            "what": "Remove the id from the region config docklands/geo/regions/leon.js: 'es-catastro' or 'overture-ign-floors' from place.heights, 'overture-ign-geometry' from place.surround.geometry; then rebuild: node cwplans/tools/build-place-tiles.mjs build --region leon (the README of the place is written again)."
+          }
+        ],
+        "if_no_decision": "Catastro: keep (transformed data only); IGN: keep as the separate, removable class the owner accepted on 2026-10-21, and remove it with the switch if IGN or the owner asks"
+      },
+      "cwg-crawl": {
+        "title": "Canary Wharf Group directory pages (canarywharf.com, read from Internet Archive copies) and the files built from them",
+        "reason": "crawl (no open licence)",
+        "issue": "canarywharf.com states no licence (all rights reserved by default). We keep facts (name, category, mall, level, address lines, website, hours) and links. In the UK a substantial extraction from a database can also infringe the database right, even for facts.",
+        "decisions": [
+          {
+            "date": "2026-10-03",
+            "words": "Website crawls - direct and via IA or CommonCrawl etc are fair use for our scoping purposes.",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "obtain licence",
+            "what": "Ask Canary Wharf Group for permission to reuse the directory facts (it publishes them to promote its tenants)."
+          },
+          {
+            "kind": "replace",
+            "what": "OSM (ODbL) and FSA (OGL) occupants, the brands' own store pages through store finders (owner, 2026-10-03), and the public registers; mall levels from OSM level:ref (fault F48)."
+          },
+          {
+            "kind": "keep",
+            "what": "Keep facts and links only, with the source URL per record, after a legal check of the database right."
+          },
+          {
+            "kind": "remove",
+            "what": "Delete registry/sources/brands/cwg-directory.json (and cwg-directory-typed.*, cwg-hours.json); then rebuild: node cwplans/registry/sources/brands/tools/build-branches.mjs and node cwplans/tools/build-registry.mjs (build-registry reads the directory only when the file is there). Then rebuild the files that read the registry (rebuild order in cwplans/METHODS.md)."
+          }
+        ],
+        "if_no_decision": "remove (the permission is for scoping only)"
+      },
+      "web-crawl": {
+        "title": "Other website crawls: site owners' structured data, site facts, feed directories, shop stock tools",
+        "reason": "crawl (no open licence)",
+        "issue": "The crawled sites state no open licence. The site owners publish schema.org markup for search engines, but that is not a licence. third_party/ is in the repository only: the Pages workflow does not publish it.",
+        "decisions": [
+          {
+            "date": "2026-10-03",
+            "words": "Website crawls - direct and via IA or CommonCrawl etc are fair use for our scoping purposes.",
+            "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-07",
+            "words": "Repo only for now",
+            "where": "CLAUDE.md, data policy (third_party/)"
+          },
+          {
+            "date": "2026-10-12",
+            "words": "These tools will be user-assisting browser functionality and not unconstrained web crawling.",
+            "where": "CLAUDE.md, data policy (stock-check survey)"
+          }
+        ],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep third_party/cwplans-structured-data in the repository only (not published), as research input."
+          },
+          {
+            "kind": "replace",
+            "what": "Read the same facts live in the browser at the user's request (as the stock-check tools do), with nothing committed."
+          },
+          {
+            "kind": "remove",
+            "what": "git rm -r third_party/cwplans-structured-data and the crawl-derived files; rebuild the dependants with their tools: cwplans/tools/hours-by-place.mjs, cwplans/tools/mall-plan-evidence.mjs, cwplans/tools/extract-structured-data.mjs, cwplans/tools/discover-feeds.mjs (each file names its tool in the register)."
+          }
+        ],
+        "if_no_decision": "keep in the repository only; remove from the published site"
+      },
+      "quotes": {
+        "title": "Short quotations: Wikipedia text (CC BY-SA 4.0) and sentences from all-rights-reserved pages",
+        "reason": "share-alike text and quotation",
+        "issue": "facts.json holds 169 quotes from Wikipedia (CC BY-SA 4.0, share-alike) and short quotes from all-rights-reserved pages (CWG, TfL, Crossrail, trade press), each with its URL, to cite a number. Quotation for a purpose with the source named is a UK copyright exception, but CC BY-SA text makes the file share-alike.",
+        "decisions": [
+          {
+            "date": "2026-10-03",
+            "words": "Website crawls - direct and via IA or CommonCrawl etc are fair use for our scoping purposes.",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep the value and the URL only, without the quote text (the value is a fact)."
+          },
+          {
+            "kind": "keep",
+            "what": "Keep the Wikipedia quotes in a separate file under CC BY-SA 4.0 with the credit, so only that file is share-alike."
+          },
+          {
+            "kind": "replace",
+            "what": "Take the values from Wikidata (CC0) where they exist."
+          },
+          {
+            "kind": "remove",
+            "what": "A projection tool that drops the quote fields (keeps value, unit, URL and date) is not written yet; then FACTS.md is generated again from facts.json."
+          }
+        ],
+        "if_no_decision": "keep the value and the URL; drop the quote text"
+      },
+      "no-licence-public": {
+        "title": "Public-sector publications with no open licence (NATS NOTAMs and AIP, TfL FOI, Planning London Datahub, CelesTrak, CAA CAP 1455)",
+        "reason": "licence unknown",
+        "issue": "No open licence is stated. We keep facts only (ids, positions, heights, dates, a few sums), no text, tables or charts.",
+        "decisions": [
+          {
+            "date": "2026-10-03",
+            "words": "Website crawls - direct and via IA or CommonCrawl etc are fair use for our scoping purposes.",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "obtain licence",
+            "what": "Ask NATS (PIB, AIP), TfL (FOI-0493-2223: is it OGL?), the GLA Planning London Datahub team (OGL?) and CelesTrak for written reuse terms."
+          },
+          {
+            "kind": "keep",
+            "what": "Keep facts only, as now, with the source and the date (facts are not protected by copyright; check the database right for NOTAMs)."
+          },
+          {
+            "kind": "replace",
+            "what": "Planning: borough planning registers under OGL through planning.data.gov.uk; orbits: Space-Track has a user agreement that limits redistribution, so CelesTrak with credit stays the better choice."
+          },
+          {
+            "kind": "remove",
+            "what": "NOTAMs and AIP: run node cwplans/tools/fetch-live.mjs without the source names notams and helicopters, and delete feeds/live/notams.json and helicopters.json; construction index: node cwplans/tools/build-construction-index.mjs (PLD is its main source, so the index goes); sky: delete the CelesTrak snapshot; CAP 1455: delete the four sums from feeds/live/README.md."
+          }
+        ],
+        "if_no_decision": "keep facts only and ask the publishers"
+      },
+      "metar-origin": {
+        "title": "METAR of London City Airport through NOAA AWC and IEM (public domain in the US; Met Office origin)",
+        "reason": "licence unknown (origin)",
+        "issue": "NOAA and IEM give the reports as public domain, but the reports come from the Met Office through the WMO. METARs are WMO essential data (Resolution 40, free and unrestricted exchange); not confirmed for redistribution.",
+        "decisions": [
+          {
+            "date": "2026-10-09",
+            "words": "Basically we want all the data we can",
+            "where": "register source awc-metar"
+          }
+        ],
+        "options": [
+          {
+            "kind": "obtain licence",
+            "what": "Confirm with the Met Office that EGLC METARs may be redistributed (WMO Resolution 40)."
+          },
+          {
+            "kind": "keep",
+            "what": "Keep with the NOAA / IEM credit and the Met Office named as origin."
+          },
+          {
+            "kind": "remove",
+            "what": "Run node cwplans/tools/fetch-live-cache.mjs without metar (--only aircraft, then --only ships); the wind layer falls back to Open-Meteo."
+          }
+        ],
+        "if_no_decision": "keep with the credit"
+      },
+      "tfl-sheets": {
+        "title": "TfL axonometric station sheets (FOI release 2015) used as a layout guide for the station models",
+        "reason": "licence unknown (restricted re-use)",
+        "issue": "The sheets are under TfL RPSI re-use, not an open licence. The models use them for topology and counts only; positions come from OSM and published levels; nothing is traced. The sheets themselves are in third_party/ (not published).",
+        "decisions": [
+          {
+            "date": "2026-10-05",
+            "summary": "use approved by the owner for the scoping phase; layout guide only, nothing traced (no exact words recorded)",
+            "where": "CLAUDE.md, data policy; register source tfl-am3d"
+          },
+          {
+            "date": "2026-10-07",
+            "words": "Repo only for now",
+            "where": "CLAUDE.md, data policy (third_party/)"
+          }
+        ],
+        "options": [
+          {
+            "kind": "obtain licence",
+            "what": "Ask TfL for a re-use licence for the derived station models."
+          },
+          {
+            "kind": "replace",
+            "what": "Model the stations from OSM indoor data, data/sourced-levels.json and the LiDAR only."
+          },
+          {
+            "kind": "remove",
+            "what": "Delete docklands/data/stations.json and the station-models index and the station layer; rebuild with new models: node cwplans/tools/build-station-mesh.mjs (from models made without the sheets; skill blender-station-models)."
+          }
+        ],
+        "if_no_decision": "remove from the published site until TfL agrees"
+      },
+      "owner-photos": {
+        "title": "The owner's own photos used as reference views",
+        "reason": "owner copyright",
+        "issue": "Night photos of 2026-10-03: the owner's copyright, kept with permission, not open. Day photos of 2026-10-04: CC0 1.0 already. Plane photo: the register says \"ask the owner\", but its README records the owner's CC0 statement of 2026-10-05. The render half of compare-photo-render.jpg carries OSM data (ODbL credit in the README).",
+        "decisions": [
+          {
+            "date": "2026-10-04",
+            "words": "I am copyright holder but will CC0 them.",
+            "where": "register (day photos)"
+          },
+          {
+            "date": "2026-10-05",
+            "words": "Plane photo - yes cc0, record me as owner",
+            "where": "cwplans/docklands/reference/plane-2026-10/README.md"
+          }
+        ],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Day and plane photos: CC0 is given; the owner can confirm and the review mark can go."
+          },
+          {
+            "kind": "obtain licence",
+            "what": "Night photos: the owner can give CC0 in one line, as for the day photos."
+          },
+          {
+            "kind": "remove",
+            "what": "Night photos: delete docklands/reference/night-2026-10-03/ from the published site (keep them in the repository); the ?view= entries keep their numbers."
+          }
+        ],
+        "if_no_decision": "night photos: keep in the repository, owner decides on publication"
+      },
+      "attribution-kept": {
+        "title": "Attribution licences already met (CC BY facade photos, Hershey fonts)",
+        "reason": "attribution required",
+        "issue": "CC BY 2.0 / 4.0 photos in the facade atlas need the credit (in docklands/data/tex/facades.json, shown in About). The Hershey font data need the acknowledgement (in the file header of docklands/plotter-svg.js). Not share-alike.",
+        "decisions": [],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep with the attribution, as now; check at the end of the phase that About still shows the facade credits."
+          },
+          {
+            "kind": "remove",
+            "what": "Facades: rebuild the atlas from the CC0 contributed tiles only (cwplans/tools/compose-facade-atlas.mjs)."
+          }
+        ],
+        "if_no_decision": "keep with the attribution"
+      },
+      "personal-data": {
+        "title": "Personal and address data allowed only under the cwplans exception",
+        "reason": "policy exception (personal data)",
+        "issue": "Charity contact addresses (for small charities often a trustee's home), business phone and email from OSM, and occupant records are kept because the owner suspended the normal data-ethics rules for this phase. The exception ends with the phase.",
+        "decisions": [
+          {
+            "date": "2026-10 (October 2026)",
+            "words": "This is a special project and we will be suspending our normal restrictions on personal org and address data while in the scoping, planning and prototyping phase.",
+            "where": "CLAUDE.md, data policy"
+          }
+        ],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep organisation records at their premises (UPRN or a non-residential building) only."
+          },
+          {
+            "kind": "remove",
+            "what": "Drop the contact addresses of charities that have no premises, and phone and email of people (not organisations). A switch for the normal rules in cwplans/tools/fetch-registers.mjs and cwplans/tools/build-registry.mjs is not written yet; then rebuild: node cwplans/tools/fetch-registers.mjs (from its snapshot) and node cwplans/tools/build-registry.mjs."
+          }
+        ],
+        "if_no_decision": "remove (the exception ends with the phase)"
+      },
+      "note-only": {
+        "title": "Notes that record a rule already applied (no licence question)",
+        "reason": "note only",
+        "issue": "towers.json: planning documents are links only, nothing copied. trees.json and tree-species.json: only position, taxon, height, crown, source and record id are kept; inferred profiles are marked as assumptions. The sources are open (OGL, CC BY, ODbL for the OSM part).",
+        "decisions": [],
+        "options": [
+          {
+            "kind": "keep",
+            "what": "Keep; the owner can clear the mark at the end-of-phase check. The OSM part follows the OSM review (group osm-odbl)."
+          }
+        ],
+        "if_no_decision": "keep"
+      }
+    },
+    "pending": []
+  },
   "pages": [
     {
       "path": "index.html",

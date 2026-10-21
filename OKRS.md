@@ -111,7 +111,7 @@ prototyping phase"; "Flag it somewhere for review as we scale" (2026-10-04); the
 | date | O1 | O2 | O3 | O4 | O5 | O6 | notes |
 |---|---|---|---|---|---|---|---|
 | 2026-10-11 (baseline) | 0.0 | 0.05 | 0.1 | 0.3 | 0.4 | 0.5 | O2: only the assessment and the coarse London terrain ring; O3: the MCP server and the test hook exist, but no non-visual or low-end support |
-| 2026-10-21 (draft for the 2026-10-25 checkpoint) | 0.30 | 0.41 | 0.40 | 0.25 | 0.29 | 0.50 | per key result below; updated 2026-10-21 with the week's merged work |
+| 2026-10-21 (draft for the 2026-10-25 checkpoint) | 0.30 | 0.41 | 0.40 | 0.25 | 0.29 | 0.70 | per key result below; updated 2026-10-21 with the week's merged work; O6 0.50 -> 0.70 with the KR6.2 exit paths and the KR6.3 recount |
 
 ### Checkpoint 1, draft scores (2026-10-20; final on 2026-10-25)
 
@@ -144,7 +144,7 @@ Evidence is on main unless stated. "Headless" means Chromium with software WebGL
 | KR5.3 live layers for any place | 0.0 | aircraft and ships for the Docklands circle only |
 | KR5.4 time scrubber | 0.5 | PARTIAL (accepted) |
 | KR6.1 check on every push | 0.9 | `npm run check` passes: 765 files registered |
-| KR6.2 "review" items with exit paths | 0.1 | 78 items marked "review"; no written exit paths yet |
-| KR6.3 open faults | 0.2 | not recounted against the target of 8 open |
+| KR6.2 "review" items with exit paths | 0.7 | 2026-10-21: all 88 review items (78 files, 2 branches, 8 sources) have an exit path in 14 groups by reason (`review_exit_paths` in `cwplans/data-register.json`; table: https://github.com/danbri/londat/blob/main/docs/review-exit-paths.md); `npm run check` counts items with no path and fails on a new one (0 without). Open: the owner decides the 5 largest groups (owner-photos, web-crawl, cwg-crawl, quotes, ais-scoping) |
+| KR6.3 open faults | 0.4 | recount 2026-10-21 against code and data: 15 open before, 12 after (F9 closed as a duplicate of F48; F25 and F30 ruled in `tools/join-lds.mjs`); the rules that close the rest, by value, are in the curation skill ("Recount of 2026-10-21"); 3 small rules (F4 with F7, F53, F49) reach the target of 8 |
 | KR6.4 log and lessons each session | 0.8 | activity-log entries and skill sections for each change since 2026-10-11 |
 

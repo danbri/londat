@@ -116,11 +116,35 @@ if (pipe) {
   for (const f of reg.files) if (/tools\/[\w-]+\.(mjs|py|sh)/.test(f.produced_by || '') && !made.has(f.path)) problems.push(`pipeline.json: no activity generates ${f.path} (register: produced by ${f.produced_by})`);
 }
 
+// ---- exit paths of the "review" items (OKR KR6.2): every file or branch with a "review" note and every source with a
+// "review" note or licence_class "review" names one or more groups of review_exit_paths.groups in "review_exit". A
+// group gives the issue, the owner decisions (date, words) and the options at the end of the prototyping phase. An
+// unknown group or a malformed group fails. An item with no exit path is counted; it fails only when it is new, that
+// is, not in review_exit_paths.pending (the list of items accepted without a path; empty since 2026-10-21).
+const EXIT = reg.review_exit_paths || { groups: {}, pending: [] }, EXIT_KINDS = ['obtain licence', 'replace', 'keep', 'remove'];
+for (const [id, g] of Object.entries(EXIT.groups)) {
+  for (const k of ['title', 'reason', 'issue', 'if_no_decision']) if (typeof g[k] !== 'string' || !g[k].trim()) problems.push(`review_exit_paths ${id}: "${k}" is empty`);
+  if (!Array.isArray(g.options) || !g.options.length) problems.push(`review_exit_paths ${id}: no options`);
+  for (const o of g.options || []) if (!EXIT_KINDS.includes(o.kind) || !o.what) problems.push(`review_exit_paths ${id}: option kind "${o.kind}" is not one of ${EXIT_KINDS.join(', ')}, or has no "what"`);
+  for (const d of g.decisions || []) if (!d.date || !(d.words || d.summary) || !d.where) problems.push(`review_exit_paths ${id}: a decision needs date, words (or summary) and where`);
+}
+const exitsOf = x => [].concat(x.review_exit || []);
+const reviewItems = [
+  ...reg.files.filter(f => f.review).map(f => ({ kind: 'file', key: f.path, x: f })),
+  ...(reg.branches || []).map(b => ({ kind: 'branch', key: 'branch ' + b.branch, x: b })),
+  ...Object.entries(reg.sources).filter(([, s]) => s.review || s.licence_class === 'review').map(([k, s]) => ({ kind: 'source', key: 'source ' + k, x: s })),
+];
+const noExit = reviewItems.filter(i => !exitsOf(i.x).length), pendingOk = new Set(EXIT.pending || []);
+for (const i of reviewItems) for (const g of exitsOf(i.x)) if (!EXIT.groups[g]) problems.push(`${i.key}: review_exit names unknown group "${g}"`);
+for (const [k, s] of Object.entries(reg.sources)) if (s.review_exit && !(s.review || s.licence_class === 'review')) problems.push(`source ${k}: review_exit but no review note`);
+for (const i of noExit) if (!pendingOk.has(i.key)) problems.push(`${i.key}: marked for review with no exit path (add "review_exit" with a group of review_exit_paths)`);
+
 const size = p => { if (isPattern(p)) { const fs = filesOf(p), n = fs.reduce((a, f) => a + statSync(f).size, 0); return fs.length ? `${fs.length} files, ${n > 1e6 ? (n / 1e6).toFixed(1) + ' MB' : Math.ceil(n / 1e3) + ' kB'}` : '0 files'; }
   if (!existsSync(loc(p))) return '(written below)'; const n = statSync(loc(p)).size; return n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.ceil(n / 1e3)} kB`; };
 const osmRows = reg.files.filter(f => f.osm.use !== 'none');
 const reviews = reg.files.filter(f => f.review);
 console.log(`${reg.files.length} files registered, ${tracked.filter(isData).length} data files tracked; ${osmRows.length} use OSM (${[...odblFiles].length} hold OSM data); ${reviews.length} marked for review.`);
+console.log(`review items: ${reviewItems.length} (${reviews.length} files, ${(reg.branches || []).length} branches, ${reviewItems.filter(i => i.kind === 'source').length} sources); with an exit path ${reviewItems.length - noExit.length}, without ${noExit.length} (${noExit.filter(i => pendingOk.has(i.key)).length} accepted as pending); ${Object.keys(EXIT.groups).length} exit groups.`);
 
 if (process.argv.includes('--write')) {
   const esc = s => String(s).replace(/\|/g, '\\|');
@@ -156,8 +180,11 @@ if (process.argv.includes('--write')) {
     '',
     '## Marked for review',
     '',
-    ...reviews.map(f => `- \`${f.path}\`: ${f.review}`),
-    ...(reg.branches || []).map(b => `- branch \`${b.branch}\`: ${b.review}`),
+    `Exit path groups (review_exit) are in brackets; the paths for the end of the prototyping phase are in [docs/review-exit-paths.md](../docs/review-exit-paths.md).`,
+    '',
+    ...reviews.map(f => `- \`${f.path}\` [${exitsOf(f).join(', ') || 'no exit path'}]: ${f.review}`),
+    ...(reg.branches || []).map(b => `- branch \`${b.branch}\` [${exitsOf(b).join(', ') || 'no exit path'}]: ${b.review}`),
+    ...reviewItems.filter(i => i.kind === 'source').map(i => `- ${i.key.replace('source ', 'source `')}\` [${exitsOf(i.x).join(', ') || 'no exit path'}]: ${i.x.review || 'licence class review'}`),
     '',
     '## Data on other branches (not on main)',
     '',
@@ -180,6 +207,7 @@ if (process.argv.includes('--write')) {
   ].join('\n');
   writeFileSync(join(CW, 'DATA-REGISTER.md'), out);
   console.log('wrote DATA-REGISTER.md');
+  writeExitPaths(esc);
   if (pipe) {   // JSON-LD for a knowledge graph: activities, the files they used and made, and the external sources
     // committed files by their GitHub URL; sources, tool activities and local files by their knowledge-graph IDs
     // (https://kgx.foaf.tv/id/src<key>, tool<id>, local<path>; kgx-ids.mjs); the cwp: vocabulary is https://kgx.foaf.tv/pipeline#
@@ -194,12 +222,66 @@ if (process.argv.includes('--write')) {
     for (const m of pipe.manual_activities || []) graph.push({ '@id': actId(m.id), '@type': 'prov:Activity', 'rdfs:label': m.what, 'dct:description': m.method, 'prov:used': (m.used || []).map(ref), 'prov:generated': (m.generated || []).map(ref),
       'cwp:kind': 'hand', 'cwp:rule': m.rules, 'cwp:area': m.area, 'cwp:fault': m.faults || [], 'cwp:by': m.by, 'cwp:date': m.date, 'cwp:decisionsRecordedIn': m.decisions_recorded_in || [], ...(m.gap ? { 'cwp:gap': m.gap } : {}) });
     const by = new Map(); for (const a of [...(pipe.manual_activities || []), ...pipe.activities]) for (const g of a.generated || []) if (g.file) by.set(g.file, actId(a.id));
-    for (const f of reg.files) graph.push({ '@id': fileId(f.path), '@type': ['prov:Entity', 'dcat:Distribution'], 'dct:title': f.what, 'prov:wasDerivedFrom': f.sources.map(k => ({ '@id': srcId(k) })), ...(by.has(f.path) ? { 'prov:wasGeneratedBy': { '@id': by.get(f.path) } } : {}), 'cwp:osmUse': f.osm.use, ...(f.review ? { 'cwp:review': f.review } : {}) });
+    for (const f of reg.files) graph.push({ '@id': fileId(f.path), '@type': ['prov:Entity', 'dcat:Distribution'], 'dct:title': f.what, 'prov:wasDerivedFrom': f.sources.map(k => ({ '@id': srcId(k) })), ...(by.has(f.path) ? { 'prov:wasGeneratedBy': { '@id': by.get(f.path) } } : {}), 'cwp:osmUse': f.osm.use, ...(f.review ? { 'cwp:review': f.review } : {}), ...(f.review_exit ? { 'cwp:reviewExit': exitsOf(f) } : {}) });
     for (const [k, v] of Object.entries(reg.sources)) graph.push({ '@id': srcId(k), '@type': ['prov:Entity', 'dcat:Dataset'], 'dct:title': v.name, 'dct:license': v.licence, ...(v.url ? { 'dcat:landingPage': v.url } : {}), ...(v.attribution ? { 'cwp:attribution': v.attribution } : {}) });
     writeFileSync(join(CW, 'pipeline.jsonld'), JSON.stringify({ '@context': { prov: 'http://www.w3.org/ns/prov#', dct: 'http://purl.org/dc/terms/', dcat: 'http://www.w3.org/ns/dcat#', rdfs: 'http://www.w3.org/2000/01/rdf-schema#', cwp: REGISTER_VOCAB }, '@graph': graph }, null, 1));
     console.log(`wrote pipeline.jsonld: ${pipe.activities.length} activities, ${(pipe.manual_activities || []).length} manual activities, ${reg.files.length} files, ${Object.keys(reg.sources).length} sources`);
     writeMethods(esc);
   }
+}
+
+// docs/review-exit-paths.md (repository root): the exit path of every "review" item, grouped by reason (OKR KR6.2).
+// Groups ranked by the number of items that name them; the five largest are the owner's decisions of KR6.2.
+function writeExitPaths(esc) {
+  const groups = Object.entries(EXIT.groups).map(([id, g]) => ({ id, g, items: reviewItems.filter(i => exitsOf(i.x).includes(id)) }))
+    .sort((a, b) => b.items.length - a.items.length || a.id.localeCompare(b.id));
+  const label = i => i.kind === 'file' ? `\`${i.key}\`` : `${i.kind} \`${i.key.slice(i.kind.length + 1)}\``;
+  const dec = d => `${d.date}: ${d.words ? `"${d.words}"` : `(${d.summary})`} (${d.where})`;
+  const out = [
+    '# Exit paths for the "review" items of the data register',
+    '',
+    `Generated from \`cwplans/data-register.json\` (\`review_exit_paths\`, \`review_exit\`) by \`cwplans/tools/check-data-register.mjs --write\` on ${new Date().toISOString().slice(0, 10)}. Edit the JSON, not this file.`,
+    '',
+    'OKR KR6.2 (https://github.com/danbri/londat/blob/main/OKRS.md): every item marked "review" has a written path for the end of the prototyping phase. The cwplans data exception holds only "while in the scoping, planning and prototyping phase" (CLAUDE.md, data policy); the owner says when the phase ends. These paths do not change a licence class or a decision: the owner chooses an option for each group.',
+    '',
+    ...(EXIT.about ? [EXIT.about, ''] : []),
+    `Items: ${reviewItems.length} (${reviews.length} files, ${(reg.branches || []).length} branches, ${reviewItems.filter(i => i.kind === 'source').length} sources); with an exit path: ${reviewItems.length - noExit.length}. Groups: ${groups.length}. An item can name more than one group; the first is its main reason.`,
+    '',
+    'The check (`npm run check`) fails when a new review item has no exit path, or when an item names an unknown group.',
+    '',
+    '## Summary',
+    '',
+    '| rank | group | reason | items | if the owner decides nothing | options |',
+    '|---:|---|---|---:|---|---|',
+    ...groups.map((x, k) => `| ${k + 1}${k < 5 ? ' (owner decides)' : ''} | [${x.id}](#${x.id}) | ${esc(x.g.reason)} | ${x.items.length} | ${esc(x.g.if_no_decision)} | ${[...new Set(x.g.options.map(o => o.kind))].join(', ')} |`),
+    '',
+    'The five largest groups (by items) are the decisions that KR6.2 asks of the owner.',
+    '',
+    ...groups.flatMap(x => [
+      `## ${x.id}`,
+      '',
+      `**${x.g.title}.** Reason: ${x.g.reason}.`,
+      '',
+      `Issue: ${x.g.issue}`,
+      '',
+      'Owner decisions:' + (x.g.decisions?.length ? '' : ' none recorded (no licence question, or the licence is met).'),
+      ...(x.g.decisions || []).map(d => `- ${dec(d)}`),
+      '',
+      '| option | what and how |',
+      '|---|---|',
+      ...x.g.options.map(o => `| ${o.kind} | ${esc(o.what)} |`),
+      '',
+      `If the owner decides nothing: ${x.g.if_no_decision}.`,
+      '',
+      `Items (${x.items.length}):`,
+      '',
+      ...x.items.map(i => `- ${label(i)}${exitsOf(i.x)[0] !== x.id ? ` (also; main group ${exitsOf(i.x)[0]})` : ''}`),
+      '',
+    ]),
+    ...(noExit.length ? ['## Items with no exit path', '', ...noExit.map(i => `- ${label(i)}`), ''] : []),
+  ].join('\n');
+  const DOCS = join(CW, '..', 'docs');
+  if (existsSync(DOCS)) { writeFileSync(join(DOCS, 'review-exit-paths.md'), out); console.log(`wrote docs/review-exit-paths.md: ${groups.length} groups, ${reviewItems.length} items`); }
 }
 
 // METHODS.md: the hand-written front section (methods-intro.md), then every activity of pipeline.json by subject area in
