@@ -555,7 +555,7 @@
     },
     "openwaters-ais": {
       "name": "Open Waters AIS (Open Water Software, LLC): live AIS re-served from several upstream sources, anonymous tier, ais.openwaters.io /v1/vessels, /v1/stations, /v1/stream (SSE); also /v1/vessels every 5 minutes server-side by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml), the positions of the last 2 hours kept on the branch live-cache (ships.json; the licence filter and small-craft rule of fetch-ais.mjs)",
-      "licence": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are not kept (owner decision). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
+      "licence": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are kept for scoping under the owner's decision of 2026-10-04 (\"Accept AISHub (and perhaps aisstream) events for scoping\"), and are taken down on request (owner, 2026-10-21). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
       "url": "https://openwaters.io/ais/",
       "attribution": "Open Waters AIS (https://openwaters.io/ais/)",
       "crawl": "API reads 2026-10-04 by tools/fetch-ais.mjs (one request at a time, >= 2 s apart, one SSE stream of 600 s); terms read from openwaters.io/ais/, /api/ais/ and github.com/openwatersio/aiscast docs on 2026-10-04"
@@ -6635,99 +6635,99 @@
       "path": "docklands/reference/night-2026-10-03/promenade-skyline-railing.jpg",
       "what": "owner's night photo: the skyline across the river from the riverside path (Night mode reference)",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/night-2026-10-03/promenade-skyline-bollard.jpg",
       "what": "owner's night photo: the skyline from the river edge with a mooring bollard (Night mode reference)",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/night-2026-10-03/promenade-zoom-moon-blur.jpg",
       "what": "owner's night photo: zoom on towers with the moon, out of focus (Night mode reference)",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/night-2026-10-03/zoom-moon-towers.jpg",
       "what": "owner's night photo: zoom on towers and the moon (Night mode reference; moon position fixes the time)",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/night-2026-10-03/river-warehouses-skyline.jpg",
       "what": "owner's night photo: river, warehouses and the towers behind (Night mode reference)",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/night-2026-10-03/clipper-canary-wharf-pier.jpg",
       "what": "owner's night photo from a Thames Clipper at Canary Wharf pier (Night mode reference)",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/night-2026-10-03/README.md",
       "what": "what the reference photos are, where and when the owner took them, and their copyright",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "the owner (photos, 2026-10-03); README hand-written",
       "shown_on": [],
-      "review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/data/towers.json",
@@ -11169,8 +11169,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-one-canada-square-cranes-citi.jpg",
@@ -11184,8 +11183,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-tide-core-cranes.jpg",
@@ -11199,8 +11197,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-one-canada-square-core.jpg",
@@ -11214,8 +11211,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-newfoundland-landmark-pinnacle.jpg",
@@ -11229,8 +11225,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-red-frame-riverside-block.jpg",
@@ -11244,8 +11239,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-dark-tower-citi.jpg",
@@ -11259,8 +11253,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/zoom-towers-pitched-roof-blocks.jpg",
@@ -11274,8 +11267,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/README.md",
@@ -11289,8 +11281,7 @@
       },
       "produced_by": "the owner (photos, 2026-10-04); README and points hand-written",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/day-2026-10-04/points.json",
@@ -11304,8 +11295,7 @@
       },
       "produced_by": "read by eye from enlargements of the owner photo (2026-10-04)",
       "shown_on": [],
-      "review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/plane-2026-10/evening-thames-from-plane.jpg",
@@ -11319,29 +11309,29 @@
       },
       "produced_by": "the owner (photo, shared 2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/plane-2026-10/README.md",
       "what": "what the aircraft photo shows, its licence status, the solved camera with uncertainty and hold-outs, the time from the sun, the flight-path check and the page view",
       "sources": [
-        "owner-supplied"
+        "owner-supplied",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "none"
       },
       "produced_by": "hand-written (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/plane-2026-10/points.json",
       "what": "pixel measurements in evening-thames-from-plane.jpg (tower tops, Greenland Pier, shoreline pixels, horizon pixels, hold-outs) and the initial camera; input of tools/view-mcp/solve.mjs",
       "sources": [
         "owner-supplied",
-        "osm"
+        "osm",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "notes",
@@ -11350,15 +11340,15 @@
       },
       "produced_by": "read by eye from 2x and 3x enlargements of the owner photo (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/plane-2026-10/solution.json",
       "what": "the camera solved from points.json (eye, heading, pitch, roll, focal length, rms, per-point residuals, hold-outs)",
       "sources": [
         "owner-supplied",
-        "osm"
+        "osm",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "notes",
@@ -11367,8 +11357,7 @@
       },
       "produced_by": "tools/view-mcp/solve.mjs (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "docklands/reference/plane-2026-10/compare-photo-render.jpg",
@@ -11376,7 +11365,8 @@
       "sources": [
         "owner-supplied",
         "osm",
-        "ea-lidar"
+        "ea-lidar",
+        "owner-photos-cc0"
       ],
       "osm": {
         "use": "derived",
@@ -11385,8 +11375,7 @@
       },
       "produced_by": "tools/view-mcp/render.mjs compare (2026-10-05)",
       "shown_on": [],
-      "review": "owner-supplied photo; ask the owner whether CC0 applies; the render half carries the page's OSM attribution in the README",
-      "review_exit": "owner-photos"
+      "licence_note": "CC0 1.0: the owner's own photos, CC0 confirmed by the owner on 2026-10-21 (\"the photos I contrib'd were cc0'd\"; earlier statements 2026-10-04 and 2026-10-05)"
     },
     {
       "path": "registry/sources/construction/sites.json",
@@ -14613,6 +14602,11 @@
             "date": "2026-10-04",
             "words": "Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale. Add to live by default now.",
             "where": "CLAUDE.md, data policy"
+          },
+          {
+            "date": "2026-10-21",
+            "words": "Both fine. The events will be taken down upon request, if needed (unlikely).",
+            "where": "CLAUDE.md, data register"
           }
         ],
         "options": [
@@ -14953,6 +14947,11 @@
             "date": "2026-10-05",
             "words": "Plane photo - yes cc0, record me as owner",
             "where": "cwplans/docklands/reference/plane-2026-10/README.md"
+          },
+          {
+            "date": "2026-10-21",
+            "words": "the photos I contrib'd were cc0'd",
+            "where": "CLAUDE.md, data register"
           }
         ],
         "options": [
@@ -14969,7 +14968,8 @@
             "what": "Night photos: delete docklands/reference/night-2026-10-03/ from the published site (keep them in the repository); the ?view= entries keep their numbers."
           }
         ],
-        "if_no_decision": "night photos: keep in the repository, owner decides on publication"
+        "if_no_decision": "night photos: keep in the repository, owner decides on publication",
+        "resolved": "2026-10-21: all the owner's photos are CC0; the review marks are removed"
       },
       "attribution-kept": {
         "title": "Attribution licences already met (CC BY facade photos, Hershey fonts)",

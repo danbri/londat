@@ -121,6 +121,10 @@ planning and prototyping phase."
   hash, and the operations that made each file.
   IGN España building outlines and floors in León (through Overture, no licence field): the owner accepted them as they
   are on 2026-10-21 ("What we have is ok"); they stay a separate, removable class registered as "review".
+- The owner's contributed photos (night 2026-10-03, day 2026-10-04, plane, `data/images/contrib/`) are all CC0 1.0 (owner,
+  2026-10-21: "the photos I contrib'd were cc0'd").
+- AIS from AISHub and aisstream.io: kept for scoping as decided on 2026-10-04; taken down on request (owner, 2026-10-21:
+  "The events will be taken down upon request, if needed (unlikely).").
 - Contributed photos: do not describe or tag people; report recognisable faces and readable number plates to the owner
   (the `docklands-data-curation` skill, "Contributed photos").
 - The exception ends when the project leaves the prototyping phase; the owner says when.

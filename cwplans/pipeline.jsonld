@@ -16296,13 +16296,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/promenade-skyline-bollard.jpg",
@@ -16314,13 +16313,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/promenade-zoom-moon-blur.jpg",
@@ -16332,13 +16330,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/zoom-moon-towers.jpg",
@@ -16350,13 +16347,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/river-warehouses-skyline.jpg",
@@ -16368,13 +16364,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/clipper-canary-wharf-pier.jpg",
@@ -16386,13 +16381,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/night-2026-10-03/README.md",
@@ -16404,13 +16398,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "the owner's copyright, kept with permission (2026-10-04); not open-licensed",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/towers.json",
@@ -22799,11 +22792,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-one-canada-square-cranes-citi.jpg",
@@ -22820,11 +22809,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-tide-core-cranes.jpg",
@@ -22841,11 +22826,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-one-canada-square-core.jpg",
@@ -22862,11 +22843,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-newfoundland-landmark-pinnacle.jpg",
@@ -22883,11 +22860,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-red-frame-riverside-block.jpg",
@@ -22904,11 +22877,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-dark-tower-citi.jpg",
@@ -22925,11 +22894,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/zoom-towers-pitched-roof-blocks.jpg",
@@ -22946,11 +22911,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/README.md",
@@ -22967,11 +22928,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/day-2026-10-04/points.json",
@@ -22988,11 +22945,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "CC0 1.0 dedicated by the owner (2026-10-04, \"I am copyright holder but will CC0 them.\"); no EXIF",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/evening-thames-from-plane.jpg",
@@ -23009,11 +22962,7 @@
      "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/README.md",
@@ -23025,13 +22974,12 @@
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcownersupplied"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "none",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/points.json",
@@ -23046,13 +22994,12 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
-   "cwp:osmUse": "notes",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "notes"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/solution.json",
@@ -23067,16 +23014,15 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
    "prov:wasGeneratedBy": {
     "@id": "https://kgx.foaf.tv/id/toolsolvephotoview"
    },
-   "cwp:osmUse": "notes",
-   "cwp:review": "owner-supplied; ask the owner whether CC0 applies (the CC0 statement of 2026-10-04 was for the Greenland Dock day photos); no EXIF; date not known (assumed 4-5 Oct 2026)",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "notes"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/reference/plane-2026-10/compare-photo-render.jpg",
@@ -23094,16 +23040,15 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcealidar"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcownerphotoscc0"
     }
    ],
    "prov:wasGeneratedBy": {
     "@id": "https://kgx.foaf.tv/id/toolsolvephotoview"
    },
-   "cwp:osmUse": "derived",
-   "cwp:review": "owner-supplied photo; ask the owner whether CC0 applies; the render half carries the page's OSM attribution in the README",
-   "cwp:reviewExit": [
-    "owner-photos"
-   ]
+   "cwp:osmUse": "derived"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/construction/sites.json",
@@ -28286,7 +28231,7 @@
     "dcat:Dataset"
    ],
    "dct:title": "Open Waters AIS (Open Water Software, LLC): live AIS re-served from several upstream sources, anonymous tier, ais.openwaters.io /v1/vessels, /v1/stations, /v1/stream (SSE); also /v1/vessels every 5 minutes server-side by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml), the positions of the last 2 hours kept on the branch live-cache (ships.json; the licence filter and small-craft rule of fetch-ais.mjs)",
-   "dct:license": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are not kept (owner decision). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
+   "dct:license": "Per event, the licence of the upstream source (the aggregate is not relicensed). Only events from open sources are kept (see openwaters-volunteer-cc0); AISHub and aisstream.io events are kept for scoping under the owner's decision of 2026-10-04 (\"Accept AISHub (and perhaps aisstream) events for scoping\"), and are taken down on request (owner, 2026-10-21). Service: free tiers 'for personal use'; commercial use of the hosted service is a paid tier",
    "dcat:landingPage": "https://openwaters.io/ais/",
    "cwp:attribution": "Open Waters AIS (https://openwaters.io/ais/)"
   },

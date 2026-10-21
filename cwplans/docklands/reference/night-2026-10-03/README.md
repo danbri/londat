@@ -2,7 +2,7 @@
 
 Six photos of Canary Wharf at night, taken by the owner (danbri) on the evening of Saturday 3 October 2026 and given
 to the project as the reference for the 3D page's Night mode (owner, 2026-10-04: "Keep my photos").
-Copyright: the owner's. Kept here with the owner's permission as project reference material; not under an open licence.
+Licence: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). The owner, 2026-10-21: "the photos I contrib'd were cc0'd" (earlier, 2026-10-04: the owner's copyright, kept with permission).
 
 Where and when (the owner's account): "as Thames Clipper landed at Greenland Dock pier & shortly afterwards, a few
 metres west on promenade". The files have no EXIF: no capture time, GPS or lens data survived the upload. They were

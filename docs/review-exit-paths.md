@@ -6,7 +6,7 @@ OKR KR6.2 (https://github.com/danbri/londat/blob/main/OKRS.md): every item marke
 
 Exit paths for the items marked "review" (OKR KR6.2): what the issue is, the owner decisions with their dates and words (CLAUDE.md), and the options at the end of the prototyping phase. Each file, branch or source with a "review" note (or licence_class "review") names one or more of these groups in its "review_exit" (the first is the main reason). A group does not change a licence class or a decision; the owner chooses an option. Readable view: docs/review-exit-paths.md (written by tools/check-data-register.mjs --write). Not an item: the Bosnia and Herzegovina waiver (owner, 2026-10-11, issue https://github.com/danbri/londat/issues/9) covers no committed file today (Sarajevo heights come from OSM and GHSL; FGU and RGURS were not reached).
 
-Items: 88 (78 files, 2 branches, 8 sources); with an exit path: 88. Groups: 14. An item can name more than one group; the first is its main reason.
+Items: 66 (56 files, 2 branches, 8 sources); with an exit path: 66. Groups: 14. An item can name more than one group; the first is its main reason.
 
 The check (`npm run check`) fails when a new review item has no exit path, or when an item names an unknown group.
 
@@ -14,65 +14,22 @@ The check (`npm run check`) fails when a new review item has no exit path, or wh
 
 | rank | group | reason | items | if the owner decides nothing | options |
 |---:|---|---|---:|---|---|
-| 1 (owner decides) | [owner-photos](#owner-photos) | owner copyright | 22 | night photos: keep in the repository, owner decides on publication | keep, obtain licence, remove |
-| 2 (owner decides) | [web-crawl](#web-crawl) | crawl (no open licence) | 21 | keep in the repository only; remove from the published site | keep, replace, remove |
-| 3 (owner decides) | [cwg-crawl](#cwg-crawl) | crawl (no open licence) | 10 | remove (the permission is for scoping only) | obtain licence, replace, keep, remove |
-| 4 (owner decides) | [quotes](#quotes) | share-alike text and quotation | 9 | keep the value and the URL; drop the quote text | keep, replace, remove |
-| 5 (owner decides) | [ais-scoping](#ais-scoping) | scoping-only permission | 7 | remove (the permission is for scoping only) | obtain licence, replace, keep, remove |
-| 6 | [no-licence-public](#no-licence-public) | licence unknown | 7 | keep facts only and ask the publishers | obtain licence, keep, replace, remove |
-| 7 | [catastro-ign](#catastro-ign) | licence terms to confirm (transformed-only reuse; licence field empty) | 5 | Catastro: keep (transformed data only); IGN: keep as the separate, removable class the owner accepted on 2026-10-21, and remove it with the switch if IGN or the owner asks | obtain licence, keep, replace, remove |
-| 8 | [adsb-odbl](#adsb-odbl) | share-alike | 3 | keep under ODbL with the credit, as for OSM (decided with the OSM review) | keep, replace, remove |
-| 9 | [attribution-kept](#attribution-kept) | attribution required | 3 | keep with the attribution | keep, remove |
-| 10 | [metar-origin](#metar-origin) | licence unknown (origin) | 3 | keep with the credit | obtain licence, keep, remove |
-| 11 | [note-only](#note-only) | note only | 3 | keep | keep |
-| 12 | [osm-odbl](#osm-odbl) | share-alike | 3 | keep under ODbL with the credit | keep, replace, remove |
-| 13 | [personal-data](#personal-data) | policy exception (personal data) | 2 | remove (the exception ends with the phase) | keep, remove |
-| 14 | [tfl-sheets](#tfl-sheets) | licence unknown (restricted re-use) | 2 | remove from the published site until TfL agrees | obtain licence, replace, remove |
+| 1 (owner decides) | [web-crawl](#web-crawl) | crawl (no open licence) | 21 | keep in the repository only; remove from the published site | keep, replace, remove |
+| 2 (owner decides) | [cwg-crawl](#cwg-crawl) | crawl (no open licence) | 10 | remove (the permission is for scoping only) | obtain licence, replace, keep, remove |
+| 3 (owner decides) | [quotes](#quotes) | share-alike text and quotation | 9 | keep the value and the URL; drop the quote text | keep, replace, remove |
+| 4 (owner decides) | [ais-scoping](#ais-scoping) | scoping-only permission | 7 | remove (the permission is for scoping only) | obtain licence, replace, keep, remove |
+| 5 (owner decides) | [no-licence-public](#no-licence-public) | licence unknown | 7 | keep facts only and ask the publishers | obtain licence, keep, replace, remove |
+| 6 | [catastro-ign](#catastro-ign) | licence terms to confirm (transformed-only reuse; licence field empty) | 5 | Catastro: keep (transformed data only); IGN: keep as the separate, removable class the owner accepted on 2026-10-21, and remove it with the switch if IGN or the owner asks | obtain licence, keep, replace, remove |
+| 7 | [adsb-odbl](#adsb-odbl) | share-alike | 3 | keep under ODbL with the credit, as for OSM (decided with the OSM review) | keep, replace, remove |
+| 8 | [attribution-kept](#attribution-kept) | attribution required | 3 | keep with the attribution | keep, remove |
+| 9 | [metar-origin](#metar-origin) | licence unknown (origin) | 3 | keep with the credit | obtain licence, keep, remove |
+| 10 | [note-only](#note-only) | note only | 3 | keep | keep |
+| 11 | [osm-odbl](#osm-odbl) | share-alike | 3 | keep under ODbL with the credit | keep, replace, remove |
+| 12 | [personal-data](#personal-data) | policy exception (personal data) | 2 | remove (the exception ends with the phase) | keep, remove |
+| 13 | [tfl-sheets](#tfl-sheets) | licence unknown (restricted re-use) | 2 | remove from the published site until TfL agrees | obtain licence, replace, remove |
+| 14 | [owner-photos](#owner-photos) | owner copyright | 0 | night photos: keep in the repository, owner decides on publication | keep, obtain licence, remove |
 
 The five largest groups (by items) are the decisions that KR6.2 asks of the owner.
-
-## owner-photos
-
-**The owner's own photos used as reference views.** Reason: owner copyright.
-
-Issue: Night photos of 2026-10-03: the owner's copyright, kept with permission, not open. Day photos of 2026-10-04: CC0 1.0 already. Plane photo: the register says "ask the owner", but its README records the owner's CC0 statement of 2026-10-05. The render half of compare-photo-render.jpg carries OSM data (ODbL credit in the README).
-
-Owner decisions:
-- 2026-10-04: "I am copyright holder but will CC0 them." (register (day photos))
-- 2026-10-05: "Plane photo - yes cc0, record me as owner" (cwplans/docklands/reference/plane-2026-10/README.md)
-
-| option | what and how |
-|---|---|
-| keep | Day and plane photos: CC0 is given; the owner can confirm and the review mark can go. |
-| obtain licence | Night photos: the owner can give CC0 in one line, as for the day photos. |
-| remove | Night photos: delete docklands/reference/night-2026-10-03/ from the published site (keep them in the repository); the ?view= entries keep their numbers. |
-
-If the owner decides nothing: night photos: keep in the repository, owner decides on publication.
-
-Items (22):
-
-- `docklands/reference/night-2026-10-03/promenade-skyline-railing.jpg`
-- `docklands/reference/night-2026-10-03/promenade-skyline-bollard.jpg`
-- `docklands/reference/night-2026-10-03/promenade-zoom-moon-blur.jpg`
-- `docklands/reference/night-2026-10-03/zoom-moon-towers.jpg`
-- `docklands/reference/night-2026-10-03/river-warehouses-skyline.jpg`
-- `docklands/reference/night-2026-10-03/clipper-canary-wharf-pier.jpg`
-- `docklands/reference/night-2026-10-03/README.md`
-- `docklands/reference/day-2026-10-04/pier-wide-skyline.jpg`
-- `docklands/reference/day-2026-10-04/zoom-one-canada-square-cranes-citi.jpg`
-- `docklands/reference/day-2026-10-04/zoom-tide-core-cranes.jpg`
-- `docklands/reference/day-2026-10-04/zoom-one-canada-square-core.jpg`
-- `docklands/reference/day-2026-10-04/zoom-newfoundland-landmark-pinnacle.jpg`
-- `docklands/reference/day-2026-10-04/zoom-red-frame-riverside-block.jpg`
-- `docklands/reference/day-2026-10-04/zoom-dark-tower-citi.jpg`
-- `docklands/reference/day-2026-10-04/zoom-towers-pitched-roof-blocks.jpg`
-- `docklands/reference/day-2026-10-04/README.md`
-- `docklands/reference/day-2026-10-04/points.json`
-- `docklands/reference/plane-2026-10/evening-thames-from-plane.jpg`
-- `docklands/reference/plane-2026-10/README.md`
-- `docklands/reference/plane-2026-10/points.json`
-- `docklands/reference/plane-2026-10/solution.json`
-- `docklands/reference/plane-2026-10/compare-photo-render.jpg`
 
 ## web-crawl
 
@@ -186,6 +143,7 @@ Issue: AISHub gives no published licence: Open Waters reports a private letter f
 
 Owner decisions:
 - 2026-10-04: "Accept AISHub (and perhaps aisstream) events for scoping. Sounds fine. Flag it somewhere for review as we scale. Add to live by default now." (CLAUDE.md, data policy)
+- 2026-10-21: "Both fine. The events will be taken down upon request, if needed (unlikely)." (CLAUDE.md, data register)
 
 | option | what and how |
 |---|---|
@@ -419,3 +377,25 @@ Items (2):
 
 - `feeds/underground/station-models.json`
 - `docklands/data/stations.json`
+
+## owner-photos
+
+**The owner's own photos used as reference views.** Reason: owner copyright.
+
+Issue: Night photos of 2026-10-03: the owner's copyright, kept with permission, not open. Day photos of 2026-10-04: CC0 1.0 already. Plane photo: the register says "ask the owner", but its README records the owner's CC0 statement of 2026-10-05. The render half of compare-photo-render.jpg carries OSM data (ODbL credit in the README).
+
+Owner decisions:
+- 2026-10-04: "I am copyright holder but will CC0 them." (register (day photos))
+- 2026-10-05: "Plane photo - yes cc0, record me as owner" (cwplans/docklands/reference/plane-2026-10/README.md)
+- 2026-10-21: "the photos I contrib'd were cc0'd" (CLAUDE.md, data register)
+
+| option | what and how |
+|---|---|
+| keep | Day and plane photos: CC0 is given; the owner can confirm and the review mark can go. |
+| obtain licence | Night photos: the owner can give CC0 in one line, as for the day photos. |
+| remove | Night photos: delete docklands/reference/night-2026-10-03/ from the published site (keep them in the repository); the ?view= entries keep their numbers. |
+
+If the owner decides nothing: night photos: keep in the repository, owner decides on publication.
+
+Items (0):
+
