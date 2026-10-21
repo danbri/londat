@@ -386,6 +386,8 @@ export async function attachPlaces(G, H, { scene, U }) {
     look.frame(hole, eye, drawn);   // the place's clock, lights, sky, style and the trees' level (place-look.js)
     if (want.length || ready.length) { G.dirty = true; requestAnimationFrame(() => H.draw()); } else if (inFlight) G.dirty = true;
   };
+  G.placeLook = () => look.describe();   // how the nearest place is drawn now (place-look.js): look, night, light, sky, trees, water
+  G.placeLookU = look;                   // (tests: docklands/test/place-look-check.mjs)
   // stats for tests and the page API: drawn tiles by tier and level, triangles drawn, loaded and pending tiles
   G.placesStats = () => P.map(p => { const st = { id: p.id, state: p.state, tiles: 0, triangles: 0, loaded: 0, drawn_by_level: {}, tiers: { core: 0, city: 0, surroundings: 0 }, settled: false, buildings: p.feats ? p.feats.B.length : null };
     for (const n of p.nodes) { if (n.state === 'ready') st.loaded++; }
@@ -471,7 +473,9 @@ export async function attachPlaces(G, H, { scene, U }) {
         places.sort((a, b) => (a.rank - b.rank) || ((b.population || 0) - (a.population || 0)));
         const rank = new Map((p.sur.rivers || []).map((x, i) => [x[0], i]));
         r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, city_blocks_by_source: Object.fromEntries(Object.entries(byCls).map(([k, v]) => [p.sur.geometry_classes?.[k]?.label || k, v])), places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
+      const lk = look.state.place === p ? look.describe() : null; if (lk) r.look = lk;
       r.text = `${p.label || p.name}: ${n.toLocaleString(p.locale)} buildings in view (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
+        + (lk ? ` Drawn as the model: ${lk.look}${lk.night > 0.5 ? ', night windows lit by the local hour' : lk.night > 0 ? ', dusk' : ', daylight'}${lk.trees_drawn.near + lk.trees_drawn.far ? `, ${(lk.trees_drawn.near + lk.trees_drawn.far).toLocaleString(p.locale)} trees drawn` : ''}${lk.water_named.length ? `, water: ${lk.water_named.join(', ')}` : ''}${lk.greens && lk.greens.placed_by_rule ? ` (trees in woods and parks without mapped trees are placed by a rule: ${lk.greens.placed_by_rule.toLocaleString(p.locale)} of ${lk.greens.trees.toLocaleString(p.locale)})` : ''}.` : '')
         + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
       res.push(r); }
     return res;

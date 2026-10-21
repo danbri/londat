@@ -326,7 +326,7 @@ export function buildingMaterial() {
 // top; heights in the tile frame + OFF). The along-wall metres and the wall flag come from the face normal in the tile frame
 // (no uw attribute: the tiles share wall vertices between faces), the height from the tile's local y (+ OFF, so the
 // window rows count from the building's own base). V: the place's uniforms { night, nP, nQ, win, look (1 Realistic, 0
-// Map), pix (1: the pixel-art palette, flat and unlit by night), winGain }.
+// Map), pix (1: the pixel-art palette V.pal, a uniformArray of vec3 sRGB, flat and unlit by night), winGain }.
 export const PLACE_OFF = 400;
 export function placeBuildingMaterial(V, inst = null) {
   const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.82, metalness: 0.0, side: THREE.DoubleSide, flatShading: true });
@@ -349,8 +349,10 @@ export function placeBuildingMaterial(V, inst = null) {
         const glass = mix(vec3(0.13, 0.18, 0.25), vec3(0.42, 0.52, 0.62), clamp(K.wy.sub(K.gk.z).div(300), 0, 1).add(h(cell).mul(0.12))).mul(K.lum.mul(0.7).add(0.55));
         out.assign(lin(mix(K.base, glass, w.mul(0.8).mul(K.wall).mul(V.win))));
       });
-    // pixel art (styles.js): flat colours in a few steps per channel, no window pattern
-    const px = lin(floor(K.base.mul(5).add(0.5)).div(5).mul(mix(float(0.86), float(1), K.wall)));
+    // pixel art (styles.js): the nearest colour of the 33-colour palette (data/pixel-palette.json, V.pal), flat, no windows
+    const pc = vec3(0.5).toVar(), bd = float(1e9).toVar();
+    If(V.pix.greaterThan(0.5), () => { Loop(V.pal.array.length, ({ i }) => { const q = V.pal.element(i), dd = dot(K.base.sub(q), K.base.sub(q)); If(dd.lessThan(bd), () => { bd.assign(dd); pc.assign(q); }); }); });
+    const px = lin(pc.mul(mix(float(0.86), float(1), K.wall)));
     return vec4(mix(out, px, V.pix), 1);
   })();
   m.emissiveNode = Fn(() => {
@@ -402,7 +404,7 @@ export function terrainMaterial() {
 //     about a pixel faded out; a ring from the acceleration; propeller wash as foam behind the stern; and the same wake
 //     mirrored at a wall within 40 m.
 // About 18 texture reads a pixel. One graph for WebGPU and WebGL 2. Skill: docklands-3d-page, "Three.js port".
-import { Loop, cos, sqrt, log } from 'three/tsl';
+import { Loop, cos, sqrt, log } from 'three/tsl';   // (also used above: imports are hoisted)
 import { surfaceData, SU, MAXW, wakeA, wakeB } from './water.js';
 const wrap = q => q.sub(floor(q.div(256)).mul(256));   // the hash keeps its precision far from the origin and as time grows
 const vnw = Fn(([q]) => { const i = floor(q), f0 = fract(q), f = f0.mul(f0).mul(float(3).sub(f0.mul(2))), a = wrap(i), b = wrap(i.add(1));

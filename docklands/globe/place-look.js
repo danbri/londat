@@ -20,7 +20,7 @@
 //     globe yet. Shadows (sun) near the camera when the model's shadows are on (Look > Shadows; WebGPU by default).
 // Skill: docklands-3d-page, "Three.js port: places look like the model (2026-10-22)".
 import * as THREE from 'three/webgpu';
-import { Fn, If, Discard, attribute, uniform, float, vec2, vec3, vec4, normalize, dot, max, min, mix, smoothstep, clamp, exp, pow, sin, cos, abs, length, select, reflect, fwidth,
+import { Fn, If, Discard, attribute, uniform, uniformArray, float, vec2, vec3, vec4, normalize, dot, max, min, mix, smoothstep, clamp, exp, pow, sin, cos, abs, length, select, reflect, fwidth,
   positionLocal, positionWorld, positionView, positionGeometry, cameraPosition, cameraNear, cameraFar, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, viewZToLogarithmicDepth, depth,
   transformNormalToView, texture, uv, normalLocal, mx_noise_float, mx_noise_vec3, sRGBTransferEOTF } from 'three/tsl';
 import { placeBuildingMaterial, nightClock, PLACE_OFF, band, BANDS, U as MU } from '../materials.js';
@@ -66,9 +66,12 @@ const toByte = v => Math.max(0, Math.min(255, Math.round(v * 255)));
 
 export function makeLook(G, H, { scene, U, upF, globeLight }) {
   const V = { night: uniform(0), nP: uniform(new THREE.Vector4(0.36, 0.30, 0.48, 0.45)), nQ: uniform(new THREE.Vector4(0.9, 0.07, 0, 0)), win: MU.win, winGain: MU.winGain,
-    look: uniform(/^(0|off|flat|no)$/i.test(qs.get('look') || '') ? 0 : 1), pix: uniform(0), day: uniform(1), tDay: uniform(180),
+    look: uniform(/^(0|off|flat|no)$/i.test(qs.get('look') || '') ? 0 : 1), pix: uniform(0), pal: uniformArray(Array.from({ length: 33 }, () => new THREE.Vector3(0.6, 0.6, 0.6)), 'vec3'), day: uniform(1), tDay: uniform(180),
     windDir: uniform(240), windSpeed: uniform(3), skyZ: uniform(new THREE.Color(0.09, 0.22, 0.58)), skyH: uniform(new THREE.Color(0.42, 0.60, 0.86)) };
   const state = { place: null, t: NaN, light: null, sky: false, shadows: false, style: 'map', look: V.look.value };
+  // Look > Realistic buildings (main.js #look): its state once the model's data are in (READY), and every change at once
+  const lookBox = () => document.getElementById('look');
+  lookBox()?.addEventListener('change', e => { V.look.value = e.target.checked ? 1 : 0; state.lookTouched = true; G.dirty = true; H.draw(); });
   // ---------- logarithmic depth as every globe material; the shadow pass (orthographic light camera) keeps its own depth
   const isOrtho = cameraProjectionMatrix.element(3).element(3).greaterThan(0.5), WATER_BIAS = 1.5;
   const logDepth = m => { m.depthNode = select(isOrtho, depth, viewZToLogarithmicDepth(positionView.z, cameraNear, cameraFar)); return m; };
@@ -372,8 +375,8 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const alt = G.altT || 0, wantSky = alt < 20000 && V.day.value > 0.02 && qs.get('placesky') !== '0';
     sky.visible = wantSky; if (wantSky) { sky.sunPosition.value.copy(sd); sky.scale.setScalar(Math.max(10000, (G.cull?.camera?.near || 1) * 4)); sky.position.set(0, 0, 0); }
     // styles: Realistic (Look > Realistic buildings), pixel art
-    const st = globalThis.__docklandsStyles?.mode || 'map', lk = document.getElementById('look'), ready = globalThis.__docklands3?.ready;
-    V.pix.value = st === 'pixel' ? 1 : 0; if (ready && lk) V.look.value = lk.checked ? 1 : 0; state.style = st; state.look = V.look.value;
+    const st = globalThis.__docklandsStyles?.mode || 'map', lk = lookBox(), ready = globalThis.__docklands3?.ready;
+    V.pix.value = st === 'pixel' ? 1 : 0; if (st === 'pixel' && !state.palP) state.palP = loadPalette(); if ((ready || state.lookTouched) && lk) V.look.value = lk.checked ? 1 : 0; state.style = st; state.look = V.look.value;
     // shadows near the camera when the model's are on (WebGPU by default; Look > Shadows)
     const shOn = !!H.sky?.sun?.castShadow && alt < 6000 && V.day.value > 0.05 && qs.get('placeshadows') !== '0';
     if (shOn !== state.shadows) { state.shadows = shOn; sun.castShadow = shOn; }
@@ -382,10 +385,15 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
       if (o) { const P = geodeticToEcef(o.lon, o.lat, o.h || 0), d = [P[0] - Fs.O[0], P[1] - Fs.O[1], P[2] - Fs.O[2]], R = Fs.R; T = [0, 1, 2].map(r => R[r][0] * d[0] + R[r][1] * d[1] + R[r][2] * d[2]); }
       sun.target.position.set(...T); sun.position.copy(sd).multiplyScalar(5000).add(sun.target.position); }
     // trees by tile
-    const K = G.cull ? G.cull.K() : innerHeight, px = LODPX();
+    const K = G.cull ? G.cull.K() : innerHeight, px = LODPX(); state.drawn = drawn;
     for (const nd of drawn) { const ts = nd.trees; if (!ts) continue;
       const d = Math.max(1, Math.hypot(eye[0] - nd.C[0], eye[1] - nd.C[1], eye[2] - nd.C[2]) - nd.rad), s = ts.hP * K / d, lvl = s >= px ? 2 : s >= PX_HIDE ? 1 : 0;
       for (const m of ts.near) m.visible = lvl === 2; ts.far.visible = lvl === 1; ts.level = lvl; }
+  }
+  // the pixel-art palette (styles.js reads the same file): 24 colours and 9 accents, sRGB
+  async function loadPalette() {
+    try { const j = await fetch(new URL('../cwplans/docklands/data/pixel-palette.json', location.href)).then(r => r.json()), L = [...j.colours, ...Object.values(j.accents)].slice(0, 33);
+      L.forEach((h, i) => { const x = parseInt(String(h).replace('#', ''), 16); V.pal.array[i].set((x >> 16 & 255) / 255, (x >> 8 & 255) / 255, (x & 255) / 255); }); for (let i = L.length; i < 33; i++) V.pal.array[i].copy(V.pal.array[0]); G.dirty = true; H.draw(); } catch (e) { console.warn('places: pixel palette', e); }
   }
   // compile the new programs with the globe's lights (the lights are part of a program's key)
   function warmMeshes() {
@@ -398,5 +406,16 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const mt = (geo, mat, A) => { const g = geo.clone(); for (const k of A) g.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4)); const m = new THREE.InstancedMesh(g, mat, 1); m.setMatrixAt(0, new THREE.Matrix4()); return m; };
     return [new THREE.Mesh(gb, BMAT), new THREE.Mesh(go, BLOCK), new THREE.Mesh(gw, WMAT), bi, mt(TG.crowns.broad, CROWN, ['mid', 'leaf', 'aut', 'cal', 'bloom']), mt(TG.trunk, TRUNK, ['bark']), mt(TG.far, FAR, ['mid', 'leaf', 'aut', 'cal', 'bloom'])];
   }
-  return { V, state, BMAT, MATS, groundMat, logDepth, buildingAttrs, blockInstAttrs, blockOutlineAttrs, decorate, frame, warmMeshes, greensOf, lights: { sun, moon, fill }, sky };
+  // the state for the text and machine interface (G.placeLook, describeView): what the place is drawn with now
+  function describe() {
+    const p = state.place; if (!p) return null; const L = state.light, tiles = { near: 0, far: 0 }, trees = { near: 0, far: 0 }, water = new Set(); let wm = 0;
+    for (const nd of state.drawn || []) { if (nd.p !== p) continue; const ts = nd.trees; if (ts && ts.level === 2) { tiles.near++; trees.near += ts.n; } else if (ts && ts.level === 1) { tiles.far++; trees.far += ts.n; }
+      if (nd.decorated?.water) { wm++; for (const W of p.greens?.water || []) if (W.name) { const [w, s2, e, n] = rectOf(nd.key); if (!(W.b[2] < w || W.b[0] > e || W.b[3] < s2 || W.b[1] > n)) water.add(W.name); } } }
+    return { place: p.id, sun_altitude_deg: L ? Math.round(L.S.alt * 10) / 10 : null, moon_altitude_deg: L?.M ? Math.round(L.M.alt * 10) / 10 : null, night: +V.night.value.toFixed(2),
+      look: V.pix.value ? 'pixel art (flat colours, no windows)' : V.look.value ? 'Realistic (walls by facade style, windows)' : 'Map (colour by height source, window grid)', style: state.style,
+      night_windows: V.night.value > 0.01 ? { home: +V.nP.value.x.toFixed(2), office: +V.nP.value.y.toFixed(2), hotel: +V.nP.value.z.toFixed(2), shopfront: +V.nP.value.w.toFixed(2) } : null,
+      sky: sky.visible, shadows: state.shadows, lights: { sun: +sun.intensity.toFixed(2), moon: +moon.intensity.toFixed(3), fill: +fill.intensity.toFixed(2) },
+      trees_drawn: trees, tree_tiles: tiles, water_tiles: wm, water_named: [...water].slice(0, 8), greens: p.greens ? { trees: p.greens.counts.trees, mapped: p.greens.counts.osm_tree + p.greens.counts.osm_tree_row, placed_by_rule: p.greens.counts.rule_wood + p.greens.counts.rule_park, water_polygons: p.greens.counts.water_polygons } : null };
+  }
+  return { V, state, BMAT, MATS, describe, groundMat, logDepth, buildingAttrs, blockInstAttrs, blockOutlineAttrs, decorate, frame, warmMeshes, greensOf, lights: { sun, moon, fill }, sky };
 }
