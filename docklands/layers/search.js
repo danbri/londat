@@ -8,6 +8,7 @@
 // Skill: docklands-3d-page, "Interface" and "Three.js port".
 const loadScript = src => new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error(src + ' did not load')); document.head.appendChild(s); });
 const OSM = /^(node|way|relation)\/\d+$/;
+import { latinPreferred, isLatin, scrubText } from '../geo/script.js';   // names in Latin script only by default (Menu > Look)
 
 export default {
   id: 'search', label: null,
@@ -109,7 +110,7 @@ export default {
     const worldItem = (G, w) => ({ t: w.name, k: [w.kind === 'region-config' ? 'project place' : w.kind === 'model' ? '3D model' : w.kind, w.region, w.country].filter(Boolean).join(', '), go: () => G.flyToEntry(w) });
     let last = [], asked = 0;
     function render() { qRes.innerHTML = '';
-      for (const it of last) { const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.innerHTML = `${esc(it.t)}<span class="k">${esc(it.k)}</span>`; b.onclick = () => pick(it); li.appendChild(b); qRes.appendChild(li); } }
+      for (const it of last) { if (latinPreferred() && !isLatin(it.t)) continue; const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.innerHTML = `${esc(it.t)}<span class="k">${esc(scrubText(it.k))}</span>`; b.onclick = () => pick(it); li.appendChild(b); qRes.appendChild(li); } }
     function runSearch() {
       last = searchItems(qIn.value); render();
       // the world's providers (a skeleton set's gazetteer, near the view) answer later: the world part is replaced then

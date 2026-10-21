@@ -13,6 +13,7 @@ button,label,select,#credit,#attribI{touch-action:manipulation}
 #view{position:fixed;inset:0;touch-action:none}
 #view canvas{display:block;width:100%;height:100%}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.scriptHidden{display:none!important}
 .lab{position:absolute;left:0;top:0;padding:1px 6px;border-radius:4px;background:rgba(10,14,18,.66);color:#f3f5f7;font-size:12px;white-space:nowrap;will-change:transform}
 .btn{position:fixed;top:calc(10px + var(--top));width:44px;height:44px;border-radius:50%;border:0;background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;z-index:5}
 #menu{left:10px}
@@ -224,6 +225,8 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
       <label class="row"><input type="checkbox" id="look"> Realistic buildings</label>
       <label class="row"><input type="checkbox" id="facades"> Photo facades</label>
       <label class="row">Ground <select id="ground"><option value="none">Plain</option><option value="rgb2008">Aerial photo 2008</option><option value="night2012">Night photo 2012</option><option value="intensity2020">LiDAR intensity 2020</option></select></label>
+      <label class="row"><input type="checkbox" id="latinNames" checked> Names in Latin script only</label>
+      <p class="small" id="latinNote">On: a name in another script (Cyrillic, Greek, Arabic ...) is shown only where the data also has it in Latin script; else no name is shown (no transliteration). For every label, card, search and description, on this device. Link: <code>?scripts=all</code> or <code>?scripts=latin</code>.</p>
       <div class="ext" id="ext-look"></div>
     </div>
     <div class="pane" id="paneLayers" role="tabpanel" aria-label="Layers">

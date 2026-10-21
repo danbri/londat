@@ -430,10 +430,10 @@ export async function attachPlaces(G, H, { scene, U }) {
       const S = await surP(p).catch(() => null); if (!S) return {};
       const ls = rowsOf(S, 'labels'), nt = nearestRow(ls.filter(x => x.kind !== 'peak'), lon, lat), pk = nearestRow(ls.filter(x => x.kind === 'peak'), lon, lat), rv = nearestRow(rowsOf(S, 'rivers'), lon, lat);
       const h = Math.round(gridAt(S.ground.h, S.ground.grid, S.ground.area, lon, lat));
-      const out = { builtUp: nt && nt.d < 2500 ? nt.r.name : undefined, country: w.country?.name || undefined, source: 'OpenStreetMap via Overture Maps (ODbL); terrain of the place', place: p.id, local_time: t ? `${t} (${p.timeZone})` : undefined, ground_m: h,
+      const out = { builtUp: nt && nt.d < 2500 ? nameText(nt.r.name, nt.r.name_alt) || undefined : undefined, country: w.country?.name || undefined, source: 'OpenStreetMap via Overture Maps (ODbL); terrain of the place', place: p.id, local_time: t ? `${t} (${p.timeZone})` : undefined, ground_m: h,
         nearestPlace: nt ? { name: nameText(nt.r.name, nt.r.name_alt), kind: nt.r.kind, dist_m: Math.round(nt.d), direction: compass(bearingDeg(lon, lat, nt.r.lon, nt.r.lat)) } : undefined,
-        nearestPeak: pk ? { name: pk.r.name, elevation_m: pk.r.elevation_m, dist_m: Math.round(pk.d) } : undefined };
-      out.text = `In the surroundings of ${p.label || p.name}, ground about ${h} m above sea level.${nt ? ` Nearest place: ${nameText(nt.r.name, nt.r.name_alt)} (${nt.r.kind}), ${fmtDist(nt.d)} ${out.nearestPlace.direction}.` : ''}${rv && rv.d < 3000 ? ` River ${rv.r.name} nearby.` : ''}${t ? ` Local time ${t} (${p.timeZone}).` : ''}`;
+        nearestPeak: pk ? { name: nameText(pk.r.name, pk.r.name_alt), elevation_m: pk.r.elevation_m, dist_m: Math.round(pk.d) } : undefined };
+      out.text = `In the surroundings of ${p.label || p.name}, ground about ${h} m above sea level.${nt ? ` Nearest place: ${nameText(nt.r.name, nt.r.name_alt)} (${nt.r.kind}), ${fmtDist(nt.d)} ${out.nearestPlace.direction}.` : ''}${rv && rv.d < 3000 && nameText(rv.r.name, rv.r.name_alt) ? ` River ${nameText(rv.r.name, rv.r.name_alt)} nearby.` : ''}${t ? ` Local time ${t} (${p.timeZone}).` : ''}`;
       return out;
     }
     const F = await featsP(p).catch(() => null); if (!F) return {};
@@ -490,7 +490,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     if (!b) return null;
     const osm = `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}`;
     const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', latinPreferred() ? null : b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
-    H.showCard(`<h2>${esc(b.name || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
+    H.showCard(`<h2>${esc((b.name && nameText(b.name, b.name_alt)) || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
     return b;
   };
   return P;

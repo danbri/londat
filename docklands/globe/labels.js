@@ -3,8 +3,17 @@
 // that the view's ground resolution matches), hidden behind the horizon, then decluttered: by order (class, then the
 // data's rank), a label is shown only if its box overlaps no label already placed. At most MAX at once.
 // Skill: docklands-3d-page, "Three.js port: globe and world skeleton (2026-10-13)".
-import { latinPreferred, isLatin } from '../geo/script.js';
+import { latinPreferred, isLatin, pickName } from '../geo/script.js';
 const MAX = 70, PAD = 3;
+// the text and title to show for candidate c under the script setting (the data's own text kept in c.text0, c.title0)
+function names(c) {
+  if (!('text0' in c)) { c.text0 = c.text; c.title0 = c.title; }
+  c.w = 0; c.hiddenScript = false; c.text = c.text0; c.title = c.title0;
+  if (!latinPreferred()) return;
+  const t = pickName(c.text0, ...(c.alts || []), c.title0);
+  if (!t) { c.hiddenScript = true; c.title = ''; return; }
+  c.text = t; c.title = c.title0 && c.title0 !== t && isLatin(c.title0) ? c.title0 : '';
+}
 const CLS = { model: 0, country: 1, sea: 2, place: 3, admin1: 4, river: 5, lake: 5, extra: 3 };
 
 export function makeLabels(host) {
@@ -12,10 +21,13 @@ export function makeLabels(host) {
   let placed = [];
   const L = {
     candidates: C,
-    // c: { id, text, cls, P: [x, y, z] ECEF, up: [ux, uy, uz], minZ, maxZ, rank (smaller first), pop, onTap }
-    // names in a non-Latin script are swapped for a Latin title, else not shown, while Latin is preferred (geo/script.js)
-    add(c) { if (latinPreferred()) { if (c.title && !isLatin(c.title)) c.title = ''; if (!isLatin(c.text)) { if (c.title && isLatin(c.title)) { c.text = c.title; c.title = ''; } else { c.hiddenScript = true; return c; } } }
+    // c: { id, text, cls, P: [x, y, z] ECEF, up: [ux, uy, uz], minZ, maxZ, rank (smaller first), pop, onTap, title?, alts? }
+    // names (geo/script.js; owner, 2026-10-22): while Latin is preferred, a name in another script gives way to the first
+    // Latin one of alts and title, else the label is kept but not shown (c.hiddenScript); refresh() applies a new setting
+    add(c) { names(c);
       c.order = (CLS[c.cls] ?? 3) * 1e4 + (isFinite(c.rank) ? c.rank : 9) * 100 - Math.log10((c.pop || 0) + 1) * 5; C.push(c); L.sorted = false; return c; },
+    // the script setting changed: every label's text again, its element made anew at the next update
+    refresh() { for (const c of C) { names(c); if (c.el) { c.el.remove(); c.el = null; } } shown.clear(); },
     clear(pred) { for (let i = C.length - 1; i >= 0; i--) if (pred(C[i])) { if (C[i].el) C[i].el.remove(); C.splice(i, 1); } },
     // project(P) -> [x, y] in CSS px or null; eye: ECEF; zoom: the view's web-map zoom; W, H: the screen
     update({ project, eye, zoom, W, H, visible = true, filter }) {
@@ -23,7 +35,7 @@ export function makeLabels(host) {
       const next = new Set(); placed = [];
       if (visible) for (const c of C) {
         if (placed.length >= MAX) break;
-        if (c.minZ != null && c.minZ > zoom) continue; if (c.maxZ != null && zoom > c.maxZ + 1) continue; if (filter && !filter(c)) continue;
+        if (c.minZ != null && c.minZ > zoom) continue; if (c.maxZ != null && zoom > c.maxZ + 1) continue; if (filter && !filter(c)) continue; if (c.hiddenScript) continue;
         const d0 = eye[0] - c.P[0], d1 = eye[1] - c.P[1], d2 = eye[2] - c.P[2];
         if (d0 * c.up[0] + d1 * c.up[1] + d2 * c.up[2] < 0) continue;   // behind the horizon
         const s = project(c.P); if (!s) continue; const [x, y] = s;

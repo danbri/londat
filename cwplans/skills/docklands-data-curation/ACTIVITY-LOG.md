@@ -3112,3 +3112,21 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   globe/places.js (names, search entries, cards, describe text). Headless over Sarajevo at 50 km: 57 labels, 0 in
   Cyrillic; describeView and findPlaces("Sarajevo") without Cyrillic; with ?scripts=all the Cyrillic search names come
   back. Next (agent): the menu checkbox, the API/WebMCP setting, the UK and world skeleton readers, cards elsewhere.
+
+## 2026-10-22: Latin script preferred, system-wide (agent)
+- Owner, 2026-10-22: "for now we should system-wide have a checkbox expressing latin labels preferred over other
+  scripts ... Better no labels than that." Done for the whole Three.js port (default on, no transliteration, a name with
+  no Latin form is not shown): Menu > Look > "Names in Latin script only" (kept in the browser; a change re-creates all
+  labels at once); `?scripts=latin|all`; `docklands.getScriptPreference()` / `setScriptPreference('latin'|'all')`, WebMCP
+  tools `get_script_preference` / `set_script_preference`, `getView().scripts` (page API 1.2.0; the no-3D page too).
+- Applied in: docklands/geo/script.js (pickName, stripNonLatin, latinOut, scrubDom), globe/labels.js (names kept, picked
+  at show time, refresh), globe/world.js (country and place names in 26 languages: a ?lang= in another script gives way
+  to the Latin name while the box is on; the menu says so), globe/globe.js (cards, search, readout, describe, where),
+  geo/skeleton.js (UK, es-nw, ba, world-detail: search, describe, whereAmI), globe/places.js (building card title, where
+  names; name handling only), api.js (goTo, getView, featuresAt, describeView, findPlaces, callTool, WebMCP, speech),
+  no3d.js (API, tools, its own box, the 2D map names), textview.js, layers/search.js, and nets in docklands/script-ui.js
+  (cards scrubbed, label elements in another script hidden).
+- Tests: docklands/geo/test/script.test.mjs (6 tests); world.test.mjs updated (ja names give way; both settings);
+  docklands/test/scripts-check.mjs headless: Sarajevo, Banja Luka 50 km, Belgrade 50 km, ?lang=ru, no 3D: all ok (0
+  letters in another script in labels, search, describeView, featuresAt, cards, speech, text view; with 'all' the
+  Cyrillic names come back). Skill: docklands-3d-page, "Names: Latin script preferred".

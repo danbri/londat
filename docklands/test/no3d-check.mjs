@@ -77,7 +77,7 @@ if (ONLY.includes('3')) {
   ok(r.time.night === true && /t=2026-10-11T22(%3A|:)00/.test(r.timeHash) && /October 11, 2026 at 22:00/.test(r.text), 'setTime: night, in the address and the text', r.timeHash);
   ok(r.keys === true && /One Canada Square/.test(r.f.text), 'featuresAt One Canada Square (named from the registry index)', r.f.text);
   ok(r.desc.mode === 'no3d' && r.desc.in_view && r.desc.text.length > 50, 'describeView', r.desc.text.slice(0, 120));
-  ok(r.tools.length === 8 && r.layers[0].id === 'map2d', 'tools and layers', r.tools.join(' '));
+  ok(r.tools.length === 10 && r.tools.includes('set_script_preference') && r.layers[0].id === 'map2d', 'tools and layers', r.tools.join(' '));
   // the map keys: an arrow moves the view; the share hash follows after the move settles
   const h0 = await page.evaluate(() => location.hash);
   await page.focus('#map2dCanvas'); await page.keyboard.press('ArrowRight'); await page.waitForFunction(h => location.hash !== h, h0, { timeout: 5000 }).catch(() => {});

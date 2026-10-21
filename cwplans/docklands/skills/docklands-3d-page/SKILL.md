@@ -3599,3 +3599,71 @@ colours by height) and Natural Earth 1:50m lines; between orbit and a testbed th
 - **Tests**: `docklands/test/base-check.mjs` (flights to León and Sarajevo at 1,000, 200, 50 km: screenshots, labels,
   tiles loaded, sampler on base heights, textures bounded after a flight to Tokyo; `--compare` adds `?base=0`).
   `globe-check.mjs` costs now print `geometries`, `textures`, `heap_mb` and `base` (baseStats).
+
+## Names: Latin script preferred (2026-10-22)
+
+Owner, 2026-10-22: "for now we should system-wide have a checkbox expressing latin labels preferred over other scripts.
+Given the politics and recent wars I don't want accidental use of Cyrillic labels in non-RS Sarajevo and I have no
+confidence in data quality so far. Better no labels than that."
+
+The rule: on by default. A name in another script (Cyrillic, Greek, Arabic, CJK ...) is replaced by a Latin form that the
+data has (an alternative name, `name_alt`, `alt`, the default Natural Earth name, the English name), else NOTHING is shown.
+No automatic transliteration, ever. Off: Menu > Look > "Names in Latin script only", `?scripts=all`,
+`docklands.setScriptPreference('all')` or the tool `set_script_preference`; kept in the browser (localStorage
+`docklands-latin-preferred`); `?scripts=latin|all` in the address wins and follows a change (replaceState).
+
+One module holds it: `docklands/geo/script.js` (no DOM needed; in node it is on).
+- `latinPreferred()`, `setLatinPreferred(on)` (fires `docklands-script-pref` { latin }), `getScriptPreference()` ->
+  `'latin'|'all'`, `setScriptPreference(v)` (throws on anything but latin/all/true/false), `resetScriptPreference()`
+  (tests).
+- `isLatin(s)`: every letter (`\p{L}`) has `Script=Latin`; digits, punctuation, spaces and combining marks pass.
+  Bosnian/Croatian č ć đ š ž, dž lj nj are Latin; one Cyrillic letter in a Latin word fails (a real data fault).
+- `pickName(...cands)`: the first Latin candidate, or null (off: the first candidate). Readers call it with every name
+  the data has, best first.
+- `stripNonLatin(s)` / `scrubText(s)`: a sentence with its runs of other-script words left out, punctuation tidied
+  ("Sarajevo (Сарајево), a city." -> "Sarajevo, a city."). Never used to make a name; only a safety net for text.
+- `latinOut(x)`: a deep copy of an API answer: a name field (`name`, `local_name`, `name_alt`, `alt`, `title`,
+  `builtUp`) in another script is removed, a list item whose `name` is in another script is dropped, a string in a list
+  in another script is dropped, other strings go through `stripNonLatin`. Functions and class instances pass through.
+- `scrubDom(root)`: text nodes, `title` and `aria-label` of a subtree.
+
+Where it applies (the readers first, the nets last):
+- Globe labels (`globe/labels.js`): each candidate keeps the data's `text0`/`title0` and `alts`; `names(c)` picks by
+  the setting; a label with no Latin form stays in the list with `hiddenScript` (so it can come back);
+  `labels.refresh()` on the event re-picks every label and drops the elements (made again at the next update).
+- World names (`globe/world.js`): `nameCands(L, i, f)` = [the ?lang name, the names-{lang} table, the default name,
+  `name`, English]; `nameOf` = `pickName(...nameCands)`; a ?lang= in another script (`NONLATIN_LANGS`: ar bn el fa he
+  hi ja ko ru uk ur zh zht) therefore gives way to the Latin default while the box is on, and the menu note says so
+  (`W.langOverridden()`, `G.langOverridden()`). `search`, `where`, `nearestPlaces`, `describe` skip a feature with no
+  Latin name. globe.js `addLabels` passes all the names (`alts`), so turning the box off brings ?lang names back.
+- Skeleton reader (`geo/skeleton.js`; the UK, es-nw, ba and world-detail sets): `search` shows the Latin one of name and
+  alt and drops an entry with none (a Cyrillic query still finds a place by its other name); `describe` and `whereAmI`
+  use `latinProps` (name from name_en, alt, name_alt, else no name: the template part with {name} drops out);
+  `whereAmI`'s nearest place is the nearest with a Latin name. data/ba has Cyrillic in `name` fields (77 layer features,
+  23 gazetteer names in 2026-10), e.g. the railway "Београд - Бар"; the skeleton's own point labels go through labels.js.
+- Places (`globe/places.js`, name handling only): `nameText(n, alt)`, used in search, where, describe and the building
+  card's title.
+- globe.js: `showCard`, `searchAll`, `search`, `whereMore` (the readout and "more"), `describe` return `latinOut(...)`;
+  the readout text is scrubbed.
+- Page API (`api.js`, version 1.2.0): `goTo`, `getView` (+ `scripts`), `featuresAt` (+ `scripts`), `describeView`
+  (+ `scripts`), `findPlaces`, `callTool` and every WebMCP `execute` go through `latinOut`; `speak()` through
+  `scrubText`; new `getScriptPreference`, `setScriptPreference`, tools `get_script_preference`,
+  `set_script_preference`. The no-3D page (`no3d.js`) the same, its own box "Names in Latin script only" in the map bar,
+  and its 2D map skips a non-Latin name. The text view (`textview.js`) filters its own description and search and
+  redraws on the event. The model's search list (`layers/search.js`) skips a non-Latin result.
+- Nets (`docklands/script-ui.js`, loaded by main.js): the Look box; a MutationObserver on `#card` runs `scrubDom`; one
+  on `#labels` and `#globeLabels` adds the class `scriptHidden` (display:none!important, index.html) to a label
+  element whose text is in another script (layers that make their own labels: ships, aircraft, cams). The class, not
+  `hidden`, because the layers set `hidden` themselves every frame.
+
+Test: `node --test docklands/geo/test/script.test.mjs` (isLatin over diacritics, č ć đ š ž, Cyrillic, Greek, Arabic,
+Hebrew, CJK, mixed; pickName, stripNonLatin, latinOut; the ba skeleton both ways) and the headless
+`docklands/test/scripts-check.mjs` (Sarajevo 1.5 km, Banja Luka 50 km, Belgrade 50 km: labels, titles, search, the
+find_places tool, describeView, featuresAt, cards, speech, the text view all Latin; with 'all' the Cyrillic comes back;
+the menu box; ?lang=ru with and without ?scripts=all; the no-3D page). Lessons:
+- A filter at the label only (the first step) is not enough: the name also reaches search, cards, the readout,
+  descriptions, speech and tool answers. Pick at the reader, then put a net at every exit.
+- Keep the data's names on the label (text0, alts) and pick at show time; a label dropped at add() cannot come back
+  when the setting is turned off.
+- `world.test.mjs` expected `ja` sea names in Japanese: with the default on they are now English ("North Sea"); the
+  test checks both settings.

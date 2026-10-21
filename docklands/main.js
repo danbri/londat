@@ -853,6 +853,9 @@ if (flag('globe', true)) {
   } catch (e) { console.warn('globe', e); }
 }
 
+// names in Latin script only (on by default; owner, 2026-10-22): the box in Menu > Look, the label and card safety nets
+// (script-ui.js; the data readers pick names by geo/script.js). Skill docklands-3d-page, "Names: Latin script preferred".
+import('./script-ui.js').then(m => m.initScriptUi({ langNote: () => GLOBE && GLOBE.langOverridden?.() ? `The page language (?lang=${esc(GLOBE.lang)}) is written in another script, so its names give way to Latin ones while this is on.` : '' })).catch(e => console.warn('script-ui', e));
 // the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
 import('./api.js').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));
 if (START_AWAY) {
