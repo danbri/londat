@@ -2775,3 +2775,14 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
 - kg page worker (`cwplans/kg/sw.js`) deleted every cache of the origin at activation; now only its own (`cwplans-kg-`).
 - Open: proposals for main.js (load the layers in parallel, drop the boot screen at the first model frame); a measurement
   on the owner's iPhone (Safari: service worker, range reads).
+
+## 2026-10-21: Pages performance merged and live; layer modules and models load in parallel
+- Merged the Pages performance work (service worker with a hash manifest, preload hints, area.js read as JSON, bulk
+  extracts left out of the Pages artifact: 535.6 MB to 355.4 MB). Live check (headless, the live site): ?view=cw,
+  ?view=globe and the Sarajevo link load with no page errors and the worker controls the page; sw-manifest.json is
+  deployed; a left-out bulk file answers 404 on Pages (data-base.js sends those paths to raw.githubusercontent.com).
+- sw-check failed once at load 13 and passed when run again; globe-controls' fling check also fails now and then under
+  load (time-based); both pass alone.
+- main.js (the agent's proposals 1 and 2): `loadLayers` asks for all layer modules at once and still runs init in
+  LAYER_IDS order; `loadModels` fetches the glTFs in parallel. Headless: 34 of 34 layers, the 1 model, no page errors,
+  globe-check passed.
