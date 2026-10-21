@@ -200,3 +200,13 @@ Traps found while building it:
 - A `file://` clone ignores `--filter=blob:none`: a test clone of glitchcan-minigam took 1.1 GB of a 1.4 GB free disk.
   Test sparse checkouts with `git worktree add --no-checkout` instead. (The workflow needs no sparse checkout since
   2026-10-07.)
+
+## The hourly loop (2026-10-21)
+
+GitHub ran the hourly schedule only 5 to 7 times a day on this repository (KR5.1 needs 20). Since 2026-10-21
+`.github/workflows/cache-live.yml` works as `live-cache.yml` does: one job runs `cache-londat.mjs` once an hour 5 times
+(commit and push after each run, sleep to the next hour), then starts the next job itself with `gh workflow run`
+(permission `actions: write`). A schedule that fires, or a start by hand, cancels the running job (`cancel-in-progress:
+true`) and starts the same loop, so a start never doubles the runs. To stop the loop: disable the workflow in the
+Actions tab. Each finished job also restarts live-cache.yml through its `workflow_run` trigger (harmless: that loop
+restarts itself).

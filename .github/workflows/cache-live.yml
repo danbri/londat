@@ -5,6 +5,9 @@
 # politeness); before that the workflow checked them out from danbri/glitchcan-minigam. Skill: cwplans-londat-cache.
 # About 120 requests per run to TfL, EA, NATS, UK Power Networks, Thames Water/Stream, Open Waters and Open-Meteo,
 # one at a time per host. Size per run: see the skill cwplans-londat-cache, "Sizes and growth".
+# GitHub skips most scheduled runs on this repository (KR5.1: 5 runs in 28 hours on 2026-10-11, 7 on 2026-10-18, 5 on
+# 2026-10-19). So, as live-cache.yml does, one job fetches once an hour 5 times, then starts the next job itself
+# (workflow_dispatch). A schedule that does fire, or a start by hand, cancels the old job and starts the same loop.
 name: cache-live
 on:
   schedule:
@@ -12,13 +15,14 @@ on:
   workflow_dispatch: {}
 permissions:
   contents: write
+  actions: write   # to start the next job itself
 concurrency:
   group: cache-live
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 340
     steps:
       - name: Check out
         uses: actions/checkout@v4
@@ -29,17 +33,26 @@ jobs:
           node-version: '22'
       - name: Install the three libraries the fetch tools import (package.json "dependencies"; the build tools are devDependencies)
         run: npm ci --omit=dev --no-audit --no-fund
-      - name: Fetch and append
-        run: node cwplans/tools/cache-londat.mjs
-      - name: Commit
+      - name: Fetch, append and commit once an hour, 5 times
         run: |
           git config user.name 'londat cache bot'
           git config user.email 'londat-cache@users.noreply.github.com'
-          git add -A cwplans/cache/runs cwplans/cache/latest.json
-          git add cwplans/cache/live-*.sqlite 2>/dev/null || true
-          if git diff --cached --quiet; then echo 'nothing new'; exit 0; fi
-          git commit -q -m "cache: live state $(date -u +%Y-%m-%dT%H:%MZ)"
-          # the fetch tools also rewrote the snapshot files in cwplans/feeds/ (not committed hourly): set them aside
-          git stash push -q --include-untracked -m 'snapshots of this run' || true
-          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep 10; done
-          exit 1
+          for i in 1 2 3 4 5; do
+            t0=$(date +%s)
+            node cwplans/tools/cache-londat.mjs || echo "run $i: fetch failed"
+            git add -A cwplans/cache/runs cwplans/cache/latest.json
+            git add cwplans/cache/live-*.sqlite 2>/dev/null || true
+            if git diff --cached --quiet; then echo "run $i: nothing new"; else
+              git commit -q -m "cache: live state $(date -u +%Y-%m-%dT%H:%MZ)"
+              # the fetch tools also rewrote the snapshot files in cwplans/feeds/ (not committed hourly): set them aside
+              git stash push -q --include-untracked -m 'snapshots of this run' || true
+              ok=0; for k in 1 2 3; do if git pull -q --rebase && git push -q; then ok=1; break; fi; sleep 10; done
+              [ "$ok" = 1 ] || echo "run $i: push failed"
+            fi
+            if [ "$i" -lt 5 ]; then s=$((3600 - ($(date +%s) - t0))); if [ "$s" -gt 0 ]; then sleep "$s"; fi; fi
+          done
+      - name: Start the next job (a loop that does not depend on GitHub's scheduler)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run cache-live.yml --ref main --repo "${{ github.repository }}"
