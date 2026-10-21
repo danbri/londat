@@ -11148,6 +11148,10 @@
   {
    "tool": "tools/test/registry-branch-key.test.mjs",
    "what": "Fixture tests (node --test) of the branch-key rule in tools/registry-branch-key.mjs (F46, F20): name keys and variants, a shared FSA id from an OSM fhrs:id tag, the same name in one building with and without a second agreement, the pairs kept apart (same source, organisation and chain branch, different FSA ids), the ODS provider and its site, an ambiguous name match, and across buildings the CWG mall address over an OSM point and two strong positions to review."
+  },
+  {
+   "tool": "tools/test/place-landmarks.test.mjs",
+   "what": "Tests (node --test) of the committed landmark set of Sarajevo (tools/build-place-landmarks.mjs): mapped and estimated minarets distinct and counted, each estimated row names its rule and has no OSM id of its own, Gazi Husrev-beg Mosque minaret mapped at 47 m from OSM with its domes, the tiles of the tileset exist, hide_core ids are core buildings, every landmark stands on the ground."
   }
  ],
  "header_mismatches_resolved": {
