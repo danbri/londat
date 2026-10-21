@@ -89,7 +89,9 @@ const ex = (c, rows, n = 8) => { c.examples = rows.slice(0, n); };
   for (const [k, rs] of by) {
     const bs = [...new Set(rs.map(r => r.b))]; if (bs.length < 2) continue; pop++;
     const per = bs.map(b => rs.filter(r => r.b === b)); if (per.some(p => p.length !== 1)) continue;
-    const srcs = per.map(p => p[0].o.source); if (new Set(srcs).size < 2) continue;
+    // no source in two of the buildings (two OSM records in two buildings are two branches of a chain: Third Space,
+    // Birleys), as the branch-key rule
+    const srcs = per.map(p => p[0].o.source), parts = srcs.flatMap(s => s.split('+')); if (new Set(parts).size !== parts.length) continue;
     const far = Math.max(...bs.flatMap(a => bs.map(b => m(a, b)))); if (far > 250) continue;
     const inReview = (REG.branch_merge_review || []).some(r => r.records.some(x => key(x.name) === k) && new Set(r.records.map(x => x.building)).size > 1);
     rows.push({ name: rs[0].o.name, buildings: bs.map(b => b.id).join(', '), sources: srcs.join(' | '), metres: far, review: inReview });
@@ -120,7 +122,7 @@ const ex = (c, rows, n = 8) => { c.examples = rows.slice(0, n); };
 {
   const c = { id: 'SP-1', cls: 'position', dim: 'completeness', title: 'Named OSM occupant outside every building outline', sources: ['osm'],
     method: 'Named OSM shops, offices, amenities, leisure, healthcare, tourism and craft features in the box that the registry did not place in or within 12 m of an outline.', rule: 'Keep as unplaced occupants with their own position; attach to a building only through a second key (address, postcode with one building, mall).' };
-  const add = check(c), placed = new Set(REG.buildings.flatMap(b => b.occupants.map(o => o.osm).filter(Boolean))), rows = []; let pop = 0;
+  const add = check(c), placed = new Set(REG.buildings.flatMap(b => b.occupants.flatMap(o => recordsOf(o).map(r => r.osm)).filter(Boolean))), rows = []; let pop = 0;
   for (const f of OSM.features) {
     const t = f.tags || {}; if (!t.name || !OCC_KEYS.some(k => t[k]) || t.building) continue;
     const p = osmPos.get(`${f.type}/${f.id}`); if (!p || !inBox(p[0], p[1])) continue; pop++;

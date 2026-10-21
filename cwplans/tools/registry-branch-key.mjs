@@ -74,6 +74,9 @@ export function idKeys(o, branchOnly = false, tagsOf = null) {
   }
   return out;
 }
+// former identifiers an OSM record names (was:fhrs:id, was:ref:GB:cqc_location: the place was registered again, Sk:n)
+const formerKeys = (o, tagsOf) => { const out = new Set(); for (const r of recordsOf(o)) { const t = r.osm && tagsOf ? tagsOf.get(r.osm) : null;
+  if (t) for (const [k, p] of [['was:fhrs:id', 'fhrs'], ['was:ref:GB:cqc_location', 'cqc']]) for (const v of String(t[k] || '').split(';')) if (v.trim()) out.add(`${p}:${v.trim()}`); } return out; };
 // an identifier type both records have, with no value in common
 const idConflict = (ia, ib) => EXCLUSIVE.filter(p => { const a = [...ia].filter(k => k.startsWith(p + ':')), b = [...ib].filter(k => k.startsWith(p + ':')); return a.length && b.length && !a.some(k => b.includes(k)); });
 // organisation (a company, provider or charity as a whole), chain branch, or place
@@ -127,7 +130,10 @@ function judgePair(a, b, { tagsOf, sameBuilding, how }) {
   const ia = idKeys(a, !sameBuilding, tagsOf), ib = idKeys(b, !sameBuilding, tagsOf), shared = [...ia].filter(k => ib.has(k));
   const sa = scopeOf(a), sb = scopeOf(b);
   if ([sa, sb].includes('organisation') && [sa, sb].includes('branch')) return { review: 'an organisation record and a chain branch of the same name: kept apart' };
-  const clash = idConflict(idKeys(a, false, tagsOf), idKeys(b, false, tagsOf));
+  const fa = formerKeys(a, tagsOf), fb = formerKeys(b, tagsOf), allA = idKeys(a, false, tagsOf), allB = idKeys(b, false, tagsOf);
+  const former = [...[...fa].filter(k => allB.has(k)), ...[...fb].filter(k => allA.has(k))];
+  if (former.length) return { confidence: 'medium', rule: 'former identifier (OSM was: tag)', evidence: former.map(k => `the OSM record names ${k} as its former ${k.split(':')[0]} id`) };
+  const clash = idConflict(allA, allB);
   if (clash.length) return { review: `different identifiers of one kind (${clash.join(', ')}): two places` };
   if (shared.length) return { confidence: 'high', rule: 'shared identifier', evidence: shared.map(k => `same ${k.split(':')[0]} id ${k.slice(k.indexOf(':') + 1)}`) };
   // two records of one source with different ids are two things unless a rule says otherwise
