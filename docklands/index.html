@@ -109,6 +109,67 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
   "three/addons/": "../third_party/three/examples/jsm/"
 } }
 </script>
+<!-- load hints: begin (cwplans/tools/build-preload-hints.mjs; the Pages workflow writes this block again at each deploy) -->
+<link rel="preload" href="../cwplans/docklands/data/area.js" as="fetch" crossorigin="anonymous" fetchpriority="high">
+<link rel="modulepreload" href="../third_party/three/build/three.core.js">
+<link rel="modulepreload" href="../third_party/three/build/three.webgpu.js">
+<link rel="modulepreload" href="../third_party/three/build/three.tsl.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/tsl/display/BloomNode.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/controls/OrbitControls.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/utils/BufferGeometryUtils.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/utils/SkeletonUtils.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/loaders/GLTFLoader.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/csm/CSMFrustum.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/csm/CSMShadowNode.js">
+<link rel="modulepreload" href="build.js">
+<link rel="modulepreload" href="water.js">
+<link rel="modulepreload" href="materials.js">
+<link rel="modulepreload" href="../third_party/three/examples/jsm/objects/SkyMesh.js">
+<link rel="modulepreload" href="geo/clock.js">
+<link rel="modulepreload" href="geo/ellipsoid.js">
+<link rel="modulepreload" href="geo/region.js">
+<link rel="modulepreload" href="geo/regions/docklands.js">
+<link rel="modulepreload" href="geo/current.js">
+<link rel="modulepreload" href="sky3.js">
+<link rel="modulepreload" href="menu.js">
+<link rel="modulepreload" href="carousel.js">
+<link rel="modulepreload" href="tide.js">
+<link rel="modulepreload" href="occlude.js">
+<link rel="modulepreload" href="views.js">
+<link rel="modulepreload" href="perf.js">
+<link rel="modulepreload" href="cpu-copies.js">
+<link rel="modulepreload" href="main.js">
+<script>
+// layer modules, the globe and the API at low priority; the model's first data only for a start in the model
+(function () {
+  var low = ["tree-species.js","layers/trees.js","layers/ring.js","layers/walls.js","layers/riverbed.js","layers/floors.js","layers/under.js","layers/water.js","layers/tide.js","layers/stations.js","layers/skyline.js","layers/placenames.js","layers/registry.js","layers/keys.js","layers/search.js","layers/routes.js","crown.js","layers/nightlights.js","ships-data.js","piers-models.js","boats-models.js","layers/ships.js","layers/piers.js","planes-data.js","planes-models.js","planes-live.js","layers/planes.js","layers/wildlife.js","debris.js","meteo.js","layers/wind.js","layers/weather.js","layers/windfield.js","layers/sky-extra.js","drone.js","layers/drone.js","plotter.js","layers/plotter.js","music.js","layers/music.js","layers/splats.js","overlay-kit.js","layers/overlays.js","moored-boats.js","layers/river.js","../cwplans/docklands/kml.js","../third_party/three/examples/jsm/lines/LineSegmentsGeometry.js","../third_party/three/examples/jsm/lines/webgpu/LineSegments2.js","layers/kml.js","layers/locate.js","layers/model.js","xr.js","layers/xr.js","geo/adapters/world-ghsl.js","geo/adapters/world-buildings.js","geo/regions/sarajevo.js","geo/regions/leon.js","geo/regions/leiden.js","geo/regions/uk.js","geo/regions/index.js","globe/world.js","globe/terrain.js","globe/vectors.js","globe/labels.js","globe/globe.js","describe.js","adapters/uk.js","api.js"];
+  var data = [["../cwplans/docklands/data/tex/textures.json","fetch"],["../cwplans/docklands/data/towers.json","fetch"],["../cwplans/docklands/data/roofs.json","fetch"],["../cwplans/docklands/data/materials.json","fetch"],["../cwplans/docklands/data/tex/facades.json","fetch"],["../cwplans/docklands/data/tex/facades.jpg","image"],["../cwplans/docklands/data/building-models.json","fetch"],["../cwplans/docklands/data/sky/stars.json","fetch"]];
+  var away = /[?&](ll|place)=|[?&]view=globe(&|#|$)/.test(location.search), h = document.head;
+  function add(href, rel, as, pri) { var l = document.createElement('link'); l.rel = rel; l.href = href; if (as) { l.as = as; l.crossOrigin = 'anonymous'; } if (pri) l.setAttribute('fetchpriority', pri); h.appendChild(l); }
+  if (!away) data.forEach(function (d) { add(d[0], 'preload', d[1]); });
+  low.forEach(function (p) { add(p, 'modulepreload', null, 'low'); });
+})();
+</script>
+<!-- load hints: end -->
+<script>
+// The service worker (sw.js; skill docklands-3d-page, "Load speed on Pages: the service worker"): a repeat visit reads
+// the deployed files from the device, checked against the hash manifest of the deploy. ?sw=0 turns it off: this page then
+// unregisters it and deletes its caches (only this page's: other pages of danbri.github.io keep theirs).
+(function () {
+  try { performance.setResourceTimingBufferSize(2000); } catch (e) {}
+  var SW = navigator.serviceWorker; if (!SW || !window.isSecureContext) return;
+  var scope = new URL('./', location.href).href;
+  if (/^(0|off|no|false)$/i.test(new URLSearchParams(location.search).get('sw') || '')) {
+    SW.getRegistration(scope).then(function (r) { if (r && r.scope === scope) r.unregister(); }).catch(function () {});
+    if (window.caches) caches.keys().then(function (ks) { ks.forEach(function (k) { if (k.indexOf('londat-docklands-') === 0) caches.delete(k); }); }).catch(function () {});
+    return;
+  }
+  // first visit: once the worker controls this page, it copies what the page has read already from the HTTP cache
+  function warm() { var c = SW.controller; if (c) c.postMessage({ type: 'warm', urls: performance.getEntriesByType('resource').map(function (e) { return e.name; }).filter(function (u) { return u.indexOf(location.origin + '/') === 0; }) }); }
+  SW.addEventListener('controllerchange', function () { setTimeout(warm, 1500); });
+  addEventListener('load', function () { SW.register('sw.js', { scope: './', updateViaCache: 'none' }).catch(function (e) { console.warn('service worker', e); }); });
+})();
+</script>
 </head>
 <body>
 <button id="menu" class="btn" aria-label="Menu" title="Menu" aria-expanded="false" aria-controls="drawer">&#9776;</button>
@@ -267,12 +328,26 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 <button type="button" id="attribI" hidden aria-label="Credits and data licences (© OpenStreetMap contributors and others)" title="Credits and data licences">i</button>
 </footer>
 <script src="../cwplans/docklands/vendor/earcut.min.js"></script>
-<script src="../cwplans/docklands/data/area.js"></script>
 <script src="../cwplans/docklands/vendor/astronomy.browser.min.js"></script>
 <script src="../cwplans/docklands/roofs-layer.js"></script>
 <script src="../cwplans/docklands/look-layer.js"></script>
-<script type="module" src="main.js"></script>
-<script type="module" src="about-extra.js"></script>
-<script type="module" src="textview.js"></script>
+<script>
+// The model (area.js, 5.5 MB: globalThis.DOCKLANDS_AREA = {...}) is read with fetch and JSON.parse, then the modules
+// start. Compiling it as a script took 280 to 470 ms of the main thread in Chromium, JSON.parse 40 to 70 ms (2026-10-20;
+// skill docklands-3d-page, "Load speed on Pages"). The download began at the top of the page (the preload in the load
+// hints). If the file is not in that form, it is run as a script, as before.
+(function () {
+  var AREA = '../cwplans/docklands/data/area.js', HEAD = 'globalThis.DOCKLANDS_AREA = ';
+  var started = false;
+  function modules() { if (started) return; started = true; ['main.js', 'about-extra.js', 'textview.js'].forEach(function (m) { var s = document.createElement('script'); s.type = 'module'; s.src = m; s.async = false; document.body.appendChild(s); }); }
+  function asScript() { var s = document.createElement('script'); s.src = AREA; s.async = false; s.onload = s.onerror = modules; document.body.appendChild(s); }
+  fetch(AREA).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
+    var i = t.indexOf(HEAD), j = t.lastIndexOf('}');
+    if (i < 0 || j < i) throw new Error('form');
+    globalThis.DOCKLANDS_AREA = JSON.parse(t.slice(i + HEAD.length, j + 1));
+    modules();
+  }).catch(function (e) { if (globalThis.DOCKLANDS_AREA) modules(); else asScript(); });
+})();
+</script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # Data register: cwplans
 
-Generated from `data-register.json` by `tools/check-data-register.mjs --write` on 2026-10-20. Edit the JSON, not this file.
+Generated from `data-register.json` by `tools/check-data-register.mjs --write` on 2026-10-21. Edit the JSON, not this file.
 
 ## Policy
 
@@ -78,7 +78,7 @@ Attribution on every page that shows OSM data: "© OpenStreetMap contributors", 
 | `docklands/data/trees.json` | 6.4 MB | derived | natural=tree nodes (position, species, genus, taxon, height, diameter_crown, node id) not within 3 m of an inventory tree; natural=tree_row lines; green area outlines (leisure park, garden, pitch, playground, nature_reserve; landuse grass, forest, meadow, recreation_ground; natural wood, scrub) with way or relation ids | osmfr-greater-london | docklands/index.html |
 | `docklands/data/tree-species.json` | 167 kB | derived | natural=tree leaf_type and leaf_cycle (437 trees with no taxon), and the OSM trees, taxa and green areas already in trees.json | overpass-2026-10-09 | docklands/index.html |
 | `data/raw/trees/osm-tree-leaf.json.gz` | 42 kB | raw | natural=tree node ids, leaf_type, leaf_cycle | overpass-2026-10-09 |  |
-| `METHODS.md` | 677 kB | notes | describes how OSM data is fetched, clipped and joined |  |  |
+| `METHODS.md` | 679 kB | notes | describes how OSM data is fetched, clipped and joined |  |  |
 | `methods-intro.md` | 9 kB | notes | states the ODbL rule and the attribution |  |  |
 | `feeds/underground/axonometric-uses.json` | 63 kB | ids | OSM element ids, changeset ids, user names and tag counts at Canada Water, Canary Wharf, Gloucester Road and Baker Street | osmfr-greater-london | feeds/underground/AXONOMETRIC-USES.md |
 | `feeds/underground/AXONOMETRIC-USES.md` | 25 kB | ids | as axonometric-uses.json | osmfr-greater-london |  |
@@ -461,9 +461,9 @@ In danbri/glitchcan-minigam (https://github.com/danbri/glitchcan-minigam), outsi
 | `docklands/data/trees.json` | 6.4 MB | 81,875 trees (position, height, crown spread, taxon, source and record id) and 15,708 green areas (OS Open Greenspace sites, OSM parks, gardens, pitches, grass and woods, Trees Outside Woodland canopy groups) in the model box, 0.5 m, model metres | GLA London Public Realm Trees, November 2025 release (OGL v3.0); planning.data.gov.uk dataset 'tree' (OGL v3.0); OpenStreetMap (ODbL 1.0); Forest Research National Trees Outside Woodland map V1, London (OGL v3.0); OS Open Greenspace, version 2026-04 (OGL v3.0 (OS OpenData licence: http://os.uk/opendata/licence redirects to OGL v3)) |
 | `docklands/data/tree-species.json` | 167 kB | a species profile (crown shape, colours, leaf calendar of the Three.js port) for each of the 81,875 trees of trees.json, one letter per tree, and how it was found: the source taxon (species or genus), the OSM leaf_type / leaf_cycle tags, or a mix INFERRED from the setting (street, park, wood, waterside within 15 m of water) where no source gives a taxon; counts by profile and basis; the SHA-256 of each input | GLA London Public Realm Trees, November 2025 release (OGL v3.0); planning.data.gov.uk dataset 'tree' (OGL v3.0); OpenStreetMap (ODbL 1.0); Forest Research National Trees Outside Woodland map V1, London (OGL v3.0); OS Open Greenspace, version 2026-04 (OGL v3.0 (OS OpenData licence: http://os.uk/opendata/licence redirects to OGL v3)) |
 | `data/raw/trees/osm-tree-leaf.json.gz` | 42 kB | OSM natural=tree nodes in the model box with leaf_type or leaf_cycle: node id and those two tags only (11,993 of 34,445 nodes), Overpass API, OSM data of 2026-10-09 | OpenStreetMap (ODbL 1.0) |
-| `pipeline.json` | 539 kB | provenance of every transform: one W3C PROV activity a tool (used, generated, rules) | written or computed in this project (repository licence) |
+| `pipeline.json` | 540 kB | provenance of every transform: one W3C PROV activity a tool (used, generated, rules) | written or computed in this project (repository licence) |
 | `pipeline.jsonld` | 1.4 MB | pipeline.json and this register as JSON-LD (PROV-O, DCAT, Dublin Core) for a knowledge graph | written or computed in this project (repository licence) |
-| `METHODS.md` | 677 kB | method catalogue of the whole project: owner rules, every tool activity by subject area in rebuild order, hand-judgement steps, fault register summary | written or computed in this project (repository licence) |
+| `METHODS.md` | 679 kB | method catalogue of the whole project: owner rules, every tool activity by subject area in rebuild order, hand-judgement steps, fault register summary | written or computed in this project (repository licence) |
 | `methods-intro.md` | 9 kB | hand-written front section of METHODS.md: the policy and owner rules that govern the methods, crawl and hand-curation rules | written or computed in this project (repository licence) |
 | `docklands/data/imagery.js` | 424 kB | satellite colour per 3D terrain vertex (Sentinel-2 true colour, 13 August 2026, 10 m) | Copernicus Sentinel-2 L2A (Copernicus Sentinel data: free, full and open (attribution)) |
 | `feeds/SURVEY-2026-10-03.md` | 168 kB | the 2026-10-03 source survey (341 sources in seven areas, 135 left out with reasons) | written or computed in this project (repository licence) |

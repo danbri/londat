@@ -2,7 +2,9 @@
 # feeds, what's on, registry, postcodes; the data they read; kgx/). One-time setting by the owner: Settings > Pages >
 # Build and deployment > Source: "GitHub Actions".
 # Not published (they stay readable in the repository): cwplans/cache/runs/ and cwplans/cache/*.sqlite (the hourly
-# history; the pages read cache/latest.json from raw.githubusercontent.com, see cwplans/data-base.js) and third_party/
+# history; the pages read cache/latest.json from raw.githubusercontent.com, see cwplans/data-base.js), the dataset folders
+# of the bulk extracts in cwplans/feeds/london-datastore/ and cwplans/feeds/portals/ (read from raw.githubusercontent.com
+# through cwplans/data-base.js), and third_party/
 # (TfL and Canary Wharf Group material with no open licence, and the crawl data of the scoping phase), except
 # third_party/three (three.js, MIT), which the Three.js port of the 3D page loads.
 # The hourly cache commits do not deploy: they change only cwplans/cache/ (paths-ignore), and a push made with the
@@ -35,8 +37,22 @@ jobs:
             --exclude=./cwplans/cache/runs --exclude='./cwplans/cache/*.sqlite' . | tar -x -C "$RUNNER_TEMP/site"
           # third_party/three (three.js, MIT) is published: the Three.js port of the 3D page (docklands/) loads it
           mkdir -p "$RUNNER_TEMP/site/third_party" && cp -r third_party/three "$RUNNER_TEMP/site/third_party/three"
+          # the bulk extracts stay in the repository only (2026-10-20): the dataset folders of feeds/london-datastore/ and
+          # feeds/portals/ (180 MB in 392 files; no page reads them at start; cwplans/data-base.js sends their URLs to
+          # raw.githubusercontent.com), except the four Datastore layers the 3D pages draw. Keep this list equal to ON_PAGES
+          # in cwplans/data-base.js (cwplans/tools/test/pages-site.test.mjs checks it).
+          ( cd "$RUNNER_TEMP/site/cwplans/feeds" && for d in london-datastore/*/ portals/*/; do
+              case "$d" in london-datastore/conservation-areas/|london-datastore/designated-open-space/|london-datastore/safeguarded-wharves/|london-datastore/cultural-infrastructure/) ;;
+                *) rm -rf "$d" ;; esac; done )
           du -sh "$RUNNER_TEMP/site"
           test "$(du -sm "$RUNNER_TEMP/site" | cut -f1)" -lt 950   # the Pages limit is 1 GB
+      - name: Load hints and the service worker's hash manifest of the 3D page (docklands/sw.js)
+        # build-preload-hints.mjs writes the modulepreload block of docklands/index.html for the deployed main.js;
+        # build-sw-manifest.mjs writes docklands/sw-manifest.json (path -> SHA-256 of each file the page may read), which
+        # the worker fetches at each visit. Skill: docklands-3d-page, "Load speed on Pages: the service worker".
+        run: |
+          node cwplans/tools/build-preload-hints.mjs --root "$RUNNER_TEMP/site"
+          GITHUB_SHA="$GITHUB_SHA" node cwplans/tools/build-sw-manifest.mjs --root "$RUNNER_TEMP/site"
       - name: Set up Pages
         uses: actions/configure-pages@v5
       - name: Upload

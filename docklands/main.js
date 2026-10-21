@@ -299,13 +299,14 @@ async function loadModels() {
   const J = await loadJSON(DATA + 'building-models.json').catch(() => null); if (!J) return;
   BMOD = Object.values(J.models).filter(m => m.model_fp === MFP && m.mi && m.mi.length);
   const gl = new GLTFLoader();
-  for (const m of BMOD) {
+  // the glTFs are fetched and parsed in parallel; each is added as it arrives
+  await Promise.all(BMOD.map(async m => {
     const url = WEBGL + 'models/' + m.source.glb.split('/').pop();
     try { const g = await gl.loadAsync(url); g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } });
       const lod = LOD.add(new THREE.LOD()); lod.position.set(...m.t); lod.name = 'model ' + m.name; Object.assign(lod.userData, { model: m.mi[0], mi: m.mi, size: new THREE.Box3().setFromObject(g.scene).getSize(new THREE.Vector3()).length(), px: 80 });
       lod.addLevel(g.scene, 0); models.add(lod); farBlock(lod); for (const i of m.mi) skip.add(i); }
     catch (e) { console.warn('model', url, e); }
-  }
+  }));
   if (skip.size) requestRebuild();
 }
 
@@ -402,8 +403,10 @@ const ctx = {
   occluded: (key, x, y, z) => OCC.test(key, x, y, z), occVersion: () => OCC.version,
 };
 async function loadLayers() {
-  for (const id of LAYER_IDS) {
-    let mod; try { mod = (await import(`./layers/${id}.js`)).default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
+  // all layer modules are asked for at once (they arrive in parallel); init still runs in LAYER_IDS order
+  const pending = LAYER_IDS.map(id => import(`./layers/${id}.js`).then(m => ({ m }), e => ({ e })));
+  for (const [k, id] of LAYER_IDS.entries()) {
+    let mod; try { const r = await pending[k]; if (r.e) throw r.e; mod = r.m.default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
     ui.tab(mod.menu || MENU_PLACE[id] || 'layers/city');
     const mark = document.createComment(id); ui.host().appendChild(mark);   // the layer's own on/off goes first, above its controls
     try { const on = flag(id, mod.on !== false), L = (await mod.init(ctx, on)) || {}; LAYERS[id] = { mod, api: L, on };   // api kept as returned: its getters stay live

@@ -8,7 +8,8 @@ const HASHED = /[?&]v=[0-9a-f]{16,}|\/shardborough\/gen-[^/]+\//;   // a store g
 
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html']).catch(() => {}))); });
 self.addEventListener('activate', e => e.waitUntil((async () => {
-  for (const k of await caches.keys()) if (k !== CACHE) await caches.delete(k);
+  // only this page's older caches: the origin danbri.github.io is shared (the 3D page's worker keeps londat-docklands-*)
+  for (const k of await caches.keys()) if (k !== CACHE && k.startsWith('cwplans-kg-')) await caches.delete(k);
   await self.clients.claim();
 })()));
 

@@ -10708,7 +10708,15 @@
   },
   {
    "tool": "tools/range-server.mjs",
-   "provides": "A small Node static server with Range, gzip, an answer delay and HTTP/2, for range-read tests of archives (docklands/test/archive-check.mjs)."
+   "provides": "A small Node static server with Range, gzip, an answer delay, HTTP/2 and --max-age (GitHub Pages sends max-age=600), for range-read tests of archives (docklands/test/archive-check.mjs) and the load-time measurements of the 3D page (docklands/test/perf-load.mjs, docklands/test/sw-check.mjs)."
+  },
+  {
+   "tool": "tools/build-sw-manifest.mjs",
+   "provides": "The hash manifest of the 3D page's service worker (docklands/sw.js): path -> first 16 hex digits of the SHA-256 of every file the page may read (the app, three.js, cwplans/docklands/, a few feed and registry folders). Run by .github/workflows/pages.yml on the staged site; writes docklands/sw-manifest.json there (not committed). Reads site files only; makes no data."
+  },
+  {
+   "tool": "tools/build-preload-hints.mjs",
+   "provides": "The load hints block of docklands/index.html: modulepreload for the static import closure of docklands/main.js (through the import map), the area.js preload, and at low priority the layer modules, the globe and the API; the model's first data for a start in the model. --check reports a stale block. Also run by .github/workflows/pages.yml on the staged site."
   },
   {
    "tool": "tools/probe-range-host.sh",
@@ -10758,7 +10766,15 @@
   },
   {
    "tool": "tools/test/range-archive.test.mjs",
-   "what": "Tests (node --test) of the range archive packer and reader: ZIP layout, Morton order, central directory, range reads of single entries and merged reads."
+   "what": "Tests (node --test) of the range archive packer and reader: ZIP layout, Morton order, central directory, range reads of single entries and merged reads; a host that answers a range with gzip offsets or a wrong Content-Range is refused and the files are read."
+  },
+  {
+   "tool": "tools/test/sw-manifest.test.mjs",
+   "what": "Tests (node --test) of build-sw-manifest.mjs (folders, kinds, SHA-256) and build-preload-hints.mjs (static import closure through the import map; every file named in the index.html block exists)."
+  },
+  {
+   "tool": "tools/test/pages-site.test.mjs",
+   "what": "Tests (node --test) of what the Pages site leaves out: the staging loop of pages.yml removes the bulk dataset folders of feeds/london-datastore/ and feeds/portals/ and keeps the four Datastore layers the 3D pages draw; data-base.js sends the left-out paths to raw.githubusercontent.com; no page names a left-out folder directly."
   }
  ],
  "header_mismatches_resolved": {
