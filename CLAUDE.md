@@ -197,6 +197,11 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).
 - `tools/view-mcp/`: the `docklands-view` MCP server (`.mcp.json`). `tools/stock-mcp/`: the `cwplans-stock` MCP server (stock at
   Canary Wharf shops, one call per user need; skill `cwplans-stock-check`). `tools/check-skills.mjs`: the skills index check.
+- Bulky data storage: https://github.com/danbri/docklandia (owner, 2026-10-22: "any bulky data you can put in TLD
+  "./data/", and make subdirs by ISO/IETF country codes if needed"; the project may be renamed "Docklandia"). Layout
+  `data/<iso-country>/<set>/`, `data/world/`; served by its own Pages at https://danbri.github.io/docklandia/ (same
+  origin as the londat site, so no CORS setup). Register each set in londat's data register. Push needs the Claude
+  GitHub App on that repository (not yet granted on 2026-10-22).
 - Pages read data through `cwplans/data-base.js` (same site; only `cache/` comes from raw.githubusercontent.com, which is
   new each hour). Tools find paths through `cwplans/tools/londat.mjs`.
 
