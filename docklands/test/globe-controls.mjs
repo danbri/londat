@@ -72,7 +72,9 @@ await page.evaluate(async () => { const G = __docklands3.globe, t0 = performance
 const fl = await page.evaluate(async () => { const { G, pe } = __gc, wait = ms => new Promise(ok => setTimeout(ok, ms)); let x = 450; const y = 350;
   pe('pointerdown', 1, x, y); for (let i = 0; i < 8; i++) { x -= 15; pe('pointermove', 1, x, y); await wait(12); }
   const lon0 = G.orbit().lon; pe('pointerup', 1, x, y); const lonUp = G.orbit().lon;
-  const t0 = performance.now(); while (performance.now() - t0 < 4000) { __docklands3.draw(); await new Promise(ok => requestAnimationFrame(ok)); }
+  // (until the glide stops, at most 20 s: stepFling decays by frame with dt capped at 50 ms, so at the 1 to 3 frames a
+  // second of software rendering it needs more than the 4 s a phone takes)
+  const t0 = performance.now(); let still = 0, prev = G.orbit().lon; while (performance.now() - t0 < 20000 && (performance.now() - t0 < 4000 || still < 3)) { __docklands3.draw(); await new Promise(ok => requestAnimationFrame(ok)); const l = G.orbit().lon; still = Math.abs(l - prev) < 1e-9 ? still + 1 : 0; prev = l; }
   const lon1 = G.orbit().lon; await wait(600); const lon2 = G.orbit().lon;
   return { dragged: lonUp - lon0, glide: lon1 - lonUp, after: lon2 - lon1, dragLon: lon0 }; });
 console.log(`     fling: glide ${fl.glide.toFixed(2)} deg after release, then ${fl.after.toFixed(4)} deg (stopped)`);
