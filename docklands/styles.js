@@ -111,6 +111,7 @@ function pixOutput() {   // index.html pixEnd: the art pixel, an outline where t
   })();
 }
 function pixFrame() {   // the orthographic camera along the orbit camera's line of sight, 6 km out; half height 0.42 x the orbit distance
+  if (!PX.pass) return;   // setStyle('pixel') awaits the palette before it makes the pass: a frame can come in between (cells.js builds ask for frames)
   const cam = C.camera, t = C.controls.target, d = cam.position.distanceTo(t), dir = cam.position.clone().sub(t).normalize(), o = PX.cam;
   const W = C.renderer.domElement.clientWidth || innerWidth, Hh = C.renderer.domElement.clientHeight || innerHeight, hh = d * 0.42, hw = hh * W / Hh;
   o.position.copy(t).addScaledVector(dir, 6000); o.up.set(0, 1, 0); o.lookAt(t);
