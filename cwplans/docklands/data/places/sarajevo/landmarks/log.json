@@ -1,0 +1,1193 @@
+{
+ "about": "Build log of the landmarks of Stari Grad, Sarajevo (tools/build-place-landmarks.mjs): fetch records and the dataflow activities landmark-select and landmark-tiles with input and output hashes and counts.",
+ "fetches": {
+  "overture-religious": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox 18.285,43.815,18.46,43.875; files part-00210-af36c72f-afd3-5d39-9c99-9033f1ca68be-c000.zstd.parquet)",
+   "fetched": "2026-10-21T12:15:48.719Z",
+   "bytes": 187587,
+   "sha256": "17344d0c7fae2f7ac1978cfd3b8cb2e6f2280621ca55b82bd479861e4ceddedc",
+   "file": "data/raw/places/sarajevo/landmarks/ov-religious-2026-09-23.1.json",
+   "source": "overture-buildings",
+   "request": "DuckDB read_parquet over HTTPS of the 512 files of the release, filter on bbox and: subtype = 'religious' OR class IN ('mosque','church','cathedral','chapel','synagogue','temple','shrine','religious','monastery','bell_tower','tower','clock_tower') OR roof_shape IN ('dome','onion','cone') OR has_parts",
+   "records": 195,
+   "use": "positions only, to choose the OSM boxes (the OSM answers give the tags and geometry)"
+  },
+  "overture-parts": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building_part/ (bbox 18.285,43.815,18.46,43.875; files part-00002-f166bab0-4dbb-5bf4-8931-37611da5b0ad-c000.zstd.parquet)",
+   "fetched": "2026-10-21T12:15:53.335Z",
+   "bytes": 147001,
+   "sha256": "f4c97503962eef46137571504b33059b5a8e549b0bb4da43daf0c712fbe886d6",
+   "file": "data/raw/places/sarajevo/landmarks/ov-parts-2026-09-23.1.json",
+   "source": "overture-buildings",
+   "request": "DuckDB read_parquet over HTTPS of the 3 files of the release, filter on bbox and: none",
+   "records": 192,
+   "use": "positions only, to choose the OSM boxes (the OSM answers give the tags and geometry)"
+  },
+  "overture-worship": {
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=places/type=place/ (bbox 18.285,43.815,18.46,43.875; files part-00009-3f7e01dc-2fb9-50a7-8be5-65df80c1cdd4-c000.zstd.parquet)",
+   "fetched": "2026-10-21T12:16:02.363Z",
+   "bytes": 100563,
+   "sha256": "14eec3d16124b63dbb31a82db49daad2a1ace6d85358d81c642badfc1e7893e5",
+   "file": "data/raw/places/sarajevo/landmarks/ov-worship-2026-09-23.1.json",
+   "source": "overture-places",
+   "request": "DuckDB read_parquet over HTTPS of the 16 files of the release, filter on bbox and: basic_category ILIKE '%mosque%' OR basic_category ILIKE '%church%' OR basic_category ILIKE '%synagog%' OR basic_category ILIKE '%relig%' OR basic_category ILIKE '%worship%' OR basic_category ILIKE '%cathedral%'",
+   "records": 124,
+   "use": "positions only, to choose the OSM boxes; not drawn, not committed"
+  },
+  "osm-landmarks": {
+   "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (one box per entry of as_fetched)",
+   "fetched": "2026-10-21T12:19:00.012Z",
+   "bytes": 2393770,
+   "sha256": "9cdc3fb0e9431549806b424ecf28e3d46e51bb5a44639abc3f97e5047e407967",
+   "file": "data/raw/places/sarajevo/landmarks/osm-landmarks.json.gz",
+   "source": "osm",
+   "requests": 114,
+   "as_fetched": [
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.348214,43.814702,18.350208,43.816149",
+     "bytes": 100833,
+     "sha256": "742ccda1fab0bf18c367bad7e2e537d75426d713f1cf145025e5d7bd98586bfc"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.312515,43.816331,18.314608,43.817846",
+     "bytes": 107525,
+     "sha256": "45ae790e50e17d4f99a508b4f15c60c68afbab9c369cc65ad2b6ef42e3de3825"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.369789,43.817842,18.371782,43.819289",
+     "bytes": 40483,
+     "sha256": "961c942fd4622a5d8a04d6a774f612b7adb60162992ca2d741067aece150106b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.309164,43.820434,18.311157,43.821881",
+     "bytes": 47676,
+     "sha256": "5c920795d2de3c2424205497005223b244dd8d9a86367e8ac66eb5e80879bba4"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.321673,43.820745,18.323666,43.822192",
+     "bytes": 137037,
+     "sha256": "701eaf68e1f225c2c5719e78ff197ea40bfd926787e0ddff36807b175ef80b48"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.355146,43.821717,18.357140,43.823164",
+     "bytes": 75755,
+     "sha256": "dc14af2f6614f707c20e980f0390a71c310b35a1ea5eef6eb0d469abf9d3eec5"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.358066,43.824590,18.360326,43.826269",
+     "bytes": 108189,
+     "sha256": "77505cd3cb310f4a646de861be55fae253d832a22ca68837b9106175ebe62c5c"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.353047,43.824959,18.355095,43.826482",
+     "bytes": 99223,
+     "sha256": "bddc39879a5b920cdbb6e6e45168364ea88af07cb77b7bb9081432c9ce5d3e7e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.348336,43.825808,18.350330,43.827325",
+     "bytes": 101121,
+     "sha256": "31087d05a312ac8990b96d31b6f3275d9011b3f476f233b881d617cbc06e14cb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.297733,43.827210,18.299727,43.828657",
+     "bytes": 52338,
+     "sha256": "070796daa882615957e48c1fda620ad8a51e6de90f05b229e69b62dd060737b7"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.351062,43.828390,18.353217,43.830693",
+     "bytes": 159151,
+     "sha256": "53cddbc3d8519221be4b8e72c174b0b34a0f9bc7b67a73aeb100caa974af21f2"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.331389,43.829587,18.333383,43.831034",
+     "bytes": 168030,
+     "sha256": "b2f2eb8b73d0ae98af0a2d700833feae4096739c67724b1f09677cea4afba839"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.300233,43.830290,18.302227,43.831737",
+     "bytes": 180056,
+     "sha256": "0befbce2edff2d0b46171bad6d05ca36e316488045593f1fe91463400fe39ac6"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.340611,43.830855,18.342604,43.832302",
+     "bytes": 54628,
+     "sha256": "fb1ae20cb78829db425a4455e7e2824c36aadd8ec474aa402837f4542e88e7b2"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.326575,43.831063,18.328614,43.832524",
+     "bytes": 56253,
+     "sha256": "319b474f1247c1bb23019f4df378bbc6af133ed3ae5751f3731ac26df91090e1"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.317394,43.831568,18.319388,43.833015",
+     "bytes": 48407,
+     "sha256": "bb319ddb94f89637ec8d2050914b1edf5942dc7e4f2d5248e8a0ddc1d33d9293"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.298104,43.831684,18.300097,43.833131",
+     "bytes": 112691,
+     "sha256": "d11e7f89cc39cf4ca918c5e5fd542254a722036ac56dfbd4a72bb094c8cecc84"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.330193,43.833164,18.332187,43.834611",
+     "bytes": 129213,
+     "sha256": "c9642436159ffd211ad26edd314b00fa22229bfee65b39503b3c14cb60298c97"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.347881,43.836262,18.350056,43.838310",
+     "bytes": 118033,
+     "sha256": "5bb3fc337b39d3f9c0ef18bf1949212b0865534c3ddc228e0b8ea12d6dbbb948"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.322112,43.836324,18.324105,43.837771",
+     "bytes": 37230,
+     "sha256": "04b2fe8a50ed7bf5d34aa47196b4e82b8c17377f9f9a3dc6a47e45ae278235d9"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.298353,43.837047,18.300417,43.838496",
+     "bytes": 72940,
+     "sha256": "bc9021b09f71d8478bc62f967882bbc0d20687e8bf2e6cb92a0ad0492d80e14d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.394132,43.837328,18.396126,43.838775",
+     "bytes": 65472,
+     "sha256": "f7eaa49caabb474e56a19e348432988a86368f5d7d1be8317adbeb7934a13ffd"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.342160,43.839040,18.344215,43.840570",
+     "bytes": 150630,
+     "sha256": "a5444bd2e49361d21e82f3545c2e5e5709660762a18bc1049ac18b8fadd1bb3a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.355176,43.839165,18.357230,43.840646",
+     "bytes": 79849,
+     "sha256": "e67e95b40f8b6a580586a8a6c766644c8ecea62835d8fe7385b29f365a213e34"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.348287,43.839985,18.350315,43.841579",
+     "bytes": 203472,
+     "sha256": "007f6160ba899f4b01056ce68c5e40bd2d0a70008b95a9a7acbfde20fc162230"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.336695,43.840346,18.338688,43.841793",
+     "bytes": 163107,
+     "sha256": "17b07dead0a80b41857bcf639da676c161e18155999966786c44c2a162018dab"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.350606,43.840412,18.353007,43.841902",
+     "bytes": 195408,
+     "sha256": "c5f78fcccdd3fe9643f0c1c1addf7e6ff8c57b4ca262854850b23cc146deda56"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.383288,43.840685,18.385281,43.842132",
+     "bytes": 89480,
+     "sha256": "58aff2927a74d36c0ee23880b8411ff51dafa24703bcf70add70c9cfcbce2bfb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.327439,43.841510,18.329433,43.842957",
+     "bytes": 710013,
+     "sha256": "4c4c57e752abbcaccf43b2d792b86bd2e15974efa1a9fc915b763472e364f4b9"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.364288,43.842023,18.366281,43.843470",
+     "bytes": 84488,
+     "sha256": "f29317fc7efe1831efdde5daeea6fe024a74c262024902fe1e898cb927947dee"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.390333,43.842077,18.392327,43.843523",
+     "bytes": 72537,
+     "sha256": "7438e615fb3c19577e960c7e8701de0c561c41a13428d962a105be394dcaa69b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.377754,43.842240,18.379779,43.843694",
+     "bytes": 78338,
+     "sha256": "e0c1d7468aa0d979048f983aa20184b6f85dd539e401acf11e8166182a31fa9c"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.370534,43.842322,18.372584,43.843805",
+     "bytes": 95934,
+     "sha256": "523796cd992ee85ca8b885cacb593c597fb365e920db7c64a303cdd656d03c7d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.321785,43.843004,18.323932,43.844563",
+     "bytes": 93734,
+     "sha256": "50f22b7a2ebdaf9ea6b69dbe770a41a803ca7102f85867758f8619e55e4fa0a0"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.307618,43.843638,18.309612,43.845085",
+     "bytes": 43372,
+     "sha256": "1814f99cc0e7bddcd02a2fa01fe67df2ca9ba86da8d974e0c444dee87d21ee13"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.398971,43.843827,18.400965,43.845274",
+     "bytes": 76709,
+     "sha256": "b24d110327556cf9b4ade62e3000d72f274cdc0fd546cd2f07af331d550a2d94"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.325968,43.844125,18.328105,43.846410",
+     "bytes": 219761,
+     "sha256": "5f93da2a04396ef06c76829c7752b2c1c934a210d42f105e368badb6b207a9ee"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.384653,43.844567,18.386646,43.846014",
+     "bytes": 195794,
+     "sha256": "7520844c0a5221f9e8af6ee8f5d9dc3717fbba2b6c4704a1abf67645d7919a2a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.378979,43.845512,18.380973,43.846959",
+     "bytes": 241607,
+     "sha256": "03c4f10022bdf3d50625951585716665d1de9b911a0b9bdde360d0d39990d362"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.358329,43.845652,18.361592,43.847951",
+     "bytes": 518235,
+     "sha256": "732deb39dff9893117d5ccd41744a81687b1cb24e2c5f390c0885c33146a2b4d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.387926,43.846103,18.390301,43.847604",
+     "bytes": 90510,
+     "sha256": "2f995f6166996d64dc2adc1106f4c360d1e5abea3d00018bf973dc74b8c5282e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.401630,43.847229,18.404019,43.849698",
+     "bytes": 268369,
+     "sha256": "ab4a0e276ab2cab1678073c084fbb8f8983e12b506b6e5c4cb7f72816c606308"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.424232,43.848163,18.426225,43.849610",
+     "bytes": 120365,
+     "sha256": "894e60dc409414c745f4d99c8eee4733233deae42ff18c406afccc41b9ba62c7"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.413968,43.848574,18.415961,43.850021",
+     "bytes": 86242,
+     "sha256": "baaedab4041a7a4215e266d268ea95976b669be5de249c6ba5712094ec01c114"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.378866,43.849105,18.381097,43.851014",
+     "bytes": 313958,
+     "sha256": "c9ddbcc6f87967ae8c8d9e0d850747116439c4e33caec3bbd8bba615424fc0e5"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.382303,43.849277,18.384297,43.850723",
+     "bytes": 40760,
+     "sha256": "c49ffc59583a416a4b9a492a15c18ab10c2f9ecfe252ff70d9decb916032d85c"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.388313,43.849448,18.390487,43.851236",
+     "bytes": 103890,
+     "sha256": "836ba12a9d13916c69ad314d77b61656d9dfd2d06455bfd78368201bae12cd9c"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.429798,43.849678,18.431876,43.851132",
+     "bytes": 143795,
+     "sha256": "2489ee40ea8a536084bfb002fc60024646287fb78ef97eaae00216986cc2dfbe"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.427416,43.849804,18.429417,43.851262",
+     "bytes": 105044,
+     "sha256": "7e73ea45cdbf10b6bfce7a750f4aebdbee8905c0126ea56d26ac8db1e2179c81"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.293408,43.849924,18.295401,43.851371",
+     "bytes": 66039,
+     "sha256": "999998834d5f8a1e1c5034f5fb2061ba5ac5da2d99704d281120d87445b53267"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.406162,43.850150,18.408155,43.851597",
+     "bytes": 210222,
+     "sha256": "eeae662f69426ae0ee3662f21703851df930895eb9cfb96ebd8c1f1e90bdb02f"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.372236,43.850411,18.374455,43.852009",
+     "bytes": 446524,
+     "sha256": "49d290dd2c173b765a9e0df2af1ee16a83dbcc3f2d487c008cb62154a046b73f"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.425279,43.850475,18.427272,43.851922",
+     "bytes": 108055,
+     "sha256": "4802f57cb5345bfa167fac76969760787ff1f83e1849b4ddecea0c5c433d2abb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.400269,43.850518,18.402365,43.852145",
+     "bytes": 134177,
+     "sha256": "e65490852f07d851098087b42e88cc934d38c3b43e470016361d47bdfba6ea7b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.430154,43.851260,18.437252,43.856849",
+     "bytes": 1098697,
+     "sha256": "fa8d087837eb3d7388bc7f60b8481ea887671d981b03b8f373fd8640a2ad9ade"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.395593,43.851647,18.398784,43.853134",
+     "bytes": 238395,
+     "sha256": "e75242683e72d341297904af58323e58957493406d192c5400b60b476ca119bd"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.381641,43.851851,18.383662,43.853323",
+     "bytes": 599372,
+     "sha256": "04bdae617ed15ac6ec6d08e5bd2badf427ff78d310898057230b90d4467d3c91"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.424934,43.851927,18.429923,43.853624",
+     "bytes": 343777,
+     "sha256": "0d37b1577082d39fedf73e304f735cafd364ba785d53d7bdc70d98734fb1238d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.413965,43.851928,18.415959,43.853375",
+     "bytes": 207062,
+     "sha256": "da291be53562c7843369d1b65cc571d90108a0bbb26a2f3ce365799fac70706b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.422770,43.852491,18.424764,43.853954",
+     "bytes": 209887,
+     "sha256": "804a84fd36d138be0e5e9638850ad5452f5717a6d2a2bba8563339ac852e230d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.389903,43.852577,18.391997,43.854055",
+     "bytes": 756818,
+     "sha256": "d41efba6c2daa172a612f0603d90f3f38a5bbdc55a3089c9c19f554c6d943bfa"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.362571,43.852957,18.364733,43.854467",
+     "bytes": 1302823,
+     "sha256": "5777b093f3b1cbc5a88387b73cf40392e15bb68796c7e2dcf25383a72ba5dff5"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.443993,43.853016,18.447866,43.855233",
+     "bytes": 174139,
+     "sha256": "f30d9a8351bf0a56c8e289a9b6587e16d084dd03ff9a8247398af2d55c9e14c4"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.437899,43.853032,18.439914,43.854480",
+     "bytes": 149611,
+     "sha256": "eb14d768c2964db6fbd0ab2a45a16910db556457f54359907eff9629394ac2f0"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.423773,43.853417,18.432371,43.859284",
+     "bytes": 1931951,
+     "sha256": "f30e6610319c4baed4fda0b3866b4cb88ba475cf22f6beb18d2ec410127e1d08"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.401648,43.853470,18.403707,43.855707",
+     "bytes": 345577,
+     "sha256": "57ac2662718afa7643c283293be8b5dbf42824346e382d165e753839e67320fb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.419909,43.854550,18.421930,43.856204",
+     "bytes": 138338,
+     "sha256": "046df5675b80966df21afa2591fb9db1bae37776e2b95bc0b1c9057dd425f26f"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.337015,43.854629,18.339009,43.856076",
+     "bytes": 53045,
+     "sha256": "19002fbc46bf2b19ff9b4f1b03daca12fefb9a53ec70f416fcbbb72ec62d19e7"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.413450,43.854634,18.415443,43.856080",
+     "bytes": 310610,
+     "sha256": "19405c962c3123f4acebe89f35e1eb1f4191b16f9e84e921fd84ef54ed49a5e0"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.379818,43.854929,18.381812,43.856439",
+     "bytes": 51586,
+     "sha256": "e3efa6f7429a820ba062501f4efac444a9daa7c52eb7a823025976f58da680ea"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.405973,43.855565,18.413733,43.860392",
+     "bytes": 1909426,
+     "sha256": "68d37ca997446531d90089d8ea976df41b71b1fb742a5286fbe3e5be2aa1a625"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.347684,43.855697,18.349677,43.857144",
+     "bytes": 84159,
+     "sha256": "08739128cf42bfcb564020e1e184bb2fe5c424d54debf32d196386fbfd7fbb1f"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.436955,43.855970,18.438949,43.857430",
+     "bytes": 201689,
+     "sha256": "72344c45b078cfa5858c6c720488ee5277c63c20f3c64c1638e02ad952e2db80"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.415965,43.856068,18.424093,43.862389",
+     "bytes": 2233742,
+     "sha256": "6d4dd3e1c93bff14e88de58b2b7be251fb74ffb6e9529f4c115cc311dc47a3b8"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.344996,43.856292,18.346990,43.857739",
+     "bytes": 95706,
+     "sha256": "d0f473e023373934f25922e78f0c6947f61fa525be35e4e424dbda5ca1ded75b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.428160,43.857726,18.436010,43.861023",
+     "bytes": 1580598,
+     "sha256": "bf55c791c5ebfb69ccc80e0fb53040412c7d102dc60672829760722f06d4cc8d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.342374,43.857837,18.344367,43.859284",
+     "bytes": 96687,
+     "sha256": "04449b6ace05227dc240a103c1c2f98b3545f58178c538808f52c184d44e3e93"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.335244,43.858028,18.337238,43.859475",
+     "bytes": 69112,
+     "sha256": "113988dd5235339e3bb10bb84852f27f53b781179c47868f0b1d9a2fce40e8c8"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.331904,43.858039,18.333898,43.859486",
+     "bytes": 74823,
+     "sha256": "262793752c8bc8506b7f4ffa24296f448367f4203a4f1404a18a1fa40b2c7948"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.421425,43.858169,18.430107,43.864175",
+     "bytes": 2030605,
+     "sha256": "6a8f37aec39319b831d071bc4cc841a44d598bc8c35e6c07bd0f2900b14b952e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.362151,43.858372,18.365193,43.861219",
+     "bytes": 158297,
+     "sha256": "fef4e70aa4f3b78c99885529aad9b42dcbc1bd3c4bc89b70aedec6881ef08ebf"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.386327,43.858896,18.388320,43.860343",
+     "bytes": 1310454,
+     "sha256": "8061f385323aa1a9de50cfda3bfcc188fc9cc05cf2b46bf345ea12de0fcc0fec"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.390013,43.858921,18.392006,43.860368",
+     "bytes": 1330957,
+     "sha256": "8f1941bc81deb32b692d2850ac61b966a74d05c579238b2fb0053a4f814fae9a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.434438,43.859451,18.443094,43.865774",
+     "bytes": 1891977,
+     "sha256": "10dafffda6dc55447eed7f1064bfe0720e4134db0e08b2c929faa3fb9c9cde28"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.321063,43.860107,18.323318,43.861854",
+     "bytes": 69374,
+     "sha256": "eefd970c3b206b5aa945c1bf8eefc15f03b44e32df141477bde284e41e0cbfab"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.442047,43.860265,18.445365,43.863796",
+     "bytes": 417787,
+     "sha256": "d253b87f888f39caf32a2d56cb2d5ad4429939dbf2e5e6a73c1e780c7d4af303"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.427347,43.860283,18.435661,43.866373",
+     "bytes": 1679299,
+     "sha256": "70c86d4da0c4d2dff0f762a29856e97bc99e5488fd3304a5dc57f7906e9ce0da"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.382489,43.860357,18.384573,43.861836",
+     "bytes": 52155,
+     "sha256": "ec80e2a1c03aae0a76ed5d67fe33a3279a58d4177f1d9deaedbf93fc85a1ae67"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.393035,43.860773,18.395028,43.862220",
+     "bytes": 99378,
+     "sha256": "e39bf00477808a53b3c04694107bb2b515298cba1da25df290dffc1b7c67cd9a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.415351,43.861576,18.418495,43.865050",
+     "bytes": 368212,
+     "sha256": "0e618c087aaa1c69b57ead427850f99da01ccfc8a5a68457753ef6addaca246e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.368426,43.861657,18.370420,43.863104",
+     "bytes": 85825,
+     "sha256": "f1ba8533983e1eb8e49fa565e5d853544bd8e3f4b7239c8203b872fc9737b6d3"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.452749,43.863211,18.454746,43.864725",
+     "bytes": 184635,
+     "sha256": "fdf9446a6a14847f9334494a2d8307b9959e8f5432ab7cf0d2f0d120863562ce"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.358875,43.863219,18.360868,43.864666",
+     "bytes": 77926,
+     "sha256": "1a9df93c7a340b78189d51f0fd8059a70fb30e6c2635b96dce9da9e5ee95dbc2"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.403368,43.864077,18.406585,43.867152",
+     "bytes": 337373,
+     "sha256": "fa2e8de2ab90fa346a129409278a7f3452527bc7a71f4bb8a9daf9390d3e5e5a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.330111,43.864190,18.332119,43.865654",
+     "bytes": 90495,
+     "sha256": "39dd2519f2cda6a697e8c994576b110b830e8fb15a1bab0afd70d41fc3406b75"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.408593,43.864466,18.411020,43.866043",
+     "bytes": 149072,
+     "sha256": "0deeb96e454d57065f6eb287a97e17ac5c7eeadbbbe1a2658d4c37cdc9798642"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.419286,43.865059,18.421283,43.866517",
+     "bytes": 111346,
+     "sha256": "35835ebb881558c7d4d0f279b59e292024101dd2885504cea3cfe354730c96b9"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.423216,43.865589,18.425211,43.867049",
+     "bytes": 115346,
+     "sha256": "7202b629cd30b52622d40d468d0aa0ee81ed3aaf29cc2a90cc101c489dfbe347"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.410515,43.866094,18.412509,43.867541",
+     "bytes": 87410,
+     "sha256": "4fb02d45704d641f649ff4574901398685dd7ede67262d33a081be84e8341782"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.317087,43.866150,18.319081,43.867597",
+     "bytes": 75310,
+     "sha256": "4eca15c17fed0173c2fc64827ce5414f291349710c51d74411d890ed658c6420"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.433724,43.866370,18.435736,43.867822",
+     "bytes": 131350,
+     "sha256": "b041012596213bee6a792397618872a3fa5f871f221f2ced6c877978e22380d0"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.396125,43.866901,18.398171,43.868356",
+     "bytes": 87390,
+     "sha256": "111b307b1a9172238683128a0930f0b82fc0c3be19756192c94e06d4a22a903e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.431123,43.866951,18.433135,43.868405",
+     "bytes": 99268,
+     "sha256": "0a6946befc6b6797f19d2cabaa3849b56a591b3a57f75bcb5eaa1f83274ab8a9"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.435921,43.867193,18.437924,43.868641",
+     "bytes": 95402,
+     "sha256": "3e9dd187ac05e9454aa49e834296116b2ad1c6062efdf5fb3b6dde29b77e7754"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.320234,43.867588,18.322366,43.869131",
+     "bytes": 73034,
+     "sha256": "bed2af45093eed3537348cc8fb58ce93925a5122e2f78d05441b538d46af73cb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.410518,43.867771,18.412517,43.869228",
+     "bytes": 46449,
+     "sha256": "5070fd0150efda562bb43e8ae565a62e6028d06c2d6b10582e4bf57fb4839ecb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.426919,43.867885,18.428912,43.869332",
+     "bytes": 165150,
+     "sha256": "8115e706415605db46b0ff09cdc7cca27d79b883ad473ba942052f42d2512d42"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.421701,43.868372,18.423694,43.869819",
+     "bytes": 137428,
+     "sha256": "fe11e780cb7298f35ad75b41844c77f59fad20dd1e5a5a3dde23765dfbb4face"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.415615,43.870145,18.417693,43.871668",
+     "bytes": 54331,
+     "sha256": "d0a8c5f9c71aece5c3c80223b6a53332482816f54fe6f9defd44bac713cf05f1"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.436856,43.870272,18.438849,43.871719",
+     "bytes": 121151,
+     "sha256": "39325f64271c3a4860ab2ac7574799c665ada0cdfcfeee7d88ff5cc1340d476e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.400585,43.870627,18.402579,43.872074",
+     "bytes": 85646,
+     "sha256": "af42dadb77886ada3d978d3a5ce4d480c365b294d076ecb5fde7e58e3d315db0"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.431802,43.871874,18.433795,43.873321",
+     "bytes": 216556,
+     "sha256": "c88a8012ce8393366ac02775c7b7bb2d2d104bd590d912bc85c915f280ffc188"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.319473,43.872073,18.321466,43.873520",
+     "bytes": 57101,
+     "sha256": "55389bdded5f6018fb607a4d06c974ec4fd24c2ebb0e0c375b15a593cf3d44b6"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=18.411560,43.873446,18.413743,43.874942",
+     "bytes": 75825,
+     "sha256": "5daed4ff336e1c684baae1c99dd89ad423b2800be95b8af064763cd61f964315"
+    }
+   ],
+   "elements": 101498,
+   "latest_element_timestamp": "2026-10-20T20:57:33Z",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors",
+   "stored_as": "the elements of all answers merged by type and id, sorted, gzip JSON (sha256 above)"
+  }
+ },
+ "activities": [
+  {
+   "activity": "cb41c6f628972688",
+   "operation": "landmark-select",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-landmarks.mjs",
+   "inputs": [
+    {
+     "label": "osm",
+     "path": "data/raw/places/sarajevo/landmarks/osm-landmarks.json.gz",
+     "sha256": "9cdc3fb0e9431549806b424ecf28e3d46e51bb5a44639abc3f97e5047e407967"
+    },
+    {
+     "label": "features",
+     "path": "docklands/data/places/sarajevo/features.json",
+     "sha256": "239e263d6fc60d8b16f82f5b6ce1145d4000174e1cfee984d91900728768b1ff"
+    }
+   ],
+   "params": {
+    "names": [
+     "name",
+     "name:bs",
+     "name:sr-Latn",
+     "name:hr"
+    ],
+    "alt_names": [
+     "name:sr",
+     "name:sr-Cyrl"
+    ],
+    "minaret_rule": {
+     "classes": [
+      {
+       "id": "S",
+       "max_area_m2": 150,
+       "height_m": 15,
+       "base_d_m": 2.5
+      },
+      {
+       "id": "M",
+       "max_area_m2": 500,
+       "height_m": 25,
+       "base_d_m": 3
+      },
+      {
+       "id": "L",
+       "max_area_m2": 1000000000,
+       "height_m": 35,
+       "base_d_m": 3.5
+      }
+     ],
+     "serefe_frac": 0.72,
+     "cap_frac": 0.2,
+     "corner_bearing_from_qibla": 135
+    }
+   },
+   "outputs": [
+    {
+     "path": "data/raw/places/sarajevo/landmarks/work/select.json.gz",
+     "sha256": "f7e8ba35ad497a66fff143dadc01c7639cab1dffa8a0828cf46a842bf6a26b78",
+     "bytes": 23922
+    }
+   ],
+   "counts": {
+    "worship": 164,
+    "mosques": 126,
+    "minarets_mapped": 4,
+    "minarets_mapped_by": {
+     "tag": 3,
+     "part-stack": 1
+    },
+    "minarets_estimated": 122,
+    "minarets_unattached": 0,
+    "mosques_excluded": 2,
+    "worship_points_without_outline": 0,
+    "domes": 24,
+    "towers": 11,
+    "churches": 31,
+    "synagogues": 5,
+    "clock_towers": 1,
+    "position_rule_error_m": {
+     "n": 4,
+     "median": 3.8,
+     "max": 7.4
+    }
+   },
+   "ms": 1362,
+   "at": "2026-10-21T12:19:06.574Z",
+   "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
+  },
+  {
+   "activity": "8fbcc4bba50380c4",
+   "operation": "landmark-tiles",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-landmarks.mjs",
+   "inputs": [
+    {
+     "label": "selection",
+     "path": "data/raw/places/sarajevo/landmarks/work/select.json.gz",
+     "sha256": "f7e8ba35ad497a66fff143dadc01c7639cab1dffa8a0828cf46a842bf6a26b78"
+    },
+    {
+     "label": "place-tileset",
+     "path": "docklands/data/places/sarajevo/tileset.json",
+     "sha256": "01e0191e5281e04cd13012b4ac2641306d0154a525c3b1c8abbd15080bebbc99"
+    },
+    {
+     "label": "features",
+     "path": "docklands/data/places/sarajevo/features.json",
+     "sha256": "239e263d6fc60d8b16f82f5b6ce1145d4000174e1cfee984d91900728768b1ff"
+    },
+    {
+     "label": "place-tile 14-18049-12181.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12181.glb",
+     "sha256": "749c53a2cf20beaf07e596b8fc3f566318bb3c0cf16a29ef01933f17946f0efc"
+    },
+    {
+     "label": "place-tile 14-18049-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12182.glb",
+     "sha256": "c6e8df97b65204e1ef5d87029160d729be76495fcb0e7c02f523efe84a8076e7"
+    },
+    {
+     "label": "place-tile 14-18049-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18049-12183.glb",
+     "sha256": "4b8b441c7896c6faadee4e2cacada06b556e9a0055c2b6951aaffa438459b15e"
+    },
+    {
+     "label": "place-tile 14-18050-12180.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12180.glb",
+     "sha256": "1a1b2679625d9ecfdcb9926691d41724fa1ba2ad3f91e533a0b7184681cff001"
+    },
+    {
+     "label": "place-tile 14-18050-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18050-12182.glb",
+     "sha256": "6e8e5b0024c1316f6976da286d44cfe2f2dee599b1a8b9bf42a60256c20f875d"
+    },
+    {
+     "label": "place-tile 14-18051-12180.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12180.glb",
+     "sha256": "449b8e1c685e44e39d6f287c0183efa5074cb2d634749910d00d9cf760515dc5"
+    },
+    {
+     "label": "place-tile 14-18051-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12182.glb",
+     "sha256": "36fe5a77d9a382879d460dc913a34573e150f2aabe8290537e925b365d300345"
+    },
+    {
+     "label": "place-tile 14-18051-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12184.glb",
+     "sha256": "203b9095d40821307779a5fbf1234e039e177e1a6707415abb9797387b9b6907"
+    },
+    {
+     "label": "place-tile 14-18051-12185.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18051-12185.glb",
+     "sha256": "fb91da5f9c0d21b7084eb4a216173a25a45715e2106319ee659a56351c4e6aa9"
+    },
+    {
+     "label": "place-tile 14-18052-12181.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12181.glb",
+     "sha256": "dd450ba9b7b2897ab3aaf8b06ad4223feaa471f7ceab95cbd9b21e3e9ff94cc9"
+    },
+    {
+     "label": "place-tile 14-18052-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12182.glb",
+     "sha256": "fd6bfeba2c8a1db1184b6a616ab0f7bfcc8e49cb5b2d6cfaaa236165ea7a1d1a"
+    },
+    {
+     "label": "place-tile 14-18052-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18052-12184.glb",
+     "sha256": "850c84ff8e35d1adf4240ca11eadc29af6ec89fb5cf71cc488cfae2bf6299ee1"
+    },
+    {
+     "label": "place-tile 14-18053-12181.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12181.glb",
+     "sha256": "4c3a942e9938f51cf828ec341adbe765668b61c21d92a1acacdd6dcd11552e7e"
+    },
+    {
+     "label": "place-tile 14-18053-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12182.glb",
+     "sha256": "e9222c052ce1405ca0efc73c2ef2fa34c9a10fe97fa0567e17ba4796d84524fd"
+    },
+    {
+     "label": "place-tile 14-18053-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12183.glb",
+     "sha256": "1da5306f0eab5add6f65da5430667351c73b33941488b90b3362b05cbd95c1f0"
+    },
+    {
+     "label": "place-tile 14-18053-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18053-12184.glb",
+     "sha256": "88fa28a884c9d5e72cc52eb65be00735b0e75ed7cfb5c08b167a0bc711849919"
+    },
+    {
+     "label": "place-tile 14-18054-12180.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12180.glb",
+     "sha256": "94054cfcf7981d3c832b3877c89eea3f21ee92fbf72608f8090a3c4491116401"
+    },
+    {
+     "label": "place-tile 14-18054-12181.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12181.glb",
+     "sha256": "d845d93234d50ec4e7f6c4faad36c0674c645d70ab9c4fe8ff982e02d339e1c1"
+    },
+    {
+     "label": "place-tile 14-18054-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12182.glb",
+     "sha256": "c1e0be597c51725add519b23f92790d879837082c2314718665b0ba19d59ebb1"
+    },
+    {
+     "label": "place-tile 14-18054-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18054-12183.glb",
+     "sha256": "de588f7d8d41227a7194ddaee294733188a4304856bf5e869daafe36fbd288ab"
+    },
+    {
+     "label": "place-tile 14-18055-12181.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12181.glb",
+     "sha256": "890aa562ad206b36d7f95ad0be41c8e22b2c00fd76182a5de83950053489bb8a"
+    },
+    {
+     "label": "place-tile 14-18055-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12182.glb",
+     "sha256": "28901e9689b47ea3bbf324ccc4745f49c035d15686f8d463696022e993534817"
+    },
+    {
+     "label": "place-tile 14-18055-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12183.glb",
+     "sha256": "04a7851da32cc55e3eff3e670be4abaea9488fb41ce6e95fd16a45777cbc704d"
+    },
+    {
+     "label": "place-tile 14-18055-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18055-12184.glb",
+     "sha256": "1ee2b24f4715a162fb5f6502bee3dfee6985f5ccc65b1a408dcc94e95d5871b2"
+    },
+    {
+     "label": "place-tile 14-18056-12180.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12180.glb",
+     "sha256": "dcc5431cb00135b3a1b23a65a54a2f0d858a826b12382037d1ef073902c94bab"
+    },
+    {
+     "label": "place-tile 14-18056-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12182.glb",
+     "sha256": "783e97313c226fd6c4ae28b41a910f47208a9e11e5e36ed2f8d6eb1204f50488"
+    },
+    {
+     "label": "place-tile 14-18056-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18056-12183.glb",
+     "sha256": "6dbec6f7ba6e1e5aefcf787a578b761023e2b6257e47f3608259894e344eae7a"
+    },
+    {
+     "label": "place-tile 14-18057-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12182.glb",
+     "sha256": "ca7995a2d7a5d359e5cbe5fc3bfd87de845249411061ae2494e41bbbfc1662bd"
+    },
+    {
+     "label": "place-tile 14-18057-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12183.glb",
+     "sha256": "e5599260167de487298391584ed41f0526690b72b46a14d5031ee81d9ba11ef9"
+    },
+    {
+     "label": "place-tile 14-18057-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18057-12184.glb",
+     "sha256": "96179b8c055f28fdfa6a43917d590d4572f517250cde04ed96f0c2df26359b51"
+    },
+    {
+     "label": "place-tile 14-18058-12182.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12182.glb",
+     "sha256": "fcf8d8679a0f0d8b2dbb956187e2ac48629e4a90240d8d8a7c93048173c9ed8b"
+    },
+    {
+     "label": "place-tile 14-18058-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12183.glb",
+     "sha256": "ada6ece6506016ff00bc709c8f000b631bcda60af7d2a7ecb94d2db4a5995c0c"
+    },
+    {
+     "label": "place-tile 14-18058-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12184.glb",
+     "sha256": "3b459c4cb34c33682eae7a529bb225f1df33ba73e296b4e36b682f33b882a6d9"
+    },
+    {
+     "label": "place-tile 14-18058-12185.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18058-12185.glb",
+     "sha256": "ae0f7a9483778cc4b71153c9032f4ce74d2bae4d5dcdd04057f121b7f011261e"
+    },
+    {
+     "label": "place-tile 14-18059-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12183.glb",
+     "sha256": "6aecd81c137a1d8a423b6d307ee6576e06c4093dd82fbaf9bc7c2d069d353d29"
+    },
+    {
+     "label": "place-tile 14-18059-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12184.glb",
+     "sha256": "3049ae302b9ea6a4683b9a8f5e78d367c0e7a4deba22b2cf63ce622301b27822"
+    },
+    {
+     "label": "place-tile 14-18059-12185.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18059-12185.glb",
+     "sha256": "59b5753a90107a280fb058faaae0c5ab53735d2a6d2d1b47434b14a0f1b845b3"
+    },
+    {
+     "label": "place-tile 14-18060-12185.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18060-12185.glb",
+     "sha256": "0545c04d673de907121b00821a320cea68fdca6e49098e552eb4eb3eadf2beb8"
+    },
+    {
+     "label": "place-tile 14-18061-12185.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18061-12185.glb",
+     "sha256": "b66f5475a17bacfa741521f3efc266ccadd6a2050dc72531a617b0f6d2a71595"
+    },
+    {
+     "label": "place-tile 14-18062-12185.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18062-12185.glb",
+     "sha256": "45c53544dcde475daa44c6198d81a8bc026adc6c039fac226d0e9cd32ca8d321"
+    },
+    {
+     "label": "place-tile 14-18063-12183.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12183.glb",
+     "sha256": "aad6af3191d1b5b0f4b0c68ce939fba34c282a6d063909c859b6c198a8940414"
+    },
+    {
+     "label": "place-tile 14-18063-12184.glb",
+     "path": "docklands/data/places/sarajevo/tiles/14-18063-12184.glb",
+     "sha256": "e63686f9973293dc11300f356548abb061e82beb040f69409ca13f6983d1376c"
+    },
+    {
+     "label": "place-tile 15-36120-24366.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24366.glb",
+     "sha256": "e47bbf88048e37c9167f067062e1807ec7ecfcf63412c786fa4353930440fee9"
+    },
+    {
+     "label": "place-tile 15-36120-24367.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24367.glb",
+     "sha256": "084de28ebdfcf41be852ac1dc0ea3442d0810bb1cd4868d6a4c7b303ce8a46aa"
+    },
+    {
+     "label": "place-tile 15-36120-24368.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24368.glb",
+     "sha256": "76721ded34766a171299397ae8ba35fbfa4d85a2a27b500de5f838e18754cc0a"
+    },
+    {
+     "label": "place-tile 15-36120-24369.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36120-24369.glb",
+     "sha256": "499dbda9ccd856c7f70f86c5e1d30874613223ffe5f19e5a05257d7be83a06dd"
+    },
+    {
+     "label": "place-tile 15-36121-24367.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24367.glb",
+     "sha256": "d56b92b8f120c7bd9d87ea2d99ee194e377f86209bb291fe010b1389c4927702"
+    },
+    {
+     "label": "place-tile 15-36121-24368.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24368.glb",
+     "sha256": "93d2968f7acd8ef941a0d15d1237a14c34ecd03aa1b91161a7e0ba742caab677"
+    },
+    {
+     "label": "place-tile 15-36121-24369.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36121-24369.glb",
+     "sha256": "1fa607d00af913d7ca199c9ad252ed2cf7009a3643f0235fcd65852be068aae3"
+    },
+    {
+     "label": "place-tile 15-36122-24366.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24366.glb",
+     "sha256": "45c9f33fba71622a2cc654347133b8e6fb8d02fb9fc8522ffa835582221c8815"
+    },
+    {
+     "label": "place-tile 15-36122-24367.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24367.glb",
+     "sha256": "05dea6cc6763d2c783659552017d4a1680de922f32351c5552cf9432f6097888"
+    },
+    {
+     "label": "place-tile 15-36122-24368.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24368.glb",
+     "sha256": "0008c6c305891f10c94ff71451eedb6bb5696f2ad9655d911722422e6d7565c2"
+    },
+    {
+     "label": "place-tile 15-36122-24369.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36122-24369.glb",
+     "sha256": "257c7c191f9b6d143c123b520e57bd821e9970fce434f9a5c3963512cdae0a9d"
+    },
+    {
+     "label": "place-tile 15-36123-24366.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24366.glb",
+     "sha256": "883e38ac4f8bf389ad1f1e9c76bba122c563dd9e1869f64642e9ffb7a4f52981"
+    },
+    {
+     "label": "place-tile 15-36123-24367.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24367.glb",
+     "sha256": "3650a33b37a28ffd94e1cb0bf004f18b27dfce6531549c52755c801ae9c36c8d"
+    },
+    {
+     "label": "place-tile 15-36123-24368.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24368.glb",
+     "sha256": "bca99e703364e3f3f4f2289c1459c63410b6080c3a826c7130981ce6b2402c67"
+    },
+    {
+     "label": "place-tile 15-36123-24369.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36123-24369.glb",
+     "sha256": "034cc32e3e87c3cd4f15a968b9c81a049af88c2e27f4d94df82a8407a9afa19e"
+    },
+    {
+     "label": "place-tile 15-36124-24367.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24367.glb",
+     "sha256": "26bb023449bcca9486044c8954871e1131dfa45f4d64f401f992da4322c7d399"
+    },
+    {
+     "label": "place-tile 15-36124-24368.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24368.glb",
+     "sha256": "4090d67d9270668fbd72e065804896cb2be03219580419863dc68bf872cd5bb3"
+    },
+    {
+     "label": "place-tile 15-36124-24369.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36124-24369.glb",
+     "sha256": "36c5eaaa347c78d973ba04cccb171d28d26dc2d50d492ac457aa4308f305e107"
+    },
+    {
+     "label": "place-tile 15-36125-24368.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24368.glb",
+     "sha256": "d346d6c57eabef3842cb509d0ac6ad49107e735d3698d0e6a0a7af34203336af"
+    },
+    {
+     "label": "place-tile 15-36125-24369.glb",
+     "path": "docklands/data/places/sarajevo/tiles/15-36125-24369.glb",
+     "sha256": "6fd3974172b51dd1b5e44edd904ab788136ce9409dfa0fc650a9c094b0824000"
+    }
+   ],
+   "params": {
+    "estimate": true,
+    "tile_level": 13
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9024-6090.glb",
+     "sha256": "ed729fbfff2af1569d5738b37e9b894c8be51827194be984219362345643e066",
+     "bytes": 8916
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9024-6091.glb",
+     "sha256": "68f77d14e351cfbbfa1a8168d39d90a2ab7b2351d03bb993bd559f9c77bbc152",
+     "bytes": 10700
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9025-6090.glb",
+     "sha256": "a36a0cc65495127f188e9399f27d4152aa3a089489f8bf3b8d91a7e6ac2a1fa7",
+     "bytes": 14328
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9025-6092.glb",
+     "sha256": "105bdf65f6ca5af973aad4dd30588fcad3d6941b0d9793b0227d47587c0d8e75",
+     "bytes": 16148
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9026-6090.glb",
+     "sha256": "26fdce5b08186fed80d23103cf2c4f93291ca98d9b858e0e1c6165252b07717a",
+     "bytes": 8912
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9026-6091.glb",
+     "sha256": "139c2b1e35e75d6f98cc599f947f8c4aef101a0e6eb7c50435efef6bc7e5c28d",
+     "bytes": 14328
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9026-6092.glb",
+     "sha256": "167e8fda8a05e14578872ca61720b2515ceeda44cd09fe20735878567bf3e071",
+     "bytes": 12536
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9027-6090.glb",
+     "sha256": "72dc6d87d2a3585340eb6e0d503e6d7b07ce8be34aebc11719effc3a4145c125",
+     "bytes": 8920
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9027-6091.glb",
+     "sha256": "ed7b4ebddd3996314f9bd77c77051aea09682edc0cc010085299ae8bd743be1c",
+     "bytes": 27000
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9027-6092.glb",
+     "sha256": "b8ea03799f44492aa60d021df2a1b1ba48c99084039ba11141b22cd50b673703",
+     "bytes": 8916
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9028-6091.glb",
+     "sha256": "5b97623b33496633824e0fd79f5a3347484b05f2accc25b814f2f00e83ebb39a",
+     "bytes": 34236
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9028-6092.glb",
+     "sha256": "0da3ab90eb8974c4e18b48ff43d9fea45c41aff4b8ac896bd63f04b3e4eb1c43",
+     "bytes": 5296
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9029-6091.glb",
+     "sha256": "0d57f665d4154441e7ff0e8e289aac9033ce012e0cd3399c74aef67e0d0ccd0b",
+     "bytes": 12532
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9029-6092.glb",
+     "sha256": "eab2253df1d2fff5737e5ed8d83245970329a15005748278a03df6c03c85d58a",
+     "bytes": 30612
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9030-6091.glb",
+     "sha256": "33c81ad937e38dc28e1eac124ac76a03e04ce1eca2eff860b96f6286c07984e9",
+     "bytes": 74020
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9030-6092.glb",
+     "sha256": "98d3ffecefd733322439a017f4fc68f23072e8e92f53ced636a9888fe67d44e8",
+     "bytes": 231204
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9031-6091.glb",
+     "sha256": "87ec59482833941cebdf994ce9b2d9007d7d8869a82c191a593fc7a65d0e1523",
+     "bytes": 19772
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9031-6092.glb",
+     "sha256": "a654d36d3f276f54a8dde4ccfb945f32cf461d4994bf0a60486c9598da0411b5",
+     "bytes": 59556
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/tileset.json",
+     "sha256": "3191768d8cd6997074168e60038cbdf23866a8e8efb5c1d077a563601526cd3f",
+     "bytes": 6761
+    },
+    {
+     "path": "docklands/data/places/sarajevo/landmarks/landmarks.json",
+     "sha256": "ac5b12add97102362b19bc4a20020ec267f2eaa58b2a19140da5d8385e200057",
+     "bytes": 85290
+    }
+   ],
+   "counts": {
+    "worship": 164,
+    "mosques": 126,
+    "minarets_mapped": 4,
+    "minarets_mapped_by": {
+     "tag": 3,
+     "part-stack": 1
+    },
+    "minarets_estimated": 122,
+    "minarets_unattached": 0,
+    "mosques_excluded": 2,
+    "worship_points_without_outline": 0,
+    "domes": 24,
+    "towers": 11,
+    "churches": 31,
+    "synagogues": 5,
+    "clock_towers": 1,
+    "position_rule_error_m": {
+     "n": 4,
+     "median": 3.8,
+     "max": 7.4
+    },
+    "minarets_drawn": {
+     "mapped": 4,
+     "estimated": 122
+    },
+    "domes_drawn": 24,
+    "towers_drawn": 6,
+    "core_parts_replaced": 33,
+    "skipped": {
+     "no_ground": 0,
+     "no_height": 5
+    },
+    "triangles": 30760,
+    "tiles": 18,
+    "tile_bytes": 597932
+   },
+   "ms": 721,
+   "at": "2026-10-21T12:19:07.350Z"
+  }
+ ]
+}

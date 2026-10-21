@@ -29,6 +29,12 @@ export default {
     surround: { size_m: 70000, top_level: 10, refine: [[30000, 11], [16000, 12], [9000, 13]], land_cover: 'world-worldcover', outer: 'world-overture-outer',
       // extra building geometry classes of the city ring, each removable by deleting its id here (then rebuild)
       geometry: ['overture-ms-geometry'] }, search: ['Vijećnica', 'Вијећница', 'Stari Grad', 'Baščaršija', 'Sarajevo'],
+    // landmarks (cwplans/tools/build-place-landmarks.mjs; owner, 2026-10-22: "Currently you show it without its distinctive
+    // landscape of mosques (especially their minarets). We need to fix that."): mosques, minarets, domes, towers over the
+    // city box; estimate_minarets: false drops the estimated class (rebuild); minaret_rule: the stated rule of that class
+    landmarks: { box: 'city', estimate_minarets: true, tile_level: 13,
+      minaret_rule: { classes: [{ id: 'S', max_area_m2: 150, height_m: 15, base_d_m: 2.5 }, { id: 'M', max_area_m2: 500, height_m: 25, base_d_m: 3 }, { id: 'L', max_area_m2: 1e9, height_m: 35, base_d_m: 3.5 }],
+        serefe_frac: 0.72, cap_frac: 0.2, corner_bearing_from_qibla: 135 } },
     roof_rule: { shape: 'hipped', pitch_deg: 32, kinds: ['yes', 'house', 'residential', 'apartments', 'detached', 'semidetached_house', 'terrace', 'school', 'retail', 'commercial', 'office', 'public', 'civic', 'hotel', 'church', 'chapel', 'mosque', 'garage'], min_rect: 0.8, max_area_m2: 1500, max_wall_m: 24 } },
   services: { weatherPoint: { lon: 18.43335, lat: 43.85917 }, aircraft: { lon: 18.43335, lat: 43.85917, nm: 25 }, metar: 'LQSA' },
   adapters: [
