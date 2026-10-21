@@ -183,6 +183,11 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   })();
   const MATS = [BMAT, BMAT_DAY, BLOCK, BLOCK_DAY, WMAT, CROWN, TRUNK, FAR];
 
+  // the capacity of an InstancedMesh: over the uniform-buffer limit, so three.js reads the instance matrices as vertex
+  // attributes. Under it, three.js puts them in a uniform buffer sized by the count, so every count is another shader
+  // program: each tile of trees or city blocks compiled its own (a second fly-in to a place: 9 + 9 programs, 3 s of
+  // getProgramParameter in software rendering). Draw count = mesh.count.
+  const instCap = k => { const lim = G.cull?.renderer?.backend?.capabilities?.getUniformBufferLimit?.() || 65536; return Math.max(k, Math.floor(lim / 64) + 1); };
   // ---------- per place: the look weights and the building facts (style, use, colours) by features.json row
   const looks = new Map();
   function lookOf(p) {
@@ -349,7 +354,7 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const m4 = new THREE.Matrix4(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), qI = new THREE.Quaternion();
     // (each tile its own copy of the small unit geometry: a shared attribute would lose its GPU buffer when a tile is freed)
     const inst = (geo, mat, list, mtx, A) => { const g = geo.clone(); for (const [k, a] of Object.entries(A || {})) g.setAttribute(k, new THREE.InstancedBufferAttribute(a, 4));
-      const m = new THREE.InstancedMesh(g, mat, list.length); list.forEach((r, i) => { mtx(r, ps, sc); m.setMatrixAt(i, m4.compose(ps, qI, sc)); });
+      const m = new THREE.InstancedMesh(g, mat, instCap(list.length)); m.count = list.length; list.forEach((r, i) => { mtx(r, ps, sc); m.setMatrixAt(i, m4.compose(ps, qI, sc)); });
       m.computeBoundingSphere(); m.frustumCulled = false; return m; };
     const near = [];
     SHAPES.forEach((name, si) => { const L = recs.filter(r => r.P.shape === si); if (!L.length) return;
@@ -425,9 +430,9 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const go = new THREE.BufferGeometry(); go.setAttribute('position', P3()); for (const k of ['col', 'rcol', 'mcol', 'gk']) go.setAttribute(k, V4());
     const gw = new THREE.BufferGeometry(); gw.setAttribute('position', P3()); gw.setAttribute('wp', new THREE.BufferAttribute(new Float32Array(6), 2));
     const gi = new THREE.BoxGeometry(1, 1, 1); gi.deleteAttribute('normal'); gi.deleteAttribute('uv'); for (const k of ['col', 'rcol', 'mcol', 'gk']) gi.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4));
-    const bi = new THREE.InstancedMesh(gi, BLOCK, 1); bi.setMatrixAt(0, new THREE.Matrix4());
-    const mt = (geo, mat, A) => { const g = geo.clone(); for (const k of A) g.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4)); const m = new THREE.InstancedMesh(g, mat, 1); m.setMatrixAt(0, new THREE.Matrix4()); return m; };
-    const bi2 = new THREE.InstancedMesh(gi, BLOCK_DAY, 1); bi2.setMatrixAt(0, new THREE.Matrix4());
+    const bi = new THREE.InstancedMesh(gi, BLOCK, instCap(1)); bi.count = 1; bi.setMatrixAt(0, new THREE.Matrix4());
+    const mt = (geo, mat, A) => { const g = geo.clone(); for (const k of A) g.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4)); const m = new THREE.InstancedMesh(g, mat, instCap(1)); m.count = 1; m.setMatrixAt(0, new THREE.Matrix4()); return m; };
+    const bi2 = new THREE.InstancedMesh(gi, BLOCK_DAY, instCap(1)); bi2.count = 1; bi2.setMatrixAt(0, new THREE.Matrix4());
     return [new THREE.Mesh(gb, BMAT), new THREE.Mesh(gb, BMAT_DAY), new THREE.Mesh(go, BLOCK), new THREE.Mesh(go, BLOCK_DAY), new THREE.Mesh(gw, WMAT), bi, bi2, mt(TG.crowns.broad, CROWN, ['mid', 'leaf', 'aut', 'cal', 'bloom']), mt(TG.trunk, TRUNK, ['bark']), mt(TG.far, FAR, ['mid', 'leaf', 'aut', 'cal', 'bloom'])];
   }
   // the state for the text and machine interface (G.placeLook, describeView): what the place is drawn with now
@@ -441,5 +446,5 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
       sky: sky.visible, shadows: state.shadows, lights: { sun: +sun.intensity.toFixed(2), moon: +moon.intensity.toFixed(3), fill: +fill.intensity.toFixed(2) },
       trees_drawn: trees, tree_tiles: tiles, water_tiles: wm, water_named: [...water].slice(0, 8), greens: p.greens ? { trees: p.greens.counts.trees, mapped: p.greens.counts.osm_tree + p.greens.counts.osm_tree_row, placed_by_rule: p.greens.counts.rule_wood + p.greens.counts.rule_park, water_polygons: p.greens.counts.water_polygons } : null };
   }
-  return { V, state, BMAT, MATS, describe, groundMat, logDepth, buildingAttrs, blockInstAttrs, blockOutlineAttrs, decorate, frame, warmMeshes, greensOf, lights: { sun, moon, fill }, sky };
+  return { V, state, BMAT, MATS, describe, instCap, groundMat, logDepth, buildingAttrs, blockInstAttrs, blockOutlineAttrs, decorate, frame, warmMeshes, greensOf, lights: { sun, moon, fill }, sky };
 }

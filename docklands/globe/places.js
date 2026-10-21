@@ -217,7 +217,7 @@ export async function attachPlaces(G, H, { scene, U }) {
         mesh = new THREE.Mesh(g, gm); mesh.__map = map; kind = 'ground';
         if (n.core) look.decorate(n, q, addDecor).catch(e => console.warn('places: water and trees', n.key, e));   // the place's water and trees on this tile's ground
       } else if (q.inst) {   // city blocks as instances of a unit box
-        const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), k); kind = 'blocks';
+        const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), look.instCap(k)); mesh.count = k; kind = 'blocks';   // (capacity: place-look.js instCap)
         const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3();
         for (let i = 0; i < k; i++) { v.fromArray(q.inst.t, 3 * i); qt.fromArray(q.inst.r, 4 * i); sc.fromArray(q.inst.s, 3 * i); mesh.setMatrixAt(i, m4.compose(v, qt, sc)); }
         mesh.computeBoundingSphere(); mesh.material = look.blockInstAttrs(mesh, q, n.meta, n.p, n.key);

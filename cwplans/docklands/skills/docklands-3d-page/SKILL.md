@@ -3224,6 +3224,104 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,30000&ht=0,45 (S
   the CPU dequantisation and InstancedMesh matrices; the Docklands model build during a place fly-in (main.js, another
   agent's file); hillshade in the coarse textures; Leiden.
 
+## Three.js port: places look like the model (2026-10-22)
+
+Owner, 2026-10-22: "why do Leon and Sarajevo look so different to London?" Cause: `globe/places.js` drew the places with
+plain materials of its own (a vertex colour or one block colour, MeshBasic, lit only by the globe's sun); the London model
+is drawn by `main.js` with the facade program (`materials.js` buildingMaterial: Realistic look, Map window grid, Night
+windows by use and hour), the light rig and day sky of `sky3.js`, trees (`layers/trees.js`), water, shadows and the
+styles. Now the places use the same parts, rendered live (Architecture rule 6: the tiles are unchanged; colours, windows,
+light, water and trees are made in the page for the time and the style). Files: `docklands/globe/place-look.js` (new),
+`places.js`, `materials.js` (placeBuildingMaterial, `nightClock(t, timeZone)`, `facadeCommon(S)`, `nightNew/nightOld(K, V)`),
+`sky3.js` (horizonAt, moonPhase, lightRig, makeSkyMesh), `water.js` (waveNoiseTex), `layers/trees.js` (exports shapes and
+`season(cal, bloom, day)`), `styles.js` (paintGraph, globeRender), `globe/globe.js` (one line: Painted), the region configs
+(`place.look`, `place.greens`), the tool `cwplans/tools/build-place-greens.mjs` and its data `places/<id>/greens/`, the test
+`docklands/test/place-look-check.mjs`. Views: León https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 ,
+Sarajevo https://danbri.github.io/londat/docklands/?ll=43.85966,18.43113,1500&ht=0,55 ; add `&t=2026-10-12T22:00` for Night.
+
+- **One program, other inputs.** The model's buildings carry per-vertex `col`, `uw` (metres along the wall, < 0 on
+  roofs) and `gk`. The place tiles share wall vertices between faces and have no `uw`, so `placeBuildingMaterial` takes
+  the face normal in the tile frame (`cross(dFdx(positionLocal), dFdy(positionLocal))`): wall where |n.y| < 0.42, `uw` =
+  the position along the wall's horizontal tangent, the height = the tile's local y + `PLACE_OFF` (400 m, so the top
+  stays under 999 in `gk.w`). The rest is the model's code: `facadeCommon`, `lookWall`, the Map grid, `nightNew`.
+- **Per vertex, at activation** (`place-look.js` buildingAttrs; core tiles): `col` = the Realistic colour and code (alpha
+  132 + style x 8 + shopfront x 4 + storey class, as `materials.json`), `mcol` = the Map look colour (alpha 0), `gk`
+  (centre, base, 1000 x night use + top, from the building's own vertices). The tile's default colours
+  (build-place-tiles.mjs WALL 214,203,182; ROOF 168,120,96 and 150,146,140) mark vertices without an OSM colour: those
+  get a material drawn by the region's weights; OSM `building:colour` / `roof:colour` stay. City blocks: the same per
+  instance (InstancedBufferAttribute on the InstancedMesh, read by name with `attribute()`) or per vertex (outlines, by
+  `extras.blocks.outlines.tri_end`), plus `rcol` (the flat top's colour).
+- **Facts of a building** (features.json kind, height, levels, roof, height source; points within half the footprint's
+  side): the style by the rules of `tools/build-materials.mjs` (house to 12 m, flats to 21 m, estate, office, curtain wall
+  for offices from 35 m, shed, civic kinds), the storey class from the levels (`LOOK_BAY`), a shopfront where a shop or
+  amenity point is inside (not hotels or offices), the night use (homes 1, offices 2, hotels 3, from the kind or a hotel /
+  office point). City blocks have no kind: style by height and footprint.
+- **Region weights, not constants.** `place.look` in `geo/regions/leon.js` and `sarajevo.js`: wall weights by style over
+  generic materials (`WALLS` in place-look.js: renders, stone, bricks, concrete, glass, metal, timber) and roof weights
+  (`ROOFS`); without a block, neutral weights (`DEF_LOOK`). Stated assumptions, not data. The Map look keeps the model's
+  legend: grey (#b9bec4) for a measured height (OSM height, Overture, Microsoft), amber (#e0b25a) for a height from floors
+  or a model, so León and Sarajevo are almost all amber (Catastro floors, OSM levels, GHSL).
+- **Light and clock of the place.** A sun, a moon and a hemisphere fill in the globe scene, from `lightRig(S, M, phase,
+  null)` (the numbers of Sky3.applyLight) with `S`, `M` by `horizonAt` at the place's centre for the page clock; the sun's
+  direction is the globe's `U.sun`. Night: `V.night` = clamp((-sun altitude - 2) / 6) (main.js U.night's rule), windows by
+  the place's local hour (`nightClock(t, timeZone)`), seasons by the day of the year in its zone. The lights stay in the
+  scene with intensity 0 when no place is near: a light that comes and goes changes the key of every lit program, and all
+  compile again (1 to 4 s each in software rendering).
+- **Sky.** `makeSkyMesh()` (the model's calibrated SkyMesh) round the eye under 20 km by day, drawn after the opaque meshes
+  with the depth test on (SkyMesh puts its vertices on the far plane), so its scattering runs only on empty pixels. The
+  model draws its sky first over the whole frame (depth test off): a full-screen pass in software rendering. Not tried on
+  the model.
+- **Day and night materials.** An `If` on the night uniform round the window program still cost about a quarter of the
+  frame by day in SwiftShader (both sides of a branch run on its SIMD lanes). So two materials, with and without
+  `emissiveNode`; place-look's frame swaps them when the place's night begins or ends (both compiled at the warm-up). The
+  model's buildingMaterial still multiplies its windows by U.night (the same split could speed London by day). Also
+  measured and dropped: a "far wall" branch (the wall's mean colour when a window cell is under half a pixel): no gain in
+  software (divergent quads run both sides).
+- **Water** (`greens.json`, below): the polygons clipped to each core cell (Sutherland-Hodgman), triangulated in the tile
+  frame (`THREE.ShapeUtils`), bisected on the longest edge until no edge is over 9 m, each vertex 0.35 m over the tile's
+  own ground grid (bilinear on its (G + 1)^2 ground vertices: the surface of the ground mesh), drawn 1.5 m nearer in depth
+  (log depth of viewZ + 1.5). Material: the model's wave bands (`band`, `BANDS`, `waveNoiseTex`), fresnel, the sun's glint by
+  low roughness, the sky by fresnel; no mirror on the globe. First tries: a flat sheet at the lowest ground of the outline
+  + 0.3 m showed as blue patches under the DEM; a 4-way split made 4^8 triangles of one long river triangle (seconds of
+  main-thread work in a fly-in).
+- **Trees**: per core tile, InstancedMeshes of the model's crown shapes, trunks and far forms (`layers/trees.js` shapes,
+  `season` with the place's day, `tree-species.js` PROFILES); the level of each tile by the size on screen of its
+  90th-percentile tree: at least `LOD.px` (32) near, at least `PX_HIDE` (2) far forms, else hidden. No twig crowns and no
+  specks yet. Water and trees are built in a queue, a few a frame within 8 ms (as places.js activates its tiles).
+- **Ground**: the ground tiles are MeshStandard (roughness 1, as the model's terrain) near the camera, the texture toned
+  to the model's ground (x 0.3 linear: the beige 0.72 to about 0.40 sRGB; pale grey street pixels to asphalt), and the
+  old globe light (emissive) from 4 to 12 km, so the surroundings still meet the world terrain. Measured on one page: the
+  lit ground costs the same as the old one.
+- **Styles**: Realistic follows Look > Realistic buildings (`#look`; `?look=0`); pixel art (styles.js): the nearest of the
+  33 colours of `data/pixel-palette.json`, flat, no windows, no night; Painted: `styles.js` globeRender paints the globe's
+  frame with the model's paint graph (`paintGraph` over a pass of the globe scene; logarithmic depth through
+  `logarithmicDepthToViewZ`; no data-layer mask); globe.js asks for it when it draws to the screen. Line drawing and Vector
+  CRT do not reach the globe.
+- **Shadows** (when the model's are on: Look > Shadows, WebGPU by default): the place's sun casts a 2048 shadow map over a
+  box of +-max(400, min(3000, 1.6 x eye height)) m round the orbit target, by day, eye under 6 km. Every place material's
+  depthNode is `select(orthographic camera, depth, log depth)`: the shadow pass uses the material's depthNode.
+- **Text and machine interface**: `G.placeLook()` (look, night, sun and moon altitude, the windows' shares, lights, sky,
+  shadows, trees drawn near and far, water by name, the greens counts), `describeView` ("Drawn as the model: Realistic
+  ..., N trees drawn, water: Miljacka ..."), `placesDescribe()[i].look`.
+- **Water and trees data**: `node cwplans/tools/build-place-greens.mjs --region <id>`: OSM API map.json of the core area
+  (and `relation/<id>/full` for water, wood and park multipolygons that leave it; Overpass was down), one dataflow
+  operation `place-greens` (greens/log.json, README.md made from the log); `places/greens.json` lists the places that have
+  one (no 404 for a place without). Trees: OSM natural=tree, tree rows every 8 m, and by rule in woods (6.5 m) and in
+  leisure=park / garden without mapped trees (15 m); grass and meadow get none; species from the taxon, the leaf type,
+  else the region's mix (`place.greens.mix`) by setting. León: 2,280 trees (936 mapped, 1,344 by rule), 38 water polygons
+  (the Bernesga, fountains); Sarajevo: 8,274 (189 mapped, 8,085 by rule: the woods of Trebević inside the area), 3 (the
+  Miljacka). Registered (`osm-api-place-greens-<id>`, pipeline activity `place-greens`).
+MEASURED-PLACEHOLDER
+- **Remaining differences**: no street lamps or aviation lights (the model's nightlights layer), no stars or moon disc on
+  the globe, no weather (cloud, haze) of the place, no water mirror, no photo facades or crowns; the Map look almost all
+  amber (heights from floors); the city tier's 256 px ground textures beside the core's 512 px; water as sheets 0.35 m over
+  the DEM (a river in a walled channel shows at street level); trees placed by rule.
+- **Traps.** A light made visible or invisible recompiles every lit program (keep it; set intensity 0).
+  `THREE.Color.set('#hex')` converts to linear: parse the hex for an sRGB uniform. The `#look` box is unchecked in the
+  HTML until main.js's deferred start sets it: follow it only once `__docklands3.ready` or after a change event. Other
+  agents' headless runs on the same machine (load 13 on 4 cores) swung frame times 2x: compare variants on one page,
+  alternated, with a 1-pixel readback after each frame (the A/B recipe in the activity log).
+
 ## Three.js port: level of detail and the hand-over (2026-10-18)
 
 Owner, 2026-10-14: "pls make sure we make appropriate use of threejs lod support for everything"; "zooming out there is an
