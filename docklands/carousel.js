@@ -7,9 +7,9 @@
 // Each strip is a canvas drawn only when the clock or the size changes. Skill: docklands-3d-page, "Three.js port".
 const AE = globalThis.Astronomy;
 const DAY = 864e5, MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-import { TZ } from './geo/current.js';   // O1: the wheels show the region's wall clock (London for the Docklands)
-const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-export function londonParts(t) { const p = {}; for (const x of fmt.formatToParts(new Date(t))) p[x.type] = x.value; return { Y: +p.year, M: +p.month, D: +p.day, min: +p.hour * 60 + +p.minute }; }
+// KR1.2: the wheels show the wall clock of the view's time zone (clockzone.js: the model's region, or the place or point
+// in view on the globe) and the sun where that zone is; the instant does not change when the zone does
+const zoneParts = (Z, t) => { const p = Z.parts(t); return { Y: p.year, M: p.month, D: p.day, min: p.hour * 60 + p.minute }; };
 const pad = n => String(n).padStart(2, '0');
 const hhmm = m => `${pad(Math.floor(m / 60) % 24)}:${pad(Math.floor(m % 60))}`;
 const yearLen = Y => (Y % 4 === 0 && Y % 100 !== 0) || Y % 400 === 0 ? 366 : 365;
@@ -30,24 +30,26 @@ body.wheels #drBar{top:calc(132px + env(safe-area-inset-top,0px))}
 body.wheels #isoBtns{margin-top:72px}
 @media (min-width:900px){body.drawerOpen #wheels{left:calc(var(--dwv,var(--dw,400px)) + 10px)}}`;   /* the open drawer (menu.js) leaves the map undimmed on a wide screen: the wheels move right of it and shrink */
 
-export function initCarousel(C) {   // C: { clock(), setClock(t), now(), fromLondon, A, tide() -> harmonics | null, predict, flag }
+export function initCarousel(C) {   // C: { clock(), setClock(t), now(), zone (clockzone.js), A, tide() -> harmonics | null, predict, flag }
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
   const box = document.createElement('div'); box.id = 'wheels'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Time wheels');
-  box.innerHTML = '<div class="strips"><canvas id="wDay" tabindex="0" role="slider" aria-label="Time of day (London)"></canvas><canvas id="wYear" tabindex="0" role="slider" aria-label="Day of the year"></canvas></div>' +
+  box.innerHTML = '<div class="strips"><canvas id="wDay" tabindex="0" role="slider" aria-label="Time of day"></canvas><canvas id="wYear" tabindex="0" role="slider" aria-label="Day of the year"></canvas></div>' +
     '<div class="side"><button type="button" id="wNow" title="Return to the time now">Now</button><button type="button" id="wHide" aria-label="Hide the time wheels" title="Hide the time wheels (Menu > Time shows them again)">&times;</button></div>';
   document.body.appendChild(box);
   const cvD = box.querySelector('#wDay'), cvY = box.querySelector('#wYear');
-  const obs = AE ? new AE.Observer(C.A.meta.geo.lat0 + 0.03, C.A.meta.geo.lon0 + 0.07, 10) : null;   // sky3.js: about the middle of the model
+  const Z = C.zone, obsKey = () => { const o = Z.observer(); return `${Z.tz}@${o.lon.toFixed(1)},${o.lat.toFixed(1)}`; };
+  let obsK = '', obs = null;
+  const observer = () => { const k = obsKey(); if (k !== obsK && AE) { obsK = k; const o = Z.observer(); obs = new AE.Observer(o.lat, o.lon, 10); } return obs; };   // the place of the zone (the model: its origin)
 
   // ---------- sky and tide data, cached by date and by year
   const sunCache = new Map();
-  function sunDay(date) {   // altitude every 10 minutes of the London day, sunrise and sunset (minutes)
-    if (sunCache.has(date)) return sunCache.get(date);
-    const t0 = C.fromLondon(date + 'T00:00'), alt = [];
+  function sunDay(date) {   // altitude every 10 minutes of the local day (the view's zone, its place), sunrise and sunset (minutes)
+    const obs = observer(), key = date + '|' + obsK; if (sunCache.has(key)) return sunCache.get(key);
+    const t0 = Z.fromLocal(date + 'T00:00'), alt = [];
     if (obs) for (let k = 0; k <= 144; k++) { const tm = AE.MakeTime(new Date(t0 + k * 6e5)), eq = AE.Equator(AE.Body.Sun, tm, obs, true, true); alt.push(AE.Horizon(tm, obs, eq.ra, eq.dec, 'normal').altitude); }
     let rise = null, set = null;
     for (let k = 1; k < alt.length; k++) { const a = alt[k - 1] + 0.833, b = alt[k] + 0.833; if ((a < 0) !== (b < 0)) { const m = (k - 1 + a / (a - b)) * 10; if (b > a) rise ??= m; else set = m; } }
-    const r = { alt, rise, set }; if (sunCache.size > 400) sunCache.clear(); sunCache.set(date, r); return r;
+    const r = { alt, rise, set }; if (sunCache.size > 400) sunCache.clear(); sunCache.set(key, r); return r;
   }
   const yearCache = new Map();
   function yearData(Y) {
@@ -70,8 +72,8 @@ export function initCarousel(C) {   // C: { clock(), setClock(t), now(), fromLon
 
   // ---------- state: the value shown (minutes of the day, day of the year, year); during a drag it leads the clock
   let S = null, drag = null, raf = 0, pendingT = null;
-  const fromClock = () => { const p = londonParts(C.clock()); S = { Y: p.Y, doy: doyOf(p.Y, p.M, p.D), min: p.min }; };
-  const valueT = () => C.fromLondon(`${dateOf(S.Y, Math.round(mod(S.doy, yearLen(S.Y))))}T${hhmm(mod(Math.round(S.min), 1440))}`);
+  const fromClock = () => { const p = zoneParts(Z, C.clock()); S = { Y: p.Y, doy: doyOf(p.Y, p.M, p.D), min: p.min }; };
+  const valueT = () => Z.fromLocal(`${dateOf(S.Y, Math.round(mod(S.doy, yearLen(S.Y))))}T${hhmm(mod(Math.round(S.min), 1440))}`);
   // the clock follows at most every 60 ms while a finger moves (setClock redraws the sky and the layers); a timer, not a
   // frame callback, so a slow frame cannot apply a stale value late
   let lastSet = 0;
@@ -96,14 +98,17 @@ export function initCarousel(C) {   // C: { clock(), setClock(t), now(), fromLon
     for (const [m, up] of [[sun.rise, true], [sun.set, false]]) { if (m == null) continue; for (const off of [-1440, 0, 1440]) { const x = (m + off - m0) * k + c; if (x < -30 || x > w + 30) continue;
       g.beginPath(); if (up) { g.moveTo(x - 4, h - 1); g.lineTo(x + 4, h - 1); g.lineTo(x, h - 7); } else { g.moveTo(x - 4, h - 7); g.lineTo(x + 4, h - 7); g.lineTo(x, h - 1); } g.fill(); g.fillText(hhmm(m), x, h - 10); } }
     g.fillStyle = '#2cc3b5'; g.fillRect(Math.round(c) - 1, 0, 2, h); pill(g, c, h - 16, hhmm(mod(Math.round(m0), 1440)));
-    cvD.setAttribute('aria-valuetext', `${hhmm(mod(Math.round(m0), 1440))} London${sun.rise != null ? `, sunrise ${hhmm(sun.rise)}, sunset ${hhmm(sun.set ?? 0)}` : ''}`);
+    { const zl = Z.label(C.clock()) + (Z.info.approximate ? ' ~' : ''); g.font = '600 9px system-ui,sans-serif'; g.textAlign = 'right'; const tw = g.measureText(zl).width; g.fillStyle = '#0d1114cc'; g.fillRect(w - tw - 8, h - 13, tw + 6, 12); g.fillStyle = '#9fe6dd'; g.fillText(zl, w - 4, h - 4); }   // the zone (abbreviation and offset; ~ approximate)
+    cvD.setAttribute('aria-label', `Time of day (${Z.info.name || Z.tz})`);
+    cvD.setAttribute('aria-valuetext', `${hhmm(mod(Math.round(m0), 1440))} ${Z.label(C.clock())}${sun.rise != null ? `, sunrise ${hhmm(sun.rise)}, sunset ${hhmm(sun.set ?? 0)}` : ''}`);
   }
   function drawYear() {
     const { g, w, h } = geom(cvY); if (!w) return; const k = pxDay(w), c = w / 2, n = yearLen(S.Y), d0 = S.doy + S.min / 1440, Yd = yearData(S.Y);
     const dx = d => { let v = mod(d - d0 + n / 2, n) - n / 2; return v * k + c; };   // the nearest copy of day d on the loop
     g.fillStyle = '#161c23'; g.fillRect(0, 0, w, h);
     for (let mo = 0; mo < 12; mo++) { const a = doyOf(S.Y, mo + 1, 1), b = mo < 11 ? doyOf(S.Y, mo + 2, 1) : n; if (mo % 2) continue; for (const s of [-n, 0, n]) { const x0 = (a + s - d0) * k + c, x1 = (b + s - d0) * k + c; if (x1 < 0 || x0 > w) continue; g.fillStyle = '#1d242c'; g.fillRect(x0, 0, x1 - x0, h); } }
-    if (Yd.range) { let lo = 1e9, hi = -1e9; for (const v of Yd.range) { lo = Math.min(lo, v); hi = Math.max(hi, v); } g.fillStyle = '#2f6f8f99'; for (let d = 0; d < n; d++) { const x = dx(d); if (x < -k || x > w) continue; const bh = 3 + 7 * (Yd.range[d] - lo) / Math.max(.01, hi - lo); g.fillRect(x, h - bh, Math.max(1, k - 1), bh); }
+    // the tide range is the Thames (the tide layer): drawn only while the zone is the model's
+    if (Yd.range && !Z.away) { let lo = 1e9, hi = -1e9; for (const v of Yd.range) { lo = Math.min(lo, v); hi = Math.max(hi, v); } g.fillStyle = '#2f6f8f99'; for (let d = 0; d < n; d++) { const x = dx(d); if (x < -k || x > w) continue; const bh = 3 + 7 * (Yd.range[d] - lo) / Math.max(.01, hi - lo); g.fillRect(x, h - bh, Math.max(1, k - 1), bh); }
       g.font = '700 9px system-ui,sans-serif'; g.textAlign = 'center'; for (const [list, txt, col] of [[Yd.spring, 'S', '#bfe8ff'], [Yd.neap, 'N', '#9fb0c0']]) { g.fillStyle = col; for (const d of list) { const x = dx(d) + k / 2; if (x > 0 && x < w) g.fillText(txt, x, h - 2); } } }
     g.strokeStyle = '#c9d3db88'; g.fillStyle = '#d9e1e8'; g.font = '10px system-ui,sans-serif'; g.textAlign = 'left';
     for (let mo = 0; mo < 12; mo++) { const x = dx(doyOf(S.Y, mo + 1, 1)); if (x < -40 || x > w) continue; g.beginPath(); g.moveTo(Math.round(x) + .5, 0); g.lineTo(Math.round(x) + .5, h); g.stroke(); g.fillText(MONTHS[mo], x + 3, 11); }
@@ -119,10 +124,10 @@ export function initCarousel(C) {   // C: { clock(), setClock(t), now(), fromLon
     const el = document.getElementById('skyNote'); if (!el || !S) return;
     const sun = sunDay(dateOf(S.Y, mod(Math.round(S.doy), yearLen(S.Y)))); let moon = '';
     if (AE) { try { const ill = AE.Illumination(AE.Body.Moon, new Date(C.clock())), ph = AE.MoonPhase(new Date(C.clock())); moon = `Moon ${Math.round(ill.phase_fraction * 100)}% lit, ${ph < 180 ? 'waxing' : 'waning'}.`; } catch { /* no moon */ } }
-    el.textContent = `${sun.rise != null ? `Sunrise ${hhmm(sun.rise)}, sunset ${sun.set != null ? hhmm(sun.set) : '?'} (London time). ` : ''}${moon}`;
+    el.textContent = `${sun.rise != null ? `Sunrise ${hhmm(sun.rise)}, sunset ${sun.set != null ? hhmm(sun.set) : '?'} (${Z.label(C.clock())}${Z.info.name ? ', ' + Z.info.name : ''}). ` : ''}${moon}`;
   }
   let shown = '';
-  function draw(force) { if (!drag || force) fromClock(); const key = `${S.Y}/${S.doy}/${S.min}/${cvD.clientWidth}`; if (!force && key === shown) return; shown = key; note(); if (box.hidden) return; drawDay(); drawYear(); }
+  function draw(force) { if (!drag || force) fromClock(); const key = `${S.Y}/${S.doy}/${S.min}/${cvD.clientWidth}/${obsKey()}`; if (!force && key === shown) return; shown = key; note(); if (box.hidden) return; drawDay(); drawYear(); }
 
   // ---------- input: drag and flick with inertia, tap to jump, arrow keys
   const ROWS = { day: { cv: cvD, unit: () => pxHour(cvD.clientWidth) / 60, snap: () => pxHour(cvD.clientWidth) >= 80 ? 5 : 15 }, year: { cv: cvY, unit: () => pxDay(cvY.clientWidth), snap: () => 1 } };
@@ -154,5 +159,5 @@ export function initCarousel(C) {   // C: { clock(), setClock(t), now(), fromLon
   show(C.flag('wheels', saved !== '0'));
   new ResizeObserver(() => draw(true)).observe(cvD);
   draw(true);
-  return { draw, show, get state() { return S && { ...S, date: dateOf(S.Y, mod(Math.round(S.doy), yearLen(S.Y))), time: hhmm(mod(Math.round(S.min), 1440)) }; }, sunDay, yearData, get hidden() { return box.hidden; } };
+  return { draw, show, get state() { return S && { ...S, date: dateOf(S.Y, mod(Math.round(S.doy), yearLen(S.Y))), time: hhmm(mod(Math.round(S.min), 1440)), time_zone: Z.tz, label: Z.label(C.clock()) }; }, sunDay, yearData, get hidden() { return box.hidden; } };
 }

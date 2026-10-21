@@ -10,16 +10,20 @@
 // Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".
 import { makeIndex, describeView as describeCore, featuresAt as featuresCore, findPlaces as findCore, viewGeo, timeOf, bearing, parseTime, DESCRIBE_VERSION } from './describe.js';
 import { ukAdapter } from './adapters/uk.js';
+import { parseZone } from './geo/zone.js';
 import { VIEW_LABELS } from './views.js';
 
-export const API_VERSION = '1.0.0';
+export const API_VERSION = '1.1.0';   // 1.1.0 (2026-10-21): the page clock's zone follows the view; getTimeZone, setTimeZone, setTime(v, zone)
 const D = Math.PI / 180, $ = id => document.getElementById(id);
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* no storage */ } } };
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 export function init(H) {
   const { THREE, camera, controls, ctx } = H, A = ctx.A, qs = new URLSearchParams(location.search);
-  const adapter = ukAdapter(A), TZ = adapter.timeZone;
+  const adapter = ukAdapter(A);
+  // the page clock's time zone follows the view (clockzone.js, KR1.2): time is the wall clock there, with its zone,
+  // abbreviation, offset and where the zone came from (a region config, the nearest town, the nautical zone, ?tz=)
+  const Z = H.zone, timeNow = () => ({ ...timeOf(H.clock, Z.tz), ...Z.describe(H.clock) });
   const I = makeIndex(A, { adapter, under: globalThis.DOCKLANDS_UNDER || null });
   // building names: the OSM keys (building-keys.json) and the registry index (atlas.json), loaded by the page anyway
   const extras = Promise.all([H.keys().then(K => { if (K) I.setKeys(K); }), (ctx.registry?.ready || Promise.resolve(null)).then(AT => { if (AT) I.setAtlas(AT); })]).catch(e => console.warn('api: extras', e));
@@ -35,9 +39,9 @@ export function init(H) {
   const sunNow = () => { const s = H.sky.state && H.sky.state.sun; return s ? { alt: s.alt, az: s.az, altGeo: s.altGeo } : null; };
   function getView() {
     if (onGlobe()) { const v = H.globe.getView(), pt = H.globe.placeTime?.(v.target.lon, v.target.lat);   // over a place (globe/places.js): its own clock too
-      return { api_version: API_VERSION, ...v, time: timeOf(H.clock, TZ), ...(pt ? { place_time: pt } : {}), view: 'globe', share: shareLink() }; }
+      return { api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), view: 'globe', share: shareLink() }; }
     const G = viewGeo(I, camOf()); delete G.frame; delete G.elon; delete G.elat; const s = sunNow();
-    return { api_version: API_VERSION, ...G, time: timeOf(H.clock, TZ), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, share: shareLink() };
+    return { api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, share: shareLink() };
   }
   const listViews = () => Object.keys(H.VIEWS).map(id => ({ id, label: VIEW_LABELS[id] || id }));
   const settle = () => new Promise(ok => requestAnimationFrame(() => ok()));
@@ -78,11 +82,17 @@ export function init(H) {
   }
 
   // ---------- time
-  function setTime(v) {
-    const t = parseTime(v, TZ); if (!isFinite(t)) throw new Error('setTime needs an ISO 8601 time (with Z or an offset, or a wall-clock time of the place), a number of ms, or "now"');
+  // setTime(v, zone?): a time without an offset is the wall clock of zone (an IANA name or UTC+n), else of the view's zone
+  function setTime(v, zone) {
+    const tz = zone ? parseZone(zone) : Z.tz; if (!tz) throw new Error(`Unknown time zone "${zone}": an IANA name such as Europe/Madrid, UTC, or UTC+2`);
+    const t = parseTime(v, tz); if (!isFinite(t)) throw new Error('setTime needs an ISO 8601 time (with Z or an offset, or a wall-clock time of the place), a number of ms, or "now"');
     if (v == null || /^now$/i.test(String(v))) H.setClockUser(Date.now(), true); else H.setClockUser(t);
-    const s = sunNow(); return { time: timeOf(H.clock, TZ), night: H.night, sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null };
+    const s = sunNow(); return { time: timeNow(), night: H.night, sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null };
   }
+  const zoneView = () => onGlobe() ? { mode: 'globe', ...H.globe.orbit(), zoneAt: H.globe.zoneAt } : { mode: 'model' };
+  const getTimeZone = () => timeNow();
+  // setTimeZone(zone): fix the page clock's zone (IANA name, UTC, UTC+n); null or "auto": follow the view again. The instant stays.
+  function setTimeZone(zone) { Z.setZone(zone, zoneView()); return timeNow(); }
 
   // ---------- layers: the page settings with a switch, and the layer modules
   const BUILTIN = [['labels', 'Labels, notes and credits on the map', 'showLabels'], ['roads', 'Roads', 'showRoads'], ['shadows', 'Sun shadows', 'shadows'], ['bloom', 'Bloom by night', 'bloom']];
@@ -128,13 +138,13 @@ export function init(H) {
 
   // ---------- what is in view
   async function describeView(o = {}) {
-    if (onGlobe()) { const d = await GL().describe({ maxItems: o.maxItems || 8, time: timeOf(H.clock, TZ).local + ' (' + TZ + ')' }); return { ...d, api_version: API_VERSION, share: shareLink() }; }
+    if (onGlobe()) { const tn = timeNow(), d = await GL().describe({ maxItems: o.maxItems || 8, time: `${tn.local} ${tn.abbreviation === tn.utc_offset ? tn.utc_offset : tn.abbreviation + ', ' + tn.utc_offset} (${tn.time_zone}${tn.approximate ? ', approximate' : ''})` }); return { ...d, time: tn, api_version: API_VERSION, share: shareLink() }; }
     await extras;
     const L = H.layers, W = ctx.stats.weather && ctx.stats.weather.now, Wn = ctx.weather && ctx.weather.now;
     const live = { aircraft: L.planes && L.planes.on ? L.planes.api.flights : null, ships: L.ships && L.ships.on ? L.ships.api.vessels : null };
     const weather = W ? { cloud_pct: W.cover != null ? Math.round(W.cover <= 1 && W.cover > 0 ? W.cover * 100 : W.cover) : null, visibility_m: W.vis ?? null, precipitation_mm: W.precip ?? null, temperature_c: Wn && Wn.temp != null ? Math.round(Wn.temp * 10) / 10 : null, source: W.source || null } : null;
     const occ = H.occ && H.occ();
-    const dsc = describeCore(I, camOf(), { time: H.clock, sun: sunNow(), weather, live, share: shareLink(), view: H.viewName || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance,
+    const dsc = describeCore(I, camOf(), { time: H.clock, timeZone: Z.tz, zoneInfo: Z.describe(H.clock), sun: sunNow(), weather, live, share: shareLink(), view: H.viewName || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance,
       occluded: occ ? (k, x, y, z) => occ.test(k, x, y, z) : null });
     // the wider place (a skeleton set's district, county, country) at the target, when the globe has one
     if (GL() && dsc.target) { try { const m = await GL().whereMore(dsc.target.lon, dsc.target.lat); if (m && (m.district || m.country)) { dsc.context = m;
@@ -158,7 +168,10 @@ export function init(H) {
     { name: 'features_at', description: 'What is at a WGS84 point (or at the centre of the view when lon and lat are absent): the building (name, OpenStreetMap id, height, registry record and occupants where known), water, park, ground height and the nearest named places.', readOnly: true,
       inputSchema: { type: 'object', properties: { lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees') } }, run: a => featuresAt(a.lon, a.lat) },
     { name: 'set_time', description: 'Set the page clock (sun, sky, night lights, tide, recorded aircraft and ships). ISO 8601 with Z or an offset; a time without an offset is the wall-clock time of the place; "now" for live.', readOnly: false,
-      inputSchema: { type: 'object', properties: { time: P('string', 'e.g. 2026-10-11T21:30 or 2026-10-11T20:30Z or now') }, required: ['time'] }, run: a => setTime(a.time) },
+      inputSchema: { type: 'object', properties: { time: P('string', 'e.g. 2026-10-11T21:30 or 2026-10-11T20:30Z or now'), time_zone: P('string', 'Read a time without an offset in this zone (IANA name such as Europe/Madrid, or UTC+2); default: the zone of the view') }, required: ['time'] }, run: a => setTime(a.time, a.time_zone) },
+    { name: 'get_time_zone', description: 'The page clock now: its time zone (it follows the view: the model\'s region, or on the globe the place or point in view), abbreviation, UTC offset, local wall-clock time, UTC time, where the zone comes from and whether it is approximate.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => getTimeZone() },
+    { name: 'set_time_zone', description: 'Fix the time zone in which the page shows and reads the clock (the time wheels, the clock label, times without an offset); "auto" lets it follow the view again. The instant (UTC) does not change.', readOnly: false,
+      inputSchema: { type: 'object', properties: { time_zone: P('string', 'An IANA name such as Europe/Madrid or America/New_York, UTC, UTC+2, or auto') }, required: ['time_zone'] }, run: a => setTimeZone(a.time_zone) },
     { name: 'list_layers', description: 'The layers and display settings with their ids and on/off state.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => listLayers() },
     { name: 'set_layer', description: 'Turn a layer or display setting on or off (ids from list_layers).', readOnly: false,
       inputSchema: { type: 'object', properties: { id: P('string', 'Layer id'), on: P('boolean', 'true for on') }, required: ['id', 'on'] }, run: a => setLayer(a.id, a.on) },
@@ -234,8 +247,8 @@ export function init(H) {
 
   // ---------- the API object
   const api = {
-    version: API_VERSION, describeVersion: DESCRIBE_VERSION, locale: { adapter: adapter.id, timeZone: TZ, heightDatum: adapter.heightDatum, bbox: adapter.bbox },
-    goTo, getView, setTime, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
+    version: API_VERSION, describeVersion: DESCRIBE_VERSION, locale: { adapter: adapter.id, timeZone: adapter.timeZone, heightDatum: adapter.heightDatum, bbox: adapter.bbox },
+    goTo, getView, setTime, getTimeZone, setTimeZone, get timeZone() { return Z.tz; }, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
     tools: TOOLS.map(({ name, description, inputSchema, readOnly }) => ({ name, description, inputSchema, readOnly })), callTool,
     webmcp, speak, get describing() { return describeOn; }, set describing(v) { const c = $('describeChk'); if (c) { c.checked = !!v; c.onchange(); } else describeOn = !!v; },
     spoken, openTextView: openText, ready: extras.then(() => true),
@@ -254,7 +267,9 @@ export function init(H) {
   // ?ll=lat,lon[,alt]: alt is the eye's height above the point in metres (the globe above 36 km or outside the model);
   // &ht=heading,tilt (degrees; tilt from straight down) on the globe
   const ht = (qs.get('ht') || '').split(',').map(Number);
-  if (ll.length >= 2 && ll.slice(0, 2).every(isFinite)) goTo({ lat: ll[0], lon: ll[1], alt_m: ll[2] || undefined, heading_deg: isFinite(ht[0]) ? ht[0] : undefined, tilt_deg: isFinite(ht[1]) && ht.length > 1 ? ht[1] : undefined }).catch(e => console.warn('api: ?ll=', e.message));
-  else if (qs.get('place')) goTo(qs.get('place')).catch(e => console.warn('api: ?place=', e.message));
+  // (then the start zone is known: ?t= without an offset is read again in it when it differs, main.js refineZone)
+  const refine = () => H.refineZone?.().catch(e => console.warn('api: zone', e));
+  if (ll.length >= 2 && ll.slice(0, 2).every(isFinite)) goTo({ lat: ll[0], lon: ll[1], alt_m: ll[2] || undefined, heading_deg: isFinite(ht[0]) ? ht[0] : undefined, tilt_deg: isFinite(ht[1]) && ht.length > 1 ? ht[1] : undefined }).then(refine).catch(e => console.warn('api: ?ll=', e.message));
+  else if (qs.get('place')) goTo(qs.get('place')).then(refine).catch(e => console.warn('api: ?place=', e.message));
   return api;
 }

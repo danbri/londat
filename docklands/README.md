@@ -331,21 +331,24 @@ and a 2D map (`no3d.js`, canvas 2D) and `window.docklands` is a data-only subset
 describeView, featuresAt, findPlaces, setTime, listViews, shareLink, tools (no layers, no globe). Every move writes the
 share hash `#v=1&c=...`, so the link opens the same view in 3D. Example: https://danbri.github.io/londat/docklands/?no3d=1&view=cw
 
-`window.docklands` (`api.js`), version `1.0.0` (`docklands.version`; `describeVersion` for the text). Ready when
+`window.docklands` (`api.js`), version `1.1.0` (`docklands.version`; `describeVersion` for the text). Ready when
 `docklands.ready` resolves (event `docklands-api-ready`). The interface is locale-free: WGS84 longitude and latitude in
 degrees, metres, degrees clockwise from true north, ISO 8601 times. Heights are above the local datum
 (`docklands.locale.heightDatum`: ODN in the UK adapter). The model frame (British National Grid offsets), the datum and
-the time zone stay in `adapters/uk.js`.
+the time zone stay in `adapters/uk.js`. The page clock's time zone follows the view (1.1.0, 2026-10-21; `clockzone.js`,
+`geo/zone.js`): the model's region in the model, on the globe the place in view (its region config) or the zone of the
+nearest Natural Earth town of the same country, at sea the nautical zone (approximate); `?tz=` or `setTimeZone` fixes it.
 
 | call | returns |
 |---|---|
 | `goTo(target)`; target: a place name (the model's, then the world's: "Tokyo", "France", "Snowdon"), a view id (`listViews()`), or `{ lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg?, tilt_deg? }` anywhere on Earth | the new view (as `getView`) and `found` (name, kind); outside the model box or above 36 km the globe takes the view |
 | `getView()` on the globe | `mode: 'globe'`, `eye` (lon, lat, height_m above the ellipsoid, above_sea_level_m, above_ground_m), `target`, `range_m`, `heading_deg`, `tilt_deg`, `pitch_deg`, `fov_deg`, `zoom` (web-map), `time`, `share` (`?ll=…&ht=…`) |
-| `getView()` | `eye` and `target` (lon, lat, height_m, above_ground_m / ground_m), `heading_deg` (true), `heading_name`, `pitch_deg` (negative = down), `range_m`, `fov_deg` (vertical, horizontal), `time` (iso, local, time_zone), `sun`, `night`, `view`, `share` |
+| `getView()` | `eye` and `target` (lon, lat, height_m, above_ground_m / ground_m), `heading_deg` (true), `heading_name`, `pitch_deg` (negative = down), `range_m`, `fov_deg` (vertical, horizontal), `time` (iso, local, time_zone, abbreviation, utc_offset, offset_min, wall_clock, source, approximate, method, place, fixed), `sun`, `night`, `view`, `share` |
 | `describeView()` on the globe | `text`, `centre` (country, region, sea, lake; `more` from a skeleton set: district, county, national park, nearest place), `below`, `countries_in_view`, `water_in_view`, `places_in_view`, `nearest`, heading and tilt. In the model inside the UK the text ends with the area (district, county, country) |
 | `describeView({ maxItems })` | `text` (a short paragraph) and `in_view`: `buildings` (the tallest, with name, height_m, OSM id), `places`, `water`, `parks`, each with distance_m, bearing_deg, direction, side (ahead, ahead left, left ...); `over`, `time`, `sun` (altitude, azimuth, day part), `weather`, `live` (aircraft and ships in the frame), `share` |
 | `featuresAt(lon, lat)`, `featuresAt()` (the centre of the view) | `building` (model_index, name, osm, osm_url, height_m, base_m, top_m, levels, type, address, wikidata, `registry`: id, use, occupants, companies, homes, owners, occupant_names, atlas link), `water` (name, level, tidal), `park`, `ground_m`, `nearest` places, `text` |
-| `setTime(iso or "now")` | time, night, sun; a time without Z or an offset is the wall clock of the place |
+| `setTime(iso or "now", zone?)` | time, night, sun; a time without Z or an offset is the wall clock of `zone` (IANA name, UTC, UTC+n), else of the view's zone |
+| `getTimeZone()`, `setTimeZone(zone or "auto")`, `timeZone` | the page clock's zone and local time (as `getView().time`); `setTimeZone` fixes the zone (the instant stays), `"auto"` follows the view again |
 | `listLayers()`, `setLayer(id, on)` | ids, labels, on/off (layer modules and the settings labels, roads, shadows, bloom) |
 | `findPlaces(query, limit)`, `listViews()`, `shareLink()` | names with kinds and WGS84 positions; view ids and labels; the share URL |
 | `tools`, `callTool(name, args)` | the same functions as tools with JSON schemas (WebMCP and the MCP server's `page_call` use them) |

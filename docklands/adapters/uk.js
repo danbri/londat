@@ -5,6 +5,11 @@
 // Model frame: x = E - 537550, z = -(N - 180300) (north is -z), y = metres above ODN. WGS84 to model metres is the data's
 // own quadratic fit (area.js meta.geo, max error 0.03 m in the box); the inverse is by Newton steps.
 // Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".
+import { fromWall } from '../geo/clock.js';
+// the London wall clock of the model's own files (the weather and wind snapshots, the test hooks' fromLondon): the page
+// clock itself follows the view's zone (clockzone.js)
+export const fromUkWall = s => fromWall(s, 'Europe/London');
+export const ukClock = { fromLondon: fromUkWall };
 export function ukAdapter(A) {
   const G = A.meta.geo, E = A.meta.extent;
   const fromLonLat = (lon, lat) => { const a = lon - G.lon0, b = lat - G.lat0, t = [1, a, b, a * b, a * a, b * b]; return [t.reduce((s, v, i) => s + v * G.x[i], 0), t.reduce((s, v, i) => s + v * G.z[i], 0)]; };

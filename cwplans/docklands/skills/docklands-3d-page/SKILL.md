@@ -1858,6 +1858,9 @@ switches: https://github.com/danbri/londat/blob/main/docklands/README.md . three
 
 Owner, 2026-10-09: "Ensure all functionality we had in original menus is available but through more intuitive structure.
 Include a looping carousel at top for time of day, time of year."
+- Since 2026-10-21 the wheels, the clock label, the hour slider and the night button read the wall clock of the view's
+  zone (`docklands/clockzone.js`: London in the model, Madrid over León, Sarajevo over Sarajevo; `?tz=`), never a London
+  constant: skill docklands-sky, "Place-aware page clock". New clock code takes `ZONE` (`__docklands3.zone`).
 - `docklands/menu.js`: the drawer has six tabs (Views, Look, Layers, Go, Time, About). `ctx.ui` methods take an optional
   `{tab}`; `ui.tab(place)` switches the place and returns the previous one. `MENU_PLACE` in `main.js` gives each layer
   its place; a module can override it with `menu:`. Layers groups: City, Below ground, Water and river, Live, Simulated,

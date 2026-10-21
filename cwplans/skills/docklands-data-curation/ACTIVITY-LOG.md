@@ -2941,3 +2941,26 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   dashboard: KR5.1 and KR5.2 (2026-10-21)". OKRS.md draft rows KR3.2 (0.3 to 0.7), KR5.1 (0.15, now measured), KR5.2
   (0.5 to 0.8). Open: the head's modulepreload hints still fetch three.js on the no-3D path; no layers or record card
   without 3D; not tried on a real device without WebGL.
+## 2026-10-21: place-aware page clock (KR1.2, KR1.1), branch work, not merged
+- Problem: on the globe over León and Sarajevo the sky followed the subsolar point, but the time wheels, the clock label,
+  `?t=`, the hour slider, the night switch and `getView().time` were London time.
+- Now the page clock's zone follows the view (`docklands/clockzone.js`, `docklands/geo/zone.js`): the model's region in
+  the model; on the globe the place's region config (León: Europe/Madrid, Sarajevo: Europe/Sarajevo), else the IANA
+  zone of the nearest Natural Earth town of the same country (`world/places.json` `tz`, public domain, already
+  registered; no new data file), at sea the nautical zone; approximate cases say so. The instant (UTC) stays when the
+  zone changes. `?t=` without an offset: the start view's zone. `?tz=` and `setTimeZone` / WebMCP `set_time_zone` fix
+  the zone; `get_time_zone`; `set_time` takes `time_zone`. Page API 1.1.0. The wheels' sun, sunrise and sunset and
+  NIGHT are at the zone's place; the Thames tide range is hidden on the year wheel away from the model.
+- One rule for a repeated hour everywhere (the first instant): describe.js `parseTime` now uses `geo/clock.js fromWall`
+  (it gave the second instant before; found by the new headless check).
+- Locale check: `timezone` 117 -> 98, `ui_en_gb` 91 -> 87 (baseline lowered); London stays in `adapters/uk.js`
+  (`fromUkWall`, `ukClock` for the test hooks) and in London data layers.
+- Tests: `docklands/geo/test/zone.test.mjs` (DST edges London, Madrid, Sarajevo; labels; towns; controller), npm test
+  84/84, npm run check OK, `docklands/test/zone-check.mjs` 390x844@2 all ok (wheels 12:00 CEST over León at
+  `?ll=42.59732,-5.56654,1500&ht=0,55&t=2026-10-12T12:00`, 01:30 BST at `?view=cw&t=2026-10-25T01:30`), globe-check
+  390x844@2 all passed, place-check León 390x844@2 all passed, view-mcp tests all passed, clock-check 169 rows 0 failed,
+  api-check all passed (expects 1.1.0 and 12 tools now); menu-check: the wheel drags and wraps passed, then console
+  errors from live EA tide fetches (CORS through the container proxy, not this change) and a stop at the 30-min limit.
+- Lessons: skill docklands-sky, "Place-aware page clock". Open: the WebGL page (cwplans/docklands/sky.js) is still
+  London-only; the layers' own London formats (aircraft, river, piers) are London data and stay; a tz polygon set
+  only if a border case needs it; locale of the interface (KR1.3) not touched.

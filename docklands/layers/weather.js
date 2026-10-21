@@ -26,7 +26,7 @@
 // Skill: docklands-sky, "Three.js port clock".
 import * as THREE from 'three/webgpu';
 import { WU } from '../water.js';
-import { fromLondon } from '../sky3.js';
+import { fromUkWall as fromLondon } from '../adapters/uk.js';   // the snapshot's hours are London wall clock
 import { forecastDay, METEO_Q } from '../meteo.js';
 import { getMetar, metarNear, hm, getMetarHistory, HIST_URL } from './wind.js';
 

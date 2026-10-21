@@ -26,7 +26,8 @@
 // Skill: docklands-3d-page, "Three.js port" (Water surface).
 import { WU, SU, setFetch, setRiver, surfaceData, setWakes } from '../water.js';
 import { riverLine, makeDebris } from '../debris.js';
-import { fromLondon, GRID_CONV } from '../sky3.js';
+import { GRID_CONV } from '../sky3.js';
+import { fromUkWall as fromLondon } from '../adapters/uk.js';   // the file's hours are London wall clock
 import { forecastDay, METEO_Q } from '../meteo.js';
 
 const D2R = Math.PI / 180;

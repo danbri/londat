@@ -5,6 +5,7 @@
 // aspect); outputs speak WGS84 longitude and latitude, metres, degrees from true north and ISO times. The locale (the
 // model frame, the height datum, the time zone, names the data lacks) comes from an adapter (adapters/uk.js).
 // Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".
+import { fromWall } from './geo/clock.js';
 export const DESCRIBE_VERSION = '1.0.0';
 const D = Math.PI / 180;
 
@@ -136,7 +137,7 @@ export function describeView(I, cam, o = {}) {
   // live things in the frame
   const count = L => (L || []).filter(p => { const s = F.see([p.x, p.y ?? 0, p.z]); return inside(s) && s[2] < maxD * 2; }).length;
   const live = o.live ? { aircraft: o.live.aircraft ? count(o.live.aircraft) : null, ships: o.live.ships ? count(o.live.ships) : null } : null;
-  const time = o.time != null ? timeOf(o.time, I.adapter.timeZone) : null;
+  const time = o.time != null ? { ...timeOf(o.time, o.timeZone || I.adapter.timeZone), ...(o.zoneInfo || {}) } : null;   // o.timeZone, o.zoneInfo: the page clock's zone (clockzone.js)
   const sun = o.sun ? { altitude_deg: r1(o.sun.alt), azimuth_deg: r1(o.sun.az), direction: compass(o.sun.az), day_part: dayPart(o.sun.altGeo ?? o.sun.alt) } : null;
   const out = { version: DESCRIBE_VERSION, eye: V.eye, target: V.target, heading_deg: V.heading_deg, heading_name: V.heading_name, pitch_deg: V.pitch_deg, range_m: V.range_m, fov_deg: V.fov_deg, height_datum: V.height_datum,
     over: over ? { name: over.name, kind: over.kind, distance_m: over.d } : null, view: o.view || null,
@@ -158,7 +159,7 @@ export function describeText(o, N = 8) {
   const s = [];
   const up = o.eye.above_ground_m, where = up > 30 ? `from ${distText(up)} above the ground` : up > 0 ? `from ${Math.round(up)} m above the ground` : `from ${Math.round(-up)} m below the ground`;
   s.push(`Looking ${o.heading_name}${Math.abs(o.pitch_deg) > 60 ? ' and down' : o.pitch_deg < -8 ? ', down,' : o.pitch_deg > 5 ? ', up,' : ''} ${where}${o.over ? `, towards ${o.over.name}` : ''}.`);
-  if (o.time) s.push(`${o.time.local} (${o.time.time_zone})${o.sun ? `; ${o.sun.day_part}, the sun ${Math.abs(o.sun.altitude_deg).toFixed(0)}° ${o.sun.altitude_deg >= 0 ? 'up' : 'below the horizon'} in the ${o.sun.direction}` : ''}${o.weather && o.weather.cloud_pct != null ? `; cloud ${o.weather.cloud_pct} %` : ''}${o.weather && o.weather.temperature_c != null ? `, ${Math.round(o.weather.temperature_c)} °C` : ''}.`);
+  if (o.time) s.push(`${o.time.local} (${o.time.abbreviation && o.time.abbreviation !== o.time.utc_offset ? o.time.abbreviation + ', ' : ''}${o.time.utc_offset ? o.time.utc_offset + ', ' : ''}${o.time.time_zone})${o.sun ? `; ${o.sun.day_part}, the sun ${Math.abs(o.sun.altitude_deg).toFixed(0)}° ${o.sun.altitude_deg >= 0 ? 'up' : 'below the horizon'} in the ${o.sun.direction}` : ''}${o.weather && o.weather.cloud_pct != null ? `; cloud ${o.weather.cloud_pct} %` : ''}${o.weather && o.weather.temperature_c != null ? `, ${Math.round(o.weather.temperature_c)} °C` : ''}.`);
   const B = o.in_view.buildings.filter(b => b.name).slice(0, 4);
   if (B.length) s.push(`Tallest in view: ${B.map(b => `${b.name} (${Math.round(b.height_m)} m tall, ${distText(b.distance_m)} ${b.side})`).join('; ')}.`);
   const P = o.in_view.places.filter(p => !B.some(b => b.name === p.name)).slice(0, N);
@@ -203,14 +204,10 @@ export function findPlaces(I, q, limit = 10) {
     .map(([p]) => { const [lon, lat] = I.adapter.toLonLat(p.x, p.z); return { ...p, lon: r6(lon), lat: r6(lat) }; });
 }
 
-// ---------- a local wall-clock time (YYYY-MM-DD[THH:MM[:SS]], no offset) in a time zone to UTC milliseconds (Intl only)
-export function zonedToUtc(s, tz) {
-  const m = /^(\d{4})-(\d\d)-(\d\d)(?:[T ](\d\d):(\d\d)(?::(\d\d))?)?$/.exec(String(s).trim()); if (!m) return NaN;
-  const want = Date.UTC(+m[1], m[2] - 1, +m[3], +(m[4] ?? 12), +(m[5] ?? 0), +(m[6] ?? 0));
-  const off = t => { const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
-    return Date.UTC(+p.year, p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - t; };
-  let t = want; for (let k = 0; k < 3; k++) t = want - off(t); return t;
-}
+// ---------- a local wall-clock time (YYYY-MM-DD[THH:MM[:SS]], no offset) in a time zone to UTC milliseconds: geo/clock.js
+// fromWall (one rule for the page, the API and the text view: a repeated hour gives the first instant, a skipped one moves
+// on by the gap; before 2026-10-21 this gave the second instant of a repeated hour)
+export const zonedToUtc = (s, tz) => fromWall(s, tz);
 // any time string: an ISO time with Z or an offset as it is; a wall-clock time without one in the place's time zone
 export function parseTime(v, tz) {
   if (typeof v === 'number') return v; const s = String(v || '').trim(); if (!s || /^now$/i.test(s)) return Date.now();

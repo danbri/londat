@@ -18,26 +18,26 @@ All positions in the page API and the MCP tools are WGS84 longitude and latitude
 - A named view: `?view=cw` (Canary Wharf), `area`, `under`, `plan`, `towerbridge`, `limehouse`, `canadawater`, `mudchute`, `greenwich`, `o2`, and photo views `rotherhithe`, `greenland`, `pier`, `greenlandday`, `plane`, `greenlanddock`. Example: https://danbri.github.io/londat/docklands/?view=greenwich
 - A WGS84 point anywhere on Earth: `?ll=<lat>,<lon>[,<eye height metres>]` (`&ht=<heading>,<tilt>` on the globe). Example: https://danbri.github.io/londat/docklands/?ll=51.4944,-0.0402,400 ; the globe: https://danbri.github.io/londat/docklands/?view=globe , https://danbri.github.io/londat/docklands/?ll=35.68,139.76,20000 (Tokyo). go_to, find_places and describe_view work at globe scale (countries, regions, seas, cities from Natural Earth; UK places from the UK skeleton).
 - A place by name: `?place=<name>`. Example: https://danbri.github.io/londat/docklands/?place=Greenland%20Dock
-- A time: `?t=2026-10-11T21:30` (wall-clock time of the place) or a share link's `t=`.
+- A time: `?t=2026-10-11T21:30` (wall-clock time of the start view's zone: London in the model, Madrid with `?place=leon`) or a share link's `t=`. A zone: `?tz=Europe/Madrid` (an IANA name, `UTC` or `UTC+2`) fixes the page clock's zone; without it the zone follows the view.
 - The share link of any view (Menu > Views > Share this view, or `shareLink()`): `#v=1&c=...` holds the camera, `&t=` the time, `&id=osm:w123` the selected building.
 - Text view: add `&text=1`. Spoken descriptions for screen readers: add `&describe=1`.
 - Without 3D (no WebGL 2 and no WebGPU, or `?no3d=1`): the text view, a 2D map and `window.docklands` from the data alone (`docklands.no3d === true`; goTo, getView, describeView, featuresAt, findPlaces, setTime, listViews; no globe). Moves write the 3D share hash, so the same link opens in 3D. Example: https://danbri.github.io/londat/docklands/?no3d=1&view=cw
 
-## Page API (window.docklands, version 1.0.0)
+## Page API (window.docklands, version 1.1.0)
 
 In the 3D page, after it loads (`window.docklands.ready` resolves; event `docklands-api-ready`). Every method returns plain JSON (some as a Promise).
 
 - `goTo(target)`: a place name, a view id, or `{ lon, lat, range_m?, alt_m?, heading_deg?, pitch_deg? }`. Returns the new view.
-- `getView()`: eye and target (lon, lat, height_m), heading_deg (true), pitch_deg, fov_deg, range_m, time (iso, local, time_zone), sun, share link.
+- `getView()`: eye and target (lon, lat, height_m), heading_deg (true), pitch_deg, fov_deg, range_m, time (iso, local, time_zone, abbreviation, utc_offset, wall_clock, source, approximate), sun, share link.
 - `describeView({ maxItems? })`: `text` (a short paragraph) and `in_view` (buildings, places, water, parks with distance_m, bearing_deg, direction, side), time, sun, weather, live counts (aircraft, ships), share.
 - `featuresAt(lon, lat)` or `featuresAt()` (the centre of the view): building (name, OpenStreetMap id, height, registry record and occupant names where known), water, park, ground height, nearest places, `text`.
-- `setTime(iso | "now")`, `listLayers()`, `setLayer(id, on)`, `findPlaces(query, limit)`, `listViews()`, `shareLink()`.
+- `setTime(iso | "now", zone?)`, `getTimeZone()`, `setTimeZone(zone | "auto")` (the page clock's zone follows the view: the model's region, the place in view, else the nearest town's zone or the nautical zone, approximate), `listLayers()`, `setLayer(id, on)`, `findPlaces(query, limit)`, `listViews()`, `shareLink()`.
 - `tools` and `callTool(name, args)`: the same functions as tools with JSON schemas.
 - Reference: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api
 
 ## WebMCP tools
 
-Where the browser offers WebMCP (`document.modelContext.registerTool`, or `navigator.modelContext` in earlier drafts and polyfills; https://github.com/webmachinelearning/webmcp), the page registers: `go_to`, `get_view`, `describe_view`, `features_at`, `set_time`, `list_layers`, `set_layer`, `find_places`, `list_views`, `share_link`. Each answers with JSON text content. `window.docklands.webmcp` says what was registered.
+Where the browser offers WebMCP (`document.modelContext.registerTool`, or `navigator.modelContext` in earlier drafts and polyfills; https://github.com/webmachinelearning/webmcp), the page registers: `go_to`, `get_view`, `describe_view`, `features_at`, `set_time` (with `time_zone`), `get_time_zone`, `set_time_zone`, `list_layers`, `set_layer`, `find_places`, `list_views`, `share_link`. Each answers with JSON text content. `window.docklands.webmcp` says what was registered.
 
 ## MCP server (local)
 
