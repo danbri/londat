@@ -383,7 +383,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     for (const n of p.nodes) { if (n.state === 'ready') st.loaded++; }
     for (const n of lastDrawn) if (n.p === p) { st.tiles += n.meshes.length; st.triangles += n.tris; st.drawn_by_level[n.level] = (st.drawn_by_level[n.level] || 0) + 1; st.tiers[n.core ? 'core' : n.meshes.some(m => m.userData.kind === 'blocks') ? 'city' : 'surroundings']++; }
     for (const t of p.extras) { st.tiles++; st.triangles += t.tris; }
-    st.settled = p.state === 'loaded' && !p.pending && !inFlight && !ready.length && (!p.sur || p.topReady);
+    st.settled = p.state === 'loaded' && !p.pending && !inFlight && !ready.length && (!p.sur || p.topReady) && (hasGround(p) || p.topReady);
     return st; });
 
   // ---------- text and machine interface

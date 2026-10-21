@@ -369,7 +369,7 @@ const OPS = {
   cityHeights: { id: 'place-city-heights', version: 2, skill: 'docklands-data-curation' },   // 2: counts by geometry class. The place-heights rule over the city buildings
   lod: { id: 'place-lod', version: 2, skill: 'docklands-3d-page' },
   selBlocks: { id: 'place-select-blocks', version: 1, skill: 'docklands-3d-page' },   // 1: Overture buildings (OSM geometry) in a boundary, outside the model boxes; non-OSM height values by dataset
-  blocks: { id: 'place-blocks', version: 1, skill: 'docklands-3d-page' },            // 1: the block tree (merged boxes by square at the coarse levels; boxes, outlines and named buildings at the leaves)                // 2: block metadata in glb extras (class, height, its source), counts by class. The tile tree: core leaves, city blocks, surroundings terrain
+  blocks: { id: 'place-blocks', version: 2, skill: 'docklands-3d-page' },            // 2: merged boxes grow with the built share of their square; 1: the block tree (merged boxes by square at the coarse levels; boxes, outlines and named buildings at the leaves)                // 2: block metadata in glb extras (class, height, its source), counts by class. The tile tree: core leaves, city blocks, surroundings terrain
 };
 
 // ---------- geometry helpers (lon/lat rings; local metres by a flat approximation for areas and tests)

@@ -162,9 +162,13 @@ export function blockTile(opt) {
     const E = (b.c[0] - w) * mLon, Nn = (b.c[1] - s) * mLat, k = Math.floor(E / P.merge_m) + ',' + Math.floor(Nn / P.merge_m);
     const q = merged.get(k) || merged.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0 }).get(k); q.a += b.a; q.x += b.a * b.c[0]; q.y += b.a * b.c[1]; q.h += b.a * H.h; q.n++;
   }
-  // one box per square: its footprint the summed area (at most the square), at the area-weighted centre and mean height
-  for (const q of [...merged.values()].sort((a, b) => a.x / a.a - b.x / b.a || a.y / a.a - b.y / b.a)) {
-    const ll = [q.x / q.a, q.y / q.a], side = Math.min(P.merge_m, Math.sqrt(q.a)), hgt = q.h / q.a, d = side / 2;
+  // one box per square at the area-weighted mean height. Its side grows with the built share of the square (full at
+  // P.full_share, default 0.5: a dense street of houses reads as one mass from afar; sqrt(area) boxes left a grid of
+  // separate cubes, 2026-10-21) and its centre moves from the area-weighted centre to the square's centre as it grows
+  const M2 = P.merge_m, full = P.full_share || 0.5;
+  for (const [k, q] of [...merged.entries()].sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)) {
+    const [i, j] = k.split(',').map(Number), sc = [w + (i + 0.5) * M2 / mLon, s + (j + 0.5) * M2 / mLat], side = M2 * Math.min(1, Math.sqrt(q.a / (M2 * M2) / full)), f = side / M2;
+    const ll = [q.x / q.a + (sc[0] - q.x / q.a) * f, q.y / q.a + (sc[1] - q.y / q.a) * f], hgt = q.h / q.a, d = side / 2;
     const gs = [[-d, -d], [d, -d], [d, d], [-d, d]].map(p => groundAt(...toLL(p, ll)));
     box(ll, 0, side, side, hgt, 1, `merged: area-weighted mean height of the buildings of a ${P.merge_m} m square`, gs); st.merged++; st.merged_buildings += q.n;
   }

@@ -8,7 +8,7 @@ This README is generated from `provenance/log.json` and [cwplans/data-register.j
 - Croydon (2 km): https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55
 - BT Tower (700 m): https://danbri.github.io/londat/docklands/?ll=51.5215,-0.1389,700&ht=200,60
 - A place of kind "blocks": no core and no ground of its own (the globe's terrain and imagery stay); buildings in the model box of docklands are left to that model
-- Area (WGS84 degrees, west, south, east, north): -0.5102, 51.2868, 0.334, 51.6919; 1050005 buildings; built 2026-10-21T10:37:08.515Z
+- Area (WGS84 degrees, west, south, east, north): -0.5102, 51.2868, 0.334, 51.6919; 1050005 buildings; built 2026-10-21T10:44:51.915Z
 - Credit shown on the page: © OpenStreetMap contributors (ODbL 1.0); Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)
 - Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)"; fault F55 in the docklands-data-curation skill
 
@@ -16,13 +16,13 @@ This README is generated from `provenance/log.json` and [cwplans/data-register.j
 
 | path | what | bytes | SHA-256 |
 |---|---|---|---|
-| [tiles/](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tiles) (2394 files) | glTF 2.0 tile of the city or the surroundings: terrain grid with a JPEG texture (land cover, water, roads, rail), city blocks (KHR_mesh_quantization, EXT_mesh_gpu_instancing) | 80948720 | `166ad4bddb1dd44186063a5f4860f47058da8b11cd0884a22a0d59eca1f0b9a6` |
-| [tileset.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tileset.json) | 3D Tiles 1.1 tileset: one child per quadtree cell, ENU -> ECEF transform, region bounding volume | 972404 | `00594582b0b4fa6b8eaf45b68702110b492e6aa2c200e80dcb9809cee4416462` |
+| [tiles/](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tiles) (2394 files) | glTF 2.0 tile of the city or the surroundings: terrain grid with a JPEG texture (land cover, water, roads, rail), city blocks (KHR_mesh_quantization, EXT_mesh_gpu_instancing) | 80948720 | `16a5976ad1811f9cf30c8433c559c1237fb300af0806a52a3871b8465c3f7a5a` |
+| [tileset.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tileset.json) | 3D Tiles 1.1 tileset: one child per quadtree cell, ENU -> ECEF transform, region bounding volume | 972402 | `a30040feca53da0008a1b67bf70a671a80301019b8fb095fac365a38f8db6560` |
 | [features.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/features.json) | the text and machine interface: the named buildings drawn with their own id (name, height and its source, OSM id), the block counts by level | 731102 | `f2abf8e18af93e856141dbd8127471279e148ae2e6c1f2d00945dcff65d73199` |
 | [sources/ghsl-built-h.json.gz](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/sources/ghsl-built-h.json.gz) | committed source extract (input of an operation; see Sources) | 360388 | `d98714b48391c0c3f1a977af8e51b9f48b93c515f305baa281d4909df024e70b` |
-| [provenance/log.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json) | fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts | 902735 | `6abd985cef9e5e3fbaa9b80573e7598b3849c51483f6bffdad3e8fee83c2c684` |
+| [provenance/log.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json) | fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts | 1349283 | `67a72dcb750ffb3388cc096e33d60b07107adc2dca87f62e1ebab3d6d924c93f` |
 
-Total 83.92 MB (README.md not counted).
+Total 84.36 MB (README.md not counted).
 
 ## Sources
 
@@ -87,7 +87,7 @@ Outputs:
 
 Parameters: `{"storey_m":3,"national_storey_m":3,"default_m":7,"default_small_m":3,"raster_min_m":3,"roof_rule":null,"pitch_deg":30,"max_roof_m":8,"footprints":["ms"],"rule":"as place-heights over the selected buildings: OSM height > OSM building:levels x storey > Overture height > Overture num_floors x storey (non-OSM records, open licence, not Microsoft) > Microsoft ML Buildings height (via Overture; footprint match: a centroid inside the other outline, area ratio >= 0.5) > small kinds 3 m > GHSL cell under the centroid (min 3 m) > default; no roofs (blocks)"}`
 
-### place-blocks version 1 (activity `ea0d3326c6b6c728`, 2026-10-21T10:37:08.515Z)
+### place-blocks version 2 (activity `306bff0c31e163ff`, 2026-10-21T10:44:51.915Z)
 
 Skill docklands-3d-page; tool tools/build-place-tiles.mjs.
 
@@ -100,10 +100,10 @@ Inputs:
 
 Outputs:
 
-- `docklands/data/places/london/tiles/10-1021-804.glb` SHA-256 `383b359f513565fa699238fab32199bcb184a5aaa10ad643d0ed57ac5820091e` (19144 bytes)
-- `docklands/data/places/london/tiles/11-2042-1609.glb` SHA-256 `9daff187c69ad6affb7fd9168a138ecb68ff86acb606d319af7a8bb6d78c2628` (13388 bytes)
-- `docklands/data/places/london/tiles/12-4084-3219.glb` SHA-256 `2077f6aef0e0c9337d44364d1f21e3c3fa4d637ecc864dd8cb162ce54a460d78` (5720 bytes)
-- `docklands/data/places/london/tiles/13-8169-6438.glb` SHA-256 `6406649183efb4d24cc823d5c6ed13b726e191ec98cb04427ba5de06e8990581` (4944 bytes)
+- `docklands/data/places/london/tiles/10-1021-804.glb` SHA-256 `75dd9514b16f5bcb01a34a7312fc9ff49a2516bd9825c9ebc566d17aed507678` (19144 bytes)
+- `docklands/data/places/london/tiles/11-2042-1609.glb` SHA-256 `23d49fe03cd7497947295c65eca47615478387f038ad7a321c67f4453100b6f3` (13388 bytes)
+- `docklands/data/places/london/tiles/12-4084-3219.glb` SHA-256 `3e61bdb6a923902331a515f27ab2db35fb74400de8023bcfb35f849f84d3447d` (5720 bytes)
+- `docklands/data/places/london/tiles/13-8169-6438.glb` SHA-256 `22b4f08a55ff9820268ad3d1be56e3c16e8b27f5fd9957dc46a7ddaffbc72509` (4944 bytes)
 - and 2392 more (the Files table above has each one)
 
 Parameters: `{"top":10,"leaf":14,"levels":{"10":{"tall_m":60,"big_m2":20000,"merge_m":400,"err_m":300},"11":{"tall_m":40,"big_m2":8000,"merge_m":200,"err_m":150},"12":{"tall_m":25,"big_m2":3000,"merge_m":100,"err_m":75},"13":{"tall_m":18,"big_m2":600,"merge_m":50,"err_m":35}},"min_area_m2":25,"simplify_m":2.5,"box_fill":0.85,"outline_min_m2":300,"drop_m":3,"named_min_m2":1500,"named_min_h_m":20,"colour":"#d6cbb6","version_label":"london-1","extent_box":[-0.52,51.28,0.34,51.7],"classes":["OpenStreetMap (via Overture)","merged OpenStreetMap buildings (one box per square: the summed footprint, the area-weighted mean height)"],"credit":"© OpenStreetMap contributors (ODbL 1.0); Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)"}`
