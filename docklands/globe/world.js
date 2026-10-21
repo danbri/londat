@@ -17,8 +17,11 @@
 // GeoJSON is WGS84 lon/lat (RFC 7946); properties are free. Skill: docklands-3d-page, "Three.js port: globe and world
 // skeleton (2026-10-13)".
 import { surfaceDistance, D2R, R2D } from '../geo/ellipsoid.js';
+import { latinPreferred, isLatin, pickName } from '../geo/script.js';
 
 export const WORLD_VERSION = '1.0.0';
+// languages of the world names (names-{lang}.json) written in another script than Latin
+export const NONLATIN_LANGS = ['ar', 'bn', 'el', 'fa', 'he', 'hi', 'ja', 'ko', 'ru', 'uk', 'ur', 'zh', 'zht'];
 
 // ---------- decoding: wsk1 (delta-encoded integers in 1/q degrees) or GeoJSON -> [{ properties, geometry: { type, coordinates } }]
 function dec(a, q) { const out = []; let x = 0, y = 0; for (let i = 0; i < a.length; i += 2) { x += a[i]; y += a[i + 1]; out.push([x / q, y / q]); } return out; }
@@ -116,14 +119,18 @@ export function makeWorld({ fetchJson, lang = null } = {}) {
     const p = fetchJson(resolve(M.base, M.names.url.replace('{lang}', W.lang))).catch(() => null); W.names.set(k, p); const r = await p; W.names.set(k, r); return r;
   };
   const tableOf = L => { const t = W.lang && L.manifest.names ? W.names.get(L.manifest.base + '#' + W.lang) : null; return t && !t.then && L.namesTable ? t[L.namesTable] : null; };
-  // the display name of feature i of layer L: the visitor's language where the data has it, else the default name
-  W.nameOf = function (L, i, f = L.features[i], textProp) {
+  // the names of feature i of layer L, best first: the visitor's language where the data has it, the default name, English
+  W.nameCands = function (L, i, f = L.features[i], textProp) {
     const p = f.properties, spec = L.labels || L.gazetteer || {}, tp = textProp || [].concat(spec.text || 'name')[0];
-    const nm = spec.names && p[spec.names]; if (W.lang && nm && nm[W.lang]) return nm[W.lang];
-    const t = tableOf(L); if (t && t[i]) return t[i];
-    return p[tp] ?? p.name ?? null;
+    const nm = spec.names && p[spec.names], t = tableOf(L);
+    return [W.lang && nm && nm[W.lang], t && t[i], p[tp], p.name, nm && nm.en].filter(x => x != null && x !== '');
   };
-  W.localName = (L, i, f = L.features[i]) => { const spec = L.labels || L.gazetteer || {}; return f.properties[[].concat(spec.text || 'name')[0]] ?? f.properties.name ?? null; };
+  // the display name: the first of nameCands; while Latin script is preferred (geo/script.js; owner, 2026-10-22) the first
+  // in Latin script, so a ?lang= in another script (ru, uk, ar, zh ...) does not override the setting; null when none is
+  W.nameOf = (L, i, f = L.features[i], textProp) => pickName(...W.nameCands(L, i, f, textProp));
+  W.localName = (L, i, f = L.features[i]) => { const spec = L.labels || L.gazetteer || {}, v = f.properties[[].concat(spec.text || 'name')[0]] ?? f.properties.name ?? null; return latinPreferred() && !isLatin(v) ? null : v; };
+  // the visitor's language gives way to Latin names: true while the setting is on and ?lang= is in another script
+  W.langOverridden = () => !!W.lang && latinPreferred() && NONLATIN_LANGS.includes(W.lang);
 
   function addGaz(L) {
     const g = L.gazetteer, texts = [].concat(g.text || 'name');
@@ -148,12 +155,12 @@ export function makeWorld({ fetchJson, lang = null } = {}) {
     }
     out.sort((a, b) => b.s - a.s || a.e.prio - b.e.prio || b.e.rank - a.e.rank);
     const seen = new Set(), res = [];
-    for (const { e, s } of out) { const r = W.entry(e); const k = r.kind + '|' + r.name + '|' + Math.round(r.lon * 10) + ',' + Math.round(r.lat * 10); if (seen.has(k)) continue; seen.add(k); r.score = s; res.push(r); if (res.length >= limit) break; }
+    for (const { e, s } of out) { const r = W.entry(e); if (!r.name) continue; const k = r.kind + '|' + r.name + '|' + Math.round(r.lon * 10) + ',' + Math.round(r.lat * 10); if (seen.has(k)) continue; seen.add(k); r.score = s; res.push(r); if (res.length >= limit) break; }
     return res;
   };
   // an entry as the API gives it: name (visitor's language), local name, kind, lon, lat, country, region, facts, wikidata
   W.entry = function (e) {
-    if (!e.L) return { name: e.name, kind: e.kind, lon: e.lon, lat: e.lat, country: e.country || null, facts: e.facts || [], id: e.id || null, wikidata: e.wd || null, alt_m: e.alt_m, view: e.view };
+    if (!e.L) return { name: pickName(e.name), kind: e.kind, lon: e.lon, lat: e.lat, country: e.country || null, facts: e.facts || [], id: e.id || null, wikidata: e.wd || null, alt_m: e.alt_m, view: e.view };
     const f = e.L.features[e.i], p = f.properties, name = W.nameOf(e.L, e.i), local = W.localName(e.L, e.i);
     const r = { name, kind: e.kind, lon: e.lon, lat: e.lat, id: e.L.manifest.id + ':' + e.L.id + ':' + e.i, wikidata: p.wd || null };
     if (local && local !== name) r.local_name = local;
@@ -179,7 +186,7 @@ export function makeWorld({ fetchJson, lang = null } = {}) {
   // where is this point: { country, admin1, sea, lake } (names in the visitor's language), each with its feature
   W.where = function (lon, lat) {
     const out = {};
-    for (const [kind, { L, idx }] of W.lookups) { const f = idx.find(lon, lat); if (f) { const i = L.features.indexOf(f); out[kind] = { name: W.nameOf(L, i, f), local_name: W.localName(L, i, f), kind, wikidata: f.properties.wd || null, props: f.properties, i, layer: L.id }; } }
+    for (const [kind, { L, idx }] of W.lookups) { const f = idx.find(lon, lat); if (f && W.nameOf(L, L.features.indexOf(f), f)) { const i = L.features.indexOf(f); out[kind] = { name: W.nameOf(L, i, f), local_name: W.localName(L, i, f), kind, wikidata: f.properties.wd || null, props: f.properties, i, layer: L.id }; } }
     if (!out.country && !out.sea && W.lookups.has('sea')) { const { L, idx } = W.lookups.get('sea'), n = idx.near(lon, lat, 400); if (n) { const i = L.features.indexOf(n.f); out.sea = { name: W.nameOf(L, i, n.f), kind: 'sea', near: true, dist_m: n.dist_m, props: n.f.properties, i, layer: L.id }; } }
     return out;
   };
@@ -189,7 +196,7 @@ export function makeWorld({ fetchJson, lang = null } = {}) {
     for (const it of W.nearest) { if (Math.abs(it.lat - lat) > maxKm / 111) continue; const pop = +it.f.properties.pop || 0; if (pop < minPop) continue;
       const d = surfaceDistance(lon, lat, it.lon, it.lat); if (d > maxKm * 1000) continue; res.push({ it, d }); }
     res.sort((a, b) => a.d - b.d);
-    return res.slice(0, n).map(({ it, d }) => ({ ...W.entry({ L: it.L, i: it.i, kind: 'place', lon: it.lon, lat: it.lat }), dist_m: Math.round(d), bearing_deg: Math.round(bearingDeg(lon, lat, it.lon, it.lat)), direction: compass(bearingDeg(lon, lat, it.lon, it.lat)) }));
+    return res.filter(({ it }) => W.nameOf(it.L, it.i, it.f)).slice(0, n).map(({ it, d }) => ({ ...W.entry({ L: it.L, i: it.i, kind: 'place', lon: it.lon, lat: it.lat }), dist_m: Math.round(d), bearing_deg: Math.round(bearingDeg(lon, lat, it.lon, it.lat)), direction: compass(bearingDeg(lon, lat, it.lon, it.lat)) }));
   };
 
   // a globe view in words. v: { eye: {lon, lat, alt_m}, centre: {lon, lat} | null, heading_deg, tilt_deg, samples: [{lon, lat}] (ray hits
@@ -203,7 +210,7 @@ export function makeWorld({ fetchJson, lang = null } = {}) {
     const seaList = [...seas.entries()].sort((a, b) => b[1] - a[1]).map(([n]) => n).slice(0, 4);
     // places in view: by population, at most maxItems, those the view can see (inView)
     const places = [];
-    if (v.inView) { const cand = W.nearest.filter(it => v.inView(it.lon, it.lat)).sort((a, b) => (+b.f.properties.pop || 0) - (+a.f.properties.pop || 0)).slice(0, maxItems);
+    if (v.inView) { const cand = W.nearest.filter(it => v.inView(it.lon, it.lat) && W.nameOf(it.L, it.i, it.f)).sort((a, b) => (+b.f.properties.pop || 0) - (+a.f.properties.pop || 0)).slice(0, maxItems);
       for (const it of cand) { const d = surfaceDistance(c.lon, c.lat, it.lon, it.lat), b = bearingDeg(c.lon, c.lat, it.lon, it.lat);
         places.push({ ...W.entry({ L: it.L, i: it.i, kind: 'place', lon: it.lon, lat: it.lat }), dist_m: Math.round(d), bearing_deg: Math.round(b), direction: compass(b) }); } }
     const near = W.nearestPlaces(c.lon, c.lat, 3);

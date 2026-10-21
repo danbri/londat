@@ -19,6 +19,8 @@
 // file's real bbox, so a query reads every file whose bbox meets the view. Lines are clipped at cell edges (a piece per
 // cell; properties repeated). Points are in the cell that holds them.
 
+import { latinPreferred, isLatin, pickName, scrubText } from './script.js';
+
 export const cellSize = level => 180 / 2 ** level;
 export function cellOf(level, lon, lat) {
   const s = cellSize(level), nx = 2 ** (level + 1), ny = 2 ** level;
@@ -68,6 +70,13 @@ export function unpack(file) {
   }) };
 }
 
+// properties with their name in Latin script while that is preferred (script.js): the Latin one of name, name_en, alt, else
+// no name (a template part with {name} is then left out)
+function latinProps(P) {
+  if (!latinPreferred() || isLatin(P.name)) return P;
+  const n = pickName(P.name_en, P.alt, P.name_alt), out = { ...P }; if (n) out.name = n; else delete out.name; return out;
+}
+
 const defaultFetchJson = async url => { const r = await fetch(url); if (!r.ok) throw new Error(`${r.status} ${url}`); return r.json(); };
 
 export async function openSkeleton(base, { fetchJson = defaultFetchJson, manifest = null } = {}) {
@@ -107,7 +116,11 @@ export async function openSkeleton(base, { fetchJson = defaultFetchJson, manifes
           const s = f === q || g === q ? 3 : f.startsWith(q) || g.startsWith(q) ? 2 : (' ' + f).includes(' ' + q) ? 1 : 0; if (s > best) best = s;
         }
         if (!best) continue;
-        hits.push({ name, alt: alt || null, kind, kindLabel: G.kinds[kind] || kind, lon, lat, la: la[lai] || null, id, wd: wd || null, population: pop || null,
+        // names in Latin script only while that is preferred (script.js; owner, 2026-10-22): the Latin one of name and alt,
+        // else the entry is left out (a Cyrillic query still finds a place by its other name, shown in Latin)
+        const shown = pickName(name, alt); if (!shown) continue;
+        const other = shown === name ? alt : name, alt2 = other && (!latinPreferred() || isLatin(other)) ? other : null;
+        hits.push({ name: shown, alt: alt2, kind, kindLabel: G.kinds[kind] || kind, lon, lat, la: la[lai] || null, id, wd: wd || null, population: pop || null,
           score: best * 1e6 + (KR[kind] ?? 0) * 1e4 + Math.min(9999, Math.log10(1 + (pop || 0)) * 1000) - (near ? Math.min(9999, distanceM(near, [lon, lat]) / 1000) : 0) });
       }
     }
@@ -131,13 +144,13 @@ export async function openSkeleton(base, { fetchJson = defaultFetchJson, manifes
     const p = [lon, lat], b = [lon, lat, lon, lat], out = {};
     const pick = async (id, level, key) => {
       if (!M.layers.some(l => l.id === id)) return;
-      const f = (await features(id, b, level)).find(f => pointInGeometry(p, f.geometry)); if (f) out[key] = f.properties;
+      const f = (await features(id, b, level)).find(f => pointInGeometry(p, f.geometry)); if (f) out[key] = latinProps(f.properties);
     };
     await pick('countries', 6, 'country'); await pick('regions', 6, 'region'); await pick('counties', 8, 'county'); await pick('districts', 8, 'district');
     await pick('national-parks', 8, 'nationalPark'); await pick('landscapes', 8, 'landscape'); await pick('built-up', 8, 'builtUp');
     if (M.layers.some(l => l.id === 'places')) {
       const r = 0.25, near = await features('places', [lon - r * 1.6, lat - r, lon + r * 1.6, lat + r], 8);
-      let best = null; for (const f of near) { const d = distanceM(p, f.geometry.coordinates); if (!best || d < best.d) best = { d, f }; }
+      let best = null; for (const f of near) { if (!pickName(f.properties.name)) continue; const d = distanceM(p, f.geometry.coordinates); if (!best || d < best.d) best = { d, f }; }
       if (best) out.nearest = { ...best.f.properties, distanceM: Math.round(best.d), lon: best.f.geometry.coordinates[0], lat: best.f.geometry.coordinates[1] };
     }
     return out;
@@ -146,11 +159,11 @@ export async function openSkeleton(base, { fetchJson = defaultFetchJson, manifes
   // one sentence per feature, from the layer's template in the manifest: {key} from the properties (numbers grouped in
   // thousands); a [bracketed part] is left out when a key in it has no value
   function describe(f, id) {
-    const L = layer(id), P = f.properties || {}, has = k => P[k] != null && P[k] !== '';
+    const L = layer(id), P = latinProps(f.properties || {}), has = k => P[k] != null && P[k] !== '';
     const val = k => typeof P[k] === 'number' && P[k] >= 10000 ? String(P[k]).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : String(P[k]);
     const t = (L.describe || '{name}').replace(/\[([^\]]*)\]/g, (_, part) => [...part.matchAll(/\{(\w+)\}/g)].every(m => has(m[1])) ? part : '')
       .replace(/\{(\w+)\}/g, (_, k) => has(k) ? val(k) : '');
-    return t.replace(/\(\s*\)/g, '').replace(/\s+,/g, ',').replace(/\s{2,}/g, ' ').replace(/,\s*\./g, '.').trim();
+    return scrubText(t.replace(/\(\s*\)/g, '').replace(/\s+,/g, ',').replace(/\s{2,}/g, ' ').replace(/,\s*\./g, '.').trim());
   }
 
   return { manifest: M, features, search, card, whereAmI, describe, levelOf: (id, want) => levelOf(layer(id), want).level };

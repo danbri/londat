@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, statSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { makeWorld, pickLang, fold, decodeLayer } from '../../globe/world.js';
+import { setLatinPreferred, resetScriptPreference, isLatin } from '../../geo/script.js';
 
 const DIR = fileURLToPath(new URL('../../../cwplans/docklands/data/world/', import.meta.url));
 const fetchJson = async u => JSON.parse(readFileSync(fileURLToPath(u), 'utf8'));
@@ -44,9 +45,14 @@ test('where: country, region, sea; nearest place', async () => {
   assert.equal(W.nearestPlaces(18.43, 43.86, 1)[0].name, 'Sarajevo');
 });
 test('names by language (index after dropped features)', async () => {
-  const de = await world('de'), ja = await world('ja');
-  assert.equal(de.where(2, 56).sea.name, 'Nordsee'); assert.equal(ja.where(2, 56).sea.name, '北海');
+  const de = await world('de'), ja = await world('ja'), ru = await world('ru');
+  // Latin script preferred (the default; geo/script.js): a language in another script gives way to the Latin name
+  assert.equal(de.where(2, 56).sea.name, 'Nordsee'); assert.equal(ja.where(2, 56).sea.name, 'North Sea');
   assert.equal(de.where(-0.02, 51.5).country.name, 'Vereinigtes Königreich');
+  assert.equal(ru.langOverridden(), true); assert.equal(de.langOverridden(), false);
+  const hits = ru.search('Сараево', 5); assert.ok(hits.every(h => isLatin(h.name) && isLatin(h.local_name)), JSON.stringify(hits.map(h => h.name)));
+  setLatinPreferred(false);   // every script: the visitor's language again
+  try { assert.equal(ja.where(2, 56).sea.name, '北海'); assert.equal(ru.langOverridden(), false); } finally { resetScriptPreference(); setLatinPreferred(true); }
 });
 test('describe: a globe view in words', async () => {
   const W = await world('en');

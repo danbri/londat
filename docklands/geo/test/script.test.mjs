@@ -58,3 +58,21 @@ test('latinOut: API answers lose names in other scripts (fields removed, list it
   assert.equal(r[1].name, 'Пањак');   // the input is not changed
   setLatinPreferred(false); assert.equal(latinOut(r), r); resetScriptPreference();
 });
+test('skeleton reader over Bosnia and Herzegovina (data/ba, Cyrillic in name fields): Latin only by default, all when off', async () => {
+  const { readFileSync, existsSync } = await import('node:fs'); const { join, dirname } = await import('node:path'); const { fileURLToPath } = await import('node:url');
+  const { openSkeleton } = await import('../skeleton.js');
+  const DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'cwplans', 'docklands', 'data', 'ba');
+  if (!existsSync(join(DIR, 'manifest.json'))) return;
+  const sk = await openSkeleton('file:///ba/', { fetchJson: async p => JSON.parse(readFileSync(join(DIR, p.replace(/^file:\/\/\/ba\//, '')), 'utf8')) });
+  const box = [18.0, 43.6, 19.6, 45.0];   // Sarajevo to the Drina, with the railway Београд - Бар
+  const run = async () => { const out = [];
+    for (const q of ['Па', 'Пањак', 'Sarajevo', 'Ba', 'Бе']) for (const h of await sk.search(q, { limit: 20 })) out.push(h.name, h.alt || '');
+    for (const id of ['rail', 'rivers', 'places']) for (const f of await sk.features(id, box, 8)) out.push(sk.describe(f, id));
+    out.push(JSON.stringify(await sk.whereAmI(18.41, 43.86))); return out; };
+  resetScriptPreference(); setLatinPreferred(true);
+  const lat = await run(), bad = lat.filter(s => !isLatin(s));
+  assert.equal(bad.length, 0, bad.slice(0, 5).join(' | '));
+  assert.ok(lat.includes('Sarajevo'));
+  setLatinPreferred(false);
+  try { const all = await run(); assert.ok(all.some(s => !isLatin(s)), 'the Cyrillic names come back with every script'); } finally { resetScriptPreference(); setLatinPreferred(true); }
+});
