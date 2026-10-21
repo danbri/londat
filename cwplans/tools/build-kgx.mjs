@@ -106,16 +106,18 @@ Object.assign(versions, await flow.run({ ...LIFT('lift-registry-occupants', 'reg
     g.lit(s, iri('cwk', 'odsCode'), o.ods_code); g.lit(s, iri('cwk', 'cqcLocationId'), o.cqc_location_id); g.lit(s, iri('s', 'servesCuisine'), o.cuisine);
     g.lit(s, iri('cwk', 'placedBy'), o.placed_by); g.lit(s, iri('cwk', 'placement'), o.placed); g.lit(s, iri('cwk', 'placementConfidence'), o.placed_confidence);
     g.lit(s, iri('cwk', 'placementFault'), o.placement_fault); if (o.point_in) g.add(s, iri('cwk', 'pointInPlace'), bIri(o.point_in));
-    const pages = x => [x.osm ? 'https://www.openstreetmap.org/' + x.osm : null, x.fhrs_id ? 'https://ratings.food.gov.uk/business/' + x.fhrs_id : null,
+    // a record's pages: OSM, the FSA page (the url an FSA record carries), the CWG pages
+    const fsaUrl = x => x.source === 'fsa' && /^https?:\/\//.test(x.url || '') ? x.url : null;
+    const pages = x => [x.osm ? 'https://www.openstreetmap.org/' + x.osm : null, fsaUrl(x),
       ...[x.cwg_url, ...(x.cwg_also || [])].filter(Boolean).map(u => u.replace(/\/?$/, '/') + '#entity')].filter(Boolean);
-    for (const u of pages(o)) g.add(s, iri('s', 'sameAs'), u);
+    for (const u of new Set([...pages({ ...o, source: o.primary_source ?? o.source }), ...(o.merged_from || []).map(fsaUrl).filter(Boolean)])) g.add(s, iri('s', 'sameAs'), u);
     if (o.merged_from?.length) {
       g.lit(s, iri('cwk', 'branchKey'), o.branch_key); g.lit(s, iri('cwk', 'mergeConfidence'), o.merge_confidence); g.lit(s, iri('cwk', 'mergeRule'), o.merge_rule);
       for (const e of o.merge_evidence || []) g.lit(s, iri('cwk', 'mergeEvidence'), e);
       // the primary record: only the identifiers of its own source (the occupant also holds fields taken from the others)
       const ps = o.primary_source || '', mine = (re, f) => re.test(ps) ? o[f] : null;
       const primary = { source: ps, name: o.name, role: o.role, building: b.id, placed_by: o.placed_by, placed: o.placed, osm: mine(/^osm/, 'osm'), fhrs_id: mine(/^fsa/, 'fhrs_id'),
-        cwg_url: mine(/cwg/, 'cwg_url'), ods_code: mine(/^ods/, 'ods_code'), cqc_location_id: mine(/^cqc/, 'cqc_location_id'), wikidata: mine(/^wikidata/, 'wikidata') };
+        cwg_url: mine(/cwg/, 'cwg_url'), url: mine(/^fsa/, 'url'), ods_code: mine(/^ods/, 'ods_code'), cqc_location_id: mine(/^cqc/, 'cqc_location_id'), wikidata: mine(/^wikidata/, 'wikidata') };
       for (const [k, x] of [primary, ...o.merged_from].entries()) {
         const r = bIri(b.id, 'occupant', `${slug(o.name)}-${sha(JSON.stringify([o.name, o.osm, o.source, i]))}`, 'record', k);
         g.add(s, iri('cwk', 'sourceRecord'), r); g.add(r, TYPE, iri('cwk', 'SourceRecord')); g.lit(r, iri('cwk', 'sourceKind'), x.source); g.lit(r, iri('s', 'name'), x.name);

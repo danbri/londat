@@ -106,7 +106,7 @@ a service category.
 | F17 | GIAS gives 8 schools at 8 postcodes the UPRN of a council office (inside the Poplar Public Mortuary outline); a first join put 9 schools in that building. One more UPRN point is 300 m from the school's own point | ID-5: 9 |
 | F18 | Addresses that are not where the organisation works: correspondence, registered-office service, care-of, charity contact addresses in homes | SE-3: 135 |
 | F19 | "The one registry building with the postcode" is not "the postcode covers one building": registry postcodes come from occupants, so a pub carrying E14 0EY took the Newby Place health centre (8 ODS records), and a virtual-office address (71-75 Shelton Street) carried E14 5RE | CV-4: 92 in the box with no building |
-| F20 | One organisation as two records in one building (ODS provider and site, "360 CAMHS" and "360 CAMHS LONDON"; OSM "Sk:n" and CQC "Sk:n - London Canary Wharf") | ID-2: 89 (open) |
+| F20 | One organisation as two records in one building (ODS provider and site, "360 CAMHS" and "360 CAMHS LONDON"; OSM "Sk:n" and CQC "Sk:n - London Canary Wharf") | rule in use 2026-10-21: the branch-key rule (`tools/registry-branch-key.mjs`): provider + site of one name in one building, shared register ids (also OSM `ref:GB:cqc_location`, `ref:GB:nhs_ods`, `ref:edubase`), a former id in an OSM `was:` tag; ID-2 89 -> 110 -> 7, all on the review list |
 | | Low-confidence key placements | SP-7: 30 of 325 |
 
 Postcode-only positions cannot choose a building where the postcode covers several: in the box 96 of 258 ODS, 29 of

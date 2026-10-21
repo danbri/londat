@@ -2,7 +2,7 @@
  "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://kgx.foaf.tv/id/",
  "vocab": "https://kgx.foaf.tv/vocab#",
- "built": "2026-10-21T03:35:44.462Z",
+ "built": "2026-10-21T04:38:46.580Z",
  "tool": "cwplans/tools/build-kgx.mjs",
  "engine": "@factoidal/core 0.7.1",
  "prefixes": {
@@ -22,8 +22,8 @@
  },
  "heads": {
   "facts": "https://kgx.foaf.tv/id/graphfactsd328af279ee0f353",
-  "buildings": "https://kgx.foaf.tv/id/graphbuildings47f060b18661d366",
-  "occupants": "https://kgx.foaf.tv/id/graphoccupantsbdc71e50085b254c",
+  "buildings": "https://kgx.foaf.tv/id/graphbuildings41263dc7cc077db2",
+  "occupants": "https://kgx.foaf.tv/id/graphoccupants95680cfac6d53d23",
   "cwg": "https://kgx.foaf.tv/id/graphcwg395b503eee6ab315",
   "web": "https://kgx.foaf.tv/id/graphweb67e1f54d70c4f914",
   "web-search": "https://kgx.foaf.tv/id/graphwebsearch85092b03aa734c09",
@@ -34,7 +34,7 @@
   "coref-site-name": "https://kgx.foaf.tv/id/graphcorefsitenamed0f4b64d58023481",
   "mallmap": "https://kgx.foaf.tv/id/graphmallmapa43de479b61de2ff",
   "storeguide": "https://kgx.foaf.tv/id/graphstoreguidefc01b8a99ccaf563",
-  "pipeline": "https://kgx.foaf.tv/id/graphpipeline46d31886e66062a2",
+  "pipeline": "https://kgx.foaf.tv/id/graphpipelinec6aa32298591c663",
   "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
   "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
   "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
@@ -51,8 +51,9 @@
   "roofs": "https://kgx.foaf.tv/id/graphroofsb6a65e444fa5affb",
   "materials": "https://kgx.foaf.tv/id/graphmaterialsca718efee790144e",
   "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96",
-  "meta": "https://kgx.foaf.tv/id/graphmeta90e0d261b79e4e4c",
-  "log": "https://kgx.foaf.tv/id/graphlog12510457e00e2e39"
+  "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
+  "meta": "https://kgx.foaf.tv/id/graphmeta9638bdb1dd0aae6f",
+  "log": "https://kgx.foaf.tv/id/graphlog3db0d2e88d56a7eb"
  },
  "graphs": {
   "facts": {
@@ -65,20 +66,20 @@
    "licence": "facts with short quotes from cited pages (crawl rule of 2026-10-03, scoping); each fact names its source URL"
   },
   "buildings": {
-   "version": "https://kgx.foaf.tv/id/graphbuildings47f060b18661d366",
-   "rdfc10_sha256": "47f060b18661d3669de68eccd313393312dcfe1b20280472ad2974cee5c5b49e",
-   "triples": 17127,
-   "file": "graphs/buildings/47f060b18661d366.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphbuildings41263dc7cc077db2",
+   "rdfc10_sha256": "41263dc7cc077db22748d513a7e95eae38fdd53556e848162c7168f62dec9876",
+   "triples": 17122,
+   "file": "graphs/buildings/41263dc7cc077db2.nq.gz",
    "parts": 6,
    "title": "Registry buildings of the Canary Wharf box (cwb- ids): names, positions, outlines, levels, height, postcodes, identifiers",
    "licence": "derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), Wikidata (CC0), OS Open UPRN/USRN/TOID ids (OGL)"
   },
   "occupants": {
-   "version": "https://kgx.foaf.tv/id/graphoccupantsbdc71e50085b254c",
-   "rdfc10_sha256": "bdc71e50085b254c443a8d1ad2c21a55c938df6e49d89bdc4303803c4d7f2b4c",
-   "triples": 13415,
-   "file": "graphs/occupants/bdc71e50085b254c.nq.gz",
-   "parts": 5,
+   "version": "https://kgx.foaf.tv/id/graphoccupants95680cfac6d53d23",
+   "rdfc10_sha256": "95680cfac6d53d236799e43e39cab0c66dd15f2098b528e9084e29927bc4b4d3",
+   "triples": 16011,
+   "file": "graphs/occupants/95680cfac6d53d23.nq.gz",
+   "parts": 6,
    "title": "Occupants of the registry buildings: shops, food and drink, services, offices, with role, level, opening hours and links",
    "licence": "joined from OSM (ODbL), FSA ratings (OGL), Canary Wharf Group directory (crawl rule, scoping), brand and register sources named per occupant in the registry"
   },
@@ -173,10 +174,10 @@
    "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
   },
   "pipeline": {
-   "version": "https://kgx.foaf.tv/id/graphpipeline46d31886e66062a2",
-   "rdfc10_sha256": "46d31886e66062a25e03f1596fd95436daa3e110bd901e1f8ae61ee4e31850f5",
-   "triples": 16831,
-   "file": "graphs/pipeline/46d31886e66062a2.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphpipelinec6aa32298591c663",
+   "rdfc10_sha256": "c6aa32298591c663ae2bdac6118c45d1a8c1bb0b8d4358a62af2e054981b1eac",
+   "triples": 16844,
+   "file": "graphs/pipeline/c6aa32298591c663.nq.gz",
    "parts": 6,
    "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
    "licence": "CC0 (descriptions of tools and files)"
@@ -325,33 +326,42 @@
    "title": "Occupant placements changed by the mall and postcode-centre rule (F4, F7): 355 links of registry/buildings.json 1658dbb0fcd6556a",
    "licence": "derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), FSA ratings (OGL), ONSPD (OGL), Canary Wharf Group directory (crawl rule, scoping)"
   },
+  "registry-branch-merge": {
+   "version": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
+   "rdfc10_sha256": "195a1de0bc6be3845c2311e14c7e26614c2182c2c6df683d1a369085888379cf",
+   "triples": 2873,
+   "file": "graphs/registry-branch-merge/195a1de0bc6be384.nq.gz",
+   "parts": 1,
+   "title": "Occupant records merged by one branch key across sources (F46, F20): 181 merges and 36 pairs for review in registry/buildings.json 15d943cc5c50edb4",
+   "licence": "derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), FSA ratings (OGL), ONSPD (OGL), public registers (OGL), Wikidata (CC0), Canary Wharf Group directory (crawl rule, scoping)"
+  },
   "meta": {
-   "version": "https://kgx.foaf.tv/id/graphmeta90e0d261b79e4e4c",
-   "rdfc10_sha256": "90e0d261b79e4e4c23d524924ab5430f7844b5763000018958edeebb6d0eccfd",
-   "triples": 894,
-   "file": "graphs/meta/90e0d261b79e4e4c.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphmeta9638bdb1dd0aae6f",
+   "rdfc10_sha256": "9638bdb1dd0aae6f4996989172b6a692354595f3e6020ceb3034e639a12c9f29",
+   "triples": 924,
+   "file": "graphs/meta/9638bdb1dd0aae6f.nq.gz",
    "parts": 0,
    "title": "Descriptions of the graph versions and the current version of each graph name",
    "licence": "CC0 (descriptions only)"
   },
   "log": {
-   "version": "https://kgx.foaf.tv/id/graphlog12510457e00e2e39",
-   "rdfc10_sha256": "12510457e00e2e39284b77807a8d0a97f12c70a4a60291b90f7bac5083c4418a",
-   "triples": 15762,
-   "file": "graphs/log/12510457e00e2e39.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphlog3db0d2e88d56a7eb",
+   "rdfc10_sha256": "3db0d2e88d56a7eba6c2f57ceaea7ad9c34bdf033bfad353e35de508aabd6cd9",
+   "triples": 16831,
+   "file": "graphs/log/3db0d2e88d56a7eb.nq.gz",
    "parts": 0,
    "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
    "licence": "CC0"
   }
  },
- "total_triples": 470599,
+ "total_triples": 477175,
  "store": {
-  "generation": "gen-979400ed1deb68bc",
-  "members": 59,
-  "files": 5846,
-  "bytes": 21796009
+  "generation": "gen-34be03964461e012",
+  "members": 61,
+  "files": 6278,
+  "bytes": 22890499
  },
- "activities_this_run": 39,
+ "activities_this_run": 40,
  "activities_run_new": 0,
- "activities_in_log": 229
+ "activities_in_log": 240
 }

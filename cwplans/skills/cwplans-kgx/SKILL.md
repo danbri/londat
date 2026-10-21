@@ -138,6 +138,13 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   without `&#038;`. 470,599 triples in 32 heads; store `gen-979400ed1deb68bc`: 59 parts, 5,846 files, 21.8 MB;
   second build `new: 0`; `check-kgx-store.mjs`: all 15 queries the same in the store and in memory.
   Counts: `kgx/README.md`.
+- Build of 2026-10-21 later (KR6.3 rule 2, faults F46, F20): new head `registry-branch-merge` (2,874 triples, in the
+  store: `cwk:BranchMerge` per merge with `cwk:branchKey`, `cwk:mergeConfidence`, `cwk:mergeRule`, `cwk:mergeEvidence`,
+  `cwk:absorbedRecord`, `cwk:fromBuilding`, `cwk:toBuilding`, `cwk:placementRank`, `cwk:fault`; `cwk:BranchMergeReview`
+  per pair kept apart with `cwk:reviewReason` and `cwk:reviewRecord`); `occupants` lift version 5: 1,262 occupants (was
+  1,446), a merged occupant with its source records (`cwk:sourceRecord` → `cwk:SourceRecord`: `cwk:sourceKind`,
+  `s:name`, `cwk:role`, `cwk:placedInBuilding`, its own OSM, FSA and CWG pages as `s:sameAs`). Query: the sources of
+  one occupant are `?o cwk:sourceRecord ?r . ?r cwk:sourceKind ?k`. Numbers of the build: the activity log entry.
 - Joins across sources go through `s:sameAs` to the CWG entity IRI (`https://canarywharf.com/<kind>/<slug>/#entity`),
   OSM element URLs and Wikidata items. Mall units join by exact name only, for now.
 

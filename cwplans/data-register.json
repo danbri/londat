@@ -4295,7 +4295,7 @@
     },
     {
       "path": "registry/buildings.json",
-      "what": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins; each occupant link keeps its placement (placed, placed_by, placed_confidence, placement_fault, point_in): the mall and postcode-centre rule of tools/registry-placement.mjs (F4, F7) moved 163 links to their mall host or key building, confirmed 152 and listed 40 under their postcode (2026-10-21)",
+      "what": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins; each occupant link keeps its placement (placed, placed_by, placed_confidence, placement_fault, point_in): the mall and postcode-centre rule of tools/registry-placement.mjs (F4, F7) moved 163 links to their mall host or key building, confirmed 152 and listed 40 under their postcode (2026-10-21); the branch-key rule of tools/registry-branch-key.mjs (F46, F20) made one occupant of the records of one branch from different sources (181 merges, 184 records absorbed: 1,446 -> 1,262 occupants; every source record kept in merged_from, with branch_key, merge_rule, merge_confidence, merge_evidence) and lists 36 uncertain pairs or groups in branch_merge_review (2026-10-21)",
       "sources": [
         "osm",
         "wikidata",
@@ -4322,7 +4322,7 @@
         "extract": "osmfr-greater-london",
         "what": "building outlines (centroid, area), names, house names, levels, addresses; occupant names, brands, levels, opening hours, cuisine, wheelchair access, check and start dates, operator and business contact tags (website, phone, email, contact:* links)"
       },
-      "produced_by": "tools/build-registry.mjs, then tools/join-web-facts.mjs; on 2026-10-21 tools/registry-placement.mjs (operation place-occupants-by-mall-and-postcode) applied the placement rule to the committed file",
+      "produced_by": "tools/build-registry.mjs, then tools/join-web-facts.mjs; on 2026-10-21 tools/registry-placement.mjs (operation place-occupants-by-mall-and-postcode) applied the placement rule to the committed file, then tools/registry-branch-key.mjs (operation merge-occupants-by-branch-key) the branch-key rule",
       "shown_on": [
         "registry/index.html"
       ],

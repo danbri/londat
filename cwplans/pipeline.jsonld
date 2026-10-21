@@ -2090,7 +2090,8 @@
     "Postcode to mall: kept when 4 or more CWG entries share the postcode and 85% or more name the same mall.",
     "Position: OSM feature, else FSA geocode, else mall centre or ONSPD postcode centroid (flagged).",
     "Confidence: high with two or more sources; low for a single prefix or alternate FSA match or a note that says low confidence; else medium.",
-    "Category from the key=value (bank, pharmacy, supermarket, cafe, takeaway, restaurant, bar, gym, hotel, leisure, health, childcare, office, motoring, service, shop, other)."
+    "Category from the key=value (bank, pharmacy, supermarket, cafe, takeaway, restaurant, bar, gym, hotel, leisure, health, childcare, office, motoring, service, shop, other).",
+    "Both CWG passes (by NSI brand and by name) copy the entry's website to cwg_website (the by-name pass did not until 2026-10-21: 4 branches); --cwg-websites sets it from cwg-directory.json for every branch with a cwg_url without a rebuild."
    ],
    "cwp:network": false,
    "cwp:deterministic": false,
@@ -2939,7 +2940,8 @@
    "cwp:kind": "derive",
    "cwp:rule": [
     "Dated special hours (validFrom) are not the weekly pattern and are left out.",
-    "An occupant in the CWG list is counted once, from its CWG page; its OSM and web hours are used only for the agreement check."
+    "An occupant in the CWG list is counted once, from its CWG page; its OSM and web hours are used only for the agreement check.",
+    "An occupant with no CWG page counts in its mall's area when it has a mall, else in its postcode sector (until 2026-10-21 an occupant with a mall and no CWG page was left out: 411 records against 424 with the rule, on the same registry). An occupant made by the branch-key rule counts once."
    ],
    "cwp:network": false,
    "cwp:deterministic": true,
@@ -2949,10 +2951,15 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolwebidioms"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistrybranchkey"
     }
    ],
    "cwp:area": "structured",
-   "cwp:fault": []
+   "cwp:fault": [
+    "F46"
+   ]
   },
   {
    "@id": "https://kgx.foaf.tv/id/toolmallplanevidence",
@@ -3002,7 +3009,7 @@
    "@id": "https://kgx.foaf.tv/id/toolbuildregistry",
    "@type": "prov:Activity",
    "rdfs:label": "build-registry",
-   "dct:description": "Builds the Canary Wharf building registry: one record per OSM building outline with a stable cwb- id, its parts, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory, the regulatory and public registers), owners, postcodes, Wikidata facts, and company and property joins. Its last join is the placement rule of tools/registry-placement.mjs (F4, F7).",
+   "dct:description": "Builds the Canary Wharf building registry: one record per OSM building outline with a stable cwb- id, its parts, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory, the regulatory and public registers), owners, postcodes, Wikidata facts, and company and property joins. Its last two joins are the placement rule of tools/registry-placement.mjs (F4, F7) and the branch-key rule of tools/registry-branch-key.mjs (F46, F20).",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/localdatarawukosostn15ntv2osgbtoetrstif"
@@ -3108,7 +3115,8 @@
     "CWG directory: an entry already linked by the branch join keeps that link. Else it joins existing occupants (OSM, FSA, Wikidata, branches, and CWG occupants added earlier in the same pass) when a name key is equal (registry/sources/brands/tools/cwg-fields.mjs nameKeys) and the place agrees, tried in this order: same mall (or same street or square), a shared postcode, or the building the entry itself would be placed in. Two different named malls never join (Canada Place and the One Canada Square mall count as one). An occupant with a CWG link takes a second entry only from another CWG section (cwg_also). Records of one source in two buildings: ambiguous, not joined.",
     "CWG entries that join nothing become occupants (source cwg, role directory: <section>) placed by: the one building whose address key equals the street line (confidence high with the postcode, medium without); else the host outline of a named mall (the one outline whose OSM name, else addr:housename, is the mall name or starts with it; medium); else the one registry building with the entry postcode, or the one of them OSM tags as retail (low). Estate-wide entries, car parks and entries with no page, address or single building stay unplaced with a reason (cwg_unplaced, summary.joins.cwg).",
     "Registers (registry/sources/registers/): records are excluded when the address is not a place: GIAS correspondence addresses (address_role), the registered-office service at E14 5HU / 10th floor 5 Churchill Place, care-of and accountant addresses. Keys in order: UPRN (OS Open UPRN point inside an outline; not used when one register gives the UPRN to records at two or more postcodes, or when the UPRN point is over 150 m from the register point), the register point (inside or within 12 m; an FSA point within 3 m of its postcode centre is a postcode, F7), a named mall in the address (the mall host outline, F4; the point outline kept as point_in), street address with the postcode, street address alone when one building matches a numbered address key, the name of an occupant at the same postcode or mall, the postcode alone when one registry building has it, the ONSPD centre is within 50 m of it and the address names no other street (never for a charity). A charity placed by address in a residential building (homes or a residential building tag) is left unplaced. A record whose name matches an occupant of the chosen building enriches it; else it is a new occupant (source = register, role register: <name> or head office (ODS) for ODS organisation records, current false for closed or inactive records). Each link (occupant.registers[]) keeps register, id, kind, status, key, precision, confidence; source ids are copied to the occupant (urn, ods_code, cqc_location_id, charity_number, company_number, ofsted_urn, gambling_premises_id, active_places_site_id, fhrs_id). Unplaced records and rejected UPRNs are listed (registers_unplaced, registers_uprn_rejected).",
-    "Placement rule (last join; tools/registry-placement.mjs applyPlacement, operation place-occupants-by-mall-and-postcode v1, F4, F7): every OSM, FSA and branch occupant placed by a point is checked. F4: an occupant of a named CWG mall (its mall from the branch table or the CWG join, else the CWG mall its OSM addr:place / addr:housename / addr:street or its FSA address names) goes to the mall host outline; the outline its point is in is kept as point_in; an OSM occupant keeps its mall level by the F48 rule (level:ref first, else level) as mall_level. F7: an FSA point within 3 m of the ONSPD centre of its postcode or shared by 3 or more premises (the SP-3 test), and a branch at a mall or postcode centroid, is not a building position: the occupant is placed by its street address with the postcode (high), its street address alone (medium), an occupant of another source with the same name and postcode (medium), or the one building with the postcode at the postcode centre (low); else it is listed under its postcode (unplaced_by_postcode; branches in placement_unplaced). Each re-placed occupant has placed (precision), placed_by (key), placed_confidence and placement_fault; occupants kept at their point have placed_by (position class). Building postcodes are then recomputed from their evidence (outline tag, Wikidata, OSM occupant tags, FSA occupants). Stats: summary.placement."
+    "Placement rule (last join; tools/registry-placement.mjs applyPlacement, operation place-occupants-by-mall-and-postcode v1, F4, F7): every OSM, FSA and branch occupant placed by a point is checked. F4: an occupant of a named CWG mall (its mall from the branch table or the CWG join, else the CWG mall its OSM addr:place / addr:housename / addr:street or its FSA address names) goes to the mall host outline; the outline its point is in is kept as point_in; an OSM occupant keeps its mall level by the F48 rule (level:ref first, else level) as mall_level. F7: an FSA point within 3 m of the ONSPD centre of its postcode or shared by 3 or more premises (the SP-3 test), and a branch at a mall or postcode centroid, is not a building position: the occupant is placed by its street address with the postcode (high), its street address alone (medium), an occupant of another source with the same name and postcode (medium), or the one building with the postcode at the postcode centre (low); else it is listed under its postcode (unplaced_by_postcode; branches in placement_unplaced). Each re-placed occupant has placed (precision), placed_by (key), placed_confidence and placement_fault; occupants kept at their point have placed_by (position class). Building postcodes are then recomputed from their evidence (outline tag, Wikidata, OSM occupant tags, FSA occupants). Stats: summary.placement.",
+    "Branch-key rule (last join; tools/registry-branch-key.mjs applyBranchMerge, operation merge-occupants-by-branch-key v1, F46, F20): the records of one branch from different sources become one occupant with every source record in merged_from: a shared identifier (high), the same name in one building (high with a second agreement, else medium), an ODS head office and its site (medium), the same name in buildings within 250 m placed by the placement rank (medium or high); uncertain pairs go to branch_merge_review. Stats: summary.branch_merge."
    ],
    "cwp:network": false,
    "cwp:deterministic": false,
@@ -3233,6 +3241,72 @@
    ]
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolregistrybranchkey",
+   "@type": "prov:Activity",
+   "rdfs:label": "registry-branch-key",
+   "dct:description": "Operation merge-occupants-by-branch-key (version 1, kgx-ops Flow, logged in kgx/log with the SHA-256 of each input): one branch key across sources (OSM, FSA, the CWG directory, store pages, the public registers, Wikidata), the same function (applyBranchMerge) as the last join of build-registry.mjs, applied to the committed registry. The records of one branch become one occupant: the primary record keeps its name, role and placement, takes the fields it lacks from the others (a second CWG page goes to cwg_also, registers are joined), and keeps every source record in merged_from with the building it was in; source is the union of the sources, primary_source the primary record's own. Each merge has branch_key, merge_rule, merge_confidence and merge_evidence; uncertain pairs are listed in branch_merge_review with a reason and not merged. Building postcodes are recomputed from their evidence for the buildings a record left or entered. Stats: summary.branch_merge. --dry prints the merges and the review list without writing or logging.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/buildings.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/registry/osm-cw.json.gz"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/postcodes/postcodes.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/ids.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/buildings.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/registry-branch-key.mjs"
+   },
+   "cwp:command": "node cwplans/tools/registry-branch-key.mjs",
+   "cwp:kind": "join",
+   "cwp:rule": [
+    "Key 1, shared identifier (high): OSM id, FSA id (also the OSM tag fhrs:id), CWG page (cwg_url, cwg_also), store page, CQC location (also ref:GB:cqc_location), school URN (also ref:edubase), Ofsted URN, Active Places site, gambling premises, ODS code (also ref:GB:nhs_ods), Wikidata item (also the OSM tag wikidata), charity or company number. Across buildings only the branch-level ones (not ODS, Wikidata, charity, company).",
+    "Never merged: an organisation record (Wikidata headquarters or occupant, ODS head office, a charity) with a chain branch; two records with different values of an identifier that one place has once (FSA id, Wikidata item, CQC location, URN); two records of one source with no shared identifier (except the F20 rule); two records whose addresses give different numbers in the same street; a name match where one record matches two records of one source (ambiguous).",
+    "Key 2, the same name key in one building (the audit ID-2 normalisation without spaces): high with a second agreement (same mall, same brand item, same street number), else medium. The name without a branch suffix naming a place (cwg-fields.mjs nameKeys) or without a final kind word (restaurant, coffee, cinema, cucina): the same confidences.",
+    "F20: an ODS head office and an ODS site with the same name key in one building are the provider and its site: one occupant, medium.",
+    "Key 3, the same name key in two or more buildings within 250 m, one record in each, no source in two of them (one branch placed twice, F46): placed by the placement rank (1 OSM node with a level in a named mall, 2 CWG mall address or a mall key, 3 a high address key or an FSA point whose address names its building, 4 OSM point or branch point, 5 FSA address point or medium key, 6 register or Wikidata coordinate, name key, low key). High with a shared branch-level identifier and a clear rank; medium when rank 1-2 is over rank 4 or worse, or rank 1-4 over rank 5 or worse, within 150 m, or with a shared identifier but two strong positions; else review (low).",
+    "A word-prefix name in one building (Hazev / Hazev Restaurant) is never merged: review (low).",
+    "Does nothing when buildings.json already has summary.branch_merge; stops when it has no summary.placement (runs after registry-placement).",
+    "In one building the primary record is chosen by the source order osm, cwg, storelocator, wikidata, the registers, fsa (its name is the shop's own); across buildings by the placement rank first."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildregistry"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/tooljoinwebfacts"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistryplacement"
+    }
+   ],
+   "cwp:area": "registry",
+   "cwp:fault": [
+    "F46",
+    "F20",
+    "F4",
+    "F7"
+   ]
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/tooljoinwebfacts",
    "@type": "prov:Activity",
    "rdfs:label": "join-web-facts",
@@ -3336,6 +3410,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolregistryosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistrybranchkey"
     }
    ],
    "cwp:area": "registry",
@@ -3510,6 +3587,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolfetchrawgrid"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistrybranchkey"
     }
    ],
    "cwp:area": "atlas",
@@ -7431,7 +7511,8 @@
     "VA-2 issues are the level tokens tools/osm-values.mjs cannot read (osmLevelsUnread).",
     "Each issue has a severity (high, medium, low) and an entity (building, postcode, OSM element, FSA premises and others).",
     "SP-2 leaves out occupants placed by a key (placed_confidence: SP-7). SP-6 counts an outline as the mall when its name, OSM name or addr:housename names it. CV-2 counts a CWG entry as seen by another source when a registry occupant from another source carries its URL after the registry join. CV-3: CWG entries the registry could not place, by reason.",
-    "CV-4: register records in the registry box with no building, by reason; ID-5: register UPRNs not used (shared across postcodes, or far from the register point); SE-3: register addresses that are not where the organisation works."
+    "CV-4: register records in the registry box with no building, by reason; ID-5: register UPRNs not used (shared across postcodes, or far from the register point); SE-3: register addresses that are not where the organisation works.",
+    "ID-6 (F46): occupant names in more than one building, one source per building, different sources, within 250 m; each name is marked when the branch-key review list holds it. ID-2 carries the branch-key stats; SP-1, SP-3 and the ID checks read the records merged into an occupant (merged_from)."
    ],
    "cwp:network": false,
    "cwp:deterministic": true,
@@ -7468,6 +7549,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolbuildindoor"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistrybranchkey"
     }
    ],
    "cwp:area": "quality",
@@ -7485,7 +7569,8 @@
     "F17",
     "F18",
     "F19",
-    "F20"
+    "F20",
+    "F46"
    ],
    "cwp:judgement": "Each new check is read by hand against its examples before it is trusted (curation skill, \"Catalogue first\")."
   },
@@ -8012,7 +8097,8 @@
     "Graph versions are immutable and named by their RDFC-1.0 hash; an activity is named by (operation, operation version, input IRIs, parameters) and is not run again.",
     "Bump an operation's version when its code changes.",
     "The log graph leaves out log lifts and store packs, so an unchanged pipeline gives the same store generation.",
-    "Only the current Shardborough generation is kept in the folder; git keeps history."
+    "Only the current Shardborough generation is kept in the folder; git keeps history.",
+    "lift-registry-occupants version 5 (2026-10-21): a merged occupant has cwk:branchKey, cwk:mergeConfidence, cwk:mergeRule, cwk:mergeEvidence and one cwk:SourceRecord node per source record (source kind, name, role, the building it was placed in, its own OSM, FSA and CWG pages); every occupant has its FSA page and second CWG pages as s:sameAs."
    ],
    "cwp:network": false,
    "cwp:deterministic": false,
@@ -8049,6 +8135,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolregistryplacement"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistrybranchkey"
     }
    ],
    "cwp:area": "structured",
@@ -13178,7 +13267,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins; each occupant link keeps its placement (placed, placed_by, placed_confidence, placement_fault, point_in): the mall and postcode-centre rule of tools/registry-placement.mjs (F4, F7) moved 163 links to their mall host or key building, confirmed 152 and listed 40 under their postcode (2026-10-21)",
+   "dct:title": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins; each occupant link keeps its placement (placed, placed_by, placed_confidence, placement_fault, point_in): the mall and postcode-centre rule of tools/registry-placement.mjs (F4, F7) moved 163 links to their mall host or key building, confirmed 152 and listed 40 under their postcode (2026-10-21); the branch-key rule of tools/registry-branch-key.mjs (F46, F20) made one occupant of the records of one branch from different sources (181 merges, 184 records absorbed: 1,446 -> 1,262 occupants; every source record kept in merged_from, with branch_key, merge_rule, merge_confidence, merge_evidence) and lists 36 uncertain pairs or groups in branch_merge_review (2026-10-21)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"

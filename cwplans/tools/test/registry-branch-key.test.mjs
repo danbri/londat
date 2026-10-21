@@ -67,3 +67,10 @@ test('across buildings: the CWG mall address outranks an OSM point in the next b
   assert.equal(stats.across_buildings.merges, 1);
   assert.ok(review.some(x => /two strong positions disagree/.test(x.reason)));
 });
+
+test('a former identifier named by an OSM was: tag joins the record of the earlier registration (medium)', () => {
+  const r = rec('cwb-10', [{ name: 'Sk:n', role: 'service: doctors', source: 'osm', osm: 'node/11' },
+    { name: 'Sk:n - London Canary Wharf', role: 'register: cqc', source: 'cqc', cqc_location_id: '1-232854118' }]);
+  run([r], { 'node/11': { 'ref:GB:cqc_location': '1-20631772333', 'was:ref:GB:cqc_location': '1-232854118' } });
+  assert.equal(r.occupants.length, 1); assert.equal(r.occupants[0].merge_rule, 'former identifier (OSM was: tag)'); assert.equal(r.occupants[0].merge_confidence, 'medium');
+});

@@ -23,5 +23,6 @@
   "iri": "https://kgx.foaf.tv/id/graphmaterialsca718efee790144e",
   "store": false
  },
- "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96"
+ "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96",
+ "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384"
 }

@@ -1,8 +1,8 @@
 {
  "heads": {
   "facts": "https://kgx.foaf.tv/id/graphfactsd328af279ee0f353",
-  "buildings": "https://kgx.foaf.tv/id/graphbuildings47f060b18661d366",
-  "occupants": "https://kgx.foaf.tv/id/graphoccupantsbdc71e50085b254c",
+  "buildings": "https://kgx.foaf.tv/id/graphbuildings41263dc7cc077db2",
+  "occupants": "https://kgx.foaf.tv/id/graphoccupants95680cfac6d53d23",
   "cwg": "https://kgx.foaf.tv/id/graphcwg395b503eee6ab315",
   "web": "https://kgx.foaf.tv/id/graphweb67e1f54d70c4f914",
   "web-search": "https://kgx.foaf.tv/id/graphwebsearch85092b03aa734c09",
@@ -13,7 +13,7 @@
   "coref-site-name": "https://kgx.foaf.tv/id/graphcorefsitenamed0f4b64d58023481",
   "mallmap": "https://kgx.foaf.tv/id/graphmallmapa43de479b61de2ff",
   "storeguide": "https://kgx.foaf.tv/id/graphstoreguidefc01b8a99ccaf563",
-  "pipeline": "https://kgx.foaf.tv/id/graphpipeline46d31886e66062a2",
+  "pipeline": "https://kgx.foaf.tv/id/graphpipelinec6aa32298591c663",
   "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
   "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
   "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
@@ -30,7 +30,8 @@
   "roofs": "https://kgx.foaf.tv/id/graphroofsb6a65e444fa5affb",
   "materials": "https://kgx.foaf.tv/id/graphmaterialsca718efee790144e",
   "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96",
-  "meta": "https://kgx.foaf.tv/id/graphmeta90e0d261b79e4e4c",
-  "log": "https://kgx.foaf.tv/id/graphlog12510457e00e2e39"
+  "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
+  "meta": "https://kgx.foaf.tv/id/graphmeta9638bdb1dd0aae6f",
+  "log": "https://kgx.foaf.tv/id/graphlog3db0d2e88d56a7eb"
  }
 }

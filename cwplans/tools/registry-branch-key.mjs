@@ -338,7 +338,8 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const V = VOCAB, S = 'https://schema.org/', T = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', N = F.namedNode, q = [];
     const add = (s, p, o) => { if (o != null && o !== '') q.push(F.quad(N(s), N(p), typeof o === 'string' ? N(o) : o, F.defaultGraph())); };
     const lit = v => v == null || v === '' ? null : F.literal(String(v));
-    const urls = o => [o.osm ? 'https://www.openstreetmap.org/' + o.osm : null, o.fhrs_id ? 'https://ratings.food.gov.uk/business/' + o.fhrs_id : null, o.cwg_url || null].filter(Boolean);
+    // a record's pages: OSM, the FSA page (the url an FSA record carries), the CWG page
+    const urls = o => [o.osm ? 'https://www.openstreetmap.org/' + o.osm : null, (o.primary_source ?? o.source) === 'fsa' && /^https?:\/\//.test(o.url || '') ? o.url : null, o.cwg_url || null].filter(Boolean);
     for (const c of changes) {
       const s = kid('building', c.to, 'branchmerge', c.o.branch_key, c.from.length > 1 ? 'across' : 'in');
       add(s, T, V + 'BranchMerge'); add(s, S + 'name', lit(c.o.name)); add(s, V + 'branchKey', lit(c.o.branch_key)); add(s, V + 'sourceKind', lit(c.o.source));
