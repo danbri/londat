@@ -111,7 +111,7 @@ prototyping phase"; "Flag it somewhere for review as we scale" (2026-10-04); the
 | date | O1 | O2 | O3 | O4 | O5 | O6 | notes |
 |---|---|---|---|---|---|---|---|
 | 2026-10-11 (baseline) | 0.0 | 0.05 | 0.1 | 0.3 | 0.4 | 0.5 | O2: only the assessment and the coarse London terrain ring; O3: the MCP server and the test hook exist, but no non-visual or low-end support |
-| 2026-10-20 (draft for the 2026-10-25 checkpoint) | 0.28 | 0.34 | 0.36 | 0.25 | 0.28 | 0.50 | per key result below; O4 and O5 are lower than the baseline guess because they are now scored key result by key result |
+| 2026-10-21 (draft for the 2026-10-25 checkpoint) | 0.30 | 0.44 | 0.41 | 0.25 | 0.29 | 0.50 | per key result below; updated 2026-10-21 with the week's merged work |
 
 ### Checkpoint 1, draft scores (2026-10-20; final on 2026-10-25)
 
@@ -120,17 +120,17 @@ Evidence is on main unless stated. "Headless" means Chromium with software WebGL
 | key result | score | evidence |
 |---|---|---|
 | KR1.1 locale constants | 0.2 | `tools/check-locale.mjs` runs in `npm run check` and fails a push that adds a constant; 1,188 lines remain (baseline about 1,186); none removed yet |
-| KR1.2 places outside the UK | 0.4 | León and Sarajevo built by one tool (`build-place-tiles.mjs`), live on the globe with search, cards and local time in the text; Leiden on hold (owner, 2026-10-18); the page clock and sky still run on London time |
+| KR1.2 places outside the UK | 0.5 | León and Sarajevo by one tool (`build-place-tiles.mjs`): core, city ring (León 23,960 buildings, Sarajevo 57,680) and 35 km surroundings by level of detail, live on the globe with search, cards and local time in the text; Leiden on hold (owner, 2026-10-18); the page clock and sky still run on London time |
 | KR1.3 languages | 0.1 | country names on the globe in 26 languages (`?lang=`); the interface is English only |
 | KR1.4 source adapters | 0.4 | UK adapter; worldwide sources (Natural Earth, ETOPO, Copernicus GLO-30, OSM); Spain (IGN, Catastro) and Bosnia (waiver) adapters in the region configs |
 | KR2.1 globe | 0.8 | live; orbit to street level; hand-over 0.000 m off with a 0.5 s fade; not measured on a phone |
 | KR2.2 worldwide base layers | 0.7 | served as tiles in the terrain quadtree (2026-10-20): Sentinel-2 cloudless 2016 imagery (CC BY 4.0) worldwide to 2.4 km a pixel and to 19 m round the testbeds, Copernicus GLO-90 heights to 150 m round the testbeds (`world-base/`, 27.6 MB); Natural Earth 1:10m roads, rail, rivers, lakes, urban areas and GeoNames towns (`world-detail/`, 16.9 MB); OSM regional sets for north-west Spain and Bosnia (7.5 MB); terrain elsewhere still ETOPO 9.8 km; no 3D Tiles terrain format yet |
-| KR2.3 one tile format | 0.4 | 3D Tiles 1.1 with glTF for the places (validator: 0 errors); the Docklands model is not tiled |
+| KR2.3 one tile format | 0.5 | 3D Tiles 1.1 with glTF for the places, a quadtree with screen-space error and REPLACE refinement (validator: 0 errors, 0 warnings); hosting study done (`docs/hosting-options.md`); the Docklands model is not tiled |
 | KR2.4 detail measure per tile | 0.0 | not started |
-| KR2.5 tile hosting | 0.0 | no decision |
+| KR2.5 tile hosting | 0.2 | study with measurements and a ranked recommendation (`docs/hosting-options.md`); owner, 2026-10-20: stay on GitHub Pages for now; same-origin range archive prototype (`?archive=`) |
 | KR2.6 knowledge-graph speed | 0.0 | not started |
 | KR2.7 skeletal world and UK | 0.7 | world and UK skeleton, search, "where am I", Home/North/World; owner: "Drag pinch twist all great" |
-| KR3.1 low-end devices | 0.2 | LOD steps 1 and 2, model and globe memory freed (largest one-frame rise 113 to 153 MB, now 34 MB, headless); no reference device measured |
+| KR3.1 low-end devices | 0.4 | LOD steps 1 to 3 (trees 818k to 56k triangles at cw), JS heap 483 to 277 MB at cw, globe and model memory freed (largest one-frame rise 113 to 153 MB, now 34 MB), service worker (repeat visit 161 to 8 requests at cw), parallel loading; all headless; no reference device measured |
 | KR3.2 no 3D needed | 0.3 | text view (`?text=1`) exists; not verified without WebGL; no 2D map |
 | KR3.3 non-visual use | 0.5 | `describeView` and `?describe=1` name places, buildings and local time; not tested with VoiceOver or TalkBack |
 | KR3.4 machine access | 0.7 | page API 1.0.0, 10 WebMCP tools, `llms.txt`, the docklands-view MCP server |
@@ -139,7 +139,7 @@ Evidence is on main unless stated. "Headless" means Chromium with software WebGL
 | KR4.2 faults closed by rules | 0.5 | F54 closed in the port (terrain cut at water outlines); F55 (default heights) counted, not patched |
 | KR4.3 Painted style | 0.2 | owner: "a bit janky and not v striking" / "Acceptable for now" |
 | KR4.4 one 3DGS capture | 0.0 | not started |
-| KR5.1 hourly cache runs | 0.1 | 7 runs on 2026-10-18 and 5 on 2026-10-19 (target 20 a day); the self-restarting loop waits for the owner's decision (the session's safety check refused the workflow change) |
+| KR5.1 hourly cache runs | 0.15 | 7 runs on 2026-10-18 and 5 on 2026-10-19 (target 20 a day); the self-restarting loop (5 runs a job, then it starts the next job) is on main since 2026-10-21 (98a93a5d); it starts with the next scheduled run that GitHub fires; not yet counted |
 | KR5.2 gaps in the 5-minute feed | 0.5 | the live-cache loop runs; gaps not yet measured on the dashboard |
 | KR5.3 live layers for any place | 0.0 | aircraft and ships for the Docklands circle only |
 | KR5.4 time scrubber | 0.5 | PARTIAL (accepted) |
