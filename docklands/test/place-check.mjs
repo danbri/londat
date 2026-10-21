@@ -4,7 +4,9 @@
 // featuresAt names the building at a point, findPlaces finds the place's words and goTo flies there, a tap on a building
 // opens its card, the place's local time is given, no page errors; since 2026-10-20 (city and surroundings by level of
 // detail) the tile tree settles with core tiles drawn at the deep link, and a far view (30 km out) draws surroundings tiles
-// with main roads and the place's river. Screenshots in --out (default docklands/test/out/).
+// with main roads and the place's river; since 2026-10-22 (Sarajevo) the landmark set: minarets present (mapped and estimated apart),
+// counted in describeView, a tap on Gazi Husrev-beg Mosque's minaret gives its card, the old town and the city 8 km out (screenshots).
+// Screenshots in --out (default docklands/test/out/).
 //   python3 -m http.server 8190 --bind 127.0.0.1 &      (from the repository root)
 //   node docklands/test/place-check.mjs [--base http://127.0.0.1:8190] [--place leon] [--webgpu] [--sizes 390x844@2,1280x800@1]
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
@@ -18,7 +20,9 @@ const SIZES = arg('--sizes', '390x844@2,1280x800@1').split(',').map(s => { const
 // what each place is checked against (test data: tests may name places)
 const CASES = {
   leon: { ll: '42.59732,-5.56654,1500', ht: '0,55', search: 'Plaza Mayor', building: { lon: -5.56689, lat: 42.59782 }, river: /Bernesga/, town: 'San Andrés del Rabanedo', city: { lon: -5.6105, lat: 42.6085 } },
-  sarajevo: { ll: '43.85917,18.43335,1500', ht: '0,55', search: 'Vijećnica', building: { lon: 18.43335, lat: 43.85917 }, river: /Miljacka|Bosna/, town: 'Ilidža', city: { lon: 18.3550, lat: 43.8500 } },
+  sarajevo: { ll: '43.85917,18.43335,1500', ht: '0,55', search: 'Vijećnica', building: { lon: 18.43335, lat: 43.85917 }, river: /Miljacka|Bosna/, town: 'Ilidža', city: { lon: 18.3550, lat: 43.8500 },
+    // the landmark set (cwplans/tools/build-place-landmarks.mjs, globe/landmarks.js): Gazi Husrev-beg Mosque's minaret (OSM parts)
+    landmarks: { minaret: 'w1030951861', name: 'Gazi Husrev-begova džamija', at: { lon: 18.42895, lat: 43.85915 } } },
   leiden: { ll: '52.15948,4.49123,1500', ht: '0,55', search: 'Hoogstraat', building: { lon: 4.49123, lat: 52.15948 } },
   // a place of kind "blocks" (no core, no ground of its own): BT Tower (OSM way 5022282, 188.4 m in OSM), a named building
   // drawn with its own id; Croydon for a city block; the whole city from 20 km
@@ -96,6 +100,27 @@ for (const [w, h, dpr] of SIZES) {
     const lv = Object.keys(far.st.drawn_by_level).map(Number);
     check(far.st.settled && far.dp && far.dp.blocks_drawn > 2000 && Math.min(...lv) <= 11, `far view (${C.far.range / 1000} km): the whole city as coarse blocks`, `${JSON.stringify(far.st.drawn_by_level)} by level; ${far.dp?.blocks_drawn} blocks ${JSON.stringify(far.dp?.blocks_by_source)}; ${far.st.triangles} place triangles, frame ${far.frame?.triangles} triangles, ${far.frame?.calls} calls; eye ${far.view.eye.above_ground_m} m up`);
     const shotF = `${OUT}/place-${PLACE}-${tag}-far.png`; await page.waitForTimeout(500); await page.screenshot({ path: shotF }); console.log('     screenshot', shotF);
+  }
+  // landmarks (minarets, domes, towers): present, counted in describeView, a tap on a mapped minaret gives its card; the old town
+  // and the city 8 km out (screenshots)
+  if (C.landmarks) {
+    const L = C.landmarks;
+    const lm = await page.evaluate(async ({ L, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: L.at.lon, lat: L.at.lat, range_m: 350, tilt_deg: 75, heading_deg: 120 });
+      const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && G.landmarks?.stats().sets[0]?.state === 'ready' && performance.now() - t0 > 1500) break; }
+      for (let k = 0; k < 3; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
+      const st = G.landmarks.stats(), rows = G.landmarks.rows(p), d = await docklands.describeView(), dl = (d.places || []).find(x => x.place === p)?.landmarks;
+      const s = G.landmarks.screen(p, L.minaret); let card = null;
+      if (s?.base && s?.top) { G.tap((s.base[0] + s.top[0]) / 2, s.base[1] * 0.3 + s.top[1] * 0.7); const el = document.getElementById('card'); card = el.hidden ? null : el.textContent.replace(/\s+/g, ' ').slice(0, 300); el.hidden = true; }
+      return { st, mapped: rows.filter(r => r.type === 'minaret' && r.source === 'mapped').length, est: rows.filter(r => r.type === 'minaret' && r.source === 'estimated').length, domes: rows.filter(r => r.type === 'dome').length, dl, card, s }; }, { L, p: PLACE });
+    check(lm.st.sets[0]?.state === 'ready' && lm.mapped > 0 && lm.est > 0 && lm.st.triangles > 0, 'landmarks: minarets present (mapped and estimated apart), drawn', `${lm.mapped} mapped, ${lm.est} estimated minarets, ${lm.domes} domes; ${lm.st.tiles} landmark meshes, ${lm.st.triangles} triangles drawn; ${lm.st.sets[0]?.hidden_core_vertices} core part vertices replaced`);
+    check(lm.dl && lm.dl.minarets_in_view.mapped + lm.dl.minarets_in_view.estimated > 0 && lm.dl.mosques_in_view > 0, 'describeView counts the mosques and minarets in view', JSON.stringify(lm.dl && { mosques: lm.dl.mosques_in_view, minarets: lm.dl.minarets_in_view, domes: lm.dl.domes_in_view, towers: lm.dl.towers_in_view, tallest: lm.dl.tallest_in_view }));
+    check(!!lm.card && lm.card.includes(L.name) && /Minaret/.test(lm.card) && /Mapped in OpenStreetMap/.test(lm.card), `a tap on ${L.name}'s minaret opens its card`, lm.card || JSON.stringify(lm.s));
+    const shotB = `${OUT}/place-${PLACE}-${tag}-bascarsija.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotB }); console.log('     screenshot', shotB);
+    const c8 = await page.evaluate(async p => { const G = __docklands3.globe; await docklands.goTo({ lon: 18.4, lat: 43.855, range_m: 8000, tilt_deg: 72, heading_deg: 80 });
+      const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
+      const d = await docklands.describeView(); return { dl: (d.places || []).find(x => x.place === p)?.landmarks, st: G.landmarks.stats() }; }, PLACE);
+    check(c8.dl && c8.dl.minarets_in_view.estimated + c8.dl.minarets_in_view.mapped > 20 && c8.st.triangles > 0, 'the city 8 km out: minarets drawn and counted', JSON.stringify(c8.dl && { mosques: c8.dl.mosques_in_view, minarets: c8.dl.minarets_in_view, towers: c8.dl.towers_in_view }));
+    const shotC = `${OUT}/place-${PLACE}-${tag}-city8.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotC }); console.log('     screenshot', shotC);
   }
   // a far view, 30 km out: surroundings tiles with main roads and the place's river; the town of the city ring found by name
   if (C.kind !== 'blocks') { const far = await page.evaluate(async ({ o, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: o.lon, lat: o.lat, range_m: 30000, tilt_deg: 45 });

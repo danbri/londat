@@ -1,0 +1,11 @@
+{
+ "format": "place-landmarks-index-1",
+ "about": "Landmark sets of the places (minarets, domes, towers) made by cwplans/tools/build-place-landmarks.mjs; read by docklands/globe/landmarks.js",
+ "places": {
+  "sarajevo": {
+   "tileset": "sarajevo/landmarks/tileset.json",
+   "features": "sarajevo/landmarks/landmarks.json",
+   "readme": "sarajevo/landmarks/README.md"
+  }
+ }
+}

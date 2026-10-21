@@ -10434,6 +10434,73 @@
    ],
    "area": "world",
    "judgement": "Natural Earth 1:10m for the world (public domain) and OSM only for the regions round the testbeds (ODbL, allowed by the owner): a worldwide OSM road layer would be hundreds of MB. GeoNames cities15000 (CC BY 4.0) rather than cities5000 or OSM places worldwide, for size."
+  },
+  {
+   "id": "place-landmarks",
+   "area": "buildings",
+   "tool": "tools/build-place-landmarks.mjs",
+   "command": "node cwplans/tools/build-place-landmarks.mjs [fetch|build|readme] --region <id> [--refetch] [--force] [--no-estimate]",
+   "kind": "build",
+   "used": [
+    {
+     "source": "overture-buildings",
+     "endpoint": "https://overturemaps-us-west-2.s3.amazonaws.com/release/2026-09-23.1/theme=buildings/",
+     "request": "cwplans/tools/fetch-overture-theme.py: religious buildings and buildings with parts, all building parts, over the landmarks box (positions only, to choose the OSM boxes)"
+    },
+    {
+     "source": "overture-places",
+     "endpoint": "https://overturemaps-us-west-2.s3.amazonaws.com/release/2026-09-23.1/theme=places/type=place/",
+     "request": "places of worship and religious organisations over the landmarks box (positions only)"
+    },
+    {
+     "source": "osm",
+     "endpoint": "https://api.openstreetmap.org/api/0.6/map.json",
+     "request": "a box of +-80 m round each candidate, boxes merged up to 700 m, one at a time 1.1 s apart, split in four on 400"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/tileset.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/tiles/*.glb"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/features.json"
+    },
+    {
+     "local": "data/raw/places/<id>/landmarks/"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/places/sarajevo/landmarks/tileset.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/landmarks/tiles/*.glb"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/landmarks/landmarks.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/landmarks/log.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/landmarks/README.md"
+    },
+    {
+     "file": "docklands/data/places/landmarks.json"
+    }
+   ],
+   "method": "Landmarks of a place on the globe (owner, 2026-10-22: \"Currently you show it [Sarajevo] without its distinctive landscape of mosques (especially their minarets). We need to fix that.\"): two dataflow operations logged in places/<id>/landmarks/log.json. landmark-select v1: OSM answers + the core features -> places of worship (outline tags or a place_of_worship node inside), mapped minarets (minaret tags; the part-stack rule: slender parts of 40 m2 or less, top >= 18 m and >= 1.6 x the hall, stacked within 2.5 m), estimated minarets (a mosque with none mapped within 30 m: size class S/M/L by footprint (15/25/35 m high, base 2.5/3/3.5 m), at the hull corner farthest along qibla + 135 deg or nearest a mapped entrance; checked against the mapped ones), domes (parts with roof:shape dome / onion), towers (tower parts, pointed roofs above the body, clock and bell towers). landmark-tiles v1: the selection + the place tiles (ground and block tops as drawn) + features -> one glb per level-13 cell (minaret by lathe: plinth, shaft, balcony on its corbel, cone; dome on a drum; tower as a prism with a pointed, dome or onion cap), each vertex placed exactly through its own ENU frame and ECEF; landmarks.json with hide_core (the core parts these replace, collapsed by the reader).",
+   "rules": [
+    "OSM (ODbL) for every shape; the estimated class is a stated rule, kept apart (its own primitive, rows marked \"estimated\"), counted and switchable (region config and ?landmarks=mapped).",
+    "Overture places (CDLA-Permissive-2.0) only to choose where to ask the OSM API; nothing from it is drawn or committed.",
+    "No 3D Warehouse model is used (docs/regions/sarajevo-3dwarehouse.md: not an open licence).",
+    "Geometry only (architecture rule 6): no baked light; the minimum screen width is applied live in the vertex shader.",
+    "build-place-tiles.mjs is not changed: the landmarks read its tiles as inputs by hash.",
+    "Bump an operation version when its body changes: the memo key does not see the code."
+   ],
+   "network": true,
+   "deterministic": true
   }
  ],
  "manual_activities": [
@@ -11104,6 +11171,10 @@
   {
    "tool": "tools/test/place-blocks.test.mjs",
    "what": "Tests (node --test) of tools/place-blocks.mjs: the selection (OSM geometry in the boundary, out of the model box, Microsoft heights by dataset, empty licences skipped), the tree (cells with buildings, leaves at the leaf level), a tile (boxes, outlines, a named building with COLOR_0 and _FEATURE_ID_0, merged squares at a coarse level, int8 rotations), the world-base ground sampler."
+  },
+  {
+   "tool": "tools/test/place-landmarks.test.mjs",
+   "what": "Tests (node --test) of the committed landmark set of Sarajevo (tools/build-place-landmarks.mjs): mapped and estimated minarets distinct and counted, each estimated row names its rule and has no OSM id of its own, Gazi Husrev-beg Mosque minaret mapped at 47 m from OSM with its domes, the tiles of the tileset exist, hide_core ids are core buildings, every landmark stands on the ground."
   }
  ],
  "header_mismatches_resolved": {

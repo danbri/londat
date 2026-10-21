@@ -3742,3 +3742,67 @@ the menu box; ?lang=ru with and without ?scripts=all; the no-3D page). Lessons:
   when the setting is turned off.
 - `world.test.mjs` expected `ja` sea names in Japanese: with the default on they are now English ("North Sea"); the
   test checks both settings.
+## Landmarks: minarets, domes and towers (2026-10-22)
+
+Owner, 2026-10-22: "Currently you show it [Sarajevo] without its distinctive landscape of mosques (especially their
+minarets). We need to fix that." Tool `cwplans/tools/build-place-landmarks.mjs --region sarajevo` (pipeline activity
+`place-landmarks`); reader `docklands/globe/landmarks.js`, hooked by ONE line at the end of `attachPlaces` (places.js);
+data `cwplans/docklands/data/places/sarajevo/landmarks/` (tileset.json, tiles/13-x-y.glb, landmarks.json, log.json,
+README.md) and the index `places/landmarks.json`; region config `place.landmarks` (box, `estimate_minarets`,
+`minaret_rule`); tests `cwplans/tools/test/place-landmarks.test.mjs`, place-check's Sarajevo case. Views: old town
+https://danbri.github.io/londat/docklands/?ll=43.85915,18.42895,600&ht=200,72 , city
+https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,8000&ht=0,50 (add `&landmarks=mapped` to hide the
+estimated minarets, `&landmarks=off` for none).
+
+- **Why nothing showed.** The place tiles draw OSM building parts as prisms in the core only (Gazi Husrev-beg's minaret
+  was a 47 m polygon prism), and the city ring as flat blocks of buildings >= 40 m2 (Overture `building` records have no
+  parts), so from the 8 km city view (level 12 to 14 tiles) no minaret, tower or dome was drawn at all.
+- **OSM has few minarets in Sarajevo** (2026-10-21): 126 mosques with an outline in the city box, 4 minarets mapped
+  (3 by tag `man_made=tower` + `tower:type=minaret` / `building=minaret`, 1 by building parts: Gazi Husrev-beg). The
+  rest are the ESTIMATED class: a stated rule, its own glb primitive "estimated", rows `source: "estimated"` with the
+  rule text, counted in the README and log, off by `estimate_minarets: false` (rebuild) or `?landmarks=mapped` /
+  `G.landmarks.setEstimated(false)`. Rule: size class by footprint (S < 150 m2: 15 m, base 2.5 m, wooden: brown cone;
+  M < 500 m2: 25 m, 3 m; L: 35 m, 3.5 m); position: the outline corner nearest a mapped entrance, else the hull corner
+  farthest along qibla + 135 deg (qibla from the great circle to the Kaaba, 134.7 deg in Sarajevo), moved inside by the
+  base radius. Checked against the 4 mapped minarets: 1.8, 2.2, 3.8, 7.4 m from where the rule would put them. Tekke,
+  turbe, mekteb, medresa, hamam and musala outlines get none (2 excluded).
+- **Fetch without Overpass.** Overpass refused again (overpass-api.de reset, kumi and private.coffee timed out,
+  mail.ru 504) and Geofabrik reset the connection. So: three Overture queries (fetch-overture-theme.py, seconds each:
+  religious buildings and buildings with parts, all `building_part`s, places of worship from the `places` theme, whose
+  2026-09 schema has `basic_category`, not `categories`) give candidate POSITIONS only; then the OSM API `map.json` of a
+  +-80 m box round each candidate (boxes merged up to 700 m): 114 requests, 1.1 s apart, about 3 minutes, 101,498
+  elements. The full OSM tags come from those answers. Limit: a minaret mapped as a lone node far from any candidate is
+  not found. Overture places (CDLA-Permissive-2.0) are registered as a source but nothing from them is drawn or kept.
+- **Geometry** (local ENU at each landmark, each vertex taken exactly to ECEF and into the tile's ENU frame; one glb per
+  level-13 cell, KHR_mesh_quantization int16 positions, COLOR_0, `_FEATURE_ID_0` = row of landmarks.json,
+  EXT_mesh_features): minaret = lathe of 12 sides (plinth, shaft, the şerefe balcony on its corbel, upper shaft, lead
+  cone; balcony and cone from the parts' `min_height` / `roof:height` when mapped, else 0.72 and 0.2 of the height);
+  dome = drum from `min_height` (else the ground) to the springing, then a hemisphere or an onion (`roof:height`, else
+  the radius; radius = the smaller half side of the part's oriented box); tower = the outline (its hull above 12
+  points) to the eaves, then a pyramid, dome, onion or flat cap. Ground: a core feature's `ground_m` + `geoid_m` (the
+  core walls' reference) for core objects, else the terrain triangles of the FINEST place tile at the point, read
+  from the glb in geodetic coordinates (the landmark tool reads the place tiles as inputs by hash; it never edits
+  build-place-tiles.mjs). A whole domed building outside the core stands its dome on the city block's flat top (the
+  block top read the same way, from the instanced unit boxes).
+- **No double drawing.** landmarks.json `hide_core` lists the core building parts a landmark replaces (Sarajevo: 33:
+  Gazi Husrev-beg's minaret parts and domes, the Orthodox cathedral's domes, the cathedral towers, the clock tower);
+  landmarks.js collapses their vertices to one point in each core tile mesh once, when the tile is activated (a
+  WeakSet of done meshes: a freed and re-activated tile is a new mesh). Mosque bodies stay the place's buildings and
+  blocks.
+- **Minimum width, live (rule 6).** A minaret is about 3 m wide: at 8 km it is a third of a pixel. Each vertex carries
+  `_RADIAL` (int16 cm: its horizontal offset from the object's axis, and in y the object's reference radius); the
+  vertex shader widens the object about its axis by s = max(1, MIN_PX x distance / (K x 2R)), K = CSS height /
+  (2 tan(fov/2)) from `G.cull.K()` each frame, MIN_PX 2 CSS px (`?minpx=`). Height unchanged; nothing baked. At the
+  8 km view the minarets are 2 px specks (their height is only 2 to 3 px there): true to scale, not a skyline; the
+  skyline reads from the old town and from low views over the valley.
+- **Material.** Same light as the place buildings (U.sun, the place's up, a touch of sky on tops, vertex colour, flat
+  normals, logarithmic depth), written in landmarks.js because places.js exposes no material factory; if
+  `G.placeBuildingMaterial()` appears, landmarks.js uses it and only adds its `positionNode`. The program is compiled
+  with `compileAsync` before the first draw (a warm-up mesh with the same attribute set).
+- **Text and machine interface.** Tap: the landmark whose screen axis (base to top) passes within its drawn half width
+  + 2 px wins, nearest the eye among those; else the nearest within 12 px (a first version took the nearest to the eye
+  within 12 px and the Sahat-kula in front won over Gazi's minaret). Card: name via `pickName` (Latin only), kind,
+  mapped (with how) or estimated (with the rule), height and its source, balcony, base, OSM links, credit.
+  describeView adds `landmarks` (mosques, minarets mapped / estimated, domes, towers, churches, clock towers in view,
+  the tallest) and a "Skyline:" sentence; search finds the named places of worship of the whole city (the core's
+  search has only the core). `G.landmarks`: stats(), rows(place), screen(place, id), setEstimated(on), describe().

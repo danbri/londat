@@ -502,5 +502,6 @@ export async function attachPlaces(G, H, { scene, U }) {
     H.showCard(`<h2>${esc((b.name && nameText(b.name, b.name_alt)) || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
     return b;
   };
+  import('./landmarks.js').then(m => m.attachLandmarks(G, H, { scene, U, P })).catch(e => console.warn('places: landmarks', e));   // minarets, domes, towers (globe/landmarks.js)
   return P;
 }

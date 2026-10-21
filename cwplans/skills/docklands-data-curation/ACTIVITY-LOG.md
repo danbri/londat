@@ -3170,3 +3170,28 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   command line and never ends; a background http.server dies at its 30-minute default: give it the long timeout.
 - Open: no 3D buildings in globe mode inside the model box (until the hand-over); Microsoft footprints where OSM has none
   (owner); the merged far view reads as a grid of squares; implicit tiling; the UK.
+## 2026-10-22: Sarajevo's mosques, minarets, domes and towers (landmark set; subagent)
+- Owner: "Currently you show it [Sarajevo] without its distinctive landscape of mosques (especially their minarets). We
+  need to fix that." Cause: the place tiles draw building parts as prisms in the core only and the city ring as flat
+  blocks >= 40 m2, so from the 8 km city view no minaret, dome or tower was drawn.
+- New tool `cwplans/tools/build-place-landmarks.mjs` (operations landmark-select v2, landmark-tiles v2; log
+  `places/sarajevo/landmarks/log.json`; pipeline activity place-landmarks); build-place-tiles.mjs not changed (its tiles
+  are read as inputs by hash). Region config `place.landmarks` in docklands/geo/regions/sarajevo.js. Reader
+  `docklands/globe/landmarks.js`, one hook line in places.js.
+- Fetch: Overpass refused, Geofabrik reset; three Overture queries (positions only) + 114 OSM API map calls round the
+  candidates, 1.1 s apart (101,498 elements). Overture places (CDLA-Permissive-2.0) registered, used only to choose
+  where to ask.
+- Counts (city box Ilidža to Baščaršija): places of worship with an outline 164 (mosques 126, churches 31, synagogues 5);
+  minarets mapped in OSM 4 (Gazi Husrev-beg 47 m by its parts, Stup, Butmir, Doglodi by tag), estimated by the stated
+  rule 122 (class "estimated", switch `estimate_minarets` / `?landmarks=mapped`), 2 tekke without; domes 24; towers 11
+  (6 drawn: 5 bell towers have no height in OSM and are counted, not drawn); 1 clock tower (Sahat-kula, 30 m); 33 core
+  parts replaced (collapsed by the reader, no double drawing). Position rule against the 4 mapped minarets: median
+  3.8 m, max 7.4 m. Sizes: 18 tiles 0.60 MB, landmarks.json 85 kB, all 0.75 MB; 30,760 triangles.
+- Checks: 3d-tiles-validator 0.6.0 0 errors, 0 warnings (18 infos: EXT_mesh_features not checked); npm run check OK;
+  npm test (with the new place-landmarks.test.mjs); place-check --place sarajevo --sizes 390x844@2 all passed (new: the
+  landmarks drawn, describeView counts, a tap on Gazi Husrev-beg's minaret gives its card, the city 8 km out); globe-check
+  390 x 844 @2 all passed; npm test 103/103.
+- Open: minarets mapped as lone nodes far from any candidate are not found until Overpass or a PBF extract answers;
+  OSM has almost no minarets in Sarajevo (a mapping task, or the FGU cadastre under the waiver, issue #9); towers with
+  no height; the owner may want the estimated class off or other size classes; at 8 km minarets are 2-pixel specks
+  (true scale: the skyline reads from the old town and low views).
