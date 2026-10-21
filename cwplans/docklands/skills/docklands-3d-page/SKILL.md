@@ -3026,6 +3026,136 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 (Le
   no implicit tiling yet); the page clock and the time wheels stay on the Docklands zone (the place's time is given in
   text only); 3d-tiles-renderer can read these sets but is not used.
 
+## Three.js port: places, city and surroundings by level of detail (2026-10-20)
+
+Owner, 2026-10-20, after seeing León and Sarajevo: "Both sarajevo and leon we now show very dense but accurate
+building/landscape for a rectangular core of central city."; "They both need geographic features and at least basic
+roads for surrounding land and substantially more city."; "Both feel sluggish and janky, we need to work on scaling."
+Tool `cwplans/tools/build-place-tiles.mjs` with the new library `cwplans/tools/place-lod.mjs`; reader
+`docklands/globe/places.js` (rewritten); tests `docklands/test/place-check.mjs` (far view added), `place-perf.mjs` (new),
+`cwplans/tools/test/place-lod.test.mjs`. Views: core https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 ,
+city https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,8000&ht=0,50 , surroundings
+https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,30000&ht=0,45 (Sarajevo: ll=43.85917,18.43335).
+
+- **Three tiers, one tree.** Region config `place.city.bbox` (León 8 x 8 km with San Andrés del Rabanedo; Sarajevo the
+  valley from Ilidža to Baščaršija, 14 x 6.7 km) and `place.surround` (`size_m` 70 km, `top_level` 10, `refine`
+  [[30000, 11], [16000, 12], [9000, 13]], `land_cover`, `outer` adapters in `docklands/geo/adapters/world-surround.js`).
+  The tile set is a quadtree of whole level-10 cells over the surround square (the extent is about 100 x 90 km because
+  whole cells are used), REPLACE refinement: a cell is refined (all four children, never fewer) to 11, 12 or 13 by its
+  distance from the origin, to 14 when it meets the city box, to 15 when it meets the core. The core leaves are the old
+  level-15 tiles unchanged (place-tiles, full detail); the other level-15 siblings are outer tiles. `geometricError` of
+  a refined cell = max(2 x its terrain vertex spacing, 40 m at level 12 over the city (no blocks there), 12 m from level
+  13 in the city); leaves 0. Each tile has its ENU frame as a `transform` RELATIVE TO ITS PARENT (3D Tiles transforms
+  compose down the tree; region volumes do not); the reader multiplies them back in doubles.
+- **Outer tile content.** Terrain grid 16 (level 10), 20, 24, 28, 32 cells; heights box-filtered from the surroundings
+  DEM; its outer 8 km eased to a 10 km box mean so the edge meets the globe's ETOPO box means with a small step (the
+  curtain hides the rest); NORMALS FROM THE DEM (central differences one grid step apart), not computed per tile: per-
+  tile `computeVertexNormals` with skirts showed every tile edge as a light line at 30 km. The grid is one triangle
+  strip (mode 5, rows joined by two repeated indices; 35 % of the list's indices), the skirts a list primitive sharing
+  the same accessors; the reader joins them into one index list (one draw call). KHR_mesh_quantization: int16
+  positions with ONE UNIFORM node scale (a per-axis scale would bend the normals in any glTF viewer), int8 normals,
+  uint16 texture coordinates. Texture 256 px JPEG q70: ESA WorldCover classes (overview 1, about 20 m, box-averaged),
+  water polygons, rivers and canals (streams from level 12), roads by class (motorway to secondary everywhere,
+  tertiary from 11, streets from 13; minimum widths in pixels so a motorway still shows at 76 m a pixel), rail, the
+  city footprints. City blocks from level 13: at 13 only big or tall buildings (>= 600 m2 or >= 18 m) as oriented
+  boxes; from 14 every building of >= 40 m2: an oriented box when it fills >= 85 % of the box or is under 300 m2
+  (most houses), else the outline simplified at 2.5 m; flat tops; base at the lowest ground minus 1 m. Boxes are
+  EXT_mesh_gpu_instancing instances of one unit box (40 bytes each instead of 124 for merged geometry: Sarajevo's city
+  12.4 -> 8.3 MB); the reader makes an InstancedMesh (one draw call).
+- **Sources outside the core.** Overpass was down again (overpass-api.de reset, kumi and private.coffee timed out,
+  mail.ru 504) and Geofabrik reset the connection; openstreetmap.fr has no Bosnia. So OSM comes through Overture
+  (release 2026-09-23.1) by DuckDB: `cwplans/tools/fetch-overture-theme.py <release> <theme> <type> <bbox> <out>
+  <columns> [<where>]` (any theme; each column written with to_json). Queries in the adapter: roads (motorway to
+  tertiary) and rail over the extent, streets and buildings over the city box, water, localities, peaks. Only records
+  whose base source is OpenStreetMap give geometry (`surround.geometry_sources`, default ['OpenStreetMap']); building
+  records of other datasets give heights only and are counted: León city 11,201 OSM drawn, IGN España 10,858 and
+  Microsoft 1,909 not drawn (OSM has about half of León's city buildings); Sarajevo 48,736 OSM drawn, Microsoft 8,945
+  not drawn. Adding them is one config line, but needs the owner (CLAUDE.md allows Microsoft / Overture for heights).
+  Terrain: León IGN MDT25 by WCS, but the service answers 400 for about 1 x 1 degree, so the tool asks in parts of at
+  most 0.5 degree (6 requests, 1 s apart) and pastes them into one grid; Sarajevo Copernicus GLO-30 COGs N43 and N44
+  as one mosaic (`cogMosaic`, range requests). Land cover: ESA WorldCover 2021 (CC BY 4.0), the N42W006 and N42W009
+  tiles for León. City heights: operation place-city-heights, the place-heights order over the city buildings (no roof
+  rule). León city: OSM height 14, OSM levels 1,176, Catastro 5,050, Overture 913, Microsoft 208, small 163, GHSL
+  3,674, default 3. Sarajevo city: OSM height 32, levels 2,370, small 200, GHSL 46,106, default 28. GHSL and Catastro
+  raw parts now cover the city box (GHSL crop 125 x 95 and 219 x 81 cells, committed).
+- **Dataflow.** Six operations with a surround block: place-select-osm v3, place-heights v4 (IGN class and the
+  validation counts), place-tiles v5 (the core tileset is an intermediate `work/core-tileset.json`; place-lod writes
+  the whole `tileset.json`), place-select-outer v1, place-city-heights v1, place-lod v1. A code change without a
+  version bump is a memo hit ("in the log") and writes nothing: bump the version (or `--force` while developing). The
+  8 km terrain ring of features.json is dropped when the surroundings exist.
+- **Reader (places.js).** Load the place (index, tileset.json, surround.json, features.json) within 150 km, free
+  beyond 220 km. Each frame: walk the tree, skip a tile out of the frustum (`G.cull.inFrustum`, the one line added to
+  globe.js), screen-space error = geometricError x K / distance with K = CSS height / (2 tan(fov / 2)) (CSS pixels, so
+  a DPR-3 phone is not penalised); refine above `MAX_SSE` 24 (`?sse=`). The walk SKIPS LEVELS: the wanted tiles (small
+  enough error, or leaves) are all fetched at once, nearest first; a part of the view whose wanted tiles are not all
+  ready is drawn by its nearest ready ancestor (never a tile with one of its descendants). Level by level (the first
+  version: refine only when all children are ready) a fly-in needed six rounds of fetch and activation: 102 s to settle
+  in software rendering against 53 s skipping. The top cells are always wanted; the world terrain is cut (`U.hole`) over the
+  extent only when they are all in. Fetch at most 6 at once, highest priority first; parse our glb directly (typed-array
+  views of the binary chunk, dequantised to float32 on the CPU: WebGPU wants float attributes for an int16 position
+  without normalisation); JPEG by `createImageBitmap` (decoded off the main thread; GLTFLoader uses an Image element
+  on Safari); at most 3 tiles activated a frame and 10 ms; a fetch that ends asks for a frame (`H.draw()`: the page's
+  loop rests when nothing moves, and without it the tiles waited for the next input); least recently used tiles freed over 220 (never the top
+  cells). One building material and one block material for every tile (ground materials stay per tile: one texture
+  each: the program is shared, the cost is small). SHADER PROGRAMS are the largest cost of a fly-in: in software
+  rendering each new program blocks 1 to 4 s at its first draw (`getProgramParameter`, `getUniformBlockIndex` in a CPU
+  profile; 21 programs on the page). The reader compiles its five (ground, core buildings, blocks, instanced blocks,
+  curtain) with `renderer.compileAsync` (KHR_parallel_shader_compile) when the first place loads, 150 km out (warm-up meshes kept), on
+  geometries with the same attribute sets as the tiles (the attribute set is part of the program: a first try with one
+  geometry carrying every attribute compiled useless variants and doubled the cost); the block colour is a uniform, not
+  a shader constant. Ground materials are POOLED (texture node value swapped), the curtain material shared: three.js
+  deletes a program when its last material is disposed, so freeing a place made the next visit compile all again (a
+  second fly-in had 5 s long tasks). No per-frame allocation in the placement (matrixWorld written in place from the content matrix in doubles).
+  Labels: surround.json towns, villages, hamlets and peaks ("Brestovac 1413 m") into the globe's labels (minimum zoom by
+  kind; a name the globe already has within 6 km is skipped). Search: towns, peaks, rivers, roads. Where: in the
+  surroundings, the nearest town and peak, the ground height. describeView: tiles drawn by tier, rivers, km of roads and
+  rail in the tiles drawn, places in view. `G.placesStats()`: drawn by level and tier, loaded, `settled`.
+- **Sizes** (on disk, under the 25 MB a place the owner's coordinator set): León core 4.62 MB (15 tiles), city 4.63 MB
+  (90 tiles, 13,795 blocks), surroundings 8.70 MB (289 tiles), sources 1.69 MB (IGN crop 1.14), tileset 0.18, features
+  0.64, surround 0.28, log 0.14: 20.9 MB. Sarajevo core 5.79, city 7.93 (132 tiles, 51,776 blocks), surroundings 7.31
+  (267 tiles), features 1.04, the rest 0.7: 22.8 MB. Steps that got there: per-level grids (16 to 28 cells under level
+  14), instanced boxes (city 12.4 -> 8.3 MB in Sarajevo), triangle strips (-1 MB a place); stored normals cost +1 MB a
+  place. 3d-tiles-validator 0.6.0: 0 errors, 0 warnings (infos: EXT_mesh_gpu_instancing and EXT_mesh_features not
+  checked by it, "may be unused" objects).
+- **Performance** (headless SwiftShader WebGL 2, 390 x 844 @2, `node docklands/test/place-perf.mjs`; fly-in from 300 km
+  to the deep link, then still views; `--layers none`, so the Docklands model is not built):
+  | measure (León / Sarajevo) | main (15 tiles at once) | this branch (tile tree) |
+  |---|---|---|
+  | cold fly-in 300 km -> 1.5 km, main-thread long tasks | 2,172 / 1,413 ms (max 2,172 / 1,413) | 0 / 1,211 ms (max 0 / 688) |
+  | cold fly-in, longest frame gap | 2.8 / 2.6 s | 2.5 / 3.6 s |
+  | second fly-in (programs compiled), long tasks | 712 / 419 ms | 3,171 / 3,083 ms (one compile of about 3 s left) |
+  | frames until settled (second fly-in) | about 5 | about 30 (wanted tiles in 3 a frame) |
+  | still view 1.5 km: frame interval, submit, calls, triangles | 1,682 / 1,297 ms; 2.3 / 3.1 ms; 178 / 184; 184,007 / 208,819 | 1,685 / 1,788 ms; 4.2 / 3.7 ms; 223 / 206; 234,884 / 242,690 |
+  | still view 30 km: frame interval, calls, triangles | 902 / 1,393 ms; 181 / 184; 205,065 / 255,373 | 923 / 1,342 ms; 200 / 204; 97,601 / 105,025 |
+  | JS heap (no model layers) | 245 / 248 MB | 251 / 263 MB |
+
+  Read: in software rendering a frame costs about the same with the city and 35 km of land as with the 2 km core alone
+  (the far tiles are coarse, the core leaves only near), triangles at 30 km are halved, the cold fly-in has no long
+  main-thread task in León, and the old full-detail core is no longer drawn from 30 km. Settling needs about 30 frames
+  (about 40 s at SwiftShader's 1 frame a second; about half a second at 60 frames a second). With the Docklands model
+  layers on, its background build (main.js) adds 2 to 5 s of long tasks to any deep-link fly-in, on main and here alike.
+  A real phone was not measured: software rendering cannot show GPU costs.
+- **IGN floors via Overture (León).** Owner: "use the data but keep it distinct and easy to remove if requested. Use for
+  validation at least". Adapter `overture-ign-floors` (world-buildings.js), its own crop
+  `places/leon/sources/overture-ign-floors.json` (9,782 records over the city box, rings delta-coded in micro-degrees:
+  1.14 MB; plain rings were 3.0 MB), height class `overture-ign-floors` after the Catastro floors, switch = its id in
+  `place.heights` (remove the id and the file, rebuild). Finding: these are WHOLE BUILDINGS whose geometry is from IGN
+  (BTN), the ones OSM lacks: 1 of 9,782 matches an OSM outline (centroid inside, area ratio >= 0.5), and only 4 of
+  525 in the core have their centroid in any OSM outline. So as a height they give 0 buildings; as a check they are
+  good: against the Catastro parts inside each record (area-weighted median), 4,490 records: same floors 89.9 %,
+  within one floor 97.9 %, mean difference +0.05, mean absolute 0.15, max 9; against OSM building:levels only 1
+  record overlaps. Their geometry could fill León's city (10,858 buildings) if the owner agrees.
+- **Traps.** Another agent's `http.server` held port 8190 and served its own worktree: the first baseline measured the
+  wrong code. Check with `curl http://127.0.0.1:<port>/docklands/globe/places.js | head` and use your own port. The
+  baseline of main was served from a `git archive origin/main docklands cwplans/docklands/data/places` copy with
+  symlinks for the rest. During a deep-link fly-in the Docklands model builds its buildings in the background
+  (main.js `rebuildBuildings` from layers/piers.js: 3.5 s of main-thread work in one profile) whatever place is shown;
+  `place-perf.mjs --layers none` measures the place alone.
+- **Open.** Implicit tiling (the explicit tree is 180 to 190 kB of JSON); meshopt compression (about 3x on the blocks
+  and grids; needs the decoder and a validator check); IGN and Microsoft geometry for the city (owner); a worker for
+  the CPU dequantisation and InstancedMesh matrices; the Docklands model build during a place fly-in (main.js, another
+  agent's file); hillshade in the coarse textures; Leiden.
+
 ## Three.js port: level of detail and the hand-over (2026-10-18)
 
 Owner, 2026-10-14: "pls make sure we make appropriate use of threejs lod support for everything"; "zooming out there is an

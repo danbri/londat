@@ -56,8 +56,9 @@ for (const [w, h, dpr] of SIZES) {
     const G = __docklands3.globe; await docklands.goTo({ lon: c.lon, lat: c.lat, range_m: range, tilt_deg: tilt });
     const t0 = performance.now(); while (performance.now() - t0 < 60000) { const st = G.placesStats().find(x => x.id === p); G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); if (st && (st.settled ?? st.state === 'loaded') && performance.now() - t0 > 1500) break; }
     const sub = []; for (let k = 0; k < 20; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); sub.push(G.stats.frame.ms); }
+    const iv = []; let l0 = performance.now(); for (let k = 0; k < 20; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const t = performance.now(); iv.push(t - l0); l0 = t; } iv.sort((a, b) => a - b);
     sub.sort((a, b) => a - b); const fr = G.stats.frame, st = G.placesStats().find(x => x.id === p);
-    return { range_m: range, tilt_deg: tilt, submit_ms_median: sub[10], calls: fr.calls, triangles: fr.triangles, place: st, heap_mb: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1e5) / 10 : null };
+    return { range_m: range, tilt_deg: tilt, submit_ms_median: sub[10], frame_interval_ms_median: Math.round(iv[10]), calls: fr.calls, triangles: fr.triangles, place: st, heap_mb: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1e5) / 10 : null };
   }, { c: C, range, tilt, p: PLACE });
   const views = [await still(1500, 55), await still(6000, 50), await still(30000, 45)];
   const r = { place: PLACE, size: `${w}x${h}@${dpr}`, layers: LAYERS || 'all', fly, fly2, views, errors: errors.slice(0, 5) };

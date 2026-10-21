@@ -105,11 +105,11 @@ export async function attachPlaces(G, H, { scene, U }) {
   }
   function groundMat(map) {
     const m = new THREE.MeshBasicNodeMaterial();
-    const nW = normalize(modelWorldMatrix.mul(vec4(normalLocal, 0)).xyz), c = map ? texture(map, uv()).rgb : vec3(0.45, 0.42, 0.36);
-    m.colorNode = vec4(c.mul(light(nW)), 1);
+    const tn = map ? texture(map, uv()) : null, nW = normalize(modelWorldMatrix.mul(vec4(normalLocal, 0)).xyz), c = tn ? tn.rgb : vec3(0.45, 0.42, 0.36);
+    m.colorNode = vec4(c.mul(light(nW)), 1); m.userData.tex = tn;
     return logDepth(m);
   }
-  const BMAT = buildingMat(null), SHARED = new Set([BMAT]), blockMats = new Map();
+  const BMAT = buildingMat(null), SHARED = new Set([BMAT]), blockMats = new Map(), groundPool = [];
   // (the block colour is a uniform, not a constant in the shader: one program for every colour)
   const blockMat = rgb => { const k = rgb.join(','); if (!blockMats.has(k)) { const m = buildingMat(uniform(new THREE.Vector3(...rgb))); blockMats.set(k, m); SHARED.add(m); } return blockMats.get(k); };
   // ---------- shader programs compiled before they are needed (KHR_parallel_shader_compile through compileAsync): the
@@ -129,7 +129,9 @@ export async function attachPlaces(G, H, { scene, U }) {
     const sc = new THREE.Scene(), gm = groundMat(tex), cm = curtainMat(), im = new THREE.InstancedMesh(gP, blockMat([0.66, 0.6, 0.5]), 1); im.setMatrixAt(0, new THREE.Matrix4());
     for (const m of [new THREE.Mesh(gG, gm), new THREE.Mesh(gC, cm), new THREE.Mesh(gB, BMAT), new THREE.Mesh(gP, blockMat([0.66, 0.6, 0.5])), im]) { m.frustumCulled = false; sc.add(m); }
     const g = { dispose() { for (const x of [gG, gB, gP, gC]) x.dispose(); } };
-    warmed = R.compileAsync(sc, cam).catch(e => console.warn('places: warm', e)).finally(() => { gm.dispose(); cm.dispose(); tex.dispose(); g.dispose(); im.dispose(); });
+    // the warm-up meshes are kept (never disposed): a program whose last user is disposed is deleted by three.js, and
+    // freeing a place freed every ground material, so the next visit compiled them all again (5 s long tasks)
+    warm.keep = sc; warmed = R.compileAsync(sc, cam).catch(e => console.warn('places: warm', e));
     return warmed;
   }
 
@@ -170,7 +172,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   }
   function free(p) {
     for (const n of p.nodes) freeNode(n);
-    for (const t of p.extras) { scene.remove(t.mesh); t.mesh.geometry.dispose(); t.mesh.material.dispose(); }
+    for (const t of p.extras) { scene.remove(t.mesh); t.mesh.geometry.dispose(); if (!SHARED.has(t.mesh.material)) t.mesh.material.dispose(); }
     G.labels?.()?.clear(c => c.placeId === p.id);
     p.extras = []; p.nodes = []; p.roots = []; p.state = null; p.ringHo = null; p.topReady = false; p.curtain = null; G.dirty = true;
     dispatchEvent(new CustomEvent('docklands-place-freed', { detail: { id: p.id } }));
@@ -204,7 +206,10 @@ export async function attachPlaces(G, H, { scene, U }) {
         if (q.uv) g.setAttribute('uv', new THREE.BufferAttribute(q.uv, 2));
         if (q.nrm) g.setAttribute('normal', new THREE.BufferAttribute(q.nrm, 3)); else g.computeVertexNormals();
         let map = null; if (q.bmp) { map = new THREE.Texture(q.bmp); map.flipY = false; map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 4; map.needsUpdate = true; }
-        mesh = new THREE.Mesh(g, groundMat(map)); mesh.__map = map; kind = 'ground';
+        // ground materials are pooled, not disposed: a program whose last material is disposed is deleted by three.js,
+        // so freeing a place made the next visit compile everything again (5 s long tasks in software rendering)
+        let gm = map && groundPool.pop(); if (gm) gm.userData.tex.value = map; else gm = groundMat(map);
+        mesh = new THREE.Mesh(g, gm); mesh.__map = map; kind = 'ground';
       } else if (q.inst) {   // city blocks as instances of a unit box
         const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), k); kind = 'blocks';
         const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3();
@@ -222,7 +227,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   }
   const mapOf = m => m.__map || null;
   function freeNode(n) {
-    for (const m of n.meshes) { scene.remove(m); m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); if (!SHARED.has(m.material)) m.material.dispose(); if (m.userData.map) { m.userData.map.image?.close?.(); m.userData.map.dispose(); } }
+    for (const m of n.meshes) { scene.remove(m); m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); if (m.userData.ground && m.material.userData.tex && groundPool.length < 400) groundPool.push(m.material); else if (!SHARED.has(m.material)) m.material.dispose(); if (m.userData.map) { m.userData.map.image?.close?.(); m.userData.map.dispose(); } }
     n.meshes = []; n.tris = 0; if (n.state === 'decoded') { for (const q of n.prims || []) q.bmp?.close?.(); n.prims = null; }
     n.state = null;
   }
@@ -243,7 +248,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   }
   // the curtain: a wall round the place's extent from the lower to the higher of its ground and the globe's coarse terrain,
   // so that no gap shows the sky where the world terrain (10 km box means) is above or below the place's own ground
-  const CURTAIN = vec3(0.36, 0.34, 0.27);
+  const CURTAIN = vec3(0.36, 0.34, 0.27); let CMAT = null;
   function curtainMat() { const m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide }); m.colorNode = vec4(CURTAIN.mul(light(upF)), 1); return logDepth(m); }
   function curtain(p) {
     const S = G.sampler(), hG = (lon, lat) => (S.h0 || S.h)(lon, lat) * (U.exag?.value || 1) + S.geoid(lon, lat);
@@ -256,7 +261,8 @@ export async function attachPlaces(G, H, { scene, U }) {
       for (const h of [lo, hi]) { const q = geodeticToEcef(lon, lat, h); pos.push(q[0] - C[0], q[1] - C[1], q[2] - C[2]); nrm.push(...u); }
       const j = (i + 1) % ring.length; idx.push(2 * i, 2 * j, 2 * i + 1, 2 * i + 1, 2 * j, 2 * j + 1); });
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3)); g.setIndex(idx);
-    const mesh = new THREE.Mesh(g, curtainMat()); mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.userData = { C, B: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], ground: true, curtain: true, place: p.id };
+    if (!CMAT) { CMAT = curtainMat(); SHARED.add(CMAT); }   // one, shared and kept (its program too)
+    const mesh = new THREE.Mesh(g, CMAT); mesh.matrixAutoUpdate = false; mesh.matrixWorldAutoUpdate = false; mesh.userData = { C, B: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], ground: true, curtain: true, place: p.id };
     scene.add(mesh); return { mesh, tris: idx.length / 3 };
   }
   // the ring (places built without a surround block): the place's wider terrain grid (features.json ring, about 8 km

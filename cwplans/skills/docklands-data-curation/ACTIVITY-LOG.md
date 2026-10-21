@@ -2749,3 +2749,45 @@ then Sarajevo". No Leiden data was made or committed.
   check OK. Not pushed (subagent branch).
 - Open: LOD step 4; roads/rail/greens positions, building `bi`, `uw`, `col`, the layers' own copies (under, tide,
   windfield); the iPhone measure and the WebGPU shadow path on a real GPU.
+
+## 2026-10-20 (night): places: city and surroundings by level of detail, IGN floors apart, faster reader (subagent)
+- Owner, 2026-10-20, after seeing León and Sarajevo on the globe: "They both need geographic features and at least basic
+  roads for surrounding land and substantially more city."; "Both feel sluggish and janky, we need to work on scaling.";
+  on the 1,009 IGN floor counts in León: "use the data but keep it distinct and easy to remove if requested. Use for
+  validation at least".
+- Branch `worktree-agent-afa57a27d9a409986` (not pushed): WIP be0ce129, merge of origin/main 7f95dee7, final commit after.
+  The container restarted once during the work; the uncommitted tree survived, the raw folders too.
+- Built: each place is now one 3D Tiles quadtree (REPLACE): the core (15 level-15 tiles as before), the city box as
+  blocks (León 8 x 8 km with San Andrés del Rabanedo, 13,795 blocks; Sarajevo Ilidža to Baščaršija, 51,776 blocks), the
+  surroundings to about 35 km (terrain from IGN MDT25 / Copernicus GLO-30, ESA WorldCover land cover, water, rivers,
+  roads motorway to tertiary, rail, city footprints in the ground textures; towns, villages and peaks as labels).
+  New operations place-select-outer, place-city-heights, place-lod; place-heights v4, place-tiles v5. New files:
+  `cwplans/tools/place-lod.mjs`, `cwplans/tools/fetch-overture-theme.py`, `docklands/geo/adapters/world-surround.js`,
+  `places/<id>/surround.json`, `places/leon/sources/overture-ign-floors.json`, `docklands/test/place-perf.mjs`,
+  `cwplans/tools/test/place-lod.test.mjs`. Reader `docklands/globe/places.js` rewritten (walk by screen-space error,
+  skip levels, own glb parser, createImageBitmap, activation budget, LRU, pooled ground materials, shader warm-up).
+- Sizes: León 20.9 MB (core 4.62, city 4.63, surroundings 8.70, sources 1.69), Sarajevo 22.8 MB (core 5.79, city 7.93,
+  surroundings 7.31). 3d-tiles-validator 0.6.0: 0 errors, 0 warnings both.
+- IGN floors (F55 evidence): 9,782 Overture records over the León city box; they are whole IGN buildings missing from
+  OSM (1 matches an OSM outline): used as a height for 0 buildings; against Catastro floors 4,490 records, same 89.9 %,
+  within one 97.9 %, mean difference +0.05, mean absolute 0.15, max 9; against OSM levels 1 record. Switch: the adapter
+  id `overture-ign-floors` in `place.heights` of docklands/geo/regions/leon.js and the file in sources/.
+- Policy kept: city geometry only from OSM-sourced Overture records. Not drawn: León IGN 10,858 and Microsoft 1,909
+  buildings (OSM has about half of León's city), Sarajevo Microsoft 8,945. Question for the owner: draw them?
+- Performance (headless SwiftShader, 390 x 844 @2, `docklands/test/place-perf.mjs --layers none`; main served from an
+  archive copy of origin/main): cold fly-in long tasks León 2,172 -> 0 ms, Sarajevo 1,413 -> 1,211 ms (max 688);
+  still view 1.5 km frame interval about equal (León 1,682 / 1,685 ms) with the city and 35 km of land added; 30 km
+  view triangles 205,065 -> 97,601 (León); draw calls 178 -> 223 at 1.5 km; settling takes about 30 frames (wanted
+  tiles 3 a frame) against 5. Largest cost found: shader program compile (1 to 4 s each in software), now done ahead
+  with compileAsync and kept (pooled ground materials). The Docklands model's background build (main.js) still adds
+  2 to 5 s of long tasks to any deep-link fly-in. Table: skill docklands-3d-page, the new section.
+- Tests: place-check León and Sarajevo 390 x 844 @2 all passed (new: far view 30 km with roads and river, a town of
+  the city ring by name); globe-check 390 x 844 @2 all passed; npm test 70/70 (new place-lod.test.mjs); npm run check
+  OK; 3d-tiles-validator 0 errors 0 warnings. globe-controls: 1 failure ("the fling ... does not glide", dragged 0),
+  the same on origin/main served alone: not from this branch.
+- Views (after a merge): core https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,1500&ht=0,55 , city
+  https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,8000&ht=0,50 , 30 km
+  https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,30000&ht=0,45 ; Sarajevo the same with
+  ll=43.85917,18.43335.
+- Open: owner decision on IGN / Microsoft geometry for the city; implicit tiling; meshopt; the Docklands model build
+  during a place fly-in (main.js); performance on a real iPhone (software rendering cannot show GPU cost).
