@@ -328,7 +328,7 @@ export function buildingMaterial() {
 // window rows count from the building's own base). V: the place's uniforms { night, nP, nQ, win, look (1 Realistic, 0
 // Map), pix (1: the pixel-art palette V.pal, a uniformArray of vec3 sRGB, flat and unlit by night), winGain }.
 export const PLACE_OFF = 400;
-export function placeBuildingMaterial(V, inst = null) {
+export function placeBuildingMaterial(V, inst = null, night = true) {
   const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.82, metalness: 0.0, side: THREE.DoubleSide, flatShading: true });
   const src = () => {
     const pl = positionLocal, nL = normalize(cross(dFdx(pl), dFdy(pl))), wall = float(1).sub(step(0.42, abs(nL.y)));
@@ -355,14 +355,21 @@ export function placeBuildingMaterial(V, inst = null) {
     const px = lin(pc.mul(mix(float(0.86), float(1), K.wall)));
     return vec4(mix(out, px, V.pix), 1);
   })();
-  m.emissiveNode = Fn(() => {
-    const C = facadeCommon(src()), { gk, wy, wall, dist } = C;
-    const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
-    let L = NIGHT_STYLE === 'old' ? nightOld(C, V) : nightNew(C, V);
-    const tb = top.sub(wy), band = step(90, ht).mul(step(tb, 3.5)).mul(step(0, tb)).mul(wall);
-    L = L.add(vec3(0.32, 0.3, 0.27).mul(smoothstep(3.5, 0.5, tb)).mul(band));
-    const hz = float(1).sub(exp(dist.div(-5200))).mul(0.6);
-    return lin(L.mul(V.winGain).add(vec3(U.haze).mul(hz).mul(0.6))).mul(V.night).mul(float(1).sub(V.pix));
+  // by night only (night false: a day material without the window lights; globe/place-look.js swaps the two when the
+  // place's night begins or ends: an If on the night uniform still cost a quarter of the frame by day in software
+  // rendering, where both sides of a branch run); the branch on uniforms also stays (dusk, pixel art)
+  if (night) m.emissiveNode = Fn(() => {
+    const E = vec3(0).toVar();
+    If(V.night.greaterThan(0.001).and(V.pix.lessThan(0.5)), () => {
+      const C = facadeCommon(src()), { gk, wy, wall, dist } = C;
+      const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
+      let L = NIGHT_STYLE === 'old' ? nightOld(C, V) : nightNew(C, V);
+      const tb = top.sub(wy), band = step(90, ht).mul(step(tb, 3.5)).mul(step(0, tb)).mul(wall);
+      L = L.add(vec3(0.32, 0.3, 0.27).mul(smoothstep(3.5, 0.5, tb)).mul(band));
+      const hz = float(1).sub(exp(dist.div(-5200))).mul(0.6);
+      E.assign(lin(L.mul(V.winGain).add(vec3(U.haze).mul(hz).mul(0.6))).mul(V.night));
+    });
+    return E;
   })();
   return m;
 }

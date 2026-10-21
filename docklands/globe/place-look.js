@@ -80,7 +80,10 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   const sun = new THREE.DirectionalLight(0xfff4e5, 0), moon = new THREE.DirectionalLight(0x9fb4d8, 0), fill = new THREE.HemisphereLight(0xbfd4ff, 0x40372c, 0);
   sun.name = 'place-sun'; moon.name = 'place-moon'; fill.name = 'place-fill';
   scene.add(sun, sun.target, moon, moon.target, fill);
-  const sky = makeSkyMesh(); sky.visible = false; sky.name = 'place-sky'; sky.material.depthNode = null; scene.add(sky);
+  // the day sky: drawn after the opaque meshes with the depth test on (SkyMesh puts its vertices on the far plane), so its
+  // scattering is computed only where no mesh is; the model draws it first over the whole frame (depth test off), which
+  // in software rendering cost a full-screen pass (place-perf 6 km view: 1.2 -> 3.3 s a frame before this)
+  const sky = makeSkyMesh(); sky.visible = false; sky.name = 'place-sky'; sky.material.depthTest = true; sky.renderOrder = 2; scene.add(sky);
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.5;
   const dirF = (az, alt, lon, lat) => { const b = enuBasis(lon, lat), a = az * D2R, e = alt * D2R, c = Math.cos(e), d = [0, 1, 2].map(k => b.north[k] * c * Math.cos(a) + b.east[k] * c * Math.sin(a) + b.up[k] * Math.sin(e)), R = G.frameState.R;
     return new THREE.Vector3(R[0][0] * d[0] + R[0][1] * d[1] + R[0][2] * d[2], R[1][0] * d[0] + R[1][1] * d[1] + R[1][2] * d[2], R[2][0] * d[0] + R[2][1] * d[1] + R[2][2] * d[2]); };
@@ -97,10 +100,14 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   }
 
   // ---------- materials
-  const BMAT = logDepth(placeBuildingMaterial(V));
+  // two of each: with the night windows and without (by day: place-look frame swaps them, see materials.js)
+  const BMAT = logDepth(placeBuildingMaterial(V)), BMAT_DAY = logDepth(placeBuildingMaterial(V, null, false));
   // city blocks: boxes (InstancedMesh) and merged outlines carry col, mcol, gk and rcol (the flat top's colour), per instance
   // (InstancedBufferAttribute, read by name) or per vertex: one material for both
-  const BLOCK = logDepth(placeBuildingMaterial(V, { col: attribute('col', 'vec4'), mcol: attribute('mcol', 'vec4'), gk: attribute('gk', 'vec4'), rcol: attribute('rcol', 'vec4') }));
+  const BA = { col: attribute('col', 'vec4'), mcol: attribute('mcol', 'vec4'), gk: attribute('gk', 'vec4'), rcol: attribute('rcol', 'vec4') };
+  const BLOCK = logDepth(placeBuildingMaterial(V, BA)), BLOCK_DAY = logDepth(placeBuildingMaterial(V, BA, false));
+  const nightMats = () => state.nightMats !== false;   // (true until the first frame decides)
+  const bmat = () => nightMats() ? BMAT : BMAT_DAY, blkmat = () => nightMats() ? BLOCK : BLOCK_DAY;
   // the ground: the tile's texture lit as the model's terrain (MeshStandard, roughness 1) near the camera, the globe's own
   // light (as the world terrain round it) from 4 to 12 km, so the surroundings meet the world terrain as before
   function groundMat(map) {
@@ -174,7 +181,7 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     m.normalNode = crownN(nd); m.aoNode = crownAO(nd, positionGeometry);
     return logDepth(m);
   })();
-  const MATS = [BMAT, BLOCK, WMAT, CROWN, TRUNK, FAR];
+  const MATS = [BMAT, BMAT_DAY, BLOCK, BLOCK_DAY, WMAT, CROWN, TRUNK, FAR];
 
   // ---------- per place: the look weights and the building facts (style, use, colours) by features.json row
   const looks = new Map();
@@ -239,7 +246,7 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     }
     g.setAttribute('col', new THREE.BufferAttribute(C, 4, true)); g.setAttribute('mcol', new THREE.BufferAttribute(M, 4, true)); g.setAttribute('gk', new THREE.BufferAttribute(K, 4));
     g.deleteAttribute('color');
-    return BMAT;
+    return bmat();
   }
   // city blocks as instances: per-instance attributes (the material reads them by name)
   function blockInstAttrs(mesh, q, meta, p, key) {
@@ -252,7 +259,7 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     }
     const g = mesh.geometry;
     g.setAttribute('col', new THREE.InstancedBufferAttribute(C, 4)); g.setAttribute('rcol', new THREE.InstancedBufferAttribute(R, 4)); g.setAttribute('mcol', new THREE.InstancedBufferAttribute(M, 4)); g.setAttribute('gk', new THREE.InstancedBufferAttribute(K, 4));
-    return BLOCK;
+    return blkmat();
   }
   // city blocks as merged outlines: per vertex, by the block of the first triangle that uses the vertex
   function blockOutlineAttrs(g, q, meta, p, key) {
@@ -270,7 +277,7 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
         K.set([(x0 + x1) / 2, (z0 + z1) / 2, y0 + PLACE_OFF, f.use * 1000 + Math.min(999, Math.max(0, y1 + PLACE_OFF))], o); }
       t0 = t1; blk++; }
     g.setAttribute('col', new THREE.BufferAttribute(C, 4)); g.setAttribute('rcol', new THREE.BufferAttribute(R, 4)); g.setAttribute('mcol', new THREE.BufferAttribute(M, 4)); g.setAttribute('gk', new THREE.BufferAttribute(K, 4));
-    return BLOCK;
+    return blkmat();
   }
 
   // ---------- greens (water and trees) of the places that have them
@@ -312,8 +319,11 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const LL = [];   // lon, lat of each vertex (for the splits)
     const len2 = (a, b) => ((LL[a][0] - LL[b][0]) * mLon) ** 2 + ((LL[a][1] - LL[b][1]) * mLat) ** 2;
     const mids = new Map(), mid = (a, b) => { const k = a < b ? a + ',' + b : b + ',' + a; let m = mids.get(k); if (m == null) { const lo = (LL[a][0] + LL[b][0]) / 2, la = (LL[a][1] + LL[b][1]) / 2; m = vtx(lo, la); LL.push([lo, la]); mids.set(k, m); } return m; };
-    const split = (a, b, c, d) => { if (d > 8 || Math.max(len2(a, b), len2(b, c), len2(c, a)) <= WATER_EDGE * WATER_EDGE) { idx.push(a, c, b); return; }
-      const ab = mid(a, b), bc = mid(b, c), ca = mid(c, a); split(a, ab, ca, d + 1); split(ab, b, bc, d + 1); split(ca, bc, c, d + 1); split(ab, bc, ca, d + 1); };
+    // longest-edge bisection (shared midpoints keep the mesh closed): about area / (WATER_EDGE^2 / 2) triangles; a 4-way
+    // split of a long thin river triangle made 4^8 pieces of it (seconds of main-thread work at a fly-in)
+    const split = (a, b, c, d) => { const ab = len2(a, b), bc = len2(b, c), ca = len2(c, a), L = Math.max(ab, bc, ca);
+      if (d > 24 || L <= WATER_EDGE * WATER_EDGE) { idx.push(a, c, b); return; }
+      if (L === ab) { const m = mid(a, b); split(a, m, c, d + 1); split(m, b, c, d + 1); } else if (L === bc) { const m = mid(b, c); split(a, b, m, d + 1); split(a, m, c, d + 1); } else { const m = mid(c, a); split(a, b, m, d + 1); split(m, b, c, d + 1); } };
     for (const W of Gr.water) {
       if (W.b[2] < w || W.b[0] > e || W.b[3] < s || W.b[1] > n) continue;
       const rings = W.rings.map(r => clipRect(r, gr.rect)).filter(r => r.length >= 3); if (!rings.length) continue;
@@ -352,19 +362,28 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   }
 
   // ---------- a core tile's decoration (called by places.js activate with the ground primitive): water and trees
+  // (queued: built a few a frame within DECOR_MS, nearest tiles first, as places.js activates its tiles)
+  const decorQ = [], DECOR_MS = 8;
   async function decorate(n, q, mk) {
     const p = n.p, gr = groundGrid(q, n.key); if (!gr) return;
     const Gr = await greensOf(p); if (!Gr || n.state !== 'ready') return;
-    const out = { water: null, trees: null, kind: [] };
-    const wm = waterMesh(gr, Gr, p); if (wm) { mk(n, wm.mesh, 'water', wm.tris); out.water = wm; }
-    const ts = treeSet(gr, Gr); if (ts) { for (const m of ts.near) mk(n, m, 'trees-near', 0); mk(n, ts.far, 'trees-far', 0); n.trees = ts; }
-    n.decorated = out;
+    decorQ.push({ n, gr, Gr, mk }); G.dirty = true; H.draw();
+  }
+  function decorStep() {
+    if (!decorQ.length) return; decorQ.sort((a, b) => (b.n.pri || 0) - (a.n.pri || 0)); const t0 = performance.now();
+    while (decorQ.length && performance.now() - t0 < DECOR_MS) { const { n, gr, Gr, mk } = decorQ.shift(); if (n.state !== 'ready' || n.decorated) continue; const p = n.p;
+      const out = { water: null };
+      const wm = waterMesh(gr, Gr, p); if (wm) { mk(n, wm.mesh, 'water', wm.tris); out.water = wm; }
+      const ts = treeSet(gr, Gr); if (ts) { for (const m of ts.near) mk(n, m, 'trees-near', 0); mk(n, ts.far, 'trees-far', 0); n.trees = ts; }
+      n.decorated = out; }
+    if (decorQ.length || t0) { G.dirty = true; requestAnimationFrame(() => H.draw()); }   // (the new meshes show in the next frame)
   }
   // ---------- per frame (places.js G.onFrame, before the render): the nearest loaded place's clock, lights, sky, styles,
   // the trees' level by the size on screen of their tile's 90th-percentile tree (LOD.px near, PX_HIDE hidden)
   const LODPX = () => globalThis.__docklands3?.ctx?.lod?.px ?? 32;
   function frame(p, eye, drawn) {
     // (the lights stay visible: a light that comes and goes changes the lights of every lit program, so all would compile again)
+    decorStep();
     if (!p) { sun.intensity = moon.intensity = fill.intensity = 0; sky.visible = false; if (state.shadows) { state.shadows = false; sun.castShadow = false; } state.place = null; return; }
     clockFor(p);
     const F = G.frameState, sd = U.sun.value;
@@ -384,6 +403,10 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
       const o = G.orbit?.(), Fs = G.frameState; let T = [0, 0, 0];
       if (o) { const P = geodeticToEcef(o.lon, o.lat, o.h || 0), d = [P[0] - Fs.O[0], P[1] - Fs.O[1], P[2] - Fs.O[2]], R = Fs.R; T = [0, 1, 2].map(r => R[r][0] * d[0] + R[r][1] * d[1] + R[r][2] * d[2]); }
       sun.target.position.set(...T); sun.position.copy(sd).multiplyScalar(5000).add(sun.target.position); }
+    // the building materials with or without the night windows (both compiled at the warm-up)
+    const nm = V.night.value > 0.001 && V.pix.value < 0.5;
+    if (nm !== state.nightMats) { state.nightMats = nm; const a = nm ? [BMAT_DAY, BMAT, BLOCK_DAY, BLOCK] : [BMAT, BMAT_DAY, BLOCK, BLOCK_DAY];
+      for (const pl of G.places || []) for (const nd of pl.nodes) for (const m of nd.meshes) { const i = a.indexOf(m.material); if (i === 0 || i === 2) m.material = a[i + 1]; } }
     // trees by tile
     const K = G.cull ? G.cull.K() : innerHeight, px = LODPX(); state.drawn = drawn;
     for (const nd of drawn) { const ts = nd.trees; if (!ts) continue;
@@ -404,7 +427,8 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const gi = new THREE.BoxGeometry(1, 1, 1); gi.deleteAttribute('normal'); gi.deleteAttribute('uv'); for (const k of ['col', 'rcol', 'mcol', 'gk']) gi.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4));
     const bi = new THREE.InstancedMesh(gi, BLOCK, 1); bi.setMatrixAt(0, new THREE.Matrix4());
     const mt = (geo, mat, A) => { const g = geo.clone(); for (const k of A) g.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4)); const m = new THREE.InstancedMesh(g, mat, 1); m.setMatrixAt(0, new THREE.Matrix4()); return m; };
-    return [new THREE.Mesh(gb, BMAT), new THREE.Mesh(go, BLOCK), new THREE.Mesh(gw, WMAT), bi, mt(TG.crowns.broad, CROWN, ['mid', 'leaf', 'aut', 'cal', 'bloom']), mt(TG.trunk, TRUNK, ['bark']), mt(TG.far, FAR, ['mid', 'leaf', 'aut', 'cal', 'bloom'])];
+    const bi2 = new THREE.InstancedMesh(gi, BLOCK_DAY, 1); bi2.setMatrixAt(0, new THREE.Matrix4());
+    return [new THREE.Mesh(gb, BMAT), new THREE.Mesh(gb, BMAT_DAY), new THREE.Mesh(go, BLOCK), new THREE.Mesh(go, BLOCK_DAY), new THREE.Mesh(gw, WMAT), bi, bi2, mt(TG.crowns.broad, CROWN, ['mid', 'leaf', 'aut', 'cal', 'bloom']), mt(TG.trunk, TRUNK, ['bark']), mt(TG.far, FAR, ['mid', 'leaf', 'aut', 'cal', 'bloom'])];
   }
   // the state for the text and machine interface (G.placeLook, describeView): what the place is drawn with now
   function describe() {

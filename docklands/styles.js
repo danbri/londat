@@ -16,7 +16,7 @@
 import * as THREE from 'three/webgpu';
 import { Fn, If, Loop, Discard, pass, uniform, uniformArray, attribute, float, vec2, vec3, vec4, floor, fract, mod, step, mix, min, max, abs,
   dot, select, sqrt, clamp, screenUV, screenCoordinate, positionWorld, positionView, normalFlat, cameraWorldMatrix, sRGBTransferEOTF,
-  sRGBTransferOETF, perspectiveDepthToViewZ, texture, int, log2, exp2, exp, sin, rtt } from 'three/tsl';
+  sRGBTransferOETF, perspectiveDepthToViewZ, logarithmicDepthToViewZ, texture, int, log2, exp2, exp, sin, rtt } from 'three/tsl';
 import { FAC } from './materials.js';
 import { afterImage } from 'three/addons/tsl/display/AfterImageNode.js';
 import { bloom } from 'three/addons/tsl/display/BloomNode.js';
@@ -384,27 +384,36 @@ const vnoise = p => {   // value noise in [0, 1)
   return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 };
 function paintOutput() {
-  const S = H.scenePass, scol = S.getTextureNode('output'), D = S.getTextureNode('depth');
-  const viewZ = uv => perspectiveDepthToViewZ(D.sample(uv).x, PT.near, PT.far).negate();
+  const R = paintGraph(H.scenePass, { near: PT.near, far: PT.far, night: C.U.night, overlays: true });
+  Object.assign(PT, { pass: R.pass, ovPass: R.ovPass, dab: R.dab, dabM: R.dabM, out: R.out, outMask: R.outMask, outNight: R.outNight });
+}
+// the paint graph of a scene pass S: the model's (overlays: the data-layer mask pass; perspective depth) or the globe's
+// (globePaint: logarithmic depth, as every globe material writes it; no data-layer pass). o: { near, far, night, overlays, log }
+function paintGraph(S, o) {
+  const scol = S.getTextureNode('output'), D = S.getTextureNode('depth');
+  const viewZ = o.log ? uv => logarithmicDepthToViewZ(D.sample(uv).x, o.near, o.far).negate() : uv => perspectiveDepthToViewZ(D.sample(uv).x, o.near, o.far).negate();
   // the data layers (OVERLAY_LAYERS: overlays, river, routes, KML, locate, keys, aircraft, flood walls, AIS ships, piers: colours that carry data) are data, not scenery: a pass of
   // them alone (full resolution, no background, clear alpha 0) gives a mask. An overlay pixel counts where the main frame
   // is not nearer than the overlay (a nearer building hides it). No If / and / or inside an rtt (r186).
-  PT.ovPass = pass(C.scene, C.camera, { samples: 0 }); const OL = new THREE.Layers(); OL.set(OVL); PT.ovPass.setLayers(OL);   // full resolution: thin lines stay whole
-  const ub = PT.ovPass.updateBefore.bind(PT.ovPass);
-  // no data layer visible: the pass is drawn once (cleared, alpha 0) and then skipped until one shows (PT.ovAny, paintFrame)
-  PT.ovPass.updateBefore = frame => { if (!PT.ovAny && PT.ovClean) { PT.ovSkipped++; return; } PT.ovClean = !PT.ovAny;
-    const r = frame.renderer, sc = C.scene, bg = sc.background, a = r.getClearAlpha(); sc.background = null; r.setClearAlpha(0);
-    try { return ub(frame); } finally { sc.background = bg; r.setClearAlpha(a); } };
-  const OV = PT.ovPass.getTextureNode(), o4 = uv => OV.sample(uv), OVD = PT.ovPass.getTextureNode('depth');
-  // visible where the overlay's own depth is not behind the main frame's (a nearer building hides it); translucent overlays too
-  // (an overlay that writes no depth, depth 1, counts as visible)
-  const ovMask = uv => { const od = OVD.sample(uv).x, zo = perspectiveDepthToViewZ(od, PT.near, PT.far).negate();
-    return clamp(o4(uv).a.sub(0.15).mul(4), 0, 1).mul(max(step(zo, viewZ(uv).mul(1.02).add(0.5)), step(0.99999, od))); };
+  let ovPass = null, o4 = () => vec4(0), ovMask = () => float(0);
+  if (o.overlays) {
+    ovPass = pass(C.scene, C.camera, { samples: 0 }); const OL = new THREE.Layers(); OL.set(OVL); ovPass.setLayers(OL);   // full resolution: thin lines stay whole
+    const ub = ovPass.updateBefore.bind(ovPass);
+    // no data layer visible: the pass is drawn once (cleared, alpha 0) and then skipped until one shows (PT.ovAny, paintFrame)
+    ovPass.updateBefore = frame => { if (!PT.ovAny && PT.ovClean) { PT.ovSkipped++; return; } PT.ovClean = !PT.ovAny;
+      const r = frame.renderer, sc = C.scene, bg = sc.background, a = r.getClearAlpha(); sc.background = null; r.setClearAlpha(0);
+      try { return ub(frame); } finally { sc.background = bg; r.setClearAlpha(a); } };
+    const OV = ovPass.getTextureNode(), OVD = ovPass.getTextureNode('depth'); o4 = uv => OV.sample(uv);
+    // visible where the overlay's own depth is not behind the main frame's (a nearer building hides it); translucent overlays too
+    // (an overlay that writes no depth, depth 1, counts as visible)
+    ovMask = uv => { const od = OVD.sample(uv).x, zo = perspectiveDepthToViewZ(od, o.near, o.far).negate();
+      return clamp(o4(uv).a.sub(0.15).mul(4), 0, 1).mul(max(step(zo, viewZ(uv).mul(1.02).add(0.5)), step(0.99999, od))); };
+  }
   // 1. the copy
   const sc0 = scol.sample(screenUV).rgb;
-  PT.pass = rtt(vec4(sc0, float(100).div(max(viewZ(screenUV), 0.05)).mul(float(1).sub(ovMask(screenUV).mul(2)))), null, null,
+  const A = rtt(vec4(sc0, float(100).div(max(viewZ(screenUV), 0.05)).mul(float(1).sub(ovMask(screenUV).mul(2)))), null, null,
     { resolutionScale: 0.5, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter, magFilter: THREE.LinearFilter });
-  const A = PT.pass, res = PT.res, at = (p, l) => A.sample(p.div(res)).level(l);
+  const res = PT.res, at = (p, l) => A.sample(p.div(res)).level(l);
   // 2. the dabs; pp in device px of the full frame, whatever the dab pass's own resolution
   const pp = screenUV.mul(res), z0 = viewZ(screenUV), iz0 = float(100).div(max(z0, 0.05)), lg2dpr = max(log2(max(PT.dpr, 1)).sub(1), 0);   // the copy's mip level of 1 CSS px (a copy texel is 2 device px)
   const same = t => clamp(min(abs(t.a), iz0).div(max(max(abs(t.a), iz0), 1e-6)).sub(PT.gate).mul(5), 0, 1);   // the depth gate
@@ -453,10 +462,10 @@ function paintOutput() {
   // value kept: towards the source luma at about 1 CSS px; half on near flat surfaces (the strokes break up the facets), none
   // where a near dab spills over a farther surface (that is the painted outline)
   // at night the source luma of the device pixel (lit windows are 1 to 2 px points), by day of 1 CSS px
-  const src = mix(m1.rgb, scol.sample(screenUV).rgb, C.U.night), Ls = lum3(src), Lp = lum3(plain);
+  const src = mix(m1.rgb, scol.sample(screenUV).rgb, o.night), Ls = lum3(src), Lp = lum3(plain);
   // at night (U.night) keepN: the lit windows stay points of light, not dabs that spread warm light over dark walls
-  const kp = mix(PT.keep, PT.keepN, C.U.night).mul(same(m1)).mul(float(1).sub(nflat.mul(0.5))).mul(float(1).sub(spilt));
-  const dabs = dabs0.mul(mix(float(1), clamp(Ls.add(0.002).div(Lp.add(0.002)), 0.03, mix(12, 50, C.U.night)), kp));
+  const kp = mix(PT.keep, PT.keepN, o.night).mul(same(m1)).mul(float(1).sub(nflat.mul(0.5))).mul(float(1).sub(spilt));
+  const dabs = dabs0.mul(mix(float(1), clamp(Ls.add(0.002).div(Lp.add(0.002)), 0.03, mix(12, 50, o.night)), kp));
   // chroma cap: a dab over a grey or dark-grey pixel (fog, concrete, a dark wall between lit windows) keeps at most a little
   // more chroma than the source has there (chroma relative to the max channel), so no colour is invented on grey
   const cs = chroma(src), cdab = chroma(dabs), Ld = lum3(dabs);
@@ -467,7 +476,7 @@ function paintOutput() {
   // size and rebuild nothing: resizing one rtt at each change cost 45 to 60 ms a change in software rendering, and without a
   // rebuild of the output's bindings the output sampled the old texture (black or stale dabs)
   const dabNode = vec4(max(vec3(L).add(capped.sub(L).mul(sk)), vec3(0)), edge.mul(float(1).sub(spilt)).mul(float(1).sub(near)));
-  PT.dab = rtt(dabNode, null, null, { resolutionScale: 1 }); PT.dabM = rtt(dabNode, null, null, { resolutionScale: 0.5 });
+  const dab = rtt(dabNode, null, null, { resolutionScale: 1 }), dabM = rtt(dabNode, null, null, { resolutionScale: 0.5 });
   // 3. the output at full resolution
   // Fewer full-resolution fetches (2026-10-12): the scene pixel only where the edge fidelity uses it (P.a over 0, and not
   // while the camera moves: PT.fidOn), the overlay depth and the main depth only where the data-layer pass has alpha
@@ -475,17 +484,34 @@ function paintOutput() {
   // (Tried 2026-10-12 and dropped: the dabs computed in the output pass itself where the dab pass is at full resolution,
   // one pass less. In SwiftShader that frame took 500 to 690 ms against 40 to 72 ms for two passes.)
   const outOf = Fn(() => {
-    const P = mix(PT.dab.sample(screenUV), PT.dabM.sample(screenUV), PT.mvU), col = vec3(P.rgb).toVar();
+    const P = mix(dab.sample(screenUV), dabM.sample(screenUV), PT.mvU), col = vec3(P.rgb).toVar();
     If(P.a.mul(PT.fidOn).greaterThan(0.002), () => { col.assign(mix(P.rgb, scol.sample(screenUV).rgb, P.a.mul(PT.fid))); });   // fidelity on strong edges: a share of the full-resolution scene
     const cp = screenUV.mul(res).div(PT.dpr), weave = sin(cp.x.mul(2.2)).mul(sin(cp.y.mul(2.2))), gr = hash4(floor(cp).add(7.7)).x.sub(0.5);
     const out = col.mul(float(1).add(weave.mul(0.5).add(gr).mul(PT.grain))).toVar();
-    If(o4(screenUV).a.greaterThan(0.15), () => { out.assign(mix(out, scol.sample(screenUV).rgb, ovMask(screenUV))); });   // the data layers crisp on top
+    if (o.overlays) If(o4(screenUV).a.greaterThan(0.15), () => { out.assign(mix(out, scol.sample(screenUV).rgb, ovMask(screenUV))); });   // the data layers crisp on top
     return out;
   });
   const out = outOf();
-  PT.out = vec4(out, 1);
-  PT.outMask = vec4(vec3(ovMask(screenUV)), 1);   // test view: the data-layer mask (paint.showMask = true; paint-check.mjs)
-  PT.outNight = vec4(out.add(bloom(A, 0.9, 0.45, 0.6).rgb), 1);   // lit windows: the map's bloom, of the half-resolution copy
+  return { pass: A, ovPass, dab, dabM, out: vec4(out, 1),
+    outMask: vec4(vec3(ovMask(screenUV)), 1),   // test view: the data-layer mask (paint.showMask = true; paint-check.mjs)
+    outNight: vec4(out.add(bloom(A, 0.9, 0.45, 0.6).rgb), 1) };   // lit windows: the map's bloom, of the half-resolution copy
+}
+// Painted on the globe (globe.js drawGlobe asks for it when it draws to the screen): the same paint graph over a pass of the
+// globe scene (the places drawn like the model, globe/place-look.js; the planet beyond), at the tier's still density; its
+// night is the place's (place-look.js V.night). Returns false in every other style (the globe draws itself).
+const GPT = { pipe: null, sp: null, R: null, near: uniform(1), far: uniform(1e7), night: uniform(0), scale: 0, frames: 0 };
+function globeRender(scene, cam) {
+  if (MODE !== 'paint') return false;
+  const r = globalThis.__docklands3?.renderer; if (!r) return false;
+  if (!GPT.pipe) { GPT.sp = pass(scene, cam); GPT.R = paintGraph(GPT.sp, { near: GPT.near, far: GPT.far, night: GPT.night, log: true, overlays: false }); GPT.pipe = new THREE.RenderPipeline(r); GPT.pipe.outputColorTransform = true; }
+  GPT.near.value = cam.near; GPT.far.value = cam.far; GPT.night.value = globalThis.__docklands3?.globe?.placeLookU?.V?.night?.value ?? 0;
+  const s = r.getDrawingBufferSize(new THREE.Vector2()), dpr = r.getPixelRatio(); PT.res.value.set(s.x, s.y); PT.dpr.value = dpr; PT.mvU.value = 0; PT.fidOn.value = 1;
+  const T = PTIERS[PT.level], sc = Math.min(1, T.still / Math.max(dpr, 1));
+  if (sc !== GPT.scale) { GPT.R.dab.setResolutionScale(sc); GPT.scale = sc; GPT.pipe.needsUpdate = true; }
+  GPT.R.dab.autoUpdate = true; GPT.R.dabM.autoUpdate = false;
+  const bl = $('bloom'), want = (bl ? bl.checked : true) && GPT.night.value > 0.01 ? GPT.R.outNight : GPT.R.out;
+  if (GPT.pipe.outputNode !== want) { GPT.pipe.outputNode = want; GPT.pipe.needsUpdate = true; }
+  GPT.pipe.render(); GPT.frames++; return true;
 }
 function setLevel(l, why, ms) {
   l = Math.max(0, Math.min(PTIERS.length - 1, l)); if (l === PT.level) return;
@@ -653,7 +679,7 @@ export function init(hook) {
   if (tierOf(pq) >= 0) { PT.mode = pq; PT.level = tierOf(pq); } else if (pz > 0) PT.size.value = Math.min(40, Math.max(1, pz));
   if ((tierOf(pq) >= 0 || pq === 'auto' || pz > 0) && !q.get('style')) want = 'paint';
   const pf = parseFloat(q.get('paintfid')); if (pf >= 0) PT.fid.value = Math.min(1, pf);   // ?paintfid=<0..1>: the share of the scene on strong edges
-  const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT,
+  const api = { setStyle, get mode() { return MODE; }, get pixel() { return PX.stats; }, paint: PT, globeRender, globePaint: GPT,
     // the tier now (full, lite, low), its mode (auto or fixed), moving or not, and the auto tier's steps (?paint=full|lite|low|auto)
     get paintTier() { return PTIERS[PT.level].name; }, get paintMode() { return PT.mode; }, get paintMoving() { return PT.moving; }, paintTiers: PTIERS,
     setPaintTier(t) { const i = PTIERS.findIndex(x => x.name === t); if (t === 'auto') { PT.mode = 'auto'; PT.tierSince = performance.now(); } else if (i >= 0) { PT.mode = t; PT.level = i; } C.draw(); return this.paintTier; },

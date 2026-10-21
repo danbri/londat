@@ -355,7 +355,7 @@ export async function createGlobe(H) {
     // background: black space, sky blue near the ground by day
     const dayK = clamp((dot3(ecefNormalAt(F.eyeGeo), s) + 0.1) / 0.3, 0, 1), skyK = clamp(1 - Math.log10(Math.max(1, alt / 1000)) / 1.9, 0, 1) * dayK;
     scene.background.setRGB(0.18 * skyK, 0.36 * skyK, 0.72 * skyK);
-    renderer.setRenderTarget(target); const t0 = performance.now(); renderer.render(scene, gcam); const ms = performance.now() - t0; renderer.setRenderTarget(null);
+    renderer.setRenderTarget(target); const t0 = performance.now(); if (!(target === null && globalThis.__docklandsStyles?.globeRender?.(scene, gcam))) renderer.render(scene, gcam); const ms = performance.now() - t0; renderer.setRenderTarget(null);   // (Painted: styles.js globeRender paints the globe's frame)
     const info = renderer.info.render; G.stats.frame = { patches: sel.length, triangles: info.triangles, calls: info.drawCalls ?? info.calls, ms: Math.round(ms * 10) / 10 };
     return ms;
   }

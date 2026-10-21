@@ -386,6 +386,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     look.frame(hole, eye, drawn);   // the place's clock, lights, sky, style and the trees' level (place-look.js)
     if (want.length || ready.length) { G.dirty = true; requestAnimationFrame(() => H.draw()); } else if (inFlight) G.dirty = true;
   };
+  G.placesDebug = { oldBuilding: BMAT, oldBlock: blockMat, oldGround: groundMat };   // (tests: the materials before 2026-10-22, for A/B timing on the same page)
   G.placeLook = () => look.describe();   // how the nearest place is drawn now (place-look.js): look, night, light, sky, trees, water
   G.placeLookU = look;                   // (tests: docklands/test/place-look-check.mjs)
   // stats for tests and the page API: drawn tiles by tier and level, triangles drawn, loaded and pending tiles
