@@ -80,7 +80,7 @@ Attribution on every page that shows OSM data: "© OpenStreetMap contributors", 
 | `docklands/data/trees.json` | 6.4 MB | derived | natural=tree nodes (position, species, genus, taxon, height, diameter_crown, node id) not within 3 m of an inventory tree; natural=tree_row lines; green area outlines (leisure park, garden, pitch, playground, nature_reserve; landuse grass, forest, meadow, recreation_ground; natural wood, scrub) with way or relation ids | osmfr-greater-london | docklands/index.html |
 | `docklands/data/tree-species.json` | 167 kB | derived | natural=tree leaf_type and leaf_cycle (437 trees with no taxon), and the OSM trees, taxa and green areas already in trees.json | overpass-2026-10-09 | docklands/index.html |
 | `data/raw/trees/osm-tree-leaf.json.gz` | 42 kB | raw | natural=tree node ids, leaf_type, leaf_cycle | overpass-2026-10-09 |  |
-| `METHODS.md` | 688 kB | notes | describes how OSM data is fetched, clipped and joined |  |  |
+| `METHODS.md` | 699 kB | notes | describes how OSM data is fetched, clipped and joined |  |  |
 | `methods-intro.md` | 9 kB | notes | states the ODbL rule and the attribution |  |  |
 | `feeds/underground/axonometric-uses.json` | 63 kB | ids | OSM element ids, changeset ids, user names and tag counts at Canada Water, Canary Wharf, Gloucester Road and Baker Street | osmfr-greater-london | feeds/underground/AXONOMETRIC-USES.md |
 | `feeds/underground/AXONOMETRIC-USES.md` | 25 kB | ids | as axonometric-uses.json | osmfr-greater-london |  |
@@ -477,7 +477,7 @@ Exit path groups (review_exit) are in brackets; the paths for the end of the pro
 | `data/raw/trees/osm-tree-leaf.json.gz` | 42 kB | OSM natural=tree nodes in the model box with leaf_type or leaf_cycle: node id and those two tags only (11,993 of 34,445 nodes), Overpass API, OSM data of 2026-10-09 | OpenStreetMap (ODbL 1.0) |
 | `pipeline.json` | 554 kB | provenance of every transform: one W3C PROV activity a tool (used, generated, rules) | written or computed in this project (repository licence) |
 | `pipeline.jsonld` | 1.5 MB | pipeline.json and this register as JSON-LD (PROV-O, DCAT, Dublin Core) for a knowledge graph | written or computed in this project (repository licence) |
-| `METHODS.md` | 688 kB | method catalogue of the whole project: owner rules, every tool activity by subject area in rebuild order, hand-judgement steps, fault register summary | written or computed in this project (repository licence) |
+| `METHODS.md` | 699 kB | method catalogue of the whole project: owner rules, every tool activity by subject area in rebuild order, hand-judgement steps, fault register summary | written or computed in this project (repository licence) |
 | `methods-intro.md` | 9 kB | hand-written front section of METHODS.md: the policy and owner rules that govern the methods, crawl and hand-curation rules | written or computed in this project (repository licence) |
 | `docklands/data/imagery.js` | 424 kB | satellite colour per 3D terrain vertex (Sentinel-2 true colour, 13 August 2026, 10 m) | Copernicus Sentinel-2 L2A (Copernicus Sentinel data: free, full and open (attribution)) |
 | `feeds/SURVEY-2026-10-03.md` | 168 kB | the 2026-10-03 source survey (341 sources in seven areas, 135 left out with reasons) | written or computed in this project (repository licence) |

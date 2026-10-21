@@ -1,7 +1,7 @@
 {
- "checked": "2026-10-12T21:14:07.089Z",
- "generation": "gen-e2b182ceb96b87cf",
- "quads": 122170,
+ "checked": "2026-10-21T03:48:58.964Z",
+ "generation": "gen-979400ed1deb68bc",
+ "quads": 132890,
  "engine": "@factoidal/core 0.7.1",
  "queries": {
   "join, one GRAPH block": {
@@ -23,8 +23,8 @@
    "identical": true
   },
   "quads per graph": {
-   "store": 56,
-   "memory": 56,
+   "store": 59,
+   "memory": 59,
    "memory_one_graph_per_source": null,
    "identical": true
   },
@@ -41,8 +41,8 @@
    "identical": true
   },
   "graphs.rq": {
-   "store": 29,
-   "memory": 29,
+   "store": 30,
+   "memory": 30,
    "memory_one_graph_per_source": null,
    "identical": true
   },
@@ -59,14 +59,14 @@
    "identical": true
   },
   "lineage.rq": {
-   "store": 700,
-   "memory": 700,
+   "store": 781,
+   "memory": 781,
    "memory_one_graph_per_source": null,
    "identical": true
   },
   "occupants-by-building.rq": {
-   "store": 289,
-   "memory": 289,
+   "store": 290,
+   "memory": 290,
    "memory_one_graph_per_source": null,
    "identical": true
   },

@@ -2918,3 +2918,59 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   2026-10-21"; rules 1 (mall and postcode-centre rule for all occupants: F4, F7), 3 (F53) and 4 (F49) reach 8 open.
 - OKRS.md draft: KR6.2 0.1 -> 0.7, KR6.3 0.2 -> 0.4, O6 0.50 -> 0.70.
 - Checks: `npm run check` and `npm test` passed. Not pushed (branch for review by the main session).
+
+## 2026-10-21: KR6.3 to target: the three rules ranked first (F53, F49, F4 with F7), each over all records (subagent)
+- Open faults 12 -> 8 (F12, F20, F46, F47, F50, F51, F52, F55). Commits on branch `worktree-agent-a452f958e388b7dd5`:
+  135a7a50 (code), e489ffd5 (data and kgx ops), da4eb77f (pipeline, register, fault rows), then the kgx build and
+  this entry. Not pushed. Detail and traps: the curation skill, "Recount of 2026-10-21", "Done 2026-10-21".
+- Rule 3, F53 fixed. `tools/key-model-buildings.mjs`: the `sameAs` URL from the way or relation key; operation
+  version 5. No OSM clip or extract in this container, so the new operation `osm-urls-from-keys` v1
+  (`--repair-osm-urls`) made a new `model-building-keys` version from the head (input `…40cf5331fa99da1a`, output
+  `…d69bccf8249df7e7`): 42,244 way URLs rebuilt from the subject key, each id checked against the subject; 220 relation
+  URLs were already right. `docklands/data/building-keys.json` changed only in its `graph` field.
+  `kgx/current.nq.gz`: `<https://www.openstreetmap.org/undefined/…>` IRIs 42,244 -> 0 (3 rule texts in the
+  pipeline and log graphs quote the string as prose).
+- Rule 4, F49 fixed. `cwg-fields.mjs` `decodeAttr` (tests: `tools/test/cwg-fields.test.mjs`), used by `fetch-cwg.mjs`
+  `parse()` on the website attribute. No fetch: `fetch-cwg.mjs --rederive` (1 of 312 websites changed),
+  `build-branches.mjs --cwg-websites` (1 branch; `nsi-matcher.mjs` is now imported after that mode, it needs the local
+  NSI install), `cwg-directory-typed.mjs`, the kgx build. `&#038;` in `cwg-directory.json`, `branches.json`,
+  `cwg-directory-typed.json`/`.nq` and as an IRI in kgx: 0. Kept as fetched (crawl records):
+  `registry/sources/web/site-facts.json` and `third_party/cwplans-structured-data/`.
+- Rule 1, F4 and F7 to "rule in use". New `tools/registry-placement.mjs`: `applyPlacement` is the last join of
+  `build-registry.mjs` (which now also takes its outline geometry, mall hosts, address keys and postcode helpers from that
+  module), and the command runs it as the logged operation `place-occupants-by-mall-and-postcode` v1 on the committed
+  registry, because `build-registry.mjs` cannot run whole here (UPRN, LBSM, company and price-paid inputs are local
+  downloads; a local run drops those joins). Check: the old local build output with the operation applied equals the new
+  `build-registry.mjs` output (0 of 1,129 buildings differ); the postcode evidence formula reproduces every building's
+  postcodes before the rule (0 mismatches). Counts by class (1,090 point-placed links: OSM 611, FSA 446, branch 35):
+  moved to the mall host: OSM 58, FSA with an address point 6, FSA at a postcode-centre or shared point 45, branch at a
+  centroid 8; moved to a key building (FSA, F7): street address + postcode 16, street address 16, same name and postcode
+  in another source 7, one building at the postcode centre 7; confirmed in the same building by a key: 152 (FSA street
+  address + postcode 92, street 15, name 13, postcode 19, mall 7; branch mall 6); out of buildings: 33 FSA under their
+  postcode, 1 FSA outside the Canary Wharf postcodes, 6 branches (`placement_unplaced`); kept at their point 644, and
+  91 already in their mall host. Confidence of the 315 re-placed or confirmed: high 108, medium 181, low 26. Postcodes
+  recomputed: 30 buildings changed. Change set: graph `registry-placement` (3,908 triples, external head, in the store).
+- Rebuilt after the rule (rebuild order): `cwg-directory-typed`, `hours-by-place` (records 419 -> 411: the tool leaves out
+  non-CWG occupants that have a mall), `build-categories` (QLever cache rebuilt locally, 2 queries; the categories
+  follow the moved occupants; on the committed registry it reproduces the committed file but its date), `build-atlas` (occupants 1,486 -> 1,446 in buildings), `audit-quality`, `key-model-buildings`
+  repair, `build-kgx` twice (second run `new: 0`, log unchanged), `check-kgx-store.mjs --write` (15 of 15 queries the
+  same). Not re-run: `join-web-facts.mjs` (its fact records name the crawl-time building: 16 would stop matching moved
+  occupants; the facts already on an occupant move with it), `mall-plan-evidence.mjs` (no change but its date),
+  `build-registry.mjs` whole (local inputs).
+- Audit, before -> after: SP-6 122/332 -> 57/393 ("mall names another complex" 91 -> 27, all in Churchill Place 16,
+  Wood Wharf 8, Columbus Courtyard 3, malls with no host outline; below ground with no basement record 31 -> 30); SP-2
+  173/1127 -> 118/772; SP-7 30/325 -> 56/640 (high 285, medium 299, low 56); SP-3 412/764 unchanged (a source class;
+  new `stats.registry_use`: in a building by such a point 0, by a key 237, under the postcode 48); ID-2 89 -> 110 (different
+  sources in one building 80 -> 101: the F46 pairs the rule brought into one building; rule 2 merges them); ID-3 25 -> 26
+  (Browns: OSM building name now also an occupant, "single-use building: may be correct"); CV-2 162 -> 164 (The Cocktail
+  Club and THE CUBE: their CWG link is on an FSA record now listed under its postcode); TM-4 30/34 (the local Wikidata
+  cache was rebuilt, so the count is the committed one again). F46 heuristic (names in more than one building, one
+  source each, within 250 m): 42 -> 25.
+- Found, not changed: `build-branches.mjs` does not copy `cwg_website` for CWG entries joined in its second (by-name)
+  pass (4 branches); the remaining SP-6 class needs mall outlines for Churchill Place, Wood Wharf and Columbus
+  Courtyard (OSM has none named); `join-web-facts.mjs` should key fact records by occupant source id, not building.
+- OKRS.md draft: KR6.3 0.4 -> 1.0 (at target, on this branch), O6 0.70 -> 0.85.
+- Checks: `npm test` 78 of 78; `npm run check` passes (locale check: zone_latlon 114 -> 113, baseline not changed);
+  headless Chromium, local server: http://127.0.0.1:8093/cwplans/kg/ (live: https://danbri.github.io/londat/cwplans/kg/)
+  loads the new store with 0 page errors and 0 console errors; https://danbri.github.io/londat/cwplans/atlas/ and
+  `#quality` locally 0 page errors (one 404: favicon.ico).
