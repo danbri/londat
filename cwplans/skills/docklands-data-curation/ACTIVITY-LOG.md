@@ -2872,3 +2872,17 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
 - City views: https://danbri.github.io/londat/docklands/?ll=42.6085,-5.6105,900&ht=0,45 (San Andrés del Rabanedo),
   https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,8000&ht=0,50 (León city),
   https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,8000&ht=0,50 (Sarajevo city).
+
+## 2026-10-21: goal "pragmatic perf improvements, and improved worldwide coverage" — merged and live
+- Owner goal (2026-10-20): "pragmatic perf improvements, and improved worldwide coverage so that our detailed city
+  testbeds are not lost in the void". Merged to main and live: trees by cell and JS heap (c35a06fc), Pages service
+  worker, preload hints, area.js as JSON, bulk extracts off Pages (e1bd9b30), parallel layer and model loading
+  (1d48bdb8), places city ring and 35 km surroundings by level of detail (a38f725b), deferred model data on away starts,
+  worldwide base (imagery, GLO-90 near testbeds, world and regional vectors, 31,784 GeoNames towns) (97e534f1), IGN and
+  Microsoft footprints in the city rings (9581a040).
+- Tests on merged main: npm run check, npm test 77/77, globe-check 390x844@2, globe-controls, place-check León and
+  Sarajevo, base-check (after a test fix: compare the base sampler S.h0, since places.js answers S.h over a place),
+  cpu-copies-check, sw-check (passed on a second run under load). Not measured on the owner's iPhone.
+- Open: Pages size now about 355 MB + about 90 MB of new place and base data; finer imagery and heights away from the
+  testbeds; LOD step 4 (Docklands buildings and terrain in 1 km tiles); globe submit time at 100 km rose (59.9 ms in one
+  headless run at load 13 against 3.8 ms in the agent's run): measure on the phone.
