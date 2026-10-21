@@ -4295,7 +4295,7 @@
     },
     {
       "path": "registry/buildings.json",
-      "what": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins",
+      "what": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins; each occupant link keeps its placement (placed, placed_by, placed_confidence, placement_fault, point_in): the mall and postcode-centre rule of tools/registry-placement.mjs (F4, F7) moved 163 links to their mall host or key building, confirmed 152 and listed 40 under their postcode (2026-10-21)",
       "sources": [
         "osm",
         "wikidata",
@@ -4322,7 +4322,7 @@
         "extract": "osmfr-greater-london",
         "what": "building outlines (centroid, area), names, house names, levels, addresses; occupant names, brands, levels, opening hours, cuisine, wheelchair access, check and start dates, operator and business contact tags (website, phone, email, contact:* links)"
       },
-      "produced_by": "tools/build-registry.mjs",
+      "produced_by": "tools/build-registry.mjs, then tools/join-web-facts.mjs; on 2026-10-21 tools/registry-placement.mjs (operation place-occupants-by-mall-and-postcode) applied the placement rule to the committed file",
       "shown_on": [
         "registry/index.html"
       ],
@@ -4425,7 +4425,7 @@
     },
     {
       "path": "registry/sources/brands/branches.json",
-      "what": "271 chain-store branches with evidence per source",
+      "what": "271 chain-store branches with evidence per source; cwg_website as decoded in cwg-directory.json (F49; build-branches.mjs --cwg-websites, 2026-10-21)",
       "sources": [
         "osm",
         "nsi",
@@ -4476,7 +4476,7 @@
     },
     {
       "path": "registry/sources/brands/cwg-directory.json",
-      "what": "374 entries of the Canary Wharf Group shop, restaurant and venue directory: title, categories, address lines, mall, level, postcode, street line, flags, website",
+      "what": "374 entries of the Canary Wharf Group shop, restaurant and venue directory: title, categories, address lines, mall, level, postcode, street line, flags, website; the website attribute with its HTML character references decoded (F49; fetch-cwg.mjs --rederive on 2026-10-21, website_rule)",
       "sources": [
         "cwg-site"
       ],
@@ -5379,7 +5379,7 @@
         "extract": "osmfr-greater-london",
         "what": "OSM way and relation ids of the model buildings and their name, addr:housename, addr:housenumber, addr:street, addr:postcode, building, building:part, building:levels and wikidata tags"
       },
-      "produced_by": "tools/key-model-buildings.mjs (operation key-model-buildings)",
+      "produced_by": "tools/key-model-buildings.mjs (operation key-model-buildings; on 2026-10-21 operation osm-urls-from-keys, --repair-osm-urls, F53)",
       "shown_on": [
         "docklands/index.html"
       ]
