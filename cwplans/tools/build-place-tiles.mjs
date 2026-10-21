@@ -42,7 +42,8 @@ import REGIONS from '../../docklands/geo/regions/index.js';
 import { enuFrame, geodeticToEcef, D2R } from '../../docklands/geo/ellipsoid.js';
 import { selectOuter, lodTree, walk, outerTile, easedDem, mul4, inv4rigid, roundM, meet } from './place-lod.mjs';
 import { overture } from '../../docklands/geo/adapters/world-buildings.js';
-import { blockSelector, blockTree, blockTile, worldBaseGround } from './place-blocks.mjs';
+import { blockSelector, blockTree, blockTile, worldBaseGround, cellBox } from './place-blocks.mjs';
+import { polyIndex, tagIndex, liteSelector, townSize, mergeItems } from './place-lite.mjs';
 import { unpack } from '../../docklands/geo/skeleton.js';
 
 const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
@@ -51,16 +52,22 @@ const CW = join(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2), flag = f => argv.includes(f);
 const argOf = k => { const i = argv.findIndex(a => a === '--' + k || a.startsWith('--' + k + '=')); if (i < 0) return null; return argv[i].includes('=') ? argv[i].split('=')[1] : argv[i + 1]; };
 const RID = argOf('region'); if (!RID) { console.error('usage: build-place-tiles.mjs [fetch|build] --region <id>'); process.exit(2); }
-const REG = REGIONS[RID]; if (!REG) throw new Error(`no region config ${RID} (docklands/geo/regions/)`);
+// a region config of the page (regions/index.js), or a build-only one (regions/<id>.js not in the index: the UK lite set,
+// whose box would make the whole UK one project region for the page's zone and gazetteer lookups)
+const REG = REGIONS[RID] || await import(`../../docklands/geo/regions/${RID}.js`).then(m => m.default).catch(() => null); if (!REG) throw new Error(`no region config ${RID} (docklands/geo/regions/)`);
 const PL = REG.place; if (!PL) throw new Error(`region ${RID} has no place block`);
 // kind 'blocks' (Greater London): no core, no ground of its own; the buildings of a boundary as blocks by level of detail
 const BLOCKS = PL.kind === 'blocks', BK = BLOCKS ? PL.blocks : null;
+// kind 'lite' (the UK outside London): landmarks plus merged mass, written to another repository (place.outRepo, --out)
+const LITE = PL.kind === 'lite', LT = LITE ? PL.lite : null;
 const cmd = ['fetch', 'build', 'readme'].find(c => argv.includes(c)) || 'all';
 const RAWD = join(CW, 'data', 'raw', 'places', RID), WORK = join(RAWD, 'work');
-const OUTROOT = join(CW, 'docklands', 'data', 'places'), OUT = join(OUTROOT, RID), PROV = join(OUT, 'provenance'), SRC = join(OUT, 'sources');
-for (const d of [RAWD, WORK, OUT, PROV, SRC]) mkdirSync(d, { recursive: true });
+const OUTROOT = join(CW, 'docklands', 'data', 'places'), OUT = LITE ? (argOf('out') || join(CW, '..', '..', PL.outRepo, PL.outPath)) : join(OUTROOT, RID), PROV = join(OUT, 'provenance'), SRC = join(OUT, 'sources');
+for (const d of [RAWD, WORK, OUT, PROV, ...(LITE ? [] : [SRC])]) mkdirSync(d, { recursive: true });
 const sha = b => createHash('sha256').update(b).digest('hex');
-const rel = p => relative(CW, p);
+// paths in the logs: relative to cwplans/, or "<repo>:<path>" for the files of another repository (kind lite)
+const rel = p => LITE && !relative(OUT, p).startsWith('..') ? `${PL.outRepo}:${PL.outPath}${relative(OUT, p)}` : relative(CW, p);
+const absOf = q => LITE && q.startsWith(PL.outRepo + ':') ? join(OUT, q.slice(PL.outRepo.length + 1 + PL.outPath.length)) : join(CW, q);
 const jz = (p, o) => writeFileSync(p, gzipSync(JSON.stringify(o)));
 const rz = p => JSON.parse(gunzipSync(readFileSync(p)).toString('utf8'));
 
@@ -109,7 +116,7 @@ async function fetchOsm() {
 
 // DEM: by the adapter's kind, into one common raw grid (row 0 = north, heights in metres of the adapter's datum)
 const demAd = REG.adapters.find(a => a.id === PL.dem && a.dem) || REG.adapters.find(a => a.dem);
-if (!demAd && !BLOCKS) throw new Error(`region ${RID}: no adapter with a dem block`);
+if (!demAd && !BLOCKS && !LITE) throw new Error(`region ${RID}: no adapter with a dem block`);
 // the ring: a wider square (place.ring_m, default 8 km) of coarser terrain round the place, drawn by the globe between the
 // place's tiles and the 10 km world terrain (globe/places.js), so a valley or a hill is not cut off at the place's edge
 const RING_M = PL.ring_m ?? 8000, RING = [O.lon - RING_M / 2 / mLon, O.lat - RING_M / 2 / mLat, O.lon + RING_M / 2 / mLon, O.lat + RING_M / 2 / mLat];
@@ -354,7 +361,7 @@ const fileIn = (p, label) => ({ label, path: rel(p), sha256: sha(readFileSync(p)
 async function run(op, inputs, params, body) {
   const act = sha(JSON.stringify([op.id, op.version, inputs.map(i => i.sha256), params])).slice(0, 16);
   const prev = blog.activities.find(a => a.activity === act);
-  if (prev && !flag('--force') && prev.outputs.every(o => existsSync(join(CW, o.path)) && sha(readFileSync(join(CW, o.path))) === o.sha256)) { console.log(`${op.id}: in the log (${act})`); return prev; }
+  if (prev && !flag('--force') && prev.outputs.every(o => existsSync(absOf(o.path)) && sha(readFileSync(absOf(o.path))) === o.sha256)) { console.log(`${op.id}: in the log (${act})`); return prev; }
   const t0 = Date.now(), outs = await body(params), rec = { activity: act, operation: op.id, version: op.version, skill: op.skill, tool: TOOL, inputs, params,
     outputs: outs.map(p => ({ path: rel(p), sha256: sha(readFileSync(p)), bytes: readFileSync(p).length })), ms: Date.now() - t0, at: new Date().toISOString() };
   if (rec.outputs.some(o => o.path.startsWith('data/raw'))) rec.note = 'outputs under data/raw are intermediate (not committed); their hashes fix the next step';
@@ -909,7 +916,7 @@ function writeReadmes() {
     'Raw downloads (OSM answers, DEM GeoTIFFs, national and GHSL zips) stay in `cwplans/data/raw/places/<id>/`, git-ignored. Catastro originals are never committed.', '',
     '## Places', '', '| place | live view | buildings | size | README |', '|---|---|---|---|---|'];
   for (const p of ix.places) { const dir = join(OUTROOT, p.id); let tot = 0; const walk = d => { for (const n of readdirSync(d)) { const q = join(d, n); if (n === 'README.md') continue; statSync(q).isDirectory() ? walk(q) : tot += size(q); } }; if (existsSync(dir)) walk(dir);
-    M.push(`| ${p.name} | ${view(p)} | ${p.buildings} | ${kb(tot)} | [${p.id}/README.md](${GH}docklands/data/places/${p.id}/README.md) |`); }
+    M.push(p.tileBase ? `| ${p.name} | ${p.view ? SITE + 'docklands/?' + p.view : view(p)} | ${p.buildings} (${p.landmarks} landmarks) | in another repository | [README.md](${p.readme}) (${p.tileBase}) |` : `| ${p.name} | ${view(p)} | ${p.buildings} | ${kb(tot)} | [${p.id}/README.md](${GH}docklands/data/places/${p.id}/README.md) |`); }
   M.push('', `Data register entries: [DATA-REGISTER.md](${GH}DATA-REGISTER.md) (search "docklands/data/places").`, '');
   writeFileSync(join(OUTROOT, 'README.md'), M.join('\n'));
   console.log('readme: places/README.md and', ix.places.map(p => p.id + '/README.md').join(', '));
@@ -1180,6 +1187,357 @@ async function buildBlocks() {
   console.log(`done: ${readdirSync(join(OUT, 'tiles')).length} tiles, ${entry.buildings} buildings (${entry.named} named), tiles ${(tot / 1e6).toFixed(2)} MB, tileset.json ${(statSync(join(OUT, 'tileset.json')).size / 1e6).toFixed(2)} MB, features.json ${(statSync(join(OUT, 'features.json')).size / 1e6).toFixed(2)} MB`);
 }
 
+// ---------- a place of kind "lite" (the UK outside Greater London; region config uk-lite.js, place.kind 'lite',
+// place.lite; module cwplans/tools/place-lite.mjs): landmarks plus merged mass, written to another repository (--out).
+// Fetch: the OSM tags of the landmark rule (one QLever query), the GHSL tiles over the parts, then part by part the
+// Overture buildings of the part's box in slim mode (centroid and area of every record, the outline of the landmark
+// candidates only). Build: place-lite-select per part (raw NDJSON -> atoms and landmarks; with --clean-raw the part's
+// answer is deleted once its activity is in the log, so the disk holds one part at a time), then place-lite-tiles
+// (all parts -> tiles, tileset.json with external tile sets, features.json). Skill docklands-3d-page, "Three.js port: the
+// UK lite set (2026-10-22)".
+const LOPS = {
+  select: { id: 'place-lite-select', version: 1, skill: 'docklands-3d-page' },   // 1: part owner by centroid (London excluded), heights in the place-heights order, landmarks by the rule, the rest as 200 m atoms
+  tiles: { id: 'place-lite-tiles', version: 2, skill: 'docklands-3d-page' },     // 2: features in shards by part and names.json; 1: quadtree levels 7..11, leaves 200/400 m by built share, external tile sets from level 9
+};
+const liteParts = () => PL.parts.map(pt => ({ ...pt, ...skelFeature(pt) }));
+// a polygon feature of the UK skeleton by layer, level and code
+function skelFeature(pt) {
+  const dir = join(CW, PL.skeleton), M = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8')), L = M.layers.find(l => l.id === pt.layer), lv = L.levels.find(l => l.level === pt.level);
+  for (const fd of lv.files) { const file = join(dir, fd.path), fc = unpack(JSON.parse(readFileSync(file, 'utf8'))), ft = fc.features.find(x => x.properties.code === pt.code); if (!ft) continue;
+    const polys = ft.geometry.type === 'Polygon' ? [ft.geometry.coordinates] : ft.geometry.coordinates; let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity;
+    for (const p of polys) for (const [x, y] of p[0]) { w = Math.min(w, x); e = Math.max(e, x); s = Math.min(s, y); n = Math.max(n, y); }
+    return { file, polys, name: ft.properties.name, bbox: [w, s, e, n], qbox: [Math.floor(w * 100) / 100, Math.floor(s * 100) / 100, Math.ceil(e * 100) / 100, Math.ceil(n * 100) / 100] }; }
+  throw new Error(`skeleton feature ${pt.code} not found (${pt.layer}, level ${pt.level})`);
+}
+const liteRaw = pt => join(RAWD, `overture-${pt.code}-${ovL().outer.release}.ndjson`);
+const ovL = () => REG.adapters.find(a => a.id === LT.outer && a.outer);
+const tagsRaw = () => join(RAWD, 'osm-landmark-tags.tsv');
+function tagsQuery() {
+  const R = LT.landmark, vals = a => a.map(v => JSON.stringify(v)).join(', ');
+  return `PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+PREFIX ogc: <http://www.opengis.net/rdf#>
+SELECT ?w ?b ?wd ?wp ?hist ?mm ?leis ?name WHERE {
+  osmrel:${LT.tags.area_relation} ogc:sfContains ?w .
+  ?w osmkey:building ?b .
+  OPTIONAL { ?w osmkey:wikidata ?wd } OPTIONAL { ?w osmkey:wikipedia ?wp } OPTIONAL { ?w osmkey:historic ?hist }
+  OPTIONAL { ?w osmkey:man_made ?mm } OPTIONAL { ?w osmkey:leisure ?leis } OPTIONAL { ?w osmkey:name ?name }
+  FILTER(BOUND(?wd) || BOUND(?wp) || ?b IN (${vals(R.building)}) || ?hist IN (${vals(R.historic)}) || ?mm IN (${vals(R.man_made)}) || ?leis IN (${vals(R.leisure)}))
+}`;
+}
+async function fetchLite() {
+  // 1. the OSM tags of the landmark rule (QLever OSM planet; one POST, TSV)
+  const ft = tagsRaw();
+  if (!existsSync(ft) || flag('--refetch')) {
+    const q = tagsQuery(), body = new URLSearchParams({ query: q });
+    const buf = await get(LT.tags.endpoint, { method: 'POST', body, headers: { Accept: 'text/tab-separated-values', 'Content-Type': 'application/x-www-form-urlencoded' } });
+    writeFileSync(ft, buf);
+    const st = JSON.parse((await get(LT.tags.endpoint + '?cmd=stats')).toString('utf8'));
+    record('osm-landmark-tags', ft, LT.tags.endpoint, { source: 'osm', request: 'SPARQL POST (text/tab-separated-values): ' + q.replace(/\s+/g, ' '), index: st['name-index'], rows: buf.toString('utf8').split('\n').filter(Boolean).length - 1,
+      licence: 'ODbL 1.0, © OpenStreetMap contributors', as_fetched: { bytes: buf.length, sha256: sha(buf) } });
+    console.log(`osm landmark tags: ${flog['osm-landmark-tags'].rows} rows (${st['name-index']})`);
+  }
+  // 2. GHSL tiles over the parts (zips stay raw)
+  await fetchGhslTiles();
+  // 3. part by part (--part <code> for one), each followed by its select operation when building
+  if (!flag('--no-parts')) for (const pt of liteParts()) { if (argOf('part') && argOf('part') !== pt.code) continue; await fetchLitePart(pt); }
+}
+async function fetchLitePart(pt) {
+  const ov = ovL(), Q = { ...ov.outer.queries[LT.query], columns: LT.columns, where: LT.where }, f = liteRaw(pt), key = 'overture-buildings-' + pt.code;
+  if (flog[key] && !flag('--refetch') && (existsSync(f) || liteSelectDone(pt))) return;
+  // the OSM ids of the landmark tags (one a line): their outlines are fetched whatever the geometry condition says
+  const fi = join(RAWD, 'osm-landmark-ids.txt'); writeFileSync(fi, [...tagIndex(readFileSync(tagsRaw(), 'utf8')).keys()].sort().join('\n') + '\n');
+  if (!existsSync(f) || flag('--refetch')) execFileSync(process.env[ov.outer.python] || 'python3', ['-I', join(CW, '..', ov.outer.script), ov.outer.release, Q.theme, Q.type, ...pt.qbox.map(v => v.toFixed(2)), f, Q.columns, Q.where, LT.geometry_when + ' OR osm_id IN (SELECT id FROM ids)', fi], { stdio: 'inherit' });
+  const M = JSON.parse(readFileSync(f + '.meta.json', 'utf8')), st = statSync(f);
+  flog[key] = { url: `s3://overturemaps-us-west-2/release/${M.release}/theme=${M.theme}/type=${M.type}/ (bbox ${M.bbox.join(',')}; files ${M.files_read.join(' ')})`, fetched: new Date(st.mtimeMs).toISOString(), bytes: st.size, sha256: await shaFile(f), file: rel(f),
+    source: 'overture-buildings', part: pt.code, request: `DuckDB read_parquet over HTTPS of the ${M.files_listed} files of the release, filter on bbox and: ${M.where}; columns ${M.columns.join(', ')}; slim mode (centroid, area in m2, cut sources; the outline only when: ${M.slim_geometry_when}; ids = the OSM ids of the landmark tags, SHA-256 ${sha(readFileSync(fi))}); rows ordered by id (fetch-overture-theme.py, .ndjson)`,
+    records: M.rows_count, licence: ov.licence, as_fetched: { note: 'the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder, NDJSON); sha256 above' } };
+  saveFlog(); console.log(`overture ${pt.code} ${pt.name}: ${M.rows_count} rows, ${(st.size / 1e6).toFixed(0)} MB`);
+}
+const GH_ZIP = (r, c) => join(RAWD, ghslAd().buildingHeights.url.replace('{r}', r).replace('{c}', c).split('/').pop());
+const ghslAd = () => REG.adapters.find(a => a.buildingHeights?.kind === 'ghsl-raster');
+function ghslTilesOf(b) { const B = ghslAd().buildingHeights, out = [];
+  for (let r = Math.floor((B.north - b[3]) / B.tile_deg) + 1; r <= Math.floor((B.north - b[1]) / B.tile_deg) + 1; r++) for (let c = Math.floor((b[0] - B.west) / B.tile_deg) + 1; c <= Math.floor((b[2] - B.west) / B.tile_deg) + 1; c++) out.push([r, c]);
+  return out; }
+async function fetchGhslTiles() {
+  const B = ghslAd().buildingHeights, want = new Map(); for (const pt of liteParts()) for (const [r, c] of ghslTilesOf(pt.qbox)) want.set(`R${r}_C${c}`, [r, c]);
+  const got = [];
+  for (const [tile, [r, c]] of [...want.entries()].sort()) { const url = B.url.replace('{r}', r).replace('{c}', c), zip = GH_ZIP(r, c);
+    if (!existsSync(zip) || flag('--refetch')) { writeFileSync(zip, await get(url)); await pause(1000); }
+    const zb = readFileSync(zip); got.push({ url, tile, bytes: zb.length, sha256: sha(zb) }); }
+  if (!flog['heights-world-ghsl'] || flag('--refetch')) { const lf = join(RAWD, 'ghsl-tiles.json'); writeFileSync(lf, JSON.stringify(got, null, 1));
+    record('heights-world-ghsl', lf, got.map(g => g.url), { source: B.source, as_fetched: got, licence: ghslAd().licence, note: 'the 10 x 10 degree tile zips stay in the raw folder (not committed); each part reads its window of them; the file above lists the zips and their SHA-256' }); }
+  console.log(`ghsl: ${got.map(g => g.tile).join(', ')}`);
+}
+// the globe's world terrain texture as the globe reads it (globe/terrain.js makeSampler: R = height code, G = land share;
+// bilinear; the sea surface at 0, land below sea level kept)
+async function worldTexSampler(png) {
+  const img = await loadImage(readFileSync(png)), w = img.width, h = img.height, cv = createCanvas(w, h), c = cv.getContext('2d'); c.drawImage(img, 0, 0); const d = c.getImageData(0, 0, w, h).data;
+  const px = (x, y, k) => d[4 * (y * w + x) + k] / 255, dec = v => { v *= 255; if (v >= 127.5) { const t = Math.max(0, (v - 128) / 127); return 8848 * t * t; } const t = Math.max(0, (127 - v) / 127); return -11000 * t * t; };
+  const bil = (lon, lat, k) => { const fx = ((lon + 180) / 360 * w - 0.5 + w) % w, fy = Math.max(0, Math.min(h - 1.001, (90 - lat) / 180 * h - 0.5)), x0 = Math.floor(fx), y0 = Math.floor(fy), u = fx - x0, v = fy - y0, x1 = (x0 + 1) % w;
+    return (px(x0, y0, k) * (1 - u) + px(x1, y0, k) * u) * (1 - v) + (px(x0, y0 + 1, k) * (1 - u) + px(x1, y0 + 1, k) * u) * v; };
+  return (lon, lat) => { const r = dec(bil(lon, lat, 0)), L = bil(lon, lat, 1); return L * r + (1 - L) * Math.max(r, 0); };
+}
+// GHSL over a box: the windows of the tiles that meet it, as Float32 grids (row 0 north); at(lon, lat) -> metres or null
+async function ghslOver(b) {
+  const B = ghslAd().buildingHeights, grids = [];
+  for (const [r, c] of ghslTilesOf(b)) { const zip = GH_ZIP(r, c); if (!existsSync(zip)) throw new Error('missing ' + rel(zip) + ': run fetch');
+    const names = execFileSync('unzip', ['-Z1', zip], { encoding: 'utf8' }).split('\n').filter(Boolean), member = names.find(n => new RegExp(B.member).test(n));
+    const tif = execFileSync('unzip', ['-p', zip, member], { maxBuffer: 1 << 30 }), img = await (await fromArrayBuffer(tif.buffer.slice(tif.byteOffset, tif.byteOffset + tif.byteLength))).getImage();
+    const [w0, s0, e0, n0] = img.getBoundingBox(), W = img.getWidth(), H = img.getHeight(), px = (e0 - w0) / W, py = (n0 - s0) / H, cl = (v, k) => Math.max(0, Math.min(k, v));
+    const win = [cl(Math.floor((b[0] - w0) / px), W), cl(Math.floor((n0 - b[3]) / py), H), cl(Math.ceil((b[2] - w0) / px), W), cl(Math.ceil((n0 - b[1]) / py), H)];
+    if (win[2] <= win[0] || win[3] <= win[1]) continue;
+    const data = (await img.readRasters({ window: win }))[0];
+    grids.push({ w: w0 + win[0] * px, n: n0 - win[1] * py, px, py, nx: win[2] - win[0], ny: win[3] - win[1], data: Float32Array.from(data) }); }
+  return (lon, lat) => { for (const g of grids) { const i = Math.floor((lon - g.w) / g.px), j = Math.floor((g.n - lat) / g.py); if (i < 0 || j < 0 || i >= g.nx || j >= g.ny) continue; const v = g.data[j * g.nx + i]; return v > 0 ? Math.round(v * 10) / 10 : null; } return null; };
+}
+// the owner of a centroid: the excluded places' polygons first (London), then the first part whose polygon holds it, then
+// the nearest part within coast_m (not inside a country of not_in_countries)
+function liteOwner(parts) {
+  const P = parts.map(pt => polyIndex(pt.polys)), X = (PL.exclude_polygons || []).map(e => ({ ...e, ...skelFeature(e) })).map(e => ({ e, ix: polyIndex(e.polys) }));
+  const NC = PL.not_in_countries ? (() => { const wj = JSON.parse(readFileSync(join(CW, PL.not_in_countries.file), 'utf8')), q = wj.q || 1000, dec = a => { const o = []; let x = 0, y = 0; for (let i = 0; i < a.length; i += 2) { x += a[i]; y += a[i + 1]; o.push([x / q, y / q]); } return o; };   // (Natural Earth, the world skeleton's wsk1 format)
+    return wj.features.filter(f => PL.not_in_countries.iso2.includes(f.p.iso2)).map(f => polyIndex(f.g.map(P => P.map(dec)))); })() : [];
+  const inB = (b, x, y) => x >= b[0] && x <= b[2] && y >= b[1] && y <= b[3];
+  return (x, y) => {
+    for (const { e, ix } of X) if (inB(ix.bbox, x, y) && ix.contains(x, y)) return { part: -1, how: 'excluded', place: e.name };
+    for (let k = 0; k < P.length; k++) if (inB(P[k].bbox, x, y) && P[k].contains(x, y)) return { part: k, how: 'in' };
+    let best = -1, bd = Infinity; for (let k = 0; k < P.length; k++) { const d = P[k].dist(x, y, PL.coast_m); if (d != null && d < bd) { bd = d; best = k; } }
+    if (best >= 0 && NC.some(ix => ix.contains(x, y))) return { part: -1, how: 'foreign' };
+    return best >= 0 ? { part: best, how: 'coast' } : { part: -1, how: 'none' };
+  };
+}
+const liteOut = pt => ({ atoms: join(WORK, `lite-${pt.code}-atoms.ndjson.gz`), lm: join(WORK, `lite-${pt.code}-landmarks.json.gz`), counts: join(WORK, `lite-${pt.code}-counts.json`) });
+function liteSelectDone(pt) { const o = liteOut(pt); return [o.atoms, o.lm, o.counts].every(existsSync) && blog.activities.some(a => a.operation === LOPS.select.id && a.params.part === pt.code && a.outputs.every(x => existsSync(absOf(x.path)) && sha(readFileSync(absOf(x.path))) === x.sha256)); }
+const boundaryInputs = parts => { const files = [...new Set([...parts.map(p => p.file), ...(PL.exclude_polygons || []).map(e => skelFeature(e).file), ...(PL.not_in_countries ? [join(CW, PL.not_in_countries.file)] : [])])].sort(); return files.map(f => fileIn(f, 'boundary')); };
+async function liteSelect(pt, k, parts, owner) {
+  const key = 'overture-buildings-' + pt.code, rec = flog[key]; if (!rec) throw new Error(`no fetch record for ${pt.code}: run fetch`);
+  const o = liteOut(pt), gz = flog['heights-world-ghsl'], tags = flog['osm-landmark-tags'];
+  const inputs = [{ label: 'overture-buildings ' + pt.code, path: rec.file, sha256: rec.sha256 }, { label: 'osm-landmark-tags', path: tags.file, sha256: tags.sha256 }, { label: 'ghsl tiles (list of zips and their SHA-256)', path: gz.file, sha256: gz.sha256 }, ...boundaryInputs(parts)];
+  const params = { part: pt.code, part_index: k, name: pt.name, parts: parts.map(p => p.code), exclude: (PL.exclude_polygons || []).map(e => e.code), coast_m: PL.coast_m, not_in_countries: PL.not_in_countries || null,
+    geometry_classes: LT.geometry_classes, licences: overture.buildingHeights.licences, rule: LT.landmark, level: LT.leaf_level, atom_m: LT.leaf.town_m, storey_m: 3, small_m: 3, default_m: PL.default_height_m ?? 7, raster_min_m: 3,
+    height_rule: 'OSM height > OSM building:levels x 3 m > height of a non-OSM source with an open licence (Microsoft ML Buildings: "ms") > num_floors of such a source x 3 m > small kinds 3 m > GHSL cell under the centroid (min 3 m) > default' };
+  return run(LOPS.select, inputs, params, async p => {
+    const f = liteRaw(pt); if (!existsSync(f)) throw new Error(`missing ${rel(f)}: run fetch --part ${pt.code}`);
+    const ghslAt = await ghslOver(pt.qbox), T = tagIndex(readFileSync(tagsRaw(), 'utf8'));
+    const S = liteSelector({ part: p.part_index, owner, geometryClasses: p.geometry_classes, licences: p.licences, tags: T, rule: p.rule, ghslAt, level: p.level, atom_m: p.atom_m, storey_m: p.storey_m, small_m: p.small_m, default_m: p.default_m, raster_min_m: p.raster_min_m, coast_m: p.coast_m });
+    let n = 0; for await (const line of ndjsonLines(f)) { S.add(JSON.parse(line)); if (++n % 1000000 === 0) console.log(`  place-lite-select ${pt.code}: ${n} rows`); }
+    const r = S.done(); await writeNdjsonGz(o.atoms, r.atoms); jz(o.lm, r.landmarks);
+    writeFileSync(o.counts, JSON.stringify({ part: pt.code, name: pt.name, counts: r.counts, height_sources: r.height_sources, geometry: r.geometry, atoms: r.atoms.length, landmarks: r.landmarks.length }, null, 1));
+    console.log(`  ${pt.code}: ${r.atoms.length} atoms, ${r.landmarks.length} landmarks; ${JSON.stringify(r.counts)}`); return [o.atoms, o.lm, o.counts]; });
+}
+async function buildLite() {
+  let parts = liteParts(); const allParts = parts, owner = liteOwner(parts), fGeoid = join(CW, 'docklands', 'data', 'world', 'geoid-egm96-1deg.png');
+  // 1. place-lite-select, part by part (fetching a part first when its answer is missing and --fetch-parts is given)
+  for (let k = 0; k < parts.length; k++) { const pt = parts[k]; if (argOf('part') && argOf('part') !== pt.code) continue; if (argOf('only') && !argOf('only').split(',').includes(pt.code)) continue;
+    if (flag('--fetch-parts') && (flag('--refetch') || !flog['overture-buildings-' + pt.code] || (!liteSelectDone(pt) && !existsSync(liteRaw(pt))))) { if (!flog['overture-buildings-' + pt.code]) rmSync(liteRaw(pt), { force: true }); await fetchLitePart(pt); }
+    await liteSelect(pt, k, parts, owner);
+    if (flag('--clean-raw') && liteSelectDone(pt) && existsSync(liteRaw(pt))) { rmSync(liteRaw(pt)); rmSync(liteRaw(pt) + '.meta.json', { force: true }); console.log(`  removed the raw answer of ${pt.code} (its SHA-256 stays in the log)`); }
+    writeFileSync(BLOG, JSON.stringify(blog, null, 1)); }
+  if (argOf('part')) return;
+  // 2. place-lite-tiles: all parts -> the tree, tiles, tileset.json and the external tile sets, features.json
+  const gdir = join(CW, LT.ground), GM = JSON.parse(readFileSync(join(gdir, 'base.json'), 'utf8')), BOX = REG.bbox;
+  const gfiles = []; for (const [Ls, a] of Object.entries(GM.dem.tiles)) { const L2 = +Ls, cs = 180 / 2 ** L2; for (let i = 0; i < a.length; i += 2) { const x = a[i], y = a[i + 1], b = [-180 + x * cs, 90 - (y + 1) * cs, -180 + (x + 1) * cs, 90 - y * cs]; if (meet(b, BOX)) gfiles.push(join(gdir, GM.dem.url.replace('{z}', L2).replace('{x}', x).replace('{y}', y))); } }
+  gfiles.sort(); const gIn = { label: 'world-base heights', path: rel(gdir) + `dem (${gfiles.length} tiles over the UK box; sha256 of the list of path and sha256 of each)`, sha256: sha(gfiles.map(f => rel(f) + ' ' + sha(readFileSync(f))).join('\n')) };
+  if (argOf('only')) parts = parts.filter(pt => argOf('only').split(',').includes(pt.code));   // (a trial build of some parts)
+  const ins = parts.flatMap(pt => { const o = liteOut(pt); return [fileIn(o.atoms, 'atoms ' + pt.code), fileIn(o.lm, 'landmarks ' + pt.code)]; });
+  const credit = ['© OpenStreetMap contributors (ODbL 1.0)', 'Landmark tags: OpenStreetMap via the QLever OSM endpoint (planet 2026-09-21)', 'Buildings: OpenStreetMap data and Microsoft ML Buildings footprints via Overture Maps © Overture Maps Foundation, © Microsoft (ODbL 1.0)', ...hAds.map(a => a.buildingHeights.credit), 'Ground: ' + GM.dem.credit + ' (the globe\'s world-base heights)'].join('; ');
+  const TP = { top: LT.top_level, leaf: LT.leaf_level, levels: LT.levels, leafRule: LT.leaf, full_share: LT.full_share, drop_m: LT.drop_m, external_from: LT.external_from, colour: LT.colour, version_label: `${RID}-1`,
+    classes: ['landmark (OpenStreetMap via Overture)', 'merged buildings (OpenStreetMap and Microsoft footprints via Overture)'], credit, parts: parts.map(p => p.code) };
+  // where the world base has no height tile (most of the UK), the globe draws the world terrain texture (ETOPO 2022 box
+  // means, about 9.8 km a pixel; globe/terrain.js): the same ground here, so the blocks stand where the globe's ground is
+  const fTex = join(CW, 'docklands', 'data', 'world', 'terrain-4096x2048.png');
+  const a2 = await run(LOPS.tiles, [...ins, gIn, fileIn(fGeoid, 'geoid'), fileIn(fTex, 'world terrain texture')], TP, async p => {
+    const texAt = await worldTexSampler(fTex), geoAt = await geoidSampler(fGeoid), G = worldBaseGround(GM, (L2, x, y) => { const b = readFileSync(join(gdir, GM.dem.url.replace('{z}', L2).replace('{x}', x).replace('{y}', y))); return new Int16Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); }, texAt);
+    // atoms of all parts by leaf cell (a cell cut by a part edge gets atoms from both: summed by key)
+    const cells = new Map(), lms = [];
+    const cellParts = new Map();   // leaf cell -> { part code: built area } (to share tile bytes out by part)
+    for (const pt of parts) { const o = liteOut(pt);
+      for await (const line of ndjsonLines(o.atoms)) { const A = JSON.parse(line), ck = A[0] + '-' + A[1]; let C = cells.get(ck); if (!C) cells.set(ck, C = new Map()); const ak = A[2] * 64 + A[3], B0 = C.get(ak);
+        const cp = cellParts.get(ck) || cellParts.set(ck, {}).get(ck); cp[pt.code] = (cp[pt.code] || 0) + A[4];
+        if (!B0) C.set(ak, A); else { const a = B0[4] + A[4]; B0[5] = (B0[5] * B0[4] + A[5] * A[4]) / a; B0[6] = (B0[6] * B0[4] + A[6] * A[4]) / a; B0[7] = (B0[7] * B0[4] + A[7] * A[4]) / a; B0[4] = a; B0[8] += A[8]; B0[9] += A[9]; B0[10] += A[10]; } }
+      for (const l of rz(o.lm)) { lms.push(l); const ck = Math.floor((l.c[0] + 180) / (180 / 2 ** p.leaf)) + '-' + Math.floor((l.c[1] + 90) / (180 / 2 ** p.leaf)), cp = cellParts.get(ck) || cellParts.set(ck, {}).get(ck); cp[pt.code] = (cp[pt.code] || 0) + l.a; } }
+    lms.sort((a, b) => (a.part - b.part) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));   // rows by part (one shard of features a part), then id
+    const named = new Map(lms.map((l, i) => [l.id, i])), cs = 180 / 2 ** p.leaf, lmByCell = new Map();
+    for (const l of lms) { const ck = Math.floor((l.c[0] + 180) / cs) + '-' + Math.floor((l.c[1] + 90) / cs); (lmByCell.get(ck) || lmByCell.set(ck, []).get(ck)).push(l); }
+    // the tree: every leaf cell with atoms or landmarks and its ancestors
+    const nodes = new Map(), get = (l, x, y) => { const k = `${l}-${x}-${y}`; let n = nodes.get(k); if (!n) { n = { l, x, y, key: k, b: cellBox(l, x, y), kids: [] }; nodes.set(k, n); if (l > p.top) get(l - 1, x >> 1, y >> 1).kids.push(n); } return n; };
+    for (const ck of new Set([...cells.keys(), ...lmByCell.keys()])) { const [x, y] = ck.split('-').map(Number); get(p.leaf, x, y); }
+    for (const n of nodes.values()) n.kids.sort((a, b) => a.key.localeCompare(b.key));
+    const roots = [...nodes.values()].filter(n => n.l === p.top).sort((a, b) => a.key.localeCompare(b.key));
+    rmSync(join(OUT, 'tiles'), { recursive: true, force: true }); mkdirSync(join(OUT, 'tiles'), { recursive: true });
+    rmSync(join(OUT, 'tilesets'), { recursive: true, force: true }); mkdirSync(join(OUT, 'tilesets'), { recursive: true });
+    const outFiles = [], stats = []; let nT = 0; const total = nodes.size;
+    const lmItem = l => ({ id: l.id, a: l.a, c: l.c, rings: l.rings, H: { h: l.h, src: l.src } });
+    const frameOf = b => { const lc = (b[0] + b[2]) / 2, bc = (b[1] + b[3]) / 2, h0 = Math.round((G.at(lc, bc) + geoAt(lc, bc)) * 100) / 100; return enuFrame({ lon: lc, lat: bc, h: h0 }); };
+    const leafKeyOf = l => `${p.leaf}-${Math.floor((l.c[0] + 180) / cs)}-${Math.floor((l.c[1] + 90) / cs)}`;
+    // returns { json, items (the mass of the cell as merged items), lms (the landmarks under it) }
+    async function tile(n, parentWorld) {
+      const F = frameOf(n.b), world = F.matrix(), leaf = n.l === p.leaf; let items, lmsHere, kidsJ = [], drawItems, Lp; n.parts = leaf ? { ...(cellParts.get(n.x + '-' + n.y) || {}) } : {};
+      if (leaf) {
+        const atoms = [...(cells.get(n.x + '-' + n.y)?.values() || [])].sort((a, b) => (a[2] - b[2]) || (a[3] - b[3])), size = townSize(atoms, p.leafRule);
+        const ait = atoms.map(A => ({ id: `a${A[2]},${A[3]}`, a: A[4], c: [A[5], A[6]], H: { h: A[7], src: 'merged' }, n: A[8], nms: A[9], m: size(A) }));
+        lmsHere = (lmByCell.get(n.x + '-' + n.y) || []).slice();
+        drawItems = [...lmsHere.map(lmItem), ...ait];
+        Lp = { tall_m: Infinity, big_m2: Infinity, merge_m: p.leafRule.rural_m, min_area_m2: 0, drop_m: p.drop_m, full_share: p.full_share };
+        items = [...mergeItems(ait.filter(i => i.m === p.leafRule.town_m), n.b, p.leafRule.town_m), ...mergeItems(ait.filter(i => i.m !== p.leafRule.town_m), n.b, p.leafRule.rural_m)];
+      } else {
+        const kidItems = []; lmsHere = [];
+        for (const k of n.kids) { const r = await tile(k, world); kidsJ.push(r.json); for (const it of r.items) kidItems.push(it); for (const l of r.lms) lmsHere.push(l); for (const [c, a] of Object.entries(k.parts)) n.parts[c] = (n.parts[c] || 0) + a; }
+        const LP = p.levels[n.l], own = [], rest = [];
+        for (const l of lmsHere) (l.h >= LP.tall_m || l.a >= LP.big_m2 ? own : rest).push(l);
+        items = mergeItems([...kidItems, ...rest.map(lmItem)], n.b, LP.merge_m);
+        drawItems = [...own.map(l => ({ ...lmItem(l), own: true })), ...items];
+        Lp = { tall_m: Infinity, big_m2: Infinity, merge_m: LP.merge_m, min_area_m2: 0, drop_m: p.drop_m, full_share: p.full_share };
+      }
+      const r = blockTile({ cell: n, items: drawItems, HT: {}, groundAt: G.at, geoidAt: geoAt, P: Lp, leaf: false, lite: true, named, namedOutlines: leaf, named_simplify_m: p.leafRule.simplify_m,
+        mergeOf: leaf ? (b => b.m) : null, classes: p.classes, colour: p.colour, credit: p.credit });
+      const f = join(OUT, 'tiles', n.key + '.glb'); writeFileSync(f, r.bytes); outFiles.push(f);
+      r.stats.landmark_boxes ||= 0; r.stats.mass_boxes = r.stats.merged; r.stats.parts = n.parts; stats.push(r.stats); if (++nT % 500 === 0) console.log(`  place-lite-tiles: ${nT} / ${total} tiles`);
+      let region = r.region; for (const k of kidsJ) region = [region[0], region[1], region[2], region[3], Math.min(region[4], k.boundingVolume.region[4]), Math.max(region[5], k.boundingVolume.region[5])];
+      const err = leaf ? 0 : p.levels[n.l].err_m;
+      const t = { boundingVolume: { region: region.map(v => +v.toPrecision(12)) }, geometricError: err, refine: 'REPLACE', transform: roundM(parentWorld ? mul4(inv4rigid(parentWorld), world) : world).map((v, i) => i >= 12 ? v : +v.toPrecision(10)), content: { uri: `tiles/${n.key}.glb` } };
+      if (kidsJ.length && n.l === p.external_from - 1) {   // the subtree as an external tile set (its root inherits this tile's frame)
+        const up = j => { if (j.content) j.content.uri = '../' + j.content.uri; for (const k of j.children || []) up(k); }; for (const k of kidsJ) up(k);   // URIs resolve against the external JSON (tilesets/)
+        const ts = { asset: { version: '1.1', generator: 'cwplans build-place-tiles.mjs (place-lite)', tilesetVersion: p.version_label }, geometricError: err, root: { boundingVolume: t.boundingVolume, geometricError: err, refine: 'REPLACE', children: kidsJ } };
+        const tf = join(OUT, 'tilesets', n.key + '.json'); writeFileSync(tf, JSON.stringify(ts)); outFiles.push(tf);
+        t.children = [{ boundingVolume: t.boundingVolume, geometricError: err, refine: 'REPLACE', content: { uri: `tilesets/${n.key}.json` } }];
+      } else if (kidsJ.length) t.children = kidsJ;
+      return { json: t, items, lms: lmsHere };
+    }
+    const children = []; for (const n of roots) children.push((await tile(n, null)).json);
+    let lo = Infinity, hi = -Infinity, ext = [Infinity, Infinity, -Infinity, -Infinity]; for (const c of children) { lo = Math.min(lo, c.boundingVolume.region[4]); hi = Math.max(hi, c.boundingVolume.region[5]); }
+    for (const n of roots) ext = [Math.min(ext[0], n.b[0]), Math.min(ext[1], n.b[1]), Math.max(ext[2], n.b[2]), Math.max(ext[3], n.b[3])];
+    const rootErr = p.levels[p.top].err_m * 2;
+    const tileset = { asset: { version: '1.1', generator: 'cwplans build-place-tiles.mjs (place-lite)', tilesetVersion: p.version_label, extras: { place: RID, name: REG.name, kind: 'lite', credit: p.credit,
+      tiers: `lite: landmarks (own outline and id at level ${p.leaf}, own box at coarser levels when tall or big) plus the merged mass (one box a square: ${Object.values(p.levels).map(v => v.merge_m).join(', ')} m at levels ${Object.keys(p.levels).join(', ')}; ${p.leafRule.town_m} m in towns and ${p.leafRule.rural_m} m elsewhere at level ${p.leaf}); no ground (the globe's terrain); levels from ${p.external_from} in external tile sets` } },
+      geometricError: rootErr * 2, root: { boundingVolume: { region: [ext[0] * D2R, ext[1] * D2R, ext[2] * D2R, ext[3] * D2R, lo, hi].map(v => +v.toPrecision(12)) }, geometricError: rootErr, refine: 'REPLACE', children } };
+    const tsf = join(OUT, 'tileset.json'); writeFileSync(tsf, JSON.stringify(tileset)); outFiles.push(tsf);
+    // features.json: the landmarks (search, cards, featuresAt, describeView)
+    // features: one shard a part (features/<code>.json, rows offset .. offset + count - 1), read by the page for the parts in
+    // view; names.json: the named landmarks for search (read on the first search); features.json: the rest
+    const r6 = v => Math.round(v * 1e6) / 1e6, FIELDS = ['osm_id', 'name', 'kind', 'lon', 'lat', 'height_m', 'height_source', 'tile', 'ground_m', 'wikidata', 'landmark', 'wikipedia'];
+    const Bf = lms.map(l => [l.osm || l.id, l.name, l.kind, r6(l.c[0]), r6(l.c[1]), l.h, l.src, leafKeyOf(l), Math.round(G.at(l.c[0], l.c[1]) * 10) / 10, l.wikidata, l.why, l.wikipedia]);
+    mkdirSync(join(OUT, 'features'), { recursive: true }); for (const f of readdirSync(join(OUT, 'features'))) rmSync(join(OUT, 'features', f));
+    const shards = []; for (let k = 0, off = 0; k < allParts.length; k++) { const rows = Bf.filter((_, i) => lms[i].part === k); if (!rows.length) continue; const pt = allParts[k];
+      const fs = join(OUT, 'features', pt.code + '.json'); writeFileSync(fs, JSON.stringify({ format: 'place-features-shard-1', place: RID, part: pt.code, name: pt.name, offset: off, buildings_fields: FIELDS, buildings: rows })); outFiles.push(fs);
+      shards.push({ code: pt.code, name: pt.name, file: `features/${pt.code}.json`, offset: off, count: rows.length, bbox: pt.bbox.map(v => Math.round(v * 1000) / 1000) }); off += rows.length; }
+    const nf = join(OUT, 'names.json'); writeFileSync(nf, JSON.stringify({ format: 'place-names-1', place: RID, fields: ['name', 'lon', 'lat', 'row'], rows: lms.map((l, i) => l.name ? [l.name, Math.round(l.c[0] * 1e5) / 1e5, Math.round(l.c[1] * 1e5) / 1e5, i] : null).filter(Boolean) })); outFiles.push(nf);
+    // bytes by part: each tile's bytes shared out by the built area of each part under it; by class: landmark outlines
+    // (their vertex and index bytes) and landmark boxes (36 bytes an instance with its card data) against the rest
+    const byPart = {}, byClass = { landmarks: 0, mass: 0 };
+    for (const s2 of stats) { const tot = Object.values(s2.parts).reduce((a, b) => a + b, 0) || 1, lmB = Math.min(s2.bytes, (s2.named_bytes || 0) + (s2.landmark_boxes || 0) * 36);
+      for (const [c, a] of Object.entries(s2.parts)) { const o = byPart[c] ||= { bytes: 0, landmark_bytes: 0 }; o.bytes += s2.bytes * a / tot; o.landmark_bytes += lmB * a / tot; }
+      byClass.landmarks += lmB; byClass.mass += s2.bytes - lmB; }
+    for (const o of Object.values(byPart)) { o.bytes = Math.round(o.bytes); o.landmark_bytes = Math.round(o.landmark_bytes); }
+    const tiers = {}; for (const s2 of stats) { const o = tiers['level ' + s2.level] ||= { tiles: 0, bytes: 0, triangles: 0, landmark_outlines: 0, landmark_boxes: 0, mass_boxes: 0, mass_buildings: 0, landmark_bytes: 0 }; o.tiles++; o.bytes += s2.bytes; o.triangles += s2.triangles;
+      o.landmark_outlines += s2.named || 0; o.landmark_boxes += s2.landmark_boxes || 0; o.mass_boxes += s2.merged || 0; o.mass_buildings += s2.merged_buildings || 0; o.landmark_bytes += (s2.named_bytes || 0) + (s2.landmark_boxes || 0) * 36; }
+    const fj = { format: 'place-features-1', kind: 'lite', place: RID, name: REG.name, label: PL.label || REG.name, search: PL.search || [], timeZone: REG.timeZone, locale: REG.locale, origin: REG.origin, area: REG.bbox, extent: ext.map(r7), level: p.leaf,
+      geoid_m: Math.round(geoAt(REG.origin.lon, REG.origin.lat) * 100) / 100, credit: p.credit,
+      note: 'a place of kind lite: landmarks (rows in the shards, one a part: features/<code>.json; drawn with their own id: _FEATURE_ID_0 = row at the leaves, glb extras.blocks.boxes.f = row where a coarse level draws one as a box) plus the merged mass (one box a square, no ids); ground_m = the globe\'s ground (world-base heights, metres above the geoid); names.json: the named landmarks for search',
+      buildings_fields: FIELDS, buildings: [], shards, names: 'names.json',
+      streets_fields: ['name', 'kind', 'lon', 'lat', 'name_alt'], streets: [], areas_fields: ['name', 'kind', 'lon', 'lat', 'name_alt'], areas: [], points_fields: ['osm_id', 'name', 'kind', 'lon', 'lat', 'address', 'name_alt'], points: [], tiles: [],
+      lite: { landmarks: lms.length, parts: parts.map(pt => ({ code: pt.code, name: pt.name, bbox: pt.bbox.map(v => Math.round(v * 1000) / 1000), tile_bytes: byPart[pt.code] || null })), tiers, bytes_by_class: byClass, rule: LT.landmark, leaf: p.leafRule } };
+    const ff = join(OUT, 'features.json'); writeFileSync(ff, JSON.stringify(fj)); outFiles.push(ff);
+    console.log('  tiers:', JSON.stringify(tiers)); console.log(`  world-base height tiles read: ${G.used.size}`);
+    return outFiles; });
+  // the committed log (in the other repository), the index entry (here), the READMEs
+  const fj = JSON.parse(readFileSync(join(OUT, 'features.json'), 'utf8'));
+  const partCounts = parts.map(pt => JSON.parse(readFileSync(liteOut(pt).counts, 'utf8')));
+  blog.about = `Build log of the place ${RID} (${REG.name}, kind lite) by cwplans/tools/build-place-tiles.mjs (danbri/londat): what was fetched (URL, date, SHA-256) and each dataflow activity with its input and output hashes. Raw files stay in cwplans/data/raw/places/${RID}/ of londat (not committed). Paths "${PL.outRepo}:..." are in the ${PL.outRepo} repository, other paths are relative to londat's cwplans/.`;
+  blog.fetches = flog; blog.parts = partCounts; blog.tiers = fj.lite.tiers; blog.lite = { landmarks: fj.lite.landmarks, bytes_by_class: fj.lite.bytes_by_class, tile_bytes_by_part: Object.fromEntries(fj.lite.parts.map(x => [x.code, x.tile_bytes])) };
+  blog.fault = 'F55 (curation skill fault register): buildings with no height in OSM; counted, not patched per record';
+  writeFileSync(BLOG, JSON.stringify(blog, null, 1));
+  const IX = join(OUTROOT, 'index.json'), ix = JSON.parse(readFileSync(IX, 'utf8')), TB = PL.tileBase.replace(/\/?$/, '/');
+  const entry = { id: RID, name: REG.name, label: fj.label, kind: 'lite', area: REG.bbox, centre: [REG.origin.lon, REG.origin.lat], timeZone: REG.timeZone, locale: REG.locale, tileBase: TB, tileset: `${TB}tileset.json`, features: `${TB}features.json`, readme: `${TB}README.md`, provenance: `${TB}provenance/log.json`,
+    credit: fj.credit, buildings: partCounts.reduce((s, c) => s + (c.counts['mass buildings'] || 0) + (c.counts.landmarks || 0), 0), landmarks: fj.lite.landmarks, built: a2.at, extent: fj.extent, load_m: PL.load_m, free_m: PL.free_m,
+    boxes: fj.lite.parts.map(x => x.bbox), exclude: (PL.exclude_polygons || []).map(e => e.place), ...(PL.views?.[0] ? { view: `ll=${PL.views[0].ll}&ht=${PL.views[0].ht}` } : {}) };
+  ix.places = ix.places.filter(q => q.id !== RID).concat(entry).sort((a, b) => a.id.localeCompare(b.id));
+  writeFileSync(IX, JSON.stringify(ix, null, 1));
+  writeLiteReadme(parts, partCounts);
+  writeReadmes();
+  let tot = 0; for (const f of readdirSync(join(OUT, 'tiles'))) tot += statSync(join(OUT, 'tiles', f)).size;
+  console.log(`done: ${readdirSync(join(OUT, 'tiles')).length} tiles ${(tot / 1e6).toFixed(1)} MB, ${fj.lite.landmarks} landmarks, tileset.json ${(statSync(join(OUT, 'tileset.json')).size / 1e3).toFixed(0)} kB, features.json ${(statSync(join(OUT, 'features.json')).size / 1e6).toFixed(2)} MB`);
+}
+
+// README.md of a lite place (in the other repository): sources, licences, the landmark rule, sizes by part and class,
+// the operations; generated from provenance/log.json, features.json and the data register (never edit it by hand)
+function writeLiteReadme(parts, partCounts) {
+  const reg = JSON.parse(readFileSync(join(CW, 'data-register.json'), 'utf8')), S = reg.sources, log = JSON.parse(readFileSync(BLOG, 'utf8'));
+  const fj = JSON.parse(readFileSync(join(OUT, 'features.json'), 'utf8')), last = op => log.activities.filter(a => a.operation === op).at(-1);
+  const size = p => statSync(p).size, mb = n => (n / 1e6).toFixed(2) + ' MB', esc = v => String(v ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' '), fmt = n => Math.round(n).toLocaleString('en');
+  const L = [], SITE = 'https://danbri.github.io/londat/', TB = PL.tileBase, R = LT.landmark;
+  const dirFiles = d => existsSync(join(OUT, d)) ? readdirSync(join(OUT, d)).sort() : [];
+  const tiles = dirFiles('tiles'), tsets = dirFiles('tilesets'), shards = dirFiles('features'), tb = tiles.reduce((a, f) => a + size(join(OUT, 'tiles', f)), 0), sb = tsets.reduce((a, f) => a + size(join(OUT, 'tilesets', f)), 0), fb = shards.reduce((a, f) => a + size(join(OUT, 'features', f)), 0);
+  const top = ['tileset.json', 'features.json', 'names.json', 'provenance/log.json'].filter(f => existsSync(join(OUT, f))), total = tb + sb + fb + top.reduce((a, f) => a + size(join(OUT, f)), 0);
+  L.push(`# ${REG.name}: a lite building set on the globe (3D Tiles 1.1)`, '',
+    `Made by [cwplans/tools/build-place-tiles.mjs](${GH}tools/build-place-tiles.mjs) (with [place-lite.mjs](${GH}tools/place-lite.mjs) and [place-blocks.mjs](${GH}tools/place-blocks.mjs)) of https://github.com/danbri/londat for the region config [docklands/geo/regions/${RID}.js](https://github.com/danbri/londat/blob/main/docklands/geo/regions/${RID}.js); drawn by the globe of the Three.js port ([docklands/globe/places.js](https://github.com/danbri/londat/blob/main/docklands/globe/places.js)). Served from ${TB}`,
+    `This README is generated from \`provenance/log.json\`, \`features.json\` and londat's [cwplans/data-register.json](${GH}data-register.json) by \`node cwplans/tools/build-place-tiles.mjs readme --region ${RID} --out <this folder>\` (also at the end of each build). Do not edit it by hand.`, '',
+    'Owner, 2026-10-22, about buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest resolution?"', '',
+    '## What it is', '',
+    `- Scope: the United Kingdom outside Greater London. Greater London is its own place (kind "blocks", every building; its README: ${GH}docklands/data/places/london/README.md ): a building whose centroid is in the ONS region E12000007 polygon of the UK skeleton is drawn by London only, the same polygon and the same centroid rule as London's build, so no building is drawn twice. Every other building belongs to the first part (English regions, then Wales, Scotland, Northern Ireland; ONS BGC polygons of the UK skeleton) whose polygon holds its centroid; a building outside every polygon (the generalised coast; the edges of two ONS products at the Welsh and Scottish borders) goes to the nearest part within ${PL.coast_m} m, never inside the Republic of Ireland (Natural Earth).`,
+    `- Two classes: (a) **landmarks**, each with its outline (simplified at ${LT.leaf.simplify_m} m), its own id (\`_FEATURE_ID_0\` = row of features.json) and a card, and as an oriented box with the same card at the coarse levels where it is tall or big enough; (b) the **merged mass**: every other building (OpenStreetMap and Microsoft footprints) only as one box a square, its footprint the summed area of the buildings (the box side grows with the built share, full at ${LT.full_share * 100} %), its height their area-weighted mean.`,
+    `- Leaves (level ${LT.leaf_level}, about 9.8 x 5.6 km at 55 N): squares of ${LT.leaf.town_m} m where a ${LT.leaf.rural_m} m square is a town (its built share at least ${LT.leaf.town_share * 100} %), else ${LT.leaf.rural_m} m. Coarse levels: ${Object.entries(LT.levels).map(([l, v]) => `level ${l} ${v.merge_m} m squares (landmarks of ${v.tall_m} m or ${fmt(v.big_m2)} m2 and more as boxes; geometricError ${v.err_m} m)`).join('; ')}. REPLACE refinement, quadtree of the cells with buildings; levels ${LT.external_from} to ${LT.leaf_level} are in external tile sets (\`tilesets/<level 8 cell>.json\`), so the root tileset.json stays small and the whole UK loads from far (the reader loads the place within ${PL.load_m / 1000} km of its centre).`,
+    '- No ground of its own: the blocks stand on the globe\'s world-base heights (Copernicus GLO-90) plus the EGM96 geoid, bases 3 m deep. Tiles hold geometry and attributes only, no texture and no baked light (Architecture rule 6).', '',
+    '## The landmark rule', '',
+    'A building whose outline comes from OpenStreetMap (via Overture) is a landmark when one of these holds (checked in this order; the card says which):', '',
+    '1. it has an OSM `wikidata` or `wikipedia` tag (an encyclopaedia record);',
+    `2. it is of a notable kind: OSM \`building\` (or Overture class) ${R.building.join(', ')}; \`historic\` ${R.historic.join(', ')}; \`man_made\` ${R.man_made.join(', ')}; \`leisure\` ${R.leisure.join(', ')};`,
+    `3. it has a name and is ${R.named_tall_m} m or taller by a measured height (OSM height or levels, Microsoft ML or another open Overture source; not the GHSL cell mean nor a default), or its footprint is ${fmt(R.named_big_m2)} m2 or more.`, '',
+    `The OSM tags of rules 1 and 2 come from one SPARQL query of the QLever OSM endpoint (planet of 2026-09-21; the buildings that the UK relation ${LT.tags.area_relation} contains), joined to the Overture record by its OSM id. A landmark by the rule whose outline is not in the slim answer (geometry is fetched only for named, tall, big or notable-class records) is merged into the mass and counted. Microsoft footprints have no names or tags, so they are never landmarks. Buildings under ${R.min_area_m2} m2 are left out.`, '',
+    `Landmarks: ${fmt(fj.lite.landmarks)}. By reason: ${Object.entries(partCounts.reduce((o, c) => { for (const [k, v] of Object.entries(c.counts)) if (k.startsWith('landmarks: ')) o[k.slice(11)] = (o[k.slice(11)] || 0) + v; return o; }, {})).map(([k, v]) => `${k} ${fmt(v)}`).join(', ')}.`, '',
+    '## Views (live after the merge)', '', ...(PL.views || []).map(v => `- ${v.name}: ${SITE}docklands/?ll=${v.ll}&ht=${v.ht || '0,55'}`), '');
+  // sizes
+  L.push('## Files and sizes', '', '| path | what | files | bytes | SHA-256 |', '|---|---|---|---|---|');
+  const listSha = (d, fs) => sha(fs.map(f => f + ' ' + sha(readFileSync(join(OUT, d, f)))).join('\n'));
+  L.push(`| tileset.json | the root: levels ${LT.top_level} and ${LT.top_level + 1}, ENU transforms relative to the parent, region bounding volumes, geometric errors; the level-${LT.external_from - 1} tiles refer to their external tile sets | 1 | ${size(join(OUT, 'tileset.json'))} | \`${sha(readFileSync(join(OUT, 'tileset.json')))}\` |`);
+  L.push(`| tilesets/ | one external tileset per level-${LT.external_from - 1} cell (levels ${LT.external_from} to ${LT.leaf_level}; content URIs relative to it) | ${tsets.length} | ${sb} | \`${listSha('tilesets', tsets)}\` (list of names and SHA-256) |`);
+  L.push(`| tiles/ | glTF 2.0 tiles: landmark outlines with COLOR_0 and _FEATURE_ID_0 (EXT_mesh_features), boxes as EXT_mesh_gpu_instancing instances of one unit box, KHR_mesh_quantization; glb extras.blocks: class, height (dm), height source, landmark row (boxes.f), landmark rows drawn as outlines (named), buildings the mass stands for | ${tiles.length} | ${tb} | \`${listSha('tiles', tiles)}\` (list of names and SHA-256) |`);
+  L.push(`| features/ | the landmarks, one shard a part (rows offset .. offset + count - 1 of the tiles' feature ids): OSM id, name, kind, position, height and its source, leaf tile, ground, Wikidata, the rule that made it a landmark, Wikipedia; read by the page for the parts in view | ${shards.length} | ${fb} | \`${listSha('features', shards)}\` (list of names and SHA-256) |`);
+  for (const f of ['features.json', 'names.json', 'provenance/log.json']) if (existsSync(join(OUT, f))) L.push(`| ${f} | ${f === 'features.json' ? 'the text and machine interface of the set: the parts and their shards, the landmark rule, sizes by level and class, the credit' : f === 'names.json' ? 'the named landmarks for search (name, position, row); read on the first search' : 'fetch records and dataflow activities (inputs and outputs by SHA-256), counts per part'} | 1 | ${size(join(OUT, f))} | \`${sha(readFileSync(join(OUT, f)))}\` |`);
+  L.push('', `Total ${mb(total)} (README.md not counted). Tiles by class (attributed: landmark outline vertices and indices, and 36 bytes for each landmark box; the rest is the mass): landmarks ${mb(fj.lite.bytes_by_class.landmarks)}, merged mass ${mb(fj.lite.bytes_by_class.mass)}.`, '');
+  L.push('### By level', '', '| level | tiles | MB | triangles | landmark outlines | landmark boxes | mass boxes (buildings in them) |', '|---|---|---|---|---|---|---|');
+  for (const [k, v] of Object.entries(fj.lite.tiers).sort((a, b) => +a[0].split(' ')[1] - +b[0].split(' ')[1])) L.push(`| ${k.replace('level ', '')} | ${fmt(v.tiles)} | ${(v.bytes / 1e6).toFixed(2)} | ${fmt(v.triangles)} | ${fmt(v.landmark_outlines)} | ${fmt(v.landmark_boxes)} | ${fmt(v.mass_boxes)} (${fmt(v.mass_buildings)}) |`);
+  L.push('', '### By part (region)', '', 'Tile bytes are shared out by the built area of each part under a tile (a tile on a border counts in both by share).', '',
+    '| part | code | records read | buildings drawn: landmarks | in the mass (of them Microsoft) | heights: OSM, Microsoft, other Overture, GHSL, default | tile MB (landmarks) |', '|---|---|---|---|---|---|---|');
+  let sumB = 0;
+  for (const c of partCounts) { const x = fj.lite.parts.find(q => q.code === c.part)?.tile_bytes || { bytes: 0, landmark_bytes: 0 }, H = c.height_sources, k = c.counts; sumB += x.bytes;
+    L.push(`| ${c.name} | ${c.part} | ${fmt(k['records read'] || 0)} | ${fmt(k.landmarks || 0)} | ${fmt(k['mass buildings'] || 0)} (${fmt(c.geometry.ms.buildings)}) | ${fmt((H['osm-height'] || 0) + (H['osm-levels'] || 0))}, ${fmt(H.ms || 0)}, ${fmt((H['overture-height'] || 0) + (H['overture-floors'] || 0))}, ${fmt(H.ghsl || 0)}, ${fmt((H['default'] || 0) + (H['default-small'] || 0))} | ${(x.bytes / 1e6).toFixed(1)} (${(x.landmark_bytes / 1e6).toFixed(1)}) |`); }
+  L.push('', 'What each part left out or took by a rule (counts of place-lite-select):', '');
+  for (const c of partCounts) L.push(`- ${c.name}: ${Object.entries(c.counts).filter(([k]) => !k.startsWith('landmarks') && k !== 'records read' && k !== 'mass buildings').map(([k, v]) => `${esc(k)} ${fmt(v)}`).join('; ')}`);
+  L.push('');
+  // sources
+  L.push('## Sources', '');
+  for (const [key, rec] of Object.entries(log.fetches || {})) {
+    const sid = rec.source, s = S[sid] || {};
+    L.push(`### ${key}: ${s.name || sid}`, '', `- Register source: \`${sid}\` ([DATA-REGISTER.md](${GH}DATA-REGISTER.md))`, `- Licence: ${s.licence || rec.licence || ''}${s.licence_url ? ` (${s.licence_url})` : ''}`, `- Credit (exact text): "${s.attribution || ''}"`,
+      `- Fetched: ${rec.fetched}${rec.index ? ` (${rec.index})` : ''}`, `- Request: ${(Array.isArray(rec.url) ? rec.url : [rec.url]).map(u => '`' + u + '`').join(' ; ')}${rec.request ? ` — ${esc(rec.request).slice(0, 900)}` : ''}`);
+    const af = rec.as_fetched; if (Array.isArray(af)) for (const a of af) L.push(`- As fetched: ${a.bytes} bytes, SHA-256 \`${a.sha256}\` (${a.url})`); else if (af?.sha256) L.push(`- As fetched: ${af.bytes} bytes, SHA-256 \`${af.sha256}\``); else if (af?.note) L.push(`- As fetched: ${af.note}`);
+    L.push(`- Stored for the build: \`${rec.file}\`, ${rec.bytes} bytes, SHA-256 \`${rec.sha256}\` — NOT committed (londat's raw folder, git-ignored)${rec.records ? `; ${fmt(rec.records)} records` : ''}${rec.rows ? `; ${fmt(rec.rows)} rows` : ''}`, '');
+  }
+  L.push('Also read (committed in londat): the UK skeleton polygons (`cwplans/docklands/data/uk/layers/regions/6/`, `countries/6/`; ONS, OGL v3.0), Natural Earth countries (`cwplans/docklands/data/world/countries.json`; public domain), the world-base heights (`cwplans/docklands/data/world-base/dem/`; Copernicus GLO-90) and the EGM96 geoid grid (`cwplans/docklands/data/world/geoid-egm96-1deg.png`).', '');
+  // operations
+  L.push('## Operations (dataflow, skill cwplans-dataflow)', '', 'Each activity: id = sha256 of [operation, version, input hashes, parameters], first 16 hex. Inputs and outputs by SHA-256; a re-run with the same inputs writes nothing. Outputs under `data/raw/` (londat) are intermediate (not committed); their hashes fix the next step. Paths `docklandia:...` are in this repository.', '');
+  const acts = [...parts.map(pt => log.activities.filter(a => a.operation === LOPS.select.id && a.params.part === pt.code).at(-1)), last(LOPS.tiles.id)].filter(Boolean);
+  for (const a of acts) {
+    L.push(`### ${a.operation} version ${a.version}${a.params.part ? ` (${a.params.part} ${a.params.name})` : ''} (activity \`${a.activity}\`, ${a.at})`, '', `Skill ${a.skill}; tool ${a.tool}.`, '', 'Inputs:', '');
+    for (const i of a.inputs) L.push(`- ${i.label}: \`${i.path}\` SHA-256 \`${i.sha256}\``);
+    L.push('', 'Outputs:', ''); for (const o of a.outputs.slice(0, 4)) L.push(`- \`${o.path}\` SHA-256 \`${o.sha256}\` (${o.bytes} bytes)`); if (a.outputs.length > 4) L.push(`- and ${fmt(a.outputs.length - 4)} more (tiles and tile sets: the Files table above)`);
+    L.push('', `Parameters: \`${esc(JSON.stringify(a.params)).slice(0, 1500)}\``, ''); }
+  L.push('## What is derived from what', '',
+    '- `place-lite-select` (one activity per part): the Overture buildings answer of the part\'s box (slim NDJSON, raw) + the landmark tags (QLever TSV, raw) + the GHSL tiles (raw zips) + the skeleton and Natural Earth polygons -> the part\'s landmarks (outline, name, kind, Wikidata, Wikipedia, height and its source, the rule) and its atoms (200 m squares of the level-11 cells: summed footprint, area-weighted centroid and height, buildings, of them Microsoft), with counts.',
+    '- `place-lite-tiles`: the atoms and landmarks of every part + the globe\'s world-base height tiles + the EGM96 geoid grid -> `tiles/*.glb`, `tilesets/*.json`, `tileset.json`, `features.json`.',
+    '- londat\'s `cwplans/docklands/data/places/index.json` (the entry with tileBase) and this README are made from these files.', '');
+  L.push('## Heights (fault F55: counted, not patched)', '', 'Order: OSM height > OSM building:levels x 3 m > height of a non-OSM source with an open licence (Microsoft ML Buildings) > num_floors of such a source x 3 m > small kinds 3 m > GHSL cell mean under the centroid (min 3 m) > 7 m. Landmark heights are often low (a cathedral\'s Microsoft height is its roof, not its tower).', '');
+  const HT2 = {}; for (const c of partCounts) for (const [k, v] of Object.entries(c.height_sources)) HT2[k] = (HT2[k] || 0) + v;
+  L.push('| height source | buildings |', '|---|---|', ...Object.entries(HT2).sort((a, b) => b[1] - a[1]).map(([k, v]) => `| ${k} | ${fmt(v)} |`), '');
+  L.push('## Review status', '',
+    '- OSM (ODbL 1.0, share-alike): allowed for the prototyping phase (owner, 2026-10-03); to be reviewed with the rest of the OSM use.',
+    '- Overture Maps buildings and Microsoft ML Buildings footprints and heights (ODbL 1.0, share-alike): allowed by the owner on 2026-10-20 ("Use ms/overture"); Microsoft footprints in the mass where OSM has none (owner, 2026-10-22, decision on London: "yes"). Registered next to OSM; credit kept. Height values whose source licence is not open are neither used nor committed (counts above).',
+    '- GHSL GHS-BUILT-H (CC BY 4.0), Copernicus GLO-90 heights of the globe, ONS boundaries (OGL v3.0), Natural Earth (public domain): open.', '');
+  writeFileSync(join(OUT, 'README.md'), L.join('\n'));
+  console.log('readme: ' + join(OUT, 'README.md'));
+}
+
 // ---------- the build: three operations (six with a surround block)
 async function build() {
   const fOsm = join(RAWD, 'osm.json.gz'), fDem = join(RAWD, 'dem.json.gz'), fGeoid = join(CW, 'docklands', 'data', 'world', 'geoid-egm96-1deg.png');
@@ -1219,6 +1577,6 @@ async function build() {
   console.log(`done: ${fj.tiles.length} tiles, ${entry.buildings} buildings, tiles ${(tot / 1e6).toFixed(2)} MB, features.json ${(readFileSync(join(OUT, 'features.json')).length / 1e6).toFixed(2)} MB`);
 }
 
-if (cmd === 'fetch' || cmd === 'all') { if (BLOCKS) await fetchBlocks(); else { await fetchOsm(); await fetchDem(); await fetchHeights(); await fetchSurround(); } }
-if (cmd === 'build' || cmd === 'all') await (BLOCKS ? buildBlocks() : build());
-if (cmd === 'readme') writeReadmes();
+if (cmd === 'fetch' || cmd === 'all') { if (LITE) await fetchLite(); else if (BLOCKS) await fetchBlocks(); else { await fetchOsm(); await fetchDem(); await fetchHeights(); await fetchSurround(); } }
+if (cmd === 'build' || cmd === 'all') await (LITE ? buildLite() : BLOCKS ? buildBlocks() : build());
+if (cmd === 'readme') { if (LITE) writeLiteReadme(liteParts(), PL.parts.map(pt => JSON.parse(readFileSync(liteOut(pt).counts, 'utf8')))); writeReadmes(); }

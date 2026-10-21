@@ -3274,3 +3274,16 @@ Owner, 2026-10-22: "yes" to "Microsoft footprints in London where OSM has none".
   3d-tiles-validator 0.6.0: 0 errors, 0 warnings.
 - Live after merge: https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45 (whole city) and
   https://danbri.github.io/londat/docklands/?ll=51.5314,-0.4230,700&ht=0,50 (Yiewsley, where OSM is thin).
+## 2026-10-22: the UK lite set (landmarks plus merged mass)
+
+Owner, 2026-10-22: "can we pick a lite subset or slice somehow? Key landmarks, modest resolution?" Built the UK outside
+Greater London as a place of kind "lite" (region config docklands/geo/regions/uk-lite.js, build-only; tool
+build-place-tiles.mjs --region uk-lite with place-lite.mjs; operations place-lite-select per part (11 activities) and
+place-lite-tiles). Data in https://github.com/danbri/docklandia data/gb/uk-lite/ on branch uk-lite (not pushed; the
+owner pushes after review). 82,784 landmarks, 22.7 M buildings in the mass, 146.4 MB. Register: new `external` section
+(check-data-register.mjs checks it; DATA-REGISTER.md "Data in other repositories"), OSM extracts overture-osm-uk-lite and
+qlever-osm-uk-landmark-tags. Reader: kind lite, tileBase, load_m, external tile sets, feature shards, ?placebase=.
+Tests: lite-check.mjs (new), place-lite.test.mjs (new). Fault F55 counts per part in the set's README. Details and
+traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)". Open: landmark heights (towers and
+spires), the mass reads as a grid from 20 km; merge order: docklandia before londat (else 404s for the index entry).
+

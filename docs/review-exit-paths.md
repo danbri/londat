@@ -6,7 +6,7 @@ OKR KR6.2 (https://github.com/danbri/londat/blob/main/OKRS.md): every item marke
 
 Exit paths for the items marked "review" (OKR KR6.2): what the issue is, the owner decisions with their dates and words (CLAUDE.md), and the options at the end of the prototyping phase. Each file, branch or source with a "review" note (or licence_class "review") names one or more of these groups in its "review_exit" (the first is the main reason). A group does not change a licence class or a decision; the owner chooses an option. Readable view: docs/review-exit-paths.md (written by tools/check-data-register.mjs --write). Not an item: the Bosnia and Herzegovina waiver (owner, 2026-10-11, issue https://github.com/danbri/londat/issues/9) covers no committed file today (Sarajevo heights come from OSM and GHSL; FGU and RGURS were not reached).
 
-Items: 68 (58 files, 2 branches, 8 sources); with an exit path: 68. Groups: 14. An item can name more than one group; the first is its main reason.
+Items: 69 (58 files, 2 branches, 8 sources); with an exit path: 69. Groups: 14. An item can name more than one group; the first is its main reason.
 
 The check (`npm run check`) fails when a new review item has no exit path, or when an item names an unknown group.
 
@@ -19,8 +19,8 @@ The check (`npm run check`) fails when a new review item has no exit path, or wh
 | 3 (owner decides) | [quotes](#quotes) | share-alike text and quotation | 9 | keep the value and the URL; drop the quote text | keep, replace, remove |
 | 4 (owner decides) | [ais-scoping](#ais-scoping) | scoping-only permission | 7 | remove (the permission is for scoping only) | obtain licence, replace, keep, remove |
 | 5 (owner decides) | [no-licence-public](#no-licence-public) | licence unknown | 7 | keep facts only and ask the publishers | obtain licence, keep, replace, remove |
-| 6 | [catastro-ign](#catastro-ign) | licence terms to confirm (transformed-only reuse; licence field empty) | 5 | Catastro: keep (transformed data only); IGN: keep as the separate, removable class the owner accepted on 2026-10-21, and remove it with the switch if IGN or the owner asks | obtain licence, keep, replace, remove |
-| 7 | [osm-odbl](#osm-odbl) | share-alike | 5 | keep under ODbL with the credit | keep, replace, remove |
+| 6 | [osm-odbl](#osm-odbl) | share-alike | 6 | keep under ODbL with the credit | keep, replace, remove |
+| 7 | [catastro-ign](#catastro-ign) | licence terms to confirm (transformed-only reuse; licence field empty) | 5 | Catastro: keep (transformed data only); IGN: keep as the separate, removable class the owner accepted on 2026-10-21, and remove it with the switch if IGN or the owner asks | obtain licence, keep, replace, remove |
 | 8 | [adsb-odbl](#adsb-odbl) | share-alike | 3 | keep under ODbL with the credit, as for OSM (decided with the OSM review) | keep, replace, remove |
 | 9 | [attribution-kept](#attribution-kept) | attribution required | 3 | keep with the attribution | keep, remove |
 | 10 | [metar-origin](#metar-origin) | licence unknown (origin) | 3 | keep with the credit | obtain licence, keep, remove |
@@ -192,6 +192,33 @@ Items (7):
 - `feeds/live/README.md`
 - `registry/sources/construction/sites.json`
 
+## osm-odbl
+
+**OpenStreetMap (ODbL 1.0, share-alike) and ODbL building data (Overture, Microsoft).** Reason: share-alike.
+
+Issue: ODbL is share-alike: a derived database that we publish must be offered under ODbL, with the credit. Only moorings.json carries a review mark, but the review covers every file with osm.use other than "none" (see the OSM table of DATA-REGISTER.md) and the Overture and Microsoft building data of the places.
+
+Owner decisions:
+- 2026-10-03: "ODbL is ok for now, and will be thoroughly reviewed as part of the planning and prototyping activities later. Keep track of our use of this data carefully." (CLAUDE.md, data policy)
+- 2026-10-20: "Use ms/overture" (CLAUDE.md, data policy)
+
+| option | what and how |
+|---|---|
+| keep | Keep under ODbL: offer each derived database under ODbL 1.0; the check already fails a page that shows OSM data without the "© OpenStreetMap contributors" link (cwplans/tools/check-data-register.mjs). |
+| replace | No open non-share-alike source has the same detail. Partial: OS Open Zoomstack and OS Open Map Local (OGL) for UK buildings and water; national cadastres outside the UK. |
+| remove | moorings.json is OSM only: delete it and the mooring layer. Other files: rebuild without OSM is not possible today (OSM gives the buildings). |
+
+If the owner decides nothing: keep under ODbL with the credit.
+
+Items (6):
+
+- `docklands/data/moorings.json`
+- `docklands/data/places/leon/tiles/*.glb` (also; main group catastro-ign)
+- `docklands/data/places/leon/features.json` (also; main group catastro-ign)
+- `docklands/data/places/london/tiles/*.glb`
+- `docklands/data/places/london/features.json`
+- external `danbri/docklandia:data/gb/uk-lite/`
+
 ## catastro-ign
 
 **León: Catastro floors (transformed) and IGN España data via Overture with no stated licence.** Reason: licence terms to confirm (transformed-only reuse; licence field empty).
@@ -220,32 +247,6 @@ Items (5):
 - source `es-catastro-inspire-bu`
 - source `overture-ign-floors`
 - source `overture-ign-geometry`
-
-## osm-odbl
-
-**OpenStreetMap (ODbL 1.0, share-alike) and ODbL building data (Overture, Microsoft).** Reason: share-alike.
-
-Issue: ODbL is share-alike: a derived database that we publish must be offered under ODbL, with the credit. Only moorings.json carries a review mark, but the review covers every file with osm.use other than "none" (see the OSM table of DATA-REGISTER.md) and the Overture and Microsoft building data of the places.
-
-Owner decisions:
-- 2026-10-03: "ODbL is ok for now, and will be thoroughly reviewed as part of the planning and prototyping activities later. Keep track of our use of this data carefully." (CLAUDE.md, data policy)
-- 2026-10-20: "Use ms/overture" (CLAUDE.md, data policy)
-
-| option | what and how |
-|---|---|
-| keep | Keep under ODbL: offer each derived database under ODbL 1.0; the check already fails a page that shows OSM data without the "© OpenStreetMap contributors" link (cwplans/tools/check-data-register.mjs). |
-| replace | No open non-share-alike source has the same detail. Partial: OS Open Zoomstack and OS Open Map Local (OGL) for UK buildings and water; national cadastres outside the UK. |
-| remove | moorings.json is OSM only: delete it and the mooring layer. Other files: rebuild without OSM is not possible today (OSM gives the buildings). |
-
-If the owner decides nothing: keep under ODbL with the credit.
-
-Items (5):
-
-- `docklands/data/moorings.json`
-- `docklands/data/places/leon/tiles/*.glb` (also; main group catastro-ign)
-- `docklands/data/places/leon/features.json` (also; main group catastro-ign)
-- `docklands/data/places/london/tiles/*.glb`
-- `docklands/data/places/london/features.json`
 
 ## adsb-odbl
 

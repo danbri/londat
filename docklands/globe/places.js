@@ -20,8 +20,10 @@
 // Why not 3d-tiles-renderer: it keeps a tile set in one ECEF group (or one fixed reoriented origin) and its fade and
 // overlay plugins patch GLSL; the globe needs a floating origin and TSL. Our sets are plain 3D Tiles 1.1, so a 3D Tiles
 // viewer (3d-tiles-renderer, CesiumJS, QGIS) reads them too.
-// Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)" and "places, city and surroundings by level
-// of detail (2026-10-20)".
+// A place of kind "lite" (the UK outside London, held in the docklandia repository: index entry tileBase) loads from its
+// own load_m, reads external tile sets (content = a tileset JSON) on first need and its landmark rows in shards per part.
+// Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)", "places, city and surroundings by level
+// of detail (2026-10-20)" and "the UK lite set (2026-10-22)".
 import { latinPreferred, pickName } from '../geo/script.js';
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, select, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, normalLocal, cameraWorldMatrix, modelWorldMatrix } from 'three/tsl';
@@ -85,16 +87,23 @@ function parseGlb(ab) {
 export async function attachPlaces(G, H, { scene, U }) {
   const base = new URL(PLACES_INDEX, location.href);
   const ix = await fetch(base).then(r => r.ok ? r.json() : { places: [] }).catch(() => ({ places: [] }));
+  // ?placebase=<id>:<url> (repeatable): serve a place whose files live elsewhere (index entry tileBase, e.g. the UK lite
+  // set in the docklandia repository) from another base, e.g. a local copy for the headless tests
+  const rebase = new Map(qs.getAll('placebase').map(v => { const i = v.indexOf(':'); return [v.slice(0, i), v.slice(i + 1).replace(/\/?$/, '/')]; }));
+  for (const p of ix.places || []) { const nb = rebase.get(p.id); if (!nb || !p.tileBase) continue; for (const k of ['tileset', 'features', 'readme', 'provenance', 'surround']) if (typeof p[k] === 'string' && p[k].startsWith(p.tileBase)) p[k] = nb + p[k].slice(p.tileBase.length); p.tileBase = nb; }
   const P = (ix.places || []).map(p => ({ ...p, C: geodeticToEcef(p.centre[0], p.centre[1], 0), state: null, tiles: [], extras: [], feats: null, nodes: [], roots: [], sur: null }));
   G.places = P;
-  const inArea = (p, lon, lat, m = 0) => { const dl = m / 111320 / Math.cos(lat * D2R), db = m / 110574; return lon >= p.area[0] - dl && lon <= p.area[2] + dl && lat >= p.area[1] - db && lat <= p.area[3] + db; };
+  // a place of kind "lite" (the UK outside London: landmarks plus merged mass) covers the boxes of its parts (index
+  // entry boxes), loads from load_m (the whole UK from 300 to 800 km) and is freed beyond free_m
+  const loadM = p => p.load_m || LOAD_M, freeM = p => p.free_m || FREE_M, LITE = p => p.kind === 'lite';
+  const inArea = (p, lon, lat, m = 0) => { const dl = m / 111320 / Math.cos(lat * D2R), db = m / 110574, inB = a => lon >= a[0] - dl && lon <= a[2] + dl && lat >= a[1] - db && lat <= a[3] + db; return p.boxes ? p.boxes.some(inB) : inB(p.area); };
   const inRect = (a, lon, lat) => lon >= a[0] && lon <= a[2] && lat >= a[1] && lat <= a[3];
   const extOf = p => p.extent || p.area;
   // a place of kind "blocks" (Greater London: cwplans/tools/place-blocks.mjs) has no ground of its own: no hole in the
   // globe's terrain, no curtain, no ground sampler; its blocks stand on the globe's own heights
   const hasGround = p => !!(p.ground || p.sur || p.ring);
   // the globe's floors (60 km away from data) do not apply over a place's tile set
-  G.detailAt = (lon, lat) => P.some(p => p.extent ? inRect(p.extent, lon, lat) : inArea(p, lon, lat, 500));
+  G.detailAt = (lon, lat) => P.some(p => p.boxes ? inArea(p, lon, lat) : p.extent ? inRect(p.extent, lon, lat) : inArea(p, lon, lat, 500));
 
   // ---------- materials: vertex colour (sRGB bytes), one colour (the blocks) or the ground texture; sun from the globe
   // (U.sun, floating frame); logarithmic depth as every globe material. One material for all buildings, one for all blocks.
@@ -146,16 +155,28 @@ export async function attachPlaces(G, H, { scene, U }) {
   }
 
   // ---------- the tile tree of a place: nodes with a bounding sphere (ECEF), geometric error, content matrix (doubles)
-  function nodesOf(p, t, parentW, parent, depth) {
+  // a tile whose content is a tileset JSON (3D Tiles external tileset; the UK lite set from level 9) is a node without
+  // content: its children are read when the walk first needs them (fetchExt) and grafted under it; content URIs resolve
+  // against the JSON they are written in (base)
+  function nodesOf(p, t, parentW, parent, depth, base = p.tsUrl) {
     const W = t.transform ? (parentW ? mul4(parentW, t.transform) : Float64Array.from(t.transform)) : parentW;
     const r = t.boundingVolume.region, pts = [];
     for (const lon of [r[0], r[2], (r[0] + r[2]) / 2]) for (const lat of [r[1], r[3], (r[1] + r[3]) / 2]) for (const h of [r[4], r[5]]) pts.push(geodeticToEcef(lon / D2R, lat / D2R, h));
     const c = [0, 1, 2].map(i => pts.reduce((s, q) => s + q[i], 0) / pts.length), rad = Math.max(...pts.map(q => len([q[0] - c[0], q[1] - c[1], q[2] - c[2]])));
-    const uri = t.content?.uri, key = uri ? uri.replace(/^.*\/|\.glb$/g, '') : 'root';
-    const n = { p, key, level: +key.split('-')[0] || 0, depth, err: t.geometricError, uri, W, M: W ? mul4(W, Y2Z) : null, C: c, rad, kids: [], parent, state: null, meshes: [], used: 0, tris: 0, core: false };
+    const u0 = t.content?.uri, ext = u0 && /\.json$/i.test(u0) ? u0 : null, uri = ext ? null : u0, key = uri ? uri.replace(/^.*\/|\.glb$/g, '') : ext ? 'ext:' + ext : 'root';
+    const n = { p, key, level: +key.split('-')[0] || 0, depth, err: t.geometricError, uri, ext, base, reg: [r[0] / D2R, r[1] / D2R, r[2] / D2R, r[3] / D2R], W, M: W ? mul4(W, Y2Z) : null, C: c, rad, kids: [], parent, state: null, meshes: [], used: 0, tris: 0, core: false };
     p.nodes.push(n);
-    for (const k of t.children || []) n.kids.push(nodesOf(p, k, W, n, depth + 1));
+    for (const k of t.children || []) n.kids.push(nodesOf(p, k, W, n, depth + 1, base));
     return n;
+  }
+  async function fetchExt(n) {
+    n.extState = 'loading'; inFlight++;
+    try { const u = new URL(n.ext, n.base), ts = await fetch(u).then(r => { if (!r.ok) throw new Error(r.status + ' ' + n.ext); return r.json(); });
+      if (n.p.state !== 'loaded' || !n.p.nodes.includes(n)) return;
+      for (const k of ts.root.children || []) n.kids.push(nodesOf(n.p, k, n.W, n, n.depth + 1, u));
+      n.extState = 'ready'; }
+    catch (e) { console.warn('places: external tileset', n.ext, e); n.extState = 'failed'; }
+    finally { inFlight--; G.dirty = true; H.draw(); }
   }
 
   // ---------- load and free a place (the small files; the tiles come by the walk)
@@ -191,15 +212,26 @@ export async function attachPlaces(G, H, { scene, U }) {
     const pick = (fields, row) => Object.fromEntries(fields.map((f, i) => [f, row[i]]));
     const B = fj.buildings.map((r, i) => r && { ...pick(fj.buildings_fields, r), i }).filter(Boolean);
     const S = (fj.streets || []).map(r => pick(fj.streets_fields, r)), A = (fj.areas || []).map(r => pick(fj.areas_fields || ['name', 'kind', 'lon', 'lat', 'name_alt'], r)), Pt = (fj.points || []).map(r => pick(fj.points_fields, r));
-    return { fj, B, byIndex: new Map(B.map(b => [b.i, b])), S, A, Pt };
+    // a lite set keeps its landmark rows in shards, one a part (fj.shards: file, offset, count, bbox), read for the parts in
+    // view (loadShard), so far views and phones do not read every row of the country
+    return { fj, B, byIndex: new Map(B.map(b => [b.i, b])), S, A, Pt, shards: (fj.shards || []).map(x => ({ ...x, state: null })) };
   }
+  function loadShard(p, sh) {
+    if (sh.p) return sh.p; sh.state = 'loading';
+    return sh.p = fetch(new URL(sh.file, new URL(p.features, base))).then(r => { if (!r.ok) throw new Error(r.status + ' ' + sh.file); return r.json(); }).then(j => {
+      const F = p.feats; if (!F) return; const fl = j.buildings_fields;
+      j.buildings.forEach((r, k) => { if (F.byIndex.has(j.offset + k)) return; const b = Object.fromEntries(fl.map((f, i) => [f, r[i]])); b.i = j.offset + k; b.part = j.name; F.B.push(b); F.byIndex.set(b.i, b); });   // (once a row, whichever copy of the index asked)
+      sh.state = 'ready'; G.dirty = true; H.draw(); }).catch(e => { console.warn('places: features shard', sh.file, e); sh.state = 'failed'; });
+  }
+  const shardsOver = (p, r) => (p.feats?.shards || []).filter(sh => sh.bbox[0] <= r[2] && sh.bbox[2] >= r[0] && sh.bbox[1] <= r[3] && sh.bbox[3] >= r[1]);
+  const shardOfRow = (p, row) => (p.feats?.shards || []).find(sh => row >= sh.offset && row < sh.offset + sh.count);
 
   // ---------- a tile: fetch, parse, decode (async), then activate (main thread, a few per frame), then free
   let inFlight = 0; const ready = [];   // decoded, waiting for activation
   async function fetchNode(n) {
     n.state = 'loading'; inFlight++;
     try {
-      const ab = await fetch(new URL(n.uri, n.p.tsUrl)).then(r => { if (!r.ok) throw new Error(r.status + ' ' + n.uri); return r.arrayBuffer(); });
+      const ab = await fetch(new URL(n.uri, n.base || n.p.tsUrl)).then(r => { if (!r.ok) throw new Error(r.status + ' ' + n.uri); return r.arrayBuffer(); });
       const prims = parseGlb(ab);
       for (const q of prims) if (q.img) q.bmp = await createImageBitmap(q.img).catch(() => null);
       if (n.state !== 'loading') { for (const q of prims) q.bmp?.close?.(); return; }
@@ -341,6 +373,8 @@ export async function attachPlaces(G, H, { scene, U }) {
     // returns true when the subtree is drawn completely by tiles at the wanted level (pushed to `out`)
     const visit = n => {
       if (cull && !cull.inFrustum(n.C, n.rad)) return true;
+      if (n.ext) { n.used = now; if (n.extState !== 'ready') { if (!n.extState) fetchExt(n); if (n.extState !== 'failed') pending = true; return n.extState === 'failed'; }
+        let all = true; for (const k of n.kids) if (!visit(k)) all = false; return all; }   // (transparent: its children stand for it)
       const d = Math.max(1, Math.hypot(eye[0] - n.C[0], eye[1] - n.C[1], eye[2] - n.C[2]) - n.rad), sse = n.err * K / d; n.used = now;
       if (n.kids.length && sse > MAX_SSE) {
         const mark = out.length; let all = true;
@@ -357,6 +391,8 @@ export async function attachPlaces(G, H, { scene, U }) {
     out.length = 0;
     for (const r of p.roots) visit(r);
     for (const n of out) drawn.push(n);
+    // a lite set: the landmark rows of the parts under the finer tiles drawn (levels 9 and up: a city or a county in view)
+    if (p.feats?.shards?.length) for (const n of out) if (n.level >= 9) for (const sh of shardsOver(p, n.reg)) if (!sh.state) loadShard(p, sh);
     // the top cells: all of them are wanted while the place is loaded (the hole in the world terrain waits for them)
     let top = true; for (const r of p.roots) { r.used = now; if (r.state !== 'ready') { top = false; need(r, 1e6); } }
     p.topReady = top; p.pending = pending;
@@ -366,7 +402,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     let hole = null, best = Infinity; want.length = 0; drawn.length = 0;
     for (const p of P) {
       const d = len([eye[0] - p.C[0], eye[1] - p.C[1], eye[2] - p.C[2]]);
-      if (d < LOAD_M && !p.state) load(p); else if (d > FREE_M && p.state === 'loaded') { free(p); continue; }
+      if (d < loadM(p) && !p.state) load(p); else if (d > freeM(p) && p.state === 'loaded') { free(p); continue; }
       if (p.state !== 'loaded') continue;
       walkPlace(p, eye, K, now);
       if (p.topReady && !p.curtain && hasGround(p) && G.sampler?.()) { p.curtain = curtain(p); p.extras.push(p.curtain); }
@@ -404,7 +440,8 @@ export async function attachPlaces(G, H, { scene, U }) {
     return st; });
 
   // ---------- text and machine interface
-  const featsP = p => p.featsP || (p.featsP = p.feats ? Promise.resolve(p.feats) : fetch(new URL(p.features, base)).then(r => r.json()).then(fj => (p.feats ||= indexFeatures(fj))));
+  // (the place's own index when it is loaded: a lite set's shards are read into p.feats, so a copy made by an earlier search must not stand in for it)
+  const featsP = p => p.feats ? Promise.resolve(p.feats) : p.featsP || (p.featsP = fetch(new URL(p.features, base)).then(r => r.json()).then(fj => (p.feats ||= indexFeatures(fj))));
   const surP = p => !p.surround ? Promise.resolve(null) : p.surP || (p.surP = p.sur ? Promise.resolve(p.sur) : fetch(new URL(p.surround, base)).then(r => r.json()).then(s => (p.sur ||= s)));
   // names: the Latin form only while Latin is preferred (geo/script.js; owner, 2026-10-22); a name with no Latin form gives ''
   const nameText = (n, alt) => { if (latinPreferred()) { const m = pickName(n, alt); return m || ''; } return alt ? `${n} (${alt})` : n; };
@@ -421,6 +458,9 @@ export async function attachPlaces(G, H, { scene, U }) {
       const sc = t => { t = fold(t); return !t ? 0 : t === f ? 100 : t.startsWith(f) ? 80 : (' ' + t).includes(' ' + f) ? 60 : f.length >= 3 && t.includes(f) ? 30 : 0; };
       const add = (name, alt, kind, lon, lat, extra = {}, bonus = 0) => { const s = Math.max(sc(name), sc(alt || '')), shown = nameText(name, alt); if (s && shown) out.push({ name: shown, local_name: (latinPreferred() ? undefined : alt) || undefined, kind, lon, lat, region: p.name, id: `place:${p.id}:${extra.osm_id || fold(name)}`, score: s + bonus, alt_m: extra.alt_m || (kind === 'building' || kind === 'point' ? 700 : 1500), facts: [{ label: 'Place', value: p.name, source: extra.source || 'build-place-tiles (OpenStreetMap)' }, ...(extra.facts || [])], place: p.id, osm_id: extra.osm_id }); };
       for (const t of F.fj.search || []) add(t, null, 'place', p.centre[0], p.centre[1], {}, 1);
+      if (F.fj.names) { const NJ = await (p.namesP ||= fetch(new URL(F.fj.names, new URL(p.features, base))).then(r => r.json()).catch(() => null)); const fi = k => NJ?.fields.indexOf(k);
+        for (const r of NJ?.rows || []) add(r[fi('name')], null, 'building', r[fi('lon')], r[fi('lat')], { osm_id: 'row' + r[fi('row')], facts: [{ label: 'Kind', value: 'a landmark of the lite set (key landmarks plus merged building mass)' }] });
+        continue; }
       for (const b of F.B) if (b.name || b.address) { add(b.name || b.address, b.name ? b.name_alt : null, 'building', b.lon, b.lat, { osm_id: b.osm_id, facts: [{ label: 'Height', value: `${b.height_m} m (${b.height_source})` }] }); if (b.name && b.address) add(b.address, null, 'building', b.lon, b.lat, { osm_id: b.osm_id }); }
       for (const x of F.Pt) add(x.name, x.name_alt, 'point', x.lon, x.lat, { osm_id: x.osm_id, facts: [{ label: 'Kind', value: x.kind }] });
       for (const x of F.S) add(x.name, x.name_alt, 'street', x.lon, x.lat);
@@ -456,12 +496,13 @@ export async function attachPlaces(G, H, { scene, U }) {
       return out;
     }
     const F = await featsP(p).catch(() => null); if (!F) return {};
+    if (F.shards?.length) await Promise.all(shardsOver(p, [lon, lat, lon, lat]).map(sh => loadShard(p, sh)));
     const nb = nearest(F, lon, lat, false), nn = nearest(F, lon, lat, true);
     const bText = b => `${b.name ? nameText(b.name, b.name_alt) : b.address || b.kind + ' building'} (OSM ${b.osm_id}, ${b.height_m} m, height from ${b.height_source})`;
     const out = { ...(hasGround(p) ? { builtUp: p.label || p.name, country: w.country?.name || undefined, source: 'OpenStreetMap (ODbL) via build-place-tiles' } : {}), place: p.id, local_time: t ? `${t} (${p.timeZone})` : undefined };
     if (nb && nb.d < 40) out.building = { osm_id: nb.b.osm_id, name: nb.b.name || null, name_alt: nb.b.name_alt || null, address: nb.b.address || null, kind: nb.b.kind, height_m: nb.b.height_m, height_source: nb.b.height_source, dist_m: Math.round(nb.d) };
     if (nn) out.nearestBuilding = { osm_id: nn.b.osm_id, name: nameText(nn.b.name, nn.b.name_alt), dist_m: Math.round(nn.d), direction: compass(bearingDeg(lon, lat, nn.b.lon, nn.b.lat)) };
-    out.text = `In ${p.label || p.name} (3D buildings from OpenStreetMap).${out.building ? ' Building here: ' + bText(nb.b) + '.' : ''}${nn ? ` Nearest named building: ${nameText(nn.b.name, nn.b.name_alt)}, ${fmtDist(nn.d)} ${out.nearestBuilding.direction}.` : ''}${t ? ` Local time ${t} (${p.timeZone}).` : ''}`;
+    out.text = `In ${p.label || p.name} (${LITE(p) ? 'a lite set: key landmarks plus merged building mass from OpenStreetMap and Microsoft footprints' : '3D buildings from OpenStreetMap'}).${out.building ? ' Building here: ' + bText(nb.b) + '.' : ''}${nn ? ` Nearest named building: ${nameText(nn.b.name, nn.b.name_alt)}, ${fmtDist(nn.d)} ${out.nearestBuilding.direction}.` : ''}${t ? ` Local time ${t} (${p.timeZone}).` : ''}`;
     return out;
   });
   // the view: buildings of loaded places on screen (their roof centres), the nearest named one to the centre of the view;
@@ -483,8 +524,15 @@ export async function attachPlaces(G, H, { scene, U }) {
         r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, city_blocks_by_source: Object.fromEntries(Object.entries(byCls).map(([k, v]) => [p.sur.geometry_classes?.[k]?.label || k, v])), places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
       if (!hasGround(p)) { const by = {}; let k = 0; for (const nd of lastDrawn) if (nd.p === p && nd.meta) for (const L of [nd.meta.boxes, nd.meta.outlines]) for (const c of L.c) { k++; by[nd.meta.classes[c]] = (by[nd.meta.classes[c]] || 0) + 1; }
         r.blocks_drawn = k; r.blocks_by_source = by; r.named_buildings_in_view = n; }
+      // a lite set: what is drawn is a selection, so say so and count each class
+      if (LITE(p)) { let lo = 0, lb = 0, mb = 0, mn = 0; const lv = {};
+        for (const nd of lastDrawn) { if (nd.p !== p || !nd.meta) continue; lv[nd.level] = (lv[nd.level] || 0) + 1; lo += (nd.meta.named || []).length; mn += nd.meta.mass_buildings || 0;
+          const B = nd.meta.boxes; for (let i = 0; i < B.c.length; i++) if (B.f && B.f[i] >= 0) lb++; else if (B.c[i] === 1) mb++; }
+        r.lite = { about: 'a lite set: key landmarks (by a stated rule, each with its own outline or box, id and card) plus the merged building mass (one box a square: 200 m in towns and 400 m elsewhere near, up to 6.4 km far); not every building',
+          landmarks_drawn: lo + lb, landmark_outlines: lo, landmark_boxes: lb, mass_boxes: mb, mass_buildings: mn, landmarks_in_view: n, tiles_by_level: lv, rule: p.feats?.fj?.lite?.rule || null }; }
       const lk = look.state.place === p ? look.describe() : null; if (lk) r.look = lk;
-      r.text = `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
+      r.text = r.lite ? `${p.label || p.name}: a lite set, key landmarks plus merged building mass (not every building). Drawn: ${r.lite.landmarks_drawn.toLocaleString(p.locale)} landmarks (${r.lite.landmark_outlines.toLocaleString(p.locale)} as outlines, ${r.lite.landmark_boxes.toLocaleString(p.locale)} as boxes) and ${r.lite.mass_boxes.toLocaleString(p.locale)} mass boxes standing for ${r.lite.mass_buildings.toLocaleString(p.locale)} buildings; ${n.toLocaleString(p.locale)} landmarks in view${nn[0] ? `; nearest landmark to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest landmark in view: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
+        : `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
         + (lk ? ` Drawn as the model: ${lk.look}${lk.night > 0.5 ? ', night windows lit by the local hour' : lk.night > 0 ? ', dusk' : ', daylight'}${lk.trees_drawn.near + lk.trees_drawn.far ? `, ${(lk.trees_drawn.near + lk.trees_drawn.far).toLocaleString(p.locale)} trees drawn` : ''}${lk.water_named.length ? `, water: ${lk.water_named.join(', ')}` : ''}${lk.greens && lk.greens.placed_by_rule ? ` (trees in woods and parks without mapped trees are placed by a rule: ${lk.greens.placed_by_rule.toLocaleString(p.locale)} of ${lk.greens.trees.toLocaleString(p.locale)})` : ''}.` : '')
         + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
       res.push(r); }
@@ -503,19 +551,35 @@ export async function attachPlaces(G, H, { scene, U }) {
       const M = hit.object.userData.node?.meta; if (!M) return null; let k = -1, L = null;
       if (hit.object.isInstancedMesh) { L = M.boxes; k = hit.instanceId; } else { L = M.outlines; const f = hit.faceIndex; k = L.tri_end.findIndex(e => e > f); }
       if (!L || k == null || k < 0 || k >= L.c.length) return null;
+      if (L.f && L.f[k] >= 0) return rowCard(p, L.f[k], creditHtml, esc);   // a landmark drawn as a box (lite, coarse levels)
       const cls = M.classes[L.c[k]], gc = p.sur?.geometry_classes?.[cls] || { label: cls };
+      if (LITE(p)) { const b = { kind: 'merged buildings', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], level: hit.object.userData.node?.level };
+        const rows = [['Kind', 'Building mass: the buildings of a square merged into one box (a lite set: landmarks plus merged mass, not every building)'], ['Footprints from', gc.label], ['Height', `${b.height_m} m (${b.height_source})`], ['Tile level', b.level], ['Place', p.name]];
+        H.showCard(`<h2>Building mass</h2><p class="small">${esc(p.name)} · ${esc(gc.label)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
+        return b; }
       const b = { kind: 'city block', geometry_class: cls, geometry_source: gc.label, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]] };
       const rows = [['Kind', 'City block (simplified, flat top)'], ['Footprint from', gc.label], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
       H.showCard(`<h2>City block</h2><p class="small">${esc(p.name)} · ${esc(gc.label)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
       return b;
     }
-    const fa = hit.object.geometry.attributes._feature_id_0, b = fa && p.feats.byIndex.get(Math.round(fa.getX(hit.face.a)));
-    if (!b) return null;
-    const osm = `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}`;
-    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', latinPreferred() ? null : b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
-    H.showCard(`<h2>${esc((b.name && nameText(b.name, b.name_alt)) || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
-    return b;
+    const fa = hit.object.geometry.attributes._feature_id_0; if (!fa || !p.feats) return null;
+    return rowCard(p, Math.round(fa.getX(hit.face.a)), creditHtml, esc);
   };
+  // the card of a features row; a row of a shard not read yet (lite): read it, then show the card
+  function rowCard(p, row, creditHtml, esc) {
+    const b = p.feats?.byIndex.get(row); if (b) return buildingCard(p, b, creditHtml, esc);
+    const sh = shardOfRow(p, row); if (!sh) return null;
+    loadShard(p, sh).then(() => { const b2 = p.feats?.byIndex.get(row); if (b2) buildingCard(p, b2, creditHtml, esc); });
+    return { pending: true, row };
+  }
+  // the card of a building of features.json (a core building, a named block, a landmark of a lite set)
+  function buildingCard(p, b, creditHtml, esc) {
+    const osm = /^[wrn]\d+$/.test(b.osm_id || '') ? `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}` : null;
+    const why = b.landmark ? { wikidata: 'an encyclopaedia record (OSM wikidata tag)', wikipedia: 'an encyclopaedia record (OSM wikipedia tag)', 'named-tall': 'named and 25 m or taller', 'named-big': 'named, footprint 3,000 m2 or more' }[b.landmark] || `a notable kind (OSM ${b.landmark.replace(':', '=')})` : null;
+    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', latinPreferred() ? null : b.name_alt], ['Wikidata', b.wikidata], ['Wikipedia', b.wikipedia], ['Landmark because', why], ['Area', b.part], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
+    H.showCard(`<h2>${esc((b.name && nameText(b.name, b.name_alt)) || b.address || (b.landmark ? 'Landmark' : 'Building'))}</h2><p class="small">${esc(p.name)}${osm ? ` · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a>` : ''}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
+    return b;
+  }
   import('./landmarks.js').then(m => m.attachLandmarks(G, H, { scene, U, P })).catch(e => console.warn('places: landmarks', e));   // minarets, domes, towers (globe/landmarks.js)
   return P;
 }

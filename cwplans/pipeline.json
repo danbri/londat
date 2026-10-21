@@ -11157,6 +11157,10 @@
   {
    "tool": "tools/place-blocks.mjs",
    "provides": "A place of kind blocks (Greater London): blockSelector (Overture buildings rows -> OSM geometry inside a boundary polygon and outside the model boxes of place.exclude; non-OSM height values by dataset), blockTree (the quadtree of the cells with buildings), blockTile (oriented boxes as instances, simplified outlines, named buildings with their feature id, merged boxes by square at the coarse levels), blocksGlb, worldBaseGround (the globe world-base height tiles as a sampler). Used by build-place-tiles.mjs (place-blocks)."
+  },
+  {
+   "tool": "tools/place-lite.mjs",
+   "provides": "The UK lite set (place kind \"lite\"): part assignment of a building to an ONS region or country polygon (London left out; nearest part within 250 m; never the Republic of Ireland), the landmark rule (OSM wikidata or wikipedia tag, notable kind, named and 25 m or taller or 3,000 m2 or bigger) with its reason, and the merge square of a building (200 m in towns, 400 m elsewhere, coarser per level). Used by build-place-tiles.mjs operations place-lite-select and place-lite-tiles."
   }
  ],
  "tests": [
@@ -11223,6 +11227,10 @@
   {
    "tool": "tools/test/place-blocks.test.mjs",
    "what": "Tests (node --test) of tools/place-blocks.mjs: the selection (OSM geometry in the boundary, out of the model box, Microsoft heights by dataset, empty licences skipped), the tree (cells with buildings, leaves at the leaf level), a tile (boxes, outlines, a named building with COLOR_0 and _FEATURE_ID_0, merged squares at a coarse level, int8 rotations), the world-base ground sampler."
+  },
+  {
+   "tool": "tools/test/place-lite.test.mjs",
+   "what": "Tests (node --test) of tools/place-lite.mjs: the part assignment (ONS regions without London, nearest part within 250 m, never the Republic of Ireland), the landmark rule and its reasons, the merge square rule (200 m in towns, 400 m elsewhere, coarser per level); with UK_LITE_DIR set, the built set in danbri/docklandia (sizes, counts, no landmark in London)."
   },
   {
    "tool": "tools/test/place-landmarks.test.mjs",

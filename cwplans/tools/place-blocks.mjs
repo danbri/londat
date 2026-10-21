@@ -90,7 +90,7 @@ export function blockSelector(opt) {
 
 // ---------- the globe's ground: world-base height tiles (35 x 35 Int16, metres above the geoid, row 0 north, y of the
 // quadtree from the north), the deepest level with a tile at the point
-export function worldBaseGround(M, readTile) {
+export function worldBaseGround(M, readTile, fallback = null) {   // fallback(lon, lat): where no height tile is (the lite set: the globe's world terrain texture)
   const avail = {}; for (const [L, a] of Object.entries(M.dem.tiles)) { const s = new Set(); for (let i = 0; i < a.length; i += 2) s.add(a[i] + ',' + a[i + 1]); avail[L] = s; }
   const levels = Object.keys(avail).map(Number).sort((a, b) => b - a), cache = new Map(), used = new Set(), G = M.dem.grid || 35;
   const tile = (L, x, y) => { const k = `${L}/${x}/${y}`; let t = cache.get(k); if (!t) { t = readTile(L, x, y); cache.set(k, t); used.add(k); } return t; };
@@ -99,7 +99,7 @@ export function worldBaseGround(M, readTile) {
       const h = tile(L, x, y), w = -180 + x * s, n = 90 - y * s, d = s / (G - 3), fx = Math.max(0, Math.min(G - 1.001, (lon - w) / d + 1)), fy = Math.max(0, Math.min(G - 1.001, (n - lat) / d + 1));
       const i = Math.floor(fx), j = Math.floor(fy), u = fx - i, v = fy - j, o = j * G + i;
       return (h[o] * (1 - u) + h[o + 1] * u) * (1 - v) + (h[o + G] * (1 - u) + h[o + G + 1] * u) * v; }
-    return 0;
+    return fallback ? fallback(lon, lat) : 0;
   };
   return { at, used };
 }
@@ -129,27 +129,27 @@ export function blockTile(opt) {
   const mLon = 111320 * Math.cos(bc * D2R), mLat = 110574, ell = (lon, lat) => groundAt(lon, lat) + geoidAt(lon, lat);
   const h0 = Math.round(ell(lc0, bc) * 100) / 100, F = enuFrame({ lon: lc0, lat: bc, h: h0 }), Y = ([E, N, U]) => [E, U, -N];
   const HS = [], hsi = k => { let i = HS.indexOf(k); if (i < 0) { HS.push(k); i = HS.length - 1; } return i; };
-  const meta = { boxes: { c: [], h: [], s: [] }, outlines: { c: [], h: [], s: [], tri_end: [] } };
+  const meta = { boxes: { c: [], h: [], s: [], ...(opt.lite ? { f: [] } : {}) }, outlines: { c: [], h: [], s: [], tri_end: [] }, ...(opt.lite ? { named: [] } : {}) };
   const inst = { t: [], r: [], s: [] }, ol = { pos: [], idx: [] }, nm = { pos: [], col: [], fid: [], idx: [] };
   let zmin = Infinity, zmax = -Infinity; const st = { boxes: 0, outlines: 0, named: 0, merged: 0, merged_buildings: 0, small_skipped: 0, by_class: {} };
   const MERGED = 1, ciOf = b => (b.cls && opt.classIndex?.[b.cls]) || 0, byCls = b => { const k = b.cls || 'osm'; st.by_class[k] = (st.by_class[k] || 0) + 1; };
   const toXY = (r, ref) => r.map(([lo, la]) => [(lo - ref[0]) * mLon, (la - ref[1]) * mLat]);
   const toLL = ([x, y], ref) => [ref[0] + x / mLon, ref[1] + y / mLat];
   // a box: base centre (lon, lat), turn about up (radians from east), length along that turn, width, ground samples
-  function box(ll, th, len, wid, hgt, cls, src, gs) {
+  function box(ll, th, len, wid, hgt, cls, src, gs, fid = -1) {
     const g0 = Math.min(...gs), gm = gs.reduce((a, c) => a + c, 0) / gs.length, N = geoidAt(ll[0], ll[1]), z0 = g0 - P.drop_m + N, z1 = gm + hgt + N;
     const t = Y(F.toEnu(ll[0], ll[1], z0)); inst.t.push(t[0], t[1], t[2]);
     // the unit box turned about glTF y (up): a turn of th from east (x) toward north (-z) is +th about y; boxes are symmetric
     // under a half turn, so th/2 in [0, pi/2): both quaternion parts >= 0 (normalized int8: 1/127 steps, under 1 degree)
     let a = th % Math.PI; if (a < 0) a += Math.PI; inst.r.push(0, Math.round(Math.sin(a / 2) * 127), 0, Math.round(Math.cos(a / 2) * 127));
     inst.s.push(Math.max(0.5, len), z1 - z0, Math.max(0.5, wid)); zmin = Math.min(zmin, z0); zmax = Math.max(zmax, z1);
-    meta.boxes.c.push(cls); meta.boxes.h.push(Math.round(hgt * 10)); meta.boxes.s.push(hsi(src)); if (cls !== MERGED) st.boxes++;
+    meta.boxes.c.push(cls); meta.boxes.h.push(Math.round(hgt * 10)); meta.boxes.s.push(hsi(src)); if (meta.boxes.f) meta.boxes.f.push(fid); if (cls !== MERGED) st.boxes++;
   }
   // an oriented box of a footprint (xy in metres round ref)
-  function obbOf(xy, ref, hgt, cls, src) {
+  function obbOf(xy, ref, hgt, cls, src, fid = -1) {
     const bx = obbBox(xy); if (!bx) return false; const f = bx.frame;
     const cl = toLL([f.cx * f.c - f.cy * f.s, f.cx * f.s + f.cy * f.c], ref), gs = bx.map(p => groundAt(...toLL(p, ref)));
-    box(cl, Math.atan2(f.s, f.c), f.len, f.wid, hgt, cls, src, gs); return true;
+    box(cl, Math.atan2(f.s, f.c), f.len, f.wid, hgt, cls, src, gs, fid); return true;
   }
   // an extruded outline (rings in metres round ref; walls of every ring, a flat top by earcut): into ol or nm
   function prism(T, rings, ref, hgt, colW, colR, fid) {
@@ -166,10 +166,19 @@ export function blockTile(opt) {
   const ccw = xy => area2(xy) < 0 ? xy.slice().reverse() : xy;
   const blockRGB = [1, 3, 5].map(i => parseInt(opt.colour.slice(i, i + 2), 16)), roofRGB = blockRGB.map((v, i) => linSrgb(srgbLin(v) * [0.82, 0.58, 0.48][i]));
   const merged = new Map();
+  // (kind lite, opt.lite: items may carry their height (b.H), merged items have no rings; b.own: a landmark drawn as its own
+  // box at a coarse level (its feature row in meta.boxes.f); opt.namedOutlines: landmarks as outlines at a coarse-mode
+  // leaf; opt.mergeOf(b): the square of each item)
   for (const b of items) {
-    const H = HT[b.id]; if (!H || !(H.h > 0)) continue;
+    const H = b.H || HT[b.id]; if (!H || !(H.h > 0)) continue;
     if (b.a < P.min_area_m2) { st.small_skipped++; continue; }
-    const xy0 = toXY(open(b.rings[0]), b.c);
+    const xy0 = b.rings ? toXY(open(b.rings[0]), b.c) : null;
+    const row0 = opt.named ? opt.named.get(b.id) : null;
+    if (row0 != null && opt.namedOutlines) {   // (lite) a landmark at the leaf: its outline (and holes), its own id
+      const tol = opt.named_simplify_m ?? 0.5, rs = b.rings.map((r, k) => { let q = simplify(toXY(open(r), b.c), tol); if (q.length < 3) return null; q = area2(q) < 0 === (k === 0) ? q.slice().reverse() : q; return q; }).filter(Boolean);
+      if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row0); st.named++; meta.named.push(row0); continue; }
+      obbOf(xy0, b.c, H.h, 0, H.src, row0); continue;
+    }
     if (opt.leaf) {
       const row = opt.named.get(b.id);
       if (row != null) {   // a named building: its outline (and holes) at 0.5 m, its own id, wall and roof colours
@@ -183,25 +192,26 @@ export function blockTile(opt) {
       continue;
     }
     // a coarse level: tall or big buildings as their own boxes, the rest merged by square
-    if (H.h >= P.tall_m || b.a >= P.big_m2) { if (obbOf(xy0, b.c, H.h, ciOf(b), H.src)) byCls(b); continue; }
-    const E = (b.c[0] - w) * mLon, Nn = (b.c[1] - s) * mLat, k = Math.floor(E / P.merge_m) + ',' + Math.floor(Nn / P.merge_m);
-    const q = merged.get(k) || merged.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0 }).get(k); q.a += b.a; q.x += b.a * b.c[0]; q.y += b.a * b.c[1]; q.h += b.a * H.h; q.n++;
+    if (b.own || (xy0 && (H.h >= P.tall_m || b.a >= P.big_m2))) { if (obbOf(xy0, b.c, H.h, ciOf(b), H.src, row0 ?? -1)) byCls(b); st.landmark_boxes = (st.landmark_boxes || 0) + (row0 != null ? 1 : 0); continue; }
+    const MS = opt.mergeOf ? opt.mergeOf(b) : P.merge_m, E = (b.c[0] - w) * mLon, Nn = (b.c[1] - s) * mLat, k = (opt.mergeOf ? MS + ':' : '') + Math.floor(E / MS) + ',' + Math.floor(Nn / MS);
+    const q = merged.get(k) || merged.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0 }).get(k); q.a += b.a; q.x += b.a * b.c[0]; q.y += b.a * b.c[1]; q.h += b.a * H.h; q.n += b.n || 1;
   }
   // one box per square at the area-weighted mean height. Its side grows with the built share of the square (full at
   // P.full_share, default 0.5: a dense street of houses reads as one mass from afar; sqrt(area) boxes left a grid of
   // separate cubes, 2026-10-21) and its centre moves from the area-weighted centre to the square's centre as it grows
-  const M2 = P.merge_m, full = P.full_share || 0.5;
+  const full = P.full_share || 0.5;
   for (const [k, q] of [...merged.entries()].sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)) {
-    const [i, j] = k.split(',').map(Number), sc = [w + (i + 0.5) * M2 / mLon, s + (j + 0.5) * M2 / mLat], side = M2 * Math.min(1, Math.sqrt(q.a / (M2 * M2) / full)), f = side / M2;
+    const M2 = opt.mergeOf ? +k.split(':')[0] : P.merge_m, [i, j] = (opt.mergeOf ? k.split(':')[1] : k).split(',').map(Number), sc = [w + (i + 0.5) * M2 / mLon, s + (j + 0.5) * M2 / mLat], side = M2 * Math.min(1, Math.sqrt(q.a / (M2 * M2) / full)), f = side / M2;
     const ll = [q.x / q.a + (sc[0] - q.x / q.a) * f, q.y / q.a + (sc[1] - q.y / q.a) * f], hgt = q.h / q.a, d = side / 2;
     const gs = [[-d, -d], [d, -d], [d, d], [-d, d]].map(p => groundAt(...toLL(p, ll)));
-    box(ll, 0, side, side, hgt, MERGED, `merged: area-weighted mean height of the buildings of a ${P.merge_m} m square`, gs); st.merged++; st.merged_buildings += q.n;
+    box(ll, 0, side, side, hgt, MERGED, `merged: area-weighted mean height of the buildings of a ${M2} m square`, gs); st.merged++; st.merged_buildings += q.n;
   }
-  const extras = meta.boxes.c.length + meta.outlines.c.length ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)' } } : null;
+  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)' + (opt.lite ? '; boxes.f: the features.json row of a landmark drawn as a box (-1: merged); named: the rows drawn as outlines with _FEATURE_ID_0; mass_buildings: the buildings the merged boxes stand for' : ''), ...(opt.lite ? { mass_buildings: st.merged_buildings } : {}) } } : null;
   const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size });
   const tris = ol.idx.length / 3 + nm.idx.length / 3 + inst.t.length / 3 * 10;
   return { bytes, F, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(isFinite(zmin) ? zmin : h0 - 10), Math.ceil(isFinite(zmax) ? zmax : h0) + 1],
-    stats: { key: cell.key, level: cell.l, bytes: bytes.length, triangles: tris, blocks: st.boxes + st.outlines + st.merged + st.named, ...st, buildings: items.length } };
+    stats: { key: cell.key, level: cell.l, bytes: bytes.length, triangles: tris, blocks: st.boxes + st.outlines + st.merged + st.named, ...st, buildings: items.length,
+      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}) } };
 }
 
 // ---------- glTF 2.0 writer for block tiles: node 0 (if any) the outlines and named buildings, int16 positions
