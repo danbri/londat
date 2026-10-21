@@ -13,8 +13,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSMShadowNode } from 'three/addons/csm/CSMShadowNode.js';
 import { A, MFP, dec, buildBuildings, terrainGeometry, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
 import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
-import { Sky3, fromLondon } from './sky3.js';
-import { TZ } from './geo/current.js';   // O1: the page clock in the region's time zone (London for the Docklands)
+import { Sky3, sunAltAt } from './sky3.js';
+import { makeClockZone } from './clockzone.js';   // KR1.2: the page clock in the time zone of the view (the model: its region)
+import { ukClock } from './adapters/uk.js';
 import { makeUi, initMenu } from './menu.js';
 import { initCarousel } from './carousel.js';
 import { predict } from './tide.js';
@@ -30,7 +31,7 @@ const WEBGL = '../cwplans/docklands/', DATA = WEBGL + 'data/';   // the WebGL pa
 const loadJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
 const say = t => { hud.textContent = t; };
 let need = true;
-const londonDate = t => new Date(t).toLocaleDateString('en-CA', { timeZone: TZ });   // YYYY-MM-DD on the London wall clock (the UTC date was the day before from 00:00 to 01:00 BST)
+const ZONE = makeClockZone(qs), localDate = t => ZONE.date(t);   // YYYY-MM-DD on the wall clock of the view's zone
 function draw() { need = true; }   // the render loop draws a frame when asked (and while the camera moves)
 
 // ---------- renderer: WebGPU, else WebGL 2
@@ -142,19 +143,18 @@ rebuildBuildings();
 // ---------- sky and light
 const sky = new Sky3(scene);
 const focus = new THREE.Vector3();
-let clock = qs.get('t') ? fromLondon(qs.get('t')) : Date.now(); if (!isFinite(clock)) clock = Date.now();
-if (qs.has('night') && !qs.get('t')) clock = fromLondon(londonDate(Date.now()) + 'T22:00');
+let clock = qs.get('t') ? ZONE.parse(qs.get('t')) : Date.now(); if (!isFinite(clock)) clock = Date.now();
+if (qs.has('night') && !qs.get('t')) clock = ZONE.fromLocal(localDate(Date.now()) + 'T22:00');
 let NIGHT = false;
 const clockHooks = [];   // carousel.js: redraw the wheels when the clock changes
-let TSHARE = null;   // the London wall-clock time the visitor chose (wheels, slider, day or night): in the share hash as t=
+let TSHARE = null;   // the wall-clock time (view's zone) the visitor chose (wheels, slider, day or night): in the share hash as t=
 let DRIVE = !!qs.get('t');   // the visitor (or ?t=, a hash t=) set the clock: the WebGL page's sky.js S.drive (never reset; "Now" does not set it)
-const londonStr = t => `${londonDate(t)}T${new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t))}`;
 function setClockUser(t, live = false) {   // a clock the visitor set: it replaces ?t= (so views may change day and night again) and goes in the hash
   if (qs.has('t')) { qs.delete('t'); const q = new URLSearchParams(location.search); q.delete('t'); history.replaceState(null, '', location.pathname + (q.size ? '?' + q : '') + location.hash); }
-  TSHARE = live ? null : londonStr(t); if (!live) DRIVE = true; setClock(t); writeHash();
+  TSHARE = live ? null : ZONE.string(t); if (!live) DRIVE = true; setClock(t); writeHash();
 }
 function setClock(t) {
-  clock = t; const s = sky.setTime(t, focus); NIGHT = s.night; $('nightBtn')?.setAttribute('aria-pressed', String(NIGHT));
+  clock = t; const s = sky.setTime(t, focus); NIGHT = ZONE.away ? (sunAltAt(t, ZONE.observer().lon, ZONE.observer().lat)?.altGeo ?? s.sun.altGeo) < -6 : s.night;   // night where the view's zone is (a place on the globe) $('nightBtn')?.setAttribute('aria-pressed', String(NIGHT));
   U.night.value = THREE.MathUtils.clamp((-s.sun.alt - 2) / 6, 0, 1);
   // scene.background (dark by night, lit by the city under cloud) is set by sky.setTime and sky.setWeather (sky3.js)
   bmat.roughness = NIGHT ? 0.5 : 0.82;
@@ -194,9 +194,9 @@ function camState() {
   return { tx: controls.target.x, ty: HFOV ? camera.position.y / VZ - d.y : controls.target.y / VZ, tz: controls.target.z, dist, yaw: Math.atan2(d.x, d.z), pitch: Math.asin(THREE.MathUtils.clamp(d.y / dist, -1, 1)), lens: { hfov: HFOV, fov: FOVY, roll: ROLL } };
 }
 function setView(k) {
-  const v = VIEWS[k]; if (!v) return; if (GLOBE && GLOBE.mode === 'globe') GLOBE.leave(); setCam(v); VIEWNAME = k;   // a named view is the model's: leave the globe
-  if (v.night && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T21:30'));
-  if (v.night === false && NIGHT && !qs.get('t')) setClock(fromLondon(londonDate(clock) + 'T14:00'));
+  const v = VIEWS[k]; if (!v) return; if (GLOBE && GLOBE.mode === 'globe') GLOBE.leave(); setCam(v); VIEWNAME = k; ZONE.follow({ mode: 'model' });   // a named view is the model's: leave the globe (and its zone)
+  if (v.night && !qs.get('t')) setClock(ZONE.fromLocal(localDate(clock) + 'T21:30'));
+  if (v.night === false && NIGHT && !qs.get('t')) setClock(ZONE.fromLocal(localDate(clock) + 'T14:00'));
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === k)));
 }
 
@@ -363,10 +363,11 @@ $('showRoads').checked = roads.visible; $('showRoads').onchange = e => { roads.v
 $('ground').onchange = e => setGround(e.target.value);
 $('facades').onchange = e => { FACADES_ON = e.target.checked; rebuildBuildings(); };
 $('look').onchange = async e => { if (e.target.checked && !LOOK) { const J = await loadJSON(DATA + 'materials.json'); const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } } else if (!e.target.checked) LOOK = null; rebuildBuildings(); };
-const hourOf = t => { const p = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t)); return p; };
-function syncClockUi() { const s = sky.state; $('clock').textContent = `${new Date(clock).toLocaleDateString('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' })} ${hourOf(clock)} London · sun ${s ? s.sun.alt.toFixed(1) : '?'}°`; const [hh, mm] = hourOf(clock).split(':').map(Number); $('hour').value = hh + mm / 60; }
-$('hour').oninput = e => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: TZ }), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClockUser(fromLondon(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
-$('nightBtn').onclick = () => { const d = new Date(clock).toLocaleDateString('en-CA', { timeZone: TZ }); setClockUser(fromLondon(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
+// the clock label and the hour slider: the wall clock of the view's zone (clockzone.js), its short name and offset, the sun there
+function syncClockUi() { const s = sky.state, o = ZONE.observer(), a = ZONE.away ? sunAltAt(clock, o.lon, o.lat)?.alt : s?.sun.alt, P = ZONE.parts(clock);
+  $('clock').textContent = `${new Date(clock).toLocaleDateString(undefined, { timeZone: ZONE.tz, day: 'numeric', month: 'short', year: 'numeric' })} ${ZONE.hm(clock)} ${ZONE.label(clock)}${ZONE.info.approximate ? ' (approx.)' : ''} · sun ${a != null ? a.toFixed(1) : '?'}°`; $('hour').value = P.hour + P.minute / 60; }
+$('hour').oninput = e => { const d = localDate(clock), v = +e.target.value, hh = Math.floor(v), mm = Math.round((v - hh) * 60); setClockUser(ZONE.fromLocal(`${d}T${String(hh).padStart(2, '0')}:${String(Math.min(59, mm)).padStart(2, '0')}`)); };
+$('nightBtn').onclick = () => { const d = localDate(clock); setClockUser(ZONE.fromLocal(d + (NIGHT ? 'T13:00' : 'T22:00'))); };
 $('tNight').onclick = () => $('nightBtn').click();
 const clockNow = () => setClockUser(Date.now(), true);
 $('tNow').onclick = clockNow;
@@ -779,8 +780,8 @@ const menu = initMenu({ setView, layers: () => LAYERS });
 // ---------- start
 setShadows(flag('shadows', GPU));
 const H = parseHash(location.hash), c = (H.c || '').split(',').map(Number), at = /^#at=(-?[\d.]+),(-?[\d.]+)(?:,([\d.]+))?/.exec(location.hash);
-if (H.t || qs.get('t')) { const t = fromLondon(H.t || qs.get('t')); if (isFinite(t)) { clock = t; DRIVE = true; } if (H.t && isFinite(t)) TSHARE = H.t; }
-setClock(H.n === '1' && !H.t && !qs.get('t') ? fromLondon(londonDate(Date.now()) + 'T22:00') : clock);
+if (H.t || qs.get('t')) { const t = ZONE.parse(H.t || qs.get('t')); if (isFinite(t)) { clock = t; DRIVE = true; } if (H.t && isFinite(t)) TSHARE = H.t; }
+setClock(H.n === '1' && !H.t && !qs.get('t') ? ZONE.fromLocal(localDate(Date.now()) + 'T22:00') : clock);
 if (c.length >= 6 && c.every(isFinite)) {   // nav.js restore: f=h<horizontal field> or f=<vertical field> (radians), rl=<roll degrees>, vw=<view>
   const f = H.f || '', hf = /^h[\d.]+$/.test(f) ? +f.slice(1) : NaN, vf = +f, rl = +H.rl, ok = x => x > .05 && x < 3.1;
   setCam({ tx: c[0], tz: c[1], ty: c[2], dist: c[3], yaw: c[4], pitch: c[5], hfov: ok(hf) ? hf : null, fov: !ok(hf) && f && ok(vf) ? vf : null, roll: isFinite(rl) && Math.abs(rl) < 90 ? rl : 0 });
@@ -790,8 +791,19 @@ else if (at) setCam({ tx: +at[1], tz: +at[2], ty: 0, dist: +(at[3] || 900), yaw:
 else setView(qs.get('view') in VIEWS ? qs.get('view') : 'cw');
 if (qs.has('vz')) setVz(qs.get('vz'));   // vertical exaggeration (layers/model.js has the slider)
 if (qs.get('ground') !== 's2') setGround(qs.get('ground') || 'none');   // s2 (Satellite 2026): layers/model.js
-const wheels = initCarousel({ clock: () => clock, setClock: t => setClockUser(t), now: clockNow, fromLondon, A, flag, predict, tide: () => LAYERS.tide?.api?.harmonics || null });
+const wheels = initCarousel({ clock: () => clock, setClock: t => setClockUser(t), now: clockNow, zone: ZONE, A, flag, predict, tide: () => LAYERS.tide?.api?.harmonics || null });
 clockHooks.push(() => wheels.draw());
+// the zone follows the view (clockzone.js): the model's region, or on the globe the zone at the centre of the view; the
+// instant stays, the wall clock shown changes (NIGHT is judged where the zone is)
+ZONE.onChange(() => setClock(clock));
+const zoneView = ready => GLOBE && GLOBE.mode === 'globe' && GLOBE.ready ? { mode: 'globe', ...GLOBE.orbit(), zoneAt: GLOBE.zoneAt, worldReady: ready } : { mode: 'model' };
+let zoneGaz = 0;   // the world's towns and countries (the zones) load after 3 s on the globe (GLOBE.gazetteer, as a search does)
+setInterval(() => { if (!GLOBE && START_AWAY) return; const v = zoneView(false); ZONE.follow(v);
+  if (v.mode === 'globe' && !zoneGaz++) setTimeout(() => GLOBE.gazetteer?.().catch(() => {}), 3000); }, 500);
+// the start view away from the model (?ll=, ?place=) is known once api.js has gone there: ?t= without an offset is read
+// again in its zone when the zone came out different (the world's towns were not loaded when main.js first read it)
+async function refineZone() { if (!GLOBE) return; await GLOBE.gazetteer?.().catch(() => {}); const ts = new URLSearchParams(location.search).get('t');
+  if (ZONE.follow(zoneView(true)) && ts) { const t = ZONE.parse(ts); if (isFinite(t)) setClock(t); } }
 say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
 sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
 // a start away from the model (?ll=, ?view=globe, ?place=): the globe and the API come first and the model's optional
@@ -812,7 +824,7 @@ function bootDone() { const b = $('boot'); if (b && !b.hidden) { b.classList.add
 if (!START_AWAY) await heavy();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, fromLondon, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, get ready() { return READY; }, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, ...ukClock, zone: ZONE, refineZone, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, get ready() { return READY; }, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
   occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };
 

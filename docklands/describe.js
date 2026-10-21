@@ -136,7 +136,7 @@ export function describeView(I, cam, o = {}) {
   // live things in the frame
   const count = L => (L || []).filter(p => { const s = F.see([p.x, p.y ?? 0, p.z]); return inside(s) && s[2] < maxD * 2; }).length;
   const live = o.live ? { aircraft: o.live.aircraft ? count(o.live.aircraft) : null, ships: o.live.ships ? count(o.live.ships) : null } : null;
-  const time = o.time != null ? timeOf(o.time, I.adapter.timeZone) : null;
+  const time = o.time != null ? { ...timeOf(o.time, o.timeZone || I.adapter.timeZone), ...(o.zoneInfo || {}) } : null;   // o.timeZone, o.zoneInfo: the page clock's zone (clockzone.js)
   const sun = o.sun ? { altitude_deg: r1(o.sun.alt), azimuth_deg: r1(o.sun.az), direction: compass(o.sun.az), day_part: dayPart(o.sun.altGeo ?? o.sun.alt) } : null;
   const out = { version: DESCRIBE_VERSION, eye: V.eye, target: V.target, heading_deg: V.heading_deg, heading_name: V.heading_name, pitch_deg: V.pitch_deg, range_m: V.range_m, fov_deg: V.fov_deg, height_datum: V.height_datum,
     over: over ? { name: over.name, kind: over.kind, distance_m: over.d } : null, view: o.view || null,
@@ -158,7 +158,7 @@ export function describeText(o, N = 8) {
   const s = [];
   const up = o.eye.above_ground_m, where = up > 30 ? `from ${distText(up)} above the ground` : up > 0 ? `from ${Math.round(up)} m above the ground` : `from ${Math.round(-up)} m below the ground`;
   s.push(`Looking ${o.heading_name}${Math.abs(o.pitch_deg) > 60 ? ' and down' : o.pitch_deg < -8 ? ', down,' : o.pitch_deg > 5 ? ', up,' : ''} ${where}${o.over ? `, towards ${o.over.name}` : ''}.`);
-  if (o.time) s.push(`${o.time.local} (${o.time.time_zone})${o.sun ? `; ${o.sun.day_part}, the sun ${Math.abs(o.sun.altitude_deg).toFixed(0)}° ${o.sun.altitude_deg >= 0 ? 'up' : 'below the horizon'} in the ${o.sun.direction}` : ''}${o.weather && o.weather.cloud_pct != null ? `; cloud ${o.weather.cloud_pct} %` : ''}${o.weather && o.weather.temperature_c != null ? `, ${Math.round(o.weather.temperature_c)} °C` : ''}.`);
+  if (o.time) s.push(`${o.time.local} (${o.time.abbreviation && o.time.abbreviation !== o.time.utc_offset ? o.time.abbreviation + ', ' : ''}${o.time.utc_offset ? o.time.utc_offset + ', ' : ''}${o.time.time_zone})${o.sun ? `; ${o.sun.day_part}, the sun ${Math.abs(o.sun.altitude_deg).toFixed(0)}° ${o.sun.altitude_deg >= 0 ? 'up' : 'below the horizon'} in the ${o.sun.direction}` : ''}${o.weather && o.weather.cloud_pct != null ? `; cloud ${o.weather.cloud_pct} %` : ''}${o.weather && o.weather.temperature_c != null ? `, ${Math.round(o.weather.temperature_c)} °C` : ''}.`);
   const B = o.in_view.buildings.filter(b => b.name).slice(0, 4);
   if (B.length) s.push(`Tallest in view: ${B.map(b => `${b.name} (${Math.round(b.height_m)} m tall, ${distText(b.distance_m)} ${b.side})`).join('; ')}.`);
   const P = o.in_view.places.filter(p => !B.some(b => b.name === p.name)).slice(0, N);

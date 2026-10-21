@@ -4,25 +4,22 @@
 // (sun, moon, sky fill). Directions use true north at the observer (area.js meta.geo: about 1.5 degrees west of grid north,
 // as sky.js setObserver). The weather layer (layers/weather.js) calls setWeather: cloud on the SkyMesh, sun and moon dimmed
 // by the cloud, stars hidden by it, haze (scene.fogNode) from the visibility, the night background lit by the city under
-// cloud. The clock is ?t=YYYY-MM-DDTHH:MM (the wall clock of the region's time zone: London for the Docklands, as sky.js) or now. Check: docklands/test/clock-check.mjs.
+// cloud. The clock is ?t=YYYY-MM-DDTHH:MM (the wall clock of the view's time zone, clockzone.js) or now. Check: docklands/test/clock-check.mjs.
 // Skill: docklands-sky (the WebGL page's sky: much more there; "Three.js port clock" for the port).
 import * as THREE from 'three/webgpu';
 import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
 import { instancedBufferAttribute, uniform, vec3, vec4, float, uv, smoothstep, length, cameraPosition, positionGeometry, positionView, positionLocal, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, fog, exp, dot, sqrt, max, mix } from 'three/tsl';
 import { A } from './build.js';
-import { fromWall } from './geo/clock.js';   // O1: the clock in the region's time zone
-import { TZ } from './geo/current.js';
 
 const AE = globalThis.Astronomy;
 const lon0 = A.meta.geo.lon0 + 0.07, lat0 = A.meta.geo.lat0 + 0.03;   // about the middle of the model (Canary Wharf)
 const OBS = AE ? new AE.Observer(lat0, lon0, 10) : null;
 
-// Wall clock of the region's time zone -> ms UTC (docklands/geo/clock.js fromWall; for Europe/London the same answers as
-// the old fromLondon here, test docklands/geo/test/clock.test.mjs). In an hour that repeats when the clocks go back the
-// first one is taken; a time in an hour that is skipped moves on by the gap. OKR O1 (2026-10-11): the zone comes from the
-// region (geo/current.js TZ), not from a literal; fromLondon stays as the name the page and the tests use.
-export const fromLocal = (s, tz = TZ) => fromWall(s, tz);
-export const fromLondon = s => fromWall(s, TZ);
+// The wall clock (?t=, the wheels) is read in the zone of the view: clockzone.js (OKR KR1.2); the London clock of the
+// model's snapshot files is the UK adapter's (adapters/uk.js fromUkWall). The sun's altitude anywhere (the wheels'
+// night shading and the night switch over a place on the globe): sunAltAt.
+export function sunAltAt(t, lon, lat) { if (!AE) return null; const o = new AE.Observer(lat, lon, 0), d = new Date(t), q = AE.Equator('Sun', d, o, true, true);
+  return { alt: AE.Horizon(d, o, q.ra, q.dec, 'normal').altitude, altGeo: AE.Horizon(d, o, q.ra, q.dec).altitude }; }
 // true north and east at the observer in the model frame (x east of grid, y up, z south of grid): the derivatives of the
 // area.js geo fit, as sky.js setObserver. GRID_CONV: the grid bearing of true north (degrees, + east; about -1.5)
 const G = A.meta.geo, geoXZ = (lon, lat) => { const a = lon - G.lon0, b = lat - G.lat0, t = [1, a, b, a * b, a * a, b * b]; return [t.reduce((s, v, i) => s + v * G.x[i], 0), t.reduce((s, v, i) => s + v * G.z[i], 0)]; };

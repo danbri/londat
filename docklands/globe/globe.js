@@ -26,6 +26,7 @@ import { uniform, texture, screenUV, vec3, vec4, float, normalize, dot, max, smo
 import { geodeticToEcef, ecefToGeodetic, enuBasis, WGS84, D2R, R2D, surfaceDistance } from '../geo/ellipsoid.js';
 import { REGION } from '../geo/current.js';
 import { REGIONS } from '../geo/regions/index.js';
+import { zoneAt, worldZones } from '../geo/zone.js';
 import { makeWorld, pickLang, fmtDist, fmtLatLon, compass, linesOf, labelPoint, bearingDeg } from './world.js';
 import { Terrain, terrainMaterial, makeSampler } from './terrain.js';
 import { buildLines, lineMaterial, graticule, rebuildLines } from './vectors.js';
@@ -612,6 +613,14 @@ export async function createGlobe(H) {
     else { const q = new URLSearchParams(location.search); let ch = false; for (const k of ['ll', 'ht']) if (q.has(k)) { q.delete(k); ch = true; } if (q.get('view') === 'globe') { q.delete('view'); ch = true; }
       if (ch) history.replaceState(null, '', location.pathname + (q.size ? '?' + q.toString().replace(/%2C/g, ',') : '') + location.hash); } }
   G.orbit = () => ({ ...orbit });
+  // the time zone at a point (the page clock, clockzone.js; geo/zone.js): region configs, then the Natural Earth towns
+  // (their IANA tz) of the country under the point, then the nautical zone. The towns count once the places layer is in.
+  let zw = null, zwN = -1;
+  G.zoneAt = (lon, lat) => {
+    if (world.nearest.length !== zwN) { zwN = world.nearest.length; const pts = world.nearest.filter(it => it.f.properties.tz).map(it => ({ lon: it.lon, lat: it.lat, a3: it.f.properties.a3, tz: it.f.properties.tz })); zw = pts.length ? worldZones(pts) : null; }
+    const lk = world.lookups.get('country'), c = lk ? lk.idx.find(lon, lat) : null;
+    return zoneAt(lon, lat, { regions: REGIONS, world: zw, a3: c ? c.properties[lk.L.idProp || 'a3'] : null });
+  };
 
   // the lowest eye away from the model and the places: 60 km over the world texture only; lower where the base has finer
   // imagery and heights (level 11: about 19 m a pixel; level 9 and 10; level 7 and 8)
