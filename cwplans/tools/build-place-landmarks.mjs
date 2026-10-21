@@ -153,8 +153,8 @@ async function run(op, inputs, params, body) {
   console.log(`${op.id}: ran (${act}, ${rec.ms} ms)`); return rec;
 }
 const OPS = {
-  select: { id: 'landmark-select', version: 1, skill: 'docklands-3d-page' },   // OSM answers + core features -> worship buildings, minarets (mapped, estimated), domes, towers
-  tiles: { id: 'landmark-tiles', version: 1, skill: 'docklands-3d-page' },     // selection + the place's tiles (ground, block tops as drawn) -> glb, tileset.json, landmarks.json
+  select: { id: 'landmark-select', version: 2, skill: 'docklands-3d-page' },   // 2: the balcony is any raised part of the stack below the top. OSM answers + core features -> worship buildings, minarets (mapped, estimated), domes, towers
+  tiles: { id: 'landmark-tiles', version: 2, skill: 'docklands-3d-page' },     // 2: the balcony ring at most 1.3 m high (corbel and parapet). selection + the place's tiles (ground, block tops as drawn) -> glb, tileset.json, landmarks.json
 };
 
 // ---------- geometry helpers (lon/lat; local metres by a flat approximation round a reference)
@@ -275,8 +275,9 @@ function selectLandmarks(osm, fj, P) {
     const top = Math.max(...ps.map(p => num(p.t.height) ?? 0)) || num(t.height) || null;
     const rOf = p => p.ring ? Math.sqrt(p.area / Math.PI) : null, shaft = ps.filter(p => p.ring).sort((a, b) => (num(a.t.min_height) ?? 0) - (num(b.t.min_height) ?? 0) || b.area - a.area)[0];
     const rs = shaft ? rOf(shaft) : (num(t.diameter) ? num(t.diameter) / 2 : null);
-    const bal = ps.filter(p => p.ring && (num(p.t.min_height) ?? 0) > 0 && rs && rOf(p) > rs * 1.1).sort((a, b) => b.area - a.area)[0];
+    // the balcony: a part of the stack raised on min_height that is not the top part (the widest such)
     const capP = ps.slice().sort((a, b) => (num(b.t.height) ?? 0) - (num(a.t.height) ?? 0))[0];
+    const bal = ps.filter(p => p.ring && p !== capP && (num(p.t.min_height) ?? 0) > 0 && num(p.t.height) > num(p.t.min_height)).sort((a, b) => b.area - a.area)[0];
     out.minarets.push({ id: m.id, parts: m.parts.map(p => p.id), rule: m.rule || 'tag', c: (m.parts.length ? centroid(shaft?.ring || m.ring) : m.c).map(r7), mosque: m.mosque, mosque_dist_m: m.dist, height_m: top, height_source: top ? 'osm-height' : null,
       r_m: rs ? r2(rs) : null, serefe: bal ? [num(bal.t.min_height), num(bal.t.height)] : null, cap_m: num(capP?.t['roof:height']) ?? null, cap_shape: capP?.t['roof:shape'] || null, material: t['building:material'] || t.material || null,
       colour: t['building:colour'] || null, roof_colour: capP?.t['roof:colour'] || null, core: m.parts.some(p => feats.has(p.id)) || feats.has(m.id) });
@@ -402,7 +403,7 @@ function domeProfile(z0, r, rise, shape, c) { const P = [];
 // an Ottoman minaret: plinth, shaft, the balcony (serefe) on its corbel with a parapet, the upper shaft, the pencil cone (alem left out)
 function minaretProfile(r, H, sb, se, capH, wooden, c) {
   const stone = c || (wooden ? [226, 220, 206] : STONE), cap = wooden ? WOOD : LEAD, rb = r * 1.22, ru = r * 0.9, rs = r * 1.45, zcap = H - capH;
-  return [[-2, rb, stone], [Math.min(0.12 * H, 4), rb, stone], [Math.min(0.12 * H, 4) + 0.6, r, stone], [sb - 0.7, r, stone], [sb, rs, stone], [se, rs, stone], [se, ru, stone], [zcap, ru, stone], [zcap, ru * 1.12, cap], [zcap + 0.15 * capH, ru * 1.05, cap], [H, 0, cap]];
+  return [[-2, rb, stone], [Math.min(0.12 * H, 4), rb, stone], [Math.min(0.12 * H, 4) + 0.6, r, stone], [sb - 0.7, r, stone], [sb, rs, stone], [Math.min(se, sb + 1.3), rs, stone], [Math.min(se, sb + 1.3), ru, stone], [zcap, ru, stone], [zcap, ru * 1.12, cap], [zcap + 0.15 * capH, ru * 1.05, cap], [H, 0, cap]];
 }
 
 // ---------- operation 2: tiles (pure: selection + the place's tiles + features -> glb per level-13 cell, tileset.json, landmarks.json)
@@ -533,7 +534,7 @@ function writeReadme() {
     `| the position rule against the mapped minarets (distance from where the rule would put them) | ${C.position_rule_error_m ? `median ${C.position_rule_error_m.median} m, max ${C.position_rule_error_m.max} m over ${C.position_rule_error_m.n}` : 'none mapped'} |`,
     `| tiles, triangles, bytes | ${C.tiles}, ${C.triangles.toLocaleString('en')}, ${C.tile_bytes.toLocaleString('en')} |`, '',
     '## Rules', '',
-    '- **Mapped minaret**: an OSM element tagged `man_made=minaret`, `building=minaret`, `building:part=minaret` or `tower:type=minaret` (way or node), or the part-stack rule: in a mosque outline, building parts of 40 m2 or less whose top is 18 m or more and 1.6 times the hall\'s top or more, stacked (centroids within 2.5 m). Height from OSM `height` (else the size class); the balcony (şerefe) from a part with `min_height` wider than the shaft (else at ' + lj.rule.minaret.serefe_frac + ' of the height); the cone from `roof:height` (else ' + lj.rule.minaret.cap_frac + ' of the height). Attached to the nearest mosque within 30 m.',
+    '- **Mapped minaret**: an OSM element tagged `man_made=minaret`, `building=minaret`, `building:part=minaret` or `tower:type=minaret` (way or node), or the part-stack rule: in a mosque outline, building parts of 40 m2 or less whose top is 18 m or more and 1.6 times the hall\'s top or more, stacked (centroids within 2.5 m). Height from OSM `height` (else the size class); the balcony (şerefe) from a part of the stack raised on `min_height` below the top part (else at ' + lj.rule.minaret.serefe_frac + ' of the height); the cone from `roof:height` (else ' + lj.rule.minaret.cap_frac + ' of the height). Attached to the nearest mosque within 30 m.',
     '- **Estimated minaret** (class "estimated", countable and switchable): ' + lj.rule.note + '. Size classes: ' + lj.rule.minaret.classes.map(c => `${c.id} footprint < ${c.max_area_m2} m2: ${c.height_m} m high, base ${c.base_d_m} m`).join('; ') + '. Class S is drawn as a wooden minaret (brown cone).',
     '- **Dome**: an OSM building part (or a worship outline without parts) with `roof:shape=dome` or `onion`: a drum from `min_height` (else the ground) to the springing, then a hemisphere (or an onion) of `roof:height` (else its radius) to `height`; radius = the smaller half side of the part\'s oriented box. A whole building with a dome roof outside the core: the dome stands on the city block\'s flat top.',
     '- **Tower**: a building part of a worship building tagged as a tower (`building:part=tower|bell_tower|church_tower|steeple`, `tower:type=bell_tower`), or with a pointed or onion roof standing 1.25 times the body or more (12 m or more); a `man_made=tower` with `tower:type=bell_tower|clock`, `building=clock_tower|bell_tower` or named Sahat-kula. Its outline (its hull above 12 points) from `min_height` to the eaves, then a pyramid to `height` (pyramidal, cone, spire), a dome or an onion, or flat.',

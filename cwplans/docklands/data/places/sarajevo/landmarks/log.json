@@ -622,9 +622,9 @@
  },
  "activities": [
   {
-   "activity": "cb41c6f628972688",
+   "activity": "4a2c9ad2d711296f",
    "operation": "landmark-select",
-   "version": 1,
+   "version": 2,
    "skill": "docklands-3d-page",
    "tool": "tools/build-place-landmarks.mjs",
    "inputs": [
@@ -679,8 +679,8 @@
    "outputs": [
     {
      "path": "data/raw/places/sarajevo/landmarks/work/select.json.gz",
-     "sha256": "f7e8ba35ad497a66fff143dadc01c7639cab1dffa8a0828cf46a842bf6a26b78",
-     "bytes": 23922
+     "sha256": "b75aa49c1209859f4ec81826f7fa10a040d37dcbf499bbbff6311084ca0e03f8",
+     "bytes": 23929
     }
    ],
    "counts": {
@@ -706,21 +706,21 @@
      "max": 7.4
     }
    },
-   "ms": 1362,
-   "at": "2026-10-21T12:19:06.574Z",
+   "ms": 1177,
+   "at": "2026-10-21T13:00:53.209Z",
    "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
   },
   {
-   "activity": "8fbcc4bba50380c4",
+   "activity": "0bc7713b68cee73e",
    "operation": "landmark-tiles",
-   "version": 1,
+   "version": 2,
    "skill": "docklands-3d-page",
    "tool": "tools/build-place-landmarks.mjs",
    "inputs": [
     {
      "label": "selection",
      "path": "data/raw/places/sarajevo/landmarks/work/select.json.gz",
-     "sha256": "f7e8ba35ad497a66fff143dadc01c7639cab1dffa8a0828cf46a842bf6a26b78"
+     "sha256": "b75aa49c1209859f4ec81826f7fa10a040d37dcbf499bbbff6311084ca0e03f8"
     },
     {
      "label": "place-tileset",
@@ -1125,7 +1125,7 @@
     },
     {
      "path": "docklands/data/places/sarajevo/landmarks/tiles/13-9030-6092.glb",
-     "sha256": "98d3ffecefd733322439a017f4fc68f23072e8e92f53ced636a9888fe67d44e8",
+     "sha256": "63e0ed1d77c5a8befe566255ad9a8c2c8e9ba580ba3cad3d290a2751b7c2f6e7",
      "bytes": 231204
     },
     {
@@ -1145,8 +1145,8 @@
     },
     {
      "path": "docklands/data/places/sarajevo/landmarks/landmarks.json",
-     "sha256": "ac5b12add97102362b19bc4a20020ec267f2eaa58b2a19140da5d8385e200057",
-     "bytes": 85290
+     "sha256": "90aa354e51b862ecf5b473bc52b0d9275918a87bb94526c06f7f826b7aa1d0f9",
+     "bytes": 85286
     }
    ],
    "counts": {
@@ -1186,8 +1186,8 @@
     "tiles": 18,
     "tile_bytes": 597932
    },
-   "ms": 721,
-   "at": "2026-10-21T12:19:07.350Z"
+   "ms": 1105,
+   "at": "2026-10-21T13:01:04.639Z"
   }
  ]
 }
