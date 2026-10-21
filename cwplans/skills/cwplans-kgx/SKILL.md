@@ -130,6 +130,13 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
   took the store from 19.6 MB to 33 MB. `roofs` (113,266 triples) and `materials` (40,958) are now `store: false`, the
   same reason as `model-building-keys` (geometry, little for a query on the page to gain); `building-models` (35) and
   `london-terrain` (14) are in the store. Generation `gen-e2b182ceb96b87cf`: 5,467 artifacts, 19.6 MB.
+- Build of 2026-10-21 (KR6.3 rules, faults F4, F7, F49, F53; curation skill "Recount of 2026-10-21"): new head
+  `registry-placement` (3,908 triples, in the store: the occupant links the mall and postcode-centre rule changed, one
+  `cwk:PlacementChange` each with `cwk:fromBuilding`, `cwk:toBuilding`, `cwk:placementKey`, `cwk:placementConfidence`,
+  `cwk:positionClass`); `occupants` (lift version 4) carries each link's placement; `model-building-keys` head
+  `…d69bccf8249df7e7` with way and relation URLs (0 `openstreetmap.org/undefined/` IRIs, was 42,244); the CWG website IRI
+  without `&#038;`. 470,599 triples in 32 heads; store `gen-979400ed1deb68bc`: 59 parts, 5,846 files, 21.8 MB;
+  second build `new: 0`; `check-kgx-store.mjs`: all 15 queries the same in the store and in memory.
   Counts: `kgx/README.md`.
 - Joins across sources go through `s:sameAs` to the CWG entity IRI (`https://canarywharf.com/<kind>/<slug>/#entity`),
   OSM element URLs and Wikidata items. Mall units join by exact name only, for now.

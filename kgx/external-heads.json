@@ -3,7 +3,7 @@
  "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
  "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
  "model-building-keys": {
-  "iri": "https://kgx.foaf.tv/id/graphmodelbuildingkeys40cf5331fa99da1a",
+  "iri": "https://kgx.foaf.tv/id/graphmodelbuildingkeysd69bccf8249df7e7",
   "store": false
  },
  "facade-tiles-cwlibrary": "https://kgx.foaf.tv/id/graphfacadetilescwlibrary8145d8bf5538cdd1",
@@ -22,5 +22,6 @@
  "materials": {
   "iri": "https://kgx.foaf.tv/id/graphmaterialsca718efee790144e",
   "store": false
- }
+ },
+ "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96"
 }

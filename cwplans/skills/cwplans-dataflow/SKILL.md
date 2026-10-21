@@ -80,7 +80,10 @@ Data: https://github.com/danbri/londat/tree/main/kgx (README). Graph, store and 
 | `pack-shardborough` | 1 | cwplans-kgx | parts + `meta` + `log` → a store generation, `gen-<sha256(store input)[0:16]>` |
 | `lift-imagery-coverage` | 3 | docklands-data-curation | coverage answer files (`tools/probe-imagery-coverage.mjs`) → `coverage-imagery` |
 | `rectify-facade-patches` (3), `lift-contrib-photos` (4), `cut-facade-tiles` (3) | | docklands-data-curation | contributed photos + photos.json (`tools/contrib-photos.mjs`) → `facade-patches-<set>`, `photos-<set>`, `facade-tiles-<set>` |
-| `key-model-buildings` | 4 | docklands-3d-page | area.js + the OSM clip + the Greater London extract + atlas.json → `model-building-keys` (not in the store) and its projection `docklands/data/building-keys.json` |
+| `lift-registry-occupants` | 4 | cwplans-kgx | `registry/buildings.json` → `occupants`; version 4 (2026-10-21) adds the placement of each link: `cwk:placedBy`, `cwk:placement`, `cwk:placementConfidence`, `cwk:placementFault`, `cwk:pointInPlace` |
+| `key-model-buildings` | 5 | docklands-3d-page | area.js + the OSM clip + the Greater London extract + atlas.json → `model-building-keys` (not in the store) and its projection `docklands/data/building-keys.json`; version 5 (2026-10-21) builds the OSM URL from the way or relation key (F53) |
+| `osm-urls-from-keys` | 1 | cwplans-dataflow | one `model-building-keys` version → the same triples with each `https://www.openstreetmap.org/undefined/<id>` replaced by the URL of the subject's OSM key (`key-model-buildings.mjs --repair-osm-urls`; for a checkout without the OSM clip; not logged when the head has no such URL). 2026-10-21: `…40cf5331fa99da1a` → `…d69bccf8249df7e7`, 42,244 URLs |
+| `place-occupants-by-mall-and-postcode` | 1 | docklands-data-curation | `registry/buildings.json` + `osm-cw.json.gz` + the FSA file + `postcodes.json` + `ids.json` (by SHA-256) → `registry-placement` (one `cwk:PlacementChange` per occupant link the F4/F7 rule changed; in the store) and the side file `registry/buildings.json` (`tools/registry-placement.mjs`; the same function is the last join of `build-registry.mjs`, so the command does nothing on a registry that has `summary.placement`). 2026-10-21: 355 changes, 3,908 triples |
 | `compose-facade-atlas` | 3 | docklands-3d-page | registry atlas + `facade-tiles-*` + `model-building-keys` + area.js → `facade-atlas` and `docklands/data/tex/facades.jpg/.json` |
 
 Versions changed on 2026-10-07 (IDs under `https://kgx.foaf.tv/id/`): every operation whose body mints IRIs went up one
@@ -139,6 +142,15 @@ is remade on every run); otherwise bump the operation version if a side file is 
   byte: term type byte, UTF-8 length as 4 bytes little-endian, UTF-8 text, first 64 bytes (`zoneKey` in
   `kgx-ops.mjs`). Parts cut in string order overlapped in key order: one entity needed 320 blocks. In key order, 56
   (`cwplans-kgx`, "The store").
+- **A repair operation on a head must not run on its own output.** The first `osm-urls-from-keys` run made the new head;
+  a second run took that head as input, changed nothing and still logged an activity and an identical version
+  (2026-10-21; the activity was removed before the commit). A repair now returns the head unchanged, with no activity,
+  when the input has nothing to repair; a side-file operation (`place-occupants-by-mall-and-postcode`) checks for the
+  marker it writes (`summary.placement`).
+- **A worktree needs `node_modules/.bin/factoidal`.** `build-kgx.mjs` runs `factoidal pack` from the repository's own
+  `node_modules/.bin`; in a git worktree without `node_modules` the lifts and partitions run and log, then the pack fails
+  with ENOENT. Link the main checkout's `node_modules` into the worktree (it is not ignored as a link: never `git add -A`
+  at the root) and run the build again: the log already has the lifts.
 - Remove the output of a failed or wrong run only before it is committed. After a commit, a fix is a new version and
   the log keeps both.
 

@@ -30,12 +30,48 @@ const ATLAS = join(CW, 'atlas', 'data', 'atlas.json'), OUT = join(CW, 'docklands
 const sha = b => createHash('sha256').update(b).digest('hex');
 
 const flow = new Flow(join(LONDAT_DIR, 'kgx'));
+// --repair-osm-urls: no OSM clip or extract here. Operation osm-urls-from-keys on the current head of model-building-keys
+// (external-heads.json): every s:sameAs https://www.openstreetmap.org/undefined/<id> (F53: versions 1 to 4 built the URL
+// from el.type, which the clip's ways do not have) becomes the URL of the subject's own OSM key, as version 5 writes it.
+//   node cwplans/tools/key-model-buildings.mjs --repair-osm-urls
+const REPAIR = { id: 'osm-urls-from-keys', version: 1, skill: 'cwplans-dataflow', tool: 'cwplans/tools/key-model-buildings.mjs (--repair-osm-urls)',
+  about: 'One model-building-keys version -> the same triples with each s:sameAs https://www.openstreetmap.org/undefined/<id> replaced by the OSM URL of the subject key (id:osmw<id> -> way/<id>, id:osmr<id> -> relation/<id>), the URL key-model-buildings version 5 writes (F53); a URL whose id is not the subject id stops the run' };
+async function repairOsmUrls() {
+  const eh = JSON.parse(readFileSync(join(LONDAT_DIR, 'kgx', 'external-heads.json'), 'utf8'))['model-building-keys'], head = flow.versions.get(eh.iri || eh);
+  if (!head) throw new Error('model-building-keys: the head is not in log/versions.jsonl');
+  const text = flow.read(head), modelSha = (text.match(/<https:\/\/kgx\.foaf\.tv\/vocab#sha256> "([0-9a-f]{64})"/) || [])[1];
+  if (modelSha !== sha(readFileSync(AREA))) throw new Error('model-building-keys: the head was built for another area.js; run the full tool (it needs the OSM clip)');
+  const SAME = '<https://schema.org/sameAs>', BAD = '<https://www.openstreetmap.org/undefined/';
+  // the head has no such URL (already repaired, or made by version 5): nothing to run, nothing to log
+  if (!text.includes(BAD)) { console.error('no OSM URL to repair in the head'); return head; }
+  return (await flow.run(REPAIR, [head], null, async () => {
+    let fixed = 0; const lines = [];
+    for (const l of text.split('\n')) {
+      if (!l) continue;
+      // the graph term is the last term (cwplans-dataflow: strip it by position)
+      let t = l.slice(0, l.lastIndexOf(' <')) + ' .';
+      const s = t.slice(1, t.indexOf('> ')), rest = t.slice(s.length + 3);
+      if (rest.startsWith(SAME + ' ' + BAD)) {
+        const k = osmKeyOf(s), id = rest.slice(SAME.length + 1 + BAD.length).split('>')[0];
+        if (!k || k.slice(1) !== id) throw new Error(`osm-urls-from-keys: ${s} has the OSM URL id ${id}`);
+        t = `<${s}> ${SAME} <https://www.openstreetmap.org/${k[0] === 'r' ? 'relation' : 'way'}/${id}> .`; fixed++;
+      }
+      lines.push(t);
+    }
+    console.error(`${fixed} OSM URLs repaired`);
+    return { 'model-building-keys': { lines: [...new Set(lines)].sort(), about: { title: head.title, licence: head.licence, osm: true } } };
+  }))['model-building-keys'];
+}
+const v = process.argv.includes('--repair-osm-urls') ? await repairOsmUrls() : await build();
+
+async function build() {
 const inputs = [flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(CLIP, 'cwplans/data/raw/docklands/osm-clip.json.gz (local, not committed: OSM clip of the openstreetmap.fr Greater London extract)'),
   flow.file(PBF, 'cwplans/data/raw/docklands/greater_london-latest.osm.pbf (local, not committed: the openstreetmap.fr Greater London extract, data of 2026-10-01, ODbL)'), flow.file(ATLAS, 'cwplans/atlas/data/atlas.json')];
-const op = { id: 'key-model-buildings', version: 4, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
+// version 5 (2026-10-21): the OSM URL from the element key (way or relation), not from el.type (F53)
+const op = { id: 'key-model-buildings', version: 5, skill: 'docklands-3d-page', tool: 'cwplans/tools/key-model-buildings.mjs',
   about: 'area.js buildings + the OSM clip they were built from + the atlas -> the OSM way or relation of every model building (exact outline match, aligned in build order), part parents, registry links and OSM name, address, type, levels, Wikidata' };
 
-const v = (await flow.run(op, inputs, {}, async () => {
+return (await flow.run(op, inputs, {}, async () => {
   const ctx = {}; vm.createContext(ctx); vm.runInContext(readFileSync(AREA, 'utf8'), ctx);
   const A = ctx.DOCKLANDS_AREA, areaSha = sha(readFileSync(AREA));
   // ---- the build's own geometry (build-docklands.mjs, same order and rules; heights are not needed)
@@ -101,7 +137,7 @@ const v = (await flow.run(op, inputs, {}, async () => {
   // (no rdf:type, no building=yes: they would add 85,000 triples that say nothing)
   add(model, V + 'sha256', lit(areaSha)); add(model, V + 'file', lit('cwplans/docklands/data/area.js')); add(model, V + 'buildingCount', lit(A.buildings.length, 'integer'));
   const done = new Set(), facts = (s, el, t) => {
-    add(s, S + 'sameAs', `https://www.openstreetmap.org/${el.type}/${el.id}`);
+    add(s, S + 'sameAs', `https://www.openstreetmap.org/${el.type === 'relation' ? 'relation' : 'way'}/${el.id}`);
     add(s, S + 'name', lit(t.name)); add(s, V + 'houseName', lit(t['addr:housename']));
     add(s, S + 'streetAddress', lit([t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' '))); add(s, S + 'postalCode', lit(t['addr:postcode']));
     const b = t['building:part'] && t['building:part'] !== 'no' ? 'part:' + t['building:part'] : t.building; if (b && b !== 'yes' && b !== 'part:yes') add(s, V + 'osmBuilding', lit(b));
@@ -114,6 +150,7 @@ const v = (await flow.run(op, inputs, {}, async () => {
   console.error(`aligned ${A.buildings.length} model buildings; ${skipped} build outlines not in the model (its height filter); ${done.size} OSM elements, ${full.size} with tags from the extract; ${reg.size} model buildings in the registry`);
   return { 'model-building-keys': { quads: q, about: { title: `OpenStreetMap keys of the ${A.buildings.length} buildings of the 3D model (area.js ${areaSha.slice(0, 16)}): OSM way or relation, part parents, registry links, OSM names and addresses`, licence: '© OpenStreetMap contributors, ODbL 1.0', osm: true } } };
 }))['model-building-keys'];
+}
 
 // ---- projection for the page: index-aligned ids for this area.js, OSM facts by id. fp is the page's own cheap check
 // that its area.js is the one the ids are for (count, first and last outline); docklands/index.html MFP is the same.

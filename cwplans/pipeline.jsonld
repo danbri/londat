@@ -813,14 +813,51 @@
     "Raw pages are cached and not fetched again.",
     "Categories: every tag div between the category block and the title (the first parser found none on any page; 339 entries have one now).",
     "Network: User-Agent glitchcan-cwplans/0.1, 120 s timeout, 1.2 s pause after every fetched page, up to 5 tries (CDX listings and copies with no CDX timestamp: 2) with 8 s x try between tries; HTTP 404 is no copy.",
-    "Owner rule 2026-10-03: crawls through the Internet Archive are fair use for scoping (CLAUDE.md, cwplans exception)."
+    "Owner rule 2026-10-03: crawls through the Internet Archive are fair use for scoping (CLAUDE.md, cwplans exception).",
+    "The website is an HTML attribute value: its character references are decoded (cwg-fields.mjs decodeAttr: decimal, hex, and amp, quot, apos, lt, gt, nbsp; once), F49."
    ],
    "cwp:network": true,
    "cwp:deterministic": false,
    "cwp:after": [],
    "cwp:area": "cwg",
    "cwp:fault": [
-    "F14"
+    "F14",
+    "F49"
+   ]
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolfetchcwgrederive",
+   "@type": "prov:Activity",
+   "rdfs:label": "fetch-cwg-rederive",
+   "dct:description": "No fetch: applies the website rule of fetch-cwg.mjs (decodeAttr, F49) to every entry of the committed directory, for a checkout without the cached pages (data/raw/registry/cwg/ is not committed). Sets website_rule.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory.json"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/tools/fetch-cwg.mjs"
+   },
+   "cwp:command": "node cwplans/registry/sources/brands/tools/fetch-cwg.mjs --rederive",
+   "cwp:kind": "transform",
+   "cwp:rule": [
+    "Only the website changes; a value with no character reference is unchanged (1 of 312 changed on 2026-10-21: Diptyque, 9 times &#038;)."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolfetchcwg"
+    }
+   ],
+   "cwp:area": "cwg",
+   "cwp:fault": [
+    "F49"
    ]
   },
   {
@@ -2090,6 +2127,47 @@
    "cwp:judgement": "CWG matches that the rules leave undecided are decided by hand in registry/sources/brands/tools/cwg-decisions.json (manual activity brand-decisions)."
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildbranchescwgwebsites",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-branches-cwg-websites",
+   "dct:description": "No rebuild: copies the website of each CWG entry into the cwg_website that a branch with its cwg_url already has (the assignment of the full merge), for a checkout without data/raw/registry/{osm,fsa}-branches.json and the NSI install. Run after fetch-cwg-rederive.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/cwg-directory.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/branches.json"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/branches.json"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/sources/brands/tools/build-branches.mjs"
+   },
+   "cwp:command": "node cwplans/registry/sources/brands/tools/build-branches.mjs --cwg-websites",
+   "cwp:kind": "transform",
+   "cwp:rule": [
+    "A branch without cwg_website gets none (the full merge does not set it for entries joined by name in its second pass: 4 such branches on 2026-10-21)."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildbranches"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolfetchcwgrederive"
+    }
+   ],
+   "cwp:area": "brands",
+   "cwp:fault": [
+    "F49"
+   ]
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolstorelocator",
    "@type": "prov:Activity",
    "rdfs:label": "storelocator",
@@ -2924,7 +3002,7 @@
    "@id": "https://kgx.foaf.tv/id/toolbuildregistry",
    "@type": "prov:Activity",
    "rdfs:label": "build-registry",
-   "dct:description": "Builds the Canary Wharf building registry: one record per OSM building outline with a stable cwb- id, its parts, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory, the regulatory and public registers), owners, postcodes, Wikidata facts, and company and property joins.",
+   "dct:description": "Builds the Canary Wharf building registry: one record per OSM building outline with a stable cwb- id, its parts, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory, the regulatory and public registers), owners, postcodes, Wikidata facts, and company and property joins. Its last join is the placement rule of tools/registry-placement.mjs (F4, F7).",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/localdatarawukosostn15ntv2osgbtoetrstif"
@@ -3029,7 +3107,8 @@
     "Buildings keep the OSM addr:housename (housename): it names the complex for a mall outline (Canada Place on 16-19 Canada Square).",
     "CWG directory: an entry already linked by the branch join keeps that link. Else it joins existing occupants (OSM, FSA, Wikidata, branches, and CWG occupants added earlier in the same pass) when a name key is equal (registry/sources/brands/tools/cwg-fields.mjs nameKeys) and the place agrees, tried in this order: same mall (or same street or square), a shared postcode, or the building the entry itself would be placed in. Two different named malls never join (Canada Place and the One Canada Square mall count as one). An occupant with a CWG link takes a second entry only from another CWG section (cwg_also). Records of one source in two buildings: ambiguous, not joined.",
     "CWG entries that join nothing become occupants (source cwg, role directory: <section>) placed by: the one building whose address key equals the street line (confidence high with the postcode, medium without); else the host outline of a named mall (the one outline whose OSM name, else addr:housename, is the mall name or starts with it; medium); else the one registry building with the entry postcode, or the one of them OSM tags as retail (low). Estate-wide entries, car parks and entries with no page, address or single building stay unplaced with a reason (cwg_unplaced, summary.joins.cwg).",
-    "Registers (registry/sources/registers/): records are excluded when the address is not a place: GIAS correspondence addresses (address_role), the registered-office service at E14 5HU / 10th floor 5 Churchill Place, care-of and accountant addresses. Keys in order: UPRN (OS Open UPRN point inside an outline; not used when one register gives the UPRN to records at two or more postcodes, or when the UPRN point is over 150 m from the register point), the register point (inside or within 12 m; an FSA point within 3 m of its postcode centre is a postcode, F7), a named mall in the address (the mall host outline, F4; the point outline kept as point_in), street address with the postcode, street address alone when one building matches a numbered address key, the name of an occupant at the same postcode or mall, the postcode alone when one registry building has it, the ONSPD centre is within 50 m of it and the address names no other street (never for a charity). A charity placed by address in a residential building (homes or a residential building tag) is left unplaced. A record whose name matches an occupant of the chosen building enriches it; else it is a new occupant (source = register, role register: <name> or head office (ODS) for ODS organisation records, current false for closed or inactive records). Each link (occupant.registers[]) keeps register, id, kind, status, key, precision, confidence; source ids are copied to the occupant (urn, ods_code, cqc_location_id, charity_number, company_number, ofsted_urn, gambling_premises_id, active_places_site_id, fhrs_id). Unplaced records and rejected UPRNs are listed (registers_unplaced, registers_uprn_rejected)."
+    "Registers (registry/sources/registers/): records are excluded when the address is not a place: GIAS correspondence addresses (address_role), the registered-office service at E14 5HU / 10th floor 5 Churchill Place, care-of and accountant addresses. Keys in order: UPRN (OS Open UPRN point inside an outline; not used when one register gives the UPRN to records at two or more postcodes, or when the UPRN point is over 150 m from the register point), the register point (inside or within 12 m; an FSA point within 3 m of its postcode centre is a postcode, F7), a named mall in the address (the mall host outline, F4; the point outline kept as point_in), street address with the postcode, street address alone when one building matches a numbered address key, the name of an occupant at the same postcode or mall, the postcode alone when one registry building has it, the ONSPD centre is within 50 m of it and the address names no other street (never for a charity). A charity placed by address in a residential building (homes or a residential building tag) is left unplaced. A record whose name matches an occupant of the chosen building enriches it; else it is a new occupant (source = register, role register: <name> or head office (ODS) for ODS organisation records, current false for closed or inactive records). Each link (occupant.registers[]) keeps register, id, kind, status, key, precision, confidence; source ids are copied to the occupant (urn, ods_code, cqc_location_id, charity_number, company_number, ofsted_urn, gambling_premises_id, active_places_site_id, fhrs_id). Unplaced records and rejected UPRNs are listed (registers_unplaced, registers_uprn_rejected).",
+    "Placement rule (last join; tools/registry-placement.mjs applyPlacement, operation place-occupants-by-mall-and-postcode v1, F4, F7): every OSM, FSA and branch occupant placed by a point is checked. F4: an occupant of a named CWG mall (its mall from the branch table or the CWG join, else the CWG mall its OSM addr:place / addr:housename / addr:street or its FSA address names) goes to the mall host outline; the outline its point is in is kept as point_in; an OSM occupant keeps its mall level by the F48 rule (level:ref first, else level) as mall_level. F7: an FSA point within 3 m of the ONSPD centre of its postcode or shared by 3 or more premises (the SP-3 test), and a branch at a mall or postcode centroid, is not a building position: the occupant is placed by its street address with the postcode (high), its street address alone (medium), an occupant of another source with the same name and postcode (medium), or the one building with the postcode at the postcode centre (low); else it is listed under its postcode (unplaced_by_postcode; branches in placement_unplaced). Each re-placed occupant has placed (precision), placed_by (key), placed_confidence and placement_fault; occupants kept at their point have placed_by (position class). Building postcodes are then recomputed from their evidence (outline tag, Wikidata, OSM occupant tags, FSA occupants). Stats: summary.placement."
    ],
    "cwp:network": false,
    "cwp:deterministic": false,
@@ -3088,7 +3167,69 @@
     "F17",
     "F18",
     "F19",
-    "F20"
+    "F20",
+    "F46"
+   ]
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolregistryplacement",
+   "@type": "prov:Activity",
+   "rdfs:label": "registry-placement",
+   "dct:description": "Operation place-occupants-by-mall-and-postcode (version 1, kgx-ops Flow, logged in kgx/log with the SHA-256 of each input): the placement rule of build-registry.mjs (applyPlacement, the same function) applied to the committed registry, for a checkout where build-registry.mjs cannot run whole (its UPRN, LBSM, company and price-paid inputs are local downloads). Rebuilds the registry outlines from the OSM extract with the cwb- ids of ids.json, checks that the mall hosts are the ones the registry build found, applies the rule, recomputes postcodes, postcode_info and the postcode links, and writes buildings.json with summary.placement (rule, input SHA-256, stats) and placement_unplaced. The change set is the graph registry-placement.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/buildings.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/registry/osm-cw.json.gz"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/data/raw/registry/fhrs/FHRS530-2026-10-03.json.gz"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/postcodes/postcodes.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/ids.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/registry/buildings.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/registry-placement.mjs"
+   },
+   "cwp:command": "node cwplans/tools/registry-placement.mjs",
+   "cwp:kind": "join",
+   "cwp:rule": [
+    "Stops when a registry building has no outline in the OSM extract or the mall hosts differ from the registry build (the extract is not the one the registry was built from).",
+    "Does nothing when buildings.json already has summary.placement (build-registry.mjs applied the rule, or this command ran).",
+    "The rule applied to the output of an older build-registry.mjs gives the same buildings as the new build-registry.mjs (checked 2026-10-21 on a local build: 0 of 1,129 buildings differ).",
+    "join-web-facts.mjs is not run again after it: its fact records name the building of the crawl, and 16 of them would no longer match a moved occupant; the web facts already on an occupant move with it."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildregistry"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/tooljoinwebfacts"
+    }
+   ],
+   "cwp:area": "registry",
+   "cwp:fault": [
+    "F4",
+    "F7",
+    "F46"
    ]
   },
   {
@@ -7902,6 +8043,12 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolcomposefacadeatlas"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolkeymodelbuildingsrepair"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolregistryplacement"
     }
    ],
    "cwp:area": "structured",
@@ -8116,7 +8263,8 @@
    "cwp:kind": "derive",
    "cwp:rule": [
     "Fails when a model building has no OSM outline in the clip (the clip is not the one area.js was built from).",
-    "Rerun after build-docklands.mjs: the indices are for one area.js."
+    "Rerun after build-docklands.mjs: the indices are for one area.js.",
+    "Operation version 5 (2026-10-21): the OSM URL (s:sameAs) is built from the element key, way or relation; versions 1 to 4 used el.type, which the clip's ways do not have, and wrote https://www.openstreetmap.org/undefined/<id> (F53)."
    ],
    "cwp:network": false,
    "cwp:deterministic": true,
@@ -8129,7 +8277,54 @@
     }
    ],
    "cwp:area": "structured",
-   "cwp:fault": []
+   "cwp:fault": [
+    "F53"
+   ]
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolkeymodelbuildingsrepair",
+   "@type": "prov:Activity",
+   "rdfs:label": "key-model-buildings-repair",
+   "dct:description": "Operation osm-urls-from-keys (version 1, kgx-ops Flow): one model-building-keys version to a new one in which each s:sameAs https://www.openstreetmap.org/undefined/<id> is the URL of the subject's own OSM key (id:osmw<id> to way/<id>, id:osmr<id> to relation/<id>), the URL that key-model-buildings version 5 writes. For a checkout without the OSM clip and extract. Then the same projection to building-keys.json.",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-keys.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/key-model-buildings.mjs"
+   },
+   "cwp:command": "node cwplans/tools/key-model-buildings.mjs --repair-osm-urls",
+   "cwp:kind": "transform",
+   "cwp:rule": [
+    "Stops when the head was built for another area.js (its model SHA-256) or a URL id is not the subject id.",
+    "Does nothing when the head has no such URL (no activity is logged)."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolkeymodelbuildings"
+    }
+   ],
+   "cwp:area": "structured",
+   "cwp:fault": [
+    "F53"
+   ]
   },
   {
    "@id": "https://kgx.foaf.tv/id/toolcomposefacadeatlas",
@@ -12983,7 +13178,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins",
+   "dct:title": "1,129 buildings with ids, names, house names, occupants (OSM, FSA, Wikidata, chain-store branches, the Canary Wharf Group directory and the regulatory and public registers: schools, care, NHS organisations, charities, childcare, betting shops, sports sites), owners, postcodes and joins; each occupant link keeps its placement (placed, placed_by, placed_confidence, placement_fault, point_in): the mall and postcode-centre rule of tools/registry-placement.mjs (F4, F7) moved 163 links to their mall host or key building, confirmed 152 and listed 40 under their postcode (2026-10-21)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -13198,7 +13393,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "271 chain-store branches with evidence per source",
+   "dct:title": "271 chain-store branches with evidence per source; cwg_website as decoded in cwg-directory.json (F49; build-branches.mjs --cwg-websites, 2026-10-21)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -13223,7 +13418,7 @@
     }
    ],
    "prov:wasGeneratedBy": {
-    "@id": "https://kgx.foaf.tv/id/toolbuildbranches"
+    "@id": "https://kgx.foaf.tv/id/toolbuildbranchescwgwebsites"
    },
    "cwp:osmUse": "derived",
    "cwp:review": "includes CWG directory fields (see cwg-directory.json)",
@@ -13284,14 +13479,14 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "374 entries of the Canary Wharf Group shop, restaurant and venue directory: title, categories, address lines, mall, level, postcode, street line, flags, website",
+   "dct:title": "374 entries of the Canary Wharf Group shop, restaurant and venue directory: title, categories, address lines, mall, level, postcode, street line, flags, website; the website attribute with its HTML character references decoded (F49; fetch-cwg.mjs --rederive on 2026-10-21, website_rule)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srccwgsite"
     }
    ],
    "prov:wasGeneratedBy": {
-    "@id": "https://kgx.foaf.tv/id/toolfetchcwg"
+    "@id": "https://kgx.foaf.tv/id/toolfetchcwgrederive"
    },
    "cwp:osmUse": "none",
    "cwp:review": "no open licence on canarywharf.com: re-check before anything leaves the prototyping phase",
@@ -14591,7 +14786,7 @@
     }
    ],
    "prov:wasGeneratedBy": {
-    "@id": "https://kgx.foaf.tv/id/toolkeymodelbuildings"
+    "@id": "https://kgx.foaf.tv/id/toolkeymodelbuildingsrepair"
    },
    "cwp:osmUse": "derived"
   },

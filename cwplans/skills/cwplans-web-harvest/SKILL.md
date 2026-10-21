@@ -250,6 +250,14 @@ the page. Output `registry/sources/brands/cwg-directory-typed.json` and `.nq`. M
 321 with a registry building; first listed 2013 (90, the site launch) to 2025 (55); last edited mostly 2024 (155) and
 2025 (153). The types are ours, from the category, not the publisher's.
 
+**An href is an HTML attribute value: decode it (F49, 2026-10-21).** WordPress writes `&` in a URL attribute as `&#038;`.
+`fetch-cwg.mjs` copied Diptyque's website with 9 of them into the directory, the branches, the typed directory and kgx,
+where it is not a valid IRI (Oxigraph strict load refused it; Factoidal did not warn). `cwg-fields.mjs` `decodeAttr`
+(decimal, hex and the named references of an attribute, applied once) now reads every website attribute. Without the
+cached pages: `fetch-cwg.mjs --rederive` and `build-branches.mjs --cwg-websites` apply it to the committed files. Read
+any other URL attribute (`src`, `content`, `data-*`) the same way. Crawl records keyed by the URL as fetched
+(`site-facts.json`, the `third_party/cwplans-structured-data/` index) keep the encoded form: that was the request.
+
 ## Site search (SearchAction, 2026-10-06): `tools/probe-site-search.mjs`, `search/probe.json`
 
 111 sites publish a schema.org SearchAction. The tool fills each site's template with a nonsense control query,

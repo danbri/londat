@@ -11,10 +11,23 @@
 import { writeFileSync, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { CW, OUT, RAW, readJSON, inBox } from './lib.mjs';
-import { matchAny, byId, byWd } from './nsi-matcher.mjs';
+// nsi-matcher.mjs is imported below, after the --cwg-websites mode (it needs the local NSI install)
 import { osmList, unitLabel } from '../../../../tools/osm-values.mjs';
 
-const osm = readJSON(join(RAW, 'osm-branches.json')).branches;
+// --cwg-websites: no rebuild. Copy the website of each CWG entry into the cwg_website that a branch with its cwg_url has
+// (the same assignment as the merge below), for a checkout without data/raw/registry/{osm,fsa}-branches.json. Used after
+// fetch-cwg.mjs --rederive (F49: decoded websites).
+//   node cwplans/registry/sources/brands/tools/build-branches.mjs --cwg-websites
+if (process.argv.includes('--cwg-websites')) {
+  const web = new Map(readJSON(join(OUT, 'cwg-directory.json')).directory.filter(c => c.website).map(c => [c.cwg_url, c.website]));
+  const f = join(OUT, 'branches.json'), d = readJSON(f); let n = 0;
+  for (const b of d.branches) if (b.cwg_website && web.has(b.cwg_url) && b.cwg_website !== web.get(b.cwg_url)) { b.cwg_website = web.get(b.cwg_url); n++; }
+  writeFileSync(f, '{"meta":' + JSON.stringify(d.meta, null, 1) + ',\n"branches":[\n' + d.branches.map(o => JSON.stringify(o)).join(',\n') + '\n],\n"cwg_not_matched":[\n' + d.cwg_not_matched.map(o => JSON.stringify(o)).join(',\n') + '\n]}\n');
+  console.log(`${n} branch cwg_website values changed`);
+  process.exit(0);
+}
+
+const osm =readJSON(join(RAW, 'osm-branches.json')).branches;
 const fsa = readJSON(join(RAW, 'fsa-branches.json')).branches;
 const cwg = readJSON(join(OUT, 'cwg-directory.json')).directory;
 const wdNear = readJSON(join(OUT, 'wikidata-near.json')).linked;

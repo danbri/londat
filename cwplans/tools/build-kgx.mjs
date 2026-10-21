@@ -85,7 +85,9 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-buildings', 'registry
   return { buildings: { quads: g.quads, about: { title: 'Registry buildings of the Canary Wharf box (cwb- ids): names, positions, outlines, levels, height, postcodes, identifiers', licence: 'derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), Wikidata (CC0), OS Open UPRN/USRN/TOID ids (OGL)', osm: true } } };
 }));
 
-Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry/buildings.json occupants -> schema.org LocalBusiness/Store/FoodEstablishment: role, level, mall, hours, links to the building, OSM, CWG, brand'), [regF], null, async () => {
+// version 4 (2026-10-21): the placement of each occupant link too (cwk:placedBy key, cwk:placement precision,
+// cwk:placementConfidence, cwk:pointInPlace, cwk:placementFault; the F4/F7 rule of registry-placement.mjs)
+Object.assign(versions, await flow.run({ ...LIFT('lift-registry-occupants', 'registry/buildings.json occupants -> schema.org LocalBusiness/Store/FoodEstablishment: role, level, mall, hours, links to the building, OSM, CWG, brand, and the placement of the link (key, precision, confidence, point outline)'), version: 4 }, [regF], null, async () => {
   const g = G();
   for (const b of B()) (b.occupants || []).forEach((o, i) => {
     const s = bIri(b.id, 'occupant', `${slug(o.name)}-${sha(JSON.stringify([o.name, o.osm, o.source, i]))}`);
@@ -98,6 +100,8 @@ Object.assign(versions, await flow.run(LIFT('lift-registry-occupants', 'registry
     if (/^https?:\/\//.test(o.website || '')) g.add(s, iri('s', 'url'), o.website);
     if (o.brand_wikidata) g.add(s, iri('s', 'brand'), NS.wd + o.brand_wikidata); else g.lit(s, iri('cwk', 'brandName'), o.brand);
     g.lit(s, iri('cwk', 'odsCode'), o.ods_code); g.lit(s, iri('cwk', 'cqcLocationId'), o.cqc_location_id); g.lit(s, iri('s', 'servesCuisine'), o.cuisine);
+    g.lit(s, iri('cwk', 'placedBy'), o.placed_by); g.lit(s, iri('cwk', 'placement'), o.placed); g.lit(s, iri('cwk', 'placementConfidence'), o.placed_confidence);
+    g.lit(s, iri('cwk', 'placementFault'), o.placement_fault); if (o.point_in) g.add(s, iri('cwk', 'pointInPlace'), bIri(o.point_in));
   });
   return { occupants: { quads: g.quads, about: { title: 'Occupants of the registry buildings: shops, food and drink, services, offices, with role, level, opening hours and links', licence: 'joined from OSM (ODbL), FSA ratings (OGL), Canary Wharf Group directory (crawl rule, scoping), brand and register sources named per occupant in the registry', osm: true } } };
 }));

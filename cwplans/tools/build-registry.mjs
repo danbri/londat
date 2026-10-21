@@ -9,11 +9,12 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { gunzipSync } from 'zlib';
 import { join } from 'path';
-import { TOOLS, RAW, bngProjector, polyArea, pointIn, joinRings } from './lib.mjs';
+import { TOOLS, RAW, bngProjector, polyArea, pointIn } from './lib.mjs';
 import { ORIGIN } from './fetch-docklands.mjs';
 import { CW_BOX } from './registry-osm.mjs';
 import { osmList, osmLevels } from './osm-values.mjs';
-import { CWG_PLACES, CWG_MALLS, cwgFields, nameKeys } from '../registry/sources/brands/tools/cwg-fields.mjs';
+import { CWG_MALLS, cwgFields, nameKeys } from '../registry/sources/brands/tools/cwg-fields.mjs';
+import { registryGeometry, mallHosts, normPc, normAddr, buildingKeys, STREET, placeIn, mPerDeg, fsaPositions, applyPlacement, postcodeInfo, postcodeLinks, PLACEMENT_OP } from './registry-placement.mjs';
 
 const OUT = join(TOOLS, '..', 'registry'), R = join(RAW, 'registry');
 mkdirSync(OUT, { recursive: true });
@@ -27,43 +28,9 @@ const wd = JSON.parse(readFileSync(join(R, 'wikidata-cw.json'), 'utf8'));
 const fhrsFile = readdirSync(join(R, 'fhrs')).filter(f => /^FHRS530-.*\.json\.gz$/.test(f)).sort().at(-1);
 const fhrs = JSON.parse(gunzipSync(readFileSync(join(R, 'fhrs', fhrsFile))));
 const pcs = new Map(JSON.parse(readFileSync(join(TOOLS, '..', 'postcodes', 'postcodes.json'), 'utf8')).postcodes.map(p => [p.pc, p]));
-const normPc = pc => String(pc || '').toUpperCase().replace(/\s+/g, '').replace(/^(.+)(\d[A-Z]{2})$/, '$1 $2');
 
-// ---- buildings (outlines) and parts, as rings of [lon, lat]
-const wayById = new Map(osm.features.filter(f => f.type === 'way').map(f => [f.id, f]));
-const ringOf = refs => refs.map(r => osm.nodes[r]).filter(Boolean);
-function rings(f) {
-  if (f.type === 'way') return f.refs[0] === f.refs.at(-1) ? [ringOf(f.refs)] : null;
-  const outer = joinRings(f.members.filter(m => m.type === 'way' && m.role !== 'inner').map(m => wayById.get(m.ref)?.refs));
-  return outer ? outer.map(ringOf) : null;
-}
-const [W, S, E, N] = CW_BOX, inBox = (lon, lat) => lon >= W && lon <= E && lat >= S && lat <= N;
-const mean = ring => ring.reduce((s, p) => [s[0] + p[0] / ring.length, s[1] + p[1] / ring.length], [0, 0]);
-const all = [];
-for (const f of osm.features) {
-  if (f.type === 'node' || !(f.tags.building || f.tags['building:part'])) continue;
-  const rs = rings(f); if (!rs || !rs[0] || rs[0].length < 4) continue;
-  const c = mean(rs[0]);
-  all.push({ f, rs, c, part: !!f.tags['building:part'] && !f.tags.building });
-}
-const outlines = all.filter(b => !b.part && inBox(b.c[0], b.c[1]));
-const inside = (b, lon, lat) => b.rs.some(r => pointIn([lon, lat], r));
-// metres from a point to a building outline (for points just outside, e.g. entrances on the wall)
-const mPerDeg = [111320 * Math.cos(51.5 * Math.PI / 180), 110540];
-function distTo(b, lon, lat) {
-  let d = Infinity;
-  for (const r of b.rs) for (let i = 1; i < r.length; i++) {
-    const ax = (r[i - 1][0] - lon) * mPerDeg[0], ay = (r[i - 1][1] - lat) * mPerDeg[1], bx = (r[i][0] - lon) * mPerDeg[0], by = (r[i][1] - lat) * mPerDeg[1];
-    const dx = bx - ax, dy = by - ay, t = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / (dx * dx + dy * dy || 1)));
-    d = Math.min(d, Math.hypot(ax + t * dx, ay + t * dy));
-  }
-  return d;
-}
-function buildingAt(lon, lat, tol = 12) {
-  let hit = outlines.find(b => inside(b, lon, lat)); if (hit) return { b: hit, how: 'inside' };
-  let best = null; for (const b of outlines) { const d = distTo(b, lon, lat); if (d < tol && (!best || d < best.d)) best = { b, d }; }
-  return best ? { b: best.b, how: `within ${Math.round(best.d)} m` } : null;
-}
+// ---- buildings (outlines) and parts, as rings of [lon, lat] (registry-placement.mjs registryGeometry)
+const { rings, inBox, mean, all, outlines, inside, distTo, buildingAt } = registryGeometry(osm, CW_BOX);
 
 // ---- ids: reuse, else mint in reading order (north to south in 100 m bands, then west to east)
 const idsFile = join(OUT, 'ids.json'), ids = existsSync(idsFile) ? JSON.parse(readFileSync(idsFile, 'utf8')) : { note: 'Canary Wharf building ids. Keys are OSM elements; never reuse a retired id.', next: 1, map: {} };
@@ -161,10 +128,8 @@ for (const h of wd.hq) { const r = recByQ.get(h.place); if (r) r.occupants.push(
 const K = 5, SRC = join(OUT, 'sources'), has = f => existsSync(join(SRC, f));
 const readJ = f => JSON.parse(readFileSync(join(SRC, f), 'utf8'));
 const recs = [...rec.values()], outlineOf = new Map(outlines.map(b => [b.id, b]));
-const NUM = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5, SIX: 6, SEVEN: 7, EIGHT: 8, NINE: 9, TEN: 10, TWENTY: 20, 'TWENTY FIVE': 25, THIRTY: 30, FORTY: 40, FIFTY: 50 };
-const normAddr = s => String(s || '').toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').replace(/\b(TWENTY FIVE|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN|TWENTY|THIRTY|FORTY|FIFTY)\b/g, m => NUM[m]).replace(/\s+/g, ' ').trim();
 // keys a building answers to: "1 CANADA SQUARE", "ONE CANADA SQUARE" -> "1 CANADA SQUARE", the OSM and Wikidata names
-for (const r of recs) r.keys = [...new Set([r.address, r.name, r.osm_name, ...(r.facts['street address'] || [])].filter(Boolean).map(normAddr).filter(k => k.length > 5))];
+for (const r of recs) r.keys = buildingKeys(r);
 const matchBuilding = (pc, text) => { const t = normAddr(text); const c = recs.filter(r => r.postcodes.has(pc) && r.keys.some(k => t.includes(k))); return c.length === 1 ? c[0] : null; };
 const joins = {};
 if (has('uprn/uprn-canary-wharf.csv')) {
@@ -248,23 +213,16 @@ if (has('brands/branches.json')) {
 // activity "build-registry"; skill docklands-data-curation (CWG join).
 const cwgOut = { unplaced: [], ambiguous: [] };
 // the CWG place (mall, street, square) a free-text address names; never a name inside a longer one that also appears
-const PLACES = CWG_PLACES.map(p => p.toLowerCase());
-const placeIn = text => { const low = String(text || '').toLowerCase(), hits = PLACES.filter(p => low.includes(p)); return CWG_PLACES[PLACES.indexOf(hits.filter(p => !hits.some(o => o !== p && o.includes(p)))[0])] || null; };
+// (placeIn: registry-placement.mjs)
 let MALL_HOST = {};   // mall name -> { id, how }: set by the CWG join, used again by the registers join
 if (has('brands/cwg-directory.json')) {
   const D = readJ('brands/cwg-directory.json').directory, st = { entries: D.length, linked_by_branch: 0, joined: 0, joined_by: {}, added: 0, added_by: {}, added_confidence: {}, unplaced: 0, unplaced_by: {}, ambiguous: 0 };
   const tagsOf = new Map(osm.features.map(f => [`${f.type}/${f.id}`, f.tags || {}]));
   const MALL = CWG_MALLS;
   // mall host outline: the outline whose OSM name or addr:housename is the mall's name or starts with it ("Cabot Place
-  // Shopping Centre", "Cabot Place East"); an OSM name outranks a house name; two or more left: no host.
-  const bare = s => String(s || '').toLowerCase().replace(/^the /, '');
-  const hostOf = {};
-  for (const m of MALL) {
-    const k = bare(m), starts = v => v && !/entrance|car park/i.test(v) && (bare(v) === k || bare(v).startsWith(k + ' '));
-    const byName = outlines.filter(b => starts(b.f.tags.name)), byHouse = outlines.filter(b => starts(b.f.tags['addr:housename']));
-    const c = byName.length ? byName : byHouse;
-    if (c.length === 1) hostOf[m] = { id: c[0].id, how: `${byName.length ? 'OSM name' : 'OSM addr:housename'} "${byName.length ? c[0].f.tags.name : c[0].f.tags['addr:housename']}" (${key(c[0])})` };
-  }
+  // Shopping Centre", "Cabot Place East"); an OSM name outranks a house name; two or more left: no host
+  // (registry-placement.mjs mallHosts)
+  const hostOf = mallHosts(outlines, key);
   st.mall_hosts = Object.fromEntries(Object.entries(hostOf).map(([m, h]) => [m, h.id]));
   MALL_HOST = hostOf;
   // what each existing occupant says about its place: mall (branch table, OSM address tags, FSA address), postcodes, building
@@ -379,7 +337,7 @@ if (has('registers/gias.json')) {
   const CARE_OF = /\bc\/o\b|\bcare of\b|accountant|accounts direct/i;
   // a street the address names ("71-75 SHELTON STREET"): when the postcode alone would place the record, the building must
   // be on that street (a virtual-office address with an E14 postcode is not in E14)
-  const STREET = /\b\d+[a-z]?(?:\s*-\s*\d+[a-z]?)?,?\s+((?:[a-z']+\s+){0,3}(?:street|road|place|square|walk|lane|avenue|way|crescent|colonnade|circus|drive|grove|passage|terrace|quay|court|wall|row|gardens))\b/i;
+  // (STREET: registry-placement.mjs)
   const st = {};
   for (const [reg, file, ids, current, exclude] of REGS) {
     if (!has('registers/' + file)) continue;
@@ -452,6 +410,13 @@ if (has('registers/gias.json')) {
   joins.registers = st;
 }
 
+// The placement rule (F4, F7; registry-placement.mjs, operation place-occupants-by-mall-and-postcode): OSM, FSA and
+// branch occupants of a named mall go to the mall host outline; an FSA point at the postcode centre or shared by 3 or
+// more premises (or a branch at a centroid) is placed by a key, else listed under its postcode. Then the building
+// postcodes are recomputed from their evidence. The last join: the joins above used the point placements.
+const placement = applyPlacement({ recs, hostOf: MALL_HOST, tagsOf: new Map(osm.features.map(f => [`${f.type}/${f.id}`, f.tags || {}])), outlineOf, geom: { inside, distTo }, fsaPos: fsaPositions(fhrs.establishments, pcs), pcs, byPostcode });
+joins.placement = placement.stats;
+
 // In a residential building a registered office is often a flat: give the number of companies, not their names.
 for (const r of recs) if (r.companies && (r.homes || /^(apartments|residential|house|terrace|detached|semidetached_house)$/.test(r.building))) r.companies = { count: r.companies.length, note: 'residential building: company names are not listed here (see the Companies House link)' };
 for (const r of recs) { if (r.toidSet) r.toids = [...r.toidSet].sort(); if (r.usrnSet) r.usrns = [...r.usrnSet].sort(); delete r.toidSet; delete r.usrnSet; delete r.keys; }
@@ -460,18 +425,16 @@ if (Object.keys(homesOut).length) writeFileSync(join(OUT, 'homes-by-postcode.jso
 console.log('joins', JSON.stringify(joins));
 
 // ---- links per building and per postcode
-const ch = pc => `https://find-and-update.company-information.service.gov.uk/advanced-search/get-results?registeredOfficeAddress=${encodeURIComponent(pc).replace(/%20/g, '+')}`;
-const ppd = pc => `https://landregistry.data.gov.uk/app/ppd/search?postcode=${encodeURIComponent(pc).replace(/%20/g, '+')}`;
 const out = [...rec.values()].sort((a, b) => a.id.localeCompare(b.id)).map(r => {
   const postcodes = [...r.postcodes].filter(Boolean).sort();
   return {
     ...r, postcodes,
-    postcode_info: postcodes.map(pc => { const p = pcs.get(pc); return { pc, status: p ? p.status : 'not in ONSPD E14 list', tier: p?.tier || null, large_user: !!p?.large_user }; }),
+    postcode_info: postcodeInfo(postcodes, pcs),
     links: {
       osm: r.osm.map(k => `https://www.openstreetmap.org/${k}`),
       ...(r.wikidata ? { wikidata: `https://www.wikidata.org/wiki/${r.wikidata}` } : {}),
       ...(r.wikipedia ? { wikipedia: `https://en.wikipedia.org/wiki/${encodeURIComponent(r.wikipedia.replace(/^en:/, '').replace(/ /g, '_'))}` } : {}),
-      companies_house_by_postcode: postcodes.map(ch), land_registry_price_paid_by_postcode: postcodes.map(ppd),
+      ...postcodeLinks(postcodes),
     },
   };
 });
@@ -479,9 +442,10 @@ const summary = {
   generated: new Date().toISOString().slice(0, 10), box: CW_BOX, buildings: out.length, minted_this_run: minted,
   named: out.filter(r => r.name).length, with_wikidata: out.filter(r => r.wikidata).length, with_occupants: out.filter(r => r.occupants.length).length,
   occupants: out.reduce((n, r) => n + r.occupants.length, 0), osm_placed: osmPlaced, osm_not_in_a_building: osmLoose, fsa_placed: fsaPlaced, fsa_by_postcode_only: Object.values(byPostcode).flat().length,
-  with_owner: out.filter(r => r.owners.length).length, joins: Object.fromEntries(Object.entries(joins).filter(([k]) => k !== 'inspire_attribution')), attribution_inspire: joins.inspire_attribution || null,
+  with_owner: out.filter(r => r.owners.length).length, joins: Object.fromEntries(Object.entries(joins).filter(([k]) => k !== 'inspire_attribution' && k !== 'placement')), attribution_inspire: joins.inspire_attribution || null,
   sources: { osm: osm.extracted, wikidata_qlever: wd.fetched, fsa: fhrs.fetched },
+  placement: { rule: `${PLACEMENT_OP.id} v${PLACEMENT_OP.version}`, applied_by: 'cwplans/tools/build-registry.mjs (its last join)', stats: placement.stats },
 };
 writeFileSync(idsFile, JSON.stringify(ids, null, 1));
-writeFileSync(join(OUT, 'buildings.json'), JSON.stringify({ summary, buildings: out, unplaced_by_postcode: byPostcode, cwg_unplaced: cwgOut.unplaced, cwg_ambiguous: cwgOut.ambiguous, registers_unplaced: regOut.unplaced, registers_uprn_rejected: regOut.uprn_rejected }));
+writeFileSync(join(OUT, 'buildings.json'), JSON.stringify({ summary, buildings: out, unplaced_by_postcode: byPostcode, cwg_unplaced: cwgOut.unplaced, cwg_ambiguous: cwgOut.ambiguous, registers_unplaced: regOut.unplaced, registers_uprn_rejected: regOut.uprn_rejected, placement_unplaced: placement.unplaced }));
 console.log(JSON.stringify(summary, null, 1));
