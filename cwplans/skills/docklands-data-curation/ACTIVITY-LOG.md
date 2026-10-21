@@ -2886,3 +2886,9 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
 - Open: Pages size now about 355 MB + about 90 MB of new place and base data; finer imagery and heights away from the
   testbeds; LOD step 4 (Docklands buildings and terrain in 1 km tiles); globe submit time at 100 km rose (59.9 ms in one
   headless run at load 13 against 3.8 ms in the agent's run): measure on the phone.
+- 2026-10-21 (evening), closing tasks: owner accepted the IGN outlines and floors in León as they are ("What we have is
+  ok"; CLAUDE.md, 5b08e356). The hourly cache is now a self-restarting loop (98a93a5d; skill cwplans-londat-cache, "The
+  hourly loop"); the GitHub MCP could not start it by hand (403 "Resource not accessible by integration"), so it starts
+  with the next scheduled run that GitHub fires: count runs per day on the dashboard to score KR5.1. OKR draft scores
+  updated (O1 0.30, O2 0.41, O3 0.40, O4 0.25, O5 0.29, O6 0.50; final on 2026-10-25). Comments on issues #2 and #9.
+  Still the owner's: the one-finger gesture rule; Leiden; FGU access (#9).
