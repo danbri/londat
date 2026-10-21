@@ -48,7 +48,7 @@ async function run(w, h, dpr, nobase) {
       if (!nobase && alt <= 2e5) check(st.base && st.base.heights > 0, `${tag} ${id} ${k}: height tiles loaded`);
     }
     if (!nobase) {
-      const g = await page.evaluate(({ T }) => { const S = __docklands3.globe.sampler(); return { h: S.h(T.lon, T.lat), dem: S.demH ? S.demH(T.lon, T.lat) : null }; }, { T });
+      const g = await page.evaluate(({ T }) => { const S = __docklands3.globe.sampler(); return { h: (S.h0 || S.h)(T.lon, T.lat), dem: S.demH ? S.demH(T.lon, T.lat) : null };   // S.h0: the base sampler (over a loaded place, places.js answers S.h from the place's finer grids) }, { T });
       check(g.dem != null && Math.abs(g.dem - g.h) < 1, `${tag} ${id}: the ground sampler answers from the base heights`, JSON.stringify(g));
     }
   }
