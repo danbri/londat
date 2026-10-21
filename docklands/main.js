@@ -130,7 +130,7 @@ const skip = new Set();
 // greens, roads and rail by cell, level and view; chosen each frame by the LOD rule above
 const buildOpts = {};   // options a layer adds to buildBuildings (layers/skyline.js: heightOf, colourOf, towers: null); merged last
 const bOpts = () => ({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts });
-const CELLS = makeCells({ THREE, camera, eye: eyeM, LOD, CPU, draw, buildTile: (key, level) => buildBuildings({ ...bOpts(), level, tile: key })[0] || null, prep: { terrain: terrainLod } });
+const CELLS = makeCells({ THREE, camera, eye: eyeM, LOD, CPU, draw, buildTile: (key, level) => buildBuildings({ ...bOpts(), level, tile: key })[0] || null, prep: { terrain: terrainLod }, active: () => !GLOBE || GLOBE.mode !== 'globe' });
 for (const [k, m] of [['terrain', terrain], ['greens', greens], ['roads', roads], ['rail', rail]]) CELLS.addIndexed(k, m, k !== 'terrain');   // lean: no CPU reader of the index drawn (the drone and layers read the terrain's)
 function rebuildBuildings() {
   CELLS.dropTiles(); buildings.clear();

@@ -29,7 +29,7 @@ const HYST = 1.1, WIDE = 1.4, FREE_MS = 5000, DROP_MS = 60000, SLICE_MS = 8;
 const LEAN = { position: 'rebuild', uw: 'rebuild', col: 'rebuild', index: 'rebuild', normal: 'normal', gk: 'runs' };   // the simplified and far levels' arrays (cpu-copies.js)
 const NAMES = ['full', 'simplified', 'far'];
 
-export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep = {} }) {
+export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep = {}, active = () => true }) {   // active(): the model holds the view (not the globe)
   const S = { tiles: { full: 0, simplified: 0, far: 0 }, builds: 0, buildMs: 0, freed: 0, dropped: 0, pending: 0, kinds: {} };
   const F = new THREE.Frustum(), PM = new THREE.Matrix4(), VP = new THREE.Matrix4(), V = new THREE.Vector3();
   const levelOf = (d, cur) => {
@@ -124,6 +124,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
   function pump() {   // build the wanted levels in the background, nearest first, SLICE_MS at a time
     if (pumping) return; pumping = true;
     const step = () => {
+      if (!active()) { want.clear(); S.pending = 0; pumping = false; return; }   // the globe holds the view: nothing is built (asked again by the next model frame)
       const t0 = performance.now(), g = gen;
       while (want.size && performance.now() - t0 < SLICE_MS) {
         let best = null; for (const [key, w] of want) if (!best || w.d < best.d) best = w;

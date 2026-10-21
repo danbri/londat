@@ -3229,7 +3229,8 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,30000&ht=0,45 (S
 Owner, 2026-10-14: "pls make sure we make appropriate use of threejs lod support for everything"; "zooming out there is an
 overly abrupt switch to planetary geography - can we make that smoother?"; Home from orbit on the iPhone "started to zoom
 in then said it was starting 3D mode ... almost like the rendering crashed and rebooted". Steps 1 and 2 of the LOD plan
-(activity log, 2026-10-14) are done; steps 3 (trees by cell) and 4 (the merged buildings and terrain in 1 km tiles) are not.
+(activity log, 2026-10-14) are done; step 3 (trees by cell) since 2026-10-20 and step 4 (the model cells: buildings, terrain,
+greens, roads and rail by 1 km cell and level) since 2026-10-21: sections "trees by cell" and "model cells" below.
 
 - **One rule for every layer** (main.js `LOD`, `ctx.lod`): an object whose size (m) would cover fewer than `LOD.px` (32) CSS
   pixels shows its cheap stand-in. `ctx.lod.dist(size, px)` is that distance for the window height and lens now (so it
@@ -3281,7 +3282,7 @@ in then said it was starting 3D mode ... almost like the rendering crashed and r
   162 draw calls both; `?view=area` aircraft 56,586 triangles in 156 objects -> 4,516 in 103, frame 6.17 M -> 6.12 M, draw
   calls 257 -> 212 (1280 x 800: 340 -> 295). The frame is mostly the merged buildings, terrain and trees: steps 3 and 4.
 - **Not done**: pixel ratio during flights (a change of pixel ratio reallocates the canvas and every screen-size target,
-  itself a peak); the merged buildings (LOD step 4). The trees (step 3) and the JS heap: next section.
+  itself a peak). The trees (step 3) and the JS heap: next section; the merged meshes (step 4): section "model cells".
 
 ## Hosting: range reads and one-file archives (2026-10-20)
 
@@ -3396,7 +3397,7 @@ Owner, 2026-10-14: "make sure we make appropriate use of threejs lod support for
 - **Not done**: the positions and indexes of roads, rail and greens (no CPU reader, but no source to make them again
   without a rebuild); `userData.bi` (runs would do, but picking and styles.js index it per vertex); building `uw` and `col`;
   the layers' own copies (under 11 MB, tide 10, windfield 8); the occluder's two Int16 grids (10 MB); area.js kept twice
-  (the parsed object, 7 MB, and the script source V8 keeps, 10.6 MB); LOD step 4; a measurement on the iPhone (Safari Web
+  (the parsed object, 7 MB, and the script source V8 keeps, 10.6 MB); a measurement on the iPhone (Safari Web
   Inspector, Timelines > Memory) and the WebGPU path with shadows (normals restored, then given up) on a real GPU.
 
 ## Load speed on Pages: the service worker, load hints, the area loader, the Pages size (2026-10-20)
