@@ -57,6 +57,7 @@ try {
   await v1.page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 60000 }).catch(() => {});
   check(await v1.page.evaluate(() => !!navigator.serviceWorker.controller), 'first visit: the worker controls the page');
   let st = null; for (let i = 0; i < 40; i++) { await v1.page.waitForTimeout(1000); const s = await swStats(v1.page); if (st && s && s.entries === st.entries && s.entries > 20) { st = s; break; } st = s; }
+  const cached1 = new Set((st?.urls || []).map(u => decodeURIComponent(new URL(u).pathname)));
   check(st && st.entries > 20, 'first visit: the files read are in the cache (warm copy from the HTTP cache)', st ? `${st.entries} entries, ${(st.bytes / 1e6).toFixed(1)} MB, warmed ${st.warmed}, stored ${st.stored}` : 'no stats');
   await v1.page.close();
 
@@ -68,7 +69,10 @@ try {
   check(!v2.errors.length, 'second visit: no page errors', v2.errors.slice(0, 2).join(' | '));
   check(fromSw >= same.length * 0.9 && fromSw > 20, 'second visit: the deployed files come from the worker', `${fromSw} of ${same.length} same-origin responses`);
   const toServer = v2.hits.filter(p => !/^\/docklands\/$|sw-manifest\.json|sw\.js$|^\/cwplans\/cache\//.test(p));   // cwplans/cache/: live (the history layer), never cached
-  check(toServer.length <= 4, 'second visit: the server is asked only for the page, the manifest and files not in the manifest', `${v2.server} requests: ${v2.hits.slice(0, 8).join(', ')}`);
+  // a file first read in this visit (the globe streams more tiles as time passes: London features, world-detail tiles) is
+  // a first fetch, not a cache failure; count only the files the worker held after the first visit
+  const again2 = toServer.filter(p => cached1.has(p));
+  check(again2.length <= 1, 'second visit: no file the worker held is asked for again (except the one with a changed hash)', `${again2.length} of ${toServer.length} server requests: ${toServer.slice(0, 8).join(', ')}`);
   check(toServer.some(p => p.endsWith(BAD)), 'a file whose hash does not match the manifest is fetched again (never cached)', toServer.join(', '));
   const badN = Object.entries(v2.counts).find(([k]) => k.endsWith(BAD))?.[1] || 0;
   check(badN === 2, 'on a mismatch the worker asks once more under ?v=<hash> (a new CDN cache key; a version mix during a deploy)', `${badN} requests for ${BAD}`);
