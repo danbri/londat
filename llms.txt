@@ -32,12 +32,13 @@ In the 3D page, after it loads (`window.docklands.ready` resolves; event `dockla
 - `describeView({ maxItems? })`: `text` (a short paragraph) and `in_view` (buildings, places, water, parks with distance_m, bearing_deg, direction, side), time, sun, weather, live counts (aircraft, ships), share.
 - `featuresAt(lon, lat)` or `featuresAt()` (the centre of the view): building (name, OpenStreetMap id, height, registry record and occupant names where known), water, park, ground height, nearest places, `text`.
 - `setTime(iso | "now", zone?)`, `getTimeZone()`, `setTimeZone(zone | "auto")` (the page clock's zone follows the view: the model's region, the place in view, else the nearest town's zone or the nautical zone, approximate), `listLayers()`, `setLayer(id, on)`, `findPlaces(query, limit)`, `listViews()`, `shareLink()`.
+- `getScriptPreference()`, `setScriptPreference('latin' | 'all')`: names in Latin script only (`'latin'`, the default: a name in another script is shown only where the data also has a Latin form, else not at all; no transliteration) or in every script; every answer follows; `?scripts=latin|all`; `getView().scripts`.
 - `tools` and `callTool(name, args)`: the same functions as tools with JSON schemas.
 - Reference: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api
 
 ## WebMCP tools
 
-Where the browser offers WebMCP (`document.modelContext.registerTool`, or `navigator.modelContext` in earlier drafts and polyfills; https://github.com/webmachinelearning/webmcp), the page registers: `go_to`, `get_view`, `describe_view`, `features_at`, `set_time` (with `time_zone`), `get_time_zone`, `set_time_zone`, `list_layers`, `set_layer`, `find_places`, `list_views`, `share_link`. Each answers with JSON text content. `window.docklands.webmcp` says what was registered.
+Where the browser offers WebMCP (`document.modelContext.registerTool`, or `navigator.modelContext` in earlier drafts and polyfills; https://github.com/webmachinelearning/webmcp), the page registers: `go_to`, `get_view`, `describe_view`, `features_at`, `set_time` (with `time_zone`), `get_time_zone`, `set_time_zone`, `get_script_preference`, `set_script_preference`, `list_layers`, `set_layer`, `find_places`, `list_views`, `share_link`. Each answers with JSON text content. `window.docklands.webmcp` says what was registered.
 
 ## MCP server (local)
 

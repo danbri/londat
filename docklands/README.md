@@ -221,6 +221,7 @@ not have yet; Views > "This view in the WebGL page" opens them at the same view.
 | Layers > Style (Map, pixel art, line drawing, vector CRT) | Look > Style (same as the selector at the top right) |
 | Night | Look > Night (`#nightBtn`, shows the state; the moon button at the top left until 2026-10-10); Time > Day or night |
 | Realistic buildings | Look > Realistic buildings (on by default since 2026-10-09; `?look=0`) |
+| Names in Latin script only | Look > Names in Latin script only (on by default since 2026-10-22; `?scripts=all` off; kept in the browser) |
 | Crown halo colour by date | Layers > City > Night lights > Crown halo colour by date |
 | Colour overlay (vector CRT), style notes | Look > Style ("Colour overlay" shows in Vector CRT, `?crt=overlay`; the style's note under it) |
 | Ground image: plain, aerial 2008, night 2012, LiDAR intensity 2020 | Look > Ground |
@@ -349,6 +350,7 @@ nearest Natural Earth town of the same country, at sea the nautical zone (approx
 | `featuresAt(lon, lat)`, `featuresAt()` (the centre of the view) | `building` (model_index, name, osm, osm_url, height_m, base_m, top_m, levels, type, address, wikidata, `registry`: id, use, occupants, companies, homes, owners, occupant_names, atlas link), `water` (name, level, tidal), `park`, `ground_m`, `nearest` places, `text` |
 | `setTime(iso or "now", zone?)` | time, night, sun; a time without Z or an offset is the wall clock of `zone` (IANA name, UTC, UTC+n), else of the view's zone |
 | `getTimeZone()`, `setTimeZone(zone or "auto")`, `timeZone` | the page clock's zone and local time (as `getView().time`); `setTimeZone` fixes the zone (the instant stays), `"auto"` follows the view again |
+| `getScriptPreference()`, `setScriptPreference('latin' or 'all')` (API 1.2.0, 2026-10-22) | `'latin'` (the default: names in Latin script only; a name in another script shows only where the data also has a Latin form, else no name; no transliteration) or `'all'`; every label, card, search answer, description and tool answer follows at once; kept in the browser; Menu > Look > Names in Latin script only; `?scripts=latin` or `?scripts=all`; `getView().scripts` |
 | `listLayers()`, `setLayer(id, on)` | ids, labels, on/off (layer modules and the settings labels, roads, shadows, bloom) |
 | `findPlaces(query, limit)`, `listViews()`, `shareLink()` | names with kinds and WGS84 positions; view ids and labels; the share URL |
 | `tools`, `callTool(name, args)` | the same functions as tools with JSON schemas (WebMCP and the MCP server's `page_call` use them) |
@@ -362,7 +364,7 @@ Deep links without the model frame: `?ll=<lat>,<lon>[,<alt m>]` (since 2026-10-1
 Feature-detected: `document.modelContext.registerTool(tool, { signal })` (the W3C Web Machine Learning CG explainer,
 https://github.com/webmachinelearning/webmcp, read 2026-10-11), else `navigator.modelContext` with `registerTool` or
 `provideContext({ tools })` (earlier drafts, the MCP-B polyfill). Nothing happens without it. Tools: `go_to`,
-`get_view`, `describe_view`, `features_at`, `set_time`, `list_layers`, `set_layer`, `find_places`, `list_views`,
+`get_view`, `describe_view`, `features_at`, `set_time`, `get_script_preference`, `set_script_preference`, `list_layers`, `set_layer`, `find_places`, `list_views`,
 `share_link`, each with an `inputSchema`, `annotations.readOnlyHint`, and an `execute` that answers
 `{ content: [{ type: 'text', text: JSON }], structuredContent }` (or `isError`).
 
