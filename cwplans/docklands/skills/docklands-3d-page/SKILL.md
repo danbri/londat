@@ -3311,7 +3311,24 @@ Sarajevo https://danbri.github.io/londat/docklands/?ll=43.85966,18.43113,1500&ht
   else the region's mix (`place.greens.mix`) by setting. León: 2,280 trees (936 mapped, 1,344 by rule), 38 water polygons
   (the Bernesga, fountains); Sarajevo: 8,274 (189 mapped, 8,085 by rule: the woods of Trebević inside the area), 3 (the
   Miljacka). Registered (`osm-api-place-greens-<id>`, pipeline activity `place-greens`).
-MEASURED-PLACEHOLDER
+- **Measured** (`place-perf.mjs --layers none`, 390 x 844 @2, software WebGL 2; main and the branch served side by side
+  and run one after the other):
+  | measure (León / Sarajevo) | main | this branch |
+  |---|---|---|
+  | cold fly-in, long tasks (max) | 1,055 / 1,169 ms (797 / 790) | 1,940 / 1,284 ms (1,585 / 938): more programs at the warm-up |
+  | second fly-in, long tasks (max) | 1,795 / 1,778 ms (1,531 / 1,513) | 1,429 / 2,481 ms (779 / 1,608) |
+  | still view 1.5 km: frame interval, calls, triangles | 937 / 820 ms; 191 / 155; 409,118 / 363,916 | 1,637 / 1,564 ms; 207 / 167; 420,789 / 408,698 |
+  | still view 6 km: frame interval | 962 / 1,057 ms | 1,445 / 1,423 ms |
+  | still view 30 km: frame interval | 887 / 865 ms | 939 / 919 ms |
+  | JS heap (1.5 km) | 299 / 306 MB | 324 / 321 MB |
+
+  Read: near views cost 1.5 to 1.9 x in software rendering: the facade program and the PBR light per pixel, the same cost
+  as the model's buildings (London's cw view takes 7 to 14 s a frame in the same software renderer). On one page (A/B of
+  materials through `G.placesDebug`, the buildings only; 1.5 km view of León): the day material (facade colour and PBR
+  light, no window lights) 1.32 x the old material, the colour program without light 1.16 x, the light with a flat colour
+  1.06 x, the night material by day 1.56 x (the reason for the split); the ground's lit material costs the same as the
+  old one; water and trees about nothing; the sky after the opaque meshes about nothing. Before the fixes (instCap, day material, sky,
+  water bisection): 2.3 to 4 x near and 10 s of long tasks in a second fly-in. A real phone was not measured.
 - **Remaining differences**: no street lamps or aviation lights (the model's nightlights layer), no stars or moon disc on
   the globe, no weather (cloud, haze) of the place, no water mirror, no photo facades or crowns; the Map look almost all
   amber (heights from floors); the city tier's 256 px ground textures beside the core's 512 px; water as sheets 0.35 m over
@@ -3320,7 +3337,8 @@ MEASURED-PLACEHOLDER
   `THREE.Color.set('#hex')` converts to linear: parse the hex for an sRGB uniform. The `#look` box is unchecked in the
   HTML until main.js's deferred start sets it: follow it only once `__docklands3.ready` or after a change event. Other
   agents' headless runs on the same machine (load 13 on 4 cores) swung frame times 2x: compare variants on one page,
-  alternated, with a 1-pixel readback after each frame (the A/B recipe in the activity log).
+  alternated: swap the place meshes' materials (the old ones in `G.placesDebug`), draw with `G.frame(now, true)` and a
+  1-pixel `gl.readPixels` after each frame (so the time includes the GPU work), median of rounds.
 
 ## Three.js port: level of detail and the hand-over (2026-10-18)
 
