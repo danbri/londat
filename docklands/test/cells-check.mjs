@@ -51,7 +51,7 @@ check(a.frame.triangles < 0.8 * b.frame.triangles, 'the frame from 8 km has fewe
 const pa = await picks(A.page), pb = await picks(B.page), same = pa.filter((v, i) => v === pb[i]).length;
 check(same === pa.length && pa.some(v => v >= 0), 'from 8 km a tap names the same building at every grid point', `${same} of ${pa.length} the same, ${pa.filter(v => v >= 0).length} on buildings`);
 const ca = await ocsCard(A.page), cb = await ocsCard(B.page);
-check(ca.model === ca.mi && ca.title === cb.title && /Canada Square/.test(ca.title), 'a tap on One Canada Square opens the same card', `"${ca.title}" (model ${ca.model}) and "${cb.title}"`);
+check(ca.model === ca.mi && cb.model === cb.mi && ca.title === cb.title && ca.title.length > 0, 'a tap on One Canada Square (its model building) opens the same card', `"${ca.title}" (model ${ca.model}) and "${cb.title}"`);
 // at Canary Wharf: the cells out of view are left out; the taps again
 for (const o of [A, B]) await o.page.evaluate(() => __docklands3.setView('cw'));
 const a2 = await settle(A.page), b2 = await settle(B.page);

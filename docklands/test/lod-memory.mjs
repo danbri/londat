@@ -31,6 +31,9 @@ async function open(w, h, dpr, q) {
   await page.goto(`${BASE}/docklands/?${far ? 'view=area' : q}&webgl&animate=0&weather=0&t=${T}${EXTRA}${far ? '#v=1&c=-1400,800,0,8000,1.2,0.3' : ''}`);
   await page.waitForFunction(() => window.__docklands3?.ready && window.__docklands3.globe && window.docklands, null, { timeout: 300000 });
   await page.waitForTimeout(6000);   // the layers' data (moorings, ships, aircraft) and a few frames
+  // the model cells' levels built in the background (cells.js; slow beside software rendering): frames until none waits, 90 s at most
+  await page.evaluate(async () => { const D = __docklands3, t0 = performance.now(); if (!D.STATS.cells) return;
+    for (let i = 0; performance.now() - t0 < 90000; i++) { D.STATS.frame = null; D.draw(); while (!D.STATS.frame) await new Promise(r => requestAnimationFrame(r)); if (i > 1 && !D.STATS.cells.pending) break; await new Promise(r => setTimeout(r, 300)); } });
   return { ctx, page, errors };
 }
 // one drawn frame: every render call in it (the globe background, the scene pass, the output)

@@ -10,10 +10,10 @@
 //    2.5 m, towers kept), built in the background when first wanted (nearest first, a time slice at a time). A tap and the
 //    occluder always use the full geometry (`userData.full`: a ray hits it through a proxy mesh a cell, so the model index
 //    under the tap is exactly as before). The simplified and far levels are lean: once uploaded they give up every CPU
-//    array but `userData.bi` (cpu-copies.js 'rebuild': three.js gets them back by building the level again, should it
-//    upload them again). Not drawn for FREE_MS, a simplified or far level is dropped (built again when wanted; also when
-//    globe.js freeModel disposes it: the full level stands in), and the full level gives back its GPU buffers (dispose;
-//    its CPU copies stay for taps, three.js uploads them again when it is drawn, as after freeModel).
+//    array but `userData.bi` (cpu-copies.js 'rebuild': three.js gets them back by building the level again when it
+//    uploads them again, as after globe.js freeModel). Not drawn for FREE_MS, a simplified or far level is dropped (built
+//    again when wanted), and the full level gives back its GPU buffers (dispose; its CPU copies stay for taps, three.js
+//    uploads them again when it is drawn, as after freeModel).
 //  - Terrain, greens, roads and rail: one mesh each, as before (tide.js, under.js, styles.js, splats, the drone see the
 //    same objects). Their triangles are sorted by cell and level class (build.js LOD_*: road and rail sides at full detail
 //    only, 4 m roads and greens under 600 m2 not far, the terrain's 40 m stand-ins: build.js terrainLod), and the index
@@ -129,13 +129,9 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
         let best = null; for (const [key, w] of want) if (!best || w.d < best.d) best = w;
         want.delete(best.id); const U = best.m.userData; if (U.lods[best.L] !== undefined || !tiles.includes(best.m)) continue;
         const tb = performance.now(), G = buildTile(U.key, best.L); if (g !== gen) break;   // a rebuild came in between
-        if (G) { const key = U.key, L = best.L, m = best.m;
-          // lean: every array given up once uploaded (cpu-copies.js 'rebuild': made again by building the level again);
-          // a level only the page draws (taps and the occluder use the full level), so it is cheap to drop and build again
-          CPU.watch(G, LEAN, () => buildTile(key, L));
-          G.addEventListener('dispose', () => { if (G.userData.mine) return;   // disposed by another (globe.js freeModel): drop it, the full level stands in
-            queueMicrotask(() => { if (U.lods[L] === G) U.lods[L] = undefined; if (m.geometry === G) { m.geometry = U.full; U.level = 0; } S.dropped++;
-              G.userData.mine = true; G.userData.freed = false; G.dispose(); }); }); }   // (again, as ours: cpu-copies.js then forgets it)
+        // lean: every array given up once uploaded (cpu-copies.js 'rebuild': made again by building the level again, when
+        // three.js uploads it again: after globe.js freeModel, the return uploads only the levels drawn, not the full ones)
+        if (G) { const key = U.key, L = best.L; CPU.watch(G, LEAN, () => buildTile(key, L)); }
         U.lods[best.L] = G || null; U.used[best.L] = performance.now(); S.builds++; S.buildMs = Math.round(S.buildMs + performance.now() - tb); draw();
       }
       S.pending = want.size;
@@ -152,7 +148,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
       for (let k = 0; k < 3; k++) { const G = U.lods[k]; if (!G || G === m.geometry || now - U.used[k] <= FREE_MS) continue;
         if (k) { G.userData.mine = true; G.userData.freed = false; G.dispose(); U.lods[k] = undefined; S.dropped++; continue; }   // a simplified or far level: dropped
         if (!G.userData.freed) { G.userData.mine = true; G.dispose(); G.userData.mine = false; G.userData.freed = true; S.freed++; } } }   // the full level: its GPU buffers (CPU copies kept for taps)
-    S.tiles = { full: n[0], simplified: n[1], far: n[2] };
+    S.tiles = { full: n[0], simplified: n[1], far: n[2] }; S.pending = want.size;
     // triangles of the levels built, against the full level of the same cells (the levels' saving)
     const tr = { simplified: [0, 0], far: [0, 0] }; for (const m of tiles) { const U = m.userData, f = U.full.index.count / 3; for (const [k, key] of [[1, 'simplified'], [2, 'far']]) { const G = U.lods[k]; if (G !== undefined) { tr[key][0] += f; tr[key][1] += G ? G.index.count / 3 : f; } } }
     S.levelTriangles = tr;
