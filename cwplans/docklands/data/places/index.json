@@ -41,6 +41,41 @@
    "city_buildings": 23960
   },
   {
+   "id": "london",
+   "name": "Greater London",
+   "label": "Greater London",
+   "kind": "blocks",
+   "area": [
+    -0.5102,
+    51.2868,
+    0.334,
+    51.6919
+   ],
+   "centre": [
+    -0.12776,
+    51.50735
+   ],
+   "timeZone": "Europe/London",
+   "locale": "en-GB",
+   "tileset": "london/tileset.json",
+   "features": "london/features.json",
+   "readme": "london/README.md",
+   "provenance": "london/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)",
+   "buildings": 1050005,
+   "named": 5562,
+   "built": "2026-10-21T10:44:51.915Z",
+   "extent": [
+    -0.5273437,
+    51.1523438,
+    0.3515625,
+    51.8554688
+   ],
+   "exclude": [
+    "docklands"
+   ]
+  },
+  {
    "id": "sarajevo",
    "name": "Stari Grad, Sarajevo",
    "label": "Vijećnica, Stari Grad, Sarajevo",

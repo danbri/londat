@@ -90,9 +90,10 @@ export function worldZones(points) {
 export function zoneAt(lon, lat, { regions = [], world = null, a3 = null } = {}) {
   const R = Object.values(regions || {});
   const out = (timeZone, source, approximate, method, r) => ({ timeZone, source, approximate, method, ...(r ? { region: r.id, locale: r.locale, name: r.name } : {}) });
-  for (const r of R) if (r.place && inBox(regionExtent(r), lon, lat)) return out(r.timeZone, 'region:' + r.id, false, `the region config of ${r.name}`, r);
-  const small = R.filter(r => !r.place && boxKm2(r.bbox) <= SMALL_KM2).find(r => inBox(r.bbox, lon, lat));
-  if (small) return out(small.timeZone, 'region:' + small.id, false, `the region config of ${small.name}`, small);
+  // a place's extent or a small region's box; when several hold the point, the smallest (the Docklands model box inside
+  // Greater London names the Docklands)
+  const hit = R.map(r => ({ r, b: r.place ? regionExtent(r) : boxKm2(r.bbox) <= SMALL_KM2 ? r.bbox : null })).filter(x => x.b && inBox(x.b, lon, lat)).sort((a, b) => boxKm2(a.b) - boxKm2(b.b))[0];
+  if (hit) return out(hit.r.timeZone, 'region:' + hit.r.id, false, `the region config of ${hit.r.name}`, hit.r);
   if (world) {
     const p = (a3 && world.nearest(lon, lat, a3, 2500)) || world.nearest(lon, lat, null, 300);
     // approximate: no country under the point, or a town of the same country in another zone is not much farther (a

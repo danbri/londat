@@ -3130,3 +3130,43 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   docklands/test/scripts-check.mjs headless: Sarajevo, Banja Luka 50 km, Belgrade 50 km, ?lang=ru, no 3D: all ok (0
   letters in another script in labels, search, describeView, featuresAt, cards, speech, text view; with 'all' the
   Cyrillic names come back). Skill: docklands-3d-page, "Names: Latin script preferred".
+## 2026-10-21: Greater London as blocks on the globe; the UK estimated (KR1.2, KR2.3, KR2.5; subagent)
+- Owner, 2026-10-22: "can we bring basic buildings to all of London, or all of UK now?" (Pages for now, 2026-10-20).
+  Coordinator: London as a new place "london" by the same pipeline, the Docklands model box left out, at most about
+  90 MB, the UK estimated, not built.
+- Region config `docklands/geo/regions/london.js` (place kind "blocks": no core, no ground; boundary = ONS region
+  E12000007 of the UK skeleton; exclude = the docklands model box, `modelBox` added to the docklands region config, the
+  model's own rule, 38,824 buildings left to it); `cwplans/tools/place-blocks.mjs` (selection, tree, tile, glb writer,
+  world-base ground sampler); build-place-tiles.mjs blocks mode (operations place-select-blocks v1, place-city-heights v2,
+  place-blocks v2); `fetch-overture-theme.py` NDJSON mode (2,026,838 rows, 1.44 GB: a JSON array is too long for a Node
+  string); `zone.js`: the smallest region holding a point wins (else the Docklands became "london" in zoneAt).
+- Result: 1,050,005 OSM buildings (via Overture, >= 25 m2) in 2,394 tiles (levels 10 to 14), 80.9 MB; 84.4 MB with
+  tileset.json 0.97, features.json 0.73 (5,562 named buildings with their id), log and sources. Heights (F55):
+  OSM height 1,354, OSM levels 224,148, Microsoft through Overture 189,445, small 22,477, GHSL 685,028, default 124.
+  3d-tiles-validator 0 errors, 0 warnings. Register entries (5 files, extract overture-osm-london), pipeline.json.
+- places.js (a small hook; another agent works on its materials): `hasGround(p)`: no hole, curtain or sampler for a
+  place without ground; the where provider leaves builtUp, country and source to the skeletons; settled waits for the
+  top cells; describeView counts blocks drawn. And a fix for all places: InstancedMesh capacity >= 1,025 (`INST_MIN`):
+  three.js r186 puts small instance counts in a uniform array whose length is in the shader, so each tile count compiled
+  its own program (London fly-in: 7 programs, 6 s of long tasks; after: London central 12.9 -> 4.8 s cold, Croydon
+  7.0 -> 1.6 s).
+- Measured (place-perf, 390 x 844 @2, layers none): 2 km over Holborn 149 calls, 364k frame triangles (place 193k),
+  1.49 s a frame in software; the whole city at 20 km 162 calls, 259k (place 74k); heap 356 to 364 MB. Croydon 175 /
+  167 calls, 387k / 292k triangles. León in the same session: 191 calls, 409k / 284k triangles at 1.5 / 30 km, heap
+  306 to 310 MB: London is close (fewer calls, as many triangles, heap +40 to 60 MB).
+- UK estimate (Overture counts per ONS region): 17.7 M OSM buildings, 1.33 GB by the same method; 1.95 GB with
+  Microsoft footprints where OSM has none (8.2 M). Regions 47 to 179 MB (OSM only): one repository with Pages per region
+  or two, or one object store; docs/planet-architecture.md 3b. The coordinator's docklandia repository
+  (data/gb/<set>/) fits that; `place.tileBase` in a region config points a place's tileset there (not used for London:
+  it fits londat).
+- Tests: npm test (place-blocks.test.mjs new) and npm run check passed; place-check León, Sarajevo and London (new case:
+  deep link at BT Tower settles with block tiles, no hole in the globe terrain, describeView blocks and named, featuresAt
+  and the card name BT Tower 188.4 m, findPlaces, the whole city at 20 km in levels 10 and 11, a Croydon block card, freed
+  far away) all passed at 390 x 844 @2; globe-check 390 x 844 @2 passed; cells-check passed with a new step: after the
+  globe has been opened once, from 12 km (eye over 3 km) the globe behind the model draws London blocks (levels 10 to 12,
+  115,550 place triangles; frame draw calls 130 -> 275 with the background globe).
+- Lessons in skills: docklands-3d-page "Three.js port: Greater London as blocks (2026-10-22)"; docklands-data-curation F55
+  (London counts); cwplans-uk-skeleton (the boundary). Trap of this session: a `pgrep -f <name>` wait loop matches its own
+  command line and never ends; a background http.server dies at its 30-minute default: give it the long timeout.
+- Open: no 3D buildings in globe mode inside the model box (until the hand-over); Microsoft footprints where OSM has none
+  (owner); the merged far view reads as a grid of squares; implicit tiling; the UK.

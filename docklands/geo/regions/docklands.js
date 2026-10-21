@@ -41,6 +41,10 @@ export default {
         error: { horizontalMaxM: 0.086, horizontalRmsM: 0.028, verticalMaxDropM: 3.08, againstFitMaxM: 0.03 } },
       // UK tile cells: BNG 1 km squares (the LiDAR tiles); worldwide cells: docs/planet-architecture.md
       cells: { scheme: 'bng-1km', size: 1000 },
+      // the model box in the model frame (BNG E 532,400 to 539,900, N 176,700 to 182,300): the model draws a building whose
+      // centroid is at least inset_m inside it (cwplans/tools/build-docklands.mjs inside(x, z, 1)); a place around the model
+      // (Greater London, regions/london.js place.exclude) draws the others, so no building is drawn twice
+      modelBox: { x0: -5150, x1: 2350, z0: -2000, z1: 3600, inset_m: 1 },
     },
   ],
 };

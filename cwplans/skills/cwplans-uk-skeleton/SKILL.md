@@ -114,3 +114,13 @@ development runs are not history).
 - Census population for Scotland (NRS 2022) and Northern Ireland (NISRA 2021); OS Terrain 50 overview; cards into kgx
   as a graph version (Flow, skill cwplans-kgx); more countries through the same adapter shape (`--region=<id>` with an
   adapter `<id>-skeleton`).
+
+## Used by the London blocks place (2026-10-21)
+
+- The ONS region polygon E12000007 (`layers/regions/6/63-50.json`, BGC) is the boundary of Greater London as blocks
+  (region config `docklands/geo/regions/london.js`, `place.boundary`; skill docklands-3d-page, "Three.js port: Greater
+  London as blocks"). The tool reads it with `unpack()` and tests building centroids against it. Changing the region
+  layer changes London's build input (its SHA-256 is in places/london/provenance/log.json): rebuild London after it.
+- The skeleton's London labels, roads and rail stay as they are: the London place has no labels of its own, and its where
+  provider leaves `builtUp`, `county`, `district` and `country` to this set.
+- The region and country polygons also gave the UK building estimate (Overture counts per region, docs/planet-architecture.md 3b).

@@ -295,4 +295,4 @@ export function inv4rigid(m) {   // inverse of a rotation + translation
   o[12] = -(o[0] * t[0] + o[4] * t[1] + o[8] * t[2]); o[13] = -(o[1] * t[0] + o[5] * t[1] + o[9] * t[2]); o[14] = -(o[2] * t[0] + o[6] * t[1] + o[10] * t[2]); return o;
 }
 export const roundM = m => m.map(v => Math.abs(v) < 1e-12 ? 0 : +v.toPrecision(15));
-export { meet };
+export { meet, simplify, obbBox, area2 };   // (also used by place-blocks.mjs)

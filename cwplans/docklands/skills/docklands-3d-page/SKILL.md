@@ -3224,6 +3224,81 @@ https://danbri.github.io/londat/docklands/?ll=42.59732,-5.56654,30000&ht=0,45 (S
   the CPU dequantisation and InstancedMesh matrices; the Docklands model build during a place fly-in (main.js, another
   agent's file); hillshade in the coarse textures; Leiden.
 
+## Three.js port: Greater London as blocks (2026-10-22)
+
+Owner, 2026-10-22: "can we bring basic buildings to all of London, or all of UK now?" Region config
+`docklands/geo/regions/london.js` (place `kind: 'blocks'`), tool `cwplans/tools/build-place-tiles.mjs --region london`
+(blocks mode) with `cwplans/tools/place-blocks.mjs`, reader `docklands/globe/places.js` (a small hook), tests
+`docklands/test/place-check.mjs --place london`, `place-perf.mjs --place london-central|london-croydon`,
+`cells-check.mjs` (London around the model), `cwplans/tools/test/place-blocks.test.mjs`. UK estimate and hosting:
+https://github.com/danbri/londat/blob/main/docs/planet-architecture.md section 3b. Views: whole city
+https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45 ; BT Tower
+https://danbri.github.io/londat/docklands/?ll=51.5215,-0.1389,700&ht=200,60 ; Croydon
+https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
+
+- **A place with no core and no ground.** `place.kind: 'blocks'`: the buildings of a boundary polygon (a skeleton
+  feature: ONS region E12000007 in `cwplans/docklands/data/uk/`) as blocks only. The globe's terrain and Sentinel-2
+  imagery stay: the blocks stand on the globe's own world-base heights (GLO-90 box means, the deepest level with a tile;
+  `worldBaseGround`) + the EGM96 geoid, bases 3 m deep. places.js `hasGround(p)` (p.ground, p.sur or p.ring): without
+  ground no hole in the world terrain, no curtain, no sampler patch; the where provider leaves `builtUp`, `country` and
+  `source` to the skeleton sets (else the model's describeView "Area: ... (source)" changed in the Docklands); `settled`
+  waits for the top cells; describeView counts the blocks drawn by class (`blocks_drawn`, `blocks_by_source`) and the
+  named buildings in view.
+- **No duplicates at the model.** `place.exclude: ['docklands']`: a building whose centroid is at least 1 m inside the
+  model box (BNG, in the docklands region config `modelBox`, tested through the uk-os `modelFrame`) is left to the
+  model, the model's own rule (build-docklands.mjs `inside(x, z, 1)`): 38,824 buildings. Side effect, open: in GLOBE mode
+  the model box (the City, Canary Wharf, Greenwich) shows no 3D buildings until the hand-over (under 36 km over the box).
+  In model mode above 3 km the London blocks show in the globe background around the model (cells-check).
+- **Fetch.** One DuckDB query of the Overture buildings theme over the boundary box: 2,026,838 rows, 1.44 GB. A JSON
+  array of that size is longer than a Node string (512 MB): `fetch-overture-theme.py` writes NDJSON (`.ndjson` output,
+  rows ordered by id in SQL, header in `<out>.meta.json`); the tool streams it (readline), hashes it by stream and
+  writes its intermediates as gzip NDJSON. GHSL: London crosses the 10-degree tile edge at 0.008 W: a mosaic of R4_C18
+  and R4_C19, committed as `sources/ghsl-built-h.json.gz` (360 kB).
+- **Heights.** Overture had already put Microsoft ML heights on 333,782 OSM outlines (`/properties/height` source
+  "Microsoft ML Buildings"): the record's own ring matches exactly. Those and the Microsoft-geometry records are the
+  class `ms` (place.blocks.footprint_classes), so the place-heights order holds: OSM height 1,354, OSM levels 224,148,
+  other Overture sources 0, Microsoft 189,445, small kinds 22,477, GHSL 685,028 (61 %), default 124. No separate download
+  of the Microsoft quadkey files (the same data). OSM `height` is rare in London (2,247 records).
+- **Tiles.** Quadtree of the cells with buildings only (an empty child is left out; REPLACE stays correct: nothing to
+  draw there), levels 10 to 14; leaves every building >= 25 m2 (box or simplified outline, as the León city ring), named
+  buildings >= 1,500 m2 or >= 20 m as their own outline with COLOR_0 and `_FEATURE_ID_0` (the card names them: BT Tower
+  188.4 m, OSM height); coarse levels: tall or big buildings as boxes, the rest one box a square (400 / 200 / 100 / 50 m).
+  A merged box of sqrt(area) left a grid of separate cubes from 20 km; now its side grows with the built share (full at
+  50 %) and its centre moves to the square's centre. Instance rotations as int8 normalized (4 bytes; under 1 degree).
+  Block classes are written as their labels in `extras.blocks.classes`, so the card says "Footprint from: OpenStreetMap
+  (via Overture)" with no surround.json. 2,394 tiles, 80.9 MB; total 84.4 MB (75 bytes a building). Named set first at
+  400 m2 / 15 m: 19,728 rows, features.json 2.58 MB (loaded at 150 km): too heavy, cut to 5,562 rows, 0.73 MB. Transforms
+  of the tileset: rotation to 10 digits (1.08 -> 0.97 MB). 3d-tiles-validator 0.6.0: 0 errors, 0 warnings.
+- **Shader programs per instance count (trap, all places).** three.js r186 puts an InstancedMesh's matrices in a uniform
+  array when count x 64 bytes fits the uniform buffer limit, and the array LENGTH is in the shader: every tile with
+  another small count compiled its own program (London fly-in: 7 programs, 6 s of long tasks in software). places.js now
+  makes each instanced block mesh with a capacity of at least 1,025 (`INST_MIN`, over 64 kB) and `mesh.count = k`: one
+  program for all tiles (León and Sarajevo profit too). Find such costs with a CPU profile (`getProgramParameter`,
+  `getUniformBlockIndex`) and by wrapping `renderer._pipelines._getRenderPipeline` to log the objects that make new ones.
+- **Measured** (`place-perf.mjs`, 390 x 844 @2, `--layers none`, software WebGL 2; fly-in from 50 km to 2 km):
+  | measure | central London (Holborn) | Croydon |
+  |---|---|---|
+  | main-thread long tasks, cold fly-in (before the INST_MIN fix) | 4,828 ms, max 2,986 (12,867, max 4,146) | 1,610 ms, max 1,313 (7,027) |
+  | long tasks, second fly-in (before) | 3,637 ms, one task (11,365) | 3,043 ms, one task (8,542) |
+  | still 2 km, tilt 55: frame interval, submit, calls, frame / place triangles | 1,486 ms, 5.8 ms, 149, 363,694 / 193,381 (levels 10 to 14) | 1,424 ms, 4.8 ms, 175, 387,493 / 195,882 |
+  | still 20 km (the whole city), tilt 45 | 1,427 ms, 4.6 ms, 162, 259,209 / 74,120 (levels 10, 11) | 1,460 ms, 8 ms, 167, 291,699 / 106,610 |
+  | JS heap | 356 to 364 MB | 347 to 350 MB |
+
+  León in the same session (same code, 1.5 km / 30 km): 191 / 191 calls, 409,118 / 284,481 frame triangles (place
+  218,242 / 63,552), 2.2 / 3.0 s a frame, long tasks 2,073 ms cold and 1,055 ms on the second fly-in, heap 306 to 310
+  MB. So London draws fewer calls and as many triangles as León (boxes are 10 triangles an instance, one draw call a
+  tile kind); its heap is 40 to 60 MB higher (tileset.json of 2,394 nodes, the UK skeleton's London layers) and one
+  task of about 3 s remains in its second fly-in. place-check London: the deep link settles in 40 to 80 s of software
+  rendering. Before the INST_MIN fix (first column, in brackets) the London fly-in compiled 7 programs.
+- **Testing traps.** The globe is drawn behind the model only after it has been opened once (`G.ready`) and only with
+  the eye over 3 km (`HANDOVER.bg`): cells-check's 8 km view (`c=...,8000,1.2,0.3`) has the eye at 2.4 km, so London
+  shows only from its 12 km step after the globe round trip. A wait loop `while pgrep -f place-perf.mjs` matches its own
+  shell's command line and never ends (use a runner script); a background `http.server` stops at the 30-minute default
+  timeout and later tests read nothing: start it with the long timeout.
+- **Open.** Buildings in globe mode inside the model box; Microsoft footprints where OSM has none (571,817 in the box:
+  one config line, owner); building parts; the merged far view still reads as a grid of squares; implicit tiling
+  (tileset.json 0.97 MB, loaded at 150 km, also in the Docklands model's globe background); the UK (section 3b).
+
 ## Three.js port: level of detail and the hand-over (2026-10-18)
 
 Owner, 2026-10-14: "pls make sure we make appropriate use of threejs lod support for everything"; "zooming out there is an
