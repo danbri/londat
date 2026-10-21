@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Halifax","kind":"city","pop":471559},"geometry":{"type":"Point","d":[-63577,44643]}},{"properties":{"name":"Hamilton","kind":"city","pop":902},"geometry":{"type":"Point","d":[-64783,32295]}}]}

@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Sydney","kind":"city","pop":105968},"geometry":{"type":"Point","d":[-60183,46135]}},{"properties":{"name":"Corner Brook","kind":"town","pop":19316},"geometry":{"type":"Point","d":[-57952,48950]}},{"properties":{"name":"Glace Bay","kind":"town","pop":16915},"geometry":{"type":"Point","d":[-59957,46197]}}]}

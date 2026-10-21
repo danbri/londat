@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Darwin","kind":"city","pop":139902},"geometry":{"type":"Point","d":[130842,-12461]}},{"properties":{"name":"Palmerston","kind":"town","pop":33695},"geometry":{"type":"Point","d":[130983,-12486]}}]}

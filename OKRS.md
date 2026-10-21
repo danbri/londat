@@ -124,7 +124,7 @@ Evidence is on main unless stated. "Headless" means Chromium with software WebGL
 | KR1.3 languages | 0.1 | country names on the globe in 26 languages (`?lang=`); the interface is English only |
 | KR1.4 source adapters | 0.4 | UK adapter; worldwide sources (Natural Earth, ETOPO, Copernicus GLO-30, OSM); Spain (IGN, Catastro) and Bosnia (waiver) adapters in the region configs |
 | KR2.1 globe | 0.8 | live; orbit to street level; hand-over 0.000 m off with a 0.5 s fade; not measured on a phone |
-| KR2.2 worldwide base layers | 0.5 | Natural Earth and ETOPO 2022 in the register; not yet served as tiles; terrain about 9.8 km a pixel |
+| KR2.2 worldwide base layers | 0.7 | served as tiles in the terrain quadtree (2026-10-20): Sentinel-2 cloudless 2016 imagery (CC BY 4.0) worldwide to 2.4 km a pixel and to 19 m round the testbeds, Copernicus GLO-90 heights to 150 m round the testbeds (`world-base/`, 27.6 MB); Natural Earth 1:10m roads, rail, rivers, lakes, urban areas and GeoNames towns (`world-detail/`, 16.9 MB); OSM regional sets for north-west Spain and Bosnia (7.5 MB); terrain elsewhere still ETOPO 9.8 km; no 3D Tiles terrain format yet |
 | KR2.3 one tile format | 0.4 | 3D Tiles 1.1 with glTF for the places (validator: 0 errors); the Docklands model is not tiled |
 | KR2.4 detail measure per tile | 0.0 | not started |
 | KR2.5 tile hosting | 0.0 | no decision |

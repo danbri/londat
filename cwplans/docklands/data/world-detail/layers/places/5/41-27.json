@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Ukhta","kind":"city","pop":102187},"geometry":{"type":"Point","d":[53691,63569]}},{"properties":{"name":"Sosnogorsk","kind":"town","pop":29343},"geometry":{"type":"Point","d":[53892,63597]}},{"properties":{"name":"Yemva","kind":"town","pop":16404},"geometry":{"type":"Point","d":[50863,62588]}}]}

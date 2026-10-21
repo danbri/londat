@@ -1,0 +1,99 @@
+{
+ "about": "Dataflow log of tools/build-world-base.mjs (skill cwplans-dataflow): operations, the fetches that made their inputs (summarised: count, bytes, SHA-256 of the sorted list of input hashes), one activity per run (inputs and outputs by SHA-256). The per-file fetch log stays in the raw folder.",
+ "operations": {
+  "imagery-tiles": {
+   "version": 1,
+   "tool": "tools/build-world-base.mjs",
+   "skill": "docklands-3d-page"
+  },
+  "dem-tiles": {
+   "version": 1,
+   "tool": "tools/build-world-base.mjs",
+   "skill": "docklands-3d-page"
+  }
+ },
+ "fetches": {
+  "imagery-tiles": {
+   "inputs": 5728,
+   "bytes": 59597523,
+   "urls": [
+    "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless/default/WGS84/{z}/{row}/{col}.jpg"
+   ],
+   "fetched": [
+    "2026-10-20"
+   ],
+   "inputs_sha256": "5e03b08d626cef0a88e84b482683985bb02e03436608d670304ba40dae07e9f7"
+  },
+  "dem-tiles": {
+   "inputs": 201,
+   "bytes": 78361304,
+   "urls": [
+    "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif",
+    "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif (overview 2 of 2, read by range)"
+   ],
+   "fetched": [
+    "2026-10-20"
+   ],
+   "inputs_sha256": "e82c7a51599d42b7ca3ba2a72df587eea51e071e90bcc0dd9eacec3ddba6ade9"
+  }
+ },
+ "activities": [
+  {
+   "id": "acta432bf4909ed00a0",
+   "operation": "imagery-tiles",
+   "version": 1,
+   "inputs_sha256": "5e03b08d626cef0a88e84b482683985bb02e03436608d670304ba40dae07e9f7",
+   "params": {
+    "q": 70,
+    "px": 512,
+    "regions": [
+     "docklands",
+     "leon",
+     "sarajevo"
+    ],
+    "radius_km": {
+     "5": 1500,
+     "6": 800,
+     "7": 400,
+     "8": 220,
+     "9": 100,
+     "10": 40,
+     "11": 15
+    },
+    "global_levels": 4
+   },
+   "outputs": 1432,
+   "outputs_sha256": "035265a1801d8cf107e17f6701ba7ec41c9713912db432a1fe99a878f57e59c8",
+   "bytes": 27794964,
+   "seconds": 102,
+   "at": "2026-10-20T23:12:23.734Z"
+  },
+  {
+   "id": "act0052a83e74ee3b96",
+   "operation": "dem-tiles",
+   "version": 1,
+   "inputs_sha256": "e82c7a51599d42b7ca3ba2a72df587eea51e071e90bcc0dd9eacec3ddba6ade9",
+   "params": {
+    "grid": 35,
+    "regions": [
+     "docklands",
+     "leon",
+     "sarajevo"
+    ],
+    "radius_km": {
+     "7": 300,
+     "8": 170,
+     "9": 80,
+     "10": 35,
+     "11": 15,
+     "12": 7
+    }
+   },
+   "outputs": 448,
+   "outputs_sha256": "e818e39beee61d6f0899f70f04ce531141f493f8cba507a4ec711805aabb4e87",
+   "bytes": 1097600,
+   "seconds": 7,
+   "at": "2026-10-20T23:12:30.483Z"
+  }
+ ]
+}

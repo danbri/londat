@@ -1,0 +1,1 @@
+{"format":"skeleton-1","q":1000,"features":[{"properties":{"name":"Antofagasta","kind":"city","pop":401096},"geometry":{"type":"Point","d":[-70397,-23651]}},{"properties":{"name":"Copiapó","kind":"city","pop":129280},"geometry":{"type":"Point","d":[-70332,-27367]}},{"properties":{"name":"Caldera","kind":"town","pop":16150},"geometry":{"type":"Point","d":[-70819,-27068]}}]}
