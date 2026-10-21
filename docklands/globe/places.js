@@ -22,6 +22,7 @@
 // viewer (3d-tiles-renderer, CesiumJS, QGIS) reads them too.
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)" and "places, city and surroundings by level
 // of detail (2026-10-20)".
+import { latinPreferred, pickName } from '../geo/script.js';
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, select, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, normalLocal, cameraWorldMatrix, modelWorldMatrix } from 'three/tsl';
 import { geodeticToEcef, enuBasis, surfaceDistance, D2R } from '../geo/ellipsoid.js';
@@ -386,7 +387,8 @@ export async function attachPlaces(G, H, { scene, U }) {
   // ---------- text and machine interface
   const featsP = p => p.featsP || (p.featsP = p.feats ? Promise.resolve(p.feats) : fetch(new URL(p.features, base)).then(r => r.json()).then(fj => (p.feats ||= indexFeatures(fj))));
   const surP = p => !p.surround ? Promise.resolve(null) : p.surP || (p.surP = p.sur ? Promise.resolve(p.sur) : fetch(new URL(p.surround, base)).then(r => r.json()).then(s => (p.sur ||= s)));
-  const nameText = (n, alt) => alt ? `${n} (${alt})` : n;
+  // names: the Latin form only while Latin is preferred (geo/script.js; owner, 2026-10-22); a name with no Latin form gives ''
+  const nameText = (n, alt) => { if (latinPreferred()) { const m = pickName(n, alt); return m || ''; } return alt ? `${n} (${alt})` : n; };
   const localTime = p => { try { return new Intl.DateTimeFormat(p.locale || undefined, { timeZone: p.timeZone, hour: '2-digit', minute: '2-digit', weekday: 'short' }).format(new Date(H.clock())); } catch { return null; } };
   G.placeTime = (lon, lat) => { const p = P.find(q => inArea(q, lon, lat) || (q.extent && inRect(q.extent, lon, lat))); if (!p) return null; const t = H.clock(); return { place: p.id, time_zone: p.timeZone, local: localTime(p), iso: new Date(t).toISOString() }; };
   const rowsOf = (S, k) => (S[k] || []).map(r => Object.fromEntries(S[k + '_fields'].map((f, i) => [f, r[i]])));
@@ -398,7 +400,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     for (const p of P) {
       const F = await featsP(p).catch(() => null); if (!F) continue;
       const sc = t => { t = fold(t); return !t ? 0 : t === f ? 100 : t.startsWith(f) ? 80 : (' ' + t).includes(' ' + f) ? 60 : f.length >= 3 && t.includes(f) ? 30 : 0; };
-      const add = (name, alt, kind, lon, lat, extra = {}, bonus = 0) => { const s = Math.max(sc(name), sc(alt || '')); if (s) out.push({ name: nameText(name, alt), local_name: alt || undefined, kind, lon, lat, region: p.name, id: `place:${p.id}:${extra.osm_id || fold(name)}`, score: s + bonus, alt_m: extra.alt_m || (kind === 'building' || kind === 'point' ? 700 : 1500), facts: [{ label: 'Place', value: p.name, source: extra.source || 'build-place-tiles (OpenStreetMap)' }, ...(extra.facts || [])], place: p.id, osm_id: extra.osm_id }); };
+      const add = (name, alt, kind, lon, lat, extra = {}, bonus = 0) => { const s = Math.max(sc(name), sc(alt || '')), shown = nameText(name, alt); if (s && shown) out.push({ name: shown, local_name: (latinPreferred() ? undefined : alt) || undefined, kind, lon, lat, region: p.name, id: `place:${p.id}:${extra.osm_id || fold(name)}`, score: s + bonus, alt_m: extra.alt_m || (kind === 'building' || kind === 'point' ? 700 : 1500), facts: [{ label: 'Place', value: p.name, source: extra.source || 'build-place-tiles (OpenStreetMap)' }, ...(extra.facts || [])], place: p.id, osm_id: extra.osm_id }); };
       for (const t of F.fj.search || []) add(t, null, 'place', p.centre[0], p.centre[1], {}, 1);
       for (const b of F.B) if (b.name || b.address) { add(b.name || b.address, b.name ? b.name_alt : null, 'building', b.lon, b.lat, { osm_id: b.osm_id, facts: [{ label: 'Height', value: `${b.height_m} m (${b.height_source})` }] }); if (b.name && b.address) add(b.address, null, 'building', b.lon, b.lat, { osm_id: b.osm_id }); }
       for (const x of F.Pt) add(x.name, x.name_alt, 'point', x.lon, x.lat, { osm_id: x.osm_id, facts: [{ label: 'Kind', value: x.kind }] });
@@ -487,7 +489,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     const fa = hit.object.geometry.attributes._feature_id_0, b = fa && p.feats.byIndex.get(Math.round(fa.getX(hit.face.a)));
     if (!b) return null;
     const osm = `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}`;
-    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
+    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', latinPreferred() ? null : b.name_alt], ['Wikidata', b.wikidata], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
     H.showCard(`<h2>${esc(b.name || b.address || 'Building')}</h2><p class="small">${esc(p.name)} · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a></p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
     return b;
   };

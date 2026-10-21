@@ -3102,3 +3102,13 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   CLAUDE.md and in docs/planet-architecture.md 3a (the Docklands tileset plan: geometry and per-building attributes only,
   no baked light, sky or time). The work so far keeps this: places, base imagery (source data, lit live), model cells
   (geometry levels, same lighting), service worker (caches files, not frames).
+
+## 2026-10-22: Latin script preferred for names (owner)
+- Owner: "for now we should system-wide have a checkbox expressing latin labels preferred over other scripts. Given the
+  politics and recent wars I don't want accidental use of Cyrillic labels in non-RS Sarajevo and I have no confidence in
+  data quality so far. Better no labels than that." First step, live: docklands/geo/script.js (latinPreferred, isLatin,
+  pickName; default on; ?scripts=all or setLatinPreferred(false) turns it off; no automatic transliteration). Applied in
+  globe/labels.js (every globe label: a non-Latin name gives way to a Latin title, else it is not shown) and
+  globe/places.js (names, search entries, cards, describe text). Headless over Sarajevo at 50 km: 57 labels, 0 in
+  Cyrillic; describeView and findPlaces("Sarajevo") without Cyrillic; with ?scripts=all the Cyrillic search names come
+  back. Next (agent): the menu checkbox, the API/WebMCP setting, the UK and world skeleton readers, cards elsewhere.

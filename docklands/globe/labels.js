@@ -3,6 +3,7 @@
 // that the view's ground resolution matches), hidden behind the horizon, then decluttered: by order (class, then the
 // data's rank), a label is shown only if its box overlaps no label already placed. At most MAX at once.
 // Skill: docklands-3d-page, "Three.js port: globe and world skeleton (2026-10-13)".
+import { latinPreferred, isLatin } from '../geo/script.js';
 const MAX = 70, PAD = 3;
 const CLS = { model: 0, country: 1, sea: 2, place: 3, admin1: 4, river: 5, lake: 5, extra: 3 };
 
@@ -12,7 +13,9 @@ export function makeLabels(host) {
   const L = {
     candidates: C,
     // c: { id, text, cls, P: [x, y, z] ECEF, up: [ux, uy, uz], minZ, maxZ, rank (smaller first), pop, onTap }
-    add(c) { c.order = (CLS[c.cls] ?? 3) * 1e4 + (isFinite(c.rank) ? c.rank : 9) * 100 - Math.log10((c.pop || 0) + 1) * 5; C.push(c); L.sorted = false; return c; },
+    // names in a non-Latin script are swapped for a Latin title, else not shown, while Latin is preferred (geo/script.js)
+    add(c) { if (latinPreferred()) { if (c.title && !isLatin(c.title)) c.title = ''; if (!isLatin(c.text)) { if (c.title && isLatin(c.title)) { c.text = c.title; c.title = ''; } else { c.hiddenScript = true; return c; } } }
+      c.order = (CLS[c.cls] ?? 3) * 1e4 + (isFinite(c.rank) ? c.rank : 9) * 100 - Math.log10((c.pop || 0) + 1) * 5; C.push(c); L.sorted = false; return c; },
     clear(pred) { for (let i = C.length - 1; i >= 0; i--) if (pred(C[i])) { if (C[i].el) C[i].el.remove(); C.splice(i, 1); } },
     // project(P) -> [x, y] in CSS px or null; eye: ECEF; zoom: the view's web-map zoom; W, H: the screen
     update({ project, eye, zoom, W, H, visible = true, filter }) {
