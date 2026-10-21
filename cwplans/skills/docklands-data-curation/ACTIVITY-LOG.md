@@ -3020,3 +3020,46 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   headless Chromium, local server: http://127.0.0.1:8093/cwplans/kg/ (live: https://danbri.github.io/londat/cwplans/kg/)
   loads the new store with 0 page errors and 0 console errors; https://danbri.github.io/londat/cwplans/atlas/ and
   `#quality` locally 0 page errors (one 404: favicon.ico).
+
+## 2026-10-21: KR6.3 rule 2: one branch key across sources (F46, F20 to "rule in use"; 8 open faults -> 6) (subagent)
+- New `cwplans/tools/registry-branch-key.mjs`: `applyBranchMerge` is the last join of `build-registry.mjs` (after the
+  placement rule); the command runs it as the logged operation `merge-occupants-by-branch-key` v1 on the committed
+  registry (inputs by SHA-256: `registry/buildings.json`, `data/raw/registry/osm-cw.json.gz`, `postcodes/postcodes.json`,
+  `registry/ids.json`); change set graph `registry-branch-merge` (external head, in the store); `--dry` prints the merges
+  and the review list. Rules, confidences and traps: curation skill, "Recount of 2026-10-21", "Done 2026-10-21 (rule 2)".
+- Result over all 1,446 occupants: 181 merges (high 162, medium 19; in one building 158, across buildings 23), 184
+  records absorbed, occupants 1,446 -> 1,262. By rule: shared identifier 141 (OSM `fhrs:id` tags on 238 OSM occupants
+  carry most of them), name in one building 13, name with a place or kind word 1, ODS provider and site (F20) 3, former
+  id in an OSM `was:` tag 1 (Sk:n), shared identifier across buildings 15, name across buildings by the placement order 8.
+  Review list `branch_merge_review`: 36 entries (word-prefix names 22, organisation and chain branch 2, different
+  identifiers of one kind 3, same source without a second key 3, addresses with different numbers 1, ambiguous 1,
+  across buildings with two strong positions or over 150 m 4). Every merged occupant keeps `merged_from` (each record
+  with the building it was in), `primary_source`, `branch_key`, `merge_rule`, `merge_confidence`, `merge_evidence`.
+- Audit before -> after: ID-2 110/1446 -> 7/1262 (all 7 on the review list); new check ID-6 (F46: a name in two
+  buildings within 250 m, one source each, no source twice) 46/78 -> 8/55 (4 names, all on the review list); SP-2
+  118/772 -> 104/684; SP-6 57/393 -> 54/344; SP-7 56/640 -> 52/550; CV-2 164 -> 158; TM-4 30/34 -> 26/28; SP-1 161
+  unchanged (after the check read `merged_from`); AT-3 59/87 -> 68/97: all 10 new pairs are merged occupants that now
+  hold both an OSM level and a CWG level (the F48 class, visible now). Issue records 8,263 -> 8,146.
+- Also: `hours-by-place.mjs` counts an occupant with a mall and no CWG page in its mall's area (records 411 -> 424 on
+  the placed registry; 413 after the merge: 11 duplicate OSM and web records gone); `build-branches.mjs` copies
+  `cwg_website` in its by-name pass (`--cwg-websites` now also fills a missing one: 4 branches). Consumers of `o.source
+  === 'fsa'` changed to read the merged records: `registry-placement.mjs` `postcodeEvidence`, `audit-quality.mjs`,
+  `build-categories.mjs`, `cwplans/atlas/index.html` (Food premises still 534 occupants with an FSA record).
+- Rebuilt: `registry-branch-key.mjs` (operation), `hours-by-place.mjs`, `build-categories.mjs` (QLever cache rebuilt
+  locally, 2 queries; occupants per category fall with the duplicates, e.g. catering 491 -> 440), `build-atlas.mjs`
+  (needed the OSTN15 grid: `fetch-raw.mjs grid`, local), `audit-quality.mjs`, `check-data-register.mjs --write`,
+  `build-kgx.mjs` twice (second run `new: 0`, logs unchanged; store `gen-34be03964461e012`, 477,175 triples, 33 heads),
+  `check-kgx-store.mjs --write`. Not re-run: `cwg-directory-typed.mjs` (reads the crawl keys, not the registry: only its
+  date changed), `join-web-facts.mjs` (the trap of the placement entry), `build-registry.mjs` whole (local inputs).
+- Lift `lift-registry-occupants` version 5: `cwk:branchKey`, `cwk:mergeConfidence`, `cwk:mergeRule`, `cwk:mergeEvidence`,
+  `cwk:sourceRecord` -> `cwk:SourceRecord` (source kind, name, role, `cwk:placedInBuilding`, own OSM, FSA, CWG pages).
+- Lessons (skills cwplans-dataflow, cwplans-kgx, docklands-data-curation): reset `kgx/` and the side files when a body
+  changes after a logged run that is not committed; run `check-data-register.mjs --write` before `build-kgx.mjs`
+  (`pipeline.jsonld` is an input); `pkill -f` with a pattern in the same shell's command line kills that shell; a
+  hard-wired FSA host counts in the locale check (`uk_sources`): use the `url` the FSA record carries.
+- OKRS.md draft: KR6.3 stays 1.0, now 6 open (F12, F47, F50, F51, F52, F55). Next by value: rule 5 (F47).
+- Checks: `npm run check` passes (locale check `uk_sources` 363, baseline 363); `npm test` 99 of 99 (8 new in
+  `cwplans/tools/test/registry-branch-key.test.mjs`); headless Chromium 390x844@2, local server:
+  http://127.0.0.1:8097/cwplans/kg/ (live: https://danbri.github.io/londat/cwplans/kg/) loads the new store
+  (139,466 quads) with 0 page errors and 0 console errors; https://danbri.github.io/londat/cwplans/atlas/ ,
+  `#business` and `#quality` (ID-6 shown) locally 0 page errors (one 404: favicon.ico). Not pushed.

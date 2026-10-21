@@ -58,7 +58,9 @@ build of 2026-10-07; the build maps old terms the same way.
 |---|---:|---|
 | `facts` | 3,452 | cited facts about Canary Wharf structures: property, value, unit, reference level, source URL, short quote |
 | `buildings` | 17,148 | registry buildings (cwb- ids): name, position, outline as WKT, levels, height, postcodes, OSM and Wikidata links |
-| `occupants` | 10,092 | occupants of the buildings: role, level, mall, opening hours, links to OSM, the CWG directory, brands |
+| `occupants` | 16,011 | occupants of the buildings (1,262 after the branch-key rule of 2026-10-21): role, level, mall, opening hours, links to OSM, the CWG directory, the FSA, brands, the placement of each link, and for an occupant made of several source records its branch key, merge confidence and one `cwk:SourceRecord` per record (lift version 5) |
+| `registry-placement` | 3,908 | the occupant links the mall and postcode-centre rule changed (F4, F7; `cwplans/tools/registry-placement.mjs`, 2026-10-21): one `cwk:PlacementChange` each |
+| `registry-branch-merge` | 2,873 | the branch-key rule (F46, F20; `cwplans/tools/registry-branch-key.mjs`, 2026-10-21): one `cwk:BranchMerge` per merge (key, confidence, rule, evidence, records absorbed, buildings) and one `cwk:BranchMergeReview` per pair kept apart (reason, records) |
 | `cwg` | 20,637 | the Canary Wharf Group directory: schema.org types, malls, levels, page dates, weekly opening hours per day |
 | `web` | 6,682 | the canonical schema.org layer of the web harvest (branch cards, hours, organisation cards) |
 | `web-search` | 1,439 | site search entry points: schema.org `WebSite` → `potentialAction` `SearchAction` → `target` `EntryPoint` `urlTemplate`, `query-input`, dates seen (`cwk:seenOn`, `cwk:notSeenOn`), probe class, `cwk:productSearch`, `s:about` the CWG shop (stored probe 2026-10-06 and live checks 2026-10-12; query `queries/site-search.rq`) |
