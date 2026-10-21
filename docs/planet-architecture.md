@@ -180,13 +180,21 @@ https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45
 
 - Source: the Overture buildings theme, release 2026-09-23.1, read by DuckDB over the boundary box (2,026,838 records,
   1.44 GB NDJSON, 5 minutes; `fetch-overture-theme.py` writes NDJSON when the output ends in `.ndjson`, because one
-  JSON array of 2 million rows is larger than a Node string). Geometry only from records whose source is OpenStreetMap.
+  JSON array of 2 million rows is larger than a Node string). Geometry from records whose source is OpenStreetMap, and
+  (since 2026-10-22, owner: "yes") from records whose source is Microsoft ML Buildings where no OSM outline overlaps them:
+  their own geometry class `ms` (switch: `place.blocks.geometry: ['overture-ms-geometry']` in the region config; delete
+  the id and rebuild to remove it). Re-fetched on 2026-10-21 for this build: the same SHA-256 as the first fetch.
 - Boundary: the ONS region E12000007 (London) of the UK skeleton (BGC), by the building centroid. The Docklands model box
   is left out by the model's own rule (a centroid at least 1 m inside the BNG box is drawn by the model:
   `modelBox` in the docklands region config), so no building is drawn twice and none is lost at the edge.
-- Heights (fault F55, counted per class): OSM height 1,354; OSM levels x 3 m 224,148; Overture height or floors of
-  other sources 0 (London has none but Microsoft); Microsoft ML Buildings height through Overture 189,445; small kinds
-  3 m 22,477; GHSL cell mean 685,028 (61 %); default 7 m 124. Of 1,122,576 OSM buildings selected.
+- Microsoft footprints (class `ms`): 405,101 selected in the boundary outside the model box (165,463 outside the
+  boundary, 1,082 in the model box), 171 dropped because they overlap an OSM outline (Overture had already left out most
+  overlaps), 349,432 drawn at 25 m2 or more. The block card says "Footprint from: Microsoft ML Buildings (via
+  Overture)"; describeView counts the blocks by class.
+- Heights (fault F55, counted per class). OSM outlines (1,122,576 selected): OSM height 1,354; OSM levels x 3 m 224,148;
+  Overture height or floors of other sources 0 (London has none but Microsoft); Microsoft ML Buildings height through
+  Overture 189,445; small kinds 3 m 22,477; GHSL cell mean 685,028 (61 %); default 7 m 124. Microsoft outlines
+  (405,101): Microsoft height 376,913 (93 %); GHSL 28,163; default 25.
 - Tiles: a quadtree of the cells with buildings from level 10 (about 20 x 12 km) to level 14 (1.22 x 0.76 km), REPLACE
   refinement, geometricError 300 / 150 / 75 / 35 m, leaves 0. Leaves: every building of 25 m2 or more as an oriented
   box (EXT_mesh_gpu_instancing; 28 bytes and 8 bytes of card data an instance) or, when it fills less than 85 % of its
@@ -194,10 +202,11 @@ https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45
   own id (5,562; the card and search name them). Coarse levels: tall or big buildings as their own boxes, the rest merged
   into one box a square (400, 200, 100, 50 m), its side growing with the built share of the square. No ground: the
   blocks stand on the globe's own world-base heights (GLO-90) 3 m deep; tiles hold geometry and attributes only (rule 6).
-- Size: 2,394 tiles 80.9 MB (level 14: 65.6 MB; levels 10 to 13: 15.4 MB), tileset.json 0.97 MB, features.json 0.73 MB,
-  log and sources 1.7 MB: 84.4 MB, 75 bytes a building. 3d-tiles-validator 0.6.0: 0 errors, 0 warnings.
-- Not drawn: buildings under 25 m2 (72,571 of the selected); Microsoft footprints where OSM has none (571,817 in the box: one config
-  line, as in León and Sarajevo, but needs the owner); building parts (Overture type building_part).
+- Size (with the Microsoft class, 2026-10-22): 2,451 tiles 106.7 MB (level 14: 86.3 MB; levels 10 to 13: 20.4 MB),
+  tileset.json 1.00 MB, features.json 0.73 MB, log and sources 2.2 MB: 110.6 MB for 1,399,437 blocks (1,050,005 OSM,
+  349,432 Microsoft), 79 bytes a building. Before (OSM only): 2,394 tiles, 84.4 MB. 3d-tiles-validator 0.6.0: 0 errors,
+  0 warnings.
+- Not drawn: buildings under 25 m2 (72,571 OSM, 55,669 Microsoft); building parts (Overture type building_part).
 - Globe mode shows no buildings inside the model box (the model draws them after the hand-over under 36 km).
 
 **The whole UK by the same method (estimate, not built).** Counts: Overture release 2026-09-23.1, every buildings record
@@ -214,7 +223,7 @@ whose bbox centre is inside an ONS region or country polygon of the UK skeleton 
 | Yorkshire and The Humber | 1,521,687 | 64,368 | 704,053 | 114 | 167 |
 | West Midlands | 1,484,432 | 32,197 | 640,663 | 112 | 160 |
 | East Midlands | 1,244,011 | 101,327 | 929,512 | 94 | 163 |
-| London (built: 84 MB) | 1,161,396 | 64,175 | 406,356 | 87 | 118 |
+| London (built: 110.6 MB with Microsoft) | 1,161,396 | 64,175 | 406,356 | 87 | 118 |
 | Northern Ireland | 936,855 | 51,774 | 307,083 | 70 | 94 |
 | Wales | 834,060 | 45,572 | 707,767 | 63 | 116 |
 | North East | 619,819 | 11,780 | 333,161 | 47 | 72 |

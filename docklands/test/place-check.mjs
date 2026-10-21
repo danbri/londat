@@ -27,7 +27,9 @@ const CASES = {
   // a place of kind "blocks" (no core, no ground of its own): BT Tower (OSM way 5022282, 188.4 m in OSM), a named building
   // drawn with its own id; Croydon for a city block; the whole city from 20 km
   london: { kind: 'blocks', ll: '51.5215,-0.1389,700', ht: '200,60', search: 'BT Tower', building: { lon: -0.13887, lat: 51.52153 }, tower: { lon: -0.13887, lat: 51.52153, name: 'BT Tower' },
-    town: 'Greater London', city: { lon: -0.0982, lat: 51.3762 }, far: { lon: -0.1276, lat: 51.4950, range: 20000, tilt: 45 } },
+    town: 'Greater London', city: { lon: -0.0982, lat: 51.3762 }, far: { lon: -0.1276, lat: 51.4950, range: 20000, tilt: 45 },
+    // the Microsoft class (place.blocks.geometry; owner 2026-10-22): Yiewsley (Hillingdon), where OSM has few outlines
+    extra: { lon: -0.4230, lat: 51.5314, label: /Microsoft/ } },
 };
 const C = CASES[PLACE]; if (!C) throw new Error('no test case for ' + PLACE);
 const FJ = JSON.parse(readFileSync(`cwplans/docklands/data/places/${PLACE}/features.json`, 'utf8'));
@@ -138,6 +140,16 @@ for (const [w, h, dpr] of SIZES) {
     for (let y = 0.35; y < 0.85; y += 0.025) for (const x of [0.2, 0.35, 0.5, 0.65, 0.8]) { G.tap(innerWidth * x, innerHeight * y); const el = document.getElementById('card'); if (!el.hidden && el.querySelector('h2')?.textContent === 'City block') return { card: el.textContent.replace(/\s+/g, ' ').slice(0, 160), sur }; }
     return { card: null, sur }; }, { c: C.city, p: PLACE });
   check(!!blk.card && /Footprint from/.test(blk.card), 'a tap on a city block opens its card with the footprint source', `${blk.card}; blocks by source in view ${JSON.stringify(blk.sur?.city_blocks_by_source)}`);
+  // an extra geometry class (a blocks place: London's Microsoft footprints): describeView counts its blocks; a tap names it
+  if (C.extra) { const xb = await page.evaluate(async ({ c, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: c.lon, lat: c.lat, range_m: 700, tilt_deg: 50 });
+      const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
+      const d = await docklands.describeView(), dp = (d.places || []).find(x => x.place === p); let card = null;
+      for (let y = 0.4; y < 0.85 && !card; y += 0.025) for (const x of [0.2, 0.35, 0.5, 0.65, 0.8]) { G.tap(innerWidth * x, innerHeight * y); const el = document.getElementById('card'); if (!el.hidden && /Microsoft/.test(el.textContent)) { card = el.textContent.replace(/\s+/g, ' ').slice(0, 200); break; } }
+      return { by: dp?.blocks_by_source, n: dp?.blocks_drawn, text: dp?.text?.slice(0, 220), card }; }, { c: C.extra, p: PLACE });
+    const k = Object.keys(xb.by || {}).find(a => C.extra.label.test(a));
+    check(!!k && xb.by[k] > 100, 'describeView counts the blocks of the extra geometry class', `${xb.n} blocks ${JSON.stringify(xb.by)}; ${xb.text}`);
+    check(!!xb.card && /Footprint from/.test(xb.card), 'a tap on a block of the extra class names its footprint source', String(xb.card));
+    const shot4 = `${OUT}/place-${PLACE}-${tag}-extra.png`; await page.screenshot({ path: shot4 }); console.log('     screenshot', shot4); }
   // goTo by name from far away: fly to the world, then to the place by its word
   await page.evaluate(() => docklands.goTo({ lon: 0, lat: 20, alt_m: 2e7 }));
   const g = await page.evaluate(q => docklands.goTo(q), C.search);

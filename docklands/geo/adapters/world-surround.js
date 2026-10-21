@@ -56,9 +56,9 @@ export const ignGeometry = {
     credit: 'Some city buildings: Instituto Geográfico Nacional (España) via Overture Maps (licence not stated; kept apart, under review)' },
 };
 export const msGeometry = {
-  id: 'overture-ms-geometry', area: 'worldwide', status: 'in use behind the region switch (place.surround.geometry)',
+  id: 'overture-ms-geometry', area: 'worldwide', status: 'in use behind the region switch (place.surround.geometry; place.blocks.geometry for a place of kind blocks)',
   about: 'Building footprints of Overture buildings records whose geometry source is "Microsoft ML Buildings"',
-  licence: 'ODbL 1.0', licenceClass: 'share-alike', approved: 'owner, 2026-10-20: "Use ms/overture"', fallback: 'OSM buildings only (remove the id from place.surround.geometry)',
+  licence: 'ODbL 1.0', licenceClass: 'share-alike', approved: 'owner, 2026-10-20: "Use ms/overture"; Greater London: owner, 2026-10-22 ("yes")', fallback: 'OSM buildings only (remove the id from place.surround.geometry or place.blocks.geometry)',
   geometry: { cls: 'ms', dataset: 'Microsoft ML Buildings', source: 'overture-ms-geometry', label: 'Microsoft ML Buildings (via Overture)',
     credit: 'Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)' },
 };

@@ -4,7 +4,9 @@
 // globe's terrain and imagery stay; the blocks stand on the globe's own heights). Pure functions over their inputs (no
 // clock, no network):
 //   blockSelector(opt)     Overture buildings rows -> the OSM buildings inside the boundary and outside the excluded model
-//                          box (drawn), and the height values of the other records (open licence, by dataset)
+//                          box (drawn), the records of the extra geometry classes (region switch place.blocks.geometry,
+//                          e.g. Microsoft ML Buildings, class 'ms') there where no OSM outline overlaps them (drawn, with
+//                          their class), and the height values of the other records (open licence, by dataset)
 //   blockTree(opt)         the quadtree: top cells over the extent, every cell with buildings refined to the leaf level
 //                          (a cell with no building has no tile; REPLACE refinement)
 //   blockTile(opt)         one glTF tile: oriented boxes (EXT_mesh_gpu_instancing of one unit box), simplified outlines,
@@ -30,16 +32,17 @@ export const ringAreaM2 = r => { const mLon = 111320 * Math.cos(r[0][1] * D2R), 
 
 // ---------- selection (operation place-select-blocks)
 // opt: { inBoundary(lon, lat), excluded(lon, lat) (the model draws it), geometrySources (['OpenStreetMap']), licences,
-// heightLabels: { dataset -> label } (the footprint height classes of place-heights: 'ms' for Microsoft, else 'overture') }
+// heightLabels: { dataset -> label } (the footprint height classes of place-heights: 'ms' for Microsoft, else 'overture'),
+// extraGeometry: [{ cls, dataset }] (records whose geometry source is that dataset are drawn as class cls where OSM has none) }
 export function blockSelector(opt) {
   const counts = {}, inc = (k, n = 1) => { counts[k] = (counts[k] || 0) + n; };
-  const buildings = [], fp = {};
+  const buildings = [], fp = {}, extra = [];
   const srcOf = (r, prop) => { const x = r.sources.find(q => q.property === '/properties/' + prop) || r.sources.find(q => !q.property) || r.sources[0]; return x ? [x.dataset, x.license || ''] : [null, null]; };
   function add(r) {
     inc('records');
     const P = polys(r.geometry); if (!P.length) { inc('records without a polygon'); return; }
     const rings = P[0].map(ring => ring.map(([x, y]) => [r7(x), r7(y)])), ring = open(rings[0]); if (ring.length < 3) { inc('records with a degenerate outline'); return; }
-    const base = r.sources.find(q => !q.property) || r.sources[0] || {}, gsrc = base.dataset, c = vmean(ring);
+    const base = r.sources.find(q => !q.property) || r.sources[0] || {}, gsrc = base.dataset, c = vmean(ring); let xg = null;
     const inside = opt.inBoundary(c[0], c[1]);
     if ((opt.geometrySources || ['OpenStreetMap']).includes(gsrc)) {
       if (!inside) inc('OSM buildings outside the boundary');
@@ -51,6 +54,10 @@ export function blockSelector(opt) {
         if (r.min_height != null && srcOf(r, 'min_height')[0] === 'OpenStreetMap') b.min_height = r.min_height;
         buildings.push(b); inc('OSM buildings selected');
       }
+    } else if ((xg = (opt.extraGeometry || []).find(g => g.dataset === gsrc))) {
+      if (!inside) inc(`${xg.cls} buildings outside the boundary`);
+      else if (opt.excluded(c[0], c[1])) inc(`${xg.cls} buildings in the model box (drawn by the model)`);
+      else extra.push({ id: r.id, osm: null, cls: xg.cls, name: r.names_primary || null, kind: r.class || 'yes', rings, c: [r7(c[0]), r7(c[1])], a: Math.round(ringAreaM2(ring) * 10) / 10 });
     } else inc(`not drawn (geometry from ${gsrc})`);
     // the record's own height values (whatever its geometry source): heights only, open licence, not OSM (OSM values are
     // read above), grouped by the label of their dataset; only records in the boundary (a match needs an OSM outline there)
@@ -62,7 +69,23 @@ export function blockSelector(opt) {
       o[k] = v; lab = opt.heightLabels[sv[0]] || 'overture'; inc(`${prop} from ${sv[0]} (${sv[1]}) kept as ${lab}`); }
     if (lab) (fp[lab] ||= []).push(o);
   }
-  return { add, done: () => { buildings.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0); return { buildings, fp, counts }; } };
+  return { add, done: () => {
+    // the extra geometry classes: drawn only where OSM has no building (OSM first). The rule of place-select-outer
+    // (place-lod.mjs selectOuter): a footprint is dropped when its centroid or any of its points pulled 20 % to its
+    // centre is inside an OSM outline, or an OSM centroid (or point pulled 20 % in) is inside it
+    if (extra.length) {
+      const S = 0.0005, G = new Map(), bbox = r => { let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity; for (const [x, y] of r) { w = Math.min(w, x); e = Math.max(e, x); s = Math.min(s, y); n = Math.max(n, y); } return [w, s, e, n]; };
+      const sh = (p, c) => [p[0] + (c[0] - p[0]) * 0.2, p[1] + (c[1] - p[1]) * 0.2];
+      for (const b of buildings) { const r = open(b.rings[0]), o = { r, c: vmean(r), bb: bbox(r) };
+        for (let i = Math.floor(o.bb[0] / S); i <= Math.floor(o.bb[2] / S); i++) for (let j = Math.floor(o.bb[1] / S); j <= Math.floor(o.bb[3] / S); j++) { const k = i + ',' + j; (G.get(k) || G.set(k, []).get(k)).push(o); } }
+      for (const x of extra) { const r = open(x.rings[0]), c = vmean(r), bb = bbox(r), seen = new Set(); let hit = false;
+        for (let i = Math.floor(bb[0] / S); i <= Math.floor(bb[2] / S) && !hit; i++) for (let j = Math.floor(bb[1] / S); j <= Math.floor(bb[3] / S) && !hit; j++) for (const o of G.get(i + ',' + j) || []) {
+          if (seen.has(o)) continue; seen.add(o); if (o.bb[0] > bb[2] || o.bb[2] < bb[0] || o.bb[1] > bb[3] || o.bb[3] < bb[1]) continue;
+          if (inRing(c, o.r) || inRing(o.c, r) || r.some(p => inRing(sh(p, c), o.r)) || o.r.some(p => inRing(sh(p, o.c), r))) { hit = true; break; } }
+        if (hit) { inc(`${x.cls} buildings dropped (overlap an OSM building)`); continue; }
+        buildings.push(x); inc(`${x.cls} buildings selected (no OSM building there)`); }
+    }
+    buildings.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0); return { buildings, fp, counts }; } };
 }
 
 // ---------- the globe's ground: world-base height tiles (35 x 35 Int16, metres above the geoid, row 0 north, y of the
@@ -99,7 +122,8 @@ const srgbLin = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) 
 const linSrgb = c => Math.round(255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055));
 // opt: { cell (l, x, y, key, b), items (building objects), HT (heights by id), leaf (bool), L (level params: tall_m, big_m2,
 // merge_m) or the leaf params (min_area_m2, simplify_m, box_fill, outline_min_m2, drop_m), groundAt (orthometric), geoidAt,
-// named (Map id -> feature row), classes, colour (hex), credit }
+// named (Map id -> feature row), classes (labels; index 0 OpenStreetMap, 1 merged), classIndex ({ cls -> index } of the extra
+// geometry classes; a building with no cls is OpenStreetMap), colour (hex), credit }
 export function blockTile(opt) {
   const { cell, items, HT, groundAt, geoidAt, P } = opt, [w, s, e, n] = cell.b, lc0 = (w + e) / 2, bc = (s + n) / 2;
   const mLon = 111320 * Math.cos(bc * D2R), mLat = 110574, ell = (lon, lat) => groundAt(lon, lat) + geoidAt(lon, lat);
@@ -107,7 +131,8 @@ export function blockTile(opt) {
   const HS = [], hsi = k => { let i = HS.indexOf(k); if (i < 0) { HS.push(k); i = HS.length - 1; } return i; };
   const meta = { boxes: { c: [], h: [], s: [] }, outlines: { c: [], h: [], s: [], tri_end: [] } };
   const inst = { t: [], r: [], s: [] }, ol = { pos: [], idx: [] }, nm = { pos: [], col: [], fid: [], idx: [] };
-  let zmin = Infinity, zmax = -Infinity; const st = { boxes: 0, outlines: 0, named: 0, merged: 0, merged_buildings: 0, small_skipped: 0 };
+  let zmin = Infinity, zmax = -Infinity; const st = { boxes: 0, outlines: 0, named: 0, merged: 0, merged_buildings: 0, small_skipped: 0, by_class: {} };
+  const MERGED = 1, ciOf = b => (b.cls && opt.classIndex?.[b.cls]) || 0, byCls = b => { const k = b.cls || 'osm'; st.by_class[k] = (st.by_class[k] || 0) + 1; };
   const toXY = (r, ref) => r.map(([lo, la]) => [(lo - ref[0]) * mLon, (la - ref[1]) * mLat]);
   const toLL = ([x, y], ref) => [ref[0] + x / mLon, ref[1] + y / mLat];
   // a box: base centre (lon, lat), turn about up (radians from east), length along that turn, width, ground samples
@@ -118,7 +143,7 @@ export function blockTile(opt) {
     // under a half turn, so th/2 in [0, pi/2): both quaternion parts >= 0 (normalized int8: 1/127 steps, under 1 degree)
     let a = th % Math.PI; if (a < 0) a += Math.PI; inst.r.push(0, Math.round(Math.sin(a / 2) * 127), 0, Math.round(Math.cos(a / 2) * 127));
     inst.s.push(Math.max(0.5, len), z1 - z0, Math.max(0.5, wid)); zmin = Math.min(zmin, z0); zmax = Math.max(zmax, z1);
-    meta.boxes.c.push(cls); meta.boxes.h.push(Math.round(hgt * 10)); meta.boxes.s.push(hsi(src)); if (cls === 0) st.boxes++;
+    meta.boxes.c.push(cls); meta.boxes.h.push(Math.round(hgt * 10)); meta.boxes.s.push(hsi(src)); if (cls !== MERGED) st.boxes++;
   }
   // an oriented box of a footprint (xy in metres round ref)
   function obbOf(xy, ref, hgt, cls, src) {
@@ -149,16 +174,16 @@ export function blockTile(opt) {
       const row = opt.named.get(b.id);
       if (row != null) {   // a named building: its outline (and holes) at 0.5 m, its own id, wall and roof colours
         const rs = b.rings.map((r, k) => { let q = simplify(toXY(open(r), b.c), 0.5); if (q.length < 3) return null; q = area2(q) < 0 === (k === 0) ? q.slice().reverse() : q; return q; }).filter(Boolean);
-        if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row); st.named++; continue; }
+        if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row); st.named++; byCls(b); continue; }
       }
-      const bx = obbBox(xy0); const fill = bx ? b.a / Math.abs(area2(bx)) : 0;
-      if (bx && (b.a < P.outline_min_m2 || fill >= P.box_fill)) { obbOf(xy0, b.c, H.h, 0, H.src); continue; }
-      let xy = simplify(xy0, P.simplify_m); if (xy.length < 3) { obbOf(xy0, b.c, H.h, 0, H.src); continue; } xy = ccw(xy);
-      prism(ol, [xy], b.c, H.h, null, null, null); meta.outlines.c.push(0); meta.outlines.h.push(Math.round(H.h * 10)); meta.outlines.s.push(hsi(H.src)); meta.outlines.tri_end.push(ol.idx.length / 3); st.outlines++;
+      const ci = ciOf(b), bx = obbBox(xy0); const fill = bx ? b.a / Math.abs(area2(bx)) : 0;
+      if (bx && (b.a < P.outline_min_m2 || fill >= P.box_fill)) { if (obbOf(xy0, b.c, H.h, ci, H.src)) byCls(b); continue; }
+      let xy = simplify(xy0, P.simplify_m); if (xy.length < 3) { if (obbOf(xy0, b.c, H.h, ci, H.src)) byCls(b); continue; } xy = ccw(xy);
+      prism(ol, [xy], b.c, H.h, null, null, null); meta.outlines.c.push(ci); meta.outlines.h.push(Math.round(H.h * 10)); meta.outlines.s.push(hsi(H.src)); meta.outlines.tri_end.push(ol.idx.length / 3); st.outlines++; byCls(b);
       continue;
     }
     // a coarse level: tall or big buildings as their own boxes, the rest merged by square
-    if (H.h >= P.tall_m || b.a >= P.big_m2) { obbOf(xy0, b.c, H.h, 0, H.src); continue; }
+    if (H.h >= P.tall_m || b.a >= P.big_m2) { if (obbOf(xy0, b.c, H.h, ciOf(b), H.src)) byCls(b); continue; }
     const E = (b.c[0] - w) * mLon, Nn = (b.c[1] - s) * mLat, k = Math.floor(E / P.merge_m) + ',' + Math.floor(Nn / P.merge_m);
     const q = merged.get(k) || merged.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0 }).get(k); q.a += b.a; q.x += b.a * b.c[0]; q.y += b.a * b.c[1]; q.h += b.a * H.h; q.n++;
   }
@@ -170,7 +195,7 @@ export function blockTile(opt) {
     const [i, j] = k.split(',').map(Number), sc = [w + (i + 0.5) * M2 / mLon, s + (j + 0.5) * M2 / mLat], side = M2 * Math.min(1, Math.sqrt(q.a / (M2 * M2) / full)), f = side / M2;
     const ll = [q.x / q.a + (sc[0] - q.x / q.a) * f, q.y / q.a + (sc[1] - q.y / q.a) * f], hgt = q.h / q.a, d = side / 2;
     const gs = [[-d, -d], [d, -d], [d, d], [-d, d]].map(p => groundAt(...toLL(p, ll)));
-    box(ll, 0, side, side, hgt, 1, `merged: area-weighted mean height of the buildings of a ${P.merge_m} m square`, gs); st.merged++; st.merged_buildings += q.n;
+    box(ll, 0, side, side, hgt, MERGED, `merged: area-weighted mean height of the buildings of a ${P.merge_m} m square`, gs); st.merged++; st.merged_buildings += q.n;
   }
   const extras = meta.boxes.c.length + meta.outlines.c.length ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)' } } : null;
   const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size });

@@ -7,7 +7,7 @@
 // 51.50735 N 0.12776 W). h: about 13 m above sea level plus a geoid height of about 45.6 m (stated, +-5 m).
 import ghsl from '../adapters/world-ghsl.js';
 import { overture, msBuildings } from '../adapters/world-buildings.js';
-import { overtureOuter } from '../adapters/world-surround.js';
+import { overtureOuter, msGeometry } from '../adapters/world-surround.js';
 
 export default {
   id: 'london',
@@ -23,7 +23,8 @@ export default {
   // world-base height tiles the globe draws, plus the globe's geoid); boundary: a polygon of a skeleton set (the GLA
   // area = the ONS region "London"); exclude: regions whose model draws its own buildings (a building whose centroid is in
   // the Docklands model box is left to the model, by the model's own rule: build-docklands.mjs keeps a building whose
-  // centroid is inside the box, 1 m in); geometry: OpenStreetMap records of the Overture buildings theme only; heights:
+  // centroid is inside the box, 1 m in); geometry: OpenStreetMap records of the Overture buildings theme, and Microsoft ML
+  // Buildings records where OSM has none (blocks.geometry, the class 'ms'); heights:
   // OSM height > OSM levels x 3 m > Overture height or floors of non-OSM records with an open licence > Microsoft >
   // GHSL cell mean > default (place-heights order, no national source in the UK yet: EA LiDAR is for the model box).
   place: {
@@ -41,6 +42,9 @@ export default {
       // height values of non-OSM records by dataset: Microsoft ML Buildings heights come through Overture (the same
       // Microsoft data as the world-ms-buildings quadkey files, no separate download) and count as class 'ms'
       footprint_classes: { 'Microsoft ML Buildings': 'ms' },
+      // extra building geometry classes, drawn only where OSM has no building (owner, 2026-10-22: Microsoft footprints in
+      // London "yes"); each removable by deleting its id here (then rebuild), as place.surround.geometry in leon.js
+      geometry: ['overture-ms-geometry'],
       drop_m: 3,   // block bases this far under the lowest ground sample (the globe draws its terrain from coarser levels far away)
       top_level: 10, leaf_level: 14,
       // what each level draws: buildings at least big_m2 or tall_m as their own oriented boxes; the rest merged into one
@@ -57,6 +61,6 @@ export default {
   services: { weatherPoint: { lon: -0.12776, lat: 51.50735 }, aircraft: { lon: -0.12776, lat: 51.50735, nm: 25 }, metar: 'EGLC' },
   adapters: [
     { id: 'world-base', area: 'worldwide', about: 'OSM / Overture buildings, Copernicus DEM, Natural Earth', licence: 'per source', licenceClass: 'open', fallback: 'none (this is the fallback)' },
-    overture, msBuildings, ghsl, overtureOuter,
+    overture, msBuildings, ghsl, overtureOuter, msGeometry,
   ],
 };

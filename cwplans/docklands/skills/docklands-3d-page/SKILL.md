@@ -3259,6 +3259,20 @@ https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
   class `ms` (place.blocks.footprint_classes), so the place-heights order holds: OSM height 1,354, OSM levels 224,148,
   other Overture sources 0, Microsoft 189,445, small kinds 22,477, GHSL 685,028 (61 %), default 124. No separate download
   of the Microsoft quadkey files (the same data). OSM `height` is rare in London (2,247 records).
+- **Microsoft footprints where OSM has none (owner, 2026-10-22: "yes").** Switch: `place.blocks.geometry:
+  ['overture-ms-geometry']` in london.js (plus `msGeometry` in its adapters); the same adapter and the same OSM-first
+  overlap rule as `place.surround.geometry` of León and Sarajevo (place-select-blocks version 2; the rule is copied from
+  place-lod.mjs `selectOuter`). Records outside the boundary or in the model box are left out by the same centroid tests
+  as OSM. Only 171 of 405,101 overlapped an OSM outline: Overture's conflation already drops Microsoft records under OSM
+  ones, so the 571,817 "in the box" were mostly outside the GLA polygon (165,463) or kept. Block class index: 0 OSM, 1
+  merged, 2 and up the extra classes (`extras.blocks.classes` holds the labels; places.js needs no change: card and
+  describeView read the labels). Merged boxes mix classes, so the merged label no longer says "OpenStreetMap". Heights:
+  the Microsoft record's own height is a footprint-match input already (class `ms`, the exact ring), so 93 % of the
+  Microsoft outlines get it; the rest GHSL. Counts per class in the log (`block_geometry`), README ("Buildings by
+  geometry class"), index.json (`buildings_by_class`). Cost: +57 tiles, +26 MB (84.4 -> 110.6 MB, 79 bytes a building),
+  build 4.5 min. place-check London has a Yiewsley view (`extra`) where Microsoft blocks are 40 % of the blocks drawn.
+  The raw NDJSON is not kept between sessions: `fetch --region london` re-made it in 5 minutes with the same SHA-256
+  (Overture releases are fixed; the query orders rows by id).
 - **Tiles.** Quadtree of the cells with buildings only (an empty child is left out; REPLACE stays correct: nothing to
   draw there), levels 10 to 14; leaves every building >= 25 m2 (box or simplified outline, as the León city ring), named
   buildings >= 1,500 m2 or >= 20 m as their own outline with COLOR_0 and `_FEATURE_ID_0` (the card names them: BT Tower
@@ -3295,8 +3309,7 @@ https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
   shows only from its 12 km step after the globe round trip. A wait loop `while pgrep -f place-perf.mjs` matches its own
   shell's command line and never ends (use a runner script); a background `http.server` stops at the 30-minute default
   timeout and later tests read nothing: start it with the long timeout.
-- **Open.** Buildings in globe mode inside the model box; Microsoft footprints where OSM has none (571,817 in the box:
-  one config line, owner); building parts; the merged far view still reads as a grid of squares; implicit tiling
+- **Open.** Buildings in globe mode inside the model box; building parts; the merged far view still reads as a grid of squares; implicit tiling
   (tileset.json 0.97 MB, loaded at 150 km, also in the Docklands model's globe background); the UK (section 3b).
 ## Three.js port: places look like the model (2026-10-22)
 

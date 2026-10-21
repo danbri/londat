@@ -27949,6 +27949,9 @@
      "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     },
     {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
+    },
+    {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
     },
     {
@@ -27972,7 +27975,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
+   "dct:title": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more, and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\"), as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -27982,6 +27985,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
@@ -28000,7 +28006,7 @@
     "@id": "https://kgx.foaf.tv/id/toolplacetiles"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+   "cwp:review": "geometry class \"ms\" (349,432 blocks) = Microsoft ML Buildings footprints through Overture where OSM has none (ODbL, share-alike; owner 2026-10-22 \"yes\"; source overture-ms-geometry; switch place.blocks.geometry); height_source \"ms\" (566,358 buildings: 189,445 OSM outlines, 376,913 Microsoft outlines) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (713,191) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 149 (7 m)",
    "cwp:reviewExit": [
     "osm-odbl"
    ]
@@ -28023,6 +28029,9 @@
      "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
     },
     {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
+    },
+    {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
     },
     {
@@ -28039,7 +28048,7 @@
     "@id": "https://kgx.foaf.tv/id/toolplacetiles"
    },
    "cwp:osmUse": "derived",
-   "cwp:review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+   "cwp:review": "geometry class \"ms\" (349,432 blocks) = Microsoft ML Buildings footprints through Overture where OSM has none (ODbL, share-alike; owner 2026-10-22 \"yes\"; source overture-ms-geometry; switch place.blocks.geometry); height_source \"ms\" (566,358 buildings: 189,445 OSM outlines, 376,913 Microsoft outlines) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (713,191) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 149 (7 m)",
    "cwp:reviewExit": [
     "osm-odbl"
    ]
@@ -28050,7 +28059,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level",
+   "dct:title": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level and by geometry class (osm, ms)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -28060,6 +28069,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
     },
     {
      "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
@@ -34023,7 +34035,7 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Microsoft ML Buildings\", over the city boxes of León and Sarajevo",
+   "dct:title": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Microsoft ML Buildings\", over the city boxes of León and Sarajevo and over Greater London (the GLA boundary)",
    "dct:license": "ODbL 1.0",
    "dcat:landingPage": "https://docs.overturemaps.org/attribution/",
    "cwp:attribution": "Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)"

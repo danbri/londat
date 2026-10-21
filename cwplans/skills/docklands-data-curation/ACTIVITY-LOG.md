@@ -3250,3 +3250,27 @@ modest rssolution? 4. Keep for now". (1) Sarajevo's 122 estimated minarets stay 
 has none go into Greater London (571,817 in the box). (3) The UK: a lite set (landmarks and modest resolution), not all
 17.7 M buildings; built in https://github.com/danbri/docklandia . (4) Rule-placed trees in León and Sarajevo stay.
 Recorded in CLAUDE.md, "Data policy".
+
+## 2026-10-22: Microsoft footprints in Greater London (owner decision 2)
+
+Owner, 2026-10-22: "yes" to "Microsoft footprints in London where OSM has none". Done on a worktree branch (not pushed).
+- Switch: `place.blocks.geometry: ['overture-ms-geometry']` in https://github.com/danbri/londat/blob/main/docklands/geo/regions/london.js
+  (the adapter of León and Sarajevo). Tools: place-select-blocks version 2 (extra geometry classes, the OSM-first overlap
+  rule of place-select-outer), place-blocks version 3 (a class index per block, counts by class); place-city-heights
+  counts heights per class.
+- Fetch: the raw Overture answer was gone; `build-place-tiles.mjs fetch --region london` re-made it (2,026,838 rows,
+  1,438,278,915 bytes) with the same SHA-256 as on 2026-10-21 (bfe11fba...).
+- Activities: place-select-blocks 39b62025245bd57f, place-city-heights 3054dab27403f7da, place-blocks ac14286044e65b6f
+  (https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json).
+- Counts: Microsoft 405,101 selected, 171 dropped (overlap OSM), 165,463 outside the boundary, 1,082 in the model box,
+  349,432 drawn (>= 25 m2). OSM 1,050,005 drawn (unchanged). Heights of the Microsoft outlines (fault F55): ms 376,913,
+  ghsl 28,163, default 25. All: ms 566,358, ghsl 713,191, osm-levels 224,148, default-small 22,477, osm-height 1,354,
+  default 149.
+- Size: 2,451 tiles 106.7 MB; total 110.6 MB (was 84.4 MB), under the 125 MB limit the coordinator set.
+- Register: source overture-ms-geometry now names Greater London; the four London files list it; review text with the
+  new counts. README, docs/planet-architecture.md 3b and the docklands-3d-page skill updated.
+- Checks: npm run check passed; npm test 114/114; place-check London 390 x 844 @2 all passed (new: the Yiewsley view,
+  2,639 of 6,545 blocks drawn from Microsoft, a tap gives "Footprint from Microsoft ML Buildings (via Overture)");
+  3d-tiles-validator 0.6.0: 0 errors, 0 warnings.
+- Live after merge: https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45 (whole city) and
+  https://danbri.github.io/londat/docklands/?ll=51.5314,-0.4230,700&ht=0,50 (Yiewsley, where OSM is thin).

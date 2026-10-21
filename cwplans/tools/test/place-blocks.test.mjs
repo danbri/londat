@@ -29,6 +29,32 @@ test('blockSelector: OSM geometry in the boundary and out of the model box; othe
   assert.equal(o.counts['height from Esri Community Maps (licence "") skipped'], 1);
 });
 
+test('blockSelector: an extra geometry class (Microsoft) is drawn only where no OSM outline overlaps it; its tiles carry its class', () => {
+  const S = blockSelector({ inBoundary: lon => lon < 1, excluded: lon => lon > 0.5 && lon < 0.6, geometrySources: ['OpenStreetMap'], licences: ['ODbL-1.0'], heightLabels: { 'Microsoft ML Buildings': 'ms' },
+    extraGeometry: [{ cls: 'ms', dataset: 'Microsoft ML Buildings' }] });
+  S.add({ id: 'o', sources: [src('OpenStreetMap')], geometry: rect(0.1, 51.5, 20, 20) });
+  S.add({ id: 'm1', height: 8, sources: [src('Microsoft ML Buildings')], geometry: rect(0.1 + 5 / 70000, 51.5, 12, 12) });   // overlaps the OSM outline: dropped
+  S.add({ id: 'm2', height: 6, sources: [src('Microsoft ML Buildings')], geometry: rect(0.2, 51.5, 10, 8) });                // no OSM there: drawn
+  S.add({ id: 'm3', sources: [src('Microsoft ML Buildings')], geometry: rect(0.1 + 15 / 70000, 51.5, 10, 10) });            // touches the OSM outline only: drawn
+  S.add({ id: 'm4', sources: [src('Microsoft ML Buildings')], geometry: rect(0.55, 51.5, 10, 8) });                          // the model draws it
+  S.add({ id: 'm5', sources: [src('Microsoft ML Buildings')], geometry: rect(2, 51.5, 10, 8) });                             // outside the boundary
+  S.add({ id: 'g', sources: [src('Google Open Buildings', 'CC-BY-4.0')], geometry: rect(0.3, 51.5, 10, 8) });              // not a switched-on class
+  const o = S.done();
+  assert.deepEqual(o.buildings.map(b => [b.id, b.cls || 'osm']), [['m2', 'ms'], ['m3', 'ms'], ['o', 'osm']]);
+  assert.equal(o.counts['ms buildings dropped (overlap an OSM building)'], 1); assert.equal(o.counts['ms buildings selected (no OSM building there)'], 2);
+  assert.equal(o.counts['ms buildings in the model box (drawn by the model)'], 1); assert.equal(o.counts['ms buildings outside the boundary'], 1);
+  assert.equal(o.counts['not drawn (geometry from Google Open Buildings)'], 1);
+  assert.deepEqual(o.fp.ms.map(r => r.id), ['m1', 'm2']);   // heights of the Microsoft records stay (a footprint match finds them)
+  // the tile: the Microsoft block has class index 2 (label 'Microsoft ...'), the OSM block 0
+  const l = 14, cs = 180 / 2 ** l, x = Math.floor((0.2 + 180) / cs), y = Math.floor((51.5 + 90) / cs);
+  const m2 = o.buildings[0], HT = { m2: { h: 6, src: 'ms' } };
+  const r = blockTile({ cell: { l, x, y, key: 'k', b: cellBox(l, x, y) }, items: [m2], HT, groundAt: () => 10, geoidAt: () => 45, P: { min_area_m2: 25, simplify_m: 2.5, box_fill: 0.85, outline_min_m2: 300, drop_m: 3 }, leaf: true, named: new Map(),
+    classes: ['OpenStreetMap', 'merged', 'Microsoft ML Buildings (via Overture)'], classIndex: { ms: 2 }, colour: '#d6cbb6', credit: 'test' });
+  const J = JSON.parse(r.bytes.subarray(20, 20 + r.bytes.readUInt32LE(12)).toString('utf8'));
+  assert.deepEqual(J.extras.blocks.boxes.c, [2]); assert.equal(J.extras.blocks.classes[2], 'Microsoft ML Buildings (via Overture)');
+  assert.deepEqual(r.stats.by_class, { ms: 1 }); assert.equal(r.stats.boxes, 1);
+});
+
 test('blockTree: cells with buildings only, leaves at the leaf level, coarse cells hold every building below', () => {
   const B = [[0.01, 51.51], [0.012, 51.511], [0.3, 51.6]].map(([lon, lat], i) => ({ id: 'b' + i, c: [lon, lat] }));
   const T = blockTree({ buildings: B, top: 10, leaf: 14 });

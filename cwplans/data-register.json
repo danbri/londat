@@ -3513,14 +3513,14 @@
       "review_exit": "catastro-ign"
     },
     "overture-ms-geometry": {
-      "name": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Microsoft ML Buildings\", over the city boxes of León and Sarajevo",
+      "name": "Overture Maps buildings, release 2026-09-23.1: the footprints of the records whose geometry source is \"Microsoft ML Buildings\", over the city boxes of León and Sarajevo and over Greater London (the GLA boundary)",
       "publisher": "Microsoft (Global ML Building Footprints), via the Overture Maps Foundation buildings theme",
       "licence": "ODbL 1.0",
       "licence_url": "https://opendatacommons.org/licenses/odbl/1-0/",
       "licence_class": "share-alike",
       "attribution": "Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)",
       "url": "https://docs.overturemaps.org/attribution/",
-      "note": "Owner, 2026-10-20: \"Use ms/overture\" (CLAUDE.md, data policy). Drawn as blocks of the city ring only where OSM has no building, as its own geometry class \"ms\" (adapter overture-ms-geometry). Remove: delete the id in place.surround.geometry of the region config and rebuild. Raw answer not committed."
+      "note": "Owner, 2026-10-20: \"Use ms/overture\" (CLAUDE.md, data policy); Greater London: owner, 2026-10-22, \"yes\" to \"Microsoft footprints in London where OSM has none\". Drawn as blocks only where OSM has no building (a footprint that overlaps an OSM outline is dropped), as its own geometry class \"ms\" (adapter overture-ms-geometry): in the city ring of León and Sarajevo, and in Greater London (405,101 selected, 171 dropped for overlap, 349,432 drawn at 25 m2 or more). Remove: delete the id in place.surround.geometry (León, Sarajevo) or place.blocks.geometry (docklands/geo/regions/london.js) and rebuild. Raw answer not committed."
     },
     "overture-places": {
       "name": "Overture Maps Foundation, places theme (type place), release 2026-09-23.1, read by bounding box with DuckDB",
@@ -14589,6 +14589,7 @@
         "osm",
         "overture-buildings",
         "ms-buildings",
+        "overture-ms-geometry",
         "ghsl-built-h",
         "copernicus-glo90",
         "ons-boundaries",
@@ -14607,11 +14608,12 @@
     },
     {
       "path": "docklands/data/places/london/tiles/*.glb",
-      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
+      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more, and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\"), as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
       "sources": [
         "osm",
         "overture-buildings",
         "ms-buildings",
+        "overture-ms-geometry",
         "ghsl-built-h",
         "copernicus-glo90",
         "ons-boundaries",
@@ -14620,9 +14622,9 @@
       "osm": {
         "use": "derived",
         "extract": "overture-osm-london",
-        "what": "building outlines, names, kinds, heights and levels of the OSM-sourced records of the Overture buildings theme (release 2026-09-23.1) inside the GLA boundary, outside the Docklands model box"
+        "what": "building outlines, names, kinds, heights and levels of the OSM-sourced records of the Overture buildings theme (release 2026-09-23.1) inside the GLA boundary, outside the Docklands model box; Microsoft footprints only where no OSM outline overlaps them"
       },
-      "review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+      "review": "geometry class \"ms\" (349,432 blocks) = Microsoft ML Buildings footprints through Overture where OSM has none (ODbL, share-alike; owner 2026-10-22 \"yes\"; source overture-ms-geometry; switch place.blocks.geometry); height_source \"ms\" (566,358 buildings: 189,445 OSM outlines, 376,913 Microsoft outlines) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (713,191) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 149 (7 m)",
       "review_exit": [
         "osm-odbl"
       ],
@@ -14639,6 +14641,7 @@
         "osm",
         "overture-buildings",
         "ms-buildings",
+        "overture-ms-geometry",
         "ghsl-built-h",
         "copernicus-glo90",
         "ons-boundaries",
@@ -14649,7 +14652,7 @@
         "extract": "overture-osm-london",
         "what": "names, OSM ids, kinds, levels of named buildings"
       },
-      "review": "height_source \"ms\" (189,445 buildings) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (685,028) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 124 (7 m)",
+      "review": "geometry class \"ms\" (349,432 blocks) = Microsoft ML Buildings footprints through Overture where OSM has none (ODbL, share-alike; owner 2026-10-22 \"yes\"; source overture-ms-geometry; switch place.blocks.geometry); height_source \"ms\" (566,358 buildings: 189,445 OSM outlines, 376,913 Microsoft outlines) = Microsoft ML Buildings heights through Overture (ODbL, share-alike; owner 2026-10-20 \"Use ms/overture\"); \"ghsl\" (713,191) = GHS-BUILT-H cell average (CC BY 4.0); \"osm-height\" 1,354, \"osm-levels\" 224,148 (ODbL); \"default-small\" 22,477 (3 m), \"default\" 149 (7 m)",
       "review_exit": [
         "osm-odbl"
       ],
@@ -14661,11 +14664,12 @@
     },
     {
       "path": "docklands/data/places/london/provenance/log.json",
-      "what": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level",
+      "what": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level and by geometry class (osm, ms)",
       "sources": [
         "osm",
         "overture-buildings",
         "ms-buildings",
+        "overture-ms-geometry",
         "ghsl-built-h",
         "copernicus-glo90",
         "ons-boundaries",
