@@ -3132,7 +3132,8 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   3.8 m, max 7.4 m. Sizes: 18 tiles 0.60 MB, landmarks.json 85 kB, all 0.75 MB; 30,760 triangles.
 - Checks: 3d-tiles-validator 0.6.0 0 errors, 0 warnings (18 infos: EXT_mesh_features not checked); npm run check OK;
   npm test (with the new place-landmarks.test.mjs); place-check --place sarajevo --sizes 390x844@2 all passed (new: the
-  landmarks drawn, describeView counts, a tap on Gazi Husrev-beg's minaret gives its card, the city 8 km out).
+  landmarks drawn, describeView counts, a tap on Gazi Husrev-beg's minaret gives its card, the city 8 km out); globe-check
+  390 x 844 @2 all passed; npm test 103/103.
 - Open: minarets mapped as lone nodes far from any candidate are not found until Overpass or a PBF extract answers;
   OSM has almost no minarets in Sarajevo (a mapping task, or the FGU cadastre under the waiver, issue #9); towers with
   no height; the owner may want the estimated class off or other size classes; at 8 km minarets are 2-pixel specks
