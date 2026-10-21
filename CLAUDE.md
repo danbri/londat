@@ -52,6 +52,10 @@ measured realism, O5 fresh live data, O6 open traced data. Its "Architecture rul
 locale constants (BNG, ODN, London time) in the core; every feature has a 3D view, a text description and a machine
 interface. Score at each checkpoint (2026-10-25, 2026-11-22, end of quarter) with evidence, in its table and the
 activity log.
+Architecture rule 6 (owner, 2026-10-22: "we should cache model and data but not visuals ... Let us NOT lose that
+casually"): tiles, archives and caches hold geometry, attributes and data; the picture is always rendered live (any
+angle, time of day, weather, style, boats, aircraft, birds). No baked lighting or time, no pre-rendered images in place
+of the model, and no capability dropped for speed without the owner's agreement.
 
 ## Data policy (the cwplans exception)
 The owner's normal data-ethics rules are in danbri/glitchcan-minigam `CLAUDE.md` ("Data ethics"). This project has an

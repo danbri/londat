@@ -136,6 +136,11 @@ external tileset. The tree is geodetic; the content may come in national cells.
 
 ### 3a. The Docklands model as 3D Tiles: the plan (2026-10-21, after LOD step 4)
 
+Rule (owner, 2026-10-22): the tiles hold the model and its data only, never visuals. The page keeps rendering every
+angle, time of day, weather, style and the live layers (boats, aircraft, birds, wind) as today. So a Docklands tileset
+carries geometry with per-building attributes (height, use, roof, year, colour class, hide flags) for the GPU, and no
+baked textures of light, shadow or sky. Architecture rule 6 in https://github.com/danbri/londat/blob/main/OKRS.md .
+
 LOD step 4 cut the Docklands model into cells **in the page** (https://github.com/danbri/londat/blob/main/docklands/cells.js):
 54 building cells of 1 km (build.js `TILE`), each with three levels (full; flat roofs without buildings under 8 m;
 buildings of 20 m across or 30 m high with outlines simplified to 2.5 m), and the terrain, greens, roads and rail drawn by

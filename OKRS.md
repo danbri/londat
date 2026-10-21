@@ -36,6 +36,13 @@ list (2026-10-09) and the scaling assessment
    interface (JS API, WebMCP tool, MCP tool). A feature is not done until it has all three.
 5. Every visible text is in a message catalogue; dates, times, units and number formats follow the visitor's locale
    (Intl), and the page clock follows the time zone of the place shown, not London.
+6. Cache and tile the model and the data, never the visuals (owner, 2026-10-22: "Re architecture I believe we should
+   cache model and data but not visuals. Currently we can view all stuff from all angles, times of day, boats birds etc.
+   Let us NOT lose that casually, ok?"). Tiles, archives and caches hold geometry, attributes and source data. The page
+   renders the picture live: any angle, any time of day and night, weather, styles, and live or simulated things (boats,
+   aircraft, birds, wind). Do not bake light, shadow, sky or time into textures, do not use pre-rendered images or
+   impostors in place of the model, and do not drop a capability for speed without the owner's agreement. Level of
+   detail may simplify geometry far away; it must keep the same lighting and time behaviour.
 
 ## O1. Any locale worldwide (mission-critical)
 

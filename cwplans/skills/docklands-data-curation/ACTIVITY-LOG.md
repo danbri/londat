@@ -3095,3 +3095,10 @@ optimisation, or other perf work, would still be worthwhile as a stopgap." KR3.1
   seven views all passed; npm test 99/99; npm run check OK. Not pushed (subagent branch).
 - Open: the tileset (section 3a); the layers' own big meshes (foreshore, ring, under: not by cell); greens and a far
   terrain level coarser; the sorted index copies (about 11 MB); a phone measurement.
+
+## 2026-10-22: architecture rule 6 (owner): cache model and data, not visuals
+- Owner: "Re architecture I believe we should cache model and data but not visuals. Currently we can view all stuff from
+  all angles, times of day, boats birds etc. Let us NOT lose that casually, ok?" Recorded as rule 6 in OKRS.md, in
+  CLAUDE.md and in docs/planet-architecture.md 3a (the Docklands tileset plan: geometry and per-building attributes only,
+  no baked light, sky or time). The work so far keeps this: places, base imagery (source data, lit live), model cells
+  (geometry levels, same lighting), service worker (caches files, not frames).
