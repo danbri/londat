@@ -166,6 +166,80 @@ screen-space error rule, putting the cells into `ctx.meshes.buildings` with `use
 the occluder keep working; terrain, greens, roads and rail as tiles later (the tide needs the terrain grid). Sizes:
 today's full level is 1.13 M triangles; the simplified and far levels add about 60 % and 15 %.
 
+### 3b. Greater London as blocks, and an estimate for the whole UK (2026-10-21)
+
+Owner, 2026-10-22: "can we bring basic buildings to all of London, or all of UK now?" (GitHub Pages for now, owner
+2026-10-20). Built: Greater London as a place of kind "blocks" (region config
+https://github.com/danbri/londat/blob/main/docklands/geo/regions/london.js , tool
+https://github.com/danbri/londat/blob/main/cwplans/tools/build-place-tiles.mjs with
+https://github.com/danbri/londat/blob/main/cwplans/tools/place-blocks.mjs , data
+https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/london ). Whole city:
+https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45
+
+**Method (the same pipeline as León and Sarajevo, three dataflow operations).**
+
+- Source: the Overture buildings theme, release 2026-09-23.1, read by DuckDB over the boundary box (2,026,838 records,
+  1.44 GB NDJSON, 5 minutes; `fetch-overture-theme.py` writes NDJSON when the output ends in `.ndjson`, because one
+  JSON array of 2 million rows is larger than a Node string). Geometry only from records whose source is OpenStreetMap.
+- Boundary: the ONS region E12000007 (London) of the UK skeleton (BGC), by the building centroid. The Docklands model box
+  is left out by the model's own rule (a centroid at least 1 m inside the BNG box is drawn by the model:
+  `modelBox` in the docklands region config), so no building is drawn twice and none is lost at the edge.
+- Heights (fault F55, counted per class): OSM height 1,354; OSM levels x 3 m 224,148; Overture height or floors of
+  other sources 0 (London has none but Microsoft); Microsoft ML Buildings height through Overture 189,445; small kinds
+  3 m 22,477; GHSL cell mean 685,028 (61 %); default 7 m 124. Of 1,122,576 OSM buildings selected.
+- Tiles: a quadtree of the cells with buildings from level 10 (about 20 x 12 km) to level 14 (1.22 x 0.76 km), REPLACE
+  refinement, geometricError 300 / 150 / 75 / 35 m, leaves 0. Leaves: every building of 25 m2 or more as an oriented
+  box (EXT_mesh_gpu_instancing; 28 bytes and 8 bytes of card data an instance) or, when it fills less than 85 % of its
+  box and is 300 m2 or more, its outline simplified at 2.5 m; named buildings of 1,500 m2 or 20 m and more with their
+  own id (5,562; the card and search name them). Coarse levels: tall or big buildings as their own boxes, the rest merged
+  into one box a square (400, 200, 100, 50 m), its side growing with the built share of the square. No ground: the
+  blocks stand on the globe's own world-base heights (GLO-90) 3 m deep; tiles hold geometry and attributes only (rule 6).
+- Size: 2,394 tiles 80.9 MB (level 14: 65.6 MB; levels 10 to 13: 15.4 MB), tileset.json 0.97 MB, features.json 0.73 MB,
+  log and sources 1.7 MB: 84.4 MB, 75 bytes a building. 3d-tiles-validator 0.6.0: 0 errors, 0 warnings.
+- Not drawn: buildings under 25 m2 (72,571 of the selected); Microsoft footprints where OSM has none (571,817 in the box: one config
+  line, as in León and Sarajevo, but needs the owner); building parts (Overture type building_part).
+- Globe mode shows no buildings inside the model box (the model draws them after the hand-over under 36 km).
+
+**The whole UK by the same method (estimate, not built).** Counts: Overture release 2026-09-23.1, every buildings record
+whose bbox centre is inside an ONS region or country polygon of the UK skeleton (DuckDB, bbox and source columns only;
+29.4 million records in the UK box). Size at London's 75 bytes an OSM building (tiles, tileset, features, log).
+
+| region | OSM buildings | of them under 40 m2 (bbox) | Microsoft only (no OSM outline) | MB, OSM | MB, OSM + Microsoft |
+|---|---|---|---|---|---|
+| South East | 2,381,531 | 143,665 | 1,082,837 | 179 | 260 |
+| Scotland | 2,074,512 | 152,263 | 452,074 | 156 | 190 |
+| South West | 1,941,800 | 123,345 | 817,965 | 146 | 207 |
+| East of England | 1,803,125 | 91,131 | 906,765 | 136 | 204 |
+| North West | 1,698,224 | 65,340 | 916,230 | 128 | 197 |
+| Yorkshire and The Humber | 1,521,687 | 64,368 | 704,053 | 114 | 167 |
+| West Midlands | 1,484,432 | 32,197 | 640,663 | 112 | 160 |
+| East Midlands | 1,244,011 | 101,327 | 929,512 | 94 | 163 |
+| London (built: 84 MB) | 1,161,396 | 64,175 | 406,356 | 87 | 118 |
+| Northern Ireland | 936,855 | 51,774 | 307,083 | 70 | 94 |
+| Wales | 834,060 | 45,572 | 707,767 | 63 | 116 |
+| North East | 619,819 | 11,780 | 333,161 | 47 | 72 |
+| **UK** | **17,701,452** | 946,937 | **8,204,466** | **1,331** | **1,948** |
+
+(London's count includes the 38,824 buildings of the model box; "under 40 m2" uses the record's bbox area, so it
+undercounts small buildings.) Files: about 38,000 tiles for the UK at London's 2,394 for 1.12 M.
+
+Hosting needed: the UK is 1.3 GB (OSM) to 1.9 GB (with Microsoft): more than one Pages site (1 GB, our workflow stops at
+950 MB; londat has about 445 MB used). Options:
+
+1. One GitHub repository with Pages per region (or two neighbouring regions), each well under 500 MB: the
+   https://github.com/danbri/docklandia layout `data/<iso country>/<set>/` (for example `data/gb/london/`) extended to
+   one repository per region when one fills; same origin (danbri.github.io), so no CORS question. Each region is a place
+   in `places/index.json` with its `tileBase` (region config `place.tileBase`; the London build supports it).
+2. One object store (Cloudflare R2, about 0 USD at this size) for all regions: one URL scheme, no 1 GB limit; needs an
+   account (hosting study, https://github.com/danbri/londat/blob/main/docs/hosting-options.md ).
+3. Smaller: drop buildings under 40 m2 (-5 %), coarser leaves (level 13 leaves with the level-14 rule: about -10 %), or
+   meshopt compression of the instance data (about 2x; needs the decoder in places.js): the UK OSM set near 0.7 GB.
+
+Work for the UK: the fetch is one DuckDB query a region (5 minutes for London); the build is about 4 minutes for
+London's 1.1 M buildings on this container (selection 1 minute, heights 1 minute, tiles 1 minute), so about 1 hour for
+the UK, region by region. The reader loads a place within 150 km: near a region border 3 or 4 places load at once
+(tileset.json about 1 MB each: implicit tiling, section 2, would cut that).
+
 ## 4. Adapters
 
 An adapter is a module plus a block in a region config. Contract:
@@ -214,6 +288,7 @@ it is committed.
 ## 5. Hosting off GitHub Pages
 
 Pages has about 494 MB left of 950 MB. Greater London tiles are 150 to 250 MB in a first version; a world base is more.
+(2026-10-21: Greater London as blocks came to 84 MB, section 3b; the whole UK by the same method 1.3 to 1.9 GB.)
 Options, for the owner (KR2.5):
 
 | host | for | against |
