@@ -10968,7 +10968,7 @@
    "@id": "https://kgx.foaf.tv/id/toolplacetiles",
    "@type": "prov:Activity",
    "rdfs:label": "place-tiles",
-   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > Overture height > Overture num_floors x 3 m (records whose own source is not OSM and whose source licence is open) > Microsoft ML height (footprint match: a centroid inside the other outline, smaller area >= 0.5 of the larger; place-heights version 3) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape, then Overture roof_shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command. Since 2026-10-20 (owner: \"Both sarajevo and leon ... need geographic features and at least basic roads for surrounding land and substantially more city\"; \"Both feel sluggish and janky\"), with a region surround block, three more operations: place-select-outer (Overture answers of release 2026-09-23.1 read with DuckDB by cwplans/tools/fetch-overture-theme.py: road and rail segments, water, localities, peaks over the extent, streets and buildings over the city box; geometry only from records whose source is OpenStreetMap; other building records give heights only; the IGN floors apart), place-city-heights (the place-heights order over the city buildings, no roofs) and place-lod (cwplans/tools/place-lod.mjs: a quadtree of whole level-10 cells over about 70 km round the origin, REPLACE refinement by distance (11 within 30 km, 12 within 16 km, 13 within 9 km), the city box to level 14 and the core cells to 15; each outer tile a 16 to 32 cell terrain grid of the surroundings DEM (IGN MDT25 in WCS parts, or Copernicus GLO-30 COG windows; the outer 8 km eased to a 10 km box mean), normals from the DEM, skirts, a 256 px JPEG texture from ESA WorldCover land cover, water, rivers, roads by class, rail and the city footprints, and in the city the OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances, else simplified outlines); KHR_mesh_quantization; geometricError = max(2 x vertex spacing, the building error of the level); tileset.json with transforms relative to the parent; surround.json with the place names, rivers, roads, a ground grid and the tiers). The IGN floors (adapter overture-ign-floors, behind the region switch) are a height class after the national floors and a validation set (F55). 2026-10-21 (place-select-outer v2, place-city-heights v2, place-lod v2): extra geometry classes for the city ring, IGN España (León) and Microsoft ML Buildings (both) via Overture, each its own class with its own switch (place.surround.geometry), drawn only where no OSM outline overlaps (centroid, points pulled 20 % to the centre, either way); heights by the same order; per-block class, height and height source in the glb extras for the block card; counts by class in log.json (city_geometry) and the README. 2026-10-21 (place kind blocks, Greater London, region config london): no core and no ground; place-select-blocks (the Overture buildings of the boundary box as NDJSON; OSM geometry whose centroid is in the ONS region polygon of the UK skeleton and not in the Docklands model box, by the model rule), place-city-heights (the place-heights order with Microsoft ML heights through Overture as class ms, the GHSL mosaic of two tiles), place-blocks (cwplans/tools/place-blocks.mjs: a quadtree from level 10 to 14 of the cells with buildings; leaves every building of 25 m2 or more as an oriented box or a simplified outline, named buildings with their id; coarse levels tall or big buildings as boxes and the rest merged by square; bases on the globe world-base heights; features.json of the named buildings).",
+   "dct:description": "A place on the globe from worldwide open data, as 3D Tiles 1.1 + glTF (OKR KR1.2, KR2.3). The area, DEM adapter, national height adapter and name keys come from the region config (block place; no locale constant in the tool). Fetch: OSM API map.json for the area; the DEM by the adapter kind (WCS 2.0 GeoTIFF, or Copernicus GLO-30 COG windows by HTTP range requests) into one raw grid; a national buildingHeights adapter (INSPIRE BU building parts with number of floors, reprojected by the adapter proj4 string) into raw parts. Build, three dataflow operations (activity id = sha256 of operation, version, input hashes, parameters; provenance/log.json): place-select-osm (buildings and building:parts with their height tags, multipolygons joined, water / green / paved areas, streets, rail, waterways, named points, names in the config name keys and a second name in another script; outlines that hold parts are not drawn, Simple 3D Buildings), place-heights version 2 (OSM height > building:levels x 3 m > national floors x 3 m (area-weighted median of the parts whose centroid is inside) > Overture height > Overture num_floors x 3 m (records whose own source is not OSM and whose source licence is open) > Microsoft ML height (footprint match: a centroid inside the other outline, smaller area >= 0.5 of the larger; place-heights version 3) > 3 m for small kinds > the GHS-BUILT-H cell average under the centroid (adapter world-ghsl, committed crop in sources/) > default 9 m; roofs: OSM roof:shape, then Overture roof_shape (gabled, hipped, pyramidal, skillion, dome and their aliases) > the region roof_rule (shape, pitch, kinds, near-rectangular footprints, size and wall-height limits) > flat; a sloped roof height from roof:height > roof:levels x 3 m > roof:angle > the pitch over the half width of the oriented box, capped at 8 m), place-tiles (one glb per level-15 cell in the ENU frame of the cell centre at the DEM height plus the EGM96 geoid: ground heightfield 32 x 32 with 300 m outer skirts and a JPEG texture drawn from the OSM areas and lines; buildings extruded from the lowest DEM point of the outline to its mean + eaves height, sloped roofs as the minimum of planes in the frame of the footprint's minimum-area oriented box (each plane clipped to where it is lowest, Sutherland-Hodgman, earcut), domes as scaled rings; wall and roof vertices shared, degenerate triangles dropped; tileset.json with transforms and region bounding volumes; features.json for search, featuresAt and describeView, with a 97 x 97 grid of an 8 km terrain ring from the DEM adapter's ring coverage). READMEs (places/README.md and places/<id>/README.md) are generated from provenance/log.json and the data register at the end of each build and by the readme command. Since 2026-10-20 (owner: \"Both sarajevo and leon ... need geographic features and at least basic roads for surrounding land and substantially more city\"; \"Both feel sluggish and janky\"), with a region surround block, three more operations: place-select-outer (Overture answers of release 2026-09-23.1 read with DuckDB by cwplans/tools/fetch-overture-theme.py: road and rail segments, water, localities, peaks over the extent, streets and buildings over the city box; geometry only from records whose source is OpenStreetMap; other building records give heights only; the IGN floors apart), place-city-heights (the place-heights order over the city buildings, no roofs) and place-lod (cwplans/tools/place-lod.mjs: a quadtree of whole level-10 cells over about 70 km round the origin, REPLACE refinement by distance (11 within 30 km, 12 within 16 km, 13 within 9 km), the city box to level 14 and the core cells to 15; each outer tile a 16 to 32 cell terrain grid of the surroundings DEM (IGN MDT25 in WCS parts, or Copernicus GLO-30 COG windows; the outer 8 km eased to a 10 km box mean), normals from the DEM, skirts, a 256 px JPEG texture from ESA WorldCover land cover, water, rivers, roads by class, rail and the city footprints, and in the city the OSM buildings as blocks (oriented boxes as EXT_mesh_gpu_instancing instances, else simplified outlines); KHR_mesh_quantization; geometricError = max(2 x vertex spacing, the building error of the level); tileset.json with transforms relative to the parent; surround.json with the place names, rivers, roads, a ground grid and the tiers). The IGN floors (adapter overture-ign-floors, behind the region switch) are a height class after the national floors and a validation set (F55). 2026-10-21 (place-select-outer v2, place-city-heights v2, place-lod v2): extra geometry classes for the city ring, IGN España (León) and Microsoft ML Buildings (both) via Overture, each its own class with its own switch (place.surround.geometry), drawn only where no OSM outline overlaps (centroid, points pulled 20 % to the centre, either way); heights by the same order; per-block class, height and height source in the glb extras for the block card; counts by class in log.json (city_geometry) and the README. 2026-10-21 (place kind blocks, Greater London, region config london): no core and no ground; place-select-blocks (the Overture buildings of the boundary box as NDJSON; OSM geometry whose centroid is in the ONS region polygon of the UK skeleton and not in the Docklands model box, by the model rule), place-city-heights (the place-heights order with Microsoft ML heights through Overture as class ms, the GHSL mosaic of two tiles), place-blocks (cwplans/tools/place-blocks.mjs: a quadtree from level 10 to 14 of the cells with buildings; leaves every building of 25 m2 or more as an oriented box or a simplified outline, named buildings with their id; coarse levels tall or big buildings as boxes and the rest merged by square; bases on the globe world-base heights; features.json of the named buildings). German places (2026-10-22; region configs berlin, stuttgart, dagstuhl; sets written to danbri/docklandia data/de/<id>/ by place.outRepo / --out): a core box (place.core_bbox) instead of the square; the official LoD2 model of Berlin (CityGML, cwplans/tools/place-lod2.mjs): the walls and roofs of the core buildings drawn as they are (an OSM outline they cover is not drawn and names them), and the measured height of every building part of Land Berlin as a height source after OSM height; Berlin DGM1 as the core terrain (DEM kind xyz-zip-tiles); a surround DEM adapter of its own (place.surround.dem); a morphological opening of Copernicus GLO-30 (dem.open_px) to take roofs and groves out of a surface model; Overture city buildings as NDJSON (place.surround.ndjson); named sites (areas such as a research institute) as points and as the site of the buildings inside.",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm",
@@ -11047,6 +11047,16 @@
      "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry",
      "dcat:accessURL": "https://overturemaps-us-west-2.s3.amazonaws.com/release/2026-09-23.1/theme=buildings/type=building/",
      "dct:description": "the city buildings answer: records whose geometry source is Microsoft ML Buildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcdebelod2",
+     "dcat:accessURL": "https://gdi.berlin.de/data/a_lod2/atom/0.atom",
+     "dct:description": "the dataset feed, then the 1 x 1 km tile zips (LoD2_<e>_<n>.zip) over the core and the city box, one at a time, 150 ms apart; parsed at once by cwplans/tools/place-lod2.mjs and deleted unless they hold core buildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcdebedgm1",
+     "dcat:accessURL": "https://gdi.berlin.de/data/dgm1/atom/0.atom",
+     "dct:description": "the dataset feed, then the 2 x 2 km tile zips (DGM1_<e>_<n>.zip, XYZ text) over the core"
     }
    ],
    "prov:generated": [
@@ -11137,7 +11147,9 @@
     "No locale constant in the tool: services, CRS and names come from the region config (tools/check-locale.mjs).",
     "Buildings with no height are counted per class (F55), not patched one by one.",
     "Size budget: a place under 10 MB.",
-    "Bump an operation version when its body changes: the memo key does not see the code."
+    "Bump an operation version when its body changes: the memo key does not see the code.",
+    "LoD2 measured heights (place-heights v5): OSM height > national measured height > OSM levels; an area-weighted median of the parts whose centroid is in the outline, else the part whose footprint holds the outline centroid",
+    "a share-alike or unclear German source is left out and listed for the owner (LGL Baden-Württemberg and LVGL Saarland were not reachable or failed on 2026-10-22; both dl-de/by-2.0)"
    ],
    "cwp:network": true,
    "cwp:deterministic": true,
@@ -11186,6 +11198,33 @@
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/greens/README.md"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/berlin/greens/greens.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/berlin/greens/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/berlin/greens/README.md"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/stuttgart/greens/greens.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/stuttgart/greens/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/stuttgart/greens/README.md"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/dagstuhl/greens/greens.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/dagstuhl/greens/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/dagstuhl/greens/README.md"
     }
    ],
    "cwp:tool": {
@@ -11196,7 +11235,8 @@
    "cwp:rule": [
     "placed trees (rule-wood, rule-park) are counted apart and described as illustrative positions",
     "grass and meadow get no placed trees",
-    "the species mixes are stated assumptions in the region config (place.greens.mix)"
+    "the species mixes are stated assumptions in the region config (place.greens.mix)",
+    "wood_m per region (place.greens.wood_m): 12 m in Berlin and Stuttgart, 25 m in the Hunsrück woods round Dagstuhl (6.5 m gave 330,720 trees, 20 MB there)"
    ],
    "cwp:network": true,
    "cwp:deterministic": true,
@@ -27681,7 +27721,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "World base imagery (KR2.2): one 512 px WebP (quality 70) per quadtree tile L/x/y (180 / 2^L degrees, y from the north), made of the 2 x 2 Sentinel-2 cloudless 2016 tiles of level L + 1; worldwide at levels 0 to 4 (2.4 km a pixel at level 4), round the testbeds (region configs docklands, leon, sarajevo) at levels 5 to 11 within 1,500 / 800 / 400 / 220 / 100 / 40 / 15 km (level 11: about 19 m a pixel); 1,432 tiles, 26.5 MB",
+   "dct:title": "World base imagery (KR2.2): one 512 px WebP (quality 70) per quadtree tile L/x/y (180 / 2^L degrees, y from the north), made of the 2 x 2 Sentinel-2 cloudless 2016 tiles of level L + 1; worldwide at levels 0 to 4 (2.4 km a pixel at level 4), round the testbeds (region configs docklands, leon, sarajevo; since 2026-10-22 also berlin, stuttgart, dagstuhl: build-world-base.mjs --add, 517 tiles more, 1,949 in all) at levels 5 to 11 within 1,500 / 800 / 400 / 220 / 100 / 40 / 15 km (level 11: about 19 m a pixel); 1,432 tiles, 26.5 MB",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srceoxs2cloudless2016"
@@ -27698,7 +27738,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "World base heights round the testbeds (KR2.2): Int16 metres above EGM2008, 35 x 35 samples per quadtree tile (the 33 x 33 vertices of a terrain patch and a border of one), box means of Copernicus DEM GLO-90 over one sample spacing; levels 7 to 12 within 300 / 170 / 80 / 35 / 15 / 7 km of each testbed; 0 over open sea; 448 tiles, 1.0 MB",
+   "dct:title": "World base heights round the testbeds (KR2.2): Int16 metres above EGM2008, 35 x 35 samples per quadtree tile (the 33 x 33 vertices of a terrain patch and a border of one), box means of Copernicus DEM GLO-90 over one sample spacing; levels 7 to 12 within 300 / 170 / 80 / 35 / 15 / 7 km of each testbed; 0 over open sea; 893 tiles, 2.1 MB (the German testbeds berlin, stuttgart, dagstuhl added on 2026-10-22)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srccopernicusglo90"
@@ -28382,6 +28422,186 @@
     "@id": "https://kgx.foaf.tv/id/toolplacegreens"
    },
    "cwp:osmUse": "none"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/berlin/greens/greens.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Mitte, Berlin: water and trees of the core of the place (format place-greens-1): 31 water polygons, 8749 trees (6829 OSM natural=tree, 170 along OSM tree rows, 1232 placed by rule in woods every 12 m and 518 in parks and gardens without mapped trees: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix), and the woods and parks; drawn by the globe as the model's water and trees",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/berlin/greens/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of the water and trees of Mitte, Berlin: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/berlin/greens/README.md",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Generated README of the water and trees of Mitte, Berlin: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/stuttgart/greens/greens.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Mitte, Stuttgart: water and trees of the core of the place (format place-greens-1): 49 water polygons, 28109 trees (4295 OSM natural=tree, 708 along OSM tree rows, 21040 placed by rule in woods every 12 m and 2066 in parks and gardens without mapped trees: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix), and the woods and parks; drawn by the globe as the model's water and trees",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/stuttgart/greens/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of the water and trees of Mitte, Stuttgart: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/stuttgart/greens/README.md",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Generated README of the water and trees of Mitte, Stuttgart: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/dagstuhl/greens/greens.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Schloss Dagstuhl, Wadern: water and trees of the core of the place (format place-greens-1): 50 water polygons, 22941 trees (23 OSM natural=tree, 470 along OSM tree rows, 22312 placed by rule in woods every 25 m and 136 in parks and gardens without mapped trees: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix), and the woods and parks; drawn by the globe as the model's water and trees",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/dagstuhl/greens/log.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Build log of the water and trees of Schloss Dagstuhl, Wadern: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/dagstuhl/greens/README.md",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Generated README of the water and trees of Schloss Dagstuhl, Wadern: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacegreens"
+   },
+   "cwp:osmUse": "counts"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srcnaturalearth",
@@ -34050,6 +34270,28 @@
    "dct:license": "CDLA-Permissive-2.0",
    "dcat:landingPage": "https://docs.overturemaps.org/attribution/",
    "cwp:attribution": "© Overture Maps Foundation (CDLA-Permissive-2.0)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcdebelod2",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "3D-Gebäudemodelle im Level of Detail 2 (LoD 2), Land Berlin: CityGML 1.0 (AdV profile), 1 x 1 km tiles in the INSPIRE ATOM feed https://gdi.berlin.de/data/a_lod2/atom (EPSG:25833, DHHN2016 heights)",
+   "dct:license": "Datenlizenz Deutschland – Zero – Version 2.0 (dl-de/zero-2.0)",
+   "dcat:landingPage": "https://gdi.berlin.de/geonetwork/srv/api/records/3c7c49af-00a4-3bcd-bc00-20e7f0f1b7bf",
+   "cwp:attribution": "Geoportal Berlin / 3D-Gebäudemodelle im Level of Detail 2 (LoD 2), dl-de/zero-2.0 (no credit required; given)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcdebedgm1",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "ATKIS DGM1, Land Berlin: the 1 m digital terrain model (airborne laser scan), XYZ text in 2 x 2 km tiles of the INSPIRE ATOM feed https://gdi.berlin.de/data/dgm1/atom (EPSG:25833, DHHN2016)",
+   "dct:license": "Datenlizenz Deutschland – Zero – Version 2.0 (dl-de/zero-2.0)",
+   "dcat:landingPage": "https://gdi.berlin.de/geonetwork/srv/api/records/f0e8ff09-2887-3446-9c53-81dbc45af03c",
+   "cwp:attribution": "Geoportal Berlin / ATKIS DGM1 (Digitales Geländemodell), dl-de/zero-2.0 (no credit required; given)"
   }
  ]
 }

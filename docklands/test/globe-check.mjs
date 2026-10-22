@@ -13,6 +13,9 @@ import { createCanvas, loadImage } from '@napi-rs/canvas';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = arg('--base', 'http://127.0.0.1:8211'), OUT = arg('--out', 'docklands/test/out/globe'), WEBGPU = process.argv.includes('--webgpu'), FULL = process.argv.includes('--full');
+// --extra '&placebase=berlin:http://...': added to every page address (e.g. local copies of sets held in another
+// repository that is not deployed yet: the search reads every place's features)
+const EXTRA = arg('--extra', '');
 const SIZES = arg('--sizes', '1280x800@1,390x844@2').split(',').map(s => { const m = /^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(s); return [+m[1], +m[2], +m[3]]; });
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
@@ -31,7 +34,7 @@ async function open(w, h, dpr, q) {
   page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   // the live and weather services are answered empty here (no third-party request from a test): the globe does not use them
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
-  await page.goto(`${BASE}/docklands/?${q}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0`);
+  await page.goto(`${BASE}/docklands/?${q}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0${EXTRA}`);
   return { ctx, page, errors };
 }
 const globeReady = page => page.waitForFunction(() => window.__docklands3?.globe?.ready && window.docklands, null, { timeout: 240000 });

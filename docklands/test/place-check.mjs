@@ -11,11 +11,15 @@
 //   node docklands/test/place-check.mjs [--base http://127.0.0.1:8190] [--place leon] [--webgpu] [--sizes 390x844@2,1280x800@1]
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
 import { chromium } from '@playwright/test';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { geodeticToEcef } from '../geo/ellipsoid.js';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = arg('--base', 'http://127.0.0.1:8190'), OUT = arg('--out', 'docklands/test/out'), WEBGPU = process.argv.includes('--webgpu'), PLACE = arg('--place', 'leon');
+// a place held in another repository (index entry tileBase: the German places, data/de/<id>/ of danbri/docklandia): serve a
+// local copy (e.g. a symlink under the ignored docklands/test/out/) and give its folder, relative to the repository root:
+//   --placedir docklands/test/out/de/berlin/   (the page gets ?placebase=<id>:<BASE>/<placedir>; features.json is read from it)
+const PLACEDIR = arg('--placedir', null);
 const SIZES = arg('--sizes', '390x844@2,1280x800@1').split(',').map(s => { const m = /^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(s); return [+m[1], +m[2], +m[3]]; });
 // what each place is checked against (test data: tests may name places)
 const CASES = {
@@ -24,6 +28,13 @@ const CASES = {
     // the landmark set (cwplans/tools/build-place-landmarks.mjs, globe/landmarks.js): Gazi Husrev-beg Mosque's minaret (OSM parts)
     landmarks: { minaret: 'w1030951861', name: 'Gazi Husrev-begova džamija', at: { lon: 18.42895, lat: 43.85915 } } },
   leiden: { ll: '52.15948,4.49123,1500', ht: '0,55', search: 'Hoogstraat', building: { lon: 4.49123, lat: 52.15948 } },
+  // the German places (2026-10-22): Berlin-Mitte with the official LoD2 buildings in the core (the Reichstag's card names
+  // its source), Stuttgart's valley, Schloss Dagstuhl (its card: the Leibniz-Zentrum für Informatik, Wikidata Q876507)
+  berlin: { ll: '52.5170,13.3940,1500', ht: '80,55', search: 'Unter den Linden', building: { lon: 13.37614, lat: 52.51862 }, river: /Spree|Havel/, town: 'Spandau', city: { lon: 13.3200, lat: 52.4560 },
+    card: { lon: 13.37614, lat: 52.51862, name: /^Reichstagsgebäude$/, text: /lod2/ } },
+  stuttgart: { ll: '48.7784,9.1797,1500', ht: '200,55', search: 'Schlossplatz', building: { lon: 9.18090, lat: 48.77761 }, river: /Neckar/, town: 'Esslingen am Neckar', city: { lon: 9.1700, lat: 48.8120 } },
+  dagstuhl: { ll: '49.5307,6.8986,600', ht: '20,60', search: 'Dagstuhl', building: { lon: 6.89863, lat: 49.53067 }, river: /Prims|Saar/, town: 'Losheim am See', city: { lon: 6.8350, lat: 49.4950 },
+    card: { lon: 6.89863, lat: 49.53067, name: /^Schloss Dagstuhl$/, text: /Leibniz/ } },
   // a place of kind "blocks" (no core, no ground of its own): BT Tower (OSM way 5022282, 188.4 m in OSM), a named building
   // drawn with its own id; Croydon for a city block; the whole city from 20 km
   london: { kind: 'blocks', ll: '51.5215,-0.1389,700', ht: '200,60', search: 'BT Tower', building: { lon: -0.13887, lat: 51.52153 }, tower: { lon: -0.13887, lat: 51.52153, name: 'BT Tower' },
@@ -32,7 +43,11 @@ const CASES = {
     extra: { lon: -0.4230, lat: 51.5314, label: /Microsoft/ } },
 };
 const C = CASES[PLACE]; if (!C) throw new Error('no test case for ' + PLACE);
-const FJ = JSON.parse(readFileSync(`cwplans/docklands/data/places/${PLACE}/features.json`, 'utf8'));
+const FJ = JSON.parse(readFileSync(PLACEDIR ? `${PLACEDIR.replace(/\/?$/, '/')}features.json` : `cwplans/docklands/data/places/${PLACE}/features.json`, 'utf8'));
+// every place of the index held in another repository whose local copy is beside PLACEDIR (data/<country>/<id>/) is
+// served from it too: the search provider reads the features of all places, and the live set may not exist yet
+const PB = !PLACEDIR ? '' : JSON.parse(readFileSync('cwplans/docklands/data/places/index.json', 'utf8')).places.filter(q => q.tileBase && (q.id === PLACE || existsSync(PLACEDIR.replace(/[^/]+\/?$/, '') + q.id)))
+  .map(q => `&placebase=${q.id}:${encodeURIComponent(`${BASE}/${q.id === PLACE ? PLACEDIR.replace(/\/?$/, '/') : PLACEDIR.replace(/[^/]+\/?$/, '') + q.id + '/'}`)}`).join('');
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
@@ -50,7 +65,7 @@ for (const [w, h, dpr] of SIZES) {
   page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   const t0 = Date.now();
-  await page.goto(`${BASE}/docklands/?ll=${C.ll}&ht=${C.ht}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0&t=2026-10-12T12:00`);
+  await page.goto(`${BASE}/docklands/?ll=${C.ll}&ht=${C.ht}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0&t=2026-10-12T12:00${PB}`);
   // the deep link: the globe takes the view, the place's tiles load
   await page.waitForFunction(p => { const G = window.__docklands3?.globe; if (!(G && G.mode === 'globe' && G.places && window.docklands && G.placesStats)) return false; G.dirty = true; return G.placesStats().find(x => x.id === p)?.settled; }, PLACE, { timeout: 240000, polling: 250 });
   const loadS = (Date.now() - t0) / 1000;
@@ -78,7 +93,10 @@ for (const [w, h, dpr] of SIZES) {
   const fp = await page.evaluate(q => docklands.findPlaces(q, 5), C.search);
   check(fp.length && fp.some(r => r.id && r.id.startsWith('place:' + PLACE)), `findPlaces "${C.search}"`, fp.slice(0, 3).map(r => `${r.name} (${r.kind})`).join('; '));
   // a close view (500 m range, tilted 70 degrees): a second screenshot
-  const near = await page.evaluate(async o => { const v = await docklands.goTo({ lon: o.lon, lat: o.lat, range_m: 500, tilt_deg: 70, heading_deg: 30 }); const G = __docklands3.globe; for (let k = 0; k < 3; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); } return v; }, FJ.origin);
+  // (waits until the tile tree settles: the core leaves near the eye replace the coarse tiles)
+  const near = await page.evaluate(async ({ o, p }) => { const v = await docklands.goTo({ lon: o.lon, lat: o.lat, range_m: 500, tilt_deg: 70, heading_deg: 30 }); const G = __docklands3.globe;
+    const t0 = performance.now(); while (performance.now() - t0 < 120000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st?.settled && performance.now() - t0 > 1500) break; }
+    for (let k = 0; k < 3; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); } return v; }, { o: FJ.origin, p: PLACE });
   check(near.eye.above_ground_m < 400, 'close view: eye under 400 m', `eye ${near.eye.above_ground_m} m above ground`);
   const shot2 = `${OUT}/place-${PLACE}-${tag}-near.png`; await page.waitForTimeout(500); await page.screenshot({ path: shot2 }); console.log('     screenshot', shot2);
   // a blocks place: a tap on the named tower (its card names it); the screen point from its top
@@ -92,8 +110,16 @@ for (const [w, h, dpr] of SIZES) {
     const shotT = `${OUT}/place-${PLACE}-${tag}-tower.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotT }); console.log('     screenshot', shotT);
   }
   // a tap on the building under the centre of the view
-  const card = C.kind === 'blocks' ? 'skipped (blocks: the named tower above)' : await page.evaluate(async () => { const G = __docklands3.globe; for (let y = 0.45; y < 0.8; y += 0.05) { G.tap(innerWidth / 2, innerHeight * y); const c = document.getElementById('card'); if (!c.hidden && /OSM/.test(c.textContent)) return c.querySelector('h2').textContent + ' · ' + c.querySelector('p.small').textContent; } return null; });
+  const card = C.kind === 'blocks' ? 'skipped (blocks: the named tower above)' : await page.evaluate(async () => { const G = __docklands3.globe; for (let y = 0.45; y < 0.8; y += 0.05) for (const x of [0.5, 0.4, 0.6, 0.3, 0.7]) { G.tap(innerWidth * x, innerHeight * y); const c = document.getElementById('card'); if (!c.hidden && /OSM/.test(c.textContent)) return c.querySelector('h2').textContent + ' · ' + c.querySelector('p.small').textContent; } return null; });
   check(!!card, 'a tap on a building opens its card', card || 'no card');
+  // a named building's card (C.card): tap at its screen point; its title and text
+  if (C.card) { const row = FJ.buildings.find(r => r && C.card.name.test(r[1] || '')), P3 = row && geodeticToEcef(row[4], row[5], row[10] + FJ.geoid_m + Math.min(row[6] * 0.5, 15));
+    const nc = !row ? { card: null } : await page.evaluate(async ({ t, P3, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: t.lon, lat: t.lat, range_m: 450, tilt_deg: 55, heading_deg: 20 });
+      const t0 = performance.now(); while (performance.now() - t0 < 120000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
+      const s = G.project(P3); if (!s) return { card: null }; for (const [dx, dy] of [[0, 0], [0, 8], [0, -8], [8, 0], [-8, 0], [0, 16]]) { G.tap(s[0] + dx, s[1] + dy); const c = document.getElementById('card'); if (!c.hidden && c.querySelector('h2')) { const tx = c.textContent.replace(/\s+/g, ' '); if (/Building|Kind/.test(tx)) return { card: tx.slice(0, 400), h2: c.querySelector('h2').textContent, at: s }; } }
+      return { card: null, at: s }; }, { t: C.card, P3, p: PLACE });
+    check(!!row && !!nc.card && C.card.name.test(nc.h2) && C.card.text.test(nc.card), `a tap on ${row?.[1]} opens its card`, nc.card || `no card (row ${row?.[0]})`);
+    const shotN = `${OUT}/place-${PLACE}-${tag}-card.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotN }); console.log('     screenshot', shotN); }
   // a blocks place: the whole city from far (coarse levels: merged blocks)
   if (C.kind === 'blocks') {
     const far = await page.evaluate(async ({ o, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: o.lon, lat: o.lat, range_m: o.range, tilt_deg: o.tilt });

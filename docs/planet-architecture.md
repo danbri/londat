@@ -267,6 +267,18 @@ https://github.com/danbri/docklandia (`data/gb/uk-lite/`, served at https://danb
   97 kB with external tile sets per level-8 cell, landmark rows in shards per part. The reader loads it within 1,200 km.
   Details, sizes by part and the traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
 
+### 3d. German places: Berlin, Stuttgart, Schloss Dagstuhl (built 2026-10-22)
+
+Owner, 2026-10-22: "bulk data in docklandia repo pls. ... Germany: Berlin and Stuttgart. Also ... Schloss Dagstuhl".
+Three places of the usual kind (core, city as blocks, 35 km surroundings) held in https://github.com/danbri/docklandia
+(`data/de/berlin/`, `data/de/stuttgart/`, `data/de/dagstuhl/`; 301 MB), index entries with `tileBase` in londat.
+Germany is the first country here with official 3D buildings under an open licence: Berlin's LoD2 model and DGM1
+(dl-de/zero-2.0) give the Mitte core as drawn walls and roofs and the measured heights of 441,635 city buildings
+(cwplans/tools/place-lod2.mjs). Baden-Württemberg (LGL) and Saarland (LVGL) publish LoD2 under dl-de/by-2.0 too, but
+were not reachable (LGL) or answered server faults (LVGL) on 2026-10-22: those places use OSM, Overture, Microsoft,
+GHSL and Copernicus GLO-30 (with a morphological opening that takes roofs out of the surface model). Details: skill
+docklands-3d-page, "Three.js port: German places (2026-10-22)".
+
 ## 4. Adapters
 
 An adapter is a module plus a block in a region config. Contract:

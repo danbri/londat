@@ -461,7 +461,9 @@ export async function attachPlaces(G, H, { scene, U }) {
       if (F.fj.names) { const NJ = await (p.namesP ||= fetch(new URL(F.fj.names, new URL(p.features, base))).then(r => r.json()).catch(() => null)); const fi = k => NJ?.fields.indexOf(k);
         for (const r of NJ?.rows || []) add(r[fi('name')], null, 'building', r[fi('lon')], r[fi('lat')], { osm_id: 'row' + r[fi('row')], facts: [{ label: 'Kind', value: 'a landmark of the lite set (key landmarks plus merged building mass)' }] });
         continue; }
-      for (const b of F.B) if (b.name || b.address) { add(b.name || b.address, b.name ? b.name_alt : null, 'building', b.lon, b.lat, { osm_id: b.osm_id, facts: [{ label: 'Height', value: `${b.height_m} m (${b.height_source})` }] }); if (b.name && b.address) add(b.address, null, 'building', b.lon, b.lat, { osm_id: b.osm_id }); }
+      // one result per named building: the parts of one OSM building (or the LoD2 buildings one OSM outline names) share it
+      const seenB = new Set();
+      for (const b of F.B) if (b.name || b.address) { const kb = (b.parent || b.osm_id) + '|' + (b.name || b.address); if (seenB.has(kb)) continue; seenB.add(kb); add(b.name || b.address, b.name ? b.name_alt : null, 'building', b.lon, b.lat, { osm_id: b.osm_id, facts: [{ label: 'Height', value: `${b.height_m} m (${b.height_source})` }] }); if (b.name && b.address) add(b.address, null, 'building', b.lon, b.lat, { osm_id: b.osm_id }); }
       for (const x of F.Pt) add(x.name, x.name_alt, 'point', x.lon, x.lat, { osm_id: x.osm_id, facts: [{ label: 'Kind', value: x.kind }] });
       for (const x of F.S) add(x.name, x.name_alt, 'street', x.lon, x.lat);
       for (const x of F.A) add(x.name, x.name_alt, x.kind === 'paved' ? 'square' : x.kind, x.lon, x.lat);
@@ -498,7 +500,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     const F = await featsP(p).catch(() => null); if (!F) return {};
     if (F.shards?.length) await Promise.all(shardsOver(p, [lon, lat, lon, lat]).map(sh => loadShard(p, sh)));
     const nb = nearest(F, lon, lat, false), nn = nearest(F, lon, lat, true);
-    const bText = b => `${b.name ? nameText(b.name, b.name_alt) : b.address || b.kind + ' building'} (OSM ${b.osm_id}, ${b.height_m} m, height from ${b.height_source})`;
+    const bText = b => `${b.name ? nameText(b.name, b.name_alt) : b.address || b.kind + ' building'} (${/^[wrn]\d+$/.test(b.osm_id || '') ? 'OSM ' : ''}${b.osm_id}, ${b.height_m} m, height from ${b.height_source})`;
     const out = { ...(hasGround(p) ? { builtUp: p.label || p.name, country: w.country?.name || undefined, source: 'OpenStreetMap (ODbL) via build-place-tiles' } : {}), place: p.id, local_time: t ? `${t} (${p.timeZone})` : undefined };
     if (nb && nb.d < 40) out.building = { osm_id: nb.b.osm_id, name: nb.b.name || null, name_alt: nb.b.name_alt || null, address: nb.b.address || null, kind: nb.b.kind, height_m: nb.b.height_m, height_source: nb.b.height_source, dist_m: Math.round(nb.d) };
     if (nn) out.nearestBuilding = { osm_id: nn.b.osm_id, name: nameText(nn.b.name, nn.b.name_alt), dist_m: Math.round(nn.d), direction: compass(bearingDeg(lon, lat, nn.b.lon, nn.b.lat)) };
@@ -576,7 +578,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   function buildingCard(p, b, creditHtml, esc) {
     const osm = /^[wrn]\d+$/.test(b.osm_id || '') ? `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[b.osm_id[0]]}/${b.osm_id.slice(1)}` : null;
     const why = b.landmark ? { wikidata: 'an encyclopaedia record (OSM wikidata tag)', wikipedia: 'an encyclopaedia record (OSM wikipedia tag)', 'named-tall': 'named and 25 m or taller', 'named-big': 'named, footprint 3,000 m2 or more' }[b.landmark] || `a notable kind (OSM ${b.landmark.replace(':', '=')})` : null;
-    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', latinPreferred() ? null : b.name_alt], ['Wikidata', b.wikidata], ['Wikipedia', b.wikipedia], ['Landmark because', why], ['Area', b.part], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
+    const rows = [['Kind', b.kind], ['Height', `${b.height_m} m (${b.height_source})`], ['Levels', b.levels], ['Roof', b.roof], ['Address', b.address], ['Name (other script)', latinPreferred() ? null : b.name_alt], ['Site', b.site], ['Wikidata', b.wikidata], ['Wikipedia', b.wikipedia], ['Landmark because', why], ['Area', b.part], ['Place', p.name]].filter(r => r[1] != null && r[1] !== '');
     H.showCard(`<h2>${esc((b.name && nameText(b.name, b.name_alt)) || b.address || (b.landmark ? 'Landmark' : 'Building'))}</h2><p class="small">${esc(p.name)}${osm ? ` · OSM <a href="${osm}" target="_blank" rel="noopener">${esc(b.osm_id)}</a>` : ''}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
     return b;
   }

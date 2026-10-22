@@ -3287,3 +3287,27 @@ Tests: lite-check.mjs (new), place-lite.test.mjs (new). Fault F55 counts per par
 traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)". Open: landmark heights (towers and
 spires), the mass reads as a grid from 20 km; merge order: docklandia before londat (else 404s for the index entry).
 
+## 2026-10-22: German places (Berlin, Stuttgart, Schloss Dagstuhl)
+
+Owner, 2026-10-22: "I'll like to add some information (bulk data in docklandia repo pls.) for more cities and
+countries. ... Germany: Berlin and Stuttgart. Also ... Schloss Dagstuhl – Leibniz Center for Informatics in Wadern,
+Saarland, let's add that too and surrounding locale." Region configs docklands/geo/regions/berlin.js, stuttgart.js,
+dagstuhl.js; tool build-place-tiles.mjs (external output for any place, core_bbox, surround.dem, dem.open_px, NDJSON city
+buildings, LoD2 kind citygml-lod2-atom, DEM kind xyz-zip-tiles, named sites; place-select-osm v4, place-heights v5,
+place-tiles v6, place-city-heights v3, place-lod v3) with the new cwplans/tools/place-lod2.mjs. Sets in danbri/docklandia
+data/de/<id>/ on branch places-de (not pushed); greens in londat (build-place-greens.mjs, wood_m per region).
+- Sources: Berlin LoD2 (de-be-lod2) and DGM1 (de-be-dgm1), Geoportal Berlin, dl-de/zero-2.0 (registered, open);
+  OSM, Overture (OSM, Microsoft ML heights), Microsoft, GHSL, ESA WorldCover, Copernicus GLO-30 as for the other places.
+  Left out: LGL Baden-Württemberg (unreachable: connection reset) and Saarland LVGL LoD2 (WFS server fault on every
+  BBOX query); both dl-de/by-2.0, open, retry later.
+- Counts: Berlin core 8,419 LoD2 buildings drawn (7,028 OSM buildings covered, 244 OSM drawn), city 814,713 buildings
+  (LoD2 height 441,635); Stuttgart core 21,124, city 204,859; Dagstuhl core 6,579, city 31,902 (fault F55 counts in each
+  README).
+- Sizes: Berlin 192.4 MB, Stuttgart 66.3 MB, Dagstuhl 42.1 MB (301 MB). World base: +517 imagery and +445 height tiles
+  round the new testbeds (build-world-base.mjs --add), 42.7 MB in all.
+- Register: sources de-be-lod2, de-be-dgm1; external entries data/de/<id>/; OSM extracts osm-api-place-<id>,
+  overture-osm-<id>, osm-api-place-greens-<id>; greens files; pipeline place-tiles and place-greens.
+- Checks: npm run check passed; npm test passed; place-check berlin, stuttgart, dagstuhl at 390 x 844 @2 passed (local
+  sets by ?placebase=); globe-check 390 x 844 @2 passed.
+- Live after both merges (docklandia first): https://danbri.github.io/londat/docklands/?ll=52.5170,13.3940,1500&ht=80,55
+  (Mitte), https://danbri.github.io/londat/docklands/?ll=49.5307,6.8986,600&ht=20,60 (Schloss Dagstuhl).

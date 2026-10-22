@@ -3383,6 +3383,87 @@ https://danbri.github.io/docklandia/data/gb/uk-lite/ ; register: `external` entr
   Republic of Ireland's buildings are not drawn; names.json for search is 2.8 MB; Isle of Man and the Channel Islands are
   not UK and not in the set.
 
+## Three.js port: German places (2026-10-22)
+
+Owner, 2026-10-22: "I'll like to add some information (bulk data in docklandia repo pls.) for more cities and countries.
+... Germany: Berlin and Stuttgart. Also ... Schloss Dagstuhl – Leibniz Center for Informatics in Wadern, Saarland, let's
+add that too and surrounding locale." Three places of the usual kind (core, city blocks, 35 km surroundings), region
+configs `docklands/geo/regions/berlin.js`, `stuttgart.js`, `dagstuhl.js` (Europe/Berlin, de-DE), tool
+`build-place-tiles.mjs --region <id> --out <docklandia clone>/data/de/<id>`, new library `cwplans/tools/place-lod2.mjs`
+(test `cwplans/tools/test/place-lod2.test.mjs`). Bulky sets in https://github.com/danbri/docklandia `data/de/<id>/`
+(served at https://danbri.github.io/docklandia/data/de/<id>/); index entry, region config and greens stay in londat.
+Views (after the merges): Mitte https://danbri.github.io/londat/docklands/?ll=52.5170,13.3940,1500&ht=80,55 , Berlin
+https://danbri.github.io/londat/docklands/?ll=52.5100,13.4000,20000&ht=0,45 , Stuttgart valley
+https://danbri.github.io/londat/docklands/?ll=48.7784,9.1797,3000&ht=200,50 , Schloss Dagstuhl
+https://danbri.github.io/londat/docklands/?ll=49.5307,6.8986,600&ht=20,60 , Wadern area
+https://danbri.github.io/londat/docklands/?ll=49.5500,6.9000,10000&ht=0,45 .
+
+- **Any place to another repository.** `place.outRepo`, `outPath`, `tileBase` (as uk-lite) now work for a place of the
+  usual kind (`EXTOUT` in the tool): log paths `docklandia:data/de/<id>/...`, the index entry with `tileBase` and absolute
+  URLs, the README generated in the set's folder with GitHub links into docklandia. Always pass `--out` (the default
+  path is the main checkout's sibling, wrong from a worktree). `writeReadmes` skips a set in another repository unless
+  this run builds it.
+- **Generic options added** (no locale constant in the tool): `place.core_bbox` (a core box instead of the square:
+  Berlin Mitte 3.3 x 2.4 km, Stuttgart the valley 3.4 x 4.4 km with the Fernsehturm, Dagstuhl Wadern to Wadrill 4.8 x
+  8.6 km); `place.surround.dem` (an adapter for the surroundings' terrain when the core's DEM covers the city only);
+  `dem.open_px` (a morphological opening of the grid, min then max over (2r+1)^2 cells, in place-tiles and place-lod: it
+  takes roofs and small groves out of the Copernicus GLO-30 SURFACE model and keeps slopes; Berlin and Stuttgart 3,
+  Dagstuhl 2); `place.surround.ndjson: ['buildings']` (Overture answers of a city of 900,000 buildings as NDJSON: one
+  JSON string cannot hold them); `place.greens.wood_m` (the rule-tree spacing in woods: 6.5 m gave 330,720 trees, 20 MB,
+  in Dagstuhl's Hunsrück woods; now 25 m there, 12 m in Berlin and Stuttgart); `place.views` (README and index).
+- **Official LoD2 in Berlin** (Geoportal Berlin, dl-de/zero-2.0, adapter `de-be-lod2`, kind `citygml-lod2-atom`): the
+  ATOM feed https://gdi.berlin.de/data/a_lod2/atom/0.atom lists 1 x 1 km zips (one CityGML 1.0 file, AdV profile, about
+  6 MB zipped, 50 MB XML, EPSG:25833, DHHN2016). `place-lod2.mjs parseLod2` splits by `core:cityObjectMember`, takes each
+  building and each `bldg:BuildingPart` as a unit (function, roofType, measuredHeight, the largest GroundSurface as the
+  footprint, and in the core every WallSurface and RoofSurface polygon), by regex (0.9 s a tile). 925 tiles meet Land
+  Berlin's box: 1,028,063 parts in about 60 minutes, each zip deleted after its parse (9 core zips kept, 54 MB).
+  - Core (place-tiles v6, input `lod2-core`): the LoD2 polygons are drawn as they are (triangulated in their own plane,
+    `triangulatePolygon`), the bottom of the walls taken to the DEM minus 0.5 m. An OSM outline that holds a LoD2
+    centroid, or whose centroid is in a LoD2 footprint, is not drawn and names the LoD2 buildings in it (name, address,
+    Wikidata, OSM id on the first, `parent` on the others; search shows one result per parent). Mitte: 8,419 LoD2
+    buildings (17,896 units), 7,028 OSM buildings covered, 244 OSM buildings still drawn (not in the model), 653 named.
+    Rows: `height_source` "lod2" (grey in the Map look: `MEASURED` in place-look.js), roof from the ALKIS roof type
+    (`ROOF_TYPE`), kind from the ALKIS function (`kindOfFunction`).
+  - Heights (place-heights v5, place-city-heights v3): a national MEASURED height (parts with `h`) comes after OSM height
+    and before OSM levels: the area-weighted median of the parts whose centroid is in the outline, else the part whose
+    footprint holds the outline's centroid. City: lod2 441,635 of 814,713 buildings (Overture/Microsoft 135,163, GHSL
+    79,322, OSM levels 46,148).
+  - Seen: the Reichstag has no dome in LoD2 (generalised standard roofs: "other"); the Fernsehturm is 253.5 m there
+    (OSM height 368 m includes the antenna); several LoD2 buildings per OSM building (the Reichstag: 4).
+- **Berlin DGM1** (adapter `de-be-dgm1`, DEM kind `xyz-zip-tiles`): 2 x 2 km zips of XYZ text (1 m cells), resampled
+  (nearest) to about 4 m over the core. Same datum family as the LoD2 z, so walls meet the ground.
+- **Trap: sliced strings.** The parser's ids are `match()` slices of the 50 MB file string: kept in the parts array they
+  kept every file alive (3.3 GB after 200 tiles). A JSON round trip per tile copies them (fetchLod2).
+- **Not reached, left out (for the owner):** LGL Baden-Württemberg (opengeodata.lgl-bw.de, www.lgl-bw.de,
+  owsproxy.lgl-bw.de: every connection reset by the egress proxy on 2026-10-22; LoD2 and DGM1 are dl-de/by-2.0 there);
+  Saarland LVGL LoD2 (INSPIRE WFS bu-core3d with the full geometry, dl-de/by-2.0, "© GeoBasis DE/LVGL-SL (Jahr)"): any
+  BBOX query answers a server fault (`failed to load summary ... postgis-3.index.bc`), the OGC API too; unfiltered paging
+  works but is the whole Land. Both are open licences: retry later, adapters `de-bw-lgl`, `de-sl-lvgl` hold the status.
+  So Stuttgart and Dagstuhl use OSM + Overture (heights there are Microsoft ML heights via Overture, ODbL) + GHSL and
+  Copernicus GLO-30 (opened).
+- **Named sites** (place-select-osm v4, all places): a named area that is not a building, water, green or paved
+  (amenity, tourism, historic, office, leisure, craft) becomes a named point (search) and the `site` of the buildings
+  whose centroid it holds (features field 16, card row "Site"). Dagstuhl: the OSM area way 95917683
+  (research_institute "Leibniz-Zentrum für Informatik", Wikidata Q879857) gives the castle (way 81517428 parts, Wikidata
+  Q876507), the new building and the guest houses their site; search "Dagstuhl" finds the place, the castle and the
+  village.
+- **World base round the new testbeds:** `build-world-base.mjs fetch|build --add --regions
+  docklands,leon,sarajevo,berlin,stuttgart,dagstuhl` keeps the tiles already built and adds 517 imagery tiles (Sentinel-2
+  2016) and 445 height tiles (GLO-90): 1,949 + 893 tiles, 42.7 MB (was 28.9 MB). Germany has no national skeleton:
+  the world-detail set (Natural Earth 1:10m, GeoNames) gives roads and names; the places' surroundings give the rest.
+- **Sizes** (docklandia, 301 MB): Berlin 192.4 MB (core 36 tiles 23.7, city 2,209 tiles 133.4 with 658,671 blocks,
+  surroundings 886 tiles 27.7, tileset.json 1.4, features 1.7, README 1.36: 925 zip hashes); Stuttgart 66.3 (core 63
+  tiles 18.9, city 519 tiles 31.1, surroundings 6.7, features 3.2: 21,124 core buildings); Dagstuhl 42.1 (core 168 tiles
+  14.3, city 12.4, surroundings 11.6). Greens in londat: Berlin 0.6, Stuttgart 1.7, Dagstuhl 1.4 MB.
+- **Tests.** `place-check.mjs --place berlin|stuttgart|dagstuhl --placedir docklands/test/out/de/<id>/` (a symlink in the
+  ignored out folder to the docklandia clone's `data/de`): the page gets `?placebase=` for every local German set (the
+  search reads every place's features, and the live sets do not exist before the docklandia merge: 404 otherwise). New
+  checks: a named building's card (`C.card`: Reichstagsgebäude "lod2", Schloss Dagstuhl "Leibniz"); the close view now
+  waits until the tile tree settles; the centre tap tries five columns. `globe-check.mjs --extra '&placebase=...'`.
+- **Merge order:** docklandia (branch places-de) first, then londat; else the index entries give 404s on the live site.
+- **Open.** LoD2 for Stuttgart (LGL) and Saarland (LVGL) when reachable; Stuttgart's features.json is 3.2 MB (loaded at
+  150 km); the Berlin city tier (133 MB) is the largest set but under the 350 MB the coordinator set for the three.
+
 ## Three.js port: places look like the model (2026-10-22)
 
 Owner, 2026-10-22: "why do Leon and Sarajevo look so different to London?" Cause: `globe/places.js` drew the places with

@@ -1,0 +1,309 @@
+{
+ "about": "Build log of the water and trees of Mitte, Stuttgart (tools/build-place-greens.mjs)",
+ "fetches": {
+  "osm": {
+   "url": [
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.157104,48.751831,9.181824,48.771057",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.181824,48.751831,9.206543,48.771057",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.157104,48.771057,9.169464,48.780670",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.169464,48.771057,9.181824,48.780670",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.157104,48.780670,9.169464,48.790283",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.169464,48.780670,9.181824,48.790283",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.181824,48.771057,9.194183,48.780670",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.194183,48.771057,9.206543,48.780670",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.181824,48.780670,9.194183,48.790283",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.194183,48.780670,9.206543,48.790283"
+   ],
+   "fetched": "2026-10-22T12:15:59.290Z",
+   "as_fetched": [
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.157104,48.751831,9.181824,48.771057",
+     "bytes": 13320867,
+     "sha256": "f0282a25f7d8056d800f371fb5756fa970334c1c8fafb016695e6417591f892a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.181824,48.751831,9.206543,48.771057",
+     "bytes": 6513127,
+     "sha256": "b4e8e9c45f2da6b83d1813c6e8db0b8a750686c2307eb19b3612a5587e874a1b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.157104,48.771057,9.169464,48.780670",
+     "bytes": 5560399,
+     "sha256": "d9b9d5e5b5fc2803bda24fe592d6312b660f2f4e11bd320fc0ae1b248c07ad4d"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.169464,48.771057,9.181824,48.780670",
+     "bytes": 7287486,
+     "sha256": "d862335d74762ffabafc6a0739461ee2fff7a532c6af825ba98e2105f965f63e"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.157104,48.780670,9.169464,48.790283",
+     "bytes": 4408639,
+     "sha256": "1e7be0264ce4b09bc2bf4e7531ad8a5325ecd17fc3a309f17f2a1dcea73a33c9"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.169464,48.780670,9.181824,48.790283",
+     "bytes": 4744772,
+     "sha256": "5abf29dee79fbe67e559b335811f275d515087ce0f513145bf2bddbe2ed929e8"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.181824,48.771057,9.194183,48.780670",
+     "bytes": 5604971,
+     "sha256": "250a026436d0a2a786ed564068601622b149774dbc8a11c5e74c5a1e4f3ed67c"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.194183,48.771057,9.206543,48.780670",
+     "bytes": 4514420,
+     "sha256": "bf4eb2332539b7d3b52733b2adc429831a61ef2670508a9167b4f1b0222e5192"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.181824,48.780670,9.194183,48.790283",
+     "bytes": 8305756,
+     "sha256": "e74ae72b46e206e43ca90abf1f1b85b533f6330fa0616911ebc7e1f81ec7ab07"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=9.194183,48.780670,9.206543,48.790283",
+     "bytes": 4257470,
+     "sha256": "74d31d80c5b2341a87be4f517268d398c4af0531258a11705a9710f037c63114"
+    }
+   ],
+   "elements": 254467,
+   "latest_element_timestamp": "2026-10-22T10:54:13Z",
+   "sha256": "77d1392ef4193c9f98fe79b0e726ac5eec620b61950e13ef284e08a3a27f2469",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors"
+  },
+  "relations": {
+   "1505685": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/1505685/full.json",
+    "fetched": "2026-10-22T12:16:02.817Z",
+    "bytes": 89816,
+    "sha256_as_fetched": "613d5e9889d926fa3b133a45fe5577b0acb2b157cb806d2cb017d577e5e10439"
+   },
+   "3756047": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/3756047/full.json",
+    "fetched": "2026-10-22T12:16:05.217Z",
+    "bytes": 579590,
+    "sha256_as_fetched": "9a0863bbeac28643c755b2a3e6f182e99d504652265dd9fe13ed8f23f9b855c5"
+   },
+   "4135989": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/4135989/full.json",
+    "fetched": "2026-10-22T12:16:01.669Z",
+    "bytes": 45842,
+    "sha256_as_fetched": "da436ec87e0cb4046ffe59089f7340f8df39fbf31aff442c01d051b5fa3e0de0"
+   },
+   "13624147": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/13624147/full.json",
+    "fetched": "2026-10-22T12:16:03.937Z",
+    "bytes": 13529,
+    "sha256_as_fetched": "57f488d029a3f9e172d6c8684fda84ae0fe75ee39f6d328f7ca75a443b501857"
+   }
+  }
+ },
+ "activities": [
+  {
+   "activity": "731f39d05efb0f1e",
+   "operation": "place-greens",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-greens.mjs",
+   "inputs": [
+    {
+     "label": "OSM map.json of the area",
+     "path": "data/raw/places/stuttgart/greens/osm-map.json.gz",
+     "sha256": "77d1392ef4193c9f98fe79b0e726ac5eec620b61950e13ef284e08a3a27f2469"
+    },
+    {
+     "label": "OSM relation 13624147 (full)",
+     "path": "data/raw/places/stuttgart/greens/relation-13624147.json.gz",
+     "sha256": "a80a9c3cd38a240da3f1066f31824cbda519a671ec45b944c6b7ed29e6eec00e"
+    },
+    {
+     "label": "OSM relation 1505685 (full)",
+     "path": "data/raw/places/stuttgart/greens/relation-1505685.json.gz",
+     "sha256": "343db26af83ee8ee541c4ac526888b0135e31e07aeac06352818b6e616929e9d"
+    },
+    {
+     "label": "OSM relation 3756047 (full)",
+     "path": "data/raw/places/stuttgart/greens/relation-3756047.json.gz",
+     "sha256": "65b9ae4e4b393cde4790aa513e296d037b1b1abf2533ad3c28f205035f3863e2"
+    },
+    {
+     "label": "OSM relation 4135989 (full)",
+     "path": "data/raw/places/stuttgart/greens/relation-4135989.json.gz",
+     "sha256": "6d050f1d25518202a55cbe8a2f5b8f5d6fe9080de94df023113b30aec22988c7"
+    }
+   ],
+   "params": {
+    "area": [
+     9.1571044921875,
+     48.7518310546875,
+     9.20654296875,
+     48.790283203125
+    ],
+    "row_m": 8,
+    "wood_m": 12,
+    "park_m": 15,
+    "water_side_m": 25,
+    "mix": {
+     "street": [
+      [
+       "plane",
+       30
+      ],
+      [
+       "lime",
+       25
+      ],
+      [
+       "maple",
+       15
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "locust",
+       5
+      ],
+      [
+       "birch",
+       5
+      ],
+      [
+       "ash",
+       5
+      ],
+      [
+       "cherry",
+       5
+      ]
+     ],
+     "park": [
+      [
+       "plane",
+       20
+      ],
+      [
+       "lime",
+       15
+      ],
+      [
+       "maple",
+       15
+      ],
+      [
+       "beech",
+       10
+      ],
+      [
+       "oak",
+       10
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "conifer",
+       10
+      ],
+      [
+       "birch",
+       10
+      ]
+     ],
+     "wood": [
+      [
+       "beech",
+       40
+      ],
+      [
+       "oak",
+       25
+      ],
+      [
+       "hornbeam",
+       15
+      ],
+      [
+       "conifer",
+       10
+      ],
+      [
+       "ash",
+       10
+      ]
+     ],
+     "water": [
+      [
+       "willow",
+       40
+      ],
+      [
+       "alder",
+       25
+      ],
+      [
+       "poplar",
+       20
+      ],
+      [
+       "ash",
+       15
+      ]
+     ]
+    },
+    "about": "trees placed by rule: every wood_m in natural=wood / landuse=forest, every park_m in leisure=park and garden areas with no mapped tree inside (grass and meadow get none), on a grid jittered by a stable hash; never inside a building or water"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/stuttgart/greens/greens.json",
+     "sha256": "7b6b56f7582ec38c807c95643abd0f3453e6f8352d1650bd6e2a6417c5855b8a",
+     "bytes": 1750506
+    }
+   ],
+   "counts": {
+    "water_polygons": 49,
+    "trees": 28109,
+    "osm_tree": 4295,
+    "osm_tree_row": 708,
+    "rule_wood": 21040,
+    "rule_park": 2066,
+    "skipped_blocked": 63,
+    "by_basis": {
+     "M": 28003,
+     "G": 51,
+     "S": 33,
+     "L": 22
+    },
+    "by_profile": {
+     "lime": 1435,
+     "locust": 170,
+     "maple": 1003,
+     "plane": 1769,
+     "horse-chestnut": 681,
+     "birch": 510,
+     "cherry": 172,
+     "alder": 6,
+     "ash": 2261,
+     "broadleaf": 158,
+     "oak": 5653,
+     "conifer": 2310,
+     "beech": 8785,
+     "pine": 14,
+     "willow": 19,
+     "ginkgo": 25,
+     "poplar": 13,
+     "evergreen": 1,
+     "apple": 1,
+     "chestnut": 2,
+     "hornbeam": 3121
+    },
+    "greens": 626
+   },
+   "ms": 2194,
+   "at": "2026-10-22T12:16:07.414Z"
+  }
+ ]
+}

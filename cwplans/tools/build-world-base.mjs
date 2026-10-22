@@ -31,7 +31,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const RAW = join(ROOT, arg('--raw', 'data/raw/world-base')), OUT = join(ROOT, 'cwplans/docklands/data/world-base');
 const REG = arg('--regions', 'docklands,leon,sarajevo').split(',').map(id => { const r = REGIONS[id]; if (!r) throw new Error('no region ' + id); return { id, lon: r.origin.lon, lat: r.origin.lat }; });
-const Q = +arg('--q', 70), PX = 512, GRID = 35;   // 32 cells between the 33 vertices of a terrain patch, plus one sample of border each side
+const Q = +arg('--q', 70), PX = 512, GRID = 35;
+// --add: keep the tiles already built in OUT (fetch and build only the new ones, e.g. round a new testbed) and merge the
+// manifest; without it the whole set is rebuilt from the raw cache
+const ADD = process.argv.includes('--add');
+const built = (dir, k, ext) => ADD && existsSync(join(OUT, dir, k + ext));   // 32 cells between the 33 vertices of a terrain patch, plus one sample of border each side
 const EOX = (z, row, col) => `https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless/default/WGS84/${z}/${row}/${col}.jpg`;
 const GLO = name => `https://copernicus-dem-90m.s3.amazonaws.com/${name}/${name}.tif`;
 const UA = { 'User-Agent': 'londat-cwplans/0.1 (+https://github.com/danbri/londat)' };
@@ -103,14 +107,14 @@ async function fetchGlo(c, kind) {
 
 async function fetchAll() {
   mkdirSync(join(RAW, 'eox'), { recursive: true }); mkdirSync(join(RAW, 'glo90'), { recursive: true });
-  const img = imageryTiles(), eox = new Set();
+  const img = imageryTiles().filter(k => !built('img', k, '.webp')), eox = new Set();
   for (const k of img) { const [L, x, y] = k.split('/').map(Number); for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) eox.add(`${L + 1}/${2 * y + dy}/${2 * x + dx}`); }
   const need = [...eox].filter(k => !existsSync(join(RAW, 'eox', k + '.jpg')) && !existsSync(join(RAW, 'eox', k + '.none')));
   console.log(`imagery: ${img.length} tiles of ours, ${eox.size} EOX tiles, ${need.length} to fetch`);
   await pool(need, 4, async k => { const [z, row, col] = k.split('/'), b = await get(EOX(z, row, col)), f = join(RAW, 'eox', k + '.jpg'); mkdirSync(dirname(f), { recursive: true });
     if (!b) { writeFileSync(f.replace(/\.jpg$/, '.none'), ''); return; } writeFileSync(f, b); flog['eox/' + k] = { url: EOX(z, row, col), fetched: new Date().toISOString().slice(0, 10), bytes: b.length, sha256: sha(b) }; });
   saveFlog();
-  const cells = gloCellsFor(demTiles()), todo = [...cells].flatMap(([c, kind]) => kind === 'full' ? [[c, 'full'], [c, 'ov']] : [[c, 'ov']]);
+  const cells = gloCellsFor(demTiles().filter(k => !built('dem', k, '.bin'))), todo = [...cells].flatMap(([c, kind]) => kind === 'full' ? [[c, 'full'], [c, 'ov']] : [[c, 'ov']]);
   console.log(`terrain: ${demTiles().length} tiles, ${cells.size} GLO-90 cells (${[...cells.values()].filter(v => v === 'full').length} at full resolution)`);
   await pool(todo, 4, ([c, kind]) => fetchGlo(c, kind), 20);
   saveFlog();
@@ -177,16 +181,16 @@ async function build() {
   const C = await import('@napi-rs/canvas');
   mkdirSync(OUT, { recursive: true });
   // imagery
-  let t = Date.now(); rmSync(join(OUT, 'img'), { recursive: true, force: true });
+  let t = Date.now(); if (!ADD) rmSync(join(OUT, 'img'), { recursive: true, force: true });
   const img = imageryTiles(), have = {}, outs = []; let bytes = 0;
-  for (const k of img) { const b = await imageryTile(k, C); if (!b) continue; const f = join(OUT, 'img', k + '.webp'); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, b); bytes += b.length; outs.push({ path: 'img/' + k + '.webp', sha256: sha(b), bytes: b.length });
+  for (const k of img) { const b = built('img', k, '.webp') ? readFileSync(join(OUT, 'img', k + '.webp')) : await imageryTile(k, C); if (!b) continue; const f = join(OUT, 'img', k + '.webp'); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, b); bytes += b.length; outs.push({ path: 'img/' + k + '.webp', sha256: sha(b), bytes: b.length });
     const [L, x, y] = k.split('/'); (have[L] ||= []).push(+x, +y); }
   logActivity('imagery-tiles', 1, Object.entries(flog).filter(([k]) => k.startsWith('eox/')).map(([, v]) => v), { q: Q, px: PX, regions: REG.map(r => r.id), radius_km: IMG_RADIUS_KM, global_levels: GLOBAL_L }, outs, Math.round((Date.now() - t) / 1000));
   console.log(`imagery: ${outs.length} tiles, ${(bytes / 1048576).toFixed(1)} MB`);
   // terrain heights
-  t = Date.now(); rmSync(join(OUT, 'dem'), { recursive: true, force: true });
+  t = Date.now(); if (!ADD) rmSync(join(OUT, 'dem'), { recursive: true, force: true });
   const dem = demTiles(), dhave = {}, douts = []; let dbytes = 0;
-  for (const k of dem.sort()) { const a = demTile(k); if (!a) continue; const b = Buffer.from(a.buffer), f = join(OUT, 'dem', k + '.bin'); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, b); dbytes += b.length; douts.push({ path: 'dem/' + k + '.bin', sha256: sha(b), bytes: b.length });
+  for (const k of dem.sort()) { const a = built('dem', k, '.bin') ? new Int16Array(Uint8Array.from(readFileSync(join(OUT, 'dem', k + '.bin'))).buffer) : demTile(k); if (!a) continue; const b = Buffer.from(a.buffer), f = join(OUT, 'dem', k + '.bin'); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, b); dbytes += b.length; douts.push({ path: 'dem/' + k + '.bin', sha256: sha(b), bytes: b.length });
     const [L, x, y] = k.split('/'); (dhave[L] ||= []).push(+x, +y); }
   logActivity('dem-tiles', 1, Object.entries(flog).filter(([k]) => k.startsWith('glo90/')).map(([, v]) => v), { grid: GRID, regions: REG.map(r => r.id), radius_km: DEM_RADIUS_KM }, douts, Math.round((Date.now() - t) / 1000));
   console.log(`terrain: ${douts.length} tiles, ${(dbytes / 1048576).toFixed(1)} MB`);

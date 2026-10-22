@@ -3,6 +3,114 @@
  "about": "Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js",
  "places": [
   {
+   "id": "berlin",
+   "name": "Mitte, Berlin",
+   "label": "Unter den Linden, Berlin-Mitte",
+   "area": [
+    13.370361328125,
+    52.503662109375,
+    13.4197998046875,
+    52.525634765625
+   ],
+   "centre": [
+    13.3777,
+    52.51627
+   ],
+   "timeZone": "Europe/Berlin",
+   "locale": "de-DE",
+   "tileBase": "https://danbri.github.io/docklandia/data/de/berlin/",
+   "tileset": "https://danbri.github.io/docklandia/data/de/berlin/tileset.json",
+   "features": "https://danbri.github.io/docklandia/data/de/berlin/features.json",
+   "readme": "https://danbri.github.io/docklandia/data/de/berlin/README.md",
+   "provenance": "https://danbri.github.io/docklandia/data/de/berlin/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Terrain of Mitte: Geoportal Berlin / ATKIS DGM1 (Digitales Geländemodell), dl-de/zero-2.0; Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Land cover © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium (CC BY 4.0); Buildings of Mitte and building heights of Berlin: Geoportal Berlin / 3D-Gebäudemodelle im Level of Detail 2 (LoD 2), dl-de/zero-2.0; Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "buildings": 8663,
+   "buildings_lod2": 8419,
+   "built": "2026-10-22T13:47:19.708Z",
+   "surround": "https://danbri.github.io/docklandia/data/de/berlin/surround.json",
+   "extent": [
+    12.8320313,
+    52.03125,
+    14.0625,
+    52.9101563
+   ],
+   "city": [
+    13.088,
+    52.338,
+    13.761,
+    52.675
+   ],
+   "city_buildings": 814713,
+   "views": [
+    {
+     "name": "Mitte (1.5 km)",
+     "ll": "52.5170,13.3940,1500",
+     "ht": "80,55"
+    },
+    {
+     "name": "Berlin (20 km)",
+     "ll": "52.5100,13.4000,20000",
+     "ht": "0,45"
+    },
+    {
+     "name": "Reichstag and Brandenburger Tor (600 m)",
+     "ll": "52.5170,13.3780,600",
+     "ht": "20,60"
+    }
+   ]
+  },
+  {
+   "id": "dagstuhl",
+   "name": "Schloss Dagstuhl, Wadern",
+   "label": "Schloss Dagstuhl, Wadern",
+   "area": [
+    6.866455078125,
+    49.515380859375,
+    6.932373046875,
+    49.59228515625
+   ],
+   "centre": [
+    6.89863,
+    49.53067
+   ],
+   "timeZone": "Europe/Berlin",
+   "locale": "de-DE",
+   "tileBase": "https://danbri.github.io/docklandia/data/de/dagstuhl/",
+   "tileset": "https://danbri.github.io/docklandia/data/de/dagstuhl/tileset.json",
+   "features": "https://danbri.github.io/docklandia/data/de/dagstuhl/features.json",
+   "readme": "https://danbri.github.io/docklandia/data/de/dagstuhl/README.md",
+   "provenance": "https://danbri.github.io/docklandia/data/de/dagstuhl/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Land cover © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium (CC BY 4.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "buildings": 6579,
+   "built": "2026-10-22T12:03:57.135Z",
+   "surround": "https://danbri.github.io/docklandia/data/de/dagstuhl/surround.json",
+   "extent": [
+    6.328125,
+    49.0429688,
+    7.5585938,
+    49.921875
+   ],
+   "city": [
+    6.8,
+    49.47,
+    7.01,
+    49.63
+   ],
+   "city_buildings": 31902,
+   "views": [
+    {
+     "name": "Schloss Dagstuhl (600 m)",
+     "ll": "49.5307,6.8986,600",
+     "ht": "20,60"
+    },
+    {
+     "name": "Wadern and the villages (10 km)",
+     "ll": "49.5500,6.9000,10000",
+     "ht": "0,45"
+    }
+   ]
+  },
+  {
    "id": "leon",
    "name": "Casco Histórico, León",
    "label": "Plaza Mayor, León",
@@ -116,6 +224,57 @@
     43.875
    ],
    "city_buildings": 57680
+  },
+  {
+   "id": "stuttgart",
+   "name": "Mitte, Stuttgart",
+   "label": "Schlossplatz, Stuttgart-Mitte",
+   "area": [
+    9.1571044921875,
+    48.7518310546875,
+    9.20654296875,
+    48.790283203125
+   ],
+   "centre": [
+    9.17974,
+    48.77847
+   ],
+   "timeZone": "Europe/Berlin",
+   "locale": "de-DE",
+   "tileBase": "https://danbri.github.io/docklandia/data/de/stuttgart/",
+   "tileset": "https://danbri.github.io/docklandia/data/de/stuttgart/tileset.json",
+   "features": "https://danbri.github.io/docklandia/data/de/stuttgart/features.json",
+   "readme": "https://danbri.github.io/docklandia/data/de/stuttgart/README.md",
+   "provenance": "https://danbri.github.io/docklandia/data/de/stuttgart/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Land cover © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium (CC BY 4.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "buildings": 21124,
+   "built": "2026-10-22T12:15:02.633Z",
+   "surround": "https://danbri.github.io/docklandia/data/de/stuttgart/surround.json",
+   "extent": [
+    8.6132813,
+    48.3398438,
+    9.6679688,
+    49.21875
+   ],
+   "city": [
+    9.039,
+    48.692,
+    9.316,
+    48.866
+   ],
+   "city_buildings": 204859,
+   "views": [
+    {
+     "name": "The valley (3 km)",
+     "ll": "48.7784,9.1797,3000",
+     "ht": "200,50"
+    },
+    {
+     "name": "Fernsehturm on the Hoher Bopser (1 km)",
+     "ll": "48.7558,9.1902,1000",
+     "ht": "330,55"
+    }
+   ]
   },
   {
    "id": "uk-lite",

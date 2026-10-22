@@ -1,0 +1,269 @@
+{
+ "about": "Build log of the water and trees of Schloss Dagstuhl, Wadern (tools/build-place-greens.mjs)",
+ "fetches": {
+  "osm": {
+   "url": [
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.866455,49.515381,6.899414,49.553833",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.899414,49.515381,6.932373,49.553833",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.866455,49.553833,6.899414,49.592285",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.899414,49.553833,6.932373,49.592285"
+   ],
+   "fetched": "2026-10-22T12:04:57.771Z",
+   "as_fetched": [
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.866455,49.515381,6.899414,49.553833",
+     "bytes": 5945951,
+     "sha256": "243c74d84fb8a59dfef4223b31ee38845c27afba5c89e70df2c140d72d27500a"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.899414,49.515381,6.932373,49.553833",
+     "bytes": 3666381,
+     "sha256": "ebc774651469363b746ff893fbd0df2055f19e49738562684eac3c0028ad8128"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.866455,49.553833,6.899414,49.592285",
+     "bytes": 4016015,
+     "sha256": "c5103fd50ec3da4b81c6c7331c18f7e674d99551a8a655eca54db409217792a5"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=6.899414,49.553833,6.932373,49.592285",
+     "bytes": 2973359,
+     "sha256": "50d172143ed5352230caef8cc18c886579f5a0223c3663226aa0b5e83ec0de58"
+    }
+   ],
+   "elements": 78419,
+   "latest_element_timestamp": "2026-10-22T12:00:16Z",
+   "sha256": "9a7f55b74dbb3be6827f66e31516adbd3b581845b5faf8df7b12420b1511d8c8",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors"
+  },
+  "relations": {
+   "4665474": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/4665474/full.json",
+    "fetched": "2026-10-22T12:05:01.670Z",
+    "bytes": 75360,
+    "sha256_as_fetched": "ef9339e92a0354cfccfbd8f960047063b047aa4e7e1e216e43a5923c7cb829d7"
+   },
+   "6179656": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/6179656/full.json",
+    "fetched": "2026-10-22T12:04:59.293Z",
+    "bytes": 115216,
+    "sha256_as_fetched": "987f7c3d729d93e8645b084b5757972a269bde7bff2cfee86526c9b281fcedda"
+   },
+   "7085461": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/7085461/full.json",
+    "fetched": "2026-10-22T12:05:02.903Z",
+    "bytes": 384081,
+    "sha256_as_fetched": "df04a0e2c01eacfcbd110a5ba6eeefa933fffd4a7923edce18a2921564cbb6bb"
+   },
+   "7582979": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/7582979/full.json",
+    "fetched": "2026-10-22T12:05:00.517Z",
+    "bytes": 436461,
+    "sha256_as_fetched": "aa8c07dd2c38517f3f33517c26edc35becaec78319d9b5e264a5433d814a87cc"
+   },
+   "8249417": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/8249417/full.json",
+    "fetched": "2026-10-22T12:05:04.084Z",
+    "bytes": 261362,
+    "sha256_as_fetched": "b74ca2bc0ec0d6d20da990b6fc497815df36c7adbe2892ab65a05f034611eac9"
+   },
+   "9347501": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/9347501/full.json",
+    "fetched": "2026-10-22T12:05:05.253Z",
+    "bytes": 156614,
+    "sha256_as_fetched": "801a28f6ed035dce8e336fdc413efdbde5a525aea9a9560bc3b347458e151e51"
+   }
+  }
+ },
+ "activities": [
+  {
+   "activity": "bc5a4d500318b6c8",
+   "operation": "place-greens",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-greens.mjs",
+   "inputs": [
+    {
+     "label": "OSM map.json of the area",
+     "path": "data/raw/places/dagstuhl/greens/osm-map.json.gz",
+     "sha256": "9a7f55b74dbb3be6827f66e31516adbd3b581845b5faf8df7b12420b1511d8c8"
+    },
+    {
+     "label": "OSM relation 4665474 (full)",
+     "path": "data/raw/places/dagstuhl/greens/relation-4665474.json.gz",
+     "sha256": "2fa6c04748a197171f44f2cf6f123a5345b82592858b5d60c08f719c134afb0d"
+    },
+    {
+     "label": "OSM relation 6179656 (full)",
+     "path": "data/raw/places/dagstuhl/greens/relation-6179656.json.gz",
+     "sha256": "086490f7c305d6d3769c9b19912432596f86dd8ebb90adbb697cb8435e658b3f"
+    },
+    {
+     "label": "OSM relation 7085461 (full)",
+     "path": "data/raw/places/dagstuhl/greens/relation-7085461.json.gz",
+     "sha256": "fd5150bdde12f1c80f55f87922c6a8cf409f8cb37fbf412288b4c95a2b5b55b7"
+    },
+    {
+     "label": "OSM relation 7582979 (full)",
+     "path": "data/raw/places/dagstuhl/greens/relation-7582979.json.gz",
+     "sha256": "1c1a3da7b5684dda074c8c159fbf1e07d19b5d0931b7b4557aca77d84ef3d75e"
+    },
+    {
+     "label": "OSM relation 8249417 (full)",
+     "path": "data/raw/places/dagstuhl/greens/relation-8249417.json.gz",
+     "sha256": "e2903321cf181f818f3402ff298023ec5a865a4525e057f203eeeee8c21701ed"
+    },
+    {
+     "label": "OSM relation 9347501 (full)",
+     "path": "data/raw/places/dagstuhl/greens/relation-9347501.json.gz",
+     "sha256": "285d76cb086b4a57b36d14df095a710ff78153a98e28634621224287eb98bae6"
+    }
+   ],
+   "params": {
+    "area": [
+     6.866455078125,
+     49.515380859375,
+     6.932373046875,
+     49.59228515625
+    ],
+    "row_m": 8,
+    "wood_m": 25,
+    "park_m": 15,
+    "water_side_m": 25,
+    "mix": {
+     "street": [
+      [
+       "lime",
+       30
+      ],
+      [
+       "maple",
+       20
+      ],
+      [
+       "horse-chestnut",
+       15
+      ],
+      [
+       "oak",
+       10
+      ],
+      [
+       "birch",
+       10
+      ],
+      [
+       "cherry",
+       10
+      ],
+      [
+       "ash",
+       5
+      ]
+     ],
+     "park": [
+      [
+       "beech",
+       20
+      ],
+      [
+       "oak",
+       20
+      ],
+      [
+       "lime",
+       15
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "maple",
+       10
+      ],
+      [
+       "conifer",
+       15
+      ],
+      [
+       "birch",
+       10
+      ]
+     ],
+     "wood": [
+      [
+       "beech",
+       40
+      ],
+      [
+       "oak",
+       25
+      ],
+      [
+       "conifer",
+       25
+      ],
+      [
+       "birch",
+       5
+      ],
+      [
+       "ash",
+       5
+      ]
+     ],
+     "water": [
+      [
+       "alder",
+       40
+      ],
+      [
+       "willow",
+       35
+      ],
+      [
+       "ash",
+       25
+      ]
+     ]
+    },
+    "about": "trees placed by rule: every wood_m in natural=wood / landuse=forest, every park_m in leisure=park and garden areas with no mapped tree inside (grass and meadow get none), on a grid jittered by a stable hash; never inside a building or water"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/dagstuhl/greens/greens.json",
+     "sha256": "ae3214f756833cd45f70c527308326ee76521998ef927555155bf8f41cc5d4e3",
+     "bytes": 1432049
+    }
+   ],
+   "counts": {
+    "water_polygons": 50,
+    "trees": 22941,
+    "osm_tree": 23,
+    "osm_tree_row": 470,
+    "rule_wood": 22312,
+    "rule_park": 136,
+    "skipped_blocked": 16,
+    "by_basis": {
+     "M": 22941
+    },
+    "by_profile": {
+     "lime": 140,
+     "horse-chestnut": 75,
+     "oak": 5710,
+     "maple": 84,
+     "birch": 1200,
+     "conifer": 4550,
+     "beech": 9061,
+     "cherry": 17,
+     "ash": 1130,
+     "broadleaf": 974
+    },
+    "greens": 475
+   },
+   "ms": 2908,
+   "at": "2026-10-22T12:05:51.109Z"
+  }
+ ]
+}

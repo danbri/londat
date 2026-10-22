@@ -2,7 +2,10 @@
  "format": "place-greens-index-1",
  "about": "Places with water and trees (cwplans/tools/build-place-greens.mjs); read by docklands/globe/place-look.js",
  "places": {
+  "berlin": "berlin/greens/greens.json",
+  "dagstuhl": "dagstuhl/greens/greens.json",
   "leon": "leon/greens/greens.json",
-  "sarajevo": "sarajevo/greens/greens.json"
+  "sarajevo": "sarajevo/greens/greens.json",
+  "stuttgart": "stuttgart/greens/greens.json"
  }
 }
