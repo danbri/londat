@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # One Overture Maps theme / type in a bounding box, for cwplans/tools/build-place-tiles.mjs (fetch of the city and the
 # surroundings of a place: buildings of the city box, road and rail segments, water, localities, peaks; skill
-# docklands-3d-page, "Three.js port: places, city and surroundings by level of detail (2026-10-20)"). As
+# docklands-3d-page, "Three.js port: places, city and surroundings rby level of detail (2026-10-20)"). As
 # fetch-overture-buildings.py: the bucket's XML listing gives the GeoParquet files of the release (the s3:// glob answers
 # 403 through the agent proxy), DuckDB reads them over HTTPS with a filter on the bbox struct columns, so it reads only the
 # footers and the row groups whose statistics meet the box.
@@ -10,7 +10,7 @@
 # where: an extra SQL condition (e.g. "subtype IN ('road','rail')"). geometry (GeoJSON) and sources are always written.
 # Output: {release, theme, type, bbox, files_listed, files_read, rows: [{id, <columns>, sources, geometry}]}.
 # An output name ending in .ndjson streams instead (for areas of millions of rows, e.g. the buildings of Greater London:
-# one JSON array of 1.5 M rows is larger than a Node string can hold): one row a line, ordered by id (DuckDB sorts out
+# one JSON array of 1.5 M rows is larger than a Node string can hold): one row a line, ordered rby id (DuckDB sorts out
 # of core), and the header object (the keys above but rows) in <out>.meta.json.
 # Slim mode (an 11th argument, a SQL condition; the UK lite set, region config uk-lite, place kind "lite"): every row
 # gets `c` (its centroid, lon/lat at 1e-7) and `a` (its area in m2: the planar area in degrees x 111,320 cos(lat) x
@@ -19,6 +19,10 @@
 # the columns of the theme, `am`, the area in m2, and `osm_id`, the OSM id of the record's base source such as w123; a
 # 12th argument names a file of OSM ids, one a line, read as the table `ids`: "osm_id IN (SELECT id FROM ids)"). For 29 million UK buildings of which only the landmark candidates
 # need an outline. A column may carry an alias ("names.primary AS name").
+# Slim mode also writes `o` for every record (since 2026-10-22, the UK lite set drawn as one box a building at the leaves):
+# the minimum rotated rectangle of the footprint in metres (the outline scaled rby 111,320 cos(lat) and 110,574 about the
+# origin, then GEOS MinimumRotatedRectangle): [angle of its long side in degrees from east toward north, 0 to 180, long side
+# m, short side m], 0.1 steps; null for a degenerate footprint.
 # Needs the duckdb Python package (pip install duckdb; httpfs and spatial are installed on first use).
 import json, sys, re, urllib.request, urllib.parse
 import duckdb
@@ -53,8 +57,13 @@ if slim:
     q = f"""WITH t0 AS (SELECT *, ST_Centroid(geometry) AS ctr FROM read_parquet({urls!r}, filename = true)
   WHERE bbox.xmin < {e} AND bbox.xmax > {w} AND bbox.ymin < {n} AND bbox.ymax > {s} AND ({where})),
 t AS (SELECT *, ST_Area(geometry) * 111320 * cos(radians(ST_Y(ctr))) * 110574 AS am,
-  split_part(list_filter(sources, x -> coalesce(x.property, '') = '')[1].record_id, '@', 1) AS osm_id FROM t0)
-SELECT id, {sel + ',' if sel else ''} {src} AS sources, CASE WHEN ({slim}) THEN ST_AsGeoJSON(geometry) END AS g, ST_X(ctr) AS cx, ST_Y(ctr) AS cy, am, filename FROM t"""
+  split_part(list_filter(sources, x -> coalesce(x.property, '') = '')[1].record_id, '@', 1) AS osm_id,
+  ST_ExteriorRing(ST_MinimumRotatedRectangle(ST_Scale(geometry, 111320 * cos(radians(ST_Y(ctr))), 110574))) AS rr FROM t0),
+t2 AS (SELECT *, ST_X(ST_PointN(rr, 2)) - ST_X(ST_PointN(rr, 1)) AS rax, ST_Y(ST_PointN(rr, 2)) - ST_Y(ST_PointN(rr, 1)) AS ray,
+  ST_X(ST_PointN(rr, 3)) - ST_X(ST_PointN(rr, 2)) AS rbx, ST_Y(ST_PointN(rr, 3)) - ST_Y(ST_PointN(rr, 2)) AS rby FROM t)
+SELECT id, {sel + ',' if sel else ''} {src} AS sources, CASE WHEN ({slim}) THEN ST_AsGeoJSON(geometry) END AS g, ST_X(ctr) AS cx, ST_Y(ctr) AS cy, am,
+  CASE WHEN rax IS NULL OR rbx IS NULL THEN NULL WHEN rax * rax + ray * ray >= rbx * rbx + rby * rby THEN [degrees(atan2(ray, rax)), sqrt(rax * rax + ray * ray), sqrt(rbx * rbx + rby * rby)]
+    ELSE [degrees(atan2(rby, rbx)), sqrt(rbx * rbx + rby * rby), sqrt(rax * rax + ray * ray)] END AS rect, filename FROM t2"""
 ndjson = out.endswith('.ndjson')
 if ndjson: q += ' ORDER BY id'
 rows, files, nrows = [], set(), 0
@@ -79,6 +88,8 @@ for rec in records():
     if slim:
         o['sources'] = [{k: v for k, v in x.items() if v is not None} for x in o['sources']]
         o['c'] = [r7(rec[3 + len(cols)]), r7(rec[4 + len(cols)])]; o['a'] = round(rec[5 + len(cols)], 1)
+        rr = rec[6 + len(cols)]
+        o['o'] = [round(rr[0] % 180, 1), round(rr[1], 1), round(rr[2], 1)] if rr and rr[1] is not None and rr[1] > 0 else None
     if rec[2 + len(cols)] is not None:
         geo = json.loads(rec[2 + len(cols)]); geo['coordinates'] = rnd(geo['coordinates']); o['geometry'] = geo
     nrows += 1
