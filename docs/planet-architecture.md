@@ -267,6 +267,24 @@ https://github.com/danbri/docklandia (`data/gb/uk-lite/`, served at https://danb
   97 kB with external tile sets per level-8 cell, landmark rows in shards per part. The reader loads it within 1,200 km.
   Details, sizes by part and the traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
 
+### 3d. Dublin: a full place held in docklandia (built 2026-10-22)
+
+Owner, 2026-10-22: "bulk data in docklandia repo pls. ... Ireland: Dublin especially". Central Dublin is a place with a
+core, a city ring and surroundings like León and Sarajevo, but every bulky file is in
+https://github.com/danbri/docklandia `data/ie/dublin/` (served at https://danbri.github.io/docklandia/data/ie/dublin/ );
+londat holds only the region config https://github.com/danbri/londat/blob/main/docklands/geo/regions/dublin.js and the
+index entries (absolute URLs under the tileBase). The same three tools write any place to another repository
+(`place.outRepo`, `--out`), so the next cities need no new code.
+
+- Core: 52 level-15 cells along the Liffey (`place.core_bbox`), ground from the Geological Survey Ireland / OPW 2 m LiDAR
+  DTM (CC BY 4.0, a national open DEM read as tile zips listed by an ArcGIS coverage layer: DEM kind `arcgis-tile-zips`);
+  city and surroundings on Copernicus GLO-30 (`dem.surround`).
+- 105.7 MB: core 17.7, city 60.2 (417,698 blocks), surroundings 17.4, features and the rest 10.4. A city of 0.5 M
+  buildings as blocks costs about 120 bytes a building with the place-lod rules (London's blocks mode: 79).
+- World base: the testbed's imagery and height tiles are ADDED (`build-world-base.mjs --add`), the existing ones stay.
+- Live: https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,1500&ht=0,55 (after docklandia, then londat,
+  are merged). Details: skill docklands-3d-page, "Three.js port: Dublin, a place held in docklandia (2026-10-22)".
+
 ## 4. Adapters
 
 An adapter is a module plus a block in a region config. Contract:

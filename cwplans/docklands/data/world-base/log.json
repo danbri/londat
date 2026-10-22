@@ -10,6 +10,16 @@
    "version": 1,
    "tool": "tools/build-world-base.mjs",
    "skill": "docklands-3d-page"
+  },
+  "imagery-tiles-add-dublin": {
+   "version": 1,
+   "tool": "tools/build-world-base.mjs",
+   "skill": "docklands-3d-page"
+  },
+  "dem-tiles-add-dublin": {
+   "version": 1,
+   "tool": "tools/build-world-base.mjs",
+   "skill": "docklands-3d-page"
   }
  },
  "fetches": {
@@ -35,6 +45,29 @@
     "2026-10-20"
    ],
    "inputs_sha256": "e82c7a51599d42b7ca3ba2a72df587eea51e071e90bcc0dd9eacec3ddba6ade9"
+  },
+  "imagery-tiles-add-dublin": {
+   "inputs": 844,
+   "bytes": 8400939,
+   "urls": [
+    "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless/default/WGS84/{z}/{row}/{col}.jpg"
+   ],
+   "fetched": [
+    "2026-10-22"
+   ],
+   "inputs_sha256": "11d494aa605b56493e22c2c3b807dcfe920b41ee6c3bc3c0d4d9b1eb0de67552"
+  },
+  "dem-tiles-add-dublin": {
+   "inputs": 68,
+   "bytes": 18960392,
+   "urls": [
+    "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif",
+    "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif (overview 2 of 2, read by range)"
+   ],
+   "fetched": [
+    "2026-10-22"
+   ],
+   "inputs_sha256": "21fe6147546b436d69f001cc6e46cd0ade7115b3c4dd414b86c169f560295e04"
   }
  },
  "activities": [
@@ -94,6 +127,60 @@
    "bytes": 1097600,
    "seconds": 7,
    "at": "2026-10-20T23:12:30.483Z"
+  },
+  {
+   "id": "actb22ceaa9d38785ed",
+   "operation": "imagery-tiles-add-dublin",
+   "version": 1,
+   "inputs_sha256": "11d494aa605b56493e22c2c3b807dcfe920b41ee6c3bc3c0d4d9b1eb0de67552",
+   "params": {
+    "q": 70,
+    "px": 512,
+    "regions": [
+     "dublin"
+    ],
+    "radius_km": {
+     "5": 1500,
+     "6": 800,
+     "7": 400,
+     "8": 220,
+     "9": 100,
+     "10": 40,
+     "11": 15
+    },
+    "add": true
+   },
+   "outputs": 211,
+   "outputs_sha256": "5bb07e029c38517f1e5164c7620c56c7a15910f3508a806353357d98a6f58454",
+   "bytes": 3620048,
+   "seconds": 6,
+   "at": "2026-10-22T11:46:02.693Z"
+  },
+  {
+   "id": "actc6a1a42158551f33",
+   "operation": "dem-tiles-add-dublin",
+   "version": 1,
+   "inputs_sha256": "21fe6147546b436d69f001cc6e46cd0ade7115b3c4dd414b86c169f560295e04",
+   "params": {
+    "grid": 35,
+    "regions": [
+     "dublin"
+    ],
+    "radius_km": {
+     "7": 300,
+     "8": 170,
+     "9": 80,
+     "10": 35,
+     "11": 15,
+     "12": 7
+    },
+    "add": true
+   },
+   "outputs": 136,
+   "outputs_sha256": "d24c9dde270f5d210751e4c52304f0b55ab73d98dc7c7cc1a6f80a2fcc7a0d19",
+   "bytes": 333200,
+   "seconds": 0,
+   "at": "2026-10-22T11:46:02.849Z"
   }
  ]
 }

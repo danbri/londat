@@ -6,6 +6,11 @@
    "tileset": "sarajevo/landmarks/tileset.json",
    "features": "sarajevo/landmarks/landmarks.json",
    "readme": "sarajevo/landmarks/README.md"
+  },
+  "dublin": {
+   "tileset": "https://danbri.github.io/docklandia/data/ie/dublin/landmarks/tileset.json",
+   "features": "https://danbri.github.io/docklandia/data/ie/dublin/landmarks/landmarks.json",
+   "readme": "https://danbri.github.io/docklandia/data/ie/dublin/landmarks/README.md"
   }
  }
 }

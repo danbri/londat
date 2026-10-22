@@ -1,12 +1,12 @@
 # Exit paths for the "review" items of the data register
 
-Generated from `cwplans/data-register.json` (`review_exit_paths`, `review_exit`) by `cwplans/tools/check-data-register.mjs --write` on 2026-10-21. Edit the JSON, not this file.
+Generated from `cwplans/data-register.json` (`review_exit_paths`, `review_exit`) by `cwplans/tools/check-data-register.mjs --write` on 2026-10-22. Edit the JSON, not this file.
 
 OKR KR6.2 (https://github.com/danbri/londat/blob/main/OKRS.md): every item marked "review" has a written path for the end of the prototyping phase. The cwplans data exception holds only "while in the scoping, planning and prototyping phase" (CLAUDE.md, data policy); the owner says when the phase ends. These paths do not change a licence class or a decision: the owner chooses an option for each group.
 
 Exit paths for the items marked "review" (OKR KR6.2): what the issue is, the owner decisions with their dates and words (CLAUDE.md), and the options at the end of the prototyping phase. Each file, branch or source with a "review" note (or licence_class "review") names one or more of these groups in its "review_exit" (the first is the main reason). A group does not change a licence class or a decision; the owner chooses an option. Readable view: docs/review-exit-paths.md (written by tools/check-data-register.mjs --write). Not an item: the Bosnia and Herzegovina waiver (owner, 2026-10-11, issue https://github.com/danbri/londat/issues/9) covers no committed file today (Sarajevo heights come from OSM and GHSL; FGU and RGURS were not reached).
 
-Items: 69 (58 files, 2 branches, 8 sources); with an exit path: 69. Groups: 14. An item can name more than one group; the first is its main reason.
+Items: 70 (58 files, 2 branches, 8 sources); with an exit path: 70. Groups: 14. An item can name more than one group; the first is its main reason.
 
 The check (`npm run check`) fails when a new review item has no exit path, or when an item names an unknown group.
 
@@ -19,7 +19,7 @@ The check (`npm run check`) fails when a new review item has no exit path, or wh
 | 3 (owner decides) | [quotes](#quotes) | share-alike text and quotation | 9 | keep the value and the URL; drop the quote text | keep, replace, remove |
 | 4 (owner decides) | [ais-scoping](#ais-scoping) | scoping-only permission | 7 | remove (the permission is for scoping only) | obtain licence, replace, keep, remove |
 | 5 (owner decides) | [no-licence-public](#no-licence-public) | licence unknown | 7 | keep facts only and ask the publishers | obtain licence, keep, replace, remove |
-| 6 | [osm-odbl](#osm-odbl) | share-alike | 6 | keep under ODbL with the credit | keep, replace, remove |
+| 6 | [osm-odbl](#osm-odbl) | share-alike | 7 | keep under ODbL with the credit | keep, replace, remove |
 | 7 | [catastro-ign](#catastro-ign) | licence terms to confirm (transformed-only reuse; licence field empty) | 5 | Catastro: keep (transformed data only); IGN: keep as the separate, removable class the owner accepted on 2026-10-21, and remove it with the switch if IGN or the owner asks | obtain licence, keep, replace, remove |
 | 8 | [adsb-odbl](#adsb-odbl) | share-alike | 3 | keep under ODbL with the credit, as for OSM (decided with the OSM review) | keep, replace, remove |
 | 9 | [attribution-kept](#attribution-kept) | attribution required | 3 | keep with the attribution | keep, remove |
@@ -210,7 +210,7 @@ Owner decisions:
 
 If the owner decides nothing: keep under ODbL with the credit.
 
-Items (6):
+Items (7):
 
 - `docklands/data/moorings.json`
 - `docklands/data/places/leon/tiles/*.glb` (also; main group catastro-ign)
@@ -218,6 +218,7 @@ Items (6):
 - `docklands/data/places/london/tiles/*.glb`
 - `docklands/data/places/london/features.json`
 - external `danbri/docklandia:data/gb/uk-lite/`
+- external `danbri/docklandia:data/ie/dublin/`
 
 ## catastro-ign
 

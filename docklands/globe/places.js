@@ -24,7 +24,7 @@
 // own load_m, reads external tile sets (content = a tileset JSON) on first need and its landmark rows in shards per part.
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)", "places, city and surroundings by level
 // of detail (2026-10-20)" and "the UK lite set (2026-10-22)".
-import { latinPreferred, pickName } from '../geo/script.js';
+import { latinPreferred, pickName, isLatin } from '../geo/script.js';
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, select, positionView, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, normalLocal, cameraWorldMatrix, modelWorldMatrix } from 'three/tsl';
 import { geodeticToEcef, enuBasis, surfaceDistance, D2R } from '../geo/ellipsoid.js';
@@ -90,7 +90,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   // ?placebase=<id>:<url> (repeatable): serve a place whose files live elsewhere (index entry tileBase, e.g. the UK lite
   // set in the docklandia repository) from another base, e.g. a local copy for the headless tests
   const rebase = new Map(qs.getAll('placebase').map(v => { const i = v.indexOf(':'); return [v.slice(0, i), v.slice(i + 1).replace(/\/?$/, '/')]; }));
-  for (const p of ix.places || []) { const nb = rebase.get(p.id); if (!nb || !p.tileBase) continue; for (const k of ['tileset', 'features', 'readme', 'provenance', 'surround']) if (typeof p[k] === 'string' && p[k].startsWith(p.tileBase)) p[k] = nb + p[k].slice(p.tileBase.length); p.tileBase = nb; }
+  for (const p of ix.places || []) { const nb = rebase.get(p.id); if (!nb || !p.tileBase) continue; for (const k of ['tileset', 'features', 'readme', 'provenance', 'surround']) if (typeof p[k] === 'string' && p[k].startsWith(p.tileBase)) p[k] = nb + p[k].slice(p.tileBase.length); p.tileBase0 = p.tileBase; p.tileBase = nb; }   // tileBase0: greens and landmarks indexes rebase by it
   const P = (ix.places || []).map(p => ({ ...p, C: geodeticToEcef(p.centre[0], p.centre[1], 0), state: null, tiles: [], extras: [], feats: null, nodes: [], roots: [], sur: null }));
   G.places = P;
   // a place of kind "lite" (the UK outside London: landmarks plus merged mass) covers the boxes of its parts (index
@@ -444,7 +444,9 @@ export async function attachPlaces(G, H, { scene, U }) {
   const featsP = p => p.feats ? Promise.resolve(p.feats) : p.featsP || (p.featsP = fetch(new URL(p.features, base)).then(r => r.json()).then(fj => (p.feats ||= indexFeatures(fj))));
   const surP = p => !p.surround ? Promise.resolve(null) : p.surP || (p.surP = p.sur ? Promise.resolve(p.sur) : fetch(new URL(p.surround, base)).then(r => r.json()).then(s => (p.sur ||= s)));
   // names: the Latin form only while Latin is preferred (geo/script.js; owner, 2026-10-22); a name with no Latin form gives ''
-  const nameText = (n, alt) => { if (latinPreferred()) { const m = pickName(n, alt); return m || ''; } return alt ? `${n} (${alt})` : n; };
+  // the name and its second name: with Latin script preferred, a second name in the Latin script stays beside the first
+  // (Dublin: "Grafton Street (Sráid Grafton)"; owner, 2026-10-22: keep English and Irish), one in another script goes
+  const nameText = (n, alt) => { if (latinPreferred()) { const m = pickName(n, alt); return m && m === n && alt && alt !== n && isLatin(alt) ? `${n} (${alt})` : m || ''; } return alt ? `${n} (${alt})` : n; };
   const localTime = p => { try { return new Intl.DateTimeFormat(p.locale || undefined, { timeZone: p.timeZone, hour: '2-digit', minute: '2-digit', weekday: 'short' }).format(new Date(H.clock())); } catch { return null; } };
   G.placeTime = (lon, lat) => { const p = P.find(q => inArea(q, lon, lat) || (q.extent && inRect(q.extent, lon, lat))); if (!p) return null; const t = H.clock(); return { place: p.id, time_zone: p.timeZone, local: localTime(p), iso: new Date(t).toISOString() }; };
   const rowsOf = (S, k) => (S[k] || []).map(r => Object.fromEntries(S[k + '_fields'].map((f, i) => [f, r[i]])));

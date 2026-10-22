@@ -197,6 +197,56 @@
       "committed": false,
       "local_path": "data/raw/places/uk-lite/osm-landmark-tags.tsv (in cwplans/.gitignore)",
       "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (76,131 rows; ids, tags only, joined to the Overture records by OSM id)"
+    },
+    "osm-api-place-dublin": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (the core area -6.295166,53.333130,-6.223755,53.355103 cut in parts on 400 too many nodes: 10 requests; each URL and the SHA-256 of each answer in docklandia data/ie/dublin/provenance/log.json)",
+      "osm_data_as_of": "2026-10-22T12:02:21.897Z (time of the API calls; newest element 2026-10-21T19:11:50Z)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "d1587e5a9f0dfa0f",
+      "size_bytes": 6894273,
+      "committed": false,
+      "local_path": "data/raw/places/dublin/osm.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region dublin --out <docklandia>/data/ie/dublin (OSM API 0.6 map.json; 243290 elements)"
+    },
+    "overture-osm-dublin": {
+      "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/ (themes transportation, base, divisions, buildings; bbox of the surroundings -6.855469,52.910156,-5.625,53.789063 and of the city box -6.45,53.21,-6.05,53.46)",
+      "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "9fa13c3a88d36651",
+      "size_bytes": 386078687,
+      "committed": false,
+      "local_path": "data/raw/places/dublin/overture-*-2026-09-23.1.json (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region dublin (fetch-overture-theme.py, one DuckDB query per theme: roads 21341, streets 96613, water 13391, places 4172, peaks 210, city buildings 516683 records); the SHA-256 of each answer is in docklandia data/ie/dublin/provenance/log.json; sha256_prefix and size_bytes: the city buildings answer"
+    },
+    "osm-api-place-greens-dublin": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (the core area, 10 requests) and relation/<id>/full for 3 multipolygons that leave it",
+      "osm_data_as_of": "2026-10-22T12:13:14.666Z (time of the API calls; newest element 2026-10-21T19:11:50Z)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "d1587e5a9f0dfa0f",
+      "size_bytes": 6894273,
+      "committed": false,
+      "local_path": "data/raw/places/dublin/greens/osm-map.json.gz (and relation-<id>.json.gz; in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-greens.mjs fetch --region dublin --out <docklandia>/data/ie/dublin"
+    },
+    "osm-api-landmarks-dublin": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (521 boxes of about 160 m to 700 m round the landmark candidates of the city box; each URL and the SHA-256 of each answer in docklandia data/ie/dublin/landmarks/log.json)",
+      "osm_data_as_of": "2026-10-22T12:28:26.101Z (time of the API calls; newest element 2026-10-22T12:22:01Z)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "4b268e58c5f51d3a",
+      "size_bytes": 16071470,
+      "committed": false,
+      "local_path": "data/raw/places/dublin/landmarks/osm-landmarks.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-landmarks.mjs fetch --region dublin --out <docklandia>/data/ie/dublin (634159 elements)"
+    },
+    "qlever-osm-dublin-tall": {
+      "url": "https://qlever.dev/api/osm-planet (SPARQL: elements contained in the Ireland relation 62273 with an OSM height and man_made chimney, obelisk, tower, monument or mast, or historic monument or memorial; the endpoint moved from qlever.cs.uni-freiburg.de, which answers 308)",
+      "osm_data_as_of": "the osm2rdf index of the QLever OSM endpoint (planet), queried 2026-10-22",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "6afa1757406a2218",
+      "size_bytes": 46940,
+      "committed": false,
+      "local_path": "data/raw/places/dublin/landmarks/qlever-tall.tsv (in cwplans/.gitignore)",
+      "fetched_by": "tools/build-place-landmarks.mjs fetch --region dublin (197 rows; positions only, to choose the OSM API boxes)"
     }
   },
   "sources": {
@@ -3550,6 +3600,15 @@
       "attribution": "© Overture Maps Foundation (CDLA-Permissive-2.0)",
       "url": "https://docs.overturemaps.org/attribution/",
       "note": "Used only by tools/build-place-landmarks.mjs to choose where to ask the OSM API (the positions of places of worship: muslim, christian and jewish places of worship, religious organisations); nothing from it is drawn, shown or committed (the answer stays in cwplans/data/raw/places/<id>/landmarks/)."
+    },
+    "gsi-opw-lidar-dtm": {
+      "name": "Geological Survey Ireland open topographic LiDAR: OPW National Flood (NASC) survey 2011, 2 m DTM tiles (2 x 2 km GeoTIFF zips, Irish Transverse Mercator EPSG:2157, heights above Malin Head)",
+      "publisher": "Geological Survey Ireland (GSI) and the Office of Public Works (OPW), Government of Ireland",
+      "licence": "CC BY 4.0 (the attribution statement in the coverage layer and in Copyright_and_Licence.txt of each zip)",
+      "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Contains Irish Public Sector Data (Geological Survey Ireland & the Office of Public Works) licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) licence.",
+      "url": "https://gsi.geodata.gov.ie/server/rest/services/Lidar/IE_GSI_LiDAR_Coverage_OPW_NASC_IE26_ITM/FeatureServer/3 (data.gov.ie: open-topographic-lidar-data)",
+      "note": "Used for the place Dublin (region config dublin, adapter ie-gsi-lidar, DEM kind arcgis-tile-zips): the terrain of the core tiles (both banks of the Liffey) and the ground under each core building. A bare-earth model (DTM; the DSM in the same zips is not used). The 8 zips over the core stay in cwplans/data/raw/places/dublin/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile and a 33 x 33 grid in features.json resampled from a 5 m lon/lat grid. Found 2026-10-22 through data.gov.ie; the hillshade image services of the same portal are pictures (U8), not heights, and are not used."
     }
   },
   "files": [
@@ -14086,7 +14145,7 @@
     },
     {
       "path": "docklands/data/places/index.json",
-      "what": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js; a place held in another repository (the UK lite set in danbri/docklandia) has tileBase, load_m, free_m, the boxes of its parts and absolute URLs",
+      "what": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js; a place held in another repository (the UK lite set in danbri/docklandia) has tileBase, load_m, free_m, the boxes of its parts and absolute URLs; Dublin (danbri/docklandia data/ie/dublin/, index entry with tileBase and absolute URLs, the core, city and surroundings like León and Sarajevo)",
       "sources": [
         "osm",
         "own"
@@ -14359,7 +14418,7 @@
     },
     {
       "path": "docklands/data/world-base/base.json",
-      "what": "World base tiles manifest (KR2.2): the geodetic quadtree (y from the north, as terrain.js), the imagery and height tiles present at each level (x, y pairs), formats, radii round the testbeds, credits, sizes",
+      "what": "World base tiles manifest (KR2.2): the geodetic quadtree (y from the north, as terrain.js), the imagery and height tiles present at each level (x, y pairs), formats, radii round the testbeds, credits, sizes; testbeds since 2026-10-22 also dublin (tiles added with build-world-base.mjs --add: the existing tiles unchanged)",
       "sources": [
         "eox-s2cloudless-2016",
         "copernicus-glo90",
@@ -14821,7 +14880,7 @@
     },
     {
       "path": "docklands/data/places/landmarks.json",
-      "what": "Index of the landmark sets of the places (tileset, features and README paths per place); read by docklands/globe/landmarks.js",
+      "what": "Index of the landmark sets of the places (tileset, features and README paths per place); read by docklands/globe/landmarks.js; a place in another repository (Dublin) has absolute URLs under its tileBase",
       "sources": [
         "own"
       ],
@@ -14940,7 +14999,7 @@
     },
     {
       "path": "docklands/data/places/greens.json",
-      "what": "The places that have a water and trees file (place id -> path of greens.json); read once by docklands/globe/place-look.js, so a place without one costs no request (tools/build-place-greens.mjs)",
+      "what": "The places that have a water and trees file (place id -> path of greens.json); read once by docklands/globe/place-look.js, so a place without one costs no request (tools/build-place-greens.mjs); a place in another repository (Dublin) has the absolute URL of its greens.json under its tileBase",
       "sources": [
         "own"
       ],
@@ -15681,6 +15740,64 @@
       "produced_by": "tools/build-place-tiles.mjs --region uk-lite (with tools/place-lite.mjs, tools/place-blocks.mjs, tools/fetch-overture-theme.py)",
       "fetched": "2026-10-21",
       "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; the UK as a lite set). Review with the OSM use before the prototyping phase ends",
+      "review_exit": [
+        "osm-odbl"
+      ]
+    },
+    {
+      "repo": "danbri/docklandia",
+      "path": "data/ie/dublin/",
+      "location": "https://github.com/danbri/docklandia/tree/main/data/ie/dublin (branch place-dublin until the owner merges it); served at https://danbri.github.io/docklandia/data/ie/dublin/ (same origin as the londat site)",
+      "paths": [
+        "tileset.json",
+        "tiles/<level>-<x>-<y>.glb",
+        "features.json",
+        "surround.json",
+        "sources/ghsl-built-h.json",
+        "sources/overture-buildings.json",
+        "sources/ms-buildings.json",
+        "provenance/log.json",
+        "README.md",
+        "greens/greens.json",
+        "greens/log.json",
+        "greens/README.md",
+        "landmarks/tileset.json",
+        "landmarks/tiles/<level>-<x>-<y>.glb",
+        "landmarks/landmarks.json",
+        "landmarks/log.json",
+        "landmarks/README.md"
+      ],
+      "what": "Central Dublin as a place on the globe (owner, 2026-10-22: \"Ireland: Dublin especially\"; region config docklands/geo/regions/dublin.js): 3D Tiles 1.1 + glTF, one quadtree with REPLACE refinement. Core: 52 level-15 cells along both banks of the Liffey from Heuston to the Docklands and Grand Canal Dock (OSM buildings with roofs, ground from the GSI / OPW 2 m LiDAR DTM with a texture of OSM water, green, streets and footprints); city: Dublin City and the built-up county as blocks (491393 OSM and 25247 Microsoft footprints drawn); surroundings to about 35 km (Copernicus GLO-30 terrain, ESA WorldCover, Overture roads, rail, water, place names and peaks: Dublin Bay, Howth, the Dublin and Wicklow mountains). features.json and surround.json: the text and machine interface (English and Irish names where the data has both). greens/: 8491 trees and 36 water polygons of the core. landmarks/: 8 tall objects (the Spire, the Poolbeg chimneys, the Wellington Monument), 21 towers and spires, 21 domes. README per folder: sources, licences, SHA-256, operations",
+      "sources": [
+        "osm",
+        "gsi-opw-lidar-dtm",
+        "copernicus-glo30",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "overture-buildings",
+        "ms-buildings",
+        "overture-ms-geometry",
+        "ghsl-built-h",
+        "overture-places",
+        "egm96",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": [
+          "osm-api-place-dublin",
+          "overture-osm-dublin",
+          "osm-api-place-greens-dublin",
+          "osm-api-landmarks-dublin",
+          "qlever-osm-dublin-tall"
+        ],
+        "what": "building outlines, parts, heights, levels, roofs, names (English and Irish), streets, areas, points, water, trees, landmark tags of the core and the city (OSM API, QLever) and, via Overture, roads, rail, water, place names, peaks and city building outlines"
+      },
+      "produced_by": "tools/build-place-tiles.mjs --region dublin --out <docklandia>/data/ie/dublin (place-select-osm, place-heights, place-tiles, place-select-outer, place-city-heights, place-lod); tools/build-place-greens.mjs (place-greens); tools/build-place-landmarks.mjs (landmark-select, landmark-tiles)",
+      "fetched": "2026-10-22",
+      "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; Dublin). Copernicus GLO-30 credit ends \"all rights reserved\" (accepted 2026-10-20). Review with the OSM use before the prototyping phase ends",
       "review_exit": [
         "osm-odbl"
       ]

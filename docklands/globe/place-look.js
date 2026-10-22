@@ -290,7 +290,9 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   const greensP = new Map();
   function greensOf(p) {
     if (greensP.has(p.id)) return greensP.get(p.id);
-    const pr = greensIx.then(ix => { const f = ix.places?.[p.id]; if (!f) return null; return fetch(new URL('../cwplans/docklands/data/places/' + f, location.href)).then(r => r.ok ? r.json() : null); })
+    // a path beside the index, or an absolute URL (a place in another repository: tileBase; ?placebase= rebases it)
+    const url = f => /^https?:/.test(f) ? (p.tileBase0 && f.startsWith(p.tileBase0) ? p.tileBase + f.slice(p.tileBase0.length) : f) : new URL('../cwplans/docklands/data/places/' + f, location.href);
+    const pr = greensIx.then(ix => { const f = ix.places?.[p.id]; if (!f) return null; return fetch(url(f)).then(r => r.ok ? r.json() : null); })
       .then(g => { if (!g) return null; const tf = g.trees_fields, ix = k => tf.indexOf(k);
         const trees = g.trees.map(r => ({ lon: r[ix('lon')], lat: r[ix('lat')], h: r[ix('height_m')], c: r[ix('crown_m')], prof: PROFILE[r[ix('profile')]] ?? PROFILE.broadleaf, src: r[ix('source')] }));
         const water = g.water.map(r => { const rings = r[3]; let w = 180, s = 90, e = -180, n = -90; for (const [x, y] of rings[0]) { w = Math.min(w, x); e = Math.max(e, x); s = Math.min(s, y); n = Math.max(n, y); } return { id: r[0], kind: r[1], name: r[2], rings, b: [w, s, e, n] }; });

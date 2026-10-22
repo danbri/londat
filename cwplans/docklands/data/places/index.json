@@ -3,6 +3,46 @@
  "about": "Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js",
  "places": [
   {
+   "id": "dublin",
+   "name": "Central Dublin",
+   "label": "O'Connell Bridge, Dublin",
+   "area": [
+    -6.295166015625,
+    53.3331298828125,
+    -6.2237548828125,
+    53.3551025390625
+   ],
+   "centre": [
+    -6.25916,
+    53.34725
+   ],
+   "timeZone": "Europe/Dublin",
+   "locale": "en-IE",
+   "tileBase": "https://danbri.github.io/docklandia/data/ie/dublin/",
+   "tileset": "https://danbri.github.io/docklandia/data/ie/dublin/tileset.json",
+   "features": "https://danbri.github.io/docklandia/data/ie/dublin/features.json",
+   "readme": "https://danbri.github.io/docklandia/data/ie/dublin/README.md",
+   "provenance": "https://danbri.github.io/docklandia/data/ie/dublin/provenance/log.json",
+   "credit": "© OpenStreetMap contributors (ODbL 1.0); Terrain of the core: Contains Irish Public Sector Data (Geological Survey Ireland & the Office of Public Works) licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) licence; Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA; Roads, rail, water, place names and city buildings: OpenStreetMap data via Overture Maps © OpenStreetMap contributors, © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Land cover © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium (CC BY 4.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0)",
+   "buildings": 23277,
+   "built": "2026-10-22T12:12:16.829Z",
+   "surround": "https://danbri.github.io/docklandia/data/ie/dublin/surround.json",
+   "extent": [
+    -6.8554687,
+    52.9101563,
+    -5.625,
+    53.7890625
+   ],
+   "city": [
+    -6.45,
+    53.21,
+    -6.05,
+    53.46
+   ],
+   "city_buildings": 516640,
+   "view": "ll=53.34725,-6.25916,1500&ht=0,55"
+  },
+  {
    "id": "leon",
    "name": "Casco Histórico, León",
    "label": "Plaza Mayor, León",

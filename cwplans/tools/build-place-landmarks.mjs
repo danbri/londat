@@ -46,10 +46,13 @@ const REG = REGIONS[RID]; if (!REG?.place?.landmarks) throw new Error(`region ${
 const PL = REG.place, LM = PL.landmarks;
 const cmd = ['fetch', 'build', 'readme'].find(c => argv.includes(c)) || 'all';
 const RAWD = join(CW, 'data', 'raw', 'places', RID, 'landmarks'), OSMD = join(RAWD, 'osm'), WORK = join(RAWD, 'work');
-const PLACED = join(CW, 'docklands', 'data', 'places', RID), OUT = join(PLACED, 'landmarks');
+// a place in another repository (place.outRepo, outPath, tileBase: Dublin): its folder is --out (a checkout of that repository)
+const XPL = PL.outRepo ? PL : null;
+const PLACED = XPL ? (argOf('out') || join(CW, '..', '..', XPL.outRepo, XPL.outPath)) : join(CW, 'docklands', 'data', 'places', RID), OUT = join(PLACED, 'landmarks');
 for (const d of [RAWD, OSMD, WORK, OUT, join(OUT, 'tiles')]) mkdirSync(d, { recursive: true });
 const sha = b => createHash('sha256').update(b).digest('hex');
-const rel = p => relative(CW, p);
+const rel = p => XPL && !relative(PLACED, p).startsWith('..') ? `${XPL.outRepo}:${XPL.outPath}${relative(PLACED, p)}` : relative(CW, p);
+const absOf = q => XPL && q.startsWith(XPL.outRepo + ':') ? join(PLACED, q.slice(XPL.outRepo.length + 1 + XPL.outPath.length)) : join(CW, q);
 const jz = (p, o) => writeFileSync(p, gzipSync(JSON.stringify(o)));
 const rz = p => JSON.parse(gunzipSync(readFileSync(p)).toString('utf8'));
 const r7 = v => Math.round(v * 1e7) / 1e7, r1 = v => Math.round(v * 10) / 10, r2 = v => Math.round(v * 100) / 100;
@@ -86,6 +89,34 @@ function fetchOverture() {
         use: k === 'worship' ? 'positions only, to choose the OSM boxes; not drawn, not committed' : 'positions only, to choose the OSM boxes (the OSM answers give the tags and geometry)' });
   }
 }
+// ---------- fetch 1b (region config place.landmarks.tall_objects): tall thin objects of the skyline (chimneys, obelisks,
+// monuments, masts, towers) with an OSM height, from the QLever OSM endpoint (one SPARQL POST over the country relation;
+// positions only: the OSM API boxes below give the full tags and geometry)
+const TALL = LM.tall_objects || null, TALLF = join(RAWD, 'qlever-tall.tsv');
+async function fetchTall() {
+  if (!TALL || (existsSync(TALLF) && !flag('--refetch'))) return;
+  const vals = a => (a || []).map(v => JSON.stringify(v)).join(', ');
+  const q = `PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+PREFIX ogc: <http://www.opengis.net/rdf#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+SELECT ?e ?mm ?hist ?h ?name ?wkt WHERE {
+  osmrel:${TALL.area_relation} ogc:sfContains ?e .
+  ?e osmkey:height ?h .
+  OPTIONAL { ?e osmkey:man_made ?mm } OPTIONAL { ?e osmkey:historic ?hist } OPTIONAL { ?e osmkey:name ?name }
+  FILTER(?mm IN (${vals(TALL.man_made)}) || ?hist IN (${vals(TALL.historic)}))
+  ?e geo:hasGeometry/geo:asWKT ?wkt .
+}`;
+  const r = await fetch(TALL.endpoint, { method: 'POST', body: new URLSearchParams({ query: q }), headers: { 'User-Agent': UA, Accept: 'text/tab-separated-values', 'Content-Type': 'application/x-www-form-urlencoded' } });
+  if (!r.ok) throw new Error(`${r.status} ${TALL.endpoint}`); const buf = Buffer.from(await r.arrayBuffer()); writeFileSync(TALLF, buf);
+  record('qlever-tall', TALLF, TALL.endpoint, { source: 'osm', request: 'SPARQL POST (text/tab-separated-values): ' + q.replace(/\s+/g, ' '), rows: buf.toString('utf8').split('\n').filter(Boolean).length - 1,
+    licence: 'ODbL 1.0, © OpenStreetMap contributors', use: 'positions only, to choose the OSM boxes (the OSM answers give the tags and geometry)', as_fetched: { bytes: buf.length, sha256: sha(buf) } });
+  console.log(`qlever tall objects: ${flog['qlever-tall'].rows} rows`);
+}
+// the QLever rows: [osm id, lon, lat, height] of the tall candidates (first coordinate pair of the WKT: the node, or a vertex)
+function tallRows() { if (!TALL || !existsSync(TALLF)) return [];
+  return readFileSync(TALLF, 'utf8').split('\n').slice(1).map(l => l.split('\t')).filter(f => f.length >= 6).map(f => { const m = f[5].match(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/), h = num(String(f[3]).replace(/^"|"$/g, '').replace(/^~/, '')); return m ? [f[0], +m[1], +m[2], h] : null; })
+    .filter(r => r && r[3] >= TALL.min_height_m); }
 const centroidOf = g => { const c = g.type === 'Point' ? [g.coordinates] : g.type === 'Polygon' ? g.coordinates[0] : g.type === 'MultiPolygon' ? g.coordinates[0][0] : g.coordinates; let x = 0, y = 0; for (const p of c) { x += p[0]; y += p[1]; } return [x / c.length, y / c.length]; };
 const RELIG_KIND = new Set(['mosque', 'church', 'cathedral', 'chapel', 'synagogue', 'temple', 'religious', 'shrine', 'monastery', 'clock_tower', 'tekke', 'mausoleum']);
 const NAME_RX = /d[žz]amij|mesd[žz]id|munar|crkv|katedral|sinagog|hram|sahat|tekij|turbe|kapel/i;
@@ -97,6 +128,7 @@ function candidates() {
   for (const r of JSON.parse(readFileSync(ovFile('worship'), 'utf8')).rows) pts.push(centroidOf(r.geometry));
   const F = fjCore.buildings_fields, ix = k => F.indexOf(k);
   for (const b of fjCore.buildings) if (b && (RELIG_KIND.has(b[ix('kind')]) || NAME_RX.test(b[ix('name')] || ''))) pts.push([b[ix('lon')], b[ix('lat')]]);
+  for (const t of tallRows()) pts.push([t[1], t[2]]);
   return pts.filter(([x, y]) => x >= BOX[0] && x <= BOX[2] && y >= BOX[1] && y <= BOX[3]);
 }
 // boxes of +-PAD m round each candidate, merged while they overlap and the union stays under MAXB m a side
@@ -145,7 +177,7 @@ const fileIn = (p, label) => ({ label, path: rel(p), sha256: sha(readFileSync(p)
 async function run(op, inputs, params, body) {
   const act = sha(JSON.stringify([op.id, op.version, inputs.map(i => i.sha256), params])).slice(0, 16);
   const prev = blog.activities.find(a => a.activity === act);
-  if (prev && !flag('--force') && prev.outputs.every(o => existsSync(join(CW, o.path)) && sha(readFileSync(join(CW, o.path))) === o.sha256)) { console.log(`${op.id}: in the log (${act})`); return prev; }
+  if (prev && !flag('--force') && prev.outputs.every(o => existsSync(absOf(o.path)) && sha(readFileSync(absOf(o.path))) === o.sha256)) { console.log(`${op.id}: in the log (${act})`); return prev; }
   const t0 = Date.now(), res = await body(params), outs = res.files || res, rec = { activity: act, operation: op.id, version: op.version, skill: op.skill, tool: TOOL, inputs, params,
     outputs: outs.map(p => ({ path: rel(p), sha256: sha(readFileSync(p)), bytes: readFileSync(p).length })), ...(res.counts ? { counts: res.counts } : {}), ms: Date.now() - t0, at: new Date().toISOString() };
   if (rec.outputs.some(o => o.path.startsWith('data/raw'))) rec.note = 'outputs under data/raw are intermediate (not committed); their hashes fix the next step';
@@ -238,6 +270,20 @@ function selectLandmarks(osm, fj, P) {
   for (const e of osm.elements) { const t = e.tags || {}; if (!isClockOrBell(t) || used.has(osmId(e))) continue;
     if (e.type === 'node') towers.push({ id: osmId(e), c: [e.lon, e.lat], ring: null, t, node: true }); else if (e.type === 'way') { const ring = wayRing(e); if (ring) towers.push({ id: osmId(e), c: centroid(ring), ring, area: ringArea(ring), t, of: null }); }
     used.add(osmId(e)); }
+  // tall thin objects (place.landmarks.tall_objects; Dublin: the Spire, the Poolbeg chimneys, the Wellington Monument):
+  // OSM man_made / historic values of the list with an OSM height >= min_height_m, not taken above; a man_made=tower with an
+  // outline of 12 m2 or more is drawn as a tower (prism and cap), the rest as bodies of revolution by kind
+  const tall = [], tallSkipped = { excluded_tower_type: 0, low: 0, outside_box: 0 };
+  if (P.tall) { const T = P.tall, mmOK = new Set(T.man_made || []), hiOK = new Set(T.historic || []), exT = new Set(T.exclude_tower_types || []);
+    for (const e of osm.elements) { const t = e.tags || {}; if (used.has(osmId(e)) || !(mmOK.has(t.man_made) || hiOK.has(t.historic))) continue;
+      if (exT.has(t['tower:type'])) { tallSkipped.excluded_tower_type++; continue; }
+      const h = num(String(t.height || '').replace(/^~/, '')); if (!(h >= T.min_height_m)) { tallSkipped.low++; continue; }
+      let ring = null, c; if (e.type === 'node') c = [e.lon, e.lat]; else { ring = e.type === 'way' ? wayRing(e) : relRing(e); if (!ring) continue; c = centroid(ring); }
+      if (P.box && (c[0] < P.box[0] || c[0] > P.box[2] || c[1] < P.box[1] || c[1] > P.box[3])) { tallSkipped.outside_box++; continue; }
+      const kind = t.man_made === 'chimney' ? 'chimney' : t.man_made === 'obelisk' ? 'obelisk' : t.man_made === 'mast' ? 'mast' : t.man_made === 'tower' ? 'tower' : 'monument', area = ring ? ringArea(ring) : null;
+      used.add(osmId(e));
+      if (kind === 'tower' && ring && area >= 12) { towers.push({ id: osmId(e), c, ring, area, t, of: null }); continue; }
+      tall.push({ id: osmId(e), kind, c, ring, area, t, h, tag: t.man_made ? `man_made=${t.man_made}` : `historic=${t.historic}` }); } }
   // estimated minarets: a mosque (muslim worship outline, not a tekke, turbe, mekteb, medresa, hamam or musala) with no
   // mapped minaret within 30 m gets one, by the size class of its footprint, at the hull corner farthest along qibla + 135 deg
   // (the north-west front's west corner where Sarajevo's Ottoman minarets stand; checked against the mapped ones below), or
@@ -266,7 +312,7 @@ function selectLandmarks(osm, fj, P) {
   // the worship list (the text interface): kind by religion and tags
   const kindOf = w => { const r = religionOf(w.t), nm = nameOf(w.t) || ''; if (r === 'muslim') return ['tekke'].includes(w.t.building) || /tekij|tekke/i.test(nm) ? 'tekke' : w.t.building === 'mausoleum' || w.t.historic === 'tomb' || /turbe/i.test(nm) ? 'turbe' : 'mosque';
     if (r === 'christian') return w.t.building === 'cathedral' || /katedral|cathedral|saborna/i.test(nm) ? 'cathedral' : w.t.building === 'chapel' ? 'chapel' : 'church'; if (r === 'jewish') return 'synagogue'; return 'place of worship'; };
-  const out = { mosque_rule: MR, worship: [], minarets: [], domes: [], towers: [], estimated, excluded, no_outline: noOutline, position_check_m: check };
+  const out = { mosque_rule: MR, worship: [], minarets: [], domes: [], towers: [], tall: [], estimated, excluded, no_outline: noOutline, position_check_m: check };
   const wOf = id => worship.get(id);
   for (const w of W2) { const nm = nameOf(w.t); out.worship.push({ id: w.b.id, name: nm, name_alt: altOf(w.t, nm), kind: kindOf(w), religion: religionOf(w.t), denomination: w.t.denomination || null, c: w.b.c.map(r7), ring: w.b.ring.map(p => p.map(r7)), area_m2: Math.round(w.b.area),
     height_m: num(w.t.height), roof: w.t['roof:shape'] || null, wikidata: w.t.wikidata || null, via: w.src, core: feats.has(w.b.id) || (partsOf.get(w.b.id) || []).some(p => feats.has(p.id)) }); }
@@ -286,7 +332,13 @@ function selectLandmarks(osm, fj, P) {
     colour: t['roof:colour'] || null, wall_colour: t['building:colour'] || null, core: feats.has(d.id) }); }
   for (const tw of towers) { const t = tw.t, nm = nameOf(t); out.towers.push({ id: tw.id, of: tw.of || null, name: nm, name_alt: altOf(t, nm), kind: /clock/.test(t['tower:type'] || t.building || '') || /sahat/i.test(nm || '') ? 'clock tower' : 'tower', c: tw.c.map(r7), ring: tw.ring ? tw.ring.map(p => p.map(r7)) : null,
     height_m: num(t.height), min_height_m: num(t.min_height), roof_height_m: num(t['roof:height']), roof: t['roof:shape'] || null, colour: t['building:colour'] || null, roof_colour: t['roof:colour'] || null, node: !!tw.node, core: feats.has(tw.id) }); }
-  out.counts = { worship: out.worship.length, mosques: out.worship.filter(w => w.kind === 'mosque').length, minarets_mapped: out.minarets.length, minarets_mapped_by: Object.fromEntries(['tag', 'part-stack'].map(k => [k, out.minarets.filter(m => m.rule === k).length])),
+  // the radius of a tall object: OSM diameter / 2, else the outline (an obelisk's outline is its plinth: / 1.5), else a stated rule by kind
+  const TALL_R = { chimney: [0.045, 1, 8], obelisk: [0.06, 1, 8], monument: [0.012, 0.5, 3], mast: [0.03, 0.8, 4], tower: [0.1, 2, 6] };
+  for (const o of tall) { const t = o.t, nm = nameOf(t), d = num(t.diameter), rr = TALL_R[o.kind], rule = Math.max(rr[1], Math.min(rr[2], rr[0] * o.h));
+    const r = d ? d / 2 : o.area ? Math.sqrt(o.area / Math.PI) / (o.kind === 'obelisk' ? 1.5 : 1) : rule;
+    out.tall.push({ id: o.id, kind: o.kind, name: nm, name_alt: altOf(t, nm), c: o.c.map(r7), height_m: o.h, r_m: r2(r), r_source: d ? 'OSM diameter' : o.area ? 'outline' : `rule (${rr[0]} x height, ${rr[1]} to ${rr[2]} m)`, tag: o.tag,
+      colour: t.colour?.split(';')[0] || t['building:colour'] || null, material: t.material || t['building:material'] || null, wikidata: t.wikidata || null, core: feats.has(o.id) }); }
+  out.counts = { tall: out.tall.length, tall_by_kind: Object.fromEntries(['chimney', 'obelisk', 'monument', 'mast', 'tower'].map(k => [k, out.tall.filter(x => x.kind === k).length])), tall_skipped: tallSkipped, worship: out.worship.length, mosques: out.worship.filter(w => w.kind === 'mosque').length, minarets_mapped: out.minarets.length, minarets_mapped_by: Object.fromEntries(['tag', 'part-stack'].map(k => [k, out.minarets.filter(m => m.rule === k).length])),
     minarets_estimated: estimated.length, minarets_unattached: out.minarets.filter(m => !m.mosque).length, mosques_excluded: excluded.length, worship_points_without_outline: noOutline.length, domes: out.domes.length, towers: out.towers.length,
     churches: out.worship.filter(w => ['church', 'cathedral', 'chapel'].includes(w.kind)).length, synagogues: out.worship.filter(w => w.kind === 'synagogue').length, clock_towers: out.towers.filter(t => t.kind === 'clock tower').length,
     position_rule_error_m: check.length ? { n: check.length, median: check[check.length >> 1], max: check.at(-1) } : null };
@@ -467,6 +519,17 @@ async function buildTiles(S, ts, tileBufs, fj, P) {
     const fid = row({ type: 'tower', id: t.id, of: t.of, ...(t.of ? nameOfW(t.of) : {}), ...(t.name ? { name: t.name, name_alt: t.name_alt } : {}), kind: t.kind, lon: t.c[0], lat: t.c[1], height_m: r1(top), height_source: 'OSM height', roof: t.roof, source: 'mapped', mapped_by: t.node ? 'OSM node (outline assumed 5 x 5 m)' : 'OSM outline or building part', ground_h: r1(g.h), top_h: r1(g.h + top), core: t.core });
     if (t.core) hide.add(t.id);
     items.push({ fid, lon: t.c[0], lat: t.c[1], h: g.h, est: false, build: s => s.prism(pts, base - (base ? 0 : 1), eave, capShape, top, hex(t.colour) || TOWER, hex(t.roof_colour) || SPIRE) }); }
+  // tall thin objects: bodies of revolution by kind (chimney: a tapering cylinder; obelisk: four sides on a plinth to a
+  // pyramid point; monument: a needle to a thin top (the Spire); mast: a tapering pole), standing on the ground
+  const TALL_C = { chimney: [196, 190, 180], obelisk: [222, 216, 200], monument: [205, 208, 210], mast: [170, 172, 170], tower: TOWER };
+  const tallProfile = (k, r, H, c) => k === 'chimney' ? [[-1, r, c], [H, r * 0.72, c]] : k === 'obelisk' ? [[-1, 1.5 * r, c], [0.07 * H, 1.5 * r, c], [0.07 * H, r, c], [0.92 * H, 0.62 * r, c], [H, 0, c]]
+    : k === 'mast' ? [[-1, r, c], [H, 0.25 * r, c]] : k === 'tower' ? [[-1, r, c], [H, r, c]] : [[-1, r, c], [H, Math.max(0.075, 0.05 * r), c]];
+  for (const t of S.tall || []) {
+    const g = groundOf(t.c[0], t.c[1], [t.id]); if (!g) { skipped.no_ground++; continue; }
+    const H = t.height_m, r = t.r_m, col = hex(t.colour) || TALL_C[t.kind], prof = tallProfile(t.kind, r, H, col);
+    const fid = row({ type: 'tall', id: t.id, kind: t.kind, name: t.name, name_alt: t.name_alt, lon: t.c[0], lat: t.c[1], height_m: r1(H), height_source: 'OSM height', r_m: r2(r), source: 'mapped', mapped_by: `OSM ${t.tag} (radius: ${t.r_source})`, ground_h: r1(g.h), top_h: r1(g.h + H), core: t.core, wikidata: t.wikidata });
+    if (t.core) hide.add(t.id);
+    items.push({ fid, lon: t.c[0], lat: t.c[1], h: g.h, est: false, build: s => s.lathe(0, 0, prof, t.kind === 'obelisk' ? 4 : 12, r, t.kind === 'obelisk' ? Math.PI / 4 : 0) }); }
   // tiles: one per level-13 cell holding items; each in the ENU frame of its cell centre at the mean base height; vertices placed
   // exactly (each item's own ENU frame -> ECEF -> the tile frame), glTF y-up
   const TL = P.tile_level, CS = 180 / 2 ** TL, cells = new Map();
@@ -496,7 +559,7 @@ async function buildTiles(S, ts, tileBufs, fj, P) {
   const ftset = join(OUT, 'tileset.json'); writeFileSync(ftset, JSON.stringify(tset)); outFiles.push(ftset);
   const fields = ['type', 'id', 'kind', 'name', 'name_alt', 'of', 'lon', 'lat', 'height_m', 'height_source', 'source', 'mapped_by', 'position', 'ground_h', 'top_h', 'r_m', 'core', 'kind_of', 'religion', 'area_m2', 'wikidata', 'parts', 'shape', 'roof', 'serefe_m', 'cap_m', 'drawn'];
   const counts = { ...S.counts, minarets_drawn: { mapped: rows.filter(r => r.type === 'minaret' && r.source === 'mapped').length, estimated: rows.filter(r => r.type === 'minaret' && r.source === 'estimated').length },
-    domes_drawn: rows.filter(r => r.type === 'dome').length, towers_drawn: rows.filter(r => r.type === 'tower').length, core_parts_replaced: hide.size, skipped, triangles: tris, tiles: children.length, tile_bytes: Object.values(sizes).reduce((a, b) => a + b, 0) };
+    domes_drawn: rows.filter(r => r.type === 'dome').length, towers_drawn: rows.filter(r => r.type === 'tower').length, tall_drawn: rows.filter(r => r.type === 'tall').length, core_parts_replaced: hide.size, skipped, triangles: tris, tiles: children.length, tile_bytes: Object.values(sizes).reduce((a, b) => a + b, 0) };
   const lj = { format: 'place-landmarks-1', place: RID, name: REG.name, credit: '© OpenStreetMap contributors (ODbL 1.0)', estimate_minarets: P.estimate, rule: { minaret: MR, note: 'estimated minarets: a mosque with no mapped minaret within 30 m gets one by the size class of its footprint; position: the outline corner nearest a mapped entrance, else the hull corner farthest along qibla + ' + MR.corner_bearing_from_qibla + ' deg, moved inside by the base radius' },
     counts, hide_core: [...hide].sort(), rows_fields: fields, rows: rows.map(r => fields.map(k => r[k] ?? null)) };
   const flj = join(OUT, 'landmarks.json'); writeFileSync(flj, JSON.stringify(lj)); outFiles.push(flj);
@@ -506,7 +569,8 @@ async function buildTiles(S, ts, tileBufs, fj, P) {
 // ---------- the index of landmark sets (read by docklands/globe/landmarks.js)
 function writeIndex() {
   const f = join(CW, 'docklands', 'data', 'places', 'landmarks.json'), ix = existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : { format: 'place-landmarks-index-1', about: 'Landmark sets of the places (minarets, domes, towers) made by cwplans/tools/build-place-landmarks.mjs; read by docklands/globe/landmarks.js', places: {} };
-  ix.places[RID] = { tileset: `${RID}/landmarks/tileset.json`, features: `${RID}/landmarks/landmarks.json`, readme: `${RID}/landmarks/README.md` };
+  const LB = XPL ? `${XPL.tileBase.replace(/\/?$/, '/')}landmarks/` : `${RID}/landmarks/`;   // a place in another repository: absolute URLs under its tileBase
+  ix.places[RID] = { tileset: `${LB}tileset.json`, features: `${LB}landmarks.json`, readme: `${LB}README.md` };
   writeFileSync(f, JSON.stringify(ix, null, 1) + '\n');
 }
 
@@ -515,11 +579,11 @@ function writeReadme() {
   const L = JSON.parse(readFileSync(BLOG, 'utf8')), lj = JSON.parse(readFileSync(join(OUT, 'landmarks.json'), 'utf8')), C = lj.counts, G = 'https://github.com/danbri/londat/blob/main/cwplans/';
   const files = L.activities.flatMap(a => a.outputs).filter(o => !o.path.startsWith('data/raw'));
   const sel = L.activities.find(a => a.operation === 'landmark-select'), til = L.activities.find(a => a.operation === 'landmark-tiles');
-  const lines = [`# Landmarks of ${REG.name}: minarets, domes and towers (3D Tiles 1.1)`, '',
-    `Made by [cwplans/tools/build-place-landmarks.mjs](${G}tools/build-place-landmarks.mjs) for the region config [docklands/geo/regions/${RID}.js](https://github.com/danbri/londat/blob/main/docklands/geo/regions/${RID}.js) (block \`place.landmarks\`); drawn by [docklands/globe/landmarks.js](https://github.com/danbri/londat/blob/main/docklands/globe/landmarks.js) beside the place's own tiles ([README](${G}docklands/data/places/${RID}/README.md)).`,
+  const GHO = o => XPL && o.startsWith(XPL.outRepo + ':') ? `https://github.com/danbri/${XPL.outRepo}/blob/main/${o.slice(XPL.outRepo.length + 1)}` : G + o, PRE = XPL ? `${XPL.outRepo}:${XPL.outPath}landmarks/` : `docklands/data/places/${RID}/landmarks/`;
+  const lines = [`# Landmarks of ${REG.name}: ${TALL ? 'towers, spires, chimneys, monuments, domes and minarets' : 'minarets, domes and towers'} (3D Tiles 1.1)`, '',
+    `Made by [cwplans/tools/build-place-landmarks.mjs](${G}tools/build-place-landmarks.mjs) for the region config [docklands/geo/regions/${RID}.js](https://github.com/danbri/londat/blob/main/docklands/geo/regions/${RID}.js) (block \`place.landmarks\`); drawn by [docklands/globe/landmarks.js](https://github.com/danbri/londat/blob/main/docklands/globe/landmarks.js) beside the place's own tiles ([README](${XPL ? `https://github.com/danbri/${XPL.outRepo}/blob/main/${XPL.outPath}README.md` : `${G}docklands/data/places/${RID}/README.md`})).`,
     'Generated from `log.json` by `node cwplans/tools/build-place-landmarks.mjs readme --region ' + RID + '` (also at the end of each build). Do not edit it by hand.', '',
-    `- The old town (Baščaršija, Gazi Husrev-beg Mosque): https://danbri.github.io/londat/docklands/?ll=43.85915,18.42895,600&ht=200,72`,
-    `- The city (8 km out): https://danbri.github.io/londat/docklands/?ll=43.85917,18.43335,8000&ht=0,50`,
+    ...(LM.views || PL.views || [{ name: 'The old town (Baščaršija, Gazi Husrev-beg Mosque)', ll: '43.85915,18.42895,600', ht: '200,72' }, { name: 'The city (8 km out)', ll: '43.85917,18.43335,8000', ht: '0,50' }]).map(v => `- ${v.name}: https://danbri.github.io/londat/docklands/?ll=${v.ll}&ht=${v.ht}`),
     `- Estimated minarets hidden: add \`&landmarks=mapped\`; all landmarks off: \`&landmarks=off\``,
     '- Licence: © OpenStreetMap contributors, ODbL 1.0 (share-alike; https://www.openstreetmap.org/copyright). Every shape is made from OSM tags or from the stated rule; no 3D model was copied (the SketchUp 3D Warehouse models are not used: docs/regions/sarajevo-3dwarehouse.md).',
     '- Skill: docklands-3d-page, "Landmarks: minarets, domes and towers (2026-10-22)"', '',
@@ -530,6 +594,7 @@ function writeReadme() {
     `| mosques given no minaret (tekke, turbe, mekteb, medresa, hamam, musala, or tagged with none) | ${C.mosques_excluded} |`,
     `| places of worship mapped as a point with no outline within 8 m (not drawn) | ${C.worship_points_without_outline} |`,
     `| domes mapped (drawn) | ${C.domes} (${C.domes_drawn}) |`, `| towers and spires mapped (drawn); clock towers | ${C.towers} (${C.towers_drawn}); ${C.clock_towers} |`,
+    ...(C.tall != null && TALL ? [`| tall thin objects (OSM ${TALL.man_made.map(v => 'man_made=' + v).concat(TALL.historic.map(v => 'historic=' + v)).join(', ')}; height >= ${TALL.min_height_m} m) | ${C.tall} (${Object.entries(C.tall_by_kind).filter(([, v]) => v).map(([k, v]) => `${k} ${v}`).join(', ')}); drawn ${C.tall_drawn}; left out: ${Object.entries(C.tall_skipped).map(([k, v]) => `${k.replace(/_/g, ' ')} ${v}`).join(', ')} |`] : []),
     `| core building parts replaced (hidden in the core tiles, drawn here) | ${C.core_parts_replaced} |`,
     `| the position rule against the mapped minarets (distance from where the rule would put them) | ${C.position_rule_error_m ? `median ${C.position_rule_error_m.median} m, max ${C.position_rule_error_m.max} m over ${C.position_rule_error_m.n}` : 'none mapped'} |`,
     `| tiles, triangles, bytes | ${C.tiles}, ${C.triangles.toLocaleString('en')}, ${C.tile_bytes.toLocaleString('en')} |`, '',
@@ -538,6 +603,7 @@ function writeReadme() {
     '- **Estimated minaret** (class "estimated", countable and switchable): ' + lj.rule.note + '. Size classes: ' + lj.rule.minaret.classes.map(c => `${c.id} footprint < ${c.max_area_m2} m2: ${c.height_m} m high, base ${c.base_d_m} m`).join('; ') + '. Class S is drawn as a wooden minaret (brown cone).',
     '- **Dome**: an OSM building part (or a worship outline without parts) with `roof:shape=dome` or `onion`: a drum from `min_height` (else the ground) to the springing, then a hemisphere (or an onion) of `roof:height` (else its radius) to `height`; radius = the smaller half side of the part\'s oriented box. A whole building with a dome roof outside the core: the dome stands on the city block\'s flat top.',
     '- **Tower**: a building part of a worship building tagged as a tower (`building:part=tower|bell_tower|church_tower|steeple`, `tower:type=bell_tower`), or with a pointed or onion roof standing 1.25 times the body or more (12 m or more); a `man_made=tower` with `tower:type=bell_tower|clock`, `building=clock_tower|bell_tower` or named Sahat-kula. Its outline (its hull above 12 points) from `min_height` to the eaves, then a pyramid to `height` (pyramidal, cone, spire), a dome or an onion, or flat.',
+    ...(TALL ? ['- **Tall thin object** (`place.landmarks.tall_objects`): an OSM element with `man_made` in ' + TALL.man_made.join(', ') + ' or `historic` in ' + TALL.historic.join(', ') + `, an OSM \`height\` of ${TALL.min_height_m} m or more, \`tower:type\` not ${TALL.exclude_tower_types.join(', ')}, centroid in the box. Found by one SPARQL query to the QLever OSM endpoint (positions), then read from the OSM API boxes (tags and geometry). A \`man_made=tower\` with an outline of 12 m2 or more is drawn as a tower; the others as bodies of revolution: chimney (a cylinder tapering to 0.72 of its base radius), obelisk (four sides on a plinth, a pyramid point), monument (a needle to a thin top: the Spire), mast (a pole tapering to a quarter). Radius: OSM \`diameter\` / 2, else the outline (an obelisk's outline is its plinth: / 1.5), else a stated rule by kind (chimney 0.045, obelisk 0.06, monument 0.012, mast 0.03 x the height, clamped).`] : []),
     '- **Ground**: a core feature\'s `ground_m` (+ the EGM96 geoid) where the object is a core building or part (the core walls\' reference), else the drawn terrain of the finest place tile at the point. Core parts drawn here are hidden in the core tiles by the reader (no double drawing); the mosque bodies stay the place\'s own buildings and blocks.',
     '- **Rendering** (architecture rule 6: geometry only, lit live): vertex colour, flat normals, the globe\'s sun; `_RADIAL` per vertex (the horizontal offset from the object\'s axis, cm) lets the reader keep a minaret at least about 1.5 CSS pixels wide at any distance (the shaft widened about its axis in the vertex shader; the height stays).', '',
     '## Sources', '',
@@ -547,22 +613,22 @@ function writeReadme() {
     '## Operations (dataflow)', '',
     ...[sel, til].filter(Boolean).map(a => `- \`${a.operation}\` v${a.version} (activity \`${a.activity}\`, ${a.at}): inputs ${a.inputs.map(i => `${i.label} \`${i.sha256.slice(0, 16)}\``).join(', ')}; params \`${JSON.stringify(a.params)}\``), '',
     '## Files', '', '| path | bytes | SHA-256 |', '|---|---|---|',
-    ...files.map(o => `| [${o.path.replace(`docklands/data/places/${RID}/landmarks/`, '')}](${G}${o.path}) | ${o.bytes} | \`${o.sha256}\` |`), ''];
+    ...files.map(o => `| [${o.path.replace(PRE, '')}](${GHO(o.path)}) | ${o.bytes} | \`${o.sha256}\` |`), ''];
   writeFileSync(join(OUT, 'README.md'), lines.join('\n'));
 }
 
 // ---------- main
 async function main() {
   if (cmd === 'readme') { writeReadme(); return; }
-  if (cmd === 'fetch' || cmd === 'all') { fetchOverture(); await fetchOsm(); }
+  if (cmd === 'fetch' || cmd === 'all') { fetchOverture(); await fetchTall(); await fetchOsm(); }
   if (cmd === 'build' || cmd === 'all') {
     if (!existsSync(OSMF)) throw new Error('no OSM answers: run fetch first');
-    const P = { names: PL.names || ['name'], alt_names: PL.alt_names || [], minaret_rule: LM.minaret_rule };
+    const P = { names: PL.names || ['name'], alt_names: PL.alt_names || [], minaret_rule: LM.minaret_rule, ...(TALL ? { tall: TALL, box: BOX } : {}) };
     const fSel = join(WORK, 'select.json.gz');
     const a1 = await run(OPS.select, [fileIn(OSMF, 'osm'), fileIn(FEAT, 'features')], P, async p => { const S = selectLandmarks(rz(OSMF), fjCore, p); jz(fSel, S); return { files: [fSel], counts: S.counts }; });
     const ts = JSON.parse(readFileSync(TSET, 'utf8')), tiles = tileTree(ts), S = rz(fSel);
     // the place tiles the landmarks stand on (the finest tile at each landmark): inputs by hash
-    const pts = [...S.worship.map(w => w.c), ...S.minarets.map(m => m.c), ...S.estimated.map(e => e.c), ...S.domes.map(d => d.c), ...S.towers.map(t => t.c)];
+    const pts = [...S.worship.map(w => w.c), ...S.minarets.map(m => m.c), ...S.estimated.map(e => e.c), ...S.domes.map(d => d.c), ...S.towers.map(t => t.c), ...(S.tall || []).map(t => t.c)];
     const need = new Set(); for (const [lon, lat] of pts) { const t = tiles.filter(t => lon >= t.b[0] && lon < t.b[2] && lat >= t.b[1] && lat < t.b[3]).sort((a, b) => b.level - a.level)[0]; if (t) need.add(t.uri); }
     const tileFiles = [...need].sort().map(u => join(PLACED, u)), bufs = new Map([...need].map(u => [u, readFileSync(join(PLACED, u))]));
     const TP = { estimate: LM.estimate_minarets !== false && !flag('--no-estimate'), tile_level: LM.tile_level || 13 };
