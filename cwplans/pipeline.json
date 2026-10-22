@@ -11329,7 +11329,7 @@
   },
   {
    "tool": "tools/test/roofs.test.mjs",
-   "what": "Tests (node --test) of docklands/data/roofs.json against area.js (fingerprint, low buildings only, eave below ridge, ridge centre near the outline) and of the page's roof builder in docklands/roofs-layer.js (every vertex finite, inside the outline box, between the ground and the ridge; roof vertices not below the eave)."
+   "what": "Tests (node --test) of docklands/data/roofs.json against area.js (fingerprint, low buildings only, eave below ridge, ridge centre near the outline) and of the page's roof builder in docklands/roofs-layer.js (every vertex finite, inside the outline box, between the ground and the ridge; roof vertices not below the eave). Since 2026-10-22: a building over hmax has a roof only from the big-building rule of roofs-refine (flat parts, footprint over its area), levels between the eave minimum and the model height + 1 m, the top kept, no LiDAR roof on a building newer than the survey."
   },
   {
    "tool": "tools/test/materials.test.mjs",
@@ -11402,6 +11402,10 @@
   {
    "tool": "tools/test/place-landmarks.test.mjs",
    "what": "Tests (node --test) of the committed landmark set of Sarajevo (tools/build-place-landmarks.mjs): mapped and estimated minarets distinct and counted, each estimated row names its rule and has no OSM id of its own, Gazi Husrev-beg Mosque minaret mapped at 47 m from OSM with its domes, the tiles of the tileset exist, hide_core ids are core buildings, every landmark stands on the ground."
+  },
+  {
+   "tool": "tools/test/model-heights.test.mjs",
+   "what": "Tests (node --test) of tools/storey-heights.mjs (use classes, kinds left alone, storeys, plant storeys; the fit recovers base and typical from exact samples and keeps the prior when too few) and of area.js as tools/model-heights.mjs left it (meta.heightRule, the source names, Three Deal Porters 24 to 29 m, Dock Shed over 19 m, the Consort Place tower top 190 to 240 m OD, every changed building listed, flagged buildings keep their class)."
   }
  ],
  "header_mismatches_resolved": {

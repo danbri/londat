@@ -46,7 +46,7 @@ CUT = {'rect_ok': 0.9, 'min_area': 10.0, 'min_width': 2.0, 'reflex_deg': 20.0, '
        'tie_m2': 2.0, 'tie_share': 0.05, 'tie_max': 4, 'min_cells': 8, 'long_edge_m': 3.0, 'parallel_deg': 12.0}
 
 txt = open(area).read(); A = json.loads(txt[txt.index('{'):txt.rindex('}') + 1])
-E0, N0 = A['meta']['origin']['E0'], A['meta']['origin']['N0']
+E0, N0 = A['meta']['origin']['E0'], A['meta']['origin']['N0']; en = lambda P: np.array([(E0 + x, N0 - z) for x, z in P], float).reshape(-1, 2)   # page x, z -> E, N (the origin from area.js)
 
 # ---- mosaic of the tiles (1 m cells; cell (r, c) centre at E = ME + c + 0.5, N = MN - r - 0.5)
 def tiles(zips):
@@ -188,7 +188,7 @@ def rect_stats(P):
 # ---- one polygon: cells and fits (EN metres)
 def fit_poly(Rx, F, base, inset, inset_cut):
     """Rx: ring in page x, z; F: cut flags of its edges. Returns the measurement record (or None outside the mosaic)."""
-    R = np.array([(E0 + x, N0 - z) for x, z in Rx])
+    R = en(Rx)
     e0, e1, n0, n1 = R[:, 0].min(), R[:, 0].max(), R[:, 1].min(), R[:, 1].max()
     c0, c1 = int(np.floor(e0 - ME)), int(np.ceil(e1 - ME)); r0, r1 = int(np.floor(MN - n1)), int(np.ceil(MN - n0))
     if c0 < 0 or r0 < 0 or c1 >= DSM.shape[1] or r1 >= DSM.shape[0]: return None
@@ -255,7 +255,7 @@ def decompose(ring, base):
 
 def cells_in(Rx, base, inset):
     """the 1 m cells inside ring Rx (page x, z) and inset metres from its edges: E, N, DSM minus base (finite only)"""
-    R = np.array([(E0 + x, N0 - z) for x, z in Rx])
+    R = en(Rx)
     e0, e1, n0, n1 = R[:, 0].min(), R[:, 0].max(), R[:, 1].min(), R[:, 1].max()
     c0, c1 = int(np.floor(e0 - ME)), int(np.ceil(e1 - ME)); r0, r1 = int(np.floor(MN - n1)), int(np.ceil(MN - n0))
     if c0 < 0 or r0 < 0 or c1 >= DSM.shape[1] or r1 >= DSM.shape[0]: return None
@@ -268,7 +268,7 @@ def cells_in(Rx, base, inset):
 def chord(P, c, u, s0):
     """the chord of piece P (page x, z) along the line (p - c) . u = s0 (EN frame): (j1, t1, j2, t2) as integers of 1/10000, or None
     unless the line crosses exactly two edges"""
-    EN = [np.array((E0 + x, N0 - z)) for x, z in P]; n = len(EN)
+    EN = list(en(P)); n = len(EN)
     d = [float((p - c) @ u - s0) for p in EN]
     if any(abs(x) < 1e-3 for x in d): return None
     hits = [(j, d[j] / (d[j] - d[(j + 1) % n])) for j in range(n) if d[j] * d[(j + 1) % n] < 0]
@@ -279,7 +279,7 @@ def chord(P, c, u, s0):
 
 def level_split(ring, base, cuts, P):
     """split the pieces P (with their cuts so far) by roof level; returns the new cuts and pieces"""
-    R = np.array([(E0 + x, N0 - z) for x, z in ring]); c, u, _, _ = min_rect(R); v = np.array([-u[1], u[0]])
+    R = en(ring); c, u, _, _ = min_rect(R); v = np.array([-u[1], u[0]])
     cuts, P = list(cuts), list(P); k = 0; tried = set()
     while k < len(P) and len(P) < BIG['max_parts']:
         pc, F = P[k]; ar = abs(area_of(pc))

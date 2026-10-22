@@ -3444,3 +3444,56 @@ in view"):
   https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,1500&ht=0,55 (Dublin: EIDW),
   https://danbri.github.io/londat/docklands/?ll=52.5170,13.3940,1500&ht=80,55 (Berlin: EDDB),
   https://danbri.github.io/londat/docklands/?view=cw (the Docklands: EGLC and the Thames current).
+
+## 2026-10-22: F52 heights by rule and big-building roof levels (subagent, worktree branch, not pushed)
+
+Owner, 2026-10-22, on big buildings drawn as flat slabs in Canada Water
+(https://danbri.github.io/londat/docklands/#v=1&c=-1865.7,1033.1,3.6,911,1.4187,0.5199&t=2026-10-22T13%3A00): "Yes, do
+all of London eventually". Each fix is a rule over the whole Docklands model, written to run over Greater London later.
+Skill lessons: docklands-3d-page, "Building heights and big roofs by rule (2026-10-22)".
+- **A. model-heights v1** (commit 7e6f9f29; `cwplans/tools/model-heights.mjs`, rule `cwplans/tools/storey-heights.mjs`):
+  the buildings the 2022 LiDAR did not measure (guess, levels, newer, digs). Storeys: OSM levels > photo count > the
+  construction index (one-building schemes only) > Wikidata P1101; a solved photo top as it is. Storey heights by use
+  fitted (least absolute deviations) to the 13,506 LiDAR-measured buildings with OSM levels: residential base 4.5 m +
+  2.95 m a storey (mean error 1.25 m), office 4.4 + 4.4 (3.74), mixed 5.7 + 3.3 (4.62), retail 4.4 + 3.25 (1.94),
+  industrial 3.7 + 4.5 (1.93), institutional 5.2 + 3.95 (3.27); small kinds keep the prior; plant storeys as CTBUH.
+  Changed 204: levels 151, newer 51, guess -> photo count 1, dig -> photo solve 1. Flagged 227 (224 guess, 3 digs) in
+  `meta.heightRule.flagged`. Construction index: 0 used (its storeys are scheme maxima; the 3 first matches were wrong).
+  New data fields in `data/images/contrib/cwdock/photos.json`: `three-deal-porters.storeys` (6, photo 13) and
+  `consort-place-tower.solved_top_m_od` (216 +- 15 m, photo 01 solve). Graph `model-heights` (1,009 triples).
+- **B. roofs-refine v1** (commit fe8d42a8; `cwplans/tools/roofs-refine.mjs`, `lidar-roofs.py --big 4000 --big-only`):
+  footprints of 4,000 m2 or more, any height, LiDAR-measured, cut by roof level into up to 24 flat parts. 121 measured,
+  69 drawn in parts (514 parts; 57 were plain prisms, 12 were build-roofs parts), 15 one level, 25 no cut, 12 not
+  LiDAR-measured, 9 with holes or a min height. Rule 2 (no LiDAR roof on a building newer than the survey): 0 rows.
+  EA LiDAR 2022 tiles (source ea-lidar, OGL v3.0) fetched again: 8 zips, 525 MB, into the ignored
+  `cwplans/data/raw/docklands/lidar/`, deleted after the run. Graph `roofs-big` (345 triples).
+- Before / after:
+
+  | building (OSM) | model index | before | after |
+  |---|---|---|---|
+  | Three Deal Porters (w1428008978) | 36552 | 6.0 m, guess | 26.4 m, 6 storeys (photo count) x office; photo: 25 to 28 m |
+  | Dock Shed (w1427207669) | 36551 | 19.0 m, 6 levels x 3 m + 1 | 26.4 m, 6 levels x office (4.4 m) |
+  | The Founding (w1330247335) | 36201 | 106.0 m, 35 levels x 3 + 1 | 107.8 m, 35 levels x residential |
+  | Consort Place tower (w988728458) | 21116 | a pit: ground -7.5, top -0.1 m OD | ground 4.3, top 216 m OD (photo solve) |
+  | Former Printworks (w288994615) | 8642 | one prism 28.9 m | 24 parts, 2.0 to 29.9 m (press halls tall, most about 8 m) |
+  | Surrey Quays Shopping Centre (w219881447) | 6725 | 10 parts 5.9 to 12.3 m | 13 parts 5.4 to 12.4 m |
+
+- Idempotence: each operation run again on its own output gave the same file and graph version (two extra activities
+  in `kgx/log/activities.jsonl`).
+- Locale check (`npm run check`, tools/check-locale.mjs) failed on the first versions: "m OD" in the graph text of
+  model-heights and three new uses of the model origin in lidar-roofs.py. Fixed: the text says "metres above the model
+  datum" (model-heights version 2, graph `model-heights` 414e8a8eb9b988f8, the same heights) and lidar-roofs.py has one
+  helper en() for page x, z -> E, N (origin from area.js). Both operations run again (tiles fetched a third time and
+  deleted): roofs.json rows unchanged, graph `roofs-big` unchanged, only the area.js SHA-256 in roofs.json model.
+- Lesson (skill docklands-3d-page): the EA survey service makes each tile zip again on each download (the bytes and the
+  SHA-256 differ each time, the rasters are the same), so an activity's input hashes for these zips cannot be checked
+  against a new download; hash the TIFs inside when that matters.
+- Tests: `npm run check`, `npm test` (new `cwplans/tools/test/model-heights.test.mjs`; `roofs.test.mjs` follows the
+  big-building rule), headless `docklands/test/load.mjs` for view=cw (night and 13:00) and the Canada Water share view:
+  no page errors. Screenshots looked at: Canada Water better (Three Deal Porters stands beside The Founding, Dock Shed
+  higher, Printworks and the shopping centre stepped); Canary Wharf the same except the Consort Place tower, which now
+  stands where the pit was.
+- Not done: build-materials.mjs not rerun (needs the OSM extract; its storey classes use the old eaves until then).
+  F52 status: "rule in use, with a counted remainder".
+- Open for the owner (proposal C, not built): wall types by use for retail and industrial sheds, and a works layer in
+  the Three.js port; cost estimates in the report of this session.

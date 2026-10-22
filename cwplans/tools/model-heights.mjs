@@ -12,8 +12,10 @@
 // 300 m2 or more, model ground 3 m or more below the ground round it and the top under 3 m above it: the survey saw an
 // excavation). Storeys, in this order: OSM building:levels, a photo count, the construction index (one building of a site
 // with one storey count), Wikidata P1101. Height: tools/storey-heights.mjs, with base and typical storey of each use FITTED
-// to the buildings of this model that the LiDAR measured and OSM gives levels for. A solved photo top (m OD) gives the
+// to the buildings of this model that the LiDAR measured and OSM gives levels for. A solved photo top (metres above the model datum) gives the
 // height directly. New source code 5 'storeys' (storeys from a dated source other than OSM; the card says which).
+// Versions: 1 (2026-10-22); 2 (2026-10-22): the graph's basis text gives heights as metres above the model datum, not
+// as a named national datum (tools/check-locale.mjs); the same heights.
 // Rebuild order: build-docklands -> key-model-buildings -> model-heights -> build-roofs -> roofs-refine -> build-materials.
 //   node cwplans/tools/model-heights.mjs            (run and log; writes area.js)
 //   node cwplans/tools/model-heights.mjs --dry      (print the table, write nothing)
@@ -38,7 +40,7 @@ const RULE = join(TOOLS, 'storey-heights.mjs');
 // the rules (parameters of the operation)
 const P = { dig: { min_area_m2: 300, below_m: 3, top_above_m: 3, ring_m: [60, 120], ring_pct: 0.6 }, site_statuses: ['completed_recently', 'on_site', 'commenced_stale'],
   site_min_area_m2: 200, site_min_share: 0.3, site_multi_height: 'part[- ]\\w+[- ]storey|ranging from|between \\w+ and \\w+ storeys|\\d+ to \\d+ storeys|buildings of', storeys_order: ['osm-levels', 'photo-count', 'construction-index', 'wikidata-p1101'], prior: PRIOR, fit: FIT, new_code: { storeys: 5 } };
-const op = { id: 'model-heights', version: 1, skill: 'docklands-data-curation', tool: 'cwplans/tools/model-heights.mjs',
+const op = { id: 'model-heights', version: 2, skill: 'docklands-data-curation', tool: 'cwplans/tools/model-heights.mjs',
   about: 'area.js + building-keys.json + photo sets + construction index + Wikidata facts -> heights of the model buildings the 2022 LiDAR did not measure (guess, OSM levels, newer, digs): storeys from OSM levels, a photo count, the construction index or Wikidata P1101, times a storey height by use fitted to the LiDAR-measured buildings with OSM levels (tools/storey-heights.mjs); a solved photo top as it is. Writes area.js and graph model-heights' };
 const dry = process.argv.includes('--dry'), flow = new Flow(K);
 const inputs = [flow.file(AREA, 'cwplans/docklands/data/area.js'), flow.file(KEYS, 'cwplans/docklands/data/building-keys.json'), flow.file(RULE, 'cwplans/tools/storey-heights.mjs'),
@@ -114,7 +116,7 @@ const body = async () => {
     const ground = c.cls === 'dig' ? c.ground : b.b;
     let h = null, how = null;
     if (n) { h = heightFromStoreys(n, use, uses); how = `${n} storeys x the ${use} storey rule`; }
-    else if (ph?.top) { h = r1(ph.top - ground); from = 'photo-solve'; basis = `top ${ph.top} m OD (+-${ph.pm} m) solved from the owner's photo set ${ph.set} (${ph.how_top})`; how = 'solved top minus ground'; }
+    else if (ph?.top) { h = r1(ph.top - ground); from = 'photo-solve'; basis = `top ${ph.top} m above the model datum (+-${ph.pm} m) solved from the owner's photo set ${ph.set} (${ph.how_top})`; how = 'solved top minus ground'; }
     if (h === null || (b.mh && h <= b.mh)) { const k = `${c.cls} (no storeys)`; unresolved[k] = (unresolved[k] || 0) + 1; flagged.push([c.i, c.cls, Math.round(geo[c.i].a), id, f.n || f.h || '']); continue; }
     const s = from === 'osm-levels' ? (c.cls === 'newer' ? 4 : c.cls === 'dig' ? 4 : 1) : 5;
     if (h === b.h && ground === b.b && s === b.s) { counts[`${c.cls} unchanged`] = (counts[`${c.cls} unchanged`] || 0) + 1; continue; }
@@ -124,7 +126,7 @@ const body = async () => {
     Object.assign(b, { b: ground, h, s });
     const S = kid('building', 'osm-' + id);
     add(S, V + 'modelHeight', lit(h.toFixed(1), 'decimal')); add(S, V + 'modelGround', lit(ground.toFixed(1), 'decimal'));
-    add(S, V + 'heightBasis', lit(`${basis}; ${how}${c.cls === 'dig' ? `; ground ${ground} m OD from the terrain round the site (the 2022 LiDAR saw an excavation at ${before[c.i][0]} m OD)` : ''}; was ${before[c.i][1]} m (${SRC_NAMES[before[c.i][2]]})`));
+    add(S, V + 'heightBasis', lit(`${basis}; ${how}${c.cls === 'dig' ? `; ground ${ground} m from the terrain round the site (the 2022 LiDAR saw an excavation at ${before[c.i][0]} m)` : ''}; was ${before[c.i][1]} m (${SRC_NAMES[before[c.i][2]]})`));
     if (n) { add(S, V + 'storeysAboveGround', lit(n, 'integer')); add(S, V + 'storeysSource', lit(from)); }
   }
   const stats = { lidar: 0, levels: 0, tag: 0, guess: 0, newer: 0, storeys: 0 }; for (const b of A.buildings) stats[SRC_NAMES[b.s]]++;
