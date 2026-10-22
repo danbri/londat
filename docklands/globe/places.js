@@ -194,7 +194,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     for (const lon of [r[0], r[2], (r[0] + r[2]) / 2]) for (const lat of [r[1], r[3], (r[1] + r[3]) / 2]) for (const h of [r[4], r[5]]) pts.push(geodeticToEcef(lon / D2R, lat / D2R, h));
     const c = [0, 1, 2].map(i => pts.reduce((s, q) => s + q[i], 0) / pts.length), rad = Math.max(...pts.map(q => len([q[0] - c[0], q[1] - c[1], q[2] - c[2]])));
     const u0 = t.content?.uri, ext = u0 && /\.json$/i.test(u0) ? u0 : null, uri = ext ? null : u0, key = uri ? uri.replace(/^.*\/|\.glb$/g, '') : ext ? 'ext:' + ext : 'root';
-    const n = { p, key, level: +key.split('-')[0] || 0, depth, err: t.geometricError, uri, ext, base, reg: [r[0] / D2R, r[1] / D2R, r[2] / D2R, r[3] / D2R], W, M: W ? mul4(W, Y2Z) : null, C: c, rad, kids: [], parent, state: null, meshes: [], used: 0, tris: 0, core: false };
+    const n = { p, key, level: +key.split('-')[0] || 0, depth, err: t.geometricError, within: t.extras?.refine_within_m || 0, uri, ext, base, reg: [r[0] / D2R, r[1] / D2R, r[2] / D2R, r[3] / D2R], W, M: W ? mul4(W, Y2Z) : null, C: c, rad, kids: [], parent, state: null, meshes: [], used: 0, tris: 0, core: false };
     p.nodes.push(n);
     for (const k of t.children || []) n.kids.push(nodesOf(p, k, W, n, depth + 1, base));
     return n;
@@ -406,7 +406,9 @@ export async function attachPlaces(G, H, { scene, U }) {
       if (n.ext) { n.used = now; if (n.extState !== 'ready') { if (!n.extState) fetchExt(n); if (n.extState !== 'failed') pending = true; return n.extState === 'failed'; }
         let all = true; for (const k of n.kids) if (!visit(k)) all = false; return all; }   // (transparent: its children stand for it)
       const d = Math.max(1, Math.hypot(eye[0] - n.C[0], eye[1] - n.C[1], eye[2] - n.C[2]) - n.rad), sse = n.err * K / d; n.used = now;
-      if (n.kids.length && sse > MAX_SSE) {
+      // (a tile with extras.refine_within_m, Greater London's parents of the leaves: refined only within that distance, so a
+      // big screen or an oblique whole-city view keeps the coarse level far away)
+      if (n.kids.length && sse > MAX_SSE && !(n.within && d > n.within)) {
         const mark = out.length; let all = true;
         for (const k of n.kids) if (!visit(k)) all = false;
         if (all) return true;
@@ -558,7 +560,17 @@ export async function attachPlaces(G, H, { scene, U }) {
         const rank = new Map((p.sur.rivers || []).map((x, i) => [x[0], i]));
         r.surroundings = { rivers: [...rivers].sort((a, b) => (rank.get(a) ?? 1e9) - (rank.get(b) ?? 1e9)).slice(0, 6), roads_km: Math.round(roadsM / 100) / 10, rail_km: Math.round(railM / 100) / 10, city_blocks: blocks, city_blocks_by_source: Object.fromEntries(Object.entries(byCls).map(([k, v]) => [p.sur.geometry_classes?.[k]?.label || k, v])), places_in_view: places.slice(0, 12).map(x => nameText(x.name, x.name_alt)) }; }
       if (!hasGround(p)) { const by = {}; let k = 0; for (const nd of lastDrawn) if (nd.p === p && nd.meta) for (const L of [nd.meta.boxes, nd.meta.outlines]) for (const c of L.c) { k++; by[nd.meta.classes[c]] = (by[nd.meta.classes[c]] || 0) + 1; }
-        r.blocks_drawn = k; r.blocks_by_source = by; r.named_buildings_in_view = n; }
+        r.blocks_drawn = k; r.blocks_by_source = by; r.named_buildings_in_view = n;
+        // compact boxes (Greater London since place-blocks 4): buildings as boxes at the leaves, merged squares farther
+        let bb = 0, mb = 0, mn = 0, ob = 0, ol = 0, inLeaf = 0; const bbBy = {}, lv = {}, leafKeys = new Set();
+        for (const nd of lastDrawn) { if (nd.p !== p || !nd.meta) continue; lv[nd.level] = (lv[nd.level] || 0) + 1; const B = nd.meta.boxes, cp = nd.meta.compact_boxes, k0 = B.c.length - (cp?.count || 0);
+          mn += nd.meta.mass_buildings || 0; if (nd.level === p.feats?.fj?.level && nd.meta.buildings != null) { inLeaf += nd.meta.buildings; leafKeys.add(nd.key); }
+          ol += nd.meta.outlines?.c?.length || 0;
+          for (let i = 0; i < B.c.length; i++) { if (i < k0) { ob++; continue; } if (cp.kind === 'squares') mb++; else { bb++; const k2 = nd.meta.classes[B.c[i]]; bbBy[k2] = (bbBy[k2] || 0) + 1; } } }
+        // (buildings_in_leaf_tiles: every building of the leaf tiles drawn, by the build; = building_boxes + outline_blocks +
+        // own_boxes + named_in_leaf_tiles when only leaves are drawn and each building once)
+        if ((bb || mb) && !LITE(p)) r.boxes = { building_boxes: bb, building_boxes_by_source: bbBy, outline_blocks: ol, mass_boxes: mb, mass_buildings: mn, own_boxes: ob, tiles_by_level: lv,
+          buildings_in_leaf_tiles: inLeaf, named_in_leaf_tiles: F.B.filter(b => leafKeys.has(b.tile)).length }; }
       // a lite set: what is drawn is a selection, so say so and count each class
       if (LITE(p)) { let lo = 0, lb = 0, mb = 0, mn = 0, bb = 0; const lv = {}, bbBy = {};
         for (const nd of lastDrawn) { if (nd.p !== p || !nd.meta) continue; lv[nd.level] = (lv[nd.level] || 0) + 1; lo += new Set(nd.meta.named || []).size; mn += nd.meta.mass_buildings || 0;
@@ -567,7 +579,7 @@ export async function attachPlaces(G, H, { scene, U }) {
           landmarks_drawn: lo + lb, landmark_outlines: lo, landmark_boxes: lb, building_boxes: bb, building_boxes_by_source: bbBy, mass_boxes: mb, mass_buildings: mn, landmarks_in_view: n, tiles_by_level: lv, rule: p.feats?.fj?.lite?.rule || null }; }
       const lk = look.state.place === p ? look.describe() : null; if (lk) r.look = lk;
       r.text = r.lite ? `${p.label || p.name}: a lite set, key landmarks with outlines, other buildings as boxes. Drawn: ${r.lite.landmarks_drawn.toLocaleString(p.locale)} landmarks (${r.lite.landmark_outlines.toLocaleString(p.locale)} as outlines, ${r.lite.landmark_boxes.toLocaleString(p.locale)} as boxes)${r.lite.building_boxes ? `, ${r.lite.building_boxes.toLocaleString(p.locale)} buildings as boxes at their true positions (footprint area, orientation and height; no outlines)` : ''}${r.lite.mass_boxes ? `, ${r.lite.mass_boxes.toLocaleString(p.locale)} merged squares standing for ${r.lite.mass_buildings.toLocaleString(p.locale)} buildings` : ''}; ${n.toLocaleString(p.locale)} landmarks in view${nn[0] ? `; nearest landmark to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest landmark in view: ${r.tallest_named.name}, ${topOf(tall)} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
-        : `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
+        : `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${r.boxes ? `; ${r.boxes.building_boxes.toLocaleString(p.locale)} buildings as boxes at their true positions (footprint area, orientation and height)${r.boxes.mass_boxes ? `, farther ${r.boxes.mass_boxes.toLocaleString(p.locale)} merged squares standing for ${r.boxes.mass_buildings.toLocaleString(p.locale)} buildings` : ''}` : ''}${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
         + (lk ? ` Drawn as the model: ${lk.look}${lk.night > 0.5 ? ', night windows lit by the local hour' : lk.night > 0 ? ', dusk' : ', daylight'}${lk.trees_drawn.near + lk.trees_drawn.far ? `, ${(lk.trees_drawn.near + lk.trees_drawn.far).toLocaleString(p.locale)} trees drawn` : ''}${lk.water_named.length ? `, water: ${lk.water_named.join(', ')}` : ''}${lk.greens && lk.greens.placed_by_rule ? ` (trees in woods and parks without mapped trees are placed by a rule: ${lk.greens.placed_by_rule.toLocaleString(p.locale)} of ${lk.greens.trees.toLocaleString(p.locale)})` : ''}.` : '')
         + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
       // a lite set seen only as far building mass (no landmark and no building box in view; e.g. Great Britain on the
@@ -592,15 +604,18 @@ export async function attachPlaces(G, H, { scene, U }) {
       if (!L || k == null || k < 0 || k >= L.c.length) return null;
       if (L.f && L.f[k] >= 0) return rowCard(p, L.f[k], creditHtml, esc);   // a landmark drawn as a box (lite, coarse levels)
       const cls = M.classes[L.c[k]], gc = p.sur?.geometry_classes?.[cls] || { label: cls };
-      if (LITE(p) && L.c[k] >= 2) {   // a building of a lite set's leaves: its own box at its true position (no outline, no id)
+      // a compact box (cwplans-boxes-1: the reader appended them after the tile's own boxes): a building of the leaves or a
+      // merged square of a coarse level (a lite set, and Greater London since place-blocks 4)
+      const cpk = L === M.boxes && M.compact_boxes && k >= L.c.length - M.compact_boxes.count ? M.compact_boxes.kind : null;
+      if ((LITE(p) && L.c[k] >= 2) || cpk === 'buildings') {   // a building of the leaves: its own box at its true position (no outline, no id)
         const m4 = new THREE.Matrix4(), ps = new THREE.Vector3(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(); hit.object.getMatrixAt(k, m4); m4.decompose(ps, qt, sc);
         const ang = Math.round((2 * Math.atan2(qt.y, qt.w) * 180 / Math.PI + 360) % 180);
         const b = { kind: 'building', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], footprint_m2: Math.round(sc.x * sc.z), long_side_m: Math.round(sc.x * 10) / 10, short_side_m: Math.round(sc.z * 10) / 10, orientation_deg: ang, level: hit.object.userData.node?.level };
-        const rows = [['Kind', 'Building, drawn as one box at its true position: its footprint area, the orientation of its long side and its height (a lite set: no outline, no name or id; landmarks have their outlines)'], ['Footprint from', cls], ['Footprint', `${b.footprint_m2} m2 (box ${b.long_side_m} x ${b.short_side_m} m, long side ${b.orientation_deg}° from east)`], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
+        const rows = [['Kind', `Building, drawn as one box at its true position: its footprint area, the orientation of its long side and its height (${LITE(p) ? 'a lite set: no outline, no name or id; landmarks have their outlines' : 'no outline, no name or id; named and irregular buildings have their outlines'})`], ['Footprint from', cls], ['Footprint', `${b.footprint_m2} m2 (box ${b.long_side_m} x ${b.short_side_m} m, long side ${b.orientation_deg}° from east)`], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
         H.showCard(`<h2>Building</h2><p class="small">${esc(p.name)} · ${esc(cls)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
         return b; }
-      if (LITE(p)) { const b = { kind: 'merged buildings', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], level: hit.object.userData.node?.level };
-        const rows = [['Kind', 'Building mass: the buildings of a square merged into one box (a lite set: landmarks plus merged mass, not every building)'], ['Footprints from', gc.label], ['Height', `${b.height_m} m (${b.height_source})`], ['Tile level', b.level], ['Place', p.name]];
+      if (LITE(p) || cpk === 'squares') { const b = { kind: 'merged buildings', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], level: hit.object.userData.node?.level };
+        const rows = [['Kind', `Building mass: the buildings of a square merged into one box (${LITE(p) ? 'a lite set: landmarks plus merged mass, not every building' : 'a far view: nearer, every building is drawn as its own box'})`], ['Footprints from', gc.label], ['Height', `${b.height_m} m (${b.height_source})`], ['Tile level', b.level], ['Place', p.name]];
         H.showCard(`<h2>Building mass</h2><p class="small">${esc(p.name)} · ${esc(gc.label)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
         return b; }
       const b = { kind: 'city block', geometry_class: cls, geometry_source: gc.label, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]] };

@@ -244,6 +244,14 @@ export function squareBoxes(items, b, M, full) {
     out.push({ lon: it.c[0] + (sc[0] - it.c[0]) * f, lat: it.c[1] + (sc[1] - it.c[1]) * f, a: side * side, asp: 1, ang, h: it.H.h, cls: 0, src: 0, n: it.n || 1 }); }
   return out;
 }
+// boxes (footprintBox / recBoxes objects: lon, lat, a, h, ang, cls) of a cell -> one item per square of M metres (as
+// recSquares; Greater London's coarse levels, place-blocks 4)
+export function boxSquares(boxes, b, M) {
+  const mLon = 111320 * Math.cos((b[1] + b[3]) / 2 * D2R), mLat = 110574, sq = new Map();
+  for (const x of boxes) { const k = Math.floor((x.lon - b[0]) * mLon / M) + ',' + Math.floor((x.lat - b[1]) * mLat / M), t4 = x.ang * 4 * D2R;
+    const q = sq.get(k) || sq.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0, nms: 0, ox: 0, oy: 0 }).get(k); q.a += x.a; q.x += x.a * x.lon; q.y += x.a * x.lat; q.h += x.a * x.h; q.n++; q.nms += x.cls & 1; q.ox += x.a * Math.cos(t4); q.oy += x.a * Math.sin(t4); }
+  return [...sq.entries()].sort((a, b2) => a[0] < b2[0] ? -1 : a[0] > b2[0] ? 1 : 0).map(([k, q]) => ({ id: 'm' + M + ':' + k, a: q.a, c: [q.x / q.a, q.y / q.a], H: { h: q.h / q.a, src: 'merged' }, n: q.n, nms: q.nms, ox: q.ox, oy: q.oy }));
+}
 // the buildings of a leaf cell as boxes for compactBoxes
 export function recBoxes(ranges) {
   const out = [];

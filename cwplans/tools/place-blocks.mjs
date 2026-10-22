@@ -88,6 +88,30 @@ export function blockSelector(opt) {
     buildings.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0); return { buildings, fp, counts }; } };
 }
 
+// ---------- one building as a compact box (place-blocks 4, Greater London rebuilt the way of the UK lite set v2; owner,
+// 2026-10-22: "Yes, do all of London eventually"): its true centroid (the area centroid of its outer ring), its footprint
+// area, the angle of the long side of its minimum rotated rectangle (degrees from east toward north, 0 .. 180) and its
+// long / short ratio, so a box of sides sqrt(a x asp) and sqrt(a / asp) keeps the footprint's area and grain; cls 0
+// OpenStreetMap, 1 Microsoft; src the index of the height source in HSRC (place-lite.mjs). For place-lite.mjs compactBoxes.
+export function footprintBox(b, h, cls, src) {
+  const ring = open(b.rings[0]), mLon = 111320 * Math.cos(b.c[1] * D2R), mLat = 110574, xy = ring.map(([lo, la]) => [(lo - b.c[0]) * mLon, (la - b.c[1]) * mLat]);
+  let A = 0, cx = 0, cy = 0;
+  for (let i = 0, j = xy.length - 1; i < xy.length; j = i++) { const cr = xy[j][0] * xy[i][1] - xy[i][0] * xy[j][1]; A += cr; cx += (xy[j][0] + xy[i][0]) * cr; cy += (xy[j][1] + xy[i][1]) * cr; }
+  const c = Math.abs(A) > 1e-6 ? [cx / (3 * A), cy / (3 * A)] : [0, 0];
+  const bx = obbBox(xy); let ang = 0, asp = 1;
+  if (bx) { const f = bx.frame, t = Math.atan2(f.s, f.c) * 180 / Math.PI + (f.wid > f.len ? 90 : 0), lo = Math.max(f.len, f.wid), sh = Math.min(f.len, f.wid); ang = ((t % 180) + 180) % 180; asp = sh > 0.01 ? lo / sh : 1; }
+  return { lon: b.c[0] + c[0] / mLon, lat: b.c[1] + c[1] / mLat, a: b.a, asp, ang, h, cls, src };
+}
+
+// ---------- the leaf rule of place-blocks 3, kept by place-blocks 5 (architecture rule 6: no capability dropped for size):
+// an irregular building (footprint >= outline_min_m2 and filling less than box_fill of its oriented box) is drawn as its
+// outline simplified at simplify_m, not as a box (blockTile's leaf path; the rest are compact boxes since place-blocks 4)
+export function wantsOutline(b, P) {
+  if (b.a < P.outline_min_m2) return false;
+  const xy = (r => { const mLon = 111320 * Math.cos(b.c[1] * D2R), mLat = 110574; return open(r).map(([lo, la]) => [(lo - b.c[0]) * mLon, (la - b.c[1]) * mLat]); })(b.rings[0]), bx = obbBox(xy);
+  return !!bx && b.a / Math.abs(area2(bx)) < P.box_fill;
+}
+
 // ---------- the globe's ground: world-base height tiles (35 x 35 Int16, metres above the geoid, row 0 north, y of the
 // quadtree from the north), the deepest level with a tile at the point
 export function worldBaseGround(M, readTile, fallback = null) {   // fallback(lon, lat): where no height tile is (the lite set: the globe's world terrain texture)
@@ -209,7 +233,7 @@ export function blockTile(opt) {
   // (lite, opt.compact(F): boxes in the compact layout cwplans-boxes-1 of place-lite.mjs compactBoxes, appended as two
   // buffer views named in extras.blocks.compact; the leaves' buildings and the coarse levels' merged squares)
   const cp = opt.compact ? opt.compact(F) : null; if (cp) { zmin = Math.min(zmin, cp.zmin); zmax = Math.max(zmax, cp.zmax); }
-  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(cp ? { compact: cp.meta } : {}) } } : null;
+  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : opt.noteRef ? opt.noteRef : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite || cp ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(opt.cellBuildings != null ? { buildings: opt.cellBuildings } : {}), ...(cp ? { compact: cp.meta } : {}) } } : null;
   const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size, compact: cp });
   const tris = ol.idx.length / 3 + nm.idx.length / 3 + inst.t.length / 3 * 10 + (cp ? cp.meta.count * 10 : 0);
   return { bytes, F, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(isFinite(zmin) ? zmin : h0 - 10), Math.ceil(isFinite(zmax) ? zmax : h0) + 1],

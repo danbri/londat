@@ -46,13 +46,30 @@ export default {
       // London "yes"); each removable by deleting its id here (then rebuild), as place.surround.geometry in leon.js
       geometry: ['overture-ms-geometry'],
       drop_m: 3,   // block bases this far under the lowest ground sample (the globe draws its terrain from coarser levels far away)
-      top_level: 10, leaf_level: 14,
-      // what each level draws: buildings at least big_m2 or tall_m as their own oriented boxes; the rest merged into one
-      // box per square of merge_m (its footprint the sum of their areas, its height their area-weighted mean); the leaf
-      // level every building of min_area_m2 or more (an oriented box, or the outline simplified at simplify_m)
-      levels: { 10: { tall_m: 60, big_m2: 20000, merge_m: 400, err_m: 300 }, 11: { tall_m: 40, big_m2: 8000, merge_m: 200, err_m: 150 },
-        12: { tall_m: 25, big_m2: 3000, merge_m: 100, err_m: 75 }, 13: { tall_m: 18, big_m2: 600, merge_m: 50, err_m: 35 } },
-      min_area_m2: 25, simplify_m: 2.5, box_fill: 0.85, outline_min_m2: 300,
+      // (since place-blocks 4, 2026-10-22, owner: "Yes, do all of London eventually": the UK lite v2 way) leaf_boxes
+      // 'compact': at the leaves (level 13, about 1.5 x 2.4 km) every building that is not named is one 8-byte compact box
+      // (layout cwplans-boxes-1: its true centroid, footprint area, the angle and long / short ratio of its rotated
+      // rectangle, its height and height source, its class), the named ones keep their outlines and ids; the coarse
+      // levels draw the tall or big buildings as boxes and the rest as one compact square a merge_m square, turned to the
+      // grain of its buildings, its side from the built share (full at full_share, the UK lite rule).
+      // Where the leaves show: a tile is refined while geometricError x K / distance > 24 (places.js MAX_SSE; K about 731
+      // on a phone held upright, 693 on a 1280 x 800 screen), so err_m 420 at level 12 draws the leaves within about 12 to
+      // 13 km of the eye (straight down from 11 km all of the view); leaf_within_m caps it on big screens and keeps the
+      // turned squares in oblique whole-city views (the parents of the leaves are refined only within it).
+      // leaf_outlines (place-blocks 5, 2026-10-22; architecture rule 6: no capability dropped for size): the place-blocks 3
+      // leaf rule stays: a building of outline_min_m2 or more that fills less than box_fill of its oriented box (L shapes,
+      // irregular blocks) is drawn as its outline simplified at simplify_m, not as a compact box
+      leaf_boxes: 'compact', leaf_outlines: true, full_share: 0.5, grid_n: 17, leaf_within_m: 13000,
+      history: 'place-blocks 3 (build of 2026-10-21, tileset london-1): 2,451 tiles, 110.62 MB in all (levels 10 to 14: 0.38, 1.31, 4.42, 14.35, 86.26 MB; the leaves: instance boxes, simplified outlines and their JSON block data, about 62 bytes a building); merged axis-aligned squares of 400 / 200 / 100 / 50 m at levels 10 to 13, so from 11 km a field of grey squares and every building only below about 2.5 km.',
+      top_level: 10, leaf_level: 13,
+      // what each coarse level draws: buildings at least big_m2 or tall_m as their own oriented boxes; the rest one
+      // compact square of merge_m (its footprint the sum of their areas, its height their area-weighted mean)
+      levels: { 10: { tall_m: 60, big_m2: 20000, merge_m: 400, err_m: 1680 }, 11: { tall_m: 40, big_m2: 8000, merge_m: 200, err_m: 840 },
+        12: { tall_m: 25, big_m2: 3000, merge_m: 100, err_m: 420 } },
+      // (place-blocks 3, until 2026-10-22: leaf_level 14; levels 10 to 13 merged axis-aligned squares of 400 / 200 / 100 /
+      // 50 m, err_m 300 / 150 / 75 / 35, so from 11 km the view was a field of grey squares; the leaves drew boxes and
+      // simplified outlines: 86 MB of the 110.6 MB)
+      min_area_m2: 25, simplify_m: 2.5, box_fill: 0.85, outline_min_m2: 300,   // (the leaf outline rule: leaf_outlines above)
       // named buildings of at least named_min_m2 or named_min_h_m: drawn at the leaf level with their own id (the card names
       // them; features.json holds them for search and the text interface)
       named_min_m2: 1500, named_min_h_m: 20,
