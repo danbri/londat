@@ -274,6 +274,10 @@ https://github.com/danbri/docklandia (`data/gb/uk-lite/`, served at https://danb
   turned to the grain of their buildings. Leaves are drawn within about 5 km (level-10 geometricError 160 m). 292.7 MB in
   all (leaves 252 MB, about 8.6 bytes a building), under the 300 MB set aside for it in docklandia. Rule 6 holds: the
   tiles carry geometry and attributes; colours, windows and light are made in the page.
+- Landmark heights (2026-10-22): OSM building:part heights (via Overture's building_part theme, joined by building id)
+  draw towers and spires above a landmark's body as their own blocks with its id; a Wikidata P2048 height (CC0; ended and
+  deprecated statements left out) adds a spire or a centroid tower by a stated rule. Salisbury 123 m, Liverpool
+  Cathedral 100 m, Durham 66 m, York Minster 63 m, Blackpool Tower 158 m. 294.8 MB in all.
 
 ## 4. Adapters
 

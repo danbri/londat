@@ -3440,6 +3440,37 @@ like literal tiles". Cause: the leaves drew one merged box a 200 m or 400 m squa
 - **Before / after (York, 1.1 km, 390 x 844):** before 6,304 merged squares and 497 landmark outlines; after 72,249
   building boxes (62,648 OSM, 9,601 Microsoft), 384 landmark outlines and 20,922 merged squares farther away.
 
+### The UK lite set: landmark heights, towers and spires (2026-10-22)
+
+Owner, 2026-10-22, to "should I improve the landmark heights next, with OSM spire and tower parts or the heights in
+Wikidata?": "Yes do that". Before: Durham Cathedral 18.7 m (Microsoft roof), York Minster 12 m (OSM height tag of the
+outline), Liverpool Cathedral 10.7 m (GHSL), Salisbury 9.5 m. Now (place-lite-landmark-heights 1, place-lite-tiles 4;
+module `cwplans/tools/place-lite-heights.mjs`, tests `place-lite-heights.test.mjs`):
+
+- **Inputs.** (1) OSM `building:part` heights through Overture's `building_part` theme for the UK box (one DuckDB query,
+  `height IS NOT NULL`: 26,690 parts, 17.7 MB, about 2 minutes), joined to the landmark by `building_id` (= the
+  landmark's Overture id: no spatial join). QLever OSM can list a building's parts (`?b ogc:sfContains ?part`, heights in
+  under 1 s) but asking for their WKT geometry timed out (200 s). (2) Wikidata P2048 of the 69,053 wikidata items of the
+  landmark tags: QLever Wikidata (https://qlever.dev/api/wikidata), VALUES chunks of 5,000, 14 POSTs: only 323 statements
+  (304 items) have a height. Trap: Lincoln has 159.7 m (the spire that fell in 1548, qualifier end time P582) and 83 m
+  (preferred): ask for rank and end time; leave out ended and deprecated statements, prefer preferred ones.
+- **Rule** (README "Landmark heights"): parts whose top is above the body by max(3 m, 15 %) are drawn as their own
+  blocks (outline, from the ground to the top; at most 64 a landmark) with the landmark's row (`_FEATURE_ID_0`; tower ids
+  `<id>:t<k>` map to the row); a Wikidata height above the highest top by the same margin (and <= 330 m) is a spire on the
+  tallest part (0.35 x sqrt of its area) or else a square tower at the centroid (0.2 x sqrt(footprint), 4 to 15 m). The
+  body keeps its height. At coarse levels a landmark gets its own box when its highest point (not the body) is tall
+  enough, and its towers are boxes too. Feature rows gain `height_top_m`, `height_top_source`, `towers`.
+- **Counts.** 490 landmarks with parts drawn (2,700 parts), 88 Wikidata towers, 2 Wikidata spires; 107 Wikidata heights
+  not used (not above the top). Highest point by source: osm-part 488, wikidata 90.
+- **Checked.** Salisbury 123 m (osm-part), Liverpool Cathedral 100 m, Norwich 96, Chichester 84.4 (wikidata), Lincoln 80,
+  Lichfield 77, Canterbury 69, Durham 66, Ely 66, York Minster 63 (osm-part; its tower is about 72 m), Blackpool Tower
+  158 m (osm-part), Royal Liver Building 104 m, St Giles' Cathedral 39 m, Spinnaker Tower 170 m and Scott Monument 61 m
+  (OSM height of the outline). Edinburgh Castle and the Angel of the North are not landmarks of the set: not OSM buildings
+  with these names (the castle is a site, the Angel is an artwork).
+- **Reader.** Card row "Highest point" (with its source); describeView `tallest_named` by the highest point; landmark
+  outline counts unique rows (towers share the row).
+- **Size.** +1.1 MB of tiles (294.8 MB in all).
+
 ## Three.js port: places look like the model (2026-10-22)
 
 Owner, 2026-10-22: "why do Leon and Sarajevo look so different to London?" Cause: `globe/places.js` drew the places with

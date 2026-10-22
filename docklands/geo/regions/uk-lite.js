@@ -35,7 +35,8 @@ export default {
     // views named in the README (deep links; ht = heading, tilt)
     views: [{ name: 'The UK from 500 km', ll: '54.5,-3.0,500000', ht: '0,0' }, { name: 'Manchester from 20 km', ll: '53.4794,-2.2453,20000', ht: '0,45' },
       { name: 'Edinburgh from 20 km', ll: '55.9533,-3.1883,20000', ht: '0,45' }, { name: 'Durham Cathedral (700 m)', ll: '54.7735,-1.5765,700', ht: '200,60' },
-      { name: 'York Minster (700 m)', ll: '53.9623,-1.0819,700', ht: '200,60' }, { name: 'York from 1.1 km (one box a building)', ll: '53.9620,-1.0793,1100', ht: '0,60' }],
+      { name: 'York Minster (700 m)', ll: '53.9623,-1.0819,700', ht: '200,60' }, { name: 'York from 1.1 km (one box a building)', ll: '53.9620,-1.0793,1100', ht: '0,60' },
+      { name: 'Salisbury Cathedral (700 m; spire 123 m from OSM parts)', ll: '51.0651,-1.7973,700', ht: '200,60' }],
     // parts: polygons of the UK skeleton (ONS BGC: English regions, then the countries); a building belongs to the first
     // part whose polygon holds its centroid; one outside every polygon (generalised coast, the England-Wales and
     // England-Scotland edges of two ONS products) to the nearest part within coast_m
@@ -66,6 +67,18 @@ export default {
       // the landmark rule (README): OSM tags from the QLever OSM endpoint (planet 2026-09-21, the UK relation's
       // containment), joined to the Overture record by its OSM id
       tags: { endpoint: 'https://qlever.cs.uni-freiburg.de/api/osm-planet', area_relation: 62149 },
+      // landmark heights (owner, 2026-10-22: "Yes do that"; operation place-lite-landmark-heights, module
+      // cwplans/tools/place-lite-heights.mjs): OSM building:part heights via Overture's building_part theme (joined by
+      // building_id) and Wikidata P2048 (QLever Wikidata, CC0). Rule: a part whose top is above the body by at least
+      // max(rise_m, rise_share x body) is drawn as its own prism (at most max_parts a landmark); a Wikidata height above
+      // the highest top by the same margin (and at most max_wd_m) is drawn as a spire on the tallest such part (side
+      // spire_share x sqrt(its area)), else as a square tower at the centroid (side tower_share x sqrt(footprint), between
+      // tower_min_m and tower_max_m); the body keeps its height
+      heights: {
+        part_columns: 'building_id,height,min_height,roof_shape,num_floors', part_where: 'height IS NOT NULL',
+        wikidata_endpoint: 'https://qlever.dev/api/wikidata', wikidata_chunk: 5000,
+        rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15 },
+      },
       landmark: {
         // (1) an encyclopaedia record: OSM wikidata or wikipedia on the building
         encyclopaedic: true,

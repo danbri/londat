@@ -26,10 +26,15 @@ const PBQ = `&placebase=${encodeURIComponent(ID + ':' + new URL(PB, BASE + '/').
 const CITIES = arg('--cities') ? arg('--cities').split(';').map(c => { const [name, lon, lat] = c.split(':'); return { name, lon: +lon, lat: +lat }; }) : [{ name: 'Manchester', lon: -2.2453, lat: 53.4794 }, { name: 'Edinburgh', lon: -3.1883, lat: 55.9533 }];
 const CATHEDRAL = ['Durham Cathedral', 'York Minster', 'Manchester Cathedral', "St Giles' Cathedral", 'Lincoln Cathedral'].map(n => FJ.buildings.find(r => r[col('name')] === n)).find(Boolean);
 if (!CATHEDRAL) throw new Error('no test cathedral in features.json');
+// landmark heights (place-lite-landmark-heights): the highest point of famous cathedrals from OSM building parts or Wikidata
+const TOP = ['Salisbury Cathedral', 'York Minster', 'Durham Cathedral', 'Lincoln Cathedral', 'Liverpool Cathedral'].map(n => FJ.buildings.find(r => r[col('name')] === n)).filter(Boolean).map(r => ({ name: r[col('name')], body: r[col('height_m')], top: r[col('height_top_m')], src: r[col('height_top_source')] }));
 mkdirSync(OUT, { recursive: true });
+let failed0 = 0;
+{ const big = TOP.filter(t => t.top > 60); const ok = col('height_top_m') >= 0 && big.length >= 4 && big.some(t => /Salisbury|York Minster/.test(t.name));
+  if (!ok) failed0++; console.log(`${ok ? 'ok  ' : 'FAIL'} landmark heights: York Minster or Salisbury and three more cathedrals have a highest point over 60 m (OSM parts or Wikidata) · ${TOP.map(t => `${t.name} ${t.top} m (${t.src}; body ${t.body} m)`).join('; ')}`); }
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
-let failed = 0;
+let failed = failed0;
 const check = (ok, what, detail = '') => { if (!ok) failed++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}${detail ? ' · ' + detail : ''}`); };
 // wait until the place has settled (tiles of the view in), at most ms
 const settle = (page, ms = 240000) => page.evaluate(async ({ id, ms }) => { const G = __docklands3.globe, t0 = performance.now();
@@ -80,6 +85,8 @@ for (const [w, h, dpr] of SIZES) {
     const s = G.project(P3); if (!s) return { card: null }; for (const [dx, dy] of [[0, 0], [0, 6], [0, -6], [4, 10], [-4, 10], [8, 0], [-8, 0]]) { G.tap(s[0] + dx, s[1] + dy); const c = document.getElementById('card'); if (!c.hidden && c.querySelector('h2')) { const h = c.querySelector('h2').textContent; if (h === t.name) return { card: c.textContent.replace(/\s+/g, ' ').slice(0, 260), at: s }; } }
     return { card: null, at: s, levels: G.placesStats().find(x => x.id === id).drawn_by_level }; }, { t: cat, P3, id: ID });
   check(!!tc.card && /Landmark because/.test(tc.card), `a tap on ${cat.name} opens its landmark card`, tc.card || `no card at ${JSON.stringify(tc.at)} levels ${JSON.stringify(tc.levels)}`);
+  const catTop = CATHEDRAL[col('height_top_m')];
+  if (catTop > CATHEDRAL[col('height_m')]) check(!!tc.card && new RegExp('Highest point ?' + catTop + ' m').test(tc.card), `the card of ${cat.name} gives its highest point (${catTop} m)`, (tc.card || '').slice(0, 200));
   await page.screenshot({ path: `${OUT}/lite-cathedral-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-cathedral-${tag}.png`);
   const fp = await page.evaluate(q => docklands.findPlaces(q, 5), cat.name);
   check(fp.some(r => r.id && r.id.startsWith('place:' + ID) && r.name === cat.name), `findPlaces "${cat.name}"`, fp.slice(0, 3).map(r => `${r.name} (${r.kind}, ${r.id})`).join('; '));

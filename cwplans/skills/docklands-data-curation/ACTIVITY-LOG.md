@@ -3306,3 +3306,15 @@ their outlines; coarse levels keep merged squares (200 m to 1.6 km) turned to th
   lite-check (new York 1.1 km check: 68,650 building boxes; a tap gives the Building card) all passed.
 - Data: danbri/docklandia data/gb/uk-lite/ on branch uk-lite-2 of a clone (not pushed). Details: skill
   docklands-3d-page, "The UK lite set, version 2: one box a building at the leaves (2026-10-22)".
+
+## 2026-10-22: UK lite set, landmark heights (towers and spires)
+
+Owner, 2026-10-22, to "should I improve the landmark heights next, with OSM spire and tower parts or the heights in
+Wikidata?": "Yes do that". New operation place-lite-landmark-heights 1 (cwplans/tools/place-lite-heights.mjs) and
+place-lite-tiles 4. Inputs: OSM building:part heights via Overture's building_part theme (26,690 parts in the UK box,
+joined by building_id) and Wikidata P2048 (QLever Wikidata, 69,053 items, 323 statements; ended and deprecated statements
+left out: Lincoln's 159.7 m spire fell in 1548). Rule in the set's README. 490 landmarks with parts drawn (2,700 parts),
+88 Wikidata towers, 2 Wikidata spires. Salisbury 123 m, Liverpool Cathedral 100 m, Norwich 96, Lincoln 80, Durham 66,
+York Minster 63, Blackpool Tower 158 m. Card row "Highest point"; describeView tallest by the highest point. Register:
+extract overture-osm-uk-building-parts, source wikidata on the set. Set 294.8 MB. Checks: npm run check, npm test,
+lite-check (new: cathedral heights over 60 m, the card's highest point) all passed. Fault F55 stays for the bodies.
