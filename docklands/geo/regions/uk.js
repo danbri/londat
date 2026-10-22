@@ -18,7 +18,14 @@ export default {
   locale: 'en-GB',
   locales: ['en-GB', 'cy', 'gd'],
   heightDatum: 'ellipsoid',
-  services: { weatherPoint: { lon: -2.5, lat: 54.4 }, aircraft: { lon: -0.02, lat: 51.505, nm: 25 }, metar: 'EGLL' },
+  services: { weatherPoint: { lon: -2.5, lat: 54.4 }, aircraft: { lon: -0.02, lat: 51.505, nm: 25 }, metar: 'EGLL',
+    // METAR stations for views anywhere in the UK that are not a place of their own (York, Manchester, Edinburgh ...): the
+    // page shows the nearest within 50 km (docklands/geo/services.js pickStation); the 5-minute job asks the NOAA Aviation
+    // Weather Center for all of them in one request (cwplans/tools/fetch-live-cache.mjs -> metar-places.json). Civil airports
+    // and two RAF stations that report around the clock; each id checked against the AWC answer on 2026-10-22 (issue #12)
+    metarStations: ['EGAA', 'EGAC', 'EGAE', 'EGBB', 'EGCC', 'EGFF', 'EGGD', 'EGGP', 'EGGW', 'EGHH', 'EGHI', 'EGHQ', 'EGKA', 'EGKK', 'EGLL', 'EGMC', 'EGMD', 'EGNH',
+      'EGNJ', 'EGNM', 'EGNS', 'EGNT', 'EGNV', 'EGNX', 'EGOV', 'EGPA', 'EGPB', 'EGPD', 'EGPE', 'EGPF', 'EGPH', 'EGPK', 'EGPN', 'EGPO', 'EGSC', 'EGSH', 'EGSS', 'EGTE', 'EGTK',
+      'EGXC', 'EGXE'] },
   adapters: [
     { id: 'world-base', area: 'worldwide', about: 'Natural Earth, Copernicus / ETOPO terrain (the globe of KR2.2)', licence: 'per source', licenceClass: 'open', fallback: 'none (this is the fallback)' },
     {

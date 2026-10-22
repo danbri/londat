@@ -20,6 +20,10 @@ export default {
     weatherPoint: { lon: -0.02, lat: 51.505 },          // Open-Meteo calls (docklands/meteo.js, about-extra.js, layers/wind.js)
     aircraft: { lon: -0.02, lat: 51.505, nm: 25 },      // adsb.lol /v2/point (docklands/planes-live.js ADSB)
     metar: 'EGLC',                                       // London City Airport (NOAA AWC; cwplans/tools/fetch-live-cache.mjs)
+    metarName: 'London City Airport',                    // the station's name in the notes (layers/wind.js metarName)
+    // the water level and current of the model's river: the Thames tideway between the EA gauges Tower Pier, Charlton and
+    // Silvertown (layers/tide.js, layers/wind.js); shown only where this region is the site of the view (geo/services.js)
+    water: { id: 'ea-thames-tideway', name: 'Thames' },
   },
   adapters: [
     {

@@ -14,7 +14,8 @@ import { parseZone } from './geo/zone.js';
 import { VIEW_LABELS } from './views.js';
 import { latinOut, scrubText, getScriptPreference, setScriptPreference } from './geo/script.js';
 
-export const API_VERSION = '1.2.0';   // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
+export const API_VERSION = '1.3.0';   // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
+// 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
 // 1.1.0 (2026-10-21): the page clock's zone follows the view; getTimeZone, setTimeZone, setTime(v, zone)
 const D = Math.PI / 180, $ = id => document.getElementById(id);
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* no storage */ } } };
@@ -41,9 +42,9 @@ export function init(H) {
   const sunNow = () => { const s = H.sky.state && H.sky.state.sun; return s ? { alt: s.alt, az: s.az, altGeo: s.altGeo } : null; };
   function getView() {
     if (onGlobe()) { const v = H.globe.getView(), pt = H.globe.placeTime?.(v.target.lon, v.target.lat);   // over a place (globe/places.js): its own clock too
-      return latinOut({ api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), view: 'globe', scripts: getScriptPreference(), share: shareLink() }); }
+      return latinOut({ api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), weather: liveWeather(), view: 'globe', scripts: getScriptPreference(), share: shareLink() }); }
     const G = viewGeo(I, camOf()); delete G.frame; delete G.elon; delete G.elat; const s = sunNow();
-    return latinOut({ api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, view: H.viewName || null, scripts: getScriptPreference(), share: shareLink() });
+    return latinOut({ api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, weather: liveWeather(), view: H.viewName || null, scripts: getScriptPreference(), share: shareLink() });
   }
   const listViews = () => Object.keys(H.VIEWS).map(id => ({ id, label: VIEW_LABELS[id] || id }));
   const settle = () => new Promise(ok => requestAnimationFrame(() => ok()));
@@ -141,13 +142,32 @@ export function init(H) {
     return latinOut(r);
   }
 
+  // ---------- the live weather of the place in view (issue #12): only what the wind and weather layers worked out for the
+  // site that is in view now (ctx.site(): the model, or the place under the centre of the globe); null when there is no
+  // site or the layers have nothing for it yet. Never the model's data for another place.
+  function liveWeather() {
+    const s = ctx.site ? ctx.site() : null, key = s ? s.key : null; if (!s) return null;
+    const W = ctx.stats.weather && ctx.stats.weather.now, Wn = ctx.weather && ctx.weather.now, S = ctx.stats.surface, wi = S && S.wind;
+    const okW = !!(W && W.site === key), okWi = !!(wi && wi.site === key);
+    if (!okW && !okWi) return null;
+    const cur = okWi && S.water && S.current != null ? S.current : null;
+    return { place: s.region || null, cloud_pct: okW && W.cover != null ? Math.round(W.cover <= 1 && W.cover > 0 ? W.cover * 100 : W.cover) : null, visibility_m: okW ? W.vis ?? null : null,
+      precipitation_mm: okW ? W.precip ?? null : null, temperature_c: okW && Wn && Wn.temp != null ? Math.round(Wn.temp * 10) / 10 : null, source: okW ? W.source || null : null,
+      wind: okWi ? { speed_ms: wi.speed, from_deg: wi.dir, gust_ms: wi.gust || null, source: wi.source, station: wi.station || null } : null,
+      water_current: cur != null ? { water: S.water, speed_ms: Math.abs(cur), direction: cur > 0.12 ? 'ebb, downstream' : cur < -0.02 ? 'flood, upstream' : 'slack' } : null };
+  }
+  const weatherText = w => w ? ` Live weather here: ${[w.wind ? `wind ${w.wind.speed_ms} m/s from ${w.wind.from_deg}° (${w.wind.source})` : '', w.cloud_pct != null ? `cloud ${w.cloud_pct} %` : '', w.temperature_c != null ? `${Math.round(w.temperature_c)} °C` : '',
+    w.water_current ? `${w.water_current.water} current ${w.water_current.speed_ms.toFixed(2)} m/s (${w.water_current.direction})` : ''].filter(Boolean).join('; ')}.` : '';
+
   // ---------- what is in view
   async function describeView(o = {}) {
-    if (onGlobe()) { const tn = timeNow(), d = await GL().describe({ maxItems: o.maxItems || 8, time: `${tn.local} ${tn.abbreviation === tn.utc_offset ? tn.utc_offset : tn.abbreviation + ', ' + tn.utc_offset} (${tn.time_zone}${tn.approximate ? ', approximate' : ''})` }); return latinOut({ ...d, time: tn, api_version: API_VERSION, scripts: getScriptPreference(), share: shareLink() }); }
+    if (onGlobe()) { const tn = timeNow(), d = await GL().describe({ maxItems: o.maxItems || 8, time: `${tn.local} ${tn.abbreviation === tn.utc_offset ? tn.utc_offset : tn.abbreviation + ', ' + tn.utc_offset} (${tn.time_zone}${tn.approximate ? ', approximate' : ''})` });
+      const weather = liveWeather(); if (weather) d.text += weatherText(weather);
+      return latinOut({ ...d, weather, time: tn, api_version: API_VERSION, scripts: getScriptPreference(), share: shareLink() }); }
     await extras;
-    const L = H.layers, W = ctx.stats.weather && ctx.stats.weather.now, Wn = ctx.weather && ctx.weather.now;
+    const L = H.layers;
     const live = { aircraft: L.planes && L.planes.on ? L.planes.api.flights : null, ships: L.ships && L.ships.on ? L.ships.api.vessels : null };
-    const weather = W ? { cloud_pct: W.cover != null ? Math.round(W.cover <= 1 && W.cover > 0 ? W.cover * 100 : W.cover) : null, visibility_m: W.vis ?? null, precipitation_mm: W.precip ?? null, temperature_c: Wn && Wn.temp != null ? Math.round(Wn.temp * 10) / 10 : null, source: W.source || null } : null;
+    const weather = liveWeather();
     const occ = H.occ && H.occ();
     const dsc = describeCore(I, camOf(), { time: H.clock, timeZone: Z.tz, zoneInfo: Z.describe(H.clock), sun: sunNow(), weather, live, share: shareLink(), view: H.viewName || null, maxItems: o.maxItems || 8, maxDistance: o.maxDistance,
       occluded: occ ? (k, x, y, z) => occ.test(k, x, y, z) : null });

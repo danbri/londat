@@ -3,7 +3,10 @@
 //             a rolling buffer of the last 60 minutes of reports -> aircraft.json
 //   ships:    one Open Waters AIS snapshot (GET https://ais.openwaters.io/v1/vessels?bbox=51.474,-0.095,51.528,0.085,
 //             anonymous tier), added to a rolling buffer of the last 2 hours of positions -> ships.json
-//   METAR:    London City Airport (EGLC), the last 24 hours, NOAA Aviation Weather Center data API -> metar.json
+//   METAR:    the model's station (region config docklands, services.metar: London City Airport), the last 24 hours,
+//             NOAA Aviation Weather Center data API -> metar.json; in the SAME request the stations of the other places
+//             (every region config's services.metar and services.metarStations; docklands/geo/services.js metarIds),
+//             the last 6 hours -> metar-places.json (issue #12: each place shows its own METAR, never London's)
 // Both are written with README.md (licences and attributions) and force-pushed as the only commit of the orphan branch
 // live-cache (temporary index, GIT_INDEX_FILE: the main working tree and index are not touched; git history does not
 // grow). The browser cannot read api.adsb.lol (no CORS header); raw.githubusercontent.com sends
@@ -19,7 +22,7 @@
 // craft (ITU 36/37, class B without a commercial type, class and type not heard) are counted, never listed.
 //
 //   node cwplans/tools/fetch-live-cache.mjs [--out DIR] [--restore] [--push] [--only aircraft|ships|metar]
-//        [--from-adsb FILE] [--from-ais FILE] [--from-metar FILE]
+//        [--from-adsb FILE] [--from-ais FILE] [--from-metar FILE] [--from-metar-places FILE]
 //     --restore    first read aircraft.json and ships.json of origin/live-cache (git fetch), so the buffers go on
 //     --from-*     use a saved API answer instead of asking (tests)
 //     NODE_USE_ENV_PROXY=1 behind a proxy. Workflow: .github/workflows/live-cache.yml (every 5 minutes).
@@ -28,6 +31,8 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from 'node
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
+import { REGIONS } from '../../docklands/geo/regions/index.js';
+import { metarIds } from '../../docklands/geo/services.js';
 
 const A = process.argv.slice(2), opt = k => { const i = A.indexOf(k); return i >= 0 ? A[i + 1] : null; };
 const OUT = resolve(opt('--out') || join(tmpdir(), 'londat-live-cache'));
@@ -60,7 +65,7 @@ const git = (args, env) => execFileSync('git', args, { encoding: 'utf8', env: { 
 function restore() {
   try { git(['fetch', '-q', '--depth=1', 'origin', BRANCH]); } catch { console.log(`no ${BRANCH} branch yet`); return {}; }
   const out = {};
-  for (const f of ['aircraft', 'ships', 'metar']) { try { out[f] = JSON.parse(git(['show', `FETCH_HEAD:${f}.json`])); } catch { console.log(`${BRANCH} has no readable ${f}.json`); } }
+  for (const f of ['aircraft', 'ships', 'metar', 'metar-places']) { try { out[f] = JSON.parse(git(['show', `FETCH_HEAD:${f}.json`])); } catch { console.log(`${BRANCH} has no readable ${f}.json`); } }
   console.log(`restored origin/${BRANCH}: ${Object.keys(out).join(', ') || 'nothing'}`);
   return out;
 }
@@ -216,36 +221,57 @@ async function ships(prev) {
   return b;
 }
 
-// ======================================================================= METAR, London City Airport (EGLC)
+// ======================================================================= METAR: the model's station and the places' stations
 // aviationweather.gov data API (NOAA Aviation Weather Center; NWS: "public domain, unless specifically noted otherwise").
-// One request a run for the last 24 hours (their limit: 100 requests a minute; "keep requests limited in scope and
-// frequency"). No CORS header (checked 2026-10-09), so the page reads this file instead. Fields as the API gives them,
-// plus the visibility in metres from the report text (the API's visib is in statute miles, "6+" for 9999).
-const METAR_URL = 'https://aviationweather.gov/api/data/metar?ids=EGLC&format=json&hours=24';
-const KEEP_METAR = 86400;
+// TWO requests a run (their limit: 100 requests a minute; "keep requests limited in scope and frequency"): the model's
+// station for the last 24 hours (as before 2026-10-22), and all other stations for the last 2 hours. The API gives at
+// most 400 reports an answer (found 2026-10-22: 49 stations x 24 hours came back cut to 400, EGLC with 8 of its 48), so
+// the places' request asks 2 hours (about 200 reports) and the file builds up its 6 hours run by run. No CORS header
+// (checked 2026-10-09 and 2026-10-22), so the page reads these files instead. Fields as the API gives them, plus the
+// visibility in metres from the report text (the API's visib is in statute miles, "6+" for 9999).
+// Stations: the region configs (docklands/geo/regions/), never a list here.
+const HOME = REGIONS.docklands.services.metar;
+const PLACE_IDS = metarIds(REGIONS).filter(id => id !== HOME);
+const awc = (ids, h) => `https://aviationweather.gov/api/data/metar?ids=${ids.join(',')}&format=json&hours=${h}`;
+const KEEP_METAR = 86400, KEEP_PLACES = 6 * 3600;
+const METAR_LICENCE = 'NOAA/NWS: public domain unless specifically noted otherwise (https://www.weather.gov/disclaimer); the reports are made by the national weather services of the aerodromes and exchanged through the WMO (essential data, WMO Resolution 40)';
+const METAR_NOTE = 'wdir degrees true (METAR), "VRB" for variable; wspd_kt and wgst_kt in knots; vis_m from the report text (9999 and CAVOK as 10000); cloud bases in ft above the aerodrome; times UTC (t = observation time, s)';
 function visM(raw) {
   if (/\bCAVOK\b/.test(raw)) return 10000;
   const m = /\s(\d{4})(NDV)?\s/.exec(raw.replace(/^.*?\d{3}(?:\d{2}|\d{3})(?:G\d{2,3})?KT(?:\s\d{3}V\d{3})?/, ''));
   return m ? (+m[1] === 9999 ? 10000 : +m[1]) : null;
 }
+// one AWC answer row -> the stored report
+const metarRow = o => ({ t: o.obsTime, report: o.reportTime, type: o.metarType, raw: o.rawOb, wdir: o.wdir, wspd_kt: o.wspd, wgst_kt: o.wgst ?? null, vis_m: visM(o.rawOb),
+  clouds: (o.clouds || []).map(c => ({ cover: c.cover, base_ft: c.base ?? null })), temp_c: o.temp, dewp_c: o.dewp, qnh_hpa: o.altim, flt_cat: o.fltCat || null });
+// the reports of the last 24 hours: the previous ones and the new ones, by time and text
+function merged(old, rows, now, keep = KEEP_METAR) {
+  const M = new Map((old || []).map(o => [o.t + o.raw, o]));
+  for (const o of rows) { const r = metarRow(o); M.set(r.t + r.raw, r); }
+  return [...M.values()].filter(o => o.t >= now - keep).sort((a, b) => a.t - b.t);
+}
+const stationOf = (o, id) => o ? { icao: id, name: o.name || null, lat: o.lat ?? null, lon: o.lon ?? null, elev_m: o.elev ?? null } : null;
+const common = url => ({ generated: new Date().toISOString(), tool: 'cwplans/tools/fetch-live-cache.mjs (danbri/londat), workflow .github/workflows/live-cache.yml (every 5 minutes)',
+  source: `NOAA Aviation Weather Center data API, ${url}`, licence: METAR_LICENCE, note: METAR_NOTE });
+const rowsOf = list => (Array.isArray(list) ? list : []).filter(o => o.rawOb && o.obsTime);
+// the model's station: metar.json (format unchanged)
 async function metar(prev) {
-  const list = await getJSON(METAR_URL, opt('--from-metar')), now = Date.now() / 1000;
-  const M = new Map((prev ? prev.obs : []).map(o => [o.t + o.raw, o]));
-  for (const o of Array.isArray(list) ? list : []) {
-    if (!o.rawOb || !o.obsTime) continue;
-    const r = { t: o.obsTime, report: o.reportTime, type: o.metarType, raw: o.rawOb, wdir: o.wdir, wspd_kt: o.wspd, wgst_kt: o.wgst ?? null, vis_m: visM(o.rawOb),
-      clouds: (o.clouds || []).map(c => ({ cover: c.cover, base_ft: c.base ?? null })), temp_c: o.temp, dewp_c: o.dewp, qnh_hpa: o.altim, flt_cat: o.fltCat || null };
-    M.set(r.t + r.raw, r);
+  const url = awc([HOME], 24), rows = rowsOf(await getJSON(url, opt('--from-metar'))).filter(o => !o.icaoId || o.icaoId === HOME), obs = merged(prev && prev.obs, rows, Date.now() / 1000);
+  console.log(`metar: ${rows.length} reports in the answer; metar.json: ${obs.length} reports, newest ${obs.at(-1) ? obs.at(-1).raw : 'none'}`);
+  return { v: 1, ...common(url), station: stationOf(rows[0], HOME) || (prev && prev.station) || { icao: HOME }, keep_s: KEEP_METAR, obs };
+}
+// the other places' stations: metar-places.json, stations { id: { icao, name, lat, lon, elev_m, obs } }
+async function metarPlaces(prev) {
+  if (!PLACE_IDS.length) return null;
+  const url = awc(PLACE_IDS, 2), rows = rowsOf(await getJSON(url, opt('--from-metar-places'))).filter(o => o.icaoId && PLACE_IDS.includes(o.icaoId)), now = Date.now() / 1000;
+  const by = new Map(); for (const o of rows) { if (!by.has(o.icaoId)) by.set(o.icaoId, []); by.get(o.icaoId).push(o); }
+  const stations = {};
+  for (const id of PLACE_IDS) {
+    const r = by.get(id) || [], old = prev && prev.stations && prev.stations[id], obs = merged(old && old.obs, r, now, KEEP_PLACES);
+    if (obs.length) stations[id] = { ...(stationOf(r[0], id) || (old && { icao: id, name: old.name, lat: old.lat, lon: old.lon, elev_m: old.elev_m }) || { icao: id }), obs };
   }
-  const obs = [...M.values()].filter(o => o.t >= now - KEEP_METAR).sort((a, b) => a.t - b.t);
-  const b = { v: 1, generated: new Date().toISOString(), station: { icao: 'EGLC', name: 'London City Airport', lat: 51.505, lon: 0.055, elev_m: 10 },
-    tool: 'cwplans/tools/fetch-live-cache.mjs (danbri/londat), workflow .github/workflows/live-cache.yml (every 5 minutes)',
-    source: `NOAA Aviation Weather Center data API, ${METAR_URL}`,
-    licence: 'NOAA/NWS: public domain unless specifically noted otherwise (https://www.weather.gov/disclaimer); the reports are made by the UK Met Office for London City Airport and exchanged through the WMO (essential data, WMO Resolution 40)',
-    note: 'wdir degrees true (METAR), "VRB" for variable; wspd_kt and wgst_kt in knots; vis_m from the report text (9999 and CAVOK as 10000); cloud bases in ft above the aerodrome; times UTC (t = observation time, s)',
-    keep_s: KEEP_METAR, obs };
-  console.log(`metar: ${(list || []).length} reports in the answer; metar.json: ${obs.length} reports, newest ${obs.at(-1) ? obs.at(-1).raw : 'none'}`);
-  return b;
+  console.log(`metar-places: ${rows.length} reports in the answer for ${by.size} of ${PLACE_IDS.length} stations; metar-places.json: ${Object.keys(stations).length} stations, ${Object.values(stations).reduce((s, x) => s + x.obs.length, 0)} reports`);
+  return { v: 1, ...common(url), keep_s: KEEP_PLACES, asked: PLACE_IDS, stations };
 }
 
 // ======================================================================= write and push
@@ -275,12 +301,15 @@ lon 1e-5, sog 0.1 kn, cog deg, heading deg, nav_status]. Small private craft are
 never listed. A vessel still listed by Open Waters (moored ones up to 7 days) keeps its newest position even when it is older
 than 2 hours.
 
-## metar.json: the last 24 hours
+## metar.json and metar-places.json: the last 24 hours
 
-London City Airport (EGLC) METAR reports from the NOAA Aviation Weather Center data API
-(https://aviationweather.gov/data/api/; NWS: "public domain, unless specifically noted otherwise"). The reports are made by
-the UK Met Office and exchanged through the WMO. Wind direction in degrees true, speeds in knots, cloud bases in feet above
-the aerodrome, visibility in metres (from the report text).
+METAR reports from the NOAA Aviation Weather Center data API (https://aviationweather.gov/data/api/; NWS: "public domain,
+unless specifically noted otherwise"), two requests a run. metar.json: the model's station (London City
+Airport), \`obs\`. metar-places.json: the stations of the other places of the page (the region configs' services.metar and
+services.metarStations: Dublin, Berlin, Stuttgart, Saarbrücken, León, Sarajevo, Amsterdam, UK airports), \`stations\`
+{ id: { icao, name, lat, lon, elev_m, obs } }, the last 6 hours; the page shows the station of the place in view, or the nearest within 50 km.
+The reports are made by the national weather services of the aerodromes and exchanged through the WMO. Wind direction in
+degrees true, speeds in knots, cloud bases in feet above the aerodrome, visibility in metres (from the report text).
 `;
 
 function push(msg) {
@@ -288,7 +317,7 @@ function push(msg) {
   const env = { GIT_INDEX_FILE: idxFile, GIT_AUTHOR_NAME: process.env.GIT_AUTHOR_NAME || 'londat live cache bot', GIT_AUTHOR_EMAIL: process.env.GIT_AUTHOR_EMAIL || 'londat-cache@users.noreply.github.com' };
   env.GIT_COMMITTER_NAME = env.GIT_AUTHOR_NAME; env.GIT_COMMITTER_EMAIL = env.GIT_AUTHOR_EMAIL;
   const gitDir = git(['rev-parse', '--absolute-git-dir']);
-  const files = ['README.md', 'aircraft.json', 'ships.json', 'metar.json'].filter(f => existsSync(join(OUT, f)));
+  const files = ['README.md', 'aircraft.json', 'ships.json', 'metar.json', 'metar-places.json'].filter(f => existsSync(join(OUT, f)));
   git(['--git-dir', gitDir, '--work-tree', OUT, '-C', OUT, 'add', '-f', ...files], env);
   const tree = git(['write-tree'], env), commit = git(['commit-tree', tree, '-m', msg], env);
   rmSync(idxFile, { force: true });
@@ -298,23 +327,24 @@ function push(msg) {
 
 mkdirSync(OUT, { recursive: true });
 const readOld = f => { try { return JSON.parse(readFileSync(join(OUT, f), 'utf8')); } catch { return null; } };
-const prev = A.includes('--restore') ? restore() : { aircraft: readOld('aircraft.json'), ships: readOld('ships.json'), metar: readOld('metar.json') };
+const prev = A.includes('--restore') ? restore() : { aircraft: readOld('aircraft.json'), ships: readOld('ships.json'), metar: readOld('metar.json'), 'metar-places': readOld('metar-places.json') };
 const parts = [];
 let failed = 0;
-for (const [name, fn] of [['aircraft', aircraft], ['ships', ships], ['metar', metar]]) {
-  if (ONLY && ONLY !== name) { if (prev[name]) writeFileSync(join(OUT, name + '.json'), JSON.stringify(prev[name])); continue; }
+const keep = name => { if (prev[name]) writeFileSync(join(OUT, name + '.json'), JSON.stringify(prev[name])); };
+const write = (name, b) => { const body = b || prev[name]; if (!body) return; const txt = JSON.stringify(body); writeFileSync(join(OUT, name + '.json'), txt); console.log(`${name}.json: ${txt.length.toLocaleString('en')} bytes`); };
+// --only metar covers both METAR files
+for (const [name, fn] of [['aircraft', aircraft], ['ships', ships], ['metar', metar], ['metar-places', metarPlaces]]) {
+  if (ONLY && ONLY !== name.replace(/-places$/, '')) { keep(name); continue; }
   try {
     const b = await fn(prev[name] || null);
-    const body = b || prev[name]; if (!body) continue;
-    const txt = JSON.stringify(body); writeFileSync(join(OUT, name + '.json'), txt);
-    console.log(`${name}.json: ${txt.length.toLocaleString('en')} bytes`);
-    if (b) parts.push(name === 'aircraft' ? `${b.ac.length} aircraft` : name === 'ships' ? `${b.vessels.length} vessels` : `${b.obs.length} METAR`);
+    write(name, b);
+    if (b) parts.push(name === 'aircraft' ? `${b.ac.length} aircraft` : name === 'ships' ? `${b.vessels.length} vessels` : name === 'metar' ? `${b.obs.length} METAR` : `METAR of ${Object.keys(b.stations).length} other stations`);
   } catch (e) {
     failed++; console.error(`${name}: failed: ${e.message}; the previous file is kept`);
-    if (prev[name]) writeFileSync(join(OUT, name + '.json'), JSON.stringify(prev[name]));
+    keep(name);
   }
 }
 writeFileSync(join(OUT, 'README.md'), README);
-if (failed === 3) process.exitCode = 1;
+if (failed === 4) process.exitCode = 1;
 if (A.includes('--push') && parts.length) push(`live-cache: ${new Date().toISOString().slice(0, 16)}Z, ${parts.join(', ')} (adsb.lol ODbL 1.0; Open Waters AIS)`);
 else if (A.includes('--push')) console.log('nothing new: nothing pushed');
