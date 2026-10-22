@@ -209,22 +209,24 @@ https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45
 - Not drawn: buildings under 25 m2 (72,571 OSM, 55,669 Microsoft); building parts (Overture type building_part).
 - Globe mode shows no buildings inside the model box (the model draws them after the hand-over under 36 km).
 
-**Rebuilt the UK lite v2 way (place-blocks 4, 2026-10-22).** Owner, 2026-10-22: "Yes, do all of London eventually"
+**Rebuilt the UK lite v2 way (place-blocks 4 and 5, 2026-10-22).** Owner, 2026-10-22: "Yes, do all of London eventually"
 (issue https://github.com/danbri/londat/issues/13 : from 11 km straight down, outer south-east London was a field of
 grey squares, https://danbri.github.io/londat/docklands/?ll=51.41793,0.07111,11347&ht=347,0 , while across the boundary
 the UK lite set already drew one box a building). Region switch `place.blocks.leaf_boxes: 'compact'`.
 - Leaves at level 13 (about 1.5 x 2.4 km): every building that is not named is one 8-byte compact box (layout
   `cwplans-boxes-1`, the UK lite reader `compactInto`: true centroid, footprint area, angle and long / short ratio of its
   minimum rotated rectangle, height, height source, class; the Microsoft class keeps its own class bit and card); the
-  5,562 named buildings keep their outlines and ids. Coarse levels 10 to 12: tall or big buildings as boxes, the rest one
+  5,562 named buildings keep their outlines and ids; the irregular buildings (300 m2 or more filling less than 85 % of
+  their oriented box: L shapes, irregular blocks; 63,607) keep their outlines simplified at 2.5 m (place-blocks 5: the
+  place-blocks 3 rule, architecture rule 6, no capability dropped for size). Coarse levels 10 to 12: tall or big buildings as boxes, the rest one
   compact square a 400 / 200 / 100 m square, turned to the grain of its buildings, side from the built share (full at 50 %).
 - Where the leaves show: geometricError 1,680 / 840 / 420 m at levels 10 to 12, so the leaves draw within about 12.8 km
   of the eye on a phone (MAX_SSE 24, K about 731); the leaves' parents carry `extras.refine_within_m` 13,000 (places.js
   refines them only within that distance minus the bounding radius), so big screens and oblique whole-city views keep the
   turned squares far away.
-- Size: 681 tiles 21.1 MB (level 10: 0.13, 11: 0.46, 12: 1.59, 13: 18.92 MB), tileset.json 0.28 MB, features.json
-  0.72 MB, log 0.14 MB: 22.6 MB in all, down from 110.6 MB (about 13.6 bytes a building at the leaves with the named
-  outlines and the ground grids, against about 62 before). The selection and heights are unchanged (same activity and
+- Size: 681 tiles 47.2 MB (level 10: 0.13, 11: 0.46, 12: 1.59, 13: 45.02 MB), tileset.json 0.28 MB, features.json
+  0.72 MB, log 0.14 MB: 48.7 MB in all, down from 110.6 MB. The irregular outlines cost 26.1 MB of it: with compact
+  boxes only (place-blocks 4, not kept) the set was 22.6 MB. The selection and heights are unchanged (same activity and
   output hashes: the raw Overture answer re-fetched with the same SHA-256).
 - Measured (software WebGL, 390 x 844 @2): straight down from 11.3 km 26 to 30 leaf tiles, 101,632 building boxes, 0
   merged squares, 1.1 M place and 1.3 M frame triangles, submit 4.5 ms, frame interval 4.5 s (software); the whole city

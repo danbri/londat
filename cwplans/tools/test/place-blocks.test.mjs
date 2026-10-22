@@ -5,7 +5,7 @@
 // Skill docklands-3d-page, "Three.js port: Greater London as blocks (2026-10-22)".
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { blockSelector, blockTree, blockTile, worldBaseGround, cellBox, ringAreaM2, footprintBox } from '../place-blocks.mjs';
+import { blockSelector, blockTree, blockTile, worldBaseGround, cellBox, ringAreaM2, footprintBox, wantsOutline } from '../place-blocks.mjs';
 import { boxSquares, squareBoxes, compactBoxes, HSRC } from '../place-lite.mjs';
 import { enuFrame } from '../../../docklands/geo/ellipsoid.js';
 
@@ -125,4 +125,13 @@ test('boxSquares + squareBoxes: one square a merge square, turned to the grain, 
   // compact layout: 8 bytes a box, the same angle code
   const F = enuFrame({ lon: 0.105, lat: 51.505, h: 50 }), cp = compactBoxes({ F, b, boxes: sq, groundAt: () => 10, geoidAt: () => 45, drop_m: 3, kind: 'squares' });
   assert.equal(cp.data.length, 16); assert.equal(cp.data[6], Math.round(20 / 180 * 256));
+});
+
+test('wantsOutline: the place-blocks 3 leaf rule (>= 300 m2 and under 85 % of the oriented box) kept by place-blocks 5', () => {
+  const lon = 0.1, lat = 51.5, mLon = 111320 * Math.cos(lat * Math.PI / 180), mLat = 110574, P = { outline_min_m2: 300, box_fill: 0.85 };
+  const L = k => { const r = [[0, 0], [20, 0], [20, 10], [10, 10], [10, 20], [0, 20]].map(([e, n]) => [lon + e * k / mLon, lat + n * k / mLat]); return [...r, r[0]]; };
+  assert.equal(wantsOutline({ c: [lon, lat], a: 1200, rings: [L(2)] }, P), true);    // an L of 1,200 m2 fills 75 % of its box
+  assert.equal(wantsOutline({ c: [lon, lat], a: 300, rings: [L(1)] }, P), true);
+  assert.equal(wantsOutline({ c: [lon, lat], a: 75, rings: [L(0.5)] }, P), false);   // small: a box
+  assert.equal(wantsOutline({ c: [lon, lat], a: 400, rings: [rect(lon, lat, 40, 10, 30).coordinates[0]] }, P), false);   // a rectangle: a box
 });

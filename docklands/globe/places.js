@@ -562,13 +562,14 @@ export async function attachPlaces(G, H, { scene, U }) {
       if (!hasGround(p)) { const by = {}; let k = 0; for (const nd of lastDrawn) if (nd.p === p && nd.meta) for (const L of [nd.meta.boxes, nd.meta.outlines]) for (const c of L.c) { k++; by[nd.meta.classes[c]] = (by[nd.meta.classes[c]] || 0) + 1; }
         r.blocks_drawn = k; r.blocks_by_source = by; r.named_buildings_in_view = n;
         // compact boxes (Greater London since place-blocks 4): buildings as boxes at the leaves, merged squares farther
-        let bb = 0, mb = 0, mn = 0, ob = 0, inLeaf = 0; const bbBy = {}, lv = {}, leafKeys = new Set();
+        let bb = 0, mb = 0, mn = 0, ob = 0, ol = 0, inLeaf = 0; const bbBy = {}, lv = {}, leafKeys = new Set();
         for (const nd of lastDrawn) { if (nd.p !== p || !nd.meta) continue; lv[nd.level] = (lv[nd.level] || 0) + 1; const B = nd.meta.boxes, cp = nd.meta.compact_boxes, k0 = B.c.length - (cp?.count || 0);
           mn += nd.meta.mass_buildings || 0; if (nd.level === p.feats?.fj?.level && nd.meta.buildings != null) { inLeaf += nd.meta.buildings; leafKeys.add(nd.key); }
+          ol += nd.meta.outlines?.c?.length || 0;
           for (let i = 0; i < B.c.length; i++) { if (i < k0) { ob++; continue; } if (cp.kind === 'squares') mb++; else { bb++; const k2 = nd.meta.classes[B.c[i]]; bbBy[k2] = (bbBy[k2] || 0) + 1; } } }
-        // (buildings_in_leaf_tiles: every building of the leaf tiles drawn, by the build; = building_boxes + named_in_leaf_tiles
-        // when each is drawn once)
-        if ((bb || mb) && !LITE(p)) r.boxes = { building_boxes: bb, building_boxes_by_source: bbBy, mass_boxes: mb, mass_buildings: mn, own_boxes: ob, tiles_by_level: lv,
+        // (buildings_in_leaf_tiles: every building of the leaf tiles drawn, by the build; = building_boxes + outline_blocks +
+        // own_boxes + named_in_leaf_tiles when only leaves are drawn and each building once)
+        if ((bb || mb) && !LITE(p)) r.boxes = { building_boxes: bb, building_boxes_by_source: bbBy, outline_blocks: ol, mass_boxes: mb, mass_buildings: mn, own_boxes: ob, tiles_by_level: lv,
           buildings_in_leaf_tiles: inLeaf, named_in_leaf_tiles: F.B.filter(b => leafKeys.has(b.tile)).length }; }
       // a lite set: what is drawn is a selection, so say so and count each class
       if (LITE(p)) { let lo = 0, lb = 0, mb = 0, mn = 0, bb = 0; const lv = {}, bbBy = {};
@@ -610,7 +611,7 @@ export async function attachPlaces(G, H, { scene, U }) {
         const m4 = new THREE.Matrix4(), ps = new THREE.Vector3(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(); hit.object.getMatrixAt(k, m4); m4.decompose(ps, qt, sc);
         const ang = Math.round((2 * Math.atan2(qt.y, qt.w) * 180 / Math.PI + 360) % 180);
         const b = { kind: 'building', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], footprint_m2: Math.round(sc.x * sc.z), long_side_m: Math.round(sc.x * 10) / 10, short_side_m: Math.round(sc.z * 10) / 10, orientation_deg: ang, level: hit.object.userData.node?.level };
-        const rows = [['Kind', `Building, drawn as one box at its true position: its footprint area, the orientation of its long side and its height (${LITE(p) ? 'a lite set: no outline, no name or id; landmarks have their outlines' : 'no outline, no name or id; named buildings have their outlines'})`], ['Footprint from', cls], ['Footprint', `${b.footprint_m2} m2 (box ${b.long_side_m} x ${b.short_side_m} m, long side ${b.orientation_deg}° from east)`], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
+        const rows = [['Kind', `Building, drawn as one box at its true position: its footprint area, the orientation of its long side and its height (${LITE(p) ? 'a lite set: no outline, no name or id; landmarks have their outlines' : 'no outline, no name or id; named and irregular buildings have their outlines'})`], ['Footprint from', cls], ['Footprint', `${b.footprint_m2} m2 (box ${b.long_side_m} x ${b.short_side_m} m, long side ${b.orientation_deg}° from east)`], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
         H.showCard(`<h2>Building</h2><p class="small">${esc(p.name)} · ${esc(cls)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
         return b; }
       if (LITE(p) || cpk === 'squares') { const b = { kind: 'merged buildings', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], level: hit.object.userData.node?.level };

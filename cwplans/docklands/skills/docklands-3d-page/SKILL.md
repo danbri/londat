@@ -3313,7 +3313,7 @@ https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
   (tileset.json 0.97 MB, loaded at 150 km, also in the Docklands model's globe background); the UK (section 3b).
   (The bullets Tiles and Measured above describe place-blocks 3; version 4 below.)
 
-### Greater London rebuilt the UK lite v2 way: compact boxes at the leaves (place-blocks 4, 2026-10-22)
+### Greater London rebuilt the UK lite v2 way: compact boxes at the leaves (place-blocks 4 and 5, 2026-10-22)
 
 Owner, 2026-10-22: "Yes, do all of London eventually" (issue https://github.com/danbri/londat/issues/13 ; from 11 km
 straight down London was a field of grey squares: https://danbri.github.io/londat/docklands/?ll=51.41793,0.07111,11347&ht=347,0 ).
@@ -3327,6 +3327,13 @@ Switch `place.blocks.leaf_boxes: 'compact'` in london.js (without it the tool st
   kind `squares`. Class indexes: 0 and 2 OpenStreetMap, 1 merged, 3 Microsoft (the reader maps a compact box to 2 +
   its class bit, so the extra class MUST be index 3; one extra class at most). Height sources must be in `HSRC` (3 bits):
   the tool throws on any other label.
+- **Irregular buildings keep their outlines (place-blocks 5; ARCHITECTURE RULE 6).** Version 4 made every unnamed
+  building a box: courtyard and L-shaped blocks became plain rectangles of their area (BT Tower 700 m). That drops a
+  capability for size, which needs the owner's agreement; the coordinator sent it back. Version 5 keeps the place-blocks 3
+  leaf rule (`wantsOutline`: 300 m2 or more and filling less than 85 % of the oriented box -> outline simplified at 2.5 m,
+  outer ring only, as in version 3; a simplify failure falls back to an instanced box, 15 cases) and compact boxes for the
+  rest (`leaf_outlines: true` in london.js). Cost: 63,607 outlines, +26.1 MB (22.6 -> 48.7 MB). Lesson: before a size
+  cut, list every capability the old output had (outlines, holes, ids, cards) and keep each one or ask.
 - **Where the leaves show.** err_m 1,680 / 840 / 420 m: leaves within about 420 x 731 / 24 = 12.8 km on a phone. New
   tile extra `extras.refine_within_m` (13,000 on the leaves' parents): places.js refines such a node only when distance
   minus bounding radius is under it (big screens; oblique whole-city views keep the turned squares).
@@ -3335,14 +3342,20 @@ Switch `place.blocks.leaf_boxes: 'compact'` in london.js (without it the tool st
   not by class: "Building" card (Footprint from: ...) or the "Building mass" card. describeView `boxes` (blocks places):
   building_boxes by source, mass_boxes, mass_buildings, own_boxes, tiles_by_level, and the check pair
   `buildings_in_leaf_tiles` (glb `extras.blocks.buildings`, all buildings of the cell, from the build) =
-  `building_boxes` + `named_in_leaf_tiles` when each building is drawn once.
-- **Sizes.** 681 tiles 21.1 MB (10: 0.13, 11: 0.46, 12: 1.59, 13: 18.92 MB), tileset.json 0.28, features.json 0.72, log
-  0.14 MB: 22.6 MB in all (was 110.6). Build 4 minutes (select 2.6, heights 1.3, tiles 0.4).
+  `building_boxes` + `outline_blocks` + `own_boxes` + `named_in_leaf_tiles` when only leaves are drawn and each building once.
+- **Sizes (place-blocks 5).** 681 tiles 47.2 MB (10: 0.13, 11: 0.46, 12: 1.59, 13: 45.02 MB: 1,330,253 compact boxes,
+  63,607 irregular outlines, 5,562 named outlines), tileset.json 0.28, features.json 0.72, log 0.14 MB: 48.7 MB in all (was
+  110.6; version 4 without the irregular outlines 22.6). Build 4 minutes (select 2.4, heights 1.3, tiles 0.4).
 - **Measured** (390 x 844 @2, software WebGL, `--layers none`; `place-perf.mjs --place london-nadir | london-city`):
   | view | levels drawn | place / frame triangles | calls | submit | frame interval | heap |
   |---|---|---|---|---|---|---|
   | 11.3 km straight down | 13: 30 tiles | 1.13 M / 1.32 M | 176 | 4.5 ms | 4.5 s | 426 MB |
   | the whole city, 20 km at 45 degrees | 11: 2, 12: 30 | 0.36 M / 0.74 M | 196 | 7.4 ms | 2.3 s | 398 MB |
+
+  The table is place-blocks 4. Place-blocks 5 (owner-view script, deep-link semantics, all layers): 11.3 km nadir 1.06 M
+  place / 1.25 M frame triangles, 198 calls, submit 5.4 ms, interval 2.7 s (99,208 boxes, 2,422 irregular outlines, 2
+  own boxes, 109 named = 101,741 of 101,741); BT Tower 700 m 2.21 M frame triangles, 221 calls (6,997 outlines); Bloomsbury
+  700 m 1.45 M, 176 calls (4,468 outlines); 20 km at 45 degrees unchanged (0.84 M, 207 calls, 2.3 s).
 
   Fly-in from 50 km: long tasks 5.3 s in all (max 1.8 s) to the nadir view, 5.5 s (max 2.9 s) to the city view; second
   fly-in 5.7 and 5.8 s. Owner-view counts (deep-link semantics, alt = eye height): 11.3 km nadir 101,632 building boxes
@@ -3356,7 +3369,7 @@ Switch `place.blocks.leaf_boxes: 'compact'` in london.js (without it the tool st
   Superseded activities (place-blocks 1 to 3 listed 2,396 to 2,453 outputs each) were pruned from the committed log
   (`pruned` lists them; 1.94 -> 0.14 MB).
 - **Open.** From 20 km the turned squares still read as a fine lattice (the far half of issue #13); big non-rectangular
-  buildings that are not named (courtyard blocks) are now rectangles of their area, not outlines.
+  courtyard holes of unnamed buildings are not drawn (outer ring only, as in version 3; a closed courtyard block fills its box and is a box).
 
 ## Three.js port: the UK lite set (2026-10-22)
 

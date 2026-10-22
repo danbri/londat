@@ -103,6 +103,15 @@ export function footprintBox(b, h, cls, src) {
   return { lon: b.c[0] + c[0] / mLon, lat: b.c[1] + c[1] / mLat, a: b.a, asp, ang, h, cls, src };
 }
 
+// ---------- the leaf rule of place-blocks 3, kept by place-blocks 5 (architecture rule 6: no capability dropped for size):
+// an irregular building (footprint >= outline_min_m2 and filling less than box_fill of its oriented box) is drawn as its
+// outline simplified at simplify_m, not as a box (blockTile's leaf path; the rest are compact boxes since place-blocks 4)
+export function wantsOutline(b, P) {
+  if (b.a < P.outline_min_m2) return false;
+  const xy = (r => { const mLon = 111320 * Math.cos(b.c[1] * D2R), mLat = 110574; return open(r).map(([lo, la]) => [(lo - b.c[0]) * mLon, (la - b.c[1]) * mLat]); })(b.rings[0]), bx = obbBox(xy);
+  return !!bx && b.a / Math.abs(area2(bx)) < P.box_fill;
+}
+
 // ---------- the globe's ground: world-base height tiles (35 x 35 Int16, metres above the geoid, row 0 north, y of the
 // quadtree from the north), the deepest level with a tile at the point
 export function worldBaseGround(M, readTile, fallback = null) {   // fallback(lon, lat): where no height tile is (the lite set: the globe's world terrain texture)

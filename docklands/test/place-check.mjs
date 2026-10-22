@@ -48,7 +48,7 @@ const CASES = {
     extra: { lon: -0.4230, lat: 51.5314, label: /Microsoft/ },
     // since place-blocks 4 (2026-10-22, the UK lite v2 way): straight down from 11 km (the owner's view of outer south-east
     // London, https://danbri.github.io/londat/docklands/?ll=51.41793,0.07111,11347&ht=347,0 ) every tile drawn is a leaf,
-    // one compact box a building (boxes + named outlines = the buildings of the leaf tiles drawn), no merged square
+    // one compact box a building, irregular ones as outlines (boxes + outlines + named = the buildings of the leaf tiles drawn), no merged square
     nadir: { lon: 0.07111, lat: 51.41793, alt: 11347, heading: 347 } },
 };
 const C = CASES[PLACE]; if (!C) throw new Error('no test case for ' + PLACE);
@@ -152,8 +152,8 @@ for (const [w, h, dpr] of SIZES) {
       document.getElementById('card').hidden = true; for (let k = 0; k < 3; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
       const d = await docklands.describeView(); return { st: G.placesStats().find(x => x.id === p), dp: (d.places || []).find(x => x.place === p), view: docklands.getView(), frame: G.stats.frame }; }, { o: C.nadir, p: PLACE });
     const B = nz.dp?.boxes, lv = Object.keys(nz.st.drawn_by_level).map(Number);
-    check(nz.st.settled && B && B.building_boxes > 10000 && B.building_boxes + B.named_in_leaf_tiles === B.buildings_in_leaf_tiles && lv.every(l => l === FJ.level),
-      `nadir ${(C.nadir.alt / 1000).toFixed(1)} km: only leaf tiles, one box a building`, `${JSON.stringify(nz.st.drawn_by_level)} by level; ${B?.building_boxes} building boxes ${JSON.stringify(B?.building_boxes_by_source)} + ${B?.named_in_leaf_tiles} named outlines = ${B?.building_boxes + B?.named_in_leaf_tiles} of ${B?.buildings_in_leaf_tiles} buildings in the leaf tiles drawn; eye ${nz.view.eye.above_ground_m} m up`);
+    check(nz.st.settled && B && B.building_boxes > 10000 && B.building_boxes + B.outline_blocks + B.own_boxes + B.named_in_leaf_tiles === B.buildings_in_leaf_tiles && lv.every(l => l === FJ.level),
+      `nadir ${(C.nadir.alt / 1000).toFixed(1)} km: only leaf tiles, one box a building`, `${JSON.stringify(nz.st.drawn_by_level)} by level; ${B?.building_boxes} building boxes ${JSON.stringify(B?.building_boxes_by_source)} + ${B?.outline_blocks} irregular outlines + ${B?.own_boxes} own boxes + ${B?.named_in_leaf_tiles} named outlines = ${B?.building_boxes + B?.outline_blocks + B?.own_boxes + B?.named_in_leaf_tiles} of ${B?.buildings_in_leaf_tiles} buildings in the leaf tiles drawn; eye ${nz.view.eye.above_ground_m} m up`);
     check(B && B.mass_boxes === 0, `nadir ${(C.nadir.alt / 1000).toFixed(1)} km: no merged squares drawn`, `${B?.mass_boxes} merged squares; ${nz.st.triangles?.toLocaleString('en')} place triangles, frame ${nz.frame?.triangles?.toLocaleString('en')} triangles, ${nz.frame?.calls} calls, ${nz.frame?.ms ?? ''} ms`);
     const shotZ = `${OUT}/place-${PLACE}-${tag}-nadir.png`; await page.waitForTimeout(500); await page.screenshot({ path: shotZ }); console.log('     screenshot', shotZ);
   }
