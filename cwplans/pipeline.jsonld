@@ -10754,6 +10754,59 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolroofsrefine",
+   "@type": "prov:Activity",
+   "rdfs:label": "roofs-refine",
+   "dct:description": "Two rules over roofs.json as build-roofs wrote it (a run on its own output restores those rows first, roofs.json refined.before: idempotent). (1) Big buildings: every model building with a footprint of 4,000 m2 or more (no holes, no min_height), at any height, whose height is from the LiDAR (or an OSM height that the LiDAR 90th percentile is within 25 % of), is measured by tools/lidar-roofs.py --big 4000 --big-only: the outline is cut at its reflex corners as in build-roofs (up to 24 parts), then each piece is split by a straight chord across the minimum-area rectangle axes of the whole outline, at 1 m steps, where the median DSM minus ground on the two sides differs by 2 m or more and the summed absolute deviation from the two medians is 20 % or more under that from one median (each side 6 m wide and 100 cells or more; pieces under 250 m2 are not split), until no piece splits or there are 24 parts; a chord must cross exactly two edges of its piece. Each part is a flat roof at its flat fit (its 90th percentile where the flat fit error is over 1 m: mixed heights), between 2 m and the model height + 1 m. The building is drawn in parts when the levels differ by 2 m or more and the highest level keeps the model top (within max(3 m, 10 %)); it replaces the building's row. The pieces are cut with roofs-layer.js pieces() and checked against the rings of lidar-roofs.py. (2) Newer than the survey: a LiDAR roof row of a building whose height source is levels, newer or storeys (model-heights) is dropped (the survey saw an older building or a site); OSM roof:shape rows stay.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/roofs.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/area.js"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-keys.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/lidar-roofs.py"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/roofs-layer.js"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcealidar",
+     "dct:description": "EA survey tiles TQ3075, TQ3080, TQ3575, TQ3580: lidar_composite_first_return_dsm/2022/1 and lidar_composite_dtm/2022/1 (https://environment.data.gov.uk/tiles/collections/survey/<product>/2022/1/<tile>, fetched again 2026-10-22, 8 zips, 525 MB; not committed, deleted after the run; SHA-256 in the activity log)"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/roofs.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/roofs-refine.mjs"
+   },
+   "cwp:command": "ROOFS_TILES=<dir of the 8 tile zips> node cwplans/tools/roofs-refine.mjs",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "The page draws these parts like any building in parts (roofs-layer.js prismParts): outer walls up to the roof of each part, inner walls where one part stands above the next; LOD levels 1 and 2 of the Three.js port keep flat prisms at the model height.",
+    "Rerun after build-roofs.mjs; then build-materials.mjs (storey classes use the eave)."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildroofs"
+    }
+   ],
+   "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolbuildmaterials",
    "@type": "prov:Activity",
    "rdfs:label": "build-materials",
@@ -10807,6 +10860,9 @@
     },
     {
      "@id": "https://kgx.foaf.tv/id/toolbuildroofs"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/toolroofsrefine"
     }
    ],
    "cwp:area": "buildings",
@@ -17502,7 +17558,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "roof shapes of the low model buildings of the 3D page (model height 25 m or less): gabled, hipped or pyramidal, with the ridge line (centre, bearing), half span, half ridge length, eave and ridge heights above the model ground; skillion roofs; an outline with wings (L, T, rear outriggers) cut into parts by chords from its reflex corners, a roof a part, with the run of a gable into a crossing wing (a valley); from robust plane fits to the EA LiDAR first-return DSM 2022 inside each outline or part, else from the OSM roof tags; the model fingerprint; counts by class and the OSM roof:shape against LiDAR class table",
+   "dct:title": "roof shapes of the low model buildings of the 3D page (model height 25 m or less): gabled, hipped or pyramidal, with the ridge line (centre, bearing), half span, half ridge length, eave and ridge heights above the model ground; skillion roofs; an outline with wings (L, T, rear outriggers) cut into parts by chords from its reflex corners, a roof a part, with the run of a gable into a crossing wing (a valley); from robust plane fits to the EA LiDAR first-return DSM 2022 inside each outline or part, else from the OSM roof tags; the model fingerprint; counts by class and the OSM roof:shape against LiDAR class table; since 2026-10-22 (operation roofs-refine) the big buildings (footprint 4,000 m2 or more, any height) cut by roof level into flat parts (up to 24), and no LiDAR roof on a building newer than the survey",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcealidar"
@@ -17515,7 +17571,7 @@
     }
    ],
    "prov:wasGeneratedBy": {
-    "@id": "https://kgx.foaf.tv/id/toolbuildroofs"
+    "@id": "https://kgx.foaf.tv/id/toolroofsrefine"
    },
    "cwp:osmUse": "derived"
   },

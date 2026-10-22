@@ -21,7 +21,9 @@ test('roofs.json is for this area.js and decodes', () => {
 test('each roof: a low building with no holes, eave below ridge, ridge line near the outline', () => {
   for (const [i, f] of roofs) {
     const b = A.buildings[i]; assert.ok(b, 'index ' + i);
-    assert.ok(b.h <= R.rules.hmax && !b.mh && !(b.holes && b.holes.length), `building ${i} should not have a roof shape`);
+    // a building over hmax has a roof only from the big-building rule of roofs-refine (footprint over its area, flat parts)
+    const bigRule = R.refined && f.shape === 'parts' && f.parts.every(p => p.shape === 'f') && Math.abs(L.pieces(ring(b), []).reduce((a, [P]) => a + P.reduce((s, p, k) => s + p[0] * P[(k + 1) % P.length][1] - P[(k + 1) % P.length][0] * p[1], 0) / 2, 0)) >= R.refined.rules.big_area_m2;
+    assert.ok((b.h <= R.rules.hmax || bigRule) && !b.mh && !(b.holes && b.holes.length), `building ${i} should not have a roof shape`);
     if (f.shape === 'parts') continue;
     assert.ok(/^([ghp]o?|k)$/.test(f.shape), f.shape);
     assert.ok(f.eave >= 1 && f.eave < f.ridge && f.ridge < 40, `building ${i}: eave ${f.eave} ridge ${f.ridge}`);
@@ -41,7 +43,7 @@ test('buildings in parts: the cuts give one piece a part, each piece inside the 
     assert.ok(Math.abs(sum - whole) < 0.01 * whole + 0.05, `building ${i}: pieces ${sum.toFixed(2)} m2, outline ${whole.toFixed(2)} m2`);
     for (const p of f.parts) {
       assert.ok(/^[fghpk]$/.test(p.shape), p.shape);
-      assert.ok(p.eave >= 1 && p.eave <= p.ridge + 1e-9 && p.ridge < 40, `building ${i}: eave ${p.eave} ridge ${p.ridge}`);
+      assert.ok(p.eave >= 1 && p.eave <= p.ridge + 1e-9 && (p.ridge < 40 || (R.refined && p.shape === 'f' && p.ridge <= b.h + R.refined.rules.top_over_h + 0.01)), `building ${i}: eave ${p.eave} ridge ${p.ridge}`);
       if (p.shape !== 'f') assert.ok(p.eave < p.ridge && p.hs > 0.5, `building ${i}: pitched part`);
       assert.ok(p.e0 >= 0 && p.e1 >= 0 && (p.shape === 'g' || p.e0 + p.e1 === 0), `building ${i}: runs on only from a gable`);
       if (p.e0 + p.e1 > 0) valleys++;
@@ -66,4 +68,20 @@ test('the page builder: walls from the ground, roof between eave and ridge, insi
       if (u < 0) assert.ok(y >= b.b + f.eave - 1e-6, `building ${i}: roof vertex below the eave`);
     }
   }
+});
+
+test('roofs-refine: big buildings in flat parts keep the model top, levels step by the rule, no LiDAR roof on a newer building', () => {
+  if (!R.refined) return;
+  const P = R.refined.rules; let n = 0;
+  for (const [i, f] of roofs) {
+    const b = A.buildings[i];
+    if (P.newer_sources.includes(b.s)) assert.ok(f.shape !== 'parts' && /o$/.test(f.shape), `building ${i}: a LiDAR roof on a building newer than the survey`);
+    if (f.shape !== 'parts' || !f.parts.every(p => p.shape === 'f') || f.parts.length < 2) continue;
+    const lv = f.parts.map(p => p.ridge), hi = Math.max(...lv), lo = Math.min(...lv);
+    if (b.h <= R.rules.hmax && hi - lo < P.levels_gap_m) continue;   // a build-roofs building in flat parts
+    n++;
+    assert.ok(lo >= P.eave_min - 0.01 && hi <= b.h + P.top_over_h + 0.01, `building ${i}: levels ${lo} to ${hi}, model ${b.h}`);
+    assert.ok(hi >= b.h - Math.max(P.top_keep_m, P.top_keep_share * b.h) - 0.01, `building ${i}: the top is lost (${hi} of ${b.h})`);
+  }
+  assert.ok(n >= 50 && n === R.refined.counts.big_parts, `big buildings in parts: ${n} (counts ${R.refined.counts.big_parts})`);
 });

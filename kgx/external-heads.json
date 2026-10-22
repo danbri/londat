@@ -28,5 +28,9 @@
  "model-heights": {
   "iri": "https://kgx.foaf.tv/id/graphmodelheights0d4d45989090340b",
   "store": false
+ },
+ "roofs-big": {
+  "iri": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
+  "store": false
  }
 }

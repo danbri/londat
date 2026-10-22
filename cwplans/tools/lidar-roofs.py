@@ -12,6 +12,14 @@
 # tools/build-roofs.mjs (logged operation build-roofs).
 #   python3 cwplans/tools/lidar-roofs.py <area.js> --dsm <zip> ... --dtm <zip> ... --out <file.json> [--hmax 25] [--inset 0.75]
 #     [--only i,j,k] (only those model indices: for checks)
+#     [--big 4000] [--big-only] (also, or only, the big-building rule, any height: below)
+# Big buildings (--big A, operation roofs-refine): every model building with a footprint of A m2 or more (no holes, no
+# min_height), whatever its height, is cut first as above (reflex corners, up to BIG['max_parts'] parts) and then by
+# level: each piece is split by a straight chord across the building's minimum-area rectangle axes where the roof level
+# (median DSM minus ground) differs by BIG['gap_m'] or more on the two sides and the summed absolute deviation from the
+# two medians is BIG['gain'] or more under that from one median (each side BIG['min_width_m'] wide and BIG['min_area_m2']
+# big; positions in 1 m steps); until no piece splits or BIG['max_parts'] parts. Written under 'big' with the same cut
+# format, so roofs-layer.js pieces() makes the same pieces.
 # Tiles: EA survey download service, 5 km zips (lidar_composite_first_return_dsm/2022/1, lidar_composite_dtm/2022/1), read
 # from the zips as they were downloaded (OGL v3.0). Needs numpy and tifffile (pip install tifffile imagecodecs).
 # Skill: docklands-3d-page, "Roof shapes".
@@ -30,6 +38,8 @@ def many(name):
     return out
 area, out = a[0], opt('--out'); HMAX, INSET = float(opt('--hmax', 25)), float(opt('--inset', 0.75))
 ONLY = set(int(x) for x in opt('--only', '').split(',') if x)
+BIG_AREA = float(opt('--big', 0))
+BIG = {'max_parts': 24, 'gap_m': 2.0, 'gain': 0.2, 'min_width_m': 6.0, 'min_area_m2': 100.0, 'step_m': 1.0, 'split_min_m2': 250.0}
 dsms, dtms = many('--dsm'), many('--dtm')
 # the cut rules (also in the output, 'cut_rules')
 CUT = {'rect_ok': 0.9, 'min_area': 10.0, 'min_width': 2.0, 'reflex_deg': 20.0, 'snap_m': 0.3, 'max_parts': 10, 'inset_cut': 0.4,
@@ -243,10 +253,63 @@ def decompose(ring, base):
         cuts.append((k, *cut)); P[k] = a_; P.append(b_)
     return cuts, [(pc, F, fit((pc, F))) for pc, F in P]
 
+def cells_in(Rx, base, inset):
+    """the 1 m cells inside ring Rx (page x, z) and inset metres from its edges: E, N, DSM minus base (finite only)"""
+    R = np.array([(E0 + x, N0 - z) for x, z in Rx])
+    e0, e1, n0, n1 = R[:, 0].min(), R[:, 0].max(), R[:, 1].min(), R[:, 1].max()
+    c0, c1 = int(np.floor(e0 - ME)), int(np.ceil(e1 - ME)); r0, r1 = int(np.floor(MN - n1)), int(np.ceil(MN - n0))
+    if c0 < 0 or r0 < 0 or c1 >= DSM.shape[1] or r1 >= DSM.shape[0]: return None
+    cc, rr = np.meshgrid(np.arange(c0, c1 + 1), np.arange(r0, r1 + 1)); cc, rr = cc.ravel(), rr.ravel()
+    X, Y = ME + cc + .5, MN - rr - .5
+    ins, d, _ = inside(X, Y, R); sel = ins & (d >= inset)
+    h = DSM[rr[sel], cc[sel]] - base; ok = np.isfinite(h)
+    return X[sel][ok], Y[sel][ok], h[ok]
+
+def chord(P, c, u, s0):
+    """the chord of piece P (page x, z) along the line (p - c) . u = s0 (EN frame): (j1, t1, j2, t2) as integers of 1/10000, or None
+    unless the line crosses exactly two edges"""
+    EN = [np.array((E0 + x, N0 - z)) for x, z in P]; n = len(EN)
+    d = [float((p - c) @ u - s0) for p in EN]
+    if any(abs(x) < 1e-3 for x in d): return None
+    hits = [(j, d[j] / (d[j] - d[(j + 1) % n])) for j in range(n) if d[j] * d[(j + 1) % n] < 0]
+    if len(hits) != 2: return None
+    (j1, t1), (j2, t2) = hits; t1, t2 = int(round(t1 * 1e4)), int(round(t2 * 1e4))
+    if not (0 < t1 < 10000 and 0 < t2 < 10000): return None
+    return (j1, t1, j2, t2)
+
+def level_split(ring, base, cuts, P):
+    """split the pieces P (with their cuts so far) by roof level; returns the new cuts and pieces"""
+    R = np.array([(E0 + x, N0 - z) for x, z in ring]); c, u, _, _ = min_rect(R); v = np.array([-u[1], u[0]])
+    cuts, P = list(cuts), list(P); k = 0; tried = set()
+    while k < len(P) and len(P) < BIG['max_parts']:
+        pc, F = P[k]; ar = abs(area_of(pc))
+        if ar < BIG['split_min_m2'] or k in tried: k += 1; continue
+        cl = cells_in(pc, base, INSET)
+        if cl is None or len(cl[2]) < 2 * BIG['min_area_m2']: k += 1; continue
+        X, Y, h = cl; m0 = np.median(h); c0 = np.abs(h - m0).sum(); best = None
+        for ax in (u, v):
+            w = (X - c[0]) * ax[0] + (Y - c[1]) * ax[1]; o = np.argsort(w); w, hs = w[o], h[o]
+            for s0 in np.arange(np.floor(w.min()) + BIG['min_width_m'], w.max() - BIG['min_width_m'] + 1e-9, BIG['step_m']):
+                i = int(np.searchsorted(w, s0))
+                if i < BIG['min_area_m2'] or len(w) - i < BIG['min_area_m2']: continue
+                ma, mb = np.median(hs[:i]), np.median(hs[i:])
+                if abs(ma - mb) < BIG['gap_m']: continue
+                cost = np.abs(hs[:i] - ma).sum() + np.abs(hs[i:] - mb).sum()
+                if cost > (1 - BIG['gain']) * c0: continue
+                if best is None or cost < best[0]: best = (cost, ax, s0 + 0.5)
+        if best is None: tried.add(k); k += 1; continue
+        ch = chord(pc, c, best[1], best[2])
+        if ch is None: tried.add(k); k += 1; continue
+        a_, b_ = split_ring(pc, F, ch[0], ch[1] / 1e4, ch[2], ch[3] / 1e4)
+        if len(a_[0]) < 3 or len(b_[0]) < 3 or abs(abs(area_of(a_[0])) + abs(area_of(b_[0])) - ar) > 0.01 * ar + 0.05: tried.add(k); k += 1; continue
+        cuts.append((k, *ch)); P[k] = a_; P.append(b_)   # piece k is tried again (it may split further)
+    return cuts, P
+
 res = {'hmax': HMAX, 'inset': INSET, 'cut_rules': CUT, 'mosaic': {'E0': ME, 'Ntop': MN, 'shape': list(DSM.shape)}, 'buildings': {}}
 counts = {}
+BIG_ONLY = '--big-only' in a   # the big-building rule alone (operation roofs-refine)
 for i, b in enumerate(A['buildings']):
-    if ONLY and i not in ONLY: continue
+    if BIG_ONLY or (ONLY and i not in ONLY): continue
     if b['h'] > HMAX or b.get('mh') or b.get('holes'): continue
     ring = ring_xz(b['p'])
     rec = fit_poly(ring, None, b['b'], INSET, 0)
@@ -262,6 +325,31 @@ for i, b in enumerate(A['buildings']):
             rec['parts'] = [{'ring': [[round(x, 3), round(z, 3)] for x, z in pc], 'cut': [int(f) for f in F], **(r or {'shape': 'nodata'})} for pc, F, r in parts]
             counts['cut'] = counts.get('cut', 0) + 1
     res['buildings'][i] = rec
+# ---- the big-building rule (--big): every outline of BIG_AREA m2 or more, any height
+if BIG_AREA:
+    res['big_rules'] = {'area_m2': BIG_AREA, **BIG}; res['big'] = {}; nb = {}
+    for i, b in enumerate(A['buildings']):
+        if ONLY and i not in ONLY: continue
+        ring = ring_xz(b['p']); ar = abs(area_of(ring))
+        if ar < BIG_AREA: continue
+        if b.get('mh') or b.get('holes'): nb['holes_or_part'] = nb.get('holes_or_part', 0) + 1; continue
+        rec = fit_poly(ring, None, b['b'], INSET, 0)
+        if rec is None: nb['outside'] = nb.get('outside', 0) + 1; continue
+        rec['model_h'] = b['h']; rec['area'] = round(ar, 1)
+        if rec.get('shape') == 'nodata': res['big'][i] = rec; nb['nodata'] = nb.get('nodata', 0) + 1; continue
+        CUT['max_parts'], keep = BIG['max_parts'], CUT['max_parts']
+        cuts, P = [], [(list(ring), [False] * len(ring))]
+        if ar < CUT['rect_ok'] * rect_stats(ring)[1]:
+            cuts, parts = decompose(ring, b['b']); P = [(pc, F) for pc, F, _ in parts]
+        CUT['max_parts'] = keep
+        cuts, P = level_split(ring, b['b'], cuts, P)
+        if cuts:
+            rec['cuts'] = [list(c) for c in cuts]
+            rec['parts'] = [{'ring': [[round(x, 3), round(z, 3)] for x, z in pc], 'cut': [int(f) for f in F], **(fit_poly(pc, F, b['b'], INSET, CUT['inset_cut']) or {'shape': 'nodata'})} for pc, F in P]
+            nb['cut'] = nb.get('cut', 0) + 1
+        nb['measured'] = nb.get('measured', 0) + 1
+        res['big'][i] = rec
+    counts['big'] = nb
 res['counts'] = counts
 json.dump(res, open(out, 'w'), separators=(',', ':'))
 print(json.dumps({'out': out, **counts}))
