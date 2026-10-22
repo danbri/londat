@@ -3311,6 +3311,53 @@ https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55 .
   timeout and later tests read nothing: start it with the long timeout.
 - **Open.** Buildings in globe mode inside the model box; building parts; the merged far view still reads as a grid of squares; implicit tiling
   (tileset.json 0.97 MB, loaded at 150 km, also in the Docklands model's globe background); the UK (section 3b).
+  (The bullets Tiles and Measured above describe place-blocks 3; version 4 below.)
+
+### Greater London rebuilt the UK lite v2 way: compact boxes at the leaves (place-blocks 4, 2026-10-22)
+
+Owner, 2026-10-22: "Yes, do all of London eventually" (issue https://github.com/danbri/londat/issues/13 ; from 11 km
+straight down London was a field of grey squares: https://danbri.github.io/londat/docklands/?ll=51.41793,0.07111,11347&ht=347,0 ).
+Switch `place.blocks.leaf_boxes: 'compact'` in london.js (without it the tool still builds the place-blocks 3 tree).
+
+- **Rule.** Leaves at level 13 (not 14): every building that is not named = one compact box (`footprintBox` in
+  place-blocks.mjs: the AREA centroid of the outer ring (b.c of the selection is the vertex mean), the footprint area,
+  angle and long / short ratio of `obbBox`), written by place-lite.mjs `compactBoxes` kind `buildings`; the 5,562 named
+  buildings stay outlines (blockTile leaf path, items = named only). Coarse levels 10 to 12: tall or big buildings as
+  instanced boxes (blockTile coarse path, items = those only), the rest `boxSquares` -> `squareBoxes` -> `compactBoxes`
+  kind `squares`. Class indexes: 0 and 2 OpenStreetMap, 1 merged, 3 Microsoft (the reader maps a compact box to 2 +
+  its class bit, so the extra class MUST be index 3; one extra class at most). Height sources must be in `HSRC` (3 bits):
+  the tool throws on any other label.
+- **Where the leaves show.** err_m 1,680 / 840 / 420 m: leaves within about 420 x 731 / 24 = 12.8 km on a phone. New
+  tile extra `extras.refine_within_m` (13,000 on the leaves' parents): places.js refines such a node only when distance
+  minus bounding radius is under it (big screens; oblique whole-city views keep the turned squares).
+- **Reader.** `compactInto` was already generic (parseGlb). places.js: the card of a compact box is chosen by its INDEX
+  (the reader appends the compact boxes after the tile's own boxes; `extras.blocks.compact_boxes` gives kind and count),
+  not by class: "Building" card (Footprint from: ...) or the "Building mass" card. describeView `boxes` (blocks places):
+  building_boxes by source, mass_boxes, mass_buildings, own_boxes, tiles_by_level, and the check pair
+  `buildings_in_leaf_tiles` (glb `extras.blocks.buildings`, all buildings of the cell, from the build) =
+  `building_boxes` + `named_in_leaf_tiles` when each building is drawn once.
+- **Sizes.** 681 tiles 21.1 MB (10: 0.13, 11: 0.46, 12: 1.59, 13: 18.92 MB), tileset.json 0.28, features.json 0.72, log
+  0.14 MB: 22.6 MB in all (was 110.6). Build 4 minutes (select 2.6, heights 1.3, tiles 0.4).
+- **Measured** (390 x 844 @2, software WebGL, `--layers none`; `place-perf.mjs --place london-nadir | london-city`):
+  | view | levels drawn | place / frame triangles | calls | submit | frame interval | heap |
+  |---|---|---|---|---|---|---|
+  | 11.3 km straight down | 13: 30 tiles | 1.13 M / 1.32 M | 176 | 4.5 ms | 4.5 s | 426 MB |
+  | the whole city, 20 km at 45 degrees | 11: 2, 12: 30 | 0.36 M / 0.74 M | 196 | 7.4 ms | 2.3 s | 398 MB |
+
+  Fly-in from 50 km: long tasks 5.3 s in all (max 1.8 s) to the nadir view, 5.5 s (max 2.9 s) to the city view; second
+  fly-in 5.7 and 5.8 s. Owner-view counts (deep-link semantics, alt = eye height): 11.3 km nadir 101,632 building boxes
+  (77,085 OSM, 24,547 Microsoft) + 109 named = 101,741 of 101,741 in the leaf tiles drawn, 0 squares; 20 km oblique
+  36,237 squares standing for 647,215 buildings and 2,936 own boxes; BT Tower 700 m 122,661 boxes, 6,841 squares far
+  off, 2.09 M frame triangles.
+- **Traps.** `run()` memoises by operation, version, input hashes and parameters: a code change that leaves those the same
+  is NOT rebuilt (stop the job and restart, or `--force`). The raw Overture answer must exist for the select step's input
+  hash even when its activity is in the log (re-fetch: 5 minutes, same SHA-256 bfe11fba...). The README file table matched
+  `tiles/*.glb` by `startsWith('tiles/')` first (wrong text for blocks places): the exact key is tested first now.
+  Superseded activities (place-blocks 1 to 3 listed 2,396 to 2,453 outputs each) were pruned from the committed log
+  (`pruned` lists them; 1.94 -> 0.14 MB).
+- **Open.** From 20 km the turned squares still read as a fine lattice (the far half of issue #13); big non-rectangular
+  buildings that are not named (courtyard blocks) are now rectangles of their area, not outlines.
+
 ## Three.js port: the UK lite set (2026-10-22)
 
 Owner, 2026-10-22, about buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest

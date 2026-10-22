@@ -19,7 +19,11 @@ const SIZES = arg('--sizes', '390x844@2').split(',').map(s => { const m = /^(\d+
 // Croydon, and the whole city at 20 km; owner's question 2026-10-22)
 const CASES = { leon: { lat: 42.59732, lon: -5.56654 }, sarajevo: { lat: 43.85917, lon: 18.43335 },
   'london-central': { id: 'london', lat: 51.5175, lon: -0.1180, from: 50000, to: 2000, tilt: 55, views: [[2000, 55], [20000, 45]] },
-  'london-croydon': { id: 'london', lat: 51.3762, lon: -0.0982, from: 50000, to: 2000, tilt: 55, views: [[2000, 55], [20000, 45]] } };
+  'london-croydon': { id: 'london', lat: 51.3762, lon: -0.0982, from: 50000, to: 2000, tilt: 55, views: [[2000, 55], [20000, 45]] },
+  // (place-blocks 4, compact leaves; 2026-10-22) outer south-east London straight down from 11 km (the owner's view: every
+  // tile a leaf, one box a building), and the whole city from 20 km at 45 degrees (turned squares)
+  'london-nadir': { id: 'london', lat: 51.41793, lon: 0.07111, from: 50000, to: 11347, tilt: 0, views: [[11347, 0]] },
+  'london-city': { id: 'london', lat: 51.4950, lon: -0.1276, from: 50000, to: 20000, tilt: 45, views: [[20000, 45]] } };
 const C = CASES[PLACE]; if (!C) throw new Error('no case ' + PLACE); const PID = C.id || PLACE, FROM = C.from || 300000, TO = C.to || 1500, TILT = C.tilt || 55;
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
   args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-precise-memory-info'] });

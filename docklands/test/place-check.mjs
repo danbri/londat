@@ -45,7 +45,11 @@ const CASES = {
   london: { kind: 'blocks', ll: '51.5215,-0.1389,700', ht: '200,60', search: 'BT Tower', building: { lon: -0.13887, lat: 51.52153 }, tower: { lon: -0.13887, lat: 51.52153, name: 'BT Tower' },
     town: 'Greater London', city: { lon: -0.0982, lat: 51.3762 }, far: { lon: -0.1276, lat: 51.4950, range: 20000, tilt: 45 },
     // the Microsoft class (place.blocks.geometry; owner 2026-10-22): Yiewsley (Hillingdon), where OSM has few outlines
-    extra: { lon: -0.4230, lat: 51.5314, label: /Microsoft/ } },
+    extra: { lon: -0.4230, lat: 51.5314, label: /Microsoft/ },
+    // since place-blocks 4 (2026-10-22, the UK lite v2 way): straight down from 11 km (the owner's view of outer south-east
+    // London, https://danbri.github.io/londat/docklands/?ll=51.41793,0.07111,11347&ht=347,0 ) every tile drawn is a leaf,
+    // one compact box a building (boxes + named outlines = the buildings of the leaf tiles drawn), no merged square
+    nadir: { lon: 0.07111, lat: 51.41793, alt: 11347, heading: 347 } },
 };
 const C = CASES[PLACE]; if (!C) throw new Error('no test case for ' + PLACE);
 // a place held in another repository (case ext, or an index entry with tileBase: Dublin, the German places): its files from
@@ -141,6 +145,18 @@ for (const [w, h, dpr] of SIZES) {
     check(far.st.settled && far.dp && far.dp.blocks_drawn > 2000 && Math.min(...lv) <= 11, `far view (${C.far.range / 1000} km): the whole city as coarse blocks`, `${JSON.stringify(far.st.drawn_by_level)} by level; ${far.dp?.blocks_drawn} blocks ${JSON.stringify(far.dp?.blocks_by_source)}; ${far.st.triangles} place triangles, frame ${far.frame?.triangles} triangles, ${far.frame?.calls} calls; eye ${far.view.eye.above_ground_m} m up`);
     const shotF = `${OUT}/place-${PLACE}-${tag}-far.png`; await page.waitForTimeout(500); await page.screenshot({ path: shotF }); console.log('     screenshot', shotF);
   }
+  // a blocks place with compact leaves: the nadir view from 11 km (C.nadir)
+  if (C.nadir) {
+    const nz = await page.evaluate(async ({ o, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: o.lon, lat: o.lat, alt_m: o.alt, tilt_deg: 0, heading_deg: o.heading });
+      const t0 = performance.now(); while (performance.now() - t0 < 240000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
+      document.getElementById('card').hidden = true; for (let k = 0; k < 3; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
+      const d = await docklands.describeView(); return { st: G.placesStats().find(x => x.id === p), dp: (d.places || []).find(x => x.place === p), view: docklands.getView(), frame: G.stats.frame }; }, { o: C.nadir, p: PLACE });
+    const B = nz.dp?.boxes, lv = Object.keys(nz.st.drawn_by_level).map(Number);
+    check(nz.st.settled && B && B.building_boxes > 10000 && B.building_boxes + B.named_in_leaf_tiles === B.buildings_in_leaf_tiles && lv.every(l => l === FJ.level),
+      `nadir ${(C.nadir.alt / 1000).toFixed(1)} km: only leaf tiles, one box a building`, `${JSON.stringify(nz.st.drawn_by_level)} by level; ${B?.building_boxes} building boxes ${JSON.stringify(B?.building_boxes_by_source)} + ${B?.named_in_leaf_tiles} named outlines = ${B?.building_boxes + B?.named_in_leaf_tiles} of ${B?.buildings_in_leaf_tiles} buildings in the leaf tiles drawn; eye ${nz.view.eye.above_ground_m} m up`);
+    check(B && B.mass_boxes === 0, `nadir ${(C.nadir.alt / 1000).toFixed(1)} km: no merged squares drawn`, `${B?.mass_boxes} merged squares; ${nz.st.triangles?.toLocaleString('en')} place triangles, frame ${nz.frame?.triangles?.toLocaleString('en')} triangles, ${nz.frame?.calls} calls, ${nz.frame?.ms ?? ''} ms`);
+    const shotZ = `${OUT}/place-${PLACE}-${tag}-nadir.png`; await page.waitForTimeout(500); await page.screenshot({ path: shotZ }); console.log('     screenshot', shotZ);
+  }
   // landmarks (minarets, domes, towers): present, counted in describeView, a tap on a mapped minaret gives its card; the old town
   // and the city 8 km out (screenshots)
   if (C.landmarks?.tall) {
@@ -194,18 +210,19 @@ for (const [w, h, dpr] of SIZES) {
   const shot3 = `${OUT}/place-${PLACE}-${tag}-far.png`; await page.waitForTimeout(500); await page.screenshot({ path: shot3 }); console.log('     screenshot', shot3); }
   const ft = await page.evaluate(q => docklands.findPlaces(q, 5), C.town);
   check(ft.some(r => r.id && r.id.startsWith('place:' + PLACE) && r.kind === 'place'), `findPlaces "${C.town}" (${C.kind === 'blocks' ? 'the place\'s own word' : 'a town of the city ring'})`, ft.slice(0, 3).map(r => `${r.name} (${r.kind})`).join('; '));
-  // a city block (outside the core): its card names the footprint's source (OSM, IGN or Microsoft) and the height's
+  // a city block (outside the core; a "Building" card for a compact box of Greater London's leaves since place-blocks 4):
+  // its card names the footprint's source (OSM, IGN or Microsoft) and the height's
   const blk = await page.evaluate(async ({ c, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: c.lon, lat: c.lat, range_m: 900, tilt_deg: 45 });
     const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
     const d = await docklands.describeView(), sur = (d.places || []).find(x => x.place === p)?.surroundings;
-    for (let y = 0.35; y < 0.85; y += 0.025) for (const x of [0.2, 0.35, 0.5, 0.65, 0.8]) { G.tap(innerWidth * x, innerHeight * y); const el = document.getElementById('card'); if (!el.hidden && el.querySelector('h2')?.textContent === 'City block') return { card: el.textContent.replace(/\s+/g, ' ').slice(0, 160), sur }; }
+    for (let y = 0.35; y < 0.85; y += 0.025) for (const x of [0.2, 0.35, 0.5, 0.65, 0.8]) { G.tap(innerWidth * x, innerHeight * y); const el = document.getElementById('card'); if (!el.hidden && /^(City block|Building)$/.test(el.querySelector('h2')?.textContent || '')) return { card: el.textContent.replace(/\s+/g, ' ').slice(0, 400), sur }; }
     return { card: null, sur }; }, { c: C.city, p: PLACE });
   check(!!blk.card && /Footprint from/.test(blk.card), 'a tap on a city block opens its card with the footprint source', `${blk.card}; blocks by source in view ${JSON.stringify(blk.sur?.city_blocks_by_source)}`);
   // an extra geometry class (a blocks place: London's Microsoft footprints): describeView counts its blocks; a tap names it
   if (C.extra) { const xb = await page.evaluate(async ({ c, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: c.lon, lat: c.lat, range_m: 700, tilt_deg: 50 });
       const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
       const d = await docklands.describeView(), dp = (d.places || []).find(x => x.place === p); let card = null;
-      for (let y = 0.4; y < 0.85 && !card; y += 0.025) for (const x of [0.2, 0.35, 0.5, 0.65, 0.8]) { G.tap(innerWidth * x, innerHeight * y); const el = document.getElementById('card'); if (!el.hidden && /Microsoft/.test(el.textContent)) { card = el.textContent.replace(/\s+/g, ' ').slice(0, 200); break; } }
+      for (let y = 0.4; y < 0.85 && !card; y += 0.025) for (const x of [0.2, 0.35, 0.5, 0.65, 0.8]) { G.tap(innerWidth * x, innerHeight * y); const el = document.getElementById('card'); if (!el.hidden && /Microsoft/.test(el.textContent)) { card = el.textContent.replace(/\s+/g, ' ').slice(0, 400); break; } }
       return { by: dp?.blocks_by_source, n: dp?.blocks_drawn, text: dp?.text?.slice(0, 220), card }; }, { c: C.extra, p: PLACE });
     const k = Object.keys(xb.by || {}).find(a => C.extra.label.test(a));
     check(!!k && xb.by[k] > 100, 'describeView counts the blocks of the extra geometry class', `${xb.n} blocks ${JSON.stringify(xb.by)}; ${xb.text}`);

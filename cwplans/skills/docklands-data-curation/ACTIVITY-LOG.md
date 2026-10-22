@@ -3444,3 +3444,28 @@ in view"):
   https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,1500&ht=0,55 (Dublin: EIDW),
   https://danbri.github.io/londat/docklands/?ll=52.5170,13.3940,1500&ht=80,55 (Berlin: EDDB),
   https://danbri.github.io/londat/docklands/?view=cw (the Docklands: EGLC and the Thames current).
+
+## 2026-10-22: Greater London rebuilt the UK lite v2 way (place-blocks 4; subagent, worktree branch, not pushed)
+
+Owner, 2026-10-22: "Yes, do all of London eventually" (rebuild Greater London as the UK lite set v2; issue
+https://github.com/danbri/londat/issues/13 ). Skill docklands-3d-page, "Greater London rebuilt the UK lite v2 way".
+- Dataflow: raw Overture answer re-fetched (2,026,838 rows, SHA-256 bfe11fba..., the same as before) and deleted after
+  the build; place-select-blocks 2 (same activity 39b62025245bd57f, same outputs), place-city-heights 3 (new activity
+  819a78563e2db421, output identical to version 2), place-blocks 4 (activity 91b39b5028d9a044; switch
+  `place.blocks.leaf_boxes: 'compact'` in docklands/geo/regions/london.js).
+- Leaves level 13: every building not named = one 8-byte compact box (cwplans-boxes-1; true centroid, area, angle and
+  long / short ratio, height, height source, class); 5,562 named buildings keep outlines and cards; Microsoft class keeps
+  its card ("Footprint from: Microsoft ML Buildings (via Overture)"); the model-box exclusion unchanged (38,824 + 1,082).
+  Coarse levels 10 to 12: tall or big buildings as boxes, the rest turned squares (400 / 200 / 100 m, full at 50 %).
+  Errors 1,680 / 840 / 420 m and `extras.refine_within_m` 13,000 on the leaves' parents (new in places.js).
+- Size: 110.6 -> 22.6 MB (tiles 106.7 -> 21.1 MB, 2,451 -> 681 tiles; tileset.json 1.00 -> 0.28 MB; log 1.81 -> 0.14 MB,
+  superseded activities pruned and listed under `pruned`).
+- Counts: 1,399,437 buildings (OSM 1,050,005, Microsoft 349,432); heights (F55) unchanged: GHSL 713,191, Microsoft
+  566,358, OSM levels 224,148, small kinds 22,477, OSM height 1,354, default 149.
+- Tests: npm test (145, 144 pass, 1 skipped), npm run check, place-check london (new: nadir 11.3 km only leaf tiles,
+  101,632 boxes + 109 named = 101,741 of 101,741 buildings, 0 merged squares), lite-check, globe-check, unit tests
+  footprintBox and boxSquares. New perf cases place-perf `london-nadir`, `london-city`.
+- Live after merge: https://danbri.github.io/londat/docklands/?ll=51.41793,0.07111,11347&ht=347,0 ,
+  https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45 ,
+  https://danbri.github.io/londat/docklands/?ll=51.5215,-0.1389,700&ht=200,60 . Open: the 20 km view still reads as a
+  fine lattice of turned squares.

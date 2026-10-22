@@ -5,7 +5,9 @@
 // Skill docklands-3d-page, "Three.js port: Greater London as blocks (2026-10-22)".
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { blockSelector, blockTree, blockTile, worldBaseGround, cellBox, ringAreaM2 } from '../place-blocks.mjs';
+import { blockSelector, blockTree, blockTile, worldBaseGround, cellBox, ringAreaM2, footprintBox } from '../place-blocks.mjs';
+import { boxSquares, squareBoxes, compactBoxes, HSRC } from '../place-lite.mjs';
+import { enuFrame } from '../../../docklands/geo/ellipsoid.js';
 
 const src = (d, lic = 'ODbL-1.0', prop = '') => ({ property: prop, dataset: d, license: lic, record_id: d === 'OpenStreetMap' ? 'w42@3' : null });
 // a w x h metre rectangle at (lon, lat), turned by deg
@@ -96,4 +98,31 @@ test('worldBaseGround: the deepest level with a tile, bilinear, sample (i, j) at
   assert.equal(Math.round(G.at(w + 3 * d, 90 - y * s - d) * 1000) / 1000, 4);   // i = 4 at w + 3 d
   const xo = (x ^ 1), lon2 = -180 + xo * s + s / 2;   // the level-12 sibling has no tile: level 11 answers
   assert.equal(G.at(lon2, 51.5 - 0.001), 500);
+});
+
+// place-blocks 4 (Greater London the way of the UK lite set v2): every building not named as a compact box
+test('footprintBox: true centroid, area, angle and long / short ratio of the rotated rectangle', () => {
+  // an L shape (two 20 x 10 m arms): its vertex mean and its area centroid differ; the long side of a 40 x 10 m
+  // rectangle turned 30 degrees is at 30 degrees, ratio 4
+  const lon = 0.1, lat = 51.5, mLon = 111320 * Math.cos(lat * Math.PI / 180), mLat = 110574;
+  const r = rect(lon, lat, 40, 10, 30).coordinates[0], b = { c: [lon, lat], a: 400, rings: [r] };
+  const x = footprintBox(b, 12.5, 0, HSRC.indexOf('ghsl'));
+  assert.ok(Math.abs(x.ang - 30) < 0.5, String(x.ang)); assert.ok(Math.abs(x.asp - 4) < 0.05, String(x.asp));
+  assert.ok(Math.abs((x.lon - lon) * mLon) < 0.05 && Math.abs((x.lat - lat) * mLat) < 0.05); assert.equal(x.h, 12.5); assert.equal(x.src, 6);
+  const L = [[0, 0], [20, 0], [20, 10], [10, 10], [10, 20], [0, 20]].map(([e, n]) => [lon + e / mLon, lat + n / mLat]);
+  const vm = [L.reduce((s2, p) => s2 + p[0], 0) / 6, L.reduce((s2, p) => s2 + p[1], 0) / 6], xl = footprintBox({ c: vm, a: 300, rings: [[...L, L[0]]] }, 6, 1, 0);
+  // the area centroid of the L: 25 / 3 m east and north of its corner (the vertex mean is not)
+  assert.ok(Math.abs((xl.lon - lon) * mLon - 25 / 3) < 0.05 && Math.abs((xl.lat - lat) * mLat - 25 / 3) < 0.05, `${(xl.lon - lon) * mLon} ${(xl.lat - lat) * mLat}`);
+  assert.equal(xl.cls, 1);
+});
+
+test('boxSquares + squareBoxes: one square a merge square, turned to the grain, side from the built share', () => {
+  const b = [0.1, 51.5, 0.11, 51.51], mLon = 111320 * Math.cos(51.505 * Math.PI / 180), mLat = 110574, at = (e, n) => [0.1 + e / mLon, 51.5 + n / mLat];
+  // four houses of 100 m2 turned 20 degrees in the first 100 m square, one in the next
+  const bx = [[10, 10], [30, 10], [10, 30], [30, 30], [150, 10]].map(([e, n]) => { const [lo, la] = at(e, n); return { lon: lo, lat: la, a: 100, h: 8, ang: 20, cls: 0, asp: 2 }; });
+  const it = boxSquares(bx, b, 100); assert.equal(it.length, 2); assert.equal(it[0].n, 4); assert.equal(it[0].a, 400);
+  const sq = squareBoxes(it, b, 100, 0.5); assert.ok(Math.abs(sq[0].ang - 20) < 1e-6, String(sq[0].ang)); assert.ok(Math.abs(sq[0].a - 800) < 1e-6, String(sq[0].a));   // 400 m2 = 4 % of the square: side 100 x sqrt(0.04 / 0.5)
+  // compact layout: 8 bytes a box, the same angle code
+  const F = enuFrame({ lon: 0.105, lat: 51.505, h: 50 }), cp = compactBoxes({ F, b, boxes: sq, groundAt: () => 10, geoidAt: () => 45, drop_m: 3, kind: 'squares' });
+  assert.equal(cp.data.length, 16); assert.equal(cp.data[6], Math.round(20 / 180 * 256));
 });

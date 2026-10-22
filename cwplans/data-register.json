@@ -14781,7 +14781,7 @@
     },
     {
       "path": "docklands/data/places/london/tileset.json",
-      "what": "Greater London (region london, place kind \"blocks\"): 3D Tiles 1.1 tileset, a quadtree of the cells with buildings from level 10 to level 14 (leaves), REPLACE refinement, geometricError by level (300, 150, 75, 35 m, leaves 0), each tile with its ENU frame as a transform relative to its parent and a region bounding volume; no ground (the globe's terrain and imagery stay)",
+      "what": "Greater London (region london, place kind \"blocks\", place-blocks 4 since 2026-10-22): 3D Tiles 1.1 tileset, a quadtree of the cells with buildings from level 10 to level 13 (leaves), REPLACE refinement, geometricError by level (1,680, 840, 420 m, leaves 0; the leaves' parents carry extras.refine_within_m 13,000: refined only within 13 km of the eye), each tile with its ENU frame as a transform relative to its parent and a region bounding volume; no ground (the globe's terrain and imagery stay)",
       "sources": [
         "osm",
         "overture-buildings",
@@ -14798,14 +14798,14 @@
         "what": "bounding volumes only (heights of OSM buildings)"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-21",
+      "fetched": "2026-10-22",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/london/tiles/*.glb",
-      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings): at level 14 every OSM building of 25 m2 or more, and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\"), as an oriented box (EXT_mesh_gpu_instancing instance of one unit box: float translation and scale, int8 normalized rotation) or an outline simplified at 2.5 m, and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 13 the tall or big buildings as boxes and the rest merged into one box per square (400, 200, 100, 50 m; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: per block its class, height and height source (block card)",
+      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings; place-blocks 4 since 2026-10-22, the UK lite v2 way): at level 13 (leaves) every OSM building of 25 m2 or more and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\") that is not named, as one compact box (layout cwplans-boxes-1 in glb extras.blocks.compact: 8 bytes a box: its true centroid in the tile frame, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height, height source, class; with a 17 x 17 ground grid), and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 12 the tall or big buildings as boxes (EXT_mesh_gpu_instancing) and the rest one compact square a 400 / 200 / 100 m square, turned to the grain of its buildings, its side from the built share (full at 50 %; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: classes, height sources, the own boxes' class, height and source (block card), buildings of the cell",
       "sources": [
         "osm",
         "overture-buildings",
@@ -14826,14 +14826,14 @@
         "osm-odbl"
       ],
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-21",
+      "fetched": "2026-10-22",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/london/features.json",
-      "what": "Greater London text and machine interface: the named buildings drawn with their own id (OSM id, name, kind, position, height and its source, levels, leaf tile, ground of the globe), block counts by level; read by globe/places.js (search, featuresAt, describeView, the card)",
+      "what": "Greater London text and machine interface: the named buildings drawn with their own id (OSM id, name, kind, position, height and its source, levels, leaf tile, ground of the globe), block counts by level, the compact layout (blocks.compact) and the tile extras; read by globe/places.js (search, featuresAt, describeView, the card)",
       "sources": [
         "osm",
         "overture-buildings",
@@ -14854,14 +14854,14 @@
         "osm-odbl"
       ],
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-21",
+      "fetched": "2026-10-22",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/places.js)"
       ]
     },
     {
       "path": "docklands/data/places/london/provenance/log.json",
-      "what": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks, place-city-heights, place-blocks with input and output hashes; selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level and by geometry class (osm, ms)",
+      "what": "Build log of Greater London: fetch records (URL, date, SHA-256 of the Overture answer and of the GHSL tiles) and the dataflow activities place-select-blocks 2, place-city-heights 3, place-blocks 4 with input and output hashes (superseded runs pruned on 2026-10-22, listed under \"pruned\"; the commit history keeps them); selection counts (in the boundary, in the model box, other geometry sources), height-source counts (fault F55), footprint matches, block counts by level and by geometry class (osm, ms)",
       "sources": [
         "osm",
         "overture-buildings",
@@ -14877,7 +14877,7 @@
         "what": "counts of OSM buildings by height source and selection class"
       },
       "produced_by": "tools/build-place-tiles.mjs",
-      "fetched": "2026-10-21",
+      "fetched": "2026-10-22",
       "shown_on": [
         "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/london"
       ]
