@@ -57,7 +57,7 @@ const KIND_OF = new Map(Object.entries(KIND).flatMap(([s, ks]) => ks.map(k => [k
 const HOME = new Set(['house', 'detached', 'semidetached_house', 'terrace', 'apartments', 'residential', 'dormitory', 'bungalow']), OFFICE = new Set(['office', 'commercial', 'government', 'bank']), HOTEL = new Set(['hotel']);
 const NOT_SHOP = new Set(['suburb', 'artwork', 'memorial', 'bicycle_rental', 'atm', 'apartment', 'taxi', 'square', 'viewpoint', 'tomb', 'information', 'drinking_water', 'charging_station', 'attraction', 'bench', 'fountain', 'statue', 'monument', 'neighbourhood', 'quarter', 'locality', 'parking', 'bicycle_parking', 'post_box', 'waste_basket', 'recycling', 'toilets']);
 const HOTEL_PT = new Set(['hotel', 'hostel', 'guest_house', 'motel', 'apartment']), OFFICE_PT = new Set(['company', 'insurance', 'government', 'diplomatic', 'estate_agent', 'association', 'union', 'lawyer', 'notary', 'office']);
-const MEASURED = new Set(['osm-height', 'overture-height', 'ms', 'lidar', 'national-height']);
+const MEASURED = new Set(['osm-height', 'overture-height', 'ms', 'lidar', 'national-height', 'lod2']);   // lod2: an official LoD2 model's measured height (German places)
 const MAP_BLD = [185, 190, 196], MAP_LV = [224, 178, 90];   // the model's Map look: --bld (measured height), --bldlv (height from floors or a model)
 const TILE_WALL = [214, 203, 182], TILE_ROOF = [[168, 120, 96], [150, 146, 140]];   // build-place-tiles.mjs defaults (no OSM colour)
 const pick = (w, u) => { const e = Object.entries(w), t = e.reduce((a, [, v]) => a + v, 0); let x = u * t; for (const [k, v] of e) { if ((x -= v) < 0) return k; } return e.at(-1)[0]; };

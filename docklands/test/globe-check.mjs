@@ -23,7 +23,8 @@ const check = (ok, what, detail = '') => { results.push({ ok, what, detail }); i
 const T = '2026-10-12T12:00';
 // --placebase <id>:<url> (repeatable): a place held in another repository (index entry tileBase) served from a local copy,
 // so a search that reads every place's features.json does not depend on the live site (e.g. dublin before docklandia is merged)
-const PB = process.argv.flatMap((a, i) => a === '--placebase' ? ['&placebase=' + encodeURIComponent(process.argv[i + 1])] : []).join('');
+// --extra '<query string>': added as it is to every page address (e.g. '&placebase=berlin:http://...&placebase=...')
+const PB = process.argv.flatMap((a, i) => a === '--placebase' ? ['&placebase=' + encodeURIComponent(process.argv[i + 1])] : []).join('') + arg('--extra', '');
 
 async function open(w, h, dpr, q) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr }), page = await ctx.newPage(), errors = [];

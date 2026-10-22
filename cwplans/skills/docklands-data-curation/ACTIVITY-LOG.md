@@ -3353,3 +3353,66 @@ left out: Lincoln's 159.7 m spire fell in 1548). Rule in the set's README. 490 l
 York Minster 63, Blackpool Tower 158 m. Card row "Highest point"; describeView tallest by the highest point. Register:
 extract overture-osm-uk-building-parts, source wikidata on the set. Set 294.8 MB. Checks: npm run check, npm test,
 lite-check (new: cathedral heights over 60 m, the card's highest point) all passed. Fault F55 stays for the bodies.
+
+## 2026-10-22: German places (Berlin, Stuttgart, Schloss Dagstuhl)
+
+Owner, 2026-10-22: "I'll like to add some information (bulk data in docklandia repo pls.) for more cities and
+countries. ... Germany: Berlin and Stuttgart. Also ... Schloss Dagstuhl – Leibniz Center for Informatics in Wadern,
+Saarland, let's add that too and surrounding locale." Region configs docklands/geo/regions/berlin.js, stuttgart.js,
+dagstuhl.js; tool build-place-tiles.mjs (external output for any place, core_bbox, surround.dem, dem.open_px, NDJSON city
+buildings, LoD2 kind citygml-lod2-atom, DEM kind xyz-zip-tiles, named sites; place-select-osm v4, place-heights v5,
+place-tiles v6, place-city-heights v3, place-lod v3) with the new cwplans/tools/place-lod2.mjs. Sets in danbri/docklandia
+data/de/<id>/ on branch places-de (not pushed); greens in londat (build-place-greens.mjs, wood_m per region).
+- Sources: Berlin LoD2 (de-be-lod2) and DGM1 (de-be-dgm1), Geoportal Berlin, dl-de/zero-2.0 (registered, open);
+  OSM, Overture (OSM, Microsoft ML heights), Microsoft, GHSL, ESA WorldCover, Copernicus GLO-30 as for the other places.
+  Left out: LGL Baden-Württemberg (unreachable: connection reset) and Saarland LVGL LoD2 (WFS server fault on every
+  BBOX query); both dl-de/by-2.0, open, retry later.
+- Counts: Berlin core 8,419 LoD2 buildings drawn (7,028 OSM buildings covered, 244 OSM drawn), city 814,713 buildings
+  (LoD2 height 441,635); Stuttgart core 21,124, city 204,859; Dagstuhl core 6,579, city 31,902 (fault F55 counts in each
+  README).
+- Sizes: Berlin 192.4 MB, Stuttgart 66.3 MB, Dagstuhl 42.1 MB (301 MB). World base: +517 imagery and +445 height tiles
+  round the new testbeds (build-world-base.mjs --add), 42.7 MB in all.
+- Register: sources de-be-lod2, de-be-dgm1; external entries data/de/<id>/; OSM extracts osm-api-place-<id>,
+  overture-osm-<id>, osm-api-place-greens-<id>; greens files; pipeline place-tiles and place-greens.
+- Checks: npm run check passed; npm test passed; place-check berlin, stuttgart, dagstuhl at 390 x 844 @2 passed (local
+  sets by ?placebase=); globe-check 390 x 844 @2 passed.
+- Live after both merges (docklandia first): https://danbri.github.io/londat/docklands/?ll=52.5170,13.3940,1500&ht=80,55
+  (Mitte), https://danbri.github.io/londat/docklands/?ll=49.5307,6.8986,600&ht=20,60 (Schloss Dagstuhl).
+
+## 2026-10-22: merge of the German places into main (branch merge-de, subagent, not pushed)
+
+Main (1eebaf58: Dublin, UK lite version 2 with landmark heights) and branch worktree-agent-a9e6e8f4d4d97d802 (3009cc8c:
+Berlin, Stuttgart, Schloss Dagstuhl) were built in parallel. Branch `merge-de` joins them with ONE implementation of each
+option that both added (details: skill docklands-3d-page, "Three.js port: one implementation after the merge of Dublin
+and the German places (2026-10-22)"):
+- build-place-tiles.mjs: `EXTOUT = lite || place.outRepo` with `--out`; `place.core_bbox`; one rule for the DEM of the
+  surroundings (`place.surround.dem` adapter, else the core adapter's `dem.surround` block, else the core DEM; one
+  `DEM_CREDIT`); both new DEM kinds (arcgis-tile-zips, xyz-zip-tiles); main's README loop (no README for the lite set);
+  index entry with `tileBase`, `buildings_lod2`, `view` and `views`. place-lod2.mjs and place-lite-heights.mjs both kept.
+- build-world-base.mjs: main's `--add` (only the new tiles, base.json merged); the German branch's full-rebuild form
+  removed. world-base/base.json: union of the tile lists (2,160 imagery, 1,029 height tiles; every listed tile is on
+  disk and every file is listed) and regions; log.json: activities of both runs (a second imagery-tiles / dem-tiles of
+  2026-10-22; its fetch summary under `<operation>#<activity id>`).
+- places.js: card rows "Highest point" (UK lite) and "Site" (German places). regions/index.js: dublin, berlin,
+  stuttgart, dagstuhl. index.json, greens.json, places/README.md, data-register.json: union of both sides.
+- Tests: place-check.mjs one `--placedir` rule (external when `ext` or `tileBase`; default
+  docklands/test/out/places/<id>; local copies beside it served too); globe-check.mjs `--placebase` and `--extra`.
+  Fault found and fixed: place-check's Sarajevo landmark check read `stats().sets[0]`, which is now Dublin's set (the
+  landmark index holds dublin and sarajevo), so it failed; it now finds the set of the place under test.
+  Second fault from the merge: lite-check gave 404 page errors for the German sets (in index.json, not yet live); it
+  now serves every external place whose local copy is beside the lite set's folder (the place-check rule).
+- Checks (all passed): npm run check; npm test (129 with UK_LITE_DIR set); place-check at 390 x 844 @2 for berlin,
+  stuttgart, dagstuhl, dublin, leon, sarajevo, london (local copies of the docklandia sets under the ignored
+  docklands/test/out/places/); lite-check; globe-check (with --placebase for the five external sets).
+- Looked at (390 x 844 @2): Berlin Mitte near, Berlin 20 km, Stuttgart valley, Schloss Dagstuhl near, Dublin near,
+  York 1.1 km: real buildings, no slabs, no missing tiles, no floating or sunken blocks. Seen, not from the merge: a
+  thin orange straight line across some views (an overlay line), Berlin at 20 km draws the surroundings tiers only
+  (no city blocks at that range), a dark terrain-shading patch on the hills east of Dagstuhl.
+- Merge order for the owner: docklandia (branches place-dublin, uk-lite-2, places-de) before this londat branch.
+- pipeline.json: tools/place-lod2.mjs and its test listed (the check warned "tool not listed" on the German branch).
+  Generated files (DATA-REGISTER.md, pipeline.jsonld, METHODS.md, docs/review-exit-paths.md) from main, then
+  regenerated with `check-data-register.mjs --write`.
+- Operation versions: the German branch bumped place-select-osm 4, place-heights 5, place-tiles 6, place-city-heights 3,
+  place-lod 3. These change the activity ids (and for named areas the `site` column) of a REBUILD of León, Sarajevo,
+  London or Dublin. Their committed data was NOT rebuilt and stays valid: it was made by the older versions, as its
+  provenance logs say.

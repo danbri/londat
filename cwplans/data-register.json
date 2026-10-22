@@ -256,6 +256,96 @@
       "committed": false,
       "local_path": "data/raw/places/uk-lite/overture-building-parts-2026-09-23.1.ndjson (in cwplans/.gitignore; re-fetch with the tool)",
       "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (fetch-overture-theme.py, building_part with height IS NOT NULL: 26,690 rows; outlines, height, min_height, roof shape, building_id); read by operation place-lite-landmark-heights; its SHA-256 is in the provenance/log.json of the set (danbri/docklandia data/gb/uk-lite/)"
+    },
+    "osm-api-place-berlin": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (4 boxes; each URL and the SHA-256 of each answer in the place's provenance/log.json)",
+      "osm_data_as_of": "2026-10-22T11:51:55.125Z (time of the API call; newest element 2026-10-22T11:17:03Z)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "b31778f35d1144e9",
+      "size_bytes": 6918679,
+      "committed": false,
+      "local_path": "data/raw/places/berlin/osm.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region berlin (OSM API 0.6 map.json; split in four on 400 too many nodes); the SHA-256 of each answer as fetched is in danbri/docklandia data/de/berlin/provenance/log.json"
+    },
+    "overture-osm-berlin": {
+      "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/ (themes transportation, base, divisions, buildings; bbox of the surroundings and of the city box)",
+      "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "15356925b4a0bfb2",
+      "size_bytes": 910629413,
+      "committed": false,
+      "local_path": "data/raw/places/berlin/overture-*-2026-09-23.1.json[.ndjson] (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region berlin (fetch-overture-theme.py, one DuckDB query per theme); the SHA-256 of each answer is in danbri/docklandia data/de/berlin/provenance/log.json"
+    },
+    "osm-api-place-greens-berlin": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (boxes in greens/log.json)",
+      "osm_data_as_of": "2026-10-22T13:48:00.593Z (time of the API call)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "b100e763041c8020",
+      "size_bytes": 68707769,
+      "committed": false,
+      "local_path": "data/raw/places/berlin/greens/osm-map.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-greens.mjs fetch --region berlin (OSM API 0.6 map.json of the core area, then relation/<id>/full for the multipolygons that leave it); the SHA-256 of each answer in greens/log.json"
+    },
+    "osm-api-place-stuttgart": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (10 boxes; each URL and the SHA-256 of each answer in the place's provenance/log.json)",
+      "osm_data_as_of": "2026-10-22T11:55:48.010Z (time of the API call; newest element 2026-10-22T10:54:13Z)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "77d1392ef4193c9f",
+      "size_bytes": 6731602,
+      "committed": false,
+      "local_path": "data/raw/places/stuttgart/osm.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region stuttgart (OSM API 0.6 map.json; split in four on 400 too many nodes); the SHA-256 of each answer as fetched is in danbri/docklandia data/de/stuttgart/provenance/log.json"
+    },
+    "overture-osm-stuttgart": {
+      "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/ (themes transportation, base, divisions, buildings; bbox of the surroundings and of the city box)",
+      "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "ab18675a62650f64",
+      "size_bytes": 283302750,
+      "committed": false,
+      "local_path": "data/raw/places/stuttgart/overture-*-2026-09-23.1.json[.ndjson] (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region stuttgart (fetch-overture-theme.py, one DuckDB query per theme); the SHA-256 of each answer is in danbri/docklandia data/de/stuttgart/provenance/log.json"
+    },
+    "osm-api-place-greens-stuttgart": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (boxes in greens/log.json)",
+      "osm_data_as_of": "2026-10-22T12:15:59.290Z (time of the API call)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "77d1392ef4193c9f",
+      "size_bytes": 64517907,
+      "committed": false,
+      "local_path": "data/raw/places/stuttgart/greens/osm-map.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-greens.mjs fetch --region stuttgart (OSM API 0.6 map.json of the core area, then relation/<id>/full for the multipolygons that leave it); the SHA-256 of each answer in greens/log.json"
+    },
+    "osm-api-place-dagstuhl": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (4 boxes; each URL and the SHA-256 of each answer in the place's provenance/log.json)",
+      "osm_data_as_of": "2026-10-22T11:51:28.810Z (time of the API call; newest element 2026-10-18T20:09:51Z)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "71c5f1eefc2ef4d8",
+      "size_bytes": 1531959,
+      "committed": false,
+      "local_path": "data/raw/places/dagstuhl/osm.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region dagstuhl (OSM API 0.6 map.json; split in four on 400 too many nodes); the SHA-256 of each answer as fetched is in danbri/docklandia data/de/dagstuhl/provenance/log.json"
+    },
+    "overture-osm-dagstuhl": {
+      "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/ (themes transportation, base, divisions, buildings; bbox of the surroundings and of the city box)",
+      "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "bf9f8c18ab5ee89c",
+      "size_bytes": 91487644,
+      "committed": false,
+      "local_path": "data/raw/places/dagstuhl/overture-*-2026-09-23.1.json[.ndjson] (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region dagstuhl (fetch-overture-theme.py, one DuckDB query per theme); the SHA-256 of each answer is in danbri/docklandia data/de/dagstuhl/provenance/log.json"
+    },
+    "osm-api-place-greens-dagstuhl": {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=... (boxes in greens/log.json)",
+      "osm_data_as_of": "2026-10-22T12:04:57.771Z (time of the API call)",
+      "fetched": "2026-10-22",
+      "sha256_prefix": "9a7f55b74dbb3be6",
+      "size_bytes": 16601706,
+      "committed": false,
+      "local_path": "data/raw/places/dagstuhl/greens/osm-map.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
+      "fetched_by": "tools/build-place-greens.mjs fetch --region dagstuhl (OSM API 0.6 map.json of the core area, then relation/<id>/full for the multipolygons that leave it); the SHA-256 of each answer in greens/log.json"
     }
   },
   "sources": {
@@ -3463,7 +3553,7 @@
       "licence": "Copernicus DEM licence (ESA / European Union, GLO-30 public instance): free of charge, worldwide, for any purpose, including redistribution of derived products, with the attribution",
       "attribution": "Copernicus DEM GLO-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA",
       "url": "https://registry.opendata.aws/copernicus-dem/",
-      "note": "Used for the place Sarajevo (region config sarajevo, adapter world-base): the terrain of the tiles and the ground under each building. A surface model: in built-up cells the roofs and trees raise it a few metres. The raw window stays in cwplans/data/raw/places/sarajevo/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km terrain ring, resampled from it. The full licence text names an 'all rights reserved' notice in the credit line; re-check before the prototyping phase ends.",
+      "note": "Used for the place Sarajevo (region config sarajevo, adapter world-base): the terrain of the tiles and the ground under each building. A surface model: in built-up cells the roofs and trees raise it a few metres. The raw window stays in cwplans/data/raw/places/sarajevo/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile a 33 x 33 grid in features.json and a 97 x 97 grid of the 8 km terrain ring, resampled from it. The full licence text names an 'all rights reserved' notice in the credit line; re-check before the prototyping phase ends. Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/).",
       "publisher": "European Space Agency (ESA) and the European Union (Copernicus); DLR e.V. and Airbus Defence and Space GmbH (TanDEM-X)",
       "licence_url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM"
     },
@@ -3474,7 +3564,7 @@
       "licence_url": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (Pesaresi M., Politis P. (2023): GHS-BUILT-H R2023A - GHS building height, derived from AW3D30, SRTM30, and Sentinel2 composite (2018). European Commission, Joint Research Centre, doi:10.2905/85005901-3A49-48DD-9D19-6261354F56FE)",
       "url": "https://human-settlement.emergency.copernicus.eu/download.php?ds=builtH",
-      "note": "Used for the places on the globe (adapter docklands/geo/adapters/world-ghsl.js, kind ghsl-raster): an OSM building with no height, no building:levels and no national floors takes the ANBH of the 3 arc-second cell under its centroid (a cell average, not a measure of the building). The 72 MB tile zip stays in cwplans/data/raw/places/<id>/ (git-ignored); the crop over each place is committed in cwplans/docklands/data/places/<id>/sources/ghsl-built-h.json (cropped and rounded to 0.1 m: a change, stated). Checked 2026-10-20: open download, no log-in."
+      "note": "Used for the places on the globe (adapter docklands/geo/adapters/world-ghsl.js, kind ghsl-raster): an OSM building with no height, no building:levels and no national floors takes the ANBH of the 3 arc-second cell under its centroid (a cell average, not a measure of the building). The 72 MB tile zip stays in cwplans/data/raw/places/<id>/ (git-ignored); the crop over each place is committed in cwplans/docklands/data/places/<id>/sources/ghsl-built-h.json (cropped and rounded to 0.1 m: a change, stated). Checked 2026-10-20: open download, no log-in. Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "overture-buildings": {
       "name": "Overture Maps Foundation, buildings theme, release 2026-09-23.1 (GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB",
@@ -3484,7 +3574,7 @@
       "licence_class": "share-alike",
       "attribution": "© Overture Maps Foundation; © OpenStreetMap contributors; © Microsoft (and the other sources named per record)",
       "url": "https://docs.overturemaps.org/attribution/",
-      "note": "Allowed by the owner on 2026-10-20 (\"Use ms/overture\"; CLAUDE.md, data policy). Used for the places on the globe (adapter docklands/geo/adapters/world-buildings.js, world-overture): heights, num_floors and roof_shape of records whose own source (the sources entry for that property) is not OpenStreetMap and whose source licence is open (ODbL, CDLA-Permissive, CC BY, CC0). Values with an empty licence field (León: 1,009 num_floors from Instituto Geográfico Nacional (España)) are neither used nor committed. The query answer stays in cwplans/data/raw/places/<id>/; only the crop of usable records is committed in places/<id>/sources/overture-buildings.json. Since 2026-10-20 also the buildings of the city box of each place (the city tier, place-select-outer): records whose geometry source is OpenStreetMap are drawn as blocks (OSM data); records from other sources give heights only (as in the core); the records whose geometry is from other datasets (León: IGN 10,858, Microsoft 1,909; Sarajevo: Microsoft 8,945) are counted and not drawn (the region config surround.geometry_sources can add them, with the owner's agreement)."
+      "note": "Allowed by the owner on 2026-10-20 (\"Use ms/overture\"; CLAUDE.md, data policy). Used for the places on the globe (adapter docklands/geo/adapters/world-buildings.js, world-overture): heights, num_floors and roof_shape of records whose own source (the sources entry for that property) is not OpenStreetMap and whose source licence is open (ODbL, CDLA-Permissive, CC BY, CC0). Values with an empty licence field (León: 1,009 num_floors from Instituto Geográfico Nacional (España)) are neither used nor committed. The query answer stays in cwplans/data/raw/places/<id>/; only the crop of usable records is committed in places/<id>/sources/overture-buildings.json. Since 2026-10-20 also the buildings of the city box of each place (the city tier, place-select-outer): records whose geometry source is OpenStreetMap are drawn as blocks (OSM data); records from other sources give heights only (as in the core); the records whose geometry is from other datasets (León: IGN 10,858, Microsoft 1,909; Sarajevo: Microsoft 8,945) are counted and not drawn (the region config surround.geometry_sources can add them, with the owner's agreement). Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "ms-buildings": {
       "name": "Microsoft Global ML Building Footprints, release 2026-02-03 (gzip GeoJSON lines per zoom-9 quadkey, dataset-links.csv); height in metres where estimated",
@@ -3494,7 +3584,7 @@
       "licence_class": "share-alike",
       "attribution": "© Microsoft (Global ML Building Footprints, ODbL 1.0)",
       "url": "https://github.com/microsoft/GlobalMLBuildingFootprints",
-      "note": "Allowed by the owner on 2026-10-20 (\"Use ms/overture\"). Used for the places on the globe (adapter world-ms-buildings): the height of a footprint that matches an OSM outline with no OSM height or levels. The quadkey files stay in cwplans/data/raw/places/<id>/; only footprints in the area with a height > 0 are committed in places/<id>/sources/ms-buildings.json. Sarajevo quadkey 120233030: 164,318 footprints, none with a height; León quadkey 031333200: 18,919 of 57,779 with a height."
+      "note": "Allowed by the owner on 2026-10-20 (\"Use ms/overture\"). Used for the places on the globe (adapter world-ms-buildings): the height of a footprint that matches an OSM outline with no OSM height or levels. The quadkey files stay in cwplans/data/raw/places/<id>/; only footprints in the area with a height > 0 are committed in places/<id>/sources/ms-buildings.json. Sarajevo quadkey 120233030: 164,318 footprints, none with a height; León quadkey 031333200: 18,919 of 57,779 with a height. Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "overture-ign-floors": {
       "name": "Overture Maps buildings, release 2026-09-23.1: the number of floors (num_floors) of the records whose source is \"Instituto Geográfico Nacional (España)\" (provider ign_es), over the León city box",
@@ -3516,7 +3606,7 @@
       "licence_class": "open",
       "attribution": "© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium",
       "url": "https://esa-worldcover.org/en/data-access",
-      "note": "Used for the places on the globe (adapter docklands/geo/adapters/world-surround.js, world-worldcover): the colours of the ground textures of the surroundings tiles (trees, shrubs, grass, crops, built-up, bare, water, wetland). The window stays in cwplans/data/raw/places/<id>/landcover.bin.gz (git-ignored); only the painted JPEG textures (resampled, mixed with roads and water: a change, stated) are committed."
+      "note": "Used for the places on the globe (adapter docklands/geo/adapters/world-surround.js, world-worldcover): the colours of the ground textures of the surroundings tiles (trees, shrubs, grass, crops, built-up, bare, water, wetland). The window stays in cwplans/data/raw/places/<id>/landcover.bin.gz (git-ignored); only the painted JPEG textures (resampled, mixed with roads and water: a change, stated) are committed. Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "overture-transportation": {
       "name": "Overture Maps Foundation, transportation theme (type segment): roads motorway to tertiary over the surroundings, residential, service and pedestrian streets over the city box, and railways, release 2026-09-23.1",
@@ -3526,7 +3616,7 @@
       "licence_class": "share-alike",
       "attribution": "© OpenStreetMap contributors, © Overture Maps Foundation",
       "url": "https://docs.overturemaps.org/attribution/",
-      "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored)."
+      "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored). Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "overture-base": {
       "name": "Overture Maps Foundation, base theme (types water and land): rivers, streams, canals, lakes and reservoirs; named peaks, release 2026-09-23.1",
@@ -3536,7 +3626,7 @@
       "licence_class": "share-alike",
       "attribution": "© OpenStreetMap contributors, © Overture Maps Foundation",
       "url": "https://docs.overturemaps.org/attribution/",
-      "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored)."
+      "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored). Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "overture-divisions": {
       "name": "Overture Maps Foundation, divisions theme (type division): localities (cities, towns, villages, hamlets), local admin areas and neighbourhoods with their names and populations, release 2026-09-23.1",
@@ -3546,7 +3636,7 @@
       "licence_class": "share-alike",
       "attribution": "© OpenStreetMap contributors, © Overture Maps Foundation",
       "url": "https://docs.overturemaps.org/attribution/",
-      "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored)."
+      "note": "OpenStreetMap data as redistributed by the Overture Maps Foundation (release 2026-09-23.1, GeoParquet on the public bucket overturemaps-us-west-2), read by bounding box with DuckDB (cwplans/tools/fetch-overture-theme.py). Only records whose own source is OpenStreetMap are used (place-select-outer counts the rest). Same licence and credit as our own OSM extracts; registered apart so the access route and release are traceable. Used for the city and the surroundings of the places on the globe (adapter world-overture-outer, docklands/geo/adapters/world-surround.js); the answers stay in cwplans/data/raw/places/<id>/ (git-ignored). Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "eox-s2cloudless-2016": {
       "name": "Sentinel-2 cloudless 2016 by EOX IT Services GmbH (layer s2cloudless of the EOX Maps WMTS, tile matrix set WGS84; the 2016 mosaic only)",
@@ -3598,7 +3688,7 @@
       "licence_class": "share-alike",
       "attribution": "Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0)",
       "url": "https://docs.overturemaps.org/attribution/",
-      "note": "Owner, 2026-10-20: \"Use ms/overture\" (CLAUDE.md, data policy); Greater London: owner, 2026-10-22, \"yes\" to \"Microsoft footprints in London where OSM has none\". Drawn as blocks only where OSM has no building (a footprint that overlaps an OSM outline is dropped), as its own geometry class \"ms\" (adapter overture-ms-geometry): in the city ring of León and Sarajevo, and in Greater London (405,101 selected, 171 dropped for overlap, 349,432 drawn at 25 m2 or more). Remove: delete the id in place.surround.geometry (León, Sarajevo) or place.blocks.geometry (docklands/geo/regions/london.js) and rebuild. Raw answer not committed."
+      "note": "Owner, 2026-10-20: \"Use ms/overture\" (CLAUDE.md, data policy); Greater London: owner, 2026-10-22, \"yes\" to \"Microsoft footprints in London where OSM has none\". Drawn as blocks only where OSM has no building (a footprint that overlaps an OSM outline is dropped), as its own geometry class \"ms\" (adapter overture-ms-geometry): in the city ring of León and Sarajevo, and in Greater London (405,101 selected, 171 dropped for overlap, 349,432 drawn at 25 m2 or more). Remove: delete the id in place.surround.geometry (León, Sarajevo) or place.blocks.geometry (docklands/geo/regions/london.js) and rebuild. Raw answer not committed. Also used for the German places (2026-10-22: berlin, stuttgart, dagstuhl; sets in danbri/docklandia data/de/)."
     },
     "overture-places": {
       "name": "Overture Maps Foundation, places theme (type place), release 2026-09-23.1, read by bounding box with DuckDB",
@@ -3618,6 +3708,26 @@
       "attribution": "Contains Irish Public Sector Data (Geological Survey Ireland & the Office of Public Works) licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) licence.",
       "url": "https://gsi.geodata.gov.ie/server/rest/services/Lidar/IE_GSI_LiDAR_Coverage_OPW_NASC_IE26_ITM/FeatureServer/3 (data.gov.ie: open-topographic-lidar-data)",
       "note": "Used for the place Dublin (region config dublin, adapter ie-gsi-lidar, DEM kind arcgis-tile-zips): the terrain of the core tiles (both banks of the Liffey) and the ground under each core building. A bare-earth model (DTM; the DSM in the same zips is not used). The 8 zips over the core stay in cwplans/data/raw/places/dublin/ (not committed); the committed tiles hold a 33 x 33 heightfield per tile and a 33 x 33 grid in features.json resampled from a 5 m lon/lat grid. Found 2026-10-22 through data.gov.ie; the hillshade image services of the same portal are pictures (U8), not heights, and are not used."
+    },
+    "de-be-lod2": {
+      "name": "3D-Gebäudemodelle im Level of Detail 2 (LoD 2), Land Berlin: CityGML 1.0 (AdV profile), 1 x 1 km tiles in the INSPIRE ATOM feed https://gdi.berlin.de/data/a_lod2/atom (EPSG:25833, DHHN2016 heights)",
+      "publisher": "Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen Berlin (Geoportal Berlin)",
+      "licence": "Datenlizenz Deutschland – Zero – Version 2.0 (dl-de/zero-2.0)",
+      "licence_url": "https://www.govdata.de/dl-de/zero-2-0",
+      "licence_class": "open",
+      "attribution": "Geoportal Berlin / 3D-Gebäudemodelle im Level of Detail 2 (LoD 2), dl-de/zero-2.0 (no credit required; given)",
+      "url": "https://gdi.berlin.de/geonetwork/srv/api/records/3c7c49af-00a4-3bcd-bc00-20e7f0f1b7bf",
+      "note": "Used for the place Berlin (region config berlin, adapter de-be-lod2): the walls and roofs of every building of the Mitte core drawn as they are (place-tiles), and the measured height (measuredHeight, ground to the highest roof point) of each building part of Land Berlin as a height source of the OSM outlines of the core and the city blocks (place-heights, place-city-heights; after OSM height, before OSM levels). Licence read from the feed's rights element on 2026-10-22. The 925 tile zips (about 5 GB) are parsed at once by cwplans/tools/place-lod2.mjs and deleted (SHA-256 of each in the place's provenance/log.json); only transformed geometry (glTF tiles) and heights are published, in danbri/docklandia data/de/berlin/."
+    },
+    "de-be-dgm1": {
+      "name": "ATKIS DGM1, Land Berlin: the 1 m digital terrain model (airborne laser scan), XYZ text in 2 x 2 km tiles of the INSPIRE ATOM feed https://gdi.berlin.de/data/dgm1/atom (EPSG:25833, DHHN2016)",
+      "publisher": "Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen Berlin (Geoportal Berlin)",
+      "licence": "Datenlizenz Deutschland – Zero – Version 2.0 (dl-de/zero-2.0)",
+      "licence_url": "https://www.govdata.de/dl-de/zero-2-0",
+      "licence_class": "open",
+      "attribution": "Geoportal Berlin / ATKIS DGM1 (Digitales Geländemodell), dl-de/zero-2.0 (no credit required; given)",
+      "url": "https://gdi.berlin.de/geonetwork/srv/api/records/f0e8ff09-2887-3446-9c53-81dbc45af03c",
+      "note": "Used for the place Berlin (region config berlin, adapter de-be-dgm1): the terrain of the Mitte core, resampled to about 4 m (place-tiles: 33 x 33 heightfield per tile, the ground of each building). Licence read from the feed's rights element on 2026-10-22. The zips stay in the raw folder (not committed)."
     }
   },
   "files": [
@@ -14455,7 +14565,7 @@
     },
     {
       "path": "docklands/data/world-base/img/*/*/*.webp",
-      "what": "World base imagery (KR2.2): one 512 px WebP (quality 70) per quadtree tile L/x/y (180 / 2^L degrees, y from the north), made of the 2 x 2 Sentinel-2 cloudless 2016 tiles of level L + 1; worldwide at levels 0 to 4 (2.4 km a pixel at level 4), round the testbeds (region configs docklands, leon, sarajevo) at levels 5 to 11 within 1,500 / 800 / 400 / 220 / 100 / 40 / 15 km (level 11: about 19 m a pixel); 1,432 tiles, 26.5 MB",
+      "what": "World base imagery (KR2.2): one 512 px WebP (quality 70) per quadtree tile L/x/y (180 / 2^L degrees, y from the north), made of the 2 x 2 Sentinel-2 cloudless 2016 tiles of level L + 1; worldwide at levels 0 to 4 (2.4 km a pixel at level 4), round the testbeds (region configs docklands, leon, sarajevo; since 2026-10-22 also berlin, stuttgart, dagstuhl: build-world-base.mjs --add, 517 tiles more, 1,949 in all) at levels 5 to 11 within 1,500 / 800 / 400 / 220 / 100 / 40 / 15 km (level 11: about 19 m a pixel); 1,432 tiles, 26.5 MB",
       "sources": [
         "eox-s2cloudless-2016"
       ],
@@ -14470,7 +14580,7 @@
     },
     {
       "path": "docklands/data/world-base/dem/*/*/*.bin",
-      "what": "World base heights round the testbeds (KR2.2): Int16 metres above EGM2008, 35 x 35 samples per quadtree tile (the 33 x 33 vertices of a terrain patch and a border of one), box means of Copernicus DEM GLO-90 over one sample spacing; levels 7 to 12 within 300 / 170 / 80 / 35 / 15 / 7 km of each testbed; 0 over open sea; 448 tiles, 1.0 MB",
+      "what": "World base heights round the testbeds (KR2.2): Int16 metres above EGM2008, 35 x 35 samples per quadtree tile (the 33 x 33 vertices of a terrain patch and a border of one), box means of Copernicus DEM GLO-90 over one sample spacing; levels 7 to 12 within 300 / 170 / 80 / 35 / 15 / 7 km of each testbed; 0 over open sea; 893 tiles, 2.1 MB (the German testbeds berlin, stuttgart, dagstuhl added on 2026-10-22)",
       "sources": [
         "copernicus-glo90"
       ],
@@ -15019,6 +15129,162 @@
       "fetched": "2026-10-21",
       "shown_on": [
         "docklands/ (the Three.js port: the globe, globe/place-look.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/berlin/greens/greens.json",
+      "what": "Mitte, Berlin: water and trees of the core of the place (format place-greens-1): 31 water polygons, 8749 trees (6829 OSM natural=tree, 170 along OSM tree rows, 1232 placed by rule in woods every 12 m and 518 in parks and gardens without mapped trees: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix), and the woods and parks; drawn by the globe as the model's water and trees",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osm-api-place-greens-berlin",
+        "what": "water polygons (geometry, kind, name), tree positions and their height, crown, genus, species, taxon and leaf_type tags, wood and park polygons (id, kind, name, area)"
+      },
+      "produced_by": "tools/build-place-greens.mjs (place-greens)",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/place-look.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/berlin/greens/log.json",
+      "what": "Build log of the water and trees of Mitte, Berlin: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of trees, water polygons, woods and parks; element counts"
+      },
+      "produced_by": "tools/build-place-greens.mjs",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/greens"
+      ]
+    },
+    {
+      "path": "docklands/data/places/berlin/greens/README.md",
+      "what": "Generated README of the water and trees of Mitte, Berlin: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of trees, water polygons, woods and parks"
+      },
+      "produced_by": "tools/build-place-greens.mjs",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/greens"
+      ]
+    },
+    {
+      "path": "docklands/data/places/stuttgart/greens/greens.json",
+      "what": "Mitte, Stuttgart: water and trees of the core of the place (format place-greens-1): 49 water polygons, 28109 trees (4295 OSM natural=tree, 708 along OSM tree rows, 21040 placed by rule in woods every 12 m and 2066 in parks and gardens without mapped trees: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix), and the woods and parks; drawn by the globe as the model's water and trees",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osm-api-place-greens-stuttgart",
+        "what": "water polygons (geometry, kind, name), tree positions and their height, crown, genus, species, taxon and leaf_type tags, wood and park polygons (id, kind, name, area)"
+      },
+      "produced_by": "tools/build-place-greens.mjs (place-greens)",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/place-look.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/stuttgart/greens/log.json",
+      "what": "Build log of the water and trees of Mitte, Stuttgart: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of trees, water polygons, woods and parks; element counts"
+      },
+      "produced_by": "tools/build-place-greens.mjs",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/greens"
+      ]
+    },
+    {
+      "path": "docklands/data/places/stuttgart/greens/README.md",
+      "what": "Generated README of the water and trees of Mitte, Stuttgart: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of trees, water polygons, woods and parks"
+      },
+      "produced_by": "tools/build-place-greens.mjs",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/greens"
+      ]
+    },
+    {
+      "path": "docklands/data/places/dagstuhl/greens/greens.json",
+      "what": "Schloss Dagstuhl, Wadern: water and trees of the core of the place (format place-greens-1): 50 water polygons, 22941 trees (23 OSM natural=tree, 470 along OSM tree rows, 22312 placed by rule in woods every 25 m and 136 in parks and gardens without mapped trees: illustrative positions) with a species profile (OSM taxon, leaf type, else the region mix), and the woods and parks; drawn by the globe as the model's water and trees",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osm-api-place-greens-dagstuhl",
+        "what": "water polygons (geometry, kind, name), tree positions and their height, crown, genus, species, taxon and leaf_type tags, wood and park polygons (id, kind, name, area)"
+      },
+      "produced_by": "tools/build-place-greens.mjs (place-greens)",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/place-look.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/dagstuhl/greens/log.json",
+      "what": "Build log of the water and trees of Schloss Dagstuhl, Wadern: the OSM fetch records (URL, date, SHA-256 of each answer as fetched) and the dataflow activity place-greens (inputs and output by SHA-256, parameters, counts)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of trees, water polygons, woods and parks; element counts"
+      },
+      "produced_by": "tools/build-place-greens.mjs",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/greens"
+      ]
+    },
+    {
+      "path": "docklands/data/places/dagstuhl/greens/README.md",
+      "what": "Generated README of the water and trees of Schloss Dagstuhl, Wadern: files with SHA-256, each source (licence, request, SHA-256 as fetched, committed or not), the operation with its inputs and parameters, the counts, review notes (tools/build-place-greens.mjs)",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of trees, water polygons, woods and parks"
+      },
+      "produced_by": "tools/build-place-greens.mjs",
+      "fetched": "2026-10-22",
+      "shown_on": [
+        "https://github.com/danbri/londat/tree/main/cwplans/docklands/data/places/sarajevo/greens"
       ]
     }
   ],
@@ -15809,6 +16075,137 @@
       "produced_by": "tools/build-place-tiles.mjs --region dublin --out <docklandia>/data/ie/dublin (place-select-osm, place-heights, place-tiles, place-select-outer, place-city-heights, place-lod); tools/build-place-greens.mjs (place-greens); tools/build-place-landmarks.mjs (landmark-select, landmark-tiles)",
       "fetched": "2026-10-22",
       "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; Dublin). Copernicus GLO-30 credit ends \"all rights reserved\" (accepted 2026-10-20). Review with the OSM use before the prototyping phase ends",
+      "review_exit": [
+        "osm-odbl"
+      ]
+    },
+    {
+      "repo": "danbri/docklandia",
+      "path": "data/de/berlin/",
+      "location": "https://github.com/danbri/docklandia/tree/main/data/de/berlin (branch places-de until the owner merges it); served at https://danbri.github.io/docklandia/data/de/berlin/ (same origin as the londat site)",
+      "paths": [
+        "tileset.json",
+        "tiles/<level>-<x>-<y>.glb",
+        "features.json",
+        "surround.json",
+        "sources/*.json",
+        "README.md",
+        "provenance/log.json"
+      ],
+      "what": "Mitte, Berlin (region config docklands/geo/regions/berlin.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (8663 buildings, the official LoD2 walls and roofs where Berlin has them; terrain, ground texture from OSM), the city box [13.088, 52.338, 13.761, 52.675] as blocks (814713 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 192.4 MB. Read by docklands/globe/places.js (index entry berlin, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "overture-ms-geometry",
+        "egm96",
+        "own",
+        "de-be-lod2",
+        "de-be-dgm1"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": [
+          "osm-api-place-berlin",
+          "overture-osm-berlin"
+        ],
+        "what": "building outlines, heights, levels, roofs, names, addresses and Wikidata ids of the core; streets, areas, points; roads, rail, water, place names and city buildings via Overture"
+      },
+      "produced_by": "tools/build-place-tiles.mjs --region berlin --out <docklandia>/data/de/berlin (with tools/place-lod2.mjs)",
+      "fetched": "2026-10-22",
+      "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; Germany: Berlin, Stuttgart, Schloss Dagstuhl). Review with the OSM use before the prototyping phase ends; Berlin LoD2 and DGM1: dl-de/zero-2.0 (open)",
+      "review_exit": [
+        "osm-odbl"
+      ]
+    },
+    {
+      "repo": "danbri/docklandia",
+      "path": "data/de/stuttgart/",
+      "location": "https://github.com/danbri/docklandia/tree/main/data/de/stuttgart (branch places-de until the owner merges it); served at https://danbri.github.io/docklandia/data/de/stuttgart/ (same origin as the londat site)",
+      "paths": [
+        "tileset.json",
+        "tiles/<level>-<x>-<y>.glb",
+        "features.json",
+        "surround.json",
+        "sources/*.json",
+        "README.md",
+        "provenance/log.json"
+      ],
+      "what": "Mitte, Stuttgart (region config docklands/geo/regions/stuttgart.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (21124 buildings; terrain, ground texture from OSM), the city box [9.039, 48.692, 9.316, 48.866] as blocks (204859 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 66.3 MB. Read by docklands/globe/places.js (index entry stuttgart, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "overture-ms-geometry",
+        "egm96",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": [
+          "osm-api-place-stuttgart",
+          "overture-osm-stuttgart"
+        ],
+        "what": "building outlines, heights, levels, roofs, names, addresses and Wikidata ids of the core; streets, areas, points; roads, rail, water, place names and city buildings via Overture"
+      },
+      "produced_by": "tools/build-place-tiles.mjs --region stuttgart --out <docklandia>/data/de/stuttgart",
+      "fetched": "2026-10-22",
+      "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; Germany: Berlin, Stuttgart, Schloss Dagstuhl). Review with the OSM use before the prototyping phase ends",
+      "review_exit": [
+        "osm-odbl"
+      ]
+    },
+    {
+      "repo": "danbri/docklandia",
+      "path": "data/de/dagstuhl/",
+      "location": "https://github.com/danbri/docklandia/tree/main/data/de/dagstuhl (branch places-de until the owner merges it); served at https://danbri.github.io/docklandia/data/de/dagstuhl/ (same origin as the londat site)",
+      "paths": [
+        "tileset.json",
+        "tiles/<level>-<x>-<y>.glb",
+        "features.json",
+        "surround.json",
+        "sources/*.json",
+        "README.md",
+        "provenance/log.json"
+      ],
+      "what": "Schloss Dagstuhl, Wadern (region config docklands/geo/regions/dagstuhl.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (6579 buildings; terrain, ground texture from OSM), the city box [6.8, 49.47, 7.01, 49.63] as blocks (31902 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 42.1 MB. Read by docklands/globe/places.js (index entry dagstuhl, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "overture-ms-geometry",
+        "egm96",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": [
+          "osm-api-place-dagstuhl",
+          "overture-osm-dagstuhl"
+        ],
+        "what": "building outlines, heights, levels, roofs, names, addresses and Wikidata ids of the core; streets, areas, points; roads, rail, water, place names and city buildings via Overture"
+      },
+      "produced_by": "tools/build-place-tiles.mjs --region dagstuhl --out <docklandia>/data/de/dagstuhl",
+      "fetched": "2026-10-22",
+      "review": "ODbL (OSM, Overture, Microsoft ML Buildings footprints and heights; share-alike) in a set held in another repository of the owner (danbri/docklandia, its own Pages): owner 2026-10-03 (OSM), 2026-10-20 (\"Use ms/overture\"), 2026-10-22 (bulky data in docklandia; Germany: Berlin, Stuttgart, Schloss Dagstuhl). Review with the OSM use before the prototyping phase ends",
       "review_exit": [
         "osm-odbl"
       ]

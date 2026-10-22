@@ -1,5 +1,5 @@
 {
- "about": "Dataflow log of tools/build-world-base.mjs (skill cwplans-dataflow): operations, the fetches that made their inputs (summarised: count, bytes, SHA-256 of the sorted list of input hashes), one activity per run (inputs and outputs by SHA-256). The per-file fetch log stays in the raw folder.",
+ "about": "Dataflow log of tools/build-world-base.mjs (skill cwplans-dataflow): operations, the fetches that made their inputs (summarised: count, bytes, SHA-256 of the sorted list of input hashes), one activity per run (inputs and outputs by SHA-256). The per-file fetch log stays in the raw folder. Merge of 2026-10-22 (branch merge-de): the activities of two parallel builds are kept, so imagery-tiles and dem-tiles appear twice: the run of 2026-10-20 (docklands, leon, sarajevo) and the run of 2026-10-22 with berlin, stuttgart and dagstuhl added (its fetch summary under '<operation>#<activity id>'); the Dublin tiles came from imagery-tiles-add-dublin and dem-tiles-add-dublin. The tile sets of the two runs are disjoint files; base.json lists their union.",
  "operations": {
   "imagery-tiles": {
    "version": 1,
@@ -68,6 +68,29 @@
     "2026-10-22"
    ],
    "inputs_sha256": "21fe6147546b436d69f001cc6e46cd0ade7115b3c4dd414b86c169f560295e04"
+  },
+  "imagery-tiles#acta651d725bbbb872d": {
+   "inputs": 2068,
+   "bytes": 31511237,
+   "urls": [
+    "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless/default/WGS84/{z}/{row}/{col}.jpg"
+   ],
+   "fetched": [
+    "2026-10-22"
+   ],
+   "inputs_sha256": "48eb6b0b6498366b718c5c2dac5d2d2a163a5c842e51ff596d36943957571273"
+  },
+  "dem-tiles#act6ddb58de1b82d4ed": {
+   "inputs": 199,
+   "bytes": 75001344,
+   "urls": [
+    "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif",
+    "https://copernicus-dem-90m.s3.amazonaws.com/{cell}/{cell}.tif (overview 2 of 2, read by range)"
+   ],
+   "fetched": [
+    "2026-10-22"
+   ],
+   "inputs_sha256": "f2ad54949bbeaad3cab0b791fde0babacefa656521e935911eba80ba31f11f36"
   }
  },
  "activities": [
@@ -181,6 +204,69 @@
    "bytes": 333200,
    "seconds": 0,
    "at": "2026-10-22T11:46:02.849Z"
+  },
+  {
+   "id": "acta651d725bbbb872d",
+   "operation": "imagery-tiles",
+   "version": 1,
+   "inputs_sha256": "48eb6b0b6498366b718c5c2dac5d2d2a163a5c842e51ff596d36943957571273",
+   "params": {
+    "q": 70,
+    "px": 512,
+    "regions": [
+     "docklands",
+     "leon",
+     "sarajevo",
+     "berlin",
+     "stuttgart",
+     "dagstuhl"
+    ],
+    "radius_km": {
+     "5": 1500,
+     "6": 800,
+     "7": 400,
+     "8": 220,
+     "9": 100,
+     "10": 40,
+     "11": 15
+    },
+    "global_levels": 4
+   },
+   "outputs": 1949,
+   "outputs_sha256": "4585bff107ebe6d1bd3f2868118646353078e3517aef87287601bf1f4af71d12",
+   "bytes": 42593726,
+   "seconds": 22,
+   "at": "2026-10-22T11:55:56.762Z"
+  },
+  {
+   "id": "act6ddb58de1b82d4ed",
+   "operation": "dem-tiles",
+   "version": 1,
+   "inputs_sha256": "f2ad54949bbeaad3cab0b791fde0babacefa656521e935911eba80ba31f11f36",
+   "params": {
+    "grid": 35,
+    "regions": [
+     "docklands",
+     "leon",
+     "sarajevo",
+     "berlin",
+     "stuttgart",
+     "dagstuhl"
+    ],
+    "radius_km": {
+     "7": 300,
+     "8": 170,
+     "9": 80,
+     "10": 35,
+     "11": 15,
+     "12": 7
+    }
+   },
+   "outputs": 893,
+   "outputs_sha256": "9508d75caf84e92c46b1e1cfbfadf0d1d566d280256ebd416aa0a88d70bb04cc",
+   "bytes": 2187850,
+   "seconds": 1,
+   "at": "2026-10-22T11:55:58.196Z"
   }
  ]
 }

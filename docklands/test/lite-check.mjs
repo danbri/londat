@@ -21,7 +21,12 @@ const BASE = arg('--base', 'http://127.0.0.1:8195'), OUT = arg('--out', 'docklan
 const SIZES = arg('--sizes', '390x844@2').split(',').map(s => { const m = /^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(s); return [+m[1], +m[2], +m[3]]; });
 const ID = 'uk-lite', DIR = PB.replace(/\/?$/, '/'), FJ = JSON.parse(readFileSync(DIR + 'features.json', 'utf8')), F = FJ.buildings_fields, col = k => F.indexOf(k);
 FJ.buildings = (FJ.shards || []).flatMap(sh => JSON.parse(readFileSync(DIR + sh.file, 'utf8')).buildings);   // the landmark rows of every part
-const PBQ = `&placebase=${encodeURIComponent(ID + ':' + new URL(PB, BASE + '/').href)}`;
+// every other place of the index held in another repository whose local copy is beside the lite set's folder
+// (<parent>/<id>/features.json, e.g. docklands/test/out/places/berlin) is served from it too: the search reads every
+// place's features, and a set not yet deployed answers 404 (the same rule as place-check.mjs)
+const SIB = DIR.replace(/[^/]+\/$/, '');
+const PBQ = `&placebase=${encodeURIComponent(ID + ':' + new URL(PB, BASE + '/').href)}` + JSON.parse(readFileSync('cwplans/docklands/data/places/index.json', 'utf8')).places
+  .filter(q => q.tileBase && q.id !== ID && existsSync(`${SIB}${q.id}/features.json`)).map(q => `&placebase=${encodeURIComponent(q.id + ':' + new URL(`${SIB}${q.id}/`, BASE + '/').href)}`).join('');
 // the cases: the UK from 500 km; two cities from 20 km; a cathedral (the first of these that the set holds)
 const CITIES = arg('--cities') ? arg('--cities').split(';').map(c => { const [name, lon, lat] = c.split(':'); return { name, lon: +lon, lat: +lat }; }) : [{ name: 'Manchester', lon: -2.2453, lat: 53.4794 }, { name: 'Edinburgh', lon: -3.1883, lat: 55.9533 }];
 const CATHEDRAL = ['Durham Cathedral', 'York Minster', 'Manchester Cathedral', "St Giles' Cathedral", 'Lincoln Cathedral'].map(n => FJ.buildings.find(r => r[col('name')] === n)).find(Boolean);

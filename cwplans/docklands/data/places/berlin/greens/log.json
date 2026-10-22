@@ -1,0 +1,308 @@
+{
+ "about": "Build log of the water and trees of Mitte, Berlin (tools/build-place-greens.mjs)",
+ "fetches": {
+  "osm": {
+   "url": [
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.370361,52.503662,13.395081,52.514648",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.395081,52.503662,13.419800,52.514648",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.370361,52.514648,13.395081,52.525635",
+    "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.395081,52.514648,13.419800,52.525635"
+   ],
+   "fetched": "2026-10-22T13:48:00.593Z",
+   "as_fetched": [
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.370361,52.503662,13.395081,52.514648",
+     "bytes": 18600286,
+     "sha256": "3bb5b4c5161b40d3ce1415eee85fb3c13b27cbb97585c1e1d4067e6a445b2fbb"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.395081,52.503662,13.419800,52.514648",
+     "bytes": 13300917,
+     "sha256": "878ab433e3e4755e1ece3c680687e19a846ee1e8d03874077410aecfb0fefaf6"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.370361,52.514648,13.395081,52.525635",
+     "bytes": 19267460,
+     "sha256": "d2ac6a30ad456d8cae4d5dfe00643cccb7cc79186edafe1aea099f40909fd80b"
+    },
+    {
+     "url": "https://api.openstreetmap.org/api/0.6/map.json?bbox=13.395081,52.514648,13.419800,52.525635",
+     "bytes": 17539106,
+     "sha256": "93c98a846497c46c518de086de6a43d6ab28bd88261c4220e3fa4a03bdf67d3e"
+    }
+   ],
+   "elements": 211430,
+   "latest_element_timestamp": "2026-10-22T13:35:50Z",
+   "sha256": "b100e763041c8020b1dc6b413f6250064fb21868b34779a120eae8b46ca459bc",
+   "licence": "ODbL 1.0, © OpenStreetMap contributors"
+  },
+  "relations": {
+   "2178114": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/2178114/full.json",
+    "fetched": "2026-10-22T13:48:02.644Z",
+    "bytes": 78730,
+    "sha256_as_fetched": "48f6c0d40b51927191cb142e672f8c723a565ff1baadbdf6ea5148ffafea63fe"
+   },
+   "6529251": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/6529251/full.json",
+    "fetched": "2026-10-22T13:48:06.088Z",
+    "bytes": 79912,
+    "sha256_as_fetched": "46a0c8cc1b29adf33d7898d90e807a0c2d26ea13e562dfb04af997d3406851bf"
+   },
+   "7643526": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/7643526/full.json",
+    "fetched": "2026-10-22T13:48:03.831Z",
+    "bytes": 114104,
+    "sha256_as_fetched": "1814036516a3b1dcfa43eaf487603c9f655cd7ae33264c245a70da6612999ff1"
+   },
+   "7652618": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/7652618/full.json",
+    "fetched": "2026-10-22T13:48:04.952Z",
+    "bytes": 11832,
+    "sha256_as_fetched": "cf9119eb3b2598150f78403e2cc21ba5e34997573dda2cca73eb9442cf040b43"
+   },
+   "14282254": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/14282254/full.json",
+    "fetched": "2026-10-22T13:48:07.211Z",
+    "bytes": 22559,
+    "sha256_as_fetched": "ca95c6696b05e2fad65310bdd12524e0f1e919c1e56ea1ae8d87d9a3ae71ed40"
+   },
+   "15748242": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/15748242/full.json",
+    "fetched": "2026-10-22T13:48:09.463Z",
+    "bytes": 12711,
+    "sha256_as_fetched": "05aa434e00ad830c8ab734571b083e58677068df3633553dd5c98d68d00c6792"
+   },
+   "17073039": {
+    "url": "https://api.openstreetmap.org/api/0.6/relation/17073039/full.json",
+    "fetched": "2026-10-22T13:48:08.333Z",
+    "bytes": 5518,
+    "sha256_as_fetched": "10972a70324caba46b3acdf6aac16f3615aea5c742f9da03f7c5d6f6db7c47d2"
+   }
+  }
+ },
+ "activities": [
+  {
+   "activity": "7896256b4b725df3",
+   "operation": "place-greens",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-greens.mjs",
+   "inputs": [
+    {
+     "label": "OSM map.json of the area",
+     "path": "data/raw/places/berlin/greens/osm-map.json.gz",
+     "sha256": "b100e763041c8020b1dc6b413f6250064fb21868b34779a120eae8b46ca459bc"
+    },
+    {
+     "label": "OSM relation 14282254 (full)",
+     "path": "data/raw/places/berlin/greens/relation-14282254.json.gz",
+     "sha256": "b23a85a266f5e851d388ead20d9b75ce60b1990f1ede290908d2347696ef2ea8"
+    },
+    {
+     "label": "OSM relation 15748242 (full)",
+     "path": "data/raw/places/berlin/greens/relation-15748242.json.gz",
+     "sha256": "a4ba0dcec8ea075053d146064b70f0712b87cc79b607241f101f854f306b9b8f"
+    },
+    {
+     "label": "OSM relation 17073039 (full)",
+     "path": "data/raw/places/berlin/greens/relation-17073039.json.gz",
+     "sha256": "51bb9a1aeecd4530af9438e0cafe2369164732a9ec9d46e69117c4aca89bade1"
+    },
+    {
+     "label": "OSM relation 2178114 (full)",
+     "path": "data/raw/places/berlin/greens/relation-2178114.json.gz",
+     "sha256": "468396a0f61e012899467a68743dd08263a6ac8f150a77344851253d055a52f1"
+    },
+    {
+     "label": "OSM relation 6529251 (full)",
+     "path": "data/raw/places/berlin/greens/relation-6529251.json.gz",
+     "sha256": "c98adbbd2466ceb7021ab0489a885ac6755ab1650a983af94d96ca21d8184246"
+    },
+    {
+     "label": "OSM relation 7643526 (full)",
+     "path": "data/raw/places/berlin/greens/relation-7643526.json.gz",
+     "sha256": "986fdc9b03e59d5f10937bc780febd65d113a0b3f270dd7553fe44527fc83161"
+    },
+    {
+     "label": "OSM relation 7652618 (full)",
+     "path": "data/raw/places/berlin/greens/relation-7652618.json.gz",
+     "sha256": "34fc38dba674062d3dd12aee241bfa3f47ddcbc04400e6076bb892b31274c407"
+    }
+   ],
+   "params": {
+    "area": [
+     13.370361328125,
+     52.503662109375,
+     13.4197998046875,
+     52.525634765625
+    ],
+    "row_m": 8,
+    "wood_m": 12,
+    "park_m": 15,
+    "water_side_m": 25,
+    "mix": {
+     "street": [
+      [
+       "lime",
+       40
+      ],
+      [
+       "plane",
+       15
+      ],
+      [
+       "maple",
+       15
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "oak",
+       5
+      ],
+      [
+       "locust",
+       5
+      ],
+      [
+       "birch",
+       5
+      ],
+      [
+       "ash",
+       5
+      ]
+     ],
+     "park": [
+      [
+       "lime",
+       15
+      ],
+      [
+       "oak",
+       15
+      ],
+      [
+       "maple",
+       15
+      ],
+      [
+       "horse-chestnut",
+       10
+      ],
+      [
+       "beech",
+       10
+      ],
+      [
+       "plane",
+       10
+      ],
+      [
+       "pine",
+       10
+      ],
+      [
+       "birch",
+       10
+      ],
+      [
+       "ash",
+       5
+      ]
+     ],
+     "wood": [
+      [
+       "pine",
+       45
+      ],
+      [
+       "oak",
+       25
+      ],
+      [
+       "birch",
+       15
+      ],
+      [
+       "beech",
+       10
+      ],
+      [
+       "conifer",
+       5
+      ]
+     ],
+     "water": [
+      [
+       "willow",
+       40
+      ],
+      [
+       "alder",
+       30
+      ],
+      [
+       "poplar",
+       20
+      ],
+      [
+       "ash",
+       10
+      ]
+     ]
+    },
+    "about": "trees placed by rule: every wood_m in natural=wood / landuse=forest, every park_m in leisure=park and garden areas with no mapped tree inside (grass and meadow get none), on a grid jittered by a stable hash; never inside a building or water"
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/berlin/greens/greens.json",
+     "sha256": "d4bef3fa04f7661dd479a7f5331b5f2fde98946900ab7ea63256b7b181b5a06b",
+     "bytes": 609893
+    }
+   ],
+   "counts": {
+    "water_polygons": 31,
+    "trees": 8749,
+    "osm_tree": 6829,
+    "osm_tree_row": 170,
+    "rule_wood": 1232,
+    "rule_park": 518,
+    "skipped_blocked": 6,
+    "by_basis": {
+     "G": 368,
+     "M": 8269,
+     "L": 12,
+     "S": 100
+    },
+    "by_profile": {
+     "maple": 1127,
+     "oak": 897,
+     "plane": 835,
+     "lime": 2126,
+     "ash": 384,
+     "horse-chestnut": 712,
+     "broadleaf": 806,
+     "birch": 645,
+     "beech": 368,
+     "locust": 179,
+     "alder": 168,
+     "willow": 229,
+     "poplar": 107,
+     "pine": 150,
+     "conifer": 11,
+     "ginkgo": 2,
+     "apple": 1,
+     "chestnut": 1,
+     "magnolia": 1
+    },
+    "greens": 920
+   },
+   "ms": 1818,
+   "at": "2026-10-22T13:48:11.283Z"
+  }
+ ]
+}
