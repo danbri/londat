@@ -1409,6 +1409,56 @@ https://danbri.github.io/londat/cwplans/docklands/#v=1&c=1875,-1875,8,260,0.5,0.
   git); `ROOFS_DRY=1 ROOFS_MEAS=<saved lidar-roofs.py output>` to tune the rules without a log entry. Then `npm test`,
   `node cwplans/tools/check-data-register.mjs --write`, a headless load.
 
+## Building heights and big roofs by rule (2026-10-22)
+
+Owner, 2026-10-22, on big buildings drawn as flat slabs in Canada Water: "Yes, do all of London eventually". So each fix
+is a RULE over the whole model, written so that it can run over Greater London later; never a patch to one record.
+Rebuild order: build-docklands -> key-model-buildings -> **model-heights** -> build-roofs -> **roofs-refine** ->
+build-materials.
+
+- **model-heights** (`cwplans/tools/model-heights.mjs`, rule in `cwplans/tools/storey-heights.mjs`, fault F52): the
+  buildings the 2022 LiDAR did not measure (classes guess 3, levels 1, newer 4, and digs: LiDAR class, 300 m2 or more,
+  ground 3 m or more under the terrain 60 to 120 m round it). Storeys: OSM levels > photo count (`photos.json`
+  `buildings.<id>.storeys`) > construction index (one-building schemes only) > Wikidata P1101; a solved photo top
+  (`solved_top_m_od`) gives the height. Height = base + typical x (storeys - 1 + plant storeys) by use.
+- **Lesson: fit the storey height, do not assume it.** The rule fits base and typical per use (least absolute
+  deviations) to the LiDAR-measured buildings with OSM levels in the same area (13,506 here): residential 4.5 + 2.95 m,
+  office 4.4 + 4.4, mixed 5.7 + 3.3, retail 4.4 + 3.25, industrial 3.7 + 4.5, institutional 5.2 + 3.95. The CTBUH values
+  (office 3.9, residential 3.1, mixed 3.5) are only the prior: on retail and industrial they were 4 and 3.5 m too high
+  (mean error 4.1 and 3.6 m against 1.9 and 1.9 m fitted). Over a new area, refit; do not copy the numbers.
+- **Lesson: planning storeys are scheme maxima.** The construction index (PLD `building_details`) gives one storey
+  count per scheme, the tallest block ("part 3/part 5/part 6 storey", 24 storeys for a 45,534 m2 estate site). Used only
+  for a one-building scheme whose description names no part heights and whose model outline covers 30 % or more of the
+  site. Today that gives none: the 3 first matches (Padium in the 10 Bank Street site, UNCLE Deptford in The Warves, a
+  Tidemill block) were all wrong.
+- **New source code 5 `storeys`** (area.js `s`); `meta.heightRule` holds the fitted values, counts, `storeys` (index ->
+  [storeys, source]) for the card, `flagged.i` (no storeys from any source) and `before` (the old values; a run on its
+  own output restores them first, so the operation is idempotent). Cards (`building-keys.js`, `layers/keys.js`) name the
+  source; colour by source treats 5 like levels. The model fingerprint (MFP) does not change (count and outline only),
+  so roofs.json, materials.json and building-keys.json stay valid.
+- **roofs-refine** (`cwplans/tools/roofs-refine.mjs`, `lidar-roofs.py --big 4000 --big-only`): every outline of 4,000 m2
+  or more (no holes, no min_height), at any height, measured by the LiDAR, is cut by roof level: reflex corners as in
+  build-roofs, then straight chords across the outline's rectangle axes where the median roof level steps by 2 m or more
+  and the absolute deviation drops 20 % or more; up to 24 flat parts at their flat fit (90th percentile where the part
+  still mixes heights, flat-fit error over 1 m). Kept when the levels differ by 2 m and the highest keeps the model top.
+  The page draws them with the existing building-in-parts code (no page change): outer walls to each part's roof, inner
+  walls where one part stands above the next. LOD 1 and 2 of the port stay flat prisms. Second rule: no LiDAR roof row on
+  a building newer than the survey.
+- **Lesson: a chord must cross its piece exactly twice.** A level split line is a full line across the outline's
+  rectangle axis; in a concave piece it can cross four edges. `chord()` refuses those (the piece stays whole) instead of
+  guessing which pair; the reflex-corner cuts run first, so most pieces are near-convex.
+- **Limits, open.** 224 guessed buildings (6 m) and 3 digs have no storeys from any source (`meta.heightRule.flagged`):
+  among them UNCLE Deptford, Seraphina, Dockley Apartments, Padium, Shurgard Storage, Amparo House, the Grinstead Road
+  blocks. Sources to add: Overture/Microsoft heights for the box (owner approved, 2026-10-20), a photo count, PLD
+  per-building storeys. Big outlines with a courtyard (holes) are not cut (pieces() has no holes). build-materials was
+  not rerun (it needs the OSM extract): its storey classes use the old eaves until it runs.
+- **Rebuild:** `node cwplans/tools/model-heights.mjs [--dry]` (no network); `ROOFS_TILES=<dir of the 8 zips> node
+  cwplans/tools/roofs-refine.mjs` (about 2 minutes; the zips again from the EA survey service: 8 files, 525 MB, fetched
+  in 2 minutes on 2026-10-22 through the proxy, one 404 that a retry fixed). Lesson: the service makes each zip again
+  on each download (three downloads that day, three SHA-256 values a zip, the same rasters), so a zip's hash in an
+  activity cannot be checked against a new download; hash the TIFs inside when that matters. Keep the zips in the
+  ignored `cwplans/data/raw/docklands/lidar/` and delete them after the run. Tests: `cwplans/tools/test/model-heights.test.mjs`, `roofs.test.mjs`.
+
 ## Realistic look (2026-10-08)
 
 Owner, 2026-10-08 (after the headset test): "the buildings without custom models are painfully flat and samey. We

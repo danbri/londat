@@ -619,7 +619,7 @@ function buildGreens() { if (L.greens) L.greens.free(); const M = new Mesh(), T 
   L.greens = M.upload(); }
 buildGreens();
 let buildingMat = null;   // pixel art: (b, i) -> material id 0 brick, 1 render, 2 glass, 3 ribbon windows, 4 metal, 5 measured facade
-let buildingColour = (b, i) => b.s === 1 || b.s === 4 ? C.bldlv : C.bld;   // replaced by the "Colour buildings by" control
+let buildingColour = (b, i) => b.s === 1 || b.s >= 4 ? C.bldlv : C.bld;   // replaced by the "Colour buildings by" control
 // skyline year: measured heights replace the model's for buildings in docklands/data/skyline.json (null: not flown, keep)
 let SKY = null, skyIdx = -1;
 const heightOf = (b, i) => { if (!SKY || skyIdx < 0) return b.h; const v = SKY.buildings[i]; if (!v || v[skyIdx] == null) return b.h; return v[skyIdx] / 10; };
@@ -1152,7 +1152,7 @@ $('colourBy').onchange = async () => {
   const mode = $('colourBy').value;
   if (mode !== 'source' && !AT) { note('The atlas index is still loading.'); $('colourBy').value = 'source'; return; }
   if (mode === 'quality' && !qCount.size) { const { q } = await getQI(); for (const i of q.issues) if (i.ent === 'b') qCount.set(i.id, (qCount.get(i.id) || 0) + 1); }
-  if (mode === 'source') { buildingColour = (b, i) => b.s === 1 || b.s === 4 ? C.bldlv : C.bld; $('rampKey').innerHTML = ''; }
+  if (mode === 'source') { buildingColour = (b, i) => b.s === 1 || b.s >= 4 ? C.bldlv : C.bld; $('rampKey').innerHTML = ''; }
   else { const [f, max, label] = MODES[mode]; buildingColour = (b, i) => { const k = regOf[i]; if (k < 0) return [.30, .32, .35]; const v = f(AT.buildings[k]); return v ? rampCol(Math.sqrt(v / max)) : [.55, .57, .60]; };
     $('rampKey').innerHTML = `<span class="ramp" style="background:linear-gradient(90deg,#3b0f70,#8c2981,#de4968,#fe9f6d,#fcfdbf)"></span>${label} (square-root scale) · light grey: none · dark grey: no registry record (outside the Canary Wharf box)`; }
   buildBld(); draw();
@@ -2381,7 +2381,7 @@ function captureMode(on) {
   document.body.classList.toggle('capture', on); if (on) { $('showLabels').checked = false; closeSheet(); toast(''); }
   // photo style: real-looking materials, no map colour codes, no flood walls, riverbed, underground or windows grid moire
   PHOTO = on; for (const id of ['showUnder', 'showWalls', 'showBed', 'showFloors']) $(id).checked = on ? false : id !== 'showFloors';
-  $('colourBy').value = 'source'; buildingColour = on ? photoColour : (b, i) => b.s === 1 || b.s === 4 ? C.bldlv : C.bld; buildBld(); buildLines(); draw();
+  $('colourBy').value = 'source'; buildingColour = on ? photoColour : (b, i) => b.s === 1 || b.s >= 4 ? C.bldlv : C.bld; buildBld(); buildLines(); draw();
 }
 if (/[?&]capture\b/.test(location.search)) captureMode(true);
 if (/[?&]night\b/.test(location.search)) setNight(true);

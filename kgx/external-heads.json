@@ -24,5 +24,13 @@
   "store": false
  },
  "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96",
- "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384"
+ "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
+ "model-heights": {
+  "iri": "https://kgx.foaf.tv/id/graphmodelheights414e8a8eb9b988f8",
+  "store": false
+ },
+ "roofs-big": {
+  "iri": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
+  "store": false
+ }
 }

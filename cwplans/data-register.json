@@ -4341,7 +4341,7 @@
     },
     {
       "path": "docklands/data/area.js",
-      "what": "Docklands 3D model: terrain, water, greens, 41,803 buildings, railways, roads, tunnels, places, flood defences, riverbed",
+      "what": "Docklands 3D model: terrain, water, greens, 41,803 buildings, railways, roads, tunnels, places, flood defences, riverbed; the heights of the buildings the 2022 LiDAR did not measure set by the rule of tools/model-heights.mjs (storeys from OSM levels, a photo count or a solved photo top, x a storey height by use fitted to the LiDAR-measured buildings; meta.heightRule)",
       "sources": [
         "osm",
         "ea-lidar",
@@ -4349,14 +4349,15 @@
         "ea-defences",
         "ukho",
         "pla-tide-booklet",
-        "web-quotes"
+        "web-quotes",
+        "own"
       ],
       "osm": {
         "use": "derived",
         "extract": "osmfr-greater-london",
         "what": "building outlines, parts and levels, water, greens, roads, railways, tunnels, place names"
       },
-      "produced_by": "tools/osm-clip-docklands.mjs, tools/build-docklands.mjs",
+      "produced_by": "tools/osm-clip-docklands.mjs, tools/build-docklands.mjs, tools/model-heights.mjs (operation model-heights)",
       "shown_on": [
         "docklands/index.html"
       ]
@@ -7358,7 +7359,7 @@
     },
     {
       "path": "docklands/data/roofs.json",
-      "what": "roof shapes of the low model buildings of the 3D page (model height 25 m or less): gabled, hipped or pyramidal, with the ridge line (centre, bearing), half span, half ridge length, eave and ridge heights above the model ground; skillion roofs; an outline with wings (L, T, rear outriggers) cut into parts by chords from its reflex corners, a roof a part, with the run of a gable into a crossing wing (a valley); from robust plane fits to the EA LiDAR first-return DSM 2022 inside each outline or part, else from the OSM roof tags; the model fingerprint; counts by class and the OSM roof:shape against LiDAR class table",
+      "what": "roof shapes of the low model buildings of the 3D page (model height 25 m or less): gabled, hipped or pyramidal, with the ridge line (centre, bearing), half span, half ridge length, eave and ridge heights above the model ground; skillion roofs; an outline with wings (L, T, rear outriggers) cut into parts by chords from its reflex corners, a roof a part, with the run of a gable into a crossing wing (a valley); from robust plane fits to the EA LiDAR first-return DSM 2022 inside each outline or part, else from the OSM roof tags; the model fingerprint; counts by class and the OSM roof:shape against LiDAR class table; since 2026-10-22 (operation roofs-refine) the big buildings (footprint 4,000 m2 or more, any height) cut by roof level into flat parts (up to 24), and no LiDAR roof on a building newer than the survey",
       "sources": [
         "ea-lidar",
         "osm",
@@ -7369,7 +7370,7 @@
         "extract": "osmfr-greater-london",
         "what": "the building outlines (through docklands/data/area.js: the minimum-area rectangle of each outline sets the ridge direction and spans) and the tags roof:shape, roof:height, roof:levels, roof:orientation of the buildings' OSM elements (osmium tags-filter on the extract of 2026-10-07)"
       },
-      "produced_by": "tools/build-roofs.mjs (operation build-roofs) with tools/lidar-roofs.py",
+      "produced_by": "tools/build-roofs.mjs (operation build-roofs) with tools/lidar-roofs.py; tools/roofs-refine.mjs (operation roofs-refine)",
       "shown_on": [
         "docklands/index.html"
       ]
