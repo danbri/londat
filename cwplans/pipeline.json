@@ -9829,6 +9829,57 @@
    ]
   },
   {
+   "id": "model-heights",
+   "area": "buildings",
+   "tool": "tools/model-heights.mjs",
+   "command": "node cwplans/tools/model-heights.mjs [--dry]",
+   "kind": "derive",
+   "used": [
+    {
+     "file": "docklands/data/area.js"
+    },
+    {
+     "file": "docklands/data/building-keys.json"
+    },
+    {
+     "file": "tools/storey-heights.mjs"
+    },
+    {
+     "file": "registry/sources/construction/sites.json"
+    },
+    {
+     "file": "data/raw/docklands/wikidata-facts.json.gz"
+    },
+    {
+     "local": "../data/images/contrib/*/photos.json (the owner's CC0 photo sets: storeys counted, a solved top)"
+    },
+    {
+     "source": "osm"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/area.js"
+    },
+    {
+     "source": "kgx",
+     "note": "graph model-heights"
+    }
+   ],
+   "note": "skill docklands-data-curation, fault F52; skill docklands-3d-page, \"Building heights\"; logged operation model-heights, kgx graph model-heights",
+   "method": "Heights of the model buildings that the 2022 LiDAR did not measure (F52). Classes: guess (no LiDAR height, no OSM levels: 6 m), levels (OSM building:levels, no LiDAR), newer (OSM levels, the LiDAR under half of them) and dig (LiDAR class, footprint 300 m2 or more, model ground 3 m or more below the 60th percentile of the terrain 60 to 120 m round the centroid and the top under 3 m above it: the survey saw an excavation). Storeys in this order: OSM building:levels; a storey count in the owner's photo sets (photos.json buildings.<id>.storeys); the construction index (a one-building scheme of one height, Planning London Datahub storeys, status completed_recently, on_site or commenced_stale, whose model outline covers 30 % or more of the site footprint and whose description names no part heights); Wikidata P1101. Height = base + typical x (storeys - 1 + plant storeys), by use from the OSM building value (tools/storey-heights.mjs: residential, office, mixed, retail, industrial, institutional, small); base and typical fitted per use by least absolute deviations to the model buildings that the LiDAR measured and that OSM gives levels for (13,506 buildings on area.js of 2026-10-03); a use with under 30 such buildings keeps its prior (CTBUH Height Calculator storeys: office 3.9 m, residential 3.1 m, mixed 3.5 m; plant storeys every 20, 30, 25). A solved photo top (photos.json solved_top_m_od) gives the height as top minus ground. A dig gets the surrounding ground. Source code 5 (storeys) for storeys from a source other than OSM; meta.heightRule holds the rule, the fitted values, the counts, the storeys and source of each such building, the flagged buildings (no storeys from any source) and the values before (a run on its own output restores them first: idempotent).",
+   "rules": [
+    "Kinds left alone: construction, roof, bridge, ruins, ship, tunnel_shaft, elevator, proposed, demolished.",
+    "A building with no storeys from any source keeps its old value and is listed in meta.heightRule.flagged.",
+    "Rerun after build-docklands.mjs and key-model-buildings.mjs, before build-roofs.mjs; the model fingerprint (MFP) does not change."
+   ],
+   "network": false,
+   "deterministic": true,
+   "after": [
+    "key-model-buildings"
+   ]
+  },
+  {
    "id": "build-roofs",
    "area": "buildings",
    "tool": "tools/build-roofs.mjs",
@@ -9878,7 +9929,8 @@
    "deterministic": true,
    "after": [
     "key-model-buildings",
-    "fetch-raw-lidar"
+    "fetch-raw-lidar",
+    "model-heights"
    ]
   },
   {

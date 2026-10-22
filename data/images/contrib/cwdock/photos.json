@@ -456,6 +456,11 @@
     "height_source": "lidar",
     "note": "the model shows a pit: the 2022 LiDAR saw the site during excavation. The tower in photo 01 tops out at about 216 m OD (+-15 m): elevation 6.7 deg at 1.77 km from the solved camera. Fault F52."
    },
+   "solved_top_m_od": {
+    "value": 216,
+    "pm": 15,
+    "how": "photo 01 camera solve (4 tower tops, rms 2.2 px): elevation 6.7 deg at 1.77 km; the ray through the top passes 3 m from the OSM centroid; the name of the tower is a guess, its place is not"
+   },
    "identified_by": [
     "a dark tall tower in photo 01 (x 1612 to 1722 px) that no model or towers.json building explains; the ray through its top passes 3 m from the centroid of OSM way 988728458, next to 'Consort Place Marketing Suite' (way 966789110)",
     "its name is not in OSM; that it is the Consort Place tower is a guess"
@@ -814,6 +819,10 @@
     "top_m_od": 11.4,
     "height_source": "guess",
     "note": "the photo shows 6 storeys (ground floor and 5 floors, the top one a row of recessed loggias) and a roof terrace with pergolas: about 25 to 28 m, not 6 m. Fault F52."
+   },
+   "storeys": {
+    "n": 6,
+    "how": "photo 13: ground floor and 5 floors, the top one a row of recessed loggias"
    },
    "footprint": "the OSM outline wraps the base of The Founding; its face to the dock is 27.9 m (outward normal 73 deg)",
    "facade": {

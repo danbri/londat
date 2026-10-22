@@ -5,7 +5,8 @@
 // roof and ground in m OD, OSM levels, "No registry record", and the links (OSM, knowledge graph, Wikidata). A part stands
 // for its parent: every part of the building is outlined. main.js asks the card hooks in layer order, so the registry
 // card (layers/registry.js) comes first. Skill: docklands-3d-page, "Building keys" and "Three.js port".
-const SRC = ['LiDAR (EA, 2022)', 'OSM levels', 'OSM height or Wikidata', 'a guess', 'OSM levels (newer than the LiDAR)'];
+const SRC = ['LiDAR (EA, 2022)', 'OSM levels x storey height by use', 'OSM height or Wikidata', 'a guess: no LiDAR, no storeys', 'OSM levels x storey height by use (newer than the LiDAR)', 'storeys from a dated source x storey height by use'];
+const ST = { 'photo-count': 'counted in a contributed photo', 'photo-solve': 'top solved from a contributed photo', 'construction-index': 'the construction index (planning)', 'wikidata-p1101': 'Wikidata floors' };
 
 export default {
   id: 'keys', label: null, on: true,
@@ -46,7 +47,7 @@ export default {
       const name = nameOf(id) || f.a || (typeOf(f.b) ? typeOf(f.b)[0].toUpperCase() + typeOf(f.b).slice(1) : 'Building');
       return `<h2>${esc(name)}</h2><p class="small">OSM ${id[0] === 'r' ? 'relation' : 'way'} ${esc(id.slice(1))}${typeOf(f.b) ? ' · ' + esc(typeOf(f.b)) : ''}${idx.length > 1 ? ` · ${idx.length} parts in the model` : ''}</p>
         ${f.a || f.pc ? `<p class="small">Address: ${esc([f.a, f.pc].filter(Boolean).join(', '))}</p>` : ''}
-        <p class="small">Height: 3D model ${Math.round((top - ground) * 10) / 10} m above the ground (${esc(SRC[b.s] || 'unknown')}) · roof ${Math.round(top)} m OD · ground ${ground} m OD${f.l ? ` · ${esc(f.l)} levels (OSM)` : ''}</p>
+        <p class="small">Height: 3D model ${Math.round((top - ground) * 10) / 10} m above the ground (${esc(SRC[b.s] || 'unknown')}${(st => st ? `: ${st[0] ? st[0] + ' storeys, ' : ''}${ST[st[1]] || st[1]}` : '')(A.meta.heightRule?.storeys?.[i])}) · roof ${Math.round(top)} m OD · ground ${ground} m OD${f.l ? ` · ${esc(f.l)} levels (OSM)` : ''}</p>
         <p class="small">No registry record: the registry covers the Canary Wharf box. Facts from OpenStreetMap (© OpenStreetMap contributors, ODbL). Model index ${i}.</p>
         <p class="small"><a href="${osmUrl(id)}" target="_blank" rel="noopener">OSM</a> · <a href="${CW}kg/#e=id:osm${esc(id)}">knowledge graph</a>${f.wd ? ` · <a href="https://www.wikidata.org/wiki/${esc(f.wd)}" target="_blank" rel="noopener">Wikidata</a>` : ''} · <a href="${ctx.WEBGL}#v=1&id=osm:${esc(id)}">open in the WebGL page</a></p>`;
     }

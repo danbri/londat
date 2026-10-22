@@ -120,7 +120,7 @@ export function buildBuildings(opts = {}) {
   const tiles = new Map(), tileOf = (x, z) => { const k = tileKey(x, z); if (!tiles.has(k)) { const M = new MeshF(); M.key = k; tiles.set(k, M); } return tiles.get(k); };
   const towerOf = new Map(); for (const t of opts.towers || []) for (const mi of t.model_buildings) towerOf.set(mi, t);
   const RF = opts.roofs, LK = opts.look, R = globalThis.DocklandsRoofs, helpers = { dec, shade, earcut };
-  const colourOf = (b, i) => (opts.colourOf && opts.colourOf(b, i)) || (LK ? [1, 1, 1] : (b.s === 1 || b.s === 4 ? C.bldlv : C.bld)), hOf = (b, i) => opts.heightOf ? opts.heightOf(b, i) : b.h;
+  const colourOf = (b, i) => (opts.colourOf && opts.colourOf(b, i)) || (LK ? [1, 1, 1] : (b.s === 1 || b.s >= 4 ? C.bldlv : C.bld)), hOf = (b, i) => opts.heightOf ? opts.heightOf(b, i) : b.h;
   // a photo facade tile (opts.facadeOf(i) -> slot or null; index.html facSlot): colour 0.9, alpha 100 + slot, not painted by the look;
   // none while a layer colours or re-heights the buildings (skyline years)
   const facOf = i => opts.facadeOf && !opts.heightOf && !opts.colourOf ? opts.facadeOf(i) : null;

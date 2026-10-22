@@ -4341,7 +4341,7 @@
     },
     {
       "path": "docklands/data/area.js",
-      "what": "Docklands 3D model: terrain, water, greens, 41,803 buildings, railways, roads, tunnels, places, flood defences, riverbed",
+      "what": "Docklands 3D model: terrain, water, greens, 41,803 buildings, railways, roads, tunnels, places, flood defences, riverbed; the heights of the buildings the 2022 LiDAR did not measure set by the rule of tools/model-heights.mjs (storeys from OSM levels, a photo count or a solved photo top, x a storey height by use fitted to the LiDAR-measured buildings; meta.heightRule)",
       "sources": [
         "osm",
         "ea-lidar",
@@ -4349,14 +4349,15 @@
         "ea-defences",
         "ukho",
         "pla-tide-booklet",
-        "web-quotes"
+        "web-quotes",
+        "own"
       ],
       "osm": {
         "use": "derived",
         "extract": "osmfr-greater-london",
         "what": "building outlines, parts and levels, water, greens, roads, railways, tunnels, place names"
       },
-      "produced_by": "tools/osm-clip-docklands.mjs, tools/build-docklands.mjs",
+      "produced_by": "tools/osm-clip-docklands.mjs, tools/build-docklands.mjs, tools/model-heights.mjs (operation model-heights)",
       "shown_on": [
         "docklands/index.html"
       ]

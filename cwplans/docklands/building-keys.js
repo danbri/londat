@@ -6,7 +6,8 @@
 (() => {
   const C = () => globalThis.DocklandsKeysCtx;
   const K = { data: null, ids: null, by: null, parts: null, ok: false, sel: null, loading: null };
-  const SRC = ['LiDAR (EA, 2022)', 'OSM levels', 'OSM height or Wikidata', 'a guess', 'OSM levels (newer than the LiDAR)'];
+  const SRC = ['LiDAR (EA, 2022)', 'OSM levels x storey height by use', 'OSM height or Wikidata', 'a guess: no LiDAR, no storeys', 'OSM levels x storey height by use (newer than the LiDAR)', 'storeys from a dated source x storey height by use'];
+  const ST = { 'photo-count': 'counted in a contributed photo', 'photo-solve': 'top solved from a contributed photo', 'construction-index': 'the construction index (planning)', 'wikidata-p1101': 'Wikidata floors' };
   function load() {
     return K.loading ||= fetch('data/building-keys.json').then(r => { if (!r.ok) throw new Error('building-keys.json ' + r.status); return r.json(); }).then(d => {
       const c = C(); K.data = d; K.ids = d.ids.split(','); K.ok = !!d.model && d.model.fp === c.MFP && K.ids.length === c.A.buildings.length;
@@ -37,7 +38,7 @@
     const parts = idx.length > 1 ? `${idx.length} parts in the model` : '', fac = c.facadeOf(idx), dm = c.modelOf ? c.modelOf(idx) : null;
     c.info.innerHTML = `<b>${esc(name)}</b> <span class="small">OSM ${id[0] === 'r' ? 'relation' : 'way'} ${esc(id.slice(1))}${typeOf(f.b) ? ' · ' + esc(typeOf(f.b)) : ''}${parts ? ' · ' + parts : ''}</span>
       ${f.a || f.pc ? `<div class="small">Address: ${esc([f.a, f.pc].filter(Boolean).join(', '))}</div>` : ''}
-      <div class="small">Height: 3D model ${Math.round((top - ground) * 10) / 10} m above the ground (${esc(SRC[b.s] || 'unknown')}) · roof ${Math.round(top)} m OD · ground ${ground} m OD${f.l ? ` · ${esc(f.l)} levels (OSM)` : ''}</div>
+      <div class="small">Height: 3D model ${Math.round((top - ground) * 10) / 10} m above the ground (${esc(SRC[b.s] || 'unknown')}${(st => st ? `: ${st[0] ? st[0] + ' storeys, ' : ''}${ST[st[1]] || st[1]}` : '')(c.A.meta.heightRule?.storeys?.[i])}) · roof ${Math.round(top)} m OD · ground ${ground} m OD${f.l ? ` · ${esc(f.l)} levels (OSM)` : ''}</div>
       ${dm ? `<div class="small">Detailed model: ${dm.parts.length} parts, ${dm.triangles.toLocaleString()} triangles, top ${dm.top_m_od} m OD, made ${esc(dm.made)} from a contributed photo and the LiDAR (<a href="https://github.com/danbri/londat/blob/main/${esc(dm.source.description)}" target="_blank" rel="noopener">evidence</a> · <a href="https://github.com/danbri/londat/blob/main/${esc(dm.source.glb)}" target="_blank" rel="noopener">glTF file</a>). Layers &gt; Show &gt; Detailed models.</div>` : ''}
       ${fac ? `<div class="small">Facade: ${esc(fac.what || 'a tile from a photo')}${fac.page ? ` (<a href="${esc(fac.page)}" target="_blank" rel="noopener">photos</a>)` : ''}</div>` : ''}
       <div class="small">No registry record: the registry covers the Canary Wharf box. Facts from OpenStreetMap (© OpenStreetMap contributors, ODbL).</div>
