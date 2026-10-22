@@ -11161,6 +11161,10 @@
   {
    "tool": "tools/place-lite.mjs",
    "provides": "The UK lite set (place kind \"lite\"): part assignment of a building to an ONS region or country polygon (London left out; nearest part within 250 m; never the Republic of Ireland), the landmark rule (OSM wikidata or wikipedia tag, notable kind, named and 25 m or taller or 3,000 m2 or bigger) with its reason, and the merge square of a building (200 m in towns, 400 m elsewhere, coarser per level). Used by build-place-tiles.mjs operations place-lite-select and place-lite-tiles."
+  },
+  {
+   "tool": "tools/place-lite-heights.mjs",
+   "provides": "Landmark heights of the UK lite set (operation place-lite-landmark-heights): OSM building parts (Overture building_part) that rise at least max(3 m, 15 %) above the landmark body become their own blocks; Wikidata P2048 (CC0, current statements only) adds a spire on the tallest part, or a tower at the centroid when there is no tall part. Used by build-place-tiles.mjs."
   }
  ],
  "tests": [
@@ -11231,6 +11235,10 @@
   {
    "tool": "tools/test/place-lite.test.mjs",
    "what": "Tests (node --test) of tools/place-lite.mjs: the part assignment (ONS regions without London, nearest part within 250 m, never the Republic of Ireland), the landmark rule and its reasons, the merge square rule (200 m in towns, 400 m elsewhere, coarser per level); with UK_LITE_DIR set, the built set in danbri/docklandia (sizes, counts, no landmark in London)."
+  },
+  {
+   "tool": "tools/test/place-lite-heights.test.mjs",
+   "what": "Tests (node --test) of tools/place-lite-heights.mjs: OSM building parts that rise above the landmark body become their own blocks; Wikidata P2048 heights (statements with an end time or a deprecated rank left out) add a spire on the tallest part or a tower at the centroid; counts by source."
   },
   {
    "tool": "tools/test/place-landmarks.test.mjs",

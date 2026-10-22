@@ -258,9 +258,9 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const k = q.inst.t.length / 3, T = q.inst.t, S = q.inst.s, L = meta?.boxes, HS = meta?.height_sources || [];
     const C = new Float32Array(k * 4), R = new Float32Array(k * 4), M = new Float32Array(k * 4), K = new Float32Array(k * 4);
     for (let i = 0; i < k; i++) {
-      const h = S[3 * i + 1], area = S[3 * i] * S[3 * i + 2], src = L ? HS[L.s[i]] : '', f = blockFacts(p, key + ':' + i, h, area, src);
+      const hs = S[3 * i + 1], h = L?.h?.[i] != null ? L.h[i] / 10 : hs, area = S[3 * i] * S[3 * i + 2], src = L ? HS[L.s[i]] : '', f = blockFacts(p, key + ':' + i, h, area, src);   // (the facade style from the block's own height; the box also reaches drop_m into the ground)
       C.set([f.wall[0] / 255, f.wall[1] / 255, f.wall[2] / 255, (132 + f.code) / 255], 4 * i); R.set([f.roof[0] / 255, f.roof[1] / 255, f.roof[2] / 255, 0], 4 * i); M.set([f.map[0] / 255, f.map[1] / 255, f.map[2] / 255, 0], 4 * i);
-      const base = T[3 * i + 1] + PLACE_OFF; K.set([T[3 * i], T[3 * i + 2], base, f.use * 1000 + Math.min(999, Math.max(0, base + h))], 4 * i);
+      const base = T[3 * i + 1] + PLACE_OFF; K.set([T[3 * i], T[3 * i + 2], base, f.use * 1000 + Math.min(999, Math.max(0, base + hs))], 4 * i);
     }
     const g = mesh.geometry;
     g.setAttribute('col', new THREE.InstancedBufferAttribute(C, 4)); g.setAttribute('rcol', new THREE.InstancedBufferAttribute(R, 4)); g.setAttribute('mcol', new THREE.InstancedBufferAttribute(M, 4)); g.setAttribute('gk', new THREE.InstancedBufferAttribute(K, 4));

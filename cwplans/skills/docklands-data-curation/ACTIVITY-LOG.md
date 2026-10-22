@@ -3323,3 +3323,33 @@ landmarks.json, absolute URLs under the tileBase).
 - Sizes: core 17.7 MB, city 60.2 MB, surroundings 17.4 MB, features.json 3.56 MB, the rest 5.4 MB (105.7 MB).
 - Merge order: docklandia place-dublin first (else the live index entry gives 404s), then londat.
 - Details and traps: skill docklands-3d-page, "Three.js port: Dublin, a place held in docklandia (2026-10-22)".
+## 2026-10-22: the UK lite set, version 2 (one box a building at the leaves)
+
+Owner, 2026-10-22, with a screenshot of York from 1.1 km (https://danbri.github.io/londat/docklands/?ll=53.9620,-1.0793,1100&ht=0,60 ):
+"re UK something is wrong, UK data looks like literal tiles". Cause: the leaves drew one merged box a 200 m or 400 m
+square. Now every non-landmark building (OSM and Microsoft, 20 m2 or more; 22,661,675) is its own box at its true
+centroid with its footprint area, the angle and aspect of its minimum rotated rectangle and its height; landmarks keep
+their outlines; coarse levels keep merged squares (200 m to 1.6 km) turned to the grain of their buildings.
+- Fetch: all 11 Overture parts again (the raw answers were gone): 39,598,169 rows, 12.7 GB, with the rotated rectangle
+  (`o`) from DuckDB (fetch-overture-theme.py slim mode). Raw answers deleted after each select (--clean-raw).
+- Operations: place-lite-select 2 (11 activities: one 20-byte record a mass building), place-lite-tiles 3 (compact
+  layout cwplans-boxes-1, 8 bytes a box; ground grid 17 x 17 a tile). Superseded activities pruned from the set's log.
+- Size: 292.7 MB (was 146.4 MB): leaves 252.1 MB, levels 10 to 7: 14.3, 6.2, 2.4, 0.8 MB; landmarks 53.6 MB.
+- Reader: places.js `compactInto` (compact boxes -> instances, with class, height, source for the card and describeView),
+  a "Building" card; describeView counts `building_boxes`; place-look.js facade style from the box's own height.
+- Checks: npm run check passed; npm test passed (new tests: records, compact boxes decoded as the reader does, squares);
+  lite-check (new York 1.1 km check: 68,650 building boxes; a tap gives the Building card) all passed.
+- Data: danbri/docklandia data/gb/uk-lite/ on branch uk-lite-2 of a clone (not pushed). Details: skill
+  docklands-3d-page, "The UK lite set, version 2: one box a building at the leaves (2026-10-22)".
+
+## 2026-10-22: UK lite set, landmark heights (towers and spires)
+
+Owner, 2026-10-22, to "should I improve the landmark heights next, with OSM spire and tower parts or the heights in
+Wikidata?": "Yes do that". New operation place-lite-landmark-heights 1 (cwplans/tools/place-lite-heights.mjs) and
+place-lite-tiles 4. Inputs: OSM building:part heights via Overture's building_part theme (26,690 parts in the UK box,
+joined by building_id) and Wikidata P2048 (QLever Wikidata, 69,053 items, 323 statements; ended and deprecated statements
+left out: Lincoln's 159.7 m spire fell in 1548). Rule in the set's README. 490 landmarks with parts drawn (2,700 parts),
+88 Wikidata towers, 2 Wikidata spires. Salisbury 123 m, Liverpool Cathedral 100 m, Norwich 96, Lincoln 80, Durham 66,
+York Minster 63, Blackpool Tower 158 m. Card row "Highest point"; describeView tallest by the highest point. Register:
+extract overture-osm-uk-building-parts, source wikidata on the set. Set 294.8 MB. Checks: npm run check, npm test,
+lite-check (new: cathedral heights over 60 m, the card's highest point) all passed. Fault F55 stays for the bodies.

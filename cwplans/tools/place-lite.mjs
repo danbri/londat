@@ -9,8 +9,15 @@
 //   liteSelector(opt)      Overture rows (slim NDJSON) of one part -> atoms (200 m squares of the leaf cells: summed
 //                          footprint, area-weighted centroid and height, counts by geometry class) and landmarks
 //   mergeItems(...)        items -> one item per square of a cell (the coarse levels' input)
-//   townSize(...)          the leaf rule: 200 m squares where a 400 m square is a town, else 400 m
-// Tiles are written by place-blocks.mjs blockTile (one box a square; landmarks as outlines with their feature id).
+//   townSize(...)          the leaf rule of place-lite-tiles 2: 200 m squares where a 400 m square is a town, else 400 m
+//   (since 2026-10-22, place-lite-select 2 and place-lite-tiles 3; owner: "UK data looks like literal tiles")
+//   recs / REC / HSRC      every mass building as one fixed 20-byte record (centroid, area, height, orientation, aspect,
+//                          footprint class, height source), sorted by leaf cell: the leaves draw one box a building
+//   compactBoxes(...)      boxes (buildings or merged squares) of one tile in the compact layout cwplans-boxes-1 (8 bytes
+//                          a box in the tile frame) with a ground grid; read by docklands/globe/places.js
+//   squaresOf(...)         records or items -> one item per square of merge_m in a cell (the coarse levels' input)
+// Tiles are written by place-blocks.mjs blockTile (landmarks as outlines with their feature id, landmark boxes) with the
+// compact boxes appended (opt.compact).
 // Skill: docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
 import { D2R } from '../../docklands/geo/ellipsoid.js';
 import { cellBox, inRing } from './place-blocks.mjs';
@@ -71,8 +78,23 @@ export function tagIndex(tsv) {
 // raster_min_m }
 const SMALL = new Set(['garage', 'garages', 'shed', 'kiosk', 'hut', 'carport', 'toilets', 'service', 'cabin', 'bunker', 'transformer_tower', 'roof', 'container', 'stable']);
 const MEASURED = new Set(['osm-height', 'osm-levels', 'ms', 'overture-height', 'overture-floors']);
+// the height sources of a building record (index = the record's byte 13)
+export const HSRC = ['osm-height', 'osm-levels', 'ms', 'overture-height', 'overture-floors', 'default-small', 'ghsl', 'default'];
+// one mass building: int32 lon x 1e7, int32 lat x 1e7, float32 footprint area m2, uint16 height dm, uint8 angle of the long
+// side (256 steps of a half turn, from east toward north), uint8 aspect code (long / short = 2^(code / 32)), uint8 class
+// (0 OpenStreetMap, 1 Microsoft), uint8 height source (HSRC), 2 bytes 0; little-endian
+export const REC = 20;
+export const recAt = (buf, i) => { const o = i * REC; return { lon: buf.readInt32LE(o) / 1e7, lat: buf.readInt32LE(o + 4) / 1e7, a: buf.readFloatLE(o + 8), h: buf.readUInt16LE(o + 12) / 10, ang: buf[o + 14] * 180 / 256, asp: 2 ** (buf[o + 15] / 32), cls: buf[o + 16], src: buf[o + 17] }; };
 export function liteSelector(opt) {
   const counts = {}, inc = (k, n = 1) => { counts[k] = (counts[k] || 0) + n; };
+  // the records of the mass buildings (growable), written sorted by leaf cell (then input order: Overture id)
+  let cap = 1 << 16, nr = 0, RB = Buffer.alloc(cap * REC), RK = new Float64Array(cap);
+  const push = (c, a, h, o, cls, src) => {
+    if (nr === cap) { cap *= 2; const b = Buffer.alloc(cap * REC); RB.copy(b); RB = b; const k = new Float64Array(cap); k.set(RK); RK = k; }
+    const off = nr * REC, cs = 180 / 2 ** opt.level; RB.writeInt32LE(Math.round(c[0] * 1e7), off); RB.writeInt32LE(Math.round(c[1] * 1e7), off + 4); RB.writeFloatLE(a, off + 8); RB.writeUInt16LE(Math.min(65535, Math.round(h * 10)), off + 12);
+    const ang = o ? ((o[0] % 180) + 180) % 180 : 0, asp = o && o[2] > 0 ? o[1] / o[2] : 1;
+    RB[off + 14] = Math.round(ang / 180 * 256) & 255; RB[off + 15] = Math.max(0, Math.min(255, Math.round(Math.log2(Math.max(1, asp)) * 32))); RB[off + 16] = cls === 'ms' ? 1 : 0; RB[off + 17] = Math.max(0, HSRC.indexOf(src));
+    RK[nr] = Math.floor((c[0] + 180) / cs) * 1e6 + Math.floor((c[1] + 90) / cs); nr++; };
   const atoms = new Map(), landmarks = [], R = opt.rule, cs = 180 / 2 ** opt.level;
   const hsrc = {}, geo = { osm: { buildings: 0, area_m2: 0 }, ms: { buildings: 0, area_m2: 0 } };
   const srcOf = (r, prop) => { const x = r.sources.find(q => q.property === '/properties/' + prop) || r.sources.find(q => !q.property) || r.sources[0]; return x ? [x.dataset, x.license || ''] : [null, null]; };
@@ -123,6 +145,7 @@ export function liteSelector(opt) {
     const i = Math.floor((c[0] - b[0]) * mLon / opt.atom_m), j = Math.floor((c[1] - b[1]) * mLat / opt.atom_m), key = ((x * 4096 + y) * 64 + i) * 64 + j;
     let A = atoms.get(key); if (!A) atoms.set(key, A = [x, y, i, j, 0, 0, 0, 0, 0, 0, 0]);
     A[4] += r.a; A[5] += r.a * c[0]; A[6] += r.a * c[1]; A[7] += r.a * h; A[8]++; if (cls === 'ms') { A[9]++; A[10] += r.a; }
+    push(c, r.a, h, r.o, cls, src); if (!r.o) inc('mass buildings without a rotated rectangle (drawn square)');
     inc('mass buildings');
   }
   // atoms: [x, y, i, j, area m2, lon, lat (area-weighted centroid), height (area-weighted mean), buildings, of them
@@ -130,7 +153,9 @@ export function liteSelector(opt) {
   const done = () => { const out = [...atoms.entries()].sort((a, b) => a[0] - b[0]).map(([, A]) => [A[0], A[1], A[2], A[3], Math.round(A[4] * 10) / 10, r6(A[5] / A[4]), r6(A[6] / A[4]), Math.round(A[7] / A[4] * 10) / 10, A[8], A[9], Math.round(A[10])]);
     landmarks.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
     for (const g of Object.values(geo)) g.area_m2 = Math.round(g.area_m2);
-    return { atoms: out, landmarks, counts, height_sources: hsrc, geometry: geo }; };
+    const ord = Array.from({ length: nr }, (_, i) => i).sort((a, b) => (RK[a] - RK[b]) || (a - b)), recs = Buffer.alloc(nr * REC);
+    ord.forEach((i, k) => RB.copy(recs, k * REC, i * REC, (i + 1) * REC));
+    return { atoms: out, recs, landmarks, counts, height_sources: hsrc, geometry: geo }; };
   return { add, done };
 }
 
@@ -147,9 +172,82 @@ export function townSize(atoms, P) {
 export function mergeItems(items, b, M) {
   const mLon = 111320 * Math.cos((b[1] + b[3]) / 2 * D2R), mLat = 110574, sq = new Map();
   for (const it of items) { const k = Math.floor((it.c[0] - b[0]) * mLon / M) + ',' + Math.floor((it.c[1] - b[1]) * mLat / M);
-    const q = sq.get(k) || sq.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0, nms: 0 }).get(k); q.a += it.a; q.x += it.a * it.c[0]; q.y += it.a * it.c[1]; q.h += it.a * it.H.h; q.n += it.n || 1; q.nms += it.nms || 0; }
-  return [...sq.entries()].sort((a, b2) => a[0] < b2[0] ? -1 : a[0] > b2[0] ? 1 : 0).map(([k, q]) => ({ id: 'm' + M + ':' + k, a: q.a, c: [q.x / q.a, q.y / q.a], H: { h: q.h / q.a, src: 'merged' }, n: q.n, nms: q.nms }));
+    const q = sq.get(k) || sq.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0, nms: 0, ox: 0, oy: 0 }).get(k); q.a += it.a; q.x += it.a * it.c[0]; q.y += it.a * it.c[1]; q.h += it.a * it.H.h; q.n += it.n || 1; q.nms += it.nms || 0; q.ox += it.ox || 0; q.oy += it.oy || 0; }
+  return [...sq.entries()].sort((a, b2) => a[0] < b2[0] ? -1 : a[0] > b2[0] ? 1 : 0).map(([k, q]) => ({ id: 'm' + M + ':' + k, a: q.a, c: [q.x / q.a, q.y / q.a], H: { h: q.h / q.a, src: 'merged' }, n: q.n, nms: q.nms, ox: q.ox, oy: q.oy }));
 }
 
 // in a ring list (a polygon with holes), by the even-odd rule
 export const inPolygon = (p, P) => inRing(p, P[0]) && !P.slice(1).some(h => inRing(p, h));
+
+// ---------- compact boxes, layout cwplans-boxes-1 (place-lite-tiles 3): the boxes of one tile in the tile's frame F (the
+// enuFrame of blockTile; glTF y up: x east, y up, z = -north). 8 bytes a box, little-endian: int16 east, int16 north (units
+// q m), uint8 footprint area code (area = 2^(code / 10) m2), uint8 height code (HDEC: 0.25 m steps to 50 m, then 5 m),
+// uint8 angle of the long side (256 steps of a half turn, from east toward north), uint8 flags (bits 0-3: aspect,
+// long / short = 2^(k / 3); bit 4: footprint class, 0 OpenStreetMap, 1 Microsoft; bits 5-7: height source, HSRC).
+// Box: long side sqrt(area x aspect), short side sqrt(area / aspect) (so the box keeps the footprint's area), from
+// ground - drop_m to ground + height. Ground: a grid of n x n int16 (decimetres of the frame's up) over east e0 .. e0 +
+// de (n - 1), north n0 .. n0 + dn (n - 1), row by row from the south; bilinear. Read by docklands/globe/places.js.
+export const TILE_EXTRAS = 'glb extras.blocks: classes (labels by class index), height_sources (labels), boxes (the landmark boxes, then the compact boxes as the reader appends them: c class index, h height in decimetres, s height-source index, f the features.json row of a landmark drawn as a box, -1 otherwise), outlines (none in a lite set), named (the features.json rows drawn as outlines, _FEATURE_ID_0), mass_buildings (the buildings the merged squares stand for), compact (the compact boxes: compact)';
+export const COMPACT_ABOUT = { layout: 'cwplans-boxes-1', where: 'glb extras.blocks.compact: bufferView (8 bytes a box), grid.bufferView (n x n int16)', box: 'int16 east, int16 north (x q m, in the tile frame), uint8 area code, uint8 height code, uint8 angle code, uint8 flags; little-endian',
+  area_code: 'footprint area m2 = 2^(code / 10)', height_code: 'code <= 200: code / 4 m; else 50 + (code - 200) x 5 m', angle_code: 'angle of the long side = code x 180 / 256 degrees, from east toward north',
+  flags: 'bits 0-3 aspect k (long / short = 2^(k / 3)), bit 4 footprint class (0 OpenStreetMap, 1 Microsoft), bits 5-7 height source (height_sources)', sides: 'long = sqrt(area x aspect), short = sqrt(area / aspect)',
+  ground: 'grid of n x n int16 decimetres of the tile frame\'s up over east e0 + i de, north n0 + j dn (rows from the south), bilinear; a box stands from ground - drop_m to ground + height',
+  kinds: { buildings: 'one box a building (leaves; class from the flags)', squares: 'one box a square of merged buildings (coarse levels; aspect 1, turned to the grain of its buildings, flags 0)' }, height_sources: HSRC };
+export const HCODE = h => h <= 50 ? Math.max(0, Math.round(h * 4)) : Math.min(255, 200 + Math.round((h - 50) / 5));
+export const HDEC = c => c <= 200 ? c / 4 : 50 + (c - 200) * 5;
+export const ACODE = a => Math.max(0, Math.min(255, Math.round(Math.log2(Math.max(1, a)) * 10)));
+// boxes: [{ lon, lat, a (m2), asp (long / short), ang (degrees from east toward north), h (m), cls (0, 1), src (HSRC index) }]
+// groundAt(lon, lat): orthometric; geoidAt(lon, lat): geoid height (ellipsoidal = orthometric + geoid)
+export function compactBoxes({ F, b, boxes, groundAt, geoidAt, drop_m, grid_n = 17, kind, colour }) {
+  const ell = (lon, lat) => groundAt(lon, lat) + geoidAt(lon, lat);
+  // the cell's extent in the frame (corners and edge middles), 60 m margin for boxes whose centroid is near the edge
+  let e0 = Infinity, e1 = -Infinity, n0 = Infinity, n1 = -Infinity;
+  for (const lon of [b[0], (b[0] + b[2]) / 2, b[2]]) for (const lat of [b[1], (b[1] + b[3]) / 2, b[3]]) { const [E, N] = F.toEnu(lon, lat, 0); e0 = Math.min(e0, E); e1 = Math.max(e1, E); n0 = Math.min(n0, N); n1 = Math.max(n1, N); }
+  e0 -= 60; n0 -= 60; e1 += 60; n1 += 60;
+  const n = grid_n, de = (e1 - e0) / (n - 1), dn = (n1 - n0) / (n - 1), grid = Buffer.alloc(n * n * 2), gv = new Float64Array(n * n);
+  let emin = Infinity, emax = -Infinity;
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const E = e0 + i * de, N = n0 + j * dn, g = F.fromEnu(E, N, 0), h = ell(g.lon, g.lat), U = F.toEnu(g.lon, g.lat, h)[2];
+    const v = Math.max(-32767, Math.min(32767, Math.round(U * 10))); grid.writeInt16LE(v, 2 * (j * n + i)); gv[j * n + i] = v / 10; emin = Math.min(emin, h); emax = Math.max(emax, h); }
+  const q = Math.max(Math.abs(e0), Math.abs(e1), Math.abs(n0), Math.abs(n1)) / 32000, data = Buffer.alloc(boxes.length * 8);
+  let hmax = 0, k = 0; const st = { boxes: boxes.length, by_class: [0, 0], by_src: new Array(8).fill(0) };
+  for (const x of boxes) {
+    const [E, N] = F.toEnu(x.lon, x.lat, 0), o = 8 * k++;
+    data.writeInt16LE(Math.max(-32767, Math.min(32767, Math.round(E / q))), o); data.writeInt16LE(Math.max(-32767, Math.min(32767, Math.round(N / q))), o + 2);
+    data[o + 4] = ACODE(x.a); data[o + 5] = HCODE(x.h); data[o + 6] = Math.round((((x.ang % 180) + 180) % 180) / 180 * 256) & 255;
+    data[o + 7] = Math.max(0, Math.min(15, Math.round(Math.log2(Math.max(1, x.asp)) * 3))) | ((x.cls & 1) << 4) | ((x.src & 7) << 5);
+    hmax = Math.max(hmax, HDEC(data[o + 5])); st.by_class[x.cls & 1]++; st.by_src[x.src & 7]++;
+  }
+  // (the layout is described once in features.json, lite.compact: COMPACT_ABOUT; a tile carries its numbers only)
+  const meta = { layout: 'cwplans-boxes-1', kind, count: boxes.length, q: +q.toPrecision(8), drop_m, ...(colour ? { colour } : {}), height_sources: HSRC,
+    grid: { n, e0: +e0.toFixed(3), n0: +n0.toFixed(3), de: +de.toFixed(4), dn: +dn.toFixed(4), unit_m: 0.1 } };
+  return { data, grid, meta, zmin: emin - drop_m - 1, zmax: emax + hmax + 1, stats: st };
+}
+
+// ---------- the mass of a leaf cell (ranges [buffer, first, end] of REC records) as one item per square of M metres (the
+// coarse levels' input; as mergeItems)
+export function recSquares(ranges, b, M) {
+  const mLon = 111320 * Math.cos((b[1] + b[3]) / 2 * D2R), mLat = 110574, sq = new Map();
+  for (const [B, s0, s1] of ranges) for (let i = s0; i < s1; i++) { const o = i * REC, lon = B.readInt32LE(o) / 1e7, lat = B.readInt32LE(o + 4) / 1e7, a = B.readFloatLE(o + 8), h = B.readUInt16LE(o + 12) / 10, ms = B[o + 16], t4 = B[o + 14] / 256 * 4 * Math.PI;
+    const k = Math.floor((lon - b[0]) * mLon / M) + ',' + Math.floor((lat - b[1]) * mLat / M);
+    const q = sq.get(k) || sq.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0, nms: 0, ox: 0, oy: 0 }).get(k); q.a += a; q.x += a * lon; q.y += a * lat; q.h += a * h; q.n++; q.nms += ms; q.ox += a * Math.cos(t4); q.oy += a * Math.sin(t4); }
+  return [...sq.entries()].sort((a, b2) => a[0] < b2[0] ? -1 : a[0] > b2[0] ? 1 : 0).map(([k, q]) => ({ id: 'm' + M + ':' + k, a: q.a, c: [q.x / q.a, q.y / q.a], H: { h: q.h / q.a, src: 'merged' }, n: q.n, nms: q.nms, ox: q.ox, oy: q.oy }));
+}
+// merged items of a cell -> square boxes (the rule of blockTile's merged boxes: the side grows with the built share of the
+// square, full at `full`; the centre moves from the area-weighted centre to the square's centre as it grows). The box is
+// turned to the grain of its buildings (the area-weighted mean of 4 x their angles, a square repeating every quarter turn),
+// so a town seen from far does not read as a grid of tiles (owner, 2026-10-22: "UK data looks like literal tiles")
+export function squareBoxes(items, b, M, full) {
+  const mLon = 111320 * Math.cos((b[1] + b[3]) / 2 * D2R), mLat = 110574, out = [];
+  for (const it of items) { const i = Math.floor((it.c[0] - b[0]) * mLon / M), j = Math.floor((it.c[1] - b[1]) * mLat / M), sc = [b[0] + (i + 0.5) * M / mLon, b[1] + (j + 0.5) * M / mLat];
+    const side = M * Math.min(1, Math.sqrt(it.a / (M * M) / full)), f = side / M;
+    const ang = it.ox || it.oy ? ((Math.atan2(it.oy, it.ox) / 4 * 180 / Math.PI) % 90 + 90) % 90 : 0;
+    out.push({ lon: it.c[0] + (sc[0] - it.c[0]) * f, lat: it.c[1] + (sc[1] - it.c[1]) * f, a: side * side, asp: 1, ang, h: it.H.h, cls: 0, src: 0, n: it.n || 1 }); }
+  return out;
+}
+// the buildings of a leaf cell as boxes for compactBoxes
+export function recBoxes(ranges) {
+  const out = [];
+  for (const [B, s0, s1] of ranges) for (let i = s0; i < s1; i++) { const o = i * REC;
+    out.push({ lon: B.readInt32LE(o) / 1e7, lat: B.readInt32LE(o + 4) / 1e7, a: B.readFloatLE(o + 8), h: B.readUInt16LE(o + 12) / 10, ang: B[o + 14] * 180 / 256, asp: 2 ** (B[o + 15] / 32), cls: B[o + 16], src: B[o + 17] }); }
+  return out;
+}

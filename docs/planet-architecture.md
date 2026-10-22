@@ -266,6 +266,18 @@ https://github.com/danbri/docklandia (`data/gb/uk-lite/`, served at https://danb
 - 146.4 MB in all (tiles 129.5 MB: landmarks 53.6, mass 75.9; level 11 108.7 MB), 7,054 tiles, a root tileset.json of
   97 kB with external tile sets per level-8 cell, landmark rows in shards per part. The reader loads it within 1,200 km.
   Details, sizes by part and the traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
+- Version 2 (later on 2026-10-22; owner: "UK data looks like literal tiles", York from 1.1 km): at the leaves every
+  non-landmark building (22.7 M) is its own box at its true centroid with its footprint area, the angle and long / short
+  ratio of its minimum rotated rectangle and its height (no outline, no id), in a compact layout of 8 bytes a box
+  (`cwplans-boxes-1`: int16 east and north in the tile frame, one byte each for area, height, angle and flags; a 17 x 17
+  ground grid a tile) that `globe/places.js` turns into instances. The coarse levels keep merged squares (200 m to 1.6 km)
+  turned to the grain of their buildings. Leaves are drawn within about 5 km (level-10 geometricError 160 m). 292.7 MB in
+  all (leaves 252 MB, about 8.6 bytes a building), under the 300 MB set aside for it in docklandia. Rule 6 holds: the
+  tiles carry geometry and attributes; colours, windows and light are made in the page.
+- Landmark heights (2026-10-22): OSM building:part heights (via Overture's building_part theme, joined by building id)
+  draw towers and spires above a landmark's body as their own blocks with its id; a Wikidata P2048 height (CC0; ended and
+  deprecated statements left out) adds a spire or a centroid tower by a stated rule. Salisbury 123 m, Liverpool
+  Cathedral 100 m, Durham 66 m, York Minster 63 m, Blackpool Tower 158 m. 294.8 MB in all.
 
 ### 3d. Dublin: a full place held in docklandia (built 2026-10-22)
 

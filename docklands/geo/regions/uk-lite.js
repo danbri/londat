@@ -2,8 +2,9 @@
 // buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest resolution?"). Pure data;
 // read through region(). A place of kind "lite": no core and no ground of its own (as London's "blocks"); two classes:
 //   (a) landmarks: buildings named by a stated rule (below), each with its own outline, id and card;
-//   (b) the merged mass: every other building (OpenStreetMap and Microsoft footprints) only as one box a square
-//       (200 m squares in towns, 400 m elsewhere at the leaves; 800 m to 6.4 km at the coarse levels).
+//   (b) every other building (OpenStreetMap and Microsoft footprints) as its own box at its true position at the leaves
+//       (footprint area, orientation, height; no outline; since 2026-10-22, owner: "UK data looks like literal tiles"),
+//       and as the merged mass at the coarse levels (one box a square: 200 m to 1.6 km).
 // Tool: cwplans/tools/build-place-tiles.mjs --region uk-lite (operations place-lite-select per part, place-lite-tiles;
 // module cwplans/tools/place-lite.mjs). Output: the docklandia repository (bulky data), data/gb/uk-lite/, served at
 // place.tileBase. Skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
@@ -34,7 +35,8 @@ export default {
     // views named in the README (deep links; ht = heading, tilt)
     views: [{ name: 'The UK from 500 km', ll: '54.5,-3.0,500000', ht: '0,0' }, { name: 'Manchester from 20 km', ll: '53.4794,-2.2453,20000', ht: '0,45' },
       { name: 'Edinburgh from 20 km', ll: '55.9533,-3.1883,20000', ht: '0,45' }, { name: 'Durham Cathedral (700 m)', ll: '54.7735,-1.5765,700', ht: '200,60' },
-      { name: 'York Minster (700 m)', ll: '53.9623,-1.0819,700', ht: '200,60' }],
+      { name: 'York Minster (700 m)', ll: '53.9623,-1.0819,700', ht: '200,60' }, { name: 'York from 1.1 km (one box a building)', ll: '53.9620,-1.0793,1100', ht: '0,60' },
+      { name: 'Salisbury Cathedral (700 m; spire 123 m from OSM parts)', ll: '51.0651,-1.7973,700', ht: '200,60' }],
     // parts: polygons of the UK skeleton (ONS BGC: English regions, then the countries); a building belongs to the first
     // part whose polygon holds its centroid; one outside every polygon (generalised coast, the England-Wales and
     // England-Scotland edges of two ONS products) to the nearest part within coast_m
@@ -65,6 +67,18 @@ export default {
       // the landmark rule (README): OSM tags from the QLever OSM endpoint (planet 2026-09-21, the UK relation's
       // containment), joined to the Overture record by its OSM id
       tags: { endpoint: 'https://qlever.cs.uni-freiburg.de/api/osm-planet', area_relation: 62149 },
+      // landmark heights (owner, 2026-10-22: "Yes do that"; operation place-lite-landmark-heights, module
+      // cwplans/tools/place-lite-heights.mjs): OSM building:part heights via Overture's building_part theme (joined by
+      // building_id) and Wikidata P2048 (QLever Wikidata, CC0). Rule: a part whose top is above the body by at least
+      // max(rise_m, rise_share x body) is drawn as its own prism (at most max_parts a landmark); a Wikidata height above
+      // the highest top by the same margin (and at most max_wd_m) is drawn as a spire on the tallest such part (side
+      // spire_share x sqrt(its area)), else as a square tower at the centroid (side tower_share x sqrt(footprint), between
+      // tower_min_m and tower_max_m); the body keeps its height
+      heights: {
+        part_columns: 'building_id,height,min_height,roof_shape,num_floors', part_where: 'height IS NOT NULL',
+        wikidata_endpoint: 'https://qlever.dev/api/wikidata', wikidata_chunk: 5000,
+        rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15 },
+      },
       landmark: {
         // (1) an encyclopaedia record: OSM wikidata or wikipedia on the building
         encyclopaedic: true,
@@ -80,13 +94,18 @@ export default {
       },
       top_level: 7, leaf_level: 11,
       // coarse levels: landmarks at least tall_m or big_m2 as their own boxes (card by id); everything else one box per
-      // square of merge_m (side grown with the built share, full at full_share; height = area-weighted mean)
-      levels: { 7: { tall_m: 150, big_m2: 150000, merge_m: 6400, err_m: 4800 }, 8: { tall_m: 90, big_m2: 60000, merge_m: 3200, err_m: 2400 },
-        9: { tall_m: 60, big_m2: 25000, merge_m: 1600, err_m: 1200 }, 10: { tall_m: 40, big_m2: 10000, merge_m: 800, err_m: 600 } },
+      // square of merge_m (side grown with the built share, full at full_share; height = area-weighted mean). err_m of
+      // level 10 sets where the leaves (one box a building) are drawn: within about err_m x 731 / 24 m of the tile on a
+      // phone (MAX_SSE 24 px), 160 m -> about 5 km, where a 10 m house is still about 1.5 px wide
+      levels: { 7: { tall_m: 150, big_m2: 150000, merge_m: 1600, err_m: 2560 }, 8: { tall_m: 90, big_m2: 60000, merge_m: 800, err_m: 1280 },
+        9: { tall_m: 60, big_m2: 25000, merge_m: 400, err_m: 640 }, 10: { tall_m: 40, big_m2: 10000, merge_m: 200, err_m: 160 } },
       // the leaves (level 11, about 9.8 x 5.6 km at 55 N): every landmark as its outline (simplified at simplify_m) with
-      // its id; the mass in 200 m squares where a 400 m square is a town (built share >= town_share), else 400 m
+      // its id; every other building as its own box (place-lite.mjs compactBoxes). town_m: the atoms of place-lite-select
+      // (200 m squares, its counts); rural_m and town_share: the leaf rule of place-lite-tiles 2 (not used since version 3)
       leaf: { town_m: 200, rural_m: 400, town_share: 0.08, simplify_m: 1.5 },
-      full_share: 0.35, drop_m: 8,   // (bases deeper than London's 3 m: the globe's ground away from the world-base tiles is a 9.8 km texture drawn by 2.4 km patches)
+      grid_n: 17,   // the ground grid of a tile's compact boxes (n x n)
+      full_share: 0.5, drop_m: 8,   // (full_share: 0.35 until place-lite-tiles 3; 0.5 leaves street gaps between the turned squares)
+      // (drop_m: bases deeper than London's 3 m: the globe's ground away from the world-base tiles is a 9.8 km texture drawn by 2.4 km patches)
       // external tile sets: the root holds levels 7 and 8; each level-8 cell's subtree (levels 9 to 11) is its own
       // tileset.json (3D Tiles 1.1 external tileset), fetched when the view needs it
       external_from: 9,

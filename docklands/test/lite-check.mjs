@@ -1,7 +1,10 @@
-// Headless check of the UK lite set (place kind "lite": landmarks plus merged mass; region config
-// docklands/geo/regions/uk-lite.js, tool cwplans/tools/build-place-tiles.mjs --region uk-lite, reader docklands/globe/places.js):
+// Headless check of the UK lite set (place kind "lite": landmarks with outlines, every other building as its own box at
+// the leaves, merged squares at the coarse levels; region config docklands/geo/regions/uk-lite.js, tool
+// cwplans/tools/build-place-tiles.mjs --region uk-lite, reader docklands/globe/places.js):
 // the whole UK from 500 km loads (coarse levels, external tile sets), describeView says it is a lite set and counts what is
-// drawn; a city from 20 km (Manchester, Edinburgh) draws finer levels and names the nearest landmark; a tap on a landmark
+// drawn; a city from 20 km (Manchester, Edinburgh) draws finer levels and names the nearest landmark; York from 1.1 km
+// draws the leaves with one box a building (owner, 2026-10-22: "UK data looks like literal tiles") and a tap on one opens
+// its "Building" card; a tap on a landmark
 // (a cathedral) opens its card; findPlaces finds it; next to Greater London both places draw and no lite landmark lies in
 // London; far away the set is freed; no page errors. Screenshots in --out (default docklands/test/out/lite).
 // The tiles live in another repository (docklandia); serve a copy under this server and point the page at it:
@@ -23,10 +26,15 @@ const PBQ = `&placebase=${encodeURIComponent(ID + ':' + new URL(PB, BASE + '/').
 const CITIES = arg('--cities') ? arg('--cities').split(';').map(c => { const [name, lon, lat] = c.split(':'); return { name, lon: +lon, lat: +lat }; }) : [{ name: 'Manchester', lon: -2.2453, lat: 53.4794 }, { name: 'Edinburgh', lon: -3.1883, lat: 55.9533 }];
 const CATHEDRAL = ['Durham Cathedral', 'York Minster', 'Manchester Cathedral', "St Giles' Cathedral", 'Lincoln Cathedral'].map(n => FJ.buildings.find(r => r[col('name')] === n)).find(Boolean);
 if (!CATHEDRAL) throw new Error('no test cathedral in features.json');
+// landmark heights (place-lite-landmark-heights): the highest point of famous cathedrals from OSM building parts or Wikidata
+const TOP = ['Salisbury Cathedral', 'York Minster', 'Durham Cathedral', 'Lincoln Cathedral', 'Liverpool Cathedral'].map(n => FJ.buildings.find(r => r[col('name')] === n)).filter(Boolean).map(r => ({ name: r[col('name')], body: r[col('height_m')], top: r[col('height_top_m')], src: r[col('height_top_source')] }));
 mkdirSync(OUT, { recursive: true });
+let failed0 = 0;
+{ const big = TOP.filter(t => t.top > 60); const ok = col('height_top_m') >= 0 && big.length >= 4 && big.some(t => /Salisbury|York Minster/.test(t.name));
+  if (!ok) failed0++; console.log(`${ok ? 'ok  ' : 'FAIL'} landmark heights: York Minster or Salisbury and three more cathedrals have a highest point over 60 m (OSM parts or Wikidata) · ${TOP.map(t => `${t.name} ${t.top} m (${t.src}; body ${t.body} m)`).join('; ')}`); }
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
-let failed = 0;
+let failed = failed0;
 const check = (ok, what, detail = '') => { if (!ok) failed++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}${detail ? ' · ' + detail : ''}`); };
 // wait until the place has settled (tiles of the view in), at most ms
 const settle = (page, ms = 240000) => page.evaluate(async ({ id, ms }) => { const G = __docklands3.globe, t0 = performance.now();
@@ -54,9 +62,20 @@ for (const [w, h, dpr] of SIZES) {
   for (const c of CITIES) {
     await page.evaluate(c => docklands.goTo({ lon: c.lon, lat: c.lat, range_m: 20000, tilt_deg: 45 }), c);
     const r = await settle(page), p2 = r.st.find(x => x.id === ID), l2 = Object.keys(p2.drawn_by_level).map(Number);
-    check(p2.settled && Math.max(...l2) >= 10 && r.dp?.lite?.mass_boxes > 200, `${c.name} from 20 km: finer levels (external tile sets) and the mass drawn`, `levels ${JSON.stringify(p2.drawn_by_level)}, ${tsets.size} external tile sets fetched so far; ${JSON.stringify({ landmarks: r.dp?.lite?.landmarks_drawn, mass: r.dp?.lite?.mass_boxes, buildings: r.dp?.lite?.mass_buildings })}; ${r.s.toFixed(1)} s`);
+    check(p2.settled && Math.max(...l2) >= 10 && (r.dp?.lite?.mass_boxes || 0) + (r.dp?.lite?.building_boxes || 0) > 200, `${c.name} from 20 km: finer levels (external tile sets) and the mass drawn`, `levels ${JSON.stringify(p2.drawn_by_level)}, ${tsets.size} external tile sets fetched so far; ${JSON.stringify({ landmarks: r.dp?.lite?.landmarks_drawn, squares: r.dp?.lite?.mass_boxes, buildings_in_squares: r.dp?.lite?.mass_buildings, building_boxes: r.dp?.lite?.building_boxes })}; ${r.s.toFixed(1)} s`);
     check(r.dp?.nearest_named && /lite set/.test(r.dp.text), `${c.name}: describeView names the nearest landmark`, `${r.dp?.nearest_named?.name} (${r.dp?.nearest_named?.dist_m} m); tallest ${r.dp?.tallest_named?.name}`);
     await page.screenshot({ path: `${OUT}/lite-${c.name.toLowerCase()}-20km-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-${c.name.toLowerCase()}-20km-${tag}.png`);
+  }
+  // 2b. York from 1.1 km (the owner's view: ?ll=53.9620,-1.0793,1100&ht=0,60): the leaves draw every building as its own
+  // box at its true position (not one box a square), and a tap on one opens its card
+  if (!arg('--cities')) {
+    await page.evaluate(() => docklands.goTo({ lon: -1.0793, lat: 53.9620, range_m: 1100, tilt_deg: 60, heading_deg: 0 }));
+    const y = await settle(page), py = y.st.find(x => x.id === ID), ly = Object.keys(py.drawn_by_level).map(Number), L = y.dp?.lite || {};
+    check(py.settled && ly.includes(11) && L.building_boxes >= 20000 && /buildings as boxes at their true positions/.test(y.dp?.text || ''), 'York from 1.1 km: the leaves draw one box a building (true positions, no outlines)',
+      `levels ${JSON.stringify(py.drawn_by_level)}; ${JSON.stringify({ building_boxes: L.building_boxes, by_source: L.building_boxes_by_source, landmark_outlines: L.landmark_outlines, squares: L.mass_boxes })}; ${y.s.toFixed(1)} s`);
+    const bc = await page.evaluate(() => { const G = __docklands3.globe; for (let j = 0; j < 9; j++) for (let i = 0; i < 5; i++) { const x = innerWidth * (0.2 + 0.15 * i), yy = innerHeight * (0.45 + 0.05 * j); G.tap(x, yy); const c = document.getElementById('card'); if (!c.hidden && c.querySelector('h2')?.textContent === 'Building') return c.textContent.replace(/\s+/g, ' ').slice(0, 300); } return null; });
+    check(!!bc && /true position/.test(bc) && /Footprint/.test(bc), 'a tap on a building box opens its "Building" card (footprint source, area, orientation, height and its source)', bc || 'no Building card found');
+    await page.screenshot({ path: `${OUT}/lite-york-1100m-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-york-1100m-${tag}.png`);
   }
   // 3. a cathedral: a close view, a tap on it opens its card; search finds it
   const cat = { name: CATHEDRAL[col('name')], lon: CATHEDRAL[col('lon')], lat: CATHEDRAL[col('lat')], h: CATHEDRAL[col('height_m')], g: CATHEDRAL[col('ground_m')] };
@@ -66,6 +85,8 @@ for (const [w, h, dpr] of SIZES) {
     const s = G.project(P3); if (!s) return { card: null }; for (const [dx, dy] of [[0, 0], [0, 6], [0, -6], [4, 10], [-4, 10], [8, 0], [-8, 0]]) { G.tap(s[0] + dx, s[1] + dy); const c = document.getElementById('card'); if (!c.hidden && c.querySelector('h2')) { const h = c.querySelector('h2').textContent; if (h === t.name) return { card: c.textContent.replace(/\s+/g, ' ').slice(0, 260), at: s }; } }
     return { card: null, at: s, levels: G.placesStats().find(x => x.id === id).drawn_by_level }; }, { t: cat, P3, id: ID });
   check(!!tc.card && /Landmark because/.test(tc.card), `a tap on ${cat.name} opens its landmark card`, tc.card || `no card at ${JSON.stringify(tc.at)} levels ${JSON.stringify(tc.levels)}`);
+  const catTop = CATHEDRAL[col('height_top_m')];
+  if (catTop > CATHEDRAL[col('height_m')]) check(!!tc.card && new RegExp('Highest point ?' + catTop + ' m').test(tc.card), `the card of ${cat.name} gives its highest point (${catTop} m)`, (tc.card || '').slice(0, 200));
   await page.screenshot({ path: `${OUT}/lite-cathedral-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-cathedral-${tag}.png`);
   const fp = await page.evaluate(q => docklands.findPlaces(q, 5), cat.name);
   check(fp.some(r => r.id && r.id.startsWith('place:' + ID) && r.name === cat.name), `findPlaces "${cat.name}"`, fp.slice(0, 3).map(r => `${r.name} (${r.kind}, ${r.id})`).join('; '));

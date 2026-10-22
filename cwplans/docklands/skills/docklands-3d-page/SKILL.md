@@ -3381,7 +3381,95 @@ https://danbri.github.io/docklandia/data/gb/uk-lite/ ; register: `external` entr
   index entry gives 404s (globe-check "no page errors" fails on the live tileset and features URLs).
 - **Open.** Landmark heights (towers, spires: OSM building parts or a kind rule); the mass reads as a grid from 20 km; the
   Republic of Ireland's buildings are not drawn; names.json for search is 2.8 MB; Isle of Man and the Channel Islands are
-  not UK and not in the set.
+  not UK and not in the set. (The bullets Mass, Tiles, Sizes and Reader above describe place-lite-tiles 2; version 3 below.)
+
+### The UK lite set, version 2: one box a building at the leaves (2026-10-22)
+
+Owner, 2026-10-22, with a screenshot of York from 1.1 km
+(https://danbri.github.io/londat/docklands/?ll=53.9620,-1.0793,1100&ht=0,60 ): "re UK something is wrong, UK data looks
+like literal tiles". Cause: the leaves drew one merged box a 200 m or 400 m square (height the area-weighted mean, 5 to
+8 m), so a town was a pavement of slabs 100 to 200 m wide with gaps. Now (place-lite-select 2, place-lite-tiles 3):
+
+- **Rule.** At the leaves (level 11) every non-landmark building (OSM and Microsoft footprints, 20 m2 or more; 22,661,675)
+  is its own box at its true centroid: its footprint area, the angle and long / short ratio of its minimum rotated
+  rectangle (so the box keeps the footprint's area and grain), its height (place-heights order). No outline, no id; a tap
+  gives a "Building" card (footprint source, area and box sides, angle, height and its source). Landmarks keep their
+  outlines and rows. The coarse levels keep merged squares, now 200 / 400 / 800 / 1,600 m at levels 10 / 9 / 8 / 7, each
+  turned to the grain of its buildings (area-weighted mean of 4 x their angles) and full only at a 50 % built share, so
+  streets show between them; from 20 km a town reads as turned squares, no longer as a grid of tiles (it is still not
+  every building). All UK buildings fit (no town / country split was needed).
+- **Where the leaves show.** Level 10 geometricError 160 m (was 600): the leaves draw within about 160 x 731 / 24 = 5 km
+  of a leaf tile on a phone (MAX_SSE 24), where a 10 m house is still about 1.5 px wide. Errors 2,560 / 1,280 / 640 / 160 m
+  at levels 7 to 10.
+- **Fetch.** `fetch-overture-theme.py` slim mode writes `o` = [angle of the long side from east toward north, long m,
+  short m] for every record: GEOS MinimumRotatedRectangle of the outline scaled to metres (`ST_Scale(geometry, 111320
+  cos(lat), 110574)`), in the same DuckDB pass (about 5 to 7 minutes a part, as before). Trap: `by` is a reserved word in
+  DuckDB SQL (column aliases `rax`, `rby`).
+- **Records.** place-lite-select 2 writes `lite-<code>-buildings.bin.gz`: one 20-byte record a mass building (int32 lon
+  and lat x 1e7, float32 area, uint16 height dm, uint8 angle, uint8 aspect code, uint8 class, uint8 height source; sorted
+  by leaf cell). place-lite-tiles 3 reads the records (not the atoms) and finds each leaf cell's ranges.
+- **Compact boxes (layout `cwplans-boxes-1`).** 8 bytes a box: int16 east and north in the tile frame (q = extent /
+  32,000 m, about 0.15 m at a leaf), area code (2^(code / 10) m2), height code (0.25 m to 50 m, then 5 m steps), angle code,
+  flags (aspect 2^(k / 3), class, height source). Ground: a 17 x 17 int16 grid (decimetres of the frame's up, so the earth's
+  curvature is in it) a tile, bilinear; a box stands from ground - 8 m to ground + height. Two buffer views named in glb
+  `extras.blocks.compact` (place-lite.mjs `compactBoxes`, appended by blockTile `opt.compact`); the layout is described
+  once in features.json `lite.compact`, the tile extras in `lite.tile_extras` (the per-tile note strings cost about 4 MB
+  over 7,054 tiles). Unit tests decode a box as the reader does (place-lite.test.mjs).
+- **Reader.** `places.js` `compactInto`: decodes the compact boxes into instances of the unit box appended to the tile's
+  instanced primitive (or a new one), and their class (1 merged, 2 OSM, 3 Microsoft), height (dm) and height source to
+  `extras.blocks.boxes`, so `blockInstAttrs` (facade style now from the box's own height, not height + drop), the card
+  and describeView treat them as any box. describeView `lite`: `building_boxes` (and by source), `mass_boxes` (merged
+  squares) and `mass_buildings`; text "N buildings as boxes at their true positions (footprint area, orientation and
+  height; no outlines)". Cost: the per-box facts (hash01 and pick) take about 150 ms for a 90,000-box tile on the build
+  machine (more on a phone); York from 1.1 km draws 72,000 boxes, about 1 M triangles.
+- **Sizes.** 292.7 MB in all (budget about 300 MB of docklandia's 950 MB: Dublin and three German places come too).
+  Tiles 275.8 MB (landmarks 53.6 MB; buildings and squares 222.2 MB), tilesets 2.8, shards 9.8, names 2.8, log 1.4 MB.
+  By level: 7: 0.8, 8: 2.4, 9: 6.2, 10: 14.3, 11: 252.1 MB (about 8.6 bytes a building at the leaves). With 100 m squares
+  at level 10 the set was 301.3 MB. By part (tile MB): NE 10.9, NW 27.3, Yorkshire 24.2, E Midlands 22.7, W Midlands 23.2,
+  East 30.3, SE 38.2, SW 33.4, Wales 18.3, Scotland 34.4, NI 13.0. Build: fetch 11 parts about 55 minutes (12.7 GB of
+  answers, one to three on disk at once), select 15 to 45 s a part, tiles about 55 s.
+- **Traps.** A fetch loop that calls the build tool for each part failed on every part after an edit left a syntax error
+  in the tool (a `//` comment swallowed the rest of a line): check with `node --check` before saving a tool that a
+  background job is running. The QLever endpoints moved to https://qlever.dev/api/<name> (the old address answers 308;
+  Node fetch follows it for a POST, curl needs the new one). A trial build with `--only` writes the index entry with only
+  those parts' boxes: restore `cwplans/docklands/data/places/index.json` after a trial. A trial into another `--out` needs
+  the set's `provenance/log.json` copied there, else place-lite-select runs again and needs the deleted raw answers.
+  Each tiles run appends an activity listing 7,054 outputs (about 1.3 MB) to the log: after trial runs, superseded
+  activities (an earlier run of the same operation and part) were pruned from the committed log (the commit history of
+  docklandia keeps them).
+- **Before / after (York, 1.1 km, 390 x 844):** before 6,304 merged squares and 497 landmark outlines; after 72,249
+  building boxes (62,648 OSM, 9,601 Microsoft), 384 landmark outlines and 20,922 merged squares farther away.
+
+### The UK lite set: landmark heights, towers and spires (2026-10-22)
+
+Owner, 2026-10-22, to "should I improve the landmark heights next, with OSM spire and tower parts or the heights in
+Wikidata?": "Yes do that". Before: Durham Cathedral 18.7 m (Microsoft roof), York Minster 12 m (OSM height tag of the
+outline), Liverpool Cathedral 10.7 m (GHSL), Salisbury 9.5 m. Now (place-lite-landmark-heights 1, place-lite-tiles 4;
+module `cwplans/tools/place-lite-heights.mjs`, tests `place-lite-heights.test.mjs`):
+
+- **Inputs.** (1) OSM `building:part` heights through Overture's `building_part` theme for the UK box (one DuckDB query,
+  `height IS NOT NULL`: 26,690 parts, 17.7 MB, about 2 minutes), joined to the landmark by `building_id` (= the
+  landmark's Overture id: no spatial join). QLever OSM can list a building's parts (`?b ogc:sfContains ?part`, heights in
+  under 1 s) but asking for their WKT geometry timed out (200 s). (2) Wikidata P2048 of the 69,053 wikidata items of the
+  landmark tags: QLever Wikidata (https://qlever.dev/api/wikidata), VALUES chunks of 5,000, 14 POSTs: only 323 statements
+  (304 items) have a height. Trap: Lincoln has 159.7 m (the spire that fell in 1548, qualifier end time P582) and 83 m
+  (preferred): ask for rank and end time; leave out ended and deprecated statements, prefer preferred ones.
+- **Rule** (README "Landmark heights"): parts whose top is above the body by max(3 m, 15 %) are drawn as their own
+  blocks (outline, from the ground to the top; at most 64 a landmark) with the landmark's row (`_FEATURE_ID_0`; tower ids
+  `<id>:t<k>` map to the row); a Wikidata height above the highest top by the same margin (and <= 330 m) is a spire on the
+  tallest part (0.35 x sqrt of its area) or else a square tower at the centroid (0.2 x sqrt(footprint), 4 to 15 m). The
+  body keeps its height. At coarse levels a landmark gets its own box when its highest point (not the body) is tall
+  enough, and its towers are boxes too. Feature rows gain `height_top_m`, `height_top_source`, `towers`.
+- **Counts.** 490 landmarks with parts drawn (2,700 parts), 88 Wikidata towers, 2 Wikidata spires; 107 Wikidata heights
+  not used (not above the top). Highest point by source: osm-part 488, wikidata 90.
+- **Checked.** Salisbury 123 m (osm-part), Liverpool Cathedral 100 m, Norwich 96, Chichester 84.4 (wikidata), Lincoln 80,
+  Lichfield 77, Canterbury 69, Durham 66, Ely 66, York Minster 63 (osm-part; its tower is about 72 m), Blackpool Tower
+  158 m (osm-part), Royal Liver Building 104 m, St Giles' Cathedral 39 m, Spinnaker Tower 170 m and Scott Monument 61 m
+  (OSM height of the outline). Edinburgh Castle and the Angel of the North are not landmarks of the set: not OSM buildings
+  with these names (the castle is a site, the Angel is an artwork).
+- **Reader.** Card row "Highest point" (with its source); describeView `tallest_named` by the highest point; landmark
+  outline counts unique rows (towers share the row).
+- **Size.** +1.1 MB of tiles (294.8 MB in all).
 
 ## Three.js port: places look like the model (2026-10-22)
 

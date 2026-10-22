@@ -2,7 +2,8 @@
 // the polygon index (inside, holes, distance to the edges), the landmark tags (QLever TSV), the selection (owner by
 // centroid with London excluded, the coast rule, heights in the place-heights order, the landmark rule and its reasons,
 // atoms of 200 m), the town rule of the leaves, the merge of items into squares; and a lite tile (blockTile with the lite
-// options: landmark outlines with their row, landmark boxes with their row, merged squares of two sizes).
+// options: landmark outlines with their row, landmark boxes with their row, merged squares of two sizes); the building
+// records (one a mass building, sorted by leaf cell) and the compact boxes (layout cwplans-boxes-1) decoded as the reader does.
 // When a built set is at hand (env UK_LITE_DIR = the data/gb/uk-lite folder of a docklandia checkout): no landmark lies in
 // Greater London's polygon of the UK skeleton (London draws those), and every shard row is in its part's box.
 // Skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
@@ -10,7 +11,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { polyIndex, tagIndex, liteSelector, townSize, mergeItems, inPolygon } from '../place-lite.mjs';
+import { polyIndex, tagIndex, liteSelector, townSize, mergeItems, inPolygon, REC, recAt, HSRC, compactBoxes, HDEC, recSquares, squareBoxes, recBoxes } from '../place-lite.mjs';
+import { enuFrame } from '../../../docklands/geo/ellipsoid.js';
 import { blockTile, cellBox } from '../place-blocks.mjs';
 import { unpack } from '../../../docklands/geo/skeleton.js';
 
@@ -85,6 +87,44 @@ test('blockTile with the lite options: landmark outline and box with their rows,
   const r2 = blockTile({ ...base, items: [{ ...lm, own: true }, items[1]], leaf: false });
   const X2 = JSON.parse(r2.bytes.subarray(20, 20 + r2.bytes.readUInt32LE(12)).toString('utf8')).extras.blocks;
   assert.deepEqual(X2.boxes.f, [7, -1]); assert.deepEqual(X2.boxes.c, [0, 1]);
+});
+
+test('building records: one 20-byte record a mass building (centroid, area, height, rotated rectangle, class, source), by leaf cell', () => {
+  const S = selector(() => ({ part: 0, how: 'in' }));
+  S.add({ id: 'b', height: 12, sources: [src('Microsoft ML Buildings')], c: [0.2, 51.5], a: 300, o: [30, 30, 10] });
+  S.add({ id: 'a', sources: [{ dataset: 'OpenStreetMap', license: 'ODbL-1.0', record_id: 'w1@1' }], c: [0.1, 51.5], a: 100 });   // no rectangle: square, GHSL height
+  const o = S.done(); assert.equal(o.recs.length, 2 * REC);
+  const r = [recAt(o.recs, 0), recAt(o.recs, 1)].sort((x, y) => x.lon - y.lon);
+  assert.equal(r[0].lon, 0.1); assert.equal(r[0].cls, 0); assert.equal(HSRC[r[0].src], 'ghsl'); assert.equal(r[0].asp, 1); assert.equal(r[0].h, 6.5);
+  assert.equal(r[1].cls, 1); assert.equal(HSRC[r[1].src], 'ms'); assert.equal(r[1].h, 12); assert.ok(Math.abs(r[1].ang - 30) < 0.8, String(r[1].ang)); assert.ok(Math.abs(r[1].asp - 3) < 0.07, String(r[1].asp));
+  assert.equal(o.counts['mass buildings without a rotated rectangle (drawn square)'], 1);
+});
+
+test('compactBoxes: 8 bytes a box in the tile frame; decoded as places.js does (position, area, height, angle, aspect, class, source, ground)', () => {
+  const b = cellBox(11, 1000, 1700), lc = (b[0] + b[2]) / 2, bc = (b[1] + b[3]) / 2, F = enuFrame({ lon: lc, lat: bc, h: 60 });
+  const boxes = [{ lon: lc + 0.01, lat: bc - 0.02, a: 120, asp: 2, ang: 45, h: 9.3, cls: 1, src: 2 }, { lon: lc - 0.03, lat: bc + 0.03, a: 5000, asp: 1, ang: 0, h: 120, cls: 0, src: 0 }];
+  const groundAt = (lon, lat) => 10 + (lon - b[0]) * 1000, cp = compactBoxes({ F, b, boxes, groundAt, geoidAt: () => 50, drop_m: 8, grid_n: 17, kind: 'buildings' });
+  assert.equal(cp.data.length, 16); assert.equal(cp.grid.length, 17 * 17 * 2); assert.equal(cp.meta.count, 2);
+  const G = cp.meta.grid, g = i => cp.grid.readInt16LE(2 * i) * G.unit_m;
+  for (let k = 0; k < 2; k++) { const d = cp.data, o = 8 * k, x = boxes[k], [E, N, U] = F.toEnu(x.lon, x.lat, groundAt(x.lon, x.lat) + 50);
+    assert.ok(Math.abs(d.readInt16LE(o) * cp.meta.q - E) < 0.2 && Math.abs(d.readInt16LE(o + 2) * cp.meta.q - N) < 0.2, 'position');
+    assert.ok(Math.abs(2 ** (d[o + 4] / 10) / x.a - 1) < 0.04, 'area'); assert.ok(Math.abs(HDEC(d[o + 5]) - x.h) <= (x.h > 50 ? 2.5 : 0.13), 'height');
+    assert.ok(Math.abs(d[o + 6] * 180 / 256 - x.ang) < 0.4, 'angle'); assert.equal((d[o + 7] >> 4) & 1, x.cls); assert.equal(d[o + 7] >> 5, x.src); assert.ok(Math.abs(2 ** ((d[o + 7] & 15) / 3) / x.asp - 1) < 0.13, 'aspect');
+    // the ground under the box from the grid (bilinear) against the frame's up of the ground point
+    const fx = (E - G.e0) / G.de, fy = (N - G.n0) / G.dn, i = Math.floor(fx), j = Math.floor(fy), u = fx - i, v = fy - j, n = G.n, gz = (g(j * n + i) * (1 - u) + g(j * n + i + 1) * u) * (1 - v) + (g((j + 1) * n + i) * (1 - u) + g((j + 1) * n + i + 1) * u) * v;
+    assert.ok(Math.abs(gz - U) < 1, `ground ${gz} ${U}`); }
+  // a lite tile with the compact boxes appended: two buffer views named in extras.blocks.compact
+  const n = { l: 11, x: 1000, y: 1700, key: '11-1000-1700', b }, r = blockTile({ cell: n, items: [], HT: {}, groundAt, geoidAt: () => 50, P: { tall_m: Infinity, big_m2: Infinity, merge_m: 150, min_area_m2: 0, drop_m: 8 }, lite: true, named: new Map(), namedOutlines: true, classes: ['l', 'm', 'o', 'ms'], colour: '#d6cbb6', credit: 't', compact: F2 => ({ ...compactBoxes({ F: F2, b, boxes, groundAt, geoidAt: () => 50, drop_m: 8, kind: 'buildings' }), mass_buildings: 0 }) });
+  const js = JSON.parse(r.bytes.subarray(20, 20 + r.bytes.readUInt32LE(12)).toString('utf8')), C = js.extras.blocks.compact;
+  assert.equal(C.count, 2); assert.equal(js.bufferViews[C.bufferView].byteLength, 16); assert.equal(js.bufferViews[C.grid.bufferView].byteLength, 17 * 17 * 2); assert.equal(r.stats.compact.boxes, 2);
+});
+
+test('recSquares and squareBoxes: the coarse levels merge the records by square; a full square has the full side', () => {
+  const b = cellBox(11, 1000, 1700), B = Buffer.alloc(3 * REC), put = (i, lon, lat, a, h) => { B.writeInt32LE(Math.round(lon * 1e7), i * REC); B.writeInt32LE(Math.round(lat * 1e7), i * REC + 4); B.writeFloatLE(a, i * REC + 8); B.writeUInt16LE(h * 10, i * REC + 12); };
+  put(0, b[0] + 0.0002, b[1] + 0.0002, 100, 10); put(1, b[0] + 0.0003, b[1] + 0.0003, 300, 20); put(2, b[0] + 0.02, b[1] + 0.02, 22500, 6);
+  const it = recSquares([[B, 0, 3]], b, 150); assert.equal(it.length, 2); assert.equal(it[0].a, 400); assert.equal(it[0].H.h, 17.5); assert.equal(it[0].n, 2);
+  const sq = squareBoxes(it, b, 150, 0.35); assert.ok(Math.abs(sq[1].a - 150 * 150) < 1e-6, 'full share: full side'); assert.ok(sq[0].a < 150 * 150 * 0.06 && sq[0].a > 0);
+  assert.equal(recBoxes([[B, 1, 3]]).length, 2);
 });
 
 const DIR = process.env.UK_LITE_DIR;

@@ -206,19 +206,22 @@ export function blockTile(opt) {
     const gs = [[-d, -d], [d, -d], [d, d], [-d, d]].map(p => groundAt(...toLL(p, ll)));
     box(ll, 0, side, side, hgt, MERGED, `merged: area-weighted mean height of the buildings of a ${M2} m square`, gs); st.merged++; st.merged_buildings += q.n;
   }
-  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)' + (opt.lite ? '; boxes.f: the features.json row of a landmark drawn as a box (-1: merged); named: the rows drawn as outlines with _FEATURE_ID_0; mass_buildings: the buildings the merged boxes stand for' : ''), ...(opt.lite ? { mass_buildings: st.merged_buildings } : {}) } } : null;
-  const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size });
-  const tris = ol.idx.length / 3 + nm.idx.length / 3 + inst.t.length / 3 * 10;
+  // (lite, opt.compact(F): boxes in the compact layout cwplans-boxes-1 of place-lite.mjs compactBoxes, appended as two
+  // buffer views named in extras.blocks.compact; the leaves' buildings and the coarse levels' merged squares)
+  const cp = opt.compact ? opt.compact(F) : null; if (cp) { zmin = Math.min(zmin, cp.zmin); zmax = Math.max(zmax, cp.zmax); }
+  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(cp ? { compact: cp.meta } : {}) } } : null;
+  const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size, compact: cp });
+  const tris = ol.idx.length / 3 + nm.idx.length / 3 + inst.t.length / 3 * 10 + (cp ? cp.meta.count * 10 : 0);
   return { bytes, F, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(isFinite(zmin) ? zmin : h0 - 10), Math.ceil(isFinite(zmax) ? zmax : h0) + 1],
     stats: { key: cell.key, level: cell.l, bytes: bytes.length, triangles: tris, blocks: st.boxes + st.outlines + st.merged + st.named, ...st, buildings: items.length,
-      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}) } };
+      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}), ...(cp ? { compact: cp.stats, compact_bytes: cp.data.length + cp.grid.length, compact_mass: cp.mass_buildings || 0 } : {}) } };
 }
 
 // ---------- glTF 2.0 writer for block tiles: node 0 (if any) the outlines and named buildings, int16 positions
 // (KHR_mesh_quantization, one uniform node scale), named with COLOR_0 (u8) and _FEATURE_ID_0 (float, EXT_mesh_features);
 // node 1 (or 0) the unit box (walls and top) instanced (EXT_mesh_gpu_instancing: float translation and scale, int8
 // normalized rotation). No normals: readers compute flat normals.
-export function blocksGlb({ ol, nm, inst, colour, credit, extras, featureCount }) {
+export function blocksGlb({ ol, nm, inst, colour, credit, extras, featureCount, compact }) {
   const json = { asset: { version: '2.0', generator: 'cwplans build-place-tiles.mjs (place-blocks)', copyright: credit }, extensionsUsed: [], extensionsRequired: [], ...(extras ? { extras } : {}),
     scene: 0, scenes: [{ nodes: [] }], nodes: [], meshes: [], materials: [], buffers: [], bufferViews: [], accessors: [] };
   const chunks = []; let off = 0;
@@ -261,6 +264,7 @@ export function blocksGlb({ ol, nm, inst, colour, credit, extras, featureCount }
     json.nodes.push({ mesh: json.meshes.length - 1, extensions: { EXT_mesh_gpu_instancing: { attributes: { TRANSLATION: at, ROTATION: ar, SCALE: as } } } }); json.scenes[0].nodes.push(json.nodes.length - 1);
     json.extensionsUsed.push('EXT_mesh_gpu_instancing'); json.extensionsRequired.push('EXT_mesh_gpu_instancing');
   }
+  if (compact) { const C = json.extras.blocks.compact; C.bufferView = view(compact.data); C.grid.bufferView = view(compact.grid); }   // (lite: the compact boxes and their ground grid)
   if (!json.extensionsUsed.length) delete json.extensionsUsed; if (!json.extensionsRequired.length) delete json.extensionsRequired;
   const bin = Buffer.concat(chunks); json.buffers.push({ byteLength: bin.length });
   let js = Buffer.from(JSON.stringify(json)); js = Buffer.concat([js, Buffer.alloc((4 - js.length % 4) % 4, 0x20)]);
