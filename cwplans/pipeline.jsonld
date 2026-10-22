@@ -27243,7 +27243,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js; a place held in another repository (the UK lite set in danbri/docklandia) has tileBase, load_m, free_m, the boxes of its parts and absolute URLs",
+   "dct:title": "The places on the globe built as 3D Tiles (id, name, area, centre, time zone, locale, tileset, features, surround, README and provenance paths, extent of the tile tree, city box, credit, building counts); read by docklands/globe/places.js; a place held in another repository (the UK lite set in danbri/docklandia) has tileBase, load_m, free_m, the boxes of its parts and absolute URLs; Dublin (danbri/docklandia data/ie/dublin/, index entry with tileBase and absolute URLs, the core, city and surroundings like León and Sarajevo)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -27641,7 +27641,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "World base tiles manifest (KR2.2): the geodetic quadtree (y from the north, as terrain.js), the imagery and height tiles present at each level (x, y pairs), formats, radii round the testbeds, credits, sizes",
+   "dct:title": "World base tiles manifest (KR2.2): the geodetic quadtree (y from the north, as terrain.js), the imagery and height tiles present at each level (x, y pairs), formats, radii round the testbeds, credits, sizes; testbeds since 2026-10-22 also dublin (tiles added with build-world-base.mjs --add: the existing tiles unchanged)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srceoxs2cloudless2016"
@@ -28235,7 +28235,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Index of the landmark sets of the places (tileset, features and README paths per place); read by docklands/globe/landmarks.js",
+   "dct:title": "Index of the landmark sets of the places (tileset, features and README paths per place); read by docklands/globe/landmarks.js; a place in another repository (Dublin) has absolute URLs under its tileBase",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -28372,7 +28372,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "The places that have a water and trees file (place id -> path of greens.json); read once by docklands/globe/place-look.js, so a place without one costs no request (tools/build-place-greens.mjs)",
+   "dct:title": "The places that have a water and trees file (place id -> path of greens.json); read once by docklands/globe/place-look.js, so a place without one costs no request (tools/build-place-greens.mjs); a place in another repository (Dublin) has the absolute URL of its greens.json under its tileBase",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -34050,6 +34050,17 @@
    "dct:license": "CDLA-Permissive-2.0",
    "dcat:landingPage": "https://docs.overturemaps.org/attribution/",
    "cwp:attribution": "© Overture Maps Foundation (CDLA-Permissive-2.0)"
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/srcgsiopwlidardtm",
+   "@type": [
+    "prov:Entity",
+    "dcat:Dataset"
+   ],
+   "dct:title": "Geological Survey Ireland open topographic LiDAR: OPW National Flood (NASC) survey 2011, 2 m DTM tiles (2 x 2 km GeoTIFF zips, Irish Transverse Mercator EPSG:2157, heights above Malin Head)",
+   "dct:license": "CC BY 4.0 (the attribution statement in the coverage layer and in Copyright_and_Licence.txt of each zip)",
+   "dcat:landingPage": "https://gsi.geodata.gov.ie/server/rest/services/Lidar/IE_GSI_LiDAR_Coverage_OPW_NASC_IE26_ITM/FeatureServer/3 (data.gov.ie: open-topographic-lidar-data)",
+   "cwp:attribution": "Contains Irish Public Sector Data (Geological Survey Ireland & the Office of Public Works) licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) licence."
   }
  ]
 }

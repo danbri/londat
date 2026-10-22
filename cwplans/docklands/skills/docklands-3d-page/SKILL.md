@@ -4011,3 +4011,73 @@ estimated minarets, `&landmarks=off` for none).
   describeView adds `landmarks` (mosques, minarets mapped / estimated, domes, towers, churches, clock towers in view,
   the tallest) and a "Skyline:" sentence; search finds the named places of worship of the whole city (the core's
   search has only the core). `G.landmarks`: stats(), rows(place), screen(place, id), setEstimated(on), describe().
+
+## Three.js port: Dublin, a place held in docklandia (2026-10-22)
+
+Owner, 2026-10-22: "I'll like to add some information (bulk data in docklandia repo pls.) for more cities and countries.
+Ireland: Dublin especially". Built: central Dublin as a place like León and Sarajevo (core, city ring, surroundings,
+greens, landmarks), with every bulky file in https://github.com/danbri/docklandia `data/ie/dublin/` (served at
+https://danbri.github.io/docklandia/data/ie/dublin/ ) and only the index entries in londat. Region config
+`docklands/geo/regions/dublin.js`; tools `build-place-tiles.mjs`, `build-place-greens.mjs`, `build-place-landmarks.mjs`
+with `--out <docklandia checkout>/data/ie/dublin`; test `docklands/test/place-check.mjs --place dublin`. Views: Liffey core
+https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,1500&ht=0,55 , the city
+https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,20000&ht=0,45 , Dublin Bay
+https://danbri.github.io/londat/docklands/?ll=53.30,-6.10,40000&ht=300,50 , the Spire
+https://danbri.github.io/londat/docklands/?ll=53.34980,-6.26031,600&ht=200,65 , Poolbeg
+https://danbri.github.io/londat/docklands/?ll=53.3405,-6.1895,2000&ht=270,60 .
+
+- **Any place in another repository.** `place.outRepo`, `outPath`, `tileBase` (as the UK lite set) now work for a place
+  with a core: `build-place-tiles.mjs` (EXTOUT), `build-place-greens.mjs` and `build-place-landmarks.mjs` write to `--out`
+  (default `../../<outRepo>/<outPath>` from cwplans/, wrong in a worktree: always pass `--out`); log paths are
+  `docklandia:data/ie/dublin/...`; index.json, greens.json and landmarks.json hold ABSOLUTE URLs under the tileBase. The
+  reader: `?placebase=dublin:<url>` rebases the index entry and keeps the old base as `p.tileBase0`, which place-look.js
+  (greens) and landmarks.js use to rebase their own absolute URLs. `writeReadmes` writes an external place's README only
+  in its own build (its folder is `--out`), with links into the other repository.
+- **Core as a rectangle.** `place.core_bbox` [w, s, e, n] replaces the `size_m` square (cells whose centre is inside):
+  Heuston to the Point and Grand Canal Dock, Parnell Square to St Stephen's Green, 13 x 4 = 52 level-15 cells. Widening
+  the box needs the core inputs deleted first (osm.json.gz, dem.json.gz, the raw core Overture answer, sources/
+  overture-buildings.json and ms-buildings.json): the fetch reuses any file that exists.
+- **National LiDAR as tile zips (DEM kind `arcgis-tile-zips`).** Geological Survey Ireland's open LiDAR (CC BY 4.0):
+  an ArcGIS coverage layer (FeatureServer query, envelope in EPSG:4326) gives the zip URL and the licence text of each
+  2 x 2 km tile; each zip holds `<id>_DTM.tif` and `_DSM.tif` in ITM (EPSG:2157), heights above Malin Head. The tool
+  resamples the DTM tiles (bilinear, nodata left out) to a 5 m lon/lat grid. OPW NASC 2011 (2 m) covers central Dublin
+  with no gap (8 tiles, 48 MB of zips, raw only). Traps: the portal's ImageServers ("..._DTM_HS_...") are U8
+  HILLSHADES (pictures, not heights); the NYU 2015 1 m set is a DSM of 3 x 3 km only. The core is bare earth (DTM),
+  the city and surroundings Copernicus GLO-30 (a DSM): the adapter's `dem.surround` block (DEMS, DEM_CREDIT in the
+  tool); the step at the core edge is hidden by the 300 m skirts.
+- **Names: English and Irish.** `names: ['name', 'name:en'], alt_names: ['name:ga']`; Overture `names.common.ga` for
+  roads, rivers, towns and peaks (selectOuter altKeys). Irish is Latin script, but `nameText` (places.js) and
+  `shownName` (landmarks.js) used `pickName` alone, which drops every second name when Latin is preferred: now a
+  second name in the Latin script stays beside the first ("O'Connell Street Lower (Sráid Uí Chonaill Íochtarach)", "Grafton Street (Sráid Grafton)"); one in
+  another script still goes (Sarajevo unchanged). 974 of 1,235 core streets and 233 of 478 surround labels have both.
+- **Heights (F55).** Core (23,277 buildings and parts): OSM height 939, OSM levels 7,348, Overture height 1,045,
+  Microsoft 364, small kinds 830, GHSL 12,980 (56 %). City (516,640 buildings): OSM levels 176,828, Overture height
+  70,406 (mostly Microsoft ML heights inside Overture), Microsoft 26,759, small kinds 54,859, GHSL 185,312, default
+  1,804. Microsoft's Ireland quadkeys carry a height on almost every footprint (5,397 of 5,400 in the core box). No
+  Irish national building heights are open (Tailte Éireann PRIME2 buildings are licensed).
+- **Landmarks: tall thin objects.** `place.landmarks.tall_objects` (min_height_m 25; man_made chimney, obelisk, tower,
+  monument, mast; historic monument, memorial; tower:type communication, cooling, lighting left out): candidates by ONE
+  SPARQL POST to QLever (`osmrel:62273 ogc:sfContains ?e`, `geo:hasGeometry/geo:asWKT` for the position; the endpoint
+  moved to https://qlever.dev/api/osm-planet, the old host answers 308), then the OSM API boxes for tags and geometry.
+  Drawn by kind as bodies of revolution: chimney (cylinder to 0.72 r), obelisk (4 sides on a plinth, a point), monument
+  (a needle: the Spire, 121.2 m), mast; a `man_made=tower` with an outline joins the towers. Dublin: 8 (chimney 4,
+  obelisk 1, monument 1, mast 1, tower 1), plus 21 towers and spires and 21 domes from the worship buildings (41 towers
+  have no OSM height and are not drawn). The Poolbeg chimneys are OSM buildings, so the city ring drew them as 207 m
+  boxes: landmarks.js `hideBlocks` scales to nothing an instanced block within max(6 m, 2.5 r) of a tall object and at
+  least 0.7 of its height (live, the tiles unchanged). describeView's "Skyline:" names only the kinds the set has.
+- **World base.** `build-world-base.mjs fetch|build --regions dublin --add`: only the missing tiles of the new testbed
+  (levels 5 to 11 imagery: +211 tiles, 3.45 MB; heights 7 to 12: +136 tiles), the existing tiles byte for byte the same,
+  base.json the union, log activities `imagery-tiles-add-dublin`, `dem-tiles-add-dublin`. Two agents adding two places
+  then touch disjoint tiles; only base.json and log.json need a union at merge.
+- **Sizes** (105.7 MB in docklandia): core 52 tiles 17.7 MB; city 910 tiles 60.2 MB (417,698 blocks: OSM 410,179,
+  Microsoft 7,519); surroundings 613 tiles 17.4 MB; tileset.json 0.71 MB; features.json 3.56 MB (the heaviest of the
+  places, read at 150 km); surround.json 0.22 MB; sources 3.65 MB; provenance 0.62 MB; greens 0.60 MB (8,491 trees,
+  5,349 mapped); landmarks 0.4 MB. 3d-tiles-validator 0.6.0: 0 errors, 0 warnings (961 infos).
+- **Tests.** `place-check.mjs --place dublin` (case `ext`: features.json from `--placedir`, default
+  `docklands/test/out/places/dublin` = a symlink to the docklandia checkout, served by the test's http.server, and
+  `?placebase=`); case `landmarks.tall`: the Spire drawn, counted, tapped, found; the Poolbeg chimneys from 2 km with
+  their city blocks hidden. `globe-check.mjs --placebase dublin:<url>`: without it the search step reads the live
+  features.json and fails with a 404 until docklandia is merged. Merge docklandia (branch place-dublin) BEFORE londat.
+- **Open.** Church spires without an OSM height (41); the core's features.json size; GHSL for 56 % of the core; DCC
+  street trees (data.gov.ie "tree-dcc", CC BY 4.0) not used yet (greens use OSM trees); the Tailte Éireann gazetteer
+  (Irish names) not used; the NYU 2015 Dublin LiDAR (CC BY 4.0, DSM 1 m) could give measured core heights.

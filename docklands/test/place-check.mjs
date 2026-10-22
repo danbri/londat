@@ -6,6 +6,9 @@
 // detail) the tile tree settles with core tiles drawn at the deep link, and a far view (30 km out) draws surroundings tiles
 // with main roads and the place's river; since 2026-10-22 (Sarajevo) the landmark set: minarets present (mapped and estimated apart),
 // counted in describeView, a tap on Gazi Husrev-beg Mosque's minaret gives its card, the old town and the city 8 km out (screenshots).
+// Since 2026-10-22 (Dublin) a place held in another repository (index entry tileBase, case `ext`): served from a local copy
+// (--placedir, default docklands/test/out/places/<id>/, a symlink or copy of the docklandia folder; ignored by git) through
+// ?placebase=<id>:<url>, so the test does not depend on the live site; the landmark case `tall` (the Spire of Dublin).
 // Screenshots in --out (default docklands/test/out/).
 //   python3 -m http.server 8190 --bind 127.0.0.1 &      (from the repository root)
 //   node docklands/test/place-check.mjs [--base http://127.0.0.1:8190] [--place leon] [--webgpu] [--sizes 390x844@2,1280x800@1]
@@ -23,6 +26,10 @@ const CASES = {
   sarajevo: { ll: '43.85917,18.43335,1500', ht: '0,55', search: 'Vijećnica', building: { lon: 18.43335, lat: 43.85917 }, river: /Miljacka|Bosna/, town: 'Ilidža', city: { lon: 18.3550, lat: 43.8500 },
     // the landmark set (cwplans/tools/build-place-landmarks.mjs, globe/landmarks.js): Gazi Husrev-beg Mosque's minaret (OSM parts)
     landmarks: { minaret: 'w1030951861', name: 'Gazi Husrev-begova džamija', at: { lon: 18.42895, lat: 43.85915 } } },
+  // a place held in the docklandia repository (ext): the Liffey core, the city of Dublin as blocks, Dublin Bay; landmarks:
+  // the Spire of Dublin (OSM way 96578181, historic=monument, height 121.2) and the Poolbeg chimneys
+  dublin: { ext: true, ll: '53.34725,-6.25916,1500', ht: '0,55', search: "O'Connell Bridge", building: { lon: -6.26040, lat: 53.34940 }, river: /Liffey/, town: 'Tallaght', city: { lon: -6.3740, lat: 53.2880 },
+    landmarks: { tall: 'w96578181', name: 'Spire of Dublin', at: { lon: -6.26031, lat: 53.34980 }, far: { lon: -6.1895, lat: 53.3405, kind: 'chimney' } } },
   leiden: { ll: '52.15948,4.49123,1500', ht: '0,55', search: 'Hoogstraat', building: { lon: 4.49123, lat: 52.15948 } },
   // a place of kind "blocks" (no core, no ground of its own): BT Tower (OSM way 5022282, 188.4 m in OSM), a named building
   // drawn with its own id; Croydon for a city block; the whole city from 20 km
@@ -32,7 +39,10 @@ const CASES = {
     extra: { lon: -0.4230, lat: 51.5314, label: /Microsoft/ } },
 };
 const C = CASES[PLACE]; if (!C) throw new Error('no test case for ' + PLACE);
-const FJ = JSON.parse(readFileSync(`cwplans/docklands/data/places/${PLACE}/features.json`, 'utf8'));
+const PDIR = arg('--placedir', C.ext ? `docklands/test/out/places/${PLACE}` : `cwplans/docklands/data/places/${PLACE}`);
+const FJ = JSON.parse(readFileSync(`${PDIR}/features.json`, 'utf8'));
+// a place in another repository: its files from the local copy (served by the test's http.server under docklands/test/out/)
+const PB = C.ext ? `&placebase=${PLACE}:${encodeURIComponent(arg('--placebase', `${BASE}/${PDIR}/`))}` : '';
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
@@ -50,7 +60,7 @@ for (const [w, h, dpr] of SIZES) {
   page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   const t0 = Date.now();
-  await page.goto(`${BASE}/docklands/?ll=${C.ll}&ht=${C.ht}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0&t=2026-10-12T12:00`);
+  await page.goto(`${BASE}/docklands/?ll=${C.ll}&ht=${C.ht}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0&t=2026-10-12T12:00${PB}`);
   // the deep link: the globe takes the view, the place's tiles load
   await page.waitForFunction(p => { const G = window.__docklands3?.globe; if (!(G && G.mode === 'globe' && G.places && window.docklands && G.placesStats)) return false; G.dirty = true; return G.placesStats().find(x => x.id === p)?.settled; }, PLACE, { timeout: 240000, polling: 250 });
   const loadS = (Date.now() - t0) / 1000;
@@ -105,7 +115,29 @@ for (const [w, h, dpr] of SIZES) {
   }
   // landmarks (minarets, domes, towers): present, counted in describeView, a tap on a mapped minaret gives its card; the old town
   // and the city 8 km out (screenshots)
-  if (C.landmarks) {
+  if (C.landmarks?.tall) {
+    // tall thin objects (place.landmarks.tall_objects): the named one drawn, counted in describeView, its card on a tap; the
+    // far one (the Poolbeg chimneys) from 2 km
+    const L = C.landmarks;
+    const lm = await page.evaluate(async ({ L, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: L.at.lon, lat: L.at.lat, range_m: 450, tilt_deg: 72, heading_deg: 200 });
+      const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && G.landmarks?.stats().sets.find(s => s.id === p)?.state === 'ready' && performance.now() - t0 > 1500) break; }
+      for (let k = 0; k < 3; k++) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }
+      const st = G.landmarks.stats(), rows = G.landmarks.rows(p), d = await docklands.describeView(), dp = (d.places || []).find(x => x.place === p), dl = dp?.landmarks;
+      const s = G.landmarks.screen(p, L.tall); let card = null;
+      if (s?.base && s?.top) { G.tap((s.base[0] + s.top[0]) / 2, s.base[1] * 0.5 + s.top[1] * 0.5); const el = document.getElementById('card'); card = el.hidden ? null : el.textContent.replace(/\s+/g, ' ').slice(0, 300); el.hidden = true; }
+      const fp = await docklands.findPlaces(L.name, 5);
+      return { st: st.sets.find(x => x.id === p), tris: st.triangles, tall: rows.filter(r => r.type === 'tall').length, towers: rows.filter(r => r.type === 'tower').length, dl, text: dp?.text?.match(/Skyline:[^.]*\./)?.[0], card, s, fp: fp.slice(0, 3).map(r => `${r.name} (${r.kind}) ${r.id}`) }; }, { L, p: PLACE });
+    check(lm.st?.state === 'ready' && lm.tall > 0 && lm.tris > 0, 'landmarks: tall objects present and drawn', `${lm.tall} tall objects, ${lm.towers} towers; ${lm.tris} triangles drawn; counts ${JSON.stringify(lm.st?.counts?.tall_by_kind)}`);
+    check(lm.dl && lm.dl.tall_in_view > 0 && /Skyline/.test(lm.text || ''), 'describeView counts the tall objects in view', `${JSON.stringify(lm.dl?.tall_by_kind)}; tallest ${JSON.stringify(lm.dl?.tallest_in_view)}; ${lm.text}`);
+    check(!!lm.card && lm.card.includes(L.name) && /Mapped in OpenStreetMap/.test(lm.card), `a tap on the ${L.name} opens its card`, lm.card || JSON.stringify(lm.s));
+    check(lm.fp.some(x => x.startsWith(L.name)), `findPlaces "${L.name}" (landmark search)`, lm.fp.join('; '));
+    const shotS = `${OUT}/place-${PLACE}-${tag}-landmark.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotS }); console.log('     screenshot', shotS);
+    const fz = await page.evaluate(async ({ f, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: f.lon, lat: f.lat, range_m: 2000, tilt_deg: 70, heading_deg: 270 });
+      const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
+      const d = await docklands.describeView(); return { ...(d.places || []).find(x => x.place === p)?.landmarks, hidden: G.landmarks.stats().sets.find(x => x.id === p)?.hidden_city_blocks }; }, { f: L.far, p: PLACE });
+    check(fz && (fz.tall_by_kind?.[L.far.kind] || 0) > 0 && fz.hidden > 0, `the ${L.far.kind}s from 2 km: drawn and counted, their city blocks hidden`, JSON.stringify(fz && { tall: fz.tall_by_kind, tallest: fz.tallest_in_view, city_blocks_hidden: fz.hidden }));
+    const shotP = `${OUT}/place-${PLACE}-${tag}-${L.far.kind}.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotP }); console.log('     screenshot', shotP);
+  } else if (C.landmarks) {
     const L = C.landmarks;
     const lm = await page.evaluate(async ({ L, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: L.at.lon, lat: L.at.lat, range_m: 350, tilt_deg: 75, heading_deg: 120 });
       const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && G.landmarks?.stats().sets[0]?.state === 'ready' && performance.now() - t0 > 1500) break; }

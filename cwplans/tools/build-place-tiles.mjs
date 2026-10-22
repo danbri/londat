@@ -62,19 +62,23 @@ const BLOCKS = PL.kind === 'blocks', BK = BLOCKS ? PL.blocks : null;
 const LITE = PL.kind === 'lite', LT = LITE ? PL.lite : null;
 const cmd = ['fetch', 'build', 'readme'].find(c => argv.includes(c)) || 'all';
 const RAWD = join(CW, 'data', 'raw', 'places', RID), WORK = join(RAWD, 'work');
-const OUTROOT = join(CW, 'docklands', 'data', 'places'), OUT = LITE ? (argOf('out') || join(CW, '..', '..', PL.outRepo, PL.outPath)) : join(OUTROOT, RID), PROV = join(OUT, 'provenance'), SRC = join(OUT, 'sources');
+// a place whose bulky files live in another repository (place.outRepo, outPath, tileBase: the UK lite set, Dublin): written
+// to --out (a checkout of that repository), its index entry in londat's places/index.json holds absolute URLs
+const EXTOUT = !!PL.outRepo;
+const OUTROOT = join(CW, 'docklands', 'data', 'places'), OUT = EXTOUT ? (argOf('out') || join(CW, '..', '..', PL.outRepo, PL.outPath)) : join(OUTROOT, RID), PROV = join(OUT, 'provenance'), SRC = join(OUT, 'sources');
 for (const d of [RAWD, WORK, OUT, PROV, ...(LITE ? [] : [SRC])]) mkdirSync(d, { recursive: true });
 const sha = b => createHash('sha256').update(b).digest('hex');
 // paths in the logs: relative to cwplans/, or "<repo>:<path>" for the files of another repository (kind lite)
-const rel = p => LITE && !relative(OUT, p).startsWith('..') ? `${PL.outRepo}:${PL.outPath}${relative(OUT, p)}` : relative(CW, p);
-const absOf = q => LITE && q.startsWith(PL.outRepo + ':') ? join(OUT, q.slice(PL.outRepo.length + 1 + PL.outPath.length)) : join(CW, q);
+const rel = p => EXTOUT && !relative(OUT, p).startsWith('..') ? `${PL.outRepo}:${PL.outPath}${relative(OUT, p)}` : relative(CW, p);
+const absOf = q => EXTOUT && q.startsWith(PL.outRepo + ':') ? join(OUT, q.slice(PL.outRepo.length + 1 + PL.outPath.length)) : join(CW, q);
 const jz = (p, o) => writeFileSync(p, gzipSync(JSON.stringify(o)));
 const rz = p => JSON.parse(gunzipSync(readFileSync(p)).toString('utf8'));
 
 // ---------- the area: a square of size_m round the origin, as whole quadtree cells
 const L = PL.level ?? 15, CS = 180 / 2 ** L, O = REG.origin;
 const mLat = 110574, mLon = 111320 * Math.cos(O.lat * D2R), half = (PL.size_m ?? 2000) / 2;
-const sq = [O.lon - half / mLon, O.lat - half / mLat, O.lon + half / mLon, O.lat + half / mLat];
+// place.core_bbox [w, s, e, n]: a rectangle instead of the square (Dublin: both banks of the Liffey, about 4.7 x 2.1 km)
+const sq = PL.core_bbox || [O.lon - half / mLon, O.lat - half / mLat, O.lon + half / mLon, O.lat + half / mLat];
 // the cells whose centre lies in the square (so the area is about size_m across, not up to two cells more)
 const cx0 = Math.round((sq[0] + 180) / CS), cx1 = Math.round((sq[2] + 180) / CS) - 1, cy0 = Math.round((sq[1] + 90) / CS), cy1 = Math.round((sq[3] + 90) / CS) - 1;
 const CELLS = []; for (let x = cx0; x <= cx1; x++) for (let y = cy0; y <= cy1; y++) CELLS.push({ x, y, key: `${L}-${x}-${y}`, b: [-180 + x * CS, -90 + y * CS, -180 + (x + 1) * CS, -90 + (y + 1) * CS] });
@@ -117,6 +121,9 @@ async function fetchOsm() {
 // DEM: by the adapter's kind, into one common raw grid (row 0 = north, heights in metres of the adapter's datum)
 const demAd = REG.adapters.find(a => a.id === PL.dem && a.dem) || REG.adapters.find(a => a.dem);
 if (!demAd && !BLOCKS && !LITE) throw new Error(`region ${RID}: no adapter with a dem block`);
+// the DEM of the city and the surroundings: the adapter's dem.surround block when it has one (Dublin: national LiDAR tiles
+// for the core, Copernicus GLO-30 round it), else the same DEM; DEM_CREDIT names both
+const DEMS = demAd?.dem.surround ? { ...demAd.dem, ...demAd.dem.surround } : demAd?.dem, DEM_CREDIT = demAd ? [demAd.dem.credit, demAd.dem.surround?.credit].filter(Boolean).join('; ') : '';
 // the ring: a wider square (place.ring_m, default 8 km) of coarser terrain round the place, drawn by the globe between the
 // place's tiles and the 10 km world terrain (globe/places.js), so a valley or a hill is not cut off at the place's edge
 const RING_M = PL.ring_m ?? 8000, RING = [O.lon - RING_M / 2 / mLon, O.lat - RING_M / 2 / mLat, O.lon + RING_M / 2 / mLon, O.lat + RING_M / 2 / mLat];
@@ -139,6 +146,34 @@ async function demGrid(b, coverage, tifOut) {
     const win = [cl(Math.floor((b[0] - w0) / (e0 - w0) * W), W), cl(Math.floor((n0 - b[3]) / (n0 - s0) * H), H), cl(Math.ceil((b[2] - w0) / (e0 - w0) * W), W), cl(Math.ceil((n0 - b[1]) / (n0 - s0) * H), H)];
     const r = await img.readRasters({ window: win }), px = (e0 - w0) / W, py = (n0 - s0) / H;
     return { url, window: win, fetched: { as_fetched: { note: 'HTTP range requests of a Cloud Optimized GeoTIFF: no single file as fetched; the window (pixel columns and rows) and the stored grid (sha256) fix the input' } }, grid: { w: w0 + win[0] * px, n: n0 - win[1] * py, e: w0 + win[2] * px, s: n0 - win[3] * py, nx: win[2] - win[0], ny: win[3] - win[1], h: Array.from(r[0], v => Math.round(v * 10) / 10), datum: D.datum, source: D.source } };
+  }
+  if (D.kind === 'arcgis-tile-zips') {
+    // national LiDAR as tile zips (Ireland: Geological Survey Ireland): an ArcGIS coverage layer lists the tiles over the box
+    // with their download URL and licence; each zip holds a GeoTIFF in a projected CRS (D.proj4). The tiles are resampled
+    // (bilinear, nodata left out) into a lon/lat grid of about res_m; the zips stay in the raw folder
+    const q = `${D.index}?where=1%3D1&geometry=${b.map(v => v.toFixed(6)).join(',')}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=${D.url_field},${D.licence_field}&returnGeometry=false&f=json`;
+    const J = JSON.parse((await get(q)).toString('utf8')); if (!J.features) throw new Error('coverage query: ' + JSON.stringify(J).slice(0, 300));
+    const urls = [...new Set(J.features.map(f => f.attributes[D.url_field]))].sort(), licences = [...new Set(J.features.map(f => f.attributes[D.licence_field]))];
+    const P = proj4('WGS84', D.proj4), imgs = [], got = [];
+    for (const u of urls) {
+      const zf = join(RAWD, 'dem-' + u.split('/').pop()); if (!existsSync(zf) || flag('--refetch')) { writeFileSync(zf, await get(u)); await pause(1000); }
+      const zb = readFileSync(zf); got.push({ url: u, bytes: zb.length, sha256: sha(zb) });
+      const member = execFileSync('unzip', ['-Z1', zf], { encoding: 'utf8' }).split('\n').filter(Boolean).find(n => new RegExp(D.member).test(n)); if (!member) { console.warn('dem: no member in', u); continue; }
+      const tif = execFileSync('unzip', ['-p', zf, member], { maxBuffer: 1 << 30 }), img = await (await fromArrayBuffer(tif.buffer.slice(tif.byteOffset, tif.byteOffset + tif.byteLength))).getImage();
+      const [x0, y0, x1, y1] = img.getBoundingBox(); imgs.push({ x0, y0, x1, y1, W: img.getWidth(), H: img.getHeight(), r: (await img.readRasters())[0], nd: img.getGDALNoData() });
+    }
+    const ok = (T, v) => v != null && v !== T.nd && v > -1000 && Number.isFinite(v);
+    const dLat = D.res_m / mLat, dLon = D.res_m / mLon, nx = Math.ceil((b[2] - b[0]) / dLon), ny = Math.ceil((b[3] - b[1]) / dLat), h = new Array(nx * ny).fill(null);
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+      const [x, y] = P.forward([b[0] + (i + 0.5) * dLon, b[3] - (j + 0.5) * dLat]);
+      for (const T of imgs) { if (x < T.x0 || x >= T.x1 || y <= T.y0 || y > T.y1) continue;
+        const fx = Math.max(0, Math.min(T.W - 1.001, (x - T.x0) / (T.x1 - T.x0) * T.W - 0.5)), fy = Math.max(0, Math.min(T.H - 1.001, (T.y1 - y) / (T.y1 - T.y0) * T.H - 0.5)), i0 = Math.floor(fx), j0 = Math.floor(fy), u = fx - i0, v = fy - j0;
+        let s = 0, wt = 0; for (const [di, dj, w] of [[0, 0, (1 - u) * (1 - v)], [1, 0, u * (1 - v)], [0, 1, (1 - u) * v], [1, 1, u * v]]) { const val = T.r[(j0 + dj) * T.W + i0 + di]; if (ok(T, val) && w > 0) { s += val * w; wt += w; } }
+        if (wt > 0) { h[j * nx + i] = Math.round(s / wt * 10) / 10; break; } }
+    }
+    const missing = h.filter(v => v == null).length;
+    console.log(`dem: ${urls.length} tile zips, ${nx} x ${ny} cells, ${missing} without a value`);
+    return { url: [q, ...urls], fetched: { as_fetched: got, licences, cells_without_value: missing }, grid: { w: b[0], s: b[3] - ny * dLat, e: b[0] + nx * dLon, n: b[3], nx, ny, h, datum: D.datum, source: D.source } };
   }
   throw new Error(`dem kind ${D.kind}?`);
 }
@@ -269,7 +304,7 @@ async function fetchSurround() {
   const m = 0.01, B = [EXT[0] - m, EXT[1] - m, EXT[2] + m, EXT[3] + m];
   // terrain of the surroundings: the DEM adapter's surroundCoverage (WCS) or the COG tiles (Copernicus GLO-30)
   const fd = join(RAWD, 'dem-surround.bin.gz');
-  if (!existsSync(fd) || flag('--refetch')) { const D = demAd.dem;
+  if (!existsSync(fd) || flag('--refetch')) { const D = DEMS;
     if (D.kind === 'wcs20') {
       // the service refuses a box of about 1 x 1 degree (400): parts of at most 0.5 degree, one request at a time, 1 s
       // apart, pasted into one grid at the resolution of the first part
@@ -791,12 +826,16 @@ function writeReadmes() {
     : key.startsWith('heights-') ? R.adapters.find(a => a.id === key.slice(8))?.buildingHeights?.source : null);
   const esc = v => String(v ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
   for (const p of ix.places) {
-    const R = REGIONS[p.id], dir = join(OUTROOT, p.id), lf = join(dir, 'provenance', 'log.json'); if (!R || !existsSync(lf)) continue;
+    // a place in another repository (place.outRepo, not lite) is written only by its own build (its folder is --out)
+    const R = REGIONS[p.id], X = !!R?.place?.outRepo; if (X && (p.id !== RID || R.place.kind === 'lite')) continue;
+    const dir = X ? OUT : join(OUTROOT, p.id), lf = join(dir, 'provenance', 'log.json'); if (!R || !existsSync(lf)) continue;
+    const PRE = X ? `${R.place.outRepo}:${R.place.outPath}` : `docklands/data/places/${p.id}/`, GHP = X ? `https://github.com/danbri/${R.place.outRepo}/blob/main/${R.place.outPath}` : `${GH}docklands/data/places/${p.id}/`, GHT = X ? `https://github.com/danbri/${R.place.outRepo}/tree/main/${R.place.outPath}` : `${GH}docklands/data/places/${p.id}/`;
     const log = JSON.parse(readFileSync(lf, 'utf8')), last = op => log.activities.filter(a => a.operation === op).at(-1);
     const L = [], BL = R.place.kind === 'blocks';
     L.push(`# ${R.name}: a place on the globe (3D Tiles 1.1)`, '',
       `Made by [cwplans/tools/build-place-tiles.mjs](${GH}tools/build-place-tiles.mjs) for the region config [docklands/geo/regions/${p.id}.js](https://github.com/danbri/londat/blob/main/docklands/geo/regions/${p.id}.js); drawn by the globe of the Three.js port ([docklands/globe/places.js](https://github.com/danbri/londat/blob/main/docklands/globe/places.js)).`,
       `This README is generated from \`provenance/log.json\` and [cwplans/data-register.json](${GH}data-register.json) by \`node cwplans/tools/build-place-tiles.mjs readme --region ${p.id}\` (also at the end of each build). Do not edit it by hand.`, '',
+      ...(X ? [`- Files served from ${p.tileBase} (repository https://github.com/danbri/${R.place.outRepo}, folder \`${R.place.outPath}\`); the index entry is in londat's [cwplans/docklands/data/places/index.json](${GH}docklands/data/places/index.json)`, ...(R.place.views || []).map(v => `- ${v.name}: ${SITE}docklands/?ll=${v.ll}&ht=${v.ht || '0,55'}`)] : []),
       ...(BL ? [`- The whole city (20 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},20000&ht=0,45`, ...(R.place.views || []).map(v => `- ${v.name}: ${SITE}docklands/?ll=${v.ll}&ht=${v.ht || '0,55'}`),
         `- A place of kind "blocks": no core and no ground of its own (the globe's terrain and imagery stay); buildings in the model box of ${(R.place.exclude || []).join(', ')} are left to that model`] : [`- Live view: ${view(p)}`]), ...(R.place.surround ? [`- The city (8 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},8000&ht=0,50`, `- The surroundings (30 km out): ${SITE}docklands/?ll=${p.centre[1]},${p.centre[0]},30000&ht=0,45`] : []), `- Area (WGS84 degrees, west, south, east, north): ${p.area.join(', ')}; ${p.buildings} buildings; built ${p.built}`,
       `- Credit shown on the page: ${p.credit}`, `- Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)"; fault F55 in the docklands-data-curation skill`, '');
@@ -810,15 +849,15 @@ function writeReadmes() {
       : f === 'provenance/log.json' ? 'fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts'
       : f.startsWith('sources/') ? 'committed source extract (input of an operation; see Sources)' : '';
     const files = [];
-    const coreKeys = new Set(), t = last('place-tiles'); if (t) for (const o of t.outputs) { const f = o.path.replace(`docklands/data/places/${p.id}/`, ''); if (f.startsWith('tiles/')) coreKeys.add(f.slice(6, -4)); if (!f.startsWith('data/raw')) files.push(f); }
-    const lo = last('place-lod'); if (lo && R.place.surround) for (const o of lo.outputs) files.push(o.path.replace(`docklands/data/places/${p.id}/`, ''));
-    const bo = last('place-blocks'); if (bo && BL) { for (const o of bo.outputs) { const f = o.path.replace(`docklands/data/places/${p.id}/`, ''); if (!f.startsWith('tiles/')) files.push(f); } files.unshift('tiles/*.glb'); }
+    const coreKeys = new Set(), t = last('place-tiles'); if (t) for (const o of t.outputs) { const f = o.path.replace(PRE, ''); if (f.startsWith('tiles/')) coreKeys.add(f.slice(6, -4)); if (!f.startsWith('data/raw')) files.push(f); }
+    const lo = last('place-lod'); if (lo && R.place.surround) for (const o of lo.outputs) files.push(o.path.replace(PRE, ''));
+    const bo = last('place-blocks'); if (bo && BL) { for (const o of bo.outputs) { const f = o.path.replace(PRE, ''); if (!f.startsWith('tiles/')) files.push(f); } files.unshift('tiles/*.glb'); }
     if (existsSync(join(dir, 'sources'))) for (const f of readdirSync(join(dir, 'sources')).sort()) files.push('sources/' + f);
     files.push('provenance/log.json');
     const tdir = join(dir, 'tiles'), tlist = f => f === 'tiles/*.glb' && existsSync(tdir) ? readdirSync(tdir).filter(x => x.endsWith('.glb')).sort() : null;
     for (const f of files) { const tl = tlist(f);
-      if (tl) { L.push(`| [tiles/](${GH}docklands/data/places/${p.id}/tiles) (${tl.length} files) | ${what(f)} | ${tl.reduce((a, x) => a + size(join(tdir, x)), 0)} | \`${sha(tl.map(x => x + ' ' + sha(readFileSync(join(tdir, x)))).join('\n'))}\` |`); continue; }
-      const fp = join(dir, f); if (!existsSync(fp)) continue; L.push(`| [${f}](${GH}docklands/data/places/${p.id}/${f}) | ${what(f)} | ${size(fp)} | \`${sha(readFileSync(fp))}\` |`); }
+      if (tl) { L.push(`| [tiles/](${GHT}tiles) (${tl.length} files) | ${what(f)} | ${tl.reduce((a, x) => a + size(join(tdir, x)), 0)} | \`${sha(tl.map(x => x + ' ' + sha(readFileSync(join(tdir, x)))).join('\n'))}\` |`); continue; }
+      const fp = join(dir, f); if (!existsSync(fp)) continue; L.push(`| [${f}](${GHP}${f}) | ${what(f)} | ${size(fp)} | \`${sha(readFileSync(fp))}\` |`); }
     let tot = 0; for (const f of files) { const tl = tlist(f); if (tl) tot += tl.reduce((a, x) => a + size(join(tdir, x)), 0); else if (existsSync(join(dir, f))) tot += size(join(dir, f)); } L.push('', `Total ${kb(tot)} (README.md not counted).`, '');
     // sources
     L.push('## Sources', '');
@@ -837,7 +876,7 @@ function writeReadmes() {
       else if (af?.sha256) L.push(`- As fetched: ${af.bytes} bytes, SHA-256 \`${af.sha256}\`${af.member_sha256 ? `; member SHA-256 \`${af.member_sha256}\`` : ''}`);
       else if (af?.note) L.push(`- As fetched: ${af.note}`);
       else if (rec.zip_sha256) L.push(`- As fetched: zip SHA-256 \`${rec.zip_sha256}\``);
-      L.push(`- Stored for the build: \`${rec.file}\`, ${rec.bytes} bytes, SHA-256 \`${rec.sha256}\` — ${rec.committed ? `committed (\`${rec.committed.replace(`docklands/data/places/${p.id}/`, '')}\`)` : 'NOT committed (raw folder, git-ignored)'}`);
+      L.push(`- Stored for the build: \`${rec.file}\`, ${rec.bytes} bytes, SHA-256 \`${rec.sha256}\` — ${rec.committed ? `committed (\`${rec.committed.replace(PRE, '')}\`)` : 'NOT committed (raw folder, git-ignored)'}`);
       if (s.review) L.push(`- Review: ${s.review}`);
       L.push('');
     }
@@ -903,7 +942,7 @@ function writeReadmes() {
     rv.push('- OSM (ODbL 1.0, share-alike): allowed for the prototyping phase (owner, 2026-10-03); to be reviewed with the rest of the OSM use.');
     for (const a of R.adapters) if (a.licenceClass === 'share-alike' && (R.place.heights || []).includes(a.id)) rv.push(`- ${a.id}: licence class "share-alike" (${a.licence}); allowed by the owner on 2026-10-20 ("Use ms/overture"), registered next to OSM. Values whose own source licence is not open (for example an empty licence field) are neither used nor committed: see the counts in sources/.`);
     const ovo = R.adapters.find(a => a.outer && a.id === (R.place.surround?.outer || R.place.blocks?.outer)); if (ovo) rv.push(`- ${ovo.id}: licence class "share-alike" (${ovo.licence}): OpenStreetMap data as redistributed by Overture; only records whose source is OpenStreetMap are drawn (geometry_sources), counted in log.json outer_counts.`);
-    if (R.adapters.find(a => a.dem?.source === 'copernicus-glo30' && a.id === R.place.dem)) rv.push('- Copernicus DEM GLO-30: its full credit ends "all rights reserved" (CLAUDE.md); accepted by the owner on 2026-10-20 ("Data - is fine for now"); re-check before the prototyping phase ends.');
+    if (R.adapters.find(a => (a.dem?.source === 'copernicus-glo30' || a.dem?.surround?.source === 'copernicus-glo30') && a.id === R.place.dem)) rv.push('- Copernicus DEM GLO-30: its full credit ends "all rights reserved" (CLAUDE.md); accepted by the owner on 2026-10-20 ("Data - is fine for now"); re-check before the prototyping phase ends.');
     L.push(...rv, '');
     writeFileSync(join(dir, 'README.md'), L.join('\n'));
   }
@@ -916,7 +955,7 @@ function writeReadmes() {
     'Raw downloads (OSM answers, DEM GeoTIFFs, national and GHSL zips) stay in `cwplans/data/raw/places/<id>/`, git-ignored. Catastro originals are never committed.', '',
     '## Places', '', '| place | live view | buildings | size | README |', '|---|---|---|---|---|'];
   for (const p of ix.places) { const dir = join(OUTROOT, p.id); let tot = 0; const walk = d => { for (const n of readdirSync(d)) { const q = join(d, n); if (n === 'README.md') continue; statSync(q).isDirectory() ? walk(q) : tot += size(q); } }; if (existsSync(dir)) walk(dir);
-    M.push(p.tileBase ? `| ${p.name} | ${p.view ? SITE + 'docklands/?' + p.view : view(p)} | ${p.buildings} (${p.landmarks} landmarks) | in another repository | [README.md](${p.readme}) (${p.tileBase}) |` : `| ${p.name} | ${view(p)} | ${p.buildings} | ${kb(tot)} | [${p.id}/README.md](${GH}docklands/data/places/${p.id}/README.md) |`); }
+    M.push(p.tileBase ? `| ${p.name} | ${p.view ? SITE + 'docklands/?' + p.view : view(p)} | ${p.buildings}${p.landmarks != null ? ` (${p.landmarks} landmarks)` : ''}${p.city_buildings ? ` (city ${p.city_buildings})` : ''} | in another repository | [README.md](${p.readme}) (${p.tileBase}) |` : `| ${p.name} | ${view(p)} | ${p.buildings} | ${kb(tot)} | [${p.id}/README.md](${GH}docklands/data/places/${p.id}/README.md) |`); }
   M.push('', `Data register entries: [DATA-REGISTER.md](${GH}DATA-REGISTER.md) (search "docklands/data/places").`, '');
   writeFileSync(join(OUTROOT, 'README.md'), M.join('\n'));
   console.log('readme: places/README.md and', ix.places.map(p => p.id + '/README.md').join(', '));
@@ -961,7 +1000,7 @@ async function buildOuter(fGeoid, natFiles, rasFiles) {
     roads: { motorway: { width_m: 26, min_px: 1.8, colour: '#d9825f', casing: '#7e5a46', min_level: 0 }, trunk: { width_m: 20, min_px: 1.6, colour: '#e3a165', casing: '#7e5f46', min_level: 0 },
       primary: { width_m: 16, min_px: 1.4, colour: '#ecc77e', casing: '#86704f', min_level: 0 }, secondary: { width_m: 13, min_px: 1.1, colour: '#f2dea0', min_level: 0 },
       tertiary: { width_m: 10, min_px: 0.8, colour: '#f4efe2', min_level: 11 }, streets: { width_m: 7, min_px: 0.6, colour: '#f7f4ec', min_level: 13 }, rail: { width_m: 5, min_px: 1, colour: '#5f5a55', min_level: 0 } } };
-  const credit = [`© OpenStreetMap contributors (ODbL 1.0)`, demAd.dem.credit, ov.outer.credit, ...geoAds.map(a => a.geometry.credit), lcAd?.landCover.credit, ...hAds.map(a => a.buildingHeights.credit)].filter(Boolean).join('; ');
+  const credit = [`© OpenStreetMap contributors (ODbL 1.0)`, DEM_CREDIT, ov.outer.credit, ...geoAds.map(a => a.geometry.credit), lcAd?.landCover.credit, ...hAds.map(a => a.buildingHeights.credit)].filter(Boolean).join('; ');
   const a6 = await run(OPS.lod, [fileIn(fOut, 'outer'), fileIn(fCH, 'city-heights'), fileIn(fDemS, 'dem-surround'), fileIn(fLc, 'landcover'), fileIn(fGeoid, 'geoid'), fileIn(fCore, 'core-tileset')], { ...LP, credit }, async p => {
     const geoAt = await geoidSampler(fGeoid), demS = loadGrid(fDemS), lc = loadGrid(fLc), demAt = easedDem(demS, EXT, mLon, mLat, p.blend_m, p.box_m), core = JSON.parse(readFileSync(fCore, 'utf8'));
     const coreKids = new Map(core.root.children.map(c => [c.content.uri.match(/(\d+-\d+-\d+)\.glb/)[1], c]));
@@ -1004,7 +1043,7 @@ async function buildOuter(fGeoid, natFiles, rasFiles) {
     const tiers = {}; for (const s of stats) { const t = s.core ? 'core' : s.blocks ? 'city' : 'surroundings', o = tiers[t] ||= { tiles: 0, bytes: 0, triangles: 0, blocks: 0, levels: {} }; o.tiles++; o.bytes += s.bytes || 0; o.triangles += s.triangles || 0; o.blocks += s.blocks || 0; o.levels[s.level] = (o.levels[s.level] || 0) + 1; for (const [c, n] of Object.entries(s.blocks_by_class || {})) { o.blocks_by_class ||= {}; o.blocks_by_class[c] = (o.blocks_by_class[c] || 0) + n; } }
     const sj = { format: 'place-surround-1', place: RID, name: REG.name, extent: EXT.map(r7), city: CITY, top_level: TOP, credit,
       geometry_classes: { osm: { label: 'OpenStreetMap (via Overture)', source: 'osm' }, ...Object.fromEntries(geoAds.map(a => [a.geometry.cls, { label: a.geometry.label, source: a.geometry.source, switch: a.id }])) },
-      ground: { grid: GN, area: EXT.map(r7), h: gh, datum: demAd.dem.datum + ' (the surroundings DEM, its outer ' + p.blend_m / 1000 + ' km eased to a ' + p.box_m / 1000 + ' km box mean); add the geoid (EGM96) for WGS84 ellipsoidal heights', source: demAd.dem.source },
+      ground: { grid: GN, area: EXT.map(r7), h: gh, datum: DEMS.datum + ' (the surroundings DEM, its outer ' + p.blend_m / 1000 + ' km eased to a ' + p.box_m / 1000 + ' km box mean); add the geoid (EGM96) for WGS84 ellipsoidal heights', source: DEMS.source },
       labels_fields: ['name', 'name_alt', 'kind', 'lon', 'lat', 'population', 'elevation_m', 'rank'], labels,
       rivers_fields: ['name', 'name_alt', 'class', 'length_km', 'lon', 'lat'], rivers, roads_fields: ['name', 'name_alt', 'class', 'length_km', 'lon', 'lat'], roads: roads.slice(0, 400),
       tiers, tiles_fields: ['key', 'level', 'bytes', 'triangles', 'blocks', 'roads_m', 'rail_m', 'river_m', 'rivers'], tiles: stats.filter(s => !s.core).map(s => [s.key, s.level, s.bytes, s.triangles, s.blocks, s.roads_m, s.rail_m, s.river_m, s.rivers]) };
@@ -1569,7 +1608,9 @@ async function build() {
   // the index of places (one entry per place built)
   const IX = join(OUTROOT, 'index.json'), ix = existsSync(IX) ? JSON.parse(readFileSync(IX, 'utf8')) : { format: 'places-index-1', about: 'Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js', places: [] };
   const fj = JSON.parse(readFileSync(join(OUT, 'features.json'), 'utf8'));
-  const entry = { id: RID, name: REG.name, label: fj.label, area: AREA, centre: [O.lon, O.lat], timeZone: REG.timeZone, locale: REG.locale, tileset: `${RID}/tileset.json`, features: `${RID}/features.json`, readme: `${RID}/README.md`, provenance: `${RID}/provenance/log.json`, credit: lod ? lod.credit : fj.credit, buildings: fj.buildings.filter(Boolean).length, built: (lod?.at || a3.at) || null, ...(lod ? { surround: `${RID}/surround.json`, extent: EXT.map(r7), city: CITY, city_buildings: lod.cityBuildings } : {}) };
+  // the files' base: beside index.json, or (place.outRepo) the absolute tileBase of the other repository
+  const TBX = EXTOUT ? PL.tileBase.replace(/\/?$/, '/') : `${RID}/`;
+  const entry = { id: RID, name: REG.name, label: fj.label, area: AREA, centre: [O.lon, O.lat], timeZone: REG.timeZone, locale: REG.locale, ...(EXTOUT ? { tileBase: TBX } : {}), tileset: `${TBX}tileset.json`, features: `${TBX}features.json`, readme: `${TBX}README.md`, provenance: `${TBX}provenance/log.json`, credit: lod ? lod.credit : fj.credit, buildings: fj.buildings.filter(Boolean).length, built: (lod?.at || a3.at) || null, ...(lod ? { surround: `${TBX}surround.json`, extent: EXT.map(r7), city: CITY, city_buildings: lod.cityBuildings } : {}), ...(EXTOUT && PL.views ? { view: `ll=${PL.views[0].ll}&ht=${PL.views[0].ht}` } : {}) };
   ix.places = ix.places.filter(p => p.id !== RID).concat(entry).sort((a, b) => a.id.localeCompare(b.id));
   writeFileSync(IX, JSON.stringify(ix, null, 1));
   let tot = 0; for (const f of readdirSync(join(OUT, 'tiles'))) tot += readFileSync(join(OUT, 'tiles', f)).length;

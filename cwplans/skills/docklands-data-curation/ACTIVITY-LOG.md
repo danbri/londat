@@ -3287,3 +3287,39 @@ Tests: lite-check.mjs (new), place-lite.test.mjs (new). Fault F55 counts per par
 traps: skill docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)". Open: landmark heights (towers and
 spires), the mass reads as a grid from 20 km; merge order: docklandia before londat (else 404s for the index entry).
 
+
+## 2026-10-22: Dublin, a place held in docklandia (subagent, branches not pushed)
+
+Owner, 2026-10-22: "I'll like to add some information (bulk data in docklandia repo pls.) for more cities and countries.
+Ireland: Dublin especially". Built central Dublin as a place like León and Sarajevo: region config
+docklands/geo/regions/dublin.js (Europe/Dublin, en-IE and ga), core 52 level-15 cells (Heuston to the Point and Grand
+Canal Dock, Parnell Square to St Stephen's Green; new `place.core_bbox`), city ring (Dublin City and the built-up county,
+516,640 buildings: OSM 491,393, Microsoft 25,247), surroundings to about 35 km (Dublin Bay, Howth, the Dublin and Wicklow
+mountains), greens (8,491 trees, 36 water polygons), landmarks (the Spire, the Poolbeg chimneys, the Wellington Monument,
+21 towers and spires, 21 domes). Bulky files in https://github.com/danbri/docklandia `data/ie/dublin/` (105.7 MB; branch
+place-dublin in a scratch clone, not pushed); londat keeps the index entries (places/index.json, greens.json,
+landmarks.json, absolute URLs under the tileBase).
+- Sources and licences: OSM (ODbL; OSM API map.json of the core, 10 requests; landmark boxes, 521 requests; QLever for
+  the tall objects), Overture 2026-09-23.1 (ODbL OSM-sourced; Microsoft ML Buildings geometry and heights, allowed
+  2026-10-20), Microsoft footprints with heights (ODbL), GHSL GHS-BUILT-H (CC BY 4.0), ESA WorldCover (CC BY 4.0),
+  Copernicus GLO-30 (city and surroundings; credit "all rights reserved", accepted 2026-10-20) and NEW: Geological
+  Survey Ireland / OPW 2 m LiDAR DTM (CC BY 4.0; register source `gsi-opw-lidar-dtm`) for the core ground. Not used:
+  Tailte Éireann PRIME2 buildings (licensed, not open), the Tailte Éireann gazetteer (CC BY 4.0, not needed now), DCC
+  trees "tree-dcc" (CC BY 4.0; a later greens input), the NYU 2015 Dublin LiDAR (CC BY 4.0 DSM, 3 x 3 km; later, for
+  measured heights). No share-alike source beyond OSM and Microsoft / Overture.
+- Tools (add, not restructure): build-place-tiles.mjs (any place with outRepo writes to --out; core_bbox; DEM kind
+  arcgis-tile-zips with a dem.surround block), build-place-greens.mjs and build-place-landmarks.mjs (--out; landmarks:
+  tall_objects from QLever, bodies of revolution by kind), build-world-base.mjs (--add: only the missing tiles of a new
+  testbed; +211 imagery, +136 height tiles, existing tiles unchanged). Reader: places.js (tileBase0; Latin second names
+  stay: Irish beside English), place-look.js and landmarks.js (rebase absolute URLs; tall objects in cards, search,
+  describeView; city blocks under a tall object hidden live). Tests: place-check.mjs case dublin (ext, tall),
+  globe-check.mjs --placebase.
+- Dataflow: place-select-osm ef5a399fed1065dc, place-heights 5f5086f9861e82b4, place-tiles d11e4faa3fce2a07,
+  place-select-outer 9ad991644533c426, place-city-heights 314fbf236d594e11, place-lod 3d6dea06cf0343a9, place-greens
+  8377ac5876341dbf, landmark-select cb245232d4e10685, landmark-tiles a19c9f7da09ab51e (docklandia
+  data/ie/dublin/provenance/log.json, greens/log.json, landmarks/log.json).
+- F55 (heights, counted): core GHSL 12,980 of 23,277 (56 %), OSM levels 7,348; city GHSL 185,312, OSM levels 176,828,
+  Overture (Microsoft ML) heights 70,406.
+- Sizes: core 17.7 MB, city 60.2 MB, surroundings 17.4 MB, features.json 3.56 MB, the rest 5.4 MB (105.7 MB).
+- Merge order: docklandia place-dublin first (else the live index entry gives 404s), then londat.
+- Details and traps: skill docklands-3d-page, "Three.js port: Dublin, a place held in docklandia (2026-10-22)".

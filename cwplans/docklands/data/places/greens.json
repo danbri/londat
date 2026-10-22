@@ -2,6 +2,7 @@
  "format": "place-greens-index-1",
  "about": "Places with water and trees (cwplans/tools/build-place-greens.mjs); read by docklands/globe/place-look.js",
  "places": {
+  "dublin": "https://danbri.github.io/docklandia/data/ie/dublin/greens/greens.json",
   "leon": "leon/greens/greens.json",
   "sarajevo": "sarajevo/greens/greens.json"
  }

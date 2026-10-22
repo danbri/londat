@@ -21,7 +21,7 @@
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, vec3, vec4, float, normalize, dot, max, mix, smoothstep, pow, positionGeometry, positionView, modelViewMatrix, cameraNear, cameraFar, viewZToLogarithmicDepth, normalFlat, cameraWorldMatrix } from 'three/tsl';
 import { geodeticToEcef, enuBasis, D2R } from '../geo/ellipsoid.js';
-import { latinPreferred, pickName } from '../geo/script.js';
+import { latinPreferred, pickName, isLatin } from '../geo/script.js';
 import { fold } from './world.js';
 
 export const LANDMARKS_INDEX = '../cwplans/docklands/data/places/landmarks.json';
@@ -50,7 +50,9 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
   if (MODE === 'off') return null;
   const base = new URL(LANDMARKS_INDEX, location.href);
   const ix = await fetch(base).then(r => r.ok ? r.json() : null).catch(() => null); if (!ix?.places) return null;
-  const S = (P || []).filter(p => ix.places[p.id]).map(p => ({ p, cfg: ix.places[p.id], state: null, tiles: [], rows: null, hide: null }));
+  // a set in another repository has absolute URLs (the place's tileBase); ?placebase= rebases them as places.js does
+  const reb = (p, u) => p.tileBase0 && typeof u === 'string' && u.startsWith(p.tileBase0) ? p.tileBase + u.slice(p.tileBase0.length) : u;
+  const S = (P || []).filter(p => ix.places[p.id]).map(p => ({ p, cfg: Object.fromEntries(Object.entries(ix.places[p.id]).map(([k, v]) => [k, reb(p, v)])), state: null, tiles: [], rows: null, hide: null }));
   if (!S.length) return null;
   let showEst = MODE !== 'mapped';
 
@@ -117,6 +119,24 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
         if (k) { pa.needsUpdate = true; L.hidden = (L.hidden || 0) + k; } } }
   }
 
+  // ---------- city blocks replaced by a tall object outside the core (Dublin: the Poolbeg chimneys and the Jameson Chimney
+  // are OSM buildings too, so the city ring draws each as a box of its full height): an instanced block whose base centre is
+  // within max(6 m, 2.5 x the object's radius) of the object's axis and whose height is at least 0.7 x the object's is
+  // scaled to nothing once, when its tile is activated (the tile data stay as they are; done per mesh, as hideCore)
+  const doneB = new WeakSet();
+  function hideBlocks(L) {
+    const p = L.p, tall = L.tallOut || (L.tallOut = L.rows.filter(r => r.type === 'tall' && !r.core && r.height_m > 0).map(r => ({ r, P: geodeticToEcef(r.lon, r.lat, r.ground_h), d: Math.max(6, 2.5 * (r.r_m || 2)) })));
+    if (!tall.length) return;
+    for (const n of p.nodes) { if (n.state !== 'ready' || n.core || !n.M) continue;
+      for (const m of n.meshes) { if (m.userData.kind !== 'blocks' || !m.isInstancedMesh || doneB.has(m)) continue; doneB.add(m);
+        const M = n.M, near = tall.map(t => { const dx = t.P[0] - M[12], dy = t.P[1] - M[13], dz = t.P[2] - M[14]; return { t, x: M[0] * dx + M[1] * dy + M[2] * dz, z: M[8] * dx + M[9] * dy + M[10] * dz }; })
+          .filter(o => Math.abs(o.x) < 30000 && Math.abs(o.z) < 30000);
+        if (!near.length) continue; const a = m.instanceMatrix.array; let k = 0;
+        for (let i = 0; i < m.count; i++) { const o = 16 * i, h = Math.hypot(a[o + 4], a[o + 5], a[o + 6]);
+          for (const q of near) if (Math.hypot(a[o + 12] - q.x, a[o + 14] - q.z) <= q.t.d && h >= 0.7 * q.t.r.height_m) { for (let c = 0; c < 16; c++) a[o + c] = 0; k++; break; } }
+        if (k) { m.instanceMatrix.needsUpdate = true; L.hiddenBlocks = (L.hiddenBlocks || 0) + k; } } }
+  }
+
   // ---------- per frame, after the places: load / free with the place, place the tiles, frustum, the estimated switch
   const placeMesh = (m, M, F) => { const R = F.R, O = F.O, me = m.matrixWorld.elements, t0 = M[12] - O[0], t1 = M[13] - O[1], t2 = M[14] - O[2];
     for (let r = 0; r < 3; r++) { const a = R[r][0], b = R[r][1], c = R[r][2]; me[r] = a * M[0] + b * M[1] + c * M[2]; me[4 + r] = a * M[4] + b * M[5] + c * M[6]; me[8 + r] = a * M[8] + b * M[9] + c * M[10]; me[12 + r] = a * t0 + b * t1 + c * t2; }
@@ -131,7 +151,7 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
       const p = L.p;
       if (p.state === 'loaded' && !L.state) load(L); else if (p.state !== 'loaded' && L.state === 'ready') free(L);
       if (L.state !== 'ready') continue;
-      hideCore(L);
+      hideCore(L); hideBlocks(L);
       const u = enuBasis(p.centre[0], p.centre[1]).up, R = F.R; upF.value.set(R[0][0] * u[0] + R[0][1] * u[1] + R[0][2] * u[2], R[1][0] * u[0] + R[1][1] * u[1] + R[1][2] * u[2], R[2][0] * u[0] + R[2][1] * u[1] + R[2][2] * u[2]);
       for (const t of L.tiles) { const vis = !G.cull || G.cull.inFrustum(t.C, t.rad); t.visible = vis;
         for (const m of t.meshes) { m.visible = vis && (showEst || !m.userData.estimated); if (m.visible) { placeMesh(m, t.M, F); stats.tiles++; stats.triangles += m.userData.tris; } } }
@@ -141,9 +161,12 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
   // ---------- the text interface
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const osmUrl = id => /^[nwr]\d+$/.test(id || '') ? `https://www.openstreetmap.org/${{ w: 'way', r: 'relation', n: 'node' }[id[0]]}/${id.slice(1)}` : null;
-  const shownName = r => pickName(r.name, r.name_alt);
-  const KIND = { minaret: 'Minaret', dome: 'Dome', tower: 'Tower' };
-  const kindText = r => r.type === 'tower' ? (r.kind === 'clock tower' ? 'Clock tower' : r.kind_of ? `Tower of a ${r.kind_of}` : 'Tower') : r.type === 'minaret' ? `Minaret of a ${r.kind_of || 'mosque'}` : `Dome of a ${r.kind || 'building'}`;
+  // as places.js nameText: a second name in the Latin script stays beside the first (English and Irish), another script goes
+  const shownName = r => { const m = pickName(r.name, r.name_alt); return m && m === r.name && r.name_alt && r.name_alt !== m && (isLatin(r.name_alt) || !latinPreferred()) ? `${m} (${r.name_alt})` : m; };
+  const KIND = { minaret: 'Minaret', dome: 'Dome', tower: 'Tower', tall: 'Landmark' };
+  // tall thin objects (chimney, obelisk, monument, mast: region config place.landmarks.tall_objects)
+  const TALLK = { chimney: 'Chimney', obelisk: 'Obelisk', monument: 'Monument', mast: 'Mast', tower: 'Tower' };
+  const kindText = r => r.type === 'tall' ? (TALLK[r.kind] || 'Landmark') : r.type === 'tower' ? (r.kind === 'clock tower' ? 'Clock tower' : r.kind_of ? `Tower of a ${r.kind_of}` : 'Tower') : r.type === 'minaret' ? `Minaret of a ${r.kind_of || 'mosque'}` : `Dome of a ${r.kind || 'building'}`;
   const drawnRows = L => L.rows.filter(r => r.type !== 'worship' && (showEst || r.source !== 'estimated'));
   const onScreen = s => s && s[0] >= 0 && s[1] >= 0 && s[0] <= innerWidth && s[1] <= innerHeight;
   function card(L, r) {
@@ -179,26 +202,33 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
       const mosques = L.rows.filter(x => x.type === 'worship' && x.kind === 'mosque' && onScreen(G.project(geodeticToEcef(x.lon, x.lat, (x.ground_h ?? 0) + 8))));
       const churches = L.rows.filter(x => x.type === 'worship' && ['church', 'cathedral', 'chapel'].includes(x.kind) && onScreen(G.project(geodeticToEcef(x.lon, x.lat, (x.ground_h ?? 0) + 8))));
       const mn = seen.filter(x => x.type === 'minaret'), tall = seen.slice().sort((a, b) => b.height_m - a.height_m)[0];
-      r.landmarks = { mosques_in_view: mosques.length, minarets_in_view: { mapped: mn.filter(x => x.source === 'mapped').length, estimated: mn.filter(x => x.source === 'estimated').length }, domes_in_view: seen.filter(x => x.type === 'dome').length,
+      const tl = seen.filter(x => x.type === 'tall');
+      r.landmarks = { tall_in_view: tl.length, tall_by_kind: Object.fromEntries(Object.keys(TALLK).map(k => [k, tl.filter(x => x.kind === k).length]).filter(x => x[1])), mosques_in_view: mosques.length, minarets_in_view: { mapped: mn.filter(x => x.source === 'mapped').length, estimated: mn.filter(x => x.source === 'estimated').length }, domes_in_view: seen.filter(x => x.type === 'dome').length,
         towers_in_view: seen.filter(x => x.type === 'tower').length, churches_in_view: churches.length, clock_towers_in_view: seen.filter(x => x.kind === 'clock tower').length, estimated_shown: showEst,
         tallest_in_view: tall ? { name: shownName(tall) || null, kind: kindText(tall), height_m: tall.height_m, source: tall.source } : null, source: 'build-place-landmarks (OpenStreetMap, ODbL; estimated minarets by a stated rule)' };
       const lm = r.landmarks;
-      r.text += ` Skyline: ${lm.mosques_in_view} mosques and ${mn.length} minarets in view (${lm.minarets_in_view.mapped} mapped in OpenStreetMap, ${lm.minarets_in_view.estimated} estimated by rule${showEst ? '' : ', hidden'}), ${lm.domes_in_view} domes, ${lm.towers_in_view} towers (${lm.churches_in_view} churches${lm.clock_towers_in_view ? `, ${lm.clock_towers_in_view} clock tower` : ''})${tall ? `; tallest: ${lm.tallest_in_view.name ? lm.tallest_in_view.name + ', ' : ''}${tall.type} ${tall.height_m} m (${tall.source})` : ''}.`; }
+      // only the kinds the set has (a city without mosques is not described by its minarets)
+      const parts = [];
+      if (lm.mosques_in_view || mn.length || L.rows.some(x => x.type === 'minaret')) parts.push(`${lm.mosques_in_view} mosques and ${mn.length} minarets in view (${lm.minarets_in_view.mapped} mapped in OpenStreetMap, ${lm.minarets_in_view.estimated} estimated by rule${showEst ? '' : ', hidden'})`);
+      if (lm.domes_in_view) parts.push(`${lm.domes_in_view} domes`);
+      parts.push(`${lm.towers_in_view} towers (${lm.churches_in_view} churches${lm.clock_towers_in_view ? `, ${lm.clock_towers_in_view} clock tower` : ''})`);
+      if (tl.length) parts.push(Object.entries(lm.tall_by_kind).map(([k, v]) => `${v} ${TALLK[k].toLowerCase()}${v > 1 ? 's' : ''}`).join(', '));
+      r.text += ` Skyline: ${parts.join(', ')}${tall ? `; tallest: ${lm.tallest_in_view.name ? lm.tallest_in_view.name + ', ' : ''}${tall.type === 'tall' ? (TALLK[tall.kind] || 'landmark').toLowerCase() : tall.type} ${tall.height_m} m (${tall.source})` : ''}.`; }
     return res;
   };
   // search: the named places of worship of the whole set (the core's search has only the core's buildings)
   G.addSearchProvider?.(async (q, n) => {
     const f = fold(q); if (f.length < 3) return []; const out = [];
     for (const L of S) { if (!L.rows) { try { const J = await fetch(new URL(L.cfg.features, base)).then(r => r.json()); L.rows = rowsOf(J); L.J = J; } catch { continue; } }
-      for (const r of L.rows) { if (r.type !== 'worship') continue; const nm = shownName(r); if (!nm) continue; const t = fold(nm), alt = latinPreferred() ? '' : fold(r.name_alt || '');
+      for (const r of L.rows) { if (r.type !== 'worship' && !(r.type === 'tall' && r.name)) continue; const nm = shownName(r); if (!nm) continue; const t = fold(nm), alt = latinPreferred() ? '' : fold(r.name_alt || '');
         const s = Math.max(...[t, alt].map(x => !x ? 0 : x === f ? 100 : x.startsWith(f) ? 80 : (' ' + x).includes(' ' + f) ? 60 : x.includes(f) ? 30 : 0)); if (!s) continue;
         const mn = L.rows.filter(x => x.type === 'minaret' && x.of === r.id);
-        out.push({ name: nm, kind: r.kind, lon: r.lon, lat: r.lat, region: L.p.name, id: `place:${L.p.id}:lm:${r.id}`, score: s - 1, alt_m: 600, place: L.p.id, osm_id: r.id,
-          facts: [{ label: 'Place', value: L.p.name, source: 'build-place-landmarks (OpenStreetMap)' }, ...(mn.length ? [{ label: 'Minaret', value: mn.map(x => `${x.height_m} m, ${x.source}`).join('; ') }] : [])] }); } }
+        out.push({ name: nm, kind: r.kind, lon: r.lon, lat: r.lat, region: L.p.name, id: `place:${L.p.id}:lm:${r.id}`, score: s - 1, alt_m: r.type === 'tall' ? Math.max(600, r.height_m * 6) : 600, place: L.p.id, osm_id: r.id,
+          facts: [{ label: 'Place', value: L.p.name, source: 'build-place-landmarks (OpenStreetMap)' }, ...(r.type === 'tall' ? [{ label: 'Height', value: `${r.height_m} m (${r.height_source})` }] : []), ...(mn.length ? [{ label: 'Minaret', value: mn.map(x => `${x.height_m} m, ${x.source}`).join('; ') }] : [])] }); } }
     return out.sort((a, b) => b.score - a.score).slice(0, n);
   });
   G.landmarks = {
-    sets: S, stats: () => ({ ...stats, sets: S.map(L => ({ id: L.p.id, state: L.state, tiles: L.tiles.length, hidden_core_vertices: L.hidden || 0, counts: L.J?.counts || null })) }),
+    sets: S, stats: () => ({ ...stats, sets: S.map(L => ({ id: L.p.id, state: L.state, tiles: L.tiles.length, hidden_core_vertices: L.hidden || 0, hidden_city_blocks: L.hiddenBlocks || 0, counts: L.J?.counts || null })) }),
     setEstimated(on) { showEst = !!on; G.dirty = true; H.draw(); return showEst; }, get estimatedShown() { return showEst; },
     rows: id => (S.find(L => L.p.id === id)?.rows || []).map(r => ({ ...r })),
     screen: (id, rowId) => { const L = S.find(x => x.p.id === id), r = L?.rows?.find(x => x.id === rowId); if (!r) return null; const a = G.project(geodeticToEcef(r.lon, r.lat, r.ground_h)), b = G.project(geodeticToEcef(r.lon, r.lat, r.top_h)); return { base: a, top: b }; },

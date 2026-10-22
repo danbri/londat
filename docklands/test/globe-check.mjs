@@ -21,6 +21,9 @@ const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw
 let failed = 0; const results = [];
 const check = (ok, what, detail = '') => { results.push({ ok, what, detail }); if (!ok) failed++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}${detail ? ' · ' + detail : ''}`); };
 const T = '2026-10-12T12:00';
+// --placebase <id>:<url> (repeatable): a place held in another repository (index entry tileBase) served from a local copy,
+// so a search that reads every place's features.json does not depend on the live site (e.g. dublin before docklandia is merged)
+const PB = process.argv.flatMap((a, i) => a === '--placebase' ? ['&placebase=' + encodeURIComponent(process.argv[i + 1])] : []).join('');
 
 async function open(w, h, dpr, q) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dpr }), page = await ctx.newPage(), errors = [];
@@ -31,7 +34,7 @@ async function open(w, h, dpr, q) {
   page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   // the live and weather services are answered empty here (no third-party request from a test): the globe does not use them
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
-  await page.goto(`${BASE}/docklands/?${q}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0`);
+  await page.goto(`${BASE}/docklands/?${q}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0${PB}`);
   return { ctx, page, errors };
 }
 const globeReady = page => page.waitForFunction(() => window.__docklands3?.globe?.ready && window.docklands, null, { timeout: 240000 });

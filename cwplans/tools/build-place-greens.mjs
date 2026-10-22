@@ -47,10 +47,13 @@ const REG = REGIONS[RID]; if (!REG || !REG.place) throw new Error(`no region con
 const cmd = ['fetch', 'build'].find(c => argv.includes(c)) || 'all';
 const PLACES = join(CW, 'docklands', 'data', 'places'), IX = JSON.parse(readFileSync(join(PLACES, 'index.json'), 'utf8'));
 const PI = IX.places.find(p => p.id === RID); if (!PI) throw new Error(`place ${RID} is not built (places/index.json): run build-place-tiles.mjs first`);
-const AREA = PI.area, RAWD = join(CW, 'data', 'raw', 'places', RID, 'greens'), OUT = join(PLACES, RID, 'greens');
+// a place in another repository (region config place.outRepo, outPath, tileBase: Dublin): the folder is <--out>/greens
+// (--out = the place's folder in a checkout of that repository) and the index entry is the absolute URL under tileBase
+const XPL = REG.place.outRepo ? REG.place : null, PLACED = XPL ? (argOf('out') || join(CW, '..', '..', XPL.outRepo, XPL.outPath)) : join(PLACES, RID);
+const AREA = PI.area, RAWD = join(CW, 'data', 'raw', 'places', RID, 'greens'), OUT = join(PLACED, 'greens');
 for (const d of [RAWD, OUT]) mkdirSync(d, { recursive: true });
 const sha = b => createHash('sha256').update(b).digest('hex');
-const rel = p => relative(CW, p);
+const rel = p => XPL && !relative(PLACED, p).startsWith('..') ? `${XPL.outRepo}:${XPL.outPath}${relative(PLACED, p)}` : relative(CW, p);
 const jz = (p, o) => writeFileSync(p, gzipSync(JSON.stringify(o)));
 const rz = p => JSON.parse(gunzipSync(readFileSync(p)).toString('utf8'));
 const pause = ms => new Promise(r => setTimeout(r, ms));
@@ -217,7 +220,7 @@ function readme() {
   const a = log.activities.at(-1), g = JSON.parse(readFileSync(join(OUT, 'greens.json'), 'utf8')), GH = 'https://github.com/danbri/londat/blob/main/cwplans/';
   const L = [`# ${PI.name}: water and trees`, '',
     `Made by [cwplans/tools/build-place-greens.mjs](${GH}tools/build-place-greens.mjs) for the region config [docklands/geo/regions/${RID}.js](https://github.com/danbri/londat/blob/main/docklands/geo/regions/${RID}.js); drawn by the globe of the Three.js port ([docklands/globe/place-look.js](https://github.com/danbri/londat/blob/main/docklands/globe/place-look.js)). Generated from \`log.json\`: do not edit by hand.`, '',
-    `- Live view: https://danbri.github.io/londat/docklands/?ll=${PI.centre[1]},${PI.centre[0]},1500&ht=0,55`,
+    `- Live view: https://danbri.github.io/londat/docklands/?ll=${PI.centre[1]},${PI.centre[0]},1500&ht=0,55`, ...(XPL ? [`- Served from ${XPL.tileBase}greens/ (repository https://github.com/danbri/${XPL.outRepo}); index entry in londat's cwplans/docklands/data/places/greens.json`] : []),
     `- Area (WGS84 degrees, west, south, east, north): ${AREA.join(', ')} (the core of the place)`, `- Credit: ${g.credit}`, `- OSM data as of ${g.osm_as_of} (newest element)`, '',
     '## Files', '', '| path | what | bytes | SHA-256 |', '|---|---|---|---|',
     `| greens.json | water polygons (clipped to the area), trees (position, height and crown when tagged, species profile and its basis, source, setting), woods and parks | ${a.outputs[0].bytes} | \`${a.outputs[0].sha256.slice(0, 16)}\` |`,
@@ -233,7 +236,7 @@ function readme() {
 }
 function index() {
   const f = join(PLACES, 'greens.json'), ix = existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : { format: 'place-greens-index-1', about: 'Places with water and trees (cwplans/tools/build-place-greens.mjs); read by docklands/globe/place-look.js', places: {} };
-  ix.places[RID] = `${RID}/greens/greens.json`; ix.places = Object.fromEntries(Object.entries(ix.places).sort());
+  ix.places[RID] = XPL ? `${XPL.tileBase.replace(/\/?$/, '/')}greens/greens.json` : `${RID}/greens/greens.json`; ix.places = Object.fromEntries(Object.entries(ix.places).sort());
   writeFileSync(f, JSON.stringify(ix, null, 1) + '\n');
 }
 
