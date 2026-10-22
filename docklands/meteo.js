@@ -24,15 +24,20 @@ export const LEVELS_HPA = [1000, 975, 950, 925, 900, 850];
 const H_VARS = ['wind_speed_80m,wind_direction_80m,wind_speed_120m,wind_direction_120m,wind_speed_180m,wind_direction_180m',
   ...LEVELS_HPA.map(p => `wind_speed_${p}hPa,wind_direction_${p}hPa,geopotential_height_${p}hPa`)].join(',');
 const C_VARS = 'cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,precipitation,weather_code,temperature_2m,relative_humidity_2m';
+// the query for another point (the place in view: geo/services.js siteAt, issue #12), to 0.01 degree; the model's point
+// when none is given
+export const meteoQ = p => p && isFinite(p.lat) && isFinite(p.lon) ? `latitude=${(+p.lat).toFixed(2)}&longitude=${(+p.lon).toFixed(2)}` : METEO_Q;
 const days = new Map();
-// day: 'YYYY-MM-DD' (GMT); returns the parsed JSON (hourly with unixtime) or throws Error(reason)
-export function forecastDay(day) {
-  if (!days.has(day)) {
+// day: 'YYYY-MM-DD' (GMT); point: { lon, lat } (default: the model's point); returns the parsed JSON (hourly with
+// unixtime) or throws Error(reason). One promise per day and point.
+export function forecastDay(day, point) {
+  const Q = meteoQ(point), key = day + '|' + Q;
+  if (!days.has(key)) {
     const end = new Date(Date.parse(day + 'T00:00:00Z') + 864e5).toISOString().slice(0, 10);
-    const url = vars => `https://api.open-meteo.com/v1/forecast?${METEO_Q}&start_date=${day}&end_date=${end}&timeformat=unixtime&timezone=GMT&wind_speed_unit=ms&hourly=${vars}`;
+    const url = vars => `https://api.open-meteo.com/v1/forecast?${Q}&start_date=${day}&end_date=${end}&timeformat=unixtime&timezone=GMT&wind_speed_unit=ms&hourly=${vars}`;
     const get = async vars => { const r = await fetch(url(vars)); const J = await r.json(); if (!r.ok || J.error) { const e = new Error(J.reason || 'HTTP ' + r.status); e.status = r.status; throw e; } return J; };
-    days.set(day, get(`${C_VARS},${W_VARS},${H_VARS}`).catch(e => { if (e.status === 400) { console.warn('Open-Meteo: wind by height refused, asked again without it:', e.message); return get(`${C_VARS},${W_VARS}`); } throw e; })
-      .catch(e => { days.delete(day); throw e; }));   // a failed day may be asked again later
+    days.set(key, get(`${C_VARS},${W_VARS},${H_VARS}`).catch(e => { if (e.status === 400) { console.warn('Open-Meteo: wind by height refused, asked again without it:', e.message); return get(`${C_VARS},${W_VARS}`); } throw e; })
+      .catch(e => { days.delete(key); throw e; }));   // a failed day may be asked again later
   }
-  return days.get(day);
+  return days.get(key);
 }

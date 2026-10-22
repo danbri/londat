@@ -23,29 +23,69 @@
 // - ?wakes=test: three synthetic boats for the wake shader (a Thames Clipper 40 m at 12 m/s accelerating 0.6 m/s2 and a
 //   small boat 8 m at 6 m/s by Canary Wharf Pier, a tug 25 m at 4 m/s by Greenland Pier), moving along the river, written
 //   to setWakes after the ships layer.
-// Skill: docklands-3d-page, "Three.js port" (Water surface).
+// - The place in view (issue #12, KR1.5; ctx.site(), docklands/site.js, geo/services.js): every source above applies only
+//   to its own place. The model's station, its archive, its snapshot file and its hourly cache: only when the site is
+//   "home" (the model, or a place whose station and point are the model's). Elsewhere: the METAR of the place's own
+//   station or the nearest station within 50 km (metar-places.json of the live-cache branch, the last 6 hours), and
+//   Open-Meteo at the place's point; no stated default and no current: with no source the note is hidden. The current
+//   ("<water> current") shows only where the site's region config names a water service (services.water).
+// Skill: docklands-3d-page, "Three.js port" (Water surface); docklands-sky, "Live data of the place in view".
 import { WU, SU, setFetch, setRiver, surfaceData, setWakes } from '../water.js';
 import { riverLine, makeDebris } from '../debris.js';
 import { GRID_CONV } from '../sky3.js';
 import { fromUkWall as fromLondon } from '../adapters/uk.js';   // the file's hours are London wall clock
-import { forecastDay, METEO_Q } from '../meteo.js';
+import { forecastDay, meteoQ } from '../meteo.js';
+import { MODEL_REGION } from '../site.js';
+import { pickStation } from '../geo/services.js';
 
 const D2R = Math.PI / 180;
 const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
 const CACHE = local ? ['../cwplans/cache/latest.json'] : ['https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json', '../cwplans/cache/latest.json'];
 export const HIST_URL = 'sky/metar-history.json';
 const FILE = { from: fromLondon('2026-10-03T00:00'), to: fromLondon('2026-10-04T23:00'), url: 'sky/weather-2026-10-03.json' };
-// ---------- METAR of London City Airport (EGLC), shared with layers/weather.js: metar.json of the live-cache branch (the
-// last 24 hours; aviationweather.gov sends no CORS header, so the 5-minute job copies it). Read again when 5 minutes old.
-const METAR_URL = 'https://raw.githubusercontent.com/danbri/londat/live-cache/metar.json';
+// ---------- METAR of the model's station (region config services.metar), shared with layers/weather.js: metar.json of the
+// live-cache branch (the last 24 hours; aviationweather.gov sends no CORS header, so the 5-minute job copies it). Read
+// again when 5 minutes old. The array carries .station (icao, name, lat, lon) when the file has it.
+const LIVE_BASE = 'https://raw.githubusercontent.com/danbri/londat/live-cache/';
+const getJ = url => fetch(url, { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+const liveUrl = (base, f) => (base ? base.replace(/\/?$/, '/') : LIVE_BASE) + f;
 let metarP = null, metarAt = 0;
 export function getMetar(base) {
   if (!metarP || Date.now() - metarAt > 5 * 60e3) { metarAt = Date.now();
-    const url = base ? base.replace(/\/?$/, '/') + 'metar.json' : METAR_URL;
-    metarP = fetch(url, { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(J => (J.obs || []).map(o => ({ ...o, t: o.t * 1000 }))).catch(e => { console.warn('METAR', e); return []; }); }
+    metarP = getJ(liveUrl(base, 'metar.json')).then(J => Object.assign((J.obs || []).map(o => ({ ...o, t: o.t * 1000 })), { station: J.station || null }))
+      .catch(e => { console.warn('METAR', e); return []; }); }
   return metarP;
 }
+// ---------- METAR of the other places' stations: metar-places.json of the live-cache branch (the last 6 hours; the region
+// configs' services.metar and services.metarStations). { stations: [{ id, name, lat, lon }], obs: { id: [...] } }
+let placesP = null, placesAt = 0;
+export function getPlaceMetars(base) {
+  if (!placesP || Date.now() - placesAt > 5 * 60e3) { placesAt = Date.now();
+    placesP = getJ(liveUrl(base, 'metar-places.json')).then(J => { const S = J.stations || {}, stations = [], obs = {};
+      for (const [id, s] of Object.entries(S)) { stations.push({ id, name: s.name, lat: s.lat, lon: s.lon }); obs[id] = (s.obs || []).map(o => ({ ...o, t: o.t * 1000 })); }
+      return { stations, obs }; }).catch(e => { console.warn('METAR of the places', e); return { stations: [], obs: {} }; }); }
+  return placesP;
+}
+const HOME_METAR = MODEL_REGION.services && MODEL_REGION.services.metar;
+const shortName = s => (String(s || '').split(',')[0].trim()) || null;
+// the METAR of a site (geo/services.js siteAt): the site's own station or the nearest within 50 km.
+// -> { station { id, name, dist_km }, obs (t ms), home (the model's station: its archive applies) } | null
+export async function metarFor(site, base) {
+  if (!site) return null;
+  let st = null;
+  if (site.metar && site.metar === HOME_METAR) st = { id: HOME_METAR, dist_km: null };
+  else { const [P, H] = await Promise.all([getPlaceMetars(base), site.metar ? null : getMetar(base)]);
+    const list = [...P.stations]; if (H && H.station && H.station.lat != null) list.push({ id: HOME_METAR, name: H.station.name, lat: H.station.lat, lon: H.station.lon });
+    st = pickStation(site, list); }
+  if (!st) return null;
+  if (st.id === HOME_METAR) { const obs = await getMetar(base); return { station: { id: HOME_METAR, name: (MODEL_REGION.services.metarName) || shortName(obs.station && obs.station.name) || HOME_METAR, dist_km: st.dist_km }, obs, home: true }; }
+  const P = await getPlaceMetars(base), obs = P.obs[st.id];
+  if (!obs || !obs.length) return null;
+  return { station: { id: st.id, name: shortName(st.name || (P.stations.find(s => s.id === st.id) || {}).name) || st.id, dist_km: st.dist_km }, obs, home: false };
+}
+// "London City Airport METAR (EGLC)", "Dublin Arpt METAR (EIDW)": the station's name from the region config
+// (services.metarName) or the AWC answer
+export const metarName = M => `${M.station.name} METAR (${M.station.id})`;
 // ---------- METAR history of London City Airport: data/sky/metar-history.json (cwplans/tools/build-metar-history.mjs, the
 // Iowa Environmental Mesonet ASOS/METAR archive, public domain; the last year to the build day, a report each 30 minutes).
 // For clock times that the live-cache branch does not cover (older than 24 hours, or when the branch does not answer).
@@ -93,7 +133,8 @@ export function metarWindAt(obs, t, gap = 60 * 6e4, tol = 45 * 6e4) {
 }
 // the report nearest t within tol (ms), or null
 export const metarNear = (obs, t, tol = 45 * 60e3) => { let best = null; for (const o of obs) if (Math.abs(o.t - t) <= tol && (!best || Math.abs(o.t - t) < Math.abs(best.t - t))) best = o; return best; };
-export const hm = t => new Date(t).toLocaleTimeString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' });
+// hh:mm in the zone tz (the page clock's zone: ctx.zone.tz), else the model region's
+export const hm = (t, tz) => new Date(t).toLocaleTimeString('en-GB', { timeZone: tz || MODEL_REGION.timeZone, hour: '2-digit', minute: '2-digit' });
 const hhmm = t => new Date(t).toLocaleString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
 // hourly rows [t, speed m/s, dir, gust m/s | null] -> the wind at t, by vector between the hours
 function interp(rows, t) {
@@ -112,40 +153,49 @@ export default {
     // ---------- data
     const getFile = () => src.file || (src.file = loadJSON(DATA + FILE.url).then(J => J.hourly.time.map((s, i) => [fromLondon(s), J.hourly.wind_speed_10m[i] / 3.6, J.hourly.wind_direction_10m[i], null]).filter(r => r[1] != null && r[2] != null)).catch(e => { console.warn('wind file', e); return []; }));
     const getCache = () => src.cache || (src.cache = (async () => { for (const u of CACHE) { try { const r = await fetch(u, { cache: 'no-cache' }); if (!r.ok) continue; const J = await r.json(), w = J.themes && J.themes.weather; if (w && w.current) return w; } catch { /* next */ } } return null; })());
-    async function getMeteo(t) {
-      const day = new Date(t).toISOString().slice(0, 10), old = Date.now() - t > 85 * 864e5, host = old ? 'historical-forecast-api.open-meteo.com' : 'api.open-meteo.com';
-      if (src.meteo && src.meteo.day === day) return src.meteo;
-      try { let J; if (!old) J = await forecastDay(day);   // shared with the weather layer (../meteo.js)
-        else { const r = await fetch(`https://${host}/v1/forecast?${METEO_Q}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=ms&timeformat=unixtime&timezone=GMT&start_date=${day}&end_date=${new Date(t + 864e5).toISOString().slice(0, 10)}`);
+    // Open-Meteo for the day of t at the site's point (one answer kept per day and point)
+    async function getMeteo(t, point) {
+      const day = new Date(t).toISOString().slice(0, 10), old = Date.now() - t > 85 * 864e5, host = old ? 'historical-forecast-api.open-meteo.com' : 'api.open-meteo.com', Q = meteoQ(point);
+      if (src.meteo && src.meteo.day === day && src.meteo.q === Q) return src.meteo;
+      try { let J; if (!old) J = await forecastDay(day, point);   // shared with the weather layer (../meteo.js)
+        else { const r = await fetch(`https://${host}/v1/forecast?${Q}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=ms&timeformat=unixtime&timezone=GMT&start_date=${day}&end_date=${new Date(t + 864e5).toISOString().slice(0, 10)}`);
           J = await r.json(); if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status); }
-        src.meteo = { day, rows: J.hourly.time.map((s, i) => [s * 1000, J.hourly.wind_speed_10m[i], J.hourly.wind_direction_10m[i], J.hourly.wind_gusts_10m[i]]).filter(r => r[1] != null && r[2] != null) }; src.meteoErr = null;
-      } catch (e) { src.meteoErr = e.message; console.warn('wind: Open-Meteo', e); }
+        src.meteo = { day, q: Q, rows: J.hourly.time.map((s, i) => [s * 1000, J.hourly.wind_speed_10m[i], J.hourly.wind_direction_10m[i], J.hourly.wind_gusts_10m[i]]).filter(r => r[1] != null && r[2] != null) }; src.meteoErr = null;
+      } catch (e) { src.meteoErr = e.message; console.warn('wind: Open-Meteo', e); return null; }
       return src.meteo;
     }
-    let W = null, lastT = null, busy = false;
+    const siteNow = () => ctx.site ? ctx.site() : { key: 'model', home: true, water: null, point: null, metar: null };
+    const tzNow = () => ctx.zone && ctx.zone.tz;
+    let W = null, lastT = null, busy = false, again = false, SITE = siteNow(), siteKey = SITE ? SITE.key : null;
     async function evaluate() {
-      const t = ctx.clock; if (busy) return; busy = true; lastT = t;
+      if (busy) { again = true; return; }
+      const t = ctx.clock; busy = true; lastT = t; const site = SITE = siteNow(), tz = tzNow(), H2 = x => hm(x, tz); siteKey = site ? site.key : null;
       try {
-        let w = null;
+        let w = null, M = null;
         if (fixed) w = { speed: +fixed[1], dir: +fixed[2], gust: null, src: 'URL ?wind=' };
-        if (!w && metarOn && Math.abs(t - Date.now()) < 26 * 3600e3) { const obs = await getMetar(qs.get('livecache')), m = metarNear(obs, t);
+        // the METAR of the site's station (live-cache branch: metar.json for the model's station, metar-places.json for the others)
+        if (!w && site && metarOn && Math.abs(t - Date.now()) < 26 * 3600e3) { M = await metarFor(site, qs.get('livecache')); const obs = M ? M.obs : [], m = metarNear(obs, t);
           if (m && typeof m.wspd_kt === 'number') { const vrb = typeof m.wdir !== 'number', ref = vrb ? obs.filter(o => typeof o.wdir === 'number').sort((a, b) => Math.abs(a.t - m.t) - Math.abs(b.t - m.t))[0] : m;
-            w = { speed: m.wspd_kt * 0.514444, dir: ref ? ref.wdir : 240, gust: m.wgst_kt != null ? m.wgst_kt * 0.514444 : null, metar: m.raw,
-              src: `London City Airport METAR ${hm(m.t)}${vrb ? ' (variable; direction of ' + (ref ? hm(ref.t) : 'the default') + ')' : ''} (NOAA AWC, public domain)` }; } }
-        // the archive (older than the live-cache's 24 hours, or the branch did not answer): interpolated between reports
-        if (!w && metarOn && t < Date.now() + 36e5 && Date.now() - t < 400 * 864e5) { const H = await getMetarHistory(DATA + HIST_URL);
+            w = { speed: m.wspd_kt * 0.514444, dir: ref ? ref.wdir : 240, gust: m.wgst_kt != null ? m.wgst_kt * 0.514444 : null, metar: m.raw, station: M.station,
+              src: `${metarName(M)} ${H2(m.t)}${vrb ? ' (variable; direction of ' + (ref ? H2(ref.t) : 'the default') + ')' : ''}${M.station.dist_km != null && !M.home ? `, ${M.station.dist_km} km away` : ''} (NOAA AWC, public domain)` }; } }
+        // the model's archive (older than the live-cache's 24 hours, or the branch did not answer): interpolated between
+        // reports; only where the model's station is the site's
+        if (!w && site && site.home && metarOn && t < Date.now() + 36e5 && Date.now() - t < 400 * 864e5) { const H = await getMetarHistory(DATA + HIST_URL);
           if (t >= H.from - 45 * 6e4 && t <= H.to + 45 * 6e4) { const v = metarWindAt(H.obs, t);
             if (v) w = { speed: v.speed, dir: v.dir, gust: v.gust, metar: v.a.raw + (v.b ? ' | ' + v.b.raw : ''), archive: true,
-              src: `London City METAR (archive) ${v.b && v.f > 0 ? hm(v.a.t) + '\u2013' + hm(v.b.t) + ', interpolated' : hm(v.a.t)}${v.vrb ? ' (variable: direction of the nearest report that has one)' : ''} (Iowa Environmental Mesonet, public domain)` }; } }
-        if (!w && t >= FILE.from - 36e5 && t <= FILE.to + 36e5) { const v = interp(await getFile(), t); if (v) w = { ...v, src: 'Open-Meteo best match, hourly (data/sky/weather-2026-10-03.json, CC BY 4.0)' }; }
-        if (!w) { const c = await getCache(), wt = c && Date.parse(c.time);
+              src: `${MODEL_REGION.services.metarName || MODEL_REGION.services.metar} METAR (archive) ${v.b && v.f > 0 ? H2(v.a.t) + '\u2013' + H2(v.b.t) + ', interpolated' : H2(v.a.t)}${v.vrb ? ' (variable: direction of the nearest report that has one)' : ''} (Iowa Environmental Mesonet, public domain)` }; } }
+        // the model's snapshot file and hourly cache: the model's point only
+        if (!w && site && site.home && t >= FILE.from - 36e5 && t <= FILE.to + 36e5) { const v = interp(await getFile(), t); if (v) w = { ...v, src: 'Open-Meteo best match, hourly (data/sky/weather-2026-10-03.json, CC BY 4.0)' }; }
+        if (!w && site && site.home) { const c = await getCache(), wt = c && Date.parse(c.time);
           if (c && Math.abs(t - wt) <= 90 * 6e4 && c.current.wind_kmh != null) w = { speed: c.current.wind_kmh / 3.6, dir: c.current.wind_dir, gust: c.current.gust_kmh != null ? c.current.gust_kmh / 3.6 : null, src: `londat hourly cache, Open-Meteo at ${hhmm(wt)} (CC BY 4.0)` }; }
-        if (!w && meteoOn) { const M = await getMeteo(t), v = M && interp(M.rows, t); if (v) w = { ...v, src: 'Open-Meteo forecast API, hourly (CC BY 4.0)' }; }
-        if (!w) w = { speed: 4, dir: 240, gust: null, src: `default, no wind data for ${hhmm(t)}${meteoOn && src.meteoErr ? ' (Open-Meteo: ' + src.meteoErr + ')' : ''}` };
-        w.at = t; W = w; WU.windSpeed.value = w.speed; WU.windDir.value = (w.dir + GRID_CONV + 360) % 360;   // true -> grid (model -z)
-        SU.gust.value = w.gust != null && w.speed > 0.5 ? Math.max(0.15, Math.min(1, w.gust / w.speed - 1)) : 0.5;
-        setFetch(w.dir); showNote(); ctx.draw();
-      } finally { busy = false; }
+        if (!w && site && meteoOn) { const P = site.home ? null : site.point, Mo = await getMeteo(t, P), v = Mo && interp(Mo.rows, t);
+          if (v) w = { ...v, src: `Open-Meteo forecast API, hourly${P ? ` at ${P.lat.toFixed(2)}, ${P.lon.toFixed(2)}` : ''} (CC BY 4.0)` }; }
+        // the stated default: the model only (elsewhere no wind is shown)
+        if (!w && site && site.home) w = { speed: 4, dir: 240, gust: null, src: `default, no wind data for ${hhmm(t)}${meteoOn && src.meteoErr ? ' (Open-Meteo: ' + src.meteoErr + ')' : ''}` };
+        if (w) { w.at = t; w.site = site ? site.key : null; WU.windSpeed.value = w.speed; WU.windDir.value = (w.dir + GRID_CONV + 360) % 360;   // true -> grid (model -z)
+          SU.gust.value = w.gust != null && w.speed > 0.5 ? Math.max(0.15, Math.min(1, w.gust / w.speed - 1)) : 0.5; setFetch(w.dir); }
+        W = w; showNote(); ctx.draw();
+      } finally { busy = false; if (again) { again = false; evaluate(); } }
     }
     // ---------- note on screen (bottom left, above the frame line, in the stack #blNotes shared with the aircraft note of
     // layers/planes.js, above it) and in the menu
@@ -159,12 +209,18 @@ export default {
     let meteoOn = qw === 'meteo' || (!fixed && !/^(0|off|no)$/i.test(ctx.qs.get('weather') || ''));   // on by default (owner, 2026-10-09: "all wind/weather"); ?weather=0 is the one switch for wind and weather
     ctx.ui.toggle('Wind from Open-Meteo for the clock time (asks api.open-meteo.com)', meteoOn, v => { meteoOn = v; evaluate(); });
     let metarOn = !fixed && qs.get('metar') !== '0';   // ?metar=0: no METAR
-    ctx.ui.toggle('Wind from the London City Airport METAR (live: last 24 hours; archive: the last year)', metarOn, v => { metarOn = v; evaluate(); });
+    ctx.ui.toggle('Wind from the METAR of the place in view (live: the last hours; the model\'s station also its archive of the last year)', metarOn, v => { metarOn = v; evaluate(); });
     const curNow = () => qc != null && isFinite(qc) ? qc : Math.max(-1.8, Math.min(1.8, -0.75 * WU.tideRate.value + 0.08));
+    // the note: the wind of the site, and the current only where the site's region names a water service; nothing when
+    // the site has no source (or there is no site: the globe from far away)
+    let layerOn = true;
+    const water = () => SITE && SITE.water;
     function showNote() {
-      if (!W) return; const c = SU.current.value, dir = c > 0.12 ? 'ebb, downstream' : c < -0.02 ? 'flood, upstream' : 'slack';
-      const txt = `Wind ${W.speed.toFixed(1)} m/s from ${Math.round(W.dir)}°${W.gust != null ? `, gusts ${W.gust.toFixed(1)}` : ''} · ${W.src} · Thames current ${Math.abs(c).toFixed(2)} m/s (${dir}${qc != null ? ', URL ?current=' : ''})`;
-      if (note.textContent !== txt) { note.textContent = txt; menuNote.textContent = txt; }
+      let txt = '';
+      if (W) { const c = SU.current.value, dir = c > 0.12 ? 'ebb, downstream' : c < -0.02 ? 'flood, upstream' : 'slack', wa = water();
+        txt = `Wind ${W.speed.toFixed(1)} m/s from ${Math.round(W.dir)}°${W.gust != null ? `, gusts ${W.gust.toFixed(1)}` : ''} · ${W.src}${wa ? ` · ${wa.name} current ${Math.abs(c).toFixed(2)} m/s (${dir}${qc != null ? ', URL ?current=' : ''})` : ''}`; }
+      if (note.textContent !== txt) { note.textContent = txt; menuNote.textContent = txt || 'No wind source for the place in view.'; }
+      note.hidden = !layerOn || !txt;
     }
     // ---------- river: flow field, debris, test wakes
     let line = null, debris = null, dOn = flag('debris', true);
@@ -181,13 +237,18 @@ export default {
         { name: 'tug', c0: gp + 60, u: 0, dirn: -1, speed: 4, len: 25, accel: 0 },
       ].map(b => ({ ...b, c: b.c0 }));
     }
-    stats.surface = { get wind() { return W && { speed: +W.speed.toFixed(1), dir: Math.round(W.dir), gridDir: +WU.windDir.value.toFixed(1), gridConv: +GRID_CONV.toFixed(2), gust: W.gust && +W.gust.toFixed(1), source: W.src, metar: W.metar || null, archive: !!W.archive, at: W.at }; }, get current() { return +SU.current.value.toFixed(2); },
+    stats.surface = { get wind() { return W && { speed: +W.speed.toFixed(1), dir: Math.round(W.dir), gridDir: +WU.windDir.value.toFixed(1), gridConv: +GRID_CONV.toFixed(2), gust: W.gust && +W.gust.toFixed(1), source: W.src, metar: W.metar || null, station: W.station ? W.station.id : null, archive: !!W.archive, at: W.at, site: W.site || null }; },
+      // the current of the site's water (null where the site has no water service: issue #12)
+      get current() { return water() ? +SU.current.value.toFixed(2) : null; }, get water() { return water() ? water().name : null; },
+      get site() { return SITE && { key: SITE.key, region: SITE.region, home: SITE.home, how: SITE.how }; },
       debris: debris ? debris.count : 0, wakes: test ? 'test' : 'ships layer', data: S.stats };
     // ---------- each frame
-    let tPrev = performance.now();
+    let tPrev = performance.now(), siteChecked = 0;
     ctx.onFrame(() => {
       const now = performance.now(), dt = Math.min(0.1, (now - tPrev) / 1000); tPrev = now;
-      if (lastT == null || Math.abs(ctx.clock - lastT) > 5 * 6e4 || (metarOn && Date.now() - metarAt > 5 * 60e3 && Math.abs(ctx.clock - Date.now()) < 3600e3)) evaluate();
+      // a new site (the view moved to another place, every 0.5 s at most), a new clock time, or a METAR file 5 minutes old
+      if (now - siteChecked > 500) { siteChecked = now; const s = siteNow(); if ((s ? s.key : null) !== siteKey) { siteKey = s ? s.key : null; evaluate(); } }
+      if (lastT == null || Math.abs(ctx.clock - lastT) > 5 * 6e4 || (metarOn && Date.now() - (SITE && !SITE.home ? placesAt : metarAt) > 5 * 60e3 && Math.abs(ctx.clock - Date.now()) < 3600e3)) evaluate();
       SU.current.value = curNow(); showNote();
       if (debris && dOn) debris.update(dt, controls.target, camera.position.distanceTo(controls.target), SU.current.value, WU.windSpeed.value, WU.windDir.value, WU.tideLevel.value);
       if (test) {
@@ -197,6 +258,6 @@ export default {
       }
     });
     evaluate();   // not awaited: a slow source (METAR, Open-Meteo) must not hold up the layers that load after this one
-    return { ownUi: true, object: null, setVisible: v => { dOn = v; if (debris) debris.mesh.visible = v; note.hidden = !v; } };
+    return { ownUi: true, object: null, setVisible: v => { dOn = v; if (debris) debris.mesh.visible = v; layerOn = v; showNote(); } };
   },
 };

@@ -15,6 +15,7 @@ import { A, MFP, dec, buildBuildings, terrainGeometry, terrainLod, waterGeometry
 import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
 import { Sky3, sunAltAt } from './sky3.js';
 import { makeClockZone } from './clockzone.js';   // KR1.2: the page clock in the time zone of the view (the model: its region)
+import { siteOf } from './site.js';   // KR1.5: the live data (METAR, Open-Meteo, water) of the place in view
 import { ukClock } from './adapters/uk.js';
 import { makeUi, initMenu } from './menu.js';
 import { initCarousel } from './carousel.js';
@@ -413,6 +414,11 @@ const ctx = {
   showCard(html) { $('card').hidden = false; $('cardBody').innerHTML = html; }, get night() { return NIGHT; }, get clock() { return clock; },
   // a label hidden by a building or the ground between the eye and its anchor (model metres); key: the label's element
   occluded: (key, x, y, z) => OCC.test(key, x, y, z), occVersion: () => OCC.version,
+  // the site of the view for live data (site.js, issue #12): the model's region, or on the globe the place under the
+  // centre of the view; null while a start away from the model (?ll=, ?place=, ?view=globe) waits for the globe, and
+  // above 300 km. zone: the page clock's zone (clockzone.js), for times in the notes
+  site: () => GLOBE && GLOBE.mode === 'globe' ? (GLOBE.ready ? siteOf({ mode: 'globe', ...GLOBE.orbit() }) : null)
+    : (!GLOBE && (qs.has('ll') || qs.has('place') || qs.get('view') === 'globe') ? null : siteOf({ mode: 'model' })), zone: ZONE,
 };
 async function loadLayers() {
   // all layer modules are asked for at once (they arrive in parallel); init still runs in LAYER_IDS order

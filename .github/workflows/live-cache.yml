@@ -2,6 +2,8 @@
 #   - adsb.lol /v2/point/51.505/-0.02/25 (aircraft, ODbL 1.0): rolling buffer of the last 60 minutes -> aircraft.json
 #   - Open Waters AIS /v1/vessels (ships; licence filter and the small-craft rule of fetch-ais.mjs): last 2 hours -> ships.json
 #   - aviationweather.gov METAR EGLC (London City Airport, NOAA public domain): last 24 hours -> metar.json
+#   - aviationweather.gov METAR of the stations the region configs name for the other places (one request, 2 hours;
+#     since 2026-10-22, issue #12): last 6 hours -> metar-places.json
 # and force-pushes them as the only commit of the orphan branch live-cache (git history does not grow; nothing on main).
 # The page reads https://raw.githubusercontent.com/danbri/londat/live-cache/<file> (Access-Control-Allow-Origin: *);
 # api.adsb.lol and aviationweather.gov send no CORS header, so the browser cannot ask them itself.

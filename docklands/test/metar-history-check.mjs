@@ -70,7 +70,7 @@ const readAt = (page, t) => page.evaluate(async t => { const D = __docklands3; D
 const refWind = (a, b, f) => { const da = a.drct ?? b.drct ?? 0, db = b.drct ?? a.drct ?? 0, sa = a.sknt * KN, sb = b.sknt * KN;
   const x = (sa || 1e-6) * Math.sin(da * D2R) * (1 - f) + (sb || 1e-6) * Math.sin(db * D2R) * f, y = (sa || 1e-6) * Math.cos(da * D2R) * (1 - f) + (sb || 1e-6) * Math.cos(db * D2R) * f;
   return { speed: sa + (sb - sa) * f, dir: norm(Math.atan2(x, y) / D2R) }; };
-const ARCH = /London City METAR \(archive\)/;
+const ARCH = /London City Airport METAR \(archive\)/;   // (until 2026-10-22: "London City METAR (archive)")
 
 { const { page, errors } = await open('', false);
   console.log(`--- default (METAR on); backend ${await page.evaluate(() => __docklands3.backend)}`);
@@ -101,7 +101,7 @@ const ARCH = /London City METAR \(archive\)/;
 for (const q of ['', '&metar=0']) {
   const { page, errors } = await open(q, true); console.log(`--- Open-Meteo answers HTTP 429${q ? ', ?metar=0' : ''}`);
   for (const day of DAYS) { const t = Date.parse(`${day}T12:50Z`), P = await readAt(page, t), w = P.wind, R = REF.get(t), ref = R && refWind(R, R, 0);
-    if (!q) row(!!w && ARCH.test(w.source) && !/^default/.test(w.source) && ref && Math.abs(w.speed - ref.speed) <= 0.5 && !!P.weather && /^London City METAR \(archive\)/.test(P.weather.source),
+    if (!q) row(!!w && ARCH.test(w.source) && !/^default/.test(w.source) && ref && Math.abs(w.speed - ref.speed) <= 0.5 && !!P.weather && /^London City Airport METAR \(archive\)/.test(P.weather.source),
       `${day} 12:50Z, Open-Meteo 429`, w ? `${w.speed} m/s from ${w.dir}°${ref ? ` (METAR ${ref.speed.toFixed(2)} from ${Math.round(ref.dir)}°)` : ''}` : 'none', `${w ? w.source : ''} | weather: ${P.weather ? P.weather.source : 'none (' + (P.weatherErr || '') + ')'}`);
     else row(null, `${day} 12:50Z, Open-Meteo 429, ?metar=0`, w ? `${w.speed} m/s from ${w.dir}°` : 'none', `${w ? w.source : ''} | weather: ${P.weather ? P.weather.source : 'none (' + (P.weatherErr || '') + ')'}`); }
   if (errors.length) row(false, `page errors (429${q})`, errors.slice(0, 3).join(' | '));

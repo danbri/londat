@@ -5,7 +5,7 @@ description: >-
   ?t=photo) and the Three.js port: astronomy-engine sun, moon (phase, bright limb), planets, rise/set, twilight; stars;
   constellation lines; the Milky Way; CelesTrak satellites and the ISS; IAU star names and Messier objects; Open-Meteo
   clouds placed by the EUMETSAT cloud mask; aircraft (adsb.lol: near-live 5-minute live-cache branch, recorded 7-day
-  cache, live API); the London City METAR (wind, low cloud); London City approach paths; EA tide readings by chainage,
+  cache, live API); the METAR of the place in view (wind, low cloud); London City approach paths; EA tide readings by chainage,
   faulty readings left out (F21); the photo-time solution for the owner's night photos (23:56 BST, ±4 min);
   tools/fetch-sky.mjs and its snapshots; the clock zone of the view (?tz=). Reach for it before you change sky.js or its hooks, add a sky object or source,
   refresh the snapshots, solve a photo's time from the sun or moon, or explain what the sky, a star, a satellite, an
@@ -301,6 +301,56 @@ DST edges of Europe/London, Europe/Madrid, Europe/Sarajevo, labels, `?tz=`, the 
 - London stays only where the data are London's: the weather and wind snapshot hours (`adapters/uk.js fromUkWall`), the
   test hooks' `__docklands3.fromLondon` (`ukClock`, spread into the hook so `main.js` does not name London), the layers'
   own London formats (planes, river, piers, sky-extra, crown: London data). Locale check: `timezone` 117 -> 98.
+
+## Live data of the place in view (KR1.5, issue #12, 2026-10-22)
+
+Fault: in Dublin, Berlin, Dagstuhl, York and every other place the bottom note said "London City Airport METAR ... ·
+Thames current ...", the weather layer put London's cloud on the sky, and Open-Meteo was asked at the model's point. Cause:
+the wind and weather layers read fixed London sources and never asked where the view was. Issue:
+https://github.com/danbri/londat/issues/12 . Example before/after: https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,1500&ht=0,55
+- **The site of the view.** `docklands/geo/services.js` (pure, tested in `geo/test/services.test.mjs`): `siteAt(view)`
+  gives the region whose place extent (or small bbox) holds the centre of the view (the smallest wins: the model box
+  inside Greater London is the model), its `services` (weatherPoint, metar, water), and `home` (the model, or a place with
+  the model's station within 30 km: Greater London). No place: the view centre rounded to 0.1 degree, no station of its
+  own (`pickStation`: the nearest within 50 km, else none). Globe range over 300 km: no site, nothing shown. A large
+  region (the UK skeleton, a lite set) is not a place here: one station does not describe a country. `docklands/site.js`
+  binds it to the region configs; `main.js` gives layers `ctx.site()` (null while a start away from the model waits for
+  the globe, so no London note flashes first) and `ctx.zone` (note times in the view's zone).
+- **Rules in the layers** (`layers/wind.js`, `layers/weather.js`): the model's station, its METAR archive, the
+  2026-10-03 snapshot and the hourly cache only when `site.home`; the stated default wind (4 m/s from 240) only at home;
+  elsewhere the site's METAR, then Open-Meteo at `site.point` (`meteo.js forecastDay(day, point)`, one promise per day and
+  point); no source: the note is hidden. The current part of the note ("<water> current") only when the site's region has
+  `services.water` (only `docklands.js`: `{ id: 'ea-thames-tideway', name: 'Thames' }`; not Greater London: the tide model
+  is the Docklands reach). The layers re-evaluate when the site key changes (checked every 0.5 s in onFrame) and tag their
+  result with `site`; `api.js liveWeather()` reports only a result whose `site` is the site in view now, so a describe
+  right after a jump never gives the old place's data. Note wording: "<station name> METAR (<ICAO>) hh:mm[, n km away]"
+  (`services.metarName` names the model's station: "London City Airport METAR (EGLC)"; archive "London City Airport
+  METAR (archive)"; tests matched the old "London City METAR (archive)" and were changed).
+- **Stations.** Each region config's `services.metar` (EIDW Dublin, EDDB Berlin, EDDS Stuttgart, EDDR Saarbrücken for
+  Dagstuhl, 38 km; ELLX is 52 km, LELN León, LQSA Sarajevo, EHAM Leiden) and `services.metarStations` (uk.js: 41 civil
+  airports and the RAF stations Coningsby and Leeming, each checked in the AWC answer on 2026-10-22). York: Leeds Bradford
+  EGNM, 40 km. `metarIds(REGIONS)` gives the list; no list in the tool.
+- **How the browser gets them.** aviationweather.gov still sends no CORS header (checked again 2026-10-22 with Origin
+  https://danbri.github.io), so the 5-minute job copies them: `fetch-live-cache.mjs` now makes TWO AWC requests a run,
+  EGLC 24 hours (metar.json, unchanged) and all other stations 2 hours (metar-places.json, `stations` {id: {icao, name,
+  lat, lon, elev_m, obs}}, 6 hours kept: about 75 kB at 2 hours, about 150 kB at steady state). TRAP: the AWC API gives at
+  most 400 reports an answer; 49 stations x 24 hours came back cut to 400 with EGLC at 8 of its 48 reports. So never
+  join the model's 24-hour request with the places'. The page reads metar-places.json only away from home
+  (`getPlaceMetars`, 5-minute refresh); `?livecache=<url>` points both files at a local copy (tests).
+- **describeView / getView.** API 1.3.0: `getView().weather` and `describeView().weather` = `{ place, cloud_pct,
+  visibility_m, precipitation_mm, temperature_c, source, wind {speed_ms, from_deg, gust_ms, source, station},
+  water_current {water, speed_ms, direction} | null }` or null; the globe's describe text ends "Live weather here: ...".
+  The UK lite set seen only as far mass (no landmark, no building box in view; Great Britain on a Dublin horizon) now
+  gives one short sentence without its local time (it printed "local time ... (Europe/London)" in Dublin).
+- **Still the model's own.** `layers/windfield.js` (the 3D wind over the model) asks Open-Meteo at the model's point
+  also when the view is elsewhere: it draws only the model's air, not in the note. About > Live data box is the model's
+  London box. Aircraft and ships (live-cache) are London's area and are only drawn in the model.
+- **Test.** `docklands/test/site-check.mjs` (fixture METAR files written to `docklands/test/out/site-livecache/`, fixture
+  Open-Meteo answers that record the point asked): Dublin, Berlin, Stuttgart, Dagstuhl, León, Sarajevo, York have no
+  "London", "Thames" or "EGLC" in the note, describeView (text and weather) or getView().weather (the zone name
+  "Europe/London" is York's own and is left out first), the expected station, no current, Open-Meteo at the place; the
+  Docklands (`?view=cw`) has EGLC and the Thames current; the globe from 5,000 km has no note. Screenshots
+  `docklands/test/out/site-<case>.png`.
 
 ## Port clock in the region's time zone (OKR O1, 2026-10-11)
 

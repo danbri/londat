@@ -3416,3 +3416,31 @@ and the German places (2026-10-22)"):
   place-lod 3. These change the activity ids (and for named areas the `site` column) of a REBUILD of León, Sarajevo,
   London or Dublin. Their committed data was NOT rebuilt and stays valid: it was made by the older versions, as its
   provenance logs say.
+
+## 2026-10-22: issue #12, live data of the place in view (subagent, worktree branch, not pushed)
+
+Issue https://github.com/danbri/londat/issues/12 (KR1.5, https://github.com/danbri/londat/issues/11): every place showed
+"London City Airport METAR ... · Thames current ..." in the bottom note, London cloud on its sky, and Open-Meteo asked at
+the model's point. Fixed by region adapters, no new constants in the core (skill docklands-sky, "Live data of the place
+in view"):
+- `docklands/geo/services.js` (siteAt, pickStation, metarIds; 14 unit tests) and `docklands/site.js`; `main.js` gives the
+  layers `ctx.site()` and `ctx.zone`. Region configs: `docklands.js` services.metarName and services.water (Thames, the
+  only water service); `uk.js` services.metarStations (41 UK stations, each checked in the AWC answer).
+- `layers/wind.js`, `layers/weather.js`: the model's station, archive, snapshot, hourly cache and default only at home;
+  elsewhere the place's own METAR (or the nearest within 50 km) and Open-Meteo at the place; else nothing. The current
+  only with services.water. `meteo.js forecastDay(day, point)`.
+- `api.js` 1.3.0: getView().weather and describeView().weather (globe text "Live weather here: ..."), only for the site in
+  view now. `globe/places.js`: a lite set seen only as far mass gives one sentence without its local time (the UK lite
+  set put "(Europe/London)" into Dublin's describe).
+- `cwplans/tools/fetch-live-cache.mjs`: a second AWC request each run for the places' stations (2 hours) ->
+  metar-places.json on the branch live-cache (6 hours kept). The AWC API caps an answer at 400 reports (found: 49
+  stations x 24 hours came back cut, EGLC 8 of 48), so EGLC keeps its own 24-hour request. aviationweather.gov still has
+  no CORS header (2026-10-22). Register: awc-metar and branch live-cache updated; pipeline.json fetch-live-cache.
+- Locale check: timezone 98 -> 97, zone_latlon 113 -> 112, uk_sources 363 -> 360 (baseline written).
+- Tests: npm test, npm run check; new `docklands/test/site-check.mjs` (Dublin, Berlin, Stuttgart, Dagstuhl, León,
+  Sarajevo, York, the Docklands, the globe from 5,000 km); place-check dublin and berlin; load.mjs view=cw;
+  metar-history-check (archive wording changed to "London City Airport METAR (archive)").
+- Live after merge and one run of the live-cache workflow (metar-places.json must exist on the branch first):
+  https://danbri.github.io/londat/docklands/?ll=53.34725,-6.25916,1500&ht=0,55 (Dublin: EIDW),
+  https://danbri.github.io/londat/docklands/?ll=52.5170,13.3940,1500&ht=80,55 (Berlin: EDDB),
+  https://danbri.github.io/londat/docklands/?view=cw (the Docklands: EGLC and the Thames current).

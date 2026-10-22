@@ -10352,7 +10352,7 @@
    "@id": "https://kgx.foaf.tv/id/toolfetchlivecache",
    "@type": "prov:Activity",
    "rdfs:label": "fetch-live-cache",
-   "dct:description": "Asks the three sources once each and adds the answers to rolling buffers. Aircraft: each report [t = answer time - seen_pos, lat, lon, altitude above the WGS84 ellipsoid (alt_geom, else alt_baro + the answer's median (alt_geom - alt_baro) below 10,000 ft), height source, ground speed, track, vertical rate, turn rate], the last 60 minutes. Ships: the newest position of each kept vessel added when it moved or 30 minutes passed; positions of the last 2 hours, the newest kept at any age while Open Waters lists the vessel. METAR: the reports of the last 24 hours with visibility in metres from the report text. A source that fails keeps its previous file. --push builds the orphan commit with a temporary index (GIT_INDEX_FILE, git write-tree, git commit-tree) and force-pushes refs/heads/live-cache, so the branch always has one commit.",
+   "dct:description": "Asks the three sources once each and adds the answers to rolling buffers. Aircraft: each report [t = answer time - seen_pos, lat, lon, altitude above the WGS84 ellipsoid (alt_geom, else alt_baro + the answer's median (alt_geom - alt_baro) below 10,000 ft), height source, ground speed, track, vertical rate, turn rate], the last 60 minutes. Ships: the newest position of each kept vessel added when it moved or 30 minutes passed; positions of the last 2 hours, the newest kept at any age while Open Waters lists the vessel. METAR: the model's station, the reports of the last 24 hours (metar.json); the other places' stations, the last 6 hours (metar-places.json, stations by ICAO id with name and position from the answer); visibility in metres from the report text. A source that fails keeps its previous file. --push builds the orphan commit with a temporary index (GIT_INDEX_FILE, git write-tree, git commit-tree) and force-pushes refs/heads/live-cache, so the branch always has one commit.",
    "prov:used": [
     {
      "@id": "https://kgx.foaf.tv/id/srcadsblol",
@@ -10367,15 +10367,20 @@
     {
      "@id": "https://kgx.foaf.tv/id/srcawcmetar",
      "dcat:accessURL": "https://aviationweather.gov/api/data/metar?ids=EGLC&format=json&hours=24",
-     "dct:description": "one GET a run"
+     "dct:description": "one GET a run (the model's station, region config docklands services.metar)"
     },
     {
-     "@id": "https://kgx.foaf.tv/id/localbranchlivecacheofdanbrilondatwithrestorethepreviousaircraftjsonshipsjsonandmetarjsonbygitfetchdepth1andgitshow"
+     "@id": "https://kgx.foaf.tv/id/srcawcmetar",
+     "dcat:accessURL": "https://aviationweather.gov/api/data/metar?ids=<the region configs' services.metar and services.metarStations, about 48>&format=json&hours=2",
+     "dct:description": "one GET a run (since 2026-10-22, issue #12); 2 hours because the API gives at most 400 reports an answer"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/localbranchlivecacheofdanbrilondatwithrestorethepreviousaircraftjsonshipsjsonmetarjsonandmetarplacesjsonbygitfetchdepth1andgitshow"
     }
    ],
    "prov:generated": [
     {
-     "@id": "https://kgx.foaf.tv/id/localbranchlivecachereadmemdaircraftjsonshipsjsonmetarjsondataregisterjsonbranches"
+     "@id": "https://kgx.foaf.tv/id/localbranchlivecachereadmemdaircraftjsonshipsjsonmetarjsonmetarplacesjsondataregisterjsonbranches"
     }
    ],
    "cwp:tool": {
@@ -10388,7 +10393,8 @@
     "Ships: the licence filter of fetch-ais.mjs (CC0, NLOD, CC BY kept; AISHub and aisstream.io kept for scoping, owner 2026-10-04; others dropped and counted) and its small-craft rule (ITU 36/37, class B without a commercial type, class and type not heard: counted in snaps[].private_not_listed, never listed).",
     "Ground vehicles and obstacles (ADS-B category C, type TWR/GND/SERV) and reports with seen_pos over 60 s are not kept.",
     "Not on main: one commit on the orphan branch live-cache, so git history does not grow; the main working tree and index are never touched.",
-    "Licences: ODbL 1.0 (adsb.lol), per event (Open Waters AIS), public domain (NOAA AWC METAR); the branch README carries the notices."
+    "Licences: ODbL 1.0 (adsb.lol), per event (Open Waters AIS), public domain (NOAA AWC METAR); the branch README carries the notices.",
+    "METAR stations come from the region configs (docklands/geo/services.js metarIds), never from a list in the tool."
    ],
    "cwp:network": true,
    "cwp:deterministic": true,
@@ -29375,10 +29381,10 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "London City Airport (EGLC) METAR reports, NOAA Aviation Weather Center data API (aviationweather.gov /api/data/metar?ids=EGLC&format=json&hours=24), asked every 5 minutes by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml); the last 24 hours kept on the branch live-cache (metar.json)",
-   "dct:license": "NOAA/NWS: 'The information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise' (https://www.weather.gov/disclaimer, read 2026-10-09). The reports are made by the UK Met Office for the aerodrome and exchanged through the WMO (essential data, WMO Resolution 40). API terms (https://aviationweather.gov/data/api/): 'keep requests limited in scope and frequency', at most 100 requests a minute; one request each 5 minutes is used",
+   "dct:title": "METAR reports from the NOAA Aviation Weather Center data API (aviationweather.gov /api/data/metar), asked every 5 minutes by cwplans/tools/fetch-live-cache.mjs (workflow live-cache.yml) in two requests: London City Airport (EGLC, the model's station) for the last 24 hours (metar.json, the last 24 hours kept), and since 2026-10-22 the stations of the other places named in the region configs (services.metar and services.metarStations: Dublin EIDW, Berlin EDDB, Stuttgart EDDS, Saarbrücken EDDR, León LELN, Sarajevo LQSA, Amsterdam EHAM, 41 UK airports and RAF stations) for the last 2 hours (metar-places.json, the last 6 hours kept); both on the branch live-cache",
+   "dct:license": "NOAA/NWS: 'The information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise' (https://www.weather.gov/disclaimer, read 2026-10-09). The reports are made by the national weather service of each aerodrome (UK Met Office, Met Éireann, DWD, AEMET and others) and exchanged through the WMO (essential data, WMO Resolution 40). API terms (https://aviationweather.gov/data/api/): 'keep requests limited in scope and frequency', at most 100 requests a minute; two requests each 5 minutes are used (since 2026-10-22; one before)",
    "dcat:landingPage": "https://aviationweather.gov/data/api/",
-   "cwp:attribution": "METAR: NOAA Aviation Weather Center (aviationweather.gov), London City Airport (EGLC)"
+   "cwp:attribution": "METAR: NOAA Aviation Weather Center (aviationweather.gov); the station is named on the page (London City Airport EGLC in the model; the place's own or nearest station elsewhere)"
   },
   {
    "@id": "https://kgx.foaf.tv/id/srciemasosmetar",
