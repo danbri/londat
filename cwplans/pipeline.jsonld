@@ -11206,6 +11206,9 @@
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/log.json"
     },
     {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/far-outlines-counts.json"
+    },
+    {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/tileset.json"
     },
     {
@@ -11219,6 +11222,9 @@
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/far-outlines-counts.json"
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/overture-buildings.json"
@@ -27351,6 +27357,62 @@
    "cwp:osmUse": "counts"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/far-outlines-counts.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcignmdt05"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcesaworldcover"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturetransportation"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebase"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturedivisions"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcovertureignfloors"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcovertureigngeometry"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/ghsl-built-h.json",
    "@type": [
     "prov:Entity",
@@ -27627,6 +27689,53 @@
     "dcat:Distribution"
    ],
    "dct:title": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles, place-select-outer, place-city-heights, place-lod with input and output hashes; height-source counts of the core and of the city (fault F55), footprint matches, the validation of the IGN floors (León), the outer counts and the tiers",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicusglo30"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcesaworldcover"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturetransportation"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebase"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturedivisions"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/far-outlines-counts.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"

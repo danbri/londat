@@ -14237,6 +14237,35 @@
       ]
     },
     {
+      "path": "docklands/data/places/leon/provenance/far-outlines-counts.json",
+      "what": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
+      "sources": [
+        "osm",
+        "ign-mdt05",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "es-catastro-inspire-bu",
+        "overture-ign-floors",
+        "own",
+        "overture-ms-geometry",
+        "overture-ign-geometry"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of OSM buildings by height source; element counts"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
       "path": "docklands/data/places/leon/sources/ghsl-built-h.json",
       "what": "GHS-BUILT-H R2023A average net building height over Casco Histórico, León and its city box (a crop of one 10 x 10 degree tile, 125 x 95 cells of 3 arc-seconds, values rounded to 0.1 m; format place-raster-1): the committed input of place-heights and place-city-heights",
       "sources": [
@@ -14426,6 +14455,32 @@
     {
       "path": "docklands/data/places/sarajevo/provenance/log.json",
       "what": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles, place-select-outer, place-city-heights, place-lod with input and output hashes; height-source counts of the core and of the city (fault F55), footprint matches, the validation of the IGN floors (León), the outer counts and the tiers",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "own",
+        "overture-ms-geometry"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of OSM buildings by height source; element counts"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/provenance/far-outlines-counts.json",
+      "what": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
       "sources": [
         "osm",
         "copernicus-glo30",

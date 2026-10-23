@@ -374,11 +374,13 @@ Each tool activity gives its command, method, rules, inputs, outputs, network an
   - [docklands/data/places/leon/features.json](docklands/data/places/leon/features.json)
   - [docklands/data/places/leon/sources/ghsl-built-h.json](docklands/data/places/leon/sources/ghsl-built-h.json)
   - [docklands/data/places/leon/provenance/log.json](docklands/data/places/leon/provenance/log.json)
+  - [docklands/data/places/leon/provenance/far-outlines-counts.json](docklands/data/places/leon/provenance/far-outlines-counts.json)
   - [docklands/data/places/sarajevo/tileset.json](docklands/data/places/sarajevo/tileset.json)
   - [docklands/data/places/sarajevo/tiles/*.glb](docklands/data/places/sarajevo/tiles/*.glb)
   - [docklands/data/places/sarajevo/features.json](docklands/data/places/sarajevo/features.json)
   - [docklands/data/places/sarajevo/sources/ghsl-built-h.json](docklands/data/places/sarajevo/sources/ghsl-built-h.json)
   - [docklands/data/places/sarajevo/provenance/log.json](docklands/data/places/sarajevo/provenance/log.json)
+  - [docklands/data/places/sarajevo/provenance/far-outlines-counts.json](docklands/data/places/sarajevo/provenance/far-outlines-counts.json)
   - [docklands/data/places/leon/sources/overture-buildings.json](docklands/data/places/leon/sources/overture-buildings.json)
   - [docklands/data/places/leon/sources/ms-buildings.json](docklands/data/places/leon/sources/ms-buildings.json)
   - [docklands/data/places/sarajevo/sources/overture-buildings.json](docklands/data/places/sarajevo/sources/overture-buildings.json)
@@ -4800,3 +4802,4 @@ All tool activities in an order that satisfies every "after" (the brands merge a
 - [tools/test/place-lod2.test.mjs](tools/test/place-lod2.test.mjs) (test): Tests (node --test) of tools/place-lod2.mjs: the parse of a building with a part (attributes, ground footprint, measured height, roof type, polygons kept only in the core), the ALKIS function and roof type mappings, and the triangulation of planar 3D polygons (walls, sloped roofs, holes).
 - [tools/test/place-landmarks.test.mjs](tools/test/place-landmarks.test.mjs) (test): Tests (node --test) of the committed landmark set of Sarajevo (tools/build-place-landmarks.mjs): mapped and estimated minarets distinct and counted, each estimated row names its rule and has no OSM id of its own, Gazi Husrev-beg Mosque minaret mapped at 47 m from OSM with its domes, the tiles of the tileset exist, hide_core ids are core buildings, every landmark stands on the ground.
 - [tools/test/model-heights.test.mjs](tools/test/model-heights.test.mjs) (test): Tests (node --test) of tools/storey-heights.mjs (use classes, kinds left alone, storeys, plant storeys; the fit recovers base and typical from exact samples and keeps the prior when too few) and of area.js as tools/model-heights.mjs left it (meta.heightRule, the source names, Three Deal Porters 24 to 29 m, Dock Shed over 19 m, the Consort Place tower top 190 to 240 m OD, every changed building listed, flagged buildings keep their class).
+- [tools/test/place-far-outlines.test.mjs](tools/test/place-far-outlines.test.mjs) (test): Tests (node --test) of tools/place-far-outlines.mjs: glb read and repack keep every accessor and image; the committed León level-13 tiles carry the far outlines counted in provenance/far-outlines-counts.json; a second run replaces nothing.
