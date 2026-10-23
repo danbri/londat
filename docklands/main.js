@@ -899,7 +899,7 @@ if (flag('globe', true)) {
 // rebuild. ?free=0 keeps them. STATS.modelDrop: drops, rebuilds, the last time.
 let MODEL_DROPPED = false;
 STATS.modelDrop = { drops: 0, rebuilds: 0, dropped: false };
-function modelBack(why) { if (!MODEL_DROPPED) return; MODEL_DROPPED = false; STATS.modelDrop.dropped = false; STATS.modelDrop.rebuilds++; STATS.modelDrop.why = why; rebuildBuildingsSlowly().catch(e => console.warn('model', e)); }
+function modelBack(why) { if (!MODEL_DROPPED) return; MODEL_DROPPED = false; STATS.modelDrop.dropped = false; STATS.modelDrop.rebuilds++; STATS.modelDrop.why = why; GOV.room(120 * 1048576); rebuildBuildingsSlowly().catch(e => console.warn('model', e)); }   // (room first: the buildings take about 120 MB while they are made)
 if (GLOBE && qs.get('free') !== '0') {
   addEventListener('docklands-globe-mode', e => { if (e.detail?.mode === 'model') modelBack('the model took the view'); });
   setInterval(() => {

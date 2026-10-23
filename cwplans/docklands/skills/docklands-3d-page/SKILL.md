@@ -4523,3 +4523,83 @@ the same options twice. Branch `merge-de` keeps ONE form of each; the two sectio
   activity ids (and, for a place with named areas, the new `site` column). Do not rebuild them only for the merge.
 - **Greens.** Dublin's greens are in docklandia (absolute URL in greens.json); the German greens are in londat
   (`places/<id>/greens/`). place-look.js reads both forms.
+
+## moglob: memory budget, governor and crash recovery (2026-10-23)
+
+Owner, 2026-10-23: "Perf: loading even on a modern macbook or iphone can be very heavy and the webapp sometimes just reboots
+(annoying, slow, amateurish feel). Can you address this? Also give the app a discrete name, 'moglob'." The app (the
+Three.js port, https://danbri.github.io/londat/docklands/ ) is now called **moglob**: page title, boot screen, About,
+drawer head, web app manifest (`docklands/manifest.webmanifest`, icons `icon-180/192/512.png`, made with @napi-rs/canvas),
+`getView().app`, `describeView().app`, the WebMCP tool descriptions. URLs, folders and `window.docklands` keep their names.
+Files: `docklands/governor.js` (new), `main.js`, `build.js`, `globe/places.js`, `globe/base-tiles.js`, `globe/globe.js`,
+`globe/terrain.js`, `globe/landmarks.js`, `globe/place-look.js`, `geo/skeleton.js`, `api.js` (1.4.0); tests
+`docklands/test/memory-check.mjs` (new), `heap-holders.mjs` (`--fly`, `--again`, `CHAIN_MIN_MB`, `CHAIN_N`).
+
+- **Cause of the "reboots".** iOS ends the WebContent process when the tab passes its memory limit, and Safari reloads the
+  page. Measured headless (SwiftShader, Linux PSS of all browser processes; the GPU process holds GPU memory as CPU memory
+  there): before, a cold start at the Docklands peaked at 785 MB in the renderer process (426 MB settled), a cold start on
+  the globe at 1,018 MB, the owner's fly (Docklands, Dublin, Berlin, Manchester 20 km, York 1 km, back) at 1,161 MB in the
+  renderer and 2,235 MB for the browser, and the JS heap after the return was 381 MB above the first visit. Four causes:
+  (1) the model's buildings were built in one pass: every tile's JS arrays alive at once (+300 MB of garbage, twice per
+  boot); (2) a start away from the model (`?ll=`, `?view=globe`) built all 34 layers of the Docklands at the globe's first
+  moment (the mode reads 'model' until the globe takes the view: the old idle rule saw "the model has the view"); (3) data
+  kept for the session: a freed place kept its features, surroundings, names and greens (a search read every place's
+  features.json: 14 MB of JSON, about 100 MB parsed), skeleton files and decoded cells, up to 300 globe cells a layer, up
+  to 1,400 terrain patches with meshes, the UK lite set and London while the model held the view; (4) nothing counted
+  bytes: tiles were freed by count (220), imagery by count (56), places by distance only (UK lite: 1,500 km).
+- **Governor** (`governor.js`, one per page, `globalThis.moglob.memory`): budget by device class (`deviceClass()`:
+  iOS by user agent or touch Mac, phone by screen < 600 px or mobile UA, `navigator.deviceMemory`, Safari on a Mac): iPhone
+  640 MB, phone 640 (2 GB or less: 400), iPad 900, computer 1,400 (4 GB or less: 800), Mac Safari 1,100; of JS heap
+  (`performance.memory`; where the browser has none, Safari: the pools' CPU bytes + the model scene's arrays + 120 MB) +
+  GPU (`renderer.info.memory.total`) + canvas (drawing buffer x 40 bytes a pixel). Each second: above 0.85 x budget the
+  idle items of all pools go, least recently used first, by bytes, to 0.7 x budget. Pools: `places` (tiles not reached by
+  the last 4 walks of the tree and not drawn for 1.5 s; whole places out of reach; search copies of place data 30 s after
+  the last search), `base` (imagery not drawn in the last 2 frames, levels 0 and 1 stay), `globe` (while the globe rests:
+  the line layers' and terrain patches' arrays, made again at the next draw). At most `max_places` places loaded (phone 2,
+  computer 4): a new place frees the one least needed (distance / reach, not drawn for 2 s). Fetches at once: phone 4.
+- **Tiers only under pressure** (rule 6): when the smallest of the last 5 counts is over the budget (garbage is not
+  pressure), tier 1 (places' screen-space error x 1.5, imagery cap 32 and one level coarser, pixel ratio 1.5), then tier 2
+  (x 2, cap 20, two levels coarser, pixel ratio 1); back one step after 15 s under 0.78 x budget. Stated in one line on
+  screen (`#memNote`, with a "Full detail" link that adds `?mem=full`), in `getView().quality`, `describeView().quality`
+  and its text, `docklands.memory()`. `?mem=full` (no budget, no tiers), `?mem=<MB>`, `?mem=ios-phone|phone|desktop|...`.
+  Everything still loads as the view comes closer.
+- **Crash recovery.** sessionStorage `moglob.run` (per tab; it survives the reload after a crash) is set at start and on
+  `visibilitychange` visible / `pageshow` persisted, removed on `pagehide` and when hidden (a tab iOS ends in the background
+  is not counted). A start that finds it: budget x 0.7 (second time x 0.5), tier 1 floor, max places - 1, one line "moglob:
+  restarted after the last visit ran short of memory, so lighter detail". The page never reloads itself: no loop; a clean
+  reload clears it. Trap: in Chromium a sessionStorage write in a reload's `pagehide` handler is lost, and CDP `Page.crash`
+  leaves a dead Playwright page: the test blocks `removeItem('moglob.run')` instead.
+- **Load less at start.** Buildings tile by tile (`build.js buildingTileKeys`, a per-tile building index; the same
+  geometries, in the same order). The boot screen shows the step (`#bootStep`, the HUD text) and ends with the first model
+  frame; the layers then load behind it with "Loading the layers: n of 34 (id)". On a start away: the light layers
+  (search, routes, drone, plotter, kml, locate, xr) when the globe is still for 1.5 s, the rest when the model takes the
+  view or the menu's Layers pane opens (`STATS.heavyWhy`); `?eager=1` loads them at once (sw-check uses it).
+- **Far from the model.** With the globe's centre more than 200 km from the model box, the model's buildings are given up
+  (`STATS.modelDrop`), and built again one tile a task (`rebuildBuildingsSlowly`) within 60 km or when the model takes the
+  view. When the globe rests (8 s in the model, eye low): places freed (`G.placesRest`), base imagery, skeleton cells,
+  three.js render lists (`renderer._renderLists.dispose()`: r186 keeps a scene's list, and so the geometries of its last
+  frame, until 10 frames pass without it; a page that draws on demand may not draw 10 frames for minutes).
+- **Measured** (390 x 844 @2 and 1280 x 800, SwiftShader WebGL 2 unless stated; before = the branch point 3a97a16a served
+  from a copy, after = this branch; "peak" = largest of JS heap + GPU + canvas sampled every 250 ms; renderer = the tab's
+  renderer process PSS; browser = all processes):
+
+MEMTABLE
+
+- **Tests.** `node docklands/test/memory-check.mjs --check [--sizes] [--webgpu] [--scenarios ...] [--timeline]`: fails
+  when the peak passes the governor's budget + 25 % (moments of garbage), when the heap + GPU at the Docklands after the fly
+  is more than 150 MB above the first visit (the globe's world data, read once and kept for search and labels, is about
+  100 to 150 MB of it: lines, terrain sampler, gazetteer, labels), when a second round trip (Dublin and back) adds more
+  than 40 MB, on page errors; scenario `crash` checks the recovery and that a clean reload does not loop. place-check,
+  lite-check and far-check now load with `&mem=full` (they test tile rules at full detail; a phone-class budget raised the
+  tier at the London nadir view and drew level 12).
+- **Lessons.** Measure the whole browser (PSS), not only `usedJSHeapSize`: the sampler in the page cannot run during a
+  long task, and the boot peak was inside one. Heap snapshots of a 500 MB page need Node with `--max-old-space-size=12000`.
+  A retainer chain through `renderItems < RenderList` or `_renderObjects` is three.js caching the last frame, not our
+  code. In software rendering a frame takes seconds: an "idle for 1.5 s" rule freed tiles the tree still wanted (London
+  never settled); count walks, not milliseconds. `pkill -f` and `pgrep -f` match their own shell (a pkill in a compound
+  command ended it). A background `http.server` stops at 2 hours: later runs measure nothing (start a new one on another
+  port).
+- **Open.** A measurement on the owner's iPhone (Safari Web Inspector, Timelines > Memory; the budget numbers are
+  estimates for WebKit); the fly's peak on the phone budget (see the table); the globe's world data (about 100 MB) stays
+  once read; the model's other arrays (roads, terrain, layers: about 150 MB) stay while far away; ImageBitmaps of place
+  ground textures are kept after upload.
