@@ -6044,6 +6044,41 @@
    ],
    "ms": 10427,
    "at": "2026-10-21T00:30:31.631Z"
+  },
+  {
+   "activity": "601915d984767bfb",
+   "operation": "place-far-lod",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "tileset (as built by place-lod)",
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "4ea84bdc8cf017422d4f7fdfe0374e86ec3128e38746336aa2e11d0bbdb37b59"
+    }
+   ],
+   "params": {
+    "city": [
+     -5.634,
+     42.564,
+     -5.536,
+     42.636
+    ],
+    "block_level": 13,
+    "from_m": 25000,
+    "sse_px": 24,
+    "k_px": 731
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/leon/tileset.json",
+     "sha256": "e1a00210edfbb819340f6cae87d6a92bf9f0bf45cc9c7a2334b3acf4e08f9cc9",
+     "bytes": 176989
+    }
+   ],
+   "ms": 7,
+   "at": "2026-10-23T11:09:46.826Z"
   }
  ],
  "height_sources": {

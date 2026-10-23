@@ -5894,6 +5894,41 @@
    ],
    "ms": 11689,
    "at": "2026-10-21T00:30:49.470Z"
+  },
+  {
+   "activity": "2318b8497368c1ce",
+   "operation": "place-far-lod",
+   "version": 1,
+   "skill": "docklands-3d-page",
+   "tool": "tools/build-place-tiles.mjs",
+   "inputs": [
+    {
+     "label": "tileset (as built by place-lod)",
+     "path": "docklands/data/places/sarajevo/tileset.json",
+     "sha256": "01e0191e5281e04cd13012b4ac2641306d0154a525c3b1c8abbd15080bebbc99"
+    }
+   ],
+   "params": {
+    "city": [
+     18.285,
+     43.815,
+     18.46,
+     43.875
+    ],
+    "block_level": 13,
+    "from_m": 25000,
+    "sse_px": 24,
+    "k_px": 731
+   },
+   "outputs": [
+    {
+     "path": "docklands/data/places/sarajevo/tileset.json",
+     "sha256": "5dda2d7ca4b3547c37d2484d7ec37114c7f1cf906e76f19e0a32123994fd472a",
+     "bytes": 184322
+    }
+   ],
+   "ms": 9,
+   "at": "2026-10-23T11:09:47.140Z"
   }
  ],
  "height_sources": {

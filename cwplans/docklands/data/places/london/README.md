@@ -8,7 +8,7 @@ This README is generated from `provenance/log.json` and [cwplans/data-register.j
 - Croydon (2 km): https://danbri.github.io/londat/docklands/?ll=51.3762,-0.0982,2000&ht=0,55
 - BT Tower (700 m): https://danbri.github.io/londat/docklands/?ll=51.5215,-0.1389,700&ht=200,60
 - A place of kind "blocks": no core and no ground of its own (the globe's terrain and imagery stay); buildings in the model box of docklands are left to that model
-- Area (WGS84 degrees, west, south, east, north): -0.5102, 51.2868, 0.334, 51.6919; 1399437 buildings; built 2026-10-22T22:43:37.731Z
+- Area (WGS84 degrees, west, south, east, north): -0.5102, 51.2868, 0.334, 51.6919; 1399437 buildings; built 2026-10-23T12:16:22.469Z
 - Credit shown on the page: © OpenStreetMap contributors (ODbL 1.0); Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)
 - Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)"; fault F55 in the docklands-data-curation skill
 
@@ -16,13 +16,13 @@ This README is generated from `provenance/log.json` and [cwplans/data-register.j
 
 | path | what | bytes | SHA-256 |
 |---|---|---|---|
-| [tiles/](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tiles) (681 files) | glTF 2.0 block tiles (one per quadtree cell with buildings): at the leaves every building not named and not irregular as a compact box (irregular ones, 300 m2 or more filling under 85 % of their oriented box, as outlines simplified at 2.5 m; layout cwplans-boxes-1, glb extras.blocks.compact: 8 bytes a box and a 17 x 17 ground grid), the named buildings as outlines with _FEATURE_ID_0 (row of features.json); at the coarse levels tall or big buildings as EXT_mesh_gpu_instancing boxes and the rest as compact squares turned to their grain; KHR_mesh_quantization; glb extras.blocks for the block card. Bytes: the sum; SHA-256: of the list of file names and their SHA-256 | 47203812 | `4a42985cf8a4c05cc184383e9ca0386d7dda2e9323f319f46b1b2b6ef1f3d1f8` |
-| [tileset.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tileset.json) | 3D Tiles 1.1 tileset: one child per quadtree cell, ENU -> ECEF transform, region bounding volume | 278294 | `b66c9aa3feca38ce2f1ae17d379014aa54873173ad0a2475cc51361e0f707f52` |
-| [features.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/features.json) | the text and machine interface: the named buildings drawn with their own id (name, height and its source, OSM id), the block counts by level | 722568 | `df0a3e6b2bd278e3f2a5f7f1e185a1d50ce9fd51e06b31236e74666a394c6ca7` |
+| [tiles/](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tiles) (681 files) | glTF 2.0 block tiles (one per quadtree cell with buildings): at the leaves every building not named and not irregular as a compact box (irregular ones, 300 m2 or more filling under 85 % of their oriented box, as outlines simplified at 2.5 m; layout cwplans-boxes-1, glb extras.blocks.compact: 8 bytes a box and a 17 x 17 ground grid), the named buildings as outlines with _FEATURE_ID_0 (row of features.json); at the coarse levels tall or big buildings as EXT_mesh_gpu_instancing boxes and the rest as compact squares turned to their grain; KHR_mesh_quantization; glb extras.blocks for the block card. Bytes: the sum; SHA-256: of the list of file names and their SHA-256 | 47873392 | `4178ff4e927f4485ccf4180529ab551a63cca4b86b50956b7b31bbbf2e9949c3` |
+| [tileset.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/tileset.json) | 3D Tiles 1.1 tileset: one child per quadtree cell, ENU -> ECEF transform, region bounding volume | 278295 | `2f5d793a5b3789e31acbd135936b6f773475a124144b5024c03c58fdde56b989` |
+| [features.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/features.json) | the text and machine interface: the named buildings drawn with their own id (name, height and its source, OSM id), the block counts by level | 723649 | `71b57e9e2c97952a8f2a2d0d8486e5192b8ee07b85517ec40ef380f7fa034dc9` |
 | [sources/ghsl-built-h.json.gz](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/sources/ghsl-built-h.json.gz) | committed source extract (input of an operation; see Sources) | 360388 | `d98714b48391c0c3f1a977af8e51b9f48b93c515f305baa281d4909df024e70b` |
-| [provenance/log.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json) | fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts | 138774 | `5dab22a5696faf5ccdea9a4ad09a7eed53fee9beb2f33410de4a7b79f4e6804e` |
+| [provenance/log.json](https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/london/provenance/log.json) | fetch records and dataflow activities (inputs and outputs by SHA-256), height-source and roof counts | 139187 | `e53fd5f460ee6f8ade5bb9df4141cf8440fb0ea1359dc1e33255a86c00407775` |
 
-Total 48.70 MB (README.md not counted).
+Total 49.37 MB (README.md not counted).
 
 ## Sources
 
@@ -33,7 +33,7 @@ Total 48.70 MB (README.md not counted).
 - Landing page: https://docs.overturemaps.org/attribution/
 - Licence: ODbL 1.0 (buildings theme); per record and property the sources list names the original dataset and its licence (https://opendatacommons.org/licenses/odbl/1-0/)
 - Credit (exact text): "© Overture Maps Foundation; © OpenStreetMap contributors; © Microsoft (and the other sources named per record)"
-- Fetched: 2026-10-22T21:27:03.550Z
+- Fetched: 2026-10-23T10:44:42.301Z
 - Request: `s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox -0.52,51.28,0.34,51.7; files part-00124-5e200299-5dc8-5a43-bb1e-0a73aba3373f-c000.zstd.parquet part-00125-dd983f4b-21a7-5215-910c-4de2f4a24e2b-c000.zstd.parquet part-00126-8f48508e-8015-5699-a61b-0cb738bc4755-c000.zstd.parquet)`
 - As fetched: the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder, NDJSON); sha256 above
 - Stored for the build: `data/raw/places/london/overture-buildings-2026-09-23.1.ndjson`, 1438278915 bytes, SHA-256 `bfe11fba0282c6b4636c8099d2a7851cabe4a05aca72a00f9d1eb8bb1d2adbc5` — NOT committed (raw folder, git-ignored)
@@ -74,7 +74,7 @@ Outputs:
 
 Parameters: `{"storey_m":3,"national_storey_m":3,"default_m":7,"default_small_m":3,"raster_min_m":3,"roof_rule":null,"pitch_deg":30,"max_roof_m":8,"footprints":["ms"],"rule":"as place-heights over the selected buildings: OSM height > OSM building:levels x storey > Overture height > Overture num_floors x storey (non-OSM records, open licence, not Microsoft) > Microsoft ML Buildings height (via Overture; footprint match: a centroid inside the other outline, area ratio >= 0.5) > small kinds 3 m > GHSL cell under the centroid (min 3 m) > default; no roofs (blocks)"}`
 
-### place-blocks version 5 (activity `d41eeef8d30be042`, 2026-10-22T22:43:37.731Z)
+### place-blocks version 6 (activity `b3b4db261a9d768e`, 2026-10-23T12:16:22.469Z)
 
 Skill docklands-3d-page; tool tools/build-place-tiles.mjs.
 
@@ -87,13 +87,13 @@ Inputs:
 
 Outputs:
 
-- `docklands/data/places/london/tiles/10-1021-804.glb` SHA-256 `72b86e1ec3c260544c1c33124a250b6ccf6659344f11bc185bff2573b8cb2e15` (8192 bytes)
-- `docklands/data/places/london/tiles/11-2042-1609.glb` SHA-256 `54f6ff6fd38003c8107680cfb903b5e65264a9e31b1af77262cfb14cabf9c601` (7608 bytes)
-- `docklands/data/places/london/tiles/12-4084-3219.glb` SHA-256 `68afdb8ce04f78701721452b02218a59cbe1df1c0696fa1e0aa90067e07d228b` (4924 bytes)
+- `docklands/data/places/london/tiles/10-1021-804.glb` SHA-256 `125de471013b1a7532e180e73a74ccd3a95ecc2a1f8fee2bd7691996c758e2a1` (5536 bytes)
+- `docklands/data/places/london/tiles/11-2042-1609.glb` SHA-256 `9a28d599410097597c43cd1b6411d3cef301c9eb8973476fdb305f977f350cfb` (6200 bytes)
+- `docklands/data/places/london/tiles/12-4084-3219.glb` SHA-256 `fb7315a5a4d5c2ae12a97b24958b9076186578f024a567eaca4e02d4a388b3ab` (4556 bytes)
 - `docklands/data/places/london/tiles/13-8169-6438.glb` SHA-256 `e37cc7221d123e1be0628a009077ce55e6f706f890bf9791abdb57cc1c4e6aaf` (18288 bytes)
 - and 679 more (the Files table above has each one)
 
-Parameters: `{"top":10,"leaf":13,"levels":{"10":{"tall_m":60,"big_m2":20000,"merge_m":400,"err_m":1680},"11":{"tall_m":40,"big_m2":8000,"merge_m":200,"err_m":840},"12":{"tall_m":25,"big_m2":3000,"merge_m":100,"err_m":420}},"min_area_m2":25,"simplify_m":2.5,"box_fill":0.85,"outline_min_m2":300,"drop_m":3,"named_min_m2":1500,"named_min_h_m":20,"colour":"#d6cbb6","version_label":"london-2","extent_box":[-0.52,51.28,0.34,51.7],"leaf_boxes":"compact","leaf_outlines":true,"layout":"cwplans-boxes-1","full_share":0.5,"grid_n":17,"leaf_within_m":13000,"classes":["OpenStreetMap (via Overture)","merged buildings (one box a square, turned to the grain of its buildings: the summed footprint, the area-weighted mean height)","OpenStreetMap (via Overture)","Microsoft ML Buildings (via Overture)"],"class_index":{"ms":3},"credit":"© OpenStreetMap contributors (ODbL 1.0); Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)"}`
+Parameters: `{"top":10,"leaf":13,"levels":{"10":{"tall_m":60,"big_m2":20000,"merge_m":400,"err_m":1680},"11":{"tall_m":40,"big_m2":8000,"merge_m":200,"err_m":840},"12":{"tall_m":25,"big_m2":3000,"merge_m":100,"err_m":420}},"min_area_m2":25,"simplify_m":2.5,"box_fill":0.85,"outline_min_m2":300,"drop_m":3,"named_min_m2":1500,"named_min_h_m":20,"colour":"#d6cbb6","version_label":"london-2","extent_box":[-0.52,51.28,0.34,51.7],"leaf_boxes":"compact","leaf_outlines":true,"layout":"cwplans-boxes-1","full_share":0.5,"grid_n":17,"leaf_within_m":13000,"far":{"gap_m":5,"fill_min":0.4,"h_rel":0.35,"h_abs_m":3,"min_m2":{"10":4870,"11":1220,"12":307}},"classes":["OpenStreetMap (via Overture)","merged buildings (one box a square, turned to the grain of its buildings: the summed footprint, the area-weighted mean height)","OpenStreetMap (via Overture)","Microsoft ML Buildings (via Overture)"],"class_index":{"ms":3},"credit":"© OpenStreetMap contributors (ODbL 1.0); Buildings: OpenStreetMap data via Overture Maps © Overture Maps Foundation (ODbL 1.0); Some city buildings: Microsoft ML Buildings via Overture Maps © Microsoft (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)"}`
 
 ## What is derived from what
 
@@ -118,13 +118,13 @@ Parameters: `{"top":10,"leaf":13,"levels":{"10":{"tall_m":60,"big_m2":20000,"mer
 
 ## Levels of detail
 
-Since place-blocks 4 (2026-10-22; owner: "Yes, do all of London eventually", to rebuilding Greater London the way of the UK lite set v2): at the leaves every building that is not named is one **compact box** (layout `cwplans-boxes-1`, 8 bytes: its true centroid, footprint area, the angle and long / short ratio of its minimum rotated rectangle, its height and height source, its class), except the irregular ones (place-blocks 5, the place-blocks 3 rule kept by architecture rule 6: 300 m2 or more and filling less than 85 % of their oriented box), drawn as their outline simplified at 2.5 m; the named buildings keep their outlines and ids. The coarse levels draw the tall or big buildings as their own boxes and the rest as one compact square a merge square, turned to the grain of its buildings, its side from the built share (full at 50 %).
+Since place-blocks 4 (2026-10-22; owner: "Yes, do all of London eventually", to rebuilding Greater London the way of the UK lite set v2): at the leaves every building that is not named is one **compact box** (layout `cwplans-boxes-1`, 8 bytes: its true centroid, footprint area, the angle and long / short ratio of its minimum rotated rectangle, its height and height source, its class), except the irregular ones (place-blocks 5, the place-blocks 3 rule kept by architecture rule 6: 300 m2 or more and filling less than 85 % of their oriented box), drawn as their outline simplified at 2.5 m; the named buildings keep their outlines and ids. Since place-blocks 6 (2026-10-23, issue #13: from 20 km the turned squares read as a lattice): the coarse levels draw the tall or big buildings as their own boxes and the rest as **far forms**: buildings and street blocks of adjacent buildings (oriented boxes within 5 m, heights within max(3 m, 35 %)) at their true positions, one oriented box each with the summed footprint and the area-weighted mean height; a level draws those whose seen size sqrt(area) x max(sqrt(area), height) is at least 4870 m2 (level 10), 1220 m2 (level 11), 307 m2 (level 12), about one device pixel squared at the far end of its range; no squares.
 
 | level | tiles | MB | triangles | building boxes (compact) | outlines (irregular) | named outlines | own boxes (tall or big; leaves: irregular with no outline) | merged squares (buildings in them) | geometric error m |
 |---|---|---|---|---|---|---|---|---|---|
-| 10 | 14 | 0.13 | 96,780 | 0 | 0 | 0 | 360 | 9,318 (1,399,077) | 1680 |
-| 11 | 43 | 0.46 | 338,890 | 0 | 0 | 0 | 1,274 | 32,615 (1,398,163) | 840 |
-| 12 | 138 | 1.59 | 1,150,260 | 0 | 0 | 0 | 5,883 | 109,143 (1,393,554) | 420 |
+| 10 | 14 | 0.08 | 26,050 | 0 | 0 | 0 | 360 | 2,245 (23,377) | 1680 |
+| 11 | 43 | 0.47 | 360,890 | 0 | 0 | 0 | 1,274 | 34,815 (358,380) | 840 |
+| 12 | 138 | 2.30 | 2,040,610 | 0 | 0 | 0 | 5,883 | 198,178 (1,027,776) | 420 |
 | 13 | 486 | 45.02 | 15,323,446 | 1,330,253 | 63,607 | 5562 | 15 | 0 (0) | 0 |
 
 Loaded by screen-space error (docklands/globe/places.js, MAX_SSE 24 px): a tile is refined while geometric error x K / distance is above 24 (K about 731 on a phone held upright), so the leaves show within about 12.8 km of the eye (straight down from 11 km all of the view is leaves) and never beyond 13 km (`extras.refine_within_m` of the leaves' parents: big screens, oblique whole-city views keep the turned squares). 1,399,437 buildings at the leaf level, 5,562 of them named (outline and id).

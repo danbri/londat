@@ -28,7 +28,7 @@ for (const v of VIEWS) {
   page.setDefaultTimeout(600000);
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('response', async r => { const u = r.url(), m = /\/places\/([^/]+)\/(?:tiles|tilesets)\/|\/data\/(?:[a-z]{2})\/([^/]+)\/(?:tiles|tilesets)\//.exec(u); if (!m) return; const id = m[1] || m[2];
-    const o = fetched[id] ||= { tiles: 0, bytes: 0 }; o.tiles++; try { o.bytes += (await r.body()).length; } catch {} });
+    const o = fetched[id] ||= { tiles: 0, bytes: 0 }; o.tiles++; o.bytes += +(r.headers()['content-length'] || 0); });   // (the server's Content-Length: body() misses some answers)
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   const url = `${BASE}/docklands/?ll=${v.lat},${v.lon},${v.range}&ht=${v.hd},${v.tilt}&webgl&animate=0&weather=0&t=2026-10-12T12:00${LAYERS === 'none' ? '&layers=' : ''}${PB}`;
   const t0 = Date.now(); await page.goto(url);

@@ -60,6 +60,14 @@ export default {
       // leaf rule stays: a building of outline_min_m2 or more that fills less than box_fill of its oriented box (L shapes,
       // irregular blocks) is drawn as its outline simplified at simplify_m, not as a compact box
       leaf_boxes: 'compact', leaf_outlines: true, full_share: 0.5, grid_n: 17, leaf_within_m: 13000,
+      // far forms (place-blocks 6, 2026-10-23, issue #13: from 20 km the turned squares still read as a lattice; three
+      // options measured, this one chosen): the coarse levels draw real buildings and street blocks at their true positions
+      // (place-lite.mjs streetBlocks: oriented boxes within gap_m and heights within max(h_abs_m, h_rel x the taller) are
+      // one block, cut while they fill less than fill_min of it), each level those whose seen size sqrt(area) x
+      // max(sqrt(area), height) is at least min_m2: (far end of the level's range / 1462 m)^2, about one device pixel
+      // squared on a phone (level 12 drawn to about 25.6 km, 11 to 51 km, 10 to about 100 km); tall or big buildings stay
+      // their own boxes (levels below). Without far the tool builds the turned squares of place-blocks 4 and 5
+      far: { gap_m: 5, fill_min: 0.4, h_rel: 0.35, h_abs_m: 3, min_m2: { 10: 4870, 11: 1220, 12: 307 } },
       history: 'place-blocks 3 (build of 2026-10-21, tileset london-1): 2,451 tiles, 110.62 MB in all (levels 10 to 14: 0.38, 1.31, 4.42, 14.35, 86.26 MB; the leaves: instance boxes, simplified outlines and their JSON block data, about 62 bytes a building); merged axis-aligned squares of 400 / 200 / 100 / 50 m at levels 10 to 13, so from 11 km a field of grey squares and every building only below about 2.5 km.',
       top_level: 10, leaf_level: 13,
       // what each coarse level draws: buildings at least big_m2 or tall_m as their own oriented boxes; the rest one
