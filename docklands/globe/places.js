@@ -462,7 +462,9 @@ export async function attachPlaces(G, H, { scene, U }) {
     }
     // fetch the wanted tiles, highest priority first
     if (want.length && inFlight < MAX_FETCH) { want.sort((a, b) => b.pri - a.pri); for (const n of want) { if (inFlight >= MAX_FETCH) break; if (!n.state) fetchNode(n); } }
-    // activate decoded tiles: at most MAX_ACTIVATE a frame and ACTIVATE_MS of work (nearest first)
+    // activate decoded tiles: at most MAX_ACTIVATE a frame and ACTIVATE_MS of work (nearest first); every 10th frame the
+    // governor makes room for them first (idle tiles and imagery of every place go, least recently used first)
+    if (ready.length && frameNo % 10 === 0) GOV.room(ready.slice(0, 6).reduce((b, n) => b + (n.prims || []).reduce((s, q) => s + 2 * ((q.pos?.byteLength || 0) + (q.idx?.byteLength || 0)), 0), 0));
     if (ready.length) { ready.sort((a, b) => (b.pri || 0) - (a.pri || 0)); const t0 = performance.now(); let k = 0;
       while (ready.length && k < MAX_ACTIVATE && performance.now() - t0 < ACTIVATE_MS) { const n = ready.shift(); if (n.state === 'decoded') { activate(n); k++; } }
       if (ready.length) G.dirty = true; }
@@ -501,6 +503,9 @@ export async function attachPlaces(G, H, { scene, U }) {
     cpuBytes() { let b = 0; for (const p of P) b += placeBytes(p) / 2 + (p.dataBytes || 0); return b; },
     stats() { const loaded = P.filter(p => p.state === 'loaded'); return { loaded: loaded.map(p => p.id), tiles: loaded.reduce((s, p) => s + p.nodes.filter(n => n.state === 'ready').length, 0), mb: Math.round(P.reduce((s, p) => s + placeBytes(p), 0) / 1048576), data_mb: Math.round(P.reduce((s, p) => s + (p.dataBytes || 0), 0) / 1048576), max_sse: MAX_SSE, places_freed: GOV.S.places_freed || 0 }; } });
   function placeBytes(p) { let b = 0; for (const n of p.nodes) if (n.state === 'ready') b += n.bytes || 0; return b + (p.state === 'loaded' ? p.dataBytes || 0 : 0); }
+  // the globe rests (globe.js restGlobe: the model holds the view near the ground): every place goes; they load again when
+  // the globe is seen (moglob, 2026-10-23: the UK lite set and London stayed in memory at the Docklands after a fly)
+  G.placesRest = () => { let n = 0; for (const p of P) if (p.state === 'loaded') { free(p); n++; } else if (p.state !== 'loading' && p.dataBytes) dropData(p); return n; };
   G.placesDebug = { oldBuilding: BMAT, oldBlock: blockMat, oldGround: groundMat };   // (tests: the materials before 2026-10-22, for A/B timing on the same page)
   G.placeLook = () => look.describe();   // how the nearest place is drawn now (place-look.js): look, night, light, sky, trees, water
   G.placeLookU = look;                   // (tests: docklands/test/place-look-check.mjs)

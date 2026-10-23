@@ -23,7 +23,7 @@ import { GOV } from '../governor.js';   // moglob's memory budget: idle imagery 
 
 export const BASE_URL = '../cwplans/docklands/data/world-base/base.json';
 const REQ = Math.min(6, GOV.S.max_fetch || 6), CAP0 = 56, DEM_MIN = 7, GRID = 35;   // CAP: imagery textures held (512 px with mipmaps: 1.4 MB each, plus the decoded image)
-let CAP = CAP0; GOV.onTier(t => { CAP = [CAP0, 32, 20][t]; });   // the governor's tiers hold fewer (a patch then draws a loaded ancestor)
+let CAP = CAP0, DROP = 0; GOV.onTier(t => { CAP = [CAP0, 32, 20][t]; DROP = t; });   // tiers: fewer textures held, and imagery one or two levels coarser near the ground (4 or 16 times fewer tiles)   // the governor's tiers hold fewer (a patch then draws a loaded ancestor)
 
 export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMaterial, url = BASE_URL }) {
   const base = new URL(url, location.href), M = await fetch(base).then(r => { if (!r.ok) throw new Error('base ' + r.status); return r.json(); });
@@ -88,7 +88,7 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
       frame = f;
       // imagery: ask for the deepest tile that exists at or above the cell; draw the deepest loaded one
       let asked = false, mat = null;
-      for (let L = Math.min(nd.L, maxImg); L >= 0; L--) { const sh = nd.L - L, x = nd.x >> sh, y = nd.y >> sh; if (!has(IA, L, x, y)) continue;
+      for (let L = Math.min(nd.L, maxImg - DROP); L >= 0; L--) { const sh = nd.L - L, x = nd.x >> sh, y = nd.y >> sh; if (!has(IA, L, x, y)) continue;
         const T = asked ? (img.get('i' + L + '/' + x + '/' + y) || null) : want('i', L, x, y); asked = true; if (T) { T.used = f; T.usedAt = performance.now(); mat = T.mat; break; } }
       const m2 = mat || terrain.mat; if (mesh.material !== m2) mesh.material = m2;
       // heights: the deepest loaded tile at or above the cell (level 7 or deeper)

@@ -85,7 +85,7 @@ export async function openSkeleton(base, { fetchJson = defaultFetchJson, manifes
   // the files read and the layers decoded, least recently used first out (moglob, 2026-10-23: both grew for the whole
   // session as the view moved over the UK; a layer file is now kept only in its decoded form)
   const lru = (cap) => { const m = new Map(); return { get(k) { const v = m.get(k); if (v !== undefined) { m.delete(k); m.set(k, v); } return v; }, set(k, v) { m.set(k, v); while (m.size > cap) m.delete(m.keys().next().value); }, delete: k => m.delete(k), get size() { return m.size; } }; };
-  const cache = lru(32), decoded = lru(48);
+  const cache = lru(24), decoded = lru(24);
   const load = path => { let v = cache.get(path); if (!v) { v = fetchJson(root + path).catch(e => { cache.delete(path); throw e; }); cache.set(path, v); } return v; };
   const loadLayer = path => { let v = decoded.get(path); if (!v) { v = fetchJson(root + path).then(unpack).catch(e => { decoded.delete(path); throw e; }); decoded.set(path, v); } return v; };
   const layer = id => { const L = M.layers.find(l => l.id === id); if (!L) throw new Error(`no layer ${id}`); return L; };

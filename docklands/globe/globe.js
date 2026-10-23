@@ -238,6 +238,7 @@ export async function createGlobe(H) {
     scene.traverse(x => { const g = x.isMesh || x.isLine || x.isPoints ? x.geometry : null; if (g) { g.dispose(); n++; v += g.attributes.position?.count || 0; } });
     for (const t of G.textures || []) t.dispose();
     if (G.baseRest) G.baseRest();   // the base imagery tiles (globe/base-tiles.js)
+    if (G.placesRest) G.placesRest();   // the places (globe/places.js): loaded again when the globe is seen
     for (const L of cellLayers) for (const [k, c] of [...L.cells]) if (c.meshes.length || c.labels.length) dropCell(L, k, c);   // the skeleton cells: read again when the globe is seen (moglob, 2026-10-23)
     if (rt) { if (bgOn) setBg(false); rt.dispose(); rt = null; G.bgNode = null; }
     if (labels) for (const c of labels.candidates) if (c.el) { c.el.remove(); c.el = null; }

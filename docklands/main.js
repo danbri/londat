@@ -880,6 +880,28 @@ if (flag('globe', true)) {
   } catch (e) { console.warn('globe', e); }
 }
 
+// the model's buildings while the view is far away (moglob, 2026-10-23: the model held about 70 MB of building arrays in the
+// JS heap during a fly to Dublin and Berlin): after 8 s on the globe with the view's centre more than 200 km from the model's
+// box they are given up (geometries disposed, arrays dropped), and built again (tile by tile, as at the start) when the view
+// comes within 60 km or the model takes the view. Picking, the occluder and the styles see the new meshes as after any
+// rebuild. ?free=0 keeps them. STATS.modelDrop: drops, rebuilds, the last time.
+let MODEL_DROPPED = false, farSince = 0;
+STATS.modelDrop = { drops: 0, rebuilds: 0, dropped: false };
+function modelBack(why) { if (!MODEL_DROPPED) return; MODEL_DROPPED = false; STATS.modelDrop.dropped = false; STATS.modelDrop.rebuilds++; STATS.modelDrop.why = why; rebuildBuildings(); }
+if (GLOBE && qs.get('free') !== '0') {
+  addEventListener('docklands-globe-mode', e => { if (e.detail?.mode === 'model') modelBack('the model took the view'); });
+  setInterval(() => {
+    if (!GLOBE.ready) return; const now = performance.now();
+    if (GLOBE.mode !== 'globe') { farSince = 0; return modelBack('the model took the view'); }
+    const o = GLOBE.orbit(); if (!o) return;
+    if (GLOBE.inBox(o.lon, o.lat, 60000)) { farSince = 0; return modelBack('the view came near the model'); }
+    if (GLOBE.inBox(o.lon, o.lat, 200000)) { farSince = 0; return; }
+    if (!farSince) farSince = now;
+    if (!MODEL_DROPPED && now - farSince > 8000 && buildings.children.length) {
+      CELLS.dropTiles(); buildings.clear(); MODEL_DROPPED = true; Object.assign(STATS.modelDrop, { drops: STATS.modelDrop.drops + 1, dropped: true, at: Date.now() }); if (OCC) OCC.dirty(); }
+  }, 2000);
+}
+
 // names in Latin script only (on by default; owner, 2026-10-22): the box in Menu > Look, the label and card safety nets
 // (script-ui.js; the data readers pick names by geo/script.js). Skill docklands-3d-page, "Names: Latin script preferred".
 import('./script-ui.js').then(m => m.initScriptUi({ langNote: () => GLOBE && GLOBE.langOverridden?.() ? `The page language (?lang=${esc(GLOBE.lang)}) is written in another script, so its names give way to Latin ones while this is on.` : '' })).catch(e => console.warn('script-ui', e));
@@ -892,9 +914,8 @@ if (START_AWAY) {
   // the model's optional data and layers (heavy) are not needed away from the model: on the globe they cost 2 to 5 s of
   // main-thread work (a deep-link fly-in to a place was jerky; places agent, 2026-10-21) and 150 to 300 MB of memory
   // (moglob, 2026-10-23: a start at ?view=globe peaked at 1 GB in the renderer). The light layers (search, routes, tools)
-  // load when the globe has been still for 1.5 s; the rest (heavy) when the view needs the model: the model takes the view,
-  // the view's centre comes within 25 km of the model's box with the eye under 80 km (the hand-over to the model is at
-  // 36 km), or the menu's Layers pane opens. ?eager=1: the
+  // load when the globe has been still for 1.5 s; the rest (heavy) when the view needs the model: the model takes the view
+  // (the plain model, built at the start, shows at once; its layers follow), or the menu's Layers pane opens. ?eager=1: the
   // old rule (heavy at the first still moment, 60 s at most).
   let lastKey = '', stillT = performance.now(), light = false, started = false, wasGlobe = false;
   const EAGER = flag('eager', false);
@@ -908,7 +929,6 @@ if (START_AWAY) {
     if (!GLOBE || (GLOBE.mode !== 'globe' && (wasGlobe || now - t0 > 60000))) return startHeavy('the model has the view');
     const o = GLOBE.ready ? GLOBE.orbit() : null, key = o ? [o.lon, o.lat, o.range, o.heading, o.tilt].map(v => v.toFixed(5)).join() : '';
     if (key !== lastKey || GLOBE.isFlying() || !GLOBE.ready) { lastKey = key; stillT = now; }
-    if (o && GLOBE.inBox && GLOBE.inBox(o.lon, o.lat, 25000) && o.range < 80000) return startHeavy('the view is near the model');
     if (GLOBE.mode === 'globe' && (now - stillT > 1500 || now - t0 > 60000)) {
       if (EAGER) return startHeavy('?eager=1');
       if (!light) { light = true; loadLayers(LAYER_IDS.filter(id => LIGHT_LAYERS.has(id))).then(() => say('')).catch(e => console.warn('layers', e)); }

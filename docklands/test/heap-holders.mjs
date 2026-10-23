@@ -116,7 +116,7 @@ for (const v of VIEWS) {
   await page.goto(`${BASE}/docklands/?view=${v}&webgl&animate=0&weather=0&t=${T}${EXTRA}${PB}`);
   await page.waitForFunction(() => window.__docklands3?.ready && window.__docklands3.globe, null, { timeout: 400000 });
   await page.waitForTimeout(8000);
-  if (FLY) { for (const t of [[53.34725, -6.25916, 1500, 0, 55], [52.5170, 13.3940, 1500, 80, 55], [53.4794, -2.2453, 20000, 0, 45], [53.9620, -1.0793, 1000, 0, 60], null]) {
+  if (FLY) { await page.waitForFunction(() => window.docklands?.goTo, null, { timeout: 300000 }); for (const t of [[53.34725, -6.25916, 1500, 0, 55], [52.5170, 13.3940, 1500, 80, 55], [53.4794, -2.2453, 20000, 0, 45], [53.9620, -1.0793, 1000, 0, 60], null]) {
     await page.evaluate(async t => { const G = __docklands3.globe, sleep = ms => new Promise(r => setTimeout(r, ms));
       if (t) await docklands.goTo({ lat: t[0], lon: t[1], alt_m: t[2], heading_deg: t[3], tilt_deg: t[4] }, { animate: true }); else G.home();
       while (G.isFlying()) await sleep(200);

@@ -18,10 +18,12 @@
 //                                                           docklands/test/out/places/<id>, served through ?placebase=)
 //   node docklands/test/memory-check.mjs [--base http://127.0.0.1:8473] [--sizes 390x844@2,1280x800@1] [--webgpu]
 //        [--scenarios cold-docklands,cold-globe,fly,london-nadir,uk-500,leon-sarajevo] [--extra '&mem=...'] [--json out.json]
-//        [--check] [--budget-mb 1000] [--leak-mb 100]
-// --check fails when the peak of (JS heap + GPU + canvas) passes the budget (default: the budget the page's governor
-// chose, else --budget-mb), or when the steady JS heap + GPU at the Docklands after the fly is more than --leak-mb above
-// the first visit, or on a page error. Software WebGL (SwiftShader): times are slow; memory and counts are what matter.
+//        [--check] [--budget-mb 1000] [--leak-mb 150] [--leak2-mb 40]
+// --check fails when the peak of (JS heap + GPU + canvas) passes the budget + --headroom (0.25: the governor keeps the
+// steady use under the budget and acts within seconds; garbage of a build or a batch of tiles may pass it for moments;
+// the budget is the page governor's, else --budget-mb), or when the steady JS heap + GPU at the Docklands after the fly is more than --leak-mb above
+// the first visit (the margin holds the world's data that the globe reads once and keeps for search and labels: about 60
+// to 80 MB measured), or when a second round trip (Dublin and back) adds more than --leak2-mb (40), or on a page error. Software WebGL (SwiftShader): times are slow; memory and counts are what matter.
 // Skill: docklands-3d-page, "moglob: memory budget, governor and crash recovery (2026-10-23)".
 import { chromium } from '@playwright/test';
 import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -30,7 +32,7 @@ const argv = process.argv.slice(2), arg = (k, d) => { const i = argv.indexOf(k);
 const BASE = arg('--base', 'http://127.0.0.1:8473'), WEBGPU = argv.includes('--webgpu'), CHECK = argv.includes('--check');
 const SIZES = arg('--sizes', '390x844@2').split(',').map(s => { const m = /^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(s); return [+m[1], +m[2], +m[3]]; });
 const SCEN = arg('--scenarios', 'cold-docklands,cold-globe,fly,london-nadir,uk-500,leon-sarajevo').split(',').filter(Boolean);
-const EXTRA = arg('--extra', ''), JSON_OUT = arg('--json', null), BUDGET = +arg('--budget-mb', 0) || null, LEAK = +arg('--leak-mb', 100);
+const EXTRA = arg('--extra', ''), JSON_OUT = arg('--json', null), BUDGET = +arg('--budget-mb', 0) || null, LEAK = +arg('--leak-mb', 150), LEAK2 = +arg('--leak2-mb', 40), HEAD = +arg('--headroom', 0.25);
 const OUT = arg('--out', 'docklands/test/out/memory'); mkdirSync(OUT, { recursive: true });
 const PD = arg('--placedir', 'docklands/test/out/places');
 // the docklandia sets with a local copy (symlinks), served from this server
@@ -105,7 +107,7 @@ async function snap(page, cdp, label) {   // one step: frame, places, base, memo
     const held = G && G.places ? G.places.filter(p => p.feats || p.sur || p.namesP).map(p => p.id) : [];
     return { label, mode: G ? G.mode : 'model', heap: performance.memory.usedJSHeapSize, gpu: I.total, gpuAttr: I.attributesSize + (I.indexAttributesSize || 0), gpuTex: I.texturesSize, geometries: I.geometries, textures: I.textures, canvas: cv.width * cv.height * 40,
       tri: frame ? Math.round(frame.triangles) : null, calls: frame ? (frame.drawCalls ?? frame.calls) : null, places, featuresHeld: held, base: G && G.baseStats ? G.baseStats() : null,
-      governor: window.moglob?.memory ? window.moglob.memory.state() : null, view: window.docklands?.getView ? (() => { try { const v = docklands.getView(); return { mode: v.mode, quality: v.quality || null }; } catch { return null; } })() : null };
+      governor: window.moglob?.memory ? window.moglob.memory.state() : null, modelDrop: D.STATS.modelDrop || null, heavy: D.STATS.heavyWhy || (D.ready ? 'at the start' : 'not loaded'), view: window.docklands?.getView ? (() => { try { const v = docklands.getView(); return { mode: v.mode, quality: v.quality || null }; } catch { return null; } })() : null };
   }, label);
   r.pss = pss(); return r;
 }
@@ -114,7 +116,7 @@ function peaks(samples, since = 0) {
   return { heap: mb(heap), gpu: mb(gpu), sum: mb(sum) };
 }
 const longOf = (lt, since = 0) => { const l = lt.filter(x => x[0] >= since); return { n: l.length, ms: l.reduce((s, x) => s + x[1], 0), max: l.reduce((m, x) => Math.max(m, x[1]), 0) }; };
-const fmt = s => `heap ${mb(s.heap)} MB, GPU ${mb(s.gpu)} MB (attr ${mb(s.gpuAttr)}, tex ${mb(s.gpuTex)}; ${s.geometries} geom, ${s.textures} tex) + canvas ${mb(s.canvas)} MB, tri ${s.tri?.toLocaleString('en')}, calls ${s.calls}; places ${s.places.map(p => `${p.id}:${p.loaded}`).join(' ') || '-'}; features held ${s.featuresHeld.join(',') || '-'}; base ${s.base ? s.base.imagery + ' img' : '-'}; pss ${JSON.stringify(s.pss)}${s.governor ? '; governor ' + JSON.stringify(s.governor) : ''}`;
+const fmt = s => `heap ${mb(s.heap)} MB, GPU ${mb(s.gpu)} MB (attr ${mb(s.gpuAttr)}, tex ${mb(s.gpuTex)}; ${s.geometries} geom, ${s.textures} tex) + canvas ${mb(s.canvas)} MB, tri ${s.tri?.toLocaleString('en')}, calls ${s.calls}; places ${s.places.map(p => `${p.id}:${p.loaded}`).join(' ') || '-'}; features held ${s.featuresHeld.join(',') || '-'}; base ${s.base ? s.base.imagery + ' img' : '-'}; model layers ${s.heavy}; model drop ${JSON.stringify(s.modelDrop)}; pss ${JSON.stringify(s.pss)}${s.governor ? '; governor ' + JSON.stringify(s.governor) : ''}`;
 
 let failed = 0; const results = [];
 // crash recovery: a load that ends without a clean unload (as when iOS ends a WebContent process), then the tab
@@ -161,16 +163,21 @@ for (const [w, h, dpr] of SIZES) {
         for (const [k, v] of [['dublin', V.dublin], ['berlin', V.berlin], ['manchester-20km', V.manchester], ['york-1km', V.york]]) { await goto(page, v); const s = await settle(page); const r = await snap(page, cdp, k); r.settle = s; steps.push(r); console.log(`  ${tag} ${sc} ${k}: ${fmt(r)}`); }
         await home(page); const s = await settle(page); await page.waitForTimeout(12000); await settle(page);   // the globe rests (8 s) and the model's buffers come back
         const r = await snap(page, cdp, 'docklands-again'); r.settle = s; steps.push(r);
+        // a second round trip (Dublin and back): a leak grows again; the world's data read on the first trip does not
+        await goto(page, V.dublin); await settle(page); await home(page); await settle(page); await page.waitForTimeout(12000); await settle(page);
+        steps.push(await snap(page, cdp, 'docklands-third'));
       }
       if (sc === 'leon-sarajevo') { await goto(page, V.sarajevo); const s = await settle(page); const r = await snap(page, cdp, 'sarajevo'); r.settle = s; steps.push(r); }
       const M = await page.evaluate(() => ({ samples: __mem.samples, longtasks: __mem.longtasks }));
       res = { ...res, boot_ms: boot, peak: peaks(M.samples), long: longOf(M.longtasks), requests: req.n, mbytes: Math.round(req.bytes / 1e5) / 10, steps, errors: errors.slice(0, 5) };
       const gov = steps.at(-1).governor;
       const budget = BUDGET || (gov ? gov.budget_mb : null);
-      if (CHECK && budget && res.peak.sum > budget) { failed++; console.log(`FAIL ${tag} ${sc}: peak JS heap + GPU + canvas ${res.peak.sum} MB > budget ${budget} MB`); }
-      if (sc === 'fly') { const a = steps[0], b = steps.at(-1), grow = mb(b.heap + b.gpu) - mb(a.heap + a.gpu); res.leak_mb = grow;
-        console.log(`  ${tag} fly: at the Docklands first ${mb(a.heap)} + ${mb(a.gpu)} MB, after the fly ${mb(b.heap)} + ${mb(b.gpu)} MB (heap + GPU after GC): ${grow >= 0 ? '+' : ''}${grow} MB`);
-        if (CHECK && grow > LEAK) { failed++; console.log(`FAIL ${tag} fly: memory after the return is ${grow} MB above the first visit (margin ${LEAK} MB)`); } }
+      if (CHECK && budget && res.peak.sum > budget * (1 + HEAD)) { failed++; console.log(`FAIL ${tag} ${sc}: peak JS heap + GPU + canvas ${res.peak.sum} MB > budget ${budget} MB + ${HEAD * 100} % for moments (garbage of a build, a batch of tiles)`); }
+      else if (CHECK && budget) console.log(`ok   ${tag} ${sc}: peak ${res.peak.sum} MB within budget ${budget} MB + ${HEAD * 100} %`);
+      if (sc === 'fly') { const a = steps[0], b = steps.find(x => x.label === 'docklands-again'), c = steps.at(-1), grow = mb(b.heap + b.gpu) - mb(a.heap + a.gpu), grow2 = mb(c.heap + c.gpu) - mb(b.heap + b.gpu); res.leak_mb = grow; res.leak2_mb = grow2;
+        console.log(`  ${tag} fly: at the Docklands first ${mb(a.heap)} + ${mb(a.gpu)} MB, after the fly ${mb(b.heap)} + ${mb(b.gpu)} MB (heap + GPU after GC): ${grow >= 0 ? '+' : ''}${grow} MB; after a second trip ${mb(c.heap)} + ${mb(c.gpu)} MB: ${grow2 >= 0 ? '+' : ''}${grow2} MB`);
+        if (CHECK && grow > LEAK) { failed++; console.log(`FAIL ${tag} fly: memory after the return is ${grow} MB above the first visit (margin ${LEAK} MB)`); }
+        if (CHECK && grow2 > LEAK2) { failed++; console.log(`FAIL ${tag} fly: a second round trip added ${grow2} MB (margin ${LEAK2} MB): a leak`); } }
       if (CHECK && errors.length) { failed++; console.log(`FAIL ${tag} ${sc}: page errors ${errors.slice(0, 2).join(' / ')}`); }
       await page.screenshot({ path: `${OUT}/${sc}-${w}x${h}${WEBGPU ? '-webgpu' : ''}.png` });
     } catch (e) { failed++; res.error = String(e.message || e).slice(0, 300); console.log(`FAIL ${tag} ${sc}: ${res.error}`); }

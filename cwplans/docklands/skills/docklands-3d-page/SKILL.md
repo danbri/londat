@@ -5,8 +5,8 @@ description: >-
   vertex formats (the alpha byte is not opacity; g carries building use and roof top), picking by model index, the
   drawer, card, search, routes, gestures, phone audio; the styles (map, realistic ?look=real, pixel art, photo facades in a 32-slot atlas,
   splats, glow chips, Line drawing ?lines and Vector CRT ?vectrex); Night and the photo views
-  (?view=rotherhithe|greenland|pier|greenlandday|plane); the fp16 fault; overlays, locate, ships, river, KML, Drone,
-  station models; detailed building models; WebXR; wind (?wind); the plotter SVG; building keys; the Three.js port (docklands/, WebGPU/WebGL 2) and its globe (?view=globe) with 3D Tiles places, LOD, hand-over fade; and the
+  (?view=rotherhithe and others); the fp16 fault; overlays, locate, ships, river, KML, Drone,
+  station models; detailed building models; WebXR; wind (?wind); the plotter SVG; building keys; the Three.js port moglob (docklands/, WebGPU/WebGL 2; memory governor) and its globe (?view=globe) with 3D Tiles places, LOD, hand-over fade; and the
   headless test recipe. Sky, clock, weather,
   tide: skill docklands-sky. Reach for it before you edit the page or scripts, add a layer or a style, change a
   shader, judge a render or plot, or push a page change. Append to the curation skill's ACTIVITY-LOG.md.
