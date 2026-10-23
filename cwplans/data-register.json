@@ -346,6 +346,26 @@
       "committed": false,
       "local_path": "data/raw/places/dagstuhl/greens/osm-map.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
       "fetched_by": "tools/build-place-greens.mjs fetch --region dagstuhl (OSM API 0.6 map.json of the core area, then relation/<id>/full for the multipolygons that leave it); the SHA-256 of each answer in greens/log.json"
+    },
+    "qlever-osm-uk-part-shapes": {
+      "url": "https://qlever.dev/api/osm-planet (SPARQL: building parts contained in the UK relation 62149 with building:part spire, steeple, tower, church_tower, bell_tower, clock_tower, minaret or belfry, or roof:shape pyramidal, cone, conical, spire, dome or onion: their roof:shape and building:part)",
+      "osm_data_as_of": "planet 2026-09-21 (osm2rdf index of the QLever OSM endpoint)",
+      "fetched": "2026-10-23",
+      "sha256_prefix": "967fe4cbbcb2b96b",
+      "size_bytes": 173003,
+      "committed": false,
+      "local_path": "data/raw/places/uk-lite/osm-part-shapes.tsv (in cwplans/.gitignore)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (2738 rows; tags only, joined to the Overture building parts by OSM id; issue #14)"
+    },
+    "qlever-osm-uk-structures": {
+      "url": "https://qlever.dev/api/osm-planet (SPARQL: elements contained in the UK relation 62149 not tagged building, with man_made tower, chimney, obelisk, lighthouse, mast, monument, historic monument, memorial, castle or tourism artwork, and a wikidata or wikipedia tag or a name and a height: kind, name, height, wikidata, wikipedia, geometry as WKT)",
+      "osm_data_as_of": "planet 2026-09-21 (osm2rdf index of the QLever OSM endpoint)",
+      "fetched": "2026-10-23",
+      "sha256_prefix": "489a7a0036f0bfbd",
+      "size_bytes": 913419,
+      "committed": false,
+      "local_path": "data/raw/places/uk-lite/osm-structures.tsv (in cwplans/.gitignore)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (4522 rows; issue #14: structures drawn as landmarks, castle sites as rows)"
     }
   },
   "sources": {
@@ -14217,6 +14237,35 @@
       ]
     },
     {
+      "path": "docklands/data/places/leon/provenance/far-outlines-counts.json",
+      "what": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
+      "sources": [
+        "osm",
+        "ign-mdt05",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "es-catastro-inspire-bu",
+        "overture-ign-floors",
+        "own",
+        "overture-ms-geometry",
+        "overture-ign-geometry"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of OSM buildings by height source; element counts"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
       "path": "docklands/data/places/leon/sources/ghsl-built-h.json",
       "what": "GHS-BUILT-H R2023A average net building height over Casco Histórico, León and its city box (a crop of one 10 x 10 degree tile, 125 x 95 cells of 3 arc-seconds, values rounded to 0.1 m; format place-raster-1): the committed input of place-heights and place-city-heights",
       "sources": [
@@ -14406,6 +14455,32 @@
     {
       "path": "docklands/data/places/sarajevo/provenance/log.json",
       "what": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles, place-select-outer, place-city-heights, place-lod with input and output hashes; height-source counts of the core and of the city (fault F55), footprint matches, the validation of the IGN floors (León), the outer counts and the tiers",
+      "sources": [
+        "osm",
+        "copernicus-glo30",
+        "esa-worldcover",
+        "overture-transportation",
+        "overture-base",
+        "overture-divisions",
+        "ghsl-built-h",
+        "overture-buildings",
+        "ms-buildings",
+        "own",
+        "overture-ms-geometry"
+      ],
+      "osm": {
+        "use": "counts",
+        "what": "counts of OSM buildings by height source; element counts"
+      },
+      "produced_by": "tools/build-place-tiles.mjs",
+      "fetched": "2026-10-20",
+      "shown_on": [
+        "docklands/ (the Three.js port: the globe, globe/places.js)"
+      ]
+    },
+    {
+      "path": "docklands/data/places/sarajevo/provenance/far-outlines-counts.json",
+      "what": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
       "sources": [
         "osm",
         "copernicus-glo30",
@@ -14806,7 +14881,7 @@
     },
     {
       "path": "docklands/data/places/london/tiles/*.glb",
-      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings; place-blocks 5 since 2026-10-22, the UK lite v2 way): at level 13 (leaves) every OSM building of 25 m2 or more and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\") that is not named and not irregular, as one compact box (layout cwplans-boxes-1 in glb extras.blocks.compact: 8 bytes a box: its true centroid in the tile frame, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height, height source, class; with a 17 x 17 ground grid); the irregular ones (300 m2 or more, filling less than 85 % of their oriented box: 63,607) as outlines simplified at 2.5 m (the place-blocks 3 rule, kept by architecture rule 6); and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 12 the tall or big buildings as boxes (EXT_mesh_gpu_instancing) and the rest one compact square a 400 / 200 / 100 m square, turned to the grain of its buildings, its side from the built share (full at 50 %; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: classes, height sources, the own boxes' class, height and source (block card), buildings of the cell",
+      "what": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings; place-blocks 7 since 2026-10-23: far forms, issue #13, and the fill rule; the UK lite v2 way since 2026-10-22): at level 13 (leaves) every OSM building of 25 m2 or more and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\") that is not named and not irregular, as one compact box (layout cwplans-boxes-1 in glb extras.blocks.compact: 8 bytes a box: its true centroid in the tile frame, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height, height source, class; with a 17 x 17 ground grid); the irregular ones (300 m2 or more, filling less than 85 % of their oriented box: 63,607) as outlines simplified at 2.5 m (the place-blocks 3 rule, kept by architecture rule 6); and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 12 the tall or big buildings as boxes (EXT_mesh_gpu_instancing) when they fill 0.7 of their oriented box, else as outlines simplified at 4 m (place-blocks 7), and the rest as far forms (compact kind blocks; no squares since place-blocks 6; street blocks cut until they fill 0.7): buildings and street blocks of adjacent buildings of similar height (oriented boxes within 5 m) at their true positions, one oriented box each with the summed footprint and the area-weighted mean height, drawn where their seen size sqrt(area) x max(sqrt(area), height) is at least 307 / 1,220 / 4,870 m2 (levels 12 / 11 / 10: about one device pixel squared at the far end of each level's range); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: classes, height sources, the own boxes' class, height and source (block card), buildings of the cell",
       "sources": [
         "osm",
         "overture-buildings",
@@ -15992,7 +16067,7 @@
         "README.md",
         "provenance/log.json"
       ],
-      "what": "The UK outside Greater London as a LITE building set (owner, 2026-10-22: \"can we pick a lite subset or slice somehow? Key landmarks, modest resolution?\"): 3D Tiles 1.1 + glTF, quadtree levels 7 to 11, REPLACE refinement, external tile sets from level 9. 82,784 landmarks (OSM wikidata or wikipedia tag; notable kinds: cathedral, castle, palace, stadium, tower, lighthouse, windmill and others; named and 25 m or taller, or 3,000 m2 or more), each with its outline, id (_FEATURE_ID_0 = row of the features shards) and card; and every other OSM and Microsoft footprint (22.7 M, 20 m2 or more) as its own box at its true position at the leaves (level 11: centroid, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height; no outline, no id; since 2026-10-22, owner: \"UK data looks like literal tiles\"), and as merged squares turned to the grain of their buildings at the coarse levels (200 m at level 10 to 1.6 km at level 7). Boxes in the compact layout cwplans-boxes-1 (8 bytes a box, glb extras.blocks.compact). A building whose centroid is in Greater London (ONS E12000007) is left to the London place. Read by docklands/globe/places.js (index entry uk-lite, kind lite, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by part and class Landmark heights (operation place-lite-landmark-heights, owner 2026-10-22 \"Yes do that\"): OSM building:part heights via the Overture building_part theme (towers and spires above the body drawn as their own blocks with the landmark's id) and Wikidata P2048 heights (CC0; a spire on the tallest part or a square tower at the centroid, by a stated rule); the card gives the highest point and its source.",
+      "what": "The UK outside Greater London as a LITE building set (owner, 2026-10-22: \"can we pick a lite subset or slice somehow? Key landmarks, modest resolution?\"): 3D Tiles 1.1 + glTF, quadtree levels 7 to 11, REPLACE refinement, external tile sets from level 9. 82,784 landmarks (OSM wikidata or wikipedia tag; notable kinds: cathedral, castle, palace, stadium, tower, lighthouse, windmill and others; named and 25 m or taller, or 3,000 m2 or more), each with its outline, id (_FEATURE_ID_0 = row of the features shards) and card; and every other OSM and Microsoft footprint (22.7 M, 20 m2 or more) as its own box at its true position at the leaves (level 11: centroid, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height; no outline, no id; since 2026-10-22, owner: \"UK data looks like literal tiles\"), and at the coarse levels (7 to 10) as far forms since 2026-10-23 (place-lite-tiles 5, issue #13; before: merged squares of 200 m to 1.6 km): buildings and street blocks of adjacent buildings of similar height at their true positions, one oriented box each (summed footprint, area-weighted mean height), drawn where their seen size sqrt(area) x max(sqrt(area), height) is at least 178 / 712 / 2,850 / 11,400 m2 (levels 10 / 9 / 8 / 7). Boxes in the compact layout cwplans-boxes-1 (8 bytes a box, glb extras.blocks.compact). A building whose centroid is in Greater London (ONS E12000007) is left to the London place. Read by docklands/globe/places.js (index entry uk-lite, kind lite, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by part and class Landmark heights (operation place-lite-landmark-heights, owner 2026-10-22 \"Yes do that\"): OSM building:part heights via the Overture building_part theme (towers and spires above the body drawn as their own blocks with the landmark's id) and Wikidata P2048 heights (CC0; a spire on the tallest part or a square tower at the centroid, by a stated rule); the card gives the highest point and its source. Since 2026-10-23 (issue #14, place-lite-landmark-heights 2, place-lite-structures 1, place-lite-tiles 6): each landmark part is drawn by its shape (walls from its min_height when held up; a spire or pyramidal roof to one apex, a dome or onion cap; roof-caps.mjs), Wikidata spires as pyramids; 329 structures that are not OSM buildings drawn as landmarks (towers, lighthouses, masts, chimneys, artworks such as the Angel of the North, monuments, obelisks) and 315 castle sites (such as Edinburgh Castle) as rows for search and the card; 83,428 landmark rows. Fill rule (place-lite-tiles 7, same day): at the coarse levels a landmark is its own box only when it fills 0.7 of its oriented box, else its outline simplified at 4 m; street blocks cut until they fill 0.7.",
       "sources": [
         "osm",
         "overture-buildings",
@@ -16012,9 +16087,11 @@
         "extract": [
           "overture-osm-uk-lite",
           "qlever-osm-uk-landmark-tags",
-          "overture-osm-uk-building-parts"
+          "overture-osm-uk-building-parts",
+          "qlever-osm-uk-part-shapes",
+          "qlever-osm-uk-structures"
         ],
-        "what": "landmark outlines, names, kinds, Wikidata and Wikipedia tags, heights and levels of OSM buildings (via Overture and QLever); the footprint areas and heights of the other OSM buildings summed into the mass; the outlines and heights of OSM building parts (building:part) of the landmarks, via Overture"
+        "what": "landmark outlines, names, kinds, Wikidata and Wikipedia tags, heights and levels of OSM buildings (via Overture and QLever); the footprint areas and heights of the other OSM buildings summed into the mass; the outlines and heights of OSM building parts (building:part) of the landmarks, via Overture; the roof:shape and building:part of landmark parts (QLever); structures that are not OSM buildings (towers, chimneys, obelisks, lighthouses, masts, monuments, artworks with a height) as landmark outlines or shapes by kind, and castle areas as named site rows (QLever)"
       },
       "produced_by": "tools/build-place-tiles.mjs --region uk-lite (operations place-lite-select 2, place-lite-landmark-heights 1 and place-lite-tiles 4; with tools/place-lite-heights.mjs, with tools/place-lite.mjs, tools/place-blocks.mjs, tools/fetch-overture-theme.py)",
       "fetched": "2026-10-22",
@@ -16046,7 +16123,7 @@
         "landmarks/log.json",
         "landmarks/README.md"
       ],
-      "what": "Central Dublin as a place on the globe (owner, 2026-10-22: \"Ireland: Dublin especially\"; region config docklands/geo/regions/dublin.js): 3D Tiles 1.1 + glTF, one quadtree with REPLACE refinement. Core: 52 level-15 cells along both banks of the Liffey from Heuston to the Docklands and Grand Canal Dock (OSM buildings with roofs, ground from the GSI / OPW 2 m LiDAR DTM with a texture of OSM water, green, streets and footprints); city: Dublin City and the built-up county as blocks (491393 OSM and 25247 Microsoft footprints drawn); surroundings to about 35 km (Copernicus GLO-30 terrain, ESA WorldCover, Overture roads, rail, water, place names and peaks: Dublin Bay, Howth, the Dublin and Wicklow mountains). features.json and surround.json: the text and machine interface (English and Irish names where the data has both). greens/: 8491 trees and 36 water polygons of the core. landmarks/: 8 tall objects (the Spire, the Poolbeg chimneys, the Wellington Monument), 21 towers and spires, 21 domes. README per folder: sources, licences, SHA-256, operations",
+      "what": "Central Dublin as a place on the globe (owner, 2026-10-22: \"Ireland: Dublin especially\"; region config docklands/geo/regions/dublin.js): 3D Tiles 1.1 + glTF, one quadtree with REPLACE refinement. Core: 52 level-15 cells along both banks of the Liffey from Heuston to the Docklands and Grand Canal Dock (OSM buildings with roofs, ground from the GSI / OPW 2 m LiDAR DTM with a texture of OSM water, green, streets and footprints); city: Dublin City and the built-up county as blocks (491393 OSM and 25247 Microsoft footprints drawn); surroundings to about 35 km (Copernicus GLO-30 terrain, ESA WorldCover, Overture roads, rail, water, place names and peaks: Dublin Bay, Howth, the Dublin and Wicklow mountains). features.json and surround.json: the text and machine interface (English and Irish names where the data has both). greens/: 8491 trees and 36 water polygons of the core. landmarks/: 8 tall objects (the Spire, the Poolbeg chimneys, the Wellington Monument), 21 towers and spires, 21 domes. README per folder: sources, licences, SHA-256, operations Since 2026-10-23 (operation place-far-lod 1, issue #13) the parents of the first city block level refine within 25 km (tileset.json geometricError >= 820.8 m over the city box), so the city blocks (tall or big buildings as boxes) show in a 20 km view. Operation place-far-outlines 1 (same day): a level-13 box whose building fills less than 0.7 of it is replaced by the building's outline from its level-14 tile.",
       "sources": [
         "osm",
         "gsi-opw-lidar-dtm",
@@ -16094,7 +16171,7 @@
         "README.md",
         "provenance/log.json"
       ],
-      "what": "Mitte, Berlin (region config docklands/geo/regions/berlin.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (8663 buildings, the official LoD2 walls and roofs where Berlin has them; terrain, ground texture from OSM), the city box [13.088, 52.338, 13.761, 52.675] as blocks (814713 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 192.4 MB. Read by docklands/globe/places.js (index entry berlin, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier",
+      "what": "Mitte, Berlin (region config docklands/geo/regions/berlin.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (8663 buildings, the official LoD2 walls and roofs where Berlin has them; terrain, ground texture from OSM), the city box [13.088, 52.338, 13.761, 52.675] as blocks (814713 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 192.4 MB. Read by docklands/globe/places.js (index entry berlin, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier Since 2026-10-23 (operation place-far-lod 1, issue #13) the parents of the first city block level refine within 25 km (tileset.json geometricError >= 820.8 m over the city box), so the city blocks (tall or big buildings as boxes) show in a 20 km view. Operation place-far-outlines 1 (same day): a level-13 box whose building fills less than 0.7 of it is replaced by the building's outline from its level-14 tile.",
       "sources": [
         "osm",
         "copernicus-glo30",
@@ -16139,7 +16216,7 @@
         "README.md",
         "provenance/log.json"
       ],
-      "what": "Mitte, Stuttgart (region config docklands/geo/regions/stuttgart.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (21124 buildings; terrain, ground texture from OSM), the city box [9.039, 48.692, 9.316, 48.866] as blocks (204859 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 66.3 MB. Read by docklands/globe/places.js (index entry stuttgart, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier",
+      "what": "Mitte, Stuttgart (region config docklands/geo/regions/stuttgart.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (21124 buildings; terrain, ground texture from OSM), the city box [9.039, 48.692, 9.316, 48.866] as blocks (204859 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 66.3 MB. Read by docklands/globe/places.js (index entry stuttgart, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier Since 2026-10-23 (operation place-far-lod 1, issue #13) the parents of the first city block level refine within 25 km (tileset.json geometricError >= 820.8 m over the city box), so the city blocks (tall or big buildings as boxes) show in a 20 km view. Operation place-far-outlines 1 (same day): a level-13 box whose building fills less than 0.7 of it is replaced by the building's outline from its level-14 tile.",
       "sources": [
         "osm",
         "copernicus-glo30",
@@ -16182,7 +16259,7 @@
         "README.md",
         "provenance/log.json"
       ],
-      "what": "Schloss Dagstuhl, Wadern (region config docklands/geo/regions/dagstuhl.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (6579 buildings; terrain, ground texture from OSM), the city box [6.8, 49.47, 7.01, 49.63] as blocks (31902 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 42.1 MB. Read by docklands/globe/places.js (index entry dagstuhl, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier",
+      "what": "Schloss Dagstuhl, Wadern (region config docklands/geo/regions/dagstuhl.js) as a place on the globe: 3D Tiles 1.1 + glTF, a quadtree with REPLACE refinement: the core (6579 buildings; terrain, ground texture from OSM), the city box [6.8, 49.47, 7.01, 49.63] as blocks (31902 buildings), the surroundings (about 70 km square: terrain, land cover, roads, rail, water, names). 42.1 MB. Read by docklands/globe/places.js (index entry dagstuhl, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by tier Since 2026-10-23 (operation place-far-lod 1, issue #13) the parents of the first city block level refine within 25 km (tileset.json geometricError >= 820.8 m over the city box), so the city blocks (tall or big buildings as boxes) show in a 20 km view. Operation place-far-outlines 1 (same day): a level-13 box whose building fills less than 0.7 of it is replaced by the building's outline from its level-14 tile.",
       "sources": [
         "osm",
         "copernicus-glo30",

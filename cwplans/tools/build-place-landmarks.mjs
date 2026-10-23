@@ -35,6 +35,7 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import REGIONS from '../../docklands/geo/regions/index.js';
 import { enuFrame, geodeticToEcef, ecefToGeodetic, enuBasis, D2R } from '../../docklands/geo/ellipsoid.js';
+import { capProfile } from './roof-caps.mjs';
 
 const UA = 'glitchcan-cwplans/0.1 (https://github.com/danbri/londat)';
 const TOOL = 'tools/build-place-landmarks.mjs';
@@ -448,10 +449,8 @@ class Shape { constructor() { this.pos = []; this.rad = []; this.col = []; this.
       const tf = this.pos.length / 3; for (let i = 1; i + 1 < n; i++) this.idx.push(t[0], t[i], t[i + 1]); this.lathe(c[0], c[1], domeProfile(z1, ri, zt - z1, cap, cr), 12, R); }
     else for (let i = 1; i + 1 < n; i++) this.idx.push(t[0], t[i], t[i + 1]); }
 }
-function domeProfile(z0, r, rise, shape, c) { const P = [];
-  if (shape === 'onion') { const prof = [[0, 1], [0.18, 1.12], [0.4, 1.06], [0.6, 0.72], [0.8, 0.3], [0.92, 0.1], [1, 0]]; for (const [f, k] of prof) P.push([z0 + f * rise, r * k, c]); }
-  else for (let k = 0; k <= 5; k++) { const a = k / 5 * Math.PI / 2; P.push([z0 + Math.sin(a) * rise, Math.cos(a) * r, c]); }
-  return P; }
+// (the dome and onion profiles are shared with the UK lite set's landmark parts: roof-caps.mjs capProfile)
+function domeProfile(z0, r, rise, shape, c) { return capProfile(shape === 'onion' ? 'onion' : 'dome').map(([f, k]) => [z0 + f * rise, r * k, c]); }
 // an Ottoman minaret: plinth, shaft, the balcony (serefe) on its corbel with a parapet, the upper shaft, the pencil cone (alem left out)
 function minaretProfile(r, H, sb, se, capH, wooden, c) {
   const stone = c || (wooden ? [226, 220, 206] : STONE), cap = wooden ? WOOD : LEAD, rb = r * 1.22, ru = r * 0.9, rs = r * 1.45, zcap = H - capH;

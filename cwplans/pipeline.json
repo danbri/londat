@@ -10356,6 +10356,9 @@
      "file": "docklands/data/places/leon/provenance/log.json"
     },
     {
+     "file": "docklands/data/places/leon/provenance/far-outlines-counts.json"
+    },
+    {
      "file": "docklands/data/places/sarajevo/tileset.json"
     },
     {
@@ -10369,6 +10372,9 @@
     },
     {
      "file": "docklands/data/places/sarajevo/provenance/log.json"
+    },
+    {
+     "file": "docklands/data/places/sarajevo/provenance/far-outlines-counts.json"
     },
     {
      "file": "docklands/data/places/leon/sources/overture-buildings.json"
@@ -11320,6 +11326,14 @@
   {
    "tool": "tools/storey-heights.mjs",
    "provides": "Storey height by use (no place constant): OSM building value -> use class (residential, office, mixed, retail, industrial, institutional, small; kinds left alone), height = base + typical x (storeys - 1 + plant storeys), the CTBUH-based prior, and the least-absolute-deviation fit of base and typical to measured buildings. Used by model-heights; meant for place-city-heights and other cities later."
+  },
+  {
+   "tool": "tools/roof-caps.mjs",
+   "provides": "Cap kinds and profiles of towers and domes (pointed: pyramid or cone to an apex; dome; onion) shared by build-place-landmarks.mjs and the UK lite set (place-blocks.mjs blockTile prism caps, place-lite-heights.mjs partCap). Pure data and functions (issue #14)."
+  },
+  {
+   "tool": "tools/place-far-outlines.mjs",
+   "provides": "Operation place-far-outlines (build-place-tiles.mjs far-outlines): in a built place with a city tier, a level-13 box whose building fills less than 0.7 of it is replaced by the building outline of its level-14 tile (glb read and repack). Pure functions over glb bytes and tile matrices (coordinator 2026-10-23: the Tempelhof terminal was a solid slab)."
   }
  ],
  "tests": [
@@ -11406,6 +11420,10 @@
   {
    "tool": "tools/test/model-heights.test.mjs",
    "what": "Tests (node --test) of tools/storey-heights.mjs (use classes, kinds left alone, storeys, plant storeys; the fit recovers base and typical from exact samples and keeps the prior when too few) and of area.js as tools/model-heights.mjs left it (meta.heightRule, the source names, Three Deal Porters 24 to 29 m, Dock Shed over 19 m, the Consort Place tower top 190 to 240 m OD, every changed building listed, flagged buildings keep their class)."
+  },
+  {
+   "tool": "tools/test/place-far-outlines.test.mjs",
+   "what": "Tests (node --test) of tools/place-far-outlines.mjs: glb read and repack keep every accessor and image; the committed León level-13 tiles carry the far outlines counted in provenance/far-outlines-counts.json; a second run replaces nothing."
   }
  ],
  "header_mismatches_resolved": {

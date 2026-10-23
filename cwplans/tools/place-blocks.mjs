@@ -19,6 +19,7 @@
 import earcut from 'earcut';
 import { enuFrame, D2R } from '../../docklands/geo/ellipsoid.js';
 import { simplify, obbBox, area2 } from './place-lod.mjs';
+import { capProfile, CAP_COLOURS } from './roof-caps.mjs';
 
 const r7 = v => Math.round(v * 1e7) / 1e7;
 export const cellBox = (l, x, y) => { const cs = 180 / 2 ** l; return [-180 + x * cs, -90 + y * cs, -180 + (x + 1) * cs, -90 + (y + 1) * cs]; };
@@ -175,13 +176,27 @@ export function blockTile(opt) {
     const cl = toLL([f.cx * f.c - f.cy * f.s, f.cx * f.s + f.cy * f.c], ref), gs = bx.map(p => groundAt(...toLL(p, ref)));
     box(cl, Math.atan2(f.s, f.c), f.len, f.wid, hgt, cls, src, gs, fid); return true;
   }
-  // an extruded outline (rings in metres round ref; walls of every ring, a flat top by earcut): into ol or nm
-  function prism(T, rings, ref, hgt, colW, colR, fid) {
+  // an extruded outline (rings in metres round ref; walls of every ring, a flat top by earcut): into ol or nm. cap (lite
+  // landmark parts, place-lite-tiles 6): { kind: 'pointed' | 'dome' | 'onion', h: its height, base: the part's min_height
+  // (its walls start there, on the part below, instead of under the ground) }: the walls stop h under the top and the outer
+  // ring is scaled about its centroid by the profile of roof-caps.mjs (a pyramid or cone to an apex, a dome, an onion)
+  function prism(T, rings, ref, hgt, colW, colR, fid, cap = null) {
     const ll = rings.map(r => r.map(p => toLL(p, ref))), gs = ll[0].map(([lo, la]) => groundAt(lo, la)), g0 = Math.min(...gs), gm = gs.reduce((a, c) => a + c, 0) / gs.length;
-    const N = geoidAt(ref[0], ref[1]), z0 = g0 - P.drop_m + N, z1 = gm + hgt + N; zmin = Math.min(zmin, z0); zmax = Math.max(zmax, z1);
+    const N = geoidAt(ref[0], ref[1]), z0 = cap?.base > 0 ? gm + cap.base + N : g0 - P.drop_m + N, z1 = gm + hgt + N; zmin = Math.min(zmin, z0); zmax = Math.max(zmax, z1);
+    const zE = cap?.kind ? Math.max(z0 + 0.1, z1 - Math.min(cap.h, z1 - z0)) : z1;
     const vtx = (q, z, col) => { const p = Y(F.toEnu(q[0], q[1], z)); T.pos.push(p[0], p[1], p[2]); if (col) { T.col.push(col[0], col[1], col[2], 255); T.fid.push(fid); } return T.pos.length / 3 - 1; };
-    for (const r of ll) { const lo = r.map(q => vtx(q, z0, colW)), hi = r.map(q => vtx(q, z1, colW)), m = r.length;
+    for (const r of ll) { const lo = r.map(q => vtx(q, z0, colW)), hi = r.map(q => vtx(q, zE, colW)), m = r.length;
       for (let k = 0; k < m; k++) { const k1 = (k + 1) % m; T.idx.push(lo[k], lo[k1], hi[k], hi[k], lo[k1], hi[k1]); } }
+    if (cap?.kind) {   // the cap over the outer ring (holes left out): rings scaled about the centroid, from the eaves to the top
+      const r0 = rings[0], m = r0.length, cx = r0.reduce((a, p) => a + p[0], 0) / m, cy = r0.reduce((a, p) => a + p[1], 0) / m, col = colW ? (CAP_COLOURS[cap.kind] || colR) : null;
+      let prev = null;
+      for (const [f, k] of capProfile(cap.kind)) { const z = zE + f * (z1 - zE);
+        const ring = k <= 1e-6 ? [vtx(toLL([cx, cy], ref), z, col)] : r0.map(p => vtx(toLL([cx + (p[0] - cx) * k, cy + (p[1] - cy) * k], ref), z, col));
+        if (prev) { if (ring.length === 1) for (let i = 0; i < m; i++) T.idx.push(prev[i], prev[(i + 1) % m], ring[0]); else for (let i = 0; i < m; i++) { const j = (i + 1) % m; T.idx.push(prev[i], prev[j], ring[j], prev[i], ring[j], ring[i]); } }
+        prev = ring; }
+      if (prev.length > 1) { const tri = earcut(r0.flat()); for (let k = 0; k < tri.length; k += 3) T.idx.push(prev[tri[k]], prev[tri[k + 1]], prev[tri[k + 2]]); }   // (a flat profile end: closed)
+      return hgt;
+    }
     const flat = [], holes = [], top = []; rings.forEach((r, k) => { if (k) holes.push(flat.length / 2); for (const p of r) flat.push(p[0], p[1]); });
     for (const r of ll) for (const q of r) top.push(vtx(q, z1, colR));
     const tri = earcut(flat, holes.length ? holes : null); for (let k = 0; k < tri.length; k += 3) T.idx.push(top[tri[k]], top[tri[k + 1]], top[tri[k + 2]]);
@@ -200,7 +215,7 @@ export function blockTile(opt) {
     const row0 = opt.named ? opt.named.get(b.id) : null;
     if (row0 != null && opt.namedOutlines) {   // (lite) a landmark at the leaf: its outline (and holes), its own id
       const tol = opt.named_simplify_m ?? 0.5, rs = b.rings.map((r, k) => { let q = simplify(toXY(open(r), b.c), tol); if (q.length < 3) return null; q = area2(q) < 0 === (k === 0) ? q.slice().reverse() : q; return q; }).filter(Boolean);
-      if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row0); st.named++; meta.named.push(row0); continue; }
+      if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row0, b.cap || null); st.named++; meta.named.push(row0); if (b.cap?.kind) st.caps = (st.caps || 0) + 1; continue; }
       obbOf(xy0, b.c, H.h, 0, H.src, row0); continue;
     }
     if (opt.leaf) {
@@ -216,7 +231,16 @@ export function blockTile(opt) {
       continue;
     }
     // a coarse level: tall or big buildings as their own boxes, the rest merged by square
-    if (b.own || (xy0 && (H.h >= P.tall_m || b.a >= P.big_m2))) { if (obbOf(xy0, b.c, H.h, ciOf(b), H.src, row0 ?? -1)) byCls(b); st.landmark_boxes = (st.landmark_boxes || 0) + (row0 != null ? 1 : 0); continue; }
+    if (b.own || (xy0 && (H.h >= P.tall_m || b.a >= P.big_m2))) {
+      // (P.far_box_fill; place-blocks 7, place-lite-tiles 7, 2026-10-23: the oriented box of a curved or concave building,
+      // e.g. an airport terminal, was a solid slab far bigger than the building) the own box only when the footprint fills
+      // at least far_box_fill of its oriented box; else its outline simplified at far_simplify_m (outer ring), with its row
+      if (P.far_box_fill && xy0 && xy0.length >= 3) { const bx = obbBox(xy0), fill = bx ? Math.abs(area2(xy0)) / Math.max(1e-6, Math.abs(area2(bx))) : 1;
+        if (fill < P.far_box_fill) { let xy = simplify(xy0, P.far_simplify_m ?? 4); if (xy.length >= 3) { xy = ccw(xy);
+          if (row0 != null) { prism(nm, [xy], b.c, H.h, blockRGB, roofRGB, row0, b.cap || null); if (meta.named) meta.named.push(row0); }
+          else { prism(ol, [xy], b.c, H.h, null, null, null); meta.outlines.c.push(ciOf(b)); meta.outlines.h.push(Math.round(H.h * 10)); meta.outlines.s.push(hsi(H.src)); meta.outlines.tri_end.push(ol.idx.length / 3); }
+          st.far_outlines = (st.far_outlines || 0) + 1; byCls(b); continue; } } }
+      if (obbOf(xy0, b.c, H.h, ciOf(b), H.src, row0 ?? -1)) byCls(b); st.landmark_boxes = (st.landmark_boxes || 0) + (row0 != null ? 1 : 0); continue; }
     const MS = opt.mergeOf ? opt.mergeOf(b) : P.merge_m, E = (b.c[0] - w) * mLon, Nn = (b.c[1] - s) * mLat, k = (opt.mergeOf ? MS + ':' : '') + Math.floor(E / MS) + ',' + Math.floor(Nn / MS);
     const q = merged.get(k) || merged.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0 }).get(k); q.a += b.a; q.x += b.a * b.c[0]; q.y += b.a * b.c[1]; q.h += b.a * H.h; q.n += b.n || 1;
   }
@@ -233,12 +257,12 @@ export function blockTile(opt) {
   // (lite, opt.compact(F): boxes in the compact layout cwplans-boxes-1 of place-lite.mjs compactBoxes, appended as two
   // buffer views named in extras.blocks.compact; the leaves' buildings and the coarse levels' merged squares)
   const cp = opt.compact ? opt.compact(F) : null; if (cp) { zmin = Math.min(zmin, cp.zmin); zmax = Math.max(zmax, cp.zmax); }
-  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : opt.noteRef ? opt.noteRef : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite || cp ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(opt.cellBuildings != null ? { buildings: opt.cellBuildings } : {}), ...(cp ? { compact: cp.meta } : {}) } } : null;
+  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : opt.noteRef ? opt.noteRef : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite || cp ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(opt.cellBuildings != null ? { buildings: opt.cellBuildings } : {}), ...(cp ? { compact: cp.meta } : {}), ...(cp?.far_left_out != null ? { far_left_out: cp.far_left_out } : {}) } } : null;
   const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size, compact: cp });
   const tris = ol.idx.length / 3 + nm.idx.length / 3 + inst.t.length / 3 * 10 + (cp ? cp.meta.count * 10 : 0);
   return { bytes, F, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(isFinite(zmin) ? zmin : h0 - 10), Math.ceil(isFinite(zmax) ? zmax : h0) + 1],
     stats: { key: cell.key, level: cell.l, bytes: bytes.length, triangles: tris, blocks: st.boxes + st.outlines + st.merged + st.named, ...st, buildings: items.length,
-      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}), ...(cp ? { compact: cp.stats, compact_bytes: cp.data.length + cp.grid.length, compact_mass: cp.mass_buildings || 0 } : {}) } };
+      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}), ...(cp ? { compact: cp.stats, compact_bytes: cp.data.length + cp.grid.length, compact_mass: cp.mass_buildings || 0, far_left_out: cp.far_left_out || 0 } : {}) } };
 }
 
 // ---------- glTF 2.0 writer for block tiles: node 0 (if any) the outlines and named buildings, int16 positions

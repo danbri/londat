@@ -36,7 +36,9 @@ export default {
     views: [{ name: 'The UK from 500 km', ll: '54.5,-3.0,500000', ht: '0,0' }, { name: 'Manchester from 20 km', ll: '53.4794,-2.2453,20000', ht: '0,45' },
       { name: 'Edinburgh from 20 km', ll: '55.9533,-3.1883,20000', ht: '0,45' }, { name: 'Durham Cathedral (700 m)', ll: '54.7735,-1.5765,700', ht: '200,60' },
       { name: 'York Minster (700 m)', ll: '53.9623,-1.0819,700', ht: '200,60' }, { name: 'York from 1.1 km (one box a building)', ll: '53.9620,-1.0793,1100', ht: '0,60' },
-      { name: 'Salisbury Cathedral (700 m; spire 123 m from OSM parts)', ll: '51.0651,-1.7973,700', ht: '200,60' }],
+      { name: 'Salisbury Cathedral (700 m; spire 123 m from OSM parts, drawn as a spire since 2026-10-23)', ll: '51.0651,-1.7973,700', ht: '200,60' },
+      { name: 'Lincoln Cathedral (700 m)', ll: '53.2343,-0.5361,700', ht: '200,60' }, { name: 'The Angel of the North (400 m; a structure, not an OSM building)', ll: '54.9141,-1.5897,400', ht: '200,70' },
+      { name: 'Manchester from 50 km (far forms)', ll: '53.4794,-2.2453,50000', ht: '0,45' }],
     // parts: polygons of the UK skeleton (ONS BGC: English regions, then the countries); a building belongs to the first
     // part whose polygon holds its centroid; one outside every polygon (generalised coast, the England-Wales and
     // England-Scotland edges of two ONS products) to the nearest part within coast_m
@@ -66,7 +68,7 @@ export default {
       geometry_classes: { OpenStreetMap: 'osm', 'Microsoft ML Buildings': 'ms' },
       // the landmark rule (README): OSM tags from the QLever OSM endpoint (planet 2026-09-21, the UK relation's
       // containment), joined to the Overture record by its OSM id
-      tags: { endpoint: 'https://qlever.cs.uni-freiburg.de/api/osm-planet', area_relation: 62149 },
+      tags: { endpoint: 'https://qlever.dev/api/osm-planet', area_relation: 62149 },
       // landmark heights (owner, 2026-10-22: "Yes do that"; operation place-lite-landmark-heights, module
       // cwplans/tools/place-lite-heights.mjs): OSM building:part heights via Overture's building_part theme (joined by
       // building_id) and Wikidata P2048 (QLever Wikidata, CC0). Rule: a part whose top is above the body by at least
@@ -75,9 +77,14 @@ export default {
       // spire_share x sqrt(its area)), else as a square tower at the centroid (side tower_share x sqrt(footprint), between
       // tower_min_m and tower_max_m); the body keeps its height
       heights: {
-        part_columns: 'building_id,height,min_height,roof_shape,num_floors', part_where: 'height IS NOT NULL',
+        part_columns: 'building_id,height,min_height,roof_shape,roof_height,num_floors', part_where: 'height IS NOT NULL',
         wikidata_endpoint: 'https://qlever.dev/api/wikidata', wikidata_chunk: 5000,
-        rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15 },
+        rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15, cap_share: 0.25, cap_max_m: 8 },
+        // (issue #14, place-lite-landmark-heights 2) the shape of each part: Overture's roof_shape and roof_height, with the
+        // OSM roof:shape and building:part of these parts (QLever: Overture has no "cone" and no part kind); a pointed cap
+        // (pyramidal, cone, spire), a dome or an onion of roof:height, else min(cap_share x height, cap_max_m), the whole part
+        // for building:part=spire; walls from min_height when the body or a part already standing holds the part up
+        shapes: { parts: ['spire', 'steeple', 'tower', 'church_tower', 'bell_tower', 'clock_tower', 'minaret', 'belfry'], roof_shapes: ['pyramidal', 'cone', 'conical', 'spire', 'dome', 'onion'] },
       },
       landmark: {
         // (1) an encyclopaedia record: OSM wikidata or wikipedia on the building
@@ -92,6 +99,11 @@ export default {
         named_tall_m: 25, named_big_m2: 3000,
         min_area_m2: 20,
       },
+      // (issue #14, operation place-lite-structures) structures that are not OSM buildings, by the landmark rule: a listed kind,
+      // not tagged building, with a wikidata or wikipedia tag or a name and a height of named_tall_m; height from OSM, else
+      // Wikidata P2048; drawn from min_height_m (its outline, else a shape at its node by kind: place-lite-heights.mjs
+      // STRUCTURE_SHAPES); historic=castle areas with wikidata are sites (search and card rows, not drawn)
+      structures: { man_made: ['tower', 'chimney', 'obelisk', 'lighthouse', 'mast', 'monument'], historic: ['monument', 'memorial', 'castle'], tourism: ['artwork'], named_tall_m: 25, min_height_m: 10 },
       top_level: 7, leaf_level: 11,
       // coarse levels: landmarks at least tall_m or big_m2 as their own boxes (card by id); everything else one box per
       // square of merge_m (side grown with the built share, full at full_share; height = area-weighted mean). err_m of
@@ -103,6 +115,17 @@ export default {
       // its id; every other building as its own box (place-lite.mjs compactBoxes). town_m: the atoms of place-lite-select
       // (200 m squares, its counts); rural_m and town_share: the leaf rule of place-lite-tiles 2 (not used since version 3)
       leaf: { town_m: 200, rural_m: 400, town_share: 0.08, simplify_m: 1.5 },
+      // far forms (place-lite-tiles 5, 2026-10-23, issue #13: from 20 km a town read as a lattice of squares; three options
+      // measured, this one chosen): the coarse levels draw real buildings and street blocks at their true positions instead
+      // of merged squares (place-lite.mjs streetBlocks: oriented boxes within gap_m and heights within max(h_abs_m, h_rel x
+      // the taller) are one block, cut while they fill less than fill_min of it); each level draws the blocks whose seen
+      // size sqrt(area) x max(sqrt(area), height) is at least min_m2 = (far end of its range / 1462 m)^2, about one device
+      // pixel squared on a phone (level 10 drawn to about 19.5 km, 9 to 39 km, 8 to 78 km, 7 beyond). merge_m above is
+      // used only without far (the squares of place-lite-tiles 3 and 4)
+      // box_fill, simplify_m and fill_min 0.7 (place-lite-tiles 7, coordinator 2026-10-23: a curved terminal was a solid slab):
+      // a landmark drawn as its own box at a coarse level only when it fills box_fill of its oriented box, else its outline
+      // simplified at simplify_m; a street block is cut until its buildings fill fill_min of its box (was 0.4)
+      far: { gap_m: 5, fill_min: 0.7, h_rel: 0.35, h_abs_m: 3, box_fill: 0.7, simplify_m: 4, min_m2: { 7: 11400, 8: 2850, 9: 712, 10: 178 } },
       grid_n: 17,   // the ground grid of a tile's compact boxes (n x n)
       full_share: 0.5, drop_m: 8,   // (full_share: 0.35 until place-lite-tiles 3; 0.5 leaves street gaps between the turned squares)
       // (drop_m: bases deeper than London's 3 m: the globe's ground away from the world-base tiles is a 9.8 km texture drawn by 2.4 km patches)

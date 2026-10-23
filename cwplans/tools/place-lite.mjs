@@ -192,7 +192,7 @@ export const COMPACT_ABOUT = { layout: 'cwplans-boxes-1', where: 'glb extras.blo
   area_code: 'footprint area m2 = 2^(code / 10)', height_code: 'code <= 200: code / 4 m; else 50 + (code - 200) x 5 m', angle_code: 'angle of the long side = code x 180 / 256 degrees, from east toward north',
   flags: 'bits 0-3 aspect k (long / short = 2^(k / 3)), bit 4 footprint class (0 OpenStreetMap, 1 Microsoft), bits 5-7 height source (height_sources)', sides: 'long = sqrt(area x aspect), short = sqrt(area / aspect)',
   ground: 'grid of n x n int16 decimetres of the tile frame\'s up over east e0 + i de, north n0 + j dn (rows from the south), bilinear; a box stands from ground - drop_m to ground + height',
-  kinds: { buildings: 'one box a building (leaves; class from the flags)', squares: 'one box a square of merged buildings (coarse levels; aspect 1, turned to the grain of its buildings, flags 0)' }, height_sources: HSRC };
+  kinds: { buildings: 'one box a building (leaves; class from the flags)', squares: 'one box a square of merged buildings (coarse levels until place-lite-tiles 5 and place-blocks 6; aspect 1, turned to the grain of its buildings, flags 0)', blocks: 'far forms (coarse levels since place-lite-tiles 5 and place-blocks 6, issue #13): one box a building or a street block of adjacent buildings at its true position, kept where it is big enough to see from that level; class and height source of its largest building' }, height_sources: HSRC };
 export const HCODE = h => h <= 50 ? Math.max(0, Math.round(h * 4)) : Math.min(255, 200 + Math.round((h - 50) / 5));
 export const HDEC = c => c <= 200 ? c / 4 : 50 + (c - 200) * 5;
 export const ACODE = a => Math.max(0, Math.min(255, Math.round(Math.log2(Math.max(1, a)) * 10)));
@@ -258,4 +258,74 @@ export function recBoxes(ranges) {
   for (const [B, s0, s1] of ranges) for (let i = s0; i < s1; i++) { const o = i * REC;
     out.push({ lon: B.readInt32LE(o) / 1e7, lat: B.readInt32LE(o + 4) / 1e7, a: B.readFloatLE(o + 8), h: B.readUInt16LE(o + 12) / 10, ang: B[o + 14] * 180 / 256, asp: 2 ** (B[o + 15] / 32), cls: B[o + 16], src: B[o + 17] }); }
   return out;
+}
+
+// ---------- far forms of the coarse levels (place-lite-tiles 5, place-blocks 6; owner, 2026-10-23, issue #13: "towns from
+// 20 km read as towns, not tiles"). No squares: the coarse levels draw real buildings at their true positions.
+//   streetBlocks(boxes, P)  the buildings of one leaf cell -> street blocks: buildings whose oriented boxes come within
+//                           P.gap_m of each other and whose heights differ by at most max(P.h_abs_m, P.h_rel x the taller)
+//                           are one group (union-find over a 40 m grid); a group is one box at the grain of its buildings
+//                           (the tighter oriented box of two angles: the area-weighted mean of 4 x their angles and the
+//                           largest member's angle), cut in two at the area median along its long side while its buildings
+//                           fill less than P.fill_min of the box; the box keeps the summed footprint (sides x sqrt(fill),
+//                           about the box's centre), height the area-weighted mean, class and height source those of the
+//                           largest member, n = the buildings in it. A lone building stays itself. gap_m null: no merge.
+//   farKeep(blocks, min_m2)  the blocks a coarse level draws: those whose seen size sqrt(area) x max(sqrt(area), height)
+//                           (about the area of the box's silhouette seen from the side) is at least min_m2, about one device
+//                           pixel squared at the far end of the level's range: (range_m / 1462)^2 for a phone held upright
+//                           (K = 731 CSS px, 2 device px a CSS px), so a tall thin tower stays where a house of its footprint
+//                           goes; the rest are counted (left_out) but not drawn at that level (nearer levels draw them).
+const D2Rf = Math.PI / 180;
+function boxCorners(b) { const lo = Math.sqrt(b.a * b.asp), sh = Math.sqrt(b.a / b.asp), t = b.ang * D2Rf, c = Math.cos(t), s = Math.sin(t);
+  return [[1, 1], [-1, 1], [-1, -1], [1, -1]].map(([p, q]) => [b.x + c * lo / 2 * p - s * sh / 2 * q, b.y + s * lo / 2 * p + c * sh / 2 * q]); }
+// separation of two convex quads: the largest gap between their projections on the four edge normals (<= 0: they touch)
+function quadGap(P, Q) { let g = -Infinity;
+  for (const R of [P, Q]) for (let i = 0; i < 2; i++) { const ex = R[i + 1][0] - R[i][0], ey = R[i + 1][1] - R[i][1], L = Math.hypot(ex, ey) || 1, nx = -ey / L, ny = ex / L;
+    let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
+    for (const p of P) { const v = p[0] * nx + p[1] * ny; if (v < a0) a0 = v; if (v > a1) a1 = v; }
+    for (const p of Q) { const v = p[0] * nx + p[1] * ny; if (v < b0) b0 = v; if (v > b1) b1 = v; }
+    g = Math.max(g, b0 - a1, a0 - b1); }
+  return g; }
+export function streetBlocks(boxes, P) {
+  const n = boxes.length; if (!n) return [];
+  if (P.gap_m == null) return boxes.map(b => ({ ...b, n: 1 }));
+  let lon0 = 0, lat0 = 0; for (const b of boxes) { lon0 += b.lon; lat0 += b.lat; } lon0 /= n; lat0 /= n;
+  const mLon = 111320 * Math.cos(lat0 * D2Rf), mLat = 110574;
+  const B = boxes.map(b => ({ ...b, x: (b.lon - lon0) * mLon, y: (b.lat - lat0) * mLat })), R = B.map(boxCorners);
+  const par = Int32Array.from({ length: n }, (_, i) => i), find = i => { while (par[i] !== i) { par[i] = par[par[i]]; i = par[i]; } return i; };
+  const cell = 40, grid = new Map(), key = (i, j) => i * 1048576 + j;
+  B.forEach((b, i) => { const k = key(Math.floor(b.x / cell), Math.floor(b.y / cell)); let L = grid.get(k); if (!L) grid.set(k, L = []); L.push(i); });
+  const half = b => Math.sqrt(b.a * b.asp) / 2;
+  for (let i = 0; i < n; i++) { const b = B[i], r = half(b) + P.gap_m, ci = Math.floor(b.x / cell), cj = Math.floor(b.y / cell), span = Math.ceil(r / cell) + 1;
+    for (let di = -span; di <= span; di++) for (let dj = -span; dj <= span; dj++) { const L = grid.get(key(ci + di, cj + dj)); if (!L) continue;
+      for (const j of L) { if (j <= i) continue; const c = B[j];
+        if (Math.hypot(c.x - b.x, c.y - b.y) > r + half(c)) continue;
+        if (Math.abs(c.h - b.h) > Math.max(P.h_abs_m ?? 3, (P.h_rel ?? 0.35) * Math.max(c.h, b.h))) continue;
+        if (quadGap(R[i], R[j]) <= P.gap_m) { const x = find(i), y = find(j); if (x !== y) par[x] = y; } } } }
+  const groups = new Map(); for (let i = 0; i < n; i++) { const r = find(i); let L = groups.get(r); if (!L) groups.set(r, L = []); L.push(i); }
+  const out = [];
+  const emit = ix => {
+    if (ix.length === 1) { const b = B[ix[0]]; out.push({ lon: b.lon, lat: b.lat, a: b.a, asp: b.asp, ang: b.ang, h: b.h, cls: b.cls, src: b.src, n: 1 }); return; }
+    let A = 0, ox = 0, oy = 0, h = 0, big = ix[0]; for (const i of ix) { const b = B[i]; A += b.a; ox += b.a * Math.cos(4 * b.ang * D2Rf); oy += b.a * Math.sin(4 * b.ang * D2Rf); h += b.a * b.h; if (b.a > B[big].a) big = i; }
+    let best = null;
+    for (const t of [Math.atan2(oy, ox) / 4, B[big].ang * D2Rf]) { const c = Math.cos(t), s = Math.sin(t); let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+      for (const i of ix) for (const p of R[i]) { const u = p[0] * c + p[1] * s, v = -p[0] * s + p[1] * c; if (u < u0) u0 = u; if (u > u1) u1 = u; if (v < v0) v0 = v; if (v > v1) v1 = v; }
+      const area = (u1 - u0) * (v1 - v0); if (!best || area < best.area) best = { t, c, s, u0, u1, v0, v1, area }; }
+    const fill = A / Math.max(1e-6, best.area);
+    if (fill < P.fill_min) {   // cut at the area median along the long side
+      const long = (best.u1 - best.u0) >= (best.v1 - best.v0), k = i => long ? B[i].x * best.c + B[i].y * best.s : -B[i].x * best.s + B[i].y * best.c;
+      const so = ix.slice().sort((a, b) => k(a) - k(b) || a - b); let acc = 0, m = 0; for (; m < so.length - 1; m++) { acc += B[so[m]].a; if (acc >= A / 2) break; }
+      m = Math.min(m, so.length - 2); emit(so.slice(0, m + 1)); emit(so.slice(m + 1)); return; }
+    const L = best.u1 - best.u0, S = best.v1 - best.v0, f = Math.sqrt(Math.min(1, fill)), uc = (best.u0 + best.u1) / 2, vc = (best.v0 + best.v1) / 2;
+    const lo = Math.max(L, S) * f, sh = Math.max(0.5, Math.min(L, S) * f), ang = (((L >= S ? best.t : best.t + Math.PI / 2) / D2Rf) % 180 + 180) % 180;
+    const x = uc * best.c - vc * best.s, y = uc * best.s + vc * best.c;
+    out.push({ lon: lon0 + x / mLon, lat: lat0 + y / mLat, a: lo * sh, asp: lo / sh, ang, h: h / A, cls: B[big].cls, src: B[big].src, n: ix.length });
+  };
+  for (const ix of [...groups.values()].sort((a, b) => a[0] - b[0])) emit(ix);
+  return out;
+}
+export function farKeep(blocks, min_m2) {
+  const keep = []; let left = 0, leftN = 0;
+  for (const b of blocks) { const w = Math.sqrt(b.a); if (w * Math.max(w, b.h) >= min_m2) keep.push(b); else { left++; leftN += b.n || 1; } }
+  return { keep, left_out: left, left_out_buildings: leftN };
 }

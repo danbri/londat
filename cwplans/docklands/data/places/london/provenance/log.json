@@ -3,7 +3,7 @@
  "fetches": {
   "overture-buildings": {
    "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (bbox -0.52,51.28,0.34,51.7; files part-00124-5e200299-5dc8-5a43-bb1e-0a73aba3373f-c000.zstd.parquet part-00125-dd983f4b-21a7-5215-910c-4de2f4a24e2b-c000.zstd.parquet part-00126-8f48508e-8015-5699-a61b-0cb738bc4755-c000.zstd.parquet)",
-   "fetched": "2026-10-22T21:27:03.550Z",
+   "fetched": "2026-10-23T10:44:42.301Z",
    "bytes": 1438278915,
    "sha256": "bfe11fba0282c6b4636c8099d2a7851cabe4a05aca72a00f9d1eb8bb1d2adbc5",
    "file": "data/raw/places/london/overture-buildings-2026-09-23.1.ndjson",
@@ -106,8 +106,8 @@
      "bytes": 54336558
     }
    ],
-   "ms": 143696,
-   "at": "2026-10-22T22:41:30.267Z",
+   "ms": 150616,
+   "at": "2026-10-23T10:47:47.248Z",
    "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
   },
   {
@@ -154,14 +154,14 @@
      "bytes": 35991210
     }
    ],
-   "ms": 77552,
-   "at": "2026-10-22T22:43:04.342Z",
+   "ms": 78587,
+   "at": "2026-10-23T10:49:30.746Z",
    "note": "outputs under data/raw are intermediate (not committed); their hashes fix the next step"
   },
   {
-   "activity": "d41eeef8d30be042",
+   "activity": "08eb8da44d79d023",
    "operation": "place-blocks",
-   "version": 5,
+   "version": 7,
    "skill": "docklands-3d-page",
    "tool": "tools/build-place-tiles.mjs",
    "inputs": [
@@ -230,6 +230,19 @@
     "full_share": 0.5,
     "grid_n": 17,
     "leaf_within_m": 13000,
+    "far": {
+     "gap_m": 5,
+     "fill_min": 0.7,
+     "h_rel": 0.35,
+     "h_abs_m": 3,
+     "box_fill": 0.7,
+     "simplify_m": 4,
+     "min_m2": {
+      "10": 4870,
+      "11": 1220,
+      "12": 307
+     }
+    },
     "classes": [
      "OpenStreetMap (via Overture)",
      "merged buildings (one box a square, turned to the grain of its buildings: the summed footprint, the area-weighted mean height)",
@@ -244,18 +257,18 @@
    "outputs": [
     {
      "path": "docklands/data/places/london/tiles/10-1021-804.glb",
-     "sha256": "72b86e1ec3c260544c1c33124a250b6ccf6659344f11bc185bff2573b8cb2e15",
-     "bytes": 8192
+     "sha256": "25c836ba7b490bd99819d6220b3739cd207858a11baf91de2b8cb661df131478",
+     "bytes": 38644
     },
     {
      "path": "docklands/data/places/london/tiles/11-2042-1609.glb",
-     "sha256": "54f6ff6fd38003c8107680cfb903b5e65264a9e31b1af77262cfb14cabf9c601",
-     "bytes": 7608
+     "sha256": "bd24347ccf7acef10f656b2b924e6de12108e2f677c7b9363500fa212a6646f1",
+     "bytes": 43272
     },
     {
      "path": "docklands/data/places/london/tiles/12-4084-3219.glb",
-     "sha256": "68afdb8ce04f78701721452b02218a59cbe1df1c0696fa1e0aa90067e07d228b",
-     "bytes": 4924
+     "sha256": "7284e40356d5bfcf94512edc880deab376fb0d08fc294e30db5faf0c7de4740a",
+     "bytes": 11448
     },
     {
      "path": "docklands/data/places/london/tiles/13-8169-6438.glb",
@@ -269,8 +282,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4085-3218.glb",
-     "sha256": "72b4367a517f7ca307e2de5dc4d0350ed113213ddc19bd769701a6cc40cafbfb",
-     "bytes": 5964
+     "sha256": "5ca952c020a4e02ff373cf2d5da906151c3ed43aa84737054a3e39217ce82ee1",
+     "bytes": 8676
     },
     {
      "path": "docklands/data/places/london/tiles/13-8170-6437.glb",
@@ -289,8 +302,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4085-3219.glb",
-     "sha256": "b06934d2305b91a14b61a2f5fb0952ebf401c9877c871f0c59c6578ac24ef73b",
-     "bytes": 9280
+     "sha256": "457247eb79e4f92cc03e90e3f09902164ce158511abc6f0b20ce84de4a427828",
+     "bytes": 44956
     },
     {
      "path": "docklands/data/places/london/tiles/13-8170-6438.glb",
@@ -314,13 +327,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2043-1608.glb",
-     "sha256": "795f9b0bc88ad421de1b309db783c508d7d39a632c388c6d960a089efa93562a",
-     "bytes": 4128
+     "sha256": "3272489a7e7fb34a24fc15db694a79e4cf701aa84d07c78bc8b9ca2055926ebe",
+     "bytes": 3876
     },
     {
      "path": "docklands/data/places/london/tiles/12-4087-3217.glb",
-     "sha256": "e8245689c074c511b4342b3f09f9d4fb81e90d7d0a7e45581f340bfcb1a5ef1a",
-     "bytes": 4672
+     "sha256": "b2152574f9c5b486959ba734cfb8f84231e08b68bdec815633943c030c93b5da",
+     "bytes": 4828
     },
     {
      "path": "docklands/data/places/london/tiles/13-8174-6435.glb",
@@ -334,13 +347,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2043-1609.glb",
-     "sha256": "132f37693a4188573878c000de75942011587923dab8405ced0551e7ac6fbcf7",
-     "bytes": 14800
+     "sha256": "669abd715b76d39ae8ac3f244d99e48f89231aaed2bf97b717c032c4a7f00906",
+     "bytes": 21884
     },
     {
      "path": "docklands/data/places/london/tiles/12-4086-3218.glb",
-     "sha256": "18ec57b7019cd0e6e7ea0c4c39e5ca3b7a18a1470786a5e0d1535553c0a1e0b0",
-     "bytes": 11236
+     "sha256": "dfdff2e808fc5bc7306241766cc855b43956fad7f3661a19aec505356f9045d6",
+     "bytes": 31788
     },
     {
      "path": "docklands/data/places/london/tiles/13-8172-6436.glb",
@@ -364,8 +377,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4086-3219.glb",
-     "sha256": "667442df59626f3f3c57a31fb0d86c1556d89c57540a9a9881bc3c35b41de7a2",
-     "bytes": 13764
+     "sha256": "4e948e4f1be9e69e0052dab39a045a0409e992ee3e86418804bd3bc58d90cbf0",
+     "bytes": 23280
     },
     {
      "path": "docklands/data/places/london/tiles/13-8172-6438.glb",
@@ -389,8 +402,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4087-3218.glb",
-     "sha256": "12bf5ea3c9eaef30aec98105657cf3519b2848a034058a32d34c913b09e0b38c",
-     "bytes": 13456
+     "sha256": "c12b3ed6464a8d538b62c4b14d9438a68a66984161009a35c350373349ec4cf8",
+     "bytes": 21596
     },
     {
      "path": "docklands/data/places/london/tiles/13-8174-6436.glb",
@@ -414,8 +427,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4087-3219.glb",
-     "sha256": "a366586c8ee04a62a4f64d9e43ea9f27f9350ba21ce7bf6ee024d650349ef237",
-     "bytes": 14752
+     "sha256": "b892cef3aa8f3f28235c5fd8b5e8f8d124c8bbbfb52739ff4bdfe97ae4b0ac70",
+     "bytes": 38248
     },
     {
      "path": "docklands/data/places/london/tiles/13-8174-6438.glb",
@@ -439,18 +452,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1021-805.glb",
-     "sha256": "334c902a5d7842820f95dbd4eb78c16582c6421263dbb7f6ecac43d5483f4415",
-     "bytes": 9836
+     "sha256": "de80a0309787121cd862a44da29a528ece63f288bd01efa32811be9dea2b7e10",
+     "bytes": 6416
     },
     {
      "path": "docklands/data/places/london/tiles/11-2042-1610.glb",
-     "sha256": "955399fb3c71d95ff206ac28f334afa47d6da6e0276a5d8b10993544f307afe4",
-     "bytes": 9488
+     "sha256": "0c169f427684a8de09c1ed300e1a4fed157f6f302172b159d078c747f5773cad",
+     "bytes": 12376
     },
     {
      "path": "docklands/data/places/london/tiles/12-4084-3220.glb",
-     "sha256": "dabc550111cd47a2830af829a3e0d5066d2574121bd699b87f7183b4beab08a0",
-     "bytes": 5372
+     "sha256": "d75178a79e4b8034f295a7d797dbfe0637ea9986e75ac04479d767e2373769ae",
+     "bytes": 5232
     },
     {
      "path": "docklands/data/places/london/tiles/13-8169-6440.glb",
@@ -464,8 +477,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4084-3221.glb",
-     "sha256": "c570f071c95b5fb44829992259fccf9fded56ff24bb35d44c0aaee8ced052aab",
-     "bytes": 4040
+     "sha256": "817d560af55c701b7e22bddd25b57f988e62605281bc915dc82b69616a5ce48a",
+     "bytes": 3964
     },
     {
      "path": "docklands/data/places/london/tiles/13-8169-6442.glb",
@@ -479,8 +492,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4085-3220.glb",
-     "sha256": "6d50295339899d814042fa6ec1f6c3fb826c79214a24f8fa51c8259e72e82931",
-     "bytes": 15280
+     "sha256": "f5cc37d56191e90195156b84dd2d2598271a71ca1a58a0207677020f9b13c020",
+     "bytes": 32396
     },
     {
      "path": "docklands/data/places/london/tiles/13-8170-6440.glb",
@@ -504,8 +517,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4085-3221.glb",
-     "sha256": "e8d884ea101a2365931c4eb490393fd10650875a95bcbfcac7a1d905ede4f4cb",
-     "bytes": 8992
+     "sha256": "83b00594108497188a910b0c4cd1a5ec1834c7ddda608a79c45484b57308323b",
+     "bytes": 13012
     },
     {
      "path": "docklands/data/places/london/tiles/13-8170-6442.glb",
@@ -529,13 +542,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2042-1611.glb",
-     "sha256": "3cde1a78b933ee4c27564c240903bd202dcd361b6d39faa4d1cf85b13e0a6aa2",
-     "bytes": 5272
+     "sha256": "3027044d03a5bde3bccf031cfcb3429412ad72e167c682bfa80514f3339869ed",
+     "bytes": 11480
     },
     {
      "path": "docklands/data/places/london/tiles/12-4084-3222.glb",
-     "sha256": "8ca337275900073a8a4454258734d87c6340edc57f4e984b39bb81adcfa98cad",
-     "bytes": 3692
+     "sha256": "c5dd7928b24d70b1387534f9a88fab5503097e3313c8880c8d28d6b940c9ae19",
+     "bytes": 3388
     },
     {
      "path": "docklands/data/places/london/tiles/13-8169-6444.glb",
@@ -549,8 +562,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4085-3222.glb",
-     "sha256": "fbae3412d006b90d1262cee6cb32dd25efede940d6a269c44b6ac757f229087d",
-     "bytes": 6048
+     "sha256": "3aa9c7a8a6ac856c4952194161d2581657a34bdd8cdae423523b8c8af583671f",
+     "bytes": 14032
     },
     {
      "path": "docklands/data/places/london/tiles/13-8170-6444.glb",
@@ -574,13 +587,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2043-1610.glb",
-     "sha256": "eb14f6b01d5e068bf27f5f22396419f241f4385ebb60212c1e5ecb3beb353b4a",
-     "bytes": 15144
+     "sha256": "d4b69f1d4abde8cef9d62141b12115a354aee086bab1f180de7501daa8518c81",
+     "bytes": 12292
     },
     {
      "path": "docklands/data/places/london/tiles/12-4086-3220.glb",
-     "sha256": "7a90bfd37fc6c1249a453c5e323d4df00c506742c895794ce3490403a26c1ff4",
-     "bytes": 13544
+     "sha256": "9da322a7575310e9a450d77c100eab823d1d5d4ec35f767cb394a894c2beccff",
+     "bytes": 26928
     },
     {
      "path": "docklands/data/places/london/tiles/13-8172-6440.glb",
@@ -604,8 +617,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4086-3221.glb",
-     "sha256": "482bd15d71944e6526e7def22f56d67c386ea9c9c91730de6243d1df1d0ae4a0",
-     "bytes": 11416
+     "sha256": "b58125409f604711e3de337215a79593de1c0f4b1f86746f69d85a2a95940c3f",
+     "bytes": 12388
     },
     {
      "path": "docklands/data/places/london/tiles/13-8172-6442.glb",
@@ -629,8 +642,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4087-3220.glb",
-     "sha256": "a2c66bcb94876e4f896a0656950639e8ddf2116ddaef6785e7d3f00a24e301ab",
-     "bytes": 15876
+     "sha256": "2c220d962b275dba48270ec3c315eabfbaf8787a0e53e9e24a38c851daac1fa1",
+     "bytes": 35556
     },
     {
      "path": "docklands/data/places/london/tiles/13-8174-6440.glb",
@@ -654,8 +667,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4087-3221.glb",
-     "sha256": "df2f216d8c4505fd77baee8f03006f8f7079394c26a5b9e5d1a76117f373a84c",
-     "bytes": 14880
+     "sha256": "88ec8359d966f9314734a3ce23801b91fc0c773803d72695418554bcae6498e9",
+     "bytes": 25984
     },
     {
      "path": "docklands/data/places/london/tiles/13-8174-6442.glb",
@@ -679,13 +692,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2043-1611.glb",
-     "sha256": "58e52790847002a4a3f7b19b5c132069ae26ac54d3ceb160e1c606f575440e21",
-     "bytes": 6748
+     "sha256": "aa30242f9e0a8fcb275e1d30432f158f8e35be2905c5d6757aedb7eab9b2381a",
+     "bytes": 5660
     },
     {
      "path": "docklands/data/places/london/tiles/12-4086-3222.glb",
-     "sha256": "6ce2363991796ed7665b0cd7938b87b84fbd16c1ef4f6f80118d4166b524f3c2",
-     "bytes": 8600
+     "sha256": "69aa22ec93e8e413329962cf903a68056812b32231ec5d7504c3547bf087d214",
+     "bytes": 14776
     },
     {
      "path": "docklands/data/places/london/tiles/13-8172-6444.glb",
@@ -709,8 +722,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4087-3222.glb",
-     "sha256": "e0d60d42e4e83ac280b6f6dc8118d4d3f2d995aa66a3405cf52544540e92d8a6",
-     "bytes": 8952
+     "sha256": "ae67cab560f6ac2b0221cfa19d9b7557811f422d8a3ee517005dba680be8445d",
+     "bytes": 10252
     },
     {
      "path": "docklands/data/places/london/tiles/13-8174-6444.glb",
@@ -734,18 +747,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1022-803.glb",
-     "sha256": "83b7bd47d1cd9d80bc635c8add5f0417aff72b3f6c54e3e2b0aac421c9253171",
-     "bytes": 2508
+     "sha256": "266eddfa2674573a1287084f6b84cc298904423afe7fef54b74978ae18dcd75d",
+     "bytes": 1044
     },
     {
      "path": "docklands/data/places/london/tiles/11-2044-1607.glb",
-     "sha256": "31eccc44275344c8436da1f6868e27379db8869bec101c7163766fb5c7722a16",
-     "bytes": 2516
+     "sha256": "266eddfa2674573a1287084f6b84cc298904423afe7fef54b74978ae18dcd75d",
+     "bytes": 1044
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3215.glb",
-     "sha256": "ed4740bc594bbd1a5636d71a73079d3ecf9ad484a32c7c6f3df69bafce424ed2",
-     "bytes": 2532
+     "sha256": "534f74c4f80e08d03efaf8bf92f46fabbb09e4d20e72a90784a3ff85c9ef6f2b",
+     "bytes": 2524
     },
     {
      "path": "docklands/data/places/london/tiles/13-8177-6431.glb",
@@ -754,18 +767,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1022-804.glb",
-     "sha256": "1be8abe5e81af041df9eccbb4fb8531b72981b567c69d02e6a9a6900ab8d7da9",
-     "bytes": 14752
+     "sha256": "7638b0568f7e5044ca3005e7e04b95769709b278b98270536c5736f175c1c3ba",
+     "bytes": 19308
     },
     {
      "path": "docklands/data/places/london/tiles/11-2044-1608.glb",
-     "sha256": "f01b4fdfd437852b013234b5c45f8d0afbcfd3240f121c8bc13f67c0c524f91a",
-     "bytes": 9136
+     "sha256": "a58ffa415e216d67c4612c731da2902115a62bf28ee0414a33aa6f5a5dd09530",
+     "bytes": 12864
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3216.glb",
-     "sha256": "791299b5330bf2d7aea380568afb3939e9b8a83480bf554732cf555ee45571a0",
-     "bytes": 5808
+     "sha256": "403e7046d06d425ae70d25cb1d8b8dd5f877f22252366df8459494449e35dc6d",
+     "bytes": 9060
     },
     {
      "path": "docklands/data/places/london/tiles/13-8177-6432.glb",
@@ -779,8 +792,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3217.glb",
-     "sha256": "01912f7815276a068ad4543173d23c8d615621d8743d576b2a3fef9f6dad5fc7",
-     "bytes": 5832
+     "sha256": "f366189352b4bcc74aecafd29fd96be6734d85881bfc6c91ecfbb64ad6674880",
+     "bytes": 8144
     },
     {
      "path": "docklands/data/places/london/tiles/13-8176-6435.glb",
@@ -799,8 +812,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3216.glb",
-     "sha256": "c35dc2eb86302b13ae678a6730c89b0f2b2c69eb8a62e310e7249115a6f01746",
-     "bytes": 6252
+     "sha256": "8639035e95550b04762bdce079662f1b8228f6759d1ce1677e6048e619750c92",
+     "bytes": 7936
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6432.glb",
@@ -819,8 +832,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3217.glb",
-     "sha256": "3d662e974b23b6b827fe2aa344f53e4c5b786db1957cd729f4dd819c4c6f40e9",
-     "bytes": 16328
+     "sha256": "495b155d346189f87a866295c466f538f903fae51388ef059ae6be9b1a8b55df",
+     "bytes": 45256
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6434.glb",
@@ -844,13 +857,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2044-1609.glb",
-     "sha256": "e508e10fd3cf2da7638bd2f0c1f8d8925b7ac9614189391e61e9cdfebb821931",
-     "bytes": 14588
+     "sha256": "6c7fc41497b7c54601cca62593ca980a3579575cd66ed99eb72924bfb5cc34a3",
+     "bytes": 19796
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3218.glb",
-     "sha256": "79ecc454f85216d66246e853821883c362cef9e23f9dea1cf8463b5cfb5db933",
-     "bytes": 14156
+     "sha256": "c3fd6bfe44e582543cb6bd004937e3f4fda62496ba84f8ea5c4ddbb297161fc9",
+     "bytes": 37332
     },
     {
      "path": "docklands/data/places/london/tiles/13-8176-6436.glb",
@@ -874,8 +887,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3219.glb",
-     "sha256": "b5670ffc23cf7e9c6ecf21e8f0a5fc6d336a60baeec7dd5e21174c6e44217354",
-     "bytes": 13948
+     "sha256": "96fd3b4d730e30be1a11e367433fca694fab313e892cf33d0f2dae607e93d3c2",
+     "bytes": 33580
     },
     {
      "path": "docklands/data/places/london/tiles/13-8176-6438.glb",
@@ -899,8 +912,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3218.glb",
-     "sha256": "f90d83f55adb650669f5babfb16075ca0593027eb298e706c335d1c739da6d31",
-     "bytes": 9080
+     "sha256": "a5a6971c2895a8253a2cd0d6b7be9bf1f61bd6e54810a50d4af3ff69f5d0c0e9",
+     "bytes": 14396
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6436.glb",
@@ -924,8 +937,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3219.glb",
-     "sha256": "dda1e8d254b96457eb35d990705858ee60fb1836757cde985077bb6c8893a907",
-     "bytes": 15372
+     "sha256": "3e613ae51003f98058324aad8e1c02b889737d4f6a6ab7e56f803a1178378fae",
+     "bytes": 33960
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6438.glb",
@@ -949,13 +962,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2045-1608.glb",
-     "sha256": "3f0517ddeb215307bded6f57c8d93862f101ed3fde938af90aa1a1c63f9258b8",
-     "bytes": 13328
+     "sha256": "3eb5821f872eaa4a7ba73c0055fd2eef5c0e531941d57d1d9479c8a5744ef283",
+     "bytes": 20196
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3216.glb",
-     "sha256": "a27ec9d101be2db2443a434a1f8e9320cd112669ab046d98f180406560f1eb14",
-     "bytes": 5572
+     "sha256": "23fbf78b15d0516a8e40b423216c7749dc463983db04c9f9faff373ae1cf1abc",
+     "bytes": 5992
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6433.glb",
@@ -974,8 +987,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3217.glb",
-     "sha256": "c0e890cb551ed7760d68e31c6ba4fd9b01c295f54936c0b062d3cba3859f1a4f",
-     "bytes": 14244
+     "sha256": "1955d99371dd8cbedc13ed25882bd1be4893738987e83827cd6d8f257aa098fe",
+     "bytes": 25392
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6434.glb",
@@ -999,8 +1012,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3216.glb",
-     "sha256": "431029549c233020e0d2f760b38ed1942abaaf07a057c1341777ba1540f77edb",
-     "bytes": 13524
+     "sha256": "0530944b8cd43b29be5d971768b6f36a7683b419a874a896fc3f474c4ddf1218",
+     "bytes": 28292
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6432.glb",
@@ -1024,8 +1037,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3217.glb",
-     "sha256": "bc3ea213e839bc681deb6c8d06adc232059a2b03481048d7a956efb6db7c430f",
-     "bytes": 16032
+     "sha256": "44d980feb4eade27148ca5d1c23419e2229d7b8b3621eef66cd4c273291cf89f",
+     "bytes": 37000
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6434.glb",
@@ -1049,13 +1062,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2045-1609.glb",
-     "sha256": "ba375e2568e4be397c1be63db24d0cb62b20b50536af9bea7921d0ae1ca3719a",
-     "bytes": 16764
+     "sha256": "6fa8af97f5dd8bf99d0672c7ed0a99715e8390344ee720971569bf54a4f9b403",
+     "bytes": 33472
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3218.glb",
-     "sha256": "58888a6067960ed9af2da95441dda3d442f6e6f3329d31251bd0eca8abd04b1c",
-     "bytes": 11276
+     "sha256": "0f6328eb3c9962ff8c32156e636375b488dd4974017b326aef73e3c9dc16a12a",
+     "bytes": 15984
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6436.glb",
@@ -1079,8 +1092,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3219.glb",
-     "sha256": "1612003c84f9b81b406ea5ee87d9397ad14bca11ad34277f92e6da69246cc59a",
-     "bytes": 15324
+     "sha256": "9f7b9e4215e150c241a05e1915afa1f5165b98efb00a7aaedc7df53aa2a2d923",
+     "bytes": 43884
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6438.glb",
@@ -1104,8 +1117,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3218.glb",
-     "sha256": "7d8235fca57038e9e35c1a57423dc5045302dd3ca555e524a90c4f850e272a01",
-     "bytes": 17144
+     "sha256": "6d05a278390b2709a9d5656024d0ba9944a154605a4657c697af23f3b77d1d51",
+     "bytes": 44784
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6436.glb",
@@ -1129,8 +1142,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3219.glb",
-     "sha256": "05fce7ebbfe6fe243998262c50b70337938e394e70473cadf61cc2443632a5bf",
-     "bytes": 20180
+     "sha256": "cb3c35d5805dedb166fcb240fdd20c1a1223573ed8de23e0a4f97eb631ed55ab",
+     "bytes": 68732
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6438.glb",
@@ -1154,18 +1167,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1022-805.glb",
-     "sha256": "ccda71456618eb67f9bd04a6fc537053d5ae7a739479b47f64391d3830230445",
-     "bytes": 15344
+     "sha256": "eadd4bc5edb3c084291f9feddeac7a9e2164f88065db7c4dd1b74c795015a142",
+     "bytes": 14140
     },
     {
      "path": "docklands/data/places/london/tiles/11-2044-1610.glb",
-     "sha256": "610cfba50fab1ed874cf2637561983803e9c8dc405b40df7b5ba7950b90f77d1",
-     "bytes": 17492
+     "sha256": "5e925f161720730bd0ec3d8327f571c813a45b8b74340098a413728183320ed3",
+     "bytes": 25604
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3220.glb",
-     "sha256": "cc5af49493c9f243e6f429ce931bbe6693f267eca283a39e4e637924fb9fe223",
-     "bytes": 14536
+     "sha256": "4d8660933a0a42b2e07fb2ae015339a97a667a68845eb0b171d162d37da31a95",
+     "bytes": 42308
     },
     {
      "path": "docklands/data/places/london/tiles/13-8176-6440.glb",
@@ -1189,8 +1202,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3221.glb",
-     "sha256": "cdab2b86208ed76a5fbaa9fa071ec19abb8f0483f24efc02ff8ec9ab2b7c1b9f",
-     "bytes": 14620
+     "sha256": "9f74e1d49a50bd7adfe97f9a9756127429387cfba9e22e22a176543a08a81282",
+     "bytes": 35216
     },
     {
      "path": "docklands/data/places/london/tiles/13-8176-6442.glb",
@@ -1214,8 +1227,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3220.glb",
-     "sha256": "e2596852bcf58fe521da8dd1e61ab2367770a5838257f091b02f58f1e8b5a926",
-     "bytes": 18512
+     "sha256": "0cc77f8ef724684677936e371c3684a328bdb044ca29d0e048a041f0eccd3950",
+     "bytes": 38656
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6440.glb",
@@ -1239,8 +1252,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3221.glb",
-     "sha256": "8a342be69bd17fc98453150d4ed41dd76d22e399dc97496b8982a3e7cd82d10d",
-     "bytes": 17800
+     "sha256": "e732ab402167a12b74afe0dbba24e444510963eedfdf7171c09e8b6a16717b9c",
+     "bytes": 50552
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6442.glb",
@@ -1264,13 +1277,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2044-1611.glb",
-     "sha256": "63e5bb2cbb916f753e67d661d50d6bd2962e124a6789dde6c2afb822ca3a8df2",
-     "bytes": 8604
+     "sha256": "8be151c5ff591a47dbe84b0d89b8a1c7de0462ec5e66a1c3cb44768964774a95",
+     "bytes": 10452
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3222.glb",
-     "sha256": "c89b555c6005a6d7ecaa76948fee776d07e192e39554cd596f6af0fa7192cc89",
-     "bytes": 10736
+     "sha256": "fb56537a0e7e564611b18877fe3a741b72179015a67d55ce877a8a3b8028a1e1",
+     "bytes": 18952
     },
     {
      "path": "docklands/data/places/london/tiles/13-8176-6444.glb",
@@ -1294,8 +1307,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4088-3223.glb",
-     "sha256": "034b2586b2e32b9acdd44d831974773da077fddf89b866ae0f3491c0ce56f8e1",
-     "bytes": 2532
+     "sha256": "c122ccbc408910020d03ca7d11fce175dab327c3a9d281fb5210bd157cbdef4a",
+     "bytes": 2520
     },
     {
      "path": "docklands/data/places/london/tiles/13-8177-6446.glb",
@@ -1304,8 +1317,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3222.glb",
-     "sha256": "556c2349ebca59381b2ca2a322d79b63b514da4eec9a659977fb80433a04c62a",
-     "bytes": 12840
+     "sha256": "e0f424aeca5bc9acb02f50007bb9e2e3b72abb0a3104c89b0c1bb843e740cbf1",
+     "bytes": 23916
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6444.glb",
@@ -1329,8 +1342,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4089-3223.glb",
-     "sha256": "65c4e22d0d5e2d3329263918f17c1edc3d7425b20a3a646a03c70d1014d6c1dd",
-     "bytes": 2580
+     "sha256": "50e73b516f91e2582a246955c22545aae578e89a58d4f860785d02fb8c8b719e",
+     "bytes": 2540
     },
     {
      "path": "docklands/data/places/london/tiles/13-8178-6446.glb",
@@ -1344,13 +1357,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2045-1610.glb",
-     "sha256": "624e42760ac99d87c1e12ec4fda415d58cf82d4ffba575ae798d7b25b31d8691",
-     "bytes": 18252
+     "sha256": "95951c51cffc80f6726cfb7b16e568d6d31f11c9be192fbb5ab439806914b9f7",
+     "bytes": 28296
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3220.glb",
-     "sha256": "2d7a0a8d1e3c8df8e544fda59ef2cec07a0f777867ef600f95d84d55f275a9de",
-     "bytes": 17468
+     "sha256": "920bd735a93919ae48255c806cca8a32442b7887caaf757aaae5c66064b0da8f",
+     "bytes": 48552
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6440.glb",
@@ -1374,8 +1387,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3221.glb",
-     "sha256": "bcf65cd97b8adc19c41701c0947221096c320b61885098f69231c361982acf33",
-     "bytes": 16364
+     "sha256": "e159c9e39cb5b122729f47c1256b456ba17e137532dbfec6b8f792beb850ea2a",
+     "bytes": 37704
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6442.glb",
@@ -1399,8 +1412,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3220.glb",
-     "sha256": "bf9badac125c91fab4374883e6b1a1419d72fea38b1d4fc1d80e571db27d2666",
-     "bytes": 19904
+     "sha256": "d18e173596d41bd8ff57c2ac51c072c49ddf35790c1fd583471521cdcc6aa11a",
+     "bytes": 59268
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6440.glb",
@@ -1424,8 +1437,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3221.glb",
-     "sha256": "850f23ae7445710deb5218f8fac7253cfc9add3eef119693cf665409ac2bc0af",
-     "bytes": 15688
+     "sha256": "621989b12036f816a07e215532954ca507a42c666f15e6a1930a92fbfcbdcaae",
+     "bytes": 38624
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6442.glb",
@@ -1449,13 +1462,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2045-1611.glb",
-     "sha256": "0d45e44118725caef457b2c0c31a23d1ef9eeacb5387cbd3f0f45b66eb77ce82",
-     "bytes": 11412
+     "sha256": "9582d583e5c442539dc9718ec7c417853ae8e99fe44b96b51f7b582b457a372b",
+     "bytes": 13276
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3222.glb",
-     "sha256": "8693a3fb189fb1a68d7e816975689a32a2dcc5ebb97a6a969c354a77b6f112d3",
-     "bytes": 12284
+     "sha256": "774e7386b020f032b285f60dceba2474a954b9bf670d969ec83fa5f6ad05a2af",
+     "bytes": 28724
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6444.glb",
@@ -1479,8 +1492,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4090-3223.glb",
-     "sha256": "674f29f69ec4babc34e2207930d5f1a8c592a97e8cb5dfc8f5f8cf124cdac444",
-     "bytes": 4400
+     "sha256": "aecb38f8bf5072c4b8e933743af4d04ae3c3c89c190a09e33c1ee91f4cb45360",
+     "bytes": 3952
     },
     {
      "path": "docklands/data/places/london/tiles/13-8180-6446.glb",
@@ -1499,8 +1512,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3222.glb",
-     "sha256": "67e5b18486ddbd2c4b731cb756baf0899fd5fdfeb3be9aa85837ba69db6cc2a0",
-     "bytes": 12836
+     "sha256": "b0bfe259257734d7065e1f4ab8f317e91abc1714be9529b298b23453e55f7174",
+     "bytes": 24924
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6444.glb",
@@ -1524,8 +1537,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4091-3223.glb",
-     "sha256": "f46c0045331f977bc71e4331d15c982833d93a0480b4fb4ed2edfc30fa169a85",
-     "bytes": 9664
+     "sha256": "a5270855efe183300cd380d2b9e912825045d4c87d20cce7c0576c63a9a8b277",
+     "bytes": 21676
     },
     {
      "path": "docklands/data/places/london/tiles/13-8182-6446.glb",
@@ -1549,18 +1562,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1023-803.glb",
-     "sha256": "42ef1cbadc4a5925b02dac2aa8a8c8a9b1ba8ba964ce92c864e02af9954752fa",
-     "bytes": 3532
+     "sha256": "2ab3ed450e0829bc2cf30d7b9167f32f377a6aded9c309c97e4e93e19fa2385b",
+     "bytes": 2548
     },
     {
      "path": "docklands/data/places/london/tiles/11-2046-1607.glb",
-     "sha256": "579501572325ba7ee7ddaa064b254a568238e192b5ef7dbb0435f5866c0784a7",
-     "bytes": 5272
+     "sha256": "a2b6d7b2a39acd7cd9742ce292267c427cfc0dccaaa678d5c7607a177f932478",
+     "bytes": 2876
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3215.glb",
-     "sha256": "052a499e0bea320bb76fa8fe14cdfd883b9a00ddb292068267804a1b65dd274b",
-     "bytes": 7116
+     "sha256": "1906a6fb2ddc4c6fc09923ee7747c2579928e3591b0a40fd54e828f10ac22387",
+     "bytes": 7852
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6430.glb",
@@ -1584,8 +1597,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3215.glb",
-     "sha256": "a69ed567efc6608a75e4ef1f171e79f675df2e9e15070e159b349dab06b2c1c4",
-     "bytes": 9332
+     "sha256": "de3a7edb9388fc82ef5375b6b0bd320b52f70e6ffe82010e0dee891957c82233",
+     "bytes": 12244
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6430.glb",
@@ -1609,13 +1622,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2047-1607.glb",
-     "sha256": "ff92a445d9b9dc9397d00cb297a20cba39387b3140e5707f46993bcd2491bccc",
-     "bytes": 2852
+     "sha256": "9fb6d0fe2ac0ec2e54f140d582e78fb49b603d6f3a494e45b6a6821a656eb502",
+     "bytes": 2584
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3215.glb",
-     "sha256": "fb21fc4462952ce982f87558db178a5ac46c6bb3edb46e823bcdd1b892cf343f",
-     "bytes": 4756
+     "sha256": "69716b6003cfd818c1a9d6d53f2882e806f3db1ed65072be5a6c505e3d46a142",
+     "bytes": 5616
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6431.glb",
@@ -1629,18 +1642,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1023-804.glb",
-     "sha256": "edf80919652db3496eac2ad2d9400c025de8e96d7f984b18d0601a04a39b1f67",
-     "bytes": 17012
+     "sha256": "3753fdce49fd93d8dbd79242bc6772933e41ccc106e8598a5dcf98f260ef0685",
+     "bytes": 17344
     },
     {
      "path": "docklands/data/places/london/tiles/11-2046-1608.glb",
-     "sha256": "d32541be318d54f857381fed54a985b6996cf947b859e8745f29919162e76954",
-     "bytes": 16596
+     "sha256": "1c85384f35c995068eb93b3830fe32c902c26839616ea8e931dc924d115230c5",
+     "bytes": 23984
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3216.glb",
-     "sha256": "67cf6bc395ea57a455204d2237c3070b6e9b77d4bbc7dd37df239264d4387302",
-     "bytes": 13536
+     "sha256": "bf8609631f01797728b974a843cf4de6925ef70dabc0f7cf2f88e59b2e9826c8",
+     "bytes": 27388
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6432.glb",
@@ -1664,8 +1677,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3217.glb",
-     "sha256": "6381b55bd0cfb4b9f7edf371628d039a31a78c5e143366802cc9dcdb5bacacb4",
-     "bytes": 13344
+     "sha256": "39ac135bcf2615f03e0595e7e55857206b0111ab493068ad01e20a373945711f",
+     "bytes": 25000
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6434.glb",
@@ -1689,8 +1702,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3216.glb",
-     "sha256": "18802771170d8f81dea5ee9f6f42cb8fa6e89e2ee5d8242111eb005726d18901",
-     "bytes": 17992
+     "sha256": "3dc7d6cb5ef82a4b3ec9fdc9e7446e348486f39737295240942755f6e2f41904",
+     "bytes": 36248
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6432.glb",
@@ -1714,8 +1727,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3217.glb",
-     "sha256": "b8a62263582918b37a61e147c98e81bfabbd40e02c96773ac7b5916afb226526",
-     "bytes": 19660
+     "sha256": "7d408906603f3a4af0da321a70dbab5cdfe0b3ac77d396ac9827d4003deb5550",
+     "bytes": 57864
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6434.glb",
@@ -1739,13 +1752,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2046-1609.glb",
-     "sha256": "965b0391782a1f017a77ee3fd6ee567fa5d90ee51baa6dbacd8bb010dd905503",
-     "bytes": 20872
+     "sha256": "a33b81517e72e9ddcd605cd7997f867c253a96f18756d3ac2d2aaac67300d5e0",
+     "bytes": 42580
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3218.glb",
-     "sha256": "4e70f3f19f1d56d3916054123f1752e6a9130c4195197fc19664ead578a3f2af",
-     "bytes": 15240
+     "sha256": "fc66159dc830365ecfff252e84df7d94129a17d8de2f4a92a2032476b0780702",
+     "bytes": 44032
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6436.glb",
@@ -1769,8 +1782,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3219.glb",
-     "sha256": "c55a0a60f7fec39e69b51fff6ab34afffd870ad24b4942646130e7b8d5122db7",
-     "bytes": 21548
+     "sha256": "f63e70b6986469606240ae9214e54656ebaf13e9ea75d5eebb7adfd443e492ae",
+     "bytes": 75740
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6438.glb",
@@ -1794,8 +1807,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3218.glb",
-     "sha256": "4ee29aa776501b874abd2a33dab57f70368003d1d3b5218342b614b98fa1bcde",
-     "bytes": 15740
+     "sha256": "1445096616cf0403f64ec36d7b0be098b8a48103928e029e81d732410ca9280b",
+     "bytes": 39772
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6436.glb",
@@ -1819,8 +1832,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3219.glb",
-     "sha256": "dda8036408fbfd77b789a2f1994d6b3184210a7d1b6ffb144f4022b440b17f71",
-     "bytes": 22536
+     "sha256": "64da795f9a64d346be11d4a85f01da979d34d71738d9d23c5ebd8f1b0199c057",
+     "bytes": 70024
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6438.glb",
@@ -1844,13 +1857,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2047-1608.glb",
-     "sha256": "fef32f4b3fe2bd03f664fa791a0ba788a6b082377a2c0fcac6913405431ebd6c",
-     "bytes": 14068
+     "sha256": "e4430da0e10b0fba1dc6569b912f95338b022eb4b7d29f31b370e251aa2bab4d",
+     "bytes": 12908
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3216.glb",
-     "sha256": "373c1f39633ce90f5a26114aa65051c1b8f679ac80338e63daaffe634c738dec",
-     "bytes": 11520
+     "sha256": "03bb8a5a5282a927c481cc96a746326f9dfab4f32f5e9697320bb145553d8f1c",
+     "bytes": 18816
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6432.glb",
@@ -1874,8 +1887,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3217.glb",
-     "sha256": "d55b35158c9a49537c089892a46703d4c0190c780d39ddff876a11a1661ea669",
-     "bytes": 18528
+     "sha256": "c3e5654a51dc1ce1f85e5eb9d6ac79675f7096c31eee665ffb448f455583c727",
+     "bytes": 36100
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6434.glb",
@@ -1899,8 +1912,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3216.glb",
-     "sha256": "6c3af8875b6143e4d3b3a348dce6ef549e6706cf1e26965036610a670797762f",
-     "bytes": 9692
+     "sha256": "cd81657ac3a55f3ef403567c03ce1b56448189cf5654c530e3e7399ed73c6793",
+     "bytes": 11852
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6432.glb",
@@ -1924,8 +1937,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3217.glb",
-     "sha256": "323000725dd9fca3cec9905f2dc9cdc41421e76492e853eba240f5e1d3c0a006",
-     "bytes": 13832
+     "sha256": "a712ae70c446f8f2159990dc1b5a86d348fabcb4b3cb99b51af6a82e9d894f91",
+     "bytes": 23684
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6434.glb",
@@ -1949,13 +1962,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2047-1609.glb",
-     "sha256": "11a3376182d92b74cb869e97494ceb41e248e7c6dabb95d328f47f84d536d4f4",
-     "bytes": 12004
+     "sha256": "5eeae867247bb4f5502d82361a809d4c2001fd5e41e6a946fe0faedab5398eee",
+     "bytes": 12872
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3218.glb",
-     "sha256": "8b8df9aa9b2c14cf02161db95d8bb6bcc72b4bca323aa469b034de725f108715",
-     "bytes": 14960
+     "sha256": "40bcc8a1179e2885372902cba8b9161bdf0155f0eb1ba388b7b9f2fc456095b8",
+     "bytes": 29296
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6436.glb",
@@ -1979,8 +1992,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3219.glb",
-     "sha256": "20b5c53b5a3359808ac78a2cd9b3fb6228eb1b6b0c8bf8c5676d99a24ce874cc",
-     "bytes": 7508
+     "sha256": "e15f0b4800e49fc7cb629745ef2d315682ccf9747a9b9df74409f2e3b39f1753",
+     "bytes": 15340
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6438.glb",
@@ -1994,8 +2007,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3218.glb",
-     "sha256": "c6497d9e3bf026f61a8ce93c61ca083a2801084811041cdf6f577f492b3a7715",
-     "bytes": 14416
+     "sha256": "8ceec45806d0eac4d6b1709c84e331d6727eccc4d591e54d4cc71aae0905db19",
+     "bytes": 28192
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6436.glb",
@@ -2019,8 +2032,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3219.glb",
-     "sha256": "b3648b04dc4314a42b061958d2a9c4fb2043cb6562a75b2ebf5792cc0e2ed843",
-     "bytes": 8084
+     "sha256": "b95a45409fb8726839475d383011ae6f399c67c124815a8222bbf294247f8a90",
+     "bytes": 16900
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6438.glb",
@@ -2034,18 +2047,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1023-805.glb",
-     "sha256": "ca850f4cd5acce081f6d7633d430b17691685aa89d196a2fcd0dfb9dcee438cf",
-     "bytes": 19032
+     "sha256": "d00629767e6a2989cde7fb0482e70ca53ab3519b5b7d294d9bd408dcdfd1d51e",
+     "bytes": 29172
     },
     {
      "path": "docklands/data/places/london/tiles/11-2046-1610.glb",
-     "sha256": "919a3c421a015e705e56f7fafce67f8d04096d48d1c408517dd31ec7aac5dace",
-     "bytes": 20756
+     "sha256": "955aa198dd7f1dcb82b333ce64d5a22da680cdb3ff012c0bfb93a273adaf1de6",
+     "bytes": 48824
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3220.glb",
-     "sha256": "c211af12701a4d173f08ceca3663f1ec10b432d0be9238536ac2c019976a989e",
-     "bytes": 22212
+     "sha256": "1f108647ac5478577cff7149f5a9e393c73bb27dbc5fd4f768a36ed460b51fbd",
+     "bytes": 71784
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6440.glb",
@@ -2069,8 +2082,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3221.glb",
-     "sha256": "19b7119c99e65ed3129f5e1163bf5e20ba542075149f342e6a3a4e310c22f1a0",
-     "bytes": 14676
+     "sha256": "502b5b494b55681c29af1315a3fb3f8495c1175e81765f9afd4b137e7da72e09",
+     "bytes": 34820
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6442.glb",
@@ -2094,8 +2107,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3220.glb",
-     "sha256": "ac1e1bf89b73fcd17fcba158b7d330268f77ca8a47cde7777d75f4d46c9330ef",
-     "bytes": 27940
+     "sha256": "895e66789603c645aa0d1068b7e4a7826704e054375e8d50f82b25ec147c4fb1",
+     "bytes": 96564
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6440.glb",
@@ -2119,8 +2132,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3221.glb",
-     "sha256": "d8f0aceeb118fd80385f0c78e2e3acac9178b0132e302cd2e7061ad787b01068",
-     "bytes": 17936
+     "sha256": "ec020ecfaa09b373a3cd2001ba1f65ef8f0119af0b5485f43b18ba181914c7a1",
+     "bytes": 49052
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6442.glb",
@@ -2144,13 +2157,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2046-1611.glb",
-     "sha256": "c232055c69a7034c49908476219eb0ab8d112384fffd647b0f009c0d852a0e0f",
-     "bytes": 13936
+     "sha256": "c447c7b7f027db4f932603aa8f409dddfa7eaff019962a422f32a4402a697913",
+     "bytes": 21420
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3222.glb",
-     "sha256": "6815d837052b856af74e57b2ec0bd145601e4fdfecb261a0f2d490ca2250715e",
-     "bytes": 14552
+     "sha256": "9df70810e88db3f116e0a4fa8958a6bc3b28b2c1e1a5996e7dd716c94c87fe94",
+     "bytes": 33576
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6444.glb",
@@ -2174,8 +2187,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3223.glb",
-     "sha256": "8d8d702820b69e704693ca89b683a62933704b3f1d64b4303be65980fe5eaf13",
-     "bytes": 9808
+     "sha256": "12f5814db59f1d9c41b1fca90e2ad8c1f7fc0e42e01c87fe4e5e200fa7f39e04",
+     "bytes": 17288
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6446.glb",
@@ -2199,8 +2212,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3222.glb",
-     "sha256": "5fd8555dc65c31bdaf80fb23c9089dfa8b18790ef3c403f53f0a0382de904f40",
-     "bytes": 15180
+     "sha256": "27111fcecd21108973773e9b45115b53f9c9c1c1e65828264060c64e1623124b",
+     "bytes": 38904
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6444.glb",
@@ -2224,8 +2237,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3223.glb",
-     "sha256": "065174c79feced1b7411037befd6f14ca06684141788bada732e994c1f7b7b53",
-     "bytes": 10840
+     "sha256": "f31e5fc22830dfa46095ad568e0c037ec8bf40d669e423c3ddd5e0c9dbbebc9e",
+     "bytes": 18436
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6446.glb",
@@ -2249,13 +2262,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2047-1610.glb",
-     "sha256": "6aa7c8b4948d1ff5984e29ad8534a5dca630edb80ab65a75b12609a4f5b30778",
-     "bytes": 17632
+     "sha256": "42996b9c246b81fc8860e94851d3752701a51b36b7f559a7a9e290302090ae08",
+     "bytes": 35244
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3220.glb",
-     "sha256": "8cb4c4d51740977714d431c4fe5aa17db3f5bb7ecbc292d503f78dfafd4ddcb3",
-     "bytes": 14332
+     "sha256": "77aeeae8b2e24d8547b7d24220a9ff3a56d349e31f52c3f948beb0255031668c",
+     "bytes": 43120
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6440.glb",
@@ -2279,8 +2292,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3221.glb",
-     "sha256": "6f4ff00478ff379501bf93acf0336bd422cf1d18151298b3b90e2b7063da8c7d",
-     "bytes": 17536
+     "sha256": "1ffdc0c016b17381916edd21c2375d5666ba5aa5f2a8654c02955619ce54e7e8",
+     "bytes": 56148
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6442.glb",
@@ -2304,8 +2317,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3220.glb",
-     "sha256": "115f85cab34426f917ea4ba1265c039d54f463277c9da8b2eaa2d9b3fc80dfd1",
-     "bytes": 16808
+     "sha256": "3fb4f297558286633d09e7e24d2f33d5065bad422191c046e629319b0bb6f24d",
+     "bytes": 37404
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6440.glb",
@@ -2329,8 +2342,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3221.glb",
-     "sha256": "1c4494b128ededd1f794cfcf1e2be07e97a8b1909a9a26ec54374dafd90a6552",
-     "bytes": 17164
+     "sha256": "6506805ae94132babdcf4efbe47ca9396c9cb414bdfa9b262c4d96baebb9d90b",
+     "bytes": 46124
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6442.glb",
@@ -2354,13 +2367,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2047-1611.glb",
-     "sha256": "6b64282df16c973c5f2744ff6ecad8a485a9a3ab875cc68e1973b163a1f9891d",
-     "bytes": 15416
+     "sha256": "215f1eb5322fe4080bbb46cf9a9941979d189939017d6f3aebf9c11520d24f41",
+     "bytes": 20780
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3222.glb",
-     "sha256": "a11321d1f24498a7629485659dd1aa373f4884b388f058eb70bba807ab45ec1c",
-     "bytes": 15964
+     "sha256": "41d02683ac5bb69f4ae12c9a52fc9d9344e49482433a9c7e31f12eb479b8f093",
+     "bytes": 46084
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6444.glb",
@@ -2384,8 +2397,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3223.glb",
-     "sha256": "ef08f900cd995ec11507b874fcbd948ea9b5dfc78e5c51775ffadc1a580c75bd",
-     "bytes": 15412
+     "sha256": "88d7d07e1cb32c247507c9082b23fb75b1ed04f9ff503c65f108b4b8dd370185",
+     "bytes": 39504
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6446.glb",
@@ -2409,8 +2422,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3222.glb",
-     "sha256": "b89b4984897496b740a2b72c77a39d77ffad6cd1b4fdcd15693b3497a14f418d",
-     "bytes": 15464
+     "sha256": "00eb0a0c094e4bed11bf0def9128d8cea76e4858cc2c76e51539b88c37de95fd",
+     "bytes": 32508
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6444.glb",
@@ -2434,8 +2447,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3223.glb",
-     "sha256": "04bf3df866f3ce5c80ff2d1a71883d85b61ce57d08da0bcbeebf1bf9c4a27b2f",
-     "bytes": 12292
+     "sha256": "24da6fd8a8d4eac22ee0a3d7b2958e53c460f6d2821a3037cd02acf7dc3c65a6",
+     "bytes": 22212
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6446.glb",
@@ -2459,18 +2472,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1023-806.glb",
-     "sha256": "5ed0f5539109c0e429dd7246f07e944897dbaadfe902feae1750c8cd331eabb9",
-     "bytes": 2860
+     "sha256": "d8e1a3d9225f60d7f005ab38aaacb9a444a6505937cbad9098cf72cb62c0d28b",
+     "bytes": 2568
     },
     {
      "path": "docklands/data/places/london/tiles/11-2046-1612.glb",
-     "sha256": "cf1b407aa4132ebca223517bc0cd9b43e4de018143ed73b9549b00c6684350c4",
-     "bytes": 2944
+     "sha256": "fe5bde2ecc79d4de33a951bfb4f17fb794c3be2df88a7dc58671be367c6ed538",
+     "bytes": 2656
     },
     {
      "path": "docklands/data/places/london/tiles/12-4092-3224.glb",
-     "sha256": "939167ec6fa216342667ab70d2433bd964774624bc4912cb924aabc0895605e0",
-     "bytes": 2688
+     "sha256": "eb456e83197c8d7148d5109a1638f4e491b2869b8f96761982e96a9d4940ce0f",
+     "bytes": 2640
     },
     {
      "path": "docklands/data/places/london/tiles/13-8184-6448.glb",
@@ -2484,8 +2497,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4093-3224.glb",
-     "sha256": "760ad9c1b2b7104169964e19eaefb7e10fb8db6fdc174bfedf95f707ea3ce66d",
-     "bytes": 4652
+     "sha256": "85ad0294b4efce1322c6774b347fec8d430808be761f4d225d4b5920a42c4fa8",
+     "bytes": 6048
     },
     {
      "path": "docklands/data/places/london/tiles/13-8186-6448.glb",
@@ -2499,13 +2512,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2047-1612.glb",
-     "sha256": "cf2d6a664d203e00614c65cab97aebfb000b50408606243853c9e958da63c863",
-     "bytes": 4228
+     "sha256": "1a41d8b8d7f25d31a49d2cadc06ece2fafb7ef796e4737560efc374bc0edb895",
+     "bytes": 3940
     },
     {
      "path": "docklands/data/places/london/tiles/12-4094-3224.glb",
-     "sha256": "639ce387aa0f14f968ea51d121df675cc29be2ad843525ba14d4080ada25916d",
-     "bytes": 2972
+     "sha256": "3f3059b616e52b2c4f910e82c973fc22cd2136f0625b1c0665b4f694d588da43",
+     "bytes": 2836
     },
     {
      "path": "docklands/data/places/london/tiles/13-8188-6448.glb",
@@ -2519,8 +2532,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4095-3224.glb",
-     "sha256": "2e5b5b23d314f824c6a419a9a45f0ef3247f1d1f0e7aa550d49737496ad8dda1",
-     "bytes": 4292
+     "sha256": "fc30de864962e6be8a1de59446cc617e6a38dde4a5ab838a4be97eacf3cb8ab4",
+     "bytes": 4336
     },
     {
      "path": "docklands/data/places/london/tiles/13-8190-6448.glb",
@@ -2534,18 +2547,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1024-803.glb",
-     "sha256": "d027826425dd9557ad53ce7ee983a904c6bd8575e30be5524eeb617d61c3617e",
-     "bytes": 3368
+     "sha256": "dc5bd3fbd950c173d426df1d7c68c2075a670625f9d2209ba1f74371132a2617",
+     "bytes": 2552
     },
     {
      "path": "docklands/data/places/london/tiles/11-2048-1607.glb",
-     "sha256": "cbb1929d51f676a224827f76ca5e66c508b45a61a793562dd1aa0a7d9cc98286",
-     "bytes": 6016
+     "sha256": "27c7b32b0b513bfd1ec8ceaa7b3d151b14060824d6238d8d2e25912a4ddb6278",
+     "bytes": 4072
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3215.glb",
-     "sha256": "4722a1b99c250b74099bbc596083ba135285750b0c49905a9bad4e8c35838d1c",
-     "bytes": 6488
+     "sha256": "55c21d2d4130103dfd776077a812a2e5eaa5d8fa397b9fbb3a210a101a34fa8e",
+     "bytes": 7780
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6430.glb",
@@ -2569,8 +2582,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3215.glb",
-     "sha256": "66fba140c52620a17b0ee788aaac1fbd2e4e08e07f4dd902e509c63fa8dc6f9b",
-     "bytes": 6692
+     "sha256": "2bd587aeb8552b3a212c162a5bba586a997648e541dc60aa1c220ae3f66fc11e",
+     "bytes": 4648
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6430.glb",
@@ -2594,13 +2607,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2049-1607.glb",
-     "sha256": "b1961c0de3dea6ca1c0447f1e2b61f1cac47b48f4e5b7e2095022ddbc2020e32",
-     "bytes": 2520
+     "sha256": "266eddfa2674573a1287084f6b84cc298904423afe7fef54b74978ae18dcd75d",
+     "bytes": 1044
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3215.glb",
-     "sha256": "de2fc27635fd5d598912987c41c167c0c6308dbfea1d07a69a96fdaafa782669",
-     "bytes": 2524
+     "sha256": "266eddfa2674573a1287084f6b84cc298904423afe7fef54b74978ae18dcd75d",
+     "bytes": 1044
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6431.glb",
@@ -2609,18 +2622,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1024-804.glb",
-     "sha256": "44588e364c4473e5f57f209c3c9e93ffc5a6f0f26d202fdb60e308aa56406189",
-     "bytes": 14596
+     "sha256": "76b0f2dec751773707e9fdb3b9612653ec5ae9f60191db67bff255842c0e22c6",
+     "bytes": 15616
     },
     {
      "path": "docklands/data/places/london/tiles/11-2048-1608.glb",
-     "sha256": "1476242a9eea36860c7d13baa837eca0deb1398a4ccf58e72b896521358cd148",
-     "bytes": 12516
+     "sha256": "4e56a1127c72f2ff7703af528c7a166cbf5b028c300dd53ce329f384fbe72064",
+     "bytes": 9328
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3216.glb",
-     "sha256": "0c127b17a742329308b65604307b0187c13841552f2b8c05b0c584d6a30b0b1e",
-     "bytes": 7800
+     "sha256": "03da4b7448325e5897a5e4ad179794f34e73b295b353fe95e3106d7d922b8325",
+     "bytes": 10024
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6432.glb",
@@ -2644,8 +2657,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3217.glb",
-     "sha256": "2ac41333af3937f14fd270252a7251608f59f1967d787d9f595d71ff99fac0d2",
-     "bytes": 14292
+     "sha256": "6b5b052ff474c0acc081f8870d55abcafdb4b3e8b2e98058e5eb6101e7b88ace",
+     "bytes": 31404
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6434.glb",
@@ -2669,8 +2682,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3216.glb",
-     "sha256": "bed6cd1002a84b3ec68fd8fb328e6fe4d44c4f996a2fa582d7966128a0c31d41",
-     "bytes": 8808
+     "sha256": "b163b2d2983b69cb4993b61da8a945a6e39055bb2f22e708714f9b1dd30d9baa",
+     "bytes": 11292
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6432.glb",
@@ -2694,8 +2707,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3217.glb",
-     "sha256": "dc28eebd6b3f440ce6465216b09ba82ffd053400ab287b5136e245b772ebd67c",
-     "bytes": 12232
+     "sha256": "9f41a6559e711704c8f295a1fb8ed7c0ed9a8b73571525e75e59d27edd19c51c",
+     "bytes": 19924
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6434.glb",
@@ -2719,13 +2732,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2048-1609.glb",
-     "sha256": "f107aaf690c87973247176e010f388f2bedc990a4143959fe4374e4644a71b1c",
-     "bytes": 15948
+     "sha256": "f0572ed1143a92f64a9d84f2bc5e44864c7235382dcd856cbbb9e9d01f0d30f6",
+     "bytes": 23060
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3218.glb",
-     "sha256": "83ae33d921207be34f25f3d1e94862c9bda7f7a40e1001898d799fb2953f340a",
-     "bytes": 14076
+     "sha256": "70e7fe00c0fb5a301dc0ba65fe09feffc55cdc3da6a3a630f768e0e2c20336da",
+     "bytes": 23776
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6436.glb",
@@ -2749,8 +2762,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3219.glb",
-     "sha256": "4adf42e1529f1aac1e7a3ac76cd31b948a3634c324ad720fb418ec3efebf7dab",
-     "bytes": 14112
+     "sha256": "970ce4eff53112d09b380de7f252a1887b9222d4c7ab305a1951492eed61ddef",
+     "bytes": 28656
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6438.glb",
@@ -2774,8 +2787,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3218.glb",
-     "sha256": "99e6fc89818ec7c42e0ca17494858b5c9228937ea3849bde6845d1c511d94893",
-     "bytes": 13632
+     "sha256": "7087782575fb5ef376f31ec6946dd31617b5cdc7e964955eb71f56220f28e45f",
+     "bytes": 22744
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6436.glb",
@@ -2799,8 +2812,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3219.glb",
-     "sha256": "05f02a21ad8007baa25f7099b9e37f419d71113ef9c83296dddb2aa290af614b",
-     "bytes": 14896
+     "sha256": "49646e1df9aa45ee13e2393db047bd76e27c72062b7e63abac9cf15414f1f8d7",
+     "bytes": 40884
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6438.glb",
@@ -2824,13 +2837,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2049-1608.glb",
-     "sha256": "0d5333d4e8a0d433c97c3f3afb094a047edf421da5e03641cba5006c4f3a5405",
-     "bytes": 8900
+     "sha256": "c6bae3789a48b446dc18869ba104c3577dcc6ebac7083d192ab5b581ffc897e0",
+     "bytes": 6848
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3216.glb",
-     "sha256": "1a53ff5a7833a2926487142641e7e0cc510871f8c557cda7cdcd72e893df012c",
-     "bytes": 8804
+     "sha256": "d6e13e369b3e68dee35ee529d99c85b82eb167da038d119173bdcef0533bcff3",
+     "bytes": 11228
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6432.glb",
@@ -2854,8 +2867,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3217.glb",
-     "sha256": "11d020cc6434acf8757185d683c221d035db238d1ca8c33727fc23a0545f2560",
-     "bytes": 13344
+     "sha256": "53b5489568b852eee689a086baf548b50e746467e57e6c02bb669caf923a1f01",
+     "bytes": 19932
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6434.glb",
@@ -2879,8 +2892,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3216.glb",
-     "sha256": "26d9c758f1806abc30c6b1c92ecd2cf714551fd254aab0dd7654a367a53ba662",
-     "bytes": 4192
+     "sha256": "f88ddc3e97f970e1081c508b90a7c9c1bfbc6771d89458e92ec978cbd0aca3f4",
+     "bytes": 3944
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6432.glb",
@@ -2894,8 +2907,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3217.glb",
-     "sha256": "30044185f61bb7a9b6ba87d20e8ead75af041a53f77d1a74800eb38f24d1eb76",
-     "bytes": 4936
+     "sha256": "223a18cb20b74853976528b834fae618cc83a65d700c20f6b2b8defaf4aaaebd",
+     "bytes": 5936
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6434.glb",
@@ -2919,13 +2932,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2049-1609.glb",
-     "sha256": "74f53a2c4bf38555c9a62cb72024401da194a970a79ab5b1fffd9121fccebfee",
-     "bytes": 15032
+     "sha256": "ba554834c6f2d2ff6ca01c5337e81921ec08421107a3985365579cbacab49832",
+     "bytes": 16196
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3218.glb",
-     "sha256": "61e2c88a96c701dfb4fe8702255ec9e3e2ec207f711816edf5260dc498495fd4",
-     "bytes": 14440
+     "sha256": "ca2d7558d065ea4cc968a9496f2d4d4c842025d9eb76e02f0dc63b5b78d03e6e",
+     "bytes": 33504
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6436.glb",
@@ -2949,8 +2962,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3219.glb",
-     "sha256": "22cbcb90f548e6990c370e5f3e6a5f8b15039d0234f0aee826b0e6cf5ef32d5c",
-     "bytes": 14644
+     "sha256": "3204e9d13b63e4f4d13bf67530f9c982fc633b6942bf72ebfc9d4bf8a8720e34",
+     "bytes": 32372
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6438.glb",
@@ -2974,8 +2987,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3218.glb",
-     "sha256": "1434ecdd201c3460ba53f1af2704d6c28b0691c6975b6a86abc07a6918b89a2c",
-     "bytes": 10264
+     "sha256": "06947728084fec87fba08dd4232ec95992c366cd3775e9d1a84a2347e1cd7efa",
+     "bytes": 18684
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6436.glb",
@@ -2999,8 +3012,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3219.glb",
-     "sha256": "4c8c1b879fb3a490079716b24c4f2c80f92f69dd27d08d75ec7a637fc353864a",
-     "bytes": 15240
+     "sha256": "785898f3a68be8701c9c6733a034a2240cf10b3f21ea6d3b1dfe29b5176a0bdd",
+     "bytes": 26068
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6438.glb",
@@ -3024,18 +3037,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1024-805.glb",
-     "sha256": "b7e76270a69944e6f9ffbcda6dada79ecd6f1577c7a901c051498e46f9ee8940",
-     "bytes": 12148
+     "sha256": "49850d3187ac34d90f777cead33bf198483021a403e2f4e8b3d21a91c9a4183c",
+     "bytes": 11464
     },
     {
      "path": "docklands/data/places/london/tiles/11-2048-1610.glb",
-     "sha256": "0077bbd1b17beb29258c446cc8e911614c298ffad697d93e0dbc32df30d9e569",
-     "bytes": 17224
+     "sha256": "590790c97f391ce40b6af81cc659a0a9cebd0ae636a36a085e5d20b590644755",
+     "bytes": 35108
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3220.glb",
-     "sha256": "5e4d2d1fcc37070c7f8338741ab348f318c2b89f23367600bfe5d8606cf0a8fc",
-     "bytes": 17228
+     "sha256": "2d58abc6d0794d0f1a5f5d0dd18b1d3ff7b8f4b42d3847cff98ca01de609a787",
+     "bytes": 62376
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6440.glb",
@@ -3059,8 +3072,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3221.glb",
-     "sha256": "9c196efa9cc8482034b542282ee23c87b4c9204f9177182c9bd2574565e72bf4",
-     "bytes": 13412
+     "sha256": "48c0e9f71079dc781fc1250ff3ede0da511c035b34c3f2d4694eec22a0fd8344",
+     "bytes": 33892
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6442.glb",
@@ -3084,8 +3097,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3220.glb",
-     "sha256": "dc3c8327dfe237449ba000a2a335b26c274a6504bc5841c63cb89326d480a819",
-     "bytes": 16936
+     "sha256": "51919c330713713293c1bc4d1220e02a52445d09a8850444ca67c207852634f4",
+     "bytes": 42616
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6440.glb",
@@ -3109,8 +3122,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3221.glb",
-     "sha256": "76b802492b978b13aba3d8ca7abbcc165118ed8bf8da0c17e5adcb4e144bea31",
-     "bytes": 15256
+     "sha256": "1329fcd03df37764a320d638dfb5f371fd23a917595732c20e21409d1a8249b6",
+     "bytes": 40640
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6442.glb",
@@ -3134,13 +3147,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2048-1611.glb",
-     "sha256": "adcbb8f5f8d77ecb7218a16a3419da42c62dd04b4780537c24860cfbe5d1755d",
-     "bytes": 7244
+     "sha256": "4be9b7f33b1384d8f3ae85b72b48a22f2d01c5feb6eb40ef7979e13b00608f93",
+     "bytes": 4936
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3222.glb",
-     "sha256": "c2f664ef0a5c090e8773c9329888d636a610bb058f108b5546ce54d837344841",
-     "bytes": 12608
+     "sha256": "12ccb8d9ad5feecd49e2c25939c9c575dd500a4cb2f309f01ec1d131189a6174",
+     "bytes": 24492
     },
     {
      "path": "docklands/data/places/london/tiles/13-8192-6444.glb",
@@ -3164,7 +3177,7 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4096-3223.glb",
-     "sha256": "5f0c46fdfdca7ed7717fcc6c8b70b75080a9e282952b631af6317cedcf64a7f7",
+     "sha256": "8b4b7d111f3df0f51e150acbe0c3fd8b00fe4f3af6432a2d1abd965c9baba141",
      "bytes": 2572
     },
     {
@@ -3174,8 +3187,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4097-3222.glb",
-     "sha256": "36a6e4e1c536a1371ad78af51b205a76844446cb05798756aaa2d701aede5287",
-     "bytes": 7300
+     "sha256": "845b232e7d8128beedcd969e26467e37f18ab1a9100f002314d195d88795e655",
+     "bytes": 10048
     },
     {
      "path": "docklands/data/places/london/tiles/13-8194-6444.glb",
@@ -3194,13 +3207,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2049-1610.glb",
-     "sha256": "5126f895933953d725bd0d2b259ef9fb89fbc932ab2acea081f6c488e0109402",
-     "bytes": 15216
+     "sha256": "af2fffc50fd967bfb94d9f4cd3a8ce0e249f00834f709185ad5631661ddd6ec6",
+     "bytes": 17124
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3220.glb",
-     "sha256": "ff73001013ddc5fe4e09b5c133a528d5383590a3bf81afc6ab7e1baa45a36655",
-     "bytes": 13976
+     "sha256": "69f929a9b4b07091b2b08729909430bf5ac4e632c8cf2f4e38c8e5d2b2bdc1dc",
+     "bytes": 29780
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6440.glb",
@@ -3224,8 +3237,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3221.glb",
-     "sha256": "63697c7d30aa26f3f450688f0d7dfccd3d551912ab070ab2876bdabeb1b88c06",
-     "bytes": 14252
+     "sha256": "87a7b6c2c556f78fb51c7b2b395ba726bda2a706b1eaeb8b65f957780c25d887",
+     "bytes": 43564
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6442.glb",
@@ -3249,8 +3262,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3220.glb",
-     "sha256": "24fce335c946ad31631b4fa57c8028279511a66e6d0aa7e6f4084de54aec583e",
-     "bytes": 13480
+     "sha256": "616ff1787a7b18f188083ef70e3885fd94c2c01c3888c9b180156e29306bf2e1",
+     "bytes": 21452
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6440.glb",
@@ -3274,8 +3287,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3221.glb",
-     "sha256": "4f05fa3fb3eb47f3c5267cc88a01402458e93ecfa23d0c832c15bace7ed613fc",
-     "bytes": 14300
+     "sha256": "57f81c9b2d21a50c9d07ad665dd4c2ecfabc040d646739efd9e2482838cf03c1",
+     "bytes": 36804
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6442.glb",
@@ -3299,13 +3312,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2049-1611.glb",
-     "sha256": "40ffbcfd1a2ec078d7dc038327245dd227b850ecdb8d8527ce05ba5b6ca1a508",
-     "bytes": 5784
+     "sha256": "9edc068ae15ea42be63307fe66bd3444d9d034d6e2c83fb3a354eeb0a3903991",
+     "bytes": 4368
     },
     {
      "path": "docklands/data/places/london/tiles/12-4098-3222.glb",
-     "sha256": "9476416997e051470a940d3084bed8fb6c7778fd931df74ccb6c7de0500c23e6",
-     "bytes": 6864
+     "sha256": "f8d345f06235a249dd3bd886506c3a9bf9a03e77af80d4f02cce289732b68feb",
+     "bytes": 13352
     },
     {
      "path": "docklands/data/places/london/tiles/13-8196-6444.glb",
@@ -3329,8 +3342,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4099-3222.glb",
-     "sha256": "abd72ebd58c863ae09b5ec826251f596e56e7e8bf1145acb6224dde49c17c302",
-     "bytes": 7264
+     "sha256": "ac0606926f7f2f74c0d11bcc8ff4d3905ec6120857806c7c5248e49945c2fece",
+     "bytes": 9528
     },
     {
      "path": "docklands/data/places/london/tiles/13-8198-6444.glb",
@@ -3354,18 +3367,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1025-804.glb",
-     "sha256": "d7f74f37388640aea4302679598c20c76659e042a66344c437387cabc3868d83",
-     "bytes": 3084
+     "sha256": "e2b7eb3a7f59c2fbe6f3ffe7217f9356d0791a4c00b283359d5567849ea037c6",
+     "bytes": 2692
     },
     {
      "path": "docklands/data/places/london/tiles/11-2050-1609.glb",
-     "sha256": "2d173927f4ec5741031e3cb206434809bf771d71e1a74c27626ace69ef3a5e72",
-     "bytes": 5832
+     "sha256": "d2a759e9bb86e818a111a02c57a79c007f558088faaa5210ef0945334ff7a19c",
+     "bytes": 5080
     },
     {
      "path": "docklands/data/places/london/tiles/12-4100-3218.glb",
-     "sha256": "da7250e943aab88f3e1ff28e7f09cd9861b56449934c1c402d363075d0c3bed1",
-     "bytes": 5580
+     "sha256": "1604eba1e91b25c6e2a53e54940b92db5860988da10938984aeecc00023d5fd2",
+     "bytes": 7472
     },
     {
      "path": "docklands/data/places/london/tiles/13-8200-6437.glb",
@@ -3379,8 +3392,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4100-3219.glb",
-     "sha256": "60dbb37e026b79af4d81a6175c4ee56d7476230bae9b1f0beeed954a3ea62031",
-     "bytes": 7880
+     "sha256": "9485d2f5c4495fb720ee9daa09009a66bdeae7abed4ca181b8186d9965be0fae",
+     "bytes": 8428
     },
     {
      "path": "docklands/data/places/london/tiles/13-8200-6438.glb",
@@ -3404,8 +3417,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4101-3219.glb",
-     "sha256": "f66aca65a22cdcf7e0997c028216a9387b108ea62c3ac1c249dd17201f29fcec",
-     "bytes": 2572
+     "sha256": "b09cc4de476ecdcbdcc8b8e4aecad11a60386e9fc87fcbc25297bc2a521eb95a",
+     "bytes": 2556
     },
     {
      "path": "docklands/data/places/london/tiles/13-8202-6439.glb",
@@ -3414,18 +3427,18 @@
     },
     {
      "path": "docklands/data/places/london/tiles/10-1025-805.glb",
-     "sha256": "9fc59f88eadb48915f519f5c1bdb5d89f84517eec675d93d1c77c6b630dbfb5a",
-     "bytes": 7776
+     "sha256": "a407fcf37e52ef98bd5343f60c689466a56e16f99113ec25511ab812e53b4ead",
+     "bytes": 7800
     },
     {
      "path": "docklands/data/places/london/tiles/11-2050-1610.glb",
-     "sha256": "558a04952aa0f0c5d725dbb830169406a3a8be6a73d72875b165048b5e5d87dc",
-     "bytes": 12284
+     "sha256": "ce4b5dae069b4807031b96221b1a58468a8ebccf9c19042eb9d2a70da916ad26",
+     "bytes": 10732
     },
     {
      "path": "docklands/data/places/london/tiles/12-4100-3220.glb",
-     "sha256": "3c2ce33cd69629b595087b5f156abd40c890aa0cdc40c1e178f22a52d5b6611a",
-     "bytes": 10796
+     "sha256": "6595c3181059d1894f1effbd43039316fa8b08acbaf9196a433783a34c7c5073",
+     "bytes": 17628
     },
     {
      "path": "docklands/data/places/london/tiles/13-8200-6440.glb",
@@ -3449,8 +3462,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4100-3221.glb",
-     "sha256": "acfaf247753b1eec7fbec56eca12d1aedb8c45695c72ad73d35afae5cd5f7602",
-     "bytes": 15720
+     "sha256": "0bbceea99faf24ed39d88995f818d9c6ed0b3fb6961ba91e2d4eb8d4e3f502d5",
+     "bytes": 39060
     },
     {
      "path": "docklands/data/places/london/tiles/13-8200-6442.glb",
@@ -3474,8 +3487,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4101-3220.glb",
-     "sha256": "bd36595c237f50222b8de08092d17fc25be7e539aa897b76dde607b756935fb5",
-     "bytes": 5576
+     "sha256": "67e8eed7a5fff0d33d4e1a7475f9f66733c758490d7fa82b453f215929fd9750",
+     "bytes": 7216
     },
     {
      "path": "docklands/data/places/london/tiles/13-8202-6440.glb",
@@ -3499,8 +3512,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4101-3221.glb",
-     "sha256": "a6dafd5bcc65cca21dea95bfdbbcd989a4bb7f89a282d8b0c7f13e529fe19626",
-     "bytes": 12848
+     "sha256": "26f8dd9b6ab6f325010f327dc96f587d8fdca912fe46d058767d275c2f9a728c",
+     "bytes": 28960
     },
     {
      "path": "docklands/data/places/london/tiles/13-8202-6442.glb",
@@ -3524,13 +3537,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2050-1611.glb",
-     "sha256": "19ab5e3ddd17bc12fcb378f7f27ebc77ecf16ecc65444d4484354151978086f1",
-     "bytes": 6736
+     "sha256": "175ae034d6c08345a9f892ac52cec276e4b9e6d7e5562979167aeee211a71357",
+     "bytes": 4696
     },
     {
      "path": "docklands/data/places/london/tiles/12-4100-3222.glb",
-     "sha256": "35c003fb52757eb291671044ccded29232d9386b49c7291cf43cfa9e5eb4f552",
-     "bytes": 8828
+     "sha256": "abf5f45efa3a2aed1f8e6e686ddfd71c020c5991197b9144db9ad8b36e755a0d",
+     "bytes": 15416
     },
     {
      "path": "docklands/data/places/london/tiles/13-8200-6444.glb",
@@ -3554,8 +3567,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4101-3222.glb",
-     "sha256": "48a4be866e0afe1d3b9072741943441c25743fc0ecbe9708dc04afb20d13d3c8",
-     "bytes": 8284
+     "sha256": "ae2c217e39da7d08ccc82c0aaf6fda668388dd8a69f5d8f5791de952b8b58a5e",
+     "bytes": 13716
     },
     {
      "path": "docklands/data/places/london/tiles/13-8202-6444.glb",
@@ -3574,13 +3587,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2051-1610.glb",
-     "sha256": "d13fa92ecace581a73ea3473ec8e4c1b4f54aa9db41ad00ae730896e358ab985",
-     "bytes": 3848
+     "sha256": "9637752ba371fefac37923136fb3a75dab74f69e243ab786062d94a12755f5f1",
+     "bytes": 2652
     },
     {
      "path": "docklands/data/places/london/tiles/12-4102-3220.glb",
-     "sha256": "bd94e905b92522827a28a5e32198ea1b89914dbfd9ba6e0108cba2c98a10308d",
-     "bytes": 4352
+     "sha256": "1b2d2ab45a1925f90474c7314f2105f75c8e9300446910d28e0289e1d3ffa391",
+     "bytes": 3908
     },
     {
      "path": "docklands/data/places/london/tiles/13-8204-6441.glb",
@@ -3594,8 +3607,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4102-3221.glb",
-     "sha256": "cde635b5213eccd1d2b9974e6640c5288118dcd8d438daab2f2e9484587cdb4c",
-     "bytes": 6312
+     "sha256": "aa8a6ca7d59621941e9cebb2528d64763f2701272be39826ba4b480922dc5654",
+     "bytes": 8804
     },
     {
      "path": "docklands/data/places/london/tiles/13-8204-6442.glb",
@@ -3614,7 +3627,7 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4103-3220.glb",
-     "sha256": "1552f471ae6aaaed8d35bd60711c7efe735ba95d87d5bc3f59aafd62f61f1bf3",
+     "sha256": "4c299bbfd80f554d483036df08305bfaa0ec6bc293c763a3bd021de36d1acbb6",
      "bytes": 2572
     },
     {
@@ -3624,8 +3637,8 @@
     },
     {
      "path": "docklands/data/places/london/tiles/12-4103-3221.glb",
-     "sha256": "d78cbe4d1f596745a46bb3b6427be3a1f394186fd5f01f4b67ba3f767cb3c400",
-     "bytes": 2704
+     "sha256": "295d89274f9df5137d0b1d8de5a8f28f3b349aba83d85f40656be96238315135",
+     "bytes": 2576
     },
     {
      "path": "docklands/data/places/london/tiles/13-8206-6442.glb",
@@ -3634,13 +3647,13 @@
     },
     {
      "path": "docklands/data/places/london/tiles/11-2051-1611.glb",
-     "sha256": "75462a8d78d9e461d0d363b1e906c775ac1cc7a02e7b25792c1e2a677b321b30",
-     "bytes": 2512
+     "sha256": "266eddfa2674573a1287084f6b84cc298904423afe7fef54b74978ae18dcd75d",
+     "bytes": 1044
     },
     {
      "path": "docklands/data/places/london/tiles/12-4102-3222.glb",
-     "sha256": "eb7349fec2bf7aed25376e94c5c94775cc5434c054884612dfc250aa4f778083",
-     "bytes": 2516
+     "sha256": "266eddfa2674573a1287084f6b84cc298904423afe7fef54b74978ae18dcd75d",
+     "bytes": 1044
     },
     {
      "path": "docklands/data/places/london/tiles/13-8204-6444.glb",
@@ -3649,17 +3662,17 @@
     },
     {
      "path": "docklands/data/places/london/tileset.json",
-     "sha256": "b66c9aa3feca38ce2f1ae17d379014aa54873173ad0a2475cc51361e0f707f52",
-     "bytes": 278294
+     "sha256": "85c633d4f2299a5627301fb8eec08f8439b23a93bf6ae843ac64174fa869c818",
+     "bytes": 278295
     },
     {
      "path": "docklands/data/places/london/features.json",
-     "sha256": "df0a3e6b2bd278e3f2a5f7f1e185a1d50ce9fd51e06b31236e74666a394c6ca7",
-     "bytes": 722568
+     "sha256": "905f27015fe29303e23db2b5b49cb69d7564d5d8a93a8ddb6da02829979ba555",
+     "bytes": 723751
     }
    ],
-   "ms": 24630,
-   "at": "2026-10-22T22:43:37.731Z"
+   "ms": 39057,
+   "at": "2026-10-23T16:22:32.719Z"
   }
  ],
  "selection": {
@@ -3694,50 +3707,53 @@
  "tiers": {
   "level 10": {
    "tiles": 14,
-   "bytes": 134040,
-   "triangles": 96780,
-   "boxes": 360,
+   "bytes": 171308,
+   "triangles": 26943,
+   "boxes": 278,
    "outlines": 0,
    "named": 0,
-   "merged": 9318,
-   "merged_buildings": 1399077,
+   "merged": 1754,
+   "merged_buildings": 5151,
    "building_boxes": 0,
-   "mass_boxes": 9318,
+   "mass_boxes": 1754,
    "by_class": {
     "osm": 360
-   }
+   },
+   "far_outlines": 82
   },
   "level 11": {
    "tiles": 43,
-   "bytes": 459468,
-   "triangles": 338890,
-   "boxes": 1274,
+   "bytes": 652796,
+   "triangles": 245711,
+   "boxes": 983,
    "outlines": 0,
    "named": 0,
-   "merged": 32615,
-   "merged_buildings": 1398163,
+   "merged": 21692,
+   "merged_buildings": 122551,
    "building_boxes": 0,
-   "mass_boxes": 32615,
+   "mass_boxes": 21692,
    "by_class": {
     "osm": 1268,
     "ms": 6
-   }
+   },
+   "far_outlines": 291
   },
   "level 12": {
    "tiles": 138,
-   "bytes": 1585572,
-   "triangles": 1150260,
-   "boxes": 5883,
+   "bytes": 3488724,
+   "triangles": 2045325,
+   "boxes": 4211,
    "outlines": 0,
    "named": 0,
-   "merged": 109143,
-   "merged_buildings": 1393554,
+   "merged": 191973,
+   "merged_buildings": 675998,
    "building_boxes": 0,
-   "mass_boxes": 109143,
+   "mass_boxes": 191973,
    "by_class": {
     "osm": 5777,
     "ms": 106
-   }
+   },
+   "far_outlines": 1672
   },
   "level 13": {
    "tiles": 486,
@@ -3753,7 +3769,8 @@
    "by_class": {
     "osm": 1050005,
     "ms": 349432
-   }
+   },
+   "far_outlines": 0
   }
  },
  "blocks": {
@@ -3855,6 +3872,22 @@
     "version": 4,
     "at": "2026-10-22T21:32:54.258Z",
     "outputs": 683
+   },
+   {
+    "activity": "d41eeef8d30be042",
+    "operation": "place-blocks",
+    "version": 5,
+    "at": "2026-10-22T22:43:37.731Z",
+    "outputs": 683,
+    "note": "superseded on 2026-10-23 by the fill rule (coordinator: the Tempelhof slab)"
+   },
+   {
+    "activity": "b3b4db261a9d768e",
+    "operation": "place-blocks",
+    "version": 6,
+    "at": "2026-10-23T10:50:36.391Z",
+    "outputs": 683,
+    "note": "superseded on 2026-10-23 by the fill rule (coordinator: the Tempelhof slab)"
    }
   ]
  }

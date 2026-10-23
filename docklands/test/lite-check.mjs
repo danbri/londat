@@ -37,6 +37,15 @@ mkdirSync(OUT, { recursive: true });
 let failed0 = 0;
 { const big = TOP.filter(t => t.top > 60); const ok = col('height_top_m') >= 0 && big.length >= 4 && big.some(t => /Salisbury|York Minster/.test(t.name));
   if (!ok) failed0++; console.log(`${ok ? 'ok  ' : 'FAIL'} landmark heights: York Minster or Salisbury and three more cathedrals have a highest point over 60 m (OSM parts or Wikidata) · ${TOP.map(t => `${t.name} ${t.top} m (${t.src}; body ${t.body} m)`).join('; ')}`); }
+// (issue #14) the highest point within 10 % of a published height; York Minster is a known OSM fault (its central tower part
+// is mapped at 54 m with a flat roof, no Wikidata height): reported, not failed
+{ const REF = [['Salisbury Cathedral', 123], ['Lincoln Cathedral', 83], ['Durham Cathedral', 66], ['York Minster', 72, 'known OSM fault']];
+  for (const [n, ref, known] of REF) { const t = TOP.find(x => x.name === n), d = t ? (t.top - ref) / ref : null, ok = d != null && Math.abs(d) <= 0.1;
+    if (!ok && !known) failed0++; console.log(`${ok ? 'ok  ' : known ? 'KNOWN' : 'FAIL'} ${n}: highest point ${t?.top} m (${t?.src}) against ${ref} m: ${d == null ? 'not in the set' : (d >= 0 ? '+' : '') + Math.round(d * 1000) / 10 + ' %'}${known && !ok ? ' (' + known + ')' : ''}`); } }
+// (issue #14) structures that are not OSM buildings: the Angel of the North drawn (Wikidata height), Edinburgh Castle a site row
+{ const A = FJ.buildings.find(r => r[col('name')] === 'Angel of the North' && /artwork/.test(r[col('kind')] || '')), E = FJ.buildings.find(r => r[col('name')] === 'Edinburgh Castle' && r[col('height_source')] === 'site');
+  const ok = !!A && A[col('height_m')] >= 18 && !!E; if (!ok) failed0++;
+  console.log(`${ok ? 'ok  ' : 'FAIL'} structures: the Angel of the North ${A ? A[col('height_m')] + ' m (' + A[col('height_source')] + ')' : 'missing'}; Edinburgh Castle ${E ? 'a site row' : 'missing'}`); }
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
 let failed = failed0;
@@ -61,13 +70,14 @@ for (const [w, h, dpr] of SIZES) {
   const uk = await settle(page);
   const pl = uk.st.find(x => x.id === ID), lv = Object.keys(pl.drawn_by_level).map(Number);
   check(pl.settled && pl.tiles > 0 && Math.max(...lv) <= 8, 'the UK from 500 km: the lite set settled at its coarse levels', `levels ${JSON.stringify(pl.drawn_by_level)}, ${pl.triangles.toLocaleString('en')} place triangles, frame ${uk.frame?.triangles?.toLocaleString('en')} triangles, ${uk.frame?.calls} calls, ${uk.s.toFixed(1)} s; eye ${uk.view.eye.above_ground_m} m up`);
-  check(uk.dp && uk.dp.lite && /lite set/.test(uk.dp.text) && uk.dp.lite.mass_boxes > 1000 && uk.dp.lite.mass_buildings > 1e6, 'describeView: a lite set, counted by class', uk.dp ? `${JSON.stringify({ ...uk.dp.lite, rule: undefined, about: undefined })} · ${uk.dp.text.slice(0, 260)}` : 'no place in the description');
+  check(uk.dp && uk.dp.lite && /lite set/.test(uk.dp.text) && ((uk.dp.lite.mass_boxes || 0) > 1000 && uk.dp.lite.mass_buildings > 1e6 || (uk.dp.lite.far_blocks || 0) > 1000 && uk.dp.lite.far_left_out > 0), 'describeView: a lite set, counted by class (merged squares, or since the far forms of issue #13 the blocks big enough to see and the buildings left out)', uk.dp ? `${JSON.stringify({ ...uk.dp.lite, rule: undefined, about: undefined })} · ${uk.dp.text.slice(0, 260)}` : 'no place in the description');
   await page.screenshot({ path: `${OUT}/lite-uk-500km-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-uk-500km-${tag}.png`);
   // 2. cities from 20 km
   for (const c of CITIES) {
     await page.evaluate(c => docklands.goTo({ lon: c.lon, lat: c.lat, range_m: 20000, tilt_deg: 45 }), c);
     const r = await settle(page), p2 = r.st.find(x => x.id === ID), l2 = Object.keys(p2.drawn_by_level).map(Number);
-    check(p2.settled && Math.max(...l2) >= 10 && (r.dp?.lite?.mass_boxes || 0) + (r.dp?.lite?.building_boxes || 0) > 200, `${c.name} from 20 km: finer levels (external tile sets) and the mass drawn`, `levels ${JSON.stringify(p2.drawn_by_level)}, ${tsets.size} external tile sets fetched so far; ${JSON.stringify({ landmarks: r.dp?.lite?.landmarks_drawn, squares: r.dp?.lite?.mass_boxes, buildings_in_squares: r.dp?.lite?.mass_buildings, building_boxes: r.dp?.lite?.building_boxes })}; ${r.s.toFixed(1)} s`);
+    check(p2.settled && Math.max(...l2) >= 10 && (r.dp?.lite?.mass_boxes || 0) + (r.dp?.lite?.far_blocks || 0) + (r.dp?.lite?.building_boxes || 0) > 200, `${c.name} from 20 km: finer levels (external tile sets) and the mass drawn`, `levels ${JSON.stringify(p2.drawn_by_level)}, ${tsets.size} external tile sets fetched so far; ${JSON.stringify({ landmarks: r.dp?.lite?.landmarks_drawn, squares: r.dp?.lite?.mass_boxes, far_blocks: r.dp?.lite?.far_blocks, far_left_out: r.dp?.lite?.far_left_out, buildings_in_squares: r.dp?.lite?.mass_buildings, building_boxes: r.dp?.lite?.building_boxes })}; ${r.s.toFixed(1)} s`);
+    if (FJ.lite?.far) check(!(r.dp?.lite?.mass_boxes) && (r.dp?.lite?.far_blocks || 0) > 200, `${c.name} from 20 km: far forms (buildings and street blocks at their true positions), no merged squares (issue #13)`, `${r.dp?.lite?.far_blocks} far blocks for ${r.dp?.lite?.mass_buildings} buildings, ${r.dp?.lite?.far_left_out} too small left out there, ${r.dp?.lite?.mass_boxes || 0} squares`);
     check(r.dp?.nearest_named && /lite set/.test(r.dp.text), `${c.name}: describeView names the nearest landmark`, `${r.dp?.nearest_named?.name} (${r.dp?.nearest_named?.dist_m} m); tallest ${r.dp?.tallest_named?.name}`);
     await page.screenshot({ path: `${OUT}/lite-${c.name.toLowerCase()}-20km-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-${c.name.toLowerCase()}-20km-${tag}.png`);
   }

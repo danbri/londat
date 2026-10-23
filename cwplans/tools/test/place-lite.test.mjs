@@ -138,3 +138,39 @@ test('a built set: no landmark in Greater London; shard rows in their part boxes
     for (const r of j.buildings) { n++; if (L.contains(r[x], r[y])) inL++; const b = sh.bbox, m = 0.01; if (r[x] < b[0] - m || r[x] > b[2] + m || r[y] < b[1] - m || r[y] > b[3] + m) outBox++; } }
   assert.ok(n > 1000, String(n)); assert.equal(inL, 0, 'landmarks inside Greater London'); assert.equal(outBox, 0, 'rows outside their part box');
 });
+
+test('streetBlocks and farKeep: a terrace merges into one block with its summed footprint, a tower stays alone, a lone house is left out far away (issue #13)', async () => {
+  const { streetBlocks, farKeep } = await import('../place-lite.mjs');
+  const mLon = 111320 * Math.cos(53 * Math.PI / 180), mLat = 110574, at = (x, y) => [-2 + x / mLon, 53 + y / mLat];
+  // a terrace of six 6 x 10 m houses side by side (touching), a 40 m tower of 15 x 15 m 3 m from its end, a house 60 m away
+  const B = [];
+  for (let i = 0; i < 6; i++) { const [lon, lat] = at(i * 6, 0); B.push({ lon, lat, a: 60, asp: 10 / 6, ang: 90, h: 8, cls: 0, src: 6 }); }
+  { const [lon, lat] = at(5 * 6 + 3 + 3 + 7.5, 0); B.push({ lon, lat, a: 225, asp: 1, ang: 0, h: 40, cls: 0, src: 0 }); }
+  { const [lon, lat] = at(0, 60); B.push({ lon, lat, a: 64, asp: 1, ang: 0, h: 7, cls: 1, src: 2 }); }
+  const S = streetBlocks(B, { gap_m: 5, fill_min: 0.4, h_rel: 0.35, h_abs_m: 3 });
+  assert.equal(S.length, 3, JSON.stringify(S.map(x => [x.n, Math.round(x.a), x.h])));
+  const row = S.find(x => x.n === 6); assert.ok(row && Math.abs(row.a - 360) < 1, 'the terrace keeps its summed footprint'); assert.equal(row.h, 8);
+  assert.ok(Math.abs(row.ang - 0) < 1 || Math.abs(row.ang - 180) < 1, `the terrace runs east-west (${row.ang})`); assert.ok(row.asp > 3, 'a long row (36 x 10 m)');
+  assert.equal(S.filter(x => x.n === 1).length, 2, 'the tower (other height) and the far house stay alone');
+  assert.equal(streetBlocks(B, { gap_m: null }).length, 8, 'gap_m null: no merge');
+  const K = farKeep(S, 178);   // (level 10 of the UK lite set)
+  assert.equal(K.keep.length, 2); assert.equal(K.left_out, 1); assert.equal(K.left_out_buildings, 1);
+  assert.equal(farKeep([{ a: 25, h: 40, n: 1 }], 178).keep.length, 1, 'a tall thin tower stays (seen size 5 x 40 m)');
+});
+
+test('blockTile, lite landmark parts with caps (issue #14): a spire on its tower ends in one apex at its height; a dome part ends in a point too', () => {
+  const n = { l: 11, x: 1000, y: 1700, key: '11-1000-1700', b: cellBox(11, 1000, 1700) }, [w, s] = n.b, c = [w + 0.01, s + 0.01];
+  const tower = { id: 'L:t0', a: 144, c, rings: rect(c[0], c[1], 12, 12).coordinates, H: { h: 69, src: 'osm building part' } };
+  const spire = { id: 'L:t1', a: 64, c, rings: rect(c[0], c[1], 8, 8).coordinates, H: { h: 123, src: 'osm building part' }, cap: { kind: 'pointed', h: 54, base: 69 } };
+  const dome = { id: 'L:t2', a: 100, c: [c[0] + 0.001, c[1]], rings: rect(c[0] + 0.001, c[1], 10, 10).coordinates, H: { h: 40, src: 'osm building part' }, cap: { kind: 'dome', h: 5, base: 0 } };
+  const named = new Map([['L:t0', 7], ['L:t1', 7], ['L:t2', 7]]);
+  const r = blockTile({ cell: n, items: [tower, spire, dome], HT: {}, groundAt: () => 10, geoidAt: () => 50, P: { tall_m: Infinity, big_m2: Infinity, merge_m: 400, min_area_m2: 0, drop_m: 3 }, lite: true, named, namedOutlines: true, named_simplify_m: 0.5, leaf: false, classes: ['landmark', 'merged'], colour: '#d6cbb6', credit: 't' });
+  assert.equal(r.stats.named, 3); assert.equal(r.stats.caps, 2);
+  // the glb: int16 positions (KHR_mesh_quantization) of the named mesh; the highest vertex is the spire's apex at ground + 123 m
+  const jl = r.bytes.readUInt32LE(12), js = JSON.parse(r.bytes.subarray(20, 20 + jl).toString('utf8')), bin = 20 + jl + 8, nd = js.nodes.find(q => q.mesh != null && q.scale);
+  const a = js.accessors[js.meshes[nd.mesh].primitives.at(-1).attributes.POSITION], bv = js.bufferViews[a.bufferView], ys = [];
+  for (let i = 0; i < a.count; i++) ys.push(r.bytes.readInt16LE(bin + bv.byteOffset + i * 8 + 2) * nd.scale[1] + nd.translation[1]);
+  const top = Math.max(...ys), atTop = ys.filter(y => Math.abs(y - top) < 0.05).length, h0 = ys.reduce((m, y) => Math.min(m, y), Infinity);
+  assert.ok(atTop === 1, `one apex at the top (${atTop} vertices)`);
+  assert.ok(ys.some(y => Math.abs(y - (top - 54)) < 0.1), 'the spire\'s eaves 54 m under its apex (its base, on the tower)');
+});

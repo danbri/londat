@@ -3418,7 +3418,7 @@ Switch `place.blocks.leaf_boxes: 'compact'` in london.js (without it the tool st
   `tiles/*.glb` by `startsWith('tiles/')` first (wrong text for blocks places): the exact key is tested first now.
   Superseded activities (place-blocks 1 to 3 listed 2,396 to 2,453 outputs each) were pruned from the committed log
   (`pruned` lists them; 1.94 -> 0.14 MB).
-- **Open.** From 20 km the turned squares still read as a fine lattice (the far half of issue #13); big non-rectangular
+- **Open.** From 20 km the turned squares still read as a fine lattice (the far half of issue #13; done 2026-10-23: "Far views" below); big non-rectangular
   courtyard holes of unnamed buildings are not drawn (outer ring only, as in version 3; a closed courtyard block fills its box and is a box).
 
 ## Three.js port: the UK lite set (2026-10-22)
@@ -3489,7 +3489,7 @@ https://danbri.github.io/docklandia/data/gb/uk-lite/ ; register: `external` entr
   it now returns `p.feats` when the place is loaded. Rows pushed twice by two index copies: deduped by row.
 - **Before the merge of londat:** push docklandia (branch uk-lite to main) first; until its Pages serve the set the
   index entry gives 404s (globe-check "no page errors" fails on the live tileset and features URLs).
-- **Open.** Landmark heights (towers, spires: OSM building parts or a kind rule); the mass reads as a grid from 20 km; the
+- **Open.** Landmark heights (towers, spires: OSM building parts or a kind rule; done, then shapes on 2026-10-23); the mass reads as a grid from 20 km (done 2026-10-23: "Far views"); the
   Republic of Ireland's buildings are not drawn; names.json for search is 2.8 MB; Isle of Man and the Channel Islands are
   not UK and not in the set. (The bullets Mass, Tiles, Sizes and Reader above describe place-lite-tiles 2; version 3 below.)
 
@@ -3580,6 +3580,132 @@ module `cwplans/tools/place-lite-heights.mjs`, tests `place-lite-heights.test.mj
 - **Reader.** Card row "Highest point" (with its source); describeView `tallest_named` by the highest point; landmark
   outline counts unique rows (towers share the row).
 - **Size.** +1.1 MB of tiles (294.8 MB in all).
+
+### Far views: buildings and street blocks, no squares (place-blocks 6, place-lite-tiles 5, place-far-lod 1; 2026-10-23)
+
+Owner, 2026-10-23: "Do 13 and 14" (issue https://github.com/danbri/londat/issues/13 : from 20 km a town read as a lattice
+of tiles in the UK and in London; Berlin showed no 3D blocks at 20 km). Module functions `streetBlocks`, `farKeep`
+(`cwplans/tools/place-lite.mjs`), `farLod` (`place-lod.mjs`); config `place.lite.far` (uk-lite.js), `place.blocks.far`
+(london.js), `place.city.blocks_from_m` (default 25 km); command `build-place-tiles.mjs far-lod --region <id> [--out]`;
+test `docklands/test/far-check.mjs` (far views measured: tiles fetched and their bytes, tiles drawn by level, frame and
+place triangles, calls, submit and frame interval, heap, describeView counts, a screenshot each). Views (live after the
+merges): London https://danbri.github.io/londat/docklands/?ll=51.4950,-0.1276,20000&ht=0,45 , Manchester
+https://danbri.github.io/londat/docklands/?ll=53.4794,-2.2453,20000&ht=0,45 , Berlin
+https://danbri.github.io/londat/docklands/?ll=52.5100,13.4000,20000&ht=0,45 .
+
+- **Measure first, three options** (numbers in issue #13 and the table below): (a) the leaves (one box a building) drawn
+  out to about 25 km (only the geometric errors change: 0 bytes); (b) thinned real buildings at the coarse levels, one
+  box each at its true position, kept by a seen-size rule; (c) street blocks: adjacent buildings merged into one oriented
+  box, then the same rule. A trial build takes `--trial <json>` (top-level keys of place.lite / place.blocks, recorded in
+  the activity parameters); option (a) is a copy of tileset.json (and the lite set's tilesets/) with other errors.
+- **Rule (option c, built).** `streetBlocks`: per leaf cell, buildings whose oriented boxes come within `gap_m` 5 m (the
+  largest gap between their projections on the four edge normals) and whose heights differ by at most max(3 m, 35 % of the
+  taller) are one group (union-find over a 40 m grid); a group is one box at its grain (the tighter of two candidate
+  angles: the area-weighted mean of 4 x the members' angles, and the largest member's angle), cut in two at the area
+  median along its long side while the members fill less than `fill_min` 0.4 of it; the box keeps the summed footprint
+  (sides x sqrt(fill) about its centre), the area-weighted mean height, the class and height source of its largest
+  member, and n. A terrace of houses becomes one long block; a tower of another height stays alone. `farKeep`: a level
+  draws the blocks whose seen size sqrt(area) x max(sqrt(area), height) is at least `min_m2` = (far end of the level's
+  range / 1462 m)^2, about one device pixel squared on a phone held upright (K 731 CSS px, 2 device px a CSS px), so a
+  thin tower stays where a house of its footprint goes. UK: 178 / 712 / 2,850 / 11,400 m2 at levels 10 / 9 / 8 / 7 (drawn
+  to about 19.5 / 39 / 78 km and beyond); London: 307 / 1,220 / 4,870 m2 at levels 12 / 11 / 10 (25.6 / 51 / about 100 km).
+  The blocks are made once per leaf cell and thinned by each coarser level (landmarks of the lite set join as their own
+  boxes and are left out of a level that draws them as its own box; London's tall or big buildings stay single for the
+  same reason).
+- **Layout.** Compact kind `blocks` (cwplans-boxes-1, 8 bytes a box; class bit and height source of the largest member).
+  Reader: `compactInto` treats it as buildings (class 2 + bit); card "Building or street block"; describeView `far_blocks`,
+  `far_left_out` (glb `extras.blocks.far_left_out`: buildings too small for that level), `mass_buildings` (the buildings the
+  blocks stand for); text "farther N buildings and street blocks at their true positions standing for M buildings".
+- **City tiers (Berlin, Stuttgart, Dagstuhl, Dublin, León, Sarajevo).** Their first block level (13: buildings of 600 m2 or
+  18 m as boxes) was drawn only within about 12 km (level-12 geometricError 404.9 m x 731 / 24); no blocks at 20 km.
+  `farLod`: every node below the block level that meets the city box and has children gets geometricError >=
+  25,000 x 24 / 731 = 820.8 m (Berlin 153 level-12 nodes, Dublin 70, Dagstuhl 30, Stuttgart 28, León 12, Sarajevo 10);
+  the same term is in place-lod's `errOf` (`blocks_from_m`), so a rebuild gives the same tileset. Applied to the built
+  tilesets as operation place-far-lod 1 (the raw inputs of those places are not on disk; Berlin's LoD2 parse takes an hour).
+  It is the thinning already built (level 13 holds the big and tall buildings only), drawn farther.
+- **Sizes.** London 47.87 MB of tiles (squares 47.2; thinned 47.03), 48.79 MB in all. UK lite 306.1 MB of tiles (squares
+  275.8; thinned 290.4), 324.07 MB in all (324.57 MB with issue #14); docklandia 724 MB in all (under 950). The leaves are
+  byte for byte the same.
+- **Measured** (390 x 844 @2, software WebGL (SwiftShader), deep links ht=0,45 at noon; frame interval in software is
+  slow, the ratios count): see the table in issue #13; summary: London 20 km frame triangles 0.84 M (squares) / 3.04 M
+  (leaves to 25 km) / 0.98 M (thinned) / 1.19 M (street blocks); Manchester 20 km 0.54 / 5.40 / 1.33 / 2.13 M. Draw calls
+  stay 107 to 343. Option (a) costs 3 to 10 times the triangles at 10 to 20 km and still shows squares beyond 25 km.
+- **Screenshots, verdicts** (scratch folder of the session; before -> after): London 20 km lattice of turned squares ->
+  scattered buildings and blocks on the imagery, no grid; 50 km dotted grid over all London -> no grid in London (UK lite
+  squares outside it before its rebuild); Manchester 20 km squares -> blocks; Berlin 20 km no blocks -> city blocks.
+- **Traps.** A tileset written by place-lod keeps its own errors: changing them needs the farLod rule in both the build
+  (`errOf`) and the post-step, or a rebuild undoes it. `git apply --unidiff-zero` of one hunk of a file whose other hunks
+  are not applied puts it at the old line number (the far block landed after `services:`; check the config with an import
+  before a build). The test web server (`python3 -m http.server`) stops at the background limit (2 hours): runs after
+  that fail with a navigation error; restart it and rerun. `r.body()` of a Playwright response misses some answers: count
+  bytes by Content-Length. The far-check settle loop needs several settled frames: at 3 to 9 s a frame in software, keep
+  it short (4 frames).
+- **Fill rule (place-blocks 7, place-lite-tiles 7, place-lod 4, place-far-outlines 1; coordinator, 2026-10-23).** "The
+  Tempelhof airport terminal ... is drawn as one huge solid dark oriented box that fills the whole inside of its arc
+  (about 1 km x 400 m)". Cause: a coarse level drew a tall or big building as its ORIENTED BOUNDING BOX (blockTile
+  `obbOf`, and place-lod's first city block level, where every building was a box): a curved, U- or L-shaped footprint
+  becomes a slab much bigger than the building. Rule now: an own box only when the footprint fills at least 0.7 of its
+  oriented box (`far.box_fill`, place-lod `far_box_fill`); else the outline simplified at 4 m (`far.simplify_m`; a lite
+  landmark keeps its row and card). Street blocks: cut until their buildings fill 0.7 of the box (`far.fill_min`, was 0.4).
+  Counts: London coarse outlines 1,672 / 291 / 82 at levels 12 / 11 / 10, street blocks 716,290 (were 459,303), tiles
+  49.34 MB (+1.47); UK lite landmark outlines 1,130 / 364 / 62 / 6 at levels 10 / 9 / 8 / 7, tiles 304.3 MB (smaller
+  blocks: fewer pass the seen-size rule), 322.38 MB in all. Built city tiers (raw inputs gone): `build-place-tiles.mjs
+  far-outlines --region <id> [--out]` (module `place-far-outlines.mjs`) replaces each level-13 box whose building (the
+  level-14 outline of the same height whose centroid lies in the box + 2 m; transforms Y2Z^-1 . child transform . Y2Z)
+  fills less than 0.7 of it by that outline, as a new float-position node; the glb is repacked (unused views dropped).
+  Replaced: Berlin 19,626 of 81,387 (+11.2 MB), Stuttgart 2,015 of 10,737 (+1.5), Dublin 2,860 of 11,694 (+2.2), Dagstuhl 90
+  of 476, León 815 of 3,479, Sarajevo 422 of 2,295; counts in each set's provenance/far-outlines-counts.json and glb
+  `extras.blocks.far_outlines`. docklandia about 744 MB in all.
+  Screenshots: Tempelhof 10 km slab -> the curved terminal; 3 km the curved outline; 20 km no slab; Wembley 10 km the round
+  stadium. Lesson: a box that stands for a building must not cover much more ground than the building; check the fill
+  (footprint / oriented box) before using an oriented box at any level. Trap: `set-london.sh` (the measuring script)
+  replaces the London folder with a saved variant, so rebuild (deterministic, 4 minutes) after using it.
+- **Open.** The seen-size rule hides small houses between 5 and 20 km on purpose (they are under one device pixel); a
+  denser far texture could come from the imagery, not geometry. Berlin and the other city tiers still have no blocks
+  beyond 25 km (level 12 holds terrain only).
+
+### The UK lite set: spires and towers drawn by their shape; structures (place-lite-landmark-heights 2, place-lite-structures 1, place-lite-tiles 6; 2026-10-23)
+
+Owner, 2026-10-23: "Do 13 and 14" (issue https://github.com/danbri/londat/issues/14 : spires and towers were straight
+columns from the ground). Module `cwplans/tools/roof-caps.mjs` (cap kinds and profiles, shared with
+build-place-landmarks.mjs: Sarajevo's and Dublin's domes and onions use the same numbers), `place-lite-heights.mjs`
+(`osmPartShapes`, `partCap`, `partBases`, `structureRows`), `place-blocks.mjs` blockTile `prism(..., cap)`. Views:
+Salisbury https://danbri.github.io/londat/docklands/?ll=51.0651,-1.7973,700&ht=200,60 , Lincoln
+https://danbri.github.io/londat/docklands/?ll=53.2343,-0.5361,700&ht=200,60 , York Minster
+https://danbri.github.io/londat/docklands/?ll=53.9623,-1.0819,700&ht=200,60 , Durham
+https://danbri.github.io/londat/docklands/?ll=54.7735,-1.5765,700&ht=200,60 , the Angel of the North
+https://danbri.github.io/londat/docklands/?ll=54.9141,-1.5897,400&ht=200,70 .
+
+- **Shape of a part.** Walls start at the part's `min_height` when something holds it up (`partBases`: the body reaches it,
+  or a part already standing whose box meets its box reaches it, within 1 m; parts in order of min_height), else at the
+  ground (a part mapped high with nothing mapped under it). A pointed roof (`roof:shape` pyramidal, cone, conical, spire;
+  `building:part=spire`) is a pyramid over the simplified outline to one apex at the centroid (an octagonal outline gives
+  an octagonal spire; a round one a cone); a dome or onion the shared profile (quarter circle in 5 steps; onion bulging
+  to 1.12). Cap height: `roof:height`, the whole part for `building:part=spire`, else min(0.25 x height, 8 m) (the rule of
+  the landmark sets). Wikidata spires (P2048 above the parts) are pyramids from the tallest part's top. Caps are lead
+  grey (CAP_COLOURS), walls the set's colour. Coarse levels keep boxes (towers as own boxes when tall).
+- **Inputs.** Overture building_part with `roof_height` (fetched again, 26,690 parts); the OSM `roof:shape` and
+  `building:part` of the UK's parts by one QLever query (2,738 rows; Overture's schema has no cone and no part kind; 4
+  `building:part=spire` and 99 cones in the UK); the OSM tag wins over Overture's roof_shape.
+- **Counts.** 2,700 parts drawn for 490 landmarks: pointed caps 445, domes 118, onions 16, standing on their min_height
+  599. Highest point against published heights (README table): Salisbury 123 m (spire 69 to 123 m: 0 %), Lincoln 80 m
+  (-3.6 % of 83), Durham 66 m (0 %), Liverpool 100 m (-1 %), Blackpool Tower 158 m, Angel of the North 20 m; York Minster
+  63 m (-12.5 % of 72: OSM maps the central tower part at 54 m with a flat roof, the 63 m are the west towers' pinnacles;
+  no Wikidata P2048: an OSM fault, listed, not patched; lite-check reports it as KNOWN).
+- **Structures that are not OSM buildings** (place-lite-structures 1, `structureRows`): one QLever query (kinds of
+  place.lite.structures, not tagged building, with wikidata or wikipedia or a name and a height; geometry as WKT; 4,522
+  rows) and one Wikidata query for their heights (201 statements for 4,028 items). Landmark rule: wikidata or wikipedia,
+  or a name and 25 m. Height: OSM height, else Wikidata P2048; drawn from 10 m: its OSM outline, else a shape at its node
+  by kind (STRUCTURE_SHAPES: sides and half width as a share of the height, clamped; an obelisk ends in a point). 329
+  drawn (lighthouses 104, towers 100, masts 98, chimneys 20, artworks 13, monuments 12, memorials 9, obelisks 5), 3,581
+  landmarks by the rule without any height (not drawn, counted). Castle areas (historic=castle with wikidata, not
+  buildings): 315 site rows (search and card "a site: its buildings are drawn as themselves"), not drawn. Rows join the
+  shards of their part (owner polygon rule; 12 in London left to London). 83,428 landmark rows (was 82,784).
+- **Size.** +0.4 MB (306.5 MB of tiles).
+- **Trap.** A python patch that writes `' + GH + '` inside a template literal prints it literally: use `${GH}` there.
+- **Open.** York Minster's central tower (OSM data); domes of a whole outline (not a part) stay flat in the lite set;
+  structures without a height (3,581) are not drawn; the Angel of the North is drawn as its OSM outline area (its wings
+  are not modelled).
 
 ## Three.js port: German places (2026-10-22)
 

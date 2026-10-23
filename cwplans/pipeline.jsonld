@@ -11206,6 +11206,9 @@
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/log.json"
     },
     {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/far-outlines-counts.json"
+    },
+    {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/tileset.json"
     },
     {
@@ -11219,6 +11222,9 @@
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/log.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/far-outlines-counts.json"
     },
     {
      "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/overture-buildings.json"
@@ -27351,6 +27357,62 @@
    "cwp:osmUse": "counts"
   },
   {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/provenance/far-outlines-counts.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcignmdt05"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcesaworldcover"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturetransportation"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebase"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturedivisions"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcescatastroinspirebu"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcovertureignfloors"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcovertureigngeometry"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/leon/sources/ghsl-built-h.json",
    "@type": [
     "prov:Entity",
@@ -27627,6 +27689,53 @@
     "dcat:Distribution"
    ],
    "dct:title": "Build log of the place Stari Grad, Sarajevo: fetch records (URL, date, SHA-256 of each answer as fetched and of the stored file) and the dataflow activities place-select-osm, place-heights, place-tiles, place-select-outer, place-city-heights, place-lod with input and output hashes; height-source counts of the core and of the city (fault F55), footprint matches, the validation of the IGN floors (León), the outer counts and the tiers",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srccopernicusglo30"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcesaworldcover"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturetransportation"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebase"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturedivisions"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcghslbuilth"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturebuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcmsbuildings"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturemsgeometry"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolplacetiles"
+   },
+   "cwp:osmUse": "counts"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/places/sarajevo/provenance/far-outlines-counts.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "Counts of operation place-far-outlines 1 (coordinator 2026-10-23: no slab for curved or concave buildings): level-13 boxes, those replaced by their level-14 outlines (fill under 0.7), tiles changed, boxes without an outline below. Written by tools/build-place-tiles.mjs far-outlines.",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"
@@ -28139,7 +28248,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings; place-blocks 5 since 2026-10-22, the UK lite v2 way): at level 13 (leaves) every OSM building of 25 m2 or more and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\") that is not named and not irregular, as one compact box (layout cwplans-boxes-1 in glb extras.blocks.compact: 8 bytes a box: its true centroid in the tile frame, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height, height source, class; with a 17 x 17 ground grid); the irregular ones (300 m2 or more, filling less than 85 % of their oriented box: 63,607) as outlines simplified at 2.5 m (the place-blocks 3 rule, kept by architecture rule 6); and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 12 the tall or big buildings as boxes (EXT_mesh_gpu_instancing) and the rest one compact square a 400 / 200 / 100 m square, turned to the grain of its buildings, its side from the built share (full at 50 %; footprint = summed area, height = area-weighted mean); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: classes, height sources, the own boxes' class, height and source (block card), buildings of the cell",
+   "dct:title": "Greater London block tiles (glTF 2.0 binary, one per quadtree cell with buildings; place-blocks 7 since 2026-10-23: far forms, issue #13, and the fill rule; the UK lite v2 way since 2026-10-22): at level 13 (leaves) every OSM building of 25 m2 or more and every Microsoft ML Buildings footprint (via Overture) of 25 m2 or more where OSM has none (class \"ms\") that is not named and not irregular, as one compact box (layout cwplans-boxes-1 in glb extras.blocks.compact: 8 bytes a box: its true centroid in the tile frame, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height, height source, class; with a 17 x 17 ground grid); the irregular ones (300 m2 or more, filling less than 85 % of their oriented box: 63,607) as outlines simplified at 2.5 m (the place-blocks 3 rule, kept by architecture rule 6); and the named buildings (1,500 m2 or 20 m and more) as outlines with COLOR_0 and _FEATURE_ID_0 = row of features.json (EXT_mesh_features); at levels 10 to 12 the tall or big buildings as boxes (EXT_mesh_gpu_instancing) when they fill 0.7 of their oriented box, else as outlines simplified at 4 m (place-blocks 7), and the rest as far forms (compact kind blocks; no squares since place-blocks 6; street blocks cut until they fill 0.7): buildings and street blocks of adjacent buildings of similar height (oriented boxes within 5 m) at their true positions, one oriented box each with the summed footprint and the area-weighted mean height, drawn where their seen size sqrt(area) x max(sqrt(area), height) is at least 307 / 1,220 / 4,870 m2 (levels 12 / 11 / 10: about one device pixel squared at the far end of each level's range); flat tops; bases 3 m under the globe's ground (world-base GLO-90 heights + EGM96 geoid); KHR_mesh_quantization; glb extras.blocks: classes, height sources, the own boxes' class, height and source (block card), buildings of the cell",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcosm"

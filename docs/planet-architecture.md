@@ -334,6 +334,26 @@ were not reachable (LGL) or answered server faults (LVGL) on 2026-10-22: those p
 GHSL and Copernicus GLO-30 (with a morphological opening that takes roofs out of the surface model). Details: skill
 docklands-3d-page, "Three.js port: German places (2026-10-22)".
 
+### 3e. Far views without squares, and spires (built 2026-10-23, issues #13 and #14)
+
+Owner, 2026-10-23: "Do 13 and 14". The coarse levels of Greater London (levels 10 to 12) and of the UK lite set (levels
+7 to 10) drew merged squares: from 20 km a town read as a lattice of tiles. Three options were measured (issue
+https://github.com/danbri/londat/issues/13 has the table): (a) the leaves drawn out to 25 km (no bytes; 3 to 10 times the
+triangles at 10 to 20 km, squares still beyond 25 km); (b) thinned real buildings; (c) street blocks of adjacent buildings,
+then the same thinning. Built: (c). Rule: adjacent buildings of similar height (oriented boxes within 5 m) are one
+oriented box with the summed footprint; a coarse level draws the blocks whose seen size sqrt(area) x max(sqrt(area),
+height) is about one device pixel squared at the far end of its range on a phone (UK 178 to 11,400 m2, London 307 to
+4,870 m2). Size: London 47.87 MB of tiles (was 47.2), the UK lite set 324.57 MB in all (was 294.8); docklandia 724 MB.
+The city tiers of the other places (Berlin, Stuttgart, Dagstuhl, Dublin, León, Sarajevo) drew their first block level
+only within 12 km: the parents of that level now refine within 25 km (operation place-far-lod; the rule is also in the
+build). Details: skill docklands-3d-page, "Far views: buildings and street blocks, no squares (2026-10-23)".
+
+Issue https://github.com/danbri/londat/issues/14 : the landmark parts of the UK lite set are drawn by their shape (walls
+from `min_height` when held up; pyramids and cones to an apex for pointed roofs and `building:part=spire`; domes and
+onions with the profiles of the landmark sets, `cwplans/tools/roof-caps.mjs`), and structures that are not OSM buildings
+(towers, lighthouses, masts, chimneys, artworks, monuments) join the landmarks by the same rule (329 drawn; 315 castle
+sites as rows). Salisbury 123 m, Lincoln 80 m (83), Durham 66 m; York Minster 63 m against 72 m (OSM data).
+
 ## 4. Adapters
 
 An adapter is a module plus a block in a region config. Contract:
