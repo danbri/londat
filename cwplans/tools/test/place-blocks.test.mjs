@@ -135,3 +135,21 @@ test('wantsOutline: the place-blocks 3 leaf rule (>= 300 m2 and under 85 % of th
   assert.equal(wantsOutline({ c: [lon, lat], a: 75, rings: [L(0.5)] }, P), false);   // small: a box
   assert.equal(wantsOutline({ c: [lon, lat], a: 400, rings: [rect(lon, lat, 40, 10, 30).coordinates[0]] }, P), false);   // a rectangle: a box
 });
+
+test('blockTile, coarse level with far_box_fill: a curved or U-shaped big building is its outline, a rectangle its box (coordinator 2026-10-23: the Tempelhof slab)', () => {
+  const n = { l: 10, x: 1000, y: 1700, key: '10-1000-1700', b: cellBox(10, 1000, 1700) }, [w, s] = n.b, mLon = 111320 * Math.cos((s + 0.05) * Math.PI / 180), mLat = 110574;
+  const c = [w + 0.05, s + 0.05], ll = ([x, y]) => [c[0] + x / mLon, c[1] + y / mLat];
+  // a U of 300 x 200 m with arms 40 m wide (fills about 47 % of its box), and a 100 x 60 m rectangle
+  const U = [[-150, -100], [150, -100], [150, 100], [110, 100], [110, -60], [-110, -60], [-110, 100], [-150, 100], [-150, -100]].map(ll);
+  const Rr = [[-50, -30], [50, -30], [50, 30], [-50, 30], [-50, -30]].map(p => ll([p[0] + 400, p[1]]));
+  const area = r => { let a = 0; for (let i = 0, j = r.length - 1; i < r.length; j = i++) a += ((r[j][0] - r[i][0]) * mLon) * ((r[j][1] + r[i][1]) * mLat); return Math.abs(a / 2); };
+  const items = [{ id: 'U', a: area(U), c, rings: [U], H: { h: 20, src: 'osm-height' }, own: true }, { id: 'R', a: area(Rr), c: ll([400, 0]), rings: [Rr], H: { h: 20, src: 'osm-height' }, own: true }];
+  const P = { tall_m: 10, big_m2: 1000, merge_m: 400, min_area_m2: 0, drop_m: 3, far_box_fill: 0.7, far_simplify_m: 4 };
+  const r = blockTile({ cell: n, items, HT: {}, groundAt: () => 10, geoidAt: () => 50, P, leaf: false, classes: ['osm', 'merged'], colour: '#d6cbb6', credit: 't' });
+  assert.equal(r.stats.far_outlines, 1, JSON.stringify(r.stats)); assert.equal(r.stats.boxes, 1);
+  const X = JSON.parse(r.bytes.subarray(20, 20 + r.bytes.readUInt32LE(12)).toString('utf8')).extras.blocks;
+  assert.equal(X.outlines.tri_end.length, 1); assert.equal(X.boxes.c.length, 1);
+  // without the rule (place-blocks 6) both were boxes
+  const r0 = blockTile({ cell: n, items, HT: {}, groundAt: () => 10, geoidAt: () => 50, P: { ...P, far_box_fill: 0 }, leaf: false, classes: ['osm', 'merged'], colour: '#d6cbb6', credit: 't' });
+  assert.equal(r0.stats.boxes, 2); assert.ok(!r0.stats.far_outlines);
+});

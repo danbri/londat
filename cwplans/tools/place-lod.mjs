@@ -217,7 +217,9 @@ export async function outerTile(opt) {
       if (A < P.min_area_m2) continue; if (!all && A < P.big_area_m2 && H.h < P.big_height_m) continue;
       // an oriented box where it fills the outline well (most houses) or the building is small, else the simplified outline
       const bx = obbBox(xy0); let xy = null;
-      if (bx && (!all || A < P.outline_min_m2 || A / Math.abs(area2(bx)) >= P.box_fill)) xy = bx; else xy = simplify(xy0, P.simplify_m);
+      // (place-lod 4, coordinator 2026-10-23: at the first block level a curved or concave building, e.g. the Tempelhof
+      // terminal, was its oriented box: a solid slab) a box only when the footprint fills far_box_fill of it there
+      if (bx && (!all ? A / Math.abs(area2(bx)) >= (P.far_box_fill ?? 0) : (A < P.outline_min_m2 || A / Math.abs(area2(bx)) >= P.box_fill))) xy = bx; else xy = simplify(xy0, P.simplify_m);
       if (!xy || xy.length < 3) continue; if (area2(xy) < 0) xy = xy.slice().reverse();
       const ll = xy.map(([x, y]) => [b.c[0] + x / mLon, b.c[1] + y / mLat]), gs = ll.map(([lo, la]) => demAt(lo, la)), g0 = Math.min(...gs), gm = gs.reduce((a, c) => a + c, 0) / gs.length, geoN = geoidAt(b.c[0], b.c[1]);
       const z0 = g0 - 1 + geoN, z1 = gm + H.h + geoN; btop = Math.max(btop, z1 - h0); stats.blocks++; const ci = Math.max(0, CL.indexOf(b.cls || 'osm')); byCls[CL[ci]] = (byCls[CL[ci]] || 0) + 1;

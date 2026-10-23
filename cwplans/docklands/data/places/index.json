@@ -216,7 +216,7 @@
     "osm": 1050005,
     "ms": 349432
    },
-   "built": "2026-10-23T12:16:22.469Z",
+   "built": "2026-10-23T16:22:32.719Z",
    "extent": [
     -0.5273437,
     51.1523438,
@@ -341,7 +341,7 @@
    "credit": "© OpenStreetMap contributors (ODbL 1.0); Landmark tags: OpenStreetMap via the QLever OSM endpoint (planet 2026-09-21); Buildings: OpenStreetMap data and Microsoft ML Buildings footprints via Overture Maps © Overture Maps Foundation, © Microsoft (ODbL 1.0); Building heights and floors from Overture Maps buildings © Overture Maps Foundation (ODbL 1.0; includes data © Microsoft, © OpenStreetMap contributors and others per record); Building heights from Microsoft Global ML Building Footprints © Microsoft (ODbL 1.0); Building heights (where OSM has none) from GHS-BUILT-H R2023A © European Union, 1995-2026, JRC (CC BY 4.0); Ground: Copernicus DEM GLO-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA (the globe's world-base heights)",
    "buildings": 22744459,
    "landmarks": 83428,
-   "built": "2026-10-23T12:27:48.063Z",
+   "built": "2026-10-23T16:09:26.873Z",
    "extent": [
     -9.84375,
     49.21875,

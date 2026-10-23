@@ -231,7 +231,16 @@ export function blockTile(opt) {
       continue;
     }
     // a coarse level: tall or big buildings as their own boxes, the rest merged by square
-    if (b.own || (xy0 && (H.h >= P.tall_m || b.a >= P.big_m2))) { if (obbOf(xy0, b.c, H.h, ciOf(b), H.src, row0 ?? -1)) byCls(b); st.landmark_boxes = (st.landmark_boxes || 0) + (row0 != null ? 1 : 0); continue; }
+    if (b.own || (xy0 && (H.h >= P.tall_m || b.a >= P.big_m2))) {
+      // (P.far_box_fill; place-blocks 7, place-lite-tiles 7, 2026-10-23: the oriented box of a curved or concave building,
+      // e.g. an airport terminal, was a solid slab far bigger than the building) the own box only when the footprint fills
+      // at least far_box_fill of its oriented box; else its outline simplified at far_simplify_m (outer ring), with its row
+      if (P.far_box_fill && xy0 && xy0.length >= 3) { const bx = obbBox(xy0), fill = bx ? Math.abs(area2(xy0)) / Math.max(1e-6, Math.abs(area2(bx))) : 1;
+        if (fill < P.far_box_fill) { let xy = simplify(xy0, P.far_simplify_m ?? 4); if (xy.length >= 3) { xy = ccw(xy);
+          if (row0 != null) { prism(nm, [xy], b.c, H.h, blockRGB, roofRGB, row0, b.cap || null); if (meta.named) meta.named.push(row0); }
+          else { prism(ol, [xy], b.c, H.h, null, null, null); meta.outlines.c.push(ciOf(b)); meta.outlines.h.push(Math.round(H.h * 10)); meta.outlines.s.push(hsi(H.src)); meta.outlines.tri_end.push(ol.idx.length / 3); }
+          st.far_outlines = (st.far_outlines || 0) + 1; byCls(b); continue; } } }
+      if (obbOf(xy0, b.c, H.h, ciOf(b), H.src, row0 ?? -1)) byCls(b); st.landmark_boxes = (st.landmark_boxes || 0) + (row0 != null ? 1 : 0); continue; }
     const MS = opt.mergeOf ? opt.mergeOf(b) : P.merge_m, E = (b.c[0] - w) * mLon, Nn = (b.c[1] - s) * mLat, k = (opt.mergeOf ? MS + ':' : '') + Math.floor(E / MS) + ',' + Math.floor(Nn / MS);
     const q = merged.get(k) || merged.set(k, { a: 0, x: 0, y: 0, h: 0, n: 0 }).get(k); q.a += b.a; q.x += b.a * b.c[0]; q.y += b.a * b.c[1]; q.h += b.a * H.h; q.n += b.n || 1;
   }

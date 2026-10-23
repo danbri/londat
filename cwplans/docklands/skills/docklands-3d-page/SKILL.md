@@ -3640,6 +3640,26 @@ https://danbri.github.io/londat/docklands/?ll=52.5100,13.4000,20000&ht=0,45 .
   that fail with a navigation error; restart it and rerun. `r.body()` of a Playwright response misses some answers: count
   bytes by Content-Length. The far-check settle loop needs several settled frames: at 3 to 9 s a frame in software, keep
   it short (4 frames).
+- **Fill rule (place-blocks 7, place-lite-tiles 7, place-lod 4, place-far-outlines 1; coordinator, 2026-10-23).** "The
+  Tempelhof airport terminal ... is drawn as one huge solid dark oriented box that fills the whole inside of its arc
+  (about 1 km x 400 m)". Cause: a coarse level drew a tall or big building as its ORIENTED BOUNDING BOX (blockTile
+  `obbOf`, and place-lod's first city block level, where every building was a box): a curved, U- or L-shaped footprint
+  becomes a slab much bigger than the building. Rule now: an own box only when the footprint fills at least 0.7 of its
+  oriented box (`far.box_fill`, place-lod `far_box_fill`); else the outline simplified at 4 m (`far.simplify_m`; a lite
+  landmark keeps its row and card). Street blocks: cut until their buildings fill 0.7 of the box (`far.fill_min`, was 0.4).
+  Counts: London coarse outlines 1,672 / 291 / 82 at levels 12 / 11 / 10, street blocks 716,290 (were 459,303), tiles
+  49.34 MB (+1.47); UK lite landmark outlines 1,130 / 364 / 62 / 6 at levels 10 / 9 / 8 / 7, tiles 304.3 MB (smaller
+  blocks: fewer pass the seen-size rule), 322.38 MB in all. Built city tiers (raw inputs gone): `build-place-tiles.mjs
+  far-outlines --region <id> [--out]` (module `place-far-outlines.mjs`) replaces each level-13 box whose building (the
+  level-14 outline of the same height whose centroid lies in the box + 2 m; transforms Y2Z^-1 . child transform . Y2Z)
+  fills less than 0.7 of it by that outline, as a new float-position node; the glb is repacked (unused views dropped).
+  Replaced: Berlin 19,626 of 81,387 (+11.2 MB), Stuttgart 2,015 of 10,737 (+1.5), Dublin 2,860 of 11,694 (+2.2), Dagstuhl 90
+  of 476, León 815 of 3,479, Sarajevo 422 of 2,295; counts in each set's provenance/far-outlines-counts.json and glb
+  `extras.blocks.far_outlines`. docklandia about 744 MB in all.
+  Screenshots: Tempelhof 10 km slab -> the curved terminal; 3 km the curved outline; 20 km no slab; Wembley 10 km the round
+  stadium. Lesson: a box that stands for a building must not cover much more ground than the building; check the fill
+  (footprint / oriented box) before using an oriented box at any level. Trap: `set-london.sh` (the measuring script)
+  replaces the London folder with a saved variant, so rebuild (deterministic, 4 minutes) after using it.
 - **Open.** The seen-size rule hides small houses between 5 and 20 km on purpose (they are under one device pixel); a
   denser far texture could come from the imagery, not geometry. Berlin and the other city tiers still have no blocks
   beyond 25 km (level 12 holds terrain only).

@@ -3551,3 +3551,9 @@ https://github.com/danbri/londat/issues/13#issuecomment-6366416701 .
   `pruned`.
 - Open: York Minster central tower (OSM); Berlin and the other city tiers have no blocks beyond 25 km; structures without
   a height (3,581) not drawn; the seen-size rule leaves small houses out between about 5 and 20 km on purpose.
+- Follow-up (same day, coordinator: "the Tempelhof airport terminal ... is drawn as one huge solid dark oriented box"):
+  fill rule. A coarse own box only when the footprint fills 0.7 of its oriented box, else the outline (4 m); street
+  blocks cut until 0.7. place-blocks 7 (London: 2,045 coarse outlines, tiles 49.34 MB), place-lite-tiles 7 (UK: 1,562
+  landmark outlines, 322.38 MB in all), place-lod 4 (rebuilds), place-far-outlines 1 on the built city tiers (Berlin
+  19,626, Stuttgart 2,015, Dublin 2,860, Dagstuhl 90, León 815, Sarajevo 422 level-13 boxes replaced by their outlines).
+  docklandia about 744 MB. Skill: "Far views", bullet "Fill rule".

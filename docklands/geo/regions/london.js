@@ -67,7 +67,10 @@ export default {
       // max(sqrt(area), height) is at least min_m2: (far end of the level's range / 1462 m)^2, about one device pixel
       // squared on a phone (level 12 drawn to about 25.6 km, 11 to 51 km, 10 to about 100 km); tall or big buildings stay
       // their own boxes (levels below). Without far the tool builds the turned squares of place-blocks 4 and 5
-      far: { gap_m: 5, fill_min: 0.4, h_rel: 0.35, h_abs_m: 3, min_m2: { 10: 4870, 11: 1220, 12: 307 } },
+      // box_fill, simplify_m and fill_min 0.7 (place-blocks 7, coordinator 2026-10-23: a curved terminal was a solid slab):
+      // a tall or big building is its own box only when it fills box_fill of its oriented box, else its outline simplified at
+      // simplify_m; a street block is cut until its buildings fill fill_min of its box (was 0.4)
+      far: { gap_m: 5, fill_min: 0.7, h_rel: 0.35, h_abs_m: 3, box_fill: 0.7, simplify_m: 4, min_m2: { 10: 4870, 11: 1220, 12: 307 } },
       history: 'place-blocks 3 (build of 2026-10-21, tileset london-1): 2,451 tiles, 110.62 MB in all (levels 10 to 14: 0.38, 1.31, 4.42, 14.35, 86.26 MB; the leaves: instance boxes, simplified outlines and their JSON block data, about 62 bytes a building); merged axis-aligned squares of 400 / 200 / 100 / 50 m at levels 10 to 13, so from 11 km a field of grey squares and every building only below about 2.5 km.',
       top_level: 10, leaf_level: 13,
       // what each coarse level draws: buildings at least big_m2 or tall_m as their own oriented boxes; the rest one

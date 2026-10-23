@@ -122,7 +122,10 @@ export default {
       // size sqrt(area) x max(sqrt(area), height) is at least min_m2 = (far end of its range / 1462 m)^2, about one device
       // pixel squared on a phone (level 10 drawn to about 19.5 km, 9 to 39 km, 8 to 78 km, 7 beyond). merge_m above is
       // used only without far (the squares of place-lite-tiles 3 and 4)
-      far: { gap_m: 5, fill_min: 0.4, h_rel: 0.35, h_abs_m: 3, min_m2: { 7: 11400, 8: 2850, 9: 712, 10: 178 } },
+      // box_fill, simplify_m and fill_min 0.7 (place-lite-tiles 7, coordinator 2026-10-23: a curved terminal was a solid slab):
+      // a landmark drawn as its own box at a coarse level only when it fills box_fill of its oriented box, else its outline
+      // simplified at simplify_m; a street block is cut until its buildings fill fill_min of its box (was 0.4)
+      far: { gap_m: 5, fill_min: 0.7, h_rel: 0.35, h_abs_m: 3, box_fill: 0.7, simplify_m: 4, min_m2: { 7: 11400, 8: 2850, 9: 712, 10: 178 } },
       grid_n: 17,   // the ground grid of a tile's compact boxes (n x n)
       full_share: 0.5, drop_m: 8,   // (full_share: 0.35 until place-lite-tiles 3; 0.5 leaves street gaps between the turned squares)
       // (drop_m: bases deeper than London's 3 m: the globe's ground away from the world-base tiles is a 9.8 km texture drawn by 2.4 km patches)

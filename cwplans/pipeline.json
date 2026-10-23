@@ -11320,6 +11320,14 @@
   {
    "tool": "tools/storey-heights.mjs",
    "provides": "Storey height by use (no place constant): OSM building value -> use class (residential, office, mixed, retail, industrial, institutional, small; kinds left alone), height = base + typical x (storeys - 1 + plant storeys), the CTBUH-based prior, and the least-absolute-deviation fit of base and typical to measured buildings. Used by model-heights; meant for place-city-heights and other cities later."
+  },
+  {
+   "tool": "tools/roof-caps.mjs",
+   "provides": "Cap kinds and profiles of towers and domes (pointed: pyramid or cone to an apex; dome; onion) shared by build-place-landmarks.mjs and the UK lite set (place-blocks.mjs blockTile prism caps, place-lite-heights.mjs partCap). Pure data and functions (issue #14)."
+  },
+  {
+   "tool": "tools/place-far-outlines.mjs",
+   "provides": "Operation place-far-outlines (build-place-tiles.mjs far-outlines): in a built place with a city tier, a level-13 box whose building fills less than 0.7 of it is replaced by the building outline of its level-14 tile (glb read and repack). Pure functions over glb bytes and tile matrices (coordinator 2026-10-23: the Tempelhof terminal was a solid slab)."
   }
  ],
  "tests": [
