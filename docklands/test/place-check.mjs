@@ -202,11 +202,13 @@ for (const [w, h, dpr] of SIZES) {
     const shotC = `${OUT}/place-${PLACE}-${tag}-city8.png`; await page.waitForTimeout(300); await page.screenshot({ path: shotC }); console.log('     screenshot', shotC);
   }
   // a far view, 30 km out: surroundings tiles with main roads and the place's river; the town of the city ring found by name
+  // (since place-far-lod, 2026-10-23, the city blocks show to 25 km: a big screen loads about 200 city tiles here, which
+  // takes more than 3 minutes in software rendering)
   if (C.kind !== 'blocks') { const far = await page.evaluate(async ({ o, p }) => { const G = __docklands3.globe; await docklands.goTo({ lon: o.lon, lat: o.lat, range_m: 30000, tilt_deg: 45 });
-    const t0 = performance.now(); while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
+    const t0 = performance.now(); while (performance.now() - t0 < 420000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); const st = G.placesStats().find(x => x.id === p); if (st.settled && performance.now() - t0 > 1500) break; }
     const d = await docklands.describeView(); return { st: G.placesStats().find(x => x.id === p), sur: (d.places || []).find(x => x.place === p)?.surroundings, view: docklands.getView() }; }, { o: FJ.origin, p: PLACE });
   check(far.st.settled && far.st.tiers.surroundings > 0 && far.sur && far.sur.roads_km > 20 && far.sur.rivers.some(r => C.river.test(r)), 'far view (30 km): surroundings tiles with main roads and the river',
-    `${JSON.stringify(far.st.drawn_by_level)} by level; roads ${far.sur?.roads_km} km, rail ${far.sur?.rail_km} km, rivers ${far.sur?.rivers?.join(', ')}; places in view ${far.sur?.places_in_view?.slice(0, 5).join(', ')}; eye ${far.view.eye.above_ground_m} m up`);
+    `${far.st.settled ? 'settled' : 'NOT settled'}, tiers ${JSON.stringify(far.st.tiers)}; ${JSON.stringify(far.st.drawn_by_level)} by level; roads ${far.sur?.roads_km} km, rail ${far.sur?.rail_km} km, rivers ${far.sur?.rivers?.join(', ')}; places in view ${far.sur?.places_in_view?.slice(0, 5).join(', ')}; eye ${far.view.eye.above_ground_m} m up`);
   const shot3 = `${OUT}/place-${PLACE}-${tag}-far.png`; await page.waitForTimeout(500); await page.screenshot({ path: shot3 }); console.log('     screenshot', shot3); }
   const ft = await page.evaluate(q => docklands.findPlaces(q, 5), C.town);
   check(ft.some(r => r.id && r.id.startsWith('place:' + PLACE) && r.kind === 'place'), `findPlaces "${C.town}" (${C.kind === 'blocks' ? 'the place\'s own word' : 'a town of the city ring'})`, ft.slice(0, 3).map(r => `${r.name} (${r.kind})`).join('; '));

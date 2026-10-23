@@ -70,7 +70,7 @@ for (const [w, h, dpr] of SIZES) {
   const uk = await settle(page);
   const pl = uk.st.find(x => x.id === ID), lv = Object.keys(pl.drawn_by_level).map(Number);
   check(pl.settled && pl.tiles > 0 && Math.max(...lv) <= 8, 'the UK from 500 km: the lite set settled at its coarse levels', `levels ${JSON.stringify(pl.drawn_by_level)}, ${pl.triangles.toLocaleString('en')} place triangles, frame ${uk.frame?.triangles?.toLocaleString('en')} triangles, ${uk.frame?.calls} calls, ${uk.s.toFixed(1)} s; eye ${uk.view.eye.above_ground_m} m up`);
-  check(uk.dp && uk.dp.lite && /lite set/.test(uk.dp.text) && (uk.dp.lite.mass_boxes || 0) + (uk.dp.lite.far_blocks || 0) > 1000 && uk.dp.lite.mass_buildings > 1e6, 'describeView: a lite set, counted by class', uk.dp ? `${JSON.stringify({ ...uk.dp.lite, rule: undefined, about: undefined })} · ${uk.dp.text.slice(0, 260)}` : 'no place in the description');
+  check(uk.dp && uk.dp.lite && /lite set/.test(uk.dp.text) && ((uk.dp.lite.mass_boxes || 0) > 1000 && uk.dp.lite.mass_buildings > 1e6 || (uk.dp.lite.far_blocks || 0) > 1000 && uk.dp.lite.far_left_out > 0), 'describeView: a lite set, counted by class (merged squares, or since the far forms of issue #13 the blocks big enough to see and the buildings left out)', uk.dp ? `${JSON.stringify({ ...uk.dp.lite, rule: undefined, about: undefined })} · ${uk.dp.text.slice(0, 260)}` : 'no place in the description');
   await page.screenshot({ path: `${OUT}/lite-uk-500km-${tag}.png` }); console.log(`     screenshot ${OUT}/lite-uk-500km-${tag}.png`);
   // 2. cities from 20 km
   for (const c of CITIES) {

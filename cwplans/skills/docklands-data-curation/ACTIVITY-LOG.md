@@ -3526,3 +3526,28 @@ https://github.com/danbri/londat/issues/13 ). Skill docklands-3d-page, "Greater 
   more, under 85 % of the oriented box, simplified at 2.5 m), 1,330,253 compact boxes. Size 48.7 MB (level 13 45.02 MB;
   10 to 12 unchanged). Raw answer fetched again (same SHA-256) and deleted after the build; log pruned again (v4 listed
   under `pruned`).
+
+## 2026-10-23: issues #13 (far views) and #14 (spires and towers) (subagent, worktree branch, not pushed)
+
+Owner, 2026-10-23: "Do 13 and 14". Skill docklands-3d-page, "Far views: buildings and street blocks, no squares" and "The
+UK lite set: spires and towers drawn by their shape; structures". Measurements: issue #13 comment
+https://github.com/danbri/londat/issues/13#issuecomment-6366416701 .
+- Fresh container: every raw input fetched again (Overture release 2026-09-23.1: the 11 UK parts and London, the same
+  SHA-256 and counts as before; QLever landmark tags 76,131 rows; GHSL; Wikidata). The raw part answers were deleted
+  after their select activity (`--clean-raw`).
+- #13, three options measured (far-check.mjs, new): (a) leaves to 25 km, (b) thinned buildings by seen size, (c) street
+  blocks then the same rule. Built (c): place-blocks 6 (London, 459,303 street blocks from 1,399,437 buildings; tiles
+  47.87 MB), place-lite-tiles 5 (UK, level 10 5.1 M blocks for 14.6 M buildings; 324.07 MB in all). Leaves unchanged byte
+  for byte. place-far-lod 1 on Berlin, Stuttgart, Dagstuhl, Dublin, León, Sarajevo (city blocks from 25 km; tileset.json
+  only); the same rule in place-lod `errOf` (`blocks_from_m`).
+- #14: place-lite-landmark-heights 2 (parts by shape: 445 pointed caps, 118 domes, 16 onions, 599 parts from their
+  min_height), place-lite-structures 1 (329 structures drawn, 315 castle sites as rows), place-lite-tiles 6 (306.5 MB of
+  tiles, 324.57 MB in all). Salisbury 123 m, Lincoln 80 m (83), Durham 66 m, York Minster 63 m (72; fault: OSM central
+  tower part 54 m flat, listed in the README, not patched).
+- Commits (londat, branch worktree-agent-a399de207f5b14047): 372ddfcc (#13 code), af7fcab1 (London rebuilt, León and
+  Sarajevo far-lod), 75c79e31 (UK far config, register), 8ecc5776 (#14), then the docs commit. docklandia clone branch
+  uk-lite-3: 8fda4c74 (#13 data), 5d986dc4 (#14 data). Merge docklandia first.
+- Logs pruned: London (place-blocks 5), UK lite (landmark-heights 1 and tiles 4, then the #13 versions); listed under
+  `pruned`.
+- Open: York Minster central tower (OSM); Berlin and the other city tiers have no blocks beyond 25 km; structures without
+  a height (3,581) not drawn; the seen-size rule leaves small houses out between about 5 and 20 km on purpose.
