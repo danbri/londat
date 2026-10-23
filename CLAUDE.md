@@ -196,6 +196,8 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
 - `docklands/`: the Three.js port of the 3D page (experimental, three.js r186 in `third_party/three/`, WebGPU or WebGL 2),
   https://danbri.github.io/londat/docklands/ ; it reads the data of `cwplans/docklands/`. Skill: `docklands-3d-page`,
   "Three.js port".
+- The app at https://danbri.github.io/londat/docklands/ is called **moglob** (owner, 2026-10-23: "give the app a discrete
+  name, 'moglob'"); the URLs, the repository and the folders keep their names.
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).

@@ -288,6 +288,8 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   // ---------- greens (water and trees) of the places that have them
   const greensIx = fetch(new URL('../cwplans/docklands/data/places/greens.json', location.href)).then(r => r.ok ? r.json() : { places: {} }).catch(() => ({ places: {} }));
   const greensP = new Map();
+  // a freed place (places.js) takes its look facts and greens with it (moglob, 2026-10-23: they stayed for the session)
+  addEventListener('docklands-place-freed', e => { const id = e.detail?.id; looks.delete(id); greensP.delete(id); });
   function greensOf(p) {
     if (greensP.has(p.id)) return greensP.get(p.id);
     // a path beside the index, or an absolute URL (a place in another repository: tileBase; ?placebase= rebases it)

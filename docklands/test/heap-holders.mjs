@@ -6,17 +6,20 @@
 // memory outside the V8 heap: they show under (2), not in usedJSHeapSize) with the largest retained objects reached from
 // window globals (dominator tree).
 //   python3 -m http.server 8317 --bind 127.0.0.1 &      (from the repository root)
-//   node docklands/test/heap-holders.mjs [--base http://127.0.0.1:8317] [--views cw,area] [--size 390x844@2] [--snapshot [--paths] [--chains]] [--query '&x=1']
+//   node docklands/test/heap-holders.mjs [--base http://127.0.0.1:8317] [--views cw,area] [--size 390x844@2] [--snapshot [--paths] [--chains]] [--query '&x=1'] [--fly]
+// --fly: before measuring, the fly of memory-check.mjs (Dublin, Berlin, Manchester 20 km, York 1 km, back to the view),
+// with the docklandia sets served from docklands/test/out/places (symlinks): what is still held after the return
 // Skill: docklands-3d-page, "Three.js port: level of detail and the hand-over" (memory).
 import { chromium } from '@playwright/test';
-import { writeFileSync, readFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { writeFileSync, readFileSync, mkdtempSync, rmSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = arg('--base', 'http://127.0.0.1:8317'), VIEWS = arg('--views', 'cw,area').split(',').filter(Boolean), EXTRA = arg('--query', ''), SNAP = process.argv.includes('--snapshot');
 const [W, H, DPR] = (/^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(arg('--size', '390x844@2')) || []).slice(1).map(Number);
-const T = '2026-10-12T12:00', MB = x => +(x / 1048576).toFixed(1);
+const T = '2026-10-12T12:00', MB = x => +(x / 1048576).toFixed(1), FLY = process.argv.includes('--fly');
+const PB = FLY ? readdirSync('docklands/test/out/places').map(id => `&placebase=${encodeURIComponent(`${id}:${BASE}/docklands/test/out/places/${id}/`)}`).join('') : '';
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
   args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-precise-memory-info'] });
 let failed = 0;
@@ -110,9 +113,16 @@ for (const v of VIEWS) {
   page.setDefaultTimeout(400000);
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
-  await page.goto(`${BASE}/docklands/?view=${v}&webgl&animate=0&weather=0&t=${T}${EXTRA}`);
+  await page.goto(`${BASE}/docklands/?view=${v}&webgl&animate=0&weather=0&t=${T}${EXTRA}${PB}`);
   await page.waitForFunction(() => window.__docklands3?.ready && window.__docklands3.globe, null, { timeout: 400000 });
   await page.waitForTimeout(8000);
+  if (FLY) { for (const t of [[53.34725, -6.25916, 1500, 0, 55], [52.5170, 13.3940, 1500, 80, 55], [53.4794, -2.2453, 20000, 0, 45], [53.9620, -1.0793, 1000, 0, 60], null]) {
+    await page.evaluate(async t => { const G = __docklands3.globe, sleep = ms => new Promise(r => setTimeout(r, ms));
+      if (t) await docklands.goTo({ lat: t[0], lon: t[1], alt_m: t[2], heading_deg: t[3], tilt_deg: t[4] }, { animate: true }); else G.home();
+      while (G.isFlying()) await sleep(200);
+      const t0 = performance.now(); let ok = 0; while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); await sleep(200);
+        const st = G.placesStats().filter(s => s.state); if (G.mode !== 'globe' || st.every(s => s.settled)) { if (++ok > 3) break; } else ok = 0; } }, t); }
+    await page.waitForTimeout(15000); }
   await page.evaluate(() => new Promise(ok => { __docklands3.draw(); requestAnimationFrame(() => requestAnimationFrame(ok)); }));
   const cdp = await ctx.newCDPSession(page);
   const heap = () => page.evaluate(() => +(performance.memory.usedJSHeapSize / 1048576).toFixed(1));

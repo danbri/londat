@@ -53,7 +53,7 @@ if (ONLY.includes('1') || ONLY.includes('2')) {
       try { d.setLayer('nosuch', true); o.badLayer = 'no error'; } catch (e) { o.badLayer = e.message; }
       return o;
     });
-    ok(r.version === '1.3.0', 'window.docklands.version', r.version);
+    ok(r.version === '1.4.0', 'window.docklands.version', r.version);
     ok(r.mock.length === 14 && r.webmcp.registered.length === 14 && r.webmcp.api === 'document.modelContext', 'WebMCP: 14 tools (1.1.0: get_time_zone, set_time_zone; 1.2.0: get_script_preference, set_script_preference) registered on document.modelContext', r.mock.join(' '));
     ok(r.mockCall && /One Canada Square/.test(r.mockCall.content[0].text), 'WebMCP: describe_view called through the host answers', r.mockCall && r.mockCall.content[0].text.slice(0, 160));
     ok(Math.abs(r.view.eye.lat - 51.495) < 0.01 && Math.abs(r.view.heading_deg - 321.5) < 2 && r.view.fov_deg.vertical > 40 && r.view.time.time_zone, 'getView: eye, heading, field, time zone', JSON.stringify({ eye: r.view.eye, h: r.view.heading_deg, f: r.view.fov_deg, t: r.view.time }));

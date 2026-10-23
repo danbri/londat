@@ -3,8 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Docklands 3D (Three.js, experimental)</title>
-<meta name="description" content="Experimental port of the Docklands 3D page to three.js r186: WebGPU where the browser has it, else WebGL 2; TSL node materials.">
+<title>moglob</title>
+<meta name="description" content="moglob: the Docklands model, places and the planet in 3D. The Three.js port of the Docklands 3D page (three.js r186): WebGPU where the browser has it, else WebGL 2; TSL node materials.">
+<meta name="application-name" content="moglob">
+<meta name="apple-mobile-web-app-title" content="moglob">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0e12">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <style>
 :root{--dw:min(88vw,400px);--bg:#0f1215;--fg:#e8ecef;--mut:#9aa4ad;--acc:#2cc3b5;--line:#2c353d;--panel:rgba(16,20,24,.92);--safe:env(safe-area-inset-bottom,0px);--top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
@@ -191,14 +200,14 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
 <main id="view" aria-label="3D view of the Docklands"></main>
 <div id="labels" role="region" aria-label="Labels on the map"></div>
 <div id="hud" role="status">Loading the model data...</div>
-<div id="boot" role="status" aria-live="polite"><div class="ring"></div><div>Starting the 3D view...</div></div>
+<div id="boot" role="status" aria-live="polite"><div class="bootName">moglob</div><div class="ring"></div><div id="bootStep">Starting the 3D view...</div></div>
 <style>#boot{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;background:#0b0e12;color:#cfd6dd;font:15px system-ui,sans-serif;transition:opacity .35s}
-#boot.done{opacity:0;pointer-events:none}#boot .ring{width:42px;height:42px;border-radius:50%;border:3px solid #2a3440;border-top-color:#7fd1a8;animation:bootspin 1s linear infinite}
+#boot.done{opacity:0;pointer-events:none}#boot .bootName{font:600 22px/1 system-ui,sans-serif;letter-spacing:.06em;color:#e8ecef}#bootStep{max-width:calc(100vw - 40px);text-align:center;font-size:13px;color:#9aa4ad}#boot .ring{width:42px;height:42px;border-radius:50%;border:3px solid #2a3440;border-top-color:#7fd1a8;animation:bootspin 1s linear infinite}
 @keyframes bootspin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion: reduce){#boot .ring{animation:none}}</style>
 <div id="navCue"></div><div id="navCueT" role="status" aria-live="polite"></div>
 <div id="scrim" hidden></div>
 <aside id="drawer" hidden aria-label="Menu">
-  <div id="dHead"><b>Docklands 3D</b><button type="button" class="ib" id="drawerX" aria-label="Close the menu">&times;</button></div>
+  <div id="dHead"><b>moglob</b><button type="button" class="ib" id="drawerX" aria-label="Close the menu">&times;</button></div>
   <nav id="dtabs" role="tablist" aria-label="Menu sections">
     <button type="button" role="tab" data-pane="paneViews" aria-selected="true">Views</button><button type="button" role="tab" data-pane="paneLook" aria-selected="false">Look</button><button type="button" role="tab" data-pane="paneLayers" aria-selected="false">Layers</button><button type="button" role="tab" data-pane="paneGo" aria-selected="false">Go</button><button type="button" role="tab" data-pane="paneTime" aria-selected="false">Time</button><button type="button" role="tab" data-pane="paneAbout" aria-selected="false">About</button>
   </nav>
@@ -267,6 +276,8 @@ input,textarea,select,#cardBody,#shareOut,#liveOut,#ugText,.tw,#credits{-webkit-
       <div class="ext" id="ext-time"></div>
     </div>
     <div class="pane" id="paneAbout" role="tabpanel" aria-label="About">
+      <h3>moglob</h3>
+      <p class="small">moglob is the name of this app (owner, 2026-10-23): the Docklands model from London Bridge to Cody Dock, above and below ground, with the planet and the places on it (Dublin, Berlin, León, Sarajevo, Greater London and the UK). It keeps what it holds in memory within a budget for your device, frees what is far away, and says so on screen when it must draw with less detail (add <code>?mem=full</code> to the address for full detail).</p>
       <h3>Docklands: London Bridge to Cody Dock, above and below ground</h3>
       <p class="small">Experimental port of the 3D page to three.js r186. <a href="../cwplans/docklands/">The WebGL page</a> · <a href="../cwplans/atlas/">atlas</a> · <a href="../cwplans/kg/">knowledge graph</a> · <a href="https://github.com/danbri/londat/blob/main/docklands/README.md">notes and menu map</a> · <a href="#credits" data-credits>credits</a></p>
       <h3>How to use it</h3>

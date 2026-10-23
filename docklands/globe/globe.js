@@ -238,6 +238,7 @@ export async function createGlobe(H) {
     scene.traverse(x => { const g = x.isMesh || x.isLine || x.isPoints ? x.geometry : null; if (g) { g.dispose(); n++; v += g.attributes.position?.count || 0; } });
     for (const t of G.textures || []) t.dispose();
     if (G.baseRest) G.baseRest();   // the base imagery tiles (globe/base-tiles.js)
+    for (const L of cellLayers) for (const [k, c] of [...L.cells]) if (c.meshes.length || c.labels.length) dropCell(L, k, c);   // the skeleton cells: read again when the globe is seen (moglob, 2026-10-23)
     if (rt) { if (bgOn) setBg(false); rt.dispose(); rt = null; G.bgNode = null; }
     if (labels) for (const c of labels.candidates) if (c.el) { c.el.remove(); c.el = null; }
     G.rested = { meshes: n, vertices: v, patchesDropped: dropped, at: Date.now() }; G.rests = (G.rests || 0) + 1;
@@ -736,6 +737,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   const cellLayers = [];
   G.addCellLayer = function (spec) { const L = { ...spec, cells: new Map(), on: spec.style?.on !== false, mat: lineMaterial(spec.style?.color || '#ffffff', spec.style?.opacity ?? 0.8) }; cellLayers.push(L); if (G.ready) layerUi(true); G.dirty = true; return L; };
   let cellT = 0;
+  function dropCell(L, k, c) { for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); } if (c.labels.length) { const S = new Set(c.labels); labels.clear(x => S.has(x)); } c.meshes = []; c.labels = []; L.cells.delete(k); }
   function updateCells(now) {
     if (!cellLayers.length || now - cellT < 300) return; cellT = now;
     const alt = F.eyeGeo.h, half = clamp(orbit.range * 1.4 / 111000, 0.05, 60), b = [orbit.lon - half / Math.max(0.2, Math.cos(orbit.lat * D2R)), orbit.lat - half, orbit.lon + half / Math.max(0.2, Math.cos(orbit.lat * D2R)), orbit.lat + half];
@@ -747,6 +749,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
           const k = level + '/' + x + '/' + y; want.add(k); if (L.cells.has(k)) continue;
           const cell = { k, meshes: [], labels: [], used: 0 }; L.cells.set(k, cell);
           Promise.resolve(L.query([-180 + x * sz, -90 + y * sz, -180 + (x + 1) * sz, -90 + (y + 1) * sz], level, [x, y])).then(fs => {
+            if (L.cells.get(k) !== cell) return;   // (dropped meanwhile)
             const feats = (fs && fs.features) || fs || [];
             if (L.kind !== 'points') { cell.meshes = buildLines(feats.flatMap(f => linesOf(f.geometry)), G.heightAt, L.mat, L.style?.lift || 0); for (const m of cell.meshes) { m.visible = false; scene.add(m); } }
             if (L.labels || L.kind === 'points') for (const f of feats) { const p = f.properties || {}, xy = f.geometry?.type === 'Point' ? f.geometry.coordinates : labelPoint(f.geometry), text = p[(L.labels && L.labels.text) || 'name']; if (!xy || !text) continue;
@@ -758,7 +761,9 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
         }
       }
       for (const [k, c] of L.cells) { const on = want.has(k); for (const m of c.meshes) { m.userData.on = on; m.visible = on; } for (const lb of c.labels) lb.off = !on; if (on) c.used = now; }
-      if (L.cells.size > 300) for (const [k, c] of [...L.cells].sort((a, b) => a[1].used - b[1].used).slice(0, L.cells.size - 250)) { if (want.has(k)) continue; for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); } labels.clear(x => c.labels.includes(x)); L.cells.delete(k); }
+      // (cells not in view, least recently used first, beyond 120 a layer: moglob, 2026-10-23: 300 a layer held 45 MB of
+      // line arrays after a fly over the UK; a cell is read again from the skeleton when the view needs it)
+      if (L.cells.size > 120) for (const [k, c] of [...L.cells].sort((a, b) => a[1].used - b[1].used).slice(0, L.cells.size - 100)) { if (want.has(k)) continue; dropCell(L, k, c); }
     }
   }
   // new ground heights (base height tiles loaded over area a = [w, s, e, n]): the line chunks over it again on the new

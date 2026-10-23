@@ -100,7 +100,7 @@ export function initMenu(M) {   // M: { setView, layers: () => LAYERS }
     // otherwise), then the page prints that image with the share link under it
     if (pr) pr.onclick = () => { open(false); globalThis.__d3snap = url => {
       if (!url) { print(); return; }
-      const w = document.createElement('div'); w.id = 'printShot'; w.innerHTML = `<img src="${url}" alt="Docklands 3D view" style="width:100%"><p class="small" style="word-break:break-all">${link().replace(/[<>&"]/g, '')}</p>`;
+      const w = document.createElement('div'); w.id = 'printShot'; w.innerHTML = `<img src="${url}" alt="moglob 3D view" style="width:100%"><p class="small" style="word-break:break-all">${link().replace(/[<>&"]/g, '')}</p>`;
       const st = document.createElement('style'); st.textContent = '@media print{body>*:not(#printShot){display:none!important}#printShot{display:block!important}}#printShot{display:none}';
       document.body.append(st, w); setTimeout(() => { print(); setTimeout(() => { w.remove(); st.remove(); }, 1000); }, 200); };
       globalThis.__docklands3?.draw?.(); }; }

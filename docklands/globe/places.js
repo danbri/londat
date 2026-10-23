@@ -30,11 +30,16 @@ import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max
 import { geodeticToEcef, enuBasis, surfaceDistance, D2R } from '../geo/ellipsoid.js';
 import { fold, fmtDist, compass, bearingDeg } from './world.js';
 import { makeLook } from './place-look.js';
+import { GOV } from '../governor.js';   // moglob's memory budget: tiles and places are freed by bytes, least recently used first
 
 export const PLACES_INDEX = '../cwplans/docklands/data/places/index.json';
 export const LOAD_M = 150000, FREE_M = 220000;
 const qs = new URLSearchParams(location.search);
-const MAX_SSE = +(qs.get('sse') || 24), MAX_FETCH = 8, MAX_ACTIVATE = 3, ACTIVATE_MS = 10, CACHE = 220, IDLE_MS = 15000;
+// MAX_SSE: the governor's tiers raise it under memory pressure (x 1.5, x 2: coarser tiles, fewer of them); MAX_FETCH: by
+// device class (governor.js: 4 on a phone, 8 on a computer). IDLE_MS: a tile not drawn for that long may go when over the
+// count CACHE; the governor frees idle tiles of every place (and the base imagery) by bytes when the budget is short.
+const MAX_SSE0 = +(qs.get('sse') || 24), MAX_FETCH = GOV.S.max_fetch || 8, MAX_ACTIVATE = 3, ACTIVATE_MS = 10, CACHE = 220, IDLE_MS = 15000, TILE_IDLE_MS = 1500, PLACE_IDLE_MS = 20000;
+let MAX_SSE = MAX_SSE0; GOV.onTier(t => { MAX_SSE = MAX_SSE0 * [1, 1.5, 2][t]; });
 const len = p => Math.hypot(p[0], p[1], p[2]);
 const Y2Z = [1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1];   // glTF y-up -> 3D Tiles z-up (column-major)
 function mul4(a, b, o = new Float64Array(16)) { for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; } return o; }
@@ -214,13 +219,13 @@ export async function attachPlaces(G, H, { scene, U }) {
     p.state = 'loading';
     try {
       const tsUrl = new URL(p.tileset, base);
-      const [ts, sur] = await Promise.all([fetch(tsUrl).then(r => r.json()), p.surround ? fetch(new URL(p.surround, base)).then(r => r.json()).catch(() => null) : null]);
+      p.dataBytes = 0; const [ts, sur] = await Promise.all([fetchSized(tsUrl, p), p.surround ? fetchSized(new URL(p.surround, base), p).catch(() => null) : null]);
       if (p.state !== 'loading') return;
       p.tsUrl = tsUrl; p.nodes = []; p.sur = sur;
       const root = nodesOf(p, ts.root, null, null, 0);
       p.roots = root.uri ? [root] : root.kids;   // a set without content at the root: its children are the top cells
       // features.json: the core's buildings (the ground grid of the core, the text interface)
-      const fj = await fetch(new URL(p.features, base)).then(r => r.json());
+      const fj = await fetchSized(new URL(p.features, base), p);
       if (p.state !== 'loading') return;
       p.feats = indexFeatures(fj); p.ground = fj.ground; p.geoid = fj.geoid_m; p.ring = fj.ring || null;
       p.coreTiles = new Set((fj.tiles || []).map(t => t.key)); for (const n of p.nodes) n.core = p.coreTiles.has(n.key) && !n.kids.length;
@@ -236,8 +241,13 @@ export async function attachPlaces(G, H, { scene, U }) {
     for (const t of p.extras) { scene.remove(t.mesh); t.mesh.geometry.dispose(); if (!SHARED.has(t.mesh.material)) t.mesh.material.dispose(); }
     G.labels?.()?.clear(c => c.placeId === p.id);
     p.extras = []; p.nodes = []; p.roots = []; p.state = null; p.ringHo = null; p.topReady = false; p.curtain = null; G.dirty = true;
+    dropData(p);   // (moglob, 2026-10-23: a freed place kept its features, surroundings, names and greens: 10 to 40 MB of JS heap a place)
     dispatchEvent(new CustomEvent('docklands-place-freed', { detail: { id: p.id } }));
   }
+  // the place's data read for its tiles or for a search: features (rows), surroundings, names, greens. Read again on need
+  function dropData(p) { p.feats = null; p.featsP = null; p.sur = null; p.surP = null; p.namesP = null; p.greens = null; p.dataBytes = 0; p.searchUsed = 0; }
+  // a JSON file with its size (the text length: the governor counts parsed JSON at about 3 x its text)
+  const fetchSized = (u, p) => fetch(u).then(r => { if (!r.ok) throw new Error(r.status + ' ' + u); return r.text(); }).then(t => { if (p) p.dataBytes = (p.dataBytes || 0) + t.length * 3; return JSON.parse(t); });
   function indexFeatures(fj) {
     const pick = (fields, row) => Object.fromEntries(fields.map((f, i) => [f, row[i]]));
     const B = fj.buildings.map((r, i) => r && { ...pick(fj.buildings_fields, r), i }).filter(Boolean);
@@ -297,7 +307,15 @@ export async function attachPlaces(G, H, { scene, U }) {
       mesh.userData = { place: n.p.id, tile: n.uri, ground: kind === 'ground', kind, node: n, map: mesh.material.colorNode && kind === 'ground' ? mapOf(mesh) : null };
       scene.add(mesh); n.meshes.push(mesh); n.tris += (q.idx ? q.idx.length : q.pos.length / 3) / 3 * (q.inst ? q.inst.t.length / 3 : 1);
     }
-    n.prims = null; n.state = 'ready';
+    n.prims = null; n.state = 'ready'; n.bytes = nodeBytes(n);
+  }
+  // what a tile holds: its arrays (kept on the CPU, for taps, and on the GPU: x 2) and its textures (the decoded image and
+  // the GPU texture with mipmaps)
+  function nodeBytes(n) {
+    let b = 0; const seen = new Set();
+    for (const m of n.meshes) { const g = m.geometry; if (!seen.has(g)) { seen.add(g); for (const a of Object.values(g.attributes)) b += 2 * (a.array?.byteLength || 0); b += 2 * (g.index?.array?.byteLength || 0); }
+      if (m.isInstancedMesh) b += 2 * m.instanceMatrix.array.byteLength; const t = m.userData.map || m.__map; if (t?.image) b += t.image.width * t.image.height * 4 * (1 + 4 / 3); }
+    return b;
   }
   const mapOf = m => m.__map || null;
   // a mesh of a core tile's decoration (water, trees: place-look.js decorate), placed and shown with the tile
@@ -433,8 +451,9 @@ export async function attachPlaces(G, H, { scene, U }) {
     const F = G.frameState, now = performance.now(), K = G.cull ? G.cull.K() : innerHeight; frameNo++;
     let hole = null, best = Infinity; want.length = 0; drawn.length = 0;
     for (const p of P) {
-      const d = len([eye[0] - p.C[0], eye[1] - p.C[1], eye[2] - p.C[2]]);
-      if (d < loadM(p) && !p.state) load(p); else if (d > freeM(p) && p.state === 'loaded') { free(p); continue; }
+      const d = len([eye[0] - p.C[0], eye[1] - p.C[1], eye[2] - p.C[2]]); p.eyeD = d;
+      if (d < loadM(p) && !p.state && placeRoom(p, d)) load(p);
+      else if (p.state === 'loaded' && (d > freeM(p) || (d > loadM(p) && now - (p.lastDraw || p.t0 || 0) > PLACE_IDLE_MS))) { free(p); continue; }   // far, or out of reach and not drawn for 20 s
       if (p.state !== 'loaded') continue;
       walkPlace(p, eye, K, now);
       if (p.topReady && !p.curtain && hasGround(p) && G.sampler?.()) { p.curtain = curtain(p); p.extras.push(p.curtain); }
@@ -450,7 +469,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     // show what is drawn this frame, hide the rest
     const now2 = new Set(drawn);
     for (const n of lastDrawn) if (!now2.has(n)) for (const m of n.meshes) m.visible = false;
-    for (const n of drawn) for (const m of n.meshes) { placeMesh(m, n.M, F); m.visible = true; }
+    for (const n of drawn) { n.p.lastDraw = now; for (const m of n.meshes) { placeMesh(m, n.M, F); m.visible = true; } }
     lastDrawn.clear(); for (const n of drawn) lastDrawn.add(n);
     // free tiles unused for a while when over the cache size (never the top cells)
     if (frameNo % 30 === 0) { const live = []; for (const p of P) for (const n of p.nodes) if (n.state === 'ready' && n.depth > 1) live.push(n);
@@ -460,6 +479,28 @@ export async function attachPlaces(G, H, { scene, U }) {
     look.frame(hole, eye, drawn);   // the place's clock, lights, sky, style and the trees' level (place-look.js)
     if (want.length || ready.length) { G.dirty = true; requestAnimationFrame(() => H.draw()); } else if (inFlight) G.dirty = true;
   };
+  // at most GOV max_places places loaded at once (2 on a phone): a new place frees the loaded place that is least needed
+  // (farthest for its reach, not drawn in the last 2 s); when every loaded place is needed more, the new one waits
+  function placeRoom(p, d) {
+    const live = P.filter(q => q.state === 'loaded' || q.state === 'loading'); if (live.length < GOV.S.max_places) return true;
+    const need = q => (q.eyeD ?? Infinity) / loadM(q), now = performance.now();
+    const worst = live.filter(q => now - (q.lastDraw || 0) > 2000 && q.state === 'loaded').sort((a, b) => need(b) - need(a))[0];
+    if (worst && need(worst) > d / loadM(p)) { free(worst); GOV.S.places_freed = (GOV.S.places_freed || 0) + 1; return true; }
+    return false;
+  }
+  // the governor's pool: idle tiles (not drawn for TILE_IDLE_MS; never the top cells of a loaded place), whole places
+  // that are out of reach, and the copies of features read only for a search (not for a loaded place)
+  GOV.register({ id: 'places',
+    idle() { const now = performance.now(), out = [];
+      for (const p of P) {
+        if (p.state === 'loaded') { for (const n of p.nodes) if (n.state === 'ready' && n.depth > 1 && !lastDrawn.has(n) && now - n.used > TILE_IDLE_MS) out.push({ bytes: n.bytes || 0, used: n.used, free: () => { const b = n.bytes || 0; freeNode(n); return b; } });
+          if ((p.eyeD ?? 0) > loadM(p) * 0.6 && now - (p.lastDraw || p.t0 || 0) > 5000) out.push({ bytes: placeBytes(p), used: p.lastDraw || p.t0 || 0, free: () => { const b = placeBytes(p); free(p); return b; } }); }
+        else if (p.dataBytes && (p.feats || p.sur || p.namesP) && now - (p.searchUsed || 0) > 30000) out.push({ bytes: p.dataBytes, used: p.searchUsed || 0, free: () => { const b = p.dataBytes; dropData(p); return b; } });
+      }
+      return out; },
+    cpuBytes() { let b = 0; for (const p of P) b += placeBytes(p) / 2 + (p.dataBytes || 0); return b; },
+    stats() { const loaded = P.filter(p => p.state === 'loaded'); return { loaded: loaded.map(p => p.id), tiles: loaded.reduce((s, p) => s + p.nodes.filter(n => n.state === 'ready').length, 0), mb: Math.round(P.reduce((s, p) => s + placeBytes(p), 0) / 1048576), data_mb: Math.round(P.reduce((s, p) => s + (p.dataBytes || 0), 0) / 1048576), max_sse: MAX_SSE, places_freed: GOV.S.places_freed || 0 }; } });
+  function placeBytes(p) { let b = 0; for (const n of p.nodes) if (n.state === 'ready') b += n.bytes || 0; return b + (p.state === 'loaded' ? p.dataBytes || 0 : 0); }
   G.placesDebug = { oldBuilding: BMAT, oldBlock: blockMat, oldGround: groundMat };   // (tests: the materials before 2026-10-22, for A/B timing on the same page)
   G.placeLook = () => look.describe();   // how the nearest place is drawn now (place-look.js): look, night, light, sky, trees, water
   G.placeLookU = look;                   // (tests: docklands/test/place-look-check.mjs)
@@ -473,8 +514,10 @@ export async function attachPlaces(G, H, { scene, U }) {
 
   // ---------- text and machine interface
   // (the place's own index when it is loaded: a lite set's shards are read into p.feats, so a copy made by an earlier search must not stand in for it)
-  const featsP = p => p.feats ? Promise.resolve(p.feats) : p.featsP || (p.featsP = fetch(new URL(p.features, base)).then(r => r.json()).then(fj => (p.feats ||= indexFeatures(fj))));
-  const surP = p => !p.surround ? Promise.resolve(null) : p.surP || (p.surP = p.sur ? Promise.resolve(p.sur) : fetch(new URL(p.surround, base)).then(r => r.json()).then(s => (p.sur ||= s)));
+  // (a search reads the features of every place; for a place that is not loaded the copy is kept while searches go on,
+  // and the governor frees it 30 s after the last one: p.searchUsed, p.dataBytes)
+  const featsP = p => { p.searchUsed = performance.now(); return p.feats ? Promise.resolve(p.feats) : p.featsP || (p.featsP = fetchSized(new URL(p.features, base), p).then(fj => (p.feats ||= indexFeatures(fj))).catch(e => { p.featsP = null; throw e; })); };
+  const surP = p => !p.surround ? Promise.resolve(null) : p.surP || (p.surP = p.sur ? Promise.resolve(p.sur) : fetchSized(new URL(p.surround, base), p).then(s => (p.sur ||= s)).catch(e => { p.surP = null; throw e; }));
   // names: the Latin form only while Latin is preferred (geo/script.js; owner, 2026-10-22); a name with no Latin form gives ''
   // the name and its second name: with Latin script preferred, a second name in the Latin script stays beside the first
   // (Dublin: "Grafton Street (Sráid Grafton)"; owner, 2026-10-22: keep English and Irish), one in another script goes
@@ -492,7 +535,7 @@ export async function attachPlaces(G, H, { scene, U }) {
       const sc = t => { t = fold(t); return !t ? 0 : t === f ? 100 : t.startsWith(f) ? 80 : (' ' + t).includes(' ' + f) ? 60 : f.length >= 3 && t.includes(f) ? 30 : 0; };
       const add = (name, alt, kind, lon, lat, extra = {}, bonus = 0) => { const s = Math.max(sc(name), sc(alt || '')), shown = nameText(name, alt); if (s && shown) out.push({ name: shown, local_name: (latinPreferred() ? undefined : alt) || undefined, kind, lon, lat, region: p.name, id: `place:${p.id}:${extra.osm_id || fold(name)}`, score: s + bonus, alt_m: extra.alt_m || (kind === 'building' || kind === 'point' ? 700 : 1500), facts: [{ label: 'Place', value: p.name, source: extra.source || 'build-place-tiles (OpenStreetMap)' }, ...(extra.facts || [])], place: p.id, osm_id: extra.osm_id }); };
       for (const t of F.fj.search || []) add(t, null, 'place', p.centre[0], p.centre[1], {}, 1);
-      if (F.fj.names) { const NJ = await (p.namesP ||= fetch(new URL(F.fj.names, new URL(p.features, base))).then(r => r.json()).catch(() => null)); const fi = k => NJ?.fields.indexOf(k);
+      if (F.fj.names) { const NJ = await (p.namesP ||= fetchSized(new URL(F.fj.names, new URL(p.features, base)), p).catch(() => null)); const fi = k => NJ?.fields.indexOf(k);
         for (const r of NJ?.rows || []) add(r[fi('name')], null, 'building', r[fi('lon')], r[fi('lat')], { osm_id: 'row' + r[fi('row')], facts: [{ label: 'Kind', value: 'a landmark of the lite set (key landmarks with outlines, other buildings as boxes)' }] });
         continue; }
       // one result per named building: the parts of one OSM building (or the LoD2 buildings one OSM outline names) share it
