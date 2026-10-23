@@ -233,12 +233,12 @@ export function blockTile(opt) {
   // (lite, opt.compact(F): boxes in the compact layout cwplans-boxes-1 of place-lite.mjs compactBoxes, appended as two
   // buffer views named in extras.blocks.compact; the leaves' buildings and the coarse levels' merged squares)
   const cp = opt.compact ? opt.compact(F) : null; if (cp) { zmin = Math.min(zmin, cp.zmin); zmax = Math.max(zmax, cp.zmax); }
-  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : opt.noteRef ? opt.noteRef : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite || cp ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(opt.cellBuildings != null ? { buildings: opt.cellBuildings } : {}), ...(cp ? { compact: cp.meta } : {}) } } : null;
+  const extras = meta.boxes.c.length + meta.outlines.c.length + (meta.named?.length || 0) || cp ? { blocks: { classes: opt.classes, height_sources: HS, ...meta, note: opt.lite ? 'features.json lite.tile_extras' : opt.noteRef ? opt.noteRef : 'per block: class index, height in decimetres, height-source index; boxes in instance order; outlines with the end of their triangles (exclusive)', ...(opt.lite || cp ? { mass_buildings: st.merged_buildings + (cp?.mass_buildings || 0) } : {}), ...(opt.cellBuildings != null ? { buildings: opt.cellBuildings } : {}), ...(cp ? { compact: cp.meta } : {}), ...(cp?.far_left_out != null ? { far_left_out: cp.far_left_out } : {}) } } : null;
   const bytes = blocksGlb({ ol, nm, inst, colour: opt.colour, credit: opt.credit, extras, featureCount: new Set(nm.fid).size, compact: cp });
   const tris = ol.idx.length / 3 + nm.idx.length / 3 + inst.t.length / 3 * 10 + (cp ? cp.meta.count * 10 : 0);
   return { bytes, F, region: [w * D2R, s * D2R, e * D2R, n * D2R, Math.floor(isFinite(zmin) ? zmin : h0 - 10), Math.ceil(isFinite(zmax) ? zmax : h0) + 1],
     stats: { key: cell.key, level: cell.l, bytes: bytes.length, triangles: tris, blocks: st.boxes + st.outlines + st.merged + st.named, ...st, buildings: items.length,
-      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}), ...(cp ? { compact: cp.stats, compact_bytes: cp.data.length + cp.grid.length, compact_mass: cp.mass_buildings || 0 } : {}) } };
+      ...(opt.lite ? { named_bytes: nm.pos.length / 3 * 16 + nm.idx.length * (nm.pos.length / 3 > 65535 ? 4 : 2), instances: inst.t.length / 3 } : {}), ...(cp ? { compact: cp.stats, compact_bytes: cp.data.length + cp.grid.length, compact_mass: cp.mass_buildings || 0, far_left_out: cp.far_left_out || 0 } : {}) } };
 }
 
 // ---------- glTF 2.0 writer for block tiles: node 0 (if any) the outlines and named buildings, int16 positions

@@ -66,7 +66,7 @@ export default {
       geometry_classes: { OpenStreetMap: 'osm', 'Microsoft ML Buildings': 'ms' },
       // the landmark rule (README): OSM tags from the QLever OSM endpoint (planet 2026-09-21, the UK relation's
       // containment), joined to the Overture record by its OSM id
-      tags: { endpoint: 'https://qlever.cs.uni-freiburg.de/api/osm-planet', area_relation: 62149 },
+      tags: { endpoint: 'https://qlever.dev/api/osm-planet', area_relation: 62149 },
       // landmark heights (owner, 2026-10-22: "Yes do that"; operation place-lite-landmark-heights, module
       // cwplans/tools/place-lite-heights.mjs): OSM building:part heights via Overture's building_part theme (joined by
       // building_id) and Wikidata P2048 (QLever Wikidata, CC0). Rule: a part whose top is above the body by at least
@@ -75,7 +75,7 @@ export default {
       // spire_share x sqrt(its area)), else as a square tower at the centroid (side tower_share x sqrt(footprint), between
       // tower_min_m and tower_max_m); the body keeps its height
       heights: {
-        part_columns: 'building_id,height,min_height,roof_shape,num_floors', part_where: 'height IS NOT NULL',
+        part_columns: 'building_id,height,min_height,roof_shape,roof_height,num_floors', part_where: 'height IS NOT NULL',
         wikidata_endpoint: 'https://qlever.dev/api/wikidata', wikidata_chunk: 5000,
         rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15 },
       },

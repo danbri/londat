@@ -296,3 +296,17 @@ export function inv4rigid(m) {   // inverse of a rotation + translation
 }
 export const roundM = m => m.map(v => Math.abs(v) < 1e-12 ? 0 : +v.toPrecision(15));
 export { meet, simplify, obbBox, area2 };   // (also used by place-blocks.mjs)
+
+// ---------- the city's first block level from far (operation place-far-lod; issue #13, owner 2026-10-23: Berlin at 20 km
+// showed no 3D blocks). The tiles of block_level (the city's tall or big buildings as boxes) were drawn only within about
+// 12 km (their parents' geometricError 404.9 m x K 731 / MAX_SSE 24); every node of a lower level that meets the city box
+// and has children gets geometricError >= from_m x sse_px / k_px, so the reader refines to block_level within from_m
+// (25 km: the blocks show in a 20 km view, as London's and the UK's far forms do). The same rule is in place-lod's errOf
+// (a rebuild gives the same tileset); this function applies it to a built tileset. Returns the number of nodes changed.
+export function farLod(tileset, { city, block_level, from_m, sse_px = 24, k_px = 731 }) {
+  const E = Math.round(from_m * sse_px / k_px * 10) / 10, R2D = 180 / Math.PI; let changed = 0;
+  (function w(t) { const L = +(t.content?.uri?.match(/(\d+)-\d+-\d+\.glb$/)?.[1] ?? NaN), r = t.boundingVolume?.region;
+    if (t.children?.length && L < block_level && r && meet([r[0] * R2D, r[1] * R2D, r[2] * R2D, r[3] * R2D], city) && t.geometricError < E) { t.geometricError = E; changed++; }
+    for (const c of t.children || []) w(c); })(tileset.root);
+  return changed;
+}

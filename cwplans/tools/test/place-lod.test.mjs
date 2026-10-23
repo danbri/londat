@@ -3,7 +3,7 @@
 // places, city and surroundings by level of detail (2026-10-20)".
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lodTree, walk, selectOuter, writeGlb, mul4, inv4rigid, cellBox, easedDem } from '../place-lod.mjs';
+import { lodTree, walk, selectOuter, writeGlb, mul4, inv4rigid, cellBox, easedDem, farLod } from '../place-lod.mjs';
 
 const origin = { lon: -5.56654, lat: 42.59732 }, mLat = 110574, mLon = 111320 * Math.cos(42.6 * Math.PI / 180);
 
@@ -62,4 +62,15 @@ test('easedDem: the outer band meets the box mean, the inside keeps the DEM', ()
   const at = easedDem({ w: 0, e: 1, s: 0, n: 1, nx, ny, h }, ext, 111320, 110574, 8000, 10000);
   const edge = at(0.0001, 0.5), mid = at(0.5025, 0.5);
   assert.ok(Math.abs(edge - 50) < 15, `edge ${edge}`); assert.ok(mid > 90 || mid < 10 || Math.abs(mid - 50) < 50, `mid ${mid}`);
+});
+
+test('farLod: the parents of the first block level over the city refine within from_m (issue #13); others unchanged', () => {
+  const D = Math.PI / 180, reg = b => ({ region: [b[0] * D, b[1] * D, b[2] * D, b[3] * D, 0, 100] });
+  const leaf = (k, b) => ({ boundingVolume: reg(b), geometricError: 0, content: { uri: `tiles/${k}.glb` } });
+  const T = { root: { boundingVolume: reg([13, 52, 14, 53]), geometricError: 971.8, content: { uri: 'tiles/11-1-1.glb' }, children: [
+    { boundingVolume: reg([13.3, 52.4, 13.5, 52.6]), geometricError: 404.9, content: { uri: 'tiles/12-2-2.glb' }, children: [leaf('13-4-4', [13.3, 52.4, 13.4, 52.5])] },
+    { boundingVolume: reg([13.8, 52.8, 13.9, 52.9]), geometricError: 404.9, content: { uri: 'tiles/12-3-3.glb' }, children: [leaf('13-6-6', [13.8, 52.8, 13.85, 52.85])] }] } };
+  const n = farLod(T, { city: [13.088, 52.338, 13.761, 52.675], block_level: 13, from_m: 25000 });
+  assert.equal(n, 1); assert.equal(T.root.children[0].geometricError, 820.8); assert.equal(T.root.children[1].geometricError, 404.9, 'outside the city box');
+  assert.equal(T.root.geometricError, 971.8, 'already refined within 25 km'); assert.ok(820.8 * 731 / 24 >= 25000);
 });
