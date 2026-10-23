@@ -9,14 +9,16 @@
 //      asked for once more under ?v=<hash>;
 //   4. a new manifest version: entries whose hash changed are dropped;
 //   5. ?sw=0 unregisters the worker and deletes its caches; the page loads without it.
-//   node docklands/test/sw-check.mjs [--query 'view=globe&layers=ships,planes'] [--keep-manifest]
+//   node docklands/test/sw-check.mjs [--query 'view=globe&layers=ships,planes&eager=1'] [--keep-manifest]
 import { chromium } from '@playwright/test';
 import { writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs';
 import { startRangeServer } from '../../cwplans/tools/range-server.mjs';
 import { buildManifest } from '../../cwplans/tools/build-sw-manifest.mjs';
 
 const argv = process.argv, arg = (k, d) => { const i = argv.indexOf(k); return i > 0 ? argv[i + 1] : d; };
-const Q = arg('--query', 'view=globe&layers=ships,planes'), MAN = 'docklands/sw-manifest.json';
+// (&eager=1: since 2026-10-23 a start on the globe loads the model's layers, ships and planes among them, only when the model
+// takes the view; this check needs their live requests, so it asks for the old rule)
+const Q = arg('--query', 'view=globe&layers=ships,planes&eager=1'), MAN = 'docklands/sw-manifest.json';
 const hadManifest = existsSync(MAN), oldManifest = hadManifest ? readFileSync(MAN) : null;
 let failed = 0; const check = (ok, what, detail = '') => { if (!ok) failed++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}${detail ? ' · ' + detail : ''}`); };
 

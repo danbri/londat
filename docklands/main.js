@@ -144,19 +144,31 @@ const buildOpts = {};   // options a layer adds to buildBuildings (layers/skylin
 const bOpts = () => ({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts });
 const CELLS = makeCells({ THREE, camera, eye: eyeM, LOD, CPU, draw, buildTile: (key, level) => buildBuildings({ ...bOpts(), level, tile: key })[0] || null, prep: { terrain: terrainLod }, active: () => !GLOBE || GLOBE.mode !== 'globe' });
 for (const [k, m] of [['terrain', terrain], ['greens', greens], ['roads', roads], ['rail', rail]]) CELLS.addIndexed(k, m, k !== 'terrain');   // lean: no CPU reader of the index drawn (the drone and layers read the terrain's)
-function rebuildBuildings() {
-  CELLS.dropTiles(); buildings.clear();
-  const t0 = performance.now();
-  // tile by tile (moglob, 2026-10-23): the same geometries as one build of all tiles, but the JS arrays of one tile are
-  // garbage before the next tile is made (the whole model at once peaked at +300 MB of JS heap: an iPhone tab restart)
-  const o = bOpts();
-  for (const key of buildingTileKeys(o)) for (const G of buildBuildings({ ...o, tile: key })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
-    CPU.watch(G, { normal: 'normal', gk: 'runs' }); CELLS.addTile(m); }   // picking and the occluder read position, index and userData.bi: kept
+let rebuildGen = 0;
+function addTileMesh(G) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
+  CPU.watch(G, { normal: 'normal', gk: 'runs' }); CELLS.addTile(m); }   // picking and the occluder read position, index and userData.bi: kept
+function rebuildDone(t0) {
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   for (const l of LOD.list) if (l.userData.mi) farBlock(l);   // the detailed models' far blocks take the new look too
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0), builds: (STATS.buildings?.builds || 0) + 1 };
   if (OCC) OCC.dirty();
   draw();
+}
+function rebuildBuildings() {
+  CELLS.dropTiles(); buildings.clear(); rebuildGen++;
+  const t0 = performance.now();
+  // tile by tile (moglob, 2026-10-23): the same geometries as one build of all tiles, but the JS arrays of one tile are
+  // garbage before the next tile is made (the whole model at once peaked at +300 MB of JS heap: an iPhone tab restart)
+  const o = bOpts();
+  for (const key of buildingTileKeys(o)) for (const G of buildBuildings({ ...o, tile: key })) addTileMesh(G);
+  rebuildDone(t0);
+}
+// the same, one tile a task (the garbage of each tile can be collected between them): the model coming back after it was
+// given up far away (modelBack); a synchronous rebuild meanwhile wins (rebuildGen)
+async function rebuildBuildingsSlowly() {
+  CELLS.dropTiles(); buildings.clear(); const gen = ++rebuildGen, t0 = performance.now(), o = bOpts();
+  for (const key of buildingTileKeys(o)) { if (gen !== rebuildGen) return; for (const G of buildBuildings({ ...o, tile: key })) addTileMesh(G); draw(); await new Promise(r => setTimeout(r, 0)); }
+  if (gen === rebuildGen) rebuildDone(t0);
 }
 // while the page boots (heavy(): optional data, detailed models, the layers) the rebuilds asked for are done once at the
 // end: there were 6 at ?view=cw (2 s each in headless Chromium, each leaving its arrays as garbage), now 2
@@ -881,25 +893,24 @@ if (flag('globe', true)) {
 }
 
 // the model's buildings while the view is far away (moglob, 2026-10-23: the model held about 70 MB of building arrays in the
-// JS heap during a fly to Dublin and Berlin): after 8 s on the globe with the view's centre more than 200 km from the model's
-// box they are given up (geometries disposed, arrays dropped), and built again (tile by tile, as at the start) when the view
+// JS heap during a fly to Dublin and Berlin): as soon as the globe has the view and its centre is more than 200 km from the
+// model's box (checked every second; a flight away passes 200 km in its first seconds) they are given up (geometries disposed, arrays dropped), and built again (tile by tile, as at the start) when the view
 // comes within 60 km or the model takes the view. Picking, the occluder and the styles see the new meshes as after any
 // rebuild. ?free=0 keeps them. STATS.modelDrop: drops, rebuilds, the last time.
-let MODEL_DROPPED = false, farSince = 0;
+let MODEL_DROPPED = false;
 STATS.modelDrop = { drops: 0, rebuilds: 0, dropped: false };
-function modelBack(why) { if (!MODEL_DROPPED) return; MODEL_DROPPED = false; STATS.modelDrop.dropped = false; STATS.modelDrop.rebuilds++; STATS.modelDrop.why = why; rebuildBuildings(); }
+function modelBack(why) { if (!MODEL_DROPPED) return; MODEL_DROPPED = false; STATS.modelDrop.dropped = false; STATS.modelDrop.rebuilds++; STATS.modelDrop.why = why; rebuildBuildingsSlowly().catch(e => console.warn('model', e)); }
 if (GLOBE && qs.get('free') !== '0') {
   addEventListener('docklands-globe-mode', e => { if (e.detail?.mode === 'model') modelBack('the model took the view'); });
   setInterval(() => {
-    if (!GLOBE.ready) return; const now = performance.now();
-    if (GLOBE.mode !== 'globe') { farSince = 0; return modelBack('the model took the view'); }
+    if (!GLOBE.ready) return;
+    if (GLOBE.mode !== 'globe') return modelBack('the model took the view');
     const o = GLOBE.orbit(); if (!o) return;
-    if (GLOBE.inBox(o.lon, o.lat, 60000)) { farSince = 0; return modelBack('the view came near the model'); }
-    if (GLOBE.inBox(o.lon, o.lat, 200000)) { farSince = 0; return; }
-    if (!farSince) farSince = now;
-    if (!MODEL_DROPPED && now - farSince > 8000 && buildings.children.length) {
+    if (GLOBE.inBox(o.lon, o.lat, 60000)) return modelBack('the view came near the model');
+    if (GLOBE.inBox(o.lon, o.lat, 200000)) return;
+    if (!MODEL_DROPPED && buildings.children.length) {
       CELLS.dropTiles(); buildings.clear(); MODEL_DROPPED = true; Object.assign(STATS.modelDrop, { drops: STATS.modelDrop.drops + 1, dropped: true, at: Date.now() }); if (OCC) OCC.dirty(); }
-  }, 2000);
+  }, 1000);
 }
 
 // names in Latin script only (on by default; owner, 2026-10-22): the box in Menu > Look, the label and card safety nets
@@ -915,14 +926,15 @@ if (START_AWAY) {
   // main-thread work (a deep-link fly-in to a place was jerky; places agent, 2026-10-21) and 150 to 300 MB of memory
   // (moglob, 2026-10-23: a start at ?view=globe peaked at 1 GB in the renderer). The light layers (search, routes, tools)
   // load when the globe has been still for 1.5 s; the rest (heavy) when the view needs the model: the model takes the view
-  // (the plain model, built at the start, shows at once; its layers follow), or the menu's Layers pane opens. ?eager=1: the
-  // old rule (heavy at the first still moment, 60 s at most).
+  // (the plain model, built at the start, shows at once; its layers follow), or the menu's Layers pane opens. ?eager=1: at once (as the
+  // page did before 2026-10-23, whose rule read the globe's first moments as the model having the view).
   let lastKey = '', stillT = performance.now(), light = false, started = false, wasGlobe = false;
   const EAGER = flag('eager', false);
   const startHeavy = why => { if (started) return; started = true; STATS.heavyDeferredMs = Math.round(performance.now() - t0); STATS.heavyWhy = why; heavy().catch(e => console.warn('model data', e)); };
   addEventListener('click', e => { if (e.target?.closest?.('[data-pane="paneLayers"]')) startHeavy('the Layers pane'); }, true);
   const idle = () => {
     if (started) return; const now = performance.now();
+    if (EAGER) return startHeavy('?eager=1');
     if (GLOBE && GLOBE.mode === 'globe') wasGlobe = true;
     // (the globe takes the view a moment after the start: until then the mode reads 'model'; a start that never reaches the
     // globe in 60 s, or no globe, loads the model's layers)
@@ -930,7 +942,6 @@ if (START_AWAY) {
     const o = GLOBE.ready ? GLOBE.orbit() : null, key = o ? [o.lon, o.lat, o.range, o.heading, o.tilt].map(v => v.toFixed(5)).join() : '';
     if (key !== lastKey || GLOBE.isFlying() || !GLOBE.ready) { lastKey = key; stillT = now; }
     if (GLOBE.mode === 'globe' && (now - stillT > 1500 || now - t0 > 60000)) {
-      if (EAGER) return startHeavy('?eager=1');
       if (!light) { light = true; loadLayers(LAYER_IDS.filter(id => LIGHT_LAYERS.has(id))).then(() => say('')).catch(e => console.warn('layers', e)); }
     }
     setTimeout(idle, 250);

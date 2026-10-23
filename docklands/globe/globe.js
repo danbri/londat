@@ -32,6 +32,7 @@ import { Terrain, terrainMaterial, makeSampler } from './terrain.js';
 import { buildLines, lineMaterial, graticule, rebuildLines } from './vectors.js';
 import { makeLabels } from './labels.js';
 import { latinOut, scrubText } from '../geo/script.js';
+import { GOV } from '../governor.js';   // moglob's memory budget: the resting globe's line and patch arrays may go
 
 // the manifests of layer sets in the globe's contract (world.js header). The UK skeleton adds its manifest here.
 export const MANIFESTS = ['../cwplans/docklands/data/world/layers.json'];
@@ -239,6 +240,10 @@ export async function createGlobe(H) {
     for (const t of G.textures || []) t.dispose();
     if (G.baseRest) G.baseRest();   // the base imagery tiles (globe/base-tiles.js)
     if (G.placesRest) G.placesRest();   // the places (globe/places.js): loaded again when the globe is seen
+    // three.js keeps each scene's render list (and so the geometries of its last frame) until 10 frames pass without it; a
+    // page that draws on demand may not draw 10 frames for a long time: the lists go now (the model's is made again at its
+    // next frame). r186 internals (renderer._renderLists): check after an upgrade (moglob, 2026-10-23)
+    try { renderer._renderLists?.dispose?.(); } catch (e) { console.warn('globe: render lists', e); }
     for (const L of cellLayers) for (const [k, c] of [...L.cells]) if (c.meshes.length || c.labels.length) dropCell(L, k, c);   // the skeleton cells: read again when the globe is seen (moglob, 2026-10-23)
     if (rt) { if (bgOn) setBg(false); rt.dispose(); rt = null; G.bgNode = null; }
     if (labels) for (const c of labels.candidates) if (c.el) { c.el.remove(); c.el = null; }
@@ -294,17 +299,29 @@ export async function createGlobe(H) {
   async function buildLayer(key) {
     if (built.has(key)) return; built.add(key);
     await world.loadLayer(key); const L = world.layers.get(key), heightAt = G.heightAt;
-    if ((L.kind === 'lines' || L.kind === 'polygons') && L.draw !== false) addLineLayer({ key, label: L.label, style: L.style || {} }, L.features.flatMap(f => linesOf(f.geometry)), heightAt, L.manifest.id);
+    if ((L.kind === 'lines' || L.kind === 'polygons') && L.draw !== false) addLineLayer({ key, label: L.label, style: L.style || {} }, () => L.features.flatMap(f => linesOf(f.geometry)), heightAt, L.manifest.id);
     if (L.labels) addLabels(L, heightAt);
     if (L.kind === 'points' && !L.labels && L.label) addLabels(Object.assign(L, { labels: { text: 'name', class: 'extra' } }), heightAt);
   }
+  // lines: an array of lines, or a function that makes it (the layer's meshes can then be given up while the globe rests
+  // and made again at its next draw: moglob, 2026-10-23, about 40 MB of line arrays for the world layers)
   function addLineLayer(spec, lines, heightAt, set) {
-    const mat = lineMaterial(spec.style.color || '#ffffff', spec.style.opacity ?? 0.8), meshes = buildLines(lines, heightAt, mat, spec.style.lift || 0);
+    const src = typeof lines === 'function' ? lines : () => lines, mat = lineMaterial(spec.style.color || '#ffffff', spec.style.opacity ?? 0.8), meshes = buildLines(src(), heightAt, mat, spec.style.lift || 0);
     for (const m of meshes) { m.visible = false; scene.add(m); }
     const on = qs.has('g.' + spec.key) ? !/^(0|false|off)$/.test(qs.get('g.' + spec.key)) : spec.style.on !== false;
-    const lay = { key: spec.key, label: spec.label, meshes, style: spec.style, on, set, segments: meshes.reduce((s, m) => s + m.userData.segments, 0) };
+    const lay = { key: spec.key, label: spec.label, meshes, style: spec.style, on, set, segments: meshes.reduce((s, m) => s + m.userData.segments, 0),
+      make: () => { lay.meshes = buildLines(src(), heightAt, mat, spec.style.lift || 0); for (const m of lay.meshes) { m.visible = false; scene.add(m); } lay.dropped = false; } };
     layers.push(lay); return lay;
   }
+  const arrBytes = g => { let b = 0; for (const a of Object.values(g.attributes)) b += a.array?.byteLength || 0; return b + (g.index?.array?.byteLength || 0) + (g.userData?.ll?.byteLength || 0); };
+  // the governor's pool: while the globe rests (the model has the view near the ground), its line layers' and terrain
+  // patches' arrays (on the CPU; the GPU buffers are already given back) may go; they are made again at the next draw
+  GOV.register({ id: 'globe',
+    idle() { if (!G.rested) return []; const out = [], at = G.rested.at || 0;
+      for (const L of layers) if (!L.dropped && L.make && L.meshes.length) out.push({ bytes: 2 * L.meshes.reduce((s, m) => s + arrBytes(m.geometry), 0), used: at, free: () => { for (const m of L.meshes) { scene.remove(m); m.geometry.dispose(); } L.meshes = []; L.dropped = true; } });
+      if (terrain) { const ms = [...terrain.cache.values()].filter(n => n.mesh); if (ms.length) out.push({ bytes: 2 * ms.reduce((s, n) => s + arrBytes(n.mesh.geometry), 0), used: at, free: () => { for (const n of ms) if (n.mesh) { scene.remove(n.mesh); n.mesh.geometry.dispose(); n.mesh = null; n.demKey = null; } } }); }
+      return out; },
+    stats: () => ({ line_layers: layers.length, dropped: layers.filter(L => L.dropped).length, patches: terrain ? [...terrain.cache.values()].filter(n => n.mesh).length : 0 }) });
   function addLabels(L, heightAt) {
     const s = L.labels, at = (f, p) => s.at ? [p[s.at[0]], p[s.at[1]]] : f.geometry.type === 'Point' ? f.geometry.coordinates : labelPoint(f.geometry);
     const num = (v, p) => v == null ? null : typeof v === 'number' ? v : +p[v];
@@ -353,7 +370,7 @@ export async function createGlobe(H) {
     const alt = F.eyeGeo.h;
     // (line chunks outside the view frustum are not drawn: fewer draw calls; a chunk's radius is in geometry.userData.r)
     const seen = m => { const r = m.geometry.userData.r; return !r || inFrustum(m.userData.C, r); };
-    for (const L of layers) { const vis = L.on && alt >= (L.style.minAlt || 0) && alt <= (L.style.maxAlt || Infinity); for (const m of L.meshes) { m.visible = vis && seen(m); if (m.visible) place(m); } }
+    for (const L of layers) { const vis = L.on && alt >= (L.style.minAlt || 0) && alt <= (L.style.maxAlt || Infinity); if (vis && L.dropped) L.make(); for (const m of L.meshes) { m.visible = vis && seen(m); if (m.visible) place(m); } }
     for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) { if (m.userData.on === undefined) m.userData.on = m.visible; if (m.userData.on) { m.visible = seen(m); if (m.visible) place(m); } else m.visible = false; }
     place(atmo); atmo.visible = alt > 2000;
     if (G.onFrame) G.onFrame(eye);   // places as 3D Tiles (globe/places.js): load, free, place the tiles, cut the hole

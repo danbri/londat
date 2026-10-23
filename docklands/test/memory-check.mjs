@@ -105,15 +105,15 @@ async function snap(page, cdp, label) {   // one step: frame, places, base, memo
     const frame = G && G.mode === 'globe' ? G.stats.frame : D.STATS.frame;
     const places = G && G.placesStats ? G.placesStats().filter(s => s.state).map(s => ({ id: s.id, state: s.state, loaded: s.loaded, tiles: s.tiles, tri: s.triangles })) : [];
     const held = G && G.places ? G.places.filter(p => p.feats || p.sur || p.namesP).map(p => p.id) : [];
-    return { label, mode: G ? G.mode : 'model', heap: performance.memory.usedJSHeapSize, gpu: I.total, gpuAttr: I.attributesSize + (I.indexAttributesSize || 0), gpuTex: I.texturesSize, geometries: I.geometries, textures: I.textures, canvas: cv.width * cv.height * 40,
+    return { label, t: Math.round(performance.now()), mode: G ? G.mode : 'model', heap: performance.memory.usedJSHeapSize, gpu: I.total, gpuAttr: I.attributesSize + (I.indexAttributesSize || 0), gpuTex: I.texturesSize, geometries: I.geometries, textures: I.textures, canvas: cv.width * cv.height * 40,
       tri: frame ? Math.round(frame.triangles) : null, calls: frame ? (frame.drawCalls ?? frame.calls) : null, places, featuresHeld: held, base: G && G.baseStats ? G.baseStats() : null,
       governor: window.moglob?.memory ? window.moglob.memory.state() : null, modelDrop: D.STATS.modelDrop || null, heavy: D.STATS.heavyWhy || (D.ready ? 'at the start' : 'not loaded'), view: window.docklands?.getView ? (() => { try { const v = docklands.getView(); return { mode: v.mode, quality: v.quality || null }; } catch { return null; } })() : null };
   }, label);
   r.pss = pss(); return r;
 }
 function peaks(samples, since = 0) {
-  let heap = 0, gpu = 0, sum = 0; for (const [t, h, g, c] of samples) { if (t < since) continue; heap = Math.max(heap, h); gpu = Math.max(gpu, g + c); sum = Math.max(sum, h + g + c); }
-  return { heap: mb(heap), gpu: mb(gpu), sum: mb(sum) };
+  let heap = 0, gpu = 0, sum = 0, at = 0; for (const [t, h, g, c] of samples) { if (t < since) continue; heap = Math.max(heap, h); gpu = Math.max(gpu, g + c); if (h + g + c > sum) { sum = h + g + c; at = t; } }
+  return { heap: mb(heap), gpu: mb(gpu), sum: mb(sum), at };
 }
 const longOf = (lt, since = 0) => { const l = lt.filter(x => x[0] >= since); return { n: l.length, ms: l.reduce((s, x) => s + x[1], 0), max: l.reduce((m, x) => Math.max(m, x[1]), 0) }; };
 const fmt = s => `heap ${mb(s.heap)} MB, GPU ${mb(s.gpu)} MB (attr ${mb(s.gpuAttr)}, tex ${mb(s.gpuTex)}; ${s.geometries} geom, ${s.textures} tex) + canvas ${mb(s.canvas)} MB, tri ${s.tri?.toLocaleString('en')}, calls ${s.calls}; places ${s.places.map(p => `${p.id}:${p.loaded}`).join(' ') || '-'}; features held ${s.featuresHeld.join(',') || '-'}; base ${s.base ? s.base.imagery + ' img' : '-'}; model layers ${s.heavy}; model drop ${JSON.stringify(s.modelDrop)}; pss ${JSON.stringify(s.pss)}${s.governor ? '; governor ' + JSON.stringify(s.governor) : ''}`;
@@ -169,8 +169,9 @@ for (const [w, h, dpr] of SIZES) {
       }
       if (sc === 'leon-sarajevo') { await goto(page, V.sarajevo); const s = await settle(page); const r = await snap(page, cdp, 'sarajevo'); r.settle = s; steps.push(r); }
       const M = await page.evaluate(() => ({ samples: __mem.samples, longtasks: __mem.longtasks }));
+      if (argv.includes('--timeline')) for (const [t, h, g, c] of M.samples.filter((x, i) => i % 8 === 0)) console.log(`   t ${t} heap ${mb(h)} gpu ${mb(g)} canvas ${mb(c)} sum ${mb(h + g + c)} ${(steps.find(x => x.t >= t) || {}).label || ''}`);
       res = { ...res, boot_ms: boot, peak: peaks(M.samples), long: longOf(M.longtasks), requests: req.n, mbytes: Math.round(req.bytes / 1e5) / 10, steps, errors: errors.slice(0, 5) };
-      const gov = steps.at(-1).governor;
+      const gov = steps.at(-1).governor; res.peak.step = (steps.find(x => x.t >= res.peak.at) || steps.at(-1)).label;   // the step whose settling held the peak
       const budget = BUDGET || (gov ? gov.budget_mb : null);
       if (CHECK && budget && res.peak.sum > budget * (1 + HEAD)) { failed++; console.log(`FAIL ${tag} ${sc}: peak JS heap + GPU + canvas ${res.peak.sum} MB > budget ${budget} MB + ${HEAD * 100} % for moments (garbage of a build, a batch of tiles)`); }
       else if (CHECK && budget) console.log(`ok   ${tag} ${sc}: peak ${res.peak.sum} MB within budget ${budget} MB + ${HEAD * 100} %`);
@@ -182,7 +183,7 @@ for (const [w, h, dpr] of SIZES) {
       await page.screenshot({ path: `${OUT}/${sc}-${w}x${h}${WEBGPU ? '-webgpu' : ''}.png` });
     } catch (e) { failed++; res.error = String(e.message || e).slice(0, 300); console.log(`FAIL ${tag} ${sc}: ${res.error}`); }
     clearInterval(pssT); res.pss_end = pss(); res.peak_pss = pssPeak;
-    console.log(`${tag} ${sc}: boot ${res.boot_ms} ms; peak heap ${res.peak?.heap} MB, GPU+canvas ${res.peak?.gpu} MB, sum ${res.peak?.sum} MB; peak browser PSS ${JSON.stringify(res.peak_pss)}; long tasks ${res.long?.n} (${res.long?.ms} ms, max ${res.long?.max}); requests ${res.requests} (${res.mbytes} MB)`);
+    console.log(`${tag} ${sc}: boot ${res.boot_ms} ms; peak heap ${res.peak?.heap} MB, GPU+canvas ${res.peak?.gpu} MB, sum ${res.peak?.sum} MB (on the way to: ${res.peak?.step}); peak browser PSS ${JSON.stringify(res.peak_pss)}; long tasks ${res.long?.n} (${res.long?.ms} ms, max ${res.long?.max}); requests ${res.requests} (${res.mbytes} MB)`);
     for (const s of res.steps || []) console.log(`   ${s.label} (${s.mode}): ${fmt(s)}`);
     results.push(res);
     await ctx.close();

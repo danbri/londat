@@ -7,6 +7,7 @@
 // window globals (dominator tree).
 //   python3 -m http.server 8317 --bind 127.0.0.1 &      (from the repository root)
 //   node docklands/test/heap-holders.mjs [--base http://127.0.0.1:8317] [--views cw,area] [--size 390x844@2] [--snapshot [--paths] [--chains]] [--query '&x=1'] [--fly]
+// --again: then one more round trip (Dublin and back) and a second snapshot, with what grew between the two (a leak).
 // --fly: before measuring, the fly of memory-check.mjs (Dublin, Berlin, Manchester 20 km, York 1 km, back to the view),
 // with the docklandia sets served from docklands/test/out/places (symlinks): what is still held after the return
 // Skill: docklands-3d-page, "Three.js port: level of detail and the hand-over" (memory).
@@ -18,7 +19,8 @@ import { join } from 'node:path';
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const BASE = arg('--base', 'http://127.0.0.1:8317'), VIEWS = arg('--views', 'cw,area').split(',').filter(Boolean), EXTRA = arg('--query', ''), SNAP = process.argv.includes('--snapshot');
 const [W, H, DPR] = (/^(\d+)x(\d+)@(\d+(?:\.\d+)?)$/.exec(arg('--size', '390x844@2')) || []).slice(1).map(Number);
-const T = '2026-10-12T12:00', MB = x => +(x / 1048576).toFixed(1), FLY = process.argv.includes('--fly');
+const T = '2026-10-12T12:00', MB = x => +(x / 1048576).toFixed(1), FLY = process.argv.includes('--fly'), AGAIN = process.argv.includes('--again');
+let cdp0 = null, prevA = null, prevAB = null;
 const PB = FLY ? readdirSync('docklands/test/out/places').map(id => `&placebase=${encodeURIComponent(`${id}:${BASE}/docklands/test/out/places/${id}/`)}`).join('') : '';
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
   args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-precise-memory-info'] });
@@ -93,9 +95,9 @@ function analyse(file) {
         if (up >= 2 && nm && !/^(buffer|backing_store|array|__proto__)$/.test(nm)) names.add(nm); else nx.push(src); } front = nx.slice(0, 20); if (names.size) break; }
     const k = [...names].slice(0, 3).join('|') || '(unnamed)'; ab.set(k, (ab.get(k) || 0) + sz); }
   // retainer chains of the largest backing stores (first non-weak parent at each step; --chains)
-  const big2 = []; for (let v = 0; v < n; v++) if (str[N[v * NF + iN]] === 'system / JSArrayBufferData' && N[v * NF + iS] > 2 * 1048576) big2.push(v);
+  const big2 = []; for (let v = 0; v < n; v++) if (str[N[v * NF + iN]] === 'system / JSArrayBufferData' && N[v * NF + iS] > (+process.env.CHAIN_MIN_MB || 2) * 1048576) big2.push(v);
   big2.sort((a, b) => N[b * NF + iS] - N[a * NF + iS]);
-  globalThis.__heapChains = big2.slice(0, 24).map(v => { const out = [MB(N[v * NF + iS]) + ' MB']; let x = v; const seen = new Set([v]);
+  globalThis.__heapChains = big2.slice(0, +process.env.CHAIN_N || 24).map(v => { const out = [MB(N[v * NF + iS]) + ' MB']; let x = v; const seen = new Set([v]);
     for (let k = 0; k < 16; k++) { const ps = (parents.get(x) || []).filter(e => !seen.has(esrc[e])); if (!ps.length) break;
       const e = ps.find(e => !/^(system \/|\(|InternalNode|Detached)/.test(String(str[N[esrc[e] * NF + iN]]))) ?? ps[0], src = esrc[e], t = edgeTypes[E[e * EF + eT]], nm = E[e * EF + eN];
       out.push((t === 'element' || t === 'hidden' ? '[' + nm + ']' : String(str[nm]).slice(0, 30)) + ' < ' + String(str[N[src * NF + iN]]).slice(0, 30)); seen.add(src); x = src; if (src === 0) break; }
@@ -116,15 +118,19 @@ for (const v of VIEWS) {
   await page.goto(`${BASE}/docklands/?view=${v}&webgl&animate=0&weather=0&t=${T}${EXTRA}${PB}`);
   await page.waitForFunction(() => window.__docklands3?.ready && window.__docklands3.globe, null, { timeout: 400000 });
   await page.waitForTimeout(8000);
-  if (FLY) { await page.waitForFunction(() => window.docklands?.goTo, null, { timeout: 300000 }); for (const t of [[53.34725, -6.25916, 1500, 0, 55], [52.5170, 13.3940, 1500, 80, 55], [53.4794, -2.2453, 20000, 0, 45], [53.9620, -1.0793, 1000, 0, 60], null]) {
+  const trip = async list => { for (const t of list) {
     await page.evaluate(async t => { const G = __docklands3.globe, sleep = ms => new Promise(r => setTimeout(r, ms));
       if (t) await docklands.goTo({ lat: t[0], lon: t[1], alt_m: t[2], heading_deg: t[3], tilt_deg: t[4] }, { animate: true }); else G.home();
       while (G.isFlying()) await sleep(200);
       const t0 = performance.now(); let ok = 0; while (performance.now() - t0 < 180000) { G.dirty = true; __docklands3.draw(); await new Promise(r => requestAnimationFrame(r)); await sleep(200);
         const st = G.placesStats().filter(s => s.state); if (G.mode !== 'globe' || st.every(s => s.settled)) { if (++ok > 3) break; } else ok = 0; } }, t); }
-    await page.waitForTimeout(15000); }
+   await page.waitForTimeout(15000); };
+  if (FLY) { await page.waitForFunction(() => window.docklands?.goTo, null, { timeout: 300000 }); await trip([[53.34725, -6.25916, 1500, 0, 55], [52.5170, 13.3940, 1500, 80, 55], [53.4794, -2.2453, 20000, 0, 45], [53.9620, -1.0793, 1000, 0, 60], null]); }
+  for (let round = 0; round < (AGAIN ? 2 : 1); round++) {
+  if (round) { await trip([[53.34725, -6.25916, 1500, 0, 55], null]); console.log('--- after a second round trip (Dublin and back): what grew'); }
+
   await page.evaluate(() => new Promise(ok => { __docklands3.draw(); requestAnimationFrame(() => requestAnimationFrame(ok)); }));
-  const cdp = await ctx.newCDPSession(page);
+  const cdp = round ? cdp0 : await ctx.newCDPSession(page); cdp0 = cdp;
   const heap = () => page.evaluate(() => +(performance.memory.usedJSHeapSize / 1048576).toFixed(1));
   const h0 = await heap(); await cdp.send('HeapProfiler.enable'); await cdp.send('HeapProfiler.collectGarbage'); await cdp.send('HeapProfiler.collectGarbage'); const h1 = await heap();
   const copies = await page.evaluate(cpuCopies);
@@ -133,10 +139,13 @@ for (const v of VIEWS) {
   console.log(`   CPU copies of geometry (typed arrays, outside the JS heap): ${copies.total_mb} MB ${JSON.stringify(copies.by)}`);
   if (SNAP) {
     const dir = mkdtempSync(join(tmpdir(), 'heap-')), file = join(dir, 'h.heapsnapshot'), parts = [];
-    cdp.on('HeapProfiler.addHeapSnapshotChunk', p => parts.push(p.chunk));
+    const onChunk = p => parts.push(p.chunk); cdp.on('HeapProfiler.addHeapSnapshotChunk', onChunk);
     await cdp.send('HeapProfiler.takeHeapSnapshot', { reportProgress: false, captureNumericValue: false });
-    writeFileSync(file, parts.join('')); parts.length = 0;
+    cdp.off('HeapProfiler.addHeapSnapshotChunk', onChunk); writeFileSync(file, parts.join('')); parts.length = 0;
     const A = analyse(file); rmSync(dir, { recursive: true, force: true });
+    if (prevA) { const m = new Map(prevA.byConstructor); console.log('   grew (self MB, by constructor): ' + JSON.stringify(A.byConstructor.map(([k, v]) => [k, +(v - (m.get(k) || 0)).toFixed(1)]).filter(x => Math.abs(x[1]) >= 0.5)));
+      const ab = new Map(prevAB); console.log('   grew (typed arrays by holder, MB): ' + JSON.stringify(globalThis.__heapAB.map(([k, v]) => [k, +(v - (ab.get(k) || 0)).toFixed(1)]).filter(x => Math.abs(x[1]) >= 0.5))); }
+    prevA = A; prevAB = globalThis.__heapAB;
     console.log(`   snapshot: ${A.nodes} nodes, ${A.total_mb} MB of self sizes (V8 heap plus native nodes)`);
     console.log('   by constructor (self MB): ' + JSON.stringify(A.byConstructor));
     console.log('   window globals (retained MB): ' + JSON.stringify(A.globals));
@@ -145,6 +154,7 @@ for (const v of VIEWS) {
     console.log('   typed-array backing stores by holder name (MB): ' + JSON.stringify(globalThis.__heapAB));
     if (process.argv.includes('--paths')) console.log('   holders:\n' + globalThis.__heapPaths.join('\n'));
     if (process.argv.includes('--chains')) console.log('   retainer chains of the largest arrays:\n      ' + globalThis.__heapChains.join('\n      '));
+  }
   }
   if (errors.length) { failed++; console.log('FAIL page errors: ' + errors.slice(0, 3).join(' | ')); }
   await ctx.close();
