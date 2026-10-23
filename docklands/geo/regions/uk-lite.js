@@ -103,6 +103,14 @@ export default {
       // its id; every other building as its own box (place-lite.mjs compactBoxes). town_m: the atoms of place-lite-select
       // (200 m squares, its counts); rural_m and town_share: the leaf rule of place-lite-tiles 2 (not used since version 3)
       leaf: { town_m: 200, rural_m: 400, town_share: 0.08, simplify_m: 1.5 },
+      // far forms (place-lite-tiles 5, 2026-10-23, issue #13: from 20 km a town read as a lattice of squares; three options
+      // measured, this one chosen): the coarse levels draw real buildings and street blocks at their true positions instead
+      // of merged squares (place-lite.mjs streetBlocks: oriented boxes within gap_m and heights within max(h_abs_m, h_rel x
+      // the taller) are one block, cut while they fill less than fill_min of it); each level draws the blocks whose seen
+      // size sqrt(area) x max(sqrt(area), height) is at least min_m2 = (far end of its range / 1462 m)^2, about one device
+      // pixel squared on a phone (level 10 drawn to about 19.5 km, 9 to 39 km, 8 to 78 km, 7 beyond). merge_m above is
+      // used only without far (the squares of place-lite-tiles 3 and 4)
+      far: { gap_m: 5, fill_min: 0.4, h_rel: 0.35, h_abs_m: 3, min_m2: { 7: 11400, 8: 2850, 9: 712, 10: 178 } },
       grid_n: 17,   // the ground grid of a tile's compact boxes (n x n)
       full_share: 0.5, drop_m: 8,   // (full_share: 0.35 until place-lite-tiles 3; 0.5 leaves street gaps between the turned squares)
       // (drop_m: bases deeper than London's 3 m: the globe's ground away from the world-base tiles is a 9.8 km texture drawn by 2.4 km patches)
