@@ -23,6 +23,7 @@ import { attribute, uniform, vec3, vec4, float, normalize, dot, max, mix, smooth
 import { geodeticToEcef, enuBasis, D2R } from '../geo/ellipsoid.js';
 import { latinPreferred, pickName, isLatin } from '../geo/script.js';
 import { fold } from './world.js';
+import { releaseMesh } from '../governor.js';
 
 export const LANDMARKS_INDEX = '../cwplans/docklands/data/places/landmarks.json';
 const qs = new URLSearchParams(location.search), MODE = qs.get('landmarks') || 'all', MIN_PX = +(qs.get('minpx') || 2);
@@ -105,7 +106,7 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
       L.tiles = tiles; L.state = 'ready'; G.dirty = true; H.draw();
     } catch (e) { console.warn('landmarks: load', L.p.id, e); L.state = 'failed'; }
   }
-  function free(L) { for (const t of L.tiles) for (const m of t.meshes) { scene.remove(m); m.geometry.dispose(); } L.tiles = []; L.state = null; }
+  function free(L) { for (const t of L.tiles) for (const m of t.meshes) { scene.remove(m); m.geometry.dispose(); releaseMesh(m); } L.tiles = []; L.state = null; }
 
   // ---------- core parts replaced by a landmark: their vertices collapsed to one point when the core tile is activated
   const done = new WeakSet();

@@ -26,7 +26,7 @@ import { VIEWS } from './views.js';
 import { makePerf } from './perf.js';
 import { makeCpuCopies } from './cpu-copies.js';
 import { makeCells } from './cells.js';
-import { GOV, APP } from './governor.js';   // moglob's memory budget, its pools and tiers, crash recovery (governor.js)
+import { GOV, APP, releaseMesh } from './governor.js';   // moglob's memory budget, its pools and tiers, crash recovery (governor.js)
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -326,7 +326,7 @@ function placeLabels() {
 // than 80 px. The blocks follow the look of the tiles (made again in rebuildBuildings).
 const models = new THREE.Group(); scene.add(models);
 function farBlock(lod) {
-  const old = lod.userData.far; if (old) { lod.remove(old); old.traverse(o => o.geometry && o.geometry.dispose()); const k = lod.levels.findIndex(l => l.object === old); if (k >= 0) lod.levels.splice(k, 1); if (lod.levels[0]) lod.levels[0].object.visible = true; lod.userData.far = null; }
+  const old = lod.userData.far; if (old) { lod.remove(old); const gone = []; old.traverse(o => { if (o.geometry) { o.geometry.dispose(); gone.push(o); } }); for (const o of gone) releaseMesh(o); const k = lod.levels.findIndex(l => l.object === old); if (k >= 0) lod.levels.splice(k, 1); if (lod.levels[0]) lod.levels[0].object.visible = true; lod.userData.far = null; }
   if (!LOD.on) return;
   const g = new THREE.Group(); g.name = 'far block'; g.position.set(-lod.position.x, -lod.position.y, -lod.position.z);   // the blocks are in model metres
   for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts, skip: null, only: new Set(lod.userData.mi) })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; g.add(m); }

@@ -30,7 +30,7 @@ import { attribute, uniform, texture, uv, vec3, vec4, float, normalize, dot, max
 import { geodeticToEcef, enuBasis, surfaceDistance, D2R } from '../geo/ellipsoid.js';
 import { fold, fmtDist, compass, bearingDeg } from './world.js';
 import { makeLook } from './place-look.js';
-import { GOV } from '../governor.js';   // moglob's memory budget: tiles and places are freed by bytes, least recently used first
+import { GOV, releaseMesh } from '../governor.js';   // moglob's memory budget: tiles and places are freed by bytes, least recently used first
 
 export const PLACES_INDEX = '../cwplans/docklands/data/places/index.json';
 export const LOAD_M = 150000, FREE_M = 220000;
@@ -238,7 +238,7 @@ export async function attachPlaces(G, H, { scene, U }) {
   }
   function free(p) {
     for (const n of p.nodes) freeNode(n);
-    for (const t of p.extras) { scene.remove(t.mesh); t.mesh.geometry.dispose(); if (!SHARED.has(t.mesh.material)) t.mesh.material.dispose(); }
+    for (const t of p.extras) { scene.remove(t.mesh); t.mesh.geometry.dispose(); if (!SHARED.has(t.mesh.material)) t.mesh.material.dispose(); releaseMesh(t.mesh); }
     G.labels?.()?.clear(c => c.placeId === p.id);
     p.extras = []; p.nodes = []; p.roots = []; p.state = null; p.ringHo = null; p.topReady = false; p.curtain = null; G.dirty = true;
     dropData(p);   // (moglob, 2026-10-23: a freed place kept its features, surroundings, names and greens: 10 to 40 MB of JS heap a place)
@@ -324,7 +324,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     mesh.userData = { place: n.p.id, tile: n.uri, kind, node: n }; scene.add(mesh); n.meshes.push(mesh); n.tris += tris; G.dirty = true; H.draw();
   }
   function freeNode(n) {
-    for (const m of n.meshes) { scene.remove(m); m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); if (m.userData.ground && m.material.userData.tex && groundPool.length < 400) groundPool.push(m.material); else if (!SHARED.has(m.material)) m.material.dispose(); if (m.userData.map) { m.userData.map.image?.close?.(); m.userData.map.dispose(); } }
+    for (const m of n.meshes) { scene.remove(m); m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); if (m.userData.ground && m.material.userData.tex && groundPool.length < 400) { if (m.material.userData.tex) m.material.userData.tex.value = null; groundPool.push(m.material); } else if (!SHARED.has(m.material)) m.material.dispose(); if (m.userData.map) { m.userData.map.image?.close?.(); m.userData.map.dispose(); } releaseMesh(m); }
     n.meshes = []; n.tris = 0; n.trees = null; n.decorated = null; if (n.state === 'decoded') { for (const q of n.prims || []) q.bmp?.close?.(); n.prims = null; }
     n.state = null;
   }

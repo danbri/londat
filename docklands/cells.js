@@ -22,6 +22,7 @@
 //    later (tide.js: the terrain without the foreshore squares) is prepared when it first shows.
 // Skill: docklands-3d-page, "Three.js port: model cells, LOD step 4 (2026-10-21)".
 import { lodIn } from './build.js';
+import { releaseMesh, releaseGeometry } from './governor.js';
 
 export const CELL = 1000;
 export const LEVEL_SIZE = [60, 240];   // m: full detail while this covers LOD.px, simplified while the second does
@@ -113,7 +114,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
   }
   function dropTiles() {   // before a rebuild: every level of every cell
     gen++; want.clear();
-    for (const m of tiles) for (const G of new Set(m.userData.lods)) if (G) { G.userData.mine = true; G.userData.freed = false; G.dispose(); }
+    for (const m of tiles) { for (const G of new Set(m.userData.lods)) if (G) { G.userData.mine = true; G.userData.freed = false; G.dispose(); releaseGeometry(G); } releaseMesh(m); }   // (releaseMesh: three.js keeps the old mesh: governor.js)
     tiles.length = 0;
   }
   function swap(m, L) {
@@ -147,7 +148,7 @@ export function makeCells({ THREE, camera, eye, LOD, CPU, draw, buildTile, prep 
       n[U.level]++; U.used[U.level] = now;
       // levels not drawn for FREE_MS: a simplified or far geometry is dropped, the full one gives back its GPU buffers
       for (let k = 0; k < 3; k++) { const G = U.lods[k]; if (!G || G === m.geometry || now - U.used[k] <= FREE_MS) continue;
-        if (k) { G.userData.mine = true; G.userData.freed = false; G.dispose(); U.lods[k] = undefined; S.dropped++; continue; }   // a simplified or far level: dropped
+        if (k) { G.userData.mine = true; G.userData.freed = false; G.dispose(); releaseGeometry(G); U.lods[k] = undefined; S.dropped++; continue; }   // a simplified or far level: dropped
         if (!G.userData.freed) { G.userData.mine = true; G.dispose(); G.userData.mine = false; G.userData.freed = true; S.freed++; } } }   // the full level: its GPU buffers (CPU copies kept for taps)
     S.tiles = { full: n[0], simplified: n[1], far: n[2] }; S.pending = want.size;
     // triangles of the levels built, against the full level of the same cells (the levels' saving)

@@ -124,6 +124,25 @@ export function makeGovernor() {
   };
   return G;
 }
+// a mesh taken out of the scene for good: its geometry is disposed by the caller; this lets go of what the mesh object still
+// points at (moglob, 2026-10-23: three.js r186 keeps a RenderObject, and through it the Mesh, its geometry and arrays, for
+// meshes that shared a material that is never disposed: every rebuild of the model kept about 15 MB, every place visit
+// its tiles). The empty geometry is shared, per geometry class.
+const EMPTY = new Map();
+// a disposed geometry: its arrays go too (three.js r186 keeps RenderObjects, and their geometry, for objects that left the
+// scene; the shell that stays is small). Only for a geometry that is never drawn again.
+export function releaseGeometry(G) {
+  if (!G || EMPTY.get(G.constructor) === G) return;
+  for (const a of Object.values(G.attributes || {})) if (a && a.array && a.array.length) a.array = new a.array.constructor(0);
+  if (G.index && G.index.array && G.index.array.length) G.index.array = new G.index.array.constructor(0);
+  G.userData = {};
+}
+export function releaseMesh(m) {
+  if (!m) return; const G = m.geometry, C = G && G.constructor; releaseGeometry(G);
+  if (C) { let e = EMPTY.get(C); if (!e) { e = new C(); EMPTY.set(C, e); } m.geometry = e; }
+  if (m.isInstancedMesh) { m.count = 0; if (m.instanceMatrix) m.instanceMatrix.array = new Float32Array(16); if (m.instanceColor) m.instanceColor.array = new Float32Array(3); }
+  m.userData = {};
+}
 // one governor for the page (main.js attaches the renderer; globe/places.js and globe/base-tiles.js register their pools)
 export const GOV = makeGovernor();
 if (typeof globalThis !== 'undefined') { globalThis.moglob = Object.assign(globalThis.moglob || {}, { name: APP.name, memory: GOV }); }

@@ -32,7 +32,7 @@ import { Terrain, terrainMaterial, makeSampler } from './terrain.js';
 import { buildLines, lineMaterial, graticule, rebuildLines } from './vectors.js';
 import { makeLabels } from './labels.js';
 import { latinOut, scrubText } from '../geo/script.js';
-import { GOV } from '../governor.js';   // moglob's memory budget: the resting globe's line and patch arrays may go
+import { GOV, releaseMesh } from '../governor.js';   // moglob's memory budget: the resting globe's line and patch arrays may go
 
 // the manifests of layer sets in the globe's contract (world.js header). The UK skeleton adds its manifest here.
 export const MANIFESTS = ['../cwplans/docklands/data/world/layers.json'];
@@ -158,7 +158,7 @@ export async function createGlobe(H) {
   const ui = {}; let freeT = 0;
   function setMode(m, o) {   // o: the orbit of the hand-over (the camera of the cross-fade's last globe frame)
     if (G.mode === m) return; crossFade(G.mode, o); G.mode = m; const on = m === 'globe';
-    clearTimeout(freeT); if (on) freeT = setTimeout(freeModel, 3000); else reupStart();
+    clearTimeout(freeT); if (on) freeT = setTimeout(freeModel, 3000); else { reupStart(); freeT = setTimeout(earlyRest, 1500); }
     document.body.classList.toggle('globeMode', on);
     controls.enabled = !on; if (ui.btns) ui.btns.hidden = !on;
     if (!on) { if (labels) labels.update({ visible: false, project, eye: F.O, zoom: 0, W: innerWidth, H: innerHeight }); }
@@ -175,6 +175,9 @@ export async function createGlobe(H) {
       if (c > 20000 && !g.userData.freed) { g.dispose(); g.userData.freed = true; n++; v += c; } });
     G.freed = { meshes: n, vertices: v, at: Date.now() };
   }
+  // back in the model with the eye low (no globe behind it): the places and the base imagery go at once (moglob,
+  // 2026-10-23: they stayed until the globe rested, 8 s later, while the model's buffers came back: the fly's peak)
+  function earlyRest() { if (G.mode !== 'model' || bgOn || qs.get('free') === '0') return; G.placesRest?.(); G.baseRest?.(); }
   function enterGlobe(o) { orbit = guard(onGround({ ...o })); setMode('globe'); }
   // the eye and the view ray kept, the target moved along the ray onto the globe's ground (guard puts the target at the
   // globe's ground height, 9.8 km cells: from the model's ground that moved the eye 34 m at the zoom-out hand-over)
@@ -318,8 +321,8 @@ export async function createGlobe(H) {
   // patches' arrays (on the CPU; the GPU buffers are already given back) may go; they are made again at the next draw
   GOV.register({ id: 'globe',
     idle() { if (!G.rested) return []; const out = [], at = G.rested.at || 0;
-      for (const L of layers) if (!L.dropped && L.make && L.meshes.length) out.push({ bytes: 2 * L.meshes.reduce((s, m) => s + arrBytes(m.geometry), 0), used: at, free: () => { for (const m of L.meshes) { scene.remove(m); m.geometry.dispose(); } L.meshes = []; L.dropped = true; } });
-      if (terrain) { const ms = [...terrain.cache.values()].filter(n => n.mesh); if (ms.length) out.push({ bytes: 2 * ms.reduce((s, n) => s + arrBytes(n.mesh.geometry), 0), used: at, free: () => { for (const n of ms) if (n.mesh) { scene.remove(n.mesh); n.mesh.geometry.dispose(); n.mesh = null; n.demKey = null; } } }); }
+      for (const L of layers) if (!L.dropped && L.make && L.meshes.length) out.push({ bytes: 2 * L.meshes.reduce((s, m) => s + arrBytes(m.geometry), 0), used: at, free: () => { for (const m of L.meshes) { scene.remove(m); m.geometry.dispose(); releaseMesh(m); } L.meshes = []; L.dropped = true; } });
+      if (terrain) { const ms = [...terrain.cache.values()].filter(n => n.mesh); if (ms.length) out.push({ bytes: 2 * ms.reduce((s, n) => s + arrBytes(n.mesh.geometry), 0), used: at, free: () => { for (const n of ms) if (n.mesh) { scene.remove(n.mesh); n.mesh.geometry.dispose(); releaseMesh(n.mesh); n.mesh = null; n.demKey = null; } } }); }
       return out; },
     stats: () => ({ line_layers: layers.length, dropped: layers.filter(L => L.dropped).length, patches: terrain ? [...terrain.cache.values()].filter(n => n.mesh).length : 0 }) });
   function addLabels(L, heightAt) {
@@ -755,7 +758,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   const cellLayers = [];
   G.addCellLayer = function (spec) { const L = { ...spec, cells: new Map(), on: spec.style?.on !== false, mat: lineMaterial(spec.style?.color || '#ffffff', spec.style?.opacity ?? 0.8) }; cellLayers.push(L); if (G.ready) layerUi(true); G.dirty = true; return L; };
   let cellT = 0;
-  function dropCell(L, k, c) { for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); } if (c.labels.length) { const S = new Set(c.labels); labels.clear(x => S.has(x)); } c.meshes = []; c.labels = []; L.cells.delete(k); }
+  function dropCell(L, k, c) { for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); releaseMesh(m); } if (c.labels.length) { const S = new Set(c.labels); labels.clear(x => S.has(x)); } c.meshes = []; c.labels = []; L.cells.delete(k); }
   function updateCells(now) {
     if (!cellLayers.length || now - cellT < 300) return; cellT = now;
     const alt = F.eyeGeo.h, half = clamp(orbit.range * 1.4 / 111000, 0.05, 60), b = [orbit.lon - half / Math.max(0.2, Math.cos(orbit.lat * D2R)), orbit.lat - half, orbit.lon + half / Math.max(0.2, Math.cos(orbit.lat * D2R)), orbit.lat + half];

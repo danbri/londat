@@ -12,6 +12,8 @@
 //   python3 -m http.server 8195 --bind 127.0.0.1 &                  (from the repository root)
 //   node docklands/test/lite-check.mjs [--base http://127.0.0.1:8195] [--placebase docklands/test/out/docklandia/data/gb/uk-lite/] [--sizes 390x844@2]
 // Skill: docklands-3d-page, "Three.js port: the UK lite set (2026-10-22)".
+// (&mem=full: these checks test the tile rules at full detail; the memory governor's tiers (coarser tiles under memory
+// pressure, docklands/governor.js) are tested by docklands/test/memory-check.mjs)
 import { chromium } from '@playwright/test';
 import { mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { geodeticToEcef } from '../geo/ellipsoid.js';
@@ -65,7 +67,7 @@ for (const [w, h, dpr] of SIZES) {
   page.on('response', r => { if (/\/tilesets\/[\d-]+\.json$/.test(r.url())) tsets.add(r.url()); if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   // 1. the UK from 500 km (straight down)
-  await page.goto(`${BASE}/docklands/?ll=54.5,-3.0,500000&ht=0,0&webgl&animate=0&weather=0&t=2026-10-12T12:00${PBQ}`);
+  await page.goto(`${BASE}/docklands/?ll=54.5,-3.0,500000&ht=0,0&webgl&animate=0&weather=0&mem=full&t=2026-10-12T12:00${PBQ}`);
   await page.waitForFunction(id => { const G = window.__docklands3?.globe; return !!(G && G.mode === 'globe' && G.places && window.docklands && G.placesStats && G.placesStats().find(x => x.id === id)); }, ID, { timeout: 240000, polling: 250 });
   const uk = await settle(page);
   const pl = uk.st.find(x => x.id === ID), lv = Object.keys(pl.drawn_by_level).map(Number);

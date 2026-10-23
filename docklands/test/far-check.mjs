@@ -10,6 +10,8 @@
 // --check: also fail when a view shows merged squares of a coarse level (kind "squares") of a set built with far forms, or
 // when a named place (--expect id:range_max, e.g. berlin:25000) draws no building block within that range.
 // Skill: docklands-3d-page, "Far views: buildings and street blocks, no squares (2026-10-23)".
+// (&mem=full: these checks test the tile rules at full detail; the memory governor's tiers (coarser tiles under memory
+// pressure, docklands/governor.js) are tested by docklands/test/memory-check.mjs)
 import { chromium } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 
@@ -30,7 +32,7 @@ for (const v of VIEWS) {
   page.on('response', async r => { const u = r.url(), m = /\/places\/([^/]+)\/(?:tiles|tilesets)\/|\/data\/(?:[a-z]{2})\/([^/]+)\/(?:tiles|tilesets)\//.exec(u); if (!m) return; const id = m[1] || m[2];
     const o = fetched[id] ||= { tiles: 0, bytes: 0 }; o.tiles++; o.bytes += +(r.headers()['content-length'] || 0); });   // (the server's Content-Length: body() misses some answers)
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
-  const url = `${BASE}/docklands/?ll=${v.lat},${v.lon},${v.range}&ht=${v.hd},${v.tilt}&webgl&animate=0&weather=0&t=2026-10-12T12:00${LAYERS === 'none' ? '&layers=' : ''}${PB}`;
+  const url = `${BASE}/docklands/?ll=${v.lat},${v.lon},${v.range}&ht=${v.hd},${v.tilt}&webgl&animate=0&weather=0&mem=full&t=2026-10-12T12:00${LAYERS === 'none' ? '&layers=' : ''}${PB}`;
   const t0 = Date.now(); await page.goto(url);
   await page.waitForFunction(() => { const G = window.__docklands3?.globe; return !!(G && G.mode === 'globe' && G.places && G.placesStats && window.docklands); }, null, { timeout: 300000, polling: 500 });
   const r = await page.evaluate(async () => {

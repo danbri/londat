@@ -15,6 +15,7 @@
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, vec2, vec3, vec4, float, normalize, dot, max, min, mix, smoothstep, pow, clamp, cross, length, select, positionLocal, positionWorld, positionView, modelWorldMatrix, cameraNear, cameraFar, viewZToLogarithmicDepth, reflect, abs } from 'three/tsl';
 import { geodeticToEcef, enuBasis, WGS84, D2R } from '../geo/ellipsoid.js';
+import { releaseMesh } from '../governor.js';
 
 export const SEG = 32, MAXL = 8, PX = 12, MESHES = 360;   // level 8: 0.7 degree patches, vertices 2.4 km apart (the data: 9.8 km a pixel); deeper only where base tiles exist
 const A_ = WGS84.a;
@@ -166,9 +167,9 @@ export class Terrain {
     if (this.detail) this.detail.selected(out, this.frame);
     let withMesh = 0; for (const n of this.cache.values()) if (n.mesh) withMesh++;
     if (withMesh > MESHES) { const old = [...this.cache.values()].filter(n => n.mesh && n.used < this.frame - 2).sort((a, b) => a.used - b.used);
-      for (const n of old.slice(0, withMesh - Math.floor(MESHES * 0.8))) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); n.mesh = null; n.demKey = null; } }
+      for (const n of old.slice(0, withMesh - Math.floor(MESHES * 0.8))) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); releaseMesh(n.mesh); n.mesh = null; n.demKey = null; } }
     if (this.cache.size > 1400) { const old = [...this.cache.values()].filter(n => n.used < this.frame - 30).sort((a, b) => a.used - b.used);
-      for (const n of old.slice(0, this.cache.size - 1000)) { if (n.mesh) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); } this.cache.delete(n.k); } }
+      for (const n of old.slice(0, this.cache.size - 1000)) { if (n.mesh) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); releaseMesh(n.mesh); } this.cache.delete(n.k); } }
     return out;
   }
 }
