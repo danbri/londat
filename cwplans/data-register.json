@@ -346,6 +346,26 @@
       "committed": false,
       "local_path": "data/raw/places/dagstuhl/greens/osm-map.json.gz (in cwplans/.gitignore; re-fetch with the tool)",
       "fetched_by": "tools/build-place-greens.mjs fetch --region dagstuhl (OSM API 0.6 map.json of the core area, then relation/<id>/full for the multipolygons that leave it); the SHA-256 of each answer in greens/log.json"
+    },
+    "qlever-osm-uk-part-shapes": {
+      "url": "https://qlever.dev/api/osm-planet (SPARQL: building parts contained in the UK relation 62149 with building:part spire, steeple, tower, church_tower, bell_tower, clock_tower, minaret or belfry, or roof:shape pyramidal, cone, conical, spire, dome or onion: their roof:shape and building:part)",
+      "osm_data_as_of": "planet 2026-09-21 (osm2rdf index of the QLever OSM endpoint)",
+      "fetched": "2026-10-23",
+      "sha256_prefix": "967fe4cbbcb2b96b",
+      "size_bytes": 173003,
+      "committed": false,
+      "local_path": "data/raw/places/uk-lite/osm-part-shapes.tsv (in cwplans/.gitignore)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (2738 rows; tags only, joined to the Overture building parts by OSM id; issue #14)"
+    },
+    "qlever-osm-uk-structures": {
+      "url": "https://qlever.dev/api/osm-planet (SPARQL: elements contained in the UK relation 62149 not tagged building, with man_made tower, chimney, obelisk, lighthouse, mast, monument, historic monument, memorial, castle or tourism artwork, and a wikidata or wikipedia tag or a name and a height: kind, name, height, wikidata, wikipedia, geometry as WKT)",
+      "osm_data_as_of": "planet 2026-09-21 (osm2rdf index of the QLever OSM endpoint)",
+      "fetched": "2026-10-23",
+      "sha256_prefix": "489a7a0036f0bfbd",
+      "size_bytes": 913419,
+      "committed": false,
+      "local_path": "data/raw/places/uk-lite/osm-structures.tsv (in cwplans/.gitignore)",
+      "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (4522 rows; issue #14: structures drawn as landmarks, castle sites as rows)"
     }
   },
   "sources": {
@@ -15992,7 +16012,7 @@
         "README.md",
         "provenance/log.json"
       ],
-      "what": "The UK outside Greater London as a LITE building set (owner, 2026-10-22: \"can we pick a lite subset or slice somehow? Key landmarks, modest resolution?\"): 3D Tiles 1.1 + glTF, quadtree levels 7 to 11, REPLACE refinement, external tile sets from level 9. 82,784 landmarks (OSM wikidata or wikipedia tag; notable kinds: cathedral, castle, palace, stadium, tower, lighthouse, windmill and others; named and 25 m or taller, or 3,000 m2 or more), each with its outline, id (_FEATURE_ID_0 = row of the features shards) and card; and every other OSM and Microsoft footprint (22.7 M, 20 m2 or more) as its own box at its true position at the leaves (level 11: centroid, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height; no outline, no id; since 2026-10-22, owner: \"UK data looks like literal tiles\"), and at the coarse levels (7 to 10) as far forms since 2026-10-23 (place-lite-tiles 5, issue #13; before: merged squares of 200 m to 1.6 km): buildings and street blocks of adjacent buildings of similar height at their true positions, one oriented box each (summed footprint, area-weighted mean height), drawn where their seen size sqrt(area) x max(sqrt(area), height) is at least 178 / 712 / 2,850 / 11,400 m2 (levels 10 / 9 / 8 / 7). Boxes in the compact layout cwplans-boxes-1 (8 bytes a box, glb extras.blocks.compact). A building whose centroid is in Greater London (ONS E12000007) is left to the London place. Read by docklands/globe/places.js (index entry uk-lite, kind lite, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by part and class Landmark heights (operation place-lite-landmark-heights, owner 2026-10-22 \"Yes do that\"): OSM building:part heights via the Overture building_part theme (towers and spires above the body drawn as their own blocks with the landmark's id) and Wikidata P2048 heights (CC0; a spire on the tallest part or a square tower at the centroid, by a stated rule); the card gives the highest point and its source.",
+      "what": "The UK outside Greater London as a LITE building set (owner, 2026-10-22: \"can we pick a lite subset or slice somehow? Key landmarks, modest resolution?\"): 3D Tiles 1.1 + glTF, quadtree levels 7 to 11, REPLACE refinement, external tile sets from level 9. 82,784 landmarks (OSM wikidata or wikipedia tag; notable kinds: cathedral, castle, palace, stadium, tower, lighthouse, windmill and others; named and 25 m or taller, or 3,000 m2 or more), each with its outline, id (_FEATURE_ID_0 = row of the features shards) and card; and every other OSM and Microsoft footprint (22.7 M, 20 m2 or more) as its own box at its true position at the leaves (level 11: centroid, footprint area, the angle and long / short ratio of its minimum rotated rectangle, height; no outline, no id; since 2026-10-22, owner: \"UK data looks like literal tiles\"), and at the coarse levels (7 to 10) as far forms since 2026-10-23 (place-lite-tiles 5, issue #13; before: merged squares of 200 m to 1.6 km): buildings and street blocks of adjacent buildings of similar height at their true positions, one oriented box each (summed footprint, area-weighted mean height), drawn where their seen size sqrt(area) x max(sqrt(area), height) is at least 178 / 712 / 2,850 / 11,400 m2 (levels 10 / 9 / 8 / 7). Boxes in the compact layout cwplans-boxes-1 (8 bytes a box, glb extras.blocks.compact). A building whose centroid is in Greater London (ONS E12000007) is left to the London place. Read by docklands/globe/places.js (index entry uk-lite, kind lite, tileBase). README in the folder: sources, licences, extract dates, SHA-256, operations, sizes by part and class Landmark heights (operation place-lite-landmark-heights, owner 2026-10-22 \"Yes do that\"): OSM building:part heights via the Overture building_part theme (towers and spires above the body drawn as their own blocks with the landmark's id) and Wikidata P2048 heights (CC0; a spire on the tallest part or a square tower at the centroid, by a stated rule); the card gives the highest point and its source. Since 2026-10-23 (issue #14, place-lite-landmark-heights 2, place-lite-structures 1, place-lite-tiles 6): each landmark part is drawn by its shape (walls from its min_height when held up; a spire or pyramidal roof to one apex, a dome or onion cap; roof-caps.mjs), Wikidata spires as pyramids; 329 structures that are not OSM buildings drawn as landmarks (towers, lighthouses, masts, chimneys, artworks such as the Angel of the North, monuments, obelisks) and 315 castle sites (such as Edinburgh Castle) as rows for search and the card; 83,428 landmark rows.",
       "sources": [
         "osm",
         "overture-buildings",
@@ -16012,9 +16032,11 @@
         "extract": [
           "overture-osm-uk-lite",
           "qlever-osm-uk-landmark-tags",
-          "overture-osm-uk-building-parts"
+          "overture-osm-uk-building-parts",
+          "qlever-osm-uk-part-shapes",
+          "qlever-osm-uk-structures"
         ],
-        "what": "landmark outlines, names, kinds, Wikidata and Wikipedia tags, heights and levels of OSM buildings (via Overture and QLever); the footprint areas and heights of the other OSM buildings summed into the mass; the outlines and heights of OSM building parts (building:part) of the landmarks, via Overture"
+        "what": "landmark outlines, names, kinds, Wikidata and Wikipedia tags, heights and levels of OSM buildings (via Overture and QLever); the footprint areas and heights of the other OSM buildings summed into the mass; the outlines and heights of OSM building parts (building:part) of the landmarks, via Overture; the roof:shape and building:part of landmark parts (QLever); structures that are not OSM buildings (towers, chimneys, obelisks, lighthouses, masts, monuments, artworks with a height) as landmark outlines or shapes by kind, and castle areas as named site rows (QLever)"
       },
       "produced_by": "tools/build-place-tiles.mjs --region uk-lite (operations place-lite-select 2, place-lite-landmark-heights 1 and place-lite-tiles 4; with tools/place-lite-heights.mjs, with tools/place-lite.mjs, tools/place-blocks.mjs, tools/fetch-overture-theme.py)",
       "fetched": "2026-10-22",

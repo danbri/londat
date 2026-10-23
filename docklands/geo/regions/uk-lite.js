@@ -36,7 +36,9 @@ export default {
     views: [{ name: 'The UK from 500 km', ll: '54.5,-3.0,500000', ht: '0,0' }, { name: 'Manchester from 20 km', ll: '53.4794,-2.2453,20000', ht: '0,45' },
       { name: 'Edinburgh from 20 km', ll: '55.9533,-3.1883,20000', ht: '0,45' }, { name: 'Durham Cathedral (700 m)', ll: '54.7735,-1.5765,700', ht: '200,60' },
       { name: 'York Minster (700 m)', ll: '53.9623,-1.0819,700', ht: '200,60' }, { name: 'York from 1.1 km (one box a building)', ll: '53.9620,-1.0793,1100', ht: '0,60' },
-      { name: 'Salisbury Cathedral (700 m; spire 123 m from OSM parts)', ll: '51.0651,-1.7973,700', ht: '200,60' }],
+      { name: 'Salisbury Cathedral (700 m; spire 123 m from OSM parts, drawn as a spire since 2026-10-23)', ll: '51.0651,-1.7973,700', ht: '200,60' },
+      { name: 'Lincoln Cathedral (700 m)', ll: '53.2343,-0.5361,700', ht: '200,60' }, { name: 'The Angel of the North (400 m; a structure, not an OSM building)', ll: '54.9141,-1.5897,400', ht: '200,70' },
+      { name: 'Manchester from 50 km (far forms)', ll: '53.4794,-2.2453,50000', ht: '0,45' }],
     // parts: polygons of the UK skeleton (ONS BGC: English regions, then the countries); a building belongs to the first
     // part whose polygon holds its centroid; one outside every polygon (generalised coast, the England-Wales and
     // England-Scotland edges of two ONS products) to the nearest part within coast_m
@@ -77,7 +79,12 @@ export default {
       heights: {
         part_columns: 'building_id,height,min_height,roof_shape,roof_height,num_floors', part_where: 'height IS NOT NULL',
         wikidata_endpoint: 'https://qlever.dev/api/wikidata', wikidata_chunk: 5000,
-        rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15 },
+        rule: { rise_m: 3, rise_share: 0.15, max_parts: 64, max_wd_m: 330, spire_share: 0.35, tower_share: 0.2, tower_min_m: 4, tower_max_m: 15, cap_share: 0.25, cap_max_m: 8 },
+        // (issue #14, place-lite-landmark-heights 2) the shape of each part: Overture's roof_shape and roof_height, with the
+        // OSM roof:shape and building:part of these parts (QLever: Overture has no "cone" and no part kind); a pointed cap
+        // (pyramidal, cone, spire), a dome or an onion of roof:height, else min(cap_share x height, cap_max_m), the whole part
+        // for building:part=spire; walls from min_height when the body or a part already standing holds the part up
+        shapes: { parts: ['spire', 'steeple', 'tower', 'church_tower', 'bell_tower', 'clock_tower', 'minaret', 'belfry'], roof_shapes: ['pyramidal', 'cone', 'conical', 'spire', 'dome', 'onion'] },
       },
       landmark: {
         // (1) an encyclopaedia record: OSM wikidata or wikipedia on the building
@@ -92,6 +99,11 @@ export default {
         named_tall_m: 25, named_big_m2: 3000,
         min_area_m2: 20,
       },
+      // (issue #14, operation place-lite-structures) structures that are not OSM buildings, by the landmark rule: a listed kind,
+      // not tagged building, with a wikidata or wikipedia tag or a name and a height of named_tall_m; height from OSM, else
+      // Wikidata P2048; drawn from min_height_m (its outline, else a shape at its node by kind: place-lite-heights.mjs
+      // STRUCTURE_SHAPES); historic=castle areas with wikidata are sites (search and card rows, not drawn)
+      structures: { man_made: ['tower', 'chimney', 'obelisk', 'lighthouse', 'mast', 'monument'], historic: ['monument', 'memorial', 'castle'], tourism: ['artwork'], named_tall_m: 25, min_height_m: 10 },
       top_level: 7, leaf_level: 11,
       // coarse levels: landmarks at least tall_m or big_m2 as their own boxes (card by id); everything else one box per
       // square of merge_m (side grown with the built share, full at full_share; height = area-weighted mean). err_m of

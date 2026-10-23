@@ -35,3 +35,40 @@ test('landmarkHeights: parts above the body, a Wikidata spire on the tallest par
   const e = landmarkHeights({ h: 40, src: 'osm-height', a: 900, c: [0, 54], wikidata: 'Q8' }, [], new Map([['Q8', 42]]), R);
   assert.equal(e.towers.length, 0, 'not above the rise');
 });
+
+test('part shapes (issue #14): a spire part standing on its tower is a pointed cap from its min_height; OSM roof:shape wins; a part mapped high with nothing under it starts at the ground', async () => {
+  const { osmPartShapes, partCap, partBases, structureRows } = await import('../place-lite-heights.mjs');
+  const S = osmPartShapes('?p\t?rs\t?bp\n<https://www.openstreetmap.org/way/929166111>\t"pyramidal"\t"yes"\n<https://www.openstreetmap.org/way/7>\t"cone"\t"tower"\n<https://www.openstreetmap.org/way/8>\t\t"spire"\n');
+  assert.deepEqual(S.get('w7'), { rs: 'cone', bp: 'tower' }); assert.equal(S.get('w8').bp, 'spire');
+  // Salisbury: tower 69 m; spire part 69 to 123 m, pyramidal, roof:height 54
+  const rows = [{ id: 't', building_id: 'B', height: 69, min_height: null, roof_shape: null, roof_height: null, sources: [{ dataset: 'OpenStreetMap', record_id: 'w929009807@4' }], geometry: { type: 'Polygon', coordinates: sq(0, 0, 0.0002) } },
+    { id: 's', building_id: 'B', height: 123, min_height: 69, roof_shape: 'pyramidal', roof_height: 54, sources: [{ dataset: 'OpenStreetMap', record_id: 'w929166111@2' }], geometry: { type: 'Polygon', coordinates: sq(0.00002, 0.00002, 0.00016) } },
+    { id: 'c', building_id: 'B', height: 40, min_height: 30, roof_shape: 'flat', roof_height: null, sources: [{ dataset: 'OpenStreetMap', record_id: 'w7@1' }], geometry: { type: 'Polygon', coordinates: sq(0.01, 0.01, 0.0001) } },
+    { id: 'f', building_id: 'B', height: 60, min_height: 50, roof_shape: null, roof_height: null, sources: [{ dataset: 'OpenStreetMap', record_id: 'w9@1' }], geometry: { type: 'Polygon', coordinates: sq(0.02, 0.02, 0.0001) } }];
+  const P = partIndex(rows, S).get('B');
+  assert.equal(P.find(p => p.id === 'c').roof, 'cone', 'the OSM roof:shape wins over Overture'); assert.equal(P.find(p => p.id === 's').rh, 54);
+  assert.deepEqual(partCap(P.find(p => p.id === 's'), R), { kind: 'pointed', h: 54 });
+  assert.deepEqual(partCap(P.find(p => p.id === 'c'), R), { kind: 'pointed', h: 8 }, 'cone without roof:height: min(0.25 x 40, 8)');
+  assert.equal(partCap(P.find(p => p.id === 't'), R), null);
+  const B = partBases(P, 10), byId = id => B.get(P.find(p => p.id === id));
+  assert.equal(byId('s'), 69, 'the spire stands on its tower'); assert.equal(byId('t'), 0); assert.equal(byId('f'), 0, 'nothing holds it up: from the ground');
+  const r = landmarkHeights({ id: 'B', c: [0, 0], a: 2000, h: 10, src: 'ms' }, P, new Map(), R);
+  const sp = r.towers.find(t => t.osm === 'w929166111'); assert.equal(sp.base_h, 69); assert.deepEqual(sp.cap, { kind: 'pointed', h: 54 }); assert.equal(r.top_h, 123);
+  // a Wikidata spire is a pyramid from the part's top
+  const r2 = landmarkHeights({ id: 'B', c: [0, 0], a: 2000, h: 10, src: 'ms', wikidata: 'Q1' }, [P.find(p => p.id === 't')], new Map([['Q1', 100]]), R);
+  const ws = r2.towers.find(t => t.kind === 'spire'); assert.equal(ws.base_h, 69); assert.deepEqual(ws.cap, { kind: 'pointed', h: 31 });
+  // structures that are not buildings: the rule, heights from OSM or Wikidata, shapes at a node, castle sites
+  const tsv = '?e\t?mm\t?hist\t?tour\t?name\t?h\t?wd\t?wp\t?wkt\n'
+    + '<https://www.openstreetmap.org/way/922533965>\t\t\t"artwork"\t"Angel of the North"\t\t"Q1325290"\t\t"POLYGON((-1.5898 54.9141,-1.5896 54.9141,-1.5896 54.9142,-1.5898 54.9142,-1.5898 54.9141))"^^<http://www.opengis.net/ont/geosparql#wktLiteral>\n'
+    + '<https://www.openstreetmap.org/node/1>\t"chimney"\t\t\t"Big Stack"\t"120"\t\t\t"POINT(-1 53)"\n'
+    + '<https://www.openstreetmap.org/node/2>\t"obelisk"\t\t\t\t"30"\t"Q2"\t\t"POINT(-1 52)"\n'
+    + '<https://www.openstreetmap.org/node/3>\t"mast"\t\t\t"Small"\t"20"\t\t\t"POINT(-1 51)"\n'
+    + '<https://www.openstreetmap.org/way/4301292>\t\t"castle"\t\t"Edinburgh Castle"\t\t"Q212065"\t\t"POLYGON((-3.2 55.94,-3.19 55.94,-3.19 55.95,-3.2 55.94))"\n';
+  const st = structureRows(tsv, new Map([['Q1325290', 20]]), { named_tall_m: 25, min_height_m: 10 });
+  const by = Object.fromEntries(st.rows.map(x => [x.name || x.osm, x]));
+  assert.equal(by['Angel of the North'].h, 20); assert.equal(by['Angel of the North'].src, 'wikidata'); assert.equal(by['Angel of the North'].shape, 'OSM outline');
+  assert.equal(by['Big Stack'].h, 120); assert.equal(by['Big Stack'].why, 'named-tall'); assert.equal(by['Big Stack'].rings[0].length, 13, 'a 12-sided chimney');
+  assert.deepEqual(by.n2.cap, { kind: 'pointed', h: 3 }, 'an obelisk ends in a point');
+  assert.equal(by.Small, undefined, 'a named mast under 25 m without wikidata is not a landmark');
+  assert.equal(by['Edinburgh Castle'].site, true); assert.equal(by['Edinburgh Castle'].rings, undefined, 'a site is not drawn');
+});

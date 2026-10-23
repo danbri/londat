@@ -37,6 +37,15 @@ mkdirSync(OUT, { recursive: true });
 let failed0 = 0;
 { const big = TOP.filter(t => t.top > 60); const ok = col('height_top_m') >= 0 && big.length >= 4 && big.some(t => /Salisbury|York Minster/.test(t.name));
   if (!ok) failed0++; console.log(`${ok ? 'ok  ' : 'FAIL'} landmark heights: York Minster or Salisbury and three more cathedrals have a highest point over 60 m (OSM parts or Wikidata) · ${TOP.map(t => `${t.name} ${t.top} m (${t.src}; body ${t.body} m)`).join('; ')}`); }
+// (issue #14) the highest point within 10 % of a published height; York Minster is a known OSM fault (its central tower part
+// is mapped at 54 m with a flat roof, no Wikidata height): reported, not failed
+{ const REF = [['Salisbury Cathedral', 123], ['Lincoln Cathedral', 83], ['Durham Cathedral', 66], ['York Minster', 72, 'known OSM fault']];
+  for (const [n, ref, known] of REF) { const t = TOP.find(x => x.name === n), d = t ? (t.top - ref) / ref : null, ok = d != null && Math.abs(d) <= 0.1;
+    if (!ok && !known) failed0++; console.log(`${ok ? 'ok  ' : known ? 'KNOWN' : 'FAIL'} ${n}: highest point ${t?.top} m (${t?.src}) against ${ref} m: ${d == null ? 'not in the set' : (d >= 0 ? '+' : '') + Math.round(d * 1000) / 10 + ' %'}${known && !ok ? ' (' + known + ')' : ''}`); } }
+// (issue #14) structures that are not OSM buildings: the Angel of the North drawn (Wikidata height), Edinburgh Castle a site row
+{ const A = FJ.buildings.find(r => r[col('name')] === 'Angel of the North' && /artwork/.test(r[col('kind')] || '')), E = FJ.buildings.find(r => r[col('name')] === 'Edinburgh Castle' && r[col('height_source')] === 'site');
+  const ok = !!A && A[col('height_m')] >= 18 && !!E; if (!ok) failed0++;
+  console.log(`${ok ? 'ok  ' : 'FAIL'} structures: the Angel of the North ${A ? A[col('height_m')] + ' m (' + A[col('height_source')] + ')' : 'missing'}; Edinburgh Castle ${E ? 'a site row' : 'missing'}`); }
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
 let failed = failed0;

@@ -19,6 +19,7 @@
 import earcut from 'earcut';
 import { enuFrame, D2R } from '../../docklands/geo/ellipsoid.js';
 import { simplify, obbBox, area2 } from './place-lod.mjs';
+import { capProfile, CAP_COLOURS } from './roof-caps.mjs';
 
 const r7 = v => Math.round(v * 1e7) / 1e7;
 export const cellBox = (l, x, y) => { const cs = 180 / 2 ** l; return [-180 + x * cs, -90 + y * cs, -180 + (x + 1) * cs, -90 + (y + 1) * cs]; };
@@ -175,13 +176,27 @@ export function blockTile(opt) {
     const cl = toLL([f.cx * f.c - f.cy * f.s, f.cx * f.s + f.cy * f.c], ref), gs = bx.map(p => groundAt(...toLL(p, ref)));
     box(cl, Math.atan2(f.s, f.c), f.len, f.wid, hgt, cls, src, gs, fid); return true;
   }
-  // an extruded outline (rings in metres round ref; walls of every ring, a flat top by earcut): into ol or nm
-  function prism(T, rings, ref, hgt, colW, colR, fid) {
+  // an extruded outline (rings in metres round ref; walls of every ring, a flat top by earcut): into ol or nm. cap (lite
+  // landmark parts, place-lite-tiles 6): { kind: 'pointed' | 'dome' | 'onion', h: its height, base: the part's min_height
+  // (its walls start there, on the part below, instead of under the ground) }: the walls stop h under the top and the outer
+  // ring is scaled about its centroid by the profile of roof-caps.mjs (a pyramid or cone to an apex, a dome, an onion)
+  function prism(T, rings, ref, hgt, colW, colR, fid, cap = null) {
     const ll = rings.map(r => r.map(p => toLL(p, ref))), gs = ll[0].map(([lo, la]) => groundAt(lo, la)), g0 = Math.min(...gs), gm = gs.reduce((a, c) => a + c, 0) / gs.length;
-    const N = geoidAt(ref[0], ref[1]), z0 = g0 - P.drop_m + N, z1 = gm + hgt + N; zmin = Math.min(zmin, z0); zmax = Math.max(zmax, z1);
+    const N = geoidAt(ref[0], ref[1]), z0 = cap?.base > 0 ? gm + cap.base + N : g0 - P.drop_m + N, z1 = gm + hgt + N; zmin = Math.min(zmin, z0); zmax = Math.max(zmax, z1);
+    const zE = cap?.kind ? Math.max(z0 + 0.1, z1 - Math.min(cap.h, z1 - z0)) : z1;
     const vtx = (q, z, col) => { const p = Y(F.toEnu(q[0], q[1], z)); T.pos.push(p[0], p[1], p[2]); if (col) { T.col.push(col[0], col[1], col[2], 255); T.fid.push(fid); } return T.pos.length / 3 - 1; };
-    for (const r of ll) { const lo = r.map(q => vtx(q, z0, colW)), hi = r.map(q => vtx(q, z1, colW)), m = r.length;
+    for (const r of ll) { const lo = r.map(q => vtx(q, z0, colW)), hi = r.map(q => vtx(q, zE, colW)), m = r.length;
       for (let k = 0; k < m; k++) { const k1 = (k + 1) % m; T.idx.push(lo[k], lo[k1], hi[k], hi[k], lo[k1], hi[k1]); } }
+    if (cap?.kind) {   // the cap over the outer ring (holes left out): rings scaled about the centroid, from the eaves to the top
+      const r0 = rings[0], m = r0.length, cx = r0.reduce((a, p) => a + p[0], 0) / m, cy = r0.reduce((a, p) => a + p[1], 0) / m, col = colW ? (CAP_COLOURS[cap.kind] || colR) : null;
+      let prev = null;
+      for (const [f, k] of capProfile(cap.kind)) { const z = zE + f * (z1 - zE);
+        const ring = k <= 1e-6 ? [vtx(toLL([cx, cy], ref), z, col)] : r0.map(p => vtx(toLL([cx + (p[0] - cx) * k, cy + (p[1] - cy) * k], ref), z, col));
+        if (prev) { if (ring.length === 1) for (let i = 0; i < m; i++) T.idx.push(prev[i], prev[(i + 1) % m], ring[0]); else for (let i = 0; i < m; i++) { const j = (i + 1) % m; T.idx.push(prev[i], prev[j], ring[j], prev[i], ring[j], ring[i]); } }
+        prev = ring; }
+      if (prev.length > 1) { const tri = earcut(r0.flat()); for (let k = 0; k < tri.length; k += 3) T.idx.push(prev[tri[k]], prev[tri[k + 1]], prev[tri[k + 2]]); }   // (a flat profile end: closed)
+      return hgt;
+    }
     const flat = [], holes = [], top = []; rings.forEach((r, k) => { if (k) holes.push(flat.length / 2); for (const p of r) flat.push(p[0], p[1]); });
     for (const r of ll) for (const q of r) top.push(vtx(q, z1, colR));
     const tri = earcut(flat, holes.length ? holes : null); for (let k = 0; k < tri.length; k += 3) T.idx.push(top[tri[k]], top[tri[k + 1]], top[tri[k + 2]]);
@@ -200,7 +215,7 @@ export function blockTile(opt) {
     const row0 = opt.named ? opt.named.get(b.id) : null;
     if (row0 != null && opt.namedOutlines) {   // (lite) a landmark at the leaf: its outline (and holes), its own id
       const tol = opt.named_simplify_m ?? 0.5, rs = b.rings.map((r, k) => { let q = simplify(toXY(open(r), b.c), tol); if (q.length < 3) return null; q = area2(q) < 0 === (k === 0) ? q.slice().reverse() : q; return q; }).filter(Boolean);
-      if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row0); st.named++; meta.named.push(row0); continue; }
+      if (rs.length) { prism(nm, rs, b.c, H.h, blockRGB, roofRGB, row0, b.cap || null); st.named++; meta.named.push(row0); if (b.cap?.kind) st.caps = (st.caps || 0) + 1; continue; }
       obbOf(xy0, b.c, H.h, 0, H.src, row0); continue;
     }
     if (opt.leaf) {
