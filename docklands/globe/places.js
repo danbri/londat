@@ -421,9 +421,9 @@ export async function attachPlaces(G, H, { scene, U }) {
     // returns true when the subtree is drawn completely by tiles at the wanted level (pushed to `out`)
     const visit = n => {
       if (cull && !cull.inFrustum(n.C, n.rad)) return true;
-      if (n.ext) { n.used = now; if (n.extState !== 'ready') { if (!n.extState) fetchExt(n); if (n.extState !== 'failed') pending = true; return n.extState === 'failed'; }
+      if (n.ext) { n.used = now; n.usedF = frameNo; if (n.extState !== 'ready') { if (!n.extState) fetchExt(n); if (n.extState !== 'failed') pending = true; return n.extState === 'failed'; }
         let all = true; for (const k of n.kids) if (!visit(k)) all = false; return all; }   // (transparent: its children stand for it)
-      const d = Math.max(1, Math.hypot(eye[0] - n.C[0], eye[1] - n.C[1], eye[2] - n.C[2]) - n.rad), sse = n.err * K / d; n.used = now;
+      const d = Math.max(1, Math.hypot(eye[0] - n.C[0], eye[1] - n.C[1], eye[2] - n.C[2]) - n.rad), sse = n.err * K / d; n.used = now; n.usedF = frameNo;
       // (a tile with extras.refine_within_m, Greater London's parents of the leaves: refined only within that distance, so a
       // big screen or an oblique whole-city view keeps the coarse level far away)
       if (n.kids.length && sse > MAX_SSE && !(n.within && d > n.within)) {
@@ -495,7 +495,9 @@ export async function attachPlaces(G, H, { scene, U }) {
   GOV.register({ id: 'places',
     idle() { const now = performance.now(), out = [];
       for (const p of P) {
-        if (p.state === 'loaded') { for (const n of p.nodes) if (n.state === 'ready' && n.depth > 1 && !lastDrawn.has(n) && now - n.used > TILE_IDLE_MS) out.push({ bytes: n.bytes || 0, used: n.used, free: () => { const b = n.bytes || 0; freeNode(n); return b; } });
+        // (idle: not reached by the last 4 walks of the tree, and not for TILE_IDLE_MS: a tile waiting for its siblings is
+        // reached by every walk; in software rendering a frame can take seconds, so time alone freed tiles still wanted)
+        if (p.state === 'loaded') { for (const n of p.nodes) if (n.state === 'ready' && n.depth > 1 && !lastDrawn.has(n) && now - n.used > TILE_IDLE_MS && frameNo - (n.usedF || 0) > 4) out.push({ bytes: n.bytes || 0, used: n.used, free: () => { const b = n.bytes || 0; freeNode(n); return b; } });
           if ((p.eyeD ?? 0) > loadM(p) * 0.6 && now - (p.lastDraw || p.t0 || 0) > 5000) out.push({ bytes: placeBytes(p), used: p.lastDraw || p.t0 || 0, free: () => { const b = placeBytes(p); free(p); return b; } }); }
         else if (p.dataBytes && (p.feats || p.sur || p.namesP) && now - (p.searchUsed || 0) > 30000) out.push({ bytes: p.dataBytes, used: p.searchUsed || 0, free: () => { const b = p.dataBytes; dropData(p); return b; } });
       }
