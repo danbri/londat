@@ -73,7 +73,7 @@ footer { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--rul
 
 <section class="panel" id="out" aria-live="polite">
   <h2 id="outTitle">Loading</h2>
-  <p class="muted" id="outNote">The engine (about 6 MB) loads once. Each query fetches only the store blocks it needs; all of them come from this device after that.</p>
+  <p class="muted" id="outNote">The engine (about 14 MB, 3 MB compressed) loads once. Each query fetches only the store blocks it needs; all of them come from this device after that.</p>
   <div class="scroll" id="outBody"></div>
 </section>
 
@@ -192,7 +192,9 @@ $('outBody').addEventListener('click', e => { const b = e.target.closest('button
 $('searchForm').addEventListener('submit', e => { e.preventDefault(); const q = $('q').value.trim(); if (!q) return;
   setPressed(null); history.replaceState(null, '', '#');
   run(`Names containing “${q}”`, 'Click a name to see everything the graph says about it.',
-    `SELECT ?thing ?name ?g WHERE { GRAPH ?g { ?thing s:name|rdfs:label ?name . FILTER(CONTAINS(LCASE(STR(?name)), ${lit(q.toLowerCase())})) } } ORDER BY ?name`); });
+    // UNION, not the path s:name|rdfs:label: the @factoidal/core 0.13.0 planner names every block for a path alternative
+    // (1,046 blocks, 10.9 MB) and 55 for the UNION, same rows (skill cwplans-web-harvest, "Factoidal notes")
+    `SELECT ?thing ?name ?g WHERE { GRAPH ?g { { ?thing s:name ?name } UNION { ?thing rdfs:label ?name } FILTER(CONTAINS(LCASE(STR(?name)), ${lit(q.toLowerCase())})) } } ORDER BY ?name`); });
 
 // --- one thing: what it says, what points at it
 async function showEntity(iri) {

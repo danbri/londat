@@ -3585,3 +3585,40 @@ Owner, 2026-10-23: "Perf: loading even on a modern macbook or iphone can be very
 - Skill: docklands-3d-page, "moglob: memory budget, governor and crash recovery (2026-10-23)". OKRS.md KR3.1 evidence.
 - Open for the owner: a measurement on the iPhone (Safari Web Inspector > Timelines > Memory) to set the iPhone budget
   from a real limit; the fly's peak on the phone budget.
+
+## 2026-10-24: kgx store and search page on @factoidal/core 0.13.0 (subagent)
+
+- Upgrade @factoidal/core 0.7.1 -> 0.13.0 (`package.json`, lockfile; `cwplans/kg/worker.js` pins
+  `@factoidal/core@0.13.0` on jsDelivr). Cause: 0.13.0 refuses the old store (layout `quad-ibk5-ptd2-lgi2-gbi1-merkle-v0`,
+  LGI2 literal index with an ASCII-only case fold) and asks for a repack.
+- API changes fixed in the tools: `new Dataset()` -> `await fromQuads()` (`kgx-ops.mjs`, `web-coref.mjs`, `web-idioms.mjs`,
+  `cwg-directory-typed.mjs`, `check-factoidal.mjs`); `graphs()` gives a term (`web-idioms.mjs`); COTTAS functions gone
+  (`check-factoidal.mjs` prints GONE). `kgx-ops.mjs` `canonical()` compares language tags in lower case.
+- `pack-shardborough` version 2: parameters `{ layout: 'ibk5', engine: '@factoidal/core 0.13.0' }`; the generation name
+  covers operation, version, parameters and store input (version 1 named it by the input only, so a new engine did not
+  repack). `check-kgx-store.mjs` uses the same `generationName()`.
+- Lifts: a re-run of every lift with 0.13.0 and an empty log (in a copy) gave the same versions for all 36 activities whose
+  inputs did not change; no lift version went up. kgx has no language-tagged literal; canonical lines were already unique.
+- Build (twice; second run `new: 0`, logs unchanged): store `gen-90010024885f7e53` (was `gen-34be03964461e012`), layout
+  `quad-ibk5-ptd2-lgi4-gbi1-merkle-v0`, 141,277 quads (was 139,466), 1,046 blocks, 6,278 files, 23.1 MB; 480,340 triples
+  in 35 heads (was 477,175 in 33). Changed heads: `pipeline` 16,844 -> 17,352 (`pipeline.jsonld` and the files it names
+  changed since 2026-10-21: 66 inputs added, 34 removed), `meta` 924 -> 950, `log` 16,831 -> 18,108, new heads
+  `model-heights` (1,009) and `roofs-big` (345), both `store: false` (named in `external-heads.json` by other sessions
+  without a rebuild).
+- Comparison, all 14 `kgx/queries/*.rq` through the worker's call sequence: 0.13.0 on the new store and 0.7.1 on the same
+  input packed by 0.7.1 give the same rows and the same sha of the sorted bindings (14 of 14), and the same block counts.
+  Against 0.7.1 on the old store, 12 of 14 the same; `graphs.rq` 31 -> 33 and `lineage.rq` 828 -> 850 differ by the data
+  (the two new heads; activities logged since 2026-10-21). `check-kgx-store.mjs --write`: 18 of 18 the same, 59 s
+  (about 9 minutes with 0.7.1).
+- Regression found and worked around: the 0.13.0 planner names every block (1,046, 10.9 MB, 8.4 s on the page) for the
+  path alternative `s:name|rdfs:label`; 0.7.1 named 55. The page's name search is now a UNION: 55 blocks, same rows (5
+  terms, same sha). New line in `check-factoidal.mjs` (STILL). To report to Factoidal (this session cannot reach
+  danbri/factoidal).
+- check-factoidal: FIXED 4 (the `BNODE()` faults), GONE 1 (COTTAS), STILL 8.
+- Page (headless Chromium, engine files served from the local package because jsDelivr is not reachable from the
+  container): 0 page errors; start 2.2 to 3.0 s (the wasm is 14.5 MB, 2.9 MB gzip; was 5.9 MB, 1.1 MB); views 1.3 to
+  1.5 s; name search 1.0 s; `#e=id:cwb0413` 2.6 s. KR2.6 target "start under 2 s" is not met in this test.
+- Tests: `npm run check` passed; `npm test` 156 pass, 1 skipped.
+- Skills: cwplans-kgx ("The store", "Checks", "The search page"), cwplans-dataflow (operation table, two rules),
+  cwplans-web-harvest ("Factoidal notes").
+- Open: report the path-alternative plan to Factoidal (owner); measure start time on the iPhone with the larger engine.

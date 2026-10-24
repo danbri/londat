@@ -150,6 +150,21 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
 
 ## The store (Shardborough, `factoidal pack --layout ibk5`)
 
+**Engine @factoidal/core 0.13.0 (since 2026-10-24; 0.7.1 before).** 0.13.0 refuses a generation of layout
+`quad-ibk5-ptd2-lgi2-gbi1-merkle-v0` (its LGI2 literal index used an ASCII-only case fold) and asks for a repack. Its packer
+writes `quad-ibk5-ptd2-lgi4-gbi1-merkle-v0` (sidecars `.lgi4`, `.gbi1`, `.merkle`). `pack-shardborough` is version 2: its
+parameters hold the engine (`{ layout: 'ibk5', engine: '@factoidal/core 0.13.0' }`) and the generation name is
+`gen-<sha256(JSON [operation, version, parameters] + newline + store input)[0:16]>` (`generationName()` in
+`kgx-ops.mjs`), so a new engine gives a new activity and a new generation. Build of 2026-10-24: `gen-90010024885f7e53`,
+141,277 quads, 1,046 blocks, 61 parts, 6,278 files, 23.1 MB; 480,340 triples in 35 heads. The same store input packed by
+0.7.1 gives 141,277 rows and 1,046 blocks too. All 14 `queries/*.rq` give the same rows (sha of the sorted bindings) with
+0.13.0 and with 0.7.1 on the same input, and the same block counts; against the old store (`gen-34be03964461e012`)
+`graphs.rq` (31 → 33: heads `model-heights` and `roofs-big`) and `lineage.rq` (828 → 850: activities logged by other
+tools since 2026-10-21) differ because of the data, not the engine. The lifts with 0.13.0 give the same versions as with
+0.7.1 (a re-run of every lift with an empty log in a copy: 36 of 36 activities with unchanged inputs gave the same
+outputs). kgx holds no language-tagged literal, and the canonical lines were already unique, so the 0.13.0 set
+semantics and the case-insensitive language tags change no triple here.
+
 Build of 2026-10-07 16:50 UTC (vocabulary under `https://kgx.foaf.tv/`; londat `kgx/manifest.json`): 299,829 triples
 in 24 head graphs, of which 116,344 quads in the browser store (49 parts, `meta` and `log`; generation
 `gen-7d0a65a1b11accc7`, 5,006 files, 19.3 MB); the growth is `log` (10,030 triples, 174 activities) and `meta` (712).
@@ -219,7 +234,8 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   (gen-5ad6ded8fc45e17f, 115,130 quads, the first build with the IDs) 17 of 17 the same, 9 min 16 s; 2026-10-07 17:00 UTC
   (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s; 2026-10-12 21:14 UTC (gen-e2b182ceb96b87cf, 122,170 quads, with `web-search` and the new query
   `site-search.rq`) 18 of 18 the same
-  (`checks/store-vs-memory.json`). It finds the parts of a head as the outputs of the head's partition activity: the
+  (`checks/store-vs-memory.json`); 2026-10-24 (gen-90010024885f7e53, 141,277 quads, @factoidal/core 0.13.0) 18 of 18
+  the same, 59 s. It finds the parts of a head as the outputs of the head's partition activity: the
   `partOf` of a version record names the first head that a part was cut from, and a later head can have a part with
   the same content (seen 2026-10-07: geometry-only parts of `buildings` and `mallmap` did not change with the
   vocabulary; the check then refused, "rebuild first", and `meta` said `dct:isPartOf` the older head; both fixed in
@@ -235,13 +251,17 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   manifest cost; text in `factoidal-issue-2026-10-06-store.md`). `tools/check-factoidal.mjs` re-tests its points after
   an upgrade (STILL or FIXED); when one is FIXED, review the parts and the query rule above. Follow-up state on
   2026-10-07: npm still has 0.7.1 as the latest @factoidal/core (published 2026-09-06), and all 12 checks print STILL.
+  2026-10-24 (0.13.0): the four `BNODE()` checks print FIXED, the COTTAS check GONE (COTTAS left the package in 0.9.0),
+  the six #697 checks and the blank-node renaming and default-graph checks STILL; a new check (a path alternative `p|q`
+  plans every block) STILL.
   This project's sessions cannot read or post in danbri/factoidal (not in the session's repositories), so any reply on
   the issue reaches us only through the owner.
 
 ## The search page (`kg/`)
 
 - `worker.js` (module Web Worker) imports the Lean engine `l4-assets/l4factoidal.js` from jsDelivr, pinned
-  (`@factoidal/core@0.7.1`; the 5.9 MB wasm loads by `locateFile`). It reads `shardborough/CURRENT` and the manifest
+  (`@factoidal/core@0.13.0` since 2026-10-24; the wasm is 14.5 MB, 2.9 MB gzip, against 5.9 MB and 1.1 MB for 0.7.1;
+  it loads by `locateFile`). It reads `shardborough/CURRENT` and the manifest
   once. Per query: `storeQueryPlan` (cached by query text), fetch the plan's blocks and blob files (not the sidecars),
   6 at a time (on 429 or 5xx it waits Retry-After, else 1, 2, 4, 8 s); answer from a handle that holds them. Up to 4 handles stay open; a query whose blocks one of them holds
   reuses it, else a new handle opens with just its blocks and the oldest closes. On "needs artifact" it opens again
@@ -269,6 +289,16 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   Chromium `--proxy-server=$HTTPS_PROXY --proxy-bypass-list=localhost;127.0.0.1` (the engine comes from jsDelivr), not
   Playwright's `proxy` option: Playwright adds `<-loopback>`, which sends the local server's requests to the agent
   proxy (405).
+- Measured 2026-10-24 with @factoidal/core 0.13.0 (`gen-90010024885f7e53`), headless Chromium 1243, local server,
+  service workers blocked: start (engine and manifest) 2.2 to 3.0 s; views graphs 1.4 s, tallest 1.3 s, site search
+  1.5 s, open now 1.5 s; name search "Jubilee Place" 71 rows 1.0 s, 55 blocks; `#e=id:cwb0413` 2.6 s, 129 blocks,
+  2.38 MB, 152 rows; 0 page errors (the only console error: Google Fonts, not reachable from the container). jsDelivr is
+  not reachable from the container either (the proxy answers 403): the test serves
+  `https://cdn.jsdelivr.net/npm/@factoidal/core@0.13.0/*` from the local npm package through Playwright's `context.route`
+  (it also routes the worker's requests; strip the `?v=` query of the wasm URL).
+- **Name search: a UNION, not the path `s:name|rdfs:label`.** The 0.13.0 planner names every block (1,046, 10.9 MB,
+  8.4 s) for a property-path alternative; 0.7.1 named 55. `{ ?thing s:name ?name } UNION { ?thing rdfs:label ?name }`
+  plans 55 blocks and gives the same rows (5 terms checked, same sha with both engines). `check-factoidal.mjs` tests it.
 - **raw.githubusercontent.com rate-limits.** The first test of the public page (2026-10-06, 12 fetches at a time, several
   hundred block requests in about a minute) got one 429 on the "Open now" view. Hence 6 at a time and the retry. GitHub
   Pages for londat may avoid this limit (not tested; open item below). Since 2026-10-07 the page reads the store from

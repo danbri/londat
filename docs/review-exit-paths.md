@@ -1,6 +1,6 @@
 # Exit paths for the "review" items of the data register
 
-Generated from `cwplans/data-register.json` (`review_exit_paths`, `review_exit`) by `cwplans/tools/check-data-register.mjs --write` on 2026-10-23. Edit the JSON, not this file.
+Generated from `cwplans/data-register.json` (`review_exit_paths`, `review_exit`) by `cwplans/tools/check-data-register.mjs --write` on 2026-10-24. Edit the JSON, not this file.
 
 OKR KR6.2 (https://github.com/danbri/londat/blob/main/OKRS.md): every item marked "review" has a written path for the end of the prototyping phase. The cwplans data exception holds only "while in the scoping, planning and prototyping phase" (CLAUDE.md, data policy); the owner says when the phase ends. These paths do not change a licence class or a decision: the owner chooses an option for each group.
 

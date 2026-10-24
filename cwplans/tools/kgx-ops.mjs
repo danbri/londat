@@ -12,12 +12,23 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, appendFileSync } fr
 import { gzipSync, gunzipSync } from 'zlib';
 import { createHash } from 'crypto';
 import { join, dirname } from 'path';
-import { serialize, Dataset, dataFactory as F } from '@factoidal/core';
+import { serialize, fromQuads, dataFactory as F } from '@factoidal/core';
 import * as fn from '@factoidal/core/fn';
 import { kid, mapLegacy, LEGACY_KG } from './kgx-ids.mjs';
 
 const sha256 = b => createHash('sha256').update(b).digest('hex');
 const short = h => h.slice(0, 16);
+
+// The engine that packs the store. The packer is the engine's, not this code's, so the engine version is a parameter of
+// pack-shardborough: a new engine gives a new activity and a new generation. Version 1 (to 2026-10-24, @factoidal/core
+// 0.7.1, layout quad-ibk5-ptd2-lgi2-gbi1-merkle-v0) named the generation by the store input only, so a new engine did
+// not repack; @factoidal/core 0.13.0 refuses that layout (its LGI2 literal index used an ASCII-only case fold).
+export const ENGINE = '@factoidal/core ' + JSON.parse(readFileSync(new URL(import.meta.resolve('@factoidal/core/package.json')), 'utf8')).version;
+export const PACK_OP = { id: 'pack-shardborough', version: 2, skill: 'cwplans-kgx', tool: 'factoidal pack --layout ibk5 + factoidal activate',
+  about: 'graph versions -> one Shardborough generation (zone maps), activated; the generation is named by the operation, its parameters (layout, engine) and the store input' };
+export const packParams = () => ({ layout: 'ibk5', engine: ENGINE });
+// the generation of a store input: gen-<sha256(JSON [operation id, version, parameters] + newline + store input)[0:16]>
+export const generationName = input => 'gen-' + short(createHash('sha256').update(JSON.stringify([PACK_OP.id, PACK_OP.version, packParams()]) + '\n').update(input).digest('hex'));
 
 export class Flow {
   constructor(out) {
@@ -35,10 +46,12 @@ export class Flow {
   }
   // canonical N-Triples lines of a quad list (graph term dropped), unique and sorted, and their RDFC-1.0 hash
   async canonical(quads) {
-    const ds = new Dataset(quads.map(q => F.quad(q.subject, q.predicate, q.object, F.defaultGraph())));
+    // @factoidal/core 0.13.0: a Dataset comes from a producer (fromQuads), and language tags compare case-insensitively
+    // (RDF 1.2 Concepts 3.4; the writer gives them in lower case), so "a"@en-GB and "a"@en-gb are one triple
+    const ds = await fromQuads(quads.map(q => F.quad(q.subject, q.predicate, q.object, F.defaultGraph())));
     const text = await serialize(ds, { format: 'nquads' });
     const lines = [...new Set(text.split('\n').filter(Boolean))].sort();
-    if (lines.length !== new Set(quads.map(q => [q.subject.termType, q.subject.value, q.predicate.value, q.object.termType, q.object.value, q.object.datatype?.value, q.object.language].join('\u0001'))).size)
+    if (lines.length !== new Set(quads.map(q => [q.subject.termType, q.subject.value, q.predicate.value, q.object.termType, q.object.value, q.object.datatype?.value, q.object.language?.toLowerCase()].join('\u0001'))).size)
       throw new Error('serialize() lost or merged quads');
     const blank = quads.some(q => q.subject.termType === 'BlankNode' || q.object.termType === 'BlankNode');
     const hash = blank ? await fn.hash(await fn.parse(lines.join('\n') + '\n', { format: 'nquads' })) : sha256(lines.join('\n') + '\n');

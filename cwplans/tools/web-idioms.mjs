@@ -9,7 +9,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
 import { join } from 'path';
 import { createHash } from 'crypto';
-import { parse, query, graphs, shexValidate, serialize, Dataset, dataFactory as F } from '@factoidal/core';
+import { parse, query, graphs, shexValidate, serialize, fromQuads, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
 const TP = join(TOOLS, '..', '..', 'third_party', 'cwplans-structured-data'), ID = join(TP, 'idioms');
@@ -31,12 +31,14 @@ const rewrites = Object.fromEntries(cat.idioms.filter(d => d.rewrite).map(d => [
 
 const pages = {}, sites = {}, canon = [], st = { pages: 0, nodes: 0, shex: 0, deferred: 0, nsRemapped: 0 };
 const bump = (id, form, h) => { const k = form ? `${id}\t${form}` : id; (sites[k] || (sites[k] = new Set())).add(h); };
-for (const [g, gd] of graphs(all)) {
+// @factoidal/core 0.10.0 and later: graphs() gives the graph as a term
+for (const [gt, gd] of graphs(all)) {
+  const g = typeof gt === 'string' ? gt : gt.value;
   if (st.pages >= limit) break; st.pages++;
   let remapped = 0;
   const quads = gd.toArray().map(q => { const p = norm(q.predicate), o = norm(q.object); if (p !== q.predicate || o !== q.object) remapped++; return F.quad(q.subject, p, o, F.defaultGraph()); });
   // recognition on the page as published (an IRI form must not match a skolemized blank node); rewrites on the skolemized copy
-  const ds = new Dataset(quads), sk = new Dataset(quads.map(q => F.quad(skol(q.subject, g), q.predicate, skol(q.object, g), q.graph)));
+  const ds = await fromQuads(quads), sk = await fromQuads(quads.map(q => F.quad(skol(q.subject, g), q.predicate, skol(q.object, g), q.graph)));
   st.nsRemapped += remapped;
   const h = host(g), rec = { site: h, idioms: {} };
   if (remapped) rec.schema_namespace_variants = remapped;
@@ -72,6 +74,6 @@ const summary = cat.idioms.map(d => ({ id: d.id, label: d.label, kind: d.kind, s
 const meta = { generated: new Date().toISOString(), tool: 'cwplans/tools/web-idioms.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(TOOLS, '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version, stats: st };
 writeFileSync(join(ID, 'page-idioms.json'), JSON.stringify({ meta, pages }, null, 0) + '\n');
 writeFileSync(join(ID, 'summary.json'), JSON.stringify({ meta, idioms: summary }, null, 1) + '\n');
-writeFileSync(join(ID, 'canonical.nq.gz'), gzipSync(await serialize(new Dataset(canon), { format: 'nquads' })));
+writeFileSync(join(ID, 'canonical.nq.gz'), gzipSync(await serialize(await fromQuads(canon), { format: 'nquads' })));
 console.log(JSON.stringify(st)); for (const s of summary) console.log(`${s.id.padEnd(17)} sites ${String(s.sites).padStart(3)} nodes ${String(s.nodes).padStart(5)}  ${JSON.stringify(s.forms)}`);
 console.log('canonical quads', canon.length, 'in', Math.round((Date.now() - t0) / 1000), 's');

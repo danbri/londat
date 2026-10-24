@@ -154,7 +154,24 @@ if needed" (also in the repo CLAUDE.md). What we learned with `@factoidal/core` 
   cardinalities and regex facets (`LITERAL /^https?:/`) work. A focus can be the RDF/JS term from a SPARQL binding,
   blank nodes included. About 30 ms a check on a page graph (16,143 checks in 9.5 minutes).
 - **Check after any Factoidal upgrade:** `node cwplans/tools/check-factoidal.mjs` prints each fault below as
-  STILL or FIXED (all STILL on 0.7.1, 2026-10-06). Remove a workaround only when its line says FIXED.
+  STILL or FIXED (all STILL on 0.7.1, 2026-10-06), or GONE when the function left the package. Remove a workaround only
+  when its line says FIXED.
+- **0.13.0 (installed 2026-10-24; npm had 0.10.0 to 0.13.0 after 0.7.1).** check-factoidal: FIXED the four `BNODE()`
+  lines (a `BNODE()` blank node is `_:d1_fxbn<hex>` in N-Quads, `serialize()` and `toNQuads()` keep it, `parse()` reads
+  it back, a SELECT term value has no `_:`); GONE `toCottas()` (COTTAS functions left the package in 0.9.0); STILL the
+  blank-node renaming per query, the default-graph-only match, the six #697 store checks, and a new one: a property-path
+  alternative `p|q` in a store query plans every block (use a UNION; skill `cwplans-kgx`, "The search page"). The
+  SHA-1 IRI workaround for `BNODE()` stays in the tools (it gives stable IRIs; not needed for validity now).
+  API changes met: `new Dataset(quads)` throws ("the constructor is internal"): use `await fromQuads(quads)`
+  (`kgx-ops.mjs`, `web-coref.mjs`, `web-idioms.mjs`, `cwg-directory-typed.mjs`, `check-factoidal.mjs` changed);
+  `graphs()` gives the graph name as a term, not a string (`web-idioms.mjs` reads `.value`); a parsed document is a set
+  of quads; language tags compare case-insensitively and are written in lower case (`"x"@en-GB` → `"x"@en-gb`), so
+  `kgx-ops.mjs` `canonical()` compares tags in lower case. `web-idioms.mjs`, `web-coref.mjs` and
+  `cwg-directory-typed.mjs` were changed but not re-run with 0.13.0 (their outputs are upstream inputs of kgx;
+  `canonical.nq.gz` has no language-tagged literal, checked 2026-10-24).
+- **npm install in the container:** `cdn.sheetjs.com` (the `xlsx` tarball) is refused by the agent proxy (403), so
+  `npm install` fails. Update the lockfile with `npm install --package-lock-only`, then install the rest without `xlsx`
+  in a scratch copy of `package.json` and move its `node_modules` here (2026-10-24).
 - **Fault, not yet filed:** the issue text is `factoidal-issue-2026-10-06.md` in this skill's folder. The session of
   2026-10-06 could not reach danbri/factoidal (add_repo refused); post it at https://github.com/danbri/factoidal/issues/new
   or ask the owner. Then write the issue URL here.

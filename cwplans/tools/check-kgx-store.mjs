@@ -12,6 +12,7 @@ import { parse, query } from '@factoidal/core';
 import { loadEngine } from '@factoidal/core/engine';
 import { openStore, openStoreHandle } from '@factoidal/core/store';
 import { LONDAT_DIR } from './londat.mjs';
+import { generationName } from './kgx-ops.mjs';
 
 const K = join(LONDAT_DIR, 'kgx'), heads = JSON.parse(readFileSync(join(K, 'heads.json'), 'utf8')).heads;
 const vers = readFileSync(join(K, 'log', 'versions.jsonl'), 'utf8').split('\n').filter(Boolean).map(JSON.parse);
@@ -28,8 +29,8 @@ const members = [...[...partsOf.values()].flatMap(p => p.outputs.map(o => byIri.
 const stored = Object.values(heads).filter(iri => iri === heads.meta || iri === heads.log || partsOf.has(iri));
 const partitioned = members.map(read).join(''), whole = stored.map(iri => read(vers.find(v => v.iri === iri))).join('');
 const gen = readFileSync(join(K, 'shardborough', 'CURRENT'), 'utf8').trim();
-const inputHash = createHash('sha256').update(partitioned).digest('hex').slice(0, 16);
-if ('gen-' + inputHash !== gen) { console.error(`the store (${gen}) was not packed from the current versions (gen-${inputHash}): rebuild first`); process.exit(2); }
+const want = generationName(partitioned);
+if (want !== gen) { console.error(`the store (${gen}) was not packed from the current versions with this engine (${want}): rebuild first`); process.exit(2); }
 
 const P = 'PREFIX s: <https://schema.org/> PREFIX cwk: <https://kgx.foaf.tv/vocab#> PREFIX owl: <http://www.w3.org/2002/07/owl#>\n';
 const Q = {

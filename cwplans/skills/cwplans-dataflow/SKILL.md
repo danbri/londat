@@ -77,7 +77,7 @@ Data: https://github.com/danbri/londat/tree/main/kgx (README). Graph, store and 
 | `describe-graph-versions` | 3 | cwplans-dataflow | all versions and parts → `meta` (graph names with their name as `rdfs:label`) |
 | `lift-activity-log` | 3 | cwplans-dataflow | the log (less log lifts and packs) → `log` (operations with their id as `rdfs:label`; the old names of earlier activities mapped) |
 | `map-legacy-ids` | 2 | cwplans-dataflow | one version → the same triples with every IRI term through `mapLegacy()` (`kgx-ops.mjs`; applied by `build-kgx.mjs` to an external head named in the old namespace or holding old names or old vocabulary terms, `hasLegacyNames()`) |
-| `pack-shardborough` | 1 | cwplans-kgx | parts + `meta` + `log` → a store generation, `gen-<sha256(store input)[0:16]>` |
+| `pack-shardborough` | 2 | cwplans-kgx | parts + `meta` + `log` → a store generation, `gen-<sha256(JSON [operation, version, parameters] + newline + store input)[0:16]>` (`generationName()` in `kgx-ops.mjs`); parameters `{ layout: 'ibk5', engine: '@factoidal/core <version>' }`. Version 1 (to 2026-10-24) named the generation by the store input only |
 | `lift-imagery-coverage` | 3 | docklands-data-curation | coverage answer files (`tools/probe-imagery-coverage.mjs`) → `coverage-imagery` |
 | `rectify-facade-patches` (3), `lift-contrib-photos` (4), `cut-facade-tiles` (3) | | docklands-data-curation | contributed photos + photos.json (`tools/contrib-photos.mjs`) → `facade-patches-<set>`, `photos-<set>`, `facade-tiles-<set>` |
 | `lift-registry-occupants` | 5 | cwplans-kgx | `registry/buildings.json` → `occupants`; version 4 (2026-10-21) adds the placement of each link: `cwk:placedBy`, `cwk:placement`, `cwk:placementConfidence`, `cwk:placementFault`, `cwk:pointInPlace`; version 5 (2026-10-21) a merged occupant's `cwk:branchKey`, `cwk:mergeConfidence`, `cwk:mergeRule`, `cwk:mergeEvidence` and one `cwk:SourceRecord` per source record (`cwk:sourceRecord`), FSA pages as `s:sameAs` |
@@ -161,6 +161,18 @@ is remade on every run); otherwise bump the operation version if a side file is 
   `node_modules/.bin`; in a git worktree without `node_modules` the lifts and partitions run and log, then the pack fails
   with ENOENT. Link the main checkout's `node_modules` into the worktree (it is not ignored as a link: never `git add -A`
   at the root) and run the build again: the log already has the lifts.
+- **The engine is an input that the memo key does not see.** `pack-shardborough` version 1 named the generation by the
+  store input only, and the build packs only when that generation folder is missing. So after the upgrade to
+  @factoidal/core 0.13.0 (2026-10-24), which refuses the 0.7.1 layout (`lgi2`), a build would not repack: a version bump
+  alone gives a new activity but the same generation name. Version 2 puts the engine version in the parameters and the
+  operation, version and parameters in the generation name, so a new engine repacks. For the lifts, the engine is not in
+  the key either: after an engine upgrade, re-run every lift with an empty log in a copy of the repository and compare
+  the outputs (2026-10-24: 36 of 36 activities with unchanged inputs gave the same versions with 0.13.0 as with 0.7.1,
+  so no lift version went up). Bump the lifts whose outputs differ.
+- **A register write after the build makes the store lag.** `check-data-register.mjs --write` writes `pipeline.jsonld`
+  from `data-register.json`, so an edit of a register entry (even its text) after a build changes the `pipeline` input
+  and the next build is not idle. Edit the register first, then write, then build (2026-10-24: one build discarded with
+  `git checkout HEAD -- kgx; git clean -fd kgx` before the commit).
 - Remove the output of a failed or wrong run only before it is committed. After a commit, a fix is a new version and
   the log keeps both.
 

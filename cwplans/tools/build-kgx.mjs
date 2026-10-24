@@ -17,7 +17,7 @@ import { join, relative } from 'path';
 import { parse, jsonldToRdf, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 import { LONDAT_DIR } from './londat.mjs';
-import { Flow, OPS, partitionLines, mapLegacyVersion, hasLegacyNames } from './kgx-ops.mjs';
+import { Flow, OPS, partitionLines, mapLegacyVersion, hasLegacyNames, PACK_OP, packParams, generationName, ENGINE } from './kgx-ops.mjs';
 import { kid, mapLegacy, cwgPath, ID_BASE, VOCAB, REGISTER_VOCAB } from './kgx-ids.mjs';
 
 const CW = join(TOOLS, '..'), ROOT = join(CW, '..'), OUT = join(LONDAT_DIR, 'kgx');
@@ -348,24 +348,24 @@ let store = null;
 if (!process.argv.includes('--no-store')) {
   const members = [...Object.values(parts).flat(), metaV.meta, logV.log].sort((a, b) => a.iri.localeCompare(b.iri));
   const input = members.map(v => flow.read(v)).join('');                 // grouped by graph, subjects sorted inside each
-  const genName = 'gen-' + createHash('sha256').update(input).digest('hex').slice(0, 16), sdir = join(OUT, 'shardborough');
+  const genName = generationName(input), sdir = join(OUT, 'shardborough');
   mkdirSync(sdir, { recursive: true });
   const inBlob = { kind: 'file', iri: kid('artifact', 'sha256', createHash('sha256').update(input).digest('hex')), label: 'store input: the part versions, meta and log, in graph order' };
-  const op = { id: 'pack-shardborough', version: 1, skill: 'cwplans-kgx', tool: 'factoidal pack --layout ibk5 + factoidal activate', about: 'graph versions -> one Shardborough generation (wire version 10, zone maps), activated' };
-  const actId = kid('activity', createHash('sha256').update(JSON.stringify([op.id, op.version, members.map(m => m.iri), { layout: 'ibk5' }])).digest('hex').slice(0, 16));
+  const op = PACK_OP, params = packParams();
+  const actId = kid('activity', createHash('sha256').update(JSON.stringify([op.id, op.version, members.map(m => m.iri), params])).digest('hex').slice(0, 16));
   if (!existsSync(join(sdir, genName, 'manifest.sbm2'))) {
     const tmp = join(OUT, '.store-input.nq'); writeFileSync(tmp, input); const bin = join(ROOT, 'node_modules', '.bin', 'factoidal');
     execFileSync(bin, ['pack', tmp, join(sdir, genName), '--layout', 'ibk5'], { stdio: 'inherit' }); rmSync(tmp);
   }
   execFileSync(join(ROOT, 'node_modules', '.bin', 'factoidal'), ['activate', sdir, genName], { stdio: 'inherit' });
   for (const d of readdirSync(sdir)) if (d.startsWith('gen-') && d !== genName) rmSync(join(sdir, d), { recursive: true });
-  if (!flow.log.has(actId)) { const a = { id: actId, operation: op.id, operation_version: op.version, skill: op.skill, tool: op.tool, about: op.about, inputs: members.map(m => m.iri), params: { layout: 'ibk5' }, outputs: [kid('store', genName)], started: new Date().toISOString(), ended: new Date().toISOString() };
+  if (!flow.log.has(actId)) { const a = { id: actId, operation: op.id, operation_version: op.version, skill: op.skill, tool: op.tool, about: op.about, inputs: members.map(m => m.iri), params, outputs: [kid('store', genName)], started: new Date().toISOString(), ended: new Date().toISOString() };
     flow.log.set(actId, a); flow.ran.push(actId); writeFileSync(flow.logFile, readFileSync(flow.logFile, 'utf8') + JSON.stringify(a) + '\n'); }
   store = { generation: genName, members: members.length, files: readdirSync(join(sdir, genName)).length, bytes: readdirSync(join(sdir, genName)).reduce((a, f) => a + statSync(join(sdir, genName, f)).size, 0) };
 }
 for (const d of ['nq', 'cottas', 'hdt']) if (existsSync(join(OUT, d))) rmSync(join(OUT, d), { recursive: true });   // the first layout; in git history
 const manifest = { about: 'cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.', base: ID_BASE, vocab: V, built: new Date().toISOString(),
-  tool: 'cwplans/tools/build-kgx.mjs', engine: '@factoidal/core ' + JSON.parse(readFileSync(join(ROOT, 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
+  tool: 'cwplans/tools/build-kgx.mjs', engine: ENGINE,
   prefixes: NS, heads: { ...heads, meta: metaV.meta.iri, log: logV.log.iri },
   graphs: Object.fromEntries(current.map(v => [v.name, { version: v.iri, rdfc10_sha256: v.rdfc10_sha256, triples: v.triples, file: v.file, parts: (parts[v.name] || []).length, title: v.title, licence: v.licence }])),
   total_triples: current.reduce((a, v) => a + v.triples, 0), store, activities_this_run: flow.used.length, activities_run_new: flow.ran.length, activities_in_log: flow.log.size };

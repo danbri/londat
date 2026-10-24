@@ -16217,7 +16217,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "code, not data: builds the knowledge graph in danbri/londat kgx as logged operations (kgx-ops.mjs): lifts source files into immutable graph versions, partitions them by subject key, describes them (meta), lifts the activity log, packs a Shardborough store (ibk5)",
+   "dct:title": "code, not data: builds the knowledge graph in danbri/londat kgx as logged operations (kgx-ops.mjs): lifts source files into immutable graph versions, partitions them by subject key, describes them (meta), lifts the activity log, packs a Shardborough store (ibk5; operation pack-shardborough version 2 names the generation by operation, engine version and store input)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -16394,7 +16394,7 @@
     "prov:Entity",
     "dcat:Distribution"
    ],
-   "dct:title": "code, not data: the search page's Web Worker; runs the Factoidal Lean engine over the kgx Shardborough store fetched from danbri/londat (blocks only, store handles, count then page)",
+   "dct:title": "code, not data: the search page's Web Worker; runs the Factoidal Lean engine (@factoidal/core 0.13.0 from jsDelivr) over the kgx Shardborough store fetched from danbri/londat (blocks only, store handles, count then page)",
    "prov:wasDerivedFrom": [
     {
      "@id": "https://kgx.foaf.tv/id/srcown"
@@ -29467,7 +29467,7 @@
     "prov:Entity",
     "dcat:Dataset"
    ],
-   "dct:title": "@factoidal/core 0.7.1 (npm), RDF parsing and SPARQL 1.1 engine used to load and query the structured data",
+   "dct:title": "@factoidal/core 0.13.0 (npm; 0.7.1 until 2026-10-24), RDF parsing and SPARQL 1.1 engine used to load and query the structured data, and the packer and engine of the kgx Shardborough store",
    "dct:license": "Apache-2.0"
   },
   {

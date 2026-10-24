@@ -1,8 +1,8 @@
 {
- "checked": "2026-10-21T04:52:17.802Z",
- "generation": "gen-34be03964461e012",
- "quads": 139466,
- "engine": "@factoidal/core 0.7.1",
+ "checked": "2026-10-24T22:37:25.137Z",
+ "generation": "gen-90010024885f7e53",
+ "quads": 141277,
+ "engine": "@factoidal/core 0.13.0",
  "queries": {
   "join, one GRAPH block": {
    "store": 1181,
@@ -41,8 +41,8 @@
    "identical": true
   },
   "graphs.rq": {
-   "store": 31,
-   "memory": 31,
+   "store": 33,
+   "memory": 33,
    "memory_one_graph_per_source": null,
    "identical": true
   },
@@ -59,8 +59,8 @@
    "identical": true
   },
   "lineage.rq": {
-   "store": 828,
-   "memory": 828,
+   "store": 850,
+   "memory": 850,
    "memory_one_graph_per_source": null,
    "identical": true
   },

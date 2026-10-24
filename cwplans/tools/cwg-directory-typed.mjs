@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { gunzipSync } from 'zlib';
 import { join } from 'path';
-import { parse, query, serialize, Dataset, dataFactory as F } from '@factoidal/core';
+import { parse, query, serialize, fromQuads, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
 const CW = join(TOOLS, '..'), TP = join(CW, '..', 'third_party', 'cwplans-structured-data');
@@ -80,5 +80,5 @@ const doc = { source: 'Canary Wharf Group directory pages as archived by the Int
     by_type: out.flatMap(r => r.schema_types).reduce((m, t) => (m[t] = (m[t] || 0) + 1, m), {}), first_listed_by_year: years('first_listed'), last_edited_by_year: years('last_edited') },
   entries: out };
 writeFileSync(join(CW, 'registry/sources/brands/cwg-directory-typed.json'), JSON.stringify(doc, null, 1) + '\n');
-writeFileSync(join(CW, 'registry/sources/brands/cwg-directory-typed.nq'), await serialize(new Dataset(Q), { format: 'nquads' }));
+writeFileSync(join(CW, 'registry/sources/brands/cwg-directory-typed.nq'), await serialize(await fromQuads(Q), { format: 'nquads' }));
 console.log(JSON.stringify(doc.counts, null, 1), Q.length, 'quads');

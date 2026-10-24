@@ -5,7 +5,7 @@
 // whose blocks one of them holds reuses it. Results come as a count and pages (LIMIT/OFFSET).
 // Messages: {id, type: 'init', base} | {id, type: 'query', sparql, page, pageSize} | {id, type: 'describe', iri}.
 // Skill: cwplans-kgx.
-import { loadL4 } from 'https://cdn.jsdelivr.net/npm/@factoidal/core@0.7.1/l4-assets/l4factoidal.js';
+import { loadL4 } from 'https://cdn.jsdelivr.net/npm/@factoidal/core@0.13.0/l4-assets/l4factoidal.js';
 
 const MAX_HANDLES = 4;
 let engine, base, gen, manifestHex;

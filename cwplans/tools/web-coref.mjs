@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
 import { createHash } from 'crypto';
 import { join } from 'path';
-import { parse, query, serialize, Dataset, dataFactory as F } from '@factoidal/core';
+import { parse, query, serialize, fromQuads, dataFactory as F } from '@factoidal/core';
 import { TOOLS } from './lib.mjs';
 
 const TP = join(TOOLS, '..', '..', 'third_party', 'cwplans-structured-data'), OUT = join(TP, 'coref');
@@ -102,7 +102,7 @@ const meta = { generated: new Date().toISOString(), tool: 'cwplans/tools/web-cor
   engine: '@factoidal/core ' + JSON.parse(readFileSync(join(TOOLS, '..', '..', 'node_modules', '@factoidal', 'core', 'package.json'), 'utf8')).version,
   rules: RULES, descriptions: descs.length, entities: entities.length, ladder,
   cross_site: entities.filter(e => e.sites.length > 1).length, conflicts: entities.filter(e => e.conflict).length };
-writeFileSync(join(OUT, 'sameas.nq.gz'), gzipSync(await serialize(new Dataset(quads), { format: 'nquads' })));
+writeFileSync(join(OUT, 'sameas.nq.gz'), gzipSync(await serialize(await fromQuads(quads), { format: 'nquads' })));
 writeFileSync(join(OUT, 'descriptions.json'), JSON.stringify({ meta, descriptions: descs.map(d => ({ iri: d.iri, page: d.page, node: d.node, kind: d.kind, site: d.site,
   name: d.name[0] || null, types: [...d.types].map(t => t.replace('https://schema.org/', '')), telephone: d.ntel, postcode: d.npc, sameAs: d.nsame, registry_keys: d.keys })) }) + '\n');
 writeFileSync(join(OUT, 'entities.json'), JSON.stringify({ meta, entities }, null, 1) + '\n');

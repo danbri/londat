@@ -724,7 +724,7 @@
       }
     },
     "factoidal": {
-      "name": "@factoidal/core 0.7.1 (npm), RDF parsing and SPARQL 1.1 engine used to load and query the structured data",
+      "name": "@factoidal/core 0.13.0 (npm; 0.7.1 until 2026-10-24), RDF parsing and SPARQL 1.1 engine used to load and query the structured data, and the packer and engine of the kgx Shardborough store",
       "licence": "Apache-2.0",
       "note": "software, not data; listed because it produces all.nq and runs the queries behind structured-facts.json"
     },
@@ -2266,7 +2266,7 @@
     "kgx": {
       "name": "the cwplans knowledge graph in danbri/londat kgx/ (built by tools/build-kgx.mjs from registry, CWG, web, mall map and store guide data)",
       "licence": "per graph, as its meta graph states; includes OSM-derived data (ODbL) and data crawled for scoping",
-      "note": "scoping phase; search page cwplans/kg/"
+      "note": "scoping phase; search page cwplans/kg/; store packed by @factoidal/core 0.13.0 (layout quad-ibk5-ptd2-lgi4-gbi1-merkle-v0, since 2026-10-24)"
     },
     "openaerialmap": {
       "name": "OpenAerialMap catalogue API (/meta by box): drone and satellite image metadata",
@@ -6329,7 +6329,7 @@
     },
     {
       "path": "tools/build-kgx.mjs",
-      "what": "code, not data: builds the knowledge graph in danbri/londat kgx as logged operations (kgx-ops.mjs): lifts source files into immutable graph versions, partitions them by subject key, describes them (meta), lifts the activity log, packs a Shardborough store (ibk5)",
+      "what": "code, not data: builds the knowledge graph in danbri/londat kgx as logged operations (kgx-ops.mjs): lifts source files into immutable graph versions, partitions them by subject key, describes them (meta), lifts the activity log, packs a Shardborough store (ibk5; operation pack-shardborough version 2 names the generation by operation, engine version and store input)",
       "sources": [
         "own"
       ],
@@ -6461,7 +6461,7 @@
     },
     {
       "path": "kg/worker.js",
-      "what": "code, not data: the search page's Web Worker; runs the Factoidal Lean engine over the kgx Shardborough store fetched from danbri/londat (blocks only, store handles, count then page)",
+      "what": "code, not data: the search page's Web Worker; runs the Factoidal Lean engine (@factoidal/core 0.13.0 from jsDelivr) over the kgx Shardborough store fetched from danbri/londat (blocks only, store handles, count then page)",
       "sources": [
         "own"
       ],

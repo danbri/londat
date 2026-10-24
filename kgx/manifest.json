@@ -2,9 +2,9 @@
  "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://kgx.foaf.tv/id/",
  "vocab": "https://kgx.foaf.tv/vocab#",
- "built": "2026-10-21T04:38:46.580Z",
+ "built": "2026-10-24T22:40:16.078Z",
  "tool": "cwplans/tools/build-kgx.mjs",
- "engine": "@factoidal/core 0.7.1",
+ "engine": "@factoidal/core 0.13.0",
  "prefixes": {
   "s": "https://schema.org/",
   "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -34,7 +34,7 @@
   "coref-site-name": "https://kgx.foaf.tv/id/graphcorefsitenamed0f4b64d58023481",
   "mallmap": "https://kgx.foaf.tv/id/graphmallmapa43de479b61de2ff",
   "storeguide": "https://kgx.foaf.tv/id/graphstoreguidefc01b8a99ccaf563",
-  "pipeline": "https://kgx.foaf.tv/id/graphpipelinec6aa32298591c663",
+  "pipeline": "https://kgx.foaf.tv/id/graphpipeline696b74a4d411981b",
   "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
   "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
   "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
@@ -52,8 +52,10 @@
   "materials": "https://kgx.foaf.tv/id/graphmaterialsca718efee790144e",
   "registry-placement": "https://kgx.foaf.tv/id/graphregistryplacement8519327d5d8d4d96",
   "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
-  "meta": "https://kgx.foaf.tv/id/graphmeta9638bdb1dd0aae6f",
-  "log": "https://kgx.foaf.tv/id/graphlog3db0d2e88d56a7eb"
+  "model-heights": "https://kgx.foaf.tv/id/graphmodelheights414e8a8eb9b988f8",
+  "roofs-big": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
+  "meta": "https://kgx.foaf.tv/id/graphmetac2590f45c19ecf14",
+  "log": "https://kgx.foaf.tv/id/graphlog24a172555c382fe7"
  },
  "graphs": {
   "facts": {
@@ -174,10 +176,10 @@
    "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
   },
   "pipeline": {
-   "version": "https://kgx.foaf.tv/id/graphpipelinec6aa32298591c663",
-   "rdfc10_sha256": "c6aa32298591c663ae2bdac6118c45d1a8c1bb0b8d4358a62af2e054981b1eac",
-   "triples": 16844,
-   "file": "graphs/pipeline/c6aa32298591c663.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphpipeline696b74a4d411981b",
+   "rdfc10_sha256": "696b74a4d411981b6612e59abf315d4f2138c3040089a6216931adf87255685d",
+   "triples": 17352,
+   "file": "graphs/pipeline/696b74a4d411981b.nq.gz",
    "parts": 6,
    "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
    "licence": "CC0 (descriptions of tools and files)"
@@ -335,33 +337,51 @@
    "title": "Occupant records merged by one branch key across sources (F46, F20): 181 merges and 36 pairs for review in registry/buildings.json 15d943cc5c50edb4",
    "licence": "derived from OpenStreetMap (© OpenStreetMap contributors, ODbL 1.0), FSA ratings (OGL), ONSPD (OGL), public registers (OGL), Wikidata (CC0), Canary Wharf Group directory (crawl rule, scoping)"
   },
+  "model-heights": {
+   "version": "https://kgx.foaf.tv/id/graphmodelheights414e8a8eb9b988f8",
+   "rdfc10_sha256": "414e8a8eb9b988f8c109d437d079470d8c2725ca58354e6d44686a21ed8fef3f",
+   "triples": 1009,
+   "file": "graphs/model-heights/414e8a8eb9b988f8.nq.gz",
+   "parts": 0,
+   "title": "Heights of the model buildings the 2022 LiDAR did not measure (F52): storeys and their source, the height and ground by rule",
+   "licence": "CC0 1.0 (contains OpenStreetMap data, ODbL 1.0, and Wikidata, CC0)"
+  },
+  "roofs-big": {
+   "version": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
+   "rdfc10_sha256": "1db3329f2b2d4323dd1d86c8f82a0e845c913b7b328adf584eb95aea1392e590",
+   "triples": 345,
+   "file": "graphs/roofs-big/1db3329f2b2d4323.nq.gz",
+   "parts": 0,
+   "title": "Roof levels of the big buildings of the 3D model (4,000 m2 or more): the outline cut by roof level into flat parts, from the EA LiDAR",
+   "licence": "CC0 1.0 (contains EA LiDAR heights, OGL v3.0, and OpenStreetMap data, ODbL 1.0)"
+  },
   "meta": {
-   "version": "https://kgx.foaf.tv/id/graphmeta9638bdb1dd0aae6f",
-   "rdfc10_sha256": "9638bdb1dd0aae6f4996989172b6a692354595f3e6020ceb3034e639a12c9f29",
-   "triples": 924,
-   "file": "graphs/meta/9638bdb1dd0aae6f.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphmetac2590f45c19ecf14",
+   "rdfc10_sha256": "c2590f45c19ecf14f34563aa4e5b4d8ed314b939a7a177493d22b120d06ad821",
+   "triples": 950,
+   "file": "graphs/meta/c2590f45c19ecf14.nq.gz",
    "parts": 0,
    "title": "Descriptions of the graph versions and the current version of each graph name",
    "licence": "CC0 (descriptions only)"
   },
   "log": {
-   "version": "https://kgx.foaf.tv/id/graphlog3db0d2e88d56a7eb",
-   "rdfc10_sha256": "3db0d2e88d56a7eba6c2f57ceaea7ad9c34bdf033bfad353e35de508aabd6cd9",
-   "triples": 16831,
-   "file": "graphs/log/3db0d2e88d56a7eb.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphlog24a172555c382fe7",
+   "rdfc10_sha256": "24a172555c382fe7654575bf3d22415e76eb085e5a5706df5cbd741407808240",
+   "triples": 18108,
+   "file": "graphs/log/24a172555c382fe7.nq.gz",
    "parts": 0,
    "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
    "licence": "CC0"
   }
  },
- "total_triples": 477175,
+ "total_triples": 480340,
  "store": {
-  "generation": "gen-34be03964461e012",
+  "generation": "gen-90010024885f7e53",
   "members": 61,
   "files": 6278,
-  "bytes": 22890499
+  "bytes": 23117175
  },
  "activities_this_run": 40,
  "activities_run_new": 0,
- "activities_in_log": 240
+ "activities_in_log": 251
 }
