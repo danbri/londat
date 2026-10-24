@@ -1,0 +1,135 @@
+{
+ "date": "2026-10-22",
+ "weekday": "Thu",
+ "legs": 7564,
+ "aircraft_legs_identified": 5557,
+ "legs_type_only": 2007,
+ "aircraft_in_area": 2307,
+ "traces_read": 78974,
+ "points": 926214,
+ "bytes": 5399526,
+ "hours": [
+  {
+   "h": 0,
+   "legs": 90,
+   "bytes": 31070
+  },
+  {
+   "h": 1,
+   "legs": 77,
+   "bytes": 22410
+  },
+  {
+   "h": 2,
+   "legs": 54,
+   "bytes": 16993
+  },
+  {
+   "h": 3,
+   "legs": 83,
+   "bytes": 28469
+  },
+  {
+   "h": 4,
+   "legs": 141,
+   "bytes": 72910
+  },
+  {
+   "h": 5,
+   "legs": 392,
+   "bytes": 245182
+  },
+  {
+   "h": 6,
+   "legs": 504,
+   "bytes": 257765
+  },
+  {
+   "h": 7,
+   "legs": 537,
+   "bytes": 298274
+  },
+  {
+   "h": 8,
+   "legs": 579,
+   "bytes": 330424
+  },
+  {
+   "h": 9,
+   "legs": 570,
+   "bytes": 343267
+  },
+  {
+   "h": 10,
+   "legs": 667,
+   "bytes": 390000
+  },
+  {
+   "h": 11,
+   "legs": 716,
+   "bytes": 385071
+  },
+  {
+   "h": 12,
+   "legs": 675,
+   "bytes": 354528
+  },
+  {
+   "h": 13,
+   "legs": 680,
+   "bytes": 369708
+  },
+  {
+   "h": 14,
+   "legs": 659,
+   "bytes": 380508
+  },
+  {
+   "h": 15,
+   "legs": 590,
+   "bytes": 329515
+  },
+  {
+   "h": 16,
+   "legs": 549,
+   "bytes": 289644
+  },
+  {
+   "h": 17,
+   "legs": 522,
+   "bytes": 282624
+  },
+  {
+   "h": 18,
+   "legs": 446,
+   "bytes": 269428
+  },
+  {
+   "h": 19,
+   "legs": 386,
+   "bytes": 225531
+  },
+  {
+   "h": 20,
+   "legs": 362,
+   "bytes": 192055
+  },
+  {
+   "h": 21,
+   "legs": 329,
+   "bytes": 169393
+  },
+  {
+   "h": 22,
+   "legs": 178,
+   "bytes": 68824
+  },
+  {
+   "h": 23,
+   "legs": 132,
+   "bytes": 45933
+  }
+ ],
+ "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.10.22-planes-readsb-prod-0",
+ "built": "2026-10-23T10:34:39.062Z"
+}
