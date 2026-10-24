@@ -854,7 +854,7 @@ setInterval(() => { if (!GLOBE && START_AWAY) return; const v = zoneView(false);
 // again in its zone when the zone came out different (the world's towns were not loaded when main.js first read it)
 async function refineZone() { if (!GLOBE) return; await GLOBE.gazetteer?.().catch(() => {}); const ts = new URLSearchParams(location.search).get('t');
   if (ZONE.follow(zoneView(true)) && ts) { const t = ZONE.parse(ts); if (isFinite(t)) setClock(t); } }
-say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
+say(qs.has('ll') || qs.get('view') === 'globe' || qs.has('place') ? 'Loading the world and the place in view...' : `${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);   // (the boot screen says what it waits for)
 sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
 // a start away from the model (?ll=, ?view=globe, ?place=): the globe and the API come first and the model's optional
 // data loads behind them (owner, 2026-10-13: the page drew a slow Canary Wharf first, then hopped to the target)
@@ -942,7 +942,7 @@ if (START_AWAY) {
     const o = GLOBE.ready ? GLOBE.orbit() : null, key = o ? [o.lon, o.lat, o.range, o.heading, o.tilt].map(v => v.toFixed(5)).join() : '';
     if (key !== lastKey || GLOBE.isFlying() || !GLOBE.ready) { lastKey = key; stillT = now; }
     if (GLOBE.mode === 'globe' && (now - stillT > 1500 || now - t0 > 60000)) {
-      if (!light) { light = true; loadLayers(LAYER_IDS.filter(id => LIGHT_LAYERS.has(id))).then(() => say('')).catch(e => console.warn('layers', e)); }
+      if (!light) { light = true; loadLayers(LAYER_IDS.filter(id => LIGHT_LAYERS.has(id))).then(() => { say(''); hud.classList.add('fade'); }).catch(e => console.warn('layers', e)); }
     }
     setTimeout(idle, 250);
   };

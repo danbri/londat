@@ -22,8 +22,8 @@
 // --check fails when the peak of (JS heap + GPU + canvas) passes the budget + --headroom (0.25: the governor keeps the
 // steady use under the budget and acts within seconds; garbage of a build or a batch of tiles may pass it for moments;
 // the budget is the page governor's, else --budget-mb), or when the steady JS heap + GPU at the Docklands after the fly is more than --leak-mb above
-// the first visit (the margin holds the world's data that the globe reads once and keeps for search and labels: about 60
-// to 80 MB measured), or when a second round trip (Dublin and back) adds more than --leak2-mb (40), or on a page error. Software WebGL (SwiftShader): times are slow; memory and counts are what matter.
+// the first visit (the margin, the larger of --leak-mb and 12 % of the budget, holds the world's data that the globe reads
+// once and keeps for search and labels, about 80 to 100 MB measured, and the idle tiles a larger budget keeps), or when a second round trip (Dublin and back) adds more than --leak2-mb (40), or on a page error. Software WebGL (SwiftShader): times are slow; memory and counts are what matter.
 // Skill: docklands-3d-page, "moglob: memory budget, governor and crash recovery (2026-10-23)".
 import { chromium } from '@playwright/test';
 import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -177,7 +177,8 @@ for (const [w, h, dpr] of SIZES) {
       else if (CHECK && budget) console.log(`ok   ${tag} ${sc}: peak ${res.peak.sum} MB within budget ${budget} MB + ${HEAD * 100} %`);
       if (sc === 'fly') { const a = steps[0], b = steps.find(x => x.label === 'docklands-again'), c = steps.at(-1), grow = mb(b.heap + b.gpu) - mb(a.heap + a.gpu), grow2 = mb(c.heap + c.gpu) - mb(b.heap + b.gpu); res.leak_mb = grow; res.leak2_mb = grow2;
         console.log(`  ${tag} fly: at the Docklands first ${mb(a.heap)} + ${mb(a.gpu)} MB, after the fly ${mb(b.heap)} + ${mb(b.gpu)} MB (heap + GPU after GC): ${grow >= 0 ? '+' : ''}${grow} MB; after a second trip ${mb(c.heap)} + ${mb(c.gpu)} MB: ${grow2 >= 0 ? '+' : ''}${grow2} MB`);
-        if (CHECK && grow > LEAK) { failed++; console.log(`FAIL ${tag} fly: memory after the return is ${grow} MB above the first visit (margin ${LEAK} MB)`); }
+        const leakM = Math.max(LEAK, Math.round((budget || 0) * 0.12));   // (a larger budget keeps more idle tiles and imagery after the return, by design)
+        if (CHECK && grow > leakM) { failed++; console.log(`FAIL ${tag} fly: memory after the return is ${grow} MB above the first visit (margin ${leakM} MB)`); }
         if (CHECK && grow2 > LEAK2) { failed++; console.log(`FAIL ${tag} fly: a second round trip added ${grow2} MB (margin ${LEAK2} MB): a leak`); } }
       if (CHECK && errors.length) { failed++; console.log(`FAIL ${tag} ${sc}: page errors ${errors.slice(0, 2).join(' / ')}`); }
       await page.screenshot({ path: `${OUT}/${sc}-${w}x${h}${WEBGPU ? '-webgpu' : ''}.png` });

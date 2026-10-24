@@ -3557,3 +3557,31 @@ https://github.com/danbri/londat/issues/13#issuecomment-6366416701 .
   landmark outlines, 322.38 MB in all), place-lod 4 (rebuilds), place-far-outlines 1 on the built city tiers (Berlin
   19,626, Stuttgart 2,015, Dublin 2,860, Dagstuhl 90, León 815, Sarajevo 422 level-13 boxes replaced by their outlines).
   docklandia about 744 MB. Skill: "Far views", bullet "Fill rule".
+
+## 2026-10-23: moglob, memory and the "reboots" (subagent, worktree branch, not pushed)
+
+Owner, 2026-10-23: "Perf: loading even on a modern macbook or iphone can be very heavy and the webapp sometimes just reboots
+(annoying, slow, amateurish feel). Can you address this? Also give the app a discrete name, 'moglob'."
+- Name: the app at https://danbri.github.io/londat/docklands/ is "moglob" (title, boot screen, About, drawer, web app
+  manifest and icons for the iPhone home screen, getView/describeView `app`, API 1.4.0); URLs and folders unchanged; one
+  line in CLAUDE.md "Layout".
+- Measured first (new `docklands/test/memory-check.mjs`: JS heap, three.js GPU bytes, canvas, Linux PSS of every browser
+  process, long tasks, requests; scenarios cold Docklands, cold globe, the fly Docklands-Dublin-Berlin-Manchester 20 km-York
+  1 km-back, London 11 km nadir, UK 500 km, León then Sarajevo, crash recovery). Cause of the reloads: memory (iOS ends the
+  WebContent process). Before: renderer process up to 1,161 MB, browser 2,235 MB on the fly; JS heap +381 MB after the
+  return.
+- Fixed: tile-by-tile model build; boot screen ends with the first model frame and says each step; on a start away the
+  Docklands layers wait for the model view; freed places drop their data; search copies, skeleton files, globe cells,
+  terrain patches bounded; places, imagery and render lists go when the globe rests; far-away model buildings given up and
+  rebuilt one tile a task; a leak in every model rebuild (three.js r186 RenderObjects kept the old meshes: about 15 MB a
+  rebuild; also every style change) fixed by `releaseMesh` / `releaseGeometry`; governor with budget, LRU by bytes, max
+  places, tiers only under pressure, `?mem=full`; crash marker in sessionStorage.
+- After (390 x 844 @2, peak heap + GPU + canvas): Docklands 587 -> 558 MB, globe 830 -> 411, London 784 -> 598, UK 910 ->
+  542, León-Sarajevo 939 -> 546, fly 1,132 -> 836 (still over the phone budget 640 + 25 %: open); after the fly
+  +381 -> +90 MB, second trip +7 MB. Numbers for 1280 x 800 and WebGPU in the skill section.
+- Tests: npm run check, npm test (156 pass, 1 skipped), load.mjs, globe-check (all passed), place-check london and dublin
+  (all passed, now at `?mem=full`), lite-check (all passed, York Minster KNOWN), sw-check (all passed, `&eager=1`),
+  memory-check (all but the fly peak).
+- Skill: docklands-3d-page, "moglob: memory budget, governor and crash recovery (2026-10-23)". OKRS.md KR3.1 evidence.
+- Open for the owner: a measurement on the iPhone (Safari Web Inspector > Timelines > Memory) to set the iPhone budget
+  from a real limit; the fly's peak on the phone budget.
