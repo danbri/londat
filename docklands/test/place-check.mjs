@@ -13,6 +13,8 @@
 //   python3 -m http.server 8190 --bind 127.0.0.1 &      (from the repository root)
 //   node docklands/test/place-check.mjs [--base http://127.0.0.1:8190] [--place leon] [--webgpu] [--sizes 390x844@2,1280x800@1]
 // Skill: docklands-3d-page, "Three.js port: places as 3D Tiles (2026-10-18)".
+// (&mem=full: these checks test the tile rules at full detail; the memory governor's tiers (coarser tiles under memory
+// pressure, docklands/governor.js) are tested by docklands/test/memory-check.mjs)
 import { chromium } from '@playwright/test';
 import { mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { geodeticToEcef } from '../geo/ellipsoid.js';
@@ -81,7 +83,7 @@ for (const [w, h, dpr] of SIZES) {
   page.on('response', r => { if (r.status() === 429 && /open-meteo\.com/.test(r.url())) return; if (r.status() >= 400 && !/favicon|\/cache\/runs\/|api\.github\.com/.test(r.url())) errors.push(r.status() + ' ' + r.url()); });
   await page.route(/open-meteo\.com|adsb\.lol|openwaters|aisstream|aviationweather/, r => r.fulfill({ status: 200, contentType: 'application/json', body: '{}' }));
   const t0 = Date.now();
-  await page.goto(`${BASE}/docklands/?ll=${C.ll}&ht=${C.ht}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0&t=2026-10-12T12:00${PB}`);
+  await page.goto(`${BASE}/docklands/?ll=${C.ll}&ht=${C.ht}${WEBGPU ? '' : '&webgl'}&animate=0&weather=0&mem=full&t=2026-10-12T12:00${PB}`);
   // the deep link: the globe takes the view, the place's tiles load
   await page.waitForFunction(p => { const G = window.__docklands3?.globe; if (!(G && G.mode === 'globe' && G.places && window.docklands && G.placesStats)) return false; G.dirty = true; return G.placesStats().find(x => x.id === p)?.settled; }, PLACE, { timeout: 240000, polling: 250 });
   const loadS = (Date.now() - t0) / 1000;

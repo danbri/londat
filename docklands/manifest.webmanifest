@@ -1,0 +1,15 @@
+{
+  "name": "moglob",
+  "short_name": "moglob",
+  "description": "moglob: the Docklands model, places and the planet in 3D (three.js; WebGPU or WebGL 2). Open data; credits in Menu > About.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0e12",
+  "theme_color": "#0b0e12",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

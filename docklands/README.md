@@ -1,6 +1,7 @@
-# Docklands 3D, Three.js port (experimental)
+# moglob: Docklands 3D, Three.js port (experimental)
 
-Live: https://danbri.github.io/londat/docklands/ (top-level folder `docklands/`; owner, 2026-10-08: "Change it to serve
+The app is called **moglob** (owner, 2026-10-23: "give the app a discrete name, 'moglob'"). The address and the folders
+stay as they are. Live: https://danbri.github.io/londat/docklands/ (top-level folder `docklands/`; owner, 2026-10-08: "Change it to serve
 from top level /docklands/ folder, and merge")
 The WebGL 1 page that it ports: https://danbri.github.io/londat/cwplans/docklands/
 
@@ -60,7 +61,10 @@ improvements."
 
 `?view=` (area, cw, under, plan, rotherhithe, greenland, pier, greenlandday, plane: the WebGL page's numbers),
 `?t=YYYY-MM-DDTHH:MM` (London wall clock), `?night`, `?webgl`, `?look=real`, `?ground=rgb2008|night2012|intensity2020`,
-`?shadows=0|1`, `?bloom=0|1`, `?roads=0`, `?towers=0`, `?roofs=0`, `#at=x,z[,dist]`. The share hash is the WebGL page's
+`?shadows=0|1`, `?bloom=0|1`, `?roads=0`, `?towers=0`, `?roofs=0`, `#at=x,z[,dist]`, `?mem=full|<MB>|ios-phone|phone|desktop`
+(the memory governor, `governor.js`: `full` = no budget and no quality tiers; a number = the budget in MB; a class name =
+that device class's budget), `?eager=1` (on a start away from the model, load the model's layers at once, as before
+2026-10-23). The share hash is the WebGL page's
 (`#v=1&c=tx,tz,ty,dist,yaw,pitch&f=h<horizontal field>&rl=<roll>&vw=<view>&n=1&t=…&id=osm:w…`, nav.js `shareState`), so a
 view opens on either page; Menu has a link to the same view on the WebGL page.
 
@@ -325,6 +329,18 @@ universal access including growing towards nonvisual access including scripting 
 webmcp." Every feature has three outputs (OKRS.md, architecture rule 4): the 3D view, a text description, a machine
 interface. For machines and agents the summary is https://danbri.github.io/londat/llms.txt .
 
+### Memory (moglob, 2026-10-23)
+
+`governor.js` keeps what the page holds (JS heap, GPU memory, the canvas) under a budget for the device class (iPhone 640
+MB, phone 640 MB, Mac Safari 1,100 MB, computer 1,400 MB; after a crash x 0.7, then x 0.5). Idle place tiles, whole places
+out of reach, search copies of place data and idle base imagery are freed by bytes, least recently used first. At most 2
+places are loaded at once on a phone (4 on a computer). Only when the view itself is over the budget: quality tier 1
+(coarser far tiles, fewer imagery textures, pixel ratio 1.5), then tier 2 (pixel ratio 1), stated in one line on screen
+(`#memNote`) and in `getView().quality` and `describeView().quality`; `?mem=full` turns them off. A load that ended
+without a clean unload (a crash: iOS ends the tab) is seen at the next start in the same tab (sessionStorage) and starts
+lighter, with one line on screen; the page never reloads itself. `docklands.memory()` gives the governor's state. Test:
+`node docklands/test/memory-check.mjs --check` (skill docklands-3d-page, "moglob: memory budget, governor and crash recovery").
+
 ### Page API
 
 Without 3D (a browser with neither WebGPU nor WebGL 2, a renderer that fails, or `?no3d=1`) the page shows the text view
@@ -332,7 +348,7 @@ and a 2D map (`no3d.js`, canvas 2D) and `window.docklands` is a data-only subset
 describeView, featuresAt, findPlaces, setTime, listViews, shareLink, tools (no layers, no globe). Every move writes the
 share hash `#v=1&c=...`, so the link opens the same view in 3D. Example: https://danbri.github.io/londat/docklands/?no3d=1&view=cw
 
-`window.docklands` (`api.js`), version `1.1.0` (`docklands.version`; `describeVersion` for the text). Ready when
+`window.docklands` (`api.js`), version `1.4.0` (`docklands.version`; `describeVersion` for the text). Ready when
 `docklands.ready` resolves (event `docklands-api-ready`). The interface is locale-free: WGS84 longitude and latitude in
 degrees, metres, degrees clockwise from true north, ISO 8601 times. Heights are above the local datum
 (`docklands.locale.heightDatum`: ODN in the UK adapter). The model frame (British National Grid offsets), the datum and

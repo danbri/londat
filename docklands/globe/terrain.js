@@ -15,8 +15,9 @@
 import * as THREE from 'three/webgpu';
 import { attribute, uniform, texture, vec2, vec3, vec4, float, normalize, dot, max, min, mix, smoothstep, pow, clamp, cross, length, select, positionLocal, positionWorld, positionView, modelWorldMatrix, cameraNear, cameraFar, viewZToLogarithmicDepth, reflect, abs } from 'three/tsl';
 import { geodeticToEcef, enuBasis, WGS84, D2R } from '../geo/ellipsoid.js';
+import { releaseMesh } from '../governor.js';
 
-export const SEG = 32, MAXL = 8, PX = 12;   // level 8: 0.7 degree patches, vertices 2.4 km apart (the data: 9.8 km a pixel); deeper only where base tiles exist
+export const SEG = 32, MAXL = 8, PX = 12, MESHES = 360;   // level 8: 0.7 degree patches, vertices 2.4 km apart (the data: 9.8 km a pixel); deeper only where base tiles exist
 const A_ = WGS84.a;
 
 // height code (R channel, 0..1) -> metres above the geoid: 128 + 127 sqrt(h / 8848) above sea level, 127 - 127 sqrt(-h / 11000) below
@@ -161,10 +162,14 @@ export class Terrain {
       nd.used = this.frame; out.push(nd);
     };
     visit(0, 0, 0); visit(0, 1, 0);
-    // keep at most 600 patches with meshes: free the least recently used
+    // patches with meshes: at most MESHES (moglob, 2026-10-23: up to 1,400 nodes kept their meshes, about 90 kB of arrays
+    // each on the CPU and as much on the GPU, and grew with every place visited); the least recently used not drawn go
     if (this.detail) this.detail.selected(out, this.frame);
+    let withMesh = 0; for (const n of this.cache.values()) if (n.mesh) withMesh++;
+    if (withMesh > MESHES) { const old = [...this.cache.values()].filter(n => n.mesh && n.used < this.frame - 2).sort((a, b) => a.used - b.used);
+      for (const n of old.slice(0, withMesh - Math.floor(MESHES * 0.8))) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); releaseMesh(n.mesh); n.mesh = null; n.demKey = null; } }
     if (this.cache.size > 1400) { const old = [...this.cache.values()].filter(n => n.used < this.frame - 30).sort((a, b) => a.used - b.used);
-      for (const n of old.slice(0, this.cache.size - 1000)) { if (n.mesh) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); } this.cache.delete(n.k); } }
+      for (const n of old.slice(0, this.cache.size - 1000)) { if (n.mesh) { this.scene.remove(n.mesh); n.mesh.geometry.dispose(); releaseMesh(n.mesh); } this.cache.delete(n.k); } }
     return out;
   }
 }

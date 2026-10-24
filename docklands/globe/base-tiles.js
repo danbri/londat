@@ -19,9 +19,11 @@
 import * as THREE from 'three/webgpu';
 import { uniform } from 'three/tsl';
 import { D2R, WGS84 } from '../geo/ellipsoid.js';
+import { GOV } from '../governor.js';   // moglob's memory budget: idle imagery goes by bytes with the places' tiles (one pool each)
 
 export const BASE_URL = '../cwplans/docklands/data/world-base/base.json';
-const REQ = 6, CAP = 56, DEM_MIN = 7, GRID = 35;   // CAP: imagery textures held (512 px with mipmaps: 1.4 MB each)
+const REQ = Math.min(6, GOV.S.max_fetch || 6), CAP0 = 56, DEM_MIN = 7, GRID = 35;   // CAP: imagery textures held (512 px with mipmaps: 1.4 MB each, plus the decoded image)
+let CAP = CAP0, DROP = 0; GOV.onTier(t => { CAP = [CAP0, 32, 20][t]; DROP = t; });   // tiers: fewer textures held, and imagery one or two levels coarser near the ground (4 or 16 times fewer tiles)   // the governor's tiers hold fewer (a patch then draws a loaded ancestor)
 
 export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMaterial, url = BASE_URL }) {
   const base = new URL(url, location.href), M = await fetch(base).then(r => { if (!r.ok) throw new Error('base ' + r.status); return r.json(); });
@@ -55,7 +57,7 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
     t.flipY = false; t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter; t.anisotropy = 4;
     t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.needsUpdate = true;
     const [w, s, e, n] = bounds(q.L, q.x, q.y), mat = terrainMaterial(tex, gtex, U, { tex: t, box: uniform(new THREE.Vector4(w, s, e, n)) });
-    img.set(q.k, { k: q.k, L: q.L, x: q.x, y: q.y, tex: t, mat, used: frame }); st.imgLoaded++;
+    img.set(q.k, { k: q.k, L: q.L, x: q.x, y: q.y, tex: t, mat, used: frame, usedAt: performance.now() }); st.imgLoaded++;
     G.dirty = true;
   }
   let demArea = null, demT = 0;
@@ -86,8 +88,8 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
       frame = f;
       // imagery: ask for the deepest tile that exists at or above the cell; draw the deepest loaded one
       let asked = false, mat = null;
-      for (let L = Math.min(nd.L, maxImg); L >= 0; L--) { const sh = nd.L - L, x = nd.x >> sh, y = nd.y >> sh; if (!has(IA, L, x, y)) continue;
-        const T = asked ? (img.get('i' + L + '/' + x + '/' + y) || null) : want('i', L, x, y); asked = true; if (T) { T.used = f; mat = T.mat; break; } }
+      for (let L = Math.min(nd.L, maxImg - DROP); L >= 0; L--) { const sh = nd.L - L, x = nd.x >> sh, y = nd.y >> sh; if (!has(IA, L, x, y)) continue;
+        const T = asked ? (img.get('i' + L + '/' + x + '/' + y) || null) : want('i', L, x, y); asked = true; if (T) { T.used = f; T.usedAt = performance.now(); mat = T.mat; break; } }
       const m2 = mat || terrain.mat; if (mesh.material !== m2) mesh.material = m2;
       // heights: the deepest loaded tile at or above the cell (level 7 or deeper)
       let T = null; asked = false;
@@ -115,6 +117,12 @@ export async function attachBase(G, { terrain, sampler, U, tex, gtex, terrainMat
       // patches still holding the material take the world one until their next frame picks a loaded tile
       for (const nd of terrain.cache.values()) if (nd.mesh && nd.mesh.material === t.mat) nd.mesh.material = terrain.mat; }
   }
+  // the governor's pool: imagery tiles not drawn in the last frames (levels 0 and 1 stay); each holds the GPU texture with
+  // mipmaps and the decoded image (TextureLoader keeps the image element)
+  const tileB = M.imagery.px * M.imagery.px * 4 * (1 + 4 / 3);
+  GOV.register({ id: 'base', idle() { const out = []; for (const t of img.values()) if (t.used < frame - 2 && t.L > 1) out.push({ bytes: tileB, used: t.usedAt || 0, free: () => { dropImg(t); return tileB; } }); return out; },
+    cpuBytes: () => img.size * M.imagery.px * M.imagery.px * 4, stats: () => ({ imagery: img.size, cap: CAP, mb: Math.round(img.size * tileB / 1048576) }) });
+  function dropImg(t) { if (!img.has(t.k)) return; t.tex.dispose(); t.mat.dispose(); img.delete(t.k); st.imgFreed++; for (const nd of terrain.cache.values()) if (nd.mesh && nd.mesh.material === t.mat) nd.mesh.material = terrain.mat; }
   G.baseRest = () => { for (const t of img.values()) { t.tex.dispose(); t.mat.dispose(); } img.clear(); for (const nd of terrain.cache.values()) if (nd.mesh) nd.mesh.material = terrain.mat; };
   G.baseStats = () => ({ imagery: img.size, heights: dem.size, queued: queue.size, active, gpu_mb: Math.round(img.size * tileMB), ...st });
   // how fine the base is at a point: the deepest imagery level that exists there (0 to 11)

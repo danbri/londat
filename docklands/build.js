@@ -104,6 +104,17 @@ export const tileKey = (x, z) => Math.floor(x / TILE) + ',' + Math.floor(z / TIL
 let SIZES = null;   // the largest of width and depth of each model building (m), for the levels
 const sizeOf = i => { if (!SIZES) { SIZES = new Float32Array(A.buildings.length); A.buildings.forEach((b, k) => { const f = dec(b.p); let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (let j = 0; j < f.length; j += 2) { x0 = Math.min(x0, f[j]); x1 = Math.max(x1, f[j]); z0 = Math.min(z0, f[j + 1]); z1 = Math.max(z1, f[j + 1]); } SIZES[k] = Math.max(x1 - x0, z1 - z0); }); } return SIZES[i]; };
 export const LEVEL_KEEP = [null, { size: 8, h: 12 }, { size: 20, h: 30 }];   // a building is drawn at a level when it is that wide or that high
+// the model buildings by tile (the key of the first point of the outline, as buildBuildings files them), made once: a
+// build of one tile then visits only its own buildings (moglob, 2026-10-23: main.js rebuildBuildings builds tile by tile,
+// so the JS arrays of one tile are garbage before the next is made; all tiles at once peaked at +300 MB of JS heap)
+let TILE_IX = null;
+const tileIndex = () => { if (!TILE_IX) { TILE_IX = new Map(); A.buildings.forEach((b, i) => { const k = tileKey(b.p[0] / 10, b.p[1] / 10); (TILE_IX.get(k) || TILE_IX.set(k, []).get(k)).push(i); }); } return TILE_IX; };
+// the tile keys a full build makes, in the order buildBuildings makes them (buildings first, then the towers' tiles)
+export function buildingTileKeys(opts = {}) {
+  const keys = new Set(tileIndex().keys());
+  for (const t of opts.towers || []) { const r0 = t.tiers[0].ring; keys.add(tileKey(r0[0][0], r0[0][1])); }
+  return [...keys];
+}
 // Douglas-Peucker on a closed ring (flat x, z): at least 3 points kept
 function simplifyRing(f, tol) {
   const n = f.length / 2; if (n <= 4) return f; const keep = new Uint8Array(n); keep[0] = 1;
@@ -124,7 +135,7 @@ export function buildBuildings(opts = {}) {
   // a photo facade tile (opts.facadeOf(i) -> slot or null; index.html facSlot): colour 0.9, alpha 100 + slot, not painted by the look;
   // none while a layer colours or re-heights the buildings (skyline years)
   const facOf = i => opts.facadeOf && !opts.heightOf && !opts.colourOf ? opts.facadeOf(i) : null;
-  A.buildings.forEach((b, i) => {
+  const each = (b, i) => {
     const h = hOf(b, i); if (towerOf.has(i) || (opts.skip && opts.skip.has(i)) || (opts.only && !opts.only.has(i)) || !(h > 0)) return;
     if (only1 && tileKey(b.p[0] / 10, b.p[1] / 10) !== only1) return;
     if (K && sizeOf(i) < K.size && h < K.h) return;   // too small for this level
@@ -136,7 +147,8 @@ export function buildBuildings(opts = {}) {
       prismF(M, encRings([ring]), b.b + (b.mh || 0), b.b + h, c, false, mat); M.hold = false; }
     else prismF(M, b, b.b + (b.mh || 0), b.b + h, c, !!b.mh, mat);
     if (LK && sl == null) LK.paint(M, n0, i, !!rf);
-  });
+  };
+  if (only1) { for (const i of tileIndex().get(only1) || []) each(A.buildings[i], i); } else A.buildings.forEach(each);   // (same order: ascending index)
   for (const t of opts.towers || []) { if (opts.only && !opts.only.has(t.model_buildings[0])) continue; const mi = t.model_buildings[0], b = A.buildings[mi], r0 = t.tiers[0].ring; if (only1 && tileKey(r0[0][0], r0[0][1]) !== only1) continue; const M = tileOf(r0[0][0], r0[0][1]), n0 = M.n, sl = facOf(mi);
     M.model = mi; M.kind = nightKind(t.name === 'One Canada Square' ? 5 : t.name === 'Newfoundland' ? 4 : opts.useOf ? opts.useOf(mi) : 0, towerTop(t)); towerF(M, t, sl != null ? [.9, .9, .9] : colourOf(b, mi), sl != null ? -1 - sl : null); if (LK && sl == null) LK.paint(M, n0, mi, false); }
   return [...tiles.values()].filter(M => M.n).map(M => { const G = toGeometry(M); G.userData.tile = M.key; G.userData.level = L; return G; });

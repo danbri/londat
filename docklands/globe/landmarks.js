@@ -23,6 +23,7 @@ import { attribute, uniform, vec3, vec4, float, normalize, dot, max, mix, smooth
 import { geodeticToEcef, enuBasis, D2R } from '../geo/ellipsoid.js';
 import { latinPreferred, pickName, isLatin } from '../geo/script.js';
 import { fold } from './world.js';
+import { releaseMesh } from '../governor.js';
 
 export const LANDMARKS_INDEX = '../cwplans/docklands/data/places/landmarks.json';
 const qs = new URLSearchParams(location.search), MODE = qs.get('landmarks') || 'all', MIN_PX = +(qs.get('minpx') || 2);
@@ -105,7 +106,7 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
       L.tiles = tiles; L.state = 'ready'; G.dirty = true; H.draw();
     } catch (e) { console.warn('landmarks: load', L.p.id, e); L.state = 'failed'; }
   }
-  function free(L) { for (const t of L.tiles) for (const m of t.meshes) { scene.remove(m); m.geometry.dispose(); } L.tiles = []; L.state = null; }
+  function free(L) { for (const t of L.tiles) for (const m of t.meshes) { scene.remove(m); m.geometry.dispose(); releaseMesh(m); } L.tiles = []; L.state = null; }
 
   // ---------- core parts replaced by a landmark: their vertices collapsed to one point when the core tile is activated
   const done = new WeakSet();
@@ -142,6 +143,8 @@ export async function attachLandmarks(G, H, { scene, U, P }) {
     for (let r = 0; r < 3; r++) { const a = R[r][0], b = R[r][1], c = R[r][2]; me[r] = a * M[0] + b * M[1] + c * M[2]; me[4 + r] = a * M[4] + b * M[5] + c * M[6]; me[8 + r] = a * M[8] + b * M[9] + c * M[10]; me[12 + r] = a * t0 + b * t1 + c * t2; }
     me[3] = 0; me[7] = 0; me[11] = 0; me[15] = 1; };
   const stats = { tiles: 0, triangles: 0 };
+  // a freed place frees its landmarks at once (the per-frame rule below runs only while the globe draws; moglob, 2026-10-23)
+  addEventListener('docklands-place-freed', e => { for (const L of S) if (L.p.id === e.detail?.id && L.state === 'ready') free(L); });
   const onFrame0 = G.onFrame;
   G.onFrame = function (eye) {
     onFrame0?.call(this, eye);

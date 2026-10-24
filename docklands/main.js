@@ -1,4 +1,5 @@
-// The Three.js port of the Docklands 3D page (experimental): https://danbri.github.io/londat/docklands/
+// moglob (owner, 2026-10-23: "give the app a discrete name, 'moglob'"): the Three.js port of the Docklands 3D page with the
+// globe and the places, https://danbri.github.io/londat/docklands/
 // three.js r186 from third_party/three (vendored), WebGPURenderer: WebGPU where the browser has it, else the WebGL 2
 // backend (?webgl forces it). The same TSL node materials compile for both. The data are the WebGL page's own files
 // (cwplans/docklands/data/*.js, *.json) read unchanged; roofs-layer.js and look-layer.js are reused through the mesh-builder interface
@@ -11,7 +12,7 @@ import { bloom } from 'three/addons/tsl/display/BloomNode.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSMShadowNode } from 'three/addons/csm/CSMShadowNode.js';
-import { A, MFP, dec, buildBuildings, terrainGeometry, terrainLod, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
+import { A, MFP, dec, buildBuildings, buildingTileKeys, terrainGeometry, terrainLod, waterGeometry, greensGeometry, linesGeometry, groundAt, inside } from './build.js';
 import { U, buildingMaterial, terrainMaterial, waterMaterial, vertexColourMaterial } from './materials.js';
 import { Sky3, sunAltAt } from './sky3.js';
 import { makeClockZone } from './clockzone.js';   // KR1.2: the page clock in the time zone of the view (the model: its region)
@@ -25,13 +26,14 @@ import { VIEWS } from './views.js';
 import { makePerf } from './perf.js';
 import { makeCpuCopies } from './cpu-copies.js';
 import { makeCells } from './cells.js';
+import { GOV, APP, releaseMesh } from './governor.js';   // moglob's memory budget, its pools and tiers, crash recovery (governor.js)
 
 const $ = id => document.getElementById(id), hud = $('hud'), qs = new URLSearchParams(location.search);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const flag = (k, dflt) => qs.has(k) ? !/^(0|false|off|no)$/i.test(qs.get(k)) : dflt;
 const WEBGL = '../cwplans/docklands/', DATA = WEBGL + 'data/';   // the WebGL page and its data
 const loadJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
-const say = t => { hud.textContent = t; };
+const say = t => { hud.textContent = t; const b = document.getElementById('bootStep'); if (b && !document.getElementById('boot')?.classList.contains('done')) b.textContent = t; };   // (the boot screen shows the same step: it says what is loading)
 let need = true;
 const ZONE = makeClockZone(qs), localDate = t => ZONE.date(t);   // YYYY-MM-DD on the wall clock of the view's zone
 function draw() { need = true; }   // the render loop draws a frame when asked (and while the camera moves)
@@ -46,16 +48,25 @@ if (globalThis.GPUTexture) { const cv = GPUTexture.prototype.createView;
 // not load this module at all for ?no3d=1 or a browser without WebGPU and WebGL 2.)
 const no3d = async why => { say(why); globalThis.__docklandsNo3d = { error: why }; dispatchEvent(new CustomEvent('docklands-no3d', { detail: { error: why } })); await new Promise(() => {}); };
 const renderer = new THREE.WebGPURenderer({ antialias: true, forceWebGL: flag('webgl', false), powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+const PR0 = Math.min(2, devicePixelRatio || 1);   // the pixel ratio; under memory pressure the governor's tiers lower it (1.5, 1)
+renderer.setPixelRatio(PR0);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
 $('view').appendChild(renderer.domElement);
 try { await renderer.init(); } catch (e) { await no3d('This browser could not start WebGPU or WebGL 2 (' + (e && e.message || e) + ').'); }   // (no page error)
 const GPU = !!renderer.backend.isWebGPUBackend, BACKEND = GPU ? 'WebGPU' : 'WebGL 2';
+// the memory governor (governor.js): renderer.info.memory for the GPU part; where the browser gives no JS heap size (Safari)
+// the model's arrays are counted from the scene (every 5 s at most)
+let cpuT = 0, cpuB = 0;
+const modelCpu = () => { const now = performance.now(); if (now - cpuT < 5000) return cpuB; cpuT = now; let b = 0; const seen = new Set();
+  scene.traverse(o => { const g = o.geometry; if (!g || seen.has(g)) return; seen.add(g); for (const a of Object.values(g.attributes)) b += a.array?.byteLength || 0; b += g.index?.array?.byteLength || 0; b += g.userData?.bi?.byteLength || 0; });
+  return cpuB = b; };
 $('backend').textContent = BACKEND;
 
 const scene = new THREE.Scene();
+GOV.attach(renderer, { cpu: modelCpu });
+GOV.onTier(t => { const pr = t >= 2 ? 1 : t === 1 ? Math.min(PR0, 1.5) : PR0; if (renderer.getPixelRatio() !== pr) { renderer.setPixelRatio(pr); if (typeof resize === 'function') try { resize(); } catch { /* before the loop */ } } });
 // CPU copies of the static geometry given up once drawn (cpu-copies.js; ?cpufree=0 keeps them): normals and the per-building
 // and per-line values, made again exactly when three.js makes their GPU buffer again (after the globe: globe.js stepReup)
 const CPU = makeCpuCopies(renderer, { on: flag('cpufree', true) });
@@ -133,16 +144,31 @@ const buildOpts = {};   // options a layer adds to buildBuildings (layers/skylin
 const bOpts = () => ({ towers: TOWERS, roofs: ROOFS, look: LOOK, skip, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts });
 const CELLS = makeCells({ THREE, camera, eye: eyeM, LOD, CPU, draw, buildTile: (key, level) => buildBuildings({ ...bOpts(), level, tile: key })[0] || null, prep: { terrain: terrainLod }, active: () => !GLOBE || GLOBE.mode !== 'globe' });
 for (const [k, m] of [['terrain', terrain], ['greens', greens], ['roads', roads], ['rail', rail]]) CELLS.addIndexed(k, m, k !== 'terrain');   // lean: no CPU reader of the index drawn (the drone and layers read the terrain's)
-function rebuildBuildings() {
-  CELLS.dropTiles(); buildings.clear();
-  const t0 = performance.now();
-  for (const G of buildBuildings(bOpts())) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
-    CPU.watch(G, { normal: 'normal', gk: 'runs' }); CELLS.addTile(m); }   // picking and the occluder read position, index and userData.bi: kept
+let rebuildGen = 0;
+function addTileMesh(G) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; m.userData.tile = true; buildings.add(m);
+  CPU.watch(G, { normal: 'normal', gk: 'runs' }); CELLS.addTile(m); }   // picking and the occluder read position, index and userData.bi: kept
+function rebuildDone(t0) {
   const tris = buildings.children.reduce((s, m) => s + m.geometry.index.count / 3, 0);
   for (const l of LOD.list) if (l.userData.mi) farBlock(l);   // the detailed models' far blocks take the new look too
   STATS.buildings = { tiles: buildings.children.length, triangles: tris, ms: Math.round(performance.now() - t0), builds: (STATS.buildings?.builds || 0) + 1 };
   if (OCC) OCC.dirty();
   draw();
+}
+function rebuildBuildings() {
+  CELLS.dropTiles(); buildings.clear(); rebuildGen++;
+  const t0 = performance.now();
+  // tile by tile (moglob, 2026-10-23): the same geometries as one build of all tiles, but the JS arrays of one tile are
+  // garbage before the next tile is made (the whole model at once peaked at +300 MB of JS heap: an iPhone tab restart)
+  const o = bOpts();
+  for (const key of buildingTileKeys(o)) for (const G of buildBuildings({ ...o, tile: key })) addTileMesh(G);
+  rebuildDone(t0);
+}
+// the same, one tile a task (the garbage of each tile can be collected between them): the model coming back after it was
+// given up far away (modelBack); a synchronous rebuild meanwhile wins (rebuildGen)
+async function rebuildBuildingsSlowly() {
+  CELLS.dropTiles(); buildings.clear(); const gen = ++rebuildGen, t0 = performance.now(), o = bOpts();
+  for (const key of buildingTileKeys(o)) { if (gen !== rebuildGen) return; for (const G of buildBuildings({ ...o, tile: key })) addTileMesh(G); draw(); await new Promise(r => setTimeout(r, 0)); }
+  if (gen === rebuildGen) rebuildDone(t0);
 }
 // while the page boots (heavy(): optional data, detailed models, the layers) the rebuilds asked for are done once at the
 // end: there were 6 at ?view=cw (2 s each in headless Chromium, each leaving its arrays as garbage), now 2
@@ -300,7 +326,7 @@ function placeLabels() {
 // than 80 px. The blocks follow the look of the tiles (made again in rebuildBuildings).
 const models = new THREE.Group(); scene.add(models);
 function farBlock(lod) {
-  const old = lod.userData.far; if (old) { lod.remove(old); old.traverse(o => o.geometry && o.geometry.dispose()); const k = lod.levels.findIndex(l => l.object === old); if (k >= 0) lod.levels.splice(k, 1); if (lod.levels[0]) lod.levels[0].object.visible = true; lod.userData.far = null; }
+  const old = lod.userData.far; if (old) { lod.remove(old); const gone = []; old.traverse(o => { if (o.geometry) { o.geometry.dispose(); gone.push(o); } }); for (const o of gone) releaseMesh(o); const k = lod.levels.findIndex(l => l.object === old); if (k >= 0) lod.levels.splice(k, 1); if (lod.levels[0]) lod.levels[0].object.visible = true; lod.userData.far = null; }
   if (!LOD.on) return;
   const g = new THREE.Group(); g.name = 'far block'; g.position.set(-lod.position.x, -lod.position.y, -lod.position.z);   // the blocks are in model metres
   for (const G of buildBuildings({ towers: TOWERS, roofs: ROOFS, look: LOOK, facadeOf: FACADES_ON ? FACADE : null, ...buildOpts, skip: null, only: new Set(lod.userData.mi) })) { const m = new THREE.Mesh(G, bmat); m.castShadow = m.receiveShadow = true; g.add(m); }
@@ -420,10 +446,16 @@ const ctx = {
   site: () => GLOBE && GLOBE.mode === 'globe' ? (GLOBE.ready ? siteOf({ mode: 'globe', ...GLOBE.orbit() }) : null)
     : (!GLOBE && (qs.has('ll') || qs.has('place') || qs.get('view') === 'globe') ? null : siteOf({ mode: 'model' })), zone: ZONE,
 };
-async function loadLayers() {
+// the layers that only add controls and tools (no model geometry, little data): on a start away from the model (?ll=,
+// ?place=, ?view=globe) they load when the globe is still; the others when the view comes near the model (heavy())
+const LIGHT_LAYERS = new Set(['search', 'routes', 'drone', 'plotter', 'kml', 'locate', 'xr']);
+const loadedIds = new Set();
+async function loadLayers(ids = LAYER_IDS) {
+  ids = ids.filter(id => !loadedIds.has(id)); for (const id of ids) loadedIds.add(id);
   // all layer modules are asked for at once (they arrive in parallel); init still runs in LAYER_IDS order
-  const pending = LAYER_IDS.map(id => import(`./layers/${id}.js`).then(m => ({ m }), e => ({ e })));
-  for (const [k, id] of LAYER_IDS.entries()) {
+  const pending = ids.map(id => import(`./layers/${id}.js`).then(m => ({ m }), e => ({ e })));
+  for (const [k, id] of ids.entries()) {
+    if (ids.length > 8) say(`Loading the layers: ${k + 1} of ${ids.length} (${id})`);
     let mod; try { const r = await pending[k]; if (r.e) throw r.e; mod = r.m.default; } catch (e) { if (!/Failed to fetch|Importing a module script failed|error loading dynamically imported module/i.test(e.message)) console.warn('layer', id, e); continue; }
     ui.tab(mod.menu || MENU_PLACE[id] || 'layers/city');
     const mark = document.createComment(id); ui.host().appendChild(mark);   // the layer's own on/off goes first, above its controls
@@ -779,7 +811,7 @@ function loop(time, xrFrame) {
   OCC.end();
   if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
-  { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles), ms: +ms.toFixed(2) }; } modelFrames++;   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
+  { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles), ms: +ms.toFixed(2) }; } if (!modelFrames++ && !START_AWAY) { STATS.firstFrameMs = Math.round(performance.now()); bootDone(); }   // the boot screen ends with the first model frame (the layers then load behind it, the HUD says which)   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
   CPU.tick();   // the geometry drawn in this frame gives up its CPU copies (cpu-copies.js)
   if (globalThis.__d3snap) { const f = globalThis.__d3snap; globalThis.__d3snap = null; try { f(renderer.domElement.toDataURL('image/png')); } catch (e) { f(null); } }   // Share > Print: the frame just drawn (the drawing buffer is cleared after it)
   frames++; const now = performance.now(); if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
@@ -822,13 +854,14 @@ setInterval(() => { if (!GLOBE && START_AWAY) return; const v = zoneView(false);
 // again in its zone when the zone came out different (the world's towns were not loaded when main.js first read it)
 async function refineZone() { if (!GLOBE) return; await GLOBE.gazetteer?.().catch(() => {}); const ts = new URLSearchParams(location.search).get('t');
   if (ZONE.follow(zoneView(true)) && ts) { const t = ZONE.parse(ts); if (isFinite(t)) setClock(t); } }
-say(`${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);
+say(qs.has('ll') || qs.get('view') === 'globe' || qs.has('place') ? 'Loading the world and the place in view...' : `${A.buildings.length.toLocaleString()} buildings · ${BACKEND}`);   // (the boot screen says what it waits for)
 sky.loadStars(DATA + 'sky/stars.json').then(draw).catch(e => console.warn('stars', e));
 // a start away from the model (?ll=, ?view=globe, ?place=): the globe and the API come first and the model's optional
 // data loads behind them (owner, 2026-10-13: the page drew a slow Canary Wharf first, then hopped to the target)
 const START_AWAY = qs.has('ll') || qs.get('view') === 'globe' || qs.has('place');
 let READY = false;
 async function heavy() {
+  say('Loading the towers, roofs and facades...');
   await loadOptional(); $('facades').checked = FACADES_ON = flag('facades', true); $('facades').disabled = !FACADE; await loadModels();
   await loadLayers();
   BOOTING = false; if (rebuildWanted) { rebuildWanted = false; rebuildBuildings(); }
@@ -836,7 +869,7 @@ async function heavy() {
   say(`${A.buildings.length.toLocaleString()} buildings · ${STATS.buildings.triangles.toLocaleString()} triangles · ${BACKEND}`);
   setTimeout(() => $('hud').classList.add('fade'), 4000);
   menu.creditsStart();
-  READY = true; if (!START_AWAY) bootDone();
+  READY = true; STATS.readyMs = Math.round(performance.now()); if (!START_AWAY) bootDone();
 }
 function bootDone() { const b = $('boot'); if (b && !b.hidden) { b.classList.add('done'); setTimeout(() => { b.hidden = true; }, 400); } }
 if (!START_AWAY) await heavy();
@@ -859,6 +892,27 @@ if (flag('globe', true)) {
   } catch (e) { console.warn('globe', e); }
 }
 
+// the model's buildings while the view is far away (moglob, 2026-10-23: the model held about 70 MB of building arrays in the
+// JS heap during a fly to Dublin and Berlin): as soon as the globe has the view and its centre is more than 200 km from the
+// model's box (checked every second; a flight away passes 200 km in its first seconds) they are given up (geometries disposed, arrays dropped), and built again (tile by tile, as at the start) when the view
+// comes within 60 km or the model takes the view. Picking, the occluder and the styles see the new meshes as after any
+// rebuild. ?free=0 keeps them. STATS.modelDrop: drops, rebuilds, the last time.
+let MODEL_DROPPED = false;
+STATS.modelDrop = { drops: 0, rebuilds: 0, dropped: false };
+function modelBack(why) { if (!MODEL_DROPPED) return; MODEL_DROPPED = false; STATS.modelDrop.dropped = false; STATS.modelDrop.rebuilds++; STATS.modelDrop.why = why; GOV.room(120 * 1048576); rebuildBuildingsSlowly().catch(e => console.warn('model', e)); }   // (room first: the buildings take about 120 MB while they are made)
+if (GLOBE && qs.get('free') !== '0') {
+  addEventListener('docklands-globe-mode', e => { if (e.detail?.mode === 'model') modelBack('the model took the view'); });
+  setInterval(() => {
+    if (!GLOBE.ready) return;
+    if (GLOBE.mode !== 'globe') return modelBack('the model took the view');
+    const o = GLOBE.orbit(); if (!o) return;
+    if (GLOBE.inBox(o.lon, o.lat, 60000)) return modelBack('the view came near the model');
+    if (GLOBE.inBox(o.lon, o.lat, 200000)) return;
+    if (!MODEL_DROPPED && buildings.children.length) {
+      CELLS.dropTiles(); buildings.clear(); MODEL_DROPPED = true; Object.assign(STATS.modelDrop, { drops: STATS.modelDrop.drops + 1, dropped: true, at: Date.now() }); if (OCC) OCC.dirty(); }
+  }, 1000);
+}
+
 // names in Latin script only (on by default; owner, 2026-10-22): the box in Menu > Look, the label and card safety nets
 // (script-ui.js; the data readers pick names by geo/script.js). Skill docklands-3d-page, "Names: Latin script preferred".
 import('./script-ui.js').then(m => m.initScriptUi({ langNote: () => GLOBE && GLOBE.langOverridden?.() ? `The page language (?lang=${esc(GLOBE.lang)}) is written in another script, so its names give way to Latin ones while this is on.` : '' })).catch(e => console.warn('script-ui', e));
@@ -868,17 +922,28 @@ if (START_AWAY) {
   // the boot screen stays until the start view is drawn (the globe takes the view, or the model is ready), 20 s at most
   const t0 = performance.now(), wait = () => { if ((GLOBE && GLOBE.mode === 'globe' && GLOBE.ready && !GLOBE.isFlying()) || READY || performance.now() - t0 > 20000) bootDone(); else requestAnimationFrame(wait); };
   requestAnimationFrame(wait);
-  // the model's optional data and layers (heavy) wait until the view is still: on the globe they cost 2 to 5 s of
-  // main-thread work, which made a deep-link fly-in to a place jerky (places agent, 2026-10-21). They start when the
-  // globe has not moved for 1.5 s and no flight runs, at once when the model takes the view, and after 60 s at most.
-  let lastKey = '', stillT = performance.now(), started = false;
-  const startHeavy = () => { if (started) return; started = true; STATS.heavyDeferredMs = Math.round(performance.now() - t0); heavy().catch(e => console.warn('model data', e)); };
+  // the model's optional data and layers (heavy) are not needed away from the model: on the globe they cost 2 to 5 s of
+  // main-thread work (a deep-link fly-in to a place was jerky; places agent, 2026-10-21) and 150 to 300 MB of memory
+  // (moglob, 2026-10-23: a start at ?view=globe peaked at 1 GB in the renderer). The light layers (search, routes, tools)
+  // load when the globe has been still for 1.5 s; the rest (heavy) when the view needs the model: the model takes the view
+  // (the plain model, built at the start, shows at once; its layers follow), or the menu's Layers pane opens. ?eager=1: at once (as the
+  // page did before 2026-10-23, whose rule read the globe's first moments as the model having the view).
+  let lastKey = '', stillT = performance.now(), light = false, started = false, wasGlobe = false;
+  const EAGER = flag('eager', false);
+  const startHeavy = why => { if (started) return; started = true; STATS.heavyDeferredMs = Math.round(performance.now() - t0); STATS.heavyWhy = why; heavy().catch(e => console.warn('model data', e)); };
+  addEventListener('click', e => { if (e.target?.closest?.('[data-pane="paneLayers"]')) startHeavy('the Layers pane'); }, true);
   const idle = () => {
     if (started) return; const now = performance.now();
-    if (!GLOBE || GLOBE.mode !== 'globe' || now - t0 > 60000) return startHeavy();
+    if (EAGER) return startHeavy('?eager=1');
+    if (GLOBE && GLOBE.mode === 'globe') wasGlobe = true;
+    // (the globe takes the view a moment after the start: until then the mode reads 'model'; a start that never reaches the
+    // globe in 60 s, or no globe, loads the model's layers)
+    if (!GLOBE || (GLOBE.mode !== 'globe' && (wasGlobe || now - t0 > 60000))) return startHeavy('the model has the view');
     const o = GLOBE.ready ? GLOBE.orbit() : null, key = o ? [o.lon, o.lat, o.range, o.heading, o.tilt].map(v => v.toFixed(5)).join() : '';
     if (key !== lastKey || GLOBE.isFlying() || !GLOBE.ready) { lastKey = key; stillT = now; }
-    if (now - stillT > 1500) return startHeavy();
+    if (GLOBE.mode === 'globe' && (now - stillT > 1500 || now - t0 > 60000)) {
+      if (!light) { light = true; loadLayers(LAYER_IDS.filter(id => LIGHT_LAYERS.has(id))).then(() => { say(''); hud.classList.add('fade'); }).catch(e => console.warn('layers', e)); }
+    }
     setTimeout(idle, 250);
   };
   setTimeout(idle, 250);

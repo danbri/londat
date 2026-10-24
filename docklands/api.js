@@ -1,4 +1,4 @@
-// The page API of the Three.js port (docklands/): window.docklands, a documented and versioned interface for scripts,
+// The page API of moglob (the Three.js port, docklands/; the app's name since 2026-10-23): window.docklands, a documented and versioned interface for scripts,
 // assistive technology and agents (OKR O3, KR3.3 and KR3.4: https://github.com/danbri/londat/issues/8), the same
 // functions as WebMCP tools where the browser offers them, the spoken description of the view (an ARIA live region), the
 // keys V (describe) and T (text view), and the locale-free deep links ?ll=lat,lon[,range] and ?place=<name>.
@@ -13,8 +13,10 @@ import { ukAdapter } from './adapters/uk.js';
 import { parseZone } from './geo/zone.js';
 import { VIEW_LABELS } from './views.js';
 import { latinOut, scrubText, getScriptPreference, setScriptPreference } from './geo/script.js';
+import { GOV, APP } from './governor.js';
 
-export const API_VERSION = '1.3.0';   // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
+export const API_VERSION = '1.4.0';   // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
+// 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
 // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
 // 1.1.0 (2026-10-21): the page clock's zone follows the view; getTimeZone, setTimeZone, setTime(v, zone)
 const D = Math.PI / 180, $ = id => document.getElementById(id);
@@ -42,9 +44,9 @@ export function init(H) {
   const sunNow = () => { const s = H.sky.state && H.sky.state.sun; return s ? { alt: s.alt, az: s.az, altGeo: s.altGeo } : null; };
   function getView() {
     if (onGlobe()) { const v = H.globe.getView(), pt = H.globe.placeTime?.(v.target.lon, v.target.lat);   // over a place (globe/places.js): its own clock too
-      return latinOut({ api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), weather: liveWeather(), view: 'globe', scripts: getScriptPreference(), share: shareLink() }); }
+      return latinOut({ app: APP.name, api_version: API_VERSION, ...v, time: timeNow(), ...(pt ? { place_time: pt } : {}), weather: liveWeather(), view: 'globe', scripts: getScriptPreference(), quality: GOV.quality(), share: shareLink() }); }
     const G = viewGeo(I, camOf()); delete G.frame; delete G.elon; delete G.elat; const s = sunNow();
-    return latinOut({ api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, weather: liveWeather(), view: H.viewName || null, scripts: getScriptPreference(), share: shareLink() });
+    return latinOut({ app: APP.name, api_version: API_VERSION, ...G, time: timeNow(), sun: s ? { altitude_deg: Math.round(s.alt * 10) / 10, azimuth_deg: Math.round(s.az * 10) / 10 } : null, night: H.night, weather: liveWeather(), view: H.viewName || null, scripts: getScriptPreference(), quality: GOV.quality(), share: shareLink() });
   }
   const listViews = () => Object.keys(H.VIEWS).map(id => ({ id, label: VIEW_LABELS[id] || id }));
   const settle = () => new Promise(ok => requestAnimationFrame(() => ok()));
@@ -160,10 +162,12 @@ export function init(H) {
     w.water_current ? `${w.water_current.water} current ${w.water_current.speed_ms.toFixed(2)} m/s (${w.water_current.direction})` : ''].filter(Boolean).join('; ')}.` : '';
 
   // ---------- what is in view
+  // the memory governor's tier, when it is not full detail (governor.js): one sentence
+  const qualityText = () => { const q = GOV.quality(); return q.tier ? ` Detail: ${q.text.split(':')[0]}, because ${q.reason || 'memory is short'} (budget ${q.budget_mb} MB; ${q.how_to_override} for full detail).` : ''; };
   async function describeView(o = {}) {
     if (onGlobe()) { const tn = timeNow(), d = await GL().describe({ maxItems: o.maxItems || 8, time: `${tn.local} ${tn.abbreviation === tn.utc_offset ? tn.utc_offset : tn.abbreviation + ', ' + tn.utc_offset} (${tn.time_zone}${tn.approximate ? ', approximate' : ''})` });
-      const weather = liveWeather(); if (weather) d.text += weatherText(weather);
-      return latinOut({ ...d, weather, time: tn, api_version: API_VERSION, scripts: getScriptPreference(), share: shareLink() }); }
+      const weather = liveWeather(); if (weather) d.text += weatherText(weather); d.text += qualityText();
+      return latinOut({ app: APP.name, ...d, weather, time: tn, api_version: API_VERSION, scripts: getScriptPreference(), quality: GOV.quality(), memory: GOV.state(), share: shareLink() }); }
     await extras;
     const L = H.layers;
     const live = { aircraft: L.planes && L.planes.on ? L.planes.api.flights : null, ships: L.ships && L.ships.on ? L.ships.api.vessels : null };
@@ -174,7 +178,7 @@ export function init(H) {
     // the wider place (a skeleton set's district, county, country) at the target, when the globe has one
     if (GL() && dsc.target) { try { const m = await GL().whereMore(dsc.target.lon, dsc.target.lat); if (m && (m.district || m.country)) { dsc.context = m;
       dsc.text += ` Area: ${[...new Set([m.district, m.county, m.region, m.country].filter(Boolean))].join(', ')} (${m.source}).`; } } catch (e) { console.warn('api: context', e); } }
-    dsc.scripts = getScriptPreference();
+    dsc.scripts = getScriptPreference(); dsc.app = APP.name; dsc.quality = GOV.quality(); dsc.memory = GOV.state(); dsc.text += qualityText();
     return latinOut(dsc);
   }
   async function findPlaces(q, limit = 10) {
@@ -218,7 +222,7 @@ export function init(H) {
   function registerWebMCP() {
     const mc = (typeof document !== 'undefined' && document.modelContext) || navigator.modelContext; if (!mc) return;
     webmcp.api = document.modelContext ? 'document.modelContext' : 'navigator.modelContext';
-    const tools = TOOLS.map(t => ({ name: t.name, description: t.description + ' (Docklands 3D page API ' + API_VERSION + ')', inputSchema: t.inputSchema, annotations: { readOnlyHint: t.readOnly, title: t.name.replace(/_/g, ' ') },
+    const tools = TOOLS.map(t => ({ name: t.name, description: t.description + ' (moglob page API ' + API_VERSION + ')', inputSchema: t.inputSchema, annotations: { readOnlyHint: t.readOnly, title: t.name.replace(/_/g, ' ') },
       execute: async input => { try { const r = latinOut(await t.run(input || {})); return { content: [{ type: 'text', text: JSON.stringify(r) }], structuredContent: Array.isArray(r) ? { items: r } : r }; } catch (e) { return { content: [{ type: 'text', text: 'Error: ' + (e && e.message || e) }], isError: true }; } } }));
     webmcp.controller = typeof AbortController === 'function' ? new AbortController() : null;
     try {
@@ -260,7 +264,7 @@ export function init(H) {
   }
   const cv = H.renderer.domElement;
   cv.tabIndex = 0; cv.setAttribute('role', 'application'); cv.setAttribute('aria-roledescription', '3D map');
-  cv.setAttribute('aria-label', 'Docklands 3D view. Arrow keys move, plus and minus zoom, V describes the view, T opens the text view. Menu: the button after this map.');
+  cv.setAttribute('aria-label', 'moglob 3D view. Arrow keys move, plus and minus zoom, V describes the view, T opens the text view. Menu: the button after this map.');
   const openText = () => import('./textview.js').then(m => m.openTextView()).catch(e => console.warn('textview', e));
   addEventListener('keydown', e => {
     if (e.ctrlKey || e.metaKey || e.altKey || (e.target instanceof Element && e.target.closest('input,select,textarea,[contenteditable],#textView'))) return;
@@ -286,7 +290,9 @@ export function init(H) {
     perf() { const P = H.perf; if (!P) return null; const s = P.stats(), St = globalThis.__docklandsStyles;
       if (St && St.mode === 'paint') s.paint = { tier: St.paintTier, mode: St.paintMode, moving: St.paintMoving, steps: St.paint.log.slice(-5) };
       return s; },
-    help: 'Docklands 3D page API: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api',
+    // the memory governor (governor.js): budget, use (JS heap, GPU, canvas), tier, pools, crash recovery
+    memory: () => GOV.state(), app: APP.name,
+    help: 'moglob (Docklands 3D) page API: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api',
   };
   globalThis.docklands = api;
   dispatchEvent(new CustomEvent('docklands-api-ready', { detail: { version: API_VERSION } }));
