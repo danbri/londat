@@ -308,6 +308,13 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   workers blocked, jsDelivr routed to the local package): start 1.5 s; all 12 views answer; name search "Jubilee Place"
   71 rows, 55 blocks; the same search written as the path `s:name|rdfs:label` 71 rows, 55 blocks; `#e=id:cwb0413` cold
   3.0 s, 129 blocks, 2.38 MB, 154 rows; 0 page errors, 0 console errors.
+- Engine comparison 2026-10-26 in Node (4-vCPU container; each engine on each store, `gen-90010024885f7e53` and
+  `gen-facf5340c7b1e696`; the 14 `queries/*.rq` and the name search as a path; median of 5; script in the session
+  scratchpad, method: `openStoreHandle` then `query`): 0.13.0 and 0.15.0 within 5% on all 14 queries (handle open 0.5 to
+  1.1 s, query 9 to 36 ms; same rows). Path name search: 0.13.0 open 3.6 s and query 196 ms, 0.15.0 open 0.79 s and
+  query 22 ms. Peak RSS of the whole run 576 to 596 MB (0.13.0), 392 to 395 MB (0.15.0); the path query, which made
+  0.13.0 load every block, is the probable cause (not measured alone). The store layout makes no difference. Handle open
+  is 95% or more of each Node query: a page or tool that reuses handles (as `worker.js` does) avoids it.
 - **Name search: a UNION, not the path `s:name|rdfs:label`.** (Since 0.15.0 both plan 55 blocks; the UNION stays.) The 0.13.0 planner names every block (1,046, 10.9 MB,
   8.4 s) for a property-path alternative; 0.7.1 named 55. `{ ?thing s:name ?name } UNION { ?thing rdfs:label ?name }`
   plans 55 blocks and gives the same rows (5 terms checked, same sha with both engines). `check-factoidal.mjs` tests it.
