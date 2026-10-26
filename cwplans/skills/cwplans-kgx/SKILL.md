@@ -150,7 +150,13 @@ an operation on immutable named graphs (the `cwplans-dataflow` skill).
 
 ## The store (Shardborough, `factoidal pack --layout ibk5`)
 
-**Engine @factoidal/core 0.13.0 (since 2026-10-24; 0.7.1 before).** 0.13.0 refuses a generation of layout
+**Engine @factoidal/core 0.15.0 (since 2026-10-26; 0.13.0 from 2026-10-24; 0.7.1 before).** 2026-10-26 upgrade:
+0.15.0 reads the 0.13.0 layout, but the engine version is in the generation name, so the build repacked:
+`gen-facf5340c7b1e696`, 142,314 quads, 1,046 blocks, 61 parts, 6,278 files, 23.2 MB, same layout
+`quad-ibk5-ptd2-lgi4-gbi1-merkle-v0`. A re-run of every lift with an empty activity log in a worktree: 36 of 36
+activities with unchanged inputs gave the same outputs; the other 4 (`pipeline`, its partition, `meta`, `log`) had new
+inputs (3 register files changed after the 2026-10-24 build, and the log itself), so no lift version went up.
+Earlier notes on 0.13.0: 0.13.0 refuses a generation of layout
 `quad-ibk5-ptd2-lgi2-gbi1-merkle-v0` (its LGI2 literal index used an ASCII-only case fold) and asks for a repack. Its packer
 writes `quad-ibk5-ptd2-lgi4-gbi1-merkle-v0` (sidecars `.lgi4`, `.gbi1`, `.merkle`). `pack-shardborough` is version 2: its
 parameters hold the engine (`{ layout: 'ibk5', engine: '@factoidal/core 0.13.0' }`) and the generation name is
@@ -235,7 +241,7 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   (gen-7d0a65a1b11accc7, 116,344 quads, the vocabulary build) 17 of 17 the same, 9 min 10 s; 2026-10-12 21:14 UTC (gen-e2b182ceb96b87cf, 122,170 quads, with `web-search` and the new query
   `site-search.rq`) 18 of 18 the same
   (`checks/store-vs-memory.json`); 2026-10-24 (gen-90010024885f7e53, 141,277 quads, @factoidal/core 0.13.0) 18 of 18
-  the same, 59 s. It finds the parts of a head as the outputs of the head's partition activity: the
+  the same, 59 s; 2026-10-26 (gen-facf5340c7b1e696, 142,314 quads, @factoidal/core 0.15.0) 18 of 18 the same, 35 s. It finds the parts of a head as the outputs of the head's partition activity: the
   `partOf` of a version record names the first head that a part was cut from, and a later head can have a part with
   the same content (seen 2026-10-07: geometry-only parts of `buildings` and `mallmap` did not change with the
   vocabulary; the check then refused, "rebuild first", and `meta` said `dct:isPartOf` the older head; both fixed in
@@ -253,7 +259,9 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   2026-10-07: npm still has 0.7.1 as the latest @factoidal/core (published 2026-09-06), and all 12 checks print STILL.
   2026-10-24 (0.13.0): the four `BNODE()` checks print FIXED, the COTTAS check GONE (COTTAS left the package in 0.9.0),
   the six #697 checks and the blank-node renaming and default-graph checks STILL; a new check (a path alternative `p|q`
-  plans every block) STILL.
+  plans every block) STILL. 2026-10-26 (0.15.0): the path-alternative check FIXED (8 blocks against 8 for the UNION;
+  Factoidal https://github.com/danbri/factoidal/issues/1008, the planner rewrites `p|q` to a UNION); all others as on
+  2026-10-24.
   This project's sessions cannot read or post in danbri/factoidal (not in the session's repositories), so any reply on
   the issue reaches us only through the owner.
 
@@ -296,7 +304,11 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   not reachable from the container either (the proxy answers 403): the test serves
   `https://cdn.jsdelivr.net/npm/@factoidal/core@0.13.0/*` from the local npm package through Playwright's `context.route`
   (it also routes the worker's requests; strip the `?v=` query of the wasm URL).
-- **Name search: a UNION, not the path `s:name|rdfs:label`.** The 0.13.0 planner names every block (1,046, 10.9 MB,
+- Measured 2026-10-26 with @factoidal/core 0.15.0 (`gen-facf5340c7b1e696`), same recipe (Chromium 1243, service
+  workers blocked, jsDelivr routed to the local package): start 1.5 s; all 12 views answer; name search "Jubilee Place"
+  71 rows, 55 blocks; the same search written as the path `s:name|rdfs:label` 71 rows, 55 blocks; `#e=id:cwb0413` cold
+  3.0 s, 129 blocks, 2.38 MB, 154 rows; 0 page errors, 0 console errors.
+- **Name search: a UNION, not the path `s:name|rdfs:label`.** (Since 0.15.0 both plan 55 blocks; the UNION stays.) The 0.13.0 planner names every block (1,046, 10.9 MB,
   8.4 s) for a property-path alternative; 0.7.1 named 55. `{ ?thing s:name ?name } UNION { ?thing rdfs:label ?name }`
   plans 55 blocks and gives the same rows (5 terms checked, same sha with both engines). `check-factoidal.mjs` tests it.
 - **raw.githubusercontent.com rate-limits.** The first test of the public page (2026-10-06, 12 fetches at a time, several

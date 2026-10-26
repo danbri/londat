@@ -192,8 +192,8 @@ $('outBody').addEventListener('click', e => { const b = e.target.closest('button
 $('searchForm').addEventListener('submit', e => { e.preventDefault(); const q = $('q').value.trim(); if (!q) return;
   setPressed(null); history.replaceState(null, '', '#');
   run(`Names containing “${q}”`, 'Click a name to see everything the graph says about it.',
-    // UNION, not the path s:name|rdfs:label: the @factoidal/core 0.13.0 planner names every block for a path alternative
-    // (1,046 blocks, 10.9 MB) and 55 for the UNION, same rows (skill cwplans-web-harvest, "Factoidal notes")
+    // UNION, not the path s:name|rdfs:label: the @factoidal/core 0.13.0 planner named every block for a path alternative
+    // (1,046 blocks, 10.9 MB) and 55 for the UNION, same rows; 0.15.0 plans both as 55 blocks (skill cwplans-kgx)
     `SELECT ?thing ?name ?g WHERE { GRAPH ?g { { ?thing s:name ?name } UNION { ?thing rdfs:label ?name } FILTER(CONTAINS(LCASE(STR(?name)), ${lit(q.toLowerCase())})) } } ORDER BY ?name`); });
 
 // --- one thing: what it says, what points at it

@@ -13,7 +13,7 @@
   "coref-site-name": "https://kgx.foaf.tv/id/graphcorefsitenamed0f4b64d58023481",
   "mallmap": "https://kgx.foaf.tv/id/graphmallmapa43de479b61de2ff",
   "storeguide": "https://kgx.foaf.tv/id/graphstoreguidefc01b8a99ccaf563",
-  "pipeline": "https://kgx.foaf.tv/id/graphpipeline696b74a4d411981b",
+  "pipeline": "https://kgx.foaf.tv/id/graphpipeline90924a7548ff4b5a",
   "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
   "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
   "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
@@ -33,7 +33,7 @@
   "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
   "model-heights": "https://kgx.foaf.tv/id/graphmodelheights414e8a8eb9b988f8",
   "roofs-big": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
-  "meta": "https://kgx.foaf.tv/id/graphmetac2590f45c19ecf14",
-  "log": "https://kgx.foaf.tv/id/graphlog24a172555c382fe7"
+  "meta": "https://kgx.foaf.tv/id/graphmetaabb7be7f740a3c0c",
+  "log": "https://kgx.foaf.tv/id/graphlog9a18e65c3f5d9f0a"
  }
 }

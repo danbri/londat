@@ -3622,3 +3622,19 @@ Owner, 2026-10-23: "Perf: loading even on a modern macbook or iphone can be very
 - Skills: cwplans-kgx ("The store", "Checks", "The search page"), cwplans-dataflow (operation table, two rules),
   cwplans-web-harvest ("Factoidal notes").
 - Open: report the path-alternative plan to Factoidal (owner); measure start time on the iPhone with the larger engine.
+
+## 2026-10-26: @factoidal/core 0.15.0 (kgx store repacked, search page)
+
+- Check of the npm release (another session doubted it): https://www.npmjs.com/package/@factoidal/core 0.15.0, published
+  2026-10-25 14:35 UTC, tag `latest`; registry signature and SLSA provenance attestation verified (`npm audit
+  signatures`); the wasm in the tarball has sha256 `06c67c27...ecdc4`, the same as its `version.json` (factoidal-builds
+  release `build-e5d9a26f3b19-web`) and as the file on jsDelivr. The repository's SBM11 tests (`sbm11-host`,
+  `sbm11-lws-1010`) run against the published package: 39 pass, 0 fail. (0.14.0 had a trap in `sbm11Open`; 0.15.0 fixes it.)
+- Upgrade @factoidal/core ^0.13.0 -> ^0.15.0 (`package.json`, lockfile; `cwplans/kg/worker.js` pins 0.15.0 on jsDelivr).
+- `npm test`: 156 pass, 0 fail, 1 skipped (out of 157), the same as on 0.13.0. `check-factoidal.mjs`: the path-alternative
+  check now FIXED; all other checks as on 0.13.0.
+- kgx: lift re-run in a worktree with an empty activity log (36 of 36 unchanged-input activities gave the same outputs),
+  then `build-kgx.mjs` twice (second run `new: 0`): store `gen-facf5340c7b1e696` (142,314 quads, 1,046 blocks; old
+  generation `gen-90010024885f7e53` removed by the build). `check-kgx-store.mjs --write`: 18 of 18 the same.
+- Search page https://danbri.github.io/londat/cwplans/kg/ headless on the new engine and store: all 12 views, name search,
+  entity `#e=id:cwb0413`, 0 page errors. Details: skill cwplans-kgx.

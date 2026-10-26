@@ -2,9 +2,9 @@
  "about": "cwplans knowledge graph: immutable graph versions made by logged operations. See README.md.",
  "base": "https://kgx.foaf.tv/id/",
  "vocab": "https://kgx.foaf.tv/vocab#",
- "built": "2026-10-24T22:40:16.078Z",
+ "built": "2026-10-26T00:48:59.144Z",
  "tool": "cwplans/tools/build-kgx.mjs",
- "engine": "@factoidal/core 0.13.0",
+ "engine": "@factoidal/core 0.15.0",
  "prefixes": {
   "s": "https://schema.org/",
   "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -34,7 +34,7 @@
   "coref-site-name": "https://kgx.foaf.tv/id/graphcorefsitenamed0f4b64d58023481",
   "mallmap": "https://kgx.foaf.tv/id/graphmallmapa43de479b61de2ff",
   "storeguide": "https://kgx.foaf.tv/id/graphstoreguidefc01b8a99ccaf563",
-  "pipeline": "https://kgx.foaf.tv/id/graphpipeline696b74a4d411981b",
+  "pipeline": "https://kgx.foaf.tv/id/graphpipeline90924a7548ff4b5a",
   "coverage-imagery": "https://kgx.foaf.tv/id/graphcoverageimagery4bbe92b4ee0a19d4",
   "facade-patches-cwlibrary": "https://kgx.foaf.tv/id/graphfacadepatchescwlibrarybeae2654dd9a84ff",
   "photos-cwlibrary": "https://kgx.foaf.tv/id/graphphotoscwlibraryf931d1c3efce6289",
@@ -54,8 +54,8 @@
   "registry-branch-merge": "https://kgx.foaf.tv/id/graphregistrybranchmerge195a1de0bc6be384",
   "model-heights": "https://kgx.foaf.tv/id/graphmodelheights414e8a8eb9b988f8",
   "roofs-big": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
-  "meta": "https://kgx.foaf.tv/id/graphmetac2590f45c19ecf14",
-  "log": "https://kgx.foaf.tv/id/graphlog24a172555c382fe7"
+  "meta": "https://kgx.foaf.tv/id/graphmetaabb7be7f740a3c0c",
+  "log": "https://kgx.foaf.tv/id/graphlog9a18e65c3f5d9f0a"
  },
  "graphs": {
   "facts": {
@@ -176,10 +176,10 @@
    "licence": "Canary Wharf Group; design © Ravenshaw Studios Limited and Paul & Linda Anthony 2026; facts only, scoping"
   },
   "pipeline": {
-   "version": "https://kgx.foaf.tv/id/graphpipeline696b74a4d411981b",
-   "rdfc10_sha256": "696b74a4d411981b6612e59abf315d4f2138c3040089a6216931adf87255685d",
+   "version": "https://kgx.foaf.tv/id/graphpipeline90924a7548ff4b5a",
+   "rdfc10_sha256": "90924a7548ff4b5a1a13e6af885ed70a99dc4d66e53b3b3114f2461403d53775",
    "triples": 17352,
-   "file": "graphs/pipeline/696b74a4d411981b.nq.gz",
+   "file": "graphs/pipeline/90924a7548ff4b5a.nq.gz",
    "parts": 6,
    "title": "Provenance of the earlier cwplans pipeline: every tool as a prov:Activity with the files it used and made (pipeline.jsonld), each file tied to its content at this build",
    "licence": "CC0 (descriptions of tools and files)"
@@ -356,32 +356,32 @@
    "licence": "CC0 1.0 (contains EA LiDAR heights, OGL v3.0, and OpenStreetMap data, ODbL 1.0)"
   },
   "meta": {
-   "version": "https://kgx.foaf.tv/id/graphmetac2590f45c19ecf14",
-   "rdfc10_sha256": "c2590f45c19ecf14f34563aa4e5b4d8ed314b939a7a177493d22b120d06ad821",
-   "triples": 950,
-   "file": "graphs/meta/c2590f45c19ecf14.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphmetaabb7be7f740a3c0c",
+   "rdfc10_sha256": "abb7be7f740a3c0c4f612d9fd515ec9c6b65513cbaf6a10e1016ec21edec0a85",
+   "triples": 953,
+   "file": "graphs/meta/abb7be7f740a3c0c.nq.gz",
    "parts": 0,
    "title": "Descriptions of the graph versions and the current version of each graph name",
    "licence": "CC0 (descriptions only)"
   },
   "log": {
-   "version": "https://kgx.foaf.tv/id/graphlog24a172555c382fe7",
-   "rdfc10_sha256": "24a172555c382fe7654575bf3d22415e76eb085e5a5706df5cbd741407808240",
-   "triples": 18108,
-   "file": "graphs/log/24a172555c382fe7.nq.gz",
+   "version": "https://kgx.foaf.tv/id/graphlog9a18e65c3f5d9f0a",
+   "rdfc10_sha256": "9a18e65c3f5d9f0ad13529786520e173e1cbeae23bf66f3d49df1013bee3d258",
+   "triples": 19142,
+   "file": "graphs/log/9a18e65c3f5d9f0a.nq.gz",
    "parts": 0,
    "title": "The activity log: every operation run on the kgx graphs, its inputs, parameters and outputs",
    "licence": "CC0"
   }
  },
- "total_triples": 480340,
+ "total_triples": 481377,
  "store": {
-  "generation": "gen-90010024885f7e53",
+  "generation": "gen-facf5340c7b1e696",
   "members": 61,
   "files": 6278,
-  "bytes": 23117175
+  "bytes": 23153084
  },
  "activities_this_run": 40,
  "activities_run_new": 0,
- "activities_in_log": 251
+ "activities_in_log": 256
 }
