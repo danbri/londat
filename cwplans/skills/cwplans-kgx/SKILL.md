@@ -355,3 +355,12 @@ Pinned worker and npm dependency to 0.28.0 (from 0.15.0). Show packageVersion al
 ## 2026-11-01T04:00:52+00:00 — Verified query-shape and version notes
 
 Re-ran known-fault checks against isolated 0.15.0 and 0.28.0 aliases. Both retain COUNT(subquery) overplanning; tested alternative property path and UNION both plan 8 blocks (do not carry forward older blanket path advice). Cross-part GRAPH fixture: shared graph 1 row, independent graphs 2 rows, default graph 0 on both. Invalid multi-fragment IRI accepted on 0.15, rejected on 0.28. Blank-node renaming across separate outputs remains a stable-identity trap. See https://github.com/danbri/londat/blob/main/docs/FACTOIDAL-QUERY-NOTES.md for query-writing rules, source-shape checks, semantic caveats, reproducible fixture and links to existing real-browser timings. Production app/data/dependencies unchanged.
+
+
+## 2026-11-01T04:16:33+00:00 — Indexed versus unindexed spatial benchmark
+
+Tested persistent WASM store operations on official Factoidal 0.15.0 and 0.28.0, four queries, exact result-multiset hashes equal across modes/versions. Current mixed generation gen-facf5340c7b1e696: spatial FILTER plans all 1046 blocks (15.2 MB), loading five WKT GBI1 indexes gives no consistent speed-up. Local source restricted? abandons candidate filtering if planned artifacts include another predicate. Do not enable all sidecars assuming a benefit.
+
+Temporary geometry-only IBK5 diagnostic: same 2556 WKT rows, repacked from current.nq.gz (different graph partitioning), three geometry blocks. Two-trial medians on 0.28: intersection 1616→88 ms; within 1100→432; empty-result intersection 2771→19; disjoint intentionally scans. These are first query execution times; include handle-open/read cost separately. Actual store handles confirm 3/0 indexes for diagnostic and 5/0 for mixed store. Results of the projected geometry IDs also match across the two representations.
+
+Query-shape lesson for skills: GBI1 matcher admits one fixed-predicate/object-variable filtered triple, optionally inside GRAPH; FILTER around GRAPH is not that shape. Mixed-store planning and candidate-filter admission must both work; loading an index is insufficient. These are local Node/filesystem WASM timings, not browser/network or the original 27s query. Report/evidence/reproduction: https://github.com/danbri/londat/blob/main/docs/benchmarks/2026-11-01-spatial-index.md . Production app/data/package pins unchanged.

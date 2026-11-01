@@ -1,0 +1,1068 @@
+{
+  "generation": "gen-geometry",
+  "queries": [
+    {
+      "name": "intersects-local",
+      "sparql": "PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX geof:<http://www.opengis.net/def/function/geosparql/> SELECT ?geometry WHERE { GRAPH ?g { ?geometry geo:asWKT ?wkt FILTER(geof:sfIntersects(?wkt,\"POLYGON((-0.03 51.5,-0.02 51.5,-0.02 51.51,-0.03 51.51,-0.03 51.5))\"^^geo:wktLiteral)) } }"
+    },
+    {
+      "name": "within-local",
+      "sparql": "PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX geof:<http://www.opengis.net/def/function/geosparql/> SELECT ?geometry WHERE { GRAPH ?g { ?geometry geo:asWKT ?wkt FILTER(geof:sfWithin(?wkt,\"POLYGON((-0.03 51.5,-0.02 51.5,-0.02 51.51,-0.03 51.51,-0.03 51.5))\"^^geo:wktLiteral)) } }"
+    },
+    {
+      "name": "intersects-miss",
+      "sparql": "PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX geof:<http://www.opengis.net/def/function/geosparql/> SELECT ?geometry WHERE { GRAPH ?g { ?geometry geo:asWKT ?wkt FILTER(geof:sfIntersects(?wkt,\"POLYGON((13 52,14 52,14 53,13 53,13 52))\"^^geo:wktLiteral)) } }"
+    },
+    {
+      "name": "disjoint-control",
+      "sparql": "PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX geof:<http://www.opengis.net/def/function/geosparql/> SELECT ?geometry WHERE { GRAPH ?g { ?geometry geo:asWKT ?wkt FILTER(geof:sfDisjoint(?wkt,\"POLYGON((-0.03 51.5,-0.02 51.5,-0.02 51.51,-0.03 51.51,-0.03 51.5))\"^^geo:wktLiteral)) } }"
+    }
+  ],
+  "runtime": {
+    "node": "v22.22.2",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "method": "2 trials per case. Node filesystem reads; same WASM store operations as browser; OS cache uncontrolled, no network, alternating index-mode order, one repeat query per handle; only geometry-predicate GBI1 sidecars loaded.",
+  "results": [
+    {
+      "version": "0.15.0",
+      "name": "intersects-local",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 26.312291000000016,
+      "readMs": 7.671875,
+      "openMs": 428.02491699999996,
+      "firstMs": 2002.4762500000002,
+      "repeatMs": [
+        1707.8185840000006
+      ],
+      "totalFirstMs": 2464.485333,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s1",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-local",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 2.374249999999847,
+      "readMs": 1.5228750000005675,
+      "openMs": 331.36695899999995,
+      "firstMs": 103.80745800000022,
+      "repeatMs": [
+        115.64020900000014
+      ],
+      "totalFirstMs": 439.0715420000006,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s2",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-local",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 2.614749999999731,
+      "readMs": 1.1341670000001614,
+      "openMs": 334.3689999999997,
+      "firstMs": 111.61766699999953,
+      "repeatMs": [
+        98.14745799999946
+      ],
+      "totalFirstMs": 449.7355839999991,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s3",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-local",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 2.3932499999991705,
+      "readMs": 0.548624999999447,
+      "openMs": 307.64887499999986,
+      "firstMs": 1980.2225419999995,
+      "repeatMs": [
+        2212.5272080000004
+      ],
+      "totalFirstMs": 2290.813291999998,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s4",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.15.0",
+      "name": "within-local",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 2.221958000000086,
+      "readMs": 0.9938750000001164,
+      "openMs": 242.27045799999905,
+      "firstMs": 1002.2518749999999,
+      "repeatMs": [
+        1082.5699999999997
+      ],
+      "totalFirstMs": 1247.7381659999992,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s5",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.15.0",
+      "name": "within-local",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 2.495582999999897,
+      "readMs": 0.9638749999994616,
+      "openMs": 294.8826250000002,
+      "firstMs": 441.2925000000014,
+      "repeatMs": [
+        444.2126670000016
+      ],
+      "totalFirstMs": 739.6345830000009,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s6",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.15.0",
+      "name": "within-local",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 2.0632499999992433,
+      "readMs": 0.7692919999990409,
+      "openMs": 284.1478329999991,
+      "firstMs": 417.5634590000009,
+      "repeatMs": [
+        504.71708299999955
+      ],
+      "totalFirstMs": 704.5438339999982,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s7",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.15.0",
+      "name": "within-local",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 2.9195419999996375,
+      "readMs": 0.6801249999989523,
+      "openMs": 323.14666699999907,
+      "firstMs": 2441.8410839999997,
+      "repeatMs": [
+        1450.1269589999974
+      ],
+      "totalFirstMs": 2768.5874179999973,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s8",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-miss",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 2.8221659999981057,
+      "readMs": 2.3429159999977855,
+      "openMs": 395.89150000000154,
+      "firstMs": 2698.519666999997,
+      "repeatMs": [
+        2735.6804999999986
+      ],
+      "totalFirstMs": 3099.5762489999943,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s9",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-miss",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 2.0339159999966796,
+      "readMs": 1.402250000002823,
+      "openMs": 327.5517089999994,
+      "firstMs": 19.75,
+      "repeatMs": [
+        19.967375000000175
+      ],
+      "totalFirstMs": 350.7378749999989,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s10",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-miss",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 2.3252079999983835,
+      "readMs": 0.6543749999982538,
+      "openMs": 327.3610829999998,
+      "firstMs": 22.365708999997878,
+      "repeatMs": [
+        100.54641700000138
+      ],
+      "totalFirstMs": 352.7063749999943,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s11",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.15.0",
+      "name": "intersects-miss",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 3.6209579999995185,
+      "readMs": 0.5646249999990687,
+      "openMs": 306.4746669999986,
+      "firstMs": 2555.7227920000005,
+      "repeatMs": [
+        2882.7546249999978
+      ],
+      "totalFirstMs": 2866.3830419999977,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s12",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.15.0",
+      "name": "disjoint-control",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 2.338999999999942,
+      "readMs": 0.6657090000007884,
+      "openMs": 252.59499999999753,
+      "firstMs": 1599.218125000003,
+      "repeatMs": [
+        1771.6738330000007
+      ],
+      "totalFirstMs": 1854.8178340000013,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s13",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.15.0",
+      "name": "disjoint-control",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 3.0382080000053975,
+      "readMs": 1.7558750000025611,
+      "openMs": 361.9235000000044,
+      "firstMs": 1739.0698330000014,
+      "repeatMs": [
+        1646.101917
+      ],
+      "totalFirstMs": 2105.7874160000138,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s14",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.15.0",
+      "name": "disjoint-control",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 2.428165999997873,
+      "readMs": 0.9391249999971478,
+      "openMs": 287.4535840000026,
+      "firstMs": 1517.987208000006,
+      "repeatMs": [
+        1693.3181250000052
+      ],
+      "totalFirstMs": 1808.8080830000035,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s15",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.15.0",
+      "name": "disjoint-control",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 1.9055000000007567,
+      "readMs": 0.4642919999969308,
+      "openMs": 265.8319999999949,
+      "firstMs": 1558.710417000002,
+      "repeatMs": [
+        1566.2333750000034
+      ],
+      "totalFirstMs": 1826.9122089999946,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s16",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-local",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 19.399250000002212,
+      "readMs": 0.5779580000016722,
+      "openMs": 279.34641700000066,
+      "firstMs": 1708.0303330000024,
+      "repeatMs": [
+        1527.8811659999992
+      ],
+      "totalFirstMs": 2007.353958000007,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s1",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-local",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 0.8048340000023018,
+      "readMs": 2.641875000001164,
+      "openMs": 169.31891599999653,
+      "firstMs": 87.87141600000177,
+      "repeatMs": [
+        87.51312499999767
+      ],
+      "totalFirstMs": 260.6370410000018,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s2",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-local",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 0.7596249999987776,
+      "readMs": 0.9412080000038259,
+      "openMs": 155.73924999999872,
+      "firstMs": 87.68912499999715,
+      "repeatMs": [
+        87.57733400000143
+      ],
+      "totalFirstMs": 245.12920799999847,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s3",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-local",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 0.7097079999948619,
+      "readMs": 0.42108400000142865,
+      "openMs": 143.60374999999476,
+      "firstMs": 1523.1707500000048,
+      "repeatMs": [
+        1536.9854580000028
+      ],
+      "totalFirstMs": 1667.9052919999958,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s4",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 781,
+      "hash": "3758debea68e697b13d8b182f477f223bda749dd39a97333a023ea6b0acb0b5d"
+    },
+    {
+      "version": "0.28.0",
+      "name": "within-local",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 0.7065419999998994,
+      "readMs": 0.43500000000494765,
+      "openMs": 163.23112499999843,
+      "firstMs": 1135.4679170000018,
+      "repeatMs": [
+        1170.0290830000013
+      ],
+      "totalFirstMs": 1299.840584000005,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s5",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.28.0",
+      "name": "within-local",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 1.7902919999978621,
+      "readMs": 0.9106249999967986,
+      "openMs": 170.12012500000128,
+      "firstMs": 412.6886250000025,
+      "repeatMs": [
+        404.61445800000365
+      ],
+      "totalFirstMs": 585.5096669999984,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s6",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.28.0",
+      "name": "within-local",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 0.6820410000000265,
+      "readMs": 0.5236660000009579,
+      "openMs": 174.4135000000024,
+      "firstMs": 451.71287499999744,
+      "repeatMs": [
+        453.61579200000415
+      ],
+      "totalFirstMs": 627.3320820000008,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s7",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.28.0",
+      "name": "within-local",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 0.6766669999997248,
+      "readMs": 0.45049999999901047,
+      "openMs": 206.39162499999657,
+      "firstMs": 1064.2715000000026,
+      "repeatMs": [
+        1490.6746249999997
+      ],
+      "totalFirstMs": 1271.7902919999979,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s8",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 717,
+      "hash": "46913b58d54174821364e649ae1f035ebe840c01dff3fd025aa5dfd9924c25c5"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-miss",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 0.9246249999996508,
+      "readMs": 0.751750000003085,
+      "openMs": 239.3302079999994,
+      "firstMs": 2567.4971250000017,
+      "repeatMs": [
+        2626.729625000007
+      ],
+      "totalFirstMs": 2808.503708000004,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s9",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-miss",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 0.677916999993613,
+      "readMs": 0.5662080000038259,
+      "openMs": 157.34370800000033,
+      "firstMs": 21.679625000004307,
+      "repeatMs": [
+        20.691167000011774
+      ],
+      "totalFirstMs": 180.26745800000208,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s10",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-miss",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 0.7627920000086306,
+      "readMs": 0.6880830000009155,
+      "openMs": 174.80383299999812,
+      "firstMs": 16.90208299999358,
+      "repeatMs": [
+        17.02637500000128
+      ],
+      "totalFirstMs": 193.15679100000125,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s11",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.28.0",
+      "name": "intersects-miss",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 1.0204999999987194,
+      "readMs": 0.6453329999931157,
+      "openMs": 159.1132079999952,
+      "firstMs": 2973.7097090000025,
+      "repeatMs": [
+        2599.609583000012
+      ],
+      "totalFirstMs": 3134.4887499999895,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s12",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 0,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "version": "0.28.0",
+      "name": "disjoint-control",
+      "trial": 0,
+      "indexed": false,
+      "planMs": 0.8034999999945285,
+      "readMs": 0.5172500000044238,
+      "openMs": 143.94795799998974,
+      "firstMs": 1482.2048329999961,
+      "repeatMs": [
+        1602.502999999997
+      ],
+      "totalFirstMs": 1627.4735409999848,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s13",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.28.0",
+      "name": "disjoint-control",
+      "trial": 0,
+      "indexed": true,
+      "planMs": 0.7646249999961583,
+      "readMs": 0.5726670000003651,
+      "openMs": 154.513082999998,
+      "firstMs": 1450.0547499999957,
+      "repeatMs": [
+        1448.3507919999975
+      ],
+      "totalFirstMs": 1605.9051249999902,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s14",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.28.0",
+      "name": "disjoint-control",
+      "trial": 1,
+      "indexed": true,
+      "planMs": 0.7339169999904698,
+      "readMs": 0.5589159999944968,
+      "openMs": 165.19216599999345,
+      "firstMs": 1534.3953750000073,
+      "repeatMs": [
+        1554.6483749999898
+      ],
+      "totalFirstMs": 1700.8803739999857,
+      "bytes": 1028240,
+      "blocks": 3,
+      "sidecars": 3,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s15",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 3,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    },
+    {
+      "version": "0.28.0",
+      "name": "disjoint-control",
+      "trial": 1,
+      "indexed": false,
+      "planMs": 0.6799999999930151,
+      "readMs": 0.4766669999953592,
+      "openMs": 152.93520900000294,
+      "firstMs": 1963.8410409999924,
+      "repeatMs": [
+        1485.0691249999945
+      ],
+      "totalFirstMs": 2117.9329169999837,
+      "bytes": 922029,
+      "blocks": 3,
+      "sidecars": 0,
+      "openEnvelope": {
+        "ok": true,
+        "handle": "s16",
+        "identity": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+        "layout": "quad-ibk5-ptd2-lgi4-gbi1-merkle-v0",
+        "wireVersion": 10,
+        "artifacts": 3,
+        "bytes": 922029,
+        "rows": 2556,
+        "literalIndexes": 0,
+        "geoIndexes": 0,
+        "blobs": 0
+      },
+      "rows": 1775,
+      "hash": "bce23033aa6be487f25ad7fa7b7e4869cdf2520cd468e8558b45f736328b99ec"
+    }
+  ],
+  "inputEvidence": {
+    "source": "kgx/current.nq.gz",
+    "sourceSha256": "e0fdff5d47e19433de637055b60696c944da9e0fc493e10f1305e3bcd8d469f4",
+    "selectedPredicate": "http://www.opengis.net/ont/geosparql#asWKT",
+    "rows": 2556,
+    "nquadsSha256": "3d07dff2fa3c8ce332a019a6bde6456a1e7e8c1b91d1930b449a47ef252b4e46",
+    "packer": "@factoidal/core 0.28.0; pack --layout ibk5"
+  },
+  "evidenceCommit": "0dab8f6339458edf9a4ebabdd48c298512807a00",
+  "validation": {
+    "complete": true,
+    "matchingResultMultisetsAcrossVersionsAndModes": true,
+    "decodedIndexCountsChecked": true,
+    "missQueryEmpty": true
+  }
+}
