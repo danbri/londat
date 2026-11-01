@@ -1,3 +1,4 @@
+import {spatialQueries} from '../docklands/test/fixtures/spatial-queries.mjs';
 // Browser/WASM spatial index comparison. No production files are changed.
 // node tools/benchmark-spatial-browser.mjs REPO ALIASES_NODE_MODULES GEOMETRY_STORE OUTPUT_JSON
 import fs from 'node:fs';
@@ -28,8 +29,7 @@ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin=`http://127.0.0.1:${server.address().port}`;
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{channel:'chrome'})}).catch(async error=>{await new Promise(resolve=>server.close(resolve));throw error;});
 result.browser=browser.version();
-const prefix='PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX geof:<http://www.opengis.net/def/function/geosparql/> ';
-const queries=[['intersects-local','POLYGON((-0.03 51.5,-0.02 51.5,-0.02 51.51,-0.03 51.51,-0.03 51.5))'],['intersects-miss','POLYGON((13 52,14 52,14 53,13 53,13 52))']].map(([name,wkt])=>({name,sparql:prefix+`SELECT ?geometry WHERE { GRAPH ?g { ?geometry geo:asWKT ?wkt FILTER(geof:sfIntersects(?wkt,"${wkt}"^^geo:wktLiteral)) } }`}));
+const queries=spatialQueries.filter(q=>['intersects-local','intersects-miss'].includes(q.name));
 result.queries=queries;
 try{
  for(const alias of ['factoidal-old','factoidal-new']){

@@ -1,11 +1,9 @@
+import {spatialQueries} from '../docklands/test/fixtures/spatial-queries.mjs';
 import fs from 'node:fs';import path from 'node:path';import {performance} from 'node:perf_hooks';import {createHash} from 'node:crypto';
 const root=process.argv[2],packages=process.argv[3],out=process.argv[4];if(!out)throw Error('Usage: node bench.mjs REPO PACKAGE_ALIASES OUTPUT_JSON');
 const storeRoot=process.env.STORE_DIR||path.join(root,'kgx/shardborough');
 const generation=fs.readFileSync(path.join(storeRoot,'CURRENT'),'utf8').trim(),base=path.join(storeRoot,generation),manifest=fs.readFileSync(path.join(base,'manifest.sbm2')).toString('hex');
-const prefix='PREFIX geo:<http://www.opengis.net/ont/geosparql#> PREFIX geof:<http://www.opengis.net/def/function/geosparql/> ';
-const box='"POLYGON((-0.03 51.5,-0.02 51.5,-0.02 51.51,-0.03 51.51,-0.03 51.5))"^^geo:wktLiteral';
-const far='"POLYGON((13 52,14 52,14 53,13 53,13 52))"^^geo:wktLiteral';
-const queries=[['intersects-local','sfIntersects',box],['within-local','sfWithin',box],['intersects-miss','sfIntersects',far],['disjoint-control','sfDisjoint',box]].map(([name,fn,b])=>({name,sparql:prefix+`SELECT ?geometry WHERE { GRAPH ?g { ?geometry geo:asWKT ?wkt FILTER(geof:${fn}(?wkt,${b})) } }`}));
+const queries=spatialQueries;
 const results=[];const trials=Number(process.env.TRIALS||2);
 for(const alias of ['factoidal-old','factoidal-new']){
  const pkg=path.join(packages,alias),{loadL4}=await import(path.join(pkg,'l4-assets/l4factoidal.js')),version=JSON.parse(fs.readFileSync(path.join(pkg,'package.json'))).version;const e=await loadL4();
