@@ -30,7 +30,7 @@ try {
   const bad=await mcTools.get('start_sweep').execute({view:'cw',duration_s:0});
   return {version:docklands.version,tools:mcTools.size,start,unmoved,plan,begin,middle,finish,end,expected:__docklands3.VIEWS.rotherhithe,time,timeAfter:docklands.getView().time.iso,stop,stopped,still,bad};
  });
- assert.equal(result.version,'1.6.0');assert.equal(result.tools,18);assert.deepEqual(result.start,result.unmoved);
+ assert.equal(result.version,'1.7.0');assert.equal(result.tools,18);assert.deepEqual(result.start,result.unmoved);
  assert.equal(result.plan.waypoints.length,11);assert.equal(result.plan.trajectory,'curved');assert.equal(result.plan.collision_checked,false);assert.ok(result.plan.gaze_fixations.length>=4);assert.ok(result.plan.waypoints.every(w=>Number.isFinite(w.composition.score)&&w.composition.occlusionKnown===false));assert.equal(result.begin.status,'playing');
  assert.ok(result.middle.progress>0&&result.middle.progress<1);assert.equal(result.finish.status,'completed');
  for(const k of ['tx','ty','tz','dist','pitch'])assert.ok(Math.abs(result.end[k]-result.expected[k])<.1,k);
@@ -50,7 +50,7 @@ try {
  assert.equal(stale,true);
  const staleLens=await page.evaluate(async()=>{const p=await docklands.planSweep({view:'rotherhithe'});const c=__docklands3.camState();__docklands3.setCam({...c,fov:.7,hfov:null});try{await docklands.startSweep({plan_id:p.id});return false;}catch(e){return /lens/.test(e.message);}});assert.equal(staleLens,true);
  const staleScale=await page.evaluate(async()=>{await docklands.goTo({view:'cw'});const p=await docklands.planSweep({view:'rotherhithe'});__docklands3.setVz(2);try{await docklands.startSweep({plan_id:p.id});return false;}catch(e){return /height scale/.test(e.message);}finally{__docklands3.setVz(1);}});assert.equal(staleScale,true);
- const rejectedCity=await page.evaluate(async()=>{try{await docklands.planSweep({view:'cw',routing_policy:'city'});return false;}catch(e){return /not implemented/.test(e.message);}});
+ const rejectedCity=await page.evaluate(async()=>{try{await docklands.planSweep({view:'cw',routing_policy:'city'});return false;}catch(e){return /City route refused|No clear low road/.test(e.message);}});
  assert.equal(rejectedCity,true);
  const cleanFailure=await page.evaluate(async()=>{await docklands.goTo({view:'cw'});await docklands.startSweep({view:'rotherhithe',duration_s:2});const original=__docklands3.setCam;__docklands3.setCam=()=>{throw Error('fixture camera failure');};try{for(let n=0;n<600;n++){if(docklands.getSweep().status!=='playing')break;await new Promise(r=>setTimeout(r,100));}return docklands.getSweep();}finally{__docklands3.setCam=original;}});
  assert.equal(cleanFailure.status,'failed');assert.match(cleanFailure.error,/fixture camera failure/);assert.deepEqual(errors,[]);

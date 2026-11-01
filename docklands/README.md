@@ -446,7 +446,33 @@ The flight planner separates eye motion from attention:
 - `eye_via: [{lon, lat, height_m}, ...]` supplies up to 16 eye waypoints. With explicit points, set `lift_m: 0` and `bend_m: 0`; the API defaults lift to zero in that case. The spline visits the points but can overshoot between them. Heights are absolute in the model height datum, not metres above ground.
 - `look_at: [{lon, lat, height_m, at_s, hold_s}, ...]` supplies ordered gaze fixations. Reach each subject at `at_s`, hold it for `hold_s`, then ease toward the next. Fixations must not overlap and must lie strictly inside the flight. `focus_destination: false` disables the automatic destination fixation.
 - `bend_m` adds a signed sideways curve to an automatic eye path. It is a compositional control, not collision avoidance. `lift_m` adds middle-course eye height in model metres.
-- `routing_policy` records `unconstrained`, `interior` or `underground` intent. Interior/underground default lift to zero; they do not infer tunnel geometry. Street-level city routing is not available in this increment and a `city` request is rejected. No course currently checks buildings, terrain, tunnel clearance or landmark visibility. Inspect the preview. City flights around buildings need a separate validated routing implementation.
+- `routing_policy` records `unconstrained`, `interior` or `underground` intent. Interior/underground default lift to zero; they do not infer tunnel geometry. These three policies do not check obstacles. The separate `city` policy below checks its exact road polyline against known static building prisms and model bounds; it does not certify all scene geometry. Inspect the preview.
 - `composition_subject: {lon, lat, height_m}` adds per-waypoint projected subject position and an explainable geometric framing score. Use a separate landmark, not the gaze target itself, to inspect an interesting composition. This uses thirds/margins, not an image model; occlusion remains unknown, so the score is not proof of visibility or aesthetic quality. Vertical exaggeration and roll are included.
 
 The returned plan includes `trajectory`, `routing_policy`, `collision_checked: false`, eye-path length and timed gaze points. Eye and gaze paths remain inspectable in WGS84. Upward-looking destinations permit negative `pitch_deg` down to -85 degrees. Sampling errors stop playback, restore controls and expose a `failed` status/error instead of leaving an animation loop running. Sun/moon-aware shot selection and learned image ranking are not implemented.
+
+### Checked low city flights (page API 1.7.0)
+
+Choose **City roads, checked building clearance** in the cinematic-flight menu. Start low near an open road; the planner checks the connector from the actual current eye and refuses unsupported starts without moving the camera. The optional city destination input accepts a model place name or `latitude, longitude`; otherwise the selected named view is used. Named views resolve near the view's **camera eye**, not the landmark at which the camera points. The result reports both requested and resolved road coordinates, heights, horizontal/vertical offset and the source model credits.
+
+`planSweep({routing_policy:'city', lon, lat})` follows the existing non-tunnel road graph at 8 m above its recorded road heights by default (`city_height_m`: 3–40 m). It checks a 2 m default radius against the loaded static building prisms and model bounds (`city_clearance_m`: 0–20 m). This is not a terrain/bridge/tree/crane/moving-object clearance guarantee. Existing source attribution remains required; the plan does not assign a blanket data licence.
+
+The exact checked polyline is played with per-segment quintic easing: velocity and acceleration go to zero at corners. It does not smooth corners through buildings. City mode refuses `eye_via`, lift, bend or a curved-trajectory override. The default gaze looks ahead along the road and up 30 degrees; `city_look_ahead_m` and `city_look_up_deg` adjust it, or `look_at` supplies explicit independent fixations. Visibility and sun/moon composition are not checked.
+
+City duration defaults to about 8 m/s average, at least 12 seconds. Explicit city durations can be up to 600 seconds and must keep average speed at most 12 m/s and eased peak speed at most 20 m/s. Too-short durations and overlong default routes are refused, rather than silently accelerated. Plans return speed/clearance/source metadata and all checked route points; `steps` means inspection intervals, not road-segment count or playback frames. Changes to camera-control limits, lens, height scale or viewport invalidate the plan; sampled controls are checked so they cannot silently clamp the eye off its certified segments.
+
+A starting view for the current model is [low on a clear Canary Wharf road](https://danbri.github.io/londat/docklands/?style=vectrex#v=1&c=-138.1,-70.5,77.7,78.1025,-1.5708,-0.876058&t=2026-11-01T13%3A00). Open it explicitly, then use:
+
+```js
+const plan = await docklands.planSweep({routing_policy:'city',
+  lon:-0.02400874816313892, lat:51.50106283345444});
+console.log(plan.destination_requested, plan.destination_resolved,
+  plan.clearance, plan.speed, plan.model_source);
+await docklands.startSweep({plan_id:plan.id});
+```
+
+The 1 November model gives roughly 979 m over 42 checked road segments (43 retained points), about 122 seconds at the default pace. This is a reproducible example, not a promise that every view can connect to a road. Menu input equivalent: `51.50106283345444, -0.02400874816313892`.
+
+Checks: `node --test docklands/test/camera-sweep.test.mjs docklands/test/city-route.test.mjs`; `node docklands/test/city-sweep-check.mjs` uses one minimal Chrome context and checks real-model route playback, upward attention, source credits, named-view semantics, height exaggeration, rejected connectors/speeds/overrides/extreme gaze and stale control limits.
+
+Checked city playback requires the base perspective camera (including map/paint/lines/Vector CRT styles). Pixel uses a separate orthographic camera and is refused, as are active XR/headset preview, drone control, geolocation centred/heading/eye follow, automatic orbit rotation and orbit damping. Planning and starting do not silently change these modes. If a known owner takes over during playback, the flight stops with `reason: "camera-owner-changed"` and does not restore its saved controls-enabled value over the new owner. These gates do not claim protection from arbitrary console mutation.

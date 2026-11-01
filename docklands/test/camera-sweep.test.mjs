@@ -73,3 +73,23 @@ test('the same physical eye endpoints follow the same model-space curve at diffe
   assert.ok(Math.hypot(...a.map((v,j)=>v-b[j]))<1e-8);
  }
 });
+
+test('polyline playback keeps exact segments and stops smoothly at a corner, including height scaling', () => {
+ const camera=(eye,target,v)=>{const dx=eye[0]-target[0],dy=(eye[1]-target[1])*v,dz=eye[2]-target[2];return {tx:target[0],ty:target[1],tz:target[2],dist:Math.hypot(dx,dy,dz),yaw:Math.atan2(dx,dz),pitch:Math.atan2(dy,Math.hypot(dx,dz))};};
+ const start=[0,8,0],corner=[80,8,0],end=[80,8,80],target=[40,100,-100];
+ for(const v of [1,3]){
+  const p=makeSweep(camera(start,target,v),camera(end,target,v),{trajectory:'polyline',verticalScale:v,lift_m:0,eye_via:[corner],duration_s:200});
+  for(let i=0;i<=1000;i++){const eye=eyeOf(p.sample(i/1000),v);assert.ok(Math.abs(eye[1]-8)<1e-8);if(i<=500){assert.ok(Math.abs(eye[2])<1e-8);assert.ok(eye[0]>=-1e-8&&eye[0]<=80+1e-8);}else{assert.ok(Math.abs(eye[0]-80)<1e-8);assert.ok(eye[2]>=-1e-8&&eye[2]<=80+1e-8);}}
+  assert.ok(Math.hypot(...eyeOf(p.sample(.5),v).map((x,j)=>x-corner[j]))<1e-8);
+  const near=eyeOf(p.sample(.5-1e-4),v),far=eyeOf(p.sample(.5-1e-3),v);
+  assert.ok(Math.hypot(...near.map((x,j)=>x-corner[j]))<Math.hypot(...far.map((x,j)=>x-corner[j]))/100);
+ }
+ assert.throws(()=>makeSweep(c0,c1,{trajectory:'polyline',lift_m:1}),/lift_m and bend_m zero/);
+ assert.throws(()=>makeSweep(c0,c1,{trajectory:'polyline',lift_m:0,duration_s:601}),/duration_s/);
+ assert.throws(()=>makeSweep(c0,c1,{trajectory:'curved',duration_s:200}),/duration_s/);
+});
+test('extreme fixations and moving gaze arithmetic fail closed before playback', () => {
+ assert.throws(()=>makeSweep(c0,c1,{trajectory:'curved',lift_m:0,look_at:[{at_s:5,point:[0,1e308,0]}]}),/finite points/);
+ assert.throws(()=>makeSweep(c0,c1,{trajectory:'polyline',lift_m:0,gaze_path:()=>[0,1e308,0]}),/finite model point/);
+ assert.throws(()=>makeSweep({...c0,ty:1e308},c1,{trajectory:'polyline',lift_m:0}),/model domain/);
+});
