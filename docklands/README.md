@@ -478,7 +478,7 @@ Checks: `node --test docklands/test/camera-sweep.test.mjs docklands/test/city-ro
 Checked city playback requires the base perspective camera (including map/paint/lines/Vector CRT styles). Pixel uses a separate orthographic camera and is refused, as are active XR/headset preview, drone control, geolocation centred/heading/eye follow, automatic orbit rotation and orbit damping. Planning and starting do not silently change these modes. If a known owner takes over during playback, the flight stops with `reason: "camera-owner-changed"` and does not restore its saved controls-enabled value over the new owner. These gates do not claim protection from arbitrary console mutation.
 
 
-### Stateful camera autopilot (page API 1.8.0)
+### Stateful camera autopilot (page API 1.8.1)
 
 `startAutopilot({destination,via,config})` starts an inertial journey from the actual current eye. `nudgeAutopilot` adds a short acceleration pulse; `gazeAutopilot` looks independently at a place or point and then returns to waypoint attention. `getAutopilot` reports motion, gaze, visited waypoints and stop reasons. `configureAutopilot` changes bounded motion limits. `controlAutopilot` pauses, resumes, brakes or stops. The same functions are WebMCP tools with snake-case names. See the complete [autopilot contract](https://github.com/danbri/londat/blob/main/docs/autopilot.md) and [London Bridge–Belfast–Tower–Canary Wharf test fixture](https://github.com/danbri/londat/blob/main/docklands/test/fixtures/london-autopilot.mjs).
 

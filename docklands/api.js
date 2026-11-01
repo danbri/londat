@@ -22,7 +22,7 @@ import { sampleCityRoute } from './city-route.js';
 import { cityCameraConflict, canRestoreFlightControls } from './city-camera-gate.js';
 import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.8.0';   // Stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
+export const API_VERSION = '1.8.1';   // Stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
 // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
@@ -310,7 +310,9 @@ export function init(H) {
   function runAutopilot() {
     requireAutopilotCamera();
     const verticalScale = H.ctx?.vzNow?.() ?? H.vz ?? 1, aspect = camera.aspect, fov = camera.fov * D, settings = controlSnapshot(), epoch = ++autopilotEpoch;
-    let previous = performance.now();
+    // rAF timestamps describe the frame, not this task's performance.now().
+    // Seed on the first callback, including resume, so its delta cannot be negative.
+    let previous = null;
     if (autopilotControls === null) autopilotControls = controls.enabled;
     controls.enabled = false; H.nav.stop(); H.setViewName(null);
     const tick = now => {
@@ -324,7 +326,7 @@ export function init(H) {
         if (Math.abs(currentScale - verticalScale) > 1e-8) { autopilotMeta.interruption_detail = { kind: 'height-scale', expected: verticalScale, actual: currentScale }; throw new Error('camera-height-scale-changed'); }
         if (Math.abs(camera.aspect - aspect) > 1e-8) { autopilotMeta.interruption_detail = { kind: 'viewport-aspect', expected: aspect, actual: camera.aspect }; throw new Error('camera-viewport-aspect-changed'); }
         if (Math.abs(camera.fov * D - fov) > 1e-8) { autopilotMeta.interruption_detail = { kind: 'field-of-view', expected_deg: fov / D, actual_deg: camera.fov }; throw new Error('camera-field-of-view-changed'); }
-        const s = autopilot.step((now - previous) / 1000); previous = now;
+        const s = autopilot.step(previous === null ? 0 : (now - previous) / 1000); previous = now;
         if (!adapter.inBox(s.position[0], s.position[2], 0)) throw new Error('model-boundary');
         H.setCam(autopilotCamera(s, verticalScale, fov));
         if (flightActive(s.status)) autopilotFrame = requestAnimationFrame(tick);

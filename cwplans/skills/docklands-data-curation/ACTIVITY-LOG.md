@@ -3712,3 +3712,12 @@ Release excludes the pre-existing identity edits to index.html, manifest.webmani
 
 ## 2026-11-01T22:57:43+00:00 — Browser interruption evidence
 Final CUA WebGL smoke verified pause/resume exact position and velocity, expired nudge/gaze, atomic reroute preserving momentum, invalid mass update leaving config and motion unchanged, brake-to-rest with reason braked and explicit resume. Saved JSON and screenshot in chat workspace output. Later camera-settings-changed interruption coincided with the scene changed to Rotherhithe night photo, clock21:30 and viewport932x810 (previous1280x720); root did not make those UI changes. Preserve that view, do not assume a flight failure or fight user control. Added detailed control-limit/height-scale/viewport/FOV interruption diagnostics. Complete rendered journey was not verified; complete numerical journey is tested.
+
+
+## 2026-11-01T23:17:39+00:00 — Autopilot first-frame clock fix (API 1.8.1)
+
+Live WebMCP start reproduced an immediate interruption, "Autopilot step needs nonnegative finite seconds", with elapsed time and velocity both zero. The adapter seeded its previous timestamp with performance.now() but stepped from rAF timestamps; the first frame timestamp can precede that task clock. Reproduced deterministically by executing the production runAutopilot function with task time 1003.5 ms and first frame 1000 ms. Fix: seed on the first animation callback (zero dt), including resume; retain all subsequent dynamics validation, bounded catch-up and long-frame-gap pause.
+
+Added an integration regression test around the actual scheduling function: older first timestamp, progress on the next frame, duplicate timestamp, fresh baseline on resume with momentum preserved, and suspension pause. Full npm test: 196 passed, 1 skipped, 0 failed; npm run check, syntax and diff checks pass. In the rendered local WebGPU scene, WebMCP start/get verified playing at 11.75 simulation seconds, speed 2.70 m/s for requested target 3 m/s (drag), and about 27 m displacement. No browser console errors. A subsequent pause/resume command was not completed because the browser approval context changed during movement; do not report that browser test as passed. Screenshot and test log are in the Moglob workspace output folder.
+
+Unrelated identity/index/manifest work preserved. Shipping only the timing fix, regression test, version references and this log entry.

@@ -1,4 +1,4 @@
-# Stateful camera autopilot — page API 1.8.0
+# Stateful camera autopilot — page API 1.8.1
 
 The camera-drone has position, velocity and acceleration. A bounded velocity servo follows ordered required waypoints. Nominal mass, drag, acceleration and jerk limits give motion inertia. Required waypoints are reached at low speed before the next point becomes active. Gaze moves independently with a maximum angular speed. The browser runs the loop between tool calls.
 
@@ -34,3 +34,8 @@ This first implementation is **unconstrained**. It enforces finite positions and
 The London test journey starts at London Bridge, passes the north side of HMS Belfast while looking at it, then passes near the Tower of London while looking at the Tower, and continues along explicit Thames approach points to Canary Wharf. The fixture preserves required flybys and distinct gaze points. It does not silently teleport to London Bridge: the test places the initial camera explicitly, while ordinary starts use the current eye.
 
 Automatic landmark selection, photo-style sun/moon framing, learned image ranking, live weather buffeting and time-stamped acceleration trajectory uploads are not implemented by these controls. Explicit waypoints, route gaze and finite acceleration pulses are supported now. `wind_acceleration` is an opt-in synthetic input rather than a physical weather model.
+
+
+### First-frame timing (1.8.1)
+
+Start and resume take their time baseline from the first animation callback. A frame timestamp can precede the performance.now() value from the task that starts a flight; mixing these values previously produced a negative first step and stopped the flight before any movement. The regression test now exercises the page scheduler as well as the pure dynamics.

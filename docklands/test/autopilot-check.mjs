@@ -26,7 +26,7 @@ try {
     if(r.isError)throw Error(r.content[0].text);
     return {version:docklands.version,result:r.structuredContent,eye:docklands.getView().eye};
   },journey);
-  assert.equal(start.version,'1.8.0');
+  assert.equal(start.version,'1.8.1');
   await page.waitForFunction(()=>docklands.getAutopilot().elapsed_s>.1,null,{timeout:10000});
   const middle=await page.evaluate(async()=>{
     const call=async(name,args={})=>{const r=await mcTools.get(name).execute(args);if(r.isError)throw Error(r.content[0].text);return r.structuredContent;};

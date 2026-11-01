@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 import {createAutopilot} from '../camera-autopilot.js';
 const norm=a=>Math.hypot(...a),sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const setup=extra=>createAutopilot({position:[0,10,0],target:[0,10,-80],route:[{point:[100,10,0],name:'first'},{point:[100,10,100],name:'last'}],...extra});
@@ -58,4 +60,34 @@ test('ordinary render stalls discard catch-up time without pausing; long suspens
  assert.ok(Math.abs(after.elapsed_s-before.elapsed_s-.25)<1e-10);assert.ok(Math.abs(after.discarded_time_s-.5)<1e-10);assert.ok(norm(sub(after.position,before.position))<=15*.25);
  stalled.nudge({acceleration:[0,1,0],duration_s:1});const active=stalled.state(),suspended=stalled.step(5);
  assert.equal(suspended.status,'paused');assert.equal(suspended.reason,'frame-gap');assert.deepEqual(suspended.position,active.position);assert.equal(suspended.active_nudges,0);
+});
+
+// Execute the actual page scheduling function with a controlled frame clock.
+// Pure dynamics tests alone cannot catch an invalid dt supplied by the browser adapter.
+test('page start and resume seed time from the first animation frame',()=>{
+ const source=readFileSync(new URL('../api.js',import.meta.url),'utf8');
+ const begin=source.indexOf('  function runAutopilot() {'),end=source.indexOf('  async function startAutopilot(');
+ assert.ok(begin>=0&&end>begin);
+ const p=setup(),queue=[],errors=[],drawn=[];
+ const scope={performance:{now:()=>1003.5},requireAutopilotCamera(){},
+  H:{vz:1,nav:{stop(){}},setViewName(){},setCam:s=>drawn.push(s)},
+  camera:{aspect:1,fov:45},D:Math.PI/180,controlSnapshot:()=>[],
+  autopilotEpoch:0,autopilotControls:null,controls:{enabled:true},autopilotMeta:{},autopilot:p,
+  adapter:{inBox:()=>true},autopilotCamera:s=>s,flightActive:s=>s==='playing'||s==='braking',
+  requestAnimationFrame:fn=>(queue.push(fn),queue.length),releaseAutopilotControls(){},
+  autopilotNotice(){},autopilotText:()=>'',stopAutopilot:e=>errors.push(e)};
+ const run=runInNewContext(source.slice(begin,end)+'\nrunAutopilot;',scope);
+ const frame=t=>{assert.ok(queue.length,'a frame must remain scheduled');queue.shift()(t);};
+ run();frame(1000); // frame timestamp can precede the performance.now() at start
+ assert.deepEqual(errors,[]);assert.equal(p.state().elapsed_s,0);
+ frame(1016);assert.ok(p.state().elapsed_s>0);assert.ok(p.state().position[0]>0);
+ const beforeDuplicate=p.state();frame(1016);assert.deepEqual(p.state(),beforeDuplicate);
+ p.pause();const beforeResume=p.state();queue.length=0;scope.performance.now=()=>100000;
+ p.resume();run();frame(99990); // resume must not integrate the time spent paused
+ assert.deepEqual(errors,[]);assert.deepEqual(p.state().position,beforeResume.position);
+ assert.deepEqual(p.state().velocity,beforeResume.velocity);assert.equal(p.state().elapsed_s,beforeResume.elapsed_s);
+ frame(100006);assert.ok(p.state().elapsed_s>beforeResume.elapsed_s);
+ const beforeGap=p.state();frame(106006);assert.equal(p.state().status,'paused');
+ assert.equal(p.state().reason,'frame-gap');assert.deepEqual(p.state().position,beforeGap.position);
+ assert.deepEqual(errors,[]);assert.ok(drawn.length>=5);
 });
