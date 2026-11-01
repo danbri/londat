@@ -369,3 +369,12 @@ Query-shape lesson for skills: GBI1 matcher admits one fixed-predicate/object-va
 ## 2026-11-01T04:24:27+00:00 — Chrome spatial-index validation
 
 Standalone Chrome156/WASM benchmark, both installed package versions, mixed and temporary geometry stores,16 cases: full result hashes agree, decoded index counts/miss checked, zero page errors. Local HTTP/cache-disabled/SW-blocked, one trial; final samples may overlap focused Lean build, absolute timings exploratory. 0.28 mixed intersection scan/index2558/2548ms; geometry2170/132ms; geometry miss3468/25ms. This is not the app UI or original27s query, and no production index policy changes. Report https://github.com/danbri/londat/blob/main/docs/benchmarks/2026-11-01-spatial-index-browser.md .
+
+
+## 2026-11-01T07:08:44+00:00 — Final release and source-repair handoff
+
+Londat city-road release7219380368215da399c88b1b7f2eb50319c7f1f4 is pushed; live api.js, camera-sweep.js and all three city modules match commit SHA-256. Full suite185pass/1skip; required checks pass. Concurrent automatic cache commits were preserved by applying only our city patch through an isolated Git index, without altering unrelated identity work. First curved-flight releaseb4bb9746 is also verified live.
+
+Factoidal source candidate remains WIP, NOT merge-ready/full-source-green and NOT deployed. Branchcodex/spatial-filter-planning now ends at documentation commitf8e73e943323cba5e7f6fb2ea1ef45d83ec6a010 (candidate4ecabb64fee83f7880f52cbbba558fbbf38de931). PlannerSoundness/ShardManifest and old SBM11 locality proofs compiled, but broader serial build failed at BackendRefinement FILTER proof (module313/341). A minimal implication repair plus exact-result gate remain uncompiled. Both source files were restored to candidate baseline; combined pending patch is durable at /Users/danbri/Documents/ChatGPT/Moglob - WebMCP/output/2026-11-01-factoidal-spatial-pending-proof-and-gate.patch . Source design note documents assurance scope and resumption. Do not claim current npm0.28 spatial performance is repaired.
+
+Disk guard stopped retry before compilation as free space fell below1.5GiB; latest observed free387MiB despite all compilers stopped. Removed ONLY session-generated Lean build caches (~390MB first pass,604MB second), preserved source/logs/patch/serialized-build script in chat workspace output. No further builds or browser launches. Resume the full dependency DAG only after enough disk/memory capacity exists; previous compiled cache has been removed. No npm/WASM release or source push occurred.
