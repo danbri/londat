@@ -4633,3 +4633,10 @@ Files: `docklands/governor.js` (new), `main.js`, `build.js`, `globe/places.js`, 
 
 ## Cinematic courses 2026-11-01
 API 1.5.0 adds plan_sweep/start_sweep/get_sweep/stop_sweep (18 tools total). camera-sweep.js builds a pure eased course; api.js owns preview, playback, cancellation and the accessible Views menu. One start call returns immediately; rAF playback needs no further host calls, avoiding WebMCP registration churn from per-step calls. Model only, no collision routing. Preserve photo lens/tilt and the page clock. Tests: docklands/test/camera-sweep.test.mjs and sweep-check.mjs.
+
+
+## 2026-11-01T04:24:27+00:00 — Cinematic requirements and active work
+
+Owner: smooth curved eye paths and separate camera attention/fixations; low city routes follow streets and gaps around buildings, look upward, favour dramatic reveals and sun/moon only where the actual selected-time geometry permits. Building crossing is allowed only for explicit interior, underground or reveal intent, not low city routing. Current increment adds independent eye/gaze motion and inspectable geometric composition scores; it must not claim automatic road routing/clearance or vision-model aesthetic judgement until implemented and tested. Preserve continuous live rendering: temporary screenshots for evaluation are not a replacement for model/data.
+
+Parallel work: a conservative Factoidal FILTER-locality source fix is under focused Lean tests; unknown functions/global backendLocal theorem must remain guarded. A separate agent is testing feasibility of road graph routing and building-prism clearance. No extra clones; disk free measured2.6GB, so avoid full package release builds while space is tight.
