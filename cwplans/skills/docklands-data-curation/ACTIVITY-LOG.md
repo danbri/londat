@@ -3661,3 +3661,19 @@ Query-shape lesson for skills: GBI1 matcher admits one fixed-predicate/object-va
 ## 2026-11-01T04:24:27+00:00 — Chrome spatial-index validation
 
 Standalone Chrome156/WASM benchmark, both installed package versions, mixed and temporary geometry stores,16 cases: full result hashes agree, decoded index counts/miss checked, zero page errors. Local HTTP/cache-disabled/SW-blocked, one trial; final samples may overlap focused Lean build, absolute timings exploratory. 0.28 mixed intersection scan/index2558/2548ms; geometry2170/132ms; geometry miss3468/25ms. This is not the app UI or original27s query, and no production index policy changes. Report https://github.com/danbri/londat/blob/main/docs/benchmarks/2026-11-01-spatial-index-browser.md .
+
+
+## 2026-11-01T04:32:53+00:00 — moglob visual identity first cut (local)
+
+Original horizon identity integrated in loading screen, menu, SVG and mobile icons. Guided damped 3D centres and perspective align into circular seeds, then designed letter contours; 2D projection, no additional WebGL context, no boot delay, stops on boot completion and hidden tabs. Aurora UI palette. Upward 100 km cue samples API eye height once per second; starts in space stay quiet, rearm below 98 km, reduced motion keeps text only. Public inspect hook moglob.identity.state; event moglob:space-entry. Delivery package: /Users/danbri/working/moglob-pm/.
+
+Validation: dynamics 3/3; npm run check passed; npm test 170 passed, one skipped; real Chrome 390x844 DPR3 and 1280x800 DPR1 passed app readiness, menu SVG, no overflow, reduced motion, boundary notice, zero page or console errors. Lettering is first-cut vector interpretation; similarity review remains preliminary, no trademark clearance. A full crossing and return inside a sampling interval can be missed. Local only: automatic approval review rejected remote publication as outside the current local integration authorization.
+
+
+## 2026-11-01T04:32:55+00:00 — Curved camera and independent gaze increment
+
+Page API1.6 adds arc-length-reparameterized curved eye paths, quintic start/stop easing, independent timed gaze targets and holds, WGS84 via points, optional composition-subject metadata and explicit unconstrained/interior/underground intent. Via points preserve coordinates by requiring lift/bend0; curves between them may overshoot, so no collision guarantee. City policy remains unavailable until exact checked-segment playback is ready. Default destination attention is explicit; no sun/moon shot search or image aesthetic model is claimed.
+
+Validation: npm run check passes; full npm test170pass/1skip,171total. Composition projection agrees with THREE matrices across roll/lens/VZ. Browser smoke passes planning/playback/endpoints/clock, stop/Escape/reduced motion, stale camera/lens/VZ, failure cleanup and menu. Actual mid/endpoint frames inspected at docklands/test/out/sweep/. Model scene is physical Y; camera scaling handles VZ, so preview physical heights must not be multiplied again. Roll is degrees, lens angles radians. State polling avoids timing assumptions under CPU load.
+
+Maintenance: moved fixed benchmark windows into a shared test fixture; exact query strings match recorded Node/Chrome evidence. Locale scanner only sees tracked paths, so run required checks after staging new files as well. Unrelated identity/index/manifest edits in the shared checkout were preserved and excluded from this change.

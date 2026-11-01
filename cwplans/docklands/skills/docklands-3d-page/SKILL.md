@@ -4640,3 +4640,19 @@ API 1.5.0 adds plan_sweep/start_sweep/get_sweep/stop_sweep (18 tools total). cam
 Owner: smooth curved eye paths and separate camera attention/fixations; low city routes follow streets and gaps around buildings, look upward, favour dramatic reveals and sun/moon only where the actual selected-time geometry permits. Building crossing is allowed only for explicit interior, underground or reveal intent, not low city routing. Current increment adds independent eye/gaze motion and inspectable geometric composition scores; it must not claim automatic road routing/clearance or vision-model aesthetic judgement until implemented and tested. Preserve continuous live rendering: temporary screenshots for evaluation are not a replacement for model/data.
 
 Parallel work: a conservative Factoidal FILTER-locality source fix is under focused Lean tests; unknown functions/global backendLocal theorem must remain guarded. A separate agent is testing feasibility of road graph routing and building-prism clearance. No extra clones; disk free measured2.6GB, so avoid full package release builds while space is tight.
+
+
+## 2026-11-01T04:32:53+00:00 — moglob visual identity first cut (local)
+
+Original horizon identity integrated in loading screen, menu, SVG and mobile icons. Guided damped 3D centres and perspective align into circular seeds, then designed letter contours; 2D projection, no additional WebGL context, no boot delay, stops on boot completion and hidden tabs. Aurora UI palette. Upward 100 km cue samples API eye height once per second; starts in space stay quiet, rearm below 98 km, reduced motion keeps text only. Public inspect hook moglob.identity.state; event moglob:space-entry. Delivery package: /Users/danbri/working/moglob-pm/.
+
+Validation: dynamics 3/3; npm run check passed; npm test 170 passed, one skipped; real Chrome 390x844 DPR3 and 1280x800 DPR1 passed app readiness, menu SVG, no overflow, reduced motion, boundary notice, zero page or console errors. Lettering is first-cut vector interpretation; similarity review remains preliminary, no trademark clearance. A full crossing and return inside a sampling interval can be missed. Local only: automatic approval review rejected remote publication as outside the current local integration authorization.
+
+
+## 2026-11-01T04:32:55+00:00 — Curved camera and independent gaze increment
+
+Page API1.6 adds arc-length-reparameterized curved eye paths, quintic start/stop easing, independent timed gaze targets and holds, WGS84 via points, optional composition-subject metadata and explicit unconstrained/interior/underground intent. Via points preserve coordinates by requiring lift/bend0; curves between them may overshoot, so no collision guarantee. City policy remains unavailable until exact checked-segment playback is ready. Default destination attention is explicit; no sun/moon shot search or image aesthetic model is claimed.
+
+Validation: npm run check passes; full npm test170pass/1skip,171total. Composition projection agrees with THREE matrices across roll/lens/VZ. Browser smoke passes planning/playback/endpoints/clock, stop/Escape/reduced motion, stale camera/lens/VZ, failure cleanup and menu. Actual mid/endpoint frames inspected at docklands/test/out/sweep/. Model scene is physical Y; camera scaling handles VZ, so preview physical heights must not be multiplied again. Roll is degrees, lens angles radians. State polling avoids timing assumptions under CPU load.
+
+Maintenance: moved fixed benchmark windows into a shared test fixture; exact query strings match recorded Node/Chrome evidence. Locale scanner only sees tracked paths, so run required checks after staging new files as well. Unrelated identity/index/manifest edits in the shared checkout were preserved and excluded from this change.

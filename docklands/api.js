@@ -15,9 +15,10 @@ import { VIEW_LABELS } from './views.js';
 import { latinOut, scrubText, getScriptPreference, setScriptPreference } from './geo/script.js';
 import { GOV, APP } from './governor.js';
 
-import { makeSweep, eyeOf } from './camera-sweep.js';
+import { makeSweep, eyeOf, targetOf } from './camera-sweep.js';
+import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.5.0';   // 1.5.0: planned cinematic courses, continuous playback and cancellation.
+export const API_VERSION = '1.6.0';   // 1.6.0: separate curved eye courses, timed gaze fixations and optional composition inspection.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
 // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
@@ -110,6 +111,8 @@ export function init(H) {
   async function planSweep(a = {}) {
     if (onGlobe()) throw new Error('Camera sweeps currently run inside the detailed model. Choose a model view first.');
     if (sweepState.status === 'playing') throw new Error('Stop the current sweep before planning another.');
+    const routing_policy = a.routing_policy ?? 'unconstrained';
+    if (!['unconstrained', 'interior', 'underground'].includes(routing_policy)) throw new Error('Street-level city routing around buildings is not implemented yet. Use a manually inspected unconstrained, interior or underground course.');
     await extras;
     let end, name, view = a.view;
     if (view) { if (!H.VIEWS[view]) throw new Error('Unknown view: ' + view); end = { ...H.VIEWS[view] }; name = VIEW_LABELS[view] || view; }
@@ -120,39 +123,58 @@ export function init(H) {
       const [x, z] = adapter.fromLonLat(lon, lat);
       if (!adapter.inBox(x, z, 0)) throw new Error('The destination is outside the detailed model.');
       const s = H.camState(), pitch = (a.pitch_deg ?? 25) * D, dist = a.range_m ?? 900;
-      if (!Number.isFinite(pitch) || pitch < 2 * D || pitch > 89.5 * D || !Number.isFinite(dist) || dist < 10 || dist > H.nav.NV.DMAX) throw new Error('Invalid pitch or range.');
+      if (!Number.isFinite(pitch) || pitch < -85 * D || pitch > 89.5 * D || !Number.isFinite(dist) || dist < 10 || dist > H.nav.NV.DMAX) throw new Error('Invalid pitch or range.');
       let yaw = s.yaw;
       if (a.heading_deg != null) { if (!Number.isFinite(a.heading_deg)) throw new Error('heading_deg must be finite'); const [l2, b2] = adapter.toLonLat(x, z - 100), conv = ((bearing(lon, lat, l2, b2) + 540) % 360) - 180; yaw = -(a.heading_deg - conv) * D; }
       end = { tx: x, ty: I.ground(x, z), tz: z, yaw, pitch, dist, hfov: null, fov: null, roll: 0 }; name ||= 'the chosen point';
     }
-    const start = H.camState(), course = makeSweep(start, end, { duration_s: a.duration_s ?? 12, steps: a.steps ?? 10, lift_m: a.lift_m ?? 150, aspect: camera.aspect });
+    const modelPoint = (p, label) => {
+      if (!p || !Number.isFinite(p.lon) || !Number.isFinite(p.lat) || !Number.isFinite(p.height_m)) throw new Error(label + ' needs finite lon, lat and height_m');
+      const [x, z] = adapter.fromLonLat(p.lon, p.lat);
+      if (!adapter.inBox(x, z, 500)) throw new Error(label + ' is outside the detailed model');
+      return [x, p.height_m, z];
+    };
+    if (a.eye_via != null && (!Array.isArray(a.eye_via) || a.eye_via.length > 16)) throw new Error('eye_via must be an array of at most 16 points');
+    if (a.look_at != null && (!Array.isArray(a.look_at) || a.look_at.length > 16)) throw new Error('look_at must be an array of at most 16 fixations');
+    const duration_s = a.duration_s ?? 12, trajectory = a.trajectory ?? 'curved', verticalScale = H.ctx?.vzNow?.() ?? H.vz ?? 1;
+    const eye_via = (a.eye_via || []).map(p => modelPoint(p, 'Eye waypoint'));
+    let look_at = (a.look_at || []).map(p => ({ point: modelPoint(p, 'Gaze fixation'), at_s: p.at_s, hold_s: p.hold_s ?? 0 }));
+    if (a.focus_destination !== false && trajectory === 'curved' && !look_at.length) look_at = [{ point: targetOf(end, verticalScale), at_s: duration_s * .45, hold_s: duration_s * .35 }];
+    const subject = a.composition_subject ? modelPoint(a.composition_subject, 'Composition subject') : null;
+    const start = H.camState(), course = makeSweep(start, end, { duration_s, steps: a.steps ?? 10, lift_m: a.lift_m ?? (routing_policy === 'unconstrained' && !eye_via.length ? 150 : 0), bend_m: a.bend_m ?? 0, aspect: camera.aspect, verticalScale, trajectory, eye_via, look_at });
     // Reject a course that leaves the model, rather than silently handing an animation to the globe.
-    for (let i = 0; i <= 200; i++) { const e = eyeOf(course.sample(i / 200)); if (!adapter.inBox(e[0], e[2], 500)) throw new Error('The course leaves the detailed model.'); }
+    for (let i = 0; i <= 200; i++) { const e = eyeOf(course.sample(i / 200), verticalScale); if (!adapter.inBox(e[0], e[2], 500)) throw new Error('The course leaves the detailed model.'); }
     clearSweepLine();
-    const points = Array.from({ length: 101 }, (_, i) => new THREE.Vector3(...eyeOf(course.sample(i / 100))));
+    const points = Array.from({ length: 101 }, (_, i) => new THREE.Vector3(...eyeOf(course.sample(i / 100), verticalScale)));
     sweepLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x55ddee, depthTest: false }));
     sweepLine.frustumCulled = false; sweepLine.renderOrder = 1000; H.scene.add(sweepLine); H.draw();
     const id = 'sweep-' + ++sweepSerial;
-    sweepPlan = { id, course, start, end, view, name };
-    sweepState = { id, status: 'planned', progress: 0, destination: name, duration_s: course.duration_s, steps: course.steps };
-    const text = `A ${course.duration_s} second flight to ${name}, with ${course.steps} course segments. The course is not checked for building collisions.`;
+    sweepPlan = { id, course, start, end, view, name, routing_policy, aspect: camera.aspect };
+    sweepState = { id, status: 'planned', progress: 0, destination: name, duration_s: course.duration_s, steps: course.steps, trajectory, routing_policy, collision_checked: false, eye_path_length_m: course.length_m };
+    const text = `A ${course.duration_s} second ${trajectory} flight to ${name}, with ${course.steps} course segments${course.gaze.length > 2 ? ' and independent gaze fixations' : ''}. Routing policy: ${routing_policy}. Building clearance and landmark visibility are not checked.`;
     sweepNotice(text);
-    return { ...sweepState, text, waypoints: course.waypoints.map(w => { const c = w.camera, e = eyeOf(c), [lon, lat] = adapter.toLonLat(e[0], e[2]), [tlon, tlat] = adapter.toLonLat(c.tx, c.tz); return { time_s: w.time_s, eye: { lon, lat, height_m: e[1] }, target: { lon: tlon, lat: tlat, height_m: c.ty } }; }) };
+    return { ...sweepState, text, gaze_fixations: course.gaze.map(g => { const [lon, lat] = adapter.toLonLat(g.point[0], g.point[2]); return { time_s: g.time_s, lon, lat, height_m: g.point[1] }; }), composition_method: subject ? 'Geometric subject framing only; occlusion is unknown. Not an image aesthetic score.' : undefined,
+      waypoints: course.waypoints.map(w => { const c = w.camera, e = eyeOf(c, verticalScale), [lon, lat] = adapter.toLonLat(e[0], e[2]), [tlon, tlat] = adapter.toLonLat(c.tx, c.tz), target = targetOf(c, verticalScale); const projection = subject ? projectSubject(c, subject, { aspect: camera.aspect, verticalScale }) : null;
+        return { time_s: w.time_s, eye: { lon, lat, height_m: e[1] }, target: { lon: tlon, lat: tlat, height_m: target[1] }, ...(projection ? { composition: { subject: projection, ...scoreComposition({ subject: projection }) } } : {}) }; }) };
   }
   async function startSweep(a = {}) {
     stopSweep('replaced');
     if (a.plan_id) { if (sweepPlan?.id !== a.plan_id) throw new Error('This plan is no longer available. Plan the course again.'); }
     else await planSweep(a);
     const p = sweepPlan, now = H.camState();
-    if (['tx', 'ty', 'tz', 'yaw', 'pitch', 'dist'].some(k => Math.abs(now[k] - p.start[k]) > .001)) throw new Error('The camera moved since this course was planned. Plan it again.');
+    if (['tx', 'ty', 'tz', 'yaw', 'pitch', 'dist'].some(k => Math.abs(now[k] - p.start[k]) > .001) || ['hfov', 'fov', 'roll'].some(k => Math.abs((now[k] ?? now.lens?.[k] ?? 0) - (p.start[k] ?? p.start.lens?.[k] ?? 0)) > 1e-8) || Math.abs((H.ctx?.vzNow?.() ?? H.vz ?? 1) - p.course.verticalScale) > 1e-8 || Math.abs(camera.aspect - p.aspect) > 1e-8) throw new Error('The camera moved or its lens, viewport or height scale changed since this course was planned. Plan it again.');
     H.setViewName(null); H.nav.stop(); sweepControls = controls.enabled; controls.enabled = false;
     sweepState = { ...sweepState, status: 'playing', progress: 0 };
     clearSweepLine(); const started = performance.now();
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     sweepNotice(`Flying to ${p.name}. Press Escape or use Stop flight to stop.`);
     const tick = t => {
+      if (Math.abs((H.ctx?.vzNow?.() ?? H.vz ?? 1) - p.course.verticalScale) > 1e-8 || Math.abs(camera.aspect - p.aspect) > 1e-8) { stopSweep('interrupted'); sweepState.reason = 'view-settings-changed'; sweepNotice('Flight interrupted: viewport or height scale changed. Plan it again.'); return; }
       const u = reduced ? 1 : Math.min(1, (t - started) / (p.course.duration_s * 1000));
-      H.setCam(p.course.sample(u)); sweepState.progress = u;
+      try { H.setCam(p.course.sample(u)); } catch (error) {
+        stopSweep('failed'); sweepState.error = String(error.message || error); sweepNotice('Flight stopped: ' + sweepState.error); return;
+      }
+      sweepState.progress = u;
       if (u < 1) sweepFrame = requestAnimationFrame(tick);
       else { H.setViewName(p.view || null); sweepState.status = 'completed'; sweepFrame = 0; controls.enabled = sweepControls; sweepControls = null; sweepNotice(`Flight complete: ${p.name}.`); if (describeOn) sayView(true); }
     };
@@ -264,9 +286,16 @@ export function init(H) {
 
   // ---------- the tools (one list: window.docklands.tools, WebMCP, and the MCP server's page_call)
   const P = (type, description, extra = {}) => ({ type, description, ...extra });
-  const SWEEP = { view: P('string', 'A named model view', { enum: Object.keys(H.VIEWS) }), place: P('string', 'A place in the detailed model'), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), heading_deg: P('number', 'True heading, degrees'), pitch_deg: P('number', 'Look-down angle, 2 to 89.5 degrees'), range_m: P('number', 'Distance from eye to target, metres'), duration_s: P('number', 'Flight duration, 0.25 to 120 seconds (default 12)'), steps: P('integer', 'Course segments, 2 to 100 (default 10); playback is continuous every frame'), lift_m: P('number', 'Extra height in the middle of the course, 0 to 2000 metres (default 150)') };
+  const SWEEP = { view: P('string', 'A named model view', { enum: Object.keys(H.VIEWS) }), place: P('string', 'A place in the detailed model'), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), heading_deg: P('number', 'True heading, degrees'), pitch_deg: P('number', 'Look-down angle, -85 (look up) to 89.5 degrees'), range_m: P('number', 'Distance from eye to target, metres'), duration_s: P('number', 'Flight duration, 0.25 to 120 seconds (default 12)'), steps: P('integer', 'Course segments, 2 to 100 (default 10); playback is continuous every frame'), lift_m: P('number', 'Extra eye height in the middle of the course, 0 to 2000 metres (default 150; interior/underground default 0)'),
+    trajectory: P('string', 'Curved eye trajectory with independent gaze, or the legacy orbit interpolation', { enum: ['curved', 'orbit'] }),
+    bend_m: P('number', 'Signed sideways curve offset, -2000 to 2000 metres; not building avoidance'),
+    routing_policy: P('string', 'Explicit unrestricted/interior/underground intent; none checks obstacles. Automatic city street routing is not available.', { enum: ['unconstrained', 'interior', 'underground'] }),
+    focus_destination: P('boolean', 'Reach the destination gaze target early and hold it while moving (default true for curved flights without look_at)'),
+    eye_via: P('array', 'Up to 16 WGS84 eye waypoints; lift_m/bend_m must be zero. Cubic curves can overshoot; inspect the preview.', { maxItems: 16, items: { type: 'object', required: ['lon', 'lat', 'height_m'], properties: { lon: { type: 'number' }, lat: { type: 'number' }, height_m: { type: 'number', description: 'Absolute height in the model height datum, metres' } } } }),
+    look_at: P('array', 'Ordered gaze fixations strictly inside the flight; smooth transitions and optional holds independent of eye motion', { maxItems: 16, items: { type: 'object', required: ['lon', 'lat', 'height_m', 'at_s'], properties: { lon: { type: 'number' }, lat: { type: 'number' }, height_m: { type: 'number' }, at_s: { type: 'number' }, hold_s: { type: 'number' } } } }),
+    composition_subject: P('object', 'Optional separate subject to inspect framing at sampled waypoints; no visibility or aesthetic guarantee', { required: ['lon', 'lat', 'height_m'], properties: { lon: { type: 'number' }, lat: { type: 'number' }, height_m: { type: 'number' } } }) };
   const TOOLS = [
-    { name: 'plan_sweep', description: 'Compute and draw a camera course from the current view to a named view, place or point in the detailed model. Does not move the camera. Returns a plan id, description and timed WGS84 eye/target waypoints. The course is not checked for building collisions.', readOnly: false, inputSchema: { type: 'object', properties: SWEEP }, run: planSweep },
+    { name: 'plan_sweep', description: 'Compute and draw a camera course from the current view to a named view, place or point in the detailed model. Does not move the camera. Returns a plan id, description, timed WGS84 eye/target waypoints and gaze fixations. Eye motion and gaze are independent. Optional subject framing scores are geometric; obstacle clearance and visibility are unchecked.', readOnly: false, inputSchema: { type: 'object', properties: SWEEP }, run: planSweep },
     { name: 'start_sweep', description: 'Start a continuous cinematic camera flight in this page. Pass a plan_id, or a destination to plan and fly in one call. Returns immediately; the browser animates every frame without further tool calls. get_sweep reads progress; stop_sweep, Escape or manual input stops it. Reduced-motion preferences skip the animation.', readOnly: false, inputSchema: { type: 'object', properties: { ...SWEEP, plan_id: P('string', 'Id returned by plan_sweep; camera must still be at the planned start') } }, run: startSweep },
     { name: 'get_sweep', description: 'Current camera flight status and progress (0 to 1), destination and current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: sweepSummary },
     { name: 'stop_sweep', description: 'Stop the camera flight at its current position and remove its course preview.', readOnly: false, inputSchema: { type: 'object', properties: {} }, run: () => { const r = stopSweep(); clearSweepLine(); return r; } },
@@ -339,10 +368,10 @@ export function init(H) {
 <p class="small">Keys: Tab to the map, then the arrow keys move, + and − zoom, V describes the view, T opens the text view, Escape closes the menu. Scripts and agents: <code>window.docklands</code> (page API ${API_VERSION}), WebMCP tools where the browser has them, and <a href="../llms.txt">llms.txt</a>.</p>`;
     if (anchor && anchor.parentNode === pane) anchor.after(box); else pane.prepend(box);
     const flight = document.createElement('div');
-    flight.innerHTML = `<h3>Cinematic flight</h3><label for="sweepView">Destination</label><select id="sweepView">${listViews().map(v => `<option value="${v.id}">${v.label}</option>`).join('')}</select><div class="btnrow"><button type="button" id="sweepPlan">Show course</button><button type="button" id="sweepStart">Fly there</button><button type="button" id="sweepStop">Stop flight</button></div><p id="sweepStatus" role="status" class="small">Choose a view. Show the course or fly there in 12 seconds. Escape stops a flight.</p>`;
+    flight.innerHTML = `<h3>Cinematic flight</h3><label for="sweepView">Destination</label><select id="sweepView">${listViews().map(v => `<option value="${v.id}">${v.label}</option>`).join('')}</select><label for="sweepTrajectory">Camera course</label><select id="sweepTrajectory"><option value="curved">Curved eye path, track destination</option><option value="orbit">Original orbit blend</option></select><div class="btnrow"><button type="button" id="sweepPlan">Show course</button><button type="button" id="sweepStart">Fly there</button><button type="button" id="sweepStop">Stop flight</button></div><p id="sweepStatus" role="status" class="small">Choose a view. Curved flights track the destination while moving. Inspect the course: buildings are not avoided. Escape stops a flight.</p>`;
     box.appendChild(flight);
     $('sweepView').value = 'rotherhithe';
-    const flightAction = fn => fn({ view: $('sweepView').value }).catch(e => sweepNotice(e.message));
+    const flightAction = fn => fn({ view: $('sweepView').value, trajectory: $('sweepTrajectory').value }).catch(e => sweepNotice(e.message));
     $('sweepPlan').onclick = () => flightAction(planSweep);
     $('sweepStart').onclick = () => flightAction(startSweep);
     $('sweepStop').onclick = () => { stopSweep(); clearSweepLine(); };

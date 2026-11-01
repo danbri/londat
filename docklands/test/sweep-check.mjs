@@ -19,22 +19,26 @@ try {
  const result=await page.evaluate(async()=>{
   const call=async(n,a={})=>{const r=await mcTools.get(n).execute(a);if(r.isError)throw Error(r.content[0].text);return r.structuredContent;};
   const start=__docklands3.camState(),time=docklands.getView().time.iso;
-  const plan=await call('plan_sweep',{view:'rotherhithe',steps:10,duration_s:2});
+  const plan=await call('plan_sweep',{view:'rotherhithe',steps:10,duration_s:12,composition_subject:{lon:-.01952,lat:51.504938,height_m:200}});
   const unmoved=__docklands3.camState();
   const begin=await call('start_sweep',{plan_id:plan.id});
-  await new Promise(r=>setTimeout(r,700));const middle=await call('get_sweep');
-  await new Promise(r=>setTimeout(r,2000));const finish=await call('get_sweep'),end=__docklands3.camState();
+  let middle;for(let n=0;n<300;n++){middle=await call('get_sweep');if(middle.progress>0)break;await new Promise(r=>setTimeout(r,100));}
+  let finish;for(let n=0;n<600;n++){finish=await call('get_sweep');if(finish.status!=='playing')break;await new Promise(r=>setTimeout(r,100));}const end=__docklands3.camState();
   await call('start_sweep',{view:'cw',duration_s:10});
   const stop=await call('stop_sweep');const stopped=__docklands3.camState();
   await new Promise(r=>setTimeout(r,300));const still=__docklands3.camState();
   const bad=await mcTools.get('start_sweep').execute({view:'cw',duration_s:0});
   return {version:docklands.version,tools:mcTools.size,start,unmoved,plan,begin,middle,finish,end,expected:__docklands3.VIEWS.rotherhithe,time,timeAfter:docklands.getView().time.iso,stop,stopped,still,bad};
  });
- assert.equal(result.version,'1.5.0');assert.equal(result.tools,18);assert.deepEqual(result.start,result.unmoved);
- assert.equal(result.plan.waypoints.length,11);assert.equal(result.begin.status,'playing');
+ assert.equal(result.version,'1.6.0');assert.equal(result.tools,18);assert.deepEqual(result.start,result.unmoved);
+ assert.equal(result.plan.waypoints.length,11);assert.equal(result.plan.trajectory,'curved');assert.equal(result.plan.collision_checked,false);assert.ok(result.plan.gaze_fixations.length>=4);assert.ok(result.plan.waypoints.every(w=>Number.isFinite(w.composition.score)&&w.composition.occlusionKnown===false));assert.equal(result.begin.status,'playing');
  assert.ok(result.middle.progress>0&&result.middle.progress<1);assert.equal(result.finish.status,'completed');
  for(const k of ['tx','ty','tz','dist','pitch'])assert.ok(Math.abs(result.end[k]-result.expected[k])<.1,k);
  assert.equal(result.time,result.timeAfter);assert.equal(result.stop.status,'stopped');assert.deepEqual(result.stopped,result.still);assert.equal(result.bad.isError,true);assert.deepEqual(errors,[]);
+ await page.evaluate(async()=>{await docklands.goTo({view:'cw'});await docklands.startSweep({view:'rotherhithe',duration_s:20,bend_m:120});});
+ await page.waitForFunction(()=>docklands.getSweep().progress>=.45,null,{timeout:30000});
+ const paused=await page.evaluate(()=>docklands.stopSweep());assert.ok(paused.progress<.95,'midflight screenshot is before the endpoint');await page.screenshot({path:out+'/sweep-curved-mid.png'});
+ await page.evaluate(()=>docklands.startSweep({view:'rotherhithe',duration_s:1}));await page.waitForFunction(()=>docklands.getSweep().status==='completed',null,{timeout:10000});await page.screenshot({path:out+'/sweep-curved-end.png'});
  await page.evaluate(()=>docklands.startSweep({view:'cw',duration_s:10}));
  await page.keyboard.press('Escape');
  assert.equal(await page.evaluate(()=>docklands.getSweep().status),'interrupted');
@@ -44,9 +48,15 @@ try {
  await page.emulateMedia({reducedMotion:'no-preference'});
  const stale=await page.evaluate(async()=>{const p=await docklands.planSweep({view:'rotherhithe'});await docklands.goTo({view:'limehouse'});try{await docklands.startSweep({plan_id:p.id});return false;}catch(e){return /camera moved/i.test(e.message);}});
  assert.equal(stale,true);
+ const staleLens=await page.evaluate(async()=>{const p=await docklands.planSweep({view:'rotherhithe'});const c=__docklands3.camState();__docklands3.setCam({...c,fov:.7,hfov:null});try{await docklands.startSweep({plan_id:p.id});return false;}catch(e){return /lens/.test(e.message);}});assert.equal(staleLens,true);
+ const staleScale=await page.evaluate(async()=>{await docklands.goTo({view:'cw'});const p=await docklands.planSweep({view:'rotherhithe'});__docklands3.setVz(2);try{await docklands.startSweep({plan_id:p.id});return false;}catch(e){return /height scale/.test(e.message);}finally{__docklands3.setVz(1);}});assert.equal(staleScale,true);
+ const rejectedCity=await page.evaluate(async()=>{try{await docklands.planSweep({view:'cw',routing_policy:'city'});return false;}catch(e){return /not implemented/.test(e.message);}});
+ assert.equal(rejectedCity,true);
+ const cleanFailure=await page.evaluate(async()=>{await docklands.goTo({view:'cw'});await docklands.startSweep({view:'rotherhithe',duration_s:2});const original=__docklands3.setCam;__docklands3.setCam=()=>{throw Error('fixture camera failure');};try{for(let n=0;n<600;n++){if(docklands.getSweep().status!=='playing')break;await new Promise(r=>setTimeout(r,100));}return docklands.getSweep();}finally{__docklands3.setCam=original;}});
+ assert.equal(cleanFailure.status,'failed');assert.match(cleanFailure.error,/fixture camera failure/);assert.deepEqual(errors,[]);
  await page.evaluate(()=>docklands.goTo({view:'cw'}));
  await page.getByRole('button',{name:'Menu',exact:true}).click();await page.getByRole('tab',{name:'Views',exact:true}).click();
  await page.getByRole('button',{name:'Show course',exact:true}).click();await page.screenshot({path:out+'/sweep-preview.png'});
  assert.match(await page.locator('#sweepStatus').innerText(),/10 course segments/);
- await writeFile(out+'/sweep-results.json',JSON.stringify({result,errors},null,2));console.log('PASS: WebMCP plan, continuous playback, endpoint, preserved clock, stop, invalid inputs, accessible UI; no page errors');
+ await writeFile(out+'/sweep-results.json',JSON.stringify({result,errors},null,2));console.log('PASS: curved WebMCP plan, gaze fixations, geometric composition metadata, continuous playback, endpoint, clock, stop/failure cleanup, unsupported city policy, accessible UI; no page errors');
 }finally{await browser.close();server.kill();}

@@ -419,14 +419,14 @@ tools/view-mcp/test-page-api.mjs [--page]`. Results: skill docklands-3d-page, "T
 non-visual access (2026-10-11)".
 
 
-### Cinematic courses (page API 1.5.0)
+### Cinematic courses (page API 1.6.0)
 
 Menu > Views > Access > Cinematic flight: choose a destination, Show course, Fly there, or Stop flight.
 The preview is an eye-path line in the model; its text and machine answer describe the destination and duration.
 `planSweep({view: 'rotherhithe', duration_s: 12, steps: 10, lift_m: 150})` computes a course without moving.
 It returns an id and timed WGS84 eye/target waypoints. `startSweep({plan_id: id})` flies it, or
 `startSweep({view: 'rotherhithe'})` plans and starts in one call. It returns immediately; the document animates on
-every rendered frame with eased position, short-arc rotation and a raised middle section. `steps` controls course
+every rendered frame. The default curved course moves the eye along an arc-length sampled cubic path, with a gradual start/stop and an independent gaze that reaches the destination early and holds it. `trajectory: "orbit"` retains the original orbit-state interpolation. `steps` controls course
 samples, not frame rate. Place names and WGS84 points with range/heading/pitch also work inside the model.
 `getSweep()` reports status/progress and the current view; `stopSweep()` stops in place.
 WebMCP equivalents: `plan_sweep`, `start_sweep`, `get_sweep`, `stop_sweep`.
@@ -439,3 +439,14 @@ collisions are not checked. Endpoints preserve the exact named view's lens and t
 Checks: `node --test docklands/test/camera-sweep.test.mjs`; `node docklands/test/sweep-check.mjs`
 (installed Chrome on macOS, or `CHROME_PATH`). The browser check calls the registered WebMCP tools and checks
 continuous progress, endpoint, clock, stopping, invalid inputs and menu access.
+
+
+The flight planner separates eye motion from attention:
+
+- `eye_via: [{lon, lat, height_m}, ...]` supplies up to 16 eye waypoints. With explicit points, set `lift_m: 0` and `bend_m: 0`; the API defaults lift to zero in that case. The spline visits the points but can overshoot between them. Heights are absolute in the model height datum, not metres above ground.
+- `look_at: [{lon, lat, height_m, at_s, hold_s}, ...]` supplies ordered gaze fixations. Reach each subject at `at_s`, hold it for `hold_s`, then ease toward the next. Fixations must not overlap and must lie strictly inside the flight. `focus_destination: false` disables the automatic destination fixation.
+- `bend_m` adds a signed sideways curve to an automatic eye path. It is a compositional control, not collision avoidance. `lift_m` adds middle-course eye height in model metres.
+- `routing_policy` records `unconstrained`, `interior` or `underground` intent. Interior/underground default lift to zero; they do not infer tunnel geometry. Street-level city routing is not available in this increment and a `city` request is rejected. No course currently checks buildings, terrain, tunnel clearance or landmark visibility. Inspect the preview. City flights around buildings need a separate validated routing implementation.
+- `composition_subject: {lon, lat, height_m}` adds per-waypoint projected subject position and an explainable geometric framing score. Use a separate landmark, not the gaze target itself, to inspect an interesting composition. This uses thirds/margins, not an image model; occlusion remains unknown, so the score is not proof of visibility or aesthetic quality. Vertical exaggeration and roll are included.
+
+The returned plan includes `trajectory`, `routing_policy`, `collision_checked: false`, eye-path length and timed gaze points. Eye and gaze paths remain inspectable in WGS84. Upward-looking destinations permit negative `pitch_deg` down to -85 degrees. Sampling errors stop playback, restore controls and expose a `failed` status/error instead of leaving an animation loop running. Sun/moon-aware shot selection and learned image ranking are not implemented.

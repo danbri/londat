@@ -10,7 +10,7 @@
     "check": "node cwplans/tools/check-data-register.mjs && node tools/check-locale.mjs",
     "check:write": "node cwplans/tools/check-data-register.mjs --write",
     "check:factoidal": "node cwplans/tools/check-factoidal.mjs",
-    "test": "node --test cwplans/tools/test/*.test.mjs docklands/geo/test/*.test.mjs docklands/test/camera-sweep.test.mjs",
+    "test": "node --test cwplans/tools/test/*.test.mjs docklands/geo/test/*.test.mjs docklands/test/camera-sweep.test.mjs docklands/test/cinematic-composition.test.mjs",
     "test:view-mcp": "node tools/view-mcp/test.mjs",
     "skills:check": "node tools/check-skills.mjs",
     "check:locale": "node tools/check-locale.mjs",
