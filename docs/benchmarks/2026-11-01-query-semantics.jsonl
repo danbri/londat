@@ -1,0 +1,2 @@
+{"alias":"factoidal-old","results":{"sameGraph":[{"place":"urn:place:b","opens":"10:00"}],"splitGraphs":[{"place":"urn:place:a","opens":"09:00"},{"place":"urn:place:b","opens":"10:00"}],"defaultGraph":[]}}
+{"alias":"factoidal-new","results":{"sameGraph":[{"place":"urn:place:b","opens":"10:00"}],"splitGraphs":[{"place":"urn:place:a","opens":"09:00"},{"place":"urn:place:b","opens":"10:00"}],"defaultGraph":[]}}

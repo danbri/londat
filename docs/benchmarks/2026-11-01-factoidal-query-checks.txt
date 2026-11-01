@@ -1,0 +1,32 @@
+Known-fault checker, 2026-11-01T04:00:52+00:00
+Command: isolated copies of cwplans/tools/check-factoidal.mjs, official package aliases 0.15.0 and 0.28.0. No production dependency changes.
+
+@factoidal/core 0.15.0
+FIXED  BNODE() label is not a valid N-Quads label (has a colon)
+FIXED  serialize() drops quads with a BNODE() blank node
+FIXED  parse() of toNQuads() output drops lines without an error
+FIXED  a SELECT BNODE() term value starts with "_:"
+STILL  blank nodes from the data are renamed per query (two CONSTRUCT outputs do not share nodes; skolemize first)
+STILL  a query without GRAPH matches only the default graph
+GONE   toCottas() of an N-Quads string writes an empty store (pass a parsed Dataset)
+STILL  #697: ibk5 makes one block per (predicate, graph); --batch-bytes does not cut it
+STILL  #697: zone keys sort by length first (string-ordered parts of IRIs of different lengths overlap: 3 blocks skipped against 9)
+STILL  #697: a COUNT over a subquery plans every block
+FIXED  a property-path alternative (p|q) plans every block (8 blocks against 8 for the UNION; write the UNION)
+STILL  #697: the README import path @factoidal/core/bin/engine.mjs is not exported (use @factoidal/core/engine)
+STILL  #697: parse() accepts an IRI with several "#" without a warning
+
+@factoidal/core 0.28.0
+FIXED  BNODE() label is not a valid N-Quads label (has a colon)
+FIXED  serialize() drops quads with a BNODE() blank node
+FIXED  parse() of toNQuads() output drops lines without an error
+FIXED  a SELECT BNODE() term value starts with "_:"
+STILL  blank nodes from the data are renamed per query (two CONSTRUCT outputs do not share nodes; skolemize first)
+STILL  a query without GRAPH matches only the default graph
+GONE   toCottas() of an N-Quads string writes an empty store (pass a parsed Dataset)
+STILL  #697: ibk5 makes one block per (predicate, graph); --batch-bytes does not cut it
+STILL  #697: zone keys sort by length first (string-ordered parts of IRIs of different lengths overlap: 3 blocks skipped against 9)
+STILL  #697: a COUNT over a subquery plans every block
+FIXED  a property-path alternative (p|q) plans every block (8 blocks against 8 for the UNION; write the UNION)
+STILL  #697: the README import path @factoidal/core/bin/engine.mjs is not exported (use @factoidal/core/engine)
+FIXED  #697: parse() accepts an IRI with several "#" without a warning

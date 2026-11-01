@@ -350,3 +350,8 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 
 ## Browser upgrade 2026-11-01
 Pinned worker and npm dependency to 0.28.0 (from 0.15.0). Show packageVersion alongside the engine's internal version label. Browser comparison and method: docs/benchmarks/2026-11-01-factoidal-browser.md; reusable runner tools/benchmark-kg.mjs. Compare identical data with service workers blocked and engines routed from local official npm packages. Follow hash changes via actual preset buttons: changing location.hash alone does not run a query.
+
+
+## 2026-11-01T04:00:52+00:00 — Verified query-shape and version notes
+
+Re-ran known-fault checks against isolated 0.15.0 and 0.28.0 aliases. Both retain COUNT(subquery) overplanning; tested alternative property path and UNION both plan 8 blocks (do not carry forward older blanket path advice). Cross-part GRAPH fixture: shared graph 1 row, independent graphs 2 rows, default graph 0 on both. Invalid multi-fragment IRI accepted on 0.15, rejected on 0.28. Blank-node renaming across separate outputs remains a stable-identity trap. See https://github.com/danbri/londat/blob/main/docs/FACTOIDAL-QUERY-NOTES.md for query-writing rules, source-shape checks, semantic caveats, reproducible fixture and links to existing real-browser timings. Production app/data/dependencies unchanged.
