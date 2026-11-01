@@ -875,7 +875,7 @@ function bootDone() { const b = $('boot'); if (b && !b.hidden) { b.classList.add
 if (!START_AWAY) await heavy();
 
 // test hooks (the WebGL page has window.__docklands)
-globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setCam, camState, setClock, setClockUser, ...ukClock, zone: ZONE, refineZone, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, get ready() { return READY; }, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
+globalThis.__docklands3 = { THREE, renderer, scene, camera, controls, backend: BACKEND, STATS, setView, setViewName: k => { VIEWNAME = k; document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === k))); }, setCam, camState, setClock, setClockUser, ...ukClock, zone: ZONE, refineZone, menu, wheels, get clock() { return clock; }, pickAt, selectModel, setShadows, setGround, sky, U, get night() { return NIGHT; }, get ready() { return READY; }, draw, shareHash, perf: PERF, frameNow: () => { need = true; loop(performance.now()); },   // frameNow: one frame now, synchronously (tests: docklands/test/paint-check.mjs --cost)
   occ: () => OCC, layers: LAYERS, ctx, tap, setVz, get vz() { return VZ; }, get drive() { return DRIVE; }, VIEWS, keys, LAYER_IDS, get viewName() { return VIEWNAME; },
   nav: { state: NS, NV, get: navGet, put: navPut, guard: navGuard, pass: navPass, stop: navStop, fling, tick: navTick, release, clearance: () => clr(navGet()), isUnder: navUnder, pitchMin, groundB, syncDig } };
 

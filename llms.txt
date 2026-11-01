@@ -23,7 +23,7 @@ All positions in the page API and the MCP tools are WGS84 longitude and latitude
 - Text view: add `&text=1`. Spoken descriptions for screen readers: add `&describe=1`.
 - Without 3D (no WebGL 2 and no WebGPU, or `?no3d=1`): the text view, a 2D map and `window.docklands` from the data alone (`docklands.no3d === true`; goTo, getView, describeView, featuresAt, findPlaces, setTime, listViews; no globe). Moves write the 3D share hash, so the same link opens in 3D. Example: https://danbri.github.io/londat/docklands/?no3d=1&view=cw
 
-## Page API (window.docklands, version 1.1.0)
+## Page API (window.docklands, version 1.5.0 on the 3D page)
 
 In the 3D page, after it loads (`window.docklands.ready` resolves; event `docklands-api-ready`). Every method returns plain JSON (some as a Promise).
 
@@ -57,3 +57,6 @@ Where the browser offers WebMCP (`document.modelContext.registerTool`, or `navig
 - [Knowledge graph data](https://github.com/danbri/londat/tree/main/kgx): RDF graph versions; IRIs under https://kgx.foaf.tv/id/
 - [Building registry](https://github.com/danbri/londat/blob/main/cwplans/registry/buildings.json): buildings with cwb- ids, occupants, owners, postcodes.
 - [3D model data](https://github.com/danbri/londat/tree/main/cwplans/docklands/data): area.js (buildings, terrain, water, places), building-keys.json (OSM id of every model building).
+
+## Cinematic flights (3D page API 1.5.0)
+`plan_sweep` computes and previews a detailed-model course; `start_sweep` starts it in one call and returns immediately. `get_sweep` reports progress; `stop_sweep` stops. Destination: view, model place or WGS84 lon/lat. Options: duration_s, steps (course samples, not frames), lift_m, range_m, heading_deg, pitch_deg. Playback stays in the browser between calls. Escape/manual input stops it; reduced motion skips animation. Model only; no building collision check. Menu > Views > Access > Cinematic flight.

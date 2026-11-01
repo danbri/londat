@@ -5,7 +5,8 @@
 // whose blocks one of them holds reuses it. Results come as a count and pages (LIMIT/OFFSET).
 // Messages: {id, type: 'init', base} | {id, type: 'query', sparql, page, pageSize} | {id, type: 'describe', iri}.
 // Skill: cwplans-kgx.
-import { loadL4 } from 'https://cdn.jsdelivr.net/npm/@factoidal/core@0.15.0/l4-assets/l4factoidal.js';
+const PACKAGE_VERSION = '0.28.0';
+import { loadL4 } from 'https://cdn.jsdelivr.net/npm/@factoidal/core@0.28.0/l4-assets/l4factoidal.js';
 
 const MAX_HANDLES = 4;
 let engine, base, gen, manifestHex;
@@ -35,7 +36,7 @@ async function init(b) {
   const ins = engine.call('storeManifestInspect', [manifestHex]);
   return { generation: gen, rows: ins.totalRows, bytes: ins.totalBytes, blocks: ins.entries.length, wire: ins.wireVersion,
     graphs: new Set(ins.entries.flatMap(e => (e.graphs || []).map(g => g.value ?? g))).size, predicates: new Set(ins.entries.map(e => e.predicate)).size,
-    manifestBytes: manifest.length, engine: engine.version().split(' (')[0] };
+    manifestBytes: manifest.length, packageVersion: PACKAGE_VERSION, engine: engine.version().split(' (')[0] };
 }
 async function fetchKeys(keys) {
   const todo = keys.filter(k => !bytes.has(k));

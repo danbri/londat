@@ -140,7 +140,7 @@ async function boot() {
   try {
     $('st-engine').textContent = 'loading…';
     const info = await ask({ type: 'init', base: new URL(BASE, location.href).href });
-    $("st-engine").textContent = `Factoidal Lean engine (${info.engine.split(" (")[0]})`;
+    $("st-engine").textContent = `@factoidal/core ${info.packageVersion || "unknown"} · Lean engine (${info.engine.split(" (")[0]})`;
     const man = await (await fetch(BASE + 'manifest.json')).json().catch(() => null);
     $('st-data').textContent = `${info.rows.toLocaleString('en-GB')} quads, ${info.blocks} blocks in ${info.graphs} graph parts (store ${info.generation}, wire ${info.wire})${man ? `, ${Object.keys(man.graphs).length} graphs` : ''}`;
     handle = true; swPost({ type: 'keep-generation', generation: info.generation });

@@ -58,5 +58,8 @@ checks.push([`a property-path alternative (p|q) plans every block (${plan('four'
 rmSync(tmp, { recursive: true });
 let exported = true; try { await import('@factoidal/core/bin/engine.mjs'); } catch { exported = false; }
 checks.push(['#697: the README import path @factoidal/core/bin/engine.mjs is not exported (use @factoidal/core/engine)', !exported]);
-checks.push(['#697: parse() accepts an IRI with several "#" without a warning', (await parse('<http://ex/a> <http://ex/p> <http://ex/x#a#b> .\n', { format: 'nquads' })).toArray().length === 1]);
+let acceptsBadIRI = false;
+try { acceptsBadIRI = (await parse('<http://ex/a> <http://ex/p> <http://ex/x#a#b> .\n', { format: 'nquads' })).toArray().length === 1; }
+catch (err) { if (err.code !== 'term.invalid-iri') throw err; }
+checks.push(['#697: parse() accepts an IRI with several "#" without a warning', acceptsBadIRI]);
 for (const [what, still] of checks) console.log(still === 'gone' ? 'GONE  ' : still ? 'STILL ' : 'FIXED ', what);

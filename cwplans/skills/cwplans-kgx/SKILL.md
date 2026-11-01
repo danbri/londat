@@ -347,3 +347,6 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
   it since 2026-10-07 (`../../kgx/`). Then measure whether Pages avoids the 429s.
 - Ask Factoidal for: a handle that keeps the parsed manifest (each call parses it again), a planner that looks inside
   subqueries, and an export path for `bin/engine.mjs` (or a README fix).
+
+## Browser upgrade 2026-11-01
+Pinned worker and npm dependency to 0.28.0 (from 0.15.0). Show packageVersion alongside the engine's internal version label. Browser comparison and method: docs/benchmarks/2026-11-01-factoidal-browser.md; reusable runner tools/benchmark-kg.mjs. Compare identical data with service workers blocked and engines routed from local official npm packages. Follow hash changes via actual preset buttons: changing location.hash alone does not run a query.

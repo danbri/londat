@@ -4630,3 +4630,6 @@ Files: `docklands/governor.js` (new), `main.js`, `build.js`, `globe/places.js`, 
   estimates for WebKit); the fly's peak on the phone budget (see the table); the globe's world data (about 100 MB) stays
   once read; the model's other arrays (roads, terrain, layers: about 150 MB) stay while far away; ImageBitmaps of place
   ground textures are kept after upload.
+
+## Cinematic courses 2026-11-01
+API 1.5.0 adds plan_sweep/start_sweep/get_sweep/stop_sweep (18 tools total). camera-sweep.js builds a pure eased course; api.js owns preview, playback, cancellation and the accessible Views menu. One start call returns immediately; rAF playback needs no further host calls, avoiding WebMCP registration churn from per-step calls. Model only, no collision routing. Preserve photo lens/tilt and the page clock. Tests: docklands/test/camera-sweep.test.mjs and sweep-check.mjs.

@@ -3638,3 +3638,7 @@ Owner, 2026-10-23: "Perf: loading even on a modern macbook or iphone can be very
   generation `gen-90010024885f7e53` removed by the build). `check-kgx-store.mjs --write`: 18 of 18 the same.
 - Search page https://danbri.github.io/londat/cwplans/kg/ headless on the new engine and store: all 12 views, name search,
   entity `#e=id:cwb0413`, 0 page errors. Details: skill cwplans-kgx.
+
+## 2026-11-01: Factoidal browser update and cinematic courses
+
+Owner requested npm upgrade, browser before/after timings and course playback through WebMCP. Used existing Londat and Docklandia checkouts; no data rebuilt or copied. Pinned @factoidal/core 0.28.0 in npm and the graph worker; UI shows npm version separately from engine label. Four browser queries, three contexts per version, identical result hashes; report and raw data in docs/benchmarks/2026-11-01-factoidal-browser.*. First-query medians roughly halved; repeat queries remain tens of milliseconds. Updated known-fault checker for fixed invalid-IRI rejection. Added camera-sweep.js, API 1.5.0: plan/start/status/stop, plotted eye path, accessible Views controls, frame-by-frame eased flight, exact photo lens endpoint, clock preserved, reduced-motion and interruption support. Detailed model only; no building collision routing. npm test: 159 pass, 1 skip; npm run check and skills:check pass; new browser integration passes with no page errors. Full npm ci was refused by this machine's remote-tarball policy for the existing SheetJS URL; tests used scoped registry dependencies in a temporary npm directory.

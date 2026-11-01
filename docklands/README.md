@@ -417,3 +417,25 @@ page itself, headless, one page kept open: `page_call {tool: "go_to", args: {pla
 with WebGL disabled), `node docklands/test/axe-check.mjs` (axe-core on each menu tab), `node
 tools/view-mcp/test-page-api.mjs [--page]`. Results: skill docklands-3d-page, "Three.js port: page API, WebMCP and
 non-visual access (2026-10-11)".
+
+
+### Cinematic courses (page API 1.5.0)
+
+Menu > Views > Access > Cinematic flight: choose a destination, Show course, Fly there, or Stop flight.
+The preview is an eye-path line in the model; its text and machine answer describe the destination and duration.
+`planSweep({view: 'rotherhithe', duration_s: 12, steps: 10, lift_m: 150})` computes a course without moving.
+It returns an id and timed WGS84 eye/target waypoints. `startSweep({plan_id: id})` flies it, or
+`startSweep({view: 'rotherhithe'})` plans and starts in one call. It returns immediately; the document animates on
+every rendered frame with eased position, short-arc rotation and a raised middle section. `steps` controls course
+samples, not frame rate. Place names and WGS84 points with range/heading/pitch also work inside the model.
+`getSweep()` reports status/progress and the current view; `stopSweep()` stops in place.
+WebMCP equivalents: `plan_sweep`, `start_sweep`, `get_sweep`, `stop_sweep`.
+
+The clock and drawing style stay as they are, including for photo-view destinations. Escape, manual map input,
+another goTo, or hiding the page stops playback. Reduced-motion preferences skip animation. A plan is refused if
+the camera has moved since planning. Courses currently stay within the detailed model, not the globe; building
+collisions are not checked. Endpoints preserve the exact named view's lens and tilt.
+
+Checks: `node --test docklands/test/camera-sweep.test.mjs`; `node docklands/test/sweep-check.mjs`
+(installed Chrome on macOS, or `CHROME_PATH`). The browser check calls the registered WebMCP tools and checks
+continuous progress, endpoint, clock, stopping, invalid inputs and menu access.
