@@ -16,12 +16,13 @@ import { latinOut, scrubText, getScriptPreference, setScriptPreference } from '.
 import { GOV, APP } from './governor.js';
 
 import { makeSweep, eyeOf, targetOf } from './camera-sweep.js';
+import { createAutopilot } from './camera-autopilot.js';
 import { createModelCityRouter } from './city-route-model.js';
 import { sampleCityRoute } from './city-route.js';
 import { cityCameraConflict, canRestoreFlightControls } from './city-camera-gate.js';
 import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.7.0';   // 1.7.0: checked low city-road routes with exact polyline playback and upward road attention.
+export const API_VERSION = '1.8.0';   // Stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
 // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
@@ -62,7 +63,7 @@ export function init(H) {
   // (answers with names in Latin script only while that is preferred: geo/script.js latinOut)
   const goTo = async (t, o = {}) => latinOut(await goTo0(t, o));
   async function goTo0(t, o = {}) {
-    stopSweep('interrupted'); clearSweepLine();
+    stopAutopilot('interrupted'); stopSweep('interrupted'); clearSweepLine();
     let found = null;
     if (t && typeof t === 'object' && t.view) t = String(t.view);
     if (t && typeof t === 'object' && t.place) { o = { ...t, ...o }; t = String(t.place); }
@@ -129,6 +130,7 @@ export function init(H) {
       if (!Number.isFinite(radius) || radius < controls.minTargetRadius || radius > controls.maxTargetRadius) throw new Error('City gaze exceeds the current camera target limits'); }
   }
   async function planSweep(a = {}) {
+    if (autopilot && ['playing', 'braking', 'paused'].includes(autopilot.state().status)) throw new Error('Stop the autopilot before planning a sweep.');
     if (onGlobe()) throw new Error('Camera sweeps currently run inside the detailed model. Choose a model view first.');
     if (sweepState.status === 'playing') throw new Error('Stop the current sweep before planning another.');
     const routing_policy = a.routing_policy ?? 'unconstrained';
@@ -222,6 +224,7 @@ export function init(H) {
         return { time_s: w.time_s, eye: { lon, lat, height_m: e[1] }, target: { lon: tlon, lat: tlat, height_m: target[1] }, ...(projection ? { composition: { subject: projection, ...scoreComposition({ subject: projection }) } } : {}) }; }) };
   }
   async function startSweep(a = {}) {
+    stopAutopilot('replaced');
     stopSweep('replaced');
     if (a.plan_id) { if (sweepPlan?.id !== a.plan_id) throw new Error('This plan is no longer available. Plan the course again.'); }
     else await planSweep(a);
@@ -258,6 +261,132 @@ export function init(H) {
     if (sweepState.status === 'playing') stopSweep('interrupted');
   }, { capture: true, passive: true });
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopSweep('interrupted'); });
+
+  // ---------- Stateful camera autopilot. Physics and attention advance in the browser, not in tool calls.
+  let autopilot = null, autopilotFrame = 0, autopilotControls = null, autopilotEpoch = 0, autopilotRequest = 0;
+  let autopilotMeta = { status: 'idle' };
+  const flightActive = s => ['playing', 'braking'].includes(s);
+  const flightPoint = (p, label, fallbackHeight) => {
+    if (!p || typeof p !== 'object') throw new Error(label + ' needs a place or WGS84 point');
+    let { lon, lat } = p, name = p.name || p.place || label;
+    if (p.place) { const found = findCore(I, p.place, 1)[0]; if (!found) throw new Error('No model place called ' + p.place); ({ lon, lat } = found); name = found.name; }
+    if (!Number.isFinite(lon) || !Number.isFinite(lat)) throw new Error(label + ' needs finite longitude and latitude');
+    const [x, z] = adapter.fromLonLat(lon, lat), y = p.height_m ?? fallbackHeight ?? (I.ground(x, z) + 40);
+    if (!adapter.inBox(x, z, 0) || !Number.isFinite(y) || Math.abs(y) > 1e5) throw new Error(label + ' is outside the finite detailed model');
+    return { point: [x, y, z], name };
+  };
+  const geographicPoint = point => { const [lon, lat] = adapter.toLonLat(point[0], point[2]); return { lon, lat, height_m: point[1] }; };
+  function autopilotText(s) {
+    if (!autopilot) return 'Autopilot is idle.';
+    const status = autopilotMeta.reason ? autopilotMeta.status : s.status, reason = autopilotMeta.reason ?? s.reason;
+    return `Autopilot ${status}${reason ? ' (' + reason + ')' : ''}. ${Math.round(flightActive(status) ? Math.hypot(...s.velocity) : 0)} metres per second. ${s.visited?.length || 0} of ${autopilotMeta.route?.length || 0} waypoints reached. Independent gaze; obstacle clearance is not checked.`;
+  }
+  function getAutopilot() {
+    if (!autopilot) return { ...autopilotMeta, text: 'Autopilot is idle.' };
+    const s = autopilot.state();
+    return latinOut({ ...s, ...autopilotMeta, status: autopilotMeta.reason ? autopilotMeta.status : s.status, reason: autopilotMeta.reason ?? s.reason,
+      position: geographicPoint(s.position), target: geographicPoint(s.target),
+      velocity_model_m_s: s.velocity, acceleration_model_m_s2: s.acceleration,
+      routing_policy: 'unconstrained', collision_checked: false, text: autopilotText(s) });
+  }
+  function autopilotNotice(text) { sweepNotice(text); const el = $('autopilotStatus'); if (el) el.textContent = text; }
+  function releaseAutopilotControls() {
+    if (autopilotControls !== null) { if (canRestoreFlightControls({ checkedCity: true, cameraConflict: cityCameraIssue() })) controls.enabled = autopilotControls; autopilotControls = null; }
+  }
+  function stopAutopilot(reason = 'stopped') {
+    autopilotRequest++; autopilotEpoch++;
+    if (autopilotFrame) cancelAnimationFrame(autopilotFrame); autopilotFrame = 0;
+    if (autopilot) { autopilot.stop(); autopilotMeta = { ...autopilotMeta, status: reason === 'stopped' ? 'stopped' : 'interrupted', reason }; }
+    releaseAutopilotControls();
+    return getAutopilot();
+  }
+  function requireAutopilotCamera() { const issue = cityCameraIssue(); if (issue) throw new Error('Autopilot requires the base perspective camera; stop ' + issue + ' first.'); }
+  function autopilotCamera(s, verticalScale, fov) {
+    const d = s.position.map((v, i) => v - s.target[i]); d[1] *= verticalScale;
+    const dist = Math.hypot(...d);
+    const c = { tx: s.target[0], ty: s.target[1], tz: s.target[2], dist, yaw: Math.atan2(d[0], d[2]), pitch: Math.atan2(d[1], Math.hypot(d[0], d[2])), hfov: null, fov, roll: 0 };
+    checkCityCamera(c, verticalScale); return c;
+  }
+  function runAutopilot() {
+    requireAutopilotCamera();
+    const verticalScale = H.ctx?.vzNow?.() ?? H.vz ?? 1, aspect = camera.aspect, fov = camera.fov * D, settings = controlSnapshot(), epoch = ++autopilotEpoch;
+    let previous = performance.now();
+    if (autopilotControls === null) autopilotControls = controls.enabled;
+    controls.enabled = false; H.nav.stop(); H.setViewName(null);
+    const tick = now => {
+      if (epoch !== autopilotEpoch) return;
+      try {
+        requireAutopilotCamera();
+        const currentSettings = controlSnapshot(), names = ['minDistance','maxDistance','minPolarAngle','maxPolarAngle','minAzimuthAngle','maxAzimuthAngle','minTargetRadius','maxTargetRadius','cursor.x','cursor.y','cursor.z'];
+        const changedControls = names.flatMap((name, i) => Object.is(settings[i], currentSettings[i]) ? [] : [{ name, expected: settings[i], actual: currentSettings[i] }]);
+        const currentScale = H.ctx?.vzNow?.() ?? H.vz ?? 1;
+        if (changedControls.length) { autopilotMeta.interruption_detail = { kind: 'control-limits', changed: changedControls }; throw new Error('camera-control-settings-changed: ' + changedControls.map(v => v.name).join(', ')); }
+        if (Math.abs(currentScale - verticalScale) > 1e-8) { autopilotMeta.interruption_detail = { kind: 'height-scale', expected: verticalScale, actual: currentScale }; throw new Error('camera-height-scale-changed'); }
+        if (Math.abs(camera.aspect - aspect) > 1e-8) { autopilotMeta.interruption_detail = { kind: 'viewport-aspect', expected: aspect, actual: camera.aspect }; throw new Error('camera-viewport-aspect-changed'); }
+        if (Math.abs(camera.fov * D - fov) > 1e-8) { autopilotMeta.interruption_detail = { kind: 'field-of-view', expected_deg: fov / D, actual_deg: camera.fov }; throw new Error('camera-field-of-view-changed'); }
+        const s = autopilot.step((now - previous) / 1000); previous = now;
+        if (!adapter.inBox(s.position[0], s.position[2], 0)) throw new Error('model-boundary');
+        H.setCam(autopilotCamera(s, verticalScale, fov));
+        if (flightActive(s.status)) autopilotFrame = requestAnimationFrame(tick);
+        else { autopilotFrame = 0; releaseAutopilotControls(); autopilotNotice(autopilotText(s)); }
+      } catch (error) { stopAutopilot(String(error.message || error)); autopilotNotice('Autopilot stopped: ' + String(error.message || error)); }
+    };
+    autopilotFrame = requestAnimationFrame(tick);
+  }
+  async function startAutopilot(a = {}) {
+    const request = ++autopilotRequest;
+    requireAutopilotCamera(); if (onGlobe()) throw new Error('Autopilot currently runs in the detailed model only.');
+    if (a.routing_policy != null && a.routing_policy !== 'unconstrained') throw new Error('Nudge autopilot currently supports only unconstrained routing; use checked city sweeps for road clearance.');
+    await extras; if (request !== autopilotRequest) throw new Error('Autopilot start was superseded.'); requireAutopilotCamera();
+    if (a.via != null && (!Array.isArray(a.via) || a.via.length > 32)) throw new Error('via must contain at most 32 waypoints');
+    const route = [...(a.via || []), a.destination || { place: a.place, lon: a.lon, lat: a.lat, height_m: a.height_m }].map((p, i) => {
+      const result = flightPoint(p, 'Waypoint ' + (i + 1)); if (p.gaze) result.gaze = flightPoint(p.gaze, 'Waypoint gaze').point; return result;
+    });
+    const start = H.camState(), verticalScale = H.ctx?.vzNow?.() ?? H.vz ?? 1;
+    const startEye = eyeOf(start, verticalScale); if (!adapter.inBox(startEye[0], startEye[2], 0)) throw new Error('The current eye is outside the detailed model; choose a model view first.');
+    const candidate = createAutopilot({ position: eyeOf(start, verticalScale), target: targetOf(start, verticalScale), route, config: a.config || {}, segmentClear: (from, to) => adapter.inBox(to[0], to[2], 0) });
+    autopilotCamera(candidate.state(), verticalScale, camera.fov * D);
+    stopAutopilot('replaced'); stopSweep('replaced'); clearSweepLine(); autopilot = candidate;
+    autopilotMeta = { route: route.map(p => ({ name: p.name, ...geographicPoint(p.point), ...(p.gaze ? { gaze: geographicPoint(p.gaze) } : {}) })), status: 'playing' };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { autopilot.pause(); autopilotMeta.status = 'paused'; }
+    else runAutopilot();
+    autopilotNotice(autopilotText(autopilot.state())); return getAutopilot();
+  }
+  function requireAutopilot() { if (!autopilot) throw new Error('Start an autopilot journey first.'); return autopilot; }
+  function nudgeAutopilot(a = {}) { requireAutopilot().nudge(a); return getAutopilot(); }
+  function gazeAutopilot(a = {}) { const p = a.point === null ? null : flightPoint(a.point || a, 'Gaze target').point; requireAutopilot().lookAt({ point: p, hold_s: a.hold_s ?? 5 }); return getAutopilot(); }
+  function configureAutopilot(a = {}) {
+    const p = requireAutopilot(), current = p.state(); let route = null;
+    if (a.via != null && !a.destination) throw new Error('Changing via points also needs a destination');
+    if (a.destination) {
+      if (!['playing', 'paused'].includes(current.status)) throw new Error('Only a playing or paused autopilot can change route');
+      if (a.via != null && (!Array.isArray(a.via) || a.via.length > 32)) throw new Error('via must contain at most 32 waypoints');
+      route = [...(a.via || []), a.destination].map((point, i) => { const entry = flightPoint(point, 'Waypoint ' + (i + 1)); if (point.gaze) entry.gaze = flightPoint(point.gaze, 'Waypoint gaze').point; return entry; });
+    }
+    // Validate all requested changes on a disposable controller before mutating the live one.
+    createAutopilot({ position: current.position, target: current.target, route: route || [{ point: current.position }], config: { ...current.config, ...(a.config || {}) } });
+    p.configure(a.config || {});
+    if (route) { p.setRoute({ route }); autopilotMeta = { ...autopilotMeta, route: route.map(point => ({ name: point.name, ...geographicPoint(point.point), ...(point.gaze ? { gaze: geographicPoint(point.gaze) } : {}) })) }; }
+    return getAutopilot();
+  }
+  function controlAutopilot(a = {}) {
+    const p = requireAutopilot();
+    if (a.action === 'stop') return stopAutopilot();
+    if (a.action === 'pause') { p.pause(); if (autopilotFrame) cancelAnimationFrame(autopilotFrame); autopilotFrame = 0; autopilotEpoch++; releaseAutopilotControls(); }
+    else if (a.action === 'resume') {
+      requireAutopilotCamera(); const current = H.camState(), scale = H.ctx?.vzNow?.() ?? H.vz ?? 1, state = p.state();
+      const changed = (actual, expected) => Math.hypot(...actual.map((v, i) => v - expected[i])) > .05;
+      if (changed(eyeOf(current, scale), state.position) || changed(targetOf(current, scale), state.target)) throw new Error('The camera moved while paused. Start a new autopilot journey from the current eye.');
+      p.resume(); delete autopilotMeta.reason; delete autopilotMeta.interruption_detail; if (!autopilotFrame && flightActive(p.state().status)) runAutopilot();
+    }
+    else if (a.action === 'brake') p.brake();
+    else throw new Error('Autopilot action must be pause, resume, brake or stop');
+    autopilotNotice(autopilotText(p.state())); return getAutopilot();
+  }
+  for (const event of ['pointerdown', 'wheel', 'keydown']) addEventListener(event, () => {
+    if (autopilot && ['playing', 'braking', 'paused'].includes(autopilot.state().status)) stopAutopilot('manual-input');
+  }, { capture: true, passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && autopilot) stopAutopilot('page-hidden'); });
 
   // ---------- time
   // setTime(v, zone?): a time without an offset is the wall clock of zone (an IANA name or UTC+n), else of the view's zone
@@ -349,7 +478,7 @@ export function init(H) {
     // the wider place (a skeleton set's district, county, country) at the target, when the globe has one
     if (GL() && dsc.target) { try { const m = await GL().whereMore(dsc.target.lon, dsc.target.lat); if (m && (m.district || m.country)) { dsc.context = m;
       dsc.text += ` Area: ${[...new Set([m.district, m.county, m.region, m.country].filter(Boolean))].join(', ')} (${m.source}).`; } } catch (e) { console.warn('api: context', e); } }
-    dsc.scripts = getScriptPreference(); dsc.app = APP.name; dsc.quality = GOV.quality(); dsc.memory = GOV.state(); dsc.text += qualityText();
+    dsc.scripts = getScriptPreference(); dsc.app = APP.name; dsc.quality = GOV.quality(); dsc.memory = GOV.state(); dsc.text += qualityText(); if (autopilot) { dsc.autopilot = getAutopilot(); dsc.text += ' ' + dsc.autopilot.text; }
     return latinOut(dsc);
   }
   async function findPlaces(q, limit = 10) {
@@ -371,7 +500,16 @@ export function init(H) {
     eye_via: P('array', 'Up to 16 WGS84 eye waypoints; lift_m/bend_m must be zero. Cubic curves can overshoot; inspect the preview.', { maxItems: 16, items: { type: 'object', required: ['lon', 'lat', 'height_m'], properties: { lon: { type: 'number' }, lat: { type: 'number' }, height_m: { type: 'number', description: 'Absolute height in the model height datum, metres' } } } }),
     look_at: P('array', 'Ordered gaze fixations strictly inside the flight; smooth transitions and optional holds independent of eye motion', { maxItems: 16, items: { type: 'object', required: ['lon', 'lat', 'height_m', 'at_s'], properties: { lon: { type: 'number' }, lat: { type: 'number' }, height_m: { type: 'number' }, at_s: { type: 'number' }, hold_s: { type: 'number' } } } }),
     composition_subject: P('object', 'Optional separate subject to inspect framing at sampled waypoints; no visibility or aesthetic guarantee', { required: ['lon', 'lat', 'height_m'], properties: { lon: { type: 'number' }, lat: { type: 'number' }, height_m: { type: 'number' } } }) };
+  const AP_POINT = { type: 'object', properties: { place: P('string', 'Model place name, or use longitude and latitude'), name: P('string', 'Waypoint label'), lon: P('number', 'WGS84 longitude'), lat: P('number', 'WGS84 latitude'), height_m: P('number', 'Absolute model datum height; default 40m above ground') } };
+  const AP_CONFIG = { type: 'object', additionalProperties: false, properties: Object.fromEntries(['speed_m_s','max_acceleration_m_s2','max_jerk_m_s3','mass_kg','drag_per_s','arrival_radius_m','gaze_turn_deg_s','gaze_distance_m'].map(k => [k, P('number', k.replaceAll('_', ' '))]).concat([['wind_acceleration', { type: 'array', minItems: 3, maxItems: 3, items: { type: 'number' }, description: 'Optional synthetic model-axis acceleration [x,y,z]; not a weather-derived wind simulation' }]])) };
+  const AP_VECTOR = { type: 'array', minItems: 3, maxItems: 3, items: { type: 'number' } };
   const TOOLS = [
+    { name: 'start_autopilot', description: 'Start a stateful camera-drone journey from the actual current eye. Ordered required flybys and independent waypoint gaze; browser advances bounded inertial motion each frame. Unconstrained detailed-model motion only: no obstacle clearance or automatic landmark/sky selection. Reduced motion starts paused.', readOnly: false, inputSchema: { type: 'object', properties: { destination: AP_POINT, via: { type: 'array', maxItems: 32, items: { ...AP_POINT, properties: { ...AP_POINT.properties, gaze: AP_POINT } } }, config: AP_CONFIG, routing_policy: { type: 'string', enum: ['unconstrained'] } }, required: ['destination'] }, run: startAutopilot },
+    { name: 'nudge_autopilot', description: 'Add a bounded acceleration nudge, at most 5 seconds. Body axes are [right,up,forward]; world axes are model metres [x,y,z]. It expires automatically. Journey tracking remains active.', readOnly: false, inputSchema: { type: 'object', properties: { acceleration: AP_VECTOR, duration_s: P('number', 'Nudge lifetime in simulation seconds, at most5'), frame: { type: 'string', enum: ['world','body'] } }, required: ['acceleration'] }, run: nudgeAutopilot },
+    { name: 'gaze_autopilot', description: 'Turn gaze toward a model place or WGS84 point independently of travel. Hold briefly then return to automatic waypoint attention. Pass point:null to release immediately.', readOnly: false, inputSchema: { type: 'object', properties: { point: { anyOf: [AP_POINT, { type: 'null' }] }, hold_s: P('number', 'Seconds of fixation, bounded by the autopilot') }, required: ['point'] }, run: gazeAutopilot },
+    { name: 'configure_autopilot', description: 'Update bounded physical motion and gaze limits, or replace destination and ordered via points without resetting velocity. The whole request is validated before mutation. No automatic sightseeing.', readOnly: false, inputSchema: { type: 'object', properties: { config: AP_CONFIG, destination: AP_POINT, via: { type: 'array', maxItems: 32, items: { ...AP_POINT, properties: { ...AP_POINT.properties, gaze: AP_POINT } } } } }, run: configureAutopilot },
+    { name: 'get_autopilot', description: 'Read autopilot motion, independent gaze, route, reached waypoints, finite nudges and stop reason without moving the camera.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: getAutopilot },
+    { name: 'control_autopilot', description: 'Pause, resume, brake or stop the camera-drone. Manual pointer/key input and page hiding interrupt it. Resume is explicit.', readOnly: false, inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['pause','resume','brake','stop'] } }, required: ['action'] }, run: controlAutopilot },
     { name: 'plan_sweep', description: 'Compute and draw a camera course from the current view to a named view, place or point in the detailed model. Does not move the camera. Returns a plan id, description, timed WGS84 eye/target waypoints and gaze metadata. Eye motion and gaze are independent. Optional subject framing scores are geometric; City policy checks the exact played road polyline against static building prisms and bounds; other policies are unchecked. Visibility is not checked.', readOnly: false, inputSchema: { type: 'object', properties: SWEEP }, run: planSweep },
     { name: 'start_sweep', description: 'Start a continuous cinematic camera flight in this page. Pass a plan_id, or a destination to plan and fly in one call. Returns immediately; the browser animates every frame without further tool calls. get_sweep reads progress; stop_sweep, Escape or manual input stops it. Reduced-motion preferences skip the animation.', readOnly: false, inputSchema: { type: 'object', properties: { ...SWEEP, plan_id: P('string', 'Id returned by plan_sweep; camera must still be at the planned start') } }, run: startSweep },
     { name: 'get_sweep', description: 'Current camera flight status and progress (0 to 1), destination and current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: sweepSummary },
@@ -481,6 +619,7 @@ export function init(H) {
   // ---------- the API object
   const api = {
     version: API_VERSION, describeVersion: DESCRIBE_VERSION, locale: { adapter: adapter.id, timeZone: adapter.timeZone, heightDatum: adapter.heightDatum, bbox: adapter.bbox },
+    startAutopilot, nudgeAutopilot, gazeAutopilot, configureAutopilot, getAutopilot, controlAutopilot,
     planSweep, startSweep, getSweep: sweepSummary, stopSweep, goTo, getView, setTime, getTimeZone, setTimeZone, get timeZone() { return Z.tz; }, getScriptPreference, setScriptPreference, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
     tools: TOOLS.map(({ name, description, inputSchema, readOnly }) => ({ name, description, inputSchema, readOnly })), callTool,
     webmcp, speak, get describing() { return describeOn; }, set describing(v) { const c = $('describeChk'); if (c) { c.checked = !!v; c.onchange(); } else describeOn = !!v; },

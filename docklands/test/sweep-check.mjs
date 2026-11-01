@@ -30,7 +30,7 @@ try {
   const bad=await mcTools.get('start_sweep').execute({view:'cw',duration_s:0});
   return {version:docklands.version,tools:mcTools.size,start,unmoved,plan,begin,middle,finish,end,expected:__docklands3.VIEWS.rotherhithe,time,timeAfter:docklands.getView().time.iso,stop,stopped,still,bad};
  });
- assert.equal(result.version,'1.7.0');assert.equal(result.tools,18);assert.deepEqual(result.start,result.unmoved);
+ assert.equal(result.version,'1.8.0');assert.equal(result.tools,24);assert.deepEqual(result.start,result.unmoved);
  assert.equal(result.plan.waypoints.length,11);assert.equal(result.plan.trajectory,'curved');assert.equal(result.plan.collision_checked,false);assert.ok(result.plan.gaze_fixations.length>=4);assert.ok(result.plan.waypoints.every(w=>Number.isFinite(w.composition.score)&&w.composition.occlusionKnown===false));assert.equal(result.begin.status,'playing');
  assert.ok(result.middle.progress>0&&result.middle.progress<1);assert.equal(result.finish.status,'completed');
  for(const k of ['tx','ty','tz','dist','pitch'])assert.ok(Math.abs(result.end[k]-result.expected[k])<.1,k);
