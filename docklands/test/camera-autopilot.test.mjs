@@ -91,3 +91,23 @@ test('page start and resume seed time from the first animation frame',()=>{
  assert.equal(p.state().reason,'frame-gap');assert.deepEqual(p.state().position,beforeGap.position);
  assert.deepEqual(errors,[]);assert.ok(drawn.length>=5);
 });
+
+
+test('camera updates preserve the rendered canvas until the viewport size changes',()=>{
+ const source=readFileSync(new URL('../main.js',import.meta.url),'utf8');
+ const begin=source.indexOf('function resize() {'),end=source.indexOf("addEventListener('resize', resize);");
+ assert.ok(begin>=0&&end>begin);
+ let width=1200,height=800,resets=0,projections=0,draws=0;
+ const scope={innerWidth:1200,innerHeight:800,renderSize:{x:0,y:0},
+  renderer:{getSize:t=>Object.assign(t,{x:width,y:height}),setSize:(w,h)=>{resets++;width=w;height=h;}},
+  camera:{aspect:1,fov:45,updateProjectionMatrix:()=>projections++},
+  HFOV:null,photoFovY:()=>60,draw:()=>draws++};
+ const resize=runInNewContext(source.slice(begin,end)+'\nresize;',scope);
+ for(let frame=0;frame<120;frame++)resize();
+ assert.equal(resets,0,'flight frames must not clear the drawing buffer');
+ assert.equal(projections,120);assert.equal(draws,120);assert.equal(scope.camera.aspect,1.5);
+ scope.innerWidth=800;resize();assert.equal(resets,1);assert.equal(scope.camera.aspect,1);
+ resize();assert.equal(resets,1);
+ scope.HFOV=1;resize();assert.equal(scope.camera.fov,60);assert.equal(resets,1);
+ scope.innerHeight=600;resize();assert.equal(resets,2);assert.equal(scope.camera.aspect,800/600);
+});

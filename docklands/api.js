@@ -15,14 +15,14 @@ import { VIEW_LABELS } from './views.js';
 import { latinOut, scrubText, getScriptPreference, setScriptPreference } from './geo/script.js';
 import { GOV, APP } from './governor.js';
 
-import { makeSweep, eyeOf, targetOf } from './camera-sweep.js';
+import { makeSweep, eyeOf, targetOf, cameraFromPose } from './camera-sweep.js?pose=1';
 import { createAutopilot } from './camera-autopilot.js';
 import { createModelCityRouter } from './city-route-model.js';
 import { sampleCityRoute } from './city-route.js';
 import { cityCameraConflict, canRestoreFlightControls } from './city-camera-gate.js';
 import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.8.1';   // Stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
+export const API_VERSION = '1.9.0';   // Stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
 // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
@@ -223,6 +223,28 @@ export function init(H) {
       waypoints: course.waypoints.map(w => { const c = w.camera, e = eyeOf(c, verticalScale), [lon, lat] = adapter.toLonLat(e[0], e[2]), [tlon, tlat] = adapter.toLonLat(c.tx, c.tz), target = targetOf(c, verticalScale); const projection = subject ? projectSubject(c, subject, { aspect: camera.aspect, verticalScale }) : null;
         return { time_s: w.time_s, eye: { lon, lat, height_m: e[1] }, target: { lon: tlon, lat: tlat, height_m: target[1] }, ...(projection ? { composition: { subject: projection, ...scoreComposition({ subject: projection }) } } : {}) }; }) };
   }
+  // Explicit independent eye/target poses use the same validated, cancellable sweep playback.
+  async function startPoseSweep(a = {}) {
+    if (onGlobe()) throw new Error('Pose sweeps require the detailed model.');
+    if (autopilot && ['playing', 'braking', 'paused'].includes(autopilot.state().status)) throw new Error('Stop the autopilot before starting a pose sweep.');
+    if (sweepState.status === 'playing') throw new Error('Stop the current sweep first.');
+    await extras;
+    if (onGlobe() || (autopilot && ['playing', 'braking', 'paused'].includes(autopilot.state().status)) || sweepState.status === 'playing') throw new Error('Camera state changed while preparing the pose sweep; try again.');
+    requireAutopilotCamera();
+    const start = H.camState(), verticalScale = H.ctx?.vzNow?.() ?? H.vz ?? 1;
+    const eye = a.eye ? flightPoint(a.eye, 'Eye').point : eyeOf(start, verticalScale);
+    const target = flightPoint(a.target, 'Gaze target').point;
+    const currentEye = eyeOf(start, verticalScale);
+    if (!adapter.inBox(currentEye[0], currentEye[2], 0) || !adapter.inBox(eye[0], eye[2], 0)) throw new Error('Both eye positions must be inside the detailed model.');
+    const end = cameraFromPose(eye, target, verticalScale, { hfov: null, fov: camera.fov * D, roll: start.lens?.roll || 0 });
+    const course = makeSweep(start, end, { duration_s: a.duration_s ?? 5, steps: 10, trajectory: 'curved', lift_m: 0, aspect: camera.aspect, verticalScale });
+    for (let i = 0; i <= 200; i++) { const c = course.sample(i / 200), e = eyeOf(c, verticalScale); if (!adapter.inBox(e[0], e[2], 0)) throw new Error('The pose course leaves the detailed model.'); checkCityCamera(c, verticalScale); }
+    const id = 'sweep-' + ++sweepSerial;
+    clearSweepLine();
+    sweepPlan = { id, course, start, end, view: null, name: a.name || 'the requested pose', routing_policy: 'unconstrained', aspect: camera.aspect, city: null };
+    sweepState = { id, status: 'planned', progress: 0, destination: sweepPlan.name, duration_s: course.duration_s, trajectory: 'curved', routing_policy: 'unconstrained', collision_checked: false, eye_path_length_m: course.length_m };
+    return startSweep({ plan_id: id });
+  }
   async function startSweep(a = {}) {
     stopAutopilot('replaced');
     stopSweep('replaced');
@@ -234,14 +256,19 @@ export function init(H) {
     if (['tx', 'ty', 'tz', 'yaw', 'pitch', 'dist'].some(k => Math.abs(now[k] - p.start[k]) > .001) || ['hfov', 'fov', 'roll'].some(k => Math.abs((now[k] ?? now.lens?.[k] ?? 0) - (p.start[k] ?? p.start.lens?.[k] ?? 0)) > 1e-8) || Math.abs((H.ctx?.vzNow?.() ?? H.vz ?? 1) - p.course.verticalScale) > 1e-8 || Math.abs(camera.aspect - p.aspect) > 1e-8) throw new Error('The camera moved or its lens, viewport or height scale changed since this course was planned. Plan it again.');
     H.setViewName(null); H.nav.stop(); sweepControls = controls.enabled; controls.enabled = false;
     sweepState = { ...sweepState, status: 'playing', progress: 0 };
-    clearSweepLine(); const started = performance.now();
+    clearSweepLine(); const started = performance.now(); let previousFrame = null;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     sweepNotice(`Flying to ${p.name}. Press Escape or use Stop flight to stop.`);
     const interruptForOwner = issue => { stopSweep('interrupted'); sweepState.reason = 'camera-owner-changed'; sweepState.camera_owner = issue; sweepNotice('City flight interrupted: ' + issue + ' now owns or changes the camera.'); };
     const tick = t => {
       const owner = p.city ? cityCameraIssue() : null; if (owner) { interruptForOwner(owner); return; }
       if (Math.abs((H.ctx?.vzNow?.() ?? H.vz ?? 1) - p.course.verticalScale) > 1e-8 || Math.abs(camera.aspect - p.aspect) > 1e-8) { stopSweep('interrupted'); sweepState.reason = 'view-settings-changed'; sweepNotice('Flight interrupted: viewport or height scale changed. Plan it again.'); return; }
-      const u = reduced ? 1 : Math.min(1, (t - started) / (p.course.duration_s * 1000));
+      const u = reduced ? 1 : clamp((t - started) / (p.course.duration_s * 1000), 0, 1);
+      const frameGap = previousFrame === null ? null : Math.max(0, t - previousFrame); previousFrame = t;
+      sweepState.frames = (sweepState.frames || 0) + 1;
+      sweepState.first_frame_delay_ms ??= Math.max(0, performance.now() - started);
+      sweepState.max_frame_gap_ms = Math.max(sweepState.max_frame_gap_ms || 0, frameGap || 0);
+      sweepState.elapsed_wall_ms = Math.max(0, t - started);
       try {
         if (p.city && !sameControls(p.control_settings)) throw new Error('Camera control limits changed during the checked city flight');
         const sample = p.course.sample(u); if (p.city) checkCityCamera(sample, p.course.verticalScale);
@@ -356,7 +383,7 @@ export function init(H) {
   }
   function requireAutopilot() { if (!autopilot) throw new Error('Start an autopilot journey first.'); return autopilot; }
   function nudgeAutopilot(a = {}) { requireAutopilot().nudge(a); return getAutopilot(); }
-  function gazeAutopilot(a = {}) { const p = a.point === null ? null : flightPoint(a.point || a, 'Gaze target').point; requireAutopilot().lookAt({ point: p, hold_s: a.hold_s ?? 5 }); return getAutopilot(); }
+  function gazeAutopilot(a = {}) { if (!autopilot || !flightActive(autopilot.state().status) || autopilotMeta.reason) throw new Error('Gaze needs a running autopilot; use start_pose_sweep for a stationary camera.'); const p = a.point === null ? null : flightPoint(a.point || a, 'Gaze target').point; requireAutopilot().lookAt({ point: p, hold_s: a.hold_s ?? 5 }); return getAutopilot(); }
   function configureAutopilot(a = {}) {
     const p = requireAutopilot(), current = p.state(); let route = null;
     if (a.via != null && !a.destination) throw new Error('Changing via points also needs a destination');
@@ -512,6 +539,7 @@ export function init(H) {
     { name: 'configure_autopilot', description: 'Update bounded physical motion and gaze limits, or replace destination and ordered via points without resetting velocity. The whole request is validated before mutation. No automatic sightseeing.', readOnly: false, inputSchema: { type: 'object', properties: { config: AP_CONFIG, destination: AP_POINT, via: { type: 'array', maxItems: 32, items: { ...AP_POINT, properties: { ...AP_POINT.properties, gaze: AP_POINT } } } } }, run: configureAutopilot },
     { name: 'get_autopilot', description: 'Read autopilot motion, independent gaze, route, reached waypoints, finite nudges and stop reason without moving the camera.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: getAutopilot },
     { name: 'control_autopilot', description: 'Pause, resume, brake or stop the camera-drone. Manual pointer/key input and page hiding interrupt it. Resume is explicit.', readOnly: false, inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['pause','resume','brake','stop'] } }, required: ['action'] }, run: controlAutopilot },
+    { name: 'start_pose_sweep', description: 'Smoothly interpolate from the current camera to an explicit eye and gaze target. Omit eye to rotate in place. Heights are absolute model datum metres. Does not check building or subject visibility.', readOnly: false, inputSchema: { type: 'object', properties: { eye: AP_POINT, target: AP_POINT, duration_s: P('number', 'Duration in seconds, 0.25 to 120'), name: P('string', 'Optional destination name') }, required: ['target'] }, run: startPoseSweep },
     { name: 'plan_sweep', description: 'Compute and draw a camera course from the current view to a named view, place or point in the detailed model. Does not move the camera. Returns a plan id, description, timed WGS84 eye/target waypoints and gaze metadata. Eye motion and gaze are independent. Optional subject framing scores are geometric; City policy checks the exact played road polyline against static building prisms and bounds; other policies are unchecked. Visibility is not checked.', readOnly: false, inputSchema: { type: 'object', properties: SWEEP }, run: planSweep },
     { name: 'start_sweep', description: 'Start a continuous cinematic camera flight in this page. Pass a plan_id, or a destination to plan and fly in one call. Returns immediately; the browser animates every frame without further tool calls. get_sweep reads progress; stop_sweep, Escape or manual input stops it. Reduced-motion preferences skip the animation.', readOnly: false, inputSchema: { type: 'object', properties: { ...SWEEP, plan_id: P('string', 'Id returned by plan_sweep; camera must still be at the planned start') } }, run: startSweep },
     { name: 'get_sweep', description: 'Current camera flight status and progress (0 to 1), destination and current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: sweepSummary },
@@ -622,7 +650,7 @@ export function init(H) {
   const api = {
     version: API_VERSION, describeVersion: DESCRIBE_VERSION, locale: { adapter: adapter.id, timeZone: adapter.timeZone, heightDatum: adapter.heightDatum, bbox: adapter.bbox },
     startAutopilot, nudgeAutopilot, gazeAutopilot, configureAutopilot, getAutopilot, controlAutopilot,
-    planSweep, startSweep, getSweep: sweepSummary, stopSweep, goTo, getView, setTime, getTimeZone, setTimeZone, get timeZone() { return Z.tz; }, getScriptPreference, setScriptPreference, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
+    startPoseSweep, planSweep, startSweep, getSweep: sweepSummary, stopSweep, goTo, getView, setTime, getTimeZone, setTimeZone, get timeZone() { return Z.tz; }, getScriptPreference, setScriptPreference, listLayers, setLayer, featuresAt, describeView, findPlaces, listViews, shareLink,
     tools: TOOLS.map(({ name, description, inputSchema, readOnly }) => ({ name, description, inputSchema, readOnly })), callTool,
     webmcp, speak, get describing() { return describeOn; }, set describing(v) { const c = $('describeChk'); if (c) { c.checked = !!v; c.onchange(); } else describeOn = !!v; },
     spoken, openTextView: openText, ready: extras.then(() => true),

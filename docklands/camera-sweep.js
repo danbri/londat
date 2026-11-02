@@ -8,6 +8,15 @@ const distance = (a, b) => Math.hypot(...a.map((v, i) => v - b[i]));
 const lerp = (a, b, t) => a.map((v, i) => mix(v, b[i], t));
 export const eyeOf = (c, verticalScale = 1) => [c.tx + c.dist * Math.sin(c.yaw) * Math.cos(c.pitch), (c.ty || 0) + c.dist * Math.sin(c.pitch) / ((c.hfov ?? c.lens?.hfov) ? 1 : verticalScale), c.tz + c.dist * Math.cos(c.yaw) * Math.cos(c.pitch)];
 export const targetOf = (c, verticalScale = 1) => [c.tx, c.ty + ((c.hfov ?? c.lens?.hfov) ? c.dist * Math.sin(c.pitch) * (1 - 1 / verticalScale) : 0), c.tz];
+// Reconstruct the orbit camera from independent physical eye and gaze points.
+export function cameraFromPose(eye, target, verticalScale = 1, lens = {}) {
+  if (!point(eye) || !point(target) || !Number.isFinite(verticalScale) || verticalScale <= 0) throw new Error('Pose needs finite eye and target and a positive height scale');
+  const dx = eye[0] - target[0], dy = (eye[1] - target[1]) * verticalScale, dz = eye[2] - target[2];
+  const dist = Math.hypot(dx, dy, dz), pitch = Math.atan2(dy, Math.hypot(dx, dz));
+  if (dist < 10 || !Number.isFinite(dist)) throw new Error('Pose eye and target must be at least 10 metres apart');
+  if (pitch < -Math.PI / 2 + .05 || pitch > Math.PI / 2 - .05) throw new Error('Pose exceeds the camera tilt limits');
+  return { tx: target[0], ty: target[1], tz: target[2], dist, yaw: Math.atan2(dx, dz), pitch, ...lens };
+}
 const angle = (a, b, t) => a + Math.atan2(Math.sin(b - a), Math.cos(b - a)) * t;
 
 // Piecewise cubic Hermite eye path. Reparameterization measures the path including its lift.

@@ -1,4 +1,4 @@
-# Stateful camera autopilot — page API 1.8.1
+# Stateful camera autopilot — page API 1.9.0
 
 The camera-drone has position, velocity and acceleration. A bounded velocity servo follows ordered required waypoints. Nominal mass, drag, acceleration and jerk limits give motion inertia. Required waypoints are reached at low speed before the next point becomes active. Gaze moves independently with a maximum angular speed. The browser runs the loop between tool calls.
 
@@ -39,3 +39,7 @@ Automatic landmark selection, photo-style sun/moon framing, learned image rankin
 ### First-frame timing (1.8.1)
 
 Start and resume take their time baseline from the first animation callback. A frame timestamp can precede the performance.now() value from the task that starts a flight; mixing these values previously produced a negative first step and stopped the flight before any movement. The regression test now exercises the page scheduler as well as the pure dynamics.
+
+## Explicit pose sweeps
+
+`start_pose_sweep` animates from the current camera to a target specified by WGS84 longitude, latitude and absolute model-datum height. Supply an optional `eye` point to move the camera independently; omit it to turn in place, including looking upward. For example, from the north-bank Belfast pose, use `{target: {lon: -0.086667, lat: 51.504444, height_m: 310}, duration_s: 8}` for the Shard. Return by sending the Belfast target `{lon: -0.081389, lat: 51.506667, height_m: 3.1}`. Read `get_sweep` for progress, animation frame count, longest observed frame gap, first-frame delay and elapsed wall time, and `get_view` to capture eye and target for later reuse. The trajectory is eased and does not check obstacle clearance or target visibility. Manual input interrupts playback. This sweep is separate from the inertial autopilot.

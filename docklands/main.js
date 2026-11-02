@@ -53,6 +53,7 @@ renderer.setPixelRatio(PR0);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.shadowMap.enabled = true;
+renderer.domElement.dataset.rendererBuild = 'canvas-resize-guard-1';
 $('view').appendChild(renderer.domElement);
 try { await renderer.init(); } catch (e) { await no3d('This browser could not start WebGPU or WebGL 2 (' + (e && e.message || e) + ').'); }   // (no page error)
 const GPU = !!renderer.backend.isWebGPUBackend, BACKEND = GPU ? 'WebGPU' : 'WebGL 2';
@@ -472,8 +473,13 @@ async function loadLayers(ids = LAYER_IDS) {
 }
 
 // ---------- render loop: on demand (a frame while the camera moves or a clock changes), always while the water moves
+const renderSize = new THREE.Vector2();
 function resize() {
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h;
+  const w = innerWidth, h = innerHeight, size = renderer.getSize(renderSize);
+  // setCam calls this on every flight frame. Even an unchanged setSize resets
+  // the canvas buffer, clearing the city while the HTML labels keep moving.
+  if (size.x !== w || size.y !== h) renderer.setSize(w, h);
+  camera.aspect = w / h;
   if (HFOV) camera.fov = photoFovY();
   camera.updateProjectionMatrix(); draw();
 }
@@ -917,7 +923,7 @@ if (GLOBE && qs.get('free') !== '0') {
 // (script-ui.js; the data readers pick names by geo/script.js). Skill docklands-3d-page, "Names: Latin script preferred".
 import('./script-ui.js').then(m => m.initScriptUi({ langNote: () => GLOBE && GLOBE.langOverridden?.() ? `The page language (?lang=${esc(GLOBE.lang)}) is written in another script, so its names give way to Latin ones while this is on.` : '' })).catch(e => console.warn('script-ui', e));
 // the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
-import('./api.js').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));
+import('./api.js?pose=2').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));
 if (START_AWAY) {
   // the boot screen stays until the start view is drawn (the globe takes the view, or the model is ready), 20 s at most
   const t0 = performance.now(), wait = () => { if ((GLOBE && GLOBE.mode === 'globe' && GLOBE.ready && !GLOBE.isFlying()) || READY || performance.now() - t0 > 20000) bootDone(); else requestAnimationFrame(wait); };

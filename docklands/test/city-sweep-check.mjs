@@ -40,7 +40,7 @@ try{
   H.setCam(playedCamera);
   return {version:docklands.version,initial,unmoved,plan,failed,named,playing,stopped,eye,pointClear,verticalScale:H.vz,expectedNamed:{lon,lat}};
  });
- assert.equal(result.version,'1.8.1');assert.deepEqual(result.initial,result.unmoved);assert.equal(result.plan.trajectory,'polyline');assert.equal(result.plan.collision_checked,true);assert.equal(result.plan.collision_scope,'static-model-building-prisms-and-model-bounds');
+ assert.equal(result.version,'1.9.0');assert.deepEqual(result.initial,result.unmoved);assert.equal(result.plan.trajectory,'polyline');assert.equal(result.plan.collision_checked,true);assert.equal(result.plan.collision_scope,'static-model-building-prisms-and-model-bounds');
  assert.ok(result.plan.route_points>16);assert.ok(result.plan.speed.peak_m_s<=20);assert.ok(result.plan.duration_s>120);assert.equal(result.plan.attention.method,'road-lookahead-up');assert.ok(result.plan.model_source.credits.some(s=>/OpenStreetMap/.test(s.text)));
  for(const [name,error]of Object.entries(result.failed))assert.notEqual(error,'not rejected',name);
  assert.equal(result.named.destination_requested.kind,'named-view-eye');assert.ok(Math.abs(result.named.destination_requested.lon-result.expectedNamed.lon)<1e-6);assert.ok(Math.abs(result.named.destination_requested.lat-result.expectedNamed.lat)<1e-6);

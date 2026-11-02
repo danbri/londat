@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { makeSweep, eyeOf } from '../camera-sweep.js';
+import { makeSweep, eyeOf, cameraFromPose } from '../camera-sweep.js';
 const a = { tx: -3000, ty: 10, tz: 0, yaw: 179 * Math.PI / 180, pitch: .5, dist: 800 };
 const b = { tx: 500, ty: -15, tz: 1000, yaw: -179 * Math.PI / 180, pitch: -.02, dist: 1200, hfov: .8, roll: 2 };
 test('course preserves exact endpoints, including a photo lens and negative pitch', () => {
@@ -92,4 +92,16 @@ test('extreme fixations and moving gaze arithmetic fail closed before playback',
  assert.throws(()=>makeSweep(c0,c1,{trajectory:'curved',lift_m:0,look_at:[{at_s:5,point:[0,1e308,0]}]}),/finite points/);
  assert.throws(()=>makeSweep(c0,c1,{trajectory:'polyline',lift_m:0,gaze_path:()=>[0,1e308,0]}),/finite model point/);
  assert.throws(()=>makeSweep({...c0,ty:1e308},c1,{trajectory:'polyline',lift_m:0}),/model domain/);
+});
+
+
+test('explicit poses keep the eye fixed while smoothly looking upward', () => {
+ const eye=[100,103,300], targetA=[100,3,127], targetB=[-265,310,-120];
+ for(const scale of [1,3]) {
+  const a=cameraFromPose(eye,targetA,scale), b=cameraFromPose(eye,targetB,scale);
+  const p=makeSweep(a,b,{trajectory:'curved',lift_m:0,verticalScale:scale});
+  for(let i=0;i<=100;i++) assert.ok(Math.hypot(...eyeOf(p.sample(i/100),scale).map((v,j)=>v-eye[j]))<1e-7);
+  assert.ok(b.pitch<0); assert.deepEqual([b.tx,b.ty,b.tz],targetB);
+ }
+ assert.throws(()=>cameraFromPose(eye,eye),/10 metres/);
 });
