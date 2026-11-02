@@ -923,7 +923,7 @@ if (GLOBE && qs.get('free') !== '0') {
 // (script-ui.js; the data readers pick names by geo/script.js). Skill docklands-3d-page, "Names: Latin script preferred".
 import('./script-ui.js').then(m => m.initScriptUi({ langNote: () => GLOBE && GLOBE.langOverridden?.() ? `The page language (?lang=${esc(GLOBE.lang)}) is written in another script, so its names give way to Latin ones while this is on.` : '' })).catch(e => console.warn('script-ui', e));
 // the page API (window.docklands), WebMCP tools, the spoken view and the keys (api.js; skill docklands-3d-page, "page API")
-import('./api.js?pose=2').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));
+import('./api.js?pose=4').then(m => m.init(globalThis.__docklands3)).catch(e => console.warn('api', e));
 if (START_AWAY) {
   // the boot screen stays until the start view is drawn (the globe takes the view, or the model is ready), 20 s at most
   const t0 = performance.now(), wait = () => { if ((GLOBE && GLOBE.mode === 'globe' && GLOBE.ready && !GLOBE.isFlying()) || READY || performance.now() - t0 > 20000) bootDone(); else requestAnimationFrame(wait); };
