@@ -6,7 +6,7 @@
 // Messages: {id, type: 'init', base} | {id, type: 'query', sparql, page, pageSize} | {id, type: 'describe', iri}.
 // Skill: cwplans-kgx.
 const PACKAGE_VERSION = '0.28.0';
-import { loadL4 } from 'https://cdn.jsdelivr.net/npm/@factoidal/core@0.28.0/l4-assets/l4factoidal.js';
+import { loadL4 } from 'https://cdn.jsdelivr.net/npm/@factoidal/core@0.30.0/l4-assets/l4factoidal.js';
 
 const MAX_HANDLES = 4;
 let engine, base, gen, manifestHex;

@@ -348,6 +348,18 @@ earlier build (15 graphs, 659 blocks); on the 774-block build the same entity re
 - Ask Factoidal for: a handle that keeps the parsed manifest (each call parses it again), a planner that looks inside
   subqueries, and an export path for `bin/engine.mjs` (or a README fix).
 
+## Upgrade to 0.30.0, 2026-11-04
+Owner, 2026-11-04: "0.3.0 is out, please update accordingly" (0.30.0 is meant). Pinned the worker's jsDelivr URL and the npm
+dependency to 0.30.0 (from 0.28.0). `npm run check:factoidal` on 0.30.0: 5 FIXED, 1 GONE, 7 STILL; the STILL rows are
+blank-node renaming per query, no default-graph view of named graphs, and the four #697 rows (ibk5 one block per
+(predicate, graph), length-first zone keys, COUNT over a subquery plans every block, `bin/engine.mjs` not exported).
+The property-path alternative row is FIXED, but the planner still plans 8 blocks for both forms. `npm test`: 198 pass,
+0 fail, 1 skipped.
+Browser check: `tools/benchmark-kg.mjs`, with its two versions changed to 0.28.0 and 0.30.0, one trial, Chrome headless,
+service workers blocked. tall, graphs, stepfree, occupants: identical row SHA-256 on both versions and no page errors,
+so 0.30.0 reads the store that 0.13.0 packed. Cold 203 to 386 ms and warm 15 to 17 ms on both; boot 1.25 s (0.30.0)
+against 1.35 s (0.28.0). The store was not repacked.
+
 ## Browser upgrade 2026-11-01
 Pinned worker and npm dependency to 0.28.0 (from 0.15.0). Show packageVersion alongside the engine's internal version label. Browser comparison and method: docs/benchmarks/2026-11-01-factoidal-browser.md; reusable runner tools/benchmark-kg.mjs. Compare identical data with service workers blocked and engines routed from local official npm packages. Follow hash changes via actual preset buttons: changing location.hash alone does not run a query.
 
