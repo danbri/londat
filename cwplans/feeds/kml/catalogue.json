@@ -85,7 +85,7 @@
    },
    "zone_features": 279,
    "model_box_features": 163,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F29j4y%2F17d3df74-9338-43ed-813b-989d57689f88%2Fall_schools_2016.kmz",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F29j4y%2F17d3df74-9338-43ed-813b-989d57689f88%2Fall_schools_2016.kmz",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -132,7 +132,7 @@
    },
    "zone_features": 92,
    "model_box_features": 66,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2jx1l%2F495e0c34-5da1-4647-baac-c9cb974df3aa%2Fward-map-kml.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2jx1l%2F495e0c34-5da1-4647-baac-c9cb974df3aa%2Fward-map-kml.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -183,7 +183,7 @@
    },
    "zone_features": 7,
    "model_box_features": 7,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2Fvqmx7%2Fe521c1ed-9787-42da-b229-faff6d4b65e5%2Fbusiness_improvement_districts_kml.zip",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2Fvqmx7%2Fe521c1ed-9787-42da-b229-faff6d4b65e5%2Fbusiness_improvement_districts_kml.zip",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -230,7 +230,7 @@
    },
    "zone_features": 10,
    "model_box_features": 8,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2koz8%2F6c9b249b-9d02-42a7-bae9-67617fa4317c%2Fgla-boroughs-canopy-cover.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2koz8%2F6c9b249b-9d02-42a7-bae9-67617fa4317c%2Fgla-boroughs-canopy-cover.kml",
    "example": false,
    "page_test": {
     "date": "2026-10-05",
@@ -277,7 +277,7 @@
    },
    "zone_features": 71,
    "model_box_features": 45,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2koz8%2F30e728fc-d736-45d7-9853-5e1ac2ff4a3e%2Fgla-wards-canopy-cover.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fdata.london.gov.uk%2Fdownload%2F2koz8%2F30e728fc-d736-45d7-9853-5e1ac2ff4a3e%2Fgla-wards-canopy-cover.kml",
    "example": false,
    "page_test": {
     "date": "2026-10-05",
@@ -395,7 +395,7 @@
    },
    "zone_features": 420,
    "model_box_features": 356,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-cycle-routes.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-cycle-routes.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -444,7 +444,7 @@
    },
    "zone_features": 15,
    "model_box_features": 12,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-river-piers.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-river-piers.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -493,7 +493,7 @@
    },
    "zone_features": 11,
    "model_box_features": 10,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-river-services.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Ftfl-river-services.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -543,7 +543,7 @@
    },
    "zone_features": 350,
    "model_box_features": 294,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fsustrans-ncn.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fsustrans-ncn.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -592,7 +592,7 @@
    },
    "zone_features": 13,
    "model_box_features": 8,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fcrt-locks.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fcrt-locks.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -641,7 +641,7 @@
    },
    "zone_features": 1,
    "model_box_features": 1,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fne-thames-path.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fne-thames-path.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -691,7 +691,7 @@
    },
    "zone_features": 1769,
    "model_box_features": 1769,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-listed-buildings.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-listed-buildings.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -740,7 +740,7 @@
    },
    "zone_features": 3,
    "model_box_features": 3,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-world-heritage.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-world-heritage.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -789,7 +789,7 @@
    },
    "zone_features": 58,
    "model_box_features": 58,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-heritage-at-risk.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-heritage-at-risk.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -838,7 +838,7 @@
    },
    "zone_features": 6,
    "model_box_features": 6,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-parks-gardens.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fhe-parks-gardens.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -887,7 +887,7 @@
    },
    "zone_features": 107,
    "model_box_features": 107,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fgla-conservation-areas.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Fgla-conservation-areas.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",
@@ -936,7 +936,7 @@
    },
    "zone_features": 92,
    "model_box_features": 66,
-   "open_link": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Flds-wards-2016-zone.kml",
+   "open_link": "https://danbri.github.io/londat/docklands/?kml=https%3A%2F%2Fraw.githubusercontent.com%2Fdanbri%2Flondat%2Fmain%2Fcwplans%2Ffeeds%2Fkml%2Flds-wards-2016-zone.kml",
    "example": true,
    "page_test": {
     "date": "2026-10-05",

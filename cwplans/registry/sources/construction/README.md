@@ -6,7 +6,7 @@ plus the Royal Docks margin 0.015 to 0.085, 51.495 to 51.522), one record per si
 `data/raw/construction/`). Method, rules and traps: skill `cwplans-construction`
 (https://github.com/danbri/londat/blob/main/cwplans/skills/cwplans-construction/SKILL.md).
 Shown on the 3D page, Layers > "Works in progress":
-https://danbri.github.io/londat/cwplans/docklands/
+https://danbri.github.io/londat/docklands/
 
 Owner, 2026-10-04: "Note the works in progress on far side of the central tower - do we have an index of these?" Before this
 there was no index: cranes were in `feeds/live/notams.json`, highway cranes and hoardings in

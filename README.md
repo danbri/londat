@@ -9,7 +9,7 @@ Site: https://danbri.github.io/londat/ (published by `.github/workflows/pages.ym
 
 | page | address |
 |---|---|
-| Docklands 3D | https://danbri.github.io/londat/cwplans/docklands/ |
+| Docklands 3D | https://danbri.github.io/londat/docklands/ |
 | Atlas | https://danbri.github.io/londat/cwplans/atlas/ |
 | Knowledge graph search | https://danbri.github.io/londat/cwplans/kg/ |
 | Feeds and sources, what's on | https://danbri.github.io/londat/cwplans/feeds/ , https://danbri.github.io/londat/cwplans/feeds/whatson.html |

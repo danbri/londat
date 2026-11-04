@@ -18,7 +18,7 @@ import { allowed, meets, ZONE, CW, today } from './walk-portals.mjs';
 
 const OUTDIR = join(CW, 'feeds', 'kml'), COPYDIR = join(LONDAT_CW, 'feeds', 'kml');
 const RAW_BASE = 'https://raw.githubusercontent.com/danbri/londat/main/cwplans/feeds/kml/';
-const PAGE = 'https://danbri.github.io/londat/cwplans/docklands/?kml=';
+const PAGE = 'https://danbri.github.io/londat/docklands/?kml=';
 // the zone of the brief: the model box plus the Royal Docks and the Thames Barrier (the 3D page cuts at the model box)
 const ZONE_WIDE = [-0.095, 51.47, 0.08, 51.53];
 const ORIGIN = 'https://danbri.github.io';
@@ -197,7 +197,7 @@ async function copy(only) {
       placemarks.push({ name: String(nameOf(p) ?? ''), extended: (c.keep || Object.keys(p).filter(x => x !== 'name')).filter(x => p[x] != null && p[x] !== '').map(x => [x, p[x]]), styleUrl: c.style ? '#layer' : '', geoms });
     }
     const description = `${c.title}. Source: ${c.publisher}, ${c.page}. Licence: ${c.licence}. Attribution: ${c.attribution}`
-      + `${c.odbl ? ' This file contains OpenStreetMap-derived data under the ODbL.' : ''} Fetched ${today} from ${api}; clipped to WGS84 ${box.join(', ')} (features that meet the box; lines cut at the edge) by cwplans/tools/find-kml.mjs for https://danbri.github.io/londat/cwplans/docklands/ .`;
+      + `${c.odbl ? ' This file contains OpenStreetMap-derived data under the ODbL.' : ''} Fetched ${today} from ${api}; clipped to WGS84 ${box.join(', ')} (features that meet the box; lines cut at the edge) by cwplans/tools/find-kml.mjs for https://danbri.github.io/londat/docklands/ .`;
     const text = k.writeKml({ name: c.title, description, styles: c.style ? { layer: c.style } : {}, placemarks });
     writeFileSync(join(COPYDIR, `${c.id}.kml`), text);
     c.copied = { features: placemarks.length, bytes: Buffer.byteLength(text), box, fetched: today };

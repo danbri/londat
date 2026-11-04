@@ -240,7 +240,7 @@ the outline, medium); brownfield 1 (low); Census LSOA context for 1,129 building
 Browse: the atlas view "London Datastore" (https://danbri.github.io/londat/cwplans/atlas/#lds), with
 a map layer per dataset or per theme, and the building records (heat demand, solar potential, Census context of the
 LSOA, venues and other records placed in the building) in the atlas and on the 3D page
-(https://danbri.github.io/londat/cwplans/docklands/). Index:
+(https://danbri.github.io/londat/docklands/). Index:
 https://danbri.github.io/londat/cwplans/feeds/london-datastore/index.json
 
 ## Ranked backlog before the third walk (219 listed for harvest; now run through the rules above)

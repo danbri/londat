@@ -123,6 +123,19 @@ body.capture #mini,body.capture #top,body.capture #gauge,body.capture #isoBtns,b
 </style>
 </head>
 <body>
+<!-- Old-page notice (owner, 2026-11-04: "I still sometimes accidentally end up using that obsolete version of the 3d UI").
+     The current page is moglob, https://danbri.github.io/londat/docklands/ . Hidden for automation (navigator.webdriver)
+     and ?capture, so the tools that test this page see no change. -->
+<div id="oldPageNote" hidden style="position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:9999;max-width:calc(100% - 32px);box-sizing:border-box;padding:8px 12px;border-radius:8px;background:#5a1d1d;color:#fff;font:14px/1.4 system-ui,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.5)">
+  This is the old Docklands 3D page. <a id="oldPageGo" style="color:#ffd59c;font-weight:600" href="https://danbri.github.io/londat/docklands/">Open the current page</a>
+  <button type="button" aria-label="Close" onclick="this.parentNode.hidden=true" style="margin-left:8px;background:none;border:0;color:#fff;font-size:16px;cursor:pointer">×</button>
+</div>
+<script>
+  if (!navigator.webdriver && !/[?&]capture\b/.test(location.search)) {
+    document.getElementById('oldPageGo').href = new URL('../../docklands/', location.href).href.split(/[?#]/)[0] + location.search + location.hash;
+    document.getElementById('oldPageNote').hidden = false;
+  }
+</script>
 <div id="wrap"><canvas id="c" role="img" aria-label="3D model of London Docklands from London Bridge to Cody Dock, with Canary Wharf above and below ground, from OpenStreetMap, Environment Agency LiDAR and Wikidata"></canvas><div id="labels"></div>
   <div id="top">
     <div id="searchRow"><button type="button" class="ib" id="menuBtn" aria-label="Menu" aria-controls="drawer" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" class="ib" id="findBtn" aria-label="Find a place"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg></button><input id="q" type="search" hidden placeholder="Find a building, shop, platform or place" autocomplete="off" aria-label="Find a building, shop, platform or place" aria-controls="qres"></div>

@@ -185,7 +185,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
 
   <section id="redirect" class="part" aria-labelledby="redirect-h">
     <h2 id="redirect-h"><span>Old site redirect</span><span id="redirect-chip"></span></h2>
-    <p class="small">The old address <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/</a> must become a redirect page (title "Moved: …") to <a href="https://danbri.github.io/londat/cwplans/docklands/">https://danbri.github.io/londat/cwplans/docklands/</a>.</p>
+    <p class="small">The old address <a href="https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/">https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/</a> must become a redirect page (title "Moved: …") to <a href="https://danbri.github.io/londat/docklands/">https://danbri.github.io/londat/docklands/</a>.</p>
     <div id="redirect-body"><p class="small">Checking…</p></div>
   </section>
 
@@ -199,7 +199,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
     <h3>Pages on the site</h3>
     <ul class="links">
       <li><b>Landing page</b><a href="https://danbri.github.io/londat/">https://danbri.github.io/londat/</a></li>
-      <li><b>Docklands 3D</b><a href="https://danbri.github.io/londat/cwplans/docklands/">https://danbri.github.io/londat/cwplans/docklands/</a></li>
+      <li><b>Docklands 3D</b><a href="https://danbri.github.io/londat/docklands/">https://danbri.github.io/londat/docklands/</a></li>
       <li><b>Atlas</b><a href="https://danbri.github.io/londat/cwplans/atlas/">https://danbri.github.io/londat/cwplans/atlas/</a></li>
       <li><b>Knowledge graph search</b><a href="https://danbri.github.io/londat/cwplans/kg/">https://danbri.github.io/londat/cwplans/kg/</a></li>
       <li><b>Feeds and sources</b><a href="https://danbri.github.io/londat/cwplans/feeds/">https://danbri.github.io/londat/cwplans/feeds/</a></li>
@@ -949,7 +949,7 @@ footer{color:var(--muted);font-size:.82rem;margin-top:1.5rem}
       throw new Error(`the old address did not load (${err.message})`);
     }
     if (/^Moved:/.test(title)) {
-      put(el, line('ok', `Redirected: the old address shows the redirect page ("${title}"), which forwards to `, a(SITE + 'cwplans/docklands/'), ' with the query and the hash.'), localNote);
+      put(el, line('ok', `Redirected: the old address shows the redirect page ("${title}"), which forwards to `, a(SITE + 'docklands/'), ' with the query and the hash.'), localNote);
       return { state: 'ok', label: 'Redirected', text: `The old address shows "${title}" and forwards to the new site.` };
     }
     put(el, line('warn', `Not redirected: the old address still serves the old page (title "${title || 'none'}"). The redirect pages are on the branch claude/docklands-migration-londat-hr8hoz of danbri/glitchcan-minigam; they go live when it is merged into master: `, a(MIGRATION)), localNote);

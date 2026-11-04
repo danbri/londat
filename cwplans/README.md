@@ -26,7 +26,7 @@ A 3D view and a long section of the East London Line (London Overground) from Wa
 | `tools/build-data.mjs` | builds `data/cwplans-data.js` from the raw data |
 | `research-report-2026-10.md` | the source survey supplied by the owner, unchanged; read the review below first |
 | `data/sourced-levels.json` | hand-curated published levels (platform depths, slab levels, dock bed) with source URL and quote; used by both builds |
-| `docklands/` | the wider Docklands model (London Bridge to Cody Dock, Canary Wharf above and below ground): https://danbri.github.io/londat/cwplans/docklands/ |
+| `docklands/` | the wider Docklands model (London Bridge to Cody Dock, Canary Wharf above and below ground): https://danbri.github.io/londat/docklands/ |
 | `feeds/` | 200 checked data sources, feeds and APIs for the area, browsable at https://danbri.github.io/londat/cwplans/feeds/ (`feeds/README.md`, `feeds/feeds.json`) |
 
 Rebuild:

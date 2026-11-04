@@ -121,6 +121,6 @@
   "data": "magpie/cwplans/docklands/data/stations.json",
   "tool": "magpie/cwplans/tools/build-station-mesh.mjs",
   "layer": "magpie/cwplans/docklands/stations-layer.js",
-  "page": "https://danbri.github.io/glitchcan-minigam/magpie/cwplans/docklands/?view=under (Menu > Layers > Show > Station models)"
+  "page": "https://danbri.github.io/londat/docklands/?view=under (Menu > Layers > Show > Station models)"
  }
 }

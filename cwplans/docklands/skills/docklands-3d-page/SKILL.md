@@ -14,6 +14,11 @@ description: >-
 
 # The Docklands 3D page
 
+**Current page: moglob, https://danbri.github.io/londat/docklands/ (folder `docklands/`).** The WebGL 1 page below is obsolete
+(owner, 2026-11-04); give people links to `docklands/`. moglob reads the same `?view=`, `?t=`, `?kml=`, `#at=` and `#v=1`
+share links. Since 2026-11-04 the old page shows a notice that links to moglob; the notice is hidden for automation
+(`navigator.webdriver`) and `?capture`.
+
 Live: https://danbri.github.io/londat/cwplans/docklands/
 (night from the river: https://danbri.github.io/londat/cwplans/docklands/?view=rotherhithe).
 Data and method notes: https://github.com/danbri/londat/blob/main/cwplans/docklands/README.md.

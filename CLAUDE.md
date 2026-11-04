@@ -10,7 +10,12 @@ Only report to the owner in ASD-STE100 Simplified Technical English (owner's rul
 
 ## Always give the full URL
 When you name a page, give the whole clickable address, never a repo path. The site is
-`https://danbri.github.io/londat/` + the file path, e.g. `https://danbri.github.io/londat/cwplans/docklands/`.
+`https://danbri.github.io/londat/` + the file path, e.g. `https://danbri.github.io/londat/docklands/`.
+
+**The 3D page is moglob, https://danbri.github.io/londat/docklands/ .** The WebGL 1 page at `cwplans/docklands/` is
+obsolete (owner, 2026-11-04: "there is a newer path without /cwplans/ in it for the main viewer ... I still sometimes
+accidentally end up using that obsolete version of the 3d UI"). Link people to `docklands/`. The old page stays (moglob
+reads its `data/` and `models/`, and tools test it) and shows a notice linking to the new page with the same query and hash.
 Owner instruction, August 2026: "Full url please, always." For a file in the repository, give the GitHub URL
 (`https://github.com/danbri/londat/blob/main/` + path).
 The site is published by `.github/workflows/pages.yml` (Settings > Pages > Source: "GitHub Actions"). Until the owner has

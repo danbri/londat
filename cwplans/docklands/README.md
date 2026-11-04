@@ -1,6 +1,10 @@
 # Docklands: London Bridge to Cody Dock
 
 Live page: https://danbri.github.io/londat/cwplans/docklands/
+
+This is the old WebGL 1 page. The current page is moglob, https://danbri.github.io/londat/docklands/ (README:
+https://github.com/danbri/londat/blob/main/docklands/README.md). This folder also holds the data that moglob reads
+(`data/`, `models/`), so it stays. Since 2026-11-04 the old page shows a notice that links to the current page.
 Canada Water corridor (the first, smaller model): https://danbri.github.io/londat/cwplans/
 
 A 3D model of the Thames from London Bridge to Cody Dock and from Limehouse to Greenwich, with the most detail at Canary Wharf, above and below ground. It is built from open data only. The page also loads live readings on request (tides, weather, air quality, line status, storm overflows, traffic cameras).

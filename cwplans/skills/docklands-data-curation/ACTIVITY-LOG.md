@@ -3721,3 +3721,13 @@ Live WebMCP start reproduced an immediate interruption, "Autopilot step needs no
 Added an integration regression test around the actual scheduling function: older first timestamp, progress on the next frame, duplicate timestamp, fresh baseline on resume with momentum preserved, and suspension pause. Full npm test: 196 passed, 1 skipped, 0 failed; npm run check, syntax and diff checks pass. In the rendered local WebGPU scene, WebMCP start/get verified playing at 11.75 simulation seconds, speed 2.70 m/s for requested target 3 m/s (drag), and about 27 m displacement. No browser console errors. A subsequent pause/resume command was not completed because the browser approval context changed during movement; do not report that browser test as passed. Screenshot and test log are in the Moglob workspace output folder.
 
 Unrelated identity/index/manifest work preserved. Shipping only the timing fix, regression test, version references and this log entry.
+
+## 2026-11-04 — links point at moglob; the old 3D page shows a notice
+Owner: "there is a newer path without /cwplans/ in it for the main viewer. Are KG and other things still using the [old]
+paths? I still sometimes accidentally end up using that obsolete version of the 3d UI too". The KG page had no 3D link.
+Changed to https://danbri.github.io/londat/docklands/ : the root index and README, cwplans/README, the dashboard, the
+atlas, feeds, postcodes and registry pages (`../docklands/` there meant the old page), the KML catalogue and its README
+and generator (`find-kml.mjs`), the station-models and construction notes. Kept: the old page's own code, its skills
+and the tools that test it. The old page now shows a notice with a link to moglob (same query and hash), hidden for
+`navigator.webdriver` and `?capture`. Checked in Chrome headless: the notice shows and links correctly, it is hidden
+for automation, and moglob opens an old `#v=1` share link with no page errors. `npm test` 198 pass, 0 fail.
