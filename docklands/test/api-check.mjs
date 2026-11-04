@@ -6,15 +6,21 @@
 //     point; setTime; listLayers / setLayer; the live region speaks when the switch is on and after the view settles;
 //     the arrow keys and + move the camera with the map focused; V speaks; T opens the text view.
 //  2. ?view=greenlanddock: describeView names Greenland Dock.
+//  4. The frame path (frame-bridge.js): test/fixtures/frame-host.html on another origin holds the page in a frame;
+//     the parent gets the tool list, calls get_view and go_to, an unknown tool is an error answer, webmcp.list lists
+//     again, and a call from another frame of the host is not answered.
 //  3. WebGL disabled (--disable-webgl --disable-3d-apis): ?view=greenlanddock opens the text view by itself, with the
 //     description and the place lists, no page errors; ?ll=51.4944,-0.0402&text=1 too.
 //   python3 -m http.server 8205 --bind 127.0.0.1 &   (repository root)
-//   node docklands/test/api-check.mjs [--base http://127.0.0.1:8205] [--only 1,2,3] [--layers a,b]
+//   node docklands/test/api-check.mjs [--base http://127.0.0.1:8205] [--only 1,2,3,4] [--layers a,b]
 // Skill: docklands-3d-page, "Three.js port: page API, WebMCP and non-visual access (2026-10-11)".
 import { chromium } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+// the version the page must report, read from api.js as text (api.js imports three.js, so it is not imported here)
+const API_VERSION = /export const API_VERSION = '([^']+)'/.exec(readFileSync(new URL('../api.js', import.meta.url), 'utf8'))[1];
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
-const BASE = arg('--base', 'http://127.0.0.1:8205'), ONLY = (arg('--only', '1,2,3')).split(',');
+const BASE = arg('--base', 'http://127.0.0.1:8205'), ONLY = (arg('--only', '1,2,3,4')).split(',');
 const LAYERS = arg('--layers', 'placenames,registry,keys,search,ships,planes,under');
 const EXE = process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', GL = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 let fails = 0; const ok = (c, m, extra = '') => { if (!c) fails++; console.log(`${c ? 'ok  ' : 'FAIL'} ${m}${extra ? ' :: ' + String(extra).slice(0, 300) : ''}`); };
@@ -38,7 +44,7 @@ if (ONLY.includes('1') || ONLY.includes('2')) {
     await ready(page); console.log(`-- 1. view=cw: API ready after ${((Date.now() - t0) / 1000).toFixed(1)} s`);
     const r = await page.evaluate(async () => {
       const d = docklands, o = {};
-      o.version = d.version; o.webmcp = { ...d.webmcp, controller: undefined }; o.mock = [...globalThis.__mcTools.keys()];
+      o.version = d.version; o.nTools = d.tools.length; o.webmcp = { ...d.webmcp, controller: undefined }; o.mock = [...globalThis.__mcTools.keys()];
       const mt = globalThis.__mcTools.get('describe_view'); o.mockCall = mt ? await mt.execute({ maxItems: 3 }) : null;
       o.view = d.getView(); o.share = d.shareLink();
       o.desc = await d.describeView();
@@ -53,8 +59,8 @@ if (ONLY.includes('1') || ONLY.includes('2')) {
       try { d.setLayer('nosuch', true); o.badLayer = 'no error'; } catch (e) { o.badLayer = e.message; }
       return o;
     });
-    ok(r.version === '1.7.0', 'window.docklands.version', r.version);
-    ok(r.mock.length === 18 && r.webmcp.registered.length === 18 && r.webmcp.api === 'document.modelContext', 'WebMCP: 18 tools (1.1.0: get_time_zone, set_time_zone; 1.2.0: get_script_preference, set_script_preference) registered on document.modelContext', r.mock.join(' '));
+    ok(r.version === API_VERSION, `window.docklands.version is ${API_VERSION} (api.js)`, r.version);
+    ok(r.nTools >= 18 && r.mock.length === r.nTools && r.webmcp.registered.length === r.nTools && r.webmcp.api === 'document.modelContext', `WebMCP: every tool of window.docklands.tools (${r.nTools}) registered on document.modelContext`, r.mock.join(' '));
     ok(r.mockCall && /One Canada Square/.test(r.mockCall.content[0].text), 'WebMCP: describe_view called through the host answers', r.mockCall && r.mockCall.content[0].text.slice(0, 160));
     ok(Math.abs(r.view.eye.lat - 51.495) < 0.01 && Math.abs(r.view.heading_deg - 321.5) < 2 && r.view.fov_deg.vertical > 40 && r.view.time.time_zone, 'getView: eye, heading, field, time zone', JSON.stringify({ eye: r.view.eye, h: r.view.heading_deg, f: r.view.fov_deg, t: r.view.time }));
     ok(/#v=1&c=/.test(r.share), 'shareLink has the share hash', r.share);
@@ -128,6 +134,36 @@ if (ONLY.includes('3')) {
     await ctx.close();
   }
   await browser.close();
+}
+if (ONLY.includes('4')) {
+  // The frame path (frame-bridge.js): a host page on another origin holds the page in a frame, as the foafos shell does,
+  // and a second frame in that host tries to call a tool. Only the parent is answered. The host is test/fixtures/
+  // frame-host.html at 127.0.0.1 and the page is at localhost: two origins, both local (Chrome refuses a public page
+  // that frames a local one).
+  const browser = await chromium.launch({ headless: true, executablePath: EXE, args: GL });
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } }), page = await ctx.newPage(); page.setDefaultTimeout(300000);
+  const errors = watch(page), t0 = Date.now();
+  const src = `${BASE.replace('127.0.0.1', 'localhost')}/docklands/?view=cw&layers=${LAYERS}&weather=0&webgl&animate=0`;
+  await page.goto(`${BASE}/docklands/test/fixtures/frame-host.html?src=${encodeURIComponent(src)}`);
+  await page.waitForFunction(() => globalThis.__tools, null, { timeout: 300000 });
+  console.log(`-- 4. frame path: tool list after ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  const r = await page.evaluate(async () => {
+    const t = __tools, o = { api: t.api, n: t.tools.length, names: t.tools.map(x => x.name), schema: !!t.tools.find(x => x.name === 'go_to')?.inputSchema?.properties, ro: t.tools.find(x => x.name === 'get_view')?.readOnly };
+    o.view = await call('get_view', {}); o.go = await call('go_to', { view: 'greenlanddock' }); o.view2 = await call('get_view', {});
+    o.bad = await call('no_such_tool', {});
+    const before = __msgs.filter(m => m.type === 'webmcp.tools').length; D().postMessage({ type: 'webmcp.list' }, '*');
+    await new Promise(res => setTimeout(res, 1500)); o.relisted = __msgs.filter(m => m.type === 'webmcp.tools').length > before;
+    document.getElementById('f').contentWindow.postMessage({ go: 1 }, '*'); await new Promise(res => setTimeout(res, 3000));
+    o.foreign = __msgs.some(m => m.id === 'foreign'); o.view3 = await call('get_view', {});
+    return o; });
+  ok(r.n >= 20 && r.names.includes('go_to') && r.names.includes('describe_view') && r.schema && r.ro === true, `the parent gets the tool list (${r.n} tools, api ${r.api})`, r.names.join(' '));
+  ok(r.view.ok && r.view.value && typeof r.view.value === 'object', 'get_view through the frame answers', JSON.stringify(r.view).slice(0, 200));
+  ok(r.go.ok && r.view2.ok && JSON.stringify(r.view2.value) !== JSON.stringify(r.view.value), 'go_to through the frame moves the view', JSON.stringify(r.go).slice(0, 200));
+  ok(r.bad.ok === false && /unknown tool/.test(r.bad.error), 'an unknown tool is an error answer, not a throw', JSON.stringify(r.bad));
+  ok(r.relisted, 'webmcp.list sends the tool list again');
+  ok(!r.foreign && r.view3.ok, 'a call from another frame of the host is not answered');
+  ok(errors.length === 0, 'no page errors (frame path)', errors.join(' | '));
+  await ctx.close(); await browser.close();
 }
 console.log(fails ? `${fails} FAILED` : 'all passed');
 process.exit(fails ? 1 : 0);

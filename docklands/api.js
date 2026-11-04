@@ -17,12 +17,14 @@ import { GOV, APP } from './governor.js';
 
 import { makeSweep, eyeOf, targetOf, cameraFromPose } from './camera-sweep.js?pose=1';
 import { createAutopilot } from './camera-autopilot.js';
+import { bridgeToParent } from './frame-bridge.js';
 import { createModelCityRouter } from './city-route-model.js';
 import { sampleCityRoute } from './city-route.js';
 import { cityCameraConflict, canRestoreFlightControls } from './city-camera-gate.js';
 import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.9.1';   // Stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
+export const API_VERSION = '1.10.0';   // The page tools also go to the frame that holds the page, by postMessage (frame-bridge.js).
+// 1.9.1: stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
 // 1.2.0 (2026-10-22): names in Latin script only by default; getScriptPreference, setScriptPreference, ?scripts=, getView().scripts.
@@ -668,6 +670,7 @@ export function init(H) {
     help: 'moglob (Docklands 3D) page API: https://github.com/danbri/londat/blob/main/docklands/README.md#page-api',
   };
   globalThis.docklands = api;
+  api.frame = bridgeToParent({ tools: api.tools, callTool, version: API_VERSION });   // null when the page is not in a frame
   dispatchEvent(new CustomEvent('docklands-api-ready', { detail: { version: API_VERSION } }));
 
   // ---------- locale-free deep links: ?ll=lat,lon[,range_m] and ?place=<name> (after the share hash and ?view= of main.js)

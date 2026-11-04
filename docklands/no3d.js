@@ -9,6 +9,7 @@
 // zoom, Enter says what is at the centre. Skill: docklands-3d-page, "No 3D: text view, 2D map and page API (KR3.2)".
 import { describeView as describeCore, featuresAt as featuresCore, findPlaces as findCore, viewGeo, timeOf, parseTime, bearing, decode, DESCRIBE_VERSION } from './describe.js';
 import { VIEWS, VIEW_LABELS } from './views.js';
+import { bridgeToParent } from './frame-bridge.js';
 import { latinOut, latinPreferred, setLatinPreferred, isLatin, getScriptPreference, setScriptPreference } from './geo/script.js';   // names in Latin script only by default
 
 export const NO3D_VERSION = '1.0.0';
@@ -220,6 +221,7 @@ export function initNo3d({ index, linkCamera, section, refresh }) {
     openTextView: () => globalThis.__docklandsText && globalThis.__docklandsText.open(), ready: Promise.resolve(true), timing, map: { draw, state: () => ({ ...M, width: W, height: H }) },
     help: 'Docklands page API (no 3D: text view and 2D map): https://github.com/danbri/londat/blob/main/docklands/README.md#page-api' };
   globalThis.docklands = api; timing.ready = Math.round(performance.now() - T0);
+  api.frame = bridgeToParent({ tools: api.tools, callTool, version: API_VERSION });   // as api.js
   dispatchEvent(new CustomEvent('docklands-api-ready', { detail: { version: API_VERSION, no3d: true } }));
   // building names after the first answer, as the 3D page has them: the OSM keys (building-keys.json, 2.6 MB; main.js keys())
   // and the registry index (atlas.json, 2.1 MB; layers/registry.js), which findPlaces also searches. Then the text again.

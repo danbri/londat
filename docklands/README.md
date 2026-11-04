@@ -384,6 +384,28 @@ https://github.com/webmachinelearning/webmcp, read 2026-10-11), else `navigator.
 `share_link`, each with an `inputSchema`, `annotations.readOnlyHint`, and an `execute` that answers
 `{ content: [{ type: 'text', text: JSON }], structuredContent }` (or `isError`).
 
+### The frame path (1.10.0, 2026-11-04)
+
+The tools have four ways in, from one list and one `callTool`: `window.docklands.tools` (scripts in the page), WebMCP
+(an agent in the browser), the MCP server's `page_call` (an agent outside the browser), and, since 1.10.0, the frame
+that holds the page (`frame-bridge.js`). None depends on another: the page registers on WebMCP and also answers its
+parent frame. The foafos shell uses the frame path (https://github.com/danbri/glitchcan-minigam/blob/master/docs/foafos-docklands-webmcp-20261104.md).
+
+| From | Message |
+|---|---|
+| page, at start and on each `webmcp.list` | `{type:'webmcp.tools', api, tools:[{name, description, inputSchema, readOnly}]}` |
+| parent | `{type:'webmcp.list'}` |
+| parent | `{type:'webmcp.call', id, name, args}` |
+| page | `{type:'webmcp.result', id, ok:true, value}` or `{type:'webmcp.result', id, ok:false, error}` |
+
+Only the parent frame is answered (`event.source === window.parent`); a message from any other window or frame is
+ignored and counted (`docklands.frame.refused`). The page sends with target origin `'*'`, because the parent's origin
+is not known; the tool list and the view are public. The page does not trust the parent: a call runs only a tool of
+its own list. What the parent lets other code call is the parent's decision (in foafos, a grant in the app tree).
+`docklands.frame` is `null` when the page is not in a frame. Test: `docklands/test/api-check.mjs --only 4`, with the
+host page `docklands/test/fixtures/frame-host.html` at 127.0.0.1 and the page at localhost (two origins, both local:
+Chrome refuses a public page that frames a local one).
+
 ### Non-visual use
 
 - Menu > Views > Access: "Describe the view (screen reader)" (kept on the device; `?describe=1`): a polite ARIA live

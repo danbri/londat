@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- A host page for the frame path (docklands/frame-bridge.js), as the foafos shell is: it holds the page named by
+     ?src= in a frame, and a second frame ("foreign") that tries to call a tool. Used by docklands/test/api-check.mjs, part 4. -->
+<meta charset="utf-8"><title>frame host</title>
+<iframe id="d" style="width:900px;height:600px"></iframe>
+<iframe id="f" srcdoc="<script>addEventListener('message', e => { if (e.data && e.data.go) parent.frames[0].postMessage({ type: 'webmcp.call', id: 'foreign', name: 'go_to', args: { view: 'greenlanddock' } }, '*'); });</script>"></iframe>
+<script>
+  const D = () => document.getElementById('d').contentWindow; let n = 0;
+  globalThis.__msgs = []; globalThis.__tools = null;
+  addEventListener('message', e => { if (e.source !== D()) return; __msgs.push(e.data); if (e.data && e.data.type === 'webmcp.tools') __tools = e.data; });
+  globalThis.call = (name, args) => new Promise(res => {
+    const id = 'c' + (++n);
+    const on = e => { if (e.source === D() && e.data && e.data.type === 'webmcp.result' && e.data.id === id) { removeEventListener('message', on); res(e.data); } };
+    addEventListener('message', on); D().postMessage({ type: 'webmcp.call', id, name, args }, '*');
+  });
+  document.getElementById('d').src = new URLSearchParams(location.search).get('src');
+</script>
