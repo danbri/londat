@@ -453,6 +453,12 @@ samples, not frame rate. Place names and WGS84 points with range/heading/pitch a
 `getSweep()` reports status/progress and the current view; `stopSweep()` stops in place.
 WebMCP equivalents: `plan_sweep`, `start_sweep`, `get_sweep`, `stop_sweep`.
 
+Flights you can watch across the globe (API 1.11.0, 2026-11-07): `fly_to` takes a place or a WGS84 point, up to 16 `via`
+stops and an optional `duration_s` (2 to 600 s; by default the length grows with distance, about 20 s from London to
+Tokyo). It answers at once and the page flies by itself along the great circle, climbing and descending; `get_flight`
+reads progress, `stop_flight` or any manual input stops it. `go_to` takes `animate: true` for a short flight instead of a
+jump. Check: `docklands/test/fly-to-check.mjs`.
+
 The clock and drawing style stay as they are, including for photo-view destinations. Escape, manual map input,
 another goTo, or hiding the page stops playback. Reduced-motion preferences skip animation. A plan is refused if
 the camera has moved since planning. Courses currently stay within the detailed model, not the globe; building

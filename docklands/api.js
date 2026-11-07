@@ -23,7 +23,7 @@ import { sampleCityRoute } from './city-route.js';
 import { cityCameraConflict, canRestoreFlightControls } from './city-camera-gate.js';
 import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.10.0';   // The page tools also go to the frame that holds the page, by postMessage (frame-bridge.js).
+export const API_VERSION = '1.11.0';   // The page tools also go to the frame that holds the page, by postMessage (frame-bridge.js).
 // 1.9.1: stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
@@ -65,7 +65,7 @@ export function init(H) {
   // (answers with names in Latin script only while that is preferred: geo/script.js latinOut)
   const goTo = async (t, o = {}) => latinOut(await goTo0(t, o));
   async function goTo0(t, o = {}) {
-    stopAutopilot('interrupted'); stopSweep('interrupted'); clearSweepLine();
+    stopAutopilot('interrupted'); stopSweep('interrupted'); clearSweepLine(); if (journey?.state.status === 'flying') { journeySerial++; journey.state.status = 'interrupted'; }
     let found = null;
     if (t && typeof t === 'object' && t.view) t = String(t.view);
     if (t && typeof t === 'object' && t.place) { o = { ...t, ...o }; t = String(t.place); }
@@ -97,6 +97,75 @@ export function init(H) {
     if (found && found.mi != null) H.selectModel(found.mi);
     await settle();
     return { ...getView(), found: found ? { name: found.name, kind: found.kind } : undefined };
+  }
+
+  // ---------- fly_to: a journey from the current view to a place or point, through up to 16 via points, slow enough to
+  // watch (owner, 2026-11-07: "gradually flies someone from a to b, not teleports"). Each leg is a globe flight
+  // (globe.js flyTo: along the great circle, up and down in log range) with its length set here. It returns at once;
+  // get_flight reads progress, stop_flight or any manual input stops it. Reduced motion: each leg is a jump.
+  let journey = null, journeySerial = 0;
+  const KM = (a, b) => { const r = Math.PI / 180, dl = (b.lat - a.lat) * r, dn = (b.lon - a.lon) * r,
+    h = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dn / 2) ** 2; return 12742 * Math.asin(Math.min(1, Math.sqrt(h))); };
+  const legSeconds = km => clamp(4 + 4 * Math.log10(1 + km), 4, 120);
+  const STOP_ALT = { building: 600, water: 1200, country: 2.6e6, region: 9e5, sea: 3e6, lake: 6e5, river: 6e5, place: 6e4 };
+  const here = () => { const v = getView(), t = v.target || v; return { lon: +t.lon, lat: +t.lat }; };
+  async function resolveStop(p = {}) {
+    if (p.place != null && (p.lon == null || p.lat == null)) {
+      const hit = (await findPlaces(String(p.place), 1))[0];
+      if (!hit) throw new Error(`No place called "${p.place}". Try find_places.`);
+      p = { ...p, lon: hit.lon, lat: hit.lat, name: p.name || hit.name, kind: hit.kind };
+    }
+    if (!isFinite(+p.lon) || !isFinite(+p.lat) || Math.abs(+p.lat) > 90) throw new Error('fly_to needs a place name, or lon and lat in WGS84 degrees, for every stop');
+    return { ...p, lon: +p.lon, lat: +p.lat, alt_m: p.alt_m ?? p.range_m ?? STOP_ALT[p.kind] ?? (p.kind ? 900 : 2e4) };
+  }
+  const journeySummary = () => ({ ...(journey ? journey.state : { status: 'idle' }), view: getView() });
+  function stopJourney(reason = 'stopped') {
+    if (!journey || journey.state.status !== 'flying') return journeySummary();
+    journeySerial++; journey.state.status = reason; GL()?.stopFlight(); return journeySummary();
+  }
+  function flyLeg(stop, ms, serial) {   // resolves 'arrived', 'interrupted' (manual input) or 'replaced'
+    return new Promise((ok, no) => {
+      let arrived = false, seen = false; journey.legStart = null;
+      GL().goTo({ lon: stop.lon, lat: stop.lat, alt_m: stop.alt_m, heading_deg: stop.heading_deg, pitch_deg: stop.pitch_deg }, { ms })
+        .then(() => { arrived = true; }, no);
+      const tick = () => {
+        if (serial !== journeySerial) return ok('replaced');
+        if (arrived) return ok('arrived');
+        if (GL().isFlying()) { if (!seen) journey.legStart = performance.now(); seen = true; } else if (seen) return ok('interrupted');
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+  async function flyTo(a = {}) {
+    if (!GL()) { const r = await goTo(a.place != null ? a.place : a, a); return { status: 'arrived', note: 'this page has no globe, so the view moved without a flight', view: r }; }
+    const stops = [];
+    for (const v of (a.via || []).slice(0, 16)) stops.push(await resolveStop(v));
+    stops.push(await resolveStop(a));
+    stopAutopilot('interrupted'); stopSweep('interrupted'); clearSweepLine(); stopJourney('replaced');
+    await GL().ensure(); await GL().placesReady;   // the globe first: the clock starts when it can fly
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let from = here(); const legs = stops.map(s => { const km = KM(from, s); from = s; return { name: s.name || null, lon: s.lon, lat: s.lat, km: Math.round(km), s: legSeconds(km) }; });
+    const want = a.duration_s != null ? clamp(+a.duration_s, 2, 600) : null, sum = legs.reduce((n, l) => n + l.s, 0);
+    for (const l of legs) l.s = reduced ? 0 : Math.round((want ? l.s * want / sum : l.s) * 10) / 10;
+    const serial = ++journeySerial, total = legs.reduce((n, l) => n + l.s, 0);
+    journey = { state: { status: 'flying', leg: 0, legs: legs.map(({ name, lon, lat, km, s }) => ({ name, lon, lat, km, duration_s: s })), duration_s: total, started: new Date().toISOString(), progress: 0, reduced_motion: reduced } };
+    // progress: seconds flown (legs done, and the current leg from the moment its flight starts) over the whole length
+    const meter = () => {
+      if (serial !== journeySerial || !journey || journey.state.status !== 'flying') return;
+      const i = journey.state.leg, done = legs.slice(0, i).reduce((n, l) => n + l.s, 0), cur = journey.legStart ? Math.min(legs[i].s, (performance.now() - journey.legStart) / 1000) : 0;
+      journey.state.progress = total ? Math.round(Math.min(1, (done + cur) / total) * 100) / 100 : 0; requestAnimationFrame(meter); };
+    requestAnimationFrame(meter);
+    (async () => {
+      for (let i = 0; i < stops.length; i++) {
+        if (serial !== journeySerial) return;
+        journey.state.leg = i;
+        let r; try { r = await flyLeg(stops[i], legs[i].s * 1000, serial); } catch (e) { r = 'failed: ' + (e.message || e); }
+        if (r !== 'arrived') { if (serial === journeySerial) journey.state.status = r; return; }
+      }
+      if (serial === journeySerial) { journey.state.status = 'arrived'; journey.state.progress = 1; }
+    })();
+    return journeySummary();
   }
 
   // A course is planned once; playback stays in this document between WebMCP calls.
@@ -550,9 +619,13 @@ export function init(H) {
     { name: 'start_sweep', description: 'Start a continuous cinematic camera flight in this page. Pass a plan_id, or a destination to plan and fly in one call. Returns immediately; the browser animates every frame without further tool calls. get_sweep reads progress; stop_sweep, Escape or manual input stops it. Reduced-motion preferences skip the animation.', readOnly: false, inputSchema: { type: 'object', properties: { ...SWEEP, plan_id: P('string', 'Id returned by plan_sweep; camera must still be at the planned start') } }, run: startSweep },
     { name: 'get_sweep', description: 'Current camera flight status and progress (0 to 1), destination and current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: sweepSummary },
     { name: 'stop_sweep', description: 'Stop the camera flight at its current position and remove its course preview.', readOnly: false, inputSchema: { type: 'object', properties: {} }, run: () => { const r = stopSweep(); clearSweepLine(); return r; } },
+    { name: 'fly_to', description: 'Fly the view from where it is now to a place or WGS84 point, through optional via points, as a journey to watch rather than a jump: along the great circle, climbing and descending. Returns at once; the page animates by itself. get_flight reads progress; stop_flight or any manual input stops it. Default length grows with distance (about 5 s for 1 km, 20 s for London to Tokyo); duration_s sets the whole journey (2 to 600 s). Reduced-motion preference: each stop is a jump.', readOnly: false,
+      inputSchema: { type: 'object', properties: { place: P('string', 'Destination: a place or building name (find_places)'), lon: P('number', 'Destination longitude, WGS84 degrees'), lat: P('number', 'Destination latitude, WGS84 degrees'), alt_m: P('number', 'Eye height above the destination, metres (default by kind of place)'), heading_deg: P('number', 'View direction at the end, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle at the end, degrees'), duration_s: P('number', 'Length of the whole journey, seconds (2 to 600)'), via: { type: 'array', maxItems: 16, description: 'Stops on the way, in order', items: { type: 'object', properties: { place: P('string', 'A place name (find_places), or use lon and lat'), name: P('string', 'A label for this stop'), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), alt_m: P('number', 'Eye height above the stop, metres') } } } } }, run: a => flyTo(a) },
+    { name: 'get_flight', description: 'The fly_to journey: status (idle, flying, arrived, interrupted, stopped, replaced), current leg, legs with distance and seconds, progress (0 to 1), and the current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => journeySummary() },
+    { name: 'stop_flight', description: 'Stop the fly_to journey where the view is now.', readOnly: false, inputSchema: { type: 'object', properties: {} }, run: () => stopJourney('stopped') },
     { name: 'go_to', description: 'Move the 3D view to a place (a name such as "Greenland Dock", "One Canada Square", "Tokyo" or "France"), a named view (list_views), or a WGS84 point anywhere on Earth (outside the Docklands model or above 36 km the globe shows it). Returns the new view.', readOnly: false,
-      inputSchema: { type: 'object', properties: { place: P('string', 'A place or building name, or a view id'), view: P('string', 'A named view id', { enum: Object.keys(H.VIEWS) }), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), range_m: P('number', 'Distance from the eye to the point, metres'), alt_m: P('number', 'Eye height above the point, metres (used when range_m is absent); up to 40,000 km on the globe'), heading_deg: P('number', 'View direction, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle, degrees (2 to 89.5)') } },
-      run: a => a.view ? goTo({ view: a.view }) : a.place ? goTo(a.place, a) : goTo(a) },
+      inputSchema: { type: 'object', properties: { place: P('string', 'A place or building name, or a view id'), view: P('string', 'A named view id', { enum: Object.keys(H.VIEWS) }), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), range_m: P('number', 'Distance from the eye to the point, metres'), alt_m: P('number', 'Eye height above the point, metres (used when range_m is absent); up to 40,000 km on the globe'), heading_deg: P('number', 'View direction, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle, degrees (2 to 89.5)'), animate: P('boolean', 'Move in a short flight of a few seconds instead of a jump (on the globe); fly_to gives a longer journey to watch') } },
+      run: a => a.view ? goTo({ view: a.view }) : a.place ? goTo(a.place, a) : goTo(a, a) },
     { name: 'get_view', description: 'The current view: eye and target (lon, lat, height in metres), true heading, pitch, field of view, range, page time and time zone, sun, and the share link.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => getView() },
     { name: 'describe_view', description: 'Describe what is in view: a short paragraph (text) and structured lists of the tallest buildings, named places, water and parks with distance and direction, the time of day, sun, weather, aircraft and ships in view, and the share link. On the globe: the country, region, sea and nearest places at the centre, the countries, water and large places in view.', readOnly: true,
       inputSchema: { type: 'object', properties: { maxItems: P('number', 'Places named in the paragraph (default 8)') } }, run: a => describeView(a) },
