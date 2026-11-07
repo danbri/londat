@@ -652,7 +652,8 @@ export async function createGlobe(H) {
   // imagery and heights (level 11: about 19 m a pixel; level 9 and 10; level 7 and 8)
   const floorAt = (lon, lat) => { const L = G.baseDetailAt ? G.baseDetailAt(lon, lat) : 0; return L >= 11 ? 2000 : L >= 9 ? 8000 : L >= 7 ? 25000 : 60000; };
   // ---------- going places
-  // goTo({ lon, lat, alt_m | range_m, heading_deg, tilt_deg | pitch_deg, animate }): anywhere on earth; in the model box and
+  // goTo({ lon, lat, alt_m | range_m, heading_deg, tilt_deg | pitch_deg }, { animate, ms }): anywhere on earth; ms sets the
+  // flight's length (fly_to in api.js); in the model box and
   // below the hand-over the model takes the view
   G.goTo = async function (t, opt = {}) {
     await G.ensure(); await G.placesReady;
@@ -665,7 +666,7 @@ export async function createGlobe(H) {
     const minR = inBox(+t.lon, +t.lat, HANDOVER.marginM) ? 0 : (G.detailAt?.(+t.lon, +t.lat) ? 300 : floorAt(+t.lon, +t.lat)) / Math.max(0.1, Math.cos(tilt));
     const o = { lon: +t.lon, lat: +t.lat, h: 0, range: Math.max(range, minR), heading: (+t.heading_deg || 0) * D2R, tilt };
     if (!isFinite(o.lon) || !isFinite(o.lat) || Math.abs(o.lat) > 90) throw new Error('goTo needs lon and lat in WGS84 degrees');
-    await new Promise(ok => flyTo(o, { ms: opt.animate ? undefined : 0, view: t.view || null, done: ok, card: opt.card || null }));
+    await new Promise(ok => flyTo(o, { ms: opt.ms ?? (opt.animate ? undefined : 0), view: t.view || null, done: ok, card: opt.card || null }));
     return G.getView();
   };
   G.flyToEntry = (e, opt = {}) => {
