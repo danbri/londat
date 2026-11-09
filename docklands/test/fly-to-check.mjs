@@ -43,6 +43,18 @@ const s = await call('stop_flight'); const at = target(s.view);
 await page.waitForTimeout(1500); const after = target((await call('get_flight')).view);
 ok(s.status === 'stopped' && Math.abs(at.lon - after.lon) < 0.01 && Math.abs(at.lat - after.lat) < 0.01, 'stop_flight stops where the view is', `${s.status} ${JSON.stringify(at)} then ${JSON.stringify(after)}`);
 
+// sound: one click first (browser rule), then the tone follows altitude, higher at cruise than at the ends
+await page.mouse.click(500, 350); await page.waitForTimeout(300);
+await call('go_to', { lon: -0.02, lat: 51.5, alt_m: 2e5 });
+const r4 = await call('fly_to', { place: 'Madrid', duration_s: 30, sound: true });
+ok(r4.sound === 'on', 'fly_to sound: true starts the tone after a click', r4.sound);
+const hz = [];
+for (let i = 0; i < 120; i++) { await page.waitForTimeout(500); const f = await call('get_flight'); if (f.tone_hz) hz.push(f.tone_hz); if (f.status !== 'flying') break; }
+ok(hz.length >= 3 && Math.max(...hz) > hz[0] && Math.max(...hz) > hz[hz.length - 1], 'the tone rises at cruise and falls at arrival', hz.join(' '));
+const r5 = await call('fly_to', { place: 'Lisbon', duration_s: 5 });
+ok(r5.sound === 'off', 'sound is off by default', r5.sound);
+await call('stop_flight');
+
 // 3
 const g = await call('go_to', { lon: -74.0, lat: 40.7, alt_m: 200000, animate: true });
 ok(Math.abs(target(g).lon + 74) < 2, 'go_to animate on the globe', JSON.stringify(target(g)));

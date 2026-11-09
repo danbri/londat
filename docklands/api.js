@@ -23,7 +23,7 @@ import { sampleCityRoute } from './city-route.js';
 import { cityCameraConflict, canRestoreFlightControls } from './city-camera-gate.js';
 import { projectSubject, scoreComposition } from './cinematic-composition.js';
 
-export const API_VERSION = '1.11.0';   // The page tools also go to the frame that holds the page, by postMessage (frame-bridge.js).
+export const API_VERSION = '1.12.0';   // The page tools also go to the frame that holds the page, by postMessage (frame-bridge.js).
 // 1.9.1: stateful acceleration nudges and independent gaze; existing checked sweeps remain separate.
 // 1.4.0 (2026-10-23): the app is called moglob: getView().app and .quality, describeView().app, .quality and .memory (the memory governor's budget, use and tier; governor.js); memory()
 // 1.3.0 (2026-10-22): getView().weather and describeView().weather: the live weather of the place in view only (wind, cloud, METAR station, a water current only where the place has one; issue #12)
@@ -65,7 +65,7 @@ export function init(H) {
   // (answers with names in Latin script only while that is preferred: geo/script.js latinOut)
   const goTo = async (t, o = {}) => latinOut(await goTo0(t, o));
   async function goTo0(t, o = {}) {
-    stopAutopilot('interrupted'); stopSweep('interrupted'); clearSweepLine(); if (journey?.state.status === 'flying') { journeySerial++; journey.state.status = 'interrupted'; }
+    stopAutopilot('interrupted'); stopSweep('interrupted'); clearSweepLine(); if (journey?.state.status === 'flying') { journeySerial++; journey.state.status = 'interrupted'; soundEnd('interrupted'); }
     let found = null;
     if (t && typeof t === 'object' && t.view) t = String(t.view);
     if (t && typeof t === 'object' && t.place) { o = { ...t, ...o }; t = String(t.place); }
@@ -104,6 +104,36 @@ export function init(H) {
   // (globe.js flyTo: along the great circle, up and down in log range) with its length set here. It returns at once;
   // get_flight reads progress, stop_flight or any manual input stops it. Reduced motion: each leg is a jump.
   let journey = null, journeySerial = 0;
+  // Flight sound, for debugging (owner, 2026-11-09: "debug sounds? Pitch as altitude?"). Off unless fly_to has
+  // sound: true or the page has ?flightsound=1. A sine tone follows the eye's height on a log scale over four octaves
+  // (110 Hz at 30 m, 1760 Hz at 40,000 km); a blip marks each via stop, two rising blips the arrival, a low one an
+  // interruption. Browsers start audio only after a click or key in the page, and here a click also stops the flight,
+  // so click the page once before the flight; until then the summary says the sound waits.
+  const FS = { ctx: null, osc: null, gain: null };
+  const altHz = h => 110 * 16 ** clamp((Math.log10(Math.max(30, h)) - Math.log10(30)) / (Math.log10(4e7) - Math.log10(30)), 0, 1);
+  function soundOn() {
+    try { FS.ctx = FS.ctx || new (globalThis.AudioContext || globalThis.webkitAudioContext)(); } catch { return 'unavailable'; }
+    const c = FS.ctx; c.resume?.().catch(() => {}); soundOff();
+    FS.osc = c.createOscillator(); FS.gain = c.createGain(); FS.osc.type = 'sine'; FS.gain.gain.value = 0;
+    FS.osc.connect(FS.gain).connect(c.destination); FS.osc.start(); FS.gain.gain.setTargetAtTime(0.05, c.currentTime, 0.05);
+    return c.state === 'running' ? 'on' : 'waiting: click the page once, then fly again';
+  }
+  function soundAlt(h) {
+    if (!FS.osc || !isFinite(h)) return; const hz = altHz(h); FS.osc.frequency.setTargetAtTime(hz, FS.ctx.currentTime, 0.03);
+    if (journey) journey.state.tone_hz = Math.round(hz);   // get_flight shows it
+  }
+  function soundBlip(hz, at = 0) {
+    const c = FS.ctx; if (!c || c.state !== 'running') return;
+    const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + at; o.type = 'triangle'; o.frequency.value = hz;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.12, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + 0.16);
+  }
+  function soundOff() {
+    if (!FS.osc) return; const o = FS.osc, g = FS.gain; FS.osc = FS.gain = null;
+    g.gain.setTargetAtTime(0, FS.ctx.currentTime, 0.05); setTimeout(() => { try { o.stop(); o.disconnect(); g.disconnect(); } catch { /* gone */ } }, 400);
+  }
+  const ENDS = { arrived: () => { soundBlip(660); soundBlip(990, 0.15); }, interrupted: () => soundBlip(196), stopped: () => soundBlip(330) };
+  function soundEnd(status) { if (!FS.osc) return; (ENDS[status] || (() => {}))(); soundOff(); }
   const KM = (a, b) => { const r = Math.PI / 180, dl = (b.lat - a.lat) * r, dn = (b.lon - a.lon) * r,
     h = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dn / 2) ** 2; return 12742 * Math.asin(Math.min(1, Math.sqrt(h))); };
   const legSeconds = km => clamp(4 + 4 * Math.log10(1 + km), 4, 120);
@@ -121,7 +151,7 @@ export function init(H) {
   const journeySummary = () => ({ ...(journey ? journey.state : { status: 'idle' }), view: getView() });
   function stopJourney(reason = 'stopped') {
     if (!journey || journey.state.status !== 'flying') return journeySummary();
-    journeySerial++; journey.state.status = reason; GL()?.stopFlight(); return journeySummary();
+    journeySerial++; journey.state.status = reason; GL()?.stopFlight(); soundEnd(reason); return journeySummary();
   }
   function flyLeg(stop, ms, serial) {   // resolves 'arrived', 'interrupted' (manual input) or 'replaced'
     return new Promise((ok, no) => {
@@ -149,21 +179,25 @@ export function init(H) {
     const want = a.duration_s != null ? clamp(+a.duration_s, 2, 600) : null, sum = legs.reduce((n, l) => n + l.s, 0);
     for (const l of legs) l.s = reduced ? 0 : Math.round((want ? l.s * want / sum : l.s) * 10) / 10;
     const serial = ++journeySerial, total = legs.reduce((n, l) => n + l.s, 0);
-    journey = { state: { status: 'flying', leg: 0, legs: legs.map(({ name, lon, lat, km, s }) => ({ name, lon, lat, km, duration_s: s })), duration_s: total, started: new Date().toISOString(), progress: 0, reduced_motion: reduced } };
+    const wantSound = a.sound ?? /[?&]flightsound=1\b/.test(location.search), sound = wantSound ? soundOn() : 'off';
+    journey = { state: { status: 'flying', sound, leg: 0, legs: legs.map(({ name, lon, lat, km, s }) => ({ name, lon, lat, km, duration_s: s })), duration_s: total, started: new Date().toISOString(), progress: 0, reduced_motion: reduced } };
     // progress: seconds flown (legs done, and the current leg from the moment its flight starts) over the whole length
     const meter = () => {
       if (serial !== journeySerial || !journey || journey.state.status !== 'flying') return;
       const i = journey.state.leg, done = legs.slice(0, i).reduce((n, l) => n + l.s, 0), cur = journey.legStart ? Math.min(legs[i].s, (performance.now() - journey.legStart) / 1000) : 0;
-      journey.state.progress = total ? Math.round(Math.min(1, (done + cur) / total) * 100) / 100 : 0; requestAnimationFrame(meter); };
+      journey.state.progress = total ? Math.round(Math.min(1, (done + cur) / total) * 100) / 100 : 0;
+      if (FS.osc) soundAlt(GL().getView().eye.height_m);
+      requestAnimationFrame(meter); };
     requestAnimationFrame(meter);
     (async () => {
       for (let i = 0; i < stops.length; i++) {
         if (serial !== journeySerial) return;
         journey.state.leg = i;
         let r; try { r = await flyLeg(stops[i], legs[i].s * 1000, serial); } catch (e) { r = 'failed: ' + (e.message || e); }
-        if (r !== 'arrived') { if (serial === journeySerial) journey.state.status = r; return; }
+        if (r !== 'arrived') { if (serial === journeySerial) { journey.state.status = r; soundEnd(r); } return; }
+        if (i < stops.length - 1 && serial === journeySerial) soundBlip(880);
       }
-      if (serial === journeySerial) { journey.state.status = 'arrived'; journey.state.progress = 1; }
+      if (serial === journeySerial) { journey.state.status = 'arrived'; journey.state.progress = 1; soundEnd('arrived'); }
     })();
     return journeySummary();
   }
@@ -620,7 +654,7 @@ export function init(H) {
     { name: 'get_sweep', description: 'Current camera flight status and progress (0 to 1), destination and current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: sweepSummary },
     { name: 'stop_sweep', description: 'Stop the camera flight at its current position and remove its course preview.', readOnly: false, inputSchema: { type: 'object', properties: {} }, run: () => { const r = stopSweep(); clearSweepLine(); return r; } },
     { name: 'fly_to', description: 'Fly the view from where it is now to a place or WGS84 point, through optional via points, as a journey to watch rather than a jump: along the great circle, climbing and descending. Returns at once; the page animates by itself. get_flight reads progress; stop_flight or any manual input stops it. Default length grows with distance (about 5 s for 1 km, 20 s for London to Tokyo); duration_s sets the whole journey (2 to 600 s). Reduced-motion preference: each stop is a jump.', readOnly: false,
-      inputSchema: { type: 'object', properties: { place: P('string', 'Destination: a place or building name (find_places)'), lon: P('number', 'Destination longitude, WGS84 degrees'), lat: P('number', 'Destination latitude, WGS84 degrees'), alt_m: P('number', 'Eye height above the destination, metres (default by kind of place)'), heading_deg: P('number', 'View direction at the end, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle at the end, degrees'), duration_s: P('number', 'Length of the whole journey, seconds (2 to 600)'), via: { type: 'array', maxItems: 16, description: 'Stops on the way, in order', items: { type: 'object', properties: { place: P('string', 'A place name (find_places), or use lon and lat'), name: P('string', 'A label for this stop'), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), alt_m: P('number', 'Eye height above the stop, metres') } } } } }, run: a => flyTo(a) },
+      inputSchema: { type: 'object', properties: { place: P('string', 'Destination: a place or building name (find_places)'), lon: P('number', 'Destination longitude, WGS84 degrees'), lat: P('number', 'Destination latitude, WGS84 degrees'), alt_m: P('number', 'Eye height above the destination, metres (default by kind of place)'), heading_deg: P('number', 'View direction at the end, degrees clockwise from true north'), pitch_deg: P('number', 'Look-down angle at the end, degrees'), duration_s: P('number', 'Length of the whole journey, seconds (2 to 600)'), sound: P('boolean', 'Debug sound: a tone whose pitch follows altitude (110 Hz at 30 m to 1760 Hz at 40,000 km), a blip at each stop. Needs one click on the page first (browser rule). Default off, or on with ?flightsound=1'), via: { type: 'array', maxItems: 16, description: 'Stops on the way, in order', items: { type: 'object', properties: { place: P('string', 'A place name (find_places), or use lon and lat'), name: P('string', 'A label for this stop'), lon: P('number', 'Longitude, WGS84 degrees'), lat: P('number', 'Latitude, WGS84 degrees'), alt_m: P('number', 'Eye height above the stop, metres') } } } } }, run: a => flyTo(a) },
     { name: 'get_flight', description: 'The fly_to journey: status (idle, flying, arrived, interrupted, stopped, replaced), current leg, legs with distance and seconds, progress (0 to 1), and the current view.', readOnly: true, inputSchema: { type: 'object', properties: {} }, run: () => journeySummary() },
     { name: 'stop_flight', description: 'Stop the fly_to journey where the view is now.', readOnly: false, inputSchema: { type: 'object', properties: {} }, run: () => stopJourney('stopped') },
     { name: 'go_to', description: 'Move the 3D view to a place (a name such as "Greenland Dock", "One Canada Square", "Tokyo" or "France"), a named view (list_views), or a WGS84 point anywhere on Earth (outside the Docklands model or above 36 km the globe shows it). Returns the new view.', readOnly: false,
