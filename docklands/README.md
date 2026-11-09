@@ -459,6 +459,11 @@ Tokyo). It answers at once and the page flies by itself along the great circle, 
 reads progress, `stop_flight` or any manual input stops it. `go_to` takes `animate: true` for a short flight instead of a
 jump. Check: `docklands/test/fly-to-check.mjs`.
 
+Flight sound, for debugging (API 1.12.0): `fly_to` with `sound: true`, or the page with `?flightsound=1`, plays a quiet
+tone whose pitch follows the eye's height on a log scale (110 Hz at 30 m to 1760 Hz at 40,000 km, four octaves), a blip at
+each via stop, two rising blips on arrival and a low one when the flight is interrupted. `get_flight` shows `tone_hz`.
+Browsers start audio only after a click or key in the page, and a click also stops a flight, so click once before it.
+
 The clock and drawing style stay as they are, including for photo-view destinations. Escape, manual map input,
 another goTo, or hiding the page stops playback. Reduced-motion preferences skip animation. A plan is refused if
 the camera has moved since planning. Courses currently stay within the detailed model, not the globe; building
