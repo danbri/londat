@@ -193,6 +193,26 @@ and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib
   README lists what the port lacks here: the warm horizon round a low sun, brown turbid water, choppy water without mirror
   reflections, and the glare round the sun.
 
+## Rendering moglob at a photo's camera (2026-11-23)
+
+- `tools/view-mcp/render.mjs` renders the old WebGL 1 page (`cwplans/docklands/`), not moglob. For moglob, open
+  `docklands/?t=<time>&labels=0&webgl&animate=0`, wait for `__docklands3.ready`, then
+  `__docklands3.setCam({ ...eyeView(eye, heading, pitch, hfov), roll })` with `eyeView` imported from `/docklands/views.js`;
+  wait about 25 s; screenshot. About 8 minutes a view in SwiftShader; a background command stops at 30 minutes, so run at
+  most three views a command.
+- Read the page's inputs after the render (`WU.windSpeed`, `WU.windDir`, `sky.state.weather`): the weather sources fail in
+  the container (Open-Meteo's daily limit after many loads; the live-cache METAR fetch aborts at 8 s while the page is
+  busy) and the page falls back to 4 m/s from 240 without an error. Set the airport report by hand with `?wind=m/s,deg`.
+- With the EXIF: eye at the GPS fix, focal = f35 / 43.27 x the image diagonal in pixels, fit only heading, pitch and roll.
+  The phone compass on a boat was 14 to 120 deg wrong; do not use it there.
+- Tune a colour live: one page load, change the exported constant or uniform from Playwright, `applyLight()` or
+  `frameNow()`, screenshot, measure, repeat (night sky: three rounds, 2026-11-23). The tone mapping shifts colours (AgX made
+  a dark blue more saturated and removed its red): measure the output, never assume input equals output.
+- HDR from the HEIC: the gain map (`urn:com:apple:photo:2020:aux:hdrgainmap`) and Apple's headroom (maker-note tags 33 and
+  48) give brightness above the SDR white: HDR = SDR x (1 + (headroom - 1) x gain). The sky mask
+  (`...:aux:semanticskymatte`) selects sky pixels exactly. `pillow-heif` reads both (8-bit); the linear thumbnail and the
+  style delta map are 10-bit and it does not read them.
+
 ## Ground versus air
 
 Ground (a pier, a promenade): the eye is known to a few metres from where the photo was taken and its height from the

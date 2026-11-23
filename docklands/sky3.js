@@ -34,6 +34,8 @@ export const dirOf = (az, alt) => { const a = az * Math.PI / 180, e = alt * Math
 function horizon(body, t) { const d = new Date(t), q = AE.Equator(body, d, OBS, true, true), h = AE.Horizon(d, OBS, q.ra, q.dec, 'normal'), g = AE.Horizon(d, OBS, q.ra, q.dec);
   return { az: h.azimuth, alt: h.altitude, altGeo: g.altitude, dist: q.dist }; }
 const sstep = THREE.MathUtils.smoothstep, clamp01 = v => Math.max(0, Math.min(1, v));
+// the night dome's colours at full strength (sRGB 0..1): tuned live on the Greenland Dock photo of 2026-11-23 17:42 GMT
+export const NIGHT_ZEN = [0.035, 0.055, 0.10], NIGHT_HOR = [0.10, 0.14, 0.21];
 // vertical exaggeration (main.js setVz): the view matrix scales y by vz, so a dome round the eye would show the sun, the
 // horizon glow and the stars too high (a direction at altitude a at atan(vz tan a)). The WebGL page draws its sky with the
 // view's rotation only (sky.js draw: cr, cu, cf from VIEW), so the sky is never exaggerated. Here a mesh round the eye is
@@ -108,6 +110,21 @@ export class Sky3 {
     this.fogU = { sigma: uniform(0), color: uniform(new THREE.Color(0xc4ccd6)) };
     scene.fogNode = fog(this.fogU.color, float(1).sub(exp(positionView.z.mul(this.fogU.sigma))).min(0.85));
     this.makeMoon();
+    this.makeNightDome();
+  }
+  // the night sky: a dome with a colour at the zenith and at the horizon, behind everything while the day sky is hidden. It
+  // brightens and turns blue with the moon (altitude x lit fraction) and with the twilight (the sun from -18 to -6 deg),
+  // tuned on the owner's photo of Greenland Dock at 17:42 GMT on 2026-11-23 (moon 98.7% lit, 26 deg up; sun -15 deg;
+  // data/images/contrib/thames-2026-11-23/: sRGB 3 9 21 at 20 to 28 deg up, 19 28 46 at the horizon). Until then the night
+  // background was a flat near-black whatever the moon.
+  makeNightDome() {
+    const U = this.nightU = { zen: uniform(new THREE.Color(0, 0, 0)), hor: uniform(new THREE.Color(0, 0, 0)) };
+    const m = new THREE.MeshBasicNodeMaterial({ side: THREE.BackSide, depthTest: false, depthWrite: false, fog: false });
+    const dir = normalize(positionWorld.sub(cameraPosition));
+    m.colorNode = vec4(mix(vec3(U.hor), vec3(U.zen), smoothstep(0, 0.45, max(dir.y, 0)).pow(0.7)), 1);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), m); mesh.scale.setScalar(9000); mesh.renderOrder = -11; mesh.frustumCulled = false;
+    mesh.onBeforeRender = (r, sc, cam) => { mesh.position.copy(cam.position); };
+    vzUndistort(m, this.vzInv); mesh.visible = false; mesh.name = 'night-sky'; this.nightDome = mesh; this.scene.add(mesh);
   }
   // the moon: a disc facing the eye at MOON_R from the camera (so the mirror pass sees it too), added to the sky (the dark
   // side adds nothing but earthshine by night), lit on the side towards the sun (a sphere's normal against the sun direction in the disc's frame: the phase and the bright limb follow); earthshine
@@ -206,6 +223,12 @@ export class Sky3 {
     const night = new THREE.Color(0x1c1a1c).lerp(new THREE.Color(0x3a2f27), cover), dayc = new THREE.Color(0xc4ccd6).lerp(new THREE.Color(0x9ea3a8), cover);
     this.fogU.color.value.copy(night).lerp(dayc, day);
     this.scene.background = day < 0.02 ? new THREE.Color(0x07080c).lerp(new THREE.Color(0x2a231e), 0.85 * cover) : this.cutDark ? new THREE.Color(0x0f1215) : null;
+    // the night dome (makeNightDome): moonlight and twilight, dimmed by cloud; colours in sRGB, converted by THREE.Color
+    { const moon = M.alt > 0 ? sstep(M.alt, 0, 25) * ph : 0, tw = sstep(B.S.alt, -18, -6), k = Math.max(moon, tw) * (1 - 0.7 * cover), on = day < 0.02 && !this.cutDark && k > 0.01;
+      this.nightDome.visible = on;
+      if (on) { const base = new THREE.Color(0x07080c).lerp(new THREE.Color(0x2a231e), 0.85 * cover);
+        this.nightU.zen.value.copy(base).lerp(new THREE.Color().setRGB(...NIGHT_ZEN, THREE.SRGBColorSpace), k);
+        this.nightU.hor.value.copy(base).lerp(new THREE.Color().setRGB(...NIGHT_HOR, THREE.SRGBColorSpace), k); } }
     if (this.state) this.state.weather = w ? { cover, low, mid, high, visibility: vis, sunTransmission: +tr.toFixed(3) } : null;
   }
 }

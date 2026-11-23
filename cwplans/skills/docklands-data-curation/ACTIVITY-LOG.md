@@ -3782,3 +3782,11 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   glass, no moon glitter, orange-brown river walls, no bridge piers. No renderer change in this entry.
 - `tools/view-mcp/render.mjs` renders the old WebGL 1 page, not moglob; the moglob renders here used a script that sets the
   camera through `views.js eyeView` and `__docklands3.setCam` (about 8 minutes a view in SwiftShader).
+- Second pass with the HEIC originals (22:30 to 23:40 GMT): cameras at the GPS fixes with EXIF focal lengths (rms 7 to 13
+  px); renders with the airport wind set by `?wind=` because the page's weather sources failed in the container (Open-Meteo
+  daily limit; live-cache METAR fetch aborted at 8 s; METAR history ends 2026-11-22) and it fell back silently to 4 m/s
+  from 240. HDR ratios from the gain maps (glint 7.7x the sky, moon glitter sparkles to 78x). Changes: flood walls drawn
+  as stone with a tide band (was highlight orange); a night sky dome lit by moon and twilight (was near-black), tuned on
+  IMG_2587 to within about 2 to 7 sRGB levels. New fault F56 (Baltic Quay 14 m low). Open: facades by building type, sunlit
+  fronts, glass glints, moon glitter, shaded faces too bright, bridge piers, simulated boats at piers hiding the view,
+  the silent weather fallback.

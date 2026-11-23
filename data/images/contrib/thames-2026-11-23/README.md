@@ -46,6 +46,68 @@ IMG_2337 shows HMS Belfast and Tower Bridge against the light. 2347 and 2354: th
 gain map (`urn:com:apple:photo:2020:aux:hdrgainmap`), a sky mask (`...:aux:semanticskymatte`), a linear thumbnail and a
 style delta map (`tag:apple.com,2023:photo:aux:...`); no depth or disparity map.
 
+### Second pass with the originals (2026-11-23, 22:30 to 23:40 GMT)
+
+Photos decoded from the HEICs (Display P3 to sRGB, 2016 px on the long side). Cameras with the eye at the GPS fix (height
+from the tide: 4.2 m OD on the boat; 5.5 m OD on the dock quay) and the focal length from the EXIF 35 mm equivalent
+(f = f35 / 43.27 x the image diagonal in pixels); only heading, pitch and roll fitted:
+
+| IMG | focal (px on 2016) | heading (grid) | pitch | roll | evidence | rms |
+|---|---|---|---|---|---|---|
+| 2337 | 9784 (168 mm) | 103.69 | 2.87 | 0 (fixed) | the Tower Bridge south tower peak (model 39872, 68 m OD) | exact (1 point) |
+| 2340 | 14210 (244 mm) | 76.73 | 1.58 | 0.95 | the four White Tower turret tops | 11.0 px |
+| 2347 | 1398 (24 mm) | 27.35 | 3.37 | 0.56 | 22 Bishopsgate, 20 Fenchurch Street, the Scalpel, 4 waterline pixels | 13.4 px |
+| 2354 | 6639 (114 mm) | about 29 | about 3.0 | 0 | the pier's west corner and waterline, by hand | not fitted |
+| 2587 | 2097 (36 mm) | 97.09 | 7.07 | -0.18 | the moon at the EXIF time, 4 dock waterline pixels | 7.3 px |
+
+In 2587 the top of Baltic Quay, held out, misses by 100 px: the photo puts it about 47 m OD at 332 m, the model has 32.6 m
+(fault F56 in the curation skill).
+
+Render inputs: in this container the page's weather sources failed and it used its stated default wind (4 m/s from 240)
+silently: Open-Meteo answered "Daily API request limit exceeded" (the day's many test loads from one address), and the
+live-cache METAR request was aborted by its 8 s limit while the software-rendered page loaded (curl fetches it in 0.45 s);
+`metar-history.json` ends on 2026-11-22. The renders therefore set the airport reports by hand: `?wind=1.5,60` (EGLC
+230920Z 06003KT) and `?wind=3.1,110` (231750Z 11006KT). Cloud: none (METAR "NCD"); the photos show thin cirrus.
+
+HDR measurements (Apple's published headroom rule from maker-note tags 33 and 48: 5.1x for 2347, 4.8x for 2587; HDR
+linear = SDR linear x (1 + (headroom - 1) x gain map); ratios to the median of the sky, found with the HEIC's sky mask):
+
+| photo | region | median | brightest 1% |
+|---|---|---|---|
+| 2347 | sun glint on the glass front | 7.7 | 9.7 |
+| 2347 | glitter path on the river | 0.8 | 9.6 |
+| 2347 | water beside the path | 0.39 | 1.8 |
+| 2347 | sunlit front of Old Billingsgate | 1.95 | 4.9 |
+| 2587 | moon | 150 | over 800 (clipped) |
+| 2587 | moon glitter on the dock | 1.3 | 78 |
+| 2587 | lamp and window streaks (far right) | 12 | 250 |
+| 2587 | dark water | 0.47 | 3.3 |
+
+What the renders at the right cameras show (`compare-IMG_NNNN-photo-moglob.jpg`, photo left):
+(`compare-IMG_2354-photo-moglob.jpg`: photo, then moglob with the old orange walls, then with the new stone walls; `compare-IMG_2587-photo-moglob.jpg`: photo, then moglob with the new night sky.)
+
+- 2337 Tower Bridge: the tower is in the right place; it has the office facade, and no high walkways or chains;
+  HMS Belfast's sides that face the camera are in shade in the photo (the sun 45 deg to the right) and light grey in the
+  render.
+- 2340 Tower of London: the turrets are in the right place; office facades on the White Tower and its neighbours; a
+  simulated river bus at Tower Millennium Pier (the pier layer draws one while the TfL timetable has a call; the photo
+  shows none) fills the foreground.
+- 2347 City: no glint on any glass front and so no second glitter path; grey, not sunlit, fronts; the building reflections
+  bent too much by the chop.
+- 2354 London Bridge: the river wall was a large salmon-orange slab (the flood wall layer's highlight colour) and coloured
+  the water orange; the bridge piers are missing.
+- 2587 Greenland Dock: the night sky was black (sRGB 1 2 3) against the photo's deep blue (3 9 21 high, 19 28 46 at the
+  horizon); no moon glitter; constellation lines over the sky.
+
+Changes made the same evening:
+
+1. Flood walls (`docklands/layers/walls.js`): stone (sRGB 0.70 0.67 0.60) with a dark band (0.30 0.31 0.24) below 3.2 m OD,
+   in place of the highlight orange; the legend says so. The layer, its switch and its data are unchanged.
+2. Night sky (`docklands/sky3.js`, `makeNightDome`): a dome with a zenith and a horizon colour while the day sky is hidden,
+   brightened by the moon (altitude x lit fraction) and by twilight (sun -18 to -6 deg), dimmed by cloud. Tuned live on
+   2587 in three rounds; chosen: sRGB 2 8 22 at 20 to 28 deg up (photo 3 9 21), 5 18 37 at 10 to 15 deg (7 16 31), 12 29 50
+   at the horizon (19 28 46).
+
 My estimates made before the zip, against the EXIF (the sections below are those estimates, kept as the record):
 
 - Times of 01 to 03, "about 09:30 to 09:50": right (09:38 to 09:40).
@@ -116,13 +178,13 @@ GMT +-4 min; the owner sent the photos at 18:08.
   the sky deep blue, lighter at the horizon.
 - moglob: no moon glitter; few streaks on the near water; constellation lines drawn over the sky (a layer that is on).
 
-## Gaps found, for the next steps
+## Gaps found, for the next steps (status after the second pass)
 
 1. Building material by type: historic stone buildings (castle, church, Victorian market) take the office facade.
 2. Sunlit fronts: low winter sun should warm and brighten the faces it lights (Tower, Billingsgate, London Bridge).
 3. Specular glass: sun glints on glass fronts and the glitter path they throw.
-4. Moon glitter on water at night.
-5. River walls and timber jetties: an orange-brown band in the model.
+4. Moon glitter on water at night. The night sky colour itself: done, 2026-11-23.
+5. River walls: done (stone with a tide band), 2026-11-23. Timber jetties: open.
 6. Bridge piers missing (London Bridge).
 7. Cameras: 03 and 04 need better solves before their numbers are used.
 8. Inputs of the day renders: the page used its stated default wind (4 m/s from 238 deg) and no weather for 01 to 03

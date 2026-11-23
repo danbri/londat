@@ -21,7 +21,7 @@ const KEY = [['#b9bec4', 'Building, LiDAR height (Map look)'], ['#e0b25a', 'Buil
   ['#b05cff', 'Basement (storeys × height)'], ['#e7d6ff', 'Indoor corridor / steps'], ['#d8c49a', 'Outdoor path or steps with a level (decks, bridges)'],
   ['#ff5fa2', 'Shops, rooms, points with a level'], ['#ff8a3d', 'Platform'], ['#c9ced6', 'Jubilee'], ['#9b6cff', 'Elizabeth line'], ['#2cc3b5', 'DLR'],
   ['#ff8a3d', 'Other Overground / rail'], ['#e6e08a', 'Road and foot tunnels'], ['#f9c75a', 'Published slab levels (Crossrail Place)'], ['#3f8fc0', 'Water'],
-  ['#e07a3f', 'Tidal flood walls to their crest level (EA)'], ['#2a4a6b', 'Thames riverbed, UKHO soundings in m OD']];
+  ['#b3ab99', 'Tidal flood walls to their crest level (EA): stone, dark band below 3.2 m OD'], ['#2a4a6b', 'Thames riverbed, UKHO soundings in m OD']];
 
 export default {
   id: 'model', label: null, on: true, menu: 'look', reveal: false,
