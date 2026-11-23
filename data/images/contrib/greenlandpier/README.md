@@ -1,4 +1,4 @@
-# Contributed photo: Greenland Pier, low November sun, 2026-11-23
+# Contributed photo: Greenland (Surrey Quays) Pier, low November sun, 2026-11-23
 
 One photograph taken by danbri (the project owner) at about 09:13 GMT on 23 November 2026 on an iPhone, given to the
 project under **CC0 1.0** (https://creativecommons.org/publicdomain/zero/1.0/). The owner, 2026-11-23 09:16 GMT: "moglob
@@ -14,6 +14,11 @@ The file is the JPEG as delivered, renamed only. It has no EXIF time, GPS, make 
 size only) and an embedded **Display P3** ICC profile: convert to sRGB before you measure a colour (fault F51 in the
 curation skill). The time is from the owner's words: the photo arrived at 09:16:37 GMT, "approx 3 mins" after it was taken.
 
+Place: the owner, 2026-11-23: "it was Greenland Surrey Quays clipper pier" (the Thames Clippers / Uber Boat pier
+"Greenland (Surrey Quays)", OSM and `area.js` place "Greenland Pier"). The owner asked for the embedded location, but the
+file as received has none: the EXIF GPS directory is absent and the Photoshop block holds only an empty IPTC record; the
+upload path removed it. The camera solve below found the same pier from the photo alone, before the owner named it.
+
 People and vehicles: none visible. No number plate. Optical artefacts: a green lens flare spot at (350, 1290) and an orange
 blur in the lower-left corner (a finger or the case at the lens edge); do not read them as objects.
 
@@ -24,7 +29,7 @@ equivalent, as for the Greenland Dock photo). Eye height fixed at 3.9 m OD (the 
 gauge at Silvertown read 1.31 m OD at 09:00 GMT and rising about 0.3 m per 15 minutes, so water about 1.3 to 1.5 m OD, deck
 about 1 m above water, eye 1.5 m above deck). Free: x, z, heading, pitch, roll.
 
-- Eye (-824.2, 3.9, 1157.8) model metres: -0.03181, 51.49470, on the Greenland Pier pontoon 6 m from the mapped pier point.
+- Eye (-824.2, 3.9, 1157.8) model metres: -0.03181, 51.49470, on the Greenland (Surrey Quays) Pier pontoon, 6 m from the mapped pier point (confirmed by the owner).
   Sigma x 3.0 m, z 1.2 m.
 - Heading 119.82 deg grid (121.4 true; sigma 0.14), pitch 3.40 deg (0.06), roll -3.80 deg (0.23: the horizon falls to the
   left; the verticals of Riverview Court lean the same way), horizontal field 71.6 deg.

@@ -153,6 +153,9 @@ iPhone main lens, 2576 x 1932, Display P3), looking east-south-east across Limeh
 and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib/greenlandpier/README.md . Port view
 `?view=greenlandpier` (Menu > Views > "Greenland Pier, morning"); only the Three.js port has it.
 
+- **Owner's photos arrive without location.** The owner asked to "use embedded geo" on this photo: the JPEG as received
+  had no GPS and no time (the upload path removes them). Solve the place from the photo, then ask the owner; here the solve
+  and the owner's "Greenland Surrey Quays clipper pier" agreed.
 - **The sun in the frame gives heading and pitch at once** when the time is known to a minute: put a point 20 km out along
   the computed direction (add the curvature drop d^2 / 2R x 0.87 back to its height, because `project` takes it off) and
   refit two or three times as the eye moves. With f fixed at 1785 px it gave heading 120 and pitch 3 before any building
