@@ -44,6 +44,10 @@ working (the owner's words)".
 - Use subagents for large tasks (2026-10-07).
 - Say when the context is too full and a new session is cheaper. Write what the next session needs into the skills and
   the activity log (`cwplans/skills/docklands-data-curation/ACTIVITY-LOG.md`), not only into the chat (2026-10-07).
+- Photos with their metadata first (2026-11-23: "In future when given Apple-damaged uploads ask whether you can get them
+  zipped before spending ages doing pointless analysis."): a photo sent as a chat image arrives with no EXIF (no time, GPS,
+  compass, lens). Check its EXIF first; if it is empty, ask the owner for a zip of the originals before any camera solve or
+  time-from-sun work. Details: the `photo-view-reconstruction` skill.
 - Ship at once (2026-10-03: "shipping immediately to live site is fine and urgent. Don't batch things up, as live site
   is my only way to see progress."): push each working change to `main` when its checks pass; the Pages workflow
   deploys it in a few minutes. Then confirm that the live file matches the commit.

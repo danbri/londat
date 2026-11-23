@@ -25,6 +25,39 @@ the same file for both, with no EXIF time, GPS, camera or lens (orientation, res
 People and vehicles: small figures on Tower Millennium Pier (01) and on the London Bridge walkway and parapet (03), none
 recognisable at this size; parked cars far away in 04, no readable plate.
 
+## The originals (zip, 2026-11-23 about 19:00 GMT) and their EXIF
+
+The owner then sent `Incoming.zip`: the five HEIC originals (each also as a byte-identical copy without the extension),
+including IMG_2337, not sent before. Committed unchanged as `2026-11-23-th-IMG_NNNN-original.heic`. Owner, same message:
+"In future when given Apple-damaged uploads ask whether you can get them zipped before spending ages doing pointless
+analysis." (now in CLAUDE.md and the `photo-view-reconstruction` skill).
+
+| IMG | time (UTC) | lens, 35 mm equivalent | GPS (error) | model x, z | compass (magnetic) | speed | SHA-256 of the HEIC |
+|---|---|---|---|---|---|---|---|
+| 2337 | 09:37:24.061 | 16.891 mm f/2.8, 168 mm | 51.506947, -0.084381 (3.5 m) | -4509, -107 | 96.0 | 0.28 m/s | 63c819942bc2c6b4d6b79594a68e4ec877b7def07ca0e080d603e5ae1e87c79b |
+| 2340 | 09:38:08.485 | 16.891 mm f/2.8, 244 mm | 51.507031, -0.084425 (3.1 m) | -4512, -117 | 68.9 | 0 | fe77643dd36222dca78a6031e8960f91be5d153f2262d45e89fcaa6c006418b0 |
+| 2347 | 09:39:04.918 | 6.765 mm f/1.78, 24 mm | 51.507428, -0.085908 (3.3 m) | -4616, -158 | 295.9 | 6.2 m/s | 3cae27396fe3fb68d421aad458ff3bad9b97ffc8abc941b99fea3f6ae37fc3d8 |
+| 2354 | 09:39:32.717 | 16.891 mm f/2.8, 114 mm | 51.507903, -0.088397 (3.9 m) | -4790, -207 | 279.6 | 6.1 m/s | 40216c4d8007964470172955811dff81b6b7a4324da10feaecbcf02bc2eff29a |
+| 2587 | 17:41:52.400 | 6.765 mm f/1.78, 36 mm | 51.494897, -0.041953 (4.7 m) | -1529, 1155 | 106.1 | 0 | da4263244d31c96b153121d500e80a8e7b1fae260db1a3d7081b6e9eccb44a01 |
+
+All iPhone 17 Pro, iOS 26.7.3. IMG_2337 and 2340: the boat stopped (speed 0) at London Bridge City Pier, by HMS Belfast;
+IMG_2337 shows HMS Belfast and Tower Bridge against the light. 2347 and 2354: the boat under way westward at about 6 m/s
+(170 m in 28 s), 2354 about 50 m west of London Bridge. Each HEIC holds, besides the image, Apple auxiliary images: an HDR
+gain map (`urn:com:apple:photo:2020:aux:hdrgainmap`), a sky mask (`...:aux:semanticskymatte`), a linear thumbnail and a
+style delta map (`tag:apple.com,2023:photo:aux:...`); no depth or disparity map.
+
+My estimates made before the zip, against the EXIF (the sections below are those estimates, kept as the record):
+
+- Times of 01 to 03, "about 09:30 to 09:50": right (09:38 to 09:40).
+- 04 from the moon, "17:52 +-4 min": wrong by 10 minutes (17:41:52); the eye was 102 m from the GPS fix, which the render
+  showed.
+- 01 (Tower) eye 178 m east of the GPS fix, focal 10,400 px against 14,200 px for the 244 mm lens: distance and focal
+  length traded, as the skill warns for features in one depth band.
+- 02 (City) eye 28 m from the GPS fix: right within the error.
+- 03 (London Bridge), "south-east of the pier, looking north-west": wrong side; the boat was west of the bridge.
+- The phone's compass on the moving boat (295.9 and 279.6 magnetic for views that face north and east) is not usable; at
+  the dock (106.1) it agreed with the moon solve (106.3 grid).
+
 ## Times
 
 No EXIF. Photos 01 to 03 come after IMG_2323 (09:10:57 GMT, `../greenlandpier/`) and were taken from a westbound river bus

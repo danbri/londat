@@ -157,6 +157,11 @@ and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib
   panel said 09:10. The 3 minutes are 0.66 deg of sun azimuth: the fit hid them by moving the eye 6 m, and the far towers
   (1.2 to 1.8 km) failed as hold-outs by 18 and 23 px. With 09:10 they passed (0.2 and 6.7 px) and the eye came to 1.6 m
   from the pier point. A sun in the frame needs the time to the minute; ask for the Photos "Info" panel.
+- **Ask for the zip before the analysis** (owner, 2026-11-23: "In future when given Apple-damaged uploads ask whether you
+  can get them zipped before spending ages doing pointless analysis."). Cost of not asking: on 2026-11-23 four photos sent
+  as images (set thames-2026-11-23) took about an hour of camera solves, a glint-as-clock attempt and moon-time searches
+  that the EXIF would have answered at once; one solve (the night photo's eye) was wrong. First step for any new photo:
+  read its EXIF; if there is none, ask for a zip and wait.
 - **A zip keeps the EXIF; a chat image does not.** A photo sent as an image in the chat, also "as a file", arrives as a
   2576 x 1932 JPEG with no time, GPS or camera (every contributed photo before 2026-11-23 arrived that way: none of the 55
   JPEGs in `data/images/contrib/` and `docklands/reference/` has EXIF). A zip of the original HEIC keeps all of it: time to
