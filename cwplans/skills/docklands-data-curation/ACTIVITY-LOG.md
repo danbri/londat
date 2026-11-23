@@ -3770,3 +3770,15 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   tidal water from the current (SU.chop, tuned: water texture 0.081 against the photo's 0.083), the chop breaks the shore's
   mirror image, berth sides of pontoons have mooring posts instead of lamp posts. The tone test loads the recorded weather
   for greenlandpier and prints a texture column. Open: cirrus drawn as a grey layer; glitter too smooth.
+
+## 2026-11-23 — contributed photos: the Thames by river bus and Greenland Dock at night (set thames-2026-11-23)
+
+- Four CC0 photos (IMG_2340, 2347, 2354, 2587), each sent twice; each pair byte-identical (chat upload, no EXIF). Stored
+  once: `data/images/contrib/thames-2026-11-23/` with README and photo/render comparisons.
+- Cameras: Tower of London (river, 7x zoom, turret tops, rms 10 px) and the City (river, 22 Bishopsgate, 20 Fenchurch
+  Street, the Scalpel, rms 9.8 px) solved; London Bridge estimated; Greenland Dock at night timed from the moon (17:52 GMT
+  +-4 min) but its eye is wrong.
+- Gaps found (README "Gaps found"): office facades on historic stone buildings, no warm sunlit fronts, no sun glints on
+  glass, no moon glitter, orange-brown river walls, no bridge piers. No renderer change in this entry.
+- `tools/view-mcp/render.mjs` renders the old WebGL 1 page, not moglob; the moglob renders here used a script that sets the
+  camera through `views.js eyeView` and `__docklands3.setCam` (about 8 minutes a view in SwiftShader).
