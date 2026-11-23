@@ -3731,3 +3731,21 @@ and generator (`find-kml.mjs`), the station-models and construction notes. Kept:
 and the tools that test it. The old page now shows a notice with a link to moglob (same query and hash), hidden for
 `navigator.webdriver` and `?capture`. Checked in Chrome headless: the notice shows and links correctly, it is hidden
 for automation, and moglob opens an old `#v=1` share link with no page errors. `npm test` 198 pass, 0 fail.
+
+## 2026-11-23 — contributed photo: Greenland Pier, low November sun
+
+- The owner gave a CC0 photo taken about 09:13 GMT from the Greenland Pier pontoon, looking east-south-east over Limehouse
+  Reach into the sun (10.8 deg up): `data/images/contrib/greenlandpier/` (README with licence words, SHA-256, camera,
+  identifications, tones). No people or number plates.
+- Camera solved with `tools/view-mcp`: eye -0.03181, 51.49470 at 3.9 m OD (pontoon; tide 1.3 m OD rising at Silvertown),
+  heading 119.8 grid, pitch 3.4, roll -3.8, focal fixed 1785 px; rms 5.3 px over 19 observations (sun, Orion Point, 11
+  waterline pixels, 4 building centres). New port view `?view=greenlandpier`:
+  https://danbri.github.io/londat/docklands/?view=greenlandpier&t=2026-11-23T09:13
+- `docklands/test/photo-tones.mjs` takes `--set greenlandpier` (no gate; ratios to the sun-side sky) and `$PW_CHROME`.
+- Findings (open): the render lacks the warm horizon round a low sun, brown turbid water, choppy water without mirror
+  reflections, the sun's glare, and silhouetted facades against the light (README "Measurements"). Not in the model: a
+  block at the left edge (bearing 86 deg true) and two tower cranes (92.6 and 144.9 deg true); Orion Point is in
+  scaffolding.
+- Open: in this cloud container (Chromium at /opt/pw-browsers/chromium, Playwright from `npm install`) the default
+  `photo-tones.mjs` run (`?view=greenlanddock`) times out after 240 s waiting for `__docklands3.ready`, with the new file
+  and with the file before this change; `--set greenlandpier` finishes in about 3 minutes.

@@ -106,7 +106,8 @@ The aircraft photo is CC0 1.0 with the owner (danbri) as photographer and copyri
 record me as owner" (2026-10-05 12:23 UTC; `docklands/reference/plane-2026-10/README.md`, glitchcan-minigam commit
 2f2772fb). The day
 photos from Greenland Pier ("I am copyright holder but will CC0 them.", 2026-10-04; `docklands/reference/day-2026-10-04/`)
-and the sets cwlibrary and cwdock (londat `data/images/contrib/`) are CC0 too. The night photos of 2026-10-03
+and the sets cwlibrary and cwdock (londat `data/images/contrib/`) are CC0 too, and so are greenlanddock (2026-10-11) and greenlandpier ("occasional cczero photos I contribute ... here is
+a new contrib photo I hereby donate", 2026-11-23). The night photos of 2026-10-03
 (`docklands/reference/night-2026-10-03/`) are not: the owner's copyright, kept with permission as reference ("Keep my
 photos", 2026-10-04). A new photo: ask for the licence and the creator before you commit it, and write both, with the
 owner's words and date, in its README.
@@ -144,6 +145,30 @@ measurements: https://github.com/danbri/londat/blob/main/data/images/contrib/gre
   against 0.58 in the photo; after (docklands-sky, "Sky calibration") about 0.56.
 - **What the model lacks here:** the near 20 m of water under the quay is ground (F54 in the curation skill); the big
   plane tree at the left is not in the tree data at that place; the boats at the east end are not drawn.
+
+## Greenland Pier, low sun (2026-11-23): the sun as a landmark
+
+The owner's CC0 photo `data/images/contrib/greenlandpier/2026-11-23-gp-01-thames-east-morning-sun.jpg` (about 09:13 GMT,
+iPhone main lens, 2576 x 1932, Display P3), looking east-south-east across Limehouse Reach into a sun 10.8 deg up. Camera
+and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib/greenlandpier/README.md . Port view
+`?view=greenlandpier` (Menu > Views > "Greenland Pier, morning"); only the Three.js port has it.
+
+- **The sun in the frame gives heading and pitch at once** when the time is known to a minute: put a point 20 km out along
+  the computed direction (add the curvature drop d^2 / 2R x 0.87 back to its height, because `project` takes it off) and
+  refit two or three times as the eye moves. With f fixed at 1785 px it gave heading 120 and pitch 3 before any building
+  was named.
+- **Find the eye from one sure tower before you trust the rest.** Orion Point (the only cylinder on the Isle of Dogs west
+  shore, `area.js` 199, not in `towers.json`) on the sun's line gave the bearing line through Greenland Pier.
+- **Two solutions with the same rms on a waterline**: the shoreline fixes only the vertical, so the eye can slide along the
+  shore. A fit without Riverview Court put the eye 30 m north-east of the pier, in the river, at rms 1.6 px, and missed
+  Riverview Court by 131 px when that was held out. The fit with it put the eye on the pontoon at rms 5.3 px. Use
+  horizontal positions of named buildings (`px: [u, null]`) on both sides of the frame, near and far.
+- **Eye height from the tide**: the pier floats. Read the river level of the hour from `cwplans/cache/latest.json` (theme
+  `tide`, EA gauge Silvertown) and put the eye about 2.5 m above the water; 2.9 to 4.9 m OD moved the eye less than 1 m.
+- **Tones against the light are exposure-bound**: the phone exposed for the sun (sky 0.29, shore 0.10 luma), so compare
+  ratios to a reference region (`photo-tones.mjs --set greenlandpier`, column "÷ sky_near_sun"), not absolute luma. The
+  README lists what the port lacks here: the warm horizon round a low sun, brown turbid water, choppy water without mirror
+  reflections, and the glare round the sun.
 
 ## Ground versus air
 
