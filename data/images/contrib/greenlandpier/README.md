@@ -119,19 +119,46 @@ each luma by the luma of `sky_near_sun` in the same image.
 | water_mid_left (100..1300, 1250..1500) | 64, 68, 74 (0.265) | 118, 146, 159 (0.553) | 0.36 / 0.59 |
 | water_near (300..1500, 1600..1850) | 40, 38, 38 (0.151) | 51, 85, 110 (0.312) | 0.20 / 0.33 |
 
-What the render lacks against this photo (open; no renderer change made on 2026-11-23):
+Renderer tuned to this photo on 2026-11-23 (`docklands/sky3.js`; the owner: "I thought point of this was you gently
+nudging the moglob visuals towards reality by looking at photos"). Three changes, each only when the sun is low or in view,
+so the Greenland Dock calibration (sun 31 deg, behind the camera) is not changed:
 
-1. The warm low sky round a low sun: the photo is yellow-orange near the horizon on the sun side (241, 206, 152; b* strongly
-   positive); the render is white (251, 250, 246).
-2. The contrast of the sky away from the sun: photo 0.40 of the sun-side sky, render 0.54.
-3. The water colour: the photo's Thames is neutral brown-grey (40, 38, 38 near; 64, 68, 74 mid); the render's is blue
-   (51, 85, 110), and too bright against the sky (0.59 against 0.36).
-4. The water surface: the photo shows short choppy waves on a rising tide with no building reflections; the render shows
-   near-mirror water with long reflections of the shore buildings.
-5. The sun: the photo shows a bright disc with a wide glare and a warm glitter path (194, 181, 158); the render shows a
-   small white disc and a white glitter path.
-6. The shore against the light: the photo's facades are silhouettes (0.14 of the sun-side sky); the render lights them
-   (0.22) and shows brick colours.
+1. More haze when the sun is under 25 deg: turbidity 2 + 2.6 x lowSun (lowSun = 1 - smoothstep(4, 25 deg) of the sun's
+   altitude; 0.77 here, turbidity 4.0).
+2. The low sky near a low sun: a smooth roll-off of the sky's luminance (cap 1.5 / lowSun^2, 2.5 here) so the tone mapping
+   does not turn it white, and a warm tint (1.0, 0.82, 0.60) x 2 lowSun x closeness to the sun x low in the sky. The sun's
+   disc is kept as bright as before. A first version with a hard limit dimmed the disc and drew a ring round the sun;
+   replaced the same day.
+3. A lower exposure when the view faces a sun under about 30 deg (1 - 0.62 x facing x sun up; 0.46 here), as an eye or a
+   camera adapts. 1 when the sun is behind the view, high or down.
+
+Values found live on one loaded page (turbidity 2 to 6, exposure 0.45 to 1, cap 1 to 4, warm 1 to 3). Result, luma
+difference from the photo, before (2026-11-23 render at 09:10) and after:
+
+| region | before | after |
+|---|---|---|
+| sky_top_left | +0.207 | +0.081 |
+| sky_mid_left | +0.256 | +0.114 |
+| sky_near_sun | +0.189 | +0.082 |
+| sky_low_sun_side | +0.158 (white, 251 250 246) | -0.021 (warm, 215 204 175) |
+| shore_shade | +0.103 | +0.020 |
+| water_glitter | +0.225 (white) | -0.001 (warm, 187 182 166) |
+| water_mid_left | +0.272 | +0.137 |
+| water_near | +0.164 | +0.043 |
+
+Picture: [`compare-2026-11-23-photo-before-after.jpg`](compare-2026-11-23-photo-before-after.jpg) (photo, before, after).
+
+Still open:
+
+1. The sky and the water are too blue: photo sky at 12 deg 76 100 124, render 93 132 160; photo mid water 64 68 74
+   (neutral), render 78 108 120. The water's colour is almost all reflection: a silt tint on tidal water (tried live, up to
+   full strength) changed no region by more than 0.01 and was not kept.
+2. The water surface: short choppy waves on a rising tide in the photo; long mirror reflections of the shore in the render.
+3. The render shows a post with a white globe about 2 m from the eye and a grey column at the left that the photo does not
+   show at those places.
+4. Not tested: sunrise and sunset (sun under 4 deg, where the cap is 1.5 and the tint strongest) and the globe places (they
+   share makeSkyMesh with warm 0, so no change there). The Greenland Dock tone test times out in this container (see the
+   activity log), before and after the change.
 
 The page's sun is at (1992, 659) in the 2576 x 1932 render, 4 px from the photo's: the page's clock, sun model and the
 view agree with the solve. The render also shows a post with a white globe about 2 m from the eye that the photo does not

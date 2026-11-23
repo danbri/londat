@@ -177,6 +177,12 @@ and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib
   horizontal positions of named buildings (`px: [u, null]`) on both sides of the frame, near and far.
 - **Eye height from the tide**: the pier floats. Read the river level of the hour from `cwplans/cache/latest.json` (theme
   `tide`, EA gauge Silvertown) and put the eye about 2.5 m above the water; 2.9 to 4.9 m OD moved the eye less than 1 m.
+- **Tune live, then gate by the sun.** Load the page once and set uniforms from Playwright (`__docklands3.sky.sky` turbidity,
+  mie, `userData.gain`; `__docklands3.renderer.toneMappingExposure`; modules by `import('/docklands/water.js')`), screenshot
+  and measure each variant: five variants cost one page load (about 4 minutes in SwiftShader) instead of five. Make each
+  change depend on the sun's altitude or the view's angle to the sun so earlier calibrations (other sun heights) stand.
+  Look at the picture as well as the numbers: a hard luminance cap passed the region numbers but dimmed the sun's disc and
+  drew a ring round it.
 - **Tones against the light are exposure-bound**: the phone exposed for the sun (sky 0.29, shore 0.10 luma), so compare
   ratios to a reference region (`photo-tones.mjs --set greenlandpier`, column "÷ sky_near_sun"), not absolute luma. The
   README lists what the port lacks here: the warm horizon round a low sun, brown turbid water, choppy water without mirror

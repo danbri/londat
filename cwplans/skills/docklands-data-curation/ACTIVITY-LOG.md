@@ -3759,3 +3759,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   -0.031742 (+-3.07 m), compass 134.15 deg magnetic. Refit at the EXIF time: eye 1 m from the pier point, heading 119.48
   grid, rms 4.2 px, far hold-outs 2.6 and 9.2 px. The GPS fix is 10 m east of the solve (near buildings miss by 9 to 18 px
   with the eye there); the compass is 14 deg off. View at the solved eye.
+- Renderer tuned to the greenlandpier photo (owner: "gently nudging the moglob visuals towards reality by looking at
+  photos"): `docklands/sky3.js` more haze, a warm low sky with a luminance roll-off near a low sun, and a lower exposure when
+  the view faces a low sun (`main.js` loop). Off from 25 to 30 deg of sun and when the sun is behind the view. Luma error
+  against the photo fell in every region (sky by the sun +0.19 to +0.08, sun's path on the water +0.23 to 0.00, shore
+  +0.10 to +0.02); the sun side and the glitter are warm. Open: blue sky and water, mirror-like water. Values and the
+  before/after picture: data/images/contrib/greenlandpier/README.md.

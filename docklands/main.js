@@ -816,6 +816,7 @@ function loop(time, xrFrame) {
   for (const f of frameHooks) f();
   OCC.end();
   if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
+  renderer.toneMappingExposure = sky.exposureFor(camera);   // lower when the view faces a low sun (sky3.js exposureFor)
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
   { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles), ms: +ms.toFixed(2) }; } if (!modelFrames++ && !START_AWAY) { STATS.firstFrameMs = Math.round(performance.now()); bootDone(); }   // the boot screen ends with the first model frame (the layers then load behind it, the HUD says which)   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
   CPU.tick();   // the geometry drawn in this frame gives up its CPU copies (cpu-copies.js)

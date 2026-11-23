@@ -8,7 +8,7 @@
 // Skill: docklands-sky (the WebGL page's sky: much more there; "Three.js port clock" for the port).
 import * as THREE from 'three/webgpu';
 import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
-import { instancedBufferAttribute, uniform, vec3, vec4, float, uv, smoothstep, length, cameraPosition, positionGeometry, positionView, positionLocal, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, fog, exp, dot, sqrt, max, mix } from 'three/tsl';
+import { instancedBufferAttribute, uniform, vec3, vec4, float, uv, smoothstep, length, cameraPosition, positionGeometry, positionView, positionLocal, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, fog, exp, dot, sqrt, max, mix, normalize, positionWorld, pow } from 'three/tsl';
 import { A } from './build.js';
 
 const AE = globalThis.Astronomy;
@@ -67,7 +67,22 @@ export function lightRig(S, M, ph, w) {
 export function makeSkyMesh() {
   const sky = new SkyMesh(); sky.scale.setScalar(10000); sky.material.depthTest = false; sky.material.depthWrite = false; sky.renderOrder = -10; sky.frustumCulled = false;
   sky.turbidity.value = 2; sky.rayleigh.value = 1.0; sky.mieCoefficient.value = 0.004; sky.mieDirectionalG.value = 0.8;
-  sky.userData.gain = uniform(0.46); { const c = sky.material.colorNode; sky.material.colorNode = vec4(c.xyz.mul(sky.userData.gain), 1); }
+  sky.userData.gain = uniform(0.46);
+  // the low sky round a low sun: warm (the photo of 2026-11-23 09:10 GMT from Greenland Pier, sun 10.5 deg up: sRGB
+  // 241 206 153 a few degrees under the sun, against 252 250 245 in the render; data/images/contrib/greenlandpier/).
+  // SkyMesh reddens only near sunset. warm (0..1, Sky3.applyLight from the sun's altitude) x closeness to the sun x low in the sky
+  sky.userData.warm = uniform(0);
+  sky.userData.cap = uniform(1e6);
+  { const c = sky.material.colorNode, dir = normalize(positionWorld.sub(cameraPosition)), near = pow(max(dot(dir, normalize(sky.sunPosition)), 0), 6);
+    const w = sky.userData.warm.mul(near).mul(float(1).sub(smoothstep(0, 0.2, dir.y)));
+    // and a cap on the sky's luminance near a low sun (cap, linear; huge = none): the scattered sun light reaches values that
+    // the tone mapping turns white whatever its colour; the photo shows that sky warm and unclipped (192 190 179)
+    // A smooth roll-off (cap (1 - exp(-L / cap)) / L: a hard limit drew a ring round the sun where it began), and none on the
+    // sun's disc (within about 1 deg of its centre), which stays as bright as SkyMesh draws it
+    const g = c.xyz.mul(sky.userData.gain), L = max(dot(g, vec3(0.2126, 0.7152, 0.0722)), 1e-6), K = sky.userData.cap;
+    const disc = smoothstep(0.99970, 0.99988, dot(dir, normalize(sky.sunPosition)));
+    const rolled = mix(g.mul(K.mul(float(1).sub(exp(L.div(K).negate()))).div(L)), g, disc);
+    sky.material.colorNode = vec4(rolled.mul(mix(vec3(1), vec3(1.0, 0.82, 0.60), w.mul(float(1).sub(disc)))), 1); }
   if (sky.cloudCoverage) sky.cloudCoverage.value = 0.25;
   return sky;
 }
@@ -155,6 +170,15 @@ export class Sky3 {
   // sun above -6 degrees). main.js calls it when the cut or the clock source changes.
   setCutDark(on) { on = !!on; if (on === this.cutDark) return; this.cutDark = on; this.applyLight(); }
   setVz(v) { this.vzInv.value = 1 / v; }
+  // the exposure for a view (main.js loop: renderer.toneMappingExposure): lower when the view faces a sun under about 30
+  // deg, as an eye or a camera adapts to it (Greenland Pier photo, 2026-11-23: the sun 23 deg from the view's centre, 10.5
+  // deg up; exposure 0.45 matched the photo's ratios of sky, shore and water to the sky by the sun, 1.0 left the sun side
+  // white). 1 elsewhere: the sun behind the view, high, or down
+  exposureFor(cam) {
+    const B = this.base; if (!B || this.cutDark) return 1;
+    const f = cam.getWorldDirection(this._fw || (this._fw = new THREE.Vector3())), a = f.dot(B.sd);
+    return 1 - 0.62 * sstep(a, 0.64, 0.97) * B.up * (1 - sstep(B.S.alt, 20, 40));
+  }
   // weather (layers/weather.js): { cover, low, mid, high (0 to 1), visibility (m) or null, precip (mm/h) } or null (none known)
   setWeather(w) { this.wx = w; this.applyLight(); }
   applyLight() {
@@ -166,7 +190,14 @@ export class Sky3 {
     this.sky.visible = day > 0.02 && !this.cutDark; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
     if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? cover : 0.25; this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
     const vis = w && w.visibility != null ? w.visibility : null;
-    this.sky.turbidity.value = vis ? 2 + 8 * clamp01(1 - vis / 40000) : 2;
+    // a low sun (under about 25 deg): more haze and the warm low sky (makeSkyMesh); none from 25 deg up, so the Greenland
+    // Dock calibration (sun 31 deg) stands. From the Greenland Pier photo of 2026-11-23 (sun 10.5 deg): turbidity 4 put the
+    // sky 30 deg up at 0.38 of the sky by the sun (photo 0.40; turbidity 2: 0.41 to 0.53 by exposure)
+    const lowSun = (1 - sstep(B.S.alt, 4, 25)) * sstep(B.S.alt, -2, 2);
+    // warm 2 x lowSun and cap 1.5 / lowSun^2: at the photo (lowSun 0.77) warm 1.5 and cap 2.5, tried live against cap 1, 2, 4
+    // and warm 1 to 3 (photo-tones.mjs --set greenlandpier); none (warm 0, cap huge) from 25 deg up
+    this.lowSun = lowSun; this.sky.userData.warm.value = 2 * lowSun; this.sky.userData.cap.value = lowSun > 0.01 ? 1.5 / (lowSun * lowSun) : 1e6;
+    this.sky.turbidity.value = Math.max(vis ? 2 + 8 * clamp01(1 - vis / 40000) : 2, 2 + 2.6 * lowSun);
     // the moon disc: above the horizon (its lower edge), dimmer by day, hidden by cloud
     this.moonDisc.visible = M.alt > -0.6;
     this.moonU.gain.value = (1 - 0.45 * day) * (1 - 0.9 * cover); this.moonU.shine.value = 0.025 * (1 - day);
