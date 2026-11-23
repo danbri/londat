@@ -3754,3 +3754,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   Greenland Pier. Refit at 09:10:30: eye -0.03190, 51.49469 (1.6 m from the pier point), heading 119.42 grid, rms 4.3 px;
   the far towers now pass as hold-outs (0.2 and 6.7 px; at 09:13 they failed by 18 and 23 px). View and tone preset moved
   to 09:10. The screenshot is not committed (map tiles).
+- Then a zip of the original HEIC (`IMG_2323.zip`): the first contributed photo with EXIF (none of the 55 earlier ones had
+  any). Committed unchanged beside the JPEG. EXIF: 09:10:57.369 UTC, iPhone 17 Pro 6.765 mm f/1.78, GPS 51.494686,
+  -0.031742 (+-3.07 m), compass 134.15 deg magnetic. Refit at the EXIF time: eye 1 m from the pier point, heading 119.48
+  grid, rms 4.2 px, far hold-outs 2.6 and 9.2 px. The GPS fix is 10 m east of the solve (near buildings miss by 9 to 18 px
+  with the eye there); the compass is 14 deg off. View at the solved eye.

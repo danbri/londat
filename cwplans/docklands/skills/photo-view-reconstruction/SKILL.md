@@ -157,11 +157,14 @@ and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib
   panel said 09:10. The 3 minutes are 0.66 deg of sun azimuth: the fit hid them by moving the eye 6 m, and the far towers
   (1.2 to 1.8 km) failed as hold-outs by 18 and 23 px. With 09:10 they passed (0.2 and 6.7 px) and the eye came to 1.6 m
   from the pier point. A sun in the frame needs the time to the minute; ask for the Photos "Info" panel.
-- **Owner's photos arrive without location.** The owner asked to "use embedded geo" on this photo: the JPEG as received
-  had no GPS and no time, and the same photo sent again "as a file" gave the same bytes: the chat upload converts
-  the HEIF and removes the metadata. A screenshot of the iOS Photos "Info" panel gives time, camera and lens (and a map pin
-  that is evidence only). Solve the place from the photo, then ask the owner; here the solve
-  and the owner's "Greenland Surrey Quays clipper pier" agreed.
+- **A zip keeps the EXIF; a chat image does not.** A photo sent as an image in the chat, also "as a file", arrives as a
+  2576 x 1932 JPEG with no time, GPS or camera (every contributed photo before 2026-11-23 arrived that way: none of the 55
+  JPEGs in `data/images/contrib/` and `docklands/reference/` has EXIF). A zip of the original HEIC keeps all of it: time to
+  the millisecond, GPS with its error, compass, lens. Ask the owner for a zip. Read the HEIC's EXIF with Pillow: find the
+  TIFF header (`MM\x00*`) after `Exif\x00\x00` and pass the bytes to `PIL.Image.Exif().load`.
+- **GPS and compass are evidence, not the answer.** Here the GPS fix (3.07 m stated error) was 10 m from the solved eye, and
+  holding the eye at the fix made the near buildings miss by 9 to 18 px; the compass (134 deg magnetic on a steel pontoon)
+  was 14 deg off the sun-solved heading. Start the solve from them, then let the photo decide; record both.
 - **The sun in the frame gives heading and pitch at once** when the time is known to a minute: put a point 20 km out along
   the computed direction (add the curvature drop d^2 / 2R x 0.87 back to its height, because `project` takes it off) and
   refit two or three times as the eye moves. With f fixed at 1785 px it gave heading 120 and pitch 3 before any building

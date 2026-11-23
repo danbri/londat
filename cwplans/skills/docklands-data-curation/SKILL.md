@@ -619,7 +619,7 @@ textures for their 3D models."
 - **Sets:** `cwlibrary` (4 photos, 2026-10-06 about 16:30 BST, low evening sun) and `cwdock` (20 photos, 2026-10-07 about
   09:00 BST, overcast and light drizzle; owner: "taken NOW near the Dock by the Library ... one of some stickers on the
   library door for white calibration"). Name a set after the place (`cw<place>`), number the photos in the owner's order.
-- **Files as delivered:** keep the JPEG bytes; record in `photos.json` what EXIF has. The owner's phone JPEGs so far have
+- **Files as delivered:** keep the JPEG bytes; record in `photos.json` what EXIF has. A chat upload removes all EXIF; a zip of the original keeps it (first case: greenlandpier, 2026-11-23, the HEIC committed beside the JPEG). The owner's phone JPEGs so far have
   no time, GPS, make or model, and embed a Display P3 profile while the EXIF ColorSpace tag says sRGB (F51).
 - **Map screenshots are evidence, never data:** a phone map screenshot shows the map provider's imagery and labels (not
   the owner's to license) and the owner's profile picture. Never copy it into either repository. Derive the position:
