@@ -92,3 +92,8 @@ GMT +-4 min; the owner sent the photos at 18:08.
 5. River walls and timber jetties: an orange-brown band in the model.
 6. Bridge piers missing (London Bridge).
 7. Cameras: 03 and 04 need better solves before their numbers are used.
+8. Inputs of the day renders: the page used its stated default wind (4 m/s from 238 deg) and no weather for 01 to 03
+   (tide 1.67 to 1.75 m OD rising, current 0.74 m/s flood, chop 0.06), against the airport's 1.5 m/s from the north-east
+   used at Greenland Pier the same morning. Either the weather and the airport report did not load within 25 s or they are
+   not applied at the City end of the model; not yet checked. 04: tide -1.99 m OD falling, wind 2.7 m/s from 127 deg, no
+   cloud.
