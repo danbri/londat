@@ -46,8 +46,12 @@ export default {
       for (const s of [-1, 1]) { if (s === bside) continue;   // rails (not on the berthing side), posts every 3 m
         part(P, pt, s * (wid / 2 - .1), fb + 1.1, 0, .07, .07, len - .4, [.85, .87, .88]); part(P, pt, s * (wid / 2 - .1), fb + .55, 0, .04, .04, len - .4, [.85, .87, .88]);
         for (let z = -len / 2 + .5; z <= len / 2 - .4; z += 3) part(P, pt, s * (wid / 2 - .1), fb + .55, z, .06, 1.1, .06, [.85, .87, .88]); }
-      for (let z = -len / 2 + 4; z < len / 2 - 2; z += 12) for (const s of [-1, 1]) {   // lamp posts along both sides
-        part(P, pt, s * (wid / 2 - .5), fb + 1.8, z, .12, 3.6, .12, PAL.steelDark); lamps.push({ P, pt, lx: s * (wid / 2 - .5), ly: fb + 3.75, lz: z }); }
+      for (let z = -len / 2 + 4; z < len / 2 - 2; z += 12) for (const s of [-1, 1]) {   // lamp posts along the sides boats do not lie against
+        if (s === bside) continue; part(P, pt, s * (wid / 2 - .5), fb + 1.8, z, .12, 3.6, .12, PAL.steelDark); lamps.push({ P, pt, lx: s * (wid / 2 - .5), ly: fb + 3.75, lz: z }); }
+      // the berthing side: mooring posts (a housing 0.6 m square, 0.8 m high, and a post on it) every 7 m, no lamps or rails
+      // (the owner's photo from the berth edge of Greenland Pier, 2026-11-23: a dark housing with a post at the edge, no lamp)
+      if (bside) for (let z = -len / 2 + 2; z <= len / 2 - 2; z += 7) {
+        part(P, pt, bside * (wid / 2 - .4), fb + .4, z, .6, .8, .6, PAL.steelDark); part(P, pt, bside * (wid / 2 - .4), fb + 1.05, z, .22, .5, .22, PAL.steelDark); }
       if (main && P.kind !== 'police') {   // a shelter on the main pontoon: roof, posts, a glazed back wall on the landward side
         const sl = Math.min(30, len * .4), sw = Math.min(5, wid * .55), sx = -bside * (wid / 2 - sw / 2 - .6);
         part(P, pt, sx, fb + 2.75, 0, sw + .6, .25, sl + .6, [.78, .8, .82]); part(P, pt, sx - bside * (sw / 2), fb + 1.35, 0, .1, 2.6, sl, PAL.glass);

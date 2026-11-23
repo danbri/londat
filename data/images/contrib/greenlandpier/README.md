@@ -43,15 +43,14 @@ confirmed by the Photos panel: 24 / 43.27 x the 3220 px diagonal). Eye height fi
 Environment Agency gauge at Silvertown read 1.31 m OD at 09:00 GMT, rising about 0.3 m per 15 minutes; deck about 1 m above
 the water, eye 1.5 m above the deck). Free: x, z, heading, pitch, roll.
 
-- Eye (-829.1, 3.9, 1159.1) model metres: -0.03189, 51.49469, on the Greenland (Surrey Quays) Pier pontoon, 1 m from the
-  mapped pier point. Sigma x 2.4 m, z 0.9 m.
-- Heading 119.48 deg grid (121.0 true; sigma 0.11), pitch 3.35 deg (0.05), roll -3.82 deg (0.18: the horizon falls to the
-  left; the verticals of Riverview Court lean the same way), horizontal field 71.6 deg.
-- rms 4.2 px over 19 observations (17 pixels, two of them with both coordinates): the sun's centre (1988, 660), set 20 km
-  out along the computed direction (azimuth 143.25 true, altitude 10.56 deg at 09:10:57.4 GMT, the EXIF time;
-  astronomy-engine with refraction); the top of Orion Point at its near rim; 11 pixels on the Thames waterline (outline
-  `water:tidal`); the horizontal centres of Riverview Court, Neptune Court, Collier Point and Knights Tower.
-- Hold-outs (fitted without them): Neptune Court 0.9 px, Collier Point 2.6 px (1.8 km), Knights Tower 9.2 px (1.2 km).
+- Eye (-819.6, 3.9, 1159.0) model metres: -0.03175, 51.49469, on the **berth edge** of the Greenland (Surrey Quays) Pier
+  pontoon, at the EXIF GPS fix (0.5 m inside the modelled edge). Chosen over the photo-only solve (-829.1, 1159.1, 10 m
+  west, on the landward half of the pontoon) on 2026-11-23 because the photo shows open water to the bottom of the frame on
+  the left and a mooring post at the right edge: from the landward half the deck, rails and lamp posts would fill the
+  foreground. Angles fitted with the eye fixed: heading 119.81 deg grid (121.4 true), pitch 3.35, roll -3.78; rms 6.3 px;
+  held out, Collier Point 0.7 px and Knights Tower 0.5 px, but the near buildings miss by 9 to 18 px (2 to 3 m at 330 to
+  570 m: within the model's building positions).
+- The photo-only solve (eye free) at the EXIF time: rms 4.2 px; hold-outs Neptune Court 0.9 px, Collier Point 2.6 px, Knights Tower 9.2 px.
 - Against the EXIF GPS: the fix is 10 m east of the solved eye (further out on the pontoon), 3.3 times its stated 3.07 m
   error. With the eye held at the fix the rms rises to 6.5 px and the near buildings miss by 9 to 18 px (Orion Point 18,
   Neptune Court 12, Riverview Court 9); the far ones stay within 3 px. The page uses the solved eye. GPS altitude 2.66 m
@@ -148,15 +147,31 @@ difference from the photo, before (2026-11-23 render at 09:10) and after:
 
 Picture: [`compare-2026-11-23-photo-before-after.jpg`](compare-2026-11-23-photo-before-after.jpg) (photo, before, after).
 
+Water and pier, second pass the same day (owner: "Re water too calm, you know - wind direction and speed - angle of sun -
+weather including nature and extent cloud cover - tidal state ... - nearby boats"). The page had, for 09:11: tide 1.10 m OD
+rising 1.26 m an hour, flood current 0.86 m/s (upstream), wind 1.5 m/s from 58 deg grid (EGLC METAR 04002KT to 06003KT).
+The chop came from none of them: the wind is too light and the current only moved the ripples. Changes:
+
+1. Chop on tidal water (`materials.js`, `SU.chop` from `layers/wind.js`): two short-crested bands (1.2 and 3.1 m, every
+   direction, carried by the current), slope 0.10 x smoothstep(0.1 to 1.2 m/s of current) + 0 x passing boats (moving AIS
+   vessels; the term is in place, 0 until a photo separates it), 1.5 times steeper where the wind blows against the current.
+   Texture (luma spread) of the water, photo / before / after (tuned live): near 0.083 / 0.064 / 0.081, middle 0.107 /
+   0.095 / 0.108.
+2. The chop breaks the mirror image of the shore (`SU.chopMirror` 3; 0 left long clean reflections, 8 was too noisy).
+3. Pontoons (`layers/piers.js`): no lamp posts and no rails on the berthing side; mooring posts every 7 m there (a housing
+   and a post, as in the photo's right edge). The "stick and ball" in the earlier render was a berth-side lamp post seen
+   from the old, wrong eye.
+
 Still open:
 
 1. The sky and the water are too blue: photo sky at 12 deg 76 100 124, render 93 132 160; photo mid water 64 68 74
    (neutral), render 78 108 120. The water's colour is almost all reflection: a silt tint on tidal water (tried live, up to
    full strength) changed no region by more than 0.01 and was not kept.
 2. The water surface: short choppy waves on a rising tide in the photo; long mirror reflections of the shore in the render.
-3. The render shows a post with a white globe about 2 m from the eye and a grey column at the left that the photo does not
-   show at those places.
-4. Not tested: sunrise and sunset (sun under 4 deg, where the cap is 1.5 and the tint strongest) and the globe places (they
+3. Clouds: with the recorded weather (Open-Meteo 39% cover at 09:00, METAR "NCD") the page draws a grey layer over the
+   upper sky; the photo shows thin white cirrus on blue. The cloud type (high, thin) needs its own look.
+4. The sun's path: the photo's glitter is sparkly (luma spread 0.217), the render's smoother (0.136).
+5. Not tested: sunrise and sunset (sun under 4 deg, where the cap is 1.5 and the tint strongest) and the globe places (they
    share makeSkyMesh with warm 0, so no change there). The Greenland Dock tone test times out in this container (see the
    activity log), before and after the change.
 

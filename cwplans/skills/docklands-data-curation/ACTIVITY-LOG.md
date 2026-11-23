@@ -3765,3 +3765,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   against the photo fell in every region (sky by the sun +0.19 to +0.08, sun's path on the water +0.23 to 0.00, shore
   +0.10 to +0.02); the sun side and the glitter are warm. Open: blue sky and water, mirror-like water. Values and the
   before/after picture: data/images/contrib/greenlandpier/README.md.
+- Water and pier, second pass: the view's eye moved to the EXIF GPS fix on the berth edge of the pontoon (the photo shows
+  open water to the frame bottom and a mooring post: the photo-only solve was 10 m inland on the pontoon). New chop on
+  tidal water from the current (SU.chop, tuned: water texture 0.081 against the photo's 0.083), the chop breaks the shore's
+  mirror image, berth sides of pontoons have mooring posts instead of lamp posts. The tone test loads the recorded weather
+  for greenlandpier and prints a texture column. Open: cirrus drawn as a grey layer; glitter too smooth.

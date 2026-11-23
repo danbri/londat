@@ -4,6 +4,7 @@
 // (fault F51 in the curation skill). Open-Meteo is blocked (no clouds drawn). Exit 1 when the preset's gated region (a
 // clear-sky band) has a luma more than 0.08 from the photo's; the other regions are printed only. A preset with a reference
 // region (ref) also prints each luma divided by the reference's luma in the same image, which removes the phone's exposure.
+// The last column is the standard deviation of luma in the region (texture: calm water low, chop high).
 // Presets (--set):
 //   greenlanddock (default): 2026-10-11 12:45 BST, Greenland Dock looking east, sun 31 deg up behind the camera
 //     (data/images/contrib/greenlanddock/); also counts the simulated birds on the west basin (the photo shows 18).
@@ -26,7 +27,7 @@ const PRESETS = {
   greenlanddock: { photo: 'data/images/contrib/greenlanddock/2026-10-11-gd-01-greenland-dock-east.jpg', view: 'greenlanddock', t: '2026-10-11T12:45', gate: 'sky_top',
     R: { sky_top: [1300, 0, 2500, 120], sky_mid: [1500, 420, 1800, 560], sky_low: [1700, 700, 2100, 760], water_mid: [900, 1050, 2400, 1350],
       water_near: [700, 1450, 1400, 1700], trees_far_right: [2000, 720, 2500, 900], trees_left_row: [0, 780, 420, 1000] } },
-  greenlandpier: { photo: 'data/images/contrib/greenlandpier/2026-11-23-gp-01-thames-east-morning-sun.jpg', view: 'greenlandpier', t: '2026-11-23T09:11', gate: null, ref: 'sky_near_sun',
+  greenlandpier: { photo: 'data/images/contrib/greenlandpier/2026-11-23-gp-01-thames-east-morning-sun.jpg', view: 'greenlandpier', t: '2026-11-23T09:11', gate: null, ref: 'sky_near_sun', weather: true,
     R: { sky_top_left: [100, 0, 1300, 120], sky_mid_left: [100, 600, 700, 760], sky_near_sun: [2150, 480, 2450, 600], sky_low_sun_side: [1900, 840, 2040, 920],
       shore_shade: [1000, 1000, 1200, 1075], water_glitter: [1950, 1150, 2150, 1500], water_mid_left: [100, 1250, 1300, 1500], water_near: [300, 1600, 1500, 1850] } },
 };
@@ -38,7 +39,7 @@ const browser = await chromium.launch({ headless: true, executablePath: CHROME,
   args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage({ viewport: { width: 1288, height: 966 }, deviceScaleFactor: 2 }), errors = [];
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
-await page.route(/open-meteo/, r => r.abort());
+if (!P.weather) await page.route(/open-meteo/, r => r.abort());   // greenlandpier loads the recorded weather of its hour
 await page.goto(`${BASE}/docklands/?view=${P.view}&t=${P.t}&labels=0&webgl&animate=0${EXTRA ? '&' + EXTRA : ''}`);
 await page.waitForFunction(() => globalThis.__docklands3 && __docklands3.ready, null, { timeout: 240000 });
 await page.waitForTimeout(8000);
@@ -56,20 +57,21 @@ const stats = await m.evaluate(async ({ photo, shot, R }) => {
     for (const [name, [x0, y0, x1, y1]] of Object.entries(R)) {
       const d = g.getImageData(x0, y0, x1 - x0, y1 - y0).data, ch = [[], [], []];
       for (let i = 0; i < d.length; i += 16) for (let j = 0; j < 3; j++) ch[j].push(d[i + j]);
-      const med = ch.map(a => a.sort((p, q) => p - q)[a.length >> 1]);
-      out[k][name] = { rgb: med, luma: +((0.2126 * med[0] + 0.7152 * med[1] + 0.0722 * med[2]) / 255).toFixed(3) };
+      const Ls = ch[0].map((r, j) => (0.2126 * r + 0.7152 * ch[1][j] + 0.0722 * ch[2][j]) / 255), mL = Ls.reduce((a, b) => a + b, 0) / Ls.length;
+      const sd = Math.sqrt(Ls.reduce((a, b) => a + (b - mL) ** 2, 0) / Ls.length), med = ch.map(a => a.sort((p, q) => p - q)[a.length >> 1]);
+      out[k][name] = { rgb: med, luma: +((0.2126 * med[0] + 0.7152 * med[1] + 0.0722 * med[2]) / 255).toFixed(3), sd: +sd.toFixed(3) };
     }
   }
   return out;
 }, { photo: 'data:image/jpeg;base64,' + readFileSync(PHOTO).toString('base64'), shot: 'data:image/png;base64,' + readFileSync(OUT).toString('base64'), R });
 await browser.close();
 let bad = errors.length;
-console.log('region            photo rgb (luma)          render rgb (luma)         d luma' + (P.ref ? `   photo/render luma ÷ ${P.ref}` : ''));
+console.log('region            photo rgb (luma)          render rgb (luma)         d luma' + (P.ref ? `   photo/render luma ÷ ${P.ref}` : '') + '   luma spread photo/render (texture)');
 for (const k of Object.keys(R)) {
   const p = stats.photo[k], r = stats.render[k], d = r.luma - p.luma;
   if (k === P.gate && Math.abs(d) > 0.08) bad++;
   const rel = P.ref ? `   ${(p.luma / stats.photo[P.ref].luma).toFixed(2)} / ${(r.luma / stats.render[P.ref].luma).toFixed(2)}` : '';
-  console.log(`${k.padEnd(17)} ${JSON.stringify(p.rgb).padEnd(16)} (${p.luma.toFixed(3)})   ${JSON.stringify(r.rgb).padEnd(16)} (${r.luma.toFixed(3)})   ${d >= 0 ? '+' : ''}${d.toFixed(3)}${rel}`);
+  console.log(`${k.padEnd(17)} ${JSON.stringify(p.rgb).padEnd(16)} (${p.luma.toFixed(3)})   ${JSON.stringify(r.rgb).padEnd(16)} (${r.luma.toFixed(3)})   ${d >= 0 ? '+' : ''}${d.toFixed(3)}${rel}   ${p.sd.toFixed(3)} / ${r.sd.toFixed(3)}`);
 }
 if (birds) console.log('birds on the west basin: photo 18 (12 gulls, 6 coots or ducks); simulation', JSON.stringify(birds));
 for (const e of errors) console.log(e.slice(0, 300));

@@ -39,6 +39,10 @@ import { MODEL_REGION } from '../site.js';
 import { pickStation } from '../geo/services.js';
 
 const D2R = Math.PI / 180;
+// the chop slope from the current (c, reached at 1.2 m/s) and from boats (b, reached at 10 moving AIS vessels in the model box).
+// c 0.10: the Greenland Pier photo of 2026-11-23 (flood 0.86 m/s): luma spread of the water 0.081 and 0.108 against the
+// photo's 0.083 and 0.107 (0.064 and 0.095 without). b 0 until a photo with known traffic separates it from the current
+export const CHOP = { c: 0.10, b: 0 };
 const local = /^(127\.|localhost$|\[::1\]$)/.test(location.hostname);
 const CACHE = local ? ['../cwplans/cache/latest.json'] : ['https://raw.githubusercontent.com/danbri/londat/main/cwplans/cache/latest.json', '../cwplans/cache/latest.json'];
 export const HIST_URL = 'sky/metar-history.json';
@@ -210,6 +214,11 @@ export default {
     ctx.ui.toggle('Wind from Open-Meteo for the clock time (asks api.open-meteo.com)', meteoOn, v => { meteoOn = v; evaluate(); });
     let metarOn = !fixed && qs.get('metar') !== '0';   // ?metar=0: no METAR
     ctx.ui.toggle('Wind from the METAR of the place in view (live: the last hours; the model\'s station also its archive of the last year)', metarOn, v => { metarOn = v; evaluate(); });
+    // the chop on tidal water (SU.chop, materials.js waterMaterial): from the current (a flood or ebb of about 1 m/s keeps the
+    // reach choppy) and from passing boats (the moving AIS vessels of the ships layer: residual wakes); stated factors, tuned on
+    // the Greenland Pier photo of 2026-11-23 09:10 GMT (data/images/contrib/greenlandpier/)
+    const chopNow = () => { const c = Math.abs(SU.current.value), mv = ctx.stats.ships ? ctx.stats.ships.moving || 0 : 0;
+      const k = Math.min(1, Math.max(0, (c - 0.1) / 1.1)); return CHOP.c * k * k * (3 - 2 * k) + CHOP.b * Math.min(1, mv / 10); };
     const curNow = () => qc != null && isFinite(qc) ? qc : Math.max(-1.8, Math.min(1.8, -0.75 * WU.tideRate.value + 0.08));
     // the note: the wind of the site, and the current only where the site's region names a water service; nothing when
     // the site has no source (or there is no site: the globe from far away)
@@ -249,7 +258,7 @@ export default {
       // a new site (the view moved to another place, every 0.5 s at most), a new clock time, or a METAR file 5 minutes old
       if (now - siteChecked > 500) { siteChecked = now; const s = siteNow(); if ((s ? s.key : null) !== siteKey) { siteKey = s ? s.key : null; evaluate(); } }
       if (lastT == null || Math.abs(ctx.clock - lastT) > 5 * 6e4 || (metarOn && Date.now() - (SITE && !SITE.home ? placesAt : metarAt) > 5 * 60e3 && Math.abs(ctx.clock - Date.now()) < 3600e3)) evaluate();
-      SU.current.value = curNow(); showNote();
+      SU.current.value = curNow(); SU.chop.value = chopNow(); showNote();
       if (debris && dOn) debris.update(dt, controls.target, camera.position.distanceTo(controls.target), SU.current.value, WU.windSpeed.value, WU.windDir.value, WU.tideLevel.value);
       if (test) {
         const list = test.map(b => { b.c += b.dirn * b.speed * dt; if (Math.abs(b.c - b.c0) > 350) b.c = b.c0; const g = line.at(b.c), tx = g.tx * b.dirn, tz = g.tz * b.dirn;

@@ -23,8 +23,8 @@ export const VIEWS = {
   // solved with tools/view-mcp (focal fixed at 1785 px, the iPhone main lens): rms 13.5 px over 12 observations
   greenlanddock: { ...eyeView([-1679.2, 6.5, 1234.1], 85.65, -0.61, 71.6), roll: -1.59, night: false },
   // the owner's CC0 photo of 2026-11-23 09:10:57 GMT (EXIF) from the Greenland (Surrey Quays) Pier pontoon (owner-confirmed), looking east-south-east into the low
-  // sun (data/images/contrib/greenlandpier/); solved with tools/view-mcp (focal fixed at 1785 px): rms 4.2 px over 19 observations
-  greenlandpier: { ...eyeView([-829.1, 3.9, 1159.1], 119.48, 3.35, 71.6), roll: -3.82, night: false },
+  // sun (data/images/contrib/greenlandpier/); solved with tools/view-mcp (focal fixed at 1785 px): eye at the EXIF GPS fix on the berth edge of the pontoon, angles fitted: rms 6.3 px
+  greenlandpier: { ...eyeView([-819.6, 3.9, 1159.0], 119.81, 3.35, 71.6), roll: -3.78, night: false },
 };
 export function eyeView(E, az, lp, hfov, D = 1200) {   // index.html eyeView: a photo's camera, orbiting a point 1.2 km along the line of sight
   const a = az * Math.PI / 180, p = lp * Math.PI / 180;

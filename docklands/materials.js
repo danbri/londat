@@ -488,8 +488,14 @@ export function waterMaterial(opts = {}) {
   const FT = 5, ph1 = fract(time.div(FT)), ph2 = fract(time.div(FT).add(0.5)), wA = float(1).sub(abs(ph1.mul(2).sub(1)));
   const pA = p.sub(fv.mul(ph1.sub(0.5).mul(FT))), pB = p.sub(fv.mul(ph2.sub(0.5).mul(FT))).add(vec2(23.7, 41.3));
   const boil = length(fv).mul(0.07);
+  // chop: short-crested waves on tidal water (1.2 m and 3.1 m, every direction, carried by the current) at SU.chop (layers/wind.js:
+  // the current, passing boats), steeper where the wind blows against the current (wind over tide); tuned on the
+  // Greenland Pier photo of 2026-11-23 (flood 0.86 m/s, wind 1.5 m/s: short chop over the whole reach)
+  const against = clamp(dot(dw, fv.div(max(length(fv), 0.05))).negate(), 0, 1).mul(smoothstep(1, 6, Ws));
+  const chopA = SU.chop.mul(tidal).mul(float(1).add(against.mul(1.5)));
   const field = pp => BANDS.reduce((s, [lam, rot, jit], k) => s.add(band(NT, pp, dw, lam, { rot, jit }).mul(wts[k])), vec2(0, 0)).mul(sw)
-    .add(band(NT, pp, vec2(1, 0), 3.0, { ch: 1, move: false, jit: 0.21 }).mul(boil));
+    .add(band(NT, pp, vec2(1, 0), 3.0, { ch: 1, move: false, jit: 0.21 }).mul(boil))
+    .add(band(NT, pp, vec2(0.6, 0.8), 1.2, { ch: 1, move: false, jit: 0.63 }).add(band(NT, pp, vec2(-0.8, 0.6), 3.1, { ch: 1, move: false, jit: 0.37 })).mul(chopA));
   let g = field(pA).mul(wA).add(field(pB).mul(float(1).sub(wA)));
   // the wall: the long bands at the mirrored point, gradient mirrored
   const wn0 = wd.rg.mul(255 / 127).sub(128 / 127), wn = wn0.div(max(length(wn0), 0.01)), wdist = wd.b.mul(63.75), wR = wd.a;
@@ -521,7 +527,8 @@ export function waterMaterial(opts = {}) {
     // mirror read as a copy of the city; one displaced sample broke the window rows into zigzags (2026-10-08)
     if (r) {
       const st = vnw(vec2(screenUV.x.mul(160), screenUV.y.mul(6).add(time.mul(0.25)))).sub(0.5);
-      const base = r.uvNode.add(vec2(N.x.mul(clamp(float(6).div(dist), 0.002, 0.02)), st.mul(0.006)));
+      const cm = SU.chop.mul(SU.chopMirror).mul(tidal);   // the chop breaks the image of the shore (tidal water only)
+      const base = r.uvNode.add(vec2(N.x.mul(clamp(float(6).div(dist), 0.002, 0.02)), st.mul(0.006))).add(vec2(N.x, N.z).mul(cm));
       let acc = null, wsum = 0;
       for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, k * 0.0065))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
       refl = acc.div(wsum).mul(0.75);
