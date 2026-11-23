@@ -1,6 +1,6 @@
 # Contributed photo: Greenland (Surrey Quays) Pier, low November sun, 2026-11-23
 
-One photograph taken by danbri (the project owner) at about 09:13 GMT on 23 November 2026 on an iPhone, given to the
+One photograph taken by danbri (the project owner) at 09:10 GMT on 23 November 2026 on an iPhone 17 Pro, given to the
 project under **CC0 1.0** (https://creativecommons.org/publicdomain/zero/1.0/). The owner, 2026-11-23 09:16 GMT: "moglob
 ... has been built with occasional cczero photos I contribute through sessions like this, to tune the visual presentation
 especially to day/time/season. Considering these and other properties including sun position here is a new contrib photo
@@ -12,42 +12,51 @@ I hereby donate. It was taken approx 3 mins ago."
 
 The file is the JPEG as delivered, renamed only. It has no EXIF time, GPS, make or model (orientation, resolution and pixel
 size only) and an embedded **Display P3** ICC profile: convert to sRGB before you measure a colour (fault F51 in the
-curation skill). The time is from the owner's words: the photo arrived at 09:16:37 GMT, "approx 3 mins" after it was taken.
+curation skill). The owner sent it twice on 2026-11-23, the second time "as a file": both uploads gave the same bytes
+(same SHA-256), so the chat upload converts the original and removes its metadata.
+
+The original, from a screenshot of the iOS Photos "Info" panel that the owner sent at 13:13 GMT (evidence only, not
+committed: it shows Apple map tiles): IMG_2323, "Monday 23 Nov 2026 09:10", Apple iPhone 17 Pro, Main Camera 24 mm f/1.78,
+HEIF, 24 MP, 5712 x 4284, 2.5 MB, ISO 100, 0 ev, 1/32258 s; the map pin is on the Rotherhithe bank at Greenland Pier, by
+the river. Seconds are not shown: the solve uses 09:10:30 +-30 s.
 
 Place: the owner, 2026-11-23: "it was Greenland Surrey Quays clipper pier" (the Thames Clippers / Uber Boat pier
-"Greenland (Surrey Quays)", OSM and `area.js` place "Greenland Pier"). The owner asked for the embedded location, but the
-file as received has none: the EXIF GPS directory is absent and the Photoshop block holds only an empty IPTC record; the
-upload path removed it. The camera solve below found the same pier from the photo alone, before the owner named it.
+"Greenland (Surrey Quays)", OSM and `area.js` place "Greenland Pier"). The camera solve found the same pier from the photo
+alone, before the owner named it.
 
 People and vehicles: none visible. No number plate. Optical artefacts: a green lens flare spot at (350, 1290) and an orange
 blur in the lower-left corner (a finger or the case at the lens edge); do not read them as objects.
 
 ## Camera
 
-Solved with `tools/view-mcp` (skill `photo-view-reconstruction`). Focal length fixed at 1785 px (the iPhone main lens, 24 mm
-equivalent, as for the Greenland Dock photo). Eye height fixed at 3.9 m OD (the floating pontoon: the Environment Agency
-gauge at Silvertown read 1.31 m OD at 09:00 GMT and rising about 0.3 m per 15 minutes, so water about 1.3 to 1.5 m OD, deck
-about 1 m above water, eye 1.5 m above deck). Free: x, z, heading, pitch, roll.
+Solved with `tools/view-mcp` (skill `photo-view-reconstruction`). Focal length fixed at 1785 px (24 mm equivalent, now
+confirmed by the Photos panel: 24 / 43.27 x the 3220 px diagonal). Eye height fixed at 3.9 m OD (the floating pontoon: the
+Environment Agency gauge at Silvertown read 1.31 m OD at 09:00 GMT, rising about 0.3 m per 15 minutes; deck about 1 m above
+the water, eye 1.5 m above the deck). Free: x, z, heading, pitch, roll.
 
-- Eye (-824.2, 3.9, 1157.8) model metres: -0.03181, 51.49470, on the Greenland (Surrey Quays) Pier pontoon, 6 m from the mapped pier point (confirmed by the owner).
-  Sigma x 3.0 m, z 1.2 m.
-- Heading 119.82 deg grid (121.4 true; sigma 0.14), pitch 3.40 deg (0.06), roll -3.80 deg (0.23: the horizon falls to the
+- Eye (-830.0, 3.9, 1159.3) model metres: -0.03190, 51.49469, on the Greenland (Surrey Quays) Pier pontoon, 1.6 m from the
+  mapped pier point. Sigma x 2.4 m, z 1.0 m.
+- Heading 119.42 deg grid (121.0 true; sigma 0.11), pitch 3.35 deg (0.05), roll -3.83 deg (0.18: the horizon falls to the
   left; the verticals of Riverview Court lean the same way), horizontal field 71.6 deg.
-- rms 5.3 px over 19 observations (17 pixels, two of them with both coordinates): the sun's centre (1988, 660), set 20 km out along the computed direction (azimuth 143.81
-  true, altitude 10.80 deg at 09:13:30 GMT, astronomy-engine with refraction); the top of Orion Point at its near rim; 11
-  pixels on the Thames waterline (outline `water:tidal`); the horizontal centres of Riverview Court, Neptune Court, Collier
-  Point and Knights Tower.
-- Variants: eye height 2.9 or 4.9 m moves the eye less than 1 m and the heading 0.03 deg; focal length free gives 1849 px
-  (sigma 35) and moves the eye 10 m; the spread of the variants is the error, about 10 m in position and 0.8 deg in heading.
-- Hold-outs (fitted without them): Neptune Court 3.2 px (pass); Collier Point 18 px and Knights Tower 23 px at 1.2 to 1.8
-  km (fail at that range: the fit without them has no feature beyond 600 m except the sun and the far waterline, so the
-  heading trades against the eye position). An earlier fit with the eye free and Riverview Court left out put the eye 30 m
-  north-east, off the pontoon, and missed Riverview Court by 131 px: that solution is rejected.
-- The sun residual in the final fit is 10.7 px (0.34 deg in azimuth, about 1.5 minutes of time): the time is not solved
-  from the photo, it is the owner's time, and the photo agrees with it to about 2 minutes.
+- rms 4.3 px over 19 observations (17 pixels, two of them with both coordinates): the sun's centre (1988, 660), set 20 km
+  out along the computed direction (azimuth 143.15 true, altitude 10.52 deg at 09:10:30 GMT, astronomy-engine with
+  refraction); the top of Orion Point at its near rim; 11 pixels on the Thames waterline (outline `water:tidal`); the
+  horizontal centres of Riverview Court, Neptune Court, Collier Point and Knights Tower.
+- Hold-outs (fitted without them): Neptune Court 0.5 px, Collier Point 0.2 px (1.8 km), Knights Tower 6.7 px (1.2 km): all
+  pass.
+- Variants: 09:10:00 and 09:10:59 move the eye 1 m and the heading 0.07 deg; eye height 2.9 or 4.9 m moved the eye less
+  than 1 m.
+- The time matters. The first solve used 09:13:30 (the owner's "approx 3 mins ago" before the upload at 09:16:37): the eye
+  went 6 m off the pier point, the sun missed by 10.7 px in azimuth, and the far towers failed as hold-outs by 18 and 23 px.
+  The sun moves 0.22 deg in azimuth a minute here, so 3 minutes of clock error is 0.66 deg of heading, and the fit moved
+  the eye to absorb it. With the camera's own time the far towers pass.
+- The sun residual is now 8 px, nearly all vertical: the photo's sun is 0.25 deg higher than computed (the centre of an
+  overexposed disc with glare, or refraction above the standard value at 4 deg C).
+- An earlier fit with the eye free and Riverview Court left out put the eye 30 m north-east, off the pontoon, at rms 1.6 px,
+  and missed Riverview Court by 131 px: rejected.
 - Orion Point's top in the photo is 11 px (about 3 m) above the model's top (51.9 m OD, EA LiDAR): the scaffold or the
   roof disc rises above the LiDAR fit.
-- On the page: https://danbri.github.io/londat/docklands/?view=greenlandpier&t=2026-11-23T09:13
+- On the page: https://danbri.github.io/londat/docklands/?view=greenlandpier&t=2026-11-23T09:10
 
 ## What the photo shows
 
@@ -80,7 +89,8 @@ colours.
 
 ## Measurements (sRGB, medians; `docklands/test/photo-tones.mjs --set greenlandpier`)
 
-Photo against the port's render of `?view=greenlandpier&t=2026-11-23T09:13` (WebGL in SwiftShader, Open-Meteo blocked so no
+Photo against the port's render of `?view=greenlandpier&t=2026-11-23T09:13` (the first camera; re-run at 09:10 with the refitted camera, every ratio changed
+by 0.01 or less) (WebGL in SwiftShader, Open-Meteo blocked so no
 clouds drawn), 2026-11-23. The phone exposed for the sun, so the absolute lumas differ by exposure; the last column divides
 each luma by the luma of `sky_near_sun` in the same image.
 

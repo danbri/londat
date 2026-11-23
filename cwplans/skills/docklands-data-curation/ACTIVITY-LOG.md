@@ -3749,3 +3749,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
 - Open: in this cloud container (Chromium at /opt/pw-browsers/chromium, Playwright from `npm install`) the default
   `photo-tones.mjs` run (`?view=greenlanddock`) times out after 240 s waiting for `__docklands3.ready`, with the new file
   and with the file before this change; `--set greenlandpier` finishes in about 3 minutes.
+- Later the same day: the owner sent the photo again "as a file" (same bytes: the chat upload removes EXIF) and a
+  screenshot of the iOS Photos panel: 09:10 GMT, iPhone 17 Pro, main camera 24 mm f/1.78, 1/32258 s, ISO 100, map pin at
+  Greenland Pier. Refit at 09:10:30: eye -0.03190, 51.49469 (1.6 m from the pier point), heading 119.42 grid, rms 4.3 px;
+  the far towers now pass as hold-outs (0.2 and 6.7 px; at 09:13 they failed by 18 and 23 px). View and tone preset moved
+  to 09:10. The screenshot is not committed (map tiles).

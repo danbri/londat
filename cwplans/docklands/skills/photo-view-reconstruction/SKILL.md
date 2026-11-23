@@ -148,13 +148,19 @@ measurements: https://github.com/danbri/londat/blob/main/data/images/contrib/gre
 
 ## Greenland Pier, low sun (2026-11-23): the sun as a landmark
 
-The owner's CC0 photo `data/images/contrib/greenlandpier/2026-11-23-gp-01-thames-east-morning-sun.jpg` (about 09:13 GMT,
-iPhone main lens, 2576 x 1932, Display P3), looking east-south-east across Limehouse Reach into a sun 10.8 deg up. Camera
+The owner's CC0 photo `data/images/contrib/greenlandpier/2026-11-23-gp-01-thames-east-morning-sun.jpg` (09:10 GMT,
+iPhone 17 Pro main lens, 2576 x 1932, Display P3), looking east-south-east across Limehouse Reach into a sun 10.8 deg up. Camera
 and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib/greenlandpier/README.md . Port view
 `?view=greenlandpier` (Menu > Views > "Greenland Pier, morning"); only the Three.js port has it.
 
+- **Get the camera's own time before you trust a sun solve.** The owner's "approx 3 mins ago" gave 09:13; the Photos
+  panel said 09:10. The 3 minutes are 0.66 deg of sun azimuth: the fit hid them by moving the eye 6 m, and the far towers
+  (1.2 to 1.8 km) failed as hold-outs by 18 and 23 px. With 09:10 they passed (0.2 and 6.7 px) and the eye came to 1.6 m
+  from the pier point. A sun in the frame needs the time to the minute; ask for the Photos "Info" panel.
 - **Owner's photos arrive without location.** The owner asked to "use embedded geo" on this photo: the JPEG as received
-  had no GPS and no time (the upload path removes them). Solve the place from the photo, then ask the owner; here the solve
+  had no GPS and no time, and the same photo sent again "as a file" gave the same bytes: the chat upload converts
+  the HEIF and removes the metadata. A screenshot of the iOS Photos "Info" panel gives time, camera and lens (and a map pin
+  that is evidence only). Solve the place from the photo, then ask the owner; here the solve
   and the owner's "Greenland Surrey Quays clipper pier" agreed.
 - **The sun in the frame gives heading and pitch at once** when the time is known to a minute: put a point 20 km out along
   the computed direction (add the curvature drop d^2 / 2R x 0.87 back to its height, because `project` takes it off) and
