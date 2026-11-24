@@ -15,8 +15,8 @@
 //     0.13 m a pixel; the girder's lower edge 44 m above the water at 1.6 m OD, 5.6 m deep). Sources: "from 42 metres
 //     above the River Thames" (https://www.towerbridge.org.uk/), 44 m at high tide (Wikipedia);
 //   - a spire on each corner turret of the main towers (the OSM turret parts, 3 x 3 m to 61 m OD): a square pyramid to
-//     67 m OD with a finial to 68.4 m (IMG_2337: the turret spire tips about 69 m OD); and the central spire over each
-//     tower's top block (68 m OD) to 75 m with a finial to 76.5 m (IMG_2337: about 76 m OD, 6.5 m wide at its foot).
+//     67 m OD with a finial to 68.4 m (IMG_2337: the turret spire tips about 69 m OD); and a central spire on each tower
+//     (below: the OSM top box hidden).
 // Measures checked: the main towers' centres are 82.6 m apart (61 m clear span, 200 ft, plus the towers). Colours: the
 // steel blue and white (the paint of 1977, later blue and white: Wikipedia), drawn light blue; the stone as the model.
 // By night the steel (chains, hangers, walkways, deck fascias) is lit (an LED system concealed in the structure:
@@ -76,8 +76,14 @@ export function towerBridge({ A, dec }) {
     const xs = P.r.map(q => q[0]), zs = P.r.map(q => q[1]), w = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs));
     if (w > 4) continue; const y0 = P.b.b + P.b.h, r = Math.min(1.6, w / 2 + .2); L.pyramid('stone', P.c, r, y0, y0 + 6, SLATE); L.tube('stone', [P.c[0], y0 + 6, P.c[1]], [P.c[0], y0 + 7.4, P.c[1]], .18, .18, GILT); spires++;
   }
-  for (const T of [TB.NT, TB.ST]) { let best = null; for (const P of parts) if (near(P.c, T, 6) && P.b.h >= 62 && (!best || P.b.h > best.b.h)) best = P;
-    if (best) { const y0 = best.b.b + best.b.h; L.pyramid('stone', T, 3.25, y0, y0 + 7, SLATE); L.tube('stone', [T[0], y0 + 7, T[1]], [T[0], y0 + 8.5, T[1]], .25, .25, GILT); spires++; } }
+  // the top of each main tower: the OSM part to 68 m OD (21 x 14 m) is a box over the whole top, where IMG_2337 shows the
+  // stone body ending lower with a steep roof; it is hidden, so the stepped body (parts to 57 and 60 m OD) and the turrets
+  // show, and the central part (9 x 11 m, to 60 m OD) gets a steep spire to 73 m with a finial to 75 m (IMG_2337: about
+  // 76 m OD at the tip)
+  for (const T of [TB.NT, TB.ST]) { let best = null;
+    for (const P of parts) if (near(P.c, T, 6)) { if (P.b.h >= 62) hide.add(P.i); else if (P.b.h >= 50 && (!best || P.b.b + P.b.h > best.b.b + best.b.h)) best = P; }
+    if (best) { const xs = best.r.map(q => q[0]), zs = best.r.map(q => q[1]), r = Math.min(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) / 2, y0 = best.b.b + best.b.h;
+      L.pyramid('stone', best.c, Math.min(r, 4.5), y0, 73, SLATE); L.tube('stone', [best.c[0], 73, best.c[1]], [best.c[0], 75, best.c[1]], .25, .25, GILT); spires++; } }
   stats.spires = spires; stats.hidden = hide.size;
   return { L, hide, stats };
 }
