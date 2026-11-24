@@ -207,6 +207,14 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   "Three.js port".
 - The app at https://danbri.github.io/londat/docklands/ is called **moglob** (owner, 2026-10-23: "give the app a discrete
   name, 'moglob'"); the URLs, the repository and the folders keep their names.
+- Hosting of tile sets (owner, 2026-11-24, to the question whether the page may read buildings and terrain at run time
+  from public tile hosts such as OpenFreeMap and the AWS terrain tiles: "We should host by default to avoid hammering open
+  project infrastructure accidentally . We can make more gh repos for now, and use fly and cloudflare with a bit of
+  effort."; and to where our own tile sets go when they outgrow Pages: "Pages only for now"). Rule: the page reads tiles
+  we host; data from open projects is downloaded once by a build tool and served from our own repositories, not fetched
+  from their servers by each visitor. When a set outgrows a repository (Pages stops near 1 GB), it is split over more
+  GitHub repositories with Pages (like docklandia; the owner adds each one to the Claude GitHub App). Fly and Cloudflare
+  come later. Plan: https://github.com/danbri/londat/issues/20 (scale to London, the UK and the world).
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).

@@ -3841,3 +3841,7 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   aircraft (under 600 m above the ground) that descends lands where the descent meets the ground and fades in 30 s;
   other low aircraft are estimated for 2 min. Test in the page with BAW48Q's two reports: before 34 km east at 8 min,
   after touchdown 1.5 km down the runway, gone in 40 s. Also: AIS 512 x 64 m placeholder sizes (giant boats).
+- 2026-11-24, the owner: "can you now work on scalably showing all of london, uk, world etc.?" Survey of what exists and
+  a plan in https://github.com/danbri/londat/issues/20. Owner decisions the same day, recorded in CLAUDE.md (Layout):
+  host tile sets ourselves by default ("avoid hammering open project infrastructure accidentally"), more GitHub repositories
+  with Pages for now, Fly and Cloudflare later; "Pages only for now" for our own sets.
