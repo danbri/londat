@@ -10801,7 +10801,7 @@
      "source": "ghsl-built-h"
     },
     {
-     "file": "docklands/geo/regions/london.js"
+     "file": "../docklands/geo/regions/london.js"
     },
     {
      "file": "docklands/data/world/terrain-4096x2048.png"
