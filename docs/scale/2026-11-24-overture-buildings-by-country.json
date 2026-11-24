@@ -1,0 +1,1433 @@
+{
+"release": "2026-09-23.1",
+"files": 512,
+"row_groups": 82688,
+"rows": 2533842612,
+"rows_by_nearest": 99405415,
+"count": {
+"IND": 379109705,
+"CHN": 210965760,
+"USA": 155444052,
+"BRA": 109938340,
+"IDN": 104934957,
+"RUS": 71385657,
+"MEX": 65531088,
+"NGA": 58919800,
+"FRA": 55881922,
+"PAK": 54384712,
+"JPN": 53418495,
+"VNM": 46075868,
+"DEU": 45285558,
+"THA": 41170925,
+"BGD": 38345828,
+"ETH": 34755895,
+"ZAF": 33062100,
+"PHL": 31936895,
+"TZA": 28760904,
+"GBR": 25836202,
+"KEN": 25776330,
+"ARG": 25392608,
+"UKR": 25145418,
+"COD": 23871357,
+"SDN": 23543387,
+"POL": 22260505,
+"ITA": 21477402,
+"UGA": 21319640,
+"TUR": 20587102,
+"ESP": 18678487,
+"MOZ": 18561842,
+"PER": 16445155,
+"COL": 15046707,
+"CAN": 14613354,
+"EGY": 14328755,
+"MMR": 13534566,
+"BFA": 13158476,
+"DZA": 12791731,
+"AUS": 12692062,
+"NPL": 12643915,
+"ROU": 12611652,
+"NLD": 12020240,
+"GHA": 11715067,
+"MDG": 11713107,
+"IRN": 11589515,
+"VEN": 10994759,
+"AGO": 10864461,
+"CHL": 10606429,
+"ZWE": 10505269,
+"MYS": 9784681,
+"MWI": 9622985,
+"ZMB": 9366624,
+"CIV": 9263896,
+"AFG": 8873873,
+"CMR": 8866358,
+"KHM": 8741501,
+"BEL": 8593542,
+"LKA": 8570538,
+"NER": 8311077,
+"KAZ": 7969442,
+"GTM": 7831467,
+"BOL": 7524386,
+"IRQ": 7319119,
+"NONE": 7248036,
+"SWE": 7202273,
+"ECU": 6872005,
+"UZB": 6683192,
+"SAU": 6675576,
+"BLR": 6670782,
+"CZE": 6554879,
+"HUN": 6307600,
+"MLI": 6301688,
+"GRC": 6192187,
+"PRT": 6161742,
+"FIN": 6094966,
+"SEN": 5415278,
+"RWA": 5404396,
+"TCD": 5302813,
+"BEN": 5188360,
+"GIN": 5108899,
+"LAO": 5015336,
+"SYR": 4963385,
+"TUN": 4888211,
+"SRB": 4884812,
+"SDS": 4851723,
+"AUT": 4780367,
+"NOR": 4758783,
+"YEM": 4564556,
+"BGR": 4395025,
+"PRY": 4364223,
+"MAR": 4343593,
+"DNK": 4146739,
+"CUB": 3968209,
+"HND": 3802011,
+"HTI": 3777148,
+"DOM": 3749540,
+"KOR": 3671525,
+"TGO": 3634054,
+"NZL": 3507939,
+"BDI": 3395173,
+"LBY": 3238521,
+"SVK": 3220612,
+"IRL": 3134277,
+"CHE": 3042275,
+"HRV": 2934351,
+"URY": 2726709,
+"NAM": 2671126,
+"AZE": 2660097,
+"NIC": 2657269,
+"TJK": 2600159,
+"SLV": 2443219,
+"CRI": 2425199,
+"BIH": 2423619,
+"LTU": 2421736,
+"KGZ": 2366781,
+"BWA": 2317770,
+"SOM": 2278851,
+"MRT": 2275261,
+"MDA": 2176141,
+"TKM": 2040355,
+"PRI": 2005719,
+"CAF": 1950555,
+"COG": 1813465,
+"LVA": 1786467,
+"ISR": 1690153,
+"PAN": 1669254,
+"GEO": 1596980,
+"TWN": 1575158,
+"ERI": 1560521,
+"LBR": 1519429,
+"SLE": 1512098,
+"JAM": 1510414,
+"LSO": 1468006,
+"PRK": 1389476,
+"BTN": 1317369,
+"SWZ": 1278713,
+"SVN": 1272939,
+"ALB": 1210088,
+"LBN": 1184354,
+"EST": 1134903,
+"JOR": 1015459,
+"SOL": 1012090,
+"ARE": 1001723,
+"GAB": 927718,
+"MNG": 871963,
+"ARM": 835067,
+"MKD": 812188,
+"PNG": 763434,
+"KOS": 729026,
+"GNQ": 652140,
+"CYP": 605399,
+"GMB": 563367,
+"GNB": 531251,
+"OMN": 514297,
+"BHS": 472493,
+"TTO": 461545,
+"MNE": 426557,
+"PSX": 416061,
+"QAT": 399016,
+"TLS": 384622,
+"GUY": 378835,
+"BLZ": 362572,
+"MUS": 357718,
+"SUR": 354501,
+"FRO": 317689,
+"LUX": 290769,
+"LCA": 272998,
+"MLT": 261325,
+"CYN": 245574,
+"GRD": 214264,
+"BRN": 202843,
+"BRB": 201596,
+"FLK": 200531,
+"FJI": 198253,
+"COM": 187467,
+"BHR": 166643,
+"SLB": 162866,
+"CPV": 158223,
+"ALD": 157523,
+"ABW": 153395,
+"KWT": 145755,
+"STP": 145037,
+"VUT": 138784,
+"SGP": 138144,
+"HKG": 137976,
+"ISL": 95247,
+"JEY": 87740,
+"NCL": 87633,
+"GRL": 82228,
+"DMA": 79307,
+"CUW": 75122,
+"DJI": 64620,
+"MDV": 50701,
+"TCA": 44764,
+"MSR": 43026,
+"IMN": 41054,
+"ATG": 40763,
+"WLF": 40425,
+"BLM": 39548,
+"SXM": 39090,
+"PLW": 38561,
+"TON": 37463,
+"MAC": 37415,
+"WSM": 37122,
+"KIR": 34520,
+"SAH": 34282,
+"KNA": 33564,
+"AND": 31256,
+"GUM": 30413,
+"CYM": 18217,
+"SMR": 17601,
+"LIE": 13370
+},
+"meta": {
+"ZWE": {
+"name": "Zimbabwe",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"ZMB": {
+"name": "Zambia",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"YEM": {
+"name": "Yemen",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"VNM": {
+"name": "Vietnam",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"VEN": {
+"name": "Venezuela",
+"cont": "South America",
+"sub": "South America"
+},
+"VAT": {
+"name": "Vatican",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"VUT": {
+"name": "Vanuatu",
+"cont": "Oceania",
+"sub": "Melanesia"
+},
+"UZB": {
+"name": "Uzbekistan",
+"cont": "Asia",
+"sub": "Central Asia"
+},
+"URY": {
+"name": "Uruguay",
+"cont": "South America",
+"sub": "South America"
+},
+"FSM": {
+"name": "Micronesia",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"MHL": {
+"name": "Marshall Is.",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"MNP": {
+"name": "N. Mariana Is.",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"VIR": {
+"name": "U.S. Virgin Is.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"GUM": {
+"name": "Guam",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"ASM": {
+"name": "American Samoa",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"PRI": {
+"name": "Puerto Rico",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"USA": {
+"name": "United States of America",
+"cont": "North America",
+"sub": "Northern America"
+},
+"SGS": {
+"name": "S. Geo. and the Is.",
+"cont": "Seven seas (open ocean)",
+"sub": "Seven seas (open ocean)"
+},
+"IOT": {
+"name": "Br. Indian Ocean Ter.",
+"cont": "Seven seas (open ocean)",
+"sub": "Seven seas (open ocean)"
+},
+"SHN": {
+"name": "Saint Helena",
+"cont": "Seven seas (open ocean)",
+"sub": "Western Africa"
+},
+"PCN": {
+"name": "Pitcairn Is.",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"AIA": {
+"name": "Anguilla",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"FLK": {
+"name": "Falkland Is.",
+"cont": "South America",
+"sub": "South America"
+},
+"CYM": {
+"name": "Cayman Is.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"BMU": {
+"name": "Bermuda",
+"cont": "North America",
+"sub": "Northern America"
+},
+"VGB": {
+"name": "British Virgin Is.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"TCA": {
+"name": "Turks and Caicos Is.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"MSR": {
+"name": "Montserrat",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"JEY": {
+"name": "Jersey",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"GGY": {
+"name": "Guernsey",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"IMN": {
+"name": "Isle of Man",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"GBR": {
+"name": "United Kingdom",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"ARE": {
+"name": "United Arab Emirates",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"UKR": {
+"name": "Ukraine",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"UGA": {
+"name": "Uganda",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"TKM": {
+"name": "Turkmenistan",
+"cont": "Asia",
+"sub": "Central Asia"
+},
+"TUR": {
+"name": "Turkey",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"TUN": {
+"name": "Tunisia",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"TTO": {
+"name": "Trinidad and Tobago",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"TON": {
+"name": "Tonga",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"TGO": {
+"name": "Togo",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"TLS": {
+"name": "Timor-Leste",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"THA": {
+"name": "Thailand",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"TZA": {
+"name": "Tanzania",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"TJK": {
+"name": "Tajikistan",
+"cont": "Asia",
+"sub": "Central Asia"
+},
+"TWN": {
+"name": "Taiwan",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"SYR": {
+"name": "Syria",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"CHE": {
+"name": "Switzerland",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"SWE": {
+"name": "Sweden",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"SWZ": {
+"name": "eSwatini",
+"cont": "Africa",
+"sub": "Southern Africa"
+},
+"SUR": {
+"name": "Suriname",
+"cont": "South America",
+"sub": "South America"
+},
+"SDS": {
+"name": "S. Sudan",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"SDN": {
+"name": "Sudan",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"LKA": {
+"name": "Sri Lanka",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"ESP": {
+"name": "Spain",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"KOR": {
+"name": "South Korea",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"ZAF": {
+"name": "South Africa",
+"cont": "Africa",
+"sub": "Southern Africa"
+},
+"SOM": {
+"name": "Somalia",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"SOL": {
+"name": "Somaliland",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"SLB": {
+"name": "Solomon Is.",
+"cont": "Oceania",
+"sub": "Melanesia"
+},
+"SVK": {
+"name": "Slovakia",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"SVN": {
+"name": "Slovenia",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"SGP": {
+"name": "Singapore",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"SLE": {
+"name": "Sierra Leone",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"SYC": {
+"name": "Seychelles",
+"cont": "Seven seas (open ocean)",
+"sub": "Eastern Africa"
+},
+"SRB": {
+"name": "Serbia",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"SEN": {
+"name": "Senegal",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"SAU": {
+"name": "Saudi Arabia",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"STP": {
+"name": "S\u00e3o Tom\u00e9 and Principe",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"SMR": {
+"name": "San Marino",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"WSM": {
+"name": "Samoa",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"VCT": {
+"name": "St. Vin. and Gren.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"LCA": {
+"name": "Saint Lucia",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"KNA": {
+"name": "St. Kitts and Nevis",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"RWA": {
+"name": "Rwanda",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"RUS": {
+"name": "Russia",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"ROU": {
+"name": "Romania",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"QAT": {
+"name": "Qatar",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"PRT": {
+"name": "Portugal",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"POL": {
+"name": "Poland",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"PHL": {
+"name": "Philippines",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"PER": {
+"name": "Peru",
+"cont": "South America",
+"sub": "South America"
+},
+"PRY": {
+"name": "Paraguay",
+"cont": "South America",
+"sub": "South America"
+},
+"PNG": {
+"name": "Papua New Guinea",
+"cont": "Oceania",
+"sub": "Melanesia"
+},
+"PAN": {
+"name": "Panama",
+"cont": "North America",
+"sub": "Central America"
+},
+"PLW": {
+"name": "Palau",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"PAK": {
+"name": "Pakistan",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"OMN": {
+"name": "Oman",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"NOR": {
+"name": "Norway",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"PRK": {
+"name": "North Korea",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"NGA": {
+"name": "Nigeria",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"NER": {
+"name": "Niger",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"NIC": {
+"name": "Nicaragua",
+"cont": "North America",
+"sub": "Central America"
+},
+"NZL": {
+"name": "New Zealand",
+"cont": "Oceania",
+"sub": "Australia and New Zealand"
+},
+"NIU": {
+"name": "Niue",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"COK": {
+"name": "Cook Is.",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"NLD": {
+"name": "Netherlands",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"ABW": {
+"name": "Aruba",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"CUW": {
+"name": "Cura\u00e7ao",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"NPL": {
+"name": "Nepal",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"NRU": {
+"name": "Nauru",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"NAM": {
+"name": "Namibia",
+"cont": "Africa",
+"sub": "Southern Africa"
+},
+"MOZ": {
+"name": "Mozambique",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"MAR": {
+"name": "Morocco",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"SAH": {
+"name": "W. Sahara",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"MNE": {
+"name": "Montenegro",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"MNG": {
+"name": "Mongolia",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"MDA": {
+"name": "Moldova",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"MCO": {
+"name": "Monaco",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"MEX": {
+"name": "Mexico",
+"cont": "North America",
+"sub": "Central America"
+},
+"MUS": {
+"name": "Mauritius",
+"cont": "Seven seas (open ocean)",
+"sub": "Eastern Africa"
+},
+"MRT": {
+"name": "Mauritania",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"MLT": {
+"name": "Malta",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"MLI": {
+"name": "Mali",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"MDV": {
+"name": "Maldives",
+"cont": "Seven seas (open ocean)",
+"sub": "Southern Asia"
+},
+"MYS": {
+"name": "Malaysia",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"MWI": {
+"name": "Malawi",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"MDG": {
+"name": "Madagascar",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"MKD": {
+"name": "North Macedonia",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"LUX": {
+"name": "Luxembourg",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"LTU": {
+"name": "Lithuania",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"LIE": {
+"name": "Liechtenstein",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"LBY": {
+"name": "Libya",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"LBR": {
+"name": "Liberia",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"LSO": {
+"name": "Lesotho",
+"cont": "Africa",
+"sub": "Southern Africa"
+},
+"LBN": {
+"name": "Lebanon",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"LVA": {
+"name": "Latvia",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"LAO": {
+"name": "Laos",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"KGZ": {
+"name": "Kyrgyzstan",
+"cont": "Asia",
+"sub": "Central Asia"
+},
+"KWT": {
+"name": "Kuwait",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"KOS": {
+"name": "Kosovo",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"KIR": {
+"name": "Kiribati",
+"cont": "Oceania",
+"sub": "Micronesia"
+},
+"KEN": {
+"name": "Kenya",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"KAZ": {
+"name": "Kazakhstan",
+"cont": "Asia",
+"sub": "Central Asia"
+},
+"JOR": {
+"name": "Jordan",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"JPN": {
+"name": "Japan",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"JAM": {
+"name": "Jamaica",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"ITA": {
+"name": "Italy",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"ISR": {
+"name": "Israel",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"PSX": {
+"name": "Palestine",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"IRL": {
+"name": "Ireland",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"IRQ": {
+"name": "Iraq",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"IRN": {
+"name": "Iran",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"IDN": {
+"name": "Indonesia",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"IND": {
+"name": "India",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"ISL": {
+"name": "Iceland",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"HUN": {
+"name": "Hungary",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"HND": {
+"name": "Honduras",
+"cont": "North America",
+"sub": "Central America"
+},
+"HTI": {
+"name": "Haiti",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"GUY": {
+"name": "Guyana",
+"cont": "South America",
+"sub": "South America"
+},
+"GNB": {
+"name": "Guinea-Bissau",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"GIN": {
+"name": "Guinea",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"GTM": {
+"name": "Guatemala",
+"cont": "North America",
+"sub": "Central America"
+},
+"GRD": {
+"name": "Grenada",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"GRC": {
+"name": "Greece",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"GHA": {
+"name": "Ghana",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"DEU": {
+"name": "Germany",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"GEO": {
+"name": "Georgia",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"GMB": {
+"name": "Gambia",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"GAB": {
+"name": "Gabon",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"FRA": {
+"name": "France",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"SPM": {
+"name": "St. Pierre and Miquelon",
+"cont": "North America",
+"sub": "Northern America"
+},
+"WLF": {
+"name": "Wallis and Futuna Is.",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"MAF": {
+"name": "St-Martin",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"BLM": {
+"name": "St-Barth\u00e9lemy",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"PYF": {
+"name": "Fr. Polynesia",
+"cont": "Oceania",
+"sub": "Polynesia"
+},
+"NCL": {
+"name": "New Caledonia",
+"cont": "Oceania",
+"sub": "Melanesia"
+},
+"ATF": {
+"name": "Fr. S. Antarctic Lands",
+"cont": "Seven seas (open ocean)",
+"sub": "Seven seas (open ocean)"
+},
+"ALD": {
+"name": "\u00c5land",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"FIN": {
+"name": "Finland",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"FJI": {
+"name": "Fiji",
+"cont": "Oceania",
+"sub": "Melanesia"
+},
+"ETH": {
+"name": "Ethiopia",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"EST": {
+"name": "Estonia",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"ERI": {
+"name": "Eritrea",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"GNQ": {
+"name": "Eq. Guinea",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"SLV": {
+"name": "El Salvador",
+"cont": "North America",
+"sub": "Central America"
+},
+"EGY": {
+"name": "Egypt",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"ECU": {
+"name": "Ecuador",
+"cont": "South America",
+"sub": "South America"
+},
+"DOM": {
+"name": "Dominican Rep.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"DMA": {
+"name": "Dominica",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"DJI": {
+"name": "Djibouti",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"GRL": {
+"name": "Greenland",
+"cont": "North America",
+"sub": "Northern America"
+},
+"FRO": {
+"name": "Faeroe Is.",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"DNK": {
+"name": "Denmark",
+"cont": "Europe",
+"sub": "Northern Europe"
+},
+"CZE": {
+"name": "Czechia",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"CYN": {
+"name": "N. Cyprus",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"CYP": {
+"name": "Cyprus",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"CUB": {
+"name": "Cuba",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"HRV": {
+"name": "Croatia",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"CIV": {
+"name": "C\u00f4te d'Ivoire",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"CRI": {
+"name": "Costa Rica",
+"cont": "North America",
+"sub": "Central America"
+},
+"COD": {
+"name": "Dem. Rep. Congo",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"COG": {
+"name": "Congo",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"COM": {
+"name": "Comoros",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"COL": {
+"name": "Colombia",
+"cont": "South America",
+"sub": "South America"
+},
+"CHN": {
+"name": "China",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"MAC": {
+"name": "Macao",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"HKG": {
+"name": "Hong Kong",
+"cont": "Asia",
+"sub": "Eastern Asia"
+},
+"CHL": {
+"name": "Chile",
+"cont": "South America",
+"sub": "South America"
+},
+"TCD": {
+"name": "Chad",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"CAF": {
+"name": "Central African Rep.",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"CPV": {
+"name": "Cabo Verde",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"CAN": {
+"name": "Canada",
+"cont": "North America",
+"sub": "Northern America"
+},
+"CMR": {
+"name": "Cameroon",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"KHM": {
+"name": "Cambodia",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"MMR": {
+"name": "Myanmar",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"BDI": {
+"name": "Burundi",
+"cont": "Africa",
+"sub": "Eastern Africa"
+},
+"BFA": {
+"name": "Burkina Faso",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"BGR": {
+"name": "Bulgaria",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"BRN": {
+"name": "Brunei",
+"cont": "Asia",
+"sub": "South-Eastern Asia"
+},
+"BRA": {
+"name": "Brazil",
+"cont": "South America",
+"sub": "South America"
+},
+"BWA": {
+"name": "Botswana",
+"cont": "Africa",
+"sub": "Southern Africa"
+},
+"BIH": {
+"name": "Bosnia and Herz.",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"BOL": {
+"name": "Bolivia",
+"cont": "South America",
+"sub": "South America"
+},
+"BTN": {
+"name": "Bhutan",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"BEN": {
+"name": "Benin",
+"cont": "Africa",
+"sub": "Western Africa"
+},
+"BLZ": {
+"name": "Belize",
+"cont": "North America",
+"sub": "Central America"
+},
+"BEL": {
+"name": "Belgium",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"BLR": {
+"name": "Belarus",
+"cont": "Europe",
+"sub": "Eastern Europe"
+},
+"BRB": {
+"name": "Barbados",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"BGD": {
+"name": "Bangladesh",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"BHR": {
+"name": "Bahrain",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"BHS": {
+"name": "Bahamas",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"AZE": {
+"name": "Azerbaijan",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"AUT": {
+"name": "Austria",
+"cont": "Europe",
+"sub": "Western Europe"
+},
+"AUS": {
+"name": "Australia",
+"cont": "Oceania",
+"sub": "Australia and New Zealand"
+},
+"IOA": {
+"name": "Indian Ocean Ter.",
+"cont": "Asia",
+"sub": "Seven seas (open ocean)"
+},
+"HMD": {
+"name": "Heard I. and McDonald Is.",
+"cont": "Seven seas (open ocean)",
+"sub": "Seven seas (open ocean)"
+},
+"NFK": {
+"name": "Norfolk Island",
+"cont": "Oceania",
+"sub": "Australia and New Zealand"
+},
+"ATC": {
+"name": "Ashmore and Cartier Is.",
+"cont": "Oceania",
+"sub": "Australia and New Zealand"
+},
+"ARM": {
+"name": "Armenia",
+"cont": "Asia",
+"sub": "Western Asia"
+},
+"ARG": {
+"name": "Argentina",
+"cont": "South America",
+"sub": "South America"
+},
+"ATG": {
+"name": "Antigua and Barb.",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"AGO": {
+"name": "Angola",
+"cont": "Africa",
+"sub": "Middle Africa"
+},
+"AND": {
+"name": "Andorra",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"DZA": {
+"name": "Algeria",
+"cont": "Africa",
+"sub": "Northern Africa"
+},
+"ALB": {
+"name": "Albania",
+"cont": "Europe",
+"sub": "Southern Europe"
+},
+"AFG": {
+"name": "Afghanistan",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"KAS": {
+"name": "Siachen Glacier",
+"cont": "Asia",
+"sub": "Southern Asia"
+},
+"ATA": {
+"name": "Antarctica",
+"cont": "Antarctica",
+"sub": "Antarctica"
+},
+"SXM": {
+"name": "Sint Maarten",
+"cont": "North America",
+"sub": "Caribbean"
+},
+"TUV": {
+"name": "Tuvalu",
+"cont": "Oceania",
+"sub": "Polynesia"
+}
+}
+}

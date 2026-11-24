@@ -3845,3 +3845,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   a plan in https://github.com/danbri/londat/issues/20. Owner decisions the same day, recorded in CLAUDE.md (Layout):
   host tile sets ourselves by default ("avoid hammering open project infrastructure accidentally"), more GitHub repositories
   with Pages for now, Fly and Cloudflare later; "Pages only for now" for our own sets.
+- 2026-11-24, issue https://github.com/danbri/londat/issues/20 stage 1 (size estimate before any build): Overture
+  2026-09-23.1 buildings counted per country from the Parquet footers only (`cwplans/tools/overture-building-counts.py`;
+  2,533,842,612 buildings; UK -0.27 % against the per-record count of planet-architecture 3b). At London's 34.8 bytes a
+  building: Great Britain 858 MB (1 repository of 900 MB, 2 with room to rebuild), Europe 14.5 GB (17), the world 88 GB
+  (98); the world as squares only (UK lite levels 7 to 10, 1.04 bytes a building) 2.6 GB (3). Record:
+  https://github.com/danbri/londat/blob/main/docs/scale-estimate.md

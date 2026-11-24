@@ -10744,6 +10744,36 @@
    ],
    "network": true,
    "deterministic": true
+  },
+  {
+   "id": "overture-building-counts",
+   "tool": "tools/overture-building-counts.py",
+   "command": "python3 -I cwplans/tools/overture-building-counts.py <release> <out.json>",
+   "kind": "measure",
+   "network": true,
+   "deterministic": true,
+   "after": [],
+   "area": "buildings",
+   "method": "Counts the Overture buildings per country from the GeoParquet footers only (DuckDB parquet_metadata over HTTPS): the row count and bbox statistics of each row group; all rows of a row group go to the Natural Earth country that holds the centre of the row group's box (nearest country within 2 degrees for a centre in the sea, else NONE). For the size estimate of issue https://github.com/danbri/londat/issues/20 stage 1; record docs/scale-estimate.md.",
+   "rules": [
+    "Footers only: no row data is read.",
+    "A row group is given whole to one country: rows near a border can go to the neighbour (UK check: -0.27 % against the per-record count of planet-architecture 3b)."
+   ],
+   "used": [
+    {
+     "source": "overture-buildings",
+     "endpoint": "https://overturemaps-us-west-2.s3.amazonaws.com/",
+     "request": "bucket listing of release/<release>/theme=buildings/type=building/ and the footer of each file"
+    },
+    {
+     "file": "docklands/data/world/countries.json"
+    }
+   ],
+   "generated": [
+    {
+     "local": "../docs/scale/2026-11-24-overture-buildings-by-country.json"
+    }
+   ]
   }
  ],
  "manual_activities": [

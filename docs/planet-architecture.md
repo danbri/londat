@@ -257,6 +257,10 @@ whose bbox centre is inside an ONS region or country polygon of the UK skeleton 
 (London's count includes the 38,824 buildings of the model box; "under 40 m2" uses the record's bbox area, so it
 undercounts small buildings.) Files: about 38,000 tiles for the UK at London's 2,394 for 1.12 M.
 
+Update 2026-11-24 (issue https://github.com/danbri/londat/issues/20 stage 1): Great Britain, Europe and the world by the
+place-blocks 5 rate (34.8 bytes a building) and by the UK lite rates, with Overture counts per country:
+https://github.com/danbri/londat/blob/main/docs/scale-estimate.md . Great Britain 858 MB, Europe 14.5 GB, the world 88 GB.
+
 Hosting needed: the UK is 1.3 GB (OSM) to 1.9 GB (with Microsoft): more than one Pages site (1 GB, our workflow stops at
 950 MB; londat has about 445 MB used). Options:
 
