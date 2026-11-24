@@ -23,6 +23,7 @@ import * as THREE from 'three/webgpu';
 import { Fn, If, Discard, attribute, uniform, uniformArray, float, vec2, vec3, vec4, normalize, dot, max, min, mix, smoothstep, clamp, exp, pow, sin, cos, abs, length, select, reflect, fwidth,
   positionLocal, positionWorld, positionView, positionGeometry, cameraPosition, cameraNear, cameraFar, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, viewZToLogarithmicDepth, depth,
   transformNormalToView, texture, uv, normalLocal, mx_noise_float, mx_noise_vec3, sRGBTransferEOTF } from 'three/tsl';
+import { noise3f, noise3v } from '../noise3d.js';   // a 3D noise texture in place of Perlin noise (2026-11-24)
 import { placeBuildingMaterial, nightClock, PLACE_OFF, band, BANDS, U as MU } from '../materials.js';
 import { waveNoiseTex } from '../water.js';
 import { horizonAt, moonPhase, lightRig, makeSkyMesh } from '../sky3.js';
@@ -153,11 +154,11 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     const t = smoothstep(cal.y.sub(8), cal.y.add(18), V.tDay), late = smoothstep(cal.y.add(18), cal.z, V.tDay);
     const autumn = mix(aut.xyz, aut.xyz.mul(.55).add(vec3(.05, .03, .01)), late.mul(.6));
     const c = select(cal.w.greaterThan(.5), leaf.xyz, mix(young, autumn, t)).toVar();
-    const spot = mx_noise_float(p.mul(14).add(leaf.w.mul(7))).mul(.5).add(.5);
+    const spot = noise3f(p.mul(14).add(leaf.w.mul(7))).mul(.5).add(.5);
     c.assign(mix(c, bloom.xyz, bl.mul(mix(float(1), smoothstep(.3, .55, spot), grow)).mul(grow.mul(.35).oneMinus())));
     return { c, dens };
   };
-  const crownN = nd => { const w = normalize(positionLocal.sub(nd.mid.xyz).add(vec3(0, nd.mid.w.mul(.12), 0)).add(mx_noise_vec3(positionLocal.mul(.45).add(nd.leaf.w.mul(9))).mul(.55)));
+  const crownN = nd => { const w = normalize(positionLocal.sub(nd.mid.xyz).add(vec3(0, nd.mid.w.mul(.12), 0)).add(noise3v(positionLocal.mul(.45).add(nd.leaf.w.mul(9))).mul(.55)));
     return normalize(cameraViewMatrix.mul(modelWorldMatrix.mul(vec4(w, 0))).xyz); };
   const crownAO = (nd, p) => { const { dens } = season(nd.cal, nd.bloom, V.tDay); return mix(float(1), mix(float(.3), float(.75), smoothstep(.05, .95, p.y)), smoothstep(.1, .6, dens)); };
   const CROWN = (() => {
@@ -165,16 +166,16 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     m.positionNode = Fn(() => { const { dens } = season(nd.cal, nd.bloom, V.tDay); const sc = select(dens.lessThan(.04), float(0), mix(float(.6), float(1), dens)); return mix(nd.mid.xyz, positionLocal, sc); })();
     m.colorNode = Fn(() => {
       const p = positionGeometry, { c, dens } = crownColour(nd, p);
-      const n = mx_noise_float(p.mul(vec3(4.2, 3.6, 4.2)).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
+      const n = noise3f(p.mul(vec3(4.2, 3.6, 4.2)).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
       If(n.greaterThan(dens.mul(nd.aut.w.mul(.45).oneMinus()).mul(1.15)), () => { Discard(); });
-      const clump = mx_noise_float(positionLocal.mul(.55).add(nd.leaf.w.mul(5))).mul(.5).add(.5);
+      const clump = noise3f(positionLocal.mul(.55).add(nd.leaf.w.mul(5))).mul(.5).add(.5);
       return vec4(c.mul(n.mul(.25).add(.85)).mul(clump.mul(.6).add(.7)), 1);
     })();
     m.normalNode = crownN(nd); m.aoNode = crownAO(nd, positionGeometry);
     return logDepth(m);
   })();
   const TRUNK = (() => { const m = new THREE.MeshStandardNodeMaterial({ roughness: .95, metalness: 0, flatShading: true }), bark = attribute('bark', 'vec4');
-    m.colorNode = vec4(bark.xyz.mul(mx_noise_float(positionGeometry.mul(vec3(5, 2.2, 5)).add(bark.w.fract().mul(40))).mul(.1).add(.95)), 1); return logDepth(m); })();
+    m.colorNode = vec4(bark.xyz.mul(noise3f(positionGeometry.mul(vec3(5, 2.2, 5)).add(bark.w.fract().mul(40))).mul(.1).add(.95)), 1); return logDepth(m); })();
   const FAR = (() => {
     const m = new THREE.MeshStandardNodeMaterial({ roughness: .92, metalness: 0, flatShading: true }), nd = TA;
     m.colorNode = Fn(() => { const p = positionGeometry, { c, dens } = crownColour(nd, p); return vec4(mix(vec3(.06, .05, .04), c, smoothstep(0, .5, dens)), 1); })();

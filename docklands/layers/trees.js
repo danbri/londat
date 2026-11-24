@@ -31,6 +31,7 @@
 // Skill: docklands-3d-page, "Three.js port" (Trees) and "Three.js port: trees by cell, JS heap (2026-10-20)".
 import { Fn, If, Discard, positionWorld, positionGeometry, positionLocal, vec2, vec3, vec4, float, uniform, instancedBufferAttribute, attribute, smoothstep,
   mix, max, abs, sin, cos, time, uv, mx_noise_float, mx_noise_vec3, clamp, length, dot, select, normalize, sqrt, cameraPosition, cameraViewMatrix } from 'three/tsl';
+import { noise3f, noise3v } from '../noise3d.js';   // a 3D noise texture in place of Perlin noise (2026-11-24: about 8 Perlin noises a crown pixel)
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { A, surfaceAt } from '../build.js';
 import { WU } from '../water.js';
@@ -166,7 +167,7 @@ export default {
       const t = smoothstep(cal.y.sub(8), cal.y.add(18), uDay), late = smoothstep(cal.y.add(18), cal.z, uDay);
       const autumn = mix(aut.xyz, aut.xyz.mul(.55).add(vec3(.05, .03, .01)), late.mul(.6));
       const c = select(cal.w.greaterThan(.5), leaf.xyz, mix(young, autumn, t)).toVar();
-      const spot = mx_noise_float(p.mul(14).add(leaf.w.mul(7))).mul(.5).add(.5);
+      const spot = noise3f(p.mul(14).add(leaf.w.mul(7))).mul(.5).add(.5);
       // blossom: before the leaves the whole crown is flower (no green on a bare tree: cherry plum, magnolia); in leaf, patches
       c.assign(mix(c, bloom.xyz, bl.mul(mix(float(1), smoothstep(.3, .55, spot), grow)).mul(grow.mul(.35).oneMinus())));
       return { c, dens };
@@ -183,7 +184,7 @@ export default {
     // from 3D noise, not from the polyhedron's flat faces; the facets and their edges go. World space: the trees group has no
     // transform, and positionWorld is after the sway
     const crownN = nd => normalize(positionWorld.sub(nd.mid.xyz).add(vec3(0, nd.mid.w.mul(.12), 0)));
-    const crownNormalView = nd => { const w = normalize(crownN(nd).add(mx_noise_vec3(positionWorld.mul(.45).add(nd.leaf.w.mul(9))).mul(.55)));
+    const crownNormalView = nd => { const w = normalize(crownN(nd).add(noise3v(positionWorld.mul(.45).add(nd.leaf.w.mul(9))).mul(.55)));
       return normalize(cameraViewMatrix.mul(vec4(w, 0)).xyz); };
     const crownAO = (nd, p) => { const { dens } = season(nd.cal, nd.bloom); return mix(float(1), mix(float(.3), float(.75), smoothstep(.05, .95, p.y)), smoothstep(.1, .6, dens)); };
     const crownAttrs = { mid: 'mid', leaf: 'leaf', aut: 'aut', cal: 'cal', bloom: 'bloom' };
@@ -199,13 +200,13 @@ export default {
       R.mat.colorNode = Fn(() => {
         cutOk();
         const p = positionGeometry, { c, dens } = crownColour(nd, p);
-        const n = mx_noise_float(p.mul(vec3(4.2, 3.6, 4.2)).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
+        const n = noise3f(p.mul(vec3(4.2, 3.6, 4.2)).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
         If(n.greaterThan(dens.mul(nd.aut.w.mul(.45).oneMinus()).mul(1.15)), () => { Discard(); });   // leaf-fall and airy crowns: holes
         // a ragged leafy outline in place of the polygon's edge: where the round crown turns away from the eye, holes by 3D noise
         // in metres (clumps of about 1.5 m) eat the rim; the inside of the crown stays whole
         const e = float(1).sub(abs(dot(normalize(positionWorld.sub(nd.mid.xyz)), normalize(cameraPosition.sub(positionWorld)))));
-        If(e.greaterThan(mx_noise_float(positionWorld.mul(.9).add(nd.leaf.w.mul(17))).mul(.28).add(mx_noise_float(positionWorld.mul(2.6)).mul(.14)).add(.5)), () => { Discard(); });
-        const clump = mx_noise_float(positionWorld.mul(.55).add(nd.leaf.w.mul(5))).mul(.5).add(.5);
+        If(e.greaterThan(noise3f(positionWorld.mul(.9).add(nd.leaf.w.mul(17))).mul(.28).add(noise3f(positionWorld.mul(2.6)).mul(.14)).add(.5)), () => { Discard(); });
+        const clump = noise3f(positionWorld.mul(.55).add(nd.leaf.w.mul(5))).mul(.5).add(.5);
         return vec4(c.mul(n.mul(.25).add(.85)).mul(clump.mul(.6).add(.7)), 1);
       })();
       R.mat.normalNode = crownNormalView(nd);
@@ -215,9 +216,9 @@ export default {
 
     const barkColour = (bark, p) => {
       const pat = bark.w.floor(), seed = bark.w.fract().mul(40);
-      const n = mx_noise_float(p.mul(vec3(5, 2.2, 5)).add(seed)).mul(.5).add(.5);
+      const n = noise3f(p.mul(vec3(5, 2.2, 5)).add(seed)).mul(.5).add(.5);
       const plane = mix(bark.xyz, vec3(.20, .21, .13), smoothstep(.48, .56, n).mul(.65));   // plane: olive and cream patches
-      const band = mx_noise_float(p.mul(vec3(2, 26, 2)).add(seed)).mul(.5).add(.5);
+      const band = noise3f(p.mul(vec3(2, 26, 2)).add(seed)).mul(.5).add(.5);
       const birch = mix(bark.xyz, vec3(.05, .05, .05), smoothstep(.62, .7, band));          // birch: white with dark bands
       const cherry = bark.xyz.mul(smoothstep(.55, .62, band).mul(.3).oneMinus());             // cherry: banded lenticels
       return select(pat.equal(1), plane, select(pat.equal(2), birch, select(pat.equal(3), cherry, bark.xyz.mul(n.mul(.2).add(.9)))));
@@ -250,7 +251,7 @@ export default {
           keep = max(keep, float(wd).mul(q.y.mul(.5).oneMinus()).sub(d));
         }
         const e = length(q.sub(vec2(.5, .62)).div(vec2(.47, .38)));
-        const fine = mx_noise_float(vec3(q.mul(46), seed)).mul(.5).add(.5);
+        const fine = noise3f(vec3(q.mul(46), seed)).mul(.5).add(.5);
         If(keep.lessThan(0).and(e.greaterThan(1).or(fine.lessThan(.66))), () => { Discard(); });
         return vec4(twigTone(nd.bark), 1);
       })();
@@ -288,7 +289,7 @@ export default {
       farMat.colorNode = Fn(() => {
         cutOk();
         const p = positionGeometry, { c, dens } = crownColour(nd, p);
-        const n = mx_noise_float(p.mul(5).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
+        const n = noise3f(p.mul(5).add(nd.leaf.w.mul(31))).mul(.5).add(.5);
         If(n.greaterThan(max(dens, .45).mul(1.15)), () => { Discard(); });
         return vec4(mix(vec3(.06, .05, .04), c, smoothstep(0, .5, dens)).mul(n.mul(.25).add(.85)), 1);   // bare: a dark twig tone (linear)
       })();

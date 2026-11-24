@@ -202,6 +202,22 @@ function setClock(t) {
 
 // ---------- shadows (cascaded, WebGPU by default) and bloom (by night, WebGPU by default)
 let csm = null;
+// The cascaded shadow maps (3 x 2048^2, WebGPU by default) were drawn every frame. A still view that animates (water,
+// birds, boats, the clock) does not move them: redrawn when the camera matrix or the sun moved, else every SHADOW_STEP-th
+// frame (moving casters: boats; 3 by default, ?shadowstep=1 every frame). The cascade cameras follow the view camera, so
+// a map is reused only while the camera and the sun are where they were (2026-11-24; skill docklands-3d-page, "Frame
+// cost by cause").
+const SHADOW_STEP = Math.max(1, Math.round(+qs.get('shadowstep') || 3)), SHK = new Float64Array(19).fill(NaN);
+let shFrames = 0;
+function shadowStep() {
+  if (!csm || !csm.lights || !csm.lights.length || !sky.sun.castShadow) return;
+  const e = camera.matrixWorld.elements, sp = sky.sun.position; let moved = false;
+  for (let i = 0; i < 16; i++) { if (!(Math.abs(e[i] - SHK[i]) < 1e-5)) moved = true; SHK[i] = e[i]; }
+  for (const [k, v] of [[16, sp.x], [17, sp.y], [18, sp.z]]) { if (!(Math.abs(v - SHK[k]) < 1e-3)) moved = true; SHK[k] = v; }
+  const upd = moved || ++shFrames >= SHADOW_STEP; if (upd) shFrames = 0;
+  for (const l of csm.lights) { l.shadow.autoUpdate = false; if (upd) l.shadow.needsUpdate = true; }
+  STATS.shadowSkips = (STATS.shadowSkips || 0) + (upd ? 0 : 1);
+}
 function setShadows(on) {
   sky.sun.castShadow = on;
   if (on && !csm) { const sh = sky.sun.shadow; sh.mapSize.set(2048, 2048); sh.camera.near = 1; sh.camera.far = 9000; sh.bias = -0.0004; sh.normalBias = 0.6;
@@ -817,6 +833,7 @@ function loop(time, xrFrame) {
   OCC.end();
   if (GLOBE) GLOBE.background();   // above 3 km eye height: the globe behind the model (its sky dome hidden)
   renderer.toneMappingExposure = sky.exposureFor(camera);   // lower when the view faces a low sun (sky3.js exposureFor)
+  shadowStep();
   const t0 = performance.now(); pipe.render(); const ms = performance.now() - t0; PERF.drawn(time, ms, performance.now());
   { const I = renderer.info.render; STATS.frame = { drawCalls: I.drawCalls, triangles: Math.round(I.triangles), ms: +ms.toFixed(2) }; } if (!modelFrames++ && !START_AWAY) { STATS.firstFrameMs = Math.round(performance.now()); bootDone(); }   // the boot screen ends with the first model frame (the layers then load behind it, the HUD says which)   // this frame's totals (info resets at each frame of the loop): the globe background, the scene pass, the output
   CPU.tick();   // the geometry drawn in this frame gives up its CPU copies (cpu-copies.js)

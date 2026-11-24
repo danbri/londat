@@ -21,6 +21,7 @@
 import { Fn, If, attribute, positionGeometry, instancedDynamicBufferAttribute, uniformArray, uniform, varying, time, vec3, vec4, float, int, sin, cos, sign, min, max } from 'three/tsl';
 import { WU, SU } from '../water.js';
 import { surfaceAt } from '../build.js';
+import { uploadFirst } from '../upload.js';
 
 const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 16, TAU = Math.PI * 2;
 // animals per hectare of each habitat class in daylight at the peak of the season (stated defaults, general ecology for
@@ -399,7 +400,7 @@ export default {
         const yy = a.y + (!fox && !a.onIce && (a.st === 'swim' || a.st === 'roost') ? .07 * L * scale : 0), o = 4 * i; M.aP.array.set([a.x, yy, a.z, a.yaw], o); M.aA.array.set([L * scale, amp, hz, a.bob], o); M.aB.array.set([span, nk, up, a.si], o);
         if (fox) nF++; else nB++; drawn.push(a);
       }
-      for (const [M, n] of [[MB, nB], [MF, nF]]) { M.mesh.geometry.instanceCount = n; M.mesh.visible = n > 0; if (n) { M.aP.needsUpdate = M.aA.needsUpdate = M.aB.needsUpdate = true; } }
+      for (const [M, n] of [[MB, nB], [MF, nF]]) { M.mesh.geometry.instanceCount = n; M.mesh.visible = n > 0; if (n) { uploadFirst(M.aP, n); uploadFirst(M.aA, n); uploadFirst(M.aB, n); } }
       const ms = performance.now() - tA; msAvg += (ms - msAvg) * .05; simAvg += (performance.now() - tU - simAvg) * .05; SAMP[frames % SAMP.length] = ms; cellMax = Math.max(cellMax, cellMs); frames++;
       if (frames % 30 === 1) status();
     }

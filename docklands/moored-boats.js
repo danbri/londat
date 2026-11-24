@@ -14,6 +14,7 @@
 import { WU } from './water.js';
 import { MFP } from './build.js';
 import { models, boatMaterial, boatMesh, paintOf, hash01, farMesh } from './boats-models.js';
+import { uploadFirst } from './upload.js';
 
 const CLASS = { canal: 'canal moorings', resid: 'residential moorings in a dock', tidal: 'residential moorings on the tidal river', marina: 'marina', mixed: 'moorings', tier: 'a mooring buoy' };
 const KIND = { houseboat: 'a houseboat outline', pontoon: 'a pontoon of a mooring', quay: 'a mooring along a quay', buoy: 'a mooring buoy' };
@@ -75,8 +76,8 @@ export async function mooredBoats(ctx, J) {
       if (dx * dx + dz * dz + (cp.y - y0) ** 2 > (b.L * lodK) ** 2) { n[b.key]--; b.far = true; const F = farOf(b.key), q = nfk[b.key] = (nfk[b.key] || 0) + 1; F.m.setMatrixAt(q - 1, dummy.matrix); F.t[0].setXYZ(q - 1, ...b.c1); F.t[1].setXYZ(q - 1, ...b.c2); nf++; continue; }
       b.mesh.setMatrixAt(i, dummy.matrix); const [t1, t2] = tints[b.key]; t1.setXYZ(i, ...b.c1); t2.setXYZ(i, ...b.c2);
     }
-    for (const [key, m] of Object.entries(meshes)) { const k = n[key] || 0; m.count = Math.max(1, k); m.visible = k > 0; m.instanceMatrix.needsUpdate = true; if (k) { tints[key][0].needsUpdate = tints[key][1].needsUpdate = true; } }
-    for (const [key, F] of Object.entries(far)) { const k = nfk[key] || 0; F.m.count = Math.max(1, k); F.m.visible = k > 0; if (k) F.m.instanceMatrix.needsUpdate = F.t[0].needsUpdate = F.t[1].needsUpdate = true; }
+    for (const [key, m] of Object.entries(meshes)) { const k = n[key] || 0; m.count = Math.max(1, k); m.visible = k > 0; uploadFirst(m.instanceMatrix, k); if (k) { uploadFirst(tints[key][0], k); uploadFirst(tints[key][1], k); } }
+    for (const [key, F] of Object.entries(far)) { const k = nfk[key] || 0; F.m.count = Math.max(1, k); F.m.visible = k > 0; if (k) { uploadFirst(F.m.instanceMatrix, k); uploadFirst(F.t[0], k); uploadFirst(F.t[1], k); } }
     (ctx.stats.lod ||= {}).mooredBoats = { full: drawnN - nf, standIn: nf };
   }
   ctx.onFrame(frame); frame();

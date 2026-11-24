@@ -27,6 +27,7 @@ import { WU, MAXW, setWakes } from '../water.js';
 import * as D from '../ships-data.js';
 import { vec3, float, attribute } from 'three/tsl';
 import { models, boatMaterial, boatMesh, aisModel, TYPICAL, paintOf, lin, farMesh } from '../boats-models.js';
+import { uploadFirst } from '../upload.js';
 
 const KN = 0.514444, CAP_S = 180, BLEND = 2000, NOW_TOL = 5 * 60e3, HIST_MAX = 24 * 3600e3, CAP = 256;
 const LC_EVERY = 60e3, TRAIL_MS = 60 * 60e3, TRAIL_MAX = 8000;   // live-cache: read every 60 s; trails of the last hour
@@ -255,9 +256,9 @@ export default {
           }
         }
       }
-      const set = (m, n) => { n = Math.min(n, m.instanceMatrix.count); m.count = Math.max(1, n); m.visible = n > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
-      for (const [key, m] of Object.entries(MESH)) { set(m, kb[key] || 0); if (kb[key]) { m.geometry.attributes.tint.needsUpdate = true; m.geometry.attributes.tint2.needsUpdate = true; } }
-      for (const [key, m] of Object.entries(FAR)) { const n = kb[key + ' far'] || 0; set(m, n); if (n) { m.geometry.attributes.tint.needsUpdate = true; m.geometry.attributes.tint2.needsUpdate = true; } }
+      const set = (m, n) => { n = Math.min(n, m.instanceMatrix.count); m.count = Math.max(1, n); m.visible = n > 0; uploadFirst(m.instanceMatrix, n); if (m.instanceColor) uploadFirst(m.instanceColor, n); };
+      for (const [key, m] of Object.entries(MESH)) { set(m, kb[key] || 0); if (kb[key]) { uploadFirst(m.geometry.attributes.tint, kb[key]); uploadFirst(m.geometry.attributes.tint2, kb[key]); } }
+      for (const [key, m] of Object.entries(FAR)) { const n = kb[key + ' far'] || 0; set(m, n); if (n) { uploadFirst(m.geometry.attributes.tint, n); uploadFirst(m.geometry.attributes.tint2, n); } }
       (ctx.stats.lod ||= {}).ships = { full: Object.entries(kb).reduce((s, [k, v]) => s + (/ far$/.test(k) ? 0 : v), 0), standIn: Object.entries(kb).reduce((s, [k, v]) => s + (/ far$/.test(k) ? v : 0), 0) };
       set(masts, c.mast); set(plates, c.plate); set(arrows, c.arrow); set(lampW, c.W); set(lampR, c.R); set(lampG, c.G);
       placeLabels(); drawTrails(ref);

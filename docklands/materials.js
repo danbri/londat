@@ -586,10 +586,12 @@ export function waterMaterial(opts = {}) {
       // samples up to +-SU.tail of the screen, thresholded so that only lights leave a tail, each fading with its offset,
       // the strongest kept, broken into dashes by thin columns of noise. By night only: by day the sun glitter has its own
       // term and the shore's image must stay sharp.
-      let tail = null;
-      for (const f of [-1, -0.62, -0.34, -0.14, 0.14, 0.34, 0.62, 1]) {
-        const c = max(r.sample(base.add(vec2(0, SU.tail.mul(f)))).rgb.sub(0.25), vec3(0)).mul(1.15 - Math.abs(f));
-        tail = tail ? max(tail, c) : c; }
+      // in a branch on the night uniform (uniform control flow): by day the 8 samples are not taken (2026-11-24)
+      const tail = Fn(() => { const t = vec3(0).toVar(); If(U.night.greaterThan(0.01), () => { let a = null;
+        for (const f of [-1, -0.62, -0.34, -0.14, 0.14, 0.34, 0.62, 1]) {
+          const c = max(r.sample(base.add(vec2(0, SU.tail.mul(f)))).rgb.sub(0.25), vec3(0)).mul(1.15 - Math.abs(f));
+          a = a ? max(a, c) : c; }
+        t.assign(a); }); return t; })();
       const dash = smoothstep(0.35, 0.75, vnw(vec2(screenUV.x.mul(260), screenUV.y.mul(28).add(time.mul(0.4)))));
       refl = refl.add(tail.mul(dash).mul(0.9).mul(U.night).mul(float(1).add(SU.rain)).mul(float(1).sub(iceM)));
       refl = refl.mul(float(1).sub(SU.rain.mul(0.3))).mul(float(1).sub(iceM.mul(0.75)));   // rain and ice: a weaker image

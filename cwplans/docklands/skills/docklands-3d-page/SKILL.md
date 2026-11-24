@@ -2220,6 +2220,51 @@ the registry layer's `NIGHT_USE` (layers/registry.js) has no car park, school or
 "no record"); balconies are only a darker strip at the foot of a window on the Map look; the CCT and lit-share numbers have no
 camera model; not yet seen on a phone GPU.
 
+## Frame cost by cause (2026-11-24)
+
+Owner, 2026-11-24: "Now deep dive on perf". Tool: `docklands/test/frame-profile.mjs` (renderer.info, triangles by
+top-level group, ms a frame, JavaScript self time a frame by function and file through the CDP profiler, and `--ablate`:
+each layer, shadows and pixel ratio off in turn with time, draw calls and triangles). SwiftShader rasterises on the CPU,
+so its ms are not a phone's; the draw calls, triangles, programs, JavaScript time and relative costs carry over. For the
+JavaScript a frame use a small canvas (`--size 120x260@1 --settle 30 --secs 15`); the first seconds after start include
+the building rebuild and the label-occlusion grid (`occlude.js build`), which are start-up work. WebGPU does not run in
+the cloud container (Chromium 1243: "Instance dropped in popErrorScope"); `--webgpu` is there for a machine where it does.
+
+Measured at the default view (`view=cw`, noon, 390 x 844 @1, WebGL 2), before -> after:
+
+| what | before | after |
+|---|---|---|
+| triangles a frame (main + mirror) | 2,247 k | 1,797 k |
+| mirror pass | about 1,050 k | about 690 k |
+| underground layer, cut-away off | 142 k | 62 k |
+| buffer uploads (bufferSubData) a frame, small canvas | 1.9 ms | 1.5 ms |
+| shadows on (`?shadows=1`, WebGPU default), still view animating: SwiftShader ms a frame | 2,439 | 2,193 |
+| same, JavaScript a frame | 32 ms | 27 ms |
+
+Changes:
+- The mirror (`layers/water.js wrapHide`) does not draw the underground, the foreshore (flat at the water line: the mud
+  covers its own image), the wind field, wildlife and debris (hidden for its render only).
+- The underground layer (`layers/under.js`) builds the tunnel segments near the surface first and the deep ones after,
+  and the basements after the rest; with the cut-away off and the eye above ground it draws only the first range
+  (`G.userData.nearTris`, setDrawRange). The tap cards keep working: the item list stays in triangle order.
+- The cascaded shadow maps (3 x 2048^2) are redrawn when the camera matrix or the sun moved, else every 3rd frame
+  (`main.js shadowStep`, `?shadowstep=1` every frame); the cascade cameras follow the view camera, so a map is reused
+  only while both are still.
+- Instance buffers that change each frame upload only the used part (`docklands/upload.js uploadFirst`: wildlife's three
+  32,768-slot buffers, about 1.5 MB a frame before; ships, moored boats).
+- Fragment work that SwiftShader cannot show: the night light tails' 8 mirror samples only by night (a branch on the
+  night uniform); the tree crowns' about 8 Perlin noises a pixel (also in the shadow pass) are fetches from a 32^3 noise
+  texture (`docklands/noise3d.js`), here and in `globe/place-look.js` (render compared at the IMG_2587 camera in June:
+  the same crowns, slightly fewer holes at the lower edge).
+- Checked and left: the wind field already uploads one range a step; building rebuilds after start are already merged
+  (2 at start). A pixel-ratio change with the page's resize leaves the counts as they were (a test that changed the
+  ratio without the resize saw 350 draw calls; that was the test).
+
+Open, by size: the buildings (1.1 M triangles, in the main pass, the mirror and the shadows); the foreshore (199 k in one
+mesh) and the ring (174 k) in the main pass; 115 to 228 shader programs (compile stalls at start and on first use); the
+trees still cost 16 to 19 % of a SwiftShader frame (their alpha-cut leaves); JavaScript about 12 ms a frame on the
+container's CPU, mostly three.js's own work for about 140 draw calls.
+
 ## Water surface from the weather (2026-11-24)
 
 Owner, 2026-11-24: "Reflection coherence depends on water surface which depends on weather - wind and rain and snow and

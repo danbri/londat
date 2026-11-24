@@ -3822,3 +3822,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   lobe and the night light tails; rain makes drop rings and a broken, dimmer mirror; a 14-day freezing index (Open-Meteo
   daily means) puts ice, and snow on it, on still water; waterbirds walk on the ice. Thresholds judged; checked on the
   December 2010 cold spell. Skill docklands-3d-page, "Water surface from the weather".
+- 2026-11-24, the owner: "Now deep dive on perf". New tool docklands/test/frame-profile.mjs (frame cost by cause). At the
+  default view triangles a frame 2,247 k -> 1,797 k (the mirror skips the underground, foreshore, wind field, wildlife and
+  debris; the underground draws only what can show from above unless the cut-away is on); cascaded shadows redrawn only
+  when the camera or sun moved, else every 3rd frame (-10 % SwiftShader frame, JS 32 -> 27 ms); instance buffers upload
+  only the used part; night tails sampled only by night; tree noise from a 3D texture. Skill docklands-3d-page, "Frame
+  cost by cause" (measures, what is left).

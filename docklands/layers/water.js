@@ -38,6 +38,20 @@ export default {
     let refl = null, planeY = level;
     const BODY = { at: null, tidal: true, level, d: null };   // the body the plane follows
     const S = new THREE.Matrix4(), M0 = new THREE.Matrix4(), T0 = new THREE.Matrix4();
+    // things that never show in the mirror are not drawn into it (2026-11-24, docklands/test/frame-profile.mjs: the mirror
+    // drew 1.05 M triangles again at the default view): the underground (below the ground and the water), the foreshore
+    // (flat at the water line: its image is a strip that the mud itself covers), the wind field, wildlife and debris.
+    // Hidden by name for the mirror's render only; the list of top-level objects is read again every 2 s.
+    const NOMIRROR = new Set(['under', 'foreshore', 'windfield', 'wildlife', 'debris']);
+    let noMir = [], noMirAt = 0;
+    function wrapHide(R) {
+      const base = R.reflector, ub = base.updateBefore;
+      base.updateBefore = function (frame) {
+        const now = performance.now(); if (now - noMirAt > 2000) { noMirAt = now; noMir = scene.children.filter(o => NOMIRROR.has(o.name)); }
+        const was = noMir.map(o => o.visible); noMir.forEach(o => { o.visible = false; });
+        try { return ub.call(this, frame); } finally { noMir.forEach((o, i) => { o.visible = was[i]; }); }
+      };
+    }
     function wrapVz(R) {   // vertical exaggeration in the mirror (see the header)
       const base = R.reflector, ub = base.updateBefore;
       base.updateBefore = function (frame) {
@@ -53,7 +67,7 @@ export default {
       };
     }
     const set = on => {
-      if (on && !refl) { refl = reflector({ resolutionScale: 0.35, bounces: false }); refl.target.rotateX(-Math.PI / 2); refl.target.position.y = planeY + 0.1; refl.target.updateMatrixWorld(); scene.add(refl.target); wrapVz(refl); }
+      if (on && !refl) { refl = reflector({ resolutionScale: 0.35, bounces: false }); refl.target.rotateX(-Math.PI / 2); refl.target.position.y = planeY + 0.1; refl.target.updateMatrixWorld(); scene.add(refl.target); wrapVz(refl); wrapHide(refl); }
       m.setReflector(on ? refl : null); draw();
     };
     set(on0);

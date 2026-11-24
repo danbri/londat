@@ -65,17 +65,23 @@ function tunnelY(l, p, P) {
 // ST: the station models' cut-outs (layers/stations.js sets ctx.stationCut; null or off: none). items: per triangle range,
 // what it belongs to (the tap card): [first triangle, kind, index, ...]
 const ntri = M => M.idx.length / 3;
-function tunnelsGeometry(P, ST) {
-  const M = new Mesh(), items = [], lines = A.lines;
+// Two passes (2026-11-24, frame cost): first the segments whose top comes within 1 m of the ground at either end (portals,
+// open cuts: they can show from above), then the deep ones; G.userData.nearTris is the end of the first range. With the
+// cut-away off and the eye above ground the layer draws only that range (90 k triangles drawn under the ground before).
+function tunnelsGeometry(P, ST, gAt) {
+  const M = new Mesh(), items = [], lines = A.lines; let nearTris = 0;
+  for (const pass of [0, 1]) {
+  if (pass === 1) nearTris = ntri(M);
   for (let li = 0; li < lines.length; li++) { const l = lines[li]; if (!l.tunnel) continue; const col = tunColour(l), w = l.k === 'road' ? 9 : l.k === 'foot' ? 3 : 6;
     for (let i = 1; i < l.pts.length; i++) { const a = l.pts[i - 1], b = l.pts[i], ya = tunnelY(l, a, P) + w / 2, yb = tunnelY(l, b, P) + w / 2;
+      const near = !gAt || ya + w / 2 > gAt(a[0], a[1]) - 1 || yb + w / 2 > gAt(b[0], b[1]) - 1; if (near !== (pass === 0)) continue;
       items.push([ntri(M), 't', li, i]);
       for (const [s, e] of ST ? ST.outside(a[0], a[1], b[0], b[1]) : [[0, 1]]) beam(M, [a[0] + (b[0] - a[0]) * s, ya + (yb - ya) * s, a[1] + (b[1] - a[1]) * s], [a[0] + (b[0] - a[0]) * e, ya + (yb - ya) * e, a[1] + (b[1] - a[1]) * e], w, w, col); } }   // station models cut their boxes out (index.html buildTunnels)
-  const G = M.geometry(); G.userData.items = items; return G;
+  }
+  const G = M.geometry(); G.userData.items = items; G.userData.nearTris = nearTris; return G;
 }
 function underGeometry(U, P, ST) {
-  const M = new Mesh(), items = [];
-  U.basements.forEach((b, k) => { items.push([ntri(M), 'b', k]); prism(M, b, b.b - b.n * P.storey, b.b - .3, C.base, true); });
+  const M = new Mesh(), items = [];   // the basements last (wholly below the ground): G.userData.nearTris ends before them
   U.indoor.forEach((o, k) => {
     if (ST && ST.inside(...dec(o.p || o.line).slice(0, 2))) return;   // station models: OSM floors inside a box are drawn by the model at measured levels
     items.push([ntri(M), 'i', k]);
@@ -87,7 +93,9 @@ function underGeometry(U, P, ST) {
   });
   U.pois.forEach((p, k) => { if (p.lv && p.kind === 'poi' && !(ST && ST.inside(p.x, p.z))) { items.push([ntri(M), 'p', k]); cube(M, p.x, p.g + Math.min(...p.lv) * P.storey + 1.5, p.z, 3, C.room); } });
   (U.structures || []).forEach((st, k) => { if (st.slabs) { items.push([ntri(M), 's', k]); for (const [, y] of st.slabs) prism(M, st, y - .4, y, [.98, .78, .35], true); } });   // Crossrail Place slabs (Arup)
-  const G = M.geometry(); G.userData.items = items; return G;
+  const nearTris = ntri(M);
+  U.basements.forEach((b, k) => { items.push([ntri(M), 'b', k]); prism(M, b, b.b - b.n * P.storey, b.b - .3, C.base, true); });
+  const G = M.geometry(); G.userData.items = items; G.userData.nearTris = nearTris; return G;
 }
 const itemAt = (G, f) => { const it = G.userData.items; if (!it || !it.length) return null; let lo = 0, hi = it.length - 1; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (it[m][0] <= f) lo = m; else hi = m - 1; } return it[lo][0] <= f ? it[lo] : null; };
 function dockGeometry(U) { const M = new Mesh(); for (const st of U.structures || []) if (st.bed != null) prism(M, st, st.bed, st.water, C.water.map(c => c * .8), true); return M.geometry(); }
@@ -119,9 +127,13 @@ export default {
     back.rotation.x = -Math.PI / 2; back.position.set((ex.x0 + ex.x1) / 2, -60, (ex.z0 + ex.z1) / 2); back.name = 'under:backdrop';
     group.add(tunnels, under, dock, back);
     const ST = () => { const c = ctx.stationCut; return c && c.on() ? c : null; };   // layers/stations.js, while its layer is shown
-    const rebuildTunnels = () => { const t0 = performance.now(), st = ST(); tunnels.geometry.dispose(); tunnels.geometry = tunnelsGeometry(P, st); stats.tunnels = { chains: CTL.size, triangles: tris(tunnels.geometry), cutOuts: !!st, ms: Math.round(performance.now() - t0) }; draw(); };
+    const rebuildTunnels = () => { const t0 = performance.now(), st = ST(); tunnels.geometry.dispose(); tunnels.geometry = tunnelsGeometry(P, st, groundAt); stats.tunnels = { chains: CTL.size, triangles: tris(tunnels.geometry), cutOuts: !!st, ms: Math.round(performance.now() - t0) }; draw(); };
     const rebuildUnder = () => { const t0 = performance.now(), st = ST(); under.geometry.dispose(); under.geometry = underGeometry(DU, P, st); stats.under = { basements: DU.basements.length, indoor: DU.indoor.length, indoorInStations: st ? DU.indoor.filter(o => st.inside(...dec(o.p || o.line).slice(0, 2))).length : 0, triangles: tris(under.geometry), ms: Math.round(performance.now() - t0) }; draw(); };
     ctx.under = { rebuild() { rebuildTunnels(); rebuildUnder(); } };   // stations.js calls it when its cut-outs change
+    // with the cut-away off and the eye above ground, only the first range of each mesh (what can show from above)
+    let rangeKey = '';
+    ctx.onFrame(() => { const all = CUT < OFF || (ctx.eyeAbove ?? 1) < 0, key = all + '|' + tunnels.geometry.id + '|' + under.geometry.id; if (key === rangeKey) return; rangeKey = key;
+      for (const m of [tunnels, under]) { const g = m.geometry, n = g.userData.nearTris; g.setDrawRange(0, all || n == null ? Infinity : n * 3); } });
     rebuildTunnels(); rebuildUnder(); stats.dockVol = { triangles: tris(dock.geometry) };
     let tq = 0, uq = 0;   // slider moves: rebuild at most every 120 ms
     const later = (fn, which) => { if (which === 't') { clearTimeout(tq); tq = setTimeout(fn, 120); } else { clearTimeout(uq); uq = setTimeout(fn, 120); } };

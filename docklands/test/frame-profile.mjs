@@ -8,7 +8,8 @@
 // draw calls, triangles, programs, JavaScript time and the relative cost of each feature carry over.
 //   python3 -m http.server 8188 --bind 127.0.0.1 &      (repository root)
 //   node docklands/test/frame-profile.mjs [--base http://127.0.0.1:8188] [--views cw,towerbridge] [--size 390x844@1]
-//        [--secs 6] [--ablate] [--json out.json] [--chrome /opt/pw-browsers/chromium]
+//        [--secs 6] [--settle 8] [--webgpu] [--ablate] [--ids water,trees] [--asecs 5] [--json out.json] [--chrome /opt/pw-browsers/chromium]
+// For the JavaScript per frame use a small canvas (--size 120x260@1 --settle 30 --secs 15): many frames, no start-up work.
 // Skill: docklands-3d-page, "Frame cost by cause".
 import { createRequire } from 'node:module';
 import { writeFileSync } from 'node:fs';
@@ -27,16 +28,17 @@ const VIEWS = {
 };
 const views = arg('--views', 'cw,night,towerbridge,area').split(',');
 const browser = await chromium.launch({ headless: true, executablePath: arg('--chrome', '/opt/pw-browsers/chromium'),
-  args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist',
+    ...(argv.includes('--webgpu') ? ['--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader'] : [])] });
 const out = [];
 for (const v of views) {
   const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: DPR }), errors = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.route(/open-meteo\.com|adsb|aisstream|raw\.githubusercontent/, r => r.abort());   // the same weather and no live feeds every run
   const q = VIEWS[v] || v, [qs, hash] = q.split('#');
-  await page.goto(`${BASE}/docklands/?${qs}&webgl&animate=0&wind=3,240${hash ? '#' + hash : ''}`, { timeout: 240000 });
+  await page.goto(`${BASE}/docklands/?${qs}${argv.includes('--webgpu') ? '' : '&webgl'}&animate=0&wind=3,240${hash ? '#' + hash : ''}`, { timeout: 240000 });
   await page.waitForFunction(() => globalThis.__docklands3 && __docklands3.ready && __docklands3.STATS.layers, null, { timeout: 400000 });
-  await page.waitForTimeout(8000);
+  await page.waitForTimeout(+arg('--settle', 8) * 1000);
   // geometry by top-level group
   const geo = await page.evaluate(() => {
     const D = __docklands3, by = {};
@@ -74,16 +76,16 @@ for (const v of views) {
     jsMsPerFrame: +([...self.entries()].filter(([k]) => !/^\((idle|program|root)\)/.test(k)).reduce((s, [, x]) => s + x, 0) / nFrames).toFixed(2),
     topFunctions: [...self.entries()].filter(([k]) => !/^\((idle|program|root)\)/.test(k)).sort((a, b) => b[1] - a[1]).slice(0, 18).map(([k, x]) => [k, +(x / nFrames).toFixed(2) + ' ms/frame']),
     topFiles: [...byFile.entries()].filter(([k]) => k && k !== '(native)').sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, x]) => [k, +(x / nFrames).toFixed(2) + ' ms/frame']) };
-  const row = { view: v, size: `${W}x${H}@${DPR}`, msPerFrame: base, ...geo, js, errors: errors.slice(0, 3) };
+  const row = { view: v, size: `${W}x${H}@${DPR}`, backend: await page.evaluate(() => __docklands3.backend), msPerFrame: base, ...geo, js, errors: errors.slice(0, 3) };
   if (ABLATE) {
-    const ab = {}, ids = await page.evaluate(() => Object.keys(__docklands3.layers).filter(k => { const L = __docklands3.layers[k]; return L && L.on && L.api && (L.api.setVisible || L.api.object); }));
+    const ab = {}, only = arg('--ids'), ids = (await page.evaluate(() => Object.keys(__docklands3.layers).filter(k => { const L = __docklands3.layers[k]; return L && L.on && L.api && (L.api.setVisible || L.api.object); }))).filter(k => !only || only.split(',').includes(k));
     const vis = (id, on) => page.evaluate(([id, on]) => { const L = __docklands3.layers[id]; if (L.api.setVisible) L.api.setVisible(on); else if (L.api.object) L.api.object.visible = on; __docklands3.draw(); }, [id, on]);
     const S = +arg('--asecs', 5), m = async () => ({ ms: await msFrame(S), ...(await counts1()) });
     ab.base = await m();
     for (const id of ids) { await vis(id, false); ab['-' + id] = await m(); await vis(id, true); }
     await page.evaluate(() => __docklands3.setShadows(false)); ab['-shadows'] = await m(); await page.evaluate(() => __docklands3.setShadows(true));
-    await page.evaluate(() => { const D = __docklands3; D._pr = D.renderer.getPixelRatio(); D.renderer.setPixelRatio(D._pr / 2); }); ab['pixelRatio/2'] = await m();
-    await page.evaluate(() => { const D = __docklands3; D.renderer.setPixelRatio(D._pr); });
+    await page.evaluate(() => { const D = __docklands3; D._pr = D.renderer.getPixelRatio(); D.renderer.setPixelRatio(D._pr / 2); window.dispatchEvent(new Event('resize')); }); ab['pixelRatio/2'] = await m();
+    await page.evaluate(() => { const D = __docklands3; D.renderer.setPixelRatio(D._pr); window.dispatchEvent(new Event('resize')); });
     ab.base_again = await m();
     row.ablate = Object.fromEntries(Object.entries(ab).sort((a, b) => a[1].ms - b[1].ms));
   }
