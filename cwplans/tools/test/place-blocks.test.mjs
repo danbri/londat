@@ -66,6 +66,28 @@ test('blockTree: cells with buildings only, leaves at the leaf level, coarse cel
   assert.equal(T.roots.reduce((k, r) => k + r.items.length, 0), 3);
 });
 
+test('blockTree sparse (build cells, issue #20): a coarse node with at most `sparse` buildings is a leaf; dense ones go to the leaf level', () => {
+  // 3 buildings in one level-10 cell near (0.3, 51.6) and 5 close together near (0.01, 51.51): sparse 3
+  const B = [[0.30, 51.60], [0.31, 51.61], [0.32, 51.605], ...[0, 1, 2, 3, 4].map(k => [0.01 + k * 1e-4, 51.51])].map(([lon, lat], i) => ({ id: 'b' + i, c: [lon, lat] }));
+  const T = blockTree({ buildings: B, top: 10, leaf: 14, sparse: 3 });
+  const leaves = [...T.nodes.values()].filter(n => n.leaf);
+  for (const n of leaves) assert.equal(n.kids.length, 0);
+  for (const n of T.nodes.values()) if (!n.leaf) assert.ok(n.kids.length >= 1 && n.items.length > 3, n.key);
+  assert.ok(leaves.some(n => n.l < 14 && n.items.length === 3), 'the three spread buildings share one coarse leaf');
+  assert.ok(leaves.some(n => n.l === 14 && n.items.length === 5), 'the five close buildings reach the leaf level');
+  assert.equal(leaves.reduce((k, n) => k + n.items.length, 0), 8, 'every building in exactly one leaf');
+  for (const n of T.nodes.values()) for (const k of n.kids) assert.ok(T.nodes.get(k.key) === k, 'no dropped node in the tree');
+});
+
+test('blocksGlb: a tile that draws nothing is valid glTF (no empty arrays, no BIN chunk)', () => {
+  const l = 12, cs = 180 / 2 ** l, x = Math.floor((0.01 + 180) / cs), y = Math.floor((51.5 + 90) / cs), b = cellBox(l, x, y);
+  const r = blockTile({ cell: { l, x, y, key: 'e', b }, items: [], HT: {}, groundAt: () => 0, geoidAt: () => 45, P: { tall_m: 25, big_m2: 600, merge_m: 100, drop_m: 3, min_area_m2: 25 }, leaf: false, named: null, classes: ['osm'], colour: '#d6cbb6', credit: 'test' });
+  const bin = r.bytes, jl = bin.readUInt32LE(12), J = JSON.parse(bin.subarray(20, 20 + jl).toString('utf8'));
+  assert.equal(bin.readUInt32LE(8), bin.length); assert.equal(bin.length, 20 + jl, 'no BIN chunk');
+  for (const k of ['nodes', 'meshes', 'materials', 'buffers', 'bufferViews', 'accessors']) assert.ok(!(k in J) || J[k].length > 0, k);
+  assert.deepEqual(J.scenes, [{}]);
+});
+
 test('blockTile: leaf boxes, outlines and named buildings; a coarse level merges small buildings by square', () => {
   const lat = 51.5, l = 14, cs = 180 / 2 ** l, x = Math.floor((0.01 + 180) / cs), y = Math.floor((lat + 90) / cs), b = cellBox(l, x, y), c0 = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
   const mk = (id, dx, w, h, ht, name, deg = 0) => { const g = rect(c0[0] + dx / 70000, c0[1], w, h, deg), ring = g.coordinates[0]; return { b: { id, name, rings: [ring], c: [c0[0] + dx / 70000, c0[1]], a: ringAreaM2(ring.slice(0, -1)) }, H: { h: ht, src: 'osm-levels' } }; };

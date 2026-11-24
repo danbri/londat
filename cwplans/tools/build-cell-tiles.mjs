@@ -2,7 +2,7 @@
 // One build cell of the worldwide building layer: issue https://github.com/danbri/londat/issues/20 stage 2 (our own
 // tile sets in our own GitHub Pages repositories; owner, 2026-11-24). Size plan: docs/scale-estimate.md.
 //
-//   node cwplans/tools/build-cell-tiles.mjs --cell 8-250-202 [--tier london] [--out <folder>] [fetch|build]
+//   node cwplans/tools/build-cell-tiles.mjs --cell 8-250-202 [--tier london] [--sparse 2000] [--out <folder>] [fetch|build]
 //
 // A build cell is a cell of the geodetic quadtree of docs/planet-architecture.md section 2 (180 / 2^z degrees; x from
 // 180 W, y from 90 S, as the place tiles of build-place-tiles.mjs). Level 8 is 0.703 degrees, about 78 x 49 km at 51 N.
@@ -29,6 +29,9 @@ if (x >= 2 ** (z + 1) || y >= 2 ** z) throw new Error(`no cell ${cell}`);
 export const cellBbox = (z, x, y) => { const s = 180 / 2 ** z; return [-180 + x * s, -90 + y * s, -180 + (x + 1) * s, -90 + (y + 1) * s]; };
 const bb = cellBbox(z, x, y), r6 = v => Math.round(v * 1e6) / 1e6;
 const TIERS = { london: 'london' };
+// --sparse <n>: a node coarser than the leaf level holding at most n buildings is a leaf (fewer, larger tiles where
+// buildings are sparse; the fixed cost of a tile is about 3 kB); 0 = every leaf at level 13 (the London set)
+const SPARSE = +(argOf('sparse') ?? 2000);
 if (!TIERS[tier]) throw new Error(`tier ${tier}: one of ${Object.keys(TIERS).join(', ')}`);
 
 const id = `cell-${cell}`, raw = join(CW, 'data', 'raw', 'places', id); mkdirSync(raw, { recursive: true });
@@ -49,7 +52,7 @@ export default {
     exclude: [], index: false,
     outRepo: 'docklandia', outPath: ${JSON.stringify(`data/cells/${cell}/`)}, tileBase: ${JSON.stringify(`https://danbri.github.io/docklandia/data/cells/${cell}/`)},
     heights: london.place.heights, default_height_m: london.place.default_height_m,
-    blocks: { ...london.place.blocks, ground_fallback: 'world-texture' },
+    blocks: { ...london.place.blocks, ground_fallback: 'world-texture', sparse_leaf_n: ${SPARSE}, credit_per_set: true },
   },
   adapters: london.adapters,
 };

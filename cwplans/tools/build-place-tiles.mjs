@@ -1333,7 +1333,7 @@ async function buildBlocks() {
   const TP = { top: BK.top_level, leaf: BK.leaf_level, levels: BK.levels, min_area_m2: BK.min_area_m2, simplify_m: BK.simplify_m, box_fill: BK.box_fill, outline_min_m2: BK.outline_min_m2, drop_m: BK.drop_m ?? 3,
     named_min_m2: BK.named_min_m2, named_min_h_m: BK.named_min_h_m, colour: BK.colour || '#d6cbb6', version_label: `${RID}-${CPT ? 2 : 1}`, extent_box: QBOX,
     ...(CPT ? { leaf_boxes: 'compact', leaf_outlines: BK.leaf_outlines !== false, layout: 'cwplans-boxes-1', full_share: BK.full_share ?? 0.5, grid_n: BK.grid_n ?? 17, leaf_within_m: BK.leaf_within_m ?? null,
-      ...(BK.far ? { far: BK.far } : {}),
+      ...(BK.far ? { far: BK.far } : {}), ...(BK.sparse_leaf_n ? { sparse_leaf_n: BK.sparse_leaf_n } : {}), ...(BK.credit_per_set ? { credit_per_set: true } : {}),
       classes: ['OpenStreetMap (via Overture)', 'merged buildings (one box a square, turned to the grain of its buildings: the summed footprint, the area-weighted mean height)', 'OpenStreetMap (via Overture)', ...geoAds.map(a => a.geometry.label)],
       class_index: Object.fromEntries(geoAds.map((a, i) => [a.geometry.cls, 3 + i])) }
       : { classes: ['OpenStreetMap (via Overture)', `merged ${geoAds.length ? '' : 'OpenStreetMap '}buildings (one box per square: the summed footprint, the area-weighted mean height)`, ...geoAds.map(a => a.geometry.label)],
@@ -1350,24 +1350,28 @@ async function buildBlocks() {
     for (const b of B) if (b.name && (b.a >= p.named_min_m2 || HT[b.id].h >= p.named_min_h_m)) { named.set(b.id, rows.length); rows.push(b); }
     // (compact) every building as a box record: true centroid, area, angle and long / short ratio, height, class, source
     const BX = p.leaf_boxes === 'compact' ? B.map(b => { const H = HT[b.id], si = HSRC.indexOf(H.src); if (si < 0) throw new Error(`height source ${H.src} has no index in the compact layout (HSRC)`); return footprintBox(b, H.h, b.cls ? 1 : 0, si); }) : null;
-    const T = blockTree({ buildings: B, top: p.top, leaf: p.leaf });
+    const T = blockTree({ buildings: B, top: p.top, leaf: p.leaf, sparse: p.sparse_leaf_n || 0 });
+    // the leaf tile of each building (sparse leaves can be coarser than p.leaf)
+    const leafOf = new Map(); for (const n of T.nodes.values()) if (n.leaf) for (const i of n.items) leafOf.set(B[i].id, n.key);
+    // (place.blocks.credit_per_set, owner 2026-11-24: "Credit per set") the full credit in tileset.json and features.json, a short one in each glb
+    const tileCredit = p.credit_per_set ? 'OpenStreetMap contributors, Overture Maps, Microsoft (ODbL 1.0); GHSL (CC BY 4.0); full credit: tileset.json asset.extras.credit' : p.credit;
     // (place-blocks 6, far forms; issue #13) the street blocks of each leaf cell, made once: buildings that are their own
     // boxes at the finest coarse level (tall or big) stay single (bi = their index), so a coarser level can leave them to
     // its own boxes; the coarse levels draw the blocks of their leaf cells whose seen size is at least min_m2
     const FAR = p.far && BX ? new Map() : null;
-    if (FAR) { const LV1 = p.levels[p.leaf - 1], ownAt = (i, LV) => HT[B[i].id].h >= LV.tall_m || B[i].a >= LV.big_m2;
-      for (const n of T.nodes.values()) { if (n.l !== p.leaf) continue; const merge = [], single = [];
+    if (FAR) { const ownAt = (i, LV) => HT[B[i].id].h >= LV.tall_m || B[i].a >= LV.big_m2;
+      for (const n of T.nodes.values()) { if (!n.leaf || n.l === p.top) continue; const LV1 = p.levels[n.l - 1], merge = [], single = [];
         for (const i of n.items) (ownAt(i, LV1) ? single : merge).push(i);
         FAR.set(n.key, [...streetBlocks(merge.map(i => BX[i]), p.far), ...single.map(i => ({ ...BX[i], n: 1, bi: i }))]); }
       FAR.ownAt = ownAt; console.log(`  place-blocks far forms: ${[...FAR.values()].reduce((a, L) => a + L.length, 0)} street blocks in ${FAR.size} leaf cells`); }
-    const farUnder = n => n.l === p.leaf ? (FAR.get(n.key) || []) : n.kids.flatMap(farUnder);
+    const farUnder = n => n.leaf ? (FAR.get(n.key) || []) : n.kids.flatMap(farUnder);
     rmSync(join(OUT, 'tiles'), { recursive: true, force: true }); mkdirSync(join(OUT, 'tiles'), { recursive: true });
     const outFiles = [], stats = []; let nT = 0; const total = T.nodes.size;
     async function tile(n, parentWorld) {
-      const leaf = n.l === p.leaf; let r;
+      const leaf = n.leaf; let r;
       if (!BX) {
         const LP = leaf ? { min_area_m2: p.min_area_m2, simplify_m: p.simplify_m, box_fill: p.box_fill, outline_min_m2: p.outline_min_m2, drop_m: p.drop_m } : { ...p.levels[n.l], min_area_m2: p.min_area_m2, drop_m: p.drop_m };
-        r = blockTile({ cell: n, items: n.items.map(i => B[i]), HT, groundAt: G.at, geoidAt: geoAt, P: LP, leaf, named: leaf ? named : null, classes: p.classes, classIndex: p.class_index, colour: p.colour, credit: p.credit });
+        r = blockTile({ cell: n, items: n.items.map(i => B[i]), HT, groundAt: G.at, geoidAt: geoAt, P: LP, leaf, named: leaf ? named : null, classes: p.classes, classIndex: p.class_index, colour: p.colour, credit: tileCredit });
       } else {
         // compact: at the leaves the named buildings as outlines (own id), every other building one compact box; at the
         // coarse levels the tall or big buildings as boxes, the rest one compact square a merge_m square of the cell,
@@ -1381,7 +1385,7 @@ async function buildBlocks() {
         else if (!leaf && rest.length) { const sqs = squareBoxes(boxSquares(rest, n.b, LV.merge_m), n.b, LV.merge_m, p.full_share); nmass = rest.length;
           compact = F2 => ({ ...compactBoxes({ F: F2, b: n.b, boxes: sqs, groundAt: G.at, geoidAt: geoAt, drop_m: p.drop_m, grid_n: p.grid_n, kind: 'squares', colour: p.colour }), mass_buildings: nmass }); }
         const LP = leaf ? (p.leaf_outlines ? { min_area_m2: p.min_area_m2, simplify_m: p.simplify_m, box_fill: p.box_fill, outline_min_m2: p.outline_min_m2, drop_m: p.drop_m } : { min_area_m2: p.min_area_m2, simplify_m: p.simplify_m, box_fill: 0, outline_min_m2: Infinity, drop_m: p.drop_m }) : { ...LV, min_area_m2: p.min_area_m2, drop_m: p.drop_m, ...(p.far?.box_fill ? { far_box_fill: p.far.box_fill, far_simplify_m: p.far.simplify_m } : {}) };
-        r = blockTile({ cell: n, items: own, HT, groundAt: G.at, geoidAt: geoAt, P: LP, leaf, named: leaf ? named : null, classes: p.classes, classIndex: p.class_index, colour: p.colour, credit: p.credit, compact,
+        r = blockTile({ cell: n, items: own, HT, groundAt: G.at, geoidAt: geoAt, P: LP, leaf, named: leaf ? named : null, classes: p.classes, classIndex: p.class_index, colour: p.colour, credit: tileCredit, compact,
           noteRef: 'features.json blocks.tile_extras', cellBuildings: n.items.length });
         const cs = r.stats.compact; r.stats.building_boxes = leaf ? (cs?.boxes || 0) : 0; r.stats.mass_boxes = leaf ? 0 : (cs?.boxes || 0); r.stats.merged = r.stats.mass_boxes; r.stats.merged_buildings = r.stats.compact_mass || 0;
         if (leaf && cs) { r.stats.by_class.osm = (r.stats.by_class.osm || 0) + cs.by_class[0]; if (cs.by_class[1]) { const xc = Object.keys(p.class_index)[0]; r.stats.by_class[xc] = (r.stats.by_class[xc] || 0) + cs.by_class[1]; } }
@@ -1392,7 +1396,7 @@ async function buildBlocks() {
       const t = { boundingVolume: { region: region.map(v => +v.toPrecision(12)) }, geometricError: leaf ? 0 : p.levels[n.l].err_m, refine: 'REPLACE', transform: roundM(parentWorld ? mul4(inv4rigid(parentWorld), world) : world).map((v, i) => i >= 12 ? v : +v.toPrecision(10)), content: { uri: `tiles/${n.key}.glb` } };   // rotation to 10 digits (under 1 mm at the Earth's radius)
       // (compact) the leaves' parents: refined only within leaf_within_m of the eye (distance minus the bounding radius), so
       // a big screen or an oblique whole-city view keeps the turned squares far away (places.js reads extras.refine_within_m)
-      if (p.leaf_within_m && n.l === p.leaf - 1) t.extras = { refine_within_m: p.leaf_within_m };
+      if (p.leaf_within_m && n.kids.some(k => k.leaf)) t.extras = { refine_within_m: p.leaf_within_m };
       if (kids.length) t.children = kids; return t;
     }
     const children = []; for (const n of T.roots) children.push(await tile(n, null));
@@ -1403,7 +1407,7 @@ async function buildBlocks() {
       geometricError: rootErr * 2, root: { boundingVolume: { region: [ext[0] * D2R, ext[1] * D2R, ext[2] * D2R, ext[3] * D2R, lo, hi].map(v => +v.toPrecision(12)) }, geometricError: rootErr, refine: 'REPLACE', children } };
     const tsf = join(OUT, 'tileset.json'); writeFileSync(tsf, JSON.stringify(tileset)); outFiles.push(tsf);
     // features.json: the named buildings drawn with their own id (search, cards, featuresAt, describeView); no ground grid
-    const leafKey = b => { const cs = 180 / 2 ** p.leaf; return `${p.leaf}-${Math.floor((b.c[0] + 180) / cs)}-${Math.floor((b.c[1] + 90) / cs)}`; };
+    const leafKey = b => leafOf.get(b.id);
     const Bf = rows.map(b => { const H = HT[b.id]; return [b.osm || b.id, b.name, null, b.kind, b.c[0], b.c[1], H.h, H.src, b.levels ?? null, leafKey(b), Math.round(G.at(b.c[0], b.c[1]) * 10) / 10, null, null, null, 'flat']; });
     const tiers = {}; for (const s2 of stats) { const o = tiers['level ' + s2.level] ||= { tiles: 0, bytes: 0, triangles: 0, boxes: 0, outlines: 0, named: 0, merged: 0, merged_buildings: 0, ...(BX ? { building_boxes: 0, mass_boxes: 0 } : {}), by_class: {} }; o.far_outlines = (o.far_outlines || 0) + (s2.far_outlines || 0); o.tiles++; for (const k of ['bytes', 'triangles', 'boxes', 'outlines', 'named', 'merged', 'merged_buildings', ...(BX ? ['building_boxes', 'mass_boxes'] : [])]) o[k] += s2[k] || 0; for (const [c, v] of Object.entries(s2.by_class || {})) o.by_class[c] = (o.by_class[c] || 0) + v; }
     const byClass = {}; for (const b of B) byClass[b.cls || 'osm'] = (byClass[b.cls || 'osm'] || 0) + 1;

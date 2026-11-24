@@ -130,7 +130,9 @@ export function worldBaseGround(M, readTile, fallback = null) {   // fallback(lo
 }
 
 // ---------- the tree: every leaf cell holding a building, and its ancestors to the top level
-export function blockTree({ buildings, top, leaf }) {
+// sparse (build cells, issue #20): a node coarser than the leaf level whose cell holds at most `sparse` buildings is a
+// leaf itself (its descendants are dropped), so a rural area has few, larger leaf tiles; every node gets n.leaf
+export function blockTree({ buildings, top, leaf, sparse = 0 }) {
   const nodes = new Map();
   const get = (l, x, y) => { const k = `${l}-${x}-${y}`; let n = nodes.get(k); if (!n) { n = { l, x, y, key: k, b: cellBox(l, x, y), kids: [], items: [] }; nodes.set(k, n);
     if (l > top) { const p = get(l - 1, x >> 1, y >> 1); p.kids.push(n); } } return n; };
@@ -139,6 +141,9 @@ export function blockTree({ buildings, top, leaf }) {
   for (let l = leaf - 1; l >= top; l--) for (const n of nodes.values()) if (n.l === l) for (const k of n.kids) for (const i of k.items) n.items.push(i);
   for (const n of nodes.values()) n.kids.sort((a, b) => a.key.localeCompare(b.key));
   const roots = [...nodes.values()].filter(n => n.l === top).sort((a, b) => a.key.localeCompare(b.key));
+  const drop = n => { for (const k of n.kids) { nodes.delete(k.key); drop(k); } };
+  const mark = n => { if (n.l === leaf || (sparse && n.items.length <= sparse)) { n.leaf = true; drop(n); n.kids = []; } else { n.leaf = false; n.kids.forEach(mark); } };
+  roots.forEach(mark);
   return { roots, nodes };
 }
 
@@ -315,8 +320,15 @@ export function blocksGlb({ ol, nm, inst, colour, credit, extras, featureCount, 
   if (compact) { const C = json.extras.blocks.compact; C.bufferView = view(compact.data); C.grid.bufferView = view(compact.grid); }   // (lite: the compact boxes and their ground grid)
   if (!json.extensionsUsed.length) delete json.extensionsUsed; if (!json.extensionsRequired.length) delete json.extensionsRequired;
   const bin = Buffer.concat(chunks); json.buffers.push({ byteLength: bin.length });
+  // glTF 2.0 forbids empty arrays (3d-tiles-validator: 18 errors in each test cell, issue #20): a tile with compact boxes
+  // only has no nodes, meshes, materials or accessors; a tile that draws nothing (a coarse tile of a sparse area whose far
+  // forms are all too small) has no buffer either and no BIN chunk
+  if (!bin.length) json.buffers = [];
+  for (const k of ['nodes', 'meshes', 'materials', 'buffers', 'bufferViews', 'accessors']) if (!json[k].length) delete json[k];
+  if (!json.nodes) json.scenes = [{}];
   let js = Buffer.from(JSON.stringify(json)); js = Buffer.concat([js, Buffer.alloc((4 - js.length % 4) % 4, 0x20)]);
   const hdr = Buffer.alloc(12); hdr.writeUInt32LE(0x46546c67, 0); hdr.writeUInt32LE(2, 4); hdr.writeUInt32LE(12 + 8 + js.length + 8 + bin.length, 8);
   const ch = (b, ty) => { const h = Buffer.alloc(8); h.writeUInt32LE(b.length, 0); h.writeUInt32LE(ty, 4); return [h, b]; };
+  if (!bin.length) { hdr.writeUInt32LE(12 + 8 + js.length, 8); return Buffer.concat([hdr, ...ch(js, 0x4e4f534a)]); }
   return Buffer.concat([hdr, ...ch(js, 0x4e4f534a), ...ch(bin, 0x004e4942)]);
 }

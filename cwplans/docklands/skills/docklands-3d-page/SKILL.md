@@ -3559,9 +3559,22 @@ buildings per country from the Overture Parquet footers only, about 1 minute for
   minutes. West London 8-255-201: 1,797,507 buildings, 1,360 tiles, 63.47 MB, 35.3 bytes a building, about 12 minutes
   (DuckDB fetch of 2.0 M rows most of it). Fit: 3,030 bytes a tile + 33 bytes a building. The glTF JSON of each tile is
   about 2.7 kB (the full credit string, about 0.9 kB, in every glb); in Wales it is 2.55 of the 5.37 MB.
+- **Credit per set; sparse leaves (2026-11-24; owner: "Credit per set").** `place.blocks.credit_per_set`: the full
+  credit in tileset.json and features.json, a short one (about 110 bytes) in each glb. `place.blocks.sparse_leaf_n`
+  (tool `--sparse`, default 2,000): place-blocks.mjs `blockTree({ sparse })` makes a node with at most that many buildings
+  a leaf (descendants dropped); every node has `n.leaf`; the builder tests `n.leaf`, never `n.l === p.leaf` (far forms,
+  refine_within_m on a node with a leaf child, the leaf key of named rows). Wales 1,109 -> 89 tiles, 5.37 -> 1.98 MB;
+  London cell 63.47 -> 61.93 MB. places.js needs no change for leaves of any level.
+- **Valid glTF for tiles that draw little.** blocksGlb leaves out every empty array (nodes, meshes, materials, buffers,
+  bufferViews, accessors) and the BIN chunk when there is no binary data (`scenes: [{}]`); places.js `parseGlb` reads
+  `json.nodes || []`. Before: 18 validator errors a cell. Trap: `run()` memoises by operation, version, inputs and
+  parameters, so after a code change of the tile writer use `build --force`.
+- **Page check without an index commit.** Copy places/index.json aside, add an entry with `tileBase`, link the cell
+  folder to `docklands/test/out/places/<id>` (ignored), serve the repository root and open the page with
+  `?placebase=<id>:<local url>`; restore index.json after. Chromium here: `/opt/pw-browsers/chromium` (the
+  chromium-1194 path in CLAUDE.md is gone in this image).
 - **Open.** Masks of our detailed sets (Docklands model box, London, places) and the tile index: stage 3. Tiers other
-  than london (one box a building, squares only). The tile cost: credit once per tile set (owner decision) and sparse
-  leaves at a coarser level; both before Europe.
+  than london (one box a building, squares only). describeView `buildings_in_leaf_tiles` counts level-13 leaves only.
 
 ## Three.js port: the UK lite set (2026-10-22)
 

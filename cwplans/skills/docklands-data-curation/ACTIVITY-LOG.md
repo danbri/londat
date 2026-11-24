@@ -3856,3 +3856,7 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   bytes a building); west London 8-255-201, 1,797,507 buildings, 63.47 MB (35.3). Fit: 3,030 bytes a tile + 33 bytes a
   building; the per-tile glTF JSON (the credit string in every tile) dominates rural cells. Revised: Great Britain 2
   repositories, Europe 19 to 26, the world 135 to 147 with today's tile format. Not committed. Record: docs/scale-estimate.md.
+- 2026-11-24, owner: "Credit per set". Build cells now have the full credit in tileset.json and features.json and a short
+  one in each tile, and sparse leaves (a node with 2,000 buildings or fewer is a leaf). Wales cell 5.37 -> 1.98 MB (32.6 bytes a
+  building), London cell 63.47 -> 61.93 MB; 3d-tiles-validator 0 errors (was 18 a cell: empty glTF arrays); page check of
+  Aberystwyth with no errors. Revised: Great Britain 1 repository (2 with room to rebuild), Europe 14 to 15, the world 82 to 89.

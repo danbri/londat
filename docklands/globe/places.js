@@ -67,7 +67,7 @@ function parseGlb(ab) {
     return { arr: out, n }; };
   const view = i => { const v = json.bufferViews[i]; return new Uint8Array(ab, bin + (v.byteOffset || 0), v.byteLength); };
   const out = [];
-  for (const nd of json.nodes) {
+  for (const nd of json.nodes || []) {   // (a block tile that draws nothing has no nodes)
     if (nd.mesh == null) continue;
     const t = nd.translation || [0, 0, 0], s = nd.scale || [1, 1, 1], inst = nd.extensions?.EXT_mesh_gpu_instancing?.attributes;
     let prev = null;

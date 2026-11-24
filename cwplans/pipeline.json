@@ -10778,7 +10778,7 @@
   {
    "id": "cell-tiles",
    "tool": "tools/build-cell-tiles.mjs",
-   "command": "node cwplans/tools/build-cell-tiles.mjs --cell <z-x-y> [--tier london] [--out <folder>] [fetch|build]",
+   "command": "node cwplans/tools/build-cell-tiles.mjs --cell <z-x-y> [--tier london] [--sparse 2000] [--out <folder>] [fetch|build] [--force]",
    "kind": "build",
    "network": true,
    "deterministic": true,
@@ -10789,7 +10789,9 @@
    "method": "One cell of the geodetic quadtree (180 / 2^z degrees, x from 180 W, y from 90 S) as basic buildings: writes a region config for the cell (cwplans/data/raw/places/cell-<z-x-y>/region.mjs: place kind blocks, a rectangle boundary by building centroid, the Greater London place.blocks parameters for tier london, the globe's world terrain texture where the world base has no height tile, no entry in places/index.json) and runs build-place-tiles.mjs fetch and build on it with --region-file. Output to danbri/docklandia data/cells/<z-x-y>/ by default. Issue https://github.com/danbri/londat/issues/20 stage 2; measurements docs/scale-estimate.md.",
    "rules": [
     "A building belongs to the cell that holds its centroid: west and south edges in, east and north edges out.",
-    "No masks of our detailed sets yet (the Docklands model box, London, the places): they come with the tile index (stage 3)."
+    "No masks of our detailed sets yet (the Docklands model box, London, the places): they come with the tile index (stage 3).",
+    "Credit per set (owner, 2026-11-24: \"Credit per set\"): the full credit in tileset.json and features.json, a short credit in each glb.",
+    "Sparse leaves: a node coarser than level 13 with at most --sparse buildings (default 2,000) is a leaf with all its buildings."
    ],
    "used": [
     {

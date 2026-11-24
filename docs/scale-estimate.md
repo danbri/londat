@@ -8,7 +8,8 @@ world at a coarse level.
 
 ## Result
 
-Revised the same day by two built test cells: see "Stage 2 test cells" at the end. Outside dense cities each tile
+Revised the same day by two built test cells and two fixes: see "The two fixes, built and measured" at the end
+(Great Britain 1 repository, 2 with room to rebuild; Europe 14 to 15; the world 82 to 89). Before the fixes: Outside dense cities each tile
 adds about 3 kB, so the counts below are too low (Great Britain 2 repositories, Europe 19 to 26, the world 135 to 147
 with today's tile format).
 
@@ -126,3 +127,38 @@ With both, the size goes towards the low column.
 The two test cells are not committed (the page cannot read them before the tile index of stage 3; the London cell
 repeats the London set). Rebuild: `node cwplans/tools/build-cell-tiles.mjs --cell 8-250-202` (about 2 minutes) and
 `--cell 8-255-201` (about 12 minutes: fetch 2.0 M rows, select, heights, tiles 55 s).
+
+## The two fixes, built and measured (2026-11-24)
+
+Owner, 2026-11-24, verbatim: "Credit per set". Both fixes are on in `build-cell-tiles.mjs` (Greater London's own build
+is unchanged):
+
+1. Credit per set (`place.blocks.credit_per_set`): the full credit in tileset.json (`asset.extras.credit`) and
+   features.json; each glb has a short credit of about 110 bytes that names the sources and points to tileset.json.
+2. Sparse leaves (`place.blocks.sparse_leaf_n`, tool option `--sparse`, default 2,000): a node coarser than level 13 that
+   holds at most 2,000 buildings is a leaf with all its buildings. Its coarser parents keep the far forms.
+
+Also fixed: 18 tiles in each cell were not valid glTF (empty arrays: tiles that draw nothing, and tiles with compact boxes
+only). Now 3d-tiles-validator 0.6.0 gives 0 errors and 0 warnings for both cells.
+
+| cell | tiles before / after | leaves by level after | size before / after | bytes a building after | bytes an Overture record |
+|---|---|---|---|---|---|
+| 8-250-202 mid Wales | 1,109 / 89 | 10: 5, 11: 32, 12: 28, 13: 4 | 5.37 / 1.98 MB | 32.6 | 28.8 |
+| 8-255-201 west London | 1,360 / 1,104 | 11: 1, 12: 59, 13: 772 | 63.47 / 61.93 MB | 34.5 | 31.5 |
+
+Page check (headless Chromium, software WebGL, 390 x 844, a local index entry not committed): Aberystwyth from 1.5 km
+draws leaves of levels 10 to 13, 8,915 building boxes and 311 outlines, no page errors; from 20 km the sparse leaves of
+levels 10 and 11 draw 8,753 building boxes (93,244 triangles). Known gap: describeView `buildings_in_leaf_tiles` counts
+level-13 leaves only.
+
+Revised estimate (28.8 to 31.5 bytes an Overture record, the two measured cells; repositories of 900 MB, full):
+
+| region | Overture records | size | repositories |
+|---|---|---|---|
+| Great Britain | 24.7 M | 710 to 777 MB | 1 (79 to 86 % full); 2 with room to rebuild |
+| Europe without Russia | 344.0 M | 9.9 to 10.8 GB | 12 to 13 |
+| Europe with Russia | 415.4 M | 12.0 to 13.1 GB | 14 to 15 |
+| World | 2,533.8 M | 73.0 to 79.8 GB | 82 to 89 |
+
+Two cells are a small sample (one rural, one dense). Other continents (small buildings, other data sources) are not
+measured.
