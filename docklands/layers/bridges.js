@@ -2,10 +2,10 @@
 // Plan: the two holes in the OSM Thames polygon at the bridge (area.js water; read 2026-11-23): north pier x -4746 to -4715,
 // z -278 to -272; south pier x -4766 to -4734, z -176 to -170 (model metres), 102 m apart (the centre span is 103.6 m:
 // https://thames.me.uk/s00049e.htm), with pointed cutwaters (3 m, judged). Heights from the owner's photo IMG_2354 of
-// 2026-11-23 (eye at its GPS fix, 85 m from the north pier, focal 6639 px: 0.0128 m a pixel): pier top 8.2 m OD, the
-// granite obelisk at each end to 12.4 m OD. Material: Cornish granite facing (https://www.gracesguide.co.uk/London_Bridge;
+// 2026-11-23 (eye at its GPS fix, 80 m from the north pier's west end, focal 6639 px: 0.012 m a pixel; camera fitted to the
+// obelisk top): pier top 7.8 m OD, the granite obelisk at each end to 13.6 m OD. Material: Cornish granite facing (https://www.gracesguide.co.uk/London_Bridge;
 // a light grey granite, probably Merrivale), drawn light grey with a dark weed band below 3.5 m OD (the photo's tide band).
-// "LONDON BRIDGE" is carved on the south face of the north pier, letters about 0.5 m high, about 4.2 m above the water at
+// "LONDON BRIDGE" is carved on the south face of the north pier, letters about 0.5 m high, about 4.0 m above the water at
 // 1.7 m OD (the photo; no written source found for the inscription). The deck is not drawn here. Data:
 // data/images/contrib/thames-2026-11-23/README.md. Skill: docklands-3d-page, "Three.js port".
 import { Mesh } from '../build.js';
@@ -14,7 +14,7 @@ const PIERS = [
   { name: 'London Bridge, north pier', x0: -4746, x1: -4715, z0: -278, z1: -272, text: 'south' },
   { name: 'London Bridge, south pier', x0: -4766, x1: -4734, z0: -176, z1: -170 },
 ];
-const BED = -4, TOP = 8.2, WET = 3.5, OB_TOP = 12.4, OB_W = 1.2, CUT = 3;
+const BED = -4, TOP = 7.8, WET = 3.5, OB_TOP = 13.6, OB_W = 1.2, CUT = 3;
 const GRANITE = [.66, .64, .60], WETC = [.34, .36, .29], CAP = [.72, .70, .66];
 
 export default {
@@ -42,7 +42,7 @@ export default {
       const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
       const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, depthWrite: false, roughness: .9, polygonOffset: true, polygonOffsetFactor: -2 });
       const L = 7.2, H = L * 192 / 2048, pl = new THREE.Mesh(new THREE.PlaneGeometry(L, H), mat);
-      pl.position.set(P.x0 + CUT + 6.5, 1.7 + 4.2, P.z1 + .03); pl.name = 'inscription: LONDON BRIDGE'; group.add(pl);   // the south face (+z)
+      pl.position.set(P.x0 + CUT + 6.5, 1.7 + 4.0, P.z1 + .03); pl.name = 'inscription: LONDON BRIDGE'; group.add(pl);   // the south face (+z)
     }
     group.userData.stats = { piers: PIERS.length, triangles: M.idx.length / 3 };
     return { object: group, setVisible(on) { group.visible = on; } };
