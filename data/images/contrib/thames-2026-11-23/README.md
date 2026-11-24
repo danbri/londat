@@ -143,6 +143,25 @@ lacks the photo's long light streaks and the near moon glitter (the model's ripp
 dark slab; Tower Bridge has no spires, walkways or chains; a large model building behind Tower Bridge where IMG_2337 shows
 sky; the City render's framing differs from IMG_2347 by about 10 to 20 px.
 
+### Fourth pass, 2026-11-24: the open items
+
+The owner, 2026-11-24: "Follow your proposal / Continue". Changes (`docklands/`):
+
+1. The block behind Tower Bridge in IMG_2337: the two OSM parts between the towers (w367652753, w367653917; model
+   indexes 38724, 38733) are extruded from 3.1 to 48.1 m OD. `layers/bridges.js` hides them and draws each outline from
+   42.5 to 48.1 m OD as the high-level walkways, in the bridge's light blue-grey. The hide did not work at first: two
+   other layers removed it (`layers/skyline.js` deleted the skip option at start; `layers/model.js` replaced it after a
+   wait). Both are fixed; the rule is in the `docklands-3d-page` skill.
+2. London Bridge deck: from bank to bank on the line of the two piers, 32 m wide, road at 14.0 m OD, a granite parapet
+   1.1 m high, the underside haunched (7.8 m OD at the piers, 12.4 m mid centre span). The underside is drawn light
+   (0.80) because the page has no light from below; in IMG_2354 the water lights it.
+3. Water streaks: a control for the spacing of the mirror streaks (`SU.streak`). On IMG_2587, 0.0065 (the old value)
+   against 0.02: 0.02 draws zig-zag bands in the reflections, so 0.0065 stays.
+
+Still open: HMS Belfast's shaded side (in the model the camera of IMG_2337 is about 7 deg off the ship's axis on the
+sunlit side; the photo shows the other side, so the ship's position or heading is off by about 10 deg or more); the near
+water of IMG_2587 is flat black where the photo has glitter and long light streaks; Tower Bridge has no spires or chains.
+
 My estimates made before the zip, against the EXIF (the sections below are those estimates, kept as the record):
 
 - Times of 01 to 03, "about 09:30 to 09:50": right (09:38 to 09:40).

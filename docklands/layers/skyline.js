@@ -19,7 +19,9 @@ export default {
       // a past year replaces these build options; today puts back what was there before (another layer's skip set, e.g. piers)
       const KEYS = ['heightOf', 'colourOf', 'towers', 'look', 'skip'];
       if (idx >= 0 && !saved) saved = Object.fromEntries(KEYS.filter(key => key in O).map(key => [key, O[key]]));
-      if (idx < 0) { for (const key of KEYS) delete O[key]; if (saved) Object.assign(O, saved); saved = null; }
+      // only when a past year replaced them: at start nothing is saved, and deleting then removed the skip set of an earlier
+      // layer (bridges: the Tower Bridge walkways, 2026-11-24)
+      if (idx < 0) { if (saved) { for (const key of KEYS) delete O[key]; Object.assign(O, saved); } saved = null; }
       else Object.assign(O, {
         heightOf: (b, i) => { const v = H[i]; return !v || v[idx] == null ? b.h : v[idx] / 10; },
         colourOf: (b, i) => { const v = H[i]; return v && v[idx] == null ? SLATE : null; },

@@ -3796,3 +3796,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   0.05 x sky, photo 0.04); high cloud drawn thin; moon glitter on the water; constellation lines off; no simulated pier boats
   under AIS; London Bridge piers with granite facing, obelisks and the carved "LONDON BRIDGE". A render at 1512 x 2016 ran
   the container out of memory (exit 137, restart): render at half size. Open items: the thames-2026-11-23 README.
+- 2026-11-24, fourth pass ("Follow your proposal / Continue"): London Bridge deck (bank to bank, road 14.0 m OD, light
+  underside); Tower Bridge walkways (the two solid OSM parts between the towers hidden and drawn from 42.5 to 48.1 m OD).
+  Fault found: the building skip option was lost twice (skyline.js deleted it at start; model.js replaced it after an
+  await), so any layer's hidden buildings came back; fixed, rule in the docklands-3d-page skill. Water streak spacing
+  tried at 0.02 on IMG_2587: zig-zag bands, 0.0065 kept. Open: HMS Belfast shaded side, near-water glitter, Tower
+  Bridge spires and chains (data/images/contrib/thames-2026-11-23/README.md, fourth pass).

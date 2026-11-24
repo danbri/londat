@@ -1945,7 +1945,11 @@ Include a looping carousel at top for time of day, time of year."
 - Look > Model (`layers/model.js`): Buildings solid, see-through, hidden (`?bmode=`), Detailed models and Roof shapes
   (`?models=0`, `?roofshapes=0`), Satellite 2026 ground (`?ground=s2`), Key to colours. `main.js` calls
   `setGround(qs ground)` at start, so `s2` is skipped there and set by the layer. `buildOpts.skip` is one object that
-  several layers replace: wrap the earlier value, never assign a plain Set.
+  several layers replace: wrap the earlier value, never assign a plain Set. Read the earlier value after your last
+  `await`, not before it. Never delete a build option that your layer did not set: on 2026-11-24 the Tower Bridge
+  walkways (`layers/bridges.js`) stayed a 45 m solid block, because `layers/skyline.js` set "today" at start and
+  deleted `skip` with nothing saved, and `layers/model.js` read the old skip before its model-list `await`. Both are
+  fixed. Check a hidden part in the page: pick it and read `mesh.userData.bi[face.a]` (the model index).
 - Recorded and live aircraft: the reported position is the aircraft, not its wheels. Lift the model only to keep the
   wheels above the ground, and lift trail points by the same rule (they were 2.75 to 5.1 m apart before 10a94413).
   `&planecam=<n>` follows recorded aircraft (`?t=2026-10-08T18:00&layers=planes&planecam=3&planecamd=70`).
