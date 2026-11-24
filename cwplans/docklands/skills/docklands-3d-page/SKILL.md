@@ -2220,6 +2220,27 @@ the registry layer's `NIGHT_USE` (layers/registry.js) has no car park, school or
 "no record"); balconies are only a darker strip at the foot of a window on the Map look; the CCT and lit-share numbers have no
 camera model; not yet seen on a phone GPU.
 
+## Water surface from the weather (2026-11-24)
+
+Owner, 2026-11-24: "Reflection coherence depends on water surface which depends on weather - wind and rain and snow and
+temperature" and "If v v cold ducks and swans walk on the ice etc". The surface uniforms in `water.js` (`SU`):
+
+- `slope2` and `tail` (`layers/wind.js`, each frame): the ripples' mean square slope from the wind, 0.003 + 0.003 U
+  (Cox and Munk 1954 give 0.003 + 0.00512 U for the open sea; lower here for sheltered docks and an airport wind). It
+  sets the moon glitter's lobe and the length of the light tails by night (0.11 of the screen at 3.1 m/s, IMG_2587,
+  scaling with the square root; 0.04 to 0.2).
+- `rain` (`layers/weather.js`): 1 - exp(-mm/h / 1.5) from the hour's precipitation, not snow. Drop rings (a 0.7 m
+  cell, a ring to 0.35 m in 1.1 s; shown where a pixel is under 8 cm), a broken (+0.012) and dimmer (-30 %) mirror,
+  rougher water, a wider glitter lobe (+0.02), longer tails.
+- `ice` and `iceSnow` (`layers/weather.js`, `iceOf`): a freezing index from the daily mean temperatures of the 14 days
+  before the clock (Open-Meteo daily, forecast host to 85 days back, archive host before): + the degrees below 0 C a
+  day, - 1.5 x the degrees above; ice from 12 to full at 25, in patches (value noise); still water only. Snowfall of
+  0.5 cm or more on the ice lies until a day above 1 C. Check: 8 Dec 2010 index 15.9 (about 30 % ice), 23 Nov 2026 0.
+- Waterbirds (`layers/wildlife.js`) on frozen still water stand 4 cm above the water level, use the walking pose, do not
+  dive; the card says "standing and walking on the ice".
+- Tests: `?rain=4`, `?ice=1`, `?icesnow=1` (these set the surface only; the falling rain comes from the measured
+  weather). The menu's weather note names the ice and its index.
+
 ## Moon glitter at a distance (2026-11-24)
 
 The moon glitter on the water (`materials.js`, `moonSpark`) uses 0.4 m glint cells on ripples of 1.2 and 3.1 m. Where

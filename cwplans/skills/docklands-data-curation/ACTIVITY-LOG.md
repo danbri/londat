@@ -3817,3 +3817,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   water; moved to the quay edge 1.5 m up. Night light tails on the water (SU.tail), moon glints as small spots on 6 % of
   cells (were whole cells on 18 %: white squares near the camera, a grey sheen far). README sixth pass; the eye-height rule
   is in the photo-view-reconstruction skill. HMS Belfast's camouflage layout still open (needs a source).
+- 2026-11-24, the owner: "Reflection coherence depends on water surface which depends on weather - wind and rain and snow
+  and temperature" and "If v v cold ducks and swans walk on the ice". Water surface from the weather: wind sets the glitter
+  lobe and the night light tails; rain makes drop rings and a broken, dimmer mirror; a 14-day freezing index (Open-Meteo
+  daily means) puts ice, and snow on it, on still water; waterbirds walk on the ice. Thresholds judged; checked on the
+  December 2010 cold spell. Skill docklands-3d-page, "Water surface from the weather".
