@@ -153,8 +153,12 @@ The owner, 2026-11-24: "Follow your proposal / Continue". Changes (`docklands/`)
    other layers removed it (`layers/skyline.js` deleted the skip option at start; `layers/model.js` replaced it after a
    wait). Both are fixed; the rule is in the `docklands-3d-page` skill.
 2. London Bridge deck: from bank to bank on the line of the two piers, 32 m wide, road at 14.0 m OD, a granite parapet
-   1.1 m high, the underside haunched (7.8 m OD at the piers, 12.4 m mid centre span). The underside is drawn light
-   (0.80) because the page has no light from below; in IMG_2354 the water lights it.
+   1.1 m high, the underside haunched (7.8 m OD at the piers, 12.4 m mid centre span). The underside and the road first
+   faced the wrong way (the underside up, so it was not drawn from below and the dark road showed through) and the east
+   fascia faced in; fixed. The page has no light from below, and in IMG_2354 the water lights the underside: the
+   underside is its own mesh with an emissive term of 0.22 x its colour by day, none at night. Compare image:
+   `compare-IMG_2354-deck.jpg` (the photo JPEG is a wider crop than the camera solve). The fascia is still darker than
+   the photo's light concrete.
 3. Water streaks: a control for the spacing of the mirror streaks (`SU.streak`). On IMG_2587, 0.0065 (the old value)
    against 0.02: 0.02 draws zig-zag bands in the reflections, so 0.0065 stays.
 
