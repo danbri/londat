@@ -85,6 +85,7 @@ const lin = c => sRGBTransferEOTF(c);   // the data colours are sRGB; the node p
 const LOOK_BAY = [[2.3, 2.6, .23], [3, 2.7, .23], [3.3, 2.6, .23], [1.6, 3.3, .33], [1.5, 3.3, .33], [1.5, 3.5, .33], [1, 4, 1.3], [3.4, 3.3, .43], [5.5, 4.4, .5]];   // tools/build-materials.mjs STYLES: bay m, storey m, storey class step m; 8 masonry (tools/build-material-overrides.mjs: stone, few small windows; 2026-11-23)
 const LOOK_WIN = [[.30, .70, .32, .80], [.20, .80, .30, .78], [.08, .92, .34, .80], [.22, .78, .16, .86], [0, 1, .40, .88], [0, 1, .14, 1], [0, 0, 0, 0], [.12, .88, .18, .86], [.44, .56, .34, .62]];   // window box in the bay (x0, x1, y0, y1)
 const byStyle = (st, T) => { const V = T[0].length === 4 ? vec4 : vec3, L = T.length - 1; let n = V(...T[L]); for (let i = L - 1; i >= 0; i--) n = select(st.lessThan(i + .5), V(...T[i]), n); return n; };
+export let GLASS_ROUGH = 0.18;   // the roughness of curtain-wall glass (buildingMaterial roughnessNode)
 export const FAC = { slots: uniformArray(Array.from({ length: 32 }, () => new THREE.Vector4(10, 10, 0, 0)), 'vec4'), tex: null };   // photo facade tile sizes (w_m, h_m) by slot; the atlas texture
 
 // the per-fragment values of the facade program (fresh nodes for each function that calls it). S: where the per-building
@@ -95,7 +96,7 @@ function facadeCommon(S = modelSource()) {
   const { col, uw, gk, wy } = S;
   const base = col.rgb, a8 = col.a.mul(255), seed = floor(gk.xy);
   // lookSet: a Realistic building's bay, storey, shopfront height and style (1.8, 3.6, 0, -1 for every other vertex)
-  const isLook = a8.greaterThan(131.5).and(a8.lessThan(195.5)), lk = floor(a8.sub(132).add(0.5)), st = floor(lk.div(8).add(0.001)), rr = lk.sub(st.mul(8)), sh = step(3.5, rr), cl = rr.sub(sh.mul(4));
+  const isLook = a8.greaterThan(131.5).and(a8.lessThan(203.5)),   /* 132 + code, code up to 71: style 8 masonry (2026-11-23) */  lk = floor(a8.sub(132).add(0.5)), st = floor(lk.div(8).add(0.001)), rr = lk.sub(st.mul(8)), sh = step(3.5, rr), cl = rr.sub(sh.mul(4));
   const SB = byStyle(st, LOOK_BAY), FHl = SB.y.add(SB.z.mul(cl));
   const BW = select(isLook, SB.x.mul(select(st.greaterThan(2.5).and(st.lessThan(6.5)), float(1), h(seed.mul(0.0137).add(0.71)).mul(0.2).add(0.9))), float(1.8));
   const FH = select(isLook, FHl, float(3.6)), GF = select(isLook, sh.mul(max(3.8, FHl.mul(1.2))), float(0)), LST = select(isLook, st, float(-1));
@@ -288,6 +289,10 @@ export function buildingMaterial() {
       return vec4(out, 1);
     })();
 
+    // glass: a curtain-wall building of the Realistic look (style 5, not a photo tile) is smooth, so the sun's highlight
+    // shows on the faces that mirror it (the owner's photo IMG_2347 of 2026-11-23: a glint 7.7 x the sky on a glass front);
+    // every other wall stays matt (0.82)
+    m.roughnessNode = Fn(() => { const C = facadeCommon(); return select(abs(C.LST.sub(5)).lessThan(0.5).and(C.fac.lessThan(0.5)), float(GLASS_ROUGH), float(0.82)); })();
     // by night: windows, shopfronts, crowns and haze as emitted light (index.html nightCol); no branches
     m.emissiveNode = Fn(() => {
       const C = facadeCommon(), { uw, gk, wy, sd, fac, tile, wall, dist, base } = C;
@@ -518,6 +523,16 @@ export function waterMaterial(opts = {}) {
   const body = mix(lin(mix(vec3(0.33, 0.45, 0.43), vec3(0.04, 0.14, 0.17), float(1).sub(exp(depthNow.div(-3.5))))), lin(vec3(0.60, 0.67, 0.65)), foam.mul(0.55));
   m.colorNode = vec4(body.mul(float(1).sub(F0.mul(float(1).sub(foam)))), 1);
   const R = reflect(V.negate(), N), ry = clamp(R.y, 0, 1);
+  // the moon's glitter: the facets of the chop that mirror the moon (a narrow lobe on the reflected view ray), on top of the
+  // mirror image; the moon light itself stays weak (it lights the whole scene). Tuned on the owner's photo IMG_2587 of
+  // 2026-11-23 (Greenland Dock, moon 98.7% lit, 26 deg up: sparkles to 78 x the sky; data/images/contrib/thames-2026-11-23/)
+  // A narrow lobe on the smooth normals found nothing: the dock is nearly flat and the moon's mirror point lay 26 deg below
+  // the horizon, outside the frame, while the photo's glitter lies a few degrees below it. Facets of the capillary ripples
+  // tilt about 11 deg (slope spread 0.2, judged): a Beckmann-like lobe on the half vector, broken into separate glints by a
+  // hash of 40 cm cells of the water.
+  const Hm = normalize(V.add(SU.moonDir)), cth = max(dot(Hm, N), 0.05), t2 = float(1).sub(cth.mul(cth)).div(cth.mul(cth));
+  const glint = step(0.82, h(floor(p.mul(2.5)))).mul(float(0.6).add(h(floor(p.mul(2.5)).add(17.3)).mul(0.8)));
+  const moonSpark = vec3(1.0, 0.96, 0.88).mul(exp(t2.div(-0.04))).mul(glint).mul(SU.moonGlint).mul(float(1).sub(foam));
   const sky = mix(mix(vec3(WU.skyHorizon), vec3(WU.skyZenith), pow(ry, 0.6)), mix(lin(vec3(U.haze)).mul(0.8), vec3(0.003, 0.004, 0.008), pow(ry, 0.5)), U.night);
   const dark = float(1).sub(patch.mul(SU.gust).mul(0.3)).mul(float(1).sub(foam.mul(0.8)));   // cat's paws darker, foam no mirror
   m.setReflector = r => {
@@ -533,7 +548,7 @@ export function waterMaterial(opts = {}) {
       for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, k * 0.0065))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
       refl = acc.div(wsum).mul(0.75);
     }
-    m.emissiveNode = refl.mul(F0).mul(dark); WU.reflect.value = r ? 1 : 0; m.needsUpdate = true;
+    m.emissiveNode = refl.mul(F0).mul(dark).add(moonSpark); WU.reflect.value = r ? 1 : 0; m.needsUpdate = true;
   };
   m.setReflector(opts.reflector || null);
   return m;

@@ -10,6 +10,7 @@ import * as THREE from 'three/webgpu';
 import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
 import { instancedBufferAttribute, uniform, vec3, vec4, float, uv, smoothstep, length, cameraPosition, positionGeometry, positionView, positionLocal, cameraProjectionMatrix, cameraViewMatrix, modelWorldMatrix, fog, exp, dot, sqrt, max, mix, normalize, positionWorld, pow } from 'three/tsl';
 import { A } from './build.js';
+import { SU } from './water.js';
 
 const AE = globalThis.Astronomy;
 const lon0 = A.meta.geo.lon0 + 0.07, lat0 = A.meta.geo.lat0 + 0.03;   // about the middle of the model (Canary Wharf)
@@ -35,6 +36,7 @@ function horizon(body, t) { const d = new Date(t), q = AE.Equator(body, d, OBS, 
   return { az: h.azimuth, alt: h.altitude, altGeo: g.altitude, dist: q.dist }; }
 const sstep = THREE.MathUtils.smoothstep, clamp01 = v => Math.max(0, Math.min(1, v));
 // the night dome's colours at full strength (sRGB 0..1): tuned live on the Greenland Dock photo of 2026-11-23 17:42 GMT
+export let MOON_GLINT = 2;   // the moon glitter gain (tuned on IMG_2587, 2026-11-23: 1, 2, 4, 8, 16 tried; 4 and over lit the whole far quay)
 export const NIGHT_ZEN = [0.035, 0.055, 0.10], NIGHT_HOR = [0.10, 0.14, 0.21];
 // vertical exaggeration (main.js setVz): the view matrix scales y by vz, so a dome round the eye would show the sun, the
 // horizon glow and the stars too high (a direction at altitude a at atan(vz tan a)). The WebGL page draws its sky with the
@@ -62,7 +64,10 @@ export function lightRig(S, M, ph, w) {
   return { day, up, low, mid, high, cover, tr,
     sun: { i: 3.2 * up * tr, hsl: [0.08, 0.6 * (0.4 + 0.6 * tr), 0.55 + 0.4 * sstep(S.alt, 0, 25)] },
     moon: { i: M && M.alt > 0 ? 0.25 * ph * (1 - day) * (1 - 0.85 * cover) : 0 },
-    fill: { i: (0.18 + 1.0 * day) * (1 - 0.25 * gc), hsl: [0.6, 0.5 * (1 - 0.7 * gc), 0.45 + 0.3 * day] } };
+    // the fill: 40 % with the sun shining through (tr), all of it under overcast: shaded faces in clear sun were 4 to 20 times
+    // too bright against the sky (the owner's photo IMG_2337 of 2026-11-23: the shaded face of a Tower Bridge tower 0.04 x the sky,
+    // the render 0.18; with the fill at 35 % 0.05)
+    fill: { i: (0.18 + 1.0 * day) * (1 - 0.25 * gc) * (1 - 0.6 * tr * up), hsl: [0.6, 0.5 * (1 - 0.7 * gc), 0.45 + 0.3 * day] } };
 }
 // the day sky (SkyMesh, TSL atmosphere scattering) as the model draws it: calibrated on the owner's photo of Greenland Dock
 // (below); used by Sky3 and by the places on the globe
@@ -205,7 +210,7 @@ export class Sky3 {
     this.moon.intensity = L.moon.i;
     this.fill.intensity = L.fill.i; this.fill.color.setHSL(...L.fill.hsl);
     this.sky.visible = day > 0.02 && !this.cutDark; this.starGain.value = (1 - day) * (1 - 0.95 * cover);
-    if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? cover : 0.25; this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
+    if (this.sky.cloudCoverage) { this.sky.cloudCoverage.value = w ? Math.max(low, mid, 0.35 * high) : 0.25;   /* high cloud (cirrus) is thin: drawn at 35 % (2026-11-23: 74 % mostly high cloud from Open-Meteo drew a grey sky where the owner's photo shows blue with thin cirrus) */ this.sky.cloudDensity.value = 0.35 + 0.5 * Math.max(low, mid); }
     const vis = w && w.visibility != null ? w.visibility : null;
     // a low sun (under about 25 deg): more haze and the warm low sky (makeSkyMesh); none from 25 deg up, so the Greenland
     // Dock calibration (sun 31 deg) stands. From the Greenland Pier photo of 2026-11-23 (sun 10.5 deg): turbidity 4 put the
@@ -217,6 +222,8 @@ export class Sky3 {
     this.sky.turbidity.value = Math.max(vis ? 2 + 8 * clamp01(1 - vis / 40000) : 2, 2 + 2.6 * lowSun);
     // the moon disc: above the horizon (its lower edge), dimmer by day, hidden by cloud
     this.moonDisc.visible = M.alt > -0.6;
+    // the moon's glitter on the water (materials.js waterMaterial moonSpark): lit fraction x altitude x night x clear sky
+    SU.moonDir.value.copy(B.md); SU.moonGlint.value = M.alt > 0 ? MOON_GLINT * ph * sstep(M.alt, 0, 6) * (1 - day) * (1 - 0.9 * cover) : 0;
     this.moonU.gain.value = (1 - 0.45 * day) * (1 - 0.9 * cover); this.moonU.shine.value = 0.025 * (1 - day);
     // haze and the night background (the city lights the underside of the cloud)
     this.fogU.sigma.value = vis ? 3.912 / Math.max(200, vis) : 0;

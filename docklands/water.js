@@ -131,6 +131,8 @@ export function mirrorLevel() {
 // SU: the surface uniforms that are not in the shared contract. Skill: docklands-3d-page, "Three.js port" (Water surface).
 export const SU = {
   chop: uniform(0),
+  moonDir: uniform(new THREE.Vector3(0, 1, 0)),   // unit vector to the moon (sky3.js applyLight)
+  moonGlint: uniform(0),    // the moon's glitter on the water: phase x altitude x night x clear sky x gain (sky3.js applyLight)
   chopMirror: uniform(3),   // how far the chop breaks the mirror image: screen offset = slope x chop x chopMirror (tuned on the same photo)        // slope of the short chop on tidal water from the current, wind against tide and passing boats (layers/wind.js)
   current: uniform(0.08),   // m/s along the flow field, + downstream (ebb, east); layers/wind.js sets it each frame from WU.tideRate
   gust: uniform(0.5),       // 0 steady to 1 gusty: the contrast of the moving cat's-paw patches (gust / mean speed - 1)

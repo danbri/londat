@@ -3790,3 +3790,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   IMG_2587 to within about 2 to 7 sRGB levels. New fault F56 (Baltic Quay 14 m low). Open: facades by building type, sunlit
   fronts, glass glints, moon glitter, shaded faces too bright, bridge piers, simulated boats at piers hiding the view,
   the silent weather fallback.
+- 2026-11-24, the owner's list ("Follow your proposal"): weather fallback named with METAR retry; facade overrides by type
+  and name (masonry style, Kentish ragstone for the Tower of London, Portland stone, reflective glass for the Northern and
+  Shell Building), logged operation build-material-overrides; fill light 40 % in clear sun (shade on the Tower Bridge tower
+  0.05 x sky, photo 0.04); high cloud drawn thin; moon glitter on the water; constellation lines off; no simulated pier boats
+  under AIS; London Bridge piers with granite facing, obelisks and the carved "LONDON BRIDGE". A render at 1512 x 2016 ran
+  the container out of memory (exit 137, restart): render at half size. Open items: the thames-2026-11-23 README.

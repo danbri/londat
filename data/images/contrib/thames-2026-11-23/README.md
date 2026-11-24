@@ -108,6 +108,41 @@ Changes made the same evening:
    2587 in three rounds; chosen: sRGB 2 8 22 at 20 to 28 deg up (photo 3 9 21), 5 18 37 at 10 to 15 deg (7 16 31), 12 29 50
    at the horizon (19 28 46).
 
+### Third pass, 2026-11-24: the owner's list of fixes
+
+The owner, 2026-11-23: "Follow your proposal", "Walkie talkie building has a complex shaped v reflective tiled building in
+front of it", "London bridge looks approx sandstone (but look it up) and notably has "London Bridge" carved into it
+underneath". Changes (`docklands/`), each checked by a render at the photo's camera:
+
+1. Weather fallback: the live-cache METAR fetch has 30 s (was 8 s) and is retried after a failure (was kept 5 minutes);
+   the wind note says DEFAULT and names the METAR and Open-Meteo errors.
+2. Facades by type: `cwplans/tools/build-material-overrides.mjs` -> `cwplans/docklands/data/materials-overrides.json`
+   (130 buildings): OSM building=castle and its parts (the Tower of London) masonry in Kentish ragstone; the Tower Bridge
+   towers masonry in Portland stone; Custom House, Fishmongers' Hall, Adelaide House Portland stone; Old Billingsgate yellow
+   brick; the Northern and Shell Building (10 Lower Thames Street, the stepped front in front of 20 Fenchurch Street)
+   curtain glass, blue-silver and smooth (roughness 0.18, so the sun's highlight shows on it). A new facade style, masonry
+   (stone, few small windows). Before: castle was in the rules' civic list, which gave the White Tower large windows in
+   brick or concrete.
+3. Light: the sky fill is 40 % when the sun shines through (all of it under overcast): the shaded face of the Tower Bridge
+   tower in IMG_2337 is now 0.05 x the sky (photo 0.04; before 0.18). High cloud (cirrus) is drawn at 35 % of its fraction:
+   Open-Meteo's 74 % mostly high cloud had drawn a grey sky where the photos show blue.
+4. Moon glitter: a facet lobe on the water (slope spread about 11 deg) broken into separate glints; gain 2. It now shows at
+   the far quay on the moon's side; it is still about five times wider than the photo's patch.
+5. Constellation lines are off by default (`?skylines=1` or the menu box).
+6. Simulated river buses at piers are not drawn when an AIS snapshot within 20 minutes of the clock is loaded. For a past
+   time with no AIS (these photos) the simulation stays: IMG_2340 still shows one at Tower Millennium Pier.
+7. London Bridge piers (`docklands/layers/bridges.js`): the two river piers from the holes in the OSM Thames polygon (102 m
+   apart; the centre span is 103.6 m), Cornish granite facing drawn light grey (research: https://www.gracesguide.co.uk/London_Bridge;
+   not sandstone; the warm colour in IMG_2354 is the low sun), a dark tide band below 3.5 m OD, a granite obelisk at each end
+   to 13.6 m OD, the pier top at 7.8 m OD (both from IMG_2354, camera fitted to the obelisk top and the pier's waterline, rms
+   10 px), and "LONDON BRIDGE" carved on the south face of the north pier, letters about 0.5 m high, 4 m above the water (from
+   the photo; no written source found).
+
+Still open: HMS Belfast's shaded side is light grey (the ship model's material or orientation, not the fill); the near water
+lacks the photo's long light streaks and the near moon glitter (the model's ripples are too gentle); the bridge deck is a
+dark slab; Tower Bridge has no spires, walkways or chains; a large model building behind Tower Bridge where IMG_2337 shows
+sky; the City render's framing differs from IMG_2347 by about 10 to 20 px.
+
 My estimates made before the zip, against the EXIF (the sections below are those estimates, kept as the record):
 
 - Times of 01 to 03, "about 09:30 to 09:50": right (09:38 to 09:40).
