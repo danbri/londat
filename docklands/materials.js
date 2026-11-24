@@ -541,8 +541,13 @@ export function waterMaterial(opts = {}) {
   // the towerbridge view). There the cells give way to their mean (0.18 x 1.0), the normal to the flat water and the lobe
   // widens by the slopes it no longer resolves (mean square slope 0.012 to 0.04), its peak lowered by the same ratio so
   // the light per area stays the same.
-  const cpp = fwidth(p.x.mul(2.5)).add(fwidth(p.y.mul(2.5))), far = smoothstep(0.35, 1.2, cpp);
-  const glint = mix(step(0.82, h(floor(p.mul(2.5)))).mul(float(0.6).add(h(floor(p.mul(2.5)).add(17.3)).mul(0.8))), float(0.18), far);
+  // Each glint is a small spot in its cell (radius about 0.11 of the cell, placed at random in it), 26 x brighter: near
+  // the camera a whole cell drew a white square (render of IMG_2587, 2026-11-24). 6 % of the cells have a glint (was 18 %:
+  // with spots that made a grey sheen over the dock where the photo is dark with a few glints); mean 0.06. The cells give
+  // way to the mean from where a spot is smaller than a pixel (0.12 to 0.4 cells per pixel).
+  const cpp = fwidth(p.x.mul(2.5)).add(fwidth(p.y.mul(2.5))), far = smoothstep(0.12, 0.4, cpp), gc = floor(p.mul(2.5));
+  const gj = vec2(h(gc.add(3.1)), h(gc.add(5.7))).sub(0.5).mul(0.6), spot = smoothstep(0.16, 0.06, length(fract(p.mul(2.5)).sub(0.5).sub(gj)));
+  const glint = mix(step(0.94, h(gc)).mul(float(0.6).add(h(gc.add(17.3)).mul(0.8))).mul(spot).mul(26), float(0.06), far);
   // the lobe near: mean square slope 0.012 (Cox and Munk 1954, about 1.5 m/s of wind; 0.04 before 2026-11-24 made the
   // glitter path on IMG_2587 about five times too wide)
   const s2 = mix(float(0.012), float(0.04), far), Ng = normalize(mix(N, vec3(0, 1, 0), far));
@@ -562,6 +567,17 @@ export function waterMaterial(opts = {}) {
       let acc = null, wsum = 0;
       for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, SU.streak.mul(k)))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
       refl = acc.div(wsum).mul(0.75);
+      // the long tails of bright lights by night (the owner's photo IMG_2587 of 2026-11-23: the quay lights' reflections
+      // run about 10 deg down the dock, a quarter of the frame; the 7 samples above smear them over about 4 %): 8 more
+      // samples up to +-SU.tail of the screen, thresholded so that only lights leave a tail, each fading with its offset,
+      // the strongest kept, broken into dashes by thin columns of noise. By night only: by day the sun glitter has its own
+      // term and the shore's image must stay sharp.
+      let tail = null;
+      for (const f of [-1, -0.62, -0.34, -0.14, 0.14, 0.34, 0.62, 1]) {
+        const c = max(r.sample(base.add(vec2(0, SU.tail.mul(f)))).rgb.sub(0.25), vec3(0)).mul(1.15 - Math.abs(f));
+        tail = tail ? max(tail, c) : c; }
+      const dash = smoothstep(0.35, 0.75, vnw(vec2(screenUV.x.mul(260), screenUV.y.mul(28).add(time.mul(0.4)))));
+      refl = refl.add(tail.mul(dash).mul(0.9).mul(U.night));
     }
     m.emissiveNode = refl.mul(F0).mul(dark).add(moonSpark); WU.reflect.value = r ? 1 : 0; m.needsUpdate = true;
   };

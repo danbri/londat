@@ -205,6 +205,13 @@ and measurements: https://github.com/danbri/londat/blob/main/data/images/contrib
   busy) and the page falls back to 4 m/s from 240 without an error. Set the airport report by hand with `?wind=m/s,deg`.
 - With the EXIF: eye at the GPS fix, focal = f35 / 43.27 x the image diagonal in pixels, fit only heading, pitch and roll.
   The phone compass on a boat was 14 to 120 deg wrong; do not use it there.
+- Set the eye height from the model ground, not the GPS altitude: ground + 1.5 m for a hand-held phone. Then pick the
+  bottom rows of the render (raycast) and check that they hit what the photo shows there. IMG_2587 (2026-11-24): the eye
+  was 0.4 m above the quay and 9 m back from the edge, so the quay hid the near water and the render looked as if the
+  water were black; the photo is taken at the quay edge. A GPS fix may need a few metres' move toward the edge the photo
+  shows.
+- The local test server stops when the container restarts: `curl` http://127.0.0.1:8188/docklands/ before a render, and
+  restart it with `python3 -m http.server 8188 --bind 127.0.0.1` in the repository root.
 - Tune a colour live: one page load, change the exported constant or uniform from Playwright, `applyLight()` or
   `frameNow()`, screenshot, measure, repeat (night sky: three rounds, 2026-11-23). The tone mapping shifts colours (AgX made
   a dark blue more saturated and removed its red): measure the output, never assume input equals output.

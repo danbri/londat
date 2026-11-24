@@ -3813,3 +3813,7 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   six solid OSM parts hidden). Sources in the module header and the thames-2026-11-23 README, fifth pass. HMS Belfast
   re-checked: geometry matches the photo; the difference is the paint (camouflage layout), still open. The local test
   server (port 8188) had stopped during the session: restart it with python3 -m http.server 8188 in the repository root.
+- 2026-11-24, "Keep going": the dock at night (IMG_2587). The camera eye was 0.4 m above the quay, which hid the near
+  water; moved to the quay edge 1.5 m up. Night light tails on the water (SU.tail), moon glints as small spots on 6 % of
+  cells (were whole cells on 18 %: white squares near the camera, a grey sheen far). README sixth pass; the eye-height rule
+  is in the photo-view-reconstruction skill. HMS Belfast's camouflage layout still open (needs a source).

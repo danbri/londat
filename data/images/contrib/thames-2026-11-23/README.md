@@ -183,6 +183,20 @@ Still open: HMS Belfast's shaded side (in the model the camera of IMG_2337 is ab
 sunlit side; the photo shows the other side, so the ship's position or heading is off by about 10 deg or more); the near
 water of IMG_2587 is flat black where the photo has glitter and long light streaks; Tower Bridge has no spires or chains.
 
+### Sixth pass, 2026-11-24: the dock at night (IMG_2587)
+
+The owner, 2026-11-24: "Keep going". Three faults in the render at the camera of IMG_2587, each fixed and checked by a
+render (`compare-IMG_2587-night-water.jpg`):
+
+1. The camera eye was 0.4 m above the quay (eye 5.5 m OD, quay 5.1 m OD) and 9 m back from the water, so the quay hid
+   the near dock at a grazing angle. The photo is taken at the quay edge (the chain railing runs away on the left, the
+   water fills the lower frame). Eye now 1.5 m above the quay and 6 m forward along the view (within GPS error):
+   (-1522.5, 6.6, 1155.2) in model metres.
+2. The reflections of the quay lights now have long tails by night (`SU.tail` 0.11 of the screen; the photo's run about
+   10 deg down the dock): 8 more mirror samples, thresholded so that only lights leave a tail, broken into dashes.
+3. The moon glints were whole 0.4 m cells (white squares near the camera) on 18 % of the cells: now small spots, 26 x
+   brighter, on 6 % of the cells, so the dock is dark with sparse sparkles as in the photo.
+
 My estimates made before the zip, against the EXIF (the sections below are those estimates, kept as the record):
 
 - Times of 01 to 03, "about 09:30 to 09:50": right (09:38 to 09:40).
