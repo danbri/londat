@@ -8,7 +8,23 @@
 // "LONDON BRIDGE" is carved on the south face of the north pier, letters about 0.5 m high, about 4.0 m above the water at
 // 1.7 m OD (the photo; no written source found for the inscription). The deck is not drawn here. Data:
 // data/images/contrib/thames-2026-11-23/README.md. Skill: docklands-3d-page, "Three.js port".
-import { Mesh } from '../build.js';
+import { Mesh, A, dec } from '../build.js';
+
+// London Bridge's deck (not in the model before 2026-11-24): on the line through the two pier centres, from bank to bank
+// (the terrain rises above 3.5 m OD at z -330 and z -85 there), 32 m wide (https://en.wikipedia.org/wiki/London_Bridge),
+// the road at 14.0 m OD (the OSM road on the bridge in area.js: 13.3 to 14.1 m), a polished granite parapet 1.1 m high
+// (https://illuminatedriver.london/bridges/london-bridge); the underside haunched: 7.8 m OD at the piers, 12.4 m at the
+// middle of the centre span (8.9 m clearance above high water at about 3.5 m OD), 11 m at the middle of the side spans and
+// 9.5 m at the banks (judged); fascia of abrasive-blasted concrete with a grey granite aggregate (Grace's Guide), light grey.
+// The underside colour is lighter than the fascia (0.80) because the page has no light from below: in IMG_2354 the
+// underside is lit by the light that the water reflects, and at 0.52 it rendered almost black.
+const LB = { n: [-4721, -330], s: [-4766, -85], pn: [-4731, -275], ps: [-4750, -173], W: 32, ROAD: 14.0, PAR: 1.1 };
+const FASCIA = [.66, .65, .62], SOFFIT = [.80, .80, .77], PARAPET = [.60, .60, .58], ROADC = [.24, .24, .25];
+// Tower Bridge's high-level walkways: the OSM parts between the towers (w367652753, w367653917) are extruded from the deck
+// at 3 m OD to 48.1 m in the model, a solid block 45 m high where the photo IMG_2337 of 2026-11-23 shows sky under the
+// walkways. This layer hides them and draws each outline from 42.5 to 48.1 m OD (the walkways' lattice girders, judged 5.6
+// m deep) in the bridge's light blue-grey. Found by place: parts over 40 m tall whose centre lies between the towers.
+const TB_BOX = [-3900, 10, -3855, 66], WALK = [42.5, 48.1], WALKC = [.55, .64, .70];
 
 const PIERS = [
   { name: 'London Bridge, north pier', x0: -4746, x1: -4715, z0: -278, z1: -272, text: 'south' },
@@ -32,6 +48,22 @@ export default {
       band(ring, BED, WET, WETC); band(ring, WET, TOP, GRANITE); cap(ring, TOP, CAP);
       box(P.x0 + 1.2, zc, OB_W, TOP, OB_TOP, GRANITE); box(P.x1 - 1.2, zc, OB_W, TOP, OB_TOP, GRANITE);   // the obelisks at the ends
     }
+    // London Bridge deck: stations along the axis from the north bank to the south bank
+    { const [nx, nz] = LB.n, [sx, sz] = LB.s, len = Math.hypot(sx - nx, sz - nz), ax = (sx - nx) / len, az = (sz - nz) / len, px = -az, pz = ax, h = LB.W / 2;
+      const sOf = q => (q[0] - nx) * ax + (q[1] - nz) * az, s1 = sOf(LB.pn), s2 = sOf(LB.ps);
+      const arch = (s, a, b, ya, yb, ym) => { const t = (s - a) / (b - a), base = ya + (yb - ya) * t; return base + (ym - (ya + yb) / 2) * 4 * t * (1 - t); };
+      const soffit = s => s <= s1 ? arch(s, 0, s1, 9.5, 7.8, 11) : s <= s2 ? arch(s, s1, s2, 7.8, 7.8, 12.4) : arch(s, s2, len, 7.8, 9.5, 11);
+      const P = (s, o, y) => [nx + ax * s + px * o, y, nz + az * s + pz * o], N = 40;
+      for (let i = 0; i < N; i++) { const a = len * i / N, b = len * (i + 1) / N, ya = soffit(a), yb = soffit(b);
+        for (const o of [-h, h]) { M.quad(P(a, o, ya), P(b, o, yb), P(b, o, LB.ROAD), P(a, o, LB.ROAD), FASCIA);   // the two fascias
+          M.quad(P(a, o, LB.ROAD), P(b, o, LB.ROAD), P(b, o, LB.ROAD + LB.PAR), P(a, o, LB.ROAD + LB.PAR), PARAPET); }
+        M.quad(P(a, -h, ya), P(a, h, ya), P(b, h, yb), P(b, -h, yb), SOFFIT);   // underside
+        M.quad(P(a, -h, LB.ROAD), P(b, -h, LB.ROAD), P(b, h, LB.ROAD), P(a, h, LB.ROAD), ROADC); } }
+    // Tower Bridge walkways: hide the solid parts, draw their outlines at the walkway level
+    const walk = new Set();
+    (A.buildings || []).forEach((b, i) => { if (b.h < 40) return; const q = dec(b.p); let x = 0, z = 0, n = q.length / 2; for (let k = 0; k < q.length; k += 2) { x += q[k]; z += q[k + 1]; } x /= n; z /= n;
+      if (x > TB_BOX[0] && x < TB_BOX[2] && z > TB_BOX[1] && z < TB_BOX[3] && b.b + b.h < 50) { walk.add(i); const r = []; for (let k = 0; k < q.length; k += 2) r.push([q[k], q[k + 1]]); band(r, WALK[0], WALK[1], WALKC); cap(r, WALK[1], WALKC); cap(r.slice().reverse(), WALK[0], WALKC); } });
+    if (walk.size) { const prev = ctx.buildOpts.skip; ctx.buildOpts.skip = { has: i => walk.has(i) || !!(prev && prev.has(i)), get size() { return walk.size + (prev ? prev.size : 0); } }; ctx.rebuildBuildings(); }
     const mesh = new THREE.Mesh(M.geometry(), ctx.materials.vertexColourMaterial()); mesh.castShadow = mesh.receiveShadow = true; group.add(mesh);
     // the inscription: carved letters (a darker fill with a light lower edge) on a plane 3 cm off the face
     for (const P of PIERS) if (P.text) {
@@ -44,7 +76,7 @@ export default {
       const L = 7.2, H = L * 192 / 2048, pl = new THREE.Mesh(new THREE.PlaneGeometry(L, H), mat);
       pl.position.set(P.x0 + CUT + 6.5, 1.7 + 4.0, P.z1 + .03); pl.name = 'inscription: LONDON BRIDGE'; group.add(pl);   // the south face (+z)
     }
-    group.userData.stats = { piers: PIERS.length, triangles: M.idx.length / 3 };
+    group.userData.stats = { piers: PIERS.length, walkways_hidden: walk.size, triangles: M.idx.length / 3 };
     return { object: group, setVisible(on) { group.visible = on; } };
   },
 };

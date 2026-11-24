@@ -543,9 +543,9 @@ export function waterMaterial(opts = {}) {
     if (r) {
       const st = vnw(vec2(screenUV.x.mul(160), screenUV.y.mul(6).add(time.mul(0.25)))).sub(0.5);
       const cm = SU.chop.mul(SU.chopMirror).mul(tidal);   // the chop breaks the image of the shore (tidal water only)
-      const base = r.uvNode.add(vec2(N.x.mul(clamp(float(6).div(dist), 0.002, 0.02)), st.mul(0.006))).add(vec2(N.x, N.z).mul(cm));
+      const base = r.uvNode.add(vec2(N.x.mul(clamp(float(6).div(dist), 0.002, 0.02)), st.mul(SU.streak))).add(vec2(N.x, N.z).mul(cm));   // the random offset as long as one step: dashes, not copies
       let acc = null, wsum = 0;
-      for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, k * 0.0065))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
+      for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, SU.streak.mul(k)))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
       refl = acc.div(wsum).mul(0.75);
     }
     m.emissiveNode = refl.mul(F0).mul(dark).add(moonSpark); WU.reflect.value = r ? 1 : 0; m.needsUpdate = true;

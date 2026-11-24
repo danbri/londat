@@ -49,7 +49,7 @@ export default {
     }).catch(() => new Set()));
     // the page skips a building drawn by its glTF model (main.js skip); a layer that sets buildOpts.skip (piers) replaces that
     // set, so this wrapper adds the model buildings back while the models show, and leaves them in when they do not
-    const prevSkip = O.skip, mi = await loadModels();
+    const mi = await loadModels(), prevSkip = O.skip;   // read after the wait: a layer that set skip meanwhile (bridges) is kept
     O.skip = { has: i => (S.models && mi.has(i)) || !!(prevSkip && prevSkip.has(i)), get size() { return (S.models ? mi.size : 0) + (prevSkip ? prevSkip.size : 0); } };
     const roofsSaved = { had: 'roofs' in O, v: O.roofs };
     const tModels = ctx.ui.toggle('Detailed models (glTF)', true, v => { S.models = v; M.models.visible = v && S.bmode !== 'off'; ctx.rebuildBuildings(); });
