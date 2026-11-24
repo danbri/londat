@@ -298,6 +298,12 @@ export function buildingMaterial() {
       const C = facadeCommon(), { uw, gk, wy, sd, fac, tile, wall, dist, base } = C;
       const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
       let L = NIGHT_STYLE === 'old' ? nightOld(C) : nightNew(C);   // lit windows and shopfronts (windows off: none)
+      // masonry (style 8: the Tower of London, the Tower Bridge towers; data/materials-overrides.json) has no lit office
+      // windows: these are floodlit monuments (the owner's screenshots of 2026-11-24 02:47 showed both lit as offices).
+      // A wash of the wall colour, brightest at the foot where the lamps stand, half as bright at the top (judged).
+      const mas = eqF(C.LST, 8).mul(wall).mul(U.win), up = clamp(wy.sub(gk.z).div(ht), 0, 1);
+      L = mix(L, base.mul(vec3(1.0, 0.92, 0.80)).mul(float(0.42).mul(float(1).sub(up.mul(0.5)))), eqF(C.LST, 8));
+      L = L.mul(float(1).sub(eqF(C.LST, 8).mul(float(1).sub(mas))));   // roofs of masonry: dark
       // a photo facade: the tile, faintly, under the lit windows (nightCol: base x (0.045 + 0.02))
       if (FAC.tex) L = L.add(tile.mul(fac).mul(0.04));
       // tops: Newfoundland's diagrid crown (use 4), One Canada Square's halo (use 5), a soft band on other towers over 90 m
@@ -530,9 +536,18 @@ export function waterMaterial(opts = {}) {
   // the horizon, outside the frame, while the photo's glitter lies a few degrees below it. Facets of the capillary ripples
   // tilt about 11 deg (slope spread 0.2, judged): a Beckmann-like lobe on the half vector, broken into separate glints by a
   // hash of 40 cm cells of the water.
-  const Hm = normalize(V.add(SU.moonDir)), cth = max(dot(Hm, N), 0.05), t2 = float(1).sub(cth.mul(cth)).div(cth.mul(cth));
-  const glint = step(0.82, h(floor(p.mul(2.5)))).mul(float(0.6).add(h(floor(p.mul(2.5)).add(17.3)).mul(0.8)));
-  const moonSpark = vec3(1.0, 0.96, 0.88).mul(exp(t2.div(-0.04))).mul(glint).mul(SU.moonGlint).mul(float(1).sub(foam));
+  // the glints are 0.4 m cells on ripples of 1.2 and 3.1 m: where a cell is smaller than a pixel (fwidth: cells per pixel,
+  // so for any field of view and screen) both alias to white noise over the whole river (render of 2026-11-24 02:47 from
+  // the towerbridge view). There the cells give way to their mean (0.18 x 1.0), the normal to the flat water and the lobe
+  // widens by the slopes it no longer resolves (mean square slope 0.012 to 0.04), its peak lowered by the same ratio so
+  // the light per area stays the same.
+  const cpp = fwidth(p.x.mul(2.5)).add(fwidth(p.y.mul(2.5))), far = smoothstep(0.35, 1.2, cpp);
+  const glint = mix(step(0.82, h(floor(p.mul(2.5)))).mul(float(0.6).add(h(floor(p.mul(2.5)).add(17.3)).mul(0.8))), float(0.18), far);
+  // the lobe near: mean square slope 0.012 (Cox and Munk 1954, about 1.5 m/s of wind; 0.04 before 2026-11-24 made the
+  // glitter path on IMG_2587 about five times too wide)
+  const s2 = mix(float(0.012), float(0.04), far), Ng = normalize(mix(N, vec3(0, 1, 0), far));
+  const Hm = normalize(V.add(SU.moonDir)), cth = max(dot(Hm, Ng), 0.05), t2 = float(1).sub(cth.mul(cth)).div(cth.mul(cth));
+  const moonSpark = vec3(1.0, 0.96, 0.88).mul(exp(t2.div(s2.negate())).mul(float(0.012).div(s2))).mul(glint).mul(SU.moonGlint).mul(float(1).sub(foam));
   const sky = mix(mix(vec3(WU.skyHorizon), vec3(WU.skyZenith), pow(ry, 0.6)), mix(lin(vec3(U.haze)).mul(0.8), vec3(0.003, 0.004, 0.008), pow(ry, 0.5)), U.night);
   const dark = float(1).sub(patch.mul(SU.gust).mul(0.3)).mul(float(1).sub(foam.mul(0.8)));   // cat's paws darker, foam no mirror
   m.setReflector = r => {

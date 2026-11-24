@@ -3802,3 +3802,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   await), so any layer's hidden buildings came back; fixed, rule in the docklands-3d-page skill. Water streak spacing
   tried at 0.02 on IMG_2587: zig-zag bands, 0.0065 kept. Open: HMS Belfast shaded side, near-water glitter, Tower
   Bridge spires and chains (data/images/contrib/thames-2026-11-23/README.md, fourth pass).
+- 2026-11-24, the owner's phone screenshots at 02:47 (Tower Bridge and the Tower of London lit as offices by night):
+  masonry style (Tower of London, Tower Bridge) now floodlit with no lit windows; two Tower Bridge parts without OSM keys
+  added to the overrides (build-material-overrides version 2, 132 buildings). The moon glitter aliased to white noise
+  over the river seen from above: far glints and ripple normals now give way to their mean by on-screen cell size, and
+  the near lobe is narrower (mean square slope 0.012). Owner's question on dedicated models for Tower Bridge and the
+  Tower of London: proposed (description file per model, as for the Pacific Tavern), waiting for the owner.

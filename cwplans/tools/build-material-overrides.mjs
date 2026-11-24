@@ -42,9 +42,11 @@ const NAMED = {
   w145631775: ['civic', 'stockYellow', 'Old Billingsgate Market (Q15263739): yellow brick, stone dressings, large arched windows'],
   w142658103: ['curtain', 'glassRefl', 'Northern and Shell Building (Q321273), 10 Lower Thames Street: stepped front of reflective glass'],
   w717305094: ['curtain', 'glassRefl', 'Northern and Shell Building (Q321273): part'],
+  w934056844: ['masonry', 'portland', 'Tower Bridge: low part at the bridge, no OSM building keys (lit as an office by night before 2026-11-24)'],
+  w934056845: ['masonry', 'portland', 'Tower Bridge: low part at the bridge, no OSM building keys'],
 };
 const sha = b => createHash('sha256').update(b).digest('hex');
-const op = { id: 'build-material-overrides', version: 1, skill: 'docklands-3d-page', tool: 'cwplans/tools/build-material-overrides.mjs',
+const op = { id: 'build-material-overrides', version: 2, skill: 'docklands-3d-page', tool: 'cwplans/tools/build-material-overrides.mjs',
   about: 'building-keys.json (OSM type, parent, name) + materials.json (model fingerprint) + the named list of the tool -> a facade style and wall colour for the buildings the Realistic rules get wrong (docklands/data/materials-overrides.json)' };
 const dry = !!process.env.MAT_DRY, flow = new Flow(K);
 const inputs = dry ? [] : [flow.file(KEYS, 'cwplans/docklands/data/building-keys.json'), flow.file(MAT, 'cwplans/docklands/data/materials.json')];

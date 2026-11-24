@@ -2147,6 +2147,13 @@ Owner, 2026-10-10, iPhone photo of Greenwich Park: "Greenwich has a grasslike pl
 
 ## Night windows by use and hour (Three.js port, 2026-10-09)
 
+Monuments by night (2026-11-24): facade style 8, masonry (the Tower of London, the Tower Bridge towers and its two low
+parts w934056844 and w934056845; `cwplans/tools/build-material-overrides.mjs`), has no lit windows. It gets a floodlight
+wash of its wall colour, brightest at the foot and half as bright at the top, and its roofs stay dark. The owner's phone
+screenshots of 2026-11-24 02:47 had shown both monuments lit as offices, because the night program reads the building's
+use and not its style. A change to the overrides tool needs a new `op.version`, or its Flow cache gives the old output
+(`"new":0`).
+
 Owner, 2026-10-09: "the binary division of night lighting into warm-white grids of tiny square windows (residential) vs cold
 blue white light horizontal bar shaped windows… this feels artificial and weird. Investigate a more realistic set of simple
 patterns we could use." `docklands/materials.js` `nightNew` (default) replaces `nightOld` (the 2026-10-04 rule, kept with
@@ -2212,6 +2219,17 @@ Open: One Canada Square is now an office (it was lit as homes before) and reads 
 the registry layer's `NIGHT_USE` (layers/registry.js) has no car park, school or warehouse code (they fall to offices or
 "no record"); balconies are only a darker strip at the foot of a window on the Map look; the CCT and lit-share numbers have no
 camera model; not yet seen on a phone GPU.
+
+## Moon glitter at a distance (2026-11-24)
+
+The moon glitter on the water (`materials.js`, `moonSpark`) uses 0.4 m glint cells on ripples of 1.2 and 3.1 m. Where
+a cell is smaller than a pixel, both alias to white noise over the whole river: a render of the towerbridge view at
+2026-11-24 02:47 showed this. A distance limit did not fix it, because the pixel size depends on the field of view and
+the screen. The fix uses `fwidth` (cells per pixel): from 0.35 to 1.2 cells per pixel, the cells give way to their
+mean (0.18), the normal to the flat water, and the lobe's mean square slope from 0.012 to 0.04. The peak is lowered by
+the same ratio, so the light per area stays the same. Near the camera the mean square slope is 0.012 (Cox and Munk,
+about 1.5 m/s of wind). Test: render `?view=towerbridge&t=2026-11-24T02:47`, then the same with `MOON_GLINT = 0` in
+`sky3.js`, and compare the two.
 
 ## Water over the LiDAR ground (2026-10-08)
 
