@@ -354,7 +354,7 @@ async function loadOptional() {
   const jobs = [], towersP = loadJSON(DATA + 'towers.json');
   if (flag('towers', true)) jobs.push(towersP.then(T => { TOWERS = Object.values(T.buildings).filter(t => t.tiers && t.tiers.length && t.status === 'fitted'); }).catch(e => console.warn('towers', e)));
   if (flag('roofs', true) && globalThis.DocklandsRoofs) jobs.push(loadJSON(DATA + 'roofs.json').then(T => { ROOFS = DocklandsRoofs.decode(T, MFP); }).catch(e => console.warn('roofs', e)));
-  if (!/^(0|off|flat|no)$/i.test(qs.get('look') || '') && globalThis.DocklandsLook) jobs.push(loadJSON(DATA + 'materials.json').then(J => { const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } }).catch(e => console.warn('materials', e)));
+  if (!/^(0|off|flat|no)$/i.test(qs.get('look') || '') && globalThis.DocklandsLook) jobs.push(Promise.all([loadJSON(DATA + 'materials.json'), loadJSON(DATA + 'materials-overrides.json').catch(() => null)]).then(([J, O]) => { let t = DocklandsLook.decode(J, MFP); if (t && O && O.model && O.model.fp === MFP && DocklandsLook.override) t = DocklandsLook.override(t, O); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } }).catch(e => console.warn('materials', e)));
   // photo facades (index.html facSlot; ?facades=0 off): data/tex/facades.json gives a slot and the tile size in metres by registry id
   // (the tower's model buildings, towers.json) or by OSM key (mi, while model_fp matches this area.js); facades.jpg is the atlas
   if (flag('facades', true)) jobs.push(Promise.all([loadJSON(DATA + 'tex/facades.json'), towersP.catch(() => null), texLoader.loadAsync(DATA + 'tex/facades.jpg')]).then(([F, T, tex]) => {
@@ -401,7 +401,7 @@ $('shareBtn').onclick = async () => {
 $('showRoads').checked = roads.visible; $('showRoads').onchange = e => { roads.visible = e.target.checked; draw(); };
 $('ground').onchange = e => setGround(e.target.value);
 $('facades').onchange = e => { FACADES_ON = e.target.checked; rebuildBuildings(); };
-$('look').onchange = async e => { if (e.target.checked && !LOOK) { const J = await loadJSON(DATA + 'materials.json'); const t = DocklandsLook.decode(J, MFP); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } } else if (!e.target.checked) LOOK = null; rebuildBuildings(); };
+$('look').onchange = async e => { if (e.target.checked && !LOOK) { const J = await loadJSON(DATA + 'materials.json'), O = await loadJSON(DATA + 'materials-overrides.json').catch(() => null); let t = DocklandsLook.decode(J, MFP); if (t && O && O.model && O.model.fp === MFP && DocklandsLook.override) t = DocklandsLook.override(t, O); if (t) { DocklandsLook.attach(t); LOOK = DocklandsLook; } } else if (!e.target.checked) LOOK = null; rebuildBuildings(); };
 // the clock label and the hour slider: the wall clock of the view's zone (clockzone.js), its short name and offset, the sun there
 function syncClockUi() { const s = sky.state, o = ZONE.observer(), a = ZONE.away ? sunAltAt(clock, o.lon, o.lat)?.alt : s?.sun.alt, P = ZONE.parts(clock);
   $('clock').textContent = `${new Date(clock).toLocaleDateString(undefined, { timeZone: ZONE.tz, day: 'numeric', month: 'short', year: 'numeric' })} ${ZONE.hm(clock)} ${ZONE.label(clock)}${ZONE.info.approximate ? ' (approx.)' : ''} · sun ${a != null ? a.toFixed(1) : '?'}°`; $('hour').value = P.hour + P.minute / 60; }
@@ -414,7 +414,7 @@ $('tNow').onclick = clockNow;
 // ---------- layers: one module each in layers/ (export default { id, label, on, async init(ctx) -> { object, setVisible(on) } });
 // a module that is missing is skipped. The list is the order in the menu. Skill: docklands-3d-page, "Three.js port".
 // ?layers=a,b loads only those (a layer under development is tested that way before it joins the list; ?layers= loads none)
-const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,riverbed,floors,under,water,tide,stations,skyline,placenames,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,windfield,sky-extra,drone,plotter,music,splats,overlays,river,kml,locate,model,xr').split(',').filter(Boolean);
+const LAYER_IDS = (qs.get('layers') ?? 'trees,ring,walls,bridges,riverbed,floors,under,water,tide,stations,skyline,placenames,registry,keys,search,routes,nightlights,ships,piers,planes,wildlife,wind,weather,windfield,sky-extra,drone,plotter,music,splats,overlays,river,kml,locate,model,xr').split(',').filter(Boolean);
 // a test link (?layers=, &planecam=) limits the page: say so, with a link to the full page at the same view (owner,
 // 2026-10-09, opened a close-up link with ?layers=planes and saw no trees or data layers)
 if (qs.has('layers') || qs.has('planecam')) {

@@ -138,13 +138,18 @@ export default {
         for (const [n, m] of Object.entries(st)) { if (!calls.has(n)) calls.set(n, []); calls.get(n).push({ line: v.line, dir: v.direction, sched: v.schedule, m: t0 + m }); } } }
     const seasonOf = (S, md) => S.find(([a, b]) => a <= b ? md >= a && md <= b : md >= a || md <= b);
     const berths = J.piers.filter(P => P.berth);
-    let boats = [], aisSkip = 0;
+    let boats = [], aisSkip = 0, aisCovered = false;
     function nowParts() { const p = lp(ctx.clock); return { wd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), m: +p.hour * 60 + +p.minute + +p.second / 60, md: `${p.month}-${p.day}` }; }
     function nextBuses(P, n = 4) { const N = nowParts(), out = []; for (const c of calls.get(P.tfl?.naptan) || []) if (schedFits(c.sched, N.wd) && c.m >= N.m) out.push(c); return out.sort((a, b) => a.m - b.m).slice(0, n); }
     function tourDeps(T, N) { const s = seasonOf(T.seasons, N.md); if (!s) return null; const a = toMin(s[2]), b = toMin(s[3]); return { a, b, every: T.every_min, s }; }
     function computeBoats() {
       const N = nowParts(), out = []; aisSkip = 0;
-      const ais = (globalThis.__docklands3 && globalThis.__docklands3.layers && globalThis.__docklands3.layers.ships && globalThis.__docklands3.layers.ships.on && globalThis.__docklands3.layers.ships.api.vessels) || [];
+      const SL = globalThis.__docklands3 && globalThis.__docklands3.layers && globalThis.__docklands3.layers.ships, ais = (SL && SL.on && SL.api.vessels) || [];
+      // AIS covers the clock (a snapshot within 20 minutes of it, not the far-history fallback): the AIS vessels show the real
+      // boats at the piers and no simulated boat is drawn (2026-11-23: a simulated river bus at Tower Millennium Pier hid the
+      // view in the owner's photo IMG_2340, which shows none). With no AIS for the time, the timetable simulation stays.
+      const SH = SL && SL.on && SL.api.SH, aisCovers = !!(SH && SH.at && ['live', 'cache', 'live-cache', 'snapshot', 'history'].some(f => String(SH.from).includes(f)) && !(SH.hist && SH.hist.far) && Math.abs(Date.parse(SH.at) - ctx.clock) < 20 * 60e3);
+      aisCovered = aisCovers; if (aisCovers && !ALL) return out;
       for (const P of berths) {
         const here = [];
         if (P.tfl) { const ferry = P.tfl.lines.length === 1 && P.tfl.lines[0] === 'rb4';
@@ -274,9 +279,9 @@ export default {
     function status() {
       const c = J.meta.counts;
       note.innerHTML = esc(`${c.piers} piers and pontoons (${c.floating} floating, following the tide; ${c.river_bus} river-bus piers, ${c.tour} tour-boat piers), ${c.gangways} gangways, ${vessels.length} berthed vessels (HMS Belfast at true size). ` +
-        `Boats alongside now: ${boats.length}${aisSkip ? ` (${aisSkip} left out: an AIS vessel at the berth)` : ''}${ALL ? ' — test view, a boat at every berth' : ''}. These boats are SIMULATED from the TfL timetable and the tour operators' published frequencies, not positions. `) +
+        `Boats alongside now: ${boats.length}${aisCovered ? ' (AIS covers this time: the AIS vessels are shown, no simulated boats)' : ''}${aisSkip ? ` (${aisSkip} left out: an AIS vessel at the berth)` : ''}${ALL ? ' — test view, a boat at every berth' : ''}. These boats are SIMULATED from the TfL timetable and the tour operators' published frequencies, not positions. `) +
         `Sources: ${OSMC} (extract of ${esc(String(J.meta.osm_data_as_of).slice(0, 10))}); Powered by TfL Open Data; Wikidata (CC0); IWM; operators' pages (facts only).`;
-      ctx.stats.piers = { piers: c.piers, pontoons: c.pontoons, gangways: gangs.length, parts: parts.length, lamps: lamps.length, vessels: vessels.length, boats: boats.length, aisSkip, hidden_buildings: hide.size, fixed_triangles: fixed.p.length / 9 };
+      ctx.stats.piers = { piers: c.piers, pontoons: c.pontoons, gangways: gangs.length, parts: parts.length, lamps: lamps.length, vessels: vessels.length, boats: boats.length, aisSkip, aisCovered, hidden_buildings: hide.size, fixed_triangles: fixed.p.length / 9 };
     }
 
     // ---------- start

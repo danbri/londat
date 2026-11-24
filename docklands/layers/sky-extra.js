@@ -56,7 +56,7 @@ export default {
     if (!AE) return {};
     const { camera, renderer, scene, sky, qs, flag, ui, draw, DATA, WEBGL, esc } = ctx;
     const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
-    const S = { t: null, A: null, days: null, dark: flag('skydark', false), lines: true, names: true, mw: true, azl: true, lcy: false, fetch: flag('skyfetch', false), vp: 'greenland',
+    const S = { t: null, A: null, days: null, dark: flag('skydark', false), lines: flag('skylines', false),   /* constellation lines off by default (owner's photos, 2026-11-23: no such lines in a real sky); ?skylines=1 or the menu box turns them on */ names: true, mw: true, azl: true, lcy: false, fetch: flag('skyfetch', false), vp: 'greenland',
       satSet: null, satErr: null, satPts: [], iss: undefined, clm: null, labelled: { stars: [], messier: [] }, visible: on };
     const root = new THREE.Group(); root.name = 'sky-extra';
 

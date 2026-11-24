@@ -7460,6 +7460,34 @@
       ]
     },
     {
+      "path": "docklands/data/materials-overrides.json",
+      "what": "overrides on the Realistic look (materials.json) by model index: a facade style (adds masonry: stone, few small windows) and a wall colour for the buildings the rules get wrong: OSM building=castle and its parts (the Tower of London: Kentish ragstone), and named buildings (Tower Bridge towers, Custom House, Fishmongers' Hall, Adelaide House: Portland stone; Old Billingsgate: yellow brick; the Northern and Shell Building: reflective glass); from the owner's photos of 2026-11-23",
+      "sources": [
+        "osm",
+        "own"
+      ],
+      "osm": {
+        "use": "derived",
+        "extract": "osmfr-greater-london",
+        "what": "OSM building type, parent, name and Wikidata of the model buildings through docklands/data/building-keys.json"
+      },
+      "produced_by": "tools/build-material-overrides.mjs (operation build-material-overrides)",
+      "shown_on": [
+        "docklands/index.html"
+      ]
+    },
+    {
+      "path": "tools/build-material-overrides.mjs",
+      "what": "code, not data: overrides on the Realistic look for historic and named buildings -> docklands/data/materials-overrides.json; logged operation build-material-overrides, kgx graph material-overrides",
+      "sources": [
+        "own"
+      ],
+      "osm": {
+        "use": "none"
+      },
+      "produced_by": "hand-written (2026-11-23)"
+    },
+    {
       "path": "docklands/look-layer.js",
       "what": "code, not data: the 3D page's Realistic look (Layers > Style > Realistic buildings, ?look=real): loads docklands/data/materials.json and paints the building mesh (wall and roof colours, the facade code in the alpha byte, the Night use); DocklandsLook.set(true) for other layers such as the headset view",
       "sources": [

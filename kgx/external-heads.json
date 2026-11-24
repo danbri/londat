@@ -32,5 +32,6 @@
  "roofs-big": {
   "iri": "https://kgx.foaf.tv/id/graphroofsbig1db3329f2b2d4323",
   "store": false
- }
+ },
+ "material-overrides": "https://kgx.foaf.tv/id/graphmaterialoverridesd42fd6ba32075b5c"
 }

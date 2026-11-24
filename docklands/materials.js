@@ -82,9 +82,9 @@ const lin = c => sRGBTransferEOTF(c);   // the data colours are sRGB; the node p
 // Every value that more than one branch reads, and every derivative, is made a variable at the top of the function, before
 // any branch (WGSL allows derivatives only in uniform control flow; the WebGL page found them noisy inside a branch); the
 // tile is read with an explicit level.
-const LOOK_BAY = [[2.3, 2.6, .23], [3, 2.7, .23], [3.3, 2.6, .23], [1.6, 3.3, .33], [1.5, 3.3, .33], [1.5, 3.5, .33], [1, 4, 1.3], [3.4, 3.3, .43]];   // tools/build-materials.mjs STYLES: bay m, storey m, storey class step m
-const LOOK_WIN = [[.30, .70, .32, .80], [.20, .80, .30, .78], [.08, .92, .34, .80], [.22, .78, .16, .86], [0, 1, .40, .88], [0, 1, .14, 1], [0, 0, 0, 0], [.12, .88, .18, .86]];   // window box in the bay (x0, x1, y0, y1)
-const byStyle = (st, T) => { const V = T[0].length === 4 ? vec4 : vec3; let n = V(...T[7]); for (let i = 6; i >= 0; i--) n = select(st.lessThan(i + .5), V(...T[i]), n); return n; };
+const LOOK_BAY = [[2.3, 2.6, .23], [3, 2.7, .23], [3.3, 2.6, .23], [1.6, 3.3, .33], [1.5, 3.3, .33], [1.5, 3.5, .33], [1, 4, 1.3], [3.4, 3.3, .43], [5.5, 4.4, .5]];   // tools/build-materials.mjs STYLES: bay m, storey m, storey class step m; 8 masonry (tools/build-material-overrides.mjs: stone, few small windows; 2026-11-23)
+const LOOK_WIN = [[.30, .70, .32, .80], [.20, .80, .30, .78], [.08, .92, .34, .80], [.22, .78, .16, .86], [0, 1, .40, .88], [0, 1, .14, 1], [0, 0, 0, 0], [.12, .88, .18, .86], [.44, .56, .34, .62]];   // window box in the bay (x0, x1, y0, y1)
+const byStyle = (st, T) => { const V = T[0].length === 4 ? vec4 : vec3, L = T.length - 1; let n = V(...T[L]); for (let i = L - 1; i >= 0; i--) n = select(st.lessThan(i + .5), V(...T[i]), n); return n; };
 export const FAC = { slots: uniformArray(Array.from({ length: 32 }, () => new THREE.Vector4(10, 10, 0, 0)), 'vec4'), tex: null };   // photo facade tile sizes (w_m, h_m) by slot; the atlas texture
 
 // the per-fragment values of the facade program (fresh nodes for each function that calls it). S: where the per-building

@@ -10869,6 +10869,49 @@
    "cwp:fault": []
   },
   {
+   "@id": "https://kgx.foaf.tv/id/toolbuildmaterialoverrides",
+   "@type": "prov:Activity",
+   "rdfs:label": "build-material-overrides",
+   "dct:description": "For each model building (building-keys.json; a part also reads its parent): a building of the tool's named list (OSM key; the reason and source in the tool) takes the style and wall colour given there; else OSM building=castle (or a part of one) and the Waterloo Block barracks take the masonry style (stone, few small windows) and Kentish ragstone. The page applies the result over materials.json while both carry the same model fingerprint.",
+   "prov:used": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/building-keys.json"
+    },
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/materials.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    }
+   ],
+   "prov:generated": [
+    {
+     "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/materials-overrides.json"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srckgx"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-material-overrides.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-material-overrides.mjs",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "Named overrides come from the owner's photos (2026-11-23) and written sources named in the tool; everything else in the Realistic look stays a rule-based guess.",
+    "Rerun after build-materials.mjs (the fingerprint must match)."
+   ],
+   "cwp:network": false,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolbuildmaterials"
+    }
+   ],
+   "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
    "@id": "https://kgx.foaf.tv/id/toolstationmesh",
    "@type": "prov:Activity",
    "rdfs:label": "station-mesh",
@@ -17656,6 +17699,40 @@
     "@id": "https://kgx.foaf.tv/id/toolbuildmaterials"
    },
    "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/data/materials-overrides.json",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "overrides on the Realistic look (materials.json) by model index: a facade style (adds masonry: stone, few small windows) and a wall colour for the buildings the rules get wrong: OSM building=castle and its parts (the Tower of London: Kentish ragstone), and named buildings (Tower Bridge towers, Custom House, Fishmongers' Hall, Adelaide House: Portland stone; Old Billingsgate: yellow brick; the Northern and Shell Building: reflective glass); from the owner's photos of 2026-11-23",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcosm"
+    },
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "prov:wasGeneratedBy": {
+    "@id": "https://kgx.foaf.tv/id/toolbuildmaterialoverrides"
+   },
+   "cwp:osmUse": "derived"
+  },
+  {
+   "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-material-overrides.mjs",
+   "@type": [
+    "prov:Entity",
+    "dcat:Distribution"
+   ],
+   "dct:title": "code, not data: overrides on the Realistic look for historic and named buildings -> docklands/data/materials-overrides.json; logged operation build-material-overrides, kgx graph material-overrides",
+   "prov:wasDerivedFrom": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcown"
+    }
+   ],
+   "cwp:osmUse": "none"
   },
   {
    "@id": "https://github.com/danbri/londat/blob/main/cwplans/docklands/look-layer.js",

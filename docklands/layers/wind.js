@@ -51,13 +51,17 @@ const FILE = { from: fromLondon('2026-10-03T00:00'), to: fromLondon('2026-10-04T
 // live-cache branch (the last 24 hours; aviationweather.gov sends no CORS header, so the 5-minute job copies it). Read
 // again when 5 minutes old. The array carries .station (icao, name, lat, lon) when the file has it.
 const LIVE_BASE = 'https://raw.githubusercontent.com/danbri/londat/live-cache/';
-const getJ = url => fetch(url, { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+const getJ = url => fetch(url, { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
 const liveUrl = (base, f) => (base ? base.replace(/\/?$/, '/') : LIVE_BASE) + f;
+// A failed fetch is not kept: the next call tries again, and metarErr names the failure for the wind note (2026-11-23: an
+// 8 s limit aborted the fetch while a software-rendered page was busy loading, the failure was kept for 5 minutes and the
+// page fell back to the stated default wind with no word about the METAR; the limit is now 30 s)
 let metarP = null, metarAt = 0;
+export let metarErr = null;
 export function getMetar(base) {
   if (!metarP || Date.now() - metarAt > 5 * 60e3) { metarAt = Date.now();
-    metarP = getJ(liveUrl(base, 'metar.json')).then(J => Object.assign((J.obs || []).map(o => ({ ...o, t: o.t * 1000 })), { station: J.station || null }))
-      .catch(e => { console.warn('METAR', e); return []; }); }
+    metarP = getJ(liveUrl(base, 'metar.json')).then(J => { metarErr = null; return Object.assign((J.obs || []).map(o => ({ ...o, t: o.t * 1000 })), { station: J.station || null }); })
+      .catch(e => { console.warn('METAR', e); metarErr = e && e.name === 'TimeoutError' ? 'timed out' : String(e && e.message || e).slice(0, 60); metarP = null; return []; }); }
   return metarP;
 }
 // ---------- METAR of the other places' stations: metar-places.json of the live-cache branch (the last 6 hours; the region
@@ -195,7 +199,7 @@ export default {
         if (!w && site && meteoOn) { const P = site.home ? null : site.point, Mo = await getMeteo(t, P), v = Mo && interp(Mo.rows, t);
           if (v) w = { ...v, src: `Open-Meteo forecast API, hourly${P ? ` at ${P.lat.toFixed(2)}, ${P.lon.toFixed(2)}` : ''} (CC BY 4.0)` }; }
         // the stated default: the model only (elsewhere no wind is shown)
-        if (!w && site && site.home) w = { speed: 4, dir: 240, gust: null, src: `default, no wind data for ${hhmm(t)}${meteoOn && src.meteoErr ? ' (Open-Meteo: ' + src.meteoErr + ')' : ''}` };
+        if (!w && site && site.home) w = { speed: 4, dir: 240, gust: null, fallback: true, src: `DEFAULT (no wind data for ${hhmm(t)}${metarErr ? '; METAR: ' + metarErr : ''}${meteoOn && src.meteoErr ? '; Open-Meteo: ' + src.meteoErr : ''})` };
         if (w) { w.at = t; w.site = site ? site.key : null; WU.windSpeed.value = w.speed; WU.windDir.value = (w.dir + GRID_CONV + 360) % 360;   // true -> grid (model -z)
           SU.gust.value = w.gust != null && w.speed > 0.5 ? Math.max(0.15, Math.min(1, w.gust / w.speed - 1)) : 0.5; setFetch(w.dir); }
         W = w; showNote(); ctx.draw();

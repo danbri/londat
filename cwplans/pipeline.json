@@ -10035,6 +10035,44 @@
    ]
   },
   {
+   "id": "build-material-overrides",
+   "area": "buildings",
+   "tool": "tools/build-material-overrides.mjs",
+   "command": "node cwplans/tools/build-material-overrides.mjs",
+   "kind": "build",
+   "used": [
+    {
+     "file": "docklands/data/building-keys.json"
+    },
+    {
+     "file": "docklands/data/materials.json"
+    },
+    {
+     "source": "osm"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/materials-overrides.json"
+    },
+    {
+     "source": "kgx",
+     "note": "graph material-overrides"
+    }
+   ],
+   "after": [
+    "build-materials"
+   ],
+   "note": "skill docklands-3d-page, \"Realistic look\"; logged operation build-material-overrides, kgx graph material-overrides",
+   "method": "For each model building (building-keys.json; a part also reads its parent): a building of the tool's named list (OSM key; the reason and source in the tool) takes the style and wall colour given there; else OSM building=castle (or a part of one) and the Waterloo Block barracks take the masonry style (stone, few small windows) and Kentish ragstone. The page applies the result over materials.json while both carry the same model fingerprint.",
+   "rules": [
+    "Named overrides come from the owner's photos (2026-11-23) and written sources named in the tool; everything else in the Realistic look stays a rule-based guess.",
+    "Rerun after build-materials.mjs (the fingerprint must match)."
+   ],
+   "network": false,
+   "deterministic": true
+  },
+  {
    "id": "station-mesh",
    "area": "underground",
    "tool": "tools/build-station-mesh.mjs",

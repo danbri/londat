@@ -32,7 +32,7 @@ function paint(M, n0, i, pitched) {
 }
 const box = () => document.getElementById('lookReal');
 async function load() {
-  if (T) return T; if (!loading) loading = C.load('data/materials.json').then(J => (T = decode(J, C.MFP))).catch(e => { console.warn('materials.json', e); loading = null; return null; });
+  if (T) return T; if (!loading) loading = C.load('data/materials.json').then(async J => { const t = decode(J, C.MFP); const O = await C.load('data/materials-overrides.json').catch(() => null); T = O && O.model && O.model.fp === C.MFP ? override(t, O) : t; return T; }).catch(e => { console.warn('materials.json', e); loading = null; return null; });
   return loading;
 }
 // turn the look on or off; resolves to the state in force
@@ -45,5 +45,12 @@ function init(ctx) {
   C = ctx; const b = box(); if (b) b.onchange = () => set(b.checked);
   if (/^(real|realistic|1)$/i.test(new URLSearchParams(location.search).get('look') || '')) set(true);
 }
-globalThis.DocklandsLook = { init, set, decode, paint, on: () => want && !!T, get data() { return T; }, attach: t => (T = t) };   // attach: decoded data without the page (tests)
+// overrides (data/materials-overrides.json, tools/build-material-overrides.mjs): [index, style, wall] for buildings the rules
+// get wrong (historic stone, reflective glass); the style replaces the code's style (shopfront and storey class kept)
+function override(t, O) {
+  if (!t || !O || !O.model || !O.items) return t; const base = t.wall.length; t.wall = t.wall.concat(O.walls); let n = 0;
+  for (const [i, st, w] of O.items) if (i < t.n) { t.code[i] = st * 8 + (t.code[i] % 8); t.w[i] = base + w; n++; }
+  t.overrides = n; return t;
+}
+globalThis.DocklandsLook = { init, set, decode, paint, override, on: () => want && !!T, get data() { return T; }, attach: t => (T = t) };   // attach: decoded data without the page (tests)
 })();
