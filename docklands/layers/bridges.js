@@ -10,6 +10,7 @@
 // data/images/contrib/thames-2026-11-23/README.md. Skill: docklands-3d-page, "Three.js port".
 import { Mesh, A, dec } from '../build.js';
 import { vec3, float } from 'three/tsl';
+import { towerBridge } from '../tower-bridge.js';
 
 // London Bridge's deck (not in the model before 2026-11-24): on the line through the two pier centres, from bank to bank
 // (the terrain rises above 3.5 m OD at z -330 and z -85 there), 32 m wide (https://en.wikipedia.org/wiki/London_Bridge),
@@ -22,11 +23,7 @@ import { vec3, float } from 'three/tsl';
 // term of 0.22 x its colour by day, none by night (ctx.U.night), in place of that reflected light (judged on IMG_2354).
 const LB = { n: [-4721, -330], s: [-4766, -85], pn: [-4731, -275], ps: [-4750, -173], W: 32, ROAD: 14.0, PAR: 1.1 };
 const FASCIA = [.66, .65, .62], SOFFIT = [.62, .62, .60], PARAPET = [.60, .60, .58], ROADC = [.24, .24, .25];
-// Tower Bridge's high-level walkways: the OSM parts between the towers (w367652753, w367653917) are extruded from the deck
-// at 3 m OD to 48.1 m in the model, a solid block 45 m high where the photo IMG_2337 of 2026-11-23 shows sky under the
-// walkways. This layer hides them and draws each outline from 42.5 to 48.1 m OD (the walkways' lattice girders, judged 5.6
-// m deep) in the bridge's light blue-grey. Found by place: parts over 40 m tall whose centre lies between the towers.
-const TB_BOX = [-3900, 10, -3855, 66], WALK = [42.5, 48.1], WALKC = [.55, .64, .70];
+// Tower Bridge: docklands/tower-bridge.js (decks, suspension chains, walkways, spires; the model's solid parts hidden).
 
 const PIERS = [
   { name: 'London Bridge, north pier', x0: -4746, x1: -4715, z0: -278, z1: -272, text: 'south' },
@@ -36,7 +33,7 @@ const BED = -4, TOP = 7.8, WET = 3.5, OB_TOP = 13.6, OB_W = 1.2, CUT = 3;
 const GRANITE = [.66, .64, .60], WETC = [.34, .36, .29], CAP = [.72, .70, .66];
 
 export default {
-  id: 'bridges', label: 'Bridge piers (London Bridge)', on: true,
+  id: 'bridges', label: 'Bridges (London Bridge, Tower Bridge)', on: true,
   async init(ctx) {
     const { THREE } = ctx, M = new Mesh(), MU = new Mesh(), group = new THREE.Group(); group.name = 'bridges';
     // a vertical band of the outline between heights a and b
@@ -63,11 +60,16 @@ export default {
           M.quad(...r, PARAPET); M.quad(r[3], r[2], r[1], r[0], PARAPET); }   // the parapet seen from both sides
         MU.quad(P(a, -h, ya), P(b, -h, yb), P(b, h, yb), P(a, h, ya), SOFFIT);   // underside, facing down (own mesh: below)
         M.quad(P(a, -h, LB.ROAD), P(a, h, LB.ROAD), P(b, h, LB.ROAD), P(b, -h, LB.ROAD), ROADC); } }   // the road, facing up
-    // Tower Bridge walkways: hide the solid parts, draw their outlines at the walkway level
-    const walk = new Set();
-    (A.buildings || []).forEach((b, i) => { if (b.h < 40) return; const q = dec(b.p); let x = 0, z = 0, n = q.length / 2; for (let k = 0; k < q.length; k += 2) { x += q[k]; z += q[k + 1]; } x /= n; z /= n;
-      if (x > TB_BOX[0] && x < TB_BOX[2] && z > TB_BOX[1] && z < TB_BOX[3] && b.b + b.h < 50) { walk.add(i); const r = []; for (let k = 0; k < q.length; k += 2) r.push([q[k], q[k + 1]]); band(r, WALK[0], WALK[1], WALKC); cap(r, WALK[1], WALKC); cap(r.slice().reverse(), WALK[0], WALKC); } });
+    // Tower Bridge: the decks, chains, walkways and spires (docklands/tower-bridge.js); the model's solid parts hidden
+    const T = towerBridge({ A, dec }), walk = T.hide;
     if (walk.size) { const prev = ctx.buildOpts.skip; ctx.buildOpts.skip = { has: i => walk.has(i) || !!(prev && prev.has(i)), get size() { return walk.size + (prev ? prev.size : 0); } }; ctx.rebuildBuildings(); }
+    const geomOf = L => { const G = new THREE.BufferGeometry(); G.setAttribute('position', new THREE.Float32BufferAttribute(L.p, 3)); G.setAttribute('color', new THREE.Float32BufferAttribute(L.c, 3)); G.computeVertexNormals(); G.computeBoundingSphere(); return G; };
+    const lit = (k, mat, name) => { const L = T.L.m[k]; if (!L) return; const m = new THREE.Mesh(geomOf(L), mat); m.name = name; m.castShadow = m.receiveShadow = true; group.add(m); };
+    { // the steel, lit by night (cool white-blue, judged), and the underside, lit from below by day as London Bridge's
+      const sm = new THREE.MeshStandardNodeMaterial({ vertexColors: true, roughness: .55, metalness: .1 }); sm.emissiveNode = vec3(.55, .68, .85).mul(float(0.55)).mul(ctx.U.night);
+      const um = new THREE.MeshStandardNodeMaterial({ vertexColors: true, roughness: .9 }); um.emissiveNode = vec3(.58, .60, .62).mul(float(0.22)).mul(float(1).sub(ctx.U.night));
+      lit('steel', sm, 'Tower Bridge steel'); lit('under', um, 'Tower Bridge underside');
+      lit('road', ctx.materials.vertexColourMaterial(), 'Tower Bridge road'); lit('stone', ctx.materials.vertexColourMaterial(), 'Tower Bridge spires'); }
     const mesh = new THREE.Mesh(M.geometry(), ctx.materials.vertexColourMaterial()); mesh.castShadow = mesh.receiveShadow = true; group.add(mesh);
     { const um = new THREE.MeshStandardNodeMaterial({ vertexColors: true, roughness: .9 }); um.emissiveNode = vec3(...SOFFIT).mul(float(0.22)).mul(float(1).sub(ctx.U.night));
       const u = new THREE.Mesh(MU.geometry(), um); u.name = 'London Bridge underside'; u.receiveShadow = true; group.add(u); }
@@ -82,7 +84,7 @@ export default {
       const L = 7.2, H = L * 192 / 2048, pl = new THREE.Mesh(new THREE.PlaneGeometry(L, H), mat);
       pl.position.set(P.x0 + CUT + 6.5, 1.7 + 4.0, P.z1 + .03); pl.name = 'inscription: LONDON BRIDGE'; group.add(pl);   // the south face (+z)
     }
-    group.userData.stats = { piers: PIERS.length, walkways_hidden: walk.size, triangles: M.idx.length / 3 };
+    group.userData.stats = { piers: PIERS.length, tower_bridge: T.stats, triangles: M.idx.length / 3 };
     return { object: group, setVisible(on) { group.visible = on; } };
   },
 };
