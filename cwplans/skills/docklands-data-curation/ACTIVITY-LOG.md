@@ -3834,3 +3834,10 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   512 m ships. ships-data.js aisDims: 400 m or more, or a beam of 60 m or more, is taken as not given (typical size of the
   type); the card names the placeholder. Same day: the memory governor keeps the pixel ratio longer and returns to full
   detail; Painted still views at full density (the owner: "Sometimes lowres", "In general").
+- 2026-11-24, the owner: BAW48Q (B78X) "flying through the trees on greenwich park ... A full sized white aeroplane!!!"
+  and "I've noticed such problems occasionally in recent week or so". Its last report in the near-live file was 75 m over
+  Heathrow on short final (138 kt, track 90, -704 ft/min); the near-live estimate moved it on east for 6 min with the
+  height held at the ground (the vertical rate is used for 2 min only): 34 km, to Greenwich. planes-live.js: a low
+  aircraft (under 600 m above the ground) that descends lands where the descent meets the ground and fades in 30 s;
+  other low aircraft are estimated for 2 min. Test in the page with BAW48Q's two reports: before 34 km east at 8 min,
+  after touchdown 1.5 km down the runway, gone in 40 s. Also: AIS 512 x 64 m placeholder sizes (giant boats).

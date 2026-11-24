@@ -334,7 +334,13 @@ export function createRecorded({ geo, conv, groundAt, base }) {
 // raw.githubusercontent.com (Access-Control-Allow-Origin: *; its CDN keeps a file about 5 min, and a query string does
 // not change that: measured 2026-10-09), every NL.every ms while wanted. URL: ?livecache=<base> reads another copy.
 export const NL = { base: 'https://raw.githubusercontent.com/danbri/londat/live-cache/', every: 60000, fresh: 20 * 60e3,
-  reckon: 360, fade: 360, turn: 30, climb: 120, maxGap: 1260, trail: 1200 };
+  reckon: 360, fade: 360, turn: 30, climb: 120, maxGap: 1260, trail: 1200,
+  // a low aircraft (under lowH m above the ground at its last report): it is landing, taking off or turning onto an
+  // approach, so its course changes soon. Descending, the estimate ends where the descent meets the ground (touchdown)
+  // and it fades in landFade s; else the estimate lasts lowReckon s (2026-11-24: BAW48Q's last report in the file was
+  // 75 m over Heathrow on short final; it was moved on east at 138 kt for 6 min, its height held at the ground, and
+  // flew through the trees of Greenwich Park; the owner had seen such aircraft "occasionally in recent week or so")
+  lowH: 600, lowReckon: 120, landFade: 30 };
 export function liveCacheBase(qs) {
   const q = qs && qs.get('livecache');
   if (q) { try { const u = new URL(q, location.href); if (u.protocol === 'https:' || u.origin === location.origin) return u.href.replace(/\/?$/, '/'); } catch { /* keep the default */ } }
@@ -387,15 +393,21 @@ export function createNearLive({ geo, conv, groundAt, base }) {
         const trk = L.trk[lo] + dT * f1, vs = (L.y[hi] - L.y[lo]) / dt, ground = L.q[lo] === 2 && L.q[hi] === 2, v = mix(L.gs) * KT;
         S = { x: mix(L.x), y: mix(L.y), z: mix(L.z), h: trk * deg + conv, v, vs, ground, rate: dT * deg / dt }; trkTrue = trk;
       } else {                   // after the last report: dead reckoning, then the fade
-        const dt = (T - L.t[i]) / 1000; if (dt > NL.reckon + NL.fade) continue;
-        est = dt; alpha = dt <= NL.reckon ? 1 : 1 - (dt - NL.reckon) / NL.fade;
-        const ground = L.q[i] === 2, v = L.gs[i] * KT, h0 = L.trk[i] * deg + conv, w = Math.max(-0.1, Math.min(0.1, L.tr[i] * deg)), tt = Math.min(dt, NL.turn);
+        const dt0 = (T - L.t[i]) / 1000, onGround = L.q[i] === 2;
+        const hg = L.y[i] - groundAt(L.x[i], L.z[i]), vr0 = L.vr[i] * FT / 60, low = !onGround && hg < NL.lowH;
+        const td = low && vr0 < -0.5 ? Math.max(0, hg) / -vr0 : Infinity, landed = dt0 > td;   // touchdown, s after the report
+        const rk = low ? NL.lowReckon : NL.reckon;
+        if (landed ? dt0 - td > NL.landFade : dt0 > rk + NL.fade) continue;
+        est = dt0; alpha = landed ? 1 - (dt0 - td) / NL.landFade : dt0 <= rk ? 1 : 1 - (dt0 - rk) / NL.fade;
+        const dt = landed ? td : dt0;   // a landed aircraft stays where it touched down
+        const ground = onGround || landed, v = landed ? 0 : L.gs[i] * KT, h0 = L.trk[i] * deg + conv, w = Math.max(-0.1, Math.min(0.1, L.tr[i] * deg)), tt = Math.min(dt, NL.turn);
+        const vMove = L.gs[i] * KT;
         let x = L.x[i], z = L.z[i], h = h0;
-        if (!(ground && v < 1)) {
-          if (Math.abs(w) > 1e-4) { h = h0 + w * tt; x += v / w * (Math.cos(h0) - Math.cos(h)); z -= v / w * (Math.sin(h) - Math.sin(h0)); }
-          x += Math.sin(h) * v * (dt - (Math.abs(w) > 1e-4 ? tt : 0)); z -= Math.cos(h) * v * (dt - (Math.abs(w) > 1e-4 ? tt : 0));
+        if (!(onGround && vMove < 1)) {   // moved by the reported ground speed until now, or until touchdown
+          if (Math.abs(w) > 1e-4) { h = h0 + w * tt; x += vMove / w * (Math.cos(h0) - Math.cos(h)); z -= vMove / w * (Math.sin(h) - Math.sin(h0)); }
+          x += Math.sin(h) * vMove * (dt - (Math.abs(w) > 1e-4 ? tt : 0)); z -= Math.cos(h) * vMove * (dt - (Math.abs(w) > 1e-4 ? tt : 0));
         }
-        const vs = ground ? 0 : L.vr[i] * FT / 60, y = ground ? groundAt(x, z) : Math.min(13700, Math.max(groundAt(x, z), L.y[i] + vs * Math.min(dt, NL.climb)));
+        const vs = ground ? 0 : vr0, y = ground ? groundAt(x, z) : Math.min(13700, Math.max(groundAt(x, z), L.y[i] + vs * Math.min(dt, NL.climb)));
         S = { x, y, z, h, v, vs, ground, rate: dt < NL.turn ? w : 0 }; trkTrue = ((h - conv) / deg + 720) % 360;
       }
       const pitch = S.ground ? 0 : Math.atan2(S.vs, Math.max(S.v, 20)) + (L.M.kind === 'heli' ? -3 * deg : 3 * deg);
