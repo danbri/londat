@@ -3828,3 +3828,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   when the camera or sun moved, else every 3rd frame (-10 % SwiftShader frame, JS 32 -> 27 ms); instance buffers upload
   only the used part; night tails sampled only by night; tree noise from a 3D texture. Skill docklands-3d-page, "Frame
   cost by cause" (measures, what is left).
+- 2026-11-24, the owner's screenshot at Tower Bridge 11:28 ("three large drawings of boats, although two seem to be the
+  same vessel"): five AIS vessels (SHAKEDOG, ULTIMATE, ELIMINATOR, EXTERMINATOR, NEPTUNE CLIPPER: tour speedboats, a tug,
+  a river bus) reported 512 x 64 m, the AIS dimension fields at their maxima (a transponder not set up), and were drawn as
+  512 m ships. ships-data.js aisDims: 400 m or more, or a beam of 60 m or more, is taken as not given (typical size of the
+  type); the card names the placeholder. Same day: the memory governor keeps the pixel ratio longer and returns to full
+  detail; Painted still views at full density (the owner: "Sometimes lowres", "In general").

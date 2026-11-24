@@ -2265,6 +2265,14 @@ mesh) and the ring (174 k) in the main pass; 115 to 228 shader programs (compile
 trees still cost 16 to 19 % of a SwiftShader frame (their alpha-cut leaves); JavaScript about 12 ms a frame on the
 container's CPU, mostly three.js's own work for about 140 draw calls.
 
+### AIS placeholder dimensions (2026-11-24)
+
+Some transponders report the AIS dimension fields at their maxima (to bow and stern 511 m each, to port and starboard 63 m
+each): 512 x 64 m for tour speedboats, a tug and a river bus at Tower Bridge, drawn as 512 m ships (the owner's screenshot
+of 11:28). `ships-data.js aisDims`, used by all four loaders: a length of 400 m or more or a beam of 60 m or more is not
+given (the layer's typical size for the type); `dims_reported` keeps the values for the card. Check the live data with
+`curl -s https://raw.githubusercontent.com/danbri/londat/live-cache/ships.json` and the vessels' `length` and `beam`.
+
 ### Low resolution on the iPhone (2026-11-24)
 
 Owner, 2026-11-24 (iPhone, Painted style, screenshots with "memory is short, so light detail (tier 2 of 2)"): "Snappy but

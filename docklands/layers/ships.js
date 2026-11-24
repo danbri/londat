@@ -284,7 +284,7 @@ export default {
       const v = S.v, rows = [], add = (k, val) => { if (val != null && val !== '') rows.push(`<tr><td>${k}</td><td>${esc(val)}</td></tr>`); };
       const lt = iso => { try { return new Date(iso).toLocaleString('en-GB', { timeZone: 'Europe/London', dateStyle: 'medium', timeStyle: 'short' }); } catch { return iso; } };
       add('Type', v.kind === 'aton' ? 'aid to navigation' : `${D.GROUP(v.ship_type)}${v.ship_type ? ` (ITU ${v.ship_type})` : ''}`);
-      add('Length', v.length ? `${v.length} m${v.beam ? ` x ${v.beam} m` : ''}` : null);
+      add('Length', v.length ? `${v.length} m${v.beam ? ` x ${v.beam} m` : ''}` : v.dims_reported ? `${v.dims_reported[0]} m x ${v.dims_reported[1]} m reported: the AIS placeholder of a transponder that was not set up, so drawn at the typical size of its type` : null);
       add('Speed', S.test ? `${(S.spd / KN).toFixed(1)} kn (${S.spd.toFixed(1)} m/s)` : v.sog != null ? `${v.sog} kn` : null);
       add('Course', !S.test && v.cog != null ? `${Math.round(v.cog)}°` : null); add('Heading', !S.test && v.heading != null && v.heading !== 511 ? `${v.heading}°` : null);
       add('Status', v.nav_status != null ? D.NAV[v.nav_status] || `code ${v.nav_status}` : null); add('Destination', v.destination);

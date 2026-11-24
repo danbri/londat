@@ -46,11 +46,11 @@ export const still = v => v.nav_status === 1 || v.nav_status === 5 || v.nav_stat
 
 // committed file items, live GeoJSON features and cache rows to one shape
 export const fromItem = i => ({ mmsi: i.mmsi, kind: i.kind, name: i.name, callsign: i.callsign, imo: i.imo, flag: i.flag, ship_type: i.ship_type, class: i.class,
-  length: i.length_m, beam: i.beam_m, lat: i.position.lat, lon: i.position.lon, cog: i.values.cog, sog: i.values.sog_kn, heading: i.values.heading,
+  ...aisDims(i.length_m, i.beam_m), lat: i.position.lat, lon: i.position.lon, cog: i.values.cog, sog: i.values.sog_kn, heading: i.values.heading,
   nav_status: i.values.nav_status, destination: i.values.destination, seen: i.time, source: i.source_kind || i.source, attribution: i.attribution });
 export const fromFeature = (f, attr) => { const p = f.properties || {}, [lon, lat] = f.geometry ? f.geometry.coordinates : [null, null], src = String(p.source || '').split(':')[0];
   return { mmsi: p.mmsi, kind: p.kind, name: p.name, callsign: p.callsign, imo: p.imo, flag: p.flag, ship_type: p.type, class: p.class || CLASS_OF[p.msg_type] || null,
-    length: p.length, beam: p.beam, lat, lon, cog: p.cog, sog: p.sog, heading: p.heading, nav_status: p.nav_status, destination: p.destination, seen: p.seen, source: src,
+    ...aisDims(p.length, p.beam), lat, lon, cog: p.cog, sog: p.sog, heading: p.heading, nav_status: p.nav_status, destination: p.destination, seen: p.seen, source: src,
     attribution: attr[src] || attr[p.source] || OW }; };
 // { list, n: { private } }: the private rule applied; rows with no position dropped
 export function filter(list) {
@@ -111,7 +111,7 @@ export async function loadRun(run, runs) {
   const list = []; let nopos = 0;
   for (const [mmsi, name, callsign, imo, ship_type, , klass, flag, length, beam, , last] of rowsOf(R, 'ais_vessels')) {
     const P = (pos.get(mmsi) || []).filter(p => p[1] <= last).sort((a, b) => b[1] - a[1]); const p = P.find(q => q[1] === last) || P[0]; if (!p) { nopos++; continue; }
-    list.push({ mmsi, kind: String(mmsi).startsWith('99') ? 'aton' : 'vessel', name, callsign, imo, flag, ship_type, class: klass, length, beam, lat: p[3], lon: p[4],
+    list.push({ mmsi, kind: String(mmsi).startsWith('99') ? 'aton' : 'vessel', name, callsign, imo, flag, ship_type, class: klass, ...aisDims(length, beam), lat: p[3], lon: p[4],
       sog: p[5], cog: p[6], heading: p[7], nav_status: p[8], seen: new Date(p[1] * 1000).toISOString(), source: p[9], attribution: ATTR[p[9]] || OW });
   }
   return { list, at, from: 'cache', run: run.day + '/' + run.name, n: { private_counted: fetchRow ? fetchRow[2] : null, nopos } };
@@ -123,6 +123,15 @@ export async function loadRun(run, runs) {
 // last 2 hours. Read from raw.githubusercontent.com (Access-Control-Allow-Origin: *; the CDN keeps a file about 5 min).
 // Returns { list (newest position of each vessel, the record shape above), at (the run time), tracks: Map mmsi ->
 // [[t ms, lat, lon, sog kn, cog, heading, nav_status], ...] oldest first, from: 'live-cache', n: { private_counted } }.
+// AIS dimensions: the fields (to bow and to stern up to 511 m each, to port and to starboard up to 63 m each) at their
+// maxima are the placeholder of a transponder that was not set up, not a size (2026-11-24, the owner's screenshot at Tower
+// Bridge: five tour speedboats, a tug and a river bus reported 512 x 64 m and were drawn as 512 m ships). A length of 400 m
+// or more, or a beam of 60 m or more, is taken as not given (no vessel that size comes up the Thames this far); the
+// layer then uses the typical size of the vessel's type. The reported values stay in dims_reported for the tap card.
+export function aisDims(length, beam) {
+  if ((+length || 0) >= 400 || (+beam || 0) >= 60) return { length: null, beam: null, dims_reported: [length, beam] };
+  return { length, beam };
+}
 export const LIVECACHE = 'https://raw.githubusercontent.com/danbri/londat/live-cache/';
 export async function loadLiveCache(base = LIVECACHE) {
   const r = await fetch(base + 'ships.json', { cache: 'no-cache', credentials: 'omit', signal: AbortSignal.timeout(15000) });
@@ -135,7 +144,7 @@ export async function loadLiveCache(base = LIVECACHE) {
   const last = (d.snaps || []).at(-1), priv = last ? Object.values(last.private_not_listed || {}).reduce((s, x) => s + x, 0) : null;
   return { list, at: new Date(d.now).toISOString(), tracks, from: 'live-cache', n: { private_counted: priv, nopos: 0 }, first: d.snaps && d.snaps.length ? d.snaps[0].t : d.now };
 }
-const cacheRow = (v, p) => ({ mmsi: v.mmsi, kind: v.kind, name: v.name, callsign: v.callsign, imo: v.imo, flag: v.flag, ship_type: v.ship_type, class: v.class, length: v.length, beam: v.beam,
+const cacheRow = (v, p) => ({ mmsi: v.mmsi, kind: v.kind, name: v.name, callsign: v.callsign, imo: v.imo, flag: v.flag, ship_type: v.ship_type, class: v.class, ...aisDims(v.length, v.beam),
   destination: v.destination, lat: p[1], lon: p[2], sog: p[3], cog: p[4], heading: p[5], nav_status: p[6], seen: new Date(p[0]).toISOString(), source: v.source, attribution: v.attribution || OW });
 // the live-cache picture at time t (ms) inside its buffer: each vessel at its last position at or before t
 export function liveCacheAt(lc, t) {
