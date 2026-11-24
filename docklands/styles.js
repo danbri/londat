@@ -506,7 +506,7 @@ function globeRender(scene, cam) {
   if (!GPT.pipe) { GPT.sp = pass(scene, cam); GPT.R = paintGraph(GPT.sp, { near: GPT.near, far: GPT.far, night: GPT.night, log: true, overlays: false }); GPT.pipe = new THREE.RenderPipeline(r); GPT.pipe.outputColorTransform = true; }
   GPT.near.value = cam.near; GPT.far.value = cam.far; GPT.night.value = globalThis.__docklands3?.globe?.placeLookU?.V?.night?.value ?? 0;
   const s = r.getDrawingBufferSize(new THREE.Vector2()), dpr = r.getPixelRatio(); PT.res.value.set(s.x, s.y); PT.dpr.value = dpr; PT.mvU.value = 0; PT.fidOn.value = 1;
-  const T = PTIERS[PT.level], sc = Math.min(1, T.still / Math.max(dpr, 1));
+  const T = PTIERS[PT.level], sc = Math.min(1, PTIERS[0].still / Math.max(dpr, 1));   // a still view: full density (paintFrame)
   if (sc !== GPT.scale) { GPT.R.dab.setResolutionScale(sc); GPT.scale = sc; GPT.pipe.needsUpdate = true; }
   GPT.R.dab.autoUpdate = true; GPT.R.dabM.autoUpdate = false;
   const bl = $('bloom'), want = (bl ? bl.checked : true) && GPT.night.value > 0.01 ? GPT.R.outNight : GPT.R.out;
@@ -536,12 +536,15 @@ function paintFrame() {
   const P = C.perf, mv = !!(P && P.moving);
   if (PT.mode === 'auto' && P) autoTier(P);
   const T = PTIERS[PT.level]; PT.moving = mv; PT.fidOn.value = mv ? 0 : 1;   // no edge fidelity while moving (one full-resolution fetch less)
-  const scS = Math.min(1, T.still / Math.max(dpr, 1)), scM = Math.min(1, T.move / Math.max(dpr, 1)), key = scS + '/' + scM;
+  // a still view is drawn at the full tier's density whatever the tier (2026-11-24, the owner on the iPhone: "Sometimes
+  // lowres"): it is redrawn at most every `hold` ms, so its cost matters less; the tiers lower the density while moving.
+  // Before, a slow stretch stepped to lite or low, and the step back needs frames under 18 ms, which a phone rarely gives.
+  const scS = Math.min(1, PTIERS[0].still / Math.max(dpr, 1)), scM = Math.min(1, T.move / Math.max(dpr, 1)), key = scS + '/' + scM;
   if (PT.dab && key !== PT.scaleKey) {   // a tier or dpr change (rare): new sizes, and the output's bindings rebuilt for the new textures
     PT.dab.setResolutionScale(scS); PT.dabM.setResolutionScale(scM); PT.scaleKey = key; H.pipe.needsUpdate = true; }
   PT.scale = mv ? scM : scS; PT.mvU.value = mv ? 1 : 0;
   if (PT.dab) { PT.dab.autoUpdate = !mv; PT.dabM.autoUpdate = mv; }   // only the dab pass in use renders
-  const os = T.ov; if (PT.ovPass && PT.ovPass.getResolutionScale && PT.ovPass.getResolutionScale() !== os) PT.ovPass.setResolutionScale(os);   // lite, low: the data-layer mask at half resolution
+  const os = mv ? T.ov : 1; if (PT.ovPass && PT.ovPass.getResolutionScale && PT.ovPass.getResolutionScale() !== os) PT.ovPass.setResolutionScale(os);   // lite, low: the data-layer mask at half resolution
   if (P) { P.style = 'paint'; P.tier = T.name + (mv ? ' (moving)' : ''); P.wantSettle = true; P.holdMs = PT.hold; }
   const LY = globalThis.__docklands3 && __docklands3.layers;   // the data layers' objects (some are made later): on layer OVL as well, every 30th frame
   if (LY && PT.tick++ % 30 === 0) {   // and the railway lines of the map (a coloured data line, not scenery)

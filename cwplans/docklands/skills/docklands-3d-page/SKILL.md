@@ -2265,6 +2265,22 @@ mesh) and the ring (174 k) in the main pass; 115 to 228 shader programs (compile
 trees still cost 16 to 19 % of a SwiftShader frame (their alpha-cut leaves); JavaScript about 12 ms a frame on the
 container's CPU, mostly three.js's own work for about 140 draw calls.
 
+### Low resolution on the iPhone (2026-11-24)
+
+Owner, 2026-11-24 (iPhone, Painted style, screenshots with "memory is short, so light detail (tier 2 of 2)"): "Snappy but
+sometimes" ... "Sometimes lowres". Two causes, both quality steps that went down easily and came back rarely:
+
+- The memory governor (`governor.js`). Measured at a wide Painted view at iPhone size with the iPhone budget
+  (`?mem=ios-phone`, 430 x 932 @3, Chromium): 610 to 740 MB counted against 640 MB (JS heap 290 to 410, GPU 255 to 267,
+  canvas 61 at the page's ratio 2). Tier 2 set the pixel ratio to 1 (a quarter of the pixels) and freed at most 46 MB, so
+  the view stayed over 78 % of the budget and the tier never came back. Now: tier 1 keeps the pixel ratio (coarser far
+  tiles, fewer images); tier 2 lowers it to 1.5 at most; tier 2 needs 10 s over the budget (tier 1 5 s); one step back
+  after 20 s under 88 % of the budget (was 15 s under 78 %).
+- The Painted style's automatic tiers (`styles.js`, `?paint=auto`): a median frame over 25 ms stepped to lite (0.75
+  samples a CSS px) or low (0.5), and the step back needs frames under 18 ms for 3 s, which a phone rarely gives; the still
+  view then stayed coarse. Now a still view (redrawn at most every 100 ms) always uses the full tier's density (2 samples a
+  CSS px) and the data-layer mask at full resolution; the tiers lower only the density while the camera moves.
+
 ## Water surface from the weather (2026-11-24)
 
 Owner, 2026-11-24: "Reflection coherence depends on water surface which depends on weather - wind and rain and snow and

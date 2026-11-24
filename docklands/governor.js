@@ -11,8 +11,12 @@
 //    items of all pools together, least recently used first, by bytes, down to LOW x budget. Nothing drawn in the last
 //    frames is freed: everything loads again when the view needs it (architecture rule 6).
 //  - Quality tiers only as a reaction to memory pressure (rule 6: no capability is dropped for speed): when the view
-//    itself is over budget after the idle items are gone, tier 1 (coarser far tiles, fewer imagery textures held, pixel
-//    ratio 1.5), then tier 2 (pixel ratio 1, coarser still). Stated on screen (#memNote, one line) and in getView and
+//    itself is over budget after the idle items are gone, tier 1 (coarser far tiles, fewer imagery textures held), then
+//    tier 2 (coarser still, pixel ratio 1.5 at most). The pixel ratio goes last and only half way (2026-11-24, the owner:
+//    "Sometimes lowres"): at the iPhone's ratio 2 the canvas is about 61 MB of the 640 MB budget, so ratio 1 freed at most
+//    46 MB and drew a quarter of the pixels; the view (about 630 MB at a wide Painted view) stayed over 78 % of the budget
+//    and the tier never came back. Now: tier 2 after 10 s over the budget (tier 1 after 5 s), and one step back after 20 s
+//    under 88 % of it. Stated on screen (#memNote, one line) and in getView and
 //    describeView (quality). ?mem=full: no tiers, no budget (the owner's override); the LRU caps still hold.
 //  - Crash recovery: a marker in sessionStorage (per tab; it survives the reload that follows a crash) is set while the
 //    page runs and cleared on pagehide and when the tab is hidden. A start that finds it set follows a load that ended
@@ -88,7 +92,7 @@ export function makeGovernor() {
     for (const f of tierHooks) try { f(t); } catch (e) { console.warn('moglob: tier', e); }
     note();
   }
-  const TIER_TEXT = ['full detail', 'lighter detail (tier 1 of 2): coarser far tiles, fewer images held, pixel ratio 1.5', 'light detail (tier 2 of 2): coarser tiles, pixel ratio 1'];
+  const TIER_TEXT = ['full detail', 'lighter detail (tier 1 of 2): coarser far tiles, fewer images held', 'light detail (tier 2 of 2): coarser tiles, pixel ratio 1.5'];
   function note() {
     if (typeof document === 'undefined') return;
     if (!noteEl) { noteEl = document.createElement('div'); noteEl.id = 'memNote'; noteEl.setAttribute('role', 'status');
@@ -102,9 +106,10 @@ export function makeGovernor() {
     S.ticks++; if (!isFinite(budget)) { measure(); return; }
     const B = budget * MB; let used = measure();
     if (used > B * HIGH) { evict(used - B * LOW); used = measure(); }
-    win.push(used); if (win.length > 5) win.shift(); const low = Math.min(...win);
-    if (win.length === 5 && low > B) { win.length = 0; underT = 0; setTier(S.tier + 1, `the view needed ${Math.round(low / MB)} MB, over the ${S.budget_mb} MB budget`); }
-    else if (used < B * 0.78 && S.tier > (S.recovered ? 1 : 0)) { if (++underT >= 15) { underT = 0; win.length = 0; setTier(S.tier - 1, 'memory is back under the budget'); } }   // (15 s under 78 %: one step back; a step back adds at most the canvas's 40 MB)
+    const need = S.tier >= 1 ? 10 : 5;   // counts over the budget for the next tier: 5 s for tier 1, 10 s for tier 2
+    win.push(used); if (win.length > need) win.shift(); const low = Math.min(...win);
+    if (win.length >= need && low > B) { win.length = 0; underT = 0; setTier(S.tier + 1, `the view needed ${Math.round(low / MB)} MB, over the ${S.budget_mb} MB budget`); }
+    else if (used < B * 0.88 && S.tier > (S.recovered ? 1 : 0)) { if (++underT >= 20) { underT = 0; win.length = 0; setTier(S.tier - 1, 'memory is back under the budget'); } }   // (20 s under 88 %: one step back; a step back adds at most the canvas's 27 MB)
     else underT = 0;
   }
   const G = {

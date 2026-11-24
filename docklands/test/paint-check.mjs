@@ -46,7 +46,7 @@ const QUERIES = arg('--query', '') ? [arg('--query')] : ['view=greenlanddock&t=2
 mkdirSync(OUT, { recursive: true });
 const args = ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 if (WEBGPU) args.push('--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-vulkan=swiftshader');
-const browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
+const browser = await chromium.launch({ headless: true, executablePath: process.env.PW_CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args });
 let failed = 0;
 for (const q of QUERIES) {
   const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: DPR }), errors = [], net = [];

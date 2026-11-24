@@ -48,7 +48,7 @@ if (globalThis.GPUTexture) { const cv = GPUTexture.prototype.createView;
 // not load this module at all for ?no3d=1 or a browser without WebGPU and WebGL 2.)
 const no3d = async why => { say(why); globalThis.__docklandsNo3d = { error: why }; dispatchEvent(new CustomEvent('docklands-no3d', { detail: { error: why } })); await new Promise(() => {}); };
 const renderer = new THREE.WebGPURenderer({ antialias: true, forceWebGL: flag('webgl', false), powerPreference: 'high-performance' });
-const PR0 = Math.min(2, devicePixelRatio || 1);   // the pixel ratio; under memory pressure the governor's tiers lower it (1.5, 1)
+const PR0 = Math.min(2, devicePixelRatio || 1);   // the pixel ratio; under memory pressure the governor's tier 2 lowers it to 1.5
 renderer.setPixelRatio(PR0);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.0;
@@ -67,7 +67,8 @@ $('backend').textContent = BACKEND;
 
 const scene = new THREE.Scene();
 GOV.attach(renderer, { cpu: modelCpu });
-GOV.onTier(t => { const pr = t >= 2 ? 1 : t === 1 ? Math.min(PR0, 1.5) : PR0; if (renderer.getPixelRatio() !== pr) { renderer.setPixelRatio(pr); if (typeof resize === 'function') try { resize(); } catch { /* before the loop */ } } });
+GOV.onTier(t => { const pr = t >= 2 ? Math.min(PR0, 1.5) : PR0;   // the pixel ratio only at tier 2, and only to 1.5 (governor.js header)
+  if (renderer.getPixelRatio() !== pr) { renderer.setPixelRatio(pr); if (typeof resize === 'function') try { resize(); } catch { /* before the loop */ } } });
 // CPU copies of the static geometry given up once drawn (cpu-copies.js; ?cpufree=0 keeps them): normals and the per-building
 // and per-line values, made again exactly when three.js makes their GPU buffer again (after the globe: globe.js stepReup)
 const CPU = makeCpuCopies(renderer, { on: flag('cpufree', true) });
