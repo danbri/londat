@@ -10774,6 +10774,47 @@
      "local": "../docs/scale/2026-11-24-overture-buildings-by-country.json"
     }
    ]
+  },
+  {
+   "id": "cell-tiles",
+   "tool": "tools/build-cell-tiles.mjs",
+   "command": "node cwplans/tools/build-cell-tiles.mjs --cell <z-x-y> [--tier london] [--out <folder>] [fetch|build]",
+   "kind": "build",
+   "network": true,
+   "deterministic": true,
+   "after": [
+    "place-tiles"
+   ],
+   "area": "buildings",
+   "method": "One cell of the geodetic quadtree (180 / 2^z degrees, x from 180 W, y from 90 S) as basic buildings: writes a region config for the cell (cwplans/data/raw/places/cell-<z-x-y>/region.mjs: place kind blocks, a rectangle boundary by building centroid, the Greater London place.blocks parameters for tier london, the globe's world terrain texture where the world base has no height tile, no entry in places/index.json) and runs build-place-tiles.mjs fetch and build on it with --region-file. Output to danbri/docklandia data/cells/<z-x-y>/ by default. Issue https://github.com/danbri/londat/issues/20 stage 2; measurements docs/scale-estimate.md.",
+   "rules": [
+    "A building belongs to the cell that holds its centroid: west and south edges in, east and north edges out.",
+    "No masks of our detailed sets yet (the Docklands model box, London, the places): they come with the tile index (stage 3)."
+   ],
+   "used": [
+    {
+     "source": "overture-buildings",
+     "endpoint": "https://overturemaps-us-west-2.s3.amazonaws.com/",
+     "request": "the buildings of the cell box (fetch-overture-theme.py, NDJSON)"
+    },
+    {
+     "source": "ghsl-built-h"
+    },
+    {
+     "file": "docklands/geo/regions/london.js"
+    },
+    {
+     "file": "docklands/data/world/terrain-4096x2048.png"
+    }
+   ],
+   "generated": [
+    {
+     "local": "data/raw/places/cell-<z-x-y>/"
+    },
+    {
+     "local": "docklandia:data/cells/<z-x-y>/"
+    }
+   ]
   }
  ],
  "manual_activities": [

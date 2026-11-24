@@ -31,7 +31,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync
 import { createInterface } from 'node:readline';
 import { createHash } from 'node:crypto';
 import { join, dirname, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { gzipSync, gunzipSync, createGzip, createGunzip } from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import proj4 from 'proj4';
@@ -56,7 +56,9 @@ const argOf = k => { const i = argv.findIndex(a => a === '--' + k || a.startsWit
 const RID = argOf('region'); if (!RID) { console.error('usage: build-place-tiles.mjs [fetch|build] --region <id>'); process.exit(2); }
 // a region config of the page (regions/index.js), or a build-only one (regions/<id>.js not in the index: the UK lite set,
 // whose box would make the whole UK one project region for the page's zone and gazetteer lookups)
-const REG = REGIONS[RID] || await import(`../../docklands/geo/regions/${RID}.js`).then(m => m.default).catch(() => null); if (!REG) throw new Error(`no region config ${RID} (docklands/geo/regions/)`);
+// --region-file <path>: a region config written by another tool (build-cell-tiles.mjs: one quadtree build cell, issue #20)
+const REGFILE = argOf('region-file');
+const REG = REGIONS[RID] || await import(REGFILE ? pathToFileURL(REGFILE).href : `../../docklands/geo/regions/${RID}.js`).then(m => m.default).catch(() => null); if (!REG) throw new Error(`no region config ${RID} (docklands/geo/regions/)`);
 const PL = REG.place; if (!PL) throw new Error(`region ${RID} has no place block`);
 // kind 'blocks' (Greater London): no core, no ground of its own; the buildings of a boundary as blocks by level of detail
 const BLOCKS = PL.kind === 'blocks', BK = BLOCKS ? PL.blocks : null;
@@ -1273,6 +1275,11 @@ async function fetchGhslMosaic(a) {
 }
 // the boundary polygon: a feature of a skeleton set (format skeleton-1) by its code
 function boundary() {
+  // a rectangle (build-cell-tiles.mjs: one quadtree cell, half-open on the east and north edges, so a building on a cell
+  // edge belongs to one cell only); written to the work folder as the input file of place-select-blocks
+  if (PL.boundary.bbox) { const [w, s, e, n] = PL.boundary.bbox, file = join(WORK, 'boundary.json');
+    writeFileSync(file, JSON.stringify({ format: 'cell-boundary-1', name: PL.boundary.name, bbox: PL.boundary.bbox, rule: 'west <= lon < east and south <= lat < north (building centroid)' }) + '\n');
+    return { file, inside: (lon, lat) => lon >= w && lon < e && lat >= s && lat < n, bbox: [w, s, e, n], name: PL.boundary.name, points: 4 }; }
   const Bd = PL.boundary, dir = join(CW, Bd.skeleton), M = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8')), L = M.layers.find(l => l.id === Bd.layer), lv = L.levels.find(l => l.level === Bd.level);
   for (const fd of lv.files) { const file = join(dir, fd.path), fc = unpack(JSON.parse(readFileSync(file, 'utf8')));
     const ft = fc.features.find(x => x.properties.code === Bd.code); if (!ft) continue;
@@ -1332,8 +1339,12 @@ async function buildBlocks() {
       : { classes: ['OpenStreetMap (via Overture)', `merged ${geoAds.length ? '' : 'OpenStreetMap '}buildings (one box per square: the summed footprint, the area-weighted mean height)`, ...geoAds.map(a => a.geometry.label)],
         class_index: Object.fromEntries(geoAds.map((a, i) => [a.geometry.cls, 2 + i])) }), credit };
   if (CPT && geoAds.length > 1) throw new Error('place.blocks.leaf_boxes compact: one extra geometry class at most (the compact flags hold one class bit)');
-  const a3 = await run(OPS.blocks, [fileIn(fSel, 'selected'), fileIn(fH, 'heights'), gIn, fileIn(fGeoid, 'geoid')], TP, async p => {
-    const geoAt = await geoidSampler(fGeoid), G = worldBaseGround(GM, (L, x, y) => { const b = readFileSync(join(gdir, GM.dem.url.replace('{z}', L).replace('{x}', x).replace('{y}', y))); return new Int16Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); });
+  // place.blocks.ground_fallback 'world-texture': where the world base has no height tile, the globe's world terrain texture
+  // (as the UK lite set; build cells outside the testbeds)
+  const fTex = join(CW, 'docklands', 'data', 'world', 'terrain-4096x2048.png'), TEXF = BK.ground_fallback === 'world-texture';
+  const a3 = await run(OPS.blocks, [fileIn(fSel, 'selected'), fileIn(fH, 'heights'), gIn, fileIn(fGeoid, 'geoid'), ...(TEXF ? [fileIn(fTex, 'world terrain texture')] : [])], TP, async p => {
+    const texAt = TEXF ? await worldTexSampler(fTex) : null;
+    const geoAt = await geoidSampler(fGeoid), G = worldBaseGround(GM, (L, x, y) => { const b = readFileSync(join(gdir, GM.dem.url.replace('{z}', L).replace('{x}', x).replace('{y}', y))); return new Int16Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); }, texAt);
     const B = buildings.filter(b => b.a >= p.min_area_m2 && HT[b.id] && HT[b.id].h > 0);
     const named = new Map(), rows = [];
     for (const b of B) if (b.name && (b.a >= p.named_min_m2 || HT[b.id].h >= p.named_min_h_m)) { named.set(b.id, rows.length); rows.push(b); }
@@ -1365,9 +1376,9 @@ async function buildBlocks() {
         for (const i of n.items) { const b = B[i]; if (leaf ? named.has(b.id) || (p.leaf_outlines && wantsOutline(b, p)) : (HT[b.id].h >= LV.tall_m || b.a >= LV.big_m2)) own.push(b); else rest.push(BX[i]); }
         let compact = null, nmass = 0;
         if (leaf && rest.length) compact = F2 => ({ ...compactBoxes({ F: F2, b: n.b, boxes: rest, groundAt: G.at, geoidAt: geoAt, drop_m: p.drop_m, grid_n: p.grid_n, kind: 'buildings', colour: p.colour }), mass_buildings: 0 });
-        else if (FAR) { const K = farKeep(farUnder(n).filter(x => !(x.bi != null && FAR.ownAt(x.bi, LV))), LV.min_m2 ?? p.far.min_m2?.[n.l] ?? 0); nmass = K.keep.reduce((a, x) => a + x.n, 0);
+        else if (!leaf && FAR) { const K = farKeep(farUnder(n).filter(x => !(x.bi != null && FAR.ownAt(x.bi, LV))), LV.min_m2 ?? p.far.min_m2?.[n.l] ?? 0); nmass = K.keep.reduce((a, x) => a + x.n, 0);
           if (K.keep.length) compact = F2 => ({ ...compactBoxes({ F: F2, b: n.b, boxes: K.keep, groundAt: G.at, geoidAt: geoAt, drop_m: p.drop_m, grid_n: p.grid_n, kind: 'blocks', colour: p.colour }), mass_buildings: nmass, far_left_out: K.left_out_buildings }); }
-        else if (rest.length) { const sqs = squareBoxes(boxSquares(rest, n.b, LV.merge_m), n.b, LV.merge_m, p.full_share); nmass = rest.length;
+        else if (!leaf && rest.length) { const sqs = squareBoxes(boxSquares(rest, n.b, LV.merge_m), n.b, LV.merge_m, p.full_share); nmass = rest.length;
           compact = F2 => ({ ...compactBoxes({ F: F2, b: n.b, boxes: sqs, groundAt: G.at, geoidAt: geoAt, drop_m: p.drop_m, grid_n: p.grid_n, kind: 'squares', colour: p.colour }), mass_buildings: nmass }); }
         const LP = leaf ? (p.leaf_outlines ? { min_area_m2: p.min_area_m2, simplify_m: p.simplify_m, box_fill: p.box_fill, outline_min_m2: p.outline_min_m2, drop_m: p.drop_m } : { min_area_m2: p.min_area_m2, simplify_m: p.simplify_m, box_fill: 0, outline_min_m2: Infinity, drop_m: p.drop_m }) : { ...LV, min_area_m2: p.min_area_m2, drop_m: p.drop_m, ...(p.far?.box_fill ? { far_box_fill: p.far.box_fill, far_simplify_m: p.far.simplify_m } : {}) };
         r = blockTile({ cell: n, items: own, HT, groundAt: G.at, geoidAt: geoAt, P: LP, leaf, named: leaf ? named : null, classes: p.classes, classIndex: p.class_index, colour: p.colour, credit: p.credit, compact,
@@ -1419,6 +1430,10 @@ async function buildBlocks() {
   if (!geoAds.length) delete blog.block_geometry;
   blog.fault = 'F55 (curation skill fault register): buildings with no height in OSM; counted, not patched per record';
   writeFileSync(BLOG, JSON.stringify(blog, null, 1));
+  // place.index false (build cells): no entry in places/index.json and no places READMEs (the cell's tile index is
+  // written by build-cell-tiles.mjs)
+  if (PL.index === false) { let t = 0; for (const f of readdirSync(join(OUT, 'tiles'))) t += statSync(join(OUT, 'tiles', f)).size;
+    console.log(`done: ${readdirSync(join(OUT, 'tiles')).length} tiles, ${fj.blocks.buildings} buildings (${fj.blocks.named} named), tiles ${(t / 1e6).toFixed(2)} MB`); return; }
   const IX = join(OUTROOT, 'index.json'), ix = existsSync(IX) ? JSON.parse(readFileSync(IX, 'utf8')) : { format: 'places-index-1', about: 'Places on the globe built as 3D Tiles 1.1 by cwplans/tools/build-place-tiles.mjs; read by docklands/globe/places.js', places: [] };
   // tileBase (region config place.tileBase): where the tile set is served when it is not beside index.json (a second
   // repository's Pages, e.g. https://danbri.github.io/docklandia/data/gb/london/); places.js resolves it against index.json

@@ -3538,6 +3538,31 @@ Switch `place.blocks.leaf_boxes: 'compact'` in london.js (without it the tool st
 - **Open.** From 20 km the turned squares still read as a fine lattice (the far half of issue #13; done 2026-10-23: "Far views" below); big non-rectangular
   courtyard holes of unnamed buildings are not drawn (outer ring only, as in version 3; a closed courtyard block fills its box and is a box).
 
+## Three.js port: build cells, the worldwide building layer (2026-11-24, issue #20 stage 2)
+
+Owner decisions of 2026-11-24 (https://github.com/danbri/londat/issues/20#issuecomment-7135728004): our own tile sets in
+more GitHub repositories with Pages; no run-time fetch from open projects' tile servers. Size plan and measurements:
+https://github.com/danbri/londat/blob/main/docs/scale-estimate.md (tool `cwplans/tools/overture-building-counts.py`:
+buildings per country from the Overture Parquet footers only, about 1 minute for the world).
+
+- **Tool.** `node cwplans/tools/build-cell-tiles.mjs --cell <z-x-y> [--tier london] [--out <folder>] [fetch|build]`. A
+  cell of the geodetic quadtree (180 / 2^z degrees, x from 180 W, y from 90 S; level 8 = 0.703 degrees). It writes a region
+  config (`cwplans/data/raw/places/cell-<z-x-y>/region.mjs`) and runs build-place-tiles.mjs with `--region-file`. Default
+  output `../docklandia/data/cells/<z-x-y>/`. Changes in build-place-tiles.mjs for it: `--region-file`; `place.boundary.bbox`
+  (a rectangle by building centroid, half-open on the east and north edges); `place.blocks.ground_fallback:
+  'world-texture'` (the UK lite ground rule); `place.index: false` (no places/index.json entry, no READMEs). Greater
+  London's build is unchanged (its parameters and inputs give the same activity).
+- **Fixed bug (all blocks places).** A leaf tile whose buildings are all outlines (named or irregular, no compact box)
+  went into the coarse-level branch and failed on `LV.min_m2` (LV is null at a leaf). Leaves now never take the far-form or
+  square branches. London never had such a leaf; the first Wales cell did.
+- **Measured (2026-11-24).** Mid Wales 8-250-202: 60,881 buildings, 1,109 tiles, 5.37 MB, 88 bytes a building, about 2
+  minutes. West London 8-255-201: 1,797,507 buildings, 1,360 tiles, 63.47 MB, 35.3 bytes a building, about 12 minutes
+  (DuckDB fetch of 2.0 M rows most of it). Fit: 3,030 bytes a tile + 33 bytes a building. The glTF JSON of each tile is
+  about 2.7 kB (the full credit string, about 0.9 kB, in every glb); in Wales it is 2.55 of the 5.37 MB.
+- **Open.** Masks of our detailed sets (Docklands model box, London, places) and the tile index: stage 3. Tiers other
+  than london (one box a building, squares only). The tile cost: credit once per tile set (owner decision) and sparse
+  leaves at a coarser level; both before Europe.
+
 ## Three.js port: the UK lite set (2026-10-22)
 
 Owner, 2026-10-22, about buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest

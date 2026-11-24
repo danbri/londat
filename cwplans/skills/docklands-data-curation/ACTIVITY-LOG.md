@@ -3851,3 +3851,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   building: Great Britain 858 MB (1 repository of 900 MB, 2 with room to rebuild), Europe 14.5 GB (17), the world 88 GB
   (98); the world as squares only (UK lite levels 7 to 10, 1.04 bytes a building) 2.6 GB (3). Record:
   https://github.com/danbri/londat/blob/main/docs/scale-estimate.md
+- 2026-11-24, issue https://github.com/danbri/londat/issues/20 stage 2 start: `cwplans/tools/build-cell-tiles.mjs` builds one
+  level-8 quadtree cell with the Greater London method. Test cells: mid Wales 8-250-202, 60,881 buildings, 5.37 MB (88
+  bytes a building); west London 8-255-201, 1,797,507 buildings, 63.47 MB (35.3). Fit: 3,030 bytes a tile + 33 bytes a
+  building; the per-tile glTF JSON (the credit string in every tile) dominates rural cells. Revised: Great Britain 2
+  repositories, Europe 19 to 26, the world 135 to 147 with today's tile format. Not committed. Record: docs/scale-estimate.md.

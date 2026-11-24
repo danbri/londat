@@ -8,6 +8,10 @@ world at a coarse level.
 
 ## Result
 
+Revised the same day by two built test cells: see "Stage 2 test cells" at the end. Outside dense cities each tile
+adds about 3 kB, so the counts below are too low (Great Britain 2 repositories, Europe 19 to 26, the world 135 to 147
+with today's tile format).
+
 | region | buildings (Overture 2026-09-23.1) | London method, 34.8 B a building | one box a building, 9.8 B | squares only, 1.04 B |
 |---|---|---|---|---|
 | Great Britain | 24,661,980 | 858 MB: 1 repository (95 % full); 2 with room to rebuild | 242 MB | 26 MB |
@@ -80,3 +84,45 @@ buildings.
 - Source volume for stage 2: the Overture files are 276.9 GB for the world. Europe is about 16 % of the rows (about
   45 GB). A builder by cell must read the row groups of its cell only (as `fetch-overture-theme.py` does by bbox), never
   a whole region to disk.
+
+## Stage 2 test cells (2026-11-24): the estimate above is too low outside dense cities
+
+Builder: https://github.com/danbri/londat/blob/main/cwplans/tools/build-cell-tiles.mjs (one level-8 cell of the geodetic
+quadtree, 0.703 degrees; it writes a region config for the cell and runs build-place-tiles.mjs with the Greater London
+parameters, tier `london`). Two cells built on 2026-11-24, Overture 2026-09-23.1:
+
+| cell | area | Overture records in the cell | buildings drawn (25 m2 or more) | tiles (leaves) | outlines | size | bytes a building |
+|---|---|---|---|---|---|---|---|
+| 8-250-202 | mid Wales (Aberystwyth, Llandrindod Wells) | 68,864 | 60,881 | 1,109 (803) | 2,139 + 73 named | 5.37 MB | 88.1 |
+| 8-255-201 | west London and the Chilterns (0.70 W to 0, 51.33 to 52.03 N) | 1,968,993 | 1,797,507 | 1,360 (1,024) | 74,705 + 6,973 named | 63.47 MB | 35.3 |
+
+- The London cell agrees with the Greater London set (35.3 against 34.8 bytes a building).
+- The Wales cell costs 2.5 times as much a building. Cause: a fixed cost for each tile. Each glb carries a glTF JSON
+  header of about 2.7 kB (the full credit string, about 0.9 kB, is in every tile; accessors and block extras), and each
+  tile has a node in tileset.json (about 0.4 kB). In Wales the JSON headers are 2.55 MB of the 5.37 MB.
+- A fit through the two cells: size = 3,030 bytes a tile + 33.0 bytes a drawn building. Drawn buildings are 0.88 to 0.91
+  of the Overture records (buildings under 25 m2 are not drawn).
+- Rural cells are nearly full of tiles: Wales has a leaf in 803 of the 1,024 level-13 cells with only 60,881 buildings.
+
+Revised estimate (tile cost included; level-8 cells with buildings counted from the row groups of measurement 1; a cell
+has at most 1,360 tiles; the middle value assumes tiles grow with the square root of the buildings between the two
+measured cells, which is a guess):
+
+| region | level-8 cells with buildings | low (content only) | middle | high (every cell 1,360 tiles) | repositories of 900 MB (low / middle / high) |
+|---|---|---|---|---|---|
+| Great Britain | 103 | 0.7 GB | 1.1 GB | 1.1 GB | 1 / 2 / 2 |
+| Europe without Russia | 1,771 | 10.2 GB | 16.4 GB | 17.4 GB | 12 / 19 / 20 |
+| Europe with Russia | 2,652 | 12.4 GB | 21.2 GB | 23.1 GB | 14 / 24 / 26 |
+| World | 13,871 | 75.3 GB | 120.9 GB | 131.6 GB | 84 / 135 / 147 |
+
+Fixes that cut the tile cost (stage 6 work, needed before Europe):
+1. A shorter glTF JSON for each tile: the credit once per tile set (tileset.json `asset` and features.json, which the
+   page already shows), not in every glb; shorter block extras. Credit stays with the data: the decision is the owner's.
+2. Leaves at a coarser level where buildings are sparse: stop dividing a node that holds fewer than about 2,000
+   buildings. This cuts the tile count of rural cells by about 10 (Wales: 76 buildings a leaf tile). The page reader
+   must then accept leaves at any level (places.js `refine_within_m` is set on the parents of level-13 leaves).
+With both, the size goes towards the low column.
+
+The two test cells are not committed (the page cannot read them before the tile index of stage 3; the London cell
+repeats the London set). Rebuild: `node cwplans/tools/build-cell-tiles.mjs --cell 8-250-202` (about 2 minutes) and
+`--cell 8-255-201` (about 12 minutes: fetch 2.0 M rows, select, heights, tiles 55 s).
