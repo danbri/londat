@@ -19,7 +19,7 @@
 // Tap: a card with the species, what it is doing, the habitat and the data behind it.
 // Skill: docklands-3d-page, "Three.js port".
 import { Fn, If, attribute, positionGeometry, instancedDynamicBufferAttribute, uniformArray, uniform, varying, time, vec3, vec4, float, int, sin, cos, sign, min, max } from 'three/tsl';
-import { WU } from '../water.js';
+import { WU, SU } from '../water.js';
 import { surfaceAt } from '../build.js';
 
 const CELL = 200, R_MIN = 800, R_MAX = 3000, CAP_B = 32768, CAP_F = 512, MAX_FOX = 16, TAU = Math.PI * 2;
@@ -232,15 +232,18 @@ export default {
         switch (a.st) {
           case 'swim': {
             steer(a, dt, b === 'duck' && a.P.L > 1 ? .35 : .25, c => c === a.h);
-            a.y = waterY(a) + Math.sin(T * 1.3 + a.bob) * .02;
+            // frozen still water (SU.ice, layers/weather.js; owner, 2026-11-24: "If v v cold ducks and swans walk on the
+            // ice"): standing on the ice, walking, no diving
+            a.onIce = !a.tidal && SU.ice.value > 0.5;
+            a.y = a.onIce ? waterY(a) + .04 : waterY(a) + Math.sin(T * 1.3 + a.bob) * .02;
             a.t2 = (a.t2 ?? 20 + a.r() * 60) - dt;
             if (a.t2 <= 0) { a.t2 = 20 + a.r() * 90;
-              if (b === 'diver' && a.r() < .7) { a.st = 'dive'; a.dt = a.s.id === 'cormorant' ? 20 + a.r() * 40 : a.s.id === 'coot' ? 3 + a.r() * 6 : 10 + a.r() * 25; a.yaw = a.r() * TAU; }
+              if (b === 'diver' && !a.onIce && a.r() < .7) { a.st = 'dive'; a.dt = a.s.id === 'cormorant' ? 20 + a.r() * 40 : a.s.id === 'coot' ? 3 + a.r() * 6 : 10 + a.r() * 25; a.yaw = a.r() * TAU; }
               else if (ph === 'day' && a.r() < ({ gull: .5, duck: .12, goose: .08, diver: .08 }[b] || 0) * (a.s.id === 'muteswan' ? .2 : 1)) { const to = waterPoint(a, 40, b === 'gull' ? 300 : 220); if (to) takeOff(a, { ...to, y: to.tidal ? WU.tideLevel.value : to.lvl, then: b === 'gull' && a.r() < .5 ? 'soar' : 'swim' }, b === 'gull' ? 9 : 14, 3 + a.r() * 8); }
             }
             break; }
-          case 'roost': a.y = waterY(a) + Math.sin(T * .8 + a.bob) * .015; break;
-          case 'dive': { a.hide = true; a.dt -= dt; const nx = a.x + Math.sin(a.yaw) * .8 * dt, nz = a.z - Math.cos(a.yaw) * .8 * dt; if (wet(cls(nx, nz)) && cls(nx, nz) === a.h) { a.x = nx; a.z = nz; } else a.yaw += 2;
+          case 'roost': a.onIce = !a.tidal && SU.ice.value > 0.5; a.y = a.onIce ? waterY(a) + .04 : waterY(a) + Math.sin(T * .8 + a.bob) * .015; break;
+          case 'dive': { if (!a.tidal && SU.ice.value > 0.5) { a.st = 'swim'; a.y = waterY(a); break; } a.hide = true; a.dt -= dt; const nx = a.x + Math.sin(a.yaw) * .8 * dt, nz = a.z - Math.cos(a.yaw) * .8 * dt; if (wet(cls(nx, nz)) && cls(nx, nz) === a.h) { a.x = nx; a.z = nz; } else a.yaw += 2;
             if (a.dt <= 0) { a.st = 'swim'; a.t = 1; } a.y = waterY(a); break; }
           case 'stand': { a.y = Math.max(waterY(a), landY(a.x, a.z)); a.t -= dt; if (a.t <= 0) { a.t = 30 + a.r() * 120; a.yaw += (a.r() - .5) * .8;
             if (ph !== 'night' && a.r() < .12) { const e = edgeNear(a.x, a.z, a.h, a.r); if (e) takeOff(a, { x: e[0], z: e[1], y: Math.max(a.y, landY(e[0], e[1])), then: 'stand' }, 6, 8); } } break; }
@@ -391,9 +394,9 @@ export default {
         let amp = 0, hz = 0, span = .14, nk = a.P.nk, up = a.P.up;
         if (fox) { amp = a.st === 'trot' ? .45 : 0; hz = a.v ? a.v * 1.1 : 0; }
         else if (air) { span = (a.P.W / L / 2 - .07) / .48; const glide = a.P.b === 'gull' && a.st === 'soar'; amp = glide ? .12 + .1 * Math.max(0, Math.sin(now / 1900 + a.bob)) : .75; hz = glide ? 1.2 : a.P.f; up = a.P.b === 'heron' ? .9 : .25; nk = a.P.b === 'heron' ? a.P.nk * .35 : a.P.nk * .8; }
-        else if (a.st === 'walk' && a.P.b !== 'goose') up = a.P.up + Math.sin(now / 230 + a.bob) * .35;   // pecking
+        else if ((a.st === 'walk' || a.onIce && a.st === 'swim') && a.P.b !== 'goose') up = a.P.up + Math.sin(now / 230 + a.bob) * .35;   // pecking (also on ice)
         else if (a.st === 'roost') { up = .4; nk = a.P.nk * .5; }
-        const yy = a.y + (!fox && (a.st === 'swim' || a.st === 'roost') ? .07 * L * scale : 0), o = 4 * i; M.aP.array.set([a.x, yy, a.z, a.yaw], o); M.aA.array.set([L * scale, amp, hz, a.bob], o); M.aB.array.set([span, nk, up, a.si], o);
+        const yy = a.y + (!fox && !a.onIce && (a.st === 'swim' || a.st === 'roost') ? .07 * L * scale : 0), o = 4 * i; M.aP.array.set([a.x, yy, a.z, a.yaw], o); M.aA.array.set([L * scale, amp, hz, a.bob], o); M.aB.array.set([span, nk, up, a.si], o);
         if (fox) nF++; else nB++; drawn.push(a);
       }
       for (const [M, n] of [[MB, nB], [MF, nF]]) { M.mesh.geometry.instanceCount = n; M.mesh.visible = n > 0; if (n) { M.aP.needsUpdate = M.aA.needsUpdate = M.aB.needsUpdate = true; } }
@@ -410,7 +413,7 @@ export default {
       const hrec = Object.entries(s.habitat).filter(([, v]) => v).sort((x, y) => y[1] - x[1]).map(([k, v]) => `${k} ${v}`).join(', ');
       const se = s.seasonEff ? `records peak in ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][s.seasonEff.indexOf(1)]} (share of all records of the month); this month ${pct(season(s, MON))}% of the peak in the simulation` : 'no season from the records';
       ctx.showCard(`<h2>${esc(s.name)}</h2><p class="small"><i>${esc(s.sci)}</i> · simulated animal</p>` +
-        `<table><tr><td>Doing</td><td>${esc(DOING[a.st] || a.st)}</td></tr><tr><td>Habitat</td><td>${esc(hab)}</td></tr>` +
+        `<table><tr><td>Doing</td><td>${esc(a.onIce && (a.st === 'swim' || a.st === 'roost') ? 'standing and walking on the ice' : DOING[a.st] || a.st)}</td></tr><tr><td>Habitat</td><td>${esc(hab)}</td></tr>` +
         `<tr><td>Size</td><td>${P.b === 'fox' ? 'about 1 m nose to tail tip' : `${P.L} m long, wingspan ${P.W} m`}</td></tr>` +
         `<tr><td>Open records in the model box</td><td>${s.records} (NBN Atlas ${s.nbn}, GBIF ${s.gbif}${s.years[0] ? `; ${s.years[0]} to ${s.years[1]}` : ''})</td></tr>` +
         `<tr><td>Located to 100 m</td><td>${s.located}${hrec ? ` (${esc(hrec)})` : ''}</td></tr><tr><td>Season</td><td>${esc(se)}</td></tr>` +

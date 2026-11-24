@@ -29,7 +29,7 @@
 // has it for 3 October), cloud at night (SkyMesh is not drawn by night; only the background and the stars show it).
 // Skill: docklands-sky, "Three.js port clock".
 import * as THREE from 'three/webgpu';
-import { WU } from '../water.js';
+import { WU, SU } from '../water.js';
 import { fromUkWall as fromLondon } from '../adapters/uk.js';   // the snapshot's hours are London wall clock
 import { forecastDay, meteoQ } from '../meteo.js';
 import { metarFor, metarName, metarNear, hm, getMetarHistory, HIST_URL } from './wind.js';
@@ -74,6 +74,23 @@ function interp(rows, t) {
   return { cover: L(a.cover, b.cover), low: L(a.low, b.low), mid: L(a.mid, b.mid), high: L(a.high, b.high), vis: L(a.vis, b.vis), precip: L(a.precip, b.precip), code: a.code, temp: L(a.temp, b.temp), rh: L(a.rh, b.rh) };
 }
 
+// Ice on still water (docks, ponds; never the tidal river) from the daily mean air temperatures of the 14 days before the
+// clock (Open-Meteo daily temperature_2m_mean and snowfall_sum): a freezing index that grows by the degrees below 0 C
+// each day and falls by 1.5 x the degrees above; ice starts at an index of 12 and covers the water at 25 (judged: a deep
+// dock must first cool; the ice is thin; a pond freezes sooner, but the page does not tell docks from ponds). Check,
+// London, Open-Meteo archive: 8 Dec 2010 (means -1 to -6 C for a week) index 15.9, about 30 % ice; 22 Dec 2010 10.7,
+// none; 23 Nov 2026 0. Snow that falls on the ice lies on it until a day above 1 C melts it.
+// D: Open-Meteo's daily block; frac: the share of the last day (the clock's day) that has passed.
+export function iceOf(D, frac = 1) {
+  const T = D && D.temperature_2m_mean, S = (D && D.snowfall_sum) || [], c = v => Math.min(1, Math.max(0, v));
+  if (!T || !T.length) return null;
+  let I = 0, snow = 0;
+  for (let k = 0; k < T.length; k++) { const w = k === T.length - 1 ? frac : 1, t = T[k]; if (t == null) continue;
+    I = Math.max(0, I + w * (t < 0 ? -t : -1.5 * t)); const ice = c((I - 12) / 13);
+    if (ice > 0 && (S[k] || 0) * w >= 0.5) snow = 1; if (t > 1) snow = Math.max(0, snow - 0.5 * w); if (ice <= 0) snow = 0; }
+  return { index: +I.toFixed(1), ice: c((I - 12) / 13), snow };
+}
+
 export default {
   id: 'weather', label: 'Weather (cloud, haze, rain)', on: true,
   async init(ctx, on) {
@@ -94,6 +111,17 @@ export default {
         return (src.meteo[key] = { rows: rowsOf(J.hourly, s => s * 1000), name: (age > 85 ? 'Open-Meteo archive (ERA5 reanalysis, no visibility)' : age > 0 ? 'Open-Meteo forecast API, past hours' : 'Open-Meteo forecast') + at });
       } catch (e) { console.warn('weather: Open-Meteo', e); return { why: 'Open-Meteo did not answer: ' + e.message }; }
     }
+    // the 14 days before the clock: daily mean temperature and snowfall (for the ice on still water)
+    async function getCold(t, point) {
+      const day = new Date(t).toISOString().slice(0, 10), Q = meteoQ(point), key = 'cold|' + day + '|' + Q, age = (Date.now() - t) / 864e5;
+      if (key in src.meteo) return src.meteo[key]; if (age < -15) return (src.meteo[key] = null);
+      const start = new Date(t - 14 * 864e5).toISOString().slice(0, 10), host = age > 85 ? 'https://archive-api.open-meteo.com/v1/archive' : 'https://api.open-meteo.com/v1/forecast';
+      try { const r = await fetch(`${host}?${Q}&start_date=${start}&end_date=${day}&daily=temperature_2m_mean,snowfall_sum&timezone=GMT`), J = await r.json();
+        if (!r.ok || J.error) throw new Error(J.reason || 'HTTP ' + r.status); return (src.meteo[key] = J.daily || null);
+      } catch (e) { console.warn('weather: Open-Meteo daily', e); return (src.meteo[key] = null); }
+    }
+    const qn = k => { const v = qs.get(k); return v != null && v !== '' && isFinite(+v) ? +v : null; }, qRain = qn('rain'), qIce = qn('ice'), qIceSnow = qn('icesnow');
+    let ICE = null;   // { index, ice, snow } for the clock (stats.weather.ice)
     const metarOn = qs.get('metar') !== '0';
     let meteoOn = !/^(0|off|no)$/i.test(qs.get('weather') || ''), evalAt = null, W = null, lastT = null, busy = false, again = false, visible = on;
     let siteKey = null, siteChecked = 0;   // the site of the last evaluation (issue #12)
@@ -148,10 +176,20 @@ export default {
         if (w) { const code = w.code ?? 0, pr = w.precip || 0, wet = pr >= 0.05 || RAIN.has(code) || SNOW.has(code);
           w.snow = SNOW.has(code); w.drops = wet ? Math.round(Math.min(NMAX, 600 + 1800 * Math.max(pr, 0.2))) : 0; }
         W = w ? { ...w, why, site: site ? site.key : null } : null; if (!W) src.err = why || null; evalAt = t;
+        if (site && meteoOn && qIce == null) { const D = await getCold(t, site.home ? null : site.point), f = (t % 864e5) / 864e5; ICE = D ? iceOf(D, f) : null; }
         apply(); showNote(); draw();
       } finally { busy = false; if (again) { again = false; evaluate(); } }
     }
+    // the water surface (materials.js waterMaterial): rain makes drop rings and breaks the mirror (not snow); ice and snow on
+    // it from the freezing index
+    function applySurface() {
+      const pr = W && !W.snow ? Math.max(W.precip || 0, W.drops ? 0.3 : 0) : 0;
+      SU.rain.value = qRain != null ? 1 - Math.exp(-qRain / 1.5) : visible && W ? 1 - Math.exp(-pr / 1.5) : 0;
+      SU.ice.value = qIce != null ? Math.min(1, Math.max(0, qIce)) : visible && ICE ? ICE.ice : 0;
+      SU.iceSnow.value = qIceSnow != null ? qIceSnow : SU.ice.value > 0 ? Math.max(ICE ? ICE.snow : 0, W && W.snow ? 1 : 0) : 0;
+    }
     function apply() {
+      applySurface();
       if (!visible || !W) { sky.setWeather(null); return; }
       const p = v => v == null ? null : v / 100;
       sky.setWeather({ cover: p(W.cover), low: W.low == null ? p(W.cover) : p(W.low), mid: p(W.mid), high: p(W.high), visibility: clear ? null : W.vis, precip: W.precip, clear });
@@ -169,11 +207,11 @@ export default {
       const w = W; let h;
       if (!visible) h = 'Weather is off: a fair sky is drawn.';
       else if (!w) h = `No weather for ${hhmm(ctx.clock)}${src.err ? ' (' + ctx.esc(src.err) + ')' : ''}: a fair sky is drawn (light cloud, no haze, no rain). Tick "Weather from Open-Meteo" for other times.`;
-      else h = `${ctx.esc(hhmm(ctx.clock))}: cloud ${f0(w.cover)}%${w.low != null ? ` (low ${f0(w.low)}, mid ${f0(w.mid)}, high ${f0(w.high)})` : ''}, visibility ${w.vis != null ? (w.vis / 1000).toFixed(0) + ' km' : 'not given'}, ${w.precip ? w.precip.toFixed(1) + ' mm/h ' + (w.snow ? 'snow' : 'rain') : 'dry'}${w.temp != null ? `, ${w.temp.toFixed(1)} °C` : ''}${w.rh != null ? `, humidity ${f0(w.rh)}%` : ''}. Source: ${ctx.esc(w.src)}.`;
+      else h = `${ctx.esc(hhmm(ctx.clock))}: cloud ${f0(w.cover)}%${w.low != null ? ` (low ${f0(w.low)}, mid ${f0(w.mid)}, high ${f0(w.high)})` : ''}, visibility ${w.vis != null ? (w.vis / 1000).toFixed(0) + ' km' : 'not given'}, ${w.precip ? w.precip.toFixed(1) + ' mm/h ' + (w.snow ? 'snow' : 'rain') : 'dry'}${w.temp != null ? `, ${w.temp.toFixed(1)} °C` : ''}${w.rh != null ? `, humidity ${f0(w.rh)}%` : ''}${SU.ice.value > 0 ? `; ice on still water ${f0(SU.ice.value * 100)}%${SU.iceSnow.value > 0 ? ', snow on it' : ''}${ICE ? ` (freezing index ${ICE.index} from the 14 days' mean temperatures)` : ' (set by ?ice=)'}` : ''}. Source: ${ctx.esc(w.src)}.`;
       if (visible && w && clear) h += ' Clear air is on: no haze, light not dimmed by the cloud.';
       if (note.innerHTML !== h) note.innerHTML = h;
     }
-    stats.weather = { get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src, metar: W.metar || null, station: W.station || null, site: W.site || null }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; }, get error() { return W ? null : src.err; }, get at() { return evalAt; } };
+    stats.weather = { get ice() { return { ice: SU.ice.value, snow: SU.iceSnow.value, rain: SU.rain.value, index: ICE && ICE.index }; }, get now() { return W && { cover: W.cover, low: W.low, mid: W.mid, high: W.high, vis: W.vis, precip: W.precip, code: W.code, drops: visible ? W.drops : 0, source: W.src, metar: W.metar || null, station: W.station || null, site: W.site || null }; }, get sky() { return sky.state && sky.state.weather; }, get meteo() { return meteoOn; }, get error() { return W ? null : src.err; }, get at() { return evalAt; } };
     ctx.weather = { evaluate, get now() { return W; } };
     ctx.onFrame(() => { const now = performance.now(); let moved = false;
       if (now - siteChecked > 500) { siteChecked = now; const s = ctx.site ? ctx.site() : null; moved = ctx.site && (s ? s.key : null) !== siteKey; }

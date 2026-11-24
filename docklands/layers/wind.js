@@ -223,6 +223,12 @@ export default {
     // the Greenland Pier photo of 2026-11-23 09:10 GMT (data/images/contrib/greenlandpier/)
     const chopNow = () => { const c = Math.abs(SU.current.value), mv = ctx.stats.ships ? ctx.stats.ships.moving || 0 : 0;
       const k = Math.min(1, Math.max(0, (c - 0.1) / 1.1)); return CHOP.c * k * k * (3 - 2 * k) + CHOP.b * Math.min(1, mv / 10); };
+    // the ripples' slope spread from the wind (Cox and Munk 1954, mean square slope 0.003 + 0.00512 U; here 0.003 + 0.003 U,
+    // for sheltered docks and a wind measured at the airport): it sets the moon glitter's lobe (SU.slope2) and how far the
+    // reflections of lights run down the water by night (SU.tail, its square root, 0.11 of the screen at 3.1 m/s: IMG_2587
+    // of 2026-11-23), longer in rain (SU.rain, layers/weather.js). A calm night gives short, sharp reflections.
+    const surfaceFromWind = () => { const u = Math.max(0, WU.windSpeed.value), s2 = Math.min(0.05, 0.003 + 0.003 * u);
+      SU.slope2.value = s2; SU.tail.value = Math.min(0.2, Math.max(0.04, 0.11 * Math.sqrt(s2 / 0.0123) * (1 + 0.5 * SU.rain.value))); };
     const curNow = () => qc != null && isFinite(qc) ? qc : Math.max(-1.8, Math.min(1.8, -0.75 * WU.tideRate.value + 0.08));
     // the note: the wind of the site, and the current only where the site's region names a water service; nothing when
     // the site has no source (or there is no site: the globe from far away)
@@ -262,7 +268,7 @@ export default {
       // a new site (the view moved to another place, every 0.5 s at most), a new clock time, or a METAR file 5 minutes old
       if (now - siteChecked > 500) { siteChecked = now; const s = siteNow(); if ((s ? s.key : null) !== siteKey) { siteKey = s ? s.key : null; evaluate(); } }
       if (lastT == null || Math.abs(ctx.clock - lastT) > 5 * 6e4 || (metarOn && Date.now() - (SITE && !SITE.home ? placesAt : metarAt) > 5 * 60e3 && Math.abs(ctx.clock - Date.now()) < 3600e3)) evaluate();
-      SU.current.value = curNow(); SU.chop.value = chopNow(); showNote();
+      SU.current.value = curNow(); SU.chop.value = chopNow(); surfaceFromWind(); showNote();
       if (debris && dOn) debris.update(dt, controls.target, camera.position.distanceTo(controls.target), SU.current.value, WU.windSpeed.value, WU.windDir.value, WU.tideLevel.value);
       if (test) {
         const list = test.map(b => { b.c += b.dirn * b.speed * dt; if (Math.abs(b.c - b.c0) > 350) b.c = b.c0; const g = line.at(b.c), tx = g.tx * b.dirn, tz = g.tz * b.dirn;

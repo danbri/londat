@@ -520,14 +520,27 @@ export function waterMaterial(opts = {}) {
   const wk = wakeAt(p, fw, p.sub(wn.mul(wdist.mul(2))), wn, wR.mul(exp(wdist.div(-25))).mul(step(0.3, wR)).mul(step(wdist, 40)));
   g = g.add(wk.xy.mul(mix(0.3, 1, damp)).mul(2.5));   // visual gain 2.5 on the wake slopes (stated)
   const foam = clamp(wk.z, 0, 1);
+  // rain (SU.rain, layers/weather.js): rings from drops, one possible drop a 0.7 m cell, more cells live in heavier rain;
+  // each ring runs out to 0.35 m in 1.1 s and fades; shown where a pixel is under 8 cm (they alias farther away, where
+  // the rain roughens the mirror instead: below)
+  const rc = floor(p.div(0.7)), rph = fract(time.div(1.1).add(h(rc.add(11.3)).mul(7))), rlive = step(float(1).sub(SU.rain.mul(0.85)), h(rc.add(29.7)));
+  const rv = fract(p.div(0.7)).sub(0.5).sub(vec2(h(rc.add(3.3)), h(rc.add(8.9))).sub(0.5).mul(0.3)).mul(0.7), rd = length(rv), rr = rph.mul(0.35);
+  const rq = rd.sub(rr).div(0.03), ring = exp(rq.mul(rq).negate()).mul(float(1).sub(rph)).mul(rlive).mul(smoothstep(0.08, 0.02, fw));
+  g = g.add(rv.div(max(rd, 0.01)).mul(ring).mul(0.35).mul(SU.rain));
+  // ice (SU.ice, layers/weather.js: from the freezing days): still water only, in patches that join as the cover grows;
+  // under it no ripples, rings or glints
+  const iceM = SU.ice.mul(float(1).sub(tidal)).mul(smoothstep(0.92, 1.0, vnw(p.div(28)).add(SU.ice.mul(1.25)))).toVar();
+  g = g.mul(float(1).sub(iceM));
   const N = normalize(vec3(g.x.negate(), 1, g.y.negate()));
   m.normalNode = transformNormalToView(N);
   // far water: a wider glint where the ripples are under a pixel, wider with the wind; foam and cat's paws rough
-  m.roughnessNode = float(0.04).add(smoothstep(2, 30, fw).mul(0.18)).add(min(Ws.mul(0.012), 0.14).mul(smoothstep(0.3, 4, fw))).add(foam.mul(0.4)).add(patch.mul(SU.gust).mul(0.06));
+  m.roughnessNode = float(0.04).add(SU.rain.mul(0.12)).add(iceM.mul(0.3)).add(smoothstep(2, 30, fw).mul(0.18)).add(min(Ws.mul(0.012), 0.14).mul(smoothstep(0.3, 4, fw))).add(foam.mul(0.4)).add(patch.mul(SU.gust).mul(0.06));
   const F0 = float(0.02).add(float(0.98).mul(pow(float(1).sub(clamp(dot(N, V), 0, 1)), 5)));
   // the water's own colour by the depth now (tidal: + WU.tideLevel - 2.75 m, the typical polygon level), deeper = darker and more green-blue (sRGB 0.33 0.45 0.43 at 0 m to 0.04 0.14 0.17 deep); foam pale
   const body = mix(lin(mix(vec3(0.33, 0.45, 0.43), vec3(0.04, 0.14, 0.17), float(1).sub(exp(depthNow.div(-3.5))))), lin(vec3(0.60, 0.67, 0.65)), foam.mul(0.55));
-  m.colorNode = vec4(body.mul(float(1).sub(F0.mul(float(1).sub(foam)))), 1);
+  // ice: grey-blue (thin, dark water seen through it) to white where snow lies on it (judged colours)
+  const iceCol = mix(lin(vec3(0.50, 0.56, 0.60)), lin(vec3(0.88, 0.90, 0.93)), SU.iceSnow);
+  m.colorNode = vec4(mix(body.mul(float(1).sub(F0.mul(float(1).sub(foam)))), iceCol, iceM), 1);
   const R = reflect(V.negate(), N), ry = clamp(R.y, 0, 1);
   // the moon's glitter: the facets of the chop that mirror the moon (a narrow lobe on the reflected view ray), on top of the
   // mirror image; the moon light itself stays weak (it lights the whole scene). Tuned on the owner's photo IMG_2587 of
@@ -550,9 +563,10 @@ export function waterMaterial(opts = {}) {
   const glint = mix(step(0.94, h(gc)).mul(float(0.6).add(h(gc.add(17.3)).mul(0.8))).mul(spot).mul(26), float(0.06), far);
   // the lobe near: mean square slope 0.012 (Cox and Munk 1954, about 1.5 m/s of wind; 0.04 before 2026-11-24 made the
   // glitter path on IMG_2587 about five times too wide)
-  const s2 = mix(float(0.012), float(0.04), far), Ng = normalize(mix(N, vec3(0, 1, 0), far));
+  // the near lobe's mean square slope from the wind (SU.slope2, layers/wind.js) and the rain; the far lobe at least 0.04
+  const sN = SU.slope2.add(SU.rain.mul(0.02)), s2 = mix(sN, max(sN, 0.04), far), Ng = normalize(mix(N, vec3(0, 1, 0), far));
   const Hm = normalize(V.add(SU.moonDir)), cth = max(dot(Hm, Ng), 0.05), t2 = float(1).sub(cth.mul(cth)).div(cth.mul(cth));
-  const moonSpark = vec3(1.0, 0.96, 0.88).mul(exp(t2.div(s2.negate())).mul(float(0.012).div(s2))).mul(glint).mul(SU.moonGlint).mul(float(1).sub(foam));
+  const moonSpark = vec3(1.0, 0.96, 0.88).mul(exp(t2.div(s2.negate())).mul(float(0.012).div(s2))).mul(glint).mul(SU.moonGlint).mul(float(1).sub(foam)).mul(float(1).sub(iceM));
   const sky = mix(mix(vec3(WU.skyHorizon), vec3(WU.skyZenith), pow(ry, 0.6)), mix(lin(vec3(U.haze)).mul(0.8), vec3(0.003, 0.004, 0.008), pow(ry, 0.5)), U.night);
   const dark = float(1).sub(patch.mul(SU.gust).mul(0.3)).mul(float(1).sub(foam.mul(0.8)));   // cat's paws darker, foam no mirror
   m.setReflector = r => {
@@ -562,7 +576,7 @@ export function waterMaterial(opts = {}) {
     // mirror read as a copy of the city; one displaced sample broke the window rows into zigzags (2026-10-08)
     if (r) {
       const st = vnw(vec2(screenUV.x.mul(160), screenUV.y.mul(6).add(time.mul(0.25)))).sub(0.5);
-      const cm = SU.chop.mul(SU.chopMirror).mul(tidal);   // the chop breaks the image of the shore (tidal water only)
+      const cm = SU.chop.mul(SU.chopMirror).mul(tidal).add(SU.rain.mul(0.012)).add(iceM.mul(0.02));   // the chop (tidal water only), rain and ice break the image of the shore
       const base = r.uvNode.add(vec2(N.x.mul(clamp(float(6).div(dist), 0.002, 0.02)), st.mul(SU.streak))).add(vec2(N.x, N.z).mul(cm));   // the random offset as long as one step: dashes, not copies
       let acc = null, wsum = 0;
       for (let k = -3; k <= 3; k++) { const w = 4 - Math.abs(k), smp = r.sample(base.add(vec2(0, SU.streak.mul(k)))).rgb.mul(w); acc = acc ? acc.add(smp) : smp; wsum += w; }
@@ -577,7 +591,8 @@ export function waterMaterial(opts = {}) {
         const c = max(r.sample(base.add(vec2(0, SU.tail.mul(f)))).rgb.sub(0.25), vec3(0)).mul(1.15 - Math.abs(f));
         tail = tail ? max(tail, c) : c; }
       const dash = smoothstep(0.35, 0.75, vnw(vec2(screenUV.x.mul(260), screenUV.y.mul(28).add(time.mul(0.4)))));
-      refl = refl.add(tail.mul(dash).mul(0.9).mul(U.night));
+      refl = refl.add(tail.mul(dash).mul(0.9).mul(U.night).mul(float(1).add(SU.rain)).mul(float(1).sub(iceM)));
+      refl = refl.mul(float(1).sub(SU.rain.mul(0.3))).mul(float(1).sub(iceM.mul(0.75)));   // rain and ice: a weaker image
     }
     m.emissiveNode = refl.mul(F0).mul(dark).add(moonSpark); WU.reflect.value = r ? 1 : 0; m.needsUpdate = true;
   };

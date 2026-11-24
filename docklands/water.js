@@ -134,6 +134,13 @@ export const SU = {
   moonDir: uniform(new THREE.Vector3(0, 1, 0)),   // unit vector to the moon (sky3.js applyLight)
   moonGlint: uniform(0),    // the moon's glitter on the water: phase x altitude x night x clear sky x gain (sky3.js applyLight)
   chopMirror: uniform(3),
+  // the surface state from the weather (2026-11-24; owner: "Reflection coherence depends on water surface which depends on
+  // weather - wind and rain and snow and temperature"): layers/wind.js sets slope2 and tail from the wind, layers/weather.js
+  // sets rain, ice and iceSnow (?rain=mm/h, ?ice=0..1, ?icesnow=0..1 override them for tests)
+  slope2: uniform(0.012),   // mean square slope of the ripples that make the moon's glints (Cox and Munk, sheltered water)
+  rain: uniform(0),         // 0 dry to 1 heavy rain: drop rings, a broken and dimmer mirror, wider glitter
+  ice: uniform(0),          // 0 open to 1 frozen: still water only (docks, ponds), never the tidal river
+  iceSnow: uniform(0),      // 0 to 1: snow lying on the ice
   tail: uniform(0.11),       // how far (screen y) the tails of bright lights reach on the water by night (IMG_2587, 2026-11-24)
   streak: uniform(0.0065),   // the spacing of the 7 mirror samples along screen y (a streak about 6 x this high); tuned on IMG_2587 (2026-11-24)   // how far the chop breaks the mirror image: screen offset = slope x chop x chopMirror (tuned on the same photo)        // slope of the short chop on tidal water from the current, wind against tide and passing boats (layers/wind.js)
   current: uniform(0.08),   // m/s along the flow field, + downstream (ebb, east); layers/wind.js sets it each frame from WU.tideRate
