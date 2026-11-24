@@ -162,6 +162,23 @@ The owner, 2026-11-24: "Follow your proposal / Continue". Changes (`docklands/`)
 3. Water streaks: a control for the spacing of the mirror streaks (`SU.streak`). On IMG_2587, 0.0065 (the old value)
    against 0.02: 0.02 draws zig-zag bands in the reflections, so 0.0065 stays.
 
+### Fifth pass, 2026-11-24: Tower Bridge drawn as a bridge; monuments by night
+
+The owner, 2026-11-24, after phone screenshots at 02:47: "Keep fixing". `docklands/tower-bridge.js` (called by
+`layers/bridges.js`) hides the model's solid deck and walkway blocks and draws decks with water below them, the side
+spans' suspension chains as lattice girders with hangers, the walkways, spires on the eight corner turrets and a central
+spire on each tower, and lights the steel by night. Sources: Wikipedia (towers 65 m, centre span 61 m, side spans 82 m,
+deck 60 ft between parapets), https://www.towerbridge.org.uk/ (walkways 42 m above the river), and IMG_2337 measured at
+0.13 m a pixel (walkway girder 45.6 to 51.2 m OD; chain 2.6 m deep, meeting the tower at the walkway's lower edge;
+spire tips about 69 m and 76 m OD). The masonry buildings (Tower of London, Tower Bridge towers) are floodlit by night
+with no office windows. Open: the OSM main tower is a solid block to 68 m OD, while IMG_2337 shows the stone body ending
+about 14 m lower with a steep roof; the bascule leaves cannot open yet.
+
+HMS Belfast, checked again: the model's ship and camera give the same view of the hull as IMG_2337 (the same side, at the
+same place in the frame), so the position and heading are not the fault. The dark hull in the photo is probably the
+ship's dark-grey camouflage panels, also seen against the low sun; the model's paint layout is mostly light on that side.
+Open until a source for the camouflage layout is found.
+
 Still open: HMS Belfast's shaded side (in the model the camera of IMG_2337 is about 7 deg off the ship's axis on the
 sunlit side; the photo shows the other side, so the ship's position or heading is off by about 10 deg or more); the near
 water of IMG_2587 is flat black where the photo has glitter and long light streaks; Tower Bridge has no spires or chains.

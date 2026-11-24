@@ -3808,3 +3808,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   over the river seen from above: far glints and ripple normals now give way to their mean by on-screen cell size, and
   the near lobe is narrower (mean square slope 0.012). Owner's question on dedicated models for Tower Bridge and the
   Tower of London: proposed (description file per model, as for the Pacific Tavern), waiting for the owner.
+- 2026-11-24, "Keep fixing": Tower Bridge drawn as a bridge (docklands/tower-bridge.js: decks with clearance, suspension
+  chains as lattice girders with hangers, walkways at the height measured on IMG_2337, ten spires, steel lit by night;
+  six solid OSM parts hidden). Sources in the module header and the thames-2026-11-23 README, fifth pass. HMS Belfast
+  re-checked: geometry matches the photo; the difference is the paint (camouflage layout), still open. The local test
+  server (port 8188) had stopped during the session: restart it with python3 -m http.server 8188 in the repository root.
