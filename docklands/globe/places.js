@@ -137,16 +137,32 @@ function compactInto(out, B, ab, bin, views) {
     B.pitched_roofs = (B.pitched_roofs || 0) + rf.map.length; }
 }
 
-const roadFiles = new Map();   // level-11 key -> Promise of the decoded file (both layers read the same file)
+const roadFiles = new Map(), roadDone = new Map();   // level-11 key -> Promise of the decoded file (both layers read the same file); the decoded files
 function roadFile(base, key) {
   let pr = roadFiles.get(key);
   if (!pr) { pr = fetch(base + key + '.json').then(r => r.ok ? r.json() : null).catch(() => null).then(J => {
       if (!J) return null; const q = J.q, out = [];
       for (const L of J.lines) { const c = []; let x = 0, y = 0; for (let i = 2; i < L.length; i += 2) { x += L[i]; y += L[i + 1]; c.push([x / q, y / q]); }
         out.push({ type: 'Feature', properties: { kind: J.classes[L[0]], major: L[0] < J.major, name: L[1] >= 0 ? J.names[L[1]] : null }, geometry: { type: 'LineString', coordinates: c } }); }
-      return out; });
+      roadDone.set(key, out); if (roadDone.size > 200) roadDone.delete(roadDone.keys().next().value); return out; });
     roadFiles.set(key, pr); if (roadFiles.size > 200) roadFiles.delete(roadFiles.keys().next().value); }
   return pr;
+}
+// the text and machine side of the roads (CLAUDE.md, OKRs: every feature has a 3D view, a text description and a machine
+// interface): from the road files already read (no fetch), the km of road by class within r metres of a point and the
+// nearest named road; null when no file round the point has been read
+export function roadsNear(lon, lat, r = 1000) {
+  const S11 = 180 / 2 ** 11, kx = 111320 * Math.cos(lat * Math.PI / 180), ky = 110574, km = {}, x0 = Math.floor((lon + 180) / S11), y0 = Math.floor((lat + 90) / S11);
+  let best = null, files = 0;
+  for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const F = roadDone.get(`11-${x0 + dx}-${y0 + dy}`); if (!F) continue; files++;
+    for (const f of F) { const C = f.geometry.coordinates;
+      for (let i = 1; i < C.length; i++) { const ax = (C[i - 1][0] - lon) * kx, ay = (C[i - 1][1] - lat) * ky, bx = (C[i][0] - lon) * kx, by = (C[i][1] - lat) * ky, dx2 = bx - ax, dy2 = by - ay, L2 = dx2 * dx2 + dy2 * dy2;
+        const t = L2 ? Math.max(0, Math.min(1, -(ax * dx2 + ay * dy2) / L2)) : 0, d = Math.hypot(ax + t * dx2, ay + t * dy2);
+        if (d <= r) km[f.properties.kind] = (km[f.properties.kind] || 0) + Math.sqrt(L2) / 1000;   // (a segment near the circle counts whole: an estimate)
+        if (f.properties.name && (!best || d < best.dist_m)) best = { name: f.properties.name, kind: f.properties.kind, dist_m: Math.round(d) }; } } }
+  if (!files) return null;
+  return { within_m: r, km_by_class: Object.fromEntries(Object.entries(km).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, Math.round(v * 10) / 10])), nearest_named: best && best.dist_m <= 5 * r ? best : null,
+    source: 'OpenStreetMap roads via Overture Maps (ODbL 1.0), the road files of the building cells' };
 }
 function addCellRoads(G, withRoads) {
   const add = () => {
@@ -676,7 +692,7 @@ export async function attachPlaces(G, H, { scene, U }) {
         // compact boxes (Greater London since place-blocks 4): buildings as boxes at the leaves, merged squares farther
         let bb = 0, mb = 0, mn = 0, ob = 0, ol = 0, inLeaf = 0, fb = 0, fl = 0; const bbBy = {}, lv = {}, leafKeys = new Set();
         for (const nd of lastDrawn) { if (nd.p !== p || !nd.meta) continue; lv[nd.level] = (lv[nd.level] || 0) + 1; const B = nd.meta.boxes, cp = nd.meta.compact_boxes, k0 = B.c.length - (cp?.count || 0);
-          mn += nd.meta.mass_buildings || 0; if (nd.level === p.feats?.fj?.level && nd.meta.buildings != null) { inLeaf += nd.meta.buildings; leafKeys.add(nd.key); }
+          mn += nd.meta.mass_buildings || 0; if (nd.err === 0 && nd.meta.buildings != null) { inLeaf += nd.meta.buildings; leafKeys.add(nd.key); }   // (a leaf: geometric error 0; sparse leaves of the cells are at levels 10 to 13)
           ol += nd.meta.outlines?.c?.length || 0;
           fl += nd.meta.far_left_out || 0;
           for (let i = 0; i < B.c.length; i++) { if (i < k0) { ob++; continue; } if (cp.kind === 'squares') mb++; else if (cp.kind === 'blocks') fb++; else { bb++; const k2 = nd.meta.classes[B.c[i]]; bbBy[k2] = (bbBy[k2] || 0) + 1; } } }
@@ -691,11 +707,13 @@ export async function attachPlaces(G, H, { scene, U }) {
           for (let i = 0; i < B.c.length; i++) if (B.f && B.f[i] >= 0) lb++; else if (far && i >= k0) fb++; else if (B.c[i] === 1) mb++; else if (B.c[i] >= 2) { bb++; const k2 = nd.meta.classes[B.c[i]]; bbBy[k2] = (bbBy[k2] || 0) + 1; } }
         r.lite = { about: 'a lite set: key landmarks (by a stated rule, each with its own outline or box, id and card); near the eye every other building as its own box at its true position (footprint area, orientation, height; no outline, no id); farther, the buildings and street blocks big enough to see from that far (place-lite-tiles 5; before, merged squares of the building mass)',
           landmarks_drawn: lo + lb, landmark_outlines: lo, landmark_boxes: lb, building_boxes: bb, building_boxes_by_source: bbBy, mass_boxes: mb, far_blocks: fb, far_left_out: fl, mass_buildings: mn, landmarks_in_view: n, tiles_by_level: lv, rule: p.feats?.fj?.lite?.rule || null }; }
+      if (p.cell) { const c2 = centre || { lon: p.centre[0], lat: p.centre[1] }; if (inRect(p.area, c2.lon, c2.lat)) { const rd = roadsNear(c2.lon, c2.lat); if (rd) r.roads = rd; } }
       const lk = look.state.place === p ? look.describe() : null; if (lk) r.look = lk;
       r.text = r.lite ? `${p.label || p.name}: a lite set, key landmarks with outlines, other buildings as boxes. Drawn: ${r.lite.landmarks_drawn.toLocaleString(p.locale)} landmarks (${r.lite.landmark_outlines.toLocaleString(p.locale)} as outlines, ${r.lite.landmark_boxes.toLocaleString(p.locale)} as boxes)${r.lite.building_boxes ? `, ${r.lite.building_boxes.toLocaleString(p.locale)} buildings as boxes at their true positions (footprint area, orientation and height; no outlines)` : ''}${r.lite.mass_boxes ? `, ${r.lite.mass_boxes.toLocaleString(p.locale)} merged squares standing for ${r.lite.mass_buildings.toLocaleString(p.locale)} buildings` : ''}${r.lite.far_blocks ? `, farther ${r.lite.far_blocks.toLocaleString(p.locale)} buildings and street blocks at their true positions standing for ${r.lite.mass_buildings.toLocaleString(p.locale)} buildings (${r.lite.far_left_out.toLocaleString(p.locale)} small buildings too small to see from this far left out there)` : ''}; ${n.toLocaleString(p.locale)} landmarks in view${nn[0] ? `; nearest landmark to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest landmark in view: ${r.tallest_named.name}, ${topOf(tall)} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
         : `${p.label || p.name}: ${r.blocks_drawn != null ? `${r.blocks_drawn.toLocaleString(p.locale)} building blocks drawn (${Object.entries(r.blocks_by_source).map(([a, b]) => `${b.toLocaleString(p.locale)} ${a}`).join(', ') || 'none yet'}), ${n.toLocaleString(p.locale)} named buildings in view` : `${n.toLocaleString(p.locale)} buildings in view`} (3D, OpenStreetMap)${r.boxes ? `; ${r.boxes.building_boxes.toLocaleString(p.locale)} buildings as boxes at their true positions (footprint area, orientation and height)${r.boxes.mass_boxes ? `, farther ${r.boxes.mass_boxes.toLocaleString(p.locale)} merged squares standing for ${r.boxes.mass_buildings.toLocaleString(p.locale)} buildings` : ''}${r.boxes.far_blocks ? `, farther ${r.boxes.far_blocks.toLocaleString(p.locale)} buildings and street blocks at their true positions standing for ${r.boxes.mass_buildings.toLocaleString(p.locale)} buildings (${r.boxes.far_left_out.toLocaleString(p.locale)} too small to see from this far left out there)` : ''}` : ''}${nn[0] ? `; nearest named building to the centre of the view: ${r.nearest_named.name}, ${fmtDist(nn[0].d)} away` : ''}${tall ? `; tallest named: ${r.tallest_named.name}, ${tall.height_m} m` : ''}${t ? `; local time ${t} (${p.timeZone})` : ''}.`
         + (lk ? ` Drawn as the model: ${lk.look}${lk.night > 0.5 ? ', night windows lit by the local hour' : lk.night > 0 ? ', dusk' : ', daylight'}${lk.trees_drawn.near + lk.trees_drawn.far ? `, ${(lk.trees_drawn.near + lk.trees_drawn.far).toLocaleString(p.locale)} trees drawn` : ''}${lk.water_named.length ? `, water: ${lk.water_named.join(', ')}` : ''}${lk.greens && lk.greens.placed_by_rule ? ` (trees in woods and parks without mapped trees are placed by a rule: ${lk.greens.placed_by_rule.toLocaleString(p.locale)} of ${lk.greens.trees.toLocaleString(p.locale)})` : ''}.` : '')
         + (r.surroundings ? ` Around it: ${r.surroundings.city_blocks.toLocaleString(p.locale)} city blocks drawn${Object.keys(r.surroundings.city_blocks_by_source).length > 1 ? ` (${Object.entries(r.surroundings.city_blocks_by_source).map(([k, v]) => `${v.toLocaleString(p.locale)} from ${k}`).join(', ')})` : ''}, ${r.surroundings.roads_km} km of main roads and ${r.surroundings.rail_km} km of railway in the tiles drawn${r.surroundings.rivers.length ? `, rivers ${r.surroundings.rivers.join(', ')}` : ''}${r.surroundings.places_in_view.length ? `; places in view: ${r.surroundings.places_in_view.join(', ')}` : ''}.` : '');
+      if (r.roads) { const e = Object.entries(r.roads.km_by_class); r.text += ` Roads within ${r.roads.within_m.toLocaleString(p.locale)} m: ${e.length ? e.slice(0, 4).map(([k, v]) => `${v.toLocaleString(p.locale)} km ${k.replace('_', ' ')}`).join(', ') : 'none'}${r.roads.nearest_named ? `; nearest named road: ${r.roads.nearest_named.name} (${r.roads.nearest_named.kind.replace('_', ' ')}), ${fmtDist(r.roads.nearest_named.dist_m)} away` : ''} (OpenStreetMap via Overture).`; }
       // a lite set seen only as far building mass (no landmark and no building box in view; e.g. Great Britain on the
       // horizon of a Dublin view): one short sentence, without its local time (it is not the time of the place in view;
       // issue #12)
