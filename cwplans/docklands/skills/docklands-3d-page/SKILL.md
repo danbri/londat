@@ -3591,6 +3591,12 @@ buildings per country from the Overture Parquet footers only, about 1 minute for
   rebase fails. (3) Pages in a one-job workflow: deploy-pages found "0 artifacts" right after the upload, again and again;
   build and deploy as two jobs (GitHub's starter workflow) works. (4) A cell expected at 0 records can hold buildings
   (8-247-199: the Isles of Scilly, 5,306): the footer count gives a row group to the cell of its box centre.
+  (5) Two drivers at once (2026-11-25, cost: one full run of moglob-1.2, 78 failed cells and 13 suspect cells pushed and
+  rebuilt). A background job waited for the moglob-1.1 run and then started moglob-1.2; I checked for it with
+  `ps aux | grep "until grep"`, which found nothing because `ps` cut the long command line, judged the waiter dead and
+  started moglob-1.2 by hand. Both drivers then built the same cells and deleted each other's raw files. Now the driver
+  takes a lock (`cwplans/data/raw/populate-cells.lock`, the pid; a second run exits 3). Look for a running job with
+  `pgrep -af <name>` or `ps -ww`, and read the task's own status, never a cut `ps` line.
 
 ## Three.js port: the UK lite set (2026-10-22)
 
