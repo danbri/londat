@@ -1239,7 +1239,8 @@ const ovB = () => REG.adapters.find(a => a.id === BK.outer && a.outer);
 const blocksRaw = () => join(RAWD, `overture-${BK.query}-${ovB().outer.release}.ndjson`);
 async function fetchBlocks() {
   const ov = ovB(), Q = { ...ov.outer.queries[BK.query], ...(BK.columns ? { columns: BK.columns } : {}), ...(BK.where != null ? { where: BK.where } : {}) }, f = blocksRaw();
-  if (!existsSync(f) || flag('--refetch')) { const bb = QBOX.map(v => v.toFixed(2)); execFileSync(process.env[ov.outer.python] || 'python3', ['-I', join(CW, '..', ov.outer.script), ov.outer.release, Q.theme, Q.type, ...bb, f, Q.columns, Q.where], { stdio: 'inherit' }); }
+  // (a raw answer without its .meta.json is a part file of a fetch that was stopped: fetch again; 2026-11-25)
+  if (!existsSync(f) || !existsSync(f + '.meta.json') || flag('--refetch')) { const bb = QBOX.map(v => v.toFixed(2)); execFileSync(process.env[ov.outer.python] || 'python3', ['-I', join(CW, '..', ov.outer.script), ov.outer.release, Q.theme, Q.type, ...bb, f, Q.columns, Q.where], { stdio: 'inherit' }); }
   // (also when the raw file is another one: a new Overture release gives a new file name; 2026-11-25 the record of the
   // old release stayed beside the new answer)
   if (!flog['overture-buildings'] || flog['overture-buildings'].file !== rel(f) || flag('--refetch')) { const M = JSON.parse(readFileSync(f + '.meta.json', 'utf8')), st = statSync(f);

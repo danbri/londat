@@ -35,7 +35,8 @@ function pushRepo(repo, keys) {
   for (let k = 0; k < 4; k++) { try { git(ROOT, 'pull', '-q', '--rebase', 'origin', 'main'); git(ROOT, 'push', '-q', 'origin', 'HEAD:main'); break; } catch (e) { if (k === 3) throw e; execFileSync('sleep', [String(2 ** (k + 2))]); } }
 }
 
-const todo = ix.cells.filter(c => c.state === 'planned' && (!ONLY || c.repo === ONLY)).slice(0, LIMIT);
+// --retry: cells in state failed are built again too
+const todo = ix.cells.filter(c => (c.state === 'planned' || (argv.includes('--retry') && c.state === 'failed')) && (!ONLY || c.repo === ONLY)).slice(0, LIMIT);
 console.log(`${todo.length} cells to build${ONLY ? ' in ' + ONLY : ''}`);
 const pending = new Map();   // repo -> { keys, bytes }
 for (const c of todo) {
