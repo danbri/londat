@@ -137,6 +137,28 @@ function compactInto(out, B, ab, bin, views) {
     B.pitched_roofs = (B.pitched_roofs || 0) + rf.map.length; }
 }
 
+const roadFiles = new Map();   // level-11 key -> Promise of the decoded file (both layers read the same file)
+function roadFile(base, key) {
+  let pr = roadFiles.get(key);
+  if (!pr) { pr = fetch(base + key + '.json').then(r => r.ok ? r.json() : null).catch(() => null).then(J => {
+      if (!J) return null; const q = J.q, out = [];
+      for (const L of J.lines) { const c = []; let x = 0, y = 0; for (let i = 2; i < L.length; i += 2) { x += L[i]; y += L[i + 1]; c.push([x / q, y / q]); }
+        out.push({ type: 'Feature', properties: { kind: J.classes[L[0]], major: L[0] < J.major, name: L[1] >= 0 ? J.names[L[1]] : null }, geometry: { type: 'LineString', coordinates: c } }); }
+      return out; });
+    roadFiles.set(key, pr); if (roadFiles.size > 200) roadFiles.delete(roadFiles.keys().next().value); }
+  return pr;
+}
+function addCellRoads(G, withRoads) {
+  const add = () => {
+    if (!G.addCellLayer) return setTimeout(add, 500);
+    const query = major => async (bb, level, [x, y]) => { const k8 = `8-${x >> 3}-${y >> 3}`, base = withRoads.get(k8); if (!base) return [];
+      const fs = await roadFile(base, `11-${x}-${y}`); return (fs || []).filter(f => f.properties.major === major); };
+    G.addCellLayer({ id: 'cells:roads-major', label: 'Roads, motorway to tertiary (OpenStreetMap via Overture)', kind: 'lines', levels: [[12000, 11]], style: { color: '#ffcf7a', opacity: 0.9, lift: 2 }, query: query(true) });
+    G.addCellLayer({ id: 'cells:roads-minor', label: 'Streets and service roads (OpenStreetMap via Overture)', kind: 'lines', levels: [[6000, 11]], style: { color: '#f2efe6', opacity: 0.55, lift: 2 }, query: query(false) });
+  };
+  add();
+}
+
 export async function attachPlaces(G, H, { scene, U }) {
   const base = new URL(PLACES_INDEX, location.href);
   const ix = await fetch(base).then(r => r.ok ? r.json() : { places: [] }).catch(() => ({ places: [] }));
@@ -155,6 +177,12 @@ export async function attachPlaces(G, H, { scene, U }) {
         return { id: 'cell-' + c.key, name: 'Building cell ' + c.key, label: 'Building cell ' + c.key, kind: 'blocks', cell: true, area: a, extent: a, centre: [(a[0] + a[2]) / 2, (a[1] + a[3]) / 2],
           tileBase: tb, tileset: tb + 'tileset.json', features: tb + 'features.json', buildings: c.buildings, named: c.named, exclude: ['docklands'] }; });
       ix.places = (ix.places || []).filter(p => !(cells.length && (p.id === 'london' || p.id === 'uk-lite'))).concat(cells);
+      // the roads of the cells (cwplans/tools/build-cell-roads.mjs: OpenStreetMap via Overture, files of level-11 cells
+      // beside the cells, data/roads/11-x-y.json, format cell-roads-1): two line layers on the globe's ground, read only for
+      // level-8 cells whose index entry has roads, below 12 km eye height (owner, 2026-11-25: "Missing roads?")
+      const withRoads = new Map(cx.cells.filter(c => c.state === 'published' && c.roads && cx.repos?.[c.repo]).map(c => [c.key, cx.repos[c.repo].replace(/cells\/$/, 'roads/')]));
+      if (withRoads.size) addCellRoads(G, withRoads);
+
     } else console.warn('places: ?cells=1 but no cells index');
   }
   const rebase = new Map(qs.getAll('placebase').map(v => { const i = v.indexOf(':'); return [v.slice(0, i), v.slice(i + 1).replace(/\/?$/, '/')]; }));

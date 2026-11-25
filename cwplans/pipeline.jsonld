@@ -11738,11 +11738,12 @@
    "cwp:tool": {
     "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/populate-cells.mjs"
    },
-   "cwp:command": "node cwplans/tools/populate-cells.mjs [--repo moglob-1.1] [--limit <cells>] [--push-mb 150] [--dry]",
+   "cwp:command": "node cwplans/tools/populate-cells.mjs [--roads] [--repo moglob-1.1] [--limit <cells>] [--push-mb 150] [--retry] [--dry]",
    "cwp:kind": "build",
    "cwp:rule": [
     "Resumable: only cells in state planned are built; a failed build is marked failed with its exit code.",
-    "Pushes stay well under 500 MB (default 150 MB a push)."
+    "Pushes stay well under 500 MB (default 150 MB a push).",
+    "--roads: the roads layer (build-cell-roads.mjs) of each published cell without roads; the index entry gets roads { state, files, segments, km, bytes, commit }."
    ],
    "cwp:network": true,
    "cwp:deterministic": true,
@@ -11752,6 +11753,42 @@
     }
    ],
    "cwp:area": "buildings",
+   "cwp:fault": []
+  },
+  {
+   "@id": "https://kgx.foaf.tv/id/toolcellroads",
+   "@type": "prov:Activity",
+   "rdfs:label": "cell-roads",
+   "dct:description": "The roads of one level-8 build cell: Overture transportation segments of subtype road and classes motorway, trunk, primary, secondary, tertiary, unclassified, residential, living_street, service, pedestrian over the cell box (fetch-overture-theme.py), each in the cell of its bbox middle, simplified (Douglas-Peucker 2 m in a local metric frame), quantised to 1e-5 degree, written per level-11 cell (data/roads/11-x-y.json, format cell-roads-1: classes, names, delta-coded lines) with a summary (data/roads/8-x-y.json: counts, km by class, bytes, input SHA-256). Read by docklands/globe/places.js with ?cells=1 as two line layers on the globe's ground (major below 12 km, minor below 6 km).",
+   "prov:used": [
+    {
+     "@id": "https://kgx.foaf.tv/id/srcoverturetransportation",
+     "dcat:accessURL": "https://overturemaps-us-west-2.s3.amazonaws.com/",
+     "dct:description": "transportation/segment of the release over the cell box"
+    }
+   ],
+   "prov:generated": [
+    {
+     "cwp:pathPattern": "moglob/<repo>:data/roads/"
+    }
+   ],
+   "cwp:tool": {
+    "@id": "https://github.com/danbri/londat/blob/main/cwplans/tools/build-cell-roads.mjs"
+   },
+   "cwp:command": "node cwplans/tools/build-cell-roads.mjs --cell 8-<x>-<y> --out <repo>/data/roads [--release 2026-11-18.0] [--raw <file>]",
+   "cwp:kind": "build",
+   "cwp:rule": [
+    "Footways, paths, tracks, cycleways, bridleways and steps are left out in version 1.",
+    "A segment is not cut at a level-11 edge: the globe asks for every level-11 cell in view."
+   ],
+   "cwp:network": true,
+   "cwp:deterministic": true,
+   "cwp:after": [
+    {
+     "@id": "https://kgx.foaf.tv/id/toolcelltiles"
+    }
+   ],
+   "cwp:area": "roads",
    "cwp:fault": []
   },
   {

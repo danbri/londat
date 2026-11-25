@@ -375,6 +375,15 @@
    "committed": false,
    "local_path": "data/raw/places/cell-<key>/overture-buildings-2026-09-23.1.ndjson (in cwplans/.gitignore; deleted after each cell is built by tools/populate-cells.mjs; re-fetch with the tool)",
    "fetched_by": "tools/build-cell-tiles.mjs (fetch-overture-theme.py, NDJSON, rows ordered by id); the SHA-256 and row count of each answer are in the cell's provenance/log.json in its moglob repository"
+  },
+  "overture-osm-roads-cells": {
+   "url": "s3://overturemaps-us-west-2/release/2026-11-18.0/theme=transportation/type=segment/ (subtype road, classes motorway to pedestrian; one bounding box per level-8 cell of the tile index docklands/data/cells/index.json)",
+   "osm_data_as_of": "Overture release 2026-11-18.0 (its OSM snapshot)",
+   "fetched": "2026-11-25",
+   "size_bytes": null,
+   "committed": false,
+   "local_path": "data/raw/places/cell-<key>/overture-roads-2026-11-18.0.ndjson (in cwplans/.gitignore; deleted after each cell by tools/populate-cells.mjs --roads)",
+   "fetched_by": "tools/build-cell-roads.mjs (fetch-overture-theme.py, NDJSON); the SHA-256 of each answer is in data/roads/<cell>.json of its moglob repository"
   }
  },
  "sources": {
@@ -16347,13 +16356,15 @@
    "path": "data/cells/",
    "location": "https://github.com/moglob/moglob-1.1/tree/main/data/cells ; served at https://moglob.github.io/moglob-1.1/data/cells/ (another origin; Access-Control-Allow-Origin *)",
    "paths": [
-    "<key>/tileset.json",
+    "../roads/11-<x>-<y>.json",
+    "../roads/8-<x>-<y>.json",
     "<key>/features.json",
-    "<key>/tiles/<level>-<x>-<y>.glb",
     "<key>/provenance/log.json",
-    "<key>/sources/ghsl-built-h.json.gz"
+    "<key>/sources/ghsl-built-h.json.gz",
+    "<key>/tiles/<level>-<x>-<y>.glb",
+    "<key>/tileset.json"
    ],
-   "what": "Building cells of Great Britain south of 52.73 N (level-8 cells 8-x-y with y 199 to 202), with the parts of France and Ireland in those cells: 3D Tiles 1.1 + glTF by cwplans/tools/build-cell-tiles.mjs (tier london, the Greater London method: every OSM and Microsoft footprint of 25 m2 or more via Overture, compact boxes, outlines of named and irregular buildings, far forms at coarse levels, levels 10 to 13, sparse leaves of 2,000 buildings; the full credit in tileset.json and features.json, a short one in each glb). Index: cwplans/docklands/data/cells/index.json.",
+   "what": "Building cells of Great Britain south of 52.73 N (level-8 cells 8-x-y with y 199 to 202), with the parts of France and Ireland in those cells: 3D Tiles 1.1 + glTF by cwplans/tools/build-cell-tiles.mjs (tier london, the Greater London method: every OSM and Microsoft footprint of 25 m2 or more via Overture, compact boxes, outlines of named and irregular buildings, far forms at coarse levels, levels 10 to 13, sparse leaves of 2,000 buildings; the full credit in tileset.json and features.json, a short one in each glb). Index: cwplans/docklands/data/cells/index.json. Roads (since 2026-11-25; owner: \"Missing roads?\", then \"(C) please\"): data/roads/11-<x>-<y>.json, format cell-roads-1, OpenStreetMap roads of classes motorway to pedestrian via Overture transportation (footways, paths, tracks, cycleways and steps left out), Douglas-Peucker 2 m, 1e-5 degree; data/roads/8-<x>-<y>.json the summary and input hash (tools/build-cell-roads.mjs).",
    "sources": [
     "osm",
     "overture-buildings",
@@ -16363,14 +16374,16 @@
     "copernicus-glo90",
     "etopo-2022",
     "egm96",
-    "own"
+    "own",
+    "overture-transportation"
    ],
    "osm": {
     "use": "derived",
     "extract": [
-     "overture-osm-cells"
+     "overture-osm-cells",
+     "overture-osm-roads-cells"
     ],
-    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-11-18.0)"
+    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-11-18.0); road lines, classes and names of OSM ways (via Overture transportation 2026-11-18.0)"
    },
    "produced_by": "tools/populate-cells.mjs with tools/build-cell-tiles.mjs and tools/build-place-tiles.mjs (operations place-select-blocks, place-city-heights, place-blocks)",
    "fetched": "2026-11-25",
@@ -16384,13 +16397,15 @@
    "path": "data/cells/",
    "location": "https://github.com/moglob/moglob-1.2/tree/main/data/cells ; served at https://moglob.github.io/moglob-1.2/data/cells/ (another origin; Access-Control-Allow-Origin *)",
    "paths": [
-    "<key>/tileset.json",
+    "../roads/11-<x>-<y>.json",
+    "../roads/8-<x>-<y>.json",
     "<key>/features.json",
-    "<key>/tiles/<level>-<x>-<y>.glb",
     "<key>/provenance/log.json",
-    "<key>/sources/ghsl-built-h.json.gz"
+    "<key>/sources/ghsl-built-h.json.gz",
+    "<key>/tiles/<level>-<x>-<y>.glb",
+    "<key>/tileset.json"
    ],
-   "what": "Building cells of Great Britain and Northern Ireland north of 52.03 N (level-8 cells with y 203 to 214), with the parts of Ireland in those cells: 3D Tiles 1.1 + glTF by cwplans/tools/build-cell-tiles.mjs (tier london, the Greater London method: every OSM and Microsoft footprint of 25 m2 or more via Overture, compact boxes, outlines of named and irregular buildings, far forms at coarse levels, levels 10 to 13, sparse leaves of 2,000 buildings; the full credit in tileset.json and features.json, a short one in each glb). Index: cwplans/docklands/data/cells/index.json.",
+   "what": "Building cells of Great Britain and Northern Ireland north of 52.03 N (level-8 cells with y 203 to 214), with the parts of Ireland in those cells: 3D Tiles 1.1 + glTF by cwplans/tools/build-cell-tiles.mjs (tier london, the Greater London method: every OSM and Microsoft footprint of 25 m2 or more via Overture, compact boxes, outlines of named and irregular buildings, far forms at coarse levels, levels 10 to 13, sparse leaves of 2,000 buildings; the full credit in tileset.json and features.json, a short one in each glb). Index: cwplans/docklands/data/cells/index.json. Roads (since 2026-11-25; owner: \"Missing roads?\", then \"(C) please\"): data/roads/11-<x>-<y>.json, format cell-roads-1, OpenStreetMap roads of classes motorway to pedestrian via Overture transportation (footways, paths, tracks, cycleways and steps left out), Douglas-Peucker 2 m, 1e-5 degree; data/roads/8-<x>-<y>.json the summary and input hash (tools/build-cell-roads.mjs).",
    "sources": [
     "osm",
     "overture-buildings",
@@ -16400,14 +16415,16 @@
     "copernicus-glo90",
     "etopo-2022",
     "egm96",
-    "own"
+    "own",
+    "overture-transportation"
    ],
    "osm": {
     "use": "derived",
     "extract": [
-     "overture-osm-cells"
+     "overture-osm-cells",
+     "overture-osm-roads-cells"
     ],
-    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-11-18.0)"
+    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-11-18.0); road lines, classes and names of OSM ways (via Overture transportation 2026-11-18.0)"
    },
    "produced_by": "tools/populate-cells.mjs with tools/build-cell-tiles.mjs and tools/build-place-tiles.mjs (operations place-select-blocks, place-city-heights, place-blocks)",
    "fetched": "2026-11-25",

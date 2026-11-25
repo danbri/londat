@@ -109,6 +109,10 @@
   {
    "id": "world",
    "title": "World skeleton for the globe (KR2.2, KR2.7)"
+  },
+  {
+   "id": "roads",
+   "title": "Roads of the building cells (OpenStreetMap via Overture)"
   }
  ],
  "activities": [
@@ -10821,7 +10825,7 @@
   {
    "id": "populate-cells",
    "tool": "tools/populate-cells.mjs",
-   "command": "node cwplans/tools/populate-cells.mjs [--repo moglob-1.1] [--limit <cells>] [--push-mb 150] [--dry]",
+   "command": "node cwplans/tools/populate-cells.mjs [--roads] [--repo moglob-1.1] [--limit <cells>] [--push-mb 150] [--retry] [--dry]",
    "kind": "build",
    "network": true,
    "deterministic": true,
@@ -10832,7 +10836,8 @@
    "method": "For each cell in state planned of the tile index docklands/data/cells/index.json: runs build-cell-tiles.mjs into the clone of the cell's moglob repository (beside londat), deletes the raw Overture answer (its hash stays in the cell's log), records counts and sizes in the index; GHSL zips shared by hard links in data/raw/ghsl/; every --push-mb commits and pushes the repository, then the index in londat.",
    "rules": [
     "Resumable: only cells in state planned are built; a failed build is marked failed with its exit code.",
-    "Pushes stay well under 500 MB (default 150 MB a push)."
+    "Pushes stay well under 500 MB (default 150 MB a push).",
+    "--roads: the roads layer (build-cell-roads.mjs) of each published cell without roads; the index entry gets roads { state, files, segments, km, bytes, commit }."
    ],
    "used": [
     {
@@ -10848,6 +10853,35 @@
     },
     {
      "local": "moglob/<repo>:data/cells/<key>/"
+    }
+   ]
+  },
+  {
+   "id": "cell-roads",
+   "tool": "tools/build-cell-roads.mjs",
+   "command": "node cwplans/tools/build-cell-roads.mjs --cell 8-<x>-<y> --out <repo>/data/roads [--release 2026-11-18.0] [--raw <file>]",
+   "kind": "build",
+   "network": true,
+   "deterministic": true,
+   "after": [
+    "cell-tiles"
+   ],
+   "area": "roads",
+   "method": "The roads of one level-8 build cell: Overture transportation segments of subtype road and classes motorway, trunk, primary, secondary, tertiary, unclassified, residential, living_street, service, pedestrian over the cell box (fetch-overture-theme.py), each in the cell of its bbox middle, simplified (Douglas-Peucker 2 m in a local metric frame), quantised to 1e-5 degree, written per level-11 cell (data/roads/11-x-y.json, format cell-roads-1: classes, names, delta-coded lines) with a summary (data/roads/8-x-y.json: counts, km by class, bytes, input SHA-256). Read by docklands/globe/places.js with ?cells=1 as two line layers on the globe's ground (major below 12 km, minor below 6 km).",
+   "rules": [
+    "Footways, paths, tracks, cycleways, bridleways and steps are left out in version 1.",
+    "A segment is not cut at a level-11 edge: the globe asks for every level-11 cell in view."
+   ],
+   "used": [
+    {
+     "source": "overture-transportation",
+     "endpoint": "https://overturemaps-us-west-2.s3.amazonaws.com/",
+     "request": "transportation/segment of the release over the cell box"
+    }
+   ],
+   "generated": [
+    {
+     "local": "moglob/<repo>:data/roads/"
     }
    ]
   }

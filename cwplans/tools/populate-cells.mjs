@@ -19,6 +19,8 @@ import { spawnSync, execFileSync } from 'node:child_process';
 
 const CW = join(dirname(fileURLToPath(import.meta.url)), '..'), ROOT = join(CW, '..'), HOME = join(ROOT, '..');
 const argv = process.argv.slice(2), argOf = k => { const i = argv.indexOf('--' + k); return i < 0 ? null : argv[i + 1]; };
+// --roads: the roads layer (build-cell-roads.mjs) of each published cell that has none yet, into <repo>/data/roads/
+const ROADS = argv.includes('--roads');
 const ONLY = argOf('repo'), LIMIT = +(argOf('limit') || Infinity), PUSH_B = +(argOf('push-mb') || 150) * 1e6, DRY = argv.includes('--dry');
 const IX = join(CW, 'docklands', 'data', 'cells', 'index.json'), GH = join(CW, 'data', 'raw', 'ghsl'); mkdirSync(GH, { recursive: true });
 const ix = JSON.parse(readFileSync(IX, 'utf8')), save = () => writeFileSync(IX, JSON.stringify(ix, null, 1) + '\n');
@@ -33,19 +35,32 @@ const git = (dir, ...a) => execFileSync('git', ['-C', dir, ...a], { encoding: 'u
 const MSG_TAIL = '\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YA9gEQRX3FdshBiTi6QdLT';
 function pushRepo(repo, keys) {
   const dir = join(HOME, repo); if (DRY || !keys.length) return;
-  git(dir, 'add', '-A', 'data/cells'); if (!git(dir, 'status', '--porcelain').trim()) return;
-  git(dir, 'commit', '-q', '-m', `Cells ${keys.join(', ')} (build-cell-tiles.mjs, tier london)` + MSG_TAIL);
+  git(dir, 'add', '-A', ROADS ? 'data/roads' : 'data/cells'); if (!git(dir, 'status', '--porcelain').trim()) return;
+  git(dir, 'commit', '-q', '-m', ROADS ? `Roads of cells ${keys.join(', ')} (build-cell-roads.mjs)` + MSG_TAIL : `Cells ${keys.join(', ')} (build-cell-tiles.mjs, tier london)` + MSG_TAIL);
   for (let k = 0; k < 4; k++) { try { git(dir, '-c', 'push.negotiate=true', 'push', '-q', 'origin', 'main'); break; } catch (e) { if (k === 3) throw e; execFileSync('sleep', [String(2 ** (k + 2))]); } }
-  ix.cells.filter(c => keys.includes(c.key)).forEach(c => { c.state = 'published'; c.commit = git(dir, 'rev-parse', '--short', 'HEAD').trim(); }); save();
-  git(ROOT, 'add', IX); git(ROOT, 'commit', '-q', '-m', `cells index: ${keys.length} cells published to moglob/${repo}` + MSG_TAIL);
+  const head = git(dir, 'rev-parse', '--short', 'HEAD').trim();
+  ix.cells.filter(c => keys.includes(c.key)).forEach(c => { if (ROADS) { c.roads.state = 'published'; c.roads.commit = head; } else { c.state = 'published'; c.commit = head; } }); save();
+  git(ROOT, 'add', IX); git(ROOT, 'commit', '-q', '-m', `cells index: ${ROADS ? 'roads of ' : ''}${keys.length} cells published to moglob/${repo}` + MSG_TAIL);
   for (let k = 0; k < 4; k++) { try { git(ROOT, 'pull', '-q', '--rebase', 'origin', 'main'); git(ROOT, 'push', '-q', 'origin', 'HEAD:main'); break; } catch (e) { if (k === 3) throw e; execFileSync('sleep', [String(2 ** (k + 2))]); } }
 }
 
 // --retry: cells in state failed are built again too
-const todo = ix.cells.filter(c => (c.state === 'planned' || (argv.includes('--retry') && c.state === 'failed')) && (!ONLY || c.repo === ONLY)).slice(0, LIMIT);
-console.log(`${todo.length} cells to build${ONLY ? ' in ' + ONLY : ''}`);
+const todo = ix.cells.filter(c => (ROADS ? c.state === 'published' && (!c.roads || (argv.includes('--retry') && c.roads.state === 'failed')) : c.state === 'planned' || (argv.includes('--retry') && c.state === 'failed')) && (!ONLY || c.repo === ONLY)).slice(0, LIMIT);
+console.log(`${todo.length} cells to build${ROADS ? ' (roads)' : ''}${ONLY ? ' in ' + ONLY : ''}`);
 const pending = new Map();   // repo -> { keys, bytes }
-for (const c of todo) {
+const addPending = (c, bytes) => { const P = pending.get(c.repo) || pending.set(c.repo, { keys: [], bytes: 0 }).get(c.repo); P.keys.push(c.key); P.bytes += bytes; if (P.bytes >= PUSH_B) { pushRepo(c.repo, P.keys); pending.delete(c.repo); } };
+if (ROADS) for (const c of todo) {
+  const repoDir = join(HOME, c.repo), out = join(repoDir, 'data', 'roads'), raw = join(CW, 'data', 'raw', 'places', 'cell-' + c.key), t0 = Date.now();
+  console.log(`== roads ${c.key} (${c.repo})`);
+  const r = DRY ? { status: 0 } : spawnSync(process.execPath, [join(CW, 'tools', 'build-cell-roads.mjs'), '--cell', c.key, '--out', out], { stdio: 'inherit' });
+  if (existsSync(raw)) for (const f of readdirSync(raw)) if (/^overture-roads-.*\.ndjson$/.test(f)) unlinkSync(join(raw, f));
+  const sf = join(out, c.key + '.json');
+  if (r.status !== 0 || !existsSync(sf)) { c.roads = { state: 'failed', error: `exit ${r.status}` }; save(); console.log(`   failed: exit ${r.status}`); continue; }
+  const S = JSON.parse(readFileSync(sf, 'utf8'));
+  c.roads = { state: 'built', files: S.files.length, segments: S.segments, points: S.points, km: Object.values(S.km_by_class).reduce((a, b) => a + b, 0), bytes: S.bytes, built: S.built, minutes: +((Date.now() - t0) / 60000).toFixed(1) }; save();
+  console.log(`   ${c.roads.segments} segments, ${c.roads.files} files, ${(c.roads.bytes / 1e6).toFixed(2)} MB`); addPending(c, c.roads.bytes);
+}
+for (const c of ROADS ? [] : todo) {
   const repoDir = join(HOME, c.repo); if (!existsSync(join(repoDir, '.git'))) throw new Error(`no clone of moglob/${c.repo} at ${repoDir}`);
   const out = join(repoDir, 'data', 'cells', c.key), raw = join(CW, 'data', 'raw', 'places', 'cell-' + c.key); mkdirSync(raw, { recursive: true });
   for (const z of readdirSync(GH)) if (!existsSync(join(raw, z))) linkSync(join(GH, z), join(raw, z));
@@ -59,8 +74,7 @@ for (const c of todo) {
   const fj = JSON.parse(readFileSync(join(out, 'features.json'), 'utf8')), bytes = dirSize(out);
   Object.assign(c, { state: 'built', buildings: fj.blocks.buildings, named: fj.blocks.named, tiles: readdirSync(join(out, 'tiles')).length, bytes, built: new Date().toISOString(), minutes: +((Date.now() - t0) / 60000).toFixed(1) });
   delete c.error; save(); console.log(`   ${c.buildings} buildings, ${c.tiles} tiles, ${(bytes / 1e6).toFixed(2)} MB, ${c.minutes} min`);
-  const P = pending.get(c.repo) || pending.set(c.repo, { keys: [], bytes: 0 }).get(c.repo); P.keys.push(c.key); P.bytes += bytes;
-  if (P.bytes >= PUSH_B) { pushRepo(c.repo, P.keys); pending.delete(c.repo); }
+  addPending(c, bytes);
 }
 for (const [repo, P] of pending) pushRepo(repo, P.keys);
 const st = {}; for (const c of ix.cells) st[c.state] = (st[c.state] || 0) + 1; console.log('states:', JSON.stringify(st));
