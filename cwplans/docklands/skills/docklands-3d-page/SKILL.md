@@ -3575,6 +3575,22 @@ buildings per country from the Overture Parquet footers only, about 1 minute for
   chromium-1194 path in CLAUDE.md is gone in this image).
 - **Open.** Masks of our detailed sets (Docklands model box, London, places) and the tile index: stage 3. Tiers other
   than london (one box a building, squares only). describeView `buildings_in_leaf_tiles` counts level-13 leaves only.
+- **Population (2026-11-25; owner: "please go ahead and set everything up and begin population with data as
+  discussed").** Repositories `moglob/moglob-1.1` (Great Britain south of 52.73 N) and `moglob/moglob-1.2` (north), served at
+  https://moglob.github.io/moglob-1.1/ and https://moglob.github.io/moglob-1.2/ . Tile index
+  `cwplans/docklands/data/cells/index.json` (129 level-8 cells that touch the UK; state planned / built / published /
+  failed). Driver `node cwplans/tools/populate-cells.mjs [--repo moglob-1.1] [--limit n]`: builds each planned cell into the
+  clone `../../<repo>/` beside londat (clone it first, add_repo access push), deletes the raw Overture answer, shares the GHSL
+  zips in `cwplans/data/raw/ghsl/`, pushes every 150 MB, then commits and pushes the index in londat. Cells have
+  `--exclude docklands` (the model box) by default. Page: `?cells=1` reads the published cells and leaves out the
+  `london` and `uk-lite` sets (trial switch; default unchanged).
+- **Traps of the population.** (1) Overture keeps only the newest releases: 2026-09-23.1 (London set, UK lite) was gone on
+  2026-11-25, the listing answered KeyCount 0 and DuckDB failed "read_parquet needs at least one file". Cells use
+  `--release` (default 2026-11-18.0). The fetch record in a cell's log is rewritten when the raw file name changes. (2) The
+  driver pulls and pushes in the londat checkout: keep that checkout clean while it runs (work in a worktree), else the
+  rebase fails. (3) Pages in a one-job workflow: deploy-pages found "0 artifacts" right after the upload, again and again;
+  build and deploy as two jobs (GitHub's starter workflow) works. (4) A cell expected at 0 records can hold buildings
+  (8-247-199: the Isles of Scilly, 5,306): the footer count gives a row group to the cell of its box centre.
 
 ## Three.js port: the UK lite set (2026-10-22)
 

@@ -3860,3 +3860,7 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   one in each tile, and sparse leaves (a node with 2,000 buildings or fewer is a leaf). Wales cell 5.37 -> 1.98 MB (32.6 bytes a
   building), London cell 63.47 -> 61.93 MB; 3d-tiles-validator 0 errors (was 18 a cell: empty glTF arrays); page check of
   Aberystwyth with no errors. Revised: Great Britain 1 repository (2 with room to rebuild), Europe 14 to 15, the world 82 to 89.
+- 2026-11-25, owner: "please go ahead and set everything up and begin population with data as discussed". Org `moglob`,
+  repositories moglob-1.1 (Great Britain south) and moglob-1.2 (north), Pages on through the org secret; tile index
+  cwplans/docklands/data/cells/index.json (129 cells); driver cwplans/tools/populate-cells.mjs; Overture 2026-11-18.0
+  (2026-09-23.1 gone). Page switch ?cells=1 (Penzance tested cross-origin, no errors). Population running: moglob-1.1, then 1.2.
