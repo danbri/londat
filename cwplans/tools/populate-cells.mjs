@@ -22,6 +22,12 @@ const argv = process.argv.slice(2), argOf = k => { const i = argv.indexOf('--' +
 const ONLY = argOf('repo'), LIMIT = +(argOf('limit') || Infinity), PUSH_B = +(argOf('push-mb') || 150) * 1e6, DRY = argv.includes('--dry');
 const IX = join(CW, 'docklands', 'data', 'cells', 'index.json'), GH = join(CW, 'data', 'raw', 'ghsl'); mkdirSync(GH, { recursive: true });
 const ix = JSON.parse(readFileSync(IX, 'utf8')), save = () => writeFileSync(IX, JSON.stringify(ix, null, 1) + '\n');
+// one driver at a time (2026-11-25: a queued run started while a run started by hand was going; the two built the same
+// cells, deleted each other's raw files and left 78 failed cells): a lock file with the pid, refused while that pid lives
+const LOCK = join(CW, 'data', 'raw', 'populate-cells.lock');
+if (existsSync(LOCK)) { const pid = +readFileSync(LOCK, 'utf8'); let alive = false; try { process.kill(pid, 0); alive = true; } catch {}
+  if (alive) { console.error(`populate-cells: another run is going (pid ${pid}, ${LOCK})`); process.exit(3); } }
+if (!DRY) { writeFileSync(LOCK, String(process.pid)); process.on('exit', () => { try { if (+readFileSync(LOCK, 'utf8') === process.pid) unlinkSync(LOCK); } catch {} }); }
 const dirSize = d => { let t = 0; for (const f of readdirSync(d, { withFileTypes: true })) t += f.isDirectory() ? dirSize(join(d, f.name)) : statSync(join(d, f.name)).size; return t; };
 const git = (dir, ...a) => execFileSync('git', ['-C', dir, ...a], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
 const MSG_TAIL = '\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YA9gEQRX3FdshBiTi6QdLT';
